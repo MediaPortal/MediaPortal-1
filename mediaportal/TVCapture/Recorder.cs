@@ -665,10 +665,11 @@ namespace MediaPortal.TV.Recording
 				{
 					m_iCurrentCard=i;
 					m_strTVChannel=channel;
-					Log.Write("Recorder:using card:{0} {1}", dev.ID, dev.FriendlyName);
+					Log.Write("Recorder:card:{0} {1} is already watching {2}", dev.ID, dev.FriendlyName,channel);
 					// do we want timeshifting?
 					if  (timeshift || dev.IsRecording)
 					{
+						Log.Write("Recorder:StartViewing():start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
 						//yes, check if we're already playing/watching it
 						string strFileName=GetTimeShiftFileName(m_iCurrentCard);
 						if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
@@ -680,9 +681,9 @@ namespace MediaPortal.TV.Recording
 								// yes,then play it
 								Log.Write("Recorder.StartViewing() play:({0})",strFileName);
 								g_Player.Play(strFileName);
-								return;
 							}
 						}
+						return;
 					}//if  (timeshift || dev.IsRecording)
 					else
 					{
