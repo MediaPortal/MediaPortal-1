@@ -163,6 +163,11 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				System.IO.Directory.CreateDirectory("database");
+			}
+			catch(Exception){}
+
+			try
+			{				
 				System.IO.Directory.CreateDirectory(@"database\pmt");
 			}
 			catch(Exception){}
