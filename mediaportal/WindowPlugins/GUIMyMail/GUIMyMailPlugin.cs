@@ -107,7 +107,7 @@ namespace MyMail
 		}
 		public bool DefaultEnabled() // Indicates if plugin is enabled by default;
 		{
-			return true;
+			return false;
 		}
 		public bool GetHome(out string strButtonText, out string strButtonImage, out string
 			strButtonImageFocus, out string strPictureImage)

@@ -617,7 +617,7 @@ namespace MediaPortal.PowerScheduler
 		}
 		public bool DefaultEnabled()
 		{
-			return true;
+			return false;
 		}
 
 		public int GetWindowId()

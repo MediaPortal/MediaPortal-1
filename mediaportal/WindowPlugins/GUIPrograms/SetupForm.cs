@@ -98,7 +98,7 @@ namespace GUIPrograms
 		}
 		public bool DefaultEnabled()
 		{
-			return false;
+			return true;
 		}
 
 		#region Windows Form Designer generated code
