@@ -645,6 +645,7 @@ namespace MediaPortal.TV.Recording
 					}//if (dev.IsRecording) 
 					else
 					{
+						g_Player.Stop();
 						dev.View=false;
 						m_iCurrentCard=-1;
 					}
