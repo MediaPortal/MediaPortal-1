@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "WinExe"
                 PreBuildEvent = ""
-                PostBuildEvent = "..\..\..\xbmc\bin\debug\postbuild.bat"
+                PostBuildEvent = ""
                 RootNamespace = "MediaPortal.Configuration"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""

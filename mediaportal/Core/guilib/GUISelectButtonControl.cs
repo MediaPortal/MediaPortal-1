@@ -336,7 +336,8 @@ namespace MediaPortal.GUI.Library
           }
           else if (m_bLeftSelected)
           {
-            OnAction(action);
+						action.wID=Action.ActionType.ACTION_MOVE_LEFT;
+						OnAction(action);
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
 						GUIWindowManager.SendThreadMessage(msg);
 						m_bUpdateNeeded=true;
