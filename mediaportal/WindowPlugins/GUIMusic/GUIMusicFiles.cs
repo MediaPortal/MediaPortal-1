@@ -239,7 +239,7 @@ namespace MediaPortal.GUI.Music
 
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+				GUIWindowManager.PreviousWindow();
         return;
       }
 
@@ -265,7 +265,7 @@ namespace MediaPortal.GUI.Music
           base.OnMessage(message);
           if (MusicState.StartWindow != GetID)
           {
-            GUIWindowManager.ActivateWindow(MusicState.StartWindow);
+            GUIWindowManager.ReplaceWindow(MusicState.StartWindow);
             return false;
           }
           LoadFolderSettings(m_strDirectory);
@@ -383,7 +383,7 @@ namespace MediaPortal.GUI.Music
             if (nNewWindow != GetID)
             {
               MusicState.StartWindow = nNewWindow;
-              GUIWindowManager.ActivateWindow(nNewWindow);
+              GUIWindowManager.ReplaceWindow(nNewWindow);
             }
 
             return true;
