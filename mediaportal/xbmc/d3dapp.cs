@@ -555,6 +555,7 @@ namespace MediaPortal
         
         if (bRemoveHandler)
           GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
+        if (windowed) TopMost=false;
         this.Activate();
         return true;
       }
@@ -1309,33 +1310,13 @@ namespace MediaPortal
 
     public void OnSetup(object sender, EventArgs e)
     {
+      g_Player.Stop();
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
+        SwitchFullScreenOrWindowed(true,true);
       m_bAutoHideMouse=false;
       Cursor.Show();
       Invalidate(true);
-      Utils.StartProcess("Configuration.exe","",true,false);
-
-      string strNewSkin="";
-      string strNewLanguage="";
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-      {
-        strNewSkin=xmlreader.GetValueAsString("skin","name","mce");
-        strNewLanguage=xmlreader.GetValueAsString("skin","language","English");
-        m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
-        GUIGraphicsContext.MouseSupport=xmlreader.GetValueAsBool("general","mousesupport",true);
-      }
-      if (strNewLanguage!=m_strLanguage)
-      {
-        m_strLanguage=strNewLanguage;
-        GUILocalizeStrings.Load(@"language\"+m_strLanguage+ @"\strings.xml");
-      }
-      if (strNewSkin!=m_strSkin)
-      {
-        m_strSkin=strNewSkin;
-        GUIWindowManager.Clear();
-        GUITextureManager.Dispose();
-        GUIFontManager.Dispose();
-        InitializeDeviceObjects();
-      }
+      Utils.StartProcess("Configuration.exe","",false,false);
     }
     /// <summary>
     /// Prepares the simulation for a new device being selected
@@ -1948,26 +1929,43 @@ namespace MediaPortal
 
     private void televisionMenuItem_Click(object sender, System.EventArgs e)
     {
+      g_Player.Stop();
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
+        SwitchFullScreenOrWindowed(true,true);
+
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\television.xml");
     }
 
     private void picturesMenuItem_Click(object sender, System.EventArgs e)
     {
+      g_Player.Stop();
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
+        SwitchFullScreenOrWindowed(true,true);
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\pictures.xml");
     }
 
     private void musicMenuItem_Click(object sender, System.EventArgs e)
     {
+      g_Player.Stop();
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
+        SwitchFullScreenOrWindowed(true,true);
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\music.xml");
     }
 
     private void moviesMenuItem_Click(object sender, System.EventArgs e)
     {
+      g_Player.Stop();
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
+        SwitchFullScreenOrWindowed(true,true);
+
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\movies.xml");
     }
 
     private void dvdMenuItem_Click(object sender, System.EventArgs e)
     {
+      g_Player.Stop();
+      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
+        SwitchFullScreenOrWindowed(true,true);
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
     }
   }
