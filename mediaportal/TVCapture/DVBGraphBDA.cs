@@ -160,6 +160,11 @@ namespace MediaPortal.TV.Recording
 			m_bIsUsingMPEG				= true;
 			m_graphState					= State.None;
 
+			try
+			{
+				System.IO.Directory.CreateDirectory("temp");
+			}
+			catch(Exception){}
 			//create registry keys needed by the streambuffer engine for timeshifting/recording
 			try
 			{
@@ -1080,6 +1085,27 @@ namespace MediaPortal.TV.Recording
 			m_iCurrentSID=SID;
 			shouldDecryptChannel=true;
 			Log.Write("DVBGraphBDA:TuneChannel() done");
+
+			try
+			{
+				string pmtName=String.Format(@"temp\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
+				if (System.IO.File.Exists(pmtName))
+				{
+					System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
+					long len=stream.Length;
+					byte[] pmt = new byte[len];
+					stream.Read(pmt,0,(int)len);
+					stream.Close();
+					VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+					if (props.SupportsFireDTVProperties)
+					{
+						//yes, then send the PMT table to the device
+						Log.Write("DVBGraphBDA:Process() send PMT to fireDTV device");	
+						props.SendPMTToFireDTV(pmt);
+					}//if (props.SupportsFireDTVProperties)
+				}
+			}
+			catch(Exception){}
 
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -2265,6 +2291,15 @@ namespace MediaPortal.TV.Recording
 				//First check if channel is scrambled
 				if (true)//channelInfo.scrambled)
 				{
+					try
+					{
+						string pmtName=String.Format(@"temp\pmt{0}{1}.dat",m_iCurrentSID,(int)Network());
+						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+						stream.Write(pmt,0,pmt.Length);
+						stream.Close();
+					}
+					catch(Exception){}
+					
 					//Tv channels is scrambled. To view them
 					//we need to send the raw PMT table to the FireDTV device
 					//Note this only works for FireDTV devices, so 
