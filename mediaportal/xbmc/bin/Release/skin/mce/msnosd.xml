@@ -29,7 +29,7 @@
 			<textcolor>ff000000</textcolor>
 		</control>
 		<control>
-			<description>NrOfUsersInChat</description>
+			<description>Talking to username label</description>
 			<type>label</type>
 			<id>3</id>
 			<posX>560</posX>
