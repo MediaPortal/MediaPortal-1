@@ -2359,6 +2359,28 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
+		static public void DeleteChannelsFromGroup(TVGroup group)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+
+					if (null==m_db) return ;
+
+					strSQL=String.Format( "delete from tblGroupMapping where idGroup={0} ", group.ID);
+
+					m_db.Execute(strSQL);
+				} 
+				catch (SQLiteException ex) 
+				{
+					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
+
+
 		static public void UnmapChannelFromGroup(TVGroup group, TVChannel channel)
 		{
 			lock (typeof(TVDatabase))

@@ -53,6 +53,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button btnUnmap;
 		private System.Windows.Forms.Button buttonMap;
 		private System.Windows.Forms.Button buttonCVS;
+		private System.Windows.Forms.Button btnGrpChnUp;
+		private System.Windows.Forms.Button btnGrpChnDown;
 
 		//
 		// Private members
@@ -128,6 +130,8 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
+			this.btnGrpChnUp = new System.Windows.Forms.Button();
+			this.btnGrpChnDown = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -397,6 +401,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.btnGrpChnDown);
+			this.tabPage3.Controls.Add(this.btnGrpChnUp);
 			this.tabPage3.Controls.Add(this.buttonMap);
 			this.tabPage3.Controls.Add(this.btnUnmap);
 			this.tabPage3.Controls.Add(this.listViewTVGroupChannels);
@@ -433,7 +439,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.listViewTVGroupChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																															this.columnHeader9});
-			this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 112);
+			this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 88);
 			this.listViewTVGroupChannels.Name = "listViewTVGroupChannels";
 			this.listViewTVGroupChannels.Size = new System.Drawing.Size(168, 240);
 			this.listViewTVGroupChannels.TabIndex = 5;
@@ -449,7 +455,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.listViewTVChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																												 this.columnHeader8});
-			this.listViewTVChannels.Location = new System.Drawing.Point(16, 112);
+			this.listViewTVChannels.Location = new System.Drawing.Point(16, 88);
 			this.listViewTVChannels.Name = "listViewTVChannels";
 			this.listViewTVChannels.Size = new System.Drawing.Size(168, 240);
 			this.listViewTVChannels.TabIndex = 4;
@@ -463,7 +469,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(240, 88);
+			this.label3.Location = new System.Drawing.Point(240, 64);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(120, 16);
 			this.label3.TabIndex = 3;
@@ -471,7 +477,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 88);
+			this.label2.Location = new System.Drawing.Point(16, 64);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(100, 16);
 			this.label2.TabIndex = 2;
@@ -492,6 +498,24 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBox1.Size = new System.Drawing.Size(280, 21);
 			this.comboBox1.TabIndex = 0;
 			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+			// 
+			// btnGrpChnUp
+			// 
+			this.btnGrpChnUp.Location = new System.Drawing.Point(264, 344);
+			this.btnGrpChnUp.Name = "btnGrpChnUp";
+			this.btnGrpChnUp.Size = new System.Drawing.Size(32, 23);
+			this.btnGrpChnUp.TabIndex = 8;
+			this.btnGrpChnUp.Text = "Up";
+			this.btnGrpChnUp.Click += new System.EventHandler(this.btnGrpChnUp_Click);
+			// 
+			// btnGrpChnDown
+			// 
+			this.btnGrpChnDown.Location = new System.Drawing.Point(304, 344);
+			this.btnGrpChnDown.Name = "btnGrpChnDown";
+			this.btnGrpChnDown.Size = new System.Drawing.Size(56, 23);
+			this.btnGrpChnDown.TabIndex = 9;
+			this.btnGrpChnDown.Text = "Down";
+			this.btnGrpChnDown.Click += new System.EventHandler(this.btnGrpChnDown_Click);
 			// 
 			// TVChannels
 			// 
@@ -1321,6 +1345,80 @@ namespace MediaPortal.Configuration.Sections
 			chan.Name="CVBS#2"; chan.Number=(int)ExternalInputs.cvbs2; TVDatabase.AddChannel(chan);
 			chan.Name="SVHS";   chan.Number=(int)ExternalInputs.svhs; TVDatabase.AddChannel(chan);
 			LoadSettings();
+		}
+
+		private void btnGrpChnUp_Click(object sender, System.EventArgs e)
+		{
+			isDirty = true;
+
+			for(int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
+			{
+				if(listViewTVGroupChannels.Items[index].Selected == true)
+				{
+					//
+					// Make sure the current index isn't smaller than the lowest index (0) in the list view
+					//
+					if(index > 0)
+					{
+						ListViewItem listItem = listViewTVGroupChannels.Items[index];
+						listViewTVGroupChannels.Items.RemoveAt(index);
+						listViewTVGroupChannels.Items.Insert(index - 1, listItem);
+					}
+				}
+			}    
+			TVGroup group = (TVGroup) comboBox1.SelectedItem;
+			TVDatabase.DeleteChannelsFromGroup(group);
+			for(int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
+			{
+				group.tvChannels.Clear();
+				ListViewItem listItem = listViewTVGroupChannels.Items[index];
+				group.tvChannels.Add (listItem.Tag);
+				TVDatabase.MapChannelToGroup(group, (TVChannel)listItem.Tag);
+			}
+			SaveTVChannels();
+			SaveGroups();
+		}
+
+		private void btnGrpChnDown_Click(object sender, System.EventArgs e)
+		{
+			isDirty = true;
+
+			for(int index = listViewTVGroupChannels.Items.Count - 1; index >= 0; index--)
+			{
+				if(listViewTVGroupChannels.Items[index].Selected == true)
+				{
+					//
+					// Make sure the current index isn't greater than the highest index in the list view
+					//
+					if(index < listViewTVGroupChannels.Items.Count - 1)
+					{
+						ListViewItem listItem = listViewTVGroupChannels.Items[index];
+						listViewTVGroupChannels.Items.RemoveAt(index);
+
+						if(index + 1 < listViewTVGroupChannels.Items.Count)
+						{
+							listViewTVGroupChannels.Items.Insert(index + 1, listItem);
+						}
+						else
+						{
+							listViewTVGroupChannels.Items.Add(listItem);
+						}
+					}
+				}
+			}
+			
+			TVGroup group = (TVGroup) comboBox1.SelectedItem;
+			TVDatabase.DeleteChannelsFromGroup(group);
+			for(int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
+			{
+				group.tvChannels.Clear();
+				ListViewItem listItem = listViewTVGroupChannels.Items[index];
+				group.tvChannels.Add (listItem.Tag);
+				TVDatabase.MapChannelToGroup(group, (TVChannel)listItem.Tag);
+			}
+			SaveTVChannels();
+			SaveGroups();
+		
 		}
 	}
 }
