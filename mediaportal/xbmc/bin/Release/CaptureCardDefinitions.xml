@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!-- This file contains the capture card definitions to create the capture card dependant part of a graph -->
+<!-- -->
+<!-- Each capture card is identified by its friendly name and its its unique identification: its guid. -->
+<!-- Depending on the cards capabilities, it has a TV and Radio section that defines the graph -->
+<!-- -->
+<!-- Each graph is defined upto a certain capture card dependant filter, upon which point the software will take over and -->
+<!-- create the rest of the graph, which should be generic, ie INDEPENDANT of the capture card!!! -->
+<!-- -->
+<!-- The last filter/output pin is defined under the interface section: -->
+<!--    name="...", "Video" (for video pin), "Audio" (for audio pin) and "Mpeg2" (for mpeg2 output video/audio). -->
+<!-- It shall depend on the kind of card (MPEG2/Software) what exactly is offered on the video, audio and mpeg2 pins... -->
+<!-- MPEG2 cards will usually only have the mpeg2 output and audio output if they have radio also... -->
+<!-- -->
+<!-- Regarding connection pin definition: -->
+<!--  1. Define the Name of the pin. This might work and might not as this might be language dependant -->
+<!--  2. Define the 0-based index of the pin. This always should work... -->
+<!-- -->
+<capturecards>
+  <capturecard commercialname="Hauppauge WinTV PVR150MCE" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&#38;dev_0016&#38;subsys_88010070&#38;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="Hauppauge WinTV PVR PCI II Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Audio" sinkfilter="tvaudio" sinkpin="TVAudio In"></connection>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Video" sinkfilter="crossbar" sinkpin="0: Video Tuner In"></connection>
+        <connection sourcefilter="tvaudio" sourcepin="TVAudio Out" sinkfilter="crossbar" sinkpin="1: Audio Tuner In"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0: Video Decoder Out" sinkfilter="capture" sinkpin="0"></connection>
+        <connection sourcefilter="capture" sourcepin="3" sinkfilter="encoder" sinkpin="656"></connection>
+      </connections>
+    </tv>
+    <radio>
+      <interface cat="capture" video="" audio="1" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV PVR PCI II Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV PVR PCI II Capture"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Audio" sinkfilter="tvaudio" sinkpin="TVAudio In"></connection>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Video" sinkfilter="crossbar" sinkpin="0: Video Tuner In"></connection>
+        <connection sourcefilter="tvaudio" sourcepin="TVAudio Out" sinkfilter="crossbar" sinkpin="1: Audio Tuner In"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0: Video Decoder Out" sinkfilter="capture" sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1: Audio Decoder Out" sinkfilter="capture" sinkpin="1"></connection>
+      </connections>
+    </radio>
+  </capturecard>
+    <capturecard commercialname="NVTV Dual Tuner" capturename="NVTV" devid="Ven_123f&#38;dev_8120&#38;subsys_024810de&#38;rev_b1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
+        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
+        <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
+        <filter cat="encoderaudio" name="NVTV Audio Encoder"      checkdevice="false"></filter>
+        <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Audio" sinkfilter="tvaudio" sinkpin="TVAudio In"></connection>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Video" sinkfilter="crossbar" sinkpin="2: Video Tuner In"></connection>
+        <connection sourcefilter="tvaudio" sourcepin="TVAudio Out" sinkfilter="crossbar" sinkpin="3: Audio Tuner In"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0: Video Decoder Out" sinkfilter="capture" sinkpin="Analog Video In"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1: Audio Decoder Out" sinkfilter="capture" sinkpin="Input4"></connection>
+        <connection sourcefilter="capture" sourcepin="Output0" sinkfilter="encodervideo" sinkpin="Input1"></connection>
+        <connection sourcefilter="capture" sourcepin="Output1" sinkfilter="encoderaudio" sinkpin="XForm In"></connection>
+        <connection sourcefilter="encodervideo" sourcepin="Video Pes" sinkfilter="mux" sinkpin="Video"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="XForm Out" sinkfilter="mux" sinkpin="Audio"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+</capturecards>
