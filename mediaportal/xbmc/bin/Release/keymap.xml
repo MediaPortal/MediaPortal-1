@@ -157,6 +157,16 @@
   </global>   
 
   <window>
+    <description>My TV record TV</description>
+    <id>603</id>
+    <action>
+      <description>delete record TV</description>
+      <id>80</id>
+      <key>0</key>
+    </action>
+  </window>
+  
+  <window>
     <description>My files specific actions</description>
     <id>3</id>
     <action>
