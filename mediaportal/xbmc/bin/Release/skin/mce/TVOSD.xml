@@ -28,7 +28,7 @@
 		<type>progress</type> 
 		<id>1</id> 
 		<posX>160</posX> 
-		<posY>390</posY> 
+		<posY>392</posY> 
 		<width>400</width>
 		<height>20</height>
 		<texturebg>osd_progress_back.png</texturebg> 
