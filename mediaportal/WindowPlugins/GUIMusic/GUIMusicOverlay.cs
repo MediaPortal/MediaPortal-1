@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Music
     
     public override bool DoesPostRender()
     {
-      if (!g_Player.Playing ) 
+      if (!g_Player.Playing &&!Recorder.IsRadio()) 
       { 
         m_strFile=String.Empty;
         return false;
@@ -125,12 +125,17 @@ namespace MediaPortal.GUI.Music
 
         return;
       }
-      if (g_Player.CurrentFile != m_strFile)
+      if (g_Player.Playing && g_Player.CurrentFile != m_strFile)
       {
         m_iFrames=0;
         m_strFile=g_Player.CurrentFile ;
         SetCurrentFile(m_strFile);
       }
+			if (Recorder.IsRadio() && Recorder.RadioStationName()!=m_strFile)
+			{
+				m_strFile=Recorder.RadioStationName() ;
+				SetCurrentFile(m_strFile);
+			}
 
       if (m_iPosOrgIcon==0)
       {

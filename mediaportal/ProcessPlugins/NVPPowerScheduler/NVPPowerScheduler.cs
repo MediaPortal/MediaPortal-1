@@ -268,11 +268,19 @@ namespace MediaPortal.PowerScheduler
             //or its a recorded tv
             if (!g_Player.IsTV || (g_Player.IsTV && !g_Player.IsTimeShifting) )
             {
-              // then disable shutdown
-              ResetShutdownTimer(0);	
-              enableShutdown=false;
-              m_iActiveWindow=-1; //check again next time
+							// then disable shutdown
+							ResetShutdownTimer(0);	
+							enableShutdown=false;
+							m_iActiveWindow=-1; //check again next time
             }
+
+						if (Recorder.IsRadio())
+						{
+							// then disable shutdown
+							ResetShutdownTimer(0);	
+							enableShutdown=false;
+							m_iActiveWindow=-1; //check again next time
+						}
           }
 
 					if (!m_bShutdownEnabled && enableShutdown)
