@@ -69,10 +69,10 @@ public class MediaPortalApp : D3DApp, IRender
 
       // CHECK if DirectX 9.0c if installed
       bool bDirectXInstalled = false;
-      bool bManagedDirectXInstalled = false;
+      //bool bManagedDirectXInstalled = false;
       bool bWindowsMediaPlayer9 = false;
       string strVersion = "";
-      string strVersionMng = "";
+      //string strVersionMng = "";
       RegistryKey hkcu = Registry.CurrentUser;
       hkcu.CreateSubKey(@"Software\MediaPortal");
       RegistryKey hklm = Registry.LocalMachine;
@@ -100,7 +100,7 @@ public class MediaPortalApp : D3DApp, IRender
           else strVersion = "?";
         }
         else strVersion = "?";
-
+/*
         strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
         if (strVersionMng != null)
         {
@@ -120,6 +120,7 @@ public class MediaPortalApp : D3DApp, IRender
           else strVersionMng = "?";
         }
         else strVersionMng = "?";
+        */
         subkey.Close();
         subkey = null;
       }
@@ -887,8 +888,12 @@ public class MediaPortalApp : D3DApp, IRender
       if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
 			if (key.KeyChar == '?')
 			{
-        bool bWindowed=!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed;
-        SwitchFullScreenOrWindowed(bWindowed,true);        
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
+          (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
+          GUIWindowManager.ActiveWindow,0,0,0,0);
+        msg.Label="D:";
+        GUIWindowManager.SendThreadMessage(msg);
 			}
 			Action action = new Action();
       if (GUIWindowManager.IsRouted && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD)
