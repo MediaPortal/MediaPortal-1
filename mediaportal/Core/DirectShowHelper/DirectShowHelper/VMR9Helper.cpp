@@ -92,6 +92,26 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 		Log("Vmr9:Init() AdviseNotify() failed 0x:%x",hr);
 		return E_FAIL;
 	}
+
+	
+	Log("Vmr9:Init() set YUV mixing mode");
+	CComQIPtr<IVMRMixerControl9> pMixControl = m_pVMR9Filter;
+	DWORD dwPrefs;
+	pMixControl->GetMixingPrefs(&dwPrefs); 
+	Log("Vmr9:Init() current mixing preferences:%x",dwPrefs); 
+
+	// Remove the current render target flag.
+	dwPrefs &= ~MixerPref_RenderTargetMask; 
+
+	// Add the render target flag that we want.
+	dwPrefs |= MixerPref_RenderTargetYUV;
+
+	// Set the new flags.
+	if (FAILED(hr = pMixControl->SetMixingPrefs(dwPrefs)))
+	{
+		Log("Vmr9:Init() cannot use YUV mixing mode 0x:%x",hr);
+	}
+
 	return S_OK;
 }
 	
