@@ -291,6 +291,23 @@ public class MediaPortalApp : D3DApp, IRender
       //  hook form close to stop updater too
       this.Closed +=new EventHandler(MediaPortal_Closed);
 
+      XmlDocument doc = new XmlDocument();
+      try
+      {
+        doc.Load("mediaportal.exe.config");
+        XmlNode node=doc.SelectSingleNode("/configuration/appStart/ClientApplicationInfo/appFolderName");
+        node.InnerText=System.IO.Directory.GetCurrentDirectory();
+
+        node=doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/baseDir");
+        node.InnerText=System.IO.Directory.GetCurrentDirectory();
+        
+        node=doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/tempDir");
+        node.InnerText=System.IO.Directory.GetCurrentDirectory();
+        doc.Save("Mediaportal.exe.config");
+      }
+      catch (Exception)
+      {
+      }
       UpdaterConfiguration config = UpdaterConfiguration.Instance;
       config.Logging.LogPath=System.IO.Directory.GetCurrentDirectory()+@"\log\updatelog.log";
       config.Applications[0].Client.BaseDir=System.IO.Directory.GetCurrentDirectory();
