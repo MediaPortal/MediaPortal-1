@@ -312,11 +312,17 @@ namespace MediaPortal.GUI.TV
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
 						OnMessage(msg);         
-						if (msg.Label.Length>0)
+						if ((msg.Label.Length>0) && (m_strGroup!=msg.Label))
 						{
 							m_strChannel="";
 							m_strGroup=msg.Label;
 							UpdateChannelButton();
+							Recorder.StartViewing(m_iCurrentCard,m_strChannel , m_bTVON,m_bTimeShifting);
+							SaveSettings();
+							m_strChannel=Recorder.GetTVChannelName(m_iCurrentCard);
+							m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);
+							m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
+
 							UpdateStateOfButtons();
 							UpdateProgressPercentageBar();
 						}
@@ -326,7 +332,7 @@ namespace MediaPortal.GUI.TV
 						//switch to another tv channel
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
 						OnMessage(msg);         
-						if (msg.Label.Length>0)
+						if ((msg.Label.Length>0) && (m_strChannel!=msg.Label))
 						{
 							m_strChannel=msg.Label;
 							UpdateStateOfButtons();
