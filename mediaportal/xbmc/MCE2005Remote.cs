@@ -240,8 +240,9 @@ namespace MediaPortal
     }
     
 
-    public bool WndProc(ref Message msg)
+    public bool WndProc(ref Message msg, out Action action)
     {
+      action=null;
       if (!RemoteFound) return false;
       int wparam=0;
       int lparam=0;
@@ -257,7 +258,7 @@ namespace MediaPortal
       catch(Exception){}
       if (msg.Msg==WM_APPCOMMAND)
       {
-        Action action=new Action(Action.ActionType.ACTION_INVALID,0,0);
+        action=new Action(Action.ActionType.ACTION_INVALID,0,0);
         lparam>>=32;
         switch (lparam)
         {
@@ -300,11 +301,7 @@ namespace MediaPortal
             Log.Write("unknown wm_appcommand:{0:X}",lparam);
           break;
         }
-        if (action.wID!=Action.ActionType.ACTION_INVALID)
-        {
-          GUIWindowManager.OnAction(action);
-          return true;
-        }
+        return true;
       }
 
       if (msg.Msg==WM_KEYDOWN)
@@ -344,6 +341,8 @@ namespace MediaPortal
         */
         switch(header.hid.RawData2)
         {
+          case 0:
+          break;
           //case 0x209://details
           //  break;
           case 0x4B://DVD angle
@@ -351,8 +350,7 @@ namespace MediaPortal
           case 0x4C://DVD audio
             break;
           case 0x24://DVD menu
-            Action action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);            
-            GUIWindowManager.OnAction(action);
+            action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
             break;
           case 0x4D://DVD subtitle
             break;
@@ -384,6 +382,13 @@ namespace MediaPortal
             break;
           case 0x0d:// home
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+            break;
+          case 0xB5: //next
+            action.wID=Action.ActionType.ACTION_NEXT_ITEM;
+            break;
+          case 0xb6: //previous
+            action=new Action(Action.ActionType.ACTION_INVALID,0,0);
+            action.wID=Action.ActionType.ACTION_PREV_ITEM;
             break;
           default:
             Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);

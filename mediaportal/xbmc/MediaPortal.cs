@@ -442,9 +442,14 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void WndProc(ref Message msg)
     {
-      if ( MCE2005Remote.WndProc(ref msg) ) 
+      Action action;
+      if ( MCE2005Remote.WndProc(ref msg, out action) ) 
       {
         msg.Result = new IntPtr(0);
+        if (action!=null && action.wID!=Action.ActionType.ACTION_INVALID)
+        {
+          OnAction(action);
+        }
         return;
       }
       if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
