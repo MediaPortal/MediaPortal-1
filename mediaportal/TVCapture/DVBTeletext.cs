@@ -702,7 +702,9 @@ namespace MediaPortal.TV.Recording
 				int i;
 				string pageNumber=Convert.ToString(mPage,16);
 				string subpageNumber=Convert.ToString(sPage,16);
-				byte[] mpText=System.Text.Encoding.ASCII.GetBytes("MediaPortal P."+pageNumber+"/"+subpageNumber);
+				string headline="MediaPortal P."+pageNumber+"/"+subpageNumber;
+				headline+=new string((char)32,32-headline.Length);
+				byte[] mpText=System.Text.Encoding.ASCII.GetBytes(headline);
 				System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
 				for (i = 0; i < 11; i++)
 					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.Yellow);

@@ -215,25 +215,19 @@ namespace MediaPortal.TV.Recording
 		private int decodePATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
 		{
 			int loop;
-			byte[] bytes = new byte[9];
-			int n;
 			// check
 			if(buf.Length<10)
 				return 0;
 
-			System.Array.Copy(buf, 0, bytes, 0, 9);
-			
-			int table_id = bytes[0];
-			int section_syntax_indicator = BitsFromBArray(bytes, 0, 8, 1);
-			int reserved_1 = BitsFromBArray(bytes, 0, 10, 2);
-			int section_length = BitsFromBArray(bytes, 0, 12, 12);
-			int transport_stream_id = BitsFromBArray(bytes, 0, 24, 16);
-			int reserved_2 = BitsFromBArray(bytes, 0, 40, 2);
-			int version_number = BitsFromBArray(bytes, 0, 42, 5);
-			int current_next_indicator = BitsFromBArray(bytes, 0, 47, 1);
-			int section_number = BitsFromBArray(bytes, 0, 48, 8);
-			int last_section_number = BitsFromBArray(bytes, 0, 56, 8);
-			
+			int table_id = buf[0];
+			int section_syntax_indicator = (buf[1]>>7) & 1;
+			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+			int transport_stream_id = (buf[3]<<8)+buf[4];
+			int version_number = ((buf[5]>>1)&0x1F);
+			int current_next_indicator = buf[5] & 1;
+			int section_number = buf[6];
+			int last_section_number = buf[7];
+
 			byte[] b = new byte[5];
 			loop =(section_length - 9) / 4;
 			//Log.Write("dvbsections:decodePatTable() loop={0}", loop);
@@ -243,11 +237,12 @@ namespace MediaPortal.TV.Recording
 			ChannelInfo ch=new ChannelInfo();
 			for (int count=0;count<loop;count++)
 			{
+				
 				System.Array.Copy(buf, 8 +(count * 4), b, 0, 4);
 				ch.transportStreamID=transport_stream_id;
-				ch.program_number = BitsFromBArray(b, 0, 0, 16);
-				ch.reserved = BitsFromBArray(b, 0, 16, 3);
-				ch.network_pmt_PID = BitsFromBArray(b, 0, 19, 13);
+				ch.program_number = (b[0]<<8)+b[1];
+				ch.reserved = ((b[2]>>5) & 7);
+				ch.network_pmt_PID = ((b[2] & 0x1F)<<8)+b[3];
 				//Log.Write("dvbsections:decodePatTable() chan:{0} {1} {2}", ch.transportStreamID,ch.networkID,ch.network_pmt_PID);
 				if(ch.program_number!=0)
 					tp.PMTTable.Add(ch);
@@ -631,27 +626,18 @@ namespace MediaPortal.TV.Recording
 		//
 		private int decodePMTTable(byte[] buf, TPList transponderInfo, Transponder tp,ref ChannelInfo pat)
 		{
-			byte[] bytes = new byte[14];
-			// check
 			if(buf.Length<13)
 				return 0;
-
-			System.Array.Copy(buf, 0, bytes, 0, 12);
-			int table_id = bytes[0];
-			int section_syntax_indicator = BitsFromBArray(bytes, 0, 8, 1);
-			int b_null = BitsFromBArray(bytes, 0, 9, 1);
-			int reserved_1 = BitsFromBArray(bytes, 0, 10, 2);
-			int section_length = BitsFromBArray(bytes, 0, 12, 12);
-			int program_number = BitsFromBArray(bytes, 0, 24, 16);
-			int reserved_2 = BitsFromBArray(bytes, 0, 40, 2);
-			int version_number = BitsFromBArray(bytes, 0, 42, 5);
-			int current_next_indicator = BitsFromBArray(bytes, 0, 47, 1);
-			int section_number = BitsFromBArray(bytes, 0, 48, 8);
-			int last_section_number = BitsFromBArray(bytes, 0, 56, 8);
-			int reserved_3 = BitsFromBArray(bytes, 0, 64, 3);
-			int pcr_pid = BitsFromBArray(bytes, 0, 67, 13);
-			int reserved_4 = BitsFromBArray(bytes, 0, 80, 4);
-			int program_info_length = BitsFromBArray(bytes, 0, 84, 12);
+			int table_id = buf[0];
+			int section_syntax_indicator = (buf[1]>>7) & 1;
+			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+			int program_number = (buf[3]<<8)+buf[4];
+			int version_number = ((buf[5]>>1)&0x1F);
+			int current_next_indicator = buf[5] & 1;
+			int section_number = buf[6];
+			int last_section_number = buf[7];
+			int pcr_pid = ((buf[8]& 0x1F)<<8)+buf[9];
+			int program_info_length = ((buf[10] & 0xF)<<8)+buf[11];
 			//
 			// store info about the channel
 			//
@@ -684,17 +670,17 @@ namespace MediaPortal.TV.Recording
 				pointer += x;
 				len1 -= x;
 			}
-			byte[] b = new byte[6];
+			//byte[] b = new byte[6];
 			PMTData pmt;
 			while (len1 > 4)
 			{
 				pmt=new PMTData();
-				System.Array.Copy(buf, pointer, b, 0, 5);
-				pmt.stream_type = BitsFromBArray(b, 0, 0, 8);
-				pmt.reserved_1 = BitsFromBArray(b, 0, 8, 3);
-				pmt.elementary_PID = BitsFromBArray(b, 0, 11, 13);
-				pmt.reserved_2 = BitsFromBArray(b, 0, 24, 4);
-				pmt.ES_info_length = BitsFromBArray(b, 0, 28, 12);
+				//System.Array.Copy(buf, pointer, b, 0, 5);
+				pmt.stream_type = buf[pointer];
+				pmt.reserved_1 = (buf[pointer+1]>>5)& 7;
+				pmt.elementary_PID = ((buf[pointer+1]&0x1F)<<8)+buf[pointer+2];
+				pmt.reserved_2 = (buf[pointer+3]>>4) & 0xF;
+				pmt.ES_info_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
 
 				switch(pmt.stream_type)
 				{
@@ -796,9 +782,9 @@ namespace MediaPortal.TV.Recording
 				{
 					System.Array.Copy(b,pointer,bytes,0,3);
 					ISO_639_language_code+=System.Text.Encoding.ASCII.GetString(bytes,0,3);
-					teletext_type		= BitsFromBArray (bytes,0,24,5);
-					teletext_magazine_number	= BitsFromBArray (bytes,0,29,3);
-					teletext_page_number	= BitsFromBArray (bytes,0,32,8);
+					teletext_type		= (bytes[3]>>3) & 0x1F;
+					teletext_magazine_number	= bytes[3] & 7;
+					teletext_page_number	= bytes[4];
 					pointer += 5;
 					len -= 5;
 				}
@@ -902,11 +888,11 @@ namespace MediaPortal.TV.Recording
 			descriptor_tag		= b[0];
 			descriptor_length	= b[1];
 
-			component_type_flag= BitsFromBArray(b, 0, 16, 1);
-			bsid_flag			= BitsFromBArray (b, 0, 17, 1);
-			mainid_flag		= BitsFromBArray (b, 0, 18, 1);
-			asvc_flag			= BitsFromBArray (b, 0, 19, 1);
-			reserved_1			= BitsFromBArray (b, 0, 20, 4);
+			component_type_flag=(b[2]>>7) & 1;
+			bsid_flag			= (b[2]>>6) & 1;
+			mainid_flag		= (b[2]>>5)&1;
+			asvc_flag			= (b[2]>>4) & 1;
+			reserved_1			= b[2] & 0xF;
 
 			int pointer=3 ;
 			len  = descriptor_length - 2;
@@ -946,170 +932,106 @@ namespace MediaPortal.TV.Recording
 		}
 		//
 		// cat
-		void decodeCATTable (byte[] buf, TPList transponderInfo, ref Transponder tp,ref ChannelInfo pat)
-		{
 
-			int      table_id;
-			int      section_syntax_indicator;		
-			int      reserved_1;
-			int      section_length;
-			int      reserved_2;
-			int      version_number;
-			int      current_next_indicator;
-			int      section_number;
-			int      last_section_number;
-
-			// private section
-
-
-			int  len1;
-
- 
-			table_id 			 = buf[0];
-			section_syntax_indicator= BitsFromBArray (buf, 0, 8, 1);
-			reserved_1 			 = BitsFromBArray (buf, 0, 10, 2);
-			section_length		 = BitsFromBArray (buf, 0, 12, 12);
-			reserved_2 			 = BitsFromBArray (buf, 0, 24, 18);
-			version_number 		 = BitsFromBArray (buf, 0, 42, 5);
-			current_next_indicator	 = BitsFromBArray (buf, 0, 47, 1);
-			section_number 		 = BitsFromBArray (buf, 0, 48, 8);
-			last_section_number = BitsFromBArray (buf, 0, 56, 8);
-
-
-			byte[] b=new byte[buf.Length];
-			len1 = section_length - 5;
-			int pointer = 8;
-			int x;
-			string caText="";
-
-			while (len1 > 4) 
-			{
-				x =  buf[pointer+1]+2;
-				try
-				{
-					System.Array.Copy(buf,pointer,b,0,x);
-					caText=DVB_CADescriptor(b);
-					if(caText!=null)
-						if(pat.pidCache.IndexOf(caText)==-1)
-						{
-							pat.pidCache+=caText+";";
-						}
-				}
-				catch
-				{}
-				len1 -= x;
-				pointer += x;
-   
-			}
-
-		}
 		//
 		//
 		private int decodeSDTTable(byte[] buf, TPList transponderInfo, ref Transponder tp,ref ChannelInfo pat)
 		{
-			byte[] bytes = new byte[14];
-			// check
+
 			if(buf.Length<12)
 				return -1;
-			System.Array.Copy(buf, 0, bytes, 0, 11);
-			int table_id = bytes[0];
-			int section_syntax_indicator = BitsFromBArray(bytes, 0, 8, 1);
-			int a_reserved_1 = BitsFromBArray(bytes, 0, 9, 1);
-			int a_reserved_2 = BitsFromBArray(bytes, 0, 10, 2);
-			int section_length = BitsFromBArray(bytes, 0, 12, 12);
-			int transport_stream_id = BitsFromBArray(bytes, 0, 24, 16);
-			int a_reserved_3 = BitsFromBArray(bytes, 0, 40, 2);
-			int version_number = BitsFromBArray(bytes, 0, 42, 5);
-			int current_next_indicator = BitsFromBArray(bytes, 0, 47, 1);
-			int section_number = BitsFromBArray(bytes, 0, 48, 8);
-			int last_section_number = BitsFromBArray(bytes, 0, 56, 8);
-			int original_network_id = BitsFromBArray(bytes, 0, 64, 16);
-			int a_reserved_4 = BitsFromBArray(bytes, 0, 80, 8);
+
+			int table_id = buf[0];
+			int section_syntax_indicator = (buf[1]>>7) & 1;
+			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+			int transport_stream_id = (buf[3]<<8)+buf[4];
+			int version_number = ((buf[5]>>1)&0x1F);
+			int current_next_indicator = buf[5] & 1;
+			int section_number = buf[6];
+			int last_section_number = buf[7];
+			int original_network_id = (buf[8]<<8)+buf[9];
 
 			int len1 = section_length - 11 - 4;
 			int descriptors_loop_length;
 			int len2;
 			int service_id;
-			int reserved_1;
 			int EIT_schedule_flag;
 			int free_CA_mode;
 			int running_status;
 			int EIT_present_following_flag;
 			int pointer = 11;
 			int x = 0;
-			byte[] b = new byte[6];
 
 
 			while (len1 > 0)
 			{
-				System.Array.Copy(buf, pointer, b, 0, 5);
-				service_id = BitsFromBArray(b, 0, 0, 16);
-				reserved_1 = BitsFromBArray(b, 0, 16, 6);
-				EIT_schedule_flag = BitsFromBArray(b, 0, 22, 1);
-				EIT_present_following_flag = BitsFromBArray(b, 0, 23, 1);
-				running_status = BitsFromBArray(b, 0, 24, 3);
-				free_CA_mode = BitsFromBArray(b, 0, 27, 1);
-				descriptors_loop_length = BitsFromBArray(b, 0, 28, 12);
+				service_id = (buf[pointer]<<8)+buf[pointer+1];
+				EIT_schedule_flag = (buf[pointer+2]>>1) & 1;
+				EIT_present_following_flag = buf[pointer+2] & 1;
+				running_status = (buf[pointer+3]>>5) & 7;
+				free_CA_mode = (buf[pointer+3]>>4) &1;
+				descriptors_loop_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
 					//
-					pointer += 5;
-					len1 -= 5;
-					len2 = descriptors_loop_length;
+				pointer += 5;
+				len1 -= 5;
+				len2 = descriptors_loop_length;
 				
 					//
-					while (len2 > 0)
+				while (len2 > 0)
+				{
+					int indicator=buf[pointer];
+					x = 0;
+					x = buf[pointer + 1] + 2;
+					byte[] service = new byte[buf.Length-pointer + 1];
+					System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
+					if (indicator == 0x48)
 					{
-						x = 0;
-						x = buf[pointer + 1] + 2;
-						byte[] service = new byte[buf.Length-pointer + 1];
-						System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
-						if (service[0] == 0x48)
-						{
-							ServiceData serviceData;
+						ServiceData serviceData;
 							
-							serviceData = DVB_GetService(service);
-							if (serviceData.serviceName.Length < 1)
-							{
-								serviceData.serviceName = "Unknown Channel";
-							}
-							if (serviceData.serviceProviderName.Length < 1)
-							{
-								serviceData.serviceProviderName = "Unknown Provider";
-							}
-							if(service_id==pat.program_number)
-							{
-
-								pat.serviceType=serviceData.serviceType;
-								pat.service_name=serviceData.serviceName ;
-								pat.service_provider_name=serviceData.serviceProviderName;
-								pat.transportStreamID=transport_stream_id;
-								pat.networkID=original_network_id;
-								pat.serviceID = service_id;
-								pat.eitPreFollow=(EIT_present_following_flag==0)?false:true;
-								pat.eitSchedule=(EIT_schedule_flag==0)?false:true;
-								pat.scrambled=(free_CA_mode==0)?false:true;
-								// freq tuning data
-								pat.diseqc=m_diseqc;
-								pat.freq=transponderInfo.TPfreq;
-								pat.pol=transponderInfo.TPpol;
-								pat.symb=transponderInfo.TPsymb;
-								pat.lnbkhz=m_selKhz;
-								pat.fec=6; // always auto for b2c2
-								pat.lnb01=m_lnbfreq;
-							}
-							//
-							//tp.serviceData.Add(serviceData);
-
-						}
-						else
+						serviceData = DVB_GetService(service);
+						if (serviceData.serviceName.Length < 1)
 						{
-							int st=service[0];
-							if(st!=0x53 && st!=0x64)
-								st=1;
+							serviceData.serviceName = "Unknown Channel";
 						}
-						len2 -= x;
-						pointer += x;
-						len1 -= x;
+						if (serviceData.serviceProviderName.Length < 1)
+						{
+							serviceData.serviceProviderName = "Unknown Provider";
+						}
+						if(service_id==pat.program_number)
+						{
+
+							pat.serviceType=serviceData.serviceType;
+							pat.service_name=serviceData.serviceName ;
+							pat.service_provider_name=serviceData.serviceProviderName;
+							pat.transportStreamID=transport_stream_id;
+							pat.networkID=original_network_id;
+							pat.serviceID = service_id;
+							pat.eitPreFollow=(EIT_present_following_flag==0)?false:true;
+							pat.eitSchedule=(EIT_schedule_flag==0)?false:true;
+							pat.scrambled=(free_CA_mode==0)?false:true;
+							// freq tuning data
+							pat.diseqc=m_diseqc;
+							pat.freq=transponderInfo.TPfreq;
+							pat.pol=transponderInfo.TPpol;
+							pat.symb=transponderInfo.TPsymb;
+							pat.lnbkhz=m_selKhz;
+							pat.fec=6; // always auto for b2c2
+							pat.lnb01=m_lnbfreq;
+						}
+						//
+						//tp.serviceData.Add(serviceData);
+
 					}
+					else
+					{
+						int st=indicator;
+						if(st!=0x53 && st!=0x64)
+							st=1;
+					}
+					len2 -= x;
+					pointer += x;
+					len1 -= x;
+				}
 				
 			}
 			if(last_section_number>section_number)
@@ -1119,86 +1041,13 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 		//
-		private int decodeBATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
-		{
-			byte[] bytes = new byte[14];
-			// check
-			if(buf.Length<11)
-				return 0;
 
-			System.Array.Copy(buf, 0, bytes, 0, 10);
-			int table_id = bytes[0];
-			int section_syntax_indicator = BitsFromBArray(bytes, 0, 8, 1);
-			int reserved_1 = BitsFromBArray(bytes, 0, 9, 1);
-			int reserved_2 = BitsFromBArray(bytes, 0, 10, 2);
-			int section_length = BitsFromBArray(bytes, 0, 12, 12);
-			int bouquet_id = BitsFromBArray(bytes, 0, 24, 16);
-			int reserved_3 = BitsFromBArray(bytes, 0, 40, 2);
-			int version_number = BitsFromBArray(bytes, 0, 42, 5);
-			int current_next_indicator = BitsFromBArray(bytes, 0, 47, 1);
-			int section_number = BitsFromBArray(bytes, 0, 48, 8);
-			int last_section_number = BitsFromBArray(bytes, 0, 56, 8);
-			int reserved_4 = BitsFromBArray(bytes, 0, 64, 4);
-			int bouquet_descriptors_length = BitsFromBArray(bytes, 0, 68, 12); //
-			int len1 = section_length - 10;
-			int pointer = 10;
-			int x = 0;
-			int dvbSIIndicator;
-			int len2 = bouquet_descriptors_length;
-			string bouquetName;
-			byte[] bData = new byte[129];
-			//
-			while (len2 > 0)
-			{
-				dvbSIIndicator = buf[pointer];
-				x = buf[pointer + 1] + 2;
-				System.Array.Copy(buf, pointer + 2, bData, 0, buf[pointer + 1]);
-				bouquetName = getString468A(bData, buf[pointer + 1]);
-				len2 -= x;
-				pointer += x;
-				len1 -= x;
-			}
-			//
-			byte[] b = new byte[7];
-			System.Array.Copy(buf, pointer, b, 0, 2);
-			int reserved_5 = BitsFromBArray(b, 0, 0, 4);
-			int transport_stream_loop_length = BitsFromBArray(b, 0, 4, 12);
-			int transport_stream_id;
-			int original_network_id;
-			int a_reserved_1;
-			int transport_descriptors_length;
-			pointer += 2;
-			while (len1 > 4)
-			{
-				System.Array.Copy(buf, pointer, b, 0, 6);
-				transport_stream_id = BitsFromBArray(b, 0, 0, 16);
-				original_network_id = BitsFromBArray(b, 0, 16, 16);
-				a_reserved_1 = BitsFromBArray(b, 0, 32, 4);
-				transport_descriptors_length = BitsFromBArray(b, 0, 36, 12);
-				pointer += 6;
-				len1 -= 6;
-				len2 = transport_descriptors_length;
-				while (len2 > 0)
-				{
-					dvbSIIndicator = buf[pointer];
-					x = buf[pointer + 1] + 2;
-					len2 -= x;
-					pointer += x;
-					len1 -= x;
-				}
-			}
-
-			return 0;
-		}
 		private int decodeEITTable(byte[] buf, ref EIT_Program_Info eitInfo)
 		{
 			int table_id;
 			int section_syntax_indicator;
-			int reserved_1;
-			int reserved_2;
 			int section_length;
 			int service_id;
-			int reserved_3;
 			int version_number;
 			int current_next_indicator;
 			int section_number;
@@ -1218,56 +1067,44 @@ namespace MediaPortal.TV.Recording
 			int len1;
 			int len2;
 			int x;
-			byte[] b = new byte[15];
-			byte[] bytes = new byte[32001];
-			//
+
 			if (buf.Length < 14)
 			{
 				return 0;
 			}
-			System.Array.Copy(buf, 0, b, 0, 14);
 			table_id = buf[0];
-			section_syntax_indicator = BitsFromBArray(b, 0, 8, 1);
-			reserved_1 = BitsFromBArray(b, 0, 9, 1);
-			reserved_2 = BitsFromBArray(b, 0, 10, 2);
-			section_length = BitsFromBArray(b, 0, 12, 12);
-			service_id = BitsFromBArray(b, 0, 24, 16);
-			reserved_3 = BitsFromBArray(b, 0, 40, 2);
-			version_number = BitsFromBArray(b, 0, 42, 5);
-			current_next_indicator = BitsFromBArray(b, 0, 47, 1);
-			section_number = BitsFromBArray(b, 0, 48, 8);
-			last_section_number = BitsFromBArray(b, 0, 56, 8);
-			transport_stream_id = BitsFromBArray(b, 0, 64, 16);
-			original_network_id = BitsFromBArray(b, 0, 80, 16);
-			segment_last_section_number = BitsFromBArray(b, 0, 96, 8);
-			last_table_id = BitsFromBArray(b, 0, 104, 8);
+			section_syntax_indicator = (buf[1]>>7) & 1;
+			section_length = ((buf[1]& 0xF)<<8) + buf[2];
+			service_id = (buf[3]<<8)+buf[4];
+			version_number = ((buf[5]>>1)&0x1F);
+			current_next_indicator = buf[5] & 1;
+			section_number = buf[6];
+			last_section_number = buf[7];
+			transport_stream_id = (buf[8]<<8)+buf[9];
+			original_network_id = (buf[10]<<8)+buf[11];
+			segment_last_section_number = buf[12];
+			last_table_id = buf[13];
 			//
 			if (service_id == 0xFFFF) // scrambled
 			{
 				return 0;
 			}
 
-			//eitInfo.running_status
-
 			len1 = section_length - 11;
 			int pointer = 14;
 			//
-			//eitInfo.evt_info_running;
-			//Dim eitInfo As EIT_Program_Info
 			//
 			while (len1 > 4)
 			{
 				EITDescr eit=new EITDescr();
-                System.Array.Copy(buf, pointer, b, 0, 12);
-				event_id = BitsFromBArray(b, 0, 0, 16);
-				start_time_MJD = BitsFromBArray(b, 0, 16, 16);
-				start_time_UTC = BitsFromBArray(b, 0, 32, 24);
-				duration = BitsFromBArray(b, 0, 56, 24);
-				running_status = BitsFromBArray(b, 0, 80, 3);
-				free_CA_mode = BitsFromBArray(b, 0, 83, 1);
-				descriptors_loop_length = BitsFromBArray(b, 0, 84, 12);
-				// is there an event already in the list?
-				// process info
+				event_id = (buf[pointer]<<8)+buf[pointer+1];
+				start_time_MJD = (buf[pointer+2]<<8)+buf[pointer+3];
+				start_time_UTC = (buf[pointer+4]<<16)+(buf[pointer+5]<<8)+buf[pointer+6];
+				duration = (buf[pointer+7]<<16)+(buf[pointer+8]<<8)+buf[pointer+9];
+				running_status = (buf[pointer+10]>>5)&7;
+				free_CA_mode = (buf[pointer+10]>>4)& 1;
+				descriptors_loop_length = ((buf[pointer+10]&0xF)<<8)+buf[pointer+11];
+
 				pointer += 12;
 				len1 -= 12 + descriptors_loop_length;
 				len2 = descriptors_loop_length;
@@ -1275,7 +1112,7 @@ namespace MediaPortal.TV.Recording
 				while (len2 > 0)
 				{
 					indicator = buf[pointer];
-					x = buf[pointer + 1] + 2; //(b, DVB_SI);
+					x = buf[pointer + 1] + 2;
 					byte[] descrEIT = new byte[x + 1];
 					System.Array.Copy(buf, pointer, descrEIT, 0, x);
 					switch (indicator)
@@ -1392,10 +1229,10 @@ namespace MediaPortal.TV.Recording
 				{
 
 					System.Array.Copy(buf,pointer,b,0,2);
-					content_nibble_level_1	 = BitsFromBArray (b,0, 0,4);
-					content_nibble_level_2	 = BitsFromBArray (b,0, 4,4);
-					user_nibble_1		 = BitsFromBArray (b,0, 8,4);
-					user_nibble_2		 = BitsFromBArray (b,0,12,4);
+					content_nibble_level_1	 = (b[0]>>4) & 0xF;
+					content_nibble_level_2	 = b[0] & 0xF;
+					user_nibble_1		 = (b[1]>>4) & 0xF;
+					user_nibble_2		 = b[1] & 0xF;
 
 					pointer   += 2;
 					len -= 2;
@@ -1594,9 +1431,9 @@ namespace MediaPortal.TV.Recording
 			
 			descriptor_tag = data[0];
 			descriptor_length = data[1];
-			descriptor_number = BitsFromBArray(data, 0, 16, 4);
-			last_descriptor_number = BitsFromBArray(data, 0, 20, 4);
-			length_of_items = BitsFromBArray(data, 0, 48, 8);
+			descriptor_number = (data[1]>>4) & 0xF;
+			last_descriptor_number = data[1] & 0xF;
+			length_of_items = data[6];
 			
 			pointer += 7;
 			lenB = descriptor_length - 5;
@@ -1605,10 +1442,10 @@ namespace MediaPortal.TV.Recording
 			while (len1 > 0)
 			{
 				System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
-				item_description_length = BitsFromBArray(b, 0, 0, 8);
+				item_description_length = b[0];
 				pointer += 1 + item_description_length;
 				System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
-				item_length = BitsFromBArray(b, 0, 0, 8);
+				item_length = b[0];
 				System.Array.Copy(buf, pointer + 1, b, 0, item_length);
 				item = getString468A(b, item_length);
 				pointer += 1 + item_length;
@@ -1616,7 +1453,7 @@ namespace MediaPortal.TV.Recording
 				lenB -= (2 + item_description_length + item_length);
 			}
 			System.Array.Copy(buf, pointer, b, 0, 1);
-			text_length = BitsFromBArray(b, 0, 0, 8);
+			text_length = b[0];
 			pointer += 1;
 			lenB -= 1;
 			System.Array.Copy(buf, pointer, b, 0, text_length);
@@ -1648,34 +1485,28 @@ namespace MediaPortal.TV.Recording
 			int pointer=0;
 			int l1=0;
 			int l2=0;
-			//byte[] b = new byte[buf.Length + 1];
-			//
-			//
-			//
-			//System.Array.Copy(buf, 0, b, 0, 10);
+
 			try
 			{
 				table_id = buf[0];
-				section_syntax_indicator = buf[1] &0x80;//BitsFromBArray(b, 0, 8, 1);
-				section_length = ((buf[1] &0xF)<<8)+buf[2];//BitsFromBArray(b, 0, 12, 12);
-				network_id = (buf[3]<<8)+buf[4];//BitsFromBArray(b, 0, 24, 16);
-				version_number = (buf[5]>>1) &0x1F;//BitsFromBArray(b, 0, 42, 5);
-				current_next_indicator = buf[5]&1;//BitsFromBArray(b, 0, 47, 1);
+				section_syntax_indicator = buf[1] &0x80;
+				section_length = ((buf[1] &0xF)<<8)+buf[2];
+				network_id = (buf[3]<<8)+buf[4];
+				version_number = (buf[5]>>1) &0x1F;
+				current_next_indicator = buf[5]&1;
 				section_number = buf[6];
-				last_section_number = buf[7];//BitsFromBArray(b, 0, 56, 8);
-				network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];//BitsFromBArray(b, 0, 68, 12);
+				last_section_number = buf[7];
+				network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
 			
 			
 				l1 = network_descriptor_length;
 				pointer += 10;
 				int x = 0;
-				//byte[] b0 = new byte[buf.Length-pointer + 1];
 			
 
 				while (l1 > 0)
 				{
 					int indicator=buf[pointer];
-					int a=0;
 					x = buf[pointer + 1] + 2;
 					byte[] service = new byte[x];
 					System.Array.Copy(buf, pointer, service, 0, x);
@@ -1686,11 +1517,9 @@ namespace MediaPortal.TV.Recording
 					l1 -= x;
 					pointer += x;
 				}
-				//System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
 				transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
 				l1 = transport_stream_loop_length;
 				pointer += 2;
-				//System.Array.Copy(buf, pointer, b0, 0, buf.Length - pointer);
 				while (l1 > 0)
 				{
 					transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
@@ -1875,75 +1704,7 @@ namespace MediaPortal.TV.Recording
 			returnValue = System.Convert.ToByte(Math.Pow(InByte,(Math.Pow(2, Bit))));
 			return returnValue;
 		}
-		private int BitsFromBArray (byte[] buf, int byte_offset, int startbit, int bitlen)
-		{
-			byte b=0;
-			byte b1=0;
-			byte b2=0;
-			byte b3=0;
-			ulong  val=0;
-			ulong bitMask=0;
-			ulong longVal=0;
-			int  highVal=0;
-			int oldStartBit=startbit;
-			int pos=byte_offset + (startbit >> 3);
-			int bufLen=buf.Length-1;
 
-			try
-			{
-				b=buf[pos];
-
-				if(pos+1>=bufLen)
-					b1=0;
-				else
-					b1=buf[pos+1];
-			
-				if(pos+2>=bufLen)
-					b2=0;
-				else
-					b2=buf[pos+2];
-
-				if(pos+3>=bufLen)
-					b3=0;
-				else
-					b3=buf[pos+3];
-
-
-				startbit %= 8;
-				switch ((bitlen-1) >> 3) 
-				{
-					case -1:	
-						return 0;
-				
-					case 0:		
-						longVal = (ulong)((b << 8) +  b1);
-						highVal = 16;
-						break;
-
-					case 1:		
-						longVal = (ulong)((b <<16) + (b1<< 8) +  b2);
-						highVal = 24;
-						break;
-
-					case 2:		
-						longVal = (ulong)((b<<24) + (b1<<16) + (b2<< 8) +  b3);
-						highVal = 32;
-						break;
-
-					default:	
-						return (int) -1;
-				}
-			
-
-				startbit = highVal - startbit - bitlen;
-				longVal = longVal >> startbit;
-				bitMask= ((ulong)1UL << bitlen) - 1; 
-				val= longVal & bitMask;
-			}
-			catch
-			{val=0;}
-			return (int)val;
-		}
 		//
 		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter)
 		{
@@ -1956,6 +1717,12 @@ namespace MediaPortal.TV.Recording
 			return eit.eitList;
 		}
 
+		public ArrayList DeliverRAWEPGSection(int tab,DShowNET.IBaseFilter filter)
+		{
+			GetStreamData(filter,18,tab,1,200);
+			return (ArrayList)m_sectionsList.Clone();
+
+		}
 		public int GrabEIT(DVBChannel ch,DShowNET.IBaseFilter filter)
 		{
 			// there must be an ts (card tuned) to get eit
@@ -2059,23 +1826,24 @@ namespace MediaPortal.TV.Recording
 //				eventsCount+=SetEITToDatabase(eit,progName,0x4f);
 //			}
 			int lastTable=0x50;
-			eitList=GetEITSchedule(0x50,filter);
 
-			foreach(EITDescr eit in eitList)
-			{
-				if(eit.lastTable>lastTable)
-					lastTable=eit.lastTable;
-				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-				eventsCount+=SetEITToDatabase(eit,progName,0x50);
-			}
-			for(int table=0x51;table<lastTable;table++)
-			{
-				eitList=GetEITSchedule(table,filter);
+				eitList=GetEITSchedule(0x50,filter);
 				foreach(EITDescr eit in eitList)
 				{
+					if(eit.lastTable>lastTable)
+						lastTable=eit.lastTable;
 					string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
 					eventsCount+=SetEITToDatabase(eit,progName,0x50);
 				}
+
+			for(int table=0x51;table<lastTable;table++)
+			{
+					eitList=GetEITSchedule(table,filter);
+					foreach(EITDescr eit in eitList)
+					{
+						string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+						eventsCount+=SetEITToDatabase(eit,progName,0x50);
+					}
 
 			}
 
