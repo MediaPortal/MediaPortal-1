@@ -60,6 +60,7 @@
 <!--    Hauppauge WinTV PVR 350               -->
 <!--    Hauppauge WinTV PVR 500MCE            -->
 <!--    Hauppauge WinTV PVR USB2              -->
+<!--    InnoDV DV-3300  `	              -->
 <!--    Kona One TV                           -->
 <!--    KNC ONE TV-Station DVB-T              -->
 <!--    Leadtek LR6650			      -->
@@ -86,8 +87,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.46                                                               -->
-<!-- changed : 28-march-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.47                                                               -->
+<!-- changed : 29-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -1672,6 +1673,33 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
         <connection sourcefilter="capture"  sourcepin="6" sinkfilter="encoder"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="InnoDV DV-3300" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e110de&amp;rev_b1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
+        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
+        <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
+        <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"      sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"     sinkpin="2"></connection>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"     sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"      sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"      sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"          sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"          sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
