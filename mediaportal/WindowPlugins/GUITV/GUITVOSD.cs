@@ -1274,6 +1274,22 @@ namespace MediaPortal.GUI.TV
         cntl.Percentage=(int)fPercent;
       }
     }
+    public bool InWindow(int x,int y)
+    {
+      for (int i=0; i < m_vecControls.Count;++i)
+      {
+        GUIControl control =(GUIControl )m_vecControls[i];
+        int controlID;
+        if (control.IsVisible)
+        {
+          if (control.InControl(x, y, out controlID))
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
   }
 }
   

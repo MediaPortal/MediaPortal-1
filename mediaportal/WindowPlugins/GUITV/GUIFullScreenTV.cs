@@ -148,9 +148,30 @@ namespace MediaPortal.GUI.TV
 					m_dwOSDTimeOut=DateTime.Now;
 					if (action.wID==Action.ActionType.ACTION_MOUSE_MOVE || action.wID==Action.ActionType.ACTION_MOUSE_CLICK)
           {
-            m_osdWindow.OnAction(action);	// route keys to OSD window
-            m_bUpdate=true;
-            return;
+            int x=(int)action.fAmount1;
+            int y=(int)action.fAmount2;
+            if (!GUIGraphicsContext.MouseSupport)
+            {
+              m_osdWindow.OnAction(action);	// route keys to OSD window
+              m_bUpdate=true;
+              return;
+            }
+            else
+            {
+              if ( m_osdWindow.InWindow(x,y))
+              {
+                m_osdWindow.OnAction(action);	// route keys to OSD window
+                m_bUpdate=true;
+                return;
+              }
+              else
+              {
+                GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+                m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+                m_bOSDVisible=false;
+                m_bUpdate=true;
+              }
+            }
           }
 					Action newAction=new Action();
 					if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_TVOSD,action.m_key,ref newAction))
@@ -161,13 +182,17 @@ namespace MediaPortal.GUI.TV
 				}
 				return;
 			}
-			else if (action.wID==Action.ActionType.ACTION_MOUSE_MOVE && m_iMaxTimeOSDOnscreen > 0)
-			{
-				m_dwOSDTimeOut=DateTime.Now;
-			  GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,0,0,null);
-			  m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
-			  m_bOSDVisible=true;
-			  m_bUpdate=true;
+			else if (action.wID==Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport)
+      {
+        int y =(int)action.fAmount2;
+        if (y > GUIGraphicsContext.Height-100)
+        {
+          m_dwOSDTimeOut=DateTime.Now;
+          GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,0,0,null);
+          m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
+          m_bOSDVisible=true;
+          m_bUpdate=true;
+        }
 			}
 
 			switch (action.wID)
