@@ -124,8 +124,26 @@ namespace MediaPortal.GUI.TV
 						//yes, are we recording this channel already ?
 						if (!Recorder.IsRecordingChannel(channel))
 						{
-							//nop, then record current program
-							Recorder.RecordNow(channel);
+							GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+							if (pDlgOK!=null)
+							{
+								pDlgOK.SetHeading(605);//my tv
+								pDlgOK.AddLocalizedString(875); //current program
+								pDlgOK.AddLocalizedString(876); //till manual stop
+								pDlgOK.DoModal(this.GetID);
+								switch (pDlgOK.SelectedId)
+								{
+									case 875:
+										//record current program
+										Recorder.RecordNow(channel,false);
+										break;
+
+									case 876:
+										//manual record
+										Recorder.RecordNow(channel,true);
+										break;
+								}
+							}
 						}
 					}
 					break;
@@ -349,7 +367,7 @@ namespace MediaPortal.GUI.TV
 						if (!Recorder.IsRecordingChannel(m_strChannel))
 						{
 							//no then start recording
-							Recorder.RecordNow(m_strChannel);
+							Recorder.RecordNow(m_strChannel,false);
 						}
 						else
 						{

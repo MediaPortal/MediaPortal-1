@@ -1284,10 +1284,7 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		bool StartRecording(TVRecording recording)
 		{
-			recording.IsContentRecording=true;
 			Log.WriteFile(Log.LogType.Capture,"Card:{0} start recording content:{1}",ID, recording.IsContentRecording);
-      
-      
 
 			DateTime dtNow = DateTime.Now.AddMinutes(_mPreRecordInterval);
 			TVUtil util = new TVUtil();

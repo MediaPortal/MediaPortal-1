@@ -2408,6 +2408,14 @@
 	<id>874</id>
 	<value>Episode</value>
 </string>
+<string>
+	<id>875</id>
+	<value>Current program</value>
+</string>
+<string>
+	<id>876</id>
+	<value>Untill manual stop</value>
+</string>
 
 <!-- End My Alarm Strings -->
 <string>

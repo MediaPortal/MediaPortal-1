@@ -251,7 +251,7 @@ namespace MediaPortal.TV.Recording
 		/// It will record the next 2 hours.
 		/// </summary>
 		/// <param name="strChannel">TVchannel to record</param>
-		static public void RecordNow(string strChannel)
+		static public void RecordNow(string strChannel, bool manualStop)
 		{
 			if (strChannel==null) return;
 			if (strChannel==String.Empty) return;
@@ -259,27 +259,30 @@ namespace MediaPortal.TV.Recording
       
 			// create a new recording which records the next 2 hours...
 			TVRecording tmpRec = new TVRecording();
+			
+			tmpRec.Channel=strChannel;
+			tmpRec.RecType=TVRecording.RecordingType.Once;
+
 			TVUtil util = new TVUtil();
 			TVProgram program=util.GetCurrentProgram(strChannel);
-			if (program!=null)
+			if (program!=null && !manualStop)
 			{
 				//record current playing program
 				tmpRec.Start=program.Start;
 				tmpRec.End=program.End;
 				tmpRec.Title=program.Title;
+				tmpRec.IsContentRecording=false;//make a reference recording! (record from timeshift buffer)
 				Log.WriteFile(Log.LogType.Recorder,"Recorder:record now:{0} program:{1}",strChannel,program.Title);
 			}
 			else
 			{
 				//no tvguide data, just record the next 2 hours
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:record now:{0} for next 2 hours",strChannel);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:record now:{0} for next 4 hours",strChannel);
 				tmpRec.Start=Utils.datetolong(DateTime.Now);
-				tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(2*60) );
+				tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(4*60) );
 				tmpRec.Title=GUILocalizeStrings.Get(413);
+				tmpRec.IsContentRecording=true;//make a content recording! (record from now)
 			}
-			tmpRec.Channel=strChannel;
-			tmpRec.RecType=TVRecording.RecordingType.Once;
-			tmpRec.IsContentRecording=false;//make a reference recording!
 
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:   start: {0} {1}",tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:   end  : {0} {1}",tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());

@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Library
         {
           float iStepY= ((float)(GUIGraphicsContext.Height-y)) / fTotalTime;
           if (iStepY<=0) iStepY=1;
-          posy = y + GUIGraphicsContext.Height- (iStepY*fTime);
+          posy = GUIGraphicsContext.Height- (iStepY*fTime);
           if (posy < y) posy=y;
         }
           break;
