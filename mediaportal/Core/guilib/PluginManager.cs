@@ -155,6 +155,7 @@ namespace MediaPortal.GUI.Library
               if (t.IsClass)
               {
 								if( t.IsAbstract ) continue;
+								IPlugin  plugin=null;
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
 								try
 								{
@@ -162,8 +163,8 @@ namespace MediaPortal.GUI.Library
 									if (foundInterfaces.Length>0)
 									{
 										object newObj=(object)Activator.CreateInstance(t);
-										IPlugin  plugin=(IPlugin)newObj;
-										_NonGUIPlugins.Add(plugin);
+										plugin=(IPlugin)newObj;
+										//_NonGUIPlugins.Add(plugin);
 	                  
 										//Log.Write("  load plugin:{0} in {1}",t.ToString(), strFile);
 									}
@@ -175,6 +176,9 @@ namespace MediaPortal.GUI.Library
 									Log.WriteFile(Log.LogType.Log,true,iPluginException.Message);
 									Log.WriteFile(Log.LogType.Log,true,iPluginException.StackTrace);
 								}
+								if (plugin==null)
+									continue;
+
 								try
 								{
 									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
@@ -186,6 +190,7 @@ namespace MediaPortal.GUI.Library
 										if (IsPluginNameEnabled(setup.PluginName()))
 										{
 											_SetupForms.Add(setup);
+											_NonGUIPlugins.Add(plugin);
 										}
 									}
 								}
@@ -339,6 +344,7 @@ namespace MediaPortal.GUI.Library
     static public bool IsPlugInEnabled(string strDllname)
     {
       if (strDllname.IndexOf("WindowPlugins.dll")>=0) return true;
+			if (strDllname.IndexOf("ProcessPlugins.dll")>=0) return true;
 
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
