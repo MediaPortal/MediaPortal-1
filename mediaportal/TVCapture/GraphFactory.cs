@@ -3,7 +3,9 @@ using System;
 namespace MediaPortal.TV.Recording
 {
 	/// <summary>
-	/// 
+	/// Singleton class implementing a factory which can be used for creating new
+	/// instances of IGraph for a particular TVCapture card
+	/// <seealso cref="MediaPortal.TV.Recording.IGraph"/>
 	/// </summary>
 	public class GraphFactory
 	{
@@ -11,6 +13,13 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 
+    /// <summary>
+    /// Creates a new object which supports the specified TVCapture card and implements
+    /// the timeshifting/viewing/recording logic for this card
+    /// </summary>
+    /// <param name="card">Tvcapture card which must be supported by the newly created graphbuilder</param>
+    /// <returns>Object which can create a DirectShow graph for this card or null if TVCapture card is not supported</returns>
+    /// <seealso>MediaPortal.TV.Recording.TVCaptureDevice</seealso>
     static public IGraph CreateGraph(TVCaptureDevice card)
     {
       int iTunerCountry=31;

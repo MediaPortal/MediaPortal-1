@@ -1,3 +1,4 @@
+22-07-2004  my tv       : fixed : when playing a recorded movie the video osd didnt show the movies properties like channel,description,title,...
 20-07-2004  my tv       : fixed : after recording my tv shows the recorded program instead of live tv
 20-07-2004  my tv       : fixed : black screen issues
 20-07-2004  my tv       : fixed : Recordings:No topbar after playing a recording

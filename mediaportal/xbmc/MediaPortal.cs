@@ -351,7 +351,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       else
       {
-        if (!Recorder.Previewing)
+        if (!Recorder.Timeshifting)
           GUIGraphicsContext.IsFullScreenVideo=false;
         GUIGraphicsContext.IsPlaying=false;
       }
@@ -408,7 +408,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-      if (!Recorder.Previewing)
+      if (!Recorder.Timeshifting)
         GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying=false;			
     }
@@ -430,7 +430,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       if (!g_Player.IsTV)
       {
-        Recorder.Previewing=false;
+        Recorder.View=false;
       }
     }
   }
@@ -527,7 +527,8 @@ public class MediaPortalApp : D3DApp, IRender
 									{
 										//then start watching live tv in background
 										Log.Write("start livetv");
-										Recorder.Previewing=true;
+										Recorder.Timeshifting=true;
+                    Recorder.View=true;
 										
 										string strRecPath;
 										strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
@@ -552,7 +553,7 @@ public class MediaPortalApp : D3DApp, IRender
 	                    
 											GUIGraphicsContext.ShowBackground =true;
 											if (g_Player.Playing && g_Player.IsTV) g_Player.Stop();
-											Recorder.Previewing=false;
+											Recorder.View=false;
 										}
 									}
 									GUIGraphicsContext.ShowBackground =true;

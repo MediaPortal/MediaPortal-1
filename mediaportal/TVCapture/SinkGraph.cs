@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices; 
 using DShowNET;
 using MediaPortal.Util;
@@ -6,9 +7,15 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Recording
 {
-	/// <summary>
-	/// 
-	/// </summary>
+  /// <summary>
+  /// Implementation of IGraph for cards with an onboard MPEG 2 encoder
+  /// like the Hauppauge PVR 250/350/USB2/MCE
+  /// A graphbuilder object supports one or more TVCapture cards and
+  /// contains all the code/logic necessary todo
+  /// -tv viewing
+  /// -tv recording
+  /// -tv timeshifting
+  /// </summary>
 	public class SinkGraph : IGraph
 	{
     enum State
@@ -17,6 +24,7 @@ namespace MediaPortal.TV.Recording
       Created,
       TimeShifting,
       Recording,
+      Viewing
     };
     string                  m_strVideoCaptureFilter="";
     IGraphBuilder           m_graphBuilder=null;
@@ -28,13 +36,19 @@ namespace MediaPortal.TV.Recording
 //  IMediaControl           m_mediaControl=null;
 		VideoCaptureDevice      m_videoCaptureDevice=null;
     MPEG2Demux              m_mpeg2Demux=null;
-    protected int				    m_rotCookie = 0;						// Cookie into the Running Object Table
+    int				              m_rotCookie = 0;						// Cookie into the Running Object Table
     State                   m_graphState=State.None;
     int                     m_iChannelNr=-1;
     int                     m_iCountryCode=31;
     bool                    m_bUseCable=false;
     DateTime                m_StartTime=DateTime.Now;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="iCountryCode">country code</param>
+    /// <param name="bCable">use Cable or antenna</param>
+    /// <param name="strVideoCaptureFilter">Filter name of the capture device</param>
 		public SinkGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter)
 		{
       m_bUseCable=bCable;
@@ -43,6 +57,10 @@ namespace MediaPortal.TV.Recording
       m_strVideoCaptureFilter=strVideoCaptureFilter;
 		}
 
+    /// <summary>
+    /// Creates a new DirectShow graph for the TV capturecard
+    /// </summary>
+    /// <returns>bool indicating if graph is created or not</returns>
     public bool CreateGraph()
     {
       if (m_graphState!=State.None) return false;
@@ -122,14 +140,6 @@ namespace MediaPortal.TV.Recording
       if (hr==0) 
       {
         m_TVTuner = o as IAMTVTuner;
-        if (m_TVTuner!=null)
-        {
-          bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
-          if (!bAllConnected)
-          {
-            FixAverMediaBug();
-          }
-        }
       }
 			if (m_TVTuner==null)
 			{
@@ -153,6 +163,12 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
+    /// <summary>
+    /// Deletes the current DirectShow graph created with CreateGraph()
+    /// </summary>
+    /// <remarks>
+    /// Graph must be created first with CreateGraph()
+    /// </remarks>
     public void DeleteGraph()
     {
       if (m_graphState < State.Created) return;
@@ -160,6 +176,7 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SinkGraph:DeleteGraph()");
       StopRecording();
       StopTimeShifting();
+      StopViewing();
 
       //if ( m_mediaControl != null )
       //{
@@ -210,9 +227,19 @@ namespace MediaPortal.TV.Recording
       return ;
     }
 
+    /// <summary>
+    /// Starts timeshifting the TV channel and stores the timeshifting 
+    /// files in the specified filename
+    /// </summary>
+    /// <param name="iChannelNr">TV channel to which card should be tuned</param>
+    /// <param name="strFileName">Filename for the timeshifting buffers</param>
+    /// <returns>boolean indicating if timeshifting is running or not</returns>
+    /// <remarks>
+    /// Graph must be created first with CreateGraph()
+    /// </remarks>
     public bool StartTimeShifting(int iChannelNr, string strFileName)
     {
-      if (m_graphState!=State.Created) return false;
+      if (m_graphState!=State.Created && m_graphState!= State.TimeShifting) return false;
       if (m_mpeg2Demux==null) return false;
 
       if (m_graphState==State.TimeShifting) 
@@ -225,9 +252,22 @@ namespace MediaPortal.TV.Recording
       }
 
 			DirectShowUtil.DebugWrite("SinkGraph:StartTimeShifting()");
-			if (!m_mpeg2Demux.IsRendered) 
-			{
-				// connect video capture pin->mpeg2 demux input
+      ConnectEncoder();
+      TuneChannel(iChannelNr);
+      m_mpeg2Demux.StartTimeshifting(strFileName);
+      
+      m_graphState=State.TimeShifting;
+      return true;
+    }
+
+    /// <summary>
+    /// Connects the videocapture->WDM Encoder for MCE devices
+    /// </summary>
+    void ConnectEncoder()
+    {
+      if (!m_mpeg2Demux.IsRendered) 
+      {
+        // connect video capture pin->mpeg2 demux input
         if (m_videoCaptureDevice.IsMCEDevice)
         {
           DirectShowUtil.DebugWrite("SinkGraph:find mpeg2 demux input pin");
@@ -249,14 +289,16 @@ namespace MediaPortal.TV.Recording
           Guid cat = PinCategory.Capture;
           m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 
         }
-			}
-      TuneChannel(iChannelNr);
-      m_mpeg2Demux.StartTimeshifting(strFileName);
-      
-      m_graphState=State.TimeShifting;
-      return true;
+      }
     }
 
+    /// <summary>
+    /// Stops timeshifting and cleans up the timeshifting files
+    /// </summary>
+    /// <returns>boolean indicating if timeshifting is stopped or not</returns>
+    /// <remarks>
+    /// Graph should be timeshifting 
+    /// </remarks>
     public bool StopTimeShifting()
     {
       if ( m_graphState!=State.TimeShifting) return false;
@@ -268,6 +310,24 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
+    /// <summary>
+    /// Starts recording live TV to a file
+    /// <param name="strFileName">filename for the new recording</param>
+    /// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
+    /// <param name="timeProgStart">Contains the starttime of the current tv program</param>
+    /// </summary>
+    /// <returns>boolean indicating if recorded is started or not</returns> 
+    /// <remarks>
+    /// Graph should be timeshifting. When Recording is started the graph is still 
+    /// timeshifting
+    /// 
+    /// A content recording will start recording from the moment this method is called
+    /// and ignores any data left/present in the timeshifting buffer files
+    /// 
+    /// A reference recording will start recording from the moment this method is called
+    /// It will examine the timeshifting files and try to record as much data as is available
+    /// from the timeProgStart till the moment recording is stopped again
+    /// </remarks>
     public bool StartRecording(string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if ( m_graphState!=State.TimeShifting) return false;
@@ -278,6 +338,13 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
+    /// <summary>
+    /// Stops recording 
+    /// </summary>
+    /// <remarks>
+    /// Graph should be recording. When Recording is stopped the graph is still 
+    /// timeshifting
+    /// </remarks>
     public void StopRecording()
     {
       if ( m_graphState!=State.Recording) return;
@@ -287,11 +354,23 @@ namespace MediaPortal.TV.Recording
       m_graphState=State.TimeShifting;
     }
 
+
+    /// <summary>
+    /// Returns the current tv channel
+    /// </summary>
+    /// <returns>Current channel</returns>
 		public int GetChannelNumber()
 		{
 			return m_iChannelNr;
 		}
 
+    /// <summary>
+    /// Switches / tunes to another TV channel
+    /// </summary>
+    /// <param name="iChannel">New channel</param>
+    /// <remarks>
+    /// Graph should be timeshifting. 
+    /// </remarks>
     public void TuneChannel(int iChannel)
     {
       m_iChannelNr=iChannel;
@@ -321,57 +400,85 @@ namespace MediaPortal.TV.Recording
       m_StartTime=DateTime.Now;
     }
 
-    void FixAverMediaBug()
+
+    /// <summary>
+    /// Property indiciating if the graph supports timeshifting
+    /// </summary>
+    /// <returns>boolean indiciating if the graph supports timeshifting</returns>
+    public bool SupportsTimeshifting()
     {
-/*
-      // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
-      // the crossbar outputs are disconnected
-      DirectShowUtil.DebugWrite("Sinkgraph:FixAverMediaBug()");
-      //find crossbar
-      int  hr;
-      Guid cat;
-      Guid iid;
-      object o=null;
-      cat = FindDirection.UpstreamOnly;
-      iid = typeof(IAMCrossbar).GUID;
-      hr=m_captureGraphBuilder.FindInterface(new Guid[1]{cat},null,m_captureFilter, ref iid, out o);
-      if (hr !=0 || o == null) 
+      return true;
+    }
+
+    /// <summary>
+    /// Starts viewing the TV channel 
+    /// </summary>
+    /// <param name="iChannelNr">TV channel to which card should be tuned</param>
+    /// <returns>boolean indicating if succeed</returns>
+    /// <remarks>
+    /// Graph must be created first with CreateGraph()
+    /// </remarks>
+    public bool StartViewing(int iChannelNr)
+    {
+      if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
+      if (m_mpeg2Demux==null) return false;
+
+      if (m_graphState==State.Viewing) 
       {
-        DirectShowUtil.DebugWrite("Sinkgraph:no crossbar found");
-        return; // no crossbar found?
+        if (iChannelNr!=m_iChannelNr)
+        {
+          TuneChannel(iChannelNr);
+        }
+        return true;
       }
-        
-      IAMCrossbar crossbar = o as IAMCrossbar;
-      if (crossbar ==null) 
+
+      DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
+      ConnectEncoder();
+      TuneChannel(iChannelNr);
+      m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
+      GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
+      m_graphState=State.Viewing;
+      GUIGraphicsContext_OnVideoWindowChanged();
+      return true;
+
+    }
+
+
+    /// <summary>
+    /// Stops viewing the TV channel 
+    /// </summary>
+    /// <returns>boolean indicating if succeed</returns>
+    /// <remarks>
+    /// Graph must be viewing first with StartViewing()
+    /// After stopping the graph is deleted
+    /// </remarks>
+    public bool StopViewing()
+    {
+      if (m_graphState!=State.Viewing) return false;
+       
+      GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
+      DirectShowUtil.DebugWrite("SinkGraph:StopViewing()");
+      m_mpeg2Demux.StopViewing();
+      m_graphState=State.Created;
+      DeleteGraph();
+      return true;
+    }
+
+    /// <summary>
+    /// Callback from GUIGraphicsContext. Will get called when the video window position or width/height changes
+    /// </summary>
+    private void GUIGraphicsContext_OnVideoWindowChanged()
+    {
+      if (m_graphState!=State.Viewing) return ;
+      if (m_mpeg2Demux==null) return ;
+      if (GUIGraphicsContext.IsFullScreenVideo)
       {
-        DirectShowUtil.DebugWrite("Sinkgraph:no crossbar found");
-        return;
+        m_mpeg2Demux.SetVideoPosition(new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height) );
       }
-
-
-      //disconnect the output pins of the crossbar
-      DirectShowUtil.DebugWrite("Sinkgraph:disconnect crossbar outputs");
-      DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
-      DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
-
-      //render the output pins of the tvtuner
-      DirectShowUtil.DebugWrite("Sinkgraph:connect tvtuner outputs");
-      bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
-      if (bAllConnected)
-        DirectShowUtil.DebugWrite("Sinkgraph:all connected");
       else
-        DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
-
-      //reconnect the output pins of the crossbar
-      DirectShowUtil.DebugWrite("Sinkgraph:reconnect crossbar output pins");
-    
-      bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
-      if (bAllConnected)
-        DirectShowUtil.DebugWrite("Sinkgraph:all connected");
-      else
-        DirectShowUtil.DebugWrite("Sinkgraph:FAILED, not all pins connected");
-
-   */
-    } 
-	}
+      {
+        m_mpeg2Demux.SetVideoPosition(GUIGraphicsContext.VideoWindow);
+      }
+    }
+  }
 }
