@@ -491,6 +491,10 @@ namespace MediaPortal.TV.Recording
       m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
       GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       GUIGraphicsContext_OnVideoWindowChanged();
+
+      int iVideoWidth,iVideoHeight;
+      m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
+      DirectShowUtil.DebugWrite("SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
       return true;
 
     }
@@ -552,9 +556,14 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        m_mpeg2Demux.SetSourcePosition(0,0,iVideoWidth,iVideoHeight);
-        m_mpeg2Demux.SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
-        m_mpeg2Demux.SetWindowPosition( GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+        if (iVideoWidth>0 && iVideoHeight>0)
+          m_mpeg2Demux.SetSourcePosition(0,0,iVideoWidth,iVideoHeight);
+        
+        if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
+          m_mpeg2Demux.SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+        
+        if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
+          m_mpeg2Demux.SetWindowPosition( GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
       }
     }
 
