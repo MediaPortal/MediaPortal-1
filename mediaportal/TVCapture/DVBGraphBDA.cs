@@ -2745,6 +2745,9 @@ namespace MediaPortal.TV.Recording
 					}
 
 					DVBChannel chan=(DVBChannel)tuningObject;
+					
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-S freq:{0} fec:{1} pol:{2} sr:{3} ONID:{4}, TSID:{5} SID:{6}",
+																		chan.Frequency,chan.FEC,chan.Polarity,chan.Symbolrate,chan.NetworkID,chan.TransportStreamID,chan.ProgramNumber);
 					//set the properties for the new tuning request. 
 					myLocator.CarrierFrequency		= chan.Frequency;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)chan.FEC;
@@ -2769,6 +2772,10 @@ namespace MediaPortal.TV.Recording
 				//and submit the tune request
 				myTuner.TuneRequest  = newTuneRequest;
 				Marshal.ReleaseComObject(myTuneRequest);
+				if (Network()==NetworkType.DVBS)
+				{
+					SetLNBSettings(myTuneRequest);
+				}
 			}
 			catch(Exception ex)
 			{
