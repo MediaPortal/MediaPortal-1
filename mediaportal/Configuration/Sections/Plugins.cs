@@ -180,8 +180,8 @@ namespace MediaPortal.Configuration.Sections
               bEnabled=true;
           }
           else bEnabled=true;
-          xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), listItem.Checked);
-					xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, listItem.Checked);
+          xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
+					xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, bEnabled);
         }
 			}			
 		}

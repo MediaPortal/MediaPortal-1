@@ -62,11 +62,13 @@ public class MediaPortalApp : D3DApp, IRender
       //
 
       ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
+#if DEBUG
+#else
       splashScreen = new SplashScreen();
       splashScreen.SetVersion(clientInfo .InstalledVersion);
       splashScreen.Show();
       splashScreen.Update();
-
+#endif
 			bool bDirectXInstalled = false;
 			bool bWindowsMediaPlayer9 = false;
       /*
@@ -201,9 +203,11 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Write("MediaPortal stopped due 2 an exception {0} {1} {2}",ex.Message, ex.Source, ex.StackTrace);
         }
       }
-
+#if DEBUG
+#else
       if (splashScreen != null)
         splashScreen.Close();
+#endif
     }
 	  private void OnRemoteCommand(object command)
 	  {
@@ -423,7 +427,6 @@ public class MediaPortalApp : D3DApp, IRender
       
       FrameMove();
       FullRender();
-      System.Windows.Forms.Application.DoEvents();
     }
 
     public void RenderFrame()
@@ -537,7 +540,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIWindowManager.Render();
       RenderStats();
      
- 
+      GUIFontManager.Present();
       GUIGraphicsContext.DX9Device.EndScene();
       try
       {
@@ -554,15 +557,10 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void FrameMove()
   {
     CheckForNewUpdate();
-    System.Windows.Forms.Application.DoEvents();
     Recorder.Process();
-    System.Windows.Forms.Application.DoEvents();
     g_Player.Process();
-    System.Windows.Forms.Application.DoEvents();
     GUIWindowManager.DispatchThreadMessages();
-    System.Windows.Forms.Application.DoEvents();
     GUIWindowManager.ProcessWindows();
-    System.Windows.Forms.Application.DoEvents();
 
     // update playing status
     if (g_Player.Playing)
