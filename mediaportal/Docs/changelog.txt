@@ -1,3 +1,5 @@
+11-07-2004  my music    : fixed : ape/ogg/flac tag reader
+11-07-2004  my tv       : fixed : recorded tv: when deleting a recording, it didnt delete all the backing files 
 11-07-2004  my tv       : fixed : crash when entering or leaving my tv
 11-07-2004  my tv       : added : button to turn on/off my tv
 11-07-2004  my tv       : added : use (0-9) to change channels while watching fullscreen tv

@@ -3283,16 +3283,18 @@ namespace MediaPortal
         }
  
         textBoxPlayLists.Text=xmlreader.GetValueAsString("music","playlists",strDefault);
+				textBoxPlayLists.Text=Utils.RemoveTrailingSlash(textBoxPlayLists.Text);
         strDefault="";
         if (listVideoShares.Items.Count>0)
         {
           strDefault=listVideoShares.Items[0].SubItems[1].Text;
         }
         textBoxPlayListFolderVideo.Text=xmlreader.GetValueAsString("movies","playlists",strDefault);
+				textBoxPlayListFolderVideo.Text=Utils.RemoveTrailingSlash(textBoxPlayListFolderVideo.Text);
         LoadWeather(xmlreader);
 
 
-        textBoxXMLTVFolder.Text=xmlreader.GetValueAsString("xmltv","folder","xmltv");
+        textBoxXMLTVFolder.Text=Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("xmltv","folder","xmltv"));
 
         string strLanguage=xmlreader.GetValueAsString("skin","language","english");
         comboBoxLanguage.Items.Clear();
@@ -3544,8 +3546,8 @@ namespace MediaPortal
         xmlWriter.SetValueAsBool("musicfiles","repeat",chkBoxRepeatAudioPlaylist.Checked);
         xmlWriter.SetValueAsBool("movies","repeat",chkBoxVideoRepeat.Checked);
         xmlWriter.SetValueAsBool("musicfiles","autoshuffle",checkBoxShufflePlaylists.Checked);
-  		  xmlWriter.SetValue("music" ,"playlists",textBoxPlayLists.Text);
-        xmlWriter.SetValue("movies","playlists",textBoxPlayListFolderVideo.Text);
+  		  xmlWriter.SetValue("music" ,"playlists",Utils.RemoveTrailingSlash(textBoxPlayLists.Text));
+        xmlWriter.SetValue("movies","playlists",Utils.RemoveTrailingSlash(textBoxPlayListFolderVideo.Text));
         
         xmlWriter.SetValue("music","extensions", txtboxAudioFiles.Text);
         xmlWriter.SetValue("movies","extensions", txtboxVideoFiles.Text);
@@ -3563,7 +3565,7 @@ namespace MediaPortal
         xmlWriter.SetValueAsBool("xmltv", "colors",checkBoxTVGuideColors.Checked);
         xmlWriter.SetValueAsBool("xmltv","usetimezone",xmltvTimeZoneCheck.Checked);
         xmlWriter.SetValue("xmltv","timezonecorrection",timeZoneCorrection.Value.ToString() );
-        xmlWriter.SetValue("xmltv","folder",textBoxXMLTVFolder.Text);
+        xmlWriter.SetValue("xmltv","folder",Utils.RemoveTrailingSlash(textBoxXMLTVFolder.Text));
         xmlWriter.SetValue("tvguide","date","");
 
         SaveRadioStations(xmlWriter);
@@ -3849,7 +3851,7 @@ namespace MediaPortal
 
     void SaveCapture(AMS.Profile.Xml xmlWriter)
     {
-      xmlWriter.SetValue("capture","recordingpath",textBoxRecPath.Text);
+      xmlWriter.SetValue("capture","recordingpath",Utils.RemoveTrailingSlash(textBoxRecPath.Text));
 			xmlWriter.SetValue("capture","prerecord", UpDownPreRecording.Value.ToString());
 			xmlWriter.SetValue("capture","postrecord", UpDownPostRecording.Value.ToString());
 
@@ -3960,7 +3962,7 @@ namespace MediaPortal
         if (strTunerType=="Antenna") btnradioAntenna.Checked=true;
         else btnradioCable.Checked=true;
 
-        textBoxRecPath.Text=strRecPath;
+        textBoxRecPath.Text=Utils.RemoveTrailingSlash(strRecPath);
 
         // setup tv channel list
         listTVChannels.Items.Clear();
@@ -4035,7 +4037,7 @@ namespace MediaPortal
       dlg.ShowNewFolderButton=true;
       dlg.ShowDialog(this);
       if (dlg.SelectedPath==null) return;
-      textBoxRecPath.Text=dlg.SelectedPath;
+      textBoxRecPath.Text=Utils.RemoveTrailingSlash(dlg.SelectedPath);
     
     }
 
@@ -4313,7 +4315,7 @@ namespace MediaPortal
       dlg.ShowNewFolderButton=true;
       dlg.ShowDialog(this);
       if (dlg.SelectedPath==null) return;
-      textBoxXMLTVFolder.Text=dlg.SelectedPath;
+      textBoxXMLTVFolder.Text=Utils.RemoveTrailingSlash(dlg.SelectedPath);
     }
 
     void SetupDVDNavigator(ComboBox box,string strDVDNavigator)
@@ -4496,7 +4498,7 @@ namespace MediaPortal
       dlg.ShowNewFolderButton=true;
       dlg.ShowDialog(this);
       if (dlg.SelectedPath==null) return;
-      textBoxPlayLists.Text=dlg.SelectedPath;
+      textBoxPlayLists.Text=Utils.RemoveTrailingSlash(dlg.SelectedPath);
     }
 
     private void btnPlayListVideo_Click(object sender, System.EventArgs e)
@@ -4505,7 +4507,7 @@ namespace MediaPortal
       dlg.ShowNewFolderButton=true;
       dlg.ShowDialog(this);
       if (dlg.SelectedPath==null) return;
-      textBoxPlayListFolderVideo.Text=dlg.SelectedPath;
+      textBoxPlayListFolderVideo.Text=Utils.RemoveTrailingSlash(dlg.SelectedPath);
     }
 
     private void buttonAutoTune_Click(object sender, System.EventArgs e)
@@ -4526,7 +4528,7 @@ namespace MediaPortal
 
     void LoadRadioStations(AMS.Profile.Xml xmlReader)
     {
-			textBoxStreamListFolder.Text=xmlReader.GetValueAsString("radio","folder","");
+			textBoxStreamListFolder.Text=Utils.RemoveTrailingSlash(xmlReader.GetValueAsString("radio","folder",""));
 			btnRadioInternal.Checked = xmlReader.GetValueAsBool("radio","internal",true);
 			btnRadioExternal.Checked=!btnRadioInternal.Checked;
       listViewRadio.Items.Clear();
@@ -4554,7 +4556,7 @@ namespace MediaPortal
     void SaveRadioStations(AMS.Profile.Xml xmlWriter)
     {
 
-			xmlWriter.SetValue("radio","folder",textBoxStreamListFolder.Text);
+			xmlWriter.SetValue("radio","folder",Utils.RemoveTrailingSlash(textBoxStreamListFolder.Text));
 			xmlWriter.SetValueAsBool("radio","internal",btnRadioInternal.Checked);
       RadioDatabase.RemoveStations();
       for (int i=0; i < listViewRadio.Items.Count;++i)
@@ -4711,7 +4713,7 @@ namespace MediaPortal
 			dlg.ShowNewFolderButton=true;
 			dlg.ShowDialog(this);
 			if (dlg.SelectedPath==null) return;
-			textBoxStreamListFolder.Text=dlg.SelectedPath;
+			textBoxStreamListFolder.Text=Utils.RemoveTrailingSlash(dlg.SelectedPath);
 		}
 
 		private void groupBox11_Enter(object sender, System.EventArgs e)

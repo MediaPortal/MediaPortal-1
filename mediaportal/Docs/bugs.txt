@@ -1,4 +1,6 @@
 Bugs left:
+  11-07-2004 my music   : cddb doesnt work anymore?
+  
   30-06-2004 my programs: returns to home when stopping a game
   29-06-2004 home       : scroll speed 9 / 10 are the same
   27-06-2004 my TV      : some cards have 2 CVBS inputs

@@ -112,7 +112,9 @@ Skin engine:
   - fade in for controls
   - transitions between windows
   - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
-
+  - specify seperate topbar for each window
+  - make onscreen keyboard skinnable (at least x,y position)
+  
 setup:
   - A Remote controlled Stetup wizard that runs the first time you run MediaPortal (no keyboard needed)
   - Setup Wizard for the first run (see Sceneo / Meedio Beta)
