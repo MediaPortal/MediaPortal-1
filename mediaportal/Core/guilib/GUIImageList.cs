@@ -88,9 +88,9 @@ namespace MediaPortal.GUI.Library
 			for (int i=0; i < imagesToDraw;++i)
 			{
 				int texture=0;
-				int currentPercent = (i*100)/imagesToDraw;
+				int currentPercent = ((i+1)*100)/imagesToDraw;
 				if (m_alignment==Alignment.ALIGN_RIGHT)
-					currentPercent = 100-currentPercent ;
+					currentPercent = ((imagesToDraw-i)*100)/(imagesToDraw);
 				if (currentPercent<Percentage)
 				{
 					int textureCount=m_items.Count-1;
