@@ -2549,7 +2549,7 @@ namespace MediaPortal.TV.Recording
 					space.HighOscillator=0;
 				//space.SpectralInversion=??
 				//space.InputRange=(lnbKhz*1000).ToString();
-
+/*
 				if (m_TunerDevice!=null)
 				{
 					IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
@@ -2603,6 +2603,7 @@ namespace MediaPortal.TV.Recording
 						}//for (int i=0; i < info.Length;++i)
 					}
 				}//if (m_TunerDevice!=null)
+				*/
 			}
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		
