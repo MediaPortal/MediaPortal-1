@@ -491,7 +491,7 @@ namespace MediaPortal.GUI.Video
 					item.Rating = details.Rating;
 					item.Year = details.Year;
 					item.DVDLabel = details.DVDLabel;
-
+					item.MusicTag = details;
 					itemlist.Add(item);
 				}
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_GENRE, "");
@@ -896,9 +896,28 @@ namespace MediaPortal.GUI.Video
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
 
-			GUIPropertyManager.SetProperty("#rating", item.Rating.ToString());
-			GUIPropertyManager.SetProperty("#year", item.Year.ToString());
-			GUIPropertyManager.SetProperty("#title", item.Label);
+			IMDBMovie movie = item.MusicTag as IMDBMovie;
+			if (movie!=null)
+			{
+				string strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,movie.Title);
+				GUIPropertyManager.SetProperty("#director",movie.Director);
+				GUIPropertyManager.SetProperty("#genre",movie.Genre);
+				GUIPropertyManager.SetProperty("#cast",movie.Cast);
+				GUIPropertyManager.SetProperty("#dvdlabel",movie.DVDLabel);
+				GUIPropertyManager.SetProperty("#imdbnumber",movie.IMDBNumber);
+				GUIPropertyManager.SetProperty("#file",movie.File);
+				GUIPropertyManager.SetProperty("#plot",movie.Plot);
+				GUIPropertyManager.SetProperty("#plotoutline",movie.PlotOutline);
+				GUIPropertyManager.SetProperty("#rating",movie.Rating.ToString());
+				GUIPropertyManager.SetProperty("#tagline",movie.TagLine);
+				GUIPropertyManager.SetProperty("#votes",movie.Votes);
+				GUIPropertyManager.SetProperty("#credits",movie.WritingCredits);
+				GUIPropertyManager.SetProperty("#thumb",strThumb);
+				GUIPropertyManager.SetProperty("#title",movie.Title);
+				GUIPropertyManager.SetProperty("#year",movie.Year.ToString());
+				GUIPropertyManager.SetProperty("#runtime",movie.RunTime.ToString());
+				GUIPropertyManager.SetProperty("#mpaarating",movie.MPARating.ToString());
+			}
 
 			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
       if (filmstrip==null) return;

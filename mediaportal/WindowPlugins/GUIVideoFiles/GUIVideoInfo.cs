@@ -544,7 +544,9 @@ namespace MediaPortal.GUI.Video
 			GUIPropertyManager.SetProperty("#thumb",strThumb);
 			GUIPropertyManager.SetProperty("#title",m_movie.Title);
 			GUIPropertyManager.SetProperty("#year",m_movie.Year.ToString());
-    }
+			GUIPropertyManager.SetProperty("#runtime",m_movie.RunTime.ToString());
+			GUIPropertyManager.SetProperty("#mpaarating",m_movie.MPARating.ToString());
+		}
     
     public bool NeedsRefresh
     {

@@ -1,4 +1,6 @@
 using System;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.Video.Database
 {
@@ -8,7 +10,8 @@ namespace MediaPortal.Video.Database
 	/// </summary>
 	public class IMDBMovie
 	{
-
+		const string ThumbsFolder=@"thumbs\Videos\Title";
+    
 		int					m_id=-1;
     string 			m_strDirector="";
     string 			m_strWritingCredits="";
@@ -172,8 +175,29 @@ namespace MediaPortal.Video.Database
       m_iTop250=0;
       m_iYear=1900;
       m_fRating=0.0f;
-		m_strDatabase = "";
+			m_strDatabase = "";
 			m_id=-1;
     }
+		public void SetProperties()
+		{
+			string strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,Title);
+			GUIPropertyManager.SetProperty("#director",Director);
+			GUIPropertyManager.SetProperty("#genre",Genre);
+			GUIPropertyManager.SetProperty("#cast",Cast);
+			GUIPropertyManager.SetProperty("#dvdlabel",DVDLabel);
+			GUIPropertyManager.SetProperty("#imdbnumber",IMDBNumber);
+			GUIPropertyManager.SetProperty("#file",File);
+			GUIPropertyManager.SetProperty("#plot",Plot);
+			GUIPropertyManager.SetProperty("#plotoutline",PlotOutline);
+			GUIPropertyManager.SetProperty("#rating",Rating.ToString());
+			GUIPropertyManager.SetProperty("#tagline",TagLine);
+			GUIPropertyManager.SetProperty("#votes",Votes);
+			GUIPropertyManager.SetProperty("#credits",WritingCredits);
+			GUIPropertyManager.SetProperty("#thumb",strThumb);
+			GUIPropertyManager.SetProperty("#title",Title);
+			GUIPropertyManager.SetProperty("#year",Year.ToString());
+			GUIPropertyManager.SetProperty("#runtime",RunTime.ToString());
+			GUIPropertyManager.SetProperty("#mpaarating",MPARating.ToString());
+		}
 	}
 }
