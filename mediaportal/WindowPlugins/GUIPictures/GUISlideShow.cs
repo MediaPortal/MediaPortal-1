@@ -49,9 +49,12 @@ namespace MediaPortal.GUI.Pictures
 
     int               			m_dwFrameCounter=0;
     int								 			m_iCurrentSlide=0;
+    int                     m_iLastShownSlide=0;
     int                			m_iTransistionMethod=0;
     bool               			m_bSlideShow=false ;
     bool							 			m_bShowInfo=false;
+    bool                    m_bShowZoomInfo=false;
+    bool                    m_bOSDAutoHide=true;
     string						 			m_strBackgroundSlide="";
     string						 			m_strCurrentSlide="";
     bool                    m_bPause=false;
@@ -101,18 +104,13 @@ namespace MediaPortal.GUI.Pictures
     }
 
 
-    Texture GetNextSlide(out int dwWidth, out int dwHeight, out string strSlide)
+    Texture GetSlide(out int dwWidth, out int dwHeight, out string strSlide)
     {
       dwWidth=0;
       dwHeight=0;
       strSlide="";
 	    if ( m_slides.Count==0) return null;
 
-	    m_iCurrentSlide++;
-	    if ( m_iCurrentSlide >= m_slides.Count ) 
-	    {
-		    m_iCurrentSlide=0;
-	    }
 	    m_iRotate=0;
 	    m_iZoomFactor=1;
 	    m_iZoomLeft=0;
@@ -136,47 +134,7 @@ namespace MediaPortal.GUI.Pictures
       GC.Collect();
 	    return texture;
     }
-
-    Texture GetPreviousSlide(out int dwWidth,out int dwHeight, out string strSlide)
-    {
-      dwWidth=0;
-      dwHeight=0;
-      strSlide="";
-      if ( m_slides.Count==0) return null;
-
-	    m_iCurrentSlide--;
-	    if ( m_iCurrentSlide < 0 ) 
-	    {
-		    m_iCurrentSlide=m_slides.Count-1;
-	    }
-	    m_iRotate=0;
-	    m_iZoomFactor=1;
-	    m_iZoomLeft=0;
-	    m_iZoomTop=0;
-
-	    strSlide=(string)m_slides[m_iCurrentSlide];
-
-      Log.Write("Prev Slide: {0}/{1} : {2}", m_iCurrentSlide+1,m_slides.Count, strSlide);
-      using (PictureDatabase dbs = new PictureDatabase())
-      {
-        m_iRotate=dbs.GetRotation(strSlide);
-      }
-      int iMaxWidth=MAX_PICTURE_WIDTH;
-      int iMaxHeight=MAX_PICTURE_HEIGHT;
-      //if (m_bSlideShow)
-      {
-        iMaxWidth=GUIGraphicsContext.OverScanWidth;
-        iMaxHeight=GUIGraphicsContext.OverScanHeight;
-      }
-
-      Texture texture=MediaPortal.Util.Picture.Load(strSlide,m_iRotate,iMaxWidth,iMaxHeight, true,true, out dwWidth,out dwHeight);
-      GC.Collect();
-      GC.Collect();
-
-	    return texture;
-    }
-
-
+    
     public void Reset()
     {
       m_slides.Clear();
@@ -209,20 +167,17 @@ namespace MediaPortal.GUI.Pictures
     {
       if (!m_bSlideShow) 
         m_bUpdate=true;
-      m_lSlideTime=(int)(DateTime.Now.Ticks/10000) -(m_iSpeed*1000);
-      
+      m_iCurrentSlide++;
+      if ( m_iCurrentSlide >= m_slides.Count ) 
+      {
+        m_iCurrentSlide=0;
+      }     
 		}
 
     void  ShowPrevious()
     {
       if (!m_bSlideShow) 
         m_bUpdate=true;
-      m_lSlideTime=(int)(DateTime.Now.Ticks/10000) -(m_iSpeed*1000);
-			m_iCurrentSlide--;
-			if ( m_iCurrentSlide < 0 ) 
-			{
-				m_iCurrentSlide=m_slides.Count-1;
-			}
 			m_iCurrentSlide--;
 			if ( m_iCurrentSlide < 0 ) 
 			{
@@ -284,26 +239,36 @@ namespace MediaPortal.GUI.Pictures
             int dwTimeElapsed = ((int)(DateTime.Now.Ticks/10000)) - m_lSlideTime;
             if (dwTimeElapsed >= (m_iSpeed*1000) || m_pTextureBackGround==null)
             {
-              if (!m_bPause|| m_pTextureBackGround==null)
+              if ((!m_bPause && m_iZoomFactor == 1) || m_pTextureBackGround==null)
               {
-                // get next picture
-                m_pTextureCurrent=GetNextSlide(out m_dwWidthCurrent,out m_dwHeightCurrent, out m_strCurrentSlide);
-                m_dwFrameCounter=0;
-                int iNewMethod;
-                if (m_bUseRandomTransistions)
+                m_iCurrentSlide++;
+                if (m_iCurrentSlide >= m_slides.Count) 
                 {
-                  do
-                  {
-                    iNewMethod=randomizer.Next(MAX_RENDER_METHODS);
-                  } while ( iNewMethod==m_iTransistionMethod);
-                  m_iTransistionMethod=iNewMethod;
+                  m_iCurrentSlide=0;
                 }
-                else m_iTransistionMethod=9;//fade
-
-                //g_application.ResetScreenSaver();
               }
             }
-          }
+
+            if (m_iCurrentSlide != m_iLastShownSlide)
+            {
+              // get selected picture
+              m_pTextureCurrent=GetSlide(out m_dwWidthCurrent,out m_dwHeightCurrent, out m_strCurrentSlide);
+              m_iLastShownSlide=m_iCurrentSlide;
+              m_dwFrameCounter=0;
+              int iNewMethod;
+              if (m_bUseRandomTransistions)
+              {
+                do
+                {
+                  iNewMethod=randomizer.Next(MAX_RENDER_METHODS);
+                } while ( iNewMethod==m_iTransistionMethod);
+                m_iTransistionMethod=iNewMethod;
+              }
+              else m_iTransistionMethod=9;//fade
+
+              //g_application.ResetScreenSaver();
+            }
+          }         
         }
 
         // swap our buffers over
@@ -388,21 +353,34 @@ namespace MediaPortal.GUI.Pictures
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
         }
       }
-
+      
       RenderPause();
 
-      
-      if (!m_bShowInfo && m_iZoomFactor == 1)
+      if (!m_bShowInfo && !m_bShowZoomInfo)
+      {
+        m_bOSDAutoHide = true;
         return;
+      }
+     
+      // Auto hide OSD
+      if (m_bOSDAutoHide && (m_bShowInfo||m_bShowZoomInfo))
+      {
+        int dwOSDTimeElapsed = ((int)(DateTime.Now.Ticks/10000)) - m_lSlideTime;
+        if (dwOSDTimeElapsed >= 3000)
+        {
+          m_bShowInfo = false;
+          m_bShowZoomInfo = false;
+        }                  
+      }
 
-      if (m_iZoomFactor > 1)
+      if ((m_iZoomFactor > 1) && (m_bShowZoomInfo || m_bShowInfo))
       {
         GUIControl.SetControlLabel(GetID, LABEL_ROW1,"");
         GUIControl.SetControlLabel(GetID, LABEL_ROW2,"");
       
         string strZoomInfo;
         strZoomInfo=String.Format("{0}x ({1},{2})", m_iZoomFactor, m_iZoomLeft, m_iZoomTop);
-        
+
         GUIControl.SetControlLabel(GetID, LABEL_ROW2_EXTRA,strZoomInfo);
       }
 
@@ -671,28 +649,28 @@ namespace MediaPortal.GUI.Pictures
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           GUIWindowManager.PreviousWindow();
-        break;
+          break;
 				
-				case Action.ActionType.ACTION_DELETE_ITEM:
-					// delete current picture
-					GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-					if (null==dlgYesNo) return;
-					if (m_strBackgroundSlide.Length==0) return;
-					bool bPause=m_bPause;
-					m_bPause=true;
-					string strFileName=System.IO.Path.GetFileName(m_strBackgroundSlide);
-					dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
-					dlgYesNo.SetLine(1,String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count) );
-					dlgYesNo.SetLine(2, strFileName);
-					dlgYesNo.SetLine(3, "");
-					dlgYesNo.DoModal(GetID);
+        case Action.ActionType.ACTION_DELETE_ITEM:
+          // delete current picture
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+          if (null==dlgYesNo) return;
+          if (m_strBackgroundSlide.Length==0) return;
+          bool bPause=m_bPause;
+          m_bPause=true;
+          string strFileName=System.IO.Path.GetFileName(m_strBackgroundSlide);
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
+          dlgYesNo.SetLine(1,String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count) );
+          dlgYesNo.SetLine(2, strFileName);
+          dlgYesNo.SetLine(3, "");
+          dlgYesNo.DoModal(GetID);
 
-					m_bPause=bPause;
-					if (!dlgYesNo.IsConfirmed) return;
-					Utils.FileDelete(m_strBackgroundSlide);
-					ShowNext();
+          m_bPause=bPause;
+          if (!dlgYesNo.IsConfirmed) return;
+          Utils.FileDelete(m_strBackgroundSlide);
+          ShowNext();
 					
-				break;
+          break;
 
         case Action.ActionType.ACTION_PREV_PICTURE:
           if (m_iZoomFactor==1) 
@@ -703,6 +681,7 @@ namespace MediaPortal.GUI.Pictures
           {
             m_iZoomLeft-=25;
             if (m_iZoomLeft < 0) m_iZoomLeft = 0;
+            m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           }
           break;
         case Action.ActionType.ACTION_NEXT_PICTURE:
@@ -714,24 +693,35 @@ namespace MediaPortal.GUI.Pictures
           {
             m_iZoomLeft+=25;
             if (m_iZoomLeft > (int)m_dwWidthBackGround - m_iZoomWidth) m_iZoomLeft = m_dwWidthBackGround - m_iZoomWidth;
+            m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           }
           break;
 
-          case Action.ActionType.ACTION_MOVE_DOWN:
-            if (m_iZoomFactor > 1 ) m_iZoomTop+=25;
-            if (m_iZoomTop > (int)m_dwHeightBackGround - m_iZoomHeight) m_iZoomTop = m_dwHeightBackGround - m_iZoomHeight;
-            m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+        case Action.ActionType.ACTION_MOVE_DOWN:
+          if (m_iZoomFactor > 1 ) m_iZoomTop+=25;
+          if (m_iZoomTop > (int)m_dwHeightBackGround - m_iZoomHeight) m_iZoomTop = m_dwHeightBackGround - m_iZoomHeight;
+          m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           break;
 
-          case Action.ActionType.ACTION_MOVE_UP:
-            if (m_iZoomFactor > 1 ) m_iZoomTop-=25;
-            if (m_iZoomTop < 0) m_iZoomTop = 0;
-            m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+        case Action.ActionType.ACTION_MOVE_UP:
+          if (m_iZoomFactor > 1 ) m_iZoomTop-=25;
+          if (m_iZoomTop < 0) m_iZoomTop = 0;
+          m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           break;
 
-          case Action.ActionType.ACTION_SHOW_CODEC:
-            m_bShowInfo=!m_bShowInfo;
+        case Action.ActionType.ACTION_SHOW_CODEC:
+          if (m_bShowInfo)
+          { 
+            m_bOSDAutoHide = !m_bOSDAutoHide;
+            if (m_bOSDAutoHide)
+              m_bShowInfo = false;
+          }
+          else
+          {
+            m_bShowInfo=true;
+            m_bOSDAutoHide=true;
             m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+          }
           break;
 
         case Action.ActionType.ACTION_PAUSE:
@@ -741,6 +731,16 @@ namespace MediaPortal.GUI.Pictures
           }
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
         break;
+
+        case Action.ActionType.ACTION_PLAY:
+          if (m_bSlideShow) 
+          {
+            m_bPause=false;
+            if (m_iZoomFactor != 1)
+              Zoom(1);
+          }
+          m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
+          break;
 
         case Action.ActionType.ACTION_ZOOM_OUT:
           Zoom(m_iZoomFactor-1);
@@ -838,7 +838,8 @@ namespace MediaPortal.GUI.Pictures
 	    {
 		    dwCounter=0;
 	    }
-	    if (!m_bPause || (m_iZoomFactor != 1)) return;
+      if ((!m_bPause && !m_bShowInfo && !m_bShowZoomInfo && (m_iZoomFactor == 1)) || m_bShowZoomInfo || m_bShowInfo) return;
+
 	    if (dwCounter <13) return;
 	    GUIFont pFont=GUIFontManager.GetFont("font13");
       if (pFont!=null)
@@ -930,7 +931,7 @@ namespace MediaPortal.GUI.Pictures
 		    m_iZoomTop=0;
 		    m_iZoomWidth=m_dwWidthBackGround;
 		    m_iZoomHeight=m_dwHeightBackGround;
-        m_bPause=false;
+        m_bShowZoomInfo = false;
 	    }
 	    else
 	    {
@@ -941,7 +942,10 @@ namespace MediaPortal.GUI.Pictures
 		    if (m_iZoomTop < 0) m_iZoomTop = 0;
 		    if (m_iZoomLeft > (int)m_dwWidthBackGround-m_iZoomWidth) m_iZoomLeft = m_dwWidthBackGround-m_iZoomWidth;
 		    if (m_iZoomTop > (int)m_dwHeightBackGround-m_iZoomHeight) m_iZoomTop = m_dwHeightBackGround-m_iZoomHeight;
-        m_bPause=true;
+        if (m_bOSDAutoHide)
+        {
+          m_bShowZoomInfo = true;
+        }      
 	    }
     }
 

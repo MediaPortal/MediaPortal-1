@@ -1,6 +1,6 @@
 using System;
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.PowerScheduler
 {
 	/// <summary>
 	/// Reports error from calls to the Windows Power Management API.

@@ -1,6 +1,6 @@
 using System;
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.PowerScheduler
 {
 	/// <summary>
 	/// Used by the <see cref="MediaPortal.TV.Recording.WaitableTimer"/>

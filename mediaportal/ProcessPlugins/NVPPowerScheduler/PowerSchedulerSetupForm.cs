@@ -22,6 +22,7 @@ namespace MediaPortal.PowerScheduler
 		private System.Windows.Forms.CheckBox cbxForced;
 		private System.Windows.Forms.CheckBox cbxTVoff;
 		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.Label label4;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -61,8 +62,8 @@ namespace MediaPortal.PowerScheduler
 				nud_shutdown.Value = xmlreader.GetValueAsInt("powerscheduler","shutdowninterval",3);
 				cobx_shutdown.Text = xmlreader.GetValueAsString("powerscheduler","shutdownmode","Suspend");
 				cbxExtensive.Checked = xmlreader.GetValueAsBool("powerscheduler","extensivelogging",false);
-				cbxForced.Checked = xmlreader.GetValueAsBool("powerscheduler","forcedshutdown",true);
-				cbxTVoff.Checked = xmlreader.GetValueAsBool("powerscheduler","disabletv",false);
+				cbxForced.Checked = xmlreader.GetValueAsBool("powerscheduler","forcedshutdown",false);
+				cbxTVoff.Checked = xmlreader.GetValueAsBool("powerscheduler","disabletv",true);
 		
 			}
 		}
@@ -101,6 +102,7 @@ namespace MediaPortal.PowerScheduler
 			this.cbxForced = new System.Windows.Forms.CheckBox();
 			this.cbxTVoff = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label4 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).BeginInit();
 			this.groupBox1.SuspendLayout();
@@ -205,6 +207,7 @@ namespace MediaPortal.PowerScheduler
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.cbxForced);
 			this.groupBox1.Controls.Add(this.cbxTVoff);
 			this.groupBox1.Controls.Add(this.cbxExtensive);
@@ -214,6 +217,14 @@ namespace MediaPortal.PowerScheduler
 			this.groupBox1.TabIndex = 18;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Advanced options";
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(216, 46);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(128, 16);
+			this.label4.TabIndex = 18;
+			this.label4.Text = "Highly recommended";
 			// 
 			// PowerSchedulerSetupForm
 			// 
@@ -228,7 +239,7 @@ namespace MediaPortal.PowerScheduler
 			this.Controls.Add(this.cb_ok);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "PowerSchedulerSetupForm";
-			this.Text = "Power Scheduler configuration 0.2 ";
+			this.Text = "Power Scheduler configuration 0.3 ";
 			((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).EndInit();
 			this.groupBox1.ResumeLayout(false);

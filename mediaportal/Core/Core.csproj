@@ -593,6 +593,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\IWakeable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\key.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

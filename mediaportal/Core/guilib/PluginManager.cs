@@ -12,6 +12,7 @@ namespace MediaPortal.GUI.Library
     static ArrayList _NonGUIPlugins = new ArrayList();
     static ArrayList _GUIPlugins = new ArrayList();
     static ArrayList _SetupForms = new ArrayList();
+	static ArrayList _Wakeables = new ArrayList();
 		static bool _Started=false;
     
     private PluginManager()
@@ -41,6 +42,13 @@ namespace MediaPortal.GUI.Library
         return _SetupForms;
       }
     }
+	static public ArrayList WakeablePlugins
+	{
+		get 
+		{
+			return _Wakeables;
+		}
+	}
 
     static public void Load()
     {
@@ -141,6 +149,16 @@ namespace MediaPortal.GUI.Library
                     _SetupForms.Add(setup);
                   }
                 }
+				        foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IWakeable");
+				        if (foundInterfaces.Length>0)
+				        {
+					        object newObj=(object)Activator.CreateInstance(t);
+					        IWakeable  setup=(IWakeable)newObj;
+					        if (IsPluginNameEnabled(setup.PluginName()))
+					        {
+						        _Wakeables.Add(setup);
+					        }
+				        }
               }
             }
             catch (System.NullReferenceException)
@@ -195,6 +213,16 @@ namespace MediaPortal.GUI.Library
                     _SetupForms.Add(setup);
                   }
                 }
+				        foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IWakeable");
+				        if (foundInterfaces.Length>0)
+				        {
+					        object newObj=(object)Activator.CreateInstance(t);
+					        IWakeable  setup=(IWakeable)newObj;
+					        if (IsPluginNameEnabled(setup.PluginName()))
+					        {
+						        _Wakeables.Add(setup);
+					        }
+				        }
               }
             }
             catch (System.NullReferenceException)

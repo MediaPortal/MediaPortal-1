@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.PowerScheduler
 {
 	/// <summary>
 	/// Implements a timer which the process can be waiting on. The 

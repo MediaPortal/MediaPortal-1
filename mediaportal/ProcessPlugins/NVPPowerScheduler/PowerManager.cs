@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.PowerScheduler
 {
 	/// <summary>
 	/// Manages access to the Power Managerment API included in Windows 2000.
