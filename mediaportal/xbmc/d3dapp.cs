@@ -1311,6 +1311,12 @@ namespace MediaPortal
 
     public void OnSetup(object sender, EventArgs e)
     {
+      processName="Configuration.exe";
+      foreach(Process process in Process.GetProcesses())
+      {
+        if(process.ProcessName.Equals(processName)) return;
+      }
+
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed==false)
         SwitchFullScreenOrWindowed(true,true);
@@ -1597,8 +1603,7 @@ namespace MediaPortal
       }
       else if (e.KeyCode == System.Windows.Forms.Keys.F2)
       {
-        //DoSelectNewDevice();
-        OnSetup(null,null);
+            OnSetup(null,null);
 			}
 
       if (e.Handled==false)
