@@ -1,6 +1,6 @@
 <window>
 	<id>8000</id>
-	<defaultcontrol>2</defaultcontrol>
+	<defaultcontrol>20</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
 
@@ -56,8 +56,20 @@
 				<label>8001</label>
 				<onleft>20</onleft>
 				<onright>50</onright>
-				<onup>21</onup>
+				<onup>22</onup>
 				<ondown>21</ondown>
+			</control>
+			<control>
+				<description>delete known mails list</description>
+				<type>button</type>
+				<id>22</id>
+				<posX>60</posX>
+				<posY>168</posY>
+				<label>8009</label>
+				<onleft>20</onleft>
+				<onright>50</onright>
+				<onup>21</onup>
+				<ondown>20</ondown>
 			</control>
 			<control>
 				<description>AutocheckMail</description>
@@ -77,7 +89,7 @@
 				<onleft>21</onleft>
 				<onright>50</onright>
 				<onup>20</onup>
-				<ondown>20</ondown>
+				<ondown>22</ondown>
 				<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 				<textureFocus>togglebutton-on-focus.png</textureFocus>

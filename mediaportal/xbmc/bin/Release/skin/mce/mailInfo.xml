@@ -23,9 +23,23 @@
 				<label>8020</label>
 				<onleft>25</onleft>
 				<onright>25</onright>
+				<onup>26</onup>
+				<ondown>26</ondown>
+			</control>
+			<control>
+				<description>Set mail readed Button</description>
+				<type>button</type>
+				<id>26</id>
+				<posX>40</posX>
+				<posY>266</posY>
+				<width>135</width>
+				<label>8021</label>
+				<onleft>26</onleft>
+				<onright>26</onright>
 				<onup>25</onup>
 				<ondown>25</ondown>
 			</control>
+
 			<control>
 				<description>Body</description>
 				<type>label</type>
