@@ -262,12 +262,19 @@ namespace MediaPortal.TV.Recording
 				if (props.SupportsProperties)
 				{
 
-					VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
-					newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
-					newBitRate.wBitrate     =6*400;  //6 mbps
-					newBitRate.dwPeak       =12*400; //12 mbps
-
-					props.VideoBitRate=newBitRate;
+					bool hiquality=false;
+					using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					{
+						hiquality=xmlreader.GetValueAsBool("tv", "hiquality", false);
+					}
+					if (hiquality)
+					{
+						VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
+						newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
+						newBitRate.wBitrate     =6*400;  //6 mbps
+						newBitRate.dwPeak       =12*400; //12 mbps
+						props.VideoBitRate=newBitRate;
+					}
 					
 
 					VideoCaptureProperties.versionInfo info = props.VersionInfo;

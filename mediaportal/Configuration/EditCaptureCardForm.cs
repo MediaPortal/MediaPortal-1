@@ -63,6 +63,7 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.TextBox textBoxName;
 		
     bool acceptuserinput=false;
+		private System.Windows.Forms.CheckBox checkBoxHiQuality;
 		private System.Windows.Forms.Button buttonAutotune;
 		
 		/// <summary>
@@ -274,6 +275,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
 			this.buttonAutotune = new System.Windows.Forms.Button();
+			this.checkBoxHiQuality = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.SuspendLayout();
@@ -283,6 +285,7 @@ namespace MediaPortal.Configuration
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.checkBoxHiQuality);
 			this.groupBox1.Controls.Add(this.lblRecordingLevel);
 			this.groupBox1.Controls.Add(this.label11);
 			this.groupBox1.Controls.Add(this.trackRecording);
@@ -314,6 +317,7 @@ namespace MediaPortal.Configuration
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Capture Card Settings";
+			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
 			// 
 			// lblRecordingLevel
 			// 
@@ -586,6 +590,14 @@ namespace MediaPortal.Configuration
 			this.buttonAutotune.Text = "Autotune";
 			this.buttonAutotune.Click += new System.EventHandler(this.buttonAutotune_Click);
 			// 
+			// checkBoxHiQuality
+			// 
+			this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 264);
+			this.checkBoxHiQuality.Name = "checkBoxHiQuality";
+			this.checkBoxHiQuality.Size = new System.Drawing.Size(344, 16);
+			this.checkBoxHiQuality.TabIndex = 51;
+			this.checkBoxHiQuality.Text = "Use Hiquality for Hauppauge PVR cards (VBR 6-12 MBPs)";
+			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -616,6 +628,11 @@ namespace MediaPortal.Configuration
 		/// <param name="e"></param>
 		private void okButton_Click(object sender, System.EventArgs e)
 		{
+			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValueAsBool("tv", "hiquality", checkBoxHiQuality.Checked);
+			}
+
 			if (videoCompressorComboBox.Enabled)
 			{
 				if (videoCompressorComboBox.Items.Count>0 && videoCompressorComboBox.SelectedItem==null)
@@ -938,6 +955,11 @@ namespace MediaPortal.Configuration
     private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
     {
       FillInAll();    
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				checkBoxHiQuality.Checked=xmlreader.GetValueAsBool("tv", "hiquality", false);
+			}
+
     }
   
     private void audioDeviceComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -965,6 +987,11 @@ namespace MediaPortal.Configuration
 			{
 				MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
+		}
+
+		private void groupBox1_Enter(object sender, System.EventArgs e)
+		{
+		
 		}
 
 
