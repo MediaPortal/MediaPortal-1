@@ -794,16 +794,19 @@ namespace MediaPortal.Player
 
 				// add preferred video & audio codecs
 				string strVideoCodec="";
-        string strAudioCodec="";
+				string strAudioCodec="";
+				string strAudiorenderer="";
         bool   bAddFFDshow=false;
 				using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
         {
           bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
 					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
 					strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
+					strAudiorenderer=xmlreader.GetValueAsString("mytv","audiorenderer","");
 				}
 				if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
-        if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+				if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+				if (strAudiorenderer.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudiorenderer);
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
 				//render outputpins of SBE

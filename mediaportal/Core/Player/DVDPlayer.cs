@@ -613,10 +613,6 @@ namespace MediaPortal.Player
           }
 
         }
-        if (strDVDAudioRenderer!="")
-        {
-          audioRenderer=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strDVDAudioRenderer);
-        }
 			
         if (dvdInfo==null)
         {
@@ -1744,15 +1740,18 @@ namespace MediaPortal.Player
 			// add preferred video & audio codecs
 			string strVideoCodec="";
 			string strAudioCodec="";
+			string strAudiorenderer="";
       bool   bAddFFDshow=false;
       using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         bAddFFDshow=xmlreader.GetValueAsBool("dvdplayer","ffdshow",false);
 				strVideoCodec=xmlreader.GetValueAsString("dvdplayer","videocodec","");
 				strAudioCodec=xmlreader.GetValueAsString("dvdplayer","audiocodec","");
+				strAudiorenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
 			}
 			if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 			if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+			if (strAudiorenderer.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudiorenderer);
       if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
       //Type comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );

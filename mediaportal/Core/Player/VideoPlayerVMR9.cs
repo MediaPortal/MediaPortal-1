@@ -62,20 +62,23 @@ namespace MediaPortal.Player
         // add preferred video & audio codecs
         string strVideoCodec="";
         string strAudioCodec="";
+				string strAudiorenderer="";
         bool   bAddFFDshow=false;
         using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
         {
           bAddFFDshow=xmlreader.GetValueAsBool("movieplayer","ffdshow",false);
           strVideoCodec=xmlreader.GetValueAsString("movieplayer","mpeg2videocodec","");
-          strAudioCodec=xmlreader.GetValueAsString("movieplayer","mpeg2audiocodec","");
+					strAudioCodec=xmlreader.GetValueAsString("movieplayer","mpeg2audiocodec","");
+					strAudiorenderer=xmlreader.GetValueAsString("movieplayer","audiorenderer","");
         }
         string strExt=System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
-        if (strExt.Equals(".mpg") ||strExt.Equals(".mpeg")||strExt.Equals(".bin")||strExt.Equals(".dat"))
+        if (strExt.Equals(".dvr-ms") ||strExt.Equals(".mpg") ||strExt.Equals(".mpeg")||strExt.Equals(".bin")||strExt.Equals(".dat"))
         {
-          //if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
-          //if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+          if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+					if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
         }
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
+				if (strAudiorenderer.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudiorenderer);
 
 
 				int hr = DsUtils.RenderFileToVMR9(graphBuilder, m_strCurrentFile, Vmr9.VMR9Filter, false);
