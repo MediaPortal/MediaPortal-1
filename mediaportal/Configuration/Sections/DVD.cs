@@ -21,6 +21,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label defaultAudioLanguagelabel;
 		private System.Windows.Forms.Label displayModeLabel;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
+    private MediaPortal.UserInterface.Controls.MPCheckBox autoPlayCheckBox;
 		private System.ComponentModel.IContainer components = null;
 
 		public DVD() : this("DVD")
@@ -63,6 +65,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "English");
 				defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "English");
+        autoPlayCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "autoplay", true);
 
 				showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
 				pixelRatioCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
@@ -84,6 +87,7 @@ namespace MediaPortal.Configuration.Sections
 
 				xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", showSubtitlesCheckBox.Checked);
 				xmlwriter.SetValueAsBool("dvdplayer", "pixelratiocorrection", pixelRatioCheckBox.Checked);
+        xmlwriter.SetValueAsBool("dvdplayer", "autoplay", autoPlayCheckBox.Checked);
 
 				xmlwriter.SetValue("dvdplayer", "armode", aspectRatioComboBox.Text);
 				xmlwriter.SetValue("dvdplayer", "displaymode", displayModeComboBox.Text);
@@ -128,8 +132,11 @@ namespace MediaPortal.Configuration.Sections
       this.aspectRatioComboBox = new System.Windows.Forms.ComboBox();
       this.aspectRatioLabel = new System.Windows.Forms.Label();
       this.pixelRatioCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.autoPlayCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
+      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -268,14 +275,38 @@ namespace MediaPortal.Configuration.Sections
       this.pixelRatioCheckBox.TabIndex = 8;
       this.pixelRatioCheckBox.Text = "Use pixel ratio correction";
       // 
+      // mpGroupBox2
+      // 
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Controls.Add(this.autoPlayCheckBox);
+      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.mpGroupBox2.Location = new System.Drawing.Point(8, 264);
+      this.mpGroupBox2.Name = "mpGroupBox2";
+      this.mpGroupBox2.Size = new System.Drawing.Size(440, 64);
+      this.mpGroupBox2.TabIndex = 4;
+      this.mpGroupBox2.TabStop = false;
+      this.mpGroupBox2.Text = "Autoplay";
+      // 
+      // autoPlayCheckBox
+      // 
+      this.autoPlayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.autoPlayCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.autoPlayCheckBox.Name = "autoPlayCheckBox";
+      this.autoPlayCheckBox.Size = new System.Drawing.Size(264, 24);
+      this.autoPlayCheckBox.TabIndex = 8;
+      this.autoPlayCheckBox.Text = "Autoplay DVDs";
+      // 
       // DVD
       // 
+      this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox1);
       this.Name = "DVD";
       this.Size = new System.Drawing.Size(456, 448);
       this.groupBox1.ResumeLayout(false);
       this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }

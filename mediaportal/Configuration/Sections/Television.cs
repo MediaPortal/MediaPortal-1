@@ -26,7 +26,11 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.ComboBox inputComboBox;
 		private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
+    private System.Windows.Forms.Label label6;
 		private System.ComponentModel.IContainer components = null;
+
+    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
 		public Television() : this("Television")
 		{
@@ -80,6 +84,8 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
+      this.label6 = new System.Windows.Forms.Label();
       this.rendererComboBox = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.alwaysTimeShiftCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -103,30 +109,57 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
+      this.groupBox1.Controls.Add(this.label6);
       this.groupBox1.Controls.Add(this.rendererComboBox);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.alwaysTimeShiftCheckBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 96);
+      this.groupBox1.Size = new System.Drawing.Size(440, 128);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General Settings";
+      // 
+      // defaultZoomModeComboBox
+      // 
+      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
+                                                                 "Normal",
+                                                                 "Original Source Format",
+                                                                 "Stretch",
+                                                                 "Zoom",
+                                                                 "4:3 Letterbox",
+                                                                 "4:3 Pan and scan"});
+      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 83);
+      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
+      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
+      this.defaultZoomModeComboBox.TabIndex = 30;
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(16, 87);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(150, 23);
+      this.label6.TabIndex = 29;
+      this.label6.Text = "Default zoom mode";
       // 
       // rendererComboBox
       // 
       this.rendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.rendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.rendererComboBox.Location = new System.Drawing.Point(168, 53);
+      this.rendererComboBox.Location = new System.Drawing.Point(168, 58);
       this.rendererComboBox.Name = "rendererComboBox";
       this.rendererComboBox.Size = new System.Drawing.Size(256, 21);
       this.rendererComboBox.TabIndex = 10;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 57);
+      this.label2.Location = new System.Drawing.Point(16, 62);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(150, 23);
       this.label2.TabIndex = 9;
@@ -156,7 +189,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.videoCodecComboBox);
       this.groupBox3.Controls.Add(this.label5);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox3.Location = new System.Drawing.Point(8, 112);
+      this.groupBox3.Location = new System.Drawing.Point(8, 144);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(440, 96);
       this.groupBox3.TabIndex = 2;
@@ -208,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.inputComboBox);
       this.groupBox2.Controls.Add(this.label1);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(8, 216);
+      this.groupBox2.Location = new System.Drawing.Point(8, 248);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(440, 96);
       this.groupBox2.TabIndex = 3;
@@ -297,8 +330,23 @@ namespace MediaPortal.Configuration.Sections
 				//
 				audioCodecComboBox.SelectedItem = xmlreader.GetValueAsString("mytv", "audiocodec", "");
 				videoCodecComboBox.SelectedItem = xmlreader.GetValueAsString("mytv", "videocodec", "");
-			}			
+
+        //
+        // Set default aspect ratio
+        //
+        string defaultAspectRatio = xmlreader.GetValueAsString("mytv","defaultar", "original");
+
+        for(int index = 0; index < aspectRatio.Length; index++)
+        {
+          if(aspectRatio[index].Equals(defaultAspectRatio))
+          {
+            defaultZoomModeComboBox.SelectedIndex = index;
+            break;
+          }
+        }
+      }			
 		}
+
 
 		public override void SaveSettings()
 		{
@@ -306,6 +354,8 @@ namespace MediaPortal.Configuration.Sections
 			{
 				xmlwriter.SetValueAsBool("mytv", "alwaystimeshift", alwaysTimeShiftCheckBox.Checked);
 				xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
+        
+        xmlwriter.SetValue("mytv","defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
 
 				for(int index = 0; index < VideoRenderers.List.Length; index++)
 				{

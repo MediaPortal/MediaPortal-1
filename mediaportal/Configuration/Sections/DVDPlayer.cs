@@ -22,8 +22,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
     private System.Windows.Forms.ComboBox videoRendererComboBox;
     private System.Windows.Forms.Label label4;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPCheckBox autoPlayCheckBox;
 		private System.ComponentModel.IContainer components = null;
 
 		public DVDPlayer() : this("DVD Player")
@@ -50,7 +48,6 @@ namespace MediaPortal.Configuration.Sections
 			{
 				fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
 				parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer","arguments", "");
-        autoPlayCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "autoplay", true);
 
         int videoRenderer = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
         if(videoRenderer >= 0 && videoRenderer <= VideoRenderersShort.List.Length)				
@@ -73,9 +70,8 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValue("dvdplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("dvdplayer","arguments", parametersTextBox.Text);
-
+        
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
-        xmlwriter.SetValueAsBool("dvdplayer", "autoplay", autoPlayCheckBox.Checked);
 
         for(int index = 0; index < VideoRenderersShort.List.Length; index++)
         {
@@ -133,11 +129,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.videoRendererComboBox = new System.Windows.Forms.ComboBox();
       this.label4 = new System.Windows.Forms.Label();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.autoPlayCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // internalPlayerCheckBox
@@ -272,38 +265,14 @@ namespace MediaPortal.Configuration.Sections
       this.label4.TabIndex = 27;
       this.label4.Text = "Video renderer";
       // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox2.Controls.Add(this.autoPlayCheckBox);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox2.Location = new System.Drawing.Point(8, 216);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(440, 64);
-      this.mpGroupBox2.TabIndex = 3;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Autoplay";
-      // 
-      // autoPlayCheckBox
-      // 
-      this.autoPlayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.autoPlayCheckBox.Location = new System.Drawing.Point(16, 24);
-      this.autoPlayCheckBox.Name = "autoPlayCheckBox";
-      this.autoPlayCheckBox.Size = new System.Drawing.Size(264, 24);
-      this.autoPlayCheckBox.TabIndex = 8;
-      this.autoPlayCheckBox.Text = "Autoplay DVDs";
-      // 
       // DVDPlayer
       // 
       this.Controls.Add(this.mpGroupBox3);
-      this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "DVDPlayer";
       this.Size = new System.Drawing.Size(456, 440);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox3.ResumeLayout(false);
-      this.mpGroupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
