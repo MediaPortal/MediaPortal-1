@@ -1,6 +1,7 @@
+03-08-2004  setup       : fixed : Drive letter is now added to static CD/DVD share names
 03-08-2004  my tv       : fixed : sw encoding cards didnt work
-03-08-2004  setup	    : fixed : edit capture card->unable to select correct audio device
-03-08-2004  setup	    : fixed : Default enabling plugins correctly
+03-08-2004  setup	: fixed : edit capture card->unable to select correct audio device
+03-08-2004  setup	: fixed : Default enabling plugins correctly
 03-08-2004  my music    : fixed : Displaying HTML code when pressing F3 under Artist view and multiple hits are found for artists like Aqua, Gloria, etc...
 03-08-2004  setup       : fixed : cant sort radio channels in setup like you can in tv
 03-08-2004  imdb        : fixed : multipage descriptions do not work, example "Liever verliefd"
