@@ -2521,7 +2521,30 @@
 		<id>12901</id>
 		<value>Vollbild OSD</value>
 	</string>
-
+	<string>
+		<id>13000</id>
+		<value>System:</value>
+	</string>
+	<string>
+		<id>13001</id>
+		<value>Hersteller:</value>
+	</string>
+	<string>
+		<id>13002</id>
+		<value>Start</value>
+	</string>
+	<string>
+		<id>13003</id>
+		<value>Importiere *.mlf Datei</value>
+	</string>
+	<string>
+		<id>13004</id>
+		<value>Importiere *.my Datei</value>
+	</string>
+	<string>
+		<id>13005</id>
+		<value>Zuletzt importiert:</value>
+	</string>
 </strings>
 
 
