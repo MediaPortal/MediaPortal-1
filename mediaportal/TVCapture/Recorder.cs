@@ -891,7 +891,7 @@ namespace MediaPortal.TV.Recording
       // get current view point
       if (g_Player.Playing && g_Player.IsTV)
       {
-        float fViewPointSec=(float)g_Player.CurrentPosition;
+        float fViewPointSec=(float)g_Player.CurrentPosition + fRecStartSec;
         float fPercentViewPoint = (fViewPointSec/fDuration)*100.00f;
         int iPercentViewPoint=(int)Math.Floor(fPercentViewPoint);
         GUIPropertyManager.Properties["#TV.Record.percent2"]=iPercentViewPoint.ToString();
