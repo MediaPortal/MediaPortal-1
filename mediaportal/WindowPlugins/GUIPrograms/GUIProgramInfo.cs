@@ -335,6 +335,15 @@ namespace WindowPlugins.GUIPrograms
 
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_BACK,GUILocalizeStrings.Get(8008));
 
+			if (m_pFile.Filename != "")
+			{
+				GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTN_LAUNCH);
+			}
+			else
+			{
+				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTN_LAUNCH);
+			}
+
 //			if (m_pFile.LaunchCount > 0)
 //			{
 //				string strLaunchStat=String.Format("Number of launches: {0} / Last launch: {1}", m_pFile.LaunchCount, m_pFile.LastTimeLaunched);

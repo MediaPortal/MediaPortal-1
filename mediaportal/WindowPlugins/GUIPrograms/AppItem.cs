@@ -151,22 +151,17 @@ namespace ProgramsDatabase
 			return (FileItem)Files[nIndex];
 		}
 
-//		public virtual void LaunchFile(int FileID)
-//		{
-//			// probably not necessary: launch File by ID
-//		}
-
-
 		
 		public virtual void LaunchFile(FileItem curFile, bool MPGUIMode)
 		{
 			string curFilename = curFile.Filename;
+			if (curFilename == "") { return; }
+
 			// Launch File by item
 			if (MPGUIMode)
 			{
 				curFile.UpdateLaunchInfo();
 			}
-//			Process proc = new Process();
 			ProcessStartInfo procStart = new ProcessStartInfo();
 			if (Filename != "")
 			{
@@ -226,24 +221,24 @@ namespace ProgramsDatabase
 			this.LaunchErrorMsg = "";
 			try
 			{
-//				Log.Write("myPrograms: starting process: program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
-//					procStart.FileName, 
-//					procStart.Arguments, 
-//					procStart.WorkingDirectory);
+				//				Log.Write("myPrograms: starting process: program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
+				//					procStart.FileName, 
+				//					procStart.Arguments, 
+				//					procStart.WorkingDirectory);
 
 				if (MPGUIMode)
 				{
 					AutoPlay.StopListening();
 				}
 
-//				proc.Start();
+				//				proc.Start();
 				Utils.StartProcess(procStart, WaitForExit);
 				if (MPGUIMode) 
 				{
-//					if (WaitForExit)
-//					{
-//						proc.WaitForExit();
-//					}
+					//					if (WaitForExit)
+					//					{
+					//						proc.WaitForExit();
+					//					}
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 					AutoPlay.StartListening();
 				}
@@ -259,7 +254,7 @@ namespace ProgramsDatabase
 					ex.StackTrace);
 				Log.Write(ErrorString);
 				this.LaunchErrorMsg = ErrorString;
-			}   
+			}
 		}
 
 		public virtual void LaunchFile(GUIListItem item)

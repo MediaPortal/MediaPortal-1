@@ -279,10 +279,10 @@ namespace ProgramsDatabase
 		{
 			// check if item is complete for importing
 			bool bOk = (curFile.Title != ""); // 1) title must not be empty
-			if (bOk)
-			{
-				bOk = (curFile.Filename != ""); // 2) Filename must not be empty
-			}
+//			if (bOk)
+//			{
+//				bOk = (curFile.Filename != ""); // 2) Filename must not be empty
+//			}
 			if (bOk && m_App.ImportValidImagesOnly)
 			{
 				// if "only import valid images" is activated, do some more checks

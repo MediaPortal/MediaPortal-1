@@ -618,7 +618,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			m_Checker.Clear();
 			m_Checker.DoCheck(CurFile.Title != "", "No title entered!");
-			m_Checker.DoCheck(CurFile.Filename != "", "No filename entered!");
+//01.04.05 no filename is FINE :-)			m_Checker.DoCheck(CurFile.Filename != "", "No filename entered!");
 			if (!m_Checker.IsOk)
 			{
 				string strHeader = "The following entries are invalid: \r\n\r\n";

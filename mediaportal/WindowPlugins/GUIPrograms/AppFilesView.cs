@@ -495,7 +495,7 @@ namespace WindowPlugins.GUIPrograms
 					{
 						btnEdit.Enabled = true;
 						btnDelete.Enabled = true;
-						btnLaunch.Enabled = true;
+						btnLaunch.Enabled = (file.Filename != "");
 					}
 				}
 			}
