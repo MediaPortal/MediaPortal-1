@@ -2106,11 +2106,7 @@ namespace MediaPortal.Configuration
 			bool result=FillInAll();    
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				checkBoxHiQuality.Checked=xmlreader.GetValueAsBool("tv", "hiquality", false);
 				
-				int quality=xmlreader.GetValueAsInt("tv", "profile", 1);
-				if (comboBoxQuality.Items.Count>0 && quality >=0 && quality < comboBoxQuality.Items.Count)
-					comboBoxQuality.SelectedIndex=quality;
 				
 				comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
 				comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
