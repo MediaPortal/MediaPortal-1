@@ -32,10 +32,18 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox displayTimoutTextBox;
 		private System.Windows.Forms.Label label5;
 		int fontSize;
-    private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
-    private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.ListView lvDatabase;
+		private System.Windows.Forms.ColumnHeader chDatabaseDB;
+		private System.Windows.Forms.ColumnHeader chDatabaseLanguage;
+		private System.Windows.Forms.ColumnHeader chDatabaseLimit;
+		private System.Windows.Forms.Button bDatabaseUp;
+		private System.Windows.Forms.Button bDatabaseDown;
+		private System.Windows.Forms.ComboBox cbDatabaseLimit;
 
-    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+		string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
 		public Movies() : this("Movies")
 		{
@@ -83,20 +91,60 @@ namespace MediaPortal.Configuration.Sections
 					catch {}
 				}
 
-        //
-        // Set default aspect ratio
-        //
-        string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer","defaultar", "original");
+				//
+				// Set default aspect ratio
+				//
+				string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer","defaultar", "original");
 
-        for(int index = 0; index < aspectRatio.Length; index++)
-        {
-          if(aspectRatio[index].Equals(defaultAspectRatio))
-          {
-            defaultZoomModeComboBox.SelectedIndex = index;
-            break;
-          }
-        }
-      }		
+				for(int index = 0; index < aspectRatio.Length; index++)
+				{
+					if(aspectRatio[index].Equals(defaultAspectRatio))
+					{
+						defaultZoomModeComboBox.SelectedIndex = index;
+						break;
+					}
+				}
+
+				// Load settings for Database
+				int iNumber = xmlreader.GetValueAsInt("moviedatabase","number",0);
+				if (iNumber<=0)
+				{
+					// no given databases in XML - entering default values
+					// create entry for IMDB
+					this.lvDatabase.Items.Add("IMDB");
+					this.lvDatabase.Items[0].SubItems.Add("english");
+					this.lvDatabase.Items[0].SubItems.Add("25");
+					// create entry for OFDB
+					this.lvDatabase.Items.Add("OFDB");
+					this.lvDatabase.Items[1].SubItems.Add("german");
+					this.lvDatabase.Items[1].SubItems.Add("25");
+				}
+				else
+				{
+					int iCount = 0;
+					string strLimit = "";
+					string strDatabase = "";
+					string strLanguage = "";
+					// Load values
+					for(int i = 0;i < iNumber;i++)
+					{
+						strLimit = xmlreader.GetValueAsString("moviedatabase","limit"+i.ToString(),"false");
+						strDatabase = xmlreader.GetValueAsString("moviedatabase","database"+i.ToString(),"false");
+						strLanguage = xmlreader.GetValueAsString("moviedatabase","language"+i.ToString(),"false");
+						if ((strLimit!="false") && (strDatabase!="false") && (strLanguage!="false"))
+						{
+							// create entry for the database
+							this.lvDatabase.Items.Add(strDatabase);
+							this.lvDatabase.Items[iCount].SubItems.Add(strLanguage);
+							this.lvDatabase.Items[iCount].SubItems.Add(strLimit);
+							iCount++;
+						}
+					}
+				}
+				// set the first entry "activ"
+				this.lvDatabase.Items[0].Selected = true;
+				this.cbDatabaseLimit.Text = this.lvDatabase.Items[0].SubItems[2].Text;
+			}		
 		}
 
 		public override void SaveSettings()
@@ -116,8 +164,17 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValueAsBool("subtitles", "bold", fontIsBold);
 				xmlwriter.SetValue("subtitles", "fontsize", fontSize);
       
-        xmlwriter.SetValue("movieplayer","defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
-      }
+				xmlwriter.SetValue("movieplayer","defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
+
+				// Database
+				xmlwriter.SetValue("moviedatabase", "number", this.lvDatabase.Items.Count);
+				for (int i = 0; i < this.lvDatabase.Items.Count; i++)
+				{
+					xmlwriter.SetValue("moviedatabase", "database"+i.ToString(), this.lvDatabase.Items[i].SubItems[0].Text);
+					xmlwriter.SetValue("moviedatabase", "limit"+i.ToString(), this.lvDatabase.Items[i].SubItems[2].Text);
+					xmlwriter.SetValue("moviedatabase", "language"+i.ToString(), this.lvDatabase.Items[i].SubItems[1].Text);
+				}
+			}
 		}
 
 		/// <summary>
@@ -143,6 +200,8 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
+      this.label1 = new System.Windows.Forms.Label();
       this.fileNameButton = new System.Windows.Forms.Button();
       this.folderNameTextBox = new System.Windows.Forms.TextBox();
       this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -159,11 +218,18 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.displayTimoutTextBox = new System.Windows.Forms.TextBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.cbDatabaseLimit = new System.Windows.Forms.ComboBox();
+      this.bDatabaseDown = new System.Windows.Forms.Button();
+      this.bDatabaseUp = new System.Windows.Forms.Button();
+      this.lvDatabase = new System.Windows.Forms.ListView();
+      this.chDatabaseDB = new System.Windows.Forms.ColumnHeader();
+      this.chDatabaseLanguage = new System.Windows.Forms.ColumnHeader();
+      this.chDatabaseLimit = new System.Windows.Forms.ColumnHeader();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
+      this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -183,6 +249,31 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General settings";
+      // 
+      // defaultZoomModeComboBox
+      // 
+      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
+                                                                 "Normal",
+                                                                 "Original Source Format",
+                                                                 "Stretch",
+                                                                 "Zoom",
+                                                                 "4:3 Letterbox",
+                                                                 "4:3 Pan and scan"});
+      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 83);
+      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
+      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
+      this.defaultZoomModeComboBox.TabIndex = 34;
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 87);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(150, 23);
+      this.label1.TabIndex = 33;
+      this.label1.Text = "Default zoom mode";
       // 
       // fileNameButton
       // 
@@ -302,9 +393,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.Controls.Add(this.displayTimoutTextBox);
       this.mpGroupBox2.Controls.Add(this.label5);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox2.Location = new System.Drawing.Point(8, 272);
+      this.mpGroupBox2.Location = new System.Drawing.Point(232, 272);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(440, 72);
+      this.mpGroupBox2.Size = new System.Drawing.Size(216, 136);
       this.mpGroupBox2.TabIndex = 4;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "OnScreen Display (OSD)";
@@ -325,33 +416,92 @@ namespace MediaPortal.Configuration.Sections
       this.label5.TabIndex = 15;
       this.label5.Text = "Display timeout (seconds)";
       // 
-      // defaultZoomModeComboBox
+      // groupBox2
       // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-                                                                 "Normal",
-                                                                 "Original Source Format",
-                                                                 "Stretch",
-                                                                 "Zoom",
-                                                                 "4:3 Letterbox",
-                                                                 "4:3 Pan and scan"});
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 83);
-      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
-      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
-      this.defaultZoomModeComboBox.TabIndex = 34;
+      this.groupBox2.Controls.Add(this.cbDatabaseLimit);
+      this.groupBox2.Controls.Add(this.bDatabaseDown);
+      this.groupBox2.Controls.Add(this.bDatabaseUp);
+      this.groupBox2.Controls.Add(this.lvDatabase);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox2.Location = new System.Drawing.Point(8, 272);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(216, 136);
+      this.groupBox2.TabIndex = 5;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "IMDB Database search results";
       // 
-      // label1
+      // cbDatabaseLimit
       // 
-      this.label1.Location = new System.Drawing.Point(16, 87);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(150, 23);
-      this.label1.TabIndex = 33;
-      this.label1.Text = "Default zoom mode";
+      this.cbDatabaseLimit.Items.AddRange(new object[] {
+                                                         "0",
+                                                         "5",
+                                                         "10",
+                                                         "15",
+                                                         "20",
+                                                         "25"});
+      this.cbDatabaseLimit.Location = new System.Drawing.Point(88, 96);
+      this.cbDatabaseLimit.Name = "cbDatabaseLimit";
+      this.cbDatabaseLimit.Size = new System.Drawing.Size(48, 21);
+      this.cbDatabaseLimit.TabIndex = 3;
+      this.cbDatabaseLimit.Text = "0";
+      this.cbDatabaseLimit.SelectedIndexChanged += new System.EventHandler(this.cbDatabaseLimit_SelectedIndexChanged);
+      // 
+      // bDatabaseDown
+      // 
+      this.bDatabaseDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.bDatabaseDown.Location = new System.Drawing.Point(8, 96);
+      this.bDatabaseDown.Name = "bDatabaseDown";
+      this.bDatabaseDown.Size = new System.Drawing.Size(48, 24);
+      this.bDatabaseDown.TabIndex = 2;
+      this.bDatabaseDown.Text = "down";
+      this.bDatabaseDown.Click += new System.EventHandler(this.bDatabaseDown_Click);
+      // 
+      // bDatabaseUp
+      // 
+      this.bDatabaseUp.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.bDatabaseUp.Location = new System.Drawing.Point(160, 96);
+      this.bDatabaseUp.Name = "bDatabaseUp";
+      this.bDatabaseUp.Size = new System.Drawing.Size(48, 24);
+      this.bDatabaseUp.TabIndex = 1;
+      this.bDatabaseUp.Text = "up";
+      this.bDatabaseUp.Click += new System.EventHandler(this.bDatabaseUp_Click);
+      // 
+      // lvDatabase
+      // 
+      this.lvDatabase.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                 this.chDatabaseDB,
+                                                                                 this.chDatabaseLanguage,
+                                                                                 this.chDatabaseLimit});
+      this.lvDatabase.FullRowSelect = true;
+      this.lvDatabase.GridLines = true;
+      this.lvDatabase.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+      this.lvDatabase.HideSelection = false;
+      this.lvDatabase.Location = new System.Drawing.Point(8, 24);
+      this.lvDatabase.MultiSelect = false;
+      this.lvDatabase.Name = "lvDatabase";
+      this.lvDatabase.Size = new System.Drawing.Size(200, 64);
+      this.lvDatabase.TabIndex = 0;
+      this.lvDatabase.View = System.Windows.Forms.View.Details;
+      this.lvDatabase.SelectedIndexChanged += new System.EventHandler(this.lvDatabase_SelectedIndexChanged);
+      // 
+      // chDatabaseDB
+      // 
+      this.chDatabaseDB.Text = "Database";
+      this.chDatabaseDB.Width = 70;
+      // 
+      // chDatabaseLanguage
+      // 
+      this.chDatabaseLanguage.Text = "Language";
+      this.chDatabaseLanguage.Width = 70;
+      // 
+      // chDatabaseLimit
+      // 
+      this.chDatabaseLimit.Text = "Limit";
+      this.chDatabaseLimit.Width = 55;
       // 
       // Movies
       // 
+      this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox1);
@@ -360,6 +510,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -431,6 +582,94 @@ namespace MediaPortal.Configuration.Sections
 					}
 
 				}
+			}
+		}
+
+		private void bDatabaseDown_Click(object sender, System.EventArgs e)
+		{
+			// Moves the selected entry down
+			// get the entry
+			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+			// guilty entry?
+			if (indexes.Count==1)
+			{
+				int index = indexes[0];
+				// not the last entry?
+				if (index < lvDatabase.Items.Count-1)
+				{
+					// save current text
+					string strSub0 = lvDatabase.Items[index+1].SubItems[0].Text;
+					string strSub1 = lvDatabase.Items[index+1].SubItems[1].Text;
+					string strSub2 = lvDatabase.Items[index+1].SubItems[2].Text;
+					// copy text
+					lvDatabase.Items[index+1].SubItems[0].Text = lvDatabase.Items[index].SubItems[0].Text;
+					lvDatabase.Items[index+1].SubItems[1].Text = lvDatabase.Items[index].SubItems[1].Text;
+					lvDatabase.Items[index+1].SubItems[2].Text = lvDatabase.Items[index].SubItems[2].Text;
+					// restore backuped text
+					lvDatabase.Items[index].SubItems[0].Text = strSub0;
+					lvDatabase.Items[index].SubItems[1].Text = strSub1;
+					lvDatabase.Items[index].SubItems[2].Text = strSub2;
+					// move the selection down
+					lvDatabase.Items[index].Selected = false;
+					lvDatabase.Items[index+1].Selected = true;
+				}
+			}			
+		}
+
+		private void bDatabaseUp_Click(object sender, System.EventArgs e)
+		{
+			// Moves the selected entry up
+			// get the entry
+			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+			// guilty entry?
+			if (indexes.Count==1)
+			{
+				int index = indexes[0];
+				// not the first entry?
+				if (index > 0)
+				{
+					// save current text
+					string strSub0 = lvDatabase.Items[index-1].SubItems[0].Text;
+					string strSub1 = lvDatabase.Items[index-1].SubItems[1].Text;
+					string strSub2 = lvDatabase.Items[index-1].SubItems[2].Text;
+					// copy text
+					lvDatabase.Items[index-1].SubItems[0].Text = lvDatabase.Items[index].SubItems[0].Text;
+					lvDatabase.Items[index-1].SubItems[1].Text = lvDatabase.Items[index].SubItems[1].Text;
+					lvDatabase.Items[index-1].SubItems[2].Text = lvDatabase.Items[index].SubItems[2].Text;
+					// restore backuped text
+					lvDatabase.Items[index].SubItems[0].Text = strSub0;
+					lvDatabase.Items[index].SubItems[1].Text = strSub1;
+					lvDatabase.Items[index].SubItems[2].Text = strSub2;
+					// move the selection up
+					lvDatabase.Items[index].Selected = false;
+					lvDatabase.Items[index-1].Selected = true;
+				}
+			}
+		}
+
+		private void cbDatabaseLimit_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			// changes the limit of the selected DB entry with that from the dropbox
+			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+			if (indexes.Count==1)
+			{
+				// guilty entry
+				int index = indexes[0];
+				// copy the text
+				lvDatabase.Items[index].SubItems[2].Text = this.cbDatabaseLimit.Text;
+			} 
+		}
+
+		private void lvDatabase_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			// updates the dropdownbox for the limits with the selected item
+			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+			if (indexes.Count==1)
+			{
+				// guilty entry
+				int index = indexes[0];
+				// copy the text
+				this.cbDatabaseLimit.Text = this.lvDatabase.Items[index].SubItems[2].Text;
 			}
 		}
 	}
