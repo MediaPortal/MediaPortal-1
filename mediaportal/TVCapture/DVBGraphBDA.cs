@@ -1910,6 +1910,7 @@ namespace MediaPortal.TV.Recording
 				TunerLib.ITuneRequest[] tunerequests = new TunerLib.ITuneRequest[1];
 				while(varRequests.Next(1,  tunerequests, out iFetched) == 0) 
 				{
+					if (tunerequests[0]==null) return;
 					IEnumGuideDataProperties enumProgramProperties;
 					data.GetServiceProperties(tunerequests[0],out enumProgramProperties);
 					if (enumProgramProperties!=null)
@@ -1917,6 +1918,7 @@ namespace MediaPortal.TV.Recording
 						IGuideDataProperty[] properties = new IGuideDataProperty[1];
 						while (enumProgramProperties.Next(1,properties, out iFetched) ==0)
 						{
+							if (properties[0]==null) return;
 							object chanValue;
 							int chanLanguage;
 							string chanName;
@@ -1938,14 +1940,22 @@ namespace MediaPortal.TV.Recording
 									parts=id.Split(new char[]{':'},10);
 									if (parts.Length>=3)
 									{
-										channel.ONID = Int32.Parse(parts[0]);
-										channel.TSID = Int32.Parse(parts[1]);
-										channel.SID  = Int32.Parse(parts[2]);
+										try
+										{
+											channel.ONID = Int32.Parse(parts[0]);
+											channel.TSID = Int32.Parse(parts[1]);
+											channel.SID  = Int32.Parse(parts[2]);
 
-										//TODO: determine if channel found is an radio or tv channel
-										channel.IsTv=true;
-										channel.IsRadio=true;
-										gotAll++;
+											//TODO: determine if channel found is an radio or tv channel
+											channel.IsTv=true;
+											channel.IsRadio=true;
+											gotAll++;
+										}
+										catch(Exception)
+										{
+											Log.Write("DVBGraphBDA: unknown service description:{0}", chanValue);
+											gotAll=0;
+										}
 									}
 								}
 								if (chanName=="Description.Name")
@@ -2029,16 +2039,37 @@ namespace MediaPortal.TV.Recording
 			{
 				TunerLib.TuneRequest newTuneRequest = null;
 				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
-				TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2) myTuner.TuningSpace;
-
+				if (myTuner ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() tuner=null");
+					return;
+				}
+				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+				if (myTuningSpace ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() tuningspace=null");
+					return;
+				}
 				newTuneRequest = myTuningSpace.CreateTuneRequest();
-
-				TunerLib.IDVBTuneRequest myTuneRequest = (TunerLib.IDVBTuneRequest) newTuneRequest;
-
+				if (newTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not create new tuningrequest");
+					return;
+				}
+				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
+				if (myTuneRequest ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
+					return;
+				}
 				TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
 				if (myLocator == null)
-					myLocator = (TunerLib.IDVBTLocator)myTuningSpace.DefaultLocator;
-
+					myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBTLocator;
+				if (myLocator ==null)
+				{
+					Log.Write("DVBGraphBDA: failed Tune() could not get IDVBTLocator");
+					return;
+				}
 				myLocator.CarrierFrequency		= (int)tuningObject;
 				myTuneRequest.ONID	= -1;					//original network id
 				myTuneRequest.TSID	= -1;					//transport stream id
