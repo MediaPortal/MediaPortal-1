@@ -21,13 +21,12 @@ namespace MediaPortal.TV.Recording
     string                  m_strVideoCaptureFilter="";
     IGraphBuilder           m_graphBuilder=null;
     ICaptureGraphBuilder2   m_captureGraphBuilder=null;
-    Filter                  m_videoCaptureDeviceFilter=null;
     IBaseFilter             m_captureFilter=null;
-    IAMStreamConfig         m_videoStreamConfig=null;
     IAMTVTuner              m_TVTuner=null;
-    IAMVideoProcAmp         m_videoprocamp;
-    IMediaControl           m_mediaControl=null;
-    VideoCaptureDevice      m_videoCaptureDevice=null;
+//	IAMStreamConfig         m_videoStreamConfig=null;
+//  IAMVideoProcAmp         m_videoprocamp;
+//  IMediaControl           m_mediaControl=null;
+		VideoCaptureDevice      m_videoCaptureDevice=null;
     MPEG2Demux              m_mpeg2Demux=null;
     protected int				    m_rotCookie = 0;						// Cookie into the Running Object Table
     State                   m_graphState=State.None;
@@ -48,16 +47,17 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("Capture.CreateGraph()");
       int hr=0;
       Filters filters = new Filters();
+			Filter                  videoCaptureDeviceFilter=null;
       foreach (Filter filter in filters.VideoInputDevices)
       {
         if (filter.Name.Equals(m_strVideoCaptureFilter))
         {
-          m_videoCaptureDeviceFilter=filter;
+          videoCaptureDeviceFilter=filter;
           break;
         }
       }
 
-      if (m_videoCaptureDeviceFilter==null) return false;
+      if (videoCaptureDeviceFilter==null) return false;
 
       // Make a new filter graph
       DirectShowUtil.DebugWrite("Capture.create new filter graph (IGraphBuilder)");
@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Recording
       DsROT.AddGraphToRot( m_graphBuilder, out m_rotCookie );
 
       // Get the video device and add it to the filter graph
-      m_captureFilter = Marshal.BindToMoniker( m_videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
+      m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
       if (m_captureFilter!=null)
       {
         hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
@@ -99,11 +99,13 @@ namespace MediaPortal.TV.Recording
       object o;
       Guid cat = PinCategory.Capture;
       Guid iid = typeof(IAMStreamConfig).GUID;
+/*
       hr = m_captureGraphBuilder.FindInterface(new Guid[1]{cat}, null, m_captureFilter, ref iid, out o );
       if (hr==0)
       {
         m_videoStreamConfig = o as IAMStreamConfig;
       }
+*/
 
       // Retrieve TV Tuner if available
       DirectShowUtil.DebugWrite("Capture.Find TV Tuner");
@@ -116,7 +118,7 @@ namespace MediaPortal.TV.Recording
         m_TVTuner = o as IAMTVTuner;
       }
 
-      m_videoprocamp=(IAMVideoProcAmp )m_captureFilter;
+      //m_videoprocamp=(IAMVideoProcAmp )m_captureFilter;
 
 
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
@@ -128,7 +130,7 @@ namespace MediaPortal.TV.Recording
 
 
       // Retreive the media control interface (for starting/stopping graph)
-      m_mediaControl = (IMediaControl) m_graphBuilder;
+      //m_mediaControl = (IMediaControl) m_graphBuilder;
 
       m_graphState=State.Created;
       return true;
@@ -143,33 +145,30 @@ namespace MediaPortal.TV.Recording
       StopTimeShifting();
 
       DirectShowUtil.DebugWrite("Capture.deleteGraph");
-      if ( m_mediaControl != null )
-      {
-        m_mediaControl.Stop();
-      }
+      //if ( m_mediaControl != null )
+      //{
+      //  m_mediaControl.Stop();
+      //}
 
       if (m_mpeg2Demux!=null)
       {
         m_mpeg2Demux.CloseInterfaces();
         m_mpeg2Demux=null;
       }
-      m_videoCaptureDeviceFilter=null;
-      m_mediaControl=null;
+      //m_mediaControl=null;
 			if (m_videoCaptureDevice!=null)
 			{
-				m_videoCaptureDevice.CloseInterfaces();
+				//m_videoCaptureDevice.CloseInterfaces();
 				m_videoCaptureDevice=null;
 			}
+			DsUtils.RemoveFilters(m_graphBuilder);
 
-      if( m_rotCookie != 0 )
-        DsROT.RemoveGraphFromRot( ref m_rotCookie);
-      m_rotCookie=0;
+			//if( m_videoStreamConfig != null )
+			//	Marshal.ReleaseComObject( m_videoStreamConfig ); m_videoStreamConfig = null;
 
-			if( m_videoStreamConfig != null )
-				Marshal.ReleaseComObject( m_videoStreamConfig ); m_videoStreamConfig = null;
+			//if( m_videoprocamp != null )
+			//	Marshal.ReleaseComObject( m_videoprocamp ); m_videoprocamp = null;
 
-			if( m_videoprocamp != null )
-				Marshal.ReleaseComObject( m_videoprocamp ); m_videoprocamp = null;
 
 			if( m_TVTuner != null )
 				Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
@@ -177,10 +176,14 @@ namespace MediaPortal.TV.Recording
       if( m_captureFilter != null )
         Marshal.ReleaseComObject( m_captureFilter ); m_captureFilter = null;
 
+			if( m_rotCookie != 0 )
+				DsROT.RemoveGraphFromRot( ref m_rotCookie);
+			m_rotCookie=0;
+
 
       if( m_captureGraphBuilder != null )
         Marshal.ReleaseComObject( m_captureGraphBuilder ); m_captureGraphBuilder = null;
-
+	
       if( m_graphBuilder != null )
         Marshal.ReleaseComObject( m_graphBuilder ); m_graphBuilder = null;
 
@@ -260,114 +263,9 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception){} 
 
-			FixCrossbarRouting( iChannel<254, (iChannel==254), (iChannel==255) );
+			DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_captureFilter, iChannel<254, (iChannel==254), (iChannel==255) );
     }
 
-    void FixCrossbarRouting(bool bTunerIn, bool bCVBS, bool bSVHS)
-    {
-      DirectShowUtil.DebugWrite("Capture.FixCrossbarRouting");
-
-      try
-      {
-        int iCrossBar=0;
-        DirectShowUtil.DebugWrite("Set Crossbar routing. Tuner:{0}",bTunerIn);
-        IBaseFilter searchfilter=m_captureFilter as IBaseFilter;
-        while (true)
-        {
-          // Find next crossbar
-          int  hr;
-          Guid cat;
-          Guid iid;
-          object o=null;
-          cat = FindDirection.UpstreamOnly;
-          iid = typeof(IAMCrossbar).GUID;
-          DirectShowUtil.DebugWrite(" Find crossbar:#{0}", iCrossBar);
-          hr=m_captureGraphBuilder.FindInterface(new Guid[1]{cat},null,searchfilter, ref iid, out o);
-          if (hr ==0 && o != null)
-          {
-            IAMCrossbar crossbar = o as IAMCrossbar;
-            searchfilter=o as IBaseFilter;
-            if (crossbar!=null)
-            {
-              // crossbar found
-              iCrossBar++;
-              DirectShowUtil.DebugWrite("  crossbar found:{0}",iCrossBar);
-              int iOutputPinCount, iInputPinCount;
-              crossbar.get_PinCounts(out iOutputPinCount, out iInputPinCount);
-              DirectShowUtil.DebugWrite("    crossbar:{0} inputs:{1}  outputs:{2}",crossbar.ToString(),iInputPinCount,iOutputPinCount);
-              
-              int                   iPinIndexRelated;
-              int                   iPinIndexRelatedIn;
-              //int                   iInputPin;
-              PhysicalConnectorType PhysicalTypeOut;
-              PhysicalConnectorType PhysicalTypeIn;
-
-              //query all outputpins
-              for (int iOut=0; iOut < iOutputPinCount; ++iOut)
-              {
-                crossbar.get_CrossbarPinInfo(false,iOut,out iPinIndexRelated, out PhysicalTypeOut);
-                
-                for (int iIn=0; iIn < iInputPinCount; iIn++)
-                {
-                  // check if we can make a connection between iIn -> iOut
-                  hr=crossbar.CanRoute(iOut, iIn);
-                  if (hr==0)
-                  {
-                    // yes thats possible, now get the PhysicalType of the input
-                    crossbar.get_CrossbarPinInfo(true,iIn,out iPinIndexRelatedIn, out PhysicalTypeIn);
-                    DirectShowUtil.DebugWrite("     check:{0}->{1} / {2}->{3}",iIn,iOut,PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
-                    bool bRoute=false;
-                    
-                    // video
-                    if (bTunerIn && PhysicalTypeIn==PhysicalConnectorType.Video_Tuner )  bRoute=true;
-                    if (bCVBS    && PhysicalTypeIn==PhysicalConnectorType.Video_Composite)  bRoute=true;
-                    if (bSVHS    && PhysicalTypeIn==PhysicalConnectorType.Video_SVideo)  bRoute=true;
-                      
-
-                    // audio
-                    if (bTunerIn)
-                    {
-                      if (PhysicalTypeIn==PhysicalConnectorType.Audio_Tuner )  bRoute=true;
-                    }
-                    else
-                    {
-                      if ( PhysicalTypeIn==PhysicalConnectorType.Audio_AUX||
-                        PhysicalTypeIn==PhysicalConnectorType.Audio_Line ||
-                        PhysicalTypeIn==PhysicalConnectorType.Audio_AudioDecoder) 
-                      {
-                        bRoute=true;
-                      }
-                    }
-
-                    if ( bRoute )
-                    {
-                      //route
-                      DirectShowUtil.DebugWrite("     connect");
-                      hr=crossbar.Route(iOut,iIn);
-                      if (hr!=0) DirectShowUtil.DebugWrite("    connect FAILED");
-                      else DirectShowUtil.DebugWrite("    connect success");
-                    }
-                  }//if (hr==0)
-                }//for (int iIn=0; iIn < iInputPinCount; iIn++)
-              }//for (int iOut=0; iOut < iOutputPinCount; ++iOut)
-            }//if (crossbar!=null)
-            else
-            {
-              DirectShowUtil.DebugWrite("  no more crossbars");
-              break;
-            }
-          }//if (hr ==0 && o != null)
-          else
-          {
-            DirectShowUtil.DebugWrite("  no more crossbars.");
-            break;
-          }
-        }//while (true)
-        DirectShowUtil.DebugWrite("crossbar routing done");
-      }
-      catch (Exception)
-      {}
-    }
 
 	}
 }
