@@ -347,7 +347,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void sharesListView_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-      editButton.Enabled  = addButton.Enabled = (sharesListView.SelectedItems.Count > 0);
+      editButton.Enabled  = deleteButton.Enabled = (sharesListView.SelectedItems.Count > 0);
     }
 	}
 }
