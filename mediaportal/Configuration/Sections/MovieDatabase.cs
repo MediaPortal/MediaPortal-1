@@ -645,7 +645,7 @@ namespace MediaPortal.Configuration.Sections
 					strTemp += strExtension;
 					Utils.FileDelete(strTemp);
              
-					Utils.DownLoadAndCacheImage(url, strTemp);
+					Utils.DownLoadImage(url, strTemp);
 					if (System.IO.File.Exists(strTemp))
 					{
 						MediaPortal.Util.Picture.CreateThumbnail(strTemp, strThumb, 128, 128, 0);

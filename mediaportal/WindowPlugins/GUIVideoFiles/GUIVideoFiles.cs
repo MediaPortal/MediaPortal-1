@@ -98,6 +98,8 @@ namespace MediaPortal.GUI.Video
 
 		static IMDB								  imdb ;
 		const string ThumbsFolder=@"thumbs\Videos\Title";
+		const string ActorThumbsFolder=@"thumbs\Videos\Actors";
+
 		DirectoryHistory m_history = new DirectoryHistory();
 		string            m_strDirectory = "";
 		int               m_iItemSelected = -1;
@@ -1692,6 +1694,37 @@ namespace MediaPortal.GUI.Video
                 if (imdb.GetDetails(url, ref movieDetails))
                 {
                   // got all movie details :-)
+									//get all actors...
+									string[] actors=movieDetails.Cast.Split('\n');
+									if (actors.Length>1)
+									{
+										for (int i=1; i < actors.Length;++i)
+										{
+											int pos =actors[i].IndexOf(" as ");
+											if (pos <0) continue;
+											string actor=actors[i].Substring(0,pos);
+											string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+											if (!System.IO.File.Exists(strThumb))
+											{
+												imdb.FindActor(actor);
+												IMDBActor imdbActor=new IMDBActor();
+												for (int x=0; x < imdb.Count;++x)
+												{
+													imdb.GetActorDetails(imdb[x],out imdbActor);
+													if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
+												}
+												if (imdbActor.ThumbnailUrl!=null)
+												{
+													if (imdbActor.ThumbnailUrl.Length!=0)
+													{
+														DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+													}
+													else Log.Write("url=empty for actor {0}", actor);
+												}
+												else Log.Write("url=null for actor {0}", actor);
+											}
+										}
+									}
                   pDlgProgress.Close();
                   bError = false;
 
@@ -2346,6 +2379,34 @@ namespace MediaPortal.GUI.Video
 			if (m_directory.IsProtectedShare(folder,out pinCode)) return true;
 			return false;
 		}
+		static void DownloadThumnail(string folder,string url, string name)
+		{
+			if (url==null) return;
+			if (url.Length==0) return;
+			string strThumb = Utils.GetCoverArtName(folder,name);
+			string LargeThumb = Utils.GetLargeCoverArtName(folder,name);
+			if (!System.IO.File.Exists(strThumb))
+			{
+				string strExtension;
+				strExtension = System.IO.Path.GetExtension(url);
+				if (strExtension.Length > 0)
+				{
+					string strTemp = "temp";
+					strTemp += strExtension;
+					Utils.FileDelete(strTemp);
+             
+					Utils.DownLoadImage(url, strTemp);
+					if (System.IO.File.Exists(strTemp))
+					{
+						MediaPortal.Util.Picture.CreateThumbnail(strTemp, strThumb, 128, 128, 0);
+						MediaPortal.Util.Picture.CreateThumbnail(strTemp, LargeThumb, 512, 512, 0);
+					}
+					else Log.Write("Unable to download {0}->{1}", url,strTemp);
+					Utils.FileDelete(strTemp);
+				}
+			}
+		}
+
 		#region IProgress Members
 
 		public void OnProgress(string line1, string line2, string line3, int percent)
