@@ -1,3 +1,5 @@
+22-07-2004  general     : fixed : pause movie/tv when VMR9 enabled->gui is paused also
+22-07-2004  my video    : fixed : entering time -> time did not appear on screen with vmr9S
 22-07-2004  my video    : fixed : video with vmr9 was blocky until you did pause
 
 21-07-2004  my tv       : added : SW encoding cards: select audio input of your soundcard
