@@ -967,7 +967,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.ActiveForm = this.Handle;
       GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
       
-			if (splashScreen!=null) splashScreen.SetInformation("Initalize texture manager...");
+			if (splashScreen!=null) splashScreen.SetInformation("Initialize texture manager...");
 			GUITextureManager.Init();
       if (splashScreen!=null) splashScreen.SetInformation("Loading fonts...");
       GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
@@ -995,7 +995,7 @@ public class MediaPortalApp : D3DApp, IRender
 			Log.Write("  WindowManager.ActivateWindow");
 			GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
 			
-			Log.Write("  skin initalized");
+			Log.Write("  skin initialized");
       if (GUIGraphicsContext.DX9Device != null)
       {
         Log.Write("  DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
