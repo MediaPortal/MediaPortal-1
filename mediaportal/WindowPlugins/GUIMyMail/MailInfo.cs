@@ -233,7 +233,7 @@ namespace MyMail
 		{
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
-				GUIWindowManager.ActivateWindow(8000);
+				GUIWindowManager.PreviousWindow();
 				return;
 			}
 			base.OnAction(action);
