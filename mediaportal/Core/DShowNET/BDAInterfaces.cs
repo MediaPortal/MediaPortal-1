@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using DShowNET;
 
 namespace DShowNET.BDA
@@ -12,13 +13,12 @@ namespace DShowNET.BDA
 	{
 		[PreserveSig]
 		int Next( [In] int celt,
-						  [Out] out object rgVar, //, size_is(celt), length_is(*pCeltFetched)] VARIANT * rgVar,
-							[Out] out int pCeltFetched
-																																			);
+						  [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]	 object[] rgVar, //, size_is(celt), length_is(*pCeltFetched)] VARIANT * rgVar,
+							[Out] out int pCeltFetched);
 
 		[PreserveSig]
 		int RemoteNext([In] int celt,
-									 [Out] out object rgVar,//size_is(celt), length_is(*pCeltFetched)] VARIANT * rgVar,
+									 [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]	 object[] rgVar, //size_is(celt), length_is(*pCeltFetched)] VARIANT * rgVar,
 									 [Out] out int pCeltFetched);
 
 		[PreserveSig]
@@ -38,7 +38,7 @@ namespace DShowNET.BDA
 	public interface IGuideDataProperty 
 	{
 		[PreserveSig]
-		int Name([Out] out object pbstrName);
+		int Name([Out] out string pbstrName);
 		[PreserveSig]
 		int Language([Out] out int idLang);
 		[PreserveSig]
@@ -51,7 +51,7 @@ namespace DShowNET.BDA
 	public interface IEnumGuideDataProperties 
 	{
 		[PreserveSig]
-		int Next([In] int celt, [Out] out IGuideDataProperty ppprop, [Out] out int pcelt);
+		int Next([In] int celt, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]  IGuideDataProperty[] ppprop, [Out] out int pcelt);
 		[PreserveSig]
 		int Skip([In] int celt);
 		[PreserveSig]
@@ -66,7 +66,7 @@ namespace DShowNET.BDA
 	public interface IEnumTuneRequests 
 	{
 		[PreserveSig]
-		int Next([In] int celt, [Out] out TunerLib.ITuneRequest ppprop, [Out] out int pcelt);
+		int Next([In] int celt, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] TunerLib.ITuneRequest[] ppprop, [Out] out int pcelt);
 		[PreserveSig]
 		int Skip([In] int celt);
 		[PreserveSig]
@@ -228,6 +228,12 @@ namespace DShowNET.BDA
 	[StructLayout(LayoutKind.Sequential)]
 	public class GuideDataEvent: IGuideDataEvent
 	{
+		static public Mutex mutexProgramChanged = new Mutex();
+		static public Mutex mutexServiceChanged = new Mutex();
+		static public Mutex mutexScheduleEntryChanged = new Mutex();
+		static public Mutex mutexProgramDeleted= new Mutex();
+		static public Mutex mutexServiceDeleted= new Mutex();
+		static public Mutex mutexScheduleDeleted= new Mutex();
 		public GuideDataEvent()
 		{
 		}
@@ -241,12 +247,14 @@ namespace DShowNET.BDA
 		public int ProgramChanged([In] object    varProgramDescriptionID)
 		{
 				DirectShowUtil.DebugWrite("ProgramChanged():");
+				mutexProgramChanged.ReleaseMutex();
 				return 0;
 		}
 
 		public int ServiceChanged([In] object    varServiceDescriptionID)
 		{
 			DirectShowUtil.DebugWrite("ServiceChanged()");
+			mutexServiceChanged .ReleaseMutex();
 		
 			return 0;
 		}
@@ -254,24 +262,28 @@ namespace DShowNET.BDA
 		public int ScheduleEntryChanged([In] object    varScheduleEntryDescriptionID)
 		{
 			DirectShowUtil.DebugWrite("ScheduleEntryChanged()");
+			mutexScheduleEntryChanged .ReleaseMutex();
 			return 0;
 		}
 
 		public int ProgramDeleted([In] object    varProgramDescriptionID)
 		{
 			DirectShowUtil.DebugWrite("ProgramDeleted()");
+			mutexProgramDeleted.ReleaseMutex();
 			return 0;
 		}
 
 		public int ServiceDeleted([In] object    varServiceDescriptionID)
 		{
 			DirectShowUtil.DebugWrite("ServiceDeleted()");
+			mutexServiceDeleted.ReleaseMutex();
 			return 0;
 		}
 
 		public int ScheduleDeleted([In] object    varScheduleEntryDescriptionID)
 		{
 			DirectShowUtil.DebugWrite("ScheduleDeleted()");
+			mutexScheduleDeleted.ReleaseMutex();
 			return 0;
 		}
 	}
