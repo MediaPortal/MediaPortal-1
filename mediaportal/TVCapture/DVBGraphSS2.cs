@@ -488,6 +488,7 @@ namespace MediaPortal.TV.Recording
 		protected bool      m_bOverlayVisible=false;
 		protected int		m_actualTab=0x50;
 		protected int		m_videoRender=0;
+		protected DVBChannel m_currentChannel=new DVBChannel();
 		//
 
 
@@ -1046,6 +1047,7 @@ namespace MediaPortal.TV.Recording
 			pinObj0=DirectShowUtil.FindPinNr(m_mpeg2Analyzer,PinDirection.Input,0);
 			if(pinObj0!=null)
 			{
+				
 				hr=m_sourceGraph.Connect(m_videoPin,pinObj0);
 				if(hr==0)
 				{
@@ -1360,6 +1362,7 @@ namespace MediaPortal.TV.Recording
 
 				DVBChannel ch=new DVBChannel();
 				TVDatabase.GetSatChannel(channelID,ref ch);
+				m_currentChannel=ch;
 				Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency);
 			}
 			
@@ -1381,7 +1384,10 @@ namespace MediaPortal.TV.Recording
 		/// <returns>boolean indiciating if the graph supports timeshifting</returns>
 		public bool SupportsTimeshifting()
 		{
+			if(m_currentChannel.ServiceType==1)
 			return true;
+			else
+				return false;
 		}
 
 
@@ -1402,9 +1408,11 @@ namespace MediaPortal.TV.Recording
 			AddPreferredCodecs();
 
 			// render here for viewing
+			if(m_currentChannel.ServiceType==1)
 			hr=m_sourceGraph.Render(m_videoPin);
 			if(hr!=0)
 				return false;
+
 			hr=m_sourceGraph.Render(m_audioPin);
 			if(hr!=0)
 				return false;
