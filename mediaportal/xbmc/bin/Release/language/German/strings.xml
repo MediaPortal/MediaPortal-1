@@ -83,7 +83,7 @@
 	</string>  
 	<string>
 		<id>23</id>
-		<value>MÃ¤rz</value>
+		<value>März</value>
 	</string>  
 	<string>
 		<id>24</id>
@@ -143,7 +143,7 @@
 	</string>    
 	<string>
 		<id>105</id>
-		<value>GrÃ¶sse</value>
+		<value>Grösse</value>
 	</string>      
 	<string>
 		<id>106</id>
@@ -167,7 +167,7 @@
 	</string>   
 	<string>
 		<id>111</id>
-		<value>VerknÃ¼pfungen</value>
+		<value>Verknüpfungen</value>
 	</string>   
 	<string>
 		<id>112</id>
@@ -191,7 +191,7 @@
 	</string>   
 	<string>
 		<id>117</id>
-		<value>LÃ¶schen</value>
+		<value>Löschen</value>
 	</string>
 	<string>
 		<id>118</id>
@@ -211,7 +211,7 @@
 	</string>   
 	<string>
 		<id>122</id>
-		<value>LÃ¶schen best.</value>
+		<value>Löschen best.</value>
 	</string>   
 	<string>
 		<id>123</id>
@@ -223,7 +223,7 @@
 	</string>   
 	<string>
 		<id>125</id>
-		<value>LÃ¶schen?</value>
+		<value>Löschen?</value>
 	</string>  
 	<string>
 		<id>126</id>
@@ -255,7 +255,7 @@
 	</string>  
 	<string>
 		<id>133</id>
-		<value>KÃ¼nstler</value>
+		<value>Künstler</value>
 	</string>  
 	<string>
 		<id>134</id>
@@ -367,11 +367,11 @@
 	</string> 
 	<string>
 		<id>161</id>
-		<value>Nicht verfÃ¼gbar</value>
+		<value>Nicht verfügbar</value>
 	</string> 
 	<string>
 		<id>162</id>
-		<value>Laufwerk geÃ¶ffnet</value>
+		<value>Laufwerk geöffnet</value>
 	</string> 
 	<string>
 		<id>163</id>
@@ -379,11 +379,11 @@
 	</string> 
 	<string>
 		<id>164</id>
-		<value>DatentrÃ¤ger fehlt</value>
+		<value>Datenträger fehlt</value>
 	</string> 
 	<string>
 		<id>165</id>
-		<value>DatentrÃ¤ger eingelegt</value>
+		<value>Datenträger eingelegt</value>
 	</string> 
 	<string>
 		<id>166</id>
@@ -399,7 +399,7 @@
 	</string> 
 	<string>
 		<id>169</id>
-		<value>AuflÃ¶sung:</value>
+		<value>Auflösung:</value>
 	</string> 
 	<string>
 		<id>170</id>
@@ -407,11 +407,11 @@
 	</string> 
 	<string>
 		<id>171</id>
-		<value>KÃ¼nstler:</value>
+		<value>Künstler:</value>
 	</string> 
 	<string>
 		<id>172</id>
-		<value>VerÃ¶ffentlichung:</value>
+		<value>Veröffentlichung:</value>
 	</string> 
 	<string>
 		<id>173</id>
@@ -423,7 +423,7 @@
 	</string> 
 	<string>
 		<id>175</id>
-		<value>TÃ¶ne:</value>
+		<value>Töne:</value>
 	</string> 
 	<string>
 		<id>176</id>
@@ -447,7 +447,7 @@
 	</string> 
 	<string>
 		<id>181</id>
-		<value>Film/Album wÃ¤hlen</value>
+		<value>Film/Album wählen</value>
 	</string> 
 	<string>
 		<id>182</id>
@@ -475,7 +475,7 @@
 	</string>  
 	<string>
 		<id>188</id>
-		<value>alle auswÃ¤hlen</value>
+		<value>alle auswählen</value>
 	</string>  
 	<string>
 		<id>189</id>
@@ -491,7 +491,7 @@
 	</string>  
 	<string>
 		<id>192</id>
-		<value>LÃ¶schen</value>
+		<value>Löschen</value>
 	</string>  
 	<string>
 		<id>193</id>
@@ -507,7 +507,7 @@
 	</string> 
 	<string>
 		<id>196</id>
-		<value>Film wÃ¤hlen:</value>
+		<value>Film wählen:</value>
 	</string> 
 	<string>
 		<id>197</id>
@@ -547,7 +547,7 @@
 	</string> 
 	<string>
 		<id>206</id>
-		<value>KÃ¼nstler</value>
+		<value>Künstler</value>
 	</string> 
 	<string>
 		<id>207</id>
@@ -559,7 +559,7 @@
 	</string> 
 	<string>
 		<id>209</id>
-		<value>NÃ¤chste</value>
+		<value>Nächste</value>
 	</string> 
 	<string>
 		<id>210</id>
@@ -623,7 +623,7 @@
 	</string> 
 	<string>
 		<id>225</id>
-		<value>Ãœbergangszeit</value>
+		<value>Übergangszeit</value>
 	</string> 
 	<string>
 		<id>226</id>
@@ -635,7 +635,7 @@
 	</string> 
 	<string>
 		<id>228</id>
-		<value>zufÃ¤llige Wiedergabeliste</value>
+		<value>zufällige Wiedergabeliste</value>
 	</string> 
 	<string>
 		<id>229</id>
@@ -667,7 +667,7 @@
 	</string> 
 	<string>
 		<id>236</id>
-		<value>GauÃŸsch Kubisch</value>
+		<value>Gaußsch Kubisch</value>
 	</string> 
 	<string>
 		<id>237</id>
@@ -675,7 +675,7 @@
 	</string> 
 	<string>
 		<id>238</id>
-		<value>VergrÃ¶sserung:</value>
+		<value>Vergrösserung:</value>
 	</string>
 	<string>
 		<id>240</id>
@@ -723,15 +723,15 @@
 	</string>
 	<string>
 		<id>251</id>
-		<value>Ziel-Ordner wÃ¤hlen</value>
+		<value>Ziel-Ordner wählen</value>
 	</string>
 	<string>
 		<id>252</id>
-		<value>Audio-Ausgabe Ã¼ber alle Lautsprecher</value>
+		<value>Audio-Ausgabe über alle Lautsprecher</value>
 	</string>
 	<string>
 		<id>253</id>
-		<value>Anzahl der KanÃ¤le</value>
+		<value>Anzahl der Kanäle</value>
 	</string>
 	<string>
 		<id>254</id>
@@ -755,7 +755,7 @@
 	</string>
 	<string>
 		<id>259</id>
-		<value>Ã–ffne</value>
+		<value>Öffne</value>
 	</string>
 	<string>
 		<id>260</id>
@@ -795,7 +795,7 @@
 	</string>
 	<string>
 		<id>269</id>
-		<value>Sortiere nach: KÃ¼nstler</value>
+		<value>Sortiere nach: Künstler</value>
 	</string>
 	<string>
 		<id>270</id>
@@ -819,11 +819,11 @@
 	</string>
 	<string>
 		<id>275</id>
-		<value>PixelverhÃ¤ltnis einstellen</value>
+		<value>Pixelverhältnis einstellen</value>
 	</string>
 	<string>
 		<id>276</id>
-		<value>ACHTUNG! FÃ¼r beste QualitÃ¤t 0,0 lassen. VerÃ¤ndern, um verkleinertes Video einzupassen.</value>
+		<value>ACHTUNG! Für beste Qualität 0,0 lassen. Verändern, um verkleinertes Video einzupassen.</value>
 	</string>
 	<string>
 		<id>277</id>
@@ -831,7 +831,7 @@
 	</string>
 	<string>
 		<id>278</id>
-		<value>WICHTIG! Ã„ndere das Rechteck so, das es ein perfektes Quadrat ergibt</value>
+		<value>WICHTIG! Ändere das Rechteck so, das es ein perfektes Quadrat ergibt</value>
 	</string>
 	<string>
 		<id>279</id>
@@ -843,11 +843,11 @@
 	</string>
 	<string>
 		<id>281</id>
-		<value>Bitte die *.xml Dateien Ã¼berprÃ¼fen</value>
+		<value>Bitte die *.xml Dateien überprüfen</value>
 	</string>
 	<string>
 		<id>282</id>
-		<value>%i EintrÃ¤ge gefunden</value>
+		<value>%i Einträge gefunden</value>
 	</string>
 	<string>
 		<id>283</id>
@@ -875,11 +875,11 @@
 	</string>
 	<string>
 		<id>289</id>
-		<value>GrÃ¶sse</value>
+		<value>Grösse</value>
 	</string>
 	<string>
 		<id>290</id>
-		<value>LautstÃ¤rke (dB)</value>
+		<value>Lautstärke (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
@@ -903,11 +903,11 @@
 	</string>
 	<string>
 		<id>296</id>
-		<value>Lesezeichen lÃ¶sch.</value>
+		<value>Lesezeichen lösch.</value>
 	</string>
 	<string>
 		<id>297</id>
-		<value>AV-VerzÃ¶g.</value>
+		<value>AV-Verzög.</value>
 	</string>
 	<string>
 		<id>298</id>
@@ -919,7 +919,7 @@
 	</string>
 	<string>
 		<id>301</id>
-		<value>2. LautstÃ¤rke</value>
+		<value>2. Lautstärke</value>
 	</string>
 	<string>
 		<id>302</id>
@@ -927,7 +927,7 @@
 	</string>
 	<string>
 		<id>303</id>
-		<value>VerzÃ¶gerung</value>
+		<value>Verzögerung</value>
 	</string>
 	<string>
 		<id>304</id>
@@ -987,7 +987,7 @@
 	</string>
 	<string>
 		<id>318</id>
-		<value>Markiere gelÃ¶schte Lieder</value>
+		<value>Markiere gelöschte Lieder</value>
 	</string>
 	<string>
 		<id>319</id>
@@ -995,7 +995,7 @@
 	</string>
 	<string>
 		<id>320</id>
-		<value>suche KÃ¼nstler...</value>
+		<value>suche Künstler...</value>
 	</string>
 	<string>
 		<id>321</id>
@@ -1027,11 +1027,11 @@
 	</string>
 	<string>
 		<id>328</id>
-		<value>schreibe Ã„nderungen...</value>
+		<value>schreibe Änderungen...</value>
 	</string>
 	<string>
 		<id>329</id>
-		<value>Fehler beim Schreiben der Ã„nderungen</value>
+		<value>Fehler beim Schreiben der Änderungen</value>
 	</string>
 	<string>
 		<id>330</id>
@@ -1075,7 +1075,7 @@
 	</string>
 	<string>
 		<id>340</id>
-		<value>versch. KÃ¼nstler</value>
+		<value>versch. Künstler</value>
 	</string>
 	<string>
 		<id>341</id>
@@ -1091,7 +1091,7 @@
 	</string>
 	<string>
 		<id>344</id>
-		<value>KÃ¼nstler</value>
+		<value>Künstler</value>
 	</string>
 	<string>
 		<id>345</id>
@@ -1203,7 +1203,7 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>Ã¼berwiegend</value>
+		<value>überwiegend</value>
 	</string>
 	<string>
 		<id>373</id>
@@ -1211,7 +1211,7 @@
 	</string>
 	<string>
 		<id>374</id>
-		<value>bewÃ¶lkt</value>
+		<value>bewölkt</value>
 	</string>
 	<string>
 		<id>375</id>
@@ -1279,7 +1279,7 @@
 	</string>
 	<string>
 		<id>399</id> 
-		<value>WindstÃ¤rkeeinheit</value> 
+		<value>Windstärkeeinheit</value> 
 	</string>
 	<string>
 		<id>400</id> 
@@ -1291,7 +1291,7 @@
 	</string>   
 	<string>
 		<id>402</id>
-		<value>GefÃ¼hlt</value>
+		<value>Gefühlt</value>
 	</string> 
 	<string>
 		<id>403</id>
@@ -1319,11 +1319,11 @@
 	</string>      
 	<string>
 		<id>410</id>
-		<value>Ã–ffne Weather.com</value>
+		<value>Öffne Weather.com</value>
 	</string>       
 	<string>
 		<id>411</id>
-		<value>Lade Wetterinformationen fÃ¼r:</value>
+		<value>Lade Wetterinformationen für:</value>
 	</string> 
 	<string>
 		<id>412</id>
@@ -1335,7 +1335,7 @@
 	</string>    
 	<string>
 		<id>414</id>
-		<value>Keine Bewertung fÃ¼r dieses Album</value>
+		<value>Keine Bewertung für dieses Album</value>
 	</string>    
 	<string>
 		<id>415</id>
@@ -1355,7 +1355,7 @@
 	</string> 
 	<string>
 		<id>419</id>
-		<value>Videos/KÃ¼nstler</value>
+		<value>Videos/Künstler</value>
 	</string> 
 	<string>
 		<id>420</id>
@@ -1367,11 +1367,11 @@
 	</string> 
 	<string>
 		<id>422</id>
-		<value>Albuminformation lÃ¶schen</value>
+		<value>Albuminformation löschen</value>
 	</string> 
 	<string>
 		<id>423</id>
-		<value>lÃ¶sche CDDB-Information</value>
+		<value>lösche CDDB-Information</value>
 	</string> 
 	<string>
 		<id>424</id>
@@ -1387,7 +1387,7 @@
 	</string> 
 	<string>
 		<id>427</id>
-		<value>DatentrÃ¤ger:</value>
+		<value>Datenträger:</value>
 	</string> 
 	<string>
 		<id>428</id>
@@ -1407,7 +1407,7 @@
 	</string>  
 	<string>
 		<id>432</id>
-		<value>LÃ¶sche Film aus der Datenbank</value>
+		<value>Lösche Film aus der Datenbank</value>
 	</string>  
 	<string>
 		<id>433</id>
@@ -1415,7 +1415,7 @@
 	</string>  
 	<string>
 		<id>434</id>
-		<value>Film gelÃ¶scht werden soll?</value>
+		<value>Film gelöscht werden soll?</value>
 	</string> 
 	<string>
 		<id>435</id>
@@ -1431,7 +1431,7 @@
 	</string> 
 	<string>
 		<id>438</id>
-		<value>Ã–ffne Datei</value>
+		<value>Öffne Datei</value>
 	</string> 
 	<string>
 		<id>439</id>
@@ -1551,7 +1551,7 @@
 	</string> 
 	<string>
 		<id>468</id>
-		<value>Leiste bewegen, um die OSD-Einstellung zu Ã¤ndern</value>
+		<value>Leiste bewegen, um die OSD-Einstellung zu ändern</value>
 	</string>
 	<string>
 		<id>469</id>
@@ -1571,7 +1571,7 @@
 	</string>
 	<string>
 		<id>473</id>
-		<value>Resampling (hohe QualitÃ¤t)</value>
+		<value>Resampling (hohe Qualität)</value>
 	</string>
 	<string>
 		<id>474</id>
@@ -1599,7 +1599,7 @@
 	</string>
 	<string>
 		<id>480</id>
-		<value>BenutzeroberflÃ¤che</value>
+		<value>Benutzeroberfläche</value>
 	</string>
 	<string>
 		<id>481</id>
@@ -1607,7 +1607,7 @@
 	</string>
 	<string>
 		<id>482</id>
-		<value>Information Ã¼ber Media Portal</value>
+		<value>Information über Media Portal</value>
 	</string>
 	<string>
 		<id>483</id>
@@ -1615,11 +1615,11 @@
 	</string>
 	<string>
 		<id>484</id>
-		<value>KÃ¼nstler</value>
+		<value>Künstler</value>
 	</string>
 	<string>
 		<id>485</id>
-		<value>Album lÃ¶schen</value>
+		<value>Album löschen</value>
 	</string>
 	<string>
 		<id>486</id>
@@ -1699,7 +1699,7 @@
 	</string>
 	<string>
 		<id>613</id>
-		<value>Immer auf allen KanÃ¤len aufnehmen</value>
+		<value>Immer auf allen Kanälen aufnehmen</value>
 	</string>
 	<string>
 		<id>614</id>
@@ -1711,7 +1711,7 @@
 	</string>
 	<string>
 		<id>616</id>
-		<value>Aufnahmemodus Ã¤ndern</value>
+		<value>Aufnahmemodus ändern</value>
 	</string>
 	<string>
 		<id>617</id>
@@ -1719,11 +1719,11 @@
 	</string>
 	<string>
 		<id>618</id>
-		<value>LÃ¶schen</value>
+		<value>Löschen</value>
 	</string>
 	<string>
 		<id>619</id>
-		<value>Datum/Zeit Ã¤ndern</value>
+		<value>Datum/Zeit ändern</value>
 	</string>
 	<string>
 		<id>620</id>
@@ -1743,19 +1743,19 @@
 	</string>
 	<string>
 		<id>624</id>
-		<value>AufrÃ¤umen</value>
+		<value>Aufräumen</value>
 	</string>
 	<string>
 		<id>625</id>
-		<value>Aufnahmen gelÃ¶scht:</value>
+		<value>Aufnahmen gelöscht:</value>
 	</string>
 	<string>
 		<id>626</id>
-		<value>Typ Ã¤ndern</value>
+		<value>Typ ändern</value>
 	</string>
 	<string>
 		<id>627</id>
-		<value>KanÃ¤le:</value>
+		<value>Kanäle:</value>
 	</string>
 	<string>
 		<id>628</id>
@@ -1807,15 +1807,15 @@
 	</string>
 	<string>
 		<id>640</id> 
-		<value>SÃ¤ttigung</value> 
+		<value>Sättigung</value> 
 	</string>
 	<string>
 		<id>641</id>
-		<value>SchÃ¤rfe</value>
+		<value>Schärfe</value>
 	</string>
 	<string>
 		<id>642</id>
-		<value>Lade TV-KanÃ¤le</value>
+		<value>Lade TV-Kanäle</value>
 	</string>
 	<string>
 		<id>643</id>
@@ -1839,7 +1839,7 @@
 	</string>
 	<string>
 		<id>648</id>
-		<value>TÃ¤glich</value>
+		<value>Täglich</value>
 	</string>
 	<string>
 		<id>649</id>
@@ -1851,7 +1851,7 @@
 	</string>
 	<string>
 		<id>651</id>
-		<value>Immer auf allen KanÃ¤len</value>
+		<value>Immer auf allen Kanälen</value>
 	</string>
 	<string>
 		<id>652</id>
@@ -1859,7 +1859,7 @@
 	</string>
 	<string>
 		<id>653</id>
-		<value>Aufnahme lÃ¶schen?</value>
+		<value>Aufnahme löschen?</value>
 	</string>
 	<string>
 		<id>654</id>
@@ -1871,7 +1871,7 @@
 	</string>
 	<string>
 		<id>656</id>
-		<value>Aufnahme lÃ¶schen</value>
+		<value>Aufnahme löschen</value>
 	</string>
 	<string>
 		<id>657</id>
@@ -1903,7 +1903,7 @@
 	</string>
 	<string>
 		<id>664</id>
-		<value>Bild lÃ¶schen?</value>
+		<value>Bild löschen?</value>
 	</string>
 	<string>
 		<id>665</id>
@@ -1951,7 +1951,7 @@
 	</string>
 	<string>
 		<id>676</id>
-		<value>Aufnahmen lÃ¶schen?</value>
+		<value>Aufnahmen löschen?</value>
 	</string>	
 	<string>
 		<id>677</id>
@@ -1963,7 +1963,7 @@
 	</string>	
 	<string>
 		<id>679</id>
-		<value>WÃ¶chentlich</value>
+		<value>Wöchentlich</value>
 	</string>	
 	<string>
 		<id>680</id>
@@ -2035,11 +2035,11 @@
 	</string>
 	<string>
 		<id>705</id>
-		<value>Empfange RSS Feed fÃ¼r </value>
+		<value>Empfange RSS Feed für </value>
 	</string>
 	<string>
 		<id>706</id>
-		<value>AuswÃ¤hlen</value>
+		<value>Auswählen</value>
 	</string>
 	<string>
 		<id>707</id>
@@ -2055,7 +2055,7 @@
 	</string>
 	<string>
 		<id>710</id>
-		<value>Neue Version verfÃ¼gbar</value>
+		<value>Neue Version verfügbar</value>
 	</string>
 	<string>
 		<id>711</id>
@@ -2063,7 +2063,7 @@
 	</string>
 	<string>
 		<id>712</id>
-		<value>ZurÃ¼ck</value>
+		<value>Zurück</value>
 	</string>
 	<string>
 		<id>713</id>
@@ -2087,11 +2087,11 @@
 	</string>
 	<string>
 		<id>718</id>
-		<value>Top100 lÃ¶schen</value>
+		<value>Top100 löschen</value>
 	</string>
 	<string>
 		<id>719</id>
-		<value>Top100 lÃ¶schen?</value>
+		<value>Top100 löschen?</value>
 	</string>
 	<string>
 		<id>720</id>
@@ -2099,7 +2099,7 @@
 	</string>
 	<string>
 		<id>721</id>
-		<value>Anzeige: HÃ¤ufigkeit</value>
+		<value>Anzeige: Häufigkeit</value>
 	</string>
 	<string>
 		<id>722</id>
@@ -2127,7 +2127,7 @@
 	</string>
 	<string>
 		<id>728</id>
-		<value>Start nicht mÃ¶glich</value>
+		<value>Start nicht möglich</value>
 	</string>
 	<string>
 		<id>729</id>
@@ -2139,7 +2139,7 @@
 	</string>
 	<string>
 		<id>731</id>
-		<value>die Aufnahme wird beim lÃ¶schen beendet!</value>
+		<value>die Aufnahme wird beim löschen beendet!</value>
 	</string>
 	<string>
 		<id>732</id>
@@ -2159,16 +2159,16 @@
 	</string>
 	<string>
 		<id>736</id>
-		<value>EPG-Daten nicht verfÃ¼gbar</value>
+		<value>EPG-Daten nicht verfügbar</value>
 	</string>
 
 	<string>
 		<id>800</id>
-		<value>FÃ¤ngt an mit</value>
+		<value>Fängt an mit</value>
 	</string>
 	<string>
 		<id>801</id>
-		<value>enthÃ¤lt</value>
+		<value>enthält</value>
 	</string>
 	<string>
 		<id>802</id>
@@ -2184,7 +2184,7 @@
 	</string>
 	<string>
 		<id>805</id>
-		<value>LÃ¶schen</value>
+		<value>Löschen</value>
 	</string>
 	<string>
 		<id>806</id>
@@ -2249,7 +2249,7 @@
 	</string>
 	<string>
 		<id>860</id>
-		<value>LautstÃ¤rke erhÃ¶hen</value>
+		<value>Lautstärke erhöhen</value>
 	</string>
 	<string>
 		<id>861</id>
@@ -2273,7 +2273,7 @@
 	</string>
 	<string>
 		<id>866</id>
-		<value>LautstÃ¤rke ausblenden</value>
+		<value>Lautstärke ausblenden</value>
 	</string>
 	<string>
 		<id>867</id>
@@ -2305,7 +2305,7 @@
 	</string>
 	<string>
 		<id>905</id>
-		<value>Das Plugin muÃŸ noch konfiguriert werden</value>
+		<value>Das Plugin muß noch konfiguriert werden</value>
 	</string>
 	<string>
 		<id>906</id>
@@ -2381,15 +2381,15 @@
 	</string>
 	<string>
 		<id>924</id>
-		<value>MenÃ¼</value>
+		<value>Menü</value>
 	</string>
 	<string>
 		<id>925</id>
-		<value>LÃ¶sche diesen Film</value>
+		<value>Lösche diesen Film</value>
 	</string>
 	<string>
 		<id>926</id>
-		<value>Zur Wiedergabeliste hinzufÃ¼gen</value>
+		<value>Zur Wiedergabeliste hinzufügen</value>
 	</string>
 	<string>
 		<id>927</id>
@@ -2401,11 +2401,11 @@
 	</string>
 	<string>
 		<id>929</id>
-		<value>Schliesse MenÃ¼</value>
+		<value>Schliesse Menü</value>
 	</string>
 	<string>
 		<id>930</id>
-		<value>Zu Favoriten hinzufÃ¼gen</value>
+		<value>Zu Favoriten hinzufügen</value>
 	</string>
 	<string>
 		<id>931</id>
@@ -2449,7 +2449,7 @@
 	</string>
 	<string>
 		<id>941</id>
-		<value>AuflÃ¶sung Ã¤ndern</value>
+		<value>Auflösung ändern</value>
 	</string>
 	<string>
 		<id>942</id>
@@ -2481,7 +2481,7 @@
 	</string>
 	<string>
 		<id>949</id>
-		<value>BeschÃ¤ftigt</value>
+		<value>Beschäftigt</value>
 	</string>
 	<string>
 		<id>950</id>
@@ -2505,7 +2505,7 @@
 	</string>
 	<string>
 		<id>955</id>
-		<value>UntÃ¤tig</value>
+		<value>Untätig</value>
 	</string>
 	<string>
 		<id>956</id>
@@ -2525,7 +2525,7 @@
 	</string>
 	<string>
 		<id>960</id>
-		<value>hat das GesprÃ¤ch verlassen</value>
+		<value>hat das Gespräch verlassen</value>
 	</string>
 	<string>
 		<id>961</id>
@@ -2535,7 +2535,7 @@
 	
 	<string>
 		<id>970</id>
-		<value>ZurÃ¼ck</value>
+		<value>Zurück</value>
 </string>
 	
 	<string>
@@ -2553,7 +2553,7 @@
 	</string>
 	<string>
 		<id>1952</id>
-		<value>LÃ¼fter</value>
+		<value>Lüfter</value>
 	</string>
 	<string>
 		<id>1953</id>
@@ -2569,7 +2569,7 @@
 	</string>
 	<string>
 		<id>1956</id>
-		<value>Alarmton wÃ¤hlen</value>
+		<value>Alarmton wählen</value>
 	</string>
 	<string>
 		<id>1957</id>
@@ -2645,7 +2645,7 @@
 	</string>
 	<string>
 		<id>1975</id>
-		<value>NÃ¤chste Seite</value>
+		<value>Nächste Seite</value>
 	</string>
 	<string>
 		<id>1976</id>
@@ -2654,7 +2654,7 @@
 	<!-- My Recipie Strings -->
 	<string>
 		<id>2005</id>
-		<value>LÃ¶schen</value>
+		<value>Löschen</value>
 	</string>
 	<string>
 		<id>2006</id>
@@ -2682,7 +2682,7 @@
 	</string>
 	<string>
 		<id>2012</id>
-		<value>LÃ¶schen</value>
+		<value>Löschen</value>
 	</string>
 	<string>
 		<id>2013</id>
@@ -2718,7 +2718,7 @@
 	</string>
 	<string>
 		<id>2021</id>
-		<value>groÃŸ</value>
+		<value>groß</value>
 	</string>
 	<string>
 		<id>2022</id>
@@ -2738,7 +2738,7 @@
 	</string>
 	<string>
 		<id>2026</id>
-		<value>SchuÃŸ</value>
+		<value>Schuß</value>
 	</string>
 	<string>
 		<id>2027</id>
@@ -2754,23 +2754,23 @@
 	</string>
 	<string>
 		<id>2030</id>
-		<value>StÃ¼ck</value>
+		<value>Stück</value>
 	</string>
 	<string>
 		<id>2031</id>
-		<value>TeelÃ¶ffel</value>
+		<value>Teelöffel</value>
 	</string>
 	<string>
 		<id>2032</id>
-		<value>TeelÃ¶ffel</value>
+		<value>Teelöffel</value>
 	</string>
 	<string>
 		<id>2033</id>
-		<value>EsslÃ¶ffel</value>
+		<value>Esslöffel</value>
 	</string>
 	<string>
 		<id>2034</id>
-		<value>EsslÃ¶ffel</value>
+		<value>Esslöffel</value>
 	</string>
 	<string>
 		<id>2035</id>
@@ -2830,11 +2830,11 @@
 	</string>
 	<string>
 		<id>2049</id>
-		<value>Rezept lÃ¶schen?</value>
+		<value>Rezept löschen?</value>
 	</string>
 	<string>
 		<id>2050</id>
-		<value>Kategorie lÃ¶schen?</value>
+		<value>Kategorie löschen?</value>
 	</string>
 	<string>
 		<id>2051</id>
@@ -2891,7 +2891,7 @@
 	</string>
 	<string>
 		<id>2109</id>
-		<value>AnschlieÃŸend OK betÃ¤tigen</value>
+		<value>Anschließend OK betätigen</value>
 	</string>
 	<string>
 		<id>2110</id>
@@ -2911,7 +2911,7 @@
 	</string>
 	<string>
 		<id>2114</id>
-		<value>RW LÃ¶schen</value>
+		<value>RW Löschen</value>
 	</string>
 	<string>
 		<id>2115</id>
@@ -2926,11 +2926,11 @@
 	</string>
 	<string>
 		<id>2201</id>
-		<value>Quelle wÃ¤hlen</value>
+		<value>Quelle wählen</value>
 	</string>
 	<string>
 		<id>2202</id>
-		<value>Ziel wÃ¤hlen</value>
+		<value>Ziel wählen</value>
 	</string>
 	<string>
 		<id>2203</id>
@@ -2942,7 +2942,7 @@
 	</string>
 	<string>
 		<id>2205</id>
-		<value>Auswahl zurÃ¼cksetzen</value>
+		<value>Auswahl zurücksetzen</value>
 	</string>
 	<string>
 		<id>2206</id>
@@ -2950,7 +2950,7 @@
 	</string>
 	<string>
 		<id>2207</id>
-		<value>MÃ¶chten Sie das Verzeichnis</value>
+		<value>Möchten Sie das Verzeichnis</value>
 	</string>
 	<string>
 		<id>2208</id>
@@ -2958,7 +2958,7 @@
 	</string>
 	<string>
 		<id>2209</id>
-		<value>MÃ¶chten Sie die ausgewÃ¤hlten Dateien kopieren?</value>
+		<value>Möchten Sie die ausgewählten Dateien kopieren?</value>
 	</string>
 	<string>
 		<id>2210</id>
@@ -2970,7 +2970,7 @@
 	</string>
 	<string>
 		<id>2212</id>
-		<value>Dateien lÃ¶schen</value>
+		<value>Dateien löschen</value>
 	</string>
 	<string>
 		<id>2213</id>
@@ -2978,7 +2978,7 @@
 	</string>
 	<string>
 		<id>2214</id>
-		<value>MÃ¶chten Sie die ausgewÃ¤hlten Dateien verschieben?</value>
+		<value>Möchten Sie die ausgewählten Dateien verschieben?</value>
 	</string>
 	<string>
 		<id>2215</id>
@@ -3019,7 +3019,7 @@
 	</string>
 	<string>
 		<id>8008</id>
-		<value>ZurÃ¼ck</value>
+		<value>Zurück</value>
 	</string>
 	<string>
 		<id>8009</id>
@@ -3047,7 +3047,7 @@
 	</string>
 	<string>
 		<id>8015</id>
-		<value>ÃœberprÃ¼fen Sie das Setup fÃ¼r Mailbox '{0}'</value>
+		<value>Überprüfen Sie das Setup für Mailbox '{0}'</value>
 	</string>
 	<string>
 		<id>8016</id>
@@ -3067,7 +3067,7 @@
 	</string>
 	<string>
 		<id>8020</id>
-		<value>E-Mail lÃ¶schen</value>
+		<value>E-Mail löschen</value>
 	</string>
 	<string>
 		<id>8021</id>
@@ -3087,7 +3087,7 @@
 	</string>
 	<string>
 		<id>8025</id>
-		<value>Nachricht prÃ¼fen</value>
+		<value>Nachricht prüfen</value>
 	</string>
 	<string>
 		<id>8030</id>
@@ -3103,11 +3103,11 @@
 	</string>
 	<string>
 		<id>9000</id>
-		<value>BildgrÃ¶ÃŸe:</value>
+		<value>Bildgröße:</value>
 	</string>
 	<string>
 		<id>9001</id>
-		<value>AuflÃ¶sung:</value>
+		<value>Auflösung:</value>
 	</string>
 	<string>
 		<id>9002</id>
@@ -3115,7 +3115,7 @@
 	</string>
 	<string>
 		<id>9003</id>
-		<value>MeÃŸwert:</value>
+		<value>Meßwert:</value>
 	</string>
 	<string>
 		<id>9004</id>
@@ -3143,7 +3143,7 @@
 	</string>
 	<string>
 		<id>9010</id>
-		<value>GerÃ¤te-Typ:</value>
+		<value>Geräte-Typ:</value>
 	</string>
 	<string>
 		<id>9011</id>
@@ -3151,7 +3151,7 @@
 	</string>
 	<string>
 		<id>10000</id>
-		<value>HauptmenÃ¼</value>
+		<value>Hauptmenü</value>
 	</string>
 	<string>
 		<id>10001</id>
@@ -3231,7 +3231,7 @@
 	</string>
 	<string>
 		<id>10022</id>
-		<value>Video/KÃ¼nstler</value>
+		<value>Video/Künstler</value>
 	</string>
 	<string>
 		<id>10023</id>
@@ -3303,7 +3303,7 @@
 	</string>
 	<string>
 		<id>10503</id>
-		<value>Musik/KÃ¼nstler</value>
+		<value>Musik/Künstler</value>
 	</string>
 	<string>
 		<id>10504</id>
@@ -3359,7 +3359,7 @@
 	</string>
 	<string>
 		<id>10757</id>
-		<value>Status-VorzÃ¼ge</value>
+		<value>Status-Vorzüge</value>
 	</string>
 	<string>
 		<id>11000</id>
@@ -3407,11 +3407,11 @@
 	</string>
 	<string>
 		<id>12011</id>
-		<value>KÃ¼nstler Info</value>
+		<value>Künstler Info</value>
 	</string>
 	<string>
 		<id>12012</id>
-		<value>Kontext MenÃ¼</value>
+		<value>Kontext Menü</value>
 	</string>
 	<string>
 		<id>12013</id>
@@ -3464,7 +3464,7 @@
 	</string>
 	<string>
 		<id>13007</id>
-		<value>GroÃŸe Bilder</value>
+		<value>Große Bilder</value>
 	</string>
 	<string>
 		<id>13008</id>
@@ -3472,11 +3472,11 @@
 	</string>
 	<string>
 		<id>13009</id>
-		<value>ZufÃ¤llige ÃœbergÃ¤nge</value>
+		<value>Zufällige Übergänge</value>
 	</string>
 	<string>
 		<id>13010</id>
-		<value>X-fade ÃœbergÃ¤nge</value>
+		<value>X-fade Übergänge</value>
 	</string>
 	<string>
 		<id>13011</id>
