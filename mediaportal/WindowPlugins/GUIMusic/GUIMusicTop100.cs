@@ -42,7 +42,6 @@ namespace MediaPortal.GUI.Music
       
       m_directory.AddDrives();
       m_directory.SetExtensions(Utils.AudioExtensions);
-      LoadSettings();
     } 
 
     public override bool Init()
@@ -51,45 +50,17 @@ namespace MediaPortal.GUI.Music
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load(GUIGraphicsContext.Skin + @"\mymusictop100.xml");
     }
-
-    #region Serialisation
-    void LoadSettings()
-    {
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+		protected override string SerializeName
+		{
+			get
 			{
-				currentView=(View)xmlreader.GetValueAsInt("musictop100","view", (int)View.List);
+				return "musictop100";
 			}
-    }
-
-    void SaveSettings()
-    {
-      using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("musictop100","view",(int)currentView);
-      }
-    }
-    #endregion
-
+		}
 
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			LoadSettings();
-			switch (currentView)
-			{
-				case View.List : 
-					facadeView.View=GUIFacadeControl.ViewMode.List;
-					break;
-				case View.Icons : 
-					facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
-					break;
-				case View.LargeIcons: 
-					facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
-					break;
-				case View.Albums: 
-					facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
-					break;
-			}
           
 			SelectCurrentItem();
 			UpdateButtonStates();
@@ -102,7 +73,6 @@ namespace MediaPortal.GUI.Music
 			{
 				MusicState.StartWindow=newWindowId;
 			}
-			SaveSettings();
 			base.OnPageDestroy (newWindowId);
 		}
 

@@ -38,6 +38,48 @@ namespace MediaPortal.GUI.Music
 		public GUIMusicBaseWindow()
 		{
 		}
+
+		protected virtual string SerializeName
+		{
+			get
+			{
+				return String.Empty;
+			}
+		}
+		#region Serialisation
+		void LoadSettings()
+		{
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				currentView=(View)xmlreader.GetValueAsInt(SerializeName,"view", (int)View.List);
+			}
+			switch (currentView)
+			{
+				case View.List : 
+					facadeView.View=GUIFacadeControl.ViewMode.List;
+					break;
+				case View.Icons : 
+					facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
+					break;
+				case View.LargeIcons: 
+					facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
+					break;
+				case View.Albums: 
+					facadeView.View=GUIFacadeControl.ViewMode.AlbumView;
+					break;
+			}
+
+		}
+
+		void SaveSettings()
+		{
+			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue(SerializeName,"view",(int)currentView);
+			}
+		}
+		#endregion
+
 		protected GUIListItem GetSelectedItem()
 		{
 				return facadeView.SelectedListItem;
@@ -262,6 +304,14 @@ namespace MediaPortal.GUI.Music
 					}
 				}
 			}
+		}
+		protected override void OnPageLoad()
+		{
+			LoadSettings();
+		}
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			SaveSettings();
 		}
 	}
 }
