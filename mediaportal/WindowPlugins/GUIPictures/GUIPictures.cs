@@ -241,7 +241,7 @@ namespace MediaPortal.GUI.Pictures
           {
             GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
           }
-										return true;
+					return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           m_iItemSelected=GetSelectedItemNo();
@@ -424,7 +424,8 @@ namespace MediaPortal.GUI.Pictures
     {
       return GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_VIEW);
     }
-    void UpdateButtons()
+    
+		void UpdateButtons()
     {
       string strLine="";
       View view=(View)_MapSettings.ViewAs;
@@ -507,6 +508,53 @@ namespace MediaPortal.GUI.Pictures
       }
       UpdateButtons();
     }
+
+		void OnDeleteItem(GUIListItem item)
+		{
+			if (item.IsRemote) return;
+
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null==dlgYesNo) return;
+			string strFileName=System.IO.Path.GetFileName(item.Path);
+			if (!item.IsFolder) dlgYesNo.SetHeading(664);
+			else dlgYesNo.SetHeading(503);
+			dlgYesNo.SetLine(1,strFileName);
+			dlgYesNo.SetLine(2, "");
+			dlgYesNo.SetLine(3, "");
+			dlgYesNo.DoModal(GetID);
+
+			if (!dlgYesNo.IsConfirmed) return;
+			DoDeleteItem(item);
+						
+			m_iItemSelected=GetSelectedItemNo();
+			if (m_iItemSelected>0) m_iItemSelected--;
+			LoadDirectory(m_strDirectory);
+			if (m_iItemSelected>=0)
+			{
+				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
+			}					
+		}
+
+		void DoDeleteItem(GUIListItem item)
+		{
+			if (item.IsFolder)
+			{
+				if (item.Label != "..")
+				{
+					ArrayList items = new ArrayList();
+					items=m_directory.GetDirectoryUnProtected(item.Path,false);
+					foreach(GUIListItem subItem in items)
+					{
+						DoDeleteItem(subItem);
+					}
+					Utils.DirectoryDelete(item.Path);
+				}
+			}
+			else if (!item.IsRemote)
+			{  			
+				Utils.FileDelete(item.Path);
+			}
+		}
 
 		void LoadFolderSettings(string strDirectory)
 		{
@@ -1210,7 +1258,9 @@ namespace MediaPortal.GUI.Pictures
 				dlg.AddLocalizedString(108); //start slideshow
 				dlg.AddLocalizedString(940); //properties
 			}
-			if (!item.IsRemote && m_bFileMenuEnabled)
+
+			int iPincodeCorrect;
+			if (!m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && m_bFileMenuEnabled)
 			{
 				dlg.AddLocalizedString(500); // FileMenu
 			}
@@ -1219,10 +1269,6 @@ namespace MediaPortal.GUI.Pictures
 			if (dlg.SelectedId==-1) return;
 			switch (dlg.SelectedId)
 			{
-				case 117: // delete
-					OnDeleteItem(item);
-					break;
-
 				case 735: // rotate
 					OnRotatePicture();
 				break;
@@ -1259,126 +1305,24 @@ namespace MediaPortal.GUI.Pictures
 		
 		void ShowFileMenu()
 		{
-			bool bReload = false;
-
 			GUIListItem item=m_itemItemSelected;
 			if (item==null) return;
 			if (item.IsFolder && item.Label=="..") return;
 
-			GUIControl cntl=GetControl((int)Controls.CONTROL_VIEW);
-			if (cntl==null) return; // Control not found
+			// init
+			GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILE);
+			if (dlgFile == null) return;
+			
+			// File operation settings
+			dlgFile.SetSourceItem(item);
+			dlgFile.SetSourceDir(m_strDirectory);
+			dlgFile.SetDestinationDir(m_strDestination);
+			dlgFile.SetDirectoryStructure(m_directory);
+			dlgFile.DoModal(GetID);
+			m_strDestination = dlgFile.GetDestinationDir();
 
-			GUIDialogMenu	dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg==null) return;
-			dlg.Reset();
-			dlg.SetHeading(500); // File menu
-	
-			if (m_strDestination != "")
-			{
-				dlg.AddLocalizedString(115); //copy
-				if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(116); //move					
-			}
-			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(118); //rename				
-			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(117); //delete
-			if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(119); //new folder
-
-			if (item.IsFolder && !Utils.IsDVD(item.Path))
-			{
-				dlg.AddLocalizedString(501); // Set as destination
-			}
-			if (m_strDestination != "") dlg.AddLocalizedString(504); // Goto destination
-			     
-			dlg.DoModal(GetID);
-			if (dlg.SelectedId==-1) return;
-			switch (dlg.SelectedId)
-			{
-				case 117: // delete
-					OnDeleteItem(item);
-					break;
-
-				case 118: // rename
-				{
-					string strSourceName = "";
-					if (item.IsFolder)
-						strSourceName = System.IO.Path.GetFileName(item.Path);
-					else
-						strSourceName = System.IO.Path.GetFileNameWithoutExtension(item.Path);
-
-					string strExtension = System.IO.Path.GetExtension(item.Path);
-					string strDestinationName = strSourceName;
-					if (GetUserInputString(ref strDestinationName) == true)
-					{
-						if (item.IsFolder)
-						{
-							// directory rename
-							if (Directory.Exists(m_strDirectory+"\\"+strSourceName))
-							{
-								try
-								{
-									Directory.Move(m_strDirectory+"\\"+strSourceName, m_strDirectory+"\\"+strDestinationName);
-								}
-								catch(Exception) 
-								{
-									ShowError(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
-								}
-								bReload = true;
-							}
-						}
-						else
-						{
-							// file rename
-							if (File.Exists(item.Path))
-							{
-								string strDestinationFile = m_strDirectory+"\\"+strDestinationName+strExtension;
-								try
-								{									
-									File.Move(item.Path, strDestinationFile);
-								}
-								catch(Exception) 
-								{
-									ShowError(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
-								}
-								bReload = true;
-							}
-						}						
-					}
-				}
-					break;
-
-				case 115: // copy				
-					{
-						FileItemMove(false, item);
-					}
-					break;
-
-				case 116: // move
-					{
-						FileItemMove(true, item);
-						bReload = true;
-					}
-					break;
-				
-				case 119: // make dir
-				{
-					MakeDir();
-					bReload = true;
-				}
-					break;
-
-				case 501: // set as destiantion
-					m_strDestination = System.IO.Path.GetFullPath(item.Path)+"\\";					
-					break;
-
-				case 504: // goto destination
-				{
-					m_strDirectory = m_strDestination;
-					m_iItemSelected = -1;
-					bReload = true;
-				}
-					break;
-			}
-
-			if (bReload)
+			//final		
+			if (dlgFile.Reload())
 			{
 				LoadDirectory(m_strDirectory);
 				if (m_iItemSelected>=0)
@@ -1386,6 +1330,9 @@ namespace MediaPortal.GUI.Pictures
 					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
 				}
 			}
+
+			dlgFile.DeInit();
+			dlgFile=null;
 		}
 
 		bool GetUserInputString(ref string sString)
@@ -1397,119 +1344,6 @@ namespace MediaPortal.GUI.Pictures
 			System.GC.Collect(); // collect some garbage
 			if (keyBoard.IsConfirmed) sString=keyBoard.Text;
 			return keyBoard.IsConfirmed;
-		}
-
-		void ShowError(int iAction, string SourceOfError)
-		{
-			GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-			if(dlgOK !=null)
-			{
-				dlgOK.SetHeading(iAction);
-				dlgOK.SetLine(1,SourceOfError);
-				dlgOK.SetLine(2,502);
-				dlgOK.DoModal(GetID);
-			}
-		}
-
-		void MakeDir() 
-		{
-			// Get input string
-			string verStr = "";
-			GetUserInputString(ref verStr);
-
-			// Ask user confirmation
-				string path = m_strDirectory+"\\"+verStr;
-			try 
-			{
-				// Determine whether the directory exists.
-				if (Directory.Exists(path)) 
-				{
-					GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-					dlgOk.SetHeading(119); 
-					dlgOk.SetLine(1, 2224);
-					dlgOk.SetLine(2, "");
-					dlgOk.DoModal(GetID);
-				} 
-				else 
-				{
-					DirectoryInfo di = Directory.CreateDirectory(path);
-				}
-			}
-			catch (Exception )
-			{
-				ShowError(119, path);
-			}
-		}
-
-		/// <summary>
-		/// Moves or Copy a file
-		/// </summary>
-		/// <param name="bMove">Move or Copy (Move=true)</param>
-		/// <param name="item">Item to be move or copied</param>
-		void FileItemMove(bool bMove, GUIListItem item) 
-		{
-			// init
-			GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILE);
-			if (dlgFile == null) return;
-			
-			// File operation settings
-			if (bMove) dlgFile.SetMode(1); // move
-			else dlgFile.SetMode(0); // copy
-			dlgFile.SetSourceItem(item);
-			dlgFile.SetDestinationDir(m_strDestination);
-			
-			// move
-			dlgFile.DoModal(GetID);
-
-			//final
-			if (null!=dlgFile) dlgFile.Close();
-		}
-		
-		void OnDeleteItem(GUIListItem item)
-		{
-			if (item.IsRemote) return;
-
-			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-			if (null==dlgYesNo) return;
-			string strFileName=System.IO.Path.GetFileName(item.Path);
-			if (!item.IsFolder) dlgYesNo.SetHeading(664);
-			else dlgYesNo.SetHeading(503);
-			dlgYesNo.SetLine(1,strFileName);
-			dlgYesNo.SetLine(2, "");
-			dlgYesNo.SetLine(3, "");
-			dlgYesNo.DoModal(GetID);
-
-			if (!dlgYesNo.IsConfirmed) return;
-			DoDeleteItem(item);
-						
-			m_iItemSelected=GetSelectedItemNo();
-			if (m_iItemSelected>0) m_iItemSelected--;
-			LoadDirectory(m_strDirectory);
-			if (m_iItemSelected>=0)
-			{
-				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
-			}
-		}
-
-		void DoDeleteItem(GUIListItem item)
-		{
-			if (item.IsFolder)
-			{
-        if (item.Label != "..")
-        {
-          ArrayList items = new ArrayList();
-          items=m_directory.GetDirectoryUnProtected(item.Path,false);
-          foreach(GUIListItem subItem in items)
-          {
-            DoDeleteItem(subItem);
-          }
-          Utils.DirectoryDelete(item.Path);
-        }
-			}
-			else if (!item.IsRemote)
-			{  			
-        Utils.FileDelete(item.Path);
-			}
 		}
 
 		void OnInfo(int itemNumber)
