@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.TV
 						{
 							if (Recorder.Get(i).IsRecording)
 							{
-								m_strChannel=Recorder.GetTVRecording().Channel;
+								m_strChannel=Recorder.Get(i).CurrentTVRecording.Channel;
 								break;
 							}
 						}
