@@ -924,6 +924,18 @@ namespace MediaPortal.Util
 			{
 			}
 		}
+    static public void DirectoryDelete(string strDir)
+    {
+      if (strDir==null) return ;
+      if (strDir.Length==0) return ;
+      try
+      {
+        System.IO.Directory.Delete(strDir);
+      }
+      catch(Exception)
+      {
+      }
+    }
 		static public void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
 		{
 			if (strURL==null) return ;
