@@ -191,6 +191,11 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
+			if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+			{
+				ShowContextMenu();
+			}
+
 			if (action.wID == Action.ActionType.ACTION_DELETE_ITEM)
 			{
 				// delete current picture
@@ -199,25 +204,7 @@ namespace MediaPortal.GUI.Pictures
 				{
 					if (item.IsFolder==false)
 					{
-						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-						if (null==dlgYesNo) return;
-						string strFileName=System.IO.Path.GetFileName(item.Path);
-						dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
-						dlgYesNo.SetLine(1,strFileName);
-						dlgYesNo.SetLine(2, "");
-						dlgYesNo.SetLine(3, "");
-						dlgYesNo.DoModal(GetID);
-
-						if (!dlgYesNo.IsConfirmed) return;
-						Utils.FileDelete(item.Path);
-						
-						m_iItemSelected=GetSelectedItemNo();
-						if (m_iItemSelected>0) m_iItemSelected--;
-						LoadDirectory(m_strDirectory);
-						if (m_iItemSelected>=0)
-						{
-							GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
-						}
+						OnDeleteItem(item);
 
 					}
 				}
@@ -1157,8 +1144,82 @@ namespace MediaPortal.GUI.Pictures
               }
             }
           }      
-        }
-      }
-    }
+        } //foreach (GUIListItem item in itemlist)
+      } //using (PictureDatabase dbs = new PictureDatabase())
+    } //void WorkerThreadFunction()
+
+		void ShowContextMenu()
+		{
+			GUIListItem item=GetSelectedItem();
+			int itemNo=GetSelectedItemNo();
+			if (item==null) return;
+
+			GUIDialogSelect2 dlg=(GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(924); // menu
+			dlg.Add( GUILocalizeStrings.Get(117)); //delete
+			dlg.Add( GUILocalizeStrings.Get(735)); //rotate
+			dlg.Add( GUILocalizeStrings.Get(923)); //show
+
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) return;
+			switch (dlg.SelectedLabel)
+			{
+				case 0: // delete
+					OnDeleteItem(item);
+					break;
+
+				case 1: // rotate
+					OnRotatePicture();
+				break;
+
+				case 2: // play
+					OnClick(itemNo);	
+					break;
+			}
+		}
+		
+		void OnDeleteItem(GUIListItem item)
+		{
+			if (item.IsRemote) return;
+
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null==dlgYesNo) return;
+			string strFileName=System.IO.Path.GetFileName(item.Path);
+			dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
+			dlgYesNo.SetLine(1,strFileName);
+			dlgYesNo.SetLine(2, "");
+			dlgYesNo.SetLine(3, "");
+			dlgYesNo.DoModal(GetID);
+
+			if (!dlgYesNo.IsConfirmed) return;
+			DoDeleteItem(item);
+						
+			m_iItemSelected=GetSelectedItemNo();
+			if (m_iItemSelected>0) m_iItemSelected--;
+			LoadDirectory(m_strDirectory);
+			if (m_iItemSelected>=0)
+			{
+				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
+			}
+		}
+
+		void DoDeleteItem(GUIListItem item)
+		{
+			if (item.IsFolder && item.Label!="..")
+			{
+				ArrayList items = new ArrayList();
+				items=m_directory.GetDirectory(item.Path);
+				foreach(GUIListItem subItem in items)
+				{
+					DoDeleteItem(subItem);
+				}
+			}
+			else if (!item.IsRemote)
+			{
+					Utils.FileDelete(item.Path);
+			}
+		}
   }
 }

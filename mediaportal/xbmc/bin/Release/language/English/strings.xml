@@ -2386,6 +2386,22 @@
 	<id>922</id>
 	<value>Description</value>
 </string>
+<string>
+	<id>923</id>
+	<value>Show</value>
+</string>
+<string>
+	<id>924</id>
+	<value>Menu</value>
+</string>
+<string>
+	<id>925</id>
+	<value>Delete this movie?</value>
+</string>
+<string>
+	<id>926</id>
+	<value>Add to playlist</value>
+</string>
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>

@@ -478,16 +478,16 @@ namespace MediaPortal.GUI.Library
 					dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
 				}
 			}
-			// Render the spin control
-      if (m_bUpDownVisible) 
-      {
-        dwPosY = m_dwPosY + m_iItemsPerPage * (m_iItemHeight + m_iSpaceBetweenItems) - m_iSpaceBetweenItems - 5;
-        //m_upDown.SetPosition(m_upDown.XPosition,dwPosY+10);
-        m_upDown.Render();
-      }
-			// Render the vertical scrollbar
-      if (m_vecItems.Count > m_iItemsPerPage)
-      {
+			if (m_vecItems.Count > m_iItemsPerPage)
+			{
+				// Render the spin control
+				if (m_bUpDownVisible) 
+				{
+					dwPosY = m_dwPosY + m_iItemsPerPage * (m_iItemHeight + m_iSpaceBetweenItems) - m_iSpaceBetweenItems - 5;
+					//m_upDown.SetPosition(m_upDown.XPosition,dwPosY+10);
+					m_upDown.Render();
+				}
+				// Render the vertical scrollbar
         m_vertScrollbar.Render();
       }
 		}

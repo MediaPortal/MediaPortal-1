@@ -145,6 +145,10 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
+			if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+			{
+				ShowContextMenu();
+			}
 			base.OnAction(action);
 		}
 
@@ -760,5 +764,79 @@ namespace MediaPortal.GUI.Video
       if (item.IsFolder) filmstrip.InfoImageFileName=item.ThumbnailImage;
       else filmstrip.InfoImageFileName=Utils.ConvertToLargeCoverArt(item.ThumbnailImage);
     }
+
+		void ShowContextMenu()
+		{
+			if (m_strDirectory == "") return;
+			GUIListItem item=GetSelectedItem();
+			int itemNo=GetSelectedItemNo();
+			if (item==null) return;
+
+			GUIDialogSelect2 dlg=(GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(924); // menu
+			dlg.Add( GUILocalizeStrings.Get(925)); //delete
+			dlg.Add( GUILocalizeStrings.Get(368)); //IMDB
+			dlg.Add( GUILocalizeStrings.Get(208)); //play
+
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) return;
+			switch (dlg.SelectedLabel)
+			{
+				case 0: // Delete
+					OnDeleteItem(item);
+					break;
+
+				case 1: // IMDB
+					OnInfo(itemNo);
+					break;
+
+				case 2: // play
+					OnClick(itemNo);	
+					break;
+			}
+		}
+
+		void OnDeleteItem(GUIListItem item)
+		{
+			if (item.IsRemote) return;
+			
+			IMDBMovie movieDetails = new IMDBMovie();
+
+			int movieid=VideoDatabase.GetMovieInfo(item.Path, ref movieDetails);
+			string strFileName=System.IO.Path.GetFileName(item.Path);
+			if (movieid>=0) strFileName=movieDetails.Title;
+
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null==dlgYesNo) return;
+			dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
+			dlgYesNo.SetLine(1,strFileName);
+			dlgYesNo.SetLine(2, "");
+			dlgYesNo.SetLine(3, "");
+			dlgYesNo.DoModal(GetID);
+
+			if (!dlgYesNo.IsConfirmed) return;
+			
+			DoDeleteItem(item);
+						
+			m_iItemSelected=GetSelectedItemNo();
+			if (m_iItemSelected>0) m_iItemSelected--;
+			LoadDirectory(m_strDirectory);
+			if (m_iItemSelected>=0)
+			{
+				GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_VIEW,m_iItemSelected);
+			}
+		}
+
+		void DoDeleteItem(GUIListItem item)
+		{
+			if (item.IsFolder ) return;
+			if (!item.IsRemote)
+			{
+				VideoDatabase.DeleteMovie(item.Path);
+				Utils.FileDelete(item.Path);
+			}
+		}
 	}
 }

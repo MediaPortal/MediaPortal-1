@@ -189,7 +189,14 @@
       <sound>click.wav</sound>
       <description>record current tv program</description>
     </action>
+    <action>
+      <id>106</id>
+      <key>F9</key>
+      <sound>click.wav</sound>
+      <description>show context menu for currently selected item</description>
+    </action>
   </global>
+  
   <window>
     <id>603</id>
     <description>My TV record TV</description>
