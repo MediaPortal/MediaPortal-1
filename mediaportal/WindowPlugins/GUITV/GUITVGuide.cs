@@ -852,6 +852,16 @@ namespace MediaPortal.GUI.TV
 				GUIPropertyManager.SetProperty("#TV.Guide.Time","");
 				GUIPropertyManager.SetProperty("#TV.Guide.Description","");
 				GUIPropertyManager.SetProperty("#TV.Guide.Genre","");
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName","");        
+        GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber","");        
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber","");        
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart","");        
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail","");        
+        GUIPropertyManager.SetProperty("#TV.Guide.Date","");        
+        GUIPropertyManager.SetProperty("#TV.Guide.StarRating","");        
+        GUIPropertyManager.SetProperty("#TV.Guide.Classification","");
+        GUIPropertyManager.SetProperty("#TV.Guide.Duration","");
+        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow","");
 				if (!System.IO.File.Exists(strLogo))
 				{
 					strLogo="defaultVideoBig.png";
@@ -875,6 +885,23 @@ namespace MediaPortal.GUI.TV
 				GUIPropertyManager.SetProperty("#TV.Guide.Time",strTime);
 				GUIPropertyManager.SetProperty("#TV.Guide.Description",m_currentProgram.Description);
 				GUIPropertyManager.SetProperty("#TV.Guide.Genre",m_currentProgram.Genre);
+        GUIPropertyManager.SetProperty("#TV.Guide.Duration",m_currentProgram.Duration);
+        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow",m_currentProgram.TimeFromNow);
+        if (m_currentProgram.Episode=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName","");
+        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName",m_currentProgram.Episode);        
+        if (m_currentProgram.SeriesNum=="-") GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber","");
+        else GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber",m_currentProgram.SeriesNum);        
+        if (m_currentProgram.EpisodeNum=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber","");
+        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber",m_currentProgram.EpisodeNum);        
+        if(m_currentProgram.EpisodePart=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart","");
+        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart",m_currentProgram.EpisodePart);        
+        if (m_currentProgram.Date=="-") GUIPropertyManager.SetProperty("#TV.Guide.Date","");
+        else GUIPropertyManager.SetProperty("#TV.Guide.Date",m_currentProgram.Date);        
+        if (m_currentProgram.StarRating=="-") GUIPropertyManager.SetProperty("#TV.Guide.StarRating","");
+        else GUIPropertyManager.SetProperty("#TV.Guide.StarRating",m_currentProgram.StarRating);        
+        if (m_currentProgram.Classification=="-") GUIPropertyManager.SetProperty("#TV.Guide.Classification","");
+        else GUIPropertyManager.SetProperty("#TV.Guide.Classification",m_currentProgram.Classification); 
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail",m_currentProgram.EpisodeDetails);
 				if (!System.IO.File.Exists(strLogo))
 				{
 					strLogo="defaultVideoBig.png";

@@ -13,65 +13,6 @@ namespace MediaPortal.Database
 	public class DatabaseUtility
 	{
     
-		/// <summary>
-		/// Delete a column from a table
-		/// </summary>
-		/// <param name="table">table name</param>
-		/// <param name="column">column name</param>
-		static public void DeleteColumnFromTable(SQLiteClient m_db, string table, string column)
-		{
-			if (m_db==null) return ;
-			if (table==null) return ;
-			if (table.Length==0) return ;
-			if (column==null) return ;
-			if (column.Length==0) return ;
-			if (!TableExists(m_db,table)) return;
-			if (!TableColumnExists(m_db,table, column)) return;
-			try
-			{
-				string sql=String.Format("ALTER TABLE {0} DROP COLUMN {1} ",table,column);
-				m_db.Execute(sql);
-			} 
-			catch (SQLiteException ex) 
-			{
-				Log.Write("DatabaseUtility exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-			}
-		}
-
-		/// <summary>
-		/// Add a column to a table
-		/// </summary>
-		/// <param name="table">table name</param>
-		/// <param name="column">name of new new column </param>
-		/// <param name="columnType">type of the new column</param>
-		/// <param name="defaultValue">default value for this column</param>
-		static public void AddColumnToTable(SQLiteClient m_db, string table, string column, string columnType, string defaultValue)
-		{
-			if (m_db==null) return ;
-			if (table==null) return ;
-			if (table.Length==0) return ;
-			if (column==null) return ;
-			if (column.Length==0) return ;
-			if (columnType==null) return ;
-			if (columnType.Length==0) return ;
-			if (!TableExists(m_db,table)) return;
-			if (TableColumnExists(m_db,table, column)) return;
-
-			try
-			{
-				string sql=String.Format("ALTER TABLE {0} ADD {1} {2}",table,column,columnType);
-				m_db.Execute(sql);
-				if (defaultValue!=null && defaultValue.Length>0)
-				{
-					sql=String.Format("update {0} set {1}='{2}'",table,column,defaultValue);
-					m_db.Execute(sql);
-				}
-			} 
-			catch (SQLiteException ex) 
-			{
-				Log.Write("DatabaseUtility exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-			}
-		}
 
 		/// <summary>
 		/// Check if a table column exists

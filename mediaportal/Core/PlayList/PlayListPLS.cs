@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.IO;
 using MediaPortal.Util;
 /*----------------------------------------------------------------------
@@ -69,7 +70,7 @@ namespace MediaPortal.Playlists
 					file.Close();
 					return true;
 				}
-				Encoding fileEncoding = Encoding.Default;
+				fileEncoding = Encoding.Default;
 				stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
 				file = new StreamReader(stream, fileEncoding, true);
 

@@ -3069,4 +3069,27 @@
 	<id>16001</id>
 	<value>Party Shuffle</value>
 </string>
+<string><id>3000</id><value>Program Options</value></string>
+<string><id>3001</id><value>Hour</value></string>
+<string><id>3002</id><value>Hours</value></string>
+<string><id>3003</id><value>Minute</value></string>
+<string><id>3004</id><value>Minutes</value></string>
+<string><id>3005</id><value>Hour ago</value></string>
+<string><id>3006</id><value>Hours ago</value></string>
+<string><id>3007</id><value>Minute ago</value></string>
+<string><id>3008</id><value>Minutes ago</value></string>
+<string><id>3009</id><value>Starts in</value></string>
+<string><id>3010</id><value>Minutes Remaining</value></string>
+<string><id>3011</id><value>Hour Remaining</value></string>
+<string><id>3012</id><value>Hours Remaining</value></string>
+<string><id>3013</id><value>Starting Now</value></string>
+<string><id>3014</id><value>Day</value></string>
+<string><id>3015</id><value>Days</value></string>
+<string><id>3016</id><value>Already Ended</value></string>
+<string><id>3017</id><value>Started </value></string>
+<string><id>3018</id><value>Minute Remaining</value></string>
+<string><id>3019</id><value>Series</value></string>
+<string><id>3020</id><value>Episode</value></string>
+<string><id>3021</id><value>Part</value></string>
+<string><id>3022</id><value>of</value></string>
 </strings>

@@ -776,6 +776,7 @@ namespace MediaPortal.TV.Recording
               GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
               GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
               GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
+
             }
             else
             {

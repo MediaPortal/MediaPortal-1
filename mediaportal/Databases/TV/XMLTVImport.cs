@@ -236,13 +236,10 @@ namespace MediaPortal.TV.Database
 					  XmlNode nodeDescription=programNode.SelectSingleNode("desc");
 			      XmlNode nodeEpisode=programNode.SelectSingleNode("sub-title");
 			      XmlNode nodeRepeat=programNode.SelectSingleNode("previously-shown");
-			      //- <rating system="BBFC">
-			      //  <value>U</value> 
-			      //  </rating>
-			      //- <star-rating>
-			      //  <value>4/5</value> 
-			      //  </star-rating>
-			      //  <date>1956</date> 
+            XmlNode nodeEpisodeNum=programNode.SelectSingleNode("episode-num");
+            XmlNode nodeDate=programNode.SelectSingleNode("date");
+            XmlNode nodeStarRating=programNode.SelectSingleNode("star-rating");
+            XmlNode nodeClasification=programNode.SelectSingleNode("rating");
 
 					  if (nodeStart!=null && nodeChannel!=null && nodeTitle!=null)
 					  {
@@ -252,10 +249,16 @@ namespace MediaPortal.TV.Database
 							  string strCategory="-";
 				        string strEpisode="";
 				        string strRepeat="";
-				          if (nodeRepeat!=null)
-				          {
-						        strRepeat="Repeat";
-				          }
+                string strSerEpNum="";
+                string strDate="";
+                string strSeriesNum="";
+                string strEpisodeNum="";
+                string strEpisodePart="";
+                string strStarRating="";
+                string strClasification="";
+
+				        if (nodeRepeat!=null)strRepeat="Repeat";
+				         
 							  string strTitle=nodeTitle.InnerText;
 							  long iStart=0;
                 if (nodeStart.InnerText.Length>=14)
@@ -370,11 +373,41 @@ namespace MediaPortal.TV.Database
 							  {
 								  strDescription=nodeDescription.InnerText;
 							  }
-				if (nodeEpisode!=null && nodeEpisode.InnerText!=null)
-				{
-				  strEpisode=nodeEpisode.InnerText;
-				}
-				
+								if (nodeEpisode!=null && nodeEpisode.InnerText!=null)
+								{
+									strEpisode=nodeEpisode.InnerText;
+								}
+								if (nodeEpisodeNum!=null && nodeEpisodeNum.InnerText!=null)
+								{
+									strSerEpNum=nodeEpisodeNum.InnerText;
+									int pos=0;
+									int Epos=0;
+									pos = strSerEpNum.IndexOf(".",pos);
+									strSeriesNum= strSerEpNum.Substring(0,pos);
+									Epos=pos;
+									pos = strSerEpNum.IndexOf(".",pos+1);
+									strEpisodeNum=strSerEpNum.Substring(Epos+1,(pos-1)-Epos);
+									strEpisodePart=strSerEpNum.Substring(pos+1,strSerEpNum.Length-(pos+1));
+									if (strEpisodePart.Substring(2,1)=="1") strEpisodePart = "";
+									else
+									{
+										int p = Convert.ToInt32(strEpisodePart.Substring(0,1))+1;
+										int t = Convert.ToInt32(strEpisodePart.Substring(2,1));
+										strEpisodePart = Convert.ToString(p)+"/"+Convert.ToString(t);
+									}
+								}
+								if (nodeDate!=null && nodeDate.InnerText!=null)
+								{
+									strDate=nodeDate.InnerText;
+								}
+								if (nodeStarRating!=null && nodeStarRating.InnerText!=null)
+								{
+									strStarRating = nodeStarRating.InnerText;
+								}
+								if (nodeClasification!=null && nodeClasification.InnerText!=null)
+								{
+									strClasification = nodeClasification.InnerText;
+								}
 							  TVProgram prog=new TVProgram();
 							  prog.Description=strDescription;
 							  prog.Start=iStart;
@@ -384,6 +417,12 @@ namespace MediaPortal.TV.Database
 							  prog.Genre=strCategory;
 							  prog.Repeat=strRepeat;
 							  prog.Channel=strChannelName;
+                prog.Date=strDate;
+                prog.SeriesNum=strSeriesNum;
+                prog.EpisodeNum=strEpisodeNum;
+                prog.EpisodePart=strEpisodePart;
+                prog.StarRating=strStarRating;
+                prog.Classification=strClasification;
 							  m_stats.Programs++;
 							  if (bShowProgress && ShowProgress!=null && (m_stats.Programs%100)==0 ) ShowProgress(m_stats);
 							  foreach (ChannelPrograms progChan in Programs)
@@ -423,8 +462,7 @@ namespace MediaPortal.TV.Database
 					  {
 						  //Log.Write("Add program :{0,-20} {1} {2} {3}",prog.Channel, prog.StartTime.ToShortDateString(),prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , prog.Title); 
 
-				TVDatabase.UpdateProgram(prog);
-//				TVDatabase.AddProgram(prog);
+							TVDatabase.UpdateProgram(prog);
 						  if (prog.StartTime < m_stats.StartTime) m_stats.StartTime=prog.StartTime;
 						  if (prog.EndTime > m_stats.EndTime) m_stats.EndTime=prog.EndTime;
 						  m_stats.Programs++;
