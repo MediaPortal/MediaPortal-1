@@ -16,12 +16,22 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class AIWGraph : MediaPortal.TV.Recording.IGraph
 	{
+		[ComImport, Guid("758C0F02-DF95-11D2-8E75-00104B93CF06")]
+			class ATIVideoEncode {};
+		[ComImport, Guid("6467DD70-FBD5-11D2-B5B6-444553540000")]
+			class ATIAudioEncode {};
+		[ComImport, Guid("5CB0B6B4-E857-40C5-92CF-715F05DE33D3")]
+			class ATIMCEAudioEncode {};
+		[ComImport, Guid("03684DED-3346-4530-8B46-10957AAD5588")]
+			class ATIMCEVideoEncode {};
+
 		enum State
 		{ 
 			None, 
 			Created, 
 			Recording, 
-			Viewing
+			Viewing,
+			Radio
 		};
 
 		int m_iCurrentChannel = 28;
@@ -42,6 +52,10 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter		          m_muxFilter = null; // DShow Filter: multiplexor (combine video and audio streams)
 		IBaseFilter             m_filterCompressorVideo = null;
 		IBaseFilter             m_filterCompressorAudio = null;
+		IBaseFilter                m_atiVideoEncode = null;
+		IBaseFilter                m_atiAudioEncode = null;
+		IPin                       m_videoEncodeOutput = null;
+		IPin                       m_audioEncodeOutput = null;
 		IAMTVTuner              m_TVTuner = null;
 		IAMAnalogVideoDecoder   m_IAMAnalogVideoDecoder=null;
 		int				              m_rotCookie = 0; // Cookie into the Running Object Table
@@ -225,7 +239,8 @@ namespace MediaPortal.TV.Recording
 			m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);
 
 			// AIW Support starts here
-			SwapOverlayMixerForOverlayMixer2(m_filterCaptureVideo, m_captureGraphBuilder, m_graphBuilder, filters);
+			SwapOverlayMixerForOverlayMixer2(m_filterCaptureVideo, m_captureGraphBuilder, m_graphBuilder, true);
+			AddATIFilters();
 	
 
 			//set the frame size
@@ -244,7 +259,7 @@ namespace MediaPortal.TV.Recording
 		/// and always connects the OverlayMixer2 to the capture card
 		/// </summary>
 		/// <param name="captureFilter">The AIW Capture filter</param>
-		public bool SwapOverlayMixerForOverlayMixer2(IBaseFilter captureFilter, ICaptureGraphBuilder2 m_captureGraphBuilder, IGraphBuilder m_graphBuilder, Filters filters)
+		private bool SwapOverlayMixerForOverlayMixer2(IBaseFilter captureFilter, ICaptureGraphBuilder2 m_captureGraphBuilder, IGraphBuilder m_graphBuilder, bool bTimeShifting)
 		{
 			int hr;
 
@@ -266,40 +281,162 @@ namespace MediaPortal.TV.Recording
 			hr = m_graphBuilder.FindFilterByName("Overlay Mixer2", out m_overlayMixer2);
 	
 			if (hr == 0)
-		
 			{
-				//IPin m_overlayInputPin = DirectShowUtil.FindPinNr(m_overlayMixer2,PinDirection.Input,0);
 				m_graphBuilder.Render(pin);
 				DirectShowUtil.RenderOutputPins(m_graphBuilder, m_overlayMixer2);	
+
+				if (bTimeShifting)
+				{
+					// Remove the video port manager if it exists
+					IBaseFilter VideoPortManager = null;
+					hr = m_graphBuilder.FindFilterByName("Video Port Manager", out VideoPortManager);
+					if (hr == 0)
+					{
+						m_graphBuilder.RemoveFilter(VideoPortManager);
+					}
+
+					IBaseFilter VideoRenderer = null;
+					hr = m_graphBuilder.FindFilterByName("Video Renderer", out VideoRenderer);
+					if (hr == 0)
+					{
+						m_graphBuilder.RemoveFilter(VideoRenderer);
+					}
+				}
+
 				return true;
 			} 
 			else 
 			{
+				Filters filters = new Filters();
 				foreach(Filter legacyFilter in filters.LegacyFilters)
 				{
 					if(legacyFilter.Name == "Overlay Mixer2")
 					{
 						// Get the overlay mixer and add it to the filter graph
-						DirectShowUtil.DebugWrite("AIWGraph:CreateGraph() add overlay mixer {0}", legacyFilter.Name);
+						Log.WriteFile(Log.LogType.Capture,"AIWGraph:CreateGraph() add overlay mixer {0}", legacyFilter.Name);
 						m_overlayMixer2 = Marshal.BindToMoniker(legacyFilter.MonikerString) as IBaseFilter;
 				
 						hr = m_graphBuilder.AddFilter(m_overlayMixer2, "Overlay Mixer2");
 
 						if (hr < 0) 
 						{
-							DirectShowUtil.DebugWrite("AIWGraph:FAILED:Add overlay mixer2 to filtergraph:0x{0:X}",hr);
+							Log.WriteFile(Log.LogType.Capture,"AIWGraph:FAILED:Add overlay mixer2 to filtergraph:0x{0:X}",hr);
 							return false;
 						}
 
 						m_graphBuilder.Render(pin);
 						DirectShowUtil.RenderOutputPins(m_graphBuilder, m_overlayMixer2);
+
+						if (bTimeShifting)
+						{
+							// Remove the video port manager if it exists
+							IBaseFilter VideoPortManager = null;
+							hr = m_graphBuilder.FindFilterByName("Video Port Manager", out VideoPortManager);
+							if (hr == 0)
+							{
+								m_graphBuilder.RemoveFilter(VideoPortManager);
+							}
+
+							IBaseFilter VideoRenderer = null;
+							hr = m_graphBuilder.FindFilterByName("Video Renderer", out VideoRenderer);
+							if (hr == 0)
+							{
+								m_graphBuilder.RemoveFilter(VideoRenderer);
+							}
+						}
+
 						return true;
 					}
 				}
 			}
+
 			return false;
 		}
 
+		/// <summary>
+		/// </summary>
+		private void AddATIFilters()
+		{
+			// Try to add the standard ATI MMC Filters
+			try
+			{
+				m_atiVideoEncode = (IBaseFilter) new ATIVideoEncode();
+				m_atiAudioEncode = (IBaseFilter) new ATIAudioEncode();
+			}
+			catch (Exception)
+			{
+			}
+
+			if (m_atiVideoEncode == null)
+			{
+				// Try to add the standard ATI MMC Filters
+				try
+				{
+					m_atiVideoEncode = (IBaseFilter) new ATIMCEVideoEncode();
+					m_atiAudioEncode = (IBaseFilter) new ATIMCEAudioEncode();
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			IBaseFilter m_atiVideoFilter = (IBaseFilter) m_atiVideoEncode;
+			if (m_atiVideoFilter == null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"AIWGraph:FAILED to add ati video encoder");
+				return;
+			}
+
+			m_graphBuilder.AddFilter(m_atiVideoFilter, "ATI Video Encode");
+
+			// Add the ATI Audio Filter
+
+			IBaseFilter m_atiAudioFilter = (IBaseFilter) m_atiAudioEncode;
+			if (m_atiAudioFilter ==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"AIWGraph:FAILED to add ati audio encoder");
+				return;
+			}
+
+			m_graphBuilder.AddFilter(m_atiAudioFilter, "ATI Audio Encode");
+
+			// Find the video capture pin
+			IPin videoOutput = null;
+			videoOutput = DirectShowUtil.FindPinNr(m_filterCaptureVideo, PinDirection.Output,0);
+
+			// Find the audio capture pin
+			IPin audioOutput = null;
+			audioOutput = DirectShowUtil.FindPinNr(m_filterCaptureAudio, PinDirection.Output,0);
+
+			// Find the video encoder input pin
+			IPin videoEncodeInput= null;
+			videoEncodeInput = DirectShowUtil.FindPinNr(m_atiVideoFilter, PinDirection.Input,0);
+
+			// Find the audio encoder input pin
+			IPin audioEncodeInput = null;
+			audioEncodeInput = DirectShowUtil.FindPinNr(m_atiAudioFilter, PinDirection.Input,0);
+
+			// Find the video encoder output pin (we will use this pin to connect to the
+			//StreamBuffer portion engine of the graph. In particular the video analyser
+			m_videoEncodeOutput = DirectShowUtil.FindPinNr(m_atiVideoFilter, PinDirection.Output,0);
+
+			// Find the audio encoder output pin (we will use this pin to connect to the
+			// StreamBuffer portion engine of the the graph in particular the StreamBufferSink
+			m_audioEncodeOutput = DirectShowUtil.FindPinNr(m_atiAudioFilter, PinDirection.Output,0);
+
+
+			// Connect video capture pin to encoder
+			m_graphBuilder.Connect(videoOutput, videoEncodeInput);
+
+			// Connect audio capture pin to encoder
+			m_graphBuilder.Connect(audioOutput, audioEncodeInput);
+
+
+			// Find and render preview pin the ATI capture graph won't work without it!
+			IPin previewPin = null;
+			previewPin = DirectShowUtil.FindPinNr(m_filterCaptureVideo, PinDirection.Output, 1);
+			m_graphBuilder.Render(previewPin);
+		}
 	
 
 		/// <summary>
@@ -1130,12 +1267,82 @@ namespace MediaPortal.TV.Recording
 		}
 		public void TuneRadioChannel(RadioStation station)
 		{
+			Log.WriteFile(Log.LogType.Capture,"AIWGraph:tune to {0} {1} hz", station.Name,station.Frequency);
+			
+			m_TVTuner.put_TuningSpace(0);
+			m_TVTuner.put_CountryCode(m_iCountryCode);
+			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+			if (m_bUseCable)
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+			}
+			else
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+			}
+			m_TVTuner.put_Channel((int)station.Frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+			int frequency;
+			m_TVTuner.get_AudioFrequency(out frequency);
+			Log.WriteFile(Log.LogType.Capture,"AIWGraph:  tuned to {0} hz", frequency);
 		}
 		public void StartRadio(RadioStation station)
 		{
+			if (m_graphState != State.Radio)  
+			{
+				if (m_graphState != State.Created)  return;
+				if (m_videoCaptureDevice == null) return ;
+				
+				DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+					m_captureGraphBuilder,
+					m_filterCaptureVideo, 
+					true, 
+					false, 
+					false, 
+					false ,
+					cardName);
+				TuneRadioChannel(station);
+
+				int hr = m_graphBuilder.Render(m_audioEncodeOutput);
+				if (hr == 0) 
+					DirectShowUtil.DebugWrite("AIWGraph:demux audio out connected ");
+				else
+					DirectShowUtil.DebugWrite("AIWGraph:FAILED to render AIWGraphdemux audio out:0x{0:X}",hr);
+
+				if (m_mediaControl == null)
+				{
+					m_mediaControl = (IMediaControl)m_graphBuilder;
+				}
+				if (m_mediaControl != null)
+				{
+					m_mediaControl.Run();
+				}
+
+				m_graphState = State.Radio;
+
+				Log.WriteFile(Log.LogType.Capture,"AIWGraph:StartRadio() started");
+
+				return;
+			}
+
+			TuneRadioChannel(station);
 		}
 		public void TuneRadioFrequency(int frequency)
 		{
+			Log.WriteFile(Log.LogType.Capture,"AIWGraph:tune to {0} hz", frequency);
+			m_TVTuner.put_TuningSpace(0);
+			m_TVTuner.put_CountryCode(m_iCountryCode);
+			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+			if (m_bUseCable)
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+			}
+			else
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+			}
+			m_TVTuner.put_Channel(frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+			m_TVTuner.get_AudioFrequency(out frequency);
+			Log.WriteFile(Log.LogType.Capture,"AIWGraph:  tuned to {0} hz", frequency);
 		}
 	}
 }
