@@ -848,18 +848,23 @@ namespace MediaPortal.TV.Recording
         Log.Write("  CaptureCard:{0} create capture to {1}",ID, m_strFilenameTmp);
         if (!StartCapture(m_strFilenameTmp, iChannelNr) )
         {
+#if DEBUG
+#else
           // create capture failed
           Log.Write("  CaptureCard:{0} cannot start capture",ID);
           m_bIsRecording=false;
           m_CurrentProgramRecording=null;
           m_CurrentTVRecording=null;
           return;
+#endif
         }
 
         // start new capture
         Log.Write("  CaptureCard:{0} start capture",ID);
+#if DEBUG
+#else
         capture.Start();
-        
+#endif        
         Log.Write("  CaptureCard:{0} capture running",ID);
         //Utils.StartProcess(@"C:\media\graphedt.exe","",true);
 

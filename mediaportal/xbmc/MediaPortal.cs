@@ -261,7 +261,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void Render() 
     { 
-      if (!g_Player.Playing)
+      if (!g_Player.Playing && !Recorder.IsRecording)
       {
         GUIPropertyManager.RemovePlayerProperties();
       }
