@@ -196,7 +196,7 @@ namespace MediaPortal.TV.Recording
 		/// This graph can be a DVB-T, DVB-C or DVB-S graph
 		/// </summary>
 		/// <returns>bool indicating if graph is created or not</returns>
-		public bool CreateGraph()
+		public bool CreateGraph(int Quality)
 		{
 			try
 			{

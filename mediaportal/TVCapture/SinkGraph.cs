@@ -173,7 +173,7 @@ namespace MediaPortal.TV.Recording
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
-    public virtual bool CreateGraph()
+    public virtual bool CreateGraph(int Quality)
     {
       if (m_graphState!=State.None) return false;
 			Vmr9 =new VMR9Util("mytv");

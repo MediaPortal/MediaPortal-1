@@ -472,7 +472,7 @@ namespace MediaPortal.TV.Recording
 		}
 		//
 		//
-		public bool CreateGraph()
+		public bool CreateGraph(int Quality)
 		{
 			if (m_graphState != State.None) return false;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph()");

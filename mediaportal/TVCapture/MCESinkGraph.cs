@@ -31,7 +31,7 @@ namespace MediaPortal.TV.Recording
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
-    public override bool CreateGraph()
+    public override bool CreateGraph(int Quality)
     {
         if (m_graphState!=State.None) return false;
         GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);

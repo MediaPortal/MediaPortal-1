@@ -23,24 +23,6 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class Recorder
 	{
-		class RecordingFileInfo : IComparable
-		{
-			public string   filename;
-			public FileInfo info;
-
-
-			#region IComparable Members
-
-			public int CompareTo(object obj)
-			{
-				RecordingFileInfo fi=(RecordingFileInfo)obj;
-				if (info.CreationTime < fi.info.CreationTime) return -1;
-				if (info.CreationTime > fi.info.CreationTime) return 1;
-				return 0;
-			}
-
-			#endregion
-		}
 
 		enum State
 		{
@@ -59,11 +41,9 @@ namespace MediaPortal.TV.Recording
 		static ArrayList     m_tvcards    = new ArrayList();
 		static ArrayList     m_TVChannels = new ArrayList();
 		static ArrayList     m_Recordings = new ArrayList();
-		static string        m_strRecPath="";
+		
 		static DateTime      m_dtStart=DateTime.Now;
 		static int           m_iCurrentCard=-1;
-		static long          m_lMaxRecordingSize=0;
-		static bool					 m_bDeleteWhenLowOnDiskspace=false;
 		static DateTime      m_dtCheckDiskSpace=DateTime.Now;
 
 		/// <summary>
@@ -127,33 +107,15 @@ namespace MediaPortal.TV.Recording
 				m_iPostRecordInterval= xmlreader.GetValueAsInt("capture","postrecord", 5);
 				//m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
 				m_strTVChannel  = xmlreader.GetValueAsString("mytv","channel","");
-				m_strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
-				m_strRecPath=Utils.RemoveTrailingSlash(m_strRecPath);
-				if (m_strRecPath==null||m_strRecPath.Length==0) 
-				{
-					m_strRecPath=System.IO.Directory.GetCurrentDirectory();
-					m_strRecPath=Utils.RemoveTrailingSlash(m_strRecPath);
-				}
-				try
-				{
-					int percentage= xmlreader.GetValueAsInt("capture", "maxsizeallowed", 50);
-					string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , m_strRecPath[0]);
-					using (ManagementObject disk = new ManagementObject(cmd))
-					{
-						disk.Get();
-						long diskSize=Int64.Parse(disk["Size"].ToString());
-						m_lMaxRecordingSize= (long) ( ((float)diskSize) * ( ((float)percentage) / 100f ));
-					}
-				}
-				catch(Exception){}
-				m_bDeleteWhenLowOnDiskspace= xmlreader.GetValueAsBool("capture", "deletewhenlowondiskspace", true);
+				
 			}
 
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				try
 				{
-					string dir=String.Format(@"{0}\card{1}",m_strRecPath,i+1);
+					TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
+					string dir=String.Format(@"{0}\card{1}",dev.RecordingPath,i+1);
 					System.IO.Directory.CreateDirectory(dir);
 					DeleteOldTimeShiftFiles(dir);
 				}
@@ -670,13 +632,15 @@ namespace MediaPortal.TV.Recording
 			TVCaptureDevice dev=(TVCaptureDevice) m_tvcards[m_iCurrentCard];
 			if (!dev.IsTimeShifting) return String.Empty;
 			
-			string FileName=String.Format(@"{0}\card{1}\live.tv",m_strRecPath, m_iCurrentCard+1);
+			string FileName=String.Format(@"{0}\card{1}\live.tv",dev.RecordingPath, m_iCurrentCard+1);
 			return FileName;
 		}
 
 		static public string GetTimeShiftFileName(int card)
 		{
-			string FileName=String.Format(@"{0}\card{1}\live.tv",m_strRecPath, card+1);
+			if (m_iCurrentCard<0 || m_iCurrentCard>=m_tvcards.Count) return String.Empty;
+			TVCaptureDevice dev=(TVCaptureDevice) m_tvcards[m_iCurrentCard];
+			string FileName=String.Format(@"{0}\card{1}\live.tv",dev.RecordingPath, card+1);
 			return FileName;
 		}
 
@@ -1616,56 +1580,14 @@ namespace MediaPortal.TV.Recording
 
 		static void CheckRecordingDiskSpace()
 		{
-			if (m_lMaxRecordingSize<=0) return;
-			if (!m_bDeleteWhenLowOnDiskspace) return;
 			TimeSpan ts = DateTime.Now-m_dtCheckDiskSpace;
 			if (ts.TotalMinutes<1) return;
 
 			m_dtCheckDiskSpace=DateTime.Now;
-
-			//get total size of all recordings.
-			Int64 totalSize=0;
-			ArrayList files=new ArrayList();
-
-			try
+			foreach (TVCaptureDevice dev in m_tvcards)
 			{
-				string[] recordings=System.IO.Directory.GetFiles(m_strRecPath,"*.dvr-ms");
-				for (int i=0; i < recordings.Length;++i)
-				{
-					FileInfo info = new FileInfo(recordings[i]);
-					totalSize+=info.Length;
-					RecordingFileInfo fi = new RecordingFileInfo();
-					fi.info=info;
-					fi.filename=recordings[i];
-					files.Add(fi);
-				}
+				dev.CheckRecordingDiskSpace();
 			}
-			catch(Exception)
-			{
-			}
-			if (totalSize < m_lMaxRecordingSize) return;
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: exceeded diskspace limit for recordings");
-			Log.WriteFile(Log.LogType.Recorder,"Recorder:   {0} recordings contain {1} while limit is {2}",
-										files.Count, Utils.GetSize(totalSize), Utils.GetSize(m_lMaxRecordingSize) );
-
-			// we exceeded the diskspace
-			//delete oldest files...
-			files.Sort();
-			while (totalSize > m_lMaxRecordingSize && files.Count>0)
-			{
-				RecordingFileInfo fi = (RecordingFileInfo)files[0];
-				Log.WriteFile(Log.LogType.Recorder,"Recorder: delete old recording:{0} size:{1} date:{2} {3}",
-															fi.filename,
-															Utils.GetSize(fi.info.Length),
-															fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
-				totalSize -= fi.info.Length;
-				if (Utils.FileDelete(fi.filename))
-				{
-					VideoDatabase.DeleteMovie(fi.filename);
-					VideoDatabase.DeleteMovieInfo(fi.filename);
-				}
-				files.RemoveAt(0);
-			}//while (totalSize > m_lMaxRecordingSize && files.Count>0)
 		}//static void CheckRecordingDiskSpace()
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

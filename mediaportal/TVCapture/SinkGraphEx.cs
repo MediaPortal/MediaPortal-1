@@ -49,7 +49,7 @@ namespace MediaPortal.TV.Recording
 		/// Creates a new DirectShow graph for the TV capturecard
 		/// </summary>
 		/// <returns>bool indicating if graph is created or not</returns>
-		public override bool CreateGraph()
+		public override bool CreateGraph(int Quality)
 		{
 			try
 			{
@@ -260,18 +260,12 @@ namespace MediaPortal.TV.Recording
 				VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
 				if (props.SupportsHauppaugePVRProperties)
 				{
-					bool hiquality=false;
-					int  profile=1;
-					using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
-					{
-						hiquality=xmlreader.GetValueAsBool("tv", "hiquality", false);
-						profile=xmlreader.GetValueAsInt("tv", "profile", 1);
-					}
-					if (hiquality)
+					
+					if (Quality>=0)
 					{
 						VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
 						newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
-						switch (profile)
+						switch (Quality)
 						{
 							case 0://low
 								newBitRate.wBitrate     =2*400;  //2 mbps

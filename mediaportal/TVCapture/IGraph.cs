@@ -68,7 +68,7 @@ namespace MediaPortal.TV.Recording
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
-    bool CreateGraph();
+    bool CreateGraph(int Quality);
 
     /// <summary>
     /// Deletes the current DirectShow graph created with CreateGraph()
