@@ -6,6 +6,4 @@ Bugs:
  
   - 28-04-2004 my tv      : crossbar  Failed to set crossbar routing
   - 28-04-2004 my tv      : tuner not found
-  - 29-04-2004 setup      : F2 in my tv crashes
-  - 29-04-2004 my pictures: test pic of mario
   - 29-04-2004 my tv      : desync audio while viewing tv
