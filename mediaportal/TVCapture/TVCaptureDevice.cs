@@ -610,7 +610,14 @@ namespace MediaPortal.TV.Recording
                     Log.Write("Is timeshifting, file:{0}", strFileName);
                     try
                     {
-                      g_Player.Play( capture.Filename);
+                      // Start the streambuffer player to play the preview
+                      // however since this is another thread, we cannot do that here
+                      // so we send a message to the playlist player 
+                      // which will start playing the file for us
+                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE,0,0,0,0,null);
+                      msg.Label=capture.Filename;
+                      GUIWindowManager.SendThreadMessage(msg);
+
                       m_bIsTimeShiftingThisChannel=true; //remember we're timeshifting/previewing using this capture device
                     }
                     catch (Exception) {}

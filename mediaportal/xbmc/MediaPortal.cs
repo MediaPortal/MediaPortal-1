@@ -560,6 +560,10 @@ public class MediaPortalApp : D3DApp
       {
         Utils.StartProcess(@"C:\media\graphedt.exe","",true);
       }
+      if (key.KeyChar=='.')
+      {
+        g_Player.Play( @"C:\media\movies\record1.tv");return;
+      }
 
 			Action action=new Action();
 			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow,key,ref action))
