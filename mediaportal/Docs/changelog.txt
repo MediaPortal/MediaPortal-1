@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  05-05-2004  My video    : fixed : crash in textureloader
   05-05-2004  My video    : fixed : imdb number not found for some movies
   05-05-2004  My tv       : fixed : recorder was broken
   05-05-2004  My video    : added : bookmarks now works

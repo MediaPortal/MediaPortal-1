@@ -255,7 +255,9 @@ namespace MediaPortal.TV.Recording
         {
           // then get all recordings from the database
           recordings.Clear();
+          channels.Clear();
           TVDatabase.GetRecordings(ref recordings);
+          TVDatabase.GetChannels(ref channels);
           m_bRecordingsChanged=false;
         }
 
@@ -641,6 +643,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="iInterval">interval the recording should start before the starttime and end after the stoptime</param>
     static void Record(TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
     { 
+
       // get capture format & recording path
       string strCaptureFormat="";
       string strRecPath="";
@@ -651,11 +654,12 @@ namespace MediaPortal.TV.Recording
       }
 
       Log.Write("start recording:{0}", rec.ToString());
-      m_bIsRecording=true;
-      Previewing=false;
       m_bStopRecording=false;
       m_programRecording=currentProgram;
       m_recordRecording=rec;
+      m_bIsRecording=true;
+      Previewing=false;
+
       if (strRecPath==null) 
       {
         Log.Write("Capture failed. no recording path specified in setup");
@@ -713,7 +717,7 @@ namespace MediaPortal.TV.Recording
         }
         // start new capture
         capture.Start();
-        
+
 
         // capture is now running
         // now just wait till recording has ended
@@ -725,7 +729,7 @@ namespace MediaPortal.TV.Recording
         newRecordedTV.Start=Utils.datetolong(DateTime.Now);
         newRecordedTV.Channel=rec.Channel;
         newRecordedTV.FileName=strFilenameEnd;
-        if (currentProgram!=null)
+        if (currentRunningProgram!=null)
         {
           newRecordedTV.Title=currentRunningProgram.Title;
           newRecordedTV.Genre=currentRunningProgram.Genre;
