@@ -566,7 +566,6 @@ namespace ProgramsDatabase
 			if (curApp.ImageDirs.Length == 0) return;
 			string strFolder = "";
 			string strFileName = "";
-//			string strCand = "";
 
 			strFolder = curApp.ImageDirs[0];
 			strFileName = Filename.TrimEnd('\"');
@@ -576,15 +575,12 @@ namespace ProgramsDatabase
 			strFileName = strFileName + "*.jpg";  // todo: also treat other pic extensions!
 
 
-			// Log.Write("dw scraper delete files \n{0}", strCand);
 			if(Directory.Exists(strFolder))
 			{
 				string[] files = Directory.GetFiles(strFolder, strFileName);
 				foreach (string file2Delete in files)
 				{
-					Log.Write("dw scraper delete file \n{0}", file2Delete);
 					File.Delete(file2Delete);
-					
 				}
 			}
 
