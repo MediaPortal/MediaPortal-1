@@ -78,7 +78,7 @@
 		<posX>60</posX> 
 		<posY>420</posY> 
 		<texture>rec.png</texture> 
-		<colordiffuse>50ffffff</colordiffuse>
+		<colordiffuse>ffffffff</colordiffuse>
 		<visible>yes</visible> 
 	</control>	
 	<control>
