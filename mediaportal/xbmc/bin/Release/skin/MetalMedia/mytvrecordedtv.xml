@@ -237,7 +237,7 @@
     <textcolor>ffDDDDDD</textcolor>
 	</control>
 
-<!--	<control>
+	<control>
 		<description>video rectangle</description>
 		<type>image</type>
 		<id>0</id>
@@ -248,7 +248,7 @@
 		<texture>panel.png</texture>
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
-	</control> -->
+	</control>
 	<control>
 		<description>TV preview window</description>
 		<type>videowindow</type>

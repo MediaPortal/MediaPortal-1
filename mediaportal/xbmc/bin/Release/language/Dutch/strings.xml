@@ -2375,6 +2375,26 @@
   	<id>871</id>
   	<value>Computer aanzetten</value>
   </string>
+  <string>
+  	<id>872</id>
+  	<value>Begint met</value>
+  </string>
+  <string>
+  	<id>873</id>
+  	<value>Programma</value>
+  </string>
+  <string>
+  	<id>874</id>
+  	<value>Aflevering</value>
+  </string>
+  <string>
+  	<id>875</id>
+  	<value>Huidige programma</value>
+  </string>
+  <string>
+  	<id>876</id>
+  	<value>Handmatig stoppen</value>
+  </string>
 
   <!-- End My Alarm Strings -->
   
@@ -2668,6 +2688,27 @@
   	<value>dit kanaal te bekijken</value>
   </string>
   <string>
+  	<id>979</id>
+  	<value>Afspelen vanaf het begin</value>
+  </string>
+  <string>
+  	<id>980</id>
+  	<value>Afspelen vanaf "live" markering</value>
+  </string>
+  <string>
+  	<id>981</id>
+  	<value>Programma annuleren</value>
+  </string>
+  <string>
+  	<id>982</id>
+  	<value>Verwijder deze opname</value>
+  </string>
+  <string>
+  	<id>983</id>
+  	<value>Ga naar playlists</value>
+  </string>
+
+  <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
   </string>
@@ -2769,30 +2810,30 @@
     <value>Status details</value>
   </string>
 	<string>
-   <id>1973</id>
-   <value>van</value>
+    <id>1973</id>
+    <value>van</value>
   </string>
 	<string>
    <id>1974</id>
-    <value>Geheugen:           </value>
+   <value>Geheugen:           </value>
   </string>
 	<string>
     <id>1975</id>
     <value>Volgende pagina</value>
   </string>
-  	<string>
+ 	<string>
   	<id>1976</id>
-	<value>tpm</value>
-  </string>	
+   	<value>tpm</value>
+  </string>
 	<string>
-	<id>1977</id>
-	<value>Bestandssysteem</value>
-  </string>	
+  	<id>1977</id>
+  	<value>Bestandssysteem</value>
+  </string>
 	<string>
-	<id>1978</id>
-	<value>Virtueel Geheugen</value>
-  </string> 
-	
+  	<id>1978</id>
+	  <value>Virtueel Geheugen</value>
+  </string>
+
   <!-- My Recipies strings -->
   <string>
     <id>2005</id>
@@ -3172,6 +3213,10 @@
     <id>2143</id>
     <value>Home</value>
     </string>
+	<string>
+    <id>2144</id>
+    <value>MP Backup</value> <!-- TODO: Got no clue how to translate this -->
+  </string>
 <!--
   <string>
 		<id>2133</id>

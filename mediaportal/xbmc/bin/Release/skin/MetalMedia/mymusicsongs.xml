@@ -157,19 +157,19 @@
 			<onup>9</onup>
 			<ondown>11</ondown>
 		</control>
-		<control>
-			<description>Eject Disc</description>
-			<type>button</type>
-			<id>11</id>
-			<posX>55</posX>
-			<posY>329</posY>
-			<label>654</label>
-			<onleft>11</onleft>
-			<onright>50</onright>
-			<onup>10</onup>
-			<ondown>2</ondown>
-			<action>100</action>
-		</control>
+    <control>
+      <description>My Playlists</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>55</posX>
+      <posY>329</posY>
+      <label>983</label>
+      <onleft>11</onleft>
+      <onright>50</onright>
+      <onup>10</onup>
+      <ondown>2</ondown>
+    </control>
+
 		<control>
       <description>composite control consisting of a list control and a thumbnail panel</description>
 			<type>facadeview</type>

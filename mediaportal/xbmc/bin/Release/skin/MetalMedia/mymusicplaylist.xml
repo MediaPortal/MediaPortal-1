@@ -24,6 +24,18 @@
 		<colordiffuse>20ffffff</colordiffuse>
 		<texture>mymusic.png</texture>
 	</control>
+
+	<control>
+		<description>Playlist Text</description>
+		<type>label</type>
+		<id>14</id>
+		<posX>280</posX>
+		<posY>50</posY>
+		<label>136</label>
+		<font>font10</font>
+		<align>right</align>
+	</control>
+
 	<control>
 		<description>Panel</description>
 		<type>image</type>
@@ -35,27 +47,17 @@
 		<texture>panel.png</texture>
 	</control>
 	<control>
-		<description>Playlist Text</description>
-		<type>label</type>
-		<id>14</id>
-		<posX>280</posX>
-		<posY>50</posY>
-		<label>136</label>
-		<font>font10</font>
-		<align>right</align>
-	</control>
-	<control>
 		<description>View-As button</description>
 		<type>button</type>
 		<id>2</id>
 		<posX>55</posX>
 		<posY>115</posY>
 		<label>100</label>
-		<onleft>50</onleft>
+		<onleft>2</onleft>
 		<onright>50</onright>
 		<onup>1111</onup> <!-- Go to topbar -->
 		<ondown>20</ondown>
-	</control>	
+	</control>
 	<control>
 		<description>Shuffle button</description>
 		<type>button</type>
@@ -63,10 +65,10 @@
 		<posX>55</posX>
 		<posY>143</posY>
 		<label>191</label>
-		<onleft>50</onleft>
+		<onleft>20</onleft>
 		<onright>50</onright>
 		<onup>2</onup>
-		<ondown>21</ondown>		
+		<ondown>21</ondown>
 		<onup>2</onup>
 	</control>
 	<control>
@@ -76,10 +78,10 @@
 		<posX>55</posX>
 		<posY>171</posY>
 		<label>190</label>
-		<onleft>50</onleft>
+		<onleft>21</onleft>
 		<onright>50</onright>
 		<onup>20</onup>
-		<ondown>22</ondown>		
+		<ondown>22</ondown>
 	</control>
 	<control>
 		<description>Clear button</description>
@@ -88,43 +90,46 @@
 		<posX>55</posX>
 		<posY>199</posY>
 		<label>192</label>
-		<onleft>50</onleft>
+		<onleft>22</onleft>
 		<onright>50</onright>
 		<onup>21</onup>
-		<ondown>23</ondown>		
+		<ondown>23</ondown>
 	</control>
 	<control>
+	  <visible>no</visible> <!-- Button not needed IMHO -->
 		<description>Play button</description>
 		<type>button</type>
 		<id>23</id>
 		<posX>55</posX>
 		<posY>227</posY>
 		<label>208</label>
-		<onleft>50</onleft>
+		<onleft>23</onleft>
 		<onright>50</onright>
 		<onup>22</onup>
-		<ondown>24</ondown>		
+		<ondown>24</ondown>
 	</control>
 	<control>
+	  <visible>no</visible> <!-- Button not needed IMHO -->
 		<description>Next button</description>
 		<type>button</type>
 		<id>24</id>
 		<posX>55</posX>
 		<posY>255</posY>
 		<label>209</label>
-		<onleft>50</onleft>
+		<onleft>24</onleft>
 		<onright>50</onright>
 		<onup>23</onup>
-		<ondown>25</ondown>		
+		<ondown>25</ondown>
 	</control>
 	<control>
+	  <visible>no</visible> <!-- Button not needed IMHO -->
 		<description>Previous button</description>
 		<type>button</type>
 		<id>25</id>
 		<posX>55</posX>
 		<posY>283</posY>
 		<label>210</label>
-		<onleft>50</onleft>
+		<onleft>25</onleft>
 		<onright>50</onright>
 		<ondown>2</ondown>
 		<onup>24</onup>
@@ -135,7 +140,8 @@
 		<type>togglebutton</type>
 		<id>26</id>
 		<posX>55</posX>
-		<posY>311</posY>
+		<posY>227</posY>
+<!--		<posY>311</posY> -->
 		<width>180</width>
 		<height>28</height>
 		<textXOff>10</textXOff>
@@ -151,7 +157,7 @@
 		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 		<onup>25</onup>
 		<ondown>2</ondown>
-		<onleft>50</onleft>
+		<onleft>26</onleft>
 		<onright>50</onright>
 	</control>
 
