@@ -89,7 +89,7 @@
 		<posX>210</posX> 
 		<posY>430</posY>
 		<width>340</width> 
-		<height>100</height>
+		<height>90</height>
 		<align>left</align> 
 		<font>font13</font>
 		<label>#plot</label>

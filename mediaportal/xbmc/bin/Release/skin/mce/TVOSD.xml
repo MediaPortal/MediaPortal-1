@@ -78,7 +78,7 @@
 		<posX>205</posX>
 		<posY>460</posY>
 		<width>340</width> 
-		<height>100</height>
+		<height>60</height>
 		<align>left</align> 
 		<label>#TV.View.description</label>
 		<font>font10</font>

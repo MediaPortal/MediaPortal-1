@@ -1194,7 +1194,9 @@ public class MediaPortalApp : D3DApp, IRender
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED : 
         if (isMaximized == false) return;
-
+#if DEBUG
+        return;
+#endif
         if (message.Param1 != 0)
         {
           //switch to fullscreen mode
