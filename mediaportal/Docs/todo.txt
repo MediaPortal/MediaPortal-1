@@ -50,6 +50,7 @@ My TV:
      - add support for digital capture cards (BDA tuners)
      - add screenshot option    
 	 - FF/RW
+	 - start timeshifting when MP starts and leave it running 
 	 
 My Music: (int_20h)
   - faster start of 1st song played
