@@ -2694,6 +2694,8 @@ namespace MediaPortal.TV.Recording
 						return;
 					}
 					//set the properties for the new tuning request. For DVB-T we only set the frequency
+
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-T freq:{0}",frequency);
 					myLocator.CarrierFrequency		= frequency;
 					myTuneRequest.ONID						= -1;					//original network id
 					myTuneRequest.TSID						= -1;					//transport stream id
@@ -2720,6 +2722,9 @@ namespace MediaPortal.TV.Recording
 
 					//set the properties for the new tuning request. For DVB-C we only set the frequency
 					DVBChannel chan=(DVBChannel)tuningObject;
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-C freq:{0} fec:{1} mod:{2} sr:{3} ONID:{4}, TSID:{5} SID:{6}",
+						chan.Frequency,chan.FEC,chan.Modulation,chan.Symbolrate,chan.NetworkID,chan.TransportStreamID,chan.ProgramNumber);
+
 					myLocator.CarrierFrequency		= chan.Frequency;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)chan.FEC;
 					myLocator.SymbolRate					= chan.Symbolrate;
