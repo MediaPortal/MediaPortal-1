@@ -159,6 +159,16 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AnalogTVTuningForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AnalogTVTuningForm.resx"
+                    DependentUpon = "AnalogTVTuningForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -299,12 +309,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "WeatherChannel.cs"
+                    RelPath = "VideoRenderers.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "VideoRenderers.cs"
+                    RelPath = "WeatherChannel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

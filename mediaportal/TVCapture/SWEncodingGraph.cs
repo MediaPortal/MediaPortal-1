@@ -884,5 +884,23 @@ namespace MediaPortal.TV.Recording
       else bFixCrossbar=false;
       return bFixCrossbar;
     }
+    public bool SignalPresent()
+    {
+      if (m_graphState!=State.Recording && m_graphState!=State.Viewing) return false;
+      if (m_TVTuner==null) return true;
+      AMTunerSignalStrength strength;
+      m_TVTuner.SignalPresent(out strength);
+      return strength==AMTunerSignalStrength.SignalPresent;
+    }
+
+    public long VideoFrequency()
+    {
+      
+      if (m_graphState!=State.Recording && m_graphState!=State.Viewing) return 0;
+      if (m_TVTuner==null) return 0;
+      int lFreq;
+      m_TVTuner.get_VideoFrequency(out lFreq);
+      return lFreq;
+    }
   }
 }

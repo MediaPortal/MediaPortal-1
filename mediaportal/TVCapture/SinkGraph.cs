@@ -687,5 +687,24 @@ namespace MediaPortal.TV.Recording
       if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
       if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
     }
+    
+    public bool SignalPresent()
+    {
+      if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return false;
+      if (m_TVTuner==null) return true;
+      AMTunerSignalStrength strength;
+      m_TVTuner.SignalPresent(out strength);
+      return strength==AMTunerSignalStrength.SignalPresent;
+    }
+
+    public long VideoFrequency()
+    {
+      
+      if (m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return 0;
+      if (m_TVTuner==null) return 0;
+      int lFreq;
+      m_TVTuner.get_VideoFrequency(out lFreq);
+      return lFreq;
+    }
   }
 }

@@ -29,6 +29,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.Button btnImport;
     private System.Windows.Forms.Button btnClear;
+    private System.Windows.Forms.Button buttonAutoTune;
 
 		//
 		// Private members
@@ -70,6 +71,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnClear = new System.Windows.Forms.Button();
       this.btnImport = new System.Windows.Forms.Button();
       this.upButton = new System.Windows.Forms.Button();
       this.downButton = new System.Windows.Forms.Button();
@@ -80,7 +82,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.btnClear = new System.Windows.Forms.Button();
+      this.buttonAutoTune = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -99,6 +101,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.buttonAutoTune);
       this.groupBox1.Controls.Add(this.btnClear);
       this.groupBox1.Controls.Add(this.btnImport);
       this.groupBox1.Controls.Add(this.upButton);
@@ -114,6 +117,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // btnClear
+      // 
+      this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnClear.Location = new System.Drawing.Point(136, 360);
+      this.btnClear.Name = "btnClear";
+      this.btnClear.TabIndex = 7;
+      this.btnClear.Text = "Clear";
+      this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
       // 
       // btnImport
       // 
@@ -219,15 +232,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.columnHeader4.Text = "Type";
       // 
-      // btnClear
+      // buttonAutoTune
       // 
-      this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnClear.Location = new System.Drawing.Point(152, 360);
-      this.btnClear.Name = "btnClear";
-      this.btnClear.TabIndex = 7;
-      this.btnClear.Text = "Clear";
-      this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+      this.buttonAutoTune.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonAutoTune.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonAutoTune.Location = new System.Drawing.Point(224, 360);
+      this.buttonAutoTune.Name = "buttonAutoTune";
+      this.buttonAutoTune.TabIndex = 8;
+      this.buttonAutoTune.Text = "AutoTune";
+      this.buttonAutoTune.Click += new System.EventHandler(this.buttonAutoTune_Click);
       // 
       // TVChannels
       // 
@@ -675,6 +688,19 @@ namespace MediaPortal.Configuration.Sections
       isDirty =true;
       SaveTVChannels();
       
+    }
+
+    private void buttonAutoTune_Click(object sender, System.EventArgs e)
+    {
+      isDirty =true;
+      SaveTVChannels();
+      AnalogTVTuningForm form = new AnalogTVTuningForm();
+      form.ShowDialog(this);
+
+
+      isDirty =true;
+      LoadTVChannels();
+    
     }
 	}
 }

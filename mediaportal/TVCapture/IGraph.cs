@@ -132,5 +132,9 @@ namespace MediaPortal.TV.Recording
     ///          false: graph does not need to be rebuild for this channel
     /// </returns>
     bool ShouldRebuildGraph(int iChannel);
+
+    bool SignalPresent();
+
+    long VideoFrequency();
 	}
 }

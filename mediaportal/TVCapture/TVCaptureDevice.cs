@@ -768,6 +768,13 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    public void Tune(int channel)
+    {
+      AnalogVideoStandard standard=AnalogVideoStandard.None;
+      if (m_eState != State.Viewing) return;
+      m_graph.TuneChannel( standard, channel);
+    }
+
     /// <summary>
     /// Property to turn on/off tv viewing
     /// </summary>
@@ -803,6 +810,16 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+    }
+    public long VideoFrequency()
+    {
+      if (m_eState!=State.Viewing && m_eState!=State.Timeshifting && m_eState!=State.Recording) return 0;
+      return m_graph.VideoFrequency();
+    }
+    public bool SignalPresent()
+    {
+      if (m_eState!=State.Viewing && m_eState!=State.Timeshifting && m_eState!=State.Recording) return false;
+      return m_graph.SignalPresent();
     }
   }
 }  
