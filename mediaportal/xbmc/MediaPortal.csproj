@@ -168,6 +168,11 @@
                     Project = "{88929413-4722-41CE-B763-FC25466CD971}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "USBUIRT"
+                    Project = "{AAFEDB30-C97D-4B13-9871-DD7B527E8C91}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -341,11 +346,6 @@
                     RelPath = "TVChannelFormNew.resx"
                     DependentUpon = "TVChannelFormNew.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "USBUIRT.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
             </Include>
         </Files>
