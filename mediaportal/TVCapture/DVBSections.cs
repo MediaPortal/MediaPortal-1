@@ -328,7 +328,7 @@ namespace MediaPortal.TV.Recording
 							if (pat.program_number==serviceId)
 							{
 								Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
-								for (int l=0; l < wdata.Length;++l)
+								for (int l=12; l < wdata.Length;++l)
 									pmtTable.Add(wdata[l]);
 							}
 							Debug.WriteLine("decode PMT:"+n.ToString());
