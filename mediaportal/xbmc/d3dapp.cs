@@ -992,12 +992,17 @@ namespace MediaPortal
             Cursor.Hide();
           else 
             Cursor.Show();
-          TimeSpan ts=DateTime.Now-m_MouseTimeOut;
-          if (ts.TotalSeconds>=3)
+          if (m_bShowCursor)
           {
-            //hide mouse
-            m_bShowCursor=false;
-            m_MouseTimeOut=DateTime.Now;
+            TimeSpan ts=DateTime.Now-m_MouseTimeOut;
+            if (ts.TotalSeconds>=3)
+            {
+              //hide mouse
+              m_bShowCursor=false;
+              m_bNeedUpdate=true;
+              m_MouseTimeOut=DateTime.Now;
+              Invalidate(true);
+            }
           }
         }
       }
@@ -1107,6 +1112,9 @@ namespace MediaPortal
 
     public void OnSetup(object sender, EventArgs e)
     {
+      m_bAutoHideMouse=false;
+      Cursor.Show();
+      Invalidate(true);
       SetupForm dlg = new SetupForm();
       dlg.ShowDialog(this);
 
@@ -1116,6 +1124,7 @@ namespace MediaPortal
       {
         strNewSkin=xmlreader.GetValueAsString("skin","name","MediaCenter");
         strNewLanguage=xmlreader.GetValueAsString("skin","language","English");
+        m_bAutoHideMouse=xmlreader.GetValueAsBool("general","autohidemouse",false);
       }
       if (strNewLanguage!=m_strLanguage)
       {
@@ -1254,7 +1263,10 @@ namespace MediaPortal
             }*/
 
       // Allow the control to handle the keystroke now
-      base.OnKeyPress(e);
+      if (!e.Handled) 
+      {
+        base.OnKeyPress(e);
+      }
     }
 
     private void D3DApp_Load(object sender, System.EventArgs e)
@@ -1580,7 +1592,8 @@ namespace MediaPortal
         {
           m_bShowCursor=true;
           m_bNeedUpdate=true;
-          Invalidate();
+          Invalidate(true);
+          m_MouseTimeOut=DateTime.Now;
         }
       }
 		}
@@ -1588,7 +1601,13 @@ namespace MediaPortal
     {
       //this.Text=String.Format("show click");
       System.Windows.Forms.Cursor ourCursor = this.Cursor;
-      m_bShowCursor=true;
+      if (!m_bShowCursor)
+      {
+        m_bShowCursor=true;
+        m_bNeedUpdate=true;
+        Invalidate(true);
+        m_MouseTimeOut=DateTime.Now;
+      }
     }
 
 		private void OnKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)

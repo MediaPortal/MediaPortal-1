@@ -24,6 +24,8 @@ public class MediaPortalApp : D3DApp
     private System.Threading.Mutex m_Mutex;
     private string m_UniqueIdentifier;
 
+  const int WM_KEYDOWN    =0x0100;
+
     [STAThread]
     public static void Main()
     {
@@ -110,10 +112,19 @@ public class MediaPortalApp : D3DApp
       g_Player.Init();
     }
 
-    protected override void WndProc( ref Message m )
+  public override bool PreProcessMessage(ref Message msg)
+  {
+    if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("pre keydown");
+
+    return base.PreProcessMessage (ref msg);
+  }
+
+    protected override void WndProc( ref Message msg )
     {
-      g_Player.WndProc(ref m);
-      base.WndProc( ref m );
+      
+      if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
+      g_Player.WndProc(ref msg);
+      base.WndProc( ref msg );
     }
 
     /// <summary>
@@ -161,6 +172,12 @@ public class MediaPortalApp : D3DApp
 
     protected override void Render() 
     { 
+      // disable TV preview when playing a movie
+      if ( g_Player.Playing && g_Player.HasVideo )
+      {
+        Recorder.Previewing=false;
+      }
+
       // sleep 10msec so we dont use 100% cpu time
       System.Threading.Thread.Sleep(10);
 
@@ -173,7 +190,7 @@ public class MediaPortalApp : D3DApp
       if (!m_bNeedUpdate)
       {
         // no refresh needed
-        // are we playing a video fullscreen?
+        // are we playing a video fullscreen or watching TV?
         if(GUIGraphicsContext.IsFullScreenVideo)
         {
           // yes, then just handle the outstanding messages
@@ -185,6 +202,7 @@ public class MediaPortalApp : D3DApp
           return;
         }
       }
+
       // we're not playing a video fullscreen
       // or screen needs a refresh
       m_bNeedUpdate=false;
@@ -397,10 +415,6 @@ public class MediaPortalApp : D3DApp
       m_iLastMousePositionX=e.X;
       m_iLastMousePositionY=e.Y;
 
-      m_MouseTimeOut=DateTime.Now;
-      Cursor.Show();
-    
-
       float fX= ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
       float fY= ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
       float x =(fX*((float)e.X)) - GUIGraphicsContext.OffsetX;
@@ -462,8 +476,6 @@ public class MediaPortalApp : D3DApp
       }
     }
 
-    m_MouseTimeOut=DateTime.Now;
-    Cursor.Show();
 	}
 		
 }

@@ -5,7 +5,8 @@ Skin:
   - My Tv : need special gfx for my tv panel
   - when watching fullscreen live-tv we need a background to show info about  current & next running program
     something like mythv : http://mythtv.sourceforge.net/mc/blueosdone.png
-  - 
+  - we need an icon for Mediaportal.exe (will be shown in start menu & on shortcut on desktop)
+  - we need a logo for Mediaportal.exe
 
 My Radio:
   - AM/FM

@@ -1,6 +1,18 @@
 History: (dd-mm-yyyy)
+
+  07-05-2004  setup       : fixed : crash when clicking on default column in audio/video/picture shares
+  07-05-2004  installer   : added : no need 2 run postsetup/register.bat anymore after installing MP
+  07-05-2004  my movies   : added : you can specify which audio renderer to use for movie playback
+  07-05-2004  DVD         : added : you can specify which audio renderer to use for DVD playback
+  07-05-2004  DVD         : added : you can specify which DVD Navigator to use for DVD playback
+  07-05-2004  DVD         : fixed : Cannot return to play after FF has been triggered, you will either go faster forward or backward. Not play using remote. 
+  07-05-2004  My pictures : added : Create thumbs now also creates thumbs for folders which contain images
+  07-05-2004  My TV       : fixed : stop watching TV when selecting a recorded tv program in mytv->recorded tv
+  07-05-2004  my music    : fixed : You need to click cursors keys twice to get it to move after switching from full screen to GUI 
+  07-05-2004  general     : fixed : after retrieving album art, imdb info or other actions the cursor went back to the top
+
   06-05-2004  My music    : fixed : fullscreen audio Windows Media player received key events, so F8 didnt work
-  06-05-2004  My video    : fixed : black screen @ end of movie instead of GUI
+  06-05-2004  My video    : fixed : MP showed a black screen @ end of movie instead of returning to GUI
   06-05-2004  My video    : fixed : crash in textureloader if texture/thumb didnt exists
   
   05-05-2004  My video    : fixed : imdb number not found for some movies

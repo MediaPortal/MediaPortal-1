@@ -1,12 +1,21 @@
 Bugs:
-  - 18-04-2004 my pictures: pics are 2 small after calibrating (not using entire screen)
-  - 24-04-2004 general    : some WM9 visz. like g-force just show a black screen
-  - 26-04-2004 my music   : F3 on a song -> the cursor gets set at the beginning of the list
-  - 26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3
- 
-  - 28-04-2004 my tv      : crossbar  Failed to set crossbar routing
-  - 28-04-2004 my tv      : tuner not found
-  - 29-04-2004 my tv      : desync audio while viewing tv
-  - 01-05-2004 general    : After playing a movie, or showing a pic and returning from full screen a different file is selected. Annoying. 
-  - 01-05-2004 my tv      : Some TV-cards do not change channel till after exiting and entering MyTv again. 
-  - 01-05-2004 my music   : database doesnt support same album name for different artists
+- installer: remove need for uninstall
+- installer: check dx9b
+- MPReader : XCDs dont work anymore
+
+- I have a movie called Gothika 2003-CD1.avi & Gothika 2003-CD2.avi 
+  If MP tryed to retreive the IMDB info it gives an error and can't retreive the info.. if i rename the file to Gothika-CD#.avi it works perfectly.. 
+
+06-05-2004 my videos  : Disc number cannot be entered in the database 
+02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
+02-05-2004 my usic	  : When having 2 albums with the same name it is shown as 1 with artist = various artists. However, there r albums with the same name from different artists. (big change needed in database engine) 
+01-05-2004 my pictures: Quality of pics is degraded since DX9 is used. 
+01-05-2004 my tv      : Some TV-cards do not change channel till after exiting and entering MyTv again. 
+29-04-2004 my tv      : desync audio while viewing tv 
+28-04-2004 my tv      : crossbar Failed to set crossbar routing 
+28-04-2004 my tv      : tuner not found 
+26-04-2004 my music   : F3 on a song -> the cursor gets set at the beginning of the list 
+26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3 
+24-04-2004 general    : some WM9 visz. like g-force just show a black screen
+
+
