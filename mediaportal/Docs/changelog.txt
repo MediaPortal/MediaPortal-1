@@ -1,5 +1,8 @@
 History: (dd-mm-yyyy)
-  05-05-2004  My video    : fixed : crash in textureloader
+  06-05-2004  My music    : fixed : fullscreen audio Windows Media player received key events, so F8 didnt work
+  06-05-2004  My video    : fixed : black screen @ end of movie instead of GUI
+  06-05-2004  My video    : fixed : crash in textureloader if texture/thumb didnt exists
+  
   05-05-2004  My video    : fixed : imdb number not found for some movies
   05-05-2004  My tv       : fixed : recorder was broken
   05-05-2004  My video    : added : bookmarks now works
