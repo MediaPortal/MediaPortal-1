@@ -27,6 +27,7 @@ namespace MediaPortal.TV.Recording
 		int						m_pageWidth=0;
 		int						m_pageHeight=0;
 		bool					m_hiddenMode=true;
+		bool					m_transparentMode=false;
 
 		//
 		//
@@ -158,6 +159,11 @@ namespace MediaPortal.TV.Recording
 			{
 				m_hiddenMode=value;
 			}
+		}
+		public bool TransparentMode
+		{
+			get{return m_transparentMode;}
+			set{m_transparentMode=value;}
 		}
 		public int PageLanguage
 		{
@@ -461,7 +467,11 @@ namespace MediaPortal.TV.Recording
 			for (row = 0; row < 24; row++)
 			{
 				foreground   = (int)TextColors.White;
-				background   = (int)TextColors.Black;
+				if(m_transparentMode==false)
+					background  = (int)TextColors.Black;
+				else
+					background  = (int)TextColors.Trans1;
+
 				doubleheight = 0;
 				charset      = 0;
 				mosaictype   = 0;
@@ -960,10 +970,7 @@ namespace MediaPortal.TV.Recording
 									m_pageBitmap.SetPixel(x+xpos,y+(ypos*2)+1,pixelColor[xpos,ypos]);
 								}
 								}
-							catch
-							{
-								int a=0;
-							}
+							catch{}
 						}
 					}
 

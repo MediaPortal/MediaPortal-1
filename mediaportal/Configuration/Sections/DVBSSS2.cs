@@ -114,6 +114,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label totalDBcount;
 		private System.Windows.Forms.Label label29;
 		private System.Windows.Forms.GroupBox groupBox8;
+		private System.Windows.Forms.Button button21;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
@@ -214,6 +215,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.groupBox6 = new System.Windows.Forms.GroupBox();
+			this.button21 = new System.Windows.Forms.Button();
 			this.button14 = new System.Windows.Forms.Button();
 			this.button10 = new System.Windows.Forms.Button();
 			this.button13 = new System.Windows.Forms.Button();
@@ -765,6 +767,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// groupBox6
 			// 
+			this.groupBox6.Controls.Add(this.button21);
 			this.groupBox6.Controls.Add(this.button14);
 			this.groupBox6.Controls.Add(this.button10);
 			this.groupBox6.Controls.Add(this.button13);
@@ -777,6 +780,17 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox6.TabIndex = 26;
 			this.groupBox6.TabStop = false;
 			this.groupBox6.Text = "Transponder to Scan";
+			// 
+			// button21
+			// 
+			this.button21.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button21.Location = new System.Drawing.Point(8, 24);
+			this.button21.Name = "button21";
+			this.button21.Size = new System.Drawing.Size(48, 21);
+			this.button21.TabIndex = 27;
+			this.button21.Text = "Get";
+			this.button21.Visible = false;
+			this.button21.Click += new System.EventHandler(this.button21_Click);
 			// 
 			// button14
 			// 
@@ -2644,6 +2658,8 @@ namespace MediaPortal.Configuration.Sections
 
 		private void button15_Click(object sender, System.EventArgs e)
 		{
+			if(m_b2c2Helper.Run()==false)
+				return;
 			progressBar2.Maximum=CountSelectedNodes();
 			progressBar2.Minimum=0;
 			progressBar2.Value=0;
@@ -2653,9 +2669,17 @@ namespace MediaPortal.Configuration.Sections
 			treeView5.Enabled=false;
 			int counter=0;
 			bool tuned=false;
-			if(m_b2c2Helper.Run()==false)
-				return;
 			ResetStatus();
+			int channelCount=0;
+			foreach(TreeNode parentNode in treeView5.Nodes)
+			{
+				if(parentNode==null)
+					continue;
+				if(parentNode.Checked==true)
+					channelCount+=parentNode.Nodes.Count;
+			}
+			progressBar2.Maximum=channelCount+1;
+			DVBChannel oldChannel=null;
 			do
 			{
 				GC.Collect();
@@ -2666,14 +2690,28 @@ namespace MediaPortal.Configuration.Sections
 						break;
 					if(tn.Checked==true)
 					{
+						
 						DVBChannel ch=(DVBChannel)tn.Tag;
 						if(m_stopEPGGrab==true)
 							break;
 						if(ch==null)
 							continue;
-						tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
-						if(tuned==false)
-							continue ;
+						if(oldChannel==null)
+						{
+							oldChannel=ch;
+							tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
+							if(tuned==false)
+								continue ;
+						}
+						if(oldChannel.Frequency!=ch.Frequency || oldChannel.Symbolrate!=ch.Symbolrate
+							|| oldChannel.FEC!=ch.FEC || oldChannel.Polarity!=ch.Polarity
+							|| oldChannel.LNBKHz!=ch.LNBKHz || oldChannel.DiSEqC!=ch.DiSEqC || oldChannel.LNBFrequency!=ch.LNBFrequency)
+						{
+							oldChannel=ch;
+							tuned=m_b2c2Helper.TuneChannel(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.LNBFrequency);
+							if(tuned==false)
+								continue ;
+						}
 						currChannel.Text=ch.ServiceName;
 						counter+=m_dvbSec.GrabEIT(m_b2c2Helper.Mpeg2DataFilter);
 						totalDBcount.Text=counter.ToString();
@@ -2764,6 +2802,128 @@ namespace MediaPortal.Configuration.Sections
 						tn.Checked=true;
 
 			}
+		}
+
+		private void button21_Click(object sender, System.EventArgs e)
+		{
+			m_b2c2Helper.Run();
+			m_scanRunning=true;
+			DVBSections.DVBNetworkInfo list=new DVBSections.DVBNetworkInfo();
+			int						dIndex=comboBox3.SelectedIndex;
+			int						lnbkhz=0;
+			int						diseqc=0;
+			int						lnb_0=0;
+			int						lnb_1=0;
+			int						lnb_switch=0;
+			int						lnb0=0;
+			int						lnb1=0;
+			int						lnbsw=0;
+			int						circ=0;
+			int						cband=0;
+			int						lnbKinds=0;
+            			
+			try
+			{
+				lnb0=Convert.ToInt16(lnb0MHZ.Text);
+				lnb1=Convert.ToInt16(lnb1MHZ.Text);
+				lnbsw=Convert.ToInt16(lnbswMHZ.Text);
+				circ=Convert.ToInt16(circularMHZ.Text);
+				cband=Convert.ToInt16(cbandMHZ.Text);
+			}
+			catch
+			{
+				MessageBox.Show("Please correct the Ku-Band/Circular/C-Band settings!");
+				return;
+			}
+
+			try
+			{
+
+				switch (dIndex)
+				{
+					case 0:
+						diseqc=diseqca.SelectedIndex;
+						lnbkhz=lnbconfig1.SelectedIndex;
+						lnbKinds=lnbkind1.SelectedIndex;
+						break;
+					case 1:
+						diseqc=diseqcb.SelectedIndex;
+						lnbkhz=lnbconfig2.SelectedIndex;
+						lnbKinds=lnbkind2.SelectedIndex;
+						break;
+					case 2:
+						diseqc=diseqcc.SelectedIndex;
+						lnbkhz=lnbconfig3.SelectedIndex;
+						lnbKinds=lnbkind3.SelectedIndex;
+						break;
+					case 3:
+						diseqc=diseqcd.SelectedIndex;
+						lnbkhz=lnbconfig4.SelectedIndex;
+						lnbKinds=lnbkind4.SelectedIndex;
+						break;
+
+				}
+				switch(lnbKinds)
+				{
+					case 0:	// ku			
+						lnb_0=lnb0;
+						lnb_1=lnb1;
+						lnb_switch=lnbsw;
+						break;
+					case 1: // circular
+						lnb_0=circ;
+						lnb_1=-1;
+						lnb_switch=-1;
+						break;
+					case 2: // c-band
+						lnb_0=cband;
+						lnb_1=-1;
+						lnb_switch=-1;
+						break;
+					default:
+						MessageBox.Show("Please correct the Ku-Band/Circular/C-Band settings!");
+						return;
+				}
+
+			}
+			catch(Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+				return;
+			}
+
+			//int lnbkhz=lnbselect.SelectedIndex;
+
+			try
+			{
+				tabPage1.Enabled=false;
+				m_b2c2Helper.GetTPLList(ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,treeView4);
+				if(list.NITDescriptorList!=null)
+				{
+					if(list.NITDescriptorList.Count>0)
+					{
+						treeView4.Nodes.Clear();
+						foreach(DVBSections.NITSatDescriptor satDescr in list.NITDescriptorList)
+						{
+							string pol="";
+							if(satDescr.Polarisation==0)
+								pol=",H,";
+							else
+								pol=",V,";
+							string nodeText=satDescr.Frequency.ToString()+pol+satDescr.Symbolrate.ToString();
+							TreeNode tn=new TreeNode(nodeText);
+							tn.Checked=true;
+							tn.Tag=nodeText;
+							treeView4.Nodes.Add(tn);
+						}
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+
 		}
 	}// class
 }// namespace

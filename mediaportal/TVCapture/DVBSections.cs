@@ -109,7 +109,49 @@ namespace MediaPortal.TV.Recording
 			public string serviceName;
 			public int serviceType;
 		}
+		//
+		// nit structs
+		public struct NITSatDescriptor
+		{
+			public int Frequency;
+			public float OrbitalPosition;
+			public int WestEastFlag;
+			public int Polarisation;
+			public int Modulation;
+			public int Symbolrate;
+			public int FECInner;
+			public string NetworkName;
+		}
+		//
+		public struct NITCableDescriptor
+		{
+			public int Frequency;
+			public int FECOuter;
+			public int Modulation;
+			public int Symbolrate;
+			public int FECInner;
+			public string NetworkName;
+		}
+		//
+		public struct NITTerrestrialDescriptor
+		{
+			public int CentreFrequency;
+			public int Bandwidth;
+			public int Constellation;
+			public int HierarchyInformation;
+			public int CoderateHPStream;
+			public int CoderateLPStream;
+			public int GuardInterval;
+			public int TransmissionMode; 
+			public int OtherFrequencyFlag;
+			public string NetworkName;
+		}
 
+		public struct DVBNetworkInfo
+		{
+			public ArrayList	NITDescriptorList;
+			public string		NetworkName;
+		}
 		//
 		//
 		public struct ChannelInfo
@@ -1583,26 +1625,18 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 		//
-		private object decodeNITTable(byte[] buf,ref TPList[] transponders)
+		private object decodeNITTable(byte[] buf,ref DVBNetworkInfo nit)
 		{
 			int table_id;
 			int section_syntax_indicator;
-			int reserved_1;
-			int reserved_2;
 			int section_length;
 			int network_id;
-			int reserved_3;
 			int version_number;
 			int current_next_indicator;
 			int section_number;
 			int last_section_number;
-			int reserved_4;
 			int network_descriptor_length;
-			//N ... descriptor
-			int reserved_5;
 			int transport_stream_loop_length;
-
-			// nit tsl
 			int transport_stream_id;
 			int original_network_id;
 
@@ -1611,97 +1645,215 @@ namespace MediaPortal.TV.Recording
 			int pointer=0;
 			int l1=0;
 			int l2=0;
-			byte[] b = new byte[buf.Length + 1];
+			//byte[] b = new byte[buf.Length + 1];
 			//
 			//
-			int transpCount=0;
 			//
-			System.Array.Copy(buf, 0, b, 0, 10);
-			table_id = b[0];
-			section_syntax_indicator = BitsFromBArray(b, 0, 8, 1);
-			reserved_1 = BitsFromBArray(b, 0, 9, 1);
-			reserved_2 = BitsFromBArray(b, 0, 10, 2);
-			section_length = BitsFromBArray(b, 0, 12, 12);
-			network_id = BitsFromBArray(b, 0, 24, 16);
-			reserved_3 = BitsFromBArray(b, 0, 40, 2);
-			version_number = BitsFromBArray(b, 0, 42, 5);
-			current_next_indicator = BitsFromBArray(b, 0, 47, 1);
-			section_number = BitsFromBArray(b, 0, 48, 8);
-			last_section_number = BitsFromBArray(b, 0, 56, 8);
-			reserved_4 = BitsFromBArray(b, 0, 64, 4);
-			network_descriptor_length = BitsFromBArray(b, 0, 68, 12);
+			//System.Array.Copy(buf, 0, b, 0, 10);
+			try
+			{
+				table_id = buf[0];
+				section_syntax_indicator = buf[1] &0x80;//BitsFromBArray(b, 0, 8, 1);
+				section_length = ((buf[1] &0xF)<<8)+buf[2];//BitsFromBArray(b, 0, 12, 12);
+				network_id = (buf[3]<<8)+buf[4];//BitsFromBArray(b, 0, 24, 16);
+				version_number = (buf[5]>>1) &0x1F;//BitsFromBArray(b, 0, 42, 5);
+				current_next_indicator = buf[5]&1;//BitsFromBArray(b, 0, 47, 1);
+				section_number = buf[6];
+				last_section_number = buf[7];//BitsFromBArray(b, 0, 56, 8);
+				network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];//BitsFromBArray(b, 0, 68, 12);
 			
 			
-			l1 = network_descriptor_length;
-			pointer += 10;
-			int x = 0;
-			byte[] b0 = new byte[buf.Length-pointer + 1];
-			//m_transponderData.transp_List = new ArrayList();
-			ArrayList data=new ArrayList();
+				l1 = network_descriptor_length;
+				pointer += 10;
+				int x = 0;
+				//byte[] b0 = new byte[buf.Length-pointer + 1];
+			
 
-			while (l1 > 0)
-			{
-				x = buf[pointer + 1] + 2;
-				byte[] service = new byte[buf.Length-pointer + 1];
-				System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
-				l1 -= x;
-				pointer += x;
-			}
-			System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
-			reserved_5 = BitsFromBArray(b, 0, 0, 4);
-			transport_stream_loop_length = BitsFromBArray(b, 0, 4, 12);
-			l1 = transport_stream_loop_length;
-			pointer += 2;
-			System.Array.Copy(buf, pointer, b0, 0, buf.Length - pointer);
-			while (l1 > 0)
-			{
-				transport_stream_id = BitsFromBArray(b0, 0, 0, 16);
-				original_network_id = BitsFromBArray(b0, 0, 16, 16);
-				reserved_1 = BitsFromBArray(b0, 0, 32, 4);
-				transport_descriptor_length = BitsFromBArray(b0, 0, 36, 12);
-				pointer += 6;
-				l1 -= 6;
-				l2 = transport_descriptor_length;
-				transpCount += 1;
-				while (l2 > 0)
+				while (l1 > 0)
 				{
-					TPList tp=new TPList();
-					x = buf[pointer + 1] ;
-					byte[] service = new byte[x + 1];
+					int indicator=buf[pointer];
+					int a=0;
+					x = buf[pointer + 1] + 2;
+					byte[] service = new byte[x];
 					System.Array.Copy(buf, pointer, service, 0, x);
-					DVB_GetSatDelivSys(service, transport_stream_id, original_network_id,ref tp);
-					data.Add(tp);
-					pointer += x;
-					l2 -= x;
+					if(indicator==0x40)
+					{
+						nit.NetworkName=System.Text.Encoding.ASCII.GetString(service,2,x-2);
+					}
 					l1 -= x;
+					pointer += x;
 				}
+				//System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
+				transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
+				l1 = transport_stream_loop_length;
+				pointer += 2;
+				//System.Array.Copy(buf, pointer, b0, 0, buf.Length - pointer);
+				while (l1 > 0)
+				{
+					transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
+					original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
+					transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
+					pointer += 6;
+					l1 -= 6;
+					l2 = transport_descriptor_length;
+					while (l2 > 0)
+					{
+						int indicator=buf[pointer];
+						x = buf[pointer + 1]+2 ;
+						byte[] service = new byte[x + 1];
+						System.Array.Copy(buf, pointer, service, 0, x);
+						if(indicator==0x43) // sat
+						{
+							NITSatDescriptor tp=new NITSatDescriptor();
+							DVB_GetSatDelivSys(service,ref tp);
+							nit.NITDescriptorList.Add(tp);
+						}
+						if(indicator==0x44) // cable
+						{
+							NITCableDescriptor tp=new NITCableDescriptor();
+							DVB_GetCableDelivSys(service,ref tp);
+							nit.NITDescriptorList.Add(tp);
+						}
+						if(indicator==0x5A) // terrestrial
+						{
+							NITTerrestrialDescriptor tp=new NITTerrestrialDescriptor();
+							DVB_GetTerrestrialDelivSys(service,ref tp);
+							nit.NITDescriptorList.Add(tp);
+						}
+						//
+						pointer += x;
+						l2 -= x;
+						l1 -= x;
+					}
+				
+				}
+				x = 0;
 			}
-			x = 0;
+			catch
+			{
+				int a=0;
+			}
 			return 0;
 		}
-		private object DVB_GetSatDelivSys(byte[] b, int tr, int onid,ref TPList tp)
+		//
+		private void DVB_GetSatDelivSys(byte[] b, ref NITSatDescriptor tp)
 		{
-			if(b[0]==0x43)
+			if(b[0]==0x43 && b.Length>=13)
 			{
 				int descriptor_tag = b[0];
 				int descriptor_length = b[1];
-				int frequency = (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
-				int orbital_position = BitsFromBArray(b, 0, 48, 16);
-				int west_east_flag = BitsFromBArray(b, 0, 64, 1);
-				int polarisation = BitsFromBArray(b, 0, 65, 2);
-				int modulation = BitsFromBArray(b, 0, 67, 5);
-				int symbol_rate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
-				int FEC_inner = BitsFromBArray(b, 0, 100, 4);
-				int org_Network_ID = onid;
-				int transport_Stream_ID = tr;
-				tp.TPfreq=frequency;
-				tp.TPpol=polarisation;
-				tp.TPsymb=symbol_rate;
+				tp.Frequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+				tp.OrbitalPosition = (b[6]<<8)+b[7];
+				tp.WestEastFlag = (b[8] & 0x80)>>7;
+				tp.Polarisation = (b[8]& 0x60)>>5;
+				if(tp.Polarisation>1)
+					tp.Polarisation-=2;
+				// polarisation
+				// 0 - horizontal/left (linear/circluar)
+				// 1 - vertical/right (linear/circluar)
+				tp.Modulation = (b[8] & 0x1F);
+				tp.Symbolrate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
+				tp.FECInner = (b[12] & 0xF);
+				// change hex to int for freq & symbolrate
+				string valString="";
+				valString=Convert.ToString(tp.Frequency,16);
+				if(valString.Length>5)
+					valString=valString.Substring(0,5);
+				tp.Frequency=Convert.ToInt32(valString);
+				valString=Convert.ToString(tp.Symbolrate,16);
+				if(valString.Length>5)
+					valString=valString.Substring(0,5);
+				tp.Symbolrate=Convert.ToInt32(valString);
 			}
 			
-			return null;
 		}
-		//
+		private void DVB_GetCableDelivSys(byte[] b, ref NITCableDescriptor tp)
+		{
+			if(b[0]==0x44 && b.Length>=13)
+			{
+				int descriptor_tag = b[0];
+				int descriptor_length = b[1];
+				tp.Frequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+				//
+				tp.FECOuter = (b[7] & 0xF);
+				// fec-outer
+				// 0- not defined
+				// 1- no outer FEC coding
+				// 2- RS(204/188)
+				// other reserved
+				tp.Modulation = b[8];
+				// modulation
+				// 0x00 not defined
+				// 0x01 16-QAM
+				// 0x02 32-QAM
+				// 0x03 64-QAM
+				// 0x04 128-QAM
+				// 0x05 256-QAM
+				tp.Symbolrate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
+				//
+				tp.FECInner = (b[12] & 0xF);
+				// fec inner
+				// 0- not defined
+				// 1- 1/2 conv. code rate
+				// 2- 2/3 conv. code rate
+				// 3- 3/4 conv. code rate
+				// 4- 5/6 conv. code rate
+				// 5- 7/8 conv. code rate
+				// 6- 8/9 conv. code rate
+				// 15- No conv. coding
+			}
+			
+		}
+		// terrestrial
+		private void DVB_GetTerrestrialDelivSys(byte[] b, ref NITTerrestrialDescriptor tp)
+		{
+			if(b[0]==0x5A)
+			{
+				int descriptor_tag = b[0];
+				int descriptor_length = b[1];
+				tp.CentreFrequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+				tp.Bandwidth = (b[6]>>5);
+				// bandwith
+				// 0- 8 MHz
+				// 1- 7 MHz
+				// 2- 6 MHz
+				tp.Constellation=(b[7]>>6);
+				// constellation
+				// 0- QPSK
+				// 1- 16-QAM
+				// 2- 64-QAM
+				tp.HierarchyInformation=(b[7]>>3)& 7;
+				// 0- non-hierarchical
+				// 1- a == 1
+				// 2- a == 2
+				// 3- a == 4
+				tp.CoderateHPStream=(b[7] & 7);
+				tp.CoderateLPStream=(b[8]>>5);
+				// coderate (fec)
+				// 0- 1/2
+				// 1- 2/3
+				// 2- 3/4
+				// 3- 5/6
+				// 4- 7/8
+				// Coderate: The code_rate is a 3-bit field specifying the inner FEC scheme used according to table 43. Non-hierarchical
+				// channel coding and modulation requires signalling of one code rate. In this case, 3 bits specifying code_rate according
+				// to table 44 are followed by another 3 bits of value '000". Two different code rates may be applied to two different levels
+				// of modulation with the aim of achieving hierarchy. Transmission then starts with the code rate for the HP level of the
+				// modulation and ends with the one for the LP level.
+				tp.GuardInterval=(b[8]>>3) & 3;
+				// 0 - 1/32
+				// 1 - 1/16
+				// 2 - 1/8
+				// 3 - 1/4
+				//
+				tp.TransmissionMode=(b[8]>>1) & 3;
+				// 0 - 2k Mode
+				// 1 - 8k Mode
+				tp.OtherFrequencyFlag=(b[8] & 3);
+				// 0 - no other frequency in use
+			}
+			
+		}		//
 		//
 		//
 		private int SetBit(int InByte, byte Bit)
@@ -1891,18 +2043,18 @@ namespace MediaPortal.TV.Recording
 			int eventsCount=0;
 
 			ArrayList eitList=new ArrayList();
-			eitList=GetEITSchedule(0x4e,filter);
-			foreach(EITDescr eit in eitList)
-			{
-				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-				eventsCount+=SetEITToDatabase(eit,progName,0);
-			}
-			eitList=GetEITSchedule(0x4f,filter);
-			foreach(EITDescr eit in eitList)
-			{
-				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-				eventsCount+=SetEITToDatabase(eit,progName,0);
-			}
+//			eitList=GetEITSchedule(0x4e,filter);
+//			foreach(EITDescr eit in eitList)
+//			{
+//				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+//				eventsCount+=SetEITToDatabase(eit,progName,0x4e);
+//			}
+//			eitList=GetEITSchedule(0x4f,filter);
+//			foreach(EITDescr eit in eitList)
+//			{
+//				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
+//				eventsCount+=SetEITToDatabase(eit,progName,0x4f);
+//			}
 			int lastTable=0x50;
 			eitList=GetEITSchedule(0x50,filter);
 
@@ -1911,7 +2063,7 @@ namespace MediaPortal.TV.Recording
 				if(eit.lastTable>lastTable)
 					lastTable=eit.lastTable;
 				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-				eventsCount+=SetEITToDatabase(eit,progName,0);
+				eventsCount+=SetEITToDatabase(eit,progName,0x50);
 			}
 			for(int table=0x51;table<lastTable;table++)
 			{
@@ -1919,7 +2071,7 @@ namespace MediaPortal.TV.Recording
 				foreach(EITDescr eit in eitList)
 				{
 					string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-					eventsCount+=SetEITToDatabase(eit,progName,0);
+					eventsCount+=SetEITToDatabase(eit,progName,0x50);
 				}
 
 			}
@@ -1932,7 +2084,7 @@ namespace MediaPortal.TV.Recording
 				if(eit.lastTable>lastTable)
 					lastTable=eit.lastTable;
 				string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-				eventsCount+=SetEITToDatabase(eit,progName,0);
+				eventsCount+=SetEITToDatabase(eit,progName,0x50);
 			}
 			for(int table=0x61;table<lastTable;table++)
 			{
@@ -1940,7 +2092,7 @@ namespace MediaPortal.TV.Recording
 				foreach(EITDescr eit in eitList)
 				{
 					string progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id,eit.ts_id);
-					eventsCount+=SetEITToDatabase(eit,progName,0);
+					eventsCount+=SetEITToDatabase(eit,progName,0x50);
 				}
 
 
@@ -1950,7 +2102,7 @@ namespace MediaPortal.TV.Recording
 
 		}
 		//
-		public int SetEITToDatabase(EITDescr data,string channelName,int dummy)
+		public int SetEITToDatabase(EITDescr data,string channelName,int eventKind)
 		{
 			try
 			{
@@ -1969,8 +2121,16 @@ namespace MediaPortal.TV.Recording
 					return 0;
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
-				tv.Description=data.event_item_text;
 				tv.Title=data.event_name;
+				tv.Description=data.event_text;
+
+
+				if(tv.Title=="" || tv.Title=="n.a.") 
+				{
+					Log.Write("epg: entrie without title found");
+					return 0;
+				}
+
 				tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
 				tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
 				ArrayList programsInDatabase = new ArrayList();
@@ -2131,7 +2291,28 @@ namespace MediaPortal.TV.Recording
 			} while (!(l1 <= 0));
 			return text;
 		}
+		//
+		//
+		public bool ProcessNITSections(DShowNET.IBaseFilter filter,ref DVBNetworkInfo nit)
+		{
+			GetStreamData(filter,16, 0x40,0,m_timeoutMS);
+			foreach(byte[] arr in m_sectionsList)
+				decodeNITTable(arr, ref nit);
+			return true;
+		}
 
+		public bool ProcessNITSections(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,DShowNET.IBaseFilter filter,ref DVBNetworkInfo nit)
+		{
+			m_setPid=true;
+			m_dataControl=dataCtrl;
+			GetStreamData(filter,16, 0x40,0,m_timeoutMS);
+			foreach(byte[] arr in m_sectionsList)
+				decodeNITTable(arr, ref nit);
+			
+			return true;
+		}
+		//
+		//
 		public bool ProcessPATSections(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,DShowNET.IBaseFilter filter,TPList tp,ref Transponder transponder)
 		{
 			m_setPid=true;
@@ -2229,5 +2410,177 @@ namespace MediaPortal.TV.Recording
 			ReleaseSectionsBuffer();
 			return true;
 		}
-	}
-}
+		string DVB_GetNetworkProvider(int orgNetworkID)
+		{
+			switch(orgNetworkID)
+			{
+				case 0x0000: return "Reserved";
+				case 0x0001: return "Astra 19,2°E" ;
+				case 0x0002: return "Astra 28,2°E" ;
+				case 0x0019: return "Astra" ;
+				case 0x001A: return "Quiero Televisión" ;
+				case 0x001B: return "RAI" ;
+				case 0x001F: return "Europe Online Networks" ;
+				case 0x0020: return "ASTRA" ;
+				case 0x0026: return "Hispasat Network" ;
+				case 0x0027: return "Hispasat 30°W" ;
+				case 0x0028: return "Hispasat 30°W" ;
+				case 0x0029: return "Hispasat 30°W" ;
+				case 0x002E: return "Xantic" ;
+				case 0x002F: return "TVNZ Digital" ;
+				case 0x0030: return "Canal+ Satellite Network" ;
+				case 0x0031: return "Hispasat - VIA DIGITAL" ;
+				case 0x0034: return "Hispasat Network" ;
+				case 0x0035: return "Nethold Main Mux System" ;
+				case 0x0036: return "TV Cabo" ;
+				case 0x0037: return "STENTOR" ;
+				case 0x0038: return "OTE" ;
+				case 0x0040: return "Croatian Post and Telecommunications" ;
+				case 0x0041: return "Mindport network" ;
+				case 0x0047: return "Telenor" ;
+				case 0x0048: return "STAR DIGITAL" ;
+				case 0x0049: return "Sentech" ;
+				case 0x0050: return "HRT Croatian Radio and Television" ;
+				case 0x0051: return "Havas" ;
+				case 0x0052: return "StarGuide Digital Networks" ;
+				case 0x0054: return "Teracom Satellite" ;
+				case 0x0055: return "Sirius (Teracom)" ;
+				case 0x0058: return "UBC Thailand" ;
+				case 0x005E: return "Sirius" ;
+				case 0x005F: return "Sirius" ;
+				case 0x0060: return "MSG MediaServices GmbH" ;
+				case 0x0069: return "Optus Communications" ;
+				case 0x0070: return "NTV+" ;
+				case 0x0073: return "PanAmSat 4 68.5°E" ;
+				case 0x007D: return "Skylogic" ;
+				case 0x007E: return "Eutelsat" ;
+				case 0x007F: return "Eutelsat" ;
+				case 0x0085: return "BetaTechnik" ;
+				case 0x0090: return "TDF" ;
+				case 0x00A0: return "News Datacom" ;
+				case 0x00A5: return "News Datacom" ;
+				case 0x00A6: return "ART" ;
+				case 0x00A7: return "Globecast" ;
+				case 0x00A8: return "Foxtel" ;
+				case 0x00A9: return "Sky New Zealand" ;
+				case 0x00B3: return "TPS" ;
+				case 0x00B4: return "Telesat 107.3°W | Telesat Canada" ;
+				case 0x00B5: return "Telesat 111.1°W" ;
+				case 0x00B6: return "Telstra Saturn" ;
+				case 0x00BA: return "Satellite Express 6 (80°E)" ;
+				case 0x00CD: return "Canal +" ;
+				case 0x00EB: return "Eurovision Network" ;
+				case 0x0100: return "ExpressVu" ;
+				case 0x010D: return "Skylogic Italia" ;
+				case 0x010E: return "Eutelsat 10°E" ;
+				case 0x010F: return "Eutelsat 10°E" ;
+				case 0x0110: return "Mediaset" ;
+				case 0x011F: return "visAvision Network" ;
+				case 0x013D: return "Skylogic Italia" ;
+				case 0x013E: return "Eutelsat 13°E" ;
+				case 0x013F: return "Eutelsat 13°E" ;
+				case 0x016D: return "Skylogic Italia" ;
+				case 0x016E: return "Eutelsat 16°E" ;
+				case 0x016F: return "Eutelsat 16°E" ;
+				case 0x01F4: return "MediaKabel B.V" ;
+				case 0x022D: return "Skylogic Italia" ;
+				case 0x022F: return "Eutelsat 21.5°E" ;
+				case 0x026D: return "Skylogic Italia" ;
+				case 0x026F: return "Eutelsat 25.5°E" ;
+				case 0x029D: return "Skylogic Italia" ;
+				case 0x029E: return "Eutelsat 29°E" ;
+				case 0x029F: return "Eutelsat 28.5°E" ;
+				case 0x02BE: return "Arabsat" ;
+				case 0x033D: return "Skylogic Italia" ;
+				case 0x033f: return "Eutelsat 33°E " ;
+				case 0x036D: return "Skylogic Italia" ;
+				case 0x036E: return "Eutelsat 36°E" ;
+				case 0x036F: return "Eutelsat 36°E" ;
+				case 0x03E8: return "Telia, Sweden" ;
+				case 0x047D: return "Skylogic Italia" ;
+				case 0x047f: return "Eutelsat 12.5°W" ;
+				case 0x048D: return "Skylogic Italia" ;
+				case 0x048E: return "Eutelsat 48°E" ;
+				case 0x048F: return "Eutelsat 48°E" ;
+				case 0x052D: return "Skylogic Italia" ;
+				case 0x052f: return "Eutelsat 8°W" ;
+				case 0x055D: return "Skylogic Italia" ;
+				case 0x055f: return "Eutelsat" ;
+				case 0x0600: return "UPC Satellite" ;
+				case 0x0601: return "UPC Cable" ;
+				case 0x0602: return "Tevel" ;
+				case 0x071D: return "Skylogic Italia" ;
+				case 0x071f: return "Eutelsat 70.5°E" ;
+				case 0x0801: return "Nilesat 101" ;
+				case 0x0880: return "MEASAT 1, 91.5°E" ;
+				case 0x0882: return "MEASAT 2, 91.5°E" ;
+				case 0x0883: return "MEASAT 2, 148.0°E" ;
+				case 0x088F: return "MEASAT 3" ;
+				case 0x1000: return "Optus B3 156°E" ;
+				case 0x1001: return "DISH Network" ;
+				case 0x1002: return "Dish Network 61.5 W" ;
+				case 0x1003: return "Dish Network 83 W" ;
+				case 0x1004: return "Dish Network 119" ;
+				case 0x1005: return "Dish Network 121" ;
+				case 0x1006: return "Dish Network 148" ;
+				case 0x1007: return "Dish Network 175" ;
+				case 0x1008: return "Dish Network W" ;
+				case 0x1009: return "Dish Network X" ;
+				case 0x100A: return "Dish Network Y" ;
+				case 0x100B: return "Dish Network Z" ;
+				case 0x1010: return "ABC TV" ;
+				case 0x1011: return "SBS" ;
+				case 0x1012: return "Nine Network Australia" ;
+				case 0x1013: return "Seven Network Australia" ;
+				case 0x1014: return "Network TEN Australia" ;
+				case 0x1015: return "WIN Television Australia" ;
+				case 0x1016: return "Prime Television Australia" ;
+				case 0x1017: return "Southern Cross Broadcasting Australia" ;
+				case 0x1018: return "Telecasters Australia" ;
+				case 0x1019: return "NBN Australia" ;
+				case 0x101A: return "Imparja Television Australia" ;
+				case 0x101f: return "Reserved" ;
+				case 0x1100: return "GE Americom" ;
+				case 0x2000: return "Thiacom 1,2 78.5°E" ;
+				case 0x2024: return "Australian Digital Terrestrial Television" ;
+				case 0x2038: return "Belgian Digital Terrestrial Television" ;
+				case 0x20CB: return "Czech Republic Digital Terrestrial Television" ;
+				case 0x20D0: return "Danish Digital Terrestrial Television" ;
+				case 0x20E9: return "Estonian Digital Terrestrial Television" ;
+				case 0x20F6: return "Finnish Digital Terrestrial Television" ;
+				case 0x2114: return "German Digital Terrestrial Television DVB-T broadcasts" ;
+				case 0x2174: return "Irish Digital Terrestrial Television" ;
+				case 0x2178: return "Israeli Digital Terrestrial Television" ;
+				case 0x2210: return "Netherlands Digital Terrestrial Television" ;
+				case 0x22BE: return "Singapore Digital Terrestrial Television" ;
+				case 0x22D4: return "Spanish Digital Terrestrial Television" ;
+				case 0x22F1: return "Swedish Digital Terrestrial Television" ;
+				case 0x22F4: return "Swiss Digital Terrestrial Television" ;
+				case 0x233A: return "UK Digital Terrestrial Television" ;
+				case 0x3000: return "PanAmSat 4 68.5°E" ;
+				case 0x5000: return "Irdeto Mux System" ;
+				case 0x616D: return "BellSouth Entertainment" ;
+				case 0x6600: return "UPC Satellite" ;
+				case 0x6601: return "UPC Cable" ;
+				case 0xF000: return "Small Cable networks" ;
+				case 0xF001: return "Deutsche Telekom" ;
+				case 0xF010: return "Telefónica Cable" ;
+				case 0xF020: return "Cable and Wireless Communication " ;
+				case 0xF100: return "Casema" ;
+				case 0xF750: return "Telewest Communications Cable Network" ;
+				case 0xF751: return "OMNE Communications" ;
+				case 0xFBFC: return "MATAV" ;
+				case 0xFBFD: return "Telia Kabel-TV" ;
+				case 0xFBFE: return "TPS" ;
+				case 0xFBFF: return "Sky Italia" ;
+				case 0xFC10: return "Rhône Vision Cable" ;
+				case 0xFC41: return "France Telecom Cable" ;
+				case 0xFD00: return "National Cable Network";
+				case 0xFE00: return "TeleDenmark Cable TV";
+				case 0xFEff: return "Network Interface Modules" ;
+				case 0xFFfe: return "ESTI Private" ;
+				default: return "Unknown Network Provider";
+			}
+		}
+	}// class
+}// namespace
