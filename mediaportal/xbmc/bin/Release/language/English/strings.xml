@@ -2109,7 +2109,28 @@
 	<id>723</id>
 	<value>Did you insert a DVD?</value>
 </string>
-
-
-
+<string>
+	<id>800</id>
+	<value>Starts with</value>
+</string>
+<string>
+	<id>801</id>
+	<value>Contains</value>
+</string>
+<string>
+	<id>802</id>
+	<value>Ends with</value>
+</string>
+<string>
+	<id>803</id>
+	<value>  Is  </value>
+</string>
+<string>
+	<id>804</id>
+	<value>Done</value>
+</string>
+<string>
+	<id>805</id>
+	<value>Clear</value>
+</string>
 </strings>

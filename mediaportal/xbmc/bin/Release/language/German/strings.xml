@@ -2278,6 +2278,30 @@
 		<id>711</id>
 		<value>Update von v#old ->v#new ?</value>
 	</string>
+<string>
+	<id>800</id>
+	<value>Beginnt mit</value>
+</string>
+<string>
+	<id>801</id>
+	<value>Enthält</value>
+</string>
+<string>
+	<id>802</id>
+	<value>Endet mit</value>
+</string>
+<string>
+	<id>803</id>
+	<value>  Ist  </value>
+</string>
+<string>
+	<id>804</id>
+	<value>Fertig</value>
+</string>
+<string>
+	<id>805</id>
+	<value>Löschen</value>
+</string>
 </strings>
 
 
