@@ -50,6 +50,10 @@ namespace MediaPortal.TV.Database
 		/// </summary>
 		static TVDatabase()
 		{
+			Open();
+		}
+		static void Open()
+		{
 			lock (typeof(TVDatabase))
 			{
 				try 
@@ -188,9 +192,10 @@ namespace MediaPortal.TV.Database
 						return -1;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -238,9 +243,10 @@ namespace MediaPortal.TV.Database
 						return -1;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -264,9 +270,10 @@ namespace MediaPortal.TV.Database
 					channelName=DatabaseUtility.Get(results,0,"sChannelName");
 					return channelName;
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return "";
@@ -342,9 +349,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -378,9 +386,10 @@ namespace MediaPortal.TV.Database
 					m_channelCache.Add(chan);
 					return iNewID;
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -412,9 +421,10 @@ namespace MediaPortal.TV.Database
 					m_channelCache.Add(chan);
 					return iNewID;
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -434,9 +444,10 @@ namespace MediaPortal.TV.Database
 					strSQL=String.Format( "update channel set iChannelNr={0} where strChannel like '{1}'", iNumber,strChannel);
 					results=m_db.Execute(strSQL);
 				}
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -453,9 +464,10 @@ namespace MediaPortal.TV.Database
 					strSQL=String.Format( "update channel set frequency='{0}' where strChannel like '{1}'", strFreq,strChannel);
 					results=m_db.Execute(strSQL);
 				}
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -475,9 +487,10 @@ namespace MediaPortal.TV.Database
 					results=m_db.Execute(strSQL);
 
 				}
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -504,9 +517,10 @@ namespace MediaPortal.TV.Database
 											ch.TeletextPid,(int)(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.ID);
 									*/
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -537,9 +551,10 @@ namespace MediaPortal.TV.Database
 						strChannel);
 					m_db.Execute(strSQL);
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -601,9 +616,10 @@ namespace MediaPortal.TV.Database
 						return iNewID;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -653,9 +669,10 @@ namespace MediaPortal.TV.Database
 						return iID;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -705,9 +722,10 @@ namespace MediaPortal.TV.Database
 					m_db.Execute(strSQL);
 					lRetId=m_db.LastInsertID();
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 			}
@@ -784,9 +802,10 @@ namespace MediaPortal.TV.Database
 					m_db.Execute(strSQL);
 					lRetId=m_db.LastInsertID();
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 			}
@@ -856,9 +875,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -913,9 +933,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -941,9 +962,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -981,9 +1003,10 @@ namespace MediaPortal.TV.Database
 					strSQL = String.Format("delete from tblChannelCard where idChannel={0}",iChannelId);
 					m_db.Execute(strSQL);
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			m_channelCache.Clear();
@@ -1004,9 +1027,10 @@ namespace MediaPortal.TV.Database
 				  
 			  
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -1024,9 +1048,10 @@ namespace MediaPortal.TV.Database
 				  
 			  
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -1041,9 +1066,10 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return ;
 					m_db.Execute("delete from tblPrograms");
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			ProgramsChanged();
@@ -1130,9 +1156,10 @@ namespace MediaPortal.TV.Database
 					return true;
 
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -1189,9 +1216,10 @@ namespace MediaPortal.TV.Database
 					return true;
 
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -1243,9 +1271,10 @@ namespace MediaPortal.TV.Database
 					return true;
 
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -1335,9 +1364,10 @@ namespace MediaPortal.TV.Database
 						recording.ID);
 					m_db.Execute(strSQL);
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			RecordingsChanged();
@@ -1373,9 +1403,10 @@ namespace MediaPortal.TV.Database
 					lNewId=m_db.LastInsertID();
 					recording.ID=lNewId;
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			RecordingsChanged();
@@ -1392,9 +1423,10 @@ namespace MediaPortal.TV.Database
 					string strSQL=String.Format("delete from recording where idRecording={0}",record.ID);
 					m_db.Execute(strSQL);
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			RecordingsChanged();
@@ -1414,9 +1446,10 @@ namespace MediaPortal.TV.Database
 						record.Start,record.End,iChannelId);
 					m_db.Execute(strSQL);
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			RecordingsChanged();
@@ -1464,9 +1497,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -1505,9 +1539,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -1524,6 +1559,7 @@ namespace MediaPortal.TV.Database
 				catch (Exception ex)
 				{
 					Log.Write("tvdatabase begin transaction failed exception err:{0} ", ex.Message);		
+					Open();
 				}
 			}
 		}
@@ -1539,6 +1575,7 @@ namespace MediaPortal.TV.Database
 				catch (Exception ex)
 				{
 					Log.Write("tvdatabase commit failed exception err:{0} ", ex.Message);		
+					Open();
 				}
 			}
 		}
@@ -1552,6 +1589,7 @@ namespace MediaPortal.TV.Database
 			catch (Exception ex)
 			{
 				Log.Write("tvdatabase rollback failed exception err:{0} ", ex.Message);		
+				Open();
 			}
 		}
 
@@ -1565,9 +1603,10 @@ namespace MediaPortal.TV.Database
 					string strSQL=String.Format("update recorded set iPlayed={0} where idRecorded={1}",record.Played, record.ID);
 					m_db.Execute(strSQL);
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 
@@ -1606,9 +1645,10 @@ namespace MediaPortal.TV.Database
 					lNewId=m_db.LastInsertID();
 					recording.ID=lNewId;
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			return lNewId;
@@ -1626,9 +1666,10 @@ namespace MediaPortal.TV.Database
 					string strSQL=String.Format("delete from recorded where idRecorded={0}",record.ID);
 					m_db.Execute(strSQL);
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		} 
@@ -1666,9 +1707,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -1709,9 +1751,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}
@@ -1766,9 +1809,10 @@ namespace MediaPortal.TV.Database
 					ArrayList arr=(ArrayList)results.Rows[0];
 					return ((string)arr[0]).Trim();
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return "";
 			}
@@ -1793,9 +1837,10 @@ namespace MediaPortal.TV.Database
 					strSQL=String.Format("DELETE FROM tblPrograms WHERE iEndTime < {0}",longYesterday);
 					m_db.Execute(strSQL);
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return;
 			}
@@ -1842,9 +1887,10 @@ namespace MediaPortal.TV.Database
 						progs.Add(prog);
 					}
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -1877,9 +1923,10 @@ namespace MediaPortal.TV.Database
 						m_db.Execute(sql);
 					}
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -1930,9 +1977,10 @@ namespace MediaPortal.TV.Database
 						}
 					}
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -1972,9 +2020,10 @@ namespace MediaPortal.TV.Database
 						return idChannel;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -2018,9 +2067,10 @@ namespace MediaPortal.TV.Database
 						return idChannel;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -2064,9 +2114,10 @@ namespace MediaPortal.TV.Database
 						return idChannel;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -2097,9 +2148,10 @@ namespace MediaPortal.TV.Database
 					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
 					return ;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2133,9 +2185,10 @@ namespace MediaPortal.TV.Database
 					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
 					return ;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2170,9 +2223,10 @@ namespace MediaPortal.TV.Database
 					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
 					return ;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2204,9 +2258,10 @@ namespace MediaPortal.TV.Database
 						GetTVChannelsForGroup(group);
 					}
 				}
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2240,9 +2295,10 @@ namespace MediaPortal.TV.Database
 						}
 					}
 				}
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2266,9 +2322,10 @@ namespace MediaPortal.TV.Database
 						cards.Add( Int32.Parse(DatabaseUtility.Get(results,i,"card")));
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2293,9 +2350,10 @@ namespace MediaPortal.TV.Database
 						m_db.Execute(strSQL);
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2326,9 +2384,10 @@ namespace MediaPortal.TV.Database
 						m_db.Execute(strSQL);
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2346,9 +2405,10 @@ namespace MediaPortal.TV.Database
 
 					m_db.Execute(strSQL);
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2384,9 +2444,10 @@ namespace MediaPortal.TV.Database
 						return true;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 			return false;
@@ -2417,9 +2478,10 @@ namespace MediaPortal.TV.Database
 						m_db.Execute(strSQL);
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2438,9 +2500,10 @@ namespace MediaPortal.TV.Database
 
 					m_db.Execute(strSQL);
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2461,9 +2524,10 @@ namespace MediaPortal.TV.Database
 
 					m_db.Execute(strSQL);
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}
@@ -2505,9 +2569,10 @@ namespace MediaPortal.TV.Database
 						return iNewID;
 					}
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 
 				return -1;
@@ -2529,9 +2594,10 @@ namespace MediaPortal.TV.Database
 					strSQL=String.Format( "delete from tblGroups where idGroup={0}", group.ID);
 					m_db.Execute(strSQL);
 				} 
-				catch (SQLiteException ex) 
+				catch (Exception ex) 
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return -1;
 			}
@@ -2587,9 +2653,10 @@ namespace MediaPortal.TV.Database
 
 					return true;
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 				return false;
 			}

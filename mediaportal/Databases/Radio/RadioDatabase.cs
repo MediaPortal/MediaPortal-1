@@ -16,8 +16,12 @@ namespace MediaPortal.Radio.Database
     {
     }
 
-    static RadioDatabase()
-    {
+		static RadioDatabase()
+		{
+			Open();
+		}
+		static void Open()
+		{
       try 
       {
         // Open database
@@ -101,9 +105,10 @@ namespace MediaPortal.Radio.Database
 
           return ;
         }
-        catch(SQLiteException ex)
+        catch(Exception ex)
         {
-          Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
         return ;
       }
@@ -145,9 +150,10 @@ namespace MediaPortal.Radio.Database
               return iNewID;
             }
           } 
-          catch (SQLiteException ex) 
+          catch (Exception ex) 
           {
-            Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+						Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+						Open();
           }
 
           return -1;
@@ -169,9 +175,10 @@ namespace MediaPortal.Radio.Database
           int iNewID=Int32.Parse(DatabaseUtility.Get(results,0,"idStation"));
           return iNewID;
         } 
-        catch (SQLiteException ex) 
+        catch (Exception ex) 
         {
-          Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
 
         return -1;
@@ -194,9 +201,10 @@ namespace MediaPortal.Radio.Database
           string strSQL=String.Format("delete from station where idStation={0}", iChannelId);
           m_db.Execute(strSQL);
         }
-        catch(SQLiteException ex)
+        catch(Exception ex)
         {
-          Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
       }
     }   
@@ -213,9 +221,10 @@ namespace MediaPortal.Radio.Database
           string strSQL=String.Format("delete from station ");
           m_db.Execute(strSQL);
         }
-        catch(SQLiteException ex)
+        catch(Exception ex)
         {
-          Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
       }
 		}  
@@ -232,9 +241,10 @@ namespace MediaPortal.Radio.Database
 					string strSQL=String.Format("delete from station where frequency>0");
 					m_db.Execute(strSQL);
 				}
-				catch(SQLiteException ex)
+				catch(Exception ex)
 				{
 					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
 				}
 			}
 		}

@@ -17,7 +17,11 @@ namespace MediaPortal.Picture.Database
 
     
 
-    public PictureDatabase()
+		public PictureDatabase()
+		{
+			Open();
+		}
+		void Open()
 		{
       lock (typeof(PictureDatabase))
       {
@@ -36,7 +40,8 @@ namespace MediaPortal.Picture.Database
         } 
         catch (Exception ex) 
         {
-          Log.Write("picture database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("picture database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
         Log.Write("picture database opened");
       }
@@ -76,9 +81,10 @@ namespace MediaPortal.Picture.Database
           lPicId=m_db.LastInsertID();
           return lPicId;
         }
-        catch (SQLiteException ex) 
+        catch (Exception ex) 
         {
-          Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
         return -1;
       }
@@ -107,9 +113,10 @@ namespace MediaPortal.Picture.Database
           AddPicture(strPicture,0);
           return 0;
         }
-        catch (SQLiteException ex) 
+        catch (Exception ex) 
         {
-          Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
         return 0;
       }
@@ -134,9 +141,10 @@ namespace MediaPortal.Picture.Database
             results=m_db.Execute(strSQL);
           }
         }
-        catch (SQLiteException ex) 
+        catch (Exception ex) 
         {
-          Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
         }
       }
     }

@@ -49,8 +49,12 @@ namespace MediaPortal.Music.Database
     ArrayList m_albumCache = new ArrayList();
 
     static SQLiteClient m_db = null;
-    static MusicDatabase()
-    {
+		static MusicDatabase()
+		{
+			Open();
+		}
+		static void Open()
+		{
       Log.Write("Opening music database");
       try 
       {
@@ -146,9 +150,10 @@ namespace MediaPortal.Music.Database
           return path.idPath;
         }
       } 
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
       return - 1;
@@ -191,9 +196,10 @@ namespace MediaPortal.Music.Database
           return artist.idArtist;
         }
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
       return - 1;
@@ -237,9 +243,10 @@ namespace MediaPortal.Music.Database
           return genre.idGenre;
         }
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
       return - 1;
@@ -275,9 +282,10 @@ namespace MediaPortal.Music.Database
 				strSQL = String.Format("insert into favorites (idFavorite, idSong) values( NULL, {0})", idSong);
 				m_db.Execute(strSQL);
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 		}
 		public void RemoveSongFromFavorites(string filename)
@@ -306,9 +314,10 @@ namespace MediaPortal.Music.Database
 
 				m_db.Execute(strSQL);
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -347,9 +356,10 @@ namespace MediaPortal.Music.Database
 
 				return ;
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 
 			return ;
@@ -389,9 +399,10 @@ namespace MediaPortal.Music.Database
 						m_db.Execute(strSQL);
 						return ;
 					}
-					catch (SQLiteException ex)
+					catch (Exception ex)
 					{
-						Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Open();
 					}
 
 			return ;
@@ -433,9 +444,10 @@ namespace MediaPortal.Music.Database
 
 				return ;
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 
 			return ;		
@@ -483,9 +495,10 @@ namespace MediaPortal.Music.Database
           return album.idAlbum;
         }
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
       return - 1;
@@ -552,9 +565,10 @@ namespace MediaPortal.Music.Database
 
         m_db.Execute(strSQL);
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
     }
 
@@ -595,9 +609,10 @@ namespace MediaPortal.Music.Database
 		    song.FileName = strFileName1;
 		    return true;
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
 	    return false;
@@ -635,9 +650,10 @@ namespace MediaPortal.Music.Database
 		    song.FileName = strFileName;
 		    return true;
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
 	    return false;
@@ -686,9 +702,10 @@ namespace MediaPortal.Music.Database
 			  }
 			  
 		  }
-		  catch (SQLiteException ex) 
+		  catch (Exception ex) 
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 		  }
 
 		  return false;
@@ -710,9 +727,10 @@ namespace MediaPortal.Music.Database
 			  NumOfSongs = Int32.Parse((string)row[0]);
 			  return NumOfSongs;
 		  }
-		  catch (SQLiteException ex) 
+		  catch (Exception ex) 
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+			Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+			Open();
 		  }
 
 	  return 0;
@@ -754,9 +772,10 @@ namespace MediaPortal.Music.Database
 
 			  return true;
 		  }
-		  catch (SQLiteException ex) 
+		  catch (Exception ex) 
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 		  }
 
 		  return false;
@@ -796,9 +815,10 @@ namespace MediaPortal.Music.Database
 
 		    return true;
 	    }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
 	    return false;
@@ -845,9 +865,10 @@ namespace MediaPortal.Music.Database
 
 		    return true;
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
 	  return false;
@@ -901,9 +922,10 @@ namespace MediaPortal.Music.Database
 			  }
 			  return true;
 		  }
-		  catch (SQLiteException ex) 
+		  catch (Exception ex) 
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 		  }
 		  return false;
 	  }
@@ -948,9 +970,10 @@ namespace MediaPortal.Music.Database
 
 			  return true;
 		  }
-		  catch (SQLiteException ex) 
+		  catch (Exception ex) 
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 		  }
 
 		  return false;
@@ -981,9 +1004,10 @@ namespace MediaPortal.Music.Database
 
 		    return true;
 	    }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
 	    return false;
@@ -1011,9 +1035,10 @@ namespace MediaPortal.Music.Database
 		    }
 		    return true;
 	    }
-	    catch (SQLiteException ex)
+	    catch (Exception ex)
 	    {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 	    }
 
 	    return false;
@@ -1055,9 +1080,10 @@ namespace MediaPortal.Music.Database
 			  }
 			  return true;
 		  }
-		  catch (SQLiteException ex)
+		  catch (Exception ex)
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 		  }
 
 		  return false;
@@ -1081,9 +1107,10 @@ namespace MediaPortal.Music.Database
 
 		    return true;
 	    }
-	    catch (SQLiteException ex)
+	    catch (Exception ex)
 	    {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
       return false;
     }
@@ -1122,9 +1149,10 @@ namespace MediaPortal.Music.Database
 
 			  return true;
 		  }
-		  catch (SQLiteException ex)
+		  catch (Exception ex)
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 		  }
 		  return false;
 	  }
@@ -1166,9 +1194,10 @@ namespace MediaPortal.Music.Database
 
 		    return true;
 	    }
-	    catch (SQLiteException ex)
+	    catch (Exception ex)
 	    {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
 	    return false;
@@ -1225,9 +1254,10 @@ namespace MediaPortal.Music.Database
 
 			  return true;
 		  }
-		  catch (SQLiteException ex)
+		  catch (Exception ex)
 		  {
-			  Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 		  }
 
 		  return false;
@@ -1267,9 +1297,10 @@ namespace MediaPortal.Music.Database
 
 				return true;
 			}
-			catch (SQLiteException ex)
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 
 			return false;
@@ -1316,9 +1347,10 @@ namespace MediaPortal.Music.Database
 				}
 				return true;
 			}
-			catch (SQLiteException ex)
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 			return false;
 		}
@@ -1346,9 +1378,10 @@ namespace MediaPortal.Music.Database
 
 				return true;
 			}
-			catch (SQLiteException ex)
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 			return false;
     }
@@ -1360,9 +1393,10 @@ namespace MediaPortal.Music.Database
         string strSQL = String.Format("update song set iTimesPlayed=0");
         m_db.Execute(strSQL);
       }
-      catch (SQLiteException ex)
+      catch (Exception ex)
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
     }
 
@@ -1401,9 +1435,10 @@ namespace MediaPortal.Music.Database
 				m_db.Execute(strSQL);
 				return true;
 			}
-			catch (SQLiteException ex)
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 
 			return false;
@@ -1449,9 +1484,10 @@ namespace MediaPortal.Music.Database
 				int lAlbumInfoId = m_db.LastInsertID();
 				return lAlbumInfoId;
 			}
-			catch (SQLiteException ex)
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 
 			return - 1;
@@ -1507,9 +1543,10 @@ namespace MediaPortal.Music.Database
 				}
 				return false;
 			}
-			catch (SQLiteException ex)
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 
 			return false;
@@ -1569,9 +1606,10 @@ namespace MediaPortal.Music.Database
         int lArtistInfoId = m_db.LastInsertID();
         return lArtistInfoId;
       }
-      catch (SQLiteException ex)
+      catch (Exception ex)
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
       return - 1;
@@ -1629,9 +1667,10 @@ namespace MediaPortal.Music.Database
         }
         return false;
       }
-      catch (SQLiteException ex)
+      catch (Exception ex)
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
       }
 
       return false;
@@ -1682,9 +1721,10 @@ namespace MediaPortal.Music.Database
 
 				return true;
 			}
-			catch (SQLiteException ex)
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
 			}
 
 			return false;
@@ -1762,7 +1802,8 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Write("musicdatabase begin transaction failed exception err:{0} ", ex.Message);
+				Log.Write("musicdatabase begin transaction failed exception err:{0} ", ex.Message);
+				Open();
       }
     }
     
@@ -1775,7 +1816,8 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Write("musicdatabase commit failed exception err:{0} ", ex.Message);
+				Log.Write("musicdatabase commit failed exception err:{0} ", ex.Message);
+				Open();
       }
     }
     
@@ -1787,7 +1829,8 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Write("musicdatabase rollback failed exception err:{0} ", ex.Message);
+				Log.Write("musicdatabase rollback failed exception err:{0} ", ex.Message);
+				Open();
       }
     }
   }

@@ -17,8 +17,12 @@ namespace MediaPortal.Video.Database
     private VideoDatabase()
     {
     }
-    static VideoDatabase()
-    {
+		static VideoDatabase()
+		{
+			Open();
+		}
+		static void Open()
+		{
       
       Log.Write("opening video database");
       try 
@@ -78,9 +82,10 @@ namespace MediaPortal.Video.Database
 				lFileId=m_db.LastInsertID();
 				return lFileId;
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return -1;
 		}
@@ -143,9 +148,10 @@ namespace MediaPortal.Video.Database
 					}
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return -1;
 		}
@@ -181,9 +187,10 @@ namespace MediaPortal.Video.Database
 				}
 
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return -1;
 		}
@@ -257,9 +264,10 @@ namespace MediaPortal.Video.Database
 				}
 				return lMovieId;
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return -1;
 		}
@@ -293,9 +301,10 @@ namespace MediaPortal.Video.Database
 					return lGenreId;
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return -1;
 		}
@@ -315,9 +324,10 @@ namespace MediaPortal.Video.Database
 					genres.Add(DatabaseUtility.Get(results,iRow, "strGenre" ) );
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 
     }
@@ -337,9 +347,10 @@ namespace MediaPortal.Video.Database
 					actors.Add(DatabaseUtility.Get(results,iRow, "strActor" ) );
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -364,9 +375,10 @@ namespace MediaPortal.Video.Database
 					if (bAdd) years.Add( strYear);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -389,9 +401,10 @@ namespace MediaPortal.Video.Database
 					return lPathId;
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return -1;
 		}
@@ -426,9 +439,10 @@ namespace MediaPortal.Video.Database
 				}
 
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return -1;
 		}
@@ -467,9 +481,10 @@ namespace MediaPortal.Video.Database
 				strSQL = String.Format("delete from movieinfo where idmovie={0}", lMovieId);
 				m_db.Execute(strSQL);  
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -492,9 +507,10 @@ namespace MediaPortal.Video.Database
 				}
 				return true;
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return false;
     }
@@ -519,9 +535,10 @@ namespace MediaPortal.Video.Database
 				if (lHasSubs!=0) return true;
 				return false;
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 			return false;
     }
@@ -549,9 +566,10 @@ namespace MediaPortal.Video.Database
 					movies.Add(strFile);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -585,9 +603,10 @@ namespace MediaPortal.Video.Database
 				strSQL=String.Format("delete from movie where idmovie={0}", lMovieId);
 				m_db.Execute(strSQL);
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 
 		}
@@ -608,9 +627,10 @@ namespace MediaPortal.Video.Database
 					m_db.Execute(strSQL);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -631,9 +651,10 @@ namespace MediaPortal.Video.Database
 					m_db.Execute(strSQL);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -648,9 +669,10 @@ namespace MediaPortal.Video.Database
         strSQL=String.Format("update movieinfo set strPictureURL='{0}' where idMovie={1}", thumbURL, lMovieId );
         m_db.Execute(strSQL);
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
       }
     }
 
@@ -666,9 +688,10 @@ namespace MediaPortal.Video.Database
 				strSQL=String.Format("update movie set discid='{0}' where idMovie={1}", strDVDLabel1, lMovieId );
 				m_db.Execute(strSQL);
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -684,9 +707,10 @@ namespace MediaPortal.Video.Database
 				strSQL=String.Format("delete from bookmark where idFile={0}",lFileId);
 				m_db.Execute(strSQL);
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 		static public void AddBookMarkToMovie( string strFilenameAndPath, float fTime)
@@ -706,9 +730,10 @@ namespace MediaPortal.Video.Database
 				strSQL=String.Format ("insert into bookmark (idBookmark, idFile, fPercentage) values(NULL,{0},'{1}')", lFileId,fTime);
 				m_db.Execute(strSQL);
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -734,9 +759,10 @@ namespace MediaPortal.Video.Database
 					bookmarks.Add(fTime);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -778,9 +804,10 @@ namespace MediaPortal.Video.Database
 					movies.Add(details);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -830,9 +857,10 @@ namespace MediaPortal.Video.Database
 				details.SearchString= String.Format("{0}", lMovieId);
         details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -876,9 +904,10 @@ namespace MediaPortal.Video.Database
 					movies.Add(details);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -922,9 +951,10 @@ namespace MediaPortal.Video.Database
 					movies.Add(details);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -967,9 +997,10 @@ namespace MediaPortal.Video.Database
 					movies.Add(details);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 
     }
@@ -1011,9 +1042,10 @@ namespace MediaPortal.Video.Database
 					movies.Add(details);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -1146,9 +1178,10 @@ namespace MediaPortal.Video.Database
 					m_db.Execute(strSQL);
 				}
 			}
-			catch (SQLiteException ex) 
+			catch (Exception ex) 
 			{
 				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
 			}
 		}
 
@@ -1160,9 +1193,10 @@ namespace MediaPortal.Video.Database
         string sql = String.Format("delete from resume where idMovie={0}", iMovieId);
         m_db.Execute(sql);
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
       }
     }
 
@@ -1178,9 +1212,10 @@ namespace MediaPortal.Video.Database
         return stoptime;
 
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
       }
       return 0;
     }
@@ -1204,9 +1239,10 @@ namespace MediaPortal.Video.Database
         }
         m_db.Execute(sql);
       }
-      catch (SQLiteException ex) 
+      catch (Exception ex) 
       {
-        Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
       }
     }
 
