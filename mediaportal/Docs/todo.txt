@@ -14,6 +14,7 @@ Skin, gfx, .xml & media:
 fix:
 	-home:nothing selected when returning from a window
 	-home:dont load plugins 3 times
+	-I think it will feel more natural and look better when you can go up and down the list and scroll 1 option when you go to the top
 
 vmr9:
 	- windowless vmr9 / renderless vmr9
