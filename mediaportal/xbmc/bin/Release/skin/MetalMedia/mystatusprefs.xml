@@ -24,7 +24,6 @@
 			<colordiffuse>20ffffff</colordiffuse>
 			<texture>mystatus.png</texture>
 		</control>
-
 		<control>
 			<description>mystatus text label</description>
 			<type>label</type>
@@ -34,7 +33,22 @@
 			<label>1962</label>
 			<align>right</align>
 		</control>
-
+		<control>
+			<description>Status Bar</description> 
+			<type>statusbar</type> 
+			<id>1</id> 
+			<posX>50</posX> 
+			<posY>510</posY> 
+			<width>620</width>
+			<height>17</height>
+			<posYTop>15</posYTop>
+			<texturebg>ProgressBar-inner.png</texturebg> 
+			<lefttexture>progress_left.png</lefttexture> 
+			<midtexture>progress_mid.png</midtexture> 
+			<righttexture>progress_right.png</righttexture> 
+			<visible>yes</visible> 
+			<label>#statusbar_perc</label>
+		</control>
 		<control>
 			<description>Panel</description>
 			<type>image</type>
@@ -135,8 +149,7 @@
 			<posX>242</posX>
 			<posY>150</posY>
 			<height>410</height>
-<!--			<posY>190</posY>
-			<height>370</height> -->
+			<height>370</height>
 			<onright>2</onright>
 			<onleft>2</onleft>
 			<onup>4</onup>
