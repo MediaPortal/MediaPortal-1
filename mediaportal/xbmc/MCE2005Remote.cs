@@ -407,8 +407,8 @@ namespace MediaPortal
             break;
           
 					case 0x8D://TV guide
-							GUIGraphicsContext.IsFullScreenVideo=false;
-							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TVGUIDE);
+						  GUIMessage msgtv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TVGUIDE,0,null);
+							GUIGraphicsContext.SendMessage(msgtv);
             break;
 
 					case 0x25://My tv (yellow on USA model)
@@ -419,15 +419,16 @@ namespace MediaPortal
 						}
 						else
 						{
-							GUIGraphicsContext.IsFullScreenVideo=false;
-							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+							
+							GUIMessage msgtv2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TV,0,null);
+							GUIGraphicsContext.SendMessage(msgtv2);
 						}
 						break;
           
           
 					case 0x47://My Music (green on USA model)
-							GUIGraphicsContext.IsFullScreenVideo=false;
-							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_MUSIC_FILES);
+							GUIMessage msgMusic = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_MUSIC_FILES,0,null);
+							GUIGraphicsContext.SendMessage(msgMusic);
             break;
           
 					case 0x49://My Pictures (blue on USA model)
@@ -438,8 +439,8 @@ namespace MediaPortal
 						}
 						else
 						{
-							GUIGraphicsContext.IsFullScreenVideo=false;
-							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_PICTURES);
+							GUIMessage msgPics = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_PICTURES,0,null);
+							GUIGraphicsContext.SendMessage(msgPics);
 						}
             break;
           
@@ -451,8 +452,8 @@ namespace MediaPortal
 						}
 						else
 						{
-							GUIGraphicsContext.IsFullScreenVideo=false;
-							GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
+							GUIMessage msgVids = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_VIDEOS,0,null);
+							GUIGraphicsContext.SendMessage(msgVids);
 						}
 						break;
           
@@ -469,8 +470,8 @@ namespace MediaPortal
             break;
           
 					case 0x5C: //green home
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+						GUIMessage msgHome = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_HOME,0,null);
+						GUIGraphicsContext.SendMessage(msgHome);
             break;
 
           case 0x5D://Show context menu (Yellow button)
@@ -504,16 +505,17 @@ namespace MediaPortal
             break;
           
 					case 0x48://Recorded TV
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_RECORDEDTV);
+						GUIMessage msgTvRec = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_RECORDEDTV,0,null);
+						GUIGraphicsContext.SendMessage(msgTvRec);
+
             break;
           
 					case 0x82://Standbye
             break;
           
 					case 0x0d:// home
-            GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+						GUIMessage msgHome2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_HOME,0,null);
+						GUIGraphicsContext.SendMessage(msgHome2);
             break;
           
 					case 0xB0: //play
@@ -579,12 +581,14 @@ namespace MediaPortal
 							if (GUIGraphicsContext.IsFullScreenVideo)
 							{
 								// Activate fullscreen teletext
-								GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+								GUIMessage msgTxt1 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT,0,null);
+								GUIGraphicsContext.SendMessage(msgTxt1);
 							}
 							else
 							{
 								// Activate teletext in window
-								GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TELETEXT);
+								GUIMessage msgTxt2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TELETEXT,0,null);
+								GUIGraphicsContext.SendMessage(msgTxt2);
 							}
 						}
 						break;

@@ -69,6 +69,7 @@ namespace MediaPortal.GUI.Library
 				GUI_MSG_PLAY_ITEM,
 				GUI_MSG_RECORDER_VIEW_CHANNEL,
 				GUI_MSG_RECORDER_STOP_VIEWING,
+				GUI_MSG_GOTO_WINDOW
 		};
 
 		private string 				m_strLabel="";

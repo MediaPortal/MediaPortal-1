@@ -1760,6 +1760,19 @@ public class MediaPortalApp : D3DApp, IRender
   {
     switch (message.Message)
     {
+			case GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW:
+				GUIWindowManager.ActivateWindow(message.Param1);
+				if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+						GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT ||
+						GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+				{
+					GUIGraphicsContext.IsFullScreenVideo=true;
+				}
+				else
+				{
+					GUIGraphicsContext.IsFullScreenVideo=false;
+				}
+			break;
       case GUIMessage.MessageType.GUI_MSG_CD_INSERTED:
         AutoPlay.ExamineCD(message.Label);
       break;
