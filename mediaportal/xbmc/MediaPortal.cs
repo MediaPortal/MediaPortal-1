@@ -1153,6 +1153,23 @@ public class MediaPortalApp : D3DApp, IRender
 
 
 
+  protected override void OnMouseWheel(MouseEventArgs e)
+  {
+    if (e.Delta>0)
+    {
+        Action action = new Action(Action.ActionType.ACTION_MOVE_UP, e.X, e.Y);
+      action.MouseButton = e.Button;
+      GUIGraphicsContext.OnAction(action);
+    }
+    else if (e.Delta<0)
+    {
+        Action action = new Action(Action.ActionType.ACTION_MOVE_DOWN, e.X,e.Y);
+      action.MouseButton = e.Button;
+      GUIGraphicsContext.OnAction(action);
+    }
+    base.OnMouseWheel (e);
+  }
+
 	protected override void mousemove(System.Windows.Forms.MouseEventArgs e)
   {
     base.mousemove(e);

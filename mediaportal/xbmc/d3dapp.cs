@@ -1525,7 +1525,6 @@ namespace MediaPortal
       }
       catch(Exception)
       {
-        int x=1;
       }
       this.Invalidate();
     }
