@@ -448,16 +448,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Sections\DVBSSS2.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Sections\DVBSSS2.resx"
-                    DependentUpon = "DVBSSS2.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Sections\DVD.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
