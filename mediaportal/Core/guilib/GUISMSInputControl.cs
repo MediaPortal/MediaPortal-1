@@ -376,16 +376,16 @@ namespace MediaPortal.GUI.Library
       int posY=m_dwPosY;
       int step=20;
       GUIGraphicsContext.ScaleVertical(ref step);
-      m_pFont.DrawText (m_dwPosX,posY,m_dwTextColor ," 1     2       3",GUIControl.Alignment.ALIGN_LEFT); posY+=step;
-      m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2," _    abc    def",GUIControl.Alignment.ALIGN_LEFT); posY+=step;
+      m_pFont.DrawText (m_dwPosX,posY,m_dwTextColor ," 1     2       3",GUIControl.Alignment.ALIGN_LEFT,-1); posY+=step;
+      m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2," _    abc    def",GUIControl.Alignment.ALIGN_LEFT,-1); posY+=step;
 
       posY+=step;
-      m_pFont.DrawText (m_dwPosX,posY,m_dwTextColor ," 4     5      6" ,GUIControl.Alignment.ALIGN_LEFT);posY+=step;
-      m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2,"ghi   jkl    mno",GUIControl.Alignment.ALIGN_LEFT);posY+=step;
+      m_pFont.DrawText (m_dwPosX,posY,m_dwTextColor ," 4     5      6" ,GUIControl.Alignment.ALIGN_LEFT,-1);posY+=step;
+      m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2,"ghi   jkl    mno",GUIControl.Alignment.ALIGN_LEFT,-1);posY+=step;
 
       posY+=step;
-      m_pFont.DrawText (m_dwPosX,posY,m_dwTextColor ," 7     8      9" ,GUIControl.Alignment.ALIGN_LEFT);posY+=step;
-      m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2,"pqrs tuv wxyz",GUIControl.Alignment.ALIGN_LEFT);posY+=step;
+      m_pFont.DrawText (m_dwPosX,posY,m_dwTextColor ," 7     8      9" ,GUIControl.Alignment.ALIGN_LEFT,-1);posY+=step;
+      m_pFont2.DrawText(m_dwPosX,posY,m_dwTextColor2,"pqrs tuv wxyz",GUIControl.Alignment.ALIGN_LEFT,-1);posY+=step;
     }
 
     void DrawTextBox() 
@@ -450,7 +450,7 @@ namespace MediaPortal.GUI.Library
       }
 
 			line=line.Insert(m_iPos, "_");			
-			m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT );
+			m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT ,-1);
 
 /*
       m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, line, GUIControl.Alignment.ALIGN_LEFT );

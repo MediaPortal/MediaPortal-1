@@ -31,15 +31,28 @@ using MediaPortal.WINLIRC;//sd00//
 using MediaPortal.Ripper;
 using MediaPortal.Core.Transcoding;
 
-/// performance issues: 
-/// (max fps in home:70 fps, without textures:160 fps, without textures&fonts: 190fps
-/// - guiimage prerender/render() is slow
-/// - Application.DoEvents is slow
-/// - guiwindow replace controls arraylist with []
-/// - direct3d.present is slow
-///    - compressed textures?
+/// Performance issues: 
+///   (max fps in home:70 fps, without textures:160 fps, without textures & fonts: 190fps
+///   - guiimage PreRender is slow
+///   - GUIFont.DrawText() marshaling the string is slow
+///   - GUIWindow replace controls arraylist with []
+///   - Direct3D.Present() is slow
+///   - Application.DoEvents() is slow
+/// 
+/// Options for better performance:
+///    - use of compressed textures
 ///    - resample textures to 2x2,4x4,8x8,16x16,32x32,...
-///   
+///    - use meshes?
+///    
+/// Performance enhancements already done:
+///    - Fonts are now rendered by the C++ fontengine. 
+///    - Textures now use a single vertexbuffer, are grouped & rendered by the C++ fontengine
+///    - GUIWindowManager.PostRender() is optimized
+///    - FPS Speed selection in settings->gui->speed
+///    
+///  Current issues:
+///    - black video preview window
+///    - music overlay  
 /// </summary>
 public class MediaPortalApp : D3DApp, IRender
 { 
@@ -547,7 +560,7 @@ public class MediaPortalApp : D3DApp, IRender
         GUIFont font = GUIFontManager.GetFont(0);
         if (font != null)
         {
-          font.DrawText(80, 40, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT);
+          font.DrawText(80, 40, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT,-1);
           region[0].X = m_ixpos;
           region[0].Y = 0;
           region[0].Width = 4;

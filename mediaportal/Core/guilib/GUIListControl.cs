@@ -562,7 +562,6 @@ namespace MediaPortal.GUI.Library
       newviewport.MinZ = 0.0f;
       newviewport.MaxZ = 1.0f;
       GUIGraphicsContext.DX9Device.Viewport = newviewport;
-
       {
         // scroll
         int iItem = m_iCursorY + m_iOffset;
@@ -622,14 +621,14 @@ namespace MediaPortal.GUI.Library
               }
             }
             if (fPosY >= 0.0)
-              m_pFont.DrawText(fPosX - iScrollX, fPosY, dwTextColor, m_wszText2, GUIControl.Alignment.ALIGN_LEFT);
+              m_pFont.DrawText(fPosX - iScrollX, fPosY, dwTextColor, m_wszText2, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth-50f));
 							
           }
           else
           {
             iStartFrame++;
             if (fPosY >= 0.0)
-              m_pFont.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT);
+              m_pFont.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth-50f));
           }
         }
       }

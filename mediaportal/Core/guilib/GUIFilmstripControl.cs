@@ -1076,7 +1076,7 @@ namespace MediaPortal.GUI.Library
 
       if (!bScroll || fTextWidth <= fMaxWidth)
       {
-        m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT);
+        m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT,(int)fMaxWidth);
 
         GUIGraphicsContext.DX9Device.Viewport = oldviewport;
         return;
@@ -1142,14 +1142,14 @@ namespace MediaPortal.GUI.Library
               }
             }
             if (fPosY >= 0.0)
-              m_pFont.DrawText(fPosX - iScrollX, fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT);
+              m_pFont.DrawText(fPosX - iScrollX, fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth-50f));
 								
           }
           else
           {
             iStartFrame++;
             if (fPosY >= 0.0)
-              m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT);
+              m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth-50f));
           }
         }
 				

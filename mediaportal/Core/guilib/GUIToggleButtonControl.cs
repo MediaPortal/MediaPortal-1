@@ -96,9 +96,9 @@ namespace MediaPortal.GUI.Library
       if (m_strLabel.Length > 0 && m_pFont!=null)
       {
         if (Disabled )
-          m_pFont.DrawText((float)m_iTextOffsetX+m_dwPosX, (float)m_iTextOffsetY+m_dwPosY,m_dwDisabledColor,m_strLabel,GUIControl.Alignment.ALIGN_LEFT);
+          m_pFont.DrawText((float)m_iTextOffsetX+m_dwPosX, (float)m_iTextOffsetY+m_dwPosY,m_dwDisabledColor,m_strLabel,GUIControl.Alignment.ALIGN_LEFT,-1);
         else
-          m_pFont.DrawText((float)m_iTextOffsetX+m_dwPosX, (float)m_iTextOffsetY+m_dwPosY,m_dwTextColor,m_strLabel,GUIControl.Alignment.ALIGN_LEFT);
+          m_pFont.DrawText((float)m_iTextOffsetX+m_dwPosX, (float)m_iTextOffsetY+m_dwPosY,m_dwTextColor,m_strLabel,GUIControl.Alignment.ALIGN_LEFT,-1);
       }
     }
 

@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Library
         if (Disabled )
         {
 					// If disabled, draw the text in the disabled color.
-					m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign);
+					m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign,-1);
         }
         else
         {
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Library
             if (m_bShadow)
               m_pFont.DrawShadowText((float)dwTextPosX, (float)m_dwPosY, m_dwTextColor, m_strLabel,m_dwAlign,5,5,0xff000000);
             else
-              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwTextColor, m_strLabel,m_dwAlign);
+              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwTextColor, m_strLabel,m_dwAlign,-1);
           }
 					// Draw non-focused text and shadow
           else
@@ -123,7 +123,7 @@ namespace MediaPortal.GUI.Library
             if (m_bShadow)
               m_pFont.DrawShadowText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign,5,5,0xff000000);
             else
-              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign);
+              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign,-1);
           }
         }
       }

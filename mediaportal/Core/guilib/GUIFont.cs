@@ -1,4 +1,4 @@
-//#define NEWFONTENGINE
+#define NEWFONTENGINE
 using System;
 using System.Text;
 using System.Diagnostics;
@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.Library
 		unsafe private static extern void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue);
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void FontEngineDrawText3D(int fontNumber, char* text, int xposStart, int yposStart, uint intColor);
+		unsafe private static extern void FontEngineDrawText3D(int fontNumber, char* text, int xposStart, int yposStart, uint intColor, int maxWidth);
 
 		
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
@@ -192,7 +192,7 @@ namespace MediaPortal.GUI.Library
 			GetTextExtent(strLabel,ref fTextWidth, ref fTextHeight);
 			if (fTextWidth <=fMaxWidth)
 			{
-				DrawText( xpos, ypos, color, strLabel,alignment );	
+				DrawText( xpos, ypos, color, strLabel,alignment, (int)fMaxWidth);	
 				return;
 			}
       while (fTextWidth >= fMaxWidth && strLabel.Length>1)
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Library
       GetTextExtent(strLabel,ref fTextWidth, ref fTextHeight);
       if (fTextWidth <=fMaxWidth)
       {
-        DrawText( xpos, ypos, color, strLabel,alignment);	
+        DrawText( xpos, ypos, color, strLabel,alignment,-1);	
       }
 		}
     
@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="color">The font color.</param>
 		/// <param name="strLabel">The actual text.</param>
 		/// <param name="alignment">The alignment of the text.</param>
-		public void DrawText(float xpos, float ypos, long color, string strLabel, GUIControl.Alignment alignment)
+		public void DrawText(float xpos, float ypos, long color, string strLabel, GUIControl.Alignment alignment, int maxWidth)
 		{
 			if (strLabel==null) return;
 			if (strLabel==String.Empty) return;
@@ -232,13 +232,13 @@ namespace MediaPortal.GUI.Library
 			
 			if (alignment==GUIControl.Alignment.ALIGN_LEFT)
 			{
-				DrawText(xpos, ypos, Color.FromArgb(alpha,red,green,blue), strLabel, RenderFlags.Filtered);
+				DrawText(xpos, ypos, Color.FromArgb(alpha,red,green,blue), strLabel, RenderFlags.Filtered,maxWidth);
 			}
 			else if (alignment==GUIControl.Alignment.ALIGN_RIGHT)
 			{
 				float fW=0,fH=0;
 				GetTextExtent(strLabel,ref fW, ref fH);
-				DrawText(xpos-fW, ypos, Color.FromArgb(alpha,red,green,blue), strLabel, RenderFlags.Filtered);
+				DrawText(xpos-fW, ypos, Color.FromArgb(alpha,red,green,blue), strLabel, RenderFlags.Filtered,maxWidth);
       }
 		}
 
@@ -265,10 +265,10 @@ namespace MediaPortal.GUI.Library
 			{
 				for (int y=-iShadowHeight; y < iShadowHeight; y++)
 				{
-					DrawText( (float)x+fOriginX, (float)y+fOriginY, dwShadowColor, strText,alignment);	
+					DrawText( (float)x+fOriginX, (float)y+fOriginY, dwShadowColor, strText,alignment,-1);	
 				}
 			}
-			DrawText( fOriginX, fOriginY, dwColor, strText,alignment);	
+			DrawText( fOriginX, fOriginY, dwColor, strText,alignment,-1);	
 		}
 	
     public void Present()
@@ -311,7 +311,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="color">The font color.</param>
 		/// <param name="text">The actual text.</param>
 		/// <param name="flags">Font render flags.</param>
-		protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags)
+		protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags, int maxWidth)
     {
 			if (text==null) return;
 			if (text==String.Empty) return;
@@ -333,7 +333,7 @@ namespace MediaPortal.GUI.Library
 			unsafe
 			{
 				IntPtr ptrStr=Marshal.StringToCoTaskMemAnsi(text); //SLOW
-				FontEngineDrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor);
+				FontEngineDrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor, maxWidth);
 				Marshal.FreeCoTaskMem(ptrStr);
 				return;
 			}

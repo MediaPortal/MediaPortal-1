@@ -19,7 +19,7 @@ namespace MediaPortal.GUI.Library
 	{
 
 		[XMLSkinElement("colorkey")] private long                    m_dwColorKey=0;
-		private VertexBuffer						m_vbBuffer=null;
+		//private VertexBuffer						m_vbBuffer=null;
 		[XMLSkinElement("texture")] private string m_strFileName="";
 		/// <summary>The width of the current texture.</summary>
 		private int                     m_iTextureWidth=0;
@@ -339,11 +339,12 @@ namespace MediaPortal.GUI.Library
 
   		
       // Create a vertex buffer for rendering the image
-      m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
+/*
+ *		m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                     4, GUIGraphicsContext.DX9Device, 
                                     Usage.WriteOnly, CustomVertex.TransformedColoredTextured.Format, 
                                     Pool.Managed);
-
+*/
 			// Set state to render the image
       Update();
 
@@ -364,11 +365,11 @@ namespace MediaPortal.GUI.Library
 				//	imageSprite =null;
 				//}
         m_strTextureFileName="";
-        if (m_vbBuffer!=null)
+        /*if (m_vbBuffer!=null)
         {
           if (!m_vbBuffer.Disposed) m_vbBuffer.Dispose();
           m_vbBuffer=null;
-        }
+        }*/
 
         m_image=null;
         m_vecTextures=null;
@@ -388,7 +389,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     protected override void Update()
     {
-      if (m_vbBuffer==null) return;
+      //if (m_vbBuffer==null) return;
       if (m_vecTextures==null) return;
       float x=(float)m_dwPosX;
       float y=(float)m_dwPosY;
@@ -587,6 +588,7 @@ namespace MediaPortal.GUI.Library
 			_umax=u;
 			_vmax=v;
 			_color=(int)m_colDiffuse;
+			/*
       CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,LockFlags.Discard);
       verts[0].X= x- 0.5f; verts[0].Y=y+nh- 0.5f; verts[0].Z= 0.0f; verts[0].Rhw=1.0f ;
       verts[0].Color = (int)m_colDiffuse;
@@ -608,7 +610,7 @@ namespace MediaPortal.GUI.Library
       verts[3].Tu = uoffs+u;
       verts[3].Tv = voffs;
       m_vbBuffer.Unlock();
-       
+*/       
 
       pntPosition=new Vector3(x,y,0);
       sourceRect=new Rectangle(m_iBitmap * m_dwWidth + iSourceX, iSourceY, iSourceWidth, iSourceHeight);
@@ -786,6 +788,7 @@ namespace MediaPortal.GUI.Library
 					frame.Draw(_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
 					return;
 				}
+/*
         //get the texture of the frame
         Direct3D.Texture texture=frame.Image;
 
@@ -795,6 +798,7 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 ); //SLOW
 
         GUIGraphicsContext.DX9Device.SetTexture( 0, null);
+*/
       }
 		}
 

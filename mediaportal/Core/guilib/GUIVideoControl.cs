@@ -16,6 +16,7 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIVideoControl : GUIControl
 	{
+		GUIImage image;
 		[XMLSkinElement("textureFocus")]	protected string	m_strImgFocusTexture="";
 		[XMLSkinElement("action")]			protected int		m_iAction=-1;
 		protected GUIImage FocusImage=null;
@@ -35,6 +36,7 @@ namespace MediaPortal.GUI.Library
 		{
 			base.FinalizeConstruction ();
 			FocusImage = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight, m_strImgFocusTexture ,0);
+			image = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight, "black.bmp" ,1);
 		}
 
 
@@ -42,11 +44,13 @@ namespace MediaPortal.GUI.Library
     {
       base.AllocResources ();
       FocusImage.AllocResources();
+			image.AllocResources();
     }
     public override void FreeResources()
     {
       base.FreeResources ();
       FocusImage.FreeResources();
+			image.FreeResources();
     }
 
 
@@ -67,6 +71,7 @@ namespace MediaPortal.GUI.Library
       float x=base.XPosition;
       float y=base.YPosition;
       GUIGraphicsContext.Correct(ref x,ref y);
+
       m_vidWindow[0].X=(int)x;
       m_vidWindow[0].Y=(int)y;
       m_vidWindow[0].Width=base.Width;
@@ -96,9 +101,12 @@ namespace MediaPortal.GUI.Library
 					}
 					else
 					{
-						GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,m_vidWindow);
+						image.SetPosition(m_vidWindow[0].X,m_vidWindow[0].Y);
+						image.Width=m_vidWindow[0].Width;
+						image.Height=m_vidWindow[0].Height;
+						image.Render();
+						//GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,m_vidWindow);
 					}
-
 				}
 				else
 				{

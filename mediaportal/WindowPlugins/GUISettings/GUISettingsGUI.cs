@@ -100,10 +100,6 @@ namespace MediaPortal.GUI.Settings
 						string strLabel=message.Label;
 						int fps=Int32.Parse(strLabel);
 						GUIGraphicsContext.MaxFPS=fps;
-						using (AMS.Profile.Xml xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
-						{
-							xmlWriter.SetValue("screen","maxfps",fps.ToString());
-						}
 					}
 
         }
@@ -128,7 +124,8 @@ namespace MediaPortal.GUI.Settings
     {
       using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        xmlwriter.SetValue("general","scrollspeed",m_iSpeed.ToString());
+				xmlwriter.SetValue("general","scrollspeed",m_iSpeed.ToString());
+				xmlwriter.SetValue("screen","maxfps",(int)GUIGraphicsContext.MaxFPS);
       }
     }
     #endregion

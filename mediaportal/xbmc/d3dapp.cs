@@ -1117,6 +1117,7 @@ namespace MediaPortal
 
     void DoSleep(int sleepTime)
     {
+			if (sleepTime<=0) return;
 #if !PROFILING
       if (!UseMillisecondTiming) 
       {

@@ -180,7 +180,7 @@ namespace MediaPortal.GUI.Library
 							font.GetTextExtent(strLine, ref fW, ref fH);
 							float x = (GUIGraphicsContext.Width - fW) / 2f;
 							float y = (GUIGraphicsContext.Height - fH) / 2f;
-							font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT);
+							font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT,-1);
 						}
 					}
 					for (int x = 0; x < m_vecControls.Count; ++x)

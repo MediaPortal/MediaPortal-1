@@ -339,7 +339,7 @@ namespace MediaPortal.GUI.Library
 					fHeight= ((float)m_guiTop.TextureHeight)/2.0f;
 					fWidth  -= fW;
 					fHeight -= fH;
-					m_pFont.DrawText((float)m_guiTop.XPosition+fWidth,(float)2+m_guiTop.YPosition+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT);
+					m_pFont.DrawText((float)m_guiTop.XPosition+fWidth,(float)2+m_guiTop.YPosition+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
 				}
 
 
@@ -354,7 +354,7 @@ namespace MediaPortal.GUI.Library
 					fHeight= ((float)m_guiLeft.TextureHeight)/2.0f;
 					fWidth  -= fW;
 					fHeight -= fH;
-					m_pFont.DrawText((float)m_dwPosX+fWidth,(float)m_dwPosY+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT);
+					m_pFont.DrawText((float)m_dwPosX+fWidth,(float)m_dwPosY+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
 				}
 
 				// render right text
@@ -368,7 +368,7 @@ namespace MediaPortal.GUI.Library
 					fHeight= ((float)m_guiRight.TextureHeight)/2.0f;
 					fWidth  -= fW;
 					fHeight -= fH;
-					m_pFont.DrawText((float)m_guiRight.XPosition+fWidth,(float)m_guiRight.YPosition+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT);
+					m_pFont.DrawText((float)m_guiRight.XPosition+fWidth,(float)m_guiRight.YPosition+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
 				}
 			}
     }

@@ -1122,7 +1122,7 @@ GUISpinControl m_upDown = null;
 
 			if (!bScroll )
 			{
-        m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT);
+        m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth));
         GUIGraphicsContext.DX9Device.Viewport = oldviewport;
 				return;
 			}
@@ -1132,7 +1132,7 @@ GUISpinControl m_upDown = null;
 
       if (fTextWidth <= fMaxWidth)
       {
-        m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT);
+        m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth));
         GUIGraphicsContext.DX9Device.Viewport = oldviewport;
         return;
       }
@@ -1196,14 +1196,14 @@ GUISpinControl m_upDown = null;
 									}
 								}
 								if (fPosY >= 0.0)
-									m_pFont.DrawText(fPosX - iScrollX, fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT);
+									m_pFont.DrawText(fPosX - iScrollX, fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth-50f));
 								
 							}
 							else
 							{
 								iStartFrame++;
 								if (fPosY >= 0.0)
-									m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT);
+									m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT,(int)(fMaxWidth-50f));
 							}
 				}
 				

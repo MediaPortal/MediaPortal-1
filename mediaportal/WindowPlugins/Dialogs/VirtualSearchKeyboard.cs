@@ -447,7 +447,7 @@ namespace MediaPortal.Dialogs
 		int           m_iCurrKey;
 		int           m_iLastColumn;
 		//float         m_fRepeatDelay;
-		Texture       m_pKeyTexture;
+		CachedTexture.Frame m_pKeyTexture;
 		float         m_fKeyHeight;
 		int           m_dwMaxRows;
 		bool          m_bConfirmed;
@@ -457,6 +457,7 @@ namespace MediaPortal.Dialogs
     GUIFont       m_FontSearchText;
 		DateTime      m_CaretTimer=DateTime.Now;
 		bool          m_bPrevOverlay=true;
+		GUIImage			image;
 		 
 		// added by Agree
 		int           m_searchKind; // 0=Starts with, 1=Contains, 2=Ends with
@@ -524,9 +525,16 @@ namespace MediaPortal.Dialogs
 			int iImages=GUITextureManager.Load("keyNF.bmp",0,0,0);
 			if (iImages==1)
 			{
-				CachedTexture.Frame frame=GUITextureManager.GetTexture("keyNF.bmp",0,out iTextureWidth,out iTextureHeight);
-				m_pKeyTexture=frame.Image;
+				m_pKeyTexture =GUITextureManager.GetTexture("keyNF.bmp",0,out iTextureWidth,out iTextureHeight);
 			}
+			image = new GUIImage(this.GetID, 1, 0, 0,10, 10, "white.bmp" ,1);
+			image.AllocResources();
+		}
+
+		void DeInitialize()
+		{
+			image.FreeResources();
+			image=null;
 		}
 
 		public void Reset()
@@ -573,6 +581,7 @@ namespace MediaPortal.Dialogs
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 				{
 					GUIGraphicsContext.Overlay=m_bPrevOverlay;				
+					DeInitialize();
 					return true;
 				}
 
@@ -791,6 +800,7 @@ namespace MediaPortal.Dialogs
 			if (null!=m_pParentWindow) 
         m_pParentWindow.Render();
 
+			GUIFontManager.Present();
 			RenderKeyboardLatin();    
 		}
 
@@ -1486,6 +1496,9 @@ namespace MediaPortal.Dialogs
 			float uoffs=0;
 			float v=1.0f;
 			float u=1.0f;
+			m_pKeyTexture.Draw(x,y,nw,nh,uoffs,0.0f,u,v,(int)KeyColor);
+			/*
+
       VertexBuffer m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                         4, GUIGraphicsContext.DX9Device, 
                                         0, CustomVertex.TransformedColoredTextured.Format, 
@@ -1525,7 +1538,7 @@ namespace MediaPortal.Dialogs
       // unset the texture and palette or the texture caching crashes because the runtime still has a reference
       GUIGraphicsContext.DX9Device.SetTexture( 0, null);
       m_vbBuffer.Dispose();
-
+*/
       // Draw the key text. If key name is, use a slightly smaller font.
       float fW=0;
       float fH=0;
@@ -1538,21 +1551,21 @@ namespace MediaPortal.Dialogs
         m_Font12.GetTextExtent(strName,ref fW,ref fH);
         fposX-= (fW/2);
         fposY-= (fH/2);
-        m_Font12.DrawText( fposX,fposY, TextColor, strName, GUIControl.Alignment.ALIGN_LEFT);
+        m_Font12.DrawText( fposX,fposY, TextColor, strName, GUIControl.Alignment.ALIGN_LEFT,-1);
       }
       else
       {
         m_Font18.GetTextExtent(strName,ref fW,ref fH);
         fposX-= (fW/2);
         fposY-= (fH/2);
-        m_Font18.DrawText( fposX,fposY, TextColor, strName, GUIControl.Alignment.ALIGN_LEFT);
+        m_Font18.DrawText( fposX,fposY, TextColor, strName, GUIControl.Alignment.ALIGN_LEFT,-1);
       }
     }
 
     void DrawTextBox(int x1,int y1, int x2, int y2) 
     {
       long lColor=0xaaffffff;
-      GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
+/*      GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x2,ref y2);
 
       x1+=GUIGraphicsContext.OffsetX;
@@ -1566,6 +1579,13 @@ namespace MediaPortal.Dialogs
 			rect[0].Width=x2-x1;
 			rect[0].Height=y2-y1;
 			GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, (int)lColor, 1.0f, 0, rect );
+*/
+			//image.ColourDiffuse=lColor;
+			image.SetPosition(x1,y1);
+			image.Width=(x2-x1);
+			image.Height=(y2-y1);
+			image.Render();
+
 
     }
 
@@ -1576,7 +1596,7 @@ namespace MediaPortal.Dialogs
 			y+=GUIGraphicsContext.OffsetY;
 			string strTxt=m_strData;
 	
-      m_FontSearchText.DrawText( (float)x, (float)y, COLOR_SEARCHTEXT, strTxt, GUIControl.Alignment.ALIGN_LEFT );
+      m_FontSearchText.DrawText( (float)x, (float)y, COLOR_SEARCHTEXT, strTxt, GUIControl.Alignment.ALIGN_LEFT ,-1);
 
       
       // Draw blinking caret using line primitives.
@@ -1589,7 +1609,7 @@ namespace MediaPortal.Dialogs
         float fCaretHeight=0.0f;
         m_FontSearchText.GetTextExtent( strLine, ref fCaretWidth, ref fCaretHeight );
         x += (int)fCaretWidth;
-        m_FontSearchText.DrawText( (float)x, (float)y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT );
+        m_FontSearchText.DrawText( (float)x, (float)y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT ,-1);
         
       }
     }
