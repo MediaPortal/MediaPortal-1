@@ -2605,14 +2605,14 @@ namespace MediaPortal.TV.Recording
 										info.networkID,
 										info.transportStreamID,
 										info.serviceID,
-										hasVideo, !hasVideo);
+										hasVideo, ((!hasVideo) && hasAudio));
 		
 				DVBChannel newchannel   = new DVBChannel();
 				newchannel.carrierFrequency = info.freq;
 				newchannel.ChannelName  = info.service_name;
 				newchannel.NetworkName  = info.service_provider_name;
 				newchannel.IsRadio		  = ((!hasVideo) && hasAudio);
-				newchannel.IsTv   		  = (hasVideo && hasAudio);
+				newchannel.IsTv   		  = (hasVideo);//some tv channels dont have an audio stream
 				newchannel.IsScrambled  = info.scrambled;
 				newchannel.ONID         = info.networkID;
 				newchannel.TSID         = info.transportStreamID;
