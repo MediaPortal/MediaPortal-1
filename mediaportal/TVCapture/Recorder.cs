@@ -316,7 +316,7 @@ namespace MediaPortal.TV.Recording
       }
 
       // not recording this yet
-      Log.Write("Recorder: time to record a program on channel:"+rec.Channel);
+      Log.Write("Recorder: time to record a {0} on channel:{1} from {2}-{3}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString());
       Log.Write("Recorder: find free capture card");
 
       // find free device for recording
@@ -333,7 +333,7 @@ namespace MediaPortal.TV.Recording
 						if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) )
 						{
 							//yes then record
-							Log.Write("Recorder: found capture card:{0} {1}", dev.ID, dev.VideoDevice);
+							Log.Write("Recorder: using capture card:{0} {1}", dev.ID, dev.VideoDevice);
 							bool viewing=IsCardViewing(cardNo);
 							TuneExternalChannel(rec.Channel);
 							dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);

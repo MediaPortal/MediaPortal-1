@@ -796,7 +796,7 @@ namespace MediaPortal.TV.Recording
       _mPostRecordInterval = iPostRecordInterval;
       _mTvChannelName = recording.Channel;
 
-      Log.Write("Card:{0} record new program on {1}",ID, _mTvChannelName);
+      Log.Write("Card:{0} record {1} on {2} from {3}-{4}",ID, recording.Title,_mTvChannelName,recording.StartTime.ToLongTimeString(),recording.EndTime.ToLongTimeString());
       // create sink graph
       if (CreateGraph())
       {
