@@ -2890,6 +2890,10 @@
 	<value>Progress</value>
 </string>
 <string>
+	<id>8034</id>
+	<value>Show HTML</value>
+</string>
+<string>
 	<id>9000</id>
 	<value>Image dimensions:</value>
 </string>
