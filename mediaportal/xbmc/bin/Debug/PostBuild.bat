@@ -40,8 +40,11 @@ copy ..\..\..\tag.cfg .
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.dll plugins\TagReaders
 copy ..\..\..\mp3TagReader\NZLib\bin\Debug\zlib.dll plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.dll plugins\TagReaders
+copy ..\..\..\WmaTagReader\bin\Debug\WmaTagReader.dll plugins\TagReaders
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
+copy ..\..\..\mmedia\bin\Debug\yeti.mmedia.dll
+copy ..\..\..\wmfsdk\bin\Debug\yeti.wmfsdk.dll
 
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.dll plugins\ExternalPlayers
 copy ..\..\..\WinampExternalPlayer\bin\Debug\WinampExternalPlayer.pdb plugins\ExternalPlayers
@@ -70,6 +73,7 @@ copy ..\..\..\SMIReader\bin\Debug\SMIReader.pdb plugins\subtitle
 copy ..\..\..\SRTReader\bin\Debug\SRTReader.pdb plugins\subtitle
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.pdb plugins\TagReaders
 copy ..\..\..\MultiTagReader\bin\Debug\MultiTagReader.pdb plugins\TagReaders
+copy ..\..\..\WmaTagReader\bin\Debug\WmaTagReader.pdb plugins\TagReaders
 copy ..\..\..\RadioDatabase\bin\Debug\RadioDatabase.pdb .
 copy ..\..\..\MusicDatabase\bin\Debug\MusicDatabase.pdb .
 copy ..\..\..\PictureDatabase\bin\Debug\PictureDatabase.pdb .

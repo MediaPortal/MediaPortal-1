@@ -54,6 +54,10 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{A20DE1A6-5059-4A00-897E-3A62BAE1FDE7}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoDatabase", "VideoDatabase\VideoDatabase.csproj", "{C5F79684-B786-43EB-99F2-9F217A6A9BE1}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -192,6 +196,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBUIRT", "USBUIRT\USBUIRT.
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoobarExternalPlayer", "FoobarExternalPlayer\FoobarExternalPlayer.csproj", "{12B0C334-83C4-4762-B699-EB10279502A3}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mmedia", "mmedia\mmedia.csproj", "{315EE7BF-EAE2-42C0-BFC6-CCA9160F3CFE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wmfsdk", "wmfsdk\wmfsdk.csproj", "{FECB5BEB-AB05-454A-BB14-6A554E897274}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WmaTagReader", "WmaTagReader\WmaTagReader.csproj", "{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -363,6 +379,18 @@ Global
 		{12B0C334-83C4-4762-B699-EB10279502A3}.Debug.Build.0 = Debug|.NET
 		{12B0C334-83C4-4762-B699-EB10279502A3}.Release.ActiveCfg = Release|.NET
 		{12B0C334-83C4-4762-B699-EB10279502A3}.Release.Build.0 = Release|.NET
+		{315EE7BF-EAE2-42C0-BFC6-CCA9160F3CFE}.Debug.ActiveCfg = Debug|.NET
+		{315EE7BF-EAE2-42C0-BFC6-CCA9160F3CFE}.Debug.Build.0 = Debug|.NET
+		{315EE7BF-EAE2-42C0-BFC6-CCA9160F3CFE}.Release.ActiveCfg = Release|.NET
+		{315EE7BF-EAE2-42C0-BFC6-CCA9160F3CFE}.Release.Build.0 = Release|.NET
+		{FECB5BEB-AB05-454A-BB14-6A554E897274}.Debug.ActiveCfg = Debug|.NET
+		{FECB5BEB-AB05-454A-BB14-6A554E897274}.Debug.Build.0 = Debug|.NET
+		{FECB5BEB-AB05-454A-BB14-6A554E897274}.Release.ActiveCfg = Release|.NET
+		{FECB5BEB-AB05-454A-BB14-6A554E897274}.Release.Build.0 = Release|.NET
+		{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}.Debug.ActiveCfg = Debug|.NET
+		{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}.Debug.Build.0 = Debug|.NET
+		{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}.Release.ActiveCfg = Release|.NET
+		{D7A604E1-D8B7-4C29-AD1A-46A12E0D73A5}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
