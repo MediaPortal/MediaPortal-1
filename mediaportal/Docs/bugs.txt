@@ -1,0 +1,9 @@
+Bugs:
+  - 14-04-2004 my video   : internal video player: mpeg2 files stop doesnt work
+  - 14-04-2004 general    : xbmc doesnt start from D: 
+  - 16-04-2004 OSD        : someone also had a problem with the OSD not wanting to go away again with Y
+  - 18-04-2004 my video   : view by title: not all movies are shown
+  - 18-04-2004 my pictures: pics are 2 small after calibrating (not using entire screen)
+  - 20-04-2005 my tv      : record a program via tvguide which is already running records the next program!
+  - 22-04-2005 my video   : dvd player flickers, especiall when OSD is drawn
+  - 22-04-2004 general    : scrolling items (like musicoverlay) take too much cpu% (disabled for now)
