@@ -963,8 +963,6 @@ namespace DShowNET
         }
       }
     }
-
-
 	}
 }
   
