@@ -47,7 +47,8 @@ namespace MediaPortal.GUI.Library
       m_properties["#credits"]="";    // imdb movie writing credits
 			m_properties["#mpaarating"]=""; // imdb movie MPAA rating
 			m_properties["#runtime"]="";    // imdb movie runtime 
-      m_properties["#thumb"]="";
+			m_properties["#iswatched"]="";  // boolean indication movie has been watched
+			m_properties["#thumb"]="";
       m_properties["#currentplaytime"]="";
       m_properties["#shortcurrentplaytime"]="";
       m_properties["#duration"]="";

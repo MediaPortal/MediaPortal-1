@@ -207,6 +207,9 @@ namespace MediaPortal.Video.Database
 			GUIPropertyManager.SetProperty("#year",Year.ToString());
 			GUIPropertyManager.SetProperty("#runtime",RunTime.ToString());
 			GUIPropertyManager.SetProperty("#mpaarating",MPARating.ToString());
+			string strValue="no";
+			if (Watched>0) strValue="yes";
+			GUIPropertyManager.SetProperty("#iswatched",strValue);
 		}
 	}
 }
