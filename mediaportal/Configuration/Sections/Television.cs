@@ -13,7 +13,6 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioButton1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox alwaysTimeShiftCheckBox;
 		private System.Windows.Forms.ComboBox rendererComboBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.GroupBox groupBox3;
@@ -29,6 +28,11 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
     private System.Windows.Forms.Label label6;
 		private System.ComponentModel.IContainer components = null;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private MediaPortal.UserInterface.Controls.MPCheckBox alwaysTimeShiftCheckBox;
+		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.TextBox textBoxTimeShiftBuffer;
+		private System.Windows.Forms.Label lblminutes;
 
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -88,7 +92,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label6 = new System.Windows.Forms.Label();
 			this.rendererComboBox = new System.Windows.Forms.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.alwaysTimeShiftCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.radioButton1 = new System.Windows.Forms.RadioButton();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.audioCodecComboBox = new System.Windows.Forms.ComboBox();
@@ -100,9 +103,15 @@ namespace MediaPortal.Configuration.Sections
 			this.label4 = new System.Windows.Forms.Label();
 			this.inputComboBox = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.lblminutes = new System.Windows.Forms.Label();
+			this.textBoxTimeShiftBuffer = new System.Windows.Forms.TextBox();
+			this.label7 = new System.Windows.Forms.Label();
+			this.alwaysTimeShiftCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
+			this.groupBox4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -113,11 +122,10 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Controls.Add(this.label6);
 			this.groupBox1.Controls.Add(this.rendererComboBox);
 			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.alwaysTimeShiftCheckBox);
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(8, 8);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 128);
+			this.groupBox1.Size = new System.Drawing.Size(440, 80);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "General Settings";
@@ -134,14 +142,14 @@ namespace MediaPortal.Configuration.Sections
 																																 "Zoom",
 																																 "4:3 Letterbox",
 																																 "4:3 Pan and scan"});
-			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 83);
+			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 40);
 			this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
 			this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
 			this.defaultZoomModeComboBox.TabIndex = 2;
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(16, 87);
+			this.label6.Location = new System.Drawing.Point(16, 48);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(150, 23);
 			this.label6.TabIndex = 29;
@@ -152,27 +160,18 @@ namespace MediaPortal.Configuration.Sections
 			this.rendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.rendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.rendererComboBox.Location = new System.Drawing.Point(168, 58);
+			this.rendererComboBox.Location = new System.Drawing.Point(168, 16);
 			this.rendererComboBox.Name = "rendererComboBox";
 			this.rendererComboBox.Size = new System.Drawing.Size(256, 21);
 			this.rendererComboBox.TabIndex = 1;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 62);
+			this.label2.Location = new System.Drawing.Point(16, 24);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(150, 23);
 			this.label2.TabIndex = 9;
 			this.label2.Text = "Video renderer";
-			// 
-			// alwaysTimeShiftCheckBox
-			// 
-			this.alwaysTimeShiftCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.alwaysTimeShiftCheckBox.Location = new System.Drawing.Point(16, 24);
-			this.alwaysTimeShiftCheckBox.Name = "alwaysTimeShiftCheckBox";
-			this.alwaysTimeShiftCheckBox.Size = new System.Drawing.Size(280, 24);
-			this.alwaysTimeShiftCheckBox.TabIndex = 0;
-			this.alwaysTimeShiftCheckBox.Text = "Always use timeshifting";
 			// 
 			// radioButton1
 			// 
@@ -189,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.Controls.Add(this.videoCodecComboBox);
 			this.groupBox3.Controls.Add(this.label5);
 			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox3.Location = new System.Drawing.Point(8, 144);
+			this.groupBox3.Location = new System.Drawing.Point(8, 96);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(440, 96);
 			this.groupBox3.TabIndex = 1;
@@ -241,7 +240,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Controls.Add(this.inputComboBox);
 			this.groupBox2.Controls.Add(this.label1);
 			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(8, 248);
+			this.groupBox2.Location = new System.Drawing.Point(8, 200);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(440, 96);
 			this.groupBox2.TabIndex = 2;
@@ -289,8 +288,55 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.TabIndex = 7;
 			this.label1.Text = "Input source";
 			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.lblminutes);
+			this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
+			this.groupBox4.Controls.Add(this.label7);
+			this.groupBox4.Controls.Add(this.alwaysTimeShiftCheckBox);
+			this.groupBox4.Location = new System.Drawing.Point(8, 304);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(440, 88);
+			this.groupBox4.TabIndex = 3;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Timeshifting settings";
+			// 
+			// lblminutes
+			// 
+			this.lblminutes.Location = new System.Drawing.Point(176, 48);
+			this.lblminutes.Name = "lblminutes";
+			this.lblminutes.Size = new System.Drawing.Size(100, 16);
+			this.lblminutes.TabIndex = 3;
+			this.lblminutes.Text = "Minutes";
+			// 
+			// textBoxTimeShiftBuffer
+			// 
+			this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(120, 48);
+			this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
+			this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(40, 20);
+			this.textBoxTimeShiftBuffer.TabIndex = 2;
+			this.textBoxTimeShiftBuffer.Text = "30";
+			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(24, 48);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(88, 16);
+			this.label7.TabIndex = 1;
+			this.label7.Text = "Timeshift buffer:";
+			// 
+			// alwaysTimeShiftCheckBox
+			// 
+			this.alwaysTimeShiftCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.alwaysTimeShiftCheckBox.Location = new System.Drawing.Point(16, 16);
+			this.alwaysTimeShiftCheckBox.Name = "alwaysTimeShiftCheckBox";
+			this.alwaysTimeShiftCheckBox.Size = new System.Drawing.Size(280, 24);
+			this.alwaysTimeShiftCheckBox.TabIndex = 0;
+			this.alwaysTimeShiftCheckBox.Text = "Always use timeshifting";
+			// 
 			// Television
 			// 
+			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox1);
@@ -299,6 +345,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
+			this.groupBox4.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -310,6 +357,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				alwaysTimeShiftCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "alwaystimeshift", false);
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
+				textBoxTimeShiftBuffer.Text= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
 
 				//
 				// Set video renderer
@@ -402,7 +450,12 @@ namespace MediaPortal.Configuration.Sections
 			{
 				xmlwriter.SetValueAsBool("mytv", "alwaystimeshift", alwaysTimeShiftCheckBox.Checked);
 				xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
-        
+				try
+				{
+					int buffer=Int32.Parse(textBoxTimeShiftBuffer.Text);
+					xmlwriter.SetValue("capture", "timeshiftbuffer", buffer.ToString());
+				}
+				catch(Exception){}
         xmlwriter.SetValue("mytv","defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
 
 				for(int index = 0; index < VideoRenderers.List.Length; index++)

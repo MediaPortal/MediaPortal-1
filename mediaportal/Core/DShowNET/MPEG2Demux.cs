@@ -489,7 +489,16 @@ namespace DShowNET
         m_bSink = m_streamBuffer as IStreamBufferSink;
         if (m_bSink ==null) DirectShowUtil.DebugWrite("mpeg2:FAILED to get IStreamBufferSink interface");
 
-        DirectShowUtil.DebugWrite("mpeg2:Set folder:{0} filecount 6-8, fileduration:300 sec",strDir);
+				int iTimeShiftBuffer=30;
+				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+				{
+					iTimeShiftBuffer= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
+					if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;
+				}
+				iTimeShiftBuffer*=60; //in seconds
+				int iFileDuration = iTimeShiftBuffer/6;
+
+        DirectShowUtil.DebugWrite("mpeg2:Set folder:{0} filecount 6-8, fileduration:{1} sec",strDir,iFileDuration);
 
 
         // set streambuffer backing file configuration
@@ -517,7 +526,7 @@ namespace DShowNET
         hr=m_pConfig.SetBackingFileCount(6, 8);    //6-8 files
         if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
 
-        hr=m_pConfig.SetBackingFileDuration( 300); // 300sec * 6 files= 30 mins
+        hr=m_pConfig.SetBackingFileDuration( (uint)iFileDuration); 
         if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
 #endif
       }
