@@ -500,9 +500,9 @@ namespace MediaPortal.GUI.TV
 					m_iChannelOffset=0;
           m_bSingleChannel=false;
           m_bUseChannelLogos=false;
-					if (Recorder.IsCardViewing( GUITVHome.GetCurrentCard() ) )
+					if (Recorder.IsViewing( ) )
 					{
-						m_strCurrentChannel= Recorder.GetTVChannelName(  GUITVHome.GetCurrentCard() );
+						m_strCurrentChannel= Recorder.GetTVChannelName(   );
 						GetChannels();
 						for (int i=0; i < m_channels.Count;i++)
 						{
@@ -2020,10 +2020,9 @@ namespace MediaPortal.GUI.TV
 					break;
 					
 					case 938: // view channel
-						int card=GUITVHome.GetCurrentCard();
 						if (Recorder.View)
 						{  
-							Recorder.StartViewing(card,m_strCurrentChannel,Recorder.IsCardViewing(card),Recorder.IsCardTimeShifting(card) );
+							GUITVHome.ViewChannel(m_strCurrentChannel);
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 							return;
 						}

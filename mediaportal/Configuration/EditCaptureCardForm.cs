@@ -111,6 +111,8 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TreeView treeView5;
 		private System.Windows.Forms.CheckBox checkBoxHiQuality;
 		bool m_stopEPGGrab;
+		private System.Windows.Forms.NumericUpDown updownPrio;
+		private System.Windows.Forms.Label label24;
 		int  CardId;
 		
 		/// <summary>
@@ -412,6 +414,8 @@ namespace MediaPortal.Configuration
 			this.label29 = new System.Windows.Forms.Label();
 			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.button1 = new System.Windows.Forms.Button();
+			this.updownPrio = new System.Windows.Forms.NumericUpDown();
+			this.label24 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -423,6 +427,7 @@ namespace MediaPortal.Configuration
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.tabPage6.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// checkBoxHiQuality
@@ -500,7 +505,7 @@ namespace MediaPortal.Configuration
 			this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.setupButton.Enabled = false;
 			this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.setupButton.Location = new System.Drawing.Point(320, 160);
+			this.setupButton.Location = new System.Drawing.Point(320, 144);
 			this.setupButton.Name = "setupButton";
 			this.setupButton.Size = new System.Drawing.Size(56, 21);
 			this.setupButton.TabIndex = 4;
@@ -513,7 +518,7 @@ namespace MediaPortal.Configuration
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.filterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.filterComboBox.Enabled = false;
-			this.filterComboBox.Location = new System.Drawing.Point(112, 160);
+			this.filterComboBox.Location = new System.Drawing.Point(112, 144);
 			this.filterComboBox.Name = "filterComboBox";
 			this.filterComboBox.Size = new System.Drawing.Size(200, 21);
 			this.filterComboBox.TabIndex = 3;
@@ -521,7 +526,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(8, 168);
+			this.label9.Location = new System.Drawing.Point(8, 152);
 			this.label9.Name = "label9";
 			this.label9.TabIndex = 40;
 			this.label9.Text = "Device property";
@@ -609,7 +614,7 @@ namespace MediaPortal.Configuration
 			this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.useRecordingCheckBox.Enabled = false;
 			this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.useRecordingCheckBox.Location = new System.Drawing.Point(32, 256);
+			this.useRecordingCheckBox.Location = new System.Drawing.Point(32, 216);
 			this.useRecordingCheckBox.Name = "useRecordingCheckBox";
 			this.useRecordingCheckBox.Size = new System.Drawing.Size(168, 24);
 			this.useRecordingCheckBox.TabIndex = 9;
@@ -621,7 +626,7 @@ namespace MediaPortal.Configuration
 			this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.useWatchingCheckBox.Enabled = false;
 			this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.useWatchingCheckBox.Location = new System.Drawing.Point(32, 232);
+			this.useWatchingCheckBox.Location = new System.Drawing.Point(32, 192);
 			this.useWatchingCheckBox.Name = "useWatchingCheckBox";
 			this.useWatchingCheckBox.Size = new System.Drawing.Size(168, 24);
 			this.useWatchingCheckBox.TabIndex = 8;
@@ -629,7 +634,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(16, 216);
+			this.label4.Location = new System.Drawing.Point(16, 176);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(100, 16);
 			this.label4.TabIndex = 13;
@@ -655,7 +660,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(8, 112);
+			this.label8.Location = new System.Drawing.Point(8, 96);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(424, 40);
 			this.label8.TabIndex = 45;
@@ -713,6 +718,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.label24);
+			this.tabPage1.Controls.Add(this.updownPrio);
 			this.tabPage1.Controls.Add(this.label2);
 			this.tabPage1.Controls.Add(this.cardComboBox);
 			this.tabPage1.Controls.Add(this.label1);
@@ -1174,6 +1181,36 @@ namespace MediaPortal.Configuration
 			this.button1.Text = "Autotune";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
+			// updownPrio
+			// 
+			this.updownPrio.Location = new System.Drawing.Point(32, 256);
+			this.updownPrio.Maximum = new System.Decimal(new int[] {
+																															 10,
+																															 0,
+																															 0,
+																															 0});
+			this.updownPrio.Minimum = new System.Decimal(new int[] {
+																															 1,
+																															 0,
+																															 0,
+																															 0});
+			this.updownPrio.Name = "updownPrio";
+			this.updownPrio.Size = new System.Drawing.Size(56, 20);
+			this.updownPrio.TabIndex = 51;
+			this.updownPrio.Value = new System.Decimal(new int[] {
+																														 1,
+																														 0,
+																														 0,
+																														 0});
+			// 
+			// label24
+			// 
+			this.label24.Location = new System.Drawing.Point(16, 240);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(136, 16);
+			this.label24.TabIndex = 52;
+			this.label24.Text = "Priority (1=low,10=high)";
+			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1201,6 +1238,7 @@ namespace MediaPortal.Configuration
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.tabPage6.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -1612,6 +1650,7 @@ namespace MediaPortal.Configuration
 				card.UseForRecording = useRecordingCheckBox.Checked;
 				card.UseForTV	= useWatchingCheckBox.Checked;
 				card.ID=CardId;
+				card.Priority = (int)updownPrio.Value;
 				
         if(frameSizeComboBox.SelectedItem != null)
         {
@@ -1669,6 +1708,8 @@ namespace MediaPortal.Configuration
           videoCompressorComboBox.SelectedItem = card.VideoCompressor;
           audioCompressorComboBox.SelectedItem = card.AudioCompressor;
           audioDeviceComboBox.SelectedItem = card.AudioDevice;
+					
+					updownPrio.Value=card.Priority ;
           
           comboBoxLineInput.Text = card.AudioInputPin;
           trackRecording_ValueChanged(null,null);
@@ -1701,6 +1742,7 @@ namespace MediaPortal.Configuration
               break;
             }
           }
+
         }
         acceptuserinput=true;
 			}

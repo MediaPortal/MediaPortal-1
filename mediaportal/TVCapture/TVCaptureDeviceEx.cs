@@ -42,6 +42,7 @@ namespace MediaPortal.TV.Recording
 		int     _RecordingLevel					= 100;
 		string  m_strFriendlyName				= "";
 		string  deviceType              ="";
+		int     priority=1;
 
 		enum State
 		{
@@ -96,6 +97,12 @@ namespace MediaPortal.TV.Recording
 				if (_mCaptureCardDefinition==null) return ;
 				_mCaptureCardDefinition.DeviceId=value;
 			}
+		}
+
+		public int Priority
+		{
+			get { return priority;}
+			set { priority=value;}
 		}
 
 		public string DeviceType

@@ -257,9 +257,7 @@ namespace MediaPortal.GUI.TV
           int iPrev=i-1;
           if (iPrev<0) iPrev=m_channels.Count-1;
           chan=(TVChannel)m_channels[iPrev];
-          int card=GUITVHome.GetCurrentCard();
-          Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
-
+					GUITVHome.ViewChannel(chan.Name);
 					SetCurrentChannelLogo();
 					m_dateTime = DateTime.Now; 
           return;
@@ -280,8 +278,7 @@ namespace MediaPortal.GUI.TV
           if (iNext>m_channels.Count-1) iNext=0;
           chan=(TVChannel)m_channels[iNext];
           
-          int card=GUITVHome.GetCurrentCard();
-          Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+          GUITVHome.ViewChannel(chan.Name) ;
 
 					SetCurrentChannelLogo();
 					m_dateTime = DateTime.Now; 
@@ -324,7 +321,7 @@ namespace MediaPortal.GUI.TV
 		  string strChannel=Recorder.TVChannelName;
 		  GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 
-		  if (!Recorder.View && Recorder.IsRecording)
+		  if (!Recorder.View && Recorder.IsRecording())
 		  {
 			  strChannel=Recorder.CurrentTVRecording.Channel;
 		  }

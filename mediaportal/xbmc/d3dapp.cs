@@ -1931,17 +1931,7 @@ namespace MediaPortal
         }
       }
 
-      if (isHandlingSizeChanges)
-      {
-        // Are we maximized?
-        //isMaximized = (this.WindowState == System.Windows.Forms.FormWindowState.Maximized);
-        //if (!isMaximized)
-        //{
-          //storedSize = this.ClientSize;
-          // storedLocation = this.Location;
-        //}
-      }
-      active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized || this.Visible == false);
+      active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized);
       base.OnResize(e);
     }
 

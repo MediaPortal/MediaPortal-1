@@ -883,8 +883,7 @@ namespace MediaPortal.GUI.TV
 			if ((tsZap.TotalMilliseconds>m_iZapDelay) && (m_sZapChannel!=""))
 			{
 				m_dwZapTimer=DateTime.Now;
-				int card=GUITVHome.GetCurrentCard();
-				Recorder.StartViewing(card, m_sZapChannel, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
+				GUITVHome.ViewChannel(m_sZapChannel);
 				m_sZapChannel="";
 			}
 

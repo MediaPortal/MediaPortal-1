@@ -66,7 +66,10 @@ namespace MediaPortal.GUI.Library
         GUI_MSG_MSN_STATUS_MESSAGE,
         GUI_MSG_MSN_CLOSECONVERSATION,
         GUI_MSG_ITEM_FOCUS_CHANGED,
-				GUI_MSG_PLAY_ITEM};
+				GUI_MSG_PLAY_ITEM,
+				GUI_MSG_RECORDER_VIEW_CHANNEL,
+				GUI_MSG_RECORDER_STOP_VIEWING,
+		};
 
 		private string 				m_strLabel="";
 		private string 				m_strLabel2="";

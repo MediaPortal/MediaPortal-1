@@ -890,7 +890,7 @@ public class MediaPortalApp : D3DApp, IRender
 				GUIGraphicsContext.IsFullScreenVideo = false;
 			GUIGraphicsContext.IsPlaying = false;
 		}
-		if (!g_Player.Playing && !Recorder.IsRecording)
+		if (!g_Player.Playing && !Recorder.IsRecording())
 		{
 			if (m_bPlayingState)
 			{
@@ -1099,6 +1099,7 @@ public class MediaPortalApp : D3DApp, IRender
 					break;
             
 				case Action.ActionType.ACTION_BACKGROUND_TOGGLE : 
+/*
 					//show livetv or video as background instead of the static GUI background
 					// toggle livetv/video in background on/pff
 					if (GUIGraphicsContext.ShowBackground)
@@ -1124,8 +1125,9 @@ public class MediaPortalApp : D3DApp, IRender
 									}
 									else
 									{
-										string channel=Recorder.GetTVChannelName(i);
-										Recorder.StartViewing(i,channel,true,true);
+										GUIMessage msgView = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL,(int)GUIWindow.Window.WINDOW_TV,0,0,0,0,null);
+										msgView.Label=Recorder.GetTVChannelName();
+										GUIWindowManager.SendMessage(msgView);
 										if (GUIGraphicsContext.Vmr9Active)
 										{
 											ok=true;
@@ -1133,7 +1135,8 @@ public class MediaPortalApp : D3DApp, IRender
 										}
 										else
 										{
-											Recorder.StartViewing(i,channel,false,false);
+											GUIMessage msgStopView = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING,(int)GUIWindow.Window.WINDOW_TV,0,0,0,0,null);
+											GUIWindowManager.SendMessage(msgStopView);
 										}
 									}
 								}
@@ -1159,11 +1162,12 @@ public class MediaPortalApp : D3DApp, IRender
 						{
 							if (Recorder.IsCardViewing(i) && !Recorder.IsCardRecording(i))
 							{
-								string channel=Recorder.GetTVChannelName(i);
-								Recorder.StartViewing(i,String.Empty,false,false);
+								GUIMessage msgView = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING,(int)GUIWindow.Window.WINDOW_TV,0,0,0,0,null);
+								msgView.Label=Recorder.GetTVChannelName(i);
+								GUIWindowManager.SendMessage(msgView);
 							}
 						}
-					}
+					}*/
 					return;
 
 				case Action.ActionType.ACTION_EXIT : 

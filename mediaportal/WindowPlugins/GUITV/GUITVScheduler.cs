@@ -557,7 +557,7 @@ namespace MediaPortal.GUI.TV
               dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));
               dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
-              Recorder.StopRecording(card);
+              Recorder.StopRecording();
             }
           }
           TVDatabase.RemoveRecording(rec);

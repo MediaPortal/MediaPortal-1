@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.TV
 				ShowControl( (int)Controls.CONTROL_PLAY_LOGO); 
 				ShowControl( (int)Controls.CONTROL_VIDEO_WINDOW);
 			}
-			else if (Recorder.IsRecording)
+			else if (Recorder.IsRecording())
 			{
 				ShowControl( (int)Controls.CONTROL_PLAYTIME);
 				ShowControl( (int)Controls.CONTROL_REC_LOGO); 
@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.TV
 
     void SetChannelLogo(string m_strChannel)
     {
-      if (!Recorder.IsRecording)
+      if (!Recorder.IsRecording())
       {
 				GUIPropertyManager.SetProperty("#thumb","blue_rectangle_video.png");
       }

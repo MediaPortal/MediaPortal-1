@@ -281,7 +281,7 @@ namespace MediaPortal.PowerScheduler
 						ResetShutdownTimer(m_iShutdownInterval);
 
 						// disable viewing and timeshifting when recording and at HOME
-						if (Recorder.IsRecording)
+						if (Recorder.IsAnyCardRecording())
 						{
 							Log.Write("PowerScheduler: Turn off timeshifting ");
 							Recorder.StopViewing();
@@ -633,7 +633,7 @@ namespace MediaPortal.PowerScheduler
 				return false;
 			}
 
-			if (Recorder.IsRecording)
+			if (Recorder.IsAnyCardRecording())
 			{
 				if (m_bFirstLogRec) 
 				{
