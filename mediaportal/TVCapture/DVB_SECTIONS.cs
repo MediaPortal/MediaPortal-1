@@ -1444,7 +1444,7 @@ namespace MediaPortal.TV.Recording
 		{
 			EIT_Program_Info eit=new EIT_Program_Info();
 			eit.eitList=new ArrayList();
-			GetStreamData(filter,18,tab,1,1);
+			GetStreamData(filter,18,tab,1,100);
 			foreach(byte[] arr in m_sectionsList)
 				decodeEITTable(arr,ref eit);
 
