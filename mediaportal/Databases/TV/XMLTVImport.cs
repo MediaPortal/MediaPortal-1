@@ -381,7 +381,7 @@ namespace MediaPortal.TV.Database
 								{
                   if (nodeEpisodeNum.Attributes.GetNamedItem("system").InnerText=="xmltv_ns")
                   {
-									strSerEpNum=nodeEpisodeNum.InnerText;
+									strSerEpNum=nodeEpisodeNum.InnerText.Replace(" ","");
 									int pos=0;
 									int Epos=0;
 									pos = strSerEpNum.IndexOf(".",pos);
