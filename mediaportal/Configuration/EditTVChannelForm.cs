@@ -475,6 +475,11 @@ namespace MediaPortal.Configuration
         channel.External = typeComboBox.Text.Equals("External");
         channel.ExternalTunerChannel = externalChannelTextBox.Text;
 
+        if(channel.External)
+        {
+          channel.Frequency = 0;
+        }
+
 				return channel;
 			}
 
@@ -507,6 +512,14 @@ namespace MediaPortal.Configuration
                 inputComboBox.Text = "Composite #2";
                 break;
             }
+          }
+
+          //
+          // Disable boxes for static channels
+          //
+          if(channel.Name.Equals("Composite #1") || channel.Name.Equals("Composite #2") || channel.Name.Equals("SVHS"))
+          {
+            okButton.Enabled = nameTextBox.Enabled = channelTextBox.Enabled = frequencyTextBox.Enabled = advancedButton.Enabled = false;
           }
         }
 			}
