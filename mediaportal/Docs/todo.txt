@@ -1,13 +1,17 @@
 Frodo's priority list:
-  1). fix    : any (new) bugs
-  2). new    : add MapSettings to my music 
-  3). new    : add filmstrip to my music artist,albums,genre,top100 views
-  4). enhance: IMDB info dialog : cache downloaded google-images
-  5). fix    : animations : fix bug with filmstrip 
-  6). new    : add wakeup from standbye / sleep mode to recorder
-  7). enhance: ken burns effect for my picture slideshow
-  8). new    : add support for DVB-T/S/C
-
+  -). fix    : any (new) bugs
+  -). enhance: ken burns effect for my picture slideshow
+  -). new    : add support for DVB-T/S/C
+  -). click on overlay preview to goto fullscreen
+  -). batch DX9 commands for more speed
+  -). find a clean way for multiple threads to access MP's core
+  -). Pressing play when fast FF/RW recordings/video should reset to 1x = normal play.
+  -). add support for wireless keyboards
+  -). show actual time in scheduled&recordings
+  
+MSN Messenger:
+    - add support for wireless keyboards
+      
 My Radio:
     - Timeshifting & recording
     - Use RDS signals in myRadio
@@ -27,22 +31,25 @@ My TV:
   
   TV OSD:
      - record this program now option
-     - Some sort of a TV OSD system. Most TV OSDs can be browsed with the standard 
-       keys (0-9, play, pause, etc. up, down, left, right, enter) and the four special color keys (red, green, yellow and blue)
      - show now & later in TV osd
      
   Recorded tv:
-     -
+     - put recordings in several subfolders
+     - show actual time
+	 - After viewing a recorded program, the program list sorting is reset. 
      
   TVGuide:
      - add to program favorites (will b highlighted next time)
      - different views like View by : movies, news, Whats playing now... 
      - show multiple red dots when recording series
      - Indicate that recording is already busy when user tries to record something while recording is already started
-
+	 - Notify ME
+	 - in EPG you could select a tv-show and with a popup search the EPG buffer for all tv-shows having the same name!
+	 
   Scheduled:
      - remove all schedules button
-  
+     - show actual time
+     
   Recorder:
     - A way to browse and resolve recording conflicts. 
     - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
@@ -50,11 +57,14 @@ My TV:
     - support for recording to mpeg with SW encoding cards
     - recoding recordings to divx, mpeg,... or .dvr-ms -> .mpeg
     - Let MP watch used diskspace, currently goes on till exeption occurs with full disk.
-
+    - 
+    
  TVSearch
     - Make IMDB search possible on a movie title
     - NOW button to get a list of all available programs currently on TV
-
+    - when searching, show more entries (now 4)
+    - when i want to record something on page 3 the coursor jumps back to the first site and the first entry
+    
  TVSetup
     - make it possible to map an input to multiple channels/inputs. This wil make it possible to use the guide to make a recording from an analog input.
     - Have a manual finetune 
@@ -74,9 +84,9 @@ My Music: (int_20h)
   - repeat none, once, always
   - cd ripper
   - show time played/current playtime
-
-My Video:
-  - auto-resume 
+  - delete songs
+  
+My Video: 
   - Make video streams possible (.asx)
   - Queue stacked files in Zoomplayer using command line like:
     zplayer.exe /Queue:movie-cd1.mpg /Queue:movie-cd2.mpg /F /PLAY /Q
@@ -85,7 +95,8 @@ My Video:
   - query info about actors from www.imdb.com
   - favorite system to add a movie, actor, to your favorites
   - add new window called favorites which shows you your favorites movie,actor or... and allows you to select & play one
-  
+  - delete movie
+    
 My Pictures:
   - Autohide info bar during zooming so it won't block the picture
   - make custom slideshows including background music
@@ -93,9 +104,11 @@ My Pictures:
     - all this can be saved and loaded ofcourse
   - custom text wich will be shown during slideshows. This can be saved in the database
   - exif/picture tag information (excentric is looking at this)
-  
+  - ken burns effect
+    
 Topbar:
   - auto hide
+  - add new 'back' button for touchscreen users
       
 Settings:
   - all :-)
@@ -115,10 +128,13 @@ new plugins:
 DVD player:
   - bookmarks
   - auto-resume 
+  - VMR9
 
+My Weather:
+  - add support for multiple images / city
+    
 Skin engine:
   - the possibility for the skinner to change the position of the album art
-  - add text of the 'next movie/song' to play
   - fade in for controls
   - transitions between windows
   - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
@@ -129,6 +145,9 @@ Skin engine:
   - if a list/thumbnailpanel/filmstrip has focus make it grow so it fits the screen and when its unfocused 
     shrink it again to its original size
   - 
+
+movieplayer:
+  - Audio switching support for Xvids / MKV / etc....
   
 setup:
   - custom zoommode, let people enter a zoom number (+ or -) and make this accessable using S
@@ -140,16 +159,15 @@ setup:
   - setup :Auto Tune needs some work
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv
-  - setup deinterlace method (vmr9)
   - Make it possible to use mixed antenna / cable tuning
+  - define your own freedb server
   
 my programs:
-  - application/program arguments  
+  - 
 
 General:
+  - autoplay for (s)vcd/cd
   - Make it possible to browse to an image control and selecting enter will show it large drawn over the GUI
-  - New view ala FilmStrip in explorer
-  - plugin structure for non-gui plugins
   - Support for right to left languages
   - Use Y to play a folder, this for video, music and pictures
   - keymap.xml : add support for support ctrl, shift , alt keys
@@ -183,6 +201,5 @@ General:
          queue movies, get/view imdb info, prev/next movie, pause, play, skip+/skip-,ff/rw
      - general:
        - general   : switch fullscreen<->windowed
-       - fullscreen: osd
        - mouse wheel for scrolling
        - autohide mouse cursor with no movement, auto show when mouse is moved
