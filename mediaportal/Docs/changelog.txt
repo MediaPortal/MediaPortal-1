@@ -7,7 +7,7 @@
 23-07-2004  gui         : fixed :  when only one page of info you can still go to pageviewbuttons but they won't get focus like in videoinfo or albuminfo 
 23-07-2004  my weather  : fixed : When you only have 1 city in my weather, you can lose the cursor when going 1 to the selectbutton 
 23-07-2004  my video    : fixed : video osd only shown once. show info (Y) then again Y to remove then Y again to show. Tags will be empty now. 
-23-07-2004  home	: fixed : Home screen didn't render correctly if no plugins were enabled, draining the cpu and causing MP to hang at startup.
+23-07-2004  home        : fixed : Home screen didn't render correctly if no plugins were enabled, draining the cpu and causing MP to hang at startup.
 
 22-07-2004  my tv       : fixed : when playing a recorded movie the video osd didnt show the movies properties like channel,description,title,...
 22-07-2004  my tv       : fixed : turn on/off timeshifting
@@ -19,7 +19,7 @@
 20-07-2004  my tv       : fixed : reset timeshift buffer after changing tv channels and recording
 
 19-07-2004  my music    : fixed : F3 artist info due to allmusic.com changed of layout.  
-								  Any info gathering from allmusic.com will take some time since the site is slow and information has to be gather from multiple http requests.
+                                  Any info gathering from allmusic.com will take some time since the site is slow and information has to be gather from multiple http requests.
 
 17-07-2004  my tv       : fixed : MCE cards with HW mpeg2 encoder didnt work
 17-07-2004  my videos   : fixed : Exception when playing DVD for a second time
@@ -57,7 +57,7 @@
 13-07-2004  home        : fixed : cannot access the top menu anymore with my remote control
 13-07-2004  general     : fixed : keyboard shortcut to enter the plugin setup form with ctrl+f2 doesn´t work in fullscreen 
 13-07-2004  home        : fixed : The list of "My" items is not "round". With only the default plugins loaded I get (while repeatedly pressing down): 
-	                               Radio->TV->Videos->Weather->Settings->Music->Pictures->Radio (again)->TV (again)->Music (again)->Pictures (again) 
+                                   Radio->TV->Videos->Weather->Settings->Music->Pictures->Radio (again)->TV (again)->Music (again)->Pictures (again) 
 12-07-2004  general     : fixed : alt+enter while something is playing is crashing
 12-07-2004  general     : fixed : multiple errors when starting MP and another version is already running
 12-07-2004  skinengine  : fixed : textboxscrollup didnt clip correctly in video OSD
