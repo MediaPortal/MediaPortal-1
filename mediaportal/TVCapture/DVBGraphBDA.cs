@@ -2426,11 +2426,11 @@ namespace MediaPortal.TV.Recording
 						props.SendPMTToFireDTV(pmt);
 					}//if (props.SupportsFireDTVProperties)
 				}//if (channelInfo.scrambled)
-				/*
+				
 				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 				if (mpeg2Demuxer!=null)
 				{
-					SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
+				//	SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
 					for (int pin=0; pin < 5; pin++)
 					{	
@@ -2443,7 +2443,7 @@ namespace MediaPortal.TV.Recording
 							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Pin:{0} is mapped to pid:{1}", (pin+1),pid);
 						}
 					}
-				}*/
+				}
 			}//if (pmt!=null && pmt.Length>0 && channelInfo!=null)
 			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() done");	
