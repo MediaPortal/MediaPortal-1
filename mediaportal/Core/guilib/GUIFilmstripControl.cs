@@ -183,6 +183,9 @@ namespace MediaPortal.GUI.Library
 		public override void ScaleToScreenResolution()
 		{
 			base.ScaleToScreenResolution ();
+			
+			m_dwSpinX+= GUIGraphicsContext.OverScanLeft;
+			m_dwSpinY+= GUIGraphicsContext.OverScanTop;
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwSpinX, ref m_dwSpinY , ref m_dwSpinWidth, ref m_dwSpinHeight);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextureWidth, ref m_iTextureHeight);
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_iThumbXPos, ref m_iThumbYPos, ref m_iThumbWidth, ref m_iThumbHeight);
@@ -191,6 +194,11 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iItemWidthBig, ref m_iItemHeightBig);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iItemWidth, ref m_iItemHeight);
 
+			m_iInfoImageX += GUIGraphicsContext.OverScanLeft;
+			m_iInfoImageY += GUIGraphicsContext.OverScanTop;
+			
+			m_iBackgroundX += GUIGraphicsContext.OverScanLeft;
+			m_iBackgroundY += GUIGraphicsContext.OverScanTop;
       GUIGraphicsContext.ScaleRectToScreenResolution(ref m_iInfoImageX, ref m_iInfoImageY, ref m_iInfoImageWidth, ref m_iInfoImageHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref m_iBackgroundX, ref m_iBackgroundY, ref m_iBackgroundWidth, ref m_iBackgroundHeight);
     }

@@ -108,6 +108,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void ScaleToScreenResolution()
 		{
+			m_dwPosX += GUIGraphicsContext.OverScanLeft;
+			m_dwPosY += GUIGraphicsContext.OverScanLeft;
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwPosX, ref m_dwPosY, ref m_dwWidth, ref m_dwHeight);
 		}
 

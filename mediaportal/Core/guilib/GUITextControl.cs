@@ -90,6 +90,9 @@ namespace MediaPortal.GUI.Library
 		public override void ScaleToScreenResolution()
 		{
 			base.ScaleToScreenResolution();
+			
+			m_dwSpinX+= GUIGraphicsContext.OverScanLeft;
+			m_dwSpinY+= GUIGraphicsContext.OverScanTop;
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwSpinX, ref m_dwSpinY,ref m_dwSpinWidth, ref m_dwSpinHeight);
 		}
 
