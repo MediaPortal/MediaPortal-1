@@ -425,6 +425,12 @@ namespace MediaPortal
               return false;
             }
             break;
+          case 0x5E://TV (Blue button)
+            if (header.hid.RawData3==0)
+            {
+              key = 's'; // switch zoom mode
+            }
+            break;
           case 0x4A://My Video
             GUIGraphicsContext.IsFullScreenVideo=false;
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_VIDEOS);
