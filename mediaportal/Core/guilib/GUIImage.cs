@@ -579,6 +579,32 @@ namespace MediaPortal.GUI.Library
         nh =(float)m_dwHeight;
       }
 
+      // check and compensate image
+      if (x < GUIGraphicsContext.OffsetX)
+      {
+        // calc percentage offset
+        iSourceX -= (int)( (float)m_iTextureWidth * (x/nw) );
+        iSourceWidth += (int)( (float)m_iTextureWidth * (x/nw) );
+
+        nw += x;
+        nw -= GUIGraphicsContext.OffsetX;
+        x = GUIGraphicsContext.OffsetX;
+      }
+      if (y < GUIGraphicsContext.OffsetY)
+      {
+        iSourceY -= (int)( (float)m_iTextureHeight * ((y-GUIGraphicsContext.OffsetY)/nh) );
+        iSourceHeight += (int)( (float)m_iTextureHeight * ((y-GUIGraphicsContext.OffsetY)/nh) );
+
+        nh += y;
+        nh -= GUIGraphicsContext.OffsetY;
+        y = GUIGraphicsContext.OffsetY;
+      }
+
+      if (x > GUIGraphicsContext.Width) x=GUIGraphicsContext.Width;      
+      if (y > GUIGraphicsContext.Height) y=GUIGraphicsContext.Height;
+
+
+
       // copy all coordinates to the vertex buffer
 			// x-offset in texture
       float uoffs = ((float)(m_iBitmap * m_dwWidth + iSourceX)) / ((float)m_iImageWidth);
@@ -601,10 +627,6 @@ namespace MediaPortal.GUI.Library
 				uoffs=0;
 				u=1;
 			}
-			if (x <0) x=0;
-			if (x > GUIGraphicsContext.Width) x=GUIGraphicsContext.Width;
-			if (y <0) y=0;
-			if (y > GUIGraphicsContext.Height) y=GUIGraphicsContext.Height;
 			if (nw <0) nw=0;
 			if (nh <0) nh=0;
 			if (x+nw >GUIGraphicsContext.Width) 

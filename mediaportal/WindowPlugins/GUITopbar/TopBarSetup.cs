@@ -12,6 +12,10 @@ namespace MediaPortal.Topbar
 		{
     }
     #region ISetupForm Members
+    public bool HasSetup()
+    {
+      return true;
+    }
 
     public bool CanEnable()
     {
@@ -53,12 +57,10 @@ namespace MediaPortal.Topbar
 
     public void ShowPlugin()
     {
+      System.Windows.Forms.Form setup = new TopBarSetupForm();
+      setup.ShowDialog();
     }
 
-    public bool HasSetup()
-    {
-      return false;
-    }
     #endregion
   }
 }

@@ -371,8 +371,6 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosY">The Y position.</param>
     public virtual void SetPosition(int dwPosX, int dwPosY)
     {
-      if (dwPosX < 0 ) dwPosX=0;
-      if (dwPosY < 0 ) dwPosY=0;
       if (m_dwPosX == dwPosX && m_dwPosY == dwPosY) return;
       m_dwPosX = dwPosX;
       m_dwPosY = dwPosY;

@@ -64,7 +64,9 @@ namespace MediaPortal.GUI.Library
     static bool                     m_bOverlay=true;							// boolean indicating if the overlay window is allowed to be shown
     static int                      m_iOffsetX=0;									// x offset of GUI calibration
     static int                      m_iOffsetY=0;									// y offset of GUI calibration
-    static int                      m_iSubtitles=550;							// Y position for subtitles
+    static bool                     m_bTopBarHidden=false; 				// Topbar hidden status for autohide
+    static DateTime                 m_dtTopBarTimeOut=DateTime.Now; // Topbar timeout timer
+    static int                      m_iSubtitles=550; 						// Y position for subtitles
     static bool                     m_bCalibrating=false;					// boolean indicating if we are in calibration mode or in normal mode
     static bool                     m_bPlaying;										// boolean indicating if we are playing any media or not
     static public Graphics          graphics=null;							// GDI+ Graphics object
@@ -487,6 +489,24 @@ namespace MediaPortal.GUI.Library
       get { return m_iOffsetY;}
       set { m_iOffsetY=value;}
     }
+
+    /// <summary>
+    /// Get/Set topbar hidden status
+    /// </summary>
+    static public bool TopBarHidden
+    {
+      get { return m_bTopBarHidden;}
+      set { m_bTopBarHidden=value;}
+    }
+
+    /// <summary>
+    /// Get/Set topbar timeout
+    /// </summary>
+    static public DateTime TopBarTimeOut
+    {
+      get { return m_dtTopBarTimeOut;}
+      set { m_dtTopBarTimeOut=value;}
+    }
     
     /// <summary>
     /// Get/Set Y-position for subtitles
@@ -641,7 +661,7 @@ namespace MediaPortal.GUI.Library
       get { return m_bMouseSupport;}
       set { m_bMouseSupport=value;}
     }
-		
+
 		/// <summary>
 		/// Get/Set  if we want to use double click to be used as right click
 		/// </summary>

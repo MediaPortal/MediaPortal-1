@@ -258,7 +258,6 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwPosY">The Y position.</param>		
 		public override void SetPosition(int dwPosX, int dwPosY)
 		{
-      if (dwPosX<0 || dwPosY<0) return;
 			base.SetPosition(dwPosX, dwPosY);
 			m_imgFocus.SetPosition(dwPosX, dwPosY);
 			m_imgNoFocus.SetPosition(dwPosX, dwPosY);
