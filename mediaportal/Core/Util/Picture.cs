@@ -347,7 +347,7 @@ namespace MediaPortal.Util
       m_vbBuffer.Unlock();
 
       GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
-      /*
+      
       GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
       GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
       GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
@@ -358,7 +358,7 @@ namespace MediaPortal.Util
       GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
       GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
       GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
-			*/
+			
       int g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
       float g_fMipMapLodBias=0.0f;
       GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Linear;

@@ -317,9 +317,9 @@ namespace MediaPortal.GUI.Pictures
       int x,y,width,height;
 
       // x-fade
+      GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
       if (m_iTransistionMethod!=9 || m_pTextureCurrent==null)
       {
-        GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
         GetOutputRect(m_dwWidthBackGround, m_dwHeightBackGround, out x, out y, out width, out height);
         MediaPortal.Util.Picture.RenderImage(ref m_pTextureBackGround, x, y, width, height, m_iZoomWidth, m_iZoomHeight, m_iZoomLeft, m_iZoomTop,true);
       }
@@ -939,7 +939,7 @@ namespace MediaPortal.GUI.Pictures
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         m_iSpeed=xmlreader.GetValueAsInt("pictures","speed",3);
-        m_iSlideShowTransistionFrames=xmlreader.GetValueAsInt("pictures","transisition",20);
+        m_iSlideShowTransistionFrames=xmlreader.GetValueAsInt("pictures","transition",20);
         m_bUseRandomTransistions=xmlreader.GetValueAsBool("pictures","random",true);
       }
     }
