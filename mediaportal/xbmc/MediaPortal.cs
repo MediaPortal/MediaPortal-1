@@ -660,7 +660,7 @@ public class MediaPortalApp : D3DApp, IRender
 
      
       // clear the surface
-      if (prevwindow!=GUIWindowManager.ActiveWindow)
+      //if (prevwindow!=GUIWindowManager.ActiveWindow)
       {
         GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
         prevwindow=GUIWindowManager.ActiveWindow;
