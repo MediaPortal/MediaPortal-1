@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  01-06-2004  general     : added : action 100 = eject cd
+  01-06-2004  my music    : fixed : pause/stop etc where not working if visz. was fullscreen
   01-06-2004  my music    : fixed : action 79 in keymap does not work 
   01-06-2004  my pictures : added : delete picture
   01-06-2004  my pictures : added : next/prev picture in slideshow mode

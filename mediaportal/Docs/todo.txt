@@ -52,6 +52,7 @@ Settings:
   - all :-)
 
 General:
+  - change sort by button into same button as view by
   - Option to auto switch between list and thumb based on availability of thumbs
   - disable screensaver during playback of movie/tv
   - setup:Auto Tune needs some work

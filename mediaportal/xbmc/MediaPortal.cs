@@ -405,6 +405,10 @@ public class MediaPortalApp : D3DApp
         }
           break;
 
+        case Action.ActionType.ACTION_EJECTCD:
+          Utils.EjectCDROM();
+        break;
+
         case Action.ActionType.ACTION_SHUTDOWN:
         {
           GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
@@ -435,7 +439,10 @@ public class MediaPortalApp : D3DApp
               GUIWindow win= GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
               if (win.FullScreenVideoAllowed)
               {
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                if (g_Player.IsTV)
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                else
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
                 GUIGraphicsContext.IsFullScreenVideo=true;
               }
               return;
@@ -446,6 +453,7 @@ public class MediaPortalApp : D3DApp
             if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               PlayListPlayer.PlayPrevious();
+              return;
             }
             break;
 
@@ -453,6 +461,7 @@ public class MediaPortalApp : D3DApp
             if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               PlayListPlayer.PlayNext(true);
+              return;
             }
           break;
 
@@ -460,6 +469,7 @@ public class MediaPortalApp : D3DApp
             if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Stop();
+              return;
             }
             break;
 
@@ -467,6 +477,7 @@ public class MediaPortalApp : D3DApp
 						if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
 						{
 							if (g_Player.Paused) g_Player.Pause();
+              return;
 						}
 					break;
           
@@ -474,6 +485,7 @@ public class MediaPortalApp : D3DApp
             if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Pause();
+              return;
             }
           break;
 
@@ -485,6 +497,7 @@ public class MediaPortalApp : D3DApp
                 g_Player.Speed=1;
               }
 							if (g_Player.Paused) g_Player.Pause();
+              return;
             }
           break;
 
@@ -493,12 +506,14 @@ public class MediaPortalApp : D3DApp
             if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Speed++;
+              return;
             }
             break;
           case Action.ActionType.ACTION_MUSIC_REWIND:
             if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
             {
               g_Player.Speed--;
+              return;
             }
             break;
         }

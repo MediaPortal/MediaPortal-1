@@ -294,6 +294,12 @@ namespace MediaPortal.TV.Recording
         {
         }
         capture=null;
+
+        // stop tv preview....
+        if (g_Player.Playing && g_Player.IsTV)
+        {
+          g_Player.Stop();
+        }
       }
     }
 
@@ -517,6 +523,10 @@ namespace MediaPortal.TV.Recording
               try
               {
                 SelectChannel(iChannel,true);
+                if (g_Player.IsTV && g_Player.Playing && capture.IsTimeShifting)
+                {
+                  g_Player.SeekAsolutePercentage(99);
+                }
               }
               catch(Exception ex)
               {
@@ -580,7 +590,7 @@ namespace MediaPortal.TV.Recording
                 {
                   strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
                 }
-                string strFileName=String.Format(@"{0}\record{1}.dvr-ms",strRecPath, ID);
+                string strFileName=String.Format(@"{0}\record{1}.tv",strRecPath, ID);
                 Utils.FileDelete(strFileName);
                 if (StartCapture(strFileName,m_iPreviewChannel))
                 {
