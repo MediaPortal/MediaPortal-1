@@ -1269,15 +1269,10 @@ namespace MediaPortal
         m_iSleepingTime=30;
 				return 100;
 			}
-			//if we're playing a movie (fullscreen)
-			if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.HasVideo)
+			//if we're playing a movie or watching tv (fullscreen)
+			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
-				// We're playing a movie fullscreen , so we dont need 2 draw the gui. so sleep 25 msec
-				if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
-				{
-          m_iSleepingTime=30;
 					return 100 ;
-				}
 			}
 			return m_iSleepingTime;
 		}
@@ -1301,6 +1296,7 @@ namespace MediaPortal
         frames  = 0;
         if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
         if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
+				if (m_iSleepingTime<0) m_iSleepingTime=0;
 
         string strFmt;
         Format fmtAdapter = graphicsSettings.DisplayMode.Format;

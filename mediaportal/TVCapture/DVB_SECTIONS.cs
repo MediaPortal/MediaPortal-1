@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Collections;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
@@ -233,8 +234,10 @@ namespace MediaPortal.TV.Recording
 			Transponder transponder = new Transponder();
 			transponder.channels = new ArrayList();
 			transponder.PMTTable = new ArrayList();
+			Debug.WriteLine("GetRAWPMT");
 			GetStreamData(filter,0, 0,0,5000);
-			
+		
+			Debug.WriteLine("Decode PAT");
 			// jump to parser
 			foreach(byte[] arr in m_sectionsList)
 				decodePATTable(arr, transp[0], ref transponder);
@@ -255,11 +258,17 @@ namespace MediaPortal.TV.Recording
 			// check tables
 			//AddTSPid(17);
 			//
+			
+			Debug.WriteLine("GET tab42");
 			GetStreamData(filter,17, 0x42,0,5000);
 			tab42=(ArrayList)m_sectionsList.Clone();
+			
+			Debug.WriteLine("GET tab46");
 			GetStreamData(filter,17, 0x46,0,5000);
 			tab46=(ArrayList)m_sectionsList.Clone();
 
+			
+			Debug.WriteLine("find PMT");
 			//bool flag=false;
 			ChannelInfo pat;
 			ArrayList pmtList = transponder.PMTTable;
@@ -277,6 +286,7 @@ namespace MediaPortal.TV.Recording
 					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
 					
 					// parse pmt
+					Debug.WriteLine("Get PMT:"+n.ToString());
 					int res=0;
 					GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
 					foreach(byte[] wdata in m_sectionsList)
@@ -285,15 +295,18 @@ namespace MediaPortal.TV.Recording
 						{
 							byData=(byte[])wdata.Clone();
 						}
+						Debug.WriteLine("decode PMT:"+n.ToString());
 						res=decodePMTTable(wdata, transp[0], transponder,ref pat);
 					}
 
 					if(res>0)
 					{
 
+						Debug.WriteLine("decode SDT table42");
 						foreach(byte[] wdata in tab42)
 							decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
 
+						Debug.WriteLine("decode SDT table46");
 						foreach(byte[] wdata in tab46)
 							decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
 					}
@@ -305,10 +318,12 @@ namespace MediaPortal.TV.Recording
 			{
 				if (chanInfo.serviceID==serviceId)
 				{
+					Debug.WriteLine("  got channelinfo");
 					info=chanInfo;
 					break;
 				}
 			}
+			Debug.WriteLine("GetRAWPMT done");
 
 			return byData;
 		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
