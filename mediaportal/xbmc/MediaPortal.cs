@@ -1162,6 +1162,36 @@ public class MediaPortalApp : D3DApp, IRender
         }
         catch(Exception){}
       break;
+
+      case GUIMessage.MessageType.GUI_MSG_GET_STRING : 
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (null == keyboard) return;
+        keyboard.Reset();
+        keyboard.Text = message.Label;
+        keyboard.DoModal(GUIWindowManager.ActiveWindow);
+        if (keyboard.IsConfirmed)
+        {
+          message.Label = keyboard.Text;
+        }
+        else message.Label = "";
+      break;
+
+      case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
+        if (isMaximized==false) return;
+
+        if (message.Param1!=0)
+        {
+          //switch to fullscreen mode
+          if (isMaximized) return;
+          SwitchFullScreenOrWindowed(true);
+        }
+        else
+        {
+          //switch to windowed mode
+          if (!isMaximized) return;
+          SwitchFullScreenOrWindowed(false);
+        }
+      break;
     }
   }
 }

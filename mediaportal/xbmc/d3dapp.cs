@@ -41,7 +41,7 @@ namespace MediaPortal
     // We need to keep track of our enumeration settings
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
     protected D3DSettings graphicsSettings = new D3DSettings();
-    private bool isMaximized = false; // Are we maximized?
+    protected bool isMaximized = false; // Are we maximized?
     private bool isHandlingSizeChanges = true; // Are we handling size changes?
     private bool isClosing = false; // Are we closing?
     private bool isChangingFormStyle = false; // Are we changing the forms style?
@@ -483,6 +483,7 @@ namespace MediaPortal
             presentParams.SwapEffect=Direct3D.SwapEffect.Copy;
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = ourRenderTarget;
+            presentParams.Windowed=true;
         }
         else
         {
@@ -494,9 +495,27 @@ namespace MediaPortal
             presentParams.SwapEffect=Direct3D.SwapEffect.Flip;
             presentParams.PresentFlag = PresentFlag.None;
             presentParams.DeviceWindow = this;
+            presentParams.Windowed=false;
       }
     }
 
+    public bool SwitchFullScreenOrWindowed(bool bWindowed)
+    {
+      windowed=bWindowed;
+      BuildPresentParamsFromSettings();
+      try
+      {
+        GUIGraphicsContext.DX9Device.Reset(presentParams);
+        return true;
+      }
+      catch(Exception ex)
+      {
+        windowed=!bWindowed;
+        BuildPresentParamsFromSettings();
+        GUIGraphicsContext.DX9Device.Reset(presentParams);
+        return false;
+      }
+    }
 
 
 
