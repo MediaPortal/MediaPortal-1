@@ -354,12 +354,14 @@ namespace MediaPortal.GUI.Video
         GUIControl.ShowControl(GetID,(int)Controls.CONTROL_SPIN);
         GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_TRACKS, GUILocalizeStrings.Get(207));
       }
+			m_movie.SetProperties();
 			GUIImage img= GetControl( (int)Controls.CONTROL_IMAGE) as GUIImage;
 			if (img!=null)
 			{
 				img.FreeResources();
 				img.AllocResources();
 			}
+			
     }
 
     
@@ -408,7 +410,6 @@ namespace MediaPortal.GUI.Video
         }
         
        
-        Update();
       }
       catch (Exception)
       {
