@@ -228,7 +228,7 @@ namespace MediaPortal.GUI.TV
             }
             else
             {
-              ShowContextMenu();
+              OnRecord();
             }
           }
 					break;
