@@ -2899,7 +2899,7 @@
 	</string>
 	<string>
 		<id>2111</id>
-		<value>Fertig !</value>
+		<value>Fertig!</value>
 	</string>
 	<string>
 		<id>2112</id>
@@ -3039,6 +3039,7 @@
 		<id>2225</id>
 		<value>Verzeichnis wurde angelegt</value>
 	</string>
+	<string>
 		<id>8000</id>
 		<value>E-Mail</value>
 	</string>
