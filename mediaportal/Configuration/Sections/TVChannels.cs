@@ -52,6 +52,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader9;
 		private System.Windows.Forms.Button btnUnmap;
 		private System.Windows.Forms.Button buttonMap;
+		private System.Windows.Forms.Button buttonCVS;
 
 		//
 		// Private members
@@ -95,6 +96,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.buttonCVS = new System.Windows.Forms.Button();
 			this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
@@ -170,6 +172,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.buttonCVS);
 			this.tabPage1.Controls.Add(this.channelsListView);
 			this.tabPage1.Controls.Add(this.btnImport);
 			this.tabPage1.Controls.Add(this.btnClear);
@@ -183,6 +186,15 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.Size = new System.Drawing.Size(432, 390);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "TV Channels";
+			// 
+			// buttonCVS
+			// 
+			this.buttonCVS.Location = new System.Drawing.Point(16, 344);
+			this.buttonCVS.Name = "buttonCVS";
+			this.buttonCVS.Size = new System.Drawing.Size(160, 23);
+			this.buttonCVS.TabIndex = 8;
+			this.buttonCVS.Text = "Add CVBS/SVHS channels";
+			this.buttonCVS.Click += new System.EventHandler(this.buttonCVS_Click);
 			// 
 			// channelsListView
 			// 
@@ -200,7 +212,7 @@ namespace MediaPortal.Configuration.Sections
 			this.channelsListView.HideSelection = false;
 			this.channelsListView.Location = new System.Drawing.Point(8, 8);
 			this.channelsListView.Name = "channelsListView";
-			this.channelsListView.Size = new System.Drawing.Size(416, 320);
+			this.channelsListView.Size = new System.Drawing.Size(416, 304);
 			this.channelsListView.TabIndex = 0;
 			this.channelsListView.View = System.Windows.Forms.View.Details;
 			this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
@@ -227,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.btnImport.Location = new System.Drawing.Point(184, 344);
+			this.btnImport.Location = new System.Drawing.Point(232, 328);
 			this.btnImport.Name = "btnImport";
 			this.btnImport.Size = new System.Drawing.Size(112, 23);
 			this.btnImport.TabIndex = 6;
@@ -238,7 +250,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.btnClear.Location = new System.Drawing.Point(144, 344);
+			this.btnClear.Location = new System.Drawing.Point(144, 320);
 			this.btnClear.Name = "btnClear";
 			this.btnClear.Size = new System.Drawing.Size(32, 23);
 			this.btnClear.TabIndex = 7;
@@ -249,7 +261,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.addButton.Location = new System.Drawing.Point(16, 344);
+			this.addButton.Location = new System.Drawing.Point(16, 320);
 			this.addButton.Name = "addButton";
 			this.addButton.Size = new System.Drawing.Size(32, 23);
 			this.addButton.TabIndex = 1;
@@ -261,7 +273,7 @@ namespace MediaPortal.Configuration.Sections
 			this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.deleteButton.Enabled = false;
 			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.deleteButton.Location = new System.Drawing.Point(96, 344);
+			this.deleteButton.Location = new System.Drawing.Point(96, 320);
 			this.deleteButton.Name = "deleteButton";
 			this.deleteButton.Size = new System.Drawing.Size(40, 23);
 			this.deleteButton.TabIndex = 3;
@@ -273,7 +285,7 @@ namespace MediaPortal.Configuration.Sections
 			this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.editButton.Enabled = false;
 			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.editButton.Location = new System.Drawing.Point(56, 344);
+			this.editButton.Location = new System.Drawing.Point(56, 320);
 			this.editButton.Name = "editButton";
 			this.editButton.Size = new System.Drawing.Size(32, 23);
 			this.editButton.TabIndex = 2;
@@ -285,7 +297,7 @@ namespace MediaPortal.Configuration.Sections
 			this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.upButton.Enabled = false;
 			this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.upButton.Location = new System.Drawing.Point(344, 344);
+			this.upButton.Location = new System.Drawing.Point(344, 328);
 			this.upButton.Name = "upButton";
 			this.upButton.Size = new System.Drawing.Size(32, 23);
 			this.upButton.TabIndex = 5;
@@ -297,7 +309,7 @@ namespace MediaPortal.Configuration.Sections
 			this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.downButton.Enabled = false;
 			this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.downButton.Location = new System.Drawing.Point(376, 344);
+			this.downButton.Location = new System.Drawing.Point(376, 328);
 			this.downButton.Name = "downButton";
 			this.downButton.Size = new System.Drawing.Size(40, 23);
 			this.downButton.TabIndex = 4;
@@ -1298,6 +1310,17 @@ namespace MediaPortal.Configuration.Sections
 			}	
 			channelsListView.Sort();
 			channelsListView.Update();
+		}
+
+		private void buttonCVS_Click(object sender, System.EventArgs e)
+		{
+			SaveSettings();
+			UpdateGroupChannels(null,true);
+			TVChannel chan = new TVChannel();
+			chan.Name="CVBS#1"; chan.Number=(int)ExternalInputs.cvbs1; TVDatabase.AddChannel(chan);
+			chan.Name="CVBS#2"; chan.Number=(int)ExternalInputs.cvbs2; TVDatabase.AddChannel(chan);
+			chan.Name="SVHS";   chan.Number=(int)ExternalInputs.svhs; TVDatabase.AddChannel(chan);
+			LoadSettings();
 		}
 	}
 }
