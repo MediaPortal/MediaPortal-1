@@ -27,6 +27,7 @@
 <!--    AVerTV DVB-T 771                      -->
 <!--    AverMedia 1500MCE                     -->
 <!--    Conexant DVB-T                        -->
+<!--    DNTV Live DVB-T                       -->
 <!--    Dvico Fusion HDTV                     -->
 <!--    Dvico Fusion HDTV WDM                 -->
 <!--    Dvico Fusion HDTV Lite                -->
@@ -65,8 +66,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.25                                                               -->
-<!-- changed : 9-feb-2005 by Frodo                                                   -->
+<!-- version : 1.0.0.26                                                               -->
+<!-- changed : 10-feb-2005 by Frodo                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -1071,4 +1072,20 @@
     </radio>
   </capturecard>
    
+  
+  <capturecard commercialname="DNTV Live DVB-T" capturename="DNTV Live! Transport Stream Capture Tuner 1" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner 1"		checkdevice="false"></filter>
+        <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner 1"	checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>  
 </capturecards>
