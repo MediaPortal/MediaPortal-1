@@ -32,7 +32,6 @@ namespace WindowPlugins.GUIPrograms
 		private AppSettingsRoot sectionRoot = new AppSettingsRoot();
 		private AppFilesView filesView = new AppFilesView();
 		private AppFilesImportProgress filesProgress = new AppFilesImportProgress();
-		private bool m_ImportRunning = false;
 		private System.Windows.Forms.ToolBar toolBarMenu;
 		private System.Windows.Forms.ToolBarButton buttonAddChild;
 		private System.Windows.Forms.ToolBarButton buttonDelete;
@@ -72,6 +71,7 @@ namespace WindowPlugins.GUIPrograms
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
+			filesView.OnRefreshClick += new System.EventHandler(this.RefreshClick);
 
 		}
 
@@ -672,7 +672,6 @@ namespace WindowPlugins.GUIPrograms
 			filesView.SetBounds(0, 0, holderPanelFiles.Width, holderPanelFiles.Height);
 			filesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left)));
-			filesView.OnRefreshClick += new System.EventHandler(this.RefreshClick);
 		}
 
 		private void AttachImportRunningView()
@@ -754,7 +753,6 @@ namespace WindowPlugins.GUIPrograms
 
 		private void BlockControls()
 		{
-			m_ImportRunning = true;
 			appTree.Enabled = false;
 			toolBarMenu.Enabled = false;
 		}
@@ -764,7 +762,6 @@ namespace WindowPlugins.GUIPrograms
 		{
 			appTree.Enabled = true;
 			toolBarMenu.Enabled = true;
-			m_ImportRunning = false;
 		}
 
 		private void DoRefresh()
