@@ -37,9 +37,6 @@ namespace GUIPrograms
 			//
 			InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
 		}
 
 		/// <summary>
@@ -98,7 +95,7 @@ namespace GUIPrograms
 		}
 		public bool DefaultEnabled()
 		{
-			return true;
+			return false;
 		}
 
 		#region Windows Form Designer generated code

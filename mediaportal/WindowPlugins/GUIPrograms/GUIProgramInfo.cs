@@ -30,6 +30,8 @@ namespace GUIPrograms
 	  , CONTROL_BTN_PREV = 7
 	  , CONTROL_BTN_NEXT = 9
 	  , CONTROL_BTN_LAUNCH = 8
+	  , CONTROL_IMAGE_BIG = 10
+	  , CONTROL_OVERVIEW_TOGGLE = 11
     }
 
     #region Base Dialog Variables
@@ -45,6 +47,7 @@ namespace GUIPrograms
 	int m_iTextureWidth=0;
 	int m_iTextureHeight=0;
 	bool m_bOverlay=false;
+	bool m_bOverviewVisible=true;
 	int m_iThumbIndex = 0;
 	int m_iThumbFolderIndex = -1;
 	int m_iSpeed=3;
@@ -180,6 +183,14 @@ namespace GUIPrograms
 						}
 						return true;
 					}
+					else if (iControl==(int)Controls.CONTROL_OVERVIEW_TOGGLE)
+					{
+						this.m_bOverviewVisible = !m_bOverviewVisible;
+						Refresh();
+						return true;
+					}
+
+					
 
 				}
 					break;
@@ -276,7 +287,7 @@ namespace GUIPrograms
 				// load the found thumbnail picture
 				if (System.IO.File.Exists(strThumb) )
 				{
-					m_pTexture=Picture.Load(strThumb,0,128,128,true,false,out m_iTextureWidth,out m_iTextureHeight);
+					m_pTexture=Picture.Load(strThumb,0,512,512,true,false,out m_iTextureWidth,out m_iTextureHeight);
 				}
 				m_iThumbIndex++; // next refresh call will try to get the next thumb
 			}
@@ -293,7 +304,26 @@ namespace GUIPrograms
 		void Update()
 	    {
 			if (null==m_pFile) return;
-	
+
+			if (m_bOverviewVisible)
+			{
+				GUIControl.HideControl(GetID,(int)Controls.CONTROL_IMAGE_BIG);
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_TEXTAREA);
+				// do not remove the ""-setting line!
+				//force a change otherwise subsequent calls of the same fileitem won't display the overview text!
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,""); 
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,m_pFile.Overview);
+				SetLabel((int)Controls.CONTROL_OVERVIEW_TOGGLE, GUILocalizeStrings.Get(13006));
+			}
+			else 
+			{
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_IMAGE_BIG);
+				GUIControl.HideControl(GetID,(int)Controls.CONTROL_TEXTAREA);
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,""); 
+				SetLabel((int)Controls.CONTROL_OVERVIEW_TOGGLE, GUILocalizeStrings.Get(13007));
+			}
+
+
 			SetLabel((int)Controls.CONTROL_TITLE, m_pFile.Title);
 			SetLabel((int)Controls.CONTROL_SYSTEM, m_pFile.System);
 			SetLabel((int)Controls.CONTROL_YEARMANU, m_pFile.YearManu);
@@ -302,10 +332,9 @@ namespace GUIPrograms
 			    strRating=String.Format("{0}/10", m_pFile.Rating);
 			SetLabel((int)Controls.CONTROL_RATING, strRating );
 			SetLabel((int)Controls.CONTROL_GENRE, m_pFile.Genre);
-			// do not remove the ""-setting line!
-			//force a change otherwise subsequent calls of the same fileitem won't display the overview text!
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,""); 
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,m_pFile.Overview);
+
+			
+
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_BACK,GUILocalizeStrings.Get(8008));
 
 			if (m_pFile.LaunchCount > 0)
@@ -334,7 +363,15 @@ namespace GUIPrograms
 			}
 
 
-			GUIControl pControl=(GUIControl)GetControl((int)Controls.CONTROL_IMAGE);
+			GUIControl pControl = null;
+			if (this.m_bOverviewVisible)
+			{
+				pControl=(GUIControl)GetControl((int)Controls.CONTROL_IMAGE);
+			}
+			else
+			{
+				pControl=(GUIControl)GetControl((int)Controls.CONTROL_IMAGE_BIG);
+			}
 			if (null!=pControl)
 			{
 				float x=(float)pControl.XPosition;

@@ -44,10 +44,6 @@ namespace GUIPrograms
 			//
 			InitializeComponent();
 			m_Checker = new ProgramConditionChecker();
-
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
 		}
 
 		/// <summary>

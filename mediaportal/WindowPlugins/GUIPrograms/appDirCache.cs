@@ -22,28 +22,15 @@ namespace ProgramsDatabase
 		
 		public appItemDirCache(SQLiteClient paramDB): base(paramDB)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
-
-		// todo: override the relevant APPITEM classes
-
-		// refresh: scan directories, find matching files, fill a FileItem
-		//          and write it into db
-		//          for SUBDIRECTORIES, write a fileitem with ISFOLDER = 'T'
-		//          and do a recursive(?) sub-scan
-
-		// displaylist: parameter is always a DIRECTORY
-
-		// other stuff like launching, proginfo etc. should work without overriding
 
 		private void ShowProgressDialog()
 		{
 			pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			pDlgProgress.SetHeading("scanning directory");
+			pDlgProgress.SetLine(0, "scanning directory");		//todo: localize! 13004...
+			pDlgProgress.SetLine(1, "");
 			pDlgProgress.SetLine(2, "");
-			pDlgProgress.SetLine(3, "");
 			pDlgProgress.StartModal(GetID);
 			pDlgProgress.Progress();
 		}

@@ -65,82 +65,93 @@ namespace ProgramsDatabase
 		private void ReadNewEntry(string strLine)
 		{
 			strLine = strLine.Trim();
+			string strLowerLine = strLine.ToLower();
 			// some stupid check by check code....
-			//string [] strSplit;
 			string strTemp = "";
-			const string cTITLE = "title=";
-			const string cSYSTEM = "Category=\"System\"";
-			const string cGENRE = "Category=\"Genre\"";
-			const string cCOUNTRY = "Category=\"Country\"";
-			const string cMANUFACTURER = "Category=\"Company\"";
-			const string cYEAR = "Category=\"Year\"";
 
-			const string cRATING = "Review=";
-			const string cOVERVIEW = "Overview=";
-			const string cFILENAME = "chain=\"Game\"";
+			// constants: important: ONLY USE LOWERCASE CHARS!
+			const string cTITLE = "title=";
+			const string cSYSTEM = "category=\"system\"";
+			const string cGENRE = "category=\"genre\"";
+			const string cCOUNTRY = "category=\"country\"";
+			const string cMANUFACTURER = "category=\"company\"";
+			const string cYEAR = "category=\"year\"";
+
+			const string cRATING = "review=";
+			const string cOVERVIEW = "overview=";
+			//const string cFILENAME = "chain=\"game\"";
+			const string cFILENAME = "chain=";
 			const string cIMAGEFILE = "images=";
-			if (strLine.StartsWith(cTITLE))
+			if (strLowerLine.StartsWith(cTITLE))
 			{
 				curFile.Title = strLine.Remove(0, cTITLE.Length);
 			}
-			else if (strLine.StartsWith(cSYSTEM))
+			else if (strLowerLine.StartsWith(cSYSTEM))
 			{
 				strTemp = strLine.Remove(0, cSYSTEM.Length+1);
 				strTemp = strTemp.TrimStart('"');
 				strTemp = strTemp.TrimEnd('"');
 				curFile.System = strTemp;
 			}
-			else if (strLine.StartsWith(cGENRE))
+			else if (strLowerLine.StartsWith(cGENRE))
 			{
 				strTemp = strLine.Remove(0, cGENRE.Length+1);
 				curFile.Genre = strTemp;
 			}
-			else if (strLine.StartsWith(cCOUNTRY))
+			else if (strLowerLine.StartsWith(cCOUNTRY))
 			{
 				strTemp = strLine.Remove(0, cCOUNTRY.Length+1);
 				strTemp = strTemp.TrimStart('"');
 				strTemp = strTemp.TrimEnd('"');
 				curFile.Country = strTemp;
 			}
-			else if (strLine.StartsWith(cMANUFACTURER))
+			else if (strLowerLine.StartsWith(cMANUFACTURER))
 			{
 				strTemp = strLine.Remove(0, cMANUFACTURER.Length+1);
 				strTemp = strTemp.TrimStart('"');
 				strTemp = strTemp.TrimEnd('"');
 				curFile.Manufacturer = strTemp;
 			}
-			else if (strLine.StartsWith(cYEAR))
+			else if (strLowerLine.StartsWith(cYEAR))
 			{
 				strTemp = strLine.Remove(0, cYEAR.Length+1);
 				strTemp = strTemp.TrimStart('"');
 				strTemp = strTemp.TrimEnd('"');
 				curFile.Year = ProgramUtils.StrToIntDef(strTemp, -1);
 			}
-			else if (strLine.StartsWith(cRATING))
+			else if (strLowerLine.StartsWith(cRATING))
 			{
 				strTemp = strLine.Remove(0, cRATING.Length);
 				curFile.Rating = ProgramUtils.StrToIntDef(strTemp, 5);
 			}
-			else if (strLine.StartsWith(cOVERVIEW))
+			else if (strLowerLine.StartsWith(cOVERVIEW))
 			{
 				strTemp = strLine.Remove(0, cOVERVIEW.Length);
 				curFile.Overview = strTemp;
 				m_bOverviewReading = true;
 			}
-			else if (strLine.StartsWith(cFILENAME))
+			else if (strLowerLine.StartsWith(cFILENAME))
 			{
 				m_bOverviewReading = false;
-				strTemp = strLine.Remove(0, cFILENAME.Length+1);
-				if (strTemp.Length >= 2)
+				string[] strParts = strLine.Split( ',' );
+				if ((strParts.Length >= 2) && (curFile.Filename == ""))
 				{
-					// remove enclosing quotes: 
-					// don't use TRIMSTART/TRIMEND because the filename itself can be enclosed by quotes!
-					strTemp = strTemp.Remove(0, 1); 
-					strTemp = strTemp.Remove(strTemp.Length-1, 1);
+					// try to extract filename
+					strTemp = strParts[1].Trim();
+					if (strTemp.StartsWith("\"") && strTemp.EndsWith("\"") && (strTemp.Length >= 2))
+					{
+						// remove enclosing quotes, but only ONE char!
+						strTemp = strTemp.Remove(0, 1); 
+						strTemp = strTemp.Remove(strTemp.Length-1, 1);
+					}
+					if (strTemp != "")
+					{
+						curFile.Filename = strTemp;
+					}
+
 				}
-				curFile.Filename = strTemp;
 			}
-			else if (strLine.StartsWith(cIMAGEFILE))
+			else if (strLowerLine.StartsWith(cIMAGEFILE))
 			{
 				strTemp = strLine.Remove(0, cIMAGEFILE.Length);
 				strTemp = strTemp.TrimStart('"');
@@ -161,7 +172,11 @@ namespace ProgramsDatabase
 		private void ReadEndOfSection(string strDummy)
 		{
 			// check if item is complete for importing
-			bool bOk = (curFile.Title != ""); // 1) filename must not be empty
+			bool bOk = (curFile.Title != ""); // 1) title must not be empty
+			if (bOk)
+			{
+				bOk = (curFile.Filename != ""); // 2) Filename must not be empty
+			}
 			if (bOk && m_App.ImportValidImagesOnly)
 			{
 				// if "only import valid images" is activated, do some more checks

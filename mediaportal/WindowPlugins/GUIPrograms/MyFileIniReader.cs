@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 
 using MediaPortal.GUI.Library;		
 
@@ -58,7 +59,7 @@ namespace ProgramsDatabase
 				Log.Write("MyFileIniReader: INI-File not found ({0})", m_FileName);
 				return;
 			} 
-			StreamReader reader = new StreamReader(m_FileName);
+			StreamReader reader = new StreamReader(m_FileName, Encoding.GetEncoding(1252));
 			try
 			{
 				do

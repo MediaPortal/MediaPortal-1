@@ -51,9 +51,6 @@ namespace Programs.Utils
 
 		static ProgramUtils()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
 
 		static public string Encode(string strValue)

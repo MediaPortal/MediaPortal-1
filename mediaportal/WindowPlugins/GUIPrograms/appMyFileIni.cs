@@ -21,15 +21,13 @@ namespace ProgramsDatabase
 		
 		public appItemMyFileINI(SQLiteClient paramDB): base(paramDB)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
 
 		private void ShowProgressDialog()
 		{
 			pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			pDlgProgress.SetHeading(13004);
+			pDlgProgress.SetLine(0, 13004);							//"importing *.my file
 			pDlgProgress.SetLine(1, "");
 			pDlgProgress.SetLine(2, "");
 			pDlgProgress.StartModal(GetID);

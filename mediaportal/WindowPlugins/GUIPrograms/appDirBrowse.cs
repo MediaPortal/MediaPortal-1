@@ -17,7 +17,7 @@ namespace ProgramsDatabase
 	{
 		Stack mDirectories = new Stack();
 		VirtualDirectory  m_directory = new VirtualDirectory();
-		DirBrowseComparer pc = new DirBrowseComparer(); // slightly hacky: pc replaces the base.dbPc object....
+		ProgramComparer pc = new ProgramComparer(); // slightly hacky: pc replaces the base.dbPc object....
 
 		public appItemDirBrowse(SQLiteClient paramDB): base(paramDB)
 		{
@@ -103,11 +103,6 @@ namespace ProgramsDatabase
 				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_THUMBS,file);
 				iTotalItems++;
 			}
-
-
-//			GUIThumbnailPanel pControl=(GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS );
-//			if( pControl != null )
-//				pControl.ShowBigIcons( true );
 
 			string strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);

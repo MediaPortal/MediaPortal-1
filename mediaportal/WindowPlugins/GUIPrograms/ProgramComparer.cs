@@ -9,9 +9,9 @@ using MediaPortal.Util;
 namespace GUIPrograms
 {
 	/// <summary>
-	/// Summary description for DirBrowseComparer.
+	/// Summary description for ProgramComparer.
 	/// </summary>
-	public class DirBrowseComparer: IComparer
+	public class ProgramComparer: IComparer
 	{
 
 		private enum SortMethod
@@ -25,7 +25,7 @@ namespace GUIPrograms
 		public bool bAsc = true;
 		
 
-		public DirBrowseComparer()
+		public ProgramComparer()
 		{
 		}
 
@@ -40,13 +40,13 @@ namespace GUIPrograms
 			SortMethod method = currentSortMethod;
 			switch (method)
 			{
-				case DirBrowseComparer.SortMethod.SORT_NAME:
+				case ProgramComparer.SortMethod.SORT_NAME:
 					strLine=GUILocalizeStrings.Get(103);
 					break;
-				case DirBrowseComparer.SortMethod.SORT_DATE:
+				case ProgramComparer.SortMethod.SORT_DATE:
 					strLine=GUILocalizeStrings.Get(104);
 					break;
-				case DirBrowseComparer.SortMethod.SORT_SIZE:
+				case ProgramComparer.SortMethod.SORT_SIZE:
 					strLine=GUILocalizeStrings.Get(105);
 					break;
 			}

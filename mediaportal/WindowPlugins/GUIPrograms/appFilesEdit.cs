@@ -17,9 +17,6 @@ namespace ProgramsDatabase
 	{
 		public appFilesEdit(SQLiteClient paramDB): base(paramDB)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
 	}
 }

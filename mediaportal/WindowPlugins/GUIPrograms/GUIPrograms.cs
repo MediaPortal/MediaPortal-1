@@ -27,13 +27,8 @@ namespace GUIPrograms
 	/// and use them as arguments when launching external applications.
 	/// </summary>
 	/// 
-	/// TODO List:
-	/// 1) Get an initial list running
-	/// 2) Get default graphics for list
-	/// 3) Get thumb panel working
 	public class GUIPrograms : GUIWindow
 	{
-
 
 		enum View
 		{
