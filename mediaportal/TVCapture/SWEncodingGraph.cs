@@ -310,6 +310,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartRecording(string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
+      if (m_graphState!=State.Recording) return true;
       if (m_graphState!=State.Created) return false;
       
       int hr;
@@ -401,7 +402,7 @@ namespace MediaPortal.TV.Recording
       {
         DirectShowUtil.DebugWrite("SWGraph:connect video capture->compressor ");
         cat = PinCategory.Capture;
-        med = MediaType.Interleaved;
+        med = MediaType.Video;
         hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
         if (hr!=0)
         {
@@ -415,13 +416,45 @@ namespace MediaPortal.TV.Recording
       {
         DirectShowUtil.DebugWrite("SWGraph:connect audio capture->compressor ");
         cat = PinCategory.Capture;
-        med = MediaType.Interleaved;
+        med = MediaType.Audio;
         hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureAudio, m_filterCompressorAudio, m_muxFilter ); 
         if (hr!=0)
         {
           DirectShowUtil.DebugWrite("SWGraph:FAILED:to connect audio capture->compressor ");
           return false;
         }
+      } 
+
+      // Set the audio as the masterstream
+      IConfigAviMux ConfigMux = m_muxFilter as IConfigAviMux;
+      if (ConfigMux!=null)
+      {
+        DirectShowUtil.DebugWrite("SWGraph:set audio as masterstream");
+        hr=ConfigMux.SetMasterStream(1);
+        if (hr!=0)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:to set audio as masterstream");
+        }
+      }
+      else
+      {
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigAviMux");
+      }
+
+      // Set the avi interleaving mode
+      IConfigInterleaving InterleaveMode = m_muxFilter as IConfigInterleaving;
+      if (InterleaveMode!=null)
+      {
+        DirectShowUtil.DebugWrite("SWGraph:set avi interleave mode");
+        hr=InterleaveMode.put_Mode(AviInterleaveMode.INTERLEAVE_CAPTURE);
+        if (hr!=0)
+        {
+          DirectShowUtil.DebugWrite("SWGraph:FAILED:to set avi interleave mode");
+        }
+      }
+      else
+      {
+        DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigInterleaving");
       }
       m_mediaControl.Run();
       m_graphState=State.Recording;
