@@ -52,23 +52,30 @@ namespace MediaPortal.Util
 			{
 				itemSearchResponse = amazonService.ItemSearch(itemSearch);
 			}
-			catch (Exception e)
+			catch (Exception )
 			{
 				return;
 			}
 
 			Items[] itemsResponse = itemSearchResponse.Items; 
+			if (itemsResponse==null) return;
 			for (int i=0; i < itemsResponse.Length;++i)
 			{
 				Items itemList=itemsResponse[i];
+				if (itemList==null) continue;
+				if (itemList.Item==null) continue;
 
 				for (int x=0; x < itemList.Item.Length;++x)
 				{
 					Item item=itemList.Item[x];
+					if (item==null) continue;
 					Image image = item.LargeImage;
 					if (image!=null)
 					{
-						m_imageList.Add(image.URL);
+						if (image.URL!=null && image.URL.Length>0)
+						{
+							m_imageList.Add(image.URL);
+						}
 					}
 				}
 			}
