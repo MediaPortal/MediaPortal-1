@@ -373,12 +373,6 @@ namespace MediaPortal.GUI.RSS
 			}
 		}
 
-		public override void Render()
-		{
-			base.Render();
-		}
-
-
 		bool Download(Uri location)
 		{
 			int i=0;
