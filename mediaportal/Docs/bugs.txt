@@ -32,8 +32,6 @@ crash/things not working Bugs:
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen
   19-06-2004 my video   : vmr9: lines/stripes?
-  11-07-2004 my music   : cddb doesnt work for some case does not update tags. Meaning an album it finds wich had various 
-                          artists first, now only 1 still shows as various artists. 
   02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. 
                           However, there r albums withds? (MrMario64 )
   02-05-2004 my music   : reorganise datab the same name from different artists. (big change needed in database engine) 
