@@ -20,9 +20,10 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button editButton;
 		private System.Windows.Forms.Button addButton;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.Button autoTuneButton;
 		private MediaPortal.UserInterface.Controls.MPListView channelsListView;
 		private System.ComponentModel.IContainer components = null;
+    private System.Windows.Forms.Button downButton;
+    private System.Windows.Forms.Button upButton;
 
 		//
 		// Private members
@@ -37,11 +38,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
-			//
-			// Hide the auto tune button
-			//
-			autoTuneButton.Visible = false;
 		}
 
 		/// <summary>
@@ -66,117 +62,132 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.autoTuneButton = new System.Windows.Forms.Button();
-			this.deleteButton = new System.Windows.Forms.Button();
-			this.editButton = new System.Windows.Forms.Button();
-			this.addButton = new System.Windows.Forms.Button();
-			this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// columnHeader3
-			// 
-			this.columnHeader3.Text = "Frequency override (MHz)";
-			this.columnHeader3.Width = 134;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Channel";
-			this.columnHeader2.Width = 76;
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.autoTuneButton);
-			this.groupBox1.Controls.Add(this.deleteButton);
-			this.groupBox1.Controls.Add(this.editButton);
-			this.groupBox1.Controls.Add(this.addButton);
-			this.groupBox1.Controls.Add(this.channelsListView);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(384, 352);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Settings";
-			// 
-			// autoTuneButton
-			// 
-			this.autoTuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.autoTuneButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.autoTuneButton.Location = new System.Drawing.Point(295, 312);
-			this.autoTuneButton.Name = "autoTuneButton";
-			this.autoTuneButton.TabIndex = 4;
-			this.autoTuneButton.Text = "Auto Tune";
-			// 
-			// deleteButton
-			// 
-			this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.deleteButton.Location = new System.Drawing.Point(176, 312);
-			this.deleteButton.Name = "deleteButton";
-			this.deleteButton.TabIndex = 3;
-			this.deleteButton.Text = "Delete";
-			this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
-			// 
-			// editButton
-			// 
-			this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.editButton.Location = new System.Drawing.Point(96, 312);
-			this.editButton.Name = "editButton";
-			this.editButton.TabIndex = 2;
-			this.editButton.Text = "Edit";
-			this.editButton.Click += new System.EventHandler(this.editButton_Click);
-			// 
-			// addButton
-			// 
-			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.addButton.Location = new System.Drawing.Point(16, 312);
-			this.addButton.Name = "addButton";
-			this.addButton.TabIndex = 1;
-			this.addButton.Text = "Add";
-			this.addButton.Click += new System.EventHandler(this.addButton_Click);
-			// 
-			// channelsListView
-			// 
-			this.channelsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																							   this.columnHeader1,
-																							   this.columnHeader2,
-																							   this.columnHeader3});
-			this.channelsListView.FullRowSelect = true;
-			this.channelsListView.HideSelection = false;
-			this.channelsListView.Location = new System.Drawing.Point(16, 24);
-			this.channelsListView.Name = "channelsListView";
-			this.channelsListView.Size = new System.Drawing.Size(352, 280);
-			this.channelsListView.TabIndex = 0;
-			this.channelsListView.View = System.Windows.Forms.View.Details;
-			this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Channel name";
-			this.columnHeader1.Width = 146;
-			// 
-			// TVChannels
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "TVChannels";
-			this.Size = new System.Drawing.Size(400, 368);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.upButton = new System.Windows.Forms.Button();
+      this.downButton = new System.Windows.Forms.Button();
+      this.deleteButton = new System.Windows.Forms.Button();
+      this.editButton = new System.Windows.Forms.Button();
+      this.addButton = new System.Windows.Forms.Button();
+      this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Frequency override (MHz)";
+      this.columnHeader3.Width = 198;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Channel";
+      this.columnHeader2.Width = 76;
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.upButton);
+      this.groupBox1.Controls.Add(this.downButton);
+      this.groupBox1.Controls.Add(this.deleteButton);
+      this.groupBox1.Controls.Add(this.editButton);
+      this.groupBox1.Controls.Add(this.addButton);
+      this.groupBox1.Controls.Add(this.channelsListView);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(456, 432);
+      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Settings";
+      // 
+      // upButton
+      // 
+      this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.upButton.Location = new System.Drawing.Point(340, 392);
+      this.upButton.Name = "upButton";
+      this.upButton.Size = new System.Drawing.Size(48, 23);
+      this.upButton.TabIndex = 5;
+      this.upButton.Text = "Up";
+      this.upButton.Click += new System.EventHandler(this.upButton_Click);
+      // 
+      // downButton
+      // 
+      this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.downButton.Location = new System.Drawing.Point(392, 392);
+      this.downButton.Name = "downButton";
+      this.downButton.Size = new System.Drawing.Size(48, 23);
+      this.downButton.TabIndex = 4;
+      this.downButton.Text = "Down";
+      this.downButton.Click += new System.EventHandler(this.downButton_Click);
+      // 
+      // deleteButton
+      // 
+      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.deleteButton.Location = new System.Drawing.Point(176, 392);
+      this.deleteButton.Name = "deleteButton";
+      this.deleteButton.TabIndex = 3;
+      this.deleteButton.Text = "Delete";
+      this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+      // 
+      // editButton
+      // 
+      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.editButton.Location = new System.Drawing.Point(96, 392);
+      this.editButton.Name = "editButton";
+      this.editButton.TabIndex = 2;
+      this.editButton.Text = "Edit";
+      this.editButton.Click += new System.EventHandler(this.editButton_Click);
+      // 
+      // addButton
+      // 
+      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.addButton.Location = new System.Drawing.Point(16, 392);
+      this.addButton.Name = "addButton";
+      this.addButton.TabIndex = 1;
+      this.addButton.Text = "Add";
+      this.addButton.Click += new System.EventHandler(this.addButton_Click);
+      // 
+      // channelsListView
+      // 
+      this.channelsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                       this.columnHeader1,
+                                                                                       this.columnHeader2,
+                                                                                       this.columnHeader3});
+      this.channelsListView.FullRowSelect = true;
+      this.channelsListView.HideSelection = false;
+      this.channelsListView.Location = new System.Drawing.Point(16, 24);
+      this.channelsListView.Name = "channelsListView";
+      this.channelsListView.Size = new System.Drawing.Size(424, 360);
+      this.channelsListView.TabIndex = 0;
+      this.channelsListView.View = System.Windows.Forms.View.Details;
+      this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Channel name";
+      this.columnHeader1.Width = 146;
+      // 
+      // TVChannels
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "TVChannels";
+      this.Size = new System.Drawing.Size(472, 448);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 
@@ -354,6 +365,11 @@ namespace MediaPortal.Configuration.Sections
 							// Finally add the channel
 							//
 							TVDatabase.AddChannel(channel);
+
+              //
+              // Set the sort order
+              //
+              TVDatabase.SetChannelSort(channel.Name, listItem.Index);
 						}
 					}
 
@@ -441,6 +457,66 @@ namespace MediaPortal.Configuration.Sections
 		{
 			editButton_Click(sender, e);		
 		}
+
+    private void MoveSelectionDown()
+    {
+      isDirty = true;
+
+      for(int index = channelsListView.Items.Count - 1; index >= 0; index--)
+      {
+        if(channelsListView.Items[index].Selected == true)
+        {
+          //
+          // Make sure the current index isn't greater than the highest index in the list view
+          //
+          if(index < channelsListView.Items.Count - 1)
+          {
+            ListViewItem listItem = channelsListView.Items[index];
+            channelsListView.Items.RemoveAt(index);
+
+            if(index + 1 < channelsListView.Items.Count)
+            {
+              channelsListView.Items.Insert(index + 1, listItem);
+            }
+            else
+            {
+              channelsListView.Items.Add(listItem);
+            }
+          }
+        }
+      }
+    }
+
+    private void MoveSelectionUp()
+    {
+      isDirty = true;
+
+      for(int index = 0; index < channelsListView.Items.Count; index++)
+      {
+        if(channelsListView.Items[index].Selected == true)
+        {
+          //
+          // Make sure the current index isn't smaller than the lowest index (0) in the list view
+          //
+          if(index > 0)
+          {
+            ListViewItem listItem = channelsListView.Items[index];
+            channelsListView.Items.RemoveAt(index);
+            channelsListView.Items.Insert(index - 1, listItem);
+          }
+        }
+      }    
+    }
+
+    private void upButton_Click(object sender, System.EventArgs e)
+    {
+      MoveSelectionUp();
+    }
+
+    private void downButton_Click(object sender, System.EventArgs e)
+    {
+      MoveSelectionDown();
+    }
 	}
 }
 
