@@ -391,6 +391,12 @@ namespace MediaPortal.TV.Recording
 			{
 					
 				TSHelperTools.TSHeader header=m_tsHelper.GetHeader((IntPtr)pointer);
+				if(header.Pid==0xd2)
+				{
+//					byte[] epgData=new byte[188];
+//					Marshal.Copy((IntPtr)pointer,epgData,0,188);
+//					string text=System.Text.Encoding.ASCII.GetString(epgData);
+				}
 				if(header.Pid==pid)
 				{
 					

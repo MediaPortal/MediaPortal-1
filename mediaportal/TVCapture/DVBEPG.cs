@@ -65,6 +65,15 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				int retVal=0;
+				//
+				//
+				if(data.extendedEventUseable==false && data.shortEventUseable==false)
+				{
+					Log.Write("epg-grabbing: event IGNORED by language selection");
+					return 0;
+				}
+				
+				//
 				Log.Write("start *********************************************");
 				TVProgram tv=new TVProgram();
 				System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
@@ -197,6 +206,7 @@ namespace MediaPortal.TV.Recording
 			int			dummyTab=0;
 
 			m_sections.Timeout=750;
+			Log.Write("epg-grab: grabbing table {0}",80);
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
 			
@@ -207,6 +217,7 @@ namespace MediaPortal.TV.Recording
 			{
 				for(int tab=0x51;tab<lastTab;tab++)
 				{
+					Log.Write("epg-grab: grabbing table {0}",tab);
 					eitList.Clear();
 					eitList=m_sections.GetEITSchedule(tab,filter,ref dummyTab);
 					if(eitList.Count>0)
@@ -295,10 +306,11 @@ namespace MediaPortal.TV.Recording
 
 					if(m_languagesToGrab!="")
 					{
-						bool ignoreFlag=true;
 						string[] langs=m_languagesToGrab.Split(new char[]{'/'});
 						foreach(string lang in langs)
 						{
+							if(lang=="")
+								continue;
 							Log.Write("epg-grabbing: language selected={0}",lang);
 							string codeEE="";
 							string codeSE="";
@@ -315,7 +327,8 @@ namespace MediaPortal.TV.Recording
 								{
 									if(lang.ToLower().Equals(codeEE))
 									{
-										eit2DB.extendedEventUseable=true;	
+										eit2DB.extendedEventUseable=true;
+										break;
 									}
 								}
 							}
@@ -329,6 +342,7 @@ namespace MediaPortal.TV.Recording
 									if(lang.ToLower().Equals(codeSE))
 									{
 										eit2DB.shortEventUseable=true;
+										break;
 									}
 
 								}
@@ -337,11 +351,6 @@ namespace MediaPortal.TV.Recording
 
 							
 
-						}
-						if(ignoreFlag==true)
-						{
-							Log.Write("epg-grab: IGNORED no matching language selected");
-							continue;
 						}
 					}
 
