@@ -888,13 +888,10 @@ public class MediaPortalApp : D3DApp, IRender
       if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
 			if (key.KeyChar == '?')
 			{
-
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
-          (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
-          GUIWindowManager.ActiveWindow,0,0,0,0);
-        msg.Label="D:";
-        GUIWindowManager.SendThreadMessage(msg);
-			}
+        GC.Collect();GC.Collect();GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();GC.Collect();GC.Collect();
+      }
 			Action action = new Action();
       if (GUIWindowManager.IsRouted && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD)
       {
