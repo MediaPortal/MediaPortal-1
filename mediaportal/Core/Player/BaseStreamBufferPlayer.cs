@@ -346,7 +346,17 @@ namespace MediaPortal.Player
 				CloseInterfaces();
 				return false;
 			}
+
       DsUtils.DumpFilters(graphBuilder);
+
+      m_iPositionX=GUIGraphicsContext.VideoWindow.X;
+      m_iPositionY=GUIGraphicsContext.VideoWindow.Y;
+      m_iWidth    =GUIGraphicsContext.VideoWindow.Width;
+      m_iHeight   =GUIGraphicsContext.VideoWindow.Height;
+      m_ar        =GUIGraphicsContext.ARType;
+      m_bUpdateNeeded=true;
+      SetVideoWindow();
+
 			hr = mediaCtrl.Run();
 			if (hr < 0)
 			{
@@ -360,13 +370,6 @@ namespace MediaPortal.Player
 			GUIWindowManager.SendThreadMessage(msg);
 
 			m_state=PlayState.Playing;
-			m_iPositionX=GUIGraphicsContext.VideoWindow.X;
-			m_iPositionY=GUIGraphicsContext.VideoWindow.Y;
-			m_iWidth    =GUIGraphicsContext.VideoWindow.Width;
-			m_iHeight   =GUIGraphicsContext.VideoWindow.Height;
-			m_ar        =GUIGraphicsContext.ARType;
-			m_bUpdateNeeded=true;
-			SetVideoWindow();
 
       if (IsTimeShifting)
       {
