@@ -7,7 +7,7 @@
   <type>image</type> 
 	<id>0</id> 
 	<posX>147</posX> 
-	<posY>195</posY> 
+	<posY>95</posY> 
 	<width>489</width> 
 	<height>320</height> 
 	<texture>context_background.png</texture> 
@@ -17,7 +17,7 @@
 		<type>label</type> 
 		<id>4</id> 
 		<posX>200</posX> 
-		<posY>200</posY> 
+		<posY>100</posY> 
 		<label>181</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
@@ -27,7 +27,7 @@
 		<type>button</type>
 		<id>2</id>
 		<posX>161</posX>
-		<posY>196</posY>
+		<posY>96</posY>
 		<width>32</width>
 		<height>32</height>
 		<textureFocus>button_close_focus.png</textureFocus>
@@ -43,7 +43,7 @@
 		<type>listcontrol</type> 
 		<id>3</id> 
 		<posX>160</posX> 
-		<posY>250</posY> 
+		<posY>150</posY> 
 		<width>450</width> 
 		<height>260</height> 
 		<onleft>2</onleft> 
@@ -51,7 +51,7 @@
 		<onup>2</onup> 
 		<ondown>2</ondown>
 		<spinPosX>500</spinPosX>
-		<spinPosY>450</spinPosY>
+		<spinPosY>365</spinPosY>
 	</control>
     </controls>
 </window>
