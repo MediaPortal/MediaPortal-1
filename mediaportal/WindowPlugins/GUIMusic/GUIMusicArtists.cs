@@ -519,7 +519,7 @@ namespace MediaPortal.GUI.Music
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      dlg.Add( GUILocalizeStrings.Get(368)); //IMDB
+      dlg.Add( GUILocalizeStrings.Get(928)); //IMDB
       dlg.Add( GUILocalizeStrings.Get(208)); //play
       dlg.Add( GUILocalizeStrings.Get(926)); //Queue
       dlg.Add( GUILocalizeStrings.Get(136)); //PlayList

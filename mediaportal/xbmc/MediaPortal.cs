@@ -719,69 +719,77 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void FrameMove()
   {
-    CheckForNewUpdate();
-    Recorder.Process();
-    g_Player.Process();
-    GUIWindowManager.DispatchThreadMessages();
-    GUIWindowManager.ProcessWindows();
+		try
+		{
+			CheckForNewUpdate();
+			Recorder.Process();
+			g_Player.Process();
+			GUIWindowManager.DispatchThreadMessages();
+			GUIWindowManager.ProcessWindows();
 
-    // update playing status
-    if (g_Player.Playing)
-    {
-      GUIGraphicsContext.IsPlaying = true;
-			GUIGraphicsContext.IsPlayingVideo = (g_Player.IsVideo || g_Player.IsTV);
+			// update playing status
+			if (g_Player.Playing)
+			{
+				GUIGraphicsContext.IsPlaying = true;
+				GUIGraphicsContext.IsPlayingVideo = (g_Player.IsVideo || g_Player.IsTV);
 
-      if (g_Player.Paused) GUIPropertyManager.SetProperty("#playlogo","logo_pause.png");
-      else if (g_Player.Speed > 1) GUIPropertyManager.SetProperty("#playlogo", "logo_fastforward.png");
-      else if (g_Player.Speed < 1) GUIPropertyManager.SetProperty("#playlogo", "logo_rewind.png");
-      else if (g_Player.Playing) GUIPropertyManager.SetProperty("#playlogo", "logo_play.png");
+				if (g_Player.Paused) GUIPropertyManager.SetProperty("#playlogo","logo_pause.png");
+				else if (g_Player.Speed > 1) GUIPropertyManager.SetProperty("#playlogo", "logo_fastforward.png");
+				else if (g_Player.Speed < 1) GUIPropertyManager.SetProperty("#playlogo", "logo_rewind.png");
+				else if (g_Player.Playing) GUIPropertyManager.SetProperty("#playlogo", "logo_play.png");
 
-			GUIPropertyManager.SetProperty("#currentplaytime",  Utils.SecondsToHMSString((int)g_Player.CurrentPosition));
-			GUIPropertyManager.SetProperty("#shortcurrentplaytime", Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition));
-      if (g_Player.Duration>0)
-      {
-        GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
-        GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
-        
-        double fPercentage = g_Player.CurrentPosition / g_Player.Duration;
-        int iPercent = (int)(100 * fPercentage);
-        GUIPropertyManager.SetProperty("#percentage", iPercent.ToString());
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#duration", String.Empty);
-        GUIPropertyManager.SetProperty("#shortduration", String.Empty);
-        GUIPropertyManager.SetProperty("#percentage", "0");
-      }
-      GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString());
-    }
-    else
-    {
-      if (!Recorder.View)
-        GUIGraphicsContext.IsFullScreenVideo = false;
-      GUIGraphicsContext.IsPlaying = false;
-    }
-    if (!g_Player.Playing && !Recorder.IsRecording)
-    {
-      if (m_bPlayingState)
-      {
-        GUIPropertyManager.RemovePlayerProperties();
-      }
-      m_bPlayingState = false;
-    }
-    else 
-    {
-      m_bPlayingState = true;
-    }
-/*
-    // disable TV preview when playing a movie
-    if (g_Player.Playing && g_Player.HasVideo)
-    {
-      if (!g_Player.IsTV)
-      {
-        Recorder.View = false;
-      }
-    }*/
+				GUIPropertyManager.SetProperty("#currentplaytime",  Utils.SecondsToHMSString((int)g_Player.CurrentPosition));
+				GUIPropertyManager.SetProperty("#shortcurrentplaytime", Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition));
+				if (g_Player.Duration>0)
+				{
+					GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
+					GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
+	        
+					double fPercentage = g_Player.CurrentPosition / g_Player.Duration;
+					int iPercent = (int)(100 * fPercentage);
+					GUIPropertyManager.SetProperty("#percentage", iPercent.ToString());
+				}
+				else
+				{
+					GUIPropertyManager.SetProperty("#duration", String.Empty);
+					GUIPropertyManager.SetProperty("#shortduration", String.Empty);
+					GUIPropertyManager.SetProperty("#percentage", "0");
+				}
+				GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString());
+			}
+			else
+			{
+				if (!Recorder.View)
+					GUIGraphicsContext.IsFullScreenVideo = false;
+				GUIGraphicsContext.IsPlaying = false;
+			}
+			if (!g_Player.Playing && !Recorder.IsRecording)
+			{
+				if (m_bPlayingState)
+				{
+					GUIPropertyManager.RemovePlayerProperties();
+				}
+				m_bPlayingState = false;
+			}
+			else 
+			{
+				m_bPlayingState = true;
+			}
+	/*
+			// disable TV preview when playing a movie
+			if (g_Player.Playing && g_Player.HasVideo)
+			{
+				if (!g_Player.IsTV)
+				{
+					Recorder.View = false;
+				}
+			}*/
+		}
+		catch (System.IO.FileNotFoundException ex)
+		{
+			System.Windows.Forms.MessageBox.Show("File not found:"+ex.FileName, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+			Close();
+		}
   }
 
 
@@ -1159,13 +1167,8 @@ public class MediaPortalApp : D3DApp, IRender
 		}
 		catch (System.IO.FileNotFoundException ex)
 		{
-			
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
-			msg.Param1=927;//warning
-			msg.Param2=928;//file not found
-			msg.Param3=0;
-			msg.Label3=ex.FileName;
-			GUIWindowManager.SendMessage(msg);
+			System.Windows.Forms.MessageBox.Show("File not found:"+ex.FileName, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+			Close();
 		}
 		catch (Exception ex)
 		{

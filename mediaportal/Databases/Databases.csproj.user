@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "C:\mediaportal\mediaportal\;C:\mediaportal\" >
+            <Settings ReferencePath = "C:\mediaportal\mediaportal\;C:\mediaportal\;D:\mediaportal\" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"
