@@ -342,23 +342,26 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void FreeResources()
 		{
-      m_strTextureFileName="";
-			if (m_vbBuffer!=null)
-			{
-				if (!m_vbBuffer.Disposed) m_vbBuffer.Dispose();
-				m_vbBuffer=null;
-			}
+      lock (this)
+      {
+        m_strTextureFileName="";
+        if (m_vbBuffer!=null)
+        {
+          if (!m_vbBuffer.Disposed) m_vbBuffer.Dispose();
+          m_vbBuffer=null;
+        }
 
-      m_image=null;
-			m_vecTextures.Clear();
-			m_iCurrentImage=0;
-      m_iCurrentLoop=0;
-      m_iImageWidth=0;
-      m_iImageHeight=0;
-      m_iTextureWidth=0;
-      m_iTextureHeight=0;
-      if (savedStateBlock!=null) savedStateBlock.Dispose();
-      savedStateBlock=null;
+        m_image=null;
+        m_vecTextures.Clear();
+        m_iCurrentImage=0;
+        m_iCurrentLoop=0;
+        m_iImageWidth=0;
+        m_iImageHeight=0;
+        m_iTextureWidth=0;
+        m_iTextureHeight=0;
+        if (savedStateBlock!=null) savedStateBlock.Dispose();
+        savedStateBlock=null;
+      }
 		}
 
 		/// <summary>
@@ -503,132 +506,135 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void Render()
     {
-      // Do not render if not visible
-      if (false==IsVisible)
+      lock (this)
       {
-        m_bWasVisible = false;
-        return;
-      }
+        // Do not render if not visible
+        if (false==IsVisible)
+        {
+          m_bWasVisible = false;
+          return;
+        }
 
-      if (m_strFileName==null) return;
-      if (m_strFileName==String.Empty) return;
+        if (m_strFileName==null) return;
+        if (m_strFileName==String.Empty) return;
 
-      if (ContainsProperty)
-      {
-        m_strTxt=GUIPropertyManager.Parse(m_strFileName);
-        if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Count)
+        if (ContainsProperty)
+        {
+          m_strTxt=GUIPropertyManager.Parse(m_strFileName);
+          if (m_strTextureFileName != m_strTxt || 0==m_vecTextures.Count)
+          {
+            FreeResources();
+            m_strTextureFileName =m_strTxt;
+            if (m_strTxt.Length==0)
+            {
+              IsVisible=false;
+              return;
+            }
+            IsVisible=true;
+            AllocResources();
+            Update();
+          }
+        }
+
+        
+  			
+        // Do not render if there are not textures
+        if (m_vecTextures==null) 
+          return;
+        if (0==m_vecTextures.Count)
+          return ;
+        // Do not render if there is no vertex buffer
+        if (null==m_vbBuffer)
+          return ;
+  			
+  			
+        if (!GUIGraphicsContext.ShowBackground)
+        {
+          if (m_iRenderWidth==GUIGraphicsContext.Width && m_iRenderHeight==GUIGraphicsContext.Height)
+          {
+            if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
+            {
+              return;
+            }
+          }
+        }
+
+        if (GUIGraphicsContext.graphics!=null)
+        {
+          // If the Image is not loaded, load the Image
+          if (m_image==null)
+          {
+            string strFileName=m_strFileName;
+            if (ContainsProperty)
+              strFileName=GUIPropertyManager.Parse(m_strFileName);
+            if (strFileName != "-")
+            {
+              if (!System.IO.File.Exists(strFileName))
+              {
+                if (strFileName[1]!=':')
+                  strFileName=GUIGraphicsContext.Skin+@"\media\"+strFileName;
+              }
+              m_image= GUITextureManager.GetImage(strFileName);
+            }
+          }
+          // Draw the image
+          if (m_image!=null)
+          {
+            GUIGraphicsContext.graphics.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            GUIGraphicsContext.graphics.CompositingMode=System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            GUIGraphicsContext.graphics.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            GUIGraphicsContext.graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+            try
+            {
+              GUIGraphicsContext.graphics.DrawImage(m_image,m_destRect);
+            }
+            catch(Exception)
+            {
+            }
+            return;        
+          }
+        }
+        if (GUIGraphicsContext.DX9Device==null) return;
+        if (GUIGraphicsContext.DX9Device.Disposed) return;
+
+        if (m_vecTextures.Count != 1)
+          Process();
+        if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Count) return;
+        CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
+        if (frame==null) return;
+        Direct3D.Texture texture=frame.Image;
+        if (texture==null)
         {
           FreeResources();
-          m_strTextureFileName =m_strTxt;
-          if (m_strTxt.Length==0)
-          {
-            IsVisible=false;
-            return;
-          }
-          IsVisible=true;
-          AllocResources();
-          Update();
+          return;
         }
-      }
-
-      
-			
-			// Do not render if there are not textures
-      if (m_vecTextures==null) 
-        return;
-			if (0==m_vecTextures.Count)
-				return ;
-			// Do not render if there is no vertex buffer
-			if (null==m_vbBuffer)
-				return ;
-			
-			
-			if (!GUIGraphicsContext.ShowBackground)
-			{
-				if (m_iRenderWidth==GUIGraphicsContext.Width && m_iRenderHeight==GUIGraphicsContext.Height)
-				{
-					if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
-					{
-						return;
-					}
-				}
-			}
-
-      if (GUIGraphicsContext.graphics!=null)
-      {
-				// If the Image is not loaded, load the Image
-        if (m_image==null)
+        if (texture.Disposed)
         {
-          string strFileName=m_strFileName;
-          if (ContainsProperty)
-            strFileName=GUIPropertyManager.Parse(m_strFileName);
-          if (strFileName != "-")
-          {
-            if (!System.IO.File.Exists(strFileName))
-            {
-              if (strFileName[1]!=':')
-                strFileName=GUIGraphicsContext.Skin+@"\media\"+strFileName;
-            }
-            m_image= GUITextureManager.GetImage(strFileName);
-          }
+          FreeResources();
+          return;
         }
-				// Draw the image
-        if (m_image!=null)
+        
+        // Render the image
+        if (savedStateBlock!=null)
         {
-          GUIGraphicsContext.graphics.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-          GUIGraphicsContext.graphics.CompositingMode=System.Drawing.Drawing2D.CompositingMode.SourceOver;
-          GUIGraphicsContext.graphics.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-          GUIGraphicsContext.graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-          try
-          {
-            GUIGraphicsContext.graphics.DrawImage(m_image,m_destRect);
-          }
-          catch(Exception)
-          {
-          }
-          return;        
+          if (savedStateBlock.Disposed) savedStateBlock=null;
         }
+        if (savedStateBlock==null)
+        {
+          CreateStateBlock();
+        }
+        if (savedStateBlock!=null)
+        {
+          savedStateBlock.Apply();
+          GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
+          GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
+          GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
+          GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
+        }
+        // unset the texture and palette or the texture caching crashes because the runtime still has a reference
+        //GUIGraphicsContext.DX9Device.SetTexture( 0, null);
       }
-      if (GUIGraphicsContext.DX9Device==null) return;
-      if (GUIGraphicsContext.DX9Device.Disposed) return;
-
-      if (m_vecTextures.Count != 1)
-			  Process();
-      if (m_iCurrentImage< 0 || m_iCurrentImage >=m_vecTextures.Count) return;
-      CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
-      if (frame==null) return;
-			Direct3D.Texture texture=frame.Image;
-      if (texture==null)
-      {
-        FreeResources();
-        return;
-      }
-      if (texture.Disposed)
-      {
-        FreeResources();
-        return;
-      }
-      
-			// Render the image
-      if (savedStateBlock!=null)
-      {
-        if (savedStateBlock.Disposed) savedStateBlock=null;
-      }
-      if (savedStateBlock==null)
-      {
-        CreateStateBlock();
-      }
-      if (savedStateBlock!=null)
-      {
-        savedStateBlock.Apply();
-        GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
-        GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
-        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-        GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
-      }
-			// unset the texture and palette or the texture caching crashes because the runtime still has a reference
-			//GUIGraphicsContext.DX9Device.SetTexture( 0, null);
 		}
 
 		/// <summary>
@@ -688,92 +694,94 @@ namespace MediaPortal.GUI.Library
     void CreateStateBlock()
     {
       
-      if (savedStateBlock!=null)
+      lock (this)
       {
-        savedStateBlock.Dispose();
-      }
-      savedStateBlock=null;
-      bool supportsAlphaBlend = Manager.CheckDeviceFormat(
-                        GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
-                        GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
-                        GUIGraphicsContext.DX9Device.DisplayMode.Format, 
-                        Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Textures, 
-                        Format.A8R8G8B8);
-      bool supportsFiltering=Manager.CheckDeviceFormat(
-                        GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
-                        GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
-                        GUIGraphicsContext.DX9Device.DisplayMode.Format, 
-                        Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures, 
-                        Format.A8R8G8B8);
-
-      GUIGraphicsContext.DX9Device.BeginStateBlock();
-      
-        
-      
-
-
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
-      GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
-				
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
-				
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
-      GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
-      GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
-      GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
-
-      if (m_bFiltering)
-      { 
-        if (supportsFiltering)
+        if (savedStateBlock!=null)
         {
-          GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Linear;
-          GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Linear;
-          GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Linear;
-          GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy=g_nAnisotropy;
-  	      
-          GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Linear;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Linear;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Linear;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy=g_nAnisotropy;
+          savedStateBlock.Dispose();
+        }
+        savedStateBlock=null;
+        bool supportsAlphaBlend = Manager.CheckDeviceFormat(
+          GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
+          GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
+          GUIGraphicsContext.DX9Device.DisplayMode.Format, 
+          Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Textures, 
+          Format.A8R8G8B8);
+        bool supportsFiltering=Manager.CheckDeviceFormat(
+          GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
+          GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
+          GUIGraphicsContext.DX9Device.DisplayMode.Format, 
+          Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures, 
+          Format.A8R8G8B8);
+
+        GUIGraphicsContext.DX9Device.BeginStateBlock();
+        
+          
+        
+
+
+        GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
+        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
+        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
+  				
+        GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
+  				
+        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
+        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
+        GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
+        GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
+
+        if (m_bFiltering)
+        { 
+          if (supportsFiltering)
+          {
+            GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Linear;
+            GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Linear;
+            GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Linear;
+            GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy=g_nAnisotropy;
+    	      
+            GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Linear;
+            GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Linear;
+            GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Linear;
+            GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy=g_nAnisotropy;
+          }
+          else
+          {
+            GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Point;
+            GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Point;
+            GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Point;
+    	      
+            GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Point;
+            GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Point;
+            GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Point;
+          }
         }
         else
         {
-          GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Point;
-          GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Point;
-          GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Point;
-  	      
-          GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Point;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Point;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Point;
+          GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.None;
+          GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.None;
+          GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.None;
+          GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.None;
+          GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.None;
+          GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.None;
         }
+        GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
+        GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
+        GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
+        GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
+        GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
+        if (supportsAlphaBlend)
+        {
+          GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
+          GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
+          GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
+        }
+        else
+        {
+          GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=false;
+        }
+        savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();
       }
-
-      else
-      {
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.None;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.None;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.None;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.None;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.None;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.None;
-      }
-      GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
-      GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
-      GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
-      GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
-      GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-      if (supportsAlphaBlend)
-      {
-        GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
-        GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-        GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-      }
-      else
-      {
-        GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=false;
-      }
-      savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();
     }
 	}
 }
