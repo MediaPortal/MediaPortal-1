@@ -119,6 +119,11 @@ namespace MediaPortal.GUI.Video
     {
     }
 
+		public override void DeInit()
+		{
+			SaveSettings();
+		}
+
 		public override bool Init()
 		{
       g_Player.PlayBackStopped +=new MediaPortal.Player.g_Player.StoppedHandler(OnPlayBackStopped);
@@ -132,6 +137,7 @@ namespace MediaPortal.GUI.Video
 				System.IO.Directory.CreateDirectory(ThumbsFolder);
 			}
 			catch(Exception){}
+			LoadSettings();
 			return Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
 		}
 
@@ -237,7 +243,6 @@ namespace MediaPortal.GUI.Video
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
-					LoadSettings();
           if (VideoState.StartWindow != GetID)
           {
             GUIWindowManager.ActivateWindow(VideoState.StartWindow);
@@ -252,7 +257,6 @@ namespace MediaPortal.GUI.Video
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
 					m_iItemSelected = GetSelectedItemNo();
 					
-          SaveSettings();
           SaveFolderSettings(m_strDirectory);
 					break;
 
@@ -333,7 +337,6 @@ namespace MediaPortal.GUI.Video
 				    {
 					    
               VideoState.StartWindow = nNewWindow;
-							SaveSettings();
 					    GUIWindowManager.ActivateWindow(nNewWindow);
 				    }
 

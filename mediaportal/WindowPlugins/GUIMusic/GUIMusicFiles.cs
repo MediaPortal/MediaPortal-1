@@ -137,6 +137,11 @@ namespace MediaPortal.GUI.Music
       get { return m_musicCD; }
       set { m_musicCD = value; }
     }
+		public override void DeInit()
+		{
+			SaveSettings();
+		}
+
 
     public override bool Init()
     {
@@ -262,7 +267,6 @@ namespace MediaPortal.GUI.Music
             GUIWindowManager.ActivateWindow(MusicState.StartWindow);
             return false;
           }
-          LoadSettings();
           LoadFolderSettings(m_strDirectory);
 
           ShowThumbPanel();
@@ -271,7 +275,6 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
           m_iItemSelected = GetSelectedItemNo();
-          SaveSettings();
           SaveFolderSettings(m_strDirectory);
           break;
 
