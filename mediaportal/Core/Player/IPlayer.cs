@@ -119,6 +119,10 @@ namespace MediaPortal.Player
     {
       get {return 0;}
     }
+    public virtual double ContentStart
+    {
+      get {return 0;}
+    }
 
     public virtual void Pause()
     {

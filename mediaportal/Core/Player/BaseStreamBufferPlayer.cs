@@ -40,6 +40,7 @@ namespace MediaPortal.Player
 		protected  IStreamBufferMediaSeeking        m_mediaSeeking=null;
 		protected int                               m_iSpeed=1;
 		protected double                            m_dCurrentPos;
+    protected double                            m_dContentStart;
 		protected double                            m_dDuration=-1d;
     protected bool          										m_bStarted=false;
     protected bool          										m_bLive=false;
@@ -461,6 +462,10 @@ namespace MediaPortal.Player
 			}
 		}
 
+    public override double ContentStart
+    {
+      get {return m_dContentStart;}
+    }
 		public override bool FullScreen
 		{
 			get 
@@ -688,6 +693,7 @@ namespace MediaPortal.Player
       double fPos=m_dCurrentPos;
       fCurrentPos-=fContentStart;
       m_dCurrentPos=fCurrentPos;
+      m_dContentStart=fContentStart;
 #if DEBUG
       TimeSpan ts=DateTime.Now-dtStart;
       if (ts.TotalMilliseconds>=1000)

@@ -500,6 +500,14 @@ namespace MediaPortal.Player
         return m_player.CurrentPosition;
       }
     }
+    static public double ContentStart
+    {
+      get 
+      { 
+        if (m_player==null) return 0;
+        return m_player.ContentStart;
+      }
+    }
 
     static public bool FullScreen
     {

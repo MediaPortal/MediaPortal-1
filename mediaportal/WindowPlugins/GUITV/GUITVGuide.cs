@@ -891,6 +891,7 @@ namespace MediaPortal.GUI.TV
         {
           img.SetPosition(iStartXPos,ypos);
           img.Width=iTotalWidth;
+          img.DoUpdate();
         }
         bool bRecording=false;
         foreach (TVRecording record in m_recordings)
@@ -1117,6 +1118,7 @@ namespace MediaPortal.GUI.TV
             {
               img.SetPosition(iStartXPos,ypos);
               img.Width=iWidth;
+              img.DoUpdate();
             }
             if (bRecording)
               img.TexutureIcon="tvguide_record_button.png";
@@ -1141,10 +1143,10 @@ namespace MediaPortal.GUI.TV
             GUILabelControl labelTemplate;
             if (program.IsRunningAt(dt))
             {
-              labelTemplate=GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
+              labelTemplate=GetControl((int)Controls.LABEL_TITLE_DARK_TEMPLATE) as GUILabelControl;
             }
             else
-              labelTemplate=GetControl((int)Controls.LABEL_TITLE_DARK_TEMPLATE) as GUILabelControl;
+              labelTemplate=GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
             
             if (labelTemplate!=null) 
             {
@@ -1158,9 +1160,9 @@ namespace MediaPortal.GUI.TV
             img.TextColor2=0xffffffff;
             img.Label2=program.Genre;
             if (program.IsRunningAt(dt))
-              labelTemplate=GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
-            else 
               labelTemplate=GetControl((int)Controls.LABEL_GENRE_DARK_TEMPLATE) as GUILabelControl;
+            else 
+              labelTemplate=GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
             if (labelTemplate!=null) 
             {
               img.FontName2=labelTemplate.FontName;
@@ -1177,160 +1179,24 @@ namespace MediaPortal.GUI.TV
             if (bEndsAfter)
             {
               img.TexutureFocusRightName="tvguide_arrow_selected_right.png";
-              img.TexutureNoFocusRightName="tvguide_arrow_right.png";
+              img.TexutureNoFocusRightName="tvguide_arrow_light_right.png";
               if (program.IsRunningAt(dt))
               {
-                img.TexutureNoFocusRightName="tvguide_arrow_light_right.png";
+                img.TexutureNoFocusRightName="tvguide_arrow_right.png";
               }
             }
             if (bStartsBefore)
             {
               img.TexutureFocusLeftName="tvguide_arrow_selected_left.png";
-              img.TexutureNoFocusLeftName="tvguide_arrow_left.png";
+              img.TexutureNoFocusLeftName="tvguide_arrow_light_left.png";
               if (program.IsRunningAt(dt))
               {
-                img.TexutureNoFocusLeftName="tvguide_arrow_light_left.png";
+                img.TexutureNoFocusLeftName="tvguide_arrow_left.png";
               }
             }
 
             img.SetPosition(img.XPosition, img.YPosition);
-            /*
-
-            int ypos=GetControl(iChannel+(int)Controls.IMG_CHAN1).YPosition;
-            int iControlId=100+iChannel*100+iProgram*10;
-            GUIImage img=(GUIImage)GetControl(iControlId);
-            int iWidth=iEndXPos-iStartXPos;
-            if (iWidth >5) iWidth-=5;
-            else iWidth=1;
-            if (img==null)
-            {
-              string strNFName="tvChannelNF.png";
-              if (!m_bUseColors) strNFName="blue-rectangleNF.png";
-              Debug.WriteLine("add "+ strTitle + " chn:"+iChannel.ToString() + " x:" +iStartXPos.ToString() + " y:" + ypos.ToString() + " width:"+ iWidth.ToString() +" height:"+ height.ToString() );
-              img = new GUIImage(GetID,iControlId,iStartXPos,ypos,iWidth,height-2,strNFName,0x0);
-              img.AllocResources();
-              GUIControl cntl=(GUIControl)img;
-              Add(ref cntl);
-            }
-            else
-            {
-              img.SetPosition(iStartXPos,ypos);
-              img.Width=iWidth;
-            }
-            img.Data=program.Clone();
-            img.ColourDiffuse=GetColorForGenre(program.Genre);
-
-            height=height-10;
-            height/=2;
-            iControlId++;
-            GUILabelControl labelTemplate;
-            if (!bRecording) 
-              labelTemplate=GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
-            else
-              labelTemplate=GetControl((int)Controls.LABEL_TITLE_TEMPLATE_REC) as GUILabelControl;
-            if (labelTemplate!=null) labelTemplate.IsVisible=false;
-            
-            iWidth=iEndXPos-iStartXPos;
-            if (iWidth>10) iWidth -=10;
-            else iWidth=1;
-            GUIFadeLabel label=(GUIFadeLabel)GetControl(iControlId);
-            if (label==null)
-            {
-              label = new GUIFadeLabel(GetID,iControlId,iStartXPos+5,ypos,iWidth,height,"font13", 0xffffffff,GUIControl.Alignment.ALIGN_LEFT);
-              label.Clear();
-              label.Add(strTitle);
-              if (labelTemplate!=null) 
-              {
-                label.FontName=labelTemplate.FontName;
-                label.TextColor=labelTemplate.TextColor;
-              }
-              label.AllowScrolling=false;
-              label.AllocResources();
-              GUIControl cntl=(GUIControl)label;
-              Add(ref cntl);
-            }
-            else
-            {
-              label.Clear();
-              label.Add(strTitle);
-              if (labelTemplate!=null) 
-              {
-                label.FontName=labelTemplate.FontName;
-                label.TextColor=labelTemplate.TextColor;
-              }
-              label.XPosition=iStartXPos+5;
-              label.YPosition=ypos;
-              label.AllowScrolling=false;
-              label.Height=height;
-              label.Width=iWidth ;
-            }
-
-            iControlId++;
-            if (bEndsAfter)
-            {
-              label=(GUIFadeLabel)GetControl(iControlId);
-              if (label==null)
-              {
-                label = new GUIFadeLabel(GetID,iControlId,iEndXPos-20,ypos+8+height/4,30,height,"font13", 0xffffffff,GUIControl.Alignment.ALIGN_LEFT);
-                label.Clear();
-                label.Add(">");
-                label.AllowScrolling=false;
-                label.AllocResources();
-                GUIControl cntl=(GUIControl)label;
-                Add(ref cntl);
-              }
-              else
-              {
-                label.Clear();
-                label.Add(">");
-                label.XPosition=iEndXPos-20;
-                label.YPosition=8+ypos+height/4;
-                label.Height=height;
-                label.AllowScrolling=false;
-                label.Width=30;
-              }
-            }
-
-            iControlId++;
-            ypos+=height;
-            iWidth=(iEndXPos-iStartXPos);
-            if (iWidth>10) iWidth-=10;
-            else iWidth=1;
-            labelTemplate=GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
-            if (labelTemplate!=null)
-              labelTemplate.IsVisible=false;
-            label=(GUIFadeLabel)GetControl(iControlId);
-            if (label==null)
-            {
-              label = new GUIFadeLabel(GetID,iControlId,iStartXPos+5,ypos,iWidth ,height,"font13", 0xffffffff,GUIControl.Alignment.ALIGN_LEFT);
-              if (labelTemplate!=null)
-              {
-                label.FontName=labelTemplate.FontName;
-                label.TextColor=labelTemplate.TextColor;
-              }
-              label.Clear();
-              label.Add(program.Genre);
-              label.AllocResources();
-              label.AllowScrolling=false;
-              GUIControl cntl=(GUIControl)label;
-              Add(ref cntl);
-            }
-            else
-            {
-              label.Clear();
-              label.Add(program.Genre);
-              if (labelTemplate!=null)
-              {
-                label.FontName=labelTemplate.FontName;
-                label.TextColor=labelTemplate.TextColor;
-              }
-              label.XPosition=iStartXPos+5;
-              label.YPosition=ypos;
-              label.Height=height;
-              label.AllowScrolling=false;
-              label.Width=iWidth ;
-            }
-*/          
+            img.DoUpdate();
             iProgram++;
           }
         }

@@ -821,6 +821,7 @@ namespace MediaPortal.TV.Recording
           dtStart=prog.StartTime;
           dtEnd=prog.EndTime;
           dtStarted=Recorder.TimeRecordingStarted;
+          if (dtStarted<dtStart) dtStarted=dtStart;
           Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
         }
         else 
@@ -831,6 +832,7 @@ namespace MediaPortal.TV.Recording
             dtStart=rec.StartTime;
             dtEnd=rec.EndTime;
             dtStarted=Recorder.TimeRecordingStarted;
+            if (dtStarted<dtStart) dtStarted=dtStart;
             Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
           }
         }
@@ -844,6 +846,7 @@ namespace MediaPortal.TV.Recording
           dtStart=prog.StartTime;
           dtEnd=prog.EndTime;
           dtStarted=Recorder.TimeTimeshiftingStarted;
+          if (dtStarted<dtStart) dtStarted=dtStart;
           Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
         }
         else
@@ -857,6 +860,7 @@ namespace MediaPortal.TV.Recording
           dtEnd=dtEnd.AddHours(2);
 
           dtStarted=Recorder.TimeTimeshiftingStarted;
+          if (dtStarted<dtStart) dtStarted=dtStart;
           Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
         }
       }
@@ -921,39 +925,39 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// this method will update all tags for the tv progress bar
     /// </summary>
-    static void SetProgressBarProperties(DateTime StartTime,DateTime RecordingStarted, DateTime EndTime)
+    static void SetProgressBarProperties(DateTime MovieStartTime,DateTime RecordingStarted, DateTime MovieEndTime)
     {
-      TimeSpan tsDuration = (EndTime-StartTime);
-      float fDuration=(float)tsDuration.TotalSeconds;
+      TimeSpan tsMovieDuration = (MovieEndTime-MovieStartTime);
+      float fMovieDurationInSecs=(float)tsMovieDuration.TotalSeconds;
 
-      GUIPropertyManager.SetProperty("#TV.Record.duration",Utils.SecondsToShortHMSString((int)fDuration));
+      GUIPropertyManager.SetProperty("#TV.Record.duration",Utils.SecondsToShortHMSString((int)fMovieDurationInSecs));
       
-      // get start recording point
-      TimeSpan tsRecStart= (RecordingStarted-StartTime);
-      float fRecStartSec=(float)tsRecStart.TotalSeconds;
-      float percentRecStart = (fRecStartSec/fDuration)*100.00f;
+      // get point where we started timeshifting/recording relative to the start of movie
+      TimeSpan tsRecordingStart= (RecordingStarted-MovieStartTime)+new TimeSpan(0,0,0,(int)g_Player.ContentStart,0);
+      float fRelativeRecordingStart=(float)tsRecordingStart.TotalSeconds;
+      float percentRecStart = (fRelativeRecordingStart/fMovieDurationInSecs)*100.00f;
       int iPercentRecStart=(int)Math.Floor(percentRecStart);
       GUIPropertyManager.SetProperty("#TV.Record.percent1",iPercentRecStart.ToString());
 
-      // get current view point
+      // get the point we're currently watching relative to the start of movie
       if (g_Player.Playing && g_Player.IsTV)
       {
-        float fViewPointSec=(float)g_Player.CurrentPosition + fRecStartSec;
-        float fPercentViewPoint = (fViewPointSec/fDuration)*100.00f;
+        float fRelativeViewPoint=(float)g_Player.CurrentPosition+ fRelativeRecordingStart;
+        float fPercentViewPoint = (fRelativeViewPoint / fMovieDurationInSecs)*100.00f;
         int iPercentViewPoint=(int)Math.Floor(fPercentViewPoint);
         GUIPropertyManager.SetProperty("#TV.Record.percent2",iPercentViewPoint.ToString());
-        GUIPropertyManager.SetProperty("#TV.Record.current",Utils.SecondsToShortHMSString((int)fViewPointSec));
+        GUIPropertyManager.SetProperty("#TV.Record.current",Utils.SecondsToShortHMSString((int)fRelativeViewPoint));
       } 
       else
       {
         GUIPropertyManager.SetProperty("#TV.Record.percent2",iPercentRecStart.ToString());
-        GUIPropertyManager.SetProperty("#TV.Record.current",Utils.SecondsToShortHMSString((int)fRecStartSec));
+        GUIPropertyManager.SetProperty("#TV.Record.current",Utils.SecondsToShortHMSString((int)fRelativeRecordingStart));
       }
 
-      // get live point
-      TimeSpan tsLive= (DateTime.Now-StartTime);
-      float   fLiveSec=(float)tsLive.TotalSeconds;
-      float percentLive = (fLiveSec/fDuration)*100.00f;
+      // get point the live program is now
+      TimeSpan tsRelativeLivePoint= (DateTime.Now-MovieStartTime);
+      float   fRelativeLiveSec=(float)tsRelativeLivePoint.TotalSeconds;
+      float percentLive = (fRelativeLiveSec/fMovieDurationInSecs)*100.00f;
       int   iPercentLive=(int)Math.Floor(percentLive);
       GUIPropertyManager.SetProperty("#TV.Record.percent3",iPercentLive.ToString());
 

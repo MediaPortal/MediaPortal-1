@@ -233,43 +233,45 @@ namespace MediaPortal.GUI.Library
         m_guiFill1.Width=(int)Math.Floor(fWidth);
         iCurPos=m_guiFill1.Width+m_guiFill1.XPosition;
         m_guiFill1.DoUpdate();
-        m_guiFill1.Render();
+        m_guiFill1.Render();// red
       }
 
 			//render 2nd color
       int iPercent;
      // if (m_guiFill2.Allocated==true)
       {
-        if (Percentage2>Percentage1)
+        if (Percentage2>=Percentage1)
         {
           iPercent=Percentage2-Percentage1;
-          fWidth=(float)iWidth;
-          fWidth/=100.0f;
-          fWidth*=(float)iPercent;
-          m_guiFill2.Width=(int)Math.Floor(fWidth);
-          m_guiFill2.Height=m_guiFill1.Height;
-          m_guiFill2.SetPosition(m_guiFill1.XPosition+m_guiFill1.Width,m_guiFill1.YPosition);
-          m_guiFill2.DoUpdate();
-          m_guiFill2.Render();
-          iCurPos=m_guiFill2.Width+m_guiFill2.XPosition;
         }
+        else iPercent=0;
+        fWidth=(float)iWidth;
+        fWidth/=100.0f;
+        fWidth*=(float)iPercent;
+        m_guiFill2.Width=(int)Math.Floor(fWidth);
+        m_guiFill2.Height=m_guiFill1.Height;
+        m_guiFill2.SetPosition(m_guiFill1.XPosition+m_guiFill1.Width,m_guiFill1.YPosition);
+        m_guiFill2.DoUpdate();
+        m_guiFill2.Render();
+        iCurPos=m_guiFill2.Width+m_guiFill2.XPosition;
       }
 
      // if (m_guiFill3.Allocated==true)
       {
-        if (Percentage3 >Percentage1 && Percentage3 > Percentage2)
+        if (Percentage3 >= Percentage2)
         {
           //render 3th color
           iPercent=Percentage3-Percentage2;
-          fWidth=(float)iWidth;
-          fWidth/=100.0f;
-          fWidth*=(float)iPercent;
-          m_guiFill3.Width=(int)Math.Floor(fWidth);
-          m_guiFill3.Height=m_guiFill2.Height;
-          m_guiFill3.SetPosition(m_guiFill2.XPosition+m_guiFill2.Width,m_guiFill2.YPosition);
-          m_guiFill3.DoUpdate();
-          m_guiFill3.Render();
         }
+        else iPercent=0;
+        fWidth=(float)iWidth;
+        fWidth/=100.0f;
+        fWidth*=(float)iPercent;
+        m_guiFill3.Width=(int)Math.Floor(fWidth);
+        m_guiFill3.Height=m_guiFill2.Height;
+        m_guiFill3.SetPosition(m_guiFill2.XPosition+m_guiFill2.Width,m_guiFill2.YPosition);
+        m_guiFill3.DoUpdate();
+        m_guiFill3.Render();
       }
 
 			// render ticks

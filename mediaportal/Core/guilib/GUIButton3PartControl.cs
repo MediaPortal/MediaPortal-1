@@ -563,6 +563,13 @@ namespace MediaPortal.GUI.Library
       {
         m_imgIcon.SetPosition(m_dwPosX+IconOffsetX,m_dwPosY+IconOffsetY );
       }
+      m_imgFocusLeft.DoUpdate();
+      m_imgFocusMid.DoUpdate();
+      m_imgFocusRight.DoUpdate();
+      m_imgNoFocusLeft.DoUpdate();
+      m_imgNoFocusMid.DoUpdate();
+      m_imgNoFocusRight.DoUpdate();
+      m_imgIcon.DoUpdate();
     }
 
 		public void Refresh()
