@@ -1,3 +1,5 @@
+02-08-2004  tag reader  : added : wma tag reader
+
 01-08-2004  setup       : added : Setup of external tuner channels
 01-08-2004  setup       : fixed : Sort order of radio channels
 01-08-2004  my movies   : added : view by genres->will use thumb\genre.jpg for thumbnails (where genre = action, comics,...)
