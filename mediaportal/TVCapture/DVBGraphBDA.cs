@@ -3222,6 +3222,7 @@ namespace MediaPortal.TV.Recording
 
 				graphRunning=true;
 				m_graphState = State.Radio;
+				Log.Write("DVBGraphBDA:Listening to radio..");
 				return;
 			}
 

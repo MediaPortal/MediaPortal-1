@@ -12,6 +12,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.Radio.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
+using MediaPortal.TV.Recording;
 
 namespace MediaPortal.GUI.Music
 {
@@ -101,7 +102,7 @@ namespace MediaPortal.GUI.Music
         return false;
       }
 
-      if (!g_Player.IsRadio && !g_Player.IsMusic) 
+      if (!g_Player.IsRadio && !g_Player.IsMusic &&!Recorder.IsRadio()) 
 			{
 				m_strFile=String.Empty;
         return false;
@@ -585,7 +586,14 @@ namespace MediaPortal.GUI.Music
         }
         if (tag==null)
         {
-            // if we're playing a radio 
+            // if we're playing a radio
+						if (Recorder.IsRadio())
+						{
+							tag = new MusicTag();
+							string cover=Utils.GetCoverArt(@"Thumbs\Radio",Recorder.RadioStationName());
+							if (cover!=String.Empty) thumb=cover;
+							tag.Title=Recorder.RadioStationName();
+						}
             if (g_Player.IsRadio)
             {
               // then check which radio station we're playing

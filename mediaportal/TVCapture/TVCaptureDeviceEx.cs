@@ -71,6 +71,7 @@ namespace MediaPortal.TV.Recording
 		[NonSerialized]	private bool				_mIsAllocated							= false;
 		[NonSerialized]	private DateTime		_mRecordingStartTime;
 		[NonSerialized]	private DateTime		_mTimeshiftingStartedTime;
+		[NonSerialized] private string      radioStationName="";
 
 		/// <summary>
 		/// #MW#
@@ -1337,6 +1338,7 @@ namespace MediaPortal.TV.Recording
 			{
 				_mGraph.TuneRadioChannel(station);
 			}
+			radioStationName=station.Name;
 		}
 		public void TuneRadioChannel(RadioStation station)
 		{
@@ -1350,6 +1352,7 @@ namespace MediaPortal.TV.Recording
 			{
 				_mGraph.TuneRadioChannel(station);
 			}
+			radioStationName=station.Name;
 		}
 		public void TuneRadioFrequency(int frequency)
 		{
@@ -1365,6 +1368,10 @@ namespace MediaPortal.TV.Recording
 			{
 				_mGraph.TuneRadioFrequency(frequency);
 			}
+		}
+		public string RadioStation
+		{
+			get { return radioStationName;}
 		}
   }
 }  

@@ -629,6 +629,30 @@ namespace MediaPortal.TV.Recording
 		}
 
 
+		static public bool IsRadio()
+		{
+			foreach (TVCaptureDevice dev in m_tvcards)
+			{
+				if (dev.IsRadio)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		static public string RadioStationName()
+		{
+			foreach (TVCaptureDevice dev in m_tvcards)
+			{
+				if (dev.IsRadio)
+				{
+					return dev.RadioStation;
+				}
+			}
+			return string.Empty;
+		}
+
 		static public void StartRadio(string radioStationName)
 		{
 			if (radioStationName==null) 
