@@ -416,11 +416,7 @@ namespace MediaPortal.TV.Recording
     static public bool Previewing
     {
       get{
-        foreach (TVCaptureDevice dev in m_tvcards)
-        {
-          if (dev.Previewing) return true;
-        }
-        return false;
+        return m_bPreviewing;
       }
       set
       {

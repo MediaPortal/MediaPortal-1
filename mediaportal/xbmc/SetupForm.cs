@@ -196,6 +196,9 @@ namespace MediaPortal
     private System.Windows.Forms.ColumnHeader columnHeader9;
     private System.ComponentModel.IContainer components;
     private System.Windows.Forms.CheckBox checkBoxARDVD;
+    private System.Windows.Forms.Label label17;
+    private System.Windows.Forms.TextBox textBoxPlayLists;
+    private System.Windows.Forms.Button btnPlayListFolder;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -327,6 +330,7 @@ namespace MediaPortal
       this.comboAudioPlayer = new System.Windows.Forms.ComboBox();
       this.TabDVDPlayer = new System.Windows.Forms.TabPage();
       this.DVDPlayerBox = new System.Windows.Forms.GroupBox();
+      this.checkBoxARDVD = new System.Windows.Forms.CheckBox();
       this.comboDVDNavigator = new System.Windows.Forms.ComboBox();
       this.label40 = new System.Windows.Forms.Label();
       this.comboDVDAudioRenderer = new System.Windows.Forms.ComboBox();
@@ -452,7 +456,9 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.checkBoxARDVD = new System.Windows.Forms.CheckBox();
+      this.label17 = new System.Windows.Forms.Label();
+      this.textBoxPlayLists = new System.Windows.Forms.TextBox();
+      this.btnPlayListFolder = new System.Windows.Forms.Button();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.tabPlayers.SuspendLayout();
@@ -906,6 +912,14 @@ namespace MediaPortal
       this.DVDPlayerBox.TabStop = false;
       this.DVDPlayerBox.Text = "DVD Player";
       // 
+      // checkBoxARDVD
+      // 
+      this.checkBoxARDVD.Location = new System.Drawing.Point(24, 288);
+      this.checkBoxARDVD.Name = "checkBoxARDVD";
+      this.checkBoxARDVD.Size = new System.Drawing.Size(224, 24);
+      this.checkBoxARDVD.TabIndex = 14;
+      this.checkBoxARDVD.Text = "Use PixelRatio correction for DVD\'s";
+      // 
       // comboDVDNavigator
       // 
       this.comboDVDNavigator.Location = new System.Drawing.Point(160, 248);
@@ -1039,45 +1053,48 @@ namespace MediaPortal
       // 
       // groupBox2
       // 
+      this.groupBox2.Controls.Add(this.btnPlayListFolder);
+      this.groupBox2.Controls.Add(this.textBoxPlayLists);
+      this.groupBox2.Controls.Add(this.label17);
       this.groupBox2.Controls.Add(this.checkBoxShufflePlaylists);
       this.groupBox2.Controls.Add(this.chkBoxRepeatAudioPlaylist);
       this.groupBox2.Controls.Add(this.txtboxAudioFiles);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.chkMusicID3);
-      this.groupBox2.Location = new System.Drawing.Point(24, 272);
+      this.groupBox2.Location = new System.Drawing.Point(24, 256);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(496, 88);
+      this.groupBox2.Size = new System.Drawing.Size(576, 104);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Music settings";
       // 
       // checkBoxShufflePlaylists
       // 
-      this.checkBoxShufflePlaylists.Location = new System.Drawing.Point(32, 56);
+      this.checkBoxShufflePlaylists.Location = new System.Drawing.Point(336, 24);
       this.checkBoxShufflePlaylists.Name = "checkBoxShufflePlaylists";
-      this.checkBoxShufflePlaylists.Size = new System.Drawing.Size(136, 24);
-      this.checkBoxShufflePlaylists.TabIndex = 2;
+      this.checkBoxShufflePlaylists.Size = new System.Drawing.Size(128, 24);
+      this.checkBoxShufflePlaylists.TabIndex = 4;
       this.checkBoxShufflePlaylists.Text = "Auto shuffle playlist";
       // 
       // chkBoxRepeatAudioPlaylist
       // 
-      this.chkBoxRepeatAudioPlaylist.Location = new System.Drawing.Point(32, 40);
+      this.chkBoxRepeatAudioPlaylist.Location = new System.Drawing.Point(336, 8);
       this.chkBoxRepeatAudioPlaylist.Name = "chkBoxRepeatAudioPlaylist";
       this.chkBoxRepeatAudioPlaylist.Size = new System.Drawing.Size(104, 16);
-      this.chkBoxRepeatAudioPlaylist.TabIndex = 1;
+      this.chkBoxRepeatAudioPlaylist.TabIndex = 3;
       this.chkBoxRepeatAudioPlaylist.Text = "Repeat playlists";
       // 
       // txtboxAudioFiles
       // 
-      this.txtboxAudioFiles.Location = new System.Drawing.Point(240, 40);
+      this.txtboxAudioFiles.Location = new System.Drawing.Point(88, 48);
       this.txtboxAudioFiles.Name = "txtboxAudioFiles";
       this.txtboxAudioFiles.Size = new System.Drawing.Size(232, 20);
-      this.txtboxAudioFiles.TabIndex = 3;
+      this.txtboxAudioFiles.TabIndex = 0;
       this.txtboxAudioFiles.Text = "";
       // 
       // label8
       // 
-      this.label8.Location = new System.Drawing.Point(176, 48);
+      this.label8.Location = new System.Drawing.Point(16, 56);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(64, 16);
       this.label8.TabIndex = 1;
@@ -1085,9 +1102,10 @@ namespace MediaPortal
       // 
       // chkMusicID3
       // 
-      this.chkMusicID3.Location = new System.Drawing.Point(32, 16);
+      this.chkMusicID3.Location = new System.Drawing.Point(336, 48);
       this.chkMusicID3.Name = "chkMusicID3";
-      this.chkMusicID3.TabIndex = 0;
+      this.chkMusicID3.Size = new System.Drawing.Size(104, 16);
+      this.chkMusicID3.TabIndex = 5;
       this.chkMusicID3.Text = "Show ID3 tags";
       // 
       // audioGroupBox
@@ -1098,14 +1116,14 @@ namespace MediaPortal
       this.audioGroupBox.Controls.Add(this.listAudioShares);
       this.audioGroupBox.Location = new System.Drawing.Point(24, 16);
       this.audioGroupBox.Name = "audioGroupBox";
-      this.audioGroupBox.Size = new System.Drawing.Size(496, 248);
+      this.audioGroupBox.Size = new System.Drawing.Size(576, 240);
       this.audioGroupBox.TabIndex = 0;
       this.audioGroupBox.TabStop = false;
       this.audioGroupBox.Text = "Music folders";
       // 
       // btnEditMusicShare
       // 
-      this.btnEditMusicShare.Location = new System.Drawing.Point(136, 216);
+      this.btnEditMusicShare.Location = new System.Drawing.Point(136, 208);
       this.btnEditMusicShare.Name = "btnEditMusicShare";
       this.btnEditMusicShare.Size = new System.Drawing.Size(48, 23);
       this.btnEditMusicShare.TabIndex = 3;
@@ -1114,7 +1132,7 @@ namespace MediaPortal
       // 
       // btnDelAudioShare
       // 
-      this.btnDelAudioShare.Location = new System.Drawing.Point(72, 216);
+      this.btnDelAudioShare.Location = new System.Drawing.Point(72, 208);
       this.btnDelAudioShare.Name = "btnDelAudioShare";
       this.btnDelAudioShare.Size = new System.Drawing.Size(56, 23);
       this.btnDelAudioShare.TabIndex = 2;
@@ -1123,7 +1141,7 @@ namespace MediaPortal
       // 
       // btnAddAudioShare
       // 
-      this.btnAddAudioShare.Location = new System.Drawing.Point(8, 216);
+      this.btnAddAudioShare.Location = new System.Drawing.Point(8, 208);
       this.btnAddAudioShare.Name = "btnAddAudioShare";
       this.btnAddAudioShare.Size = new System.Drawing.Size(56, 23);
       this.btnAddAudioShare.TabIndex = 1;
@@ -2070,13 +2088,30 @@ namespace MediaPortal
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
       // 
-      // checkBoxARDVD
+      // label17
       // 
-      this.checkBoxARDVD.Location = new System.Drawing.Point(24, 288);
-      this.checkBoxARDVD.Name = "checkBoxARDVD";
-      this.checkBoxARDVD.Size = new System.Drawing.Size(224, 24);
-      this.checkBoxARDVD.TabIndex = 14;
-      this.checkBoxARDVD.Text = "Use PixelRatio correction for DVD\'s";
+      this.label17.Location = new System.Drawing.Point(16, 80);
+      this.label17.Name = "label17";
+      this.label17.Size = new System.Drawing.Size(80, 16);
+      this.label17.TabIndex = 4;
+      this.label17.Text = "Playlist folder:";
+      // 
+      // textBoxPlayLists
+      // 
+      this.textBoxPlayLists.Location = new System.Drawing.Point(88, 72);
+      this.textBoxPlayLists.Name = "textBoxPlayLists";
+      this.textBoxPlayLists.Size = new System.Drawing.Size(392, 20);
+      this.textBoxPlayLists.TabIndex = 1;
+      this.textBoxPlayLists.Text = "";
+      // 
+      // btnPlayListFolder
+      // 
+      this.btnPlayListFolder.Location = new System.Drawing.Point(488, 72);
+      this.btnPlayListFolder.Name = "btnPlayListFolder";
+      this.btnPlayListFolder.Size = new System.Drawing.Size(24, 23);
+      this.btnPlayListFolder.TabIndex = 2;
+      this.btnPlayListFolder.Text = "...";
+      this.btnPlayListFolder.Click += new System.EventHandler(this.btnPlayListFolder_Click);
       // 
       // SetupForm
       // 
@@ -2315,7 +2350,7 @@ namespace MediaPortal
         txtboxAudioFiles.Text=xmlreader.GetValueAsString("music","extensions",".mp3,.wma,.ogg,.flac,.wav");
         txtBoxPictureFiles.Text=xmlreader.GetValueAsString("pictures","extensions",".jpg,.jpeg,.gif,.bmp,.pcx,.png");
         txtboxVideoFiles.Text=xmlreader.GetValueAsString("movies","extensions",".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov");
-
+        textBoxPlayLists.Text=xmlreader.GetValueAsString("music","playlists","");
         LoadWeather(xmlreader);
 
 
@@ -2546,7 +2581,8 @@ namespace MediaPortal
         xmlWriter.SetValueAsBool("musicfiles","repeat",chkBoxRepeatAudioPlaylist.Checked);
         xmlWriter.SetValueAsBool("movies","repeat",chkBoxVideoRepeat.Checked);
         xmlWriter.SetValueAsBool("musicfiles","autoshuffle",checkBoxShufflePlaylists.Checked);
-  			
+  		  xmlWriter.SetValue("music","playlists",textBoxPlayLists.Text);
+
         xmlWriter.SetValue("music","extensions", txtboxAudioFiles.Text);
         xmlWriter.SetValue("movies","extensions", txtboxVideoFiles.Text);
         xmlWriter.SetValue("pictures","extensions",txtBoxPictureFiles.Text);
@@ -3369,6 +3405,15 @@ namespace MediaPortal
     private void listCaptureCards_DoubleClick(object sender, System.EventArgs e)
     {
       btnEditCaptureDevice_Click(null,null);    
+    }
+
+    private void btnPlayListFolder_Click(object sender, System.EventArgs e)
+    {
+      FolderBrowserDialog dlg=new FolderBrowserDialog();
+      dlg.ShowNewFolderButton=true;
+      dlg.ShowDialog(this);
+      if (dlg.SelectedPath==null) return;
+      textBoxPlayLists.Text=dlg.SelectedPath;
     }
 	}
 

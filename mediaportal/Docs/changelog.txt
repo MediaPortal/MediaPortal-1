@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  11-05-2004  my music    : added : playlist folder (playlists gets saved here). 
+  11-05-2004  general     : added : space before & after | character when scrolling
+  11-05-2004  OSD keyboard: added : cursor keys & blinking caret
+  11-05-2004  my videos   : added : refresh IMDB info now shows onscreen keyboard so you can change the search string
   11-05-2004  my movies   : added : eject cd/dvd button
   11-05-2004  general/skin: added : <allowoverlay> tag to each xml so skinners can decide whether or not overlay window should b visible
   11-05-2004  MY TV       : fixed : problem with tvguide.xml if start/stop times where only 12 instead of 14 digits
