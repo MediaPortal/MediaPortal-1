@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.TV
             m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
           }
           
-					if (iControl==(int)Controls.BTN_CHANNEL)
+					if (iControl==(int)Controls.BTN_GROUP)
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
 						OnMessage(msg);         
