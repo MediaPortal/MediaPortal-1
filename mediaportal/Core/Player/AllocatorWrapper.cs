@@ -324,6 +324,15 @@ namespace MediaPortal.Player
 			/// <returns></returns>
       public int PresentImage(uint uid, VMR9PresentationInfo presInfo)
       {
+				//when not fullscreen, limit the FPS 
+				if (!GUIGraphicsContext.IsFullScreenVideo)
+				{
+					//skip every 2nd frame
+					if ( (frameCounter %2)==0)
+					{
+						return 0;
+					}
+				}
 				scene.Render(m_nativeSize);
 				frameCounter++;
         return 0;
