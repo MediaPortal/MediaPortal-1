@@ -343,7 +343,7 @@ namespace MediaPortal.GUI.Music
               //and slide out the visualisation
               AlbumArtPicture.XPosition=(int)fXPos-GUIGraphicsContext.OffsetX;
               AlbumArtPicture.Width = iStep*m_iFrame;
-              if (AlbumArtPicture.Width<=0) AlbumArtPicture.Width=1;
+              if ((AlbumArtPicture.Width<=0) || (m_iFrame==0)) AlbumArtPicture.Width=1;
               int x=(int)AlbumArtPicture.Width+AlbumArtPicture.XPosition+GUIGraphicsContext.OffsetX;
               int w=(iWidth-(x-(int)fXPos));
               GUIGraphicsContext.VideoWindow = new Rectangle((int)x,(int)fYPos,
