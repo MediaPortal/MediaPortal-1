@@ -485,13 +485,13 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (interleaved)");
         cat = PinCategory.Capture;
         med = MediaType.Interleaved;
-        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
+        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, new Guid[1]{med}, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
         if (hr!=0)
         {
           DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (video)");
           cat = PinCategory.Capture;
           med = MediaType.Video;
-          hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
+          hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, new Guid[1]{med}, m_filterCaptureVideo, m_filterCompressorVideo, m_muxFilter ); 
           if (hr!=0)
           {
             DirectShowUtil.DebugWrite("SWGraph:FAILED:videocap:to connect video capture->compressor :0x{0:X}",hr);
@@ -501,7 +501,7 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor ");
         cat = PinCategory.Capture;
         med = MediaType.Audio;
-        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureVideo, m_filterCompressorAudio, m_muxFilter ); 
+        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, new Guid[1]{med}, m_filterCaptureVideo, m_filterCompressorAudio, m_muxFilter ); 
         if (hr==0)
         {
           DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor :succeeded");
@@ -514,7 +514,7 @@ namespace MediaPortal.TV.Recording
         DirectShowUtil.DebugWrite("SWGraph:audiocap:connect audio capture->compressor ");
         cat = PinCategory.Capture;
         med = MediaType.Audio;
-        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null, m_filterCaptureAudio, m_filterCompressorAudio, m_muxFilter ); 
+        hr = m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, new Guid[1]{med}, m_filterCaptureAudio, m_filterCompressorAudio, m_muxFilter ); 
         if (hr!=0)
         {
           DirectShowUtil.DebugWrite("SWGraph:FAILED:audiocap:to connect audio capture->compressor :0x{0:X}",hr);
