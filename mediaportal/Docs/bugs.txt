@@ -5,3 +5,5 @@ Bugs:
   - 26-04-2004 my music   : F3 and get the album immediately, the thumb is not shown. Will be shown when some other song gets a list on F3
 
   - 28-04-2004 my tv : crossbar  Failed to set crossbar routing
+  - 28-04-2004 my tv : tuner not found
+  

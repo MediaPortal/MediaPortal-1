@@ -1,4 +1,15 @@
 History: (dd-mm-yyyy)
+  29-04-2004: my TV       : added : TV overlay
+  29-04-2004: my music    : added : artists view now shows artists->artist->albums of artist->songs of album&artist
+  29-04-2004: general     : added : speed-up of loading&saving mediaportal.xml file
+  29-04-2004: general     : added : mediaportal took 100% cpu when minimized
+  29-04-2004: general     : added : if mediaportal window didnt had the focus it still responded to mouse movements 
+  29-04-2004: setup       : added : tvchannels: xmltv timezone correction
+  29-04-2004: setup       : added : tvchannels: use timezone from xmltv file or not option
+  29-04-2004: setup       : added : tvchannels: allow frequencies to b entered in MHz format
+  29-04-2004: setup       : added : tvcapture : property pages for tuner & crossbars
+  29-04-2004: setup       : added : tvcapture : check on frequency format (caused exception when wrong)
+  
   28-04-2004: MY TV       : added : support for VP pins.this fixes tv preview problems on some cards
   28-04-2004: MY TV       : added : better way 2 find tv tuner
   28-04-2004: MY TV       : added : support for multiple crossbars

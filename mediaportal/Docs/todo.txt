@@ -45,6 +45,7 @@ Settings:
   - all :-)
 
 General:
+  - setup:add timezone correction for tvguide
   - setup:Auto Tune 
   - caller ID
   - seperate module/database for TV-series
