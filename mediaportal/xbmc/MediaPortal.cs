@@ -662,7 +662,7 @@ public class MediaPortalApp : D3DApp, IRender
 			bool tmpPluginsFlag=false;
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				tmpPluginsFlag=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
+				tmpPluginsFlag=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 			}
 			if(tmpPluginsFlag==true)
 				DVBGraphSS2.MenuItemClick(msg.WParam.ToInt32());
