@@ -119,6 +119,7 @@
 		<width>430</width>
 		<height>180</height>
 		<label>-</label>
+		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
