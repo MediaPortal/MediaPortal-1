@@ -127,6 +127,7 @@ namespace MediaPortal
     protected virtual void InitializeDeviceObjects() { /* Do Nothing */ }
     protected virtual void OnDeviceReset(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
     protected virtual void FrameMove() { /* Do Nothing */ }
+		protected virtual void OnProcess() {/* Do Nothing */ }
     protected virtual void Render() { /* Do Nothing */ }
     //protected virtual void OnDeviceLost(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
     //protected virtual void OnDeviceDisposing(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
@@ -2168,6 +2169,7 @@ namespace MediaPortal
           break;
         try
         {
+					OnProcess();
           FrameMove();
           FullRender();
           int SleepingTime=GetSleepingTime();

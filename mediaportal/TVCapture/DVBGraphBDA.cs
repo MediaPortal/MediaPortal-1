@@ -2236,6 +2236,7 @@ namespace MediaPortal.TV.Recording
 		public void Process()
 		{
 			if (m_SectionsTables==null) return;
+			Log.Write("vmr9:{0} fps:{1}",GUIGraphicsContext.Vmr9Active  ,GUIGraphicsContext.Vmr9FPS);
 			if(GUIGraphicsContext.Vmr9Active  && GUIGraphicsContext.Vmr9FPS < 1f)
 			{
 				Vmr9.Repaint();// repaint vmr9

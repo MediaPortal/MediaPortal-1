@@ -1895,6 +1895,12 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
+			if (m_captureGraphBuilder==null) return;
+			if (m_filterCaptureVideo==null) return;
+			if(GUIGraphicsContext.Vmr9Active  && GUIGraphicsContext.Vmr9FPS < 1f)
+			{
+				Vmr9.Repaint();// repaint vmr9
+			}
 		}
 		
 		public PropertyPageCollection PropertyPages()

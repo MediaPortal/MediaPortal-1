@@ -752,6 +752,15 @@ namespace MediaPortal.TV.Recording
     static public void Process()
     {
       if (m_eState!=State.Initialized) return;
+			if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f)
+			{
+				for (int i=0; i < m_tvcards.Count;++i)
+				{
+					TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
+					dev.Process();
+				}
+			}
+
       TimeSpan ts=DateTime.Now-m_dtStart;
       if (ts.TotalMilliseconds<1000) return;
       Recorder.HandleRecordings();
