@@ -84,7 +84,8 @@ namespace MediaPortal.GUI.Music
       SORT_TITLE = 5, 
       SORT_ARTIST = 6, 
       SORT_ALBUM = 7, 
-      SORT_FILENAME = 8
+      SORT_FILENAME = 8,
+			SORT_RATING=9
     }
 
     enum View
@@ -329,8 +330,12 @@ namespace MediaPortal.GUI.Music
                 _MapSettings.SortBy = (int)SortMethod.SORT_FILENAME;
                 break;
               case SortMethod.SORT_FILENAME : 
-                _MapSettings.SortBy = (int)SortMethod.SORT_NAME;
-                break;
+                _MapSettings.SortBy = (int)SortMethod.SORT_RATING;
+								break;
+							case SortMethod.SORT_RATING: 
+								_MapSettings.SortBy = (int)SortMethod.SORT_NAME;
+								break;
+
             }
             OnSort();
             GUIControl.FocusControl(GetID, iControl);
@@ -645,7 +650,10 @@ namespace MediaPortal.GUI.Music
           break;
         case SortMethod.SORT_FILENAME : 
           strLine = GUILocalizeStrings.Get(363);
-          break;
+					break;
+				case SortMethod.SORT_RATING: 
+					strLine = GUILocalizeStrings.Get(367);
+					break;
       }
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSORTBY, strLine);
 
@@ -849,9 +857,12 @@ namespace MediaPortal.GUI.Music
                 item.Label = String.Format("{0} - {1}", tag.Album, tag.Title);
               }
             }
+						if (method == SortMethod.SORT_RATING)
+						{
+							item.Label2 = String.Format("{0}", tag.Rating);
+						}
           }
         }
-        
         
         if (method == SortMethod.SORT_SIZE || method == SortMethod.SORT_FILENAME)
         {
@@ -882,7 +893,7 @@ namespace MediaPortal.GUI.Music
             item.Label2 = item.FileInfo.CreationTime.ToShortDateString() + " " + item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
           }
         }
-        else
+        else if (method != SortMethod.SORT_RATING)
         {
           item.Label2 = "";
           if (tag != null)
@@ -940,6 +951,20 @@ namespace MediaPortal.GUI.Music
           }
         
 
+				case SortMethod.SORT_RATING:
+					int iRating1 = 0;
+					int iRating2 = 0;
+					if (item1.MusicTag != null) iRating1 = ((MusicTag)item1.MusicTag).Rating;
+					if (item2.MusicTag != null) iRating2 = ((MusicTag)item2.MusicTag).Rating;
+					if (bAscending)
+					{
+						return (int)(iRating1 - iRating2);
+					}
+					else
+					{
+						return (int)(iRating2 - iRating1);
+					}
+					break;
         case SortMethod.SORT_DATE : 
           if (item1.FileInfo == null) return - 1;
           if (item2.FileInfo == null) return - 1;
@@ -1365,6 +1390,7 @@ namespace MediaPortal.GUI.Music
                 tag.Duration = song.Duration;
                 tag.Title = song.Title;
                 tag.Track = song.Track;
+								tag.Rating=song.Rating;
               }
             }//if (strExtension!=".cda" )
             else // int_20h: if it is .cda then get info from freedb

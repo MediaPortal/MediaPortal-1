@@ -16,6 +16,7 @@ namespace MediaPortal.TagReader
     int    m_iDuration=0;
     int    m_iTrack=0;
     int    _TimesPlayed=0;
+		int    m_iRating=0;
 		
 		/// <summary>
 		/// empty constructor
@@ -40,6 +41,7 @@ namespace MediaPortal.TagReader
       Year=tag.Year;
       Duration=tag.Duration;
       Track=tag.Track;
+			Rating=tag.Rating;
     }
 		/// <summary>
 		/// Property to get/set the comment field of the music file
@@ -125,6 +127,14 @@ namespace MediaPortal.TagReader
       set {m_iTrack=value;}
 		}
 		/// <summary>
+		/// Property to get/set the Track number field of the music file
+		/// </summary>
+		public int Rating
+		{
+			get { return m_iRating;}
+			set {m_iRating=value;}
+		}
+		/// <summary>
 		/// Property to get/set the number of times this file has been played
 		/// </summary>
     public int TimesPlayed
@@ -146,6 +156,7 @@ namespace MediaPortal.TagReader
       m_iYear=0;
       m_iDuration=0;
       m_iTrack=0;
+			m_iRating=0;
     }
 	}
 }
