@@ -1,5 +1,4 @@
--home,mytv : GUIMessage:
--vertexbuffers
+2 tuners->both create live.tv
 
 Cosmetic bugs:
   13-07-2004 general    : if name/file/... is to long then the text will just run right off the end of the dialog box
