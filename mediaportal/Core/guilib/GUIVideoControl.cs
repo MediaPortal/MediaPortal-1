@@ -79,6 +79,8 @@ namespace MediaPortal.GUI.Library
             int w=10;int h=10;
             GUIGraphicsContext.ScalePosToScreenResolution(ref xoff, ref yoff);
             GUIGraphicsContext.ScalePosToScreenResolution(ref w, ref h);
+            xoff += GUIGraphicsContext.OffsetX;
+            yoff += GUIGraphicsContext.OffsetY;
             FocusImage.SetPosition((int)x-xoff,(int)y-yoff);
             FocusImage.Width=base.Width+w;
             FocusImage.Height=base.Height+h;
