@@ -71,6 +71,15 @@ namespace MediaPortal.GUI.MSN
     {
       get { return currentconversation;}
     }
+    static public void CloseConversation()
+    {
+      if (currentconversation==null) return;
+      if (currentconversation.Connected) 
+      {
+        currentconversation.Close();
+      }
+      currentconversation=null;
+    }
     static public bool IsTyping
     {
       get

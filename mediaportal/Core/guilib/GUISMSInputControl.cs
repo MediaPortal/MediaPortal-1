@@ -34,6 +34,9 @@ namespace MediaPortal.GUI.Library
     protected string m_strData="";
     protected int    m_iPos=0;
     DateTime      m_CaretTimer=DateTime.Now;
+    DateTime      m_keyTimer=DateTime.Now;
+    char          m_CurrentKey=(char)0;
+    char          m_PrevKey=(char)0;
 
 		public GUISMSInputControl(int dwParentID) : base(dwParentID)
 		{
@@ -65,6 +68,7 @@ namespace MediaPortal.GUI.Library
     {
       base.AllocResources ();
       m_CaretTimer=DateTime.Now;
+      m_keyTimer=DateTime.Now;
       m_strData="";
       m_iPos=0;
     }
@@ -79,11 +83,183 @@ namespace MediaPortal.GUI.Library
     {
       return base.OnMessage (message);
     }
-    
+    public override bool CanFocus()
+    {
+      return true;
+    }
+
     //TODO: add implementation
     public override void OnAction(Action action)
     {
+      switch (action.wID)
+      {
+        case Action.ActionType.ACTION_MOVE_LEFT : 
+        {
+          if (m_iPos>0) 
+          {
+            m_iPos--;
+          }
+          return;
+        }
+        case Action.ActionType.ACTION_MOVE_RIGHT: 
+        {
+          if (m_iPos < m_strData.Length) 
+          {
+            m_iPos++;
+          }
+          return;
+        }
+
+        case Action.ActionType.ACTION_SELECT_ITEM: 
+        {
+          if (m_CurrentKey!= (char)0)
+          {
+            m_strData+=m_CurrentKey;
+          }
+          m_PrevKey=(char)0;
+          m_CurrentKey=(char)0;
+          m_keyTimer=DateTime.Now;
+          m_iPos=0;
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED,WindowId,GetID, ParentID,0,0,null );
+          msg.Label=m_strData;
+          m_strData="";
+          GUIGraphicsContext.SendMessage(msg);
+          return;
+        }
+
+        case Action.ActionType.ACTION_KEY_PRESSED:
+          if (action.m_key!=null)
+          {
+            if (action.m_key.KeyChar>=32)
+            {
+              Press((char)action.m_key.KeyChar);
+              return;
+            }
+          }
+          break;
+      }
       base.OnAction (action);
+    }
+
+    void CheckTimer()
+    {
+      TimeSpan ts=DateTime.Now-m_keyTimer;
+      if (ts.TotalMilliseconds>=800)
+      {
+        if (m_CurrentKey!= (char)0)
+        {
+          m_strData+=m_CurrentKey;
+          m_iPos++;
+        }
+        m_PrevKey=(char)0;
+        m_CurrentKey=(char)0;
+        m_keyTimer=DateTime.Now;
+      }
+    }
+
+    void Press(char Key)
+    {
+      if (Key!=m_PrevKey && m_CurrentKey!=(char)0)
+      {
+        m_strData+=m_CurrentKey;
+        m_PrevKey=(char)0;
+        m_CurrentKey=(char)0;
+        m_keyTimer=DateTime.Now;
+        m_iPos++;
+      }
+      CheckTimer();
+      if (Key >='0' && Key <='9')
+      {
+        m_PrevKey=Key;
+      }
+      if (Key=='0')
+      {
+        m_keyTimer=DateTime.Now;
+        if (m_iPos>0)
+        {
+          m_strData=m_strData.Remove(m_iPos-1,1);
+          m_iPos--;
+        }
+        m_keyTimer=DateTime.Now;
+        m_PrevKey=(char)0;
+        m_CurrentKey=(char)0;
+      }
+      if (Key=='1')
+      {
+        m_keyTimer=DateTime.Now;
+        if (m_CurrentKey==0) m_CurrentKey=' ';
+        if (m_CurrentKey==' ') m_CurrentKey='!';
+        if (m_CurrentKey=='!') m_CurrentKey='?';
+        if (m_CurrentKey=='?') m_CurrentKey='.';
+        if (m_CurrentKey=='.') m_CurrentKey=' ';
+      }
+
+      if (Key=='2')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='a';
+        else if (m_CurrentKey=='a') m_CurrentKey='b';
+        else if (m_CurrentKey=='b') m_CurrentKey='c';
+        else if (m_CurrentKey=='c') m_CurrentKey='a';
+        m_keyTimer=DateTime.Now;
+      }
+      if (Key=='3')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='d';
+        else if (m_CurrentKey=='d') m_CurrentKey='e';
+        else if (m_CurrentKey=='e') m_CurrentKey='f';
+        else if (m_CurrentKey=='f') m_CurrentKey='d';
+        m_keyTimer=DateTime.Now;
+      }
+      if (Key=='4')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='g';
+        else if (m_CurrentKey=='g') m_CurrentKey='h';
+        else if (m_CurrentKey=='h') m_CurrentKey='i';
+        else if (m_CurrentKey=='i') m_CurrentKey='h';
+        m_keyTimer=DateTime.Now;
+      }
+      if (Key=='5')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='j';
+        else if (m_CurrentKey=='j') m_CurrentKey='k';
+        else if (m_CurrentKey=='k') m_CurrentKey='l';
+        else if (m_CurrentKey=='l') m_CurrentKey='j';
+        m_keyTimer=DateTime.Now;
+      }
+      if (Key=='6')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='m';
+        else if (m_CurrentKey=='m') m_CurrentKey='n';
+        else if (m_CurrentKey=='n') m_CurrentKey='o';
+        else if (m_CurrentKey=='o') m_CurrentKey='m';
+        m_keyTimer=DateTime.Now;
+      }
+      if (Key=='7')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='p';
+        else if (m_CurrentKey=='p') m_CurrentKey='q';
+        else if (m_CurrentKey=='q') m_CurrentKey='r';
+        else if (m_CurrentKey=='r') m_CurrentKey='s';
+        else if (m_CurrentKey=='s') m_CurrentKey='p';
+        m_keyTimer=DateTime.Now;
+      }
+      if (Key=='8')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='t';
+        else if (m_CurrentKey=='t') m_CurrentKey='u';
+        else if (m_CurrentKey=='u') m_CurrentKey='v';
+        else if (m_CurrentKey=='v') m_CurrentKey='t';
+        m_keyTimer=DateTime.Now;
+      }
+      if (Key=='9')
+      {
+        if (m_CurrentKey==0) m_CurrentKey='w';
+        else if (m_CurrentKey=='w') m_CurrentKey='x';
+        else if (m_CurrentKey=='x') m_CurrentKey='y';
+        else if (m_CurrentKey=='y') m_CurrentKey='z';
+        else if (m_CurrentKey=='z') m_CurrentKey='w';
+        m_keyTimer=DateTime.Now;
+      }
     }
     
     public override void Render()
@@ -91,6 +267,7 @@ namespace MediaPortal.GUI.Library
       DrawInput();
       DrawTextBox();
       DrawText();
+      CheckTimer();
     }
 
     void DrawInput()
@@ -139,7 +316,7 @@ namespace MediaPortal.GUI.Library
     }
     void DrawText()
     {
-      m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, m_strData, GUIControl.Alignment.ALIGN_LEFT );
+      m_pTextBoxFont.DrawText( m_dwTextBoxXpos, m_dwTextBoxYpos, m_dwTextBoxColor, m_strData+m_CurrentKey, GUIControl.Alignment.ALIGN_LEFT );
 
 
       // Draw blinking caret using line primitives.

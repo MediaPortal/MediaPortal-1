@@ -29,8 +29,16 @@ namespace MediaPortal.GUI.MSN
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
-        return;
+        Conversation conversation=GUIMSNPlugin.CurrentConversation;
+        if (conversation!=null) 
+        {
+          if (conversation.Connected) 
+          {
+            GUIMSNPlugin.CloseConversation();
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
+            return;
+          }
+        }
       }
 
       base.OnAction(action);
@@ -47,9 +55,7 @@ namespace MediaPortal.GUI.MSN
           GUIControl.ClearControl(GetID,(int)Controls.List);
           for (int i=0; i < 30;++i)
           {
-            GUIListItem item=new GUIListItem("");
-            item.IsFolder=false;
-            GUIControl.AddListItemControl(GetID,(int)Controls.List,item);
+            AddToList("");
           }
           GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
           list.ScrollToEnd();
@@ -71,6 +77,16 @@ namespace MediaPortal.GUI.MSN
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           int iControl=message.SenderControlId;
+        break;
+
+        case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
+          Conversation conversation=GUIMSNPlugin.CurrentConversation;
+          if (conversation==null) return true;
+          if (conversation.Connected==false) return true;
+          conversation.SendMessage(message.Label);
+
+          string text=String.Format(">{0}", message.Label);
+          AddToList(text);
         break;
       }
       return base.OnMessage(message);
@@ -108,14 +124,15 @@ namespace MediaPortal.GUI.MSN
     private void MessageReceived(Conversation sender, MessageEventArgs e)
     {
       string text=String.Format("{0}:{1}", e.Sender.Name, e.Message.Text);
+      AddToList(text);
+    }
+    void AddToList(string text)
+    {
       GUIListItem item =new GUIListItem(text);
       item.IsFolder=false;
       GUIControl.AddListItemControl(GetID,(int)Controls.List,item);
       GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
       list.ScrollToEnd();
-    }
-    void keyboard_TextChanged(int kindOfSearch,string data)
-    {
     }
   }
 }
