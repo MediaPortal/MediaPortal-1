@@ -446,7 +446,7 @@
 	</string>
 	<string>
 		<id>181</id>
-		<value>Select</value>
+		<value>Select album</value>
 	</string>
 	<string>
 		<id>182</id>
@@ -2132,5 +2132,25 @@
 <string>
 	<id>805</id>
 	<value>Clear</value>
+</string>
+<string>
+	<id>806</id>
+	<value>Title</value>
+</string>
+<string>
+	<id>807</id>
+	<value>Yield</value>
+</string>
+<string>
+	<id>808</id>
+	<value>Ingredients</value>
+</string>
+<string>
+	<id>809</id>
+	<value>Directions</value>
+</string>
+<string>
+	<id>810</id>
+	<value>Card</value>
 </string>
 </strings>
