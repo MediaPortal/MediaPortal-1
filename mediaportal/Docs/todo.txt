@@ -83,7 +83,6 @@ Settings:
   - all :-)
 
 new plugins:
-  - topbar plugin
   - RSS feed reader
   - my files  
   - my programs/emulators/games (domifan is working on this)
