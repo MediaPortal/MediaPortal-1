@@ -18,6 +18,7 @@ namespace MediaPortal.Music.Database
     int m_iDuration=0;
     int m_iYear=0;
     int m_iTimedPlayed=0;
+		int m_irating=0;
 
     public Song()
 		{
@@ -34,6 +35,7 @@ namespace MediaPortal.Music.Database
       newsong.Title = Title;
       newsong.Track = Track;
       newsong.Year = Year;
+			newsong.Rating=Rating;
       return newsong;
     }
 
@@ -48,6 +50,7 @@ namespace MediaPortal.Music.Database
       m_iDuration=0;
       m_iYear=0;
       m_iTimedPlayed=0;
+			m_irating=0;
     }
 
     public string FileName
@@ -94,7 +97,12 @@ namespace MediaPortal.Music.Database
     {
       get { return m_iTimedPlayed;}
       set {m_iTimedPlayed=value;}
-    }
+		}
+		public int Rating
+		{
+			get { return m_irating;}
+			set {m_irating=value;}
+		}
 
   }
 	public class SongMap

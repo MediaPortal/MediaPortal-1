@@ -2030,6 +2030,7 @@
 <string><id>10503</id><value>My Music/artists</value></string>
 <string><id>10504</id><value>My Music/genres</value></string>
 <string><id>10505</id><value>My Music/top100</value></string>
+<string><id>10506</id><value>My Music/Favorites</value></string>
 <string><id>10600</id><value>My TV/Guide</value></string>
 <string><id>10601</id><value>My TV/Scheduler</value></string>
 <string><id>10602</id><value>My TV/fullscreen</value></string>
@@ -2414,7 +2415,22 @@
 	<id>929</id>
 	<value>Close menu</value>
 </string>
-
+<string>
+	<id>930</id>
+	<value>Add to favorites</value>
+</string>
+<string>
+	<id>931</id>
+	<value>Rating</value>
+</string>
+<string>
+	<id>932</id>
+	<value>Favorites</value>
+</string>
+<string>
+	<id>933</id>
+	<value>Remove from favorites</value>
+</string>
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>

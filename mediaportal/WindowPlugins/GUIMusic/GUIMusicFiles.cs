@@ -359,6 +359,10 @@ namespace MediaPortal.GUI.Music
               case 4 : //	top100
                 nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
                 break;
+							case 5 : //	favorites
+								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
+								break;
+
             }
 
             if (nNewWindow != GetID)
@@ -494,8 +498,13 @@ namespace MediaPortal.GUI.Music
         if ((System.IO.Path.GetFileName(item.Path) != "") || Utils.IsDVD(item.Path))
         {
           dlg.AddLocalizedString(928); //find coverart
-          dlg.AddLocalizedString(926); //Queue        
-        }
+          dlg.AddLocalizedString(926); //Queue     
+					if (!item.IsFolder && !item.IsRemote)
+					{
+						dlg.AddLocalizedString(930); //Add to favorites
+						dlg.AddLocalizedString(931); //Rating
+					}
+				}
         if (!item.IsFolder || Utils.IsDVD(item.Path))
         {
           dlg.AddLocalizedString(208); //play
@@ -532,6 +541,12 @@ namespace MediaPortal.GUI.Music
           Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
           LoadDirectory("");
           break;
+				case 930: // add to favorites
+					m_database.AddSongToFavorites(item.Path);
+					break;
+				case 931:// Rating
+					OnSetRating(item);
+					break;
       }
     }
 
@@ -1122,6 +1137,10 @@ namespace MediaPortal.GUI.Music
       }
     }
     
+		void OnSetRating(GUIListItem item)
+		{
+			int x=1;
+		}
     void OnQueueItem(int iItem)
     {
       // add item 2 playlist

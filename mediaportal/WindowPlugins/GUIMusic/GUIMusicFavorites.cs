@@ -14,7 +14,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIMusicTop100 : GUIWindow
+  public class GUIMusicFavorites : GUIWindow
   {
     enum Mode
     {
@@ -55,15 +55,15 @@ namespace MediaPortal.GUI.Music
     Database		      m_database = new Database();
     Mode              _CurrentMode =Mode.Duration;
 
-    public GUIMusicTop100()
+    public GUIMusicFavorites()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
+      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
       
       m_directory.AddDrives();
       m_directory.SetExtensions(Utils.AudioExtensions);
       LoadSettings();
     }
-    ~GUIMusicTop100()
+    ~GUIMusicFavorites()
     {
     }
 
@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Music
     {
       m_strDirectory = "";
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
-      return Load(GUIGraphicsContext.Skin + @"\mymusictop100.xml");
+      return Load(GUIGraphicsContext.Skin + @"\mymusicfavorites.xml");
     }
     #region Serialisation
     void LoadSettings()
@@ -254,10 +254,7 @@ namespace MediaPortal.GUI.Music
                 break;
               case 4 : //	top100
                 nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
-								break;
-							case 5 : //	favorites
-								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
-								break;
+                break;
             }
 
             if (nNewWindow != GetID)
@@ -338,7 +335,7 @@ namespace MediaPortal.GUI.Music
 			dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
 			if (!item.IsFolder && !item.IsRemote)
 			{
-				dlg.AddLocalizedString(930); //Add to favorites
+				dlg.AddLocalizedString(933); //Remove from favorites
 				dlg.AddLocalizedString(931); //Rating
 			}
 
@@ -356,17 +353,15 @@ namespace MediaPortal.GUI.Music
 					
         case 2: // show playlist
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
-          break;
+					break;
 				case 3: // add to favorites
-					m_database.AddSongToFavorites(item.Path);
+					m_database.RemoveSongFromFavorites(item.Path);
 					break;
 				case 4:// Rating
 					OnSetRating(item);
 					break;
-
       }
     }
-
 		void OnSetRating(GUIListItem item)
 		{
 			int x=1;
@@ -598,7 +593,7 @@ namespace MediaPortal.GUI.Music
 
 			ArrayList itemlist = new ArrayList();
 			ArrayList songs = new ArrayList();
-			m_database.GetTop100(ref songs);
+			m_database.GetSongsByFavorites(out songs);
 			foreach (Song song in songs)
 			{
 				GUIListItem item = new GUIListItem();

@@ -411,7 +411,10 @@ namespace MediaPortal.GUI.Music
                 break;
               case 4:	//	top100
                 nNewWindow=(int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
-                break;
+								break;
+							case 5 : //	favorites
+								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
+								break;
             }
 
             if (nNewWindow!=GetID)
@@ -966,6 +969,11 @@ namespace MediaPortal.GUI.Music
       dlg.Add( GUILocalizeStrings.Get(208)); //play
       dlg.Add( GUILocalizeStrings.Get(926)); //Queue
 			dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
+			if (!item.IsFolder && !item.IsRemote)
+			{
+				dlg.AddLocalizedString(930); //Add to favorites
+				dlg.AddLocalizedString(931); //Rating
+			}
 
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
@@ -981,9 +989,20 @@ namespace MediaPortal.GUI.Music
 					
         case 2: // show playlist
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
-          break;
+					break;
+				case 3: // add to favorites
+					m_database.AddSongToFavorites(item.Path);
+					break;
+				case 4:// Rating
+					OnSetRating(item);
+					break;
       }
     }
+
+		void OnSetRating(GUIListItem item)
+		{
+			int x=1;
+		}
 
     void OnQueueGenre(string strGenre)
     {

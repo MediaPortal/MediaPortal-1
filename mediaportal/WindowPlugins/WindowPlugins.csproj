@@ -303,6 +303,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIMusic\GUIMusicFavorites.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIMusic\GUIMusicFiles.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
