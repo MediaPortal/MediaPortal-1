@@ -93,6 +93,16 @@ namespace MediaPortal.Dialogs
       m_bRunning=true;
     }
 
+		public void ContinueModal()
+		{
+			if (m_bCanceled) return;
+			GUIWindowManager.RouteToWindow( GetID );
+
+			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
+			OnMessage(msg);
+			m_bRunning=true;
+		}
+
     public void Progress()
     {
       if  (m_bRunning)
