@@ -219,7 +219,7 @@ namespace MediaPortal
         try
         {
           int chan=Int32.Parse(listView1.Items[i].SubItems[1].Text);
-          if (chan>0)
+          if (chan>0) 
           {
             TVDatabase.SetChannelNumber(listView1.Items[i].Text,chan);
             TVDatabase.SetChannelFrequency(listView1.Items[i].Text,"0");
