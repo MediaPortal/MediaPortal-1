@@ -665,7 +665,7 @@ namespace MediaPortal.TV.Recording
       }
       if (bFixCrossbar)
       {
-        DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_filterCaptureVideo, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
+        DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder,m_filterCaptureVideo, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
       }
       m_iPrevChannel=iChannel;
     }
