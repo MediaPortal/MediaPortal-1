@@ -116,6 +116,7 @@ Skin engine:
   - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
   - specify seperate topbar for each window
   - make onscreen keyboard skinnable (at least x,y position)
+  - add extra font properties to indicate which characters to cache (like 0-9 : for a big time font)
   
 setup:
   - Update paths of the setup project in CVS to point to the new location of the girder files.
