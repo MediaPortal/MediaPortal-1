@@ -1998,15 +1998,27 @@ namespace MediaPortal.GUI.Video
 			if (dlg==null) return;
 			dlg.Reset();
 			dlg.SetHeading(924); // menu
-			dlg.AddLocalizedString(925); //delete
-			dlg.AddLocalizedString(368); //IMDB
-			dlg.AddLocalizedString(208); //play
-			dlg.AddLocalizedString(926); //Queue
-      dlg.AddLocalizedString(136); //Playlist
-      if (Utils.getDriveType(item.Path) == 5)
-      {
-        dlg.AddLocalizedString(654); //Eject
-      }
+
+			if (!cntl.Focus)
+			{
+				// control view has no focus
+				dlg.AddLocalizedString(136); //PlayList
+			}
+			else
+			{
+				if ((System.IO.Path.GetFileName(item.Path) != "") || Utils.IsDVD(item.Path))
+				{
+					if (Utils.getDriveType(item.Path) != 5) dlg.AddLocalizedString(925); //delete
+					dlg.AddLocalizedString(368); //IMDB
+					dlg.AddLocalizedString(208); //play
+					dlg.AddLocalizedString(926); //Queue
+				}
+				dlg.AddLocalizedString(136); //Playlist
+				if (Utils.getDriveType(item.Path) == 5)
+				{
+					dlg.AddLocalizedString(654); //Eject
+				}				
+			}
 
 			dlg.DoModal( GetID);
 			if (dlg.SelectedId==-1) return;
