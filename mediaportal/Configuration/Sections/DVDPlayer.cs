@@ -21,9 +21,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPCheckBox autoPlayCheckBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox ffdshowCheckBox;
-    private System.Windows.Forms.Label label3;
 		private System.ComponentModel.IContainer components = null;
 
 		public DVDPlayer() : this("DVD Player")
@@ -48,7 +45,6 @@ namespace MediaPortal.Configuration.Sections
 				fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
 				parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer","arguments", "");
         autoPlayCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "autoplay", true);
-        ffdshowCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "ffdshow", false);
 
 				//
 				// Fake a check changed to force a CheckChanged event
@@ -70,7 +66,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
         xmlwriter.SetValueAsBool("dvdplayer", "autoplay", autoPlayCheckBox.Checked);
-        xmlwriter.SetValueAsBool("dvdplayer", "ffdshow", ffdshowCheckBox.Checked);
       }
     }
 
@@ -119,12 +114,8 @@ namespace MediaPortal.Configuration.Sections
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.autoPlayCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label3 = new System.Windows.Forms.Label();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
-      this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
       // internalPlayerCheckBox
@@ -249,50 +240,14 @@ namespace MediaPortal.Configuration.Sections
       this.autoPlayCheckBox.TabIndex = 8;
       this.autoPlayCheckBox.Text = "Autoplay DVDs";
       // 
-      // mpGroupBox3
-      // 
-      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox3.Controls.Add(this.ffdshowCheckBox);
-      this.mpGroupBox3.Controls.Add(this.label3);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox3.Location = new System.Drawing.Point(8, 208);
-      this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(440, 96);
-      this.mpGroupBox3.TabIndex = 4;
-      this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Post processing";
-      // 
-      // ffdshowCheckBox
-      // 
-      this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 56);
-      this.ffdshowCheckBox.Name = "ffdshowCheckBox";
-      this.ffdshowCheckBox.Size = new System.Drawing.Size(264, 24);
-      this.ffdshowCheckBox.TabIndex = 8;
-      this.ffdshowCheckBox.Text = "Enable FFDshow post processing";
-      // 
-      // label3
-      // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(16, 24);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(408, 32);
-      this.label3.TabIndex = 9;
-      this.label3.Text = "Please note that you need to install ffdshow seperately to make any this option w" +
-        "ork. Please read the MediaPortal manual for more information.";
-      // 
       // DVDPlayer
       // 
-      this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "DVDPlayer";
       this.Size = new System.Drawing.Size(456, 440);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox3.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }

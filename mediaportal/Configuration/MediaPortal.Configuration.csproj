@@ -378,6 +378,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\DVDPostProcessing.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DVDPostProcessing.resx"
+                    DependentUpon = "DVDPostProcessing.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\FileExtensions.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -425,6 +435,16 @@
                 <File
                     RelPath = "Sections\MoviePlayer.resx"
                     DependentUpon = "MoviePlayer.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\MoviePostProcessing.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MoviePostProcessing.resx"
+                    DependentUpon = "MoviePostProcessing.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -600,6 +620,16 @@
                 <File
                     RelPath = "Sections\TVChannels.resx"
                     DependentUpon = "TVChannels.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\TVPostProcessing.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\TVPostProcessing.resx"
+                    DependentUpon = "TVPostProcessing.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
