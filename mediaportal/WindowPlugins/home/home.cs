@@ -639,8 +639,10 @@ namespace MediaPortal.GUI.Home
 
 					img = new GUIImage(GetID,iButtonId+100,xpos,ypos,width,height,strPictureImage,0);
 					img.AllocResources();
-          width = img.TextureWidth;
-          height = img.TextureHeight;
+          width = GetControl( (int)Controls.TemplateHoverImage).Width;
+          if (width == 0) width = img.TextureWidth; 
+          height = GetControl( (int)Controls.TemplateHoverImage).Height;
+          if (height == 0) height = img.TextureHeight;
           GUIGraphicsContext.ScaleHorizontal(ref width);
           GUIGraphicsContext.ScaleVertical(ref height);
           img.Width=width;
