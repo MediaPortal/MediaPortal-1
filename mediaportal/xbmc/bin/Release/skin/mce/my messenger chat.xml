@@ -65,7 +65,7 @@
 			<textboxYpos>350</textboxYpos>
 			<textboxWidth>400</textboxWidth>
 			<textboxHeight>22</textboxHeight>
-			<textboxColor>FF000000</textboxColor>
+			<textboxColor>FFFFFF00</textboxColor>
 			<textboxBgColor>ffffffff</textboxBgColor>
 		</control>
 	</controls>

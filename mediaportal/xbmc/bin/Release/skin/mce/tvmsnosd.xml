@@ -90,7 +90,7 @@
 			<textboxYpos>443</textboxYpos>
 			<textboxWidth>500</textboxWidth>
 			<textboxHeight>20</textboxHeight>
-			<textboxColor>ff111111</textboxColor>
+			<textboxColor>ffffff00</textboxColor>
 			<textboxBgColor>ffffffff</textboxBgColor>
 		</control>
 </controls>
