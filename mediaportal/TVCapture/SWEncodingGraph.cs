@@ -90,6 +90,7 @@ namespace MediaPortal.TV.Recording
     IStreamBufferRecordControl m_recControl=null;
     IStreamBufferSink          m_bSink=null;
     IStreamBufferConfigure     m_pConfig=null;
+		IAMAudioInputMixer				 m_mixer=null;
     StreamBufferSink           m_StreamBufferSink=null;
     StreamBufferConfig         m_StreamBufferConfig=null;
     bool                       m_bOverlayVisible=false;
@@ -353,6 +354,22 @@ namespace MediaPortal.TV.Recording
         Vmr9=null;
       }
 
+			if (m_mixer=null)
+			{
+				try
+				{
+					m_mixer.put_MixLevel(0d);
+				}
+				catch(Exception){}
+				
+				try
+				{
+					m_mixer.put_Enable(false);
+				}
+				catch(Exception){}
+				m_mixer=null;
+			}
+
       if (m_videoprocamp!=null)
       {
         m_videoAmp=null;
@@ -606,12 +623,12 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
-            IAMAudioInputMixer mixer = pinInput as IAMAudioInputMixer;
-            if (mixer != null)
+            m_mixer = pinInput as IAMAudioInputMixer;
+            if (m_mixer != null)
             {
 							try
 							{
-								hr = mixer.put_Enable(true);
+								hr = m_mixer.put_Enable(true);
 								if (hr != 0)
 								{
 									DirectShowUtil.DebugWrite("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
@@ -627,7 +644,7 @@ namespace MediaPortal.TV.Recording
               fLevel /= 100.0d;
 							try
 							{
-								hr = mixer.put_MixLevel(fLevel);
+								hr = m_mixer.put_MixLevel(fLevel);
 								if (hr != 0)
 								{
 									DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
