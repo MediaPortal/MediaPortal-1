@@ -27,6 +27,7 @@ namespace MediaPortal.TV.Recording
       Initialized,
       Deinitializing
     }
+    static string TVChannelCovertArt=@"thumbs\tv\logos";
     static bool          m_bRecordingsChanged=false;  // flag indicating that recordings have been added/changed/removed
     static bool          m_bTimeshifting =false;       //todo
     static bool          m_bAlwaysTimeshift=false;  //todo
@@ -485,7 +486,7 @@ namespace MediaPortal.TV.Recording
     static void OnTVChannelChanged()
     {
       if (m_eState!= State.Initialized) return ;
-      string strLogo=Utils.GetLogo(m_strTVChannel);
+      string strLogo=Utils.GetCoverArt(TVChannelCovertArt,m_strTVChannel);
       if (!System.IO.File.Exists(strLogo))
       {
         strLogo="defaultVideoBig.png";
@@ -736,7 +737,7 @@ namespace MediaPortal.TV.Recording
             {
               if (!GUIPropertyManager.Properties["#TV.Record.channel"].Equals(recording.Channel))
               {
-                string strLogo=Utils.GetLogo(recording.Channel);
+                string strLogo=Utils.GetCoverArt(TVChannelCovertArt,recording.Channel);
                 if (!System.IO.File.Exists(strLogo))
                 {
                   strLogo="defaultVideoBig.png";
@@ -753,7 +754,7 @@ namespace MediaPortal.TV.Recording
             {
               if (!GUIPropertyManager.Properties["#TV.Record.channel"].Equals(program.Channel))
               {
-                string strLogo=Utils.GetLogo(program.Channel);
+                string strLogo=Utils.GetCoverArt(TVChannelCovertArt,program.Channel);
                 if (!System.IO.File.Exists(strLogo))
                 {
                   strLogo="defaultVideoBig.png";
