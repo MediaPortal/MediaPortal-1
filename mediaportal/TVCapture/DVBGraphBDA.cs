@@ -888,8 +888,11 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(objRecord);
 				objRecord=null;
 				GC.Collect();
+				GC.WaitForPendingFinalizers();
 				GC.Collect();
+				GC.WaitForPendingFinalizers();
 				GC.Collect();
+				GC.WaitForPendingFinalizers();
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
 				if (hr!=0) 
