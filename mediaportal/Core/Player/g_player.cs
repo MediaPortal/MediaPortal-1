@@ -53,6 +53,8 @@ namespace MediaPortal.Player
     static public event EndedHandler PlayBackEnded;
     static public event StartedHandler PlayBackStarted;
 
+		static MediaType currentMedia;
+
     // singleton. Dont allow any instance of this class
     private g_Player()
     {
@@ -69,16 +71,8 @@ namespace MediaPortal.Player
       if (g_Player.Playing && PlayBackStopped!=null)
       {
         //yes, then raise event 
-        MediaType type=MediaType.Music;
-        if (g_Player.IsTV) 
-        {
-          type=MediaType.TV;
-          if (!m_player.IsTimeShifting) 
-            type=MediaType.Recording;
-        }
-        else if (g_Player.IsRadio) type=MediaType.Radio;
-        else if (g_Player.IsVideo) type=MediaType.Video;
-        PlayBackStopped(type,(int)g_Player.CurrentPosition, g_Player.CurrentFile);
+        
+        PlayBackStopped(currentMedia,(int)g_Player.CurrentPosition, g_Player.CurrentFile);
       }
     }
 
@@ -89,16 +83,8 @@ namespace MediaPortal.Player
       if (PlayBackEnded!=null)
       {
         //yes, then raise event 
-        MediaType type=MediaType.Music;
-        if (g_Player.IsTV) 
-        {
-          type=MediaType.TV;
-          if (!m_player.IsTimeShifting) 
-            type=MediaType.Recording;
-        }
-        else if (g_Player.IsRadio) type=MediaType.Radio;
-        else if (g_Player.IsVideo) type=MediaType.Video;
-        PlayBackEnded(type, CurrentFilePlaying);
+        
+        PlayBackEnded(currentMedia, CurrentFilePlaying);
       }
     }
     //called when starting playing a file
@@ -109,17 +95,26 @@ namespace MediaPortal.Player
       if (m_player.Playing && PlayBackStarted!=null)
       {
         //yes, then raise event 
-        MediaType type=MediaType.Music;
-        if (g_Player.IsTV) 
-        {
-          type=MediaType.TV;
-          if (!m_player.IsTimeShifting) 
-            type=MediaType.Recording;
-        }
-        else if (g_Player.IsRadio) type=MediaType.Radio;
-        else if (g_Player.IsVideo) type=MediaType.Video;
+        currentMedia=MediaType.Music;
+				if (g_Player.IsTV) 
+				{
+					currentMedia=MediaType.TV;
+					if (!m_player.IsTimeShifting) 
+						currentMedia=MediaType.Recording;
+				}
+				else if (g_Player.IsRadio) 
+				{
+					currentMedia=MediaType.Radio;
+				}
+        else if (m_player.HasVideo) 
+				{
+					if ( !Utils.IsAudio (CurrentFilePlaying) )
+					{
+						currentMedia=MediaType.Video;
+					}
+				}
         if (PlayBackStarted!=null)        
-          PlayBackStarted(type, CurrentFilePlaying);
+          PlayBackStarted(currentMedia, CurrentFilePlaying);
       }
     }
     public static void Stop()
@@ -173,7 +168,15 @@ namespace MediaPortal.Player
         if (m_player==null) return false;
         return m_player.IsTV;
       }
-    }
+		}
+		public static bool IsTVRecording
+		{
+			get 
+			{
+				if (m_player==null) return false;
+				return (currentMedia==MediaType.Recording);
+			}
+		}
     public static bool IsTimeShifting
     {
       get 
@@ -395,9 +398,19 @@ namespace MediaPortal.Player
       get 
       {
         if (m_player==null) return false;
-        return m_player.IsRadio;
+        return (currentMedia==MediaType.Radio);
       }
-    }
+		}
+
+		public static bool IsMusic
+		{
+			get 
+			{
+				if (m_player==null) return false;
+				return (currentMedia==MediaType.Music);
+			}
+		}
+
     public static bool Playing
     {
       get 
@@ -783,20 +796,8 @@ namespace MediaPortal.Player
       get 
       {
         if (m_player==null) return false;
-        if (!m_player.HasVideo) return false;
-        if (m_player.HasVideo)
-        {
-          if ( Utils.IsAudio (m_player.CurrentFile) )
-          {
-            return false;
-          }
-
-          if ( m_player.IsRadio )
-          {
-            return false;
-          }
-        }
-        return true;
+        if (currentMedia==MediaType.Video) return true;
+				return false;
       }
     }
 

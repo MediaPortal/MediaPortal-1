@@ -95,21 +95,19 @@ namespace MediaPortal.GUI.Music
     
     public override bool DoesPostRender()
     {
-      if (!g_Player.Playing) 
-      {
-        
-        m_strFile="";
+      if (!g_Player.Playing ) 
+      { 
+        m_strFile=String.Empty;
         return false;
       }
 
-      if (!g_Player.IsRadio && !Utils.IsAudio(g_Player.CurrentFile) && !Utils.IsCDDA(g_Player.CurrentFile) ) 
-      {
-        m_strFile="";
+      if (!g_Player.IsRadio && !g_Player.IsMusic) 
+			{
+				m_strFile=String.Empty;
         return false;
       }
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       if (!GUIGraphicsContext.Overlay) return false;
-      if (g_Player.Playing && (g_Player.IsTV || g_Player.IsDVD) ) return false;
       return true;
     }
 

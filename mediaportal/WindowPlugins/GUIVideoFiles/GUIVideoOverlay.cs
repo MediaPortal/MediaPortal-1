@@ -55,18 +55,17 @@ namespace MediaPortal.GUI.Video
     {
       if (!g_Player.Playing) 
       {
-        m_strFile = "";
+        m_strFile = String.Empty;
         return false;
       }
-      if (!g_Player.HasVideo)       
+      if (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording)       
       {
-        m_strFile = "";
+        m_strFile = String.Empty;
         return false;
-      }
-      if (Utils.IsAudio(g_Player.CurrentFile)) return false;
-      if (Utils.IsCDDA(g_Player.CurrentFile)) return false;
-      if (g_Player.IsRadio) return false;
-
+			}
+			if (GUIGraphicsContext.IsFullScreenVideo) return false;
+			if (GUIGraphicsContext.Calibrating) return false;
+			if (!GUIGraphicsContext.Overlay) return false;
 
 			if (g_Player.CurrentFile != m_strFile)
 			{
@@ -75,10 +74,6 @@ namespace MediaPortal.GUI.Video
 			}
 
 
-			if (GUIGraphicsContext.IsFullScreenVideo) return false;
-			if (GUIGraphicsContext.Calibrating) return false;
-			if (!GUIGraphicsContext.Overlay) return false;
-      if (g_Player.IsTV && GUIGraphicsContext.ShowBackground==false) return false;
       return true;
     }
     

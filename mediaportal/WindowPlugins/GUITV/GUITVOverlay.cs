@@ -56,6 +56,7 @@ namespace MediaPortal.GUI.TV
     {
       if (Recorder.IsRecording==false && Recorder.View==false) return  false;
 			if (g_Player.Playing && !g_Player.IsTV) return false;
+			if (g_Player.IsTVRecording) return false;
 
 			if (m_util==null)
 			{
