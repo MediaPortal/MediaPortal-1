@@ -132,6 +132,7 @@ namespace MediaPortal.GUI.MSN
       GUIControl.AddListItemControl(GetID,(int)Controls.List,item);
       GUIListControl list= (GUIListControl)GetControl((int)Controls.List);
       list.ScrollToEnd();
+      list.Disabled=true;
     }
   }
 }
