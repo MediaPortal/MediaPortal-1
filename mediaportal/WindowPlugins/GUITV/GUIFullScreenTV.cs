@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.TV
 		DateTime		m_dwZapTimer;
 		DateTime		m_dwGroupZapTimer;
 //		string			m_sZapChannel;
-		long				m_iZapDelay;
+//		long				m_iZapDelay;
 		bool				m_bOSDVisible=false;
 		bool				m_bZapOSDVisible=false;
 		bool				m_bLastZapOSDVisible=false;
@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.TV
 			{
 				m_bMSNChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
 				m_iMaxTimeOSDOnscreen=1000*xmlreader.GetValueAsInt("movieplayer","osdtimeout",5);
-				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
+//				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
 				m_iZapTimeOut = 1000*xmlreader.GetValueAsInt("movieplayer","zaptimeout",5);
 				string strValue=xmlreader.GetValueAsString("mytv","defaultar","normal");
 				if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -1345,7 +1345,7 @@ namespace MediaPortal.GUI.TV
 		private void OnPageDown()
 		{
 			// Switch to the next channel group and tune to the first channel in the group
-			GUITVHome.Navigator.ZapToPreviousGroup(m_iZapDelay);
+			GUITVHome.Navigator.ZapToPreviousGroup(true);
 			m_bShowGroup = true;
 			m_dwGroupZapTimer = DateTime.Now;
 		}
@@ -1353,14 +1353,14 @@ namespace MediaPortal.GUI.TV
 		private void OnPageUp()
 		{
 			// Switch to the next channel group and tune to the first channel in the group
-			GUITVHome.Navigator.ZapToNextGroup(m_iZapDelay);
+			GUITVHome.Navigator.ZapToNextGroup(true);
 			m_bShowGroup = true;
 			m_dwGroupZapTimer = DateTime.Now;
 		}
 
 		void ChangeChannelNr(int channelNr)
 		{
-			GUITVHome.Navigator.ZapToChannel(channelNr, m_iZapDelay);
+			GUITVHome.Navigator.ZapToChannel(channelNr, false);
 			UpdateOSD();
 			m_dwZapTimer=DateTime.Now;
 			m_bClear = true;				// Clear screen during next render
@@ -1368,14 +1368,14 @@ namespace MediaPortal.GUI.TV
 
 		public void ZapPreviousChannel()
 		{
-			GUITVHome.Navigator.ZapToPreviousChannel(m_iZapDelay);
+			GUITVHome.Navigator.ZapToPreviousChannel(true);
 			UpdateOSD();
 			m_dwZapTimer = DateTime.Now;
 		}
 
 		public void ZapNextChannel()
 		{
-			GUITVHome.Navigator.ZapToNextChannel(m_iZapDelay);
+			GUITVHome.Navigator.ZapToNextChannel(true);
 			UpdateOSD();
 			m_dwZapTimer = DateTime.Now;
 		}

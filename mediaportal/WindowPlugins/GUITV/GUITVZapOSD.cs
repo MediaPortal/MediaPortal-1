@@ -244,53 +244,25 @@ namespace MediaPortal.GUI.TV
       }
       return false;
     }
-    
-    void OnPreviousChannel()
-    {
-      if (!Recorder.View) return;
-		GUITVHome.Navigator.ZapToPreviousChannel(0);
 
-//      string strChannel=Recorder.TVChannelName;
-//      for (int i=0; i < m_channels.Count;++i)
-//      {
-//        TVChannel chan=(TVChannel)m_channels[i];
-//        if (strChannel==""||String.Compare(chan.Name,strChannel,true)==0 )
-//        {
-//          int iPrev=i-1;
-//          if (iPrev<0) iPrev=m_channels.Count-1;
-//          chan=(TVChannel)m_channels[iPrev];
-//					GUITVHome.ViewChannel(chan.Name);
-					SetCurrentChannelLogo();
-					m_dateTime = DateTime.Now; 
-//          return;
-//        }
-//      }
-    }
-    
-    void OnNextChannel()
-    {
-      if (!Recorder.View) return;
-		GUITVHome.Navigator.ZapToNextChannel(0);
-//      string strChannel=Recorder.TVChannelName;
-//      for (int i=0; i < m_channels.Count;++i)
-//      {
-//        TVChannel chan=(TVChannel)m_channels[i];
-//        if (strChannel==""||String.Compare(chan.Name,strChannel,true)==0 )
-//        {
-//          int iNext=i+1;
-//          if (iNext>m_channels.Count-1) iNext=0;
-//          chan=(TVChannel)m_channels[iNext];
-//          
-//          GUITVHome.ViewChannel(chan.Name) ;
+  	private void OnPreviousChannel()
+  	{
+  		if (!Recorder.View) return;
+  		GUITVHome.Navigator.ZapToPreviousChannel(true);
 
-					SetCurrentChannelLogo();
-					m_dateTime = DateTime.Now; 
-//          return;
-//        }
-//      }
-    }
+  		SetCurrentChannelLogo();
+  		m_dateTime = DateTime.Now;
+  	}
 
-		public void UpdateChannelInfo()
+  	private void OnNextChannel()
+  	{
+  		if (!Recorder.View) return;
+  		GUITVHome.Navigator.ZapToNextChannel(true);
+  		SetCurrentChannelLogo();
+  		m_dateTime = DateTime.Now;
+  	}
+
+  	public void UpdateChannelInfo()
 		{
 			SetCurrentChannelLogo();
 		}

@@ -684,7 +684,7 @@ namespace MediaPortal.GUI.TV
 			}
 
 			// Zap to previous channel immediately
-			Navigator.ZapToPreviousChannel(0);
+			Navigator.ZapToPreviousChannel(false);
 		}
 
 		static public void ViewChannelAndCheck(string channel)
@@ -742,7 +742,7 @@ namespace MediaPortal.GUI.TV
 			}
 
 			// Zap to next channel immediately
-			Navigator.ZapToNextChannel(0);
+			Navigator.ZapToNextChannel(false);
 		}
 
 		/// <summary>
@@ -851,7 +851,6 @@ namespace MediaPortal.GUI.TV
 		private long			m_zapdelay;
 		private string		m_zapchannel = null;
 		private int				m_zapgroup = -1;
-		private string    m_strGroup="";
 		#endregion
 
 		#region Constructors
@@ -917,6 +916,14 @@ namespace MediaPortal.GUI.TV
 		}
 
 		/// <summary>
+		/// Gets the configured zap delay (in milliseconds).
+		/// </summary>
+		public long ZapDelay
+		{
+			get { return m_zapdelay; }
+		}
+
+		/// <summary>
 		/// Gets the group that we will zap to. Contains the current group name if not zapping to anything.
 		/// </summary>
 		public string ZapGroupName
@@ -941,22 +948,20 @@ namespace MediaPortal.GUI.TV
 			if (m_zapgroup != -1 || m_zapchannel != null)
 			{
 				// Time to zap?
-				TimeSpan ts = DateTime.Now - m_zaptime;
-				if (ts.TotalMilliseconds > m_zapdelay)
+				if (DateTime.Now >= m_zaptime)
 				{
 					// Zapping to another group?
-					if(m_zapgroup != -1)
+					if(m_zapgroup != -1 && m_zapgroup != m_currentgroup)
 					{
 						// Change current group and zap to the first channel of the group
 						m_currentgroup = m_zapgroup;
-						m_strGroup=CurrentGroup.GroupName;
 						if(CurrentGroup.tvChannels.Count > 0) 
 						{
 							TVChannel chan = (TVChannel)CurrentGroup.tvChannels[0];
 							m_zapchannel = chan.Name;
 						}
-						m_zapgroup = -1;
 					}
+					m_zapgroup = -1;
 
 					// Zap to desired channel
 					GUITVHome.ViewChannel(m_zapchannel);
@@ -972,7 +977,6 @@ namespace MediaPortal.GUI.TV
 		public void SetCurrentGroup(string groupname)
 		{
 			m_currentgroup = GetGroupIndex(groupname);
-			m_strGroup=groupname;
 		}
 
 		/// <summary>
@@ -1006,35 +1010,38 @@ namespace MediaPortal.GUI.TV
 		/// Changes the current channel after a specified delay.
 		/// </summary>
 		/// <param name="channelName">The channel to switch to.</param>
-		/// <param name="zapdelay">The number of milliseconds to wait before zapping.</param>
-		public void ZapToChannel(string channelName, long zapdelay)
+		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
+		public void ZapToChannel(string channelName, bool useZapDelay)
 		{
 			m_zapchannel = channelName;
-			m_zapdelay = zapdelay;
-			m_zaptime = DateTime.Now;
+
+			if(useZapDelay)
+				m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+			else
+				m_zaptime = DateTime.Now;
 		}
 
 		/// <summary>
 		/// Changes the current channel after a specified delay.
 		/// </summary>
 		/// <param name="channelNr">The nr of the channel to change to.</param>
-		/// <param name="zapdelay">The number of milliseconds to wait before zapping.</param>
-		public void ZapToChannel(int channelNr, long zapdelay)
+		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
+		public void ZapToChannel(int channelNr, bool useZapDelay)
 		{
 			ArrayList channels = CurrentGroup.tvChannels;
 			channelNr--;
-			if (channelNr >= 0 && channelNr < CurrentGroup.tvChannels.Count)
+			if (channelNr >= 0 && channelNr < channels.Count)
 			{
-				TVChannel chan = (TVChannel) CurrentGroup.tvChannels[channelNr];
-				ZapToChannel(chan.Name, zapdelay);
+				TVChannel chan = (TVChannel) channels[channelNr];
+				ZapToChannel(chan.Name, useZapDelay);
 			}
 		}
 
 		/// <summary>
 		/// Changes to the next channel in the current group.
 		/// </summary>
-		/// <param name="zapdelay">The delay before zapping.</param>
-		public void ZapToNextChannel(long zapdelay)
+		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
+		public void ZapToNextChannel(bool useZapDelay)
 		{
 			int currindex;
 			if (m_zapchannel == null)
@@ -1042,17 +1049,24 @@ namespace MediaPortal.GUI.TV
 			else
 				currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel
 
-			int nextindex = (currindex + 1) % CurrentGroup.tvChannels.Count;
-			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[nextindex];
+			// Step to next channel
+			currindex++;
+			if(currindex >= CurrentGroup.tvChannels.Count)
+				currindex = 0;
+			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
 			m_zapchannel = chan.Name;
-			m_zapdelay = zapdelay;
+
+			if(useZapDelay)
+				m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+			else
+				m_zaptime = DateTime.Now;
 		}
 
 		/// <summary>
 		/// Changes to the previous channel in the current group.
 		/// </summary>
-		/// <param name="zapdelay">The delay before zapping.</param>
-		public void ZapToPreviousChannel(long zapdelay)
+		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
+		public void ZapToPreviousChannel(bool useZapDelay)
 		{
 			int currindex;
 			if (m_zapchannel == null)
@@ -1060,36 +1074,56 @@ namespace MediaPortal.GUI.TV
 			else
 				currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel
 
-			int previndex = (currindex - 1) % CurrentGroup.tvChannels.Count;
-			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[previndex];
+			// Step to previous channel
+			currindex--;
+			if(currindex < 0)
+				currindex = CurrentGroup.tvChannels.Count - 1;
+
+			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
 			m_zapchannel = chan.Name;
-			m_zapdelay = zapdelay;
+
+			if(useZapDelay)
+				m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+			else
+				m_zaptime = DateTime.Now;
 		}
 
 		/// <summary>
 		/// Changes to the next channel group.
 		/// </summary>
-		public void ZapToNextGroup(long zapdelay) 
+		public void ZapToNextGroup(bool useZapDelay) 
 		{
 			if(m_zapgroup == -1)
-				m_zapgroup = (m_currentgroup + 1) % m_groups.Count;
+				m_zapgroup = m_currentgroup + 1;
 			else
-				m_zapgroup = (m_zapgroup + 1) % m_groups.Count;
-			m_zapdelay = zapdelay;
-			m_zaptime = DateTime.Now;
+				m_zapgroup = m_zapgroup + 1;			// Zap from last zap group
+
+			if(m_zapgroup >= m_groups.Count)
+				m_zapgroup = 0;
+
+			if(useZapDelay)
+				m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+			else
+				m_zaptime = DateTime.Now;
 		}
 
 		/// <summary>
 		/// Changes to the previous channel group.
 		/// </summary>
-		public void ZapToPreviousGroup(long zapdelay) 
+		public void ZapToPreviousGroup(bool useZapDelay) 
 		{
 			if(m_zapgroup == -1)
-				m_zapgroup = (m_currentgroup - 1) % m_groups.Count;
+				m_zapgroup = m_currentgroup - 1;
 			else
-				m_zapgroup = (m_zapgroup - 1) % m_groups.Count;
-			m_zapdelay = zapdelay;
-			m_zaptime = DateTime.Now;
+				m_zapgroup = m_zapgroup - 1;
+
+			if(m_zapgroup < 0)
+				m_zapgroup = m_groups.Count - 1;
+
+			if(useZapDelay)
+				m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+			else
+				m_zaptime = DateTime.Now;
 		}
 
 		#endregion
@@ -1134,36 +1168,22 @@ namespace MediaPortal.GUI.TV
 		public void LoadSettings(Xml xmlreader)
 		{
 			m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", "");
-			m_strGroup=xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
-			for (int i=0; i < m_groups.Count;++i)
-			{
-				TVGroup group=(TVGroup)m_groups[i];
-				if (m_strGroup==group.GroupName)
-				{
-					m_currentgroup=i;
-					break;
-				}
-			}
-			if (m_currentgroup<0 || m_currentgroup >= m_groups.Count)  
-				m_currentgroup=0;
-			
+			m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
+			string groupname = xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
+			m_currentgroup = GetGroupIndex(groupname);
+			if(m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
+				m_currentgroup = 0;
+
 			if (m_currentchannel=="")
 			{
-				if (m_currentgroup>=0 && m_currentgroup < m_groups.Count)
-				{
-					TVGroup group=(TVGroup)m_groups[m_currentgroup];
-					if (group.tvChannels.Count>0)
-					{
-						m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
-					}
-				}
+				m_currentchannel=((TVChannel)m_groups[m_currentgroup]).Name;
 			}
 		}
 
 		public void SaveSettings(Xml xmlwriter)
 		{
 			xmlwriter.SetValue("mytv", "channel", m_currentchannel);
-			xmlwriter.SetValue("mytv", "group", m_strGroup);
+			xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
 		}
 
 		#endregion
