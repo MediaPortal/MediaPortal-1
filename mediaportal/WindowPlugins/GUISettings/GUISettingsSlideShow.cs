@@ -12,13 +12,15 @@ namespace MediaPortal.GUI.Settings
     {
       CONTROL_SPEED =2,
       CONTROL_TRANSITION=3,
-      CONTROL_XFADE=4,
-      CONTROL_KENBURNS=5,
-      CONTROL_RANDOM=6
+      CONTROL_KENBURNS_SPEED=4,
+      CONTROL_XFADE=5,
+      CONTROL_KENBURNS=6,
+      CONTROL_RANDOM=7      
     };
 
     int m_iSpeed=3;
     int m_iTransistion=20;
+    int m_iKenBurnsSpeed=30;
     bool m_bXFade=false;
     bool m_bKenBurns=false;
     bool m_bRandom=false;
@@ -65,8 +67,15 @@ namespace MediaPortal.GUI.Settings
             GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_TRANSITION,i.ToString());
           }
 
+          GUIControl.ClearControl(GetID,(int)Controls.CONTROL_KENBURNS_SPEED);
+          for (int i=1; i <=50;++i)
+          {
+            GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_KENBURNS_SPEED,i.ToString());
+          }
+
           GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED,m_iSpeed-1);
           GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_TRANSITION,m_iTransistion-1);
+          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_KENBURNS_SPEED,m_iKenBurnsSpeed-1);
 
           if (m_bXFade)
           {
@@ -102,6 +111,11 @@ namespace MediaPortal.GUI.Settings
           {
             string strLabel=message.Label;
             m_iTransistion=Int32.Parse(strLabel);
+          }
+          if (iControl==(int)Controls.CONTROL_KENBURNS_SPEED)
+          {
+            string strLabel=message.Label;
+            m_iKenBurnsSpeed=Int32.Parse(strLabel);
           }
           if (iControl==(int)Controls.CONTROL_XFADE)
           {
@@ -160,6 +174,7 @@ namespace MediaPortal.GUI.Settings
       {
         m_iSpeed=xmlreader.GetValueAsInt("pictures","speed",3);
         m_iTransistion=xmlreader.GetValueAsInt("pictures","transition",20);
+        m_iKenBurnsSpeed=xmlreader.GetValueAsInt("pictures","kenburnsspeed",20);
         m_bKenBurns=xmlreader.GetValueAsBool("pictures","kenburns", false);
         m_bRandom=xmlreader.GetValueAsBool("pictures","random", false);
         m_bXFade = (!m_bRandom & !m_bKenBurns);
@@ -172,6 +187,7 @@ namespace MediaPortal.GUI.Settings
       {
         xmlwriter.SetValue("pictures","speed",m_iSpeed.ToString());
         xmlwriter.SetValue("pictures","transition",m_iTransistion.ToString());
+        xmlwriter.SetValue("pictures","kenburnsspeed",m_iKenBurnsSpeed.ToString());
         xmlwriter.SetValueAsBool("pictures","kenburns",m_bKenBurns);
         xmlwriter.SetValueAsBool("pictures","random",m_bRandom);
       }
