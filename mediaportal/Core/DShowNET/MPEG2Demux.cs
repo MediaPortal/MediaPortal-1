@@ -411,12 +411,20 @@ namespace DShowNET
 				hr=m_pConfig.SetDirectory(strDir);
 				if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile folder:0x{0:X}",hr);
 	      
-				hr=m_pConfig.SetBackingFileCount(6, 8);    //6-8 files
+#if DEBUG				
+        hr=m_pConfig.SetBackingFileCount(4, 6);    //4-6 files
 				if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
 
-				hr=m_pConfig.SetBackingFileDuration( 300); // 300sec * 6 files= 30 mins
+        hr=m_pConfig.SetBackingFileDuration( 60); // 60sec * 4 files= 4 mins
+        if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
+#else
+        hr=m_pConfig.SetBackingFileCount(6, 8);    //6-8 files
+				if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
+
+        hr=m_pConfig.SetBackingFileDuration( 300); // 300sec * 6 files= 30 mins
 				if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
-			}
+#endif
+        }
 
       // lock profile
       DirectShowUtil.DebugWrite("mpeg2:lock profile");

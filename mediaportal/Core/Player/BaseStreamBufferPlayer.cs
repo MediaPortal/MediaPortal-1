@@ -200,10 +200,7 @@ namespace MediaPortal.Player
 
       if (m_bLive)
       {
-        long lStreamPos;
-        m_mediaSeeking.GetCurrentPosition(out lStreamPos);
-        m_dCurrentPos=lStreamPos;
-        m_dCurrentPos/=10000000d;
+        UpdateCurrentPosition();
         if (m_dCurrentPos+5 < m_dDuration)
         {
           Log.Write("StreamBufferPlayer:Seek to 99%");
@@ -321,29 +318,24 @@ namespace MediaPortal.Player
 			//lock(this)
 		{
 
-			long lStreamPos,lDuration;
+			long lDuration;
 
-				
-			//GetCurrentPosition(): Returns stream position. 
-			//Stream position:The current playback position, relative to the content start
-      Guid guidTimeFormat;
-      m_mediaSeeking.GetTimeFormat(out guidTimeFormat);
-			m_mediaSeeking.GetCurrentPosition(out lStreamPos);
-			m_dCurrentPos=lStreamPos;
-      m_dCurrentPos/=10000000d;
+			UpdateCurrentPosition();
+
 
       if (IsTimeShifting)
       {
         //GetDuration(): Returns (content start – content stop). 
         //content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
         //content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
-        m_mediaSeeking.GetDuration(out lDuration);
+        m_mediaSeeking.GetDuration(out lDuration); 
         m_dDuration=lDuration;
-
         m_dDuration/=10000000d;
 
         double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
 				double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
+
+
 
 				if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
 				{
@@ -628,8 +620,6 @@ namespace MediaPortal.Player
 		{
 			if (m_state!=PlayState.Init)
 			{
-				//lock (this)
-			{
 				if (mediaCtrl!=null && m_mediaSeeking!=null)
 				{ 
 					double dCurTime=this.CurrentPosition;
@@ -638,13 +628,9 @@ namespace MediaPortal.Player
 					if (dTime<0.0d) dTime=0.0d;
 					if (dTime < Duration)
 					{
-						dTime*=10000000d;
-						long lTime=(long)dTime;
-						long pStop=0;
-						m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
+						SeekAbsolute(dTime);
 					}
 				}
-			}
 			}
 		}
 
@@ -653,35 +639,68 @@ namespace MediaPortal.Player
 			if (m_state!=PlayState.Init)
 			{
 				if (mediaCtrl!=null && m_mediaSeeking!=null)
-				{
-					if (dTime<0.0d) dTime=0.0d;
-					if (dTime <= Duration)
-					{
-						dTime*=10000000d;
-						long lTime=(long)dTime;
-						long pStop=0;
-            
-            Log.Write("seekabs: {0} time:{1} duration:{2} current pos:{3}", dTime,lTime,Duration, CurrentPosition);
-						int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
-            if (hr !=0)
-            {
-              Log.Write("seek failed->seek to 0 0x:{0:X}",hr);
-            }
+        {
+          if (dTime<0.0d) dTime=0.0d;
+          if (dTime>Duration) dTime=Duration;
+          Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
+          dTime*=10000000d;
+					long lTime=(long)dTime;
+					long pStop=0;
+          
+					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+          if (hr !=0)
+          {
+            Log.Write("seek failed->seek to 0 0x:{0:X}",hr);
           }
 				}
-        long lStreamPos;
-        m_mediaSeeking.GetCurrentPosition(out lStreamPos);
-        m_dCurrentPos=lStreamPos;
-        m_dCurrentPos/=10000000d;
+        UpdateCurrentPosition();
         Log.Write("seek->current pos:{0}", CurrentPosition);
 			}
 		}
+#if DEBUG
+    static DateTime dtStart=DateTime.Now;
+#endif
+    void UpdateCurrentPosition()
+    {
+      if (m_mediaSeeking==null) return;
+      //GetCurrentPosition(): Returns stream position. 
+      //Stream position:The current playback position, relative to the content start
+      long lStreamPos;
+      double fCurrentPos;
+      m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+      fCurrentPos=lStreamPos;
+      fCurrentPos/=10000000d;
+
+      long lContentStart,lContentEnd;
+      double fContentStart,fContentEnd;
+      m_mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+      fContentStart=lContentStart;
+      fContentEnd=lContentEnd;
+      fContentStart/=10000000d;
+      fContentEnd/=10000000d;
+      double fPos=m_dCurrentPos;
+      fCurrentPos-=fContentStart;
+      m_dCurrentPos=fCurrentPos;
+#if DEBUG
+      TimeSpan ts=DateTime.Now-dtStart;
+      if (ts.TotalMilliseconds>=1000)
+      {
+        long lDuration;
+        double fDuration;
+        m_mediaSeeking.GetDuration(out lDuration); 
+        fDuration=lDuration;
+        fDuration/=10000000d;
+
+        Log.Write("pos:{0} content:{1}-{2} duration:{3} stream:{4}",m_dCurrentPos,fContentStart,fContentEnd,fDuration,fPos);
+                  
+        dtStart=DateTime.Now;
+      }
+#endif
+    }
 
 		public override void SeekRelativePercentage(int iPercentage)
 		{
 			if (m_state!=PlayState.Init)
-			{
-				//lock (this)
 			{
 				if (mediaCtrl!=null && m_mediaSeeking!=null)
 				{
@@ -695,14 +714,9 @@ namespace MediaPortal.Player
 					if (fCurPercent<0.0d) fCurPercent=0.0d;
 					if (fCurPercent<Duration)
 					{
-						fCurPercent*=10000000d;
-						long lTime=(long)fCurPercent;
-						long pStop=0;
-						m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
-
+            SeekAbsolute(fCurPercent);
 					}
 				}
-			}
 			}
 		}
 
@@ -711,8 +725,6 @@ namespace MediaPortal.Player
 		{
 			if (m_state!=PlayState.Init)
 			{
-				//lock (this)
-			{
 				if (mediaCtrl!=null && m_mediaSeeking!=null)
 				{
 
@@ -720,24 +732,8 @@ namespace MediaPortal.Player
 					if (iPercentage>=100) iPercentage=100;
 					double fPercent=Duration/100.0f;
 					fPercent*=(double)iPercentage;
-					fPercent*=10000000d;
-					long lTime=(long)fPercent;
-					long pStop=0;
-          Log.Write("seek {0}% time:{1} duration:{2} current pos:{3}", iPercentage,lTime,Duration, CurrentPosition);
-					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
-          if (hr !=0)
-          {
-            lTime=0;
-            m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
-            Log.Write("seek failed->seek to 0 0x:{0:X}",hr);
-          }
-          long lStreamPos;
-          m_mediaSeeking.GetCurrentPosition(out lStreamPos);
-          m_dCurrentPos=lStreamPos;
-          m_dCurrentPos/=10000000d;
-          Log.Write("seek->current pos:{0}", CurrentPosition);
+          SeekAbsolute(fPercent);
 				}
-			}
 			}
 		}
 

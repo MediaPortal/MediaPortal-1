@@ -82,6 +82,7 @@ namespace MediaPortal.GUI.Library
             FocusImage.SetPosition((int)x-xoff,(int)y-yoff);
             FocusImage.Width=base.Width+w;
             FocusImage.Height=base.Height+h;
+            FocusImage.DoUpdate();
             FocusImage.Render();
           }
 
