@@ -1357,35 +1357,10 @@ namespace MediaPortal.TV.Recording
 			m_iChannelNr=channel;
 			if(channelID!=-1)
 			{
-				int freq=0;
-				int symrate=0;
-				int fec=0;
-				int lnbkhz=0;
-				int diseqc=0;
-				int prognum=0; 
-				int servicetype=0;
-				string provider=""; 
-				string chann="";
-				int eitsched=0;
-				int eitpol=0; 
-				int audpid=0; 
-				int vidpid=0; 
-				int ac3pid=0;
-				int apid1=0; 
-				int apid2=0;
-				int apid3=0;
-				int teltxtpid=0;
-				int scrambled=0;
-				int pol=0; 
-				int lnbfreq=0;
-				int networkid=0;
-				int pcrpid=0;
-				int tsid=0;
-				TVDatabase.GetSatChannel(channelID,ref freq,ref symrate,ref  fec,ref lnbkhz,ref diseqc,ref 
-					prognum,ref servicetype,ref provider,ref chann,ref  eitsched,ref 
-					eitpol,ref  audpid,ref vidpid,ref ac3pid,ref apid1,ref  apid2,ref  apid3,ref 
-					teltxtpid,ref scrambled,ref  pol,ref lnbfreq,ref networkid,ref tsid,ref pcrpid);
-				Tune(freq,symrate,6,pol,lnbkhz,diseqc,audpid,vidpid,lnbfreq);
+
+				DVBChannel ch=new DVBChannel();
+				TVDatabase.GetSatChannel(channelID,ref ch);
+				Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency);
 			}
 			
 			m_StartTime=DateTime.Now;
