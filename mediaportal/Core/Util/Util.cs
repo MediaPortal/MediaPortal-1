@@ -1275,6 +1275,13 @@ namespace MediaPortal.Util
       if (strFileName==null) return String.Empty;
       if (strFileName.Length==0) return String.Empty;
       if (strFileName==String.Empty) return String.Empty;
+			try
+			{
+				string tbnImage = System.IO.Path.ChangeExtension(strFileName,".tbn");
+				if (System.IO.File.Exists(tbnImage)) return tbnImage;
+			}
+			catch(Exception){}
+
       string strThumb=String.Format(@"{0}\{1}",strFolder,Utils.FilterFileName(strFileName));
       if (System.IO.File.Exists(strThumb+".jpg")) return strThumb+".jpg";
       else if (System.IO.File.Exists(strThumb+".png")) return strThumb+".png";

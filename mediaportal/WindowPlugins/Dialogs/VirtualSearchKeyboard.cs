@@ -396,13 +396,13 @@ namespace MediaPortal.Dialogs
 						strName = "SPACE";
 						break;
 					case Xkey.XK_BACKSPACE:
-						strName = "BACKSPACE";
+						strName = "BKSP";
 						break;
 					case Xkey.XK_SHIFT:
 						strName = "SHIFT";
 						break;
 					case Xkey.XK_CAPSLOCK:
-						strName = "CAPS LOCK";
+						strName = "CAPS";
 						break;
 					case Xkey.XK_ALPHABET:
 						strName = "ALPHABET";
@@ -779,7 +779,64 @@ namespace MediaPortal.Dialogs
 			if (null!=m_pParentWindow) 
         m_pParentWindow.Render();
       GUIFontManager.Present();
+
+			GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = false;
+			GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = false;
+			GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
+			GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x08;
+			GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
+			GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
+			GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
+			GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
+			GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
+			GUIGraphicsContext.DX9Device.ClipPlanes.DisableAll();
+			GUIGraphicsContext.DX9Device.RenderState.VertexBlend = VertexBlend.Disable;
+			GUIGraphicsContext.DX9Device.RenderState.IndexedVertexBlendEnable = false;
+			GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
+			GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
+			GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
+			GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
+			GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
+			GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
+			GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
+			GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
+			GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Point;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Point;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
+
 			RenderKeyboardLatin();    
+
+			GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = false;
+			GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
+			GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
+			GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
+			//GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
+			GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
+			GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.CounterClockwise;
+			GUIGraphicsContext.DX9Device.RenderState.StencilEnable = false;
+			//GUIGraphicsContext.DX9Device.RenderState.Clipping = true;
+			GUIGraphicsContext.DX9Device.ClipPlanes.DisableAll();
+			GUIGraphicsContext.DX9Device.RenderState.VertexBlend = VertexBlend.Disable;
+			GUIGraphicsContext.DX9Device.RenderState.IndexedVertexBlendEnable = false;
+			GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
+			//GUIGraphicsContext.DX9Device.RenderState.ColorWriteEnable = ColorWriteEnable.RedGreenBlueAlpha;
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
+			GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
+			GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
+			GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
+			GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
+			GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
+			GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
+			GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
+			GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.None;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.None;
+			GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
 		}
 
 		void InitBoard()
