@@ -83,6 +83,30 @@ public class MediaPortalApp : D3DApp, IRender
 			bool bDirectXInstalled = false;
 			bool bWindowsMediaPlayer9 = false;
 
+      // Set Intervideo registry keys 
+      try
+      {
+        RegistryKey hklm = Registry.LocalMachine;
+        RegistryKey subkey = hklm.CreateSubKey(@"SOFTWARE\InterVideo\MediaPortal\AudioDec");
+        if (subkey != null)
+        {
+          Int32 iValue=1;
+          subkey.SetValue("DsContinuousRate",iValue);
+          iValue=6;
+          subkey.SetValue("AUDIO",iValue);
+        }
+        subkey = hklm.CreateSubKey(@"SOFTWARE\InterVideo\MediaPortal\VideoDec");
+        if (subkey != null)
+        {
+          Int32 iValue=1;
+          subkey.SetValue("DsContinuousRate",iValue);
+        }
+        subkey.Close();
+        hklm.Close();
+      }
+      catch(Exception)
+      {
+      }
       /*
 			try 
 			{
