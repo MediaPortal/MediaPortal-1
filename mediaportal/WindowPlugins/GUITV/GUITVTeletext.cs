@@ -315,12 +315,14 @@ namespace MediaPortal.GUI.TV
 				GUIControl.HideControl(GetID,(int)Controls.LBL_MESSAGE);
 				GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
 				
-				
 				pictureBox.FreeResources();
 				GUITextureManager.ReleaseTexture(@"temp\teletext.jpg");
 				Utils.FileDelete(@"temp\teletext.jpg");
 				m_pageBitmap.Save(@"temp\teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+				pictureBox.SetFileName(@"-");
 				pictureBox.SetFileName(@"temp\teletext.jpg");
+				pictureBox.AllocResources();
+				pictureBox.IsVisible=true;
 			}
 			catch (Exception ex)
 			{
