@@ -211,18 +211,20 @@ namespace MediaPortal.Configuration.Sections
 			foreach(ListViewItem listItem in cardsListView.SelectedItems)
 			{
 				EditCaptureCardForm editCard = new EditCaptureCardForm(listItem.Index);
-				editCard.CaptureCard = listItem.Tag as TVCaptureDevice;
+        editCard.CaptureCard = listItem.Tag as TVCaptureDevice;
 
-				DialogResult dialogResult = editCard.ShowDialog(this);
+        DialogResult dialogResult = editCard.ShowDialog(this);
 
 				if(dialogResult == DialogResult.OK)
 				{
-					listItem.Tag = editCard.CaptureCard;
+          TVCaptureDevice captureCard = editCard.CaptureCard;
 
-					listItem.SubItems[0].Text = editCard.CaptureCard.VideoDevice;
-					listItem.SubItems[1].Text = editCard.CaptureCard.UseForTV.ToString();
-					listItem.SubItems[2].Text = editCard.CaptureCard.UseForRecording.ToString();
-				}
+					listItem.Tag = captureCard;
+
+					listItem.SubItems[0].Text = captureCard.VideoDevice;
+					listItem.SubItems[1].Text = captureCard.UseForTV.ToString();
+					listItem.SubItems[2].Text = captureCard.UseForRecording.ToString();
+        }
 			}		
 		}
 
@@ -255,20 +257,27 @@ namespace MediaPortal.Configuration.Sections
 			{
 				using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				{
-					//
-					// Create Soap Formatter
-					//
-					SoapFormatter formatter = new SoapFormatter();
+          try
+          {
+            //
+            // Create Soap Formatter
+            //
+            SoapFormatter formatter = new SoapFormatter();
 
-					//
-					// Serialize
-					//
-					captureCards = (ArrayList)formatter.Deserialize(fileStream);
+            //
+            // Serialize
+            //
+            captureCards = (ArrayList)formatter.Deserialize(fileStream);
 
-					//
-					// Finally close our file stream
-					//
-					fileStream.Close();
+            //
+            // Finally close our file stream
+            //
+            fileStream.Close();
+          }
+          catch
+          {
+            MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          }
 				}
 			}
 		}
@@ -282,10 +291,20 @@ namespace MediaPortal.Configuration.Sections
 				//
 				SoapFormatter formatter = new SoapFormatter();
 
+        //
+        // Fetch list of capture cards
+        //
+        ArrayList availableCards = new ArrayList();
+
+        foreach(ListViewItem listItem in cardsListView.Items)
+        {
+          availableCards.Add(listItem.Tag);
+        }
+
 				//
 				// Serialize
 				//
-				formatter.Serialize(fileStream, captureCards);
+				formatter.Serialize(fileStream, availableCards);
 
 				//
 				// Finally close our file stream
