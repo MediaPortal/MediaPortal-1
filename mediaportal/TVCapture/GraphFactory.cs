@@ -35,9 +35,9 @@ namespace MediaPortal.TV.Recording
 
       if (card.SupportsMPEG2)
       {
-        return new SinkGraph(iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
+        return new SinkGraph(card.ID,iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
       }
-      return new SWEncodingGraph(iTunerCountry,bCable, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel);
+      return new SWEncodingGraph(card.ID,iTunerCountry,bCable, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel);
       
     }
 	}

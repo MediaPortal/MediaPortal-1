@@ -61,6 +61,7 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.TextBox textBoxName;
 		int cardId = 0;
+    bool acceptuserinput=false;
 
 		/// <summary>
 		/// 
@@ -91,7 +92,7 @@ namespace MediaPortal.Configuration
       comboBoxLineInput.Items.Clear();
 
 			if(availableVideoDevices.Count == 0)
-			{
+			{acceptuserinput=false;
 				MessageBox.Show("No video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = cardComboBox.Enabled = okButton.Enabled = setupButton.Enabled = audioCompressorComboBox.Enabled = audioDeviceComboBox.Enabled = videoCompressorComboBox.Enabled = false;
         comboBoxLineInput.Enabled=false;
@@ -519,11 +520,14 @@ namespace MediaPortal.Configuration
 			Capture capture = null;
       DShowNET.Filter videoDevice = null;
       DShowNET.Filter audioDevice = null;
+      DShowNET.Filter videoCompressor = null;
+      DShowNET.Filter audioCompressor = null;
 
 			string selectedVideoDeviceName = (string)cardComboBox.SelectedItem;
       string selectedAudioDeviceName = audioDeviceComboBox.SelectedItem as string;
-      
 
+      string selectedVideoCompressor = videoCompressorComboBox.SelectedItem as string;
+      string selectedAudioCompressor = audioCompressorComboBox.SelectedItem as string;
       if(selectedVideoDeviceName != null)
       {
         //
@@ -555,17 +559,82 @@ namespace MediaPortal.Configuration
             }
           }
         }
+        
+        if (selectedAudioCompressor!=null)
+        {
+          foreach(Filter filter in filters.AudioCompressors)
+          {
+            if(selectedAudioCompressor.Equals(filter.Name))
+            {
+              //
+              // The device was found
+              //
+              audioCompressor = filter;
+              break;
+            }
+          }
+          if (audioCompressor==null)
+          {
+            foreach(Filter filter in filters.LegacyFilters)
+            {
+              if(selectedAudioCompressor.Equals(filter.Name))
+              {
+                //
+                // The device was found
+                //
+                audioCompressor = filter;
+                break;
+              }
+            }
+          }
+        }
+        
+        if (selectedVideoCompressor!=null)
+        {
+          foreach(Filter filter in filters.VideoCompressors)
+          {
+            if(selectedVideoCompressor.Equals(filter.Name))
+            {
+              //
+              // The device was found
+              //
+              videoCompressor = filter;
+              break;
+            }
+          }
+          if (videoCompressor==null)
+          {
+            foreach(Filter filter in filters.LegacyFilters)
+            {
+              if(selectedVideoCompressor.Equals(filter.Name))
+              {
+                //
+                // The device was found
+                //
+                videoCompressor = filter;
+                break;
+              }
+            }
+          }
+        }
+
         //
         // Create new capture
         //
         try
         {
           capture = new Capture(videoDevice, audioDevice);
-          capture.LoadSettings(cardId);
+
+          capture.VideoCompressor = videoCompressor;
+          capture.AudioCompressor = audioCompressor;
+
+          capture.LoadSettings(cardId);        
+
           m_bMPEG2=capture.SupportsTimeShifting;
         }
-        catch
+        catch (Exception ex)
         {
+          Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
           return null;
         }        
       }
@@ -573,14 +642,12 @@ namespace MediaPortal.Configuration
       return capture;
 		}
 
-		private void SetupPropertyPages()
+		private void SetupPropertyPages(Capture capture )
 		{
 			//
 			// Clear any previous items
 			//
 			filterComboBox.Items.Clear();
-
-			Capture capture = CreateCaptureDevice();
 
 			if (capture != null) 
 			{
@@ -591,9 +658,6 @@ namespace MediaPortal.Configuration
 						filterComboBox.Items.Add(page.Name);
 					}
 				}
-
-				capture.Stop();
-				capture.Dispose();
 			}
 		}
 
@@ -624,7 +688,7 @@ namespace MediaPortal.Configuration
 
 		private void frameRateTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
 			{
 				e.Handled = true;
 			}		
@@ -632,18 +696,19 @@ namespace MediaPortal.Configuration
 
 		private void cardComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
+      if (!acceptuserinput) return;
       FillInAll();
     }
 
     void FillInAll()
     {
-			SetupPropertyPages();
-
-
       //
       // Setup frame sizes
       //
       Capture capture = CreateCaptureDevice();
+			SetupPropertyPages(capture);
+
+
 
       if(capture != null && capture.SupportsTimeShifting == false)
       {
@@ -677,8 +742,6 @@ namespace MediaPortal.Configuration
       if(capture != null)
       {
         trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=!capture.SupportsTimeShifting;
-        //@@@
-        ///frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=true;
       }
       else
       {
@@ -777,7 +840,7 @@ namespace MediaPortal.Configuration
 								//
 								// Save settings
 								//
-								capture.SaveSettings(0);
+								capture.SaveSettings(cardId);
 								break;
 							}
 						}
@@ -819,12 +882,12 @@ namespace MediaPortal.Configuration
 
     private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
     {
-
       FillInAll();    
     }
   
     private void audioDeviceComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
+      if (!acceptuserinput) return;
       FillInAll();        
     }
 
@@ -868,6 +931,7 @@ namespace MediaPortal.Configuration
 
 			set
 			{
+        acceptuserinput=false;
 				TVCaptureDevice card = value as TVCaptureDevice;
 
 				if(card != null)
@@ -914,6 +978,7 @@ namespace MediaPortal.Configuration
             }
           }
         }
+        acceptuserinput=true;
 			}
 		}
 	}

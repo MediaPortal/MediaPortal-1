@@ -26,6 +26,7 @@ namespace MediaPortal.TV.Recording
       Recording,
       Viewing
     };
+    int                     m_cardID=-1;
     string                  m_strVideoCaptureFilter="";
     IGraphBuilder           m_graphBuilder=null;
     ICaptureGraphBuilder2   m_captureGraphBuilder=null;
@@ -51,8 +52,9 @@ namespace MediaPortal.TV.Recording
     /// <param name="iCountryCode">country code</param>
     /// <param name="bCable">use Cable or antenna</param>
     /// <param name="strVideoCaptureFilter">Filter name of the capture device</param>
-		public SinkGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter, Size frameSize, double frameRate)
+		public SinkGraph(int ID,int iCountryCode,bool bCable,string strVideoCaptureFilter, Size frameSize, double frameRate)
 		{
+      m_cardID=ID;
       m_bFirstTune=true;
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;

@@ -119,6 +119,11 @@
                     Project = "{88929413-4722-41CE-B763-FC25466CD971}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "DirectX.Capture"
+                    Project = "{8C0015DB-69E1-46E7-8705-3A4F8BE2E5E7}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>

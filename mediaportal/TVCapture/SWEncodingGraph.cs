@@ -41,7 +41,7 @@ namespace MediaPortal.TV.Recording
       Recording, 
       Viewing
     };
-
+    int                     m_cardID=-1;
     int                     m_iCurrentChannel = 28;
     int                     m_iCountryCode = 31;
     bool                    m_bUseCable = false;
@@ -89,8 +89,9 @@ namespace MediaPortal.TV.Recording
     StreamBufferConfig         m_StreamBufferConfig=null;
 
 
-		public SWEncodingGraph(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
+		public SWEncodingGraph(int ID,int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
     {
+      m_cardID=ID;
       m_bFirstTune = true;
       m_bUseCable = bCable;
       m_iCountryCode = iCountryCode;
@@ -534,6 +535,8 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+      DirectX.Capture.FilterPersist persist=new DirectX.Capture.FilterPersist (m_captureGraphBuilder,m_filterCompressorVideo,m_filterCompressorAudio);
+      persist.LoadSettings(m_cardID);
       return true;
     }
     
