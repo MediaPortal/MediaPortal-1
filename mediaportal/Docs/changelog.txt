@@ -1,4 +1,10 @@
 History: (dd-mm-yyyy)
+  26-05-2004  my video's  : fixed : movie sometimes didnt start if STACK was enabled
+  26-05-2004  general     : added : logo
+  26-05-2004  general     : added : ESC now switches from fullscreen video/tv->GUI
+  26-05-2004  my tv       : fixed : tvguide: use abbreviations for daynames
+  26-05-2004  general     : fixed : updated dutch & finnish translations
+
   25-05-2004  my music    : fixed : when you put an .m3u file in a folder with mp3's then when you select the 3rd song, the 4th will play etc
   25-05-2004  my pictures : fixed : play a song, view a picture, press X->visualisation shows and picture disappears!
   25-05-2004  my tv       : fixed : click in empty 'recorded tv'->crash

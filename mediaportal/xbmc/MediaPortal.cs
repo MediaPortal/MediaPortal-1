@@ -543,6 +543,7 @@ public class MediaPortalApp : D3DApp
     }
 	}
 
+
 	protected override void mouseclick(MouseEventArgs e)
 	{
     base.mouseclick(e);

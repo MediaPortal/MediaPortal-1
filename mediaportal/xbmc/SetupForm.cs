@@ -214,6 +214,7 @@ namespace MediaPortal
     private System.Windows.Forms.CheckBox checkBoxHideFileExtensions;
     private System.Windows.Forms.Button buttonAutoTune;
     private System.Windows.Forms.Button buttonAutoTune2;
+    private System.Windows.Forms.PictureBox pictureBox1;
     ArrayList m_tvcards = new ArrayList();
 
 		public SetupForm()
@@ -309,6 +310,7 @@ namespace MediaPortal
 		private void InitializeComponent()
 		{
       this.components = new System.ComponentModel.Container();
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SetupForm));
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabGeneral = new System.Windows.Forms.TabPage();
       this.label27 = new System.Windows.Forms.Label();
@@ -410,6 +412,24 @@ namespace MediaPortal
       this.HdrVideoName = new System.Windows.Forms.ColumnHeader();
       this.HdrVideoFolder = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.tabPictureShares = new System.Windows.Forms.TabPage();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.txtBoxPictureFiles = new System.Windows.Forms.TextBox();
+      this.label10 = new System.Windows.Forms.Label();
+      this.label7 = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.UpDownPictureTransition = new System.Windows.Forms.NumericUpDown();
+      this.label5 = new System.Windows.Forms.Label();
+      this.label4 = new System.Windows.Forms.Label();
+      this.UpDownPictureDuration = new System.Windows.Forms.NumericUpDown();
+      this.PictureGroupBox = new System.Windows.Forms.GroupBox();
+      this.btnEditPictureShare = new System.Windows.Forms.Button();
+      this.btnDelPictureShare = new System.Windows.Forms.Button();
+      this.btnAddPictureShare = new System.Windows.Forms.Button();
+      this.listPictureShares = new MediaPortal.WinControls.ListViewEx();
+      this.HdrPictureName = new System.Windows.Forms.ColumnHeader();
+      this.HdrPictureFolder = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.tabTVChannels = new System.Windows.Forms.TabPage();
       this.groupBox20 = new System.Windows.Forms.GroupBox();
       this.btnXMLTVFolder = new System.Windows.Forms.Button();
@@ -429,25 +449,8 @@ namespace MediaPortal
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.groupBox18 = new System.Windows.Forms.GroupBox();
+      this.buttonAutoTune2 = new System.Windows.Forms.Button();
       this.textEditBox = new System.Windows.Forms.TextBox();
-      this.tabPictureShares = new System.Windows.Forms.TabPage();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.txtBoxPictureFiles = new System.Windows.Forms.TextBox();
-      this.label10 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.UpDownPictureTransition = new System.Windows.Forms.NumericUpDown();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
-      this.UpDownPictureDuration = new System.Windows.Forms.NumericUpDown();
-      this.PictureGroupBox = new System.Windows.Forms.GroupBox();
-      this.btnEditPictureShare = new System.Windows.Forms.Button();
-      this.btnDelPictureShare = new System.Windows.Forms.Button();
-      this.btnAddPictureShare = new System.Windows.Forms.Button();
-      this.listPictureShares = new MediaPortal.WinControls.ListViewEx();
-      this.HdrPictureName = new System.Windows.Forms.ColumnHeader();
-      this.HdrPictureFolder = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.tabPageCapture = new System.Windows.Forms.TabPage();
       this.btnEditCaptureDevice = new System.Windows.Forms.Button();
       this.btnDelCaptureDevice = new System.Windows.Forms.Button();
@@ -493,7 +496,7 @@ namespace MediaPortal
       this.WeatherHeader1 = new System.Windows.Forms.ColumnHeader();
       this.WeatherHeader2 = new System.Windows.Forms.ColumnHeader();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.buttonAutoTune2 = new System.Windows.Forms.Button();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabControl.SuspendLayout();
       this.tabGeneral.SuspendLayout();
       this.Skin.SuspendLayout();
@@ -516,16 +519,16 @@ namespace MediaPortal
       this.tabVideoShares.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.VideoGroupBox.SuspendLayout();
-      this.tabTVChannels.SuspendLayout();
-      this.groupBox20.SuspendLayout();
-      this.groupBox19.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).BeginInit();
-      this.groupBox18.SuspendLayout();
       this.tabPictureShares.SuspendLayout();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureTransition)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureDuration)).BeginInit();
       this.PictureGroupBox.SuspendLayout();
+      this.tabTVChannels.SuspendLayout();
+      this.groupBox20.SuspendLayout();
+      this.groupBox19.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).BeginInit();
+      this.groupBox18.SuspendLayout();
       this.tabPageCapture.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).BeginInit();
       this.groupBox13.SuspendLayout();
@@ -548,8 +551,8 @@ namespace MediaPortal
       this.tabControl.Controls.Add(this.TabDVDPlayer);
       this.tabControl.Controls.Add(this.tabAudioShares);
       this.tabControl.Controls.Add(this.tabVideoShares);
-      this.tabControl.Controls.Add(this.tabTVChannels);
       this.tabControl.Controls.Add(this.tabPictureShares);
+      this.tabControl.Controls.Add(this.tabTVChannels);
       this.tabControl.Controls.Add(this.tabPageCapture);
       this.tabControl.Controls.Add(this.tabWeather);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -672,9 +675,10 @@ namespace MediaPortal
       // 
       this.Skin.Controls.Add(this.checkBoxHideFileExtensions);
       this.Skin.Controls.Add(this.checkBoxMouseSupport);
+      this.Skin.Controls.Add(this.pictureBox1);
       this.Skin.Location = new System.Drawing.Point(16, 8);
       this.Skin.Name = "Skin";
-      this.Skin.Size = new System.Drawing.Size(320, 184);
+      this.Skin.Size = new System.Drawing.Size(592, 184);
       this.Skin.TabIndex = 0;
       this.Skin.TabStop = false;
       this.Skin.Text = "Skin";
@@ -691,7 +695,7 @@ namespace MediaPortal
       // 
       this.checkBoxMouseSupport.Location = new System.Drawing.Point(16, 56);
       this.checkBoxMouseSupport.Name = "checkBoxMouseSupport";
-      this.checkBoxMouseSupport.Size = new System.Drawing.Size(264, 24);
+      this.checkBoxMouseSupport.Size = new System.Drawing.Size(248, 24);
       this.checkBoxMouseSupport.TabIndex = 0;
       this.checkBoxMouseSupport.Text = "Show special mouse controls like scrollbars";
       // 
@@ -1486,6 +1490,191 @@ namespace MediaPortal
       // 
       this.columnHeader5.Text = "Default";
       // 
+      // tabPictureShares
+      // 
+      this.tabPictureShares.Controls.Add(this.groupBox1);
+      this.tabPictureShares.Controls.Add(this.PictureGroupBox);
+      this.tabPictureShares.Location = new System.Drawing.Point(4, 22);
+      this.tabPictureShares.Name = "tabPictureShares";
+      this.tabPictureShares.Size = new System.Drawing.Size(616, 374);
+      this.tabPictureShares.TabIndex = 2;
+      this.tabPictureShares.Text = "Pictures";
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.txtBoxPictureFiles);
+      this.groupBox1.Controls.Add(this.label10);
+      this.groupBox1.Controls.Add(this.label7);
+      this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.Controls.Add(this.UpDownPictureTransition);
+      this.groupBox1.Controls.Add(this.label5);
+      this.groupBox1.Controls.Add(this.label4);
+      this.groupBox1.Controls.Add(this.UpDownPictureDuration);
+      this.groupBox1.Location = new System.Drawing.Point(24, 272);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(496, 88);
+      this.groupBox1.TabIndex = 2;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Slideshow";
+      // 
+      // txtBoxPictureFiles
+      // 
+      this.txtBoxPictureFiles.Location = new System.Drawing.Point(96, 56);
+      this.txtBoxPictureFiles.Name = "txtBoxPictureFiles";
+      this.txtBoxPictureFiles.Size = new System.Drawing.Size(376, 20);
+      this.txtBoxPictureFiles.TabIndex = 2;
+      this.txtBoxPictureFiles.Text = "";
+      // 
+      // label10
+      // 
+      this.label10.Location = new System.Drawing.Point(24, 56);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(72, 24);
+      this.label10.TabIndex = 7;
+      this.label10.Text = "Picture files";
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(320, 24);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(48, 16);
+      this.label7.TabIndex = 6;
+      this.label7.Text = "Frames";
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(120, 24);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(32, 23);
+      this.label6.TabIndex = 5;
+      this.label6.Text = "sec.";
+      // 
+      // UpDownPictureTransition
+      // 
+      this.UpDownPictureTransition.Location = new System.Drawing.Point(256, 24);
+      this.UpDownPictureTransition.Minimum = new System.Decimal(new int[] {
+                                                                            1,
+                                                                            0,
+                                                                            0,
+                                                                            0});
+      this.UpDownPictureTransition.Name = "UpDownPictureTransition";
+      this.UpDownPictureTransition.Size = new System.Drawing.Size(48, 20);
+      this.UpDownPictureTransition.TabIndex = 1;
+      this.UpDownPictureTransition.Value = new System.Decimal(new int[] {
+                                                                          1,
+                                                                          0,
+                                                                          0,
+                                                                          0});
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(192, 24);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(56, 23);
+      this.label5.TabIndex = 3;
+      this.label5.Text = "Transition";
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(24, 24);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(48, 23);
+      this.label4.TabIndex = 1;
+      this.label4.Text = "Duration";
+      // 
+      // UpDownPictureDuration
+      // 
+      this.UpDownPictureDuration.Location = new System.Drawing.Point(80, 24);
+      this.UpDownPictureDuration.Maximum = new System.Decimal(new int[] {
+                                                                          20,
+                                                                          0,
+                                                                          0,
+                                                                          0});
+      this.UpDownPictureDuration.Minimum = new System.Decimal(new int[] {
+                                                                          1,
+                                                                          0,
+                                                                          0,
+                                                                          0});
+      this.UpDownPictureDuration.Name = "UpDownPictureDuration";
+      this.UpDownPictureDuration.Size = new System.Drawing.Size(32, 20);
+      this.UpDownPictureDuration.TabIndex = 0;
+      this.UpDownPictureDuration.Value = new System.Decimal(new int[] {
+                                                                        3,
+                                                                        0,
+                                                                        0,
+                                                                        0});
+      // 
+      // PictureGroupBox
+      // 
+      this.PictureGroupBox.Controls.Add(this.btnEditPictureShare);
+      this.PictureGroupBox.Controls.Add(this.btnDelPictureShare);
+      this.PictureGroupBox.Controls.Add(this.btnAddPictureShare);
+      this.PictureGroupBox.Controls.Add(this.listPictureShares);
+      this.PictureGroupBox.Location = new System.Drawing.Point(24, 16);
+      this.PictureGroupBox.Name = "PictureGroupBox";
+      this.PictureGroupBox.Size = new System.Drawing.Size(496, 248);
+      this.PictureGroupBox.TabIndex = 0;
+      this.PictureGroupBox.TabStop = false;
+      this.PictureGroupBox.Text = "Picture folders";
+      // 
+      // btnEditPictureShare
+      // 
+      this.btnEditPictureShare.Location = new System.Drawing.Point(136, 216);
+      this.btnEditPictureShare.Name = "btnEditPictureShare";
+      this.btnEditPictureShare.Size = new System.Drawing.Size(48, 23);
+      this.btnEditPictureShare.TabIndex = 3;
+      this.btnEditPictureShare.Text = "Edit";
+      this.btnEditPictureShare.Click += new System.EventHandler(this.btnEditPictureShare_Click);
+      // 
+      // btnDelPictureShare
+      // 
+      this.btnDelPictureShare.Location = new System.Drawing.Point(72, 216);
+      this.btnDelPictureShare.Name = "btnDelPictureShare";
+      this.btnDelPictureShare.Size = new System.Drawing.Size(56, 23);
+      this.btnDelPictureShare.TabIndex = 2;
+      this.btnDelPictureShare.Text = "Delete";
+      this.btnDelPictureShare.Click += new System.EventHandler(this.btnDelPictureShare_Click);
+      // 
+      // btnAddPictureShare
+      // 
+      this.btnAddPictureShare.Location = new System.Drawing.Point(8, 216);
+      this.btnAddPictureShare.Name = "btnAddPictureShare";
+      this.btnAddPictureShare.Size = new System.Drawing.Size(56, 23);
+      this.btnAddPictureShare.TabIndex = 1;
+      this.btnAddPictureShare.Text = "Add";
+      this.btnAddPictureShare.Click += new System.EventHandler(this.btnAddPictureShare_Click);
+      // 
+      // listPictureShares
+      // 
+      this.listPictureShares.AllowDrop = true;
+      this.listPictureShares.AllowRowReorder = true;
+      this.listPictureShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                        this.HdrPictureName,
+                                                                                        this.HdrPictureFolder,
+                                                                                        this.columnHeader6});
+      this.listPictureShares.FullRowSelect = true;
+      this.listPictureShares.HideSelection = false;
+      this.listPictureShares.Location = new System.Drawing.Point(0, 24);
+      this.listPictureShares.MultiSelect = false;
+      this.listPictureShares.Name = "listPictureShares";
+      this.listPictureShares.Size = new System.Drawing.Size(448, 176);
+      this.listPictureShares.TabIndex = 0;
+      this.listPictureShares.View = System.Windows.Forms.View.Details;
+      this.listPictureShares.DoubleClick += new System.EventHandler(this.listPictureShares_DoubleClick);
+      // 
+      // HdrPictureName
+      // 
+      this.HdrPictureName.Text = "Name";
+      // 
+      // HdrPictureFolder
+      // 
+      this.HdrPictureFolder.Text = "Folder";
+      this.HdrPictureFolder.Width = 323;
+      // 
+      // columnHeader6
+      // 
+      this.columnHeader6.Text = "Default";
+      // 
       // tabTVChannels
       // 
       this.tabTVChannels.Controls.Add(this.groupBox20);
@@ -1677,6 +1866,14 @@ namespace MediaPortal
       this.groupBox18.TabStop = false;
       this.groupBox18.Text = "TV Channels";
       // 
+      // buttonAutoTune2
+      // 
+      this.buttonAutoTune2.Location = new System.Drawing.Point(176, 248);
+      this.buttonAutoTune2.Name = "buttonAutoTune2";
+      this.buttonAutoTune2.TabIndex = 19;
+      this.buttonAutoTune2.Text = "Auto Tune";
+      this.buttonAutoTune2.Click += new System.EventHandler(this.buttonAutoTune2_Click);
+      // 
       // textEditBox
       // 
       this.textEditBox.Location = new System.Drawing.Point(312, 248);
@@ -1684,191 +1881,6 @@ namespace MediaPortal
       this.textEditBox.TabIndex = 18;
       this.textEditBox.Text = "textBox1";
       this.textEditBox.Visible = false;
-      // 
-      // tabPictureShares
-      // 
-      this.tabPictureShares.Controls.Add(this.groupBox1);
-      this.tabPictureShares.Controls.Add(this.PictureGroupBox);
-      this.tabPictureShares.Location = new System.Drawing.Point(4, 22);
-      this.tabPictureShares.Name = "tabPictureShares";
-      this.tabPictureShares.Size = new System.Drawing.Size(616, 374);
-      this.tabPictureShares.TabIndex = 2;
-      this.tabPictureShares.Text = "Pictures";
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Controls.Add(this.txtBoxPictureFiles);
-      this.groupBox1.Controls.Add(this.label10);
-      this.groupBox1.Controls.Add(this.label7);
-      this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Controls.Add(this.UpDownPictureTransition);
-      this.groupBox1.Controls.Add(this.label5);
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.UpDownPictureDuration);
-      this.groupBox1.Location = new System.Drawing.Point(24, 272);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(496, 88);
-      this.groupBox1.TabIndex = 2;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Slideshow";
-      // 
-      // txtBoxPictureFiles
-      // 
-      this.txtBoxPictureFiles.Location = new System.Drawing.Point(96, 56);
-      this.txtBoxPictureFiles.Name = "txtBoxPictureFiles";
-      this.txtBoxPictureFiles.Size = new System.Drawing.Size(376, 20);
-      this.txtBoxPictureFiles.TabIndex = 2;
-      this.txtBoxPictureFiles.Text = "";
-      // 
-      // label10
-      // 
-      this.label10.Location = new System.Drawing.Point(24, 56);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(72, 24);
-      this.label10.TabIndex = 7;
-      this.label10.Text = "Picture files";
-      // 
-      // label7
-      // 
-      this.label7.Location = new System.Drawing.Point(320, 24);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(48, 16);
-      this.label7.TabIndex = 6;
-      this.label7.Text = "Frames";
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(120, 24);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(32, 23);
-      this.label6.TabIndex = 5;
-      this.label6.Text = "sec.";
-      // 
-      // UpDownPictureTransition
-      // 
-      this.UpDownPictureTransition.Location = new System.Drawing.Point(256, 24);
-      this.UpDownPictureTransition.Minimum = new System.Decimal(new int[] {
-                                                                            1,
-                                                                            0,
-                                                                            0,
-                                                                            0});
-      this.UpDownPictureTransition.Name = "UpDownPictureTransition";
-      this.UpDownPictureTransition.Size = new System.Drawing.Size(48, 20);
-      this.UpDownPictureTransition.TabIndex = 1;
-      this.UpDownPictureTransition.Value = new System.Decimal(new int[] {
-                                                                          1,
-                                                                          0,
-                                                                          0,
-                                                                          0});
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(192, 24);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(56, 23);
-      this.label5.TabIndex = 3;
-      this.label5.Text = "Transition";
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(24, 24);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(48, 23);
-      this.label4.TabIndex = 1;
-      this.label4.Text = "Duration";
-      // 
-      // UpDownPictureDuration
-      // 
-      this.UpDownPictureDuration.Location = new System.Drawing.Point(80, 24);
-      this.UpDownPictureDuration.Maximum = new System.Decimal(new int[] {
-                                                                          20,
-                                                                          0,
-                                                                          0,
-                                                                          0});
-      this.UpDownPictureDuration.Minimum = new System.Decimal(new int[] {
-                                                                          1,
-                                                                          0,
-                                                                          0,
-                                                                          0});
-      this.UpDownPictureDuration.Name = "UpDownPictureDuration";
-      this.UpDownPictureDuration.Size = new System.Drawing.Size(32, 20);
-      this.UpDownPictureDuration.TabIndex = 0;
-      this.UpDownPictureDuration.Value = new System.Decimal(new int[] {
-                                                                        3,
-                                                                        0,
-                                                                        0,
-                                                                        0});
-      // 
-      // PictureGroupBox
-      // 
-      this.PictureGroupBox.Controls.Add(this.btnEditPictureShare);
-      this.PictureGroupBox.Controls.Add(this.btnDelPictureShare);
-      this.PictureGroupBox.Controls.Add(this.btnAddPictureShare);
-      this.PictureGroupBox.Controls.Add(this.listPictureShares);
-      this.PictureGroupBox.Location = new System.Drawing.Point(24, 16);
-      this.PictureGroupBox.Name = "PictureGroupBox";
-      this.PictureGroupBox.Size = new System.Drawing.Size(496, 248);
-      this.PictureGroupBox.TabIndex = 0;
-      this.PictureGroupBox.TabStop = false;
-      this.PictureGroupBox.Text = "Picture folders";
-      // 
-      // btnEditPictureShare
-      // 
-      this.btnEditPictureShare.Location = new System.Drawing.Point(136, 216);
-      this.btnEditPictureShare.Name = "btnEditPictureShare";
-      this.btnEditPictureShare.Size = new System.Drawing.Size(48, 23);
-      this.btnEditPictureShare.TabIndex = 3;
-      this.btnEditPictureShare.Text = "Edit";
-      this.btnEditPictureShare.Click += new System.EventHandler(this.btnEditPictureShare_Click);
-      // 
-      // btnDelPictureShare
-      // 
-      this.btnDelPictureShare.Location = new System.Drawing.Point(72, 216);
-      this.btnDelPictureShare.Name = "btnDelPictureShare";
-      this.btnDelPictureShare.Size = new System.Drawing.Size(56, 23);
-      this.btnDelPictureShare.TabIndex = 2;
-      this.btnDelPictureShare.Text = "Delete";
-      this.btnDelPictureShare.Click += new System.EventHandler(this.btnDelPictureShare_Click);
-      // 
-      // btnAddPictureShare
-      // 
-      this.btnAddPictureShare.Location = new System.Drawing.Point(8, 216);
-      this.btnAddPictureShare.Name = "btnAddPictureShare";
-      this.btnAddPictureShare.Size = new System.Drawing.Size(56, 23);
-      this.btnAddPictureShare.TabIndex = 1;
-      this.btnAddPictureShare.Text = "Add";
-      this.btnAddPictureShare.Click += new System.EventHandler(this.btnAddPictureShare_Click);
-      // 
-      // listPictureShares
-      // 
-      this.listPictureShares.AllowDrop = true;
-      this.listPictureShares.AllowRowReorder = true;
-      this.listPictureShares.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                        this.HdrPictureName,
-                                                                                        this.HdrPictureFolder,
-                                                                                        this.columnHeader6});
-      this.listPictureShares.FullRowSelect = true;
-      this.listPictureShares.HideSelection = false;
-      this.listPictureShares.Location = new System.Drawing.Point(0, 24);
-      this.listPictureShares.MultiSelect = false;
-      this.listPictureShares.Name = "listPictureShares";
-      this.listPictureShares.Size = new System.Drawing.Size(448, 176);
-      this.listPictureShares.TabIndex = 0;
-      this.listPictureShares.View = System.Windows.Forms.View.Details;
-      this.listPictureShares.DoubleClick += new System.EventHandler(this.listPictureShares_DoubleClick);
-      // 
-      // HdrPictureName
-      // 
-      this.HdrPictureName.Text = "Name";
-      // 
-      // HdrPictureFolder
-      // 
-      this.HdrPictureFolder.Text = "Folder";
-      this.HdrPictureFolder.Width = 323;
-      // 
-      // columnHeader6
-      // 
-      this.columnHeader6.Text = "Default";
       // 
       // tabPageCapture
       // 
@@ -2287,13 +2299,14 @@ namespace MediaPortal
       this.WeatherHeader2.Text = "shortcode";
       this.WeatherHeader2.Width = 121;
       // 
-      // buttonAutoTune2
+      // pictureBox1
       // 
-      this.buttonAutoTune2.Location = new System.Drawing.Point(176, 248);
-      this.buttonAutoTune2.Name = "buttonAutoTune2";
-      this.buttonAutoTune2.TabIndex = 19;
-      this.buttonAutoTune2.Text = "Auto Tune";
-      this.buttonAutoTune2.Click += new System.EventHandler(this.buttonAutoTune2_Click);
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(264, 16);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(320, 144);
+      this.pictureBox1.TabIndex = 13;
+      this.pictureBox1.TabStop = false;
       // 
       // SetupForm
       // 
@@ -2326,16 +2339,16 @@ namespace MediaPortal
       this.tabVideoShares.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.VideoGroupBox.ResumeLayout(false);
-      this.tabTVChannels.ResumeLayout(false);
-      this.groupBox20.ResumeLayout(false);
-      this.groupBox19.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).EndInit();
-      this.groupBox18.ResumeLayout(false);
       this.tabPictureShares.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureTransition)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPictureDuration)).EndInit();
       this.PictureGroupBox.ResumeLayout(false);
+      this.tabTVChannels.ResumeLayout(false);
+      this.groupBox20.ResumeLayout(false);
+      this.groupBox19.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.timeZoneCorrection)).EndInit();
+      this.groupBox18.ResumeLayout(false);
       this.tabPageCapture.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.UpDownPostRecording)).EndInit();
       this.groupBox13.ResumeLayout(false);

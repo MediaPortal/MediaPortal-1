@@ -29,7 +29,6 @@ namespace MediaPortal
     // The menu items that *all* samples will need
     protected System.Windows.Forms.MainMenu mnuMain;
     protected System.Windows.Forms.MenuItem mnuFile;
-    private System.Windows.Forms.MenuItem mnuBreak1;
     private System.Windows.Forms.MenuItem mnuChange;
     private System.Windows.Forms.MenuItem mnuBreak2;
     protected System.Windows.Forms.MenuItem mnuExit;
@@ -95,8 +94,9 @@ namespace MediaPortal
     protected bool startFullscreen; // Whether to start up the app in fullscreen mode
 
     protected System.Drawing.Size storedSize;
-    private System.Windows.Forms.MenuItem mnuSetup;
     protected System.Drawing.Point storedLocation;
+    private System.Windows.Forms.MenuItem menuItem1;
+    private System.Windows.Forms.MenuItem menuItem2;
     protected Rectangle   oldBounds;
 
     // Overridable functions for the 3D scene created by the app
@@ -1270,6 +1270,11 @@ namespace MediaPortal
       }
     }
 
+    private void menuItem2_Click(object sender, System.EventArgs e)
+    {
+      OnSetup(sender,e);    
+    }
+
     private void D3DApp_Load(object sender, System.EventArgs e)
     {
     
@@ -1404,63 +1409,65 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
       this.mnuMain = new System.Windows.Forms.MainMenu();
       this.mnuFile = new System.Windows.Forms.MenuItem();
-      this.mnuSetup = new System.Windows.Forms.MenuItem();
-      this.mnuBreak1 = new System.Windows.Forms.MenuItem();
       this.mnuChange = new System.Windows.Forms.MenuItem();
       this.mnuBreak2 = new System.Windows.Forms.MenuItem();
       this.mnuExit = new System.Windows.Forms.MenuItem();
+      this.menuItem1 = new System.Windows.Forms.MenuItem();
+      this.menuItem2 = new System.Windows.Forms.MenuItem();
       // 
       // mnuMain
       // 
       this.mnuMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                            this.mnuFile});
+                                                                            this.mnuFile,
+                                                                            this.menuItem1});
       // 
       // mnuFile
       // 
       this.mnuFile.Index = 0;
       this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                            this.mnuSetup,
-                                                                            this.mnuBreak1,
                                                                             this.mnuChange,
                                                                             this.mnuBreak2,
                                                                             this.mnuExit});
       this.mnuFile.Text = "&File";
       // 
-      // mnuSetup
-      // 
-      this.mnuSetup.Index = 0;
-      this.mnuSetup.Shortcut = System.Windows.Forms.Shortcut.F2;
-      this.mnuSetup.Text = "&Setup...";
-      this.mnuSetup.Click += new System.EventHandler(this.OnSetup);
-      // 
-      // mnuBreak1
-      // 
-      this.mnuBreak1.Index = 1;
-      this.mnuBreak1.Text = "-";
-      // 
       // mnuChange
       // 
-      this.mnuChange.Index = 2;
+      this.mnuChange.Index = 0;
       this.mnuChange.Text = "&Change Device...";
       this.mnuChange.Click += new System.EventHandler(this.UserSelectNewDevice);
       // 
       // mnuBreak2
       // 
-      this.mnuBreak2.Index = 3;
+      this.mnuBreak2.Index = 1;
       this.mnuBreak2.Text = "-";
       // 
       // mnuExit
       // 
-      this.mnuExit.Index = 4;
-      this.mnuExit.Text = "E&xit\tESC";
+      this.mnuExit.Index = 2;
+      this.mnuExit.Text = "Exit";
       this.mnuExit.Click += new System.EventHandler(this.ExitSample);
+      // 
+      // menuItem1
+      // 
+      this.menuItem1.Index = 1;
+      this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                              this.menuItem2});
+      this.menuItem1.Text = "&Tools";
+      // 
+      // menuItem2
+      // 
+      this.menuItem2.Index = 0;
+      this.menuItem2.Text = "&Options...";
+      this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
       // 
       // D3DApp
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(292, 273);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.KeyPreview = true;
       this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";

@@ -389,6 +389,11 @@
       <id>67</id>
       <key>9</key>
     </action>
+    <action>
+      <description>Toggle between GUI and fullscreen</description>
+      <id>18</id>
+      <key>ESC</key>
+    </action>
   </window>
   
   <window>
@@ -665,12 +670,12 @@
     <action>
       <description>Next Chapter</description>
       <id>91</id>
-      <key>n</key>
+      <key>F8</key>
     </action>
     <action>
       <description>Previous Chapter</description>
       <id>92</id>
-      <key>p</key>
+      <key>F7</key>
     </action>
   </window>
   <window>
@@ -678,12 +683,12 @@
 	<id>602</id>
 	<action>
 	  <description>Next tv channel</description>
-	  <key>right</key>
+	  <key>pagedown</key>
 	  <id>95</id>
 	</action>
 	<action>
 	  <description>Previous tv channel</description>
-	  <key>left</key>
+	  <key>pageup</key>
 	  <id>94</id>
 	</action>
     <action>
@@ -691,7 +696,11 @@
       <id>24</id>
       <key>Y</key>
     </action>
-	
+    <action>
+      <description>Toggle between GUI and fullscreen</description>
+      <id>18</id>
+      <key>ESC</key>
+    </action>
   </window>
   
  
