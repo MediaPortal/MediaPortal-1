@@ -89,6 +89,10 @@
 		<reverse>yes</reverse>
 		<onleft>6</onleft>
 		<onright>8</onright>
+		<textureUp>arrow_round_right_nofocus.png</textureUp>
+		<textureDown>arrow_round_left_nofocus.png</textureDown>
+		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_round_left_nofocus.png</textureDownFocus>
 	</control>
 	<control>
 		<description>time interval spin control</description>
@@ -100,10 +104,10 @@
 		<orientation>vertical</orientation>
 		<align>center</align>
 		<reverse>yes</reverse>
-		<textureUp>arrow_up_nofocus.png</textureUp>
-		<textureDown>arrow_down_nofocus.png</textureDown>
-		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
-		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
+		<textureUp>arrow_round_up_nofocus.png</textureUp>
+		<textureDown>arrow_round_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
 		<onleft>6</onleft>
 		<onright>8</onright>
 	</control>
@@ -185,13 +189,22 @@
 		<textcolor>FFFFFFFF</textcolor>
 	</control>	
 	<control>
-		<description>genre</description>
+		<description>template for program genre light area</description>
 		<type>label</type>
 		<id>23</id>
 		<label>-</label>
 		<font>font10</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FF101010</textcolor>
 	</control>	
+	<control>
+		<description>template for program title light area</description>
+		<type>label</type>
+		<id>24</id>
+		<visible>no</visible>
+		<label>-</label>
+		<font>font13</font>
+		<textcolor>FF101010</textcolor>
+	</control>
 	<control>
 		<description>vertical timeline</description>
 		<type>image</type>
@@ -204,14 +217,24 @@
 		<texture>vertical-line.png</texture>
 	</control>	
 	<control>
-		<description>title REC</description>
+		<description>template for program title darkarea </description>
 		<type>label</type>
 		<visible>no</visible>
 		<id>26</id>
 		<label>-</label>
 		<font>font13</font>
-		<textcolor>FFFF0000</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
+	<control>
+		<description>template for genre  dark area</description>
+		<type>label</type>
+		<visible>no</visible>
+		<id>30</id>
+		<label>-</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	
 	
 	<control>
 		<description>TV preview window</description> 
