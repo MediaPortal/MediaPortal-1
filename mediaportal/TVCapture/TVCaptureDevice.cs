@@ -586,6 +586,7 @@ namespace MediaPortal.TV.Recording
     { 
       m_iPreRecordInterval=iPreRecordInterval;
       m_iPostRecordInterval=iPostRecordInterval;
+      m_CurrentProgramRecording=null;
       // get capture format & recording path
       string strRecPath="";
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -597,9 +598,9 @@ namespace MediaPortal.TV.Recording
       if (currentProgram!=null) 
       {
         Log.Write("  CaptureCard:{0} title:{1}", ID,currentProgram.Title);
+        m_CurrentProgramRecording=currentProgram.Clone();
       }
       m_bStopRecording=false;
-      m_CurrentProgramRecording=currentProgram.Clone();
       m_CurrentTVRecording=rec;
       m_bIsRecording=true;
       Previewing=false;

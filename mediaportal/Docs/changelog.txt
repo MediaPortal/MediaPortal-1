@@ -1,4 +1,5 @@
 History: (dd-mm-yyyy)
+  16-05-2004  general     : added : SKIN xmls: added <action> tag for buttons. 
   16-05-2004  my tv       : fixed : no audio when watching TV for hauppauge PVR USB2/250/350
   16-05-2004  general     : added : option to show/hide the file-extensions
   16-05-2004  my tv       : fixed : Record Now was broken

@@ -149,7 +149,7 @@ namespace MediaPortal.TV.Recording
           HandlePreview();
           
           int iRec=0;
-
+          bool bRecorded=false;
           // for each tv-channel
           foreach (TVChannel chan in channels)
           {
@@ -178,7 +178,6 @@ namespace MediaPortal.TV.Recording
               if (m_bRecordingsChanged) break;
               if (m_bStopRecording) break;
               if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
-              bool bRecorded=false;
               
               // if not, then check each check for each tv program
               foreach (TVProgram currentProgram in runningPrograms)
@@ -203,7 +202,7 @@ namespace MediaPortal.TV.Recording
    
 
           iRec=0;
-          if (!m_bRecordingsChanged)
+          if (!bRecorded)
           {
             foreach (TVRecording rec in recordings)
             {

@@ -16,6 +16,7 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
 using MediaPortal.TV.Recording;
+using MediaPortal.Dialogs;
 
 public class MediaPortalApp : D3DApp
 {
@@ -140,6 +141,7 @@ public class MediaPortalApp : D3DApp
       Log.Write("starting");
       GUIGraphicsContext.form=this;
       GUIGraphicsContext.graphics=null;
+      GUIGraphicsContext.ActionHandlers += new OnActionHandler(this.OnAction);
       try
       {
         using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -372,6 +374,53 @@ public class MediaPortalApp : D3DApp
 
     void OnAction(Action action)
     {
+      switch (action.wID)
+      {
+        case Action.ActionType.ACTION_EXIT:
+          GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
+          break;
+
+        case Action.ActionType.ACTION_REBOOT:
+        {
+          //reboot
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+          if (null!=dlgYesNo)
+          {
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(630));
+            dlgYesNo.SetLine(0, "");
+            dlgYesNo.SetLine(1, "");
+            dlgYesNo.SetLine(2, "");
+            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+            if (dlgYesNo.IsConfirmed)
+            {
+              WindowsController.ExitWindows(RestartOptions.Reboot,true);
+              GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
+            }
+          }
+        }
+          break;
+
+        case Action.ActionType.ACTION_SHUTDOWN:
+        {
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+          if (null!=dlgYesNo)
+          {
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(631));
+            dlgYesNo.SetLine(0, "");
+            dlgYesNo.SetLine(1, "");
+            dlgYesNo.SetLine(2, "");
+            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+            if (dlgYesNo.IsConfirmed)
+            {
+              WindowsController.ExitWindows(RestartOptions.PowerOff,true);
+              GUIGraphicsContext.CurrentState=GUIGraphicsContext.State.STOPPING;
+            }
+          }
+          break;
+        }
+      }
       if (g_Player.Playing)
       {
         switch (action.wID)

@@ -4,8 +4,8 @@ mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
 
+copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .
 copy ..\..\..\GUIMusic\bin\Release\GUIMusic.dll plugins\windows
-copy ..\..\..\Dialogs\bin\Release\Dialogs.dll plugins\windows
 copy ..\..\..\GUIPictures\bin\Release\GUIPictures.dll plugins\windows
 copy ..\..\..\GUITV\bin\Release\GUITV.dll plugins\windows
 copy ..\..\..\GUIVideoFiles\bin\Release\GUIVideoFiles.dll plugins\windows

@@ -158,6 +158,11 @@
                     AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
                 />
+                <Reference
+                    Name = "Dialogs"
+                    Project = "{0235DA71-5415-464A-A219-704324A4BAAE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
