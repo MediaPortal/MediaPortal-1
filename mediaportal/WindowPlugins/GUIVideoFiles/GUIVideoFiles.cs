@@ -1537,6 +1537,7 @@ namespace MediaPortal.GUI.Video
               Utils.FileDelete(strFolderImage);
               try
               {
+                Utils.FileDelete(strFolderImage);
                 System.IO.File.Copy(strThumbOrg, strFolderImage);
               }
               catch (Exception)
@@ -1654,6 +1655,7 @@ namespace MediaPortal.GUI.Video
                         strFolderImage += "\\folder.jpg"; //TODO                  
                         try
                         {
+                          Utils.FileDelete(strFolderImage);
                           System.IO.File.Copy(strThumbOrg, strFolderImage);
                         }
                         catch (Exception)
