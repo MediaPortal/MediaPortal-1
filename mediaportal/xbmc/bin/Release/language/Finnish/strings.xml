@@ -3,19 +3,19 @@
 	<characters>255</characters>
 	<string>
 		<id>0</id>
-		<value>Omat ohjelmat</value>
+		<value>Ohjelmat</value>
 	</string>
 	<string>
 		<id>1</id>
-		<value>Omat kuvat</value>
+		<value>Kuvat</value>
 	</string>
 	<string>
 		<id>2</id>
-		<value>Oma musiikki</value>
+		<value>Musiikki</value>
 	</string>
 	<string>
 		<id>3</id>
-		<value>Omat elokuvat</value>
+		<value>Elokuvat</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -31,11 +31,11 @@
 	</string>
 	<string>
 		<id>7</id>
-		<value>Omat tiedostot</value>
+		<value>Tiedostot</value>
 	</string>
 	<string>
 		<id>8</id>
-		<value>S‰‰tiedot</value>
+		<value>S‰‰</value>
 	</string>
         <string>
                 <id>9</id>
@@ -43,7 +43,7 @@
 	</string>
 	<string>
                 <id>10</id>
-		<value>Omat reseptit</value>
+		<value>Reseptit</value>
 	</string>
 	<string>
 		<id>11</id>
@@ -175,11 +175,11 @@
 	</string>
 	<string>
 		<id>113</id>
-		<value>Omat tiedostot : L‰hde</value>
+		<value>Tiedostot : L‰hde</value>
 	</string>
 	<string>
 		<id>114</id>
-		<value>Omat tiedostot : Kohde</value>
+		<value>Tiedostot : Kohde</value>
 	</string>
 	<string>
 		<id>115</id>
@@ -1047,11 +1047,11 @@
 	</string>
 	<string>
 		<id>333</id>
-		<value>Haluatko uudelleenj‰rjest‰‰ oma musiikki-tietokannan?</value>
+		<value>Haluatko uudelleenj‰rjest‰‰ musiikki-tietokannan?</value>
 	</string>
 	<string>
 		<id>334</id>
-		<value>Uudelleenj‰rjest‰ oma musiikki</value>
+		<value>Uudelleenj‰rjest‰ musiikki</value>
 	</string>
 	<string>
 		<id>335</id>
@@ -1351,19 +1351,19 @@
 	</string>
 	<string>
 		<id>418</id>
-		<value>Omat Videot/Genre</value>
+		<value>Videot/Genre</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Omat Videot/N‰yttelij‰t</value>
+		<value>Videot/N‰yttelij‰t</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Omat Videot/Vuodet</value>
+		<value>Videot/Vuodet</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Omat Videot/Nimi</value>
+		<value>Videot/Nimi</value>
 	</string>
 	<string>
 		<id>422</id>
@@ -1667,7 +1667,7 @@
 	</string>
 	<string>
 		<id>605</id>
-		<value>Oma TV</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -1907,7 +1907,7 @@
         </string>
         <string>
                 <id>665</id>
-                <value>Oma radio</value>
+                <value>Radio</value>
         </string>
         <string>
                 <id>666</id>
@@ -2159,11 +2159,11 @@
         </string>
         <string>
 	        <id>736</id>
-	        <value>TV-oppaan tietoja ei saatavilla</value>
+	        <value>Tietoja ei saatavilla</value>
         </string>
         <string>
 	        <id>737</id>
-	        <value>View: Satelliitti</value>
+	        <value>N‰yt‰: Satelliitti</value>
         </string>
         <string>
 	        <id>738</id>
@@ -2262,7 +2262,7 @@
         <!-- My Alarm Strings -->
         <string>
 	        <id>850</id>
-	        <value>Oma h‰lytys</value>
+	        <value>H‰lytys</value>
         </string>
         <string>
 	        <id>851</id>
@@ -2396,7 +2396,7 @@
         </string>
         <string>
 	        <id>913</id>
-	        <value>Omat lis‰osat</value>
+	        <value>Lis‰osat</value>
         </string>
         <string>
         	<id>914</id>
@@ -2606,17 +2606,57 @@
 	         <id>973</id>
 	         <value>Maksimi FPS</value>
         </string>
+        <string>
+	        <id>974</id>
+	        <value>P‰‰valikko</value>
+        </string>
+        <string>
+	        <id>975</id>
+	        <value>Edellinen kohtaus</value>
+        </string>
+        <string>
+	        <id>976</id>
+	        <value>Seuraava kohtaus</value>
+        </string>
+        <string>
+	        <id>977</id>
+         	<value>Ei vapaata korttia saatavilla</value>
+        </string>
+        <string>
+	        <id>978</id>
+	        <value>jolla voi katsella t‰t‰ kanavaa.</value>
+        </string>
+        <string>
+	        <id>979</id>
+	        <value>Play recording from beginning</value>
+        </string>
+        <string>
+        	<id>980</id>
+         	<value>Siirry nykyhetkeen</value>
+        </string>
+        <string>
+	        <id>981</id>
+	        <value>Peruuta ohjelman tallennus</value>
+        </string>
+        <string>
+        	<id>982</id>
+         	<value>Poista tallennus</value>
+        </string>
 
         <string>
         	<id>1440</id>
-         	<value>Teksti-TV</value>
+         	<value>Teksti-tv</value>
+        </string>
+        <string>
+        	<id>1441</id>
+         	<value>Teksti-tv</value>
         </string>
 
 
         <!-- My Status Strings -->
 	<string>
                 <id>1950</id>
-                <value>Oma tila</value>
+                <value>Tila</value>
         </string>
 	<string>
                 <id>1951</id>
@@ -2998,7 +3038,87 @@
 		<id>2115</id>
 		<value>Aseta CD/DVD RW</value>
 	</string>
-		<string>
+	<string>
+                <id>2116</id>
+                <value>Asema ei ole valmis</value>
+        </string>
+	<string>
+                <id>2117</id>
+                <value>Vakava virhe!</value>
+        </string>
+	<string>
+                <id>2118</id>
+                <value>Convert DVR-MS</value>
+        </string>
+	<string>
+                <id>2119</id>
+                <value>Aloita muunnos</value>
+        </string>
+	<string>
+                <id>2120</id>
+                <value>Muunnan tiedostoja ...</value>
+        </string>
+	<string>
+                <id>2121</id>
+                <value>Ei voitu muuntaa!</value>
+        </string>
+	<string>
+                <id>2122</id>
+                <value>Alkaa</value>
+        </string>
+	<string>
+                <id>2123</id>
+                <value>Levyn tiedot</value>
+        </string>
+	<string>
+                <id>2124</id>
+                <value>Ei voi tyhjent‰‰. Media ei ole R/W tyyppinen</value>
+        </string>
+	<string>
+                <id>2125</id>
+                <value>Tyhjent‰‰ levyn....</value>
+        </string>
+	<string>
+                <id>2126</id>
+                <value>Anna CD</value>
+        </string>
+	<string>
+                <id>2127</id>
+                <value>CD:lle ei voi kirjoittaa</value>
+        </string>
+	<string>
+                <id>2128</id>
+                <value>Valmistautuu polttoon: arvioitu aika:</value>
+        </string>
+	<string>
+                <id>2129</id>
+                <value>Valmistautuu polttoon</value>
+        </string>
+	<string>
+                <id>2130</id>
+                <value>Lohko</value>
+        </string>
+	<string>
+                <id>2131</id>
+                <value>???of</value>
+        </string>
+	<string>
+                <id>2132</id>
+                <value>Viimeistell‰‰n levy‰, arvioitu aika:</value>
+        </string>
+	<string>
+                <id>2133</id>
+                <value>Tallennetut</value>
+        </string>
+	<string>
+                <id>2134</id>
+                <value>Video</value>
+        </string>
+	<string>
+                <id>2135</id>
+                <value>Audio</value>
+        </string>
+        <string>
 		<id>2216</id>
 		<value>Tiedostot siirretty!</value>
 	</string>
@@ -3204,7 +3324,7 @@
         </string>
         <string>
 	        <id>8000</id>
-	        <value>Oma posti</value>
+	        <value>S‰hkˆposti</value>
         </string>
         <string>
 	        <id>8001</id>
@@ -3373,15 +3493,15 @@
         </string>
         <string>
                 <id>10001</id>
-                <value>Oma TV</value>
+                <value>TV</value>
         </string>
         <string>
                 <id>10002</id>
-                <value>Omat kuvat</value>
+                <value>Kuvat</value>
         </string>
         <string>
                 <id>10003</id>
-                <value>Omat tiedostot</value>
+                <value>Tiedostot</value>
         </string>
         <string>
                 <id>10004</id>
@@ -3389,11 +3509,11 @@
         </string>
         <string>
                 <id>10005</id>
-                <value>Oma musiikki</value>
+                <value>Musiikki</value>
         </string>
         <string>
                 <id>10006</id>
-                <value>Omat videot</value>
+                <value>Videot</value>
         </string>
         <string>
                 <id>10007</id>
@@ -3444,15 +3564,15 @@
         </string>
         <string>
                 <id>10021</id>
-                <value>Omat Videot/genre</value>
+                <value>Videot/genre</value>
         </string>
         <string>
                 <id>10022</id>
-                <value>Omat Videot/n‰yttelij‰</value>
+                <value>Videot/n‰yttelij‰</value>
         </string>
         <string>
                 <id>10023</id>
-                <value>Omat videot/vuosi</value>
+                <value>Videot/vuosi</value>
         </string>
         <string>
                 <id>10024</id>
@@ -3460,7 +3580,7 @@
         </string>
         <string>
                 <id>10025</id>
-                <value>Omat videot/otsikko</value>
+                <value>Videot/otsikko</value>
         </string>
         <string>
                 <id>10026</id>
@@ -3472,7 +3592,7 @@
         </string>
         <string>
                 <id>10028</id>
-                <value>Omat videot/soittolista</value>
+                <value>Videot/soittolista</value>
         </string>
         <string>
                 <id>10029</id>
@@ -3480,7 +3600,7 @@
         </string>
         <string>
                 <id>10030</id>
-                <value>Oma radio</value>
+                <value>Radio</value>
         </string>
         <string>
                 <id>10031</id>
@@ -3496,7 +3616,7 @@
         </string>
         <string>
                 <id>10034</id>
-                <value>Omat lis‰osat</value>
+                <value>Lis‰osat</value>
         </string>
         <string>
                 <id>10100</id>
@@ -3508,75 +3628,75 @@
         </string>
         <string>
                 <id>10500</id>
-                <value>Oma musiikki/soittolista</value>
+                <value>Musiikki/soittolista</value>
         </string>
         <string>
                 <id>10501</id>
-                <value>Oma musiikki/tiedostot</value>
+                <value>Musiikki/tiedostot</value>
         </string>
         <string>
                 <id>10502</id>
-                <value>Oma musiikki/albumit</value>
+                <value>Musiikki/albumit</value>
         </string>
         <string>
                 <id>10503</id>
-                <value>Oma musiikki/artistit</value>
+                <value>Musiikki/artistit</value>
         </string>
         <string>
                 <id>10504</id>
-                <value>Oma musiikki/genret</value>
+                <value>Musiikki/genret</value>
         </string>
         <string>
                 <id>10505</id>
-                <value>Oma musiikki/top 100</value>
+                <value>Musiikki/top 100</value>
         </string>
         <string>
                 <id>10506</id>
-                <value>Oma musiikki/suosikit</value>
+                <value>Musiikki/suosikit</value>
         </string>
         <string>
                 <id>10600</id>
-                <value>Oma TV/opas</value>
+                <value>TV opas</value>
         </string>
         <string>
                 <id>10601</id>
-                <value>Oma TV/ajastus</value>
+                <value>TV ajastus</value>
         </string>
         <string>
                 <id>10602</id>
-                <value>Oma TV/kokoruutu</value>
+                <value>TV kokoruutu</value>
         </string>
         <string>
                 <id>10603</id>
-                <value>Oma TV/tallennukset</value>
+                <value>TV tallennukset</value>
         </string>
         <string>
                 <id>10604</id>
-                <value>Oma TV/haku</value>
+                <value>TV haku</value>
         </string>
         <string>
                 <id>10605</id>
-                <value>Oma TV/tallennukset/Genre</value>
+                <value>TV/tallennukset/Genre</value>
         </string>
         <string>
                 <id>10606</id>
-                <value>Oma TV/tallennukset/kanavat</value>
+                <value>TV/tallennukset/kanavat</value>
         </string>
         <string>
                 <id>10750</id>
-                <value>Omat reseptit</value>
+                <value>Reseptit</value>
         </string>
         <string>
                 <id>10755</id>
-                <value>Oma tila</value>
+                <value>Tila</value>
         </string>
         <string>
                 <id>10756</id>
-                <value>Oma tila yksityiskohdat</value>
+                <value>Tila yksityiskohdat</value>
         </string>
         <string>
                 <id>10757</id>
-                <value>Oma tila asetukset</value>
+                <value>Tila asetukset</value>
         </string>
         <string>
                 <id>10770</id>
@@ -3592,7 +3712,7 @@
         </string>
         <string>
                 <id>12001</id>
-                <value>Oma musiikki/info</value>
+                <value>Musiikki/info</value>
         </string>
         <string>
                 <id>12002</id>
@@ -3600,11 +3720,11 @@
         </string>
         <string>
                 <id>12003</id>
-                <value>Omat videot Info</value>
+                <value>Videot Info</value>
         </string>
         <string>
                 <id>12004</id>
-                <value>Omat Scriptit Info</value>
+                <value>Scriptit Info</value>
         </string>
         <string>
                 <id>12005</id>
@@ -3616,7 +3736,7 @@
         </string>
         <string>
                 <id>12007</id>
-                <value>Omat kuvat / kuvaesitys</value>
+                <value>Kuvat / kuvaesitys</value>
         </string>
         <string>
                 <id>12008</id>
@@ -3644,11 +3764,11 @@
         </string>
         <string>
                 <id>12600</id>
-                <value>Oma s‰‰</value>
+                <value>S‰‰</value>
         </string>
         <string>
                 <id>12700</id>
-                <value>Omat Uutiset</value>
+                <value>Uutiset</value>
         </string>
         <string>
                 <id>12900</id>
@@ -3714,5 +3834,54 @@
         <string>
         	<id>16001</id>
          	<value>Jukeboxi</value>
+         </string>
+         <!-- My Tetris --> 
+         <string>
+                 <id>19001</id>
+                 <value>Tetris</value>
+         </string>
+         <string>
+                 <id>19002</id>
+                 <value>Uusi Peli</value>
+         </string>
+         <string>
+                 <id>19003</id>
+                 <value>Musiikki</value>
+         </string>
+         <string>
+                 <id>19004</id>
+                 <value>ƒ‰net</value>
+         </string>
+         <string>
+                 <id>19005</id>
+                 <value>Tulos</value>
+         </string>
+         <string>
+                 <id>19006</id>
+                 <value>Taso</value>
+         </string>
+         <string>
+                 <id>19007</id>
+                 <value>Rivit</value>
+         </string>
+         <string>
+                 <id>19008</id>
+                 <value>Enn‰tys</value>
+         </string>
+         <string>
+                 <id>19009</id>
+                 <value>Seuraava</value>
+         </string>
+         <string>
+                 <id>19010</id>
+                 <value>Paina enter aloittaaksesi</value>
+         </string>
+         <string>
+                 <id>19011</id>
+                 <value>Tauko</value>
+         </string>
+         <string>
+                 <id>19012</id>
+                 <value>Peli loppu</value>
          </string>
 </strings>
