@@ -478,10 +478,18 @@ namespace MediaPortal.GUI.TV
             }
           }
         break;
-        case SearchMode.Title:
-          TVProgram prog = item.MusicTag as TVProgram;
-          OnRecord(prog);
-        break;
+				case SearchMode.Title:
+				{
+					TVProgram prog = item.MusicTag as TVProgram;
+					OnRecord(prog);
+				}
+					break;
+				case SearchMode.Description:
+				{
+					TVProgram prog = item.MusicTag as TVProgram;
+					OnRecord(prog);
+				}
+					break;
       }
     }
 

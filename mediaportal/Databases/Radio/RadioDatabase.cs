@@ -201,7 +201,7 @@ namespace MediaPortal.Radio.Database
       }
     }   
     
-    static public void RemoveStations()
+    static public void RemoveAllStations()
     {
       lock (m_db)
       {
@@ -218,6 +218,25 @@ namespace MediaPortal.Radio.Database
           Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
         }
       }
-    }
+		}  
+    
+		static public void RemoveLocalRadioStations()
+		{
+			lock (m_db)
+			{
+				if (null==m_db) return ;
+        
+				try
+				{
+					if (null==m_db) return ;
+					string strSQL=String.Format("delete from station where frequency>0");
+					m_db.Execute(strSQL);
+				}
+				catch(SQLiteException ex)
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
+			}
+		}
   }
 }

@@ -224,7 +224,17 @@ namespace MediaPortal.Database
 
 		static public void RemoveInvalidChars(ref string strTxt)
 		{
-			string strReturn = "";
+			if (strTxt==null) 
+			{
+				strTxt="unknown";
+				return;
+			}
+			if (strTxt.Length==0) 
+			{
+				strTxt="unknown";
+				return;
+			}
+			string strReturn = String.Empty;
 			for (int i = 0; i < (int)strTxt.Length; ++i)
 			{
 				char k = strTxt[i];
@@ -234,9 +244,10 @@ namespace MediaPortal.Database
 				}
 				strReturn += k;
 			}
-			if (strReturn == "") 
+			strReturn=strReturn.Trim();
+			if (strReturn == String.Empty) 
 				strReturn = "unknown";
-			strTxt = strReturn.Trim();
+			strTxt = strReturn;
 		}
 
 		static public void Split(string strFileNameAndPath, out string strPath, out string strFileName)

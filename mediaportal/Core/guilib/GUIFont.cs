@@ -234,7 +234,6 @@ namespace MediaPortal.GUI.Library
 			DrawText( fOriginX, fOriginY, dwColor, strText,alignment);	
 		}
 	
-		static int maxVert=0;
     public void Present()
     {
       // Set the data for the vertex buffer

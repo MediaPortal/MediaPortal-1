@@ -320,7 +320,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(stationsListView.Items.Count > 0)
 			{
-				DialogResult dialogResult = MessageBox.Show("Do you want to remove all current stations before you continue with the auto tuning?", "MediaPortal Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+				DialogResult dialogResult = MessageBox.Show("Do you want to remove all current radio stations before you continue with the auto tuning?", "MediaPortal Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
 
 				switch(dialogResult)
 				{
@@ -328,6 +328,8 @@ namespace MediaPortal.Configuration.Sections
 						//
 						// Remove previously created stations
 						//
+						RadioDatabase.RemoveLocalRadioStations();
+						AutoTuneStations();
 						break;
 
 					case DialogResult.No:
@@ -499,7 +501,7 @@ namespace MediaPortal.Configuration.Sections
         //
 				// Start by removing the currently available stations from the database
 				//
-				RadioDatabase.RemoveStations();
+				RadioDatabase.RemoveAllStations();
 
         string strDefaultStation="";
         foreach(ListViewItem listItem in stationsListView.Items)

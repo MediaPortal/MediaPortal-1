@@ -39,7 +39,9 @@ namespace MediaPortal.Playlists
 			Clear();
 			m_strPlayListName=System.IO.Path.GetFileName(strFileName);
 			strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
-			StreamReader file = File.OpenText(strFileName);
+			Encoding fileEncoding = Encoding.Default;
+			FileStream stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
+			StreamReader file = new StreamReader(stream, fileEncoding, true);
 			if (file==null ) 
 			{
 				return false;
@@ -53,7 +55,7 @@ namespace MediaPortal.Playlists
 				return false;
 			}
 
-			string strLine=szLine;
+			string strLine=szLine.Trim();
 			//CUtil::RemoveCRLF(strLine);
 			if (strLine != START_PLAYLIST_MARKER)
 			{
@@ -67,7 +69,10 @@ namespace MediaPortal.Playlists
 					file.Close();
 					return true;
 				}
-				file = File.OpenText(strFileName);
+				Encoding fileEncoding = Encoding.Default;
+				stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
+				file = new StreamReader(stream, fileEncoding, true);
+
 				//file.Close();
 				//return false;
 			}
@@ -77,7 +82,7 @@ namespace MediaPortal.Playlists
 			szLine=file.ReadLine();
 			while (szLine!=null)
 			{
-				strLine=szLine;
+				strLine=szLine.Trim();
 			//CUtil::RemoveCRLF(strLine);
 				int iPosEqual=strLine.IndexOf("=");
 				if (iPosEqual>0)

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using MediaPortal.Util;
 // example m3u file:
 //			#EXTM3U
@@ -32,7 +33,11 @@ namespace MediaPortal.Playlists
       {
         m_strPlayListName=System.IO.Path.GetFileName(strFileName);
         strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
-        StreamReader file = File.OpenText(strFileName);
+				
+				Encoding fileEncoding = Encoding.Default;
+				FileStream stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
+				StreamReader file = new StreamReader(stream, fileEncoding, true);
+        //StreamReader file = File.OpenText(strFileName);
         if (file==null) 
         {
           return false;
@@ -45,7 +50,7 @@ namespace MediaPortal.Playlists
           file.Close();
           return false;
         }
-        string strLine=szLine;
+        string strLine=szLine.Trim();
         //CUtil::RemoveCRLF(strLine);
         if (strLine != M3U_START_MARKER)
         {
@@ -66,7 +71,7 @@ namespace MediaPortal.Playlists
         szLine=file.ReadLine();
         while (szLine!=null  )
         {
-          strLine=szLine;
+          strLine=szLine.Trim();
           //CUtil::RemoveCRLF(strLine);
           if (strLine.StartsWith( M3U_INFO_MARKER) )
           {
@@ -85,7 +90,7 @@ namespace MediaPortal.Playlists
               szLine=file.ReadLine();
               if (szLine!=null && szLine.Length>0 )
               {
-                strFileName=szLine;
+                strFileName=szLine.Trim();
                 //CUtil::RemoveCRLF(strFileName);
                 if (strFileName.Length>1)
                 {
@@ -109,7 +114,7 @@ namespace MediaPortal.Playlists
           }
           else
           {
-            strFileName=szLine;
+            strFileName=szLine.Trim();
             //CUtil::RemoveCRLF(strFileName);
             if (strFileName.Length>1)
             {
