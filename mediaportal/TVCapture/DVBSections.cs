@@ -371,7 +371,7 @@ namespace MediaPortal.TV.Recording
 						
 						// parse pmt
 						int res=0;
-						if (pat.program_number==serviceId)
+						//if (pat.program_number==serviceId)
 						{
 							Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
 							GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt

@@ -2765,7 +2765,7 @@ namespace MediaPortal.TV.Recording
 			// the callback needs to return as soon as possible!!
 			//
 
-			if (!m_videoDataFound)
+			if (!m_videoDataFound && GUIGraphicsContext.Vmr9Active)
 			{
 				// the following check should takes care of scrambled video-data
 				// and redraw the vmr9 not to hang
