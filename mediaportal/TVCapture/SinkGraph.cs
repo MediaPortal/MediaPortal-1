@@ -31,9 +31,6 @@ namespace MediaPortal.TV.Recording
     ICaptureGraphBuilder2   m_captureGraphBuilder=null;
     IBaseFilter             m_captureFilter=null;
     IAMTVTuner              m_TVTuner=null;
-//	IAMStreamConfig         m_videoStreamConfig=null;
-//  IAMVideoProcAmp         m_videoprocamp;
-//  IMediaControl           m_mediaControl=null;
 		VideoCaptureDevice      m_videoCaptureDevice=null;
     MPEG2Demux              m_mpeg2Demux=null;
     int				              m_rotCookie = 0;						// Cookie into the Running Object Table
@@ -44,19 +41,27 @@ namespace MediaPortal.TV.Recording
     DateTime                m_StartTime=DateTime.Now;
     int                     m_iPrevChannel=-1;
     bool                    m_bFirstTune=true;
+    Size                    m_FrameSize;
+    double                  m_FrameRate;
+
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="iCountryCode">country code</param>
     /// <param name="bCable">use Cable or antenna</param>
     /// <param name="strVideoCaptureFilter">Filter name of the capture device</param>
-		public SinkGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter)
+		public SinkGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter, Size frameSize, double frameRate)
 		{
       m_bFirstTune=true;
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
       m_graphState=State.None;
       m_strVideoCaptureFilter=strVideoCaptureFilter;
+      m_FrameSize = frameSize;
+      m_FrameRate = frameRate;
+
+      if (m_FrameSize.Width==0 || m_FrameSize.Height==0)
+        m_FrameSize=new Size(720,576);
 		}
 
     /// <summary>
@@ -126,15 +131,9 @@ namespace MediaPortal.TV.Recording
       // upstream filters to function).
       DirectShowUtil.DebugWrite("SinkGraph:get Video stream control interface (IAMStreamConfig)");
       object o;
-      Guid cat = PinCategory.Capture;
-      Guid iid = typeof(IAMStreamConfig).GUID;
-/*
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1]{cat}, null, m_captureFilter, ref iid, out o );
-      if (hr==0)
-      {
-        m_videoStreamConfig = o as IAMStreamConfig;
-      }
-*/
+      Guid cat ;
+      Guid iid ;
+
       // Retrieve TV Tuner if available
       DirectShowUtil.DebugWrite("SinkGraph:Find TV Tuner");
       o = null;
@@ -170,15 +169,18 @@ namespace MediaPortal.TV.Recording
         }
       }
 
+
+      m_FrameSize=m_videoCaptureDevice.GetFrameSize();
+
+      DirectShowUtil.DebugWrite("SinkGraph:capturing:{0}x{1}",m_FrameSize.Width,m_FrameSize.Height);
       m_mpeg2Demux=null;
       if (m_videoCaptureDevice.MPEG2)
       {
-        m_mpeg2Demux = new MPEG2Demux(ref m_graphBuilder);
+        m_mpeg2Demux = new MPEG2Demux(ref m_graphBuilder,m_FrameSize);
       }
 
 
       // Retreive the media control interface (for starting/stopping graph)
-      //m_mediaControl = (IMediaControl) m_graphBuilder;
 
       m_graphState=State.Created;
       return true;
@@ -200,17 +202,12 @@ namespace MediaPortal.TV.Recording
       StopTimeShifting();
       StopViewing();
 
-      //if ( m_mediaControl != null )
-      //{
-      //  m_mediaControl.Stop();
-      //}
 
       if (m_mpeg2Demux!=null)
       {
         m_mpeg2Demux.CloseInterfaces();
         m_mpeg2Demux=null;
       }
-      //m_mediaControl=null;
 
       if (m_videoCaptureDevice!=null)
 			{
@@ -223,12 +220,6 @@ namespace MediaPortal.TV.Recording
         Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
 			
       DsUtils.RemoveFilters(m_graphBuilder);
-
-			//if( m_videoStreamConfig != null )
-			//	Marshal.ReleaseComObject( m_videoStreamConfig ); m_videoStreamConfig = null;
-
-			//if( m_videoprocamp != null )
-			//	Marshal.ReleaseComObject( m_videoprocamp ); m_videoprocamp = null;
 
 
       if( m_captureFilter != null )
