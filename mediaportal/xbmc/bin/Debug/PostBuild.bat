@@ -3,6 +3,7 @@ mkdir plugins\windows
 mkdir plugins\TagReaders
 mkdir plugins\subtitle
 
+copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.dll plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.dll plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.dll plugins\windows
 copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.dll plugins\windows
@@ -16,6 +17,7 @@ copy ..\..\..\SetupScreens\bin\Debug\SetupScreens.dll plugins\windows
 copy ..\..\..\GUIWeather\bin\Debug\GUIWeather.dll plugins\windows
 copy ..\..\..\SMIReader\bin\Debug\SMIReader.dll plugins\subtitle
 copy ..\..\..\SRTReader\bin\Debug\SRTReader.dll plugins\subtitle
+copy ..\..\..\RadioDatabase\bin\Debug\RadioDatabase.dll .
 copy ..\..\..\MusicDatabase\bin\Debug\MusicDatabase.dll .
 copy ..\..\..\PictureDatabase\bin\Debug\PictureDatabase.dll .
 copy ..\..\..\VideoDatabase\bin\Debug\VideoDatabase.dll .
@@ -30,7 +32,7 @@ copy ..\..\..\mp3TagReader\NZLib\bin\Debug\zlib.dll plugins\TagReaders
 copy ..\..\..\DShowNET\bin\Debug\DShowNET.dll .
 copy ..\..\..\DirectX.Capture\bin\Debug\DirectX.Capture.dll .
 
-
+copy ..\..\..\GUIRadio\bin\Debug\GUIRadio.pdb plugins\windows
 copy ..\..\..\GUIMusic\bin\Debug\GUIMusic.pdb plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Debug\Freedb.pdb plugins\windows
 copy ..\..\..\GUIMusic\Ripper\bin\Debug\Ripper.pdb plugins\windows
@@ -45,6 +47,7 @@ copy ..\..\..\GUIWeather\bin\Debug\GUIWeather.pdb plugins\windows
 copy ..\..\..\SMIReader\bin\Debug\SMIReader.pdb plugins\subtitle
 copy ..\..\..\SRTReader\bin\Debug\SRTReader.pdb plugins\subtitle
 copy ..\..\..\mp3TagReader\bin\Debug\mp3TagReader.pdb plugins\TagReaders
+copy ..\..\..\RadioDatabase\bin\Debug\RadioDatabase.pdb .
 copy ..\..\..\MusicDatabase\bin\Debug\MusicDatabase.pdb .
 copy ..\..\..\PictureDatabase\bin\Debug\PictureDatabase.pdb .
 copy ..\..\..\VideoDatabase\bin\Debug\VideoDatabase.pdb .

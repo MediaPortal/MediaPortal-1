@@ -139,6 +139,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ripper", "GUIMusic\Ripper\R
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIRadio", "GUIRadio\GUIRadio.csproj", "{A96E905B-5393-40D8-8DCA-6B8B03876404}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadioDatabase", "RadioDatabase\RadioDatabase.csproj", "{50E428C2-230C-4549-8BB7-F269203C2C3C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -263,6 +271,14 @@ Global
 		{940015B7-F05D-402E-9330-E616A6CE9D7A}.Debug.Build.0 = Debug|.NET
 		{940015B7-F05D-402E-9330-E616A6CE9D7A}.Release.ActiveCfg = Release|.NET
 		{940015B7-F05D-402E-9330-E616A6CE9D7A}.Release.Build.0 = Release|.NET
+		{A96E905B-5393-40D8-8DCA-6B8B03876404}.Debug.ActiveCfg = Debug|.NET
+		{A96E905B-5393-40D8-8DCA-6B8B03876404}.Debug.Build.0 = Debug|.NET
+		{A96E905B-5393-40D8-8DCA-6B8B03876404}.Release.ActiveCfg = Release|.NET
+		{A96E905B-5393-40D8-8DCA-6B8B03876404}.Release.Build.0 = Release|.NET
+		{50E428C2-230C-4549-8BB7-F269203C2C3C}.Debug.ActiveCfg = Debug|.NET
+		{50E428C2-230C-4549-8BB7-F269203C2C3C}.Debug.Build.0 = Debug|.NET
+		{50E428C2-230C-4549-8BB7-F269203C2C3C}.Release.ActiveCfg = Release|.NET
+		{50E428C2-230C-4549-8BB7-F269203C2C3C}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

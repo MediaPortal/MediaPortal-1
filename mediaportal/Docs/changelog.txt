@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  05-06-2004  my Radio    : added : started with my radio...
+  
   04-06-2004  my tv       : added : record & view at the same time
   
   03-06-2004  general     : added : sanity checks for setup (channel numbers, folder paths,...)

@@ -5,6 +5,7 @@ mkdir plugins\TagReaders
 mkdir plugins\subtitle
 
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .
+copy ..\..\..\GUIRadio\bin\Release\GUIRadio.dll plugins\windows
 copy ..\..\..\GUIMusic\bin\Release\GUIMusic.dll plugins\windows
 copy ..\..\..\GUIMusic\Freedb\bin\Release\Freedb.dll plugins\windows
 copy ..\..\..\GUIMusic\Ripper\bin\Release\Ripper.dll plugins\windows
@@ -18,7 +19,7 @@ copy ..\..\..\GUIWeather\bin\Release\GUIWeather.dll plugins\windows
 copy ..\..\..\SMIReader\bin\Release\SMIReader.dll plugins\subtitle
 copy ..\..\..\SRTReader\bin\Release\SRTReader.dll plugins\subtitle
 
-
+copy ..\..\..\RadioDatabase\bin\release\RadioDatabase.dll .
 copy ..\..\..\MusicDatabase\bin\release\MusicDatabase.dll .
 copy ..\..\..\PictureDatabase\bin\release\PictureDatabase.dll .
 copy ..\..\..\VideoDatabase\bin\release\VideoDatabase.dll .

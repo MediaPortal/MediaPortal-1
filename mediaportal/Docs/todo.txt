@@ -11,6 +11,7 @@ Skin, gfx & media:
      - need my radio gfx in home
      - need gfx in my radio
      - .xml for my radio
+     - need new default icons for normal & internet radio streams (both small & big)
   - my programs/emulators/...
      - need gfx in my programs/emulators/games...
      - .xml for my programs/emulators/games

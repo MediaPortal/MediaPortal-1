@@ -1895,6 +1895,30 @@
 		<id>664</id>
 		<value>Delete this picture?</value>
 	</string>
+	<string>
+		<id>665</id>
+		<value>My Radio</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Stations</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Auto Tune</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Sort by: Type</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Sort by: Genre</value>
+	</string>	
+	<string>
+		<id>670</id>
+		<value>Sort by: Bitrate</value>
+	</string>	
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>My Programs</value></string>
 <string><id>10002</id><value>My Pictures</value></string>
