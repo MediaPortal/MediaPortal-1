@@ -826,6 +826,47 @@ namespace MediaPortal.Music.Database
 
 	    return false;
     }
+		public bool GetSongsByYear(int yearStart, int yearEnd, ref ArrayList songs)
+		{
+			try
+			{
+
+				songs.Clear();
+				if (null == m_db) return false;
+    		
+				string strSQL;
+				strSQL = String.Format("select song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and song.iYear >={0} and song.iYear <={1}",yearStart,yearEnd);
+				SQLiteResultSet results;
+				results = m_db.Execute(strSQL);
+				if (results.Rows.Count == 0) return false;
+				for (int i = 0; i < results.Rows.Count; ++i)
+				{
+					Song song = new Song();
+					song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+					song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+					song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+					song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
+					song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
+					song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
+					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
+					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
+					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
+					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
+					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
+					song.FileName = strFileName;
+					songs.Add(song);
+				}
+
+				return true;
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
+			}
+
+			return false;
+		}
 
     public bool GetSongsByAlbum(string strAlbum1, ref ArrayList songs)
     {

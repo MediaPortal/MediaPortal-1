@@ -429,6 +429,9 @@ namespace MediaPortal.GUI.Music
 							case 5 : //	favorites
 								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
 								break;
+							case 6 : //	years
+								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_YEARS;
+								break;
             }
 
             if (nNewWindow!=GetID)

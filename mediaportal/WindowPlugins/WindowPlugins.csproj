@@ -429,6 +429,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIMusic\GUIMusicYears.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIMusic\MusicState.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
