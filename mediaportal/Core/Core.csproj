@@ -954,11 +954,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Player\DVBRadioGraph.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Player\DVDPlayer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

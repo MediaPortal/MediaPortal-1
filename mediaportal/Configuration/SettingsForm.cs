@@ -139,7 +139,6 @@ namespace MediaPortal.Configuration
       AddChildSection(television, new Sections.TVRecording());
       Log.Write("  add tv postprocessing section");
       AddChildSection(television, new Sections.TVPostProcessing());
-			//AddChildSection(television, new Sections.DVBSSS2());
 
 			SectionSettings remote = new Sections.Remote();
 			AddSection(remote);

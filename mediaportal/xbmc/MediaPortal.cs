@@ -340,7 +340,7 @@ public class MediaPortalApp : D3DApp, IRender
 		bool tmpPluginsFlag=false;
 		using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 		{
-			tmpPluginsFlag=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
+			tmpPluginsFlag=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 		}
 
 		if(tmpPluginsFlag==true)
@@ -351,7 +351,7 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 				using (AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
 				{
-					xmlwriter.SetValueAsBool("DVBSS2","enablePlugins",false);
+					xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				}
 				MessageBox.Show("Plugins are disabled, DLL 'SoftCSA.dll' must be in MediaPortal-Folder!");
 			}
