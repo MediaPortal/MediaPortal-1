@@ -298,6 +298,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIExplorer\GUIExplorer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIExplorer\SetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIExplorer\SetupForm.resx"
+                    DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIMSNPlugin\GUIMSNChatWindow.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
