@@ -28,7 +28,7 @@ namespace MediaPortal.GUI.Library
 		
 		DateTime                        m_dtTime=DateTime.Now;
 		int                             m_iCurrentFrame=0;
-
+    bool                            containsProperty=false;
 
 		public GUITextScrollUpControl(int dwParentID) : base(dwParentID)
 		{
@@ -48,6 +48,8 @@ namespace MediaPortal.GUI.Library
 			base.FinalizeConstruction ();
 			m_pFont=GUIFontManager.GetFont(m_strFontName);
 			m_dtTime=DateTime.Now;
+      if (m_strProperty.IndexOf("#")>=0) 
+        containsProperty=true;
 		}
 
 		public override void ScaleToScreenResolution()
@@ -67,20 +69,10 @@ namespace MediaPortal.GUI.Library
 			
 			int dwPosY=m_dwPosY;
       
-			if (m_strProperty.IndexOf('#')>=0)
+			if (containsProperty)
 			{ 
 				string strText=GUIPropertyManager.Parse(m_strProperty);
-				/*
-				strText="line 1 line 1 line 1 line 1 line 1\\r";
-				strText+="line 2 line 2 line 2 line 2 line 2\\r";
-				strText+="line 3 line 3 line 3 line 3 line 3\\r";
-				strText+="line 4 line 4 line 4 line 4 line 4\\r";
-				strText+="line 5 line 5 line 5 line 5 line 5\\r";
-				strText+="line 6 line 6 line 6 line 6 line 6\\r";
-				strText+="line 7 line 7 line 7 line 7 line 7\\r";
-				strText+="line 8 line 8 line 8 line 8 line 8\\r";
-
-		*/
+				
 				strText=strText.Replace("\\r","\r");
 				if (strText!=m_strPrevProperty)
 				{
@@ -91,8 +83,6 @@ namespace MediaPortal.GUI.Library
 					SetText(strText);
 					m_iFrames=0;
 					m_dtTime=DateTime.Now;
-
-          
 				}
 			}
 			TimeSpan ts= DateTime.Now-m_dtTime;
@@ -109,8 +99,9 @@ namespace MediaPortal.GUI.Library
 				iDiffFrames=0;
 				m_iFrames=0;
 			}
-			do
-			{
+      bAdd=true;
+			//do
+			//{
 				if (bAdd) 
 				{
 					m_iCurrentFrame++;
@@ -228,7 +219,7 @@ namespace MediaPortal.GUI.Library
 					GUIGraphicsContext.DX9Device.Viewport=oldviewport;
 				}
 				iFrameCount++;
-			} while (iFrameCount < iDiffFrames);
+			//} while (iFrameCount < iDiffFrames);
       
 			m_iCurrentFrame=(int)(ts.TotalMilliseconds/  ((double)( (11-GUIGraphicsContext.ScrollSpeed)*15))  );
 		}
@@ -239,6 +230,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
 				{
+          containsProperty=false;
 					m_strProperty="";
 					GUIListItem pItem=(GUIListItem)message.Object;
 					m_vecItems.Add( pItem);
@@ -246,7 +238,8 @@ namespace MediaPortal.GUI.Library
 				}
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
-				{
+        {
+          containsProperty=false;
 					m_strProperty="";
 					m_iFrames=0;
 					m_dtTime=DateTime.Now;
@@ -260,15 +253,20 @@ namespace MediaPortal.GUI.Library
   
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
-					if (m_strProperty!=message.Label)
-					{
-						m_strProperty=message.Label;
+          if (message.Label!=null)
+          {
+            if (m_strProperty!=message.Label)
+            {
+              m_strProperty=message.Label;
+              if (m_strProperty.IndexOf("#")>=0) 
+                containsProperty=true;
 
-						m_iOffset=0;
-						m_vecItems.Clear();
-						SetText( message.Label );
-						m_dtTime=DateTime.Now;
-					}
+              m_iOffset=0;
+              m_vecItems.Clear();
+              SetText( message.Label );
+              m_dtTime=DateTime.Now;
+            }
+          }
 				}
 			}
 
@@ -289,6 +287,7 @@ namespace MediaPortal.GUI.Library
 				m_iItemHeight			= (int)fHeight;
 				float fTotalHeight= (float)m_dwHeight;
 				m_iItemsPerPage		= (int)Math.Floor(fTotalHeight / fHeight);
+        m_iItemsPerPage++;
 			}
 			catch(Exception)
 			{
@@ -308,7 +307,7 @@ namespace MediaPortal.GUI.Library
 				float fHeight     = (float)m_iItemHeight;// + (float)m_iSpaceBetweenItems;
 				float fTotalHeight= (float)(m_dwHeight);
 				m_iItemsPerPage		= (int)Math.Floor(fTotalHeight / fHeight );
-
+        m_iItemsPerPage++;
 				int iPages=1;
 				if (m_vecItems.Count>0)
 				{
@@ -476,7 +475,11 @@ namespace MediaPortal.GUI.Library
 		public string Property
 		{
 			get { return m_strProperty; }
-			set {m_strProperty=value;}
+			set {
+        m_strProperty=value;
+        if (m_strProperty.IndexOf("#")>=0) 
+          containsProperty=true;
+      }
 		}
 		public string Seperator
 		{
