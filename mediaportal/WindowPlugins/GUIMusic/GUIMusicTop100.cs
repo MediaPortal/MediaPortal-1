@@ -55,6 +55,16 @@ namespace MediaPortal.GUI.Music
     MusicDatabase		      m_database = new MusicDatabase();
     Mode              _CurrentMode =Mode.Duration;
 
+		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs;
+		[SkinControlAttribute(3)]			protected GUIButtonControl btnSortBy;
+		[SkinControlAttribute(4)]			protected GUIButtonControl btnSortAsc;
+		[SkinControlAttribute(7)]			protected GUISelectButtonControl btnType;
+		[SkinControlAttribute(6)]			protected GUIButtonControl btnChangeInfo;
+		[SkinControlAttribute(9)]			protected GUIButtonControl btnResetTop100;
+		[SkinControlAttribute(50)]		protected GUIListControl listViewSmall;
+		[SkinControlAttribute(51)]		protected GUIListControl listViewBig;
+		[SkinControlAttribute(11)]		protected GUIButtonControl btnSearch;
+
     public GUIMusicTop100()
     {
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
@@ -121,6 +131,26 @@ namespace MediaPortal.GUI.Music
     #endregion
 
 
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			LoadSettings();
+          
+			ShowThumbPanel();
+			LoadDirectory(m_strDirectory);
+		}
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			m_iItemSelected = GetSelectedItemNo();
+			if (GUIMusicFiles.IsMusicWindow(newWindowId))
+			{
+				MusicState.StartWindow=newWindowId;
+			}
+			SaveSettings();
+			base.OnPageDestroy (newWindowId);
+		}
+
+
     void OnThreadMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -146,80 +176,49 @@ namespace MediaPortal.GUI.Music
         //GoParentFolder();
         return;
       }
-
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        GUIWindowManager.PreviousWindow();
-        return;
-      }
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
         return;
       }
 
-      if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        ShowContextMenu();
-      }
       base.OnAction(action);
     }
 
-		
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
-          base.OnMessage(message);
-					LoadSettings();
-          
-          ShowThumbPanel();
-          LoadDirectory(m_strDirectory);
-          return true;
-
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-          m_iItemSelected = GetSelectedItemNo();
-					if (GUIMusicFiles.IsMusicWindow(message.Param1))
+		protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+		{
+			if (control == btnViewAs)
+			{
+				if (m_strDirectory == "")
+				{
+					switch (currentViewRoot)
 					{
-						MusicState.StartWindow=message.Param1;
+						case View.VIEW_AS_LIST : 
+							currentViewRoot = View.VIEW_AS_ICONS;
+							break;
+						case View.VIEW_AS_ICONS : 
+							currentViewRoot = View.VIEW_AS_LIST;
+							break;
 					}
-          SaveSettings();
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_CLICKED : 
-          int iControl = message.SenderControlId;
-          if (iControl == (int)Controls.CONTROL_BTNVIEWASICONS)
-          {
-            if (m_strDirectory == "")
-            {
-              switch (currentViewRoot)
-              {
-                case View.VIEW_AS_LIST : 
-                  currentViewRoot = View.VIEW_AS_ICONS;
-                  break;
-                case View.VIEW_AS_ICONS : 
-                  currentViewRoot = View.VIEW_AS_LIST;
-                  break;
-              }
-            }
-            else
-            {
-              switch (currentView)
-              {
-                case View.VIEW_AS_LIST : 
-                  currentView = View.VIEW_AS_ICONS;
-                  break;
-                case View.VIEW_AS_ICONS : 
-                  currentView = View.VIEW_AS_LIST;
-                  break;
-              }
-            }
-            ShowThumbPanel();
-            GUIControl.FocusControl(GetID, iControl);
-          }
-			  // search-button handling
-			if (iControl == (int)Controls.CONTROL_SEARCH)
+				}
+				else
+				{
+					switch (currentView)
+					{
+						case View.VIEW_AS_LIST : 
+							currentView = View.VIEW_AS_ICONS;
+							break;
+						case View.VIEW_AS_ICONS : 
+							currentView = View.VIEW_AS_LIST;
+							break;
+					}
+				}
+				ShowThumbPanel();
+				GUIControl.FocusControl(GetID, controlId);
+			}
+			
+			// search-button handling
+			if (control == btnSearch)
 			{
 				int activeWindow=(int)GUIWindowManager.ActiveWindow;
 				VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
@@ -230,102 +229,97 @@ namespace MediaPortal.GUI.Music
 				keyBoard.TextChanged-=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged);	// remove the handler			
 				System.GC.Collect(); // collect some garbage
 			}
-			  //
+			//
           
-          if (iControl == (int)Controls.CONTROL_BTNTYPE)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-            OnMessage(msg);
-            int nSelected = (int)msg.Param1;
-            int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
-            switch (nSelected)
-            {
-              case 0 : //	files
-                nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
-                break;
-              case 1 : //	albums
-                nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_ALBUM;
-                break;
-              case 2 : //	artist
-                nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_ARTIST;
-                break;
-              case 3 : //	genres
-                nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
-                break;
-              case 4 : //	top100
-                nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
-								break;
-							case 5 : //	favorites
-								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
-								break;
-							case 6 : //	years
-								nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_YEARS;
-								break;
-            }
+			if (control==btnType)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
+				OnMessage(msg);
+				int nSelected = (int)msg.Param1;
+				int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
+				switch (nSelected)
+				{
+					case 0 : //	files
+						nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
+						break;
+					case 1 : //	albums
+						nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_ALBUM;
+						break;
+					case 2 : //	artist
+						nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_ARTIST;
+						break;
+					case 3 : //	genres
+						nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
+						break;
+					case 4 : //	top100
+						nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
+						break;
+					case 5 : //	favorites
+						nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES;
+						break;
+					case 6 : //	years
+						nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_YEARS;
+						break;
+				}
 
-            if (nNewWindow != GetID)
-            {
-              MusicState.StartWindow = nNewWindow;
-              GUIWindowManager.ReplaceWindow(nNewWindow);
-            }
+				if (nNewWindow != GetID)
+				{
+					MusicState.StartWindow = nNewWindow;
+					GUIWindowManager.ReplaceWindow(nNewWindow);
+				}
+				return ;
+			}
 
-            return true;
-          }
-          if (iControl == (int)Controls.CONTROL_THUMBS || iControl == (int)Controls.CONTROL_LIST)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-            OnMessage(msg);
-            int iItem = (int)msg.Param1;
-            int iAction = (int)message.Param1;
-            if (iAction == (int)Action.ActionType.ACTION_SHOW_INFO) 
-            {
-              OnInfo(iItem);
-            }
-            if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-            {
-              OnClick(iItem);
-            }
-            if (iAction == (int)Action.ActionType.ACTION_QUEUE_ITEM)
-            {
-              OnQueueItem(iItem);
-            }
+			if (control == listViewBig || control == listViewSmall)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
+				OnMessage(msg);
+				int iItem = (int)msg.Param1;
+				if (actionType == Action.ActionType.ACTION_SHOW_INFO) 
+				{
+					OnInfo(iItem);
+				}
+				if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
+				{
+					OnClick(iItem);
+				}
+				if (actionType == Action.ActionType.ACTION_QUEUE_ITEM)
+				{
+					OnQueueItem(iItem);
+				}
+			}
 
-          }
+			if (control == btnResetTop100)
+			{
+				GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+				if (null != dlgYesNo)
+				{
+					dlgYesNo.SetHeading(GUILocalizeStrings.Get(718));
+					dlgYesNo.SetLine(1, GUILocalizeStrings.Get(719));
+					dlgYesNo.SetLine(2, "");
+					dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+					if (!dlgYesNo.IsConfirmed) return ;
+					m_database.ResetTop100();
+					LoadDirectory(m_strDirectory);
+				}
+			}
+			if (control == btnChangeInfo)
+			{
+				switch (_CurrentMode)
+				{
+					case Mode.Duration: 
+						_CurrentMode=Mode.TimesPlayed;
+						break;
+					case Mode.TimesPlayed:
+						_CurrentMode=Mode.Duration;
+						break;
+				}
+				LoadDirectory(m_strDirectory);
+				GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO);
+			}
+		}
 
-          if (iControl==(int)Controls.CONTROL_BTN_RESETTOP100)
-          {
-            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-            if (null != dlgYesNo)
-            {
-              dlgYesNo.SetHeading(GUILocalizeStrings.Get(718));
-              dlgYesNo.SetLine(1, GUILocalizeStrings.Get(719));
-              dlgYesNo.SetLine(2, "");
-              dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-              if (!dlgYesNo.IsConfirmed) return true;
-              m_database.ResetTop100();
-              LoadDirectory(m_strDirectory);
-            }
-          }
-          if (iControl==(int)Controls.CONTROL_BTN_CHANGE_INFO)
-          {
-            switch (_CurrentMode)
-            {
-              case Mode.Duration: 
-                  _CurrentMode=Mode.TimesPlayed;
-              break;
-              case Mode.TimesPlayed:
-                  _CurrentMode=Mode.Duration;
-              break;
-            }
-            LoadDirectory(m_strDirectory);
-            GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTN_CHANGE_INFO);
-          }
-          break;
-      }
-      return base.OnMessage(message);
-    }
-
-    void ShowContextMenu()
+		protected override void OnShowContextMenu()
     {
       GUIListItem item=GetSelectedItem();
       int itemNo=GetSelectedItemNo();

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
 using System.Xml;
+using System.Reflection;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -241,6 +242,17 @@ namespace MediaPortal.GUI.Library
 			if (action==null) return ;
       //lock (this)
       {
+				if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+				{
+					OnShowContextMenu();
+					return;
+				}
+				if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+				{
+					OnPreviousWindow();
+					return;
+				}
+
 				try
 				{
 					GUIMessage msg;
@@ -336,6 +348,13 @@ namespace MediaPortal.GUI.Library
 				{
 					switch (message.Message)
 					{
+						case GUIMessage.MessageType.GUI_MSG_CLICKED:
+						{
+							int iControlId = message.SenderControlId;
+							OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
+						}
+						break;
+
 							// Initialize the window.
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
 						{
@@ -375,13 +394,15 @@ namespace MediaPortal.GUI.Library
               }
 							Log.Write( "window:{0} init", this.ToString());
 						}
+							OnPageLoad();
 							return true;
 							// TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 	      
 							// Cleanup and free resources
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
 						{
-              if (m_dwPreviousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
+							OnPageDestroy(message.Param1);
+							if (m_dwPreviousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
               {
                 GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId));
                 GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId);
@@ -662,6 +683,21 @@ namespace MediaPortal.GUI.Library
 				CPosition pos = new CPosition(ref control, control.XPosition, control.YPosition);
 				m_vecPositions.Add(pos);
 			}
+
+			FieldInfo[] allFields = this.GetType().GetFields(BindingFlags.Instance 
+																												|BindingFlags.NonPublic
+																												|BindingFlags.FlattenHierarchy
+																												|BindingFlags.Public);
+			foreach (FieldInfo field in allFields)
+			{
+				if (field.IsDefined(typeof(SkinControlAttribute), false))
+				{
+					SkinControlAttribute atrb = (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
+				
+					field.SetValue(this, GetControl(atrb.ID));
+				}
+			}
+
 		}
 
 		/// <summary>
@@ -961,6 +997,22 @@ namespace MediaPortal.GUI.Library
     }
 
 		public virtual void SetObject(object obj)
+		{
+		}
+		protected virtual void OnPageLoad()
+		{
+		}
+		protected virtual void OnPageDestroy(int newWindowId)
+		{
+		}
+		protected virtual void OnShowContextMenu()
+		{
+		}
+		protected virtual void OnPreviousWindow()
+		{
+			GUIWindowManager.PreviousWindow();
+		}
+		protected virtual void OnClicked( int controlId, GUIControl control, Action.ActionType actionType) 
 		{
 		}
 	}

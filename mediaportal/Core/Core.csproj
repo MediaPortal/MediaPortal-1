@@ -749,6 +749,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\SkinControlAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\TexturePacker.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
