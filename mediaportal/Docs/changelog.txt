@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  07-07-2004  my music    : fixed : no thumbnail in mymusic/artists:if artist name retrieved from www.allmusic.com differs from the one in id3tag
+  07-07-2004  my music    : fixed : songs without an album name dont show up in my music->arists
+
   05-07-2004  my music    : fixed : remove album info does not delete the thumbnail. 
   05-07-2004  my music    : fixed : F3 under my music/artist/album should retrieve album info.
   

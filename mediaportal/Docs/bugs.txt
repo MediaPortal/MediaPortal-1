@@ -13,8 +13,6 @@ Bugs left:
   27-06-2004 general    : The same happens for movies if the filename does not match the name that was 
                           retrieved from the internet.
 
-  20-06-2004 my music   : no thumbnail in mymusic/artists:if artist name retrieved from www.allmusic.com differs from the one in id3tag
-  20-06-2004 my music   : songs without an album name dont show up in my music->arists
   19-06-2004 my tv      : when playing a movie, stop timeshifting?
   
   19-06-2004 general    : crash if alt+enter when playing a movie
