@@ -2403,6 +2403,7 @@ namespace MediaPortal.TV.Recording
 					//check if this channel already exists in the tv database
 					bool isNewChannel=true;
 					int iChannelNumber=0;
+					int channelId=-1;
 					foreach (TVChannel tvchan in tvChannels)
 					{
 						if (tvchan.Name.Equals(newchannel.ChannelName))
@@ -2410,6 +2411,7 @@ namespace MediaPortal.TV.Recording
 							//yes already exists
 							iChannelNumber=tvchan.Number;
 							isNewChannel=false;
+							channelId=tvchan.ID;
 							break;
 						}
 					}
@@ -2424,7 +2426,8 @@ namespace MediaPortal.TV.Recording
 						tvChan.Number=newchannel.SID;
 						tvChan.VisibleInGuide=true;
 						iChannelNumber=tvChan.Number;
-						TVDatabase.AddChannel(tvChan);
+						int id=TVDatabase.AddChannel(tvChan);
+						channelId=id;
 					}
 					else
 					{
@@ -2448,6 +2451,24 @@ namespace MediaPortal.TV.Recording
 						TVDatabase.MapDVBSChannel(newchannel.ChannelName,iChannelNumber, newchannel.carrierFrequency, newchannel.symbolRate,newchannel.innerFec,newchannel.polarisation,newchannel.ONID,newchannel.TSID,newchannel.SID);
 					}
 					TVDatabase.MapChannelToCard(iChannelNumber,ID);
+
+					
+					TVGroup group = new TVGroup();
+					if (info.scrambled)
+					{
+						group.GroupName="Scrambled";
+					}
+					else
+					{
+						group.GroupName="Unscrambled";
+					}
+					int groupid=TVDatabase.AddGroup(group);
+					group.ID=groupid;
+					TVChannel tvTmp=new TVChannel();
+					tvTmp.Name=newchannel.ChannelName;
+					tvTmp.Number=iChannelNumber;
+					tvTmp.ID=channelId;
+					TVDatabase.MapChannelToGroup(group,tvTmp);
 				}
 				else
 				{
