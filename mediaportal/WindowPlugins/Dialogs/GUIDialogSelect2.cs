@@ -34,7 +34,7 @@ namespace MediaPortal.Dialogs
     {
       GetID=(int)GUIWindow.Window.WINDOW_DIALOG_SELECT2;
     }
-
+ 
     public override bool Init()
     {
       return Load (GUIGraphicsContext.Skin+@"\DialogSelect2.xml");

@@ -87,7 +87,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     //NProf doesnt work if the [STAThread] attribute is set
     //but is needed when you want to play music or video
-		//[STAThread]
+		[STAThread]
     public static void Main()
     {
 

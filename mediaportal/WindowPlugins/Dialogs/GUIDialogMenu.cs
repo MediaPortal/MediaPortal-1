@@ -36,8 +36,8 @@ namespace MediaPortal.Dialogs
     }
 
     public override bool Init()
-    {
-      return Load (GUIGraphicsContext.Skin+@"\DialogSelect2.xml");
+    { 
+      return Load (GUIGraphicsContext.Skin+@"\DialogMenu.xml");
     }
     
     public override bool SupportsDelayedLoad

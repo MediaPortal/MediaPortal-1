@@ -31,7 +31,7 @@
 		<width>450</width> 
 		<height>260</height> 
 		<onleft>5</onleft> 
-		<onright>5</onright> 
+		<onright>5</onright>
 		<onup>5</onup> 
 		<ondown>5</ondown>
 		<spinPosX>500</spinPosX>
