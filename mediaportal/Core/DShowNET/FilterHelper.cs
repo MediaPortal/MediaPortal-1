@@ -51,7 +51,6 @@ namespace DShowNET
 
       return devices;
     }
-#if (UseCaptureCardDefinitions)
 
 		/// <summary>
 		/// #MW#.
@@ -73,7 +72,6 @@ namespace DShowNET
 
 			return devices;
 		}
-#endif
 
 		public static ArrayList GetVideoInputDevices()
 		{

@@ -12,6 +12,7 @@ using DirectX.Capture;
 
 using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
+using TVCapture;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -21,6 +22,7 @@ namespace MediaPortal.Configuration
 	{
     bool    m_bMPEG2=false;
     bool    m_bISMCE=false;
+		static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox cardComboBox;
@@ -63,7 +65,9 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.TextBox textBoxName;
 		int cardId = 0;
     bool acceptuserinput=false;
+		private System.Windows.Forms.TextBox MonikerString;
 
+		private TVCaptureDevice _mTvCaptureDevice = null;
 		/// <summary>
 		/// 
 		/// </summary>
@@ -78,6 +82,7 @@ namespace MediaPortal.Configuration
 			// Setup combo boxes and controls
 			//
 			ArrayList availableVideoDevices = FilterHelper.GetVideoInputDevices();
+			ArrayList availableVideoDeviceMonikers	= FilterHelper.GetVideoInputDeviceMonikers();
       ArrayList availableAudioDevices = FilterHelper.GetAudioInputDevices();
       ArrayList availableVideoCompressors = FilterHelper.GetVideoCompressors();
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
@@ -94,20 +99,58 @@ namespace MediaPortal.Configuration
 
 			if(availableVideoDevices.Count == 0)
 			{
-        acceptuserinput=false;
 				MessageBox.Show("No video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = cardComboBox.Enabled = okButton.Enabled = setupButton.Enabled = audioCompressorComboBox.Enabled = audioDeviceComboBox.Enabled = videoCompressorComboBox.Enabled = false;
-        comboBoxLineInput.Enabled=false;
-        trackRecording.Enabled=false;
+        comboBoxLineInput.Enabled	= false;
+        trackRecording.Enabled		= false;
+				acceptuserinput						= false;
 			}
       else
         acceptuserinput=true;
+#if (UseCaptureCardDefinitions)
+			// #MW#
+			// Load capture card definitions, and only display those cards that are supported by MP
+			// This might mean that altough capture cards are present, they're not supported, and thus
+			// not displayed ;-)
+			//
+			// So:
+			//	match cards & put in list
+			//	if list is empty, inform user and block further input
+			//	else continue
 
+			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
+			{
+				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
+				for (int i = 0; i < availableVideoDevices.Count; i++)
+				{
+					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
+						 ((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 ))
+					{
+						TVCaptureDevice cd		= new TVCaptureDevice();
+						cd.VideoDevice				= ccd.CaptureName;
+						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
+						cd.LoadDefinitions();
+						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
+						cardComboBox.Items.Add(cbcc); //availableVideoDevices[i]);
+					}
+				}
+			}
+
+			if (cardComboBox.Items.Count == 0)
+			{
+				MessageBox.Show("No supported video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = cardComboBox.Enabled = okButton.Enabled = setupButton.Enabled = audioCompressorComboBox.Enabled = audioDeviceComboBox.Enabled = videoCompressorComboBox.Enabled = false;
+				comboBoxLineInput.Enabled = false;
+				trackRecording.Enabled    = false;
+				acceptuserinput           = false;
+			}
+			else
+				acceptuserinput						= true;
+#endif
 			SetupCaptureFormats();
 			frameSizeComboBox.Items.AddRange(captureFormats.ToArray());
 
       textBoxName.Text=String.Format("card{0}", cardId);
-
 		}
 
 		/// <summary>
@@ -133,6 +176,9 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.MonikerString = new System.Windows.Forms.TextBox();
+			this.textBoxName = new System.Windows.Forms.TextBox();
+			this.label12 = new System.Windows.Forms.Label();
       this.lblRecordingLevel = new System.Windows.Forms.Label();
       this.label11 = new System.Windows.Forms.Label();
       this.trackRecording = new System.Windows.Forms.TrackBar();
@@ -170,6 +216,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.MonikerString);
       this.groupBox1.Controls.Add(this.textBoxName);
       this.groupBox1.Controls.Add(this.label12);
       this.groupBox1.Controls.Add(this.lblRecordingLevel);
@@ -203,8 +250,36 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Capture Card Settings";
-      this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+			// 
       // 
+			this.MonikerString.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+			this.MonikerString.AutoSize = false;
+			this.MonikerString.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.MonikerString.Enabled = false;
+			this.MonikerString.Location = new System.Drawing.Point(16, 40);
+			this.MonikerString.Name = "MonikerString";
+			this.MonikerString.ReadOnly = true;
+			this.MonikerString.Size = new System.Drawing.Size(72, 20);
+			this.MonikerString.TabIndex = 53;
+			this.MonikerString.TabStop = false;
+			this.MonikerString.Text = "MonikerString";
+			this.MonikerString.Visible = false;
+			// 
+			// textBoxName
+			// 
+			this.textBoxName.Location = new System.Drawing.Point(120, 24);
+			this.textBoxName.Name = "textBoxName";
+			this.textBoxName.Size = new System.Drawing.Size(320, 20);
+			this.textBoxName.TabIndex = 52;
+			this.textBoxName.Text = "";
+			// 
+			// label12
+			// 
+			this.label12.Location = new System.Drawing.Point(16, 24);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(80, 16);
+			this.label12.TabIndex = 51;
+			this.label12.Text = "Friendly name:";
       // lblRecordingLevel
       // 
       this.lblRecordingLevel.Location = new System.Drawing.Point(272, 392);
@@ -225,7 +300,7 @@ namespace MediaPortal.Configuration
       this.trackRecording.Location = new System.Drawing.Point(120, 384);
       this.trackRecording.Maximum = 100;
       this.trackRecording.Name = "trackRecording";
-      this.trackRecording.Size = new System.Drawing.Size(136, 42);
+			this.trackRecording.Size = new System.Drawing.Size(136, 45);
       this.trackRecording.TabIndex = 48;
       this.trackRecording.TickFrequency = 10;
       this.trackRecording.Value = 80;
@@ -519,15 +594,34 @@ namespace MediaPortal.Configuration
 		/// 
 		/// </summary>
 		/// <returns></returns>
+#if (UseCaptureCardDefinitions)
+		private CaptureEx CreateCaptureDevice()
+#else
 		private Capture CreateCaptureDevice()
 		{
 			Capture capture = null;
+#endif
       DShowNET.Filter videoDevice = null;
       DShowNET.Filter audioDevice = null;
       DShowNET.Filter videoCompressor = null;
       DShowNET.Filter audioCompressor = null;
 
+#if (UseCaptureCardDefinitions)
+			string selectedVideoDeviceName = "";
+			if (cardComboBox.SelectedItem != null)
+			{
+				_mTvCaptureDevice = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
+				if (_mTvCaptureDevice != null)
+				{
+					videoDevice = new Filter(_mTvCaptureDevice.VideoDeviceMoniker);
+					videoDevice.Name					= _mTvCaptureDevice.VideoDevice;
+					videoDevice.MonikerString = _mTvCaptureDevice.VideoDeviceMoniker;
+					selectedVideoDeviceName		= videoDevice.Name;
+				}
+			}
+#else
 			string selectedVideoDeviceName = (string)cardComboBox.SelectedItem;
+#endif
       string selectedAudioDeviceName = audioDeviceComboBox.SelectedItem as string;
 
       string selectedVideoCompressor = videoCompressorComboBox.SelectedItem as string;
@@ -538,6 +632,8 @@ namespace MediaPortal.Configuration
         // Find the selected video capture device
         //
         Filters filters = new Filters();
+#if (UseCaptureCardDefinitions)
+#else
         foreach(Filter filter in filters.VideoInputDevices)
         {
           if(selectedVideoDeviceName.Equals(filter.Name))
@@ -549,6 +645,7 @@ namespace MediaPortal.Configuration
             break;
           }
         }
+#endif
         if (selectedAudioDeviceName!=null)
         {
           foreach(Filter filter in filters.AudioInputDevices)
@@ -627,8 +724,11 @@ namespace MediaPortal.Configuration
         //
         try
         {
+#if (UseCaptureCardDefinitions)
+          capture = new CaptureEx(this._mTvCaptureDevice, videoDevice, audioDevice);
+#else
           capture = new Capture(videoDevice, audioDevice);
-
+#endif
           capture.VideoCompressor = videoCompressor;
           capture.AudioCompressor = audioCompressor;
 
@@ -646,9 +746,14 @@ namespace MediaPortal.Configuration
 
       return capture;
 		}
+#if (UseCaptureCardDefinitions)
+		private void SetupPropertyPages(CaptureEx capture )
+		{
+#else
 
 		private void SetupPropertyPages(Capture capture )
 		{
+#endif
 			//
 			// Clear any previous items
 			//
@@ -705,12 +810,40 @@ namespace MediaPortal.Configuration
       FillInAll();
     }
 
+		/// <summary>
+		/// #MW#
+		/// Fill in all the appropriate fields. The selected card is already checked as a card that
+		/// is supported, so definitions might already been loaded.
+		/// The createcapturedevice() method builds up a graph, without the connections in order to
+		/// display the property pages belonging to the required filters.
+		/// 
+		/// This was done using the Capture class, which did a mix of the (My)SinkGraph class used by the
+		/// TvCapture stuff. For the time being, a kind of hack is used to re-use parts of the sinkgraph
+		/// code that builds the graph according to the cards definitions. In the future, a redesign should
+		/// be done to remove all obsolete code and refactor the whole capture tv/radio thingy...
+		/// 
+		/// Depending on the cards capabilities, the rest of the fields should be enabled/disabled
+		/// 
+		/// Display should give the descriptive name, ie PVR150MCE, PVR350 etc.
+		/// </summary>
     void FillInAll()
     {
+			// #MW#
+			// Load card and set properties (double work again) to make the creation of the capture device
+			// work, ie that one can load the definitions held in the TVCaptureDevice to create the graph, ie
+			// load the filters and connect the pins...
+			//
+			//_mTvCaptureDevice.FriendlyName = "";
+			// card should be set already by caller...
+
       //
       // Setup frame sizes
       //
+#if (UseCaptureCardDefinitions)
+      CaptureEx capture = CreateCaptureDevice();
+#else
       Capture capture = CreateCaptureDevice();
+#endif
 			SetupPropertyPages(capture);
 
 
@@ -831,8 +964,11 @@ namespace MediaPortal.Configuration
 			if(filterComboBox.SelectedItem != null)
 			{
 				string propertyPageName = (string)filterComboBox.SelectedItem;
-
+#if (UseCaptureCardDefinitions)
+				CaptureEx capture = CreateCaptureDevice();
+#else
 				Capture capture = CreateCaptureDevice();
+#endif
 
 				if(capture != null)
 				{
@@ -885,11 +1021,6 @@ namespace MediaPortal.Configuration
       }    
     }
 
-    private void groupBox1_Enter(object sender, System.EventArgs e)
-    {
-    
-    }
-
     private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
     {
       FillInAll();    
@@ -911,9 +1042,13 @@ namespace MediaPortal.Configuration
 		{
 			get 
 			{
+#if (UseCaptureCardDefinitions)
+				TVCaptureDevice card = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
+#else
 				TVCaptureDevice card = new TVCaptureDevice();
 
 				card.VideoDevice = cardComboBox.Text;
+#endif
 
 				card.UseForRecording = useRecordingCheckBox.Checked;
 				card.UseForTV	= useWatchingCheckBox.Checked;
@@ -933,8 +1068,10 @@ namespace MediaPortal.Configuration
         card.AudioCompressor = audioCompressorComboBox.Text;
         card.AudioDevice = audioDeviceComboBox.Text;
         card.AudioInputPin = comboBoxLineInput.Text;
+#if (UseCaptureCardDefinitions)
         card.SupportsMPEG2 = m_bMPEG2;
         card.IsMCECard     = m_bISMCE;
+#endif
         card.RecordingLevel = trackRecording.Value;
         card.FriendlyName   = textBoxName.Text;
 				return card;
@@ -948,7 +1085,11 @@ namespace MediaPortal.Configuration
 				if(card != null)
 				{
           textBoxName.Text=card.FriendlyName;
-					cardComboBox.SelectedItem = card.VideoDevice;
+#if (UseCaptureCardDefinitions)
+          cardComboBox.SelectedItem					= cbcc;
+#else
+          cardComboBox.SelectedItem = card.VideoDevice;
+#endif
           audioDeviceComboBox.SelectedItem  = card.AudioDevice          ;
 					useRecordingCheckBox.Checked = card.UseForRecording;
           useWatchingCheckBox.Checked = card.UseForTV;
@@ -1005,4 +1146,46 @@ namespace MediaPortal.Configuration
 			return Description;
 		}
 	}
+}
+public class ComboBoxCaptureCard
+{
+	private TVCaptureDevice _mCaptureDevice;
+
+	public ComboBoxCaptureCard(TVCaptureDevice pCaptureDevice)
+	{
+		this._mCaptureDevice = pCaptureDevice;
+	}
+
+	public TVCaptureDevice CaptureDevice
+	{
+		get {return _mCaptureDevice;}
+	}
+#if (UseCaptureCardDefinitions)
+	public string VideoDeviceMoniker
+	{
+		get {return _mCaptureDevice.VideoDeviceMoniker;}
+	}
+
+	public string CaptureName
+	{
+		get {return _mCaptureDevice.CaptureName;}
+	}
+
+	// Display a more readable name by adding the commercial name of the card to the capture device
+	public override string ToString()
+	{
+		return (this.CaptureName + " (" + this._mCaptureDevice.CommercialName + ")");
+	}
+
+	public override bool Equals(object obj)
+	{
+//		return this.ToString().Equals((obj as ComboBoxCaptureCard).ToString());
+		return VideoDeviceMoniker.Equals((obj as ComboBoxCaptureCard).VideoDeviceMoniker);
+	}
+
+	public override int GetHashCode()
+	{
+		return base.GetHashCode();
+	}
+#endif
 }
