@@ -393,6 +393,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\Error.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\Events.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
