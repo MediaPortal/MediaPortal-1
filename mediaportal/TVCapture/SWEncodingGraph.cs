@@ -50,6 +50,7 @@ namespace MediaPortal.TV.Recording
     double                  m_FrameRate;
     int                     _RecordingLevel=100;
     bool                    m_bFirstTune = true;
+    int                     m_iPrevChannel=-1;
 
     const int WS_CHILD = 0x40000000;
     const int WS_CLIPCHILDREN = 0x02000000;
@@ -82,6 +83,7 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SWGraph:CreateGraph()");
 
       // find the video capture device
+      m_iPrevChannel=-1;
       m_bFirstTune = true;
       Filters filters = new Filters();
       Filter filterVideoCaptureDevice = null;
@@ -206,6 +208,7 @@ namespace MediaPortal.TV.Recording
     public void DeleteGraph()
     {
       if (m_graphState < State.Created) return;
+      m_iPrevChannel=-1;
 
       DirectShowUtil.DebugWrite("SWGraph:DeleteGraph()");
       StopRecording();
@@ -678,7 +681,19 @@ namespace MediaPortal.TV.Recording
                                   m_iCountryCode,standard.ToString(),
                                   m_bUseCable);
 
-      DsUtils.FixCrossbarRouting(m_captureGraphBuilder, m_filterCaptureVideo, iChannel < 1000, (iChannel == 1001),(iChannel == 1002),(iChannel == 1000));
+      bool bFixCrossbar=true;
+      if (m_iPrevChannel>=0)
+      {
+        if (m_iPrevChannel< 1000 && iChannel < 1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1000 && iChannel ==1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1001 && iChannel ==1001) bFixCrossbar=false;
+        if (m_iPrevChannel==1002 && iChannel ==1002) bFixCrossbar=false;
+      }
+      if (bFixCrossbar)
+      {
+        DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_filterCaptureVideo, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
+      }
+      m_iPrevChannel=iChannel;
     }
 
     /// <summary>
@@ -844,9 +859,30 @@ namespace MediaPortal.TV.Recording
     }
 
     
+    /// <summary>
+    /// This method can be used to ask the graph if it should be rebuild when
+    /// we want to tune to the new channel:ichannel
+    /// </summary>
+    /// <param name="iChannel">new channel to tune to</param>
+    /// <returns>true : graph needs to be rebuild for this channel
+    ///          false: graph does not need to be rebuild for this channel
+    /// </returns>
     public bool ShouldRebuildGraph(int iChannel)
     {
-      return false;
+      // if we switch from tuner <-> SVHS/Composite then 
+      // we need to rebuild the capture graph
+      bool bFixCrossbar=true;
+      if (m_iPrevChannel>=0)
+      {
+        // tuner : channel < 1000
+        // SVHS/composite : channel >=1000
+        if (m_iPrevChannel< 1000 && iChannel < 1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1000 && iChannel ==1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1001 && iChannel ==1001) bFixCrossbar=false;
+        if (m_iPrevChannel==1002 && iChannel ==1002) bFixCrossbar=false;
+      }
+      else bFixCrossbar=false;
+      return bFixCrossbar;
     }
-	}
+  }
 }
