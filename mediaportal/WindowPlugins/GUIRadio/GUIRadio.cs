@@ -469,8 +469,16 @@ namespace MediaPortal.GUI.Radio
             }
             else
             {
-              item.IconImageBig="DefaultMyradioBig.png";
-              item.IconImage="DefaultMyradio.png";
+							if (station.Scrambled)
+							{
+								item.IconImageBig="DefaultMyradioBigLocked.png";
+								item.IconImage="DefaultMyradioLocked.png";
+							}
+							else
+							{
+								item.IconImageBig="DefaultMyradioBig.png";
+								item.IconImage="DefaultMyradio.png";
+							}
               item.ThumbnailImage=Utils.GetCoverArt(ThumbsFolder,station.Name);
               //if (item.ThumbnailImage=="")
               //  item.ThumbnailImage="DefaultMyradioBig.png";

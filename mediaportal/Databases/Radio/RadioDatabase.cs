@@ -32,7 +32,7 @@ namespace MediaPortal.Radio.Database
         System.IO.Directory.CreateDirectory("database");
 				}
 				catch(Exception){}
-				m_db = new SQLiteClient(@"database\RadioDatabase2.db");
+				m_db = new SQLiteClient(@"database\RadioDatabase3.db");
         CreateTables();
 
         if (m_db!=null)
@@ -53,7 +53,7 @@ namespace MediaPortal.Radio.Database
     static bool CreateTables()
     {
       if (m_db==null) return false;
-      if ( DatabaseUtility.AddTable(m_db,"station","CREATE TABLE station ( idChannel integer primary key, strName text, iChannelNr integer, frequency text, URL text, genre text, bitrate int)\n"))
+      if ( DatabaseUtility.AddTable(m_db,"station","CREATE TABLE station ( idChannel integer primary key, strName text, iChannelNr integer, frequency text, URL text, genre text, bitrate integer, scrambled integer)\n"))
       {
         m_db.Execute("CREATE INDEX idxStation ON station(idChannel)");
       }
@@ -96,6 +96,13 @@ namespace MediaPortal.Radio.Database
               chan.Frequency = Int64.Parse(DatabaseUtility.Get(results,i,"frequency"));
             }catch(Exception)
             {}
+						
+						int scrambled=Int32.Parse( DatabaseUtility.Get(results,i,"scrambled"));
+						if (scrambled!=0)
+							chan.Scrambled=true;
+						else
+							chan.Scrambled=false;
+
             chan.Name = DatabaseUtility.Get(results,i,"strName");
             chan.URL = DatabaseUtility.Get(results,i,"URL");
             if (chan.URL.Equals("unknown")) chan.URL ="";
@@ -152,6 +159,12 @@ namespace MediaPortal.Radio.Database
 					}
 					catch(Exception)
 					{}
+					
+					int scrambled=Int32.Parse( DatabaseUtility.Get(results,0,"scrambled"));
+					if (scrambled!=0)
+						chan.Scrambled=true;
+					else
+						chan.Scrambled=false;
 					station.Name = DatabaseUtility.Get(results,0,"strName");
 					station.URL = DatabaseUtility.Get(results,0,"URL");
 					if (station.URL.Equals("unknown")) chan.URL ="";
@@ -174,6 +187,32 @@ namespace MediaPortal.Radio.Database
 			}
 		}
 
+		static public void UpdateStation(RadioStation channel)
+		{
+			lock (m_db)
+			{
+				string strSQL;
+				try
+				{
+					string strChannel=channel.Name;
+					string strURL    =channel.URL;
+					string strGenre    =channel.Genre;
+					DatabaseUtility.RemoveInvalidChars(ref strChannel);
+					DatabaseUtility.RemoveInvalidChars(ref strURL);
+					DatabaseUtility.RemoveInvalidChars(ref strGenre);
+					int scrambled=0;
+					if (channel.Scrambled) scrambled=1;
+					strSQL=String.Format("update station set strName='{0}',iChannelNr={1} ,frequency='{2}',URL='{3}',bitrate={4},genre='{5}',scrambled={6} where idChannel={7}", 
+																strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled, channel.ID);
+					m_db.Execute(strSQL);
+				} 
+				catch (Exception ex) 
+				{
+					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
     
     static public int AddStation(ref RadioStation channel)
     {
@@ -196,8 +235,10 @@ namespace MediaPortal.Radio.Database
             if (results.Rows.Count==0) 
             {
               // doesnt exists, add it
-              strSQL=String.Format("insert into station (idChannel, strName,iChannelNr ,frequency,URL,bitrate,genre) values ( NULL, '{0}', {1}, {2}, '{3}',{4},'{5}' )", 
-                                    strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre);
+							int scrambled=0;
+							if (channel.Scrambled) scrambled=1;
+              strSQL=String.Format("insert into station (idChannel, strName,iChannelNr ,frequency,URL,bitrate,genre,scrambled) values ( NULL, '{0}', {1}, {2}, '{3}',{4},'{5}',{6} )", 
+                                    strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled);
               m_db.Execute(strSQL);
               int iNewID=m_db.LastInsertID();
               channel.ID=iNewID;

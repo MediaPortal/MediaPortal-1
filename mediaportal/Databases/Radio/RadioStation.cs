@@ -15,6 +15,7 @@ namespace MediaPortal.Radio.Database
     string m_strURL="";
     string m_strGenre=""; 
     int    m_iBitRate=0;
+		bool   m_bScrambled=false;
 		public RadioStation()
 		{
 		}
@@ -54,6 +55,11 @@ namespace MediaPortal.Radio.Database
       get { return m_iBitRate;}
       set { m_iBitRate=value;}
     }
+		public bool Scrambled
+		{
+			get { return m_bScrambled;}
+			set { m_bScrambled=value;}
+		}
 
 	}
 }

@@ -2159,6 +2159,8 @@ namespace MediaPortal.TV.Recording
 								//yes already exists
 								isNewChannel=false;
 								channelId=station.ID;
+								station.Scrambled=info.scrambled;
+								RadioDatabase.UpdateStation(station);
 								break;
 							}
 						}
@@ -2172,6 +2174,7 @@ namespace MediaPortal.TV.Recording
 							station.Name=newchannel.ServiceName;
 							station.Channel=newchannel.ProgramNumber;
 							station.Frequency=newchannel.Frequency;
+							station.Scrambled=info.scrambled;
 							int id=RadioDatabase.AddStation(ref station);
 							channelId=id;
 						}
