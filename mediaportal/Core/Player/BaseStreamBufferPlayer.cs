@@ -1031,7 +1031,8 @@ namespace MediaPortal.Player
 				newPosition = 0;
 				SeekAbsolute(newPosition);
 				DirectShowUtil.EnableDeInterlace(graphBuilder);
-				mediaCtrl.Run();
+				//mediaCtrl.Run();
+				Reset();
 				return;
 			}
 
@@ -1043,7 +1044,8 @@ namespace MediaPortal.Player
 				newPosition = m_dDuration;
 				SeekAbsolute(newPosition);
 				DirectShowUtil.EnableDeInterlace(graphBuilder);
-				mediaCtrl.Run();
+				//mediaCtrl.Run();
+				Reset();
 				return;
 			}
 
@@ -1104,9 +1106,11 @@ namespace MediaPortal.Player
 							case -32: m_speedRate=-75000;break;
 
 							case 1:  
+
 								m_speedRate=10000;
-								mediaCtrl.Run();
+								//mediaCtrl.Run();
 								DirectShowUtil.EnableDeInterlace(graphBuilder);
+								Reset();
 								break;
 							case 2:  m_speedRate=15000;break;
 							case 4:  m_speedRate=30000;break;

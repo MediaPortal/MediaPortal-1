@@ -1464,11 +1464,12 @@ namespace MediaPortal.TV.Recording
 
 		void Pause()
 		{	
-			return;
+			//pause playing graph
 			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
 			{
 				g_Player.Pause();
 			}
+			//pause recording/timeshifting graph
 			if (m_mediaControl!=null && graphRunning)
 			{
 				m_mediaControl.Pause();
@@ -1477,15 +1478,20 @@ namespace MediaPortal.TV.Recording
 
 		void Continue()
 		{
-			return;
+			//continue recording/timeshifting graph
 			if (m_mediaControl!=null && graphRunning)
 			{
-				m_mediaControl.Run();
+				m_mediaControl.Pause();
 			}
 			
-			if (g_Player.Playing && g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
+			//continue playing graph
+			if (g_Player.Playing && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
 			{
-				g_Player.Pause();
+				g_Player.Reset();
+				if (g_Player.Paused)
+				{
+					g_Player.Pause();
+				}
 			}
 		}
 		#region graph building helper functions

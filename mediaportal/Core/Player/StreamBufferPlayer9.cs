@@ -222,12 +222,14 @@ namespace MediaPortal.Player
 		{
 			if (Vmr9==null || !GUIGraphicsContext.Vmr9Active || mediaCtrl==null) return;
 
+			Log.Write("StreamBufferPlayer9:Reset graph");
 			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
 			double pos=CurrentPosition;
 			mediaCtrl.Stop();
 			mediaCtrl.Run();
 			SeekAbsolute(pos);
 			mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
+			m_state=PlayState.Playing;
 		}
 
   }
