@@ -114,6 +114,7 @@ namespace MediaPortal.TV.Recording
 			foreach (string catName in mCard.TvFilterDefinitions.Keys)
 			{
 				FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
+				DirectShowUtil.DebugWrite("SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
 				dsFilter.DSFilter         = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
 				hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
 				if (hr == 0)

@@ -319,6 +319,7 @@ namespace MediaPortal.TV.Recording
       Log.Write("Recorder: find free capture card");
 
       // find free device for recording
+			int cardNo=0;
       foreach (TVCaptureDevice dev in m_tvcards)
       {
         if (dev.UseForRecording)
@@ -326,12 +327,15 @@ namespace MediaPortal.TV.Recording
           if (!dev.IsRecording)
           {
             Log.Write("Recorder: found capture card:{0} {1}", dev.ID, dev.VideoDevice);
+						bool viewing=IsCardViewing(cardNo);
             TuneExternalChannel(rec.Channel);
             dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
-
-            return true;
+			
+						if (viewing) m_strTVChannel=rec.Channel;
+						return true;
           }
         }
+				cardNo++;
       }
 
       // still no device found. 
@@ -340,19 +344,24 @@ namespace MediaPortal.TV.Recording
       {
         // yes, then find & stop any capture running which is busy post-recording
         Log.Write("check if a capture card is post-recording");
+				cardNo=0;
         foreach (TVCaptureDevice dev in m_tvcards)
         {
           if (dev.UseForRecording)
           {
             if (dev.IsPostRecording)
             {
+							bool viewing=IsCardViewing(cardNo);
               Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
               dev.StopRecording();
               TuneExternalChannel(rec.Channel);
               dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
+							
+							if (viewing) m_strTVChannel=rec.Channel;
               return true;
             }
           }
+					cardNo++;
         }
       }
 
