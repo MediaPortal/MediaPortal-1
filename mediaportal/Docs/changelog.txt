@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  25-05-2004  my music    : fixed : play song, press F5->crash
+  25-05-2004  my videos   : fixed : remove HTML entities from IMDB info
+  25-05-2004  general     : added : dont show hidden files/folders
+
   17-05-2004  general     : fixed : %filename% for external movie player
   
   16-05-2004  general     : added : auto tune option
