@@ -24,8 +24,9 @@ namespace MediaPortal.GUI.TV
       SortBy=2,
       SortAscending=3,
       SearchByGenre=4,
-      SearchByTitle=5,
-      Search=6,
+			SearchByTitle=5,
+			SearchByDescription=6,
+      Search=7,
       ListControl=10,
       TitleControl=11
     }
@@ -33,7 +34,8 @@ namespace MediaPortal.GUI.TV
     enum SearchMode
     {
       Genre, 
-      Title
+      Title,
+			Description
     }
     enum SortMethod
     {
@@ -118,7 +120,15 @@ namespace MediaPortal.GUI.TV
             _SearchKind=-1;
             _SearchCriteria=String.Empty;
             Update();
-          }
+					}
+					if (iControl==(int)Controls.SearchByDescription)
+					{
+						_SearchMode=SearchMode.Description;
+						_Level=0;
+						_SearchKind=-1;
+						_SearchCriteria=String.Empty;
+						Update();
+					}
           if (iControl==(int)Controls.SortAscending)
           {
             _Ascending=!_Ascending;
@@ -226,6 +236,9 @@ namespace MediaPortal.GUI.TV
             TVDatabase.SearchProgramsPerGenre(_CurrentGenre,titles, _SearchKind, _SearchCriteria);
             foreach(TVProgram program in titles)
             {
+							//dont show programs which have ended
+							if (program.EndTime >= DateTime.Now) continue;
+							
               string strTime=String.Format("{0} {1} - {2}", 
                 program.StartTime.ToShortDateString() , 
                 program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
@@ -256,7 +269,7 @@ namespace MediaPortal.GUI.TV
             long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
             TVDatabase.SearchPrograms(start,end, ref titles, _SearchKind, _SearchCriteria);
             foreach(TVProgram program in titles)
-            {
+						{
               string strTime=String.Format("{0} {1} - {2}", 
                 program.StartTime.ToShortDateString() , 
                 program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
@@ -280,6 +293,39 @@ namespace MediaPortal.GUI.TV
             }
           }
           break;
+
+
+				case SearchMode.Description:
+				{
+					ArrayList titles = new ArrayList();
+					long start=Utils.datetolong( DateTime.Now );
+					long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
+					TVDatabase.SearchProgramsByDescription(start,end, ref titles, _SearchKind, _SearchCriteria);
+					foreach(TVProgram program in titles)
+					{
+						string strTime=String.Format("{0} {1} - {2}", 
+							program.StartTime.ToShortDateString() , 
+							program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+							program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+
+						GUIListItem item = new GUIListItem();
+						item.IsFolder=false;
+						item.Label=program.Description;
+						item.Label2=strTime;
+						item.Path=program.Title;
+						item.MusicTag=program;
+						if (IsRecording(program))
+						{
+							item.PinImage="tvguide_record_button.png";
+						}
+						Utils.SetDefaultIcons(item);
+						SetChannelLogo(program.Channel,ref item);
+						GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
+						GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
+						itemCount++;
+					}
+				}
+					break;
       }
       string strObjects=String.Format("{0} {1}", itemCount, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount",strObjects);

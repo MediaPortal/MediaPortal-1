@@ -374,12 +374,6 @@ namespace MediaPortal.Player
 		}
 
 
-		public override bool DoesOwnRendering
-		{
-			get { 
-				 return m_bIsVisible;
-			}
-		}      
 
 		protected override void OnProcess()
 		{
@@ -388,7 +382,8 @@ namespace MediaPortal.Player
 
 			memDC.FillRectangle(Brushes.Black, 0 , 0, GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 			GUIGraphicsContext.graphics=memDC;
-			if (m_renderFrame!=null) m_renderFrame.RenderFrame();
+			
+			GUIGraphicsContext.RenderGUI.RenderFrame();
 			GUIGraphicsContext.graphics=null;
 
 			bitmap.HDC = memdc ;  

@@ -1183,7 +1183,7 @@ namespace MediaPortal
 
       try
       {
-				if (g_Player.Playing&& g_Player.DoesOwnRendering) 
+				if (GUIGraphicsContext.Vmr9Active) 
 				{
 				}
 				else
@@ -1240,7 +1240,7 @@ namespace MediaPortal
 	  int GetSleepingTime()
 		{
       // Render the scene as normal
-			if (g_Player.Playing&& g_Player.DoesOwnRendering) 
+			if (GUIGraphicsContext.Vmr9Active) 
 			{
 				// if we're playing a movie with vmr9 then the player will draw the GUI
         // so we just sleep 50msec here ...

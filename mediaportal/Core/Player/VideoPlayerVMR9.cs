@@ -17,11 +17,8 @@ namespace MediaPortal.Player
 
 	public class VideoPlayerVMR9 : VideoPlayerVMR7
 	{
-    GCHandle                  myHandle;
-    AllocatorWrapper.Allocator allocator;
-    PlaneScene                 m_scene=null;
 
-		
+		VMR9Util Vmr9 = null;
 		public VideoPlayerVMR9()
 		{
 		}
@@ -29,6 +26,7 @@ namespace MediaPortal.Player
 		/// <summary> create the used COM components and get the interfaces. </summary>
 		protected override bool GetInterfaces()
 		{
+			Vmr9 = new VMR9Util("movieplayer");
       //switch back to directx fullscreen mode
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);
@@ -59,60 +57,7 @@ namespace MediaPortal.Player
 				comobj = Activator.CreateInstance( comtype );
 				graphBuilder = (IGraphBuilder) comobj; comobj = null;
 			
-				//IVideoMixingRenderer9
-				comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
-				comobj = Activator.CreateInstance( comtype );
-        IBaseFilter VMR9Filter=(IBaseFilter)comobj; comobj=null;
-        if (VMR9Filter==null) 
-        {
-          Error.SetError("Unable to play movie","VMR9 is not installed");
-          Log.Write("VideoPlayer9:Failed to get instance of VMR9 ");
-          return false;
-        }
-				
-
-				//IVMRFilterConfig9
-        IVMRFilterConfig9 FilterConfig9 = VMR9Filter as IVMRFilterConfig9;
-        if (FilterConfig9==null) 
-        {
-          Error.SetError("Unable to play movie","Unable to initialize VMR9");
-          Log.Write("VideoPlayer9:Failed to get IVMRFilterConfig9 ");
-          return false;
-        }
-				int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
-        if (hr!=0) 
-        {
-          Error.SetError("Unable to play movie","Unable to initialize VMR9");
-          Log.Write("VideoPlayer9:Failed to set VMR9 to renderless mode");
-          return false;
-        }
-
-        // needed to put VMR9 in mixing mode instead of pass-through mode
-        
-        hr = FilterConfig9.SetNumberOfStreams(1);
-        if (hr!=0) 
-        {
-          Error.SetError("Unable to play movie","Unable to initialize VMR9");
-          Log.Write("VideoPlayer9:Failed to set VMR9 streams to 1");
-          return false;
-        }
-
-
-        hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
-        if (hr!=0) 
-        {
-          Error.SetError("Unable to play movie","Unable to initialize VMR9");
-          Log.Write("VideoPlayer9:Failed to set VMR9 allocator/presentor");
-          return false;
-        }
-
-        hr=graphBuilder.AddFilter(VMR9Filter,"VMR9");
-        if (hr!=0) 
-        {
-          Error.SetError("Unable to play movie","Unable to initialize VMR9");
-          Log.Write("VideoPlayer9:Failed to add vmr9 to filtergraph");
-          return false;
-        }
+				Vmr9.AddVMR9(graphBuilder);
 
         // add preferred video & audio codecs
         string strVideoCodec="";
@@ -133,7 +78,7 @@ namespace MediaPortal.Player
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
 
-				hr = DsUtils.RenderFileToVMR9(graphBuilder, m_strCurrentFile, VMR9Filter, false);
+				int hr = DsUtils.RenderFileToVMR9(graphBuilder, m_strCurrentFile, Vmr9.VMR9Filter, false);
         if (hr!=0) 
         {
           Error.SetError("Unable to play movie","Unable to render file. Missing codecs?");
@@ -148,8 +93,8 @@ namespace MediaPortal.Player
 				basicAudio	= graphBuilder as IBasicAudio;
 				//DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 				DirectShowUtil.EnableDeInterlace(graphBuilder);
-        m_iVideoWidth=allocator.NativeSize.Width;
-        m_iVideoHeight=allocator.NativeSize.Height;
+        m_iVideoWidth=Vmr9.VideoWidth;
+        m_iVideoHeight=Vmr9.VideoHeight;
 
         ushort b;
         unchecked
@@ -196,12 +141,7 @@ namespace MediaPortal.Player
           Marshal.ReleaseComObject( filter ); filter = null;
 
 
-        if( FilterConfig9 != null )
-          Marshal.ReleaseComObject( FilterConfig9 ); FilterConfig9 = null;
-
         
-        if( VMR9Filter != null )
-          Marshal.ReleaseComObject( VMR9Filter ); VMR9Filter = null;
 				return true;
 			}
 			catch( Exception  ex)
@@ -212,54 +152,12 @@ namespace MediaPortal.Player
 			}
 		}
 
-
-    int SetAllocPresenter(IBaseFilter filter, Control control)
-    {
-      IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = filter as IVMRSurfaceAllocatorNotify9;
-
-      if (lpIVMRSurfAllocNotify == null)
-      {
-        Log.Write("VideoPlayer9:Failed to get IVMRSurfaceAllocatorNotify9");
-        return -1;
-      }
-      m_scene= new PlaneScene(m_renderFrame);
-      allocator = new AllocatorWrapper.Allocator(control, m_scene);
-      IntPtr hMonitor;
-      AdapterInformation ai = Manager.Adapters.Default;
-
-      hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
-      IntPtr upDevice = DsUtils.GetUnmanagedDevice(allocator.Device);
-				 
-      int hr = lpIVMRSurfAllocNotify.SetD3DDevice(upDevice, hMonitor);
-      //Marshal.AddRef(upDevice);
-      if (hr != 0)
-      {
-        Log.Write("VideoPlayer9:Failed to get SetD3DDevice()");
-        return hr;
-      }
-      // this must be global. If it gets garbage collected, pinning won't exist...
-      myHandle = GCHandle.Alloc(allocator, GCHandleType.Pinned);
-      hr = allocator.AdviseNotify(lpIVMRSurfAllocNotify);
-      if (hr != 0)
-      {
-        Log.Write("VideoPlayer9:Failed to AdviseNotify()");
-        return hr;
-      }
-      hr = lpIVMRSurfAllocNotify.AdviseSurfaceAllocator(0xACDCACDC, allocator);
-      if (hr !=0)
-      {
-        Log.Write("VideoPlayer9:Failed to AdviseSurfaceAllocator()");
-      }
-      return hr;
-    }
-
-
 		protected override void OnProcess()
 		{
 			if (Paused)
 			{
 				//repaint
-        allocator.Repaint();
+        if (Vmr9!=null) Vmr9.Repaint();
 			}
 		}
 
@@ -286,22 +184,8 @@ namespace MediaPortal.Player
 
 
 
-          if (allocator!=null)
-          {
-            allocator.UnAdviseNotify();
-          }
-          if (myHandle.IsAllocated)
-          {
-            myHandle.Free();
-          }
-          allocator=null;
-          
-          if (m_scene!=null)
-          {
-            m_scene.Stop();
-            m_scene.Deinit();
-            m_scene=null;
-          }
+					Vmr9.RemoveVMR9();
+					Vmr9=null;
 
           mediaSeek	= null;
           mediaPos	= null;
@@ -335,10 +219,6 @@ namespace MediaPortal.Player
       }
 		}
 
-    public override bool DoesOwnRendering
-    {
-      get { return true;}
-    }      
 
 
 	}

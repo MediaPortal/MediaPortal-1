@@ -356,13 +356,6 @@ namespace MediaPortal.Player
 		}
 
 
-		public override bool DoesOwnRendering
-		{
-			get 
-			{
-				return m_bVisible;
-			}
-		}      
 
 		protected override void OnProcess()
 		{
@@ -393,7 +386,7 @@ namespace MediaPortal.Player
 			}
 
 
-			if (m_renderFrame!=null) m_renderFrame.RenderFrame();
+			GUIGraphicsContext.RenderGUI.RenderFrame();
 			GUIGraphicsContext.graphics=null;
 			bitmap.HDC = memdc ;  
 			bitmap.pDDS=IntPtr.Zero;

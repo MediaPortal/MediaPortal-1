@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using DirectX.Capture;
 
 namespace MediaPortal.TV.Recording
@@ -91,7 +92,7 @@ namespace MediaPortal.TV.Recording
     StreamBufferSink           m_StreamBufferSink=null;
     StreamBufferConfig         m_StreamBufferConfig=null;
     bool                       m_bOverlayVisible=false;
-
+		protected VMR9Util							  Vmr9=null; 
 
 		public SWEncodingGraph(int ID,int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
     {
@@ -131,6 +132,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState != State.None) return false;
       m_bIsUsingMPEG = false;
+			Vmr9 =new VMR9Util("mytv");
       
       Filter filterVideoCompressor ;
       Filter filterAudioCompressor;
@@ -331,6 +333,9 @@ namespace MediaPortal.TV.Recording
       StopViewing();
 
       GUIGraphicsContext.OnGammaContrastBrightnessChanged -=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+
+			Vmr9.RemoveVMR9();
+			Vmr9=null;
 
       if (m_videoprocamp!=null)
       {
@@ -770,38 +775,43 @@ namespace MediaPortal.TV.Recording
       Log.Write("SWGraph:Start viewing");
       TuneChannel(standard, iChannelNr);
 
+			Vmr9.AddVMR9(m_graphBuilder);
+
       m_videoCaptureDevice.RenderPreview();
+			m_mediaControl = (IMediaControl)m_graphBuilder;
 
       Log.Write("SWGraph:Get overlay interfaces");
-      m_videoWindow = m_graphBuilder as IVideoWindow;
-      if (m_videoWindow==null)
-      {
-        Log.Write("SWGraph:FAILED:Unable to get IVideoWindow");
-        return false;
-      }
+			if (!Vmr9.UseVMR9inMYTV)
+			{
+				m_videoWindow = m_graphBuilder as IVideoWindow;
+				if (m_videoWindow==null)
+				{
+					Log.Write("SWGraph:FAILED:Unable to get IVideoWindow");
+					return false;
+				}
 
-      m_basicVideo = m_graphBuilder as IBasicVideo2;
-      if (m_basicVideo==null)
-      {
-        Log.Write("SWGraph:FAILED:Unable to get IBasicVideo2");
-        return false;
-      }
+				m_basicVideo = m_graphBuilder as IBasicVideo2;
+				if (m_basicVideo==null)
+				{
+					Log.Write("SWGraph:FAILED:Unable to get IBasicVideo2");
+					return false;
+				}
+				int hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+				if (hr != 0) 
+					DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window:0x{0:X}",hr);
 
-      m_mediaControl = (IMediaControl)m_graphBuilder;
-      int hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
-      if (hr != 0) 
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window:0x{0:X}",hr);
+				hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+				if (hr != 0) 
+					DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style:0x{0:X}",hr);
 
-      hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-      if (hr != 0) 
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style:0x{0:X}",hr);
+	      
+				Log.Write("SWGraph:Show overlay");
+				m_bOverlayVisible=true;
+				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
+				if (hr != 0) 
+					DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible:0x{0:X}",hr);
+			}
 
-      
-      Log.Write("SWGraph:Show overlay");
-      m_bOverlayVisible=true;
-      hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
-      if (hr != 0) 
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible:0x{0:X}",hr);
 
       DirectShowUtil.DebugWrite("SWGraph:enable deinterlace");
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
@@ -830,7 +840,8 @@ namespace MediaPortal.TV.Recording
        
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       DirectShowUtil.DebugWrite("SWGraph:StopViewing()");
-      m_videoWindow.put_Visible(DsHlp.OAFALSE);
+			if (m_videoWindow!=null)
+				m_videoWindow.put_Visible(DsHlp.OAFALSE);
       m_bOverlayVisible=false;
       m_mediaControl.Stop();
       m_graphState = State.Created;
@@ -848,6 +859,7 @@ namespace MediaPortal.TV.Recording
       set 
       {
         if (value==m_bOverlayVisible) return;
+				if (m_videoWindow==null) return;
         m_bOverlayVisible=value;
         if (!m_bOverlayVisible)
         {
@@ -873,7 +885,15 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState != State.Viewing) return;
       int iVideoWidth, iVideoHeight;
-      m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
+			if (Vmr9.UseVMR9inMYTV)
+			{
+				iVideoWidth=Vmr9.VideoWidth;
+				iVideoHeight=Vmr9.VideoHeight;
+			}
+			else
+			{
+				m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
+			}
       /*if (GUIGraphicsContext.Overlay==false)
       {
         if (Overlay!=false)
@@ -913,21 +933,27 @@ namespace MediaPortal.TV.Recording
         rDest.X += (int)x;
         rDest.Y += (int)y;
 
-        m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-        m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
-        m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-        DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-        DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
-        DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
+				if (!Vmr9.UseVMR9inMYTV)
+				{
+					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+					DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+					DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
+					DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
+				}
       }
       else
       {
-        m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
-        m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-        m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-        DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-        DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
-        DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
+				if (!Vmr9.UseVMR9inMYTV)
+				{
+					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
+					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+					DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+					DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
+					DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
+				}
 
       }
 

@@ -29,9 +29,7 @@ namespace MediaPortal.Player
     const uint  VFW_E_DVD_DECNOTENOUGH    =0x8004027B;
     const uint  VFW_E_DVD_RENDERFAIL      =0x8004027A;
 
-    GCHandle                  myHandle;
-    AllocatorWrapper.Allocator allocator;
-    PlaneScene                 m_scene=null;
+		VMR9Util Vmr9 = null;
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string strPath)
     {
@@ -42,7 +40,6 @@ namespace MediaPortal.Player
       dvdInfo=null;
       dvdCtrl=null;
 
-      IBaseFilter VMR9Filter=null;
       string strDVDAudioRenderer="";
       string strDVDNavigator="";
       string strARMode="";
@@ -65,7 +62,8 @@ namespace MediaPortal.Player
       }
       try 
       {
-        
+
+        Vmr9=new VMR9Util("dvdplayer");
         comtype = Type.GetTypeFromCLSID( Clsid.DvdGraphBuilder );
         if( comtype == null )
           throw new NotSupportedException( "DirectX (8.1 or higher) not installed?" );
@@ -101,25 +99,7 @@ namespace MediaPortal.Player
         }
 
         DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
-        VMR9Filter= AddVMR9(dvdGraph);
-        if (VMR9Filter==null) return false;
-
-        try
-        {
-            hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
-            if (hr!=0) 
-            {
-              Log.Write("Dvdplayer9:Failed to set VMR9 allocator/presentor");
-              return false;
-            }
-
-            m_bFreeNavigator=false;
-            //Marshal.ReleaseComObject( dvdbasefilter); dvdbasefilter = null;              
-        }
-        catch(Exception ex)
-        {
-          string strEx=ex.Message;
-        }
+        Vmr9.AddVMR9(graphBuilder);
         Guid riid ;
 
 			
@@ -192,11 +172,9 @@ namespace MediaPortal.Player
 
 
 
-        m_iVideoWidth=allocator.NativeSize.Width;
-        m_iVideoHeight=allocator.NativeSize.Height;
+        m_iVideoWidth=Vmr9.VideoWidth;
+        m_iVideoHeight=Vmr9.VideoHeight;
 
-        if( VMR9Filter != null )
-          Marshal.ReleaseComObject( VMR9Filter ); VMR9Filter = null;
 
         Log.Write("Dvdplayer9:graph created");
         m_bStarted=true;
@@ -290,23 +268,8 @@ namespace MediaPortal.Player
           mediaEvt = null;
         }
 
-        if (allocator!=null)
-        {
-          allocator.UnAdviseNotify();
-        }
-        if (myHandle.IsAllocated)
-        {
-          myHandle.Free();
-        }
-        allocator=null;
-          
-        if (m_scene!=null)
-        {
-          m_scene.Stop();
-          m_scene.Deinit();
-          m_scene=null;
-        }
-
+				Vmr9.RemoveVMR9();
+				Vmr9=null;
 
 
         if( audioRenderer != null )
@@ -357,61 +320,15 @@ namespace MediaPortal.Player
       }
     }
 
-    int SetAllocPresenter(IBaseFilter Vmr9Filter, Control control)
-    {
-      IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = Vmr9Filter as IVMRSurfaceAllocatorNotify9;
-
-      if (lpIVMRSurfAllocNotify == null)
-      {
-        Log.Write("Dvdplayer9:Failed to get IVMRSurfaceAllocatorNotify9");
-        return -1;
-      }
-      m_scene= new PlaneScene(m_renderFrame);
-      allocator = new AllocatorWrapper.Allocator(control, m_scene);
-      //allocator.SetTextureSize( new Size(720,576) );
-      IntPtr hMonitor;
-      AdapterInformation ai = Manager.Adapters.Default;
-
-      hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
-      IntPtr upDevice = DsUtils.GetUnmanagedDevice(allocator.Device);
-				 
-      int hr = lpIVMRSurfAllocNotify.SetD3DDevice(upDevice, hMonitor);
-      //Marshal.AddRef(upDevice);
-      if (hr != 0)
-      {
-        Log.Write("Dvdplayer9:Failed to get SetD3DDevice()");
-        return hr;
-      }
-      // this must be global. If it gets garbage collected, pinning won't exist...
-      myHandle = GCHandle.Alloc(allocator, GCHandleType.Pinned);
-      hr = allocator.AdviseNotify(lpIVMRSurfAllocNotify);
-      if (hr != 0)
-      {
-        Log.Write("Dvdplayer9:Failed to AdviseNotify()");
-        return hr;
-      }
-      hr = lpIVMRSurfAllocNotify.AdviseSurfaceAllocator(0xACDCACDC, allocator);
-      if (hr !=0)
-      {
-        Log.Write("Dvdplayer9:Failed to AdviseSurfaceAllocator()");
-      }
-      return hr;
-    }
-
     protected override void OnProcess()
     {
       if (Paused || menuMode!=MenuMode.No )
       {
         //repaint
-        allocator.Repaint();
+        if (Vmr9!=null) Vmr9.Repaint();
       }
-      m_SourceRect=m_scene.SourceRect;
-      m_VideoRect=m_scene.DestRect;
+      //m_SourceRect=m_scene.SourceRect;
+      //m_VideoRect=m_scene.DestRect;
     }
-
-    public override bool DoesOwnRendering
-    {
-      get { return true;}
-    }      
   }
 }

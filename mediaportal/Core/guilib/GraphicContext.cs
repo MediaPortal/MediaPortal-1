@@ -82,6 +82,8 @@ namespace MediaPortal.GUI.Library
     static int                      m_iCharsInCharacterSet=255;		//number of characters for current fonts
     static bool                     m_bEditMode=false;						//boolean indicating if we are in skin edit mode
     static bool                     m_bAnimations=true;						//boolean indicating animiations are turned on or off
+		static IRender                  m_renderFrame=null;
+		static bool                     vmr9Active=false;
 
 		// singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
@@ -721,5 +723,21 @@ namespace MediaPortal.GUI.Library
         m_iCharsInCharacterSet=value;
       }
     }
+		static public IRender RenderGUI
+		{
+			get { return m_renderFrame;}
+			set { m_renderFrame=value;}
+		}
+		static public bool Vmr9Active
+		{
+			get 
+			{
+				return vmr9Active;
+			}
+			set 
+			{
+				vmr9Active=value;
+			}
+		}
   }
 }

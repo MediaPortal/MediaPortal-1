@@ -81,7 +81,7 @@ namespace MediaPortal.Player
       return null;
     }
 
-		static public IPlayer Create(IRender renderframe,string strFileName)
+		static public IPlayer Create(string strFileName)
     {
       IPlayer newPlayer=null;
 
@@ -91,7 +91,6 @@ namespace MediaPortal.Player
 				newPlayer = GetExternalPlayer(strFileName);
 				if(newPlayer != null)
 				{
-					newPlayer.RenderFrame=renderframe;
 					return newPlayer;
 				}
 			}
@@ -116,7 +115,6 @@ namespace MediaPortal.Player
           if (iUseVMR9inMYTV==0) newPlayer=new Player.BaseStreamBufferPlayer();
 					if (iUseVMR9inMYTV==1) newPlayer=new Player.StreamBufferPlayerVMR9wl();
 					if (iUseVMR9inMYTV==2) newPlayer=new Player.StreamBufferPlayer9();
-          newPlayer.RenderFrame=renderframe;
           return newPlayer;
         }
         else
@@ -124,7 +122,6 @@ namespace MediaPortal.Player
           if (iUseVMR9inMYMovies==0) newPlayer=new Player.VideoPlayerVMR7();
 					if (iUseVMR9inMYMovies==1) newPlayer=new Player.VideoPlayerVMR9wl();
 					if (iUseVMR9inMYMovies==2) newPlayer=new Player.VideoPlayerVMR9();
-          newPlayer.RenderFrame=renderframe;
           return newPlayer;
         }
       }
@@ -133,14 +130,13 @@ namespace MediaPortal.Player
       if ( strExt==".radio" )
       {
         newPlayer=new Player.RadioTuner();
-        newPlayer.RenderFrame=renderframe;
         return newPlayer;
       }
 
       if (Utils.IsCDDA(strFileName))
       {
         newPlayer=new Player.AudioPlayerWMP9();
-        newPlayer.RenderFrame=renderframe;
+
         return newPlayer;
       }
 
@@ -152,18 +148,15 @@ namespace MediaPortal.Player
           if (String.Compare(strAudioPlayer,"Windows Media Player 9",true)==0)
           {
             newPlayer=new Player.AudioPlayerWMP9();
-            newPlayer.RenderFrame=renderframe;
             return newPlayer;
           }
           newPlayer=new Player.AudioPlayerVMR7();
-          newPlayer.RenderFrame=renderframe;
           return newPlayer;
         }
       }
 
 
       newPlayer=new Player.AudioPlayerWMP9();
-      newPlayer.RenderFrame=renderframe;
       return newPlayer;
 
     }

@@ -17,17 +17,11 @@ namespace MediaPortal.Player
 	{
     protected Rectangle m_VideoRect = new Rectangle(0,0,0,0);
     protected Rectangle m_SourceRect = new Rectangle(0,0,0,0);
-    protected IRender                   m_renderFrame=null;
     protected bool                      m_bIsVisible=false;
     public IPlayer()
 		{
 		}
 
-    public virtual IRender RenderFrame
-    {
-      get { return m_renderFrame;}
-      set { m_renderFrame=value;}
-    }
 
     public virtual void WndProc( ref Message m )
     {
@@ -280,11 +274,6 @@ namespace MediaPortal.Player
     public virtual bool CanSeek()
     {
       return true;
-    }
-
-    public virtual bool DoesOwnRendering
-    {
-      get { return false;}
     }
     public virtual bool Ended
     {

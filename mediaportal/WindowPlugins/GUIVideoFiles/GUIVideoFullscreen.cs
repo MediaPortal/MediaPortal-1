@@ -498,7 +498,7 @@ namespace MediaPortal.GUI.Video
           */
           HideOSD();
 
-          if (!g_Player.DoesOwnRendering)
+          if (!GUIGraphicsContext.Vmr9Active)
           {
             m_form = new FormOSD();
             m_form.Show();
@@ -632,7 +632,7 @@ namespace MediaPortal.GUI.Video
     public void SetFFRWLogos()
     {
 
-      if (g_Player.DoesOwnRendering && (m_bShowStep||m_bShowInfo || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
+      if (GUIGraphicsContext.Vmr9Active && (m_bShowStep||m_bShowInfo || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
       {
         for (int i=(int)Control.PANEL1; i < (int)Control.PANEL2;++i)
           ShowControl(GetID,i);
@@ -737,7 +737,7 @@ namespace MediaPortal.GUI.Video
 			}
 			SetFFRWLogos();
 
-      if (g_Player.DoesOwnRendering)
+      if (GUIGraphicsContext.Vmr9Active)
       {
         RenderFullScreen();  
         // do we need 2 render the OSD?

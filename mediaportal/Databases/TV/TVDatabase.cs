@@ -190,6 +190,7 @@ namespace MediaPortal.TV.Database
 
         return true;
       }
+
     }
 	  //b2c2
 	  static public int AddSatChannel(int idChannel,int freq,int symrate,int fec,int lnbkhz,int diseqc,
@@ -405,7 +406,7 @@ namespace MediaPortal.TV.Database
       }
     }
 
-    static public int GetChannelId(int iChannelNr)
+		static public int GetChannelId(int iChannelNr)
     {
       lock (typeof(TVDatabase))
       {
@@ -1097,6 +1098,30 @@ namespace MediaPortal.TV.Database
       }
       return GetTVPrograms(iStartTime, iEndTime, strSQL, ref programs);
     }
+
+		static public bool SearchProgramsByDescription(long iStartTime, long iEndTime,ref ArrayList programs, int SearchKind, string SearchCriteria)
+		{
+			string strSQL=String.Empty;
+			switch (SearchKind)
+			{
+				case -1:
+					strSQL=String.Format("select * from channel,program,genre where genre.idGenre=program.idGenre and program.idChannel=channel.idChannel  order by iStartTime");
+					break;
+				case 0:
+					strSQL=String.Format("select * from channel,program,genre where genre.idGenre=program.idGenre and program.idChannel=channel.idChannel and program.strDescription like '{0}%' order by iStartTime", SearchCriteria);
+					break;
+				case 1:
+					strSQL=String.Format("select * from channel,program,genre where genre.idGenre=program.idGenre and program.idChannel=channel.idChannel and program.strDescription like '%{0}%' order by iStartTime", SearchCriteria);
+					break;
+				case 2:
+					strSQL=String.Format("select * from channel,program,genre where genre.idGenre=program.idGenre and program.idChannel=channel.idChannel and program.strDescription like '%{0}' order by iStartTime", SearchCriteria);
+					break;
+				case 3:
+					strSQL=String.Format("select * from channel,program,genre where genre.idGenre=program.idGenre and program.idChannel=channel.idChannel and program.strDescription like '{0}' order by iStartTime", SearchCriteria);
+					break;
+			}
+			return GetTVPrograms(iStartTime, iEndTime, strSQL, ref programs);
+		}
 
 		static public bool GetPrograms(long iStartTime, long iEndTime,ref ArrayList programs)
 		{

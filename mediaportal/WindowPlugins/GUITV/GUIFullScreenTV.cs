@@ -418,7 +418,7 @@ namespace MediaPortal.GUI.TV
           m_bShowStep=false;
           m_bShowStatus=false;
           m_dwTimeStatusShowTime=DateTime.Now;
-					if (!g_Player.DoesOwnRendering)
+					if (!GUIGraphicsContext.Vmr9Active)
 					{
 						m_form = new FormOSD();
 						m_form.Show();
@@ -517,7 +517,7 @@ namespace MediaPortal.GUI.TV
       base.Process ();
       OnKeyTimeout();
     
-      if (g_Player.Playing && g_Player.DoesOwnRendering)
+      if (GUIGraphicsContext.Vmr9Active)
       {
 
         if (m_bShowInfo==true||m_bShowStep==true||m_bShowStatus==true)
@@ -538,7 +538,7 @@ namespace MediaPortal.GUI.TV
 
 		public override void Render()
 		{
-      if (g_Player.Playing && g_Player.DoesOwnRendering)
+      if (GUIGraphicsContext.Vmr9Active)
       {
         base.Render();
 
@@ -646,7 +646,7 @@ namespace MediaPortal.GUI.TV
 
 		public void SetFFRWLogos()
 		{
-      if (g_Player.DoesOwnRendering && (m_bShowStatus||m_bShowInfo || m_bShowStep || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
+      if (GUIGraphicsContext.Vmr9Active && (m_bShowStatus||m_bShowInfo || m_bShowStep || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
       {
         for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
           ShowControl(GetID,i);

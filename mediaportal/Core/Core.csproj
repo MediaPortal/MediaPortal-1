@@ -913,16 +913,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Player\RecordingPlayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\RecordingPlayer9.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Player\StreamBufferPlayer9.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -944,6 +934,11 @@
                 />
                 <File
                     RelPath = "Player\VideoPlayerVMR9wl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Player\VMR9.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

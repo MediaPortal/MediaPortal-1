@@ -2382,6 +2382,10 @@
 	<id>921</id>
 	<value>File is being downloaded</value>
 </string>
+<string>
+	<id>922</id>
+	<value>Description</value>
+</string>
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices; 
 using DShowNET;
 using MediaPortal.Util;
+using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 
@@ -33,6 +34,8 @@ namespace MediaPortal.TV.Recording
     {
         if (m_graphState!=State.None) return false;
         GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+			
+				Vmr9 =new VMR9Util("mytv");
 
         m_iPrevChannel=-1;
         m_bFirstTune=true;

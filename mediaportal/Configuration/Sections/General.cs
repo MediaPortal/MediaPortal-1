@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -148,7 +149,12 @@ namespace MediaPortal.Configuration.Sections
 	
 				//
 				// Set language
-				//
+				string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
+				string skin         = xmlwriter.GetValueAsString("skin", "name", "mce");
+				if (prevLanguage!=languageComboBox.Text)
+				{
+					Utils.DeleteFiles(@"skin\"+skin+@"\fonts","*");
+				}
 				xmlwriter.SetValue("skin", "language", languageComboBox.Text);
         
         xmlwriter.SetValueAsBool("daemon", "enabled", checkBoxDaemonTools.Checked);

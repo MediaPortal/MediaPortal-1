@@ -3,9 +3,11 @@ using System.Drawing;
 using System.Runtime.InteropServices; 
 using DShowNET;
 using MediaPortal.Util;
+using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using DirectX.Capture;
+
 
 namespace MediaPortal.TV.Recording
 {
@@ -49,6 +51,9 @@ namespace MediaPortal.TV.Recording
     protected double                  m_FrameRate;
     protected IAMVideoProcAmp         m_videoprocamp=null;
     protected VideoProcAmp            m_videoAmp=null;
+		protected VMR9Util							  Vmr9=null; 
+
+
 
     /// <summary>
     /// Constructor
@@ -80,6 +85,9 @@ namespace MediaPortal.TV.Recording
 
       }
       catch(Exception){}
+
+
+
 		}
 
     /// <summary>
@@ -89,6 +97,7 @@ namespace MediaPortal.TV.Recording
     public virtual bool CreateGraph()
     {
       if (m_graphState!=State.None) return false;
+			Vmr9 =new VMR9Util("mytv");
 			DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
       GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       m_iPrevChannel=-1;
@@ -96,8 +105,8 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
       int hr=0;
       Filters filters = new Filters();
-			Filter                  videoCaptureDeviceFilter=null;
-      foreach (Filter filter in filters.VideoInputDevices)
+			DShowNET.Filter                  videoCaptureDeviceFilter=null;
+      foreach (DShowNET.Filter filter in filters.VideoInputDevices)
       {
         if (filter.Name.Equals(m_strVideoCaptureFilter))
         {
@@ -259,6 +268,9 @@ namespace MediaPortal.TV.Recording
       StopViewing();
 
       GUIGraphicsContext.OnGammaContrastBrightnessChanged -=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+
+			Vmr9.RemoveVMR9();
+			Vmr9=null;
 
       if (m_videoprocamp!=null)
       {
@@ -578,41 +590,52 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartViewing(AnalogVideoStandard standard,  int iChannelNr)
-    {
+		public bool StartViewing(AnalogVideoStandard standard,  int iChannelNr)
+		{
 
-      DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
-      if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
+			DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
+			if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
 
-      if (m_mpeg2Demux==null) return false;
-      if (m_videoCaptureDevice==null) return false;
+			if (m_mpeg2Demux==null) return false;
+			if (m_videoCaptureDevice==null) return false;
 
-      if (m_graphState==State.Viewing) 
-      {
-        if (iChannelNr!=m_iChannelNr)
-        {
-          TuneChannel(standard, iChannelNr);
-        }
-        return true;
-      }
+			if (m_graphState==State.Viewing) 
+			{
+				if (iChannelNr!=m_iChannelNr)
+				{
+					TuneChannel(standard, iChannelNr);
+				}
+				return true;
+			}
 
-      AddPreferredCodecs();
+			Vmr9.AddVMR9(m_graphBuilder);
+
+			AddPreferredCodecs();
       
-      ConnectVideoCaptureToMPEG2Demuxer();
+			ConnectVideoCaptureToMPEG2Demuxer();
       
-      m_graphState=State.Viewing;
-      TuneChannel(standard, iChannelNr);
-      m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
-
-      
-      DirectShowUtil.EnableDeInterlace(m_graphBuilder);
-
-      GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-      GUIGraphicsContext_OnVideoWindowChanged();
+			m_graphState=State.Viewing;
+			TuneChannel(standard, iChannelNr);
+			if (!Vmr9.UseVMR9inMYTV)
+				m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle);
 
       
-      int iVideoWidth,iVideoHeight;
-      m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
+			DirectShowUtil.EnableDeInterlace(m_graphBuilder);
+
+			GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
+			GUIGraphicsContext_OnVideoWindowChanged();
+
+      
+			int iVideoWidth,iVideoHeight;
+			if (!Vmr9.UseVMR9inMYTV)
+			{
+				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
+			}
+			else
+			{
+				iVideoWidth=Vmr9.VideoWidth;
+				iVideoHeight=Vmr9.VideoHeight;
+			}
       DirectShowUtil.DebugWrite("SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
       return true;
 
@@ -633,7 +656,8 @@ namespace MediaPortal.TV.Recording
        
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       DirectShowUtil.DebugWrite("SinkGraph:StopViewing()");
-      m_mpeg2Demux.StopViewing();
+			if (!Vmr9.UseVMR9inMYTV)
+				m_mpeg2Demux.StopViewing();
       m_graphState=State.Created;
       DeleteGraph();
       return true;
@@ -646,20 +670,32 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return ;
       if (m_mpeg2Demux==null) return ;
-      if (GUIGraphicsContext.Overlay==false)
-      {
-        if (m_graphState!=State.Viewing)
-        {
-          m_mpeg2Demux.Overlay=false;
-          return;
-        }
-      }
-      else
-      {
-        m_mpeg2Demux.Overlay=true;
-      }
+			
+			if (!Vmr9.UseVMR9inMYTV)
+			{
+				if (GUIGraphicsContext.Overlay==false)
+				{
+					if (m_graphState!=State.Viewing)
+					{
+						m_mpeg2Demux.Overlay=false;
+						return;
+					}
+				}
+				else
+				{
+					m_mpeg2Demux.Overlay=true;
+				}
+			}
       int iVideoWidth,iVideoHeight;
-      m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
+			if (!Vmr9.UseVMR9inMYTV)
+			{
+				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
+			}
+			else
+			{
+				iVideoWidth=Vmr9.VideoWidth;
+				iVideoHeight=Vmr9.VideoHeight;
+			}
       if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
       {
         float x=GUIGraphicsContext.OverScanLeft;
@@ -756,5 +792,7 @@ namespace MediaPortal.TV.Recording
       GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
       GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
     }
+
+
   }
 }

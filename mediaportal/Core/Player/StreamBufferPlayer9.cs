@@ -14,9 +14,7 @@ namespace MediaPortal.Player
 {
   public class StreamBufferPlayer9 : BaseStreamBufferPlayer
   {
-    GCHandle                   m_myHandle;
-    AllocatorWrapper.Allocator m_allocator;
-    PlaneScene                 m_scene=null;
+		VMR9Util Vmr9 = null;
 
     public StreamBufferPlayer9()
     {
@@ -25,6 +23,7 @@ namespace MediaPortal.Player
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
     {
+			Vmr9= new VMR9Util("mytv");
       Type comtype = null;
       object comobj = null;
       
@@ -43,52 +42,9 @@ namespace MediaPortal.Player
         comobj = Activator.CreateInstance( comtype );
         graphBuilder = (IGraphBuilder) comobj; comobj = null;
 			
-        //IVideoMixingRenderer9
-        comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
-        comobj = Activator.CreateInstance( comtype );
-        IBaseFilter VMR9Filter=(IBaseFilter)comobj; comobj=null;
-        if (VMR9Filter==null) 
-        {
-          Log.Write("StreamBufferPlayer9:Failed to get instance of VMR9 ");
-          return false;
-        }				
+        Vmr9.AddVMR9(graphBuilder);				
 
-        //IVMRFilterConfig9
-        IVMRFilterConfig9 FilterConfig9 = VMR9Filter as IVMRFilterConfig9;
-        if (FilterConfig9==null) 
-        {
-          Log.Write("StreamBufferPlayer9:Failed to get IVMRFilterConfig9");
-          return false;
-        }				
-
-        int hr = FilterConfig9.SetRenderingMode(VMR9.VMRMode_Renderless);
-        if (hr!=0) 
-        {
-          Log.Write("StreamBufferPlayer9:Failed to SetRenderingMode()");
-          return false;
-        }				
-
-        hr = FilterConfig9.SetNumberOfStreams(1);
-        if (hr!=0) 
-        {
-          Log.Write("StreamBufferPlayer9:Failed to SetNumberOfStreams()");
-          return false;
-        }				
-
-        hr = SetAllocPresenter(VMR9Filter, GUIGraphicsContext.form as Control);
-        if (hr!=0) 
-        {
-          Log.Write("StreamBufferPlayer9:Failed to SetAllocPresenter()");
-          return false;
-        }				
-
-        hr=graphBuilder.AddFilter(VMR9Filter,"VMR9");
-        if (hr!=0) 
-        {
-          Log.Write("StreamBufferPlayer9:Failed to VMR9 to graph");
-          return false;
-        }	
-        // create SBE source
+				// create SBE source
         Guid clsid = Clsid.StreamBufferSource;
         Guid riid = typeof(IStreamBufferSource).GUID;
         Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
@@ -101,7 +57,7 @@ namespace MediaPortal.Player
 
 		
         IBaseFilter filter = (IBaseFilter) bufferSource;
-        hr=graphBuilder.AddFilter(filter, "SBE SOURCE");
+        int hr=graphBuilder.AddFilter(filter, "SBE SOURCE");
         if (hr!=0) 
         {
           Log.Write("StreamBufferPlayer9:Failed to add SBE to graph");
@@ -154,13 +110,6 @@ namespace MediaPortal.Player
         Log.Write("StreamBufferPlayer9: set Deinterlace");
         DirectShowUtil.EnableDeInterlace(graphBuilder);
 
-        //Log.Write("StreamBufferPlayer9: done");
-        if( FilterConfig9 != null )
-          Marshal.ReleaseComObject( FilterConfig9 ); FilterConfig9 = null;
-
-        
-        if( VMR9Filter != null )
-          Marshal.ReleaseComObject( VMR9Filter ); VMR9Filter = null;
         return true;
       }
       catch( Exception  ex)
@@ -173,37 +122,6 @@ namespace MediaPortal.Player
         if( comobj != null )
           Marshal.ReleaseComObject( comobj ); comobj = null;
       }
-    }
-
-
-    int SetAllocPresenter(IBaseFilter filter, Control control)
-    {
-      IVMRSurfaceAllocatorNotify9 lpIVMRSurfAllocNotify = filter as IVMRSurfaceAllocatorNotify9;
-
-      if (lpIVMRSurfAllocNotify == null)
-        return -1;
-
-      m_scene= new PlaneScene(m_renderFrame);
-      m_allocator = new AllocatorWrapper.Allocator(control, m_scene);
-      IntPtr hMonitor;
-      AdapterInformation ai = Manager.Adapters.Default;
-
-      hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
-      IntPtr upDevice = DsUtils.GetUnmanagedDevice(m_allocator.Device);
-				 
-      int hr = lpIVMRSurfAllocNotify.SetD3DDevice(upDevice, hMonitor);
-      //Marshal.AddRef(upDevice);
-      if (hr != 0)
-        return hr;
-
-      // this must be global. If it gets garbage collected, pinning won't exist...
-      m_myHandle = GCHandle.Alloc(m_allocator, GCHandleType.Pinned);
-      hr = m_allocator.AdviseNotify(lpIVMRSurfAllocNotify);
-      if (hr != 0)
-        return hr;
-      hr = lpIVMRSurfAllocNotify.AdviseSurfaceAllocator(0xACDCACDC, m_allocator);
-
-      return hr;
     }
 
 
@@ -232,23 +150,8 @@ namespace MediaPortal.Player
           }
 
 
-//          Log.Write("StreamBufferPlayer9:cleanup");
-          if (m_allocator!=null)
-          {
-            m_allocator.UnAdviseNotify();
-          }
-          if (m_myHandle.IsAllocated)
-          {
-            m_myHandle.Free();
-          }
-          m_allocator=null;
-          
-          if (m_scene!=null)
-          {
-            m_scene.Stop();
-            m_scene.Deinit();
-            m_scene=null;
-          }
+					Vmr9.RemoveVMR9();
+					Vmr9=null;
 
           basicAudio	= null;
           m_mediaSeeking=null;
@@ -280,17 +183,13 @@ namespace MediaPortal.Player
         GUIWindowManager.SendMessage(msg);
       }
     }
-		public override bool DoesOwnRendering
-		{
-			get { return true;}
-		}      
 
     protected override void OnProcess()
     {
       if (Paused)
       {
         //repaint
-        m_allocator.Repaint();
+        if (Vmr9!=null) Vmr9.Repaint();
       }
     }
 

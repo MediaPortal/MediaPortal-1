@@ -760,7 +760,9 @@ namespace MediaPortal.Util
     /// <summary>
     /// Returns the path of the default share
     /// </summary>
-    /// <returns>Returns the path of the default share</returns>
+    /// <returns>Returns the path of the default share
+    /// or empty if no default path has been set
+    /// </returns>
     public string GetDefaultPath()
     {
       foreach (Share share in m_shares)
@@ -774,9 +776,11 @@ namespace MediaPortal.Util
     }
 
     /// <summary>
-    /// Function to split get the path and filename for a remote file
+    /// Function to split a string containg the remote file+path 
+    /// and get the path and filename for a remote file
+    /// remote file is in format remote:hostname?port?login?password?folder
     /// </summary>
-    /// <param name="remotefile">remote file</param>
+    /// <param name="remotefile">string containing the remote file</param>
     /// <param name="filename">on return contains the filename</param>
     /// <param name="path">on return contains the path</param>
     public void GetRemoteFileNameAndPath(string remotefile, out string filename, out string path)
@@ -797,6 +801,7 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// Returns the local filename for a downloaded file
+    /// remote file is in format remote:hostname?port?login?password?folder
     /// </summary>
     /// <param name="remotefile">remote filename+path</param>
     /// <returns>local filename+path</returns>
@@ -827,6 +832,7 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// Function to check if a remote file has been downloaded or not
+    /// remote file is in format remote:hostname?port?login?password?folder
     /// </summary>
     /// <param name="file">remote filename + path</param>
     /// <returns>true: file is downloaded
@@ -860,6 +866,7 @@ namespace MediaPortal.Util
     /// <summary>
     /// Function which checks if a remote file has been downloaded and if not
     /// asks the user whether it should download it
+    /// remote file is in format remote:hostname?port?login?password?folder
     /// </summary>
     /// <param name="file">remote file</param>
     /// <returns>true: download file
@@ -894,11 +901,12 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// Function to download a remote file
+    /// remote file is in format remote:hostname?port?login?password?folder
     /// </summary>
     /// <param name="file">remote file</param>
     /// <returns>true: download started,
     /// false: failed to start download</returns>
-    /// <remarks>file is downloaded to the default share</remarks>
+    /// <remarks>file is downloaded to the local folder specified in the setup</remarks>
     public bool DownloadRemoteFile(string file,long size)
     {
       if (IsRemoteFileDownloaded(file,size)) return true;
@@ -936,6 +944,7 @@ namespace MediaPortal.Util
     /// <summary>
     /// Function which gets an available ftp client 
     /// if none is available it creates a new one
+    /// remote file is in format remote:hostname?port?login?password?folder
     /// </summary>
     /// <param name="file">remote file/folder</param>
     /// <returns>FTP client or null</returns>

@@ -6,31 +6,42 @@ using MediaPortal.GUI.Library;
 namespace Core.Util
 {
 	/// <summary>
-	/// Summary description for FtpConnectionCache.
+	/// This (static) class will handle all ftp connections with remote shares
+	/// it contains functions to connect to a remote ftp server and
+	/// download a file
 	/// </summary>
 
 	public class FtpConnectionCache
 	{
+		/// <summary>
+		/// Subclass handeling 1 ftp connection
+		/// </summary>
     class FtpConnection
     {
-      public FTPClient Connection=null;
-      public string    HostName=String.Empty;
-      public string    LoginName=String.Empty;
-      public string    Password=String.Empty;
-      public int       Port=21;
-      public bool      Busy=false;
-      public string    remoteFile=String.Empty;
-      public string    localFile=String.Empty;
-      public string    originalRemoteFile=String.Empty;
-      public long      BytesTransferred=0;
-      public long      BytesOffset=0;
+      public FTPClient Connection=null;					//current FTP connection
+      public string    HostName=String.Empty;		//host name
+      public string    LoginName=String.Empty;	//loginname
+      public string    Password=String.Empty;		//password
+      public int       Port=21;									//tcp/ip port of the server
+      public bool      Busy=false;							//Flag indicating if we are busy downloading a file
+      public string    remoteFile=String.Empty;	//remote file we're downloading
+      public string    localFile=String.Empty;	//local file where download is stored
+      public string    originalRemoteFile=String.Empty;	//original remote filename
+      public long      BytesTransferred=0;			// bytes transferred
+      public long      BytesOffset=0;						// bytes offset when resuming an ftp download
 
       delegate void OnDownloadHandler(FtpConnection ftp);
       event     OnDownloadHandler OnDownLoad=null;
+
       public FtpConnection()
       {
       }
       
+			/// <summary>
+			/// callback from our asynchronous download
+			/// will be called when download is finished 
+			/// </summary>
+			/// <param name="ar"></param>
       void GetCallback(IAsyncResult ar)
       {
 
@@ -43,6 +54,11 @@ namespace Core.Util
         Log.Write("ftp download finished {0}->{1}", remoteFile, localFile);
       }
       
+			/// <summary>
+			/// Function which will be called by the begininvoke() to 
+			/// start an asynchronous download
+			/// </summary>
+			/// <param name="ftp"></param>
       void StartDownLoad(FtpConnection ftp)
       {
         BytesTransferred=0;
@@ -70,6 +86,12 @@ namespace Core.Util
         ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
       }
 
+			/// <summary>
+			/// Function to start a download
+			/// </summary>
+			/// <param name="orgremoteFile"></param>
+			/// <param name="remotefile"></param>
+			/// <param name="localfile"></param>
       public void Download(string orgremoteFile,string remotefile, string localfile)
       {
         localFile=localfile;
@@ -82,6 +104,12 @@ namespace Core.Util
 
       }
 
+			/// <summary>
+			/// callback from the ftp library when some data has been transferred
+			/// We just send a message to the current window so it can update its status
+			/// </summary>
+			/// <param name="ftpClient"></param>
+			/// <param name="bytesTransferred"></param>
       private void OnBytesTransferred(object ftpClient, BytesTransferredEventArgs bytesTransferred)
       {
         BytesTransferred=bytesTransferred.ByteCount;
@@ -94,8 +122,24 @@ namespace Core.Util
       }
     }
 
+		/// <summary>
+		/// list containing all active ftp connections
+		/// </summary>
     static ArrayList ftpConnections=new ArrayList();
 		
+		/// <summary>
+		/// Checks if we have a idle connection to the remote ftp server
+		/// </summary>
+		/// <param name="hostname">hostname or ipadres of the ftp server</param>
+		/// <param name="login">loginname</param>
+		/// <param name="password">password</param>
+		/// <param name="port">tcp/ip port</param>
+		/// <param name="ftpclient">on return contains the idle ftp connection for this server
+		/// or null if none is found</param>
+		/// <returns>
+		/// true: found an idle connection, this is returned in ftpclient
+		/// false: no idle connections found. ftpclient =null
+		/// </returns>
     static public bool InCache(string hostname, string login, string password, int port, out FTPClient ftpclient)
     {
       ftpclient=null;
@@ -114,6 +158,18 @@ namespace Core.Util
       }
       return false;
     }
+
+		/// <summary>
+		/// Create a new ftp connection to the remote server
+		/// </summary>
+		/// <param name="hostname">hostname or ip adres of remote ftp server</param>
+		/// <param name="login">loginname</param>
+		/// <param name="password">password</param>
+		/// <param name="port">tcpip port</param>
+		/// <returns>
+		/// instance of an FTPClient handling the ftp connection
+		/// or null if no connection could be made
+		/// </returns>
     static public FTPClient MakeConnection(string hostname, string login, string password, int port)
     {
       try
@@ -141,6 +197,11 @@ namespace Core.Util
       }
     }
 
+		/// <summary>
+		/// Remove an ftp client from the cache
+		/// this can be used to remove ftp clients which are disconnected
+		/// </summary>
+		/// <param name="ftpclient">FTPClient</param>
     static public void Remove(FTPClient ftpclient)
     {
       foreach (FtpConnection client in ftpConnections)
@@ -153,6 +214,19 @@ namespace Core.Util
       }
     }
 
+		/// <summary>
+		/// Start downloading a file from a remote server to local harddisk
+		/// orgremoteFile is in format remote:hostname?port?login?password?folder
+		/// while the remotefile only contains the remote path+filename
+		/// </summary>
+		/// <param name="ftpclient">FTP client to use</param>
+		/// <param name="orgremoteFile">remote file including all details</param>
+		/// <param name="remotefile">remote file including only path+filename</param>
+		/// <param name="localfile">filename where download should be stored</param>
+		/// <returns>
+		/// true: download is started
+		/// false: unable to download file
+		/// </returns>
     static public bool Download(FTPClient ftpclient,string orgremoteFile,string remotefile,string localfile)
     {
       foreach (FtpConnection client in ftpConnections)
@@ -171,6 +245,13 @@ namespace Core.Util
       return false;
     }
 
+		/// <summary>
+		/// Method which checks if the remotefile is being downloaded or not
+		/// remote file is in format remote:hostname?port?login?password?folder
+		/// </summary>
+		/// <param name="remotefile">remote file</param>
+		/// <returns>true: file is being downloaded
+		/// false: file is not being downloaded</returns>
     public static bool IsDownloading(string remotefile)
     {
       foreach (FtpConnection client in ftpConnections)
@@ -183,6 +264,12 @@ namespace Core.Util
       return false;
     }
 
+		/// <summary>
+		/// Callback from the FTP client. This is called when a file has been downloaded
+		/// We're just sending a message to the current window so it can update its view
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
     private static void OnTransferComplete(object sender, EventArgs e)
     {
       FTPClient ftpclient=sender as FTPClient;

@@ -43,7 +43,6 @@ namespace MediaPortal.Player
     static Player.IPlayer            m_player=null;
     static SubTitles                 m_subs=null;        
     static bool                      m_bInit=false;
-    static IRender                   m_renderFrame;
     static string                    CurrentFilePlaying="";
     
     public enum MediaType  { Video, TV, Radio, Music,Recording };
@@ -224,7 +223,6 @@ namespace MediaPortal.Player
       else        
         m_player = new DVDPlayer();
 
-      m_player.RenderFrame=m_renderFrame;
       bool bResult=m_player.Play(strPath);
       if (!bResult)
       {
@@ -326,7 +324,6 @@ namespace MediaPortal.Player
             m_player = new DVDPlayer9();
           else        
             m_player = new DVDPlayer();
-          m_player.RenderFrame=m_renderFrame;
 
           bool bResult=m_player.Play(strFile);
           if (!bResult)
@@ -349,7 +346,7 @@ namespace MediaPortal.Player
           return bResult;
         }
       }
-      m_player = PlayerFactory.Create(m_renderFrame, strFile);
+      m_player = PlayerFactory.Create( strFile);
       if (m_player!=null)
       {
         if (Utils.IsVideo(strFile))
@@ -932,9 +929,8 @@ namespace MediaPortal.Player
       }
     }
 
-    public static void Init(IRender renderFrame)
+    public static void Init()
     {
-      m_renderFrame=renderFrame;
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(g_Player.OnVideoWindowChanged);
       GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(g_Player.OnGammaContrastBrightnessChanged);
     }
@@ -1009,13 +1005,7 @@ namespace MediaPortal.Player
       if (m_player==null) return ;
       m_player.ReleaseHDC(HDC);
     }
-    static public  bool DoesOwnRendering
-    {
-      get { 
-        if (m_player==null) return false;
-        return m_player.DoesOwnRendering;
-      }
-    }
+
     static public bool CanSeek
     {
       get 

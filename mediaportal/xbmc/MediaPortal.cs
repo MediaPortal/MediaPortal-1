@@ -363,6 +363,8 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Write("starting");
       GUIGraphicsContext.form = this;
       GUIGraphicsContext.graphics = null;
+			GUIGraphicsContext.RenderGUI=this;
+
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
       try
       {
@@ -436,7 +438,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       //registers the player for video window size notifications
       Log.Write("Init players");
-      g_Player.Init(this);
+      g_Player.Init();
       Log.Write("done");
 
 
@@ -964,7 +966,7 @@ public class MediaPortalApp : D3DApp, IRender
             {
               Log.Write("Use live TV as background");
               // if on, but we're not playing any video or watching tv
-              if (g_Player.Playing && g_Player.DoesOwnRendering)
+              if (GUIGraphicsContext.Vmr9Active)
               {
                   GUIGraphicsContext.ShowBackground = false;
                   GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
@@ -985,7 +987,7 @@ public class MediaPortalApp : D3DApp, IRender
                     {
                       string channel=Recorder.GetTVChannelName(i);
                       Recorder.StartViewing(i,channel,true,true);
-                      if (g_Player.Playing && g_Player.DoesOwnRendering)
+                      if (GUIGraphicsContext.Vmr9Active)
                       {
                         ok=true;
                         break;

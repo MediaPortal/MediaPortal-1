@@ -32,6 +32,7 @@ namespace MediaPortal.Dialogs
     const float fCARET_ON_RATIO = 0.75f;
 
     // Text colors for keys
+	const long COLOR_SEARCHTEXT	   = 0xff000000;   // black (0xff10e010)
     const long COLOR_HIGHLIGHT     = 0xff00ff00;   // green
     const long COLOR_PRESSED       = 0xff808080;   // gray
     const long COLOR_NORMAL        = 0xff000000;   // black
@@ -40,6 +41,11 @@ namespace MediaPortal.Dialogs
     const long COLOR_FONT_DISABLED = 0xff808080;   // gray
     const long COLOR_INVISIBLE     = 0xff0000ff;   // blue
     const long COLOR_RED           = 0xffff0000;   // red
+	// Font sizes
+	const int FONTSIZE_BUTTONCHARS		= 24;
+	const int FONTSIZE_BUTTONSTRINGS	= 18;
+	const int FONTSIZE_SEARCHTEXT		= 32;
+	
 
     // Controller repeat values
     const float fINITIAL_REPEAT = 0.333f; // 333 mS recommended for first repeat
@@ -72,9 +78,9 @@ namespace MediaPortal.Dialogs
       "Back",
       "Help",
       "SPACE",
-      "BACKSPACE",
+      "<-",
       "SHIFT",
-      "CAPS LOCK",
+      "CAPS",
       "ALPHABET",
       "SYMBOLS",
       "ACEENTS",
@@ -418,6 +424,7 @@ namespace MediaPortal.Dialogs
     GUIFont       m_Font18;
     GUIFont       m_Font12;
     GUIFont       m_FontButtons;
+    GUIFont       m_FontSearchText;
     DateTime      m_CaretTimer=DateTime.Now;
     bool          m_bPrevOverlay=true;
     bool          _Password=false;
@@ -466,12 +473,14 @@ namespace MediaPortal.Dialogs
 
     void Initialize()
     {
-      m_Font12=new GUIFont("font12", "Arial",12,FontStyle.Bold);
-      m_Font18=new GUIFont("font18", "Arial",18,FontStyle.Bold);
-      m_FontButtons=new GUIFont("font24", "dingbats",24,FontStyle.Bold);
+      m_Font12=new GUIFont("font12", "Arial",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
+      m_Font18=new GUIFont("font18", "Arial",FONTSIZE_BUTTONCHARS,FontStyle.Bold);
+	  m_FontButtons=new GUIFont("font24", "dingbats",FONTSIZE_BUTTONSTRINGS,FontStyle.Bold);
+	  m_FontSearchText=new GUIFont("font18", "Arial",FONTSIZE_SEARCHTEXT,FontStyle.Bold);
       m_Font12.Load();m_Font12.InitializeDeviceObjects();m_Font12.RestoreDeviceObjects();
       m_Font18.Load();m_Font18.InitializeDeviceObjects();m_Font18.RestoreDeviceObjects();
       m_FontButtons.Load();m_FontButtons.InitializeDeviceObjects();m_FontButtons.RestoreDeviceObjects();
+	  m_FontSearchText.Load();m_FontSearchText.InitializeDeviceObjects();m_FontSearchText.RestoreDeviceObjects();
 
       int iTextureWidth,iTextureHeight;
       int iImages=GUITextureManager.Load("keyNF.bmp",0,0,0);
@@ -1556,7 +1565,8 @@ namespace MediaPortal.Dialogs
         strTxt="";
         for (int i=0; i < m_strData.Length;++i) strTxt+="*";
       }
-      m_Font18.DrawText( x, y, 0xff10e010, strTxt, GUIControl.Alignment.ALIGN_LEFT );
+	
+      m_FontSearchText.DrawText( x, y, COLOR_SEARCHTEXT, strTxt, GUIControl.Alignment.ALIGN_LEFT );
 
       
       // Draw blinking caret using line primitives.
@@ -1567,9 +1577,9 @@ namespace MediaPortal.Dialogs
 
         float fCaretWidth = 0.0f;
         float fCaretHeight=0.0f;
-        m_Font18.GetTextExtent( strLine, ref fCaretWidth, ref fCaretHeight );
+        m_FontSearchText.GetTextExtent( strLine, ref fCaretWidth, ref fCaretHeight );
         x += fCaretWidth;
-        m_Font18.DrawText( x, y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT );
+        m_FontSearchText.DrawText( x, y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT );
         
       }
     }

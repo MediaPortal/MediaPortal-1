@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -113,6 +114,11 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
+				string prevSkin = xmlwriter.GetValueAsString("skin", "name", "mce");
+				if (prevSkin!=availableSkinsListBox.Text)
+				{
+					Utils.DeleteFiles(@"skin\"+availableSkinsListBox.Text+@"\fonts","*");
+				}
 				xmlwriter.SetValue("skin", "name", availableSkinsListBox.Text);
 			}
 		}
