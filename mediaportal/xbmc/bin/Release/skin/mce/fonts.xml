@@ -1,0 +1,27 @@
+<fonts>
+  <font>
+    <name>font10</name>
+    <filename>Arial</filename>
+    <height>10</height>
+  </font>
+  <font>
+    <name>font13</name>
+    <filename>Arial</filename>
+    <height>13</height>
+  </font>
+  <font>
+    <name>font14</name>
+    <filename>Arial</filename>
+    <height>13</height>
+  </font>
+  <font>
+    <name>font16</name>
+    <filename>Arial</filename>
+    <height>16</height>
+  </font>
+  <font>
+    <name>font72</name>
+    <filename>Arial</filename>
+    <height>72</height>
+  </font>
+</fonts>
