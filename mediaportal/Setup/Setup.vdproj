@@ -2589,6 +2589,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_30D69B8E4D614DB38CEDBB3879AB6D22"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_30E2D5D0B1E347E4ABE987E40724FC8E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -6555,6 +6561,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_87F14880D9294E9980EC2DE85300BB73"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_87F34744FD114A4B82FF9984FD3CE9ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -9669,6 +9681,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CB161909F43443FDA94B67E65A30320A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CB3AB29223894AF88A093C1E70DE3349"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -10498,6 +10516,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D76193D3978647DDB6767FC821D7E31E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D7930171BC9C445593446E6622F91522"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -15588,7 +15612,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -18013,6 +18037,26 @@
             "TargetName" = "8:38.png"
             "Tag" = "8:"
             "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_30D69B8E4D614DB38CEDBB3879AB6D22"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\language\\Croatian\\strings.xml"
+            "TargetName" = "8:strings.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_46EB8A0E1D0446B8A7998EAAA76E288D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -22618,7 +22662,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -23809,7 +23853,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -24240,7 +24284,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -25882,7 +25926,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -26413,7 +26457,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -27530,6 +27574,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_87F14880D9294E9980EC2DE85300BB73"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\language\\Danish\\strings.xml"
+            "TargetName" = "8:strings.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_812BB0F2A5AA42A4944854CF735512A0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_87F34744FD114A4B82FF9984FD3CE9ED"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\osd_rewind_focus.png"
@@ -28197,7 +28261,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -29810,7 +29874,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -35616,6 +35680,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CB161909F43443FDA94B67E65A30320A"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\language\\Norwegian\\strings.xml"
+            "TargetName" = "8:strings.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_5888EFADE8354B56BE89819DDE8DA54E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_CB3AB29223894AF88A093C1E70DE3349"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\osd_settings_subs_focus.png"
@@ -36223,7 +36307,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -36254,7 +36338,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -36786,6 +36870,26 @@
             "TargetName" = "8:folder-nofocus.png"
             "Tag" = "8:"
             "Folder" = "8:_F441D636829246B393932119A7B8C2ED"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D7930171BC9C445593446E6622F91522"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\language\\Italian\\strings.xml"
+            "TargetName" = "8:strings.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_0BE156D06EA843BA8C92E7357C1FE1E7"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -39811,7 +39915,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -41404,6 +41508,17 @@
                     "Property" = "8:_2E6CC0BF5B794C5EA6546C4BF37E669D"
                         "Folders"
                         {
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_0BE156D06EA843BA8C92E7357C1FE1E7"
+                            {
+                            "Name" = "8:Italian"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_A28F4C7808C6419DBFD4F1EC25072994"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_1031ACE3A72E45598F474F30646311EC"
                             {
                             "Name" = "8:German"
@@ -41426,6 +41541,28 @@
                                 {
                                 }
                             }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_46EB8A0E1D0446B8A7998EAAA76E288D"
+                            {
+                            "Name" = "8:Croatian"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_50AF27C41D2C43A8AD61FE0B1B2171EF"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_5888EFADE8354B56BE89819DDE8DA54E"
+                            {
+                            "Name" = "8:Norwegian"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_C18D1815A7BC4406A566829976EFA922"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_63680DDBAE4F4F48AEE338FC7A4539B1"
                             {
                             "Name" = "8:Finnish"
@@ -41433,6 +41570,17 @@
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
                             "Property" = "8:_C9E13B1DB45E4D1F9A6862F6C0FBEA40"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_812BB0F2A5AA42A4944854CF735512A0"
+                            {
+                            "Name" = "8:Danish"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_7794C41A76AA4D918A1F07E663ED669D"
                                 "Folders"
                                 {
                                 }
@@ -41963,7 +42111,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{B2167E96-9619-41E0-AF67-E50F62B16F70}"
+        "PackageCode" = "8:{FB24EAEC-7CFB-45B9-8360-CBB085CB200D}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
