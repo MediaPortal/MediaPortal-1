@@ -902,7 +902,7 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="false"></filter>
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>

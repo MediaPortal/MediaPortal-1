@@ -2818,9 +2818,18 @@
 	<string><id>2130</id><value>Block</value></string>
 	<string><id>2131</id><value>of</value></string>
 	<string><id>2132</id><value>Closing disc: estimated time:</value></string>
-	<string><id>2133</id><value>Cannot convert DVR-MS to MPG</value></string>
-	<string><id>2134</id><value>Required DirectShow filters are</value></string>
-	<string><id>2135</id><value>not installed</value></string>
+	<string><id>2133</id><value>TV-Recordings</value></string>
+	<string><id>2134</id><value>Video</value></string>
+	<string><id>2135</id><value>Audio</value></string>
+	<string><id>2136</id><value>Data</value></string>
+	<string><id>2137</id><value>Convert</value></string>
+	<string><id>2138</id><value>Cut</value></string>
+	<string><id>2139</id><value>Make MP3-CD</value></string>
+	<string><id>2140</id><value>Make MP3-DVD</value></string>
+	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
+	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
+	<string><id>2143</id><value>Home</value></string>
+
 	<!-- End of My Burner Strings -->
 
 	<!-- My Explorer Strings -->
