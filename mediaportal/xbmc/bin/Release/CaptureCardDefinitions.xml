@@ -161,5 +161,45 @@
       </connections>
     </radio>
   </capturecard>
+  
+  <capturecard commercialname="Winfast PVR2000" capturename="WinFast PVR2000 WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_663c107d&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false"></capabilities>
+	<tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"  checkdevice="false"></filter>
+        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"  checkdevice="false"></filter>
+        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar" checkdevice="false"></filter>
+        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture"  checkdevice="false"></filter>
+        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"  checkdevice="false"></filter>
+      </filters>
+      <connections>
+    <connection sourcefilter="tvtuner" sourcepin="Analog Video" sinkfilter="crossbar" sinkpin="1: Video Tuner In"></connection>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Audio" sinkfilter="tvaudio" sinkpin="TV Audio In"></connection>
+        <connection sourcefilter="tvaudio" sourcepin="TV Audio Out" sinkfilter="crossbar" sinkpin="3: Audio Tuner In"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0: Video Decoder Out" sinkfilter="capture" sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1: Audio Decoder Out" sinkfilter="capture" sinkpin="1"></connection>
+        <connection sourcefilter="capture" sourcepin="656" sinkfilter="encoder" sinkpin="656"></connection>
+        <connection sourcefilter="capture" sourcepin="I2S" sinkfilter="encoder" sinkpin="I2S"></connection>
+      </connections>
+    </tv>
+    <radio>
+      <interface cat="capture" video="" audio="1" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"  checkdevice="false"></filter>
+        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"  checkdevice="false"></filter>
+        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar" checkdevice="false"></filter>
+        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture"  checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Audio" sinkfilter="tvaudio" sinkpin="TV Audio In"></connection>
+        <connection sourcefilter="tvtuner" sourcepin="Analog Video" sinkfilter="crossbar" sinkpin="1: Video Tuner In"></connection>
+        <connection sourcefilter="tvaudio" sourcepin="TV Audio Out" sinkfilter="crossbar" sinkpin="3: Audio Tuner In"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0: Video Decoder Out" sinkfilter="capture" sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1: Audio Decoder Out" sinkfilter="capture" sinkpin="1"></connection>
+      </connections>
+    </radio>
+  </capturecard>
+
  
 </capturecards>
