@@ -36,6 +36,14 @@
 		<value>My Weather</value>
 	</string>
 	<string>
+		<id>9</id>
+		<value>My News</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>My Recipies</value>
+	</string>
+	<string>
 		<id>11</id>
 		<value>Monday</value>
 	</string>
@@ -2033,8 +2041,6 @@
 <string><id>12007</id><value>My Picture/slideshow</value></string>
 <string><id>12008</id><value>Filestacking dialog</value></string>
 <string><id>12600</id><value>My Weather</value></string>
-<string><id>12700</id><value>My News</value></string>
-<string><id>12701</id><value>Select feed</value></string>
 <string><id>12900</id><value>Screensaver</value></string>
 <string><id>12901</id><value>Fullscreen OSD</value></string>
 
@@ -2050,4 +2056,5 @@
 <string><id>703</id><value>Not connected to the Internet!</value></string>
 <string><id>704</id><value>Feed Retrieval</value></string>
 <string><id>705</id><value>Getting RSS Feed for </value></string>
+<string><id>706</id><value>Select Feed</value></string>
 </strings>
