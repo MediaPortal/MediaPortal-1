@@ -78,6 +78,8 @@ My Music: (int_20h)
   - repeat none, once, always
 
 My Video:
+  - Queue stacked files in Zoomplayer using command line like:
+    zplayer.exe /Queue:movie-cd1.mpg /Queue:movie-cd2.mpg /F /PLAY /Q
   - show IMDB info when fullscreen/osd
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - 1st time it takes a long time b4 OSD appears
@@ -115,6 +117,8 @@ Skin engine:
   - add extra font properties to indicate which characters to cache (like 0-9 : for a big time font)
   
 setup:
+  - custom zoommode, let people enter a zoom number (+ or -) and make this accessable using S
+  - advanced filter manager, let people make custom graphs for certain filetypes. See ZoomPlayer.
   - Update paths of the setup project in CVS to point to the new location of the girder files.
   - A Remote controlled Stetup wizard that runs the first time you run MediaPortal (no keyboard needed)
   - Setup Wizard for the first run (see Sceneo / Meedio Beta)
