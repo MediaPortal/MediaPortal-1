@@ -24,7 +24,7 @@ namespace DShowNET
 	public class FilterCollection : CollectionBase
 	{
 		/// <summary> Populate the collection with a list of filters from a particular category. </summary>
-		internal FilterCollection(Guid category)
+		public FilterCollection(Guid category)
 		{
 			getFilters( category );
 		}

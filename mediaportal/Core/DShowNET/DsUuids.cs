@@ -35,6 +35,10 @@ public class FilterCategory		// uuids.h  :  CLSID_*
 		/// <summary> CLSID_LegacyAmFilterCategory, legacy filters </summary>
 		public static readonly Guid LegacyAmFilterCategory	= new Guid( 0x083863F1,0x70DE,0x11d0,0xBD,0x40,0x00,0xA0,0xC9,0x11,0xCE,0x86 );
 
+		/// <summary>
+		/// #MW# CLSID_ActiveMovieCategory, a superset of all the available filters
+		/// </summary>
+		public static readonly Guid ActiveMovieCategory	= new Guid(0xda4e3da0, 0xd07d, 0x11d0, 0xbd, 0x50, 0x0, 0xa0, 0xc9, 0x11, 0xce, 0x86);
 	}
 
   [ComVisible(false)]

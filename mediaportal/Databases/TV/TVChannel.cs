@@ -21,6 +21,7 @@ namespace MediaPortal.TV.Database
     bool   m_bVisibleInGuide=true;
     
     AnalogVideoStandard _TVStandard;
+
     /// <summary> 
     /// Property to indicate if this is an internal or external (USB-UIRT) channel
     /// </summary>
@@ -30,6 +31,9 @@ namespace MediaPortal.TV.Database
       set {m_bExternal=value;}
     }
 
+    /// <summary>
+    /// Property to specify the TV standard
+    /// </summary>
     public AnalogVideoStandard TVStandard
     {
       get { return _TVStandard;}

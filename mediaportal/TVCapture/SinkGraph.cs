@@ -176,6 +176,20 @@ namespace MediaPortal.TV.Recording
 			else
 				DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() TV tuner found");
 
+      // For some reason, it happens alot that the capture card can NOT be connected (pin 656 for the
+      // PRV150MCE) to the encoder because for some reason the videostandard is GONE...
+      // So fetch the standard from the TvTuner and define it for the capture card.
+
+      if (m_TVTuner!=null )
+      {
+          m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
+          if (m_IAMAnalogVideoDecoder!=null)
+          {
+            AnalogVideoStandard videoStandard;
+            m_TVTuner.get_TVFormat(out videoStandard);
+            m_IAMAnalogVideoDecoder.put_TVFormat(videoStandard);
+          }
+      }
 
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
       
@@ -190,7 +204,7 @@ namespace MediaPortal.TV.Recording
       }
 
 
-      m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
+      
 
       // Retreive the media control interface (for starting/stopping graph)
       ConnectVideoCaptureToMPEG2Demuxer();
