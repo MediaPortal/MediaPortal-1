@@ -57,6 +57,7 @@ namespace MediaPortal
     private bool isChangingFormStyle = false; // Are we changing the forms style?
     private bool isWindowActive = true; // Are we waiting for got focus?
     protected bool m_bShowCursor=true;
+    protected bool m_bLastShowCursor=true;
     bool UseMillisecondTiming=true;
 
     static int lastx=0;
@@ -1105,6 +1106,8 @@ namespace MediaPortal
           System.Threading.Thread.Sleep(100);
 #endif
       }
+
+      HandleCursor();
     }
 
 
@@ -1232,10 +1235,14 @@ namespace MediaPortal
 		{
 			if (m_bAutoHideMouse)
 			{
-				if (!m_bShowCursor) 
-					Cursor.Hide();
-				else 
-					Cursor.Show();
+				if (m_bShowCursor != m_bLastShowCursor) 
+				{
+					if (!m_bShowCursor)
+						Cursor.Hide();
+					else 
+						Cursor.Show();
+					m_bLastShowCursor=m_bShowCursor;
+				}
 				if (m_bShowCursor)
 				{
 					TimeSpan ts=DateTime.Now-m_MouseTimeOut;
@@ -1244,7 +1251,6 @@ namespace MediaPortal
 						//hide mouse
 						m_bShowCursor=false;
 						m_bNeedUpdate=true;
-						m_MouseTimeOut=DateTime.Now;
 						Invalidate(true);
 					}
 				}
@@ -1870,6 +1876,7 @@ namespace MediaPortal
     /// </summary>
     protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
+      m_MouseTimeOut=DateTime.Now;
       if ((GUIGraphicsContext.DX9Device != null) && (!GUIGraphicsContext.DX9Device.Disposed))
       {
         // Move the D3D cursor
@@ -1991,8 +1998,8 @@ namespace MediaPortal
           m_bShowCursor=true;
           m_bNeedUpdate=true;
           Invalidate(true);
-          m_MouseTimeOut=DateTime.Now;
         }
+        m_MouseTimeOut=DateTime.Now;
       }
 		}
 		protected virtual void mouseclick(MouseEventArgs e)
@@ -2004,8 +2011,8 @@ namespace MediaPortal
         m_bShowCursor=true;
         m_bNeedUpdate=true;
         Invalidate(true);
-        m_MouseTimeOut=DateTime.Now;
       }
+      m_MouseTimeOut=DateTime.Now;     
     }
 
 		private void OnKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -2130,7 +2137,7 @@ namespace MediaPortal
           int SleepingTime=GetSleepingTime();
           DoSleep(SleepingTime);
           HandleMessage();
-          HandleCursor();
+          //HandleCursor();
         }
         catch(Exception ex)
         {
