@@ -1,4 +1,5 @@
 using System;
+using System.Xml;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -12,11 +13,18 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 		int mTag = 0;
+		XmlNode mXmlTag = null;
 
 		public int Tag
 		{
 			get{ return mTag; }
 			set{ mTag = value;}
+		}
+
+		public XmlNode XmlTag
+		{
+			get {return mXmlTag;}
+			set {mXmlTag = value;}
 		}
 
 	}

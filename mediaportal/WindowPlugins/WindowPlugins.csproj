@@ -658,6 +658,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\ProgramSettingProfiles.xml"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "GUIPrograms\ProgramSettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

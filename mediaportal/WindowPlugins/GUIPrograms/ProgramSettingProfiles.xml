@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<profiles>
+	<profile>
+		<id>100</id>
+		<section>Emulator Profiles</section>
+		<title>MAME</title>
+		<launchingApplication>...yourpathhere...\Mame32.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>-joy -skip_disclaimer -skip_gameinfo</arguments>
+		<windowStyle>minimized</windowStyle>
+		<useQuotes>T</useQuotes>
+	</profile>
+	<profile>
+		<id>101</id>
+		<section>Emulator Profiles</section>
+		<title>Project 64 (Nintendo 64)</title>
+		<launchingApplication>...yourpathhere...\Project64.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>hidden</windowStyle>
+		<useQuotes>F</useQuotes>
+	</profile>
+</profiles>

@@ -608,6 +608,20 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
+		public override void LoadFromAppItem(AppItem tempApp)
+		{
+			this.txtTitle.Text = tempApp.Title;
+			if (txtFilename.Text == "")
+			{
+				this.txtFilename.Text = tempApp.Filename;
+			}
+			this.txtArguments.Text = tempApp.Arguments;
+			SetWindowStyle(tempApp.WindowStyle);
+			this.chkbUseShellExecute.Checked = (tempApp.UseShellExecute);
+			this.chkbUseQuotes.Checked = (tempApp.UseQuotes);
+		}
+
+
 	}
 }
 

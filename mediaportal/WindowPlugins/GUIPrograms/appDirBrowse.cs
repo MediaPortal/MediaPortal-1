@@ -45,6 +45,11 @@ namespace ProgramsDatabase
 			return false;  // no files, no links!
 		}
 
+		override public bool ProfileLoadingAllowed()
+		{
+			return true;
+		}
+
 		String GetFolderThumb( String fileName )
 		{
 			string strFolderThumb = "";

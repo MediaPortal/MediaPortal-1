@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
+using System.Xml;
 using SQLite.NET;
 
 using MediaPortal.GUI.Library;		
@@ -329,6 +330,11 @@ namespace ProgramsDatabase
 			return false;
 		}
 
+		public virtual bool ProfileLoadingAllowed()
+		{
+			return false;
+		}
+
 		public virtual void Refresh(bool bGUIMode)
 		{
 			// descendant classes do that!
@@ -519,44 +525,52 @@ namespace ProgramsDatabase
 	
 		private int GetNewAppID()
 		{
-			// won't work in multiuser environment :)
-			SQLiteResultSet results;
-			int res = 0;
-			results = m_db.Execute("SELECT MAX(APPID) FROM application");
-			ArrayList arr = (ArrayList)results.Rows[0];
-			if (arr[0] != null)
+			if (m_db != null)
 			{
-				res = Int32.Parse((string)arr[0]);
+
+				// won't work in multiuser environment :)
+				SQLiteResultSet results;
+				int res = 0;
+				results = m_db.Execute("SELECT MAX(APPID) FROM application");
+				ArrayList arr = (ArrayList)results.Rows[0];
+				if (arr[0] != null)
+				{
+					res = Int32.Parse((string)arr[0]);
+				}
+				else
+				{
+					res = 0;
+				}
+				return res + 1;
 			}
-			else
-			{
-				res = 0;
-			}
-			return res + 1;
+			else return -1;
 		}
 
 		private void Insert()
 		{
-			try
+			if (m_db != null)
 			{
-				this.AppID = GetNewAppID(); // important to avoid subsequent inserts!
-				string strSQL = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled, enableGUIRefresh, GUIRefreshPossible, pincode) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}')", 
-					AppID, FatherID, ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments), 
-					ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute), 
-					ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile), 
-					ProgramUtils.Encode(FileDirectory), ProgramUtils.Encode(ImageDirectory), ProgramUtils.Encode(ValidExtensions), ProgramUtils.BooleanToStr(mImportValidImagesOnly), Position, 
-					ProgramUtils.BooleanToStr(Enabled), ProgramUtils.BooleanToStr(EnableGUIRefresh), ProgramUtils.BooleanToStr(GUIRefreshPossible), Pincode);
-				m_db.Execute(strSQL);
-			}
-			catch (SQLiteException ex) 
-			{
-				Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				try
+				{
+					this.AppID = GetNewAppID(); // important to avoid subsequent inserts!
+					string strSQL = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled, enableGUIRefresh, GUIRefreshPossible, pincode) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}')", 
+						AppID, FatherID, ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments), 
+						ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute), 
+						ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile), 
+						ProgramUtils.Encode(FileDirectory), ProgramUtils.Encode(ImageDirectory), ProgramUtils.Encode(ValidExtensions), ProgramUtils.BooleanToStr(mImportValidImagesOnly), Position, 
+						ProgramUtils.BooleanToStr(Enabled), ProgramUtils.BooleanToStr(EnableGUIRefresh), ProgramUtils.BooleanToStr(GUIRefreshPossible), Pincode);
+					m_db.Execute(strSQL);
+				}
+				catch (SQLiteException ex) 
+				{
+					Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
 			}
 		}
 
 		private void Update()
 		{
-			if (this.AppID >= 0)
+			if ((this.AppID >= 0) && (m_db != null))
 			{
 				try
 				{
@@ -578,7 +592,7 @@ namespace ProgramsDatabase
 
 		public void Delete()
 		{	
-			if (this.AppID >= 0)
+			if ((this.AppID >= 0) && (m_db != null))
 			{
 				try
 				{
@@ -597,44 +611,54 @@ namespace ProgramsDatabase
 
 		protected void DeleteFiles()
 		{
-			try
+			if ((this.AppID >= 0) && (m_db != null))
 			{
-				m_db.Execute(String.Format("delete from file where appid = {0}", AppID));
-			}
-			catch (SQLiteException ex) 
-			{	
-				Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				try
+				{
+					m_db.Execute(String.Format("delete from file where appid = {0}", AppID));
+				}
+				catch (SQLiteException ex) 
+				{	
+					Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
 			}
 		}
 
 
 		protected virtual void LoadFiles()
 		{
-			// load Files and fill Files-arraylist here!
-			if (mFiles == null) 
+			if (m_db != null)
 			{
-				mFiles = new Filelist(m_db);}
-			else 
-			{ 
-				mFiles.Clear();
+
+				// load Files and fill Files-arraylist here!
+				if (mFiles == null) 
+				{
+					mFiles = new Filelist(m_db);}
+				else 
+				{ 
+					mFiles.Clear();
+				}
+				mLastFilepath = "";
+				mFiles.Load(AppID, "");
+				bFilesLoaded = true;
 			}
-			mLastFilepath = "";
-			mFiles.Load(AppID, "");
-			bFilesLoaded = true;
 		}
 
 		protected virtual void LoadFileLinks()
 		{
-			if (mFileLinks == null) 
+			if (m_db != null)
 			{
-				mFileLinks = new FilelinkList(m_db);}
-			else 
-			{ 
-				mFileLinks.Clear();
+				if (mFileLinks == null) 
+				{
+					mFileLinks = new FilelinkList(m_db);}
+				else 
+				{ 
+					mFileLinks.Clear();
+				}
+				mLastFilepath = "";
+				mFileLinks.Load(AppID, "");
+				bLinksLoaded = true;
 			}
-			mLastFilepath = "";
-			mFileLinks.Load(AppID, "");
-			bLinksLoaded = true;
 		}
 
 		protected virtual void FixFileLinks()
@@ -753,8 +777,45 @@ namespace ProgramsDatabase
 		}
 			 
 
+		public void LoadFromXmlProfile(XmlNode node)
+		{
+			XmlNode titleNode = node.SelectSingleNode("title");
+			if (titleNode != null)
+			{
+				this.Title = titleNode.InnerText;
+			}
 
+			XmlNode launchingAppNode = node.SelectSingleNode("launchingApplication");
+			if (launchingAppNode != null)
+			{
+				this.Filename = launchingAppNode.InnerText;
+			}
 
+			XmlNode useShellExecuteNode = node.SelectSingleNode("useShellExecute");
+			if (useShellExecuteNode != null)
+			{
+				this.UseShellExecute = ProgramUtils.StrToBoolean(useShellExecuteNode.InnerText);
+			}
+
+			XmlNode argumentsNode = node.SelectSingleNode("arguments");
+			if (argumentsNode != null)
+			{
+				this.Arguments = argumentsNode.InnerText;
+			}
+
+			XmlNode windowStyleNode = node.SelectSingleNode("windowStyle");
+			if (windowStyleNode != null)
+			{
+				this.WindowStyle = ProgramUtils.StringToWindowStyle(windowStyleNode.InnerText);
+			}
+
+			XmlNode useQuotesNode = node.SelectSingleNode("useQuotes");
+			if (useQuotesNode != null)
+			{
+				this.UseQuotes = ProgramUtils.StrToBoolean(useQuotesNode.InnerText);
+			}
+
+		}
 
 	}
 

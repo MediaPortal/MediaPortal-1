@@ -16,7 +16,7 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class Applist: ArrayList
 	{
-		static SQLiteClient m_db=null;
+		public static SQLiteClient m_db=null;
 		static ApplicationFactory appFactory = ApplicationFactory.AppFactory;
 
 		static public event AppItem.FilelinkLaunchEventHandler OnLaunchFilelink = null;

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Xml;
 
 using MediaPortal.GUI.Library;
 using ProgramsDatabase;
@@ -62,8 +63,11 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.MenuItem SourceTypeToFilelauncher;
 		private System.Windows.Forms.ToolBarButton buttonTools;
 		private System.Windows.Forms.Panel holderPanelFiles;
+		private System.Windows.Forms.MenuItem menuItem2;
+		private System.Windows.Forms.MenuItem menuItemReadFromProfile;
 		// pointer to currently displayed sheet
 		private AppSettings pageCurrentSettings = null;
+		private bool m_ProfilesLoaded = false;
 
 		public SetupForm()
 		{
@@ -180,6 +184,8 @@ namespace WindowPlugins.GUIPrograms
 			this.holderPanel = new System.Windows.Forms.Panel();
 			this.FilesPage = new System.Windows.Forms.TabPage();
 			this.holderPanelFiles = new System.Windows.Forms.Panel();
+			this.menuItemReadFromProfile = new System.Windows.Forms.MenuItem();
+			this.menuItem2 = new System.Windows.Forms.MenuItem();
 			this.DetailsTabControl.SuspendLayout();
 			this.DetailsPage.SuspendLayout();
 			this.FilesPage.SuspendLayout();
@@ -254,7 +260,6 @@ namespace WindowPlugins.GUIPrograms
 																						  this.menuMLFFile,
 																						  this.menuFileLauncher,
 																						  this.menuGrouper});
-			this.popupAddChild.Popup += new System.EventHandler(this.popupAddChild_Popup);
 			// 
 			// menuDirBrowse
 			// 
@@ -329,7 +334,8 @@ namespace WindowPlugins.GUIPrograms
 			// popupTools
 			// 
 			this.popupTools.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																					   this.MenuItemChangeSourceType});
+																					   this.MenuItemChangeSourceType,
+																					   this.menuItemReadFromProfile});
 			this.popupTools.Popup += new System.EventHandler(this.popupTools_Popup);
 			// 
 			// MenuItemChangeSourceType
@@ -429,6 +435,18 @@ namespace WindowPlugins.GUIPrograms
 			this.holderPanelFiles.Name = "holderPanelFiles";
 			this.holderPanelFiles.Size = new System.Drawing.Size(397, 416);
 			this.holderPanelFiles.TabIndex = 13;
+			// 
+			// menuItemReadFromProfile
+			// 
+			this.menuItemReadFromProfile.Index = 1;
+			this.menuItemReadFromProfile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																									this.menuItem2});
+			this.menuItemReadFromProfile.Text = "Read From Profile";
+			// 
+			// menuItem2
+			// 
+			this.menuItem2.Index = 0;
+			this.menuItem2.Text = "<dummy>";
 			// 
 			// SetupForm
 			// 
@@ -1206,10 +1224,6 @@ namespace WindowPlugins.GUIPrograms
 			appTree.SelectedNode = appTree.GetNodeAt(targetPoint);
 		}
 
-		private void popupAddChild_Popup(object sender, System.EventArgs e)
-		{
-		}
-
 		private void popupTools_Popup(object sender, System.EventArgs e)
 		{
 			AppItem curApp = this.GetSelectedAppItem();
@@ -1220,6 +1234,16 @@ namespace WindowPlugins.GUIPrograms
 			else
 			{
 				this.MenuItemChangeSourceType.Enabled = true;
+			}
+
+			this.menuItemReadFromProfile.Enabled = false;
+			if ((curApp != null) && (curApp.ProfileLoadingAllowed()))
+			{
+				if (System.IO.File.Exists("ProgramSettingProfiles.xml"))
+				{
+					this.menuItemReadFromProfile.Enabled = true;
+					FillProfileMenu();
+				}
 			}
 
 		}
@@ -1290,6 +1314,56 @@ namespace WindowPlugins.GUIPrograms
 				{
 					DetailsTabControl.SelectedIndex = 0;
 				}
+			}
+		}
+
+		private void FillProfileMenu()
+		{
+			if (!m_ProfilesLoaded)
+			{
+				menuItemReadFromProfile.MenuItems.Clear();
+
+				XmlDocument document = new XmlDocument();
+				document.Load("ProgramSettingProfiles.xml");
+				XmlElement rootElement = document.DocumentElement;
+
+				if(rootElement != null && rootElement.Name.Equals("profiles"))
+				{
+					//
+					// Fetch global actions
+					//
+					XmlNodeList nodeList = rootElement.SelectNodes("/profiles/profile");
+
+					foreach(XmlNode node in nodeList)
+					{
+						XmlNode idNode = node.SelectSingleNode("id");
+						XmlNode titleNode = node.SelectSingleNode("title");
+
+						taggedMenuItem newMenu = new taggedMenuItem(titleNode.InnerText);
+						newMenu.Tag = Convert.ToInt32(idNode.InnerText.Length > 0 ? idNode.InnerText : "0");
+						newMenu.XmlTag = node;
+						newMenu.Click += new System.EventHandler(this.ProfileItem_Click);
+						menuItemReadFromProfile.MenuItems.Add(newMenu);
+					}
+				}
+
+				m_ProfilesLoaded = true;
+			}
+		}
+
+
+		private void ProfileItem_Click(object sender, System.EventArgs e)
+		{
+			AppItem curApp = GetSelectedAppItem();
+			XmlNode profileNode = ((taggedMenuItem)sender).XmlTag;
+			pageCurrentSettings = GetCurrentSettingsPage();
+			Log.Write("huhu1");
+			if (pageCurrentSettings != null)
+			{
+				// create a pseudo-appitem and read the values from the xml node
+				AppItem tempApp = new AppItem(curApp.db);
+				tempApp.LoadFromXmlProfile(profileNode);
+				pageCurrentSettings.LoadFromAppItem(tempApp);
 			}
 		}
 

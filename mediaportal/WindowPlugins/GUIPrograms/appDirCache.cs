@@ -218,6 +218,11 @@ namespace ProgramsDatabase
 			return true;  
 		}
 
+		override public bool ProfileLoadingAllowed()
+		{
+			return true;
+		}
+
 		override public void Refresh(bool bGUIMode)
 		{
 			base.Refresh(bGUIMode);

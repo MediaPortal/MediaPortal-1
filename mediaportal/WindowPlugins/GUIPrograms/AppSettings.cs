@@ -81,6 +81,7 @@ namespace WindowPlugins.GUIPrograms
 			return true;
 		}
 
+
 		public virtual void Form2AppObj(AppItem curApp)
 		{
 			// virtual!
@@ -89,6 +90,11 @@ namespace WindowPlugins.GUIPrograms
 		public virtual bool EntriesOK(AppItem curApp)
 		{
 			return true;
+		}
+
+		public virtual void LoadFromAppItem(AppItem tempApp)
+		{
+			// virtual!
 		}
 
 		protected void UpButtonClicked()
