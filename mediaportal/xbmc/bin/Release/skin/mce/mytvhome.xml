@@ -277,5 +277,14 @@
 			<font>font14</font> 
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
+		<control>
+			<description>record pin</description>
+			<type>image</type>
+			<id>24</id>
+			<posX>670</posX>
+			<posY>425</posY>
+			<texture>tvguide_record_button.png</texture>
+			<visible>no</visible>
+		</control>
 	</controls>
 </window>
