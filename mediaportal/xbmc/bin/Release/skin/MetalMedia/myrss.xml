@@ -38,9 +38,9 @@
 		<description>Panel</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>48</posX>
-		<posY>95</posY>
-		<width>180</width>
+		<posX>50</posX>
+		<posY>100</posY>
+		<width>190</width>
 		<height>350</height>
 		<texture>panel.png</texture>
 	</control>
@@ -48,7 +48,7 @@
 		<description>Refresh Button</description>
 		<type>button</type>
 		<id>2</id>
-		<posX>64</posX>
+		<posX>55</posX>
 		<posY>128</posY>
  		<label>184</label>
 		<onleft>2</onleft>
@@ -60,7 +60,7 @@
 		<description>RSS feed select</description>
 		<type>selectbutton</type>
 		<id>4</id>
-		<posX>64</posX>
+		<posX>55</posX>
 		<posY>160</posY>
 		<label>706</label>
 		<onleft>50</onleft>
@@ -72,7 +72,7 @@
 		<description>Middle Bar</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>64</posX>
+		<posX>55</posX>
 		<posY>200</posY>
 		<width>145</width>
 		<texture>middle-bar.png</texture>

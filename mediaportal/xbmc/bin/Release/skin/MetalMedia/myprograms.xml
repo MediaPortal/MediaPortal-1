@@ -30,9 +30,9 @@
 		<description>Panel</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>48</posX>
-		<posY>95</posY>
-		<width>180</width>
+		<posX>50</posX>
+		<posY>100</posY>
+		<width>190</width>
 		<height>350</height>
 		<texture>panel.png</texture>
 	</control>
@@ -60,7 +60,7 @@
 		<description>View-As button</description>
 		<type>button</type>
 		<id>2</id>
-		<posX>64</posX>
+		<posX>55</posX>
 		<posY>128</posY>
 		<label>100</label>
 		<onleft>2</onleft>
@@ -72,7 +72,7 @@
 		<description>Sort-by button</description>
 		<type>button</type>
 		<id>4</id>
-		<posX>64</posX>
+		<posX>55</posX>
 		<posY>160</posY>
 		<label>103</label>
 		<onleft>4</onleft>
@@ -84,8 +84,8 @@
 		<description>Sort Asc</description>
 		<type>togglebutton</type>
 		<id>5</id>
-		<posX>221</posX>
-		<posY>168</posY>
+		<posX>200</posX>
+		<posY>165</posY>
 		<label>-</label>
 		<onleft>4</onleft>
 		<onright>7</onright>
@@ -96,7 +96,7 @@
 		<description>Middle Bar</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>64</posX>
+		<posX>55</posX>
 		<posY>200</posY>
 		<width>145</width>
 		<texture>middle-bar.png</texture>
@@ -105,7 +105,7 @@
 		<description>Scan Button</description>
 		<type>button</type>
 		<id>3</id>
-		<posX>64</posX>
+		<posX>55</posX>
 		<posY>215</posY>
 		<label>102</label>
 		<onleft>3</onleft>
