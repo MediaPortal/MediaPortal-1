@@ -1,3 +1,6 @@
+20-07-2004  my tv       : fixed : after recording my tv shows the recorded program instead of live tv
+20-07-2004  my tv       : fixed : black screen issues
+20-07-2004  my tv       : fixed : Recordings:No topbar after playing a recording
 20-07-2004  my music    : fixed : crash when playing a movie (vmr9) and opening the music/playlists window
 20-07-2004  my tv       : fixed : reset timeshift buffer after changing tv channels and recording
 
