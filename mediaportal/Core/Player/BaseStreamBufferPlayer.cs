@@ -78,39 +78,12 @@ namespace MediaPortal.Player
 		{
       if (!System.IO.File.Exists(strFile)) return false;
 			m_speedRate=10000;
-      long lDuration;
       m_bLive=false;
       m_dDuration=-1d;
       string strExt=System.IO.Path.GetExtension(strFile).ToLower();
       if (strExt.Equals(".tv"))
       {
         m_bLive=true;
-      }
-      if (!m_bLive)
-      {
-        using (FileStream strm =new FileStream(strFile,FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
-        {
-          strm.Seek(0x176,SeekOrigin.Begin);
-          using (BinaryReader reader=new BinaryReader(strm))
-          {
-            ulong lDur =reader.ReadUInt64();
-            
-            m_dDuration=lDur;
-            m_dDuration/=10000000d;
-            
-            // check if this file was created by XP SP2
-            byte[] buffer = new byte[0x20];
-            strm.Seek(0xd0,SeekOrigin.Begin);
-            reader.Read(buffer,0,0x20);
-            if (buffer[0xa]==0x33 && buffer[0xb]==0x0 && buffer[0xc]==0x36 && buffer[0xd]==0x0 && buffer[0xe]==0x34 &&  buffer[0xf]==0x0 && buffer[0x10]==0x36)
-            {
-              strm.Seek(0x234,SeekOrigin.Begin);
-              lDur =reader.ReadUInt64();
-              m_dDuration=lDur;
-              m_dDuration/=10000000d;
-            }
-          }
-        }
       }
 
 			m_bIsVisible=false;
@@ -195,26 +168,23 @@ namespace MediaPortal.Player
 
 			m_state=PlayState.Playing;
 
-      if (IsTimeShifting)
+      if (m_bLive)
       {
-        m_mediaSeeking.GetDuration(out lDuration);
-        m_dDuration=lDuration;
-        m_dDuration/=10000000d;
-        if (m_dDuration<1)
-        {
-					Log.Write("StreamBufferPlayer:Duration < 1sec");
-          CloseInterfaces();
-          return false;
-        }
-      }
+				DateTime dt=DateTime.Now;
+				do
+				{
+						UpdateCurrentPosition();
+						Application.DoEvents();
+					  TimeSpan ts=DateTime.Now-dt;
+					  if (ts.TotalSeconds>=2) break;
+				} while (m_dDuration<1);
 
-			if (m_bLive)
-			{
 				UpdateCurrentPosition();
-				if (m_dCurrentPos+5 < m_dDuration)
+				double dPos=m_dDuration-5;
+				if (dPos>=0)
 				{
 					Log.Write("StreamBufferPlayer:Seek to 99%");
-					SeekAsolutePercentage(99);
+					SeekAbsolute(dPos);
 				}
 			}
 			else
