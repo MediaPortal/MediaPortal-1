@@ -11,23 +11,9 @@ Cosmetic bugs:
 
 crash/things not working Bugs:
   10-08-2004 calibration: when calibration pixel ratio and setting a perfect square, calibration is wrong. I need to set a non square to get good AR) (maybe calibrate pic in skin bad?
-
   09-08-2004 my video   : vmr9 quality of video turns bad after a GUI element (like pause,ff,rw icon) has been shown
-  
   02-08-2004 my tv      : dual tuner setup: when recording with card#1 you cannot switch tv channels anymore
                           since card#1 is also used for tv viewing instead of card #2
-  02-08-2004 my tv      : When you are -100 sec in the buffer and forward with 32X and it has got to the 
-                          "actual real live tv" (and it can't forward any more, becuse it has got to the end 
-                          of the buffer) it should automaticly go to "normal playup" (1X). 
-  02-08-2004 my tv      : black screen when recording has ended
-  02-08-2004 my tv      : If you press "PLAY" during back- forwarding you want it to play
-  02-08-2004 my tv      : When you go to the "tv guide" it seems like it ment that the tv will pause untill 
-                          you return from the "guide". For me it's not working, becuse it's forwarding 
-                          (>> very fast). and when it has reached the end of the "live" buffer the 
-                          pictures freezes and is not comming back
-  02-08-2004 my tv      : with timeshifting off in fullscreen you will not get an OSD by pressing y. 
-                          After doing this you will not be able to go back to windowed mode by pressing x or Esc. 
-                          Reacts after pressing it a couple of times. Won´t happen with timeshifting on.
   29-07-2004 DVD player : Settings for AR control and display mode are not respected. It always uses default modes
   11-07-2004 general    : disable VMR9 if vga card doesnt support it (frodo)
   24-04-2004 general    : some WM9 visz. like g-force just show a black screen

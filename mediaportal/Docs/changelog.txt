@@ -1,3 +1,5 @@
+13-08-2004  My tv       : fixed : FF/RW bugs
+13-08-2004  My tv       : fixed : OSD bug
 13-08-2004  My tv       : fixed : No sound on te SVHS channel
 13-08-2004  My tv       : fixed : TV on/off button: tv was still enabled when re-entering my tv
 
