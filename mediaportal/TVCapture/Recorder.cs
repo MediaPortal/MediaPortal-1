@@ -691,6 +691,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("Recorder:StartRadio unknown station:{0}", radioStationName);
 				return ;
 			}
+
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
@@ -712,7 +713,7 @@ namespace MediaPortal.TV.Recording
 						Log.Write("Recorder:Start radio on card:{0} {1} station:{2}",
 											tvcard.ID,tvcard.FriendlyName,radioStationName);
 						tvcard.StartRadio(radiostation);
-						break;
+						return;
 					}
 				}
 			}

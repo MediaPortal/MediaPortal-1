@@ -1091,6 +1091,8 @@ namespace MediaPortal.TV.Recording
 		
 		public void TuneRadioChannel(RadioStation station)
 		{
+			Log.Write("SinkGraphEx:tune to {0} {1} hz", station.Name,station.Frequency);
+			
 			m_TVTuner.put_TuningSpace(0);
 			m_TVTuner.put_CountryCode(m_iCountryCode);
 			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
@@ -1102,7 +1104,10 @@ namespace MediaPortal.TV.Recording
 			{
 				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
 			}
-			m_TVTuner.put_Channel(station.Channel, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+			m_TVTuner.put_Channel((int)station.Frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+			int frequency;
+			m_TVTuner.get_AudioFrequency(out frequency);
+			Log.Write("SinkGraphEx:  tuned to {0} hz", frequency);
 		}
 		
 		public void StartRadio(RadioStation station)
@@ -1128,11 +1133,13 @@ namespace MediaPortal.TV.Recording
 					false, 
 					false ,
 					cardName);
+				TuneRadioChannel(station);
 				m_mpeg2Demux.StartListening();
 
 
 				Log.Write("SinkGraph:StartRadio() started");
 				m_graphState=State.Radio;
+				return;
 			}
 			TuneRadioChannel(station);
 		}
