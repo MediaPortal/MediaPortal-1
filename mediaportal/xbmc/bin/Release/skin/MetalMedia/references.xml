@@ -21,7 +21,7 @@
 		<posY>60</posY>
 		<label>6</label>
 		<font>font13</font>
-		<textcolor>FF000000</textcolor>
+		<textcolor>FFdddddd</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
 	</control>
 	<control>
@@ -98,8 +98,8 @@
 		<font>font14</font>
 		<shadedColor>20484848</shadedColor>
 		<selectedColor>FF000000</selectedColor>
-		<textcolor>FF000000</textcolor>
-		<textcolor2>FF000000</textcolor2>
+		<textcolor>FF555555</textcolor>
+		<textcolor2>FF555555</textcolor2>
 		<colordiffuse>ff000000</colordiffuse>
 		<scrollbarbg>slider_vertical.png</scrollbarbg>
 		<scrollbartop>progress_left.png</scrollbartop>
@@ -118,7 +118,7 @@
 		<spinHeight>25</spinHeight>
 		<spinPosX>590</spinPosX>
 		<spinPosY>530</spinPosY>
-		<spinColor>FF000000</spinColor>
+		<spinColor>FFffffff</spinColor>
 		<textureUp>arrow_round_up_nofocus.png</textureUp>
 		<textureDown>arrow_round_down_nofocus.png</textureDown>
 		<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
@@ -135,7 +135,7 @@
 		<imageFolderFocus>folder_focus.png</imageFolderFocus>
 		<font>font14</font>
 		<selectedColor>FFF8BC70</selectedColor>
-		<textcolor>FF000000</textcolor>
+		<textcolor>FFdddddd</textcolor>
 		<colordiffuse>ff000000</colordiffuse>
 		<suffix>|</suffix>
 		<textureWidthBig>128</textureWidthBig>
@@ -159,7 +159,7 @@
 		<width>180</width>
 		<align>left</align>
 		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FFdddddd</textcolor>
 	</control>
 	<control>
 		<description>default textarea</description>
@@ -180,7 +180,7 @@
 		<textureDownFocus>scroll-down-focus.png</textureDownFocus>
 		<image>icon-folder.png</image>
 		<font>font13</font>
-		<textcolor>FF000000</textcolor>
+		<textcolor>FFdddddd</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 	</control>
 	<control>
@@ -242,9 +242,8 @@
 		<id>4</id>
 		<posX>208</posX>
 		<posY>166</posY>
-		<textcolor>FF000000</textcolor>
+		<textcolor>FF484848</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
-		<textcolor>ff000000</textcolor>
 		<font>font13</font>
 		<label>167</label>
 		<textureCheckmark>check-box.png</textureCheckmark>
@@ -268,7 +267,7 @@
 		<textureNoFocus>-</textureNoFocus>
 		<label>215</label>
 		<font>font13</font>
-		<textcolor>ff000000</textcolor>
+		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
