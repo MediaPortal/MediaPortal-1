@@ -214,6 +214,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "EditWeatherCityForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "EditWeatherCityForm.resx"
+                    DependentUpon = "EditWeatherCityForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "FilterHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
