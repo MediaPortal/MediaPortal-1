@@ -234,21 +234,24 @@ namespace MediaPortal.GUI.Library
           GUIListItem pItem = (GUIListItem)m_vecItems[i + m_iOffset];
           if (m_imgButton!=null)
           {
-            GUIButtonControl btn=m_imgButton[i] as GUIButtonControl;
-            if (btn!=null)
+            if (i>=0 && i < m_imgButton.Count)
             {
-              if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+              GUIButtonControl btn=m_imgButton[i] as GUIButtonControl;
+              if (btn!=null)
               {
-                // render focused line
-                btn.Focus = true;
+                if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+                {
+                  // render focused line
+                  btn.Focus = true;
+                }
+                else
+                {
+                  // render no-focused line
+                  btn.Focus = false;
+                }
+                btn.SetPosition(m_dwPosX, dwPosY);
+                btn.Render();
               }
-              else
-              {
-                // render no-focused line
-                btn.Focus = false;
-              }
-              btn.SetPosition(m_dwPosX, dwPosY);
-              btn.Render();
             }
           }
 
@@ -317,15 +320,18 @@ namespace MediaPortal.GUI.Library
 
               if (m_labels2!=null)
               {
-                GUILabelControl label2=m_labels2[i] as GUILabelControl;
-                if (label2!=null)
+                if (i>=0 && i < m_labels2.Count)
                 {
-                  label2.SetPosition(xpos,ypos + 2 + m_iTextOffsetY2);
-                  label2.TextColor=dwColor;
-                  label2.Label=pItem.Label2;
-                  label2.TextAlignment=GUIControl.Alignment.ALIGN_RIGHT;
-                  label2.FontName=m_strFont2Name;
-                  dMaxWidth -= (int)(label2.TextWidth + 20);
+                  GUILabelControl label2=m_labels2[i] as GUILabelControl;
+                  if (label2!=null)
+                  {
+                    label2.SetPosition(xpos,ypos + 2 + m_iTextOffsetY2);
+                    label2.TextColor=dwColor;
+                    label2.Label=pItem.Label2;
+                    label2.TextAlignment=GUIControl.Alignment.ALIGN_RIGHT;
+                    label2.FontName=m_strFont2Name;
+                    dMaxWidth -= (int)(label2.TextWidth + 20);
+                  }
                 }
               }
 						}
@@ -358,16 +364,19 @@ namespace MediaPortal.GUI.Library
             {
               if (m_labels2!=null)
               {
-                GUILabelControl label2=m_labels2[i] as GUILabelControl;
-                if (label2!=null)
+                if (i>=0 && i < m_labels2.Count)
                 {
-                  label2.SetPosition(dwPosX,dwPosY + 2 + m_iTextOffsetY2);
-                  label2.TextColor=dwColor;
-                  label2.Label=m_wszText;
-                  label2.TextAlignment=GUIControl.Alignment.ALIGN_RIGHT;
-                  label2.FontName=m_strFont2Name;
-                  label2.Render();
-                  //m_pFont.DrawText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY2, dwColor, m_wszText, GUIControl.Alignment.ALIGN_RIGHT);
+                  GUILabelControl label2=m_labels2[i] as GUILabelControl;
+                  if (label2!=null)
+                  {
+                    label2.SetPosition(dwPosX,dwPosY + 2 + m_iTextOffsetY2);
+                    label2.TextColor=dwColor;
+                    label2.Label=m_wszText;
+                    label2.TextAlignment=GUIControl.Alignment.ALIGN_RIGHT;
+                    label2.FontName=m_strFont2Name;
+                    label2.Render();
+                    //m_pFont.DrawText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY2, dwColor, m_wszText, GUIControl.Alignment.ALIGN_RIGHT);
+                  }
                 }
               }
             }
@@ -393,16 +402,19 @@ namespace MediaPortal.GUI.Library
             {
               if (m_labels3!=null)
               {
-                GUILabelControl label3=m_labels3[i] as GUILabelControl;
-                if (label3!=null)
+                if (i>=0 && i < m_labels3.Count)
                 {
-                  label3.SetPosition(dwPosX,ypos);
-                  label3.TextColor=dwColor;
-                  label3.Label=pItem.Label3;
-                  label3.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
-                  label3.FontName=m_strFont2Name;
-                  label3.Render();
-                  //m_pFont.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
+                  GUILabelControl label3=m_labels3[i] as GUILabelControl;
+                  if (label3!=null)
+                  {
+                    label3.SetPosition(dwPosX,ypos);
+                    label3.TextColor=dwColor;
+                    label3.Label=pItem.Label3;
+                    label3.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
+                    label3.FontName=m_strFont2Name;
+                    label3.Render();
+                    //m_pFont.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
+                  }
                 }
               }
             }
@@ -465,6 +477,7 @@ namespace MediaPortal.GUI.Library
 			// TODO Unify render text methods into one general rendertext method.
 
       if (m_labels1==null) return;
+      if (Item<0||Item>=m_labels1.Count) return;
       GUILabelControl label1=m_labels1[Item] as GUILabelControl;
       if (label1==null) return;
       label1.SetPosition((int)fPosX,(int)fPosY);
