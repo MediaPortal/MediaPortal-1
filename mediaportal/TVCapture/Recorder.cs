@@ -563,6 +563,7 @@ namespace MediaPortal.TV.Recording
               dev.View=false;
             }
           }
+          m_bViewing=false;
         }
         else
         {
@@ -578,6 +579,7 @@ namespace MediaPortal.TV.Recording
             }
             string strFileName=String.Format(@"{0}\live.tv",strRecPath);
             g_Player.Play(strFileName);
+            m_bViewing=true;
             return;
           }
 
@@ -587,7 +589,13 @@ namespace MediaPortal.TV.Recording
             TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
             if (!dev.IsRecording) 
             {
+              if (g_Player.Playing && g_Player.IsTV)
+              {
+                g_Player.Stop();
+              }
+              dev.TVChannel = m_strTVChannel;
               dev.View=true;
+              m_bViewing=true;
               return;
             }
           }

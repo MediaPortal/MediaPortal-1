@@ -257,12 +257,15 @@ namespace MediaPortal.TV.Recording
         if (!IsRecording)
         {
           m_strTVChannel=value;
-          m_graph.TuneChannel( GetChannelNr(m_strTVChannel) );
-          if (IsTimeShifting && !View)
+          if (m_graph!= null)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE,0,0,0,0,0,null);
-						msg.Param1=99;
-						GUIWindowManager.SendThreadMessage(msg);
+            m_graph.TuneChannel( GetChannelNr(m_strTVChannel) );
+            if (IsTimeShifting && !View)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE,0,0,0,0,0,null);
+              msg.Param1=99;
+              GUIWindowManager.SendThreadMessage(msg);
+            }
           }
         }
       }

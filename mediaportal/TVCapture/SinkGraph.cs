@@ -404,7 +404,7 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// Property indiciating if the graph supports timeshifting
     /// </summary>
-    /// <returns>boolean indiciating if the graph supports timeshifting</returns>
+    /// <returns>boolean in diciating if the graph supports timeshifting</returns>
     public bool SupportsTimeshifting()
     {
       return true;
