@@ -260,6 +260,7 @@ namespace MediaPortal
       {
         action=new Action(Action.ActionType.ACTION_INVALID,0,0);
         lparam>>=32;
+        Log.Write("lp:{0:X}",lparam);
         switch (lparam)
         {
           case 0x1032: //back
@@ -339,10 +340,15 @@ namespace MediaPortal
         Log.Write("hid.dwSizeHid:{0:X}",header.hid.dwSizeHid);
         Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
         */
+        Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+
         switch(header.hid.RawData2)
         {
           case 0:
-          break;
+            action = new Action(Action.ActionType.ACTION_SHOW_INFO,0,0);  
+            break;
+          case 0x9:
+            break;
           //case 0x209://details
           //  break;
           case 0x4B://DVD angle
@@ -383,12 +389,43 @@ namespace MediaPortal
           case 0x0d:// home
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
             break;
+          case 0xB0: //play
+            action=new Action(Action.ActionType.ACTION_PLAY,0,0);
+            break;
+          case 0xB1: //pause
+            action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
+            break;
+          case 0xB2: //record
+            action=new Action(Action.ActionType.ACTION_RECORD,0,0);
+            break;
+          case 0xB4: //rewind
+            action=new Action(Action.ActionType.ACTION_REWIND,0,0);
+            break;
+          case 0xB3: //fast forward
+            action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
+            break;
           case 0xB5: //next
-            action.wID=Action.ActionType.ACTION_NEXT_ITEM;
+            action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
             break;
           case 0xb6: //previous
-            action=new Action(Action.ActionType.ACTION_INVALID,0,0);
-            action.wID=Action.ActionType.ACTION_PREV_ITEM;
+            action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
+            break;
+          case 0xb7: //stop
+            action=new Action(Action.ActionType.ACTION_STOP,0,0);
+            break;
+          case 0xe9: //volume+
+            action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
+            break;
+          case 0xea: //volume-
+            action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
+            break;
+          case 0x9c: //channel+
+            action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
+            break;
+          case 0x9d: //channel-
+            action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
+            break;
+          case 0xe2: //mute
             break;
           default:
             Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
