@@ -1,4 +1,6 @@
 History: (dd-mm-yyyy)
+  04-06-2004  my tv       : added : record & view at the same time
+  
   03-06-2004  general     : added : sanity checks for setup (channel numbers, folder paths,...)
   03-06-2004  general     : added : tivo style FF/RW for live tv timeshifting
   03-06-2004  general     : added : play a sound when a key has been pressed (you can select which sound to play for which action/key in keymap.xml)

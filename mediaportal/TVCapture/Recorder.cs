@@ -328,6 +328,9 @@ namespace MediaPortal.TV.Recording
           {
             Log.Write("Recorder: capture card:{0} {1} was previewing. Now use it for recording", dev.ID,dev.VideoDevice);
             dev.Previewing=false;
+            
+            m_bPreviewing=false;
+            
             dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
             return true;
           }
@@ -408,6 +411,21 @@ namespace MediaPortal.TV.Recording
         return null;
       }
     }
+    
+    static public string TempRecordingFileName
+    {
+      get
+      {
+        foreach (TVCaptureDevice dev in m_tvcards)
+        {
+          if (dev.IsRecording) 
+          {
+            return dev.TempRecordingFileName;
+          }
+        }
+        return "";
+      }
+    }
 
     static void HandlePreview()
     {
@@ -446,6 +464,8 @@ namespace MediaPortal.TV.Recording
             return;
           }
         }
+        Log.Write("Recorder: no free tuner for previewing...");
+        m_bPreviewing=false;
         return;
       }
       else

@@ -760,6 +760,17 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
+    /// When recording, return the temporary filename of the recording 
+    /// </summary>
+    public string TempRecordingFileName
+    {
+      get { 
+        if (IsRecording) return m_strFilenameTmp;
+        return "";
+      }
+    }
+
+    /// <summary>
     /// Returns whether the record is currently recording or not
     /// </summary>
     public bool IsRecording

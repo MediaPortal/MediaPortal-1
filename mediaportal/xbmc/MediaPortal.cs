@@ -470,7 +470,7 @@ public class MediaPortalApp : D3DApp
             break;
 
           case Action.ActionType.ACTION_NEXT_ITEM:
-            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               PlayListPlayer.PlayNext(true);
               return;
@@ -478,7 +478,7 @@ public class MediaPortalApp : D3DApp
           break;
 
           case Action.ActionType.ACTION_STOP:
-            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               g_Player.Stop();
               return;
@@ -486,7 +486,7 @@ public class MediaPortalApp : D3DApp
             break;
 
 					case Action.ActionType.ACTION_MUSIC_PLAY:
-						if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+						if (!GUIGraphicsContext.IsFullScreenVideo)
 						{
 							if (g_Player.Paused) g_Player.Pause();
               return;
@@ -494,7 +494,7 @@ public class MediaPortalApp : D3DApp
 					break;
           
           case Action.ActionType.ACTION_PAUSE:
-            if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               g_Player.Pause();
               return;
@@ -502,7 +502,7 @@ public class MediaPortalApp : D3DApp
           break;
 
           case Action.ActionType.ACTION_PLAY:
-            if (g_Player.IsTV || Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               if (g_Player.Speed!=1)
               {
@@ -515,14 +515,14 @@ public class MediaPortalApp : D3DApp
 
           
           case Action.ActionType.ACTION_MUSIC_FORWARD:
-            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
               return;
             }
             break;
           case Action.ActionType.ACTION_MUSIC_REWIND:
-            if (Utils.IsCDDA(g_Player.CurrentFile)||Utils.IsAudio(g_Player.CurrentFile) )
+            if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
               return;
