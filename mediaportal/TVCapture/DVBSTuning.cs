@@ -201,20 +201,20 @@ namespace MediaPortal.TV.Recording
 				captureCard.DeleteGraph();
 				return;
 			}
-			DVBGraphBDA.DVBChannel newchan = new DVBGraphBDA.DVBChannel();
-			newchan.ONID=-1;
-			newchan.TSID=-1;
-			newchan.SID=-1;
+			DVBChannel newchan = new DVBChannel();
+			newchan.NetworkID=-1;
+			newchan.TransportStreamID=-1;
+			newchan.ProgramNumber=-1;
 
-			newchan.polarisation=transp[currentIndex].TPpol;
-			newchan.symbolRate=transp[currentIndex].TPsymb;
-			newchan.innerFec=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-			newchan.carrierFrequency=transp[currentIndex].TPfreq;
+			newchan.Polarity=transp[currentIndex].TPpol;
+			newchan.Symbolrate=transp[currentIndex].TPsymb;
+			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+			newchan.Frequency=transp[currentIndex].TPfreq;
 
 			
 
 			Log.Write("tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
-									newchan.carrierFrequency,newchan.symbolRate,newchan.polarisation);
+									newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
 			captureCard.Tune(newchan);
 		}
 

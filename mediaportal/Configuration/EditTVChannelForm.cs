@@ -1251,15 +1251,16 @@ namespace MediaPortal.Configuration
 
 
 						//DVB-S
-						TVDatabase.GetDVBSTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec, out polarisation,out ONID,out TSID, out SID);
-						tbDVBSFreq.Text=freq.ToString();;
-						tbDVBSONID.Text=ONID.ToString();;
-						tbDVBSTSID.Text=TSID.ToString();;
-						tbDVBSSID.Text=SID.ToString();
-						tbDVBSSymbolrate.Text=symbolrate.ToString();
-						cbDvbSInnerFec.SelectedIndex=FecToIndex(innerFec);
-						cbDVBSPolarisation.SelectedIndex=PolarisationToIndex(polarisation);
-						tbDVBSProvider.Text=provider;
+						DVBChannel ch = new DVBChannel();
+						TVDatabase.GetSatChannel(channelId,1,ref ch);
+						tbDVBSFreq.Text=ch.Frequency.ToString();;
+						tbDVBSONID.Text=ch.NetworkID.ToString();;
+						tbDVBSTSID.Text=ch.TransportStreamID.ToString();;
+						tbDVBSSID.Text=ch.ProgramNumber.ToString();
+						tbDVBSSymbolrate.Text=ch.Symbolrate.ToString();
+						cbDvbSInnerFec.SelectedIndex=FecToIndex(ch.FEC);
+						cbDVBSPolarisation.SelectedIndex=PolarisationToIndex(ch.Polarity);
+						tbDVBSProvider.Text=ch.ServiceProvider;
 
 					}
 				}//if(channel != null)
@@ -1466,7 +1467,19 @@ namespace MediaPortal.Configuration
 				provider=tbDVBSProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBSChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
+					DVBChannel ch = new DVBChannel();
+					ch.ServiceType=1;
+					ch.Frequency=freq;
+					ch.NetworkID=ONID;
+					ch.TransportStreamID=TSID;
+					ch.ProgramNumber=SID;
+					ch.Symbolrate=symbolrate;
+					ch.FEC=innerFec;
+					ch.Polarity=polarisation;
+					ch.ServiceProvider=provider;
+					ch.ServiceName=tvchannel.Name;
+					ch.ID=tvchannel.ID;
+					TVDatabase.UpdateSatChannel(ch);
 				}
 			}
 			catch(Exception){}

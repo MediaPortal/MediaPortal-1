@@ -223,15 +223,15 @@ namespace MediaPortal.TV.Recording
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
 												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate);
 			Log.Write("tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
-			DVBGraphBDA.DVBChannel newchan = new DVBGraphBDA.DVBChannel();
-			newchan.ONID=-1;
-			newchan.TSID=-1;
-			newchan.SID=-1;
+			DVBChannel newchan = new DVBChannel();
+			newchan.NetworkID=-1;
+			newchan.TransportStreamID=-1;
+			newchan.ProgramNumber=-1;
 
-			newchan.modulation=dvbcChannels[currentIndex].modulation;
-			newchan.symbolRate=(dvbcChannels[currentIndex].symbolrate)/1000;
-			newchan.innerFec=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-			newchan.carrierFrequency=dvbcChannels[currentIndex].frequency;
+			newchan.Modulation=dvbcChannels[currentIndex].modulation;
+			newchan.Symbolrate=(dvbcChannels[currentIndex].symbolrate)/1000;
+			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+			newchan.Frequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan);
 		}
 

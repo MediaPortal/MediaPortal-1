@@ -84,6 +84,7 @@ namespace MediaPortal.TV.Database
 		string m_sLangCodeAudio3;
 		int m_sECMPid;
 		int m_sPMTPid;
+		int m_modulation;
 
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
@@ -377,7 +378,15 @@ namespace MediaPortal.TV.Database
 			set
 			{m_sPMTPid=value;}
 		}
-
+		[BrowsableAttribute(true),Category("Modulation"),
+		ReadOnly(false)]
+		public int Modulation
+		{
+			get
+			{return m_modulation;}
+			set
+			{m_modulation=value;}
+		}
 		public override string ToString()
 		{
 			return m_sChannelName;
