@@ -276,7 +276,7 @@ namespace MediaPortal.Player
     {
       get 
       {
-        if (m_state!=PlayState.Init) 
+        if (m_state!=PlayState.Init && m_player!=null) 
         {
           return m_player.currentMedia.duration;
         }
@@ -294,6 +294,7 @@ namespace MediaPortal.Player
 
     public override void Pause()
     {
+      if (m_player==null) return;
       if (m_state==PlayState.Paused) 
       {
         m_state=PlayState.Playing;
@@ -338,6 +339,7 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
+      if (m_player==null) return;
       if (m_state!=PlayState.Init)
       {
         m_player.Ctlcontrols.stop();
@@ -348,9 +350,15 @@ namespace MediaPortal.Player
 
     public override int Volume
     {
-      get { return m_player.settings.volume;}
+      get {
+        
+        if (m_player==null) return 100;
+        return m_player.settings.volume;
+      }
       set 
       {
+        
+        if (m_player==null) return ;
         if (m_player.settings.volume!=value)
         {
           m_player.settings.volume= value;
@@ -372,7 +380,11 @@ namespace MediaPortal.Player
       if (m_player==null) return;
       m_player.Visible=false;
       
-      GUIGraphicsContext.form.Controls.Remove(m_player);
+      try
+      {
+        GUIGraphicsContext.form.Controls.Remove(m_player);
+      }
+      catch(Exception){}
       m_player.Dispose();
       m_player=null;
     }
@@ -447,7 +459,7 @@ namespace MediaPortal.Player
     public override void Process()
     {
       if ( !Playing) return;
-
+      if (m_player==null) return;
       if (GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false)
       {
         if (m_player.Visible)
@@ -481,6 +493,7 @@ namespace MediaPortal.Player
     public override void SetVideoWindow()
     {
 
+      if (m_player==null) return;
       if (GUIGraphicsContext.IsFullScreenVideo!= m_bFullScreen)
       {
         m_bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
@@ -543,6 +556,7 @@ namespace MediaPortal.Player
 */
     public override void SeekRelative(double dTime)
     {
+      if (m_player==null) return;
       if (m_state!=PlayState.Init)
       {
           
@@ -558,6 +572,7 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double dTime)
     {
+      if (m_player==null) return;
       if (m_state!=PlayState.Init)
       {
         if (dTime<0.0d) dTime=0.0d;
@@ -570,6 +585,7 @@ namespace MediaPortal.Player
 
     public override void SeekRelativePercentage(int iPercentage)
     {
+      if (m_player==null) return;
       if (m_state!=PlayState.Init)
       {
         double dCurrentPos=CurrentPosition;
@@ -590,6 +606,7 @@ namespace MediaPortal.Player
 
     public override void SeekAsolutePercentage(int iPercentage)
     {
+      if (m_player==null) return;
       if (m_state!=PlayState.Init)
       {
         if (iPercentage<0) iPercentage=0;
@@ -604,10 +621,12 @@ namespace MediaPortal.Player
       get 
       { 
         if (m_state==PlayState.Init) return 1;
+        if (m_player==null) return 1;
         return (int)m_player.settings.rate;
       }
       set 
       {
+        if (m_player==null) return ;
         if (m_state!=PlayState.Init)
         {
           try
@@ -625,6 +644,7 @@ namespace MediaPortal.Player
     {
       get 
       {
+        if (m_strCurrentFile==null) return false;
         //TODO: this has to be changed if we are gonna support video streams in the future
         if (m_strCurrentFile.ToLower().IndexOf("http:")>=0) return true;
         if (m_strCurrentFile.ToLower().IndexOf("https:")>=0) return true;

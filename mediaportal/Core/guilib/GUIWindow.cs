@@ -146,7 +146,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void Render()
 		{
-      lock (this)
+      //lock (this)
       {
 				try
 				{

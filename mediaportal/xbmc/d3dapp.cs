@@ -1081,23 +1081,20 @@ namespace MediaPortal
         return;
       }
 
-      int times=sleepTime/MILLI_SECONDS_TIMER;
-      NativeMethods.Message msg;
-      for (int counter=0; counter < times; counter++)
+      try
       {
-        System.Threading.Thread.Sleep(MILLI_SECONDS_TIMER);
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-          return;
-        bool gotMessage = NativeMethods.PeekMessage(out msg, IntPtr.Zero, 0, 0, NativeMethods.PeekMessageFlags.Remove);
-        if (gotMessage)
+        int times=sleepTime/MILLI_SECONDS_TIMER;
+        for (int counter=0; counter < times; counter++)
         {
-          NativeMethods.TranslateMessage(ref msg);
-          NativeMethods.DispatchMessage(ref msg);
-          if (msg.msg==NativeMethods.WindowMessage.Quit)
-          {
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-          }
+          System.Threading.Thread.Sleep(MILLI_SECONDS_TIMER);
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+            return;
+          HandleMessage();
         }
+      }
+      catch (Exception ex)
+      {
+        Log.Write("exception:{0}",ex.ToString());
       }
     }
 
@@ -1993,17 +1990,7 @@ namespace MediaPortal
 
     void HandleMessage()
     {
-      NativeMethods.Message msg;
-      if (NativeMethods.PeekMessage(out msg, IntPtr.Zero, 0, 0, NativeMethods.PeekMessageFlags.NoRemove))
-      {
-        if (msg.msg==NativeMethods.WindowMessage.Quit)
-        {
-          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-          return;
-        }
-        NativeMethods.TranslateMessage(ref msg);
-        NativeMethods.DispatchMessage(ref msg);
-      }
+      System.Windows.Forms.Application.DoEvents();
     }
 
     /// <summary>
