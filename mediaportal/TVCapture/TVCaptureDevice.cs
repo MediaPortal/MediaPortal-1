@@ -22,6 +22,8 @@ namespace MediaPortal.TV.Recording
     bool          m_bUseForRecording;
     bool          m_bUseForTV;			
     bool          m_bSupportsMPEG2;
+    Size          m_FrameSize;
+    double        m_FrameRate;
     
     [NonSerialized]
     int           m_iID;
@@ -87,6 +89,24 @@ namespace MediaPortal.TV.Recording
     {
       get { return m_bSupportsMPEG2;}
       set { m_bSupportsMPEG2=value;}
+    }
+
+    /// <summary>
+    /// Property to set the frame size
+    /// </summary>
+    public Size FrameSize
+    {
+      get { return m_FrameSize;}
+      set { m_FrameSize=value;}
+    }
+
+    /// <summary>
+    /// Property to set the frame size
+    /// </summary>
+    public double FrameRate
+    {
+      get { return m_FrameRate;}
+      set { m_FrameRate=value;}
     }
 
     /// <summary>
@@ -457,6 +477,11 @@ namespace MediaPortal.TV.Recording
       {
         strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
         strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+        if (strRecPath==null||strRecPath.Length==0) 
+        {
+          strRecPath=System.IO.Directory.GetCurrentDirectory();
+          strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+        }
       }
       string strFileName=String.Format(@"{0}\live.tv",strRecPath);
 
@@ -515,6 +540,11 @@ namespace MediaPortal.TV.Recording
       {
         strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
         strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+        if (strRecPath==null||strRecPath.Length==0) 
+        {
+          strRecPath=System.IO.Directory.GetCurrentDirectory();
+          strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+        }
       }
 
       DateTime dtNow = DateTime.Now.AddMinutes(m_iPreRecordInterval);

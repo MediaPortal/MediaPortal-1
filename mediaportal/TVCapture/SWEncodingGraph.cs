@@ -41,12 +41,15 @@ namespace MediaPortal.TV.Recording
     VideoCaptureDevice      m_videoCaptureDevice=null;
     IVideoWindow            m_videoWindow = null;
     IBasicVideo2            m_basicVideo = null;
-    IMediaControl					  m_mediaControl=null;
+    IMediaControl					  m_mediaControl=null;		
+    Size                    m_FrameSize;
+    double                  m_FrameRate;
+             
     const int WS_CHILD			= 0x40000000;	
     const int WS_CLIPCHILDREN	= 0x02000000;
     const int WS_CLIPSIBLINGS	= 0x04000000;
 
-		public SWEncodingGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter,string  strAudioCaptureFilter,string  strVideoCompressor,string  strAudioCompressor)
+		public SWEncodingGraph(int iCountryCode,bool bCable,string strVideoCaptureFilter,string  strAudioCaptureFilter,string  strVideoCompressor,string  strAudioCompressor, Size frameSize, double frameRate)
     {
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
@@ -55,6 +58,8 @@ namespace MediaPortal.TV.Recording
       m_strAudioCaptureFilter=strAudioCaptureFilter;
       m_strVideoCompressor=strVideoCompressor;
       m_strAudioCompressor=strAudioCompressor;
+      m_FrameSize=frameSize;
+      m_FrameRate=frameRate;
 		}
 
     /// <summary>
@@ -169,6 +174,12 @@ namespace MediaPortal.TV.Recording
 
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo);
 
+
+
+      //set the frame size
+      m_videoCaptureDevice.SetFrameSize(m_FrameSize);
+      m_videoCaptureDevice.SetFrameRate(m_FrameRate);
+
       m_graphState=State.Created;
       return true;
     }
@@ -203,7 +214,6 @@ namespace MediaPortal.TV.Recording
         m_videoCaptureDevice.CloseInterfaces();
         m_videoCaptureDevice=null;
       }
-
 
       if (m_filterCaptureAudio!=null)
         Marshal.ReleaseComObject(m_filterCaptureAudio);m_filterCaptureAudio=null;      

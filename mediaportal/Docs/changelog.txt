@@ -1,3 +1,5 @@
+05-08-2004  my tv       : fixed : recording to C:\ or D:\ failed
+05-08-2004  my tv       : added : frame size & frame rate now works for SW encoding cards
 05-08-2004  setup       : fixed : External radio settings were not being saved
 
 04-08-2004  my music    : fixed : Exception when WMA file uses DRM.  Now it skips this file.

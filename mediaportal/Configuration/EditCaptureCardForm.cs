@@ -600,9 +600,10 @@ namespace MediaPortal.Configuration
 
 				card.UseForRecording	= useRecordingCheckBox.Checked;
 				card.UseForTV			= useWatchingCheckBox.Checked;
-//				
-//				card.FrameFormat = (CaptureFormat)frameSizeComboBox.SelectedItem;
-//				card.FrameRate = Int32.Parse(frameRateTextBox.Text);
+				
+        CaptureFormat fmt = (CaptureFormat)frameSizeComboBox.SelectedItem;
+				card.FrameSize = new Size(fmt.Width, fmt.Height);
+				card.FrameRate = Int32.Parse(frameRateTextBox.Text);
 
         card.VideoCompressor = videoCompressorComboBox.Text;
         card.AudioCompressor = audioCompressorComboBox.Text;
@@ -622,9 +623,17 @@ namespace MediaPortal.Configuration
 					useRecordingCheckBox.Checked = card.UseForRecording;
 					useWatchingCheckBox.Checked = card.UseForTV;
 				
-//					frameSizeComboBox.Text = card.FrameFormat.Description;
-//					frameRateTextBox.Text = card.FrameRate.ToString();
-
+          int i=0;
+          foreach (CaptureFormat fmt in captureFormats)
+          {
+            if (card.FrameSize.Width==fmt.Width && card.FrameSize.Height==fmt.Height)
+            {
+              frameSizeComboBox.SelectedIndex=i;
+              break;
+            }
+            ++i;
+          }
+					frameRateTextBox.Text = card.FrameRate.ToString();
           videoCompressorComboBox.SelectedItem = card.VideoCompressor;
           audioCompressorComboBox.SelectedItem = card.AudioCompressor;
           audioDeviceComboBox.SelectedItem = card.AudioDevice;
