@@ -5,6 +5,7 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Dialogs;
+using MediaPortal.Video.Database;
 
 
 namespace MediaPortal.GUI.Video
@@ -467,6 +468,7 @@ namespace MediaPortal.GUI.Video
 				}
 				itemlist.Add(pItem);
         Utils.SetDefaultIcons(pItem);
+        
       }
 
 			iCurrentSong = 0;
@@ -488,7 +490,9 @@ namespace MediaPortal.GUI.Video
 					}
 				}
 			}
- 
+
+      SetIMDBThumbs(itemlist);
+      
 			string strSelectedItem = m_history.Get(m_strDirectory);
 			int iItem = 0;
 			foreach (GUIListItem item in itemlist)
@@ -530,6 +534,8 @@ namespace MediaPortal.GUI.Video
       }
 
 		}
+
+
 		#endregion
 
 		void ClearFileItems()
@@ -549,6 +555,72 @@ namespace MediaPortal.GUI.Video
 			UpdateButtons();
 			GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTNVIEWASICONS);
 		}
+    void SetIMDBThumbs(ArrayList items)
+    {
+      GUIListItem pItem ;
+      ArrayList movies = new ArrayList();
+      for (int x = 0; x < items.Count; ++x)
+      {
+        pItem = (GUIListItem)items[x];
+        if (pItem.IsFolder)
+        {
+          if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+          {
+            movies.Clear();
+            string file= pItem.Path + @"\VIDEO_TS";
+            VideoDatabase.GetMoviesByPath(file, ref movies);
+            for (int i = 0; i < movies.Count; ++i)
+            {
+              IMDBMovie info = (IMDBMovie)movies[i];
+              string strFile = "VIDEO_TS.IFO";
+              if (info.File[0] == '\\' || info.File[0] == '/')
+                info.File = info.File.Substring(1);
+
+              if (strFile.Length > 0)
+              {
+                if (info.File == strFile /*|| pItem->GetLabel() == info.Title*/)
+                {
+                  string strThumb;
+                  if (Utils.IsDVD(pItem.Path))
+                    pItem.Label=String.Format( "({0}:) {1}",  pItem.Path.Substring(0,1),  info.Title );
+                  strThumb = Utils.GetCoverArt(ThumbsFolder, info.Title );
+                  if (System.IO.File.Exists(strThumb))
+                  {
+                    pItem.ThumbnailImage = strThumb;
+                    pItem.IconImageBig = strThumb;
+                    pItem.IconImage = strThumb;
+                  }
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      movies.Clear();
+      VideoDatabase.GetMoviesByPath(m_strDirectory, ref movies);
+      for (int x = 0; x < items.Count; ++x)
+      {
+        pItem = (GUIListItem)items[x];
+        if (!pItem.IsFolder)
+        {
+          IMDBMovie info = new IMDBMovie();
+          int movieid=VideoDatabase.GetMovieInfo(pItem.Path,ref info);
+          if (movieid>=0)
+          {
+            string strThumb;
+            strThumb = Utils.GetCoverArt(ThumbsFolder, info.Title );
+            if (System.IO.File.Exists(strThumb))
+            {
+              pItem.ThumbnailImage = strThumb;
+              pItem.IconImageBig = strThumb;
+              pItem.IconImage = strThumb;
+            }
+          }
+        }
+      }
+    }
 
 		void OnClick(int iItem)
 		{
