@@ -601,7 +601,7 @@ namespace MediaPortal.Configuration
 		{
 			if (videoCompressorComboBox.Enabled)
 			{
-				if (videoCompressorComboBox.Items>0 && videoCompressorComboBox.SelectedItem==null)
+				if (videoCompressorComboBox.Items.Count>0 && videoCompressorComboBox.SelectedItem==null)
 				{
 					MessageBox.Show("No video compressor selected.Please choose a video compressor", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;					
@@ -609,7 +609,7 @@ namespace MediaPortal.Configuration
 			}
 			if (audioCompressorComboBox.Enabled)
 			{
-				if (audioCompressorComboBox.Items>0 && audioCompressorComboBox.SelectedItem==null)
+				if (audioCompressorComboBox.Items.Count>0 && audioCompressorComboBox.SelectedItem==null)
 				{
 					MessageBox.Show("No audio compressor selected.Please choose an audio compressor", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;					
@@ -617,7 +617,7 @@ namespace MediaPortal.Configuration
 			}
 			if (audioDeviceComboBox.Enabled)
 			{
-				if (audioDeviceComboBox.Items>0 && audioDeviceComboBox.SelectedItem==null)
+				if (audioDeviceComboBox.Items.Count>0 && audioDeviceComboBox.SelectedItem==null)
 				{
 					MessageBox.Show("No audio device selected.Please choose an audio device", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;					
@@ -625,7 +625,7 @@ namespace MediaPortal.Configuration
 			}
 			if (comboBoxLineInput.Enabled)
 			{
-				if (comboBoxLineInput.Items>0 && comboBoxLineInput.SelectedItem==null)
+				if (comboBoxLineInput.Items.Count>0 && comboBoxLineInput.SelectedItem==null)
 				{
 					MessageBox.Show("No line input selected.Please choose a line input", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					return;					
