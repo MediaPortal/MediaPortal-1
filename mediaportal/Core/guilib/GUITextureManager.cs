@@ -393,9 +393,9 @@ namespace MediaPortal.GUI.Library
       Direct3D.Texture texture=null;
       try
       {
+#if DO_RESAMPLE
         imgSrc=Image.FromFile(strFileName);   
         if (imgSrc==null) return null;
-#if DO_RESAMPLE
 				//Direct3D prefers textures which height/width are a power of 2
 				//doing this will increases performance
 				//So the following core resamples all textures to
@@ -439,6 +439,8 @@ namespace MediaPortal.GUI.Library
 				{
 					iMaxWidth=MAX_THUMB_WIDTH;
 					iMaxHeight=MAX_THUMB_HEIGHT;
+					imgSrc=Image.FromFile(strFileName);   
+					if (imgSrc==null) return null;
 					if (imgSrc.Width >= iMaxWidth || imgSrc.Height>=iMaxHeight)
 					{
 						Image imgResampled=Resample(imgSrc,iMaxWidth, iMaxHeight);
@@ -446,33 +448,47 @@ namespace MediaPortal.GUI.Library
 						imgSrc=imgResampled;
 						imgResampled=null;
 					}
+					//load jpg or png into texture
+					using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+					{
+						imgSrc.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
+						ImageInformation info2 = new ImageInformation();
+						stream.Flush();
+						stream.Seek(0,System.IO.SeekOrigin.Begin);
+						texture=TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+							stream,
+							0,0,//width/height
+							1,//mipslevels
+							0,//Usage.Dynamic,
+							fmt,
+							Pool.Managed,
+							Filter.None,
+							Filter.None,
+							(int)lColorKey,
+							ref info2);
+						iWidth=info2.Width;
+						iHeight=info2.Height;
+					}
 				}
 				else
 				{
 					fmt=GetCompression(strFileName);
+					ImageInformation info2 = new ImageInformation();
+					texture=TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+						strFileName,
+						0,0,//width/height
+						1,//mipslevels
+						0,//Usage.Dynamic,
+						fmt,
+						Pool.Managed,
+						Filter.None,
+						Filter.None,
+						(int)lColorKey,
+						ref info2);
+					iWidth=info2.Width;
+					iHeight=info2.Height;
+					
 				}
-
-        //load jpg or png into texture
-        using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
-        {
-          imgSrc.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
-          ImageInformation info2 = new ImageInformation();
-          stream.Flush();
-          stream.Seek(0,System.IO.SeekOrigin.Begin);
-          texture=TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
-                                              stream,
-                                              0,0,//width/height
-                                              1,//mipslevels
-                                              0,//Usage.Dynamic,
-                                              fmt,
-                                              Pool.Managed,
-                                              Filter.None,
-                                              Filter.None,
-                                              (int)lColorKey,
-                                              ref info2);
-          iWidth=info2.Width;
-          iHeight=info2.Height;
-        }
       }
       catch(Exception ex)
       {
