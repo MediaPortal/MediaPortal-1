@@ -73,7 +73,7 @@
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
 <!-- version : 1.0.0.29                                                               -->
-<!-- changed : 26-feb-2005 by Frodo                                                   -->
+<!-- changed : 4-march-2005 by Frodo                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
