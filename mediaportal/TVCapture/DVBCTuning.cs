@@ -60,7 +60,7 @@ namespace MediaPortal.TV.Recording
 			count = 0;
 			string line;
 			string[] tpdata;
-			Log.Write("Opening {0}",ofd.FileName);
+			Log.WriteFile(Log.LogType.Capture,"Opening {0}",ofd.FileName);
 			// load dvbcChannelsList list and start scan
 			System.IO.TextReader tin = System.IO.File.OpenText(ofd.FileName);
 			
@@ -117,7 +117,7 @@ namespace MediaPortal.TV.Recording
 							}
 							catch
 							{
-								Log.Write("Error in line:{0}", LineNr);
+								Log.WriteFile(Log.LogType.Capture,"Error in line:{0}", LineNr);
 							}
 						}
 					}
@@ -126,7 +126,7 @@ namespace MediaPortal.TV.Recording
 			tin.Close();
 			
 
-			Log.Write("loaded:{0} dvbcChannels", count);
+			Log.WriteFile(Log.LogType.Capture,"loaded:{0} dvbcChannels", count);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
@@ -174,7 +174,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.Write("Found signal for Channel:{0} {1}",currentIndex,chanDesc);
+					Log.WriteFile(Log.LogType.Capture,"Found signal for Channel:{0} {1}",currentIndex,chanDesc);
 					currentState=State.ScanChannels;
 				}
 			}
@@ -201,7 +201,7 @@ namespace MediaPortal.TV.Recording
 			timer1.Enabled=false;
 			captureCard.StoreTunedChannels(false,true);
 			callback.UpdateList();
-			Log.Write("timeout, goto scanning channels");
+			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning channels");
 			currentState=State.ScanFrequencies;
 			ScanNextDVBCChannel();
 			timer1.Enabled=true;
@@ -222,7 +222,7 @@ namespace MediaPortal.TV.Recording
 
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
 												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate);
-			Log.Write("tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
+			Log.WriteFile(Log.LogType.Capture,"tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
 			DVBChannel newchan = new DVBChannel();
 			newchan.NetworkID=-1;
 			newchan.TransportStreamID=-1;

@@ -817,14 +817,14 @@ namespace MediaPortal.TV.Recording
 			m_videoWindow = (IVideoWindow) m_graphBuilder as IVideoWindow;
 			if (m_videoWindow==null)
 			{
-				Log.Write("AIWGraph:FAILED:Unable to get IVideoWindow");
+				Log.WriteFile(Log.LogType.Capture,"AIWGraph:FAILED:Unable to get IVideoWindow");
 				return false;
 			}
 
 			m_basicVideo = m_graphBuilder as IBasicVideo2;
 			if (m_basicVideo==null)
 			{
-				Log.Write("AIWGraph:FAILED:Unable to get IBasicVideo2");
+				Log.WriteFile(Log.LogType.Capture,"AIWGraph:FAILED:Unable to get IBasicVideo2");
 				return false;
 			}
 

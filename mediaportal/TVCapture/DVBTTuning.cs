@@ -48,7 +48,7 @@ namespace MediaPortal.TV.Recording
 			currentFrequencyIndex=-1;
 			String countryCode = String.Empty;
 
-			Log.Write("Opening dvbt.xml");
+			Log.WriteFile(Log.LogType.Capture,"Opening dvbt.xml");
 			XmlDocument doc= new XmlDocument();
 			doc.Load("dvbt.xml");
 
@@ -62,7 +62,7 @@ namespace MediaPortal.TV.Recording
 			formCountry.ShowDialog();
 			string countryName=formCountry.countryName;
 			if (countryName==String.Empty) return;
-			Log.Write("auto tune for {0}", countryName);
+			Log.WriteFile(Log.LogType.Capture,"auto tune for {0}", countryName);
 			frequencies.Clear();
 
 			countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
@@ -70,16 +70,16 @@ namespace MediaPortal.TV.Recording
 			{
 				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
 				if (name!=countryName) continue;
-				Log.Write("found country {0} in dvbt.xml", countryName);
+				Log.WriteFile(Log.LogType.Capture,"found country {0} in dvbt.xml", countryName);
 				try
 				{
 					scanOffset =  XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-					Log.Write("scanoffset: {0} ", scanOffset);
+					Log.WriteFile(Log.LogType.Capture,"scanoffset: {0} ", scanOffset);
 				}
 				catch(Exception){}
 
 				XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-				Log.Write("number of carriers:{0}", frequencyList.Count);
+				Log.WriteFile(Log.LogType.Capture,"number of carriers:{0}", frequencyList.Count);
 				int[] carrier;
 				foreach (XmlNode node in frequencyList)
 				{
@@ -92,13 +92,13 @@ namespace MediaPortal.TV.Recording
 					catch(Exception){}
 
 					frequencies.Add(carrier);
-					Log.Write("added:{0}", carrier[0]);
+					Log.WriteFile(Log.LogType.Capture,"added:{0}", carrier[0]);
 				}
 			}
 			if (frequencies.Count==0) return;
 
-			Log.Write("loaded:{0} frequencies", frequencies.Count);
-			Log.Write("{0} has a scan offset of {1}KHz", countryCode, scanOffset);
+			Log.WriteFile(Log.LogType.Capture,"loaded:{0} frequencies", frequencies.Count);
+			Log.WriteFile(Log.LogType.Capture,"{0} has a scan offset of {1}KHz", countryCode, scanOffset);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
@@ -139,7 +139,7 @@ namespace MediaPortal.TV.Recording
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
 			int[] tmp = frequencies[currentFreq] as int[];
-			//Log.Write("FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
+			//Log.WriteFile(Log.LogType.Capture,"FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
 			float frequency = tunedFrequency;
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
@@ -151,7 +151,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (captureCard.SignalPresent())
 					{
-						Log.Write("Found signal at:{0} MHz,scan for channels",frequency);
+						Log.WriteFile(Log.LogType.Capture,"Found signal at:{0} MHz,scan for channels",frequency);
 						currentState=State.ScanChannels;
 						currentOffset=0;
 					}
@@ -203,7 +203,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 				tmp = (int[])frequencies[currentFrequencyIndex];
-				Log.Write("tune:{0}",tunedFrequency);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
 				captureCard.Tune(tunedFrequency,0);
 				return;
 			}
@@ -212,7 +212,7 @@ namespace MediaPortal.TV.Recording
 			tunedFrequency=tmp[0];
 			if (currentOffset==0)
 			{
-				Log.Write("tune:{0}",tunedFrequency);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
 				captureCard.Tune(tunedFrequency,0);
 				if (scanOffset==0) currentOffset=3;
 				else currentOffset++;
@@ -220,14 +220,14 @@ namespace MediaPortal.TV.Recording
 			else if (currentOffset==1)
 			{
 				tunedFrequency-=scanOffset;
-				Log.Write("tune:{0}",tunedFrequency);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
 				captureCard.Tune(tunedFrequency,0);
 				currentOffset++;
 			}
 			else if (currentOffset==2)
 			{
 				tunedFrequency+=scanOffset;
-				Log.Write("tune:{0}",tunedFrequency);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
 				captureCard.Tune(tunedFrequency,0);
 				currentOffset++;
 			}

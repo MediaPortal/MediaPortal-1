@@ -218,12 +218,12 @@ namespace MediaPortal.TV.Recording
 			if (_mDefinitionLoaded) return (true);
 			_mDefinitionLoaded = true;
 			
-			Log.Write("LoadDefinitions()");
+			Log.WriteFile(Log.LogType.Capture,"LoadDefinitions()");
 			CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
 			if (CaptureCardDefinitions.CaptureCards.Count == 0)
 			{
 				// Load failed!!!
-				Log.Write("TVCaptureDevice.LoadDefinitions: No capturecards defined, or load failed");
+				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinitions: No capturecards defined, or load failed");
 				return (false);
 			}
 
@@ -251,7 +251,7 @@ namespace MediaPortal.TV.Recording
 				_mCaptureCardDefinition											 = new CaptureCardDefinition();
 			if (ccd == null)
 			{
-				Log.Write("TVCaptureDevice.LoadDefinitions: CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
+				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinitions: CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
 				return (false);
 			}
 			_mCaptureCardDefinition.CaptureName          = ccd.CaptureName;
@@ -317,12 +317,12 @@ namespace MediaPortal.TV.Recording
 							} 
 							if (!filterFound)
 							{
-								Log.Write("TVCaptureDevice.LoadDefinition: Cannot find unique filter for filter:{0}", filter.Name);
+								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: Cannot find unique filter for filter:{0}", filter.Name);
 								filterFound = true;
 							}
 							else
 							{
-								Log.Write("TVCaptureDevice.LoadDefinition: found unique filter for filter:{0}", filter.Name);
+								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: found unique filter for filter:{0}", filter.Name);
 							}
 						}
 						else filterFound = true;
@@ -340,7 +340,7 @@ namespace MediaPortal.TV.Recording
 				// Log the error and return false...
 				if (!filterFound)
 				{
-					Log.Write("TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
+					Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
 					return (false);
 				}
 			}
@@ -403,11 +403,11 @@ namespace MediaPortal.TV.Recording
 				// Log the error and return false...
 				if (!filterFound)
 				{
-					Log.Write("TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
+					Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
 					return (false);
 				}
 			
-			Log.Write("LoadDefinitions() done");}
+			Log.WriteFile(Log.LogType.Capture,"LoadDefinitions() done");}
 
 			return (true);
 		}
@@ -737,11 +737,11 @@ namespace MediaPortal.TV.Recording
 
     void RebuildGraph()
     {
-      Log.Write("Card:{0} rebuild graph",ID);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} rebuild graph",ID);
       State state=_mState;
       if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
 			{
-				Log.Write("TVCaptureDevice.Rebuildgraph() stop media");
+				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.Rebuildgraph() stop media");
         g_Player.Stop();
       }
               
@@ -753,14 +753,14 @@ namespace MediaPortal.TV.Recording
       {
         StartTimeShifting();
         
-				Log.Write("TVCaptureDevice.Rebuildgraph() play:{0}",Recorder.GetTimeShiftFileName(ID-1));        
+				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.Rebuildgraph() play:{0}",Recorder.GetTimeShiftFileName(ID-1));        
         g_Player.Play(Recorder.GetTimeShiftFileName(ID-1));
       }
       else 
       {
         View=true;
       }
-      Log.Write("Card:{0} rebuild graph done",ID);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} rebuild graph done",ID);
     }
 
     /// <summary>
@@ -771,7 +771,7 @@ namespace MediaPortal.TV.Recording
     {
       if (!IsRecording) return;
 
-      Log.Write("Card:{0} stop recording",ID);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} stop recording",ID);
       // todo : stop recorder
       _mGraph.StopRecording();
 
@@ -830,7 +830,7 @@ namespace MediaPortal.TV.Recording
       _mPostRecordInterval = iPostRecordInterval;
       _mTvChannelName = recording.Channel;
 
-      Log.Write("Card:{0} record {1} on {2} from {3}-{4}",ID, recording.Title,_mTvChannelName,recording.StartTime.ToLongTimeString(),recording.EndTime.ToLongTimeString());
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} record {1} on {2} from {3}-{4}",ID, recording.Title,_mTvChannelName,recording.StartTime.ToLongTimeString(),recording.EndTime.ToLongTimeString());
       // create sink graph
       if (CreateGraph())
       {
@@ -904,7 +904,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Stop()
     {
-      Log.Write("Card:{0} stop",ID);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} stop",ID);
       StopRecording();
       StopTimeShifting();
       DeleteGraph();
@@ -920,7 +920,7 @@ namespace MediaPortal.TV.Recording
       if (_mGraph == null)
 			{
 				LoadContrastGammaBrightnessSettings();
-        Log.Write("Card:{0} CreateGraph",ID);
+        Log.WriteFile(Log.LogType.Capture,"Card:{0} CreateGraph",ID);
         _mGraph = GraphFactory.CreateGraph(this);
         if (_mGraph == null) return false;
         return _mGraph.CreateGraph();
@@ -939,7 +939,7 @@ namespace MediaPortal.TV.Recording
       if (_mGraph != null)
       {
 				SaveContrastGammaBrightnessSettings();
-        Log.Write("Card:{0} DeleteGraph",ID);
+        Log.WriteFile(Log.LogType.Capture,"Card:{0} DeleteGraph",ID);
         _mGraph.DeleteGraph();
         _mGraph = null;
 				GC.Collect();
@@ -960,7 +960,7 @@ namespace MediaPortal.TV.Recording
     {
       if (IsRecording) return false;
 
-      Log.Write("Card:{0} start timeshifting :{1}",ID, _mTvChannelName);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} start timeshifting :{1}",ID, _mTvChannelName);
       TVChannel channel=GetChannel(_mTvChannelName);
 
 			if (_mState == State.Timeshifting) 
@@ -997,7 +997,7 @@ namespace MediaPortal.TV.Recording
 
   
       
-      Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} timeshift to file:{1}",ID, strFileName);
       bool bResult = _mGraph.StartTimeShifting(channel, strFileName);
       if ( bResult ==true)
       {
@@ -1020,7 +1020,7 @@ namespace MediaPortal.TV.Recording
       if (!IsTimeShifting) return false;
 
       //stopping timeshifting will also remove the live.tv file 
-      Log.Write("Card:{0} stop timeshifting",ID);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} stop timeshifting",ID);
       _mGraph.StopTimeShifting();
       _mState = State.Initialized;
       return true;
@@ -1044,7 +1044,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
      bool StartRecording(bool bContentRecording)
      {
-      Log.Write("Card:{0} start recording content:{1}",ID, bContentRecording);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} start recording content:{1}",ID, bContentRecording);
       string strRecPath;
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
@@ -1092,7 +1092,7 @@ namespace MediaPortal.TV.Recording
       
 
       string strFileName = String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName));
-      Log.Write("Card:{0} recording to file:{1}",ID, strFileName);
+      Log.WriteFile(Log.LogType.Capture,"Card:{0} recording to file:{1}",ID, strFileName);
 
       TVChannel channel=GetChannel(_mTvChannelName);
 
@@ -1160,7 +1160,7 @@ namespace MediaPortal.TV.Recording
         {
           if (chan.Number <= 0)
           {
-            Log.Write("error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
+            Log.WriteFile(Log.LogType.Capture,"error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
               strChannelName, chan.Number, chan.Frequency);
           }
 					if (chan.Country<=0) chan.Country=CountryCode;
@@ -1208,7 +1208,7 @@ namespace MediaPortal.TV.Recording
         {
           if (View)
           {
-            Log.Write("Card:{0} stop viewing :{1}",ID, _mTvChannelName);
+            Log.WriteFile(Log.LogType.Capture,"Card:{0} stop viewing :{1}",ID, _mTvChannelName);
             _mGraph.StopViewing();
             DeleteGraph();
           }
@@ -1220,7 +1220,7 @@ namespace MediaPortal.TV.Recording
           DeleteGraph();
           if (CreateGraph())
           {
-            Log.Write("Card:{0} start viewing :{1}",ID, _mTvChannelName);
+            Log.WriteFile(Log.LogType.Capture,"Card:{0} start viewing :{1}",ID, _mTvChannelName);
             TVChannel chan = GetChannel(_mTvChannelName);
             _mGraph.StartViewing(chan);
 						SetTvSettings();

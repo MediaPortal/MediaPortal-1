@@ -297,7 +297,7 @@ namespace MediaPortal.TV.Recording
 
 				if (notConnected>0 && connected<2)
 				{
-					Log.Write("SWGraph: tuner got {0} pins connected and {1} pins unconnected", connected,notConnected);
+					Log.WriteFile(Log.LogType.Capture,"SWGraph: tuner got {0} pins connected and {1} pins unconnected", connected,notConnected);
 					ConnectTVTunerOutputs();
 				}
       }
@@ -814,7 +814,7 @@ namespace MediaPortal.TV.Recording
 			}
 
       if (m_graphState != State.Created) return false;
-      Log.Write("SWGraph:Start viewing");
+      Log.WriteFile(Log.LogType.Capture,"SWGraph:Start viewing");
 			m_iCountryCode=channel.Country;
       TuneChannel(channel);
 
@@ -823,30 +823,30 @@ namespace MediaPortal.TV.Recording
 
 			/* disabled. this causes a audio-echo because now both the video capture filter audio out
 			 * and the audio capture filter audio out are both connected to a directsound renderer
-			Log.Write("SWGraph:FAILED:render audio preview");
+			Log.WriteFile(Log.LogType.Capture,"SWGraph:FAILED:render audio preview");
 			DirectShowUtil.RenderOutputPins(m_graphBuilder, m_filterCaptureAudio,2);
 			*/
 
-			Log.Write("SWGraph:FAILED:render video preview");
+			Log.WriteFile(Log.LogType.Capture,"SWGraph:FAILED:render video preview");
       m_videoCaptureDevice.RenderPreview();
 			m_mediaControl = (IMediaControl)m_graphBuilder;
 
 			bool useOverlay=true;
 			if (Vmr9.IsVMR9Connected) useOverlay=false;
-      Log.Write("SWGraph:Get overlay interfaces");
+      Log.WriteFile(Log.LogType.Capture,"SWGraph:Get overlay interfaces");
 			if (useOverlay)
 			{
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow==null)
 				{
-					Log.Write("SWGraph:FAILED:Unable to get IVideoWindow");
+					Log.WriteFile(Log.LogType.Capture,"SWGraph:FAILED:Unable to get IVideoWindow");
 					return false;
 				}
 
 				m_basicVideo = m_graphBuilder as IBasicVideo2;
 				if (m_basicVideo==null)
 				{
-					Log.Write("SWGraph:FAILED:Unable to get IBasicVideo2");
+					Log.WriteFile(Log.LogType.Capture,"SWGraph:FAILED:Unable to get IBasicVideo2");
 					return false;
 				}
 				int hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
@@ -858,7 +858,7 @@ namespace MediaPortal.TV.Recording
 					DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style:0x{0:X}",hr);
 
 	      
-				Log.Write("SWGraph:Show overlay");
+				Log.WriteFile(Log.LogType.Capture,"SWGraph:Show overlay");
 				m_bOverlayVisible=true;
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 				if (hr != 0) 
@@ -870,7 +870,7 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 
       
-      Log.Write("SWGraph:run graph");
+      Log.WriteFile(Log.LogType.Capture,"SWGraph:run graph");
       m_mediaControl.Run();
       
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
@@ -916,14 +916,14 @@ namespace MediaPortal.TV.Recording
         m_bOverlayVisible=value;
         if (!m_bOverlayVisible)
         {
-          Log.Write("SWGraph: hide overlay window");
+          Log.WriteFile(Log.LogType.Capture,"SWGraph: hide overlay window");
           if (m_videoWindow!=null)
             m_videoWindow.put_Visible( DsHlp.OAFALSE );
 
         }
         else
         {
-          Log.Write("SWGraph: show overlay window");
+          Log.WriteFile(Log.LogType.Capture,"SWGraph: show overlay window");
           if (m_videoWindow!=null)
             m_videoWindow.put_Visible( DsHlp.OATRUE );
 
@@ -951,7 +951,7 @@ namespace MediaPortal.TV.Recording
       {
         if (Overlay!=false)
         {
-          Log.Write("SWGraph:overlay disabled");
+          Log.WriteFile(Log.LogType.Capture,"SWGraph:overlay disabled");
           Overlay=false;
         }
         return;
@@ -960,7 +960,7 @@ namespace MediaPortal.TV.Recording
       {
         if (Overlay!=true)
         {
-          Log.Write("SWGraph:overlay enabled");
+          Log.WriteFile(Log.LogType.Capture,"SWGraph:overlay enabled");
           Overlay=true;
         }
       }*/
@@ -1783,12 +1783,12 @@ namespace MediaPortal.TV.Recording
 				crossbar.get_CrossbarPinInfo(true,i,out iPinIndexRelatedIn, out PhysicalTypeIn);
 				if (PhysicalTypeIn == PhysicalConnectorType.Audio_Tuner)
 				{
-					Log.Write("SWGraph:got crossbar audio tuner input");
+					Log.WriteFile(Log.LogType.Capture,"SWGraph:got crossbar audio tuner input");
 					crossBarAudioTunerIn=DirectShowUtil.FindPinNr( (IBaseFilter)crossbar, PinDirection.Input,i);
 				}
 				if (PhysicalTypeIn == PhysicalConnectorType.Video_Tuner)
 				{
-					Log.Write("SWGraph:got crossbar video tuner input");
+					Log.WriteFile(Log.LogType.Capture,"SWGraph:got crossbar video tuner input");
 					crossBarVideoTunerIn=DirectShowUtil.FindPinNr( (IBaseFilter)crossbar, PinDirection.Input,i);
 				}
 			}
@@ -1815,12 +1815,12 @@ namespace MediaPortal.TV.Recording
 								hr=m_graphBuilder.Connect(pin, crossBarVideoTunerIn);
 							if (hr==0)
 							{
-								Log.Write("SWGraph:connected tuner->crossbar video tuner input");
+								Log.WriteFile(Log.LogType.Capture,"SWGraph:connected tuner->crossbar video tuner input");
 							}
 						}
 						else
 						{	
-							Log.Write("SWGraph:connected tuner->crossbar audio tuner input");
+							Log.WriteFile(Log.LogType.Capture,"SWGraph:connected tuner->crossbar audio tuner input");
 						}
 					}
 				}
@@ -1843,14 +1843,14 @@ namespace MediaPortal.TV.Recording
 			if (crossbarOut1!=null && videoCaptureIn1!=null)
 			{
 				hr=m_graphBuilder.Connect(crossbarOut1, videoCaptureIn1);
-				if (hr==0) Log.Write("SWGraph: connected crossbar:0->capture:0");
-				else Log.Write("SWGraph: FAILED connected crossbar:0->capture:0 0x{0:X}",hr);
+				if (hr==0) Log.WriteFile(Log.LogType.Capture,"SWGraph: connected crossbar:0->capture:0");
+				else Log.WriteFile(Log.LogType.Capture,"SWGraph: FAILED connected crossbar:0->capture:0 0x{0:X}",hr);
 			}
 			if (crossbarOut2!=null && videoCaptureIn2!=null)
 			{
 				hr=m_graphBuilder.Connect(crossbarOut2, videoCaptureIn2);
-				if (hr==0) Log.Write("SWGraph: connected crossbar:1->capture:1");
-				else Log.Write("SWGraph: FAILED connected crossbar:1->capture:1 0x{0:X}",hr);
+				if (hr==0) Log.WriteFile(Log.LogType.Capture,"SWGraph: connected crossbar:1->capture:1");
+				else Log.WriteFile(Log.LogType.Capture,"SWGraph: FAILED connected crossbar:1->capture:1 0x{0:X}",hr);
 			}
 
 			if (crossbarOut1!=null) 

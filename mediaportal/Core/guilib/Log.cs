@@ -28,6 +28,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static Log()
 		{
+			System.IO.Directory.CreateDirectory("log");
 			Initialize(LogType.Capture);
 			Initialize(LogType.Log);
 			Initialize(LogType.Recorder);
@@ -38,8 +39,7 @@ namespace MediaPortal.GUI.Library
       try
       {
 				string name=GetFileName(type);
-        System.IO.Directory.CreateDirectory(name);
-				System.IO.File.Delete(name);
+				System.IO.File.Delete(name.Replace(".log",".bak"));
 				System.IO.File.Move(name,name.Replace(".log",".bak"));
       }
       catch(Exception)
@@ -92,6 +92,6 @@ namespace MediaPortal.GUI.Library
 				{
 				}
 			}
-		}
+		}//static public void WriteFile(LogType type, string strFormat, params object[] arg)
 	}
 }

@@ -75,7 +75,7 @@ namespace MediaPortal.TV.Recording
 			count = 0;
 			string line;
 			string[] tpdata;
-			Log.Write("Opening {0}",ofd.FileName);
+			Log.WriteFile(Log.LogType.Capture,"Opening {0}",ofd.FileName);
 			// load transponder list and start scan
 			System.IO.TextReader tin = System.IO.File.OpenText(ofd.FileName);
 			
@@ -123,7 +123,7 @@ namespace MediaPortal.TV.Recording
 			tin.Close();
 			
 
-			Log.Write("loaded:{0} transponders", count);
+			Log.WriteFile(Log.LogType.Capture,"loaded:{0} transponders", count);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
@@ -172,7 +172,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.Write("Found signal for transponder:{0} {1}",currentIndex,chanDesc);
+					Log.WriteFile(Log.LogType.Capture,"Found signal for transponder:{0} {1}",currentIndex,chanDesc);
 					currentState=State.ScanChannels;
 				}
 			}
@@ -199,7 +199,7 @@ namespace MediaPortal.TV.Recording
 			timer1.Enabled=false;
 			captureCard.StoreTunedChannels(false,true);
 			callback.UpdateList();
-			Log.Write("timeout, goto scanning transponders");
+			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning transponders");
 			currentState=State.ScanTransponders;
 			ScanNextTransponder();
 			timer1.Enabled=true;
@@ -238,7 +238,7 @@ namespace MediaPortal.TV.Recording
 			
 			
 
-			Log.Write("tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
+			Log.WriteFile(Log.LogType.Capture,"tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
 									newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
 			Application.DoEvents();
 			Application.DoEvents();

@@ -49,11 +49,8 @@ namespace MediaPortal.TV.Recording
 			Initialized,
 			Deinitializing
 		}
-		static string TVChannelCovertArt=@"thumbs\tv\logos";
+		static string				 TVChannelCovertArt=@"thumbs\tv\logos";
 		static bool          m_bRecordingsChanged=false;  // flag indicating that recordings have been added/changed/removed
-		//static bool          m_bTimeshifting =false;       //todo
-		//static bool          m_bAlwaysTimeshift=false;  //todo
-		//static bool          m_bViewing=false;  //todo
 		static int           m_iPreRecordInterval =0;
 		static int           m_iPostRecordInterval=0;
 		static TVUtil        m_TVUtil=null;
@@ -94,7 +91,7 @@ namespace MediaPortal.TV.Recording
 			m_bRecordingsChanged=false;
     
 
-			Log.Write("Recorder: Loading capture cards from capturecards.xml");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: Loading capture cards from capturecards.xml");
 			m_tvcards.Clear();
 			try
 			{
@@ -107,17 +104,17 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception)
 			{
-				Log.Write("Recorder: invalid capturecards.xml found! please delete it");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: invalid capturecards.xml found! please delete it");
 			}
 			if (m_tvcards.Count==0) 
 			{
-				Log.Write("Recorder: no capture cards found. Use file->setup to setup tvcapture!");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: no capture cards found. Use file->setup to setup tvcapture!");
 			}
 			for (int i=0; i < m_tvcards.Count;i++)
 			{
 				TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
 				card.ID=(i+1);
-				Log.Write("Recorder:    card:{0} video device:{1} TV:{2}  record:{3} priority:{4}",
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:    card:{0} video device:{1} TV:{2}  record:{3} priority:{4}",
 					card.ID,card.VideoDevice,card.UseForTV,card.UseForRecording,card.Priority);
 			}
 
@@ -306,12 +303,12 @@ namespace MediaPortal.TV.Recording
 				tmpRec.Start=program.Start;
 				tmpRec.End=program.End;
 				tmpRec.Title=program.Title;
-				Log.Write("Recorder: record now:{0} program:{1}",strChannel,program.Title);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: record now:{0} program:{1}",strChannel,program.Title);
 			}
 			else
 			{
 				//no tvguide data, just record the next 2 hours
-				Log.Write("Recorder: record now:{0} for next 2 hours",strChannel);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: record now:{0} for next 2 hours",strChannel);
 				tmpRec.Start=Utils.datetolong(DateTime.Now);
 				tmpRec.End=Utils.datetolong(DateTime.Now.AddMinutes(2*60) );
 				tmpRec.Title=GUILocalizeStrings.Get(413);
@@ -320,8 +317,8 @@ namespace MediaPortal.TV.Recording
 			tmpRec.RecType=TVRecording.RecordingType.Once;
 			tmpRec.IsContentRecording=false;//make a reference recording!
 
-			Log.Write("Recorder: start: {0} {1}",tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
-			Log.Write("Recorder: end  : {0} {1}",tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: start: {0} {1}",tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: end  : {0} {1}",tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
 
 			TVDatabase.AddRecording(ref tmpRec);
 		}//static public void RecordNow(string strChannel)
@@ -352,16 +349,16 @@ namespace MediaPortal.TV.Recording
 			}
 
 			// not recording this yet
-			Log.Write("Recorder: time to record a {0} on channel:{1} from {2}-{3}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString());
-			Log.Write("Recorder: find free capture card");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record a {0} on channel:{1} from {2}-{3}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString());
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: find free capture card");
 			foreach (TVCaptureDevice dev in m_tvcards)
 			{
-				Log.Write("Recorder: Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
 					dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
 			}
 			if (g_Player.Playing)
 			{
-				Log.Write("Recorder: currently playing:{0}", g_Player.CurrentFile);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: currently playing:{0}", g_Player.CurrentFile);
 			}
 
 			// find free device for recording
@@ -409,7 +406,7 @@ namespace MediaPortal.TV.Recording
 				//yes then record
 				cardNo=highestCard;
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[cardNo];
-				Log.Write("Recorder: using capture card:{0} {1} prio:{2}", dev.ID, dev.VideoDevice,dev.Priority);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: using capture card:{0} {1} prio:{2}", dev.ID, dev.VideoDevice,dev.Priority);
 				bool viewing=(m_iCurrentCard==cardNo);
 				TuneExternalChannel(rec.Channel);
 				dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
@@ -423,7 +420,7 @@ namespace MediaPortal.TV.Recording
 			if ( rec.IsRecordingProgramAtTime(currentTime,currentProgram,0,0) )
 			{
 				// yes, then find & stop any capture running which is busy post-recording
-				Log.Write("Recorder: No card found, check if a card is post-recording");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: No card found, check if a card is post-recording");
 				cardNo=0;
 				highestPrio=-1;
 				highestCard=-1;
@@ -471,7 +468,7 @@ namespace MediaPortal.TV.Recording
 				cardNo=highestCard;
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[cardNo];
 				bool viewing=(m_iCurrentCard==cardNo);
-				Log.Write("Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: capture card:{0} {1} was post-recording. Now use it for recording new program", dev.ID,dev.VideoDevice);
 				dev.StopRecording();
 				TuneExternalChannel(rec.Channel);
 				dev.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
@@ -481,7 +478,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//no device free...
-			Log.Write("Recorder: no capture cards are available right now for recording");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: no capture cards are available right now for recording");
 			return false;
 		}//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
@@ -496,7 +493,7 @@ namespace MediaPortal.TV.Recording
       
 			if (dev.IsRecording) 
 			{
-				Log.Write("Recorder: Stop recording on channel:{0} capture card:{1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording on channel:{0} capture card:{1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
 				int ID=dev.CurrentTVRecording.ID;
 				for (int i=0; i < m_Recordings.Count;++i)
 				{
@@ -606,17 +603,17 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		static public void StopViewing()
 		{
-			Log.Write("Recorder: StopViewing()");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: StopViewing()");
 			TVCaptureDevice dev ;
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				dev=(TVCaptureDevice)m_tvcards[i];
-				Log.Write("Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
 					dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
 			}
 			if (g_Player.Playing)
 			{
-				Log.Write("Recorder:currently playing:{0}", g_Player.CurrentFile);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:currently playing:{0}", g_Player.CurrentFile);
 			}
 			// stop any playing..
 			if (g_Player.Playing && g_Player.IsTV) 
@@ -632,12 +629,12 @@ namespace MediaPortal.TV.Recording
 				{
 					if (dev.IsTimeShifting)
 					{
-						Log.Write("Recorder: stop timeshifting {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
+						Log.WriteFile(Log.LogType.Recorder,"Recorder: stop timeshifting {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
 						dev.StopTimeShifting();
 					}
 					if (dev.View) 
 					{
-						Log.Write("Recorder: stop viewing {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
+						Log.WriteFile(Log.LogType.Recorder,"Recorder: stop viewing {0} on card {1} {2}", dev.TVChannel,dev.ID,dev.FriendlyName);
 						dev.View=false;
 					}
 					dev.DeleteGraph();
@@ -692,13 +689,13 @@ namespace MediaPortal.TV.Recording
 		
 		static public void StopRadio()
 		{
-			Log.Write("Recorder:StopRadio()");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:StopRadio()");
 			
 			foreach (TVCaptureDevice dev in m_tvcards)
 			{
 				if (dev.IsRadio)
 				{
-					Log.Write("Recorder:StopRadio() stop radio on card:{0}", dev.ID);
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:StopRadio() stop radio on card:{0}", dev.ID);
 					dev.DeleteGraph();
 				}
 			}
@@ -708,26 +705,26 @@ namespace MediaPortal.TV.Recording
 		{
 			if (radioStationName==null) 
 			{
-				Log.Write("Recorder:Start TV viewing radioStation=null?");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:Start TV viewing radioStation=null?");
 				return ;
 			}
 			if (radioStationName==String.Empty)  
 			{
-				Log.Write("Recorder:Start TV viewing radioStation=empty");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:Start TV viewing radioStation=empty");
 				return ;
 			}
 			if (m_eState!= State.Initialized)  
 			{
-				Log.Write("Recorder:StartRadio but recorder is not initalised");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio but recorder is not initalised");
 				return ;
 			}
 			g_Player.Stop();
 			StopViewing();
-			Log.Write("Recorder:StartRadio:{0}",radioStationName);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio:{0}",radioStationName);
 			RadioStation radiostation;
 			if (!RadioDatabase.GetStation( radioStationName,out radiostation) )
 			{
-				Log.Write("Recorder:StartRadio unknown station:{0}", radioStationName);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio unknown station:{0}", radioStationName);
 				return ;
 			}
 
@@ -749,31 +746,31 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
-						Log.Write("Recorder:Start radio on card:{0} {1} station:{2}",
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:Start radio on card:{0} {1} station:{2}",
 											tvcard.ID,tvcard.FriendlyName,radioStationName);
 						tvcard.StartRadio(radiostation);
 						return;
 					}
 				}
 			}
-			Log.Write("Recorder: no free card which can listen to radio channel:{0}", radioStationName);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: no free card which can listen to radio channel:{0}", radioStationName);
 		}
 
 		static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
 		{
 			if (channel==null) 
 			{
-				Log.Write("Recorder:Start TV viewing channel=null?");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:Start TV viewing channel=null?");
 				return ;
 			}
 			if (channel==String.Empty)  
 			{
-				Log.Write("Recorder:Start TV viewing channel=empty");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:Start TV viewing channel=empty");
 				return ;
 			}
 			if (m_eState!= State.Initialized)  
 			{
-				Log.Write("Recorder:Start TV viewing but recorder is not initalised");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:Start TV viewing but recorder is not initalised");
 				return ;
 			}
 
@@ -781,32 +778,32 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				dev=(TVCaptureDevice)m_tvcards[i];
-				Log.Write("Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
 								dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
 			}
 			if (g_Player.Playing)
 			{
-				Log.Write("Recorder:currently playing:{0}", g_Player.CurrentFile);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:currently playing:{0}", g_Player.CurrentFile);
 			}
 	
 			string strTimeShiftFileName;
 			if (TVOnOff==false)
 			{
-				Log.Write("Recorder:turn TV off");
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:turn TV off");
 				//TV should be turned off
 				if (m_iCurrentCard>=0 && m_iCurrentCard<m_tvcards.Count)
 				{
 					dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
 				
-					Log.Write("Recorder:stop watching TV on card:{0} {1}", dev.ID, dev.FriendlyName);
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:stop watching TV on card:{0} {1}", dev.ID, dev.FriendlyName);
 					// is card currently recording?
 					if (dev.IsRecording) 
 					{
-						Log.Write("Recorder:card is recording");
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:card is recording");
 						// yes, does it support timeshifting?
 						if (dev.SupportsTimeShifting)
 						{
-							Log.Write("Recorder:stop playing timeshifting file");
+							Log.WriteFile(Log.LogType.Recorder,"Recorder:stop playing timeshifting file");
 							//yes, are playing the timeshifting file?
 							if (g_Player.CurrentFile==GetTimeShiftFileName(m_iCurrentCard))
 							{
@@ -833,7 +830,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			}//if (TVOnOff==false)
 			
-			Log.Write("Recorder:Turn tv on channel:{0}", channel);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:Turn tv on channel:{0}", channel);
 
 			// tv should be turned on
 			// check if any card is already viewing...
@@ -864,7 +861,7 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 
-							Log.Write("Recorder:card:{0} {1} is watching {2}", dev.ID, dev.FriendlyName,channel);
+							Log.WriteFile(Log.LogType.Recorder,"Recorder:card:{0} {1} is watching {2}", dev.ID, dev.FriendlyName,channel);
 							// do we want timeshifting?
 							if  (timeshift || dev.IsRecording)
 							{
@@ -874,12 +871,12 @@ namespace MediaPortal.TV.Recording
 									dev.StartTimeShifting();
 								}
 
-								Log.Write("Recorder:StartViewing():start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
+								Log.WriteFile(Log.LogType.Recorder,"Recorder:StartViewing():start viewing timeshift file of card {0} {1}", dev.ID, dev.FriendlyName);
 								//yes, check if we're already playing/watching it
 								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
 								if (g_Player.CurrentFile!=strTimeShiftFileName)
 								{
-									Log.Write(" currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
+									Log.WriteFile(Log.LogType.Recorder," currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
 									g_Player.Play(strTimeShiftFileName);
 								}
 								return;
@@ -887,7 +884,7 @@ namespace MediaPortal.TV.Recording
 							else
 							{
 								//we dont want timeshifting
-								Log.Write("Recorder:StartViewing() view card:{0} {1} channel:{2}", dev.ID, dev.FriendlyName, dev.TVChannel);
+								Log.WriteFile(Log.LogType.Recorder,"Recorder:StartViewing() view card:{0} {1} channel:{2}", dev.ID, dev.FriendlyName, dev.TVChannel);
 								
 								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
 								if (g_Player.CurrentFile==strTimeShiftFileName)
@@ -904,7 +901,7 @@ namespace MediaPortal.TV.Recording
 				}//if ( (dev.IsTimeShifting||dev.View) && dev.TVChannel == channel)
 			}//for (int i=0; i < m_tvcards.Count;++i)
 
-			Log.Write("Recorder:find free card");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:find free card");
 			//stop any other cards which are only viewing
 			g_Player.Stop();
 			for (int i=0; i < m_tvcards.Count;++i)
@@ -913,7 +910,7 @@ namespace MediaPortal.TV.Recording
 				if (!tvcard.IsRecording)
 				{
 					//stop watching on this card
-					Log.Write("Recorder: stop watching on card:{0} {1} channel:{2}", tvcard.ID,tvcard.FriendlyName,tvcard.TVChannel);
+					Log.WriteFile(Log.LogType.Recorder,"Recorder: stop watching on card:{0} {1} channel:{2}", tvcard.ID,tvcard.FriendlyName,tvcard.TVChannel);
 					
 
 					if (tvcard.IsTimeShifting)
@@ -949,14 +946,14 @@ namespace MediaPortal.TV.Recording
 			}
 			if (card < 0) 
 			{
-				Log.Write("Recorder:No free card which can receive channel {0}", channel);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:No free card which can receive channel {0}", channel);
 				return; // no card available
 			}
 			m_iCurrentCard=card;
 			m_strTVChannel=channel;
 			dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			
-			Log.Write("Recorder:found card {0} {1}",dev.ID,dev.FriendlyName);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:found card {0} {1}",dev.ID,dev.FriendlyName);
 
 			//do we want to use timeshifting ?
 			if (timeshift)
@@ -965,7 +962,7 @@ namespace MediaPortal.TV.Recording
 				if (dev.SupportsTimeShifting)
 				{
 					// yep, then turn timeshifting on
-					Log.Write("Recorder:start timeshifting card {0} {1} channel:{2}",dev.ID,dev.FriendlyName,channel);
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:start timeshifting card {0} {1} channel:{2}",dev.ID,dev.FriendlyName,channel);
 					TuneExternalChannel(channel);
 					dev.TVChannel=channel;
 					dev.StartTimeShifting();
@@ -975,7 +972,7 @@ namespace MediaPortal.TV.Recording
 					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
 					if (g_Player.CurrentFile!=strTimeShiftFileName)
 					{
-						Log.Write(" currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
+						Log.WriteFile(Log.LogType.Recorder," currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
 						g_Player.Play(strTimeShiftFileName);
 					}
 					return;
@@ -985,7 +982,7 @@ namespace MediaPortal.TV.Recording
 			//tv should be turned on without timeshifting
 			//just present the overlay tv view
 			// now start watching on our card
-			Log.Write("Recorder: start watching on card:{0} {1} channel:{2}", dev.ID,dev.FriendlyName,channel);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: start watching on card:{0} {1} channel:{2}", dev.ID,dev.FriendlyName,channel);
 			TuneExternalChannel(channel);
 			dev.TVChannel=channel;
 			dev.View=true;
@@ -1626,8 +1623,8 @@ namespace MediaPortal.TV.Recording
 			{
 			}
 			if (totalSize < m_lMaxRecordingSize) return;
-			Log.Write("Recorder: exceeded diskspace limit for recordings");
-			Log.Write("Recorder:   {0} recordings contain {1} while limit is {2}",
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: exceeded diskspace limit for recordings");
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:   {0} recordings contain {1} while limit is {2}",
 										files.Count, Utils.GetSize(totalSize), Utils.GetSize(m_lMaxRecordingSize) );
 
 			// we exceeded the diskspace
@@ -1636,7 +1633,7 @@ namespace MediaPortal.TV.Recording
 			while (totalSize > m_lMaxRecordingSize && files.Count>0)
 			{
 				RecordingFileInfo fi = (RecordingFileInfo)files[0];
-				Log.Write("Recorder: delete old recording:{0} size:{1} date:{2} {3}",
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: delete old recording:{0} size:{1} date:{2} {3}",
 															fi.filename,
 															Utils.GetSize(fi.info.Length),
 															fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
@@ -1647,7 +1644,7 @@ namespace MediaPortal.TV.Recording
 					VideoDatabase.DeleteMovieInfo(fi.filename);
 				}
 				files.RemoveAt(0);
-			}
-		}
+			}//while (totalSize > m_lMaxRecordingSize && files.Count>0)
+		}//static void CheckRecordingDiskSpace()
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

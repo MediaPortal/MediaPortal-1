@@ -337,7 +337,7 @@ namespace MediaPortal.TV.Recording
 				}
 				catch(Exception ex)
 				{
-					Log.Write("Plugins-Exception: {0}",ex.Message);
+					Log.WriteFile(Log.LogType.Capture,"Plugins-Exception: {0}",ex.Message);
 				}
 
 			}
@@ -413,13 +413,13 @@ namespace MediaPortal.TV.Recording
 					m_retryCount=0;
 					CyclePid();
 					ExecTuner();
-					Log.Write("Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
+					Log.WriteFile(Log.LogType.Capture,"Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
 				}			
 			}
 			else m_retryCount=-1;
 
 
-			//Log.Write("Plugins: address {1}: written {0} bytes",add,len);
+			//Log.WriteFile(Log.LogType.Capture,"Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
 		}
 
@@ -475,7 +475,7 @@ namespace MediaPortal.TV.Recording
 		public bool CreateGraph()
 		{
 			if (m_graphState != State.None) return false;
-			Log.Write("DVBGraphSS2:creategraph()");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph()");
 			// create graphs
 			Vmr9 =new VMR9Util("mytv");
 
@@ -502,7 +502,7 @@ namespace MediaPortal.TV.Recording
 			
 			catch(Exception ex)
 			{
-				Log.Write("DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
 				return false;
 				//System.Windows.Forms.MessageBox.Show(ex.Message);
 			}
@@ -513,53 +513,53 @@ namespace MediaPortal.TV.Recording
 				n=m_graphBuilder.AddFilter(m_b2c2Adapter,"B2C2-Source");
 				if(n!=0)
 				{
-					Log.Write("DVBGraphSS2: FAILED to add B2C2-Adapter");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to add B2C2-Adapter");
 					return false;
 				}
 				n=m_graphBuilder.AddFilter(m_sampleGrabber,"GrabberFilter");
 				if(n!=0)
 				{
-					Log.Write("DVBGraphSS2: FAILED to add SampleGrabber");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to add SampleGrabber");
 					return false;
 				}
 				
 				n=m_graphBuilder.AddFilter(m_mpeg2Data,"SectionsFilter");
 				if(n!=0)
 				{
-					Log.Write("DVBGraphSS2: FAILED to add SectionsFilter");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to add SectionsFilter");
 					return false;
 				}
 
 				n=m_graphBuilder.AddFilter(m_demux,"Demuxer");
 				if(n!=0)
 				{
-					Log.Write("DVBGraphSS2: FAILED to add Demultiplexer");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to add Demultiplexer");
 					return false;
 				}
 				// get interfaces
 				m_dataCtrl=(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3) m_b2c2Adapter;
 				if(m_dataCtrl==null)
 				{
-					Log.Write("DVBGraphSS2: cannot get IB2C2MPEG2DataCtrl3");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: cannot get IB2C2MPEG2DataCtrl3");
 					return false;
 				}
 				m_tunerCtrl=(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2) m_b2c2Adapter;
 				if(m_tunerCtrl==null)
 				{
-					Log.Write("DVBGraphSS2: cannot get IB2C2MPEG2TunerCtrl2");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: cannot get IB2C2MPEG2TunerCtrl2");
 					return false;
 				}
 				m_avCtrl=(DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2) m_b2c2Adapter;
 				if(m_avCtrl==null)
 				{
-					Log.Write("DVBGraphSS2: cannot get IB2C2MPEG2AVCtrl2");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: cannot get IB2C2MPEG2AVCtrl2");
 					return false;
 				}
 				// init for tuner
 				n=m_tunerCtrl.Initialize();
 				if(n!=0)
 				{
-					Log.Write("DVBGraphSS2: Tuner initialize failed");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tuner initialize failed");
 					return false;
 				}
 				// call checklock once, the return value dont matter
@@ -569,7 +569,7 @@ namespace MediaPortal.TV.Recording
 				b=SetVideoAudioPins();
 				if(b==false)
 				{
-					Log.Write("DVBGraphSS2: SetVideoAudioPins() failed");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetVideoAudioPins() failed");
 					return false;
 				}
 
@@ -589,16 +589,16 @@ namespace MediaPortal.TV.Recording
 					hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2Sections",out m_demuxSectionsPin);
 					if (hr!=0)
 					{
-						Log.Write("DVBGraphSS2: FAILED to create mpeg2-sections pin on demuxer");
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to create mpeg2-sections pin on demuxer");
 						return false;
 					}
 					hr=m_graphBuilder.Connect(m_demuxSectionsPin,mpeg2DataIn);
 					if(hr!=0)
 					{
-						Log.Write("dvbgrapgss2: FAILED to connect demux<->mpeg2data");
+						Log.WriteFile(Log.LogType.Capture,"dvbgrapgss2: FAILED to connect demux<->mpeg2data");
 						return false;
 					}
-					Log.Write("dvbgraphss2: successfully connected demux<->mpeg2data");
+					Log.WriteFile(Log.LogType.Capture,"dvbgraphss2: successfully connected demux<->mpeg2data");
 				}
 
 				if(m_sampleInterface!=null)
@@ -612,13 +612,13 @@ namespace MediaPortal.TV.Recording
 					m_sampleInterface.SetBufferSamples(false);
 				}
 				else
-					Log.Write("DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
 					
 
 			}
 			catch(Exception ex)
 			{
-				Log.Write("DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
 				System.Windows.Forms.MessageBox.Show(ex.Message);
 				return false;
 			}
@@ -644,43 +644,43 @@ namespace MediaPortal.TV.Recording
 				hr = m_tunerCtrl.SetFrequency(Frequency);
 				if (hr!=0)
 				{
-					Log.Write("Tune for SkyStar2 FAILED: on SetFrequency");
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFrequency");
 					return false;	// *** FUNCTION EXIT POINT
 				}
 				hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
 				if (hr!=0)
 				{
-					Log.Write("Tune for SkyStar2 FAILED: on SetSymbolRate");
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetSymbolRate");
 					return false;	// *** FUNCTION EXIT POINT
 				}
 				hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
 				if (hr!=0)
 				{
-					Log.Write("Tune for SkyStar2 FAILED: on SetLnbFrequency");
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbFrequency");
 					return false;	// *** FUNCTION EXIT POINT
 				}
 				hr = m_tunerCtrl.SetFec(FEC);
 				if (hr!=0)
 				{
-					Log.Write("Tune for SkyStar2 FAILED: on SetFec");
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFec");
 					return false;	// *** FUNCTION EXIT POINT
 				}
 				hr = m_tunerCtrl.SetPolarity(POL);
 				if (hr!=0)
 				{
-					Log.Write("Tune for SkyStar2 FAILED: on SetPolarity");
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetPolarity");
 					return false;	// *** FUNCTION EXIT POINT
 				}
 				hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
 				if (hr!=0)
 				{
-					Log.Write("Tune for SkyStar2 FAILED: on SetLnbKHz");
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbKHz");
 					return false;	// *** FUNCTION EXIT POINT
 				}
 				hr = m_tunerCtrl.SetDiseqc(Diseq);
 				if (hr!=0)
 				{
-					Log.Write("Tune for SkyStar2 FAILED: on SetDiseqc");
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetDiseqc");
 					return false;	// *** FUNCTION EXIT POINT
 				}
 			}
@@ -706,7 +706,7 @@ namespace MediaPortal.TV.Recording
 
 					if(retryCount>=20)
 					{
-						Log.Write("Tune for SkyStar2 FAILED: on SetTunerStatus (in loop)");
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetTunerStatus (in loop)");
 						return false;	// *** FUNCTION EXIT POINT
 					}
 				}
@@ -717,7 +717,7 @@ namespace MediaPortal.TV.Recording
 //			hr=m_tunerCtrl.CheckLock();
 //			if(hr!=0)
 //			{
-//				Log.Write("Tune for SkyStar2 FAILED: on CheckLock");
+//				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on CheckLock");
 //				return false;
 //			}
 
@@ -1146,7 +1146,7 @@ namespace MediaPortal.TV.Recording
 
 			if(m_videoPin==null || m_audioPin==null)
 			{
-				Log.Write("DVBGraphSS2: pins not found on adapter");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: pins not found on adapter");
 				return false;
 			}
 			m_audioPin.QueryPinInfo(out pInfo);
@@ -1492,7 +1492,7 @@ namespace MediaPortal.TV.Recording
 				DVBChannel ch=new DVBChannel();
 				if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
 				{
-					Log.Write("DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
 					m_channelFound=false;
 					return;
 				}
@@ -1520,7 +1520,7 @@ namespace MediaPortal.TV.Recording
 					int hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,ch.AudioPid,ch.VideoPid);
 					if(hr!=0)
 					{
-						Log.Write("DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 						return;
 					}
 				}
@@ -1538,12 +1538,12 @@ namespace MediaPortal.TV.Recording
 			
 			if(m_demuxInterface==null)
 			{
-				Log.Write("DVBGraphSS2: SetDemux FAILED: no Demux-Interface");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetDemux FAILED: no Demux-Interface");
 				return;
 			}
 			int hr=0;
 
-			Log.Write("DVBGraphSS2:SetDemux() audio pid:0x{0:X} video pid:0x{1:X}",audioPid,videoPid);
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:SetDemux() audio pid:0x{0:X} video pid:0x{1:X}",audioPid,videoPid);
 			AMMediaType mpegVideoOut = new AMMediaType();
 			mpegVideoOut.majorType = MediaType.Video;
 			mpegVideoOut.subType = MediaSubType.MPEG2_Video;
@@ -1578,25 +1578,25 @@ namespace MediaPortal.TV.Recording
 			hr=m_demuxInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_demuxVideoPin);
 			if (hr!=0)
 			{
-				Log.Write("DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
 				return;
 			}
 			hr=m_demuxInterface.CreateOutputPin(ref mpegAudioOut, "audio", out m_demuxAudioPin);
 			if (hr!=0)
 			{
-				Log.Write("DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
 				return;
 			}
 
 			hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,audioPid,videoPid);
 			if(hr!=0)
 			{
-				Log.Write("DVBGraphSS2: FAILED to config Demuxer");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to config Demuxer");
 				return;
 			}
 
 
-			Log.Write("DVBGraphSS2:SetDemux() done:{0}", hr);
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:SetDemux() done:{0}", hr);
 			//int //=0;
 		}
 		/// <summary>
@@ -1629,14 +1629,14 @@ namespace MediaPortal.TV.Recording
 		public bool StartViewing(TVChannel channel)
 		{
 			if (m_graphState != State.Created) return false;
-			Log.Write("DVBGraphSS2:StartViewing()");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing()");
 			TuneChannel(channel);
 			int hr=0;
 			bool setVisFlag=false;
 			
 			if(m_channelFound==false)
 			{
-				Log.Write("DVBGraphSS2:StartViewing() channel not found");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() channel not found");
 				return false;
 			}
 			AddPreferredCodecs(true,true);
@@ -1647,38 +1647,38 @@ namespace MediaPortal.TV.Recording
 			}
 
 
-				Log.Write("DVBGraphSS2:StartViewing() Using plugins");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() Using plugins");
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
 
 				if (samplePin==null)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
 					return false;
 				}
 				if (demuxInPin==null)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
 					return false;
 				}
 
 				hr=m_graphBuilder.Connect(m_data0,samplePin);
 				if(hr!=0)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
 					return false;
 				}
 				samplePin=null;
 				samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Output,0);			
 				if(samplePin==null)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find sampleGrabber output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find sampleGrabber output pin");
 					return false;
 				}
 				hr=m_graphBuilder.Connect(samplePin,demuxInPin);
 				if(hr!=0)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: connect sample->demux");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: connect sample->demux");
 					return false;
 				}
 
@@ -1686,25 +1686,25 @@ namespace MediaPortal.TV.Recording
 			
 				if(m_demuxVideoPin==null)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demux video output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demux video output pin");
 					return false;
 				}
 				if(m_demuxAudioPin==null)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demux audio output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demux audio output pin");
 					return false;
 				}
 
 				hr=m_graphBuilder.Render(m_demuxVideoPin);
 				if(hr!=0)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot render demux video output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot render demux video output pin");
 					return false;
 				}
 				hr=m_graphBuilder.Render(m_demuxAudioPin);
 				if(hr!=0)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot render demux audio output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot render demux audio output pin");
 					return false;
 				}
 				//
@@ -1739,13 +1739,13 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow = (IVideoWindow) m_graphBuilder as IVideoWindow;
 				if (m_videoWindow==null)
 				{
-					Log.Write("DVBGraphSS2:FAILED:Unable to get IVideoWindow");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:FAILED:Unable to get IVideoWindow");
 				}
 
 				m_basicVideo = (IBasicVideo2)m_graphBuilder as IBasicVideo2;
 				if (m_basicVideo==null)
 				{
-					Log.Write("DVBGraphSS2:FAILED:Unable to get IBasicVideo2");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:FAILED:Unable to get IBasicVideo2");
 				}
 				hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
 				if (hr != 0) 
@@ -1767,13 +1767,13 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext_OnVideoWindowChanged();
 			//
 			
-			Log.Write("DVBGraphSS2:StartViewing() start graph");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() start graph");
 
 			m_mediaControl.Run();
 				
 			if(setVisFlag)
 			{
-				Log.Write("DVBGraphSS2:StartViewing() show video window");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() show video window");
 				hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
 				if (hr != 0) 
 				{
@@ -1782,7 +1782,7 @@ namespace MediaPortal.TV.Recording
 
 			}
 
-			Log.Write("DVBGraphSS2:StartViewing() startviewing done");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() startviewing done");
 			return true;
 		}
 
@@ -1940,18 +1940,18 @@ namespace MediaPortal.TV.Recording
 			catch{}
 			if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,-1,-1,ch.LNBFrequency,0,0,0,0,"",0)==false)
 			{
-				Log.Write("auto-tune ss2: FAILED to tune channel");
+				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: FAILED to tune channel");
 				return;
 			}
 			else
-				Log.Write("called Tune(object)");
+				Log.WriteFile(Log.LogType.Capture,"called Tune(object)");
 			m_currentTuningObject=ch;
 
 		}
 		//
 		public void StoreChannels(int ID,bool radio, bool tv)
 		{
-			Log.Write("called StoreChannels()");
+			Log.WriteFile(Log.LogType.Capture,"called StoreChannels()");
 			if (m_mpeg2Data==null) return;
 
 
@@ -1963,7 +1963,7 @@ namespace MediaPortal.TV.Recording
 			SetPidToPin(m_dataCtrl,0,0);
 			SetPidToPin(m_dataCtrl,0,16);
 			SetPidToPin(m_dataCtrl,0,17);
-			Log.Write("auto-tune ss2: StoreChannels()");
+			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: StoreChannels()");
 			DVBSections sections = new DVBSections();
 			sections.SetPidsForTechnisat=true;
 			sections.DataControl=m_dataCtrl;
@@ -1972,10 +1972,10 @@ namespace MediaPortal.TV.Recording
 			DVBSections.Transponder transp = sections.Scan(m_mpeg2Data);
 			if (transp.channels==null)
 			{
-				Log.Write("auto-tune ss2: found no channels", transp.channels);
+				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: found no channels", transp.channels);
 				return;
 			}
-			Log.Write("auto-tune ss2: found {0} channels", transp.channels.Count);
+			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: found {0} channels", transp.channels.Count);
 			for (int i=0; i < transp.channels.Count;++i)
 			{
 				System.Windows.Forms.Application.DoEvents();
@@ -1994,7 +1994,7 @@ namespace MediaPortal.TV.Recording
 
 				if (info.serviceID==0) 
 				{
-					Log.Write("auto-tune ss2: channel#{0} has no service id",i);
+					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel#{0} has no service id",i);
 					continue;
 				}
 				bool hasAudio=false;
@@ -2029,7 +2029,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-				Log.Write("auto-tune ss2:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11}", 
+				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11}", 
 					info.service_provider_name,
 					info.service_name,
 					info.scrambled,
@@ -2069,7 +2069,7 @@ namespace MediaPortal.TV.Recording
 			
 				if (info.serviceType==1 && tv)
 				{
-					Log.Write("auto-tune ss2: channel {0} is a tv channel",newchannel.ServiceName);
+					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} is a tv channel",newchannel.ServiceName);
 					//check if this channel already exists in the tv database
 					bool isNewChannel=true;
 					int iChannelNumber=0;
@@ -2090,7 +2090,7 @@ namespace MediaPortal.TV.Recording
 					if (isNewChannel)
 					{
 						//then add a new channel to the database
-						Log.Write("auto-tune ss2: create new tv channel for {0}",newchannel.ServiceName);
+						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: create new tv channel for {0}",newchannel.ServiceName);
 						TVChannel tvChan = new TVChannel();
 						tvChan.Name=newchannel.ServiceName;
 						tvChan.Number=newchannel.ProgramNumber;
@@ -2101,12 +2101,12 @@ namespace MediaPortal.TV.Recording
 					}
 					else
 					{
-						Log.Write("auto-tune ss2: channel {0} already exists in tv database",newchannel.ServiceName);
+						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
 
 				
 
-					Log.Write("auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
 					newchannel.ID=channelId;
 					TVDatabase.AddSatChannel(newchannel);
 					//}
@@ -2147,7 +2147,7 @@ namespace MediaPortal.TV.Recording
 					if(info.serviceType==2)
 					{
 						//todo: radio channels
-						Log.Write("auto-tune ss2: channel {0} is a radio channel",newchannel.ServiceName);
+						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} is a radio channel",newchannel.ServiceName);
 						//check if this channel already exists in the radio database
 						bool isNewChannel=true;
 						int channelId=-1;
@@ -2169,7 +2169,7 @@ namespace MediaPortal.TV.Recording
 						if (isNewChannel)
 						{
 							//then add a new channel to the database
-							Log.Write("auto-tune ss2: create new radio channel for {0}",newchannel.ServiceName);
+							Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: create new radio channel for {0}",newchannel.ServiceName);
 							RadioStation station = new RadioStation();
 							station.Name=newchannel.ServiceName;
 							station.Channel=newchannel.ProgramNumber;
@@ -2180,12 +2180,12 @@ namespace MediaPortal.TV.Recording
 						}
 						else
 						{
-							Log.Write("DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 						}
 
 						if (Network() == NetworkType.DVBS)
 						{
-							Log.Write("auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+							Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
 							newchannel.ID=channelId;
 
 							int scrambled=0;
@@ -2202,7 +2202,7 @@ namespace MediaPortal.TV.Recording
 								newchannel.ECMPid,newchannel.PMTPid);
 						}
 						RadioDatabase.MapChannelToCard(channelId,ID);
-						Log.Write("auto-tune ss2: channel {0} is a radio channel",newchannel.ServiceName);
+						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} is a radio channel",newchannel.ServiceName);
 					}
 				}
 			}//for (int i=0; i < transp.channels.Count;++i)
@@ -2293,25 +2293,25 @@ namespace MediaPortal.TV.Recording
 				ch.LNBFrequency=lnb0MHZ;
 				ch.LNBKHz=0;
 			}
-			Log.Write("auto-tune ss2: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}",ch.Frequency,ch.LNBKHz,ch.LNBFrequency,ch.DiSEqC); 
+			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}",ch.Frequency,ch.LNBKHz,ch.LNBFrequency,ch.DiSEqC); 
 			return ch;
 
 		}// LoadDiseqcSettings()
 
 		public void TuneRadioChannel(RadioStation station)
 		{
-			Log.Write("DVBGraphSS2:TuneChannel() get DVBS tuning details");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:TuneChannel() get DVBS tuning details");
 			DVBChannel ch=new DVBChannel();
 			if(RadioDatabase.GetDVBSTuneRequest(station.ID,0,ref ch)==false)//only radio
 			{
-				Log.Write("DVBGraphSS2:database invalid tuning details for channel:{0}", station.Channel);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:database invalid tuning details for channel:{0}", station.Channel);
 				return;
 			}
 			if(Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,0,ch.LNBFrequency,0,0,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,0)==true)
-				Log.Write("DVBGraphSS2: Radio tune ok");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Radio tune ok");
 			else
 			{
-				Log.Write("DVBGraphSS2: FAILED cannot tune");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED cannot tune");
 				return;
 			}
 
@@ -2329,7 +2329,7 @@ namespace MediaPortal.TV.Recording
 				if(m_graphState!=State.Created)
 					return;
 
-				Log.Write("DVBGraphSS2: start radio");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: start radio");
 
 				int hr=0;
 				AddPreferredCodecs(true,false);
@@ -2341,38 +2341,38 @@ namespace MediaPortal.TV.Recording
 				}
 
 
-				Log.Write("DVBGraphSS2:StartRadio() Using plugins");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartRadio() Using plugins");
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
 
 				if (samplePin==null)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
 					return ;
 				}
 				if (demuxInPin==null)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
 					return ;
 				}
 
 				hr=m_graphBuilder.Connect(m_data0,samplePin);
 				if(hr!=0)
 				{
-					Log.Write("DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
 					return ;
 				}
 				samplePin=null;
 				samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Output,0);			
 				if(samplePin==null)
 				{
-					Log.Write("DVBGraphSS2:StartRadio() FAILED: cannot find sampleGrabber output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartRadio() FAILED: cannot find sampleGrabber output pin");
 					return ;
 				}
 				hr=m_graphBuilder.Connect(samplePin,demuxInPin);
 				if(hr!=0)
 				{
-					Log.Write("DVBGraphSS2:StartRadio() FAILED: connect sample->demux");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartRadio() FAILED: connect sample->demux");
 					return ;
 				}
 
@@ -2380,14 +2380,14 @@ namespace MediaPortal.TV.Recording
 			
 				if(m_demuxAudioPin==null)
 				{
-					Log.Write("DVBGraphSS2:StartRadio() FAILED: cannot find demux audio output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartRadio() FAILED: cannot find demux audio output pin");
 					return ;
 				}
 
 				hr=m_graphBuilder.Render(m_demuxAudioPin);
 				if(hr!=0)
 				{
-					Log.Write("DVBGraphSS2:StartRadio() FAILED: cannot render demux audio output pin");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartRadio() FAILED: cannot render demux audio output pin");
 					return ;
 				}
 				//
@@ -2411,7 +2411,7 @@ namespace MediaPortal.TV.Recording
 
 			// tune to the correct channel
 			TuneRadioChannel(station);
-			Log.Write("DVBGraphSS2:Listening to radio..");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:Listening to radio..");
 		}
 		public void TuneRadioFrequency(int frequency)
 		{

@@ -58,7 +58,7 @@ namespace MediaPortal.TV.Recording
 				if (m_graphState != State.None) return false;		// If doing something already, return...
 				if (mCard==null) 
 				{
-					Log.Write("SinkGraphEx:card is not defined");
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:card is not defined");
 					return false;
 				}
 
@@ -69,12 +69,12 @@ namespace MediaPortal.TV.Recording
 				}
 				if (mCard.TvFilterDefinitions==null)
 				{
-					Log.Write("SinkGraphEx:card does not contain filters?");
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:card does not contain filters?");
 					return false;
 				}
 				if (mCard.TvConnectionDefinitions==null)
 				{
-					Log.Write("SinkGraphEx:card does not contain connections for tv?");
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:card does not contain connections for tv?");
 					return false;
 				}
 
@@ -172,12 +172,12 @@ namespace MediaPortal.TV.Recording
 					sinkFilter   = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
 					if (sourceFilter==null)
 					{
-						Log.Write("Cannot find source filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,"Cannot find source filter for connection:{0}",i);
 						continue;
 					}
 					if (sinkFilter==null)
 					{
-						Log.Write("Cannot find sink filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,"Cannot find sink filter for connection:{0}",i);
 						continue;
 					}
 					DirectShowUtil.DebugWrite("SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}", 
@@ -298,9 +298,9 @@ namespace MediaPortal.TV.Recording
 
 					VideoCaptureProperties.versionInfo info = props.VersionInfo;
 					VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
-					Log.Write(" driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
-					Log.Write(" encoding:{0} bitrate:{1} MBps peak:{2} MBps", bitrate.bEncodingMode.ToString(),((float)bitrate.wBitrate)/400.0f,((float)bitrate.dwPeak)/400.0f );
-					Log.Write(" gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",props.GopSize, props.ClosedGop, props.InverseTelecine,props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,props.StreamOutput.ToString());
+					Log.WriteFile(Log.LogType.Capture," driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
+					Log.WriteFile(Log.LogType.Capture," encoding:{0} bitrate:{1} MBps peak:{2} MBps", bitrate.bEncodingMode.ToString(),((float)bitrate.wBitrate)/400.0f,((float)bitrate.dwPeak)/400.0f );
+					Log.WriteFile(Log.LogType.Capture," gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",props.GopSize, props.ClosedGop, props.InverseTelecine,props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,props.StreamOutput.ToString());
 				}
 
 				// All filters and connections have been made.
@@ -344,7 +344,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception)
 			{
-				Log.Write("SinkGraphEx: Unable to create graph");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Unable to create graph");
 				return false;
 			}
 		}
