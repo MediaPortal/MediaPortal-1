@@ -67,6 +67,7 @@ Tagname                     description
 #selecteditem2              2nd text of selected item
 #selectedthumb              filename of thumbnail of selected item
 #itemcount                  number of items in list/album/thumbnail view
+#currentmodule              contains the name of the current window (like My Movies or My Pictures)
 
 #TV.Record.channel          TV channel of the current tvprogram which gets recorded
 #TV.Record.start            start time of the current tvprogram which gets recorded

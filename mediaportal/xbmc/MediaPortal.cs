@@ -336,6 +336,11 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void FrameMove()
   {
+    
+    int iWindow=GUIWindowManager.ActiveWindow;
+    string strModule=GUILocalizeStrings.Get(10000+iWindow);
+    GUIPropertyManager.Properties["#currentmodule"]=strModule;
+
     g_Player.Process();
     GUIWindowManager.DispatchThreadMessages(); 
 

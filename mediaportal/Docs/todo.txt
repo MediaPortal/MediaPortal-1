@@ -94,7 +94,8 @@ Skin engine:
   - fade in for controls
   - position text for buttons
   - transitions between windows
-    
+  - property for current module 
+  
 General:
   - setup : add tooltips 
   - show properties in skin: 

@@ -189,5 +189,16 @@
 		<onup>29</onup>
 		<ondown>2</ondown>
 	</control>
+	<control>
+		<description>text label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>280</posX>
+		<posY>50</posY>
+		<label>#currentmodule</label>
+		<font>font10</font>
+		<align>right</align>
+		<textcolor>FF000000</textcolor>
+	</control>
 </controls>
 </window>
