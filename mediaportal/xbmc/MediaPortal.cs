@@ -549,6 +549,8 @@ public class MediaPortalApp : D3DApp, IRender
       AutoPlay.StopListening();
       
       PluginManager.Stop();
+
+      GUIWindowManager.Clear();
     }
 
 
