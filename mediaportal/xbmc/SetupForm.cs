@@ -2909,12 +2909,16 @@ namespace MediaPortal
           if (iNumber <254)
           {
             long lFreq=0;
-            strFreq=strFreq.Replace("," , ".");
-            if (strFreq.IndexOf(".") >0 )
+            double dTmp=2.50;
+            string strTst=dTmp.ToString();
+            if (strTst.IndexOf(".")>0)
+              strFreq=strFreq.Replace("," , ".");
+            else 
+              strFreq=strFreq.Replace("." , ",");
+            if (strFreq.IndexOf(".") >0  || strFreq.IndexOf(",") >0 )
             {
               double dFreq;
               dFreq=Convert.ToDouble(strFreq);
-              if (dFreq>=1000d) dFreq/=100d; 
               dFreq*= (1000000d);
               lFreq=(long)dFreq;
             }
