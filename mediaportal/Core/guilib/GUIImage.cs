@@ -364,11 +364,11 @@ namespace MediaPortal.GUI.Library
 				//	imageSprite .Dispose();
 				//	imageSprite =null;
 				//}
-				if (m_strTextureFileName!=null && m_strTextureFileName!=String.Empty)
+				if (m_strFileName!=null && m_strFileName!=String.Empty)
 				{
-					if (GUITextureManager.IsTemporary(m_strTextureFileName))
+					if (GUITextureManager.IsTemporary(m_strFileName))
 					{
-						GUITextureManager.ReleaseTexture(m_strTextureFileName);
+						GUITextureManager.ReleaseTexture(m_strFileName);
 					}
 				}
         m_strTextureFileName="";
