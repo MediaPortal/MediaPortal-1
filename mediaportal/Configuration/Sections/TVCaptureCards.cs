@@ -251,22 +251,25 @@ namespace MediaPortal.Configuration.Sections
 
 		public void LoadCaptureCards()
 		{
-			using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			if(File.Exists("capturecards.xml"))
 			{
-				//
-				// Create Soap Formatter
-				//
-				SoapFormatter formatter = new SoapFormatter();
+				using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				{
+					//
+					// Create Soap Formatter
+					//
+					SoapFormatter formatter = new SoapFormatter();
 
-				//
-				// Serialize
-				//
-				captureCards = (ArrayList)formatter.Deserialize(fileStream);
+					//
+					// Serialize
+					//
+					captureCards = (ArrayList)formatter.Deserialize(fileStream);
 
-				//
-				// Finally close our file stream
-				//
-				fileStream.Close();
+					//
+					// Finally close our file stream
+					//
+					fileStream.Close();
+				}
 			}
 		}
 
