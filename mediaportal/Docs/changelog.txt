@@ -1,4 +1,10 @@
 History: (dd-mm-yyyy)
+  28-05-2004  my videos   : fixed : IMDB thumbs where broken
+  28-05-2004  my tv       : added : new TV OSD when watching live TV
+  
+  27-05-2004  my tv       : added : in tvguide each genre is now shown with its own color
+  27-05-2004  my tv       : added : when browsing tvguide up/down, the cursor stays @ the same time
+  
   26-05-2004  my tv       : fixed : tvguide is now more skinnable
   26-05-2004  my tv       : fixed : my tv info didnt scroll anymore
   26-05-2004  general     : fixed : skin page view does not listen to the coordinates you give in references.xml
