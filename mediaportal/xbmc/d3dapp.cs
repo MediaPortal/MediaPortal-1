@@ -13,6 +13,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Player;
 
 namespace MediaPortal
 {
@@ -35,7 +36,7 @@ namespace MediaPortal
     #endregion
 
     protected bool m_bAutoHideMouse=false;
-    protected bool m_bResized=false;
+    protected bool m_bNeedUpdate=false;
     protected DateTime  m_MouseTimeOut=DateTime.Now;
     // The window we will render too
     private System.Windows.Forms.Control ourRenderTarget;
@@ -743,6 +744,7 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
         GUIGraphicsContext.DX9Device.ShowCursor(true);
       }
+      m_bNeedUpdate=true;
 
     }
 
@@ -1046,6 +1048,7 @@ namespace MediaPortal
           EnvironmentResized(GUIGraphicsContext.DX9Device, new System.ComponentModel.CancelEventArgs());
         }
         deviceLost = false;
+        m_bNeedUpdate=true;
       }
             
       
@@ -1241,6 +1244,16 @@ namespace MediaPortal
       base.OnKeyPress(e);
     }
 
+    private void D3DApp_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      g_Player.Stop();
+    }
+
+    private void D3DApp_Resize(object sender, System.EventArgs e)
+    {
+      m_bNeedUpdate=true;
+    }
+
 
 
     protected override void OnPaintBackground(PaintEventArgs e)
@@ -1248,6 +1261,7 @@ namespace MediaPortal
     }
     protected override void OnPaint(PaintEventArgs e)
     {
+      m_bNeedUpdate=true;
     }
 
 
@@ -1401,7 +1415,9 @@ namespace MediaPortal
       this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+      this.Resize += new System.EventHandler(this.D3DApp_Resize);
       this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
+      this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
       this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
 
@@ -1460,6 +1476,7 @@ namespace MediaPortal
       }
       active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized || this.Visible == false);
       base.OnResize(e);
+      m_bNeedUpdate=true;
     }
 
 

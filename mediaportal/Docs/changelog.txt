@@ -1,4 +1,8 @@
 History: (dd-mm-yyyy)
+  25-04-2004: my music    : fixed : music overlay window didnt reset @ start of next song
+  25-04-2004: general     : fixed : screen refresh problems resizing, alt+tab, alt+enter etc when movie is playing fullscreen
+  25-04-2004: my video    : fixed : start new video when running another one in video preview mode->preview window isnt removed
+  25-04-2004: my music    : fixed : album art not visible in songs when view by list
   25-04-2004: my TV       : fixed : switched back to DirectX for smooth scrolling
   25-04-2004: setup       : fixed : switching skins in setup now reloads the skin
   25-04-2004: setup       : fixed : switching language in the setup now works 

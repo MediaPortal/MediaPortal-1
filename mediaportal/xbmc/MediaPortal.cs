@@ -110,13 +110,12 @@ public class MediaPortalApp : D3DApp
       SetStyle(ControlStyles.DoubleBuffer, false);
 
       m_MouseTimeOut=DateTime.Now;
-      //System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
+      System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
       GUIWindowManager.OnAppStarting();
       //Clock = new Timer();
       //Clock.Interval=50;
       //Clock.Start();
       //Clock.Tick+=new EventHandler(Timer_Tick);
-      m_bResized=false;
 
     } 
     protected override void OnExit() 
@@ -157,21 +156,27 @@ public class MediaPortalApp : D3DApp
     { 
       if (GUIGraphicsContext.DX9Device==null) return;
 
-      while (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing)
+      if (!m_bNeedUpdate)
       {
-        System.Threading.Thread.Sleep(20);
-        GUIWindowManager.DispatchThreadMessages();
-        SetVideoRect();
-        g_Player.Process();
-        GUIGraphicsContext.IsPlaying=true;
-
-        System.Windows.Forms.Application.DoEvents();
-        if ( GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING)
+        if(GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing)
         {
-          this.Close();
+          System.Threading.Thread.Sleep(100);
+          GUIWindowManager.DispatchThreadMessages();
+          SetVideoRect();
+          g_Player.Process();
+          GUIGraphicsContext.IsPlaying=true;
           return;
         }
       }
+      else
+      {
+        // force a refresh
+        if (GUIGraphicsContext.IsFullScreenVideo)
+        {
+          g_Player.PositionX = g_Player.PositionX+1;
+        }
+      }
+      m_bNeedUpdate=false;
 
       GUIWindowManager.DispatchThreadMessages();
       g_Player.Process();
@@ -232,6 +237,7 @@ public class MediaPortalApp : D3DApp
       g_Player.RenderWidth=GUIGraphicsContext.VideoWindow.Width;
       g_Player.RenderHeight=GUIGraphicsContext.VideoWindow.Height;
       g_Player.ARType=GUIGraphicsContext.ARType;
+      g_Player.SetVideoWindow();
     }
 
 
