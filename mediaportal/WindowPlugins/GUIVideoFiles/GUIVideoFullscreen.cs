@@ -655,8 +655,11 @@ namespace MediaPortal.GUI.Video
 			dlg.SetHeading(924); // menu
 
 			dlg.AddLocalizedString(941); // Change aspect ratio
-      dlg.AddLocalizedString(12902); // MSN Messenger
-      dlg.AddLocalizedString(902); // MSN Online contacts
+			if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
+			{
+				dlg.AddLocalizedString(12902); // MSN Messenger
+				dlg.AddLocalizedString(902); // MSN Online contacts
+			}
 			dlg.AddLocalizedString(970); // Previous window
 			if (g_Player.IsDVD)
 			{
@@ -689,16 +692,16 @@ namespace MediaPortal.GUI.Video
 					ShowAspectRatioMenu();
 					break;
 					
-        case 12902: // MSN Messenger
-          Log.Write("MSN CHAT:ON");     
-          m_bMSNChatVisible=true;
-          m_msnWindow.DoModal( GetID, null );
-          m_bMSNChatVisible=false;
-          break;
+				case 12902: // MSN Messenger
+					Log.Write("MSN CHAT:ON");     
+					m_bMSNChatVisible=true;
+					m_msnWindow.DoModal( GetID, null );
+					m_bMSNChatVisible=false;
+					break;
 
-        case 902: // Online contacts
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
-          break;
+				case 902: // Online contacts
+					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
+					break;
 
 				case 970:
 					// switch back to MyMovies window
