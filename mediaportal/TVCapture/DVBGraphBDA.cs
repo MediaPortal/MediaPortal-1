@@ -2621,6 +2621,7 @@ namespace MediaPortal.TV.Recording
 					tvTmp.ID=channelId;
 					TVDatabase.MapChannelToGroup(group,tvTmp);
 
+					//make group for service provider
 					group = new TVGroup();
 					group.GroupName=newchannel.NetworkName;
 					groupid=TVDatabase.AddGroup(group);
