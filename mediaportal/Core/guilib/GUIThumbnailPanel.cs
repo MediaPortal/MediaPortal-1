@@ -203,7 +203,7 @@ GUISpinControl m_upDown = null;
     }
 
 
-		void RenderItem(int iButton,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
+		void RenderItem(int iButton,bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem, bool buttonOnly)
 		{
       if (m_button==null) return;
       if (iButton<0||iButton>=m_button.Count) return;
@@ -223,20 +223,25 @@ GUISpinControl m_upDown = null;
       }
 			if (bFocus == true && Focus && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
 			{
-        btn.Focus=true;
-				btn.SetPosition(dwPosX, dwPosY);
-				if (true == m_bShowTexture) btn.Render();
-
+				if (buttonOnly)
+				{
+					btn.Focus=true;
+					btn.SetPosition(dwPosX, dwPosY);
+					if (true == m_bShowTexture) btn.Render();
+					return;
+				}
 				RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, true);
 			}
 			else
       {
-        btn.Focus=false;
-        btn.SetPosition(dwPosX, dwPosY);
-        if (true == m_bShowTexture) btn.Render();
-
+				if (buttonOnly)
+				{
+					btn.Focus=false;
+					btn.SetPosition(dwPosX, dwPosY);
+					if (true == m_bShowTexture) btn.Render();
+					return;
+				}
 				RenderText((float)dwPosX, (float)fTextPosY, dwColor, pItem.Label, false);
-
 			}
 
 			// Set oversized value
@@ -373,59 +378,63 @@ GUISpinControl m_upDown = null;
 
 			int iStartItem = 30000;
 			int iEndItem = -1;
-			if (m_bScrollUp)
+
+			for (int i=0; i < 2; ++i)
 			{
-				// render item on top
-				dwPosY = m_dwPosY - m_iItemHeight + iScrollYOffset;
-				m_iOffset -= m_iColumns;
-				for (int iCol = 0; iCol < m_iColumns; iCol++)
+				if (m_bScrollUp)
 				{
-					int dwPosX = m_dwPosX + iCol * m_iItemWidth;
-					int iItem = iCol + m_iOffset;
-					if (iItem > 0 && iItem < (int)m_vecItems.Count)
+					// render item on top
+					dwPosY = m_dwPosY - m_iItemHeight + iScrollYOffset;
+					m_iOffset -= m_iColumns;
+					for (int iCol = 0; iCol < m_iColumns; iCol++)
 					{
-						GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
-						RenderItem(0,false, dwPosX, dwPosY, pItem);
-						if (iItem < iStartItem) iStartItem = iItem;
-						if (iItem > iEndItem) iEndItem = iItem;
+						int dwPosX = m_dwPosX + iCol * m_iItemWidth;
+						int iItem = iCol + m_iOffset;
+						if (iItem > 0 && iItem < (int)m_vecItems.Count)
+						{
+							GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
+							RenderItem(0,false, dwPosX, dwPosY, pItem, i==0);
+							if (iItem < iStartItem) iStartItem = iItem;
+							if (iItem > iEndItem) iEndItem = iItem;
+						}
+					}
+					m_iOffset += m_iColumns;
+				}
+
+				// render main panel
+				for (int iRow = 0; iRow < m_iRows; iRow++)
+				{
+					dwPosY = m_dwPosY + iRow * m_iItemHeight + iScrollYOffset;
+					for (int iCol = 0; iCol < m_iColumns; iCol++)
+					{
+						int dwPosX = m_dwPosX + iCol * m_iItemWidth;
+						int iItem = iRow * m_iColumns + iCol + m_iOffset;
+						if (iItem < (int)m_vecItems.Count)
+						{
+							GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
+							bool bFocus = (m_iCursorX == iCol && m_iCursorY == iRow);
+							RenderItem(iRow*m_iRows+iCol,bFocus, dwPosX, dwPosY, pItem, i==0);
+							if (iItem < iStartItem) iStartItem = iItem;
+							if (iItem > iEndItem) iEndItem = iItem;
+						}
 					}
 				}
-				m_iOffset += m_iColumns;
-			}
 
-			// render main panel
-			for (int iRow = 0; iRow < m_iRows; iRow++)
-			{
-				dwPosY = m_dwPosY + iRow * m_iItemHeight + iScrollYOffset;
-				for (int iCol = 0; iCol < m_iColumns; iCol++)
+				if (m_bScrollDown)
 				{
-					int dwPosX = m_dwPosX + iCol * m_iItemWidth;
-					int iItem = iRow * m_iColumns + iCol + m_iOffset;
-					if (iItem < (int)m_vecItems.Count)
+					// render item on bottom
+					dwPosY = m_dwPosY + m_iRows * m_iItemHeight + iScrollYOffset;
+					for (int iCol = 0; iCol < m_iColumns; iCol++)
 					{
-						GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
-						bool bFocus = (m_iCursorX == iCol && m_iCursorY == iRow);
-						RenderItem(iRow*m_iRows+iCol,bFocus, dwPosX, dwPosY, pItem);
-						if (iItem < iStartItem) iStartItem = iItem;
-						if (iItem > iEndItem) iEndItem = iItem;
-					}
-				}
-			}
-
-			if (m_bScrollDown)
-			{
-				// render item on bottom
-				dwPosY = m_dwPosY + m_iRows * m_iItemHeight + iScrollYOffset;
-				for (int iCol = 0; iCol < m_iColumns; iCol++)
-				{
-					int dwPosX = m_dwPosX + iCol * m_iItemWidth;
-					int iItem = m_iRows * m_iColumns + iCol + m_iOffset;
-					if (iItem < m_vecItems.Count)
-					{
-						GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
-						RenderItem(0,false, dwPosX, dwPosY, pItem);
-						if (iItem < iStartItem) iStartItem = iItem;
-						if (iItem > iEndItem) iEndItem = iItem;
+						int dwPosX = m_dwPosX + iCol * m_iItemWidth;
+						int iItem = m_iRows * m_iColumns + iCol + m_iOffset;
+						if (iItem < m_vecItems.Count)
+						{
+							GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
+							RenderItem(0,false, dwPosX, dwPosY, pItem, i==0);
+							if (iItem < iStartItem) iStartItem = iItem;
+							if (iItem > iEndItem) iEndItem = iItem;
+						}
 					}
 				}
 			}
