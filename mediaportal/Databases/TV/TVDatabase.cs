@@ -972,6 +972,16 @@ namespace MediaPortal.TV.Database
           
 					strSQL=String.Format("delete from channel where idChannel={0}", iChannelId);
 					m_db.Execute(strSQL);
+					
+					strSQL=String.Format("delete from groupmapping where idChannel={0}", iChannelId);
+					m_db.Execute(strSQL);
+
+					strSQL = String.Format("delete from dvbsmapping where iLCN={0}",iChannelId);
+					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from dvbcmapping where iLCN={0}",iChannelId);
+					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from dvbtmapping where iLCN={0}",iChannelId);
+					m_db.Execute(strSQL);
 				}
 				catch(SQLiteException ex)
 				{
