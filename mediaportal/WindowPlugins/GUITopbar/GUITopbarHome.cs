@@ -37,11 +37,14 @@ namespace MediaPortal.Topbar
         m_bOverrideSkinAutoHide = false;
         if (xmlreader.GetValueAsInt("TopBar", "overrideskinautohide", 0) == 1) m_bOverrideSkinAutoHide = true;
 
-        m_bTopBarAutoHide = this.AutoHide;     
+        m_bTopBarAutoHide = this.AutoHideTopbar; // Get skin setting
+				m_bTopBarHidden = m_bTopBarAutoHide;
+
         if (m_bOverrideSkinAutoHide)
         {          
           m_bTopBarAutoHide = false;
           if (xmlreader.GetValueAsInt("TopBar", "autohide", 0) == 1) m_bTopBarAutoHide = true;
+					GUIGraphicsContext.TopBarHidden = m_bTopBarAutoHide;
         }
       }
 
@@ -78,7 +81,26 @@ namespace MediaPortal.Topbar
       CheckFocus();
 
       // Check auto hide topbar
-      if (m_bTopBarAutoHide)
+			if (GUIGraphicsContext.TopBarHidden != m_bTopBarHidden)
+			{
+				// Rest to new settings
+				m_bTopBarHidden = GUIGraphicsContext.TopBarHidden;
+				m_bTopBarHide = GUIGraphicsContext.TopBarHidden;
+				m_bTopBarEffect = false;
+
+				m_iMoveUp = 0;
+				if (m_bTopBarHidden) m_iMoveUp = m_iTopbarRegion;
+				foreach (CPosition pos in m_vecPositions)
+				{
+					pos.control.SetPosition((int)pos.XPos,(int)pos.YPos - m_iMoveUp);         
+				}
+			}
+			else if (m_bTopBarHidden != m_bTopBarHide)
+			{
+				m_bTopBarEffect = true;
+			}
+
+      if (GUIGraphicsContext.AutoHideTopBar)
       {
         // Check autohide timeout
         if (m_bFocused)
@@ -95,26 +117,6 @@ namespace MediaPortal.Topbar
           m_iMoveUp=0;
         }
         
-        if (GUIGraphicsContext.TopBarHidden != m_bTopBarHidden)
-        {
-          // Rest to new settings
-          m_bTopBarHidden = GUIGraphicsContext.TopBarHidden;
-          m_bTopBarHide = GUIGraphicsContext.TopBarHidden;
-          m_bTopBarEffect = false;
-
-          m_iMoveUp = 0;
-          if (m_bTopBarHidden) m_iMoveUp = m_iTopbarRegion;
-          foreach (CPosition pos in m_vecPositions)
-          {
-            pos.control.SetPosition((int)pos.XPos,(int)pos.YPos - m_iMoveUp);         
-          }
-        }
-        else if (m_bTopBarHidden != m_bTopBarHide)
-        {
-          m_bTopBarEffect = true;
-        }
-
-
         if (m_bTopBarEffect)
         {
           if (m_bTopBarHide)
@@ -136,12 +138,13 @@ namespace MediaPortal.Topbar
           }
 
           foreach (CPosition pos in m_vecPositions)
-          {
+      
+					{
             pos.control.SetPosition((int)pos.XPos,(int)pos.YPos - m_iMoveUp);         
           }
         }
       }
-      if (m_bTopBarHidden) return;           
+      if (GUIGraphicsContext.TopBarHidden) return;           
      
 			GUIFontManager.Present();
       base.Render();
@@ -172,7 +175,7 @@ namespace MediaPortal.Topbar
         if (m_bFocused==true)
         {
           // reset autohide timer
-          if (m_bTopBarAutoHide) 
+          if (GUIGraphicsContext.AutoHideTopBar) 
           {
             GUIGraphicsContext.TopBarTimeOut = DateTime.Now;
             m_bTopBarHide = false;
@@ -197,7 +200,7 @@ namespace MediaPortal.Topbar
       if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
       {
         // reset autohide timer       
-        if (m_bTopBarHidden && m_bTopBarAutoHide)
+        if (m_bTopBarHidden && GUIGraphicsContext.AutoHideTopBar)
         {
           if (action.fAmount2 < m_iTopbarRegion)
           {
@@ -231,7 +234,7 @@ namespace MediaPortal.Topbar
       if (action.wID==Action.ActionType.ACTION_MOVE_DOWN)
       {
         // reset autohide timer
-        if (m_bTopBarAutoHide) GUIGraphicsContext.TopBarTimeOut = DateTime.Now;
+        if (GUIGraphicsContext.AutoHideTopBar) GUIGraphicsContext.TopBarTimeOut = DateTime.Now;
         Focused=false;
       }
     }

@@ -121,7 +121,12 @@ namespace MediaPortal.GUI.Library
 		protected ArrayList m_vecControls = new ArrayList();
 		protected string m_strWindowXmlFile = "";
 		protected bool m_bAllowOverlay = true;
-    protected bool m_bAutoHide = false;
+		
+		//-1=default from topbar.xml 
+		// 0=flase from skin.xml
+		// 1=true  from skin.xml
+    protected int m_iAutoHideTopbar = -1;
+		protected bool m_bAutoHideTopbar = false;
 		bool m_bSkinLoaded = false;
 
 		/// <summary>
@@ -329,11 +334,27 @@ namespace MediaPortal.GUI.Library
 							// Initialize the window.
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
 						{
-
 							LoadSkin();
 							AllocResources();
 							InitControls();
 							GUIGraphicsContext.Overlay = m_bAllowOverlay;
+
+							// set topbar autohide 
+							switch (m_iAutoHideTopbar)
+							{
+								case 0:
+									m_bAutoHideTopbar = false;
+									break;
+								case 1:
+									m_bAutoHideTopbar = true;
+									break;
+								default:
+									m_bAutoHideTopbar = GUIGraphicsContext.DefaultTopBarHide;
+									break;
+							}
+							GUIGraphicsContext.AutoHideTopBar = m_bAutoHideTopbar;
+							GUIGraphicsContext.TopBarHidden = m_bAutoHideTopbar;
+
 							if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
 							{
 								if (message.Param1 != GetID)
@@ -762,16 +783,17 @@ namespace MediaPortal.GUI.Library
 				}
 
         // Configure the autohide setting
-        XmlNode nodeAutoHide = doc.DocumentElement.SelectSingleNode("/window/autohide");
-        if (nodeAutoHide != null) 
+        XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
+        if (nodeAutoHideTopbar != null) 
         {
-          if (nodeAutoHide.InnerText != null)
+          if (nodeAutoHideTopbar.InnerText != null)
           {
-            string strAllow = nodeAutoHide.InnerText.ToLower();
+						m_iAutoHideTopbar = -1;
+            string strAllow = nodeAutoHideTopbar.InnerText.ToLower();
             if (strAllow == "yes" || strAllow == "true")
-              m_bAutoHide = true;
-            if (strAllow == "no" || strAllow == "false")
-              m_bAutoHide = false;
+              m_iAutoHideTopbar = 1;
+						if (strAllow == "no" || strAllow == "false")
+							m_iAutoHideTopbar = 0;
           }
         } 
 
@@ -889,11 +911,23 @@ namespace MediaPortal.GUI.Library
 		}
     
     /// <summary>
-    /// Returns whether autohide is allowed on this screen
+    /// Returns whether autohide the topbar is allowed on this screen
     /// </summary>
-    public virtual bool AutoHide 
+    public virtual bool AutoHideTopbar 
     {
-      get { return m_bAutoHide ; }
+      get
+			{
+				// set topbar autohide 
+				switch (m_iAutoHideTopbar)
+				{
+					case 0: 
+						return false;
+					case 1:
+						return true;
+					default:
+						return GUIGraphicsContext.DefaultTopBarHide;
+				}
+			}
     }
 
 		/// <summary>

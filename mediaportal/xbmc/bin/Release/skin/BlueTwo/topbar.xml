@@ -2,7 +2,7 @@
 	<id>3005</id>
 	<defaultcontrol>21</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<autohide>yes</autohide>
+	<autohidetopbar>yes</autohidetopbar>
 <controls>
 	<control>
 		<type>image</type>
@@ -159,7 +159,7 @@
 		<textureFocus>minimize_enabled.png</textureFocus>
 		<textureNoFocus>minimize_disabled.png</textureNoFocus>
 		<label>-</label>
-		<action>-</action>
+		<action>18</action>
 		<onleft>29</onleft>
 		<onright>31</onright>
 		<onup>30</onup>

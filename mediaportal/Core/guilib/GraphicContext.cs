@@ -64,7 +64,9 @@ namespace MediaPortal.GUI.Library
     static bool                     m_bOverlay=true;							// boolean indicating if the overlay window is allowed to be shown
     static int                      m_iOffsetX=0;									// x offset of GUI calibration
     static int                      m_iOffsetY=0;									// y offset of GUI calibration
-    static bool                     m_bTopBarHidden=false; 				// Topbar hidden status for autohide
+		static bool                     m_bTopBarHidden=false; 				// Topbar hidden status for autohide
+		static bool											m_bAutoHideTopBar=false;      // Topbar autohide status
+		static bool											m_bDefaultTopBarHide=false;      // Topbar.xml default autohide status
     static DateTime                 m_dtTopBarTimeOut=DateTime.Now; // Topbar timeout timer
     static int                      m_iSubtitles=550; 						// Y position for subtitles
     static bool                     m_bCalibrating=false;					// boolean indicating if we are in calibration mode or in normal mode
@@ -498,6 +500,24 @@ namespace MediaPortal.GUI.Library
       get { return m_bTopBarHidden;}
       set { m_bTopBarHidden=value;}
     }
+
+		/// <summary>
+		/// Get/Set topbar autohide status
+		/// </summary>
+		static public bool AutoHideTopBar
+		{
+			get { return m_bAutoHideTopBar;}
+			set { m_bAutoHideTopBar=value;}
+		}
+
+		/// <summary>
+		/// Get/Set default topbar autohide status
+		/// </summary>
+		static public bool DefaultTopBarHide
+		{
+			get { return m_bDefaultTopBarHide;}
+			set { m_bDefaultTopBarHide=value;}
+		}
 
     /// <summary>
     /// Get/Set topbar timeout
