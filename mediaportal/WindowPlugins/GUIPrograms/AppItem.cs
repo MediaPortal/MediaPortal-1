@@ -166,20 +166,21 @@ namespace ProgramsDatabase
 			{
 				curFile.UpdateLaunchInfo();
 			}
-			Process proc = new Process();
+//			Process proc = new Process();
+			ProcessStartInfo procStart = new ProcessStartInfo();
 			if (Filename != "")
 			{
 				// use the APPLICATION launcher and add current file information
-				proc.StartInfo.FileName = Filename; // filename of the application
+				procStart.FileName = Filename; // filename of the application
 				// set the arguments: one of the arguments is the fileitem-filename
-				proc.StartInfo.Arguments = " " + this.Arguments + " ";
+				procStart.Arguments = " " + this.Arguments + " ";
 				if (UseQuotes) 
 				{
 					// avoid double quotes around the filename-argument.....
 					curFilename = "\"" + (curFile.Filename.TrimStart('\"')).TrimEnd('\"') + "\"";
 				}
 
-				if (proc.StartInfo.Arguments.IndexOf("%FILEnoPATHnoEXT%") >= 0)
+				if (procStart.Arguments.IndexOf("%FILEnoPATHnoEXT%") >= 0)
 				{
 					// ex. kawaks:
 					// winkawaks.exe alpham2
@@ -187,61 +188,62 @@ namespace ProgramsDatabase
 					string strFileNoPathNoExt = curFile.ExtractFileName();
 					strFileNoPathNoExt = (strFileNoPathNoExt.TrimStart('\"')).TrimEnd('\"');
 					strFileNoPathNoExt = Path.GetFileNameWithoutExtension(strFileNoPathNoExt);
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILEnoPATHnoEXT%", strFileNoPathNoExt);
+					procStart.Arguments = procStart.Arguments.Replace("%FILEnoPATHnoEXT%", strFileNoPathNoExt);
 				}
 				else
 				{
 					// the fileitem-argument can be positioned anywhere in the argument string...
-					if (proc.StartInfo.Arguments.IndexOf("%FILE%") == -1)
+					if (procStart.Arguments.IndexOf("%FILE%") == -1)
 					{
 						// no placeholder found => default handling: add the fileitem as the last argument
-						proc.StartInfo.Arguments = proc.StartInfo.Arguments + curFilename;
+						procStart.Arguments = procStart.Arguments + curFilename;
 					}
 					else
 					{
 						// placeholder found => replace the placeholder by the correct filename
-						proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFilename);
+						procStart.Arguments = procStart.Arguments.Replace("%FILE%", curFilename);
 					}
 				}
-				proc.StartInfo.WorkingDirectory  = Startupdir;
-				if (proc.StartInfo.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
+				procStart.WorkingDirectory  = Startupdir;
+				if (procStart.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
 				{
 					//Log.Write("curFile.Filename {0}", curFile.Filename);
-					proc.StartInfo.WorkingDirectory = proc.StartInfo.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(curFile.Filename));
+					procStart.WorkingDirectory = procStart.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(curFile.Filename));
 				}
-				proc.StartInfo.UseShellExecute = UseShellExecute;
+				procStart.UseShellExecute = UseShellExecute;
 			}
 			else 
 			{
 				// application has no launch-file 
 				// => try to make a correct launch using the current FILE object
 				string strCurFilename = curFile.ExtractFileName();
-				proc.StartInfo.FileName = strCurFilename;
-				proc.StartInfo.Arguments = curFile.ExtractArguments();
-				proc.StartInfo.WorkingDirectory  = curFile.ExtractDirectory(strCurFilename);
-				proc.StartInfo.UseShellExecute = UseShellExecute; 
+				procStart.FileName = strCurFilename;
+				procStart.Arguments = curFile.ExtractArguments();
+				procStart.WorkingDirectory  = curFile.ExtractDirectory(strCurFilename);
+				procStart.UseShellExecute = UseShellExecute; 
 			}
-			proc.StartInfo.WindowStyle = this.WindowStyle;
+			procStart.WindowStyle = this.WindowStyle;
 			this.LaunchErrorMsg = "";
 			try
 			{
-				Log.Write("myPrograms: starting process: program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
-					proc.StartInfo.FileName, 
-					proc.StartInfo.Arguments, 
-					proc.StartInfo.WorkingDirectory);
+//				Log.Write("myPrograms: starting process: program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
+//					procStart.FileName, 
+//					procStart.Arguments, 
+//					procStart.WorkingDirectory);
 
 				if (MPGUIMode)
 				{
 					AutoPlay.StopListening();
 				}
 
-				proc.Start();
+//				proc.Start();
+				Utils.StartProcess(procStart, WaitForExit);
 				if (MPGUIMode) 
 				{
-					if (WaitForExit)
-					{
-						proc.WaitForExit();
-					}
+//					if (WaitForExit)
+//					{
+//						proc.WaitForExit();
+//					}
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 					AutoPlay.StartListening();
 				}
@@ -249,9 +251,9 @@ namespace ProgramsDatabase
 			catch (Exception ex)
 			{
 				string ErrorString = String.Format("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
-					proc.StartInfo.FileName, 
-					proc.StartInfo.Arguments, 
-					proc.StartInfo.WorkingDirectory, 
+					procStart.FileName, 
+					procStart.Arguments, 
+					procStart.WorkingDirectory, 
 					ex.Message, 
 					ex.Source, 
 					ex.StackTrace);

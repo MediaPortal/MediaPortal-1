@@ -18,18 +18,26 @@ namespace WindowPlugins.GUIPrograms
 
 		static public int NodeCount
 		{
-			get{return NodeList.Count;}
+			get{if (NodeList != null) 
+					{return NodeList.Count;} 
+					else 
+					{return -1;}
+			}
 		}
 
 		static public int NodeID(int Index)
 		{
 			int result = -1;
-			XmlNode node = NodeList.Item(Index);
-			if (node != null)
+			if (NodeList == null) {return -1;}
+			if ((Index >= 0) && (Index <= NodeList.Count - 1))
 			{
-				//				string strVal = node.Attributes["id"].Value;
-				//				result = Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
-				result = ExtractNodeID(node);
+				XmlNode node = NodeList.Item(Index);
+				if (node != null)
+				{
+					//				string strVal = node.Attributes["id"].Value;
+					//				result = Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
+					result = ExtractNodeID(node);
+				}
 			}
 			return result;
 		}
@@ -43,13 +51,17 @@ namespace WindowPlugins.GUIPrograms
 		static public string NodeTitle(int Index)
 		{
 			string result = "";
-			XmlNode node = NodeList.Item(Index);
-			if (node != null)
+			if (NodeList == null) {return "";}
+			if ((Index >= 0) && (Index <= NodeList.Count - 1))
 			{
-				XmlNode titleNode = node.SelectSingleNode("title");
-				if (titleNode != null)
+				XmlNode node = NodeList.Item(Index);
+				if (node != null)
 				{
-					result = titleNode.InnerText;
+					XmlNode titleNode = node.SelectSingleNode("title");
+					if (titleNode != null)
+					{
+						result = titleNode.InnerText;
+					}
 				}
 			}
 			return result;
@@ -57,7 +69,7 @@ namespace WindowPlugins.GUIPrograms
 
 		static public int GetIndexOfID(int ContentID)
 		{
-			int result = 0;
+			int result = -1;
 			XmlNode node = null;
 			for (int i=0; i < NodeCount; i++)
 			{
@@ -80,29 +92,37 @@ namespace WindowPlugins.GUIPrograms
 
 		static ProgramContentManager()
 		{
-			try
+			if (System.IO.File.Exists("FileDetailContents.xml"))
 			{
-				XmlDocument document = new XmlDocument();
-				document.Load("FileDetailContents.xml");
-				rootElement = document.DocumentElement;
-				if((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
+				try
 				{
-					NodeList = rootElement.SelectNodes("/contentprofiles/profile");
-					foreach(XmlNode node in NodeList)
+					XmlDocument document = new XmlDocument();
+					document.Load("FileDetailContents.xml");
+					rootElement = document.DocumentElement;
+					if((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
 					{
-						XmlNode titleNode = node.SelectSingleNode("title");
+						NodeList = rootElement.SelectNodes("/contentprofiles/profile");
+						foreach(XmlNode node in NodeList)
+						{
+							XmlNode titleNode = node.SelectSingleNode("title");
+						}
 					}
 				}
+				catch (Exception ex)
+				{
+					Log.Write("exception in ProgramContentManager err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				}
 			}
-			catch (Exception ex)
+			else
 			{
-				Log.Write("exception in ProgramContentManager err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.Write("Warning: myPrograms did not find the expected 'FileDetailContents.xml' in your MP root directory!");
 			}
 		}
 
 		static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName)
 		{
 			string result = "";
+			if (rootElement == null) {return "";}
 			XmlNode node = rootElement.SelectSingleNode(String.Format("/contentprofiles/profile[@id={0}]", curApp.ContentID));
 			if (node != null)
 			{

@@ -59,7 +59,7 @@ namespace MediaPortal.Util
 		static extern bool CloseHandle(IntPtr hObject);
 
 
-		public delegate void UtilEventHandler();
+		public delegate void UtilEventHandler(Process proc, bool waitForExit);
 		static public event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
 		static public event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
 		static ArrayList m_AudioExtensions		=new ArrayList();
@@ -787,37 +787,65 @@ namespace MediaPortal.Util
 		{
 			mciSendString( "set cdaudio door open", null, 0, IntPtr.Zero );
 		}
-    
+
+		static public Process StartProcess(ProcessStartInfo procStartInfo, bool bWaitForExit)
+		{
+			Process proc = new Process();
+			proc.StartInfo = procStartInfo;
+			try
+			{
+				Log.Write("Start process {0} {1}", procStartInfo.FileName, procStartInfo.Arguments);
+				if (OnStartExternal != null)
+				{
+					// Event: Starting external process
+					OnStartExternal(proc, bWaitForExit);	
+				}
+				proc.Start();
+				if (bWaitForExit) 
+				{
+					proc.WaitForExit();
+				}
+				if (OnStopExternal != null)
+				{
+					// Event: After launching external process
+					OnStopExternal(proc, bWaitForExit);		
+				}
+			}
+			catch (Exception ex)
+			{
+				string ErrorString = String.Format("Utils: Error starting process!\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
+					proc.StartInfo.FileName, 
+					proc.StartInfo.Arguments, 
+					proc.StartInfo.WorkingDirectory, 
+					ex.Message, 
+					ex.Source, 
+					ex.StackTrace);
+				Log.Write(ErrorString);
+			}
+			return proc;
+		}
+
 		static public Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bMinimized)
 		{
 			if (strProgram==null) return null;
 			if (strProgram.Length==0) return null;
-			Log.Write("Start process {0} {1}", strProgram,strParams);
-			Process dvdplayer = new Process();
 
 			string strWorkingDir=System.IO.Path.GetFullPath(strProgram);
 			string strFileName=System.IO.Path.GetFileName(strProgram);
 			strWorkingDir=strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length+1) );
-			dvdplayer.StartInfo.FileName=strFileName;
-			dvdplayer.StartInfo.WorkingDirectory=strWorkingDir;
-			dvdplayer.StartInfo.Arguments=strParams;
+
+			ProcessStartInfo procInfo = new ProcessStartInfo();
+			procInfo.FileName=strFileName;
+			procInfo.WorkingDirectory=strWorkingDir;
+			procInfo.Arguments=strParams;
 			if (bMinimized)
 			{
-				dvdplayer.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-				dvdplayer.StartInfo.CreateNoWindow=true;
+				procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+				procInfo.CreateNoWindow=true;
 			}
-			if (OnStartExternal != null)
-			{
-				OnStartExternal();		// Event: Starting external process
-			}
-			dvdplayer.Start();
-			if (bWaitForExit) dvdplayer.WaitForExit();
-			if (OnStopExternal != null)
-			{
-				OnStopExternal();		// Event: External process stopped
-			}
-			return dvdplayer;
+			return StartProcess(procInfo, bWaitForExit);
 		}
+
 		static public bool PlayDVD()
 		{
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
@@ -847,13 +875,13 @@ namespace MediaPortal.Util
 
 						if (OnStartExternal != null)
 						{
-							OnStartExternal();		// Event: Starting external process
+							OnStartExternal(dvdplayer, true);		// Event: Starting external process
 						}
 						dvdplayer.Start();
 						dvdplayer.WaitForExit();
 						if (OnStopExternal != null)
 						{
-							OnStopExternal();		// Event: External process stopped
+							OnStopExternal(dvdplayer, true);		// Event: External process stopped
 						}
 						Log.Write("{0} done",strPath);
 					}
@@ -917,13 +945,13 @@ namespace MediaPortal.Util
 							Log.Write("start process {0} {1}",strPath,movieplayer.StartInfo.Arguments);
 							if (OnStartExternal != null)
 							{
-								OnStartExternal();		// Event: Starting external process
+								OnStartExternal(movieplayer, true);		// Event: Starting external process
 							}
 							movieplayer.Start();
 							movieplayer.WaitForExit();
 							if (OnStopExternal != null)
 							{
-								OnStopExternal();		// Event: External process stopped
+								OnStopExternal(movieplayer, true);		// Event: External process stopped
 							}
 							Log.Write("{0} done",strPath);
 							return true;

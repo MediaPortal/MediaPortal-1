@@ -161,60 +161,51 @@ namespace ProgramsDatabase
 		override public void LaunchFile(GUIListItem item)
 		{
 			string curFilename = item.Path;
-			Process proc = new Process();
+			ProcessStartInfo procStart = new ProcessStartInfo();
 			if (Filename != "")
 			{
-				proc.StartInfo.FileName = this.Filename; // application
-				proc.StartInfo.Arguments = this.Arguments;
+				procStart.FileName = this.Filename; // application
+				procStart.Arguments = this.Arguments;
 				if (UseQuotes) 
 				{
 					curFilename = " \"" + item.Path + "\"";
 				}
-				if (proc.StartInfo.Arguments.IndexOf("%FILE%") == -1)
+				if (procStart.Arguments.IndexOf("%FILE%") == -1)
 				{
 					// no placeholder found => default handling: add the fileitem as the last argument
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments + curFilename;
+					procStart.Arguments = procStart.Arguments + curFilename;
 				}
 				else
 				{
 					// placeholder found => replace the placeholder by the correct filename
-					proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("%FILE%", curFilename);
+					procStart.Arguments = procStart.Arguments.Replace("%FILE%", curFilename);
 				}
 			}
 			else 
 			{
 				// application has no filename given => simply ShellExecute the item....
-				proc.StartInfo.FileName = item.Path;
+				procStart.FileName = item.Path;
 			}
-			proc.StartInfo.WorkingDirectory  = Startupdir;
-			if (proc.StartInfo.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
+			procStart.WorkingDirectory  = Startupdir;
+			if (procStart.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
 			{
-				proc.StartInfo.WorkingDirectory = proc.StartInfo.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(item.Path));
+				procStart.WorkingDirectory = procStart.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(item.Path));
 			}
-			proc.StartInfo.UseShellExecute = UseShellExecute;
-			proc.StartInfo.WindowStyle = this.WindowStyle;
+			procStart.UseShellExecute = UseShellExecute;
+			procStart.WindowStyle = this.WindowStyle;
 			try
 			{
 				AutoPlay.StopListening();
-				proc.Start(); // start the app
-				if (WaitForExit)
-				{
-					proc.WaitForExit(); // stop MP
-				}
+				Utils.StartProcess(procStart, WaitForExit);
 				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
 				AutoPlay.StartListening();
-
-//				Log.Write("myPrograms: DEBUG LOG program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
-//					proc.StartInfo.FileName, 
-//					proc.StartInfo.Arguments, 
-//					proc.StartInfo.WorkingDirectory);
 			}
 			catch (Exception ex)
 			{
 				Log.Write("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
-					proc.StartInfo.FileName, 
-					proc.StartInfo.Arguments, 
-					proc.StartInfo.WorkingDirectory, 
+					procStart.FileName, 
+					procStart.Arguments, 
+					procStart.WorkingDirectory, 
 					ex.Message, 
 					ex.Source, 
 					ex.StackTrace);

@@ -298,7 +298,7 @@ namespace WindowPlugins.GUIPrograms
 					m_iItemSelected=GetSelectedItemNo();
 					GUIListItem item = GetSelectedItem();
 					m_iItemSelectedLabel = item.Label;
-					if (!item.Label.Equals( ProgramUtils.cBackLabel ))
+					if (!item.Label.Equals( ProgramUtils.cBackLabel ) && (!item.IsFolder))
 					{
 						// show file info but only if the selected item is not the back button
 						lastApp.OnInfo(item);
