@@ -1733,6 +1733,7 @@ namespace MediaPortal.GUI.Library
 		public int		SpinY 
 		{ 
 			get { return m_upDown.YPosition; }
+			set {m_upDown.YPosition=value;}
 		}
 
 		/// <summary>

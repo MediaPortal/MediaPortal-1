@@ -208,6 +208,11 @@
 				<description>scheduler recordings listcontrol</description>
 				<type>listcontrol</type>
 				<id>11</id>
+				<subitems>
+					<subitem>=370</subitem>
+					<subitem>=450</subitem>
+				</subitems>
+	
 				<width>425</width>
 				<height>370</height>		
 				<textXOff>50</textXOff>
@@ -285,7 +290,7 @@
 		<control>
 			<description>thumb image</description>
 			<type>image</type>
-			<id>1</id>
+			<id>18</id>
 			<posX>180</posX> 
 			<posY>440</posY> 
 			<width>64</width>

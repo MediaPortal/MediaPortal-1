@@ -864,7 +864,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns>subitem object</returns>
     public object GetSubItem(int index)
 		{
-			if (index<=0 || index>= m_SubItems.Count) return null;
+			if (index<0 || index>= m_SubItems.Count) return null;
       return m_SubItems[index];
     }
 		/// <summary>

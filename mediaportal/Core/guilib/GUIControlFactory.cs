@@ -336,7 +336,10 @@ namespace MediaPortal.GUI.Library
 			foreach (XmlNode subNode in subNodes)
 			{
 				string strSubItem = subNode.Value;
-				GUILocalizeStrings.LocalizeLabel(ref strSubItem);
+				if (Char.IsDigit(strSubItem[0]))
+				{
+					GUILocalizeStrings.LocalizeLabel(ref strSubItem);
+				}
 				control.AddSubItem(strSubItem);
 			}
 		}
