@@ -620,6 +620,10 @@ namespace MediaPortal.TV.Recording
 				Log.Write("Recorder:Card:{0} {1} viewing:{2} recording:{3} timeshifting:{4} channel:{5}",
 								dev.ID,dev.FriendlyName,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
 			}
+			if (g_Player.Playing)
+			{
+				Log.Write("Recorder:currently playing:{0}", g_Player.CurrentFile);
+			}
 	
 			if (TVOnOff==false)
 			{
@@ -695,12 +699,12 @@ namespace MediaPortal.TV.Recording
 					else
 					{
 						//we dont want timeshifting
-						Log.Write("Recorder.StartViewing() stop timeshifting on card:{0} {1}", dev.ID, dev.FriendlyName);
+						Log.Write("Recorder.StartViewing() stop timeshifting on card:{0} {1} channel:{2}", dev.ID, dev.FriendlyName, dev.TVChannel);
 						g_Player.Stop();
 						dev.View=false;
 
 						//now start viewing without timeshifting
-						Log.Write("Recorder:Start viewing card:{0} {1} view", dev.ID, dev.FriendlyName);
+						Log.Write("Recorder:Start viewing on card:{0} {1} view {2}", dev.ID, dev.FriendlyName,channel);
 						dev.TVChannel=channel;
 						dev.View=true;
 						return;
@@ -734,10 +738,38 @@ namespace MediaPortal.TV.Recording
 				return; // no card available
 			}
 			m_iCurrentCard=card;
-			dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			m_strTVChannel=channel;
+			dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			
-			Log.Write("Recorder:using card {0} {1} to watch {2}",dev.ID,dev.FriendlyName,channel);
+			Log.Write("Recorder:found card {0} {1}",dev.ID,dev.FriendlyName);
+			
+			//but first disable the tv view of any other card
+			g_Player.Stop();
+      
+			//stop any other cards which are only viewing
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				if (i!=m_iCurrentCard)
+				{
+					TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
+					if (!tvcard.IsRecording)
+					{
+						//stop watching on this card
+						Log.Write("Recorder: stop watching on card:{0} {1} channel:{2}", tvcard.ID,tvcard.FriendlyName,tvcard.TVChannel);
+						if (tvcard.IsTimeShifting)
+						{
+							tvcard.StopTimeShifting();
+						}
+						if (tvcard.View)
+						{
+							tvcard.View=false;
+						}
+						tvcard.DeleteGraph();
+					}
+				}
+			}
+
+
 			//do we want to use timeshifting ?
 			if (timeshift)
 			{
@@ -745,6 +777,7 @@ namespace MediaPortal.TV.Recording
 				if (dev.SupportsTimeShifting)
 				{
 					// yep, then turn timeshifting on
+					Log.Write("Recorder:start timeshifting card {0} {1} channel:{2}",dev.ID,dev.FriendlyName,channel);
 					TuneExternalChannel(channel);
 					dev.TVChannel=channel;
 					dev.StartTimeShifting();
@@ -765,25 +798,8 @@ namespace MediaPortal.TV.Recording
 
 			//tv should be turned on without timeshifting
 			//just present the overlay tv view
-			//but first disable the tv view of any other card
-			Log.Write("Recorder.StartViewing() stop media");
-			g_Player.Stop();
-      
-			//stop any other cards which are only viewing
-			for (int i=0; i < m_tvcards.Count;++i)
-			{
-				if (i!=m_iCurrentCard)
-				{
-					TVCaptureDevice tvcard =(TVCaptureDevice)m_tvcards[i];
-					if (!tvcard.IsRecording && !tvcard.IsTimeShifting && tvcard.View==true)
-					{
-						//stop watching on this card
-						tvcard.View=false;
-					}
-				}
-			}
-
 			// now start watching on our card
+			Log.Write("Recorder: start watching on card:{0} {1} channel:{2}", dev.ID,dev.FriendlyName,channel);
 			TuneExternalChannel(channel);
 			dev.TVChannel=channel;
 			dev.View=true;
