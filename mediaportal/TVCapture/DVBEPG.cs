@@ -18,10 +18,20 @@ namespace MediaPortal.TV.Recording
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//
 			m_cardType=card;
+			m_networkType=NetworkType.DVBS;
+		}
+		public DVBEPG(int card, NetworkType networkType)
+		{
+			//
+			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
+			//
+			m_cardType=card;
+			m_networkType=networkType;
 		}
 		DVBSections		m_sections=new DVBSections();
 		int				m_cardType=0;
 		string			m_channelName="";
+		NetworkType m_networkType;
 		
 		public enum EPGCard
 		{
@@ -157,6 +167,7 @@ namespace MediaPortal.TV.Recording
 					// the progName must be get from the database
 					// to submitt to correct channel
 					string progName="";
+					Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} ",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
 				
 					switch(m_cardType)
 					{
@@ -166,6 +177,42 @@ namespace MediaPortal.TV.Recording
 							break;
 
 						case (int)EPGCard.BDACards:
+						{
+							ArrayList channels = new ArrayList();
+							TVDatabase.GetChannels(ref channels);
+							int freq, symbolrate,innerFec,modulation, ONID, TSID, SID,polarisation;
+							foreach (TVChannel chan in channels)
+							{
+								switch (m_networkType)
+								{
+									case NetworkType.DVBC:
+										TVDatabase.GetDVBCTuneRequest(chan.Number,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID);
+										if (eit.program_number==SID && eit.ts_id==TSID)
+										{
+											progName=chan.Name;
+											Log.Write("epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+										}
+										break;
+									case NetworkType.DVBS:
+										TVDatabase.GetDVBSTuneRequest(chan.Number,out freq, out symbolrate,out innerFec,out polarisation, out ONID, out TSID, out SID);
+										if (eit.program_number==SID && eit.ts_id==TSID)
+										{
+											Log.Write("epg-grab: DVBS counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+											progName=chan.Name;
+										}
+										break;
+									case NetworkType.DVBT:
+										TVDatabase.GetDVBTTuneRequest(chan.Number,out freq, out ONID, out TSID, out SID);
+										if (eit.program_number==SID && eit.ts_id==TSID)
+										{
+											Log.Write("epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+											progName=chan.Name;
+										}
+										break;
+								}
+								if (progName!=String.Empty) break;
+							}//foreach (TVChannel chan in channels)
+						}
 							break;
 
 						case (int)EPGCard.ChannelName:

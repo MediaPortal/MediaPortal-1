@@ -371,28 +371,32 @@ namespace MediaPortal.Player
 				{
 					if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
 					{
+						Log.Write("BaseStreambufferPlayer: unpause since timeshiftbuffer gets rolled over");
 						Pause();
 					}
 
 					if (Speed<0 && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
 					{
+						Log.Write("BaseStreambufferPlayer: stop RWD since timeshiftbuffer gets rolled over");
 						Speed=1;
 					}
 					if (Speed>1 && CurrentPosition+5d >=Duration) 
 					{
+						Log.Write("BaseStreambufferPlayer: stop FFWD since end of timeshiftbuffer reached");
 						Speed=1;
 						SeekAsolutePercentage(99);
 					}
 					if (Speed<0 && CurrentPosition<5d)
 					{
+						Log.Write("BaseStreambufferPlayer: stop RWD since begin of timeshiftbuffer reached");
 						Speed=1;
 						SeekAsolutePercentage(0);
-					}
+					}/*
 					if (Speed<0 && CurrentPosition > m_dLastPosition)
 					{
 						Speed=1;
 						SeekAsolutePercentage(0);
-					}
+					}*/
 				}
 				m_dLastPosition=CurrentPosition;
 				
@@ -535,6 +539,7 @@ namespace MediaPortal.Player
 			{
 				m_speedRate = 10000;
 				mediaCtrl.Run();
+				DirectShowUtil.EnableDeInterlace(graphBuilder);
 				m_state=PlayState.Playing;
 			}
 			else if (m_state==PlayState.Playing) 
@@ -699,6 +704,10 @@ namespace MediaPortal.Player
 				}
         UpdateCurrentPosition();
         Log.Write("seek->current pos:{0}", CurrentPosition);
+				if (Speed==1)
+				{
+					DirectShowUtil.EnableDeInterlace(graphBuilder);
+				}
 			}
 		}
 #if DEBUG
@@ -1021,6 +1030,7 @@ namespace MediaPortal.Player
 				m_speedRate = 10000;
 				newPosition = 0;
 				SeekAbsolute(newPosition);
+				DirectShowUtil.EnableDeInterlace(graphBuilder);
 				mediaCtrl.Run();
 				return;
 			}
@@ -1032,6 +1042,7 @@ namespace MediaPortal.Player
 				m_speedRate = 10000;
 				newPosition = m_dDuration;
 				SeekAbsolute(newPosition);
+				DirectShowUtil.EnableDeInterlace(graphBuilder);
 				mediaCtrl.Run();
 				return;
 			}
@@ -1080,6 +1091,7 @@ namespace MediaPortal.Player
 			{
 				if (m_state!=PlayState.Init)
 				{
+					if (value==m_speedRate) return;
 					if (m_mediaSeeking!=null)
 					{
 						switch ( (int)value)
@@ -1094,6 +1106,7 @@ namespace MediaPortal.Player
 							case 1:  
 								m_speedRate=10000;
 								mediaCtrl.Run();
+								DirectShowUtil.EnableDeInterlace(graphBuilder);
 								break;
 							case 2:  m_speedRate=15000;break;
 							case 4:  m_speedRate=30000;break;

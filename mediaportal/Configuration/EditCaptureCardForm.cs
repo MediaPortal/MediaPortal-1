@@ -1903,6 +1903,7 @@ namespace MediaPortal.Configuration
 
 				DVBSections dvbSec =new DVBSections();
 
+				DVBEPG	ssEPG=new DVBEPG((int)DVBEPG.EPGCard.BDACards, capture.Network);
 				GUIGraphicsContext.VideoWindow = new Rectangle(300,90,110,110);
 				IntPtr prevFormPtr=GUIGraphicsContext.ActiveForm;
 				Form prevForm=GUIGraphicsContext.form;
@@ -1923,9 +1924,7 @@ namespace MediaPortal.Configuration
 							capture.View=true;
 							if (!capture.SignalPresent()) continue;
 
-							DVBChannel dvbChannel =  dvbSec.GetDVBChannel(capture.Mpeg2DataFilter,ch.Number);
-							dvbChannel.ServiceName=ch.Name;
-							counter+=dvbSec.GrabEIT(dvbChannel,capture.Mpeg2DataFilter);
+							counter+=ssEPG.GetEPG(capture.Mpeg2DataFilter,0/*all services*/);
 							label17.Text=counter.ToString();
 							try
 							{
