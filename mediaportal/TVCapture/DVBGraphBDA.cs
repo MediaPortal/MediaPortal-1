@@ -1109,7 +1109,11 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",currentTuningObject.ProgramNumber,(int)Network());
+				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+					currentTuningObject.NetworkID,
+					currentTuningObject.TransportStreamID,
+					currentTuningObject.ProgramNumber,
+					(int)Network());
 				if (System.IO.File.Exists(pmtName))
 				{
 					System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
@@ -2272,16 +2276,16 @@ namespace MediaPortal.TV.Recording
 			}
 			m_iRetyCount++;
 
-			Log.Write("DVBGraphBDA:Process() Tuner locked to signal");	
+			//Log.Write("DVBGraphBDA:Process() Tuner locked to signal");	
 			//yes, lets get all details for the current channel
 			
-			Log.Write("DVBGraphBDA:Process() Get PMT and channel info");	
+			//Log.Write("DVBGraphBDA:Process() Get PMT and channel info");	
 			DVBSections sections = new DVBSections();
 			DVBSections.ChannelInfo channelInfo;
 			byte[] pmt= sections.GetRAWPMT(m_SectionsTables, currentTuningObject.ProgramNumber, out channelInfo);
 			if (pmt==null)
 			{	
-				Log.Write("DVBGraphBDA:Process() PMT not found");	
+				//Log.Write("DVBGraphBDA:Process() PMT not found");	
 				return;
 			}
 			if (pmt!=null && pmt.Length>0 )
@@ -2335,7 +2339,11 @@ namespace MediaPortal.TV.Recording
 				{
 					try
 					{
-						string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",currentTuningObject.ProgramNumber,(int)Network());
+						string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+							  currentTuningObject.NetworkID,
+								currentTuningObject.TransportStreamID,
+								currentTuningObject.ProgramNumber,
+							(int)Network());
 						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 						stream.Write(pmt,0,pmt.Length);
 						stream.Close();
@@ -3146,9 +3154,14 @@ namespace MediaPortal.TV.Recording
 			shouldDecryptChannel=true;
 			Log.Write("DVBGraphBDA:TuneChannel() done");
 
+			SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,0);
 			try
 			{
-				string pmtName=String.Format(@"database\pmt\pmt{0}{1}.dat",currentTuningObject.ProgramNumber,(int)Network());
+				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+					currentTuningObject.NetworkID,
+					currentTuningObject.TransportStreamID,
+					currentTuningObject.ProgramNumber,
+					(int)Network());
 				if (System.IO.File.Exists(pmtName))
 				{
 					System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);

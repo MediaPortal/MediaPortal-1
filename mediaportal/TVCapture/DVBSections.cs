@@ -322,7 +322,7 @@ namespace MediaPortal.TV.Recording
 				Transponder transponder = new Transponder();
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
-				Log.Write("dvbSections:GetRAWPMT for channel:{0}",serviceId);
+				//Log.Write("dvbSections:GetRAWPMT for channel:{0}",serviceId);
 				GetStreamData(filter,0, 0,0,200);
 				if (m_sectionsList.Count==0)
 				{
@@ -341,7 +341,25 @@ namespace MediaPortal.TV.Recording
 					//Log.Write("dvbSections:Got channel:{0} {1}",chanInfo.service_name, chanInfo.serviceID);
 					if (chanInfo.serviceID==serviceId)
 					{
-						Log.Write("dvbSections:GetRAWPMT() found channel:{0} service id:{1} network PMT pid:{2:X} program:{3}",chanInfo.service_name,chanInfo.serviceID,chanInfo.network_pmt_PID,chanInfo.program_number);
+						Log.Write("dvbSections:GetRAWPMT() found channel:{0} scrambled:{1} service id:{2} network PMT pid:{3} program:{4}",
+									chanInfo.service_name,chanInfo.scrambled,chanInfo.serviceID,chanInfo.network_pmt_PID,chanInfo.program_number);
+						if (chanInfo.pid_list!=null)
+						{
+							for (int i=0; i < chanInfo.pid_list.Count;++i)
+							{
+								DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[i];
+								if (data.isTeletext) 
+									Log.Write("dvbSections:GetRAWPMT() teletext pid:{0}", data.elementary_PID);
+								if (data.isAudio) 
+									Log.Write("dvbSections:GetRAWPMT() audio pid:{0}", data.elementary_PID);
+								if (data.isVideo) 
+									Log.Write("dvbSections:GetRAWPMT() video pid:{0}", data.elementary_PID);
+								if (data.isDVBSubtitle) 
+									Log.Write("dvbSections:GetRAWPMT() subtitle pid:{0}", data.elementary_PID);
+								if (data.isAC3Audio) 
+									Log.Write("dvbSections:GetRAWPMT() ac3 audio pid:{0}", data.elementary_PID);
+							}
+						}
 						found=true;
 						info=chanInfo;
 						break;
@@ -349,7 +367,7 @@ namespace MediaPortal.TV.Recording
 				}
 				if (!found) 
 				{
-					Log.Write("dvbSections:GetRAWPMT() channel not found");
+					//Log.Write("dvbSections:GetRAWPMT() channel not found");
 					return null;
 				}
 				int t;
@@ -376,7 +394,7 @@ namespace MediaPortal.TV.Recording
 				int pmtScans;
 				pmtScans = (pmtList.Count / 20) + 1;
 				
-				Log.Write("dvbSections: PMT table list:{0} pmtScans:{1}", pmtList.Count,pmtScans);
+				//Log.Write("dvbSections: PMT table list:{0} pmtScans:{1}", pmtList.Count,pmtScans);
 				for (t = 1; t <= pmtScans; t++)
 				{
 					//flag = DeleteAllPIDsI();
@@ -392,13 +410,13 @@ namespace MediaPortal.TV.Recording
 						int res=0;
 						//if (pat.program_number==serviceId)
 					{
-						Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
+				//		Log.Write("dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
 						GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
 						foreach(byte[] wdata in m_sectionsList)
 						{
 							if (pat.program_number==serviceId)
 							{
-								Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
+					//			Log.Write("dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
 								for (int l=0; l < wdata.Length;++l)
 									sectionTable.Add(wdata[l]);
 							}
@@ -447,7 +465,7 @@ namespace MediaPortal.TV.Recording
 					PMTTable[i]=(byte)sectionTable[i];
 				}
 			}
-			Log.Write("dvbsections:GetRAWPMT done");
+			//Log.Write("dvbsections:GetRAWPMT done");
 			return PMTTable;
 		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
 

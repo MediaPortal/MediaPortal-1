@@ -797,23 +797,23 @@ namespace MediaPortal.Configuration
 			// 
 			this.updownPrio.Location = new System.Drawing.Point(32, 256);
 			this.updownPrio.Maximum = new System.Decimal(new int[] {
-																	   10,
-																	   0,
-																	   0,
-																	   0});
+																															 10,
+																															 0,
+																															 0,
+																															 0});
 			this.updownPrio.Minimum = new System.Decimal(new int[] {
-																	   1,
-																	   0,
-																	   0,
-																	   0});
+																															 1,
+																															 0,
+																															 0,
+																															 0});
 			this.updownPrio.Name = "updownPrio";
 			this.updownPrio.Size = new System.Drawing.Size(56, 20);
 			this.updownPrio.TabIndex = 51;
 			this.updownPrio.Value = new System.Decimal(new int[] {
-																	 1,
-																	 0,
-																	 0,
-																	 0});
+																														 1,
+																														 0,
+																														 0,
+																														 0});
 			// 
 			// tabPage2
 			// 
@@ -859,9 +859,9 @@ namespace MediaPortal.Configuration
 			// comboBoxQuality
 			// 
 			this.comboBoxQuality.Items.AddRange(new object[] {
-																 "Low",
-																 "Medium",
-																 "High"});
+																												 "Low",
+																												 "Medium",
+																												 "High"});
 			this.comboBoxQuality.Location = new System.Drawing.Point(96, 48);
 			this.comboBoxQuality.Name = "comboBoxQuality";
 			this.comboBoxQuality.Size = new System.Drawing.Size(121, 21);
@@ -986,8 +986,6 @@ namespace MediaPortal.Configuration
 			// 
 			// checkBox1
 			// 
-			this.checkBox1.Checked = true;
-			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.checkBox1.Location = new System.Drawing.Point(16, 24);
 			this.checkBox1.Name = "checkBox1";
@@ -1067,9 +1065,9 @@ namespace MediaPortal.Configuration
 			// lnbkind4
 			// 
 			this.lnbkind4.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind4.Location = new System.Drawing.Point(232, 109);
 			this.lnbkind4.Name = "lnbkind4";
 			this.lnbkind4.Size = new System.Drawing.Size(72, 21);
@@ -1078,9 +1076,9 @@ namespace MediaPortal.Configuration
 			// lnbkind3
 			// 
 			this.lnbkind3.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind3.Location = new System.Drawing.Point(232, 85);
 			this.lnbkind3.Name = "lnbkind3";
 			this.lnbkind3.Size = new System.Drawing.Size(72, 21);
@@ -1089,9 +1087,9 @@ namespace MediaPortal.Configuration
 			// lnbkind2
 			// 
 			this.lnbkind2.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind2.Location = new System.Drawing.Point(232, 61);
 			this.lnbkind2.Name = "lnbkind2";
 			this.lnbkind2.Size = new System.Drawing.Size(72, 21);
@@ -1124,10 +1122,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig4
 			// 
 			this.lnbconfig4.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig4.Location = new System.Drawing.Point(136, 109);
 			this.lnbconfig4.Name = "lnbconfig4";
 			this.lnbconfig4.Size = new System.Drawing.Size(80, 21);
@@ -1136,10 +1134,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig3
 			// 
 			this.lnbconfig3.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig3.Location = new System.Drawing.Point(136, 85);
 			this.lnbconfig3.Name = "lnbconfig3";
 			this.lnbconfig3.Size = new System.Drawing.Size(80, 21);
@@ -1148,10 +1146,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig2
 			// 
 			this.lnbconfig2.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig2.Location = new System.Drawing.Point(136, 61);
 			this.lnbconfig2.Name = "lnbconfig2";
 			this.lnbconfig2.Size = new System.Drawing.Size(80, 21);
@@ -1160,13 +1158,13 @@ namespace MediaPortal.Configuration
 			// diseqcd
 			// 
 			this.diseqcd.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqcd.Location = new System.Drawing.Point(16, 109);
 			this.diseqcd.Name = "diseqcd";
 			this.diseqcd.Size = new System.Drawing.Size(104, 21);
@@ -1177,13 +1175,13 @@ namespace MediaPortal.Configuration
 			// diseqcc
 			// 
 			this.diseqcc.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqcc.Location = new System.Drawing.Point(16, 85);
 			this.diseqcc.Name = "diseqcc";
 			this.diseqcc.Size = new System.Drawing.Size(104, 21);
@@ -1194,13 +1192,13 @@ namespace MediaPortal.Configuration
 			// diseqcb
 			// 
 			this.diseqcb.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqcb.Location = new System.Drawing.Point(16, 61);
 			this.diseqcb.Name = "diseqcb";
 			this.diseqcb.Size = new System.Drawing.Size(104, 21);
@@ -1211,13 +1209,13 @@ namespace MediaPortal.Configuration
 			// diseqca
 			// 
 			this.diseqca.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqca.Location = new System.Drawing.Point(16, 37);
 			this.diseqca.Name = "diseqca";
 			this.diseqca.Size = new System.Drawing.Size(104, 21);
@@ -1228,9 +1226,9 @@ namespace MediaPortal.Configuration
 			// lnbkind1
 			// 
 			this.lnbkind1.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind1.Location = new System.Drawing.Point(232, 37);
 			this.lnbkind1.Name = "lnbkind1";
 			this.lnbkind1.Size = new System.Drawing.Size(72, 21);
@@ -1239,10 +1237,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig1
 			// 
 			this.lnbconfig1.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig1.Location = new System.Drawing.Point(136, 37);
 			this.lnbconfig1.Name = "lnbconfig1";
 			this.lnbconfig1.Size = new System.Drawing.Size(80, 21);
