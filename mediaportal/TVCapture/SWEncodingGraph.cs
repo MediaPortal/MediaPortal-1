@@ -354,7 +354,7 @@ namespace MediaPortal.TV.Recording
         Vmr9=null;
       }
 
-			if (m_mixer=null)
+			if (m_mixer!=null)
 			{
 				try
 				{
