@@ -32,7 +32,7 @@ namespace id3
 			_frameBase = null;
 		}
 
-		FrameBase FrameBase
+		public FrameBase FrameBase
 		{
 			get{ return _frameBase;}
 		}

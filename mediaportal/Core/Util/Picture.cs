@@ -810,7 +810,48 @@ namespace MediaPortal.Util
 			}
     }
     
-		/// <summary>
+    /// <summary>
+    /// Creates a thumbnail of the specified image
+    /// </summary>
+    /// <param name="strFile">filename of the image</param>
+    /// <param name="strThumb">filename of the thumbnail to create</param>
+    /// <param name="iMaxWidth">maximum width of the thumbnail</param>
+    /// <param name="iMaxHeight">maximum height of the thumbnail</param>
+    /// <param name="iRotate">
+    /// 0 = no rotate
+    /// 1 = rotate 90 degrees
+    /// 2 = rotate 180 degrees
+    /// 3 = rotate 270 degrees
+    /// </param>
+    static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    {
+      if (strFile==null || strThumb==null || iMaxHeight<=0 || iMaxHeight<=0) return;
+      if (strFile==String.Empty || strThumb==String.Empty) return;
+      GC.Collect();
+
+      Log.Write("create thumbnail for {0}", strFile);
+      Image theImage = null;
+
+      try
+      {
+        theImage = Image.FromFile(strFile);
+
+        CreateThumbnail( theImage, strThumb, iMaxWidth, iMaxHeight, iRotate );
+      }
+      catch (Exception ex)
+      {
+        Log.Write("Picture.CreateThumbnail exception {0} err:{1} stack:{2}", strFile, ex.Message,ex.StackTrace);
+      }
+      finally
+      {
+        if (theImage!=null)
+        {
+          theImage.Dispose();
+        }
+      }
+    }
+  
+    /// <summary>
 		/// Creates a thumbnail of the specified image
 		/// </summary>
 		/// <param name="strFile">filename of the image</param>
@@ -823,20 +864,17 @@ namespace MediaPortal.Util
 		/// 2 = rotate 180 degrees
 		/// 3 = rotate 270 degrees
 		/// </param>
-    static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
+    static public void CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate )
     {
-			if (strFile==null || strThumb==null || iMaxHeight<=0 || iMaxHeight<=0) return;
-			if (strFile==String.Empty || strThumb==String.Empty) return;
+			if (strThumb==null || iMaxHeight<=0 || iMaxHeight<=0) return;
+			if (strThumb==String.Empty) return;
+      if (theImage==null) return;
 
       GC.Collect();
-      if (strFile==null) return;
-      if (strFile.Length==0) return;
-      Log.Write("create {0}x{1} thumbnail from {2}->{3}", iMaxWidth,iMaxHeight,strFile,strThumb);
-      Image theImage=null;
+      Log.Write("create {0}x{1} thumbnail ->{2}", iMaxWidth,iMaxHeight,strThumb);
+
       try
       {
-        theImage=Image.FromFile(strFile);
-        if (theImage==null) return;
         switch (iRotate)
         {
           case 1:
@@ -892,7 +930,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Write("Picture.CreateThumbnail exception {0} err:{1} stack:{2}", strFile, ex.Message,ex.StackTrace);
+        Log.Write("Picture.CreateThumbnail exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
       finally
       {

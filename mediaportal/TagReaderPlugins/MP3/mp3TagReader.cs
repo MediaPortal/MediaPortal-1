@@ -176,6 +176,7 @@ namespace MediaPortal.TagReader.ID3
     const uint EMPHASIS_MASK =3;
 
     MusicTag m_tag=new MusicTag();
+    byte[] m_imageBytes = null;
     bool     m_containsID3Information=false;
 
     public override bool SupportsFile(string strFileName)
@@ -194,6 +195,7 @@ namespace MediaPortal.TagReader.ID3
       try
       {
 //        Log.Write("id3 tag: scan {0}",filename);
+        m_imageBytes = null;
         m_tag.Clear();
         m_containsID3Information=false;
         if (File.Exists(filename))
@@ -228,12 +230,20 @@ namespace MediaPortal.TagReader.ID3
                   }
                   else m_tag.Genre=strValue;
                 }
-                if ( (strTag=="TALB" || strTag=="TAL" ) && strValue.Length>0) m_tag.Album=strValue;
-                if ( (strTag=="TP1"  || strTag=="TPE1") && strValue.Length>0) m_tag.Artist=strValue;
-                if ( (strTag=="TIT2" || strTag=="TT2" ) && strValue.Length>0) m_tag.Title=strValue;
-                if ( (strTag=="TYER" || strTag=="TYE" ) && strValue.Length>0) m_tag.Year=GetInt(strValue);
-                if ( (strTag=="TRCK" || strTag=="TRK" ) && strValue.Length>0) m_tag.Track=GetInt(strValue);
-                m_tag.Duration=ReadDuration(s);
+                else if ( (strTag=="TALB" || strTag=="TAL" ) && strValue.Length>0) m_tag.Album=strValue;
+                else if ( (strTag=="TP1"  || strTag=="TPE1") && strValue.Length>0) m_tag.Artist=strValue;
+                else if ( (strTag=="TIT2" || strTag=="TT2" ) && strValue.Length>0) m_tag.Title=strValue;
+                else if ( (strTag=="TYER" || strTag=="TYE" ) && strValue.Length>0) m_tag.Year=GetInt(strValue);
+                else if ( (strTag=="TRCK" || strTag=="TRK" ) && strValue.Length>0) m_tag.Track=GetInt(strValue);
+                else if ( strTag=="COMM" )
+                {
+//          FrameLCText lcTextFrame = (FrameLCText)frame.FrameBase;
+                }
+                else if ( strTag == "APIC" ) 
+                {
+                  FrameAPIC apicFrame = (FrameAPIC)frame.FrameBase;
+                  m_imageBytes = apicFrame.PictureData;
+                }
                 m_containsID3Information=true;
               }
               catch(Exception )
@@ -276,6 +286,8 @@ namespace MediaPortal.TagReader.ID3
             {
               //Log.Write (" error reading id3tagv1");
             }
+
+            m_tag.Duration=ReadDuration(s);
 						try
 						{
 							m_tag.Duration=ReadDuration(s);
@@ -353,7 +365,11 @@ namespace MediaPortal.TagReader.ID3
       get { return m_tag;}
     }
 
-    
+    public override byte[] Image
+    {
+      get { return m_imageBytes; }
+    }
+   
     //	Inspired by http://rockbox.haxx.se/ and http://www.xs4all.nl/~rwvtveer/scilla 
     int ReadDuration(Stream file)
     {

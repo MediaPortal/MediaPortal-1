@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 
 namespace MediaPortal.TagReader
 {
@@ -53,5 +54,12 @@ namespace MediaPortal.TagReader
     {
       get { return null;}
     }
-	}
+
+    /// <summary>
+    /// </summary>
+    public virtual byte[] Image
+    {
+      get { return null;}
+    }
+  }
 }

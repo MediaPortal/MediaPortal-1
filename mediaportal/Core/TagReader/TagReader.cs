@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Drawing;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TagReader
@@ -91,6 +92,37 @@ namespace MediaPortal.TagReader
       }
       return null;
     }
-
-	}
+    /// <summary>
+    /// This method is called by mediaportal when it wants information for a music file
+    /// The method will check which tagreader supports the file and ask it to extract the information from it
+    /// </summary>
+    /// <param name="strFile">filename of the music file</param>
+    /// <returns>
+    /// MusicTag instance when file has been read
+    /// null when file type is not supported or if the file does not contain any information
+    /// </returns>
+    static public MusicTag ReadTag(string strFile, ref byte[] imageBytes )
+    {
+      foreach (ITagReader reader in m_readers)
+      {
+        try
+        {
+          if (reader.SupportsFile(strFile))
+          {
+            if (reader.ReadTag(strFile))
+            {
+              MusicTag newTag = new MusicTag(reader.Tag);
+              imageBytes = reader.Image;
+              return newTag;
+            }
+          }
+        }
+        catch(Exception ex)
+        { 
+          Log.Write("Tag reader generated exception:{0}",ex.ToString());
+        }
+      }
+      return null;
+    }
+  }
 }
