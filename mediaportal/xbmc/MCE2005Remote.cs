@@ -348,7 +348,7 @@ namespace MediaPortal
         switch(header.hid.RawData2)
         {
           case 0:
-            action = new Action(Action.ActionType.ACTION_SHOW_INFO,0,0);  
+            //action = new Action(Action.ActionType.ACTION_SHOW_INFO,0,0);  
             break;
           case 0x9:
             break;
@@ -365,7 +365,12 @@ namespace MediaPortal
             if (header.hid.RawData3==0)
               action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
             else
-              GUIWindowManager.PreviousWindow();
+            {
+              if (GUIGraphicsContext.IsFullScreenVideo)
+                action.wID=Action.ActionType.ACTION_SHOW_GUI;
+              else
+                GUIWindowManager.PreviousWindow();
+            }
             break;
           case 0x4D://DVD subtitle
             break;
