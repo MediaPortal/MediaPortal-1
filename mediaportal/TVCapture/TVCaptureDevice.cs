@@ -880,20 +880,22 @@ namespace MediaPortal.TV.Recording
     /// <param name="strChannelName">Channel Name</param>
     /// <returns>Channel number</returns>
     int GetChannelNr(string strChannelName)
-    {
-      int iChannelNr=0;
-      
+    { 
       ArrayList channels = new ArrayList();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
         if (String.Compare(strChannelName,chan.Name,true)==0)
         {
-          iChannelNr=(int)chan.Number;
-          break;
+          if (chan.Number<=0)
+          {
+            Log.Write("error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
+                      strChannelName, chan.Number,chan.Frequency); 
+          }
+          return chan.Number;
         }
       }
-      return iChannelNr;
+      return 0;
     }
 	}
 }
