@@ -15,7 +15,7 @@ using Direct3D=Microsoft.DirectX.Direct3D;
 namespace MediaPortal.GUI.Pictures
 {
 	/// <summary>
-	/// todo : adding OSD (stripped if for KenBurns)
+	/// todo : adding zoom OSD (stripped if for KenBurns)
 	/// </summary>
 	public class GUISlideShow: GUIWindow
 	{
@@ -527,7 +527,6 @@ namespace MediaPortal.GUI.Pictures
 
       // Landscape picture
       iRandom = randomizer.Next(2);
-
       switch (iRandom)
       {
         default:
@@ -1199,31 +1198,14 @@ namespace MediaPortal.GUI.Pictures
 
     public override void OnAction(Action action)
     {
-      switch (action.wID)
+			switch (action.wID)
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           GUIWindowManager.PreviousWindow();
           break;
 				
         case Action.ActionType.ACTION_DELETE_ITEM:
-          // delete current picture
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          if (null==dlgYesNo) return;
-          if (m_strBackgroundSlide.Length==0) return;
-          bool bPause=m_bPause;
-          m_bPause=true;
-          string strFileName=System.IO.Path.GetFileName(m_strBackgroundSlide);
-          dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
-          dlgYesNo.SetLine(1,String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count) );
-          dlgYesNo.SetLine(2, strFileName);
-          dlgYesNo.SetLine(3, "");
-          dlgYesNo.DoModal(GetID);
-
-          m_bPause=bPause;
-          if (!dlgYesNo.IsConfirmed) return;
-          Utils.FileDelete(m_strBackgroundSlide);
-          ShowNext();
-					
+					OnDelete();				
           break;
 
         case Action.ActionType.ACTION_PREV_PICTURE:
@@ -1306,18 +1288,7 @@ namespace MediaPortal.GUI.Pictures
         break;
 
         case Action.ActionType.ACTION_ROTATE_PICTURE:
-          m_iRotate++;
-          if (m_iRotate>=4)
-          {
-            m_iRotate=0;
-          }
-
-          using (PictureDatabase dbs = new PictureDatabase())
-          {
-            dbs.SetRotation(m_strBackgroundSlide,m_iRotate);
-          }
-          DoRotate();
-          DeleteThumb(m_strBackgroundSlide);
+          DoRotate();          
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
         break;
 
@@ -1389,8 +1360,76 @@ namespace MediaPortal.GUI.Pictures
             }
           }
           break;
+
+				case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
+				case Action.ActionType.ACTION_CONTEXT_MENU:
+					ShowContextMenu();
+					break;
       } 
     }
+
+		void ShowContextMenu()
+		{
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(924); // menu
+
+			dlg.AddLocalizedString(117); //delete
+			dlg.AddLocalizedString(735); //rotate
+			dlg.AddLocalizedString(940); //properties
+			dlg.AddLocalizedString(970); //Exit
+
+			dlg.DoModal( GetID);
+			if (dlg.SelectedId==-1) return;
+			switch (dlg.SelectedId)
+			{
+				case 117: // Delete
+					OnDelete();
+					break;
+
+				case 735: // Rotate					
+					DoRotate();
+					break;
+					
+				case 940: // Properties
+					OnShowInfo();
+					break;
+
+				case 970:
+					GUIWindowManager.PreviousWindow();
+					break;
+			}
+		}
+
+		void OnDelete()
+		{
+			// delete current picture
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null==dlgYesNo) return;
+			if (m_strBackgroundSlide.Length==0) return;
+			bool bPause=m_bPause;
+			m_bPause=true;
+			string strFileName=System.IO.Path.GetFileName(m_strBackgroundSlide);
+			dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
+			dlgYesNo.SetLine(1,String.Format("{0}/{1}", 1+m_iCurrentSlide ,m_slides.Count) );
+			dlgYesNo.SetLine(2, strFileName);
+			dlgYesNo.SetLine(3, "");
+			dlgYesNo.DoModal(GetID);
+
+			m_bPause=bPause;
+			if (!dlgYesNo.IsConfirmed) return;
+			Utils.FileDelete(m_strBackgroundSlide);
+			ShowNext();
+		}
+
+		void OnShowInfo()
+		{
+			GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
+			exifDialog.FileName=m_strBackgroundSlide;
+			exifDialog.DoModal(GetID);
+		}
+
 
     void RenderPause()
     {
@@ -1413,6 +1452,17 @@ namespace MediaPortal.GUI.Pictures
 
     void DoRotate()
     {
+			m_iRotate++;
+			if (m_iRotate>=4)
+			{
+				m_iRotate=0;
+			}
+
+			using (PictureDatabase dbs = new PictureDatabase())
+			{
+				dbs.SetRotation(m_strBackgroundSlide,m_iRotate);
+			}
+
 	    if (null!=m_pTextureCurrent)
 	    {
 		    m_pTextureCurrent.Dispose();
@@ -1436,6 +1486,8 @@ namespace MediaPortal.GUI.Pictures
 	    m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
       m_dwFrameCounter=0;
       m_iTransistionMethod=9;
+
+			DeleteThumb(m_strBackgroundSlide);
     }
 
     void GetOutputRect(float iSourceWidth, float iSourceHeight, float fZoomLevel, out float x,out float y,out float width,out float height)
