@@ -120,25 +120,18 @@ namespace MediaPortal.GUI.TV
 						GUIWindowManager.PreviousWindow();
 						return false;
 					}
-					m_teleText.GetPage(100,0);
 					GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
 					if(pictureBox!=null && m_teleText!=null)
 					{
-						pictureBox.Width=GUIGraphicsContext.Width;
-						pictureBox.Height=GUIGraphicsContext.Height;
-						pictureBox.XPosition=0;
-						pictureBox.YPosition=0;
+						pictureBox.Width=GUIGraphicsContext.OverScanWidth;
+						pictureBox.Height=GUIGraphicsContext.OverScanHeight;
+						pictureBox.XPosition=GUIGraphicsContext.OverScanLeft;
+						pictureBox.YPosition=GUIGraphicsContext.OverScanTop;
 						m_teleText.SetPageSize(pictureBox.Width,pictureBox.Height);
-					
 					}
-					m_teleText.GetPage(100,0);
-//					GUIToggleButtonControl hiddenButton=(GUIToggleButtonControl)GetControl((int)Controls.BTN_HIDDEN);
-//					if(hiddenButton!=null && m_teleText!=null)
-//					{
-//						m_teleText.HiddenMode=true;
-//						hiddenButton.Selected=true;
-//						GetNewPage();
-//					}
+					m_actualPage=100;
+					m_actualSubPage=0;
+					GetNewPage();
 
 					return true;
 				}
@@ -146,44 +139,6 @@ namespace MediaPortal.GUI.TV
 
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					int iControl=message.SenderControlId;
-//					if(iControl==(int)Controls.BTN_HIDDEN)
-//					{
-//						GUIToggleButtonControl button=(GUIToggleButtonControl)GetControl(iControl);
-//						
-//						if(m_teleText!=null && button!=null)
-//						{
-//							m_teleText.HiddenMode=button.Selected;
-//							GetNewPage();
-//						}
-//					}
-//
-//					if(iControl==(int)Controls.BTN_LANG)
-//					{
-//						GUISelectButtonControl button=(GUISelectButtonControl)GetControl(iControl);
-//						
-//						if(m_teleText!=null && button!=null)
-//						{
-//							m_teleText.PageLanguage=button.SelectedItem;
-//							GetNewPage();
-//						}
-//
-//					}
-//					if(iControl==(int)Controls.BTN_SUBPAGE)
-//					{
-//						GUISelectButtonControl button=(GUISelectButtonControl)GetControl(iControl);
-//						
-//						if(m_teleText!=null && button!=null)
-//						{
-//							m_actualSubPage=button.SelectedItem;
-//							GetNewPage();
-//						}
-//
-//					}
-
-					
-					//					if (iControl==(int)Controls.SPINCONTROL_TIME_INTERVAL)
-					//					{
-					//					}
 
 					break;
 
