@@ -9,7 +9,13 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class Log
 	{
-    
+
+		public enum LogType
+		{
+			Log,
+			Capture,
+			Recorder
+		}
 		/// <summary>
 		/// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
 		/// </summary>
@@ -22,13 +28,19 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static Log()
 		{
-				String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
-			 GetExecutingAssembly().Location); 
+			Initialize(LogType.Capture);
+			Initialize(LogType.Log);
+			Initialize(LogType.Recorder);
+		}
+
+		static void Initialize(LogType type)
+		{
       try
       {
-        System.IO.Directory.CreateDirectory(strPath+@"\log");
-				System.IO.File.Delete(strPath+@"\log\MediaPortalold.log");
-				System.IO.File.Move(strPath+@"\log\MediaPortal.log",strPath+@"\log\MediaPortalold.log");
+				string name=GetFileName(type);
+        System.IO.Directory.CreateDirectory(name);
+				System.IO.File.Delete(name);
+				System.IO.File.Move(name,name.Replace(".log",".bak"));
       }
       catch(Exception)
       {
@@ -42,24 +54,44 @@ namespace MediaPortal.GUI.Library
 		/// <param name="arg">An array containing the actual data of the string.</param>
 		static public void Write(string strFormat, params object[] arg)
 		{
-      lock (typeof(Log))
-      {
-        try
-        {
-          using (StreamWriter writer = new StreamWriter(@"log\MediaPortal.log",true))
-          {
-            writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-            writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
-            writer.WriteLine(strFormat,arg);
-            writer.Close();
-          }
-          string strLine=String.Format(strFormat,arg);
-          Debug.WriteLine(strLine);
-        }
-        catch(Exception)
-        {
-        }
-      }
+      WriteFile(LogType.Log,strFormat,arg);
+		}
+
+		static string GetFileName(LogType type)
+		{
+			string fname=@"log\MediaPortal.log";
+			switch (type)
+			{
+				case LogType.Capture:
+					fname=@"log\capture.log";
+					break;
+				case LogType.Recorder:
+					fname=@"log\recorder.log";
+					break;
+			}
+			return fname;
+		}
+
+		static public void WriteFile(LogType type, string strFormat, params object[] arg)
+		{
+			lock (typeof(Log))
+			{
+				try
+				{
+					using (StreamWriter writer = new StreamWriter(GetFileName(type),true))
+					{
+						writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+						writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
+						writer.WriteLine(strFormat,arg);
+						writer.Close();
+					}
+					string strLine=String.Format(strFormat,arg);
+					Debug.WriteLine(strLine);
+				}
+				catch(Exception)
+				{
+				}
+			}
 		}
 	}
 }

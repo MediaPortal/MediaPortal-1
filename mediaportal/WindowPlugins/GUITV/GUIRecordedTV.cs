@@ -439,6 +439,8 @@ namespace MediaPortal.GUI.TV
       SetLabels();
       GUIListControl list=(GUIListControl)GetControl((int)Controls.CONTROL_ALBUM);
       list.Sort(this);
+			list=(GUIListControl)GetControl((int)Controls.CONTROL_LIST);
+			list.Sort(this);
       UpdateButtons();
     }
 
@@ -554,19 +556,26 @@ namespace MediaPortal.GUI.TV
       SortMethod method=currentSortMethod;
       bool bAscending=m_bSortAscending;
 
-      for (int i=0; i < GetItemCount();++i)
-      {
-        GUIListItem item=GetItem(i);
-        TVRecorded rec=(TVRecorded)item.TVTag;
-        item.Label=rec.Title;
+			for (int i=0; i < GetItemCount();++i)
+			{
+				GUIListItem item=GetItem(i);
+				TVRecorded rec=(TVRecorded)item.TVTag;
+				item.Label=rec.Title;
 				TimeSpan ts = rec.EndTime-rec.StartTime;
-        string strTime=String.Format("{0} {1} ", 
-                                Utils.GetShortDayString(rec.StartTime) , 
-                                Utils.SecondsToHMString( (int)ts.TotalSeconds));
-        item.Label2=strTime;
+				string strTime=String.Format("{0} {1} ", 
+					Utils.GetShortDayString(rec.StartTime) , 
+					Utils.SecondsToHMString( (int)ts.TotalSeconds));
+				item.Label2=strTime;
 				if (currentViewMethod==ViewAs.Album)
+				{
 					item.Label3=rec.Genre;
-      }
+				}
+				else 
+				{
+					if (currentSortMethod==SortMethod.SORT_CHANNEL)
+						item.Label2=rec.Channel;
+				}
+			}
     }
 
     void ShowContextMenu()

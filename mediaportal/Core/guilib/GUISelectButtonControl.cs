@@ -279,7 +279,7 @@ namespace MediaPortal.GUI.Library
         {
           m_label.FontName=m_pFont.FontName;
           m_label.SetPosition(m_iTextOffsetX2+m_dwPosX,m_iTextOffsetY2+m_dwPosY);
-          if (Disabled )
+          if (Disabled || m_SubItems.Count==0)
             m_label.TextColor=m_dwDisabledColor;
           else
               m_label.TextColor=m_dwTextColor;
