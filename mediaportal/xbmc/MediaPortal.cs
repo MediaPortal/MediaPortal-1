@@ -147,22 +147,12 @@ public class MediaPortalApp : D3DApp, IRender
         form.ShowDialog();
       }
 
-#if AUTOUPDATE
-      ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
-	#if DEBUG
-	#else
-				splashScreen = new SplashScreen();
-				splashScreen.SetVersion(clientInfo.InstalledVersion);
-				splashScreen.Show();
-				splashScreen.Update();
-	#endif
-#else
-	#if DEBUG
-	#else
-				splashScreen = new SplashScreen();
-				splashScreen.Show();
-				splashScreen.Update();
-	#endif
+			ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
+#if !DEBUG
+			splashScreen = new SplashScreen();
+			splashScreen.SetVersion(clientInfo.InstalledVersion);
+			splashScreen.Show();
+			splashScreen.Update();
 #endif
       Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
       // Set Intervideo registry keys 
