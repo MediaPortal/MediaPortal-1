@@ -124,7 +124,7 @@ namespace MediaPortal.TV.Recording
 		NetworkType							m_NetworkType;
 		IBaseFilter							m_sampleGrabber=null;
 		ISampleGrabber					m_sampleInterface=null;
-
+		object									objRecord=null;
 		TVCaptureDevice					m_Card;
 		
 		//streambuffer interfaces
@@ -775,6 +775,8 @@ namespace MediaPortal.TV.Recording
 				m_recControl.Stop(0);
 				Marshal.ReleaseComObject(m_recControl); m_recControl=null;
 			}
+			if (objRecord!=null)
+				Marshal.ReleaseComObject(objRecord); objRecord=null;
 		      
 			if (m_StreamBufferSink!=null) 
 			{
@@ -875,7 +877,22 @@ namespace MediaPortal.TV.Recording
 			if (m_recControl!=null) 
 			{
 				int hr=m_recControl.Stop(0);
-				if (m_recControl!=null) Marshal.ReleaseComObject(m_recControl); m_recControl=null;
+				if (m_recControl!=null) 
+				{
+					Marshal.ReleaseComObject(m_recControl); 
+					Marshal.ReleaseComObject(m_recControl); 
+					Marshal.ReleaseComObject(m_recControl); 
+					m_recControl=null;
+					
+					Marshal.ReleaseComObject(objRecord);
+					Marshal.ReleaseComObject(objRecord);
+					Marshal.ReleaseComObject(objRecord);
+					objRecord=null;
+					GC.Collect();
+					GC.Collect();
+					GC.Collect();
+					GC.Collect();
+				}
 				if (hr!=0) 
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to stop recording:0x{0:x}",hr );
@@ -1769,9 +1786,10 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 
-			object objRecord = Marshal.GetObjectForIUnknown(recorderObj);
+			objRecord = Marshal.GetObjectForIUnknown(recorderObj);
 			if (objRecord == null) 
 			{
+					Marshal.Release(recorderObj);
 					Marshal.Release(recorderObj);
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IRecorder");
 					return false;
@@ -1782,6 +1800,7 @@ namespace MediaPortal.TV.Recording
 
 			if (m_recControl == null) 
 			{
+				Marshal.ReleaseComObject(objRecord);
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get IStreamBufferRecordControl");
 				return false;
 			}
