@@ -117,6 +117,18 @@
 		<fileextensions>.pce</fileextensions>
 	</profile>
 	<profile>
+		<id>195</id>
+		<section>Emulator Profiles</section>
+		<title>Visual Boy Advance</title>
+		<launchingApplication>...yourpathhere...\VisualBoyAdvance.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments></arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir></startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.gba</fileextensions>
+	</profile>
+	<profile>
 		<id>200</id>
 		<section>Emulator Profiles</section>
 		<title>WinVice</title>
