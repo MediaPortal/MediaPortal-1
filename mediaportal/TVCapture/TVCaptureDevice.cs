@@ -15,16 +15,16 @@ namespace MediaPortal.TV.Recording
   [Serializable]
   public class TVCaptureDevice
   {
-    string m_strVideoDevice = "";
-    string m_strAudioDevice = "";
-    string m_strVideoCompressor = "";
-    string m_strAudioCompressor = "";
-    bool m_bUseForRecording;
-    bool m_bUseForTV;
-    bool m_bSupportsMPEG2;
-    Size m_FrameSize;
-    double m_FrameRate;
-    string m_strAudioInputPin = "";
+    string  m_strVideoDevice = "";
+    string  m_strAudioDevice = "";
+    string  m_strVideoCompressor = "";
+    string  m_strAudioCompressor = "";
+    bool    m_bUseForRecording;
+    bool    m_bUseForTV;
+    bool    m_bSupportsMPEG2;
+    Size    m_FrameSize;
+    double  m_FrameRate;
+    string  m_strAudioInputPin = "";
     int    _RecordingLevel=100;
 
     [NonSerialized]

@@ -112,6 +112,11 @@ namespace MediaPortal.TV.Recording
           m_strRecPath=Utils.RemoveTrailingSlash(m_strRecPath);
         }
       }
+      for (int i=0; i < m_tvcards.Count;++i)
+      {
+        string dir=String.Format(@"{0}\card{1}",m_strRecPath,i+1);
+        System.IO.Directory.CreateDirectory(dir);
+      }
 
       m_TVChannels.Clear();
       TVDatabase.GetChannels(ref m_TVChannels);
@@ -416,7 +421,7 @@ namespace MediaPortal.TV.Recording
 
     static public string GetTimeShiftFileName(int card)
     {
-      string FileName=String.Format(@"{0}\live{1}.tv",m_strRecPath, card);
+      string FileName=String.Format(@"{0}\card{1}\live.tv",m_strRecPath, card+1);
       return FileName;
     }
 
