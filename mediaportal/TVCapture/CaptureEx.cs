@@ -1380,23 +1380,214 @@ namespace MediaPortal.TV.Recording
 				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 				// Loop through configured filters for this card, bind them and add them to the graph
-				// Note that while adding filters to a graph, some connections may already be created...
-				foreach (string catName in mCard.TvFilterDefinitions.Keys)
+				FilterDefinition lastFilter = null;
+				if (mCard.TvFilterDefinitions!=null && mCard.TvFilterDefinitions.Keys!=null)
 				{
-					FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
-					dsFilter.DSFilter         = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
-					hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
+					// Note that while adding filters to a graph, some connections may already be created...
+					foreach (string catName in mCard.TvFilterDefinitions.Keys)
+					{
+						FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
+						dsFilter.DSFilter         = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
+						hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
 
-					// Support the "legacy" member variables. This could be done different using properties
-					// through which the filters are accessable. More implementation independent...
-					if (dsFilter.Category == "tvtuner") tuner = new Tuner(dsFilter.DSFilter as IAMTVTuner);
-//					if (dsFilter.Category == "capture") videoDevice /*m_captureFilter*/ = dsFilter.DSFilter;
+						// Support the "legacy" member variables. This could be done different using properties
+						// through which the filters are accessable. More implementation independent...
+						if (dsFilter.Category == "tvtuner") tuner = new Tuner(dsFilter.DSFilter as IAMTVTuner);
+						//					if (dsFilter.Category == "capture") videoDevice /*m_captureFilter*/ = dsFilter.DSFilter;
+					}
+					// Find out which filter & pin is used as the interface to the rest of the graph.
+					// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
+					// We only use the filter, as the software will find the correct pin for now...
+					lastFilter = mCard.TvFilterDefinitions[mCard.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
 				}
-				// Find out which filter & pin is used as the interface to the rest of the graph.
-				// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
-				// We only use the filter, as the software will find the correct pin for now...
-				FilterDefinition lastFilter = mCard.TvFilterDefinitions[mCard.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
+				else
+				{
+					// Get the video device and add it to the filter graph
+					if ( VideoDevice != null )
+					{
+						DirectShowUtil.DebugWrite("Add Videodevice to filtergraph:"+VideoDevice.Name);
+						videoDeviceFilter = Marshal.BindToMoniker( VideoDevice.MonikerString ) as IBaseFilter;
+						if (videoDeviceFilter!=null)
+						{
+							hr = m_graphBuilder.AddFilter( videoDeviceFilter, "Video Capture Device" );
+							if( hr < 0 ) 
+							{
+								DirectShowUtil.DebugWrite("FAILED:Add Videodevice to filtergraph");
+								return;
+							}
+						}
+						else
+						{
+							DirectShowUtil.DebugWrite("FAILED:Unable to add video device:{0}", VideoDevice.Name);
+							return;
+						}
+					}
 
+					// Get the audio device and add it to the filter graph
+					if ( AudioDevice != null )
+					{
+						DirectShowUtil.DebugWrite("Add audiodevice to filtergraph:"+AudioDevice.Name);
+						audioDeviceFilter =  Marshal.BindToMoniker( AudioDevice.MonikerString ) as IBaseFilter;
+						if (audioDeviceFilter!=null)
+						{
+							hr = m_graphBuilder.AddFilter( audioDeviceFilter, "Audio Capture Device" );
+							if( hr < 0 ) 
+							{
+								DirectShowUtil.DebugWrite("FAILED:Add audiodevice to filtergraph");
+								return;
+							}
+						}
+						else
+						{
+							DirectShowUtil.DebugWrite("FAILED:Unable to add audio device:{0}", AudioDevice.Name);
+							return;
+						}
+					}
+
+					// Get the video compressor and add it to the filter graph
+					if ( VideoCompressor != null )
+					{
+						DirectShowUtil.DebugWrite("Add videoCompressor to filtergraph:"+VideoCompressor.Name);
+						videoCompressorFilter = (IBaseFilter) Marshal.BindToMoniker( VideoCompressor.MonikerString ); 
+						hr = m_graphBuilder.AddFilter( videoCompressorFilter, "Video Compressor" );
+						if( hr < 0 ) 
+						{
+							DirectShowUtil.DebugWrite("FAILED:Add m_videoCompressor to filtergraph");
+							Marshal.ThrowExceptionForHR( hr );
+						}
+					}
+
+					// Get the audio compressor and add it to the filter graph
+					if ( AudioCompressor != null )
+					{
+						DirectShowUtil.DebugWrite("Add AudioCompressor to filtergraph:"+AudioCompressor.Name);
+						audioCompressorFilter = (IBaseFilter) Marshal.BindToMoniker( AudioCompressor.MonikerString ); 
+						hr = m_graphBuilder.AddFilter( audioCompressorFilter, "Audio Compressor" );
+						if( hr < 0 ) 
+						{ 
+							DirectShowUtil.DebugWrite("FAILED:Add AudioCompressor to filtergraph");
+							Marshal.ThrowExceptionForHR( hr );
+						}
+					}
+
+
+					// Retrieve the stream control interface for the video device
+					// FindInterface will also add any required filters
+					// (WDM devices in particular may need additional
+					// upstream filters to function).
+
+					// Try looking for an interleaved media type
+					DirectShowUtil.DebugWrite("get Video stream control interface (IAMStreamConfig)");
+					object o;
+					cat = PinCategory.Capture;
+					Guid iid = typeof(IAMStreamConfig).GUID;
+					hr = m_captureGraphBuilder.FindInterface(new Guid[1]{cat}, null, videoDeviceFilter, ref iid, out o );
+					if ( hr != 0 )
+					{
+						o=null;
+						cat = PinCategory.Preview;
+						iid = typeof(IAMStreamConfig).GUID;
+						hr = m_captureGraphBuilder.FindInterface(new Guid[1]{cat}, null, videoDeviceFilter, ref iid, out o );
+						if ( hr != 0 )
+						{
+							o=null;
+							cat = PinCategory.VideoPort;
+							iid = typeof(IAMStreamConfig).GUID;
+							hr = m_captureGraphBuilder.FindInterface(new Guid[1]{cat}, null, videoDeviceFilter, ref iid, out o );
+							if ( hr != 0 )
+							{
+								o=null;
+							}
+						}
+					}
+					videoStreamConfig = o as IAMStreamConfig;
+					if (videoStreamConfig ==null)
+						DirectShowUtil.DebugWrite("FAILED:get Video stream control interface (IAMStreamConfig)");
+					else
+						DirectShowUtil.DebugWrite("got Video stream control interface (IAMStreamConfig)");
+        
+					if (audioDeviceFilter!=null)
+					{
+						// Retrieve the stream control interface for the audio device
+						DirectShowUtil.DebugWrite("get audio stream control interface (IAMStreamConfig)");
+						o = null;
+						cat = PinCategory.Capture;
+						iid = typeof(IAMStreamConfig).GUID;
+						hr = m_captureGraphBuilder.FindInterface(new Guid[1]{ cat}, null, audioDeviceFilter, ref iid, out o );
+						if ( hr != 0 )
+						{
+							o = null;
+							cat = PinCategory.Preview;
+							iid = typeof(IAMStreamConfig).GUID;
+							hr = m_captureGraphBuilder.FindInterface(new Guid[1]{cat}, null, audioDeviceFilter, ref iid, out o );
+							if ( hr != 0 )
+							{
+								o = null;
+								cat = PinCategory.VideoPort;
+								iid = typeof(IAMStreamConfig).GUID;
+								hr = m_captureGraphBuilder.FindInterface(new Guid[1]{cat}, null, audioDeviceFilter, ref iid, out o );
+								if ( hr != 0 )
+								{
+									o=null;
+								}
+							}
+						}
+
+						audioStreamConfig = o as IAMStreamConfig;
+						if (audioStreamConfig==null)
+							DirectShowUtil.DebugWrite("FAILED:get audio stream control interface (IAMStreamConfig)");
+						else
+							DirectShowUtil.DebugWrite("got get audio stream control interface (IAMStreamConfig)");
+					}
+					else audioStreamConfig=null;
+
+					// Retreive the media control interface (for starting/stopping graph)
+					mediaControl = (IMediaControl) m_graphBuilder;
+
+					// Reload any video crossbars
+					if ( videoSources != null ) videoSources.Dispose(); videoSources = null;
+
+					// Reload any audio crossbars
+					if ( audioSources != null ) audioSources.Dispose(); audioSources = null;
+				
+					// Reload any property pages exposed by filters
+					if ( propertyPages != null ) propertyPages.Dispose(); propertyPages = null;
+
+					// Reload capabilities of video device
+					videoCaps = null;
+
+					// Reload capabilities of video device
+					audioCaps = null;
+
+					// Retrieve TV Tuner if available
+					DirectShowUtil.DebugWrite("Find TV Tuner");
+					o = null;
+					cat = FindDirection.UpstreamOnly;
+					iid = typeof(IAMTuner).GUID;
+					hr = m_captureGraphBuilder.FindInterface( new Guid[1]{ cat}, null, videoDeviceFilter, ref iid, out o );
+					if (hr==0) 
+						DirectShowUtil.DebugWrite("Tuner Found (IAMTuner)");
+					else
+						DirectShowUtil.DebugWrite("FAILED: tuner(IAMTuner) not found:0x{0:x}",hr);
+
+					o = null;
+					cat = FindDirection.UpstreamOnly;
+					iid = typeof(IAMTVTuner).GUID;
+					hr = m_captureGraphBuilder.FindInterface( new Guid[1]{ cat}, null, videoDeviceFilter, ref iid, out o );
+					if (hr!=0) 
+						DirectShowUtil.DebugWrite("FAILED: tuner(IAMTVTuner) not found:0x{0:x}",hr);
+
+					IAMTVTuner t = o as IAMTVTuner;
+					if ( t != null )
+					{
+						DirectShowUtil.DebugWrite("TV Tuner Found");
+						tuner = new Tuner( t );
+					}
+					else
+					{
+						DirectShowUtil.DebugWrite("FAILED:TV Tuner found");
+					}
+				}
 
 				// For NON MCE devices, the audio is mostly lead into the system
 				// using an audio capture device...
@@ -1550,9 +1741,17 @@ namespace MediaPortal.TV.Recording
 
 				// All filters and connections have been made.
 				// Now fix the rest of the graph, add MUX etc.
-				m_videoCaptureDevice = new VideoCaptureDevice(
-					m_graphBuilder, m_captureGraphBuilder, videoDeviceFilter, lastFilter.DSFilter, mCard.IsMCECard, mCard.SupportsMPEG2);
 
+				if (lastFilter!=null)
+				{
+					m_videoCaptureDevice = new VideoCaptureDevice(
+						m_graphBuilder, m_captureGraphBuilder, videoDeviceFilter, lastFilter.DSFilter, mCard.IsMCECard, mCard.SupportsMPEG2);
+				}
+				else
+				{
+					m_videoCaptureDevice = new VideoCaptureDevice(
+						m_graphBuilder, m_captureGraphBuilder, videoDeviceFilter, videoDeviceFilter, mCard.IsMCECard, mCard.SupportsMPEG2);
+				}
 //				m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, videoDeviceFilter);
 				m_mpeg2Demux=null;
 				if (m_videoCaptureDevice.MPEG2)

@@ -134,14 +134,32 @@ namespace MediaPortal.Configuration
 				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
 				for (int i = 0; i < availableVideoDevices.Count; i++)
 				{
-					
-					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
-						 ((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 ))
+					bool add=false;
+					if (ccd.CaptureName==String.Empty) 
+					{
+						add=true;
+					}
+					else
+					{
+						if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
+							((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) add=true;
+					}
+					if (add)
 					{
 						TVCaptureDevice cd		= new TVCaptureDevice();
-						cd.VideoDevice				= ccd.CaptureName;
 						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
-						cd.LoadDefinitions();
+						if (ccd.CaptureName!=String.Empty) 
+						{
+							cd.VideoDevice				= ccd.CaptureName;
+							cd.LoadDefinitions();
+						}
+						else
+						{
+							cd.VideoDevice				= (string)availableVideoDevices[i];
+							cd.CommercialName			= ccd.CommercialName;
+							cd.CaptureName			  = cd.VideoDevice;
+							cd.DeviceId						= ccd.DeviceId;
+						}
 						ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
 						cardComboBox.Items.Add(cbcc); //availableVideoDevices[i]);
 					}
@@ -704,14 +722,28 @@ namespace MediaPortal.Configuration
           capture = new CaptureEx(this._mTvCaptureDevice, videoDevice, audioDevice);
 #else
           capture = new Capture(videoDevice, audioDevice);
-#endif
-          capture.VideoCompressor = videoCompressor;
-          capture.AudioCompressor = audioCompressor;
+#endif	
+					if (videoCompressor!=null)
+						capture.VideoCompressor = videoCompressor;
+					if (audioCompressor!=null)
+						capture.AudioCompressor = audioCompressor;
 
           capture.LoadSettings(cardId);        
 
           m_bMPEG2=capture.SupportsTimeShifting;
           m_bISMCE=capture.IsMCECard;
+#if (UseCaptureCardDefinitions)
+					ComboBoxCaptureCard cd = (cardComboBox.SelectedItem as ComboBoxCaptureCard);
+					if (cd!=null)
+					{
+						if (cd.CaptureDevice!=null)
+						{
+							if (cd.CaptureDevice.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
+							if (cd.CaptureDevice.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
+							if (cd.CaptureDevice.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
+						}
+					}
+#endif
         }
         catch (Exception ex)
         {
@@ -1021,6 +1053,7 @@ namespace MediaPortal.Configuration
 			{
 #if (UseCaptureCardDefinitions)
 				TVCaptureDevice card = (cardComboBox.SelectedItem as ComboBoxCaptureCard).CaptureDevice;
+				card.DeviceType=card.DeviceId;
 #else
 				TVCaptureDevice card = new TVCaptureDevice();
 
@@ -1050,9 +1083,13 @@ namespace MediaPortal.Configuration
 				// Now failed to copy the mpeg2/mce settings...
 				// And mpeg2/mce cards always set to false, ie software cards!!!
 				//#if (UseCaptureCardDefinitions)
-        card.SupportsMPEG2 = m_bMPEG2;
-        card.IsMCECard     = m_bISMCE;
-				//#endif
+#if (UseCaptureCardDefinitions)
+				if (card.DeviceId.ToLower()=="s/w") {m_bMPEG2=false; m_bISMCE=false;}
+				if (card.DeviceId.ToLower()=="hw") {m_bMPEG2=true; m_bISMCE=false;}
+				if (card.DeviceId.ToLower()=="mce") {m_bMPEG2=true; m_bISMCE=true;}
+#endif
+					card.SupportsMPEG2 = m_bMPEG2;
+				card.IsMCECard     = m_bISMCE;
         card.RecordingLevel = trackRecording.Value;
         card.FriendlyName   = textBoxName.Text;
 				return card;
@@ -1069,6 +1106,7 @@ namespace MediaPortal.Configuration
 #if (UseCaptureCardDefinitions)
           ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(card);
           cardComboBox.SelectedItem					= cbcc;
+					card.DeviceType=card.DeviceId;
 #else
           cardComboBox.SelectedItem = card.VideoDevice;
 #endif

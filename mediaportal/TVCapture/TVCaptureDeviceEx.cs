@@ -39,6 +39,7 @@ namespace MediaPortal.TV.Recording
 		string  m_strAudioInputPin			= "";
 		int     _RecordingLevel					= 100;
 		string  m_strFriendlyName				= "";
+		string  deviceType              ="";
 
 		enum State
 		{
@@ -85,6 +86,13 @@ namespace MediaPortal.TV.Recording
 		public string DeviceId
 		{
 			get {return _mCaptureCardDefinition.DeviceId;}
+			set {_mCaptureCardDefinition.DeviceId=value;}
+		}
+
+		public string DeviceType
+		{
+			get {return deviceType;}
+			set {deviceType=value;}
 		}
 
 		/// <summary>
@@ -93,6 +101,7 @@ namespace MediaPortal.TV.Recording
 		public string CaptureName
 		{
 			get {return _mCaptureCardDefinition.CaptureName;}
+			set {_mCaptureCardDefinition.CaptureName=value;}
 		}
 		/// <summary>
 		/// #MW#
@@ -100,6 +109,7 @@ namespace MediaPortal.TV.Recording
 		public string CommercialName
 		{
 			get {return _mCaptureCardDefinition.CommercialName;}
+			set {_mCaptureCardDefinition.CommercialName=value;}
 		}
 		/// <summary>
 		/// #MW#
@@ -114,7 +124,10 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		public Hashtable TvFilterDefinitions
 		{
-			get {return _mCaptureCardDefinition.Tv.FilterDefinitions; }
+			get {
+				if (_mCaptureCardDefinition.Tv==null) return null;
+				return _mCaptureCardDefinition.Tv.FilterDefinitions; 
+			}
 		}
 
 		/// <summary>
@@ -122,14 +135,22 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		public ArrayList TvConnectionDefinitions
 		{
-			get {return _mCaptureCardDefinition.Tv.ConnectionDefinitions; }
+			get 
+			{
+				if (_mCaptureCardDefinition.Tv==null) return null;
+				return _mCaptureCardDefinition.Tv.ConnectionDefinitions; 
+			}
 		}
 		/// <summary>
 		/// #MW#
 		/// </summary>
 		public InterfaceDefinition TvInterfaceDefinition
 		{
-			get {return _mCaptureCardDefinition.Tv.InterfaceDefinition; }
+			get 
+			{
+				if (_mCaptureCardDefinition.Tv==null) return null;
+				return _mCaptureCardDefinition.Tv.InterfaceDefinition; 
+			}
 		}
 
 		/// <summary>
@@ -137,7 +158,10 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		public Hashtable RadioFilterDefinitions
 		{
-			get {return _mCaptureCardDefinition.Radio.FilterDefinitions; }
+			get 
+			{
+				if (_mCaptureCardDefinition.Radio==null) return null;
+				return _mCaptureCardDefinition.Radio.FilterDefinitions; }
 		}
 
 		/// <summary>
@@ -145,7 +169,10 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		public ArrayList RadioConnectionDefinitions
 		{
-			get {return _mCaptureCardDefinition.Radio.ConnectionDefinitions; }
+			get {
+				if (_mCaptureCardDefinition.Radio==null) return null;
+				return _mCaptureCardDefinition.Radio.ConnectionDefinitions; 
+			}
 		}
 
 		/// <summary>
@@ -153,7 +180,11 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		public InterfaceDefinition RadioInterfaceDefinition
 		{
-			get {return _mCaptureCardDefinition.Radio.InterfaceDefinition; }
+			get 
+			{
+				if (_mCaptureCardDefinition.Radio==null) return null;
+				return _mCaptureCardDefinition.Radio.InterfaceDefinition; 
+			}
 		}
 
 		/// <summary>

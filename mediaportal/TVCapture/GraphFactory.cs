@@ -73,6 +73,9 @@ namespace MediaPortal.TV.Recording
       //	- Hardware MPEG2 encoders
       //	- Hardware MPEG2 "MCE" compatible encoders which for instance always include Radio...
 			
+			if (card.DeviceType.ToLower()=="hw") return new SinkGraph(card);
+			if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate);
+			if (card.DeviceType.ToLower()=="s/w") return new SWEncodingGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
       if (card.SupportsMPEG2)
       {
         // #MW#
