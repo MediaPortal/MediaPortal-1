@@ -47,8 +47,10 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox feedback;
 		// globals
-		private DVBSections m_dvbSec=null;
-		private DVBSections.Transponder[] transpList=null;
+		private DVBSections					m_dvbSec=null;
+		private DVBSections.Transponder[]	transpList=null;
+		private bool						m_bIsDirty=false;
+		//
 		private System.Windows.Forms.ComboBox lnbconfig1;
 		private System.Windows.Forms.ComboBox lnbconfig2;
 		private System.Windows.Forms.ComboBox lnbconfig3;
@@ -893,7 +895,7 @@ namespace MediaPortal.Configuration.Sections
 					if(m_dvbSec.Run()==true)
 					{
 						m_dvbSec.OpenTPLFile(comboBox3.SelectedItem.ToString(),ref list,diseqc,lnbkhz,lnb_0,lnb_1,lnb_switch,progressBar1,feedback);
-						
+						m_bIsDirty=true;
 						// setting up list
 						transpList=(DVBSections.Transponder[])list.Clone();
 						m_dvbSec.CleanUp();
@@ -1070,7 +1072,8 @@ namespace MediaPortal.Configuration.Sections
 			int radioCounter=1;
 
 			// clear sat database
-			TVDatabase.RemoveAllSatChannels();
+			if(m_bIsDirty==true)
+				TVDatabase.RemoveAllSatChannels();
 
 			if(list==null)
 			{
