@@ -405,6 +405,8 @@ public class MediaPortalApp : D3DApp, IRender
         if (font != null)
         {
           font.DrawText(80, 80, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT);
+          string tmp=String.Format("{0},{1}",m_iLastMousePositionX,m_iLastMousePositionY);
+          font.DrawText(80, 50, 0xffffffff, tmp, GUIControl.Alignment.ALIGN_LEFT);
           
           region[0].X = m_ixpos;
           region[0].Y = 0;
@@ -436,7 +438,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void WndProc(ref Message msg)
     {
-      
+
       if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
       {
         // windows wants to activate the screensaver
