@@ -669,7 +669,7 @@ namespace MediaPortal.TV.Recording
 
 			TunerData td=new TunerData();
 			td=(TunerData)Marshal.PtrToStructure(data,typeof(TunerData));
-			m_currentChannel.Audio2=td.ECM;
+			m_currentChannel.ECMPid=td.ECM;
 			TVDatabase.UpdateSatChannel(m_currentChannel);
 			//DeleteGraph();
 			//CreateGraph();
@@ -685,14 +685,14 @@ namespace MediaPortal.TV.Recording
 		void ExecTuner()
 		{
 			TunerData tu=new TunerData();
-			tu.PMT=(Int16)m_currentChannel.Audio3;
+			tu.PMT=(Int16)m_currentChannel.PMTPid;
 			tu.TunerType=1;
 			tu.Frequency=(Int32)m_currentChannel.Frequency;
 			tu.SymbolRate=(Int32)m_currentChannel.Symbolrate*1000;
 			tu.AC3=0;
 			tu.AudioPID=(Int16)m_currentChannel.AudioPid;
 			tu.DiseqC=(Int16)m_currentChannel.DiSEqC;
-			tu.ECM=(Int16)m_currentChannel.Audio2;
+			tu.ECM=(Int16)m_currentChannel.ECMPid;
 			tu.FEC=(Int16)6;
 			tu.LNB=(Int16)m_currentChannel.LNBFrequency;
 			tu.LNBSelection=(Int16)m_currentChannel.LNBKHz;
@@ -1760,7 +1760,7 @@ namespace MediaPortal.TV.Recording
 				
 				m_channelFound=true;
 				
-				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.Audio2,ch.TeletextPid,ch.Audio3)==false)
+				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid)==false)
 				{
 					m_channelFound=false;
 					return;
