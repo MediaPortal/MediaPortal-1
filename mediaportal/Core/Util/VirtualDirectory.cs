@@ -45,6 +45,10 @@ namespace MediaPortal.Util
     {
 			if (extensions==null) return;
       m_extensions = extensions;
+			for (int i=0; i < m_extensions.Count;++i)
+			{
+				m_extensions[i]=((string)m_extensions[i]).ToLower();
+			}
     }
 		/// <summary>
 		/// Method to add a new file extension to the file extensions list
@@ -54,7 +58,7 @@ namespace MediaPortal.Util
     {
 			if (m_extensions == null)
 				m_extensions = new ArrayList();
-      m_extensions.Add(strExtension);
+      m_extensions.Add(strExtension.ToLower());
     }
 
 		/// <summary>
@@ -744,13 +748,11 @@ namespace MediaPortal.Util
 			try
 			{
 				if (!System.IO.Path.HasExtension(strPath)) return false;
-			{
-				string strExtFile = System.IO.Path.GetExtension(strPath);
-				foreach (string strExt in m_extensions)
+				string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
+				for (int i=0; i < m_extensions.Count;++i)
 				{
-					if (strExt.ToLower() == strExtFile.ToLower()) return true;
+					if ( (m_extensions[i] as string)==strExtFile) return true;
 				}
-			}
 			}
 			catch(Exception){}
 
