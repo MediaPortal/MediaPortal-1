@@ -464,7 +464,9 @@ namespace MediaPortal.TV.Recording
         }
         return;
       }
-
+      dev.TVChannel=channel;
+      m_strTVChannel=channel;
+      
       //not recording. Should TV be turned off?
       if (!TVOnOff)
       {
