@@ -35,7 +35,18 @@ CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevic
 
 CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
 {
-}
+	m_pVideoSurface[0]=NULL;
+	m_pVideoSurface[1]=NULL;
+	m_pVideoTexture[0]=NULL;
+	m_pVideoTexture[1]=NULL;
+	m_pVideoSurfaceOff=NULL;
+	m_pVideoSurfaceYUY2=NULL;
+		for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
+    {
+        m_pSurfaces[i] = NULL;
+    }
+
+}	
 
 
 // IUnknown
@@ -260,6 +271,8 @@ void CVMR9AllocatorPresenter::DeleteSurfaces()
 {
     CAutoLock cAutoLock(this);
 
+	m_pVideoSurfaceOff=NULL;
+	m_pVideoSurfaceYUY2=NULL;
 
 	m_pVideoTexture[0] = m_pVideoTexture[1] = NULL;
 	m_pVideoSurface[0] = m_pVideoSurface[1] = NULL;
