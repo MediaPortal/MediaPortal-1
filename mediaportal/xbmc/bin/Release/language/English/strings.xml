@@ -2392,6 +2392,11 @@
 <!-- End My Alarm Strings -->
 
 <string>
+	<id>890</id>
+	<value>Play CD</value>
+</string>
+
+<string>
 	<id>900</id>
 	<value>Resume movie from last time ?</value>
 </string>
@@ -3160,6 +3165,10 @@
 <string>
 	<id>1440</id>
 	<value>My TeleText</value>
+</string>
+<string>
+	<id>1441</id>
+	<value>TeleText</value>
 </string>
 <string>
 	<id>16001</id>
