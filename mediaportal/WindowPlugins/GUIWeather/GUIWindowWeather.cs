@@ -534,13 +534,13 @@ namespace MediaPortal.GUI.Weather
 			//progress dialog for download
 			if(pDlgProgress!=null && !autoUpdate) //dont display progress dialog on autoupdate or it crashes! :|
 			{
-				pDlgProgress.SetHeading(410);							//"Accessing Weather.com"
-				pDlgProgress.SetLine(1, 411);							//"Getting Weather For:"
+				pDlgProgress.SetHeading(410);						//"Accessing Weather.com"
+				pDlgProgress.SetLine(1, 411);						//"Getting Weather For:"
 				pDlgProgress.SetLine(2, m_strLocation);	//Area code
 				if(m_szLocation.Length > 1)							//got the location string yet?
-					pDlgProgress.SetLine(3, m_szLocation);
-				else
-					pDlgProgress.SetLine(3, "");
+					pDlgProgress.SetLine(2, m_szLocation);
+				//else
+				//	pDlgProgress.SetLine(3, "");
 				pDlgProgress.StartModal(GetID);
 				pDlgProgress.Progress();
 			}	
