@@ -89,6 +89,7 @@ namespace MediaPortal.GUI.Library
 			int iFrame=(int)(ts.TotalMilliseconds/  ((double)( (11-GUIGraphicsContext.ScrollSpeed)*15)) );
 			int iDiffFrames=iFrame-m_iCurrentFrame;
 			if (iDiffFrames>25) iDiffFrames=25;
+			if (iDiffFrames<0) iDiffFrames=0;
 			bool bAdd=false;
 			if (iDiffFrames>0) bAdd=true;
 			int iFrameCount=0;
@@ -104,8 +105,8 @@ namespace MediaPortal.GUI.Library
 			//{
 				if (bAdd) 
 				{
-					m_iCurrentFrame++;
-					m_iFrames++;
+					m_iCurrentFrame+=iDiffFrames;
+					m_iFrames+=iDiffFrames;
 				}
 				if ( m_vecItems.Count > m_iItemsPerPage)
 				{
