@@ -748,7 +748,59 @@ namespace MediaPortal.GUI.Library
 				break;
 
         case Action.ActionType.ACTION_KEY_PRESSED : 
-        break;
+        {
+          if (action.m_key!=null)
+          {
+            // Check key
+            if ( ( (action.m_key.KeyChar >= 97) && (action.m_key.KeyChar <= 122) ) || 
+                 ( (action.m_key.KeyChar >= 48) && (action.m_key.KeyChar <= 57) ) )
+            {
+              // Get selected item
+              bool bItemFound = false;
+              int iCurrentItem = m_iCursorY + m_iOffset;
+              int iItem = iCurrentItem;
+              do
+              {
+                iItem++;
+                if (iItem >= m_vecItems.Count) iItem=0;
+
+                GUIListItem pItem = (GUIListItem)m_vecItems[iItem];
+                if (action.m_key.KeyChar == pItem.Label.ToLower()[0])
+                {
+                  bItemFound = true;
+                  break;
+                }
+              }
+              while (iItem != iCurrentItem);
+
+              if ( (bItemFound) && (iItem >= 0 && iItem < m_vecItems.Count) )
+              {
+                // update spin controls
+                int iPage = 1;
+                int iSel = iItem;
+                while (iSel >= m_iItemsPerPage)
+                {
+                  iPage++;
+                  iSel -= m_iItemsPerPage;
+                }
+                m_upDown.Value = iPage;
+
+                // find item
+                m_iOffset = 0;
+                m_iCursorY = 0;
+                while (iItem  >= m_iItemsPerPage) 
+                {
+                  iItem  -= m_iItemsPerPage;
+                  m_iOffset += m_iItemsPerPage;
+                }
+                m_iCursorY = iItem ;
+                OnSelectionChanged();
+              }
+            }
+          }
+        }
+          break;
+
         case Action.ActionType.ACTION_MOUSE_MOVE : 
         {
           int id;
