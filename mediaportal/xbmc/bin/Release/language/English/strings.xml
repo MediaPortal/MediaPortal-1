@@ -2500,39 +2500,51 @@
 	<id>8033</id>
 	<value>Progress</value>
 </string>
+<string>
 	<id>9000</id>
 	<value>Image dimensions:</value>
 </string>
+<string>
 	<id>9001</id>
 	<value>Resolution:</value>
 </string>
+<string>
 	<id>9002</id>
 	<value>Flash:</value>
 </string>
+<string>
 	<id>9003</id>
 	<value>Metering Mode:</value>
 </string>
+<string>
 	<id>9004</id>
 	<value>Exposure Compensation:</value>
 </string>
+<string>
 	<id>9005</id>
 	<value>Shutter Speed:</value>
 </string>
+<string>
 	<id>9006</id>
 	<value>Date taken:</value>
 </string>
+<string>
 	<id>9007</id>
 	<value>Fstop:</value>
 </string>
+<string>
 	<id>9008</id>
 	<value>Exposure time:</value>
 </string>
+<string>
 	<id>9009</id>
 	<value>Camera Model:</value>
 </string>
+<string>
 	<id>9010</id>
 	<value>Equipment make:</value>
 </string>
+<string>
 	<id>9011</id>
 	<value>View comments:</value>
 </string>
