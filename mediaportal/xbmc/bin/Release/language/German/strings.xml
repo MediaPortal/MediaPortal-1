@@ -1899,6 +1899,42 @@
 		<id>664</id>
 		<value>Dieses Bild löschen?</value>
 	</string>
+	<string>
+		<id>665</id>
+		<value>Radio</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Sender</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Suchlauf</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>nach Typ</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>nach Genre</value>
+	</string>	
+	<string>
+		<id>670</id>
+		<value>nach Bitrate</value>
+	</string>	
+	<string>
+		<id>670</id>
+		<value>Gesehene Aufnahmen löschen?</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>nach Ansicht</value>
+	</string>	
+	<string>
+		<id>672</id>
+		<value>Aufnahme Mon-Fre</value>
+	</string>	
 
 	<string>
 		<id>10000</id>
@@ -2097,4 +2133,5 @@
 		<value>Vollbild OSD</value>
 	</string>
 </strings>
+
 
