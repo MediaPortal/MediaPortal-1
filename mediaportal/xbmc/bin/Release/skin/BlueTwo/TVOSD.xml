@@ -64,8 +64,8 @@
 		<description>TV Logo</description> 
 		<type>image</type> 
 		<id>10</id> 
-		<posX>65</posX> 
-		<posY>440</posY>
+		<posX>620</posX> 
+		<posY>435</posY>
 		<width>80</width>
 		<height>80</height>
 		<texture>#TV.View.thumb</texture>		
@@ -79,7 +79,7 @@
 		<posX>210</posX> 
 		<posY>450</posY>
 		<width>330</width> 
-		<height>70</height>
+		<height>50</height>
 		<align>left</align> 
 		<label>#TV.View.description</label>
 		<font>font10</font>
@@ -113,14 +113,14 @@
 		<description>Program Button Up</description>
 		<type>button</type>
 		<id>33</id>
-		<posX>147</posX>
+		<posX>557</posX>
 		<posY>420</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_up_focus.png</textureFocus>
 		<textureNoFocus>arrow_round_up_nofocus.png</textureNoFocus>
 		<label>-</label>
-		<onleft>33</onleft>
+		<onleft>221</onleft>
 		<onright>34</onright>
 		<onup>33</onup>
 		<ondown>32</ondown>
@@ -129,7 +129,7 @@
 		<description>Program Button Down</description>
 		<type>button</type>
 		<id>34</id>
-		<posX>173</posX>
+		<posX>582</posX>
 		<posY>420</posY>
 		<width>26</width>
 		<height>26</height>
@@ -145,15 +145,15 @@
 		<description>Channel Button Up</description>
 		<type>button</type>
 		<id>31</id>
-		<posX>173</posX>
-		<posY>520</posY>
+		<posX>582</posX>
+		<posY>510</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_right_focus.png</textureFocus>
 		<textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
 		<label>-</label>
 		<onleft>32</onleft>
-		<onright>210</onright>
+		<onright>31</onright>
 		<onup>34</onup>
 		<ondown>31</ondown>
 	</control>	
@@ -161,14 +161,14 @@
 		<description>Channel Button Down</description>
 		<type>button</type>
 		<id>32</id>
-		<posX>147</posX>
-		<posY>520</posY>
+		<posX>557</posX>
+		<posY>510</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_left_focus.png</textureFocus>
 		<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
 		<label>-</label>
-		<onleft>32</onleft>
+		<onleft>221</onleft>
 		<onright>31</onright>
 		<onup>33</onup>
 		<ondown>32</ondown>
@@ -177,8 +177,9 @@
 		<description>Current channel</description> 
 		<type>label</type> 
 		<id>35</id> 
-		<posX>65</posX> 
-		<posY>530</posY> 
+		<posX>620</posX> 
+		<posY>520</posY>
+		<width>80</width> 
 		<label>-</label> 
 		<align>left</align> 
 		<font>font10</font> 
@@ -188,17 +189,17 @@
 		<description>Skip Bwd</description> 
 		<type>togglebutton</type> 
 		<id>210</id> 
-		<posX>205</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>57</posX> 
+		<posY>424</posY>
+		<width>35</width>
+		<height>35</height> 
 		<AltTextureFocus>osd_back_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_back_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>osd_back_focus.png</textureFocus> 
 		<textureNoFocus>osd_back_focus.png</textureNoFocus> 
 		<label>-</label> 
 		<font>-</font> 
-		<onleft>31</onleft> 
+		<onleft>221</onleft> 
 		<onright>211</onright> 
 		<onup>210</onup> 
 		<ondown>210</ondown> 
@@ -207,10 +208,10 @@
 		<description>Rewind</description> 
 		<type>togglebutton</type> 
 		<id>211</id> 
-		<posX>240</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>42</posX> 
+		<posY>464</posY>
+		<width>31</width>
+		<height>35</height>
 		<AltTextureFocus>osd_rewind_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_rewind_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>osd_rewind_focus.png</textureFocus> 
@@ -226,10 +227,10 @@
 		<description>Stop</description> 
 		<type>button</type> 
 		<id>212</id> 
-		<posX>275</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>57</posX> 
+		<posY>504</posY>
+		<width>35</width>
+		<height>35</height> 
 		<textureFocus>osd_stop_focus.png</textureFocus> 
 		<textureNoFocus>osd_stop_nofocus.png</textureNoFocus> 
 		<label>-</label> 
@@ -243,10 +244,10 @@
 		<description>Play</description> 
 		<type>togglebutton</type> 
 		<id>213</id> 
-		<posX>310</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>75</posX> 
+		<posY>440</posY>
+		<width>82</width>
+		<height>82</height> 
 		<AltTextureFocus>osd_pause_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>osd_play_focus.png</textureFocus> 
@@ -254,7 +255,7 @@
 		<label>-</label> 
 		<font>-</font> 
 		<onleft>212</onleft> 
-		<onright>214</onright> 
+		<onright>215</onright> 
 		<onup>213</onup> 
 		<ondown>213</ondown> 
 	</control>
@@ -262,18 +263,18 @@
 		<description>Fast Forward</description> 
 		<type>togglebutton</type> 
 		<id>214</id> 
-		<posX>345</posX> 
-		<posY>520</posY> 
-		<width>30</width>
-		<height>26</height> 
+		<posX>157</posX> 
+		<posY>464</posY>
+		<width>31</width>
+		<height>35</height>
 		<AltTextureFocus>osd_fastforward_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_fastforward_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>osd_fastforward_focus.png</textureFocus> 
 		<textureNoFocus>osd_fastforward_focus.png</textureNoFocus> 
 		<label>-</label> 
 		<font>-</font> 
-		<onleft>213</onleft> 
-		<onright>215</onright> 
+		<onleft>215</onleft> 
+		<onright>216</onright> 
 		<onup>214</onup> 
 		<ondown>214</ondown> 
 	</control>
@@ -281,18 +282,18 @@
 		<description>Skip Fwd</description> 
 		<type>togglebutton</type> 
 		<id>215</id> 
-		<posX>380</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>138</posX> 
+		<posY>424</posY>
+		<width>35</width>
+		<height>35</height> 
 		<AltTextureFocus>osd_next_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_next_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>osd_next_focus.png</textureFocus> 
 		<textureNoFocus>osd_next_focus.png</textureNoFocus> 
 		<label>-</label> 
 		<font>-</font> 
-		<onleft>214</onleft> 
-		<onright>216</onright> 
+		<onleft>213</onleft> 
+		<onright>214</onright> 
 		<onup>215</onup> 
 		<ondown>215</ondown> 
 	</control>
@@ -300,17 +301,17 @@
 		<description>Mute</description> 
 		<type>togglebutton</type> 
 		<id>216</id> 
-		<posX>415</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>138</posX> 
+		<posY>504</posY>
+		<width>35</width>
+		<height>35</height>
 		<AltTextureFocus>osd_mute_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_mute_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>osd_mute_focus.png</textureFocus> 
 		<textureNoFocus>osd_mute_focus.png</textureNoFocus> 
 		<label>-</label> 
 		<font>-</font> 
-		<onleft>215</onleft> 
+		<onleft>214</onleft> 
 		<onright>218</onright> 
 		<onup>216</onup> 
 		<ondown>216</ondown> 
@@ -319,10 +320,10 @@
 		<description>Subtitles Menu</description> 
 		<type>togglebutton</type> 
 		<id>218</id> 
-		<posX>450</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>190</posX> 
+		<posY>506</posY>
+		<width>31</width>
+		<height>31</height> 
 		<AltTextureFocus>osd_settings_subs_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_settings_subs_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>-</textureFocus> 
@@ -338,10 +339,10 @@
 		<description>Bookmarks Menu</description> 
 		<type>togglebutton</type> 
 		<id>219</id> 
-		<posX>485</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>230</posX> 
+		<posY>506</posY>
+		<width>31</width>
+		<height>31</height> 
 		<AltTextureFocus>osd_settings_bookmark_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_settings_bookmark_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>-</textureFocus> 
@@ -357,10 +358,10 @@
 		<description>Video Menu</description> 
 		<type>togglebutton</type> 
 		<id>220</id> 
-		<posX>520</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>270</posX> 
+		<posY>506</posY>
+		<width>31</width>
+		<height>31</height> 
 		<AltTextureFocus>osd_settings_video_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_settings_video_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>-</textureFocus> 
@@ -376,10 +377,10 @@
 		<description>Audio Menu</description> 
 		<type>togglebutton</type> 
 		<id>221</id> 
-		<posX>555</posX> 
-		<posY>520</posY>
-		<width>30</width>
-		<height>26</height> 
+		<posX>310</posX> 
+		<posY>506</posY>
+		<width>31</width>
+		<height>31</height> 
 		<AltTextureFocus>osd_settings_audio_focus.png</AltTextureFocus> 
 		<AltTextureNoFocus>osd_settings_audio_nofocus.png</AltTextureNoFocus> 
 		<textureFocus>-</textureFocus> 
@@ -387,7 +388,7 @@
 		<label>-</label> 
 		<font>-</font> 
 		<onleft>220</onleft> 
-		<onright>210</onright> 
+		<onright>33</onright> 
 		<onup>221</onup> 
 		<ondown>221</ondown> 
 	</control>
@@ -395,8 +396,8 @@
 		<description>Sub Menu Background (volume)</description> 
 		<type>image</type> 
 		<id>300</id> 
-		<posX>170</posX> 
-		<posY>330</posY> 
+		<posX>145</posX> 
+		<posY>315</posY> 
 		<texture>osd_dialog.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
@@ -406,8 +407,8 @@
 		<description>Sub Menu Background (subtitles)</description> 
 		<type>image</type> 
 		<id>302</id> 
-		<posX>170</posX> 
-		<posY>330</posY> 
+		<posX>145</posX> 
+		<posY>315</posY> 
 		<texture>osd_dialog.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
@@ -417,8 +418,8 @@
 		<description>Sub Menu Background (bookmarks)</description> 
 		<type>image</type> 
 		<id>303</id> 
-		<posX>170</posX> 
-		<posY>330</posY> 
+		<posX>145</posX> 
+		<posY>315</posY> 
 		<texture>osd_dialog.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
@@ -428,8 +429,8 @@
 		<description>Sub Menu Background (video)</description> 
 		<type>image</type> 
 		<id>304</id> 
-		<posX>170</posX> 
-		<posY>305</posY> 
+		<posX>145</posX> 
+		<posY>290</posY> 
 		<texture>osd_dialog_big.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
@@ -439,8 +440,8 @@
 		<description>Sub Menu Background (audio)</description> 
 		<type>image</type> 
 		<id>305</id>		
-		<posX>170</posX> 
-		<posY>330</posY> 
+		<posX>145</posX> 
+		<posY>315</posY> 
 		<texture>osd_dialog.png</texture> 
 		<colorkey>0</colorkey> 
 		<colordiffuse>ffffffff</colordiffuse> 
@@ -516,8 +517,8 @@
 		<description>Sub Titles List Control</description> 
 		<type>listcontrol</type> 
 		<id>802</id> 
-		<posX>118</posX> 
-		<posY>340</posY> 
+		<posX>185</posX> 
+		<posY>425</posY> 
 		<width>300</width> 
 		<height>100</height> 
 		<onleft>801</onleft> 
@@ -559,7 +560,7 @@
 		<id>501</id> 
 		<posX>185</posX> 
 		<posY>400</posY> 
-		<width>300</width> 
+		<width>355</width> 
 		<height>150</height> 		
 		<onleft>500</onleft> 
 		<onright>500</onright> 
@@ -595,26 +596,25 @@
 		<visible>no</visible> 
 	</control>
 	<control>
-		<description>Sharpness label</description> 
-		<type>label</type> 
-		<id>710</id> 
+		<description>Non-Interleaved Checkbox</description> 
+		<type>checkmark</type> 
+		<id>701</id> 
 		<posX>185</posX> 
 		<posY>370</posY> 
-		<label>641</label> 
-		<font>font13</font> 
-		<textcolor>FFFFFFFF</textcolor> 
+		<label>306</label> 
+		<onup>700</onup> 
+		<ondown>703</ondown> 
+		<onleft>701</onleft> 
+		<onright>701</onright> 
 		<visible>no</visible> 
 	</control>
 	<control>
-		<description>Sharpness</description> 
-		<type>slider</type> 
-		<id>701</id> 
-		<posX>300</posX> 
+		<description>No Cache Checkbox</description> 
+		<type>checkmark</type> 
+		<id>702</id> 
+		<posX>359</posX> 
 		<posY>370</posY> 
-		<subtype>int</subtype> 
-		<textureSliderBar>osd_slider_bg.png</textureSliderBar> 
-		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib> 
-		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus> 
+		<label>431</label> 
 		<onup>700</onup> 
 		<ondown>703</ondown> 
 		<onleft>701</onleft> 
@@ -622,26 +622,12 @@
 		<visible>no</visible> 
 	</control>
 	<control>
-		<description>Saturation label</description> 
-		<type>label</type> 
-		<id>702</id> 
+		<description>Adjust Framerate Checkbox</description> 
+		<type>checkmark</type> 
+		<id>703</id> 
 		<posX>185</posX> 
 		<posY>395</posY> 
-		<label>640</label> 
-		<font>font13</font> 
-		<textcolor>FFFFFFFF</textcolor> 
-		<visible>no</visible> 
-	</control>
-	<control>
-		<description>Saturation</description> 
-		<type>slider</type> 
-		<id>703</id> 
-		<posX>300</posX> 
-		<posY>395</posY> 
-		<subtype>int</subtype> 
-		<textureSliderBar>osd_slider_bg.png</textureSliderBar> 
-		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib> 
-		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>  
+		<label>343</label> 
 		<onup>701</onup> 
 		<ondown>704</ondown> 
 		<onleft>703</onleft> 
@@ -769,7 +755,6 @@
 		<onright>601</onright> 
 		<onup>600</onup> 
 		<ondown>601</ondown> 
-
 		<visible>no</visible> 
 	</control>
 	<control>
@@ -777,13 +762,15 @@
 		<type>listcontrol</type> 
 		<id>601</id> 
 		<posX>185</posX> 
-		<posY>400</posY> 
-		<width>300</width> 
+		<posY>410</posY> 
+		<width>355</width> 
 		<height>120</height> 
 		<onleft>602</onleft> 
 		<onright>600</onright> 
 		<onup>600</onup> 
 		<ondown>601</ondown> 
+		<spinPosX>465</spinPosX>
+		<spinPosY>480</spinPosY>
 		<visible>no</visible> 
 	</control>
 </controls>

@@ -187,7 +187,7 @@
 			<type>image</type> 
 			<id>104</id> 
 			<posX>171</posX> 
-			<posY>391</posY>
+			<posY>416</posY>
 			<width>375</width>
 			<height>22</height>
 			<texture>osd_progress_background.png</texture>		
@@ -231,7 +231,7 @@
 			<type>label</type> 
 			<id>105</id> 
 			<posX>70</posX> 
-			<posY>415</posY> 
+			<posY>440</posY> 
 			<label>#TV.Record.current</label> 
 			<align>left</align> 
 			<font>font72</font> 
@@ -242,7 +242,7 @@
 			<type>label</type> 
 			<id>106</id> 
 			<posX>160</posX> 
-			<posY>390</posY> 
+			<posY>415</posY> 
 			<label>0:00</label> 
 			<align>right</align> 
 			<font>font16</font> 
@@ -253,7 +253,7 @@
 			<type>label</type> 
 			<id>107</id> 
 			<posX>555</posX> 
-			<posY>390</posY> 
+			<posY>415</posY> 
 			<label>#TV.Record.duration</label> 
 			<align>left</align> 
 			<font>font16</font> 
