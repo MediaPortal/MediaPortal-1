@@ -277,8 +277,8 @@ namespace MediaPortal.GUI.TV
 							//dont show programs which have ended
 							if (program.EndTime < DateTime.Now) continue;
 							
-              string strTime=String.Format("{0} {1} - {2}", 
-                program.StartTime.ToShortDateString() , 
+							string strTime=String.Format("{0} {1} - {2}", 
+								Utils.GetShortDayString(program.StartTime) , 
                 program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
                 program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 
@@ -312,8 +312,8 @@ namespace MediaPortal.GUI.TV
             TVDatabase.SearchPrograms(start,end, ref titles, _SearchKind, _SearchCriteria);
             foreach(TVProgram program in titles)
 						{
-              string strTime=String.Format("{0} {1} - {2}", 
-                program.StartTime.ToShortDateString() , 
+							string strTime=String.Format("{0} {1} - {2}", 
+								Utils.GetShortDayString(program.StartTime) , 
                 program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
                 program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 
@@ -350,7 +350,7 @@ namespace MediaPortal.GUI.TV
 					foreach(TVProgram program in titles)
 					{
 						string strTime=String.Format("{0} {1} - {2}", 
-							program.StartTime.ToShortDateString() , 
+							Utils.GetShortDayString(program.StartTime) , 
 							program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
 							program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 
