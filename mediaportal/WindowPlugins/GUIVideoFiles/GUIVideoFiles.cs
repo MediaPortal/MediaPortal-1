@@ -148,6 +148,7 @@ namespace MediaPortal.GUI.Video
           string shareLogin = String.Format("sharelogin{0}", i);
           string sharePwd  = String.Format("sharepassword{0}", i);
           string sharePort = String.Format("shareport{0}", i);
+          string remoteFolder = String.Format("shareRemotepath{0}", i);
 
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("movies", strShareName, "");
@@ -159,6 +160,7 @@ namespace MediaPortal.GUI.Video
           share.FtpLoginName= xmlreader.GetValueAsString("movies", shareLogin,"");
           share.FtpPassword= xmlreader.GetValueAsString("movies", sharePwd,"");
           share.FtpPort= xmlreader.GetValueAsInt("movies", sharePort,21);
+          share.FtpFolder= xmlreader.GetValueAsString("movies", remoteFolder,"/");
 
           if (share.Name.Length > 0)
           {

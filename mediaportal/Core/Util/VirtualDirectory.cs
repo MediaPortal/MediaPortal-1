@@ -24,7 +24,7 @@ namespace MediaPortal.Util
     ArrayList m_shares = new ArrayList();
     ArrayList m_extensions = null;
     string	  m_strPreviousDir = String.Empty;
-    
+    string    m_strLocalFolder=String.Empty;
 		/// <summary>
 		/// constructor
 		/// </summary>
@@ -107,7 +107,7 @@ namespace MediaPortal.Util
         if (share.IsFtpShare)
         {
           item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,share.Path);
+                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,Utils.RemoveTrailingSlash(share.FtpFolder));
         }
 				Utils.SetDefaultIcons(item);
         items.Add(item);
@@ -144,7 +144,7 @@ namespace MediaPortal.Util
             if (share.IsFtpShare)
             {
               string remoteFolder=String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,share.Path);
+                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,Utils.RemoveTrailingSlash(share.FtpFolder));
               if (remoteFolder==strDir) return true;
             }
           }
@@ -195,7 +195,7 @@ namespace MediaPortal.Util
             if (share.IsFtpShare)
             {
               string remoteFolder=String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,share.Path);
+                share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,Utils.RemoveTrailingSlash(share.FtpFolder));
               if (strDir.IndexOf(remoteFolder)>=0) 
               {
                 iPincode = share.Pincode;
@@ -804,18 +804,19 @@ namespace MediaPortal.Util
 
       foreach (Share share in m_shares)
       {
-        if (!share.IsFtpShare && share.Default)
+        if (share.IsFtpShare)
         {
-          int slash=remotefile.LastIndexOf("/");
-          if (slash>0) remotefile=remotefile.Substring(slash+1);
-          else 
+          string filename,path;
+          GetRemoteFileNameAndPath(remotefile, out filename, out path);
+
+          string remoteFolder=String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+            share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,Utils.RemoveTrailingSlash(share.FtpFolder));
+
+          if (remotefile.IndexOf(remoteFolder)==0)
           {
-            int questionMark=remotefile.LastIndexOf("?");
-            if (questionMark>0) remotefile=remotefile.Substring(questionMark+1);
-          }            
-          
-          string localFile=String.Format(@"{0}\{1}", share.Path,remotefile);
-          return localFile;
+            string localFile=string.Format(@"{0}\{1}", Utils.RemoveTrailingSlash(share.Path), filename);
+            return localFile;
+          }
         }
       }
       return String.Empty;
@@ -919,7 +920,7 @@ namespace MediaPortal.Util
       try
       {
         client.ChDir(remotePath);
-        string localFile=String.Format(@"{0}\{1}", GetDefaultPath(),remoteFilename);
+        string localFile=GetLocalFilename(file);
         return FtpConnectionCache.Download(client,file,remoteFilename,localFile);
       }
       catch(Exception ex)

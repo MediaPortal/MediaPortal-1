@@ -39,6 +39,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLogin = String.Format("sharelogin{0}", index);
           string sharePwd  = String.Format("sharepassword{0}", index);
           string sharePort = String.Format("shareport{0}", index);
+          string shareRemotePath = String.Format("shareremotepath{0}", index);
 
 					string shareNameData = xmlreader.GetValueAsString("music", shareName, "");
 					string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
@@ -49,6 +50,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLoginData = xmlreader.GetValueAsString("music", shareLogin, "");
           string sharePwdData = xmlreader.GetValueAsString("music", sharePwd, "");
           int    sharePortData = xmlreader.GetValueAsInt("music", sharePort, 21);
+          string shareRemotePathData = xmlreader.GetValueAsString("music", shareRemotePath, "/");
 
           if(shareNameData != null && shareNameData.Length > 0)
           {
@@ -58,6 +60,7 @@ namespace MediaPortal.Configuration.Sections
             newShare.LoginName=shareLoginData;
             newShare.PassWord=sharePwdData;
             newShare.Port=sharePortData;
+            newShare.RemoteFolder=shareRemotePathData;
            
             AddShare(newShare, shareNameData.Equals(defaultShare));
           }
@@ -87,6 +90,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLogin = String.Format("sharelogin{0}", index);
           string sharePwd  = String.Format("sharepassword{0}", index);
           string sharePort = String.Format("shareport{0}", index);
+          string shareRemotePath = String.Format("shareremotepath{0}", index);
 
           string shareNameData = String.Empty;
           string sharePathData = String.Empty;
@@ -97,6 +101,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLoginData = String.Empty;
           string sharePwdData = String.Empty;
           int    sharePortData = 21;
+          string shareRemotePathData = String.Empty;
 
 					if(CurrentShares != null && CurrentShares.Count > index)
 					{
@@ -113,6 +118,7 @@ namespace MediaPortal.Configuration.Sections
               shareLoginData = shareData.LoginName;
               sharePwdData = shareData.PassWord;
               sharePortData = shareData.Port;
+              shareRemotePathData=shareData.RemoteFolder;
 
               if(CurrentShares[index] == DefaultShare)
                 defaultShare = shareNameData;
@@ -128,6 +134,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("music", shareLogin, shareLoginData);
           xmlwriter.SetValue("music", sharePwd, sharePwdData);
           xmlwriter.SetValue("music", sharePort, sharePortData.ToString());
+          xmlwriter.SetValue("music", shareRemotePath, shareRemotePathData);
         }
 
 				xmlwriter.SetValue("music", "default", defaultShare);

@@ -51,12 +51,6 @@ namespace Core.Util
         ftp.Connection.BytesTransferred +=new BytesTransferredHandler(OnBytesTransferred);
         ftp.Connection.TransferType=FTPTransferType.BINARY;
 
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
-        msg.Label=originalRemoteFile;
-        msg.Label2=localFile;
-        msg.Param1=(int)(BytesTransferred+BytesOffset);
-        GUIGraphicsContext.SendMessage(msg);
-
 
         Log.Write("ftp download{0}->{1}", ftp.remoteFile, ftp.localFile);
         if (System.IO.File.Exists(ftp.localFile))
@@ -65,6 +59,14 @@ namespace Core.Util
           BytesOffset=info.Length;
           ftp.Connection.Resume();
         }
+        
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
+        msg.Label=originalRemoteFile;
+        msg.Label2=localFile;
+        msg.Param1=(int)(BytesTransferred+BytesOffset);
+        GUIGraphicsContext.SendMessage(msg);
+
         ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
       }
 

@@ -170,6 +170,7 @@ namespace MediaPortal.GUI.Music
           string shareLogin = String.Format("sharelogin{0}", i);
           string sharePwd  = String.Format("sharepassword{0}", i);
           string sharePort = String.Format("shareport{0}", i);
+          string remoteFolder = String.Format("shareRemotepath{0}", i);
 
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("music", strShareName, "");
@@ -181,6 +182,7 @@ namespace MediaPortal.GUI.Music
           share.FtpLoginName= xmlreader.GetValueAsString("music", shareLogin,"");
           share.FtpPassword= xmlreader.GetValueAsString("music", sharePwd,"");
           share.FtpPort= xmlreader.GetValueAsInt("music", sharePort,21);
+          share.FtpFolder= xmlreader.GetValueAsString("music", remoteFolder,"/");
 
           if (share.Name.Length > 0)
           { 

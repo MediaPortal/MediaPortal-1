@@ -19,6 +19,7 @@ namespace MediaPortal.Configuration.Sections
       public string Server=String.Empty;
       public string LoginName=String.Empty;
       public string PassWord=String.Empty;
+      public string RemoteFolder=String.Empty;
       public int    Port=21;
 
       public bool   HasPinCode
@@ -205,6 +206,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.LoginName=editShare.LoginName;
         shareData.PassWord=editShare.PassWord;
         shareData.Port=editShare.Port;
+        shareData.RemoteFolder=editShare.RemoteFolder;
             
 
 				AddShare(shareData, currentlyCheckedItem == null);
@@ -245,6 +247,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.Port=shareData.Port;
           editShare.LoginName=shareData.LoginName;
           editShare.PassWord=shareData.PassWord;
+          editShare.RemoteFolder=shareData.RemoteFolder;
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -259,6 +262,7 @@ namespace MediaPortal.Configuration.Sections
             shareData.LoginName=editShare.LoginName;
             shareData.PassWord=editShare.PassWord;
             shareData.Port=editShare.Port;
+            shareData.RemoteFolder=editShare.RemoteFolder;
             
 
             selectedItem.Tag = shareData;

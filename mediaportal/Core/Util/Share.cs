@@ -21,6 +21,7 @@ namespace MediaPortal.Util
     private string remoteServer=String.Empty;
     private string remoteLogin=String.Empty;
     private string remotePassword=String.Empty;
+    private string remoteFolder=String.Empty;
     private int    remotePort=21;
 		/// <summary>
 		/// empty constructor
@@ -128,6 +129,19 @@ namespace MediaPortal.Util
         remoteLogin=value;
       }
     }
+    /// <summary>
+    /// Property to get/set the ftp folder
+    /// </summary>
+    public string FtpFolder
+    {
+      get { return remoteFolder;}
+      set 
+      { 
+        if (value==null) return;
+        remoteFolder=value;
+      }
+    }
+
     /// <summary>
     /// Property to get/set the ftp password
     /// </summary>

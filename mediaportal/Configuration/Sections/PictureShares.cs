@@ -39,6 +39,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLogin = String.Format("sharelogin{0}", index);
           string sharePwd  = String.Format("sharepassword{0}", index);
           string sharePort = String.Format("shareport{0}", index);
+          string shareRemotePath = String.Format("shareremotepath{0}", index);
 
 					string shareNameData = xmlreader.GetValueAsString("pictures", shareName, "");
 					string sharePathData = xmlreader.GetValueAsString("pictures", sharePath, "");
@@ -49,6 +50,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLoginData = xmlreader.GetValueAsString("pictures", shareLogin, "");
           string sharePwdData = xmlreader.GetValueAsString("pictures", sharePwd, "");
           int    sharePortData = xmlreader.GetValueAsInt("pictures", sharePort, 21);
+          string shareRemotePathData = xmlreader.GetValueAsString("pictures", shareRemotePath, "/");
 
           if(shareNameData != null && shareNameData.Length > 0)
           {
@@ -58,6 +60,7 @@ namespace MediaPortal.Configuration.Sections
             newShare.LoginName=shareLoginData;
             newShare.PassWord=sharePwdData;
             newShare.Port=sharePortData;
+            newShare.RemoteFolder=shareRemotePathData;
            
             AddShare(newShare, shareNameData.Equals(defaultShare));
           }
@@ -82,6 +85,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLogin = String.Format("sharelogin{0}", index);
           string sharePwd  = String.Format("sharepassword{0}", index);
           string sharePort = String.Format("shareport{0}", index);
+          string shareRemotePath = String.Format("shareremotepath{0}", index);
 
           string shareNameData = String.Empty;
           string sharePathData = String.Empty;
@@ -92,6 +96,7 @@ namespace MediaPortal.Configuration.Sections
           string shareLoginData = String.Empty;
           string sharePwdData = String.Empty;
           int    sharePortData = 21;
+          string shareRemotePathData = String.Empty;
 
 					if(CurrentShares != null && CurrentShares.Count > index)
 					{
@@ -108,6 +113,7 @@ namespace MediaPortal.Configuration.Sections
               shareLoginData = shareData.LoginName;
               sharePwdData = shareData.PassWord;
               sharePortData = shareData.Port;
+              shareRemotePathData=shareData.RemoteFolder;
 
 
 
@@ -125,6 +131,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("pictures", shareLogin, shareLoginData);
           xmlwriter.SetValue("pictures", sharePwd, sharePwdData);
           xmlwriter.SetValue("pictures", sharePort, sharePortData.ToString());
+          xmlwriter.SetValue("pictures", shareRemotePath, shareRemotePathData);
 
         }
 
