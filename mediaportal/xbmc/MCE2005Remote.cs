@@ -350,7 +350,10 @@ namespace MediaPortal
           case 0x9:
             break;
           //case 0x209://details
-          //  break;
+            //  break;
+          case 0x25://live tv
+            GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_TV);
+            break;
           case 0x4B://DVD angle
             break;
           case 0x4C://DVD audio
@@ -383,8 +386,6 @@ namespace MediaPortal
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_RECORDEDTV);
             break;
           case 0x82://Standbye
-            break;
-          case 0x25://TV/jump
             break;
           case 0x0d:// home
             GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
