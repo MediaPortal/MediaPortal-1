@@ -10,6 +10,7 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
+  11-09-2004 Pictures   : Screensaver is not disabled during a slideshow
   11-09-2004 playlist   : pressing Y in a playlist will cause a crash
   10-09-2004 GUI	: when aligning a fadelabel 'right' you will not see the beginning of the string.
   10-08-2004 viz	: after a new songs start to play while being in full screen viz, you can't exit the viz anymore with X or ESC
