@@ -103,7 +103,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnLaunch.Enabled = false;
-			this.btnLaunch.Location = new System.Drawing.Point(304, 144);
+			this.btnLaunch.Location = new System.Drawing.Point(296, 144);
 			this.btnLaunch.Name = "btnLaunch";
 			this.btnLaunch.Size = new System.Drawing.Size(88, 23);
 			this.btnLaunch.TabIndex = 18;
@@ -114,7 +114,7 @@ namespace WindowPlugins.GUIPrograms
 			// UpdateDatabaseButton
 			// 
 			this.UpdateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.UpdateDatabaseButton.Location = new System.Drawing.Point(304, 208);
+			this.UpdateDatabaseButton.Location = new System.Drawing.Point(296, 216);
 			this.UpdateDatabaseButton.Name = "UpdateDatabaseButton";
 			this.UpdateDatabaseButton.Size = new System.Drawing.Size(88, 40);
 			this.UpdateDatabaseButton.TabIndex = 17;
@@ -126,7 +126,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnEdit.Enabled = false;
-			this.btnEdit.Location = new System.Drawing.Point(304, 24);
+			this.btnEdit.Location = new System.Drawing.Point(296, 24);
 			this.btnEdit.Name = "btnEdit";
 			this.btnEdit.Size = new System.Drawing.Size(88, 23);
 			this.btnEdit.TabIndex = 16;
@@ -138,7 +138,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnDelete.Enabled = false;
-			this.btnDelete.Location = new System.Drawing.Point(304, 48);
+			this.btnDelete.Location = new System.Drawing.Point(296, 48);
 			this.btnDelete.Name = "btnDelete";
 			this.btnDelete.Size = new System.Drawing.Size(88, 23);
 			this.btnDelete.TabIndex = 15;
@@ -149,7 +149,7 @@ namespace WindowPlugins.GUIPrograms
 			// btnNew
 			// 
 			this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnNew.Location = new System.Drawing.Point(304, 0);
+			this.btnNew.Location = new System.Drawing.Point(296, 0);
 			this.btnNew.Name = "btnNew";
 			this.btnNew.Size = new System.Drawing.Size(88, 23);
 			this.btnNew.TabIndex = 14;
@@ -161,7 +161,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnAddToFavourites.Enabled = false;
-			this.btnAddToFavourites.Location = new System.Drawing.Point(304, 104);
+			this.btnAddToFavourites.Location = new System.Drawing.Point(296, 104);
 			this.btnAddToFavourites.Name = "btnAddToFavourites";
 			this.btnAddToFavourites.Size = new System.Drawing.Size(88, 40);
 			this.btnAddToFavourites.TabIndex = 19;
@@ -176,7 +176,7 @@ namespace WindowPlugins.GUIPrograms
 			this.TopPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.TopPanel.Location = new System.Drawing.Point(0, 0);
 			this.TopPanel.Name = "TopPanel";
-			this.TopPanel.Size = new System.Drawing.Size(400, 32);
+			this.TopPanel.Size = new System.Drawing.Size(392, 32);
 			this.TopPanel.TabIndex = 14;
 			// 
 			// BackButton
@@ -195,9 +195,9 @@ namespace WindowPlugins.GUIPrograms
 			this.FilePathLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.FilePathLabel.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.FilePathLabel.Location = new System.Drawing.Point(40, 8);
+			this.FilePathLabel.Location = new System.Drawing.Point(36, 8);
 			this.FilePathLabel.Name = "FilePathLabel";
-			this.FilePathLabel.Size = new System.Drawing.Size(352, 16);
+			this.FilePathLabel.Size = new System.Drawing.Size(344, 16);
 			this.FilePathLabel.TabIndex = 0;
 			this.FilePathLabel.Text = "Filepath:";
 			this.FilePathLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -214,7 +214,7 @@ namespace WindowPlugins.GUIPrograms
 			this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.bottomPanel.Location = new System.Drawing.Point(0, 32);
 			this.bottomPanel.Name = "bottomPanel";
-			this.bottomPanel.Size = new System.Drawing.Size(400, 248);
+			this.bottomPanel.Size = new System.Drawing.Size(392, 264);
 			this.bottomPanel.TabIndex = 15;
 			// 
 			// FileList
@@ -228,7 +228,7 @@ namespace WindowPlugins.GUIPrograms
 			this.FileList.HideSelection = false;
 			this.FileList.Location = new System.Drawing.Point(0, 0);
 			this.FileList.Name = "FileList";
-			this.FileList.Size = new System.Drawing.Size(296, 248);
+			this.FileList.Size = new System.Drawing.Size(288, 264);
 			this.FileList.SmallImageList = this.smallListImages;
 			this.FileList.TabIndex = 12;
 			this.FileList.View = System.Windows.Forms.View.Details;
@@ -262,7 +262,7 @@ namespace WindowPlugins.GUIPrograms
 			this.Controls.Add(this.bottomPanel);
 			this.Controls.Add(this.TopPanel);
 			this.Name = "AppFilesView";
-			this.Size = new System.Drawing.Size(400, 280);
+			this.Size = new System.Drawing.Size(392, 296);
 			this.TopPanel.ResumeLayout(false);
 			this.bottomPanel.ResumeLayout(false);
 			this.ResumeLayout(false);

@@ -31,6 +31,8 @@ namespace WindowPlugins.GUIPrograms
 		private AppSettingsGrouper sectionGrouper = new AppSettingsGrouper();
 		private AppSettingsRoot sectionRoot = new AppSettingsRoot();
 		private AppFilesView filesView = new AppFilesView();
+		private AppFilesImportProgress filesProgress = new AppFilesImportProgress();
+		private bool m_ImportRunning = false;
 		private System.Windows.Forms.ToolBar toolBarMenu;
 		private System.Windows.Forms.ToolBarButton buttonAddChild;
 		private System.Windows.Forms.ToolBarButton buttonDelete;
@@ -60,6 +62,7 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.MenuItem SourceTypeToDirCache;
 		private System.Windows.Forms.MenuItem SourceTypeToFilelauncher;
 		private System.Windows.Forms.ToolBarButton buttonTools;
+		private System.Windows.Forms.Panel holderPanelFiles;
 		// pointer to currently displayed sheet
 		private AppSettings pageCurrentSettings = null;
 
@@ -176,8 +179,10 @@ namespace WindowPlugins.GUIPrograms
 			this.DetailsPage = new System.Windows.Forms.TabPage();
 			this.holderPanel = new System.Windows.Forms.Panel();
 			this.FilesPage = new System.Windows.Forms.TabPage();
+			this.holderPanelFiles = new System.Windows.Forms.Panel();
 			this.DetailsTabControl.SuspendLayout();
 			this.DetailsPage.SuspendLayout();
+			this.FilesPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// appTree
@@ -408,11 +413,22 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// FilesPage
 			// 
+			this.FilesPage.Controls.Add(this.holderPanelFiles);
 			this.FilesPage.Location = new System.Drawing.Point(4, 22);
 			this.FilesPage.Name = "FilesPage";
-			this.FilesPage.Size = new System.Drawing.Size(408, 430);
+			this.FilesPage.Size = new System.Drawing.Size(408, 422);
 			this.FilesPage.TabIndex = 1;
 			this.FilesPage.Text = "Files";
+			// 
+			// holderPanelFiles
+			// 
+			this.holderPanelFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.holderPanelFiles.Location = new System.Drawing.Point(6, 3);
+			this.holderPanelFiles.Name = "holderPanelFiles";
+			this.holderPanelFiles.Size = new System.Drawing.Size(397, 416);
+			this.holderPanelFiles.TabIndex = 13;
 			// 
 			// SetupForm
 			// 
@@ -427,6 +443,7 @@ namespace WindowPlugins.GUIPrograms
 			this.Load += new System.EventHandler(this.SetupForm_Load);
 			this.DetailsTabControl.ResumeLayout(false);
 			this.DetailsPage.ResumeLayout(false);
+			this.FilesPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -650,11 +667,21 @@ namespace WindowPlugins.GUIPrograms
 
 		private void AttachFilesView()
 		{
-			FilesPage.Controls.Add(filesView);
-			filesView.SetBounds(0, 0, FilesPage.Width, FilesPage.Height);
+			holderPanelFiles.Controls.Clear();
+			holderPanelFiles.Controls.Add(filesView);
+			filesView.SetBounds(0, 0, holderPanelFiles.Width, holderPanelFiles.Height);
 			filesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left)));
 			filesView.OnRefreshClick += new System.EventHandler(this.RefreshClick);
+		}
+
+		private void AttachImportRunningView()
+		{
+			holderPanelFiles.Controls.Clear();
+			holderPanelFiles.Controls.Add(filesProgress);
+			filesProgress.SetBounds(0, 0, holderPanelFiles.Width, holderPanelFiles.Height);
+			filesProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left)));
 		}
 
 		private void SetupForm_Load(object sender, System.EventArgs e)
@@ -725,22 +752,39 @@ namespace WindowPlugins.GUIPrograms
 
 
 
+		private void BlockControls()
+		{
+			m_ImportRunning = true;
+			appTree.Enabled = false;
+			toolBarMenu.Enabled = false;
+		}
+
+
+		private void UnblockControls()
+		{
+			appTree.Enabled = true;
+			toolBarMenu.Enabled = true;
+			m_ImportRunning = false;
+		}
+
 		private void DoRefresh()
 		{
 			AppItem curApp = GetSelectedAppItem();
 			if (curApp != null) 
 			{
-				ImportStatusForm frmImport = new ImportStatusForm();
-				frmImport.CurApp = curApp;
 				try
 				{
-					frmImport.Show();
-					frmImport.RunImport();
+					AttachImportRunningView();
+					BlockControls();
+					filesProgress.CurApp = curApp;
+					filesProgress.RunImport();
 				}
 				finally
 				{
-					frmImport.Close();
+					AttachFilesView();
+					UnblockControls();
 				}
+
 			}
 		}
 

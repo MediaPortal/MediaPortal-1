@@ -448,6 +448,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\AppFilesImportProgress.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppFilesImportProgress.resx"
+                    DependentUpon = "AppFilesImportProgress.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIPrograms\AppFilesView.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -611,16 +621,6 @@
                     RelPath = "GUIPrograms\GUIPrograms.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIPrograms\ImportStatusForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIPrograms\ImportStatusForm.resx"
-                    DependentUpon = "ImportStatusForm.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUIPrograms\MyFileIniImporter.cs"
