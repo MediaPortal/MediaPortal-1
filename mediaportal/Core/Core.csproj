@@ -333,6 +333,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DShowNET\VideoCaptureProperties.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FreeDB\CDInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

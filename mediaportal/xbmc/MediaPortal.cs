@@ -111,7 +111,6 @@ public class MediaPortalApp : D3DApp, IRender
       if (!form.AreCodecsInstalled())
       {
         form.ShowDialog();
-        return;
       }
 
 

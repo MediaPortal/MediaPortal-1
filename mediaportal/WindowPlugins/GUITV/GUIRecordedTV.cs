@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.TV
       using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
       {
         string strTmp="";
-        strTmp=(string)xmlreader.GetValue("tvscheduler","sort");
+        strTmp=(string)xmlreader.GetValue("tvrecorded","sort");
         if (strTmp!=null)
         {
           if (strTmp=="channel") currentSortMethod=SortMethod.SORT_CHANNEL;
@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.TV
           else if (strTmp=="type") currentSortMethod=SortMethod.SORT_GENRE;
           else if (strTmp=="played") currentSortMethod=SortMethod.SORT_PLAYED;
         }
-        m_bSortAscending=xmlreader.GetValueAsBool("tvscheduler","sortascending",true);
+        m_bSortAscending=xmlreader.GetValueAsBool("tvrecorded","sortascending",true);
       }
     }
 
@@ -82,22 +82,22 @@ namespace MediaPortal.GUI.TV
         switch (currentSortMethod)
         {
           case SortMethod.SORT_CHANNEL:
-            xmlwriter.SetValue("tvscheduler","sort","channel");
+            xmlwriter.SetValue("tvrecorded","sort","channel");
             break;
           case SortMethod.SORT_DATE:
-            xmlwriter.SetValue("tvscheduler","sort","date");
+            xmlwriter.SetValue("tvrecorded","sort","date");
             break;
           case SortMethod.SORT_NAME:
-            xmlwriter.SetValue("tvscheduler","sort","name");
+            xmlwriter.SetValue("tvrecorded","sort","name");
             break;
           case SortMethod.SORT_GENRE:
-            xmlwriter.SetValue("tvscheduler","sort","type");
+            xmlwriter.SetValue("tvrecorded","sort","type");
             break;
           case SortMethod.SORT_PLAYED:
-            xmlwriter.SetValue("tvscheduler","sort","played");
+            xmlwriter.SetValue("tvrecorded","sort","played");
             break;
         }
-        xmlwriter.SetValueAsBool("tvscheduler","sortascending",m_bSortAscending);
+        xmlwriter.SetValueAsBool("tvrecorded","sortascending",m_bSortAscending);
       }
     }
     #endregion

@@ -195,29 +195,18 @@ namespace MediaPortal.TV.Recording
           }
       }
 #if DEBUG
-      IPin outPin;
-      DsUtils.GetPin(m_captureFilter,PinDirection.Output,0,out outPin);
-      IKsPropertySet prop= m_captureFilter as IKsPropertySet;
-
-      try
+      VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
+      if (props.SupportsProperties)
       {
-        Guid guidTest= IVac.IvacGuid;
-        uint propid=(uint)IVac.PropertyId.IVAC_GOP_SIZE;
-        uint typesupport=0;
-        IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
-        uint uiSize=100;
-        hr=prop.QuerySupported( ref guidTest,propid, out typesupport);
-        hr=prop.RemoteGet(ref guidTest,propid,IntPtr.Zero,0, pDataReturned,100,out uiSize);
-        byte gopsize=Marshal.ReadByte(pDataReturned);
-        
-        propid=(uint)IVac.PropertyId.IVAC_SAMPLING_RATE;        
-        hr=prop.RemoteGet(ref guidTest,propid,IntPtr.Zero,0, pDataReturned,100,out uiSize);
-        int bitrate=Marshal.ReadInt32(pDataReturned);
-        int x=1;
-      }
-      catch (Exception ex)
-      {
-        int x=1;
+        VideoCaptureProperties.versionInfo info = props.VersionInfo;
+        VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
+        Log.Write(" driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
+        Log.Write(" encoding:{0} bitrate:{1} peak:{2}", bitrate.bEncodingMode.ToString(),
+          ((float)bitrate.wBitrate)/400.0f,bitrate.dwPeak);
+        Log.Write(" gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",
+          props.GopSize, props.ClosedGop, props.InverseTelecine,
+          props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,
+          props.StreamOutput.ToString());
       }
 #endif
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
