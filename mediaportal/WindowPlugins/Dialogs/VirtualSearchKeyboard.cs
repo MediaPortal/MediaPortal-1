@@ -1142,12 +1142,12 @@ namespace MediaPortal.Dialogs
 					if (m_iPos>=m_strData.Length)
 					{
 						m_strData +=k.ToString();
-						TextChanged(m_searchKind,m_strData);
+						if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 					}
 					else
 					{
 						m_strData=m_strData.Insert( m_iPos, k.ToString() );
-						TextChanged(m_searchKind,m_strData);
+						if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 					}
 					++m_iPos; // move the caret
 				}
@@ -1178,12 +1178,12 @@ namespace MediaPortal.Dialogs
 						if (m_iPos>=m_strData.Length)
 						{
 							m_strData +=GetChar( xk ).ToString();
-							TextChanged(m_searchKind,m_strData);
+							if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						}
 						else
 						{
 							m_strData=m_strData.Insert( m_iPos, GetChar( xk ).ToString() );
-							TextChanged(m_searchKind,m_strData);
+							if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						}
 						++m_iPos; // move the caret
 					}
@@ -1201,14 +1201,14 @@ namespace MediaPortal.Dialogs
 						 {
 							 --m_iPos; // move the caret
 							 m_strData=m_strData.Remove( m_iPos, 1 );
-							 TextChanged(m_searchKind,m_strData);
+							 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						 }
 						 break;
 					 case Xkey.XK_DELETE: // Used for Japanese only
 						 if( m_strData.Length > 0 )
 						 {
 							 m_strData=m_strData.Remove( m_iPos, 1 );
-							 TextChanged(m_searchKind,m_strData);
+							 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						 }
 						 break;
 					 case Xkey.XK_SHIFT:
@@ -1257,25 +1257,25 @@ namespace MediaPortal.Dialogs
 					 case Xkey.XK_SEARCH_IS:
 						 m_searchKind=(int)SearchKinds.SEARCH_STARTS_WITH;
 						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_START_WITH, MODEKEY_WIDTH ));
-						 TextChanged(m_searchKind,m_strData);
+						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						 break;
 
 					 case Xkey.XK_SEARCH_CONTAINS:
 						 m_searchKind=(int)SearchKinds.SEARCH_ENDS_WITH;
 						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_ENDS_WITH, MODEKEY_WIDTH ));
-						 TextChanged(m_searchKind,m_strData);
+						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						 break;
 					 
 					 case Xkey.XK_SEARCH_ENDS_WITH:
 						 m_searchKind=(int)SearchKinds.SEARCH_IS;
 						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_IS, MODEKEY_WIDTH ));
-						 TextChanged(m_searchKind,m_strData);
+						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						 break;
 					 
 					 case Xkey.XK_SEARCH_START_WITH:
 						 m_searchKind=(int)SearchKinds.SEARCH_CONTAINS;
 						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH ));
-						 TextChanged(m_searchKind,m_strData);
+						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 						 break;
 					// code by Agree ends here
 					//
