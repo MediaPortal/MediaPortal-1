@@ -516,10 +516,14 @@ namespace DShowNET
 			{
 				return surface.GetObjectByValue(magicConstant);
 			}
-		public static IntPtr GetUnmanagedDevice(Microsoft.DirectX.Direct3D.Device device) 
-    {
-			return device.GetObjectByValue(magicConstant);
-		}
+			public static IntPtr GetUnmanagedDevice(Microsoft.DirectX.Direct3D.Device device) 
+			{
+				return device.GetObjectByValue(magicConstant);
+			}
+			public static IntPtr GetUnmanagedTexture(Microsoft.DirectX.Direct3D.Texture texture) 
+			{
+				return texture.GetObjectByValue(magicConstant);
+			}
 			public static string GetFriendlyName( UCOMIMoniker mon )
 			{
         if (mon==null) return String.Empty;

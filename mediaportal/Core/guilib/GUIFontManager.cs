@@ -25,10 +25,12 @@ namespace MediaPortal.GUI.Library
 		{
 			// Clear current set of fonts
       Dispose();
+			int counter=0;
       Log.Write("  Load fonts from {0}", strFilename);
 			m_fonts.Clear();
 			// Load the debug font
-      GUIFont fontDebug = new GUIFont("debug","Arial",12);
+			GUIFont fontDebug = new GUIFont("debug","Arial",12);
+			fontDebug.ID=counter++;
       fontDebug.Load();
       m_fonts.Add(fontDebug);			
       try
@@ -60,6 +62,7 @@ namespace MediaPortal.GUI.Library
             fPercent*=iHeight;
             iHeight=(int)fPercent;
 						GUIFont font = new GUIFont(strName,strFileName,iHeight);
+						font.ID=counter++;
             if (nodeStart!=null && nodeStart.InnerText!="" && nodeEnd!=null&& nodeEnd.InnerText!="" )
             {
               int start=Int32.Parse(nodeStart.InnerText);

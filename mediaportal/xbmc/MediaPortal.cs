@@ -784,7 +784,7 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
         // Show the frame on the primary surface.
-        GUIGraphicsContext.DX9Device.Present();
+        GUIGraphicsContext.DX9Device.Present();//SLOW
       }
       catch (DeviceLostException)
       {

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using Microsoft.DirectX;using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.GUI.Library
 {
@@ -15,6 +17,16 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIFont
 	{
+#if NEWFONTENGINE
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void AddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices);
+		
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void SetCoordinate(int fontNumber, int index, int subindex, float fValue);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void DrawText3D(int fontNumber, char* text, int xposStart, int yposStart, uint intColor);
+#endif		
 		private string m_strFontName;
 		private string m_strFileName;
 		public const int MaxNumfontVertices = 100*6;
@@ -60,6 +72,7 @@ namespace MediaPortal.GUI.Library
     // Fill vertex buffer
     int iv = 0;
     int dwNumTriangles = 0;
+		int m_ID;
 		/// <summary>
 		/// Constructor of the GUIFont class.
 		/// </summary>
@@ -72,6 +85,12 @@ namespace MediaPortal.GUI.Library
 			m_strFileName=strFileName;
 			m_iFontHeight=iHeight;
     }
+		public int ID
+		{
+			get { return m_ID;}
+			set { m_ID=value;}
+
+		}
 
 		/// <summary>
 		/// Constructor of the GUIFont class.
@@ -236,6 +255,7 @@ namespace MediaPortal.GUI.Library
 	
     public void Present()
     {
+			/*
       // Set the data for the vertex buffer
       if (dwNumTriangles > 0)
       {
@@ -260,7 +280,7 @@ namespace MediaPortal.GUI.Library
 
 			}
       dwNumTriangles=0;
-      iv=0;
+      iv=0;*/
     }
 
     public bool GetFontCache(float xpos, float ypos, long color, string text, out VertexBuffer cachedVertexBuffer, out int triangles)
@@ -336,16 +356,27 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.graphics.DrawString(text,systemFont,new SolidBrush(color),xpos,ypos);
         return;
       }
+/*
 			if (fontVertices==null) return;
 			if (fontTexture==null) return;
 			if (textureCoords==null) return;
 			if (fontTexture.Disposed) return;
-			//if (savedStateBlock==null) return;
-			//if (savedStateBlock.Disposed) return;
 			if (vertexBuffer==null) return;
 			if (vertexBuffer.Disposed) return;
 			if (GUIGraphicsContext.DX9Device==null) return;
 			if (GUIGraphicsContext.DX9Device.Disposed) return;
+*/
+			int intColor = color.ToArgb();
+#if NEWFONTENGINE
+			unsafe
+			{
+				IntPtr ptrStr=Marshal.StringToCoTaskMemAnsi(text); //SLOW
+				DrawText3D(ID, (char*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint) intColor);
+				Marshal.FreeCoTaskMem(ptrStr);
+			}
+#endif
+			//if (savedStateBlock==null) return;
+			//if (savedStateBlock.Disposed) return;
 			// Setup renderstate
 			//savedStateBlock.Capture();
 			//drawTextStateBlock.Apply();
@@ -355,7 +386,6 @@ namespace MediaPortal.GUI.Library
 			float fStartX = xpos;
 			ypos -=0.5f;
 
-      int intColor = color.ToArgb();
       float yoff=(textureCoords[0,3]-textureCoords[0,1])*textureHeight;
       float fScaleX=textureWidth / textureScale;
       float fScaleY=textureHeight / textureScale;
@@ -430,6 +460,7 @@ namespace MediaPortal.GUI.Library
         Present();
 			// Restore the modified renderstates
 			//savedStateBlock.Apply();
+
 		}
     
 		/// <summary>
@@ -741,6 +772,25 @@ namespace MediaPortal.GUI.Library
 				GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, GUIGraphicsContext.DX9Device.DisplayMode.Format, 
 				Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface, 
 				surf.Description.Format );
+
+#if NEWFONTENGINE
+			unsafe
+			{
+				
+				IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+				IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
+				AddFont(upDevice.ToPointer(), ID,upTexture.ToPointer(), _StartCharacter, _EndCharacter, textureScale, textureWidth, textureHeight, spacingPerChar,MaxNumfontVertices);
+				
+				int length=textureCoords.GetLength(0);
+				for (int i=0; i < length;++i)
+				{
+					SetCoordinate(ID, i, 0, textureCoords[i,0]);
+					SetCoordinate(ID, i, 1, textureCoords[i,1]);
+					SetCoordinate(ID, i, 2, textureCoords[i,2]);
+					SetCoordinate(ID, i, 3, textureCoords[i,3]);
+				}
+			}
+#endif
 /*
 			// Create the state blocks for rendering text
 			{

@@ -13,6 +13,8 @@ del /F /Q plugins\subtitle\*.*
 del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
 del *.dll
+copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
+copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
 copy ..\..\..\Microsoft.ApplicationBlocks*.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .

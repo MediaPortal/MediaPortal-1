@@ -759,7 +759,9 @@ namespace MediaPortal.GUI.Library
     {
       if (sprite==null) return;
       if (sprite.Disposed) return;
-      if (!PreRender()) return;
+
+      if (!PreRender()) return; // SLOW
+
       //get the current frame
       CachedTexture.Frame frame=(CachedTexture.Frame)m_vecTextures[m_iCurrentImage];
       if (frame==null) return ; // no frame? then return
@@ -786,18 +788,11 @@ namespace MediaPortal.GUI.Library
         //get the texture of the frame
         Direct3D.Texture texture=frame.Image;
 
-        // if we have a stateblock
-        //if (savedStateBlock!=null)
-        {
-          //then finally render the texture
-          //savedStateBlock.Apply();
+				GUIGraphicsContext.DX9Device.SetTexture( 0, texture); //SLOW
+        GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0); // SLOW
+        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
+        GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 ); //SLOW
 
-					GUIGraphicsContext.DX9Device.SetTexture( 0, texture);
-          GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
-          GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-          GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
-        }
-        // unset the texture and palette or the texture caching crashes because the runtime still has a reference
         GUIGraphicsContext.DX9Device.SetTexture( 0, null);
       }
 		}

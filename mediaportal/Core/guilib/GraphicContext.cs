@@ -67,8 +67,8 @@ namespace MediaPortal.GUI.Library
     static int                      m_iSubtitles=550;							// Y position for subtitles
     static bool                     m_bCalibrating=false;					// boolean indicating if we are in calibration mode or in normal mode
     static bool                     m_bPlaying;										// boolean indicating if we are playing any media or not
-    static Graphics                 m_graphics=null;							// GDI+ Graphics object
-    static Form                     m_form=null;									// Current GDI form
+    static public Graphics          graphics=null;							// GDI+ Graphics object
+    static public Form              form=null;									// Current GDI form
     static int                      m_iBrightness=-1;							// brightness value
     static int                      m_iGamma=-1;										// gamma value
     static int                      m_iContrast=-1;								// contrast value
@@ -204,7 +204,7 @@ namespace MediaPortal.GUI.Library
         {
           return DX9Device.PresentationParameters.BackBufferHeight;
         }
-        return m_form.ClientSize.Height;
+        return form.ClientSize.Height;
       }
     }
 
@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.Library
         {
           return DX9Device.PresentationParameters.BackBufferWidth;
         }
-        return m_form.ClientSize.Width;
+        return form.ClientSize.Width;
       }
     }
 
@@ -544,27 +544,6 @@ namespace MediaPortal.GUI.Library
 				m_bPlayingVideo=value;
 			}
 		}
-
-    /// <summary>
-    /// get/set, placeholder for form.graphics
-    /// </summary>
-    static public Graphics graphics
-    {
-      get 
-      { 
-        return m_graphics;
-      }
-      set { m_graphics=value;}
-    }
-
-    /// <summary>
-    /// Get/Set placeholder to the app's form
-    /// </summary>
-    static public Form form
-    {
-      get  { return m_form;}
-      set { m_form=value;}
-    }
 
 		/// <summary>
 		/// Get/Set the Brightness.
