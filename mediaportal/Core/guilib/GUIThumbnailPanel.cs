@@ -1654,8 +1654,14 @@ namespace MediaPortal.GUI.Library
 			m_iSelect = GUIListControl.ListType.CONTROL_LIST;
 			y -= (int)m_dwPosY;
 			x -= (int)m_dwPosX;
-			m_iCursorY = (y / m_iItemHeight);
-			m_iCursorX = (x / m_iItemWidth);
+			int iCursorY = (y / m_iItemHeight);
+			int iCursorX = (x / m_iItemWidth);
+
+			// Check item inside panel
+			if (iCursorX < 0 || iCursorX >= m_iRows) return false;
+			if (iCursorY < 0 || iCursorY >= m_iColumns) return false;
+			m_iCursorY = iCursorY;
+			m_iCursorX = iCursorX;
 
 			while (m_iCursorX > 0 && m_iOffset + m_iCursorY * m_iColumns + m_iCursorX >= (int) m_vecItems.Count)
 			{
