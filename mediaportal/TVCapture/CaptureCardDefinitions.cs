@@ -235,7 +235,7 @@ namespace TVCapture
 		/// </summary>
 		private CaptureCardDefinitions()
 		{
-			DirectShowUtil.DebugWrite("CaptureCardDefinitions:ctor IN");
+//			DirectShowUtil.DebugWrite("CaptureCardDefinitions:ctor IN");
 
 			XmlDocument doc = new XmlDocument();
 			if (!System.IO.File.Exists(@"CaptureCardDefinitions.xml"))
@@ -264,7 +264,7 @@ namespace TVCapture
 			{
 				if (nodeList != null)
 				{
-					DirectShowUtil.DebugWrite(" Loading: capturecards...");
+					//DirectShowUtil.DebugWrite(" Loading: capturecards...");
 
 					foreach (XmlNode cc in nodeList)
 					{
@@ -298,13 +298,13 @@ namespace TVCapture
 						cardConfig.CommercialName = cc.Attributes.GetNamedItem(@"commercialname").InnerText;
 						cardConfig.CaptureName    = cc.Attributes.GetNamedItem(@"capturename").InnerText;
 						_mCaptureCardDefinitions.Add(cardConfig);
-						DirectShowUtil.DebugWrite("device:{0}", cardConfig.CommercialName);
+						//DirectShowUtil.DebugWrite("device:{0}", cardConfig.CommercialName);
 
 						// Get the cards capabilities...
 						XmlNode capNode     = cc.SelectSingleNode(@"capabilities");
 						if (capNode != null)
 						{
-							DirectShowUtil.DebugWrite("  Getting capabilities...");
+							//DirectShowUtil.DebugWrite("  Getting capabilities...");
 							cardConfig.Capabilities.HasTv						 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"tv").InnerText);
 							cardConfig.Capabilities.HasRadio				 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
 							cardConfig.Capabilities.IsBDADevice			 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
@@ -312,21 +312,21 @@ namespace TVCapture
 							cardConfig.Capabilities.IsMpeg2Device    = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
 							cardConfig.Capabilities.IsSoftwareDevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"sw").InnerText);
 
-							DirectShowUtil.DebugWrite("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
-												cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
-												cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
+							//DirectShowUtil.DebugWrite("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
+							//					cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
+							//					cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
 
 						}
 						else
 						{
-							DirectShowUtil.DebugWrite("  Failed getting capabilities...");
+							//DirectShowUtil.DebugWrite("  Failed getting capabilities...");
 						}
 
 						// First do the tv part, then the (optional) radio part...
 						XmlNode tvNode      = cc.SelectSingleNode(@"tv");
 						if (tvNode != null)
 						{
-							DirectShowUtil.DebugWrite("  Getting tv...");
+//							DirectShowUtil.DebugWrite("  Getting tv...");
 
 							XmlNode filterNodes = tvNode.SelectSingleNode(@"filters");
 							FilterDefinition dsfilter;
@@ -372,7 +372,7 @@ namespace TVCapture
 						XmlNode radioNode = cc.SelectSingleNode(@"radio");
 						if (radioNode != null)
 						{
-							DirectShowUtil.DebugWrite("  Getting radio...");
+							//DirectShowUtil.DebugWrite("  Getting radio...");
 
 							XmlNode filterNodes = radioNode.SelectSingleNode(@"filters");
 							FilterDefinition dsfilter;
@@ -418,8 +418,8 @@ namespace TVCapture
 
 
 						}
-						DirectShowUtil.DebugWrite("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
-							cardConfig.DeviceId, cardConfig.CommercialName, cardConfig.CaptureName);
+						//DirectShowUtil.DebugWrite("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
+						//	cardConfig.DeviceId, cardConfig.CommercialName, cardConfig.CaptureName);
 					}
 				}
 			}

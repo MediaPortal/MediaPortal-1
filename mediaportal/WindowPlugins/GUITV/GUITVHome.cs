@@ -257,7 +257,7 @@ namespace MediaPortal.GUI.TV
 						else
 						{
 							// tv on
-							Log.Write("TVHome:turn tv on");
+							Log.Write("TVHome:turn tv on {0}",m_strChannel);
 							m_bTVON=true;
 							SaveSettings();
 						}

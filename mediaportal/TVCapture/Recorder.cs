@@ -599,13 +599,16 @@ namespace MediaPortal.TV.Recording
 				if (m_iCurrentCard>=0 && m_iCurrentCard<m_tvcards.Count)
 				{
 					dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
-					
+				
+					Log.Write("Recorder:stop watching TV on card:{0} {1}", dev.ID, dev.FriendlyName);
 					// is card currently recording?
 					if (dev.IsRecording) 
 					{
+						Log.Write("Recorder:card is recording");
 						// yes, does it support timeshifting?
 						if (dev.SupportsTimeShifting)
 						{
+							Log.Write("Recorder:stop playing timeshifting file");
 							//yes, are playing the timeshifting file?
 							if (g_Player.CurrentFile==GetTimeShiftFileName(m_iCurrentCard))
 							{
@@ -627,6 +630,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			}//if (TVOnOff==false)
 			
+			Log.Write("Recorder:start watching TV on channel:{0}", channel);
 
 			// tv should be turned on
 			// check if any card is already timeshifting / recording the channel we want
@@ -636,11 +640,12 @@ namespace MediaPortal.TV.Recording
 				//is card timeshifting on the channel we want?
 				if (dev.IsTimeShifting && dev.TVChannel == channel)
 				{
+					m_iCurrentCard=i;
+					Log.Write("Recorder:using card:{0} {1}", dev.ID, dev.FriendlyName);
 					// do we want timeshifting?
 					if  (timeshift || dev.IsRecording)
 					{
 						//yes, check if we're already playing/watching it
-						m_iCurrentCard=i;
 						string strFileName=GetTimeShiftFileName(m_iCurrentCard);
 						if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
 						{
@@ -664,6 +669,7 @@ namespace MediaPortal.TV.Recording
 				}//if (dev.IsTimeShifting && dev.TVChannel == channel)
 			}//for (int i=0; i < m_tvcards.Count;++i)
 
+			Log.Write("Recorder:find free card");
 			// no cards are timeshifting the channel we want.
 			// Find a card which can view the channel
 			int card=-1;
@@ -683,10 +689,16 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
-			if (card < 0) return; // no card available
+			if (card < 0) 
+			{
+				Log.Write("Recorder:No free card which can receive channel {0}", channel);
+				return; // no card available
+			}
 			m_iCurrentCard=card;
 			dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
       m_strTVChannel=channel;
+			
+			Log.Write("Recorder:using card {0} {1} to watch {2}",dev.ID,dev.FriendlyName,channel);
       //do we want to use timeshifting ?
       if (timeshift)
       {
