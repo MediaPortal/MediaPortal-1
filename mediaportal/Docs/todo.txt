@@ -12,14 +12,19 @@ My TV:
    
   TVGuide:
      - 
+
   Scheduler:
 
   Capture:
     - time shifting. This allows you to pause/ FF/RW live tv      
     - add BDA support
     - support multiple tuners/capture cards
-
+    - brightness/contrast etc. control
+    - stutter?
+    
 My Music:
+  - faster start of 1st song played
+  - gapless playback
   - search songs by genre,artist,album (based on music database)
   - support for external audio players based on file extension
   - FF/RW/pause/volume control
@@ -32,6 +37,7 @@ My Music:
 Video:
   - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
   - bookmarks
+  - 1st time it takes a long time b4 OSD appears
   
 Pictures:
   

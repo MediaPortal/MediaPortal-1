@@ -156,10 +156,10 @@ namespace MediaPortal
             clipCursorWhenFullscreen = true;
 #endif
       InitializeComponent();
-      SetStyle(ControlStyles.AllPaintingInWmPaint | 
-        ControlStyles.UserPaint | 
-        ControlStyles.DoubleBuffer,
-        true);    
+//      SetStyle(ControlStyles.AllPaintingInWmPaint | 
+//        ControlStyles.UserPaint | 
+  //      ControlStyles.DoubleBuffer,
+    //    true);    
 
     }
 
@@ -455,27 +455,23 @@ namespace MediaPortal
       presentParams.AutoDepthStencilFormat = graphicsSettings.DepthStencilBufferFormat;
       presentParams.PresentFlag = PresentFlag.None;
 
-      if (windowed)
-      {
-        presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
-        presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
-        presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-        presentParams.FullScreenRefreshRateInHz = 0;
-        presentParams.PresentationInterval = PresentInterval.Immediate;
-        presentParams.SwapEffect= SwapEffect.Discard;
-        presentParams.PresentFlag=PresentFlag.None;
-        presentParams.DeviceWindow = ourRenderTarget;
-      }
-      else
-      {
-        presentParams.BackBufferWidth  = graphicsSettings.DisplayMode.Width;
-        presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
-        presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-        presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
-        presentParams.SwapEffect= SwapEffect.Flip;
-        presentParams.PresentFlag=PresentFlag.None;
-        presentParams.PresentationInterval = PresentInterval.Default;
-        presentParams.DeviceWindow = this;
+        if (windowed)
+        {
+            presentParams.BackBufferWidth  = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
+            presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
+            presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
+            presentParams.FullScreenRefreshRateInHz = 0;
+            presentParams.PresentationInterval = PresentInterval.Immediate;
+            presentParams.DeviceWindow = ourRenderTarget;
+        }
+        else
+        {
+            presentParams.BackBufferWidth  = graphicsSettings.DisplayMode.Width;
+            presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
+            presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
+            presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
+            presentParams.PresentationInterval = graphicsSettings.PresentInterval;
+            presentParams.DeviceWindow = this;
       }
     }
 
@@ -523,7 +519,7 @@ namespace MediaPortal
       {
         // Create the device
         GUIGraphicsContext.DX9Device = new Device(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType, 
-          windowed ? ourRenderTarget : this , createFlags|CreateFlags.MultiThreaded, presentParams);
+          windowed ? ourRenderTarget : this , createFlags, presentParams);
 
         // Cache our local objects
         renderState = GUIGraphicsContext.DX9Device.RenderState;
@@ -973,18 +969,14 @@ namespace MediaPortal
       
       while (mainWindow.Created && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
       {
-        if (!m_bShowCursor) 
-          Cursor.Hide();
-        else
-          Cursor.Show();
         FullRender();
-        if (!m_bShowCursor) 
-          Cursor.Hide();
         System.Windows.Forms.Application.DoEvents();
-        if (!m_bShowCursor) 
-          Cursor.Hide();
         if (m_bAutoHideMouse)
         {
+          if (!m_bShowCursor) 
+            Cursor.Hide();
+          else 
+            Cursor.Show();
           TimeSpan ts=DateTime.Now-m_MouseTimeOut;
           if (ts.TotalSeconds>=3)
           {
@@ -1060,11 +1052,6 @@ namespace MediaPortal
 
       UpdateStats();
 
-      //if (windowed)
-    {
-      System.Threading.Thread.Sleep(25);
-
-    }
     }
 
 

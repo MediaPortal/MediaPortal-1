@@ -153,6 +153,7 @@ public class MediaPortalApp : D3DApp
 
     protected override void Render() 
     { 
+      System.Threading.Thread.Sleep(10);
       if (GUIGraphicsContext.DX9Device==null) return;
 
       if (!m_bNeedUpdate)
@@ -180,11 +181,13 @@ public class MediaPortalApp : D3DApp
         GUIGraphicsContext.IsFullScreenVideo=false;
         GUIGraphicsContext.IsPlaying=false;
       }
+ 
       GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
       GUIGraphicsContext.DX9Device.BeginScene();
       GUIWindowManager.Render(); 
       RenderVideoOverlay();
       RenderMusicOverlay();
+ 
       GUIGraphicsContext.DX9Device.EndScene();
       try
       {

@@ -1,4 +1,10 @@
 History: (dd-mm-yyyy)
+  28-04-2004: MY TV       : added : support for VP pins.this fixes tv preview problems on some cards
+  28-04-2004: MY TV       : added : better way 2 find tv tuner
+  28-04-2004: MY TV       : added : support for multiple crossbars
+  28-04-2004: general     : added : font caching for faster startup
+  28-04-2004: general     : added : delayed plugin-loading for faster startup
+  
   27-04-2004: my tv       : added : better navigation in tvguide
   27-04-2004: general     : added : show time in am/pm format depending on current regional setting
   27-04-2004: setup       : added : tv channels->click on header colum->sorts tvchannels by selected column
