@@ -20,6 +20,8 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("spaceBetweenItems")] protected int	m_iSpaceBetweenItems = 2;
 		protected int m_iOffset = 0;
 		protected int m_iItemsPerPage = 10;
+    protected int m_iLastItemPageValues = 0;
+
 		[XMLSkinElement("textureHeight")]	protected int m_iItemHeight = 10;
 		protected ListType m_iSelect = ListType.CONTROL_LIST;
 		protected int										m_iCursorY = 0;
@@ -266,7 +268,30 @@ namespace MediaPortal.GUI.Library
 				dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
 			}
 
-			dwPosY = m_dwPosY;
+      // Free unused textures if page has changed
+      if (m_iLastItemPageValues != m_iOffset+m_iItemsPerPage)
+      {
+        m_iLastItemPageValues = m_iOffset+m_iItemsPerPage;
+        for (int i = 0; i < m_iOffset; ++i)
+        {
+          GUIListItem pItem = (GUIListItem)m_vecItems[i];
+          if (null != pItem)
+          {
+            pItem.FreeMemory();
+          }
+        }
+        for (int i = m_iOffset+m_iItemsPerPage+1 ; i < m_vecItems.Count; ++i) 
+        {
+          GUIListItem pItem = (GUIListItem)m_vecItems[i];
+          if (null != pItem)
+          {
+            pItem.FreeMemory();
+          }
+        }
+      }
+
+      // Render new item list
+      dwPosY = m_dwPosY;
 			for (int i = 0; i < m_iItemsPerPage; i++)
 			{
 				int dwPosX = m_dwPosX;
@@ -493,6 +518,7 @@ namespace MediaPortal.GUI.Library
 					dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
 				}
 			}
+
 			if (m_vecItems.Count > m_iItemsPerPage)
 			{
 				// Render the spin control
