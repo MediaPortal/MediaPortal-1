@@ -174,10 +174,10 @@
 		<spinPosX>610</spinPosX>
 		<spinPosY>530</spinPosY>
 		<spinColor>ff000000</spinColor>
-		<textureUp>scroll-up.png</textureUp>
-		<textureDown>scroll-down.png</textureDown>
-		<textureUpFocus>scroll-up-focus.png</textureUpFocus>
-		<textureDownFocus>scroll-down-focus.png</textureDownFocus>
+		<textureUp>arrow_up_nofocus.png</textureUp>
+		<textureDown>arrow_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
 		<image>icon-folder.png</image>
 		<font>font13</font>
 		<textcolor>FFdddddd</textcolor>
