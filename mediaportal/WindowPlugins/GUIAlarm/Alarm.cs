@@ -241,25 +241,29 @@ namespace MediaPortal.GUI.Alarm
 		{
 			if(sender == _AlarmTimer)
 			{
-				if(DateTime.Now.Hour == _Time.Hour && DateTime.Now.Minute == _Time.Minute && IsDayEnabled())
+				if(DateTime.Now.Hour == _Time.Hour && DateTime.Now.Minute == _Time.Minute)
 				{
-					Log.Write("Alarm {0} fired at {1}",_Name,DateTime.Now);
-
-					if (!GUIGraphicsContext.IsFullScreenVideo)
+					if(_AlarmType == AlarmType.Recurring && IsDayEnabled() || _AlarmType == AlarmType.Once)
 					{
-						Play();
-						//enable fade timer if selected
-						if(_VolumeFade)
-						{
-							g_Player.Volume = 0;
-							_VolumeFadeTimer.Enabled = true;
-						}
-							
-						GUIWindowManager.ActivateWindow(GUIAlarm.WINDOW_ALARM);
-					}
+						Log.Write("Alarm {0} fired at {1}",_Name,DateTime.Now);
 
-					//disable the timer.
-					_AlarmTimer.Enabled = false;
+						if (!GUIGraphicsContext.IsFullScreenVideo)
+						{
+							Play();
+							//enable fade timer if selected
+							if(_VolumeFade)
+							{
+								g_Player.Volume = 0;
+								_VolumeFadeTimer.Enabled = true;
+							}
+								
+							GUIWindowManager.ActivateWindow(GUIAlarm.WINDOW_ALARM);
+						}
+
+						//disable the timer.
+						_AlarmTimer.Enabled = false;
+					}
+					
 				}
 			}
 			if(sender == _VolumeFadeTimer)

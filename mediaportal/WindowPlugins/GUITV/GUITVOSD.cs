@@ -1316,7 +1316,7 @@ namespace MediaPortal.GUI.TV
 	  void UpdateProgressBar()
 	  {
 		  double fPercent;
-		  if (g_Player.Playing==false)
+		  if (g_Player.Playing)
 		  {
 			  if (m_util==null)
 			  {
