@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
 
 					string shareNameData = xmlreader.GetValueAsString("music", shareName, "");
 					string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
-          string sharePinData = xmlreader.GetValueAsString("pictures", sharePin, "");
+          string sharePinData = xmlreader.GetValueAsString("music", sharePin, "");
 
 					if(shareNameData != null && shareNameData.Length > 0)
 						AddShare(new ShareData(shareNameData, sharePathData, sharePinData), shareNameData.Equals(defaultShare));
