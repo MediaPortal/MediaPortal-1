@@ -512,12 +512,13 @@ namespace MediaPortal.GUI.TV
 			return false;
 		}
 
-		public override void Render()
-		{
-
-
-			if (g_Player.Playing && g_Player.DoesOwnRendering)
-			{
+    public override void Process()
+    {
+      base.Process ();
+      OnKeyTimeout();
+    
+      if (g_Player.Playing && g_Player.DoesOwnRendering)
+      {
 
         if (m_bShowInfo==true||m_bShowStep==true||m_bShowStatus==true)
         {
@@ -530,9 +531,16 @@ namespace MediaPortal.GUI.TV
           }
         }
 
-				SetFFRWLogos();
-				ShowStatus();
-				base.Render();
+        SetFFRWLogos();
+        ShowStatus();
+      }
+    }
+
+		public override void Render()
+		{
+      if (g_Player.Playing && g_Player.DoesOwnRendering)
+      {
+        base.Render();
 
 				// do we need 2 render the OSD?
 				if (m_bOSDVisible)
@@ -849,13 +857,6 @@ namespace MediaPortal.GUI.TV
 
 			}
 		}
-    public override void Process()
-    {
-      base.Process ();
-      OnKeyTimeout();
-      if (g_Player.Playing && g_Player.DoesOwnRendering) return;
-      System.Threading.Thread.Sleep(25);
-    }
 
 
     public override int GetFocusControlId()

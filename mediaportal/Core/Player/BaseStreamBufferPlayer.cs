@@ -352,17 +352,13 @@ namespace MediaPortal.Player
 				}
 				if (Speed>1 && CurrentPosition+5d >=Duration) 
 				{
-					Speed=1;
-				}
-        
-        if (Speed>1 && CurrentPosition <m_dLastPosition ) 
-        {
           Speed=1;
           SeekAsolutePercentage(99);
-        }
+				}
         if (Speed<0 && CurrentPosition<5d)
         {
           Speed=1;
+          SeekAsolutePercentage(0);
         }
         if (Speed<0 && CurrentPosition > m_dLastPosition)
         {

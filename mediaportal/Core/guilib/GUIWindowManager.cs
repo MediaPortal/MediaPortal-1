@@ -422,6 +422,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static void PostRender()
     {
+      if (GUIGraphicsContext.IsFullScreenVideo && GUIGraphicsContext.ShowBackground) return;
 			try
 			{
 				//render overlay layer 1-10

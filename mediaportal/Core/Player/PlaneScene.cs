@@ -21,6 +21,9 @@ namespace MediaPortal.Player
     bool					  m_bFadeIn = true;
     float           m_fU=1.0f;
     float           m_fV=1.0f;
+    Rectangle       previousRect;
+    bool            renderTexture=false;
+    MediaPortal.GUI.Library.Geometry.Type arType;
 
     System.Drawing.Rectangle rSource, rDest;    
     MediaPortal.GUI.Library.Geometry m_geometry = new MediaPortal.GUI.Library.Geometry();
@@ -96,7 +99,7 @@ namespace MediaPortal.Player
         float x = GUIGraphicsContext.VideoWindow.X;
         float y = GUIGraphicsContext.VideoWindow.Y;
         float nw = GUIGraphicsContext.VideoWindow.Width;
-        float nh = GUIGraphicsContext.VideoWindow.Height;
+        float nh = GUIGraphicsContext.VideoWindow.Height; 
 
         if (nw > GUIGraphicsContext.OverScanWidth)
           nw = GUIGraphicsContext.OverScanWidth;
@@ -116,6 +119,15 @@ namespace MediaPortal.Player
         if (nw <= 10 || nh <= 10) return false;
         if (x < 0 || y < 0) return false;
 
+        
+        if (x ==previousRect.X && y==previousRect.Y && 
+            nw==previousRect.Width && nh==previousRect.Height &&
+            GUIGraphicsContext.ARType==arType)
+        {
+          return renderTexture;
+        }
+        previousRect=new Rectangle((int)x,(int)y,(int)nw,(int)nh);
+        arType=GUIGraphicsContext.ARType;
         
         float fVideoWidth=(float)videoSize.Width;
         fVideoWidth *= m_fU;
@@ -217,7 +229,7 @@ namespace MediaPortal.Player
             m_lColorDiffuse = 0xFFffffff;
           }
 
-          bool bPresent = SetVideoWindow(nativeSize);
+          renderTexture= SetVideoWindow(nativeSize);
 
           device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
 
@@ -238,7 +250,7 @@ namespace MediaPortal.Player
             if (m_renderer != null) m_renderer.RenderFrame();
           }
     
-          if (bPresent)
+          if (renderTexture)
           {
             device.SetTexture(0, tex);
             /*

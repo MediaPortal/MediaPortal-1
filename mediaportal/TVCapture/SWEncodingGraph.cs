@@ -262,6 +262,12 @@ namespace MediaPortal.TV.Recording
       if (m_videoprocamp!=null)
       {
         m_videoAmp=new VideoProcAmp(m_videoprocamp);
+        GUIGraphicsContext.Brightness= m_videoAmp.Brightness  ;
+        GUIGraphicsContext.Contrast  = m_videoAmp.Contrast ;
+        GUIGraphicsContext.Gamma     = m_videoAmp.Gamma ;
+        GUIGraphicsContext.Saturation= m_videoAmp.Saturation;
+        GUIGraphicsContext.Sharpness = m_videoAmp.Sharpness;
+
       }
 
       return true;
