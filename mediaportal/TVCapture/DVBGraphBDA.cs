@@ -157,10 +157,10 @@ namespace MediaPortal.TV.Recording
 		int                         adviseCookie;
 		bool												graphRunning=false;
 		DVBChannel									currentTuningObject=null;
-		bool												shouldDecryptChannel=false;
 		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
 		bool												refreshPmtTable=false;
+		int                         pmtVersionNumber=-1;
 		protected bool							m_pluginsEnabled=false;
 #if DUMP
 		System.IO.FileStream fileout;
@@ -219,7 +219,6 @@ namespace MediaPortal.TV.Recording
 				//check if we didnt already create a graph
 				if (m_graphState != State.None) 
 					return false;
-		    shouldDecryptChannel=false;
 				graphRunning=false;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph(). ");
 
@@ -951,7 +950,6 @@ namespace MediaPortal.TV.Recording
 			m_iPrevChannel		= m_iCurrentChannel;
 			m_iCurrentChannel = channel.Number;
 			m_StartTime				= DateTime.Now;
-			refreshPmtTable=true;
 			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() tune to channel:{0}", channel.Number);
 
@@ -1165,7 +1163,6 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
 			SetupDemuxer(m_DemuxVideoPin, m_DemuxAudioPin,currentTuningObject.AudioPid, currentTuningObject.VideoPid);
 			DirectShowUtil.EnableDeInterlace(m_graphBuilder);
-			shouldDecryptChannel=true;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
 			try
@@ -1195,6 +1192,8 @@ namespace MediaPortal.TV.Recording
 
 			if(m_pluginsEnabled==true)
 				ExecTuner();
+			refreshPmtTable=true;
+			pmtVersionNumber=-1;
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 		/// <summary>
@@ -2413,6 +2412,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				catch(Exception){}
+				SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
 			}
 		}//public void Process()
 
@@ -3041,7 +3041,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
-			if (currentTuningObject.PMTPid>=0 && shouldDecryptChannel)
+			if (currentTuningObject.PMTPid>=0)
 			{
 				for(int pointer=add;pointer<end;pointer+=188)
 				{
@@ -3049,24 +3049,31 @@ namespace MediaPortal.TV.Recording
 					if (header.Pid==currentTuningObject.PMTPid)
 					{
 						//copy pmt pid...
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}");
-						shouldDecryptChannel=false;
 						byte[] pmtTable=new byte[188];
 						Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
 						int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
-						try
+						if (section_length>0 && section_length < 183)
 						{
-							string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
-																						currentTuningObject.NetworkID,
-																						currentTuningObject.TransportStreamID,
-																						currentTuningObject.ProgramNumber,
-																						(int)Network());
-							System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-							stream.Write(pmtTable,0,section_length);
-							stream.Close();
+							int version_number = ((pmtTable[5]>>1)&0x1F);
+							if (version_number != pmtVersionNumber)
+							{
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}", pmtVersionNumber);
+								pmtVersionNumber=version_number;
+								try
+								{
+									string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+										currentTuningObject.NetworkID,
+										currentTuningObject.TransportStreamID,
+										currentTuningObject.ProgramNumber,
+										(int)Network());
+									System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+									stream.Write(pmtTable,0,section_length);
+									stream.Close();
+								}
+								catch(Exception){}
+								refreshPmtTable=true;
+							}
 						}
-						catch(Exception){}
-						refreshPmtTable=true;
 						break;
 					}
 				}
@@ -3100,7 +3107,6 @@ namespace MediaPortal.TV.Recording
 			m_iPrevChannel		= m_iCurrentChannel;
 			m_iCurrentChannel = channel.Channel;
 			m_StartTime				= DateTime.Now;
-			refreshPmtTable=true;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() tune to radio station:{0}", channel.Name);
 
 			//get the ITuner interface from the network provider filter
@@ -3309,12 +3315,13 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() submit tuning request");
 			myTuner.TuneRequest = newTuneRequest;
 			Marshal.ReleaseComObject(myTuneRequest);
-			shouldDecryptChannel=true;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() done");
 
 			SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,0);
 			if(m_pluginsEnabled==true)
 				ExecTuner();
+			refreshPmtTable=true;
+			pmtVersionNumber=-1;
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 		public void StartRadio(RadioStation station)
