@@ -116,11 +116,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public override void Render(float timePassed)
     {
-			if (AlbumListView!=null) AlbumListView.Render(timePassed);
-      if (m_ListView!=null) m_ListView.Render(timePassed);
-      if (m_ThumbnailView!=null) m_ThumbnailView.Render(timePassed);
-      if (m_FilmStripView!=null) m_FilmStripView.Render(timePassed);
-    }
+			if (m_ViewMode == ViewMode.AlbumView && AlbumListView !=null) AlbumListView.Render(timePassed);
+      else if (m_ViewMode == ViewMode.List && m_ListView!=null) m_ListView.Render(timePassed);
+      else if (m_ViewMode == ViewMode.Filmstrip && m_FilmStripView!=null) m_FilmStripView.Render(timePassed);
+			else if (m_ThumbnailView!=null) m_ThumbnailView.Render(timePassed);
+		}
 
 		/// <summary>
 		/// Allocate any resources needed for the controls
@@ -280,7 +280,7 @@ namespace MediaPortal.GUI.Library
       get { 
         if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
           return m_FilmStripView.Focus ;
-        if (m_ViewMode==ViewMode.List && m_ListView!=null)
+        else if (m_ViewMode==ViewMode.List && m_ListView!=null)
           return m_ListView.Focus;
 				else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 					return m_ThumbnailView.Focus;
@@ -292,7 +292,7 @@ namespace MediaPortal.GUI.Library
       { 
 				if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
 					m_FilmStripView.Focus=value ;
-				if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				else if (m_ViewMode==ViewMode.List && m_ListView!=null)
 					m_ListView.Focus=value;
 				else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 					m_ThumbnailView.Focus=value;
@@ -306,7 +306,7 @@ namespace MediaPortal.GUI.Library
 			controlID=-1;
 			if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
 				return m_FilmStripView.InControl (x, y, out controlID);
-			if (m_ViewMode==ViewMode.List && m_ListView!=null)
+			else if (m_ViewMode==ViewMode.List && m_ListView!=null)
 				return m_ListView.InControl (x, y, out controlID);
 			else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 				return m_ThumbnailView.InControl (x, y, out controlID);
@@ -354,18 +354,6 @@ namespace MediaPortal.GUI.Library
         if (m_ThumbnailView!=null) m_ThumbnailView.IsVisible=false;
 				if (m_FilmStripView!=null) m_FilmStripView.IsVisible=false;
 				if (m_ListAlbumView!=null) m_ListAlbumView.IsVisible=false;
-      }
-      else if (m_ThumbnailView!=null)
-      {
-        base.XPosition=m_ThumbnailView.XPosition;
-        base.YPosition=m_ThumbnailView.YPosition;
-        base.Width=m_ThumbnailView.Width;
-        base.Height=m_ThumbnailView.Height;
-        m_ThumbnailView.ShowBigIcons(m_ViewMode==ViewMode.LargeIcons);
-        m_ThumbnailView.IsVisible=true;
-        if (m_ListView!=null) m_ListView.IsVisible=false;
-				if (m_FilmStripView!=null) m_FilmStripView.IsVisible=false;
-				if (m_ListAlbumView!=null) m_ListAlbumView.IsVisible=false;
 			}       
 			else if (m_ViewMode==ViewMode.AlbumView && m_ListAlbumView!=null)
 			{
@@ -377,6 +365,18 @@ namespace MediaPortal.GUI.Library
 				if (m_ListView!=null) m_ListView.IsVisible=false;
 				if (m_ThumbnailView!=null) m_ThumbnailView.IsVisible=false;
 				if (m_FilmStripView!=null) m_FilmStripView.IsVisible=false;
+			}
+      else if (m_ThumbnailView!=null)
+      {
+        base.XPosition=m_ThumbnailView.XPosition;
+        base.YPosition=m_ThumbnailView.YPosition;
+        base.Width=m_ThumbnailView.Width;
+        base.Height=m_ThumbnailView.Height;
+        m_ThumbnailView.ShowBigIcons(m_ViewMode==ViewMode.LargeIcons);
+        m_ThumbnailView.IsVisible=true;
+        if (m_ListView!=null) m_ListView.IsVisible=false;
+				if (m_FilmStripView!=null) m_FilmStripView.IsVisible=false;
+				if (m_ListAlbumView!=null) m_ListAlbumView.IsVisible=false;
 			}
     }
 
@@ -455,7 +455,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
 					return m_FilmStripView.SelectedListItem;
-				if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				else if (m_ViewMode==ViewMode.List && m_ListView!=null)
 					return m_ListView.SelectedListItem;
 				else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 					return m_ThumbnailView.SelectedListItem;
@@ -471,7 +471,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
 					return m_FilmStripView.Count;
-				if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				else if (m_ViewMode==ViewMode.List && m_ListView!=null)
 					return m_ListView.Count;
 				else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 					return m_ThumbnailView.Count;
@@ -486,7 +486,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
 					return m_FilmStripView.SelectedListItemIndex;
-				if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				else if (m_ViewMode==ViewMode.List && m_ListView!=null)
 					return m_ListView.SelectedListItemIndex;
 				else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 					return m_ThumbnailView.SelectedListItemIndex;
@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
 					return m_FilmStripView[index];
-				if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				else if (m_ViewMode==ViewMode.List && m_ListView!=null)
 					return m_ListView[index];
 				else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 					return m_ThumbnailView[index];

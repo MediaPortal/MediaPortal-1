@@ -10,7 +10,8 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   abstract public class GUIControl
   {
-    [XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;
+		[XMLSkinElement("subtype")]			protected string  m_strSubType = "";
+		[XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;
     [XMLSkinElement("onright")]			protected int			m_dwControlRight = 0;
     [XMLSkinElement("onup")]			protected int			m_dwControlUp = 0;
     [XMLSkinElement("ondown")]			protected int			m_dwControlDown = 0;
@@ -998,5 +999,13 @@ namespace MediaPortal.GUI.Library
       m_dwHeight=h;
       DoUpdate();
     }
+
+		public string SubType
+		{
+			get
+			{
+				return m_strSubType;
+			}
+		}
   }
 }

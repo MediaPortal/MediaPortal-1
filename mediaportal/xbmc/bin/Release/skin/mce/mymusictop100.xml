@@ -183,6 +183,7 @@
 				<control>
 					<description>album view listcontrol</description>
 					<type>listcontrol</type>
+					<subtype>album</subtype>
 					<id>52</id>
 					<font>font13</font>
 					<font2>font13</font2>

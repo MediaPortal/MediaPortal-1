@@ -290,7 +290,13 @@ namespace MediaPortal.GUI.Library
 				{
 					GUIControl subControl = Create(dwParentId, subControlNode);
 					if (subControl is GUIListControl)
-						facade.ListView = subControl as GUIListControl;
+					{
+						GUIListControl list = subControl as GUIListControl;
+						if ( list.SubType=="album")
+							facade.AlbumListView = list;
+						else
+							facade.ListView = list;
+					}
 					if (subControl is GUIThumbnailPanel)
 						facade.ThumbnailView = subControl as GUIThumbnailPanel;
 					if (subControl is GUIFilmstripControl)
