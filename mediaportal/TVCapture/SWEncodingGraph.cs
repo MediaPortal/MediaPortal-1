@@ -40,6 +40,7 @@ namespace MediaPortal.TV.Recording
     int				              m_rotCookie = 0;						// Cookie into the Running Object Table
     VideoCaptureDevice      m_videoCaptureDevice=null;
     IVideoWindow            m_videoWindow = null;
+    IBasicVideo2            m_basicVideo = null;
     const int WS_CHILD			= 0x40000000;	
     const int WS_CLIPCHILDREN	= 0x02000000;
     const int WS_CLIPSIBLINGS	= 0x04000000;
@@ -189,6 +190,11 @@ namespace MediaPortal.TV.Recording
       {
         Marshal.ReleaseComObject(m_videoWindow);m_videoWindow=null;
       }
+      if (m_basicVideo!=null)
+      {
+        Marshal.ReleaseComObject(m_basicVideo);m_basicVideo=null;
+      }
+      
 
       if (m_filterCaptureVideo!=null)
         Marshal.ReleaseComObject(m_filterCaptureVideo);m_filterCaptureVideo=null;
@@ -369,6 +375,7 @@ namespace MediaPortal.TV.Recording
       m_videoCaptureDevice.RenderPreview();
 
       m_videoWindow = (IVideoWindow) m_graphBuilder;
+      m_basicVideo = (IBasicVideo2) m_basicVideo;
       int hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
       if( hr != 0 ) 
         DirectShowUtil.DebugWrite("mpeg2:FAILED:set Video window");
@@ -413,13 +420,38 @@ namespace MediaPortal.TV.Recording
     private void GUIGraphicsContext_OnVideoWindowChanged()
     {
       if (m_graphState!=State.Viewing) return ;
+      int iVideoWidth,iVideoHeight;
+      m_basicVideo.GetVideoSize( out iVideoWidth, out iVideoHeight );
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
-        m_videoWindow.SetWindowPosition(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height) ;
+        float x=GUIGraphicsContext.OverScanLeft;
+        float y=GUIGraphicsContext.OverScanTop;
+        int  nw=GUIGraphicsContext.OverScanWidth;
+        int  nh=GUIGraphicsContext.OverScanHeight;
+        if (nw <=0 || nh <=0) return;
+
+
+        System.Drawing.Rectangle rSource,rDest;
+        MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
+        m_geometry.ImageWidth=iVideoWidth;
+        m_geometry.ImageHeight=iVideoHeight;
+        m_geometry.ScreenWidth=nw;
+        m_geometry.ScreenHeight=nh;
+        m_geometry.ARType=GUIGraphicsContext.ARType;
+        m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
+        m_geometry.GetWindow(out rSource, out rDest);
+        rDest.X += (int)x;
+        rDest.Y += (int)y;
+
+        m_basicVideo.SetSourcePosition(rSource.Left,rSource.Top,rSource.Width,rSource.Height);
+        m_basicVideo.SetDestinationPosition(0,0,rDest.Width,rDest.Height );
+        m_videoWindow.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
       }
       else
       {
-        m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+        m_basicVideo.SetSourcePosition( 0,0,iVideoWidth,iVideoHeight);
+        m_basicVideo.SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+        m_videoWindow.SetWindowPosition( GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
       }
     }
 	}
