@@ -592,7 +592,10 @@ namespace MediaPortal.Configuration
         if (standard=="PAL N COMBO") channel.standard = AnalogVideoStandard.PAL_N_COMBO;
 
 				TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
-				channel.Country=tunerCountry.Id;
+				if (tunerCountry!=null)
+					channel.Country=tunerCountry.Id;
+				else
+					channel.Country=-1;
 				return channel;
 			}
 
