@@ -68,6 +68,7 @@ namespace home
 		private System.Windows.Forms.CheckBox chkBoxFixed;
 		private ArrayList loadedPlugins = new ArrayList();
 		bool	addPicture=false;
+		bool	addScript=false;
 		string	skinName;
 
 		private System.Windows.Forms.Button MakeMenu;
@@ -131,6 +132,12 @@ namespace home
 		private System.Windows.Forms.Label label25;
 		private System.Windows.Forms.PictureBox pictureBox4;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.ComboBox comboBox1;
+		private System.Windows.Forms.GroupBox groupBox6;
+		private System.Windows.Forms.CheckBox StartScript;
+		private System.Windows.Forms.CheckBox EndScript;
+		private System.Windows.Forms.ComboBox comboBox2;
+		private System.Windows.Forms.ComboBox comboBox3;
 		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
@@ -255,6 +262,7 @@ namespace home
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.SearchPicture = new System.Windows.Forms.Button();
 			this.MakeMenu = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
@@ -292,6 +300,11 @@ namespace home
 			this.addConfig = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.TopBar = new System.Windows.Forms.TabPage();
+			this.groupBox6 = new System.Windows.Forms.GroupBox();
+			this.comboBox3 = new System.Windows.Forms.ComboBox();
+			this.comboBox2 = new System.Windows.Forms.ComboBox();
+			this.EndScript = new System.Windows.Forms.CheckBox();
+			this.StartScript = new System.Windows.Forms.CheckBox();
 			this.label24 = new System.Windows.Forms.Label();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.NoTopBar = new System.Windows.Forms.CheckBox();
@@ -339,6 +352,7 @@ namespace home
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.TopBar.SuspendLayout();
+			this.groupBox6.SuspendLayout();
 			this.groupBox5.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -367,6 +381,7 @@ namespace home
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.comboBox1);
 			this.groupBox2.Controls.Add(this.SearchPicture);
 			this.groupBox2.Controls.Add(this.MakeMenu);
 			this.groupBox2.Controls.Add(this.label7);
@@ -387,6 +402,15 @@ namespace home
 			this.groupBox2.TabIndex = 26;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Tag Info";
+			// 
+			// comboBox1
+			// 
+			this.comboBox1.Enabled = false;
+			this.comboBox1.Location = new System.Drawing.Point(96, 16);
+			this.comboBox1.Name = "comboBox1";
+			this.comboBox1.Size = new System.Drawing.Size(168, 21);
+			this.comboBox1.TabIndex = 13;
+			this.comboBox1.Visible = false;
 			// 
 			// SearchPicture
 			// 
@@ -429,7 +453,7 @@ namespace home
 			this.textBox5.Name = "textBox5";
 			this.textBox5.Size = new System.Drawing.Size(168, 20);
 			this.textBox5.TabIndex = 9;
-			this.textBox5.Text = "textBox5";
+			this.textBox5.Text = "";
 			// 
 			// textBox6
 			// 
@@ -437,7 +461,7 @@ namespace home
 			this.textBox6.Name = "textBox6";
 			this.textBox6.Size = new System.Drawing.Size(168, 20);
 			this.textBox6.TabIndex = 8;
-			this.textBox6.Text = "textBox6";
+			this.textBox6.Text = "";
 			// 
 			// label5
 			// 
@@ -477,7 +501,7 @@ namespace home
 			this.textBox3.Name = "textBox3";
 			this.textBox3.Size = new System.Drawing.Size(168, 20);
 			this.textBox3.TabIndex = 3;
-			this.textBox3.Text = "textBox3";
+			this.textBox3.Text = "";
 			// 
 			// textBox4
 			// 
@@ -485,7 +509,7 @@ namespace home
 			this.textBox4.Name = "textBox4";
 			this.textBox4.Size = new System.Drawing.Size(168, 20);
 			this.textBox4.TabIndex = 2;
-			this.textBox4.Text = "textBox4";
+			this.textBox4.Text = "";
 			// 
 			// textBox2
 			// 
@@ -493,7 +517,7 @@ namespace home
 			this.textBox2.Name = "textBox2";
 			this.textBox2.Size = new System.Drawing.Size(168, 20);
 			this.textBox2.TabIndex = 1;
-			this.textBox2.Text = "textBox2";
+			this.textBox2.Text = "";
 			// 
 			// textBox1
 			// 
@@ -586,7 +610,7 @@ namespace home
 			this.radioButton2.Location = new System.Drawing.Point(16, 56);
 			this.radioButton2.Name = "radioButton2";
 			this.radioButton2.TabIndex = 1;
-			this.radioButton2.Text = "MM DD YYYY";
+			this.radioButton2.Text = "MM-DD-YYYY";
 			this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
 			// 
 			// radioButton1
@@ -595,7 +619,7 @@ namespace home
 			this.radioButton1.Name = "radioButton1";
 			this.radioButton1.Size = new System.Drawing.Size(112, 24);
 			this.radioButton1.TabIndex = 0;
-			this.radioButton1.Text = "DD.MM YYYY";
+			this.radioButton1.Text = "DD-MM-YYYY";
 			this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
 			// 
 			// treeView
@@ -693,6 +717,7 @@ namespace home
 			// 
 			// TopBar
 			// 
+			this.TopBar.Controls.Add(this.groupBox6);
 			this.TopBar.Controls.Add(this.label24);
 			this.TopBar.Controls.Add(this.groupBox5);
 			this.TopBar.Controls.Add(this.groupBox4);
@@ -702,6 +727,51 @@ namespace home
 			this.TopBar.Size = new System.Drawing.Size(832, 494);
 			this.TopBar.TabIndex = 0;
 			this.TopBar.Text = "Home Design";
+			// 
+			// groupBox6
+			// 
+			this.groupBox6.Controls.Add(this.comboBox3);
+			this.groupBox6.Controls.Add(this.comboBox2);
+			this.groupBox6.Controls.Add(this.EndScript);
+			this.groupBox6.Controls.Add(this.StartScript);
+			this.groupBox6.Location = new System.Drawing.Point(312, 296);
+			this.groupBox6.Name = "groupBox6";
+			this.groupBox6.Size = new System.Drawing.Size(456, 72);
+			this.groupBox6.TabIndex = 30;
+			this.groupBox6.TabStop = false;
+			this.groupBox6.Text = "Special Scripts";
+			// 
+			// comboBox3
+			// 
+			this.comboBox3.Location = new System.Drawing.Point(160, 40);
+			this.comboBox3.Name = "comboBox3";
+			this.comboBox3.Size = new System.Drawing.Size(240, 21);
+			this.comboBox3.TabIndex = 3;
+			// 
+			// comboBox2
+			// 
+			this.comboBox2.Location = new System.Drawing.Point(160, 16);
+			this.comboBox2.Name = "comboBox2";
+			this.comboBox2.Size = new System.Drawing.Size(240, 21);
+			this.comboBox2.TabIndex = 2;
+			// 
+			// EndScript
+			// 
+			this.EndScript.Enabled = false;
+			this.EndScript.Location = new System.Drawing.Point(16, 40);
+			this.EndScript.Name = "EndScript";
+			this.EndScript.Size = new System.Drawing.Size(128, 24);
+			this.EndScript.TabIndex = 1;
+			this.EndScript.Text = "Script at MP exit";
+			// 
+			// StartScript
+			// 
+			this.StartScript.Enabled = false;
+			this.StartScript.Location = new System.Drawing.Point(16, 16);
+			this.StartScript.Name = "StartScript";
+			this.StartScript.Size = new System.Drawing.Size(128, 24);
+			this.StartScript.TabIndex = 0;
+			this.StartScript.Text = "Script at MP startup";
 			// 
 			// label24
 			// 
@@ -941,6 +1011,7 @@ namespace home
 			this.AddSpecial.Size = new System.Drawing.Size(88, 32);
 			this.AddSpecial.TabIndex = 36;
 			this.AddSpecial.Text = "Add Script Function";
+			this.AddSpecial.Click += new System.EventHandler(this.AddSpecial_Click);
 			// 
 			// groupBox1
 			// 
@@ -1079,13 +1150,17 @@ namespace home
 			// 
 			// listView
 			// 
+			this.listView.AutoArrange = false;
 			this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
 																																							 this.Type,
 																																							 this.Plugin,
 																																							 this.Key,
 																																							 this.Fullscreen});
+			this.listView.FullRowSelect = true;
 			this.listView.GridLines = true;
+			this.listView.LabelEdit = true;
 			this.listView.Location = new System.Drawing.Point(240, 16);
+			this.listView.MultiSelect = false;
 			this.listView.Name = "listView";
 			this.listView.Size = new System.Drawing.Size(552, 432);
 			this.listView.TabIndex = 19;
@@ -1099,17 +1174,17 @@ namespace home
 			// Plugin
 			// 
 			this.Plugin.Text = "Plugin";
-			this.Plugin.Width = 264;
+			this.Plugin.Width = 282;
 			// 
 			// Key
 			// 
 			this.Key.Text = "Key";
-			this.Key.Width = 62;
+			this.Key.Width = 77;
 			// 
 			// Fullscreen
 			// 
 			this.Fullscreen.Text = "Full Screen";
-			this.Fullscreen.Width = 72;
+			this.Fullscreen.Width = 82;
 			// 
 			// SetupForm
 			// 
@@ -1119,11 +1194,11 @@ namespace home
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "SetupForm";
 			this.Text = "Home Setup";
-			this.Load += new System.EventHandler(this.SetupForm_Load);
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.TopBar.ResumeLayout(false);
+			this.groupBox6.ResumeLayout(false);
 			this.groupBox5.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
@@ -1161,6 +1236,8 @@ namespace home
 
 		private void MakeMenu_Click(object sender, System.EventArgs e)
 		{
+			comboBox1.Visible=false;
+			textBox1.Visible=true;
 			MakeMenu.Visible=false;
 			textBox2.Visible=true;
 			label4.Visible=true;
@@ -1194,7 +1271,15 @@ namespace home
 				SearchPicture.Visible=false;
 				UpdateTagInfo(textBox1.Text);
 			} 
-			else 
+			else if (addScript==true) 
+			{
+				
+				++this.FolderCount;
+				string mName=	"["+comboBox1.Items[comboBox1.SelectedIndex]+"]";
+				this.treeView.Nodes.Add(new TreeNode(mName, 2, 2));			
+				UpdateTagInfo(mName);
+			}
+			else
 			{
 			  ++this.FolderCount;
 				string mName=	"("+textBox1.Text+")";
@@ -1216,13 +1301,12 @@ namespace home
 
 		private void SaveAll_Click(object sender, System.EventArgs e)
 		{
-			saveTree(treeView, Application.StartupPath + @"\menu.bin");
+			saveTree(treeView, Application.StartupPath + @"\menu2.bin");
 			using (AMS.Profile.Xml xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				int iLayout=0;
 				if (radioButton2.Checked) iLayout=1;
 				if (radioButton3.Checked) iLayout=2;
-
 				xmlWriter.SetValue("home","datelayout",iLayout.ToString());
 				xmlWriter.SetValueAsBool("home","scroll",chkBoxScrolling.Checked);
 				xmlWriter.SetValueAsBool("home","scrollfixed",chkBoxFixed.Checked);
@@ -1270,7 +1354,14 @@ namespace home
 					SpecialFunctions.Enabled=true;
 				}
 			}
-			loadTree(treeView, Application.StartupPath + @"\menu.bin");
+			if (System.IO.File.Exists(Application.StartupPath + @"\menu2.bin"))
+			{
+				loadTree(treeView, Application.StartupPath + @"\menu2.bin");
+			} 
+			else 
+			{
+				loadTree(treeView, Application.StartupPath + @"\menu.bin");
+			}
 		}
 
 		private void UpdateTagInfo(string name)
@@ -1593,7 +1684,7 @@ namespace home
 			if (treeView.SelectedNode!=null) 
 			{
 				tn=treeView.SelectedNode;		
-				if (tn.Text.StartsWith("("))
+				if (tn.Text.StartsWith("(") || tn.Text.StartsWith("["))
 				{
 					SearchPicture.Visible=true;
 					addPicture=true;
@@ -1659,10 +1750,6 @@ namespace home
 			{
 				MessageBox.Show( "Please select a Menu Item in the Menu Structure!" );
 			}
-		}
-
-		private void SetupForm_Load(object sender, System.EventArgs e)
-		{
 		}
 
 		private void addConfig_Click(object sender, System.EventArgs e)
@@ -2184,11 +2271,11 @@ namespace home
 
 			if (radioButton1.Checked==true) 
 			{
-				strDate=String.Format("{0}. {1} {2}",cur.Day, month, cur.Year);
+				strDate=String.Format("{0} {1}. {2}",day, cur.Day, month);
 			}
 			if (radioButton2.Checked==true)
 			{
-				strDate=String.Format("{0} {1} {2}",month, cur.Day, cur.Year);
+				strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
 			}
 			if (radioButton3.Checked==true)
 			{
@@ -2221,11 +2308,27 @@ namespace home
 				string scriptdir=System.IO.Directory.GetCurrentDirectory()+"\\"+"scripts";
 				if(!Directory.Exists(scriptdir)) 
 				{
-					MessageBox.Show( "You must enable the Script Plugin!" );
 					SpecialFunctions.Items.Clear();
 					AddSpecial.Enabled=false;
 					SpecialFunctions.Enabled=true;		
 					ActivateSpecial.Checked=false;
+				} 
+				else 
+				{
+					DirectoryInfo scDir = new DirectoryInfo(scriptdir);
+					foreach(FileInfo fi in scDir.GetFiles()) 
+					{
+						Log.Write(fi.Name+"  "+fi.Extension);
+						if (fi.Extension.ToLower()==".mps") 
+						{
+							string fl=fi.Name;
+							fl=fl.Substring(0,fl.Length-4);
+							SpecialFunctions.Items.Add(fl);
+							comboBox1.Items.Add(fl);
+							comboBox2.Items.Add(fl);
+							comboBox3.Items.Add(fl);
+						}
+					}
 				}
 			} 
 			else 
@@ -2236,5 +2339,34 @@ namespace home
 			}
 		}
 
+		private void AddSpecial_Click(object sender, System.EventArgs e)
+		{
+			addScript=true;
+			SearchPicture.Visible=false;
+			MakeMenu.Visible=true;
+			MakeMenu.Text="Add Script";
+			label3.Text="Script Name";
+			textBox1.Visible=false;
+			label4.Text="";
+			label4.Visible=false;
+			textBox2.Visible=true;
+			comboBox1.Visible=true;
+			comboBox1.Enabled=true;
+			textBox1.Text="";
+			textBox2.Text="";
+			textBox3.Text="";
+			textBox4.Text="";
+			textBox5.Text="";
+			textBox6.Text="";
+			label5.Visible=false;
+			textBox3.Visible=false;
+			label6.Visible=false;
+			textBox4.Visible=false;
+			label7.Visible=false;
+			textBox5.Visible=false;
+			label8.Visible=false;
+			textBox6.Visible=false;
+			comboBox1.Focus();
+		}
 	}
 }

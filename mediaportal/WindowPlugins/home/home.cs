@@ -10,6 +10,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Topbar;
+using MediaPortal.GUI.GUIScript;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.DirectX;
@@ -91,6 +92,8 @@ namespace MediaPortal.GUI.Home
 		bool					firstDate=false;
 		Viewport      m_newviewport = new Viewport();
 		Viewport      m_oldviewport;
+		ScriptHandler gScript=new ScriptHandler();
+
 		GUITopbar topBar = new GUITopbar();
 		GUITopbarHome	topBarHome = new GUITopbarHome();
 
@@ -147,7 +150,14 @@ namespace MediaPortal.GUI.Home
 			}
 			if (useMenus==true) 
 			{
-				loadTree(treeView, Application.StartupPath + @"\menu.bin");						// if new menu handling load menutree
+				if (System.IO.File.Exists(Application.StartupPath + @"\menu2.bin"))
+				{
+					loadTree(treeView, Application.StartupPath + @"\menu2.bin");
+				} 
+				else 
+				{
+					loadTree(treeView, Application.StartupPath + @"\menu.bin");// if new menu handling load menutree
+				}
 			}
 			
 			m_iButtons=0;
@@ -257,6 +267,14 @@ namespace MediaPortal.GUI.Home
 
 		public override void OnAction(Action action)
 		{
+			if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)	
+			{
+				if(action.m_key.KeyChar == 89 || action.m_key.KeyChar == 121 ) 
+				{
+
+				}
+				return;
+			}
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
 			{
 				if(useMyPlugins==true && inMyPlugins==true)   // if frodo´s menu style used set menu to MyPlugins entrys
@@ -613,6 +631,12 @@ namespace MediaPortal.GUI.Home
 								if (button.HyperLink==-3)
 								{
 									GoBackMenu();
+									break;
+								}
+								if (button.HyperLink==-500)
+								{
+									gScript.SetGlobalVar("insubmenu",inSubMenu);
+									gScript.StartScript(button.Label);
 									break;
 								}
 								if (inSecondMenu==true) 
@@ -1026,7 +1050,10 @@ namespace MediaPortal.GUI.Home
 							}
 						}
 						int iHyperLink = setup.GetWindowId();
-						AddPluginButton(iHyperLink,strButtonText, strButtonImageFocus,  strButtonImage,strPictureImage);
+						if (iHyperLink!=740)
+						{
+							AddPluginButton(iHyperLink,strButtonText, strButtonImageFocus,  strButtonImage,strPictureImage);
+						}
 					}
 				}
 				if (useMyPlugins==true && inMyPlugins==false) // if My Plugin Call make MyPlugin Button
@@ -1057,6 +1084,27 @@ namespace MediaPortal.GUI.Home
 						}
 					}
 					AddPluginButton(-1,strBtnText, "",  "", strBtnFile);	
+					continue;
+				}
+				if (tn.Text.StartsWith("[")) 
+				{
+					string strBtnFile="";
+					int l1=tn.Text.IndexOf("{",0);
+					int l2=tn.Text.IndexOf("}",0);
+					string strBtnText=tn.Text.Substring(1,tn.Text.IndexOf("]",0)-1);
+					if(l1>0) 
+					{
+						strBtnFile=tn.Text.Substring(l1+1,(l2-l1)-1);
+						strBtnFile=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,strBtnFile);
+						if (!System.IO.File.Exists(strBtnFile))
+						{
+							strBtnFile="";
+						}
+					}
+					string btnTxt="";
+					gScript.SetGlobalVar("insubmenu",inSubMenu);
+					btnTxt=gScript.LoadScript(strBtnText);
+					AddPluginButton(-500,btnTxt, "",  "", strBtnFile);	
 					continue;
 				}
 				foreach (ISetupForm setup in plugins)
@@ -1676,11 +1724,11 @@ namespace MediaPortal.GUI.Home
 
 				if (m_iDateLayout==0) 
 				{
-					strDate=String.Format("{0}. {1} {2}",cur.Day, month, cur.Year);
+					strDate=String.Format("{0} {1}. {2}",day, cur.Day, month);
 				}
 				if (m_iDateLayout==1)
 				{
-					strDate=String.Format("{0} {1} {2}",month, cur.Day, cur.Year);
+					strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
 				}
 				if (m_iDateLayout==2)
 				{
