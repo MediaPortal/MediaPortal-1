@@ -1359,6 +1359,7 @@ namespace MediaPortal.TV.Recording
 				CreateGraph();
 				RadioStation station = new RadioStation();
 				_mGraph.StartRadio(station);
+				_mState =State.Radio;
 			}
 			else
 			{

@@ -1128,6 +1128,19 @@ namespace MediaPortal.TV.Recording
 		
 		public void TuneRadioFrequency(int frequency)
 		{
+			Log.Write("SinkGraphEx:tune to {0} hz", frequency);
+			m_TVTuner.put_TuningSpace(0);
+			m_TVTuner.put_CountryCode(m_iCountryCode);
+			m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+			if (m_bUseCable)
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+			}
+			else
+			{
+				m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+			}
+			m_TVTuner.put_Channel(frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
 		}
   }
 }

@@ -30,6 +30,7 @@ namespace MediaPortal.Configuration
 
 		public override void OnStartTuning(int startValue)
 		{
+			
 			m_graph.TuneRadioFrequency(startValue);
 			currentChannel=startValue;
 			channelNo=1;
