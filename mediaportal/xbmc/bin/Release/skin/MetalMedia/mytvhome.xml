@@ -82,6 +82,28 @@
 		<posY>189</posY>
 		<label>602</label>
 		<onup>3</onup>
+		<ondown>7</ondown>
+	</control>
+	<control>
+		<description>TV On/Off button</description>
+		<type>togglebutton</type>
+		<id>7</id>
+		<posX>55</posX>
+		<posY>217</posY>
+		<width>180</width>
+		<height>28</height>
+		<textXOff>10</textXOff>
+		<textYOff>2</textYOff>
+		<font>font14</font>
+		<textcolor>ff484848</textcolor>
+		<colordiffuse>ffffffff</colordiffuse>
+		<disabledcolor>60ffffff</disabledcolor>
+		<label>707</label>
+		<AltTextureFocus>button-focus.png</AltTextureFocus>
+		<AltTextureNoFocus>-</AltTextureNoFocus>
+		<textureFocus>togglebutton-focus.png</textureFocus>
+		<textureNoFocus>togglebutton-nofocus.png</textureNoFocus>
+		<onup>6</onup>
 		<ondown>8</ondown>
 	</control>
 	<control>
@@ -89,10 +111,10 @@
 		<type>button</type>
 		<id>8</id>
 		<posX>55</posX>
-		<posY>217</posY>
+		<posY>245</posY>
 		<label>603</label>
 		<hyperlink>601</hyperlink>
-		<onup>6</onup>
+		<onup>7</onup>
 		<ondown>9</ondown>
 	</control>
 	<control>
@@ -100,7 +122,7 @@
 		<type>button</type>
 		<id>9</id>
 		<posX>55</posX>
-		<posY>245</posY>
+		<posY>273</posY>
 		<label>604</label>
 		<hyperlink>603</hyperlink>
 		<onup>8</onup>

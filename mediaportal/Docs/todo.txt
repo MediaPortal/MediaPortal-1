@@ -8,23 +8,28 @@ Skin, gfx, .xml & media:
   - my videos: fullscreen       : xml:progressbar when FF/RW or seek to show where we are in the movie
                                   example: http://www.pvrcompare.com/SATivo2StatusBar.jpg  
 --------------------------------------------------------------------------------------------------------------     
--seperator for texboxscrollup
+	- my tv->fullscreen ->crash?
+fix:
+	-imdb info gets retrieved from inet every time?
+	-home:nothing selected when returning from a window
+	-home:dont load plugins 3 times
+
 vmr9:
-	- overlay
-	- windowless vmr9 
-	   - z-order
-	   - alpha transparency
-	   - 
-	- renderless vmr9
+	- windowless vmr9 / renderless vmr9
 
 My Radio:
-    - add support for more cards
     - prev/next buttons dont work yet 
+    - add support for more cards
     - Timeshifting & recording
+    - Use RDS signals in myRadio
          
 My TV:
   general
-    - support for simple tvcards (watch tv only)
+    - check the EPG without showing the TV
+    - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
+    - support for SW encoding capture cards for watching and recording
+    - Video network broadcasting...so we can send live video streams(from a capture device) to other networked computers..
+    - watch Live TV on two TVs if user has two Tuners
 	- option:fade in/out when switching between fullscreen video/tv<->gui
 	- option:turn timeshifting on/off
 	- option:show fullscreen TV when going to my tv (instead of windowed)
@@ -35,6 +40,7 @@ My TV:
 	- TV-out through PVR 350
   
   Fullscreen TV:
+    - use 0-9 on remote to select a TV channel
 	- show progressbar when FF/RW/SKIP+/SKIP- and OSD is not visible
 	- when in FF mode, auto stop when live-point is reached
   
@@ -46,14 +52,16 @@ My TV:
         - where in time you're watching
      - show description of current program
      - record this program now option
+     - Some sort of a TV OSD system. Most TV OSDs can be browsed with the standard keys (0-9, play, pause, etc. up, down, left, right, enter) and the four special color keys (red, green, yellow and blue)
      
   Recorded tv:
      - change layout of screen so it becomes more readable
      
   TVGuide:
+     - use 0-9 on remote to select a TV channel
+     - "Watch this channel" in EPG
+     - Search function in EPG 
      - special background/color for currently playing program(s)
-     - in the tv guide, when you select a program, it would be nice to have an option 
-     - which directly switches to the channel. Of course only if the program currently runs. 
      - add to program favorites (will b highlighted next time)
      - allow user to specify which channels should b displayed and which not (hide channels)
      - View by : movies, news, Whats playing now... 
@@ -62,10 +70,10 @@ My TV:
      - remove all schedules button
   
   Recorder/Capture:
-     - add support for digital capture cards (BDA tuners)
      - add screenshot option    
      
 My Music: (int_20h)
+  - foobar plugin (int20h is working on this)
   - search songs by genre,artist,album (based on music database)
   - favorite system to add an album, song, artists to your favorites
   - add new window called favorites which shows you your favorites artist,alums,songs or... and allows you to select & play them
@@ -88,6 +96,9 @@ My Video:
 My Pictures:
   - exif/picture tag information (excentric is looking at this)
   
+Topbar:
+  - add volume control
+    
 Settings:
   - all :-)
 
@@ -105,6 +116,8 @@ Skin engine:
   - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
 
 setup:
+  - A Remote controlled Stetup wizard that runs the first time you run MediaPortal (no keyboard needed)
+  - Setup Wizard for the first run (see Sceneo / Meedio Beta)
   - setup : add tooltips 
   - setup :Auto Tune needs some work
       - map S01 /k01 etc -> channel numbers
@@ -112,6 +125,13 @@ setup:
   - setup deinterlace method (vmr9)
 
 General:
+  - volume control via remote
+  - integrated support for remote controls instead of using girder
+  - The ability to search for and download new skins from within MP
+  - The ability to search for and download new plugins from within MP
+  - auto-update, a Check when you open MP to see if you are running the latest version
+  - Screenshot taking
+  - A PPC client
   - seperate frontend for client/server
   - autoplay anything thats in the cd/dvd
   - support for VFD/LCD displays

@@ -185,7 +185,8 @@ namespace MediaPortal
 			{
 				string strBody;
 				string strURL=String.Format("http://xoap.weather.com/search/search?where={0}", textBoxCity.Text);
-				WebRequest req = WebRequest.Create(strURL);
+        WebRequest req = WebRequest.Create(strURL);
+        req.Proxy=WebProxy.GetDefaultProxy();
 				WebResponse result = req.GetResponse();
 				Stream ReceiveStream = result.GetResponseStream();
 				Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
