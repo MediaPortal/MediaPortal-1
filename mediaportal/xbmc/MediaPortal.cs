@@ -83,6 +83,9 @@ public class MediaPortalApp : D3DApp, IRender
           strLine=strLine+ "Mediaportal cannot run without DirectX 9.0b";
           System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
+//TESTTESTTEST
+bWindowsMediaPlayer9=true;
+
         if (!bWindowsMediaPlayer9)
         {
           string strLine="Please install Windows Mediaplayer 9\r\n";

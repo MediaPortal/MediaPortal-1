@@ -1,4 +1,5 @@
 Bugs left:
+  08-07-2004 my videos  : imdb info gets retrieved from inet every time?
   30-06-2004 my programs: returns to home when stopping a game
   29-06-2004 home       : scroll speed 9 / 10 are the same
   27-06-2004 my TV      : some cards have 2 CVBS inputs

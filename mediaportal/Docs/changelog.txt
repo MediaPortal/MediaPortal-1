@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  08-07-2004  general     : added : use default proxy settings when accessing the internet
+  08-07-2004  home        : added : mouse scrolling support
+  
   08-07-2004  general     : fixed : .pls playlist loader
   08-07-2004  home        : added : option to disable core plugins
   08-07-2004  home        : added : scrolling button items
