@@ -76,7 +76,8 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "startfullscreen", "false" },
 												new string[] { "general", "autohidemouse", "false" },
 												new string[] { "general", "mousesupport", "true" }, 
-												new string[] { "general", "hideextensions", "true" },
+                        new string[] { "general", "hideextensions", "true" },
+                        new string[] { "general", "animations", "true" }
 												};
 
 		/// <summary>
@@ -192,7 +193,8 @@ namespace MediaPortal.Configuration.Sections
                                                                 "Start MediaPlayer in fullscreen mode",
                                                                 "Auto hide mouse cursor",
                                                                 "Show special mouse controls (scrollbars, etc)",
-                                                                "Hide file extensions for known file types"});
+                                                                "Hide file extensions for known file types",
+                                                                "Enable animations"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(408, 109);
