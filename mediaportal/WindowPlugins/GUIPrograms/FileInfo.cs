@@ -129,9 +129,10 @@ namespace ProgramsDatabase
 				return;
 			if(GameURL.Length>0)
 			{
-				Log.Write("allgamescraper launches URL \n{0}", GameURL);
-				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(GameURL);
-				System.Diagnostics.Process.Start(sInfo);
+// this code doesn't work with firefox !?! (launches a 6-tab browser window)
+//				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(GameURL);
+//				System.Diagnostics.Process.Start(sInfo);
+				System.Diagnostics.Process.Start("iexplore.exe", GameURL);
 			}
 		}
 
