@@ -524,10 +524,27 @@ public class MediaPortalApp : D3DApp, IRender
 
     void OnAction(Action action)
     {
+      int iCurrent,iMin, iMax,iStep;
 			try
 			{
 				switch (action.wID)
 				{
+					case Action.ActionType.ACTION_VOLUME_DOWN:
+            iCurrent=AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
+            iStep=(iMax - iMin) / 10;
+            iCurrent -= iStep;
+            if (iCurrent < iMin) iCurrent =iMin;
+            AudioMixerHelper.SetVolume(iCurrent);
+          break;
+
+					case Action.ActionType.ACTION_VOLUME_UP:
+            iCurrent=AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
+            iStep=(iMax - iMin) / 10;
+            iCurrent += iStep;
+            if (iCurrent > iMax) iCurrent =iMax;
+            AudioMixerHelper.SetVolume(iCurrent);
+          break;
+            
 					case Action.ActionType.ACTION_BACKGROUND_TOGGLE:
 						//show livetv or video as background instead of the static GUI background
 						using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))

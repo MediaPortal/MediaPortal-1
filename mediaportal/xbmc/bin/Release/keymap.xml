@@ -171,6 +171,18 @@
       <sound>click.wav</sound>
       <description>Toggle between GUI and fullscreen</description>
     </action>
+    <action>
+      <id>102</id>
+      <key>-</key>
+      <sound>click.wav</sound>
+      <description>volume down</description>
+    </action>
+    <action>
+      <id>103</id>
+      <key>=</key>
+      <sound>click.wav</sound>
+      <description>volume up</description>
+    </action>
   </global>
   <window>
     <id>603</id>
