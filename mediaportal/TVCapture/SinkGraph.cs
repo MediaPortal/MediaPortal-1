@@ -57,7 +57,11 @@ namespace MediaPortal.TV.Recording
         }
       }
 
-      if (videoCaptureDeviceFilter==null) return false;
+			if (videoCaptureDeviceFilter==null) 
+			{
+				DirectShowUtil.DebugWrite("Capture.CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
+				return false;
+			}
 
       // Make a new filter graph
       DirectShowUtil.DebugWrite("Capture.create new filter graph (IGraphBuilder)");
@@ -80,6 +84,7 @@ namespace MediaPortal.TV.Recording
       DsROT.AddGraphToRot( m_graphBuilder, out m_rotCookie );
 
       // Get the video device and add it to the filter graph
+			DirectShowUtil.DebugWrite("Capture.CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
       m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
       if (m_captureFilter!=null)
       {
@@ -118,6 +123,10 @@ namespace MediaPortal.TV.Recording
         m_TVTuner = o as IAMTVTuner;
       }
 
+			if (m_TVTuner==null)
+			{
+				DirectShowUtil.DebugWrite("Capture.CreateGraph() FAILED:no tuner found");
+			}
       //m_videoprocamp=(IAMVideoProcAmp )m_captureFilter;
 
 
@@ -144,7 +153,6 @@ namespace MediaPortal.TV.Recording
       StopRecording();
       StopTimeShifting();
 
-      DirectShowUtil.DebugWrite("Capture.deleteGraph");
       //if ( m_mediaControl != null )
       //{
       //  m_mediaControl.Stop();
@@ -203,9 +211,9 @@ namespace MediaPortal.TV.Recording
 
 			if (m_graphState==State.TimeShifting) return true;
 
+			DirectShowUtil.DebugWrite("Capture.StartTimeShifting()");
 			if (!m_mpeg2Demux.IsRendered) 
 			{
-				DirectShowUtil.DebugWrite("Capture.StartTimeShifting()");
 				// connect video capture pin->mpeg2 demux input
 				Guid cat = PinCategory.Capture;
 				m_captureGraphBuilder.RenderStream( new Guid[1]{ cat}, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter); 
@@ -220,8 +228,8 @@ namespace MediaPortal.TV.Recording
     {
       if ( m_graphState!=State.TimeShifting) return false;
 
+			DirectShowUtil.DebugWrite("Capture.StopTimeShifting()");
 			m_mpeg2Demux.StopTimeShifting();
-      DirectShowUtil.DebugWrite("Capture.StopTimeShifting()");
       m_graphState=State.Created;
       return true;
     }
@@ -254,8 +262,8 @@ namespace MediaPortal.TV.Recording
     {
       m_iChannelNr=iChannel;
       if (m_TVTuner==null) return;
-      
 
+			DirectShowUtil.DebugWrite("Capture.TuneChannel() tune to channel:{0}", iChannel);
       m_TVTuner.put_TuningSpace(0);
       m_TVTuner.put_CountryCode(m_iCountryCode);
       m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
@@ -266,12 +274,16 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
+
+				int iFreq;
+				double dFreq;
+				m_TVTuner.get_VideoFrequency(out iFreq);
+				dFreq=iFreq/1000000d;
+				DirectShowUtil.DebugWrite("Capture.TuneChannel() tuned to freq:{0}", dFreq);
 			}
 			catch(Exception){} 
 
 			DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_captureFilter, iChannel<254, (iChannel==254), (iChannel==255) );
     }
-
-
 	}
 }
