@@ -565,6 +565,7 @@ namespace MediaPortal.GUI.TV
 
 			dlg.AddLocalizedString(915); // TV Channels
 			dlg.AddLocalizedString(971); // Group
+			dlg.AddLocalizedString(1441); // Fullscreen teletext
       dlg.AddLocalizedString(941); // Change aspect ratio
       dlg.AddLocalizedString(12902); // MSN Messenger
 			dlg.AddLocalizedString(902); // MSN Online contacts
@@ -643,6 +644,10 @@ namespace MediaPortal.GUI.TV
         case 902: // Online contacts
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
           break;
+
+				case 1441: // Fullscreen teletext
+					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+					break;
 
 				case 970:
 					// switch back to previous window
