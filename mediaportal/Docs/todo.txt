@@ -145,7 +145,6 @@ General:
   - integrated support for remote controls instead of using girder
   - The ability to search for and download new skins from within MP
   - The ability to search for and download new plugins from within MP
-  - auto-update, a Check when you open MP to see if you are running the latest version
   - Screenshot taking
   - A PPC client
   - seperate frontend for client/server
