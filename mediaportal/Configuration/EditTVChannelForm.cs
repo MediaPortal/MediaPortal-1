@@ -1231,7 +1231,7 @@ namespace MediaPortal.Configuration
 						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
 						string provider;
 						//DVB-T
-						TVDatabase.GetDVBTTuneRequest(channel.Channel,out provider,out freq,out ONID, out TSID,out SID);
+						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID);
 						tbDVBTFreq.Text=freq.ToString();;
 						tbDVBTONID.Text=ONID.ToString();;
 						tbDVBTTSID.Text=TSID.ToString();;
@@ -1239,7 +1239,7 @@ namespace MediaPortal.Configuration
 						tbDVBTProvider.Text=provider;
 
 						//DVB-C
-						TVDatabase.GetDVBCTuneRequest(channel.Channel,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID);
+						TVDatabase.GetDVBCTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID);
 						tbDVBCFreq.Text=freq.ToString();;
 						tbDVBCONID.Text=ONID.ToString();;
 						tbDVBCTSID.Text=TSID.ToString();;
@@ -1251,7 +1251,7 @@ namespace MediaPortal.Configuration
 
 
 						//DVB-S
-						TVDatabase.GetDVBSTuneRequest(channel.Channel,out provider,out freq, out symbolrate,out innerFec, out polarisation,out ONID,out TSID, out SID);
+						TVDatabase.GetDVBSTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec, out polarisation,out ONID,out TSID, out SID);
 						tbDVBSFreq.Text=freq.ToString();;
 						tbDVBSONID.Text=ONID.ToString();;
 						tbDVBSTSID.Text=TSID.ToString();;
@@ -1429,7 +1429,7 @@ namespace MediaPortal.Configuration
 				provider=tbDVBTProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.Number,freq,ONID,TSID,SID);
+					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
@@ -1448,7 +1448,7 @@ namespace MediaPortal.Configuration
 				provider=tbDVBCProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.Number,freq,symbolrate,innerFec,modulation,ONID,TSID,SID);
+					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
@@ -1466,7 +1466,7 @@ namespace MediaPortal.Configuration
 				provider=tbDVBSProvider.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBSChannel(tvchannel.Name,provider,tvchannel.Number,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
+					TVDatabase.MapDVBSChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,polarisation,ONID,TSID,SID);
 				}
 			}
 			catch(Exception){}
