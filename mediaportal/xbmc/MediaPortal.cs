@@ -263,6 +263,7 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 			}
 
+			Utils.KillExternalTVProcesses();
       try
       {
 				if (splashScreen!=null) splashScreen.SetInformation("Initializing DirectX...");

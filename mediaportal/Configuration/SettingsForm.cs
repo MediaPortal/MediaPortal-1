@@ -10,6 +10,7 @@ using System.Threading;
 using MediaPortal;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration
 {
@@ -48,6 +49,8 @@ namespace MediaPortal.Configuration
 			//
 			InitializeComponent();
 
+			
+			Utils.KillExternalTVProcesses();
 			//
 			// Set caption
 			//
