@@ -259,5 +259,15 @@
 			<font>font16</font> 
 			<textcolor>FFFFFFFF</textcolor> 
 		</control>
+		<control>
+			<description>rec logo</description> 
+			<type>image</type> 
+			<id>39</id> 
+			<posX>555</posX> 
+			<posY>420</posY> 
+			<texture>rec.png</texture> 
+			<colordiffuse>50ffffff</colordiffuse>
+			<visible>yes</visible> 
+		</control>	
   </controls>
 </window>

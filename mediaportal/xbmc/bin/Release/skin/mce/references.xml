@@ -9,6 +9,7 @@
 		  <change date="16-2-2005">updated the alarm xmls</change>
 		  <change date="16-2-2005">updated the music artists and genres xml</change>
 		  <change date="17-2-2005">fixed mytvscheduler.xml</change>
+		  <change date="17-2-2005">Added my tv fullscreen/osd/zaposd record status</change>
 		</changelog>
 	</skin>
 	<control>

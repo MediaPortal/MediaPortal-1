@@ -25,6 +25,7 @@ namespace MediaPortal.GUI.TV
       LABEL_ONTV_NOW=36,
       LABEL_ONTV_NEXT=37,
       PROGRESS_BAR=1,
+      REC_LOGO=39,
       LABEL_CURRENT_TIME=100,
 
   OSD_VIDEOPROGRESS =1
@@ -343,6 +344,15 @@ namespace MediaPortal.GUI.TV
 
       GUIMessage msg;
 
+      // Set recorder status
+      if (Recorder.IsRecordingChannel(GetChannelName()))
+      {
+        ShowControl(GetID, (int)Controls.REC_LOGO);
+      }
+      else
+      {
+        HideControl(GetID, (int)Controls.REC_LOGO);
+      }
 
       if (cntlCurrentChannel!=null)
       {

@@ -28,54 +28,55 @@ namespace MediaPortal.GUI.TV
       LABEL_ONTV_NOW=36,
       LABEL_ONTV_NEXT=37,
       PROGRESS_BAR=38,
+      REC_LOGO=39,
       LABEL_CURRENT_TIME=100,
 
-  OSD_VIDEOPROGRESS =1
-  , OSD_SKIPBWD =210
-  , OSD_REWIND =211
-  , OSD_STOP =212
-  , OSD_PLAY =213
-  , OSD_FFWD =214
-  , OSD_SKIPFWD =215
-  , OSD_MUTE =216
-  //, OSD_SYNC =217 - not used
-  , OSD_SUBTITLES =218
-  , OSD_BOOKMARKS =219
-  , OSD_VIDEO =220
-  , OSD_AUDIO =221
-  , OSD_VOLUMESLIDER =400
-  , OSD_AVDELAY =500
-  , OSD_AVDELAY_LABEL =550
-  , OSD_AUDIOSTREAM_LIST =501
-  , OSD_CREATEBOOKMARK =600
-  , OSD_BOOKMARKS_LIST =601
-  , OSD_BOOKMARKS_LIST_LABEL =650
-  , OSD_CLEARBOOKMARKS =602
-  , OSD_VIDEOPOS =700
-  , OSD_VIDEOPOS_LABEL =750
-  , OSD_SHARPNESS =701
-  , OSD_SHARPNESSLABEL =710
-  , OSD_SATURATIONLABEL =702
-  , OSD_SATURATION =703
-  , OSD_BRIGHTNESS =704
-  , OSD_BRIGHTNESSLABEL =752
-  , OSD_CONTRAST =705
-  , OSD_CONTRASTLABEL =753
-  , OSD_GAMMA =706
-  , OSD_GAMMALABEL =754
-  , OSD_SUBTITLE_DELAY =800
-  , OSD_SUBTITLE_DELAY_LABEL =850
-  , OSD_SUBTITLE_ONOFF =801
-  , OSD_SUBTITLE_LIST =802
-  , OSD_TIMEINFO =100
-  , OSD_SUBMENU_BG_VOL =300
-  //, OSD_SUBMENU_BG_SYNC 301	- not used
-  , OSD_SUBMENU_BG_SUBTITLES =302
-  , OSD_SUBMENU_BG_BOOKMARKS =303
-  , OSD_SUBMENU_BG_VIDEO =304
-  , OSD_SUBMENU_BG_AUDIO =305
-  , OSD_SUBMENU_NIB =350
-  , TV_LOGO=10
+      OSD_VIDEOPROGRESS =1
+      , OSD_SKIPBWD =210
+      , OSD_REWIND =211
+      , OSD_STOP =212
+      , OSD_PLAY =213
+      , OSD_FFWD =214
+      , OSD_SKIPFWD =215
+      , OSD_MUTE =216
+      //, OSD_SYNC =217 - not used
+      , OSD_SUBTITLES =218
+      , OSD_BOOKMARKS =219
+      , OSD_VIDEO =220
+      , OSD_AUDIO =221
+      , OSD_VOLUMESLIDER =400
+      , OSD_AVDELAY =500
+      , OSD_AVDELAY_LABEL =550
+      , OSD_AUDIOSTREAM_LIST =501
+      , OSD_CREATEBOOKMARK =600
+      , OSD_BOOKMARKS_LIST =601
+      , OSD_BOOKMARKS_LIST_LABEL =650
+      , OSD_CLEARBOOKMARKS =602
+      , OSD_VIDEOPOS =700
+      , OSD_VIDEOPOS_LABEL =750
+      , OSD_SHARPNESS =701
+      , OSD_SHARPNESSLABEL =710
+      , OSD_SATURATIONLABEL =702
+      , OSD_SATURATION =703
+      , OSD_BRIGHTNESS =704
+      , OSD_BRIGHTNESSLABEL =752
+      , OSD_CONTRAST =705
+      , OSD_CONTRASTLABEL =753
+      , OSD_GAMMA =706
+      , OSD_GAMMALABEL =754
+      , OSD_SUBTITLE_DELAY =800
+      , OSD_SUBTITLE_DELAY_LABEL =850
+      , OSD_SUBTITLE_ONOFF =801
+      , OSD_SUBTITLE_LIST =802
+      , OSD_TIMEINFO =100
+      , OSD_SUBMENU_BG_VOL =300
+      //, OSD_SUBMENU_BG_SYNC 301	- not used
+      , OSD_SUBMENU_BG_SUBTITLES =302
+      , OSD_SUBMENU_BG_BOOKMARKS =303
+      , OSD_SUBMENU_BG_VIDEO =304
+      , OSD_SUBMENU_BG_AUDIO =305
+      , OSD_SUBMENU_NIB =350,
+      TV_LOGO=10
     };
     bool m_bSubMenuOn = false;
     int m_iActiveMenu = 0;
@@ -108,9 +109,9 @@ namespace MediaPortal.GUI.TV
     public override void Render()
     {
       UpdateProgressBar();
-      SetVideoProgress();			// get the percentage of playback complete so far
-      Get_TimeInfo();				// show the time elapsed/total playing time
-      base.Render();		// render our controls to the screen
+      SetVideoProgress();	  // get the percentage of playback complete so far
+      Get_TimeInfo();       // show the time elapsed/total playing time
+      base.Render();        // render our controls to the screen
     }
     void HideControl (int dwSenderId, int dwControlID) 
     {
@@ -226,18 +227,18 @@ namespace MediaPortal.GUI.TV
           return;
         }
 
-				case Action.ActionType.ACTION_NEXT_CHANNEL:
-				{
-					OnNextChannel();
-					return;
-				}
+        case Action.ActionType.ACTION_NEXT_CHANNEL:
+        {
+          OnNextChannel();
+          return;
+        }
 				
-				case Action.ActionType.ACTION_PREV_CHANNEL:
-				{
-					OnPreviousChannel();
-					return;
-				}
-			}
+        case Action.ActionType.ACTION_PREV_CHANNEL:
+        {
+          OnPreviousChannel();
+          return;
+        }
+      }
 
       base.OnAction(action);
     }
@@ -360,8 +361,8 @@ namespace MediaPortal.GUI.TV
               FocusControl(GetID, m_iActiveMenuButtonID, 0);	// set focus to last menu button
               ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
             }
-						//g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
-						Log.Write("TVOSD:stop");
+            //g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
+            Log.Write("TVOSD:stop");
             g_Player.Stop();						// close our media
             //GUIWindowManager.PreviousWindow();							// go back to the previous window
           }
@@ -489,7 +490,7 @@ namespace MediaPortal.GUI.TV
               SetSliderValue(0.0f, 100.0f, (float) fPercent, (int)Controls.OSD_VIDEOPOS);
 
 
-							UpdateGammaContrastBrightness();
+              UpdateGammaContrastBrightness();
               // show the controls on this sub menu
               ShowControl(GetID, (int)Controls.OSD_VIDEOPOS);
               ShowControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
@@ -532,20 +533,20 @@ namespace MediaPortal.GUI.TV
       return base.OnMessage(message);
     }
 
-		void UpdateGammaContrastBrightness()
-		{
-			float fBrightNess=(float)GUIGraphicsContext.Brightness;
-			float fContrast=(float)GUIGraphicsContext.Contrast;
-			float fGamma=(float)GUIGraphicsContext.Gamma;
-			float fSaturation=(float)GUIGraphicsContext.Saturation;
-			float fSharpness=(float)GUIGraphicsContext.Sharpness;
+    void UpdateGammaContrastBrightness()
+    {
+      float fBrightNess=(float)GUIGraphicsContext.Brightness;
+      float fContrast=(float)GUIGraphicsContext.Contrast;
+      float fGamma=(float)GUIGraphicsContext.Gamma;
+      float fSaturation=(float)GUIGraphicsContext.Saturation;
+      float fSharpness=(float)GUIGraphicsContext.Sharpness;
               
-			SetSliderValue(0.0f, 100.0f, (float) fBrightNess, (int)Controls.OSD_BRIGHTNESS);
-			SetSliderValue(0.0f, 100.0f, (float) fContrast, (int)Controls.OSD_CONTRAST);
-			SetSliderValue(0.0f, 100.0f, (float) fGamma, (int)Controls.OSD_GAMMA);
-			SetSliderValue(0.0f, 100.0f, (float) fSaturation, (int)Controls.OSD_SATURATION);
-			SetSliderValue(0.0f, 100.0f, (float) fSharpness, (int)Controls.OSD_SHARPNESS);
-		}
+      SetSliderValue(0.0f, 100.0f, (float) fBrightNess, (int)Controls.OSD_BRIGHTNESS);
+      SetSliderValue(0.0f, 100.0f, (float) fContrast, (int)Controls.OSD_CONTRAST);
+      SetSliderValue(0.0f, 100.0f, (float) fGamma, (int)Controls.OSD_GAMMA);
+      SetSliderValue(0.0f, 100.0f, (float) fSaturation, (int)Controls.OSD_SATURATION);
+      SetSliderValue(0.0f, 100.0f, (float) fSharpness, (int)Controls.OSD_SHARPNESS);
+    }
 
     void SetVideoProgress()
     {
@@ -1226,6 +1227,15 @@ namespace MediaPortal.GUI.TV
 
       GUIMessage msg;
 
+      // Set recorder status
+      if (Recorder.IsRecordingChannel(GetChannelName()))
+      {
+        ShowControl(GetID, (int)Controls.REC_LOGO);
+      }
+      else
+      {
+        HideControl(GetID, (int)Controls.REC_LOGO);
+      }
 
       if (cntlCurrentChannel!=null)
       {

@@ -77,6 +77,7 @@ namespace MediaPortal.GUI.TV
 		, IMG_MIN32X       =27
 		, LABEL_CURRENT_TIME =22
     , OSD_VIDEOPROGRESS=100
+    , REC_LOGO=39
 		};
 
 		ArrayList m_channels = new ArrayList();
@@ -543,6 +544,7 @@ namespace MediaPortal.GUI.TV
 					HideControl(GetID,(int)Control.LABEL_ROW3);
 					HideControl(GetID,(int)Control.BLUE_BAR);
 					HideControl(GetID,(int)Control.LABEL_CURRENT_TIME);
+          HideControl(GetID,(int)Control.REC_LOGO);
 					m_bLastPause=g_Player.Paused;
 					m_iLastSpeed=g_Player.Speed;
 					m_bClear=false;
@@ -1033,7 +1035,7 @@ namespace MediaPortal.GUI.TV
       else
 			{
 				HideControl(GetID, (int)Control.BLUE_BAR);
-				HideControl(GetID, (int)Control.LABEL_ROW1);
+				HideControl(GetID, (int)Control.LABEL_ROW1);        
 			}
 		}
 
@@ -1058,15 +1060,23 @@ namespace MediaPortal.GUI.TV
 
 		public void SetFFRWLogos()
 		{
-      if (GUIGraphicsContext.Vmr9Active && (m_bShowStatus||m_bShowInfo || m_bShowStep || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
+      //if (GUIGraphicsContext.Vmr9Active && (m_bShowStatus||m_bShowInfo || m_bShowStep || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
+      if ((m_bShowStatus||m_bShowInfo || m_bShowStep || (!m_bOSDVisible && g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
       {
         for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
           ShowControl(GetID,i);
+
+        // Set recorder status
+        if (Recorder.IsRecordingChannel(GUITVHome.m_strChannel))
+        {
+          ShowControl(GetID, (int)Control.REC_LOGO);
+        }
       }
       else
       {
         for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
           HideControl(GetID,i);
+        HideControl(GetID, (int)Control.REC_LOGO);
       }
 
 			if (g_Player.Paused )
