@@ -275,6 +275,7 @@ namespace MediaPortal.Ripper
           {
             if (ShouldWeAutoPlay()) 
             {
+              if (g_Player.Playing) g_Player.Stop();
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
                 (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
                 GUIWindowManager.ActiveWindow,0,0,0,0);
