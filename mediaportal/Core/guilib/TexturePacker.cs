@@ -92,12 +92,12 @@ namespace MediaPortal.GUI.Library
 		}
 		public void test()
 		{
-			string[] files =System.IO.Directory.GetFiles(@"skin\mce\media","*.png");
+			string[] files =System.IO.Directory.GetFiles(@"skin\bluetwo\media","*.png");
 			foreach (string file in files)
 			{
 				AddBitmap(file);
 			}
-			rootImage.Save("test.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+			rootImage.Save("bluetwo.png", System.Drawing.Imaging.ImageFormat.Png);
 			rootImage.Dispose();
 		}
 		public bool AddBitmap(string file)

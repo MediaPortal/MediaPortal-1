@@ -52,6 +52,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void PopulateListView()
 		{
+			cardsListView.Items.Clear();
 			foreach(TVCaptureDevice captureCard in captureCards)
 			{
 				AddCaptureCard(captureCard);
