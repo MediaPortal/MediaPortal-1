@@ -91,16 +91,6 @@ namespace MediaPortal.Configuration
 			InitializeComponent();
 
 			//
-			// Fetch highest channel number
-			//
-			SectionSettings channelSection = SectionSettings.GetSection("Channels");
-			if(channelSection!=null)
-			{
-				int highestChannelNumber = (int)channelSection.GetSetting("channel.highest");
-				channelTextBox.Text = String.Format("{0}", highestChannelNumber + 1);
-			}
-			else channelTextBox.Text="23";
-			//
 			// Set size of window
 			//
 			typeComboBox.Text = "Internal";
@@ -1323,6 +1313,29 @@ namespace MediaPortal.Configuration
 			tvchannel.ExternalTunerChannel=chan.ExternalTunerChannel;
 			tvchannel.TVStandard=chan.standard;
 			tvchannel.VisibleInGuide=chan.VisibleInGuide;
+
+			if (tvchannel.Number==0)
+			{
+				//get a unique number
+				ArrayList chans=new ArrayList();
+				TVDatabase.GetChannels(ref chans);
+				tvchannel.Number=chans.Count;
+				while (true)
+				{
+					bool ok=true;
+					foreach (TVChannel ch in chans)
+					{
+						if (ch.Number==tvchannel.Number)
+						{
+							ok=false;
+							tvchannel.Number++;
+							break;
+						}
+					}
+					if (ok) break;
+				}
+				channelTextBox.Text=tvchannel.Number.ToString();
+			}
 
 			tvchannel.Frequency=chan.Frequency.Herz;
 			if(chan.Frequency.Herz < 1000)
