@@ -2167,12 +2167,8 @@ namespace MediaPortal
         mainWindow = ourRenderTarget;
 
       mainWindow.Show();	
-      Initialize() ;
 
-      OnStartup();
-
-      // Get the first message
-			
+      // Get the first message		
       storedSize=this.ClientSize;
       storedLocation=this.Location ;
 
