@@ -385,12 +385,15 @@ namespace MediaPortal.GUI.Library
 			if (GUIGraphicsContext.graphics!=null)
 			{
 				Rectangle[] vidWindow= new Rectangle[1];
-				vidWindow[0].X=m_dwTextBoxXpos;
-				vidWindow[0].Y=m_dwTextBoxYpos;
+
+				float x=(float)m_dwTextBoxXpos;
+				float y=(float)m_dwTextBoxYpos;
+				GUIGraphicsContext.Correct(ref x ,ref y);
+
+				vidWindow[0].X=(int)x;
+				vidWindow[0].Y=(int)y;
 				vidWindow[0].Width=m_dwTextBoxWidth;
 				vidWindow[0].Height=m_dwTextBoxHeight;
-
-				
 				GUIGraphicsContext.graphics.FillRectangle(Brushes.White, vidWindow[0].X, vidWindow[0].Y, vidWindow[0].Width, vidWindow[0].Height);
 				return;
 			}
