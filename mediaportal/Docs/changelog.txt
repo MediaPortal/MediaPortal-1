@@ -1,3 +1,7 @@
+04-08-2004  my music    : fixed : Exception when WMA file uses DRM.  Now it skips this file.
+04-08-2004  my music    : fixed : fixes problem where track or year has other characters in it (ogg/flac files).... 
+                                  Now, it extracts first numeric value on those tags 
+04-08-2004  language    : fixed : Spanish does not show when selecting it.
 04-08-2004  my music    : fixed : Second level album view sorts by track by default
 04-08-2004  setup       : fixed : Music database update will only scan for known extensions
 04-08-2004  home        : added : option to enable/disable scrolling of the menu items
