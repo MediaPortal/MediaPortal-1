@@ -4,7 +4,6 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Runtime.InteropServices; 
-
 using DShowNET;
 using DShowNET.Device;
 using DirectX.Capture;
@@ -12,6 +11,8 @@ using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using TVCapture;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
+
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -406,6 +407,8 @@ namespace MediaPortal.Configuration
 			this.label16 = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.useLNB4 = new System.Windows.Forms.CheckBox();
 			this.useLNB3 = new System.Windows.Forms.CheckBox();
@@ -452,8 +455,6 @@ namespace MediaPortal.Configuration
 			this.label29 = new System.Windows.Forms.Label();
 			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.button1 = new System.Windows.Forms.Button();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -462,11 +463,11 @@ namespace MediaPortal.Configuration
 			this.tabPage5.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.tabPage4.SuspendLayout();
+			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.tabPage6.SuspendLayout();
-			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// checkBoxHiQuality
@@ -973,6 +974,28 @@ namespace MediaPortal.Configuration
 			this.tabPage4.Text = "DVB-S LNB";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
 			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.checkBox1);
+			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox1.Location = new System.Drawing.Point(24, 344);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(192, 56);
+			this.groupBox1.TabIndex = 33;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Use SkyStar2 MD-Plugins";
+			// 
+			// checkBox1
+			// 
+			this.checkBox1.Checked = true;
+			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkBox1.Location = new System.Drawing.Point(16, 24);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(152, 16);
+			this.checkBox1.TabIndex = 0;
+			this.checkBox1.Text = "Use Plugins";
+			// 
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this.useLNB4);
@@ -1463,6 +1486,7 @@ namespace MediaPortal.Configuration
 			this.treeView5.Name = "treeView5";
 			this.treeView5.SelectedImageIndex = -1;
 			this.treeView5.Size = new System.Drawing.Size(248, 168);
+			this.treeView5.Sorted = true;
 			this.treeView5.TabIndex = 20;
 			// 
 			// button1
@@ -1473,28 +1497,6 @@ namespace MediaPortal.Configuration
 			this.button1.TabIndex = 6;
 			this.button1.Text = "Autotune";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.checkBox1);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(24, 344);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(192, 56);
-			this.groupBox1.TabIndex = 33;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Use SkyStar2 MD-Plugins";
-			// 
-			// checkBox1
-			// 
-			this.checkBox1.Checked = true;
-			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBox1.Location = new System.Drawing.Point(16, 24);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(152, 16);
-			this.checkBox1.TabIndex = 0;
-			this.checkBox1.Text = "Use Plugins";
 			// 
 			// EditCaptureCardForm
 			// 
@@ -1520,11 +1522,11 @@ namespace MediaPortal.Configuration
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.tabPage6.ResumeLayout(false);
-			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -2095,7 +2097,7 @@ namespace MediaPortal.Configuration
 			
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
 			{
-				checkBox1.Checked=xmlreader.GetValueAsBool("DVBSS2","enablePlugins",false);
+				checkBox1.Checked=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 			}
 			
 			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
@@ -2230,7 +2232,7 @@ namespace MediaPortal.Configuration
 			// save settings
 			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
 			{
-				xmlwriter.SetValueAsBool("DVBSS2","enablePlugins",checkBox1.Checked);
+				xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",checkBox1.Checked);
 			}
 
 			using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml(filename))
@@ -2410,8 +2412,11 @@ namespace MediaPortal.Configuration
 					return;
 				}
 
-
-				DVBEPG	ssEPG=new DVBEPG((int)DVBEPG.EPGCard.BDACards, capture.Network);
+				DVBEPG	ssEPG;
+				if(capture.VideoDevice!="B2C2 MPEG-2 Source")
+					ssEPG=new DVBEPG((int)DVBEPG.EPGCard.BDACards, capture.Network);
+				else
+					ssEPG=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
 				GUIGraphicsContext.VideoWindow = new Rectangle(300,90,110,110);
 				IntPtr prevFormPtr=GUIGraphicsContext.ActiveForm;
 				Form prevForm=GUIGraphicsContext.form;
