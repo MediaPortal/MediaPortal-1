@@ -1,3 +1,4 @@
+29-07-2004  my music    : fixed : sorting is always z>a initially in album view
 29-07-2004  my videos   : fixed : -CD1 is still shown when stacking. This is caused by the capital letters
 27-07-2004  setup       : fixed : Ability to manually enter the frequency of radion stations
 
