@@ -53,6 +53,7 @@ namespace MediaPortal.GUI.GUIBurner
 			CONTROL_COPY_CD_DVD			= 3,	 
 			CONTROL_MAKE_DATA_CD		= 4,
 			CONTROL_MAKE_DATA_DVD		= 5,
+			CONTROL_MAKE_MP_BACKUP  = 6,
 
 			CONTROL_MARK_ALL				= 12,
 
@@ -77,8 +78,9 @@ namespace MediaPortal.GUI.GUIBurner
 			STATE_DATA						= 11,
 			STATE_CONVERT					= 12,
 			STATE_MP3_CD					= 13,
-			STATE_MP3_DVD					= 14
-		};
+			STATE_MP3_DVD					= 14,
+			STATE_MAKE_BACKUP			= 15
+	};
 
 		enum BurnTypes
 		{
@@ -87,8 +89,9 @@ namespace MediaPortal.GUI.GUIBurner
 			MP3_CD			= 2,
 			MP3_DVD			= 3,
 			DIVX_CD			= 4,
-			DIVX_DVD		= 5
-		};
+			DIVX_DVD		= 5,
+			MP_BACKUP		= 6
+	};
 		private BurnTypes burnType = BurnTypes.DATA_CD;
 		private States currentState = States.STATE_MAIN;
 
@@ -126,6 +129,7 @@ namespace MediaPortal.GUI.GUIBurner
 		private int recordCards=0;
 		private int recorder;
 		private ArrayList files = new ArrayList();
+		private ArrayList backupFiles = new ArrayList();
 		private string tmpFolder;
 		private string tmpStr;
 		private ArrayList currentExt=null;
@@ -263,6 +267,10 @@ namespace MediaPortal.GUI.GUIBurner
 								burnType = BurnTypes.DATA_DVD;
 								BurnCD(burnType);
 								break;
+							case States.STATE_MAKE_BACKUP :
+								burnType = BurnTypes.MP_BACKUP;
+								BurnCD(burnType);
+								break;
 							case States.STATE_MP3_CD :
 								burnType = BurnTypes.MP3_CD;
 								BurnCD(burnType);
@@ -319,6 +327,10 @@ namespace MediaPortal.GUI.GUIBurner
 						{
 							case States.STATE_MAIN :
 								CdRwFormat();
+								break;
+							case States.STATE_DATA :
+								currentState=States.STATE_MAKE_BACKUP;
+								ShowList();
 								break;
 						}
 						return true;
@@ -400,104 +412,107 @@ namespace MediaPortal.GUI.GUIBurner
 						int iAction=(int)message.Param1;
 						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM) 
 						{
-							GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST_DIR );
-							if (item.Label.StartsWith(".."))				// go back folder
-							{ 
-								if (item.Path=="") 
-									LoadDriveListControl();
-								else
+							if (currentState!=States.STATE_MAKE_BACKUP) 
+							{
+								GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST_DIR );
+								if (item.Label.StartsWith(".."))				// go back folder
+								{ 
+									if (item.Path=="") 
+										LoadDriveListControl();
+									else
+										LoadListControl(item.Path,currentExt);
+								} 
+								else if (item.Label.StartsWith("["))		// is a share
+								{ 
+									String shareName=item.Label.Substring(1);
+									shareName=shareName.Substring(0,shareName.Length-1);
+									if (shareName==GUILocalizeStrings.Get(2133)) 
+									{
+										currentFolder=recordpath1;
+										LoadListControl(currentFolder,currentExt);
+									} 
+									if (shareName==GUILocalizeStrings.Get(2144)) // if two tv cards installed
+									{
+										currentFolder=recordpath1;
+										LoadListControl(currentFolder,currentExt);
+									} 
+									if (shareName==GUILocalizeStrings.Get(2145)) 
+									{
+										currentFolder=recordpath2;
+										LoadListControl(currentFolder,currentExt);
+									} 
+									else 
+									{
+										for (int i=0; i<20; i++) 
+										{
+											if (pname[i]==shareName)
+											{
+												currentFolder=pictures[i];
+												LoadListControl(currentFolder,currentExt);
+												break;
+											}
+											if (sname[i]==shareName)
+											{
+												currentFolder=sound[i];
+												LoadListControl(currentFolder,currentExt);
+												break;
+											}
+											if (vname[i]==shareName)
+											{
+												currentFolder=video[i];
+												LoadListControl(currentFolder,currentExt);
+												break;
+											}
+										}
+									}
+									LoadListControl(currentFolder,currentExt);
+								} 
+								else if (item.IsFolder)								// is a folder
+								{		
 									LoadListControl(item.Path,currentExt);
-							} 
-							else if (item.Label.StartsWith("["))		// is a share
-							{ 
-								String shareName=item.Label.Substring(1);
-								shareName=shareName.Substring(0,shareName.Length-1);
-								if (shareName==GUILocalizeStrings.Get(2133)) 
-								{
-									currentFolder=recordpath1;
-									LoadListControl(currentFolder,currentExt);
 								} 
-								if (shareName==GUILocalizeStrings.Get(2144)) // if two tv cards installed
-	 							{
-									currentFolder=recordpath1;
-									LoadListControl(currentFolder,currentExt);
-								} 
-								if (shareName==GUILocalizeStrings.Get(2145)) 
-								{
-									currentFolder=recordpath2;
-									LoadListControl(currentFolder,currentExt);
-								} 
+								else if (item.Label.Substring(1,1)==":")  // is a drive
+								{ 
+									currentFolder=item.Label;
+									if (currentFolder!=String.Empty)
+										LoadListControl(currentFolder,currentExt);
+									else
+										LoadDriveListControl();
+								} 							
 								else 
 								{
-									for (int i=0; i<20; i++) 
+									int indx=currentFolder.IndexOf("\\\\");
+									if (indx>0) 
 									{
-										if (pname[i]==shareName)
+										currentFolder=currentFolder.Remove(indx,1);
+									}
+									GUIListItem pItem = new GUIListItem(item);
+									pItem.Path=currentFolder;	
+									bool isdoub=false;
+									int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
+									for (int i=0; i<count; i++) 
+									{
+										GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
+										if (cItem.Label==pItem.Label) 
 										{
-											currentFolder=pictures[i];
-											LoadListControl(currentFolder,currentExt);
-											break;
-										}
-										if (sname[i]==shareName)
-										{
-											currentFolder=sound[i];
-											LoadListControl(currentFolder,currentExt);
-											break;
-										}
-										if (vname[i]==shareName)
-										{
-											currentFolder=video[i];
-											LoadListControl(currentFolder,currentExt);
-											break;
+											if (cItem.Path==pItem.Path) 
+											{
+												isdoub=true;
+											}
 										}
 									}
-								}
-								LoadListControl(currentFolder,currentExt);
-							} 
-							else if (item.IsFolder)								// is a folder
-							{		
-								LoadListControl(item.Path,currentExt);
-							} 
-							else if (item.Label.Substring(1,1)==":")  // is a drive
-							{ 
-								currentFolder=item.Label;
-								if (currentFolder!=String.Empty)
-									LoadListControl(currentFolder,currentExt);
-								else
-									LoadDriveListControl();
-							} 							
-							else 
-							{
-								int indx=currentFolder.IndexOf("\\\\");
-								if (indx>0) 
-								{
-									currentFolder=currentFolder.Remove(indx,1);
-								}
-								GUIListItem pItem = new GUIListItem(item);
-								pItem.Path=currentFolder;	
-								bool isdoub=false;
-								int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
-								for (int i=0; i<count; i++) 
-								{
-									GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
-									if (cItem.Label==pItem.Label) 
+									if (isdoub==false) 
 									{
-										if (cItem.Path==pItem.Path) 
-										{
-											isdoub=true;
-										}
+										GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_COPY,pItem);
+										actSize=actSize+pItem.FileInfo.Length;
+										if (actSize>0) 
+											perc=Convert.ToInt16(actSize/(max/100d)); 
+										else 
+											perc=0;
+										tmpStr=CalcExt(actSize)+" ";
+										GUIPropertyManager.SetProperty("#burner_size",tmpStr);
+										GUIPropertyManager.SetProperty("#burner_perc",perc.ToString());
 									}
-								}
-								if (isdoub==false) 
-								{
-									GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_COPY,pItem);
-									actSize=actSize+pItem.FileInfo.Length;
-									if (actSize>0) 
-										perc=Convert.ToInt16(actSize/(max/100d)); 
-									else 
-										perc=0;
-									tmpStr=CalcExt(actSize)+" ";
-									GUIPropertyManager.SetProperty("#burner_size",tmpStr);
-									GUIPropertyManager.SetProperty("#burner_perc",perc.ToString());
 								}
 							}
 						}
@@ -510,170 +525,6 @@ namespace MediaPortal.GUI.GUIBurner
 		#endregion
 
 		#region Private Methods
-
-		/// <summary>
-		/// init 60 sec timer for automatic convert. 
-		/// </summary>
-		private void InitializeConvertTimer() 
-		{
-			ArrayList     m_tvcards    = new ArrayList();
-			dvr_extensions.Clear();
-			dvr_extensions.Add(".dvr-ms");
-			recordCards=0;
-		
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
-			{
-				convertAuto=xmlreader.GetValueAsBool("burner","convertautomatic",false);
-			}
-			if (convertAuto==true) 
-			{
-				try
-				{
-					using (Stream r = File.Open(@"capturecards.xml", FileMode.Open, FileAccess.Read))
-					{
-						SoapFormatter c = new SoapFormatter();
-						m_tvcards = (ArrayList)c.Deserialize(r);
-						r.Close();
-					} 
-				}
-				catch(Exception)
-				{
-					Log.WriteFile(Log.LogType.Recorder,"Recorder: invalid capturecards.xml found! please delete it");
-				}
-
-				if (m_tvcards.Count==0) 
-				{
-					Log.WriteFile(Log.LogType.Recorder,"Recorder: no capture cards found. automatic convert canceled");
-				} 
-				else 
-				{
-					for (int i=0; i < m_tvcards.Count;i++)
-					{
-						TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
-						if(card.UseForRecording==true) 
-						{
-							if (i==0) 
-							{
-								recordpath1=card.RecordingPath;
-								recordCards=1;
-							}
-							if (i==1) 
-							{
-								recordpath2=card.RecordingPath;
-								if (recordpath1!=recordpath2)
-								{
-									recordCards=2;
-								}
-							}
-						}
-						card.ID=(i+1);
-					}
-
-					bt.ClearFiles();
-					VirtualDirectory Directory;
-					ArrayList itemlist;
-					Directory = new VirtualDirectory();
-					Directory.SetExtensions(dvr_extensions);
-					itemlist = Directory.GetDirectory(recordpath1);
-					maxAutoFiles=0;
-					foreach (GUIListItem item in itemlist) 
-					{
-						if (item.IsFolder==false)
-						{ 
-							cFiles[maxAutoFiles].name=item.Label;
-							cFiles[maxAutoFiles].path=recordpath1;
-							if (item.FileInfo!=null) 
-							{
-								cFiles[maxAutoFiles].size=item.FileInfo.Length;
-							}
-							cFiles[maxAutoFiles++].oldSize=0;
-						}
-					}
-					convertTimer.Tick += new EventHandler(OnTimer);
-					convertTimer.Interval = 60000;	  //60 sec Intervall
-					convertTimer.Enabled=true;
-					convertTimer.Start();
-				}
-			}
-		}
-
-		// if a new file in TV-Record folder start converting
-		private void OnTimer(Object sender, EventArgs e) 
-		{
-			if(bt.isConverting==false) 
-			{
-				VirtualDirectory Directory;
-				ArrayList itemlist;
-				Directory = new VirtualDirectory();
-				Directory.SetExtensions(dvr_extensions);
-				itemlist = Directory.GetDirectory(recordpath1);
-
-				foreach (GUIListItem item in itemlist) 
-				{
-					if (item.IsFolder==false)
-					{ 
-						if (item.FileInfo!=null) 
-						{
-							bool hit=false;
-							for(int i=0;i<maxAutoFiles;i++) 
-							{	
-								if (item.Label==cFiles[i].name) 
-								{
-									hit=true;
-									if (item.FileInfo!=null) 
-									{
-										if (item.FileInfo.Length>cFiles[i].oldSize)
-										{
-											cFiles[i].oldSize=item.FileInfo.Length;
-										} 
-										else 
-										{
-											if (cFiles[i].oldSize==item.FileInfo.Length) // ready to convert
-											{
-												bt.ClearFiles();
-												bt.deleteDvrMsSrc=true;
-												bt.changeDatabase=true;
-												bt.AddFiles(item.Label+".dvr-ms",recordpath1);
-												ThreadStart ts = new ThreadStart(bt.TranscodeThread);
-												Thread t = new Thread(ts);
-												t.IsBackground=true;
-												t.Priority=ThreadPriority.Lowest;
-												t.Start();
-												if (maxAutoFiles==1) 
-												{
-													maxAutoFiles--;
-												} 
-												else 
-												{
-													for(int x=i;x<maxAutoFiles;x++) 
-													{
-														cFiles[x]=cFiles[x+1];	
-													}
-													maxAutoFiles--;
-												}
-											}
-										}
-									}
-								}
-							}
-							if (hit==false) 
-							{
-								if (item.IsFolder==false)
-								{ 
-									cFiles[maxAutoFiles].name=item.Label;
-									cFiles[maxAutoFiles].path=item.Path;
-									if (item.FileInfo!=null) 
-									{
-										cFiles[maxAutoFiles].size=item.FileInfo.Length;
-									}
-									cFiles[maxAutoFiles++].oldSize=0;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
 
 		private void ConvertDvrMs()
 		{
@@ -783,7 +634,24 @@ namespace MediaPortal.GUI.GUIBurner
 			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 		}
-		
+
+		private void LoadBackupListControl() 
+		{	
+			//clear the list
+			int len=System.IO.Directory.GetCurrentDirectory().Length;
+			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
+			GetBackup();
+			foreach (string file in backupFiles) 
+			{
+				GUIListItem pItem = new GUIListItem(file.Substring(len));
+				pItem.IsFolder=false;
+				Utils.SetDefaultIcons(pItem);
+				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
+			}
+			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
+			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+		}
+
 		private void DisableButtons()
 		{
 			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_VIDEO);
@@ -832,6 +700,14 @@ namespace MediaPortal.GUI.GUIBurner
 					LoadDriveListControl();
 					currentFolder="";
 					max=dvdSize;
+					actSize=0;
+					break;
+				case States.STATE_MAKE_BACKUP :
+					UpdateButtons();
+					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2144));
+					currentFolder="";
+					LoadBackupListControl();
+					max=cdSize;
 					actSize=0;
 					break;
 				case States.STATE_MP3_CD :
@@ -937,9 +813,8 @@ namespace MediaPortal.GUI.GUIBurner
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_COPY_CD_DVD,GUILocalizeStrings.Get(2101));
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_DATA_CD,GUILocalizeStrings.Get(2105));
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_DATA_DVD,GUILocalizeStrings.Get(2106));
-					GUIControl.HideControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_MP_BACKUP,GUILocalizeStrings.Get(2144));
 					GUIControl.HideControl(GetID,(int)Controls.CONTROL_EJECT_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
 					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
 					break;
 				case States.STATE_DISK_INFO : // CD Disk Info
@@ -960,6 +835,15 @@ namespace MediaPortal.GUI.GUIBurner
 					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_AUDIO,GUILocalizeStrings.Get(2100));
 					break;
 				case States.STATE_MAKE_DATA_DVD : // Burn Data DVD Menu
+					AllButtonsOff();
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_AUDIO,GUILocalizeStrings.Get(2100));
+					break;
+				case States.STATE_MAKE_BACKUP : // Burn Data DVD Menu
 					AllButtonsOff();
 					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BACK);
 					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_BACK);
@@ -1146,24 +1030,41 @@ namespace MediaPortal.GUI.GUIBurner
 				dlgYesNo.DoModal(GetID);
 				if (dlgYesNo.IsConfirmed)  // burn CD
 				{
-					int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
-					for (int i=0; i<count; i++) 
+					if (bTyp==BurnTypes.MP_BACKUP) 
 					{
-						GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
 						try 
 						{
-							if (bTyp == BurnTypes.DATA_CD || bTyp == BurnTypes.DATA_DVD) 
+							foreach (string file in backupFiles) 
 							{
-								burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
-							}
-							if (bTyp == BurnTypes.MP3_CD || bTyp == BurnTypes.MP3_DVD) 
-							{
-								burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
+								burnClass.AddFile(file,file);
 							}
 						}
 						catch(Exception ex)
 						{
 							Log.Write("MyBurner: ", ex.Message);
+						}
+					} 
+					else 
+					{
+						int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
+						for (int i=0; i<count; i++) 
+						{
+							GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
+							try 
+							{
+								if (bTyp == BurnTypes.DATA_CD || bTyp == BurnTypes.DATA_DVD) 
+								{
+									burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
+								}
+								if (bTyp == BurnTypes.MP3_CD || bTyp == BurnTypes.MP3_DVD) 
+								{
+									burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
+								}
+							}
+							catch(Exception ex)
+							{
+								Log.Write("MyBurner: ", ex.Message);
+							}
 						}
 					}
 					burnClass.ActiveFormat = XPBurn.RecordType.afData;
@@ -1260,8 +1161,8 @@ namespace MediaPortal.GUI.GUIBurner
 						info=info+"Media Is Writable : " + burnClass.MediaInfo.isWritable.ToString()+"\n";
 					}
 					info=info+"Product ID : " + burnClass.ProductID.ToString()+"\n";
-					if (burnClass.RecorderType==XPBurn.RecorderType.RECORDER_CDR)  { info=info+"Recorder Type : CDR\n"; }
-					if (burnClass.RecorderType==XPBurn.RecorderType.RECORDER_CDRW) { info=info+"Recorder Type : CDRW\n"; }
+					if (burnClass.RecorderType==XPBurn.RecorderType.rtCDR)  { info=info+"Recorder Type : CDR\n"; }
+					if (burnClass.RecorderType==XPBurn.RecorderType.rtCDRW) { info=info+"Recorder Type : CDRW\n"; }
 					info=info+"Max Write Speed : " + burnClass.MaxWriteSpeed.ToString()+"\n";
 					info=info+"Revision : " + burnClass.Revision+"\n";
 					info=info+"Vendor : " + burnClass.Vendor+"\n";
@@ -1315,6 +1216,295 @@ namespace MediaPortal.GUI.GUIBurner
 		{
 			GUIPropertyManager.SetProperty("#convert_info",GUILocalizeStrings.Get(2111));
 			XPBurn.XPBurnCD burnClass = new XPBurn.XPBurnCD(); 
+		}
+		#endregion
+		#region Backup Functions
+		private void GetBackup() 
+		{
+			string dest=System.IO.Directory.GetCurrentDirectory()+"\\backup";
+			string file="";
+			string folder="";
+			backupFiles.Clear();		
+			using (AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				int count=xmlreader.GetValueAsInt("burner","backuplines",0);
+				for(int i=0; i<=count; i++)
+				{
+					file=xmlreader.GetValueAsString("burner","backupline#"+i.ToString(),"");
+					int indx=file.IndexOf("*.*",0);
+					if (indx>=0) 
+					{
+						if (indx>1) 
+						{
+							folder="\\"+file.Substring(0,indx-1);
+						} 
+						else 
+						{
+							folder="";
+						}
+						file=System.IO.Directory.GetCurrentDirectory()+"\\"+file.Substring(0,indx);
+						FileInfo scFile = new FileInfo(file);
+						DirectoryInfo scDir = scFile.Directory;
+						ParseFolder(scDir,dest+folder,"");
+					} 
+					else 
+					{
+						indx=file.IndexOf("*.",0);
+						if (indx>=0) 
+						{
+							if (indx>1) 
+							{
+								folder="\\"+file.Substring(0,indx-1);
+							} 
+							else 
+							{
+								folder="";
+							}
+							string ex=file.Substring(indx+1);
+							file=System.IO.Directory.GetCurrentDirectory()+"\\"+file.Substring(0,indx);
+							FileInfo scFile = new FileInfo(file);
+							DirectoryInfo scDir = scFile.Directory;
+							ParseFolder(scDir,dest+folder,ex);
+						} 
+						else 
+						{
+							if (file!="") 
+							{
+								FileInfo fi = new FileInfo(System.IO.Directory.GetCurrentDirectory()+"\\"+file);
+								fi.CopyTo(dest+file, true);
+								backupFiles.Add(dest+"\\"+file);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		private void ParseFolder(DirectoryInfo source, string dest, string ext) 
+		{
+			bool result = true;
+			if(!Directory.Exists(dest))
+				Directory.CreateDirectory(dest);
+
+			foreach(FileInfo fi in source.GetFiles()) 
+			{
+				if (ext!="") 
+				{
+					if (fi.Extension==ext) 
+					{
+						string destFile = dest + "\\" + fi.Name;
+						result = result && (fi.CopyTo(destFile, true) != null);
+						backupFiles.Add( destFile);
+					}
+				}
+				else 
+				{
+					string destFile = dest + "\\" + fi.Name;
+					result = result && (fi.CopyTo(destFile, true) != null);
+					backupFiles.Add( destFile);					
+				}
+			}
+			if (ext=="") 
+			{
+				foreach(DirectoryInfo subDir in source.GetDirectories())
+				{
+					string destTmp = subDir.FullName.Replace(source.FullName, dest);
+					ParseFolder(subDir, destTmp,ext);
+				}
+			}
+		}
+
+/*
+		private void ParseFolder(DirectoryInfo source, string ext) 
+		{
+			foreach(FileInfo fi in source.GetFiles()) 
+			{
+				if (ext!="") 
+				{
+					if (fi.Extension==ext) 
+					{
+						backupFiles.Add( fi.FullName);
+					}
+				} 
+				else 
+				{
+					backupFiles.Add( fi.FullName);
+				}
+			}
+			if (ext=="") 
+			{
+				foreach(DirectoryInfo subDir in source.GetDirectories())
+				{
+					ParseFolder(subDir,ext);
+				}
+			}
+		}
+		*/
+		#endregion
+
+		#region Timer Functions		
+		/// <summary>
+		/// init 60 sec timer for automatic convert. 
+		/// </summary>
+		private void InitializeConvertTimer() 
+		{
+			ArrayList     m_tvcards    = new ArrayList();
+			dvr_extensions.Clear();
+			dvr_extensions.Add(".dvr-ms");
+			recordCards=0;
+		
+			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			{
+				convertAuto=xmlreader.GetValueAsBool("burner","convertautomatic",false);
+			}
+			if (convertAuto==true) 
+			{
+				try
+				{
+					using (Stream r = File.Open(@"capturecards.xml", FileMode.Open, FileAccess.Read))
+					{
+						SoapFormatter c = new SoapFormatter();
+						m_tvcards = (ArrayList)c.Deserialize(r);
+						r.Close();
+					} 
+				}
+				catch(Exception)
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder: invalid capturecards.xml found! please delete it");
+				}
+
+				if (m_tvcards.Count==0) 
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder: no capture cards found. automatic convert canceled");
+				} 
+				else 
+				{
+					for (int i=0; i < m_tvcards.Count;i++)
+					{
+						TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
+						if(card.UseForRecording==true) 
+						{
+							if (i==0) 
+							{
+								recordpath1=card.RecordingPath;
+								recordCards=1;
+							}
+							if (i==1) 
+							{
+								recordpath2=card.RecordingPath;
+								if (recordpath1!=recordpath2)
+								{
+									recordCards=2;
+								}
+							}
+						}
+						card.ID=(i+1);
+					}
+
+					bt.ClearFiles();
+					VirtualDirectory Directory;
+					ArrayList itemlist;
+					Directory = new VirtualDirectory();
+					Directory.SetExtensions(dvr_extensions);
+					itemlist = Directory.GetDirectory(recordpath1);
+					maxAutoFiles=0;
+					foreach (GUIListItem item in itemlist) 
+					{
+						if (item.IsFolder==false)
+						{ 
+							cFiles[maxAutoFiles].name=item.Label;
+							cFiles[maxAutoFiles].path=recordpath1;
+							if (item.FileInfo!=null) 
+							{
+								cFiles[maxAutoFiles].size=item.FileInfo.Length;
+							}
+							cFiles[maxAutoFiles++].oldSize=0;
+						}
+					}
+					convertTimer.Tick += new EventHandler(OnTimer);
+					convertTimer.Interval = 60000;	  //60 sec Intervall
+					convertTimer.Enabled=true;
+					convertTimer.Start();
+				}
+			}
+		}
+
+		// if a new file in TV-Record folder start converting
+		private void OnTimer(Object sender, EventArgs e) 
+		{
+			if(bt.isConverting==false) 
+			{
+				VirtualDirectory Directory;
+				ArrayList itemlist;
+				Directory = new VirtualDirectory();
+				Directory.SetExtensions(dvr_extensions);
+				itemlist = Directory.GetDirectory(recordpath1);
+
+				foreach (GUIListItem item in itemlist) 
+				{
+					if (item.IsFolder==false)
+					{ 
+						if (item.FileInfo!=null) 
+						{
+							bool hit=false;
+							for(int i=0;i<maxAutoFiles;i++) 
+							{	
+								if (item.Label==cFiles[i].name) 
+								{
+									hit=true;
+									if (item.FileInfo!=null) 
+									{
+										if (item.FileInfo.Length>cFiles[i].oldSize)
+										{
+											cFiles[i].oldSize=item.FileInfo.Length;
+										} 
+										else 
+										{
+											if (cFiles[i].oldSize==item.FileInfo.Length) // ready to convert
+											{
+												bt.ClearFiles();
+												bt.deleteDvrMsSrc=true;
+												bt.changeDatabase=true;
+												bt.AddFiles(item.Label+".dvr-ms",recordpath1);
+												ThreadStart ts = new ThreadStart(bt.TranscodeThread);
+												Thread t = new Thread(ts);
+												t.IsBackground=true;
+												t.Priority=ThreadPriority.Lowest;
+												t.Start();
+												if (maxAutoFiles==1) 
+												{
+													maxAutoFiles--;
+												} 
+												else 
+												{
+													for(int x=i;x<maxAutoFiles;x++) 
+													{
+														cFiles[x]=cFiles[x+1];	
+													}
+													maxAutoFiles--;
+												}
+											}
+										}
+									}
+								}
+							}
+							if (hit==false) 
+							{
+								if (item.IsFolder==false)
+								{ 
+									cFiles[maxAutoFiles].name=item.Label;
+									cFiles[maxAutoFiles].path=item.Path;
+									if (item.FileInfo!=null) 
+									{
+										cFiles[maxAutoFiles].size=item.FileInfo.Length;
+									}
+									cFiles[maxAutoFiles++].oldSize=0;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		#endregion
 	}
