@@ -5,6 +5,7 @@ using System.Diagnostics;
 using SQLite.NET;
 
 using Programs.Utils;
+using MediaPortal.Ripper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using WindowPlugins.GUIPrograms;
@@ -194,9 +195,11 @@ namespace ProgramsDatabase
 			proc.StartInfo.WindowStyle = this.WindowStyle;
 			try
 			{
+				AutoPlay.StopListening();
 				proc.Start(); // start the app
 				proc.WaitForExit(); // stop MP
 				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
+				AutoPlay.StartListening();
 
 //				Log.Write("myPrograms: DEBUG LOG program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
 //					proc.StartInfo.FileName, 

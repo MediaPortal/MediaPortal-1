@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Xml;
 using SQLite.NET;
 
+using MediaPortal.Ripper;
 using MediaPortal.GUI.Library;		
 using WindowPlugins.GUIPrograms;
 using Programs.Utils;
@@ -196,12 +197,17 @@ namespace ProgramsDatabase
 					proc.StartInfo.Arguments, 
 					proc.StartInfo.WorkingDirectory);
 
+				if (MPGUIMode)
+				{
+					AutoPlay.StopListening();
+				}
+
 				proc.Start();
 				if (MPGUIMode) 
 				{
 					proc.WaitForExit();
-					Log.Write("GUIPrograms: DX9Device.Reset");
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+					AutoPlay.StartListening();
 				}
 			}
 			catch (Exception ex)
