@@ -495,9 +495,10 @@ namespace MediaPortal.GUI.Video
         ArrayList movies = new ArrayList();
         VideoDatabase.GetMoviesByGenre(m_strDirectory, ref movies);
         for (int i = 0; i < movies.Count; ++i)
-        {
+				{
           IMDBMovie movie = (IMDBMovie)movies[i];
-          GUIListItem Item = new GUIListItem(movie.Title);
+					if (GUIVideoFiles.IsFolderPinProtected(movie.Path)) continue;
+					GUIListItem Item = new GUIListItem(movie.Title);
           Item.Path = movie.SearchString;
           Item.IsFolder = false;
 

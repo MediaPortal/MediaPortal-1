@@ -98,7 +98,7 @@ namespace MediaPortal.GUI.Video
 		DirectoryHistory m_history = new DirectoryHistory();
 		string            m_strDirectory = "";
 		int               m_iItemSelected = -1;
-		VirtualDirectory  m_directory = new VirtualDirectory();
+		static VirtualDirectory  m_directory = new VirtualDirectory();
     MapSettings       _MapSettings = new MapSettings();
 		#endregion
 
@@ -2057,6 +2057,13 @@ namespace MediaPortal.GUI.Video
 				VideoDatabase.DeleteMovie(item.Path);
 				Utils.FileDelete(item.Path);
 			}
+		}
+
+		static public bool IsFolderPinProtected(string folder)
+		{
+			int pinCode=0;
+			if (m_directory.IsProtectedShare(folder,out pinCode)) return true;
+			return false;
 		}
   }
 }

@@ -479,6 +479,7 @@ namespace MediaPortal.GUI.Video
 				for (int i = 0; i < movies.Count; ++i)
 				{
 					IMDBMovie movie = (IMDBMovie)movies[i];
+					if (GUIVideoFiles.IsFolderPinProtected(movie.Path)) continue;
 					GUIListItem Item = new GUIListItem(movie.Title);
 					Item.Path = movie.SearchString;
 					Item.IsFolder = false;
