@@ -1,4 +1,4 @@
-// #define NEWFONTENGINE
+//#define NEWFONTENGINE
 using System;
 using System.Text;
 using System.Diagnostics;
@@ -93,7 +93,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="iHeight">The height of the font.</param>
 		public GUIFont(string strName, string strFileName, int iHeight)
 		{
+#if NEWFONTENGINE
 			FontEngineInitialize();
+#endif
 			m_strFontName=strName;
 			m_strFileName=strFileName;
 			m_iFontHeight=iHeight;
@@ -114,7 +116,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="style">The style of the font (E.g., Bold)</param>
     public GUIFont(string strName, string strFileName, int iHeight, FontStyle style)
     {
+#if NEWFONTENGINE
 			FontEngineInitialize();
+#endif
       m_strFontName=strName;
       m_strFileName=strFileName;
       m_FontStyle=style;
