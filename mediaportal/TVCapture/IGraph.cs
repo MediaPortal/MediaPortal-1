@@ -50,6 +50,7 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Starts recording live TV to a file
+    /// <param name="iChannelNr">TV channel to record</param>
     /// <param name="strFileName">filename for the new recording</param>
     /// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
     /// <param name="timeProgStart">Contains the starttime of the current tv program</param>
@@ -66,7 +67,7 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    bool StartRecording(ref string strFileName, bool bContentRecording, DateTime timeProgStart);
+    bool StartRecording(int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
     
     
     /// <summary>

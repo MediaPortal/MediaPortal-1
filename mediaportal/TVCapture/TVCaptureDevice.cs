@@ -15,62 +15,62 @@ namespace MediaPortal.TV.Recording
   [Serializable]
   public class TVCaptureDevice
   {
-    string        m_strVideoDevice="";
-    string        m_strAudioDevice="";
-    string        m_strVideoCompressor="";
-    string        m_strAudioCompressor="";
-    bool          m_bUseForRecording;
-    bool          m_bUseForTV;			
-    bool          m_bSupportsMPEG2;
-    Size          m_FrameSize;
-    double        m_FrameRate;
-    string        m_strAudioInputPin="";
+    string m_strVideoDevice = "";
+    string m_strAudioDevice = "";
+    string m_strVideoCompressor = "";
+    string m_strAudioCompressor = "";
+    bool m_bUseForRecording;
+    bool m_bUseForTV;
+    bool m_bSupportsMPEG2;
+    Size m_FrameSize;
+    double m_FrameRate;
+    string m_strAudioInputPin = "";
     
     [NonSerialized]
-    int           m_iID;
+    int m_iID;
 
     enum State
     {
-      None,
-      Initialized,
-      Timeshifting,
-      PreRecording,
-      Recording,
-      PostRecording,
+      None, 
+      Initialized, 
+      Timeshifting, 
+      PreRecording, 
+      Recording, 
+      PostRecording, 
       Viewing
     }
 
     [NonSerialized]
-    State         m_eState=State.None;
+    State m_eState = State.None;
     
     [NonSerialized]
-    TVRecording   m_CurrentTVRecording=null;
+    TVRecording m_CurrentTVRecording = null;
     
     [NonSerialized]
-    TVProgram     m_CurrentProgramRecording=null;
+    TVProgram m_CurrentProgramRecording = null;
     
     [NonSerialized]
-    string        m_strTVChannel="";
+    string m_strTVChannel = "";
     
     [NonSerialized]
-    int           m_iPreRecordInterval=0;
+    int m_iPreRecordInterval = 0;
     
     [NonSerialized]
-    int           m_iPostRecordInterval=0;
+    int m_iPostRecordInterval = 0;
     
     [NonSerialized]
-    IGraph      m_graph=null;
+    IGraph m_graph = null;
 
     [NonSerialized]
-    TVRecorded    m_newRecordedTV = null;
+    TVRecorded m_newRecordedTV = null;
 
     [NonSerialized]
-    bool					m_bAllocated=false;
+    bool					m_bAllocated = false;
 
     [NonSerialized]
-    DateTime      m_dtRecordingStartTime;
+    DateTime m_dtRecordingStartTime;
     [NonSerialized]
-    DateTime      m_dtTimeShiftingStarted;
+    DateTime m_dtTimeShiftingStarted;
 
     /// <summary>
     /// Default constructor
@@ -93,8 +93,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public bool SupportsMPEG2
     {
-      get { return m_bSupportsMPEG2;}
-      set { m_bSupportsMPEG2=value;}
+      get { return m_bSupportsMPEG2; }
+      set { m_bSupportsMPEG2 = value; }
     }
 
     /// <summary>
@@ -102,8 +102,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public Size FrameSize
     {
-      get { return m_FrameSize;}
-      set { m_FrameSize=value;}
+      get { return m_FrameSize; }
+      set { m_FrameSize = value; }
     }
 
     /// <summary>
@@ -111,14 +111,14 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public double FrameRate
     {
-      get { return m_FrameRate;}
-      set { m_FrameRate=value;}
+      get { return m_FrameRate; }
+      set { m_FrameRate = value; }
     }
 
     public string AudioInputPin
     {
-      get { return m_strAudioInputPin;}
-      set { m_strAudioInputPin=value;}
+      get { return m_strAudioInputPin; }
+      set { m_strAudioInputPin = value; }
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public DateTime TimeRecordingStarted
     {
-      get { return m_dtRecordingStartTime;}
+      get { return m_dtRecordingStartTime; }
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public DateTime TimeShiftingStarted
     {
-      get { return m_dtTimeShiftingStarted;}
+      get { return m_dtTimeShiftingStarted; }
     }
 
     /// <summary>
@@ -142,8 +142,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public string VideoDevice
     {
-      get { return m_strVideoDevice;}
-      set { m_strVideoDevice=value;}
+      get { return m_strVideoDevice; }
+      set { m_strVideoDevice = value; }
     }
 
     /// <summary>
@@ -151,8 +151,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public string AudioDevice
     {
-      get { return m_strAudioDevice;}
-      set { m_strAudioDevice=value;}
+      get { return m_strAudioDevice; }
+      set { m_strAudioDevice = value; }
     }
 
     /// <summary>
@@ -160,8 +160,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public string VideoCompressor
     {
-      get { return m_strVideoCompressor;}
-      set { m_strVideoCompressor=value;}
+      get { return m_strVideoCompressor; }
+      set { m_strVideoCompressor = value; }
     }
 
     /// <summary>
@@ -169,8 +169,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public string AudioCompressor
     {
-      get { return m_strAudioCompressor;}
-      set { m_strAudioCompressor=value;}
+      get { return m_strAudioCompressor; }
+      set { m_strAudioCompressor = value; }
     }
 
 
@@ -183,7 +183,7 @@ namespace MediaPortal.TV.Recording
 				if (Allocated) return false;
 				return m_bUseForTV;
 			}
-      set { m_bUseForTV=value;}
+      set { m_bUseForTV = value; }
     }
 
     /// <summary>
@@ -192,10 +192,10 @@ namespace MediaPortal.TV.Recording
     /// </summary>
 		public bool Allocated
 		{
-			get { return m_bAllocated;}
+			get { return m_bAllocated; }
 			set 
 			{
-				m_bAllocated=value;
+				m_bAllocated = value;
 			}
 		}
     
@@ -208,7 +208,7 @@ namespace MediaPortal.TV.Recording
 				if (Allocated) return false;
 				return m_bUseForRecording;
 			}
-      set { m_bUseForRecording=value;}
+      set { m_bUseForRecording = value; }
     }
     
     /// <summary>
@@ -216,11 +216,11 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public int ID
     {
-      get { return m_iID;}
+      get { return m_iID; }
       set 
       {
-        m_iID=value;
-        m_eState=State.Initialized;
+        m_iID = value;
+        m_eState = State.Initialized;
       }
     }
 
@@ -230,9 +230,9 @@ namespace MediaPortal.TV.Recording
     public bool IsRecording
     {
       get { 
-        if (m_eState==State.PreRecording) return true;
-        if (m_eState==State.Recording) return true;
-        if (m_eState==State.PostRecording) return true;
+        if (m_eState == State.PreRecording) return true;
+        if (m_eState == State.Recording) return true;
+        if (m_eState == State.PostRecording) return true;
         return false;
       }
     }
@@ -246,7 +246,7 @@ namespace MediaPortal.TV.Recording
       get 
       {
         if (IsRecording) return true;
-        if (m_eState==State.Timeshifting) return true;
+        if (m_eState == State.Timeshifting) return true;
         return false;
       }
     }
@@ -285,7 +285,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public bool IsPostRecording
     {
-      get { return m_eState==State.PostRecording;}
+      get { return m_eState == State.PostRecording; }
     }
 
     /// <summary>
@@ -295,21 +295,21 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public string TVChannel
     {
-      get { return m_strTVChannel;}
+      get { return m_strTVChannel; }
       set
       {
         if (value.Equals(m_strTVChannel)) return;
 
         if (!IsRecording)
         {
-          m_strTVChannel=value;
-          if (m_graph!= null)
+          m_strTVChannel = value;
+          if (m_graph != null)
           {
-            m_graph.TuneChannel( GetChannelNr(m_strTVChannel) );
+            m_graph.TuneChannel(GetChannelNr(m_strTVChannel));
             if (IsTimeShifting && !View)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE,0,0,0,0,0,null);
-              msg.Param1=99;
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_PERCENTAGE, 0, 0, 0, 0, 0, null);
+              msg.Param1 = 99;
               GUIWindowManager.SendThreadMessage(msg);
             }
           }
@@ -329,18 +329,18 @@ namespace MediaPortal.TV.Recording
       // todo : stop recorder
       m_graph.StopRecording();
 
-			m_newRecordedTV.End=Utils.datetolong(DateTime.Now);
+			m_newRecordedTV.End = Utils.datetolong(DateTime.Now);
 			TVDatabase.AddRecordedTV(m_newRecordedTV);
-			m_newRecordedTV=null;
+			m_newRecordedTV = null;
 
       // cleanup...
       m_CurrentProgramRecording = null;
-      m_CurrentTVRecording      = null;
-      m_iPreRecordInterval      = 0;
-      m_iPostRecordInterval     = 0;
+      m_CurrentTVRecording = null;
+      m_iPreRecordInterval = 0;
+      m_iPostRecordInterval = 0;
 
       // back to timeshifting state
-      m_eState=State.Timeshifting;
+      m_eState = State.Timeshifting;
     }
 
     /// <summary>
@@ -358,36 +358,36 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     /// <seealso>MediaPortal.TV.Database.TVRecorded</seealso>
     /// <seealso>MediaPortal.TV.Database.TVProgram</seealso>
-    public void Record(TVRecording recording,TVProgram currentProgram,int iPreRecordInterval,int iPostRecordInterval)
+    public void Record(TVRecording recording, TVProgram currentProgram, int iPreRecordInterval, int iPostRecordInterval)
     {
-      if (m_eState!=State.Initialized && m_eState!=State.Timeshifting)
+      if (m_eState != State.Initialized && m_eState != State.Timeshifting)
       {
         DeleteGraph();
       }
       if (!UseForRecording) return;
 
-			if (currentProgram!=null)
+			if (currentProgram != null)
 				m_CurrentProgramRecording = currentProgram.Clone();
-      m_CurrentTVRecording      = recording;
-      m_iPreRecordInterval      = iPreRecordInterval;
-      m_iPostRecordInterval     = iPostRecordInterval;
-      m_strTVChannel            = recording.Channel;
+      m_CurrentTVRecording = recording;
+      m_iPreRecordInterval = iPreRecordInterval;
+      m_iPostRecordInterval = iPostRecordInterval;
+      m_strTVChannel = recording.Channel;
 
-      Log.Write("Card:{0} record new program on {1}",ID,m_strTVChannel);		
+      Log.Write("Card:{0} record new program on {1}",ID, m_strTVChannel);
       // create sink graph
       if (CreateGraph())
       {
-        bool bContinue=false;
-        if (m_graph.SupportsTimeshifting() )
+        bool bContinue = false;
+        if (m_graph.SupportsTimeshifting())
         {
           if (StartTimeShifting())
           {
-            bContinue=true;
+            bContinue = true;
           }
         }
         else 
         {
-          bContinue=true;
+          bContinue = true;
         }
         
         if (bContinue)
@@ -411,19 +411,19 @@ namespace MediaPortal.TV.Recording
       // set postrecording status
       if (IsRecording) 
       {
-        if (m_CurrentTVRecording!=null) 
+        if (m_CurrentTVRecording != null) 
         {
-          if ( m_CurrentTVRecording.IsRecordingAtTime(DateTime.Now,m_CurrentProgramRecording,m_iPreRecordInterval, m_iPostRecordInterval) )
+          if (m_CurrentTVRecording.IsRecordingAtTime(DateTime.Now, m_CurrentProgramRecording, m_iPreRecordInterval, m_iPostRecordInterval))
           {
-            m_eState=State.Recording;
+            m_eState = State.Recording;
 
-            if ( !m_CurrentTVRecording.IsRecordingAtTime(DateTime.Now,m_CurrentProgramRecording,m_iPreRecordInterval, 0) )
+            if (!m_CurrentTVRecording.IsRecordingAtTime(DateTime.Now, m_CurrentProgramRecording, m_iPreRecordInterval, 0))
             {
-              m_eState=State.PostRecording;
+              m_eState = State.PostRecording;
             }
-            if ( !m_CurrentTVRecording.IsRecordingAtTime(DateTime.Now,m_CurrentProgramRecording,0, m_iPostRecordInterval) )
+            if (!m_CurrentTVRecording.IsRecordingAtTime(DateTime.Now, m_CurrentProgramRecording, 0, m_iPostRecordInterval))
             {
-              m_eState=State.PreRecording;
+              m_eState = State.PreRecording;
             }
           }
           else
@@ -442,7 +442,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Stop()
     {
-      Log.Write("Card:{0} stop",ID);	
+      Log.Write("Card:{0} stop",ID);
       StopRecording();
       StopTimeShifting();
       DeleteGraph();
@@ -455,11 +455,11 @@ namespace MediaPortal.TV.Recording
     bool CreateGraph()
     {
       if (Allocated) return false;
-      if (m_graph==null)
+      if (m_graph == null)
       {
-        Log.Write("Card:{0} CreateGraph",ID);		
-        m_graph=GraphFactory.CreateGraph(this);
-        if (m_graph==null) return false;
+        Log.Write("Card:{0} CreateGraph",ID);
+        m_graph = GraphFactory.CreateGraph(this);
+        if (m_graph == null) return false;
         return m_graph.CreateGraph();
       }
       return true;
@@ -473,16 +473,16 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     bool DeleteGraph()
     {
-      if (m_graph!=null)
+      if (m_graph != null)
       {
-        Log.Write("Card:{0} DeleteGraph",ID);		
+        Log.Write("Card:{0} DeleteGraph",ID);
         m_graph.DeleteGraph();
-        m_graph=null;
+        m_graph = null;
 				GC.Collect();
 				GC.Collect();
 				GC.Collect();
       }
-      m_eState=State.Initialized;
+      m_eState = State.Initialized;
       return true;
     }
 
@@ -497,47 +497,47 @@ namespace MediaPortal.TV.Recording
       if (IsRecording) return false;
 
       Log.Write("Card:{0} start timeshifting :{1}",ID, m_strTVChannel);
-			int iChannelNr=GetChannelNr(m_strTVChannel);
+			int iChannelNr = GetChannelNr(m_strTVChannel);
 
-			if (m_eState==State.Timeshifting) 
+			if (m_eState == State.Timeshifting) 
 			{
-				if (m_graph.GetChannelNumber()!=iChannelNr)
+				if (m_graph.GetChannelNumber() != iChannelNr)
 				{
-          m_dtTimeShiftingStarted=DateTime.Now;
+          m_dtTimeShiftingStarted = DateTime.Now;
 					m_graph.TuneChannel(iChannelNr);
 				}
 				return true;
 			}
 
-      if (m_eState!=State.Initialized) 
+      if (m_eState != State.Initialized) 
       {
         DeleteGraph();
       }
       CreateGraph();
       string strRecPath;
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
-        strRecPath=Utils.RemoveTrailingSlash(strRecPath);
-        if (strRecPath==null||strRecPath.Length==0) 
+        strRecPath = xmlreader.GetValueAsString("capture","recordingpath","");
+        strRecPath = Utils.RemoveTrailingSlash(strRecPath);
+        if (strRecPath == null || strRecPath.Length == 0) 
         {
-          strRecPath=System.IO.Directory.GetCurrentDirectory();
-          strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+          strRecPath = System.IO.Directory.GetCurrentDirectory();
+          strRecPath = Utils.RemoveTrailingSlash(strRecPath);
         }
       }
-      string strFileName=String.Format(@"{0}\live.tv",strRecPath);
+      string strFileName = String.Format(@"{0}\live.tv",strRecPath);
 
       // it could be that another card is already timeshifting and therefore has
       // created a live.tv file. ifso, then we create a new one called live[id].tv 
       if (System.IO.File.Exists(strFileName))
       {
-        strFileName=String.Format(@"{0}\live{1}.tv",strRecPath,ID);
+        strFileName = String.Format(@"{0}\live{1}.tv",strRecPath, ID);
       }
       
       Log.Write("Card:{0} timeshift to file:{1}",ID, strFileName);
-      bool bResult=m_graph.StartTimeShifting(iChannelNr, strFileName);
-      m_dtTimeShiftingStarted=DateTime.Now;
-      m_eState=State.Timeshifting;
+      bool bResult = m_graph.StartTimeShifting(iChannelNr, strFileName);
+      m_dtTimeShiftingStarted = DateTime.Now;
+      m_eState = State.Timeshifting;
       return bResult;
     }
 
@@ -555,7 +555,7 @@ namespace MediaPortal.TV.Recording
       //stopping timeshifting will also remove the live.tv file 
       Log.Write("Card:{0} stop timeshifting",ID);
       m_graph.StopTimeShifting();
-      m_eState=State.Initialized;
+      m_eState = State.Initialized;
       return true;
     }
 
@@ -579,74 +579,76 @@ namespace MediaPortal.TV.Recording
      {
       Log.Write("Card:{0} start recording content:{1}",ID, bContentRecording);
       string strRecPath;
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
-        strRecPath=xmlreader.GetValueAsString("capture","recordingpath","");
-        strRecPath=Utils.RemoveTrailingSlash(strRecPath);
-        if (strRecPath==null||strRecPath.Length==0) 
+        strRecPath = xmlreader.GetValueAsString("capture","recordingpath","");
+        strRecPath = Utils.RemoveTrailingSlash(strRecPath);
+        if (strRecPath == null || strRecPath.Length == 0) 
         {
-          strRecPath=System.IO.Directory.GetCurrentDirectory();
-          strRecPath=Utils.RemoveTrailingSlash(strRecPath);
+          strRecPath = System.IO.Directory.GetCurrentDirectory();
+          strRecPath = Utils.RemoveTrailingSlash(strRecPath);
         }
       }
 
       DateTime dtNow = DateTime.Now.AddMinutes(m_iPreRecordInterval);
-      TVUtil util=new TVUtil();
-      TVProgram currentRunningProgram=null;
-      TVProgram prog=util.GetProgramAt(m_strTVChannel, dtNow);
-      if (prog!=null) currentRunningProgram=prog.Clone();
-      util=null;
+      TVUtil util = new TVUtil();
+      TVProgram currentRunningProgram = null;
+      TVProgram prog = util.GetProgramAt(m_strTVChannel, dtNow);
+      if (prog != null) currentRunningProgram = prog.Clone();
+      util = null;
 
-			DateTime timeProgStart=new DateTime(1971,11,6,20,0,0,0);
+			DateTime timeProgStart = new DateTime(1971, 11, 6, 20, 0, 0, 0);
       string strName;
-      if (currentRunningProgram!=null)
+      if (currentRunningProgram != null)
       {
-        DateTime dt=currentRunningProgram.StartTime;
-        strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}", 
-                                currentRunningProgram.Channel,currentRunningProgram.Title,
-                                dt.Year,dt.Month,dt.Day,
-                                dt.Hour,
-                                dt.Minute,
-                                DateTime.Now.Minute,DateTime.Now.Second,
+        DateTime dt = currentRunningProgram.StartTime;
+        strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}", 
+                                currentRunningProgram.Channel, currentRunningProgram.Title, 
+                                dt.Year, dt.Month, dt.Day, 
+                                dt.Hour, 
+                                dt.Minute, 
+                                DateTime.Now.Minute, DateTime.Now.Second, 
                                 ".dvr-ms");
-				timeProgStart=currentRunningProgram.StartTime.AddMinutes(-m_iPreRecordInterval);
+				timeProgStart = currentRunningProgram.StartTime.AddMinutes(- m_iPreRecordInterval);
       }
       else
       {
-        DateTime dt=DateTime.Now;
-        strName=String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}", 
-                                m_strTVChannel,m_CurrentTVRecording.Title,
-                                dt.Year,dt.Month,dt.Day,
-                                dt.Hour,
-                                dt.Minute,
-                                DateTime.Now.Minute,DateTime.Now.Second,
+        DateTime dt = DateTime.Now;
+        strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}", 
+                                m_strTVChannel, m_CurrentTVRecording.Title, 
+                                dt.Year, dt.Month, dt.Day, 
+                                dt.Hour, 
+                                dt.Minute, 
+                                DateTime.Now.Minute, DateTime.Now.Second, 
                                 ".dvr-ms");
       }
       
 
-      string strFileName=String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName) );
+      string strFileName = String.Format(@"{0}\{1}",strRecPath, Utils.MakeFileName(strName));
       Log.Write("Card:{0} recording to file:{1}",ID, strFileName);
-      bool bResult=m_graph.StartRecording(ref strFileName, bContentRecording,timeProgStart);
 
-			m_newRecordedTV = new TVRecorded();        
-			m_newRecordedTV.Start=Utils.datetolong(DateTime.Now);
-			m_newRecordedTV.Channel=m_strTVChannel;
-			m_newRecordedTV.FileName=strFileName;
-			if (currentRunningProgram!=null)
+      int iChannelNr = GetChannelNr(m_strTVChannel);
+      bool bResult = m_graph.StartRecording(iChannelNr, ref strFileName, bContentRecording, timeProgStart);
+
+			m_newRecordedTV = new TVRecorded();
+			m_newRecordedTV.Start = Utils.datetolong(DateTime.Now);
+			m_newRecordedTV.Channel = m_strTVChannel;
+			m_newRecordedTV.FileName = strFileName;
+			if (currentRunningProgram != null)
 			{
-				m_newRecordedTV.Title=currentRunningProgram.Title;
-				m_newRecordedTV.Genre=currentRunningProgram.Genre;
-				m_newRecordedTV.Description=currentRunningProgram.Description;
+				m_newRecordedTV.Title = currentRunningProgram.Title;
+				m_newRecordedTV.Genre = currentRunningProgram.Genre;
+				m_newRecordedTV.Description = currentRunningProgram.Description;
 			}
 			else
 			{
-				m_newRecordedTV.Title="";
-				m_newRecordedTV.Genre="";
-				m_newRecordedTV.Description="";
+				m_newRecordedTV.Title = "";
+				m_newRecordedTV.Genre = "";
+				m_newRecordedTV.Description = "";
 			}
 
-      m_dtRecordingStartTime=DateTime.Now;
-      m_eState=State.Recording;
+      m_dtRecordingStartTime = DateTime.Now;
+      m_eState = State.Recording;
       return bResult;
     }
 
@@ -664,12 +666,12 @@ namespace MediaPortal.TV.Recording
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
-        if (String.Compare(strChannelName,chan.Name,true)==0)
+        if (String.Compare(strChannelName, chan.Name, true) == 0)
         {
-          if (chan.Number<=0)
+          if (chan.Number <= 0)
           {
             Log.Write("error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
-              strChannelName, chan.Number,chan.Frequency); 
+              strChannelName, chan.Number, chan.Frequency);
           }
           return chan.Number;
         }
@@ -688,7 +690,7 @@ namespace MediaPortal.TV.Recording
       {
         if (CreateGraph())
         {
-          return (m_graph.SupportsTimeshifting() );
+          return (m_graph.SupportsTimeshifting());
         }
         return false;
       }
@@ -701,11 +703,11 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        return (m_eState==State.Viewing);
+        return (m_eState == State.Viewing);
       }
       set
       {
-        if (value==false)
+        if (value == false)
         {
           if (View)
           {
@@ -719,12 +721,12 @@ namespace MediaPortal.TV.Recording
           if (View) return;
           if (IsRecording) return;
           DeleteGraph();
-          if ( CreateGraph() )
+          if (CreateGraph())
           {
             Log.Write("Card:{0} start viewing :{1}",ID, m_strTVChannel);
-            int iChannelNr=GetChannelNr(m_strTVChannel);
+            int iChannelNr = GetChannelNr(m_strTVChannel);
             m_graph.StartViewing(iChannelNr);
-            m_eState=State.Viewing;
+            m_eState = State.Viewing;
           }
         }
       }

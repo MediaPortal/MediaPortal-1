@@ -350,10 +350,14 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording(ref string strFileName, bool bContentRecording, DateTime timeProgStart)
+    public bool StartRecording(int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
-      if ( m_graphState!=State.TimeShifting) return false;
+      if (m_graphState != State.TimeShifting) return false;
 
+      if (iChannelNr != m_iChannelNr)
+      {
+        TuneChannel(iChannelNr);
+      }
       DirectShowUtil.DebugWrite("SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
       m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart,m_StartTime);
       m_graphState=State.Recording;
