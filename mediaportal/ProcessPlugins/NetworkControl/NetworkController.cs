@@ -24,10 +24,13 @@ namespace NetworkControl
 
 		public void Start()
 		{
+			Log.Write("NetworkController: plugin start");
 			channel = new HttpChannel (1095);     
 			ChannelServices.RegisterChannel (channel);
 			Type type=typeof(NetworkControl.Mediaportal);
 			RemotingConfiguration.RegisterWellKnownServiceType(type,"Mediaportal",WellKnownObjectMode.Singleton);
+			
+			Log.Write("NetworkController: plugin started");
 		}
 
 		public void Stop()
