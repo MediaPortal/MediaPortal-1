@@ -216,7 +216,7 @@ namespace MediaPortal.TV.Recording
 
 			Log.Write("tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
 									newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
-			captureCard.Tune(newchan);
+			captureCard.Tune(newchan,0);
 		}
 
 		#endregion

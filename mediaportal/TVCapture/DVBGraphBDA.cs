@@ -2410,7 +2410,7 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph should be created 
 		/// </remarks>
-		public void Tune(object tuningObject)
+		public void Tune(object tuningObject, int disecqNo)
 		{
 
 			try

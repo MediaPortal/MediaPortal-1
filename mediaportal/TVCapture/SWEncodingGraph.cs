@@ -1967,7 +1967,7 @@ namespace MediaPortal.TV.Recording
 		{
 				return NetworkType.ATSC;
 		}
-		public void Tune(object tuningObject)
+		public void Tune(object tuningObject, int disecqNo)
 		{
 		}
 		public void StoreChannels(int ID,bool radio, bool tv)

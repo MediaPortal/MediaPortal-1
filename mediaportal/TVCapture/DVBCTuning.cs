@@ -232,7 +232,7 @@ namespace MediaPortal.TV.Recording
 			newchan.Symbolrate=(dvbcChannels[currentIndex].symbolrate)/1000;
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.Frequency=dvbcChannels[currentIndex].frequency;
-			captureCard.Tune(newchan);
+			captureCard.Tune(newchan,0);
 		}
 
 		#endregion

@@ -204,7 +204,7 @@ namespace MediaPortal.TV.Recording
 
 				tmp = (int[])frequencies[currentFrequencyIndex];
 				Log.Write("tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency);
+				captureCard.Tune(tunedFrequency,0);
 				return;
 			}
 
@@ -213,7 +213,7 @@ namespace MediaPortal.TV.Recording
 			if (currentOffset==0)
 			{
 				Log.Write("tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency);
+				captureCard.Tune(tunedFrequency,0);
 				if (scanOffset==0) currentOffset=3;
 				else currentOffset++;
 			}
@@ -221,14 +221,14 @@ namespace MediaPortal.TV.Recording
 			{
 				tunedFrequency-=scanOffset;
 				Log.Write("tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency);
+				captureCard.Tune(tunedFrequency,0);
 				currentOffset++;
 			}
 			else if (currentOffset==2)
 			{
 				tunedFrequency+=scanOffset;
 				Log.Write("tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency);
+				captureCard.Tune(tunedFrequency,0);
 				currentOffset++;
 			}
 			else

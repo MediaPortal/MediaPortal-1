@@ -1257,10 +1257,10 @@ namespace MediaPortal.TV.Recording
 				return _mGraph.Network();
 			}
 		}
-		public void Tune(object tuningObject)
+		public void Tune(object tuningObject, int disecqNo)
 		{
 			if (_mGraph==null) return ;
-			_mGraph.Tune(tuningObject);
+			_mGraph.Tune(tuningObject, disecqNo);
 		}
 		public void StoreTunedChannels(bool radio, bool tv)
 		{

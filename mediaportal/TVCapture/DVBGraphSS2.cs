@@ -1873,7 +1873,7 @@ namespace MediaPortal.TV.Recording
 		{
 				return NetworkType.DVBS;
 		}
-		public void Tune(object tuningObject)
+		public void Tune(object tuningObject, int disecqNo)
 		{
 			if (tuningObject==null) return;
 			DVBChannel chan=tuningObject as DVBChannel;

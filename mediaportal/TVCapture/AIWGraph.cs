@@ -1117,7 +1117,7 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 		
-		public void Tune(object tuningObject)
+		public void Tune(object tuningObject, int disecqNo)
 		{
 		}
 		public void StoreChannels(int ID,bool radio, bool tv)

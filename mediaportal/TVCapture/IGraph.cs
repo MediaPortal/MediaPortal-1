@@ -216,7 +216,7 @@ namespace MediaPortal.TV.Recording
 
 		IBaseFilter AudiodeviceFilter();
 		NetworkType Network();
-		void Tune(object tuningObject);
+		void Tune(object tuningObject, int disecqNo);
 		void StoreChannels(int ID,bool radio, bool tv);
 		IBaseFilter Mpeg2DataFilter();
 	}
