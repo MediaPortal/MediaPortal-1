@@ -382,6 +382,19 @@ namespace MediaPortal.GUI.Library
 
     void DrawTextBox() 
     {
+			if (GUIGraphicsContext.graphics!=null)
+			{
+				Rectangle[] vidWindow= new Rectangle[1];
+				vidWindow[0].X=m_dwTextBoxXpos;
+				vidWindow[0].Y=m_dwTextBoxYpos;
+				vidWindow[0].Width=m_dwTextBoxWidth;
+				vidWindow[0].Height=m_dwTextBoxHeight;
+
+				
+				GUIGraphicsContext.graphics.FillRectangle(Brushes.White, vidWindow[0].X, vidWindow[0].Y, vidWindow[0].Width, vidWindow[0].Height);
+				return;
+			}
+
       long lColor=m_dwTextBoxBgColor;
 			int oldTextureFactor=GUIGraphicsContext.DX9Device.RenderState.TextureFactor;
       GUIGraphicsContext.DX9Device.SetTexture( 0, null );
