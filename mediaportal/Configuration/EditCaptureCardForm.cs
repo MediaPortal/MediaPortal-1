@@ -595,7 +595,9 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		/// <returns></returns>
 #if (UseCaptureCardDefinitions)
-		private CaptureEx CreateCaptureDevice()
+    private CaptureEx CreateCaptureDevice()
+    {
+      CaptureEx capture = null;
 #else
 		private Capture CreateCaptureDevice()
 		{
@@ -746,6 +748,7 @@ namespace MediaPortal.Configuration
 
       return capture;
 		}
+
 #if (UseCaptureCardDefinitions)
 		private void SetupPropertyPages(CaptureEx capture )
 		{
@@ -1086,6 +1089,7 @@ namespace MediaPortal.Configuration
 				{
           textBoxName.Text=card.FriendlyName;
 #if (UseCaptureCardDefinitions)
+          ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(card);
           cardComboBox.SelectedItem					= cbcc;
 #else
           cardComboBox.SelectedItem = card.VideoDevice;

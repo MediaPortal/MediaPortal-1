@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Runtime.InteropServices; 
 using DShowNET;
 using MediaPortal.Util;
+using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using System.Xml;
@@ -50,7 +51,8 @@ namespace MediaPortal.TV.Recording
 		/// <returns>bool indicating if graph is created or not</returns>
 		public override bool CreateGraph()
 		{
-			DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() IN");
+      Vmr9 =new VMR9Util("mytv");
+      DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() IN");
 			if (m_graphState != State.None) return false;		// If doing something already, return...
 
 			if (!mCard.LoadDefinitions())											// Load configuration for this card
@@ -115,15 +117,8 @@ namespace MediaPortal.TV.Recording
 			}
 			DirectShowUtil.DebugWrite("SinkGraphEx: Adding configured filters...DONE");
 
-			// For some reason, it happens alot that the capture card can NOT be connected (pin 656 for the
-			// PRV150MCE) to the encoder because for some reason the videostandard is GONE...
-			// So fetch the standard from the TvTuner and define it for the capture card.
-
-			AnalogVideoStandard videoStandard;
 			m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
-			m_TVTuner.get_TVFormat(out videoStandard);
-			m_IAMAnalogVideoDecoder.put_TVFormat(videoStandard);
-
+      InitializeTuner();
 			// All filters, up-to and including the encoder filter have been added using a configuration file.
 			// The rest of the filters depends on the fact if we are just viewing TV, or Timeshifting or even
 			// recording. This part is however card independent and controlled by software, although this part
@@ -132,7 +127,7 @@ namespace MediaPortal.TV.Recording
 			// even (again, pretentions...) the Sigma Designs XCard could be "coupled" to the capture card...
 
 			// Set crossbar routing, default to Tv Tuner + Audio Tuner...
-			DsUtils.FixCrossbarRouting(m_graphBuilder, m_captureGraphBuilder, m_captureFilter, true, false, false, false);
+			DsUtils.FixCrossbarRouting(m_graphBuilder, m_captureGraphBuilder, m_captureFilter, true, false, false, false,false);
 
 			FilterDefinition sourceFilter;
 			FilterDefinition sinkFilter;
@@ -268,6 +263,11 @@ namespace MediaPortal.TV.Recording
 			StopViewing();
 
 			GUIGraphicsContext.OnGammaContrastBrightnessChanged -=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+      if (Vmr9!=null)
+      {
+        Vmr9.RemoveVMR9();
+        Vmr9=null;
+      }
 
 			if (m_videoprocamp != null)
 			{
@@ -379,6 +379,7 @@ namespace MediaPortal.TV.Recording
 			else
 				DirectShowUtil.DebugWrite("SinkGraphEx:FAILED, not all pins connected");
 		}
+
 	#endregion
 	}
 }

@@ -1145,6 +1145,7 @@ namespace MediaPortal.TV.Recording
 		protected IAMVideoProcAmp m_videoprocamp=null;
 		VideoCaptureDevice        m_videoCaptureDevice=null;
 		MPEG2Demux                m_mpeg2Demux=null;
+    IAMAnalogVideoDecoder m_IAMAnalogVideoDecoder;
       
 		//#MW#
 		protected TVCaptureDevice mCard = null;
@@ -1882,10 +1883,6 @@ namespace MediaPortal.TV.Recording
 			// PRV150MCE) to the encoder because for some reason the videostandard is GONE...
 			// So fetch the standard from the TvTuner and define it for the capture card.
 
-			AnalogVideoStandard videoStandard;
-//			m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
-//			m_TVTuner.get_TVFormat(out videoStandard);
-//			m_IAMAnalogVideoDecoder.put_TVFormat(videoStandard);
 
 			// All filters, up-to and including the encoder filter have been added using a configuration file.
 			// The rest of the filters depends on the fact if we are just viewing TV, or Timeshifting or even
@@ -1895,7 +1892,7 @@ namespace MediaPortal.TV.Recording
 			// even (again, pretentions...) the Sigma Designs XCard could be "coupled" to the capture card...
 
 			// Set crossbar routing, default to Tv Tuner + Audio Tuner...
-			DsUtils.FixCrossbarRouting(m_graphBuilder, m_captureGraphBuilder, videoDeviceFilter, true, false, false, false);
+			DsUtils.FixCrossbarRouting(m_graphBuilder, m_captureGraphBuilder, videoDeviceFilter, true, false, false, false,false);
 
 			FilterDefinition sourceFilter;
 			FilterDefinition sinkFilter;

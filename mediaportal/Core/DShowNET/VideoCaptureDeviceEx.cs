@@ -172,7 +172,7 @@ namespace DShowNET
 
 			//make sure the analog video&audio outputs of the crossbar are connected
 			//to the video&audio inputs of the video capture device
-			DsUtils.FixCrossbarRouting(_mGraphBuilder,_mCaptureGraphBuilder,_mCaptureFilter, true, false, false, false );
+			DsUtils.FixCrossbarRouting(_mGraphBuilder,_mCaptureGraphBuilder,_mCaptureFilter, true, false, false, false,false );
 
 			if (!_mIsMpeg2Card)
 			{

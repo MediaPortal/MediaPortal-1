@@ -40,16 +40,15 @@ namespace MediaPortal.TV.Recording
           return new MCESinkGraph(card.ID,iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
         return new SinkGraph(card.ID,iTunerCountry,bCable, card.VideoDevice, card.FrameSize,card.FrameRate);
       }
-	  if (card.ToString() == "ATI Rage Theater Video Capture")
-	  {
-		return new AIWGraph(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
-	  }
-		if (card.ToString() == "B2C2 MPEG-2 Source")
-		{
-			return new DVBGraphSS2(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
-		}
+	    if (card.ToString() == "ATI Rage Theater Video Capture")
+	    {
+		  return new AIWGraph(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+	    }
+		  if (card.ToString() == "B2C2 MPEG-2 Source")
+		  {
+			  return new DVBGraphSS2(iTunerCountry,bCable,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+		  }
       return new SWEncodingGraph(card.ID,iTunerCountry,bCable, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel);
-      
     }
 #else
       int    countryCode = 31;
@@ -63,35 +62,36 @@ namespace MediaPortal.TV.Recording
       bool isCableInput = false;
       if (!tunerInput.Equals("Antenna")) isCableInput = true;
 
-			// #MW#
-			// Added properties to card...
-			// Could be read using serialization...
-			card.IsCableInput = isCableInput;
-			card.CountryCode  = countryCode;
+      // #MW#
+      // Added properties to card...
+      // Could be read using serialization...
+      card.IsCableInput = isCableInput;
+      card.CountryCode  = countryCode;
 
-			// There are a few types of cards:
-			//	-	Software based cards, ie no hardware MPEG2 encoder
-			//	- Hardware MPEG2 encoders
-			//	- Hardware MPEG2 "MCE" compatible encoders which for instance always include Radio...
+      // There are a few types of cards:
+      //	-	Software based cards, ie no hardware MPEG2 encoder
+      //	- Hardware MPEG2 encoders
+      //	- Hardware MPEG2 "MCE" compatible encoders which for instance always include Radio...
 			
-			if (card.SupportsMPEG2)
+      if (card.SupportsMPEG2)
       {
-				// #MW#
-				// Use a single call for all MPEG2 cards, also the MCE versions...
-				// NOT tested of course, since I have only MCE versions!
-				// The extra code (3 lines??) found in the MPEG2 SinkGraph is now included in here.
+        // #MW#
+        // Use a single call for all MPEG2 cards, also the MCE versions...
+        // NOT tested of course, since I have only MCE versions!
+        // The extra code (3 lines??) found in the MPEG2 SinkGraph is now included in here.
         return new SinkGraphEx(card);
       }
 
-			// Special graph building for the ATI AIW cards
-			if (card.ToString() == "ATI Rage Theater Video Capture")
-			{
-				return new AIWGraph(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
-			}
+      // Special graph building for the ATI AIW cards
+      if (card.ToString() == "ATI Rage Theater Video Capture")
+      {
+        return new AIWGraph(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+      }
 
-			// Standard call for all other software based cards.
+      // Standard call for all other software based cards.
       return new SWEncodingGraph(card.ID,countryCode,isCableInput, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel);
+    }
 #endif
-		}
 	}
+}
 

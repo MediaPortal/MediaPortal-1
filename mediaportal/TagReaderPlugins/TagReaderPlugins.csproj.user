@@ -34,6 +34,22 @@
                     StartWorkingDirectory = ""
                     StartWithIE = "true"
                 />
+                <Config
+                    Name = "UseCaptureCardDefinitions"
+                    EnableASPDebugging = "false"
+                    EnableASPXDebugging = "false"
+                    EnableUnmanagedDebugging = "false"
+                    EnableSQLServerDebugging = "false"
+                    RemoteDebugEnabled = "false"
+                    RemoteDebugMachine = ""
+                    StartAction = "Project"
+                    StartArguments = ""
+                    StartPage = ""
+                    StartProgram = ""
+                    StartURL = ""
+                    StartWorkingDirectory = ""
+                    StartWithIE = "false"
+                />
             </Settings>
         </Build>
         <OtherProjectSettings

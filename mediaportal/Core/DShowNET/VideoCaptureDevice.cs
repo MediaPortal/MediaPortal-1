@@ -1,3 +1,4 @@
+#if (!UseCaptureCardDefinitions)
 using System;
 using System.Drawing;
 using System.IO;
@@ -798,3 +799,4 @@ namespace DShowNET
     }
 	}
 }
+#endif
