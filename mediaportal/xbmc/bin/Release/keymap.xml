@@ -859,13 +859,13 @@
     </action>
     <action>
       <id>95</id>
-      <key>pagedown</key>
+      <key>F8</key>
       <sound />
       <description>Next tv channel</description>
     </action>
     <action>
       <id>94</id>
-      <key>pageup</key>
+      <key>F7</key>
       <sound />
       <description>Previous tv channel</description>
     </action>
