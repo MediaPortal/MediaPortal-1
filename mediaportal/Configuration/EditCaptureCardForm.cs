@@ -128,6 +128,17 @@ namespace MediaPortal.Configuration
 			//	else continue
 
 
+			bool addEmpty=true;
+			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
+			{
+				CaptureCardDefinition ccd = CaptureCardDefinitions.CaptureCards[ccDevId] as CaptureCardDefinition;
+				for (int i = 0; i < availableVideoDevices.Count; i++)
+				{
+					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
+						((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) addEmpty=false;
+
+				}
+			}
 
 			foreach (string ccDevId in CaptureCardDefinitions.CaptureCards.Keys)
 			{
@@ -137,7 +148,8 @@ namespace MediaPortal.Configuration
 					bool add=false;
 					if (ccd.CaptureName==String.Empty) 
 					{
-						add=true;
+						if (addEmpty)
+							add=true;
 					}
 					else
 					{
