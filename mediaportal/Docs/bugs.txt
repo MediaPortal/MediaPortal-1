@@ -10,7 +10,8 @@ Cosmetic bugs:
   13-07-2004 general    : pause movie/tv when VMR9 enabled->gui is paused also
 
 crash/things not working Bugs:
-  10-09-2004 GUI	    : when aligning a fadelabel 'right' you will not see the beginning of the string.
+  12-08-2004 CD		: when pressing X during cd playback and then X again will reload the cddb data from the net resulting in a new selection screen when you have multiple hits
+  10-08-2004 GUI        : when aligning a fadelabel 'right' you will not see the beginning of the string.
   10-08-2004 calibration: when calibration pixel ratio and setting a perfect square, calibration is wrong. I need to set a non square to get good AR) (maybe calibrate pic in skin bad?
   10-08-2004 music      : after playing a song with winamp plugin the background of the viz (bluebox) is not shown anymore (has to do with previous bug I think)
 							- play a song using winamp without album art
