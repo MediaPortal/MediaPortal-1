@@ -299,6 +299,7 @@ namespace WindowPlugins.GUIPrograms
 					}
 					UpdateListControl();
 					ShowThumbPanel();
+					m_lSlideTime=(int)(DateTime.Now.Ticks/10000); // reset timer!
 					return true;
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
