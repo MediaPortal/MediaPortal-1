@@ -470,12 +470,12 @@ namespace MediaPortal.TV.Recording
 				m_MPEG2Demultiplexer.FindPin(m_Card.TvInterfaceDefinition.AudioPinName, out m_DemuxAudioPin);
 				if (m_DemuxVideoPin==null)
 				{
-					Log.Write("DVBGraphBDA:Failed to get pin '3' (video out) from MPEG-2 Demultiplexer");
+					Log.Write("DVBGraphBDA:Failed to get pin '{0}' (video out) from MPEG-2 Demultiplexer",m_DemuxVideoPin);
 					return false;
 				}
 				if (m_DemuxAudioPin==null)
 				{
-					Log.Write("DVBGraphBDA:Failed to get pin '4' (audio out)  from MPEG-2 Demultiplexer");
+					Log.Write("DVBGraphBDA:Failed to get pin '{0}' (audio out)  from MPEG-2 Demultiplexer",m_DemuxAudioPin);
 					return false;
 				}
 
