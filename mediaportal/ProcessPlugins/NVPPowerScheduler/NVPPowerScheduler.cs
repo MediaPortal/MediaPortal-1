@@ -271,8 +271,10 @@ namespace MediaPortal.PowerScheduler
               // then disable shutdown
               ResetShutdownTimer(0);	
               enableShutdown=false;
+              m_iActiveWindow=-1; //check again next time
             }
           }
+
 					if (!m_bShutdownEnabled && enableShutdown)
 					{
 						// Entered HOME - enable shutdown
