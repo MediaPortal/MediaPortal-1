@@ -2859,6 +2859,14 @@
 		<id>13005</id>
 		<value>Zuletzt importierte Datei:</value>
 	</string>
+	<string>
+		<id>13006</id>
+		<value>Kleine Bilder</value>
+	</string>
+	<string>
+		<id>13007</id>
+		<value>Grosse Bilder</value>
+	</string>
 
 	<string>
 		<id>16001</id>

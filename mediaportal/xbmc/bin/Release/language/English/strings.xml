@@ -2509,6 +2509,14 @@
 	<value>Last imported file:</value>
 </string>
 <string>
+	<id>13006</id>
+	<value>Small Picture</value>
+</string>
+<string>
+	<id>13007</id>
+	<value>Large Picture</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
