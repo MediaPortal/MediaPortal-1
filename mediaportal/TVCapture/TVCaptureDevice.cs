@@ -338,6 +338,12 @@ namespace MediaPortal.TV.Recording
               RebuildGraph();
               return;
             }
+            if (IsTimeShifting && !View)
+            {
+              g_Player.Stop();
+              RebuildGraph();
+              return;
+            }
             m_graph.TuneChannel(standard, ichannel);
             if (IsTimeShifting && !View)
             {
