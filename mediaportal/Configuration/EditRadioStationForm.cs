@@ -27,6 +27,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.ComboBox typeComboBox;
     private System.Windows.Forms.TextBox frequencyTextBox;
+		RadioStation station;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -319,7 +320,6 @@ namespace MediaPortal.Configuration
 		public RadioStation Station
 		{
 			get { 
-				RadioStation station = new RadioStation();
 
 				station.Type = (string)typeComboBox.SelectedItem;
 				station.Name = nameTextBox.Text;
@@ -381,7 +381,7 @@ namespace MediaPortal.Configuration
 			}
 
 			set { 
-				RadioStation station = value as RadioStation;
+				station = value as RadioStation;
 	
 				typeComboBox.SelectedItem = (string)station.Type;
 				nameTextBox.Text = station.Name;

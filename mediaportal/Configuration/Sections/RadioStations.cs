@@ -12,6 +12,7 @@ using DShowNET;
 using DirectX.Capture;
 using MediaPortal.Player;
 using SQLite.NET;
+using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 
@@ -385,17 +386,30 @@ namespace MediaPortal.Configuration.Sections
 
 			if(dialogResult == DialogResult.OK)
 			{
+
+				MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+				station.Scrambled= false;
+				station.Name	= editStation.Station.Name;
+				station.Genre	= editStation.Station.Genre;
+				station.BitRate	= editStation.Station.Bitrate;
+				station.URL		= editStation.Station.URL;
+				station.Frequency= editStation.Station.Frequency.Herz;
+				if(station.Frequency < 1000)
+					station.Frequency *= 1000000L;
+
 				ListViewItem listItem = new ListViewItem(new string[] { editStation.Station.Type, 
-																		editStation.Station.Name,
-																		editStation.Station.Frequency.ToString(Frequency.Format.MegaHerz),
-																		editStation.Station.Genre, 
-																		editStation.Station.Bitrate.ToString(),
-																		editStation.Station.URL 
-																	  } );
+																																editStation.Station.Name,
+																																editStation.Station.Frequency.ToString(Frequency.Format.MegaHerz),
+																																editStation.Station.Genre, 
+																																editStation.Station.Bitrate.ToString(),
+																																editStation.Station.URL 
+																															} );
+				
 
 				listItem.Tag = editStation.Station;
-
 				stationsListView.Items.Add(listItem);
+				station.Channel = listItem.Index;
+				editStation.Station.ID=RadioDatabase.AddStation(ref station);
 			}
 		}
 
@@ -426,8 +440,21 @@ namespace MediaPortal.Configuration.Sections
 					listItem.SubItems[3].Text = editStation.Station.Genre;
 					listItem.SubItems[4].Text = editStation.Station.Bitrate.ToString();
 					listItem.SubItems[5].Text = editStation.Station.URL;
+
+					MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+					station.Scrambled= editStation.Station.Scrambled;
+					station.ID= editStation.Station.ID;
+					station.Name	= editStation.Station.Name;
+					station.Genre	= editStation.Station.Genre;
+					station.BitRate	= editStation.Station.Bitrate;
+					station.URL		= editStation.Station.URL;
+					station.Frequency= editStation.Station.Frequency.Herz;
+					if(station.Frequency < 1000)
+						station.Frequency *= 1000000L;
+					station.Channel = listItem.Index;
+					RadioDatabase.UpdateStation(station);
 				}
-			}
+				}
 		}
 
 		private void deleteButton_Click(object sender, System.EventArgs e)
@@ -438,6 +465,8 @@ namespace MediaPortal.Configuration.Sections
 
 			for(int index = 0; index < itemCount; index++)
 			{
+				RadioStation station = stationsListView.SelectedItems[0].Tag as RadioStation;
+				RadioDatabase.RemoveStation(station.Name);
 				stationsListView.Items.RemoveAt(stationsListView.SelectedIndices[0]);
 			}
 		}
@@ -456,52 +485,24 @@ namespace MediaPortal.Configuration.Sections
 
 		private void SaveRadioStations()
 		{
-			if(isDirty == true)
-			{
-        //
+
+				//
 				// Start by removing the currently available stations from the database
 				//
-				RadioDatabase.RemoveAllStations();
 
         string strDefaultStation="";
         foreach(ListViewItem listItem in stationsListView.Items)
         {
-          MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
           RadioStation radioStation = listItem.Tag as RadioStation;
-
-          station.Name	= radioStation.Name;
-          station.Genre	= radioStation.Genre;
-          station.BitRate	= radioStation.Bitrate;
-          station.URL		= radioStation.URL;
-
-          //
-          // Calculate the frequency for this station
-          //
-          if(radioStation.Frequency.Herz < 1000)
-            radioStation.Frequency.Herz *= 1000000L;
-
-          station.Frequency = radioStation.Frequency.Herz;
-          station.Channel = listItem.Index;
-
-          //
-          // Save station
-          //
-          if(station.Frequency != 0 || station.URL.Length > 0)
-          {
-            RadioDatabase.AddStation(ref station);
-          }
-
-          //
-          // Save default station
-          //
-          if(listItem.Checked == true)
-            strDefaultStation=station.Name;
+					if(listItem.Checked == true)
+					{
+						strDefaultStation=radioStation.Name;
+					}
         }
         using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
         {
           xmlwriter.SetValue("myradio", "default", strDefaultStation);
         }
-			}
 		}
 
 		private void LoadRadioStations()
@@ -520,12 +521,14 @@ namespace MediaPortal.Configuration.Sections
 			{
 				RadioStation radioStation = new RadioStation();
 
+				radioStation.ID=station.ID;
 				radioStation.Type = station.URL.Length == 0 ? "Radio" : "Stream";
 				radioStation.Name = station.Name;
 				radioStation.Frequency = station.Frequency;
 				radioStation.Genre = station.Genre;
 				radioStation.Bitrate = station.BitRate;
 				radioStation.URL = station.URL;
+				radioStation.Scrambled = station.Scrambled;
 
 				ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
 																		radioStation.Name,
@@ -646,6 +649,7 @@ namespace MediaPortal.Configuration.Sections
           currentlyCheckedItem = null;
         }
       }        
+			SaveSettings();
     }
 
 		private void btnMapChannelToCard_Click(object sender, System.EventArgs e)

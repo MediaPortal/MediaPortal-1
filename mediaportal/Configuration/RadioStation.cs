@@ -4,11 +4,13 @@ namespace MediaPortal.Configuration
 {
 	public class RadioStation
 	{
-		public string Type;
-		public string Name;
-		public string Genre;
-		public int Bitrate;
-		public string URL;
+		public bool Scrambled=false;
+		public int ID=-1;
+		public string Type="";
+		public string Name="";
+		public string Genre="";
+		public int Bitrate=0;
+		public string URL="";
 		public Frequency Frequency;
 
 		public RadioStation()
