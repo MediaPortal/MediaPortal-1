@@ -72,9 +72,10 @@ namespace MediaPortal.TV.Recording
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
       m_graphState=State.None;
-#if (UseCaptureCardDefinitions)
+			// #MW# Mistake???
+			//#if (UseCaptureCardDefinitions)
       m_strVideoCaptureFilter=strVideoCaptureFilter;
-#endif
+			//#endif
       m_FrameSize = frameSize;
       m_FrameRate = frameRate;
 
