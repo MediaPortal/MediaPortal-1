@@ -17,7 +17,7 @@ namespace MediaPortal.GUI.Library
 	{
 		private string m_strFontName;
 		private string m_strFileName;
-		public const int MaxNumfontVertices = 100*6;
+		public const int MaxNumfontVertices = 50*6;
     
     private int       _StartCharacter=32;
     private int       _EndCharacter=255;
@@ -234,6 +234,7 @@ namespace MediaPortal.GUI.Library
 			DrawText( fOriginX, fOriginY, dwColor, strText,alignment);	
 		}
 	
+		static int maxVert=0;
     public void Present()
     {
       // Set the data for the vertex buffer
@@ -257,6 +258,7 @@ namespace MediaPortal.GUI.Library
 //        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleList, 0, dwNumTriangles);
 				GUIGraphicsContext.DX9Device.SetTexture(0, null);
+
 			}
       dwNumTriangles=0;
       iv=0;
