@@ -145,6 +145,7 @@ namespace MediaPortal.GUI.Library
 				//m_pFont.DrawText(m_dwPosX-10,m_dwPosY,0xffffffff,"W",GUIControl.Alignment.ALIGN_LEFT);
 				//m_pFont.DrawText(m_dwPosX-10,m_dwPosY+m_dwHeight,0xffffffff,"W",GUIControl.Alignment.ALIGN_LEFT);
 
+        
 				Viewport oldviewport=GUIGraphicsContext.DX9Device.Viewport;
 				if (GUIGraphicsContext.graphics!=null)
 				{
@@ -210,6 +211,7 @@ namespace MediaPortal.GUI.Library
 						dwPosY += (int)m_iItemHeight;
 					}
 				}
+        
 				if (GUIGraphicsContext.graphics!=null)
 				{
 					GUIGraphicsContext.graphics.SetClip(new Rectangle(0,0,GUIGraphicsContext.Width,GUIGraphicsContext.Height));
