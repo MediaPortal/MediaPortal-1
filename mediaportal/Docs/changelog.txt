@@ -1,14 +1,14 @@
 History: (dd-mm-yyyy)
+  18-06-2004  my radio    : added : added streamlist folder which can contain .pls/.asx files
+  18-06-2004  my TV       : added : option : background live tv or GUI
   18-06-2004  my Music    : added : Artist info from allmusic.com (need to be in Artist mode)
   18-06-2004  my TV       : added : start timeshifting tv when MP starts 
   18-06-2004  my TV       : fixed : 100%CPU usage
-  
   17-06-2004  my radio    : added : support for external audio players (like http://www.axife.com/)
   17-06-2004  my video    : fixed : movie & dvd player now check if audio renderer specified in setup actually exists
   17-06-2004  topbar      : fixed : topbar was not shown when dialog is presented
   17-06-2004  my music    : fixed : album art was looked up 2 times
   17-06-2004  my tv       : fixed : tvguide was broken due to new topbar plugin
-  
   16-06-2004  my radio    : fixed : no sound for hauppauge PVR 350
   15-06-2004  general     : added : plugin for topbar (topbar now has seperate .xml skin files and can be turned on/off)
   15-06-2004  general     : added : support for VMR9 (optional, turn it on/off in file setup->general)
@@ -26,7 +26,6 @@ History: (dd-mm-yyyy)
   14-06-2004  my videos   : added : press 0 to remove movie from database in my videos/titles
   14-06-2004  my radio    : fixed : enter frequencies in file->setup in MHz instead of Hz
   14-06-2004  my tv       : fixed : 100% cpu usage in my tv module when no capture cards where installed
-  
   13-06-2004  my video    : added : progressbar to video osd
   13-06-2004  my tv       : added : record program on weekdays only (Mon-Fri)
   13-06-2004  my music    : fixed : when scanning rename artist with name 'VA' to 'Various Artists'
