@@ -447,7 +447,7 @@
 		<posX>60</posX>
 		<posY>200</posY>
 		<width>648</width>
-		<posY>316</posY>
+		<height>316</height>
 		<texture></texture>
 		<visible>no</visible>
 		<colorkey>FFFFFFFF</colorkey>
