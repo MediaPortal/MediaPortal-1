@@ -74,7 +74,8 @@ namespace MediaPortal.GUI.RSS
 		string			m_strDescription="";
 		DateTime        m_lRefreshTime=DateTime.Now.AddHours(-1);		//for autorefresh
 		feed_details[]	m_feed_details		=  new 	feed_details[NUM_STORIES];
-		int             m_iRSSRefresh=15;
+		int         m_iRSSRefresh=15;
+		bool				m_bRSSAutoRefresh=true;
 
 		GUIImage		m_pSiteImage=null;
 
@@ -124,14 +125,7 @@ namespace MediaPortal.GUI.RSS
 					LoadSettings();
 					m_pSiteImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGELOGO);
 
-					TimeSpan ts=DateTime.Now-m_lRefreshTime;
-			    if( ts.TotalMinutes >= m_iRSSRefresh && m_strSiteURL!="" )
-			    {
-// Disabled for now to avoid downloading twice. Until refesh is implemented.
-//			        Download(new Uri(m_strSiteURL));
-			    }
-          
-          UpdateNews();
+          UpdateNews(true);
 
 					return true;
 				}
@@ -142,24 +136,27 @@ namespace MediaPortal.GUI.RSS
 				}
 				break;
 
+				case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
+				{
+					int iControl=message.SenderControlId;
+					if (iControl==(int)Controls.CONTROL_LIST)
+					{
+						UpdateDetails();
+					}
+				}
+				break;
+
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 				{
 					int iControl=message.SenderControlId;
           if (iControl == (int)Controls.CONTROL_BTNREFRESH)
-          {
-            
-            UpdateNews();
+          {            
+            UpdateNews(true);
           }
+
 					if (iControl==(int)Controls.CONTROL_LIST)
          	{
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-            OnMessage(msg);
-            int iItem=(int)msg.Param1;
-            int iAction=(int)message.Param1;
-            if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-            {
-              	OnClick(iItem);
-            }
+           	UpdateDetails();
          	}
 
 					if (iControl==(int)Controls.CONTROL_BTNCHANNEL)
@@ -179,7 +176,7 @@ namespace MediaPortal.GUI.RSS
        						m_strDescription = ((Site)m_sites[nSelected]).m_Name;
  						}
 
-            UpdateNews();
+            UpdateNews(true);
 
 						return true;
 					}
@@ -189,7 +186,42 @@ namespace MediaPortal.GUI.RSS
 			}
 			return base.OnMessage(message);
 		}
-    void UpdateNews()
+
+		public override void Process()
+		{
+			TimeSpan ts=DateTime.Now-m_lRefreshTime;
+			if ((m_bRSSAutoRefresh) && (ts.TotalMinutes >= m_iRSSRefresh && m_strSiteURL!=""))
+			{
+				// Reset time
+				m_lRefreshTime = DateTime.Now;
+
+				// Check if we may refresh (only when not in the list or on the first item)
+				if (GetFocusControlId() != (int)Controls.CONTROL_LIST)
+				{
+					// Try refresh without warnings
+					UpdateNews(false);
+				}
+				else
+				{
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,(int)Controls.CONTROL_LIST,0,0,null);
+					OnMessage(msg);
+					if ((int)msg.Param1 < 1)
+					{
+						// Try refresh without warnings
+						UpdateNews(false);
+					}
+				}
+			}         
+			base.Process ();
+		}
+
+
+		private void RefreshNews(object sender,System.EventArgs e)
+		{
+			System.GC.Collect();
+		}
+
+    void UpdateNews(bool bShowWarning)
     {
       try
       {
@@ -203,12 +235,15 @@ namespace MediaPortal.GUI.RSS
       }
       catch(Exception)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
-        msg.Param1=9;//my news
-        msg.Param2=912;//Unable to download latest news
-        msg.Param3=0;
-				msg.Label3=m_strSiteURL;
-        GUIWindowManager.SendMessage(msg);
+				if (bShowWarning)
+				{
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+					msg.Param1=9;//my news
+					msg.Param2=912;//Unable to download latest news
+					msg.Param3=0;
+					msg.Label3=m_strSiteURL;
+					GUIWindowManager.SendMessage(msg);
+				}
       }
     }
 
@@ -217,42 +252,48 @@ namespace MediaPortal.GUI.RSS
 		{
 			String firstSite = "";
 			m_sites.Clear();
-      		using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
-      		{
-        		for (int i=0; i < 20; i++)
-        		{
-          			string strNameTag=String.Format("siteName{0}",i);
-          			string strURLTag=String.Format("siteURL{0}",i);
+			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				for (int i=0; i < 20; i++)
+				{
+					string strNameTag=String.Format("siteName{0}",i);
+					string strURLTag=String.Format("siteURL{0}",i);
 					string strImageTag = String.Format("siteImage{0}", i);
-        			string strDescriptionTag = String.Format("siteDescription{0}", i);
+					string strDescriptionTag = String.Format("siteDescription{0}", i);
 
-		          	string strName=xmlreader.GetValueAsString("rss",strNameTag,"");
-		          	string strURL=xmlreader.GetValueAsString("rss",strURLTag,"");
-					      string strImage = xmlreader.GetValueAsString("rss", strImageTag, "");
-        			  string strDescription = xmlreader.GetValueAsString("rss", strDescriptionTag, "");
+					string strName=xmlreader.GetValueAsString("rss",strNameTag,"");
+					string strURL=xmlreader.GetValueAsString("rss",strURLTag,"");
+					string strImage = xmlreader.GetValueAsString("rss", strImageTag, "");
+					string strDescription = xmlreader.GetValueAsString("rss", strDescriptionTag, "");
 
-		          	if (strName.Length>0 && strURL.Length>0)
-		          	{
-                  if (strImage.Length==0) strImage=DEFAULT_NEWS_ICON;
+					if (strName.Length>0 && strURL.Length>0)
+					{
+						if (strImage.Length==0) strImage=DEFAULT_NEWS_ICON;
 
-		          		if (firstSite == "")
-		          		{
-		          			m_strSiteName=strName;
-    			    		  m_strSiteURL=strURL;
-		          			m_strSiteIcon = strImage;
-		          			m_strDescription = strDescription;
-		          			firstSite = strURL;
-		          		}
+						if (firstSite == "")
+						{
+							m_strSiteName=strName;
+							m_strSiteURL=strURL;
+							m_strSiteIcon = strImage;
+							m_strDescription = strDescription;
+							firstSite = strURL;
+						}
 
-		            	Site loc = new Site();
-		            	loc.m_Name=strName;
-		            	loc.m_URL=strURL;
-		          		loc.m_Image = strImage;
-		          		loc.m_Description = strDescription;
-		            	m_sites.Add(loc);
-		          	}
-		        }
-      		}
+						Site loc = new Site();
+						loc.m_Name=strName;
+						loc.m_URL=strURL;
+						loc.m_Image = strImage;
+						loc.m_Description = strDescription;
+						m_sites.Add(loc);
+					}
+				}
+
+				// General settings
+				m_iRSSRefresh=xmlreader.GetValueAsInt("rss","iRefreshTime",15);
+				m_bRSSAutoRefresh=false;
+				if (xmlreader.GetValueAsInt("rss","bAutoRefresh",0) != 0)
+					m_bRSSAutoRefresh=true;
+			}
 		}
 
 		void SaveSettings()
@@ -274,18 +315,7 @@ namespace MediaPortal.GUI.RSS
 			}
 
 			LoadSettings();
-			UpdateButtons();
-
-      TimeSpan ts=DateTime.Now-m_lRefreshTime;
-
-      if(ts.TotalMinutes >= m_iRSSRefresh && m_strSiteURL!="" )
-      {
-// Disabled for now to avoid downloading twice. Until refesh is implemented.
-//       	Download(new Uri(m_strSiteURL));
-       	UpdateButtons();
-      }
-
-      UpdateNews();
+      UpdateNews(true);
 		}
 
 		void UpdateButtons()
@@ -502,23 +532,22 @@ namespace MediaPortal.GUI.RSS
 		}
 
 		GUIListItem GetSelectedItem()
-    	{
-      		int iControl;
+   	{
+   		int iControl;
 
-      	  iControl=(int)Controls.CONTROL_LIST;
+   	  iControl=(int)Controls.CONTROL_LIST;
+     	GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
+     	return item;
+   	}
 
-	      	GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
-	      	return item;
-    	}
+		void UpdateDetails()
+    {
+      GUIListItem item = GetSelectedItem();
+	    if (item==null) return;
 
-		void OnClick(int iItem)
-	    {
-	      GUIListItem item = GetSelectedItem();
-	      if (item==null) return;
-
-	      feed_details feed = (feed_details)item.MusicTag;
-	      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, feed.m_description);
-	    }
+      feed_details feed = (feed_details)item.MusicTag;
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, feed.m_description);
+    }
 
 	}
 }
