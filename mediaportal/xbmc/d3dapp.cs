@@ -1117,6 +1117,11 @@ namespace MediaPortal
       }
 
       HandleCursor();
+
+      if ( (System.Windows.Forms.Form.ActiveForm != this) && (alwaysOnTop) )
+      {
+        this.Activate();
+      }
     }
 
 
