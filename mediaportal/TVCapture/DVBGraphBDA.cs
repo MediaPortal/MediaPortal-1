@@ -146,6 +146,9 @@ namespace MediaPortal.TV.Recording
 		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
 		int                         m_iRetyCount=0;
+#if DUMP
+		System.IO.FileStream fileout;
+#endif
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -729,6 +732,13 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void DeleteGraph()
 		{
+#if DUMP
+			if (fileout!=null)
+			{
+				fileout.Close();
+				fileout=null;
+			}
+#endif
 			if (m_graphState < State.Created) 
 				return;
 			m_iPrevChannel = -1;
@@ -2292,6 +2302,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (channelInfo.pid_list==null) return;
 				if (channelInfo.pid_list.Count==0) return;
+				
 				//got all details. Log them
 				shouldDecryptChannel=false;
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
@@ -2927,6 +2938,18 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
+#if DUMP
+			for(int pointer=add;pointer<end;pointer+=188)
+			{
+				TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+				if (header.Pid==currentTuningObject.AudioPid)
+				{
+					byte[] tmpBuffer=new byte[188];
+					Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
+					fileout.Write(tmpBuffer,0,tmpBuffer.Length);
+				}
+			}
+#endif
 			return 0;
 		}
 
@@ -3186,6 +3209,9 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Radio) 
 			{
+#if DUMP
+				fileout = new System.IO.FileStream("audiodump.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
+#endif
 				if (m_graphState!=State.Created)  return;
 				if (Vmr9!=null)
 				{
