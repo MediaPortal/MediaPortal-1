@@ -42,6 +42,7 @@ namespace MediaPortal.TV.Recording
     int                     m_iCountryCode=31;
     bool                    m_bUseCable=false;
     DateTime                m_StartTime=DateTime.Now;
+    int                     m_iPrevChannel=-1;
 
     /// <summary>
     /// Constructor
@@ -64,6 +65,7 @@ namespace MediaPortal.TV.Recording
     public bool CreateGraph()
     {
       if (m_graphState!=State.None) return false;
+      m_iPrevChannel=-1;
       DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
       int hr=0;
       Filters filters = new Filters();
@@ -173,6 +175,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState < State.Created) return;
 
+      m_iPrevChannel=-1;
       DirectShowUtil.DebugWrite("SinkGraph:DeleteGraph()");
       StopRecording();
       StopTimeShifting();
@@ -398,7 +401,20 @@ namespace MediaPortal.TV.Recording
         }
         catch(Exception){} 
       }
-			DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
+
+      bool bFixCrossbar=true;
+      if (m_iPrevChannel>=0)
+      {
+        if (m_iPrevChannel< 1000 && iChannel < 1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1000 && iChannel ==1000) bFixCrossbar=false;
+        if (m_iPrevChannel==1001 && iChannel ==1001) bFixCrossbar=false;
+        if (m_iPrevChannel==1002 && iChannel ==1002) bFixCrossbar=false;
+      }
+      if (bFixCrossbar)
+      {
+        DsUtils.FixCrossbarRouting(m_captureGraphBuilder,m_captureFilter, iChannel<1000, (iChannel==1001), (iChannel==1002), (iChannel==1000) );
+      }
+      m_iPrevChannel=iChannel;
       m_StartTime=DateTime.Now;
     }
 
