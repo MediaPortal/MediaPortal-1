@@ -1672,6 +1672,31 @@
 		<id>491</id>
 		<value>Use big icons</value>
 	</string>
+
+
+	<string>
+		<id>500</id>
+		<value>File menu</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Set as destiantion</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Unable to complete action</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Delete this folder</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Goto destination</value>
+	</string>
+	
+	
+	
 	<string>
 		<id>600</id>
 		<value>TVGuide</value>
