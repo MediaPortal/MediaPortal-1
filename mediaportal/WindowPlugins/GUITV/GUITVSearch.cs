@@ -125,10 +125,6 @@ namespace MediaPortal.GUI.TV
           TVDatabase.GetRecordings(ref _recordings);
           Update();
 					
-					
-					GUIControl.ClearControl(GetID, (int)Controls.btnLetter);
-					GUIControl.ClearControl(GetID, (int)Controls.btnShow);
-					GUIControl.ClearControl(GetID, (int)Controls.btnEpisode);
 					GUIControl.AddItemLabelControl(GetID,(int)Controls.btnLetter,"#");
 					for (char k='A'; k <='Z'; k++)
 					{
@@ -576,6 +572,7 @@ namespace MediaPortal.GUI.TV
       else
         GUIControl.SelectControl(GetID, (int)Controls.SortAscending);
 
+			UpdateStateButtons();
     }
     #region Sort Members
     void OnSort()
@@ -872,6 +869,22 @@ namespace MediaPortal.GUI.TV
 			{
 				GUIPropertyManager.SetProperty("#TV.Search.thumb","defaultVideoBig.png");
 			}
+		}
+		void UpdateStateButtons()
+		{
+				GUIControl.DeSelectControl(GetID,(int)Controls.SearchByDescription);
+			GUIControl.DeSelectControl(GetID,(int)Controls.SearchByTitle);
+			GUIControl.DeSelectControl(GetID,(int)Controls.SearchByGenre);
+			if (_SearchMode==SearchMode.Title)
+				GUIControl.SelectControl(GetID,(int)Controls.SearchByTitle);
+			if (_SearchMode==SearchMode.Description)
+				GUIControl.SelectControl(GetID,(int)Controls.SearchByDescription);
+			if (_SearchMode==SearchMode.Genre)
+				GUIControl.SelectControl(GetID,(int)Controls.SearchByGenre);
+					
+			GUIControl.ClearControl(GetID, (int)Controls.btnLetter);
+			GUIControl.ClearControl(GetID, (int)Controls.btnShow);
+			GUIControl.ClearControl(GetID, (int)Controls.btnEpisode);
 		}
 	}
 }
