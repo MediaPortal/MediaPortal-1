@@ -112,6 +112,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label21;
 		private System.Windows.Forms.Button button19;
 		private System.Windows.Forms.Button button20;
+		private System.Windows.Forms.CheckBox checkBox5;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
@@ -218,6 +219,7 @@ namespace MediaPortal.Configuration.Sections
 			this.button11 = new System.Windows.Forms.Button();
 			this.treeView4 = new System.Windows.Forms.TreeView();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.checkBox5 = new System.Windows.Forms.CheckBox();
 			this.button20 = new System.Windows.Forms.Button();
 			this.button12 = new System.Windows.Forms.Button();
 			this.button9 = new System.Windows.Forms.Button();
@@ -624,7 +626,7 @@ namespace MediaPortal.Configuration.Sections
 			this.treeView1.Location = new System.Drawing.Point(8, 48);
 			this.treeView1.Name = "treeView1";
 			this.treeView1.SelectedImageIndex = -1;
-			this.treeView1.Size = new System.Drawing.Size(232, 224);
+			this.treeView1.Size = new System.Drawing.Size(232, 200);
 			this.treeView1.Sorted = true;
 			this.treeView1.TabIndex = 5;
 			this.treeView1.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeSelect);
@@ -827,6 +829,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.checkBox5);
 			this.groupBox5.Controls.Add(this.button20);
 			this.groupBox5.Controls.Add(this.button12);
 			this.groupBox5.Controls.Add(this.button9);
@@ -840,6 +843,17 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox5.TabIndex = 22;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Select Channels";
+			// 
+			// checkBox5
+			// 
+			this.checkBox5.Checked = true;
+			this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkBox5.Location = new System.Drawing.Point(8, 280);
+			this.checkBox5.Name = "checkBox5";
+			this.checkBox5.Size = new System.Drawing.Size(144, 16);
+			this.checkBox5.TabIndex = 26;
+			this.checkBox5.Text = "Make Provider-Groups";
 			// 
 			// button20
 			// 
@@ -866,7 +880,7 @@ namespace MediaPortal.Configuration.Sections
 			// button9
 			// 
 			this.button9.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button9.Location = new System.Drawing.Point(192, 280);
+			this.button9.Location = new System.Drawing.Point(192, 256);
 			this.button9.Name = "button9";
 			this.button9.Size = new System.Drawing.Size(48, 21);
 			this.button9.TabIndex = 23;
@@ -876,7 +890,7 @@ namespace MediaPortal.Configuration.Sections
 			// button8
 			// 
 			this.button8.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button8.Location = new System.Drawing.Point(136, 280);
+			this.button8.Location = new System.Drawing.Point(136, 256);
 			this.button8.Name = "button8";
 			this.button8.Size = new System.Drawing.Size(48, 21);
 			this.button8.TabIndex = 22;
@@ -888,7 +902,7 @@ namespace MediaPortal.Configuration.Sections
 			this.checkBox2.Checked = true;
 			this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBox2.Location = new System.Drawing.Point(8, 280);
+			this.checkBox2.Location = new System.Drawing.Point(8, 256);
 			this.checkBox2.Name = "checkBox2";
 			this.checkBox2.Size = new System.Drawing.Size(88, 16);
 			this.checkBox2.TabIndex = 16;
@@ -2117,13 +2131,15 @@ namespace MediaPortal.Configuration.Sections
 								if(provider==null)
 									provider="Unknown Provider";
 
-								TVGroup group=new TVGroup();
-								group.GroupName=provider;
+								if(checkBox5.Checked)// set provider grpos and map channels
+								{
+									TVGroup group=new TVGroup();
+									group.GroupName=provider;
 								
-								int groupID=TVDatabase.AddGroup(group);
-								group.ID=groupID;
-								TVDatabase.MapChannelToGroup(group,tv);
-
+									int groupID=TVDatabase.AddGroup(group);
+									group.ID=groupID;
+									TVDatabase.MapChannelToGroup(group,tv);
+								}
 								ret=TVDatabase.AddSatChannel(dbID,ch.freq,ch.symb,6,ch.lnbkhz,ch.diseqc,ch.program_number,
 									ch.serviceType,provider,tv.Name,(ch.eitSchedule?1:0),(ch.eitPreFollow?1:0),
 									audioPid,videoPid,ac3Pid,otherAudio[0],otherAudio[1],subTitlePid,teleTextPid,(ch.scrambled?1:0),ch.pol,ch.lnb01,ch.networkID,ch.transportStreamID,ch.pcr_pid,langString,otherAudioLang[0],otherAudioLang[1],ch.pidCache,0,ch.network_pmt_PID);
