@@ -55,6 +55,7 @@ My TV:
     - NOW button to get a list of all available programs currently on TV
 
  TVSetup
+    - make it possible to map an input to multiple channels/inputs. This wil make it possible to use the guide to make a recording from an analog input.
     - Have a manual finetune 
     - Manual tune ala autotune but let user enter channel and then allow finetune
     - Make it possible to enter a name manualy for an autotuned found channel
