@@ -20,16 +20,16 @@ My TV:
      
   TVGuide:
      - 
-
+  
   Scheduler:
-
+     -
+  
   Capture:
-    - time shifting. This allows you to pause/ FF/RW live tv      
-    - add support for digital capture cards (BDA tuners)
-    - support multiple tuners/capture cards
-    - brightness/contrast etc. control
-    - stutter /avsync ?
-    - store property page settings...
+     - time shifting. This allows you to pause/ FF/RW live tv      
+     - add support for digital capture cards (BDA tuners)
+     - support multiple tuners/capture cards
+     - stutter /avsync ?
+     - store property page settings...
     
 My Music:
   - faster start of 1st song played
@@ -48,13 +48,13 @@ Video:
   - bookmarks
   - 1st time it takes a long time b4 OSD appears
   - OSD: when submenu is opened, dont use the osd timeout
+  
 Pictures:
   
 Settings:
   - all :-)
 
 General:
-  - setup:add timezone correction for tvguide
   - setup:Auto Tune 
   - caller ID
   - seperate module/database for TV-series
@@ -66,8 +66,7 @@ General:
      - in GUI: slide in OSD when mouse touches bottom of screen
      - scrollbar
      - my weather: <> arrows
-        
-  - OSD keyboard : add mouse control & keyboard control
+     - OSD keyboard 
   - my files  
   - my programs
   - autoplay anything thats in the cd/dvd

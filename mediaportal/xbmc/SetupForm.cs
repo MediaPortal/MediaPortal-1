@@ -2418,9 +2418,12 @@ namespace MediaPortal
           ListViewItem item=view.Items[i];
           strName=item.Text;
           strPath=item.SubItems[1].Text;
-          if (item.SubItems[2].Text=="X")
+          if (item.SubItems.Count>=3)
           {
-            xmlWriter.SetValue(strTag, "default",strName);
+            if (item.SubItems[2].Text=="X")
+            {
+              xmlWriter.SetValue(strTag, "default",strName);
+            }
           }
         }
         xmlWriter.SetValue(strTag,strShareName,strName);
