@@ -263,7 +263,7 @@ namespace MediaPortal.GUI.Library
         {
           pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.ThumbnailImage, 0x0);
           pImage.KeepAspectRatio = true;
-          pImage.Zoom = (bFocus && Focus);
+          pImage.Zoom = !pItem.IsFolder;
           pImage.AllocResources();
           pItem.Thumbnail = pImage;
           int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
@@ -279,7 +279,7 @@ namespace MediaPortal.GUI.Library
             pImage.FreeResources();
             pImage.AllocResources();
           }
-          pImage.Zoom = (bFocus && Focus);
+          pImage.Zoom = !pItem.IsFolder;
           pImage.Width = m_iThumbWidth+2*iOverSized;
           pImage.Height = m_iThumbHeight+2*iOverSized;
           int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.Library
           {
             pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth+2*iOverSized, m_iThumbHeight+2*iOverSized, pItem.IconImageBig, 0x0);
             pImage.KeepAspectRatio = true;
-            pImage.Zoom = (bFocus && Focus);
+            pImage.Zoom = !pItem.IsFolder;
             pImage.AllocResources();
             pItem.IconBig = pImage;
             int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
@@ -308,7 +308,7 @@ namespace MediaPortal.GUI.Library
           }
           if (null != pImage)
           {
-            pImage.Zoom = (bFocus && Focus);
+            pImage.Zoom = !pItem.IsFolder;
             pImage.Width = m_iThumbWidth+2*iOverSized;
             pImage.Height = m_iThumbHeight+2*iOverSized;
             int xOff = (m_iThumbWidth+2*iOverSized - pImage.RenderWidth) / 2;
