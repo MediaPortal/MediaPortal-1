@@ -21,6 +21,7 @@ My Radio:
          
 My TV:
   general
+    - show now & later in TV osd
     - support for DVB-T/DVB-S/DVB-C digital capture cards (BDA tuners)
     - Video network broadcasting...so we can send live video streams(from a capture device) to other networked computers..
     - watch Live TV on two TVs if user has two Tuners
@@ -29,20 +30,12 @@ My TV:
 	- option:show fullscreen TV when going to my tv (instead of windowed)
 	- option:show live tv in 'tv gfx' on home
 	- A way to browse and resolve recording conflicts. 
-	- support of external tuners (http://www.usbuirt.com/) (xbmc-er is looking at this)
 	- picture in picture
 	- TV-out through PVR 350
   
   Fullscreen TV:
-	- when in FF mode, auto stop when live-point is reached
   
   TV OSD:
-     - timeshifting info:
-        - show how much of current running program is recorded
-        - which part has been watched  
-        - which part isnt watched yet
-        - where in time you're watching
-     - show description of current program
      - record this program now option
      - Some sort of a TV OSD system. Most TV OSDs can be browsed with the standard keys (0-9, play, pause, etc. up, down, left, right, enter) and the four special color keys (red, green, yellow and blue)
      
@@ -64,7 +57,6 @@ My TV:
 My Music: (int_20h)
   - show which songs are 'queued'
   - highlight currently playing file somehow
-  - search songs by genre,artist,album (based on music database)
   - favorite system to add an album, song, artists to your favorites
   - add new window called favorites which shows you your favorites artist,alums,songs or... and allows you to select & play them
   - faster start of 1st song played
