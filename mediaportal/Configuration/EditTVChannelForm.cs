@@ -479,15 +479,15 @@ namespace MediaPortal.Configuration
       switch(inputComboBox.Text)
       {
         case "SVHS":
-          channelTextBox.Text = ExternalInputs.svhs.ToString();
+          channelTextBox.Text = ((int)ExternalInputs.svhs).ToString();
           break;
 
         case "Composite #1":
-          channelTextBox.Text = ExternalInputs.cvbs1.ToString();
+          channelTextBox.Text = ((int)ExternalInputs.cvbs1).ToString();
           break;
 
         case "Composite #2":
-          channelTextBox.Text = ExternalInputs.cvbs2.ToString();
+          channelTextBox.Text = ((int)ExternalInputs.cvbs2).ToString();
           break;
       }
     }
