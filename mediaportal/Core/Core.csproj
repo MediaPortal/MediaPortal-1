@@ -1074,6 +1074,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "PlayList\PlayListWPL.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "RedEye\RedEye.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

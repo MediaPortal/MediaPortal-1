@@ -296,6 +296,7 @@ namespace MediaPortal.Util
 				if (strExtFile==".m3u") return true;
 				if (strExtFile==".pls") return true;
 				if (strExtFile==".b4s") return true;
+				if (strExtFile==".wpl") return true;
 			}
 			catch(Exception)
 			{

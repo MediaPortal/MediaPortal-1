@@ -26,6 +26,10 @@ namespace MediaPortal.Playlists
 			{
 				return new PlayListB4S();
 			}
+			if (strExtension==".wpl")
+			{
+				return new PlayListWPL();
+			}
 			return null;
 		}
 
@@ -36,6 +40,7 @@ namespace MediaPortal.Playlists
 			if (strExtension==".m3u") return true;
 			if (strExtension==".pls") return true;
 			if (strExtension==".b4s") return true;
+			if (strExtension==".wpl") return true;
 			return false;
 		}
 	}
