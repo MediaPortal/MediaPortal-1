@@ -205,9 +205,11 @@ namespace MediaPortal.Player
       try 
       {
         Log.Write("DVDPlayer:cleanup DShow graph");
-        if( dvdCtrl != null )
-          hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
-
+				if( dvdCtrl != null )
+				{
+					hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
+					dvdCtrl.Stop();
+				}
         if( mediaCtrl != null )
         {
           hr = mediaCtrl.Stop();

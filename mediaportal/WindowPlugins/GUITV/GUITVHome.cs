@@ -119,6 +119,12 @@ namespace MediaPortal.GUI.TV
 						//yes, are we recording this channel already ?
 						if (!Recorder.IsRecordingChannel(channel))
 						{
+							if (GUIGraphicsContext.IsFullScreenVideo)
+							{
+								Recorder.RecordNow(channel,true);
+								return;
+							}
+
 							TVProgram prog=m_util.GetCurrentProgram(channel);
 							if (prog!=null)
 							{

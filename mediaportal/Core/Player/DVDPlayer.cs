@@ -444,8 +444,11 @@ namespace MediaPortal.Player
       try 
       {
         Log.Write("DVDPlayer:cleanup DShow graph");
-        if( dvdCtrl != null )
-          hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
+				if( dvdCtrl != null )
+				{
+					hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
+					dvdCtrl.Stop();
+				}
 
         if( mediaCtrl != null )
         {
@@ -1100,6 +1103,11 @@ namespace MediaPortal.Player
       if( (mediaCtrl == null) ||
         ((m_state != PlayState.Playing) && (m_state != PlayState.Paused) ) )
         return;
+			if( dvdCtrl != null )
+			{
+				dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
+				dvdCtrl.Stop();
+			}
       int hr = mediaCtrl.Stop();
       if( hr >= 0 )
       {
