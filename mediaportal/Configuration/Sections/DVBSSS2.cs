@@ -111,6 +111,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label19;
 		private System.Windows.Forms.Label label20;
 		private System.Windows.Forms.Label label21;
+		private System.Windows.Forms.Button button19;
+		private System.Windows.Forms.Button button20;
 		
 		/// <summary> 
 		/// Erforderliche Designervariable.
@@ -217,6 +219,7 @@ namespace MediaPortal.Configuration.Sections
 			this.button11 = new System.Windows.Forms.Button();
 			this.treeView4 = new System.Windows.Forms.TreeView();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.button20 = new System.Windows.Forms.Button();
 			this.button12 = new System.Windows.Forms.Button();
 			this.button9 = new System.Windows.Forms.Button();
 			this.button8 = new System.Windows.Forms.Button();
@@ -227,6 +230,7 @@ namespace MediaPortal.Configuration.Sections
 			this.feedback = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.button19 = new System.Windows.Forms.Button();
 			this.label15 = new System.Windows.Forms.Label();
 			this.treeView3 = new System.Windows.Forms.TreeView();
 			this.treeView2 = new System.Windows.Forms.TreeView();
@@ -753,7 +757,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Size = new System.Drawing.Size(440, 397);
 			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Channels";
+			this.tabPage2.Text = "Scan";
 			// 
 			// groupBox6
 			// 
@@ -825,6 +829,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.button20);
 			this.groupBox5.Controls.Add(this.button12);
 			this.groupBox5.Controls.Add(this.button9);
 			this.groupBox5.Controls.Add(this.button8);
@@ -839,6 +844,18 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox5.TabIndex = 22;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Select Channels";
+			// 
+			// button20
+			// 
+			this.button20.Enabled = false;
+			this.button20.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button20.Location = new System.Drawing.Point(56, 24);
+			this.button20.Name = "button20";
+			this.button20.Size = new System.Drawing.Size(88, 21);
+			this.button20.TabIndex = 25;
+			this.button20.Text = "Save list...";
+			this.button20.Visible = false;
+			this.button20.Click += new System.EventHandler(this.button20_Click);
 			// 
 			// button12
 			// 
@@ -927,6 +944,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.button19);
 			this.tabPage3.Controls.Add(this.label15);
 			this.tabPage3.Controls.Add(this.treeView3);
 			this.tabPage3.Controls.Add(this.treeView2);
@@ -938,6 +956,16 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.Size = new System.Drawing.Size(440, 397);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Channel-Edit";
+			// 
+			// button19
+			// 
+			this.button19.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button19.Location = new System.Drawing.Point(240, 368);
+			this.button19.Name = "button19";
+			this.button19.Size = new System.Drawing.Size(80, 24);
+			this.button19.TabIndex = 9;
+			this.button19.Text = "Delete";
+			this.button19.Click += new System.EventHandler(this.button19_Click);
 			// 
 			// label15
 			// 
@@ -1502,6 +1530,108 @@ namespace MediaPortal.Configuration.Sections
 				EnableSatConfig();
 			}
 		}
+		void ChannelToNode(DVBChannel ch,TreeNode parent)
+		{
+			if(parent==null)
+				return;
+
+			TreeNode node;
+
+			node=new TreeNode("AC3:="+ch.AC3Pid.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO1:="+ch.Audio1.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO2:="+ch.Audio2.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO3:="+ch.Audio3.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO-LANG:="+ch.AudioLanguage);
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO1-LANG:="+ch.AudioLanguage1);
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO2-LANG:="+ch.AudioLanguage2);
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO3-LANG:="+ch.AudioLanguage3);
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("AUDIO:="+ch.AudioPid.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("DISEQC:="+ch.DiSEqC.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("ECM:="+ch.ECMPid.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("FEC:="+ch.FEC.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("FREQ:="+ch.Frequency.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("EIT-PF:="+ch.HasEITPresentFollow.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("EIT-SCHED:="+ch.HasEITSchedule.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("ID:="+ch.ID.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("SCRAMBLED:="+ch.IsScrambled.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("LNBFREQ:="+ch.LNBFrequency.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("LNBKHZ:="+ch.LNBKHz.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("NET-ID:="+ch.NetworkID.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("PCR:="+ch.PCRPid.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("PMT:="+ch.PMTPid.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("POL:="+ch.Polarity.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("SID:="+ch.ProgramNumber.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("SERVICENAME:="+ch.ServiceName);
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("PROV-NAME:="+ch.ServiceProvider);
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("SERVICE-TYPE:="+ch.ServiceType.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("TXTPID:="+ch.TeletextPid.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("SYMB:="+ch.Symbolrate.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("TSID:="+ch.TransportStreamID.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+			node=new TreeNode("VIDEO:="+ch.VideoPid.ToString());
+			node.Tag="property";
+			parent.Nodes.Add(node);
+
+		}
 		private void DisableSatConfig()
 		{
 				diseqcb.Enabled=
@@ -1545,14 +1675,18 @@ namespace MediaPortal.Configuration.Sections
 		void ExportTreeView()
 		{
 			
-			IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
-			System.IO.Stream stream = new System.IO.FileStream(Application.StartupPath+@"dvb-ss2-channelTree.xml", System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
-			TreeNode root = new TreeNode();
-			foreach(TreeNode node in treeView1.Nodes)
-				root.Nodes.Add((TreeNode)node.Clone());
+			DialogResult res=sfd.ShowDialog();
+			if(res==DialogResult.OK)
+			{
+				IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
+				System.IO.Stream stream = new System.IO.FileStream(sfd.FileName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
+				TreeNode root = new TreeNode();
+				foreach(TreeNode node in treeView1.Nodes)
+					root.Nodes.Add((TreeNode)node.Clone());
 
-			formatter.Serialize(stream, root);
-			stream.Close();
+				formatter.Serialize(stream, root);
+				stream.Close();
+			}
 		}
 		//
 		public void ReadTPList (string fileName)
@@ -1854,6 +1988,7 @@ namespace MediaPortal.Configuration.Sections
 								else
 									node.Checked=true;
 
+								//ChannelToNode(ch,node);
 								tn.Nodes.Add(node);
 								//treeView1.
 							}
@@ -2059,79 +2194,6 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 			return ;
-		}
-
-		private void button9_Click(object sender, System.EventArgs e)
-		{
-//			treeView2.Nodes.Clear();
-//			System.Collections.Hashtable	ht=new Hashtable();
-//			System.Collections.Hashtable	se=new Hashtable();
-//			DVBSections						sec=new DVBSections();
-//			DVBSections.EIT_Program_Info	epi=new MediaPortal.Configuration.Sections.DVBSections.EIT_Program_Info();
-//			int								maxTables=0x51;
-//			sec.Run();
-//			int count=0;
-//			epi.eitList=new ArrayList();
-//
-//				
-//			for(int tabs=0x50;tabs<maxTables;tabs++)
-//			{
-//				GC.Collect();
-//				progressBar2.Value=0;
-//				label7.Text=tabs.ToString();
-//				treeView2.Nodes.Clear();
-//				for(int i=0;i<25000;i++) // run 500 times
-//				{
-//					epi.eitList.Clear();
-//					epi.eitList=sec.GetEITSchedule(tabs);
-//					foreach(DVBSections.EITDescr eitInfo in epi.eitList)
-//					{
-//					
-//						maxTables=eitInfo.lastTable;
-//						textBox1.Text=count.ToString();
-//						sec.SetEITToDatabase(eitInfo);
-//						if(ht.ContainsKey(eitInfo.event_id)==false)
-//						{
-//							treeView2.Nodes.Add(eitInfo.event_name+" "+eitInfo.program_number.ToString());
-//							ht.Add(eitInfo.event_id,eitInfo.event_id);
-//						}
-//					}
-//					progressBar2.Value=i;
-//
-//				}
-//			}
-//			maxTables=0x61;
-//			for(int tabs=0x60;tabs<maxTables;tabs++)
-//			{
-//				GC.Collect();
-//				progressBar2.Value=0;
-//				label7.Text=tabs.ToString();
-//				treeView2.Nodes.Clear();
-//				for(int i=0;i<25000;i++) // run 500 times
-//				{
-//					epi.eitList.Clear();
-//					epi.eitList=sec.GetEITSchedule(tabs);
-//					foreach(DVBSections.EITDescr eitInfo in epi.eitList)
-//					{
-//					
-//						maxTables=eitInfo.lastTable;
-//						textBox1.Text=count.ToString();
-//						sec.SetEITToDatabase(eitInfo);
-//						if(ht.ContainsKey(eitInfo.event_id)==false)
-//						{
-//							treeView2.Nodes.Add(eitInfo.event_name+" "+eitInfo.program_number.ToString());
-//							ht.Add(eitInfo.event_id,eitInfo.event_id);
-//						}
-//					}
-//					progressBar2.Value=i;
-//
-//				}
-//			}
-//			
-//			
-//			System.Windows.Forms.MessageBox.Show("Ready.");
-//			sec.CleanUp();
-
 		}
 
 
@@ -2536,6 +2598,29 @@ namespace MediaPortal.Configuration.Sections
 		{
 			m_stopEPGGrab=true;
 			button16.Enabled=false;
+		}
+
+		private void button20_Click(object sender, System.EventArgs e)
+		{
+			//ExportTreeView();
+		}
+
+		private void button19_Click(object sender, System.EventArgs e)
+		{
+			if(propertyGrid1.SelectedObject !=null)
+			{
+				int channelID=0;
+				DVBChannel ch=(DVBChannel)propertyGrid1.SelectedObject;
+				TVDatabase.RemoveSatChannel((DVBChannel)propertyGrid1.SelectedObject);
+				
+				channelID=TVDatabase.GetChannelId(ch.ServiceName);
+				if(ch.ID==channelID)
+				{
+					TVDatabase.RemoveChannel(ch.ServiceName);
+				}
+				GetChannels();
+			}
+
 		}
 	}// class
 }// namespace
