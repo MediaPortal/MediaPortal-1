@@ -1199,7 +1199,10 @@ namespace MediaPortal.Configuration.Sections
 			foreach(DVBSections.PMTData pids in ch)
 			{
 				if(pids.isAudio && pids.elementary_PID!=audio)
-				{pidArray[n]=pids.elementary_PID;n++;}
+				{
+					if(n<2)
+					pidArray[n]=pids.elementary_PID;n++;
+				}
 			}
 			return null;
 		}
