@@ -29,7 +29,7 @@ copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.pdb .
 copy ..\..\..\mbm5.dll .
 copy ..\..\..\edtftpnet-1.1.3.dll .
 copy ..\..\..\dvblib.dll .
-copy ..\..\..\astra.tpl .
+copy ..\..\..\*.tpl .
 copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
 
