@@ -178,11 +178,11 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.None) return false;
 			Vmr9 =new VMR9Util("mytv");
-			DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
+			Log.Write("SinkGraph:CreateGraph()");
       GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       m_iPrevChannel=-1;
       m_bFirstTune=true;
-      DirectShowUtil.DebugWrite("SinkGraph:CreateGraph()");
+      Log.Write("SinkGraph:CreateGraph()");
       int hr=0;
       Filters filters = new Filters();
 			DShowNET.Filter                  videoCaptureDeviceFilter=null;
@@ -197,45 +197,45 @@ namespace MediaPortal.TV.Recording
 
 			if (videoCaptureDeviceFilter==null) 
 			{
-				DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
+				Log.Write("SinkGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
 				return false;
 			}
 
       // Make a new filter graph
-      DirectShowUtil.DebugWrite("SinkGraph:create new filter graph (IGraphBuilder)");
+      Log.Write("SinkGraph:create new filter graph (IGraphBuilder)");
       m_graphBuilder = (IGraphBuilder) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) ); 
 
       // Get the Capture Graph Builder
-      DirectShowUtil.DebugWrite("SinkGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+      Log.Write("SinkGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
       Guid clsid = Clsid.CaptureGraphBuilder2;
       Guid riid = typeof(ICaptureGraphBuilder2).GUID;
       m_captureGraphBuilder = (ICaptureGraphBuilder2) DsBugWO.CreateDsInstance( ref clsid, ref riid ); 
 
-      DirectShowUtil.DebugWrite("SinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+      Log.Write("SinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       hr = m_captureGraphBuilder.SetFiltergraph( m_graphBuilder );
       if( hr < 0 ) 
       {
-        DirectShowUtil.DebugWrite("SinkGraph:link FAILED");
+        Log.Write("SinkGraph:link FAILED");
         return false;
       }
-      DirectShowUtil.DebugWrite("SinkGraph:Add graph to ROT table");
+      Log.Write("SinkGraph:Add graph to ROT table");
       DsROT.AddGraphToRot( m_graphBuilder, out m_rotCookie );
 
       // Get the video device and add it to the filter graph
-			DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
+			Log.Write("SinkGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
       m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
       if (m_captureFilter!=null)
       {
         hr = m_graphBuilder.AddFilter( m_captureFilter, "Video Capture Device" );
         if( hr != 0 ) 
         {
-          DirectShowUtil.DebugWrite("SinkGraph:FAILED:Add Videodevice to filtergraph :0x{0:X}",hr);
+          Log.Write("SinkGraph:FAILED:Add Videodevice to filtergraph :0x{0:X}",hr);
           return false;
         }
       }
       else
       {
-        DirectShowUtil.DebugWrite("SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
+        Log.Write("SinkGraph:FAILED:Unable to create video capture device:{0{", videoCaptureDeviceFilter.Name);
         return false;
       }
 
@@ -243,13 +243,13 @@ namespace MediaPortal.TV.Recording
       // FindInterface will also add any required filters
       // (WDM devices in particular may need additional
       // upstream filters to function).
-      DirectShowUtil.DebugWrite("SinkGraph:get Video stream control interface (IAMStreamConfig)");
+      Log.Write("SinkGraph:get Video stream control interface (IAMStreamConfig)");
       object o;
       Guid cat ;
       Guid iid ;
 
       // Retrieve TV Tuner if available
-      DirectShowUtil.DebugWrite("SinkGraph:Find TV Tuner");
+      Log.Write("SinkGraph:Find TV Tuner");
       o = null;
       cat = FindDirection.UpstreamOnly;
       iid = typeof(IAMTVTuner).GUID;
@@ -260,10 +260,10 @@ namespace MediaPortal.TV.Recording
       }
       if (hr!=0||m_TVTuner==null)
       {
-        DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() FAILED:no tuner found :0x{0:X}",hr);
+        Log.Write("SinkGraph:CreateGraph() FAILED:no tuner found :0x{0:X}",hr);
       }
 			else
-				DirectShowUtil.DebugWrite("SinkGraph:CreateGraph() TV tuner found");
+				Log.Write("SinkGraph:CreateGraph() TV tuner found");
 
       // For some reason, it happens alot that the capture card can NOT be connected (pin 656 for the
       // PRV150MCE) to the encoder because for some reason the videostandard is GONE...
@@ -300,7 +300,7 @@ namespace MediaPortal.TV.Recording
 
       m_FrameSize=m_videoCaptureDevice.GetFrameSize();
 
-      DirectShowUtil.DebugWrite("SinkGraph:capturing:{0}x{1}",m_FrameSize.Width,m_FrameSize.Height);
+      Log.Write("SinkGraph:capturing:{0}x{1}",m_FrameSize.Width,m_FrameSize.Height);
       m_mpeg2Demux=null;
       if (m_videoCaptureDevice.MPEG2)
       {
@@ -343,7 +343,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState < State.Created) return;
 
       m_iPrevChannel=-1;
-      DirectShowUtil.DebugWrite("SinkGraph:DeleteGraph()");
+      Log.Write("SinkGraph:DeleteGraph()");
       StopRecording();
       StopTimeShifting();
       StopViewing();
@@ -430,7 +430,7 @@ namespace MediaPortal.TV.Recording
         return true;
       }
 
-			DirectShowUtil.DebugWrite("SinkGraph:StartTimeShifting()");
+			Log.Write("SinkGraph:StartTimeShifting()");
       m_graphState=State.TimeShifting;
       TuneChannel(standard,iChannelNr, m_iCountryCode);
       m_mpeg2Demux.StartTimeshifting(strFileName);
@@ -442,10 +442,24 @@ namespace MediaPortal.TV.Recording
     /// Connects the videocapture->MPEG2 Demuxer
     /// </summary>
     protected void ConnectVideoCaptureToMPEG2Demuxer()
-    {
-      if (m_videoCaptureDevice==null) return;
+		{
+			Log.Write("SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
+			if (m_captureFilter==null) 
+			{
+				Log.Write("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
+				return;
+			}
+			if (m_videoCaptureDevice==null) 
+			{
+				Log.Write("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED videocapturedevice filter=null");
+				return;
+			}
+			if (m_mpeg2Demux==null) 
+			{
+				Log.Write("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED mpeg2demux filter=null");
+				return;
+			}
       if (m_mpeg2Demux.IsRendered) return;
-			DirectShowUtil.DebugWrite("SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
 
       // connect video capture pin->mpeg2 demux input
       if (!m_videoCaptureDevice.IsMCEDevice)
@@ -457,19 +471,19 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
-      DirectShowUtil.DebugWrite("SinkGraph:find MPEG2 demuxer input pin");
+      Log.Write("SinkGraph:find MPEG2 demuxer input pin");
       IPin pinIn=DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter,PinDirection.Input,0);
       if (pinIn!=null) 
       {
-        DirectShowUtil.DebugWrite("SinkGraph:found MPEG2 demuxer input pin");
+        Log.Write("SinkGraph:found MPEG2 demuxer input pin");
         int hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, pinIn);
         if (hr==0)
-          DirectShowUtil.DebugWrite("SinkGraph:connected video capture out->MPEG2 demuxer input");
+          Log.Write("SinkGraph:connected video capture out->MPEG2 demuxer input");
         else
-          DirectShowUtil.DebugWrite("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
+          Log.Write("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
       }
       else
-        DirectShowUtil.DebugWrite("SinkGraph:FAILED could not find mpeg2 demux input pin");
+        Log.Write("SinkGraph:FAILED could not find mpeg2 demux input pin");
     }
 
     /// <summary>
@@ -483,7 +497,7 @@ namespace MediaPortal.TV.Recording
     {
       if ( m_graphState!=State.TimeShifting) return false;
 
-			DirectShowUtil.DebugWrite("SinkGraph:StopTimeShifting()");
+			Log.Write("SinkGraph:StopTimeShifting()");
 			m_mpeg2Demux.StopTimeShifting();
       m_graphState=State.Created;
 
@@ -517,7 +531,7 @@ namespace MediaPortal.TV.Recording
       {
         TuneChannel(standard,iChannelNr,m_iCountryCode);
       }
-      DirectShowUtil.DebugWrite("SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
+      Log.Write("SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
       m_mpeg2Demux.Record(strFileName, bContentRecording, timeProgStart,m_StartTime);
       m_graphState=State.Recording;
       return true;
@@ -534,7 +548,7 @@ namespace MediaPortal.TV.Recording
     {
       if ( m_graphState!=State.Recording) return;
 
-      DirectShowUtil.DebugWrite("SinkGraph:StopRecording()");
+      Log.Write("SinkGraph:StopRecording()");
       m_mpeg2Demux.StopRecording();
       m_graphState=State.TimeShifting;
     }
@@ -589,7 +603,7 @@ namespace MediaPortal.TV.Recording
       m_iChannelNr=iChannel;
 			m_iCountryCode=country;
     
-      DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tune to channel:{0}", iChannel);
+      Log.Write("SinkGraph:TuneChannel() tune to channel:{0}", iChannel);
       if (iChannel <1000)
       {
         if (m_TVTuner==null) return;
@@ -600,7 +614,7 @@ namespace MediaPortal.TV.Recording
           SetVideoStandard(standard);
           
           
-          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
+          Log.Write("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
             m_iCountryCode,standard.ToString(),
             m_bUseCable);
         }
@@ -618,7 +632,7 @@ namespace MediaPortal.TV.Recording
           double dFreq;
           m_TVTuner.get_VideoFrequency(out iFreq);
           dFreq=iFreq/1000000d;
-          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuned to {0} MHz. tvformat:{1}", dFreq,standard.ToString());
+          Log.Write("SinkGraph:TuneChannel() tuned to {0} MHz. tvformat:{1}", dFreq,standard.ToString());
         }
         catch(Exception){} 
       }
@@ -664,7 +678,7 @@ namespace MediaPortal.TV.Recording
 		public bool StartViewing(AnalogVideoStandard standard,  int iChannelNr,int country)
 		{
 
-			DirectShowUtil.DebugWrite("SinkGraph:StartViewing()");
+			Log.Write("SinkGraph:StartViewing()");
 			if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
 
 			m_iCountryCode=country;
@@ -710,7 +724,7 @@ namespace MediaPortal.TV.Recording
 				iVideoHeight=Vmr9.VideoHeight;
 			}
 
-      DirectShowUtil.DebugWrite("SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
+      Log.Write("SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
       return true;
 
     }
@@ -729,7 +743,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState!=State.Viewing) return false;
        
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-      DirectShowUtil.DebugWrite("SinkGraph:StopViewing()");
+      Log.Write("SinkGraph:StopViewing()");
 			
 				m_mpeg2Demux.StopViewing();
       m_graphState=State.Created;
@@ -945,10 +959,10 @@ namespace MediaPortal.TV.Recording
       int hr=m_IAMAnalogVideoDecoder.get_TVFormat(out currentStandard);
       if (currentStandard==standard) return;
 
-      DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+      Log.Write("SinkGraph:Select tvformat:{0}", standard.ToString());
       if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
       hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-      if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+      if (hr!=0) Log.Write("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
     }
 
 		/// <summary>
