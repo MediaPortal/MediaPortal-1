@@ -511,12 +511,12 @@ namespace MediaPortal.TV.Recording
 				Log.Write("DVBGraphBDA:CreateGraph() FAILED couldnt set advise");
 				return ;
 			}
-			Log.Write("AdivseProgramInfo() done");
+			Log.Write("DVBGraphBDA:AdivseProgramInfo() done");
 		}
 
 		void UnAdviseProgramInfo()
 		{
-			Log.Write("UnAdviseProgramInfo()");
+			Log.Write("DVBGraphBDA:UnAdviseProgramInfo()");
 			if (adviseCookie==0) return;
 			if (m_TIF==null) return;
 			IConnectionPointContainer container = m_TIF as IConnectionPointContainer;
