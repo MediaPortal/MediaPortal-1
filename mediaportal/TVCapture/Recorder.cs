@@ -457,7 +457,14 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
 						rec.Canceled=Utils.datetolong(DateTime.Now);
 						TVDatabase.ChangeRecording(ref rec);
-						dev.Stop();
+						dev.StopRecording();
+
+						//if we're not viewing this card
+						if (m_iCurrentCard!=dev.ID)
+						{
+							//then stop card
+							dev.Stop();
+						}
 					}
 				}
 			}
@@ -486,6 +493,12 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				dev.StopRecording();
+				//if we're not viewing this card
+				if (m_iCurrentCard!=dev.ID)
+				{
+					//then stop card
+					dev.Stop();
+				}
 			}
 		}//static public void StopRecording()
 
