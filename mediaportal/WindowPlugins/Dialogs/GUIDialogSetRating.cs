@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.Player;
 
 namespace MediaPortal.Dialogs
 {
@@ -10,11 +10,21 @@ namespace MediaPortal.Dialogs
 	/// </summary>
 	public class GUIDialogSetRating: GUIWindow
 	{
+		public enum ResultCode
+		{
+			Close,
+			Next,
+			Previous
+		};
 		enum Controls
 		{
-				ID_BUTTON_MIN   =11
+			ID_LABEL_NAME  = 4
+			,	ID_BUTTON_MIN   =11
 			, ID_BUTTON_PLUS  =10
 			, ID_BUTTON_OK = 12
+			, ID_NEXTITEM=13
+			, ID_BUTTON_PLAY=14
+			, ID_PREVITEM=15
 			,	CONTROL_STARS=100
 		};
 
@@ -26,6 +36,9 @@ namespace MediaPortal.Dialogs
     
 		bool m_bPrevOverlay=true;
 		int  m_iRating=1;
+		string fileName;
+		ResultCode resultCode;
+
 		public GUIDialogSetRating()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_DIALOG_RATING;
@@ -118,6 +131,7 @@ namespace MediaPortal.Dialogs
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
+					resultCode=ResultCode.Close;
 					m_bPrevOverlay=GUIGraphicsContext.Overlay;
 					base.OnMessage(message);
 					GUIGraphicsContext.Overlay=false;
@@ -132,8 +146,26 @@ namespace MediaPortal.Dialogs
 					if (iControl==(int)Controls.ID_BUTTON_OK)
 					{
 						Close();
+						resultCode=ResultCode.Close;
 						return true;
 					}
+					if (iControl==(int)Controls.ID_NEXTITEM)
+					{
+						Close();
+						resultCode=ResultCode.Next;
+						return true;
+					}
+					if (iControl==(int)Controls.ID_PREVITEM)
+					{
+						Close();
+						resultCode=ResultCode.Previous;
+						return true;
+					}
+					if (iControl==(int)Controls.ID_BUTTON_PLAY)
+					{
+						g_Player.Play(FileName);
+					}
+
 					if (iControl==(int)Controls.ID_BUTTON_MIN)
 					{
 						if (m_iRating >=1) m_iRating--;
@@ -165,6 +197,13 @@ namespace MediaPortal.Dialogs
 			else SetHeading (GUILocalizeStrings.Get(iString) );
 		}
 
+		public void SetTitle(string title)
+		{
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,(int)Controls.ID_LABEL_NAME,0,0,null);
+			msg.Label=title; 
+			OnMessage(msg);
+		}
+
 		void Update()
 		{
 			for (int i=0; i < 5; ++i)
@@ -184,6 +223,16 @@ namespace MediaPortal.Dialogs
 		{
 			get { return m_iRating;}
 			set {m_iRating=value;}
+		}
+		public string FileName
+		{
+			get { return fileName;}
+			set {fileName=value;}
+		}
+
+		public ResultCode Result
+		{
+			get { return resultCode;}
 		}
 	}
 }

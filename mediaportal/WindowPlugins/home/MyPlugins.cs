@@ -97,9 +97,9 @@ namespace MediaPortal.GUI.Home
       }
       plugins=null;
       m_iCurrentButton=m_iButtons/2;
-      LayoutButtons(0);
-      GUIControl.SetControlLabel(GetID, 200,GetDate());
-      GUIControl.SetControlLabel(GetID, 201,GetTime());
+			LayoutButtons(0);
+			GUIControl.SetControlLabel(GetID, 200,GUIPropertyManager.GetProperty("#date") ); 	 
+			GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 
     }
     public override void OnAction(Action action)
@@ -501,19 +501,6 @@ namespace MediaPortal.GUI.Home
       }
       return strDate;
     }
-		
-    /// <summary>
-    /// Get the current time from the system.
-    /// </summary>
-    /// <returns>A string containing the current time.</returns>
-    // TODO: Localize the time settings based on the user preferences
-    protected string GetTime()
-    {
-      DateTime cur=DateTime.Now;
-      string strTime=cur.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-      return strTime;
-    }
-
     void ProcessPlugins(ref ArrayList plugins)
     {
       foreach (ISetupForm setup in plugins)
@@ -887,11 +874,9 @@ namespace MediaPortal.GUI.Home
       // Set the date & time
       if (DateTime.Now.Minute != m_updateTimer.Minute)
       {
-        m_updateTimer=DateTime.Now;
-        GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
-        GUIControl.SetControlLabel(GetID, 201,GetTime());
-        GUIPropertyManager.SetProperty("#date",GetDate()); 	 
-        GUIPropertyManager.SetProperty("#time",GetTime()); 	 
+				m_updateTimer=DateTime.Now;
+				GUIControl.SetControlLabel(GetID, 200,GUIPropertyManager.GetProperty("#date") ); 	 
+				GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
       }
     }
     #region ISetupForm Members

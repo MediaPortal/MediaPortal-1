@@ -554,7 +554,7 @@ namespace MediaPortal.GUI.Music
 					m_database.AddSongToFavorites(item.Path);
 					break;
 				case 931:// Rating
-					OnSetRating(item);
+					OnSetRating(GetSelectedItemNo());
 					break;
       }
     }
@@ -1165,15 +1165,50 @@ namespace MediaPortal.GUI.Music
       }
     }
     
-		void OnSetRating(GUIListItem item)
+		void OnSetRating(int itemNumber)
 		{
+			GUIListItem item = GetItem(itemNumber);
+			if (item ==null) return;
 			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
 			if (item.MusicTag!=null) 
 			{
 				dialog.Rating=((MusicTag)item.MusicTag).Rating;
+				dialog.SetTitle(((MusicTag)item.MusicTag).Title);
 			}
+			dialog.FileName=item.Path;
 			dialog.DoModal(GetID);
+			if (item.MusicTag!=null) 
+			{
+				((MusicTag)item.MusicTag).Rating=dialog.Rating;
+			}
 			m_database.SetRating(item.Path,dialog.Rating);
+			if (dialog.Result == GUIDialogSetRating.ResultCode.Previous)
+			{
+				while (itemNumber >0)
+				{
+					itemNumber--;
+					item = GetItem(itemNumber);
+					if (!item.IsFolder && !item.IsRemote)
+					{
+						OnSetRating(itemNumber);
+						return;
+					}
+				}
+			}
+
+			if (dialog.Result == GUIDialogSetRating.ResultCode.Next)
+			{
+				while (itemNumber+1 < GetItemCount() )
+				{
+					itemNumber++;
+					item = GetItem(itemNumber);
+					if (!item.IsFolder && !item.IsRemote)
+					{
+						OnSetRating(itemNumber);
+						return;
+					}
+				}
+			}
 		}
 
     void OnQueueItem(int iItem)

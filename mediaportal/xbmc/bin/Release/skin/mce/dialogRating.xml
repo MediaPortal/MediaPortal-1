@@ -23,6 +23,16 @@
 		<textcolor>ffffffff</textcolor> 
 	</control>
 	<control>
+		<description>Rating label</description> 
+		<type>label</type> 
+		<id>3</id> 
+		<posX>190</posX> 
+		<posY>270</posY> 
+		<label>204</label> 
+		<font>font13</font> 
+		<textcolor>ffffffff</textcolor> 
+	</control>
+	<control>
 		<description>right button</description> 
 		<type>button</type> 
 		<id>10</id> 
@@ -35,8 +45,8 @@
 		<label></label> 
 		<onleft>11</onleft> 
 		<onright>10</onright> 
-		<onup>12</onup> 
-		<ondown>12</ondown> 
+		<onup>13</onup> 
+		<ondown>13</ondown> 
 	</control>
 	<control>
 		<description>left button</description> 
@@ -51,15 +61,15 @@
 		<label></label>
 		<onleft>11</onleft> 
 		<onright>10</onright> 
-		<onup>12</onup> 
-		<ondown>12</ondown> 
+		<onup>13</onup> 
+		<ondown>13</ondown> 
 	</control>
 	<control>
 		<description>OK button</description> 
 		<type>button</type> 
 		<id>12</id> 
-		<posX>435</posX> 
-		<posY>355</posY>
+		<posX>440</posX> 
+		<posY>360</posY>
 		<textXOff>10</textXOff>
 		<textYOff>7</textYOff>  
 		<width>105</width> 
@@ -67,11 +77,74 @@
 		<textureFocus>small_button_focus.png</textureFocus>
 		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
 		<label>186</label> 
-		<onleft>10</onleft> 
+		<onleft>13</onleft> 
 		<onright>10</onright> 
 		<onup>10</onup> 
 		<ondown>10</ondown> 
 	</control>
+
+	<control>
+		<description>next item</description> 
+		<type>button</type> 
+		<id>13</id> 
+		<posX>270</posX> 
+		<posY>360</posY> 
+		<width>26</width>
+		<height>27</height>
+		<textureFocus>arrow_round_right_focus.png</textureFocus>
+		<textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+		<label></label> 
+		<onleft>14</onleft> 
+		<onright>12</onright> 
+		<onup>10</onup> 
+		<ondown>10</ondown> 
+	</control>
+	
+	<control>
+		<description>Play</description> 
+		<type>button</type> 
+		<id>14</id> 
+		<posX>240</posX> 
+		<posY>360</posY>
+		<width>26</width>
+		<height>27</height>  
+		<textureFocus>osd_play_focus.png</textureFocus> 
+		<textureNoFocus>osd_play_nofocus.png</textureNoFocus> 
+		<label>-</label> 
+		<font>-</font> 
+		<onleft>15</onleft> 
+		<onright>13</onright> 
+		<onup>10</onup> 
+		<ondown>10</ondown> 
+	</control>
+	<control>
+		<description>previous item</description> 
+		<type>button</type> 
+		<id>15</id> 
+		<posX>210</posX> 
+		<posY>360</posY>
+		<width>26</width>
+		<height>27</height>
+		<textureFocus>arrow_round_left_focus.png</textureFocus>
+		<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+		<label></label>
+		<onleft>15</onleft> 
+		<onright>14</onright> 
+		<onup>10</onup> 
+		<ondown>10</ondown> 
+	</control>
+	
+	<control>
+		<description>Title</description> 
+		<type>label</type> 
+		<id>4</id> 
+		<posX>190</posX> 
+		<posY>335</posY> 
+		<label>204</label> 
+		<font>font13</font> 
+		<textcolor>ffffffff</textcolor> 
+	</control>
+	
 	<control>
 		<type>image</type>
 		<id>100</id>

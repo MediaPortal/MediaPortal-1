@@ -211,8 +211,10 @@ namespace MediaPortal.Dialogs
     }
 
     public void Add(string strLabel)
-    {
-      GUIListItem pItem = new GUIListItem(strLabel);
+		{
+			int iItemIndex = m_vecList.Count+1;
+      GUIListItem pItem = new GUIListItem(iItemIndex.ToString()+" "+strLabel);
+			pItem.ItemId =iItemIndex;
       m_vecList.Add(pItem);
     }
 

@@ -95,8 +95,8 @@ namespace MediaPortal.GUI.Home
       plugins=null;
 			m_iCurrentButton=m_iButtons/2;
 			LayoutButtons(0);
-			GUIControl.SetControlLabel(GetID, 200,GetDate());
-			GUIControl.SetControlLabel(GetID, 201,GetTime());
+			GUIControl.SetControlLabel(GetID, 200,GUIPropertyManager.GetProperty("#date") ); 	 
+			GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 		}
@@ -535,61 +535,6 @@ namespace MediaPortal.GUI.Home
 
 		}
 
-		/// <summary>
-		/// Get the current date from the system and localize it based on the user preferences.
-		/// </summary>
-		/// <returns>A string containing the localized version of the date.</returns>
-		protected string GetDate()
-		{
-			DateTime cur=DateTime.Now;
-			string day;
-			switch (cur.DayOfWeek)
-			{
-				case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(11);	break;
-				case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(12);	break;
-				case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(13);	break;
-				case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(14);	break;
-				case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(15);	break;
-				case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(16);	break;
-				default:	day = GUILocalizeStrings.Get(17);	break;
-			}
-
-			string month;
-			switch (cur.Month)
-			{
-				case 1 :	month= GUILocalizeStrings.Get(21);	break;
-				case 2 :	month= GUILocalizeStrings.Get(22);	break;
-				case 3 :	month= GUILocalizeStrings.Get(23);	break;
-				case 4 :	month= GUILocalizeStrings.Get(24);	break;
-				case 5 :	month= GUILocalizeStrings.Get(25);	break;
-				case 6 :	month= GUILocalizeStrings.Get(26);	break;
-				case 7 :	month= GUILocalizeStrings.Get(27);	break;
-				case 8 :	month= GUILocalizeStrings.Get(28);	break;
-				case 9 :	month= GUILocalizeStrings.Get(29);	break;
-				case 10:	month= GUILocalizeStrings.Get(30);	break;
-				case 11:	month= GUILocalizeStrings.Get(31);	break;
-				default:	month= GUILocalizeStrings.Get(32);	break;
-			}
-
-			string strDate=String.Format("{0} {1} {2}",day, cur.Day, month);
-      if (m_iDateLayout==1)
-      {
-        strDate=String.Format("{0} {1} {2}",day, month, cur.Day);
-      }
-			return strDate;
-		}
-		
-		/// <summary>
-		/// Get the current time from the system.
-		/// </summary>
-		/// <returns>A string containing the current time.</returns>
-		// TODO: Localize the time settings based on the user preferences
-		protected string GetTime()
-		{
-			DateTime cur=DateTime.Now;
-			string strTime=cur.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-			return strTime;
-		}
 
     void ProcessPlugins(ref ArrayList plugins)
     {
@@ -965,10 +910,8 @@ namespace MediaPortal.GUI.Home
 			if (DateTime.Now.Minute != m_updateTimer.Minute)
 			{
 				m_updateTimer=DateTime.Now;
-				GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
-        GUIControl.SetControlLabel(GetID, 201,GetTime());
-        GUIPropertyManager.SetProperty("#date",GetDate()); 	 
-        GUIPropertyManager.SetProperty("#time",GetTime()); 	 
+				GUIControl.SetControlLabel(GetID, 200,GUIPropertyManager.GetProperty("#date") ); 	 
+        GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
 			}
 		}
 

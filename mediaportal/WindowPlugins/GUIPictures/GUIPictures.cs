@@ -663,9 +663,7 @@ namespace MediaPortal.GUI.Pictures
     }
     #endregion
 
-    void OnInfo(int iItem)
-    {
-    }
+    
     void OnClick(int iItem)
     {
       GUIListItem item = GetSelectedItem();
@@ -1165,6 +1163,7 @@ namespace MediaPortal.GUI.Pictures
 			dlg.Add( GUILocalizeStrings.Get(117)); //delete
 			dlg.Add( GUILocalizeStrings.Get(735)); //rotate
 			dlg.Add( GUILocalizeStrings.Get(923)); //show
+			dlg.Add( GUILocalizeStrings.Get(940)); //properties
 
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;
@@ -1180,6 +1179,10 @@ namespace MediaPortal.GUI.Pictures
 
 				case 2: // play
 					OnClick(itemNo);	
+					break;
+
+				case 3: // properties
+					OnInfo(itemNo);	
 					break;
 			}
 		}
@@ -1224,6 +1227,16 @@ namespace MediaPortal.GUI.Pictures
 			{
 					Utils.FileDelete(item.Path);
 			}
+		}
+
+		void OnInfo(int itemNumber)
+		{
+			GUIListItem item=GetItem(itemNumber);
+			if (item==null) return;
+			if (item.IsFolder || item.IsRemote) return;
+			GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_EXIF);
+			exifDialog.FileName=item.Path;
+			exifDialog.DoModal(GetID);
 		}
   }
 }
