@@ -2109,6 +2109,7 @@ namespace MediaPortal.GUI.TV
 							if (rec1.IsRecordingProgram(m_currentProgram))
 							{
 								TVDatabase.RemoveRecordingByTime(rec1);
+								Recorder.StopRecording(rec1);
 								break;
 							}
 						}
