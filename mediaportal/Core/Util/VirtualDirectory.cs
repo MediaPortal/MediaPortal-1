@@ -441,16 +441,19 @@ namespace MediaPortal.Util
           //Log.Write("VirtualDirectory: {0} {1}",file.Name,file.Dir);
           if (file.Dir)
           {
-            item = new GUIListItem();
-            item.IsFolder = true;
-            item.Label = file.Name;
-            item.Label2 = "";
-            item.Path = String.Format("{0}/{1}",strDir,file.Name);
-            item.IsRemote=true;
-            item.FileInfo=null;
-            Utils.SetDefaultIcons(item);
-            Utils.SetThumbnails(ref item);
-            items.Add(item);
+            if (file.Name !="." && !file.Name !="..")
+            {
+              item = new GUIListItem();
+              item.IsFolder = true;
+              item.Label = file.Name;
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}",strDir,file.Name);
+              item.IsRemote=true;
+              item.FileInfo=null;
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
+            }
           }
           else
           {
