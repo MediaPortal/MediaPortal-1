@@ -356,7 +356,7 @@
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="THDTV DVB-t BDA Tuner Filter"       checkdevice="false"></filter>
-        <filter cat="capture"        name="THDTV DVB-t BDA Capture Filter"      checkdevice="false"></filter>
+        <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="false"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
