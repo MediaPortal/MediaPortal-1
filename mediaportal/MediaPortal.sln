@@ -1,6 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
 	ProjectSection(ProjectDependencies) = postProject
+		{3333B71D-6304-452C-BEA5-D037E7B3AA6B} = {3333B71D-6304-452C-BEA5-D037E7B3AA6B}
 		{02FFFC1F-2555-4B99-8B01-3432D0673855} = {02FFFC1F-2555-4B99-8B01-3432D0673855}
 		{96B7452E-8D2B-4EAE-8300-153CCB6C5109} = {96B7452E-8D2B-4EAE-8300-153CCB6C5109}
 		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB} = {C1BCEC3E-6074-4328-B5D9-391A457C8FFB}
@@ -56,6 +57,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVGuideScheduler", "TVGuide
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessPlugins", "ProcessPlugins\ProcessPlugins.csproj", "{3333B71D-6304-452C-BEA5-D037E7B3AA6B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -104,6 +109,10 @@ Global
 		{809F8C77-0EC1-44F9-9536-707A646F43EB}.Debug.Build.0 = Debug|.NET
 		{809F8C77-0EC1-44F9-9536-707A646F43EB}.Release.ActiveCfg = Release|.NET
 		{809F8C77-0EC1-44F9-9536-707A646F43EB}.Release.Build.0 = Release|.NET
+		{3333B71D-6304-452C-BEA5-D037E7B3AA6B}.Debug.ActiveCfg = Debug|.NET
+		{3333B71D-6304-452C-BEA5-D037E7B3AA6B}.Debug.Build.0 = Debug|.NET
+		{3333B71D-6304-452C-BEA5-D037E7B3AA6B}.Release.ActiveCfg = Release|.NET
+		{3333B71D-6304-452C-BEA5-D037E7B3AA6B}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
