@@ -420,11 +420,6 @@ namespace ProgramsDatabase
 
 		public virtual void Write()
 		{
-			//no! quotes  or composite filenames will fuck up in getdirectoryname.......
-			//			if (mFilepath == "")
-			//			{
-			//				mFilepath = System.IO.Path.GetDirectoryName(mFilename);
-			//			}
 			if (mFileID == -1)	
 			{Insert();}
 			else 
@@ -439,11 +434,8 @@ namespace ProgramsDatabase
 				{
 					string strSQL1 = String.Format("delete from filteritem where fileid = {0}", this.FileID);
 					string strSQL2 = String.Format("delete from file where fileid = {0}", this.FileID);
-					Log.Write(" dw sql1 \n{0}", strSQL1);
 					m_db.Execute(strSQL1);
-					Log.Write(" dw sql2 \n{0}", strSQL1);
 					m_db.Execute(strSQL2);
-					Log.Write(" dw sql3 done");
 				}
 				catch (SQLiteException ex) 
 				{	
