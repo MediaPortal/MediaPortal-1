@@ -213,6 +213,8 @@ namespace MediaPortal.TV.Recording
 				for (int j=0; j < m_Recordings.Count;++j)
 				{
 					TVRecording rec =(TVRecording)m_Recordings[j];
+					if (rec.Canceled>0) continue;
+					if (rec.IsDone()) continue;
 					// check which program is running 
 					TVProgram prog=m_TVUtil.GetProgramAt(chan.Name,dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
 
@@ -232,6 +234,9 @@ namespace MediaPortal.TV.Recording
 			for (int j=0; j < m_Recordings.Count;++j)
 			{
 				TVRecording rec =(TVRecording)m_Recordings[j];
+				if (rec.Canceled>0) continue;
+				if (rec.IsDone()) continue;
+
 				// 1st check if the recording itself should b recorded
 				if ( rec.IsRecordingProgramAtTime(DateTime.Now,null,m_iPreRecordInterval, m_iPostRecordInterval) )
 				{
