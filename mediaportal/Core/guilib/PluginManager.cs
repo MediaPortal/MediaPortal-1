@@ -138,6 +138,7 @@ namespace MediaPortal.GUI.Library
 
     static void LoadPlugin(string strFile)
     {
+			Type[] foundInterfaces = null;
       if (!IsPlugInEnabled(strFile)) return;
 			Log.Write("  Load plugins from :{0}", strFile);
       try
@@ -153,8 +154,11 @@ namespace MediaPortal.GUI.Library
             {
               if (t.IsClass)
               {
+								if( t.IsAbstract ) continue;
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
-                Type[] foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IPlugin");
+								try
+								{
+									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IPlugin");
                 if (foundInterfaces.Length>0)
                 {
                   object newObj=(object)Activator.CreateInstance(t);
@@ -163,6 +167,17 @@ namespace MediaPortal.GUI.Library
                   
                   //Log.Write("  load plugin:{0} in {1}",t.ToString(), strFile);
                 }
+								}
+								catch( Exception iPluginException )
+								{
+									Log.Write("Exception while loading IPlugin instances: {0}", t.FullName);
+#if DEBUG
+									Log.Write(iPluginException.Message);
+									Log.Write(iPluginException.StackTrace);
+#endif
+								}
+								try
+								{
                 foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
                 if (foundInterfaces.Length>0)
                 {
@@ -174,6 +189,18 @@ namespace MediaPortal.GUI.Library
                     _SetupForms.Add(setup);
                   }
                 }
+								}
+								catch( Exception iSetupFormException )
+								{
+									Log.Write("Exception while loading ISetupForm instances: {0}", t.FullName);
+#if DEBUG
+									Log.Write(iSetupFormException.Message);
+									Log.Write(iSetupFormException.StackTrace);
+#endif
+								}
+
+								try
+								{
 				        foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IWakeable");
 				        if (foundInterfaces.Length>0)
 				        {
@@ -184,8 +211,17 @@ namespace MediaPortal.GUI.Library
 						        _Wakeables.Add(setup);
 					        }
 				        }
-              }
-            }
+								}
+								catch( Exception iWakeableException )
+								{
+									Log.Write("Exception while loading IWakeable instances: {0}", t.FullName);
+#if DEBUG
+									Log.Write(iWakeableException.Message);
+									Log.Write(iWakeableException.StackTrace);
+#endif
+								}
+							}
+						}
             catch (System.NullReferenceException)
             {
 							
@@ -210,6 +246,7 @@ namespace MediaPortal.GUI.Library
         if (assem!=null)
         {
           Type[] types = assem.GetExportedTypes();
+					Type[] foundInterfaces = null;
 
           foreach (Type t in types)
           {
@@ -217,8 +254,11 @@ namespace MediaPortal.GUI.Library
 						{
               if (t.IsClass)
 							{
+								if( t.IsAbstract ) continue;
                 if (t.IsSubclassOf (typeof(MediaPortal.GUI.Library.GUIWindow)))
-                {
+								{
+									try
+									{
                   object newObj=(object)Activator.CreateInstance(t);
                   GUIWindow win=(GUIWindow)newObj;
                   if (IsWindowPlugInEnabled(win.GetType().ToString()))
@@ -235,8 +275,19 @@ namespace MediaPortal.GUI.Library
                   }
                   //else Log.Write("  plugin:{0} not enabled",win.GetType().ToString());
                 }
+									catch( Exception guiWindowsException )
+									{
+										Log.Write("Exception while loading GUIWindows instances: {0}", t.FullName);
+#if DEBUG
+										Log.Write(guiWindowsException.Message);
+										Log.Write(guiWindowsException.StackTrace);
+#endif
+									}
+								}
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
-                Type[] foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
+								try
+								{
+									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
                 if (foundInterfaces.Length>0)
                 {
                   object newObj=(object)Activator.CreateInstance(t);
@@ -246,6 +297,18 @@ namespace MediaPortal.GUI.Library
                     _SetupForms.Add(setup);
                   }
                 }
+								}
+								catch( Exception iSetupFormException )
+								{
+									Log.Write("Exception while loading ISetupForm instances: {0}", t.FullName);
+#if DEBUG
+									Log.Write(iSetupFormException.Message);
+									Log.Write(iSetupFormException.StackTrace);
+#endif
+								}
+
+								try
+								{
 				        foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IWakeable");
 				        if (foundInterfaces.Length>0)
 				        {
@@ -256,8 +319,17 @@ namespace MediaPortal.GUI.Library
 						        _Wakeables.Add(setup);
 					        }
 				        }
-              }
-            }
+								}
+								catch( Exception iWakeableException )
+								{
+									Log.Write("Exception while loading IWakeable instances: {0}", t.FullName);
+#if DEBUG
+									Log.Write(iWakeableException.Message);
+									Log.Write(iWakeableException.StackTrace);
+#endif
+								}
+							}
+						}
             catch (System.NullReferenceException)
             {
 							
