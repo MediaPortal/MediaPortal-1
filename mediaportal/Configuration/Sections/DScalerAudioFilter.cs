@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
+using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
 using DShowNET;
@@ -177,6 +178,64 @@ namespace MediaPortal.Configuration.Sections
 
 		}
 		#endregion
+
+		public override void LoadSettings()
+		{
+			RegistryKey hkcu = Registry.CurrentUser;
+			RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
+			if (subkey!=null)
+			{
+				Int32 regValue=(Int32)subkey.GetValue("Dynamic Range Control");
+				if (regValue==1) checkBoxDynamicRange.Checked=true;
+				else checkBoxDynamicRange.Checked=false;
+
+				regValue=(Int32)subkey.GetValue("MPEG Audio over SPDIF");
+				if (regValue==1) checkBoxMPEGOverSPDIF.Checked=true;
+				else checkBoxMPEGOverSPDIF.Checked=false;
+
+				regValue=(Int32)subkey.GetValue("Use SPDIF for AC3 & DTS");
+				if (regValue==1) checkBoxSPDIF.Checked=true;
+				else checkBoxSPDIF.Checked=false;
+				
+				regValue=(Int32)subkey.GetValue("SPDIF Audio Time Offset");
+				textBoxAudioOffset.Text=regValue.ToString();
+
+				regValue=(Int32)subkey.GetValue("Speaker Config");
+				comboBoxSpeakerConfig.SelectedIndex=regValue;
+
+				subkey.Close();
+			}
+		}
+		public override void SaveSettings()
+		{
+			RegistryKey hkcu = Registry.CurrentUser;
+			RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
+			if (subkey!=null)
+			{
+				Int32 regValue;
+				if (checkBoxDynamicRange.Checked) regValue=1;
+				else regValue=0;
+				subkey.SetValue("Dynamic Range Control",regValue);
+
+				
+				if (checkBoxMPEGOverSPDIF.Checked) regValue=1;
+				else regValue=0;
+				subkey.SetValue("MPEG Audio over SPDIF",regValue);
+
+				if (checkBoxSPDIF.Checked) regValue=1;
+				else regValue=0;
+				subkey.SetValue("Use SPDIF for AC3 & DTS",regValue);
+
+				regValue=Int32.Parse(textBoxAudioOffset.Text);
+				subkey.SetValue("Use SPDIF for AC3 & DTS",regValue);
+
+				regValue=comboBoxSpeakerConfig.SelectedIndex;
+				subkey.SetValue("Speaker Config",regValue);
+
+				subkey.Close();
+			}
+		}
+
 
 	}
 }
