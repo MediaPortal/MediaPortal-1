@@ -1464,7 +1464,7 @@ namespace MediaPortal.TV.Recording
 
 		void Pause()
 		{	
-			
+			/*
 			Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Pause() {0}",m_cardID);
 			//pause playing graph
 			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID-1))
@@ -1485,13 +1485,13 @@ namespace MediaPortal.TV.Recording
 				}
 				m_mediaControl.GetState(10,out  state);
 				Log.WriteFile(Log.LogType.Log,"Pause() capture graph state:{0}", state.ToString());
-			}
+			}*/
 		}
 
 		void Continue()
 		{
 			//continue recording/timeshifting graph
-			
+			/*
 			Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() {0}",m_cardID);
 			if (m_mediaControl!=null)
 			{
@@ -1517,7 +1517,7 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Log,"Continue() continue timeshift file");
 					g_Player.Pause();
 				}
-			}
+			}*/
 		}
 		#region graph building helper functions
 		void AddPreferredCodecs(bool audio, bool video)
