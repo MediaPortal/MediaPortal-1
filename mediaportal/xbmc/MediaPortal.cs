@@ -414,19 +414,19 @@ public class MediaPortalApp : D3DApp
 
       m_MouseTimeOut=DateTime.Now;
       Cursor.Show();
-    }
+    
 
-
-    float fX= ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
-    float fY= ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
-    float x =(fX*((float)e.X)) - GUIGraphicsContext.OffsetX;
-    float y =(fY*((float)e.Y)) - GUIGraphicsContext.OffsetY;;
-    GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-    if (window!=null)
-    {
-      Action action=new Action(Action.ActionType.ACTION_MOUSE_MOVE,x,y);
-      OnAction(action);
-      
+      float fX= ((float)GUIGraphicsContext.Width) / ((float)this.ClientSize.Width);
+      float fY= ((float)GUIGraphicsContext.Height) / ((float)this.ClientSize.Height);
+      float x =(fX*((float)e.X)) - GUIGraphicsContext.OffsetX;
+      float y =(fY*((float)e.Y)) - GUIGraphicsContext.OffsetY;;
+      GUIWindow window=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+      if (window!=null)
+      {
+        Action action=new Action(Action.ActionType.ACTION_MOUSE_MOVE,x,y);
+        OnAction(action);
+        
+      }
     }
 	}
 
