@@ -6,6 +6,7 @@ mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 
 copy ..\..\..\Dialogs\bin\Release\Dialogs.dll .
+copy ..\..\..\GUIRecipies\bin\Release\GUIRecipies.dll plugins\windows
 copy ..\..\..\GUIPrograms\bin\Release\GUIPrograms.dll plugins\windows
 copy ..\..\..\GUIRSSFeed\bin\Release\GUIRSSFeed.dll plugins\windows
 copy ..\..\..\GUIRadio\bin\Release\GUIRadio.dll plugins\windows

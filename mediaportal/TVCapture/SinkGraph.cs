@@ -193,7 +193,6 @@ namespace MediaPortal.TV.Recording
 
     public bool StartTimeShifting(int iChannelNr, string strFileName)
     {
-      if (m_graphState==State.TimeShifting) return true;
       if (m_graphState!=State.Created) return false;
       if (m_mpeg2Demux==null) return false;
 
@@ -201,6 +200,8 @@ namespace MediaPortal.TV.Recording
       {
         TuneChannel(iChannelNr);
       }
+
+			if (m_graphState==State.TimeShifting) return true;
 
 			if (!m_mpeg2Demux.IsRendered) 
 			{
@@ -243,6 +244,11 @@ namespace MediaPortal.TV.Recording
       m_mpeg2Demux.StopRecording();
       m_graphState=State.TimeShifting;
     }
+
+		public int ChannelNumber
+		{
+			get { return m_iChannelNr;}
+		}
 
     public void TuneChannel(int iChannel)
     {

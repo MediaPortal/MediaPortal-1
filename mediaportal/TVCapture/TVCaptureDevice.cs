@@ -333,7 +333,17 @@ namespace MediaPortal.TV.Recording
 
     public bool StartTimeShifting()
     {
-			if (m_eState==State.Timeshifting) return true;
+			int iChannelNr=GetChannelNr(m_strTVChannel);
+
+			if (m_eState==State.Timeshifting) 
+			{
+				if (m_graph.ChannelNumber!=iChannelNr)
+				{
+					m_graph.TuneChannel(iChannelNr);
+				}
+				return true;
+			}
+
       if (m_eState!=State.Initialized) return false;
       CreateGraph();
       string strRecPath;
@@ -343,8 +353,6 @@ namespace MediaPortal.TV.Recording
         strRecPath=Utils.RemoveTrailingSlash(strRecPath);
       }
       string strFileName=String.Format(@"{0}\live.tv",strRecPath);
-
-      int iChannelNr=GetChannelNr(m_strTVChannel);
     
       bool bResult=m_graph.StartTimeShifting(iChannelNr, strFileName);
       m_eState=State.Timeshifting;
