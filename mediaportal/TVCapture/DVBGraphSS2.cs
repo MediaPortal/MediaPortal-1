@@ -245,7 +245,8 @@ namespace MediaPortal.TV.Recording
 			
 
 			GUIWindow win=GUIWindowManager.GetWindow(7700);
-			win.SetObject(m_ttxt);
+			if(win!=null)
+				win.SetObject(m_ttxt);
 
 			try
 			{
@@ -372,7 +373,7 @@ namespace MediaPortal.TV.Recording
 			{
 					
 				TSHelperTools.TSHeader header=tools.GetHeader((IntPtr)pointer);
-				if(header.Pid==teleTextPid)
+				if(header.Pid==teleTextPid && m_ttxt!=null)
 				{
 					m_ttxt.SaveData((IntPtr)pointer);
 					m_counterTxT+=1;
