@@ -77,11 +77,6 @@ namespace MediaPortal.GUI.Library
             if (cntl!=null) cntl.Animate(timePassed,m_animator);
           }
           m_animator.Advance(timePassed);
-					if (m_animator.IsDone())
-					{
-						ReStorePosition();
-						m_animator=null;
-					}
         }
       }
 
@@ -89,14 +84,28 @@ namespace MediaPortal.GUI.Library
       {
         ((GUIControl)m_Controls[i]).Render(timePassed);
       }
+			
+			if (m_animator!=null)
+			{
+				if (m_animator.IsDone())
+				{
+					ReStorePosition();
+					m_animator=null;
+				}
+			}
     }
 
     public override void FreeResources()
-    {
-        for (int i=0; i < m_Controls.Count;++i)
-        {
-          ((GUIControl)m_Controls[i]).FreeResources();
-        }
+		{
+			if (m_animator!=null)
+			{
+				ReStorePosition();
+				m_animator=null;
+			}
+      for (int i=0; i < m_Controls.Count;++i)
+      {
+        ((GUIControl)m_Controls[i]).FreeResources();
+      }
     }
 
     public override void AllocResources()
