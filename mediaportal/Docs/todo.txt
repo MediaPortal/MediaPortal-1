@@ -119,6 +119,9 @@ setup:
       - map S01 /k01 etc -> channel numbers
       - map autotune <->xmltv
   - setup deinterlace method (vmr9)
+  
+my programs:
+  - program arguments  
 
 General:
   - Support for right to left languages
