@@ -160,17 +160,17 @@ namespace MediaPortal.TV.Database
 					string strChannel=channel;
 					SQLiteResultSet results=null;
 
-					strSQL=String.Format( "select * from tblSatChannels ");
+					strSQL=String.Format( "select * from tblDVBSMapping ");
 					results=m_db.Execute(strSQL);
 					int totalchannels=results.Rows.Count;
 
-					strSQL=String.Format( "select * from tblSatChannels where idChannel = {0} and sServiceType={1}", idChannel,servicetype);
+					strSQL=String.Format( "select * from tblDVBSMapping where idChannel = {0} and sServiceType={1}", idChannel,servicetype);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) 
 					{
 						//
 
-						// fields in tblSatChannels
+						// fields in tblDVBSMapping
 						// idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid
 						// parameter (8)(9)
 						//idChannel,freq,symrate, fec,lnbkhz,diseqc,
@@ -178,7 +178,7 @@ namespace MediaPortal.TV.Database
 						//eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
 						// teltxtpid,scrambled, pol,lnbfreq,networkid
 
-						strSQL=String.Format("insert into tblSatChannels (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
+						strSQL=String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 							idChannel,freq,symrate, fec,lnbkhz,diseqc,
 							prognum,servicetype,provider,channel, eitsched,
 							eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
@@ -211,17 +211,17 @@ namespace MediaPortal.TV.Database
 
 					SQLiteResultSet results=null;
 
-					strSQL=String.Format( "select * from tblSatChannels ");
+					strSQL=String.Format( "select * from tblDVBSMapping ");
 					results=m_db.Execute(strSQL);
 					int totalchannels=results.Rows.Count;
 
-					strSQL=String.Format( "select * from tblSatChannels where idChannel = {0} and sServiceType={1}", ch.ID,ch.ServiceType);
+					strSQL=String.Format( "select * from tblDVBSMapping where idChannel = {0} and sServiceType={1}", ch.ID,ch.ServiceType);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) 
 					{
 						//
 
-						// fields in tblSatChannels
+						// fields in tblDVBSMapping
 						// idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid
 						// parameter (8)(9)
 						//idChannel,freq,symrate, fec,lnbkhz,diseqc,
@@ -229,7 +229,7 @@ namespace MediaPortal.TV.Database
 						//eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
 						// teltxtpid,scrambled, pol,lnbfreq,networkid
 
-						strSQL=String.Format("insert into tblSatChannels (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
+						strSQL=String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 							ch.ID,ch.Frequency,ch.Symbolrate,ch.FEC,ch.LNBKHz,ch.DiSEqC,
 							ch.ProgramNumber,ch.ServiceType,ch.ServiceProvider,ch.ServiceName,(ch.HasEITSchedule==true?1:0),
 							(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
@@ -264,7 +264,7 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return "";
 
 					SQLiteResultSet results;
-					strSQL=String.Format( "select * from tblSatChannels where sProgramNumber={0}", program_number);
+					strSQL=String.Format( "select * from tblDVBSMapping where sProgramNumber={0}", program_number);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) return "";
 					channelName=DatabaseUtility.Get(results,0,"sChannelName");
@@ -297,7 +297,7 @@ namespace MediaPortal.TV.Database
 				{
 					if (null==m_db) return false;
 					string strSQL;
-					strSQL=String.Format("select * from tblSatChannels where idChannel={0} and sServiceType={1}",idChannel,serviceType);
+					strSQL=String.Format("select * from tblDVBSMapping where idChannel={0} and sServiceType={1}",idChannel,serviceType);
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count<1) return false;
@@ -373,7 +373,7 @@ namespace MediaPortal.TV.Database
 
 					RemoveSatChannel(ch);
 					AddSatChannel(ch);
-					/*				  strSQL=String.Format( "update tblSatChannels set (sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23}) where idChannel = {24}", 
+					/*				  strSQL=String.Format( "update tblDVBSMapping set (sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23}) where idChannel = {24}", 
 											ch.Frequency,ch.Symbolrate, ch.FEC,ch.LNBKHz,ch.DiSEqC,
 											ch.ProgramNumber,ch.ServiceType,strProvider,strChannel, (int)(ch.HasEITSchedule==true?1:0),
 											(int)(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
@@ -403,7 +403,7 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return false;
 					DVBChannel dvbChannel=new DVBChannel();
 					string strSQL;
-					strSQL=String.Format("select * from tblSatChannels order by sChannelName");
+					strSQL=String.Format("select * from tblDVBSMapping order by sChannelName");
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
@@ -468,7 +468,7 @@ namespace MediaPortal.TV.Database
 				try
 				{
 					if (null==m_db) return ;
-					string strSQL=String.Format("delete from tblSatChannels where idChannel={0}",ch.ID);
+					string strSQL=String.Format("delete from tblDVBSMapping where idChannel={0}",ch.ID);
 					m_db.Execute(strSQL);
 				  
 			  
@@ -489,7 +489,7 @@ namespace MediaPortal.TV.Database
 				try
 				{
 					if (null==m_db) return ;
-					string strSQL=String.Format("delete from tblSatChannels");
+					string strSQL=String.Format("delete from tblDVBSMapping");
 					m_db.Execute(strSQL);
 				  
 			  

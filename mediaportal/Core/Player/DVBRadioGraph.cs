@@ -691,7 +691,7 @@ namespace MediaPortal.Player
 				try
 				{
 					string strSQL;
-					strSQL=String.Format("select * from tblSatChannels where idChannel={0} and sServiceType=2",(channel>>16));
+					strSQL=String.Format("select * from tblDVBSMapping where idChannel={0} and sServiceType=2",(channel>>16));
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count!=1) return ;
