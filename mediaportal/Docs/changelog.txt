@@ -1,3 +1,6 @@
+15-07-2004  my videos   : fixed : DVD player->blue bars when switching to GUI and back
+15-07-2004  my videos   : fixed : DVD player->video stayed onscreen after stopping DVD
+
 14-07-2004  general     : fixed : after alt+enter you return in home
 
 13-07-2004  general     : fixed : fadelabel didnt worwrap correctly
