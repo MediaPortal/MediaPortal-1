@@ -66,7 +66,7 @@
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
-				<onup>9</onup>
+				<onup>10</onup>
 				<ondown>6</ondown>
 			</control>
 			<control>
@@ -136,20 +136,8 @@
 				<onleft>10</onleft>
 				<onright>50</onright>
 				<onup>11</onup>
-				<ondown>9</ondown>
-				<action>100</action>
-			</control>
-			<control>
-				<description>Clear top100 button</description>
-				<type>button</type>
-				<id>9</id>
-				<posX>60</posX>
-				<posY>301</posY>
-				<label>718</label>
-				<onleft>9</onleft>
-				<onright>50</onright>
-				<onup>10</onup>
 				<ondown>2</ondown>
+				<action>100</action>
 			</control>
 		</control>
 		<control>

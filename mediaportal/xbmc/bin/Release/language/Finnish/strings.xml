@@ -1975,7 +1975,7 @@
         </string>
         <string>
                 <id>682</id>
-                <value>√Ñ‰nitt‰‰</value>
+                <value>ƒ‰nitt‰‰</value>
         </string>
         <string>
                 <id>683</id>
@@ -1988,6 +1988,7 @@
         <string>
                 <id>685</id>
                 <value>J‰rjest‰: Tila</value>
+        </string>
         <string>
                 <id>686</id>
                 <value>Syntynyt</value>
@@ -2371,7 +2372,28 @@
 	        <id>921</id>
 	        <value>Tiedosto latautuu ...</value>
         </string>
-         	<!-- My Status Strings -->
+        <string>
+	        <id>922</id>
+	        <value>Kuvaus</value>
+        </string>
+        <string>
+	        <id>923</id>
+	        <value>N‰yt‰</value>
+        </string>
+        <string>
+	        <id>924</id>
+	        <value>Valikko</value>
+         </string>
+         <string>
+	         <id>925</id>
+	         <value>Poistetaanko elokuva?</value>
+        </string>
+        <string>
+	        <id>926</id>
+	        <value>Lis‰t‰‰n soittolistaan</value>
+        </string>
+
+        <!-- My Status Strings -->
 	<string>
                 <id>1950</id>
                 <value>Oma Tila</value>
@@ -3061,11 +3083,11 @@
         </string>
         <string>
                 <id>12003</id>
-                <value>Omat Videot/Info</value>
+                <value>Omat Videot Info</value>
         </string>
         <string>
                 <id>12004</id>
-                <value>Omat Scriptit/Info</value>
+                <value>Omat Scriptit Info</value>
         </string>
         <string>
                 <id>12005</id>
@@ -3077,7 +3099,7 @@
         </string>
         <string>
                 <id>12007</id>
-                <value>Omat Kuvat/kuvaesitys</value>
+                <value>Omat Kuvatkuvaesitys</value>
         </string>
         <string>
                 <id>12008</id>
