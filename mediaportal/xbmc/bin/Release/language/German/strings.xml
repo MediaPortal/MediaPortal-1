@@ -448,7 +448,7 @@
 	</string> 
 	<string>
 		<id>181</id>
-		<value>Album wählen</value>
+		<value>Film / Album wählen</value>
 	</string> 
 	<string>
 		<id>182</id>
@@ -504,7 +504,7 @@
 	</string> 
 	<string>
 		<id>195</id>
-		<value>Keinen IMDB Eintrag gefunden!</value>
+		<value>Keinen OFDB / IMDB Eintrag gefunden!</value>
 	</string> 
 	<string>
 		<id>196</id>
@@ -512,7 +512,7 @@
 	</string> 
 	<string>
 		<id>197</id>
-		<value>IMDB Info abfragen</value>
+		<value>OFDB / IMDB Info abfragen</value>
 	</string> 
 	<string>
 		<id>198</id>
@@ -1188,7 +1188,7 @@
 	</string>   
 	<string>
 		<id>368</id>
-		<value>IMDB</value>
+		<value>OFDB / IMDB</value>
 	</string>   
 	<string>
 		<id>369</id>
@@ -1333,7 +1333,7 @@
 	</string>    
 	<string>
 		<id>413</id>
-		<value>Handbuch</value>
+		<value>manuell</value>
 	</string>    
 	<string>
 		<id>414</id>
@@ -2113,6 +2113,55 @@
 		<value>Ist eine Disc eingelegt?</value>
 	</string>
 	<string>
+		<id>724</id>
+		<value>TV Programm durchsuchen</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Genres</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Titel</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>Live-TV im Hintergrund</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>Start unmöglich</value>
+	</string>
+	<string>
+		<id>729</id>
+		<value>Stellen Sie sicher, das Sie VMR9 benutzen und etwas abgespielt wird</value>
+	</string>
+	<string>
+		<id>730</id>
+		<value>Dieser Termin wird gerade aufgenommen. Wenn</value>
+	</string>
+	<string>
+		<id>731</id>
+		<value>Sie ihn löschen, wird die Aufnahme gestoppt.</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Sind Sie sicher?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>Filmansicht</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Bild:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Drehen</value>
+	</string>
+
+	<string>
 		<id>800</id>
 		<value>Fängt an mit</value>
 	</string>
@@ -2220,7 +2269,7 @@
 	</string>
 	<string>
 		<id>8004</id>
-		<value>Sie haben neue Mails!</value>
+		<value>Neue Nachrichten</value>
 	</string>
 	<string>
 		<id>8005</id>
@@ -2280,11 +2329,27 @@
 	</string>
 	<string>
 		<id>8020</id>
-		<value>Mail löschen</value>
+		<value>Zeige HTML</value>
 	</string>
 	<string>
 		<id>8021</id>
 		<value>Mail gelesen</value>
+	</string>
+	<string>
+		<id>8022</id>
+		<value>Anhang zeigen</value>
+	</string>
+	<string>
+		<id>8023</id>
+		<value>Neue Nachrichten angekommen</value>
+	</string>
+	<string>
+		<id>8024</id>
+		<value>Nachricht zeigen</value>
+	</string>
+	<string>
+		<id>8025</id>
+		<value>Nachricht prüfen</value>
 	</string>
 
 	<string>
@@ -2543,8 +2608,9 @@
 	</string>
 	<string>
 		<id>13005</id>
-		<value>Zuletzt importiert:</value>
+		<value>Zuletzt importierte Datei:</value>
 	</string>
+
 </strings>
 
 
