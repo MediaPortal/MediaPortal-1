@@ -1397,148 +1397,164 @@ namespace MediaPortal.Configuration
     bool FillInAll()
     {
 			bool result=true;
-      //
-      // Setup frame sizes
-      //
-      TVCaptureDevice capture = CaptureCard;
+			try
+			{
+				//
+				// Setup frame sizes
+				//
+				TVCaptureDevice capture = CaptureCard;
 
-      //
-      // Update controls
-      //
-      if(capture != null)
-      {
-        trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=!CaptureCard.SupportsMPEG2;
-      }
-      else
-      {
-        trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=false;
-				if(cardComboBox.SelectedIndex!=-1) 
-					if(cardComboBox.SelectedItem.ToString()=="B2C2 MPEG-2 Source")
-					{
-						frameSizeComboBox.Enabled =true;
-					}
-			}
-
-      useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
-
-      //
-      // Setup line input combo box
-      //
-      comboBoxLineInput.Items.Clear();
-
-      if(capture != null)
-      {
-				if (capture.CreateGraph())
+				//
+				// Update controls
+				//
+				if(capture != null)
 				{
-					//
-					// Clear combo box
-					//
-					frameSizeComboBox.Items.Clear();
-
-					//
-					// Loop through available frame sizes and try to assign them to the card, if we succeed we
-					// know the card supports the size.
-					//
-				
-					SetupPropertyPages(capture);
-					foreach(CaptureFormat format in captureFormats)
-					{
-						Size frameSize = new Size(format.Width, format.Height);
-						if (capture.SupportsFrameSize(frameSize))
-						{	
-							//
-							// Card supports the current frame size
-							//
-							frameSizeComboBox.Items.Add(format);
-						}
-					}
-
-					IBaseFilter audioDevice=capture.AudiodeviceFilter;
-					if (audioDevice!=null)
-					{
-						int hr=0;
-						IEnumPins pinEnum;
-						hr=audioDevice.EnumPins(out pinEnum);
-						if( (hr == 0) && (pinEnum != null) )
-						{
-							pinEnum.Reset();
-							IPin[] pins = new IPin[1];
-							int f;
-							do
-							{
-								// Get the next pin
-								hr = pinEnum.Next( 1, pins, out f );
-								if( (hr == 0) && (pins[0] != null) )
-								{
-									PinDirection pinDir;
-									pins[0].QueryDirection(out pinDir);
-									if (pinDir==PinDirection.Input)
-									{
-										PinInfo info;
-										pins[0].QueryPinInfo(out info);
-										comboBoxLineInput.Items.Add(info.name);
-									}
-									Marshal.ReleaseComObject( pins[0] );
-								}
-							}
-							while( hr == 0 );
-						}
-					}
-					
-					capture.DeleteGraph();
+					trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=!CaptureCard.SupportsMPEG2;
 				}
-				else result=false;
-      }
+				else
+				{
+					trackRecording.Enabled=frameSizeComboBox.Enabled = frameRateTextBox.Enabled = audioDeviceComboBox.Enabled = audioCompressorComboBox.Enabled = videoCompressorComboBox.Enabled = frameRateTextBox.Enabled = frameSizeComboBox.Enabled = audioCompressorComboBox.Enabled=comboBoxLineInput.Enabled=false;
+					if(cardComboBox.SelectedIndex!=-1) 
+						if(cardComboBox.SelectedItem.ToString()=="B2C2 MPEG-2 Source")
+						{
+							frameSizeComboBox.Enabled =true;
+						}
+				}
 
-      // select the correct framesize
-      if (frameSizeComboBox.Items.Count>0)
-        frameSizeComboBox.SelectedIndex=0;
+				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = setupButton.Enabled = cardComboBox.Text.Length > 0;
 
-      for (int i=0; i < frameSizeComboBox.Items.Count;++i)
-      {
-        CaptureFormat fmt =(CaptureFormat)frameSizeComboBox.Items[i];
-        if (m_size.Width==fmt.Width && m_size.Height==fmt.Height)
-        {
-          frameSizeComboBox.SelectedIndex = i;
-          break;
-        }
-      }
+				//
+				// Setup line input combo box
+				//
+				comboBoxLineInput.Items.Clear();
+
+				if(capture != null)
+				{
+					if (capture.CreateGraph())
+					{
+						//
+						// Clear combo box
+						//
+						frameSizeComboBox.Items.Clear();
+
+						//
+						// Loop through available frame sizes and try to assign them to the card, if we succeed we
+						// know the card supports the size.
+						//
+					
+						SetupPropertyPages(capture);
+						foreach(CaptureFormat format in captureFormats)
+						{
+							Size frameSize = new Size(format.Width, format.Height);
+							if (capture.SupportsFrameSize(frameSize))
+							{	
+								//
+								// Card supports the current frame size
+								//
+								frameSizeComboBox.Items.Add(format);
+							}
+						}
+
+						IBaseFilter audioDevice=capture.AudiodeviceFilter;
+						if (audioDevice!=null)
+						{
+							int hr=0;
+							IEnumPins pinEnum;
+							hr=audioDevice.EnumPins(out pinEnum);
+							if( (hr == 0) && (pinEnum != null) )
+							{
+								pinEnum.Reset();
+								IPin[] pins = new IPin[1];
+								int f;
+								do
+								{
+									// Get the next pin
+									hr = pinEnum.Next( 1, pins, out f );
+									if( (hr == 0) && (pins[0] != null) )
+									{
+										PinDirection pinDir;
+										pins[0].QueryDirection(out pinDir);
+										if (pinDir==PinDirection.Input)
+										{
+											PinInfo info;
+											pins[0].QueryPinInfo(out info);
+											comboBoxLineInput.Items.Add(info.name);
+										}
+										Marshal.ReleaseComObject( pins[0] );
+									}
+								}
+								while( hr == 0 );
+							}
+						}
+						
+						capture.DeleteGraph();
+					}
+					else result=false;
+				}
+
+				// select the correct framesize
+				if (frameSizeComboBox.Items.Count>0)
+					frameSizeComboBox.SelectedIndex=0;
+
+				for (int i=0; i < frameSizeComboBox.Items.Count;++i)
+				{
+					CaptureFormat fmt =(CaptureFormat)frameSizeComboBox.Items[i];
+					if (m_size.Width==fmt.Width && m_size.Height==fmt.Height)
+					{
+						frameSizeComboBox.SelectedIndex = i;
+						break;
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("FillInAll exception:{0} {1} {2}",
+								ex.Message,ex.Source,ex.StackTrace);
+			}
 			return result;
     }
 
 		private void setupButton_Click(object sender, System.EventArgs e)
 		{
-			if(filterComboBox.SelectedItem != null)
+			try
 			{
-				string propertyPageName = (string)filterComboBox.SelectedItem;
-				TVCaptureDevice capture = CaptureCard;
-				if(capture != null)
+				if(filterComboBox.SelectedItem != null)
 				{
-					if (capture.CreateGraph())
+					string propertyPageName = (string)filterComboBox.SelectedItem;
+					TVCaptureDevice capture = CaptureCard;
+					if(capture != null)
 					{
-						if(capture.PropertyPages != null)
+						if (capture.CreateGraph())
 						{
-							foreach(PropertyPage page in capture.PropertyPages)
+							if(capture.PropertyPages != null)
 							{
-								if(propertyPageName.Equals(page.Name))
+								foreach(PropertyPage page in capture.PropertyPages)
 								{
-									//
-									// Display property page
-									//
-									page.Show(this);
+									if(propertyPageName.Equals(page.Name))
+									{
+										//
+										// Display property page
+										//
+										page.Show(this);
 
-									//
-									// Save settings
-									//
-									//capture.SaveSettings(cardId);
-									break;
+										//
+										// Save settings
+										//
+										//capture.SaveSettings(cardId);
+										break;
+									}
 								}
 							}
-						}
 
-						capture.DeleteGraph();
+							capture.DeleteGraph();
+						}
 					}
 				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("btnSetup exception:{0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
 
@@ -1860,74 +1876,82 @@ namespace MediaPortal.Configuration
 
 		private void button15_Click(object sender, System.EventArgs e)
 		{
-			progressBar2.Step=1;
-			progressBar2.Maximum=CountSelectedNodes();
-			progressBar2.Minimum=0;
-			progressBar2.Value=0;
-			m_stopEPGGrab=false;
-			button16.Enabled=true;
-			button15.Enabled=false;
-			int counter=0;
-			TVCaptureDevice capture = CaptureCard;
-			if(capture == null)
+			try
 			{
-				MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
-			if (!capture.CreateGraph())
-			{
-				MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
-
-			DVBSections dvbSec =new DVBSections();
-
-			GUIGraphicsContext.VideoWindow = new Rectangle(300,90,110,110);
-			IntPtr prevFormPtr=GUIGraphicsContext.ActiveForm;
-			Form prevForm=GUIGraphicsContext.form;
-			GUIGraphicsContext.ActiveForm = this.Handle;
-			GUIGraphicsContext.form=this;
-			do
-			{
-				GC.Collect();
-				foreach(TreeNode tn in treeView5.Nodes)
+				progressBar2.Step=1;
+				progressBar2.Maximum=CountSelectedNodes();
+				progressBar2.Minimum=0;
+				progressBar2.Value=0;
+				m_stopEPGGrab=false;
+				button16.Enabled=true;
+				button15.Enabled=false;
+				int counter=0;
+				TVCaptureDevice capture = CaptureCard;
+				if(capture == null)
 				{
-					if(m_stopEPGGrab==true)
-						break;
-					if(tn.Checked==true)
-					{
-						TVChannel ch=(TVChannel)tn.Tag;
-						chName.Text=ch.Name;
-						capture.TVChannel=ch.Name;
-						capture.View=true;
-						if (!capture.SignalPresent()) continue;
-
-						DVBChannel dvbChannel =  dvbSec.GetDVBChannel(capture.Mpeg2DataFilter,ch.Number);
-						dvbChannel.ServiceName=ch.Name;
-						counter+=dvbSec.GrabEIT(dvbChannel,capture.Mpeg2DataFilter);
-						label17.Text=counter.ToString();
-						try
-						{
-							progressBar2.Value=progressBar2.Value+1;
-						}
-						catch
-						{
-							progressBar2.Value=0;
-						}		
-					}
-					Application.DoEvents();
+					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return;
 				}
-			}while(m_stopEPGGrab==false);
-			chName.Text="Stopped.";
-			button15.Enabled=true;
-			button16.Enabled=false;
-			label17.Text="0";
-			capture.View=false;
-			capture=null;
-			GC.Collect();
-			GUIGraphicsContext.ActiveForm = prevFormPtr;
-			GUIGraphicsContext.form=prevForm;
-			TVDatabase.RemoveOverlappingPrograms();
+				if (!capture.CreateGraph())
+				{
+					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					return;
+				}
+
+				DVBSections dvbSec =new DVBSections();
+
+				GUIGraphicsContext.VideoWindow = new Rectangle(300,90,110,110);
+				IntPtr prevFormPtr=GUIGraphicsContext.ActiveForm;
+				Form prevForm=GUIGraphicsContext.form;
+				GUIGraphicsContext.ActiveForm = this.Handle;
+				GUIGraphicsContext.form=this;
+				do
+				{
+					GC.Collect();
+					foreach(TreeNode tn in treeView5.Nodes)
+					{
+						if(m_stopEPGGrab==true)
+							break;
+						if(tn.Checked==true)
+						{
+							TVChannel ch=(TVChannel)tn.Tag;
+							chName.Text=ch.Name;
+							capture.TVChannel=ch.Name;
+							capture.View=true;
+							if (!capture.SignalPresent()) continue;
+
+							DVBChannel dvbChannel =  dvbSec.GetDVBChannel(capture.Mpeg2DataFilter,ch.Number);
+							dvbChannel.ServiceName=ch.Name;
+							counter+=dvbSec.GrabEIT(dvbChannel,capture.Mpeg2DataFilter);
+							label17.Text=counter.ToString();
+							try
+							{
+								progressBar2.Value=progressBar2.Value+1;
+							}
+							catch
+							{
+								progressBar2.Value=0;
+							}		
+						}
+						Application.DoEvents();
+					}
+				}while(m_stopEPGGrab==false);
+				chName.Text="Stopped.";
+				button15.Enabled=true;
+				button16.Enabled=false;
+				label17.Text="0";
+				capture.View=false;
+				capture=null;
+				GC.Collect();
+				GUIGraphicsContext.ActiveForm = prevFormPtr;
+				GUIGraphicsContext.form=prevForm;
+				TVDatabase.RemoveOverlappingPrograms();
+			}
+			catch(Exception ex)
+			{
+				Log.Write("epggrabber exception:{0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
+			}
 		}
 
 		private void button16_Click(object sender, System.EventArgs e)
@@ -1939,68 +1963,76 @@ namespace MediaPortal.Configuration
 
 		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			if(tabControl1.SelectedIndex==4)
-			{	
-				
-				TVCaptureDevice capture = CaptureCard;
-				if (capture==null)
-				{
-					MessageBox.Show("Please fill in the capture card details first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					tabControl1.SelectedIndex=0;
-					return;
-				}
-				
-				if (!capture.CreateGraph())
-				{
-					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					tabControl1.SelectedIndex=0;
-					return;
-				}
-				if (capture.Network != NetworkType.DVBS)
-				{
+			try
+			{
+				if(tabControl1.SelectedIndex==4)
+				{	
+					
+					TVCaptureDevice capture = CaptureCard;
+					if (capture==null)
+					{
+						MessageBox.Show("Please fill in the capture card details first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						tabControl1.SelectedIndex=0;
+						return;
+					}
+					
+					if (!capture.CreateGraph())
+					{
+						MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						tabControl1.SelectedIndex=0;
+						return;
+					}
+					if (capture.Network != NetworkType.DVBS)
+					{
+						capture.DeleteGraph();
+						MessageBox.Show("This section is only for DVB-S cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						tabControl1.SelectedIndex=0;
+						return;
+					}
 					capture.DeleteGraph();
-					MessageBox.Show("This section is only for DVB-S cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					tabControl1.SelectedIndex=0;
-					return;
 				}
-				capture.DeleteGraph();
-			}
 
-			if(tabControl1.SelectedIndex==5)
-			{	
-				TVCaptureDevice capture = CaptureCard;
-				if (capture==null)
-				{
-					MessageBox.Show("Please fill in the capture card details first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					tabControl1.SelectedIndex=0;
-					return;
-				}
-				if (!capture.CreateGraph())
-				{
-					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					tabControl1.SelectedIndex=0;
-					return;
-				}
-				if (capture.Network != NetworkType.DVBC &&
-					  capture.Network != NetworkType.DVBS &&
-					  capture.Network != NetworkType.DVBT)
-				{
+				if(tabControl1.SelectedIndex==5)
+				{	
+					TVCaptureDevice capture = CaptureCard;
+					if (capture==null)
+					{
+						MessageBox.Show("Please fill in the capture card details first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						tabControl1.SelectedIndex=0;
+						return;
+					}
+					if (!capture.CreateGraph())
+					{
+						MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						tabControl1.SelectedIndex=0;
+						return;
+					}
+					if (capture.Network != NetworkType.DVBC &&
+						capture.Network != NetworkType.DVBS &&
+						capture.Network != NetworkType.DVBT)
+					{
+						capture.DeleteGraph();
+						MessageBox.Show("EPG grabber only supports DVB-T / DVB-S / DVB-T cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						tabControl1.SelectedIndex=0;
+						return;
+					}
 					capture.DeleteGraph();
-					MessageBox.Show("EPG grabber only supports DVB-T / DVB-S / DVB-T cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					tabControl1.SelectedIndex=0;
-					return;
+					ArrayList channelList=new ArrayList();
+					TVDatabase.GetChannels(ref channelList);
+					treeView5.Nodes.Clear();
+					foreach (TVChannel chan in channelList)
+					{
+						TreeNode node=new TreeNode(chan.Name);
+						node.Tag=chan;
+						node.Checked=true;
+						treeView5.Nodes.Add(node);
+					}
 				}
-				capture.DeleteGraph();
-				ArrayList channelList=new ArrayList();
-				TVDatabase.GetChannels(ref channelList);
-				treeView5.Nodes.Clear();
-				foreach (TVChannel chan in channelList)
-				{
-					TreeNode node=new TreeNode(chan.Name);
-					node.Tag=chan;
-					node.Checked=true;
-					treeView5.Nodes.Add(node);
-				}
+			}
+			catch(Exception ex)
+			{
+				Log.Write("Switch tabs exception:{0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
 	}

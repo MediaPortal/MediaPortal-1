@@ -820,7 +820,8 @@ namespace MediaPortal.TV.Recording
 			m_basicVideo = null;
 			m_mediaControl = null;
 		      
-			DsUtils.RemoveFilters(m_graphBuilder);
+			if (m_graphBuilder!=null)
+				DsUtils.RemoveFilters(m_graphBuilder);
 
 			if (m_rotCookie != 0)
 				DsROT.RemoveGraphFromRot(ref m_rotCookie);

@@ -371,7 +371,8 @@ namespace MediaPortal.TV.Recording
 			if (m_IAMAnalogVideoDecoder != null)
 				Marshal.ReleaseComObject(m_IAMAnalogVideoDecoder); m_IAMAnalogVideoDecoder = null;
 
-			DsUtils.RemoveFilters(m_graphBuilder);
+			if (m_graphBuilder!=null)
+				DsUtils.RemoveFilters(m_graphBuilder);
 
 			if (m_captureFilter != null)
 				Marshal.ReleaseComObject(m_captureFilter); m_captureFilter = null;

@@ -358,7 +358,8 @@ namespace MediaPortal.TV.Recording
 			if (m_filterCaptureVideo != null)
 				Marshal.ReleaseComObject(m_filterCaptureVideo); m_filterCaptureVideo = null;
 
-			DsUtils.RemoveFilters(m_graphBuilder);
+			if (m_graphBuilder!=null)
+				DsUtils.RemoveFilters(m_graphBuilder);
 
 			if (m_rotCookie != 0)
 				DsROT.RemoveGraphFromRot(ref m_rotCookie);
