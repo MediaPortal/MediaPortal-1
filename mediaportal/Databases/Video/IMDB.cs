@@ -642,6 +642,7 @@ namespace MediaPortal.Video.Database
 
 						// set rating
 						string strRating=strBody.Substring(iStart,iEnd-iStart);
+            if (strRating !=String.Empty) strRating = strRating.Replace('.',','); 
 						try
 						{
 							movieDetails.Rating = (float)System.Double.Parse(strRating);
