@@ -100,6 +100,21 @@ public class MediaPortalApp : D3DApp, IRender
       // Display splash screen
       //
 
+      //check if mediaportal has been configured
+      if ( !System.IO.File.Exists("mediaportal.xml") )
+      {
+        //no, then start configuration.exe in wizard form
+        System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
+        return;
+      }
+      CodecsForm form = new CodecsForm();
+      if (!form.AreCodecsInstalled())
+      {
+        form.ShowDialog();
+        return;
+      }
+
+
       ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 #if DEBUG
 #else

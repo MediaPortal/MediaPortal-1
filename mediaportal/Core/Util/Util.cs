@@ -10,6 +10,8 @@ using System.Diagnostics;
 using MediaPortal.GUI.Library;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Xml;
+using Microsoft.Win32;
 
 
 namespace MediaPortal.Util
@@ -1301,6 +1303,7 @@ namespace MediaPortal.Util
       catch(Exception){}
 
     }
+
   }
 }
 

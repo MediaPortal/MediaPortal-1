@@ -162,6 +162,16 @@
                     BuildAction = "None"
                 />
                 <File
+                    RelPath = "CodecsForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CodecsForm.resx"
+                    DependentUpon = "CodecsForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "d3dapp.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

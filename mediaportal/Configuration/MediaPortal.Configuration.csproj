@@ -204,11 +204,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "FilterHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "LaunchGuideScheduler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
