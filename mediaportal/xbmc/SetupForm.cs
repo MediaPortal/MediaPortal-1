@@ -381,9 +381,9 @@ namespace MediaPortal
       this.tabControl.Controls.Add(this.tabPlayers);
       this.tabControl.Controls.Add(this.tabAudioShares);
       this.tabControl.Controls.Add(this.tabVideoShares);
+      this.tabControl.Controls.Add(this.tabPictureShares);
       this.tabControl.Controls.Add(this.tabWeather);
       this.tabControl.Controls.Add(this.tabPageCapture);
-      this.tabControl.Controls.Add(this.tabPictureShares);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
       this.tabControl.Name = "tabControl";
       this.tabControl.SelectedIndex = 0;
