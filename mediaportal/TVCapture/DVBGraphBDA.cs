@@ -2676,6 +2676,9 @@ namespace MediaPortal.TV.Recording
 				newchannel.Modulation = currentTuningObject.Modulation;
 				newchannel.Symbolrate = currentTuningObject.Symbolrate;
 				newchannel.ServiceType=1;//tv
+				newchannel.AudioPid=currentTuningObject.AudioPid;
+				newchannel.VideoPid=currentTuningObject.VideoPid;
+				newchannel.TeletextPid=currentTuningObject.TeletextPid;
 				
 				if (IsTv && tv)
 				{
