@@ -28,8 +28,9 @@
 <!--    ATI eHomeWonder	 		      -->
 <!--    ATI HDTV			      -->
 <!--    ATI TV Wonder Elite		      -->
-<!--    AverMedia 1500MCE                     -->
 <!--    AverMedia A16A DVB-T 		      -->
+<!--    AverMedia M150 (NTSC)                 -->
+<!--    AverMedia M150 (PAL)                  -->
 <!--    BlackGold GDI			      -->
 <!--    Chaintech DTT-1000                    -->
 <!--    Conexant DVB-T                        -->
@@ -40,6 +41,9 @@
 <!--    Dvico Fusion HDTV Lite                -->
 <!--    Dvico Fusion HDTV USB2                -->
 <!--    Dvico Fusion HDTV Plus (Driver 2.80)  -->
+<!--    Emuzed Maui II NTSC	              -->
+<!--    Emuzed Maui II NTSC FM	              -->
+<!--    Emuzed Maui II PAL FM	              -->
 <!--    Emuzed Maui III-G	              -->
 <!--    Emuzed Maui III NTSC                  -->
 <!--    Emuzed Maui III PAL                   -->
@@ -71,6 +75,8 @@
 <!--    Meedion SAA1734 DVBT                  -->
 <!--    NVTV Dual Tuner                       -->
 <!--    NVTV Single Tuner                     -->
+<!--    Plextor ConvertX M402U                -->
+<!--    Plextor ConvertX TV402U               -->
 <!--    Pinnacle Deluxe USB2		      -->
 <!--    Pinnacle 300i DVBT		      -->
 <!--    Pinnacle 300i Analog		      -->
@@ -88,7 +94,7 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.48                                                               -->
+<!-- version : 1.0.0.51                                                               -->
 <!-- changed : 30-march-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -996,7 +1002,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="AverMedia 1500MCE" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c1111461&amp;rev_05">
+  <capturecard commercialname="AverMedia M150 (NTSC)" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c1111461&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
@@ -1005,7 +1011,7 @@
         <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
         <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
         <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="false"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1242,7 +1248,7 @@
 
 <!-- Not sure if this works, it needs to be verified, please advise -->
 
-  <capturecard commercialname="Diamond XtremeTV PVR550" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0070FF92&amp;rev_01">
+  <capturecard commercialname="Diamond XtremeTV PVR550" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0070ff92&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
@@ -1814,6 +1820,310 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
         <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Plextor ConvertX M402U" capturename="Plextor ConvertX M402U A/V Capture" devid="vid_093b&amp;pid_a102">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		checkdevice="true"></filter>
+        <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  	checkdevice="true"></filter>
+        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="true"></filter>
+        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
+        <connection sourcefilter="capture"	 sourcepin="2" sinkfilter="encoderaudio"   sinkpin="0"></connection>
+        <connection sourcefilter="capture"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c00b1461&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8810&amp;subsys_c00b1461&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c10b1461&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00051809&amp;rev_b0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui SE TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui SE TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui SE Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00051809&amp;rev_b1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui SE TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui SE TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui SE Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui 2S Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui 2S Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II NTSC-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_000c1809&amp;rev_b0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S NTSC FM TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S NTSC FM TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II NTSC-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_000c1809&amp;rev_b1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S NTSC FM TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S NTSC FM TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II PAL-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S PAL FM TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S PAL FM TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui II PAL-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S PAL FM TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S PAL FM TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
