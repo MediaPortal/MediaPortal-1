@@ -178,6 +178,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="iWindowID">window id of the window to activate</param>
     static public void ActivateWindow(int iWindowID)
     {
+			UnRoute();
       m_bSwitching=true;
       try
       {
