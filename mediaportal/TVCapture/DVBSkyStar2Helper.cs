@@ -813,10 +813,6 @@ namespace MediaPortal.TV.Recording
 
 					if(m_breakScan==true)
 						break;
-					DeleteAllPIDs(m_dataCtrl,0);
-					SetPidToPin(m_dataCtrl,0,16);
-					SetPidToPin(m_dataCtrl,0,17);
-					SetPidToPin(m_dataCtrl,0,0);
 					// feedback
 					if(m_progress!=null)
 					{
@@ -858,9 +854,11 @@ namespace MediaPortal.TV.Recording
 						tuneTryCount++;
 					}while(tunedFlag==false && tuneTryCount<3);
 					//
+					SetPidToPin(m_dataCtrl,0,16);
+					SetPidToPin(m_dataCtrl,0,17);
+					SetPidToPin(m_dataCtrl,0,0);
 					if (tunedFlag==true)
 					{
-					
 						m_dvbSections.Timeout=2500;
 						m_dvbSections.ProcessPATSections(m_dataCtrl,m_mpeg2Data,m_transponder[t],ref transplist[t]);
 						if(m_textBox!=null)
@@ -869,7 +867,7 @@ namespace MediaPortal.TV.Recording
 						}
 						if(m_textBox!=null)
 						{
-							m_textBox.Text=Convert.ToString(m_transponder[t].TPfreq)+" MHz ("+Convert.ToString(servCount)+" services found yet)";
+							m_textBox.Text=Convert.ToString(m_transponder[t].TPfreq/1000)+" MHz ("+Convert.ToString(servCount)+" services found yet)";
 							System.Windows.Forms.Application.DoEvents();
 						}
 					}

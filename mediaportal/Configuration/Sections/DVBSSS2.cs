@@ -251,6 +251,10 @@ namespace MediaPortal.Configuration.Sections
 			this.lnb0MHZ = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
+			this.groupBox8 = new System.Windows.Forms.GroupBox();
+			this.treeView5 = new System.Windows.Forms.TreeView();
+			this.button17 = new System.Windows.Forms.Button();
+			this.button18 = new System.Windows.Forms.Button();
 			this.groupBox7 = new System.Windows.Forms.GroupBox();
 			this.totalDBcount = new System.Windows.Forms.Label();
 			this.label29 = new System.Windows.Forms.Label();
@@ -261,12 +265,8 @@ namespace MediaPortal.Configuration.Sections
 			this.button16 = new System.Windows.Forms.Button();
 			this.button15 = new System.Windows.Forms.Button();
 			this.progressBar2 = new System.Windows.Forms.ProgressBar();
-			this.button18 = new System.Windows.Forms.Button();
-			this.button17 = new System.Windows.Forms.Button();
-			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.ofd = new System.Windows.Forms.OpenFileDialog();
 			this.sfd = new System.Windows.Forms.SaveFileDialog();
-			this.groupBox8 = new System.Windows.Forms.GroupBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -280,8 +280,8 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.tabPage5.SuspendLayout();
-			this.groupBox7.SuspendLayout();
 			this.groupBox8.SuspendLayout();
+			this.groupBox7.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -642,7 +642,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(56, 16);
 			this.label8.TabIndex = 7;
-			this.label8.Text = "TPL-File:";
+			this.label8.Text = "Satellite:";
 			// 
 			// comboBox3
 			// 
@@ -1157,6 +1157,51 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "EPG-Grabber";
 			// 
+			// groupBox8
+			// 
+			this.groupBox8.Controls.Add(this.treeView5);
+			this.groupBox8.Controls.Add(this.button17);
+			this.groupBox8.Controls.Add(this.button18);
+			this.groupBox8.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox8.Location = new System.Drawing.Point(8, 16);
+			this.groupBox8.Name = "groupBox8";
+			this.groupBox8.Size = new System.Drawing.Size(416, 192);
+			this.groupBox8.TabIndex = 21;
+			this.groupBox8.TabStop = false;
+			this.groupBox8.Text = "TV-Channels";
+			// 
+			// treeView5
+			// 
+			this.treeView5.CheckBoxes = true;
+			this.treeView5.HideSelection = false;
+			this.treeView5.ImageIndex = -1;
+			this.treeView5.Location = new System.Drawing.Point(16, 24);
+			this.treeView5.Name = "treeView5";
+			this.treeView5.SelectedImageIndex = -1;
+			this.treeView5.Size = new System.Drawing.Size(328, 160);
+			this.treeView5.TabIndex = 7;
+			this.treeView5.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView5_BeforeCheck);
+			// 
+			// button17
+			// 
+			this.button17.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button17.Location = new System.Drawing.Point(352, 136);
+			this.button17.Name = "button17";
+			this.button17.Size = new System.Drawing.Size(48, 21);
+			this.button17.TabIndex = 14;
+			this.button17.Text = "All";
+			this.button17.Click += new System.EventHandler(this.button17_Click);
+			// 
+			// button18
+			// 
+			this.button18.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button18.Location = new System.Drawing.Point(352, 160);
+			this.button18.Name = "button18";
+			this.button18.Size = new System.Drawing.Size(48, 21);
+			this.button18.TabIndex = 15;
+			this.button18.Text = "None";
+			this.button18.Click += new System.EventHandler(this.button18_Click);
+			// 
 			// groupBox7
 			// 
 			this.groupBox7.Controls.Add(this.totalDBcount);
@@ -1253,38 +1298,6 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar2.Size = new System.Drawing.Size(288, 16);
 			this.progressBar2.TabIndex = 13;
 			// 
-			// button18
-			// 
-			this.button18.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button18.Location = new System.Drawing.Point(352, 160);
-			this.button18.Name = "button18";
-			this.button18.Size = new System.Drawing.Size(48, 21);
-			this.button18.TabIndex = 15;
-			this.button18.Text = "None";
-			this.button18.Click += new System.EventHandler(this.button18_Click);
-			// 
-			// button17
-			// 
-			this.button17.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button17.Location = new System.Drawing.Point(352, 136);
-			this.button17.Name = "button17";
-			this.button17.Size = new System.Drawing.Size(48, 21);
-			this.button17.TabIndex = 14;
-			this.button17.Text = "All";
-			this.button17.Click += new System.EventHandler(this.button17_Click);
-			// 
-			// treeView5
-			// 
-			this.treeView5.CheckBoxes = true;
-			this.treeView5.HideSelection = false;
-			this.treeView5.ImageIndex = -1;
-			this.treeView5.Location = new System.Drawing.Point(16, 24);
-			this.treeView5.Name = "treeView5";
-			this.treeView5.SelectedImageIndex = -1;
-			this.treeView5.Size = new System.Drawing.Size(328, 160);
-			this.treeView5.TabIndex = 7;
-			this.treeView5.BeforeCheck+=new TreeViewCancelEventHandler(treeView5_BeforeCheck);
-			// 
 			// ofd
 			// 
 			this.ofd.Filter = "Transponder-Listings (*.tpl)|*.tpl";
@@ -1293,19 +1306,6 @@ namespace MediaPortal.Configuration.Sections
 			// sfd
 			// 
 			this.sfd.Filter = "Transponder-Files|*.tpl";
-			// 
-			// groupBox8
-			// 
-			this.groupBox8.Controls.Add(this.treeView5);
-			this.groupBox8.Controls.Add(this.button17);
-			this.groupBox8.Controls.Add(this.button18);
-			this.groupBox8.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox8.Location = new System.Drawing.Point(8, 16);
-			this.groupBox8.Name = "groupBox8";
-			this.groupBox8.Size = new System.Drawing.Size(416, 192);
-			this.groupBox8.TabIndex = 21;
-			this.groupBox8.TabStop = false;
-			this.groupBox8.Text = "TV-Channels";
 			// 
 			// DVBSSS2
 			// 
@@ -1325,8 +1325,8 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
-			this.groupBox7.ResumeLayout(false);
 			this.groupBox8.ResumeLayout(false);
+			this.groupBox7.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
