@@ -1910,7 +1910,6 @@ namespace MediaPortal.Configuration
 			button16.Enabled=false;
 			label17.Text="0";
 			capture.View=false;
-			capture.DeleteGraph();
 			capture=null;
 			GC.Collect();
 			GUIGraphicsContext.ActiveForm=prevForm;
