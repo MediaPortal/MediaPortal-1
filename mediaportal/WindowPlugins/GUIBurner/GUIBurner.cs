@@ -1,6 +1,6 @@
 #region Usings
-
 using System;
+using System.Windows.Forms;
 using System.Collections;
 using System.Threading;
 using System.Management;
@@ -91,7 +91,6 @@ namespace MediaPortal.GUI.GUIBurner
 
 		#region Private Variables
 
-		private ArrayList cFiles  = new ArrayList();
 		private struct file 
 		{
 			public string name;
@@ -99,6 +98,15 @@ namespace MediaPortal.GUI.GUIBurner
 			public string path;
 		}
 		
+		private struct convFile 
+		{
+			public string name;
+			public long size;
+			public long oldSize;
+			public string path;
+		}
+
+		convFile[] cFiles = new convFile[100];
 		private	XPBurn.XPBurnCD burnClass; 
 		
 		string[] video = new string[20];
@@ -127,12 +135,11 @@ namespace MediaPortal.GUI.GUIBurner
 		private	bool convertDVR;
 		private	bool deleteDVRSrc;
 		private bool changeTVDatabase;
-		//private string soundFolder="";
-		//private string videoFolder="";
+		private int maxAutoFiles=0;
 		private	BurnerThread bt = new BurnerThread();
 		static ArrayList dvr_extensions	= new ArrayList();
 		private bool convertAuto;
-		private string dvrMsFolder;
+		private System.Windows.Forms.Timer convertTimer = new System.Windows.Forms.Timer();
 
 		#endregion
 
@@ -154,6 +161,7 @@ namespace MediaPortal.GUI.GUIBurner
 
 		public override bool Init() 
 		{
+			InitializeConvertTimer();
 			return Load (GUIGraphicsContext.Skin+@"\myburner.xml");
 		}
 
@@ -486,9 +494,129 @@ namespace MediaPortal.GUI.GUIBurner
 
 		#region Private Methods
 
+		/// <summary>
+		/// init 60 sec timer for automatic convert. 
+		/// </summary>
+		private void InitializeConvertTimer() 
+		{
+			dvr_extensions.Clear();
+			dvr_extensions.Add(".dvr-ms");
+			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			{
+				recordpath=xmlreader.GetValueAsString("burner","dvrms_folder","");
+				//recordpath=xmlreader.GetValueAsString("capture","recordingpath","c:\\");
+				convertAuto=xmlreader.GetValueAsBool("burner","convertautomatic",false);
+			}
+			if (convertAuto==true) 
+			{
+				bt.ClearFiles();
+				VirtualDirectory Directory;
+				ArrayList itemlist;
+				Directory = new VirtualDirectory();
+				Directory.SetExtensions(dvr_extensions);
+				itemlist = Directory.GetDirectory(recordpath);
+				maxAutoFiles=0;
+				foreach (GUIListItem item in itemlist) 
+				{
+					if (item.IsFolder==false)
+					{ 
+						cFiles[maxAutoFiles].name=item.Label;
+						cFiles[maxAutoFiles].path=recordpath;
+						if (item.FileInfo!=null) 
+						{
+							cFiles[maxAutoFiles].size=item.FileInfo.Length;
+						}
+						cFiles[maxAutoFiles++].oldSize=0;
+					}
+				}
+				convertTimer.Tick += new EventHandler(OnTimer);
+				convertTimer.Interval = 60000;	  //60 sec Intervall
+				convertTimer.Enabled=true;
+				convertTimer.Start();
+			}
+		}
+
+		// if a new file in TV-Record folder start converting
+		private void OnTimer(Object sender, EventArgs e) 
+		{
+			if(bt.isConverting==false) 
+			{
+				VirtualDirectory Directory;
+				ArrayList itemlist;
+				Directory = new VirtualDirectory();
+				Directory.SetExtensions(dvr_extensions);
+				itemlist = Directory.GetDirectory(recordpath);
+
+				foreach (GUIListItem item in itemlist) 
+				{
+					if (item.IsFolder==false)
+					{ 
+						if (item.FileInfo!=null) 
+						{
+							bool hit=false;
+							for(int i=0;i<maxAutoFiles;i++) 
+							{	
+								if (item.Label==cFiles[i].name) 
+								{
+									hit=true;
+									if (item.FileInfo!=null) 
+									{
+										if (item.FileInfo.Length>cFiles[i].oldSize)
+										{
+											cFiles[i].oldSize=item.FileInfo.Length;
+										} 
+										else 
+										{
+											if (cFiles[i].oldSize==item.FileInfo.Length) // ready to convert
+											{
+												bt.ClearFiles();
+												bt.deleteDvrMsSrc=true;
+												bt.changeDatabase=true;
+												bt.AddFiles(item.Label+".dvr-ms",recordpath);
+												ThreadStart ts = new ThreadStart(bt.TranscodeThread);
+												Thread t = new Thread(ts);
+												t.IsBackground=true;
+												t.Priority=ThreadPriority.Lowest;
+												t.Start();
+												if (maxAutoFiles==1) 
+												{
+													maxAutoFiles--;
+												} 
+												else 
+												{
+													for(int x=i;x<maxAutoFiles;x++) 
+													{
+														cFiles[x]=cFiles[x+1];	
+													}
+													maxAutoFiles--;
+												}
+											}
+										}
+									}
+								}
+							}
+							if (hit==false) 
+							{
+								if (item.IsFolder==false)
+								{ 
+									cFiles[maxAutoFiles].name=item.Label;
+									cFiles[maxAutoFiles].path=item.Path;
+									if (item.FileInfo!=null) 
+									{
+										cFiles[maxAutoFiles].size=item.FileInfo.Length;
+									}
+									cFiles[maxAutoFiles++].oldSize=0;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		private void ConvertDvrMs()
 		{
-			if (convertDVR==true) //Convert Video Files
+			if (convertDVR==true && bt.isConverting==false) //Convert Video Files
 			{
 				int fCount=0;
 				bt.ClearFiles();
@@ -884,10 +1012,7 @@ namespace MediaPortal.GUI.GUIBurner
 		{
 			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
 			{
-				dvr_extensions.Clear();
-				dvr_extensions.Add(".dvr-ms");
 				isBurner=xmlreader.GetValueAsBool("burner","burn",true);
-				recordpath=xmlreader.GetValueAsString("capture","recordingpath","c:\\");
 				fastFormat=xmlreader.GetValueAsBool("burner","fastformat",true);
 				tmpFolder=xmlreader.GetValueAsString("burner","temp_folder","c:\\image.iso");
 				recorder=xmlreader.GetValueAsInt("burner","recorder",0);
@@ -895,8 +1020,6 @@ namespace MediaPortal.GUI.GUIBurner
 				deleteDVRSrc=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
 				changeTVDatabase=xmlreader.GetValueAsBool("burner","changetvdatabase",false);
 
-				convertAuto=xmlreader.GetValueAsBool("burner","convertautomatic",false);
-				dvrMsFolder=xmlreader.GetValueAsString("burner","dvrms_folder","");
 				if (isBurner==true) 
 				{
 					burnClass= new XPBurn.XPBurnCD();

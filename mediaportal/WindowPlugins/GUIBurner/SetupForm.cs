@@ -29,9 +29,6 @@ namespace GUIBurner
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.CheckBox checkBox3;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.CheckBox checkBox4;
 		private System.Windows.Forms.Label label8;
@@ -41,6 +38,10 @@ namespace GUIBurner
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.CheckBox checkBox6;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.TextBox textBox2;
+		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.Label label12;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
@@ -94,9 +95,6 @@ namespace GUIBurner
 		this.label4 = new System.Windows.Forms.Label();
 		this.label5 = new System.Windows.Forms.Label();
 		this.checkBox3 = new System.Windows.Forms.CheckBox();
-		this.label6 = new System.Windows.Forms.Label();
-		this.button3 = new System.Windows.Forms.Button();
-		this.textBox2 = new System.Windows.Forms.TextBox();
 		this.label7 = new System.Windows.Forms.Label();
 		this.checkBox4 = new System.Windows.Forms.CheckBox();
 		this.label8 = new System.Windows.Forms.Label();
@@ -106,6 +104,10 @@ namespace GUIBurner
 		this.label10 = new System.Windows.Forms.Label();
 		this.label11 = new System.Windows.Forms.Label();
 		this.checkBox6 = new System.Windows.Forms.CheckBox();
+		this.label6 = new System.Windows.Forms.Label();
+		this.textBox2 = new System.Windows.Forms.TextBox();
+		this.button3 = new System.Windows.Forms.Button();
+		this.label12 = new System.Windows.Forms.Label();
 		this.SuspendLayout();
 		// 
 		// comboBox1
@@ -126,7 +128,7 @@ namespace GUIBurner
 		// 
 		// button1
 		// 
-		this.button1.Location = new System.Drawing.Point(496, 312);
+		this.button1.Location = new System.Drawing.Point(496, 296);
 		this.button1.Name = "button1";
 		this.button1.Size = new System.Drawing.Size(88, 24);
 		this.button1.TabIndex = 2;
@@ -189,9 +191,9 @@ namespace GUIBurner
 		// 
 		// checkBox2
 		// 
-		this.checkBox2.Location = new System.Drawing.Point(216, 176);
+		this.checkBox2.Location = new System.Drawing.Point(216, 184);
 		this.checkBox2.Name = "checkBox2";
-		this.checkBox2.Size = new System.Drawing.Size(24, 24);
+		this.checkBox2.Size = new System.Drawing.Size(16, 16);
 		this.checkBox2.TabIndex = 9;
 		// 
 		// label4
@@ -212,33 +214,10 @@ namespace GUIBurner
 		// 
 		// checkBox3
 		// 
-		this.checkBox3.Location = new System.Drawing.Point(216, 224);
+		this.checkBox3.Location = new System.Drawing.Point(216, 232);
 		this.checkBox3.Name = "checkBox3";
-		this.checkBox3.Size = new System.Drawing.Size(24, 24);
+		this.checkBox3.Size = new System.Drawing.Size(16, 16);
 		this.checkBox3.TabIndex = 11;
-		// 
-		// label6
-		// 
-		this.label6.Location = new System.Drawing.Point(8, 256);
-		this.label6.Name = "label6";
-		this.label6.TabIndex = 13;
-		this.label6.Text = "DVR-MS File Path ";
-		// 
-		// button3
-		// 
-		this.button3.Location = new System.Drawing.Point(504, 248);
-		this.button3.Name = "button3";
-		this.button3.Size = new System.Drawing.Size(32, 24);
-		this.button3.TabIndex = 15;
-		this.button3.Text = "...";
-		// 
-		// textBox2
-		// 
-		this.textBox2.Location = new System.Drawing.Point(216, 248);
-		this.textBox2.Name = "textBox2";
-		this.textBox2.Size = new System.Drawing.Size(272, 20);
-		this.textBox2.TabIndex = 14;
-		this.textBox2.Text = "";
 		// 
 		// label7
 		// 
@@ -282,7 +261,7 @@ namespace GUIBurner
 		// 
 		// button4
 		// 
-		this.button4.Location = new System.Drawing.Point(400, 312);
+		this.button4.Location = new System.Drawing.Point(400, 296);
 		this.button4.Name = "button4";
 		this.button4.Size = new System.Drawing.Size(88, 24);
 		this.button4.TabIndex = 21;
@@ -307,15 +286,54 @@ namespace GUIBurner
 		// 
 		// checkBox6
 		// 
-		this.checkBox6.Location = new System.Drawing.Point(216, 200);
+		this.checkBox6.Location = new System.Drawing.Point(216, 208);
 		this.checkBox6.Name = "checkBox6";
-		this.checkBox6.Size = new System.Drawing.Size(24, 24);
+		this.checkBox6.Size = new System.Drawing.Size(16, 16);
 		this.checkBox6.TabIndex = 23;
+		// 
+		// label6
+		// 
+		this.label6.Location = new System.Drawing.Point(232, 232);
+		this.label6.Name = "label6";
+		this.label6.Size = new System.Drawing.Size(288, 16);
+		this.label6.TabIndex = 25;
+		this.label6.Text = "This Option converts automatic all TV-Record Files";
+		// 
+		// textBox2
+		// 
+		this.textBox2.Location = new System.Drawing.Point(216, 256);
+		this.textBox2.Name = "textBox2";
+		this.textBox2.Size = new System.Drawing.Size(272, 20);
+		this.textBox2.TabIndex = 26;
+		this.textBox2.Text = "";
+		// 
+		// button3
+		// 
+		this.button3.Location = new System.Drawing.Point(504, 256);
+		this.button3.Name = "button3";
+		this.button3.Size = new System.Drawing.Size(32, 24);
+		this.button3.TabIndex = 27;
+		this.button3.Text = "...";
+		this.button3.Click += new System.EventHandler(this.button3_Click);
+		// 
+		// label12
+		// 
+		this.label12.Location = new System.Drawing.Point(8, 264);
+		this.label12.Name = "label12";
+		this.label12.Size = new System.Drawing.Size(184, 24);
+		this.label12.TabIndex = 28;
+		this.label12.Text = "TV Recording Path";
 		// 
 		// SetupForm
 		// 
 		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-		this.ClientSize = new System.Drawing.Size(600, 350);
+		this.ClientSize = new System.Drawing.Size(600, 342);
+		this.Controls.Add(this.label12);
+		this.Controls.Add(this.textBox2);
+		this.Controls.Add(this.checkBox1);
+		this.Controls.Add(this.textBox1);
+		this.Controls.Add(this.button3);
+		this.Controls.Add(this.label6);
 		this.Controls.Add(this.label11);
 		this.Controls.Add(this.checkBox6);
 		this.Controls.Add(this.label10);
@@ -325,11 +343,6 @@ namespace GUIBurner
 		this.Controls.Add(this.label8);
 		this.Controls.Add(this.label7);
 		this.Controls.Add(this.checkBox4);
-		this.Controls.Add(this.button3);
-		this.Controls.Add(this.textBox2);
-		this.Controls.Add(this.checkBox1);
-		this.Controls.Add(this.textBox1);
-		this.Controls.Add(this.label6);
 		this.Controls.Add(this.label5);
 		this.Controls.Add(this.checkBox3);
 		this.Controls.Add(this.label4);
@@ -343,6 +356,7 @@ namespace GUIBurner
 		this.Controls.Add(this.comboBox1);
 		this.Name = "SetupForm";
 		this.Text = "SetupForm";
+		this.Load += new System.EventHandler(this.SetupForm_Load);
 		this.ResumeLayout(false);
 
 	}
@@ -502,6 +516,27 @@ namespace GUIBurner
 			burnClass= new XPBurn.XPBurnCD();
 			GetRecorder();
 			comboBox1.SelectedIndex=selIndx;
+		}
+
+		private void SetupForm_Load(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void button3_Click(object sender, System.EventArgs e)
+		{
+			using(folderBrowserDialog1 = new FolderBrowserDialog()) 
+			{
+				folderBrowserDialog1.Description = "Select the folder where TV record files will be stored";
+				folderBrowserDialog1.ShowNewFolderButton = true;
+				folderBrowserDialog1.SelectedPath = textBox2.Text;
+				DialogResult dialogResult = folderBrowserDialog1.ShowDialog(this);
+
+				if(dialogResult == DialogResult.OK) 
+				{
+					textBox2.Text = folderBrowserDialog1.SelectedPath;
+				}
+			}		
 		}
  }
 }
