@@ -590,6 +590,15 @@ namespace DShowNET
     /// <param name="graphBuilder"></param>
     static public void EnableDeInterlace(IGraphBuilder graphBuilder)
     {
+			int DeInterlaceMode=3;
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				//None
+				//Bob
+				//Weave
+				//Best
+				DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+			}
 			DirectShowUtil.DebugWrite("EnableDeInterlace()");
       int hr;
       IBaseFilter overlay;
@@ -600,7 +609,10 @@ namespace DShowNET
         IAMOverlayFX overlayFX = overlay as IAMOverlayFX;
         if (overlayFX!=null)
         {
-          overlayFX.SetOverlayFX((uint)AMOVERLAYFX.DEINTERLACE);
+					if (DeInterlaceMode==0)
+						overlayFX.SetOverlayFX((uint)AMOVERLAYFX.None);
+          else
+						overlayFX.SetOverlayFX((uint)AMOVERLAYFX.DEINTERLACE);
         }
       }
         
@@ -632,6 +644,31 @@ namespace DShowNET
 						IVMRDeinterlaceControl9 vmrdeinterlace9 = pBasefilter as IVMRDeinterlaceControl9;
 						if (vmrdeinterlace9!=null)
 						{
+							Guid guidNone = new Guid(0,0,0,0,0,0,0,0,0,0,0);
+							if (DeInterlaceMode==0)
+							{
+								//none
+								Log.Write("VMR9: select deinterlace mode:None");
+								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
+								hr=vmrdeinterlace9.SetDeinterlaceMode(0,ref guidNone);
+								hr=vmrdeinterlace9.SetDeinterlaceMode(1,ref guidNone);
+								return;
+							}
+							if (DeInterlaceMode==1)
+							{
+								//Bob
+								Log.Write("VMR9: select deinterlace mode:BOB");
+								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_BOB);
+								return;
+							}
+							if (DeInterlaceMode==2)
+							{
+								//Weave
+								Log.Write("VMR9: select deinterlace mode:Weave");
+								vmrdeinterlace9.SetDeinterlacePrefs((uint)VMR9DeinterlacePrefs.DeinterlacePref9_Weave);
+								return;
+							}
+							Log.Write("VMR9: select deinterlace mode:NextBest");
 							DirectShowUtil.DebugWrite("VMR9:got IVMRDeinterlaceControl9");
 							VMR9VideoDesc videodesc=new VMR9VideoDesc();
 							IPin pinIn;
