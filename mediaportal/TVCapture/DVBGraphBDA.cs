@@ -2559,23 +2559,50 @@ namespace MediaPortal.TV.Recording
 					}
 					else
 					{
+						if (lnb_1 < 0) lnb_1=0;
+						if (lnb_0 < 0) lnb_0=0;
+						if (lnbKhz < 0) lnbKhz=0;
 						for (int i=0; i < info.Length;++i)
 						{
 							if (info[i] !=null)
 							{
+								bool ok=true;
 								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got IBDA_LNBInfo #{0}",i);
 								int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
-								if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_HighLowSwitchFrequency  hr:0x{0:X}",hr);
-								
+								if (hr!=0) 
+								{
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
+									ok=false;
+								}
+								else 
+								{
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  put_HighLowSwitchFrequency ({0}) ok",lnbKhz);
+								}
 								hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
-								if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand  hr:0x{0:X}",hr);
-								
+								if (hr!=0) 
+								{
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
+									ok=false;
+								}
+								else
+								{
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} ok",lnb_0);
+								}
 								hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
-								if (hr!=0) Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand hr:0x{0:X}",hr);
-							}
-						}
+								if (hr!=0) 
+								{
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
+									ok=false;
+								}
+								else
+								{
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} ok",lnb_1);
+								}
+								if (ok) break;
+							}//if (info[i] !=null)
+						}//for (int i=0; i < info.Length;++i)
 					}
-				}
+				}//if (m_TunerDevice!=null)
 			}
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		
