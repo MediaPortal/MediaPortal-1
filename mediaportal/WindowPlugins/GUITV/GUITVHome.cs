@@ -102,11 +102,16 @@ namespace MediaPortal.GUI.TV
 			switch (action.wID)
       {
         case Action.ActionType.ACTION_RECORD:
+					//record current program on current channel
           int card=GetCurrentCard();
+
+					//are we watching tv?
           if (Recorder.IsCardViewing(card) || Recorder.IsCardTimeShifting(card))
           {
+						//yes, are we not recording yet
             if (!Recorder.IsCardRecording(card))
             {
+							//nop, then record current program
               string channel=Recorder.GetTVChannelName(card);
               Recorder.RecordNow(channel);
             }
@@ -123,13 +128,14 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
-          
+					// goto home 
+          // are we watching tv & doing timeshifting
           if (! g_Player.Playing)
           {
+						//yes, do we want tv as background
             if (GUIGraphicsContext.ShowBackground)
             {
-              // stop timeshifting & viewing... 
-              
+              // No, then stop timeshifting & viewing... 
               Recorder.StopViewing();
             }
           }
@@ -138,6 +144,8 @@ namespace MediaPortal.GUI.TV
 				}
 
         case Action.ActionType.ACTION_SHOW_GUI:
+					//switch to fullscreen TV
+					//but only if we're watching tv
           if ( Recorder.IsCardViewing(m_iCurrentCard) )
           {
             StartPlaying(false);
@@ -156,12 +164,15 @@ namespace MediaPortal.GUI.TV
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
         {
           base.OnMessage(message);
+					
           TVDatabase.GetRecordings(ref m_recordings);
 					if (g_Player.Playing && !g_Player.IsTV)
 					{
 						g_Player.Stop();
 					}
           m_util= new TVUtil();
+
+					//if we're already watching tv or recording, then get the current tv channel
           if (Recorder.IsCardViewing(m_iCurrentCard)||Recorder.IsCardTimeShifting(m_iCurrentCard) )
           {
             m_strChannel=Recorder.GetTVChannelName(m_iCurrentCard);
@@ -171,21 +182,24 @@ namespace MediaPortal.GUI.TV
             m_strChannel=Recorder.GetTVRecording(m_iCurrentCard).Channel;
           }
           
-          
+          //add all tv capture cards to the cards selection button
           GUIControl.ClearControl(GetID,(int)Controls.BTN_CARD);
           for (int x=0; x < Recorder.Count; ++x)
           {
               string CardName =Recorder.GetFriendlyNameForCard(x);
               GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_CARD,CardName );
           }
+					//if we only have 1 tv capture card then disable the cards selection button
           if (Recorder.Count<=1)
             GUIControl.DisableControl(GetID,(int)Controls.BTN_CARD);
 
+					// set card button to current selected card
           if (m_iCurrentCard<Recorder.Count)
           {
             GUIControl.SelectItemControl(GetID,(int)Controls.BTN_CARD,m_iCurrentCard);
           }
 					
+					//add all tv channels to the channel selection button
           TVDatabase.GetChannels(ref m_channels);
           GUIControl.ClearControl(GetID,(int)Controls.BTN_CHANNEL);
           int i=0;
@@ -197,6 +211,8 @@ namespace MediaPortal.GUI.TV
               ++i;
             }
           }
+					// if no channel selected then set channel button to the first
+					// channel found
           if (m_strChannel==String.Empty && m_channels.Count>0)
           {
             foreach (TVChannel channel in m_channels)
@@ -208,21 +224,24 @@ namespace MediaPortal.GUI.TV
               }
             }
           }
-          // start viewing... 
-          Recorder.StartViewing(m_iCurrentCard,m_strChannel, m_bTVON, m_bTimeShifting);
+
+          // start viewing tv... 
+					GUIGraphicsContext.IsFullScreenVideo=false;
+					Recorder.StartViewing(m_iCurrentCard,m_strChannel, m_bTVON, m_bTimeShifting);
+
           m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);
           m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
 			
+					//set video window position
 					GUIControl cntl = GetControl( (int)Controls.VIDEO_WINDOW);
 					if (cntl!=null)
 					{
-						GUIGraphicsContext.IsFullScreenVideo=false;
 						GUIGraphicsContext.VideoWindow = new Rectangle(cntl.XPosition,cntl.YPosition,cntl.Width,cntl.Height);
 					}
           
-          UpdateButtons();
-          UpdateCurrentProgram();
-          UpdateChannel();
+          UpdateStateOfButtons();
+          UpdateProgressPercentageBar();
+          UpdateChannelButton();
 
           return true;
 				}
@@ -234,14 +253,16 @@ namespace MediaPortal.GUI.TV
           m_util=null;
           
           SaveSettings();
+					//if we're switching to another plugin
 					if ( !GUITVHome.IsTVWindow(message.Param1) )
 					{
+						//and we're not playing which means we dont timeshift tv
 						if (! g_Player.Playing)
 						{
+							// and we dont want tv in the background
 							if (GUIGraphicsContext.ShowBackground)
 							{
-								// stop timeshifting & viewing... 
-	              
+								// then stop timeshifting & viewing... 
 								Recorder.StopViewing();
 							}
 						}
@@ -255,14 +276,17 @@ namespace MediaPortal.GUI.TV
 
           if (iControl==(int)Controls.BTN_TVONOFF)
           {
+						//switch tv on/off
             if (message.Param1==0) 
             {
+							//tv off
               m_bTVON=false;
               SaveSettings();
               g_Player.Stop();
             }
             else
             {
+							// tv on
               m_bTVON=true;
               SaveSettings();
             }
@@ -277,6 +301,7 @@ namespace MediaPortal.GUI.TV
 
           if (iControl==(int)Controls.BTN_TIMESHIFTINGONOFF)
           {
+						//turn timeshifting on/off
             if (message.Param1==0) 
             {
               //turn timeshifting off 
@@ -289,7 +314,6 @@ namespace MediaPortal.GUI.TV
             }
             SaveSettings();
             Recorder.StartViewing(m_iCurrentCard, Recorder.GetTVChannelName(m_iCurrentCard), m_bTVON,m_bTimeShifting);
-
             
             m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);
             m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
@@ -297,14 +321,15 @@ namespace MediaPortal.GUI.TV
           
 					if (iControl==(int)Controls.BTN_CHANNEL)
 					{
+						//switch to another tv channel
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
             OnMessage(msg);         
             if (msg.Label.Length>0)
             {
               m_strChannel=msg.Label;
-              UpdateButtons();
-              UpdateCurrentProgram();
-              UpdateChannel();
+              UpdateStateOfButtons();
+              UpdateProgressPercentageBar();
+              UpdateChannelButton();
               Recorder.StartViewing(m_iCurrentCard,m_strChannel , m_bTVON,m_bTimeShifting);
               SaveSettings();
               m_strChannel=Recorder.GetTVChannelName(m_iCurrentCard);
@@ -314,6 +339,7 @@ namespace MediaPortal.GUI.TV
 					}
           if (iControl == (int)Controls.BTN_CARD)
           {
+						//switch to another tv capture card
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
             OnMessage(msg);
             
@@ -327,22 +353,27 @@ namespace MediaPortal.GUI.TV
               Recorder.StartViewing(m_iCurrentCard,m_strChannel , m_bTVON,m_bTimeShifting);
             }
 
-            UpdateButtons();
-            UpdateCurrentProgram();
-            UpdateChannel();
+            UpdateStateOfButtons();
+            UpdateProgressPercentageBar();
+            UpdateChannelButton();
           }
 
           if (iControl == (int)Controls.BTN_RECORD)
           {
+						//record now.
+
+						//Are we recording already?
             if (!Recorder.IsCardRecording(m_iCurrentCard))
             {
+							//no then start recording
               Recorder.RecordNow(m_strChannel);
             }
             else
             {
+							//yes then stop recording
               Recorder.StopRecording(m_iCurrentCard);
 
-              // re-start viewing.... 
+              // and re-start viewing.... 
               LoadSettings();
               Recorder.StartViewing(m_iCurrentCard, Recorder.GetTVChannelName(m_iCurrentCard), m_bTVON,m_bTimeShifting);
 
@@ -350,7 +381,7 @@ namespace MediaPortal.GUI.TV
               m_bTimeShifting=Recorder.IsCardTimeShifting(m_iCurrentCard);
               m_bTVON=m_bTimeShifting||Recorder.IsCardViewing(m_iCurrentCard);
             }
-            UpdateButtons();
+            UpdateStateOfButtons();
           }
         break;
 
@@ -372,10 +403,19 @@ namespace MediaPortal.GUI.TV
 			return base.OnMessage(message);
 		}
 
-    void UpdateButtons()
+		/// <summary>
+		/// Update the state of the following buttons
+		/// - tv on/off
+		/// - timeshifting on/off
+		/// - record now
+		/// </summary>
+    void UpdateStateOfButtons()
     {
+			//are we recording a tv program?
       if (Recorder.IsCardRecording(m_iCurrentCard))
       {
+				//yes then disable the tv on/off and timeshifting on/off buttons
+				//and change the Record Now button into Stop Record
         GUIControl.DisableControl(GetID,(int)Controls.BTN_TVONOFF);
         GUIControl.DisableControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
         GUIControl.SelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
@@ -383,19 +423,25 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
+				//nop. then enable the tv on/off button and change the Record Now button
+				//to Record Now
         GUIControl.EnableControl(GetID,(int)Controls.BTN_TVONOFF);
         GUIControl.SetControlLabel(GetID, (int)Controls.BTN_RECORD, GUILocalizeStrings.Get(601));
       
+				//is tv turned off or is the current card not supporting timeshifting
         bool supportstimeshifting=Recorder.DoesCardSupportTimeshifting(m_iCurrentCard);
         if (m_bTVON==false || supportstimeshifting==false)
         {
+					//then disable the timeshifting button
           GUIControl.DisableControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
           GUIControl.DeSelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
         }
         else if (supportstimeshifting)
         {
+					//enable the timeshifting button
           GUIControl.EnableControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
 
+					// set state of timeshifting button
           if ( Recorder.IsCardTimeShifting(m_iCurrentCard) )
           {
             GUIControl.SelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
@@ -405,19 +451,23 @@ namespace MediaPortal.GUI.TV
             GUIControl.DeSelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
           }
         }
+
+				//set state of TV on/off button
         if (m_bTVON)
           GUIControl.SelectControl(GetID,(int)Controls.BTN_TVONOFF);
         else
           GUIControl.DeSelectControl(GetID,(int)Controls.BTN_TVONOFF);
-
       }
     }
-    void UpdateChannel()
+
+		// updates the channel button so it shows the currently selected tv channel
+    void UpdateChannelButton()
     {
       int i=0;
       int iSelected=-1;
       if (m_channels.Count>0)
       {
+				GUIControl.ClearControl(GetID, (int)Controls.BTN_CHANNEL);
         foreach (TVChannel chan in m_channels)
         {
           GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_CHANNEL,chan.Name);
@@ -434,30 +484,29 @@ namespace MediaPortal.GUI.TV
 		}
 
 
-      
-    void UpdateCurrentProgram()
+		/// <summary>
+		/// Update the the progressbar in the GUI which shows
+		/// how much of the current tv program has elapsed
+		/// </summary>
+    void UpdateProgressPercentageBar()
     {
       int iStep=0;
       try
       {
         if (m_util!=null)
         {
+					//get current tv program
           TVProgram prog=m_util.GetCurrentProgram(m_strChannel);
-          iStep=1;
           if (prog!=null) 
           {
-            iStep=2;
             TimeSpan ts=prog.EndTime-prog.StartTime;
             double iTotalSecs=ts.TotalSeconds;
             ts=DateTime.Now-prog.StartTime;
             double iCurSecs=ts.TotalSeconds;
             double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
             fPercent *=100.0d;
-            iStep=3;
             GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
-            iStep=4;
           }
-          iStep=5;
         }
       }
       catch (Exception)
@@ -466,65 +515,55 @@ namespace MediaPortal.GUI.TV
       }
     }
 
+		/// <summary>
+		/// this method is called periodicaly by MP
+		/// as long as this window is shown
+		/// It will check if anything has changed like
+		/// tv channel switched or recording started/stopped
+		/// and will update the GUI
+		/// </summary>
     public override void Process()
-    {
-      
+    { 
+			//if we're not playing the timeshifting file
       if (!g_Player.Playing)
       {
+				//then try to start it
         StartPlaying(true);
       }
 
-
-      //m_strChannel=Recorder.GetTVChannelName(GetCurrentCard());
-      //show/hide 'record pin' if current program is being recorded or not
-      bool bRecording=false;
-      TVProgram program=m_util.GetCurrentProgram(m_strChannel);
-      if (program!=null)
-      {
-        foreach (TVRecording record in m_recordings)
-        {
-          if (record.Canceled==0 && record.IsRecordingProgram(program) ) 
-          {
-            bRecording=true;
-            break;
-          }
-        }
-      }
-
-      if (bRecording)
-      {
-        GUIControl.ShowControl(GetID,(int)Controls.IMG_REC_PIN);
-      }
-      else
-      {
-        GUIControl.HideControl(GetID,(int)Controls.IMG_REC_PIN);
-      }
-
-      // if previewing, then set current channel to channel we're previewing
-      // if recording, then set current channel to channel we're recording and ask player to
-      // start playing the recording
+      // if we're watching tv, then set current channel to tv channel we're watching
       if (Recorder.IsCardViewing(m_iCurrentCard))
       {
+				//we're watching tv. Did the tv channel change?
         if (!m_strChannel.Equals(Recorder.GetTVChannelName(m_iCurrentCard) ))
         {
+					//yes then update GUI
           Log.Write("Previewing channel changed");
           m_strChannel=Recorder.GetTVChannelName(m_iCurrentCard) ;
-          UpdateButtons();
-          UpdateCurrentProgram();
-          UpdateChannel();
+          UpdateStateOfButtons();
+          UpdateProgressPercentageBar();
+          UpdateChannelButton();
         }
       }
-      else if (Recorder.IsCardRecording(m_iCurrentCard))
-      {
-        if (!m_strChannel.Equals(Recorder.GetTVRecording(m_iCurrentCard) .Channel))
-        {
-          m_strChannel=Recorder.GetTVRecording(m_iCurrentCard).Channel;
-          UpdateButtons();
-          UpdateCurrentProgram();
-          UpdateChannel();
-        }
-      }
-
+      
+			// if we're recording tv, then set current channel to tv channel we're recording 
+			if (Recorder.IsCardRecording(m_iCurrentCard))
+			{
+				//we're recording. Did the tvchannel change?
+				if (!m_strChannel.Equals(Recorder.GetTVRecording(m_iCurrentCard) .Channel))
+				{
+					//yes then update GUI
+					m_strChannel=Recorder.GetTVRecording(m_iCurrentCard).Channel;
+					UpdateStateOfButtons();
+					UpdateProgressPercentageBar();
+					UpdateChannelButton();
+				}
+				GUIControl.ShowControl(GetID,(int)Controls.IMG_REC_PIN);
+			}
+			else
+			{
+				GUIControl.HideControl(GetID,(int)Controls.IMG_REC_PIN);
+			}
 
       TimeSpan ts = DateTime.Now-m_updateTimer;
       if (ts.TotalMilliseconds>500)
@@ -543,45 +582,61 @@ namespace MediaPortal.GUI.TV
           GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
         }
 
-        UpdateCurrentProgram();
+        UpdateProgressPercentageBar();
         
-        UpdateButtons();
+        UpdateStateOfButtons();
       }
     }
 
 
+		/// <summary>
+		/// This method will try playing the timeshifting file
+		/// </summary>
+		/// <param name="bCheckOnOffButton">check state of tv on/off button</param>
     void StartPlaying(bool bCheckOnOffButton)
     {
       if (bCheckOnOffButton)
       {
+				//if tv is off then do nothing
         if (!m_bTVON) return;
       }
       
+      // if we're not timeshifting then do nothing
+      if (!Recorder.IsCardTimeShifting(m_iCurrentCard) ) return;
       
-      if (Recorder.IsCardTimeShifting(m_iCurrentCard) )
+			//get the timeshifting filename
+      string strFileName=Recorder.GetTimeShiftFileName(m_iCurrentCard);
+    
+			//if we're not playing this file yet
+      if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
       {
-        string strFileName=Recorder.GetTimeShiftFileName(m_iCurrentCard);
-      
-        if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
+				// and it exists
+        if (System.IO.File.Exists(strFileName))
         {
-          if (System.IO.File.Exists(strFileName))
-          {
-            g_Player.Play(strFileName);
-          }
-          else 
-          {
-            m_bTVON=false;
-          }
+					//then play it
+          g_Player.Play(strFileName);
+        }
+        else 
+        {
+					// file does not exists. turn off tv
+          m_bTVON=false;
         }
       }
     }
 
+		/// <summary>
+		/// Returns the current tv capture card number we're looking at
+		/// </summary>
+		/// <returns></returns>
     static public int GetCurrentCard()
     {
       return m_iCurrentCard;
     }
 
-    static public void OnPreviousChannel()
+		/// <summary>
+		/// When called this method will switch to the previous TV channel
+		/// </summary>
+		static public void OnPreviousChannel()
     {	
 			ArrayList m_channels=new ArrayList();
       TVDatabase.GetChannels(ref m_channels);
@@ -608,20 +663,28 @@ namespace MediaPortal.GUI.TV
       }
     }
     
+		/// <summary>
+		/// When called this method will switch to the next TV channel
+		/// </summary>
     static public void OnNextChannel()
     {
+			// get list of all channels
       ArrayList m_channels=new ArrayList();
       TVDatabase.GetChannels(ref m_channels);
+
+			// get current channel name
       string strChannel=Recorder.TVChannelName;
       for (int i=0; i < m_channels.Count;++i)
       {
         TVChannel chan=(TVChannel)m_channels[i];
         if (String.Compare(chan.Name,strChannel,true)==0 )
         {
+					//select next channel
           int iNext=i+1;
           if (iNext>m_channels.Count-1) iNext=0;
           chan=(TVChannel)m_channels[iNext];
 
+					//and view that
           int card=GUITVHome.GetCurrentCard();
           Recorder.StartViewing(card, chan.Name, Recorder.IsCardViewing(card), Recorder.IsCardTimeShifting(card)) ;
 					
@@ -634,6 +697,14 @@ namespace MediaPortal.GUI.TV
         }
       }
     }
+
+		/// <summary>
+		/// Returns true if the specified window belongs to the my tv plugin
+		/// </summary>
+		/// <param name="windowId">id of window</param>
+		/// <returns>
+		/// true: belongs to the my tv plugin
+		/// false: does not belong to the my tv plugin</returns>
 		static public bool IsTVWindow(int windowId)
 		{
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV) return true;
