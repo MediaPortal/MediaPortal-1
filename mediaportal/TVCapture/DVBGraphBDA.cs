@@ -1464,42 +1464,57 @@ namespace MediaPortal.TV.Recording
 
 		void Pause()
 		{	
+			
+			Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Pause() {0}",m_cardID);
 			//pause playing graph
-			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
+			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID-1))
 			{
+				Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Pause() pause player");
 				g_Player.Pause();
 			}
+
 			//pause recording/timeshifting graph
-			if (m_mediaControl!=null && graphRunning)
+			FilterState state;
+			if (m_mediaControl!=null)
 			{
-				FilterState state;
 				m_mediaControl.GetState(10,out  state);
 				if (state==FilterState.Running)
 				{
+					Log.WriteFile(Log.LogType.Log,"Pause() capture graph");
 					m_mediaControl.Pause();
 				}
+				m_mediaControl.GetState(10,out  state);
+				Log.WriteFile(Log.LogType.Log,"Pause() capture graph state:{0}", state.ToString());
 			}
 		}
 
 		void Continue()
 		{
 			//continue recording/timeshifting graph
-			if (m_mediaControl!=null && graphRunning)
+			
+			Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() {0}",m_cardID);
+			if (m_mediaControl!=null)
 			{
 				FilterState state;
 				m_mediaControl.GetState(10,out  state);
 				if (state==FilterState.Paused)
 				{
+					Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() run capture graph");
 					m_mediaControl.Run();
 				}
+				m_mediaControl.GetState(10,out  state);
+				Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() capture graph state:{0}", state.ToString());
 			}
 			
 			//continue playing graph
-			if (g_Player.Playing && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID))
+			if (g_Player.Playing && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID-1))
 			{
+
+				Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() reset player");
 				g_Player.Reset();
 				if (g_Player.Paused)
 				{
+					Log.WriteFile(Log.LogType.Log,"Continue() continue timeshift file");
 					g_Player.Pause();
 				}
 			}
