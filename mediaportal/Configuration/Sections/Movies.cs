@@ -119,10 +119,10 @@ namespace MediaPortal.Configuration.Sections
 					this.lvDatabase.Items[1].SubItems.Add("german");
 					this.lvDatabase.Items[1].SubItems.Add("25");
           
-          // create entry for OFDB
+          // create entry for frdb
           this.lvDatabase.Items.Add("FRDB");
-          this.lvDatabase.Items[1].SubItems.Add("french");
-          this.lvDatabase.Items[1].SubItems.Add("25");
+          this.lvDatabase.Items[2].SubItems.Add("french");
+          this.lvDatabase.Items[2].SubItems.Add("25");
 				}
 				else
 				{
@@ -131,6 +131,7 @@ namespace MediaPortal.Configuration.Sections
 					string strDatabase = "";
 					string strLanguage = "";
 					// Load values
+          bool frenchFound=false;
 					for(int i = 0;i < iNumber;i++)
 					{
 						strLimit = xmlreader.GetValueAsString("moviedatabase","limit"+i.ToString(),"false");
@@ -143,8 +144,17 @@ namespace MediaPortal.Configuration.Sections
 							this.lvDatabase.Items[iCount].SubItems.Add(strLanguage);
 							this.lvDatabase.Items[iCount].SubItems.Add(strLimit);
 							iCount++;
+              if (strLanguage=="french")
+                frenchFound=true;
 						}
 					}
+          if (!frenchFound)
+          {
+            this.lvDatabase.Items.Add("FRDB");
+            this.lvDatabase.Items[2].SubItems.Add("french");
+            this.lvDatabase.Items[2].SubItems.Add("25");
+          }
+          
 				}
 				// set the first entry "activ"
 				this.lvDatabase.Items[0].Selected = true;
