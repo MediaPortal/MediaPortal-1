@@ -10,8 +10,6 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class TVProgramGuide : MediaPortal.Configuration.SectionSettings
 	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
     private MediaPortal.UserInterface.Controls.MPCheckBox useColorCheckBox;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
@@ -46,7 +44,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.Button DeleteTaskButton;
-    private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label label13;
     private System.Windows.Forms.Button btnUpdateTvGuide;
 		private System.ComponentModel.IContainer components = null;
@@ -56,6 +53,11 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label15;
     int   OldTimeZoneOffsetHours=0;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Label label16;
     int   OldTimeZoneOffsetMins=0;
 
 		public TVProgramGuide() : this("Program Guide")
@@ -95,9 +97,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.useColorCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textBoxMinutes = new System.Windows.Forms.TextBox();
@@ -121,7 +121,6 @@ namespace MediaPortal.Configuration.Sections
 			this.GrabbercomboBox = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.basicRadioButton = new System.Windows.Forms.RadioButton();
-			this.label14 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.dayIntervalTextBox = new System.Windows.Forms.TextBox();
@@ -138,73 +137,29 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.DeleteTaskButton = new System.Windows.Forms.Button();
-			this.groupBox1.SuspendLayout();
-			this.groupBox2.SuspendLayout();
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label16 = new System.Windows.Forms.Label();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.label14 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
+			this.tabControl1.SuspendLayout();
+			this.tabPage1.SuspendLayout();
+			this.tabPage2.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.useColorCheckBox);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 48);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General Settings";
 			// 
 			// useColorCheckBox
 			// 
 			this.useColorCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.useColorCheckBox.Location = new System.Drawing.Point(16, 16);
+			this.useColorCheckBox.Location = new System.Drawing.Point(24, 16);
 			this.useColorCheckBox.Name = "useColorCheckBox";
-			this.useColorCheckBox.Size = new System.Drawing.Size(308, 24);
+			this.useColorCheckBox.Size = new System.Drawing.Size(308, 16);
 			this.useColorCheckBox.TabIndex = 0;
-			this.useColorCheckBox.Text = "Use colors in program guide";
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox2.Controls.Add(this.label15);
-			this.groupBox2.Controls.Add(this.label2);
-			this.groupBox2.Controls.Add(this.textBoxMinutes);
-			this.groupBox2.Controls.Add(this.btnClearTVDatabase);
-			this.groupBox2.Controls.Add(this.btnUpdateTvGuide);
-			this.groupBox2.Controls.Add(this.RunGrabberButton);
-			this.groupBox2.Controls.Add(this.advancedRadioButton);
-			this.groupBox2.Controls.Add(this.compensateTextBox);
-			this.groupBox2.Controls.Add(this.useTimeZoneCheckBox);
-			this.groupBox2.Controls.Add(this.label1);
-			this.groupBox2.Controls.Add(this.browseButton);
-			this.groupBox2.Controls.Add(this.folderNameTextBox);
-			this.groupBox2.Controls.Add(this.folderNameLabel);
-			this.groupBox2.Controls.Add(this.label6);
-			this.groupBox2.Controls.Add(this.daysToKeepTextBox);
-			this.groupBox2.Controls.Add(this.parametersButton);
-			this.groupBox2.Controls.Add(this.parametersTextBox);
-			this.groupBox2.Controls.Add(this.label7);
-			this.groupBox2.Controls.Add(this.AdvancedDaystextBox);
-			this.groupBox2.Controls.Add(this.label4);
-			this.groupBox2.Controls.Add(this.GrabbercomboBox);
-			this.groupBox2.Controls.Add(this.label3);
-			this.groupBox2.Controls.Add(this.basicRadioButton);
-			this.groupBox2.Controls.Add(this.label14);
-			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(8, 56);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(440, 256);
-			this.groupBox2.TabIndex = 1;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "XMLTV Settings";
-			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+			this.useColorCheckBox.Text = "Use genre colors in MY TV Guide";
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(224, 80);
+			this.label15.Location = new System.Drawing.Point(224, 130);
 			this.label15.Name = "label15";
 			this.label15.Size = new System.Drawing.Size(56, 16);
 			this.label15.TabIndex = 69;
@@ -213,7 +168,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(160, 80);
+			this.label2.Location = new System.Drawing.Point(144, 176);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(8, 16);
 			this.label2.TabIndex = 68;
@@ -221,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// textBoxMinutes
 			// 
-			this.textBoxMinutes.Location = new System.Drawing.Point(176, 80);
+			this.textBoxMinutes.Location = new System.Drawing.Point(184, 128);
 			this.textBoxMinutes.Name = "textBoxMinutes";
 			this.textBoxMinutes.Size = new System.Drawing.Size(32, 20);
 			this.textBoxMinutes.TabIndex = 4;
@@ -229,16 +184,16 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// btnClearTVDatabase
 			// 
-			this.btnClearTVDatabase.Location = new System.Drawing.Point(216, 224);
+			this.btnClearTVDatabase.Location = new System.Drawing.Point(152, 320);
 			this.btnClearTVDatabase.Name = "btnClearTVDatabase";
-			this.btnClearTVDatabase.Size = new System.Drawing.Size(120, 24);
+			this.btnClearTVDatabase.Size = new System.Drawing.Size(120, 48);
 			this.btnClearTVDatabase.TabIndex = 11;
-			this.btnClearTVDatabase.Text = "Remove all programs";
+			this.btnClearTVDatabase.Text = "Remove all programs from TV Database";
 			this.btnClearTVDatabase.Click += new System.EventHandler(this.btnClearTVDatabase_Click);
 			// 
 			// btnUpdateTvGuide
 			// 
-			this.btnUpdateTvGuide.Location = new System.Drawing.Point(288, 56);
+			this.btnUpdateTvGuide.Location = new System.Drawing.Point(16, 320);
 			this.btnUpdateTvGuide.Name = "btnUpdateTvGuide";
 			this.btnUpdateTvGuide.Size = new System.Drawing.Size(120, 48);
 			this.btnUpdateTvGuide.TabIndex = 5;
@@ -249,7 +204,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.RunGrabberButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RunGrabberButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.RunGrabberButton.Location = new System.Drawing.Point(344, 224);
+			this.RunGrabberButton.Location = new System.Drawing.Point(224, 344);
 			this.RunGrabberButton.Name = "RunGrabberButton";
 			this.RunGrabberButton.Size = new System.Drawing.Size(80, 20);
 			this.RunGrabberButton.TabIndex = 12;
@@ -260,16 +215,16 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.advancedRadioButton.Enabled = false;
 			this.advancedRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.advancedRadioButton.Location = new System.Drawing.Point(16, 200);
+			this.advancedRadioButton.Location = new System.Drawing.Point(16, 96);
 			this.advancedRadioButton.Name = "advancedRadioButton";
-			this.advancedRadioButton.Size = new System.Drawing.Size(160, 24);
+			this.advancedRadioButton.Size = new System.Drawing.Size(160, 16);
 			this.advancedRadioButton.TabIndex = 55;
 			this.advancedRadioButton.Text = "Advanced Single Day Grabs";
 			this.advancedRadioButton.CheckedChanged += new System.EventHandler(this.advancedRadioButton_CheckedChanged);
 			// 
 			// compensateTextBox
 			// 
-			this.compensateTextBox.Location = new System.Drawing.Point(136, 80);
+			this.compensateTextBox.Location = new System.Drawing.Point(136, 128);
 			this.compensateTextBox.MaxLength = 3;
 			this.compensateTextBox.Name = "compensateTextBox";
 			this.compensateTextBox.Size = new System.Drawing.Size(24, 20);
@@ -279,16 +234,16 @@ namespace MediaPortal.Configuration.Sections
 			// useTimeZoneCheckBox
 			// 
 			this.useTimeZoneCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.useTimeZoneCheckBox.Location = new System.Drawing.Point(16, 50);
+			this.useTimeZoneCheckBox.Location = new System.Drawing.Point(24, 96);
 			this.useTimeZoneCheckBox.Name = "useTimeZoneCheckBox";
 			this.useTimeZoneCheckBox.Size = new System.Drawing.Size(240, 24);
 			this.useTimeZoneCheckBox.TabIndex = 2;
-			this.useTimeZoneCheckBox.Text = "Use time zone information from XMLTV";
+			this.useTimeZoneCheckBox.Text = "Use time zone information from XMLTV file";
 			this.useTimeZoneCheckBox.CheckedChanged += new System.EventHandler(this.useTimeZoneCheckBox_CheckedChanged);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 72);
+			this.label1.Location = new System.Drawing.Point(24, 124);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(112, 28);
 			this.label1.TabIndex = 50;
@@ -298,7 +253,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.browseButton.Location = new System.Drawing.Point(369, 22);
+			this.browseButton.Location = new System.Drawing.Point(344, 64);
 			this.browseButton.Name = "browseButton";
 			this.browseButton.Size = new System.Drawing.Size(56, 20);
 			this.browseButton.TabIndex = 1;
@@ -309,23 +264,23 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.folderNameTextBox.Location = new System.Drawing.Point(96, 22);
+			this.folderNameTextBox.Location = new System.Drawing.Point(32, 64);
 			this.folderNameTextBox.Name = "folderNameTextBox";
-			this.folderNameTextBox.Size = new System.Drawing.Size(265, 20);
+			this.folderNameTextBox.Size = new System.Drawing.Size(296, 20);
 			this.folderNameTextBox.TabIndex = 0;
 			this.folderNameTextBox.Text = "";
 			// 
 			// folderNameLabel
 			// 
-			this.folderNameLabel.Location = new System.Drawing.Point(16, 25);
+			this.folderNameLabel.Location = new System.Drawing.Point(16, 48);
 			this.folderNameLabel.Name = "folderNameLabel";
-			this.folderNameLabel.Size = new System.Drawing.Size(80, 23);
+			this.folderNameLabel.Size = new System.Drawing.Size(264, 16);
 			this.folderNameLabel.TabIndex = 47;
-			this.folderNameLabel.Text = "XMLTV folder";
+			this.folderNameLabel.Text = "Folder which contains the XMLTV file (tvguide.xml)";
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(184, 204);
+			this.label6.Location = new System.Drawing.Point(16, 146);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(104, 16);
 			this.label6.TabIndex = 44;
@@ -334,7 +289,7 @@ namespace MediaPortal.Configuration.Sections
 			// daysToKeepTextBox
 			// 
 			this.daysToKeepTextBox.Enabled = false;
-			this.daysToKeepTextBox.Location = new System.Drawing.Point(312, 176);
+			this.daysToKeepTextBox.Location = new System.Drawing.Point(144, 120);
 			this.daysToKeepTextBox.MaxLength = 3;
 			this.daysToKeepTextBox.Name = "daysToKeepTextBox";
 			this.daysToKeepTextBox.Size = new System.Drawing.Size(40, 20);
@@ -347,7 +302,7 @@ namespace MediaPortal.Configuration.Sections
 			this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.parametersButton.Enabled = false;
 			this.parametersButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.parametersButton.Location = new System.Drawing.Point(369, 138);
+			this.parametersButton.Location = new System.Drawing.Point(320, 40);
 			this.parametersButton.Name = "parametersButton";
 			this.parametersButton.Size = new System.Drawing.Size(56, 20);
 			this.parametersButton.TabIndex = 8;
@@ -359,15 +314,15 @@ namespace MediaPortal.Configuration.Sections
 			this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.parametersTextBox.Enabled = false;
-			this.parametersTextBox.Location = new System.Drawing.Point(168, 137);
+			this.parametersTextBox.Location = new System.Drawing.Point(96, 40);
 			this.parametersTextBox.Name = "parametersTextBox";
-			this.parametersTextBox.Size = new System.Drawing.Size(192, 20);
+			this.parametersTextBox.Size = new System.Drawing.Size(216, 20);
 			this.parametersTextBox.TabIndex = 7;
 			this.parametersTextBox.Text = "";
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(16, 139);
+			this.label7.Location = new System.Drawing.Point(-112, 80);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(80, 16);
 			this.label7.TabIndex = 37;
@@ -378,7 +333,7 @@ namespace MediaPortal.Configuration.Sections
 			this.AdvancedDaystextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.AdvancedDaystextBox.Enabled = false;
-			this.AdvancedDaystextBox.Location = new System.Drawing.Point(312, 200);
+			this.AdvancedDaystextBox.Location = new System.Drawing.Point(144, 144);
 			this.AdvancedDaystextBox.Name = "AdvancedDaystextBox";
 			this.AdvancedDaystextBox.Size = new System.Drawing.Size(112, 20);
 			this.AdvancedDaystextBox.TabIndex = 10;
@@ -387,9 +342,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(184, 178);
+			this.label4.Location = new System.Drawing.Point(16, 122);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(144, 16);
+			this.label4.Size = new System.Drawing.Size(120, 16);
 			this.label4.TabIndex = 30;
 			this.label4.Text = "Days to keep in guide";
 			// 
@@ -398,18 +353,18 @@ namespace MediaPortal.Configuration.Sections
 			this.GrabbercomboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.GrabbercomboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.GrabbercomboBox.Location = new System.Drawing.Point(168, 112);
+			this.GrabbercomboBox.Location = new System.Drawing.Point(96, 16);
 			this.GrabbercomboBox.Name = "GrabbercomboBox";
-			this.GrabbercomboBox.Size = new System.Drawing.Size(256, 21);
+			this.GrabbercomboBox.Size = new System.Drawing.Size(200, 21);
 			this.GrabbercomboBox.TabIndex = 6;
 			this.GrabbercomboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.GrabbercomboBox_KeyPress);
 			this.GrabbercomboBox.SelectedIndexChanged += new System.EventHandler(this.GrabbercomboBox_SelectedIndexChanged);
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(16, 115);
+			this.label3.Location = new System.Drawing.Point(16, 18);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(144, 23);
+			this.label3.Size = new System.Drawing.Size(64, 16);
 			this.label3.TabIndex = 28;
 			this.label3.Text = "Grabber";
 			// 
@@ -417,24 +372,16 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.basicRadioButton.Enabled = false;
 			this.basicRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.basicRadioButton.Location = new System.Drawing.Point(16, 174);
+			this.basicRadioButton.Location = new System.Drawing.Point(16, 72);
 			this.basicRadioButton.Name = "basicRadioButton";
 			this.basicRadioButton.Size = new System.Drawing.Size(192, 24);
 			this.basicRadioButton.TabIndex = 54;
 			this.basicRadioButton.Text = "Basic Multiday Grab";
 			this.basicRadioButton.CheckedChanged += new System.EventHandler(this.basicRadioButton_CheckedChanged);
 			// 
-			// label14
-			// 
-			this.label14.Location = new System.Drawing.Point(184, 176);
-			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(144, 16);
-			this.label14.TabIndex = 30;
-			this.label14.Text = "Days to keep in guide";
-			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(312, 26);
+			this.label10.Location = new System.Drawing.Point(272, 50);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(40, 16);
 			this.label10.TabIndex = 63;
@@ -442,7 +389,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(244, 26);
+			this.label9.Location = new System.Drawing.Point(184, 50);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(34, 16);
 			this.label9.TabIndex = 62;
@@ -450,7 +397,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// dayIntervalTextBox
 			// 
-			this.dayIntervalTextBox.Location = new System.Drawing.Point(279, 24);
+			this.dayIntervalTextBox.Location = new System.Drawing.Point(224, 48);
 			this.dayIntervalTextBox.Name = "dayIntervalTextBox";
 			this.dayIntervalTextBox.Size = new System.Drawing.Size(32, 20);
 			this.dayIntervalTextBox.TabIndex = 3;
@@ -459,7 +406,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// minutesTextBox
 			// 
-			this.minutesTextBox.Location = new System.Drawing.Point(211, 24);
+			this.minutesTextBox.Location = new System.Drawing.Point(144, 48);
 			this.minutesTextBox.Name = "minutesTextBox";
 			this.minutesTextBox.Size = new System.Drawing.Size(32, 20);
 			this.minutesTextBox.TabIndex = 2;
@@ -468,7 +415,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(170, 26);
+			this.label8.Location = new System.Drawing.Point(104, 50);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(40, 16);
 			this.label8.TabIndex = 1;
@@ -476,7 +423,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// hoursTextBox
 			// 
-			this.hoursTextBox.Location = new System.Drawing.Point(137, 24);
+			this.hoursTextBox.Location = new System.Drawing.Point(64, 48);
 			this.hoursTextBox.Name = "hoursTextBox";
 			this.hoursTextBox.Size = new System.Drawing.Size(32, 20);
 			this.hoursTextBox.TabIndex = 1;
@@ -485,7 +432,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(104, 26);
+			this.label5.Location = new System.Drawing.Point(32, 50);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(32, 16);
 			this.label5.TabIndex = 57;
@@ -503,7 +450,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// UserTextBox
 			// 
-			this.UserTextBox.Location = new System.Drawing.Point(168, 56);
+			this.UserTextBox.Location = new System.Drawing.Point(104, 80);
 			this.UserTextBox.Name = "UserTextBox";
 			this.UserTextBox.Size = new System.Drawing.Size(96, 20);
 			this.UserTextBox.TabIndex = 5;
@@ -513,15 +460,15 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.PasswordTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.PasswordTextBox.Location = new System.Drawing.Point(328, 56);
+			this.PasswordTextBox.Location = new System.Drawing.Point(264, 80);
 			this.PasswordTextBox.Name = "PasswordTextBox";
-			this.PasswordTextBox.Size = new System.Drawing.Size(96, 20);
+			this.PasswordTextBox.Size = new System.Drawing.Size(48, 20);
 			this.PasswordTextBox.TabIndex = 6;
 			this.PasswordTextBox.Text = "";
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(88, 57);
+			this.label11.Location = new System.Drawing.Point(24, 81);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(72, 18);
 			this.label11.TabIndex = 67;
@@ -529,7 +476,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label12
 			// 
-			this.label12.Location = new System.Drawing.Point(272, 58);
+			this.label12.Location = new System.Drawing.Point(208, 82);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(56, 16);
 			this.label12.TabIndex = 68;
@@ -540,7 +487,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox3.Controls.Add(this.label13);
-			this.groupBox3.Controls.Add(this.DeleteTaskButton);
 			this.groupBox3.Controls.Add(this.createScheduleCheckBox);
 			this.groupBox3.Controls.Add(this.label5);
 			this.groupBox3.Controls.Add(this.label10);
@@ -554,18 +500,18 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.Controls.Add(this.PasswordTextBox);
 			this.groupBox3.Controls.Add(this.UserTextBox);
 			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox3.Location = new System.Drawing.Point(8, 312);
+			this.groupBox3.Location = new System.Drawing.Point(16, 176);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(440, 104);
+			this.groupBox3.Size = new System.Drawing.Size(392, 160);
 			this.groupBox3.TabIndex = 2;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Windows Task Scheduler Settings";
 			// 
 			// label13
 			// 
-			this.label13.Location = new System.Drawing.Point(16, 80);
+			this.label13.Location = new System.Drawing.Point(8, 120);
 			this.label13.Name = "label13";
-			this.label13.Size = new System.Drawing.Size(415, 16);
+			this.label13.Size = new System.Drawing.Size(368, 32);
 			this.label13.TabIndex = 70;
 			this.label13.Text = "NOTE: Windows will not run a task if the user does not have a password assigned";
 			// 
@@ -573,23 +519,92 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.DeleteTaskButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeleteTaskButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.DeleteTaskButton.Location = new System.Drawing.Point(352, 24);
+			this.DeleteTaskButton.Location = new System.Drawing.Point(320, 344);
 			this.DeleteTaskButton.Name = "DeleteTaskButton";
 			this.DeleteTaskButton.Size = new System.Drawing.Size(74, 20);
 			this.DeleteTaskButton.TabIndex = 4;
 			this.DeleteTaskButton.Text = "Delete Task";
 			this.DeleteTaskButton.Click += new System.EventHandler(this.DeleteTaskButton_Click);
 			// 
+			// tabControl1
+			// 
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Location = new System.Drawing.Point(8, 8);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(432, 416);
+			this.tabControl1.TabIndex = 3;
+			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.label16);
+			this.tabPage1.Controls.Add(this.browseButton);
+			this.tabPage1.Controls.Add(this.folderNameTextBox);
+			this.tabPage1.Controls.Add(this.folderNameLabel);
+			this.tabPage1.Controls.Add(this.textBoxMinutes);
+			this.tabPage1.Controls.Add(this.compensateTextBox);
+			this.tabPage1.Controls.Add(this.useTimeZoneCheckBox);
+			this.tabPage1.Controls.Add(this.label1);
+			this.tabPage1.Controls.Add(this.label15);
+			this.tabPage1.Controls.Add(this.btnUpdateTvGuide);
+			this.tabPage1.Controls.Add(this.btnClearTVDatabase);
+			this.tabPage1.Controls.Add(this.useColorCheckBox);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Size = new System.Drawing.Size(424, 390);
+			this.tabPage1.TabIndex = 0;
+			this.tabPage1.Text = "General";
+			// 
+			// label16
+			// 
+			this.label16.Location = new System.Drawing.Point(168, 134);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(8, 9);
+			this.label16.TabIndex = 70;
+			this.label16.Text = ":";
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.label14);
+			this.tabPage2.Controls.Add(this.label6);
+			this.tabPage2.Controls.Add(this.daysToKeepTextBox);
+			this.tabPage2.Controls.Add(this.parametersButton);
+			this.tabPage2.Controls.Add(this.parametersTextBox);
+			this.tabPage2.Controls.Add(this.label7);
+			this.tabPage2.Controls.Add(this.AdvancedDaystextBox);
+			this.tabPage2.Controls.Add(this.label4);
+			this.tabPage2.Controls.Add(this.RunGrabberButton);
+			this.tabPage2.Controls.Add(this.GrabbercomboBox);
+			this.tabPage2.Controls.Add(this.label3);
+			this.tabPage2.Controls.Add(this.basicRadioButton);
+			this.tabPage2.Controls.Add(this.advancedRadioButton);
+			this.tabPage2.Controls.Add(this.groupBox3);
+			this.tabPage2.Controls.Add(this.label2);
+			this.tabPage2.Controls.Add(this.DeleteTaskButton);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(424, 390);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "Scheduler";
+			// 
+			// label14
+			// 
+			this.label14.Location = new System.Drawing.Point(16, 42);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(64, 16);
+			this.label14.TabIndex = 69;
+			this.label14.Text = "Parameters";
+			// 
 			// TVProgramGuide
 			// 
-			this.Controls.Add(this.groupBox3);
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.tabControl1);
 			this.Name = "TVProgramGuide";
 			this.Size = new System.Drawing.Size(456, 448);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
+			this.tabControl1.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
+			this.tabPage2.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
