@@ -169,10 +169,13 @@ public class MediaPortalApp : D3DApp
       ActionTranslator.Load();
 
       //register the playlistplayer for thread messages (like playback stopped,ended)
+      Log.Write("Init playlist player");
       PlayListPlayer.Init();
 
       //registers the player for video window size notifications
+      Log.Write("Init players");
       g_Player.Init();
+      Log.Write("done");
     }
 
   public override bool PreProcessMessage(ref Message msg)

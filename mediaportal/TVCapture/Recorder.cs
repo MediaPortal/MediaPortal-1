@@ -76,6 +76,22 @@ namespace MediaPortal.TV.Recording
     static void ThreadFunctionRecord()
     {
       Log.Write("Recording thread starting");
+      GUIPropertyManager.Properties["#TV.View.channel"]="";
+      GUIPropertyManager.Properties["#TV.View.thumb"]  ="";
+      GUIPropertyManager.Properties["#TV.View.start"]="";
+      GUIPropertyManager.Properties["#TV.View.stop"] ="";
+      GUIPropertyManager.Properties["#TV.View.genre"]="";
+      GUIPropertyManager.Properties["#TV.View.title"]="";
+      GUIPropertyManager.Properties["#TV.View.description"]="";
+
+      GUIPropertyManager.Properties["#TV.Record.channel"]="";
+      GUIPropertyManager.Properties["#TV.Record.start"]="";
+      GUIPropertyManager.Properties["#TV.Record.stop"] ="";
+      GUIPropertyManager.Properties["#TV.Record.genre"]="";
+      GUIPropertyManager.Properties["#TV.Record.title"]="";
+      GUIPropertyManager.Properties["#TV.Record.description"]="";
+      GUIPropertyManager.Properties["#TV.Record.thumb"]  ="";
+
       System.Threading.Thread.Sleep(3000);
       m_tvcards.Clear();
       
@@ -199,8 +215,12 @@ namespace MediaPortal.TV.Recording
         if (chan.Name.Equals(m_strPreviewChannel))
         {
           TVProgram prog=tvutil.GetCurrentProgram(chan.Name);
-          if (m_bPreviewing && prog!=null)
+          if (prog!=null)
           {
+            if (!GUIPropertyManager.Properties["#TV.View.channel"].Equals(m_strPreviewChannel))
+            {
+              OnPreviewChannelChanged();
+            }
             GUIPropertyManager.Properties["#TV.View.start"]=prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
             GUIPropertyManager.Properties["#TV.View.stop"] =prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
             GUIPropertyManager.Properties["#TV.View.genre"]=prog.Genre;
@@ -209,6 +229,10 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
+            if (!GUIPropertyManager.Properties["#TV.View.channel"].Equals(m_strPreviewChannel))
+            {
+              OnPreviewChannelChanged();
+            }
             GUIPropertyManager.Properties["#TV.View.start"]="";
             GUIPropertyManager.Properties["#TV.View.stop"] ="";
             GUIPropertyManager.Properties["#TV.View.genre"]="";
@@ -216,7 +240,10 @@ namespace MediaPortal.TV.Recording
             GUIPropertyManager.Properties["#TV.View.description"]="";
           }
         }
+      }
 
+      foreach (TVChannel chan in channels)
+      {
         if (m_eState !=State.Running) break;
         if (m_bPreviewChanged) break;
         if (m_bRecordingsChanged) break;
@@ -516,8 +543,6 @@ namespace MediaPortal.TV.Recording
 
     static void OnPreviewStopped()
     {
-      GUIPropertyManager.Properties["#TV.View.channel"]="";
-      GUIPropertyManager.Properties["#TV.View.thumb"]  ="";
     }
     
     static void OnPreviewStarted()

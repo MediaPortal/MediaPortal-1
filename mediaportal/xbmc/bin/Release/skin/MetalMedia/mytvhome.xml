@@ -321,7 +321,7 @@
 		<posY>110</posY>
 		<width>90</width>
 		<height>90</height>
-		<texture>defaultVideoBig.png</texture>
+		<texture>#TV.View.thumb</texture>
 	</control>
 	<control>
 		<description>Current program title</description>
@@ -329,7 +329,7 @@
 		<id>13</id>
 		<posX>350</posX>
 		<posY>110</posY>
-		<label>605</label>
+		<label>#TV.View.title</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
@@ -340,7 +340,7 @@
 		<posX>645</posX>
 		<posY>110</posY>
 		<width>100</width> 
-		<label>605</label>
+		<label>#TV.View.start-#TV.View.stop</label>
 		<font>font14</font>
 		<align>right</align>
 		<textcolor>FFFFFFFF</textcolor>
@@ -353,7 +353,7 @@
 		<posY>132</posY>
 		<width>295</width> 
 		<height>90</height> 
-		<label>605</label>
+		<label>#TV.View.description</label>
 		<font>font14</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
