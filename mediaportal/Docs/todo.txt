@@ -10,7 +10,7 @@ My TV:
   - A way to browse and resolve recording conflicts. 
   - view live tv in fullscreen mode with osd
   - support multiple tuners/capture cards
- 
+   
   TVGuide:
      - 
 
@@ -43,6 +43,7 @@ Settings:
   - all :-)
 
 General:
+  - setup:specify recording +/- interval
   - seperate module/database for TV-series
   - remember 'view as' setting per folder
   - better mouse control

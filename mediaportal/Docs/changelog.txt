@@ -1,4 +1,7 @@
 History: (dd-mm-yyyy)
+  25-04-2004: my music    : added : show both visz & album art
+  25-04-2004: my music    : fixed : visz. disappeared when refreshing my weather
+  25-04-2004: general     : fixed : space=pause didnt work
   25-04-2004: my music    : fixed : music overlay window didnt reset @ start of next song
   25-04-2004: general     : fixed : screen refresh problems resizing, alt+tab, alt+enter etc when movie is playing fullscreen
   25-04-2004: my video    : fixed : start new video when running another one in video preview mode->preview window isnt removed
