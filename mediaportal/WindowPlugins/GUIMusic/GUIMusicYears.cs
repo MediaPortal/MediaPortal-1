@@ -14,7 +14,7 @@ using MediaPortal.Dialogs;
 namespace MediaPortal.GUI.Music
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// My music / years.
   /// </summary>
   public class GUIMusicYears: GUIWindow, IComparer
   { 
