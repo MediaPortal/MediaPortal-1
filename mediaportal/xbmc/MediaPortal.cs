@@ -694,7 +694,8 @@ public class MediaPortalApp : D3DApp, IRender
     protected override void OnStartup() 
     {
       // set window form styles
-      // these styles enable double buffering, which results in no flickering
+			// these styles enable double buffering, which results in no flickering
+			Log.Write("Mediaportal.OnStartup()");
       SetStyle(ControlStyles.Opaque, true);
       SetStyle(ControlStyles.UserPaint, true);
       SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -741,6 +742,7 @@ public class MediaPortalApp : D3DApp, IRender
     /// </summary>
     protected override void OnExit() 
     {
+			Log.Write("Mediaportal.OnExit()");
 			if(serialuirdevice != null)
 				serialuirdevice.Close();
 			if(redeyedevice != null)
