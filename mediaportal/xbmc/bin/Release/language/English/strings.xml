@@ -2396,6 +2396,19 @@
 	<id>871</id>
 	<value>Wake up pc</value>
 </string>
+<string>
+	<id>872</id>
+	<value>Starts with</value>
+</string>
+<string>
+	<id>873</id>
+	<value>TV Show</value>
+</string>
+<string>
+	<id>874</id>
+	<value>Episode</value>
+</string>
+
 <!-- End My Alarm Strings -->
 <string>
 	<id>890</id>
