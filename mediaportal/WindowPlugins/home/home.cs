@@ -257,6 +257,10 @@ namespace MediaPortal.GUI.Home
 
 		public override void OnAction(Action action)
 		{
+			if (action.wID == Action.ActionType.ACTION_SHUTDOWN) 
+			{
+				return;
+			}
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
 			{
 				if(useMyPlugins==true && inMyPlugins==true)   // if frodo´s menu style used set menu to MyPlugins entrys

@@ -33,7 +33,6 @@ namespace home
 		private System.Windows.Forms.TextBox textBox4;
 		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ListBox listBox;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.CheckBox chkBoxScrolling;
@@ -128,6 +127,10 @@ namespace home
 		private System.Windows.Forms.CheckBox useMenuShortcuts;
 		private System.Windows.Forms.CheckBox NoTopBar;
 		private System.Windows.Forms.Label label24;
+		private System.Windows.Forms.CheckBox ActivateSpecial;
+		private System.Windows.Forms.Label label25;
+		private System.Windows.Forms.PictureBox pictureBox4;
+		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Button addConfig;
 
 		#region plugin vars	
@@ -198,6 +201,7 @@ namespace home
 			ImageList TreeviewIL = new ImageList();
 			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.folder.png")));
 			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.node.png")));
+			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.script.png")));
 			
 			this.treeView.ImageList = TreeviewIL;
 			this.treeView.HideSelection = false;
@@ -217,9 +221,6 @@ namespace home
 			textBox4.Text="";
 			textBox5.Text="";
 			textBox6.Text="";
-
-			SpecialFunctions.Items.Add("CD EJECT");
-			SpecialFunctions.Items.Add("BACK BUTTON");
 			
 			this.treeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseDown);
 			this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
@@ -272,7 +273,6 @@ namespace home
 			this.DeleteItem = new System.Windows.Forms.Button();
 			this.AddMenu = new System.Windows.Forms.Button();
 			this.CopyItem = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
 			this.listBox = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.NoScrollSubs = new System.Windows.Forms.CheckBox();
@@ -322,6 +322,7 @@ namespace home
 			this.useMyPlugins = new System.Windows.Forms.RadioButton();
 			this.useMenus = new System.Windows.Forms.RadioButton();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.ActivateSpecial = new System.Windows.Forms.CheckBox();
 			this.button2 = new System.Windows.Forms.Button();
 			this.SpecialFunctions = new System.Windows.Forms.ListBox();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -331,6 +332,9 @@ namespace home
 			this.Plugin = new System.Windows.Forms.ColumnHeader();
 			this.Key = new System.Windows.Forms.ColumnHeader();
 			this.Fullscreen = new System.Windows.Forms.ColumnHeader();
+			this.label25 = new System.Windows.Forms.Label();
+			this.pictureBox4 = new System.Windows.Forms.PictureBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -535,14 +539,6 @@ namespace home
 			this.CopyItem.Text = "<---";
 			this.CopyItem.Click += new System.EventHandler(this.CopyItem_Click);
 			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(640, 248);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(104, 16);
-			this.label2.TabIndex = 18;
-			this.label2.Text = "Available Plugins";
-			// 
 			// listBox
 			// 
 			this.listBox.Location = new System.Drawing.Point(472, 216);
@@ -634,7 +630,7 @@ namespace home
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(8, 88);
+			this.label9.Location = new System.Drawing.Point(8, 64);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(208, 32);
 			this.label9.TabIndex = 30;
@@ -643,7 +639,7 @@ namespace home
 			// pictureBox2
 			// 
 			this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-			this.pictureBox2.Location = new System.Drawing.Point(8, 120);
+			this.pictureBox2.Location = new System.Drawing.Point(8, 96);
 			this.pictureBox2.Name = "pictureBox2";
 			this.pictureBox2.Size = new System.Drawing.Size(16, 24);
 			this.pictureBox2.TabIndex = 31;
@@ -651,7 +647,7 @@ namespace home
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(32, 120);
+			this.label10.Location = new System.Drawing.Point(32, 96);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(168, 16);
 			this.label10.TabIndex = 32;
@@ -659,7 +655,7 @@ namespace home
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(32, 144);
+			this.label11.Location = new System.Drawing.Point(32, 120);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(88, 16);
 			this.label11.TabIndex = 34;
@@ -668,7 +664,7 @@ namespace home
 			// pictureBox3
 			// 
 			this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-			this.pictureBox3.Location = new System.Drawing.Point(8, 144);
+			this.pictureBox3.Location = new System.Drawing.Point(8, 120);
 			this.pictureBox3.Name = "pictureBox3";
 			this.pictureBox3.Size = new System.Drawing.Size(16, 24);
 			this.pictureBox3.TabIndex = 33;
@@ -931,6 +927,7 @@ namespace home
 			this.tabPage2.Controls.Add(this.groupBox1);
 			this.tabPage2.Controls.Add(this.label1);
 			this.tabPage2.Controls.Add(this.SaveAll);
+			this.tabPage2.Controls.Add(this.label2);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Size = new System.Drawing.Size(832, 494);
@@ -943,11 +940,12 @@ namespace home
 			this.AddSpecial.Name = "AddSpecial";
 			this.AddSpecial.Size = new System.Drawing.Size(88, 32);
 			this.AddSpecial.TabIndex = 36;
-			this.AddSpecial.Text = "Add Special Function";
-			this.AddSpecial.Click += new System.EventHandler(this.AddSpecial_Click);
+			this.AddSpecial.Text = "Add Script Function";
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.label25);
+			this.groupBox1.Controls.Add(this.pictureBox4);
 			this.groupBox1.Controls.Add(this.label23);
 			this.groupBox1.Controls.Add(this.label22);
 			this.groupBox1.Controls.Add(this.useMyPlugins);
@@ -1000,13 +998,23 @@ namespace home
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.ActivateSpecial);
 			this.tabPage3.Controls.Add(this.button2);
 			this.tabPage3.Controls.Add(this.SpecialFunctions);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
 			this.tabPage3.Size = new System.Drawing.Size(832, 494);
 			this.tabPage3.TabIndex = 2;
-			this.tabPage3.Text = "Special Functions";
+			this.tabPage3.Text = "Script Functions";
+			// 
+			// ActivateSpecial
+			// 
+			this.ActivateSpecial.Location = new System.Drawing.Point(32, 32);
+			this.ActivateSpecial.Name = "ActivateSpecial";
+			this.ActivateSpecial.Size = new System.Drawing.Size(176, 24);
+			this.ActivateSpecial.TabIndex = 29;
+			this.ActivateSpecial.Text = "Activate script funktions";
+			this.ActivateSpecial.CheckedChanged += new System.EventHandler(this.ActivateSpecial_CheckedChanged);
 			// 
 			// button2
 			// 
@@ -1019,9 +1027,10 @@ namespace home
 			// 
 			// SpecialFunctions
 			// 
-			this.SpecialFunctions.Location = new System.Drawing.Point(416, 72);
+			this.SpecialFunctions.Enabled = false;
+			this.SpecialFunctions.Location = new System.Drawing.Point(408, 32);
 			this.SpecialFunctions.Name = "SpecialFunctions";
-			this.SpecialFunctions.Size = new System.Drawing.Size(328, 342);
+			this.SpecialFunctions.Size = new System.Drawing.Size(392, 407);
 			this.SpecialFunctions.TabIndex = 0;
 			// 
 			// tabPage4
@@ -1077,12 +1086,36 @@ namespace home
 			this.Fullscreen.Text = "Full Screen";
 			this.Fullscreen.Width = 72;
 			// 
+			// label25
+			// 
+			this.label25.Location = new System.Drawing.Point(32, 144);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(88, 16);
+			this.label25.TabIndex = 38;
+			this.label25.Text = "is a Script Item";
+			// 
+			// pictureBox4
+			// 
+			this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
+			this.pictureBox4.Location = new System.Drawing.Point(8, 144);
+			this.pictureBox4.Name = "pictureBox4";
+			this.pictureBox4.Size = new System.Drawing.Size(16, 24);
+			this.pictureBox4.TabIndex = 37;
+			this.pictureBox4.TabStop = false;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(472, 200);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(104, 16);
+			this.label2.TabIndex = 37;
+			this.label2.Text = "Available Plugins";
+			// 
 			// SetupForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(856, 526);
 			this.Controls.Add(this.tabControl1);
-			this.Controls.Add(this.label2);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "SetupForm";
 			this.Text = "Home Setup";
@@ -1123,6 +1156,7 @@ namespace home
 			textBox5.Visible=false;
 			label8.Visible=false;
 			textBox6.Visible=false;
+			textBox1.Focus();
 		}
 
 		private void MakeMenu_Click(object sender, System.EventArgs e)
@@ -1199,7 +1233,8 @@ namespace home
 				xmlWriter.SetValueAsBool("home","noTopBarSub",NoTopBar.Checked);		
 				xmlWriter.SetValueAsBool("home","useMenuShortcuts",useMenuShortcuts.Checked);		
 				xmlWriter.SetValue("home","ownDate",OwnDate.Text);		
-		}
+				xmlWriter.SetValueAsBool("home","activateSpecial",ActivateSpecial.Checked);		
+			}
 			this.Close();
 		}
 
@@ -1222,6 +1257,17 @@ namespace home
 				useMenuShortcuts.Checked=xmlreader.GetValueAsBool("home","useMenuShortcuts",false);
 				skinName=xmlreader.GetValueAsString("skin","name","BlueTwo");
 				OwnDate.Text=xmlreader.GetValueAsString("home","ownDate","Day DD. Month");
+				ActivateSpecial.Checked=xmlreader.GetValueAsBool("home","activateSpecial",false);
+				if (ActivateSpecial.Checked==true) 
+				{
+					AddSpecial.Enabled=true;
+					SpecialFunctions.Enabled=true;
+				} 
+				else 
+				{
+					AddSpecial.Enabled=false;
+					SpecialFunctions.Enabled=true;
+				}
 			}
 			loadTree(treeView, Application.StartupPath + @"\menu.bin");
 		}
@@ -2155,11 +2201,6 @@ namespace home
 			DateTest.Text=GetDate();
 		}
 
-		private void AddSpecial_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
 		private void NoTopBar_CheckedChanged(object sender, System.EventArgs e)
 		{
 			useTopBarSub.Checked=false;
@@ -2169,5 +2210,33 @@ namespace home
 		{
 			NoTopBar.Checked=false;
 		}
+
+		private void ActivateSpecial_CheckedChanged(object sender, System.EventArgs e)
+		{
+			if (ActivateSpecial.Checked==true) 
+			{
+				AddSpecial.Enabled=true;
+				SpecialFunctions.Enabled=true;
+				string scriptdir=System.IO.Directory.GetCurrentDirectory()+"\\"+"scripts";
+				if(!Directory.Exists(scriptdir)) 
+				{
+					MessageBox.Show( "You must enable the Script Plugin!" );
+					SpecialFunctions.Items.Clear();
+					AddSpecial.Enabled=false;
+					SpecialFunctions.Enabled=true;		
+					ActivateSpecial.Checked=false;
+				}
+//				SpecialFunctions.Items.Add("CD EJECT");
+//				SpecialFunctions.Items.Add("BACK BUTTON");
+//				SpecialFunctions.Items.Add("SHUT DOWN");
+			} 
+			else 
+			{
+				SpecialFunctions.Items.Clear();
+				AddSpecial.Enabled=false;
+				SpecialFunctions.Enabled=true;
+			}
+		}
+
 	}
 }
