@@ -9,7 +9,6 @@ Bugs left:
   18-06-2004 my video   : problems when F3 when no inet connection
   18-06-2004 my music   : problems when F3 when no inet connection
   18-06-2004 my weather : problems when no inet connection
-  16-06-2004 general    : have autotune enter the channels from low to high instead of high to low ?   
   
   31-05-2004 my music   : remove album info does not delete the thumbnail. 
   02-05-2004 my music   : reorganise database does not update tags. Meaning an album it finds wich had various artists first, now only 1 still shows as various artists. 
