@@ -528,7 +528,8 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 208: // play
-          OnClick(itemNo);	
+          if (Utils.getDriveType(item.Path) != 5) OnClick(itemNo);	
+          else OnPlayCD(item.Path);
           break;
 					
         case 926: // add to playlist
