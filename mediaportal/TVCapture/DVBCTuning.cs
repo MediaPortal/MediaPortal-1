@@ -26,6 +26,7 @@ namespace MediaPortal.TV.Recording
 
 		enum State
 		{
+			ScanStart,
 			ScanFrequencies,
 			ScanChannels
 		}
@@ -47,7 +48,7 @@ namespace MediaPortal.TV.Recording
 			captureCard=card;
 			callback=statusCallback;
 
-			currentState=State.ScanFrequencies;
+			currentState=State.ScanStart;
 			currentIndex=0;
 
 			OpenFileDialog ofd =new OpenFileDialog();
@@ -164,8 +165,9 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 
-			if (currentState==State.ScanFrequencies)
+			if (currentState==State.ScanFrequencies || currentState==State.ScanStart)
 			{
+				currentState=State.ScanFrequencies ;
 				callback.OnStatus(description);
 				ScanNextdvbcChannelsonder();
 			}

@@ -1298,6 +1298,7 @@ namespace MediaPortal.TV.Recording
 			if (m_TunerStatistics==null) return false;
 			bool isTunerLocked		= false;
 			bool isSignalPresent	= false;
+			long signalQuality=0;
 
 			for (int i = 0; i < m_TunerStatistics.Length; i++) 
 			{
@@ -1321,10 +1322,23 @@ namespace MediaPortal.TV.Recording
 				catch (COMException)
 				{
 				}
+				try
+				{
+					//is a signal quality ok?
+					long quality=0;
+					m_TunerStatistics[i].get_SignalQuality(ref quality);
+					if (quality>0) signalQuality += quality;
+				}
+				catch (COMException)
+				{
+				}
 			}
 
-			//if tuner is locked and quality is ok then return true;
-			if (isTunerLocked && isSignalPresent)
+			//some devices give different results about signal status
+			//on some signalpresent is only true when tuned to a channel
+			//on others  signalpresent is true when tuned to a transponder
+			//so we just look if any variables returns true
+			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
 			{
 				return true;
 			}
@@ -2256,14 +2270,20 @@ namespace MediaPortal.TV.Recording
 			DVBSections.Transponder transp = sections.Scan(m_SectionsTables);
 			for (int i=0; i < transp.channels.Count;++i)
 			{
+				DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
+				info.service_name=info.service_name.Trim();
+				info.service_provider_name=info.service_provider_name.Trim();
+				if (info.service_name==String.Empty ||
+					  info.service_provider_name==String.Empty) continue;
+
 				bool hasAudio=false;
 				bool hasVideo=false;
-				DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
+				info.freq=currentFrequency;
 
 				//check if this channel has audio/video streams
 				for (int pids =0; pids < info.pid_list.Count;pids++)
 				{
-					DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[i];
+					DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
 					if (data.isVideo)
 						hasVideo=true;
 					if (data.isAudio)

@@ -140,11 +140,14 @@ namespace MediaPortal.TV.Recording
 
 			if (currentState==State.ScanFrequencies)
 			{
-				if (captureCard.SignalPresent())
+				if (frequency>0)
 				{
-					Log.Write("Found signal at:{0} MHz,scan for channels",frequency);
-					currentState=State.ScanChannels;
-					currentOffset=0;
+					if (captureCard.SignalPresent())
+					{
+						Log.Write("Found signal at:{0} MHz,scan for channels",frequency);
+						currentState=State.ScanChannels;
+						currentOffset=0;
+					}
 				}
 			}
 
@@ -214,6 +217,7 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 			}
+//			System.Threading.Thread.Sleep(100);
 		}
 
 		#endregion
