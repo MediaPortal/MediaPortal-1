@@ -203,6 +203,9 @@ namespace MediaPortal.TV.Database
 			  string strSQL;
 			  try
 			  {
+				  RemoveInvalidChars(ref provider);
+				  RemoveInvalidChars(ref channel);
+
 				  string strChannel=channel;
 				  SQLiteResultSet results=null;
 
@@ -217,7 +220,7 @@ namespace MediaPortal.TV.Database
 					  //
 
 					  // fields in satchannels
-					  // idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID
+					  // idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid
 					  // parameter (8)(9)
 					  //idChannel,freq,symrate, fec,lnbkhz,diseqc,
 					  //prognum,servicetype,provider,channel, eitsched,
@@ -273,11 +276,15 @@ namespace MediaPortal.TV.Database
 		  }
 	  }
 	  //b2c2
-	  static public bool GetSatChannel(int idChannel,ref int freq,ref int symrate,ref int fec,ref int lnbkhz,ref int diseqc,
-		  ref int prognum,ref int servicetype,ref string provider,ref string channel,ref int eitsched,
-		  ref int eitprefol,ref int audpid,ref int vidpid,ref int ac3pid,ref int apid1,ref int apid2,ref int apid3,
-		  ref int teltxtpid,ref int scrambled,ref int pol,ref int lnbfreq,ref int networkid,ref int tsid,ref int pcrpid)
+	  static public bool GetSatChannel(int idChannel,ref DVBChannel retChannel)
 	  {
+		  
+		  int freq=0;int symrate=0;int fec=0;int lnbkhz=0;int diseqc=0;
+		  int prognum=0;int servicetype=0;string provider="";string channel="";int eitsched=0;
+		  int eitprefol=0;int audpid=0;int vidpid=0;int ac3pid=0;int apid1=0;int apid2=0;int apid3=0;
+		  int teltxtpid=0;int scrambled=0;int pol=0;int lnbfreq=0;int networkid=0;int tsid=0;int pcrpid=0;
+	  
+	  
 		  if (m_db==null) return false;
 		  lock (typeof(TVDatabase))
 		  {
@@ -321,6 +328,11 @@ namespace MediaPortal.TV.Database
 					  networkid=Int32.Parse(Get(results,i,"sNetworkID"));
 					  tsid=Int32.Parse(Get(results,i,"sTSID"));
 					  pcrpid=Int32.Parse(Get(results,i,"sPCRPid"));
+					  retChannel=new DVBChannel(idChannel, freq, symrate, fec, lnbkhz, diseqc,
+						  prognum, servicetype,provider, channel, eitsched,
+						  eitprefol, audpid, vidpid, ac3pid, apid1, apid2, apid3,
+						  teltxtpid, scrambled, pol, lnbfreq, networkid, tsid, pcrpid);
+
 				  }
 
 				  return true;
@@ -499,6 +511,34 @@ namespace MediaPortal.TV.Database
         }
       }
     }
+	  static public void UpdateSatChannel(DVBChannel ch)
+	  {
+
+		  lock (typeof(TVDatabase))
+		  {
+			  string strSQL;
+			  try
+			  {
+				  string strChannel=ch.ServiceName;
+				  string strProvider=ch.ServiceProvider;
+				  RemoveInvalidChars(ref strChannel);
+				  RemoveInvalidChars(ref strProvider);
+
+				  if (null==m_db) return ;
+
+				  strSQL=String.Format( "update satchannels set sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23} where idChannel = {24}", 
+					  ch.Frequency,ch.Symbolrate, ch.FEC,ch.LNBKHz,ch.DiSEqC,
+					  ch.ProgramNumber,ch.ServiceType,strProvider,strChannel, (int)(ch.HasEITSchedule==true?1:0),
+					  (int)(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
+					  ch.TeletextPid,(int)(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.ID);
+				  m_db.Execute(strSQL);
+			  } 
+			  catch (SQLiteException ex) 
+			  {
+				  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			  }
+		  }
+	  }
 
 		static public void UpdateChannel(TVChannel channel, int sort)
 		{
@@ -757,7 +797,70 @@ namespace MediaPortal.TV.Database
 			ProgramsChanged();
       return lRetId;
     }
+	  static public bool GetSatChannels(ref ArrayList channels)
+	  {
+		  if (m_db==null) return false;
+		  int idChannel=0;int freq=0;int symrate=0;int fec=0;int lnbkhz=0;int diseqc=0;
+		  int prognum=0;int servicetype=0;string provider="";string channel="";int eitsched=0;
+		  int eitprefol=0;int audpid=0;int vidpid=0;int ac3pid=0;int apid1=0;int apid2=0;int apid3=0;
+		  int teltxtpid=0;int scrambled=0;int pol=0;int lnbfreq=0;int networkid=0;int tsid=0;int pcrpid=0;
+		  
+		  lock (typeof(TVDatabase))
+		  {
+			  channels.Clear();
+			  try
+			  {
+				  if (null==m_db) return false;
+				  DVBChannel dvbChannel=new DVBChannel();
+				  string strSQL;
+				  strSQL=String.Format("select * from satchannels order by sChannelName");
+				  SQLiteResultSet results;
+				  results=m_db.Execute(strSQL);
+				  if (results.Rows.Count== 0) return false;
+				  for (int i=0; i < results.Rows.Count;++i)
+				  {
+					  
+					  idChannel=Int32.Parse(Get(results,i,"idChannel"));
+					  freq=Int32.Parse(Get(results,i,"sFreq"));
+					  symrate=Int32.Parse(Get(results,i,"sSymbrate"));
+					  fec=Int32.Parse(Get(results,i,"sFEC"));
+					  lnbkhz=Int32.Parse(Get(results,i,"sLNBKhz"));
+					  diseqc=Int32.Parse(Get(results,i,"sDiseqc"));
+					  prognum=Int32.Parse(Get(results,i,"sProgramNumber"));
+					  servicetype=Int32.Parse(Get(results,i,"sServiceType"));
+					  provider=Get(results,i,"sProviderName");
+					  channel=Get(results,i,"sChannelName");
+					  eitsched=Int32.Parse(Get(results,i,"sEitSched"));
+					  eitprefol= Int32.Parse(Get(results,i,"sEitPreFol"));
+					  audpid=Int32.Parse(Get(results,i,"sAudioPid"));
+					  vidpid=Int32.Parse(Get(results,i,"sVideoPid"));
+					  ac3pid=Int32.Parse(Get(results,i,"sAC3Pid"));
+					  apid1= Int32.Parse(Get(results,i,"sAudio1Pid"));
+					  apid2= Int32.Parse(Get(results,i,"sAudio2Pid"));
+					  apid3=Int32.Parse(Get(results,i,"sAudio3Pid"));
+					  teltxtpid=Int32.Parse(Get(results,i,"sTeletextPid"));
+					  scrambled= Int32.Parse(Get(results,i,"sScrambled"));
+					  pol=Int32.Parse(Get(results,i,"sPol"));
+					  lnbfreq=Int32.Parse(Get(results,i,"sLNBFreq"));
+					  networkid=Int32.Parse(Get(results,i,"sNetworkID"));
+					  tsid=Int32.Parse(Get(results,i,"sTSID"));
+					  pcrpid=Int32.Parse(Get(results,i,"sPCRPid"));
+					  dvbChannel=new DVBChannel(idChannel, freq, symrate, fec, lnbkhz, diseqc,
+						  prognum, servicetype,provider, channel, eitsched,
+						  eitprefol, audpid, vidpid, ac3pid, apid1, apid2, apid3,
+						  teltxtpid, scrambled, pol, lnbfreq, networkid, tsid, pcrpid);
+					  channels.Add(dvbChannel);
+				  }
 
+				  return true;
+			  }
+			  catch(SQLiteException ex)
+			  {
+				  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			  }
+			  return false;
+		  }
+	  }
     static public bool GetChannels(ref ArrayList channels)
     {
       if (m_db==null) return false;
@@ -872,7 +975,26 @@ namespace MediaPortal.TV.Database
       ProgramsChanged();
       RecordingsChanged();
     }
-
+	  static public void RemoveAllSatChannels()
+	  {
+		  lock (typeof(TVDatabase))
+		  {
+			  if (null==m_db) return ;
+        
+			  try
+			  {
+				  if (null==m_db) return ;
+				  string strSQL=String.Format("delete from satchannels");
+				  m_db.Execute(strSQL);
+				  
+			  
+			  }
+			  catch(SQLiteException ex)
+			  {
+				  Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+			  }
+		  }
+	  }
     static public void RemovePrograms()
     {
       lock (typeof(TVDatabase))
