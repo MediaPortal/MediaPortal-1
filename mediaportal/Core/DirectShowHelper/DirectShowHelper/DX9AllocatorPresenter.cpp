@@ -246,14 +246,19 @@ STDMETHODIMP_(bool) CVMR9AllocatorPresenter::Paint(bool fAll)
 {
 	if (m_pCallback!=NULL)
 	{
-		if (m_pVideoTexture==NULL)
-		{
-			return E_FAIL;
-		}
 		CSize videoSize = GetVideoSize(false);
-		IDirect3DTexture9* tex=m_pVideoTexture;
-		DWORD dwPtr=(DWORD)(tex);
-		m_pCallback->PresentImage(videoSize.cx, videoSize.cy, dwPtr);
+		if (m_pVideoTexture!=NULL)
+		{
+			IDirect3DTexture9* tex=m_pVideoTexture;
+			DWORD dwPtr=(DWORD)(tex);
+			m_pCallback->PresentImage(videoSize.cx, videoSize.cy, dwPtr);
+		}
+		else
+		{
+			IDirect3DSurface9* tex=m_pVideoSurface;
+			DWORD dwPtr=(DWORD)(tex);
+			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, dwPtr);
+		}
 		//tex->Release();
 		return S_OK;
 	}

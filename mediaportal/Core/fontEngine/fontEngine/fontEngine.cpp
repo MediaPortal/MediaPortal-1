@@ -689,3 +689,33 @@ void FontEngineSetTexture(void* texture)
 	LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)texture;
 	m_pDevice->SetTexture(0, pTexture);
 }
+
+void FontEngineDrawSurface(int fx, int fy, int nw, int nh, 
+						   int dstX, int dstY, int dstWidth, int dstHeight,
+						   void* surface)
+{
+	IDirect3DSurface9* pBackBuffer;
+	m_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
+
+	LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
+	if(pBackBuffer)
+	{
+		
+		RECT srcRect,dstRect;
+		srcRect.left=(int)fx;
+		srcRect.top =(int)fy;
+		srcRect.right=srcRect.left+(int)nw;
+		srcRect.bottom=srcRect.top+(int)nh;
+
+		dstRect.left=(int)dstX;
+		dstRect.top =(int)dstY;
+		dstRect.right=dstRect.left+(int)dstWidth;
+		dstRect.bottom=dstRect.top+(int)dstHeight;
+		// IMPORTANT: rSrcVid has to be aligned on mod2 for yuy2->rgb conversion with StretchRect!!!
+		srcRect.left &= ~1; srcRect.right &= ~1;
+		srcRect.top &= ~1; srcRect.bottom &= ~1;
+		m_pDevice->StretchRect(pSurface, &srcRect, pBackBuffer, &dstRect, D3DTEXF_NONE);
+
+		pBackBuffer->Release();
+	}
+}

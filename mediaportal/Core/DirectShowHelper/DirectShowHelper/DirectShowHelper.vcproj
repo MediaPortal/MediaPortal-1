@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="strmbasd.lib winmm.lib"
+				AdditionalDependencies="strmbased.lib winmm.lib"
 				OutputFile="$(OutDir)/DirectShowHelper.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\DirectShowHelper.def"

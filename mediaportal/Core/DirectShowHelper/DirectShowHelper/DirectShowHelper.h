@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Fri Mar 11 20:51:29 2005
+/* at Fri Mar 11 22:10:11 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -125,6 +125,11 @@ EXTERN_C const IID IID_IVMR9Callback;
             /* [in] */ int height,
             /* [in] */ DWORD texture) = 0;
         
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PresentSurface( 
+            /* [in] */ int width,
+            /* [in] */ int height,
+            /* [in] */ DWORD surface) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -149,6 +154,12 @@ EXTERN_C const IID IID_IVMR9Callback;
             /* [in] */ int width,
             /* [in] */ int height,
             /* [in] */ DWORD texture);
+        
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *PresentSurface )( 
+            IVMR9Callback * This,
+            /* [in] */ int width,
+            /* [in] */ int height,
+            /* [in] */ DWORD surface);
         
         END_INTERFACE
     } IVMR9CallbackVtbl;
@@ -176,6 +187,9 @@ EXTERN_C const IID IID_IVMR9Callback;
 #define IVMR9Callback_PresentImage(This,width,height,texture)	\
     (This)->lpVtbl -> PresentImage(This,width,height,texture)
 
+#define IVMR9Callback_PresentSurface(This,width,height,surface)	\
+    (This)->lpVtbl -> PresentSurface(This,width,height,surface)
+
 #endif /* COBJMACROS */
 
 
@@ -191,6 +205,20 @@ EXTERN_C const IID IID_IVMR9Callback;
 
 
 void __RPC_STUB IVMR9Callback_PresentImage_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Callback_PresentSurface_Proxy( 
+    IVMR9Callback * This,
+    /* [in] */ int width,
+    /* [in] */ int height,
+    /* [in] */ DWORD surface);
+
+
+void __RPC_STUB IVMR9Callback_PresentSurface_Stub(
     IRpcStubBuffer *This,
     IRpcChannelBuffer *_pRpcChannelBuffer,
     PRPC_MESSAGE _pRpcMessage,

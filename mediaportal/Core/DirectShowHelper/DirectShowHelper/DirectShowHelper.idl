@@ -19,7 +19,8 @@ cpp_quote ("#endif")
 	pointer_default(unique)
 ]
 interface IVMR9Callback : IUnknown{
-	[helpstring("method PresentImage")] HRESULT PresentImage([in] int width, [in] int height, [in] DWORD texture);
+	[helpstring("method PresentImage")]   HRESULT PresentImage([in] int width, [in] int height, [in] DWORD texture);
+	[helpstring("method PresentSurface")] HRESULT PresentSurface([in] int width, [in] int height, [in] DWORD surface);
 };
 [
 	object,

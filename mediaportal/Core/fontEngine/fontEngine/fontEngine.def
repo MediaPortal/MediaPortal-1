@@ -16,3 +16,4 @@ FontEngineDrawTexture			@9
 FontEnginePresentTextures		@10
 FontEngineAddSurface            @11
 FontEngineSetTexture			@12
+FontEngineDrawSurface			@13

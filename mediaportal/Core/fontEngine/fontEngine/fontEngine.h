@@ -24,4 +24,8 @@ void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fVal
 void FontEngineDrawText3D(int fontNumber, void* text, int xposStart, int yposStart, DWORD intColor,int maxWidth);
 void FontEnginePresent3D(int fontNumber);
 void FontEngineSetTexture(void* texture);
+void FontEngineDrawSurface(int fx, int fy, int nw, int nh, 
+						   int dstX, int dstY, int dstWidth, int dstHeight,
+						   void* surface);
+
 void PrintStatistics();
