@@ -223,7 +223,7 @@ namespace MediaPortal.Player
 				long lTime=5*60*60;
 				lTime*=10000000;
 				long pStop=0;
-				hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.SeekAbsolutePositionKey,ref pStop, SeekingFlags.NoPositioning);
+				hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
 				if (hr==0)
 				{
 					long lStreamPos;
@@ -688,7 +688,7 @@ namespace MediaPortal.Player
           dTime+=fContentStart;
           long lTime=(long)dTime;
           
-					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.SeekAbsolutePositionKey,ref pStop, SeekingFlags.NoPositioning);
+					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
           if (hr !=0)
           {
             Log.Write("seek failed->seek to 0 0x:{0:X}",hr);
