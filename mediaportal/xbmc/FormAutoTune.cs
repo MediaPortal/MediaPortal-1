@@ -172,11 +172,11 @@ namespace MediaPortal
     {
       try
       {
-        if (m_card.TVTuner.SignalPresent)
+        /*if (m_card.TVTuner.SignalPresent)
         {
           AddChannel(m_iChannel,m_card.TVTuner.GetVideoFrequency);
           m_iChannelsFound++;
-        }
+        }*/
       }
       catch(Exception)
       {
@@ -188,6 +188,7 @@ namespace MediaPortal
       }
       else
       {
+        /*
         try
         {
           progressBar1.Value=m_iChannel;
@@ -198,7 +199,7 @@ namespace MediaPortal
         }
         catch(Exception)
         {
-        }
+        }*/
       }
     }
     void AddChannel(int Channel, int Frequency)
@@ -233,7 +234,7 @@ namespace MediaPortal
         MessageBox.Show(this.Parent,"You need to setup a tvcapture card first", "AutoTune",MessageBoxButtons.OK);
         this.Close();
       }
-      
+      /*
       foreach (TVCaptureDevice card in cards)
       {
         try
@@ -257,13 +258,13 @@ namespace MediaPortal
           }
           else 
           {
-            card.StopCapture();
+            //card.StopCapture();
           }
         }
         catch(Exception)
         {
         }
-      }
+      }*/
 
       
       tvchannels.Clear();
@@ -281,7 +282,7 @@ namespace MediaPortal
     {
       if (m_card!=null)
       {
-        m_card.StopCapture();
+        //m_card.StopCapture();
       }
       m_card=null;
     }

@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using Microsoft.Win32;
-
+using DShowNET;
 using DirectX.Capture;
 using MediaPortal.GUI.Library;
 using MediaPortal.WinControls;

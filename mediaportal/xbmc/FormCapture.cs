@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using DShowNET;
 using DirectX.Capture;
 
 namespace MediaPortal
@@ -675,8 +676,8 @@ namespace MediaPortal
       string strCompressorVideo=(string)comboVideoCompressor.SelectedItem;
 
       
-      DirectX.Capture.Filter videoDevice=null;
-      DirectX.Capture.Filter audioDevice=null;
+      DShowNET.Filter videoDevice=null;
+      DShowNET.Filter audioDevice=null;
       Filters filters=new Filters();
       // find video capture device
       foreach (Filter filter in filters.VideoInputDevices)

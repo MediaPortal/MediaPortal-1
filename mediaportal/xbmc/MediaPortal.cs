@@ -340,6 +340,7 @@ public class MediaPortalApp : D3DApp, IRender
     string strModule=GUILocalizeStrings.Get(10000+iWindow);
     GUIPropertyManager.Properties["#currentmodule"]=strModule;
 
+    Recorder.Process();
     g_Player.Process();
     GUIWindowManager.DispatchThreadMessages(); 
 
@@ -648,7 +649,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       if (key.KeyChar==']')
       {
-        Recorder.StopRecording("RTL 4");
+        Recorder.StopRecording();
       }
       if (key.KeyChar=='g')
       {

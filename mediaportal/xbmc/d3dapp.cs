@@ -899,8 +899,11 @@ namespace MediaPortal
       // Render a frame during idle time (no messages are waiting)
       if (active && ready)
       {
+#if DEBUG
+#else
         try 
         {
+#endif
           if ((deviceLost) || (System.Windows.Forms.Form.ActiveForm != this))
           {
             // Yield some CPU time to other processes
@@ -911,6 +914,8 @@ namespace MediaPortal
           {
             Render3DEnvironment();
           }
+#if DEBUG
+#else
         }
         catch (Exception ee)
         {
@@ -918,6 +923,7 @@ namespace MediaPortal
             System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
           this.Close();
         }
+#endif
       }
       else 
       {

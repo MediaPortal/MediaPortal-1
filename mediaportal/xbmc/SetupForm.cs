@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using Microsoft.Win32;
-
+using DShowNET;
 using DirectX.Capture;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
@@ -4247,13 +4247,7 @@ namespace MediaPortal
         TVCaptureDevice dev = new TVCaptureDevice();
         dev.UseForRecording=dlg.UseForRecording;
         dev.UseForTV=dlg.UseForTV;
-        dev.AudioCompressor=dlg.AudioCompressor;
-        dev.VideoCompressor=dlg.VideoCompressor;
-        dev.AudioDevice=dlg.AudioDevice;
         dev.VideoDevice=dlg.VideoDevice;
-        dev.CaptureFormat=dlg.CaptureFormat;
-        dev.FrameRate=dlg.FrameRate;
-        dev.FrameSize=dlg.FrameSize;
         dev.ID=dlg.ID;
         m_tvcards.Add(dev);
         UpdateCaptureCardList();
@@ -4269,26 +4263,14 @@ namespace MediaPortal
       TVCaptureDevice dev=(TVCaptureDevice)m_tvcards[iItem];
       dlg.UseForRecording=dev.UseForRecording;
       dlg.UseForTV=dev.UseForTV;
-      dlg.AudioCompressor=dev.AudioCompressor;
-      dlg.VideoCompressor=dev.VideoCompressor;
-      dlg.AudioDevice=dev.AudioDevice;
       dlg.VideoDevice=dev.VideoDevice;
-      dlg.CaptureFormat=dev.CaptureFormat;
-      dlg.FrameRate=dev.FrameRate;
-      dlg.FrameSize=dev.FrameSize;
       dlg.ID=dev.ID;
       dlg.ShowDialog(this.Parent);
       if (dlg.VideoDevice!="")
       {
         dev.UseForRecording=dlg.UseForRecording;
         dev.UseForTV=dlg.UseForTV;
-        dev.AudioCompressor=dlg.AudioCompressor;
-        dev.VideoCompressor=dlg.VideoCompressor;
-        dev.AudioDevice=dlg.AudioDevice;
         dev.VideoDevice=dlg.VideoDevice;
-        dev.CaptureFormat=dlg.CaptureFormat;
-        dev.FrameRate=dlg.FrameRate;
-        dev.FrameSize=dlg.FrameSize;
 
         UpdateCaptureCardList();
       }
