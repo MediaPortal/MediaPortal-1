@@ -32,6 +32,22 @@
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
+			<description>Status Bar</description> 
+			<type>statusbar</type> 
+			<id>1</id> 
+			<posX>50</posX> 
+			<posY>545</posY> 
+			<width>620</width>
+			<height>16</height>
+			<posYTop>15</posYTop>
+			<texturebg>statusbar_back.png</texturebg> 
+			<lefttexture>statusbar_left.png</lefttexture> 
+			<midtexture>statusbar_mid.png</midtexture> 
+			<righttexture>statusbar_right.png</righttexture> 
+			<visible>yes</visible> 
+			<label>#statusbar_perc</label>
+		</control>
+		<control>
 			<description>Interval</description>
 			<type>label</type>
 			<id>1</id>
@@ -70,7 +86,7 @@
 			<posX>270</posX>
 			<posY>127</posY>
 			<height>32</height>
-			<width>190</width>
+			<width>290</width>
 			<textXOff>10</textXOff>
 			<textYOff>5</textYOff>
 			<font>font14</font>

@@ -360,6 +360,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUIButtonControl);
 				case ("button3part"):
 					return typeof (GUIButton3PartControl);
+			    case ("statusbar"):
+				    return typeof (GUIStatusbarControl);
 				case ("progress"):
 					return typeof (GUIProgressControl);
 				case ("tvprogress"):

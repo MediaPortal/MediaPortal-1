@@ -1,8 +1,9 @@
 #region Usings
 using System;
+using System.Drawing;
+using System.Windows.Forms;
 using System.Management;
 using System.Collections;
-using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -27,15 +28,16 @@ namespace MediaPortal.GUI.GUIStatus
 	  CONTROL_DETAIL		= 3,	  // status details
 	  CONTROL_NEXTPAGE		= 4,	  // next page
 	  CONTROL_STATUS		= 9,	  // status text
-	  CONTROL_1				= 10
+	  CONTROL_1				= 10,
+	  CONTROL_STATUSBAR		= 9875	  // status bar
 	};
 
 	enum SensorTypes 
 	{
-	  Volt		= 1,
+	  Volt			= 1,
 	  Fan			= 2,
 	  Percentage	= 3,
-	  Temperature = 4,
+	  Temperature	= 4,
 	  HD			= 5,
 	  Mhz			= 6,
 	  Ram			= 7
@@ -44,6 +46,7 @@ namespace MediaPortal.GUI.GUIStatus
 	#endregion
 
 	#region Private Variables 
+
 	private struct Sensor 
 	{
 	  public string name;
@@ -70,7 +73,11 @@ namespace MediaPortal.GUI.GUIStatus
 	private bool onWindow=false;
 	private bool onDetails=false;
 	private bool onStatus=false;
+	private bool showStatusBar=false;
+	private bool isMbm=false;
 	private bool page1=true;
+	private string statusBarSensor="";
+	private bool showTopBottom=false;  // true=show status bar on top false=bottom
 	private static bool alarm=false;
 	private static bool shutdown=false;
 	private static int selectedSensor=0;
@@ -233,8 +240,8 @@ namespace MediaPortal.GUI.GUIStatus
 	  int st;
 	  if (onStatus==false) 
 	  {
-		GUIControl.HideControl( GetID,(int)Controls.CONTROL_NEXTPAGE); 
-		GUIControl.DisableControl( GetID,(int)Controls.CONTROL_NEXTPAGE);
+		GUIControl.HideControl( GetID,(int)Controls.CONTROL_STATUS); 
+		GUIControl.DisableControl( GetID,(int)Controls.CONTROL_STATUS);
 	  }
 	  if(numSensors>12) 
 	  {
@@ -323,7 +330,7 @@ namespace MediaPortal.GUI.GUIStatus
 	}
   
 	/// <summary>
-	/// get the size of a disk
+	/// get infos of a disk
 	/// </summary>
 	private string GetDiskInfo(string lw) 
 	{
@@ -351,6 +358,31 @@ namespace MediaPortal.GUI.GUIStatus
 	  }
 	  str=lw+" "+CalcExt(m)+" "+GUILocalizeStrings.Get(1973)+" "+CalcExt(s)+" "+GUILocalizeStrings.Get(1953)+"    Filesystem: "+" "+f;
 	  return str;
+	}
+
+	/// <summary>
+	/// get the size of a disk
+	/// </summary>
+	private long GetDiskSize(string lw) 
+	{
+	  ManagementObjectSearcher query;
+	  ManagementObjectCollection queryCollection;
+	  System.Management.ObjectQuery oq;
+	  string stringMachineName = "localhost";
+	  long s=0;
+	  //Connect to the remote computer
+	  ConnectionOptions co = new ConnectionOptions();
+
+	  //Point to machine
+	  System.Management.ManagementScope ms = new System.Management.ManagementScope("\\\\" + stringMachineName + "\\root\\cimv2", co);
+	  oq = new System.Management.ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID = '"+lw+"'");
+	  query = new ManagementObjectSearcher(ms,oq);
+	  queryCollection = query.Get();
+	  foreach ( ManagementObject mo in queryCollection) 
+	  {
+		s=Convert.ToInt64(mo["Size"]);
+	  }
+	  return s;
 	}
 
 	/// <summary>
@@ -405,13 +437,20 @@ namespace MediaPortal.GUI.GUIStatus
 	{
 	  return CalcExt(GetFreeDiskLong(lw));
 	}
+
 	
 	private void UpdateFields() 
 	{
-	  MBMInfo.Refresh();
 	  int start=(int)Controls.CONTROL_1;
 	  string s="";
 	  string text="";
+	  double act=0;
+	  double max=0;
+	  int p;
+	  if (isMbm==true) 
+	  {	 
+		MBMInfo.Refresh();
+	  }
 	  if (onStatus==true) // show status detail page 
 	  {
 		text=text+GetMemInfo()+"\n";
@@ -439,8 +478,40 @@ namespace MediaPortal.GUI.GUIStatus
 	  }
 
 	  // test threshold for each sensor
+
 	  for (int i=0; i<numSensors && i<=(int)Controls.CONTROL_1+maxSensors; i++) 
 	  {
+		if (showStatusBar==true) // show statusbar
+		{
+		  if (statusBarSensor==sensors[i].sname) 
+		  { 
+			GUIPropertyManager.SetProperty("#statusbar_name",sensors[i].name);
+			if(sensors[i].name=="lw") 
+			{ 
+			  act=Convert.ToDouble((GetFreeDiskLong(sensors[i].drive)));
+			  max=GetDiskSize(sensors[i].drive);
+			  p=100-Convert.ToInt16(act/(max/100));
+			  GUIPropertyManager.SetProperty("#statusbar_perc",p.ToString());
+			  GUIPropertyManager.SetProperty("#statusbar_act",act.ToString());
+			} 
+			else 
+			{  
+			  if (sensors[i].name=="perc1") 
+			  {
+				GUIPropertyManager.SetProperty("#statusbar_perc",Convert.ToString((int)MBMInfo.Sensor(sensors[i].sensorNum).ssCurrent));
+				GUIPropertyManager.SetProperty("#statusbar_act",Convert.ToString((int)MBMInfo.Sensor(sensors[i].sensorNum).ssCurrent));
+			  } 
+			  else 
+			  {
+				act=Convert.ToDouble(MBMInfo.Sensor(sensors[i].sensorNum).ssCurrent);
+				max=(double)sensors[i].max;
+				p=Convert.ToInt16(act/(max/100));
+				GUIPropertyManager.SetProperty("#statusbar_perc",p.ToString());
+				GUIPropertyManager.SetProperty("#statusbar_act",act.ToString());
+			  }
+			}
+		  }
+		}
 		if (sensors[i].alarm==true) // is test alarm set?
 		{	
 		  switch (sensors[i].name)  // which sensor
@@ -617,9 +688,24 @@ namespace MediaPortal.GUI.GUIStatus
 	private void LoadSettings() 
 	{
 	  int num=0;
-	  MBMInfo.Refresh();
 	  using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
 	  {
+		isMbm=xmlreader.GetValueAsBool("status","status_is_mbm",false);
+		showStatusBar=xmlreader.GetValueAsBool("status","status_bar_show",false);
+		if (showStatusBar==false) GUIPropertyManager.SetProperty("#statusbar_perc","-1");
+		bool top=xmlreader.GetValueAsBool("status","status_bar_top",false);
+		bool bot=xmlreader.GetValueAsBool("status","status_bar_bottom",false);
+		if (top==true) showTopBottom=true;
+		if (bot==true) showTopBottom=false;
+		if (showTopBottom==true) 
+		{
+		  GUIPropertyManager.SetProperty("#statusbarTB","1");
+		} 
+		else 
+		{
+		  GUIPropertyManager.SetProperty("#statusbarTB","2");
+		}
+		statusBarSensor=xmlreader.GetValueAsString("status","status_bar_sensor","");
 		soundFolder=xmlreader.GetValueAsString("status","status_sound_folder","c:\\windows\\media");
 		sound=xmlreader.GetValueAsString("status","status_sound","ding.wav");
 		delayPlay=xmlreader.GetValueAsInt("status","status_sound_delay",6);
@@ -643,140 +729,144 @@ namespace MediaPortal.GUI.GUIStatus
 		  drive++;
 		  ldrive++;
 		}
-		if (xmlreader.GetValueAsBool("status","status_temp1",false)) 
+		if (isMbm==true) 
 		{
-		  sensors[num].name="temp1";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_temp1i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_temp1al",false);
-		  sensors[num].shutdown=xmlreader.GetValueAsBool("status","status_temp1sh",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1954)+" 1:";
-		  sensors[num].last=GUILocalizeStrings.Get(1955);
-		  sensors[num++].sensorType=(int)SensorTypes.Temperature;
-		}
-		if (xmlreader.GetValueAsBool("status","status_temp2",false)) 
-		{
-		  sensors[num].name="temp2";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_temp2i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_temp2al",false);
-		  sensors[num].shutdown=xmlreader.GetValueAsBool("status","status_temp1sh",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1954)+" 2:";
-		  sensors[num].last=GUILocalizeStrings.Get(1955);
-		  sensors[num++].sensorType=(int)SensorTypes.Temperature;
-		}
-		if (xmlreader.GetValueAsBool("status","status_temp3",false)) 
-		{
-		  sensors[num].name="temp3";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_temp3i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_temp3al",false);
-		  sensors[num].shutdown=xmlreader.GetValueAsBool("status","status_temp1sh",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1954)+" 3:";
-		  sensors[num].last=GUILocalizeStrings.Get(1955);
-		  sensors[num++].sensorType=(int)SensorTypes.Temperature;
-		}
-		if (xmlreader.GetValueAsBool("status","status_fan1",false)) 
-		{
-		  sensors[num].name="fan1";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_fan1i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_fan1al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1952)+" 1:";
-		  sensors[num].last="upm";
-		  sensors[num++].sensorType=(int)SensorTypes.Fan;
-		}
-		if (xmlreader.GetValueAsBool("status","status_fan2",false)) 
-		{
-		  sensors[num].name="fan2";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_fan2i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_fan2al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1952)+" 2:";
-		  sensors[num].last="upm";
-		  sensors[num++].sensorType=(int)SensorTypes.Fan;
-		}
-		if (xmlreader.GetValueAsBool("status","status_fan3",false)) 
-		{
-		  sensors[num].name="fan3";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_fan3i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_fan3al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1952)+" 3:";
-		  sensors[num].last="upm";
-		  sensors[num++].sensorType=(int)SensorTypes.Fan;
-		}
-		if (xmlreader.GetValueAsBool("status","status_volt1",false)) 
-		{
-		  sensors[num].name="volt1";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_volt1i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_volt1al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1959)+" 1:";
-		  sensors[num].last=GUILocalizeStrings.Get(1960);
-		  sensors[num++].sensorType=(int)SensorTypes.Volt;
-		}
-		if (xmlreader.GetValueAsBool("status","status_volt2",false)) 
-		{
-		  sensors[num].name="volt2";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_volt2i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_volt2al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1959)+" 2:";
-		  sensors[num].last=GUILocalizeStrings.Get(1960);
-		  sensors[num++].sensorType=(int)SensorTypes.Volt;
-		}
-		if (xmlreader.GetValueAsBool("status","status_volt3",false)) 
-		{
-		  sensors[num].name="volt3";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_volt3i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_volt3al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1959)+" 3:";
-		  sensors[num].last=GUILocalizeStrings.Get(1960);
-		  sensors[num++].sensorType=(int)SensorTypes.Volt;
-		}	
-		if (xmlreader.GetValueAsBool("status","status_mhz1",false)) 
-		{
-		  sensors[num].name="mhz1";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_mhz1i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_mhz1al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1961);
-		  sensors[num].last="Mhz";
-		  sensors[num++].sensorType=(int)SensorTypes.Mhz;
-		}
-		if (xmlreader.GetValueAsBool("status","status_perc1",false)) 
-		{
-		  sensors[num].name="perc1";
-		  sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_perc1i",0);
-		  sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
-		  sensors[num].alarm=xmlreader.GetValueAsBool("status","status_perc1al",false);
-		  sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
-		  sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
-		  sensors[num].first=GUILocalizeStrings.Get(1958);
-		  sensors[num].last="%";
-		  sensors[num++].sensorType=(int)SensorTypes.Percentage;
+		  MBMInfo.Refresh();
+		  if (xmlreader.GetValueAsBool("status","status_temp1",false)) 
+		  {
+			sensors[num].name="temp1";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_temp1i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_temp1al",false);
+			sensors[num].shutdown=xmlreader.GetValueAsBool("status","status_temp1sh",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1954)+" 1:";
+			sensors[num].last=GUILocalizeStrings.Get(1955);
+			sensors[num++].sensorType=(int)SensorTypes.Temperature;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_temp2",false)) 
+		  {
+			sensors[num].name="temp2";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_temp2i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_temp2al",false);
+			sensors[num].shutdown=xmlreader.GetValueAsBool("status","status_temp1sh",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1954)+" 2:";
+			sensors[num].last=GUILocalizeStrings.Get(1955);
+			sensors[num++].sensorType=(int)SensorTypes.Temperature;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_temp3",false)) 
+		  {
+			sensors[num].name="temp3";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_temp3i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_temp3al",false);
+			sensors[num].shutdown=xmlreader.GetValueAsBool("status","status_temp1sh",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1954)+" 3:";
+			sensors[num].last=GUILocalizeStrings.Get(1955);
+			sensors[num++].sensorType=(int)SensorTypes.Temperature;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_fan1",false)) 
+		  {
+			sensors[num].name="fan1";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_fan1i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_fan1al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1952)+" 1:";
+			sensors[num].last="upm";
+			sensors[num++].sensorType=(int)SensorTypes.Fan;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_fan2",false)) 
+		  {
+			sensors[num].name="fan2";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_fan2i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_fan2al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1952)+" 2:";
+			sensors[num].last="upm";
+			sensors[num++].sensorType=(int)SensorTypes.Fan;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_fan3",false)) 
+		  {
+			sensors[num].name="fan3";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_fan3i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_fan3al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1952)+" 3:";
+			sensors[num].last="upm";
+			sensors[num++].sensorType=(int)SensorTypes.Fan;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_volt1",false)) 
+		  {
+			sensors[num].name="volt1";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_volt1i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_volt1al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1959)+" 1:";
+			sensors[num].last=GUILocalizeStrings.Get(1960);
+			sensors[num++].sensorType=(int)SensorTypes.Volt;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_volt2",false)) 
+		  {
+			sensors[num].name="volt2";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_volt2i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_volt2al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1959)+" 2:";
+			sensors[num].last=GUILocalizeStrings.Get(1960);
+			sensors[num++].sensorType=(int)SensorTypes.Volt;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_volt3",false)) 
+		  {
+			sensors[num].name="volt3";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_volt3i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_volt3al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1959)+" 3:";
+			sensors[num].last=GUILocalizeStrings.Get(1960);
+			sensors[num++].sensorType=(int)SensorTypes.Volt;
+		  }	
+		  if (xmlreader.GetValueAsBool("status","status_mhz1",false)) 
+		  {
+			sensors[num].name="mhz1";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_mhz1i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_mhz1al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1961);
+			sensors[num].last="Mhz";
+			sensors[num++].sensorType=(int)SensorTypes.Mhz;
+		  }
+		  if (xmlreader.GetValueAsBool("status","status_perc1",false)) 
+		  {
+			sensors[num].name="perc1";
+			sensors[num].sensorNum=xmlreader.GetValueAsInt("status","status_perc1i",0);
+			sensors[num].sname=Convert.ToString(MBMInfo.Sensor(sensors[num].sensorNum).ssName);
+			sensors[num].alarm=xmlreader.GetValueAsBool("status","status_perc1al",false);
+			sensors[num].min=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm2);
+			sensors[num].max=Convert.ToInt16(MBMInfo.Sensor(sensors[num].sensorNum).ssAlarm1);
+			sensors[num].first=GUILocalizeStrings.Get(1958);
+			sensors[num].last="%";
+			sensors[num++].sensorType=(int)SensorTypes.Percentage;
+		  }
 		}
 		numSensors=num;
 	  }

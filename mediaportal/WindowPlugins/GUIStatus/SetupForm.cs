@@ -20,7 +20,7 @@ namespace GUIStatus
 	private int[] aTemperature = {0, 0, 0, 0};
 	private int[] aVolt = {0, 0, 0, 0, 0, 0, 0, 0};
 	private int statusVer=1;
-
+	private bool isMbm=false;
 	private mbmSharedData MBMInfo=new mbmSharedData();
 	private System.Windows.Forms.Label label1;
 	private System.Windows.Forms.Label label2;
@@ -85,6 +85,14 @@ namespace GUIStatus
 	private System.Windows.Forms.CheckBox checkBox36;
 	private System.Windows.Forms.CheckBox checkBox37;
 	private System.Windows.Forms.CheckBox checkBox38;
+    private System.Windows.Forms.Label label18;
+    private System.Windows.Forms.CheckBox checkBox39;
+    private System.Windows.Forms.Label label19;
+    private System.Windows.Forms.CheckBox checkBox40;
+    private System.Windows.Forms.CheckBox checkBox41;
+    private System.Windows.Forms.Label label20;
+    private System.Windows.Forms.ComboBox comboBox1;
+    private System.Windows.Forms.GroupBox groupBox3;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
@@ -160,6 +168,7 @@ namespace GUIStatus
 		  this.checkBox16 = new System.Windows.Forms.CheckBox();
 		  this.checkBox17 = new System.Windows.Forms.CheckBox();
 		  this.groupBox2 = new System.Windows.Forms.GroupBox();
+		  this.groupBox3 = new System.Windows.Forms.GroupBox();
 		  this.textBox1 = new System.Windows.Forms.TextBox();
 		  this.label16 = new System.Windows.Forms.Label();
 		  this.button3 = new System.Windows.Forms.Button();
@@ -187,6 +196,14 @@ namespace GUIStatus
 		  this.checkBox36 = new System.Windows.Forms.CheckBox();
 		  this.checkBox37 = new System.Windows.Forms.CheckBox();
 		  this.checkBox38 = new System.Windows.Forms.CheckBox();
+		  this.label18 = new System.Windows.Forms.Label();
+		  this.checkBox39 = new System.Windows.Forms.CheckBox();
+		  this.label19 = new System.Windows.Forms.Label();
+		  this.checkBox40 = new System.Windows.Forms.CheckBox();
+		  this.checkBox41 = new System.Windows.Forms.CheckBox();
+		  this.label20 = new System.Windows.Forms.Label();
+		  this.comboBox1 = new System.Windows.Forms.ComboBox();
+		  this.groupBox2.SuspendLayout();
 		  this.SuspendLayout();
 		  // 
 		  // label1
@@ -276,16 +293,16 @@ namespace GUIStatus
 		  // 
 		  // groupBox1
 		  // 
-		  this.groupBox1.Location = new System.Drawing.Point(16, 88);
+		  this.groupBox1.Location = new System.Drawing.Point(304, 280);
 		  this.groupBox1.Name = "groupBox1";
-		  this.groupBox1.Size = new System.Drawing.Size(656, 8);
+		  this.groupBox1.Size = new System.Drawing.Size(376, 8);
 		  this.groupBox1.TabIndex = 10;
 		  this.groupBox1.TabStop = false;
 		  // 
 		  // button1
 		  // 
 		  this.button1.Enabled = false;
-		  this.button1.Location = new System.Drawing.Point(600, 360);
+		  this.button1.Location = new System.Drawing.Point(584, 392);
 		  this.button1.Name = "button1";
 		  this.button1.Size = new System.Drawing.Size(88, 24);
 		  this.button1.TabIndex = 11;
@@ -446,7 +463,7 @@ namespace GUIStatus
 		  // 
 		  // button2
 		  // 
-		  this.button2.Location = new System.Drawing.Point(496, 360);
+		  this.button2.Location = new System.Drawing.Point(480, 392);
 		  this.button2.Name = "button2";
 		  this.button2.Size = new System.Drawing.Size(88, 24);
 		  this.button2.TabIndex = 34;
@@ -456,41 +473,50 @@ namespace GUIStatus
 		  // checkBox14
 		  // 
 		  this.checkBox14.Enabled = false;
-		  this.checkBox14.Location = new System.Drawing.Point(32, 232);
+		  this.checkBox14.Location = new System.Drawing.Point(32, 224);
 		  this.checkBox14.Name = "checkBox14";
-		  this.checkBox14.Size = new System.Drawing.Size(56, 32);
+		  this.checkBox14.Size = new System.Drawing.Size(56, 24);
 		  this.checkBox14.TabIndex = 35;
 		  this.checkBox14.Text = "HD C:";
 		  // 
 		  // checkBox16
 		  // 
 		  this.checkBox16.Enabled = false;
-		  this.checkBox16.Location = new System.Drawing.Point(32, 256);
+		  this.checkBox16.Location = new System.Drawing.Point(32, 248);
 		  this.checkBox16.Name = "checkBox16";
-		  this.checkBox16.Size = new System.Drawing.Size(56, 32);
+		  this.checkBox16.Size = new System.Drawing.Size(56, 24);
 		  this.checkBox16.TabIndex = 36;
 		  this.checkBox16.Text = "HD D:";
 		  // 
 		  // checkBox17
 		  // 
 		  this.checkBox17.Enabled = false;
-		  this.checkBox17.Location = new System.Drawing.Point(32, 280);
+		  this.checkBox17.Location = new System.Drawing.Point(32, 272);
 		  this.checkBox17.Name = "checkBox17";
-		  this.checkBox17.Size = new System.Drawing.Size(56, 32);
+		  this.checkBox17.Size = new System.Drawing.Size(56, 24);
 		  this.checkBox17.TabIndex = 37;
 		  this.checkBox17.Text = "HD E:";
 		  // 
 		  // groupBox2
 		  // 
-		  this.groupBox2.Location = new System.Drawing.Point(24, 216);
+		  this.groupBox2.Controls.Add(this.groupBox3);
+		  this.groupBox2.Location = new System.Drawing.Point(24, 208);
 		  this.groupBox2.Name = "groupBox2";
 		  this.groupBox2.Size = new System.Drawing.Size(640, 8);
 		  this.groupBox2.TabIndex = 38;
 		  this.groupBox2.TabStop = false;
 		  // 
+		  // groupBox3
+		  // 
+		  this.groupBox3.Location = new System.Drawing.Point(0, 0);
+		  this.groupBox3.Name = "groupBox3";
+		  this.groupBox3.Size = new System.Drawing.Size(640, 8);
+		  this.groupBox3.TabIndex = 39;
+		  this.groupBox3.TabStop = false;
+		  // 
 		  // textBox1
 		  // 
-		  this.textBox1.Location = new System.Drawing.Point(456, 232);
+		  this.textBox1.Location = new System.Drawing.Point(456, 224);
 		  this.textBox1.Name = "textBox1";
 		  this.textBox1.Size = new System.Drawing.Size(200, 20);
 		  this.textBox1.TabIndex = 39;
@@ -498,7 +524,7 @@ namespace GUIStatus
 		  // 
 		  // label16
 		  // 
-		  this.label16.Location = new System.Drawing.Point(296, 240);
+		  this.label16.Location = new System.Drawing.Point(296, 232);
 		  this.label16.Name = "label16";
 		  this.label16.Size = new System.Drawing.Size(144, 16);
 		  this.label16.TabIndex = 40;
@@ -506,7 +532,7 @@ namespace GUIStatus
 		  // 
 		  // button3
 		  // 
-		  this.button3.Location = new System.Drawing.Point(664, 232);
+		  this.button3.Location = new System.Drawing.Point(664, 224);
 		  this.button3.Name = "button3";
 		  this.button3.Size = new System.Drawing.Size(24, 23);
 		  this.button3.TabIndex = 41;
@@ -515,7 +541,7 @@ namespace GUIStatus
 		  // 
 		  // label17
 		  // 
-		  this.label17.Location = new System.Drawing.Point(296, 264);
+		  this.label17.Location = new System.Drawing.Point(296, 256);
 		  this.label17.Name = "label17";
 		  this.label17.Size = new System.Drawing.Size(176, 16);
 		  this.label17.TabIndex = 42;
@@ -523,7 +549,7 @@ namespace GUIStatus
 		  // 
 		  // textBox2
 		  // 
-		  this.textBox2.Location = new System.Drawing.Point(456, 256);
+		  this.textBox2.Location = new System.Drawing.Point(456, 248);
 		  this.textBox2.Name = "textBox2";
 		  this.textBox2.Size = new System.Drawing.Size(72, 20);
 		  this.textBox2.TabIndex = 43;
@@ -532,196 +558,265 @@ namespace GUIStatus
 		  // checkBox18
 		  // 
 		  this.checkBox18.Enabled = false;
-		  this.checkBox18.Location = new System.Drawing.Point(32, 352);
+		  this.checkBox18.Location = new System.Drawing.Point(32, 344);
 		  this.checkBox18.Name = "checkBox18";
-		  this.checkBox18.Size = new System.Drawing.Size(56, 32);
+		  this.checkBox18.Size = new System.Drawing.Size(56, 24);
 		  this.checkBox18.TabIndex = 46;
 		  this.checkBox18.Text = "HD H:";
 		  // 
 		  // checkBox19
 		  // 
 		  this.checkBox19.Enabled = false;
-		  this.checkBox19.Location = new System.Drawing.Point(32, 328);
+		  this.checkBox19.Location = new System.Drawing.Point(32, 320);
 		  this.checkBox19.Name = "checkBox19";
-		  this.checkBox19.Size = new System.Drawing.Size(56, 32);
+		  this.checkBox19.Size = new System.Drawing.Size(56, 24);
 		  this.checkBox19.TabIndex = 45;
 		  this.checkBox19.Text = "HD G:";
 		  // 
 		  // checkBox20
 		  // 
 		  this.checkBox20.Enabled = false;
-		  this.checkBox20.Location = new System.Drawing.Point(32, 304);
+		  this.checkBox20.Location = new System.Drawing.Point(32, 296);
 		  this.checkBox20.Name = "checkBox20";
-		  this.checkBox20.Size = new System.Drawing.Size(56, 32);
+		  this.checkBox20.Size = new System.Drawing.Size(56, 24);
 		  this.checkBox20.TabIndex = 44;
 		  this.checkBox20.Text = "HD F:";
 		  // 
 		  // checkBox21
 		  // 
 		  this.checkBox21.Enabled = false;
-		  this.checkBox21.Location = new System.Drawing.Point(96, 352);
+		  this.checkBox21.Location = new System.Drawing.Point(96, 344);
 		  this.checkBox21.Name = "checkBox21";
-		  this.checkBox21.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox21.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox21.TabIndex = 52;
 		  this.checkBox21.Text = "HD N:";
 		  // 
 		  // checkBox22
 		  // 
 		  this.checkBox22.Enabled = false;
-		  this.checkBox22.Location = new System.Drawing.Point(96, 328);
+		  this.checkBox22.Location = new System.Drawing.Point(96, 320);
 		  this.checkBox22.Name = "checkBox22";
-		  this.checkBox22.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox22.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox22.TabIndex = 51;
 		  this.checkBox22.Text = "HD M:";
 		  // 
 		  // checkBox23
 		  // 
 		  this.checkBox23.Enabled = false;
-		  this.checkBox23.Location = new System.Drawing.Point(96, 304);
+		  this.checkBox23.Location = new System.Drawing.Point(96, 296);
 		  this.checkBox23.Name = "checkBox23";
-		  this.checkBox23.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox23.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox23.TabIndex = 50;
 		  this.checkBox23.Text = "HD L:";
 		  // 
 		  // checkBox24
 		  // 
 		  this.checkBox24.Enabled = false;
-		  this.checkBox24.Location = new System.Drawing.Point(96, 280);
+		  this.checkBox24.Location = new System.Drawing.Point(96, 272);
 		  this.checkBox24.Name = "checkBox24";
-		  this.checkBox24.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox24.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox24.TabIndex = 49;
 		  this.checkBox24.Text = "HD K:";
 		  // 
 		  // checkBox25
 		  // 
 		  this.checkBox25.Enabled = false;
-		  this.checkBox25.Location = new System.Drawing.Point(96, 256);
+		  this.checkBox25.Location = new System.Drawing.Point(96, 248);
 		  this.checkBox25.Name = "checkBox25";
-		  this.checkBox25.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox25.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox25.TabIndex = 48;
 		  this.checkBox25.Text = "HD J:";
 		  // 
 		  // checkBox26
 		  // 
 		  this.checkBox26.Enabled = false;
-		  this.checkBox26.Location = new System.Drawing.Point(96, 232);
+		  this.checkBox26.Location = new System.Drawing.Point(96, 224);
 		  this.checkBox26.Name = "checkBox26";
-		  this.checkBox26.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox26.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox26.TabIndex = 47;
 		  this.checkBox26.Text = "HD I:";
 		  // 
 		  // checkBox27
 		  // 
 		  this.checkBox27.Enabled = false;
-		  this.checkBox27.Location = new System.Drawing.Point(160, 352);
+		  this.checkBox27.Location = new System.Drawing.Point(160, 344);
 		  this.checkBox27.Name = "checkBox27";
-		  this.checkBox27.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox27.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox27.TabIndex = 58;
 		  this.checkBox27.Text = "HD T:";
 		  // 
 		  // checkBox28
 		  // 
 		  this.checkBox28.Enabled = false;
-		  this.checkBox28.Location = new System.Drawing.Point(160, 328);
+		  this.checkBox28.Location = new System.Drawing.Point(160, 320);
 		  this.checkBox28.Name = "checkBox28";
-		  this.checkBox28.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox28.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox28.TabIndex = 57;
 		  this.checkBox28.Text = "HD S:";
 		  // 
 		  // checkBox29
 		  // 
 		  this.checkBox29.Enabled = false;
-		  this.checkBox29.Location = new System.Drawing.Point(160, 304);
+		  this.checkBox29.Location = new System.Drawing.Point(160, 296);
 		  this.checkBox29.Name = "checkBox29";
-		  this.checkBox29.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox29.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox29.TabIndex = 56;
 		  this.checkBox29.Text = "HD R:";
 		  // 
 		  // checkBox30
 		  // 
 		  this.checkBox30.Enabled = false;
-		  this.checkBox30.Location = new System.Drawing.Point(160, 280);
+		  this.checkBox30.Location = new System.Drawing.Point(160, 272);
 		  this.checkBox30.Name = "checkBox30";
-		  this.checkBox30.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox30.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox30.TabIndex = 55;
 		  this.checkBox30.Text = "HD Q:";
 		  // 
 		  // checkBox31
 		  // 
 		  this.checkBox31.Enabled = false;
-		  this.checkBox31.Location = new System.Drawing.Point(160, 256);
+		  this.checkBox31.Location = new System.Drawing.Point(160, 248);
 		  this.checkBox31.Name = "checkBox31";
-		  this.checkBox31.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox31.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox31.TabIndex = 54;
 		  this.checkBox31.Text = "HD P:";
 		  // 
 		  // checkBox32
 		  // 
 		  this.checkBox32.Enabled = false;
-		  this.checkBox32.Location = new System.Drawing.Point(160, 232);
+		  this.checkBox32.Location = new System.Drawing.Point(160, 224);
 		  this.checkBox32.Name = "checkBox32";
-		  this.checkBox32.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox32.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox32.TabIndex = 53;
 		  this.checkBox32.Text = "HD O :";
 		  // 
 		  // checkBox33
 		  // 
 		  this.checkBox33.Enabled = false;
-		  this.checkBox33.Location = new System.Drawing.Point(224, 352);
+		  this.checkBox33.Location = new System.Drawing.Point(224, 344);
 		  this.checkBox33.Name = "checkBox33";
-		  this.checkBox33.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox33.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox33.TabIndex = 64;
 		  this.checkBox33.Text = "HD Z:";
 		  // 
 		  // checkBox34
 		  // 
 		  this.checkBox34.Enabled = false;
-		  this.checkBox34.Location = new System.Drawing.Point(224, 328);
+		  this.checkBox34.Location = new System.Drawing.Point(224, 320);
 		  this.checkBox34.Name = "checkBox34";
-		  this.checkBox34.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox34.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox34.TabIndex = 63;
 		  this.checkBox34.Text = "HD Y:";
 		  // 
 		  // checkBox35
 		  // 
 		  this.checkBox35.Enabled = false;
-		  this.checkBox35.Location = new System.Drawing.Point(224, 304);
+		  this.checkBox35.Location = new System.Drawing.Point(224, 296);
 		  this.checkBox35.Name = "checkBox35";
-		  this.checkBox35.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox35.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox35.TabIndex = 62;
 		  this.checkBox35.Text = "HD X:";
 		  // 
 		  // checkBox36
 		  // 
 		  this.checkBox36.Enabled = false;
-		  this.checkBox36.Location = new System.Drawing.Point(224, 280);
+		  this.checkBox36.Location = new System.Drawing.Point(224, 272);
 		  this.checkBox36.Name = "checkBox36";
-		  this.checkBox36.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox36.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox36.TabIndex = 61;
 		  this.checkBox36.Text = "HD W:";
 		  // 
 		  // checkBox37
 		  // 
 		  this.checkBox37.Enabled = false;
-		  this.checkBox37.Location = new System.Drawing.Point(224, 256);
+		  this.checkBox37.Location = new System.Drawing.Point(224, 248);
 		  this.checkBox37.Name = "checkBox37";
-		  this.checkBox37.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox37.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox37.TabIndex = 60;
 		  this.checkBox37.Text = "HD U:";
 		  // 
 		  // checkBox38
 		  // 
 		  this.checkBox38.Enabled = false;
-		  this.checkBox38.Location = new System.Drawing.Point(224, 232);
+		  this.checkBox38.Location = new System.Drawing.Point(224, 224);
 		  this.checkBox38.Name = "checkBox38";
-		  this.checkBox38.Size = new System.Drawing.Size(64, 32);
+		  this.checkBox38.Size = new System.Drawing.Size(64, 24);
 		  this.checkBox38.TabIndex = 59;
 		  this.checkBox38.Text = "HD U :";
+		  // 
+		  // label18
+		  // 
+		  this.label18.Location = new System.Drawing.Point(296, 304);
+		  this.label18.Name = "label18";
+		  this.label18.Size = new System.Drawing.Size(152, 16);
+		  this.label18.TabIndex = 65;
+		  this.label18.Text = "Enable statusbar";
+		  // 
+		  // checkBox39
+		  // 
+		  this.checkBox39.Enabled = false;
+		  this.checkBox39.Location = new System.Drawing.Point(456, 296);
+		  this.checkBox39.Name = "checkBox39";
+		  this.checkBox39.Size = new System.Drawing.Size(48, 24);
+		  this.checkBox39.TabIndex = 66;
+		  this.checkBox39.CheckedChanged += new System.EventHandler(this.checkBox39_CheckedChanged);
+		  // 
+		  // label19
+		  // 
+		  this.label19.Location = new System.Drawing.Point(296, 328);
+		  this.label19.Name = "label19";
+		  this.label19.Size = new System.Drawing.Size(152, 16);
+		  this.label19.TabIndex = 67;
+		  this.label19.Text = "Statusbar positon";
+		  // 
+		  // checkBox40
+		  // 
+		  this.checkBox40.Enabled = false;
+		  this.checkBox40.Location = new System.Drawing.Point(456, 328);
+		  this.checkBox40.Name = "checkBox40";
+		  this.checkBox40.Size = new System.Drawing.Size(48, 16);
+		  this.checkBox40.TabIndex = 68;
+		  this.checkBox40.Text = "Top";
+		  this.checkBox40.CheckedChanged += new System.EventHandler(this.checkBox40_CheckedChanged);
+		  // 
+		  // checkBox41
+		  // 
+		  this.checkBox41.Enabled = false;
+		  this.checkBox41.Location = new System.Drawing.Point(520, 328);
+		  this.checkBox41.Name = "checkBox41";
+		  this.checkBox41.Size = new System.Drawing.Size(64, 16);
+		  this.checkBox41.TabIndex = 69;
+		  this.checkBox41.Text = "Bottom";
+		  this.checkBox41.CheckedChanged += new System.EventHandler(this.checkBox41_CheckedChanged);
+		  // 
+		  // label20
+		  // 
+		  this.label20.Location = new System.Drawing.Point(296, 352);
+		  this.label20.Name = "label20";
+		  this.label20.Size = new System.Drawing.Size(152, 16);
+		  this.label20.TabIndex = 70;
+		  this.label20.Text = "Select statusbar sensor";
+		  // 
+		  // comboBox1
+		  // 
+		  this.comboBox1.Enabled = false;
+		  this.comboBox1.Location = new System.Drawing.Point(456, 352);
+		  this.comboBox1.Name = "comboBox1";
+		  this.comboBox1.Size = new System.Drawing.Size(216, 21);
+		  this.comboBox1.TabIndex = 71;
+		  this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 		  // 
 		  // SetupForm
 		  // 
 		  this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-		  this.ClientSize = new System.Drawing.Size(704, 398);
+		  this.ClientSize = new System.Drawing.Size(704, 430);
+		  this.Controls.Add(this.comboBox1);
+		  this.Controls.Add(this.label20);
+		  this.Controls.Add(this.checkBox41);
+		  this.Controls.Add(this.checkBox40);
+		  this.Controls.Add(this.label19);
+		  this.Controls.Add(this.checkBox39);
+		  this.Controls.Add(this.label18);
 		  this.Controls.Add(this.checkBox33);
 		  this.Controls.Add(this.checkBox34);
 		  this.Controls.Add(this.checkBox35);
@@ -786,6 +881,7 @@ namespace GUIStatus
 		  this.Controls.Add(this.label1);
 		  this.Name = "SetupForm";
 		  this.Text = "SetupForm";
+		  this.groupBox2.ResumeLayout(false);
 		  this.ResumeLayout(false);
 
 		}
@@ -869,6 +965,11 @@ namespace GUIStatus
 	{
 	  using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) 
 	  {
+		xmlwriter.SetValueAsBool("status","status_is_mbm",isMbm);
+		xmlwriter.SetValueAsBool("status","status_bar_show",checkBox39.Checked);
+		xmlwriter.SetValueAsBool("status","status_bar_top",checkBox40.Checked);
+		xmlwriter.SetValueAsBool("status","status_bar_bottom",checkBox41.Checked);
+		if (checkBox39.Checked==true) xmlwriter.SetValue("status","status_bar_sensor",comboBox1.Items[comboBox1.SelectedIndex]);
 		xmlwriter.SetValue("status","status_sound_folder",textBox1.Text);
 		xmlwriter.SetValue("status","status_hd_threshold",textBox2.Text);
 		xmlwriter.SetValueAsBool("status","status_temp1",checkBox1.Checked); 
@@ -1036,127 +1137,151 @@ namespace GUIStatus
 	  int nPercentage=0;
 	  int nTemperature=0;
 	  int nVoltage=0;
+	  checkBox39.Enabled=true;
 	  if (GetDriveType("C:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox14.Enabled=true;
+		comboBox1.Items.Add("C:");
 	  } 
 	  else checkBox14.Checked=false;
 	  if (GetDriveType("D:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox16.Enabled=true;
+		comboBox1.Items.Add("D:");
 	  } 
 	  else checkBox16.Checked=false;
 	  if (GetDriveType("E:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox17.Enabled=true;
+		comboBox1.Items.Add("E:");
 	  } 
 	  else checkBox17.Checked=false;
 	  if (GetDriveType("F:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox20.Enabled=true;
+		comboBox1.Items.Add("F:");
 	  } 
 	  else checkBox20.Checked=false;
 	  if (GetDriveType("G:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox19.Enabled=true;
+		comboBox1.Items.Add("G:");
 	  } 
 	  else checkBox19.Checked=false;
 	  if (GetDriveType("H:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox18.Enabled=true;
+		comboBox1.Items.Add("H:");
 	  } 
 	  else checkBox18.Checked=false;
 	  if (GetDriveType("I:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox26.Enabled=true;
+		comboBox1.Items.Add("I:");
 	  } 
 	  else checkBox26.Checked=false;
 	  if (GetDriveType("J:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox25.Enabled=true;
+		comboBox1.Items.Add("J:");
 	  } 
 	  else checkBox25.Checked=false;
 	  if (GetDriveType("K:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox24.Enabled=true;
+		comboBox1.Items.Add("K:");
 	  } 
 	  else checkBox24.Checked=false;
 	  if (GetDriveType("L:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox23.Enabled=true;
+		comboBox1.Items.Add("L:");
 	  } 
 	  else checkBox23.Checked=false;
 	  if (GetDriveType("M:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox22.Enabled=true;
+		comboBox1.Items.Add("M:");
 	  } 
 	  else checkBox22.Checked=false;
 	  if (GetDriveType("N:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox21.Enabled=true;
+		comboBox1.Items.Add("N:");
 	  } 
 	  else checkBox21.Checked=false;
 	  if (GetDriveType("O:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox32.Enabled=true;
+		comboBox1.Items.Add("O:");
 	  } 
 	  else checkBox32.Checked=false;
 	  if (GetDriveType("P:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox31.Enabled=true;
+		comboBox1.Items.Add("P:");
 	  } 
 	  else checkBox31.Checked=false;
 	  if (GetDriveType("Q:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox30.Enabled=true;
+		comboBox1.Items.Add("Q:");
 	  } 
 	  else checkBox30.Checked=false;
 	  if (GetDriveType("R:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox29.Enabled=true;
+		comboBox1.Items.Add("R:");
 	  } 
 	  else checkBox29.Checked=false;
 	  if (GetDriveType("S:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox28.Enabled=true;
+		comboBox1.Items.Add("S:");
 	  } 
 	  else checkBox28.Checked=false;
 	  if (GetDriveType("T:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox27.Enabled=true;
+		comboBox1.Items.Add("T:");
 	  } 
 	  else checkBox27.Checked=false;
 	  if (GetDriveType("U:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox38.Enabled=true;
+		comboBox1.Items.Add("U:");
 	  } 
 	  else checkBox38.Checked=false;
 	  if (GetDriveType("V:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox37.Enabled=true;
+		comboBox1.Items.Add("V:");
 	  } 
 	  else checkBox37.Checked=false;
 	  if (GetDriveType("W:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox36.Enabled=true;
+		comboBox1.Items.Add("W:");
 	  } 
 	  else checkBox36.Checked=false;
 	  if (GetDriveType("X:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox35.Enabled=true;
+		comboBox1.Items.Add("X:");
 	  } 
 	  else checkBox35.Checked=false;
 	  if (GetDriveType("Y:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox34.Enabled=true;
+		comboBox1.Items.Add("Y:");
 	  } 
 	  else checkBox34.Checked=false;
 	  if (GetDriveType("Z:")==3)  // 3 = hd 5 = cd
 	  { 
 		checkBox33.Enabled=true;
+		comboBox1.Items.Add("Z:");
 	  } 
 	  else checkBox33.Checked=false;
-		
 
 	  MBMInfo.Refresh();
 	  button1.Enabled=true;
@@ -1164,124 +1289,169 @@ namespace GUIStatus
 	  {
 		MessageBox.Show ("Can not found MBM! You can load MBM from http://mbm.livewiredev.com", "My Status", 
 		  MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
-		this.Visible = false;
-	  }
-	  label2.Text=MBMInfo.Version.ToString();
-	  label3.Text=MBMInfo.sdPath.ToString();
-	  label5.Text=MBMInfo.sdStart.ToString();
-	  label11.Text=MBMInfo.sdCurrent.ToString();
-	  label9.Text=MBMInfo.sdInfo().siSmb_Name.ToString();
-	  for (int i=1; i<=100; i++) 
+		checkBox6.Enabled=false;
+		checkBox6.Checked=false;
+		checkBox5.Enabled=false;
+		checkBox5.Checked=false;
+		checkBox4.Enabled=false;
+		checkBox4.Checked=false;
+		checkBox13.Enabled=false;
+		checkBox13.Checked=false;
+		checkBox15.Enabled=false;
+		checkBox15.Checked=false;
+		checkBox1.Enabled=false;
+		checkBox1.Checked=false;
+		checkBox2.Enabled=false;
+		checkBox2.Checked=false;
+		checkBox3.Enabled=false;
+		checkBox3.Checked=false;
+		checkBox7.Enabled=false;
+		checkBox7.Checked=false;
+		checkBox8.Enabled=false;
+		checkBox8.Checked=false;
+		checkBox9.Enabled=false;
+		checkBox9.Checked=false;
+		checkBox10.Enabled=false;
+		checkBox10.Checked=false;
+		checkBox11.Enabled=false;
+		checkBox11.Checked=false;
+		checkBox12.Enabled=false;
+		checkBox12.Checked=false;
+		isMbm=false;
+	  } 
+	  else 
 	  {
-		switch (MBMInfo.Sensor(i).ssType) 
+		isMbm=true;
+		label2.Text=MBMInfo.Version.ToString();
+		label3.Text=MBMInfo.sdPath.ToString();
+		label5.Text=MBMInfo.sdStart.ToString();
+		label11.Text=MBMInfo.sdCurrent.ToString();
+		label9.Text=MBMInfo.sdInfo().siSmb_Name.ToString();
+		for (int i=1; i<=100; i++) 
 		{
-		  case mbmSensorType.stFan :
-			if (MBMInfo.Sensor(i).ssCurrent>260) 
-			{
-			  nFan++;
-			  switch (nFan) 
+		  switch (MBMInfo.Sensor(i).ssType) 
+		  {
+			case mbmSensorType.stFan :
+			  if (MBMInfo.Sensor(i).ssCurrent>260) 
 			  {
-				case 1:
-				  checkBox6.Enabled=true;
-				  checkBox6.Text=String.Format("{0}: {1:0.##}upm",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aFan[1]=i;
-				  break;
-				case 2:
-				  checkBox5.Enabled=true;
-				  checkBox5.Text=String.Format("{0}: {1:0.##}upm",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aFan[2]=i;
-				  break;
-				case 3:
-				  checkBox4.Enabled=true;
-				  checkBox4.Text=String.Format("{0}: {1:0.##}upm",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aFan[3]=i;
-				  break;
+				nFan++;
+				switch (nFan) 
+				{
+				  case 1:
+					checkBox6.Enabled=true;
+					checkBox6.Text=String.Format("{0}: {1:0.##}upm",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aFan[1]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 2:
+					checkBox5.Enabled=true;
+					checkBox5.Text=String.Format("{0}: {1:0.##}upm",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aFan[2]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 3:
+					checkBox4.Enabled=true;
+					checkBox4.Text=String.Format("{0}: {1:0.##}upm",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aFan[3]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				}
 			  }
-			}
-			break;
-		  case mbmSensorType.stMhz :
-			nMhz++;
-			if (nMhz==1) 
-			{
-			  checkBox13.Enabled=true;
-			  checkBox13.Text=String.Format("{0}: {1:0.##}Mhz",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-			  aMhz[1]=i;
-			}
-			break;
-		  case mbmSensorType.stPercentage :
-			nPercentage++;
-			if (nPercentage==1) 
-			{
-			  checkBox15.Enabled=true;
-			  checkBox15.Text=String.Format("{0}: {1:0.##}%",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-			  aPercentage[1]=i;
-			}
-			break;
-		  case mbmSensorType.stTemperature :
-			if (MBMInfo.Sensor(i).ssCurrent<150)
-			{ 
-			  nTemperature++;
-			  switch (nTemperature) 
+			  break;
+			case mbmSensorType.stMhz :
+			  nMhz++;
+			  if (nMhz==1) 
 			  {
-				case 1:
-				  checkBox1.Enabled=true;
-				  checkBox1.Text=String.Format("{0}: {1:0.##}C",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aTemperature[1]=i;
-				  break;
-				case 2:
-				  checkBox2.Enabled=true;
-				  checkBox2.Text=String.Format("{0}: {1:0.##}C",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aTemperature[2]=i;
-				  break;
-				case 3:
-				  checkBox3.Enabled=true;
-				  checkBox3.Text=String.Format("{0}: {1:0.##}C",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aTemperature[3]=i;
-				  break;
+				checkBox13.Enabled=true;
+				checkBox13.Text=String.Format("{0}: {1:0.##}Mhz",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+				aMhz[1]=i;
 			  }
-			}
-			break;
-		  case mbmSensorType.stVoltage :
-			if (MBMInfo.Sensor(i).ssCurrent<255)
-			{
-			  nVoltage++;
-			  switch (nVoltage) 
+			  break;
+			case mbmSensorType.stPercentage :
+			  nPercentage++;
+			  if (nPercentage==1) 
 			  {
-				case 1:
-				  checkBox9.Enabled=true;
-				  checkBox9.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aVolt[1]=i;
-				  break;
-				case 2:
-				  checkBox8.Enabled=true;
-				  checkBox8.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aVolt[2]=i;
-				  break;
-				case 3:
-				  checkBox7.Enabled=true;
-				  checkBox7.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aVolt[3]=i;
-				  break;
-				case 4:
-				  checkBox12.Enabled=true;
-				  checkBox12.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aVolt[4]=i;
-				  break;
-				case 5:
-				  checkBox11.Enabled=true;
-				  checkBox11.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aVolt[5]=i;
-				  break;
-				case 6:
-				  checkBox10.Enabled=true;
-				  checkBox10.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
-				  aVolt[6]=i;
-				  break;
+				checkBox15.Enabled=true;
+				checkBox15.Text=String.Format("{0}: {1:0.##}%",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+				aPercentage[1]=i;
+				comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
 			  }
-			}
-			break;
-		  case mbmSensorType.stUnknown :
-			break;
+			  break;
+			case mbmSensorType.stTemperature :
+			  if (MBMInfo.Sensor(i).ssCurrent<150)
+			  { 
+				nTemperature++;
+				switch (nTemperature) 
+				{
+				  case 1:
+					checkBox1.Enabled=true;
+					checkBox1.Text=String.Format("{0}: {1:0.##}C",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aTemperature[1]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 2:
+					checkBox2.Enabled=true;
+					checkBox2.Text=String.Format("{0}: {1:0.##}C",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aTemperature[2]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 3:
+					checkBox3.Enabled=true;
+					checkBox3.Text=String.Format("{0}: {1:0.##}C",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aTemperature[3]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				}
+			  }
+			  break;
+			case mbmSensorType.stVoltage :
+			  if (MBMInfo.Sensor(i).ssCurrent<255)
+			  {
+				nVoltage++;
+				switch (nVoltage) 
+				{
+				  case 1:
+					checkBox9.Enabled=true;
+					checkBox9.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aVolt[1]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 2:
+					checkBox8.Enabled=true;
+					checkBox8.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aVolt[2]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 3:
+					checkBox7.Enabled=true;
+					checkBox7.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aVolt[3]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 4:
+					checkBox12.Enabled=true;
+					checkBox12.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aVolt[4]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 5:
+					checkBox11.Enabled=true;
+					checkBox11.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aVolt[5]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				  case 6:
+					checkBox10.Enabled=true;
+					checkBox10.Text=String.Format("{0}: {1:0.##}V",MBMInfo.Sensor(i).ssName,MBMInfo.Sensor(i).ssCurrent);
+					aVolt[6]=i;
+					comboBox1.Items.Add(MBMInfo.Sensor(i).ssName);
+					break;
+				}
+			  }
+			  break;
+			case mbmSensorType.stUnknown :
+			  break;
+		  }
 		}
 	  }
 	}
@@ -1300,6 +1470,28 @@ namespace GUIStatus
 		  textBox1.Text = folderBrowserDialog1.SelectedPath;
 		}
 	  }		
+	}
+
+    private void checkBox39_CheckedChanged(object sender, System.EventArgs e)
+	{
+		comboBox1.Enabled=true;
+		checkBox40.Enabled=true;
+		checkBox41.Enabled=true;
+	}
+
+    private void checkBox40_CheckedChanged(object sender, System.EventArgs e)
+	{
+		checkBox41.Checked=false;
+	}
+
+    private void checkBox41_CheckedChanged(object sender, System.EventArgs e)
+	{
+	  checkBox40.Checked=false;
+	}
+
+    private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
+	{
+	
 	}
   }
 }

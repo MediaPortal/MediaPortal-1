@@ -538,6 +538,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\GUIStatusbarControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\GUITextControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
