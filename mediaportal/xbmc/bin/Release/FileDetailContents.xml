@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<contentprofiles>
+	<profile id="100">
+		<title>Default Profile</title>
+		<fields>
+			<field id="Line1Label"></field>
+			<field id="Line2Label"></field>
+			<field id="Line3Label"></field>
+			<field id="Line4Label"></field>
+			<field id="Line1Data">[VALUEOFTAG("system")]</field>
+			<field id="Line2Data">[VALUEOFTAG("yearmanu")]</field>
+			<field id="Line3Data">[VALUEOFTAG("rating")]</field>
+			<field id="Line4Data">[VALUEOFTAG("genre")]</field>
+			<field id="OverviewData">[VALUEOFTAG("overview")]</field>
+		</fields>
+	</profile>
+	<profile id="110">
+		<title>"Kino.de" - Profile</title>
+		<fields>
+			<field id="Line1Label">Produziert:</field>
+			<field id="Line2Label">Spieldauer:</field>
+			<field id="Line3Label">Genre:</field>
+			<field id="Line4Label">Kinos:</field>
+			<field id="Line1Data">[VALUEOFTAG("produced")] ([VALUEOFTAG("released")])</field>
+			<field id="Line2Data">[VALUEOFTAG("duration")]</field>
+			<field id="Line3Data">[VALUEOFTAG("genre")]</field>
+			<field id="Line4Data">[NAMEOFCATEGORY(1)] [VALUEOFCATEGORY(1)]   [NAMEOFCATEGORY(2)] [VALUEOFCATEGORY(2)]   [NAMEOFCATEGORY(3)] [VALUEOFCATEGORY(3)]</field>
+			<field id="OverviewData">[VALUEOFTAG("overview")]</field>
+		</fields>
+	</profile>
+</contentprofiles>
