@@ -187,8 +187,13 @@ namespace MediaPortal.TV.Recording
       StopRecording();
       StopViewing();
 
+      if (m_mediaControl!=null)
+      {
+        m_mediaControl.Stop();
+      }
       if (m_videoWindow!=null)
       {
+        m_videoWindow.put_Visible( DsHlp.OAFALSE);
         Marshal.ReleaseComObject(m_videoWindow);m_videoWindow=null;
       }
       if (m_basicVideo!=null)
@@ -223,15 +228,16 @@ namespace MediaPortal.TV.Recording
         m_videoCaptureDevice=null;
       }
 
-      DsUtils.RemoveFilters(m_graphBuilder);
-
       if( m_rotCookie != 0 )
         DsROT.RemoveGraphFromRot( ref m_rotCookie);
       m_rotCookie=0;
 
+      DsUtils.RemoveFilters(m_graphBuilder);
+
 
       if( m_captureGraphBuilder != null )
         Marshal.ReleaseComObject( m_captureGraphBuilder ); m_captureGraphBuilder = null;
+
 	
       if( m_graphBuilder != null )
         Marshal.ReleaseComObject( m_graphBuilder ); m_graphBuilder = null;
