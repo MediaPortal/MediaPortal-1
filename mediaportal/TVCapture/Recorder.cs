@@ -1747,7 +1747,7 @@ namespace MediaPortal.TV.Recording
 			}//foreach (string drive in drives)
 		}//static void CheckRecordingDiskSpace()
 		
-		static void ImportDvrMsFiles()
+		static public void ImportDvrMsFiles()
 		{
 			ArrayList recordings = new ArrayList();
 			TVDatabase.GetRecordedTV(ref recordings);
@@ -1762,10 +1762,13 @@ namespace MediaPortal.TV.Recording
 						bool add=true;
 						foreach (TVRecorded rec in recordings)
 						{
-							if (rec.FileName.ToLower()==file.ToLower())
+							if (rec.FileName!=null)
 							{
-								add=false;
-								break;
+								if (rec.FileName.ToLower()==file.ToLower())
+								{
+									add=false;
+									break;
+								}
 							}
 						}
 						if (add)
@@ -1773,15 +1776,23 @@ namespace MediaPortal.TV.Recording
 							using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
 							{
 								TVRecorded newRec = new TVRecorded();
+								newRec.FileName=file;
 								IDictionary dict=editor.GetAttributes();
 								foreach (MetadataItem item in dict.Values)
 								{
 									if (item.Name=="channel") newRec.Channel=(string)item.Value;
 									if (item.Name=="title") newRec.Title=(string)item.Value;
 									if (item.Name=="genre") newRec.Genre=(string)item.Value;
-									if (item.Name=="description") newRec.Description=(string)item.Value;
+									if (item.Name=="details") newRec.Description=(string)item.Value;
 									if (item.Name=="start") newRec.Start=(long)item.Value;
 									if (item.Name=="end") newRec.End=(long)item.Value;
+								}
+								if (newRec.Channel==null)
+								{
+									string name=Utils.GetFilename(file);
+									string[] parts=name.Split('_');
+									if (parts.Length>0)
+										newRec.Channel=parts[0];
 								}
 								if (newRec.Channel!=null)
 								{
@@ -1796,6 +1807,6 @@ namespace MediaPortal.TV.Recording
 				{
 				}
 			}//for (int i=0; i < Recorder.Count;++i)
-		}
+		} //static void ImportDvrMsFiles()
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

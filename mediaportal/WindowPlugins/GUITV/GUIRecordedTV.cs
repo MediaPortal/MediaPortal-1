@@ -195,6 +195,7 @@ namespace MediaPortal.GUI.TV
         {
           base.OnMessage(message);
 					
+					Recorder.ImportDvrMsFiles();
           LoadSettings();
           LoadDirectory();
           GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
@@ -832,7 +833,5 @@ namespace MediaPortal.GUI.TV
       if (type!=g_Player.MediaType.Recording) return;
       VideoDatabase.AddMovieFile(filename);
     }
-		
-
   }
 }
