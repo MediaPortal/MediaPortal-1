@@ -934,7 +934,7 @@
                 />
                 <File
                     RelPath = "Player\BaseStreamBufferPlayer.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File

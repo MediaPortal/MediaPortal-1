@@ -169,8 +169,9 @@ namespace MediaPortal.TV.Recording
 			captureCard.Process();
 
 			TimeSpan ts = DateTime.Now-channelScanTimeOut;
-			if (ts.TotalSeconds>=15)
+			if (ts.TotalSeconds>=5)
 			{
+				timer1.Enabled=false;
 				captureCard.StoreTunedChannels(false,true);
 				callback.UpdateList();
 				Log.Write("timeout, goto scanning frequencies");
@@ -178,6 +179,7 @@ namespace MediaPortal.TV.Recording
 				currentOffset=0;
 				currentFrequencyIndex++;
 				ScanNextFrequency();
+				timer1.Enabled=true;
 				return;
 			}
 		}

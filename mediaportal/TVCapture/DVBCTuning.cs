@@ -188,11 +188,13 @@ namespace MediaPortal.TV.Recording
 			TimeSpan ts = DateTime.Now-channelScanTimeOut;
 			if (ts.TotalSeconds>=15)
 			{
+				timer1.Enabled=false;
 				captureCard.StoreTunedChannels(false,true);
 				callback.UpdateList();
 				Log.Write("timeout, goto scanning dvbcChannelsonders");
 				currentState=State.ScanFrequencies;
 				ScanNextdvbcChannelsonder();
+				timer1.Enabled=true;
 				return;
 			}
 		}

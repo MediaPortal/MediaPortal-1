@@ -2545,6 +2545,29 @@ namespace MediaPortal.TV.Recording
 		/// <param name="tv">if true:Store tv channels found in the database</param>
 		public void StoreChannels(bool radio, bool tv)
 		{
+			if (channelList.Count==0) return;
+			if (m_SectionsTables!=null)
+			{
+				DVBSections sections = new DVBSections();
+				DVBSections.Transponder transp = sections.Scan(m_SectionsTables);
+				for (int i=0; i < transp.channels.Count;++i)
+				{
+					bool audio=false;
+					bool video=false;
+					bool scrambled;
+					DVBSections.ChannelInfo info=(DVBSections.ChannelInfo)transp.channels[i];
+					scrambled=info.scrambled;
+					for (int pids =0; pids < info.pid_list.Count;pids++)
+					{
+						DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[i];
+						if (data.isVideo)
+							video=true;
+						if (data.isAudio)
+							audio=true;
+					}
+				}
+			}
+
 			//get list of current tv channels present in the database
 			ArrayList tvChannels = new ArrayList();
 			TVDatabase.GetChannels(ref tvChannels);

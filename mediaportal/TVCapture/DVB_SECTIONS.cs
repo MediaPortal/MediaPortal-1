@@ -354,6 +354,79 @@ namespace MediaPortal.TV.Recording
 
 			}
 		}
+		public Transponder Scan(DShowNET.IBaseFilter filter)
+		{
+			Transponder transplist = new Transponder();
+			transplist.channels = new ArrayList();
+			transplist.PMTTable = new ArrayList();
+			DeleteAllPIDsI();
+			AddTSPid(17);
+			AddTSPid(0);
+			GetStreamData(filter,0, 0,0,5000);
+			// jump to parser
+			foreach(byte[] arr in m_sectionsList)
+				decodePATTable(arr, transp[0], ref transplist);
+
+			LoadPMTTables(filter,transp[0],ref transplist);
+			return transplist;
+		}
+		
+		private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
+		{
+			int t;
+			int n;
+			ArrayList	tab42=new ArrayList();
+			ArrayList	tab46=new ArrayList();
+
+			// check tables
+			AddTSPid(17);
+			//
+			GetStreamData(filter,17, 0x42,0,5000);
+			tab42=(ArrayList)m_sectionsList.Clone();
+			GetStreamData(filter,17, 0x46,0,5000);
+			tab46=(ArrayList)m_sectionsList.Clone();
+
+			bool flag;
+			ChannelInfo pat;
+			ArrayList pmtList = tp.PMTTable;
+			int pmtScans;
+			pmtScans = (pmtList.Count / 20) + 1;
+			for (t = 1; t <= pmtScans; t++)
+			{
+				flag = DeleteAllPIDsI();
+				for (n = 0; n <= 19; n++)
+				{
+					if (((t - 1) * 20) + n > pmtList.Count - 1)
+					{
+						break;
+					}
+					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
+					//flag = AddTSPid(pat.network_pmt_PID);
+					//if (flag == false)
+					//{
+					//	break;
+					//}
+					
+					// parse pmt
+					int res=0;
+					GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
+					foreach(byte[] wdata in m_sectionsList)
+						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
+
+					if(res>0)
+					{
+
+						foreach(byte[] wdata in tab42)
+							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
+
+						foreach(byte[] wdata in tab46)
+							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
+					}
+					tp.channels.Add(pat);
+				
+				}
+			}
+		}
 		
 		private void LoadPMTTables (TPList tpInfo, ref Transponder tp)
 		{
