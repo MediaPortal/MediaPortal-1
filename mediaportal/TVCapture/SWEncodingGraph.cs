@@ -456,6 +456,9 @@ namespace MediaPortal.TV.Recording
       {
         DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigInterleaving");
       }
+      if (m_mediaControl==null)
+        m_mediaControl=(IMediaControl)m_graphBuilder;
+
       m_mediaControl.Run();
       m_graphState=State.Recording;
 
