@@ -18,21 +18,39 @@ namespace MediaPortal.GUI.GUIBurner
   /// </summary>
 	public class GUIBurner : GUIWindow 
 	{
+		public static int WINDOW_STATUS = 760;
 
 		#region Private Enumerations
 		enum Controls 
 		{
-			CONTROL_COPY_CD_DVD			= 2,	 
+			CONTROL_BACK					  = 2,
+		
+			CONTROL_VIDEO						= 2,
+			CONTROL_AUDIO						= 3,
+			CONTROL_DATA						= 4,
+			CONTROL_CD_INFO					= 5,
+			CONTROL_FORMAT_RD				= 6,
+			CONTROL_EJECT_CD				= 7,
+
+			CONTROL_CONVERT					= 3,
+			CONTROL_CUT							= 4,
+			CONTROL_MAKE_VIDEO_CD		= 5,	 
+			CONTROL_MAKE_VIDEO_DVD	= 6,
+
+			CONTROL_CONVERT_DVR			= 3,
+			CONTROL_CONVERT_DIVX		= 4,
+			CONTROL_CONVERT_MPEG4		= 5,	 
+			
 			CONTROL_MAKE_AUDIO			= 3,	 
-			CONTROL_MAKE_VIDEO_CD		= 4,	 
-			CONTROL_MAKE_VIDEO_DVD	= 5,
-			CONTROL_CONVERT_DVR			= 6,
-			CONTROL_MAKE_DATA_CD		= 7,
-			CONTROL_MAKE_DATA_DVD		= 8,
-			CONTROL_CD_INFO					= 9,
-			CONTROL_FORMAT_RD				= 10,
-			CONTROL_EJECT_CD				= 11,
+			CONTROL_MAKE_MP3_CD			= 4,	 
+			CONTROL_MAKE_MP3_DVD		= 5,	 
+
+			CONTROL_COPY_CD_DVD			= 3,	 
+			CONTROL_MAKE_DATA_CD		= 4,
+			CONTROL_MAKE_DATA_DVD		= 5,
+
 			CONTROL_MARK_ALL				= 12,
+
 			CONTROL_LIST_DIR				= 20,
 			CONTROL_LIST_COPY				= 30,
 			CONTROL_CD_DETAILS			= 50
@@ -48,7 +66,11 @@ namespace MediaPortal.GUI.GUIBurner
 			STATE_MAKE_VIDEO_CD = 5,
 			STATE_MAKE_VIDEO_DVD = 6,
 			STATE_CONVERT_DVR = 7,
-			STATE_DISK_INFO = 8
+			STATE_DISK_INFO = 8,
+			STATE_VIDEO = 9,
+			STATE_AUDIO = 10,
+			STATE_DATA = 11,
+			STATE_CONVERT = 12
 		};
 
 		private States currentState = States.STATE_MAIN;
@@ -65,7 +87,7 @@ namespace MediaPortal.GUI.GUIBurner
 			public string path;
 		}
 		
-		private	XPBurn.XPBurnCD burnClass = new XPBurn.XPBurnCD(); 
+		private	XPBurn.XPBurnCD burnClass; 
 		
 		string[] video = new string[20];
 		string[] vname = new string[20];
@@ -74,6 +96,7 @@ namespace MediaPortal.GUI.GUIBurner
 		string[] pictures = new string[20];
 		string[] pname = new string[20];
 
+		private string recordpath="";
 		private int recorder;
 		private ArrayList files = new ArrayList();
 		private string tmpFolder;
@@ -88,6 +111,7 @@ namespace MediaPortal.GUI.GUIBurner
 		private int perc=0;
 		private long max=681574400;
 		private bool fastFormat;
+		private bool isBurner=true;
 		private	bool convertDVR;
 		private	bool deleteDVRSrc;
 		private string soundFolder="";
@@ -109,7 +133,7 @@ namespace MediaPortal.GUI.GUIBurner
 		#region Overrides		
 		public override int GetID 
 		{
-			get { return (int)GUIWindow.Window.WINDOW_MY_BURNER; }
+			get { return WINDOW_STATUS; }
 			set { base.GetID = value; }
 		}
 
@@ -137,9 +161,9 @@ namespace MediaPortal.GUI.GUIBurner
 					driveCount=0;
 					GetDrives();
 					LoadSettings();
-					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(2100));//Burn
-					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2100));//Burn
-					GUIPropertyManager.SetProperty("#burner_perc","0");
+					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(2100));
+					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2100));
+					GUIPropertyManager.SetProperty("#burner_perc","-5");
 					GUIPropertyManager.SetProperty("#burner_size"," ");
 					GUIPropertyManager.SetProperty("#burner_info"," ");
 					GUIPropertyManager.SetProperty("#convert_info"," ");
@@ -151,357 +175,113 @@ namespace MediaPortal.GUI.GUIBurner
 					//get sender control
 					base.OnMessage(message);
 					int iControl=message.SenderControlId;
-					if (iControl==(int)Controls.CONTROL_COPY_CD_DVD) // select Main Page or copy cd/dvd
+					if (iControl==(int)Controls.CONTROL_VIDEO) 
 					{
-						if (currentState!=States.STATE_MAIN) // select return Button
+						switch (currentState) 
 						{
-							currentState=States.STATE_MAIN;
-							UpdateButtons();
-						} 
-						else 
-						{
-							GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2101));//Copy CD/DVD
-							currentState=States.STATE_COPY_CDDVD;
-							UpdateButtons();
-							GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-							if (null==dlgYesNo) break;
-							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100)); //Burn
-							dlgYesNo.SetLine(1,GUILocalizeStrings.Get(2110));//Insert original CD/DVD
-							dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2109));//then press OK
-							dlgYesNo.DoModal(GetID);
-						}
-						return true;
-					}
-					if (iControl==(int)Controls.CONTROL_MAKE_AUDIO) // select Make Audio page
-					{
-						if (currentState==States.STATE_MAIN) 
-						{
-							currentState=States.STATE_MAKE_AUDIO;
-							UpdateButtons();
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-							GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2102));//Create Audio-CD
-							currentExt=Util.Utils.AudioExtensions;
-							LoadListControl(soundFolder,currentExt);
-							currentFolder=soundFolder;
-							max=cdSize;
-							actSize=0;
-						} 
-						else // Start Convert/Burning Action 
-						{
-							if (currentState==States.STATE_CONVERT_DVR) //Convert Video Files
-							{
-								if (!bt.CheckEnvironment())
-								{
-									GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-									dlgOk.SetHeading(2100); //Burn
-									dlgOk.SetLine(0,2133);//Cannot convert DVR-MS to MPG
-									dlgOk.SetLine(1,2134);//Required DirectShow filters are
-									dlgOk.SetLine(2,2135);//not installed
-									dlgOk.DoModal(GetID);
-									return true;
-								}
-								int fCount=0;
-								bt.ClearFiles();
-								int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
-								for (int i=0; i<count; i++) 
-								{
-									GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
-									string ext=System.IO.Path.GetExtension(cItem.Label);
-									if (ext.ToLower() !=".dvr-ms") continue;
-									bt.AddFiles(cItem.Label,cItem.Path);
-									fCount++;
-								}								
-								if (fCount>0) // Start Thread to converting Files
-								{
-									ThreadStart ts = new ThreadStart(bt.TranscodeThread);
-									Thread t = new Thread(ts);
-									t.IsBackground=true;
-									t.Priority=ThreadPriority.BelowNormal;
-									t.Start();
-									GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-									dlgOk.SetHeading(2100); //Burn
-									dlgOk.SetLine(2,2120);//Converting file(s)
-									dlgOk.DoModal(GetID);
-								}
-								else 
-								{
-									GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-									dlgOk.SetHeading(2100); //Burn
-									dlgOk.SetLine(2,2121);// Couldn't convert file(s)!
-									dlgOk.DoModal(GetID);
-								}
-								actSize=0;
-								currentState=States.STATE_MAIN;
+							case States.STATE_MAIN :							// If Main change Folder to Video
+								currentState=States.STATE_VIDEO;
 								UpdateButtons();
-								GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-								GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
-							}
-
-							if (currentState==States.STATE_MAKE_DATA_CD || currentState==States.STATE_MAKE_DATA_DVD) //Burn Data
-							{
-								AutoPlay.StopListening();
-								GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-								if (null!=dlgYesNo) {
-									dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100)); //Burn
-									dlgYesNo.SetLine(1,GUILocalizeStrings.Get(2108));//Insert empty CD/DVD
-									dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2109));//then press OK
-									dlgYesNo.DoModal(GetID);
-									if (dlgYesNo.IsConfirmed)  // burn CD
-									{
-										int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
-										for (int i=0; i<count; i++) 
-										{
-											GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
-											try 
-											{
-												GUIPropertyManager.SetProperty("#convert_info",cItem.Path+"\\"+cItem.Label);
-												burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
-											}
-											catch(Exception ex)
-											{
-												Log.Write("MyBurner: ", ex.Message);
-											}
-										}
-										burnClass.ActiveFormat = XPBurn.RecordType.afData;
-										GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
-										GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-										if(burnClass.MediaInfo.isWritable == false) 
-										{
-											//Burn, The CD is not writable
-											okDialog(GUILocalizeStrings.Get(2100), GUILocalizeStrings.Get(2127));
-										} 
-										else 
-										{
-											GUIControl.HideControl(GetID,(int)Controls.CONTROL_COPY_CD_DVD);
-											burnClass.PreparingBurn +=new XPBurn.NotifyEstimatedTime(burnClass_PreparingBurn);
-											burnClass.AddProgress +=new XPBurn.NotifyCDProgress(burnClass_AddProgress);
-											burnClass.BlockProgress+=new XPBurn.NotifyCDProgress(burnClass_BlockProgress);
-											burnClass.ClosingDisc+=new XPBurn.NotifyEstimatedTime(burnClass_ClosingDisc);
-											burnClass.BurnComplete+=new XPBurn.NotifyCompletionStatus(burnClass_BurnComplete);
-											try 
-											{
-												burnClass.RecordDisc(false,false);
-											}
-											catch(Exception ex)
-											{
-												Log.Write("MyBurner: ", ex.Message);
-											}
-										}
-									}
-								}
-								currentState=States.STATE_MAIN;
+								break;
+							case States.STATE_VIDEO :
+								currentState=States.STATE_MAIN;			// If Video change Folder to Main
 								UpdateButtons();
-								AutoPlay.StartListening();
-							}
+								break;
+							case States.STATE_AUDIO :
+								currentState=States.STATE_MAIN;			// If Audio change Folder to Main
+								UpdateButtons();
+								break;
+							case States.STATE_DATA :
+								currentState=States.STATE_MAIN;			// If Data change Folder to Main
+								UpdateButtons();
+								break;
+							case States.STATE_CONVERT :
+								currentState=States.STATE_VIDEO;		// If Convert change Folder to Video
+								UpdateButtons();
+								break;
+							case States.STATE_DISK_INFO :					// If Disk Info change Folder to Main
+								currentState=States.STATE_MAIN;		
+								UpdateButtons();
+								break;
 						}
 						return true;
 					}
-					if (iControl==(int)Controls.CONTROL_MAKE_VIDEO_CD) // select Make Audio page
+					if (iControl==(int)Controls.CONTROL_AUDIO) 
 					{
-						if (currentState!=States.STATE_MAIN) 
+						switch (currentState) 
 						{
-							currentState=States.STATE_MAKE_VIDEO_CD;
-							UpdateButtons();
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-							GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2103));//Create Video-CD
-							currentExt=Util.Utils.AudioExtensions;
-							LoadListControl(soundFolder,currentExt);
-							currentFolder=videoFolder;
-							max=cdSize;
-							actSize=0;
+							case States.STATE_MAIN :
+								currentState=States.STATE_AUDIO;
+								UpdateButtons();
+								break;
+							case States.STATE_AUDIO :
+								currentState=States.STATE_MAIN;		
+								UpdateButtons();
+								break;
+							case States.STATE_VIDEO :
+								currentState=States.STATE_CONVERT;
+								ShowList();
+								break;
+							case States.STATE_CONVERT :
+								ConvertDvrMs();
+								break;
+							case States.STATE_MAKE_DATA_CD :
+								BurnCD(false);
+								break;
 						}
 						return true;
 					}
-					if (iControl==(int)Controls.CONTROL_MAKE_VIDEO_DVD) // select Make Audio page
+					if (iControl==(int)Controls.CONTROL_DATA) 
 					{
-						if (currentState!=States.STATE_MAIN) 
+						switch (currentState) 
 						{
-							currentState=States.STATE_MAKE_VIDEO_DVD;
-							UpdateButtons();
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-							GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2104));//Create Video-DVD
-							currentExt=Util.Utils.AudioExtensions;
-							LoadListControl(soundFolder,currentExt);
-							currentFolder=videoFolder;
-							max=dvdSize;
-							actSize=0;
-						}
-						return true;
-					}
-					if (iControl==(int)Controls.CONTROL_CONVERT_DVR) // select Convert DVR->MS page
-					{
-						if (currentState==States.STATE_MAIN) 
-						{
-							currentState=States.STATE_CONVERT_DVR;
-							UpdateButtons();
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-							GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2118));//Convert DVR-MS
-							currentExt=dvr_extensions;
-							LoadDriveListControl();
-							currentFolder="";
-							max=dvdSize*5;
-							actSize=0;
-						}
-						return true;
-					}
-					if (iControl==(int)Controls.CONTROL_MAKE_DATA_CD) // select Make Data page
-					{
-						if (currentState==States.STATE_MAIN) 
-						{
-							currentState=States.STATE_MAKE_DATA_CD;
-							UpdateButtons();
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-							GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2105));//Create Data-CD
-							currentExt=Util.Utils.AudioExtensions;
-							currentExt.AddRange(Util.Utils.PictureExtensions);
-							currentExt.AddRange(Util.Utils.VideoExtensions);
-							LoadDriveListControl();
-							currentFolder="";
-							max=cdSize;
-							actSize=0;
-						}
-						return true;
-					}
-					if (iControl==(int)Controls.CONTROL_MAKE_DATA_DVD) // select Make Data page
-					{
-						if (currentState!=States.STATE_MAIN) 
-						{
-							currentState=States.STATE_MAKE_DATA_DVD;
-							UpdateButtons();
-							GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-							GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2106));//Create Data-DVD
-							currentExt=Util.Utils.AudioExtensions;
-							currentExt.AddRange(Util.Utils.PictureExtensions);
-							currentExt.AddRange(Util.Utils.VideoExtensions);
-							LoadDriveListControl();
-							currentFolder="";
-							max=dvdSize;
-							actSize=0;
+							case States.STATE_MAIN :
+								currentState=States.STATE_DATA;
+								UpdateButtons();
+								break;
+							case States.STATE_DATA :
+								currentState=States.STATE_MAKE_DATA_CD;
+								ShowList();
+								break;
 						}
 						return true;
 					}
 					if (iControl==(int)Controls.CONTROL_CD_INFO) 
 					{
-						string info=GUILocalizeStrings.Get(2123);//Disk info
-						currentState=States.STATE_DISK_INFO;
-						UpdateButtons();
-						try 
+						switch (currentState) 
 						{
-							info="\nDisc Space : " + burnClass.DiscSpace.ToString()+"\n";
-							info=info+"Free Disc Space : " + burnClass.FreeDiscSpace.ToString()+"\n";
-							if (burnClass.IsBurning==false && burnClass.IsErasing==false) 
-							{
-							  info=info+"Media Is Usable : " + burnClass.MediaInfo.isUsable.ToString()+"\n";
-								info=info+"Media Is Blank : " + burnClass.MediaInfo.isBlank.ToString()+"\n";
-								info=info+"Media Is ReadWrite : " + burnClass.MediaInfo.isReadWrite.ToString()+"\n";
-								info=info+"Media Is Writable : " + burnClass.MediaInfo.isWritable.ToString()+"\n";
-							}
-							info=info+"Product ID : " + burnClass.ProductID.ToString()+"\n";
-							if (burnClass.RecorderType==XPBurn.RecorderType.RECORDER_CDR)  { info=info+"Recorder Type : CDR\n"; }
-							if (burnClass.RecorderType==XPBurn.RecorderType.RECORDER_CDRW) { info=info+"Recorder Type : CDRW\n"; }
-							info=info+"Max Write Speed : " + burnClass.MaxWriteSpeed.ToString()+"\n";
-							info=info+"Revision : " + burnClass.Revision+"\n";
-							info=info+"Vendor : " + burnClass.Vendor+"\n";
-							info=info+"Volume Name : " + burnClass.VolumeName+"\n";
-							info=info+"Write Speed : " + burnClass.WriteSpeed.ToString()+"\n";
+							case States.STATE_MAIN :
+								currentState=States.STATE_DISK_INFO;
+								ShowList();
+								CdInfo();
+								break;
 						}
-						catch(Exception ex)
-						{
-							Log.Write("MyBurner:Error CD Info", ex.Message);
-						}
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_CD_DETAILS, info );
-					}
-					if (iControl==(int)Controls.CONTROL_EJECT_CD) 
-					{
-						burnClass.Eject();
+						return true;
 					}
 					if (iControl==(int)Controls.CONTROL_FORMAT_RD) 
 					{
-						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-						if (null==dlgYesNo) break;
-						dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100)); //Burn
-						dlgYesNo.SetLine(1,GUILocalizeStrings.Get(2115));//Insert CD/DVD RW
-						dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2109));//then press OK
-						dlgYesNo.DoModal(GetID);
-						if (dlgYesNo.IsConfirmed) // format CD
+						switch (currentState) 
 						{
-							if(burnClass.MediaInfo.isUsable==false) 
-							{
-								//Burn, Cannot Erase: Media is not writable
-								okDialog(GUILocalizeStrings.Get(2100), GUILocalizeStrings.Get(2124));
-							} 
-							else 
-							{
-								GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_AUDIO);
-								GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
-								GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-								GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MARK_ALL);
-								XPBurn.EraseKind eraseType = new XPBurn.EraseKind();
-								if(fastFormat==true) 
-								{
-									eraseType=XPBurn.EraseKind.ekQuick;
-								} 
-								else 
-								{
-									eraseType=XPBurn.EraseKind.ekFull;
-								}
-								GUIPropertyManager.SetProperty("#convert_info",GUILocalizeStrings.Get(2125));//Erase Disk....
-								try 
-								{
-									burnClass.Erase(eraseType);
-								}			
-								catch(Exception ex)
-								{
-									Log.Write("MyBurner:Unable format CD/RW", ex.Message);
-								}
-								burnClass.EraseComplete +=new XPBurn.NotifyCompletionStatus(EraseFinished);	
-							}
+							case States.STATE_MAIN :
+								CdRwFormat();
+								break;
 						}
+						return true;
 					}
-					if (iControl==(int)Controls.CONTROL_MARK_ALL) // select Mark All
+					if (iControl==(int)Controls.CONTROL_EJECT_CD) 
 					{
-						int indx=currentFolder.IndexOf("\\\\");
-						if (indx>0) 
+						switch (currentState) 
 						{
-							currentFolder=currentFolder.Remove(indx,1);
-						}
-						int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR);
-						for (int i=0; i<count; i++) 
-						{
-							GUIListItem item = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_DIR,i);
-							if (!item.Label.StartsWith("\\..") && !item.Label.StartsWith("\\") && item.Label.Substring(1,1)!=":") 
-							{
-								bool isdoub=false;
-								int dcount = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
-								for (int ii=0; i<dcount; ii++) 
+							case States.STATE_MAIN :
+								if (isBurner==true) 
 								{
-									GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,ii);
-									if (cItem.Label==item.Label) 
-									{
-										if (cItem.Path==item.Path) 
-										{
-											isdoub=true;
-											//break;	
-										}
-									}
+									burnClass.Eject();
 								}
-								if (isdoub==false) 
-								{
-									GUIListItem pItem = new GUIListItem(item);
-									pItem.Path=currentFolder;	
-									GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_COPY,pItem);
-									actSize=actSize+pItem.FileInfo.Length;
-									if (actSize>0) 
-										perc=Convert.ToInt16(actSize/(max/100d)); 
-									else 
-										perc=0;
-									tmpStr=CalcExt(actSize)+" ";
-									GUIPropertyManager.SetProperty("#burner_size",tmpStr);
-									GUIPropertyManager.SetProperty("#burner_perc",perc.ToString());
-								}
-							}
+								break;
 						}
+						return true;
 					}
+
 					if (iControl==(int)Controls.CONTROL_LIST_COPY) // select Copy Dir
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
@@ -577,25 +357,33 @@ namespace MediaPortal.GUI.GUIBurner
 							{ 
 								String shareName=item.Label.Substring(1);
 								shareName=shareName.Substring(0,shareName.Length-1);
-								for (int i=0; i<20; i++) 
+								if (shareName==GUILocalizeStrings.Get(2133)) 
 								{
-									if (pname[i]==shareName)
+									currentFolder=recordpath;
+									LoadListControl(currentFolder,currentExt);
+								} 
+								else 
+								{
+									for (int i=0; i<20; i++) 
 									{
-										currentFolder=pictures[i];
-										LoadListControl(currentFolder,currentExt);
-										break;
-									}
-									if (sname[i]==shareName)
-									{
-										currentFolder=sound[i];
-										LoadListControl(currentFolder,currentExt);
-										break;
-									}
-									if (vname[i]==shareName)
-									{
-										currentFolder=video[i];
-										LoadListControl(currentFolder,currentExt);
-										break;
+										if (pname[i]==shareName)
+										{
+											currentFolder=pictures[i];
+											LoadListControl(currentFolder,currentExt);
+											break;
+										}
+										if (sname[i]==shareName)
+										{
+											currentFolder=sound[i];
+											LoadListControl(currentFolder,currentExt);
+											break;
+										}
+										if (vname[i]==shareName)
+										{
+											currentFolder=video[i];
+											LoadListControl(currentFolder,currentExt);
+											break;
+										}
 									}
 								}
 								LoadListControl(currentFolder,currentExt);
@@ -656,16 +444,52 @@ namespace MediaPortal.GUI.GUIBurner
 		}
 		#endregion
 
-		public override void Process()
+		#region Private Methods
+
+		private void ConvertDvrMs()
 		{
-			
-			if(bt.isConverting==true) 
+			if (convertDVR==true) //Convert Video Files
 			{
-				GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
+				int fCount=0;
+				bt.ClearFiles();
+				int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
+				for (int i=0; i<count; i++) 
+				{
+					GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
+					string ext=System.IO.Path.GetExtension(cItem.Label);
+					if (ext.ToLower() !=".dvr-ms") continue;
+					bt.AddFiles(cItem.Label,cItem.Path);
+					fCount++;
+				}								
+				if (fCount>0) // Start Thread to converting Files
+				{
+					ThreadStart ts = new ThreadStart(bt.TranscodeThread);
+					Thread t = new Thread(ts);
+					t.IsBackground=true;
+					t.Priority=ThreadPriority.BelowNormal;
+					GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+					dlgOk.SetHeading(2100); 
+					dlgOk.SetLine(1,2120);
+					dlgOk.SetLine(2,2122);
+					dlgOk.DoModal(GetID);
+					t.Start();
+				}
+				else 
+				{
+					GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+					dlgOk.SetHeading(2100); 
+					dlgOk.SetLine(1,2120);
+					dlgOk.SetLine(2,2121);
+					dlgOk.DoModal(GetID);
+				}
+				actSize=0;
+				currentState=States.STATE_MAIN;
+				UpdateButtons();
+				GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
+				GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
 			}
 		}
 
-		#region Private Methods
 		private void LoadListControl(string folder,ArrayList Exts) 
 		{	
 			//clear the list
@@ -707,7 +531,7 @@ namespace MediaPortal.GUI.GUIBurner
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
 				}
 			}
-			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));//Objects
+			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 			currentFolder=folder;
 		}
@@ -729,91 +553,168 @@ namespace MediaPortal.GUI.GUIBurner
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 		}
 		
+		private void DisableButtons()
+		{
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_VIDEO);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_AUDIO);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_DATA);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CD_INFO);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+		}
+
+		private void ShowList()
+		{
+			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);					
+			switch (currentState)
+			{
+				case States.STATE_DISK_INFO :
+					UpdateButtons();
+					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2123));
+					break;
+				case States.STATE_CONVERT :
+					UpdateButtons();
+					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2137));
+					currentExt=dvr_extensions;
+					LoadDriveListControl();
+					currentFolder="";
+					max=dvdSize*5;
+					actSize=0;
+					break;
+				case States.STATE_MAKE_DATA_CD :
+					UpdateButtons();
+					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2105));
+					currentExt=Util.Utils.AudioExtensions;
+					currentExt.AddRange(Util.Utils.PictureExtensions);
+					currentExt.AddRange(Util.Utils.VideoExtensions);
+					LoadDriveListControl();
+					currentFolder="";
+					max=cdSize;
+					actSize=0;
+					break;
+			}
+		}
+
 		private void UpdateButtons()
 		{
 			switch (currentState)
 			{
-				case States.STATE_MAIN :
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_COPY_CD_DVD,GUILocalizeStrings.Get(2101));//Copy CD/DVD
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_AUDIO,GUILocalizeStrings.Get(2102));//Create Audio-CD
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_COPY_CD_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_AUDIO);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CD_DETAILS);
+				case States.STATE_MAIN :  // Main Menu
+					GUIPropertyManager.SetProperty("#burner_title",GUILocalizeStrings.Get(2143));
+					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
+					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
 					GUIControl.HideControl(GetID,(int)Controls.CONTROL_CD_DETAILS);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MARK_ALL);
-					if (convertDVR) 
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CD_DETAILS);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_VIDEO,GUILocalizeStrings.Get(2134));
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_VIDEO);
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_VIDEO);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_AUDIO,GUILocalizeStrings.Get(2135));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_DATA,GUILocalizeStrings.Get(2136));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_CD_INFO,GUILocalizeStrings.Get(2123));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_FORMAT_RD,GUILocalizeStrings.Get(2114));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_EJECT_CD,GUILocalizeStrings.Get(2126));
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_DATA);
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_CD_INFO);
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					if (isBurner==true) 
 					{
-						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_AUDIO);
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_DATA);
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_CD_INFO);
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+						GUIControl.EnableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
 					} 
 					else 
 					{
-						GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
+						GUIControl.DisableControl(GetID,(int)Controls.CONTROL_AUDIO);
+						GUIControl.DisableControl(GetID,(int)Controls.CONTROL_DATA);
+						GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CD_INFO);
+						GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+						GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
 					}
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_CD_INFO);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_CD);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_DVD);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
 					break;
-				case States.STATE_DISK_INFO:
-					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
-					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_CD_DETAILS);
+				case States.STATE_VIDEO : // Video Menu
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_CONVERT,GUILocalizeStrings.Get(2137));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_CUT,GUILocalizeStrings.Get(2138));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD,GUILocalizeStrings.Get(2103));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_VIDEO_DVD,GUILocalizeStrings.Get(2104));
+					GUIControl.HideControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					break;
+				case States.STATE_CONVERT : // Video Convert Menu
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_CONVERT,GUILocalizeStrings.Get(2118));
+					if(bt.isConverting==true) 
+					{
+						GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT);
+					}
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_CUT,GUILocalizeStrings.Get(2141));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD,GUILocalizeStrings.Get(2142));
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CUT);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD);
+					GUIControl.HideControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.HideControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					break;
+				case States.STATE_AUDIO : // Audio Menu
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_AUDIO,GUILocalizeStrings.Get(2102));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_MP3_CD,GUILocalizeStrings.Get(2139));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_MP3_DVD,GUILocalizeStrings.Get(2140));
+					GUIControl.HideControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.HideControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					break;
+				case States.STATE_DATA : // Data Menu
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_COPY_CD_DVD,GUILocalizeStrings.Get(2101));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_DATA_CD,GUILocalizeStrings.Get(2105));
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_DATA_DVD,GUILocalizeStrings.Get(2106));
+					GUIControl.HideControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.HideControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+					break;
+				case States.STATE_DISK_INFO : // CD Disk Info
+					AllButtonsOff();
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
 					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_CD_DETAILS);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_COPY_CD_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_AUDIO);
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_COPY_CD_DVD,GUILocalizeStrings.Get(712));
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_CD_DETAILS);
 					break;
-				case States.STATE_MAKE_DATA_CD :
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_COPY_CD_DVD);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MAKE_AUDIO);
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_COPY_CD_DVD,GUILocalizeStrings.Get(712));
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_AUDIO,GUILocalizeStrings.Get(2107));
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+				case States.STATE_MAKE_DATA_CD : // Burn Data CD Menu
+					AllButtonsOff();
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_BACK);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BACK,GUILocalizeStrings.Get(712));
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_AUDIO);
+					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_AUDIO,GUILocalizeStrings.Get(2100));
 					break;
-				case States.STATE_MAKE_DATA_DVD :
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_COPY_CD_DVD);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MAKE_AUDIO);
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_COPY_CD_DVD,GUILocalizeStrings.Get(712));
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_AUDIO,GUILocalizeStrings.Get(2107));
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
-					break;
-				case States.STATE_CONVERT_DVR:
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_COPY_CD_DVD);
-					GUIControl.EnableControl(GetID,(int)Controls.CONTROL_MAKE_AUDIO);
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_COPY_CD_DVD,GUILocalizeStrings.Get(712));
-					GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_MAKE_AUDIO,GUILocalizeStrings.Get(2118));
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_DATA_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_CD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_MAKE_VIDEO_DVD);
-					GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
-					break;
-			}
-			if(bt.isConverting==true) 
-			{
-				GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CONVERT_DVR);
 			}
 		}
 
+		private void AllButtonsOff()
+		{
+			GUIControl.HideControl(GetID,(int)Controls.CONTROL_VIDEO);
+			GUIControl.HideControl(GetID,(int)Controls.CONTROL_AUDIO);
+			GUIControl.HideControl(GetID,(int)Controls.CONTROL_DATA);
+			GUIControl.HideControl(GetID,(int)Controls.CONTROL_CD_INFO);
+			GUIControl.HideControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+			GUIControl.HideControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_VIDEO);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_AUDIO);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_DATA);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_CD_INFO);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_FORMAT_RD);
+			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
+		}
 
 		/// <summary>
 		/// calculate KB,MB and GB View
@@ -885,12 +786,19 @@ namespace MediaPortal.GUI.GUIBurner
 			{
 				dvr_extensions.Clear();
 				dvr_extensions.Add(".dvr-ms");
+				isBurner=xmlreader.GetValueAsBool("burner","burn",true);
+				recordpath=xmlreader.GetValueAsString("capture","recordingpath","c:\\");
 				fastFormat=xmlreader.GetValueAsBool("burner","fastformat",true);
 				tmpFolder=xmlreader.GetValueAsString("burner","temp_folder","c:\\image.iso");
 				recorder=xmlreader.GetValueAsInt("burner","recorder",0);
 				convertDVR=xmlreader.GetValueAsBool("burner","convertdvr",true);
 				deleteDVRSrc=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
-				burnClass.BurnerDrive = burnClass.RecorderDrives[recorder].ToString();
+				if (isBurner==true) 
+				{
+					burnClass= new XPBurn.XPBurnCD();
+					burnClass.BurnerDrive = burnClass.RecorderDrives[recorder].ToString();
+				}
+				drives[driveCount++]="["+GUILocalizeStrings.Get(2133)+"]";
 
 				for (int i=0; i<20; i++) 
 				{
@@ -930,9 +838,147 @@ namespace MediaPortal.GUI.GUIBurner
 		#endregion
 
 		#region Burner Functions
+
+		private void BurnCD(bool isDVD)
+		{
+			AutoPlay.StopListening();
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null!=dlgYesNo) 
+			{
+				dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100)); 
+				dlgYesNo.SetLine(1,GUILocalizeStrings.Get(2108));
+				dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2109));
+				dlgYesNo.DoModal(GetID);
+				if (dlgYesNo.IsConfirmed)  // burn CD
+				{
+					int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
+					for (int i=0; i<count; i++) 
+					{
+						GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY,i);
+						try 
+						{
+							GUIPropertyManager.SetProperty("#convert_info",cItem.Path+"\\"+cItem.Label);
+							burnClass.AddFile(cItem.Path+"\\"+cItem.Label,cItem.Path+"\\"+cItem.Label);
+						}
+						catch(Exception ex)
+						{
+							Log.Write("MyBurner: ", ex.Message);
+						}
+					}
+					burnClass.ActiveFormat = XPBurn.RecordType.afData;
+					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
+					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_COPY);
+					if(burnClass.MediaInfo.isWritable == false) 
+					{
+						okDialog(GUILocalizeStrings.Get(2100), GUILocalizeStrings.Get(2127));
+					} 
+					else 
+					{
+						GUIControl.HideControl(GetID,(int)Controls.CONTROL_COPY_CD_DVD);
+						burnClass.PreparingBurn +=new XPBurn.NotifyEstimatedTime(burnClass_PreparingBurn);
+						burnClass.AddProgress +=new XPBurn.NotifyCDProgress(burnClass_AddProgress);
+						burnClass.BlockProgress+=new XPBurn.NotifyCDProgress(burnClass_BlockProgress);
+						burnClass.ClosingDisc+=new XPBurn.NotifyEstimatedTime(burnClass_ClosingDisc);
+						burnClass.BurnComplete+=new XPBurn.NotifyCompletionStatus(burnClass_BurnComplete);
+						try 
+						{
+							burnClass.RecordDisc(false,false);
+						}
+						catch(Exception ex)
+						{
+							Log.Write("MyBurner: ", ex.Message);
+						}
+					}
+				}
+			}
+			currentState=States.STATE_MAIN;
+			UpdateButtons();
+			AutoPlay.StartListening();
+		}
+
+		private void CdRwFormat()
+		{
+			if (isBurner==true) 
+			{
+				GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+				if (dlgYesNo!=null) 
+				{
+					dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100)); 
+					dlgYesNo.SetLine(1,GUILocalizeStrings.Get(2115));
+					dlgYesNo.SetLine(2,GUILocalizeStrings.Get(2109));
+					dlgYesNo.DoModal(GetID);
+					if (dlgYesNo.IsConfirmed) // format CD
+					{
+						if(burnClass.MediaInfo.isUsable==false) 
+						{
+							okDialog(GUILocalizeStrings.Get(2100), GUILocalizeStrings.Get(2124));
+						} 
+						else 
+						{
+							DisableButtons();
+							XPBurn.EraseKind eraseType = new XPBurn.EraseKind();
+							if(fastFormat==true) 
+							{
+								eraseType=XPBurn.EraseKind.ekQuick;
+							} 
+							else 
+							{
+								eraseType=XPBurn.EraseKind.ekFull;
+							}
+							GUIPropertyManager.SetProperty("#convert_info",GUILocalizeStrings.Get(2125));
+							try 
+							{
+								burnClass.Erase(eraseType);
+							}			
+							catch(Exception ex)
+							{
+								Log.Write("MyBurner:Unable format CD/RW", ex.Message);
+							}
+							burnClass.EraseComplete +=new XPBurn.NotifyCompletionStatus(EraseFinished);	
+						}
+					}
+				}
+			}
+		}
+
+		private void CdInfo()
+		{
+			if (isBurner==true) 
+			{
+				string info=GUILocalizeStrings.Get(2123);
+				currentState=States.STATE_DISK_INFO;
+				UpdateButtons();
+				try 
+				{
+					info="\nDisc Space : " + burnClass.DiscSpace.ToString()+"\n";
+					info=info+"Free Disc Space : " + burnClass.FreeDiscSpace.ToString()+"\n";
+					if (burnClass.IsBurning==false && burnClass.IsErasing==false) 
+					{
+						info=info+"Media Is Usable : " + burnClass.MediaInfo.isUsable.ToString()+"\n";
+						info=info+"Media Is Blank : " + burnClass.MediaInfo.isBlank.ToString()+"\n";
+						info=info+"Media Is ReadWrite : " + burnClass.MediaInfo.isReadWrite.ToString()+"\n";
+						info=info+"Media Is Writable : " + burnClass.MediaInfo.isWritable.ToString()+"\n";
+					}
+					info=info+"Product ID : " + burnClass.ProductID.ToString()+"\n";
+					if (burnClass.RecorderType==XPBurn.RecorderType.RECORDER_CDR)  { info=info+"Recorder Type : CDR\n"; }
+					if (burnClass.RecorderType==XPBurn.RecorderType.RECORDER_CDRW) { info=info+"Recorder Type : CDRW\n"; }
+					info=info+"Max Write Speed : " + burnClass.MaxWriteSpeed.ToString()+"\n";
+					info=info+"Revision : " + burnClass.Revision+"\n";
+					info=info+"Vendor : " + burnClass.Vendor+"\n";
+					info=info+"Volume Name : " + burnClass.VolumeName+"\n";
+					info=info+"Write Speed : " + burnClass.WriteSpeed.ToString()+"\n";
+				}
+				catch(Exception ex)
+				{
+					Log.Write("MyBurner:Error CD Info", ex.Message);
+				}
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_CD_DETAILS, info );
+			}
+		}
 		private void EraseFinished(System.UInt32 status)
 		{
 			GUIPropertyManager.SetProperty("#convert_info",GUILocalizeStrings.Get(2111));
+			UpdateButtons();
 		}
 
 		private void burnClass_PreparingBurn(int nEstimatedSeconds)

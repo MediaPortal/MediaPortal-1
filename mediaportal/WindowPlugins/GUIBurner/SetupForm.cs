@@ -35,6 +35,8 @@ namespace GUIBurner
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.CheckBox checkBox4;
 		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.CheckBox checkBox5;
 	/// <summary>
 	/// Required designer variable.
 	/// </summary>
@@ -95,18 +97,20 @@ namespace GUIBurner
 		this.label7 = new System.Windows.Forms.Label();
 		this.checkBox4 = new System.Windows.Forms.CheckBox();
 		this.label8 = new System.Windows.Forms.Label();
+		this.label9 = new System.Windows.Forms.Label();
+		this.checkBox5 = new System.Windows.Forms.CheckBox();
 		this.SuspendLayout();
 		// 
 		// comboBox1
 		// 
-		this.comboBox1.Location = new System.Drawing.Point(128, 8);
+		this.comboBox1.Location = new System.Drawing.Point(200, 48);
 		this.comboBox1.Name = "comboBox1";
-		this.comboBox1.Size = new System.Drawing.Size(344, 21);
+		this.comboBox1.Size = new System.Drawing.Size(272, 21);
 		this.comboBox1.TabIndex = 0;
 		// 
 		// label1
 		// 
-		this.label1.Location = new System.Drawing.Point(8, 8);
+		this.label1.Location = new System.Drawing.Point(8, 48);
 		this.label1.Name = "label1";
 		this.label1.Size = new System.Drawing.Size(80, 24);
 		this.label1.TabIndex = 1;
@@ -114,7 +118,7 @@ namespace GUIBurner
 		// 
 		// button1
 		// 
-		this.button1.Location = new System.Drawing.Point(496, 256);
+		this.button1.Location = new System.Drawing.Point(496, 288);
 		this.button1.Name = "button1";
 		this.button1.Size = new System.Drawing.Size(88, 24);
 		this.button1.TabIndex = 2;
@@ -123,15 +127,15 @@ namespace GUIBurner
 		// 
 		// textBox1
 		// 
-		this.textBox1.Location = new System.Drawing.Point(128, 40);
+		this.textBox1.Location = new System.Drawing.Point(200, 80);
 		this.textBox1.Name = "textBox1";
-		this.textBox1.Size = new System.Drawing.Size(344, 20);
+		this.textBox1.Size = new System.Drawing.Size(272, 20);
 		this.textBox1.TabIndex = 3;
 		this.textBox1.Text = "";
 		// 
 		// label2
 		// 
-		this.label2.Location = new System.Drawing.Point(8, 40);
+		this.label2.Location = new System.Drawing.Point(8, 80);
 		this.label2.Name = "label2";
 		this.label2.Size = new System.Drawing.Size(96, 24);
 		this.label2.TabIndex = 4;
@@ -139,7 +143,7 @@ namespace GUIBurner
 		// 
 		// button2
 		// 
-		this.button2.Location = new System.Drawing.Point(504, 40);
+		this.button2.Location = new System.Drawing.Point(504, 80);
 		this.button2.Name = "button2";
 		this.button2.Size = new System.Drawing.Size(32, 24);
 		this.button2.TabIndex = 5;
@@ -150,7 +154,7 @@ namespace GUIBurner
 		// 
 		this.checkBox1.Checked = true;
 		this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-		this.checkBox1.Location = new System.Drawing.Point(128, 72);
+		this.checkBox1.Location = new System.Drawing.Point(200, 112);
 		this.checkBox1.Name = "checkBox1";
 		this.checkBox1.Size = new System.Drawing.Size(16, 16);
 		this.checkBox1.TabIndex = 6;
@@ -158,7 +162,7 @@ namespace GUIBurner
 		// 
 		// label3
 		// 
-		this.label3.Location = new System.Drawing.Point(8, 72);
+		this.label3.Location = new System.Drawing.Point(8, 112);
 		this.label3.Name = "label3";
 		this.label3.Size = new System.Drawing.Size(112, 16);
 		this.label3.TabIndex = 7;
@@ -166,7 +170,7 @@ namespace GUIBurner
 		// 
 		// groupBox1
 		// 
-		this.groupBox1.Location = new System.Drawing.Point(8, 104);
+		this.groupBox1.Location = new System.Drawing.Point(8, 136);
 		this.groupBox1.Name = "groupBox1";
 		this.groupBox1.Size = new System.Drawing.Size(584, 8);
 		this.groupBox1.TabIndex = 8;
@@ -174,14 +178,14 @@ namespace GUIBurner
 		// 
 		// checkBox2
 		// 
-		this.checkBox2.Location = new System.Drawing.Point(200, 144);
+		this.checkBox2.Location = new System.Drawing.Point(200, 176);
 		this.checkBox2.Name = "checkBox2";
 		this.checkBox2.Size = new System.Drawing.Size(24, 24);
 		this.checkBox2.TabIndex = 9;
 		// 
 		// label4
 		// 
-		this.label4.Location = new System.Drawing.Point(8, 152);
+		this.label4.Location = new System.Drawing.Point(8, 184);
 		this.label4.Name = "label4";
 		this.label4.Size = new System.Drawing.Size(184, 24);
 		this.label4.TabIndex = 10;
@@ -189,7 +193,7 @@ namespace GUIBurner
 		// 
 		// label5
 		// 
-		this.label5.Location = new System.Drawing.Point(8, 176);
+		this.label5.Location = new System.Drawing.Point(8, 208);
 		this.label5.Name = "label5";
 		this.label5.Size = new System.Drawing.Size(184, 24);
 		this.label5.TabIndex = 12;
@@ -198,21 +202,21 @@ namespace GUIBurner
 		// checkBox3
 		// 
 		this.checkBox3.Enabled = false;
-		this.checkBox3.Location = new System.Drawing.Point(200, 168);
+		this.checkBox3.Location = new System.Drawing.Point(200, 200);
 		this.checkBox3.Name = "checkBox3";
 		this.checkBox3.Size = new System.Drawing.Size(24, 24);
 		this.checkBox3.TabIndex = 11;
 		// 
 		// label6
 		// 
-		this.label6.Location = new System.Drawing.Point(8, 200);
+		this.label6.Location = new System.Drawing.Point(8, 232);
 		this.label6.Name = "label6";
 		this.label6.TabIndex = 13;
 		this.label6.Text = "DVR-MS File Path ";
 		// 
 		// button3
 		// 
-		this.button3.Location = new System.Drawing.Point(504, 192);
+		this.button3.Location = new System.Drawing.Point(504, 224);
 		this.button3.Name = "button3";
 		this.button3.Size = new System.Drawing.Size(32, 24);
 		this.button3.TabIndex = 15;
@@ -221,7 +225,7 @@ namespace GUIBurner
 		// textBox2
 		// 
 		this.textBox2.Enabled = false;
-		this.textBox2.Location = new System.Drawing.Point(200, 192);
+		this.textBox2.Location = new System.Drawing.Point(200, 224);
 		this.textBox2.Name = "textBox2";
 		this.textBox2.Size = new System.Drawing.Size(272, 20);
 		this.textBox2.TabIndex = 14;
@@ -229,7 +233,7 @@ namespace GUIBurner
 		// 
 		// label7
 		// 
-		this.label7.Location = new System.Drawing.Point(8, 128);
+		this.label7.Location = new System.Drawing.Point(8, 160);
 		this.label7.Name = "label7";
 		this.label7.Size = new System.Drawing.Size(184, 24);
 		this.label7.TabIndex = 17;
@@ -237,24 +241,41 @@ namespace GUIBurner
 		// 
 		// checkBox4
 		// 
-		this.checkBox4.Location = new System.Drawing.Point(200, 120);
+		this.checkBox4.Location = new System.Drawing.Point(200, 152);
 		this.checkBox4.Name = "checkBox4";
 		this.checkBox4.Size = new System.Drawing.Size(24, 24);
 		this.checkBox4.TabIndex = 16;
 		// 
 		// label8
 		// 
-		this.label8.Location = new System.Drawing.Point(8, 240);
+		this.label8.Location = new System.Drawing.Point(8, 272);
 		this.label8.Name = "label8";
 		this.label8.Size = new System.Drawing.Size(432, 40);
 		this.label8.TabIndex = 18;
 		this.label8.Text = "If you want to convert DVR-MS in MPEG Files you must instal the Cyberlink Filters" +
 			". Read the \"Convert DVR-MS.txt\" in Docs folder.";
 		// 
+		// label9
+		// 
+		this.label9.Location = new System.Drawing.Point(8, 16);
+		this.label9.Name = "label9";
+		this.label9.Size = new System.Drawing.Size(184, 24);
+		this.label9.TabIndex = 20;
+		this.label9.Text = "Burn CD/DVD";
+		// 
+		// checkBox5
+		// 
+		this.checkBox5.Location = new System.Drawing.Point(200, 8);
+		this.checkBox5.Name = "checkBox5";
+		this.checkBox5.Size = new System.Drawing.Size(24, 24);
+		this.checkBox5.TabIndex = 19;
+		// 
 		// SetupForm
 		// 
 		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-		this.ClientSize = new System.Drawing.Size(600, 294);
+		this.ClientSize = new System.Drawing.Size(608, 326);
+		this.Controls.Add(this.label9);
+		this.Controls.Add(this.checkBox5);
 		this.Controls.Add(this.label8);
 		this.Controls.Add(this.label7);
 		this.Controls.Add(this.checkBox4);
@@ -320,7 +341,7 @@ namespace GUIBurner
 
 	public int GetWindowId() 
 	{
-	  return (int)GUIWindow.Window.WINDOW_MY_BURNER;
+	  return 760;
 	}
 
 	/// <summary>
@@ -386,6 +407,7 @@ namespace GUIBurner
 		{
 			textBox1.Text=xmlreader.GetValueAsString("burner","temp_folder","");
 			comboBox1.SelectedIndex=xmlreader.GetValueAsInt("burner","recorder",0);
+			checkBox5.Checked=xmlreader.GetValueAsBool("burner","burn",true);
 			checkBox1.Checked=xmlreader.GetValueAsBool("burner","fastformat",true);
 			checkBox4.Checked=xmlreader.GetValueAsBool("burner","convertdvr",true);
 			checkBox2.Checked=xmlreader.GetValueAsBool("burner","deletedvrsource",false);
@@ -398,6 +420,7 @@ namespace GUIBurner
 	  {
 			xmlwriter.SetValue("burner","temp_folder",textBox1.Text);
 			xmlwriter.SetValue("burner","recorder",comboBox1.SelectedIndex);
+			xmlwriter.SetValueAsBool("burner","burn",checkBox5.Checked);
 			xmlwriter.SetValueAsBool("burner","fastformat",checkBox1.Checked);
 			xmlwriter.SetValueAsBool("burner","convertdvr",checkBox4.Checked);
 			xmlwriter.SetValueAsBool("burner","deletedvrsource",checkBox2.Checked);

@@ -75,8 +75,19 @@ namespace MediaPortal.GUI.GUIBurner
 		/// </summary>
 		public void TranscodeThread()
 		{
+			long gfl=0;
+			long zfl=0;
+			long wfl=0;
+			int perc;
 			bool test=false;
 			byte eff=0;
+
+			foreach(file f in cFiles) 
+			{
+				FileInfo fil = new FileInfo(f.path+"\\"+f.name);	
+				gfl=gfl+fil.Length;						
+			}
+
 			foreach(file f in cFiles) 
 			{
 				converting=true;
@@ -95,11 +106,13 @@ namespace MediaPortal.GUI.GUIBurner
 
 				long fl=0;
 				long flO=0;
+				wfl=wfl+zfl;
 				while (IsTranscoding()) 
 				{
 					Thread.Sleep(1000);
 					FileInfo fi = new FileInfo(outName);	// The following Code is a little Hack to detect
-					fl=fi.Length;													// the end of Conversion	
+					fl=fi.Length;													// the end of Conversion
+					zfl=fl;
 					string text=f.name;
 					string c1="/ Convert ";
 					string c2="- Convert ";
@@ -124,6 +137,13 @@ namespace MediaPortal.GUI.GUIBurner
 							flO=fl;
 						}
 					}
+
+					if ((zfl+wfl)>0) 
+						perc=Convert.ToInt16((zfl+wfl)/(gfl/100d)); 
+					else 
+						perc=0;
+					GUIPropertyManager.SetProperty("#burner_perc",perc.ToString());
+
 					switch (eff)
 					{
 						case 0: 
@@ -146,27 +166,8 @@ namespace MediaPortal.GUI.GUIBurner
 				}
 			}
 			converting=false;
-		}
-
-		public bool CheckEnvironment()
-		{
-			bool powerDvdMuxerFound=false;
-			bool fileWriterFound=false;
-			string monikerPowerDvdMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9}";
-			string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{3E8868CB-5FE8-402C-AA90-CB1AC6AE3240}";
-			Filters filters = new Filters();
-			foreach (Filter filter in filters.LegacyFilters)
-			{
-				if (filter.MonikerString.Equals(monikerPowerDvdMuxer))
-				{
-					powerDvdMuxerFound=true;
-				}
-				if (filter.MonikerString.Equals(monikerFileWrite))
-				{
-					fileWriterFound=true;
-				}
-			}
-			return (fileWriterFound && powerDvdMuxerFound);
+			GUIPropertyManager.SetProperty("#convert_info"," ");
+			GUIPropertyManager.SetProperty("#burner_perc","-5");
 		}
 
 		private bool Transcode(string file)
@@ -203,7 +204,6 @@ namespace MediaPortal.GUI.GUIBurner
 
 				IPin pinOut0, pinOut1;
 				IPin pinIn0, pinIn1;
-				Log.Write("Get Pins");
 
 				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
 				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
@@ -230,7 +230,6 @@ namespace MediaPortal.GUI.GUIBurner
 				string outputFileName=System.IO.Path.ChangeExtension(file,".mpg");
 				mt.majorType=MediaType.Stream;
 				mt.subType=MediaSubType.MPEG2;
-				Log.Write("Set Filename");
 
 				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
 
