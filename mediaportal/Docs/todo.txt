@@ -3,7 +3,8 @@ Skin, gfx & media:
   - my videos: show IMDB info in video OSD. (we need new .xml & graphics) 
 --------------------------------------------------------------------------------------------------------------     
 My Radio:
-  
+    - add support for more cards
+      
 My TV:
   general
 	- reload tvguide.xml if something in the setup has been changed
