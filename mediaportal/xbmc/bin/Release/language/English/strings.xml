@@ -2072,5 +2072,9 @@
 		<id>714</id>
 		<value>DVD inserted, do you want to play it?</value>
 	</string>
+	<string>
+		<id>715</id>
+		<value>CD inserted, do you want to play it?</value>
+	</string>
 
 </strings>
