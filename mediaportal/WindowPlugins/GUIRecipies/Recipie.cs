@@ -6,8 +6,7 @@ namespace GUIRecipies
 	/// <summary>
 	/// Summary description for Recipie.
 	/// </summary>
-	public class Recipie
-	{
+	public class Recipie {
 		string mId;
 		string mTitle;
 		int mCYield;
@@ -19,95 +18,79 @@ namespace GUIRecipies
 		ArrayList mRemarks = new ArrayList();
 		string mDirections;
 		
-		public Recipie()
-		{
+		public Recipie(){
 			//
 			// TODO: Add constructor logic here
 			//
 		}
 
-		public string Title
-		{
+		public string Title	{
 			get{ return mTitle; }
 			set{ mTitle = value; }
 		}
 
-		public string Id
-		{
+		public string Id {
 			get { return mId; }
 			set { mId = value; }
 		}
 
-		public ArrayList Categories
-		{
+		public ArrayList Categories	{
 			get{ return mCategories; }
 			set{ mCategories = value; }
 		}
 
-		public void SetCategories( string Categories)
-		{
+		public void SetCategories( string Categories) {
 			mCategories = new ArrayList( Categories.Split( ',' ) );
 		}
 
-		public string Yield
-		{
+		public string Yield	{
 			get{ return mYield; }
 			set{ mYield = value; }
 		}
 
-		public int CYield
-		{
+		public int CYield {
 			get{ return mCYield; }
 			set{ mCYield = value; }
 		}
 
-		public string Directions
-		{
+		public string Directions {
 			get{ return mDirections; }
 			set{ mDirections = value; }
 		}
 
-		public ArrayList Ingredients
-		{
+		public ArrayList Ingredients {
 			get{ return mIngredients; }
 			set{ mIngredients = value; }
 		}
 
-		public ArrayList Lot
-		{
+		public ArrayList Lot {
 			get{ return mLot; }
 			set{ mLot = value; }
 		}
 
-		public ArrayList Unit
-		{
+		public ArrayList Unit {
 			get{ return mUnit; }
 			set{ mUnit = value; }
 		}
 
-		public ArrayList Remarks
-		{
+		public ArrayList Remarks {
 			get{ return mRemarks; }
 			set{ mRemarks = value; }
 		}
 
-		public void AddIngredient( string ing )
-		{
+		public void AddIngredient( string ing )	{
 			Ingredients.Add( ing );
 		}
 
-		public void AddLot( string lot )
-		{
+		public void AddLot( string lot ) {
 			Lot.Add( lot );
 		}
 		
-		public void AddUnit( string unit )
-		{
+		public void AddUnit( string unit ) {
 			Unit.Add( unit );
 		}
 
-		public void AddRemarks( string rem )
-		{
+		public void AddRemarks( string rem ) {
 			Remarks.Add( rem );
 		}
 
@@ -118,22 +101,17 @@ namespace GUIRecipies
 			double dilot=0.0;
 			string s1 = "";
 			string stunit = "";
-			try
-			{
-				if (CYield <= 1) 
-				{
+			try	{
+				if (CYield <= 1) {
 					stunit=Yield;
-				} 
-				else 
-				{
+				} else {
 					stunit=Yield.Trim();
 					string[] s2 = stunit.Split( ' ' );
 					dsunit=Convert.ToDouble(s2[0]);
 					stunit=Convert.ToString(CYield);
 				}
 			}
-			catch (Exception ) 
-			{
+			catch (Exception ) {
 				stunit=Yield;
 				dsunit=1.0;
 			}
@@ -142,98 +120,77 @@ namespace GUIRecipies
 				GUILocalizeStrings.Get(2007),stunit,
 				GUILocalizeStrings.Get(2008));
 
-			for( int i=0; i < Ingredients.Count; i++ )
-			{
+			for( int i=0; i < Ingredients.Count; i++ ) {
 				sunit=Convert.ToInt16(Unit[i]);
-				if (sunit > 10) 
-				{
+				if (sunit > 10)	{
 					stunit=GUILocalizeStrings.Get(sunit)+" ";
-				} 
-				else 
-				{
+				} else {
 					stunit="";
 				}
 				s1=(string)Lot[i];
 				s1=s1.Trim();
-				if (s1!="") 
-				{
-					try
-					{
-						if (CYield > 1) 
-						{
+				if (s1!="") {
+					try	{
+						if (CYield > 1) {
 							string SLot=(string)Lot[i];
 							SLot=SLot.Trim();
-							if (SLot.IndexOf("/",0) > 0) 
-							{
+							if (SLot.IndexOf("/",0) > 0) {
 								int l = SLot.IndexOf("/",0);
 								string b = SLot.Substring(l-1,3);
 								double x=0.0;
 								double y=0.0;
-								if (l>2) 
-								{
+								if (l>2) {
 									int k=SLot.IndexOf(" ",0);
 									y=Convert.ToDouble(SLot.Substring(0,k));
 								}
-								switch (b)
-								{
-									case "1/2" :     // x/2
+								switch (b) {
+									case "1/2" :     // 1/2
 										x=(y+0.5)/dsunit;
 										x=x*(double)CYield;
 										break;
-									case "1/4" :     // x/4
+									case "1/4" :     // 1/4
 										x=(y+0.25)/dsunit;
 										x=x*(double)CYield;
 										break;
-									case "1/8" :     // x/8
+									case "1/8" :     // 1/8
 										x=(y+0.125)/dsunit;
 										x=x*(double)CYield;
 										break;
-									case "3/4" :     // x/8
+									case "3/8" :     // 3/8
+										x=(y+0.375)/dsunit;
+										x=x*(double)CYield;
+										break;
+									case "3/4" :     // 3/4
 										x=(y+0.75)/dsunit;
 										x=x*(double)CYield;
 										break;
 								}
-								s1=Convert.ToString(x);
-								s1=s1+" ";
-							}
-							else
-							{
+								s1=String.Format("{0:0.##} ",x);
+							} else {
 								dilot=Convert.ToDouble(Lot[i]);
 								dilot=dilot/dsunit;
 								dilot=dilot*(double)CYield;
-								s1=Convert.ToString(dilot);
-								s1=s1+" ";
+								s1=String.Format("{0:0.##} ",dilot);
 							}
-						} 
-						else s1=s1+" ";
+						} else s1=s1+" ";
 					}
-					catch (Exception )
-					{
+					catch (Exception ) {
 						s1=(string)Lot[i];
 						s1=s1+" ";
 					}
 				}
-				if (i+1 < Ingredients.Count) 
-				{
-					if (Convert.ToInt16(Unit[i+1]) == 1) // Line Break with "-" in first char
-					{						
+				if (i+1 < Ingredients.Count) {
+					if (Convert.ToInt16(Unit[i+1]) == 1) { // Line Break with "-" in first char
 						retval = retval + "             " + s1 + stunit + Ingredients[i]+ Ingredients[i+1]+"\n";
 						i++;
-					} 
-					else 
-					{
-						if (sunit == 2)			// Subtitle
-						{
+					} else {
+						if (sunit == 2)	{		// Subtitle
 							retval = retval + "\n" + Ingredients[i]+ "\n";;
-						}
-						else					// Normal Ingredients
-						{
+						} else {					// Normal Ingredients
 							retval = retval + "             " + s1 + stunit + Ingredients[i]+ "\n";;
 						}
 					}
-				} 
-				else 
-				{
+				} else {
 					retval = retval + "             " + s1 + stunit + Ingredients[i]+ "\n";;
 				}
 			}

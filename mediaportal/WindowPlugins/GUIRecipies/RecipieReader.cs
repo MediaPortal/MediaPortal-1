@@ -82,22 +82,24 @@ namespace GUIRecipies
 				else if( line.Trim().StartsWith( "Categories: " ) )		// Read Categorie
 				{
 					catTst=true;
-					rec.SetCategories( line.Trim().Substring( 12 ) );
+					tit=line.Trim().Substring( 12 );
+					rec.SetCategories( tit.TrimEnd());
 				}
 				else if( line.Trim().StartsWith( "Yield: " ) )			//  Read Yield
 				{
 					rec.Yield = line.Trim().Substring( 7 );
 					rec.CYield = 0;
-				}															// Read Remarks
-				else if( line.Trim().StartsWith( "Servings: " ) )			//  Read Yield
+				}														
+				else if( line.Trim().StartsWith( "Servings: " ) )		//  Read Servings
 				{
-					;
-				}															// Read Remarks
+					rec.Yield = line.Trim().Substring( 9 );
+					rec.CYield = 0;
+				}														// Read Remarks
 				else if( line.Trim().StartsWith( ":" ) || line.Trim().StartsWith( "," ))
 				{
 					rec.AddRemarks (line.Trim().Substring( 1 ));
 				}
-				else if( line.Trim().StartsWith( "*  Quelle:" ) )				// Read Remarks
+				else if( line.Trim().StartsWith( "*  Quelle:" ) )		// Read Remarks
 				{
 					rec.AddRemarks (line.Trim().Substring( 1 ));
 					rem=1;

@@ -1,9 +1,11 @@
+#region Usings
 using System;
 using System.Collections;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 
+#endregion
 
 namespace GUIRecipies
 {
@@ -12,6 +14,7 @@ namespace GUIRecipies
 	/// </summary>
 	public class GUIRecipies : GUIWindow
 	{
+		#region Private Enumerations
 		enum Controls
 		{
 			CONTROL_BACKBUTTON	= 2,
@@ -25,21 +28,26 @@ namespace GUIRecipies
 			CONTROL_LIST        = 10,
 			CONTROL_TEXTBOX		= 11
 		};
+		#endregion
 
 		#region Base variabeles
 
 		Recipie rec = new Recipie();
 		RecipiePrinter rp = new RecipiePrinter();
+		string subcatstr = "";// contains actual subcategorie
 		string catstr = "";   // contains actual categorie
 		string titstr = "";   // contains actual title of recipie
 		string seastr = "";   // contains actual search string
 		bool search = false;  // was search mode the last menu?
+		bool online = false;  // online recipie update?
+		bool subcat = false;  // show subcategories ?
 
 		enum States
 		{
 			STATE_MAIN = 0,
 			STATE_CATEGORY = 1,
-			STATE_RECIPIE  = 2
+			STATE_RECIPIE  = 2,
+			STATE_SUB = 3
 		};
 
 		enum Search_Types
@@ -53,18 +61,20 @@ namespace GUIRecipies
 
 		#endregion
 
-		public GUIRecipies()
-		{
+		#region Constructor
+		public GUIRecipies() {
 			//
 			// TODO: Add constructor logic here
 			//
 		}
 
+		#endregion
+
+		#region Overides
 		/// <summary>
 		/// Return the id of this window
 		/// </summary>
-		public override int GetID
-		{
+		public override int GetID {
 			get { return 750; }
 			set { base.GetID = value; }
 		}
@@ -75,24 +85,26 @@ namespace GUIRecipies
 		/// the Load() method
 		/// </summary>
 		/// <returns></returns>
-		public override bool Init()
-		{
+		public override bool Init() {
+			LoadSettings();
 			return Load (GUIGraphicsContext.Skin+@"\myrecipies.xml");
 		}
 
-		#region BaseWindow Members
-
 		public override void OnAction(Action action)
 		{
-			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-			{
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) {
 				GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_HOME);
+				return;
+			}
+			if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)	{
+				if(action.m_key.KeyChar == 89 || action.m_key.KeyChar == 121 ) {
+					if (titstr.Length>1) RecipieDatabase.GetInstance().AddFavorite(titstr);
+				}
 				return;
 			}
 			if (action.wID == Action.ActionType.ACTION_QUEUE_ITEM) // add recipie to favorites
 			{
-				if( currentState == States.STATE_RECIPIE  )
-				{
+				if( currentState == States.STATE_RECIPIE  )	{
 					RecipieDatabase.GetInstance().AddFavorite(titstr);
 				}
 				return;
@@ -103,14 +115,12 @@ namespace GUIRecipies
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch ( message.Message )
-			{
+			{  
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					base.OnMessage(message);
-     		  GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10));
 					GUISpinControl cntlYieldInterval=GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
-					if (cntlYieldInterval!=null)
-					{
-						for (int i=1; i <= 24; i++) cntlYieldInterval.AddLabel("",i);
+					if (cntlYieldInterval!=null) {
+						for (int i=1; i <= 24; i++) cntlYieldInterval.AddLabel("",i);	
 						cntlYieldInterval.Value=1;
 					}
 					LoadAllCategories();
@@ -119,10 +129,8 @@ namespace GUIRecipies
 					return true;
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					int iControl=message.SenderControlId;
-					if (iControl==(int)Controls.CONTROL_SPIN)				// Yield Calculator
-					{
-						if( currentState == States.STATE_RECIPIE )
-						{
+					if (iControl==(int)Controls.CONTROL_SPIN) {		// Yield Calculator
+						if( currentState == States.STATE_RECIPIE ) {	
 							GUISpinControl cntlYieldInt=GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
 							int iInterval=(cntlYieldInt.Value)+1;
 							rec.CYield=iInterval;
@@ -130,13 +138,10 @@ namespace GUIRecipies
 							UpdateButtons();
 						}
 					} 
-					else if (iControl==(int)Controls.CONTROL_SEARCH_TYP)	// Select type of search
-					{
+					else if (iControl==(int)Controls.CONTROL_SEARCH_TYP) {  // Select type of search
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
 						GUIGraphicsContext.SendMessage(msg);         
-						
-						switch (currentSearch)
-						{
+						switch (currentSearch) {
 							case Search_Types.SEARCH_RECIPIE :				// search by title
 								currentSearch = Search_Types.SEARCH_TITLE;
 								break;
@@ -153,13 +158,10 @@ namespace GUIRecipies
 						GUIGraphicsContext.SendMessage(msg);         
 						int iItem=(int)msg.Param1;
 						int iAction=(int)message.Param1;
-						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-						{
+						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM) {
 							GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST );
-							if( currentState == States.STATE_CATEGORY )			// show recipie details
-							{
-								if (item.Label!=GUILocalizeStrings.Get(2054))
-								{ 
+							if( currentState == States.STATE_CATEGORY ) {	// show recipie details
+								if (item.Label!=GUILocalizeStrings.Get(2054)) { 
 									rec = RecipieDatabase.GetInstance().GetRecipie( item.Label );
 									titstr=item.Label;
 									GUISpinControl cntlYieldInt=GetControl((int)Controls.CONTROL_SPIN) as GUISpinControl;
@@ -170,59 +172,64 @@ namespace GUIRecipies
 									UpdateButtons();
 								}
 							}
-							else if ( currentState == States.STATE_MAIN )		// show category
-							{
+							else if ( currentState == States.STATE_MAIN ) {		// show category
+								// show list of items
+								ArrayList recipies;
+								if (subcat==true) {
+									recipies = RecipieDatabase.GetInstance().GetSubsForCategory( item.Label );
+									currentState = States.STATE_SUB;
+									subcatstr=item.Label;
+								} else {
+									recipies = RecipieDatabase.GetInstance().GetRecipiesForCategory( item.Label );
+									currentState = States.STATE_CATEGORY;
+									catstr=item.Label;
+								}
+								UpDateList(recipies);
+								GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
+								UpdateButtons();
+							}
+							else if ( currentState == States.STATE_SUB ) {		// show category
 								// show list of items
 								ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForCategory( item.Label );
-								catstr=item.Label;
-								GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST );
-								foreach( Recipie r in recipies )
-								{
-									GUIListItem gli = new GUIListItem( r.Title );
-									GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-								}
-								GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
 								currentState = States.STATE_CATEGORY;
-								string strObjects=String.Format("{0} {1}", recipies.Count, GUILocalizeStrings.Get(632));
-								GUIPropertyManager.SetProperty("#itemcount",strObjects);
+								catstr=item.Label;
+								UpDateList(recipies);
+								GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
 								UpdateButtons();
 							}
 						}
 					}
-					else if( iControl == (int) Controls.CONTROL_BACKBUTTON )  // click on Backbutton
-					{
-						if(currentState == States.STATE_RECIPIE)
-						{
+					else if( iControl == (int) Controls.CONTROL_BACKBUTTON ) { // click on Backbutton
+						if(currentState == States.STATE_RECIPIE) { // back from recipie detail
 							currentState = States.STATE_CATEGORY;
 							UpdateButtons();
-							if (search==true) 
-							{
+							if (search==true) {
 								byte styp=0;
 								if (currentSearch == Search_Types.SEARCH_RECIPIE) styp=0;
 								if (currentSearch == Search_Types.SEARCH_TITLE) styp=1;
 								ArrayList recipies = RecipieDatabase.GetInstance().SearchRecipies(seastr,styp);
-								GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST );
-								foreach( Recipie r in recipies )
-								{
-									GUIListItem gli = new GUIListItem( r.Title );
-									GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-								}
-							} 
-							else 
-							{
+								UpDateList(recipies);
+							} else {
 								ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForCategory( catstr );
-								GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST );
-								foreach( Recipie r in recipies )
-								{
-									GUIListItem gli = new GUIListItem( r.Title );
-									GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-								}
+								UpDateList(recipies);
 							}
 							GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
-						} 
-						else if(currentState == States.STATE_CATEGORY)		
-						{
+						} else if(currentState == States.STATE_CATEGORY) {
 							search = false;
+							if (subcat==true) {
+								currentState = States.STATE_SUB;
+								// show list of items
+								ArrayList recipies = RecipieDatabase.GetInstance().GetSubsForCategory( subcatstr);
+								UpDateList(recipies);
+								GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
+								UpdateButtons();
+							} else {
+								currentState = States.STATE_MAIN;
+								LoadAllCategories();
+							}
+							UpdateButtons();
+							GUIControl.FocusControl(GetID, (int)Controls.CONTROL_LIST);
+						} else if(currentState == States.STATE_SUB) {
 							currentState = States.STATE_MAIN;
 							LoadAllCategories();
 							UpdateButtons();
@@ -246,12 +253,7 @@ namespace GUIRecipies
 						if (currentSearch == Search_Types.SEARCH_TITLE) styp=1;
 						search = true;
 						ArrayList recipies = RecipieDatabase.GetInstance().SearchRecipies(seastr,styp);
-						GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST );
-						foreach( Recipie r in recipies )
-						{
-							GUIListItem gli = new GUIListItem( r.Title );
-							GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-						}
+						UpDateList(recipies);
 						currentState = States.STATE_CATEGORY;
 						UpdateButtons();
 					}
@@ -260,20 +262,7 @@ namespace GUIRecipies
 						// show list of items
 						GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST );
 						ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForFavorites();
-						GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST );
-						if (recipies.Count>0) 
-						{
-							foreach( Recipie r in recipies )
-							{
-								GUIListItem gli = new GUIListItem( r.Title );
-								GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-							}
-						} 
-						else 
-						{
-							GUIListItem gli = new GUIListItem(GUILocalizeStrings.Get(2054));
-							GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-						}
+						UpDateList(recipies);
 						GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
 						currentState = States.STATE_CATEGORY;
 						UpdateButtons();
@@ -283,13 +272,11 @@ namespace GUIRecipies
 					{
 						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 						if (null==dlgYesNo) break;
-						if( currentState == States.STATE_RECIPIE || currentState == States.STATE_CATEGORY )
-						{ 
+						if( currentState == States.STATE_RECIPIE || currentState == States.STATE_CATEGORY ) { 
 							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2049)); 
 							dlgYesNo.SetLine(0,titstr);
 						} 
-						if( currentState == States.STATE_MAIN )
-						{
+						if( currentState == States.STATE_MAIN ) {
 							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2050)); 
 							dlgYesNo.SetLine(0,catstr);
 						}
@@ -302,20 +289,11 @@ namespace GUIRecipies
 						currentState = States.STATE_CATEGORY;
 						UpdateButtons();
 						ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForCategory( catstr );
-						GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST );
-						foreach( Recipie r in recipies )
-						{
-							GUIListItem gli = new GUIListItem( r.Title );
-							GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
-						}
+						UpDateList(recipies);
 						GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
-						string strObjects=String.Format("{0} {1}", recipies.Count, GUILocalizeStrings.Get(632));
-						GUIPropertyManager.SetProperty("#itemcount",strObjects);
 					}					
-					else if( iControl == (int) Controls.CONTROL_PRINT )		// click on Print button
-					{
-						if( currentState == States.STATE_RECIPIE )
-						{
+					else if( iControl == (int) Controls.CONTROL_PRINT ) {		// click on Print button
+						if( currentState == States.STATE_RECIPIE ) {
 							rp.printRecipie(rec,catstr,titstr);
 							GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
 						}
@@ -324,6 +302,25 @@ namespace GUIRecipies
 			}
 			return base.OnMessage (message);
 		}
+		#endregion
+
+		#region Private Methods
+		//loads list control with new values
+		void UpDateList(ArrayList recipies) {
+			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST );
+			if (recipies.Count>0) {
+				foreach( Recipie r in recipies ) {
+					GUIListItem gli = new GUIListItem( r.Title );
+					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
+				}
+			} else {
+				GUIListItem gli = new GUIListItem(GUILocalizeStrings.Get(2054));
+				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST, gli );
+			}
+			string strObjects=String.Format("{0} {1}", recipies.Count, GUILocalizeStrings.Get(632));
+			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+		}
+
 
 		void UpdateButtons()
 		{
@@ -362,6 +359,17 @@ namespace GUIRecipies
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_DELETE );
 					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_BACKBUTTON );
 					break;
+				case States.STATE_SUB :
+					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_TEXTBOX );
+					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_SPIN );
+					GUIControl.HideControl( GetID, (int) Controls.CONTROL_TEXTBOX );
+					GUIControl.HideControl( GetID, (int) Controls.CONTROL_SPIN);
+					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_LIST );
+					GUIControl.ShowControl( GetID, (int) Controls.CONTROL_LIST );
+					GUIControl.FocusControl(GetID, (int) Controls.CONTROL_LIST );
+					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_DELETE );
+					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_BACKBUTTON );
+					break;
 				case States.STATE_RECIPIE :
 					GUIControl.HideControl( GetID, (int) Controls.CONTROL_LIST );
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_LIST );
@@ -375,11 +383,22 @@ namespace GUIRecipies
 					break;
 			}
 		}
-		#endregion
+
+		/// <summary>
+		/// Loads my status settings from the profile xml.
+		/// </summary>
+		/// 
+		private void LoadSettings() {
+			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) {
+				subcat = xmlreader.GetValueAsBool("recipie","subcats",false);
+				online = xmlreader.GetValueAsBool("recipie","online",false);
+			}
+		}
 
 		private void ShowDetails(Recipie rec) // show recipie directions
 		{
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTBOX, rec.ToString() );
+			GUIPropertyManager.SetProperty("#itemcount"," ");
 		}
 		
 		void keyboard_TextChanged(int kindOfSearch,string data)
@@ -389,8 +408,13 @@ namespace GUIRecipies
 		
 		private void LoadAllCategories()	// show all categories 
 		{
+			ArrayList recipies;
 			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST ); 
-			ArrayList recipies = RecipieDatabase.GetInstance().GetCategories();
+			if (subcat==true) {
+				recipies = RecipieDatabase.GetInstance().GetMainCategories();
+			} else {
+				recipies = RecipieDatabase.GetInstance().GetCategories();
+			}
 			foreach( string cat in recipies )
 			{
 				GUIListItem gli = new GUIListItem( cat );
@@ -399,5 +423,7 @@ namespace GUIRecipies
             string strObjects=String.Format("{0} {1}", recipies.Count, GUILocalizeStrings.Get(632));
             GUIPropertyManager.SetProperty("#itemcount",strObjects);
 		}
+		#endregion
+
 	}
 }
