@@ -37,6 +37,7 @@
 			<id>12</id>
 			<posX>260</posX>
 			<posY>50</posY>
+			<label>-</label>
 			<font>font16</font>
 			<align>left</align>
 			<textcolor>FFB2D4F5</textcolor>
