@@ -93,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				string currentSkin = xmlreader.GetValueAsString("skin", "name", "crystalcenter");
+				string currentSkin = xmlreader.GetValueAsString("skin", "name", "mce");
 
 				//
 				// Make sure the skin actually exists before setting it as the current skin
