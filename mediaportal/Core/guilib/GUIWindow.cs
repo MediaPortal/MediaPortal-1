@@ -790,6 +790,15 @@ namespace MediaPortal.GUI.Library
 			{
 				GUIControl newControl = GUIControlFactory.Create(m_dwWindowId, node);
 				newControl.WindowId = GetID;
+				GUIImage img = newControl as GUIImage;
+				if (img!=null)
+				{
+					if (img.Width==0 || img.Height==0)
+					{
+						Log.Write("xml:{0} image id:{1} width:{2} height:{3} gfx:{4}",
+							m_strWindowXmlFile, img.GetID, img.Width, img.Height, img.FileName);
+					}
+				}
 				controls.Add(newControl);
 			}
 			catch(Exception ex)

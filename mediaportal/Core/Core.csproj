@@ -713,6 +713,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\TexturePacker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\Util.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
