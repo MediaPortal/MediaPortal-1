@@ -15,6 +15,7 @@ namespace MediaPortal.GUI.Video
 {
   /// <summary>
   /// Summary description for Class1.
+  /// 
   /// </summary>
 	public class GUIVideoFiles : GUIWindow, IComparer, ISetupForm
 	{
@@ -139,6 +140,8 @@ namespace MediaPortal.GUI.Video
     {
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
+				
+				VideoState.StartWindow=xmlreader.GetValueAsInt("movies","startWindow", GetID);
         m_directory.Clear();
         string strDefault = xmlreader.GetValueAsString("movies", "default","");
         for (int i = 0; i < 20; i++)
@@ -181,7 +184,12 @@ namespace MediaPortal.GUI.Video
     }
 
     void SaveSettings()
-    {
+		{
+			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("movies","startWindow",VideoState.StartWindow.ToString());
+
+			}
     }
     #endregion
 

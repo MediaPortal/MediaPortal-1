@@ -160,6 +160,7 @@ namespace MediaPortal.GUI.Music
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
 
+				MusicState.StartWindow=xmlreader.GetValueAsInt("music","startWindow", GetID);
         m_bUseID3 = xmlreader.GetValueAsBool("musicfiles","showid3",true);
         m_bAutoShuffle = xmlreader.GetValueAsBool("musicfiles","autoshuffle",true);
 
@@ -208,6 +209,8 @@ namespace MediaPortal.GUI.Music
     {
       using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
       {
+				xmlwriter.SetValue("music","startWindow",MusicState.StartWindow.ToString());
+
       }
     }
     #endregion
