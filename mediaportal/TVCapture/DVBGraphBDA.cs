@@ -2887,9 +2887,14 @@ namespace MediaPortal.TV.Recording
 							currentTuningObject.VideoPid=data.elementary_PID;
 							hasVideo=true;
 						}
-						if (data.isAudio)
+						if (data.isAudio && hasAudio==false)
 						{
 							currentTuningObject.AudioPid=data.elementary_PID;
+							if(data.data!=null)
+							{
+								if(data.data.Length==3)
+									newchannel.AudioLanguage=sections.GetLanguageFromCode(data.data);
+							}
 							hasAudio=true;
 						}
 						if (data.isTeletext)
