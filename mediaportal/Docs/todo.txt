@@ -5,8 +5,6 @@ Skin:
   - My Tv : need special gfx for my tv panel
   - when watching fullscreen live-tv we need a background to show info about  current & next running program
     something like mythv : http://mythtv.sourceforge.net/mc/blueosdone.png
-  - we need an icon for Mediaportal.exe (will be shown in start menu & on shortcut on desktop)
-  - we need a logo for Mediaportal.exe
 
 My Radio:
   - AM/FM
@@ -18,8 +16,6 @@ My TV:
   - A way to browse and resolve recording conflicts. 
   - full screen TV OSD
      - show info about current & next program
-  - Guide cannot be limited in width,should be skinnable
-  - Guide always holds 5 channels, should be definable in skin. 
 
   
   Recorded tv:
