@@ -46,6 +46,29 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
+		public void AnimateColor(ref long colorDiffuse)
+		{
+			//if animation has ended, then just return
+			if ( IsDone() ) return;
+      
+			//check if animation should end
+			float fTotalTime=FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES;
+			float fTime=(float)lTime;
+			if (lTime >= fTotalTime)
+			{
+				//yes, then end the animation
+				m_Animating=false;
+				return;
+			}
+			float alphaValue= (float)(colorDiffuse >>24);
+			float fPercent=fTime/fTotalTime;
+			alphaValue *=fPercent;
+			long lAlpha=(long)alphaValue;
+			lAlpha<<=24;
+			colorDiffuse =colorDiffuse  & 0x00ffffff;
+			colorDiffuse|=lAlpha;
+		}
+
 		/// <summary>
 		/// Method which does the next step of the animation
 		/// It will modify the x,y,width,height parameters 
