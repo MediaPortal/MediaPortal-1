@@ -422,6 +422,8 @@ namespace MediaPortal.Configuration.Sections
 
     private void AddChannel(ref ArrayList channels, string strName, int iNumber)
     {
+      isDirty = true;
+
       TVChannel channel = new TVChannel();
       channel.Number=iNumber;
       channel.Name  =strName;
