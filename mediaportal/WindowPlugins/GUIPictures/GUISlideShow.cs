@@ -35,7 +35,9 @@ namespace MediaPortal.GUI.Pictures
     int LABEL_ROW2			=11;
     int LABEL_ROW2_EXTRA	=12;
 
-    float KENBURNS_ZOOM_FACTOR = 1.20f;
+    float KENBURNS_ZOOM_FACTOR = 1.30f; // Zoom factor for pictures that have a black border on the sides
+    float KENBURNS_ZOOM_FACTOR_FS = 1.20f; // Zoom factor for pictures that are filling the whole screen 
+
     float KENBURNS_MAXZOOM = 1.30f;
     int   KENBURNS_XFADE_FRAMES = 15;
 
@@ -85,6 +87,7 @@ namespace MediaPortal.GUI.Pictures
     // Kenburns transition variables
     bool                    m_bKenBurns=true;
     bool                    m_bLandscape=false;
+    bool                    m_bFullScreen=false;
     float                   m_fBestZoomFactorCurrent=1.0f;   
     float                   m_fEndZoomFactor=1.0f;      
     float                   m_fStartZoomFactor=1.0f;
@@ -807,6 +810,10 @@ namespace MediaPortal.GUI.Pictures
         m_bLandscape=true;
       }
 
+      m_bFullScreen=false;
+      if ((ZoomFactorY < KENBURNS_ZOOM_FACTOR_FS) && (ZoomFactorX < KENBURNS_ZOOM_FACTOR_FS))
+        m_bFullScreen=true;
+
       // Zoom 100%..150%
       if (fZoom < 1.00f)
         fZoom = 1.00f;
@@ -937,8 +944,12 @@ namespace MediaPortal.GUI.Pictures
             break;
         }
 
-        // Init zoom
-        m_fEndZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)
+        // Init zoom        
+        if (m_bFullScreen) 
+          m_fEndZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR_FS;
+        else
+          m_fEndZoomFactor = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR;
+
         m_fStartZoomFactor = m_fBestZoomFactorCurrent;
         m_fZoomChange = (m_fEndZoomFactor - m_fStartZoomFactor)/iNrOfFramesPerEffect;            
         m_fZoomFactorCurrent = m_fStartZoomFactor;        
@@ -1101,7 +1112,11 @@ namespace MediaPortal.GUI.Pictures
         }
 
         // Init 120% top center fixed
-        m_fZoomFactorCurrent = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR; // Calc best zoom (whole screen filled + 20%)        
+        if (m_bFullScreen) 
+          m_fZoomFactorCurrent = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR_FS;
+        else
+          m_fZoomFactorCurrent = m_fBestZoomFactorCurrent * KENBURNS_ZOOM_FACTOR;
+
         m_iZoomTypeCurrent = iStartPoint;
       }
       else
