@@ -121,7 +121,7 @@ namespace MediaPortal.Player
         }
       }
 
-
+/*
       // Get the audio device and add it to the filter graph
       if (filterAudioCaptureDevice != null)
       {
@@ -138,7 +138,7 @@ namespace MediaPortal.Player
           }
         }
       }
-
+*/
 
       // Retrieve TV Tuner if available
       DirectShowUtil.DebugWrite("RadioGraph:Find TV Tuner");
@@ -194,7 +194,7 @@ namespace MediaPortal.Player
         }
         DirectShowUtil.DebugWrite("RadioGraph:starting graph");
       }
-
+/*
       // select the correct audio input pin to capture
       if (m_filterCaptureAudio != null)
       {
@@ -241,7 +241,7 @@ namespace MediaPortal.Player
           }
         }
       }
-
+*/
       m_mediaControl = (IMediaControl) m_graphBuilder;
       m_graphState = State.Created;
       return true;

@@ -801,8 +801,11 @@ namespace MediaPortal.TV.Recording
 			Vmr9.AddVMR9(m_graphBuilder);
 
 
+			/* disabled. this causes a audio-echo because now both the video capture filter audio out
+			 * and the audio capture filter audio out are both connected to a directsound renderer
 			Log.Write("SWGraph:FAILED:render audio preview");
 			DirectShowUtil.RenderOutputPins(m_graphBuilder, m_filterCaptureAudio,2);
+			*/
 
 			Log.Write("SWGraph:FAILED:render video preview");
       m_videoCaptureDevice.RenderPreview();

@@ -34,12 +34,17 @@ namespace MediaPortal.Player
 		static IntPtr												m_surface1    = IntPtr.Zero;
 		static IntPtr[] 										extraTextures = new IntPtr[10];
 		static int													textureCount  = 1;
+		static int												  MaxTextureWidth=1024;
+		static int												  MaxTextureHeight=768;
     
 		[StructLayout(LayoutKind.Sequential)]
 	  public class Allocator : IVMRSurfaceAllocator9, IVMRImagePresenter9
 		{
 			public Allocator()
 			{
+				MaxTextureWidth=1024;
+				MaxTextureHeight=768;
+
 			}
 
 			/// <summary>
@@ -108,14 +113,14 @@ namespace MediaPortal.Player
 					{
 						//yes, then use it
 						Log.Write("AllocatorWrapper:alloc extra texture#[0} :{1}x{2}", i,allocInfo.dwWidth,allocInfo.dwHeight);
-						if (allocInfo.dwHeight<=576 && allocInfo.dwWidth<=1024)
+						if (allocInfo.dwHeight<=MaxTextureHeight && allocInfo.dwWidth<=MaxTextureWidth)
 						{
 							Log.Write("AllocatorWrapper:return extra texture:{0}",i);
 							m_surface1=extraTextures[i];
 							extraTextures[i]=IntPtr.Zero; // dont use it anymore after this
 							m_nativeSize = new Size(allocInfo.dwWidth, allocInfo.dwHeight);
-							float fTU = (float)(allocInfo.dwWidth ) / 1024.0f;
-							float fTV = (float)(allocInfo.dwHeight) / 576.0f;
+							float fTU = (float)(allocInfo.dwWidth ) / ((float)MaxTextureWidth);
+							float fTV = (float)(allocInfo.dwHeight) / ((float)MaxTextureHeight);
 							scene.SetSrcRect( fTU, fTV );
 							return 0;
 						}
@@ -166,7 +171,7 @@ namespace MediaPortal.Player
         else
         {
           Log.Write("AllocatorWrapper:AllocateSurface succeeded");
-
+/*
 					//double check the allocated texture dimensions
 					Surface orig = new Surface(m_surface1);
 					if (orig!=null)
@@ -193,10 +198,12 @@ namespace MediaPortal.Player
 						Marshal.Release(m_surface1);
 						Marshal.Release(m_surface1);
 					}
-
+*/
 					//allocate the extra video textures
-					allocInfo.dwWidth=1024;
-					allocInfo.dwHeight=576;
+					if (allocInfo.dwWidth>MaxTextureWidth) MaxTextureWidth=allocInfo.dwWidth;
+					if (allocInfo.dwHeight>MaxTextureHeight) MaxTextureHeight=allocInfo.dwHeight;
+					allocInfo.dwWidth=MaxTextureWidth;
+					allocInfo.dwHeight=MaxTextureHeight;
 					for (int i=0; i < textureCount;++i)
 					{
 						//release first
@@ -207,8 +214,8 @@ namespace MediaPortal.Player
 						}
 						//and alloc
 						hr=allocNotify.AllocateSurfaceHelper(allocInfo, numBuffers, out extraTextures[i]);
-						if (hr==0) Log.Write("AllocatorWrapper:  allocted extra texture#{0} 1024x576",i);
-						else Log.Write("AllocatorWrapper:failed:  allocted extra texture#{1} 1024x576",i);
+						if (hr==0) Log.Write("AllocatorWrapper:  allocted extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
+						else Log.Write("AllocatorWrapper:failed:  allocted extra texture#{0} {1}x{2}",i,MaxTextureWidth,MaxTextureHeight);
 					}
 					hr=0;
         }
