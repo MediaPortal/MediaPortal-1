@@ -1033,7 +1033,6 @@ namespace MediaPortal.GUI.TV
 				g_Player.SourceWindow.Right,g_Player.SourceWindow.Bottom, 
 				g_Player.VideoWindow.Left,g_Player.VideoWindow.Top,
 				g_Player.VideoWindow.Right,g_Player.VideoWindow.Bottom);
-				strStatus += strRects;
 
 				ShowControl(GetID, (int)Control.BLUE_BAR);
 				ShowControl(GetID, (int)Control.LABEL_ROW1);
