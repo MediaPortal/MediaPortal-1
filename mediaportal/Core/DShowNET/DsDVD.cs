@@ -692,7 +692,7 @@ public interface IDvdInfo2
 	int GetTitleParentalLevels( int ulTitle, out int pulParentalLevels );
 
 		[PreserveSig]
-	int GetDVDDirectory( [Out]	out IntPtr pszwPath,[In] int ulMaxSize, [Out] out int pulActualSize );
+	int GetDVDDirectory( IntPtr pszwPath,[In] int ulMaxSize, [Out] out int pulActualSize );
 
 		[PreserveSig]
 	int IsAudioStreamEnabled( int ulStreamNum,

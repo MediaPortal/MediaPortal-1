@@ -87,9 +87,25 @@ namespace MediaPortal.Player
 						dvdCtrl=dvdbasefilter as IDvdControl2;
 						if (dvdCtrl!=null)
 						{
-							if (strPath!=null) dvdCtrl.SetDVDDirectory(strPath);
-							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 							dvdInfo = dvdbasefilter as IDvdInfo2;
+							if (strPath!=null) 
+							{
+								if (strPath.Length!=0)
+									dvdCtrl.SetDVDDirectory(strPath);
+							}
+							string path;
+							int size;
+							IntPtr ptrFolder = Marshal.AllocCoTaskMem(256);
+							hr=dvdInfo.GetDVDDirectory( ptrFolder,256,out size);
+							path=Marshal.PtrToStringAuto(ptrFolder);
+							if (path!=null && path.Length>0)
+							{
+								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
+								dvdHelper.Reset(path);
+							}
+							Marshal.FreeCoTaskMem(ptrFolder);
+
+							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 								
 							m_bFreeNavigator=false;
 						}

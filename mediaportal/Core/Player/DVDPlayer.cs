@@ -183,8 +183,6 @@ namespace MediaPortal.Player
       m_iVolume=100;
 			mouseMsg  = new ArrayList();
 
-			DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
-			dvdHelper.Reset(strFile);
 
       bool bResult=FirstPlayDvd(strFile);
       if (!bResult) 
@@ -578,11 +576,28 @@ namespace MediaPortal.Player
             IDvdControl2 cntl=(IDvdControl2)dvdbasefilter;
             if (cntl!=null)
             {
-							AddPreferedCodecs(graphBuilder);
-              if (strPath!=null) cntl.SetDVDDirectory(strPath);
-              DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
               dvdInfo = (IDvdInfo2) cntl;
               dvdCtrl = (IDvdControl2)cntl;
+							if (strPath!=null) 
+							{
+								if (strPath.Length!=0)
+									cntl.SetDVDDirectory(strPath);
+							}
+							string path;
+							int size;
+							IntPtr ptrFolder = Marshal.AllocCoTaskMem(256);
+							dvdInfo.GetDVDDirectory( ptrFolder,256,out size);
+							path=Marshal.PtrToStringAuto(ptrFolder);
+							if (path!=null && path.Length>0)
+							{
+								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
+								dvdHelper.Reset(path);
+							}
+							Marshal.FreeCoTaskMem(ptrFolder);
+
+							AddPreferedCodecs(graphBuilder);
+							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
+
               videoWin	= graphBuilder as IVideoWindow;
               m_bFreeNavigator=false;
             }
