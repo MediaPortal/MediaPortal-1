@@ -294,7 +294,7 @@ namespace MediaPortal.TV.Recording
 			{
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
-				GetStreamData(filter,0, 0,0,5000);
+				GetStreamData(filter,0, 0,0,Timeout);
 				// jump to parser
 				foreach(byte[] arr in m_sectionsList)
 					decodePATTable(arr, transp[0], ref transponder);
@@ -617,7 +617,7 @@ namespace MediaPortal.TV.Recording
 			//
 			GetStreamData(filter,17, 0x42,0,m_timeoutMS);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(filter,17, 0x46,0,200); // low value, nothing in most of time
+			GetStreamData(filter,17, 0x46,0,500); // low value, nothing in most of time
 			tab46=(ArrayList)m_sectionsList.Clone();
 
 			//bool flag;
