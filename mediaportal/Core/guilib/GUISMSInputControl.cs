@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using System.Windows.Forms; // used for Keys definition
 using Direct3D = Microsoft.DirectX.Direct3D;
 namespace MediaPortal.GUI.Library
 {
@@ -125,25 +126,32 @@ namespace MediaPortal.GUI.Library
 
 				case Action.ActionType.ACTION_SELECT_ITEM: 
 				{
-					if (m_CurrentKey!= (char)0)
-					{
-						m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
-					}
-					m_PrevKey=(char)0;
-					m_CurrentKey=(char)0;
-					m_keyTimer=DateTime.Now;
-					m_iPos=0;
-					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED,WindowId,GetID, ParentID,0,0,null );
-					msg.Label=m_strData;
-					m_strData="";
-					GUIGraphicsContext.SendMessage(msg);
-					return;
+					// Enter key or Ok button (not working when clicked outside the box)
+					return;				
 				}
 
 				case Action.ActionType.ACTION_KEY_PRESSED:
 					if (action.m_key!=null)
 					{
-						if ((action.m_key.KeyChar>=32) || (action.m_key.KeyChar==8))
+						// Enter key or OK button
+						if (action.m_key.KeyChar==(int)Keys.Enter)
+						{
+							if (m_CurrentKey!= (char)0)
+							{
+								m_strData=m_strData.Insert(m_iPos,m_CurrentKey.ToString());
+							}
+							m_PrevKey=(char)0;
+							m_CurrentKey=(char)0;
+							m_keyTimer=DateTime.Now;
+							m_iPos=0;
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED,WindowId,GetID, ParentID,0,0,null );
+							msg.Label=m_strData;
+							m_strData="";
+							GUIGraphicsContext.SendMessage(msg);
+							return;
+						}
+
+						if ((action.m_key.KeyChar>=32) || (action.m_key.KeyChar==(int)Keys.Back))
 						{
 							Press((char)action.m_key.KeyChar);
 							return;
