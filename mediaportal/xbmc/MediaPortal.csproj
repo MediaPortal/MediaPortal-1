@@ -251,16 +251,6 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "PluginForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PluginForm.resx"
-                    DependentUpon = "PluginForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "SplashScreen.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

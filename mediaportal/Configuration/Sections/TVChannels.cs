@@ -291,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
 					listItem.SubItems[0].Text = editedChannel.Name;
 					listItem.SubItems[1].Text = editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString();
 					listItem.SubItems[2].Text = editedChannel.Frequency.ToString(Frequency.Format.MegaHerz);
-          listItem.SubItems[4].Text = GetStandardName(editedChannel.standard);
+          listItem.SubItems[3].Text = GetStandardName(editedChannel.standard);
           listItem.SubItems[4].Text = editedChannel.External ? "External" : "Internal";
 				}
 			}		

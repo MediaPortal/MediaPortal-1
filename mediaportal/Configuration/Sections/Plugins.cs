@@ -209,86 +209,88 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.setupButton = new System.Windows.Forms.Button();
-			this.pluginsListView = new MediaPortal.UserInterface.Controls.MPListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.setupButton);
-			this.groupBox1.Controls.Add(this.pluginsListView);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 432);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Plugin Settings";
-			// 
-			// setupButton
-			// 
-			this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.setupButton.Location = new System.Drawing.Point(16, 392);
-			this.setupButton.Name = "setupButton";
-			this.setupButton.TabIndex = 1;
-			this.setupButton.Text = "Setup";
-			this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
-			// 
-			// pluginsListView
-			// 
-			this.pluginsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.pluginsListView.CheckBoxes = true;
-			this.pluginsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																							  this.columnHeader1,
-																							  this.columnHeader2,
-																							  this.columnHeader3});
-			this.pluginsListView.FullRowSelect = true;
-			this.pluginsListView.HideSelection = false;
-			this.pluginsListView.Location = new System.Drawing.Point(16, 24);
-			this.pluginsListView.MultiSelect = false;
-			this.pluginsListView.Name = "pluginsListView";
-			this.pluginsListView.Size = new System.Drawing.Size(408, 360);
-			this.pluginsListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
-			this.pluginsListView.TabIndex = 0;
-			this.pluginsListView.View = System.Windows.Forms.View.Details;
-			this.pluginsListView.DoubleClick += new System.EventHandler(this.pluginsListView_DoubleClick);
-			this.pluginsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.pluginsListView_ItemCheck);
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Plugin Name";
-			this.columnHeader1.Width = 119;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Description";
-			this.columnHeader2.Width = 198;
-			// 
-			// columnHeader3
-			// 
-			this.columnHeader3.Text = "Author";
-			this.columnHeader3.Width = 87;
-			// 
-			// Plugins
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "Plugins";
-			this.Size = new System.Drawing.Size(456, 448);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.setupButton = new System.Windows.Forms.Button();
+      this.pluginsListView = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.setupButton);
+      this.groupBox1.Controls.Add(this.pluginsListView);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(440, 432);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Plugin Settings";
+      // 
+      // setupButton
+      // 
+      this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.setupButton.Enabled = false;
+      this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.setupButton.Location = new System.Drawing.Point(16, 392);
+      this.setupButton.Name = "setupButton";
+      this.setupButton.TabIndex = 1;
+      this.setupButton.Text = "Setup";
+      this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
+      // 
+      // pluginsListView
+      // 
+      this.pluginsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.pluginsListView.CheckBoxes = true;
+      this.pluginsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                      this.columnHeader1,
+                                                                                      this.columnHeader2,
+                                                                                      this.columnHeader3});
+      this.pluginsListView.FullRowSelect = true;
+      this.pluginsListView.HideSelection = false;
+      this.pluginsListView.Location = new System.Drawing.Point(16, 24);
+      this.pluginsListView.MultiSelect = false;
+      this.pluginsListView.Name = "pluginsListView";
+      this.pluginsListView.Size = new System.Drawing.Size(408, 360);
+      this.pluginsListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.pluginsListView.TabIndex = 0;
+      this.pluginsListView.View = System.Windows.Forms.View.Details;
+      this.pluginsListView.DoubleClick += new System.EventHandler(this.pluginsListView_DoubleClick);
+      this.pluginsListView.SelectedIndexChanged += new System.EventHandler(this.pluginsListView_SelectedIndexChanged);
+      this.pluginsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.pluginsListView_ItemCheck);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Plugin Name";
+      this.columnHeader1.Width = 119;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Description";
+      this.columnHeader2.Width = 198;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Author";
+      this.columnHeader3.Width = 87;
+      // 
+      // Plugins
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "Plugins";
+      this.Size = new System.Drawing.Size(456, 448);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void setupButton_Click(object sender, System.EventArgs e)
@@ -336,6 +338,27 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 		}
+
+    private void pluginsListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (pluginsListView.SelectedIndices.Count<=0) return;
+      ListViewItem listItem = pluginsListView.Items[pluginsListView.SelectedIndices[0]];
+
+      if(listItem != null)
+      {
+        ItemTag tag = listItem.Tag as ItemTag;
+
+        bool bCanSetup=false;
+        if(tag.SetupForm != null)
+        {
+          if(tag.SetupForm.HasSetup())
+          {
+            bCanSetup=true;
+          }
+        }
+        setupButton.Enabled=bCanSetup;
+      }
+    }
 	}
 }
 

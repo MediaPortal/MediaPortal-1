@@ -412,12 +412,9 @@ namespace MediaPortal.TV.Recording
           m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
           if (m_IAMAnalogVideoDecoder!=null)
           {
-            if (standard != AnalogVideoStandard.None)
-            {
-              DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
-              int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-              if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
-            }
+            DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+            int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+            if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
           }
           m_TVTuner.get_TVFormat(out standard);
           if (m_bUseCable)
@@ -430,13 +427,21 @@ namespace MediaPortal.TV.Recording
         }
         try
         {
+          if (m_IAMAnalogVideoDecoder!=null)
+          {
+            DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+            int hr=m_IAMAnalogVideoDecoder.put_TVFormat(standard);
+            if (hr!=0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+          }
+          m_TVTuner.get_TVFormat(out standard);
+
           m_TVTuner.put_Channel(iChannel,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
 
           int iFreq;
           double dFreq;
           m_TVTuner.get_VideoFrequency(out iFreq);
           dFreq=iFreq/1000000d;
-          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuned to {0} MHz.", dFreq);
+          DirectShowUtil.DebugWrite("SinkGraph:TuneChannel() tuned to {0} MHz. tvformat:{1}", dFreq,standard.ToString());
         }
         catch(Exception){} 
       }

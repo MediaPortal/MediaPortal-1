@@ -95,7 +95,6 @@ namespace MediaPortal
     private System.Windows.Forms.MenuItem menuItem2;
     private System.Windows.Forms.Timer timer1;
     private System.ComponentModel.IContainer components;
-    private System.Windows.Forms.MenuItem menuItem3;
     private System.Windows.Forms.MenuItem menuItem4;
     private System.Windows.Forms.MenuItem dvdMenuItem;
     private System.Windows.Forms.MenuItem moviesMenuItem;
@@ -1448,11 +1447,6 @@ namespace MediaPortal
       }
     }
 
-    private void menuItem3_Click(object sender, System.EventArgs e)
-    {
-      PluginForm dlg = new PluginForm();
-      dlg.ShowDialog();
-    }
 
     public virtual void OnTimer()
     {
@@ -1572,11 +1566,7 @@ namespace MediaPortal
     /// </summary>
     protected void OnKeyDown(object sender,System.Windows.Forms.KeyEventArgs e)
     {
-      if ((e.Control) && (e.KeyCode == System.Windows.Forms.Keys.F2))
-      {
-        menuItem3_Click(null,null);
-        return ;
-      }
+     
 
       if (e.Control==false && e.Alt==true && (e.KeyCode == System.Windows.Forms.Keys.Return))
       {
@@ -1609,10 +1599,6 @@ namespace MediaPortal
         //DoSelectNewDevice();
         OnSetup(null,null);
 			}
-			else if (e.Control && e.KeyCode == System.Windows.Forms.Keys.F2)
-			{
-				menuItem3_Click(null,null);
-			}
 
       if (e.Handled==false)
       {
@@ -1637,7 +1623,6 @@ namespace MediaPortal
       this.mnuExit = new System.Windows.Forms.MenuItem();
       this.menuItem1 = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
-      this.menuItem3 = new System.Windows.Forms.MenuItem();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.menuItem4 = new System.Windows.Forms.MenuItem();
       this.dvdMenuItem = new System.Windows.Forms.MenuItem();
@@ -1683,8 +1668,7 @@ namespace MediaPortal
       // 
       this.menuItem1.Index = 1;
       this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                              this.menuItem2,
-                                                                              this.menuItem3});
+                                                                              this.menuItem2});
       this.menuItem1.Text = "&Tools";
       // 
       // menuItem2
@@ -1693,13 +1677,6 @@ namespace MediaPortal
       this.menuItem2.Shortcut = System.Windows.Forms.Shortcut.F2;
       this.menuItem2.Text = "&Options...";
       this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
-      // 
-      // menuItem3
-      // 
-      this.menuItem3.Index = 1;
-      this.menuItem3.Shortcut = System.Windows.Forms.Shortcut.CtrlF2;
-      this.menuItem3.Text = "Plugins...";
-      this.menuItem3.Click += new System.EventHandler(this.menuItem3_Click);
       // 
       // timer1
       // 
