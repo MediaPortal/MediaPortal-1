@@ -480,9 +480,9 @@
       <description>delete Picture</description>
     </action>
     <action>
-      <id>27</id>
-      <key>F1</key>
-      <sound />
+      <id>11</id>
+      <key>F3</key>
+      <sound>click.wav</sound>
       <description>Show Picture Info</description>
     </action>
     <action>

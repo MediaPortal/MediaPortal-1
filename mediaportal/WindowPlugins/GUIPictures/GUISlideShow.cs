@@ -139,6 +139,7 @@ namespace MediaPortal.GUI.Pictures
     {
       m_slides.Clear();
       m_bShowInfo=false;
+      m_bShowZoomInfo=false;
       m_bSlideShow=false;
       m_bPause=false;
  
@@ -709,7 +710,7 @@ namespace MediaPortal.GUI.Pictures
           m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
           break;
 
-        case Action.ActionType.ACTION_SHOW_CODEC:
+        case Action.ActionType.ACTION_SHOW_INFO:
           if (m_bShowInfo)
           { 
             m_bOSDAutoHide = !m_bOSDAutoHide;
