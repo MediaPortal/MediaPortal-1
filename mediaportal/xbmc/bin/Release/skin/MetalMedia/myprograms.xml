@@ -47,10 +47,20 @@
 	<control>
 		<description>My Programs text label</description>
 		<type>label</type>
-		<id>1</id>
+		<id>9</id>
 		<posX>280</posX>
 		<posY>50</posY>
 		<label>0</label>
+		<font>font10</font>
+		<textcolor>FF000000</textcolor>
+	</control>
+	<control>
+		<description>Title label</description>
+		<type>label</type>
+		<id>10</id>
+		<posX>280</posX>
+		<posY>50</posY>
+		<label>-</label>
 		<font>font10</font>
 		<textcolor>FF000000</textcolor>
 	</control>
