@@ -2052,6 +2052,10 @@ namespace MediaPortal.GUI.TV
 					break;
 					
 					case 938: // view channel
+						if (g_Player.Playing && g_Player.IsTVRecording)
+						{
+							g_Player.Stop();
+						}
 						GUITVHome.IsTVOn=true;
 						GUITVHome.ViewChannel(m_strCurrentChannel);
 						if (Recorder.IsViewing())

@@ -616,6 +616,10 @@ namespace MediaPortal.GUI.TV
 					break;
 
 				case 3: // Play recording from beginning
+					if (g_Player.Playing && g_Player.IsTVRecording)
+					{
+						g_Player.Stop();
+					}
 					GUITVHome.IsTVOn=true;
 					GUITVHome.ViewChannel(rec.Channel);
 					g_Player.SeekAbsolute(0);
