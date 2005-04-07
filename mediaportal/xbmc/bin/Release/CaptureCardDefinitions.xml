@@ -99,8 +99,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.58                                                               -->
-<!-- changed : 03-april-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.60                                                               -->
+<!-- changed : 07-april-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -1074,7 +1074,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Conexant BDA DVB Tuner/Demod"		checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
         <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
@@ -1371,7 +1371,7 @@
 
 <!--    Below is a TEST - needs MARS WARRIOR Confirmation   -->  
 
-  <capturecard commercialname="ATI AIW 9800 Pro" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
+  <capturecard commercialname="ATI AIW 9x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2412,8 +2412,8 @@
     </tv>
   </capturecard> 
 
-<capturecard commercialname="AVerMedia DVB-T USB2" capturename="AVerMedia DVB-T BDA Video Capture(A800)" devid="vid_07ca&amp;pid_a800">
-  <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+  <capturecard commercialname="AVerMedia DVB-T USB2" capturename="AVerMedia DVB-T BDA Video Capture(A800)" devid="vid_07ca&amp;pid_a800">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="tunerdevice" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
@@ -2424,5 +2424,21 @@
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
-</capturecard>
+  </capturecard>
+
+  <capturecard commercialname="ADS Instant TV DVB-T PCI" capturename="ADS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_03341421">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="ADS BDA DVB-T Tuner/Demod"      	checkdevice="true"></filter>
+        <filter cat="capture"         name="ADS 2388x Transport Stream Capture" checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
