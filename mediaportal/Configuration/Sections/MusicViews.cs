@@ -94,11 +94,23 @@ namespace MediaPortal.Configuration.Sections
 					"rating",
 					"favorites"
 			};
+			string[] sqloperators = new string[]
+			{
+				"",
+				"=",
+				">",
+			  "<",
+			  ">=",
+				"<=",
+				"<>",
+				"like",
+
+			};
 			
 			//Declare and initialize local variables used
 			DataColumn dtCol = null;//Data Column variable
 			string[]   arrColumnNames = null;//string array variable
-			System.Windows.Forms.ComboBox cbSelection;  //combo box var              
+			System.Windows.Forms.ComboBox cbSelection, cbOperators;  //combo box var              
 			DataTable datasetFilters;//Data Table var
            
 			//Create the combo box object and set its properties
@@ -110,6 +122,15 @@ namespace MediaPortal.Configuration.Sections
 				cbSelection.Items.Add(strText);
 			//Event that will be fired when selected index in the combo box is changed
 			cbSelection.SelectionChangeCommitted +=new EventHandler(cbSelection_SelectionChangeCommitted);
+
+			
+			//Create the combo box object and set its properties
+			cbOperators               = new ComboBox();
+			cbOperators.Cursor        = System.Windows.Forms.Cursors.Arrow;
+			cbOperators.DropDownStyle=System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cbOperators.Dock          = DockStyle.Fill;
+			foreach (string strText in sqloperators)
+				cbOperators.Items.Add(strText);
      
 			//Create the String array object, initialize the array with the column
 			//names to be displayed
@@ -180,6 +201,9 @@ namespace MediaPortal.Configuration.Sections
 			DataGridTextBoxColumn dgtb    =     (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[0];
 			//Add the combo box to the text box taken in the above step 
 			dgtb.TextBox.Controls.Add (cbSelection);        
+
+			dgtb    =     (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[1];
+			dgtb.TextBox.Controls.Add (cbOperators);        
 		}
 		
 
