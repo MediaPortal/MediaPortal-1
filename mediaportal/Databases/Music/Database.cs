@@ -763,7 +763,7 @@ namespace MediaPortal.Music.Database
 		    if (null == m_db) return false;
     		
 		    string strSQL;
-		    strSQL = String.Format("select song.Favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and artist.strArtist like '{0}'",strArtist);
+		    strSQL = String.Format("select song.idSong,artist.idArtist,album.idAlbum,genre.idGenre,song.favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and artist.strArtist like '{0}'",strArtist);
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
 		    if (results.Rows.Count == 0) return false;
@@ -1472,7 +1472,7 @@ namespace MediaPortal.Music.Database
 				if (null == m_db) return false;
 				
 				string strSQL;
-				strSQL = String.Format("select song.Favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName,song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and path.strPath like '{0}'",strPath);
+				strSQL = String.Format("select song.idSong,artist.idArtist,album.idAlbum,genre.idGenre,song.favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName,song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and path.strPath like '{0}'",strPath);
 				SQLiteResultSet results;
 				results = m_db.Execute(strSQL);
 				if (results.Rows.Count == 0) return false;
@@ -1534,7 +1534,7 @@ namespace MediaPortal.Music.Database
 				if (null == m_db) return false;
     		
 				string strSQL;
-				strSQL = String.Format("select song.favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and album.strAlbum like '{0}' and path.idPath=song.idPath order by song.iTrack", strAlbum);
+				strSQL = String.Format("select song.idSong,artist.idArtist,album.idAlbum,genre.idGenre,song.favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and album.strAlbum like '{0}' and path.idPath=song.idPath order by song.iTrack", strAlbum);
 				SQLiteResultSet results;
 				results = m_db.Execute(strSQL);
 				if (results.Rows.Count == 0) return false;
@@ -1552,6 +1552,9 @@ namespace MediaPortal.Music.Database
 					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
 					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
 
+					song.artistId= Int32.Parse(DatabaseUtility.Get(results, i, "artist.idArtist"));
+					song.albumId= Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
+					song.genreId= Int32.Parse(DatabaseUtility.Get(results, i, "genre.idGenre"));
 					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
 					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
 					song.FileName = strFileName;
