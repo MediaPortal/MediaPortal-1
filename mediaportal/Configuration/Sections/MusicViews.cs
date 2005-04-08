@@ -7,7 +7,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
+using MediaPortal.Configuration.Controls;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 
@@ -22,11 +22,24 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.Button btnDelete;
 		private System.ComponentModel.IContainer components = null;
-		
+		private DataGridTableStyle GridTableStyle;
+
 		ViewDefinition currentView ;
 		ArrayList views;
 		DataSet ds = new DataSet();
 
+		enum WhereTypes
+		{
+			album,
+			artist,
+			title,
+			genre,
+			year,
+			track,
+			timesplayed,
+			rating,
+			favorites 
+		}
     public MusicViews() :  this("Music Views")
     {
     }
@@ -35,7 +48,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
 			LoadViews();
 		}
 
@@ -70,23 +82,106 @@ namespace MediaPortal.Configuration.Sections
 			if (index < 0) return;
 			currentView =(ViewDefinition) views[index]; 
 
-			ds = new DataSet();
-			ds.Tables.Add("filters");
-			ds.Tables[0].Columns.Add("Selection",typeof(string));
-			ds.Tables[0].Columns.Add("Operator",typeof(string));
-			ds.Tables[0].Columns.Add("Restriction",typeof(string));
-			ds.Tables[0].Columns.Add("Limit",typeof(int));
-			ds.Tables[0].Columns.Add("Sort",typeof(bool));
+			string[] selections= new string[]
+			{
+					"album",
+					"artist",
+					"title",
+					"genre",
+					"year",
+					"track",
+					"timesplayed",
+					"rating",
+					"favorites"
+			};
+			
+			//Declare and initialize local variables used
+			DataColumn dtCol = null;//Data Column variable
+			string[]   arrColumnNames = null;//string array variable
+			System.Windows.Forms.ComboBox cbSelection;  //combo box var              
+			DataTable datasetFilters;//Data Table var
+           
+			//Create the combo box object and set its properties
+			cbSelection               = new ComboBox();
+			cbSelection.Cursor        = System.Windows.Forms.Cursors.Arrow;
+			cbSelection.DropDownStyle=System.Windows.Forms.ComboBoxStyle.DropDownList;
+			cbSelection.Dock          = DockStyle.Fill;
+			foreach (string strText in selections)
+				cbSelection.Items.Add(strText);
+			//Event that will be fired when selected index in the combo box is changed
+			cbSelection.SelectionChangeCommitted +=new EventHandler(cbSelection_SelectionChangeCommitted);
+     
+			//Create the String array object, initialize the array with the column
+			//names to be displayed
+			arrColumnNames          = new string [4];
+			arrColumnNames[0]       = "Selection";
+			arrColumnNames[1]       = "Operator";
+			arrColumnNames[2]       = "Restriction";
+			arrColumnNames[3]       = "Limit";
+     
+			//Create the Data Table object which will then be used to hold
+			//columns and rows
+			datasetFilters            = new DataTable ("FunctionArea");
+			//Add the string array of columns to the DataColumn object       
+			for(int i=0; i< arrColumnNames.Length;i++)
+			{    
+				string str        = arrColumnNames[i];
+				dtCol             = new DataColumn(str);
+				dtCol.DataType          = System.Type.GetType("System.String");
+				dtCol.DefaultValue      = "";
+				datasetFilters.Columns.Add(dtCol);               
+			}     
 
+			//Add a Column with checkbox at last in the Grid     
+			DataColumn dtcCheck    = new DataColumn("Sort Ascending");//create the data          //column object with the name 
+			dtcCheck.DataType      = System.Type.GetType("System.Boolean");//Set its //data Type
+			dtcCheck.DefaultValue  = false;//Set the default value
+			datasetFilters.Columns.Add(dtcCheck);//Add the above column to the //Data Table
+  
+			//fill in all rows...
 			for (int i=0; i < currentView.Filters.Count;++i)
 			{
 				FilterDefinition def = (FilterDefinition)currentView.Filters[i];
-				ds.Tables[0].Rows.Add( new object[] { def.Where,def.SqlOperator,def.Restriction,def.Limit,def.SortAscending});
+				datasetFilters.Rows.Add( new object[] { def.Where,def.SqlOperator,def.Restriction,def.Limit,def.SortAscending});
+			}	
+
+			//Set the Data Grid Source as the Data Table created above
+			dataGrid1.CaptionText=String.Empty;
+			dataGrid1.DataSource    = datasetFilters; 
+
+			//set style property when first time the grid loads, next time onwards it //will maintain its property
+			if(!dataGrid1.TableStyles.Contains("FunctionArea"))
+			{
+				//Create a DataGridTableStyle object     
+				DataGridTableStyle dgdtblStyle      = new DataGridTableStyle();
+				//Set its properties
+				dgdtblStyle.MappingName            = datasetFilters.TableName;//its table name of dataset
+				dataGrid1.TableStyles.Add(dgdtblStyle);
+				dgdtblStyle.RowHeadersVisible       = false;
+				dgdtblStyle.HeaderBackColor         = Color.LightSteelBlue;
+				dgdtblStyle.AllowSorting            = false;
+				dgdtblStyle.HeaderBackColor         = Color.FromArgb(8,36,107);
+				dgdtblStyle.RowHeadersVisible       = false;
+				dgdtblStyle.HeaderForeColor         = Color.White;
+				dgdtblStyle.HeaderFont              = new System.Drawing.Font("Microsoft Sans Serif", 9F,  System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+				dgdtblStyle.GridLineColor           = Color.DarkGray;
+				dgdtblStyle.PreferredRowHeight            = 22;
+				dataGrid1.BackgroundColor           = Color.White; 
+
+				//Take the columns in a GridColumnStylesCollection object and set //the size of the
+				//individual columns   
+				GridColumnStylesCollection    colStyle;
+				colStyle                = dataGrid1.TableStyles[0].GridColumnStyles;
+				colStyle[0].Width       = 100;
+				colStyle[1].Width       = 50;
+				colStyle[2].Width       = 50;
+				colStyle[3].Width       = 80;
 			}
-			ds.Tables[0].DefaultView.AllowNew = true;
-			ds.Tables[0].DefaultView.AllowDelete = true; 
-			dataGrid1.DataSource=ds.Tables[0];
+			DataGridTextBoxColumn dgtb    =     (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[0];
+			//Add the combo box to the text box taken in the above step 
+			dgtb.TextBox.Controls.Add (cbSelection);        
 		}
+		
 
 
 		/// <summary>
@@ -197,6 +292,15 @@ namespace MediaPortal.Configuration.Sections
 			UpdateView();
 		}
 
+		private void cbSelect_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void cbSelection_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+
+		}
 	}
 }
 

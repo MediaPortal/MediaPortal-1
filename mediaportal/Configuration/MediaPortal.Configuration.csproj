@@ -401,6 +401,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\DataGridBooleanNoNull.resx"
+                    DependentUpon = "DataGridBooleanNoNull.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Controls\EventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
