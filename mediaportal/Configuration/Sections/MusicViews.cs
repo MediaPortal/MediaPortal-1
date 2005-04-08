@@ -71,6 +71,8 @@ namespace MediaPortal.Configuration.Sections
 
 		ViewDefinition currentView ;
 		ArrayList views;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.TextBox tbViewName;
 		DataSet ds = new DataSet();
 
 		enum WhereTypes
@@ -93,11 +95,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-			LoadViews();
-		}
-
-		void LoadViews()
-		{
 			views=new ArrayList();
 			using(FileStream fileStream = new FileStream("musicViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 			{
@@ -111,22 +108,37 @@ namespace MediaPortal.Configuration.Sections
 				{
 				}
 			}
+			LoadViews();
+		}
+
+		void LoadViews()
+		{
+
 			cbViews.Items.Clear();
 			foreach (ViewDefinition view in views)
 			{
 				cbViews.Items.Add(view.Name);
 			}
+			cbViews.Items.Add("new...");
 			if (cbViews.Items.Count>0)
 				cbViews.SelectedIndex=0;
 													
 			UpdateView( );	
 		}
+
 		void UpdateView()
 		{
+			currentView =null;
 			int index=cbViews.SelectedIndex;
 			if (index < 0) return;
-			currentView =(ViewDefinition) views[index]; 
-
+			if (index < views.Count)
+				currentView = views[index] as ViewDefinition; 
+			if (currentView == null) 
+			{
+				currentView = new ViewDefinition();
+				currentView.Name="new...";
+			}
+			tbViewName.Text=currentView.Name;
 			string[] selections= new string[]
 			{
 					"album",
@@ -289,6 +301,8 @@ namespace MediaPortal.Configuration.Sections
 			this.cbViews = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.dataGrid1 = new System.Windows.Forms.DataGrid();
+			this.label2 = new System.Windows.Forms.Label();
+			this.tbViewName = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
 			this.SuspendLayout();
@@ -297,6 +311,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.tbViewName);
+			this.groupBox1.Controls.Add(this.label2);
 			this.groupBox1.Controls.Add(this.btnDelete);
 			this.groupBox1.Controls.Add(this.btnSave);
 			this.groupBox1.Controls.Add(this.cbViews);
@@ -317,6 +333,7 @@ namespace MediaPortal.Configuration.Sections
 			this.btnDelete.Size = new System.Drawing.Size(48, 23);
 			this.btnDelete.TabIndex = 4;
 			this.btnDelete.Text = "Delete";
+			this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
 			// 
 			// btnSave
 			// 
@@ -325,6 +342,7 @@ namespace MediaPortal.Configuration.Sections
 			this.btnSave.Size = new System.Drawing.Size(48, 23);
 			this.btnSave.TabIndex = 3;
 			this.btnSave.Text = "Save";
+			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
 			// 
 			// cbViews
 			// 
@@ -347,10 +365,25 @@ namespace MediaPortal.Configuration.Sections
 			this.dataGrid1.DataMember = "";
 			this.dataGrid1.FlatMode = true;
 			this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-			this.dataGrid1.Location = new System.Drawing.Point(16, 64);
+			this.dataGrid1.Location = new System.Drawing.Point(16, 120);
 			this.dataGrid1.Name = "dataGrid1";
-			this.dataGrid1.Size = new System.Drawing.Size(408, 312);
+			this.dataGrid1.Size = new System.Drawing.Size(408, 248);
 			this.dataGrid1.TabIndex = 0;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(24, 56);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(40, 23);
+			this.label2.TabIndex = 5;
+			this.label2.Text = "Name:";
+			// 
+			// tbViewName
+			// 
+			this.tbViewName.Location = new System.Drawing.Point(80, 56);
+			this.tbViewName.Name = "tbViewName";
+			this.tbViewName.TabIndex = 6;
+			this.tbViewName.Text = "";
 			// 
 			// MusicViews
 			// 
@@ -366,6 +399,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void cbViews_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
+			StoreGridInView();
 			UpdateView();
 		}
 
@@ -381,6 +415,8 @@ namespace MediaPortal.Configuration.Sections
 			DataGridCell currentCell=dataGrid1.CurrentCell;
 			DataTable table = dataGrid1.DataSource as DataTable;
 
+			if (currentCell.RowNumber==table.Rows.Count)
+				table.Rows.Add( new object[] {"","","",""});
 			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
 		}
 
@@ -392,8 +428,87 @@ namespace MediaPortal.Configuration.Sections
 			DataGridCell currentCell=dataGrid1.CurrentCell;
 			DataTable table = dataGrid1.DataSource as DataTable;
 
+			if (currentCell.RowNumber==table.Rows.Count)
+				table.Rows.Add( new object[] {"","","",""});
 			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
 
+		}
+
+		private void btnSave_Click(object sender, System.EventArgs e)
+		{
+			StoreGridInView();
+			try
+			{
+				using(FileStream fileStream = new FileStream("musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+				{
+					SoapFormatter formatter = new SoapFormatter();
+					formatter.Serialize(fileStream, views);
+					fileStream.Close();
+				}
+			}
+			catch(Exception)
+			{
+			}
+		}
+
+		void StoreGridInView()
+		{
+			if (dataGrid1.DataSource==null) return;
+			if (currentView==null) return;
+			ViewDefinition view =null;
+			for (int i=0; i < views.Count;++i)
+			{
+				ViewDefinition tmp= views[i] as ViewDefinition;
+				if (tmp.Name==currentView.Name)
+				{
+					view=tmp;
+					break;
+				}
+			}
+			DataTable dt = dataGrid1.DataSource as DataTable;
+			if (view==null)
+			{
+				if (dt.Rows.Count==0) return;
+				view = new ViewDefinition();
+				view.Name=tbViewName.Text;
+				views.Add(view);
+				cbViews.Items.Insert(cbViews.Items.Count-1,view.Name);
+			}
+			view.Name=tbViewName.Text;
+			view.Filters.Clear();
+			
+			foreach (DataRow row in dt.Rows)
+			{
+				FilterDefinition def = new FilterDefinition();
+				def.Where = row[0] as string;
+				def.SqlOperator = row[1].ToString();
+				def.Restriction = row[2].ToString();
+				try
+				{
+					def.Limit = Int32.Parse(row[3].ToString());
+				}
+				catch(Exception)
+				{
+					def.Limit=-1;
+				}
+				view.Filters.Add(def);
+			}
+		}
+		
+		private void btnDelete_Click(object sender, System.EventArgs e)
+		{
+			string viewName=cbViews.SelectedItem as string;
+			if (viewName==null) return;
+			for (int i=0; i < views.Count;++i)
+			{
+				ViewDefinition view = views[i] as ViewDefinition;
+				if (view.Name==viewName)
+				{
+					views.RemoveAt(i);
+					break;
+				}
+			}
+			LoadViews();
 		}
 	}
 }

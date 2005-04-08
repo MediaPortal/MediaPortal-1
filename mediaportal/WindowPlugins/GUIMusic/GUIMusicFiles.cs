@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Music
 				MusicState.StartWindow=xmlreader.GetValueAsInt("music","startWindow", GetID);
 				MusicState.View=xmlreader.GetValueAsString("music","startview", "");
 			}
-
+/*
 			//genres
 			FilterDefinition filter1,filter2,filter3;
 			ViewDefinition viewGenre = new ViewDefinition();
@@ -165,7 +165,7 @@ namespace MediaPortal.GUI.Music
 //			list = handler.Execute();
 //			handler.CurrentLevel--;
 //			list = handler.Execute();
-
+*/
 		}
 
     
