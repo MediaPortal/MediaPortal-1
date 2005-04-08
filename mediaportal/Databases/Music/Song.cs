@@ -19,6 +19,11 @@ namespace MediaPortal.Music.Database
     int m_iYear=0;
     int m_iTimedPlayed=0;
 		int m_irating=0;
+		int idGenre=-1;
+		int idAlbum=-1;
+		int idArtist=-1;
+		int Id=-1;
+		bool favorite=false;
 
     public Song()
 		{
@@ -36,11 +41,21 @@ namespace MediaPortal.Music.Database
       newsong.Track = Track;
       newsong.Year = Year;
 			newsong.Rating=Rating;
+			newsong.idGenre=idGenre;
+			newsong.idAlbum=idAlbum;
+			newsong.idArtist=idArtist;
+			newsong.Id=Id;
+			newsong.favorite=Favorite;
       return newsong;
     }
 
     public void Clear() 
-    {
+		{
+			favorite=false;
+			idGenre=-1;
+			idAlbum=-1;
+			idArtist=-1;
+			Id=-1;
       m_strFileName="";
       m_strTitle="";
       m_strArtist="";
@@ -103,7 +118,31 @@ namespace MediaPortal.Music.Database
 			get { return m_irating;}
 			set {m_irating=value;}
 		}
-
+		public bool Favorite
+		{
+			get { return favorite;}
+			set {favorite=value;}
+		}
+		public int albumId
+		{
+			get { return idAlbum;}
+			set {idAlbum=value;}
+		}
+		public int genreId
+		{
+			get { return idGenre;}
+			set {idGenre=value;}
+		}
+		public int artistId
+		{
+			get { return idArtist;}
+			set {idArtist=value;}
+		}
+		public int songId
+		{
+			get { return Id;}
+			set {Id=value;}
+		}
   }
 	public class SongMap
 	{

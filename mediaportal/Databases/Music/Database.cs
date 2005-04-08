@@ -67,7 +67,7 @@ namespace MediaPortal.Music.Database
 					System.IO.Directory.CreateDirectory(strPath+@"\database");
 				}
 				catch(Exception){}
-        m_db = new SQLiteClient(strPath+@"\database\musicdatabase3.db");
+        m_db = new SQLiteClient(strPath+@"\database\musicdatabase4.db");
         CreateTables();
 
         m_db.Execute("PRAGMA cache_size=8192\n");
@@ -99,8 +99,7 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key,  strPath text)\n");
       DatabaseUtility.AddTable(m_db,"albuminfo","CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)\n");
 			DatabaseUtility.AddTable(m_db,"artistinfo","CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)\n");
-      DatabaseUtility.AddTable(m_db,"song","CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer)\n");
-			DatabaseUtility.AddTable(m_db,"favorites","CREATE TABLE favorites ( idFavorite integer primary key,  idSong integer)\n");
+      DatabaseUtility.AddTable(m_db,"song","CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer)\n");
 			return true;
     }
 
@@ -254,118 +253,22 @@ namespace MediaPortal.Music.Database
 
       return - 1;
     }
-
-
-		public void AddSongToFavorites(string filename)
+		public void SetFavorite(Song song)
 		{
 			try
 			{
-				if (null == m_db) return;
-				string strPath, strFileName;
-				DatabaseUtility.Split(filename, out strPath, out strFileName);
-				DatabaseUtility.RemoveInvalidChars(ref strFileName);
-				int lPathId = AddPath(strPath);
-
-				ulong dwCRC = 0;
-				CRCTool crc = new CRCTool();
-				crc.Init(CRCTool.CRCCode.CRC32);
-				dwCRC = crc.calc(filename);
-				SQLiteResultSet results;
-
-				string strSQL = String.Format("select * from song where dwFileNameCRC='{0}' and idPath={1}", dwCRC, lPathId);
-				results = m_db.Execute(strSQL);
-				if (results.Rows.Count == 0)  return;
-				int idSong = Int32.Parse(DatabaseUtility.Get(results, 0, "idSong"));
-
-				strSQL = String.Format("select * from favorites where idSong={0}", idSong);
-				results = m_db.Execute(strSQL);
-				if (results.Rows.Count != 0)  return;
-
-				
-				strSQL = String.Format("insert into favorites (idFavorite, idSong) values( NULL, {0})", idSong);
+				if (song.songId < 0) return;
+				int iFavorite=0;
+				if (song.Favorite) iFavorite=1;
+				string strSQL = String.Format("update song set favorite={0} where idSong={1}",iFavorite, song.songId);
 				m_db.Execute(strSQL);
-			}
-			catch (Exception ex) 
-			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-				Open();
-			}
-		}
-		public void RemoveSongFromFavorites(string filename)
-		{
-			try
-			{
-				if (null == m_db) return;
-				string strPath, strFileName;
-				DatabaseUtility.Split(filename, out strPath, out strFileName);
-				DatabaseUtility.RemoveInvalidChars(ref strFileName);
-				int lPathId = AddPath(strPath);
-
-				ulong dwCRC = 0;
-				CRCTool crc = new CRCTool();
-				crc.Init(CRCTool.CRCCode.CRC32);
-				dwCRC = crc.calc(filename);
-				SQLiteResultSet results;
-
-				string strSQL = String.Format("select * from song where dwFileNameCRC='{0}' and idPath={1}", dwCRC, lPathId);
-				results = m_db.Execute(strSQL);
-				if (results.Rows.Count == 0)  return;
-				int idSong = Int32.Parse(DatabaseUtility.Get(results, 0, "idSong"));
-
-				strSQL = String.Format("delete from favorites where idSong={0}", idSong);
-				results = m_db.Execute(strSQL);
-
-				m_db.Execute(strSQL);
-			}
-			catch (Exception ex) 
-			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-				Open();
-			}
-		}
-
-		public void GetSongsByFavorites(out ArrayList songs)
-		{
-			songs=new ArrayList();
-			try
-			{
-				if (null == m_db) return ;
-
-				string strSQL;
-				SQLiteResultSet results;
-				strSQL = String.Format("select * from favorites,song,album,genre,artist,path where favorites.idSong=song.idSong and song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist");
-
-				results = m_db.Execute(strSQL);
-				Song song;
-
-				for (int i=0; i<results.Rows.Count; i++)
-				{
-					song = new Song();
-					song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-					song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-					song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-					song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
-					song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
-					song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
-					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
-					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-
-					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-					song.FileName = strFileName;
-					songs.Add(song);
-				}	  
-
 				return ;
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
 				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
-
-			return ;
 		}
 
 		public void SetRating(string filename, int rating)
@@ -410,38 +313,75 @@ namespace MediaPortal.Music.Database
 
 			return ;
 		}
+		
+		public SQLiteResultSet GetResults(string sql)
+		{
+			try
+			{
+				if (null == m_db) return null;
+				SQLiteResultSet results;
+				results = m_db.Execute(sql);
+				return results;
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
+			}
 
+			return null;	
+		}
 
-		public void GetSongsByRating(int miniumRating, out ArrayList songs)
+		public void GetSongsByFilter(string sql, out ArrayList songs, bool artistTable, bool albumTable, bool songTable, bool genreTable)
 		{
 			songs=new ArrayList();
 			try
 			{
 				if (null == m_db) return ;
-
-				string strSQL;
-				SQLiteResultSet results;
-				strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and iRating>={0}", miniumRating);
-
-				results = m_db.Execute(strSQL);
+				SQLiteResultSet results=GetResults(sql);
 				Song song;
 
 				for (int i=0; i<results.Rows.Count; i++)
 				{
 					song = new Song();
-					song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-					song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-					song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-					song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
-					song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
-					song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
-					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
-					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-
-					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-					song.FileName = strFileName;
+					ArrayList fields = (ArrayList)results.Rows[i];
+					if (artistTable && !songTable)
+					{
+						song.Artist = (string)fields[1];
+						song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+					}
+					if (albumTable && !songTable)
+					{
+						song.Album =  (string)fields[2];
+						song.albumId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+						song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[1]));
+					}
+					if (genreTable && !songTable)
+					{
+						song.Genre = (string)fields[1];
+						song.genreId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+					}
+					if (songTable)
+					{
+						song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+						song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+						song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+						song.artistId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idArtist")));
+						song.Track = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iTrack")));
+						song.Duration = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iDuration")));
+						song.Year = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iYear")));
+						song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
+						song.TimesPlayed = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed")));
+						song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+						song.Rating= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iRating")));
+						song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+						song.songId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idSong")));
+						song.albumId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idAlbum")));
+						song.genreId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idGenre")));
+						string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
+						strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
+						song.FileName = strFileName;
+					}
 					songs.Add(song);
 				}	  
 
@@ -456,6 +396,7 @@ namespace MediaPortal.Music.Database
 			return ;		
 		}
 
+		
     public int AddAlbum(string strAlbum1, int lArtistId)
     {
       string strSQL;
@@ -555,16 +496,26 @@ namespace MediaPortal.Music.Database
           strSQL = String.Format("select * from song where idAlbum={0} AND idGenre={1} AND idArtist={2} AND dwFileNameCRC='{3}' AND strTitle='{4}'", 
                                 lAlbumId, lGenreId, lArtistId, dwCRC, song.Title);
           results = m_db.Execute(strSQL);
+					song1.albumId=lAlbumId;
+					song1.artistId=lArtistId;
+					song1.genreId=lGenreId;
 
-          if (results.Rows.Count != 0)  return;
-        }
-    		
-        strSQL = String.Format("insert into song (idSong,idArtist,idAlbum,idGenre,idPath,strTitle,iTrack,iDuration,iYear,dwFileNameCRC,strFileName,iTimesPlayed,iRating) values(NULL,{0},{1},{2},{3},'{4}',{5},{6},{7},'{8}','{9}',{10},{11})",
+					if (results.Rows.Count != 0)  
+					{
+						song1.songId=Int32.Parse(DatabaseUtility.Get(results,0,"idSong"));
+						return;
+					}
+				}
+    		int iFavorite=0;
+				if (song.Favorite) iFavorite=1;
+        strSQL = String.Format("insert into song (idSong,idArtist,idAlbum,idGenre,idPath,strTitle,iTrack,iDuration,iYear,dwFileNameCRC,strFileName,iTimesPlayed,iRating,favorite) values(NULL,{0},{1},{2},{3},'{4}',{5},{6},{7},'{8}','{9}',{10},{11},{12})",
           lArtistId, lAlbumId, lGenreId, lPathId, 
           song.Title, 
           song.Track, song.Duration, song.Year, 
           dwCRC, 
-          strFileName, 0,song.Rating);
+          strFileName, 0,song.Rating, iFavorite);
+				song1.songId=m_db.LastInsertID();
+
 
         m_db.Execute(strSQL);
       }
@@ -609,6 +560,12 @@ namespace MediaPortal.Music.Database
 		    song.Title = DatabaseUtility.Get(results, 0, "song.strTitle");
 		    song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, 0, "song.iTimesPlayed"));
 				song.Rating= Int32.Parse(DatabaseUtility.Get(results, 0, "song.iRating"));
+				song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, 0, "song.favorite")))!=0;
+				song.songId= Int32.Parse(DatabaseUtility.Get(results, 0, "song.idSong"));
+				song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, 0, "song.favorite")))!=0;
+				song.artistId= Int32.Parse(DatabaseUtility.Get(results, 0, "artist.idArtist"));
+				song.albumId= Int32.Parse(DatabaseUtility.Get(results, 0, "album.idAlbum"));
+				song.genreId= Int32.Parse(DatabaseUtility.Get(results, 0, "genre.idGenre"));
 		    song.FileName = strFileName1;
 		    return true;
       }
@@ -647,7 +604,11 @@ namespace MediaPortal.Music.Database
 		    song.Title = DatabaseUtility.Get(results, 0, "song.strTitle");
 		    song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, 0, "song.iTimesPlayed"));
 				song.Rating= Int32.Parse(DatabaseUtility.Get(results, 0, "song.iRating"));
-
+				song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, 0, "song.favorite")))!=0;;
+				song.songId= Int32.Parse(DatabaseUtility.Get(results, 0, "song.idSong"));
+				song.artistId= Int32.Parse(DatabaseUtility.Get(results, 0, "artist.idArtist"));
+				song.albumId= Int32.Parse(DatabaseUtility.Get(results, 0, "album.idAlbum"));
+				song.genreId= Int32.Parse(DatabaseUtility.Get(results, 0, "genre.idGenre"));
 		    string strFileName = DatabaseUtility.Get(results, 0, "path.strPath");
 		    strFileName += DatabaseUtility.Get(results, 0, "song.strFileName");
 		    song.FileName = strFileName;
@@ -692,7 +653,11 @@ namespace MediaPortal.Music.Database
 				  song.Title = DatabaseUtility.Get(results, 0, "song.strTitle");
 				  song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, 0, "song.iTimesPlayed"));
 					song.Rating= Int32.Parse(DatabaseUtility.Get(results, 0, "song.iRating"));
-
+					song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, 0, "song.favorite")))!=0;
+					song.songId= Int32.Parse(DatabaseUtility.Get(results, 0, "song.idSong"));
+					song.artistId= Int32.Parse(DatabaseUtility.Get(results, 0, "artist.idArtist"));
+					song.albumId= Int32.Parse(DatabaseUtility.Get(results, 0, "album.idAlbum"));
+					song.genreId= Int32.Parse(DatabaseUtility.Get(results, 0, "genre.idGenre"));
 				  string strFileName = DatabaseUtility.Get(results, 0, "path.strPath");
 				  strFileName += DatabaseUtility.Get(results, 0, "song.strFileName");
 				  song.FileName = strFileName;
@@ -766,7 +731,11 @@ namespace MediaPortal.Music.Database
 				song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
 				song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
 				song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-
+				song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+				song.songId= Int32.Parse(DatabaseUtility.Get(results, i, "song.idSong"));
+				song.artistId= Int32.Parse(DatabaseUtility.Get(results, i, "artist.idArtist"));
+				song.albumId= Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
+				song.genreId= Int32.Parse(DatabaseUtility.Get(results, i, "genre.idGenre"));
 				string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
 				strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
 				song.FileName = strFileName;
@@ -810,8 +779,13 @@ namespace MediaPortal.Music.Database
 			    song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
 			    song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
 					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
+					song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
 			    string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
 			    strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
+					song.songId= Int32.Parse(DatabaseUtility.Get(results, i, "song.idSong"));
+					song.artistId= Int32.Parse(DatabaseUtility.Get(results, i, "artist.idArtist"));
+					song.albumId= Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
+					song.genreId= Int32.Parse(DatabaseUtility.Get(results, i, "genre.idGenre"));
 			    song.FileName = strFileName;
 			    songs.Add(song);
 		    }
@@ -825,98 +799,6 @@ namespace MediaPortal.Music.Database
       }
 
 	    return false;
-    }
-		public bool GetSongsByYear(int yearStart, int yearEnd, ref ArrayList songs)
-		{
-			try
-			{
-
-				songs.Clear();
-				if (null == m_db) return false;
-    		
-				string strSQL;
-				strSQL = String.Format("select song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and song.iYear >={0} and song.iYear <={1}",yearStart,yearEnd);
-				SQLiteResultSet results;
-				results = m_db.Execute(strSQL);
-				if (results.Rows.Count == 0) return false;
-				for (int i = 0; i < results.Rows.Count; ++i)
-				{
-					Song song = new Song();
-					song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-					song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-					song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-					song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
-					song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
-					song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
-					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
-					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-					song.FileName = strFileName;
-					songs.Add(song);
-				}
-
-				return true;
-			}
-			catch (Exception ex) 
-			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-				Open();
-			}
-
-			return false;
-		}
-
-    public bool GetSongsByAlbum(string strAlbum1, ref ArrayList songs)
-    {
-	    try
-	    {
-        
-		    string strAlbum = strAlbum1;
-		    //	musicdatabase always stores directories 
-		    //	without a slash at the end 
-
-		    DatabaseUtility.RemoveInvalidChars(ref strAlbum);
-
-		    songs.Clear();
-		    if (null == m_db) return false;
-    		
-		    string strSQL;
-		    strSQL = String.Format("select song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and album.strAlbum like '{0}' and path.idPath=song.idPath order by song.iTrack", strAlbum);
-        SQLiteResultSet results;
-        results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0) return false;
-		    for (int i = 0; i < results.Rows.Count; ++i)
-		    {
-			    Song song = new Song();
-			    song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-			    song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-			    song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-			    song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
-			    song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
-			    song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
-			    song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-			    song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
-					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-
-			    string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-			    strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-			    song.FileName = strFileName;
-
-			    songs.Add(song);
-		    }
-
-		    return true;
-      }
-      catch (Exception ex) 
-      {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-				Open();
-      }
-
-	  return false;
-
     }
 	  //
 	  public bool GetSongs(int searchKind,string strTitle1,ref ArrayList songs)
@@ -1200,156 +1082,6 @@ namespace MediaPortal.Music.Database
 		  }
 		  return false;
 	  }
-	  //
-    public bool GetSongsByGenre(string strGenre, ref ArrayList songs)
-    {
-	    try
-	    {
-		    string strSQLGenre = strGenre;
-		    DatabaseUtility.RemoveInvalidChars(ref strSQLGenre);
-
-		    songs.Clear();
-		    if (null == m_db) return false;
-    		
-		    string strSQL;
-		    strSQL = String.Format("select song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,genre,album,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and genre.strGenre like '{0}'",strSQLGenre);
-        SQLiteResultSet results;
-        results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0) return false;
-        for (int i = 0; i < results.Rows.Count; ++i)
-        {
-			    Song song = new Song();
-			    song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-			    song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-			    song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-			    song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
-			    song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
-			    song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
-			    song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-			    song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
-					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-    			
-			    string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-			    strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-			    song.FileName = strFileName;
-
-			    songs.Add(song);
-		    }
-
-		    return true;
-	    }
-	    catch (Exception ex)
-	    {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-				Open();
-      }
-
-	    return false;
-
-    }
-	  public bool GetTop100(int searchKind,string strGenere1,ref ArrayList songs)
-	  {
-		  try
-		  {
-			  songs.Clear();
-			  string strGenere=strGenere1;
-
-			  if (null == m_db) return false;
-				
-			  string strSQL="";
-			  switch (searchKind)
-			  {
-				  case 0:
-					  strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and song.strTitle like '{0}%' and iTimesPlayed > 0 order by song.iTimesPlayed desc limit 100",strGenere);
-					  break;
-				  case 1:
-					  strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and song.strTitle like '%{0}%' and iTimesPlayed > 0 order by song.iTimesPlayed desc limit 100",strGenere);
-					  break;
-				  case 2:
-					  strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and song.strTitle like '%{0}' and iTimesPlayed > 0 order by song.iTimesPlayed desc limit 100",strGenere);
-					  break;
-				  case 3:
-					  strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and song.strTitle like '{0}' and iTimesPlayed > 0 order by song.iTimesPlayed desc limit 100",strGenere);
-					  break;
-			  }
-
-			  SQLiteResultSet results;
-			  results = m_db.Execute(strSQL);
-			  if (results.Rows.Count == 0) return false;
-			  for (int i = 0; i < results.Rows.Count; ++i)
-			  {
-				  Song song = new Song();
-				  song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-				  song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-				  song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-				  song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
-				  song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
-				  song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
-				  song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-				  song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
-					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-				  song.Track = i;
-					
-				  string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-				  strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-				  song.FileName = strFileName;
-				  songs.Add(song);
-			  }
-
-			  return true;
-		  }
-		  catch (Exception ex)
-		  {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-				Open();
-		  }
-
-		  return false;
-	  }
-
-		public bool GetTop100(ref ArrayList songs)
-		{
-			try
-			{
-				songs.Clear();
-				if (null == m_db) return false;
-				
-				string strSQL;
-				strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and iTimesPlayed > 0 order by song.iTimesPlayed desc limit 100");
-				SQLiteResultSet results;
-				results = m_db.Execute(strSQL);
-				if (results.Rows.Count == 0) return false;
-				for (int i = 0; i < results.Rows.Count; ++i)
-				{
-					Song song = new Song();
-					song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-					song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-					song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-					song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
-					song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
-					song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
-					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
-					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-					song.Track = i;
-					
-					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-					song.FileName = strFileName;
-					songs.Add(song);
-				}
-
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-				Open();
-			}
-
-			return false;
-		}
-
 		public bool GetSongsByPath(string strPath1, ref ArrayList songs)
 		{
 			try
@@ -1382,7 +1114,11 @@ namespace MediaPortal.Music.Database
 					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
 					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
 					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-					
+					song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+					song.songId= Int32.Parse(DatabaseUtility.Get(results, i, "song.idSong"));
+					song.artistId= Int32.Parse(DatabaseUtility.Get(results, i, "artist.idArtist"));
+					song.albumId= Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
+					song.genreId= Int32.Parse(DatabaseUtility.Get(results, i, "genre.idGenre"));					
 					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
 					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
 					song.FileName = strFileName;
@@ -1753,7 +1489,11 @@ namespace MediaPortal.Music.Database
 					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
 					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
 					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
-
+					song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+					song.songId= Int32.Parse(DatabaseUtility.Get(results, i, "song.idSong"));
+					song.artistId= Int32.Parse(DatabaseUtility.Get(results, i, "artist.idArtist"));
+					song.albumId= Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
+					song.genreId= Int32.Parse(DatabaseUtility.Get(results, i, "genre.idGenre"));
 					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
 					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
 					song.FileName = strFileName;
@@ -1779,7 +1519,57 @@ namespace MediaPortal.Music.Database
     {
       return false;
     }
+		public bool GetSongsByAlbum(string strAlbum1, ref ArrayList songs)
+		{
+			try
+			{
+        
+				string strAlbum = strAlbum1;
+				//	musicdatabase always stores directories 
+				//	without a slash at the end 
 
+				DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+
+				songs.Clear();
+				if (null == m_db) return false;
+    		
+				string strSQL;
+				strSQL = String.Format("select song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and album.strAlbum like '{0}' and path.idPath=song.idPath order by song.iTrack", strAlbum);
+				SQLiteResultSet results;
+				results = m_db.Execute(strSQL);
+				if (results.Rows.Count == 0) return false;
+				for (int i = 0; i < results.Rows.Count; ++i)
+				{
+					Song song = new Song();
+					song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+					song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+					song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+					song.Track = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTrack"));
+					song.Duration = Int32.Parse(DatabaseUtility.Get(results, i, "song.iDuration"));
+					song.Year = Int32.Parse(DatabaseUtility.Get(results, i, "song.iYear"));
+					song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
+					song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+					song.TimesPlayed = Int32.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed"));
+					song.Rating= Int32.Parse(DatabaseUtility.Get(results, i, "song.iRating"));
+
+					string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
+					strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
+					song.FileName = strFileName;
+
+					songs.Add(song);
+				}
+
+				return true;
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
+			}
+
+			return false;
+
+		}
     public void CheckVariousArtistsAndCoverArt()
     {
 	    if (m_albumCache.Count <= 0)

@@ -379,27 +379,12 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "GUIMusic\GUIMusicAlbums.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "GUIMusic\GUIMusicArtistInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GUIMusic\GUIMusicArtists.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "GUIMusic\GUIMusicBaseWindow.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIMusic\GUIMusicFavorites.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -429,17 +414,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GUIMusic\GUIMusicTop100.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIMusic\GUIMusicYears.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "GUIMusic\MusicState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIMusic\MusicViewHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

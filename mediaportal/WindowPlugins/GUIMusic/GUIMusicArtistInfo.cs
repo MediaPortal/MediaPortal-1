@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.Music
           if (iControl==(int)Controls.CONTROL_BTN_REFRESH)
           {
             string strImage=m_pArtist.ImageURL;
-            string strThumb=GUIMusicArtists.GetCoverArt(m_pArtist.Artist);
+            string strThumb=GUIMusicFiles.GetArtistCoverArtName(m_pArtist.Artist);
             if (strThumb!=String.Empty) Utils.FileDelete(strThumb);
             m_bRefresh=true;
             Close();
@@ -392,7 +392,7 @@ namespace MediaPortal.GUI.Music
 
       string strThumb;
       string strImage=m_pArtist.ImageURL;
-      strThumb=GUIMusicArtists.GetCoverArtName(m_pArtist.Artist);
+      strThumb=GUIMusicFiles.GetArtistCoverArtName(m_pArtist.Artist);
       if (strThumb!=String.Empty )
       {
         //	Download image and save as 

@@ -694,7 +694,18 @@ namespace MediaPortal.GUI.Library
 				{
 					SkinControlAttribute atrb = (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
 				
-					field.SetValue(this, GetControl(atrb.ID));
+					GUIControl control = GetControl(atrb.ID);
+					if (control!=null)
+					{
+						try
+						{
+							field.SetValue(this, control);
+						}
+						catch(Exception ex)
+						{
+							Log.WriteFile(Log.LogType.Log,true,"GUIWindow:OnWindowLoaded ex:{0} {1}", ex.Message,ex.StackTrace);
+						}
+					}
 				}
 			}
 

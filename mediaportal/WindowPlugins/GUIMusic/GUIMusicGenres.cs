@@ -9,6 +9,7 @@ using MediaPortal.Playlists;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.View;
 
 namespace MediaPortal.GUI.Music
 {
@@ -23,6 +24,11 @@ namespace MediaPortal.GUI.Music
     string            m_strDirectory="";
     int               m_iItemSelected=-1;   
 		VirtualDirectory  m_directory = new VirtualDirectory();
+		int[]  views      = new int[50];
+		bool[] sortasc    = new bool[50];
+		int[] sortby      = new int[50];
+
+
 		[SkinControlAttribute(9)]			protected GUIButtonControl btnSearch=null;
     #endregion
 
@@ -38,13 +44,14 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       m_strDirectory="";
+			handler.CurrentView="Artists";
       return Load (GUIGraphicsContext.Skin+@"\mymusicgenres.xml");
     }
 		protected override string SerializeName
 		{
 			get
 			{
-				return "mymusicgenres";
+				return "mymusic"+handler.CurrentView;
 			}
 		}
 
@@ -52,15 +59,11 @@ namespace MediaPortal.GUI.Music
 		{
 			get
 			{
-				if (m_strDirectory=="") return currentViewRoot;
-				return currentView;
+				return (View)views[handler.CurrentLevel];
 			}
 			set
 			{
-				if (m_strDirectory=="") 
-					currentViewRoot=value;
-				else
-					currentView=value;
+				views[handler.CurrentLevel] = (int)value;
 			}
 		}
 
@@ -68,32 +71,22 @@ namespace MediaPortal.GUI.Music
 		{
 			get
 			{
-				if (m_strDirectory==String.Empty) 
-					return m_bSortAscendingRoot;
-				return m_bSortAscending;
+				return sortasc[handler.CurrentLevel];
 			}
 			set
 			{
-				if (m_strDirectory==String.Empty) 
-					m_bSortAscendingRoot=value;
-				else
-					m_bSortAscending=value;
+				sortasc[handler.CurrentLevel]=value;
 			}
 		}
 		protected override SortMethod CurrentSortMethod
 		{
 			get
 			{
-				if (m_strDirectory==String.Empty) 
-					return currentSortMethodRoot;
-				return currentSortMethod;
+				return (SortMethod)sortby[handler.CurrentLevel];
 			}
 			set
 			{
-				if (m_strDirectory==String.Empty) 
-					currentSortMethodRoot=value;
-				else
-					currentSortMethod=value;
+				sortby[handler.CurrentLevel]=(int)value;
 			}
 		}
 		protected override bool AllowView(View view)
@@ -122,8 +115,13 @@ namespace MediaPortal.GUI.Music
 
 		protected override void OnPageLoad()
 		{
-			LoadDirectory(m_strDirectory);
+			string view=MusicState.View;
+			if (view==String.Empty)
+				view=((ViewDefinition)handler.Views[0]).Name;
+
+			handler.CurrentView = view;
 			base.OnPageLoad ();
+			LoadDirectory(m_strDirectory);
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
@@ -153,9 +151,27 @@ namespace MediaPortal.GUI.Music
 
 		protected override void OnRetrieveCoverArt(GUIListItem item)
 		{
-			if (m_strDirectory.Length==0)
+			Song song = item.AlbumInfoTag as Song;
+			if (song==null) return;
+			if (song.genreId>=0 && song.albumId<0 && song.artistId<0 && song.songId<0)
 			{
 				string strThumb=Utils.GetCoverArt(GUIMusicFiles.GenreThumbsFolder,item.Label);
+				item.IconImage=strThumb;
+				item.IconImageBig=strThumb;
+				item.ThumbnailImage=strThumb;
+				Utils.SetDefaultIcons(item);
+			}
+			else if (song.artistId>=0 && song.albumId<0 && song.songId<0)
+			{
+				string strThumb=Utils.GetCoverArt(GUIMusicFiles.ArtistsThumbsFolder,item.Label);
+				item.IconImage=strThumb;
+				item.IconImageBig=strThumb;
+				item.ThumbnailImage=strThumb;
+				Utils.SetDefaultIcons(item);
+			}
+			else if (song.albumId>=0 && song.songId<0)
+			{
+				string strThumb=Utils.GetCoverArt(GUIMusicFiles.AlbumThumbsFolder,item.Label);
 				item.IconImage=strThumb;
 				item.IconImageBig=strThumb;
 				item.ThumbnailImage=strThumb;
@@ -176,6 +192,10 @@ namespace MediaPortal.GUI.Music
 			if (item.IsFolder)
 			{
 				m_iItemSelected=-1;
+				if (item.Label=="..")
+					handler.CurrentLevel--;
+				else
+					handler.Select(item.AlbumInfoTag as Song);
 				LoadDirectory(item.Path);
 			}
 			else
@@ -213,6 +233,8 @@ namespace MediaPortal.GUI.Music
 			}
 		}
     
+
+
 		protected override  void OnShowContextMenu()
 		{
 			GUIListItem item=GetSelectedItem();
@@ -229,8 +251,12 @@ namespace MediaPortal.GUI.Music
 			dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
 			if (!item.IsFolder && !item.IsRemote)
 			{
-				dlg.AddLocalizedString(930); //Add to favorites
-				dlg.AddLocalizedString(931); //Rating
+				Song song = item.AlbumInfoTag as Song;
+				if (song.songId>=0)
+				{
+					dlg.AddLocalizedString(930); //Add to favorites
+					dlg.AddLocalizedString(931); //Rating
+				}
 			}
 
 			dlg.DoModal( GetID);
@@ -249,7 +275,7 @@ namespace MediaPortal.GUI.Music
 					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
 					break;
 				case 3: // add to favorites
-					m_database.AddSongToFavorites(item.Path);
+					AddSongToFavorites(item);
 					break;
 				case 4:// Rating
 					OnSetRating(GetSelectedItemNo());
@@ -261,10 +287,24 @@ namespace MediaPortal.GUI.Music
 		{
 			// add item 2 playlist
 			GUIListItem pItem=GetItem(iItem);
-			if (m_strDirectory=="")
+			if (handler.CurrentLevel < handler.MaxLevels-1)
 			{
-				string strArtist=pItem.Label;
-				OnQueueGenre(strArtist);
+				//queue
+				handler.Select(pItem.AlbumInfoTag as Song);
+				ArrayList songs = handler.Execute();
+				handler.CurrentLevel--;
+				foreach (Song song in songs)
+				{
+					if (song.songId>0)
+					{
+						GUIListItem item = new GUIListItem();
+						item.Path=song.FileName;
+						item.Label=song.Title;
+						item.Duration=song.Duration;
+						item.IsFolder=false;
+						AddItemToPlayList(item);
+					}
+				}
 			}
 			else
 			{
@@ -282,7 +322,7 @@ namespace MediaPortal.GUI.Music
 	  }
     
 		
-    void LoadDirectory(string strNewDirectory)
+    protected override void LoadDirectory(string strNewDirectory)
     {
       GUIListItem SelectedItem = GetSelectedItem();
       if (SelectedItem!=null) 
@@ -298,37 +338,24 @@ namespace MediaPortal.GUI.Music
             
       string strObjects="";
 
-			ArrayList itemlist=new ArrayList();
-			if (m_strDirectory.Length==0)
+			ArrayList itemlist = new ArrayList();
+			ArrayList songs=handler.Execute();
+			if (handler.CurrentLevel>0)
 			{
-				ArrayList genres=new ArrayList();
-				m_database.GetGenres(ref genres);
-				foreach(string strGenre in genres)
-				{
-					GUIListItem item=new GUIListItem();
-					item.Label=strGenre;
-					item.Path=strGenre;
-          item.IsFolder=true;
-          item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-					itemlist.Add(item);
-				}
-			}
-			else
-			{
-
 				GUIListItem pItem = new GUIListItem ("..");
 				pItem.Path="";
-        pItem.IsFolder=true;
-        Utils.SetDefaultIcons(pItem);
+				pItem.IsFolder=true;
+				Utils.SetDefaultIcons(pItem);
 				itemlist.Add(pItem);
-
-				ArrayList songs=new ArrayList();
-				m_database.GetSongsByGenre(m_strDirectory,ref songs);
-				foreach (Song song in songs)
-				{
+			}
+			foreach (Song song in songs)
+			{
 					GUIListItem item=new GUIListItem();
 					item.Label=song.Title;
-					item.IsFolder=false;
+					if (handler.CurrentLevel+1 < handler.MaxLevels)
+						item.IsFolder=true;
+					else
+						item.IsFolder=false;
 					item.Path=song.FileName;
 					item.Duration=song.Duration;
 					
@@ -341,11 +368,10 @@ namespace MediaPortal.GUI.Music
 					tag.Track=song.Track;
 					tag.Year=song.Year;
 					tag.Rating=song.Rating;
+					item.AlbumInfoTag = song;
 					item.MusicTag=tag;
           item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-		
 					itemlist.Add(item);
-				}
 			}
      
 
@@ -438,29 +464,15 @@ namespace MediaPortal.GUI.Music
 
 	  }
 
-		
-    void OnQueueGenre(string strGenre)
-    {
-      if (strGenre==null) return;
-      if (strGenre=="") return;
-      ArrayList albums=new ArrayList();
-      m_database.GetSongsByGenre(strGenre, ref albums);
-      foreach (Song song in albums)
-      {
-        PlayList.PlayListItem playlistItem =new PlayList.PlayListItem();
-        playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
-        playlistItem.FileName=song.FileName;
-        playlistItem.Description=song.Title;
-        playlistItem.Duration=song.Duration;
-        PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Add(playlistItem);
-      }
-      
-      if (!g_Player.Playing)
-      {
-        PlayListPlayer.CurrentPlaylist =PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.Play(0);
-      }
-    }
+		protected override void SetLabels()
+		{
+			base.SetLabels ();
+			for (int i=0; i < GetItemCount();++i)
+			{
+				GUIListItem item=GetItem(i);
+				handler.SetLabel(item.AlbumInfoTag as Song, ref item);
+			}
+		}
 
     void AddItemToPlayList(GUIListItem pItem) 
     {
@@ -491,8 +503,5 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
-
-
-    
   }
 }

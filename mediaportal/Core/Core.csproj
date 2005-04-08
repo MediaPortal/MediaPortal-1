@@ -519,6 +519,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\FilterDefinition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\Geometry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -760,6 +765,11 @@
                 />
                 <File
                     RelPath = "guilib\Util.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "guilib\ViewDefinition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

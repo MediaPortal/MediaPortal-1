@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.Music
 
 		#endregion
 		
-		void LoadDirectory(string strNewDirectory)
+		protected override void LoadDirectory(string strNewDirectory)
 		{
 			GUIListItem SelectedItem = GetSelectedItem();
 			if (SelectedItem != null) 

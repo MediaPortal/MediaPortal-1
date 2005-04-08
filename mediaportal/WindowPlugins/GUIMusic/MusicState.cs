@@ -10,6 +10,7 @@ namespace MediaPortal.GUI.Music
     static int      m_iTempPlaylistWindow=0;
     static string   m_strTempPlaylistDirectory="";
     static int      m_iStartWindow=(int)GUIWindow.Window.WINDOW_MUSIC_FILES;
+		static string   view="";
 		public MusicState()
 		{
 			// 
@@ -30,6 +31,11 @@ namespace MediaPortal.GUI.Music
     {
       get { return m_iStartWindow;}
       set {m_iStartWindow=value;}
-    }
+		}
+		static public string View
+		{
+			get { return view;}
+			set {view=value;}
+		}
 	}
 }

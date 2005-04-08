@@ -11,6 +11,10 @@ using MediaPortal.TagReader;
 using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.View;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
 
 namespace MediaPortal.GUI.Music
 {
@@ -59,9 +63,6 @@ namespace MediaPortal.GUI.Music
     }
 
 
-		static public string AlbumThumbsFolder=@"thumbs\music\albums";
-    static public string ArtistsThumbsFolder=@"thumbs\music\artists";
-    static public string GenreThumbsFolder=@"thumbs\music\genre";
     MapSettings       _MapSettings = new MapSettings();
 		
     DirectoryHistory  m_history = new DirectoryHistory();
@@ -90,8 +91,82 @@ namespace MediaPortal.GUI.Music
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				MusicState.StartWindow=xmlreader.GetValueAsInt("music","startWindow", GetID);
+				MusicState.View=xmlreader.GetValueAsString("music","startview", "");
 			}
-    }
+
+			//genres
+			FilterDefinition filter1,filter2,filter3;
+			ViewDefinition viewGenre = new ViewDefinition();
+			viewGenre.Name="Genres";
+			filter1 = new FilterDefinition();filter1.Where="genre";;filter1.SortAscending=true;
+			filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
+			viewGenre.Filters.Add(filter1);
+			viewGenre.Filters.Add(filter2);
+
+			//top100
+			ViewDefinition viewTop100 = new ViewDefinition();
+			viewTop100.Name="Top100";
+			filter1 = new FilterDefinition();filter1.Where="timesplayed";filter1.SortAscending=false;filter1.Limit=100;
+			viewTop100.Filters.Add(filter1);
+
+			//artists
+			ViewDefinition viewArtists = new ViewDefinition();
+			viewArtists.Name="Artists";
+			filter1 = new FilterDefinition();filter1.Where="artist";;filter1.SortAscending=true;
+			filter2 = new FilterDefinition();filter2.Where="album";;filter2.SortAscending=true;
+			filter3 = new FilterDefinition();filter3.Where="title";;filter3.SortAscending=true;
+			viewArtists.Filters.Add(filter1);
+			viewArtists.Filters.Add(filter2);
+			viewArtists.Filters.Add(filter3);
+
+			//albums
+			ViewDefinition viewAlbums = new ViewDefinition();
+			viewAlbums.Name="Albums";
+			filter1 = new FilterDefinition();filter1.Where="album";;filter1.SortAscending=true;
+			filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
+			viewAlbums.Filters.Add(filter1);
+			viewAlbums.Filters.Add(filter2);
+
+			//years
+			ViewDefinition viewYears = new ViewDefinition();
+			viewYears.Name="Years";
+			filter1 = new FilterDefinition();filter1.Where="year";;filter1.SortAscending=true;
+			filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
+			viewYears.Filters.Add(filter1);
+			viewYears.Filters.Add(filter2);
+
+			//favorites
+			ViewDefinition viewFavorites = new ViewDefinition();
+			viewFavorites.Name="Favorites";
+			filter1 = new FilterDefinition();filter1.Where="favorites";filter1.SqlOperator="=";filter1.Restriction="1";filter1.SortAscending=true;
+			viewFavorites.Filters.Add(filter1);
+
+			ArrayList listViews = new ArrayList();
+			listViews.Add(viewGenre);
+			listViews.Add(viewTop100);
+			listViews.Add(viewArtists);
+			listViews.Add(viewAlbums);
+			listViews.Add(viewYears);
+			listViews.Add(viewFavorites);
+
+			using(FileStream fileStream = new FileStream("musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+			{
+				SoapFormatter formatter = new SoapFormatter();
+				formatter.Serialize(fileStream, listViews);
+				fileStream.Close();
+			}
+//
+//			MusicViewHandler handler = new MusicViewHandler();
+//			handler.CurrentView="Genres";
+//			ArrayList list = handler.Execute();
+//			handler.Select((Song)list[15]);// genre=pop 5
+//			list = handler.Execute();
+//			handler.Select((Song)list[2]);// album=wanadoo top 40 2002 192
+//			list = handler.Execute();
+//			handler.CurrentLevel--;
+//			list = handler.Execute();
+
+		}
 
     
     static public Freedb.CDInfoDetail MusicCD
@@ -158,6 +233,7 @@ namespace MediaPortal.GUI.Music
 			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("music","startWindow",MusicState.StartWindow.ToString());
+				xmlwriter.SetValue("music","startview",MusicState.View);
 			}
 		}
 
@@ -374,17 +450,13 @@ namespace MediaPortal.GUI.Music
           break;
 
 				case 930: // add to favorites
-					m_database.AddSongToFavorites(item.Path);
+					AddSongToFavorites(item);
 					break;
 
 				case 931:// Rating
 					OnSetRating(GetSelectedItemNo());
 					break;
 
-				case 102: //Scan
-					OnScan();
-					LoadDirectory(m_strDirectory);
-					break;
       }
     }
 
@@ -502,307 +574,6 @@ namespace MediaPortal.GUI.Music
 
 		}
 
-		protected override void OnInfo(int iItem)
-		{
-			m_iItemSelected = GetSelectedItemNo();
-			int iSelectedItem = GetSelectedItemNo();
-			GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-			GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-			GUIListItem pItem = GetItem(iItem);
-
-			ArrayList list = new ArrayList();
-			list.Add(pItem);
-			m_bScan=true;
-			OnRetrieveMusicInfo(ref list);
-			m_database.CheckVariousArtistsAndCoverArt();
-			m_bScan=false;
-
-			string artistName="";
-			string year="";
-			if (pItem.IsRemote) return;
-			string strPath = "";
-			if (pItem.IsFolder)
-			{
-				strPath = pItem.Path;
-			}
-			else
-			{
-				string strFileName;
-				DatabaseUtility.Split(pItem.Path, out strPath, out strFileName);
-			}
-
-			//	Try to find an album name for this item.
-			//	Only save to database, if album name is found there.
-			bool bSaveDb = false;
-			string strAlbumName = pItem.Label;
-			MusicTag tag = (MusicTag)(pItem.MusicTag);
-			if (tag != null)
-			{
-				if (tag.Artist!=String.Empty) artistName=tag.Artist;
-				if (tag.Year>=1900) year=tag.Year.ToString();
-				if (tag.Album.Length > 0) 
-				{
-					strAlbumName = tag.Album;
-					bSaveDb = true;
-				}
-				else if (tag.Title.Length > 0) 
-				{
-					strAlbumName = tag.Title;
-					bSaveDb = true;
-				}
-			}
-
-			MusicAlbumInfo infoTag = (MusicAlbumInfo)pItem.AlbumInfoTag;
-			if (pItem.IsFolder)
-			{
-
-				//	if a folder has an album set,
-				//	we can be sure that it is in database
-				AlbumInfo album = new AlbumInfo();
-				if (infoTag != null)
-				{
-					string strAlbum = infoTag.Title;
-					if (strAlbum.Length > 0)
-					{
-						strAlbumName = strAlbum;
-						bSaveDb = true;
-					}
-				}/* TODO
-        else if (m_database.GetAlbumByPath(pItem.Path, ref album))
-        {	
-          //	Normal folder, query database for album name
-          if (album.Album.Length>0)
-          {
-            strAlbumName=album.Album;
-            bSaveDb=true;
-          }
-        }*/
-				else
-				{
-					//	No album name found for folder. Look into
-					//	the directory, but don't save to database
-					ArrayList items = new ArrayList();
-					items = m_directory.GetDirectory(pItem.Path);
-					OnRetrieveMusicInfo(ref items);
-
-					//	Get first album name found in directory
-					foreach (GUIListItem newitem in items)
-					{
-						MusicAlbumInfo info = (MusicAlbumInfo)newitem.AlbumInfoTag;
-						if (info != null)
-						{
-							if (info.Title.Length > 0)
-							{
-								strAlbumName = info.Title;
-								break;
-							}
-						}
-					}
-				}
-			}
-			else if (infoTag != null)
-			{
-				//	Handle files
-				AlbumInfo album = new AlbumInfo();
-				string strAlbum = infoTag.Title;
-				//	Is album in database?
-				/* TODO
-				if (m_database.GetAlbumByPath(strPath, ref album))
-				{
-					//	yes, save query results to database
-					strAlbumName=album.Album;
-					bSaveDb=true;
-				}
-				else
-					//	no, don't save
-					strAlbumName=strAlbum; */
-			}
-
-
-			// check cache
-			AlbumInfo albuminfo = new AlbumInfo();
-			if (m_database.GetAlbumInfo(strAlbumName, strPath, ref albuminfo))
-			{
-				ArrayList songs = new ArrayList();
-				MusicAlbumInfo album = new MusicAlbumInfo();
-				album.Set(albuminfo);
-
-				GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
-				if (null != pDlgAlbumInfo)
-				{
-					pDlgAlbumInfo.Album = album;
-					pDlgAlbumInfo.Tag=tag;
-
-					pDlgAlbumInfo.DoModal(GetID);
-					if (pDlgAlbumInfo.NeedsRefresh)
-					{
-						m_database.DeleteAlbumInfo(strAlbumName);
-						OnInfo(iItem);
-					}
-					return;
-					//GetStringFromKeyboard(ref strAlbumName);
-				}
-			}
-
-			// show dialog box indicating we're searching the album
-			if (dlgProgress != null)
-			{
-				dlgProgress.SetHeading(185);
-				dlgProgress.SetLine(1, strAlbumName );
-				dlgProgress.SetLine(2, artistName);
-				dlgProgress.SetLine(3, year);
-				dlgProgress.StartModal(GetID);
-				dlgProgress.Progress();
-			}
-			bool bDisplayErr = false;
-	
-			// find album info
-			MusicInfoScraper scraper = new MusicInfoScraper();
-			if (scraper.FindAlbuminfo(strAlbumName))
-			{
-				if (dlgProgress != null) dlgProgress.Close();
-				// did we found at least 1 album?
-				int iAlbumCount = scraper.Count;
-				if (iAlbumCount >= 1)
-				{
-					//yes
-					// if we found more then 1 album, let user choose one
-					int iSelectedAlbum = 0;
-					if (iAlbumCount > 1)
-					{
-						//show dialog with all albums found
-						string szText = GUILocalizeStrings.Get(181);
-						GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-						if (null != pDlg)
-						{
-							pDlg.Reset();
-							pDlg.SetHeading(szText);
-							for (int i = 0; i < iAlbumCount; ++i)
-							{
-								MusicAlbumInfo info = scraper[i];
-								pDlg.Add(info.Title2);
-							}
-							pDlg.DoModal(GetID);
-
-							// and wait till user selects one
-							iSelectedAlbum = pDlg.SelectedLabel;
-							if (iSelectedAlbum < 0) return;
-						}
-					}
-
-					// ok, now show dialog we're downloading the album info
-					MusicAlbumInfo album = scraper[iSelectedAlbum];
-					if (null != dlgProgress) 
-					{
-						dlgProgress.SetHeading(185);
-						dlgProgress.SetLine(1, album.Title2);
-						dlgProgress.SetLine(2, album.Artist);
-						dlgProgress.StartModal(GetID);
-						dlgProgress.Progress();
-					}
-
-					// download the album info
-					bool bLoaded = album.Loaded;
-					if (!bLoaded) 
-						bLoaded = album.Load();
-					if (bLoaded)
-					{
-						// set album title from musicinfotag, not the one we got from allmusic.com
-						album.Title = strAlbumName;
-						// set path, needed to store album in database
-						album.AlbumPath = strPath;
-
-						if (bSaveDb)
-						{
-							albuminfo = new AlbumInfo();
-							albuminfo.Album = album.Title;
-							albuminfo.Artist = album.Artist;
-							albuminfo.Genre = album.Genre;
-							albuminfo.Tones = album.Tones;
-							albuminfo.Styles = album.Styles;
-							albuminfo.Review = album.Review;
-							albuminfo.Image = album.ImageURL;
-							albuminfo.Rating = album.Rating;
-							albuminfo.Tracks = album.Tracks;
-							try
-							{
-								albuminfo.Year = Int32.Parse(album.DateOfRelease);
-							}
-							catch (Exception)
-							{
-							}
-							//albuminfo.Path   = album.AlbumPath;
-							// save to database
-							m_database.AddAlbumInfo(albuminfo);
-
-
-						}
-						if (null != dlgProgress) 
-							dlgProgress.Close();
-
-						// ok, show album info
-						GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
-						if (null != pDlgAlbumInfo)
-						{
-							pDlgAlbumInfo.Album = album;
-							pDlgAlbumInfo.Tag=tag;
-
-							pDlgAlbumInfo.DoModal(GetID);
-							if (pDlgAlbumInfo.NeedsRefresh)
-							{
-								m_database.DeleteAlbumInfo(album.Title);
-								OnInfo(iItem);
-								return;
-							}
-							if (pItem.IsFolder)
-							{
-								string thumb=GetAlbumThumbName(album.Artist, album.Title);
-								if (System.IO.File.Exists(thumb))
-								{
-									try
-									{
-										string folderjpg=String.Format(@"{0}\folder.jpg",Utils.RemoveTrailingSlash(pItem.Path));
-										Utils.FileDelete(folderjpg);
-										System.IO.File.Copy(thumb, folderjpg);
-									}
-									catch(Exception)
-									{
-									}
-								}
-							}
-						}
-					}
-					else
-					{
-						// failed 2 download album info
-						bDisplayErr = true;
-					}
-				}
-				else 
-				{
-					// no albums found
-					bDisplayErr = true;
-				}
-			}
-			else
-			{
-				// unable 2 connect to www.allmusic.com
-				bDisplayErr = true;
-			}
-			// if an error occured, then notice the user
-			if (bDisplayErr)
-			{
-				if (null != dlgProgress) 
-					dlgProgress.Close();
-				if (null != pDlgOK)
-				{
-					pDlgOK.SetHeading(187);
-					pDlgOK.SetLine(1, 187);
-					pDlgOK.SetLine(2, "");
-					pDlgOK.DoModal(GetID);
-				}
-			}
-		}
     
 		#endregion    
     
@@ -886,7 +657,7 @@ namespace MediaPortal.GUI.Music
       FolderSettings.AddFolderSetting(strDirectory,"MusicFiles",typeof(GUIMusicFiles.MapSettings), _MapSettings);
     }
 
-    void LoadDirectory(string strNewDirectory)
+    protected override void LoadDirectory(string strNewDirectory)
     {
       GUIListItem SelectedItem = GetSelectedItem();
       if (SelectedItem != null) 
@@ -986,368 +757,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    void OnRetrieveMusicInfo(ref ArrayList items)
-    {
-      int nFolderCount = 0;
-      foreach (GUIListItem item in items)
-      {
-        if (item.IsFolder) nFolderCount++;
-      }
-
-      // Skip items with folders only
-      if (nFolderCount == (int)items.Count)
-        return;
-
-      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-
-      if (m_strDirectory.Length == 0) return;
-      //string strItem;
-      ArrayList songsMap = new ArrayList();
-      // get all information for all files in current directory from database 
-      m_database.GetSongsByPath2(m_strDirectory, ref songsMap);
-
-      //musicCD is the information about the cd...
-			//delete old CD info
-      GUIMusicFiles.MusicCD = null;
-
-      bool bCDDAFailed=false;
-      // for every file found, but skip folder
-      for (int i = 0; i < (int)items.Count; ++i)
-      {
-        GUIListItem pItem = (GUIListItem)items[i];
-        if (pItem.IsRemote) continue;
-        if (pItem.IsFolder) continue;
-        if (pItem.Path.Length == 0) continue;
-        string strFilePath = System.IO.Path.GetFullPath(pItem.Path);
-        strFilePath = strFilePath.Substring(0, strFilePath.Length - (1 + System.IO.Path.GetFileName(pItem.Path).Length));
-        if (strFilePath != m_strDirectory)
-        {
-          return;
-        }
-        string strExtension = System.IO.Path.GetExtension(pItem.Path);
-        if (m_bScan  && strExtension.ToLower().Equals(".cda")) continue;
-        if (m_bScan && dlg != null)
-          dlg.ProgressKeys();
-
-        // dont try reading id3tags for folders or playlists
-        if (!pItem.IsFolder && !PlayListFactory.IsPlayList(pItem.Path))
-        {
-          // is tag for this file already loaded?
-          bool bNewFile = false;
-          MusicTag tag = (MusicTag)pItem.MusicTag;
-          if (tag == null)
-          {
-            // no, then we gonna load it. But dont load tags from cdda files
-            if (strExtension != ".cda")  // int_20h: changed cdda to cda.
-            {
-              // first search for file in our list of the current directory
-              Song song = new Song();
-              bool bFound = false;
-              foreach (SongMap song1 in songsMap)
-              {
-                if (song1.m_strPath == pItem.Path)
-                {
-                  song = song1.m_song;
-                  bFound = true;
-                  tag = new MusicTag();
-                  pItem.MusicTag = tag;
-                  break;
-                }
-              }
-							
-              if (!bFound && !m_bScan)
-              {
-                // try finding it in the database
-                string strPathName;
-                string strFileName;
-                DatabaseUtility.Split(pItem.Path, out strPathName, out strFileName);
-                if (strPathName != m_strDirectory)
-                {
-                  if (m_database.GetSongByFileName(pItem.Path, ref song))
-                  {
-                    bFound = true;
-                  }
-                }
-              }
-
-              if (!bFound)
-              {
-                // if id3 tag scanning is turned on OR we're scanning the directory
-                // then parse id3tag from file
-                if (UseID3 || m_bScan)
-                {
-                  // get correct tag parser
-                  tag = TagReader.TagReader.ReadTag(pItem.Path);
-                  if (tag != null)
-                  {
-                    pItem.MusicTag = tag;
-                    bNewFile = true;
-                  }
-                }
-              }
-              else // of if ( !bFound )
-              {
-                tag.Album = song.Album;
-                tag.Artist = song.Artist;
-                tag.Genre = song.Genre;
-                tag.Duration = song.Duration;
-                tag.Title = song.Title;
-                tag.Track = song.Track;
-								tag.Rating=song.Rating;
-              }
-            }//if (strExtension!=".cda" )
-            else // int_20h: if it is .cda then get info from freedb
-            {
-              if (m_bScan)
-                continue;
-
-              if (bCDDAFailed) continue;
-              if (!Util.Win32API.IsConnectedToInternet()) continue;
-
-              try
-              {
-                // check internet connectivity
-                GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                if (null != pDlgOK && !Util.Win32API.IsConnectedToInternet())
-                {
-                  pDlgOK.SetHeading(703);
-                  //pDlgOK.SetLine(0, "");
-                  pDlgOK.SetLine(1, 703);
-                  pDlgOK.SetLine(2, "");
-                  pDlgOK.DoModal(GetID);
-                  throw new Exception("no internet");
-                }
-                else if (!Util.Win32API.IsConnectedToInternet())
-                {
-                  throw new Exception("no internet");
-                }
-
-                Freedb.FreeDBHttpImpl freedb = new Freedb.FreeDBHttpImpl();
-                char driveLetter = System.IO.Path.GetFullPath(pItem.Path).ToCharArray()[0];
-                // try finding it in the database
-                string strPathName, strCDROMPath;
-                //int_20h fake the path with the cdInfo
-                strPathName = driveLetter + ":/" + freedb.GetCDDBDiscIDInfo(driveLetter, '+');
-                strCDROMPath = strPathName + "+" + System.IO.Path.GetFileName(pItem.Path);
-
-                Song song = new Song();
-                bool bFound = false;
-                if (m_database.GetSongByFileName(strCDROMPath, ref song))
-                {
-                  bFound = true;
-                }
-
-                if (!bFound && GUIMusicFiles.MusicCD == null)
-                {
-                  try
-                  {
-                    freedb.Connect(); // should be replaced with the Connect that receives a http freedb site...
-                    Freedb.CDInfo[] cds = freedb.GetDiscInfo(driveLetter);
-                    if (cds!=null)
-                    {
-                      if (cds.Length == 1)
-                      {
-                        GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);
-                        m_strDiscId=cds[0].DiscId;
-                      }
-                      else if (cds.Length > 1)
-                      {
-                        if (m_strDiscId==cds[0].DiscId)
-                        {
-                            GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
-                        }
-                        else
-                        {
-                          m_strDiscId=cds[0].DiscId;
-                          //show dialog with all albums found
-                          string szText = GUILocalizeStrings.Get(181);
-                          GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-                          if (null != pDlg)
-                          {
-                            pDlg.Reset();
-                            pDlg.SetHeading(szText);
-                            for (int j = 0; j < cds.Length; j++)
-                            {
-                              Freedb.CDInfo info = cds[j];
-                              pDlg.Add(info.Title);
-                            }
-                            pDlg.DoModal(GetID);
-
-                            // and wait till user selects one
-                            m_iSelectedAlbum = pDlg.SelectedLabel;
-                            if (m_iSelectedAlbum < 0) return;
-                            GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
-                          }
-                        }
-                      }
-                    }
-                    freedb.Disconnect();
-                    if (GUIMusicFiles.MusicCD==null) bCDDAFailed=true;
-                  }
-                  catch(Exception)
-                  {
-                    GUIMusicFiles.MusicCD=null;
-                    bCDDAFailed=true;
-                  }
-
-                }
-
-                if (!bFound && GUIMusicFiles.MusicCD != null) // if musicCD was configured correctly...
-                {
-                  int trackno=GetCDATrackNumber(pItem.Path);
-                  Freedb.CDTrackDetail track = GUIMusicFiles.MusicCD.getTrack(trackno);
-
-                  tag = new MusicTag();
-                  tag.Album = GUIMusicFiles.MusicCD.Title;
-                  tag.Artist = track.Artist == null ? GUIMusicFiles.MusicCD.Artist : track.Artist;
-                  tag.Genre = GUIMusicFiles.MusicCD.Genre;
-                  tag.Duration = track.Duration;
-                  tag.Title = track.Title;
-                  tag.Track = track.TrackNumber;
-                  pItem.MusicTag = tag;
-                  bNewFile = true;
-                  pItem.Label = pItem.Path; // 
-                  pItem.Path = strCDROMPath; // to be stored in the database
-                }
-                
-                else if (bFound)
-                {
-                  tag = new MusicTag();
-                  tag.Album = song.Album;
-                  tag.Artist = song.Artist;
-                  tag.Genre = song.Genre;
-                  tag.Duration = song.Duration;
-                  tag.Title = song.Title;
-                  tag.Track = song.Track;
-                  pItem.MusicTag = tag;
-                }
-
-              }// end of try
-              catch (Exception e)
-              {
-                // log the problem...
-                Log.Write("OnRetrieveMusicInfo: {0}",e.ToString());
-              }
-            }
-          }//if (!tag.Loaded() )
-          else if (m_bScan)
-          {
-            bNewFile = true;
-            foreach (SongMap song1 in songsMap)
-            {
-              if (song1.m_strPath == pItem.Path)
-              {
-                bNewFile = false;
-              }
-            }
-          }
-
-          if (tag != null && m_bScan && bNewFile)
-          {
-            Song song = new Song();
-            song.Title = tag.Title;
-            song.Genre = tag.Genre;
-            song.FileName = pItem.Path;
-            song.Artist = tag.Artist;
-            song.Album = tag.Album;
-            song.Year = tag.Year;
-            song.Track = tag.Track;
-            song.Duration = tag.Duration;
-
-            m_database.AddSong(song, false);
-          }
-        }//if (!pItem.IsFolder)
-      }
-    }
-
-    bool DoScan(string strDir, ref ArrayList items)
-    {
-      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      if (dlg != null)
-      {
-        string strPath = System.IO.Path.GetFileName(strDir);
-        dlg.SetLine(2, strPath);
-        dlg.Progress();
-      }
-
-      OnRetrieveMusicInfo(ref items);
-      m_database.CheckVariousArtistsAndCoverArt();
-			
-      if (dlg != null && dlg.IsCanceled) return false;
-			
-      bool bCancel = false;
-      for (int i = 0; i < (int)items.Count; ++i)
-      {
-        GUIListItem pItem = (GUIListItem)items[i];
-        if (pItem.IsRemote) continue;
-        if (dlg != null && dlg.IsCanceled)
-        {
-          bCancel = true;
-          break;
-        }
-        if (pItem.IsFolder)
-        {
-          if (pItem.Label != "..")
-          {
-            // load subfolder
-            string strPrevDir = m_strDirectory;
-            m_strDirectory = pItem.Path;
-            ArrayList subDirItems = m_directory.GetDirectory(m_strDirectory);
-            if (!DoScan(m_strDirectory, ref subDirItems))
-            {
-              bCancel = true;
-            }
-            m_strDirectory = strPrevDir;
-            if (bCancel) break;
-          }
-        }
-      }
-			
-      return!bCancel;
-    }
-
-    void OnScan()
-    {
-      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      GUIGraphicsContext.Overlay = false;
-
-      m_bScan = true;
-      ArrayList items = new ArrayList();
-      for (int i = 0; i < GetItemCount(); ++i)
-      {
-        GUIListItem pItem=GetItem(i);
-        if (!pItem.IsRemote) 
-          items.Add(pItem);
-      }
-      if (null != dlg)
-      {
-        string strPath = System.IO.Path.GetFileName(m_strDirectory);
-        dlg.SetHeading(189);
-        dlg.SetLine(1, 330);
-        //dlg.SetLine(1, "");
-        dlg.SetLine(2, strPath);
-        dlg.StartModal(GetID);
-      }
-      
-      m_database.BeginTransaction();
-      if (DoScan(m_strDirectory, ref items))
-      {
-        dlg.SetLine(1, 328);
-        dlg.SetLine(2, "");
-        dlg.SetLine(3, 330);
-        dlg.Progress();
-        m_database.CommitTransaction();
-      }
-      else
-        m_database.RollbackTransaction();
-      m_database.EmptyCache();
-      dlg.Close();
-      // disable scan mode
-      m_bScan = false;
-      GUIGraphicsContext.Overlay = OverlayAllowed;
-		
-      LoadDirectory(m_strDirectory);
-    }
 
 		void keyboard_TextChanged(int kindOfSearch,string data)
     {
@@ -1407,15 +816,6 @@ namespace MediaPortal.GUI.Music
       }
       return string.Empty;
     }
-
-    static public string GetAlbumThumbName(string ArtistName, string AlbumName)
-    {
-      if (ArtistName==String.Empty) return String.Empty;
-      if (AlbumName==String.Empty) return String.Empty;
-      string name=String.Format("{0}-{1}", ArtistName, AlbumName);
-      return Utils.GetCoverArtName(GUIMusicFiles.AlbumThumbsFolder, name);
-    }
-
 
 		#region ISetupForm Members
 
@@ -1511,5 +911,410 @@ namespace MediaPortal.GUI.Music
 			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES) return true;
 			return false;
 		}
+		protected override void UpdateButtonStates()
+		{
+			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
+			base.UpdateButtonStates ();
+		}
+
+
+		void OnRetrieveMusicInfo(ref ArrayList items)
+		{
+			int nFolderCount = 0;
+			foreach (GUIListItem item in items)
+			{
+				if (item.IsFolder) nFolderCount++;
+			}
+
+			// Skip items with folders only
+			if (nFolderCount == (int)items.Count)
+				return;
+
+			GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+
+			if (m_strDirectory.Length == 0) return;
+			//string strItem;
+			ArrayList songsMap = new ArrayList();
+			// get all information for all files in current directory from database 
+			m_database.GetSongsByPath2(m_strDirectory, ref songsMap);
+
+			//musicCD is the information about the cd...
+			//delete old CD info
+			GUIMusicFiles.MusicCD = null;
+
+			bool bCDDAFailed=false;
+			// for every file found, but skip folder
+			for (int i = 0; i < (int)items.Count; ++i)
+			{
+				GUIListItem pItem = (GUIListItem)items[i];
+				if (pItem.IsRemote) continue;
+				if (pItem.IsFolder) continue;
+				if (pItem.Path.Length == 0) continue;
+				string strFilePath = System.IO.Path.GetFullPath(pItem.Path);
+				strFilePath = strFilePath.Substring(0, strFilePath.Length - (1 + System.IO.Path.GetFileName(pItem.Path).Length));
+				if (strFilePath != m_strDirectory)
+				{
+					return;
+				}
+				string strExtension = System.IO.Path.GetExtension(pItem.Path);
+				if (m_bScan  && strExtension.ToLower().Equals(".cda")) continue;
+				if (m_bScan && dlg != null)
+					dlg.ProgressKeys();
+
+				// dont try reading id3tags for folders or playlists
+				if (!pItem.IsFolder && !PlayListFactory.IsPlayList(pItem.Path))
+				{
+					// is tag for this file already loaded?
+					bool bNewFile = false;
+					MusicTag tag = (MusicTag)pItem.MusicTag;
+					if (tag == null)
+					{
+						// no, then we gonna load it. But dont load tags from cdda files
+						if (strExtension != ".cda")  // int_20h: changed cdda to cda.
+						{
+							// first search for file in our list of the current directory
+							Song song = new Song();
+							bool bFound = false;
+							foreach (SongMap song1 in songsMap)
+							{
+								if (song1.m_strPath == pItem.Path)
+								{
+									song = song1.m_song;
+									bFound = true;
+									tag = new MusicTag();
+									pItem.MusicTag = tag;
+									break;
+								}
+							}
+							
+							if (!bFound && !m_bScan)
+							{
+								// try finding it in the database
+								string strPathName;
+								string strFileName;
+								DatabaseUtility.Split(pItem.Path, out strPathName, out strFileName);
+								if (strPathName != m_strDirectory)
+								{
+									if (m_database.GetSongByFileName(pItem.Path, ref song))
+									{
+										bFound = true;
+									}
+								}
+							}
+
+							if (!bFound)
+							{
+								// if id3 tag scanning is turned on OR we're scanning the directory
+								// then parse id3tag from file
+								if (UseID3 || m_bScan)
+								{
+									// get correct tag parser
+									tag = TagReader.TagReader.ReadTag(pItem.Path);
+									if (tag != null)
+									{
+										pItem.MusicTag = tag;
+										bNewFile = true;
+									}
+								}
+							}
+							else // of if ( !bFound )
+							{
+								tag.Album = song.Album;
+								tag.Artist = song.Artist;
+								tag.Genre = song.Genre;
+								tag.Duration = song.Duration;
+								tag.Title = song.Title;
+								tag.Track = song.Track;
+								tag.Rating=song.Rating;
+							}
+						}//if (strExtension!=".cda" )
+						else // int_20h: if it is .cda then get info from freedb
+						{
+							if (m_bScan)
+								continue;
+
+							if (bCDDAFailed) continue;
+							if (!Util.Win32API.IsConnectedToInternet()) continue;
+
+							try
+							{
+								// check internet connectivity
+								GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+								if (null != pDlgOK && !Util.Win32API.IsConnectedToInternet())
+								{
+									pDlgOK.SetHeading(703);
+									//pDlgOK.SetLine(0, "");
+									pDlgOK.SetLine(1, 703);
+									pDlgOK.SetLine(2, "");
+									pDlgOK.DoModal(GetID);
+									throw new Exception("no internet");
+								}
+								else if (!Util.Win32API.IsConnectedToInternet())
+								{
+									throw new Exception("no internet");
+								}
+
+								Freedb.FreeDBHttpImpl freedb = new Freedb.FreeDBHttpImpl();
+								char driveLetter = System.IO.Path.GetFullPath(pItem.Path).ToCharArray()[0];
+								// try finding it in the database
+								string strPathName, strCDROMPath;
+								//int_20h fake the path with the cdInfo
+								strPathName = driveLetter + ":/" + freedb.GetCDDBDiscIDInfo(driveLetter, '+');
+								strCDROMPath = strPathName + "+" + System.IO.Path.GetFileName(pItem.Path);
+
+								Song song = new Song();
+								bool bFound = false;
+								if (m_database.GetSongByFileName(strCDROMPath, ref song))
+								{
+									bFound = true;
+								}
+
+								if (!bFound && GUIMusicFiles.MusicCD == null)
+								{
+									try
+									{
+										freedb.Connect(); // should be replaced with the Connect that receives a http freedb site...
+										Freedb.CDInfo[] cds = freedb.GetDiscInfo(driveLetter);
+										if (cds!=null)
+										{
+											if (cds.Length == 1)
+											{
+												GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);
+												m_strDiscId=cds[0].DiscId;
+											}
+											else if (cds.Length > 1)
+											{
+												if (m_strDiscId==cds[0].DiscId)
+												{
+													GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
+												}
+												else
+												{
+													m_strDiscId=cds[0].DiscId;
+													//show dialog with all albums found
+													string szText = GUILocalizeStrings.Get(181);
+													GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+													if (null != pDlg)
+													{
+														pDlg.Reset();
+														pDlg.SetHeading(szText);
+														for (int j = 0; j < cds.Length; j++)
+														{
+															Freedb.CDInfo info = cds[j];
+															pDlg.Add(info.Title);
+														}
+														pDlg.DoModal(GetID);
+
+														// and wait till user selects one
+														m_iSelectedAlbum = pDlg.SelectedLabel;
+														if (m_iSelectedAlbum < 0) return;
+														GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
+													}
+												}
+											}
+										}
+										freedb.Disconnect();
+										if (GUIMusicFiles.MusicCD==null) bCDDAFailed=true;
+									}
+									catch(Exception)
+									{
+										GUIMusicFiles.MusicCD=null;
+										bCDDAFailed=true;
+									}
+
+								}
+
+								if (!bFound && GUIMusicFiles.MusicCD != null) // if musicCD was configured correctly...
+								{
+									int trackno=GetCDATrackNumber(pItem.Path);
+									Freedb.CDTrackDetail track = GUIMusicFiles.MusicCD.getTrack(trackno);
+
+									tag = new MusicTag();
+									tag.Album = GUIMusicFiles.MusicCD.Title;
+									tag.Artist = track.Artist == null ? GUIMusicFiles.MusicCD.Artist : track.Artist;
+									tag.Genre = GUIMusicFiles.MusicCD.Genre;
+									tag.Duration = track.Duration;
+									tag.Title = track.Title;
+									tag.Track = track.TrackNumber;
+									pItem.MusicTag = tag;
+									bNewFile = true;
+									pItem.Label = pItem.Path; // 
+									pItem.Path = strCDROMPath; // to be stored in the database
+								}
+                
+								else if (bFound)
+								{
+									tag = new MusicTag();
+									tag.Album = song.Album;
+									tag.Artist = song.Artist;
+									tag.Genre = song.Genre;
+									tag.Duration = song.Duration;
+									tag.Title = song.Title;
+									tag.Track = song.Track;
+									pItem.MusicTag = tag;
+								}
+
+							}// end of try
+							catch (Exception e)
+							{
+								// log the problem...
+								Log.Write("OnRetrieveMusicInfo: {0}",e.ToString());
+							}
+						}
+					}//if (!tag.Loaded() )
+					else if (m_bScan)
+					{
+						bNewFile = true;
+						foreach (SongMap song1 in songsMap)
+						{
+							if (song1.m_strPath == pItem.Path)
+							{
+								bNewFile = false;
+							}
+						}
+					}
+					foreach (SongMap song1 in songsMap)
+					{
+						if (song1.m_song.FileName == pItem.Path)
+						{
+							pItem.AlbumInfoTag=song1.m_song;
+						}
+					}
+
+					if (tag != null && m_bScan && bNewFile)
+					{
+						Song song = new Song();
+						song.Title = tag.Title;
+						song.Genre = tag.Genre;
+						song.FileName = pItem.Path;
+						song.Artist = tag.Artist;
+						song.Album = tag.Album;
+						song.Year = tag.Year;
+						song.Track = tag.Track;
+						song.Duration = tag.Duration;
+						pItem.AlbumInfoTag=song;
+
+						m_database.AddSong(song, false);
+					}
+				}//if (!pItem.IsFolder)
+			}
+		}
+
+		bool DoScan(string strDir, ref ArrayList items)
+		{
+			GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			if (dlg != null)
+			{
+				string strPath = System.IO.Path.GetFileName(strDir);
+				dlg.SetLine(2, strPath);
+				dlg.Progress();
+			}
+
+			OnRetrieveMusicInfo(ref items);
+			m_database.CheckVariousArtistsAndCoverArt();
+			
+			if (dlg != null && dlg.IsCanceled) return false;
+			
+			bool bCancel = false;
+			for (int i = 0; i < (int)items.Count; ++i)
+			{
+				GUIListItem pItem = (GUIListItem)items[i];
+				if (pItem.IsRemote) continue;
+				if (dlg != null && dlg.IsCanceled)
+				{
+					bCancel = true;
+					break;
+				}
+				if (pItem.IsFolder)
+				{
+					if (pItem.Label != "..")
+					{
+						// load subfolder
+						string strPrevDir = m_strDirectory;
+						m_strDirectory = pItem.Path;
+						ArrayList subDirItems = m_directory.GetDirectory(m_strDirectory);
+						if (!DoScan(m_strDirectory, ref subDirItems))
+						{
+							bCancel = true;
+						}
+						m_strDirectory = strPrevDir;
+						if (bCancel) break;
+					}
+				}
+			}
+			
+			return!bCancel;
+		}
+
+		void OnScan()
+		{
+			GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			GUIGraphicsContext.Overlay = false;
+
+			m_bScan = true;
+			ArrayList items = new ArrayList();
+			for (int i = 0; i < GetItemCount(); ++i)
+			{
+				GUIListItem pItem=GetItem(i);
+				if (!pItem.IsRemote) 
+					items.Add(pItem);
+			}
+			if (null != dlg)
+			{
+				string strPath = System.IO.Path.GetFileName(m_strDirectory);
+				dlg.SetHeading(189);
+				dlg.SetLine(1, 330);
+				//dlg.SetLine(1, "");
+				dlg.SetLine(2, strPath);
+				dlg.StartModal(GetID);
+			}
+      
+			m_database.BeginTransaction();
+			if (DoScan(m_strDirectory, ref items))
+			{
+				dlg.SetLine(1, 328);
+				dlg.SetLine(2, "");
+				dlg.SetLine(3, 330);
+				dlg.Progress();
+				m_database.CommitTransaction();
+			}
+			else
+				m_database.RollbackTransaction();
+			m_database.EmptyCache();
+			dlg.Close();
+			// disable scan mode
+			m_bScan = false;
+			GUIGraphicsContext.Overlay = OverlayAllowed;
+		
+			LoadDirectory(m_strDirectory);
+		}
+		protected override void OnInfo(int iItem)
+		{
+			GUIListItem pItem = GetItem(iItem);
+			Song song = pItem.AlbumInfoTag as Song;
+			if (song==null)
+			{
+				ArrayList list = new ArrayList();
+				list.Add(pItem);
+				m_bScan=true;
+				OnRetrieveMusicInfo(ref list);
+				m_bScan=false;
+			}
+			base.OnInfo (iItem);
+		}
+		protected override void AddSongToFavorites(GUIListItem item)
+		{
+			Song song = item.AlbumInfoTag as Song;
+			if (song==null)
+			{
+				ArrayList list = new ArrayList();
+				list.Add(item);
+				m_bScan=true;
+				OnRetrieveMusicInfo(ref list);
+				m_bScan=false;
+			}
+			base.AddSongToFavorites (item);
+		}
+
 	}
 }

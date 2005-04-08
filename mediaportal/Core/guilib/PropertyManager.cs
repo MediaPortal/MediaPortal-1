@@ -110,6 +110,7 @@ namespace MediaPortal.GUI.Library
 			m_properties["#TV.Search.thumb"]="";              
 			m_properties["#TV.Search.Genre"]="";        
  
+			m_properties["#view"]="";        
 
     }
 
