@@ -721,6 +721,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Sections\MusicViews.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MusicViews.resx"
+                    DependentUpon = "MusicViews.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\PictureExtensions.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
