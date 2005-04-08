@@ -295,7 +295,7 @@ namespace MediaPortal.GUI.Music
 			{
 				if (MusicState.StartWindow!= (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
 				{
-					GUIWindowManager.ReplaceWindow(MusicState.StartWindow);
+					GUIWindowManager.ReplaceWindow((int)GUIWindow.Window.WINDOW_MUSIC_GENRE);
 					return ;
 				}
 			}
