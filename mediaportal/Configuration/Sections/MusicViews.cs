@@ -15,6 +15,52 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class MusicViews : MediaPortal.Configuration.SectionSettings
 	{
+		public class SyncedComboBox:ComboBox
+		{
+			DataGrid grid;
+			int      cell;
+			public int Cell
+			{
+				get { return cell;}
+				set { cell=value;}
+			}
+
+			public DataGrid Grid
+			{
+				get { return grid;}
+				set {grid=value;}
+			}
+			protected override void OnLayout(LayoutEventArgs levent)
+			{
+
+				if (true||SelectedIndex<0)
+				{
+					DataGridCell currentCell=Grid.CurrentCell;
+
+					if (currentCell.ColumnNumber==Cell)
+					{
+						DataTable ds= Grid.DataSource as DataTable;
+						if (ds!=null)
+						{
+							foreach (string item in Items)
+							{
+								if (currentCell.RowNumber < ds.Rows.Count)
+								{
+									DataRow row=ds.Rows[currentCell.RowNumber];
+									string currentValue = (string)row.ItemArray[Cell];
+									if (currentValue==item)
+									{
+										SelectedItem=item;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+				base.OnLayout (levent);
+			}
+		}
     private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.DataGrid dataGrid1;
 		private System.Windows.Forms.Label label1;
@@ -22,7 +68,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button btnSave;
 		private System.Windows.Forms.Button btnDelete;
 		private System.ComponentModel.IContainer components = null;
-		private DataGridTableStyle GridTableStyle;
 
 		ViewDefinition currentView ;
 		ArrayList views;
@@ -110,25 +155,31 @@ namespace MediaPortal.Configuration.Sections
 			//Declare and initialize local variables used
 			DataColumn dtCol = null;//Data Column variable
 			string[]   arrColumnNames = null;//string array variable
-			System.Windows.Forms.ComboBox cbSelection, cbOperators;  //combo box var              
+			SyncedComboBox cbSelection, cbOperators;  //combo box var              
 			DataTable datasetFilters;//Data Table var
            
 			//Create the combo box object and set its properties
-			cbSelection               = new ComboBox();
+			cbSelection               = new SyncedComboBox();
 			cbSelection.Cursor        = System.Windows.Forms.Cursors.Arrow;
 			cbSelection.DropDownStyle=System.Windows.Forms.ComboBoxStyle.DropDownList;
 			cbSelection.Dock          = DockStyle.Fill;
+			cbSelection.DisplayMember="Selection";
 			foreach (string strText in selections)
 				cbSelection.Items.Add(strText);
+			cbSelection.Grid=dataGrid1;
+			cbSelection.Cell=0;
 			//Event that will be fired when selected index in the combo box is changed
 			cbSelection.SelectionChangeCommitted +=new EventHandler(cbSelection_SelectionChangeCommitted);
-
 			
 			//Create the combo box object and set its properties
-			cbOperators               = new ComboBox();
+			cbOperators               = new SyncedComboBox();
 			cbOperators.Cursor        = System.Windows.Forms.Cursors.Arrow;
 			cbOperators.DropDownStyle=System.Windows.Forms.ComboBoxStyle.DropDownList;
 			cbOperators.Dock          = DockStyle.Fill;
+			cbOperators.DisplayMember="Operator";
+			cbOperators.Grid=dataGrid1;
+			cbOperators.Cell=1;
+			cbOperators.SelectionChangeCommitted+=new EventHandler(cbOperators_SelectionChangeCommitted);
 			foreach (string strText in sqloperators)
 				cbOperators.Items.Add(strText);
      
@@ -142,7 +193,7 @@ namespace MediaPortal.Configuration.Sections
      
 			//Create the Data Table object which will then be used to hold
 			//columns and rows
-			datasetFilters            = new DataTable ("FunctionArea");
+			datasetFilters            = new DataTable ("Selection");
 			//Add the string array of columns to the DataColumn object       
 			for(int i=0; i< arrColumnNames.Length;i++)
 			{    
@@ -171,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
 			dataGrid1.DataSource    = datasetFilters; 
 
 			//set style property when first time the grid loads, next time onwards it //will maintain its property
-			if(!dataGrid1.TableStyles.Contains("FunctionArea"))
+			if(!dataGrid1.TableStyles.Contains("Selection"))
 			{
 				//Create a DataGridTableStyle object     
 				DataGridTableStyle dgdtblStyle      = new DataGridTableStyle();
@@ -204,6 +255,8 @@ namespace MediaPortal.Configuration.Sections
 
 			dgtb    =     (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[1];
 			dgtb.TextBox.Controls.Add (cbOperators);        
+			
+			
 		}
 		
 
@@ -231,11 +284,11 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.dataGrid1 = new System.Windows.Forms.DataGrid();
-			this.label1 = new System.Windows.Forms.Label();
-			this.cbViews = new System.Windows.Forms.ComboBox();
-			this.btnSave = new System.Windows.Forms.Button();
 			this.btnDelete = new System.Windows.Forms.Button();
+			this.btnSave = new System.Windows.Forms.Button();
+			this.cbViews = new System.Windows.Forms.ComboBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.dataGrid1 = new System.Windows.Forms.DataGrid();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
 			this.SuspendLayout();
@@ -257,31 +310,13 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Music Views";
 			// 
-			// dataGrid1
+			// btnDelete
 			// 
-			this.dataGrid1.DataMember = "";
-			this.dataGrid1.FlatMode = true;
-			this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-			this.dataGrid1.Location = new System.Drawing.Point(16, 64);
-			this.dataGrid1.Name = "dataGrid1";
-			this.dataGrid1.Size = new System.Drawing.Size(408, 312);
-			this.dataGrid1.TabIndex = 0;
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(24, 32);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(56, 16);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "View:";
-			// 
-			// cbViews
-			// 
-			this.cbViews.Location = new System.Drawing.Point(80, 24);
-			this.cbViews.Name = "cbViews";
-			this.cbViews.Size = new System.Drawing.Size(168, 21);
-			this.cbViews.TabIndex = 2;
-			this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
+			this.btnDelete.Location = new System.Drawing.Point(376, 384);
+			this.btnDelete.Name = "btnDelete";
+			this.btnDelete.Size = new System.Drawing.Size(48, 23);
+			this.btnDelete.TabIndex = 4;
+			this.btnDelete.Text = "Delete";
 			// 
 			// btnSave
 			// 
@@ -291,13 +326,31 @@ namespace MediaPortal.Configuration.Sections
 			this.btnSave.TabIndex = 3;
 			this.btnSave.Text = "Save";
 			// 
-			// btnDelete
+			// cbViews
 			// 
-			this.btnDelete.Location = new System.Drawing.Point(376, 384);
-			this.btnDelete.Name = "btnDelete";
-			this.btnDelete.Size = new System.Drawing.Size(48, 23);
-			this.btnDelete.TabIndex = 4;
-			this.btnDelete.Text = "Delete";
+			this.cbViews.Location = new System.Drawing.Point(80, 24);
+			this.cbViews.Name = "cbViews";
+			this.cbViews.Size = new System.Drawing.Size(168, 21);
+			this.cbViews.TabIndex = 2;
+			this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(24, 32);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(56, 16);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "View:";
+			// 
+			// dataGrid1
+			// 
+			this.dataGrid1.DataMember = "";
+			this.dataGrid1.FlatMode = true;
+			this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+			this.dataGrid1.Location = new System.Drawing.Point(16, 64);
+			this.dataGrid1.Name = "dataGrid1";
+			this.dataGrid1.Size = new System.Drawing.Size(408, 312);
+			this.dataGrid1.TabIndex = 0;
 			// 
 			// MusicViews
 			// 
@@ -323,6 +376,23 @@ namespace MediaPortal.Configuration.Sections
 
 		private void cbSelection_SelectionChangeCommitted(object sender, EventArgs e)
 		{
+			SyncedComboBox box = sender as SyncedComboBox;
+			if (box ==null) return;
+			DataGridCell currentCell=dataGrid1.CurrentCell;
+			DataTable table = dataGrid1.DataSource as DataTable;
+
+			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
+		}
+
+
+		private void cbOperators_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			SyncedComboBox box = sender as SyncedComboBox;
+			if (box ==null) return;
+			DataGridCell currentCell=dataGrid1.CurrentCell;
+			DataTable table = dataGrid1.DataSource as DataTable;
+
+			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
 
 		}
 	}
