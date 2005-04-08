@@ -810,7 +810,6 @@ namespace MediaPortal.GUI.Music
       // no album art? then use folder.jpg
       string strPathName;
       string strFileName;
-      MusicDatabase	        m_database = new MusicDatabase();
       DatabaseUtility.Split(filename, out strPathName, out strFileName);
       strFolderThumb = strPathName + @"\folder.jpg";
       if (System.IO.File.Exists(strFolderThumb))
