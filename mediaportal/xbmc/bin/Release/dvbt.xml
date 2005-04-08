@@ -1,5 +1,5 @@
-<!-- version : 1.0.0.4                          -->
-<!-- changed : 23-jan-2005 by Frodo             -->
+<!-- version : 1.0.0.5                          -->
+<!-- changed : 08-april-2005 by DMAN            -->
 <!-- contains:									-->
 <!--   - Europe 								-->
 <!--   - Australia 								-->
@@ -414,7 +414,7 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Taiwan - All Regions" offset="125">
+	<country name="Taiwan - All Regions" offset="0">
 		<carrier frequency="533000" bandwidth="6" />
 		<carrier frequency="539000" bandwidth="6" />
 		<carrier frequency="545000" bandwidth="6" />
