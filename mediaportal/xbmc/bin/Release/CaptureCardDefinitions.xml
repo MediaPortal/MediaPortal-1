@@ -954,6 +954,7 @@
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  	 checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  	 checkdevice="true"></filter>
         <filter cat="crossbar" 		name="713x BDA Analog Xbar"      	 checkdevice="true"></filter>
+        <filter cat="capture"  		name="713x BDA Analog Capture"   	 checkdevice="true"></filter>
 	<filter cat="encodervideo"  	name="CyberLink MPEG Video Encoder"      checkdevice="false"></filter>        
 	<filter cat="encoderaudio"  	name="Cyberlink Audio Encoder(LifeView)" checkdevice="false"></filter>
         <filter cat="mux"  		name="CyberLink MPEG Muxer"     	 checkdevice="false"></filter>
@@ -2438,6 +2439,33 @@
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
 	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="FlyTV Platinum Mini" capturename="FlyTV Platinum33 mini" devid="ven_1131&amp;dev_7133&amp;subsys_02125168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="PhTVTune (TDA8275)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="LifeView FlyVideo TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="LifeView FlyVideo CrossBar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="FlyTV Platinum33 mini"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="InterVideo Video Encoder"		checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"		checkdevice="false"></filter>
+	<filter cat="mux"		name="InterVideo Multiplexer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
