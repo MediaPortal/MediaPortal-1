@@ -457,6 +457,9 @@ namespace MediaPortal.GUI.Music
 					OnSetRating(GetSelectedItemNo());
 					break;
 
+				case 102:
+					OnScan();
+				break;
       }
     }
 
