@@ -126,7 +126,7 @@ namespace WindowPlugins.GUIPrograms
 			XmlNode node = rootElement.SelectSingleNode(String.Format("/contentprofiles/profile[@id={0}]", curApp.ContentID));
 			if (node != null)
 			{
-				XmlNode fieldnode = node.SelectSingleNode(String.Format("fields/field[@id=\"{0}\"]", strFieldName));
+				XmlNode fieldnode = node.SelectSingleNode(String.Format("fields/field[@fieldid=\"{0}\"]", strFieldName));
 				if (fieldnode != null)
 				{
 					result = ParseExpressions(fieldnode.InnerText, curApp, curFile);
