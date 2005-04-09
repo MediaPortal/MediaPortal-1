@@ -34,6 +34,8 @@ namespace MediaPortal.GUI.Music
 
     public GUIMusicGenres()
     {
+			for (int i=0; i < sortasc.Length;++i)
+				sortasc[i]=true;
       GetID=(int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
       
       m_directory.AddDrives();
@@ -91,8 +93,6 @@ namespace MediaPortal.GUI.Music
 		}
 		protected override bool AllowView(View view)
 		{
-			if (view==View.Albums) return false;
-			if (view==View.FilmStrip) return false;
 			return true;
 		}
 
