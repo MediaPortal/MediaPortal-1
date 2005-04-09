@@ -16,6 +16,18 @@
 			<colordiffuse>ffffffff</colordiffuse>
 		</control>
 		<control>
+			<description>Background TV</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>70</posX>
+			<posY>400</posY>
+			<width>-</width>
+			<height>-</height>
+			<colordiffuse>ffffffff</colordiffuse>
+			<texture>Background_Recipies.png</texture>
+			<colorkey>0</colorkey>
+		</control>
+		<control>
 			<type>image</type>
 			<id>1</id>
 			<posX>60</posX>
@@ -51,7 +63,7 @@
 			<posY>70</posY>
 			<width>400</width>
 			<label>#selecteditem</label>
-			<font>font13</font>
+			<font>font14</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>

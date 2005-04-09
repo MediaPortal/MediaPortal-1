@@ -47,8 +47,8 @@
 			<description>Date</description>
 			<type>label</type>
 			<id>200</id>
-			<posX>690</posX>
-			<posY>30</posY>
+			<posX>65</posX>
+			<posY>230</posY>
 			<label>#date</label>
 			<align>left</align>
 			<font>font13</font>
@@ -58,8 +58,8 @@
 			<description>Time</description>
 			<type>label</type>
 			<id>201</id>
-			<posX>690</posX>
-			<posY>50</posY>
+			<posX>65</posX>
+			<posY>250</posY>
 			<label>#time</label>
 			<align>left</align>
 			<font>font13</font>
@@ -84,7 +84,7 @@
 			<posY>70</posY>
 			<width>400</width>
 			<label>#selecteditem</label>
-			<font>font13</font>
+			<font>font14</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
 		</control>
@@ -198,7 +198,7 @@
 				<posY>440</posY>
 				<width>250</width>
 				<label>#TV.RecordedTV.Title</label>
-				<font>font13</font>
+				<font>font14</font>
 				<align>left</align>
 				<textcolor>FFFFFFFF</textcolor>
 			</control>
@@ -210,7 +210,7 @@
 				<posY>460</posY>
 				<label>#TV.RecordedTV.Time</label>
 				<align>left</align>
-				<font>font13</font>
+				<font>font14</font>
 				<textcolor>FFB2D4F5</textcolor>
 			</control>
 			<control>
@@ -222,7 +222,7 @@
 				<width>430</width>
 				<height>65</height>
 				<label>#TV.RecordedTV.Description</label>
-				<font>font13</font>
+				<font>font14</font>
 				<textcolor>FFFFFFFF</textcolor>
 			</control>
 			<control>
@@ -233,7 +233,7 @@
 				<posY>460</posY>
 				<label>#TV.RecordedTV.Genre</label>
 				<align>right</align>
-				<font>font13</font>
+				<font>font14</font>
 				<textcolor>FFB2D4F5</textcolor>
 			</control>
 		</control>
