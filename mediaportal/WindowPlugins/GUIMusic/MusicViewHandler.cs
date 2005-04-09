@@ -119,25 +119,25 @@ namespace MediaPortal.GUI.Music
 				bool useGenreTable=false;
 				FilterDefinition defRoot=(FilterDefinition)currentView.Filters[0];
 				string table=GetTable(defRoot.Where,ref useSongTable, ref useAlbumTable, ref useArtistTable,ref useGenreTable);
-				BuildRestriction(defRoot,ref whereClause );
+
 				if (table=="album")
 				{
 					sql=String.Format("select * from album ");
-					if (whereClause!=String.Empty) sql+= whereClause;
+					if (whereClause!=String.Empty) sql+= "where "+whereClause;
 					if (orderClause!=String.Empty) sql+= orderClause;
 					database.GetSongsByFilter(sql, out songs,false, true, false, false);
 				}
 				else if (table=="artist")
 				{
 					sql=String.Format("select * from artist ");
-					if (whereClause!=String.Empty) sql+= whereClause;
+					if (whereClause!=String.Empty) sql+= "where "+whereClause;
 					if (orderClause!=String.Empty) sql+= orderClause;
 					database.GetSongsByFilter(sql, out songs,true, false, false, false);
 				}
 				else if (table=="genre")
 				{
 					sql=String.Format("select * from genre ");
-					if (whereClause!=String.Empty) sql+= whereClause;
+					if (whereClause!=String.Empty) sql+= "where "+whereClause;
 					if (orderClause!=String.Empty) sql+= orderClause;
 					database.GetSongsByFilter(sql, out songs,false, false, false, true);
 				}
@@ -194,7 +194,7 @@ namespace MediaPortal.GUI.Music
 			if (filter.SqlOperator != String.Empty && filter.Restriction != String.Empty)
 			{
 				if (whereClause!="") whereClause+=" and ";
-				whereClause+=String.Format(" {0}{1}'{2}'",GetFieldName(filter.Where),filter.SqlOperator,filter.Restriction);
+				whereClause+=String.Format(" {0} {1} '{2}'",GetFieldName(filter.Where),filter.SqlOperator,filter.Restriction);
 			}
 		}
 		void BuildWhere(FilterDefinition filter,ref string whereClause )
