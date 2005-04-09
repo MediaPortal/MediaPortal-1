@@ -260,7 +260,7 @@ namespace MediaPortal.GUI.Music
 		string GetFieldName(string where)
 		{
 			if (where=="album") return "album.strAlbum";
-			if (where=="artist") return "song.strArtist";
+			if (where=="artist") return "artist.strArtist";
 			if (where=="title") return "song.idSong";
 			if (where=="genre") return "genre.strGenre";
 			if (where=="year") return "song.iYear";
