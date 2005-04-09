@@ -261,7 +261,7 @@ namespace MediaPortal.GUI.Music
 		{
 			if (where=="album") return "album.strAlbum";
 			if (where=="artist") return "artist.strArtist";
-			if (where=="title") return "song.idSong";
+			if (where=="title") return "song.strTitle";
 			if (where=="genre") return "genre.strGenre";
 			if (where=="year") return "song.iYear";
 			if (where=="track") return "song.iTrack";
