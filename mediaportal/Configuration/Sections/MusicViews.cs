@@ -74,20 +74,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox tbViewName;
 		DataSet ds = new DataSet();
+		bool updating=false;
 
-		enum WhereTypes
-		{
-			album,
-			artist,
-			title,
-			genre,
-			year,
-			track,
-			timesplayed,
-			rating,
-			favorites 
-		}
-    public MusicViews() :  this("Music Views")
+		public MusicViews() :  this("Music Views")
     {
     }
 
@@ -113,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
 
 		void LoadViews()
 		{
-
+			updating=true;
 			cbViews.Items.Clear();
 			foreach (ViewDefinition view in views)
 			{
@@ -123,11 +112,13 @@ namespace MediaPortal.Configuration.Sections
 			if (cbViews.Items.Count>0)
 				cbViews.SelectedIndex=0;
 													
-			UpdateView( );	
+			UpdateView( );
+			updating=false;
 		}
 
 		void UpdateView()
 		{
+			updating=true;
 			currentView =null;
 			int index=cbViews.SelectedIndex;
 			if (index < 0) return;
@@ -268,7 +259,8 @@ namespace MediaPortal.Configuration.Sections
 			dgtb    =     (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[1];
 			dgtb.TextBox.Controls.Add (cbOperators);        
 			
-			
+		
+			updating=false;	
 		}
 		
 
@@ -399,6 +391,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void cbViews_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
+			if (updating) return;
 			StoreGridInView();
 			UpdateView();
 		}
@@ -410,6 +403,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void cbSelection_SelectionChangeCommitted(object sender, EventArgs e)
 		{
+			if (updating) return;
 			SyncedComboBox box = sender as SyncedComboBox;
 			if (box ==null) return;
 			DataGridCell currentCell=dataGrid1.CurrentCell;
@@ -423,6 +417,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void cbOperators_SelectionChangeCommitted(object sender, EventArgs e)
 		{
+			if (updating) return;
 			SyncedComboBox box = sender as SyncedComboBox;
 			if (box ==null) return;
 			DataGridCell currentCell=dataGrid1.CurrentCell;
@@ -453,6 +448,7 @@ namespace MediaPortal.Configuration.Sections
 
 		void StoreGridInView()
 		{
+			if (updating) return;
 			if (dataGrid1.DataSource==null) return;
 			if (currentView==null) return;
 			ViewDefinition view =null;
@@ -473,6 +469,20 @@ namespace MediaPortal.Configuration.Sections
 				view.Name=tbViewName.Text;
 				views.Add(view);
 				cbViews.Items.Insert(cbViews.Items.Count-1,view.Name);
+			}
+			else
+			{
+				updating=true;
+				for (int i=0; i < cbViews.Items.Count;++i)
+				{
+					string label=(string)cbViews.Items[i];
+					if (label==currentView.Name)
+					{
+						cbViews.Items[i]=tbViewName.Text;
+						break;
+					}
+				}
+				updating=false;
 			}
 			view.Name=tbViewName.Text;
 			view.Filters.Clear();

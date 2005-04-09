@@ -119,6 +119,7 @@ namespace MediaPortal.GUI.Music
 				bool useGenreTable=false;
 				FilterDefinition defRoot=(FilterDefinition)currentView.Filters[0];
 				string table=GetTable(defRoot.Where,ref useSongTable, ref useAlbumTable, ref useArtistTable,ref useGenreTable);
+				BuildRestriction(defRoot,ref whereClause );
 				if (table=="album")
 				{
 					sql=String.Format("select * from album ");
@@ -193,7 +194,7 @@ namespace MediaPortal.GUI.Music
 			if (filter.SqlOperator != String.Empty && filter.Restriction != String.Empty)
 			{
 				if (whereClause!="") whereClause+=" and ";
-				whereClause+=String.Format(" {0}{1}'{2}'",GetFieldId(filter.Where),filter.SqlOperator,filter.Restriction);
+				whereClause+=String.Format(" {0}{1}'{2}'",GetFieldName(filter.Where),filter.SqlOperator,filter.Restriction);
 			}
 		}
 		void BuildWhere(FilterDefinition filter,ref string whereClause )
@@ -247,6 +248,19 @@ namespace MediaPortal.GUI.Music
 			if (where=="artist") return "song.idArtist";
 			if (where=="title") return "song.idSong";
 			if (where=="genre") return "genre.idGenre";
+			if (where=="year") return "song.iYear";
+			if (where=="track") return "song.iTrack";
+			if (where=="timesplayed") return "song.iTimesPlayed";
+			if (where=="rating") return "song.iRating";
+			if (where=="favorites") return "song.favorite";
+			return null;
+		}
+		string GetFieldName(string where)
+		{
+			if (where=="album") return "album.strAlbum";
+			if (where=="artist") return "song.strArtist";
+			if (where=="title") return "song.idSong";
+			if (where=="genre") return "genre.strGenre";
 			if (where=="year") return "song.iYear";
 			if (where=="track") return "song.iTrack";
 			if (where=="timesplayed") return "song.iTimesPlayed";
