@@ -37,11 +37,10 @@
 <!--    Conexant DVB-T                        -->
 <!--    Diamond XtremeTV PVR550		      -->
 <!--    DNTV Live DVB-T                       -->
-<!--    Dvico Fusion HDTV                     -->
-<!--    Dvico Fusion HDTV WDM                 -->
+<!--    Dvico Fusion HDTV Plus                -->
+<!--    Dvico Fusion HDTV Plus (Analog)       -->
 <!--    Dvico Fusion HDTV Lite                -->
 <!--    Dvico Fusion HDTV USB2                -->
-<!--    Dvico Fusion HDTV Plus (Driver 2.80)  -->
 <!--    Emuzed Maui I NTSC	              -->
 <!--    Emuzed Maui II NTSC	              -->
 <!--    Emuzed Maui II NTSC FM	              -->
@@ -99,8 +98,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.60                                                               -->
-<!-- changed : 07-april-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.61                                                               -->
+<!-- changed : 09-april-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -744,14 +743,14 @@
     </tv> 
   </capturecard>
    
-  <capturecard commercialname="Dvico Fusion HDTV" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_05">
+  <capturecard commercialname="Dvico Fusion HDTV Plus" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA DVB-T Tuner/Demod"      checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -759,15 +758,31 @@
       </connections>
     </tv>
   </capturecard>
-   
+
+  <capturecard commercialname="Dvico Fusion HDTV Plus" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db1018ac&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="Dvico Fusion HDTV" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
       <filters> 
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter> 
-        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" 			checkdevice="true"></filter> 
-        <filter cat="capture" name="FusionHDTV, Transport Stream Capture" 	checkdevice="true"></filter> 
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 		checkdevice="false"></filter> 
+        <filter cat="tunerdevice" 	name="FusionHDTV, BDA Tuner" 			checkdevice="true"></filter> 
+        <filter cat="capture" 		name="FusionHDTV, Transport Stream Capture" 	checkdevice="true"></filter> 
       </filters> 
       <connections> 
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -829,7 +844,7 @@
     </tv>
   </capturecard>
   
-   <capturecard commercialname="Fusion HDTV" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
+   <capturecard commercialname="Dvico Fusion HDTV Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
@@ -853,9 +868,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice" name="FusionHDTV, BDA Tuner" 			    checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"        	checkdevice="false"></filter>
+        <filter cat="tunerdevice" 	name="FusionHDTV, BDA Tuner" 		    	checkdevice="true"></filter>
+        <filter cat="capture"         	name="FusionHDTV, Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1158,22 +1173,6 @@
     </tv>
   </capturecard>  
   
- <capturecard commercialname="Dvico Fusion HDTV Plus (Driver 2.80)" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db1018ac&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"		    checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
-      </filters>
-      <connections>
-      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
   <capturecard commercialname="Asus PVR 416" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_48231043&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -2328,18 +2327,23 @@
   <capturecard commercialname="Creative Video Blaster Digital VCR" capturename="VBDVCR Capture" devid="ven_1274&amp;dev_5882&amp;subsys_58821274&amp;rev_02">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="0" audio="1" mpeg2=""></interface>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"	name="VBDVCR TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"	name="VBDVCR TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"	name="VBDVCR Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"	name="VBDVCR Capture"	checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="VBDVCR TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="VBDVCR TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="VBDVCR Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="VBDVCR Capture"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"	checkdevice="false"></filter>
+	<filter cat="mux"		name="InterVideo Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
         <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2455,6 +2459,33 @@
 	<filter cat="encodervideo"	name="InterVideo Video Encoder"		checkdevice="false"></filter>
 	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"		checkdevice="false"></filter>
 	<filter cat="mux"		name="InterVideo Multiplexer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro Videomate Gold Plus" capturename="VideoMate TV Capture" devid="ven_1131&amp;dev_7134&amp;subsys_c200185b&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="VideoMate TV Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="VideoMate TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="VideoMate TV Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="VideoMate TV Capture"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Compro MPEG Video Encoder"	checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="Compro MPEG Audio Encoder"	checkdevice="false"></filter>
+	<filter cat="mux"		name="Compro MPEG Muxer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
