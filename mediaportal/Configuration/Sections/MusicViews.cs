@@ -15,6 +15,41 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class MusicViews : MediaPortal.Configuration.SectionSettings
 	{
+		public class SyncedCheckBox:CheckBox
+		{
+			DataGrid grid;
+			int      cell;
+			public int Cell
+			{
+				get { return cell;}
+				set { cell=value;}
+			}
+
+			public DataGrid Grid
+			{
+				get { return grid;}
+				set {grid=value;}
+			}
+			protected override void OnLayout(LayoutEventArgs levent)
+			{
+				DataGridCell currentCell=Grid.CurrentCell;
+
+				if (currentCell.ColumnNumber==Cell)
+				{
+					DataTable ds= Grid.DataSource as DataTable;
+					if (ds!=null)
+					{
+						if (currentCell.RowNumber < ds.Rows.Count)
+						{
+							DataRow row=ds.Rows[currentCell.RowNumber];
+							this.Checked=(bool)row.ItemArray[Cell];
+						}
+					}
+				}
+				base.OnLayout (levent);
+			}
+		}
+
 		public class SyncedComboBox:ComboBox
 		{
 			DataGrid grid;
@@ -211,6 +246,7 @@ namespace MediaPortal.Configuration.Sections
 			DataColumn dtcCheck    = new DataColumn("Sort Ascending");//create the data          //column object with the name 
 			dtcCheck.DataType      = System.Type.GetType("System.Boolean");//Set its //data Type
 			dtcCheck.DefaultValue  = false;//Set the default value
+			dtcCheck.AllowDBNull	 =false;
 			datasetFilters.Columns.Add(dtcCheck);//Add the above column to the //Data Table
   
 			//fill in all rows...
@@ -253,6 +289,14 @@ namespace MediaPortal.Configuration.Sections
 				colStyle[1].Width       = 50;
 				colStyle[2].Width       = 50;
 				colStyle[3].Width       = 80;
+				
+			/*
+				DataGridColumnStyle boolCol = new FormattableBooleanColumn();
+				boolCol.MappingName = "Sort Ascending";
+				boolCol.HeaderText = "Sort Ascending";
+				boolCol.Width = 60;
+				dgdtblStyle.GridColumnStyles.Add(boolCol);
+				*/
 			}
 			DataGridTextBoxColumn dgtb    =     (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[0];
 			//Add the combo box to the text box taken in the above step 
@@ -261,6 +305,9 @@ namespace MediaPortal.Configuration.Sections
 			dgtb    =     (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[1];
 			dgtb.TextBox.Controls.Add (cbOperators);        
 			
+			DataGridBoolColumn boolColumn    =     (DataGridBoolColumn)dataGrid1.TableStyles[0].GridColumnStyles[4];
+			boolColumn.AllowNull=false;
+
 		
 			updating=false;	
 		}
