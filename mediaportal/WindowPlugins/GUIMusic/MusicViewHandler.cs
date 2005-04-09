@@ -196,6 +196,23 @@ namespace MediaPortal.GUI.Music
 				if (whereClause!="") whereClause+=" and ";
 				string restriction=filter.Restriction;
 				restriction=restriction.Replace("*","%");
+				Database.DatabaseUtility.RemoveInvalidChars(ref restriction);
+				if (filter.SqlOperator=="=")
+				{
+					bool isascii=false;
+					for (int x=0; x < restriction.Length;++x)
+					{
+						if ( !Char.IsDigit(restriction[x]) )
+						{
+							isascii=true;
+							break;
+						}
+					}
+					if (isascii)
+					{
+						filter.SqlOperator="like";
+					}
+				}
 				whereClause+=String.Format(" {0} {1} '{2}'",GetFieldName(filter.Where),filter.SqlOperator,restriction);
 			}
 		}
