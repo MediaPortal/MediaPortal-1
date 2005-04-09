@@ -444,6 +444,7 @@ namespace MediaPortal.Configuration.Sections
 			catch(Exception)
 			{
 			}
+
 		}
 
 		void StoreGridInView()
@@ -468,7 +469,11 @@ namespace MediaPortal.Configuration.Sections
 				view = new ViewDefinition();
 				view.Name=tbViewName.Text;
 				views.Add(view);
+				currentView=view;
 				cbViews.Items.Insert(cbViews.Items.Count-1,view.Name);
+				updating=true;
+				cbViews.SelectedItem=view.Name;
+				updating=false;
 			}
 			else
 			{
