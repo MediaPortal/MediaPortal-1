@@ -66,7 +66,7 @@
 			<onleft>3</onleft>
 			<onright>4</onright>
 			<onup>2</onup>
-			    <ondown>6</ondown>
+	    <ondown>6</ondown>
 		</control>
 		<control>
 			<description>Sort Asc</description>
@@ -91,6 +91,7 @@
   		<texture>panel_split.png</texture>
 		</control>
 		<control>
+		<description>Views button</description>
 			<type>button</type>
 	    <id>6</id>
 			<posX>55</posX>
@@ -104,30 +105,30 @@
 		<control>
 			<description>Playlists button</description>
 			<type>button</type>
-			    <id>8</id>
+	    <id>8</id>
 			<posX>55</posX>
 			<posY>217</posY>
 			<label>136</label>
-			    <onleft>8</onleft>
+	    <onleft>8</onleft>
 			<onright>50</onright>
-			    <onup>6</onup>
-			    <ondown>9</ondown>
-				<action>33</action>
+	    <onup>6</onup>
+	    <ondown>9</ondown>
+			<action>33</action>
 		</control>
 		<control>
-			    <description>Play CD</description>
+	    <description>Play CD</description>
 			<type>button</type>
-			    <id>9</id>
+	    <id>9</id>
 			<posX>55</posX>
 			<posY>273</posY>
 			<label>193</label>
-			    <onleft>9</onleft>
-			    <onright>50</onright>
-			    <onup>8</onup>
-			    <ondown>10</ondown>
+	    <onleft>9</onleft>
+	    <onright>50</onright>
+	    <onup>8</onup>
+	    <ondown>10</ondown>
 		</control>
 		<control>
-			    <description>My Playlists</description>
+	    <description>My Playlists</description>
 			<type>button</type>
 			<id>10</id>
 			<posX>55</posX>
@@ -136,16 +137,14 @@
 			<onleft>10</onleft>
 			<onright>50</onright>
 			<onup>9</onup>
-			    <ondown>2</ondown>
-		    </control>
-		</control>
-
+	    <ondown>2</ondown>
+    </control>
 		<control>
       <description>composite control consisting of a list control and a thumbnail panel</description>
 			<type>facadeview</type>
 			<id>50</id>
-  		<control>
-  			<description>listcontrol</description>
+	  	<control>
+ 				<description>listcontrol</description>
   			<type>listcontrol</type>
   			<id>50</id>
   			<onleft>2</onleft>
