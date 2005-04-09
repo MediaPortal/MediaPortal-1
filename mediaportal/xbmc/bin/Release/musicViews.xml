@@ -3,7 +3,7 @@
 <a1:ArrayList id="ref-1" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-2"/>
 <_size>6</_size>
-<_version>6</_version>
+<_version>8</_version>
 </a1:ArrayList>
 <SOAP-ENC:Array id="ref-2" SOAP-ENC:arrayType="xsd:anyType[16]">
 <item href="#ref-3"/>
@@ -13,59 +13,59 @@
 <item href="#ref-7"/>
 <item href="#ref-8"/>
 </SOAP-ENC:Array>
-<a3:ViewDefinition id="ref-3" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-3" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-10"/>
 <name id="ref-11">Genres</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-4" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-4" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-12"/>
 <name id="ref-13">Top100</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-5" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-5" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-14"/>
 <name id="ref-15">Artists</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-6" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-6" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-16"/>
 <name id="ref-17">Albums</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-7" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-7" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-18"/>
 <name id="ref-19">Years</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-8" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-8" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-20"/>
 <name id="ref-21">Favorites</name>
 </a3:ViewDefinition>
 <a1:ArrayList id="ref-10" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-22"/>
 <_size>2</_size>
-<_version>2</_version>
+<_version>23</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-12" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-23"/>
 <_size>1</_size>
-<_version>1</_version>
+<_version>13</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-14" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-24"/>
 <_size>3</_size>
-<_version>3</_version>
+<_version>15</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-16" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-25"/>
 <_size>2</_size>
-<_version>2</_version>
+<_version>8</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-18" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-26"/>
 <_size>2</_size>
-<_version>2</_version>
+<_version>8</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-20" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-27"/>
 <_size>1</_size>
-<_version>1</_version>
+<_version>5</_version>
 </a1:ArrayList>
 <SOAP-ENC:Array id="ref-22" SOAP-ENC:arrayType="xsd:anyType[16]">
 <item href="#ref-28"/>
@@ -90,7 +90,7 @@
 <SOAP-ENC:Array id="ref-27" SOAP-ENC:arrayType="xsd:anyType[16]">
 <item href="#ref-38"/>
 </SOAP-ENC:Array>
-<a3:FilterDefinition id="ref-28" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-28" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction id="ref-39"></restriction>
@@ -101,7 +101,7 @@
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-29" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-29" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-39"/>
@@ -112,102 +112,102 @@
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-30" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-30" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>false</sortAscending>
-<restriction href="#ref-39"/>
-<whereClause id="ref-43">timesplayed</whereClause>
+<restriction id="ref-43">0</restriction>
+<whereClause id="ref-44">timesplayed</whereClause>
 <fromStatement href="#ref-39"/>
-<sqloperator href="#ref-39"/>
+<sqloperator id="ref-45">&#62;</sqloperator>
 <whereValue href="#ref-41"/>
 <selectedValue href="#ref-39"/>
 <limit>100</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-31" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-31" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-39"/>
-<whereClause id="ref-44">artist</whereClause>
+<whereClause id="ref-46">artist</whereClause>
 <fromStatement href="#ref-39"/>
 <sqloperator href="#ref-39"/>
-<whereValue href="#ref-41"/>
+<whereValue id="ref-47">*</whereValue>
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-32" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-32" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-39"/>
-<whereClause id="ref-45">album</whereClause>
+<whereClause id="ref-48">album</whereClause>
 <fromStatement href="#ref-39"/>
 <sqloperator href="#ref-39"/>
-<whereValue href="#ref-41"/>
+<whereValue href="#ref-47"/>
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-33" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-<distinct>false</distinct>
-<sortAscending>true</sortAscending>
-<restriction href="#ref-39"/>
-<whereClause href="#ref-42"/>
-<fromStatement href="#ref-39"/>
-<sqloperator href="#ref-39"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-39"/>
-<limit>-1</limit>
-</a3:FilterDefinition>
-<a3:FilterDefinition id="ref-34" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-<distinct>false</distinct>
-<sortAscending>true</sortAscending>
-<restriction href="#ref-39"/>
-<whereClause href="#ref-45"/>
-<fromStatement href="#ref-39"/>
-<sqloperator href="#ref-39"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-39"/>
-<limit>-1</limit>
-</a3:FilterDefinition>
-<a3:FilterDefinition id="ref-35" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-33" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-39"/>
 <whereClause href="#ref-42"/>
 <fromStatement href="#ref-39"/>
 <sqloperator href="#ref-39"/>
-<whereValue href="#ref-41"/>
+<whereValue href="#ref-47"/>
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-36" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-34" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-39"/>
-<whereClause id="ref-46">year</whereClause>
+<whereClause href="#ref-48"/>
 <fromStatement href="#ref-39"/>
 <sqloperator href="#ref-39"/>
-<whereValue href="#ref-41"/>
+<whereValue href="#ref-47"/>
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-37" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-35" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-39"/>
 <whereClause href="#ref-42"/>
 <fromStatement href="#ref-39"/>
 <sqloperator href="#ref-39"/>
-<whereValue href="#ref-41"/>
+<whereValue href="#ref-47"/>
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-38" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1924.25992%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-36" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
-<restriction id="ref-47">1</restriction>
-<whereClause id="ref-48">favorites</whereClause>
+<restriction href="#ref-39"/>
+<whereClause id="ref-49">year</whereClause>
 <fromStatement href="#ref-39"/>
-<sqloperator id="ref-49">=</sqloperator>
-<whereValue href="#ref-41"/>
+<sqloperator href="#ref-39"/>
+<whereValue href="#ref-47"/>
+<selectedValue href="#ref-39"/>
+<limit>-1</limit>
+</a3:FilterDefinition>
+<a3:FilterDefinition id="ref-37" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<distinct>false</distinct>
+<sortAscending>true</sortAscending>
+<restriction href="#ref-39"/>
+<whereClause href="#ref-42"/>
+<fromStatement href="#ref-39"/>
+<sqloperator href="#ref-39"/>
+<whereValue href="#ref-47"/>
+<selectedValue href="#ref-39"/>
+<limit>-1</limit>
+</a3:FilterDefinition>
+<a3:FilterDefinition id="ref-38" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.1925.13920%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<distinct>false</distinct>
+<sortAscending>true</sortAscending>
+<restriction id="ref-50">1</restriction>
+<whereClause id="ref-51">favorites</whereClause>
+<fromStatement href="#ref-39"/>
+<sqloperator id="ref-52">=</sqloperator>
+<whereValue href="#ref-47"/>
 <selectedValue href="#ref-39"/>
 <limit>-1</limit>
 </a3:FilterDefinition>

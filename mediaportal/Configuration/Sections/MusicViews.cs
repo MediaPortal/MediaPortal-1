@@ -217,7 +217,9 @@ namespace MediaPortal.Configuration.Sections
 			for (int i=0; i < currentView.Filters.Count;++i)
 			{
 				FilterDefinition def = (FilterDefinition)currentView.Filters[i];
-				datasetFilters.Rows.Add( new object[] { def.Where,def.SqlOperator,def.Restriction,def.Limit,def.SortAscending});
+				string limit=def.Limit.ToString();
+				if (def.Limit<0) limit="";
+				datasetFilters.Rows.Add( new object[] { def.Where,def.SqlOperator,def.Restriction,limit,def.SortAscending});
 			}	
 
 			//Set the Data Grid Source as the Data Table created above
