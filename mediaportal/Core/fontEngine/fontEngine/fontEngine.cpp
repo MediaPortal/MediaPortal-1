@@ -442,13 +442,13 @@ void FontEnginePresentTextures()
 		textureZ[i]=0;
 	}
 	textureCount=0;
-
+/*
 #ifdef _DEBUG
 	if (m_iTexturesInUse>0)
 	{
 		PrintStatistics();
 	}
-#endif
+#endif*/
 	m_iTexturesInUse=0;
 	m_iVertexBuffersUpdated=0;
 	m_iFontVertexBuffersUpdated=0;

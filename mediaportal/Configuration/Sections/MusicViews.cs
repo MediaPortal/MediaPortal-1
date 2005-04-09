@@ -247,6 +247,7 @@ namespace MediaPortal.Configuration.Sections
 			dtcCheck.DataType      = System.Type.GetType("System.Boolean");//Set its //data Type
 			dtcCheck.DefaultValue  = false;//Set the default value
 			dtcCheck.AllowDBNull	 =false;
+			dtcCheck.ColumnName="Sort Ascending";
 			datasetFilters.Columns.Add(dtcCheck);//Add the above column to the //Data Table
   
 			//fill in all rows...
@@ -555,6 +556,7 @@ namespace MediaPortal.Configuration.Sections
 				{
 					def.Limit=-1;
 				}
+				def.SortAscending = (bool)row[4] ;
 				view.Filters.Add(def);
 			}
 		}
