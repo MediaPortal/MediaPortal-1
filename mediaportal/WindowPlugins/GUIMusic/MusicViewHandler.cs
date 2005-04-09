@@ -194,7 +194,9 @@ namespace MediaPortal.GUI.Music
 			if (filter.SqlOperator != String.Empty && filter.Restriction != String.Empty)
 			{
 				if (whereClause!="") whereClause+=" and ";
-				whereClause+=String.Format(" {0} {1} '{2}'",GetFieldName(filter.Where),filter.SqlOperator,filter.Restriction);
+				string restriction=filter.Restriction;
+				restriction=restriction.Replace("*","%");
+				whereClause+=String.Format(" {0} {1} '{2}'",GetFieldName(filter.Where),filter.SqlOperator,restriction);
 			}
 		}
 		void BuildWhere(FilterDefinition filter,ref string whereClause )
