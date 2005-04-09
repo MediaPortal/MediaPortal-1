@@ -1518,5 +1518,23 @@ namespace MediaPortal.Video.Database
 				Open();
 			}
 		}
+		static public void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
+		{
+			if (movieDetails == null) return;
+			SQLiteResultSet results;
+			try
+			{	
+				string sql = String.Format("select idPath from path where cdlabel = '{0}'",movieDetails.CDLabel);
+				results=m_db.Execute(sql);
+				int idPath = System.Int32.Parse( DatabaseUtility.Get(results,0,"idPath") );
+				sql = String.Format("update path set cdlabel = '{0}' where idPath = '{1}'",CDlabel,idPath);
+				results=m_db.Execute(sql);				
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
 	}
 }

@@ -702,7 +702,7 @@ namespace MediaPortal.GUI.Video
           for (int i = 0; i < items.Count; ++i)
           {
             GUIListItem pItemTmp = (GUIListItem)items[i];
-            if (Utils.ShouldStack(pItemTmp.Path, (string)movies[0]))
+            if ((Utils.ShouldStack(pItemTmp.Path, (string)movies[0])) && (movies.Count > 1))
             {   
               if (!asked) iSelectedFile++;                
               IMDBMovie movieDetails = new IMDBMovie();

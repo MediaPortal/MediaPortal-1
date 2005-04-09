@@ -1890,32 +1890,47 @@ namespace MediaPortal.GUI.Video
 
     static public bool CheckMovie(int movieid)
     {
-      IMDBMovie movieDetails = new IMDBMovie();
-      VideoDatabase.GetMovieInfoById(movieid, ref movieDetails);
+		IMDBMovie movieDetails = new IMDBMovie();
+		VideoDatabase.GetMovieInfoById(movieid, ref movieDetails);
 
-      if (!Utils.IsDVD(movieDetails.Path)) return true;
-      string cdlabel="";
-      cdlabel=Utils.GetDriveSerial(movieDetails.Path);
-      if (cdlabel.Equals(movieDetails.CDLabel)) return true;
+		if (!Utils.IsDVD(movieDetails.Path)) return true;
+		string cdlabel="";
+		cdlabel=Utils.GetDriveSerial(movieDetails.Path);
+		if (cdlabel.Equals(movieDetails.CDLabel)) return true;
 
-      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      if (dlg == null) return true;
-      while (true)
-      {
- 	      dlg.SetHeading(428);
-	      dlg.SetLine(1, 429);
-        dlg.SetLine(2, movieDetails.DVDLabel);
-	      dlg.SetLine(3, movieDetails.Title);
-	      dlg.DoModal(GUIWindowManager.ActiveWindow);
-        if (dlg.IsConfirmed) 
-        {
-          cdlabel=Utils.GetDriveSerial(movieDetails.Path);
-          if (cdlabel.Equals(movieDetails.CDLabel)) return true;
-        }
-        else break;
-      }
-      return false;
+		GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+		if (dlg == null) return true;
+		while (true)
+		{
+			dlg.SetHeading(428);
+			dlg.SetLine(1, 429);
+			dlg.SetLine(2, movieDetails.DVDLabel);
+			dlg.SetLine(3, movieDetails.Title);
+			dlg.DoModal(GUIWindowManager.ActiveWindow);
+			if (dlg.IsConfirmed) 
+			{
+				if (movieDetails.CDLabel.StartsWith("nolabel"))
+				{
+					ArrayList movies = new ArrayList();
+					VideoDatabase.GetFiles(movieid, ref movies);
+					if (System.IO.File.Exists(/*movieDetails.Path+movieDetails.File*/(string)movies[0]))
+					{
+						cdlabel = Utils.GetDriveSerial(movieDetails.Path);
+						VideoDatabase.UpdateCDLabel(movieDetails, cdlabel);
+						movieDetails.CDLabel = cdlabel;
+						return true;
+					}
+				}
+				else
+				{
+					cdlabel=Utils.GetDriveSerial(movieDetails.Path);
+					if (cdlabel.Equals(movieDetails.CDLabel)) return true;
+				}
+			}
+			else break;
 		}
+		return false;
+	}
 	
     void OnManualIMDB()
 		{
