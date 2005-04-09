@@ -31,7 +31,6 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.Label lblImageFile;
 		private System.Windows.Forms.TextBox txtImageFile;
 		private System.Windows.Forms.CheckBox chkbEnabled;
-		private System.Windows.Forms.TextBox txtFilename;
 		private System.Windows.Forms.TextBox txtTitle;
 		private System.Windows.Forms.Label lblTitle;
 		private System.Windows.Forms.Label lblFilename;
@@ -44,6 +43,7 @@ namespace WindowPlugins.GUIPrograms
 		private System.Windows.Forms.TextBox txtPinCode;
 		private System.Windows.Forms.Button buttonGetExtensions;
 		private System.Windows.Forms.CheckBox chkbWaitForExit;
+		private System.Windows.Forms.ComboBox cbFilename;
 		private System.ComponentModel.IContainer components = null;
 
 
@@ -99,7 +99,6 @@ namespace WindowPlugins.GUIPrograms
 			this.buttonImageFile = new System.Windows.Forms.Button();
 			this.txtImageFile = new System.Windows.Forms.TextBox();
 			this.chkbEnabled = new System.Windows.Forms.CheckBox();
-			this.txtFilename = new System.Windows.Forms.TextBox();
 			this.txtTitle = new System.Windows.Forms.TextBox();
 			this.lblTitle = new System.Windows.Forms.Label();
 			this.lblFilename = new System.Windows.Forms.Label();
@@ -109,6 +108,7 @@ namespace WindowPlugins.GUIPrograms
 			this.txtPinCode = new System.Windows.Forms.TextBox();
 			this.buttonGetExtensions = new System.Windows.Forms.Button();
 			this.chkbWaitForExit = new System.Windows.Forms.CheckBox();
+			this.cbFilename = new System.Windows.Forms.ComboBox();
 			this.SuspendLayout();
 			// 
 			// label3
@@ -299,14 +299,6 @@ namespace WindowPlugins.GUIPrograms
 			this.chkbEnabled.Text = "Enabled";
 			this.chkbEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// txtFilename
-			// 
-			this.txtFilename.Location = new System.Drawing.Point(120, 64);
-			this.txtFilename.Name = "txtFilename";
-			this.txtFilename.Size = new System.Drawing.Size(250, 20);
-			this.txtFilename.TabIndex = 4;
-			this.txtFilename.Text = "";
-			// 
 			// txtTitle
 			// 
 			this.txtTitle.Location = new System.Drawing.Point(120, 40);
@@ -388,8 +380,20 @@ namespace WindowPlugins.GUIPrograms
 			this.chkbWaitForExit.TabIndex = 33;
 			this.chkbWaitForExit.Text = "Wait for exit";
 			// 
+			// cbFilename
+			// 
+			this.cbFilename.Items.AddRange(new object[] {
+																										"%PLAY%",
+																										"%PLAYAUDIOSTREAM%",
+																										"%PLAYVIDEOSTREAM%"});
+			this.cbFilename.Location = new System.Drawing.Point(120, 64);
+			this.cbFilename.Name = "cbFilename";
+			this.cbFilename.Size = new System.Drawing.Size(250, 21);
+			this.cbFilename.TabIndex = 37;
+			// 
 			// AppSettingsDirCache
 			// 
+			this.Controls.Add(this.cbFilename);
 			this.Controls.Add(this.chkbWaitForExit);
 			this.Controls.Add(this.buttonGetExtensions);
 			this.Controls.Add(this.LblPinCode);
@@ -416,7 +420,6 @@ namespace WindowPlugins.GUIPrograms
 			this.Controls.Add(this.buttonImageFile);
 			this.Controls.Add(this.txtImageFile);
 			this.Controls.Add(this.chkbEnabled);
-			this.Controls.Add(this.txtFilename);
 			this.Controls.Add(this.txtTitle);
 			this.Controls.Add(this.lblTitle);
 			this.Controls.Add(this.lblFilename);
@@ -434,7 +437,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			this.chkbEnabled.Checked = curApp.Enabled;
 			this.txtTitle.Text = curApp.Title;
-			this.txtFilename.Text = curApp.Filename;
+			this.cbFilename.Text = curApp.Filename;
 			this.txtArguments.Text = curApp.Arguments;
 			SetWindowStyle(curApp.WindowStyle);
 			this.txtStartupDir.Text = curApp.Startupdir;
@@ -462,7 +465,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			curApp.Enabled = this.chkbEnabled.Checked;
 			curApp.Title = this.txtTitle.Text;
-			curApp.Filename = this.txtFilename.Text;
+			curApp.Filename = this.cbFilename.Text;
 			curApp.Arguments = this.txtArguments.Text;
 			curApp.WindowStyle = GetSelectedWindowStyle();
 			curApp.Startupdir = this.txtStartupDir.Text;
@@ -482,7 +485,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			m_Checker.Clear();
 			m_Checker.DoCheck(txtTitle.Text != "", "No title entered!");
-			if (txtFilename.Text == "") 
+			if (cbFilename.Text == "") 
 			{
 				m_Checker.DoCheck(chkbUseShellExecute.Checked, "No launching filename entered!");
 			}
@@ -558,7 +561,7 @@ namespace WindowPlugins.GUIPrograms
 				"uments)");
 			toolTip.SetToolTip(txtImageFile, "Optional filename for an image to display in MediaPortal");
 			toolTip.SetToolTip(chkbEnabled, "Only enabled items will appear in MediaPortal");
-			toolTip.SetToolTip(txtFilename, "Program you wish to execute, include the full path (mandatory if ShellExecute is " +
+			toolTip.SetToolTip(cbFilename, "Program you wish to execute, include the full path (mandatory if ShellExecute is " +
 				"OFF)");
 			toolTip.SetToolTip(txtExtensions, "Only files with matching extensions will be displayed. \r\nSeparate several extension" +
 				"s by a coma (.zip,.txt)\r\n(mandatory)");
@@ -570,11 +573,11 @@ namespace WindowPlugins.GUIPrograms
 
 		private void buttonLaunchingApp_Click(object sender, System.EventArgs e)
 		{
-			dialogFile.FileName = txtFilename.Text;
+			dialogFile.FileName = cbFilename.Text;
 			dialogFile.RestoreDirectory = true;
 			if( dialogFile.ShowDialog(null) == DialogResult.OK )
 			{
-				txtFilename.Text = dialogFile.FileName;
+				cbFilename.Text = dialogFile.FileName;
 			}
 		}
 
@@ -644,9 +647,9 @@ namespace WindowPlugins.GUIPrograms
 		public override void LoadFromAppItem(AppItem tempApp)
 		{
 			this.txtTitle.Text = tempApp.Title;
-			if (txtFilename.Text == "")
+			if (cbFilename.Text == "")
 			{
-				this.txtFilename.Text = tempApp.Filename;
+				this.cbFilename.Text = tempApp.Filename;
 			}
 			this.txtArguments.Text = tempApp.Arguments;
 			SetWindowStyle(tempApp.WindowStyle);

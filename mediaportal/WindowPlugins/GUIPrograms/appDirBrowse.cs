@@ -160,6 +160,10 @@ namespace ProgramsDatabase
 
 		override public void LaunchFile(GUIListItem item)
 		{
+			bool bUseGenericPlayer = (Filename.ToUpper() == "%PLAY%") || 
+				(Filename.ToUpper() == "%PLAYAUDIOSTREAM%") || 
+				(Filename.ToUpper() == "%PLAYVIDEOSTREAM%");
+
 			string curFilename = item.Path;
 			ProcessStartInfo procStart = new ProcessStartInfo();
 			if (Filename != "")
@@ -196,9 +200,18 @@ namespace ProgramsDatabase
 			try
 			{
 				AutoPlay.StopListening();
-				Utils.StartProcess(procStart, WaitForExit);
-				GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
-				AutoPlay.StartListening();
+				if (!bUseGenericPlayer)
+				{
+					Utils.StartProcess(procStart, WaitForExit);
+					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
+					AutoPlay.StartListening();
+				}
+				else
+				{
+					LaunchGenericPlayer(Filename, item.Path);
+					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+					AutoPlay.StartListening();
+				}
 			}
 			catch (Exception ex)
 			{

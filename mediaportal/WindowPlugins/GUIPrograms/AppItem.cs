@@ -6,6 +6,7 @@ using System.Xml;
 using SQLite.NET;
 
 using MediaPortal.Ripper;
+using MediaPortal.Player;
 using MediaPortal.GUI.Library;		
 using MediaPortal.Util;
 using WindowPlugins.GUIPrograms;
@@ -151,6 +152,30 @@ namespace ProgramsDatabase
 			return (FileItem)Files[nIndex];
 		}
 
+		protected void LaunchGenericPlayer(string strCommand, string strFilename)
+		{
+			// don't use quotes!
+			strFilename = strFilename.Trim();
+			strFilename = strFilename.TrimStart('\"');
+			strFilename = strFilename.TrimEnd('\"');
+			if (strCommand == "%PLAY%")
+			{
+				g_Player.Play(strFilename);
+			}
+			else if (strCommand == "%PLAYAUDIOSTREAM%")
+			{
+				g_Player.PlayAudioStream(strFilename);
+			}
+			else if (strCommand == "%PLAYVIDEOSTREAM%")
+			{
+				g_Player.PlayVideoStream(strFilename);
+			}
+			else 
+			{
+				Log.Write("error in myPrograms: AppItem.LaunchGenericPlayer: unknown command: {0}", strCommand);
+				return;
+			}
+		}
 		
 		public virtual void LaunchFile(FileItem curFile, bool MPGUIMode)
 		{
@@ -202,7 +227,6 @@ namespace ProgramsDatabase
 				procStart.WorkingDirectory  = Startupdir;
 				if (procStart.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
 				{
-					//Log.Write("curFile.Filename {0}", curFile.Filename);
 					procStart.WorkingDirectory = procStart.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(curFile.Filename));
 				}
 				procStart.UseShellExecute = UseShellExecute;
@@ -214,34 +238,54 @@ namespace ProgramsDatabase
 				string strCurFilename = curFile.ExtractFileName();
 				procStart.FileName = strCurFilename;
 				procStart.Arguments = curFile.ExtractArguments();
+				curFilename = procStart.Arguments;
 				procStart.WorkingDirectory  = curFile.ExtractDirectory(strCurFilename);
 				procStart.UseShellExecute = UseShellExecute; 
 			}
 			procStart.WindowStyle = this.WindowStyle;
+
+
+			//			bool bUseGenericPlayer = (Filename.ToUpper() == "%PLAY%") || 
+			//				(Filename.ToUpper() == "%PLAYAUDIOSTREAM%") || 
+			//				(Filename.ToUpper() == "%PLAYVIDEOSTREAM%");
+			bool bUseGenericPlayer = (procStart.FileName.ToUpper() == "%PLAY%") || 
+													  		(procStart.FileName.ToUpper() == "%PLAYAUDIOSTREAM%") || 
+																(procStart.FileName.ToUpper() == "%PLAYVIDEOSTREAM%");
+				
 			this.LaunchErrorMsg = "";
 			try
 			{
-				//				Log.Write("myPrograms: starting process: program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n",
-				//					procStart.FileName, 
-				//					procStart.Arguments, 
-				//					procStart.WorkingDirectory);
-
 				if (MPGUIMode)
 				{
 					AutoPlay.StopListening();
 				}
-
-				//				proc.Start();
-				Utils.StartProcess(procStart, WaitForExit);
-				if (MPGUIMode) 
+				if (!bUseGenericPlayer)
 				{
-					//					if (WaitForExit)
-					//					{
-					//						proc.WaitForExit();
-					//					}
-					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
-					AutoPlay.StartListening();
+					Utils.StartProcess(procStart, WaitForExit);
+					if (MPGUIMode) 
+					{
+						GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+						AutoPlay.StartListening();
+					}
 				}
+				else
+				{
+					// use generic player
+					if (MPGUIMode)
+					{
+						LaunchGenericPlayer(procStart.FileName, curFilename);
+						GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+						AutoPlay.StartListening();
+					}
+					else
+					{
+						// generic player can only be used in MPGUI mode! 
+						// => Apologize to the user :-)
+						string ProblemString = "Sorry! The internal generic players cannot be used in Configuration. \nTry it in the MediaPortal application!";
+						this.LaunchErrorMsg = ProblemString;
+					}
+				}
+
 			}
 			catch (Exception ex)
 			{
@@ -346,19 +390,15 @@ namespace ProgramsDatabase
 		
 		public virtual void OnSort(GUIFacadeControl view, bool bDoSwitch)
 		{
-//			Log.Write(" dw onsort: ENTER");
 			if (!bFilesLoaded)
 			{
-//				Log.Write(" dw onsort: loadfiles");
 				LoadFiles();
 			} 
 
 			if (bDoSwitch)
 			{
-//				Log.Write(" dw onsort: updatestate");
 				dbPc.updateState();
 			}
-//			Log.Write(" dw onsort: sort");
 			view.Sort(dbPc);
 		}
 
