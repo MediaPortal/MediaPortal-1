@@ -1789,7 +1789,7 @@ namespace MediaPortal.TV.Recording
 										{
 											if (item==null) continue;
 											if (item.Name==null) continue;
-											Log.Write("attribute:{0} value:{1}", item.Name,item.Value.ToString());
+											//Log.Write("attribute:{0} value:{1}", item.Name,item.Value.ToString());
 											try { if (item.Name.ToLower()=="channel") newRec.Channel=(string)item.Value.ToString();} catch(Exception){}
 											try{ if (item.Name.ToLower()=="title") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
 											try{ if (item.Name.ToLower()=="programtitle") newRec.Title=(string)item.Value.ToString();} catch(Exception){}
