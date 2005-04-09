@@ -79,7 +79,7 @@
 			    <onleft>3</onleft>
 			    <onright>4</onright>
 			    <onup>2</onup>
-			    <ondown>7</ondown>
+			    <ondown>6</ondown>
 		    </control>
 		    <control>
 			    <description>Sort Asc</description>
@@ -95,24 +95,15 @@
 		    </control>
 		    <control>
 			    <description>Switch View</description>
-			    <type>selectbutton</type>
-			    <id>7</id>
+			    <type>button</type>
+			    <id>6</id>
 			    <posX>60</posX>
 			    <posY>165</posY>
 			    <label>457</label>
-			    <onleft>7</onleft>
+			    <onleft>6</onleft>
 			    <onright>50</onright>
 			    <onup>3</onup>
 			    <ondown>8</ondown>
-			    <subitems>
-						<subitem>134</subitem>
-						<subitem>132</subitem>
-						<subitem>133</subitem>
-						<subitem>135</subitem>
-						<subitem>271</subitem>
-						<subitem>932</subitem>
-					<subitem>987</subitem>
-			    </subitems>
 		    </control>
 		    <control>
 			    <description>Playlists button</description>
@@ -123,7 +114,7 @@
 			    <label>136</label>
 			    <onleft>8</onleft>
 			    <onright>50</onright>
-			    <onup>7</onup>
+			    <onup>6</onup>
 			    <ondown>9</ondown>
 				<action>33</action>
 		    </control>
