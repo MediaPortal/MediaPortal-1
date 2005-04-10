@@ -1286,7 +1286,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState!= State.TimeShifting && m_graphState!=State.Recording && m_graphState!=State.Viewing) return false;
 			if (currentTuningObject==null) return false;
-			if (m_NetworkProvider==null) return false;
 			if (currentTuningObject.TeletextPid>0) return true;
 			return false;
 		}

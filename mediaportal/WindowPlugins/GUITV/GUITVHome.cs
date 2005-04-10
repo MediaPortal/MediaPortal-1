@@ -217,12 +217,12 @@ namespace MediaPortal.GUI.TV
 			{
 				GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition,videoWindow.YPosition,videoWindow.Width,videoWindow.Height);
 			}
-			UpdateChannelButton();
 
 			// start viewing tv... 
 			GUIGraphicsContext.IsFullScreenVideo=false;
 			ViewChannel(Navigator.CurrentChannel);
 
+			UpdateChannelButton();
 			UpdateStateOfButtons();
 			UpdateProgressPercentageBar();
 		}
