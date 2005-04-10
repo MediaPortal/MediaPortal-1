@@ -136,6 +136,7 @@ namespace MediaPortal.Configuration.Sections
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.btnImport = new System.Windows.Forms.Button();
 			this.btnClear = new System.Windows.Forms.Button();
 			this.addButton = new System.Windows.Forms.Button();
@@ -177,7 +178,6 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxCard = new System.Windows.Forms.ComboBox();
 			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
 			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -306,6 +306,12 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.columnHeader4.Text = "Type";
 			this.columnHeader4.Width = 155;
+			// 
+			// imageList1
+			// 
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// btnImport
 			// 
@@ -696,12 +702,6 @@ namespace MediaPortal.Configuration.Sections
 			this.XMLSaveDialog.Filter = "xml|*.xml";
 			this.XMLSaveDialog.InitialDirectory = ".";
 			this.XMLSaveDialog.Title = "Save to....";
-			// 
-			// imageList1
-			// 
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// TVChannels
 			// 

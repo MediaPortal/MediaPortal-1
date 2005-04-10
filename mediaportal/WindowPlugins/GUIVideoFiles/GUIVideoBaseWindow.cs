@@ -34,8 +34,8 @@ namespace MediaPortal.GUI.Video
 			LargeIcons = 2,
 			FilmStrip=3
 		}
-		const string ThumbsFolder=@"thumbs\Videos\Title";
-		const string ActorThumbsFolder=@"thumbs\Videos\Actors";
+		protected   const string ThumbsFolder=@"thumbs\Videos\Title";
+		protected   const string ActorThumbsFolder=@"thumbs\Videos\Actors";
 
 		protected   View currentView		    = View.List;
 		protected   View currentViewRoot    = View.List;
@@ -259,6 +259,11 @@ namespace MediaPortal.GUI.Video
 				OnShowViews();
 			}
 				
+
+			if (control==btnPlayDVD)
+			{
+				OnPlayDVD();
+			}
 
 			if (control == facadeView )
 			{
@@ -544,6 +549,29 @@ namespace MediaPortal.GUI.Video
 		protected virtual void OnInfo(int iItem)
 		{
 		}
+
+		protected void OnPlayDVD()
+		{
+			Log.Write("GUIVideoFiles playDVD");
+			g_Player.PlayDVD();
+		}
 		
+
+		protected virtual void AddItemToPlayList(GUIListItem pItem) 
+		{
+			if (!pItem.IsFolder)
+			{
+				//TODO
+				if (Utils.IsVideo(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
+				{
+					PlayList.PlayListItem playlistItem =new PlayList.PlayListItem();
+					playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
+					playlistItem.FileName=pItem.Path;
+					playlistItem.Description=pItem.Label;
+					playlistItem.Duration=pItem.Duration;
+					PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_VIDEO ).Add(playlistItem);
+				}
+			}
+		}
 	}
 }

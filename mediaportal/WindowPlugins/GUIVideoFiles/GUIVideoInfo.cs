@@ -328,7 +328,7 @@ namespace MediaPortal.GUI.Video
 					{
 						int id=m_movie.ID;
 						Close();
-						GUIVideoTitle.PlayMovie(id);
+						GUIVideoFiles.PlayMovie(id);
 						return true;
 					}
         }

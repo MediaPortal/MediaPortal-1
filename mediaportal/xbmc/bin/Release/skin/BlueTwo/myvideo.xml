@@ -72,7 +72,7 @@
 				<posY>97</posY>
 				<label>100</label>
 				<onleft>2</onleft>
-				<onright>10</onright>
+				<onright>50</onright>
 				<onup>17</onup>
 				<ondown>3</ondown>
 			</control>
@@ -96,28 +96,21 @@
 				<posY>139</posY>
 				<label>-</label>
 				<onleft>3</onleft>
-				<onright>10</onright>
+				<onright>50</onright>
 				<onup>4</onup>
 				<ondown>4</ondown>
 			</control>
 			<control>
 				<description>Switch view</description>
-				<type>selectbutton</type>
+				<type>button</type>
 				<id>5</id>
 				<posX>60</posX>
 				<posY>165</posY>
 				<label>457</label>
 				<onleft>5</onleft>
-				<onright>10</onright>
+				<onright>50</onright>
 				<onup>3</onup>
 				<ondown>20</ondown>
-				<subitems>
-					<subitem>342</subitem>
-					<subitem>135</subitem>
-					<subitem>344</subitem>
-					<subitem>345</subitem>
-					<subitem>369</subitem>
-				</subitems>
 			</control>
 			<control>
 				<description>Playlist button</description>
@@ -128,7 +121,7 @@
 				<label>136</label>
 				<action>33</action>
 				<onleft>20</onleft>
-				<onright>10</onright>
+				<onright>50</onright>
 				<onup>5</onup>
 				<ondown>6</ondown>
 			</control>
@@ -140,7 +133,7 @@
 				<posY>233</posY>
 				<label>341</label>
 				<onleft>6</onleft>
-				<onright>10</onright>
+				<onright>50</onright>
 				<onup>20</onup>
 				<ondown>2</ondown>
 			</control>
@@ -152,11 +145,11 @@
 			<control>
 				<description>composite control consisting of a list control and a thumbnail panel</description>
 			    <type>facadeview</type>
-			    <id>10</id>			
+			    <id>50</id>			
 			        <control>
 				        <description>listcontrol</description>
 				        <type>listcontrol</type>
-				        <id>10</id>
+				        <id>50</id>
 				        <onleft>2</onleft>
 				        <onright>2</onright>
 				        <onup>2</onup>
@@ -165,7 +158,7 @@
 			        <control>
 				        <description>Thumbnail Panel</description>
 				        <type>thumbnailpanel</type>
-				        <id>10</id>
+				        <id>50</id>
 				        <onleft>2</onleft>
 				        <onright>2</onright>
 				        <onup>2</onup>
@@ -174,7 +167,7 @@
 			        <control>
 				        <description>Filmstrip view</description>
 				        <type>filmstrip</type>
-				        <id>11</id>
+				        <id>50</id>
 				        <onleft>2</onleft>
 				        <onright>2</onright>
 				        <onup>2</onup>
