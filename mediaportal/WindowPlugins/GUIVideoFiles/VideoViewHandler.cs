@@ -261,6 +261,7 @@ namespace MediaPortal.GUI.Video
 		}
 		string GetField(string where)
 		{
+			if (where=="watched") return "iswatched";
 			if (where=="actor") return "strActor";
 			if (where=="title") return "strTitle";
 			if (where=="genre") return "strGenre";
@@ -270,6 +271,7 @@ namespace MediaPortal.GUI.Video
 		}
 		string GetFieldId(string where)
 		{
+			if (where=="watched") return "movieinfo.idMovie";
 			if (where=="actor") return "actors.idActor";
 			if (where=="title") return "movieinfo.idMovie";
 			if (where=="genre") return "genre.idGenre";
@@ -279,6 +281,7 @@ namespace MediaPortal.GUI.Video
 		}
 		string GetFieldName(string where)
 		{
+			if (where=="watched") return "movieinfo.iswatched";
 			if (where=="actor") return "actor.strActor";
 			if (where=="title") return "movieinfo.strTitle";
 			if (where=="genre") return "genre.strGenre";
@@ -288,6 +291,7 @@ namespace MediaPortal.GUI.Video
 		}
 		int GetFieldIdValue(IMDBMovie movie,string where)
 		{
+			if (where=="watched")  return (int)movie.Watched;
 			if (where=="actor")  return movie.actorId;
 			if (where=="title")  return movie.ID;
 			if (where=="genre")  return movie.genreId;

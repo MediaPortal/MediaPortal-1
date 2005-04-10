@@ -172,6 +172,7 @@ namespace MediaPortal.Configuration.Sections
 					"genre",
 					"year",
 					"rating",
+					"watched",
 			};
 			string[] sqloperators = new string[]
 			{
