@@ -45,12 +45,12 @@
 			<align>right</align>
 		</control>
 		<control>
-			<description>genre name text label</description>
+			<description>View text label</description>
 			<type>label</type>
 			<id>15</id>
 			<posX>670</posX>
 			<posY>85</posY>
-			<label>135</label>
+			<label>#view</label>
 			<font>font13</font>
 			<align>right</align>
 		</control>

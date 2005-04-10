@@ -28,7 +28,7 @@
 			<texture>music_logo.png</texture>
 		</control>
 		<control>
-			<description>Songs text label</description>
+			<description>Shares text label</description>
 			<type>label</type>
 			<id>1</id>
 			<posX>250</posX>

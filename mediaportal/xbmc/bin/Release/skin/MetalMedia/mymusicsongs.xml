@@ -35,7 +35,7 @@
 			<texture>panel.png</texture>
 		</control>
 		<control>
-			<description>Songs text label</description>
+			<description>Shares text label</description>
 			<type>label</type>
 			<id>14</id>
 			<posX>280</posX>

@@ -54,12 +54,12 @@
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
-			<description>genre name text label</description>
+			<description>View text label</description>
 			<type>label</type>
 			<id>1</id>
 			<posX>250</posX>
 			<posY>70</posY>
-			<label>135</label>
+			<label>#view</label>
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>

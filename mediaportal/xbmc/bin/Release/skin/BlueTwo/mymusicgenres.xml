@@ -28,7 +28,7 @@
 			<texture>music_logo.png</texture>
 		</control>
 		<control>
-			<description>Genre text label</description>
+			<description>View label</description>
 			<type>label</type>
 			<id>1</id>
 			<posX>250</posX>
