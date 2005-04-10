@@ -45,23 +45,6 @@
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
-	<control>
-		<description>default buttonm</description>
-		<type>buttonM</type>
-		<id>10</id>
-		<posX>430</posX>
-		<posY>460</posY>
-		<width>16</width>
-		<height>16</height>
-		<textureFocus>button-powerdown.png</textureFocus>
-		<textureNoFocus>button-powerdownNF.png</textureNoFocus>
-		<label>-</label>
-		<bitmaps>2</bitmaps>
-		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
-		<disabledcolor>60ffffff</disabledcolor>
-	</control> 
  	<control>
 		<description>default togglebutton</description>
 		<type>togglebutton</type>
@@ -324,24 +307,6 @@
 		<align>left</align>
 		<shadow>no</shadow>
 	</control>	
-	<control>
-		<description>default radio button</description>
-		<type>radiobutton</type>
-		<id>4</id>
-		<posX>50</posX>
-		<posY>268</posY>
-		<width>160</width>
-		<height>32</height>
-		<textureRadioFocus>radiobutton-focus.png</textureRadioFocus>
-		<textureRadioNoFocus>radiobutton-nofocus.png</textureRadioNoFocus>
-		<textureFocus>button-focus.png</textureFocus>
-		<textureNoFocus>-</textureNoFocus>
-		<label>215</label>
-		<font>font13</font>
-		<textcolor>ffffffff</textcolor>
-		<colordiffuse>ffffffff</colordiffuse>
-		<disabledcolor>60ffffff</disabledcolor>
-	</control>
 	<control>
 	      <description>default select button</description>
 		<type>selectbutton</type>
