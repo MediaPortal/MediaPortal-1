@@ -270,6 +270,7 @@ namespace MediaPortal.GUI.Video
 				item.AlbumInfoTag=movie;
 				item.Year=movie.Year;
 				item.DVDLabel=movie.DVDLabel;
+				item.OnItemSelected	+=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 
 				itemlist.Add(item);
 			}
@@ -403,6 +404,13 @@ namespace MediaPortal.GUI.Video
 					}
 				}
 			}
+		}
+
+		private void item_OnItemSelected(GUIListItem item, GUIControl parent)
+		{
+			IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+			if(movie==null) movie = new IMDBMovie();
+			movie.SetProperties();
 		}
 	}
 }
