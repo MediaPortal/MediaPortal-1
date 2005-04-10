@@ -86,6 +86,10 @@ namespace MediaPortal.GUI.Library
       {
         if (!IsVisible) return;
       }
+			if (Focus)
+			{	
+				GUIPropertyManager.SetProperty("#buttontitle", m_strLabel);
+			}
       int dwTextPosX=m_dwPosX;
       int dwCheckMarkPosX=m_dwPosX;
       if (null!=m_pFont) 

@@ -97,6 +97,7 @@ namespace MediaPortal.GUI.Library
 			{
 				//render the focused image
 				m_imgFocus.Render(timePassed);
+				GUIPropertyManager.SetProperty("#buttontitle", Label);
       }
 			else 
 			{
