@@ -1,3 +1,4 @@
+//#define DUMP
 #if (UseCaptureCardDefinitions)
 using System;
 using System.Collections;
@@ -209,6 +210,10 @@ namespace MediaPortal.TV.Recording
 				//check if we didnt already create a graph
 				if (m_graphState != State.None) 
 					return false;
+
+#if DUMP
+				fileout = new System.IO.FileStream("audiodump.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
+#endif
 				graphRunning=false;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph(). ");
 
@@ -645,13 +650,6 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void DeleteGraph()
 		{
-#if DUMP
-			if (fileout!=null)
-			{
-				fileout.Close();
-				fileout=null;
-			}
-#endif
 			if (m_graphState < State.Created) 
 				return;
 			m_iPrevChannel = -1;
@@ -774,6 +772,13 @@ namespace MediaPortal.TV.Recording
 				dsFilter = null;
 			}
 
+#if DUMP
+			if (fileout!=null)
+			{
+				fileout.Close();
+				fileout=null;
+			}
+#endif
 			m_graphState = State.None;
 			return;
 		}//public void DeleteGraph()
@@ -1163,14 +1168,12 @@ namespace MediaPortal.TV.Recording
 			for(int pointer=add;pointer<end;pointer+=188)
 			{
 				TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-				if (header.Pid==currentTuningObject.AudioPid)
-				{
-					byte[] tmpBuffer=new byte[188];
-					Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
-					fileout.Write(tmpBuffer,0,tmpBuffer.Length);
-				}
+				byte[] tmpBuffer=new byte[188];
+				Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
+				fileout.Write(tmpBuffer,0,tmpBuffer.Length);
 			}
 #endif
+
 			return 0;
 		}
 
@@ -3342,9 +3345,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Radio) 
 			{
-#if DUMP
-				fileout = new System.IO.FileStream("audiodump.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
-#endif
 				if (m_graphState!=State.Created)  return;
 				if (Vmr9!=null)
 				{
