@@ -580,7 +580,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_eState!= State.Initialized) return false;
 			if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return false;
-			
 			TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			return dev.HasTeletext;
 		}
