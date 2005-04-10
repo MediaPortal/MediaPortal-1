@@ -603,6 +603,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_08B46E65F82947A68AA5A381BC8AB736"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_08C49BBFE70C41F6B614BDCA83CEF5CB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2650,6 +2656,12 @@
         "Entry"
         {
         "MsmKey" = "8:_362CD73329EB4E148FE9F735C08EF39B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_363685D81CDE451FB0BD6D9DEEE3D7DE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -13716,6 +13728,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_08B46E65F82947A68AA5A381BC8AB736"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\musicViews.xml"
+            "TargetName" = "8:musicViews.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_08C49BBFE70C41F6B614BDCA83CEF5CB"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\media\\buttonNF_my mail.png"
@@ -20231,6 +20263,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_363685D81CDE451FB0BD6D9DEEE3D7DE"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\videoViews.xml"
+            "TargetName" = "8:videoViews.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_363C5A28F4D74EC4B5C1C44ADF0D4602"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\Media\\remote_red.png"
@@ -24531,7 +24583,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -37662,7 +37714,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.1926.23187, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.1926.29413, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_B566FF09CF9AE6A60C5A3632B782BAA4"
@@ -45419,7 +45471,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1926.23191, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.1926.29416, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_E90B3CA2021A4CC182703029EB606123"
@@ -46450,7 +46502,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.1926.23190, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.1926.29416, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_F1B67FEAD40489CAEDE88877A3264EEC"

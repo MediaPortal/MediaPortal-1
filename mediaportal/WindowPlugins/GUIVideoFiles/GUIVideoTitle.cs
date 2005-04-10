@@ -411,6 +411,24 @@ namespace MediaPortal.GUI.Video
 			IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 			if(movie==null) movie = new IMDBMovie();
 			movie.SetProperties();
+			if (movie.ID>=0)
+			{
+				string strThumb;
+				strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,movie.Title);
+				if (System.IO.File.Exists(strThumb))
+				{
+					facadeView.FilmstripView.InfoImageFileName=strThumb;
+				}
+			}
+			else if (movie.Actor!=String.Empty)
+			{
+				string strThumb;
+				strThumb = Utils.GetLargeCoverArtName(ActorThumbsFolder,movie.Actor);
+				if (System.IO.File.Exists(strThumb))
+				{
+					facadeView.FilmstripView.InfoImageFileName=strThumb;
+				}
+			}
 		}
 	}
 }
