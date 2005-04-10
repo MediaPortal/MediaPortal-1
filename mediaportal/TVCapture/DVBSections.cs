@@ -12,7 +12,7 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBSections
 	{
-		
+		#region imports
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionPtr(int section,ref IntPtr dataPointer,ref int len,ref int header,ref int tableExtId,ref int version,ref int secNum,ref int lastSecNum);
@@ -21,6 +21,9 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid,int tid,ref int sectionCount,int tableSection,int timeout);
 		// globals
+		#endregion
+
+		#region variables
 		TPList[]							transp;
 		ArrayList							m_sectionsList;	
 		int									m_diseqc=0;
@@ -37,6 +40,182 @@ namespace MediaPortal.TV.Recording
 		System.Timers.Timer					m_eitTimeoutTimer=null;
 		bool								m_breakAction=false;
 		object								m_dataCtrl=null;
+		
+		string[] m_langCodes=new string[]{
+																			 "abk","ace","ach","ada","aar",
+																			 "afh","afr","afa","aka","akk",
+																			 "alb","sqi","ale","alg","tut",
+																			 "amh","apa","ara","arc","arp",
+																			 "arn","arw","arm","hye","art",
+																			 "asm","ath","map","ava","ave",
+																			 "awa","aym","aze","nah","ban",
+																			 "bat","bal","bam","bai","bad",
+																			 "bnt","bas","bak","baq","eus",
+																			 "bej","bem","ben","ber","bho",
+																			 "bih","bik","bin","bis","bra",
+																			 "bre","bug","bul","bua","bur",
+																			 "mya","bel","cad","car","cat",
+																			 "cau","ceb","cel","cai","chg",
+																			 "cha","che","chr","chy","chb",
+																			 "chi","zho","chn","cho","chu",
+																			 "chv","cop","cor","cos","cre",
+																			 "mus","crp","cpe","cpf","cpp",
+																			 "cus","ces","cze","dak","dan",
+																			 "del","din","div","doi","dra",
+																			 "dua","dut","nla","dum","dyu",
+																			 "dzo","efi","egy","eka","elx",
+																			 "eng","enm","ang","esk","epo",
+																			 "est","ewe","ewo","fan","fat",
+																			 "fao","fij","fin","fiu","fon",
+																			 "fra","fre","frm","fro","fry",
+																			 "ful","gaa","gae","gdh","glg",
+																			 "lug","gay","gez","geo","kat",
+																			 "deu","ger","gmh","goh","gem",
+																			 "gil","gon","got","grb","grc",
+																			 "ell","gre","kal","grn","guj",
+																			 "hai","hau","haw","heb","her",
+																			 "hil","him","hin","hmo","hun",
+																			 "hup","iba","ice","isl","ibo",
+																			 "ijo","ilo","inc","ine","ind",
+																			 "ina","ine","iku","ipk","ira",
+																			 "gai","iri","sga","mga","iro",
+																			 "ita","jpn","jav","jaw","jrb",
+																			 "jpr","kab","kac","kam","kan",
+																			 "kau","kaa","kar","kas","kaw",
+																			 "kaz","kha","khm","khi","kho",
+																			 "kik","kin","kir","kom","kon",
+																			 "kok","kor","kpe","kro","kua",
+																			 "kum","kur","kru","kus","kut",
+																			 "lad","lah","lam","oci","lao",
+																			 "lat","lav","ltz","lez","lin",
+																			 "lit","loz","lub","lui","lun",
+																			 "luo","mac","mak","mad","mag",
+																			 "mai","mak","mlg","may","msa",
+																			 "mal","mlt","man","mni","mno",
+																			 "max","mao","mri","mar","chm",
+																			 "mah","mwr","mas","myn","men",
+																			 "mic","min","mis","moh","mol",
+																			 "mkh","lol","mon","mos","mul",
+																			 "mun","nau","nav","nde","nbl",
+																			 "ndo","nep","new","nic","ssa",
+																			 "niu","non","nai","nor","nno",
+																			 "nub","nym","nya","nyn","nyo",
+																			 "nzi","oji","ori","orm","osa",
+																			 "oss","oto","pal","pau","pli",
+																			 "pam","pag","pan","pap","paa",
+																			 "fas","per","peo","phn","pol",
+																			 "pon","por","pra","pro","pus",
+																			 "que","roh","raj","rar","roa",
+																			 "ron","rum","rom","run","rus",
+																			 "sal","sam","smi","smo","sad",
+																			 "sag","san","srd","sco","sel",
+																			 "sem","scr","srr","shn","sna",
+																			 "sid","bla","snd","sin","sit",
+																			 "sio","sla","ssw","slk","slo",
+																			 "slv","sog","som","son","wen",
+																			 "nso","sot","sai","esl","spa",
+																			 "suk","sux","sun","sus","swa",
+																			 "ssw","sve","swe","syr","tgl",
+																			 "tah","tgk","tmh","tam","tat",
+																			 "tel","ter","tha","bod","tib",
+																			 "tig","tir","tem","tiv","tli",
+																			 "tog","ton","tru","tsi","tso",
+																			 "tsn","tum","tur","ota","tuk",
+																			 "tyv","twi","uga","uig","ukr",
+																			 "umb","und","urd","uzb","vai",
+																			 "ven","vie","vol","vot","wak",
+																			 "wal","war","was","cym","wel",
+																			 "wol","xho","sah","yao","yap",
+																			 "yid","yor","zap","zen","zha","zul"};
+		string[] m_langLanguage=new string[]{
+																					"Abkhazian","Achinese","Acoli","Adangme","Afar",
+																					"Afrihili","Afrikaans","Afro-Asiatic","Akan",
+																					"Akkadian","Albanian","Albanian","Aleut","Algonquian",
+																					"Altaic","Amharic","Apache","Arabic","Aramaic",
+																					"Arapaho","Araucanian","Arawak","Armenian","Armenian",
+																					"Artificial","Assamese","Athapascan","Austronesian",
+																					"Avaric","Avestan","Awadhi","Aymara","Azerbaijani",
+																					"Aztec","Balinese","Baltic","Baluchi","Bambara",
+																					"Bamileke","Banda","Bantu","Basa","Bashkir","Basque",
+																					"Basque","Beja","Bemba","Bengali","Berber","Bhojpuri",
+																					"Bihari","Bikol","Bini","Bislama","Braj","Breton",
+																					"Buginese","Bulgarian","Buriat","Burmese","Burmese",
+																					"Byelorussian","Caddo","Carib","Catalan","Caucasian",
+																					"Cebuano","Celtic","Central-American(Indian)","Chagatai",
+																					"Chamorro","Chechen","Cherokee","Cheyenne","Chibcha",
+																					"Chinese","Chinese","Chinook","Choctaw","Church","Chuvash",
+																					"Coptic","Cornish","Corsican","Cree","Creek",
+																					"Creoles(Pidgins)","Creoles(Pidgins)","Creoles(Pidgins)",
+																					"Creoles(Pidgins)","Cushitic","Czech","Czech","Dakota",
+																					"Danish","Delaware","Dinka","Divehi","Dogri","Dravidian",
+																					"Duala","Dutch","Dutch","Dutch-Middle","Dyula","Dzongkha",
+																					"Efik","Egyptian","Ekajuk","Elamite","English",
+																					"English-Middle","English-Old","Eskimo","Esperanto",
+																					"Estonian","Ewe","Ewondo","Fang","Fanti","Faroese",
+																					"Fijian","Finnish","Finno-Ugrian","Fon","French",
+																					"French","French-Middle","French-Old","Frisian",
+																					"Fulah","Ga","Gaelic","Gaelic","Gallegan","Ganda",
+																					"Gayo","Geez","Georgian","Georgian","German","German",
+																					"German-Middle","German-Old","Germanic","Gilbertese",
+																					"Gondi","Gothic","Grebo","Greek-Ancient","Greek",
+																					"Greek","Greenlandic","Guarani","Gujarati","Haida",
+																					"Hausa","Hawaiian","Hebrew","Herero","Hiligaynon",
+																					"Himachali","Hindi","Hiri","Hungarian","Hupa","Iban",
+																					"Icelandic","Icelandic","Igbo","Ijo","Iloko","Indic",
+																					"Indo-European","Indonesian","Interlingua","Interlingue",
+																					"Inuktitut","Inupiak","Iranian","Irish","Irish",
+																					"Irish-Old","Irish-Middle","Iroquoian","Italian",
+																					"Japanese","Javanese","Javanese","Judeo-Arabic",
+																					"Judeo-Persian","Kabyle","Kachin","Kamba","Kannada",
+																					"Kanuri","Kara-Kalpak","Karen","Kashmiri","Kawi",
+																					"Kazakh","Khasi","Khmer","Khoisan","Khotanese","Kikuyu",
+																					"Kinyarwanda","Kirghiz","Komi","Kongo","Konkani",
+																					"Korean","Kpelle","Kru","Kuanyama","Kumyk","Kurdish",
+																					"Kurukh","Kusaie","Kutenai","Ladino","Lahnda","Lamba",
+																					"Langue","Lao","Latin","Latvian","Letzeburgesch",
+																					"Lezghian","Lingala","Lithuanian","Lozi","Luba-Katanga",
+																					"Luiseno","Lunda","Luo","Macedonian","Macedonian",
+																					"Madurese","Magahi","Maithili","Makasar","Malagasy",
+																					"Malay","Malay","Malayalam","Maltese","Mandingo",
+																					"Manipuri","Manobo","Manx","Maori","Maori","Marathi",
+																					"Mari","Marshall","Marwari","Masai","Mayan","Mende",
+																					"Micmac","Minangkabau","Miscellaneous","Mohawk",
+																					"Moldavian","Mon-Kmer","Mongo","Mongolian","Mossi",
+																					"Multiple","Munda","Nauru","Navajo","Ndebele-North",
+																					"Ndebele-South","Ndongo","Nepali","Newari",
+																					"Niger-Kordofanian","Nilo-Saharan","Niuean",
+																					"Norse-Old","North-American(Indian)","Norwegian",
+																					"Norwegian","Nubian","Nyamwezi","Nyanja","Nyankole",
+																					"Nyoro","Nzima","Ojibwa","Oriya","Oromo","Osage",
+																					"Ossetic","Otomian","Pahlavi","Palauan","Pali",
+																					"Pampanga","Pangasinan","Panjabi","Papiamento",
+																					"Papuan-Australian","Persian","Persian","Persian-Old",
+																					"Phoenician","Polish","Ponape","Portuguese","Prakrit",
+																					"Provencal-Old","Pushto","Quechua","Rhaeto-Romance",
+																					"Rajasthani","Rarotongan","Romance","Romanian","Romanian",
+																					"Romany","Rundi","Russian","Salishan","Samaritan(Aramaic)",
+																					"Sami","Samoan","Sandawe","Sango","Sanskrit","Sardinian",
+																					"Scots","Selkup","Semitic","Serbo-Croatian","Serer","Shan",
+																					"Shona","Sidamo","Siksika","Sindhi","Singhalese",
+																					"Sino-Tibetan","Siouan","Slavic","Siswant","Slovak",
+																					"Slovak","Slovenian","Sogdian","Somali","Songhai","Sorbian",
+																					"Sotho-Northern","Sotho-Southern","South-American(Indian)",
+																					"Spanish","Spanish","Sukuma","Sumerian","Sudanese","Susu",
+																					"Swahili","Swazi","Swedish","Swedish","Syriac","Tagalog",
+																					"Tahitian","Tajik","Tamashek","Tamil","Tatar","Telugu",
+																					"Tereno","Thai","Tibetan","Tibetan","Tigre","Tigrinya",
+																					"Timne","Tivi","Tlingit","Tonga","Tonga(Tonga-Islands)",
+																					"Truk","Tsimshian","Tsonga","Tswana","Tumbuka","Turkish",
+																					"Turkish-Ottoman","Turkmen","Tuvinian","Twi","Ugaritic",
+																					"Uighur","Ukrainian","Umbundu","Undetermined","Urdu",
+																					"Uzbek","Vai","Venda","Vietnamese","Volapük","Votic",
+																					"Wakashan","Walamo","Waray","Washo","Welsh","Welsh",
+																					"Wolof","Xhosa","Yakut","Yao","Yap","Yiddish","Yoruba",
+																					"Zapotec","Zenaga","Zhuang","Zulu"};
+
+#endregion
+
+		#region Helper Methods
 		//
 
 		//
@@ -53,6 +232,7 @@ namespace MediaPortal.TV.Recording
 			get{return m_timeoutMS;}
 			set{m_timeoutMS=value;}
 		}
+		#region tables
 		// tables
 		public struct EITDescr
 		{
@@ -207,6 +387,7 @@ namespace MediaPortal.TV.Recording
 			public bool		isDVBSubtitle;
 			public string	teletextLANG;
 		}
+		#endregion
 		//
 		//
 		public bool SetPidsForTechnisat
@@ -233,6 +414,327 @@ namespace MediaPortal.TV.Recording
 		
 		}
 		
+		int getUTC(int val)
+		{
+			if ((val&0xF0)>=0xA0)
+				return 0;
+			if ((val&0xF)>=0xA)
+				return 0;
+			return ((val&0xF0)>>4)*10+(val&0xF);
+		}
+
+		public ArrayList GetLanguages()
+		{
+			ArrayList langs=new ArrayList();
+			foreach(string str in m_langLanguage)
+				langs.Add(str);
+			return langs;
+		}
+		//
+		//
+		public ArrayList GetLanguageCodes()
+		{
+			ArrayList langs=new ArrayList();
+			foreach(string str in m_langCodes)
+				langs.Add(str);
+			return langs;
+		}
+		//
+		//
+		public string GetLanguageFromCode(string code)
+		{
+			int n=0;
+			foreach(string langCode in m_langCodes)
+			{
+				if(langCode.Equals(code))
+					return m_langLanguage.GetValue(n).ToString();
+				n++;
+			}
+			return "";
+		}
+
+
+		//
+		//
+		// iso 639 language codes
+
+
+		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			m_breakAction=true;
+		}
+
+		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
+		{
+			bool flag;
+			int dataLen=0;
+			int header=0;
+			int tableExt=0;
+			int sectNum=0;
+			int sectLast=0;
+			int version=0;
+			byte[] arr = new byte[1];
+			IntPtr sectionBuffer=IntPtr.Zero;
+
+			m_sectionsList=new ArrayList();
+			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
+			if(flag==false)
+			{
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBSections:GetStreamdata() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
+				return false;
+			}
+			if (sectLast<=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBSections:Sections:GetStreamdata() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
+			}
+			for(int n=0;n<sectLast;n++)
+			{
+				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
+				if(flag)
+				{
+					if (tableExt != - 1)
+					{
+						arr = new byte[dataLen+8 + 1];
+						try
+						{
+							Marshal.Copy(sectionBuffer, arr, 8, dataLen);
+						}
+						catch
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							m_sectionsList.Clear();
+							break;
+						}
+						arr[0] = (byte)tid;
+						arr[1] = (byte)((header >> 8) & 255);
+						arr[2] =(byte) (header & 255);
+						arr[3] = (byte)((tableExt >> 8) & 255);
+						arr[4] = (byte)(tableExt & 255);
+						arr[5] =(byte) version;
+						arr[6] = (byte)sectNum;
+						arr[7] = (byte)sectLast;
+						m_sectionsList.Add(arr);
+						if(tableSection!=0)
+							break;
+					}
+					else
+					{
+						arr = new byte[dataLen+3 + 1];
+						try
+						{
+							Marshal.Copy(sectionBuffer, arr, 3, dataLen);
+						}
+						catch
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							m_sectionsList.Clear();
+							break;
+						}
+						arr[0] = System.Convert.ToByte(tid);
+						arr[1] = System.Convert.ToByte((header >> 8) & 255);
+						arr[2] = System.Convert.ToByte(header & 255);
+						m_sectionsList.Add(arr);
+						if(tableSection!=0)
+							break;
+					}// else
+
+				}// if(flag)
+			}//for
+			ReleaseSectionsBuffer();
+			return true;
+		}
+		string DVB_GetLanguageFromISOCode(string code)
+		{
+			return "";
+		}
+		public string GetNetworkProvider(int onid)
+		{
+			return DVB_GetNetworkProvider(onid);
+		}
+		string DVB_GetNetworkProvider(int orgNetworkID)
+		{
+			switch(orgNetworkID)
+			{
+				case 0x0000: return "Reserved";
+				case 0x0001: return "Astra 19,2°E" ;
+				case 0x0002: return "Astra 28,2°E" ;
+				case 0x0019: return "Astra" ;
+				case 0x001A: return "Quiero Televisión" ;
+				case 0x001B: return "RAI" ;
+				case 0x001F: return "Europe Online Networks" ;
+				case 0x0020: return "ASTRA" ;
+				case 0x0026: return "Hispasat Network" ;
+				case 0x0027: return "Hispasat 30°W" ;
+				case 0x0028: return "Hispasat 30°W" ;
+				case 0x0029: return "Hispasat 30°W" ;
+				case 0x002E: return "Xantic" ;
+				case 0x002F: return "TVNZ Digital" ;
+				case 0x0030: return "Canal+ Satellite Network" ;
+				case 0x0031: return "Hispasat - VIA DIGITAL" ;
+				case 0x0034: return "Hispasat Network" ;
+				case 0x0035: return "Nethold Main Mux System" ;
+				case 0x0036: return "TV Cabo" ;
+				case 0x0037: return "STENTOR" ;
+				case 0x0038: return "OTE" ;
+				case 0x0040: return "Croatian Post and Telecommunications" ;
+				case 0x0041: return "Mindport network" ;
+				case 0x0047: return "Telenor" ;
+				case 0x0048: return "STAR DIGITAL" ;
+				case 0x0049: return "Sentech" ;
+				case 0x0050: return "HRT Croatian Radio and Television" ;
+				case 0x0051: return "Havas" ;
+				case 0x0052: return "StarGuide Digital Networks" ;
+				case 0x0054: return "Teracom Satellite" ;
+				case 0x0055: return "Sirius (Teracom)" ;
+				case 0x0058: return "UBC Thailand" ;
+				case 0x005E: return "Sirius" ;
+				case 0x005F: return "Sirius" ;
+				case 0x0060: return "MSG MediaServices GmbH" ;
+				case 0x0069: return "Optus Communications" ;
+				case 0x0070: return "NTV+" ;
+				case 0x0073: return "PanAmSat 4 68.5°E" ;
+				case 0x007D: return "Skylogic" ;
+				case 0x007E: return "Eutelsat" ;
+				case 0x007F: return "Eutelsat" ;
+				case 0x0085: return "BetaTechnik" ;
+				case 0x0090: return "TDF" ;
+				case 0x00A0: return "News Datacom" ;
+				case 0x00A5: return "News Datacom" ;
+				case 0x00A6: return "ART" ;
+				case 0x00A7: return "Globecast" ;
+				case 0x00A8: return "Foxtel" ;
+				case 0x00A9: return "Sky New Zealand" ;
+				case 0x00B3: return "TPS" ;
+				case 0x00B4: return "Telesat 107.3°W | Telesat Canada" ;
+				case 0x00B5: return "Telesat 111.1°W" ;
+				case 0x00B6: return "Telstra Saturn" ;
+				case 0x00BA: return "Satellite Express 6 (80°E)" ;
+				case 0x00CD: return "Canal +" ;
+				case 0x00EB: return "Eurovision Network" ;
+				case 0x0100: return "ExpressVu" ;
+				case 0x010D: return "Skylogic Italia" ;
+				case 0x010E: return "Eutelsat 10°E" ;
+				case 0x010F: return "Eutelsat 10°E" ;
+				case 0x0110: return "Mediaset" ;
+				case 0x011F: return "visAvision Network" ;
+				case 0x013D: return "Skylogic Italia" ;
+				case 0x013E: return "Eutelsat 13°E" ;
+				case 0x013F: return "Eutelsat 13°E" ;
+				case 0x016D: return "Skylogic Italia" ;
+				case 0x016E: return "Eutelsat 16°E" ;
+				case 0x016F: return "Eutelsat 16°E" ;
+				case 0x01F4: return "MediaKabel B.V" ;
+				case 0x022D: return "Skylogic Italia" ;
+				case 0x022F: return "Eutelsat 21.5°E" ;
+				case 0x026D: return "Skylogic Italia" ;
+				case 0x026F: return "Eutelsat 25.5°E" ;
+				case 0x029D: return "Skylogic Italia" ;
+				case 0x029E: return "Eutelsat 29°E" ;
+				case 0x029F: return "Eutelsat 28.5°E" ;
+				case 0x02BE: return "Arabsat" ;
+				case 0x033D: return "Skylogic Italia" ;
+				case 0x033f: return "Eutelsat 33°E " ;
+				case 0x036D: return "Skylogic Italia" ;
+				case 0x036E: return "Eutelsat 36°E" ;
+				case 0x036F: return "Eutelsat 36°E" ;
+				case 0x03E8: return "Telia, Sweden" ;
+				case 0x047D: return "Skylogic Italia" ;
+				case 0x047f: return "Eutelsat 12.5°W" ;
+				case 0x048D: return "Skylogic Italia" ;
+				case 0x048E: return "Eutelsat 48°E" ;
+				case 0x048F: return "Eutelsat 48°E" ;
+				case 0x052D: return "Skylogic Italia" ;
+				case 0x052f: return "Eutelsat 8°W" ;
+				case 0x055D: return "Skylogic Italia" ;
+				case 0x055f: return "Eutelsat" ;
+				case 0x0600: return "UPC Satellite" ;
+				case 0x0601: return "UPC Cable" ;
+				case 0x0602: return "Tevel" ;
+				case 0x071D: return "Skylogic Italia" ;
+				case 0x071f: return "Eutelsat 70.5°E" ;
+				case 0x0801: return "Nilesat 101" ;
+				case 0x0880: return "MEASAT 1, 91.5°E" ;
+				case 0x0882: return "MEASAT 2, 91.5°E" ;
+				case 0x0883: return "MEASAT 2, 148.0°E" ;
+				case 0x088F: return "MEASAT 3" ;
+				case 0x1000: return "Optus B3 156°E" ;
+				case 0x1001: return "DISH Network" ;
+				case 0x1002: return "Dish Network 61.5 W" ;
+				case 0x1003: return "Dish Network 83 W" ;
+				case 0x1004: return "Dish Network 119" ;
+				case 0x1005: return "Dish Network 121" ;
+				case 0x1006: return "Dish Network 148" ;
+				case 0x1007: return "Dish Network 175" ;
+				case 0x1008: return "Dish Network W" ;
+				case 0x1009: return "Dish Network X" ;
+				case 0x100A: return "Dish Network Y" ;
+				case 0x100B: return "Dish Network Z" ;
+				case 0x1010: return "ABC TV" ;
+				case 0x1011: return "SBS" ;
+				case 0x1012: return "Nine Network Australia" ;
+				case 0x1013: return "Seven Network Australia" ;
+				case 0x1014: return "Network TEN Australia" ;
+				case 0x1015: return "WIN Television Australia" ;
+				case 0x1016: return "Prime Television Australia" ;
+				case 0x1017: return "Southern Cross Broadcasting Australia" ;
+				case 0x1018: return "Telecasters Australia" ;
+				case 0x1019: return "NBN Australia" ;
+				case 0x101A: return "Imparja Television Australia" ;
+				case 0x101f: return "Reserved" ;
+				case 0x1100: return "GE Americom" ;
+				case 0x2000: return "Thiacom 1,2 78.5°E" ;
+				case 0x2024: return "Australian Digital Terrestrial Television" ;
+				case 0x2038: return "Belgian Digital Terrestrial Television" ;
+				case 0x20CB: return "Czech Republic Digital Terrestrial Television" ;
+				case 0x20D0: return "Danish Digital Terrestrial Television" ;
+				case 0x20E9: return "Estonian Digital Terrestrial Television" ;
+				case 0x20F6: return "Finnish Digital Terrestrial Television" ;
+				case 0x2114: return "German Digital Terrestrial Television DVB-T broadcasts" ;
+				case 0x2174: return "Irish Digital Terrestrial Television" ;
+				case 0x2178: return "Israeli Digital Terrestrial Television" ;
+				case 0x2210: return "Netherlands Digital Terrestrial Television" ;
+				case 0x22BE: return "Singapore Digital Terrestrial Television" ;
+				case 0x22D4: return "Spanish Digital Terrestrial Television" ;
+				case 0x22F1: return "Swedish Digital Terrestrial Television" ;
+				case 0x22F4: return "Swiss Digital Terrestrial Television" ;
+				case 0x233A: return "UK Digital Terrestrial Television" ;
+				case 0x3000: return "PanAmSat 4 68.5°E" ;
+				case 0x5000: return "Irdeto Mux System" ;
+				case 0x616D: return "BellSouth Entertainment" ;
+				case 0x6600: return "UPC Satellite" ;
+				case 0x6601: return "UPC Cable" ;
+				case 0xF000: return "Small Cable networks" ;
+				case 0xF001: return "Deutsche Telekom" ;
+				case 0xF010: return "Telefónica Cable" ;
+				case 0xF020: return "Cable and Wireless Communication " ;
+				case 0xF100: return "Casema" ;
+				case 0xF750: return "Telewest Communications Cable Network" ;
+				case 0xF751: return "OMNE Communications" ;
+				case 0xFBFC: return "MATAV" ;
+				case 0xFBFD: return "Telia Kabel-TV" ;
+				case 0xFBFE: return "TPS" ;
+				case 0xFBFF: return "Sky Italia" ;
+				case 0xFC10: return "Rhône Vision Cable" ;
+				case 0xFC41: return "France Telecom Cable" ;
+				case 0xFD00: return "National Cable Network";
+				case 0xFE00: return "TeleDenmark Cable TV";
+				case 0xFEff: return "Network Interface Modules" ;
+				case 0xFFfe: return "ESTI Private" ;
+				default: return "Unknown Network Provider";
+			}
+		}
+
+
+		#endregion
+
+		#region Table Decoding
+		#region tables
+		/// <summary>
+		/// The PAT table contains the PMT pid of each program
+		/// </summary>
+		/// <param name="buf">PAT table</param>
+		/// <returns>tp.PMTTable table will contain all the PMT pids</returns>
 		private int decodePATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
 		{
 			int loop;
@@ -259,10 +761,9 @@ namespace MediaPortal.TV.Recording
 				Log.Write("decodePATTable() loop < 1 loop={0}", buf.Length);
 				return 0;
 			}
-			ChannelInfo ch=new ChannelInfo();
 			for (int count=0;count<loop;count++)
 			{
-				
+				ChannelInfo ch=new ChannelInfo();
 				System.Array.Copy(buf, 8 +(count * 4), b, 0, 4);
 				ch.transportStreamID=transport_stream_id;
 				ch.program_number = (b[0]<<8)+b[1];
@@ -280,419 +781,15 @@ namespace MediaPortal.TV.Recording
 			}
 			return loop;
 		}
-		//
-		//
 
 		/// <summary>
-		/// Get all information about channels & services 
+		/// The PMT table contains the audio/video/teletext pids for each program
 		/// </summary>
-		/// <param name="filter">IBase filter implementing IMpeg2Data</param>
-		/// <returns>Transponder object containg all channels/services found</returns>
-		public Transponder Scan(DShowNET.IBaseFilter filter)
-		{
-			m_sectionsList=new ArrayList();	
-			Transponder transponder = new Transponder();
-			if(m_setPid==true)
-			{
-				DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
-				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,0);
-				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,16);
-				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,17);
-				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: pids set");
-			}
-			try
-			{
-				Log.Write("AutoTune()");
-/*
-				MediaPortal.Util.Utils.FileDelete("table0x1f.dat");
-				System.IO.FileStream fileout = new System.IO.FileStream("table0x1f.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
-				GetStreamData(filter,0x1f, 0x5d,0,10000);
-				foreach(byte[] arr in m_sectionsList)
-				fileout.Write(arr,0,arr.Length);
-				fileout.Close();
-*/
-				transponder.channels = new ArrayList();
-				transponder.PMTTable = new ArrayList();
-				GetStreamData(filter,0, 0,0,Timeout);
-				// jump to parser
-				Log.Write("AutoTune() sectionlist count:{0}",m_sectionsList.Count);
-				foreach(byte[] arr in m_sectionsList)
-					decodePATTable(arr, transp[0], ref transponder);
-
-				LoadPMTTables(filter,transp[0],ref transponder);
-				
-				Log.Write("AutoTune() done");
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:Scan() exception:{0}", ex.ToString());
-			}
-			return transponder;
-		}//public Transponder Scan(DShowNET.IBaseFilter filter)
-		
-		/// <summary>
-		/// Get all information about channels & services 
-		/// </summary>
-		/// <param name="filter">[in] IBase filter implementing IMpeg2Data</param>
-		/// <param name="serviceId">[in] The service id for which the raw PMT should be returned</param>
-		/// <param name="info">[Out] The channel info for the service id</param>
-		/// <returns>byte array containing the raw PMT or null if no PMT is found</returns>
-		public byte[] GetRAWPMT(DShowNET.IBaseFilter filter, int serviceId, out ChannelInfo info)
-		{
-			byte[] PMTTable=null;
-			info=new ChannelInfo();
-
-			ArrayList sectionTable=new ArrayList();
-			try
-			{
-				m_sectionsList=new ArrayList();	
-				Transponder transponder = new Transponder();
-				transponder.channels = new ArrayList();
-				transponder.PMTTable = new ArrayList();
-				//Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT for channel:{0}",serviceId);
-				GetStreamData(filter,0, 0,0,200);
-				if (m_sectionsList.Count==0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() timeout");
-					return null;
-				}
-				//Log.WriteFile(Log.LogType.Capture,"dvbSections:Decode PAT :{0}",m_sectionsList.Count);
-				// jump to parser
-				foreach(byte[] arr in m_sectionsList)
-					decodePATTable(arr, transp[0], ref transponder);
-
-				LoadPMTTables(filter,transp[0],ref transponder);
-				bool found=false;
-				foreach (ChannelInfo chanInfo in transponder.channels)
-				{
-					//Log.WriteFile(Log.LogType.Capture,"dvbSections:Got channel:{0} {1}",chanInfo.service_name, chanInfo.serviceID);
-					if (chanInfo.serviceID==serviceId)
-					{
-						Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() found channel:{0} scrambled:{1} service id:{2} network PMT pid:{3} program:{4}",
-									chanInfo.service_name,chanInfo.scrambled,chanInfo.serviceID,chanInfo.network_pmt_PID,chanInfo.program_number);
-						if (chanInfo.pid_list!=null)
-						{
-							for (int i=0; i < chanInfo.pid_list.Count;++i)
-							{
-								DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[i];
-								if (data.isTeletext) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() teletext pid:{0}", data.elementary_PID);
-								if (data.isAudio) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() audio pid:{0}", data.elementary_PID);
-								if (data.isVideo) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() video pid:{0}", data.elementary_PID);
-								if (data.isDVBSubtitle) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() subtitle pid:{0}", data.elementary_PID);
-								if (data.isAC3Audio) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() ac3 audio pid:{0}", data.elementary_PID);
-							}
-						}
-						found=true;
-						info=chanInfo;
-						break;
-					}
-				}
-				if (!found) 
-				{
-					//Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() channel not found");
-					return null;
-				}
-				int t;
-				int n;
-				ArrayList	tab42=new ArrayList();
-				ArrayList	tab46=new ArrayList();
-
-				// check tables
-				//AddTSPid(17);
-				//
-				
-				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,200);
-				tab42=(ArrayList)m_sectionsList.Clone();
-				
-				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,200);
-				tab46=(ArrayList)m_sectionsList.Clone();
-
-				
-				//bool flag=false;
-				ChannelInfo pat;
-				ArrayList pmtList = transponder.PMTTable;
-				int pmtScans;
-				pmtScans = (pmtList.Count / 20) + 1;
-				
-				//Log.WriteFile(Log.LogType.Capture,"dvbSections: PMT table list:{0} pmtScans:{1}", pmtList.Count,pmtScans);
-				for (t = 1; t <= pmtScans; t++)
-				{
-					//flag = DeleteAllPIDsI();
-					for (n = 0; n <= 19; n++)
-					{
-						if (((t - 1) * 20) + n > pmtList.Count - 1)
-						{
-							break;
-						}
-						pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-						
-						// parse pmt
-						int res=0;
-						//if (pat.program_number==serviceId)
-					{
-				//		Log.WriteFile(Log.LogType.Capture,"dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
-						foreach(byte[] wdata in m_sectionsList)
-						{
-							if (pat.program_number==serviceId)
-							{
-					//			Log.WriteFile(Log.LogType.Capture,"dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
-								for (int l=0; l < wdata.Length;++l)
-									sectionTable.Add(wdata[l]);
-							}
-							Debug.WriteLine("decode PMT:"+n.ToString());
-							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
-						}
-
-						if(res>0)
-						{
-
-							Debug.WriteLine("decode SDT table42");
-							foreach(byte[] wdata in tab42)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-
-							Debug.WriteLine("decode SDT table46");
-							foreach(byte[] wdata in tab46)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-						}
-						transponder.channels.Add(pat);
-					}
-					}
-				}
-
-				foreach (ChannelInfo chanInfo in transponder.channels)
-				{
-					if (chanInfo.serviceID==serviceId)
-					{
-						Debug.WriteLine("  got channelinfo");
-						info=chanInfo;
-						break;
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetRAWPMT() exception:{0}", ex.ToString());
-			}
-
-			if (sectionTable.Count>3)
-			{
-				byte byLen=(byte)sectionTable[2];
-				byLen+=3;
-				PMTTable = new byte[byLen];
-				for (int i=0; i < byLen;++i)
-				{
-					PMTTable[i]=(byte)sectionTable[i];
-				}
-			}
-			//Log.WriteFile(Log.LogType.Capture,"dvbsections:GetRAWPMT done");
-			return PMTTable;
-		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
-
-		public DVBChannel GetDVBChannel(DShowNET.IBaseFilter filter, int serviceId)
-		{
-			Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel for service:{0}", serviceId);
-			DVBChannel chan = new DVBChannel();
-
-			ArrayList pmtTable=new ArrayList();
-			try
-			{
-				m_sectionsList=new ArrayList();	
-				Transponder transponder = new Transponder();
-				transponder.channels = new ArrayList();
-				transponder.PMTTable = new ArrayList();
-				GetStreamData(filter,0, 0,0,5000);
-				if (m_sectionsList.Count==0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel no sections found");
-					return null;
-				}
-				// jump to parser
-				foreach(byte[] arr in m_sectionsList)
-					decodePATTable(arr, transp[0], ref transponder);
-
-				LoadPMTTables(filter,transp[0],ref transponder);
-				int t;
-				int n;
-				ArrayList	tab42=new ArrayList();
-				ArrayList	tab46=new ArrayList();
-
-				// check tables
-				//AddTSPid(17);
-				//
-				
-				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,200);
-				tab42=(ArrayList)m_sectionsList.Clone();
-				
-				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,200);
-				tab46=(ArrayList)m_sectionsList.Clone();
-
-				
-				//bool flag=false;
-				ChannelInfo pat;
-				ArrayList pmtList = transponder.PMTTable;
-				int pmtScans;
-				pmtScans = (pmtList.Count / 20) + 1;
-				
-				for (t = 1; t <= pmtScans; t++)
-				{
-					//flag = DeleteAllPIDsI();
-					for (n = 0; n <= 19; n++)
-					{
-						if (((t - 1) * 20) + n > pmtList.Count - 1)
-						{
-							break;
-						}
-						pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-						
-						// parse pmt
-						int res=0;
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
-						foreach(byte[] wdata in m_sectionsList)
-						{
-							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
-						}
-
-						if(res>0)
-						{
-
-							foreach(byte[] wdata in tab42)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-
-							foreach(byte[] wdata in tab46)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-						}
-						transponder.channels.Add(pat);
-					}
-				}
-
-				foreach (ChannelInfo chanInfo in transponder.channels)
-				{
-					if (chanInfo.serviceID==serviceId)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel found channel details");
-						for (int pids =0; pids < chanInfo.pid_list.Count;pids++)
-						{
-							DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[pids];
-							if (data.isVideo)
-								chan.VideoPid=data.elementary_PID;
-							if (data.isAC3Audio)
-								chan.AC3Pid=data.elementary_PID;
-							if (data.isTeletext)
-								chan.TeletextPid=data.elementary_PID;
-							if (data.isAudio)
-								chan.AudioPid=data.elementary_PID;
-						}
-						
-						chan.TransportStreamID=chanInfo.transportStreamID;
-						chan.Symbolrate=chanInfo.symb;
-						chan.ServiceType=chanInfo.serviceType;
-						chan.ServiceProvider=chanInfo.service_provider_name;
-						chan.ServiceName=chanInfo.service_name;
-						chan.ProgramNumber=chanInfo.program_number;
-						chan.Polarity=chanInfo.pol;
-						chan.PMTPid=chanInfo.network_pmt_PID;
-						chan.PCRPid=chanInfo.pcr_pid;
-						chan.NetworkID=chanInfo.networkID;
-						chan.LNBKHz=chanInfo.lnb01;
-						chan.LNBFrequency=chanInfo.lnbkhz;
-						chan.IsScrambled=chanInfo.scrambled;
-						chan.ID=1;
-						chan.HasEITSchedule=chanInfo.eitSchedule;
-						chan.HasEITPresentFollow=chanInfo.eitPreFollow;
-						chan.Frequency=chanInfo.freq;
-						chan.FEC=chanInfo.fec;
-						chan.ECMPid=0;
-						chan.DiSEqC=0;
-						Log.WriteFile(Log.LogType.Capture,"name:{0} audio:{1:X} video:{2:X} txt:{3:X} EIT:{4} EITPF:{5}",
-							chan.ServiceName,chan.AudioPid,chan.VideoPid,chan.TeletextPid,chan.HasEITSchedule,chan.HasEITPresentFollow);
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetDVBChannel() exception:{0}", ex.ToString());
-			}
-			return chan;
-
-
-		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
-	
-		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
-		{
-			int t;
-			int n;
-			ArrayList	tab42=new ArrayList();
-			ArrayList	tab46=new ArrayList();
-
-			// check tables
-			//AddTSPid(17);
-			//
-			GetStreamData(filter,17, 0x42,0,m_timeoutMS);
-			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(filter,17, 0x46,0,500); // low value, nothing in most of time
-			tab46=(ArrayList)m_sectionsList.Clone();
-
-			//bool flag;
-			ChannelInfo pat;
-			ArrayList pmtList = tp.PMTTable;
-			int pmtScans;
-			pmtScans = (pmtList.Count / 20) + 1;
-			for (t = 1; t <= pmtScans; t++)
-			{
-				//flag = DeleteAllPIDsI();
-				for (n = 0; n <= 19; n++)
-				{
-					if (((t - 1) * 20) + n > pmtList.Count - 1)
-					{
-						break;
-					}
-					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-					//flag = AddTSPid(pat.network_pmt_PID);
-					//if (flag == false)
-					//{
-					//	break;
-					//}
-					
-					// parse pmt
-					int res=0;
-					if(m_setPid)
-					{
-						DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
-						DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,pat.network_pmt_PID);
-					}
-
-					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); // get here the pmt
-					foreach(byte[] wdata in m_sectionsList)
-						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
-
-					if(res>0)
-					{
-
-						foreach(byte[] wdata in tab42)
-							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-
-						foreach(byte[] wdata in tab46)
-							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-					}
-					tp.channels.Add(pat);
-				}
-			}
-		}//private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
-		
-
-		//
-		//
-		//
+		/// <param name="buf"></param>
+		/// <param name="transponderInfo"></param>
+		/// <param name="tp"></param>
+		/// <param name="pat"></param>
+		/// <returns></returns>
 		private int decodePMTTable(byte[] buf, TPList transponderInfo, Transponder tp,ref ChannelInfo pat)
 		{
 			if(buf.Length<13)
@@ -836,6 +933,443 @@ namespace MediaPortal.TV.Recording
 			pat.pidCache=pidText;
 			return 1;
 		}
+
+
+		/// <summary>
+		/// the sdt table contains the service name & provider name
+		/// </summary>
+		/// <param name="buf"></param>
+		/// <param name="transponderInfo"></param>
+		/// <param name="tp"></param>
+		/// <param name="pat"></param>
+		/// <returns></returns>
+		private int decodeSDTTable(byte[] buf, TPList transponderInfo, ref Transponder tp,ref ChannelInfo pat)
+		{
+
+			//tableid syntax res res sectlen  tsid    res vers cni sectn lsectn onid    resv
+			//8       1      1   2   4 + 8    8 + 8   2   5    1   8     8      8 + 8   8
+			//[0]     [1..............] [2]  [3] [4] [5.........] [6]   [7]    [8] [9] [10]
+			if(buf.Length<12)
+			{
+				Log.Write("decodeSDTTable() len < 12 len={0}", buf.Length);
+				return -1;
+			}
+			int table_id = buf[0];
+			int section_syntax_indicator = (buf[1]>>7) & 1;
+			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+			int transport_stream_id = (buf[3]<<8)+buf[4];
+			int version_number = ((buf[5]>>1)&0x1F);
+			int current_next_indicator = buf[5] & 1;
+			int section_number = buf[6];
+			int last_section_number = buf[7];
+			int original_network_id = (buf[8]<<8)+buf[9];
+
+			int len1 = section_length - 11 - 4;
+			int descriptors_loop_length;
+			int len2;
+			int service_id;
+			int EIT_schedule_flag;
+			int free_CA_mode;
+			int running_status;
+			int EIT_present_following_flag;
+			int pointer = 11;
+			int x = 0;
+
+
+			while (len1 > 0)
+			{
+				service_id = (buf[pointer]<<8)+buf[pointer+1];
+				EIT_schedule_flag = (buf[pointer+2]>>1) & 1;
+				EIT_present_following_flag = buf[pointer+2] & 1;
+				running_status = (buf[pointer+3]>>5) & 7;
+				free_CA_mode = (buf[pointer+3]>>4) &1;
+				descriptors_loop_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
+				//
+				pointer += 5;
+				len1 -= 5;
+				len2 = descriptors_loop_length;
+				
+				//
+				while (len2 > 0)
+				{
+					int indicator=buf[pointer];
+					x = 0;
+					x = buf[pointer + 1] + 2;
+					byte[] service = new byte[buf.Length-pointer + 1];
+					System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
+					//Log.Write("indicator = {0:X}",indicator);
+					if (indicator == 0x48)
+					{
+						ServiceData serviceData;
+							
+						serviceData = DVB_GetService(service);
+						if (serviceData.serviceName.Length < 1)
+						{
+							serviceData.serviceName = "Unknown Channel";
+						}
+						if (serviceData.serviceProviderName.Length < 1)
+						{
+							serviceData.serviceProviderName = "Unknown Provider";
+						}
+						if(service_id==pat.program_number)
+						{
+
+							pat.serviceType=serviceData.serviceType;
+							pat.service_name=serviceData.serviceName ;
+							pat.service_provider_name=serviceData.serviceProviderName;
+							pat.transportStreamID=transport_stream_id;
+							pat.networkID=original_network_id;
+							pat.serviceID = service_id;
+							pat.eitPreFollow=(EIT_present_following_flag==0)?false:true;
+							pat.eitSchedule=(EIT_schedule_flag==0)?false:true;
+							pat.scrambled=(free_CA_mode==0)?false:true;
+							// freq tuning data
+							pat.diseqc=m_diseqc;
+							pat.freq=transponderInfo.TPfreq;
+							pat.pol=transponderInfo.TPpol;
+							pat.symb=transponderInfo.TPsymb;
+							pat.lnbkhz=m_selKhz;
+							pat.fec=6; // always auto for b2c2
+							pat.lnb01=m_lnbfreq;
+						}
+						//
+						//tp.serviceData.Add(serviceData);
+
+					}
+					else
+					{
+						int st=indicator;
+						if(st!=0x53 && st!=0x64)
+							st=1;
+					}
+					len2 -= x;
+					pointer += x;
+					len1 -= x;
+				}
+				
+			}
+			if(last_section_number>section_number)
+				return last_section_number;
+			return 0;
+		}
+
+		private object decodeNITTable(byte[] buf,ref DVBNetworkInfo nit)
+		{
+			int table_id;
+			int section_syntax_indicator;
+			int section_length;
+			int network_id;
+			int version_number;
+			int current_next_indicator;
+			int section_number;
+			int last_section_number;
+			int network_descriptor_length;
+			int transport_stream_loop_length;
+			int transport_stream_id;
+			int original_network_id;
+
+			int transport_descriptor_length=0;
+			//
+			int pointer=0;
+			int l1=0;
+			int l2=0;
+
+			try
+			{
+				table_id = buf[0];
+				section_syntax_indicator = buf[1] &0x80;
+				section_length = ((buf[1] &0xF)<<8)+buf[2];
+				network_id = (buf[3]<<8)+buf[4];
+				version_number = (buf[5]>>1) &0x1F;
+				current_next_indicator = buf[5]&1;
+				section_number = buf[6];
+				last_section_number = buf[7];
+				network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
+			
+			
+				l1 = network_descriptor_length;
+				pointer += 10;
+				int x = 0;
+			
+
+				while (l1 > 0)
+				{
+					int indicator=buf[pointer];
+					x = buf[pointer + 1] + 2;
+					byte[] service = new byte[x];
+					System.Array.Copy(buf, pointer, service, 0, x);
+					if(indicator==0x40)
+					{
+						nit.NetworkName=System.Text.Encoding.ASCII.GetString(service,2,x-2);
+					}
+					l1 -= x;
+					pointer += x;
+				}
+				transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
+				l1 = transport_stream_loop_length;
+				pointer += 2;
+				while (l1 > 0)
+				{
+					transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
+					original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
+					transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
+					pointer += 6;
+					l1 -= 6;
+					l2 = transport_descriptor_length;
+					while (l2 > 0)
+					{
+						int indicator=buf[pointer];
+						x = buf[pointer + 1]+2 ;
+						byte[] service = new byte[x + 1];
+						System.Array.Copy(buf, pointer, service, 0, x);
+						if(indicator==0x43) // sat
+						{
+							NITSatDescriptor tp=new NITSatDescriptor();
+							DVB_GetSatDelivSys(service,ref tp);
+							nit.NITDescriptorList.Add(tp);
+						}
+						if(indicator==0x44) // cable
+						{
+							NITCableDescriptor tp=new NITCableDescriptor();
+							DVB_GetCableDelivSys(service,ref tp);
+							nit.NITDescriptorList.Add(tp);
+						}
+						if(indicator==0x5A) // terrestrial
+						{
+							NITTerrestrialDescriptor tp=new NITTerrestrialDescriptor();
+							DVB_GetTerrestrialDelivSys(service,ref tp);
+							nit.NITDescriptorList.Add(tp);
+						}
+						//
+						pointer += x;
+						l2 -= x;
+						l1 -= x;
+					}
+				
+				}
+				x = 0;
+			}
+			catch
+			{
+				//int a=0;
+			}
+			return 0;
+		}
+
+		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
+		{
+			int t;
+			int n;
+			ArrayList	tab42=new ArrayList();
+			ArrayList	tab46=new ArrayList();
+
+			
+			//get SDT table (pid 0x11)
+			GetStreamData(filter,0x11, 0x42,0,m_timeoutMS);
+			tab42=(ArrayList)m_sectionsList.Clone();
+			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
+			tab46=(ArrayList)m_sectionsList.Clone();
+
+			//for each PMT table...
+			ChannelInfo pat;
+			ArrayList pmtList = tp.PMTTable;
+			int pmtScans;
+			pmtScans = (pmtList.Count / 20) + 1;
+			for (t = 1; t <= pmtScans; t++)
+			{
+				for (n = 0; n <= 19; n++)
+				{
+					if (((t - 1) * 20) + n > pmtList.Count - 1)
+					{
+						break;
+					}
+					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
+					
+					int res=0;
+					if(m_setPid)
+					{
+						DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
+						DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,pat.network_pmt_PID);
+					}
+
+					//get PMT table
+					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
+
+					//PMT table contains the audio/video/teletext pids, so decode them
+					foreach(byte[] wdata in m_sectionsList)
+						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
+
+					//SDT contains the service/provide name, so get it
+					if(res>0)
+					{
+						foreach(byte[] wdata in tab42)
+							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
+
+						foreach(byte[] wdata in tab46)
+							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
+					}
+					tp.channels.Add(pat);
+				}
+			}
+		}//private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
+		
+
+		private int decodeEITTable(byte[] buf, ref EIT_Program_Info eitInfo,int lastSection,bool flag)
+		{
+			int table_id;
+			int section_syntax_indicator;
+			int section_length;
+			int service_id;
+			int version_number;
+			int current_next_indicator;
+			int section_number;
+			int last_section_number;
+			int transport_stream_id;
+			int original_network_id;
+			int segment_last_section_number;
+			int last_table_id;
+			int event_id;
+			long start_time_MJD;
+			long start_time_UTC;
+			long duration;
+			int running_status;
+			int free_CA_mode;
+			int descriptors_loop_length;
+			int indicator;
+			int len1;
+			int len2;
+			int x;
+
+			if (buf.Length < 14)
+			{
+				return 0;
+			}
+			table_id = buf[0];
+			section_syntax_indicator = (buf[1]>>7) & 1;
+			section_length = ((buf[1]& 0xF)<<8) + buf[2];
+			service_id = (buf[3]<<8)+buf[4];
+			version_number = ((buf[5]>>1)&0x1F);
+			current_next_indicator = buf[5] & 1;
+			section_number = buf[6];
+			last_section_number = buf[7];
+			transport_stream_id = (buf[8]<<8)+buf[9];
+			original_network_id = (buf[10]<<8)+buf[11];
+			segment_last_section_number = buf[12];
+			last_table_id = buf[13];
+			//
+			if (service_id == 0xFFFF) // scrambled
+			{
+				return 0;
+			}
+
+			len1 = section_length - 11;
+			int pointer = 14;
+			//
+			//
+			while (len1 > 4)
+			{
+				EITDescr eit=new EITDescr();
+				event_id = (buf[pointer]<<8)+buf[pointer+1];
+				start_time_MJD = (buf[pointer+2]<<8)+buf[pointer+3];
+				start_time_UTC = (buf[pointer+4]<<16)+(buf[pointer+5]<<8)+buf[pointer+6];
+				duration = (buf[pointer+7]<<16)+(buf[pointer+8]<<8)+buf[pointer+9];
+				running_status = (buf[pointer+10]>>5)&7;
+				free_CA_mode = (buf[pointer+10]>>4)& 1;
+				descriptors_loop_length = ((buf[pointer+10]&0xF)<<8)+buf[pointer+11];
+
+				pointer += 12;
+				len1 -= 12 + descriptors_loop_length;
+				len2 = descriptors_loop_length;
+				
+				while (len2 > 0)
+				{
+					indicator = buf[pointer];
+					x = buf[pointer + 1] + 2;
+					byte[] descrEIT = new byte[x + 1];
+					try
+					{
+						System.Array.Copy(buf, pointer, descrEIT, 0, x);
+						switch (indicator)
+						{
+							case 0x4E:
+								Log.Write("dvbsection: extended event found...");
+								DVB_ExtendedEvent(descrEIT,ref eit);
+								break;
+							case 0x4D:
+								Log.Write("dvbsection: short event found...");
+								DVB_ShortEvent(descrEIT,ref eit);
+								break;
+							case 0x54:
+								DVB_ContentDescription(descrEIT,ref eit);
+								break;
+							
+						}
+
+					}
+					catch(Exception ex)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
+					}
+
+					eit.section=section_number;
+					eit.lastSection=last_section_number;
+					eit.table=table_id;
+					eit.lastTable=last_table_id;
+					eit.program_number=service_id;
+					eit.org_network_id=original_network_id;
+					eit.ts_id=transport_stream_id;
+					eit.starttime_y=0;
+					eit.starttime_d=0;
+					eit.starttime_m=0;
+					eit.event_id = event_id;
+					eit.version = version_number;
+					eit.duration_hh = getUTC((int) ((duration >> 16) )& 255);
+					eit.duration_mm = getUTC((int) ((duration >> 8) )& 255);
+					eit.duration_ss = getUTC((int) (duration )& 255);
+					eit.starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
+					eit.starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
+					eit.starttime_ss =getUTC((int) (start_time_UTC )& 255);
+					// convert the julian date
+					int year = (int) ((start_time_MJD - 15078.2) / 365.25);
+					int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
+					int day = (int) (start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
+					int k = (month == 14 || month == 15) ? 1 : 0;
+					year += 1900+ k; // start from year 1900, so add that here
+					month = month - 1 - k * 12;
+					eit.starttime_y=year;
+					eit.starttime_m=month;
+					eit.starttime_d=day;
+					eitInfo.program_id = service_id;
+					eitInfo.running_status = running_status;
+					if (free_CA_mode == 0)
+					{
+						eitInfo.scrambled = false;
+					}
+					else
+					{
+						eitInfo.scrambled = true;
+					}
+					eit.handled=true;
+				
+					pointer += x;
+					len2 -= x;
+				}
+				if(eit.program_number>0)
+					eitInfo.eitList.Add(eit);
+			}
+			//eitInfo.evt_info_act_ts=eit;
+			if(section_number==0 && lastSection==last_section_number && flag==false)
+				return -1;// start grab
+			if(section_number==0 && lastSection==last_section_number && flag==true)
+				return -2;// end grab
+
+			return section_number; // normal grab
+		}
+
+
+		#endregion
+
+		#region Descriptors
 		//
 		private string DVB_GetTeletextDescriptor (byte[] b)
 		{
@@ -1014,267 +1548,6 @@ namespace MediaPortal.TV.Recording
 
 		//
 		//
-		private int decodeSDTTable(byte[] buf, TPList transponderInfo, ref Transponder tp,ref ChannelInfo pat)
-		{
-
-			if(buf.Length<12)
-			{
-				Log.Write("decodeSDTTable() len < 12 len={0}", buf.Length);
-				return -1;
-			}
-			int table_id = buf[0];
-			int section_syntax_indicator = (buf[1]>>7) & 1;
-			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
-			int transport_stream_id = (buf[3]<<8)+buf[4];
-			int version_number = ((buf[5]>>1)&0x1F);
-			int current_next_indicator = buf[5] & 1;
-			int section_number = buf[6];
-			int last_section_number = buf[7];
-			int original_network_id = (buf[8]<<8)+buf[9];
-
-			int len1 = section_length - 11 - 4;
-			int descriptors_loop_length;
-			int len2;
-			int service_id;
-			int EIT_schedule_flag;
-			int free_CA_mode;
-			int running_status;
-			int EIT_present_following_flag;
-			int pointer = 11;
-			int x = 0;
-
-
-			while (len1 > 0)
-			{
-				service_id = (buf[pointer]<<8)+buf[pointer+1];
-				EIT_schedule_flag = (buf[pointer+2]>>1) & 1;
-				EIT_present_following_flag = buf[pointer+2] & 1;
-				running_status = (buf[pointer+3]>>5) & 7;
-				free_CA_mode = (buf[pointer+3]>>4) &1;
-				descriptors_loop_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
-				//
-				pointer += 5;
-				len1 -= 5;
-				len2 = descriptors_loop_length;
-				
-				//
-				while (len2 > 0)
-				{
-					int indicator=buf[pointer];
-					x = 0;
-					x = buf[pointer + 1] + 2;
-					byte[] service = new byte[buf.Length-pointer + 1];
-					System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
-						//Log.Write("indicator = {0:X}",indicator);
-					if (indicator == 0x48)
-					{
-						ServiceData serviceData;
-							
-						serviceData = DVB_GetService(service);
-						if (serviceData.serviceName.Length < 1)
-						{
-							serviceData.serviceName = "Unknown Channel";
-						}
-						if (serviceData.serviceProviderName.Length < 1)
-						{
-							serviceData.serviceProviderName = "Unknown Provider";
-						}
-						if(service_id==pat.program_number)
-						{
-
-							pat.serviceType=serviceData.serviceType;
-							pat.service_name=serviceData.serviceName ;
-							pat.service_provider_name=serviceData.serviceProviderName;
-							pat.transportStreamID=transport_stream_id;
-							pat.networkID=original_network_id;
-							pat.serviceID = service_id;
-							pat.eitPreFollow=(EIT_present_following_flag==0)?false:true;
-							pat.eitSchedule=(EIT_schedule_flag==0)?false:true;
-							pat.scrambled=(free_CA_mode==0)?false:true;
-							// freq tuning data
-							pat.diseqc=m_diseqc;
-							pat.freq=transponderInfo.TPfreq;
-							pat.pol=transponderInfo.TPpol;
-							pat.symb=transponderInfo.TPsymb;
-							pat.lnbkhz=m_selKhz;
-							pat.fec=6; // always auto for b2c2
-							pat.lnb01=m_lnbfreq;
-						}
-						//
-						//tp.serviceData.Add(serviceData);
-
-					}
-					else
-					{
-						int st=indicator;
-						if(st!=0x53 && st!=0x64)
-							st=1;
-					}
-					len2 -= x;
-					pointer += x;
-					len1 -= x;
-				}
-				
-			}
-			if(last_section_number>section_number)
-				return last_section_number;
-			return 0;
-		}
-		//
-		//
-		//
-
-		private int decodeEITTable(byte[] buf, ref EIT_Program_Info eitInfo,int lastSection,bool flag)
-		{
-			int table_id;
-			int section_syntax_indicator;
-			int section_length;
-			int service_id;
-			int version_number;
-			int current_next_indicator;
-			int section_number;
-			int last_section_number;
-			int transport_stream_id;
-			int original_network_id;
-			int segment_last_section_number;
-			int last_table_id;
-			int event_id;
-			long start_time_MJD;
-			long start_time_UTC;
-			long duration;
-			int running_status;
-			int free_CA_mode;
-			int descriptors_loop_length;
-			int indicator;
-			int len1;
-			int len2;
-			int x;
-
-			if (buf.Length < 14)
-			{
-				return 0;
-			}
-			table_id = buf[0];
-			section_syntax_indicator = (buf[1]>>7) & 1;
-			section_length = ((buf[1]& 0xF)<<8) + buf[2];
-			service_id = (buf[3]<<8)+buf[4];
-			version_number = ((buf[5]>>1)&0x1F);
-			current_next_indicator = buf[5] & 1;
-			section_number = buf[6];
-			last_section_number = buf[7];
-			transport_stream_id = (buf[8]<<8)+buf[9];
-			original_network_id = (buf[10]<<8)+buf[11];
-			segment_last_section_number = buf[12];
-			last_table_id = buf[13];
-			//
-			if (service_id == 0xFFFF) // scrambled
-			{
-				return 0;
-			}
-
-			len1 = section_length - 11;
-			int pointer = 14;
-			//
-			//
-			while (len1 > 4)
-			{
-				EITDescr eit=new EITDescr();
-				event_id = (buf[pointer]<<8)+buf[pointer+1];
-				start_time_MJD = (buf[pointer+2]<<8)+buf[pointer+3];
-				start_time_UTC = (buf[pointer+4]<<16)+(buf[pointer+5]<<8)+buf[pointer+6];
-				duration = (buf[pointer+7]<<16)+(buf[pointer+8]<<8)+buf[pointer+9];
-				running_status = (buf[pointer+10]>>5)&7;
-				free_CA_mode = (buf[pointer+10]>>4)& 1;
-				descriptors_loop_length = ((buf[pointer+10]&0xF)<<8)+buf[pointer+11];
-
-				pointer += 12;
-				len1 -= 12 + descriptors_loop_length;
-				len2 = descriptors_loop_length;
-				
-				while (len2 > 0)
-				{
-					indicator = buf[pointer];
-					x = buf[pointer + 1] + 2;
-					byte[] descrEIT = new byte[x + 1];
-					try
-					{
-						System.Array.Copy(buf, pointer, descrEIT, 0, x);
-						switch (indicator)
-						{
-							case 0x4E:
-								Log.Write("dvbsection: extended event found...");
-								DVB_ExtendedEvent(descrEIT,ref eit);
-								break;
-							case 0x4D:
-								Log.Write("dvbsection: short event found...");
-								DVB_ShortEvent(descrEIT,ref eit);
-								break;
-							case 0x54:
-								DVB_ContentDescription(descrEIT,ref eit);
-								break;
-							
-						}
-
-					}
-					catch(Exception ex)
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
-					}
-
-					eit.section=section_number;
-					eit.lastSection=last_section_number;
-					eit.table=table_id;
-					eit.lastTable=last_table_id;
-					eit.program_number=service_id;
-					eit.org_network_id=original_network_id;
-					eit.ts_id=transport_stream_id;
-					eit.starttime_y=0;
-					eit.starttime_d=0;
-					eit.starttime_m=0;
-					eit.event_id = event_id;
-					eit.version = version_number;
-					eit.duration_hh = getUTC((int) ((duration >> 16) )& 255);
-					eit.duration_mm = getUTC((int) ((duration >> 8) )& 255);
-					eit.duration_ss = getUTC((int) (duration )& 255);
-					eit.starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
-					eit.starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
-					eit.starttime_ss =getUTC((int) (start_time_UTC )& 255);
-					// convert the julian date
-					int year = (int) ((start_time_MJD - 15078.2) / 365.25);
-					int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
-					int day = (int) (start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
-					int k = (month == 14 || month == 15) ? 1 : 0;
-					year += 1900+ k; // start from year 1900, so add that here
-					month = month - 1 - k * 12;
-					eit.starttime_y=year;
-					eit.starttime_m=month;
-					eit.starttime_d=day;
-					eitInfo.program_id = service_id;
-					eitInfo.running_status = running_status;
-					if (free_CA_mode == 0)
-					{
-						eitInfo.scrambled = false;
-					}
-					else
-					{
-						eitInfo.scrambled = true;
-					}
-					eit.handled=true;
-				
-					pointer += x;
-					len2 -= x;
-				}
-				if(eit.program_number>0)
-					eitInfo.eitList.Add(eit);
-			}
-			//eitInfo.evt_info_act_ts=eit;
-			if(section_number==0 && lastSection==last_section_number && flag==false)
-				return -1;// start grab
-			if(section_number==0 && lastSection==last_section_number && flag==true)
-				return -2;// end grab
-
-			return section_number; // normal grab
-		}
 		private void DVB_ShortEvent(byte[] buf, ref EITDescr eit)
 		{
 			int descriptor_tag;
@@ -1585,7 +1858,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-					Log.WriteFile(Log.LogType.Capture,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+				Log.WriteFile(Log.LogType.Capture,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
 			}
 			if(eit.event_item==null)
 				eit.event_item="";
@@ -1597,111 +1870,7 @@ namespace MediaPortal.TV.Recording
 
 			return 0;
 		}
-		//
-		//
-		//
-		private object decodeNITTable(byte[] buf,ref DVBNetworkInfo nit)
-		{
-			int table_id;
-			int section_syntax_indicator;
-			int section_length;
-			int network_id;
-			int version_number;
-			int current_next_indicator;
-			int section_number;
-			int last_section_number;
-			int network_descriptor_length;
-			int transport_stream_loop_length;
-			int transport_stream_id;
-			int original_network_id;
 
-			int transport_descriptor_length=0;
-			//
-			int pointer=0;
-			int l1=0;
-			int l2=0;
-
-			try
-			{
-				table_id = buf[0];
-				section_syntax_indicator = buf[1] &0x80;
-				section_length = ((buf[1] &0xF)<<8)+buf[2];
-				network_id = (buf[3]<<8)+buf[4];
-				version_number = (buf[5]>>1) &0x1F;
-				current_next_indicator = buf[5]&1;
-				section_number = buf[6];
-				last_section_number = buf[7];
-				network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
-			
-			
-				l1 = network_descriptor_length;
-				pointer += 10;
-				int x = 0;
-			
-
-				while (l1 > 0)
-				{
-					int indicator=buf[pointer];
-					x = buf[pointer + 1] + 2;
-					byte[] service = new byte[x];
-					System.Array.Copy(buf, pointer, service, 0, x);
-					if(indicator==0x40)
-					{
-						nit.NetworkName=System.Text.Encoding.ASCII.GetString(service,2,x-2);
-					}
-					l1 -= x;
-					pointer += x;
-				}
-				transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
-				l1 = transport_stream_loop_length;
-				pointer += 2;
-				while (l1 > 0)
-				{
-					transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
-					original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
-					transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
-					pointer += 6;
-					l1 -= 6;
-					l2 = transport_descriptor_length;
-					while (l2 > 0)
-					{
-						int indicator=buf[pointer];
-						x = buf[pointer + 1]+2 ;
-						byte[] service = new byte[x + 1];
-						System.Array.Copy(buf, pointer, service, 0, x);
-						if(indicator==0x43) // sat
-						{
-							NITSatDescriptor tp=new NITSatDescriptor();
-							DVB_GetSatDelivSys(service,ref tp);
-							nit.NITDescriptorList.Add(tp);
-						}
-						if(indicator==0x44) // cable
-						{
-							NITCableDescriptor tp=new NITCableDescriptor();
-							DVB_GetCableDelivSys(service,ref tp);
-							nit.NITDescriptorList.Add(tp);
-						}
-						if(indicator==0x5A) // terrestrial
-						{
-							NITTerrestrialDescriptor tp=new NITTerrestrialDescriptor();
-							DVB_GetTerrestrialDelivSys(service,ref tp);
-							nit.NITDescriptorList.Add(tp);
-						}
-						//
-						pointer += x;
-						l2 -= x;
-						l1 -= x;
-					}
-				
-				}
-				x = 0;
-			}
-			catch
-			{
-				//int a=0;
-			}
-			return 0;
-		}
 		//
 		private void DVB_GetSatDelivSys(byte[] b, ref NITSatDescriptor tp)
 		{
@@ -1822,116 +1991,6 @@ namespace MediaPortal.TV.Recording
 			
 		}		//
 
-		// get mhw epg
-		// program titles	= pid 0xD2, table 0x90
-		// program summaries= pid 0xD3, table 0x90
-		// theme names		= pid 0xD3, table 0x92
-		//
-		public void GetMHWData(DShowNET.IBaseFilter filter)
-		{
-			GetStreamData(filter,0xd2,0x90,1,m_timeoutMS);
-			if(m_sectionsList.Count>0)
-				System.Windows.Forms.MessageBox.Show("Sections: ");
-		}
-		// get current/next info
-		//
-		public ArrayList GetEITPresentFollowing(DShowNET.IBaseFilter filter)
-		{
-			EIT_Program_Info eit=new EIT_Program_Info();
-			eit.eitList=new ArrayList();
-			GetStreamData(filter,18,0x4E,0,200);
-
-			foreach(byte[] arr in m_sectionsList)
-				decodeEITTable(arr,ref eit,0,false);
-			return eit.eitList;
-		}
-
-		//
-		// returns events found in tables >=0x50 && <=0x6f 
-		// lastTab holds the last table
-		//
-		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter,ref int lastTab)
-		{
-			if(tab<0x50 || tab>0x6f)
-				return null;
-			EIT_Program_Info eit=new EIT_Program_Info();
-			eit.eitList=new ArrayList();
-			EITDescr descr=new EITDescr();
-
-			bool startFlag=false;
-			bool endFlag=false;
-			int ret=-1;
-			m_breakAction=false;
-			m_eitTimeoutTimer.Interval=60000;// one minute
-			m_eitTimeoutTimer.Start();
-			while(1!=0)
-			{
-				System.Windows.Forms.Application.DoEvents();
-				GetStreamData(filter,18,tab,1,m_timeoutMS);
-				
-				foreach(byte[] arr in m_sectionsList)
-					ret=decodeEITTable(arr,ref eit,ret,startFlag);
-				
-				if(eit.eitList.Count>0)
-				{
-					descr=(EITDescr)eit.eitList[0];
-					lastTab=descr.lastTable;
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: last Table={0}",lastTab);
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: last section={0}",descr.lastSection);
-				}
-				
-				if(ret==-1)
-				{
-					
-					startFlag=true;
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: start grabbing table");
-					m_eitTimeoutTimer.Start();
-				}
-
-				if(ret==-2)
-				{
-					endFlag=true;
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: end grabbing table");
-					m_eitTimeoutTimer.Start();
-
-				}
-				
-				if(ret>=0 && startFlag==true)
-				Log.WriteFile(Log.LogType.Capture,"epg-grab: grab section {0} complete",ret);
-
-				if(startFlag==false)
-				{
-					eit.eitList.Clear();
-				}
-
-				if(startFlag==true && endFlag==true)
-					break;
-				
-				
-				if(m_breakAction==true)
-				{
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: FAILED timeout on getting epg");
-					break;
-				}
-
-
-			}
-
-			return eit.eitList;
-		}
-		//
-		//
-		//
-		int getUTC(int val)
-		{
-			if ((val&0xF0)>=0xA0)
-				return 0;
-			if ((val&0xF)>=0xA)
-				return 0;
-			return ((val&0xF0)>>4)*10+(val&0xF);
-		}
-
-		
 		private ServiceData DVB_GetService(byte[] b)
 		{
 			int descriptor_tag;
@@ -2007,6 +2066,13 @@ namespace MediaPortal.TV.Recording
 			} while (!(l1 <= 0));
 			return text;
 		}
+
+		//
+		//
+		//
+		#endregion
+
+		#region process nit/pat sections
 		//
 		//
 		public bool ProcessNITSections(DShowNET.IBaseFilter filter,ref DVBNetworkInfo nit)
@@ -2053,477 +2119,457 @@ namespace MediaPortal.TV.Recording
 		}
 		//
 		//
-		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
-		{
-			bool flag;
-			int dataLen=0;
-			int header=0;
-			int tableExt=0;
-			int sectNum=0;
-			int sectLast=0;
-			int version=0;
-			byte[] arr = new byte[1];
-			IntPtr sectionBuffer=IntPtr.Zero;
+		#endregion
 
-			m_sectionsList=new ArrayList();
-			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
-			if(flag==false)
+		#endregion
+
+		#region EPG
+		public ArrayList GetEITPresentFollowing(DShowNET.IBaseFilter filter)
+		{
+			EIT_Program_Info eit=new EIT_Program_Info();
+			eit.eitList=new ArrayList();
+			GetStreamData(filter,18,0x4E,0,200);
+
+			foreach(byte[] arr in m_sectionsList)
+				decodeEITTable(arr,ref eit,0,false);
+			return eit.eitList;
+		}
+
+		//
+		// returns events found in tables >=0x50 && <=0x6f 
+		// lastTab holds the last table
+		//
+		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter,ref int lastTab)
+		{
+			if(tab<0x50 || tab>0x6f)
+				return null;
+			EIT_Program_Info eit=new EIT_Program_Info();
+			eit.eitList=new ArrayList();
+			EITDescr descr=new EITDescr();
+
+			bool startFlag=false;
+			bool endFlag=false;
+			int ret=-1;
+			m_breakAction=false;
+			m_eitTimeoutTimer.Interval=60000;// one minute
+			m_eitTimeoutTimer.Start();
+			while(1!=0)
 			{
+				System.Windows.Forms.Application.DoEvents();
+				GetStreamData(filter,18,tab,1,m_timeoutMS);
 				
-				Log.WriteFile(Log.LogType.Capture,"DVBSections:GetStreamdata() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-				return false;
-			}
-			if (sectLast<=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,"DVBSections:Sections:GetStreamdata() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-			}
-			for(int n=0;n<sectLast;n++)
-			{
-				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
-				if(flag)
+				foreach(byte[] arr in m_sectionsList)
+					ret=decodeEITTable(arr,ref eit,ret,startFlag);
+				
+				if(eit.eitList.Count>0)
 				{
-					if (tableExt != - 1)
+					descr=(EITDescr)eit.eitList[0];
+					lastTab=descr.lastTable;
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: last Table={0}",lastTab);
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: last section={0}",descr.lastSection);
+				}
+				
+				if(ret==-1)
+				{
+					
+					startFlag=true;
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: start grabbing table");
+					m_eitTimeoutTimer.Start();
+				}
+
+				if(ret==-2)
+				{
+					endFlag=true;
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: end grabbing table");
+					m_eitTimeoutTimer.Start();
+
+				}
+				
+				if(ret>=0 && startFlag==true)
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: grab section {0} complete",ret);
+
+				if(startFlag==false)
+				{
+					eit.eitList.Clear();
+				}
+
+				if(startFlag==true && endFlag==true)
+					break;
+				
+				
+				if(m_breakAction==true)
+				{
+					Log.WriteFile(Log.LogType.Capture,"epg-grab: FAILED timeout on getting epg");
+					break;
+				}
+
+
+			}
+
+			return eit.eitList;
+		}
+		// get mhw epg
+		// program titles	= pid 0xD2, table 0x90
+		// program summaries= pid 0xD3, table 0x90
+		// theme names		= pid 0xD3, table 0x92
+		//
+		public void GetMHWData(DShowNET.IBaseFilter filter)
+		{
+			GetStreamData(filter,0xd2,0x90,1,m_timeoutMS);
+			if(m_sectionsList.Count>0)
+				System.Windows.Forms.MessageBox.Show("Sections: ");
+		}
+
+		#endregion
+
+		#region Scanning
+		//
+		//
+
+		/// <summary>
+		/// Get all information about channels & services 
+		/// </summary>
+		/// <param name="filter">IBase filter implementing IMpeg2Data</param>
+		/// <returns>Transponder object containg all channels/services found</returns>
+		public Transponder Scan(DShowNET.IBaseFilter filter)
+		{
+			m_sectionsList=new ArrayList();	
+			Transponder transponder = new Transponder();
+			if(m_setPid==true)
+			{
+				DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
+				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,0);
+				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,16);
+				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,17);
+				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: pids set");
+			}
+			try
+			{
+				Log.Write("AutoTune()");
+
+				transponder.channels = new ArrayList();
+				transponder.PMTTable = new ArrayList();
+
+				//get PAT table (pid=0x11)
+				GetStreamData(filter,0, 0,0,Timeout);
+				
+				//The PAT table contains the pid of each PMT table
+				//so decode it...
+				foreach(byte[] arr in m_sectionsList)
+					decodePATTable(arr, transp[0], ref transponder);
+
+				// now we got the pids for all PMT tables, get each PMT table and decode it
+				LoadPMTTables(filter,transp[0],ref transponder);
+				
+				Log.Write("AutoTune() done");
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:Scan() exception:{0}", ex.ToString());
+			}
+			return transponder;
+		}//public Transponder Scan(DShowNET.IBaseFilter filter)
+		
+		/// <summary>
+		/// Get all information about channels & services 
+		/// </summary>
+		/// <param name="filter">[in] IBase filter implementing IMpeg2Data</param>
+		/// <param name="serviceId">[in] The service id for which the raw PMT should be returned</param>
+		/// <param name="info">[Out] The channel info for the service id</param>
+		/// <returns>byte array containing the raw PMT or null if no PMT is found</returns>
+		public byte[] GetRAWPMT(DShowNET.IBaseFilter filter, int serviceId, out ChannelInfo info)
+		{
+			byte[] PMTTable=null;
+			info=new ChannelInfo();
+
+			ArrayList sectionTable=new ArrayList();
+			try
+			{
+				m_sectionsList=new ArrayList();	
+				Transponder transponder = new Transponder();
+				transponder.channels = new ArrayList();
+				transponder.PMTTable = new ArrayList();
+				//Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT for channel:{0}",serviceId);
+				GetStreamData(filter,0, 0,0,200);
+				if (m_sectionsList.Count==0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() timeout");
+					return null;
+				}
+				//Log.WriteFile(Log.LogType.Capture,"dvbSections:Decode PAT :{0}",m_sectionsList.Count);
+				// jump to parser
+				foreach(byte[] arr in m_sectionsList)
+					decodePATTable(arr, transp[0], ref transponder);
+
+				LoadPMTTables(filter,transp[0],ref transponder);
+				bool found=false;
+				foreach (ChannelInfo chanInfo in transponder.channels)
+				{
+					//Log.WriteFile(Log.LogType.Capture,"dvbSections:Got channel:{0} {1}",chanInfo.service_name, chanInfo.serviceID);
+					if (chanInfo.serviceID==serviceId)
 					{
-						arr = new byte[dataLen+8 + 1];
-						try
+						Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() found channel:{0} scrambled:{1} service id:{2} network PMT pid:{3} program:{4}",
+									chanInfo.service_name,chanInfo.scrambled,chanInfo.serviceID,chanInfo.network_pmt_PID,chanInfo.program_number);
+						if (chanInfo.pid_list!=null)
 						{
-							Marshal.Copy(sectionBuffer, arr, 8, dataLen);
+							for (int i=0; i < chanInfo.pid_list.Count;++i)
+							{
+								DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[i];
+								if (data.isTeletext) 
+									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() teletext pid:{0}", data.elementary_PID);
+								if (data.isAudio) 
+									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() audio pid:{0}", data.elementary_PID);
+								if (data.isVideo) 
+									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() video pid:{0}", data.elementary_PID);
+								if (data.isDVBSubtitle) 
+									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() subtitle pid:{0}", data.elementary_PID);
+								if (data.isAC3Audio) 
+									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() ac3 audio pid:{0}", data.elementary_PID);
+							}
 						}
-						catch
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-							m_sectionsList.Clear();
-							break;
-						}
-						arr[0] = (byte)tid;
-						arr[1] = (byte)((header >> 8) & 255);
-						arr[2] =(byte) (header & 255);
-						arr[3] = (byte)((tableExt >> 8) & 255);
-						arr[4] = (byte)(tableExt & 255);
-						arr[5] =(byte) version;
-						arr[6] = (byte)sectNum;
-						arr[7] = (byte)sectLast;
-						m_sectionsList.Add(arr);
-						if(tableSection!=0)
-							break;
+						found=true;
+						info=chanInfo;
+						break;
 					}
-					else
+				}
+				if (!found) 
+				{
+					//Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() channel not found");
+					return null;
+				}
+				int t;
+				int n;
+				ArrayList	tab42=new ArrayList();
+				ArrayList	tab46=new ArrayList();
+
+				// check tables
+				//AddTSPid(17);
+				//
+				
+				Debug.WriteLine("GET tab42");
+				GetStreamData(filter,17, 0x42,0,200);
+				tab42=(ArrayList)m_sectionsList.Clone();
+				
+				Debug.WriteLine("GET tab46");
+				GetStreamData(filter,17, 0x46,0,200);
+				tab46=(ArrayList)m_sectionsList.Clone();
+
+				
+				//bool flag=false;
+				ChannelInfo pat;
+				ArrayList pmtList = transponder.PMTTable;
+				int pmtScans;
+				pmtScans = (pmtList.Count / 20) + 1;
+				
+				//Log.WriteFile(Log.LogType.Capture,"dvbSections: PMT table list:{0} pmtScans:{1}", pmtList.Count,pmtScans);
+				for (t = 1; t <= pmtScans; t++)
+				{
+					//flag = DeleteAllPIDsI();
+					for (n = 0; n <= 19; n++)
 					{
-						arr = new byte[dataLen+3 + 1];
-						try
+						if (((t - 1) * 20) + n > pmtList.Count - 1)
 						{
-							Marshal.Copy(sectionBuffer, arr, 3, dataLen);
-						}
-						catch
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-							m_sectionsList.Clear();
 							break;
 						}
-						arr[0] = System.Convert.ToByte(tid);
-						arr[1] = System.Convert.ToByte((header >> 8) & 255);
-						arr[2] = System.Convert.ToByte(header & 255);
-						m_sectionsList.Add(arr);
-						if(tableSection!=0)
+						pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
+						
+						// parse pmt
+						int res=0;
+						//if (pat.program_number==serviceId)
+					{
+				//		Log.WriteFile(Log.LogType.Capture,"dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
+						GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
+						foreach(byte[] wdata in m_sectionsList)
+						{
+							if (pat.program_number==serviceId)
+							{
+					//			Log.WriteFile(Log.LogType.Capture,"dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
+								for (int l=0; l < wdata.Length;++l)
+									sectionTable.Add(wdata[l]);
+							}
+							Debug.WriteLine("decode PMT:"+n.ToString());
+							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
+						}
+
+						if(res>0)
+						{
+
+							Debug.WriteLine("decode SDT table42");
+							foreach(byte[] wdata in tab42)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+
+							Debug.WriteLine("decode SDT table46");
+							foreach(byte[] wdata in tab46)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+						}
+						transponder.channels.Add(pat);
+					}
+					}
+				}
+
+				foreach (ChannelInfo chanInfo in transponder.channels)
+				{
+					if (chanInfo.serviceID==serviceId)
+					{
+						Debug.WriteLine("  got channelinfo");
+						info=chanInfo;
+						break;
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetRAWPMT() exception:{0}", ex.ToString());
+			}
+
+			if (sectionTable.Count>3)
+			{
+				byte byLen=(byte)sectionTable[2];
+				byLen+=3;
+				PMTTable = new byte[byLen];
+				for (int i=0; i < byLen;++i)
+				{
+					PMTTable[i]=(byte)sectionTable[i];
+				}
+			}
+			//Log.WriteFile(Log.LogType.Capture,"dvbsections:GetRAWPMT done");
+			return PMTTable;
+		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
+
+		public DVBChannel GetDVBChannel(DShowNET.IBaseFilter filter, int serviceId)
+		{
+			Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel for service:{0}", serviceId);
+			DVBChannel chan = new DVBChannel();
+
+			ArrayList pmtTable=new ArrayList();
+			try
+			{
+				m_sectionsList=new ArrayList();	
+				Transponder transponder = new Transponder();
+				transponder.channels = new ArrayList();
+				transponder.PMTTable = new ArrayList();
+				GetStreamData(filter,0, 0,0,5000);
+				if (m_sectionsList.Count==0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel no sections found");
+					return null;
+				}
+				// jump to parser
+				foreach(byte[] arr in m_sectionsList)
+					decodePATTable(arr, transp[0], ref transponder);
+
+				LoadPMTTables(filter,transp[0],ref transponder);
+				int t;
+				int n;
+				ArrayList	tab42=new ArrayList();
+				ArrayList	tab46=new ArrayList();
+
+				// check tables
+				//AddTSPid(17);
+				//
+				
+				Debug.WriteLine("GET tab42");
+				GetStreamData(filter,17, 0x42,0,200);
+				tab42=(ArrayList)m_sectionsList.Clone();
+				
+				Debug.WriteLine("GET tab46");
+				GetStreamData(filter,17, 0x46,0,200);
+				tab46=(ArrayList)m_sectionsList.Clone();
+
+				
+				//bool flag=false;
+				ChannelInfo pat;
+				ArrayList pmtList = transponder.PMTTable;
+				int pmtScans;
+				pmtScans = (pmtList.Count / 20) + 1;
+				
+				for (t = 1; t <= pmtScans; t++)
+				{
+					//flag = DeleteAllPIDsI();
+					for (n = 0; n <= 19; n++)
+					{
+						if (((t - 1) * 20) + n > pmtList.Count - 1)
+						{
 							break;
-					}// else
+						}
+						pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
+						
+						// parse pmt
+						int res=0;
+						GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
+						foreach(byte[] wdata in m_sectionsList)
+						{
+							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
+						}
 
-				}// if(flag)
-			}//for
-			ReleaseSectionsBuffer();
-			return true;
-		}
-		string DVB_GetLanguageFromISOCode(string code)
-		{
-			return "";
-		}
-		public string GetNetworkProvider(int onid)
-		{
-			return DVB_GetNetworkProvider(onid);
-		}
-		string DVB_GetNetworkProvider(int orgNetworkID)
-		{
-			switch(orgNetworkID)
-			{
-				case 0x0000: return "Reserved";
-				case 0x0001: return "Astra 19,2°E" ;
-				case 0x0002: return "Astra 28,2°E" ;
-				case 0x0019: return "Astra" ;
-				case 0x001A: return "Quiero Televisión" ;
-				case 0x001B: return "RAI" ;
-				case 0x001F: return "Europe Online Networks" ;
-				case 0x0020: return "ASTRA" ;
-				case 0x0026: return "Hispasat Network" ;
-				case 0x0027: return "Hispasat 30°W" ;
-				case 0x0028: return "Hispasat 30°W" ;
-				case 0x0029: return "Hispasat 30°W" ;
-				case 0x002E: return "Xantic" ;
-				case 0x002F: return "TVNZ Digital" ;
-				case 0x0030: return "Canal+ Satellite Network" ;
-				case 0x0031: return "Hispasat - VIA DIGITAL" ;
-				case 0x0034: return "Hispasat Network" ;
-				case 0x0035: return "Nethold Main Mux System" ;
-				case 0x0036: return "TV Cabo" ;
-				case 0x0037: return "STENTOR" ;
-				case 0x0038: return "OTE" ;
-				case 0x0040: return "Croatian Post and Telecommunications" ;
-				case 0x0041: return "Mindport network" ;
-				case 0x0047: return "Telenor" ;
-				case 0x0048: return "STAR DIGITAL" ;
-				case 0x0049: return "Sentech" ;
-				case 0x0050: return "HRT Croatian Radio and Television" ;
-				case 0x0051: return "Havas" ;
-				case 0x0052: return "StarGuide Digital Networks" ;
-				case 0x0054: return "Teracom Satellite" ;
-				case 0x0055: return "Sirius (Teracom)" ;
-				case 0x0058: return "UBC Thailand" ;
-				case 0x005E: return "Sirius" ;
-				case 0x005F: return "Sirius" ;
-				case 0x0060: return "MSG MediaServices GmbH" ;
-				case 0x0069: return "Optus Communications" ;
-				case 0x0070: return "NTV+" ;
-				case 0x0073: return "PanAmSat 4 68.5°E" ;
-				case 0x007D: return "Skylogic" ;
-				case 0x007E: return "Eutelsat" ;
-				case 0x007F: return "Eutelsat" ;
-				case 0x0085: return "BetaTechnik" ;
-				case 0x0090: return "TDF" ;
-				case 0x00A0: return "News Datacom" ;
-				case 0x00A5: return "News Datacom" ;
-				case 0x00A6: return "ART" ;
-				case 0x00A7: return "Globecast" ;
-				case 0x00A8: return "Foxtel" ;
-				case 0x00A9: return "Sky New Zealand" ;
-				case 0x00B3: return "TPS" ;
-				case 0x00B4: return "Telesat 107.3°W | Telesat Canada" ;
-				case 0x00B5: return "Telesat 111.1°W" ;
-				case 0x00B6: return "Telstra Saturn" ;
-				case 0x00BA: return "Satellite Express 6 (80°E)" ;
-				case 0x00CD: return "Canal +" ;
-				case 0x00EB: return "Eurovision Network" ;
-				case 0x0100: return "ExpressVu" ;
-				case 0x010D: return "Skylogic Italia" ;
-				case 0x010E: return "Eutelsat 10°E" ;
-				case 0x010F: return "Eutelsat 10°E" ;
-				case 0x0110: return "Mediaset" ;
-				case 0x011F: return "visAvision Network" ;
-				case 0x013D: return "Skylogic Italia" ;
-				case 0x013E: return "Eutelsat 13°E" ;
-				case 0x013F: return "Eutelsat 13°E" ;
-				case 0x016D: return "Skylogic Italia" ;
-				case 0x016E: return "Eutelsat 16°E" ;
-				case 0x016F: return "Eutelsat 16°E" ;
-				case 0x01F4: return "MediaKabel B.V" ;
-				case 0x022D: return "Skylogic Italia" ;
-				case 0x022F: return "Eutelsat 21.5°E" ;
-				case 0x026D: return "Skylogic Italia" ;
-				case 0x026F: return "Eutelsat 25.5°E" ;
-				case 0x029D: return "Skylogic Italia" ;
-				case 0x029E: return "Eutelsat 29°E" ;
-				case 0x029F: return "Eutelsat 28.5°E" ;
-				case 0x02BE: return "Arabsat" ;
-				case 0x033D: return "Skylogic Italia" ;
-				case 0x033f: return "Eutelsat 33°E " ;
-				case 0x036D: return "Skylogic Italia" ;
-				case 0x036E: return "Eutelsat 36°E" ;
-				case 0x036F: return "Eutelsat 36°E" ;
-				case 0x03E8: return "Telia, Sweden" ;
-				case 0x047D: return "Skylogic Italia" ;
-				case 0x047f: return "Eutelsat 12.5°W" ;
-				case 0x048D: return "Skylogic Italia" ;
-				case 0x048E: return "Eutelsat 48°E" ;
-				case 0x048F: return "Eutelsat 48°E" ;
-				case 0x052D: return "Skylogic Italia" ;
-				case 0x052f: return "Eutelsat 8°W" ;
-				case 0x055D: return "Skylogic Italia" ;
-				case 0x055f: return "Eutelsat" ;
-				case 0x0600: return "UPC Satellite" ;
-				case 0x0601: return "UPC Cable" ;
-				case 0x0602: return "Tevel" ;
-				case 0x071D: return "Skylogic Italia" ;
-				case 0x071f: return "Eutelsat 70.5°E" ;
-				case 0x0801: return "Nilesat 101" ;
-				case 0x0880: return "MEASAT 1, 91.5°E" ;
-				case 0x0882: return "MEASAT 2, 91.5°E" ;
-				case 0x0883: return "MEASAT 2, 148.0°E" ;
-				case 0x088F: return "MEASAT 3" ;
-				case 0x1000: return "Optus B3 156°E" ;
-				case 0x1001: return "DISH Network" ;
-				case 0x1002: return "Dish Network 61.5 W" ;
-				case 0x1003: return "Dish Network 83 W" ;
-				case 0x1004: return "Dish Network 119" ;
-				case 0x1005: return "Dish Network 121" ;
-				case 0x1006: return "Dish Network 148" ;
-				case 0x1007: return "Dish Network 175" ;
-				case 0x1008: return "Dish Network W" ;
-				case 0x1009: return "Dish Network X" ;
-				case 0x100A: return "Dish Network Y" ;
-				case 0x100B: return "Dish Network Z" ;
-				case 0x1010: return "ABC TV" ;
-				case 0x1011: return "SBS" ;
-				case 0x1012: return "Nine Network Australia" ;
-				case 0x1013: return "Seven Network Australia" ;
-				case 0x1014: return "Network TEN Australia" ;
-				case 0x1015: return "WIN Television Australia" ;
-				case 0x1016: return "Prime Television Australia" ;
-				case 0x1017: return "Southern Cross Broadcasting Australia" ;
-				case 0x1018: return "Telecasters Australia" ;
-				case 0x1019: return "NBN Australia" ;
-				case 0x101A: return "Imparja Television Australia" ;
-				case 0x101f: return "Reserved" ;
-				case 0x1100: return "GE Americom" ;
-				case 0x2000: return "Thiacom 1,2 78.5°E" ;
-				case 0x2024: return "Australian Digital Terrestrial Television" ;
-				case 0x2038: return "Belgian Digital Terrestrial Television" ;
-				case 0x20CB: return "Czech Republic Digital Terrestrial Television" ;
-				case 0x20D0: return "Danish Digital Terrestrial Television" ;
-				case 0x20E9: return "Estonian Digital Terrestrial Television" ;
-				case 0x20F6: return "Finnish Digital Terrestrial Television" ;
-				case 0x2114: return "German Digital Terrestrial Television DVB-T broadcasts" ;
-				case 0x2174: return "Irish Digital Terrestrial Television" ;
-				case 0x2178: return "Israeli Digital Terrestrial Television" ;
-				case 0x2210: return "Netherlands Digital Terrestrial Television" ;
-				case 0x22BE: return "Singapore Digital Terrestrial Television" ;
-				case 0x22D4: return "Spanish Digital Terrestrial Television" ;
-				case 0x22F1: return "Swedish Digital Terrestrial Television" ;
-				case 0x22F4: return "Swiss Digital Terrestrial Television" ;
-				case 0x233A: return "UK Digital Terrestrial Television" ;
-				case 0x3000: return "PanAmSat 4 68.5°E" ;
-				case 0x5000: return "Irdeto Mux System" ;
-				case 0x616D: return "BellSouth Entertainment" ;
-				case 0x6600: return "UPC Satellite" ;
-				case 0x6601: return "UPC Cable" ;
-				case 0xF000: return "Small Cable networks" ;
-				case 0xF001: return "Deutsche Telekom" ;
-				case 0xF010: return "Telefónica Cable" ;
-				case 0xF020: return "Cable and Wireless Communication " ;
-				case 0xF100: return "Casema" ;
-				case 0xF750: return "Telewest Communications Cable Network" ;
-				case 0xF751: return "OMNE Communications" ;
-				case 0xFBFC: return "MATAV" ;
-				case 0xFBFD: return "Telia Kabel-TV" ;
-				case 0xFBFE: return "TPS" ;
-				case 0xFBFF: return "Sky Italia" ;
-				case 0xFC10: return "Rhône Vision Cable" ;
-				case 0xFC41: return "France Telecom Cable" ;
-				case 0xFD00: return "National Cable Network";
-				case 0xFE00: return "TeleDenmark Cable TV";
-				case 0xFEff: return "Network Interface Modules" ;
-				case 0xFFfe: return "ESTI Private" ;
-				default: return "Unknown Network Provider";
+						if(res>0)
+						{
+
+							foreach(byte[] wdata in tab42)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+
+							foreach(byte[] wdata in tab46)
+								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
+						}
+						transponder.channels.Add(pat);
+					}
+				}
+
+				foreach (ChannelInfo chanInfo in transponder.channels)
+				{
+					if (chanInfo.serviceID==serviceId)
+					{
+						Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel found channel details");
+						for (int pids =0; pids < chanInfo.pid_list.Count;pids++)
+						{
+							DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[pids];
+							if (data.isVideo)
+								chan.VideoPid=data.elementary_PID;
+							if (data.isAC3Audio)
+								chan.AC3Pid=data.elementary_PID;
+							if (data.isTeletext)
+								chan.TeletextPid=data.elementary_PID;
+							if (data.isAudio)
+								chan.AudioPid=data.elementary_PID;
+						}
+						
+						chan.TransportStreamID=chanInfo.transportStreamID;
+						chan.Symbolrate=chanInfo.symb;
+						chan.ServiceType=chanInfo.serviceType;
+						chan.ServiceProvider=chanInfo.service_provider_name;
+						chan.ServiceName=chanInfo.service_name;
+						chan.ProgramNumber=chanInfo.program_number;
+						chan.Polarity=chanInfo.pol;
+						chan.PMTPid=chanInfo.network_pmt_PID;
+						chan.PCRPid=chanInfo.pcr_pid;
+						chan.NetworkID=chanInfo.networkID;
+						chan.LNBKHz=chanInfo.lnb01;
+						chan.LNBFrequency=chanInfo.lnbkhz;
+						chan.IsScrambled=chanInfo.scrambled;
+						chan.ID=1;
+						chan.HasEITSchedule=chanInfo.eitSchedule;
+						chan.HasEITPresentFollow=chanInfo.eitPreFollow;
+						chan.Frequency=chanInfo.freq;
+						chan.FEC=chanInfo.fec;
+						chan.ECMPid=0;
+						chan.DiSEqC=0;
+						Log.WriteFile(Log.LogType.Capture,"name:{0} audio:{1:X} video:{2:X} txt:{3:X} EIT:{4} EITPF:{5}",
+							chan.ServiceName,chan.AudioPid,chan.VideoPid,chan.TeletextPid,chan.HasEITSchedule,chan.HasEITPresentFollow);
+					}
+				}
 			}
-		}
-
-		string[] m_langCodes=new string[]{
-"abk","ace","ach","ada","aar",
-"afh","afr","afa","aka","akk",
-"alb","sqi","ale","alg","tut",
-"amh","apa","ara","arc","arp",
-"arn","arw","arm","hye","art",
-"asm","ath","map","ava","ave",
-"awa","aym","aze","nah","ban",
-"bat","bal","bam","bai","bad",
-"bnt","bas","bak","baq","eus",
-"bej","bem","ben","ber","bho",
-"bih","bik","bin","bis","bra",
-"bre","bug","bul","bua","bur",
-"mya","bel","cad","car","cat",
-"cau","ceb","cel","cai","chg",
-"cha","che","chr","chy","chb",
-"chi","zho","chn","cho","chu",
-"chv","cop","cor","cos","cre",
-"mus","crp","cpe","cpf","cpp",
-"cus","ces","cze","dak","dan",
-"del","din","div","doi","dra",
-"dua","dut","nla","dum","dyu",
-"dzo","efi","egy","eka","elx",
-"eng","enm","ang","esk","epo",
-"est","ewe","ewo","fan","fat",
-"fao","fij","fin","fiu","fon",
-"fra","fre","frm","fro","fry",
-"ful","gaa","gae","gdh","glg",
-"lug","gay","gez","geo","kat",
-"deu","ger","gmh","goh","gem",
-"gil","gon","got","grb","grc",
-"ell","gre","kal","grn","guj",
-"hai","hau","haw","heb","her",
-"hil","him","hin","hmo","hun",
-"hup","iba","ice","isl","ibo",
-"ijo","ilo","inc","ine","ind",
-"ina","ine","iku","ipk","ira",
-"gai","iri","sga","mga","iro",
-"ita","jpn","jav","jaw","jrb",
-"jpr","kab","kac","kam","kan",
-"kau","kaa","kar","kas","kaw",
-"kaz","kha","khm","khi","kho",
-"kik","kin","kir","kom","kon",
-"kok","kor","kpe","kro","kua",
-"kum","kur","kru","kus","kut",
-"lad","lah","lam","oci","lao",
-"lat","lav","ltz","lez","lin",
-"lit","loz","lub","lui","lun",
-"luo","mac","mak","mad","mag",
-"mai","mak","mlg","may","msa",
-"mal","mlt","man","mni","mno",
-"max","mao","mri","mar","chm",
-"mah","mwr","mas","myn","men",
-"mic","min","mis","moh","mol",
-"mkh","lol","mon","mos","mul",
-"mun","nau","nav","nde","nbl",
-"ndo","nep","new","nic","ssa",
-"niu","non","nai","nor","nno",
-"nub","nym","nya","nyn","nyo",
-"nzi","oji","ori","orm","osa",
-"oss","oto","pal","pau","pli",
-"pam","pag","pan","pap","paa",
-"fas","per","peo","phn","pol",
-"pon","por","pra","pro","pus",
-"que","roh","raj","rar","roa",
-"ron","rum","rom","run","rus",
-"sal","sam","smi","smo","sad",
-"sag","san","srd","sco","sel",
-"sem","scr","srr","shn","sna",
-"sid","bla","snd","sin","sit",
-"sio","sla","ssw","slk","slo",
-"slv","sog","som","son","wen",
-"nso","sot","sai","esl","spa",
-"suk","sux","sun","sus","swa",
-"ssw","sve","swe","syr","tgl",
-"tah","tgk","tmh","tam","tat",
-"tel","ter","tha","bod","tib",
-"tig","tir","tem","tiv","tli",
-"tog","ton","tru","tsi","tso",
-"tsn","tum","tur","ota","tuk",
-"tyv","twi","uga","uig","ukr",
-"umb","und","urd","uzb","vai",
-"ven","vie","vol","vot","wak",
-"wal","war","was","cym","wel",
-"wol","xho","sah","yao","yap",
-"yid","yor","zap","zen","zha","zul"};
-		string[] m_langLanguage=new string[]{
-"Abkhazian","Achinese","Acoli","Adangme","Afar",
-"Afrihili","Afrikaans","Afro-Asiatic","Akan",
-"Akkadian","Albanian","Albanian","Aleut","Algonquian",
-"Altaic","Amharic","Apache","Arabic","Aramaic",
-"Arapaho","Araucanian","Arawak","Armenian","Armenian",
-"Artificial","Assamese","Athapascan","Austronesian",
-"Avaric","Avestan","Awadhi","Aymara","Azerbaijani",
-"Aztec","Balinese","Baltic","Baluchi","Bambara",
-"Bamileke","Banda","Bantu","Basa","Bashkir","Basque",
-"Basque","Beja","Bemba","Bengali","Berber","Bhojpuri",
-"Bihari","Bikol","Bini","Bislama","Braj","Breton",
-"Buginese","Bulgarian","Buriat","Burmese","Burmese",
-"Byelorussian","Caddo","Carib","Catalan","Caucasian",
-"Cebuano","Celtic","Central-American(Indian)","Chagatai",
-"Chamorro","Chechen","Cherokee","Cheyenne","Chibcha",
-"Chinese","Chinese","Chinook","Choctaw","Church","Chuvash",
-"Coptic","Cornish","Corsican","Cree","Creek",
-"Creoles(Pidgins)","Creoles(Pidgins)","Creoles(Pidgins)",
-"Creoles(Pidgins)","Cushitic","Czech","Czech","Dakota",
-"Danish","Delaware","Dinka","Divehi","Dogri","Dravidian",
-"Duala","Dutch","Dutch","Dutch-Middle","Dyula","Dzongkha",
-"Efik","Egyptian","Ekajuk","Elamite","English",
-"English-Middle","English-Old","Eskimo","Esperanto",
-"Estonian","Ewe","Ewondo","Fang","Fanti","Faroese",
-"Fijian","Finnish","Finno-Ugrian","Fon","French",
-"French","French-Middle","French-Old","Frisian",
-"Fulah","Ga","Gaelic","Gaelic","Gallegan","Ganda",
-"Gayo","Geez","Georgian","Georgian","German","German",
-"German-Middle","German-Old","Germanic","Gilbertese",
-"Gondi","Gothic","Grebo","Greek-Ancient","Greek",
-"Greek","Greenlandic","Guarani","Gujarati","Haida",
-"Hausa","Hawaiian","Hebrew","Herero","Hiligaynon",
-"Himachali","Hindi","Hiri","Hungarian","Hupa","Iban",
-"Icelandic","Icelandic","Igbo","Ijo","Iloko","Indic",
-"Indo-European","Indonesian","Interlingua","Interlingue",
-"Inuktitut","Inupiak","Iranian","Irish","Irish",
-"Irish-Old","Irish-Middle","Iroquoian","Italian",
-"Japanese","Javanese","Javanese","Judeo-Arabic",
-"Judeo-Persian","Kabyle","Kachin","Kamba","Kannada",
-"Kanuri","Kara-Kalpak","Karen","Kashmiri","Kawi",
-"Kazakh","Khasi","Khmer","Khoisan","Khotanese","Kikuyu",
-"Kinyarwanda","Kirghiz","Komi","Kongo","Konkani",
-"Korean","Kpelle","Kru","Kuanyama","Kumyk","Kurdish",
-"Kurukh","Kusaie","Kutenai","Ladino","Lahnda","Lamba",
-"Langue","Lao","Latin","Latvian","Letzeburgesch",
-"Lezghian","Lingala","Lithuanian","Lozi","Luba-Katanga",
-"Luiseno","Lunda","Luo","Macedonian","Macedonian",
-"Madurese","Magahi","Maithili","Makasar","Malagasy",
-"Malay","Malay","Malayalam","Maltese","Mandingo",
-"Manipuri","Manobo","Manx","Maori","Maori","Marathi",
-"Mari","Marshall","Marwari","Masai","Mayan","Mende",
-"Micmac","Minangkabau","Miscellaneous","Mohawk",
-"Moldavian","Mon-Kmer","Mongo","Mongolian","Mossi",
-"Multiple","Munda","Nauru","Navajo","Ndebele-North",
-"Ndebele-South","Ndongo","Nepali","Newari",
-"Niger-Kordofanian","Nilo-Saharan","Niuean",
-"Norse-Old","North-American(Indian)","Norwegian",
-"Norwegian","Nubian","Nyamwezi","Nyanja","Nyankole",
-"Nyoro","Nzima","Ojibwa","Oriya","Oromo","Osage",
-"Ossetic","Otomian","Pahlavi","Palauan","Pali",
-"Pampanga","Pangasinan","Panjabi","Papiamento",
-"Papuan-Australian","Persian","Persian","Persian-Old",
-"Phoenician","Polish","Ponape","Portuguese","Prakrit",
-"Provencal-Old","Pushto","Quechua","Rhaeto-Romance",
-"Rajasthani","Rarotongan","Romance","Romanian","Romanian",
-"Romany","Rundi","Russian","Salishan","Samaritan(Aramaic)",
-"Sami","Samoan","Sandawe","Sango","Sanskrit","Sardinian",
-"Scots","Selkup","Semitic","Serbo-Croatian","Serer","Shan",
-"Shona","Sidamo","Siksika","Sindhi","Singhalese",
-"Sino-Tibetan","Siouan","Slavic","Siswant","Slovak",
-"Slovak","Slovenian","Sogdian","Somali","Songhai","Sorbian",
-"Sotho-Northern","Sotho-Southern","South-American(Indian)",
-"Spanish","Spanish","Sukuma","Sumerian","Sudanese","Susu",
-"Swahili","Swazi","Swedish","Swedish","Syriac","Tagalog",
-"Tahitian","Tajik","Tamashek","Tamil","Tatar","Telugu",
-"Tereno","Thai","Tibetan","Tibetan","Tigre","Tigrinya",
-"Timne","Tivi","Tlingit","Tonga","Tonga(Tonga-Islands)",
-"Truk","Tsimshian","Tsonga","Tswana","Tumbuka","Turkish",
-"Turkish-Ottoman","Turkmen","Tuvinian","Twi","Ugaritic",
-"Uighur","Ukrainian","Umbundu","Undetermined","Urdu",
-"Uzbek","Vai","Venda","Vietnamese","Volapük","Votic",
-"Wakashan","Walamo","Waray","Washo","Welsh","Welsh",
-"Wolof","Xhosa","Yakut","Yao","Yap","Yiddish","Yoruba",
-"Zapotec","Zenaga","Zhuang","Zulu"};
-		public ArrayList GetLanguages()
-		{
-			ArrayList langs=new ArrayList();
-			foreach(string str in m_langLanguage)
-				langs.Add(str);
-			return langs;
-		}
-		//
-		//
-		public ArrayList GetLanguageCodes()
-		{
-			ArrayList langs=new ArrayList();
-			foreach(string str in m_langCodes)
-				langs.Add(str);
-			return langs;
-		}
-		//
-		//
-		public string GetLanguageFromCode(string code)
-		{
-			int n=0;
-			foreach(string langCode in m_langCodes)
+			catch(Exception ex)
 			{
-				if(langCode.Equals(code))
-					return m_langLanguage.GetValue(n).ToString();
-				n++;
+				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetDVBChannel() exception:{0}", ex.ToString());
 			}
-			return "";
-		}
+			return chan;
 
 
+		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
+	
+		#endregion
+
+		// get current/next info
 		//
-		//
-		// iso 639 language codes
-
-
-		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			m_breakAction=true;
-		}
 	}// class
 }// namespace
