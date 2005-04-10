@@ -861,5 +861,16 @@ namespace MediaPortal.GUI.Library
         m_iTextOffsetY2=value;
       }
 		}
+		public string SelectedLabel
+		{
+			get
+			{
+				if (SelectedItem>=0 && SelectedItem < m_SubItems.Count)
+				{
+					return (string)m_SubItems[SelectedItem];
+				}
+				return String.Empty;
+			}
+		}
 	}
 }

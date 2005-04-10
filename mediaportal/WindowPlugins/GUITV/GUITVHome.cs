@@ -22,64 +22,42 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class  GUITVHome : GUIWindow, ISetupForm
 	{
+		#region variables
 		enum Controls
 		{
-			BTN_TVGUIDE=2,
-			BTN_RECORD=3,
-			BTN_GROUP=6,
-			BTN_CHANNEL=7,
-			BTN_TVONOFF=8,
-			BTN_TIMESHIFTINGONOFF=9,
-			BTN_SCHEDULER=10,
-			BTN_RECORDINGS=11,
-			BTN_SEARCH=12,
-			BTN_TELETEXT=13,
-			VIDEO_WINDOW=99,
-      
 			IMG_REC_CHANNEL=21,
 			LABEL_REC_INFO=22,
 			IMG_REC_RECTANGLE=23,
-			IMG_REC_PIN=24
 
 		};
 		static public string 	TVChannelCovertArt=@"thumbs\tv\logos";
 		static public string 	TVShowCovertArt=@"thumbs\tv\shows";
-//		static public string 	m_strChannel="Nederland 1";
-//		static public string 	m_strGroup=GUILocalizeStrings.Get(972);
+
 		static bool     			m_bTVON=true;
 		static bool     			m_bTimeShifting=true;
 		static ChannelNavigator		m_navigator;
 		
-//		ArrayList       			m_channels=new ArrayList();
-//		ArrayList       			m_groups=new ArrayList();
 		TVUtil          			m_util =null;
 		DateTime        			m_updateTimer=DateTime.Now;
 		bool            			m_bAlwaysTimeshift=false;
-//		static TVGroup				currentGroup=null;
 		ArrayList       			m_recordings=new ArrayList();
 		DateTime						  dtlastTime=DateTime.Now;
+
+		[SkinControlAttribute(2)]			protected GUIButtonControl btnTvGuide=null;
+		[SkinControlAttribute(3)]			protected GUIButtonControl btnRecord=null;
+		[SkinControlAttribute(6)]			protected GUISelectButtonControl btnGroup=null;
+		[SkinControlAttribute(7)]			protected GUISelectButtonControl btnChannel=null;
+		[SkinControlAttribute(8)]			protected GUIToggleButtonControl btnTvOnOff=null;
+		[SkinControlAttribute(9)]			protected GUIToggleButtonControl btnTimeshiftingOnOff=null;
+		[SkinControlAttribute(13)]		protected GUIButtonControl btnTeletext=null;
+		[SkinControlAttribute(24)]		protected GUIImage imgRecordingIcon=null;
+		[SkinControlAttribute(99)]		protected GUIVideoControl videoWindow=null;
+		#endregion		
+
 		public  GUITVHome()
 		{	
 			GetID=(int)GUIWindow.Window.WINDOW_TV;
 			m_util= new TVUtil();
-		}
-		~GUITVHome()
-		{	
-      
-		}
-		public override bool Init()
-		{
-			try
-			{
-				System.IO.Directory.CreateDirectory(@"thumbs\tv");
-				System.IO.Directory.CreateDirectory(@"thumbs\tv\logos");
-			}
-			catch(Exception){}
-			bool bResult= Load (GUIGraphicsContext.Skin+@"\mytvhome.xml");
-			// Create the channel navigator (it will load groups and channels)
-			m_navigator = new ChannelNavigator();
-			LoadSettings();
-			return bResult;
 		}
 
     
@@ -106,6 +84,21 @@ namespace MediaPortal.GUI.TV
 		}
 		#endregion
 
+		#region overrides
+		public override bool Init()
+		{
+			try
+			{
+				System.IO.Directory.CreateDirectory(@"thumbs\tv");
+				System.IO.Directory.CreateDirectory(@"thumbs\tv\logos");
+			}
+			catch(Exception){}
+			bool bResult= Load (GUIGraphicsContext.Skin+@"\mytvhome.xml");
+			// Create the channel navigator (it will load groups and channels)
+			m_navigator = new ChannelNavigator();
+			LoadSettings();
+			return bResult;
+		}
 
 		public override void OnAction(Action action)
 		{
@@ -205,227 +198,291 @@ namespace MediaPortal.GUI.TV
 			base.OnAction(action);
 		}
 
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			TVDatabase.GetRecordings(ref m_recordings);
+			if (g_Player.Playing && !g_Player.IsTV)
+			{
+				if (!g_Player.IsTVRecording)
+				{
+					Log.Write("TVHome:stop music/video:{0}",g_Player.CurrentFile);
+					g_Player.Stop();
+				}
+			}
+					
+
+			//set video window position
+			if (videoWindow!=null)
+			{
+				GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition,videoWindow.YPosition,videoWindow.Width,videoWindow.Height);
+			}
+			UpdateChannelButton();
+
+			// start viewing tv... 
+			GUIGraphicsContext.IsFullScreenVideo=false;
+			ViewChannel(Navigator.CurrentChannel);
+
+			UpdateStateOfButtons();
+			UpdateProgressPercentageBar();
+		}
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			m_recordings.Clear();
+					
+          
+			SaveSettings();
+			//if we're switching to another plugin
+			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			{
+				//and we're not playing which means we dont timeshift tv
+				if (! g_Player.Playing)
+				{
+					// and we dont want tv in the background
+					if (GUIGraphicsContext.ShowBackground)
+					{
+						// then stop timeshifting & viewing... 
+						Recorder.StopViewing();
+					}
+				}
+			}
+
+
+			base.OnPageDestroy (newWindowId);
+		}
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			if (control==btnTvOnOff)
+			{
+				if (!btnTvOnOff.Selected)
+				{
+					//tv off
+					Log.Write("TVHome:turn tv off");
+					m_bTVON=false;
+					SaveSettings();
+					g_Player.Stop();
+				}
+				else
+				{
+					// tv on
+					Log.Write("TVHome:turn tv on {0}", Navigator.CurrentChannel);
+					m_bTVON=true;
+					SaveSettings();
+				}
+
+				// turn tv on/off
+				ViewChannelAndCheck(Navigator.CurrentChannel);
+			}
+
+			if (control==btnTimeshiftingOnOff)
+			{
+				//turn timeshifting off 
+				m_bTimeShifting=btnTimeshiftingOnOff.Selected;
+				SaveSettings();
+				ViewChannelAndCheck(Navigator.CurrentChannel);
+			}
+
+			if (control==btnGroup)
+			{
+				string channel = btnGroup.SelectedLabel;
+				if ((channel.Length > 0) && (Navigator.CurrentGroup.GroupName != channel))
+				{
+					// Change current group and switch to first channel in group
+					Navigator.SetCurrentGroup(channel);
+					if(Navigator.CurrentGroup.tvChannels.Count > 0) 
+					{
+						TVChannel chan = (TVChannel)Navigator.CurrentGroup.tvChannels[0];
+						ViewChannelAndCheck(chan.Name);
+						Navigator.UpdateCurrentChannel();
+					}
+
+					UpdateStateOfButtons();
+					UpdateProgressPercentageBar();
+					UpdateChannelButton();
+					SaveSettings();
+				}
+			}
+			if (control == btnTeletext)
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
+				return;
+			}
+
+			if (control== btnRecord)
+			{
+				OnRecord();
+			}
+			if (control==btnChannel)
+			{
+				//switch to another tv channel
+				string channel    =btnChannel.SelectedLabel;
+				if ((channel.Length > 0) && (Navigator.CurrentChannel != channel))
+				{
+					ViewChannelAndCheck(channel);
+					Navigator.UpdateCurrentChannel();
+
+					UpdateStateOfButtons();
+					UpdateProgressPercentageBar();
+					UpdateChannelButton();
+					SaveSettings();
+				}
+			}
+			base.OnClicked (controlId, control, actionType);
+		}
+
+
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch ( message.Message )
 			{
-
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+				case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
 				{
-					base.OnMessage(message);
-					
-					TVDatabase.GetRecordings(ref m_recordings);
-					if (g_Player.Playing && !g_Player.IsTV)
-					{
-						if (!g_Player.IsTVRecording)
-						{
-							Log.Write("TVHome:stop music/video:{0}",g_Player.CurrentFile);
-							g_Player.Stop();
-						}
-					}
-					
+					LoadSettings();
 
-					//set video window position
-					GUIControl cntl = GetControl( (int)Controls.VIDEO_WINDOW);
-					if (cntl!=null)
-					{
-						GUIGraphicsContext.VideoWindow = new Rectangle(cntl.XPosition,cntl.YPosition,cntl.Width,cntl.Height);
-					}
-					UpdateChannelButton();
-
-					// start viewing tv... 
-					GUIGraphicsContext.IsFullScreenVideo=false;
+					//restart viewing...  
 					ViewChannel(Navigator.CurrentChannel);
-
-					UpdateStateOfButtons();
-					UpdateProgressPercentageBar();
-
-					return true;
 				}
-
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-				{
-					m_recordings.Clear();
-					base.OnMessage(message);
-					
-          
-					SaveSettings();
-					//if we're switching to another plugin
-					if ( !GUITVHome.IsTVWindow(message.Param1) )
-					{
-						//and we're not playing which means we dont timeshift tv
-						if (! g_Player.Playing)
-						{
-							// and we dont want tv in the background
-							if (GUIGraphicsContext.ShowBackground)
-							{
-								// then stop timeshifting & viewing... 
-								Recorder.StopViewing();
-							}
-						}
-					}
-
-					return true;
-				}
-				
-				case GUIMessage.MessageType.GUI_MSG_CLICKED:
-					int iControl=message.SenderControlId;
-
-					if (iControl==(int)Controls.BTN_TVONOFF)
-					{
-						//switch tv on/off
-						if (message.Param1==0) 
-						{
-							//tv off
-							Log.Write("TVHome:turn tv off");
-							m_bTVON=false;
-							SaveSettings();
-							g_Player.Stop();
-						}
-						else
-						{
-							// tv on
-							Log.Write("TVHome:turn tv on {0}", Navigator.CurrentChannel);
-							m_bTVON=true;
-							SaveSettings();
-						}
-
-						// turn tv on/off
-						ViewChannelAndCheck(Navigator.CurrentChannel);
-					}
-
-					if (iControl==(int)Controls.BTN_TIMESHIFTINGONOFF)
-					{
-						//turn timeshifting on/off
-						if (message.Param1==0) 
-						{
-							//turn timeshifting off 
-							m_bTimeShifting=false;
-						}
-						else
-						{
-							//turn timeshifting on 
-							m_bTimeShifting=true;
-						}
-						SaveSettings();
-						
-						ViewChannelAndCheck(Navigator.CurrentChannel);
-					}
-          
-					if (iControl==(int)Controls.BTN_GROUP)
-					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						OnMessage(msg);         
-						if ((msg.Label.Length > 0) && (Navigator.CurrentGroup.GroupName != msg.Label))
-						{
-							// Change current group and switch to first channel in group
-							Navigator.SetCurrentGroup(msg.Label);
-							if(Navigator.CurrentGroup.tvChannels.Count > 0) {
-								TVChannel chan = (TVChannel)Navigator.CurrentGroup.tvChannels[0];
-								ViewChannelAndCheck(chan.Name);
-								Navigator.UpdateCurrentChannel();
-							}
-
-							UpdateStateOfButtons();
-							UpdateProgressPercentageBar();
-							UpdateChannelButton();
-							SaveSettings();
-						}
-					}
-					if (iControl==(int)Controls.BTN_CHANNEL)
-					{
-						//switch to another tv channel
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						OnMessage(msg);         
-						if ((msg.Label.Length > 0) && (Navigator.CurrentChannel != msg.Label))
-						{
-							ViewChannelAndCheck(msg.Label);
-							Navigator.UpdateCurrentChannel();
-
-							UpdateStateOfButtons();
-							UpdateProgressPercentageBar();
-							UpdateChannelButton();
-							SaveSettings();
-						}
-					}
-					if (iControl == (int)Controls.BTN_TELETEXT)
-					{
-						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
-					}
-					if (iControl == (int)Controls.BTN_RECORD)
-					{
-						//record now.
-						//Are we recording this channel already?
-						if (!Recorder.IsRecordingChannel(Navigator.CurrentChannel))
-						{
-							//no then start recording
-							TVProgram prog=m_util.GetCurrentProgram(Navigator.CurrentChannel);
-							if (prog!=null)
-							{
-								GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
-								if (pDlgOK!=null)
-								{
-									pDlgOK.SetHeading(605);//my tv
-									pDlgOK.AddLocalizedString(875); //current program
-									pDlgOK.AddLocalizedString(876); //till manual stop
-									pDlgOK.DoModal(this.GetID);
-									switch (pDlgOK.SelectedId)
-									{
-										case 875:
-											//record current program
-											Recorder.RecordNow(Navigator.CurrentChannel,false);
-											break;
-
-										case 876:
-											//manual record
-											Recorder.RecordNow(Navigator.CurrentChannel,true);
-											break;
-									}
-								}
-							}
-							else
-							{
-								//manual record
-								Recorder.RecordNow(Navigator.CurrentChannel,true);
-							}
-						}
-						else
-						{
-							if (Recorder.IsRecording())
-							{
-								//yes then stop recording
-								Recorder.StopRecording();
-
-								// and re-start viewing.... 
-								LoadSettings();
-								ViewChannel(Navigator.CurrentChannel);
-								Navigator.UpdateCurrentChannel();
-							}
-						}
-						UpdateStateOfButtons();
-					}
+				break;
+				case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
+					ViewChannel(message.Label);
+					Navigator.UpdateCurrentChannel();
 					break;
 
-					case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
-					{
-						LoadSettings();
-
-						//restart viewing...  
-						ViewChannel(Navigator.CurrentChannel);
-					}
+				case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
+					m_bTVON=false;
+					ViewChannel(message.Label);
+					Navigator.UpdateCurrentChannel();
 					break;
-					case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
-						ViewChannel(message.Label);
-						Navigator.UpdateCurrentChannel();
-						break;
-
-					case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
-						m_bTVON=false;
-						ViewChannel(message.Label);
-						Navigator.UpdateCurrentChannel();
-						break;
 			}
 			return base.OnMessage(message);
+		}
+
+		public override void Process()
+		{ 
+			//if we're not playing the timeshifting file
+			TimeSpan ts;
+			if (!g_Player.Playing)
+			{
+				//then try to start it
+				ts=DateTime.Now-dtlastTime;
+				if (ts.TotalMilliseconds>=1000)
+				{
+					dtlastTime=DateTime.Now;
+					string fileName=Recorder.GetTimeShiftFileName();
+					try
+					{
+						if (System.IO.File.Exists(fileName))
+						{
+							StartPlaying(true);
+						}
+					}
+					catch(Exception){}
+				}
+			}
+
+			// Let the navigator zap channel if needed
+			Navigator.CheckChannelChange();
+
+			// Update navigator with information from the Recorder
+			// TODO: This should ideally be handled using events. Recorder should fire an event
+			// when the current channel changes. This is a temporary workaround //Vic
+			string currchan = Navigator.CurrentChannel;		// Remember current channel
+			Navigator.UpdateCurrentChannel();
+			bool channelchanged = currchan != Navigator.CurrentChannel;
+
+			// Has the channel changed?
+			if(channelchanged)
+			{
+				UpdateStateOfButtons();
+				UpdateProgressPercentageBar();
+				UpdateChannelButton();
+			}
+      
+			// if we're recording tv, update gui with info
+			if (Recorder.IsRecording())
+			{
+				TVRecording rec=Recorder.GetTVRecording();
+				if (rec!= null)
+				{	
+					if (rec.RecType != TVRecording.RecordingType.Once)
+						imgRecordingIcon.SetFileName("tvguide_recordserie_button.png");
+					else
+						imgRecordingIcon.SetFileName("tvguide_record_button.png");
+				}				
+				imgRecordingIcon.IsVisible=true;
+			}
+			else
+			{
+				imgRecordingIcon.IsVisible=false;
+			}
+			ts = DateTime.Now-m_updateTimer;
+			if (ts.TotalMilliseconds>500)
+			{
+				m_updateTimer=DateTime.Now;
+
+				GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
+				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
+				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
+				UpdateProgressPercentageBar();
+        
+				UpdateStateOfButtons();
+			}
+
+		}
+
+		#endregion
+		void OnRecord()
+		{
+			//record now.
+			//Are we recording this channel already?
+			if (!Recorder.IsRecordingChannel(Navigator.CurrentChannel))
+			{
+				//no then start recording
+				TVProgram prog=m_util.GetCurrentProgram(Navigator.CurrentChannel);
+				if (prog!=null)
+				{
+					GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+					if (pDlgOK!=null)
+					{
+						pDlgOK.SetHeading(605);//my tv
+						pDlgOK.AddLocalizedString(875); //current program
+						pDlgOK.AddLocalizedString(876); //till manual stop
+						pDlgOK.DoModal(this.GetID);
+						switch (pDlgOK.SelectedId)
+						{
+							case 875:
+								//record current program
+								Recorder.RecordNow(Navigator.CurrentChannel,false);
+								break;
+
+							case 876:
+								//manual record
+								Recorder.RecordNow(Navigator.CurrentChannel,true);
+								break;
+						}
+					}
+				}
+				else
+				{
+					//manual record
+					Recorder.RecordNow(Navigator.CurrentChannel,true);
+				}
+			}
+			else
+			{
+				if (Recorder.IsRecording())
+				{
+					//yes then stop recording
+					Recorder.StopRecording();
+
+					// and re-start viewing.... 
+					LoadSettings();
+					ViewChannel(Navigator.CurrentChannel);
+					Navigator.UpdateCurrentChannel();
+				}
+			}
+			UpdateStateOfButtons();
 		}
 
 		/// <summary>
@@ -441,84 +498,74 @@ namespace MediaPortal.GUI.TV
 			{
 				//yes then disable the tv on/off and timeshifting on/off buttons
 				//and change the Record Now button into Stop Record
-				GUIControl.DisableControl(GetID,(int)Controls.BTN_TVONOFF);
-				GUIControl.DisableControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
-				GUIControl.SelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
-				GUIControl.SetControlLabel(GetID, (int)Controls.BTN_RECORD, GUILocalizeStrings.Get(629));
+				btnTvOnOff.Disabled=true;
+				btnTimeshiftingOnOff.Disabled=true;
+				btnTimeshiftingOnOff.Selected=true;
+				btnRecord.Label=GUILocalizeStrings.Get(629);//stop record
 			}
 			else
 			{
 				//nop. then enable the tv on/off button and change the Record Now button
 				//to Record Now
-				GUIControl.EnableControl(GetID,(int)Controls.BTN_TVONOFF);
-				GUIControl.SetControlLabel(GetID, (int)Controls.BTN_RECORD, GUILocalizeStrings.Get(601));
+				btnTvOnOff.Disabled=false;
+				btnRecord.Label=GUILocalizeStrings.Get(601);// record
       
 				//is tv turned off or is the current card not supporting timeshifting
 				bool supportstimeshifting=Recorder.DoesSupportTimeshifting();
 				if (m_bTVON==false || supportstimeshifting==false)
 				{
 					//then disable the timeshifting button
-					GUIControl.DisableControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
-					GUIControl.DeSelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
+					btnTimeshiftingOnOff.Disabled=true;
+					btnTimeshiftingOnOff.Selected=false;
 				}
 				else if (supportstimeshifting)
 				{
 					//enable the timeshifting button
-					GUIControl.EnableControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
-
+					btnTimeshiftingOnOff.Disabled=false;
 					// set state of timeshifting button
 					if ( Recorder.IsTimeShifting() )
 					{
-						GUIControl.SelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
+						btnTimeshiftingOnOff.Selected=true;
 					}
 					else
 					{
-						GUIControl.DeSelectControl(GetID,(int)Controls.BTN_TIMESHIFTINGONOFF);
+						btnTimeshiftingOnOff.Selected=false;
 					}
 				}
 
 				//set state of TV on/off button
-				if (m_bTVON)
-					GUIControl.SelectControl(GetID,(int)Controls.BTN_TVONOFF);
-				else
-					GUIControl.DeSelectControl(GetID,(int)Controls.BTN_TVONOFF);
+				btnTvOnOff.Selected=m_bTVON;
 			}
 		}
 
 		// updates the channel button so it shows the currently selected tv channel
 		void UpdateChannelButton()
 		{
-			if (Recorder.HasTeletext())
-			{
-				GUIControl.ShowControl(GetID,(int)Controls.BTN_TELETEXT);
-			}
-			else
-			{
-				GUIControl.HideControl(GetID,(int)Controls.BTN_TELETEXT);
-			}
+			btnTeletext.IsVisible=Recorder.HasTeletext();
+			
 			// Update group button
 			int i=0;
 //			currentGroup=null;
-			GUIControl.ClearControl(GetID, (int)Controls.BTN_GROUP);
+			GUIControl.ClearControl(GetID, btnGroup.GetID);
 			foreach (TVGroup group in Navigator.Groups)
 			{
-				GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_GROUP,group.GroupName);
+				GUIControl.AddItemLabelControl(GetID,btnGroup.GetID,group.GroupName);
 				if (group == Navigator.CurrentGroup) 
 				{
-					GUIControl.SelectItemControl(GetID, (int)Controls.BTN_GROUP, i);
+					GUIControl.SelectItemControl(GetID, btnGroup.GetID, i);
 				}
 				++i;
 			}
 
 			// Update channel button
 			i=0;
-			GUIControl.ClearControl(GetID, (int)Controls.BTN_CHANNEL);
+			GUIControl.ClearControl(GetID, btnChannel.GetID);
 			foreach (TVChannel chan in Navigator.CurrentGroup.tvChannels)
 			{
-				GUIControl.AddItemLabelControl(GetID,(int)Controls.BTN_CHANNEL,chan.Name);
+				GUIControl.AddItemLabelControl(GetID,btnChannel.GetID,chan.Name);
 				if (chan.Name==Navigator.CurrentChannel)
 				{
-					GUIControl.SelectItemControl(GetID, (int)Controls.BTN_CHANNEL, i);
+					GUIControl.SelectItemControl(GetID, btnChannel.GetID, i);
 				}
 				++i;
 			}
@@ -563,80 +610,6 @@ namespace MediaPortal.GUI.TV
 		/// tv channel switched or recording started/stopped
 		/// and will update the GUI
 		/// </summary>
-		public override void Process()
-		{ 
-			//if we're not playing the timeshifting file
-			TimeSpan ts;
-			if (!g_Player.Playing)
-			{
-				//then try to start it
-				ts=DateTime.Now-dtlastTime;
-				if (ts.TotalMilliseconds>=1000)
-				{
-					dtlastTime=DateTime.Now;
-					string fileName=Recorder.GetTimeShiftFileName();
-					try
-					{
-						if (System.IO.File.Exists(fileName))
-						{
-								StartPlaying(true);
-						}
-					}
-					catch(Exception){}
-				}
-			}
-
-			// Let the navigator zap channel if needed
-			Navigator.CheckChannelChange();
-
-			// Update navigator with information from the Recorder
-			// TODO: This should ideally be handled using events. Recorder should fire an event
-			// when the current channel changes. This is a temporary workaround //Vic
-			string currchan = Navigator.CurrentChannel;		// Remember current channel
-			Navigator.UpdateCurrentChannel();
-			bool channelchanged = currchan != Navigator.CurrentChannel;
-
-			// Has the channel changed?
-			if(channelchanged)
-			{
-				UpdateStateOfButtons();
-				UpdateProgressPercentageBar();
-				UpdateChannelButton();
-			}
-      
-			// if we're recording tv, update gui with info
-			if (Recorder.IsRecording())
-			{
-				TVRecording rec=Recorder.GetTVRecording();
-				if (rec!= null)
-				{
-					GUIImage img = (GUIImage) GetControl((int)Controls.IMG_REC_PIN);
-					if (rec.RecType != TVRecording.RecordingType.Once)
-						img.SetFileName("tvguide_recordserie_button.png");
-					else
-						img.SetFileName("tvguide_record_button.png");
-				}				
-				GUIControl.ShowControl(GetID,(int)Controls.IMG_REC_PIN);
-			}
-			else
-			{
-				GUIControl.HideControl(GetID,(int)Controls.IMG_REC_PIN);
-			}
-			ts = DateTime.Now-m_updateTimer;
-			if (ts.TotalMilliseconds>500)
-			{
-				m_updateTimer=DateTime.Now;
-
-				GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
-				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
-				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-				UpdateProgressPercentageBar();
-        
-				UpdateStateOfButtons();
-			}
-
-		}
-
 
 		/// <summary>
 		/// This method will try playing the timeshifting file
