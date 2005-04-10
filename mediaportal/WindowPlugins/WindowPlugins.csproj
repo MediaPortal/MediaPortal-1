@@ -1200,11 +1200,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "GUIVideoFiles\GUIVideoActors.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "GUIVideoFiles\GUIVideoBaseWindow.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1216,11 +1211,6 @@
                 />
                 <File
                     RelPath = "GUIVideoFiles\GUIVideoFullscreen.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIVideoFiles\GUIVideoGenres.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1246,16 +1236,6 @@
                 />
                 <File
                     RelPath = "GUIVideoFiles\GUIVideoPlaylist.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIVideoFiles\GUIVideoTitle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIVideoFiles\GUIVideoYear.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

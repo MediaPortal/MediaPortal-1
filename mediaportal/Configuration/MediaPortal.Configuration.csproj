@@ -671,6 +671,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\MovieViews.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\MovieViews.resx"
+                    DependentUpon = "MovieViews.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\Mpeg2DecAudioFilter.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
