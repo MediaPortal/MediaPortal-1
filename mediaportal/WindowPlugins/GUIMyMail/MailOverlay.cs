@@ -19,6 +19,7 @@ namespace MyMail
 		}
 		public MailOverlay()
 		{
+			GetID=8002;
 			//
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//

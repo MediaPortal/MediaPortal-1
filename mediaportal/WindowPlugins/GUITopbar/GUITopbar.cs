@@ -29,7 +29,8 @@ namespace MediaPortal.Topbar
 			// 
 			// TODO: Add constructor logic here
 			//
-    }
+			GetID=(int)GUIWindow.Window.WINDOW_TOPBAR;
+		}
 
 		public bool UseTopBarSub	// Use top Bar in Submenu. 
 		{

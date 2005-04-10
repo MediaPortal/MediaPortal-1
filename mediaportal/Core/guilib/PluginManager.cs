@@ -261,6 +261,10 @@ namespace MediaPortal.GUI.Library
 									{
 										object newObj=(object)Activator.CreateInstance(t);
 										GUIWindow win=(GUIWindow)newObj;
+										if (win.GetID <0)
+										{
+											int x=1;
+										}
 										if (win.GetID>=0 && IsWindowPlugInEnabled(win.GetType().ToString()))
 										{
 											try

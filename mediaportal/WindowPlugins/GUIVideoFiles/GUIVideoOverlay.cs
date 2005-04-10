@@ -30,6 +30,7 @@ namespace MediaPortal.GUI.Video
 		string m_strThumb="";
 		public GUIVideoOverlay()
 		{
+			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
 		}
 
     public override bool Init()

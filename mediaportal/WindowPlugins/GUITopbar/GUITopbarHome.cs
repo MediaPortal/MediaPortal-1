@@ -24,6 +24,7 @@ namespace MediaPortal.Topbar
         
     public GUITopbarHome()
 		{
+			GetID=(int)GUIWindow.Window.WINDOW_TOPBARHOME;
 		}
     
 		public bool UseTopBarSub // Use top Bar in Submenu. 	
