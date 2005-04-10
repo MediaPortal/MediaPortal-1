@@ -231,7 +231,7 @@ namespace MediaPortal.Player
 		}//public bool IsVMR9Connected
 		public void SetDeinterlacePrefs()
 		{
-			
+			if (vmr9Helper==null) return;
 			int DeInterlaceMode=3;
 			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
 			{
@@ -245,6 +245,7 @@ namespace MediaPortal.Player
 		}
 		public void SetDeinterlaceMode()
 		{
+			if (vmr9Helper==null) return;
 			vmr9Helper.SetDeinterlaceMode();
 		}
 	}//public class VMR9Util
