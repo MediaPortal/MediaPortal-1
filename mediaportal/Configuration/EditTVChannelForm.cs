@@ -2187,6 +2187,11 @@ namespace MediaPortal.Configuration
 			this.herz = herz;
 		}
 
+		public Frequency(double megaherz)
+		{
+			this.herz = (long) (megaherz * (1000000d));
+		}
+
 		private long herz = 0;
 
 		public long Herz
@@ -2203,6 +2208,10 @@ namespace MediaPortal.Configuration
 		public double MegaHerz
 		{
 			get { return (double)herz / 1000000d; }
+			set 
+			{
+				herz = (long) (value * 1000000d);
+			}
 		}
 
 		public static implicit operator Frequency(int herz)

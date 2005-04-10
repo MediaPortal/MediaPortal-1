@@ -2120,7 +2120,7 @@ namespace MediaPortal.Configuration.Sections
 					Import_Chan.Country=channels.GetValueAsInt(i.ToString(),"Country",0);
 					Import_Chan.External=channels.GetValueAsBool(i.ToString(),"External",false);
 					Import_Chan.ExternalTunerChannel=channels.GetValueAsString(i.ToString(),"External Tuner Channel","");
-					Import_Chan.Frequency=Convert.ToDouble(channels.GetValueAsInt(i.ToString(),"Frequency",0));
+					Import_Chan.Frequency.MegaHerz=Convert.ToDouble(channels.GetValueAsFloat(i.ToString(),"Frequency",0));
 					Import_Chan.standard=Convert_AVS(channels.GetValueAsString(i.ToString(),"Analog Standard Index","None"));
 					Import_Chan.VisibleInGuide=channels.GetValueAsBool(i.ToString(),"Visible in Guide",false);	
 					Import_Chan.Scrambled=channels.GetValueAsBool(i.ToString(),"Scrambled",false);
