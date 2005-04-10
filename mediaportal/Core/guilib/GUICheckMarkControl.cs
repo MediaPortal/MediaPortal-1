@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Library
       }
 			if (Focus)
 			{	
-				GUIPropertyManager.SetProperty("#buttontitle", m_strLabel);
+				GUIPropertyManager.SetProperty("#highlightedbutton", m_strLabel);
 			}
       int dwTextPosX=m_dwPosX;
       int dwCheckMarkPosX=m_dwPosX;

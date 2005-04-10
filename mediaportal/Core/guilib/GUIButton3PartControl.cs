@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Library
 				m_imgFocusLeft.Render(timePassed);
 				m_imgFocusMid.Render(timePassed);
 				m_imgFocusRight.Render(timePassed);
-				GUIPropertyManager.SetProperty("#buttontitle", m_strText1);
+				GUIPropertyManager.SetProperty("#highlightedbutton", m_strText1);
 			}
 			else 
 			{

@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.Library
 			GUIPropertyManager.SetProperty("#selecteditem", strSelected);
 			GUIPropertyManager.SetProperty("#selecteditem2",strSelected2);
 			GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
-      
+      GUIPropertyManager.SetProperty("#highlightedbutton", strSelected);
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null);
 			msg.SendToTargetWindow = true;
 			GUIGraphicsContext.SendMessage(msg);
@@ -597,6 +597,8 @@ namespace MediaPortal.GUI.Library
 				// Render the vertical scrollbar
 				m_vertScrollbar.Render(timePassed);
 			}
+			if (Focus)
+				GUIPropertyManager.SetProperty("#highlightedbutton",String.Empty);
 		}//public override void Render()
 
 		/// <summary>

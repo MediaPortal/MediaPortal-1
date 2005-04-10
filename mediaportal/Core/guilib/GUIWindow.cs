@@ -358,6 +358,10 @@ namespace MediaPortal.GUI.Library
 							// Initialize the window.
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
 						{
+							GUIPropertyManager.SetProperty("#itemcount",String.Empty);
+							GUIPropertyManager.SetProperty("#selecteditem",String.Empty);
+							GUIPropertyManager.SetProperty("#selecteditem2",String.Empty);
+							GUIPropertyManager.SetProperty("#selectedthumb",String.Empty);
 							LoadSkin();
 							AllocResources();
 							InitControls();

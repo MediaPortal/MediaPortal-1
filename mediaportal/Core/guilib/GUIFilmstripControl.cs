@@ -224,7 +224,7 @@ namespace MediaPortal.GUI.Library
       int item=GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb);
       GUIPropertyManager.SetProperty("#selecteditem", strSelected);
       GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
-      GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+			GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
 
       if (!IsVisible) return;
       if (item>=0 && item < m_vecItems.Count)
@@ -268,7 +268,8 @@ namespace MediaPortal.GUI.Library
       }
 
       if (bFocus == true && Focus && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
-      {
+			{
+				
         m_imgFolderFocus.SetPosition(dwPosX, dwPosY);
         if (true == m_bShowTexture) m_imgFolderFocus.Render(timePassed);
 
@@ -552,7 +553,9 @@ namespace MediaPortal.GUI.Library
       if (m_vecItems.Count > iItemsPerPage && m_horzScrollbar!=null)
       {
         m_horzScrollbar.Render(timePassed);
-      }
+			}
+			if (Focus)
+				GUIPropertyManager.SetProperty("#highlightedbutton",String.Empty);
     }
 
 

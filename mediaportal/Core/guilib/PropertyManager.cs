@@ -23,7 +23,7 @@ namespace MediaPortal.GUI.Library
     }
     static  GUIPropertyManager()
     {
-			m_properties["#buttontitle"]="";
+			m_properties["#highlightedbutton"]="";
 			m_properties["#itemcount"]="";
       m_properties["#selecteditem"]="";
       m_properties["#selecteditem2"]="";

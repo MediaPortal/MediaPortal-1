@@ -221,6 +221,7 @@ namespace MediaPortal.GUI.Library
       GUIPropertyManager.SetProperty("#selecteditem", strSelected);
       GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
       GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+			
 
 			
 			if (item>=0 && item < m_vecItems.Count)
@@ -542,7 +543,9 @@ namespace MediaPortal.GUI.Library
       if (m_vecItems.Count > iItemsPerPage)
       {
         m_vertScrollbar.Render(timePassed);
-      }
+			}
+			if (Focus)
+				GUIPropertyManager.SetProperty("#highlightedbutton",String.Empty);
 		}
 
 
