@@ -661,18 +661,32 @@ namespace MediaPortal.GUI.Music
 				playlist.Save(strPath);
 			}
 		}
-    void SelectCurrentPlayingSong()
-    {
-      if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC)
-      {
-        int iSong = PlayListPlayer.CurrentSong;
-        if (iSong >= 0 && iSong <= GetItemCount())
-        {
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
-        }
-      }
-    }
 
+		void SelectCurrentPlayingSong()
+		{
+			if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC)
+			{
+				// delete prev. selected item
+				for (int i = 0; i < GetItemCount(); ++i)
+				{
+					GUIListItem item = GetItem(i);
+					if (item != null && item.Selected)
+					{
+						item.Selected = false;
+						break;
+					}
+				}
+
+				// set current item selected
+				int iSong = PlayListPlayer.CurrentSong;
+				if (iSong >= 0 && iSong <= GetItemCount())
+				{
+					GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
+					GUIListItem item = GetItem(iSong);
+					if (item != null) item.Selected = true;
+				}
+			}
+		}
 
 		//added by Sam
 		void AddRandomSongToPlaylist(ref Song song)
