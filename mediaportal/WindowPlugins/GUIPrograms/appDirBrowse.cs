@@ -199,16 +199,17 @@ namespace ProgramsDatabase
 			procStart.WindowStyle = this.WindowStyle;
 			try
 			{
-				AutoPlay.StopListening();
-				if (!bUseGenericPlayer)
+
+
+
+				if (bUseGenericPlayer)
 				{
-					Utils.StartProcess(procStart, WaitForExit);
-					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters); // and restore the DirectX screen (in case the app was a DirectX application itself!)
-					AutoPlay.StartListening();
+					LaunchGenericPlayer(Filename, item.Path);
 				}
 				else
 				{
-					LaunchGenericPlayer(Filename, item.Path);
+					AutoPlay.StopListening();
+					Utils.StartProcess(procStart, WaitForExit);
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 					AutoPlay.StartListening();
 				}
