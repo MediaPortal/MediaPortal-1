@@ -1751,6 +1751,8 @@ namespace MediaPortal.TV.Recording
 		{
 			try
 			{
+				//dont import during recording...
+				if (IsAnyCardRecording()) return;
 				ArrayList recordings = new ArrayList();
 				TVDatabase.GetRecordedTV(ref recordings);
 				for (int i=0; i < Recorder.Count;i++)
