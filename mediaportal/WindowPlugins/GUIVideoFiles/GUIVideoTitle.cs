@@ -268,6 +268,9 @@ namespace MediaPortal.GUI.Video
 				item.Path=movie.File;
 				item.Duration=movie.RunTime*60;
 				item.AlbumInfoTag=movie;
+				item.Year=movie.Year;
+				item.DVDLabel=movie.DVDLabel;
+
 				itemlist.Add(item);
 			}
       

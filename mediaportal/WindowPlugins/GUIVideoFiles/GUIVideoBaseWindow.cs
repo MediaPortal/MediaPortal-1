@@ -456,6 +456,34 @@ namespace MediaPortal.GUI.Video
 
 		protected virtual void SetLabels()
 		{
+			for (int i=0; i < GetItemCount();++i)
+			{
+				GUIListItem item=GetItem(i);
+				IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+				if (movie!=null && movie.ID>0)
+				{
+					if (CurrentSortMethod==SortMethod.Name)
+						item.Label2 = movie.Rating.ToString();
+					else if (CurrentSortMethod==SortMethod.Year)
+						item.Label2 = movie.Year.ToString();
+					else if (CurrentSortMethod==SortMethod.Rating)
+						item.Label2 = movie.Rating.ToString();
+					else if (CurrentSortMethod==SortMethod.Label)
+						item.Label2 = movie.DVDLabel.ToString();
+				}
+				else
+				{
+					string strSize1 = "",strDate="";
+					if (item.FileInfo != null) strSize1 = Utils.GetSize(item.FileInfo.Length);
+					if (item.FileInfo != null) strDate = item.FileInfo.CreationTime.ToShortDateString() + " " + item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					if (CurrentSortMethod==SortMethod.Name)
+						item.Label2 = strSize1;
+					else if (CurrentSortMethod==SortMethod.Date)
+						item.Label2 = strDate;
+					else
+						item.Label2 = strSize1;
+				}
+			}
 		}
 		protected void SwitchView()
 		{

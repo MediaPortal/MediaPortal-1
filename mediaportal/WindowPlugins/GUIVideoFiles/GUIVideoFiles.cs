@@ -158,6 +158,11 @@ namespace MediaPortal.GUI.Video
 			catch(Exception){}
 			LoadSettings();
 			bool result=Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
+			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			{
+				
+				VideoState.StartWindow=xmlreader.GetValueAsInt("movies","startWindow", GetID);
+			}
 			LoadSettings();
 			return result;
 		}
@@ -168,7 +173,6 @@ namespace MediaPortal.GUI.Video
       using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
       {
 				
-				VideoState.StartWindow=xmlreader.GetValueAsInt("movies","startWindow", GetID);
         m_directory.Clear();
         string strDefault = xmlreader.GetValueAsString("movies", "default","");
         for (int i = 0; i < 20; i++)
