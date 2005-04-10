@@ -175,6 +175,12 @@ namespace ProgramsDatabase
 				Log.Write("error in myPrograms: AppItem.LaunchGenericPlayer: unknown command: {0}", strCommand);
 				return;
 			}
+			if (Utils.IsVideo(strFilename))
+			{
+				GUIGraphicsContext.IsFullScreenVideo=true;
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+			}
+			return;
 		}
 		
 		public virtual void LaunchFile(FileItem curFile, bool MPGUIMode)
@@ -245,9 +251,6 @@ namespace ProgramsDatabase
 			procStart.WindowStyle = this.WindowStyle;
 
 
-			//			bool bUseGenericPlayer = (Filename.ToUpper() == "%PLAY%") || 
-			//				(Filename.ToUpper() == "%PLAYAUDIOSTREAM%") || 
-			//				(Filename.ToUpper() == "%PLAYVIDEOSTREAM%");
 			bool bUseGenericPlayer = (procStart.FileName.ToUpper() == "%PLAY%") || 
 													  		(procStart.FileName.ToUpper() == "%PLAYAUDIOSTREAM%") || 
 																(procStart.FileName.ToUpper() == "%PLAYVIDEOSTREAM%");
@@ -255,27 +258,13 @@ namespace ProgramsDatabase
 			this.LaunchErrorMsg = "";
 			try
 			{
-				if (MPGUIMode)
-				{
-					AutoPlay.StopListening();
-				}
-				if (!bUseGenericPlayer)
-				{
-					Utils.StartProcess(procStart, WaitForExit);
-					if (MPGUIMode) 
-					{
-						GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
-						AutoPlay.StartListening();
-					}
-				}
-				else
+				if (bUseGenericPlayer)
 				{
 					// use generic player
 					if (MPGUIMode)
 					{
 						LaunchGenericPlayer(procStart.FileName, curFilename);
-						GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
-						AutoPlay.StartListening();
+						return;
 					}
 					else
 					{
@@ -285,7 +274,19 @@ namespace ProgramsDatabase
 						this.LaunchErrorMsg = ProblemString;
 					}
 				}
-
+				else
+				{
+					if (MPGUIMode)
+					{
+						AutoPlay.StopListening();
+					}
+					Utils.StartProcess(procStart, WaitForExit);
+					if (MPGUIMode) 
+					{
+						GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+						AutoPlay.StartListening();
+					}
+				}
 			}
 			catch (Exception ex)
 			{
