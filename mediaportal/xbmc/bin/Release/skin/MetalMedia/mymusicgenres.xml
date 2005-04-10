@@ -101,8 +101,8 @@
   		<texture>panel_split.png</texture>
 		</control>
 		<control>
-			<description>Albums/Artists/Songs/Genres button</description>
-			<type>selectbutton</type>
+			<description>Views button</description>
+			<type>button</type>
 				<id>6</id>
 			<posX>55</posX>
 			<posY>189</posY>
