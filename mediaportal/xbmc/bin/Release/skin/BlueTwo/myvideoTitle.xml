@@ -28,6 +28,23 @@
 			<texture>videos_logo.png</texture>
 		</control>
 		<control>
+			<type>imagelist</type>
+			<id>101</id>
+			<posX>650</posX>
+			<posY>50</posY>
+			<width>100</width>
+			<height>32</height>
+			<textureWidth>16</textureWidth>
+			<textureHeight>16</textureHeight>
+			<subitems>
+				<subitem>greystar.png</subitem>
+				<subitem>star.png</subitem>
+			</subitems>
+			<orientation>horizontal</orientation>
+			<align>right</align>
+			<percentage>#rating</percentage>
+		</control>
+		<control>
 			<description>My videos text label</description>
 			<type>label</type>
 			<id>1</id>
