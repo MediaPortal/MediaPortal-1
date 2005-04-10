@@ -1536,5 +1536,88 @@ namespace MediaPortal.Video.Database
 				Open();
 			}
 		}
+
+		static public SQLiteResultSet GetResults(string sql)
+		{
+			try
+			{
+				if (null == m_db) return null;
+				SQLiteResultSet results;
+				results = m_db.Execute(sql);
+				return results;
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
+			}
+
+			return null;	
+		}
+
+		static public void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable,  bool movieinfoTable, bool genreTable)
+		{
+			movies=new ArrayList();
+			try
+			{
+				if (null == m_db) return ;
+				SQLiteResultSet results=GetResults(sql);
+				IMDBMovie movie;
+
+				for (int i=0; i<results.Rows.Count; i++)
+				{
+					movie = new IMDBMovie();
+					ArrayList fields = (ArrayList)results.Rows[i];
+					if (actorTable && !movieinfoTable)
+					{
+						movie.Actor = (string)fields[1];
+						movie.actorId= (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+					}
+					if (genreTable && !movieinfoTable)
+					{
+						movie.SingleGenre = (string)fields[1];
+						movie.genreId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+					}
+					if (movieinfoTable)
+					{
+						movie.Rating=(float)System.Double.Parse(DatabaseUtility.Get(results,i,"movieinfo.fRating") );
+						if (movie.Rating>10.0f) movie.Rating /=10.0f;
+						movie.Director=DatabaseUtility.Get(results,i,"actors.strActor");
+						movie.WritingCredits=DatabaseUtility.Get(results,i,"movieinfo.strCredits");
+						movie.TagLine=DatabaseUtility.Get(results,i,"movieinfo.strTagLine");
+						movie.PlotOutline=DatabaseUtility.Get(results,i,"movieinfo.strPlotOutline");
+						movie.Plot=DatabaseUtility.Get(results,i,"movieinfo.strPlot");
+						movie.Votes=DatabaseUtility.Get(results,i,"movieinfo.strVotes");
+						movie.Cast=DatabaseUtility.Get(results,i,"movieinfo.strCast");
+						movie.Year=System.Int32.Parse(DatabaseUtility.Get(results,i,"movieinfo.iYear"));
+						movie.Genre=DatabaseUtility.Get(results,i,"movieinfo.strGenre").Trim();
+						movie.ThumbURL=DatabaseUtility.Get(results,i,"movieinfo.strPictureURL");
+						movie.Title=DatabaseUtility.Get(results,i,"movieinfo.strTitle");
+						movie.Path=DatabaseUtility.Get(results,i,"path.strPath");
+						movie.DVDLabel=DatabaseUtility.Get(results,i,"movie.discid") ;
+						movie.IMDBNumber=DatabaseUtility.Get(results,i,"movieinfo.IMDBID") ;
+						long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,i,"movieinfo.idMovie") );
+						movie.SearchString= String.Format("{0}", lMovieId);
+						movie.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+						movie.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
+						movie.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,i,"movieinfo.runtime"));
+						movie.Watched=System.Int32.Parse(DatabaseUtility.Get(results,i,"movieinfo.iswatched"));
+						movie.ID=(int)lMovieId;
+					}
+					movies.Add(movie);
+				}	  
+
+				return ;
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
+			}
+
+			return ;		
+		}
+
+		
 	}
 }

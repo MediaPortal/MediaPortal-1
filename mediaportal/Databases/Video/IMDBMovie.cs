@@ -36,6 +36,10 @@ namespace MediaPortal.Video.Database
     string     m_strMPARating="";
 		int        m_iRunTime=0;
 		int        m_iWatched=0;
+		int				 m_actorid=-1;
+		int				 m_genreid=-1;
+		string		 m_strActor="";
+		string		 m_strgenre="";
 		public IMDBMovie()
 		{
 		}
@@ -43,6 +47,26 @@ namespace MediaPortal.Video.Database
 		{
 			get { return m_id;}
 			set { m_id=value;}
+		}
+		public int actorId
+		{
+			get { return m_actorid;}
+			set { m_actorid=value;}
+		}
+		public int genreId
+		{
+			get { return m_genreid;}
+			set { m_genreid=value;}
+		}
+		public string Genre
+		{
+			get { return m_strgenre;}
+			set { m_strgenre=value;}
+		}
+		public string Actor
+		{
+			get { return m_strActor;}
+			set { m_strActor=value;}
 		}
 		public int RunTime
 		{
@@ -69,7 +93,7 @@ namespace MediaPortal.Video.Database
       get { return m_strWritingCredits;}
       set { m_strWritingCredits=value;}
     }
-    public string Genre
+    public string SingleGenre
     {
       get { return m_strGenre;}
       set { m_strGenre=value;}

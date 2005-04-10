@@ -11,12 +11,18 @@ namespace MediaPortal.GUI.Video
     static int m_iTempPlaylistWindow = 0;
     static string m_strTempPlaylistDirectory = "";
     static int m_iStartWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
+		static string view;
     public VideoState()
     {
       // 
       // TODO: Add constructor logic here
       //
-    }
+		}
+		static public string View
+		{
+			get { return view; }
+			set { view = value; }
+		}
     static public string TempPlaylistDirectory
     {
       get { return m_strTempPlaylistDirectory; }
