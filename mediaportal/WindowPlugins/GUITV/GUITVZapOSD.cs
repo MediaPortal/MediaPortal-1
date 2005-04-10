@@ -41,7 +41,8 @@ namespace MediaPortal.GUI.TV
     public GUITVZAPOSD()
     {
 		
-		TVDatabase.GetChannels(ref m_channels);
+			GetID=(int)GUIWindow.Window.WINDOW_TVZAPOSD;
+			TVDatabase.GetChannels(ref m_channels);
     }
 
     public override bool Init()

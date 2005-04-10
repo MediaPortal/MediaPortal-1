@@ -712,7 +712,7 @@ namespace MediaPortal.Player
         fDuration=lDuration;
         fDuration/=10000000d;
 
-        Log.Write("pos:{0} content:{1}-{2} duration:{3} stream:{4}",m_dCurrentPos,fContentStart,fContentEnd,fDuration,fPos);
+        //Log.Write("pos:{0} content:{1}-{2} duration:{3} stream:{4}",m_dCurrentPos,fContentStart,fContentEnd,fDuration,fPos);
                   
         dtStart=DateTime.Now;
       }

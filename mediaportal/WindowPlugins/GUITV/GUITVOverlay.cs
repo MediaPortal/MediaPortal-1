@@ -29,6 +29,7 @@ namespace MediaPortal.GUI.TV
     //TVUtil m_util=null;
     public GUITVOverlay()
 		{
+			GetID=(int)GUIWindow.Window.WINDOW_TV_OVERLAY;
 		}
 
     public override bool Init()

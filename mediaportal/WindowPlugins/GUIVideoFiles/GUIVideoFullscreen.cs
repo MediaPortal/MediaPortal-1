@@ -74,7 +74,8 @@ namespace MediaPortal.GUI.Video
 		GUIDialogMenu dlg;
     
     public GUIVideoFullscreen()
-    {
+		{
+			GetID=(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
 			
     }
 
