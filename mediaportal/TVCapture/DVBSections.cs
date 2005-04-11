@@ -2165,22 +2165,22 @@ namespace MediaPortal.TV.Recording
 				{
 					descr=(EITDescr)eit.eitList[0];
 					lastTab=descr.lastTable;
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: last Table={0}",lastTab);
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: last section={0}",descr.lastSection);
+					//Log.WriteFile(Log.LogType.Capture,"epg-grab: last Table={0}",lastTab);
+					//Log.WriteFile(Log.LogType.Capture,"epg-grab: last section={0}",descr.lastSection);
 				}
 				
 				if(ret==-1)
 				{
 					
 					startFlag=true;
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: start grabbing table");
+					//Log.WriteFile(Log.LogType.Capture,"epg-grab: start grabbing table");
 					m_eitTimeoutTimer.Start();
 				}
 
 				if(ret==-2)
 				{
 					endFlag=true;
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: end grabbing table");
+					//Log.WriteFile(Log.LogType.Capture,"epg-grab: end grabbing table");
 					m_eitTimeoutTimer.Start();
 
 				}
