@@ -379,5 +379,22 @@ namespace MediaPortal.Freedb
       return retval;
     }
 
+		public string GetCDDBDiscID (char driveLetter)
+		{   
+			string retval = null;
+			CDDrive cddrive = new CDDrive();
+			if ( cddrive.Open(driveLetter) )
+			{
+				if ( cddrive.IsCDReady() )
+				{
+					if ( cddrive.Refresh() )
+					{
+						retval = cddrive.GetFreeDBDiscID();
+					}
+				}
+			}
+			return retval;
+		}
+
 	}
 }
