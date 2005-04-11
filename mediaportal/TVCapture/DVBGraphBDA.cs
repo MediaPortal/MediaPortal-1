@@ -2247,121 +2247,128 @@ namespace MediaPortal.TV.Recording
 
 		void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		{
-			if (tuneRequest==null) return;
-			
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetLNBSettings()");
-			TunerLib.IDVBSTuningSpace space = tuneRequest.TuningSpace as TunerLib.IDVBSTuningSpace;
-			if (space==null)
+			try
 			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: cannot get IDVBSTuningSpace in SetLNBSettings()");
-				return;
-			}
-
-			string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
-			{
-				int lnb_0=0;
-				int lnb_1=0;
-				int lnb_switch=0;
-				int lnb0		 = xmlreader.GetValueAsInt("dvbs","LNB0"    ,9750);
-				int lnb1		 = xmlreader.GetValueAsInt("dvbs","LNB1"    ,10600);
-				int lnbSwitch= xmlreader.GetValueAsInt("dvbs","Switch"  ,11700);
-				int CBand		 = xmlreader.GetValueAsInt("dvbs","CBand"   ,5150);
-				int Circular = xmlreader.GetValueAsInt("dvbs","Circular",10750);
-				int lnbKhz	 = xmlreader.GetValueAsInt("dvbs","lnb"     ,44);
-				int lnbKind  = xmlreader.GetValueAsInt("dvbs","lnbKind" ,0);
-				switch (lnbKind)
+				if (tuneRequest==null) return;
+				if (tuneRequest.TuningSpace==null) return;
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetLNBSettings()");
+				TunerLib.IDVBSTuningSpace space = tuneRequest.TuningSpace as TunerLib.IDVBSTuningSpace;
+				if (space==null)
 				{
-					case 0:	// ku			
-						lnb_0=lnb0;
-						lnb_1=lnb1;
-						lnb_switch=lnbSwitch;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using KU-band LNB:{0}-{1} MHz, Switch:{2} MHz", lnb_0,lnb_1,lnb_switch);
-						break;
-					case 1: // circular
-						lnb_0=Circular;
-						lnb_1=-1;
-						lnb_switch=-1;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using Circular-band LNB:{0} MHz", Circular);
-						break;
-					case 2: // c-band
-						lnb_0=CBand;
-						lnb_1=-1;
-						lnb_switch=-1;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using C-Band LNB:{0} MHz", CBand);
-						break;
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: cannot get IDVBSTuningSpace in SetLNBSettings()");
+					return;
 				}
-				if (lnb_switch>0)
-					space.LNBSwitch     = lnb_switch*1000;
-				else 
-					space.LNBSwitch     =0;
 
-				if (lnb_0>0)
-					space.LowOscillator = lnb_0*1000;
-				else
-					space.LowOscillator =0;
+				string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
+				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+				{
+					int lnb_0=0;
+					int lnb_1=0;
+					int lnb_switch=0;
+					int lnb0		 = xmlreader.GetValueAsInt("dvbs","LNB0"    ,9750);
+					int lnb1		 = xmlreader.GetValueAsInt("dvbs","LNB1"    ,10600);
+					int lnbSwitch= xmlreader.GetValueAsInt("dvbs","Switch"  ,11700);
+					int CBand		 = xmlreader.GetValueAsInt("dvbs","CBand"   ,5150);
+					int Circular = xmlreader.GetValueAsInt("dvbs","Circular",10750);
+					int lnbKhz	 = xmlreader.GetValueAsInt("dvbs","lnb"     ,44);
+					int lnbKind  = xmlreader.GetValueAsInt("dvbs","lnbKind" ,0);
+					switch (lnbKind)
+					{
+						case 0:	// ku			
+							lnb_0=lnb0;
+							lnb_1=lnb1;
+							lnb_switch=lnbSwitch;
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using KU-band LNB:{0}-{1} MHz, Switch:{2} MHz", lnb_0,lnb_1,lnb_switch);
+							break;
+						case 1: // circular
+							lnb_0=Circular;
+							lnb_1=-1;
+							lnb_switch=-1;
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using Circular-band LNB:{0} MHz", Circular);
+							break;
+						case 2: // c-band
+							lnb_0=CBand;
+							lnb_1=-1;
+							lnb_switch=-1;
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using C-Band LNB:{0} MHz", CBand);
+							break;
+					}
+					if (lnb_switch>0)
+						space.LNBSwitch     = lnb_switch*1000;
+					else 
+						space.LNBSwitch     =0;
 
-				if (lnb_1>0)
-					space.HighOscillator= lnb_1*1000;
-				else
-					space.HighOscillator=0;
-				//space.SpectralInversion=??
-				//space.InputRange=(lnbKhz*1000).ToString();
-				/*
-								if (m_TunerDevice!=null)
-								{
-									IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
-									if (info==null)
+					if (lnb_0>0)
+						space.LowOscillator = lnb_0*1000;
+					else
+						space.LowOscillator =0;
+
+					if (lnb_1>0)
+						space.HighOscillator= lnb_1*1000;
+					else
+						space.HighOscillator=0;
+					//space.SpectralInversion=??
+					//space.InputRange=(lnbKhz*1000).ToString();
+					/*
+									if (m_TunerDevice!=null)
 									{
-										Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to get IBDA_LNBInfo");
-									}
-									else
-									{
-										if (lnb_1 < 0) lnb_1=0;
-										if (lnb_0 < 0) lnb_0=0;
-										if (lnbKhz < 0) lnbKhz=0;
-										for (int i=0; i < info.Length;++i)
+										IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
+										if (info==null)
 										{
-											if (info[i] !=null)
+											Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to get IBDA_LNBInfo");
+										}
+										else
+										{
+											if (lnb_1 < 0) lnb_1=0;
+											if (lnb_0 < 0) lnb_0=0;
+											if (lnbKhz < 0) lnbKhz=0;
+											for (int i=0; i < info.Length;++i)
 											{
-												bool ok=true;
-												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got IBDA_LNBInfo #{0}",i);
-												int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
-												if (hr!=0) 
+												if (info[i] !=null)
 												{
-													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
-													ok=false;
-												}
-												else 
-												{
-													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  put_HighLowSwitchFrequency ({0}) ok",lnbKhz);
-												}
-												hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
-												if (hr!=0) 
-												{
-													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
-													ok=false;
-												}
-												else
-												{
-													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: put_LocalOscilatorFrequencyLowBand({0}) ok",lnb_0);
-												}
-												hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
-												if (hr!=0) 
-												{
-													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
-													ok=false;
-												}
-												else
-												{
-													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: set put_LocalOscilatorFrequencyHighBand({0}) ok",lnb_1);
-												}
-												if (ok) break;
-											}//if (info[i] !=null)
-										}//for (int i=0; i < info.Length;++i)
-									}
-								}//if (m_TunerDevice!=null)
-								*/
+													bool ok=true;
+													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got IBDA_LNBInfo #{0}",i);
+													int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
+													if (hr!=0) 
+													{
+														Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
+														ok=false;
+													}
+													else 
+													{
+														Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  put_HighLowSwitchFrequency ({0}) ok",lnbKhz);
+													}
+													hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
+													if (hr!=0) 
+													{
+														Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
+														ok=false;
+													}
+													else
+													{
+														Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: put_LocalOscilatorFrequencyLowBand({0}) ok",lnb_0);
+													}
+													hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
+													if (hr!=0) 
+													{
+														Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
+														ok=false;
+													}
+													else
+													{
+														Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: set put_LocalOscilatorFrequencyHighBand({0}) ok",lnb_1);
+													}
+													if (ok) break;
+												}//if (info[i] !=null)
+											}//for (int i=0; i < info.Length;++i)
+										}
+									}//if (m_TunerDevice!=null)
+									*/
+				}
+			}
+			catch(Exception)
+			{
 			}
 		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		
