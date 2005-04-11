@@ -537,6 +537,7 @@ namespace MediaPortal.GUI.Music
 						playlistItem.FileName = pItem.Path;
 						playlistItem.Description = pItem.Label;
 						playlistItem.Duration = pItem.Duration;
+						playlistItem.MusicTag = pItem.MusicTag;
 						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
 					}
 					else
@@ -758,6 +759,7 @@ namespace MediaPortal.GUI.Music
           playlistItem.FileName = pItem.Path;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;
+          playlistItem.MusicTag = pItem.MusicTag;
           PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
         }
       }
@@ -945,7 +947,7 @@ namespace MediaPortal.GUI.Music
 
 			//musicCD is the information about the cd...
 			//delete old CD info
-			GUIMusicFiles.MusicCD = null;
+			//GUIMusicFiles.MusicCD = null;
 
 			bool bCDDAFailed=false;
 			// for every file found, but skip folder
@@ -1074,6 +1076,15 @@ namespace MediaPortal.GUI.Music
 									bFound = true;
 								}
 
+								// Disk changed (or other drive)
+								if (GUIMusicFiles.MusicCD != null)
+								{
+									if (freedb.GetCDDBDiscID(driveLetter).ToLower() != GUIMusicFiles.MusicCD.DiscID)
+									{
+										GUIMusicFiles.MusicCD = null;
+									}
+								}
+
 								if (!bFound && GUIMusicFiles.MusicCD == null)
 								{
 									try
@@ -1126,7 +1137,6 @@ namespace MediaPortal.GUI.Music
 										GUIMusicFiles.MusicCD=null;
 										bCDDAFailed=true;
 									}
-
 								}
 
 								if (!bFound && GUIMusicFiles.MusicCD != null) // if musicCD was configured correctly...
@@ -1136,17 +1146,28 @@ namespace MediaPortal.GUI.Music
 
 									tag = new MusicTag();
 									tag.Album = GUIMusicFiles.MusicCD.Title;
-									tag.Artist = track.Artist == null ? GUIMusicFiles.MusicCD.Artist : track.Artist;
 									tag.Genre = GUIMusicFiles.MusicCD.Genre;
-									tag.Duration = track.Duration;
-									tag.Title = track.Title;
-									tag.Track = track.TrackNumber;
-									pItem.MusicTag = tag;
-									bNewFile = true;
-									pItem.Label = pItem.Path; // 
+									if (track == null)
+									{
+										// prob hidden track									
+										tag.Artist = GUIMusicFiles.MusicCD.Artist;
+										tag.Duration = -1;
+										tag.Title = "";
+										tag.Track = -1;			
+										pItem.Label = pItem.Path;
+									}
+									else
+									{										
+										tag.Artist = track.Artist == null ? GUIMusicFiles.MusicCD.Artist : track.Artist;
+										tag.Duration = track.Duration;
+										tag.Title = track.Title;
+										tag.Track = track.TrackNumber;
+										pItem.Label = track.Title;
+									}
+									bNewFile = true;									
+									pItem.MusicTag = tag;									
 									pItem.Path = strCDROMPath; // to be stored in the database
-								}
-                
+								}               
 								else if (bFound)
 								{
 									tag = new MusicTag();
@@ -1157,6 +1178,8 @@ namespace MediaPortal.GUI.Music
 									tag.Title = song.Title;
 									tag.Track = song.Track;
 									pItem.MusicTag = tag;
+									pItem.Label = song.Title;
+									pItem.Path = strCDROMPath;
 								}
 
 							}// end of try

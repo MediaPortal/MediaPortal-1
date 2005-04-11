@@ -363,55 +363,33 @@ namespace MediaPortal.GUI.Music
 		}
 
 		
-    void OnRetrieveMusicInfo(ref ArrayList items)
-    {
-      if (items.Count <= 0) return;
-      MusicDatabase dbs = new MusicDatabase();
-      Song song = new Song();
-      foreach (GUIListItem item in items)
-      {
-        string strExtension = System.IO.Path.GetExtension(item.Path);
-        if (strExtension.Equals(".cda"))
-        {
-          if (GUIMusicFiles.MusicCD != null)
-          {
-            string strfile=item.Label.ToLower();
-            if (strfile.IndexOf(".cda")>=0) strfile=strfile.Substring(0,item.Label.Length-4); // skip .cda
-            int pos=strfile.IndexOf("track") + "track".Length;
-            int iTrack=Convert.ToInt32(strfile.Substring(pos));
-            MusicTag tag = new MusicTag();
-            Freedb.CDTrackDetail track = GUIMusicFiles.MusicCD.getTrack(iTrack);
-
-            tag = new MusicTag();
-            tag.Album = GUIMusicFiles.MusicCD.Title;
-            tag.Artist = track.Artist == null ? GUIMusicFiles.MusicCD.Artist : track.Artist;
-            tag.Genre = GUIMusicFiles.MusicCD.Genre;
-            tag.Duration = track.Duration;
-            tag.Title = track.Title;
-            tag.Track = track.TrackNumber;
-            item.MusicTag = tag;
-          }
-        }
-        else
-        {
-          if (dbs.GetSongByFileName(item.Path, ref song))
-          {
-            MusicTag tag = new MusicTag();
-            tag.Album = song.Album;
-            tag.Artist = song.Artist;
-            tag.Genre = song.Genre;
-            tag.Duration = song.Duration;
-            tag.Title = song.Title;
-            tag.Track = song.Track;
-            item.MusicTag = tag;
-          }
-          else if (UseID3)
-          {
-            item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
-          }
-        }
-      }
-    }
+		void OnRetrieveMusicInfo(ref ArrayList items)
+		{
+			if (items.Count <= 0) return;
+			MusicDatabase dbs = new MusicDatabase();
+			Song song = new Song();
+			foreach (GUIListItem item in items)
+			{
+				if (item.MusicTag == null)
+				{
+					if (dbs.GetSongByFileName(item.Path, ref song))
+					{
+						MusicTag tag = new MusicTag();
+						tag.Album = song.Album;
+						tag.Artist = song.Artist;
+						tag.Genre = song.Genre;
+						tag.Duration = song.Duration;
+						tag.Title = song.Title;
+						tag.Track = song.Track;
+						item.MusicTag = tag;
+					}
+					else if (UseID3)
+					{
+						item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
+					}
+				}
+			}
+		}
 
 		protected override void LoadDirectory(string strNewDirectory)
 		{
@@ -444,6 +422,7 @@ namespace MediaPortal.GUI.Music
 		
 				GUIListItem pItem = new GUIListItem(item.Description);
 				pItem.Path = strFileName;
+				pItem.MusicTag = item.MusicTag;
 				pItem.IsFolder = false;
 				//pItem.m_bIsShareOrDrive = false;
 
