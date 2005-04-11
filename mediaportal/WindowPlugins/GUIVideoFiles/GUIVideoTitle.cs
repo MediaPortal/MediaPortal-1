@@ -104,6 +104,7 @@ namespace MediaPortal.GUI.Video
 				{
 					if (item.IsFolder && item.Label=="..")
 					{
+						handler.CurrentLevel--;
 						LoadDirectory(item.Path);
 					}
 				}
