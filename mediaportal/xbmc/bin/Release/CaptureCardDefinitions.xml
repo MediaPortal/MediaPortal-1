@@ -23,6 +23,7 @@
 <!--  2. Define the 0-based index of the pin. This always should work...                                -->
 <!--                                                                                                    -->
 <!-- Cards supported so far:                                                          -->
+<!--    AAdaptec AVC2000	 	      -->
 <!--    Aito DVB-T DUO CardBus		      -->
 <!--    Asus PVR 416			      -->
 <!--    ATI eHomeWonder	 		      -->
@@ -41,13 +42,12 @@
 <!--    Dvico Fusion HDTV Plus (Analog)       -->
 <!--    Dvico Fusion HDTV Lite                -->
 <!--    Dvico Fusion HDTV USB2                -->
-<!--    Emuzed Maui I NTSC	              -->
-<!--    Emuzed Maui II NTSC	              -->
-<!--    Emuzed Maui II NTSC FM	              -->
-<!--    Emuzed Maui II PAL FM	              -->
-<!--    Emuzed Maui III-G	              -->
-<!--    Emuzed Maui III NTSC                  -->
-<!--    Emuzed Maui III PAL                   -->
+<!--    Emuzed Angel PCI MPEG                 -->
+<!--    Emuzed Angel USB MPEG                 -->
+<!--    Emuzed Bali (all variants)	      -->
+<!--    Emuzed Maui I (all variants)	      -->
+<!--    Emuzed Maui II (all variants)         -->
+<!--    Emuzed Maui III (all variants)        -->
 <!--    FireDTV (BDA DVB-T)                   -->
 <!--    FireDTV (BDA DVB-C)                   -->
 <!--    FireDTV (BDA DVB-S)                   -->
@@ -67,7 +67,9 @@
 <!--    Hauppauge WinTV PVR 500MCE            -->
 <!--    Hauppauge WinTV PVR PCI model 883     -->
 <!--    Hauppauge WinTV PVR USB2              -->
+<!--    HP USB PVR 	 `	              -->
 <!--    InnoDV DV-3300  `	              -->
+<!--    I-O DATA GV-MPEG2/USB2		      -->
 <!--    Kona One TV                           -->
 <!--    KNC ONE TV Station DVB-C       	      -->
 <!--    KNC ONE TV Station DVB-S       	      -->
@@ -77,6 +79,7 @@
 <!--    LifeView DVB-T Analog                 -->
 <!--    Meedion SAA1734 DVBS                  -->
 <!--    Meedion SAA1734 DVBT                  -->
+<!--    MELCO PC-MV5/U2                       -->
 <!--    NVTV Dual Tuner                       -->
 <!--    NVTV Single Tuner                     -->
 <!--    Plextor ConvertX M402U                -->
@@ -84,8 +87,12 @@
 <!--    Pinnacle Deluxe USB2		      -->
 <!--    Pinnacle 300i DVBT		      -->
 <!--    Pinnacle 300i Analog		      -->
-<!--    Snazzi III USB2                       -->
+<!--    Pinnacle MP20                         -->
+<!--    Sentosa USB IO-Data (all variants)    -->
+<!--    Snazzi* III DVD Creator               -->
+<!--    Snazzi* III USB2                      -->
 <!--    Sony MPEG RealTime Encoder            -->
+<!--    TOSHIBA Style Bay TV Tuner            -->
 <!--    Twinhan VisionDTV Ter                 -->
 <!--    Twinhan VisionDTV Sat                 -->
 <!--    Typhoon TV PVR (USB)                  -->
@@ -98,8 +105,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.64                                                               -->
-<!-- changed : 10-april-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.69                                                               -->
+<!-- changed : 11-april-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -1008,7 +1015,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Pinnacle Deluxe USB2" capturename="Pinnacle PCTV Deluxe USB (PAL) Device" devid="vid_2304&amp;pid_061e">
+  <capturecard commercialname="Pinnacle Deluxe USB2 (PAL)" capturename="Pinnacle PCTV Deluxe USB (PAL) Device" devid="vid_2304&amp;pid_061e">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
@@ -1519,7 +1526,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui III-G" capturename="Emuzed Maui III-G Device" devid="ven_123f&amp;dev_8120&amp;subsys_00161809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui III PCI PVR Gateway" capturename="Emuzed Maui III-G Device" devid="ven_123f&amp;dev_8120&amp;subsys_00161809&amp;rev_b1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1546,7 +1553,34 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui III NTSC" capturename="Emuzed Maui III Device" devid="ven_123f&amp;dev_8120&amp;subsys_000f1809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui III PCI PVR NTSC" capturename="Emuzed Maui III Device" devid="ven_123f&amp;dev_8120&amp;subsys_000f1809&amp;rev_b0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui III Device"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui III PCI PVR NTSC" capturename="Emuzed Maui III Device" devid="ven_123f&amp;dev_8120&amp;subsys_000f1809&amp;rev_b1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1573,34 +1607,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui III NTSC" capturename="Emuzed Maui III Device" devid="ven_123f&amp;dev_8120&amp;subsys_000f1809&amp;rev_b1">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
-    <tv>
-      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
-      <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Emuzed Maui III NTSC" capturename="Emuzed Maui III Device" devid="ven_123f&amp;dev_8120&amp;subsys_000b1809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui III PCI PVR NTSC" capturename="Emuzed Maui III Device" devid="ven_123f&amp;dev_8120&amp;subsys_000b1809&amp;rev_b1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1627,7 +1634,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui III PAL" capturename="Emuzed Maui III PAL Device" devid="ven_123f&amp;dev_8120&amp;subsys_000e1809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui III PCI PVR PAL" capturename="Emuzed Maui III PAL Device" devid="ven_123f&amp;dev_8120&amp;subsys_000e1809&amp;rev_b1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1907,7 +1914,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00051809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui-I PCI PVR Samsung" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00051809&amp;rev_b0">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1934,7 +1941,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00051809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui-I PCI PVR Samsung" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00051809&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1961,7 +1968,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui IIS PCI PVR" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b0">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1988,7 +1995,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II NTSC" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui IIS PCI PVR" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2069,7 +2076,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II PAL-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui-IIS PAL FM V-One" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2096,7 +2103,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II PAL-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui-IIS PAL FM V-One" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2260,7 +2267,7 @@
 
 <!--    Cards after release 0.1.1.1   -->  
 
-  <capturecard commercialname="Emuzed Maui I NTSC" capturename="Emuzed EvcapMaui Device" devid="ven_123f&amp;dev_8120&amp;subsys_00011809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui-I PCI HP" capturename="Emuzed EvcapMaui Device" devid="ven_123f&amp;dev_8120&amp;subsys_00011809&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2287,7 +2294,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui I NTSC" capturename="Emuzed EvcapMaui Device" devid="ven_123f&amp;dev_8120&amp;subsys_00011809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui-I PCI HP" capturename="Emuzed EvcapMaui Device" devid="ven_123f&amp;dev_8120&amp;subsys_00011809&amp;rev_b0">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2343,10 +2350,10 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="PhTVTune"				checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="MEDION Cap7134 TV Audio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="MEDION Cap7134 Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="MEDION (7134) WDM Video Capture"	checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="MEDION BDA Analog TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MEDION BDA Analog TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MEDION BDA Analog Xbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="MEDION BDA Analog Capture"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
 	<filter cat="encoderaudio"	name="CyberLink MPEG Audio Encoder"	checkdevice="false"></filter>
 	<filter cat="mux"		name="CyberLink MPEG Muxer"		checkdevice="false"></filter>
@@ -2491,7 +2498,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_010614c7&amp;rev_03">
+  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_010614c7&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -2507,7 +2514,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_010914c7&amp;rev_03">
+  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_010914c7&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -2523,7 +2530,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_fc02270f&amp;rev_03">
+  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_fc02270f&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -2539,7 +2546,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_fc03270f&amp;rev_03">
+  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_fc03270f&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -2551,6 +2558,661 @@
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
 	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Medion (7134) Analog TV" capturename="MEDION (7134) WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000516be&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="MEDION BDA Analog TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MEDION BDA Analog TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MEDION BDA Analog Xbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="MEDION BDA Analog Capture"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="CyberLink MPEG Audio Encoder"	checkdevice="false"></filter>
+	<filter cat="mux"		name="CyberLink MPEG Muxer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui IIS PCI Melco" capturename="MELCO INC. PC-MV5/PCI Device" devid="ven_123f&amp;dev_8120&amp;subsys_051c1154&amp;rev_b0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="MELCO INC. PC-MV5/PCI TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MELCO INC. PC-MV5/PCI TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui IIS PCI Melco" capturename="MELCO INC. PC-MV5/PCI Device" devid="ven_123f&amp;dev_8120&amp;subsys_051c1154&amp;rev_b1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="MELCO INC. PC-MV5/PCI TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MELCO INC. PC-MV5/PCI TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui III PCI PVR Samsung" capturename="Emuzed Maui III SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00101809&amp;rev_b0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui III SE TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III SE TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui III SE Device"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui III PCI PVR Samsung" capturename="Emuzed Maui III SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00101809&amp;rev_b1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui III SE TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III SE TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui III SE Device"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui III PCI PVR ViewSonic" capturename="Viewsonic Device" devid="ven_123f&amp;dev_8120&amp;subsys_00111809&amp;rev_b0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Viewsonic TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Viewsonic TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Viewsonic Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Viewsonic Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Viewsonic Encoder"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui III PCI PVR ViewSonic" capturename="Viewsonic Device" devid="ven_123f&amp;dev_8120&amp;subsys_00111809&amp;rev_b1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Viewsonic TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Viewsonic TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Viewsonic Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Viewsonic Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Viewsonic Encoder"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui III PCI PVR Melco" capturename="Emuzed Maui III BJ Device" devid="ven_123f&amp;dev_8120&amp;subsys_051f1154&amp;rev_b0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui III BJ TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III BJ TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui III BJ Device"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Maui III PCI PVR Melco" capturename="Emuzed Maui III BJ Device" devid="ven_123f&amp;dev_8120&amp;subsys_051f1154&amp;rev_b1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Maui III BJ TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III BJ TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui III BJ Device"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Sentosa USB IO-Data" capturename="I-O DATA GV-MDVD USB WDM Device" devid="vid_04bb&amp;pid_0511">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="I-O DATA GV-MDVD USB WDM TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="I-O DATA GV-MDVD USB WDM TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="I-O DATA GV-MDVD USB WDM Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="I-O DATA GV-MDVD USB WDM Device"		checkdevice="true"></filter>
+	<filter cat="encoder"		name="I-O DATA GV-MDVD USB WDM Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Sentosa USB IO-Data" capturename="I-O DATA GV-MDVD USB WDM Device" devid="vid_04bb&amp;pid_0511">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="I-O DATA GV-MDVD USB WDM TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="I-O DATA GV-MDVD USB WDM TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="I-O DATA GV-MDVD USB WDM Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="I-O DATA GV-MDVD USB WDM Device"		checkdevice="true"></filter>
+	<filter cat="encoder"		name="I-O DATA GV-MDVD USB WDM Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Sentosa USB Emuzed" capturename="Emuzed Sentosa USB Device" devid="vid_1009&amp;pid_0008">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed Sentosa USB TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Sentosa USB TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Sentosa USB Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Sentosa USB Device"		checkdevice="true"></filter>
+	<filter cat="encoder"		name="Emuzed Sentosa USB WDM Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+<!--    Not confirmed working yet   -->  
+
+  <capturecard commercialname="Pinnacle MP20" capturename="Pinnacle MP20 Device" devid="ven_141f&amp;dev_9000&amp;subsys_001f11bd&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Pinnacle MP20 TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Pinnacle MP20 TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Pinnacle MP20 Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Pinnacle MP20 Device"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Adaptec AVC2000" capturename="Adaptec AVC-2000 Device" devid="ven_141f&amp;dev_9000&amp;subsys_20009004&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="crossbar"		name="Adaptec AVC-2000 Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="Adaptec AVC-2000 Device"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+<!--    Not confirmed working yet   -->  
+
+  <capturecard commercialname="Snazzi* III DVD Creator" capturename="V-One Bali Device" devid="ven_141f&amp;dev_9000&amp;subsys_000a1779&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="V-One Bali TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="V-One Bali TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="V-One Bali Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="V-One Bali Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Snazzi* III DVD Creator" capturename="V-One Bali Device" devid="ven_141f&amp;dev_9000&amp;subsys_9000141f&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="V-One Bali TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="V-One Bali TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="V-One Bali Crossbar"	checkdevice="true"></filter>
+	<filter cat="capture"		name="V-One Bali Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Bali-USB-PVR NTSC" capturename="Emuzed USB PVR Device" devid="vid_1009&amp;pid_0005">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed USB PVR TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed USB PVR TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed USB PVR Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed USB PVR Device"		checkdevice="true"></filter>
+	<filter cat="encoder"		name="Emuzed USB PVR Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Bali-USB-PVR PAL" capturename="Emuzed USB PVR Device" devid="vid_1009&amp;pid_0006">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="Emuzed USB PVR TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed USB PVR TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed USB PVR Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed USB PVR Device"		checkdevice="true"></filter>
+	<filter cat="encoder"		name="Emuzed USB PVR Encoder"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle Deluxe USB2 (NTSC)" capturename="Pinnacle PCTV Deluxe USB (NTSC) Device" devid="vid_2304&amp;pid_061d">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Pinnacle PCTV Deluxe USB (NTSC) TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Pinnacle PCTV Deluxe USB (NTSC) TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Pinnacle PCTV Deluxe USB (NTSC) Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Pinnacle PCTV Deluxe USB (NTSC) Device"   checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="HP USB PVR" capturename="HP USB TV Tuner and Personal Video Recorder Device" devid="vid_049F&pid_008a">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="HP USB TV Tuner and Personal Video Recorder TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="HP USB TV Tuner and Personal Video Recorder TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="HP USB TV Tuner and Personal Video Recorder Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="HP USB TV Tuner and Personal Video Recorder Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="HP USB TV Tuner and Personal Video Recorder Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="HP USB PVR" capturename="HP USB TV Tuner and Personal Video Recorder Device" devid="vid_049F&pid_008c">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="HP USB TV Tuner and Personal Video Recorder TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="HP USB TV Tuner and Personal Video Recorder TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="HP USB TV Tuner and Personal Video Recorder Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="HP USB TV Tuner and Personal Video Recorder Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="HP USB TV Tuner and Personal Video Recorder Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TOSHIBA Style Bay TV Tuner" capturename="TOSHIBA Style Bay TV Tuner KiT Device" devid="vid_1009&pid_0007">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="TOSHIBA Style Bay TV Tuner KiT TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="TOSHIBA Style Bay TV Tuner KiT TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="TOSHIBA Style Bay TV Tuner KiT Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="TOSHIBA Style Bay TV Tuner KiT Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="TOSHIBA Style Bay TV Tuner KiT Encoder/Multiplexer"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="MELCO PC-MV5/U2 (NTSC)" capturename="MELCO INC. PC-MV5/U2 USB Capture Device" devid="vid_0411&amp;pid_0031">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="MELCO INC. PC-MV5/U2 USB Capture TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="MELCO INC. PC-MV5/U2 USB Capture TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="MELCO INC. PC-MV5/U2 USB Capture Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="MELCO INC. PC-MV5/U2 USB Capture Device"   checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="I-O DATA GV-MPEG2/USB2" capturename="I-O DATA GV-MPEG2/USB2 Device" devid="vid_04bb&pid_050f">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="crossbar" name="I-O DATA GV-MPEG2/USB2 Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="I-O DATA GV-MPEG2/USB2 Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Bali-TE USB PVR (PAL)" capturename="Bali-TE USB PVR (PAL) Device" devid="vid_1009&pid_000a">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Bali-TE USB PVR (PAL) TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Bali-TE USB PVR (PAL) TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Bali-TE USB PVR (PAL) Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Bali-TE USB PVR (PAL) Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="Bali-TE USB PVR (PAL) Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Bali-TE USB PVR (PAL)" capturename="Bali-TE USB PVR (PAL) Device" devid="vid_1009&pid_000a">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Bali-TE USB PVR (PAL) TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Bali-TE USB PVR (PAL) TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Bali-TE USB PVR (PAL) Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Bali-TE USB PVR (PAL) Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="Bali-TE USB PVR (PAL) Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Angel USB MPEG PVR" capturename="Angel USB Device" devid="vid_1009&pid_0013">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Angel USB TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Angel USB TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Angel USB Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Angel USB Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="Angel USB Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+<!--    Not confirmed working yet   -->
+
+  <capturecard commercialname="Emuzed Angel PCI MPEG PVR (a)" capturename="Angel Device" devid="ven_1033&amp;dev_013a&subsys_001a1809">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Angel TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Angel TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Angel Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Angel Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="Angel Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Emuzed Angel PCI MPEG PVR (b)" capturename="Angel Device" devid="angel_ch2_rev0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Angel TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Angel TvAudio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="Angel Crossbar" checkdevice="true"></filter>
+        <filter cat="capture"  name="Angel Device"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="Angel Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
