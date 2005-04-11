@@ -1,5 +1,5 @@
-	In the .xml files of the skin you can use the list of tags (see below) to show info about the current
-	playing file. These special tags currently work for the following controls:
+In the .xml files of the skin you can use the list of tags (see below) to show info about the current
+playing file. These special tags currently work for the following controls:
 		- button
 		- label 
 		- fadelabel 
@@ -7,10 +7,10 @@
 		- progress
 		- image
 		- tvprogress 
-	These special tags are placed in the <label></label> field of the controls and contain the
-	tagname and any other text you want.
+These special tags are placed in the <label></label> field of the controls and contain the
+tagname and any other text you want.
 
-	example of an label control :
+example of an label control :
 		<control>
 			<description>example label control showwing the current play time </description> 
 			<type>label</type> 
@@ -23,7 +23,7 @@
 			<textcolor>FFB2D4F5</textcolor> 
 		</control> 
 
-	example of an fadelabel: 
+example of an fadelabel: 
 	(note that \r means a new line in the fadelabel control)
 		<control>
 			<description>example fadelabel control showing & scrolling title, genre, year & director tag</description> 
@@ -39,10 +39,10 @@
 			<id>5</id> 
 		</control>
 
-	List of special tags:
-	Tagname							description
-	---------------------------------------------------------
-	Metadata of the currently playing movie / song
+List of special tags:
+		Tagname							description
+		---------------------------------------------------------
+Metadata of the currently playing movie / song
 		#title                      title 
 		#artist                     artist
 		#album                      albumname 
@@ -62,31 +62,35 @@
 		#votes                      votes
 		#credits                    credits
 		#thumb                      filename of the thumbnail containg the movie/song art
-		
+		#watched                    indicates if current selected movie has been watched or not
+
 		#currentplaytime            current playtime in HH:MM:SS
-		#shortcurrentplaytime		current playtime in HH:MM
+		#shortcurrentplaytime	    current playtime in HH:MM
 		#duration                   duration in seconds of  in HH:MM:SS
 		#shortduration              duration in seconds of  in HH:MM
-		#playlogo					contains the filename of the logo which shows the current status (FF/RW/PAUSE/PLAY)
+		#playlogo		    contains the filename of the logo which 
+                                            shows the current status (FF/RW/PAUSE/PLAY)
 		#playspeed                  playspeed (-2x, 1x, 2x, 4x,...)/song
 		#percentage                 % (0-100/song)
 
-	Metadata of the listcontrol/thumbnail panel controls
+Metadata of the listcontrol/thumbnail panel controls
 		#selecteditem               text of current selected item
 		#selecteditem2              2nd text of for current selected item
 		#selectedthumb              filename of thumbnail for current selected item
 		#itemcount                  number of items 
+		#highlightedbutton	    text of current selected button
+		#view			    name of current selected music/video view
 
-	Various:
+Various:
 		#currentmodule              contains the name of the current window (like My Movies or My Pictures)
 
-	Metadata of My TV & recorder
+Metadata of My TV & recorder
 		#channel                    current TV channel
-		#TV.start					start time of the current tvprogram you're watching/recording
-		#TV.stop					stop time of the current tvprogram you're watching/recording
-		#TV.current					current time of the current tvprogram you're watching/recording
+		#TV.start		    start time of the current tvprogram you're watching/recording
+		#TV.stop		    stop time of the current tvprogram you're watching/recording
+		#TV.current		    current time of the current tvprogram you're watching/recording
 
-	metadata of My TV/recorder:
+metadata of My TV/recorder:
 		#TV.Record.channel          TV channel of the current tvprogram which gets recorded
 		#TV.Record.start            start time of the current tvprogram which gets recorded
 		#TV.Record.stop             stop time of the current tvprogram which gets recorded
@@ -95,7 +99,7 @@
 		#TV.Record.description      description of the current tvprogram which gets recorded
 		#TV.Record.thumb            thumbnail filename of the current tvprogram which gets recorded
 
-	metadata of My TV/ tv viewing:
+metadata of My TV/ tv viewing:
 		#TV.View.channel            TV channel of the current tvprogram you're watching
 		#TV.View.thumb              thumbnail of the current tvprogram you're watching
 		#TV.View.start              start time of the current tvprogram you're watching
@@ -105,7 +109,7 @@
 		#TV.View.description        description of the current tvprogram you're watching
 		#TV.View.Percentage         contains how much percent (0%-100%) of the current tvprogram has past
 
-	metadata of My TV/TVGuide:
+metadata of My TV/TVGuide:
 		#TV.Guide.Day               contains the day you're browsing
 		#TV.Guide.thumb             thumbnail of current selected tv channel
 		#TV.Guide.Title             title of current selected program
@@ -113,14 +117,14 @@
 		#TV.Guide.Description       description of current selected program
 		#TV.Guide.Genre             genre of current selected program
 
-	metadata of My TV/ Recorded TV:
+metadata of My TV/ Recorded TV:
 		#TV.RecordedTV.Title        title of current selected recording
 		#TV.RecordedTV.Time         time of current selected recording
 		#TV.RecordedTV.Description  description of current selected recording
 		#TV.RecordedTV.thumb        thumbnail of current selected recording
 		#TV.RecordedTV.Genre        genre of current selected recording
 
-	meta data of current recording/program
+meta data of current recording/program
 		#TV.Record.percent1	    total percentage of show not recorded
 		#TV.Record.percent2	    total percentage of show recorded
 		#TV.Record.percent3	    total percentage of show viewed
@@ -128,7 +132,7 @@
 		#TV.Record.current	    position we're currently viewing
 
 
-	metadata of My TV/ Scheduled:
+metadata of My TV/ Scheduled:
 		#TV.Scheduled.Title         title of current selected schedule
 		#TV.Scheduled.Time          time of current selected schedule
 		#TV.Scheduled.Description   description of current selected schedule
