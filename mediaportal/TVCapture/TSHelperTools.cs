@@ -19,6 +19,9 @@ namespace MediaPortal.TV.Recording{
 			public int	AdaptionFieldControl;
 			public int	ContinuityCounter;
 			public int	AdaptionField;
+			public int	TableID;
+			public int	SectionLen;
+			public bool	IsMHWTable;
 
 		}
 		
@@ -31,8 +34,8 @@ namespace MediaPortal.TV.Recording{
 
 		public TSHeader GetHeader(IntPtr streamData)
 		{
-			byte[] data=new byte[5];
-			Marshal.Copy(streamData,data,0,5);
+			byte[] data=new byte[8];
+			Marshal.Copy(streamData,data,0,8);
 			TSHeader header=new TSHeader();
 			header.SyncByte=data[0]; // indicates header is not valid
 			if(data[0]!=0x47)
@@ -46,6 +49,17 @@ namespace MediaPortal.TV.Recording{
 			header.AdaptionFieldControl=(data[3]>>4) & 0x3;
 			header.ContinuityCounter=data[3] & 0x0F;
 			header.AdaptionField=data[4];
+			header.TableID=0;
+			header.SectionLen=0;
+			header.IsMHWTable=false;
+			//
+			// this is ONLY for MHW-EPG !!
+			if(data[4]==0 && ((int)(data[5] & 0x90))==0x90 && ((int)(data[6] & 0x70))==0x70)
+			{
+				header.TableID=data[5];
+				header.SectionLen=((data[6]-0x70)<<8)+data[7];
+				header.IsMHWTable=true;
+			}
 			return header;
 		}
 	}

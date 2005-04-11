@@ -266,6 +266,8 @@ namespace MediaPortal.TV.Recording
 			public bool		extendedEventComplete;
 			public bool		shortEventUseable;
 			public bool		shortEventComplete;
+			public DateTime mhwStartTime;
+			public bool		isMHWEvent;
 		}
 		public struct EIT_Program_Info
 		{
@@ -1453,9 +1455,7 @@ namespace MediaPortal.TV.Recording
 			string  ISO_639_language_code="";
 			int     audio_type;
 			int     len;
-			// so we need some more info
-			// we return
-			//return "";
+
 			descriptor_tag= b[0];
 			descriptor_length= b[1];
 			if(descriptor_length<b.Length)

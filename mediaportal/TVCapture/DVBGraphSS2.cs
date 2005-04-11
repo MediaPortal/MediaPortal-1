@@ -91,7 +91,8 @@ namespace MediaPortal.TV.Recording
 			TimeShifting,
 			Recording,
 			Viewing,
-			Radio
+			Radio,
+			EPGGrab
 		};
 
 		public enum TunerType
@@ -107,40 +108,40 @@ namespace MediaPortal.TV.Recording
 			public int tt;
 			public UInt32 Frequency;
 			public UInt32 SymbolRate;
-			public Int16 LNB;           //LNB Frequency, e.g. 9750, 10600
-			public Int16 PMT;           //PMT Pid
-			public Int16 ECM_0; //= 0 if unencrypted
+			public UInt16 LNB;           //LNB Frequency, e.g. 9750, 10600
+			public UInt16 PMT;           //PMT Pid
+			public UInt16 ECM_0; //= 0 if unencrypted
 			public byte Reserved1;
 			public byte AC3;           //= 1 if audio PID = AC3 private stream
 			//= 0 otherwise
-			public Int16 FEC;           //1 = 1/2, 2 = 2/3, 3 = 3/4,
+			public UInt16 FEC;           //1 = 1/2, 2 = 2/3, 3 = 3/4,
 			//4 = 5/6, 5 = 7/8, 6 = Auto
-			public Int16 CAID_0;
-			public Int16 Polarity;      //0 = H, 1 = V
+			public UInt16 CAID_0;
+			public UInt16 Polarity;      //0 = H, 1 = V
 			//or Modulation or GuardUInterval
-			public Int16 ECM_1;
-			public Int16 LNBSelection;  //0 = none, 1 = 22 khz
-			public Int16 CAID_1;
-			public Int16 DiseqC;        //0 = none, 1 = A, 2 = B,
+			public UInt16 ECM_1;
+			public UInt16 LNBSelection;  //0 = none, 1 = 22 khz
+			public UInt16 CAID_1;
+			public UInt16 DiseqC;        //0 = none, 1 = A, 2 = B,
 			//3 = A/A, 4 = B/A, 5 = A/B, 6 = B/B
-			public Int16 ECM_2;
-			public Int16 AudioPID;
-			public Int16 CAID_2;
-			public Int16 VideoPID;
-			public Int16 TransportStreamID; //from 2.0 R3 on (?), if scanned channel
-			public Int16 TelePID;
-			public Int16 NetworkID;         //from 2.0 R3 on (?), if scanned channel
-			public Int16 SID;               //Service ID
-			public Int16 PCRPID;
+			public UInt16 ECM_2;
+			public UInt16 AudioPID;
+			public UInt16 CAID_2;
+			public UInt16 VideoPID;
+			public UInt16 TransportStreamID; //from 2.0 R3 on (?), if scanned channel
+			public UInt16 TelePID;
+			public UInt16 NetworkID;         //from 2.0 R3 on (?), if scanned channel
+			public UInt16 SID;               //Service ID
+			public UInt16 PCRPID;
 
 		} 
 		//
+//		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
+//		public static extern int GetGraph([In] DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
+//		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
+//		public static extern void StopGraph();
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int GetGraph([In] DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern void StopGraph();
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool Execute(IntPtr data);
+		public static extern bool EventMsg(int eventType,[In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
@@ -233,15 +234,13 @@ namespace MediaPortal.TV.Recording
 		public RebuildFunc				m_rebuildCB=null;
 		int	[]							m_ecmPids=new int[3]{0,0,0};
 		int[]							m_ecmIDs=new int[3]{0,0,0};
-		bool							m_videoDataFound=false;
 		//bool							m_vmr9Running=false;
 		DVBTeletext						m_teleText=new DVBTeletext();
-		int								m_retryCount=0;
 		TSHelperTools					m_tsHelper=new TSHelperTools();
 		string							m_cardType="";
 		string							m_cardFilename="";
 		DVBChannel						m_currentTuningObject;
-
+		DVBEPG							m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 //
 		
@@ -305,28 +304,29 @@ namespace MediaPortal.TV.Recording
 			tu.Frequency=(UInt32)(m_currentChannel.Frequency);
 			tu.SymbolRate=(UInt32)(m_currentChannel.Symbolrate);
 			tu.AC3=0;
-			tu.AudioPID=(Int16)m_currentChannel.AudioPid;
-			tu.DiseqC=(Int16)m_currentChannel.DiSEqC;
-			tu.PMT=(Int16)m_currentChannel.PMTPid;
-			tu.ECM_0=(Int16)m_currentChannel.ECMPid;
-			tu.FEC=(Int16)6;
-			tu.LNB=(Int16)m_currentChannel.LNBFrequency;
-			tu.LNBSelection=(Int16)m_currentChannel.LNBKHz;
-			tu.NetworkID=(Int16)m_currentChannel.NetworkID;
-			tu.PCRPID=(Int16)m_currentChannel.PCRPid;
-			tu.Polarity=(Int16)m_currentChannel.Polarity;
-			tu.SID=(Int16)m_currentChannel.ProgramNumber;
-			tu.TelePID=(Int16)m_currentChannel.TeletextPid;
-			tu.TransportStreamID=(Int16)m_currentChannel.TransportStreamID;
-			tu.VideoPID=(Int16)m_currentChannel.VideoPid;
+			tu.AudioPID=(UInt16)m_currentChannel.AudioPid;
+			tu.DiseqC=(UInt16)m_currentChannel.DiSEqC;
+			tu.PMT=(UInt16)m_currentChannel.PMTPid;
+			tu.FEC=(UInt16)6;
+			tu.LNB=(UInt16)m_currentChannel.LNBFrequency;
+			tu.LNBSelection=(UInt16)m_currentChannel.LNBKHz;
+			tu.NetworkID=(UInt16)m_currentChannel.NetworkID;
+			tu.PCRPID=(UInt16)m_currentChannel.PCRPid;
+			tu.Polarity=(UInt16)m_currentChannel.Polarity;
+			tu.SID=(UInt16)m_currentChannel.ProgramNumber;
+			tu.TelePID=(UInt16)m_currentChannel.TeletextPid;
+			tu.TransportStreamID=(UInt16)m_currentChannel.TransportStreamID;
+			tu.VideoPID=(UInt16)m_currentChannel.VideoPid;
 			tu.Reserved1=0;
-			tu.ECM_1=(Int16)m_ecmPids[1];
-			tu.ECM_2=(Int16)m_ecmPids[2];
-			tu.CAID_0=(Int16)m_currentChannel.Audio3;
-			tu.CAID_1=(Int16)m_ecmIDs[1];
-			tu.CAID_2=(Int16)m_ecmIDs[2];
+			tu.ECM_0=(UInt16)m_currentChannel.ECMPid;
+			tu.ECM_1=(UInt16)m_ecmPids[1];
+			tu.ECM_2=(UInt16)m_ecmPids[2];
+			tu.CAID_0=(UInt16)m_currentChannel.Audio3;
+			tu.CAID_1=(UInt16)m_ecmIDs[1];
+			tu.CAID_2=(UInt16)m_ecmIDs[2];
 
 			IntPtr data=Marshal.AllocHGlobal(50);
+			
 			Marshal.StructureToPtr(tu,data,true);
 
 			bool flag=false;
@@ -334,7 +334,7 @@ namespace MediaPortal.TV.Recording
 			{
 				try
 				{
-					flag=Execute(data/*,out pids*/);
+					flag=EventMsg(999, data/*,out pids*/);
 				}
 				catch(Exception ex)
 				{
@@ -379,54 +379,41 @@ namespace MediaPortal.TV.Recording
 
 			}
 		
-			//
-			// here write code to record raw ts or mp3 etc.
-			// the callback needs to return as soon as possible!!
-			//
 
-			// the following check should takes care of scrambled video-data
-			// and redraw the vmr9 not to hang
-
-			int pid=m_currentChannel.VideoPid;
+//			int pid=m_currentChannel.VideoPid;
+			if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
 			for(int pointer=add;pointer<end;pointer+=188)
 			{
 					
 				TSHelperTools.TSHeader header=m_tsHelper.GetHeader((IntPtr)pointer);
-				if(header.Pid==0xd2)
+				// epg
+				Log.Write("mhw-grab: checking header"); 
+				try
 				{
-//					byte[] epgData=new byte[188];
-//					Marshal.Copy((IntPtr)pointer,epgData,0,188);
-//					string text=System.Text.Encoding.ASCII.GetString(epgData);
+					if(m_epgClass.GrabState==false && header.IsMHWTable==true && (header.TableID==0x91 || header.TableID==0x90))
+					{
+						m_epgClass.GrabState=true;
+						m_epgClass.GrabbingLength=header.SectionLen;
+						m_epgClass.MHWTable=header.TableID;
+						m_epgClass.CurrentPid=header.Pid;
+						Log.Write("mhw-grab: start grabbing"); 
+
+					}
+					if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
+					{
+						byte[] epgData=new byte[184];
+						// mhw epg: titles
+						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+						m_epgClass.SaveData(epgData,header);	
+					}
 				}
-				if(header.Pid==pid)
+				catch(Exception ex)
 				{
-					
-					if(header.TransportScrambling!=0) // data is scrambled?
-						m_videoDataFound=false;
-					else
-						m_videoDataFound=true;
-						
-					break;// stop loop 
+					Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.Source);
 				}
+				
 			}
-			//
 
-			// call the plugins tuner
-			if(m_videoDataFound==false && m_retryCount>=0 && m_graphState!=State.Radio)
-			{
-				m_retryCount++;
-				if(m_retryCount>=300)//
-				{
-					m_retryCount=0;
-					CyclePid();
-					ExecTuner();
-					Log.WriteFile(Log.LogType.Capture,"Plugins: recall Tune() with pid={0}",m_currentChannel.ECMPid);
-				}			
-			}
-			else m_retryCount=-1;
-
-
-			//Log.WriteFile(Log.LogType.Capture,"Plugins: address {1}: written {0} bytes",add,len);
 			return 0;
 		}
 
@@ -488,8 +475,8 @@ namespace MediaPortal.TV.Recording
 
 			m_graphBuilder=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
 			
-			if(m_pluginsEnabled)
-				GetGraph(m_graphBuilder,false,IntPtr.Zero);
+//			if(m_pluginsEnabled)
+//				GetGraph(m_graphBuilder,false,IntPtr.Zero);
 			
 			int n=0;
 			m_b2c2Adapter=null;
@@ -638,6 +625,10 @@ namespace MediaPortal.TV.Recording
 		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText,int dvbsubPID)
 		{
 			int hr=0; // the result
+
+			// clear epg
+			if(m_epgClass!=null)
+				m_epgClass.ClearBuffer();
 
 			if(Frequency>13000)
 				Frequency/=1000;
@@ -925,7 +916,7 @@ namespace MediaPortal.TV.Recording
 			//m_fileWriter.Close();
 			if(m_pluginsEnabled)
 			{
-				StopGraph();
+				//StopGraph();
 				//m_sampleInterface.SetCallback(null,0);
 			}
 
@@ -1503,8 +1494,6 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 
-				m_retryCount=0;
-				m_videoDataFound=false;
 				m_StartTime=DateTime.Now;
 
 
@@ -1851,7 +1840,7 @@ namespace MediaPortal.TV.Recording
 		/// </returns>
 		public bool SignalPresent()
 		{
-				return (m_tunerCtrl.CheckLock()==0?true:false);
+				return true;
 		}
 
 		/// <summary>
@@ -1902,6 +1891,7 @@ namespace MediaPortal.TV.Recording
 		//
 		public void Tune(object tuningObject, int disecqNo)
 		{
+			
 			DVBChannel ch=(DVBChannel)tuningObject;
 			ch=LoadDiseqcSettings(ch,disecqNo);
 			m_currentTuningObject=new DVBChannel();
@@ -1925,6 +1915,8 @@ namespace MediaPortal.TV.Recording
 			else
 				Log.WriteFile(Log.LogType.Capture,"called Tune(object)");
 			m_currentTuningObject=ch;
+			if(m_epgClass!=null)
+				m_epgClass.ClearBuffer();
 
 		}
 		//
