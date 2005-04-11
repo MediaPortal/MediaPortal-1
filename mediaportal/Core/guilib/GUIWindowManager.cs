@@ -751,6 +751,18 @@ namespace MediaPortal.GUI.Library
 				else return m_iActiveWindowID;
 			}
     }
+		/// <summary>
+		/// return the ID of the current active window
+		/// </summary>
+		static public int	ActiveWindowEx
+		{
+			get
+			{
+				if (IsRouted) return m_pRouteWindow.GetID;
+				if (m_iActiveWindowID < 0) return 0;
+				else return m_iActiveWindowID;
+			}
+		}
 
     /// <summary>
     /// Property which returns true when there is a dialog on screen
