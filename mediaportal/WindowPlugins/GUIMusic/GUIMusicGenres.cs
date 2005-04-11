@@ -105,6 +105,7 @@ namespace MediaPortal.GUI.Music
         {
           if (item.IsFolder && item.Label=="..")
           {
+				handler.CurrentLevel--;
             LoadDirectory(item.Path);
           }
         }
