@@ -351,7 +351,7 @@ namespace MediaPortal.GUI.Library
 						case GUIMessage.MessageType.GUI_MSG_CLICKED:
 						{
 							int iControlId = message.SenderControlId;
-							OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
+							if (iControlId != 0) OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
 						}
 						break;
 
