@@ -950,8 +950,6 @@ namespace MediaPortal.TV.Recording
 
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  find free card");
 
-			//stop any other cards which are only viewing
-			g_Player.Stop();
 
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
@@ -961,6 +959,11 @@ namespace MediaPortal.TV.Recording
 					//stop watching on this card
 					if (tvcard.View || tvcard.IsTimeShifting || tvcard.IsRadio)
 					{
+						if (g_Player.CurrentFile == GetTimeShiftFileName(i))
+						{
+							g_Player.Stop();
+						}
+
 						Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop watching on card:{0} channel:{1}", tvcard.ID,tvcard.TVChannel);
 						tvcard.Stop();
 					}
