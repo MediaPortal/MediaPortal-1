@@ -642,7 +642,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (action!=null && action.wID!=Action.ActionType.ACTION_INVALID)
         {
           Log.Write("action:{0} ", action.wID);
-          if (ActionTranslator.GetActionDetail(GUIWindowManager.ActiveWindow, action))
+          if (ActionTranslator.GetActionDetail(GUIWindowManager.ActiveWindowEx, action))
           {
             if (action.SoundFileName.Length > 0)
               Utils.PlaySound(action.SoundFileName, false, true);
@@ -1248,7 +1248,7 @@ public class MediaPortalApp : D3DApp, IRender
 						break;
 	          
 					case Action.ActionType.ACTION_PREV_ITEM :
-						if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindow,action.m_key))
+						if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx,action.m_key))
 						{
 							return;
 						}
@@ -1256,7 +1256,7 @@ public class MediaPortalApp : D3DApp, IRender
 						break;
 
 					case Action.ActionType.ACTION_NEXT_ITEM :
-						if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindow,action.m_key))
+						if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx,action.m_key))
 						{
 							return;
 						}
@@ -1356,7 +1356,7 @@ public class MediaPortalApp : D3DApp, IRender
 
 			if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
 
-			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
+			if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
       {
         if (action.SoundFileName.Length > 0)
           Utils.PlaySound(action.SoundFileName, false, true);
@@ -1370,7 +1370,7 @@ public class MediaPortalApp : D3DApp, IRender
 		{
 				Key key = new Key(0, (int)e.KeyCode);
 				Action action = new Action();
-				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
+				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
 				{
           if (action.SoundFileName.Length > 0)
             Utils.PlaySound(action.SoundFileName, false, true);
@@ -1559,7 +1559,7 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 				Key key = new Key(0, (int)Keys.Escape);
 				action = new Action();
-				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
+				if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
 				{
 					if (action.SoundFileName.Length > 0)
 						Utils.PlaySound(action.SoundFileName, false, true);
@@ -1574,7 +1574,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Key key = new Key('y',0);
       action = new Action();
-      if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action))
+      if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
       {
         if (action.SoundFileName.Length > 0)
           Utils.PlaySound(action.SoundFileName, false, true);
