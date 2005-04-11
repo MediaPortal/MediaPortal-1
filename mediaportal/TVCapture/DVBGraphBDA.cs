@@ -1144,7 +1144,8 @@ namespace MediaPortal.TV.Recording
 								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}->{1}", pmtVersionNumber,version_number);
 								try
 								{
-									string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+									string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}_{4}.dat",
+										currentTuningObject.ServiceName,
 										currentTuningObject.NetworkID,
 										currentTuningObject.TransportStreamID,
 										currentTuningObject.ProgramNumber,
@@ -2216,7 +2217,9 @@ namespace MediaPortal.TV.Recording
 			}
 			try
 			{
-				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}.dat",
+
+				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}_{4}.dat",
+					currentTuningObject.ServiceName,
 					currentTuningObject.NetworkID,
 					currentTuningObject.TransportStreamID,
 					currentTuningObject.ProgramNumber,
@@ -2467,6 +2470,7 @@ namespace MediaPortal.TV.Recording
 				int frequency=-1,ONID=-1,TSID=-1,SID=-1;
 				int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1;
 				string providerName;
+				
 				switch (m_NetworkType)
 				{
 					case NetworkType.ATSC: 
@@ -2525,6 +2529,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.VideoPid=videoPid;
 						currentTuningObject.TeletextPid=teletextPid;
 						currentTuningObject.PMTPid=pmtPid;
+						currentTuningObject.ServiceName=channel.Name;
 
 
 					} break;
@@ -2585,6 +2590,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.VideoPid=ch.VideoPid;
 						currentTuningObject.TeletextPid=ch.TeletextPid;
 						currentTuningObject.PMTPid=ch.PMTPid;
+						currentTuningObject.ServiceName=channel.Name;
 					} break;
 
 					case NetworkType.DVBT: 
@@ -2630,6 +2636,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.VideoPid=videoPid;
 						currentTuningObject.TeletextPid=teletextPid;
 						currentTuningObject.PMTPid=pmtPid;
+						currentTuningObject.ServiceName=channel.Name;
 					} break;
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
