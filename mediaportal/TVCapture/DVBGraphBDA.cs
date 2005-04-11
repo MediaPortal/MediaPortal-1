@@ -1162,7 +1162,7 @@ namespace MediaPortal.TV.Recording
 					
 					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
 					// epg
-					Log.Write("mhw-grab: checking header"); 
+					//Log.Write("mhw-grab: checking header"); 
 					try
 					{
 						if(m_epgClass.GrabState==false && header.IsMHWTable==true && (header.TableID==0x91 || header.TableID==0x90))
