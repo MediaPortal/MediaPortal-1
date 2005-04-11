@@ -20,7 +20,14 @@ namespace Core.Util
       System.IO.FileInfo info = new System.IO.FileInfo(file);
       Length=info.Length;
       Name=info.Name;
-      CreationTime=info.CreationTime;
+      try
+      {
+        CreationTime=info.CreationTime;
+      }
+      catch(Exception)
+      {
+        creationTime=DateTime.MinValue;
+      }
     }
     public long Length
     {
