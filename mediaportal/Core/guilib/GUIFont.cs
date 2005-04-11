@@ -390,8 +390,11 @@ namespace MediaPortal.GUI.Library
 
       fontTexture=null;
 			systemFont = null;
-			if (logfonts) Log.Write("GUIFont:Dispose() fontengine: Remove font:"+ID.ToString());
-			if (ID>=0) FontEngineRemoveFont(ID);	
+			if (FontAdded)
+			{
+				if (logfonts) Log.Write("GUIFont:Dispose({0}) fontengine: Remove font:{1}",m_strFontName,ID.ToString());
+				if (ID>=0) FontEngineRemoveFont(ID);	
+			}
 			FontAdded=false;
 		}
 
@@ -593,7 +596,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public void RestoreDeviceObjects()
 		{
-
+			if (FontAdded) return;
 			if (ID<0) return;
 			Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget( 0 );
 			

@@ -294,7 +294,7 @@ namespace MediaPortal.GUI.Library
 						{
 							IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(bigOne.texture);
 							bigOne.textureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
-							Log.Write("TexturePacker: fontengine add texure:{0} {1}",bigOne.textureNo, fileName);
+							Log.Write("TexturePacker: fontengine add texure:{0}",bigOne.textureNo);
 						}
 					}
 					TextureNo=bigOne.textureNo;

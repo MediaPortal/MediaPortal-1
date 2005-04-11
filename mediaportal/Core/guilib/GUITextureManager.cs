@@ -223,7 +223,7 @@ namespace MediaPortal.GUI.Library
                                                                   ref info2);
                 newCache.Width=info2.Width;
                 newCache.Height=info2.Height;
-                newCache[i]=new CachedTexture.Frame(texture, (frameDelay[i]/5)*50);
+                newCache[i]=new CachedTexture.Frame(strFileName,texture, (frameDelay[i]/5)*50);
               }
             }
             
@@ -253,7 +253,7 @@ namespace MediaPortal.GUI.Library
           newCache.Frames=1;
           newCache.Width=iWidth;
           newCache.Height=iHeight;
-          newCache.texture=new CachedTexture.Frame(dxtexture,0);
+          newCache.texture=new CachedTexture.Frame(strFileName,dxtexture,0);
           Log.Write("  texturemanager:added:"+strFileName + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
           m_cache.Add(newCache);
           return 1;

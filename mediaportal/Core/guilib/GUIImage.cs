@@ -78,6 +78,7 @@ namespace MediaPortal.GUI.Library
 		float														_texUoff,_texVoff,_texUmax,_texVmax;
 		Texture													_packedTexture=null;
 		int															_packedTextureNo;
+		static bool											logtextures=false;
 
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
@@ -347,6 +348,7 @@ namespace MediaPortal.GUI.Library
 			if (m_strFileName=="-") return;
 			if (m_strFileName=="") return;
 			
+			if (logtextures) Log.Write("GUIImage:AllocResources:{0}", strFile);
 			if (GUITextureManager.GetPackedTexture(strFile,out _texUoff,out _texVoff,out _texUmax,out _texVmax,out m_iTextureWidth, out m_iTextureHeight, out _packedTexture, out _packedTextureNo))
 			{
 				Update();
@@ -387,6 +389,7 @@ namespace MediaPortal.GUI.Library
 				}
 				if (file!=null && file!=String.Empty)
 				{
+					if (logtextures) Log.Write("GUIImage:freeresources:{0}", file);
 					if (GUITextureManager.IsTemporary(file))
 					{
 						GUITextureManager.ReleaseTexture(file);
@@ -720,6 +723,7 @@ namespace MediaPortal.GUI.Library
         if (m_strTextureFileName != m_strTxt || m_vecTextures==null||0==m_vecTextures.Length)
         {
           // then free our resources, and reload the (new) image
+					if (logtextures) Log.Write("GUIImage:PreRender() image changed:{0}->{1}", m_strTextureFileName,m_strTxt);
           FreeResources();
           m_strTextureFileName =m_strTxt;
           if (m_strTxt.Length==0)
@@ -903,6 +907,7 @@ namespace MediaPortal.GUI.Library
       if (strFileName==null) return;
       if (m_strFileName==strFileName) return;// same file, no need to do anything
 
+			if (logtextures) Log.Write("GUIImage:SetFileName() {0", strFileName);
 			m_strFileName=strFileName;
       if (m_strFileName.IndexOf("#")>=0) ContainsProperty=true;
       else ContainsProperty=false;
