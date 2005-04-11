@@ -57,11 +57,7 @@ namespace MediaPortal.TV.Recording
 		private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
 
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int GetGraph([In] DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern void StopGraph();
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool Execute(IntPtr data);
+		public static extern bool EventMsg(int eventType,[In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
@@ -144,6 +140,7 @@ namespace MediaPortal.TV.Recording
 		bool												refreshPmtTable=false;
 		int                         pmtVersionNumber=-1;
 		protected bool							m_pluginsEnabled=false;
+		DVBEPG											m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.BDACards);
 		
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 #if DUMP
@@ -257,8 +254,6 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:create new filter graph (IGraphBuilder)");
 				m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
 
-				if(m_pluginsEnabled)
-					GetGraph(m_graphBuilder,false,IntPtr.Zero);
 			
 				// Get the Capture Graph Builder
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
@@ -657,11 +652,6 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
 			StopRecording();
 			StopViewing();
-
-			if(m_pluginsEnabled)
-			{
-				StopGraph();
-			}
 
 			if (m_TunerStatistics!=null)
 			{
@@ -1165,6 +1155,40 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
+
+			if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
+				for(int pointer=add;pointer<end;pointer+=188)
+				{
+					
+					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+					// epg
+					Log.Write("mhw-grab: checking header"); 
+					try
+					{
+						if(m_epgClass.GrabState==false && header.IsMHWTable==true && (header.TableID==0x91 || header.TableID==0x90))
+						{
+							m_epgClass.GrabState=true;
+							m_epgClass.GrabbingLength=header.SectionLen;
+							m_epgClass.MHWTable=header.TableID;
+							m_epgClass.CurrentPid=header.Pid;
+							Log.Write("mhw-grab: start grabbing"); 
+
+						}
+						if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
+						{
+							byte[] epgData=new byte[184];
+							// mhw epg: titles
+							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+							m_epgClass.SaveData(epgData,header);	
+						}
+					}
+					catch(Exception ex)
+					{
+						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.Source);
+					}
+				}
+
+
 #if DUMP
 			for(int pointer=add;pointer<end;pointer+=188)
 			{
@@ -2686,6 +2710,7 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
+
 				//if no network provider then return;
 				if (m_NetworkProvider==null) return;
 				if (tuningObject		 ==null) return;
@@ -2846,6 +2871,9 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Tune() exception {0} {1} {2}",
 					ex.Message,ex.Source,ex.StackTrace);
 			}
+			if(m_epgClass!=null)
+				m_epgClass.ClearBuffer();
+
 		}//public void Tune(object tuningObject)
 		
 		/// <summary>
@@ -3457,7 +3485,7 @@ namespace MediaPortal.TV.Recording
 			{
 				try
 				{
-					flag=Execute(data/*,out pids*/);
+					flag=EventMsg(999, data/*,out pids*/);
 				}
 				catch(Exception ex)
 				{
