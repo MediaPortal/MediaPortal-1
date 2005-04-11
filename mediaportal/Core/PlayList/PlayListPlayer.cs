@@ -118,6 +118,16 @@ namespace MediaPortal.Playlists
       return item.FileName;
     }
 
+    static public PlayList.PlayListItem GetCurrentItem()
+    {
+      if (m_iCurrentSong<0) return null;
+
+      PlayList playlist = GetPlaylist(m_iCurrentPlayList);
+      if (playlist == null) return null;
+
+      return playlist[m_iCurrentSong];
+    }
+
     static public string GetNext()
     {
       if (m_iCurrentPlayList==PlayListType.PLAYLIST_NONE) return String.Empty;
@@ -224,7 +234,7 @@ namespace MediaPortal.Playlists
       }
     }
 
-    static public void			Play(int iSong)
+    static public void Play(int iSong)
     {
       if (m_iCurrentPlayList==PlayListType.PLAYLIST_NONE)
         return;

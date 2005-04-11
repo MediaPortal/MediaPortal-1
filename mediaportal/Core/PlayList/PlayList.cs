@@ -26,6 +26,7 @@ namespace MediaPortal.Playlists
       protected string m_strFilename="";
       protected string m_strDescription="";
       protected int    m_iDuration=0;
+      protected object m_pMusicTag=null;
       bool             m_bPlayed=false;
       PlayListItemType m_Type=PlayListItemType.Unknown;
 
@@ -83,6 +84,15 @@ namespace MediaPortal.Playlists
       {
         get { return m_bPlayed;}
         set { m_bPlayed=value;}
+      }
+
+      /// <summary>
+      /// Get/set the object containing the tag info of a music file (e.g., id3 tag).
+      /// </summary>
+      public object MusicTag
+      {
+        get { return m_pMusicTag;}
+        set {m_pMusicTag=value;}
       }
     };
 
