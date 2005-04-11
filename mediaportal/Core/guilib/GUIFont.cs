@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Library
 		public const int						MaxNumfontVertices = 100*6;
 		private int									_StartCharacter=32;
 		private int									_EndCharacter=255;
-
+		private static bool         logfonts=false;
 		/// <summary>
 		/// Constructor of the GUIFont class.
 		/// </summary>
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="iHeight">The height of the font.</param>
 		public GUIFont(string strName, string strFileName, int iHeight)
 		{
-			Trace.WriteLine("fontengine: Initialize()");
+			if (logfonts) Log.Write("GUIFont:ctor({0}) fontengine: Initialize()",strName);
 			FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 			m_strFontName=strName;
 			m_strFileName=strFileName;
@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="style">The style of the font (E.g., Bold)</param>
     public GUIFont(string strName, string strFileName, int iHeight, FontStyle style)
     {
-			Trace.WriteLine("fontengine: Initialize()");
+			if (logfonts) Log.Write("GUIFont:ctor({0}) fontengine: Initialize()",strName);
 			FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
       m_strFontName=strName;
       m_strFileName=strFileName;
@@ -252,7 +252,7 @@ namespace MediaPortal.GUI.Library
     {
 			if (!FontAdded)
 			{
-				Trace.WriteLine("Fontengine Present(): ERROR font not added:"+ ID.ToString());
+				if (logfonts) Log.Write("GUIFont:Present() Fontengine  ERROR font not added:"+ ID.ToString());
 			}
 			else if (ID>=0)
 			{
@@ -288,7 +288,7 @@ namespace MediaPortal.GUI.Library
 
 			if (!FontAdded)
 			{
-				Trace.WriteLine("Fontengine Draw(): ERROR font not added:"+ ID.ToString());
+				if (logfonts) Log.Write("GUIFont:DrawText Fontengine ERROR font not added:"+ ID.ToString());
 				return;
 			}
 			else if (ID>=0)
@@ -390,7 +390,7 @@ namespace MediaPortal.GUI.Library
 
       fontTexture=null;
 			systemFont = null;
-			Trace.WriteLine("fontengine: Remove font:"+ID.ToString());
+			if (logfonts) Log.Write("GUIFont:Dispose() fontengine: Remove font:"+ID.ToString());
 			if (ID>=0) FontEngineRemoveFont(ID);	
 			FontAdded=false;
 		}
@@ -597,7 +597,7 @@ namespace MediaPortal.GUI.Library
 			if (ID<0) return;
 			Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget( 0 );
 			
-			Trace.WriteLine("fontengine: add font:"+ID.ToString());
+			if (logfonts) Log.Write("GUIFont:RestoreDeviceObjects() fontengine: add font:"+ID.ToString());
 			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 			IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
 			unsafe

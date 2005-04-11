@@ -294,6 +294,7 @@ namespace MediaPortal.GUI.Library
 						{
 							IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(bigOne.texture);
 							bigOne.textureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
+							Log.Write("TexturePacker: fontengine add texure:{0} {1}",bigOne.textureNo, fileName);
 						}
 					}
 					TextureNo=bigOne.textureNo;
@@ -306,12 +307,14 @@ namespace MediaPortal.GUI.Library
 
 		public void Dispose()
 		{
+			Log.Write("TexturePacker:Dispose()");
 			if (packedTextures!=null)
 			{
 				foreach (PackedTexture bigOne in packedTextures)
 				{
 					if (bigOne.textureNo>=0)
 					{
+						Log.Write("TexturePacker: fontengine remove texture:{0}",bigOne.textureNo);
 						FontEngineRemoveTexture(bigOne.textureNo);
 					}
 					bigOne.texture.Dispose();

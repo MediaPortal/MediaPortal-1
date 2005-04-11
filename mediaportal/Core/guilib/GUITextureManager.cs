@@ -42,12 +42,12 @@ namespace MediaPortal.GUI.Library
     
     static void dispose(bool disposing)
     {
+			Log.Write("texturemanager:dispose()");
 			_packer.Dispose();
       if ( !_Disposed)
       {
         if (disposing)
         {
-          Log.Write("  texturemanager:dispose()");
           foreach (CachedTexture cached in m_cache)
           {
             cached.Dispose();

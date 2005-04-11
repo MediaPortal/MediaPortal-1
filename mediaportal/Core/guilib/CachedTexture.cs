@@ -41,6 +41,7 @@ namespace MediaPortal.GUI.Library
       int										 _Duration;	//duration of current frame
 			int										 _TextureNo;
 			public readonly bool    UseNewTextureEngine=true;
+			static private bool logTextures=false;
       public Frame(Texture image, int duration)
       {
         _Image = image;
@@ -51,7 +52,7 @@ namespace MediaPortal.GUI.Library
 					{
 						IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
 						_TextureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
-						Trace.WriteLine("fontengine: added texture:"+_TextureNo.ToString());
+						if (logTextures) Log.Write("Frame:ctor() fontengine: added texture:"+_TextureNo.ToString());
 					}
 				}
       }
@@ -65,7 +66,7 @@ namespace MediaPortal.GUI.Library
         set {
           if (_Image!=null) 
           {
-						Trace.WriteLine("fontengine: remove texture:"+_TextureNo.ToString());
+						if (logTextures) Log.Write("Frame:Image fontengine: remove texture:"+_TextureNo.ToString());
 						FontEngineRemoveTexture(_TextureNo);
             if (!_Image.Disposed) 
               _Image.Dispose();
@@ -78,7 +79,7 @@ namespace MediaPortal.GUI.Library
 						{
 							IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
 							_TextureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
-							Trace.WriteLine("fontengine: added texture:"+_TextureNo.ToString());
+							if (logTextures) Log.Write("Frame:Image fontengine: added texture:"+_TextureNo.ToString());
 						}
 					}
         }
@@ -99,7 +100,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_Image!=null)
         {
-					Trace.WriteLine("fontengine: remove texture:"+_TextureNo.ToString());
+					if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:"+_TextureNo.ToString());
 					FontEngineRemoveTexture(_TextureNo);
 					if (!_Image.Disposed)
           {
@@ -121,7 +122,7 @@ namespace MediaPortal.GUI.Library
 				}
 				else
 				{
-					Trace.WriteLine("fontengine: ERROR. Texture is disposed:"+_TextureNo.ToString());
+					if (logTextures) Log.Write("fontengine:Draw() ERROR. Texture is disposed:"+_TextureNo.ToString());
 				}
 			}
     }
