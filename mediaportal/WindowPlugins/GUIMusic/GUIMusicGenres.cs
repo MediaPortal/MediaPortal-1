@@ -311,9 +311,15 @@ namespace MediaPortal.GUI.Music
 			{
 				AddItemToPlayList(pItem);
 			}
-			//move to next item
+			
+			//move to next item and start playing
 			GUIControl.SelectItemControl(GetID, facadeView.GetID,iItem+1);
-
+			if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 &&  !g_Player.Playing)
+			{
+				PlayListPlayer.Reset();
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+				PlayListPlayer.Play(0);
+			}
 		}
 		#endregion
 
