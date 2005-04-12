@@ -146,8 +146,8 @@ namespace MediaPortal.Database
 
 		static public string Get(SQLiteResultSet results, int iRecord, string strColum)
 		{
-			if (null == results) return "";
-			if (results.Rows.Count < iRecord) return "";
+			if (null == results) return String.Empty;
+			if (results.Rows.Count < iRecord) return String.Empty;
 			ArrayList arr = (ArrayList)results.Rows[iRecord];
 			int iCol = 0;
 			foreach (string columnName in results.ColumnNames)
@@ -162,7 +162,19 @@ namespace MediaPortal.Database
 				}
 				iCol++;
 			}
-			return "";
+			return String.Empty;
+		}
+
+		static public string Get(SQLiteResultSet results, int iRecord, int column)
+		{
+			if (null == results) return String.Empty;
+			if (results.Rows.Count < iRecord) return String.Empty;
+			if (results.ColumnNames.Count < column) return String.Empty;
+			ArrayList arr = (ArrayList)results.Rows[iRecord];
+			
+			string strLine = ((string)arr[column]).Trim();
+			strLine = strLine.Replace("''","'");
+			return strLine;;
 		}
 
 		static public void RemoveInvalidChars(ref string strTxt)

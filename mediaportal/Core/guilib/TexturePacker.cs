@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Library
 				if (fileName.Length==0) return null;
 				if (FileName!=null)
 				{
-					if (FileName.ToLower()==fileName) 
+					if (FileName==fileName) 
 					{
 						return this;
 					}
@@ -189,6 +189,7 @@ namespace MediaPortal.GUI.Library
 				bigOne.root.Rect = new Rectangle(0,0,iMaxWidth, iMaxHeight);
 				for (int i=0; i < files.Length;++i)
 				{
+					files[i]=files[i].ToLower();
 					if (files[i]!="") 
 					{
 						if (AddBitmap(bigOne.root,rootImage,files[i]))
@@ -270,10 +271,11 @@ namespace MediaPortal.GUI.Library
 			{
 				fileName=fileName.Remove(0,1);
 			}
+			fileName=fileName.ToLower();
 			int index=0;
 			foreach (PackedTexture bigOne in packedTextures)
 			{
-				PackedTextureNode foundNode=bigOne.root.Get(fileName.ToLower());
+				PackedTextureNode foundNode=bigOne.root.Get(fileName);
 				if (foundNode!=null)
 				{
 					uoffs  = ((float)foundNode.Rect.Left+1)   / ((float)bigOne.root.Rect.Width);

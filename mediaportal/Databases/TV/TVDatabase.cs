@@ -1286,8 +1286,8 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count== 0) return false;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,15));
+						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,16));
 						bool bAdd=false;
 						if (iEnd >=iStartTime && iEnd <= iEndTime) bAdd=true;
 						if (iStart >=iStartTime && iStart <= iEndTime) bAdd=true;
@@ -1295,21 +1295,21 @@ namespace MediaPortal.TV.Database
 						if (bAdd)
 						{
 							TVProgram prog=new TVProgram();
-							prog.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
+							prog.Channel=DatabaseUtility.Get(results,i,1);
 							prog.Start=iStart;
 							prog.End=iEnd;
-							prog.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
-							prog.Title=DatabaseUtility.Get(results,i,"tblPrograms.strTitle");
-							prog.Description=DatabaseUtility.Get(results,i,"tblPrograms.strDescription");
-							prog.Episode=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeName");
-							prog.Repeat=DatabaseUtility.Get(results,i,"tblPrograms.strRepeat");
-							prog.ID=Int32.Parse(DatabaseUtility.Get(results,i,"tblPrograms.idProgram"));
-              prog.SeriesNum=DatabaseUtility.Get(results,i,"tblPrograms.strSeriesNum");
-              prog.EpisodeNum=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeNum");
-              prog.EpisodePart=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodePart");
-              prog.Date=DatabaseUtility.Get(results,i,"tblPrograms.strDate");
-              prog.StarRating=DatabaseUtility.Get(results,i,"tblPrograms.strStarRating");
-              prog.Classification=DatabaseUtility.Get(results,i,"tblPrograms.strClassification");
+							prog.Genre=DatabaseUtility.Get(results,i,27);
+							prog.Title=DatabaseUtility.Get(results,i,14);
+							prog.Description=DatabaseUtility.Get(results,i,17);
+							prog.Episode=DatabaseUtility.Get(results,i,18);
+							prog.Repeat=DatabaseUtility.Get(results,i,19);
+							prog.ID=Int32.Parse(DatabaseUtility.Get(results,i,11));
+              prog.SeriesNum=DatabaseUtility.Get(results,i,20);
+              prog.EpisodeNum=DatabaseUtility.Get(results,i,21);
+              prog.EpisodePart=DatabaseUtility.Get(results,i,22);
+              prog.Date=DatabaseUtility.Get(results,i,23);
+              prog.StarRating=DatabaseUtility.Get(results,i,24);
+              prog.Classification=DatabaseUtility.Get(results,i,25);
 							progs.Add(prog);
 						}
 					}

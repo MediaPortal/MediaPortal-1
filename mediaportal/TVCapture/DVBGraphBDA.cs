@@ -1126,6 +1126,7 @@ namespace MediaPortal.TV.Recording
 						byte[] pmtTable=new byte[188];
 						Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
 						int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
+						section_length+=3;
 						if (section_length>0 && section_length < 183)
 						{
 							int version_number = ((pmtTable[5]>>1)&0x1F);
