@@ -1239,12 +1239,21 @@ namespace MediaPortal.TV.Recording
 		{
 			Log.WriteFile(Log.LogType.Capture,"Card:{0} start recording content:{1}",ID, recording.IsContentRecording);
 
+			TVProgram prog=null;
 			DateTime dtNow = DateTime.Now.AddMinutes(_mPreRecordInterval);
-			TVUtil util = new TVUtil();
 			TVProgram currentRunningProgram = null;
-			TVProgram prog = util.GetProgramAt(_mTvChannelName, dtNow);
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			foreach (TVChannel chan in channels)
+			{
+				if (chan.Name==_mTvChannelName)
+				{
+					prog = chan.GetProgramAt(dtNow);
+					break;
+				}
+			}
 			if (prog != null) currentRunningProgram = prog.Clone();
-			util = null;
+			
 
 			DateTime timeProgStart = new DateTime(1971, 11, 6, 20, 0, 0, 0);
 			string strName;

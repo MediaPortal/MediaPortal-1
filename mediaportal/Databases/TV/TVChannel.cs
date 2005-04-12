@@ -181,18 +181,7 @@ namespace MediaPortal.TV.Database
 					currentProgram=null;
 				}
 
-				ArrayList progs = new ArrayList();
-				long starttime=Utils.datetolong( dtNow.AddDays(-2) );
-				long endtime  =Utils.datetolong( dtNow.AddDays(2));
-				TVDatabase.GetProgramsPerChannel(Name,starttime,endtime,ref progs);
-				foreach (TVProgram prog in progs)
-				{
-					if (prog.Start <= lNow && prog.End >= lNow)
-					{
-						currentProgram=prog;
-						break;
-					}
-				}
+				currentProgram=GetProgramAt(DateTime.Now);
 				return currentProgram;
 			}
 		}
