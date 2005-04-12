@@ -55,9 +55,9 @@ namespace MediaPortal.GUI.TV
 		int                                 m_iBlocks=4;
 		int                                 m_iCursorX=0;
 		int                                 m_iCursorY=0;
-		string                              m_strCurrentTitle="";
-		string                              m_strCurrentTime="";
-		string                              m_strCurrentChannel="";
+		string                              m_strCurrentTitle=String.Empty;
+		string                              m_strCurrentTime=String.Empty;
+		string                              m_strCurrentChannel=String.Empty;
 		long                                m_iCurrentStartTime=0;
 		long                                m_iCurrentEndTime=0;
 		TVProgram                           m_currentProgram=null;
@@ -75,7 +75,7 @@ namespace MediaPortal.GUI.TV
     bool                                m_bUseChannelLogos=false;
 
 		DateTime  m_timeKeyPressed=DateTime.Now;
-		string    m_strInput="";
+		string    m_strInput=String.Empty;
     
 		public  GUITVGuide()
 		{
@@ -163,8 +163,8 @@ namespace MediaPortal.GUI.TV
 			bool bImport=false;
 			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				string strTmp="";
-				strTmp=xmlreader.GetValueAsString("tvguide","date","");
+				string strTmp=String.Empty;
+				strTmp=xmlreader.GetValueAsString("tvguide","date",String.Empty);
 				if (System.IO.File.Exists(m_strTVGuideFile ) )
 				{
 					string strFileTime=System.IO.File.GetLastWriteTime(m_strTVGuideFile).ToString();
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.TV
 		{
 			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
 			{
-				m_strCurrentChannel=xmlreader.GetValueAsString("tvguide","channel","");
+				m_strCurrentChannel=xmlreader.GetValueAsString("tvguide","channel",String.Empty);
 				m_iCursorY=xmlreader.GetValueAsInt("tvguide", "ypos",0);
 				m_iChannelOffset=xmlreader.GetValueAsInt("tvguide", "yoffset",0);
 			}
@@ -554,7 +554,7 @@ namespace MediaPortal.GUI.TV
 					GUISpinControl cntlTimeInterval=GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
 					if (cntlTimeInterval!=null)
 					{
-						for (int i=1; i <= 4; i++) cntlTimeInterval.AddLabel("",i);	
+						for (int i=1; i <= 4; i++) cntlTimeInterval.AddLabel(String.Empty,i);	
 						cntlTimeInterval.Value=1;
 					}
 					Update();
@@ -612,235 +612,238 @@ namespace MediaPortal.GUI.TV
 
 		void Update()
 		{
-			if ( GUIWindowManager.ActiveWindow != this.GetID)
+			lock (this)
 			{
-				return;
-			}
-
-			GUISpinControl cntlDay=GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
-
-      // Find first day in TVGuide and set spincontrol position 
-      int iDay=m_dtTime.DayOfYear - DateTime.Now.DayOfYear;
-      for ( ; iDay<0 ; ++iDay)
-      {
-        m_dtTime = m_dtTime.AddDays(1.0);
-      }
-      for ( ; iDay>=m_iGuideDayRange ; --iDay)
-      {
-        m_dtTime = m_dtTime.AddDays(-1.0);
-      }
-			cntlDay.Value=iDay;
-
-			int xpos,ypos;
-			GUIControl			cntlPanel   = GetControl((int)Controls.PANEL_BACKGROUND);
-			GUIImage				cntlChannelImg = (GUIImage)GetControl((int)Controls.CHANNEL_IMAGE_TEMPLATE);
-			GUILabelControl cntlChannelLabel = (GUILabelControl) GetControl((int)Controls.CHANNEL_LABEL_TEMPLATE);
-			GUILabelControl labelTime= (GUILabelControl) GetControl((int)Controls.LABEL_TIME1);
-			GUIImage				cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME1);
-      GUIImage        cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
-			
-      m_bUseChannelLogos = cntlChannelImg!=null;
-      if (m_bUseChannelLogos) cntlChannelImg.IsVisible=false;
-			cntlChannelLabel.IsVisible=false;
-			cntlHeaderBkgImg.IsVisible=false;
-			labelTime.IsVisible=false;
-      cntlChannelTemplate.IsVisible=false;
-			int iLabelWidth=(cntlPanel.XPosition+cntlPanel.Width-labelTime.XPosition)/4; 
-
-			// add labels for time blocks 1-4
-			int iHour,iMin;
-			iMin=m_dtTime.Minute;
-			m_dtTime=m_dtTime.AddMinutes(-iMin);
-			iMin = (iMin/m_iBlockTime)*m_iBlockTime;
-			m_dtTime=m_dtTime.AddMinutes(iMin);
-      
-			DateTime dt=new DateTime();
-			dt=m_dtTime;
-
-			for (int iLabel=0; iLabel <4; iLabel++)
-			{
-				xpos=iLabel*iLabelWidth + labelTime.XPosition;
-				ypos=labelTime.YPosition;
-
-				GUIImage img=GetControl((int)Controls.IMG_TIME1+iLabel) as GUIImage;
-				if (img==null)
+				if ( GUIWindowManager.ActiveWindow != this.GetID)
 				{
-					img = new GUIImage(GetID,(int)Controls.IMG_TIME1+iLabel,xpos,ypos,iLabelWidth-4,cntlHeaderBkgImg.RenderHeight,cntlHeaderBkgImg.FileName,0x0);
-					img.AllocResources();
-					GUIControl cntl2=(GUIControl)img;
-					Add(ref cntl2);
-				}
-        
-				img.IsVisible=!m_bSingleChannel;
-				img.Width=iLabelWidth-4;
-				img.Height=cntlHeaderBkgImg.RenderHeight;
-				img.SetFileName(cntlHeaderBkgImg.FileName);
-				img.SetPosition(xpos,ypos);
-				img.DoUpdate();
-
-				GUILabelControl label = GetControl((int)Controls.LABEL_TIME1+iLabel) as GUILabelControl;
-				if (label==null)
-				{
-					label=new GUILabelControl(GetID,(int)Controls.LABEL_TIME1+iLabel,xpos,ypos,iLabelWidth,cntlHeaderBkgImg.RenderHeight,labelTime.FontName, "",labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER,false);
-					label.AllocResources();
-					GUIControl cntl=(GUIControl)label;
-					this.Add(ref cntl);
-				}
-				iHour=dt.Hour;
-				iMin=dt.Minute;
-				string strTime=dt.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-				label.Label=strTime;
-				dt=dt.AddMinutes(m_iBlockTime);
-
-				label.TextAlignment=GUIControl.Alignment.ALIGN_CENTER;
-				label.IsVisible=!m_bSingleChannel;
-				label.Width=iLabelWidth;
-				label.Height=cntlHeaderBkgImg.RenderHeight;
-				label.FontName=labelTime.FontName;
-				label.TextColor=labelTime.TextColor;
-				label.SetPosition(xpos,ypos);
-			}
-
-			// add channels...
-      int iHeight=cntlPanel.Height+cntlPanel.YPosition-cntlChannelTemplate.YPosition;
-      int iItemHeight=cntlChannelTemplate.Height;
-
-			m_iChannels= (int)(((float)iHeight) / ((float)iItemHeight) );
-			for (int iChan=0; iChan <m_iChannels; ++iChan)
-			{
-        xpos=cntlChannelTemplate.XPosition;
-        ypos=cntlChannelTemplate.YPosition + iChan*iItemHeight;
-
-				//this.Remove((int)Controls.IMG_CHAN1+iChan);
-				GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1+iChan) as GUIButton3PartControl;
-				if (imgBut==null)
-				{
-          string strChannelImageFileName="";
-          if (m_bUseChannelLogos) strChannelImageFileName = cntlChannelImg.FileName;
-					imgBut = new GUIButton3PartControl(GetID,(int)Controls.IMG_CHAN1+iChan,xpos,ypos,
-						cntlChannelTemplate.Width-2, cntlChannelTemplate.Height-2,
-						"tvguide_button_selected_left.png",
-						"tvguide_button_selected_middle.png",
-						"tvguide_button_selected_right.png",
-						"tvguide_button_light_left.png",
-						"tvguide_button_light_middle.png",
-						"tvguide_button_light_right.png",
-						strChannelImageFileName);
-					imgBut.AllocResources();
-					GUIControl cntl=(GUIControl)imgBut;
-					Add(ref cntl);
+					return;
 				}
 
-				if (m_bUseChannelLogos) imgBut.TexutureIcon=cntlChannelImg.FileName;
-				imgBut.Width=cntlChannelTemplate.Width-2;//labelTime.XPosition-cntlChannelImg.XPosition;
-				imgBut.Height=cntlChannelTemplate.Height-2;//iItemHeight-2;
-				imgBut.SetPosition(xpos,ypos);
-				imgBut.FontName1=cntlChannelLabel.FontName;
-				imgBut.TextColor1=cntlChannelLabel.TextColor;
-				imgBut.Label1="";
-        if (m_bUseChannelLogos)
-        {
-          imgBut.IconOffsetX=cntlChannelImg.XPosition;
-          imgBut.IconOffsetY=cntlChannelImg.YPosition;
-          imgBut.IconWidth=cntlChannelImg.RenderWidth;
-          imgBut.IconHeight=cntlChannelImg.RenderHeight;
-          imgBut.IconKeepAspectRatio=cntlChannelImg.KeepAspectRatio;
-          imgBut.IconCentered=cntlChannelImg.Centered;
-          imgBut.IconZoom=cntlChannelImg.Zoom;
-        }
-				imgBut.TextOffsetX1=cntlChannelLabel.XPosition;
-				imgBut.TextOffsetY1=cntlChannelLabel.YPosition;
-				imgBut.ColourDiffuse=0xffffffff;
-				imgBut.DoUpdate();
-			}
+				GUISpinControl cntlDay=GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
 
-			UpdateHorizontalScrollbar();
-			UpdateVerticalScrollbar();
-
-			GetChannels();
-
-
-			string day;
-			switch (m_dtTime.DayOfWeek)
-			{
-				case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(657);	break;
-				case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(658);	break;
-				case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(659);	break;
-				case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(660);	break;
-				case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(661);	break;
-				case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(662);	break;
-				default:	day = GUILocalizeStrings.Get(663);	break;
-			}
-			day=String.Format("{0} {1}-{2}",day,m_dtTime.Day, m_dtTime.Month);
-			GUIPropertyManager.SetProperty("#TV.Guide.Day", day);
-
-			//2004 03 31 22 20 00
-			string strStart=String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}", 
-				m_dtTime.Year,m_dtTime.Month,m_dtTime.Day,
-				m_dtTime.Hour,m_dtTime.Minute,0);
-			DateTime dtStop=new DateTime();
-			dtStop=m_dtTime;			
-      dtStop=dtStop.AddMinutes( m_iBlocks*m_iBlockTime - 1);
-			iMin=dtStop.Minute;
-			string strEnd=String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}", 
-				dtStop.Year,dtStop.Month,dtStop.Day,
-				dtStop.Hour,iMin,0);
-
-			long iStart=Int64.Parse(strStart);
-			long iEnd=Int64.Parse(strEnd);
-
-      
-			m_recordings.Clear();
-			TVDatabase.GetRecordings(ref m_recordings);
-
-			if (m_iChannelOffset>m_channels.Count)
-			{
-				m_iChannelOffset=0;
-				m_iCursorY=0;
-			}
-
-			for (int i=0; i < m_vecControls.Count;++i)
-			{
-				GUIControl cntl=(GUIControl)m_vecControls[i];
-				if (cntl.GetID>=100)
+				// Find first day in TVGuide and set spincontrol position 
+				int iDay=m_dtTime.DayOfYear - DateTime.Now.DayOfYear;
+				for ( ; iDay<0 ; ++iDay)
 				{
-					cntl.IsVisible=false;
+					m_dtTime = m_dtTime.AddDays(1.0);
 				}
-			}
-
-			if (m_bSingleChannel)
-			{
-        if (m_iCursorX==0)
-        {
-          m_iSingleChannel=m_iCursorY + m_iChannelOffset;
-          if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
-          GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
-          if (null!=img) m_strCurrentChannel=img.Label1;
-        }
-        TVChannel channel=(TVChannel)m_channels[m_iSingleChannel];
-				RenderSingleChannel(channel);
-			}
-			else
-			{
-				int chan=m_iChannelOffset ;
-				for (int iChannel=0; iChannel <m_iChannels; iChannel++)
+				for ( ; iDay>=m_iGuideDayRange ; --iDay)
 				{
-					if (chan < m_channels.Count)
+					m_dtTime = m_dtTime.AddDays(-1.0);
+				}
+				cntlDay.Value=iDay;
+
+				int xpos,ypos;
+				GUIControl			cntlPanel   = GetControl((int)Controls.PANEL_BACKGROUND);
+				GUIImage				cntlChannelImg = (GUIImage)GetControl((int)Controls.CHANNEL_IMAGE_TEMPLATE);
+				GUILabelControl cntlChannelLabel = (GUILabelControl) GetControl((int)Controls.CHANNEL_LABEL_TEMPLATE);
+				GUILabelControl labelTime= (GUILabelControl) GetControl((int)Controls.LABEL_TIME1);
+				GUIImage				cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME1);
+				GUIImage        cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
+				
+				m_bUseChannelLogos = cntlChannelImg!=null;
+				if (m_bUseChannelLogos) cntlChannelImg.IsVisible=false;
+				cntlChannelLabel.IsVisible=false;
+				cntlHeaderBkgImg.IsVisible=false;
+				labelTime.IsVisible=false;
+				cntlChannelTemplate.IsVisible=false;
+				int iLabelWidth=(cntlPanel.XPosition+cntlPanel.Width-labelTime.XPosition)/4; 
+
+				// add labels for time blocks 1-4
+				int iHour,iMin;
+				iMin=m_dtTime.Minute;
+				m_dtTime=m_dtTime.AddMinutes(-iMin);
+				iMin = (iMin/m_iBlockTime)*m_iBlockTime;
+				m_dtTime=m_dtTime.AddMinutes(iMin);
+	      
+				DateTime dt=new DateTime();
+				dt=m_dtTime;
+
+				for (int iLabel=0; iLabel <4; iLabel++)
+				{
+					xpos=iLabel*iLabelWidth + labelTime.XPosition;
+					ypos=labelTime.YPosition;
+
+					GUIImage img=GetControl((int)Controls.IMG_TIME1+iLabel) as GUIImage;
+					if (img==null)
 					{
-						TVChannel channel=(TVChannel)m_channels[chan];
-						RenderChannel(iChannel,channel,iStart,iEnd);
+						img = new GUIImage(GetID,(int)Controls.IMG_TIME1+iLabel,xpos,ypos,iLabelWidth-4,cntlHeaderBkgImg.RenderHeight,cntlHeaderBkgImg.FileName,0x0);
+						img.AllocResources();
+						GUIControl cntl2=(GUIControl)img;
+						Add(ref cntl2);
 					}
-					chan++;
-					if (chan >= m_channels.Count) chan=0;
+	        
+					img.IsVisible=!m_bSingleChannel;
+					img.Width=iLabelWidth-4;
+					img.Height=cntlHeaderBkgImg.RenderHeight;
+					img.SetFileName(cntlHeaderBkgImg.FileName);
+					img.SetPosition(xpos,ypos);
+					img.DoUpdate();
+
+					GUILabelControl label = GetControl((int)Controls.LABEL_TIME1+iLabel) as GUILabelControl;
+					if (label==null)
+					{
+						label=new GUILabelControl(GetID,(int)Controls.LABEL_TIME1+iLabel,xpos,ypos,iLabelWidth,cntlHeaderBkgImg.RenderHeight,labelTime.FontName, String.Empty,labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER,false);
+						label.AllocResources();
+						GUIControl cntl=(GUIControl)label;
+						this.Add(ref cntl);
+					}
+					iHour=dt.Hour;
+					iMin=dt.Minute;
+					string strTime=dt.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					label.Label=strTime;
+					dt=dt.AddMinutes(m_iBlockTime);
+
+					label.TextAlignment=GUIControl.Alignment.ALIGN_CENTER;
+					label.IsVisible=!m_bSingleChannel;
+					label.Width=iLabelWidth;
+					label.Height=cntlHeaderBkgImg.RenderHeight;
+					label.FontName=labelTime.FontName;
+					label.TextColor=labelTime.TextColor;
+					label.SetPosition(xpos,ypos);
 				}
 
-        // update selected channel 
-        m_iSingleChannel=m_iCursorY + m_iChannelOffset;
-        if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
-        GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
-        if (null!=img) m_strCurrentChannel=img.Label1;
+				// add channels...
+				int iHeight=cntlPanel.Height+cntlPanel.YPosition-cntlChannelTemplate.YPosition;
+				int iItemHeight=cntlChannelTemplate.Height;
+
+				m_iChannels= (int)(((float)iHeight) / ((float)iItemHeight) );
+				for (int iChan=0; iChan <m_iChannels; ++iChan)
+				{
+					xpos=cntlChannelTemplate.XPosition;
+					ypos=cntlChannelTemplate.YPosition + iChan*iItemHeight;
+
+					//this.Remove((int)Controls.IMG_CHAN1+iChan);
+					GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1+iChan) as GUIButton3PartControl;
+					if (imgBut==null)
+					{
+						string strChannelImageFileName=String.Empty;
+						if (m_bUseChannelLogos) strChannelImageFileName = cntlChannelImg.FileName;
+						imgBut = new GUIButton3PartControl(GetID,(int)Controls.IMG_CHAN1+iChan,xpos,ypos,
+							cntlChannelTemplate.Width-2, cntlChannelTemplate.Height-2,
+							"tvguide_button_selected_left.png",
+							"tvguide_button_selected_middle.png",
+							"tvguide_button_selected_right.png",
+							"tvguide_button_light_left.png",
+							"tvguide_button_light_middle.png",
+							"tvguide_button_light_right.png",
+							strChannelImageFileName);
+						imgBut.AllocResources();
+						GUIControl cntl=(GUIControl)imgBut;
+						Add(ref cntl);
+					}
+
+					if (m_bUseChannelLogos) imgBut.TexutureIcon=cntlChannelImg.FileName;
+					imgBut.Width=cntlChannelTemplate.Width-2;//labelTime.XPosition-cntlChannelImg.XPosition;
+					imgBut.Height=cntlChannelTemplate.Height-2;//iItemHeight-2;
+					imgBut.SetPosition(xpos,ypos);
+					imgBut.FontName1=cntlChannelLabel.FontName;
+					imgBut.TextColor1=cntlChannelLabel.TextColor;
+					imgBut.Label1=String.Empty;
+					if (m_bUseChannelLogos)
+					{
+						imgBut.IconOffsetX=cntlChannelImg.XPosition;
+						imgBut.IconOffsetY=cntlChannelImg.YPosition;
+						imgBut.IconWidth=cntlChannelImg.RenderWidth;
+						imgBut.IconHeight=cntlChannelImg.RenderHeight;
+						imgBut.IconKeepAspectRatio=cntlChannelImg.KeepAspectRatio;
+						imgBut.IconCentered=cntlChannelImg.Centered;
+						imgBut.IconZoom=cntlChannelImg.Zoom;
+					}
+					imgBut.TextOffsetX1=cntlChannelLabel.XPosition;
+					imgBut.TextOffsetY1=cntlChannelLabel.YPosition;
+					imgBut.ColourDiffuse=0xffffffff;
+					imgBut.DoUpdate();
+				}
+
+				UpdateHorizontalScrollbar();
+				UpdateVerticalScrollbar();
+
+				GetChannels();
+
+
+				string day;
+				switch (m_dtTime.DayOfWeek)
+				{
+					case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(657);	break;
+					case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(658);	break;
+					case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(659);	break;
+					case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(660);	break;
+					case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(661);	break;
+					case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(662);	break;
+					default:	day = GUILocalizeStrings.Get(663);	break;
+				}
+				day=String.Format("{0} {1}-{2}",day,m_dtTime.Day, m_dtTime.Month);
+				GUIPropertyManager.SetProperty("#TV.Guide.Day", day);
+
+				//2004 03 31 22 20 00
+				string strStart=String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}", 
+					m_dtTime.Year,m_dtTime.Month,m_dtTime.Day,
+					m_dtTime.Hour,m_dtTime.Minute,0);
+				DateTime dtStop=new DateTime();
+				dtStop=m_dtTime;			
+				dtStop=dtStop.AddMinutes( m_iBlocks*m_iBlockTime - 1);
+				iMin=dtStop.Minute;
+				string strEnd=String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}", 
+					dtStop.Year,dtStop.Month,dtStop.Day,
+					dtStop.Hour,iMin,0);
+
+				long iStart=Int64.Parse(strStart);
+				long iEnd=Int64.Parse(strEnd);
+
+	      
+				m_recordings.Clear();
+				TVDatabase.GetRecordings(ref m_recordings);
+
+				if (m_iChannelOffset>m_channels.Count)
+				{
+					m_iChannelOffset=0;
+					m_iCursorY=0;
+				}
+
+				for (int i=0; i < m_vecControls.Count;++i)
+				{
+					GUIControl cntl=(GUIControl)m_vecControls[i];
+					if (cntl.GetID>=100)
+					{
+						cntl.IsVisible=false;
+					}
+				}
+
+				if (m_bSingleChannel)
+				{
+					if (m_iCursorX==0)
+					{
+						m_iSingleChannel=m_iCursorY + m_iChannelOffset;
+						if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
+						GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
+						if (null!=img) m_strCurrentChannel=img.Label1;
+					}
+					TVChannel channel=(TVChannel)m_channels[m_iSingleChannel];
+					RenderSingleChannel(channel);
+				}
+				else
+				{
+					int chan=m_iChannelOffset ;
+					for (int iChannel=0; iChannel <m_iChannels; iChannel++)
+					{
+						if (chan < m_channels.Count)
+						{
+							TVChannel channel=(TVChannel)m_channels[chan];
+							RenderChannel(iChannel,channel,iStart,iEnd);
+						}
+						chan++;
+						if (chan >= m_channels.Count) chan=0;
+					}
+
+					// update selected channel 
+					m_iSingleChannel=m_iCursorY + m_iChannelOffset;
+					if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
+					GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
+					if (null!=img) m_strCurrentChannel=img.Label1;
+				}
+				UpdateVerticalScrollbar();
 			}
-			UpdateVerticalScrollbar();
 		}
 
 		void SetProperties()
@@ -853,20 +856,20 @@ namespace MediaPortal.GUI.TV
 				TVChannel chan=(TVChannel)m_channels[channel];
 				string strChannel=chan.Name;
 				string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,strChannel);
-				GUIPropertyManager.SetProperty("#TV.Guide.Title","");
-				GUIPropertyManager.SetProperty("#TV.Guide.Time","");
-				GUIPropertyManager.SetProperty("#TV.Guide.Description","");
-				GUIPropertyManager.SetProperty("#TV.Guide.Genre","");
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName","");        
-        GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber","");        
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber","");        
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart","");        
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail","");        
-        GUIPropertyManager.SetProperty("#TV.Guide.Date","");        
-        GUIPropertyManager.SetProperty("#TV.Guide.StarRating","");        
-        GUIPropertyManager.SetProperty("#TV.Guide.Classification","");
-        GUIPropertyManager.SetProperty("#TV.Guide.Duration","");
-        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow","");
+				GUIPropertyManager.SetProperty("#TV.Guide.Title",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Guide.Time",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Guide.Description",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Guide.Genre",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName",String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber",String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber",String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart",String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail",String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Guide.Date",String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Guide.StarRating",String.Empty);        
+        GUIPropertyManager.SetProperty("#TV.Guide.Classification",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Duration",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow",String.Empty);
 				if (!System.IO.File.Exists(strLogo))
 				{
 					strLogo="defaultVideoBig.png";
@@ -874,8 +877,8 @@ namespace MediaPortal.GUI.TV
 				GUIPropertyManager.SetProperty("#TV.Guide.thumb",strLogo);
 				m_iCurrentStartTime=0;
 				m_iCurrentEndTime=0;
-				m_strCurrentTitle="";
-				m_strCurrentTime="";
+				m_strCurrentTitle=String.Empty;
+				m_strCurrentTime=String.Empty;
 				m_strCurrentChannel=strChannel;
 				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
 			}
@@ -892,19 +895,19 @@ namespace MediaPortal.GUI.TV
 				GUIPropertyManager.SetProperty("#TV.Guide.Genre",m_currentProgram.Genre);
         GUIPropertyManager.SetProperty("#TV.Guide.Duration",m_currentProgram.Duration);
         GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow",m_currentProgram.TimeFromNow);
-        if (m_currentProgram.Episode=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName","");
+        if (m_currentProgram.Episode=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName",String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName",m_currentProgram.Episode);        
-        if (m_currentProgram.SeriesNum=="-") GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber","");
+        if (m_currentProgram.SeriesNum=="-") GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber",String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber",m_currentProgram.SeriesNum);        
-        if (m_currentProgram.EpisodeNum=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber","");
+        if (m_currentProgram.EpisodeNum=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber",String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber",m_currentProgram.EpisodeNum);        
-        if(m_currentProgram.EpisodePart=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart","");
+        if(m_currentProgram.EpisodePart=="-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart",String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart",m_currentProgram.EpisodePart);        
-        if (m_currentProgram.Date=="-") GUIPropertyManager.SetProperty("#TV.Guide.Date","");
+        if (m_currentProgram.Date=="-") GUIPropertyManager.SetProperty("#TV.Guide.Date",String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.Date",m_currentProgram.Date);        
-        if (m_currentProgram.StarRating=="-") GUIPropertyManager.SetProperty("#TV.Guide.StarRating","");
+        if (m_currentProgram.StarRating=="-") GUIPropertyManager.SetProperty("#TV.Guide.StarRating",String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.StarRating",m_currentProgram.StarRating);        
-        if (m_currentProgram.Classification=="-") GUIPropertyManager.SetProperty("#TV.Guide.Classification","");
+        if (m_currentProgram.Classification=="-") GUIPropertyManager.SetProperty("#TV.Guide.Classification",String.Empty);
         else GUIPropertyManager.SetProperty("#TV.Guide.Classification",m_currentProgram.Classification); 
         GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail",m_currentProgram.EpisodeDetails);
 				if (!System.IO.File.Exists(strLogo))
@@ -1027,7 +1030,7 @@ namespace MediaPortal.GUI.TV
 						"tvguide_button_light_left.png",
 						"tvguide_button_light_middle.png",
 						"tvguide_button_light_right.png",
-						"");
+						String.Empty);
 					img.AllocResources();
 					img.ColourDiffuse=GetColorForGenre(program.Genre);
 					GUIControl cntl=(GUIControl)img;
@@ -1061,17 +1064,6 @@ namespace MediaPortal.GUI.TV
 					}
 				}
 
-				if (bRecording)
-				{
-					if (bSeries)
-						img.TexutureIcon="tvguide_recordserie_button.png";
-					else
-						img.TexutureIcon="tvguide_record_button.png";
-				}
-				else
-				{
-					img.TexutureIcon="";
-				}
 				img.Data=program.Clone();
 				img.ColourDiffuse=GetColorForGenre(program.Genre);
 				height=height-10;
@@ -1147,6 +1139,17 @@ namespace MediaPortal.GUI.TV
 
 				img.SetPosition(img.XPosition, img.YPosition);
 
+				if (bRecording)
+				{
+					if (bSeries)
+						img.TexutureIcon="tvguide_recordserie_button.png";
+					else
+						img.TexutureIcon="tvguide_record_button.png";
+				}
+				else
+				{
+					img.TexutureIcon=String.Empty;
+				}
 			}
 		}
 
@@ -1287,7 +1290,7 @@ namespace MediaPortal.GUI.TV
 								"tvguide_button_light_left.png",
 								"tvguide_button_light_middle.png",
 								"tvguide_button_light_right.png",
-								"");        
+								String.Empty);        
 							img.AllocResources();
 							GUIControl cntl=(GUIControl)img;
 							Add(ref cntl);
@@ -1314,7 +1317,7 @@ namespace MediaPortal.GUI.TV
 								img.TexutureIcon="tvguide_record_button.png";
 						}
 						else
-							img.TexutureIcon="";
+							img.TexutureIcon=String.Empty;
 
 						img.Data=program.Clone();
 						img.ColourDiffuse=GetColorForGenre(program.Genre);
@@ -1832,8 +1835,8 @@ namespace MediaPortal.GUI.TV
 			if (dlgProgress!=null)
 			{
 				dlgProgress.SetHeading(606);
-				dlgProgress.SetLine(1,"");
-				dlgProgress.SetLine(2,"");
+				dlgProgress.SetLine(1,String.Empty);
+				dlgProgress.SetLine(2,String.Empty);
 				dlgProgress.StartModal(GetID);
 				dlgProgress.Progress();
 			}
@@ -1988,10 +1991,13 @@ namespace MediaPortal.GUI.TV
 
 		public override void Render(float timePassed)
 		{
-			GUIImage vertLine=GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
-			base.Render (timePassed);
-			if (vertLine!=null)
-				vertLine.Render(timePassed);
+			lock (this)
+			{
+				GUIImage vertLine=GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
+				base.Render (timePassed);
+				if (vertLine!=null)
+					vertLine.Render(timePassed);
+			}
 		}
 
 		void ShowContextMenu()
@@ -2214,7 +2220,7 @@ namespace MediaPortal.GUI.TV
 				// change channel
 				int iChannel=Int32.Parse(m_strInput);
 				ChangeChannelNr(iChannel);
-				m_strInput="";
+				m_strInput=String.Empty;
 			}
 		}
 
@@ -2225,7 +2231,7 @@ namespace MediaPortal.GUI.TV
 				TimeSpan ts=DateTime.Now-m_timeKeyPressed;
 				if (m_strInput.Length>=2||ts.TotalMilliseconds>=800)
 				{
-					m_strInput="";
+					m_strInput=String.Empty;
 				}
 				m_timeKeyPressed=DateTime.Now;
 				if (chKey=='0' && m_strInput.Length==0) return;
