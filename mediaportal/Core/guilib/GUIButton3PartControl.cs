@@ -401,6 +401,8 @@ namespace MediaPortal.GUI.Library
         if (m_imgIcon!=null)
         {
 					m_imgIcon.SetFileName(value);
+					m_imgIcon.Width=m_iIconWidth;
+					m_imgIcon.Height=m_iIconHeight;
 					Update();
         }
       }
@@ -661,12 +663,10 @@ namespace MediaPortal.GUI.Library
           if (offset > m_dwWidth) offset=m_dwWidth;
 					m_imgIcon.SetPosition(m_dwPosX+(m_dwWidth)  - offset,
 																m_dwPosY+(m_dwHeight/2) - (m_imgIcon.TextureHeight/2) );
-					m_imgIcon.Width=m_imgIcon.TextureWidth;
 				}
 				else
 				{
 					m_imgIcon.SetPosition(m_dwPosX+IconOffsetX,m_dwPosY+IconOffsetY );
-					m_imgIcon.Width=m_imgIcon.TextureWidth;
 				}
         
 			}
