@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Library
 			if (Focus)
 			{
 				//render the focused images
-				if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
+				//if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
 				m_imgFocusLeft.Render(timePassed);
 				m_imgFocusMid.Render(timePassed);
 				m_imgFocusRight.Render(timePassed);
@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.Library
 			else 
 			{
 				//else render the non-focus images
-				if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
+				//if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
 				m_imgNoFocusLeft.Render(timePassed);  		
 				m_imgNoFocusMid.Render(timePassed);  		
 				m_imgNoFocusRight.Render(timePassed);

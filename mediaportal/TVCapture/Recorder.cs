@@ -214,16 +214,20 @@ namespace MediaPortal.TV.Recording
 					TVRecording rec =(TVRecording)m_Recordings[j];
 					if (rec.Canceled>0) continue;
 					if (rec.IsDone()) continue;
-					// check which program is running 
-					TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
-
-					// if the recording should record the tv program
-					if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,m_iPreRecordInterval, m_iPostRecordInterval) )
+					if (rec.RecType==TVRecording.RecordingType.EveryTimeOnEveryChannel ||
+						chan.Name==rec.Channel)
 					{
-						// yes, then record it
-						if (Record(dtCurrentTime,rec,prog, m_iPreRecordInterval, m_iPostRecordInterval))
+						// check which program is running 
+						TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
+
+						// if the recording should record the tv program
+						if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,m_iPreRecordInterval, m_iPostRecordInterval) )
 						{
-							break;
+							// yes, then record it
+							if (Record(dtCurrentTime,rec,prog, m_iPreRecordInterval, m_iPostRecordInterval))
+							{
+								break;
+							}
 						}
 					}
 				}
