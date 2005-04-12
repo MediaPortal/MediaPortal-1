@@ -209,6 +209,7 @@ namespace MediaPortal.TV.Database
 						previousProgram=progs[i-1] as TVProgram;
 					if (i+1 < progs.Count)
 						nextProgram=progs[i+1] as TVProgram;
+					break;
 				}
 			}
 		}
@@ -222,7 +223,7 @@ namespace MediaPortal.TV.Database
 			
 			if (currentProgram!=null)
 			{
-				if (currentProgram.Start <= lNow && currentProgram.End >= lNow) 
+				if (currentProgram.End < lNow) 
 					Update();
 			}
 				
