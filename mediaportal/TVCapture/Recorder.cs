@@ -46,6 +46,7 @@ namespace MediaPortal.TV.Recording
 		static DateTime      m_dtStart=DateTime.Now;
 		static int           m_iCurrentCard=-1;
 		static DateTime      m_dtCheckDiskSpace=DateTime.Now;
+		static bool					 importing=false;
 
 		/// <summary>
 		/// singleton. Dont allow any instance of this class so make the constructor private
@@ -1773,6 +1774,15 @@ namespace MediaPortal.TV.Recording
 		
 		static public void ImportDvrMsFiles()
 		{
+			//dont import during recording...
+			if (IsAnyCardRecording()) return;
+			if (importing) return;
+			Thread WorkerThread = new Thread(new ThreadStart(ImportWorkerThreadFunction));
+			WorkerThread.Start();
+		}
+		static void ImportWorkerThreadFunction()
+		{
+			importing=true;
 			try
 			{
 				//dont import during recording...
@@ -1788,9 +1798,11 @@ namespace MediaPortal.TV.Recording
 						string[] files=System.IO.Directory.GetFiles(dev.RecordingPath,"*.dvr-ms");
 						foreach (string file in files)
 						{
+							System.Threading.Thread.Sleep(100);
 							bool add=true;
 							foreach (TVRecorded rec in recordings)
 							{
+								if (IsAnyCardRecording()) return;
 								if (rec.FileName!=null)
 								{
 									if (rec.FileName.ToLower()==file.ToLower())
@@ -1805,6 +1817,7 @@ namespace MediaPortal.TV.Recording
 								Log.Write("Recorder: import recording {0}", file);
 								try
 								{
+									System.Threading.Thread.Sleep(100);
 									using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
 									{
 										TVRecorded newRec = new TVRecorded();
@@ -1863,7 +1876,8 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception)
 			{
-			}		
+			}
+			importing=false;
 		} //static void ImportDvrMsFiles()
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording
