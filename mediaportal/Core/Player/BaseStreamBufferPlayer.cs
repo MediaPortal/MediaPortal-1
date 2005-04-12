@@ -169,15 +169,15 @@ namespace MediaPortal.Player
 
 			m_state=PlayState.Playing;
 
-      if (m_bLive)
-      {
+			if (m_bLive)
+			{
 				DateTime dt=DateTime.Now;
 				do
 				{
-						UpdateCurrentPosition();
-						Application.DoEvents();
-					  TimeSpan ts=DateTime.Now-dt;
-					  if (ts.TotalSeconds>=2) break;
+					Process();
+					Application.DoEvents();						
+					TimeSpan ts=DateTime.Now-dt;
+					if (ts.TotalSeconds>=2) break;
 				} while (m_dDuration<1);
 
 				UpdateCurrentPosition();
