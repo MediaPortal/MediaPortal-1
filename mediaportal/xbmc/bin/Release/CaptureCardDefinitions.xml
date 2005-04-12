@@ -23,7 +23,7 @@
 <!--  2. Define the 0-based index of the pin. This always should work...                                -->
 <!--                                                                                                    -->
 <!-- Cards supported so far:                                                          -->
-<!--    AAdaptec AVC2000	 	      -->
+<!--    Adaptec AVC2000	 	      	      -->
 <!--    Aito DVB-T DUO CardBus		      -->
 <!--    Asus PVR 416			      -->
 <!--    ATI eHomeWonder	 		      -->
@@ -42,6 +42,7 @@
 <!--    Dvico Fusion HDTV Plus (Analog)       -->
 <!--    Dvico Fusion HDTV Lite                -->
 <!--    Dvico Fusion HDTV USB2                -->
+<!--    Empire PCI DVB-T   	              -->
 <!--    Emuzed Angel PCI MPEG                 -->
 <!--    Emuzed Angel USB MPEG                 -->
 <!--    Emuzed Bali (all variants)	      -->
@@ -77,8 +78,8 @@
 <!--    Leadtek LR6650			      -->
 <!--    LifeView DVB-T                        -->
 <!--    LifeView DVB-T Analog                 -->
-<!--    Meedion SAA1734 DVBS                  -->
-<!--    Meedion SAA1734 DVBT                  -->
+<!--    Medion SAA1734 DVBS                   -->
+<!--    Medion SAA1734 DVBT                   -->
 <!--    MELCO PC-MV5/U2                       -->
 <!--    NVTV Dual Tuner                       -->
 <!--    NVTV Single Tuner                     -->
@@ -105,8 +106,8 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.69                                                               -->
-<!-- changed : 11-april-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.71                                                               -->
+<!-- changed : 12-april-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -2345,7 +2346,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Medion (7134) Analog TV" capturename="MEDION BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
+  <capturecard commercialname="Medion BDA Analog (DVB Hybrid)" capturename="MEDION BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2355,7 +2356,7 @@
         <filter cat="crossbar"		name="MEDION BDA Analog Xbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="MEDION BDA Analog Capture"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
-	<filter cat="encoderaudio"	name="CyberLink MPEG Audio Encoder"	checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="CyberLink Audio Encoder"		checkdevice="false"></filter>
 	<filter cat="mux"		name="CyberLink MPEG Muxer"		checkdevice="false"></filter>
       </filters>
       <connections>
@@ -2562,7 +2563,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Medion (7134) Analog TV" capturename="MEDION BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000516be&amp;rev_01">
+  <capturecard commercialname="Medion BDA Analog (DVB Hybrid)" capturename="MEDION BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000516be&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -2572,7 +2573,7 @@
         <filter cat="crossbar"		name="MEDION BDA Analog Xbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="MEDION BDA Analog Capture"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
-	<filter cat="encoderaudio"	name="CyberLink MPEG Audio Encoder"	checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="CyberLink Audio Encoder"		checkdevice="false"></filter>
 	<filter cat="mux"		name="CyberLink MPEG Muxer"		checkdevice="false"></filter>
       </filters>
       <connections>
@@ -3213,6 +3214,49 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Empire PCI DVB-T" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a117de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"	name="EMPIRE BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
+        <filter cat="capture"		name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Medion WDM Analog (Not Hybrid)" capturename="MEDION (7134) WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="PhTVTune"				checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MEDION Cap7134 TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MEDION Cap7134 Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="MEDION (7134) WDM Video Capture"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+	<filter cat="encoderaudio"	name="CyberLink MPEG Audio Encoder"	checkdevice="false"></filter>
+	<filter cat="mux"		name="CyberLink MPEG Muxer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
