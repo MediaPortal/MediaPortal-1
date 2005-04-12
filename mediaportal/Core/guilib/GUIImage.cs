@@ -77,7 +77,7 @@ namespace MediaPortal.GUI.Library
 		int															_color;
 		float														_texUoff,_texVoff,_texUmax,_texVmax;
 		Texture													_packedTexture=null;
-		int															_packedTextureNo;
+		int															_packedTextureNo=-1;
 		static bool											logtextures=false;
 
 		public GUIImage (int dwParentID) : base(dwParentID)
@@ -871,20 +871,20 @@ namespace MediaPortal.GUI.Library
         if (!PreRender()) return;
 				
         //get the current frame
-				if (_packedTexture!=null)
+				if (_packedTextureNo>=0)
 				{
 					FontEngineDrawTexture(_packedTextureNo,_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
 					return;
 				}
         CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
         if (frame==null) return ; // no frame? then return
-
+				frame.Draw(_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
+				/*
 				if (frame.UseNewTextureEngine)
 				{
 					frame.Draw(_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
 					return;
 				}
-/*
         //get the texture of the frame
         Direct3D.Texture texture=frame.Image;
 
