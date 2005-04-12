@@ -36,7 +36,7 @@ namespace MediaPortal.TV.Recording
 		static bool          m_bRecordingsChanged=false;  // flag indicating that recordings have been added/changed/removed
 		static int           m_iPreRecordInterval =0;
 		static int           m_iPostRecordInterval=0;
-		static TVUtil        m_TVUtil=null;
+		
 		static string        m_strTVChannel="";
 		static State         m_eState=State.None;
 		static ArrayList     m_tvcards    = new ArrayList();
@@ -130,7 +130,6 @@ namespace MediaPortal.TV.Recording
 			m_Recordings.Clear();
 			TVDatabase.GetRecordings(ref m_Recordings);
 
-			m_TVUtil= new TVUtil();
 
 			TVDatabase.OnRecordingsChanged += new TVDatabase.OnChangedHandler(Recorder.OnRecordingsChanged);
       
@@ -216,7 +215,7 @@ namespace MediaPortal.TV.Recording
 					if (rec.Canceled>0) continue;
 					if (rec.IsDone()) continue;
 					// check which program is running 
-					TVProgram prog=m_TVUtil.GetProgramAt(chan.Name,dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
+					TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
 
 					// if the recording should record the tv program
 					if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,m_iPreRecordInterval, m_iPostRecordInterval) )
@@ -268,8 +267,17 @@ namespace MediaPortal.TV.Recording
 			tmpRec.Channel=strChannel;
 			tmpRec.RecType=TVRecording.RecordingType.Once;
 
-			TVUtil util = new TVUtil();
-			TVProgram program=util.GetCurrentProgram(strChannel);
+			TVProgram program=null;
+			for (int i=0; i < m_TVChannels.Count;++i)
+			{
+				TVChannel chan =(TVChannel)m_TVChannels[i];
+				if (chan.Name.Equals(strChannel))
+				{
+					program=chan.CurrentProgram;
+					break;
+				}
+			}
+
 			if (program!=null && !manualStop)
 			{
 				//record current playing program
@@ -1223,7 +1231,7 @@ namespace MediaPortal.TV.Recording
 				TVChannel chan =(TVChannel)m_TVChannels[i];
 				if (chan.Name.Equals(m_strTVChannel))
 				{
-					TVProgram prog=m_TVUtil.GetCurrentProgram(chan.Name);
+					TVProgram prog=chan.CurrentProgram;
 					if (prog!=null)
 					{
 						if (!GUIPropertyManager.GetProperty("#TV.View.channel").Equals(m_strTVChannel))
@@ -1326,7 +1334,16 @@ namespace MediaPortal.TV.Recording
 			}
 			else if (Recorder.View)
 			{
-				TVProgram prog=m_TVUtil.GetCurrentProgram(m_strTVChannel);
+				TVProgram prog=null;
+				for (int i=0; i < m_TVChannels.Count;++i)
+				{
+					TVChannel chan =(TVChannel)m_TVChannels[i];
+					if (chan.Name.Equals(m_strTVChannel))
+					{
+						prog=chan.CurrentProgram;
+						break;
+					}
+				}
 				if (prog!=null)
 				{
 					DateTime dtStart,dtEnd,dtStarted;

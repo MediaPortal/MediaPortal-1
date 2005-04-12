@@ -45,6 +45,8 @@ namespace MediaPortal.TV.Database
 		public bool   m_scrambled=false;
 		public int    m_iSort=-1;
 		private TVProgram currentProgram=null;
+		private TVProgram previousProgram=null;
+		private TVProgram nextProgram=null;
 
 		AnalogVideoStandard _TVStandard;
 		/// <summary> 
@@ -181,14 +183,66 @@ namespace MediaPortal.TV.Database
 					currentProgram=null;
 				}
 
-				currentProgram=GetProgramAt(DateTime.Now);
+				Update();
 				return currentProgram;
+			}
+		}
+
+		private void Update()
+		{
+			DateTime dt = DateTime.Now;
+			previousProgram=null;
+			currentProgram=null;
+			nextProgram=null;
+			long lNow=Utils.datetolong(dt);
+			ArrayList progs = new ArrayList();
+			long starttime=Utils.datetolong( dt.AddDays(-2) );
+			long endtime  =Utils.datetolong( dt.AddDays(2));
+			TVDatabase.GetProgramsPerChannel(Name,starttime,endtime,ref progs);
+			for (int i=0; i < progs.Count;++i)
+			{
+				TVProgram prog = (TVProgram) progs[i];
+				if (prog.Start <= lNow && prog.End >= lNow)
+				{
+					currentProgram=prog;
+					if (i-1 >=0 )
+						previousProgram=progs[i-1] as TVProgram;
+					if (i+1 < progs.Count)
+						nextProgram=progs[i+1] as TVProgram;
+				}
 			}
 		}
 
 		public TVProgram GetProgramAt(DateTime dt)
 		{	
-			long lNow=Utils.datetolong(dt);
+			long lNow=Utils.datetolong(DateTime.Now);
+			
+			if (currentProgram==null) 
+				Update();
+			
+			if (currentProgram!=null)
+			{
+				if (currentProgram.Start <= lNow && currentProgram.End >= lNow) 
+					Update();
+			}
+				
+			lNow=Utils.datetolong(dt);
+			if (previousProgram!=null)
+			{
+				if (previousProgram.Start <= lNow && previousProgram.End >= lNow) 
+					return previousProgram;
+			}
+			if (previousProgram!=null)
+			{
+				if (previousProgram.Start <= lNow && previousProgram.End >= lNow) 
+					return previousProgram;
+			}
+			if (currentProgram!=null)
+			{
+				if (currentProgram.Start <= lNow && currentProgram.End >= lNow) 
+					return currentProgram;
+			}
+
 			ArrayList progs = new ArrayList();
 			long starttime=Utils.datetolong( dt.AddDays(-2) );
 			long endtime  =Utils.datetolong( dt.AddDays(2));
