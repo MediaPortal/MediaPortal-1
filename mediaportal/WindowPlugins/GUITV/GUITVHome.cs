@@ -576,25 +576,36 @@ namespace MediaPortal.GUI.TV
 		/// </summary>
 		void UpdateProgressPercentageBar()
 		{
-			int iStep=0;
 			try
 			{
+				if (Navigator.CurrentTVChannel==null)
+				{
+					GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+					return;
+				}
 				//get current tv program
 				TVProgram prog=Navigator.CurrentTVChannel.CurrentProgram;
-				if (prog!=null) 
+				if (prog==null) 
 				{
-					TimeSpan ts=prog.EndTime-prog.StartTime;
-					double iTotalSecs=ts.TotalSeconds;
-					ts=DateTime.Now-prog.StartTime;
-					double iCurSecs=ts.TotalSeconds;
-					double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
-					fPercent *=100.0d;
-					GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+					GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+					return;
 				}
+				TimeSpan ts=prog.EndTime-prog.StartTime;
+				if (ts.TotalSeconds<=0)
+				{
+					GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+					return;
+				}
+				double iTotalSecs=ts.TotalSeconds;
+				ts=DateTime.Now-prog.StartTime;
+				double iCurSecs=ts.TotalSeconds;
+				double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+				fPercent *=100.0d;
+				GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				Log.Write("grrrr:{0}",iStep);
+				Log.Write("grrrr:{0}",ex.Source, ex.StackTrace);
 			}
 		}
 
