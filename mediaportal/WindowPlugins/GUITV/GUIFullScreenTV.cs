@@ -354,17 +354,23 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_REWIND:
 				{
-					g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
-					if (g_Player.Paused) g_Player.Pause();
-					m_bUpdate=true;
+					if (g_Player.IsTimeShifting)
+					{
+						g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
+						if (g_Player.Paused) g_Player.Pause();
+						m_bUpdate=true;
+					}
 				}
 					break;
 
 				case Action.ActionType.ACTION_FORWARD:
 				{
-					g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
-					if (g_Player.Paused) g_Player.Pause();
-					m_bUpdate=true;
+					if (g_Player.IsTimeShifting)
+					{
+						g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
+						if (g_Player.Paused) g_Player.Pause();
+						m_bUpdate=true;
+					}
 				}
 					break;
 
@@ -387,47 +393,62 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_STEP_BACK:
 				{
-					m_bShowStep=true;
-					m_dwTimeStatusShowTime=DateTime.Now;
-					g_Player.SeekStep(false);
+					if (g_Player.IsTimeShifting)
+					{
+						m_bShowStep=true;
+						m_dwTimeStatusShowTime=DateTime.Now;
+						g_Player.SeekStep(false);
+					}
 				}
 					break;
 
 				case Action.ActionType.ACTION_STEP_FORWARD:
 				{    
-					m_bShowStep=true;
-					m_dwTimeStatusShowTime=DateTime.Now;
-					g_Player.SeekStep(true);
+					if (g_Player.IsTimeShifting)
+					{
+						m_bShowStep=true;
+						m_dwTimeStatusShowTime=DateTime.Now;
+						g_Player.SeekStep(true);
+					}
 				}
 					break;
 
 				case Action.ActionType.ACTION_BIG_STEP_BACK:
 				{
-					m_bShowInfo=true;
-					m_dwTimeStatusShowTime=DateTime.Now;
-					g_Player.SeekRelativePercentage(-10);
+					if (g_Player.IsTimeShifting)
+					{
+						m_bShowInfo=true;
+						m_dwTimeStatusShowTime=DateTime.Now;
+						g_Player.SeekRelativePercentage(-10);
+					}
 				}
 					break;
 
 				case Action.ActionType.ACTION_BIG_STEP_FORWARD:
 				{
-					m_bShowInfo=true;
-					m_dwTimeStatusShowTime=DateTime.Now;
-					g_Player.SeekRelativePercentage(10);
+					if (g_Player.IsTimeShifting)
+					{
+						m_bShowInfo=true;
+						m_dwTimeStatusShowTime=DateTime.Now;
+						g_Player.SeekRelativePercentage(10);
+					}
 				}
 					break;
           
 				case Action.ActionType.ACTION_PAUSE:
 				{
-					g_Player.Pause();
+					if (g_Player.IsTimeShifting) g_Player.Pause();
 				}
 					break;
 
 				case Action.ActionType.ACTION_PLAY:
 				case Action.ActionType.ACTION_MUSIC_PLAY:
-					g_Player.StepNow();
-					g_Player.Speed=1;
-					if (g_Player.Paused) g_Player.Pause();
+					if (g_Player.IsTimeShifting)
+					{
+						g_Player.StepNow();
+						g_Player.Speed=1;
+						if (g_Player.Paused) g_Player.Pause();
+					}
 					break;
 
 				case Action.ActionType.ACTION_CONTEXT_MENU:
