@@ -37,7 +37,6 @@ namespace MediaPortal.GUI.TV
 		static bool     			m_bTimeShifting=true;
 		static ChannelNavigator		m_navigator;
 		
-		TVUtil          			m_util =null;
 		DateTime        			m_updateTimer=DateTime.Now;
 		bool            			m_bAlwaysTimeshift=false;
 		ArrayList       			m_recordings=new ArrayList();
@@ -57,7 +56,6 @@ namespace MediaPortal.GUI.TV
 		public  GUITVHome()
 		{	
 			GetID=(int)GUIWindow.Window.WINDOW_TV;
-			m_util= new TVUtil();
 		}
 
     
@@ -119,7 +117,7 @@ namespace MediaPortal.GUI.TV
 								return;
 							}
 
-							TVProgram prog=m_util.GetCurrentProgram(channel);
+							TVProgram prog=Navigator.GetTVChannel(channel).CurrentProgram;
 							if (prog!=null)
 							{
 								GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
@@ -439,7 +437,7 @@ namespace MediaPortal.GUI.TV
 			if (!Recorder.IsRecordingChannel(Navigator.CurrentChannel))
 			{
 				//no then start recording
-				TVProgram prog=m_util.GetCurrentProgram(Navigator.CurrentChannel);
+				TVProgram prog=Navigator.CurrentTVChannel.CurrentProgram;
 				if (prog!=null)
 				{
 					GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
@@ -581,20 +579,17 @@ namespace MediaPortal.GUI.TV
 			int iStep=0;
 			try
 			{
-				if (m_util!=null)
+				//get current tv program
+				TVProgram prog=Navigator.CurrentTVChannel.CurrentProgram;
+				if (prog!=null) 
 				{
-					//get current tv program
-					TVProgram prog=m_util.GetCurrentProgram(Navigator.CurrentChannel);
-					if (prog!=null) 
-					{
-						TimeSpan ts=prog.EndTime-prog.StartTime;
-						double iTotalSecs=ts.TotalSeconds;
-						ts=DateTime.Now-prog.StartTime;
-						double iCurSecs=ts.TotalSeconds;
-						double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
-						fPercent *=100.0d;
-						GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
-					}
+					TimeSpan ts=prog.EndTime-prog.StartTime;
+					double iTotalSecs=ts.TotalSeconds;
+					ts=DateTime.Now-prog.StartTime;
+					double iCurSecs=ts.TotalSeconds;
+					double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+					fPercent *=100.0d;
+					GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
 				}
 			}
 			catch (Exception)
@@ -792,9 +787,9 @@ namespace MediaPortal.GUI.TV
 		{
 			// TODO:  Add GUITVHome.GetHome implementation
 			strButtonText = GUILocalizeStrings.Get(605);
-			strButtonImage = "";
-			strButtonImageFocus = "";
-			strPictureImage = "";
+			strButtonImage = String.Empty;
+			strButtonImageFocus = String.Empty;
+			strPictureImage = String.Empty;
 			return true;
 		}
 
@@ -830,12 +825,14 @@ namespace MediaPortal.GUI.TV
 
 		private ArrayList	m_groups = new ArrayList(); // Contains all channel groups (including an "all channels" group)
 		private int				m_currentgroup = 0;
-		private string		m_currentchannel = string.Empty;
+		private string		m_currentchannel = String.Empty;
 		private DateTime	m_zaptime;
 		private long			m_zapdelay;
 		private string		m_zapchannel = null;
 		private int				m_zapgroup = -1;
-    private string    lastViewedChannel = null; // saves the last viewed Channel  // mPod
+		private string    lastViewedChannel = null; // saves the last viewed Channel  // mPod
+		private TVChannel m_currentTvChannel=null;
+		private ArrayList channels = new ArrayList();
 		#endregion
 
 		#region Constructors
@@ -846,8 +843,8 @@ namespace MediaPortal.GUI.TV
 			ArrayList groups = new ArrayList();
 			TVDatabase.GetGroups(ref groups); // Put groups in a local variable to ensure the "All" group is first always
 
+			channels.Clear();
 			// Add a group containing all channels
-			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels); // Load all channels
 			TVGroup tvgroup = new TVGroup();
 			tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
@@ -869,6 +866,15 @@ namespace MediaPortal.GUI.TV
 		public string CurrentChannel
 		{
 			get { return m_currentchannel; }
+		}
+
+		/// <summary>
+		/// Gets the channel that we currently watch.
+		/// Returns empty string if there is no current channel.
+		/// </summary>
+		public TVChannel CurrentTVChannel
+		{
+			get { return m_currentTvChannel; }
 		}
 
 		/// <summary>
@@ -970,14 +976,15 @@ namespace MediaPortal.GUI.TV
 		/// </summary>
 		public void UpdateCurrentChannel()
 		{
+			string newChannel=String.Empty;
 			//if current card is watching tv then use that channel
 			if (Recorder.IsViewing() || Recorder.IsTimeShifting())
 			{
-				m_currentchannel = Recorder.GetTVChannelName();
+				newChannel = Recorder.GetTVChannelName();
 			}
 			else if (Recorder.IsRecording())
 			{ // else if current card is recording, then use that channel
-				m_currentchannel = Recorder.GetTVRecording().Channel;
+				newChannel = Recorder.GetTVRecording().Channel;
 			}
 			else if (Recorder.IsAnyCardRecording())
 			{ // else if any card is recording
@@ -986,9 +993,15 @@ namespace MediaPortal.GUI.TV
 				{
 					if (Recorder.Get(i).IsRecording)
 					{
-						m_currentchannel = Recorder.Get(i).CurrentTVRecording.Channel;
+						newChannel = Recorder.Get(i).CurrentTVRecording.Channel;
 					}
 				}
+			}
+			
+			if (m_currentchannel != newChannel)
+			{
+				m_currentchannel = newChannel;
+				m_currentTvChannel=GetTVChannel(m_currentchannel);
 			}
 		}
 
@@ -1154,6 +1167,14 @@ namespace MediaPortal.GUI.TV
 			}
 			return -1;
 		}
+		public TVChannel GetTVChannel(string channelName)
+		{
+			foreach (TVChannel chan in channels)
+			{
+				if (chan.Name==channelName) return chan;
+			}
+			return null;
+		}
 
 		#endregion
 
@@ -1161,18 +1182,20 @@ namespace MediaPortal.GUI.TV
 
 		public void LoadSettings(Xml xmlreader)
 		{
-			m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", "");
+			m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
 			m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
 			string groupname = xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
 			m_currentgroup = GetGroupIndex(groupname);
 			if(m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
 				m_currentgroup = 0;
 
-			if (m_currentchannel=="")
+			if (m_currentchannel==String.Empty)
 			{
 				TVGroup group=(TVGroup )m_groups[m_currentgroup];
 				m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
 			}
+
+			m_currentTvChannel=GetTVChannel(m_currentchannel);
 		}
 
 		public void SaveSettings(Xml xmlwriter)

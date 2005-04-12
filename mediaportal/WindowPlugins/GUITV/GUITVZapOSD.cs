@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.TV
 
 	  bool m_bNeedRefresh=false;
     DateTime m_dateTime=DateTime.Now;
-	  TVUtil m_util = new TVUtil();
+	  
     ArrayList m_channels = new ArrayList();
 
     public GUITVZAPOSD()
@@ -160,13 +160,10 @@ namespace MediaPortal.GUI.TV
 
     void Get_TimeInfo()
     {
-      if (m_util==null)
-      {
-        m_util=new TVUtil();
-      }
+      
       string strChannel=GetChannelName();
       string strTime=strChannel;
-      TVProgram prog=m_util.GetCurrentProgram(strChannel);
+      TVProgram prog=GUITVHome.Navigator.GetTVChannel(strChannel).CurrentProgram;
       if( prog!=null) 
       {
      
@@ -337,11 +334,8 @@ namespace MediaPortal.GUI.TV
         cntlNext.OnMessage(msg);
       }
 
-		if (m_util==null)
-		{
-			m_util=new TVUtil();
-		}
-      TVProgram prog=m_util.GetProgramAt(GetChannelName(),m_dateTime);
+		
+			TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(m_dateTime);
       
       if (prog!=null)
       {
@@ -366,7 +360,7 @@ namespace MediaPortal.GUI.TV
         }
 
         // next program
-        prog=m_util.GetProgramAt(GetChannelName(),prog.EndTime.AddMinutes(1));
+				prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(1));
         if (prog!=null)
         {
           strTime=String.Format("{0} ", 
@@ -395,11 +389,8 @@ namespace MediaPortal.GUI.TV
 		  double fPercent;
 		  if (g_Player.Playing)
 		  {
-			  if (m_util==null)
-			  {
-				  m_util=new TVUtil();
-			  }
-			  TVProgram prog=m_util.GetCurrentProgram(GetChannelName());
+
+				TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).CurrentProgram;
 			  if (prog==null) return;
 			  string strTime=String.Format("{0}-{1}", 
 				  prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
