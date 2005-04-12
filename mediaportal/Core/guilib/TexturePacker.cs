@@ -244,7 +244,7 @@ namespace MediaPortal.GUI.Library
 			using (Image bmp = Image.FromFile(file))
 			{
 				int pos;
-				string skinName=String.Format(@"{0}\media", GUIGraphicsContext.Skin);
+				string skinName=String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
 				pos=file.IndexOf(skinName);
 				if (pos>=0)
 				{
@@ -272,6 +272,7 @@ namespace MediaPortal.GUI.Library
 				fileName=fileName.Remove(0,1);
 			}
 			fileName=fileName.ToLower();
+			if (fileName==String.Empty) return false;
 			int index=0;
 			foreach (PackedTexture bigOne in packedTextures)
 			{

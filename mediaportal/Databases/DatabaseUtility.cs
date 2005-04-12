@@ -169,9 +169,9 @@ namespace MediaPortal.Database
 		{
 			if (null == results) return String.Empty;
 			if (results.Rows.Count < iRecord) return String.Empty;
-			if (results.ColumnNames.Count < column) return String.Empty;
+			if (column<0 || column>=results.ColumnNames.Count ) return String.Empty;
 			ArrayList arr = (ArrayList)results.Rows[iRecord];
-			
+			if (arr[column]==null) return String.Empty;
 			string strLine = ((string)arr[column]).Trim();
 			strLine = strLine.Replace("''","'");
 			return strLine;;
