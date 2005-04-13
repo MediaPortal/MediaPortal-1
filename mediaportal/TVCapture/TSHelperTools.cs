@@ -22,7 +22,7 @@ namespace MediaPortal.TV.Recording{
 			public int	TableID;
 			public int	SectionLen;
 			public bool	IsMHWTable;
-
+			public int	MHWIndicator;
 		}
 		
 		public TSHelperTools()
@@ -49,17 +49,8 @@ namespace MediaPortal.TV.Recording{
 			header.AdaptionFieldControl=(data[3]>>4) & 0x3;
 			header.ContinuityCounter=data[3] & 0x0F;
 			header.AdaptionField=data[4];
-			header.TableID=0;
-			header.SectionLen=0;
-			header.IsMHWTable=false;
-			//
-			// this is ONLY for MHW-EPG !!
-			if(data[4]==0 && ((int)(data[5] & 0x90))==0x90 && ((int)(data[6] & 0x70))==0x70)
-			{
-				header.TableID=data[5];
-				header.SectionLen=((data[6]-0x70)<<8)+data[7];
-				header.IsMHWTable=true;
-			}
+			header.TableID=data[5];
+			header.SectionLen=((data[6]-0x70)<<8)+data[7];
 			return header;
 		}
 	}

@@ -136,10 +136,6 @@ namespace MediaPortal.TV.Recording
 
 		} 
 		//
-//		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-//		public static extern int GetGraph([In] DShowNET.IGraphBuilder graph,bool running,IntPtr callback);
-//		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-//		public static extern void StopGraph();
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern bool EventMsg(int eventType,[In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
@@ -380,31 +376,28 @@ namespace MediaPortal.TV.Recording
 			}
 		
 
-//			int pid=m_currentChannel.VideoPid;
+			//			int pid=m_currentChannel.VideoPid;
 			if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
 			for(int pointer=add;pointer<end;pointer+=188)
 			{
 					
 				TSHelperTools.TSHeader header=m_tsHelper.GetHeader((IntPtr)pointer);
-				// epg
 
 				try
 				{
-					if(m_epgClass.GrabState==false && header.IsMHWTable==true && (header.TableID==0x91 || header.TableID==0x90))
+					if(m_epgClass.GrabState==false && m_epgClass.CanStartGrabbing==true && header.AdaptionField==0 && (header.TableID==0x91 || header.TableID==0x90))
 					{
 						m_epgClass.GrabState=true;
 						m_epgClass.GrabbingLength=header.SectionLen;
 						m_epgClass.MHWTable=header.TableID;
 						m_epgClass.CurrentPid=header.Pid;
-						Log.Write("mhw-grab: start grabbing"); 
-
 					}
 					if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
 					{
+						
 						byte[] epgData=new byte[184];
-						// mhw epg: titles
 						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-						m_epgClass.SaveData(epgData,header);	
+						m_epgClass.SaveData(epgData,header);
 					}
 				}
 				catch(Exception ex)
@@ -413,6 +406,7 @@ namespace MediaPortal.TV.Recording
 				}
 				
 			}
+
 
 			return 0;
 		}
@@ -627,97 +621,94 @@ namespace MediaPortal.TV.Recording
 			int hr=0; // the result
 
 			// clear epg
-			if(m_epgClass!=null)
-				m_epgClass.ClearBuffer();
+				if(m_epgClass!=null)
+				{
+					Log.Write("dvbgrabss2: clear mhw buffer");
+					m_epgClass.ClearBuffer();
+				}
 
-			if(Frequency>13000)
-				Frequency/=1000;
+				if(Frequency>13000)
+					Frequency/=1000;
 
-			if(m_tunerCtrl==null || m_dataCtrl==null || m_b2c2Adapter==null || m_avCtrl==null)
-				return false;
+				if(m_tunerCtrl==null || m_dataCtrl==null || m_b2c2Adapter==null || m_avCtrl==null)
+					return false;
 
-			// skystar
-			if(m_cardType=="" || m_cardType=="skystar")
-			{
-				hr = m_tunerCtrl.SetFrequency(Frequency);
-				if (hr!=0)
+				// skystar
+				if(m_cardType=="" || m_cardType=="skystar")
 				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFrequency");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetSymbolRate");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbFrequency");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetFec(FEC);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFec");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetPolarity(POL);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetPolarity");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbKHz");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetDiseqc(Diseq);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetDiseqc");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-			}
-			// cablestar
-			
-			
-			
-			// airstar
-
-			// final
-			hr = m_tunerCtrl.SetTunerStatus();
-			if (hr!=0)	
-			{
-				// some more tries...
-				int retryCount=0;
-				while(1>0)
-				{
-					hr=m_tunerCtrl.SetTunerStatus();
-					if(hr!=0)
-						retryCount++;
-					else
-						break;
-
-					if(retryCount>=20)
+					hr = m_tunerCtrl.SetFrequency(Frequency);
+					if (hr!=0)
 					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetTunerStatus (in loop)");
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFrequency");
+						return false;	// *** FUNCTION EXIT POINT
+					}
+					hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetSymbolRate");
+						return false;	// *** FUNCTION EXIT POINT
+					}
+					hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbFrequency");
+						return false;	// *** FUNCTION EXIT POINT
+					}
+					hr = m_tunerCtrl.SetFec(FEC);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFec");
+						return false;	// *** FUNCTION EXIT POINT
+					}
+					hr = m_tunerCtrl.SetPolarity(POL);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetPolarity");
+						return false;	// *** FUNCTION EXIT POINT
+					}
+					hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbKHz");
+						return false;	// *** FUNCTION EXIT POINT
+					}
+					hr = m_tunerCtrl.SetDiseqc(Diseq);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetDiseqc");
 						return false;	// *** FUNCTION EXIT POINT
 					}
 				}
-				//
-				
-			}
+				// cablestar
+			
+			
+			
+				// airstar
 
-//			hr=m_tunerCtrl.CheckLock();
-//			if(hr!=0)
-//			{
-//				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on CheckLock");
-//				return false;
-//			}
+				// final
+				hr = m_tunerCtrl.SetTunerStatus();
+				if (hr!=0)	
+				{
+					// some more tries...
+					int retryCount=0;
+					while(1>0)
+					{
+						hr=m_tunerCtrl.SetTunerStatus();
+						if(hr!=0)
+							retryCount++;
+						else
+							break;
+
+						if(retryCount>=20)
+						{
+							Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetTunerStatus (in loop)");
+							return false;	// *** FUNCTION EXIT POINT
+						}
+					}
+					//
+				
+				}
+			
 
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
@@ -1915,8 +1906,6 @@ namespace MediaPortal.TV.Recording
 			else
 				Log.WriteFile(Log.LogType.Capture,"called Tune(object)");
 			m_currentTuningObject=ch;
-			if(m_epgClass!=null)
-				m_epgClass.ClearBuffer();
 
 		}
 		//
