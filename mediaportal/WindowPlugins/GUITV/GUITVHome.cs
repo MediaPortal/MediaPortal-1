@@ -1008,8 +1008,9 @@ namespace MediaPortal.GUI.TV
 					}
 				}
 			}
-			
-			if (m_currentchannel != newChannel)
+			if (newChannel==String.Empty)
+				newChannel=m_currentchannel ;
+			if (m_currentchannel != newChannel && newChannel!=String.Empty)
 			{
 				m_currentchannel = newChannel;
 				m_currentTvChannel=GetTVChannel(m_currentchannel);
