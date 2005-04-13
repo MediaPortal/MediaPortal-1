@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.TV
 		
 		DateTime        			m_updateTimer=DateTime.Now;
 		bool            			m_bAlwaysTimeshift=false;
-		ArrayList       			m_recordings=new ArrayList();
+		
 		DateTime						  dtlastTime=DateTime.Now;
 
 		[SkinControlAttribute(2)]			protected GUIButtonControl btnTvGuide=null;
@@ -199,7 +199,7 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			TVDatabase.GetRecordings(ref m_recordings);
+			
 			if (g_Player.Playing && !g_Player.IsTV)
 			{
 				if (!g_Player.IsTVRecording)
@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.TV
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			m_recordings.Clear();
+			
 					
           
 			SaveSettings();
