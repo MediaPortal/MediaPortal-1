@@ -165,5 +165,17 @@
 		<useQuotes>F</useQuotes>
 		<fileextensions>.adf</fileextensions>
 	</profile>
+	<profile>
+		<id>220</id>
+		<section>Emulator Profiles</section>
+		<title>Atari 7800</title>
+		<launchingApplication>...yourMESSpathhere...\mess.exe</launchingApplication>
+		<useShellExecute>T</useShellExecute>
+		<arguments>a7800 -cart %FILE% -skip_gameinfo -skip_disclaimer -nonewui</arguments>
+		<windowStyle>minimized</windowStyle>
+		<startupDir>...yourMESSpathhere...</startupDir>
+		<useQuotes>T</useQuotes>
+		<fileextensions>.a78</fileextensions>
+	</profile>
 
 </profiles>
