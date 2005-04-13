@@ -1200,7 +1200,7 @@ namespace MediaPortal.GUI.TV
 			if(m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
 				m_currentgroup = 0;
 
-			if (m_currentchannel==String.Empty)
+			if (m_currentchannel.Trim()==String.Empty)
 			{
 				TVGroup group=(TVGroup )m_groups[m_currentgroup];
 				m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
@@ -1211,8 +1211,11 @@ namespace MediaPortal.GUI.TV
 
 		public void SaveSettings(Xml xmlwriter)
 		{
-			xmlwriter.SetValue("mytv", "channel", m_currentchannel);
-			xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
+			if (m_currentchannel.Trim() != String.Empty)
+				xmlwriter.SetValue("mytv", "channel", m_currentchannel);
+			
+			if (CurrentGroup.GroupName.Trim() != String.Empty)
+				xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
 		}
 
 		#endregion
