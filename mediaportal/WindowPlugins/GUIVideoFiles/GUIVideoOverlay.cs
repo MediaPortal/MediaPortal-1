@@ -14,6 +14,7 @@ namespace MediaPortal.GUI.Video
 	{
     const string ThumbsFolder=@"thumbs\Videos\Title";
     string m_strFile = "";
+		string m_strProgram = "";
     enum Controls
     {
 			CONTROL_VIDEO_RECTANGLE = 0
@@ -74,6 +75,15 @@ namespace MediaPortal.GUI.Video
         m_strFile = g_Player.CurrentFile;
         SetCurrentFile(m_strFile);
       }
+
+			if ( g_Player.IsTV && (m_strProgram!=GUIPropertyManager.GetProperty("#TV.View.title")) )
+			{
+				m_strProgram = GUIPropertyManager.GetProperty("#TV.View.title");
+				GUIPropertyManager.SetProperty("#title", GUIPropertyManager.GetProperty("#TV.View.channel"));
+				GUIPropertyManager.SetProperty("#genre", m_strProgram);
+				GUIPropertyManager.SetProperty("#year", GUIPropertyManager.GetProperty("#TV.View.genre"));
+				GUIPropertyManager.SetProperty("#director", GUIPropertyManager.GetProperty("#TV.View.start")+" - "+GUIPropertyManager.GetProperty("#TV.View.stop"));
+			}
 
 			if (GUIGraphicsContext.IsFullScreenVideo) return false;
 			if (GUIGraphicsContext.Calibrating) return false;
@@ -235,19 +245,24 @@ namespace MediaPortal.GUI.Video
         VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
         bMovieInfoFound = true;
       }
-      if (bMovieInfoFound)
-      {
-				movieDetails.SetProperties();
-      }
-      else
-      {
-        GUIListItem item = new GUIListItem();
-        item.IsFolder = false;
-        item.Path = strFile;
-        Utils.SetThumbnails(ref item);
-        GUIPropertyManager.SetProperty("#thumb",item.ThumbnailImage);
-      }
-			m_strThumb=GUIPropertyManager.GetProperty("#thumb");
+		 if (bMovieInfoFound)
+		 {
+			 movieDetails.SetProperties();
+		 }
+		 else if (g_Player.IsTV)
+		 {
+			 GUIPropertyManager.SetProperty("#title", GUIPropertyManager.GetProperty("#TV.View.channel"));
+			 GUIPropertyManager.SetProperty("#genre", GUIPropertyManager.GetProperty("#TV.View.title"));
+		 }
+		 else
+		 {
+			 GUIListItem item = new GUIListItem();
+			 item.IsFolder = false;
+			 item.Path = strFile;
+			 Utils.SetThumbnails(ref item);
+			 GUIPropertyManager.SetProperty("#thumb",item.ThumbnailImage);
+		 }
+		 m_strThumb=GUIPropertyManager.GetProperty("#thumb");
     }
 	}
 }
