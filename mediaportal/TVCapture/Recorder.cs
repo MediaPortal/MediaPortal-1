@@ -44,6 +44,7 @@ namespace MediaPortal.TV.Recording
 		static ArrayList     m_Recordings = new ArrayList();
 		
 		static DateTime      m_dtStart=DateTime.Now;
+		static DateTime      m_dtProgresBar=DateTime.Now;
 		static int           m_iCurrentCard=-1;
 		static DateTime      m_dtCheckDiskSpace=DateTime.Now;
 		static bool					 importing=false;
@@ -1205,26 +1206,32 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 
-			TimeSpan ts=DateTime.Now-m_dtStart;
+			TimeSpan ts=DateTime.Now-m_dtProgresBar;
+			if (ts.TotalMilliseconds>10000)
+			{
+				Recorder.SetRecorderProperties();
+				m_dtProgresBar=DateTime.Now;
+			}
+
+			ts=DateTime.Now-m_dtStart;
 			if (ts.TotalMilliseconds<30000) return;
 			Recorder.HandleRecordings();
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
 				dev.Process();
-			}
+			}			
 			Recorder.SetProperties();
 			Recorder.CheckRecordingDiskSpace();
 			m_dtStart=DateTime.Now;
 		}//static public void Process()
 
 		/// <summary>
-		/// Updates the TV tags for the skin bases on the current tv channel, recording...
+		/// Updates the TV tags for the skin bases on the current tv channel
 		/// </summary>
 		/// <remarks>
 		/// Tags updated are:
 		/// #TV.View.channel, #TV.View.start,#TV.View.stop, #TV.View.genre, #TV.View.title, #TV.View.description
-		/// #TV.Record.channel, #TV.Record.start,#TV.Record.stop, #TV.Record.genre, #TV.Record.title, #TV.Record.description, #TV.Record.thumb
 		/// </remarks>
 		static void SetProperties()
 		{
@@ -1259,13 +1266,23 @@ namespace MediaPortal.TV.Recording
 						GUIPropertyManager.SetProperty("#TV.View.start","");
 						GUIPropertyManager.SetProperty("#TV.View.stop" ,"");
 						GUIPropertyManager.SetProperty("#TV.View.genre","");
-						GUIPropertyManager.SetProperty("#TV.View.title","");
+						GUIPropertyManager.SetProperty("#TV.View.title", m_strTVChannel);
 						GUIPropertyManager.SetProperty("#TV.View.description","");
 					}
 					break;
 				}//if (chan.Name.Equals(m_strTVChannel))
-			}//for (int i=0; i < m_TVChannels.Count;++i)
+			}//for (int i=0; i < m_TVChannels.Count;++i)			
+		}//static void SetProperties()
 
+		/// <summary>
+		/// Updates the TV tags for the skin bases on the current tv recording...
+		/// </summary>
+		/// <remarks>
+		/// Tags updated are:
+		/// #TV.Record.channel, #TV.Record.start,#TV.Record.stop, #TV.Record.genre, #TV.Record.title, #TV.Record.description, #TV.Record.thumb
+		/// </remarks>
+		static void SetRecorderProperties()
+		{
 			// handle properties...
 			if (IsRecording())
 			{
@@ -1373,7 +1390,7 @@ namespace MediaPortal.TV.Recording
 					Recorder.SetProgressBarProperties(dtStart,dtStarted,dtEnd);
 				}
 			}
-		}//static void SetProperties()
+		}
     
 		/// <summary>
 		/// property which returns the date&time the recording was started
