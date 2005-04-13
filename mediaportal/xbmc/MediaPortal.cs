@@ -893,8 +893,17 @@ public class MediaPortalApp : D3DApp, IRender
 			else if (g_Player.Speed < 1) GUIPropertyManager.SetProperty("#playlogo", "logo_rewind.png");
 			else if (g_Player.Playing) GUIPropertyManager.SetProperty("#playlogo", "logo_play.png");
 
-			GUIPropertyManager.SetProperty("#currentplaytime",  Utils.SecondsToHMSString((int)g_Player.CurrentPosition));
-			GUIPropertyManager.SetProperty("#shortcurrentplaytime", Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition));
+			if (g_Player.IsTV)
+			{
+				GUIPropertyManager.SetProperty("#currentplaytime", GUIPropertyManager.GetProperty("#TV.Record.current"));
+				GUIPropertyManager.SetProperty("#shortcurrentplaytime", GUIPropertyManager.GetProperty("#TV.Record.current"));
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#currentplaytime", Utils.SecondsToHMSString((int)g_Player.CurrentPosition));
+				GUIPropertyManager.SetProperty("#shortcurrentplaytime", Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition));
+			}
+
 			if (g_Player.Duration>0)
 			{
 				GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
