@@ -881,6 +881,10 @@ public class MediaPortalApp : D3DApp, IRender
 		// update playing status
 		if (g_Player.Playing)
 		{
+			if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+			{
+				GUIGraphicsContext.IsFullScreenVideo=true;
+			}
 			GUIGraphicsContext.IsPlaying = true;
 			GUIGraphicsContext.IsPlayingVideo = (g_Player.IsVideo || g_Player.IsTV);
 
@@ -911,7 +915,9 @@ public class MediaPortalApp : D3DApp, IRender
 		else
 		{
 			if (!Recorder.View)
+			{
 				GUIGraphicsContext.IsFullScreenVideo = false;
+			}
 			GUIGraphicsContext.IsPlaying = false;
 		}
 		if (!g_Player.Playing && !Recorder.IsRecording())
