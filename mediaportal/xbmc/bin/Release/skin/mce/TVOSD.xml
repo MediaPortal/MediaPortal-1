@@ -101,9 +101,9 @@
 		<width>500</width>
 		<height>60</height> 
 		<posX>205</posX> 
-		<posY>443</posY>
+		<posY>420</posY>
 		<align>left</align>
-		<font>font10</font> 
+		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
@@ -113,9 +113,9 @@
 		<width>500</width> 
 		<height>60</height>
 		<posX>205</posX> 
-		<posY>420</posY>
+		<posY>443</posY>
 		<align>left</align> 
-		<font>font13</font> 
+		<font>font10</font> 
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
