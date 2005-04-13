@@ -20,7 +20,7 @@
 			<posY>20</posY>
 			<texture>television_logo.png</texture>
 		</control>	
-			<control>
+		<control>
 			<description>My Recorded TV Text Label</description>
 			<type>label</type>
 			<id>1</id>
@@ -118,7 +118,7 @@
 			</control>
 			<control>
 				<description>All,Genre,Channel button</description>
-				<type>selectbutton</type>
+				<type>button</type>
 				<id>5</id>
 				<posX>60</posX>
 				<posY>165</posY>
@@ -127,11 +127,6 @@
 				<onright>10</onright>
 				<onup>2</onup>
 				<ondown>6</ondown>
-				<subitems>
-					<subitem>914</subitem>
-					<subitem>135</subitem>
-					<subitem>915</subitem>
-				</subitems>
 			</control>
 			<control>
 				<description>cleanup button</description>
