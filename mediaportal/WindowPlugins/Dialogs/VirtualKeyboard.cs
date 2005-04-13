@@ -459,7 +459,8 @@ namespace MediaPortal.Dialogs
       m_CaretTimer=DateTime.Now;
 
       
-      InitBoard();
+			if (GUIGraphicsContext.DX9Device!=null)
+				InitBoard();
     }
 
     public override bool Init()

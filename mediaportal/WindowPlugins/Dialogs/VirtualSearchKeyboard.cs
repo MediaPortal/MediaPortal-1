@@ -496,8 +496,9 @@ namespace MediaPortal.Dialogs
 			m_CaretTimer=DateTime.Now;
 			// construct search def.
 			m_searchKind	 = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
-	              
-			InitBoard();
+	           
+			if (GUIGraphicsContext.DX9Device!=null)
+				InitBoard();
 		}
 
 		public override bool Init()
