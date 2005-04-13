@@ -1067,10 +1067,18 @@ namespace MediaPortal.GUI.TV
 			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
 			m_zapchannel = chan.Name;
 
-			if(useZapDelay)
-				m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+			if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+			{				
+				if(useZapDelay)
+					m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+				else
+					m_zaptime = DateTime.Now;
+			}
 			else
+			{
 				m_zaptime = DateTime.Now;
+				CheckChannelChange();
+			}
 		}
 
 		/// <summary>
@@ -1093,10 +1101,18 @@ namespace MediaPortal.GUI.TV
 			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
 			m_zapchannel = chan.Name;
 
-			if(useZapDelay)
-				m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+			if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+			{				
+				if(useZapDelay)
+					m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+				else
+					m_zaptime = DateTime.Now;
+			}
 			else
+			{
 				m_zaptime = DateTime.Now;
+				CheckChannelChange();
+			}
 		}
 
 		/// <summary>
