@@ -233,10 +233,10 @@ namespace MediaPortal.TV.Database
 				if (previousProgram.Start <= lNow && previousProgram.End >= lNow) 
 					return previousProgram;
 			}
-			if (previousProgram!=null)
+			if (nextProgram!=null)
 			{
-				if (previousProgram.Start <= lNow && previousProgram.End >= lNow) 
-					return previousProgram;
+				if (nextProgram.Start <= lNow && nextProgram.End >= lNow) 
+					return nextProgram;
 			}
 			if (currentProgram!=null)
 			{
