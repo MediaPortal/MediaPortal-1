@@ -23,7 +23,7 @@
 <!--  2. Define the 0-based index of the pin. This always should work...                                -->
 <!--                                                                                                    -->
 <!-- Cards supported so far:                                                          -->
-<!--    Adaptec AVC2000	 	      	      -->
+<!--    Adaptec AVC-2000 	      	      -->
 <!--    Aito DVB-T DUO CardBus		      -->
 <!--    Asus PVR 416			      -->
 <!--    ATI eHomeWonder	 		      -->
@@ -71,7 +71,6 @@
 <!--    HP USB PVR 	 `	              -->
 <!--    InnoDV DV-3300  `	              -->
 <!--    I-O DATA GV-MPEG2/USB2		      -->
-<!--    Kona One TV                           -->
 <!--    KNC ONE TV Station DVB-C       	      -->
 <!--    KNC ONE TV Station DVB-S       	      -->
 <!--    KNC ONE TV-Station DVB-T              -->
@@ -93,7 +92,7 @@
 <!--    Snazzi* III DVD Creator               -->
 <!--    Snazzi* III USB2                      -->
 <!--    Sony MPEG RealTime Encoder            -->
-<!--    TOSHIBA Style Bay TV Tuner            -->
+<!--    Toshiba Style Bay TV Tuner            -->
 <!--    Twinhan VisionDTV DVB-C               -->
 <!--    Twinhan VisionDTV DVB-S               -->
 <!--    Twinhan VisionDTV DVB-T               -->
@@ -102,13 +101,13 @@
 <!--    VideoMate DVB-T 300                   -->
 <!--    V-Stream Xpert DTV                    -->
 <!--    Vstream Xpert TV PVR 883	      -->
-<!--    Winfast PVR 2000                      -->
+<!--    WinFast PVR 2000                      -->
 <!--    general s/w card                      -->
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.74                                                               -->
-<!-- changed : 12-april-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.76                                                               -->
+<!-- changed : 14-april-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -198,7 +197,7 @@
         <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
         <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
         <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
-        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
         <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
         <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
       </filters>
@@ -225,7 +224,7 @@
         <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
         <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
         <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
-        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
         <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
         <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
       </filters>
@@ -252,7 +251,7 @@
         <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
         <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
         <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
-        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="false"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
         <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
         <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
       </filters>
@@ -370,16 +369,16 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Winfast PVR2000" capturename="WinFast PVR2000 WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_663c107d&amp;rev_05">
+  <capturecard commercialname="WinFast PVR2000" capturename="WinFast PVR2000 WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_663c107d&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="true"></filter>
-        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="true"></filter>
-        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="true"></filter>
-        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="false"></filter>
+        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="false"></filter>
+        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="false"></filter>
+        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="false"></filter>
+        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="false"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
@@ -591,8 +590,6 @@
     </tv>
   </capturecard>
 
-<!--   below is currently causing lock-ups - investigating with animation technologies	  -->
-
   <capturecard commercialname="Lifeview DVB-T Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03015168&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -605,10 +602,10 @@
         <filter cat="mux"  		name="CyberLink MPEG Muxer"     		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
-        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encodervideo"  	sinkpin="0"></connection>
-        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoderaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" 	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"  	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"  	sourcepin="3" sinkfilter="encoderaudio" sinkpin="0"></connection>
 	<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
         <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
       </connections>
@@ -779,8 +776,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
       <filters> 
         <filter cat="networkprovider" name="Microsoft DVBC Network Provider"    checkdevice="false"></filter> 
-        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="false"></filter> 
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="true"></filter> 
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter> 
       </filters> 
       <connections> 
       <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
@@ -795,8 +792,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
       <filters> 
         <filter cat="networkprovider" name="Microsoft DVBC Network Provider"    checkdevice="false"></filter> 
-        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="false"></filter> 
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="true"></filter> 
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter> 
       </filters> 
       <connections> 
       <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
@@ -811,8 +808,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
       <filters> 
         <filter cat="networkprovider" name="Microsoft DVBC Network Provider"    checkdevice="false"></filter> 
-        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="false"></filter> 
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-C Tuner"        checkdevice="true"></filter> 
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter> 
       </filters> 
       <connections> 
       <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
@@ -1225,33 +1222,8 @@
 	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
-  </capturecard> 
-
-<!-- Not sure if this works, it needs to be verified, please advise -->
-  
-  <capturecard commercialname="Kona One TV" capturename="Europa BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_a0061894&amp;rev_01">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
-    <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
-      <filters>
-        <filter cat="tvtuner"  name="Europa BDA Analog TV Tuner" checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Europa BDA Analog TV Audio" checkdevice="true"></filter>
-        <filter cat="crossbar" name="Europa BDA Analog Xbar"	 checkdevice="true"></filter>
-        <filter cat="capture"  name="Europa BDA Analog Capture"  checkdevice="true"></filter>
-        <filter cat="encoder"  name="Europa BDA MPEG Encoder"    checkdevice="false"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
-        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="encoder"  sinkpin="0"></connection>
-        <connection sourcefilter="capture"  sourcepin="5" sinkfilter="encoder"  sinkpin="1"></connection>
-      </connections>
-    </tv>
   </capturecard>
-   
+
   <capturecard commercialname="DNTV Live DVB-T" capturename="DNTV Live! Transport Stream Capture Tuner 1" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -1277,7 +1249,7 @@
         <filter cat="tvaudio"  name="Conexant 2388x TvAudio"			checkdevice="true"></filter>
         <filter cat="crossbar" name="Conexant 2388x Crossbar"			checkdevice="true"></filter>
         <filter cat="capture"  name="Conexant 2388x Video Capture"		checkdevice="true"></filter>
-        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"		checkdevice="false"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1346,7 +1318,7 @@
     </tv>
   </capturecard>
 
-<!-- Not sure if this works, it needs to be verified, please advise -->
+<!-- Diamond XtremeTV PVR550 - not sure if this works, it needs to be verified, please advise -->
 
   <capturecard commercialname="Diamond XtremeTV PVR550" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0070ff92&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
@@ -1374,9 +1346,9 @@
     <tv> 
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
       <filters> 
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter> 
-        <filter cat="tunerdevice" name="AVerMedia BDA DVBT Tuner" checkdevice="true"></filter> 
-        <filter cat="capture" name="AVerMedia BDA Digital Capture" checkdevice="true"></filter> 
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter> 
+        <filter cat="tunerdevice" 	name="AVerMedia BDA DVBT Tuner" 	checkdevice="true"></filter> 
+        <filter cat="capture" 		name="AVerMedia BDA Digital Capture" 	checkdevice="true"></filter> 
       </filters> 
     <connections> 
       <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
@@ -1409,7 +1381,7 @@
         <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
         <filter cat="crossbar" name="Conexant 2388x Crossbar"  		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"  	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1426,10 +1398,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Conexant 2388x TvAudio"		checkdevice="true"></filter>
         <filter cat="crossbar" name="Conexant 2388x Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"  	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1464,7 +1436,7 @@
     </tv>
   </capturecard>
 
-<!--    Below is a TEST - needs MARS WARRIOR Confirmation   -->  
+<!--    Requires AIW bypass patch to work properly (TVCapture.dll)   --> 
 
   <capturecard commercialname="ATI AIW 9x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -1476,9 +1448,9 @@
         <filter cat="crossbaraudio" 	name="ATI TV Audio Crossbar"    	checkdevice="true"></filter>      
         <filter cat="crossbarvideo" 	name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
         <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
-        <filter cat="encodervideo"  	name="ATI Media Center Video Encoder"	checkdevice="true"></filter>
-        <filter cat="encoderaudio"  	name="ATI Media Center Audio Encoder" 	checkdevice="true"></filter>
-        <filter cat="mux"      		name="ATI Media Center Multiplexer"	checkdevice="true"></filter>
+        <filter cat="encodervideo"  	name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
+        <filter cat="encoderaudio"  	name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"  sinkpin="2"></connection>
@@ -1497,7 +1469,7 @@
     </tv>
   </capturecard>
 
-<!--    Not confirmed working yet   -->  
+<!--    AverMedia UltraTV Media Center PCI 550 - not confirmed working yet   -->  
 
   <capturecard commercialname="AverMedia UltraTV Media Center PCI 550" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_80111461&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -1531,8 +1503,8 @@
         <filter cat="tvaudio"  		name="Plextor ConvertX TV402U TV Audio"		checkdevice="true"></filter>
         <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		checkdevice="true"></filter>
         <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  	checkdevice="true"></filter>
-        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="true"></filter>
-        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="true"></filter>
+        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="false"></filter>
+        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="0"></connection>
@@ -1551,9 +1523,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice" name="TV Station DVB-T Tuner (TU1216)" checkdevice="true"></filter>
-        <filter cat="capture" name="TV Station DVB-T MCE (TU1216)" checkdevice="true"></filter>
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
+        <filter cat="tunerdevice" 	name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="capture" 		name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1572,8 +1544,8 @@
         <filter cat="crossbar"		name="Emuzed Maui III-G Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III-G Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui III-G Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -1594,13 +1566,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III Device"	checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Emuzed Maui III Device"		checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -1621,13 +1593,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"	checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -1653,8 +1625,8 @@
         <filter cat="crossbar"		name="Emuzed Maui III Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -1680,8 +1652,8 @@
         <filter cat="crossbar"		name="Emuzed Maui III PAL Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III PAL Device"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui III PAL Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -1869,8 +1841,8 @@
       <filters>
         <filter cat="crossbar"	 	name="Plextor ConvertX M402U CrossBar"		checkdevice="true"></filter>
         <filter cat="capture"  		name="Plextor ConvertX M402U A/V Capture"  	checkdevice="true"></filter>
-        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="true"></filter>
-        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="true"></filter>
+        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="false"></filter>
+        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
@@ -1960,8 +1932,8 @@
         <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui SE Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -1987,8 +1959,8 @@
         <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui SE Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2014,8 +1986,8 @@
         <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui 2S Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2041,8 +2013,8 @@
         <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui 2S Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2068,8 +2040,8 @@
         <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2095,8 +2067,8 @@
         <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2122,8 +2094,8 @@
         <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2149,8 +2121,8 @@
         <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2313,8 +2285,8 @@
         <filter cat="crossbar"		name="Emuzed EvcapMaui Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed EvcapMaui Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed EvcapMaui Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2340,8 +2312,8 @@
         <filter cat="crossbar"		name="Emuzed EvcapMaui Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed EvcapMaui Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed EvcapMaui Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2356,6 +2328,8 @@
       </connections>
     </tv>
   </capturecard>
+
+<!--    Creative Video Blaster Digital VCR - not working yet!   --> 
 
   <capturecard commercialname="Creative Video Blaster Digital VCR" capturename="VBDVCR Capture" devid="ven_1274&amp;dev_5882&amp;subsys_58821274&amp;rev_02">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -2380,6 +2354,8 @@
       </connections>
     </tv>
   </capturecard>
+
+<!--    Medion BDA Analog (DVB Hybrid) - not officially supported!   --> 
 
   <capturecard commercialname="Medion BDA Analog (DVB Hybrid)" capturename="MEDION BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -2407,6 +2383,9 @@
       </connections>
     </tv>
   </capturecard>
+
+
+<!--    AverTV Cardbus - not officially supported!   --> 
 
   <capturecard commercialname="AverTV Cardbus" capturename="AVerMedia, AVerTV WDM Video Capture (E500)" devid="ven_1131&amp;dev_7134&amp;subsys_d6ee1461&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -2480,6 +2459,8 @@
     </tv>
   </capturecard>
 
+<!--    FlyTV Platinum Mini - not officially supported!   --> 
+
   <capturecard commercialname="FlyTV Platinum Mini" capturename="FlyTV Platinum33 mini" devid="ven_1131&amp;dev_7133&amp;subsys_02125168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -2492,33 +2473,6 @@
 	<filter cat="encodervideo"	name="InterVideo Video Encoder"		checkdevice="false"></filter>
 	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"		checkdevice="false"></filter>
 	<filter cat="mux"		name="InterVideo Multiplexer"		checkdevice="false"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Compro Videomate Gold Plus" capturename="VideoMate TV Capture" devid="ven_1131&amp;dev_7134&amp;subsys_c200185b&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
-    <tv>
-      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
-      <filters>
-        <filter cat="tvtuner"		name="VideoMate TV Tuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="VideoMate TV Audio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="VideoMate TV Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="VideoMate TV Capture"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Compro MPEG Video Encoder"	checkdevice="false"></filter>
-	<filter cat="encoderaudio"	name="Compro MPEG Audio Encoder"	checkdevice="false"></filter>
-	<filter cat="mux"		name="Compro MPEG Muxer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
@@ -2598,6 +2552,8 @@
     </tv>
   </capturecard>
 
+<!--    Medion WDM Analog (Not Hybrid) - not officially supported!   -->
+
   <capturecard commercialname="Medion BDA Analog (DVB Hybrid)" capturename="MEDION BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000516be&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -2635,8 +2591,8 @@
         <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2662,8 +2618,8 @@
         <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"		checkdevice="true"></filter>
 	<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2689,8 +2645,8 @@
         <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III SE Device"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2716,8 +2672,8 @@
         <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III SE Device"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2738,13 +2694,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Viewsonic TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Viewsonic TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Viewsonic Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Viewsonic Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Viewsonic Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="Viewsonic TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Viewsonic TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Viewsonic Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Viewsonic Device"			checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Viewsonic Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2765,13 +2721,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Viewsonic TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Viewsonic TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Viewsonic Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Viewsonic Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Viewsonic Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="Viewsonic TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Viewsonic TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Viewsonic Crossbar"		checkdevice="true"></filter>
+	<filter cat="capture"		name="Viewsonic Device"			checkdevice="true"></filter>
+	<filter cat="encodervideo"	name="Viewsonic Encoder"		checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2797,8 +2753,8 @@
         <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III BJ Device"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2824,8 +2780,8 @@
         <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"	checkdevice="true"></filter>
 	<filter cat="capture"		name="Emuzed Maui III BJ Device"	checkdevice="true"></filter>
 	<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="true"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="true"></filter>
+	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2910,7 +2866,7 @@
     </tv>
   </capturecard>
 
-<!--    Not confirmed working yet   -->  
+<!--    Pinnacle MP20 - not confirmed working yet   -->  
 
   <capturecard commercialname="Pinnacle MP20" capturename="Pinnacle MP20 Device" devid="ven_141f&amp;dev_9000&amp;subsys_001f11bd&amp;rev_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -2931,7 +2887,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Adaptec AVC2000" capturename="Adaptec AVC-2000 Device" devid="ven_141f&amp;dev_9000&amp;subsys_20009004&amp;rev_00">
+  <capturecard commercialname="Adaptec AVC-2000" capturename="Adaptec AVC-2000 Device" devid="ven_141f&amp;dev_9000&amp;subsys_20009004&amp;rev_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
@@ -2945,7 +2901,7 @@
     </tv>
   </capturecard>
 
-<!--    Not confirmed working yet   -->  
+<!--    Snazzi* III DVD Creator - not confirmed working yet   -->  
 
   <capturecard commercialname="Snazzi* III DVD Creator" capturename="V-One Bali Device" devid="ven_141f&amp;dev_9000&amp;subsys_000a1779&amp;rev_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -3209,7 +3165,7 @@
     </tv>
   </capturecard>
 
-<!--    Not confirmed working yet   -->
+<!--    Emuzed Angel PCI MPEG PVR - Not confirmed working yet   -->
 
   <capturecard commercialname="Emuzed Angel PCI MPEG PVR (a)" capturename="Angel Device" devid="ven_1033&amp;dev_013a&amp;subsys_001a1809">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
@@ -3269,6 +3225,8 @@
     </tv>
   </capturecard>
 
+<!--    Medion WDM Analog (Not Hybrid) - not officially supported!   -->
+
   <capturecard commercialname="Medion WDM Analog (Not Hybrid)" capturename="MEDION (7134) WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -3308,6 +3266,34 @@
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
 	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan MagicBox II (USB Box)" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3205">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Twinhan USB2 DVB-T receiver"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TwinhanDTV Alpha USB2" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3206">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Twinhan USB2 DVB-T receiver"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
