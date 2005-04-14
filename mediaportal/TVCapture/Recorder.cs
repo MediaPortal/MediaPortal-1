@@ -1733,7 +1733,7 @@ namespace MediaPortal.TV.Recording
 				long diskSize=0;
 				try
 				{
-					string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\String.Empty , drive[0]);
+					string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"", drive[0]);
 					using (ManagementObject disk = new ManagementObject(cmd))
 					{
 						disk.Get();
