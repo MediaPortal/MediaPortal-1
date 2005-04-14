@@ -1601,6 +1601,19 @@ public class MediaPortalApp : D3DApp, IRender
 	
 	private void tMouseClickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 	{
+		// Check for touchscreen users and TVGuide items
+		if (GUIGraphicsContext.DBLClickAsRightClick)
+		{
+			if(GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVGUIDE)
+			{
+				GUIWindow pWindow=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+				if ( (pWindow.GetFocusControlId()==1) && (GUIWindowManager.RoutedWindow==-1) )
+				{
+					// Dont send single click (only the mouse move event is send)
+					return;
+				}
+			}
+		}
 		CheckSingleClick();
 	}
 
