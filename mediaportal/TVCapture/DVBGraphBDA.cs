@@ -1162,32 +1162,31 @@ namespace MediaPortal.TV.Recording
 				{
 					
 					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-					// epg
-					//Log.Write("mhw-grab: checking header"); 
+
 					try
 					{
-						if(m_epgClass.GrabState==false && header.IsMHWTable==true && (header.TableID==0x91 || header.TableID==0x90))
+						if(m_epgClass.GrabState==false && m_epgClass.CanStartGrabbing==true && header.AdaptionField==0 && (header.TableID==0x91 || header.TableID==0x90))
 						{
 							m_epgClass.GrabState=true;
 							m_epgClass.GrabbingLength=header.SectionLen;
 							m_epgClass.MHWTable=header.TableID;
 							m_epgClass.CurrentPid=header.Pid;
-							Log.Write("mhw-grab: start grabbing"); 
-
 						}
 						if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
 						{
+						
 							byte[] epgData=new byte[184];
-							// mhw epg: titles
 							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-							m_epgClass.SaveData(epgData,header);	
+							m_epgClass.SaveData(epgData,header);
 						}
 					}
 					catch(Exception ex)
 					{
 						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.Source);
 					}
+				
 				}
+
 
 
 #if DUMP
@@ -2708,6 +2707,8 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void Tune(object tuningObject, int disecqNo)
 		{
+			if(m_epgClass!=null)
+				m_epgClass.ClearBuffer();
 
 			try
 			{
@@ -2872,8 +2873,6 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Tune() exception {0} {1} {2}",
 					ex.Message,ex.Source,ex.StackTrace);
 			}
-			if(m_epgClass!=null)
-				m_epgClass.ClearBuffer();
 
 		}//public void Tune(object tuningObject)
 		
