@@ -37,7 +37,7 @@ namespace MediaPortal.TV.Recording
 		static int           m_iPreRecordInterval =0;
 		static int           m_iPostRecordInterval=0;
 		
-		static string        m_strTVChannel="";
+		static string        m_strTVChannel=String.Empty;
 		static State         m_eState=State.None;
 		static ArrayList     m_tvcards    = new ArrayList();
 		static ArrayList     m_TVChannels = new ArrayList();
@@ -108,7 +108,7 @@ namespace MediaPortal.TV.Recording
 				m_iPreRecordInterval = xmlreader.GetValueAsInt("capture","prerecord", 5);
 				m_iPostRecordInterval= xmlreader.GetValueAsInt("capture","postrecord", 5);
 				//m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
-				m_strTVChannel  = xmlreader.GetValueAsString("mytv","channel","");
+				m_strTVChannel  = xmlreader.GetValueAsString("mytv","channel",String.Empty);
 				
 			}
 
@@ -1263,11 +1263,11 @@ namespace MediaPortal.TV.Recording
 						{
 							OnTVChannelChanged();
 						}
-						GUIPropertyManager.SetProperty("#TV.View.start","");
-						GUIPropertyManager.SetProperty("#TV.View.stop" ,"");
-						GUIPropertyManager.SetProperty("#TV.View.genre","");
+						GUIPropertyManager.SetProperty("#TV.View.start",String.Empty);
+						GUIPropertyManager.SetProperty("#TV.View.stop" ,String.Empty);
+						GUIPropertyManager.SetProperty("#TV.View.genre",String.Empty);
 						GUIPropertyManager.SetProperty("#TV.View.title", m_strTVChannel);
-						GUIPropertyManager.SetProperty("#TV.View.description","");
+						GUIPropertyManager.SetProperty("#TV.View.description",String.Empty);
 					}
 					break;
 				}//if (chan.Name.Equals(m_strTVChannel))
@@ -1298,9 +1298,9 @@ namespace MediaPortal.TV.Recording
 					GUIPropertyManager.SetProperty("#TV.Record.thumb",strLogo);
 					GUIPropertyManager.SetProperty("#TV.Record.start",recording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 					GUIPropertyManager.SetProperty("#TV.Record.stop",recording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-					GUIPropertyManager.SetProperty("#TV.Record.genre","");
+					GUIPropertyManager.SetProperty("#TV.Record.genre",String.Empty);
 					GUIPropertyManager.SetProperty("#TV.Record.title",recording.Title);
-					GUIPropertyManager.SetProperty("#TV.Record.description","");
+					GUIPropertyManager.SetProperty("#TV.Record.description",String.Empty);
 				}
 				else
 				{
@@ -1320,13 +1320,13 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
-				GUIPropertyManager.SetProperty("#TV.Record.channel","");
-				GUIPropertyManager.SetProperty("#TV.Record.start","");
-				GUIPropertyManager.SetProperty("#TV.Record.stop" ,"");
-				GUIPropertyManager.SetProperty("#TV.Record.genre","");
-				GUIPropertyManager.SetProperty("#TV.Record.title","");
-				GUIPropertyManager.SetProperty("#TV.Record.description","");
-				GUIPropertyManager.SetProperty("#TV.Record.thumb"  ,"");
+				GUIPropertyManager.SetProperty("#TV.Record.channel",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Record.start",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Record.stop" ,String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Record.genre",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Record.title",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Record.description",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Record.thumb"  ,String.Empty);
 			}
 
 			if (IsRecording())
@@ -1485,27 +1485,27 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		static void CleanProperties()
 		{
-			GUIPropertyManager.SetProperty("#TV.View.channel","");
-			GUIPropertyManager.SetProperty("#TV.View.thumb",  "");
-			GUIPropertyManager.SetProperty("#TV.View.start","");
-			GUIPropertyManager.SetProperty("#TV.View.stop", "");
-			GUIPropertyManager.SetProperty("#TV.View.genre","");
-			GUIPropertyManager.SetProperty("#TV.View.title","");
-			GUIPropertyManager.SetProperty("#TV.View.description","");
+			GUIPropertyManager.SetProperty("#TV.View.channel",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.thumb",  String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.start",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.genre",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.title",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.description",String.Empty);
 
-			GUIPropertyManager.SetProperty("#TV.Record.channel","");
-			GUIPropertyManager.SetProperty("#TV.Record.start","");
-			GUIPropertyManager.SetProperty("#TV.Record.stop", "");
-			GUIPropertyManager.SetProperty("#TV.Record.genre","");
-			GUIPropertyManager.SetProperty("#TV.Record.title","");
-			GUIPropertyManager.SetProperty("#TV.Record.description","");
-			GUIPropertyManager.SetProperty("#TV.Record.thumb",  "");
+			GUIPropertyManager.SetProperty("#TV.Record.channel",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.start",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.stop", String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.genre",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.title",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.description",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.thumb",  String.Empty);
 
-			GUIPropertyManager.SetProperty("#TV.Record.percent1","");
-			GUIPropertyManager.SetProperty("#TV.Record.percent2","");
-			GUIPropertyManager.SetProperty("#TV.Record.percent3","");
-			GUIPropertyManager.SetProperty("#TV.Record.duration","");
-			GUIPropertyManager.SetProperty("#TV.Record.current","");
+			GUIPropertyManager.SetProperty("#TV.Record.percent1",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.percent2",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.percent3",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.duration",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Record.current",String.Empty);
 		}//static void CleanProperties()
 		
 		/// <summary>
@@ -1648,7 +1648,7 @@ namespace MediaPortal.TV.Recording
 
       
 			// clean the TempDVR\ folder
-			string strDir="";
+			string strDir=String.Empty;
 			string[] strFiles;
 			try
 			{
@@ -1733,7 +1733,7 @@ namespace MediaPortal.TV.Recording
 				long diskSize=0;
 				try
 				{
-					string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\"" , drive[0]);
+					string cmd=String.Format( "win32_logicaldisk.deviceid=\"{0}:\String.Empty , drive[0]);
 					using (ManagementObject disk = new ManagementObject(cmd))
 					{
 						disk.Get();
