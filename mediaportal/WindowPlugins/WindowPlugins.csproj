@@ -204,6 +204,36 @@
                     AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
                 />
+                <Reference
+                    Name = "KCS.Utilities"
+                    AssemblyName = "KCS.Utilities"
+                    HintPath = "..\KCS.Utilities.dll"
+                />
+                <Reference
+                    Name = "X10Plugin"
+                    AssemblyName = "X10Plugin"
+                    HintPath = "..\X10Plugin.dll"
+                />
+                <Reference
+                    Name = "X10Unified"
+                    AssemblyName = "X10Unified"
+                    HintPath = "..\X10Unified.dll"
+                />
+                <Reference
+                    Name = "xAPMessage"
+                    AssemblyName = "xAPMessage"
+                    HintPath = "..\xAPMessage.dll"
+                />
+                <Reference
+                    Name = "xAPTransport"
+                    AssemblyName = "xAPTransport"
+                    HintPath = "..\xAPTransport.dll"
+                />
+                <Reference
+                    Name = "Communications"
+                    AssemblyName = "Communications"
+                    HintPath = "..\Communications.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -1258,6 +1288,41 @@
                     RelPath = "GUIWeather\GUIWindowWeather.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIX10\ApplianceConfiguration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIX10\ApplianceForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIX10\ApplianceForm.resx"
+                    DependentUpon = "ApplianceForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIX10\GUIX10.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIX10\SendX10.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIX10\SetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIX10\SetupForm.resx"
+                    DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "home\home.cs"

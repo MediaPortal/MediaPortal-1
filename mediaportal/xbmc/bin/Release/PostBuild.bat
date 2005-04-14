@@ -25,6 +25,12 @@ copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
+copy ..\..\..\Communications.dll .
+copy ..\..\..\KCS.Utilities.dll .
+copy ..\..\..\X10Plugin.* .
+copy ..\..\..\X10Unified.* .
+copy ..\..\..\xAPMessage.dll .
+copy ..\..\..\xAPTransport.dll .
 copy ..\..\..\mbm5.dll .
 copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .

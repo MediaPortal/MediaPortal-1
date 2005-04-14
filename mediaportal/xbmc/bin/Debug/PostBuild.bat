@@ -27,6 +27,12 @@ copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
+copy ..\..\..\Communications.dll .
+copy ..\..\..\KCS.Utilities.dll .
+copy ..\..\..\X10Plugin.* .
+copy ..\..\..\X10Unified.* .
+copy ..\..\..\xAPMessage.dll .
+copy ..\..\..\xAPTransport.dll .
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\debug\Configuration.exe .
 copy ..\..\..\Configuration\bin\debug\Configuration.pdb .
