@@ -11,6 +11,7 @@ namespace MediaPortal.TV.Database
 	/// </summary>
 	public class TVRecording
 	{
+		static string				 TVChannelCovertArt=@"thumbs\tv\logos";
     /// <summary>
     /// Type of recording
     /// </summary>
@@ -721,6 +722,44 @@ namespace MediaPortal.TV.Database
 				if (dtCanceled==dtProgram) return true;
 			}
 			return false;
+		}
+		
+		public void SetProperties(TVProgram prog)
+		{
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Title",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Genre",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Time",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Description",String.Empty);
+			GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",String.Empty);
+
+			string strTime=String.Format("{0} {1} - {2}", 
+				Utils.GetShortDayString(StartTime) , 
+				StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+				EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Title",Title);
+			GUIPropertyManager.SetProperty("#TV.Scheduled.Time",strTime);
+			if (prog!=null)
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Description",prog.Description);
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Genre",prog.Genre);
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Description",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Scheduled.Genre",String.Empty);
+			}
+
+    
+			string strLogo=Utils.GetCoverArt(TVChannelCovertArt,Channel);
+			if (System.IO.File.Exists(strLogo))
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",strLogo);
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb","defaultVideoBig.png");
+			}
 		}
 	}
 }
