@@ -94,8 +94,9 @@
 <!--    Snazzi* III USB2                      -->
 <!--    Sony MPEG RealTime Encoder            -->
 <!--    TOSHIBA Style Bay TV Tuner            -->
-<!--    Twinhan VisionDTV Ter                 -->
-<!--    Twinhan VisionDTV Sat                 -->
+<!--    Twinhan VisionDTV DVB-C               -->
+<!--    Twinhan VisionDTV DVB-S               -->
+<!--    Twinhan VisionDTV DVB-T               -->
 <!--    Typhoon TV PVR (USB)                  -->
 <!--    VA2000                                -->
 <!--    VideoMate DVB-T 300                   -->
@@ -106,7 +107,7 @@
 <!--    general MCE card                      -->
 <!--    general MPEG2 card                    -->
 <!--                                                                                  -->
-<!-- version : 1.0.0.72                                                               -->
+<!-- version : 1.0.0.74                                                               -->
 <!-- changed : 12-april-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -516,7 +517,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"     checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TwinHan DVBT BDA Tuner Filter"    checkdevice="true"></filter>
         <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"   checkdevice="true"></filter>
       </filters>
       <connections>
@@ -532,7 +533,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TwinHan DVBS BDA Tuner Filter"	checkdevice="true"></filter>
         <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"	checkdevice="true"></filter>
       </filters>
       <connections>
@@ -548,7 +549,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
       <filters> 
 	<filter cat="networkprovider" 	name="Microsoft DVBC Network Provider"	checkdevice="false"></filter> 
-	<filter cat="tunerdevice" 	name="TwinHan PCI BDA Tuner Filter" 	checkdevice="false"></filter> 
+	<filter cat="tunerdevice" 	name="TwinHan DVBC BDA Tuner Filter" 	checkdevice="false"></filter> 
 	<filter cat="capture" 		name="TwinHan PCI BDA Capture Filter" 	checkdevice="false"></filter> 
       </filters> 
       <connections> 
@@ -922,55 +923,39 @@
   </capturecard>
   
    <capturecard commercialname="Dvico Fusion HDTV Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
       <filters>
         <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
         <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
         <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
-        <filter cat="encodervideo"  name="Dvico MPEG-2 Video Encoder"	  checkdevice="false"></filter>
-        <filter cat="encoderaudio"	name="D&amp;M MP2 Encoder(48KHz)"		  checkdevice="false"></filter>
-        <filter cat="mux"      		name="CyberLink MPEG Muxer"	    	  checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
         <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
         <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-	<connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-	<connection sourcefilter="capture"  	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-	<connection sourcefilter="capture"  	sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
-	<connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
-	<connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
 
    <capturecard commercialname="Dvico Fusion HDTV Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db0018ac&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
       <filters>
         <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
         <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
         <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
-        <filter cat="encodervideo"  name="Dvico MPEG-2 Video Encoder"	  checkdevice="false"></filter>
-        <filter cat="encoderaudio"	name="D&amp;M MP2 Encoder(48KHz)"		  checkdevice="false"></filter>
-        <filter cat="mux"      		name="CyberLink MPEG Muxer"	    	  checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
         <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
         <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-	<connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-	<connection sourcefilter="capture"  	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-	<connection sourcefilter="capture"  	sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
-	<connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
-	<connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1174,12 +1159,10 @@
     </tv>
   </capturecard> 
 
-<!-- The below wont work, needs an encoder, please advise -->
-
   <capturecard commercialname="Pinnacle 300i Analog" capturename="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_002d11bd&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="3" mpeg2=""></interface>
       <filters>
         <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"		checkdevice="true"></filter>
@@ -3309,6 +3292,22 @@
         <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
         <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
         <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="BlackGold GDI" capturename="Genesis BDA Transport Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_010814c7&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Genesis BDA Tuner"			checkdevice="true"></filter>
+        <filter cat="capture"         name="Genesis BDA Transport Capture"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
