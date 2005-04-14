@@ -603,7 +603,7 @@ namespace MediaPortal.TV.Database
     /// <returns>Returns a string describing the recording</returns>
     public override string ToString()
     {
-      string strLine="";
+      string strLine=String.Empty;
       switch (RecType)
       {
         case RecordingType.Once:
