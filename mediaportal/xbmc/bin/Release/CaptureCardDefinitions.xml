@@ -411,22 +411,6 @@
     </tv>
   </capturecard> 
   
-  <capturecard commercialname="FireDTV DVB-T" capturename="Firesat BDA Receiver DVBT" devid="digital_everywhere&amp;firedtv_t">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBT"          checkdevice="true"></filter>
-        <filter cat="capture"         name="Firesat BDA Receiver DVBT"       checkdevice="true"></filter>
-      </filters>
-      <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard> 
-  
   <capturecard commercialname="FireDTV DVB-T" capturename="FireDTV BDA Receiver DVBT" devid="digital_everywhere&amp;firedtv_t">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -435,22 +419,6 @@
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="FireDTV BDA Tuner DVBT"          checkdevice="true"></filter>
         <filter cat="capture"         name="FireDTV BDA Receiver DVBT"       checkdevice="true"></filter>
-      </filters>
-      <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard> 
-  
-  <capturecard commercialname="FireDTV DVB-S" capturename="Firesat BDA Receiver DVBS" devid="digital_everywhere&amp;firedtv_s">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBS Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBS"          checkdevice="true"></filter>
-        <filter cat="capture"         name="Firesat BDA Receiver DVBS"       checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -475,24 +443,7 @@
     </tv>
   </capturecard> 
   
-  
-  <capturecard commercialname="FireDTV DVB-C" capturename="Firesat BDA Receiver DVBC" devid="digital_everywhere&amp;firedtv_c#ci&amp;typ_5">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBC Network Provider" checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Firesat BDA Tuner DVBC"          checkdevice="true"></filter>
-        <filter cat="capture"         name="Firesat BDA Receiver DVBC"       checkdevice="true"></filter>
-      </filters>
-      <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard> 
-  
-  <capturecard commercialname="FireDTV DVB-C" capturename="FireDTV BDA Receiver DVBC" devid="digital_everywhere&amp;firedtv_c#ci&amp;typ_5">
+  <capturecard commercialname="FireDTV DVB-C" capturename="FireDTV BDA Receiver DVBC" devid="digital_everywhere&amp;firedtv_c">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -507,7 +458,7 @@
       </connections>
     </tv>
   </capturecard> 
-   
+  
 <!--   The Twinhan Cards use the same Device ID for all variants of the card - manually adjust the list to prioritise your card  -->
 
   <capturecard commercialname="Twinhan VisionDTV DVB-T" capturename="TwinHan PCI BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
