@@ -205,6 +205,16 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
                 />
                 <Reference
+                    Name = "xAPTransport"
+                    AssemblyName = "xAPTransport"
+                    HintPath = "..\xAPTransport.dll"
+                />
+                <Reference
+                    Name = "Communications"
+                    AssemblyName = "Communications"
+                    HintPath = "..\Communications.dll"
+                />
+                <Reference
                     Name = "KCS.Utilities"
                     AssemblyName = "KCS.Utilities"
                     HintPath = "..\KCS.Utilities.dll"
@@ -223,16 +233,6 @@
                     Name = "xAPMessage"
                     AssemblyName = "xAPMessage"
                     HintPath = "..\xAPMessage.dll"
-                />
-                <Reference
-                    Name = "xAPTransport"
-                    AssemblyName = "xAPTransport"
-                    HintPath = "..\xAPTransport.dll"
-                />
-                <Reference
-                    Name = "Communications"
-                    AssemblyName = "Communications"
-                    HintPath = "..\Communications.dll"
                 />
             </References>
         </Build>
