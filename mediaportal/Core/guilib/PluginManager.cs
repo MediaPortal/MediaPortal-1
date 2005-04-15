@@ -347,7 +347,7 @@ namespace MediaPortal.GUI.Library
       if (strDllname.IndexOf("WindowPlugins.dll")>=0) return true;
 			if (strDllname.IndexOf("ProcessPlugins.dll")>=0) return true;
 
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         // from the assembly name check the reference to plugin name
         // if available check to see if the plugin is enabled
@@ -362,7 +362,7 @@ namespace MediaPortal.GUI.Library
     static public bool IsWindowPlugInEnabled(string strType)
     {
 
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         bool bEnabled=xmlreader.GetValueAsBool("pluginswindows",strType,true);
         return bEnabled;
@@ -372,7 +372,7 @@ namespace MediaPortal.GUI.Library
     static public bool IsPluginNameEnabled(string strPluginName)
     {
 
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         bool bEnabled=xmlreader.GetValueAsBool("plugins",strPluginName,true);
         return bEnabled;

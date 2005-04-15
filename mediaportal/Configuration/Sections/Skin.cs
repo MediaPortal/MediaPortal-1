@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		public override void LoadSettings()
 		{
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string currentSkin = xmlreader.GetValueAsString("skin", "name", "mce");
 
@@ -123,7 +123,7 @@ namespace MediaPortal.Configuration.Sections
 		public override void SaveSettings()
 		{
 			if (listViewAvailableSkins.SelectedItems.Count==0) return;
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string prevSkin = xmlwriter.GetValueAsString("skin", "name", "mce");
 				if (prevSkin!=listViewAvailableSkins.SelectedItems[0].Text)

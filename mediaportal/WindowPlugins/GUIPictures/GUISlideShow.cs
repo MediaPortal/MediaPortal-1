@@ -1815,7 +1815,7 @@ namespace MediaPortal.GUI.Pictures
 
     void LoadSettings()
     {
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         m_iSpeed=xmlreader.GetValueAsInt("pictures","speed",3);
         m_iSlideShowTransistionFrames=xmlreader.GetValueAsInt("pictures","transition",20);

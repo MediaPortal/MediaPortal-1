@@ -117,7 +117,7 @@ namespace MediaPortal.GUI.Pictures
 		#region Serialisation
 		void LoadSettings()
 		{
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 				m_strFileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);

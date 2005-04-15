@@ -440,7 +440,7 @@ namespace MyMail
 		}
 		void SaveSettings()
 		{
-			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("mymail","autoCheck",m_bAutoCheck);
 			}
@@ -449,7 +449,7 @@ namespace MyMail
 		}
 		void LoadSettings()
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int boxCount=0;
 				MailBox tmpBox;

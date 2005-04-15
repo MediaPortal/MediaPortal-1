@@ -237,7 +237,7 @@ namespace MediaPortal.Player
 
       if (Utils.PlayDVD()) return true;
       int iUseVMR9=0;
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         iUseVMR9=xmlreader.GetValueAsInt("dvdplayer","vmr9",0);
       }
@@ -335,7 +335,7 @@ namespace MediaPortal.Player
 			  m_player=null;
 		  }
 		  int iUseVMR9inMYMovies=0;
-		  using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+		  using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 		  {
 			  iUseVMR9inMYMovies=xmlreader.GetValueAsInt("movieplayer","vmr9",0);
 		  }
@@ -402,7 +402,7 @@ namespace MediaPortal.Player
         {
 
           int iUseVMR9=0;
-          using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+          using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
           {
             iUseVMR9=xmlreader.GetValueAsInt("dvdplayer","vmr9",0);
           }

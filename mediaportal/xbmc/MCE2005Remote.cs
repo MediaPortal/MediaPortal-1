@@ -156,7 +156,7 @@ namespace MediaPortal
 		public void Init(IntPtr hwnd)
 		{
 			if (RemoteFound) return;// already registered
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				RemoteEnabled= xmlreader.GetValueAsBool("remote", "mce2005", false);
 				USAModel= xmlreader.GetValueAsBool("remote", "USAModel", false);

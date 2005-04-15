@@ -92,7 +92,7 @@ namespace MediaPortal.GUI.Video
 		#region Serialisation
 		protected virtual void LoadSettings()
 		{
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				currentView=(View)xmlreader.GetValueAsInt(SerializeName,"view", (int)View.List);
 				currentViewRoot=(View)xmlreader.GetValueAsInt(SerializeName,"viewroot", (int)View.List);
@@ -108,7 +108,7 @@ namespace MediaPortal.GUI.Video
 
 		protected virtual void SaveSettings()
 		{
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue(SerializeName,"view",(int)currentView);
 				xmlwriter.SetValue(SerializeName,"viewroot",(int)currentViewRoot);

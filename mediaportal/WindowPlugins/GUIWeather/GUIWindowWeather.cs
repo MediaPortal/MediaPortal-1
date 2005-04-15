@@ -457,7 +457,7 @@ namespace MediaPortal.GUI.Weather
 		void LoadSettings()
 		{
 			m_locations.Clear();
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_strLocation=xmlreader.GetValueAsString("weather","location","");
 				m_strWeatherFTemp=xmlreader.GetValueAsString("weather","temperature","C");
@@ -515,7 +515,7 @@ namespace MediaPortal.GUI.Weather
 
 		void SaveSettings()
 		{
-			using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("weather","location",m_strLocation);
 				xmlwriter.SetValue("weather","temperature",m_strWeatherFTemp);      

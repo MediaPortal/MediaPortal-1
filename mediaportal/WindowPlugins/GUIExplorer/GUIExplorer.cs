@@ -710,7 +710,7 @@ namespace MediaPortal.GUI.GUIExplorer
 		/// </summary>
 		private void LoadShareSettings() 
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 			{
 				showOnlyShares=xmlreader.GetValueAsBool("myexplorer","show_only_shares",false);
 			}
@@ -721,7 +721,7 @@ namespace MediaPortal.GUI.GUIExplorer
 		/// </summary>
 		private void LoadSettings() 
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 			{
 				tempFolder=xmlreader.GetValueAsString("myexplorer","temp_folder","");
 				enableDelete=xmlreader.GetValueAsBool("myexplorer","enable_delete",false);

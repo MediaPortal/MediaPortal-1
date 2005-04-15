@@ -263,7 +263,7 @@ namespace MediaPortal
 		}
 		private bool PlugInEnabled(string strPlugin, bool bDefault)
 		{
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string strValue=xmlreader.GetValueAsString("plugins",strPlugin,"");
 				if (strValue.Length==0)
@@ -311,7 +311,7 @@ namespace MediaPortal
 
 		private void PluginForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			using (AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				for (int i=0; i < listView1.Items.Count;++i)
 				{

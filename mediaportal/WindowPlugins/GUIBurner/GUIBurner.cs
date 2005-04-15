@@ -1065,7 +1065,7 @@ namespace MediaPortal.GUI.GUIBurner
 
 		private void LoadSettings() 
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 			{
 				isBurner=xmlreader.GetValueAsBool("burner","burn",true);
 				fastFormat=xmlreader.GetValueAsBool("burner","fastformat",true);
@@ -1348,7 +1348,7 @@ namespace MediaPortal.GUI.GUIBurner
 				DateTime cur=DateTime.Now;
 				dest=dest+"\\backup"+cur.Day+"-"+cur.Month+"-"+cur.Year+" "+cur.Hour+cur.Minute;
 			}
-			using (AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int count=xmlreader.GetValueAsInt("burner","backuplines",0);
 				for(int i=0; i<=count; i++)
@@ -1459,7 +1459,7 @@ namespace MediaPortal.GUI.GUIBurner
 			ArrayList     m_tvcards    = new ArrayList();
 			recordCards=0;
 		
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 			{
 				convertAuto=xmlreader.GetValueAsBool("burner","convertautomatic",false);
 			}

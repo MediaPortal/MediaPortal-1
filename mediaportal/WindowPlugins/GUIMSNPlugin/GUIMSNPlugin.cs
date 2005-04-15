@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.MSN
     public override void PreInit()
     {
       bool autosignin = false;
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         autosignin = xmlreader.GetValueAsInt("MSNmessenger", "autosignin", 0) != 0;
       }
@@ -662,7 +662,7 @@ namespace MediaPortal.GUI.MSN
       ReFillContactList=true;
       string emailadres="";
       string password="";	
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         emailadres = xmlreader.GetValueAsString("MSNmessenger","email","");
         password = xmlreader.GetValueAsString("MSNmessenger","password","");

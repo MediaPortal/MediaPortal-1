@@ -599,7 +599,7 @@ namespace DShowNET
 /*
 			return;
 			int DeInterlaceMode=3;
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				//None
 				//Bob

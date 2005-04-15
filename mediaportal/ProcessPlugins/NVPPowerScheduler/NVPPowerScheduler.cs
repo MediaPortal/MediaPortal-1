@@ -409,7 +409,7 @@ namespace MediaPortal.PowerScheduler
 		{
 			Log.Write("PowerScheduler: version 0.3");
 
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_iStartupInterval = xmlreader.GetValueAsInt("powerscheduler","wakeupinterval",1);
 				m_iShutdownInterval = xmlreader.GetValueAsInt("powerscheduler","shutdowninterval",3);

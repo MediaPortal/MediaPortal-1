@@ -311,7 +311,7 @@ namespace MediaPortal.Playlists
           m_iCurrentPlayList=value ;
           m_iEntriesNotFound=0;
           m_bChanged=true;
-          using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+          using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
           {
             if (value==PlayListType.PLAYLIST_MUSIC||value==PlayListType.PLAYLIST_MUSIC_TEMP)
             {

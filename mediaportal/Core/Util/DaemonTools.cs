@@ -15,7 +15,7 @@ namespace MediaPortal.Util
 
     static DaemonTools()
     {
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         _Enabled= xmlreader.GetValueAsBool("daemon", "enabled", false);
         _Path= xmlreader.GetValueAsString("daemon", "path", "");

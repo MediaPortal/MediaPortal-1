@@ -613,7 +613,7 @@ namespace MediaPortal.GUI.Music
 			{
 				string strPath = System.IO.Path.GetFileNameWithoutExtension(strNewFileName);
         string strPlayListPath = "";
-        using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           strPlayListPath = xmlreader.GetValueAsString("music","playlists","");
           strPlayListPath = Utils.RemoveTrailingSlash(strPlayListPath);

@@ -130,7 +130,7 @@ namespace MediaPortal.Player
         string strVideoCodec="";
         string strAudioCodec="";
         bool   bAddFFDshow=false;
-        using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           bAddFFDshow=xmlreader.GetValueAsBool("movieplayer","ffdshow",false);
           strVideoCodec=xmlreader.GetValueAsString("movieplayer","mpeg2videocodec","");

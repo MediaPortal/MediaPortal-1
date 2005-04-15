@@ -330,7 +330,7 @@ public class MediaPortalApp : D3DApp, IRender
 		{
 		// check to load plugins
 		bool tmpPluginsFlag=false;
-		using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+		using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 		{
 			tmpPluginsFlag=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 		}
@@ -341,7 +341,7 @@ public class MediaPortalApp : D3DApp, IRender
 				DVBGraphSS2.SetMenuHandle(mnuMain.Handle.ToInt32());
 			else
 			{
-				using (AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				}
@@ -407,7 +407,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
       try
       {
-        using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           m_strSkin = xmlreader.GetValueAsString("skin","name","mce");
           m_strLanguage = xmlreader.GetValueAsString("skin","language","English");
@@ -452,7 +452,7 @@ public class MediaPortalApp : D3DApp, IRender
 		//
 		// Only load the USBUIRT device if it has been enabled in the configuration
 		//
-		using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+		using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 		{
 			bool inputEnabled = xmlreader.GetValueAsString("USBUIRT", "internal", "false") == "true";
 			bool outputEnabled = xmlreader.GetValueAsString("USBUIRT", "external", "false") == "true";
@@ -585,7 +585,7 @@ public class MediaPortalApp : D3DApp, IRender
 			catch(Exception )
 			{
 			}
-			using(AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_iDateLayout = xmlreader.GetValueAsInt("home","datelayout",0);
 			}
@@ -670,7 +670,7 @@ public class MediaPortalApp : D3DApp, IRender
 		if(msg.Msg==0x111)
 		{
 			bool tmpPluginsFlag=false;
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				tmpPluginsFlag=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 			}
@@ -763,7 +763,7 @@ public class MediaPortalApp : D3DApp, IRender
 			tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(tMouseClickTimer_Elapsed);
 			tMouseClickTimer.SynchronizingObject = this;
 
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string strDefault=xmlreader.GetValueAsString("myradio","default","");
 				if (strDefault!="")

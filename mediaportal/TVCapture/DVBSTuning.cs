@@ -57,7 +57,7 @@ namespace MediaPortal.TV.Recording
 			//
 			// load card settings to check diseqc
 			m_diseqcLoops=1;
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 			{
 				if(xmlreader.GetValueAsBool("dvbs","useLNB2",false)==true)
 					m_diseqcLoops++;

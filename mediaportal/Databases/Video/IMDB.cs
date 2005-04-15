@@ -143,7 +143,7 @@ namespace MediaPortal.Video.Database
 		private void LoadSettings()
 		{
 			// getting available databases and limits
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int iNumber = xmlreader.GetValueAsInt("moviedatabase","number",0);
 				if (iNumber<=0)

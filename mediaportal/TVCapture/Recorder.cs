@@ -103,7 +103,7 @@ namespace MediaPortal.TV.Recording
 			m_iPreRecordInterval =0;
 			m_iPostRecordInterval=0;
 			//m_bAlwaysTimeshift=false;
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_iPreRecordInterval = xmlreader.GetValueAsInt("capture","prerecord", 5);
 				m_iPostRecordInterval= xmlreader.GetValueAsInt("capture","postrecord", 5);

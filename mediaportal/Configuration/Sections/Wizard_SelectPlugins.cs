@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void LoadSettings()
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				myMoviesCheckBox.Checked = xmlreader.GetValueAsBool("plugins", "My Movies", true);
 				myMusicCheckBox.Checked = xmlreader.GetValueAsBool("plugins", "My Music", true);
@@ -162,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("plugins", "My Movies", myMoviesCheckBox.Checked);
 				xmlwriter.SetValueAsBool("plugins", "My Music", myMusicCheckBox.Checked);

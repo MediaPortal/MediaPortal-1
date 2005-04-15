@@ -35,7 +35,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void LoadSettings()
 		{
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				durationTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "speed" ,3));
         transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 20));
@@ -51,7 +51,7 @@ namespace MediaPortal.Configuration.Sections
 		
 		public override void SaveSettings()
 		{
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("pictures", "speed", durationTextBox.Text);
         xmlwriter.SetValue("pictures", "transition", transitionTextBox.Text);

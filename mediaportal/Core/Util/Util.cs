@@ -78,7 +78,7 @@ namespace MediaPortal.Util
 				System.IO.Directory.CreateDirectory("thumbs");
 			}
 			catch(Exception){}
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_bHideExtensions=xmlreader.GetValueAsBool("general","hideextensions",true);
 
@@ -850,7 +850,7 @@ namespace MediaPortal.Util
 
 		static public bool PlayDVD()
 		{
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string strPath=xmlreader.GetValueAsString("dvdplayer","path","");
 				string strParams=xmlreader.GetValueAsString("dvdplayer","arguments","");
@@ -912,7 +912,7 @@ namespace MediaPortal.Util
 					strFile.IndexOf("record2.")>0 || strFile.IndexOf("record3.")>0 || 
 					strFile.IndexOf("record4.")>0 || strFile.IndexOf("record5.")>0 ) return false;
 
-				using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					bool bInternal=xmlreader.GetValueAsBool("movieplayer","internal",true);
 					if (bInternal) return false;

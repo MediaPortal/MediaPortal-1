@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.TV
 		#region Serialisation
 		void LoadSettings()
 		{
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_navigator.LoadSettings(xmlreader);
 				m_bTVON=xmlreader.GetValueAsBool("mytv","tvon",true);
@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.TV
 
 		void SaveSettings()
 		{
-			using (AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_navigator.SaveSettings(xmlwriter);
 				xmlwriter.SetValueAsBool("mytv","tvon",m_bTVON);
@@ -1208,7 +1208,7 @@ namespace MediaPortal.GUI.TV
 
 		#region Serialization
 
-		public void LoadSettings(Xml xmlreader)
+		public void LoadSettings(MediaPortal.Profile.Xml xmlreader)
 		{
 			m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
 			m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
@@ -1226,7 +1226,7 @@ namespace MediaPortal.GUI.TV
 			m_currentTvChannel=GetTVChannel(m_currentchannel);
 		}
 
-		public void SaveSettings(Xml xmlwriter)
+		public void SaveSettings(MediaPortal.Profile.Xml xmlwriter)
 		{
 			if (m_currentchannel.Trim() != String.Empty)
 				xmlwriter.SetValue("mytv", "channel", m_currentchannel);

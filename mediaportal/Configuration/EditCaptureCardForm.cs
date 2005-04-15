@@ -1757,7 +1757,7 @@ namespace MediaPortal.Configuration
 		void FillInDefaultRecordingPath()
 		{
 			if (tbRecordingFolder.Text!=String.Empty) return;
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				for (int i = 0; i < 20; i++)
 				{
@@ -1788,7 +1788,7 @@ namespace MediaPortal.Configuration
 			}
 			
 			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(filename))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(filename))
 			{
 				xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
 				xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
@@ -2178,7 +2178,7 @@ namespace MediaPortal.Configuration
 			if (CaptureCard!=null)
 			{
 				string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
-				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(filename))
+				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
 				{
 					
 					
@@ -2413,12 +2413,12 @@ namespace MediaPortal.Configuration
 			if (CaptureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 			
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
 			{
 				checkBox1.Checked=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 			}
 			
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 			{
 				lnb0MHZ.Text=xmlreader.GetValueAsInt("dvbs","LNB0",9750).ToString();
 				lnb1MHZ.Text=xmlreader.GetValueAsInt("dvbs","LNB1",10600).ToString();
@@ -2548,12 +2548,12 @@ namespace MediaPortal.Configuration
 		{
 			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 			// save settings
-			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",checkBox1.Checked);
 			}
 
-			using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml(filename))
+			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
 			{
 				xmlwriter.SetValue("dvbs","LNB0",lnb0MHZ.Text);
 				xmlwriter.SetValue("dvbs","LNB1",lnb1MHZ.Text);
@@ -2655,7 +2655,7 @@ namespace MediaPortal.Configuration
 				{
 					string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 					// save settings for get the filename in mp.xml
-					using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
 					{
 						xmlwriter.SetValue("dvb_ts_cards","filename",filename);
 					}

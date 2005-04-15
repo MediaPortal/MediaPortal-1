@@ -169,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void LoadSettings()
 		{
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 1));
 				endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 1));				
@@ -181,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
 				xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);

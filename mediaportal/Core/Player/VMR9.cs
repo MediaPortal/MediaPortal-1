@@ -42,7 +42,7 @@ namespace MediaPortal.Player
 		{
 			
 			// add vmr9 if necessary
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int iUseVMR9inMYTV=xmlreader.GetValueAsInt(key,"vmr9",0);
 				if (iUseVMR9inMYTV!=0) UseVMR9inMYTV=true;
@@ -233,7 +233,7 @@ namespace MediaPortal.Player
 		{
 			if (vmr9Helper==null) return;
 			int DeInterlaceMode=3;
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				//None
 				//Bob

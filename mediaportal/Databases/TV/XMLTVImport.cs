@@ -88,7 +88,7 @@ namespace MediaPortal.TV.Database
 			TVDatabase.SupressEvents=true;
       bool bUseTimeZone=false;
       int iTimeZoneCorrection=0;
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         bUseTimeZone=xmlreader.GetValueAsBool("xmltv", "usetimezone",true);
         int hours=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);

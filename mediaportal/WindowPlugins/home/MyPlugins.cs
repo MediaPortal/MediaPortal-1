@@ -321,7 +321,7 @@ namespace MediaPortal.GUI.Home
             FocusControl(GetID, buttonIndex + 2);
           }
 
-          using(AMS.Profile.Xml xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+          using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
           {
             m_iDateLayout = xmlreader.GetValueAsInt("home","datelayout",0);
             m_bAllowScroll= xmlreader.GetValueAsBool("home","scroll",true);
@@ -505,7 +505,7 @@ namespace MediaPortal.GUI.Home
     {
       foreach (ISetupForm setup in plugins)
       {
-        using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+        using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           bool bHomeDefault=setup.DefaultEnabled();
           bool inhome=xmlreader.GetValueAsBool("myplugins", setup.PluginName(), bHomeDefault);

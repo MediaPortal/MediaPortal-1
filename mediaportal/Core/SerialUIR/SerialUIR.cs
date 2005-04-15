@@ -241,7 +241,7 @@ namespace MediaPortal.SerialIR
 		{
 			try
 			{
-				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					recInternalCommands = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
 					commport        = xmlreader.GetValueAsString("SerialUIR", "commport",     "COM1:");

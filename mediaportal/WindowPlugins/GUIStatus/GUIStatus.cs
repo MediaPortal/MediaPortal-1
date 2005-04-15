@@ -683,7 +683,7 @@ namespace MediaPortal.GUI.GUIStatus
 
     private void LoadSound() 
     {
-      using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+      using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
       {	
         soundFolder=xmlreader.GetValueAsString("status","status_sound_folder","");
         sound=xmlreader.GetValueAsString("status","status_sound","");
@@ -693,7 +693,7 @@ namespace MediaPortal.GUI.GUIStatus
     private void LoadSettings() 
     {
       int num=0;
-      using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+      using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
       {
         isMbm=xmlreader.GetValueAsBool("status","status_is_mbm",false);
         showStatusBar=xmlreader.GetValueAsBool("status","status_bar_show",false);

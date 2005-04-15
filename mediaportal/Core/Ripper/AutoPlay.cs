@@ -101,7 +101,7 @@ namespace MediaPortal.Ripper
       m_vecList=new ArrayList();
       try
       {
-        using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           m_dvd=xmlreader.GetValueAsBool("dvdplayer","autoplay",true);
           m_audiocd=xmlreader.GetValueAsBool("audioplayer","autoplay",true);

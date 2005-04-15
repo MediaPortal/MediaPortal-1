@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Video
     #region Serialisation
     void LoadSettings()
     {
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         string strTmp = "";
         strTmp = (string)xmlreader.GetValue("videoplaylist","viewby");
@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.Video
 
     void SaveSettings()
     {
-      using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         switch (currentView)
         {
@@ -710,7 +710,7 @@ namespace MediaPortal.GUI.Video
 			if (GetKeyboard(ref strNewFileName))
 			{
         string strPlayListPath = "";
-        using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           strPlayListPath = xmlreader.GetValueAsString("movies","playlists","");
           strPlayListPath = Utils.RemoveTrailingSlash(strPlayListPath);

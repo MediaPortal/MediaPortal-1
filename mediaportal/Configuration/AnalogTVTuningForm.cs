@@ -227,7 +227,7 @@ namespace MediaPortal
     private void btnOk_Click(object sender, System.EventArgs e)
     {
      
-			//using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			//using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			//{
 			//	xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
 			//}
@@ -257,7 +257,7 @@ namespace MediaPortal
 			btnOk.Enabled=false;
 			UpdateList();
 			GUIGraphicsContext.form=this;
-//			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+//			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 //			{
 //				videoRenderer = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
 //				xmlreader.SetValue("mytv", "vmr9","0");

@@ -28,7 +28,7 @@ namespace MediaPortal.GUI.X10Plugin
 		{
 			m_locations.Clear();
 			m_X10Appliances.Clear();
-			using( AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using( MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int i = 0;
 				while(true)
@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.X10Plugin
 		/// </summary>
 		public void SaveSettings()
 		{
-			using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int i=0;
 				foreach (X10Appliance sx10 in m_X10Appliances)

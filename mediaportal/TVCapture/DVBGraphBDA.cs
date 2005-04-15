@@ -214,7 +214,7 @@ namespace MediaPortal.TV.Recording
 				graphRunning=false;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph(). ");
 
-				using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				}
@@ -1520,7 +1520,7 @@ namespace MediaPortal.TV.Recording
 			string strAudioCodec="";
 			string strAudioRenderer="";
 			bool   bAddFFDshow=false;
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
 				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
@@ -2288,7 +2288,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 				string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
-				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+				using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 				{
 					int lnb_0=0;
 					int lnb_1=0;

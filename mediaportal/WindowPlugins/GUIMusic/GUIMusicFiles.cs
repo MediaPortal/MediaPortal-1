@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Music
       m_directory.AddDrives();
       m_directory.SetExtensions(Utils.AudioExtensions);
 
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				MusicState.StartWindow=xmlreader.GetValueAsInt("music","startWindow", GetID);
 				MusicState.View=xmlreader.GetValueAsString("music","startview", "");
@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Music
     protected override void LoadSettings()
     {
 			base.LoadSettings();
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
 				m_strPlayListPath = xmlreader.GetValueAsString("music","playlists","");
 				m_strPlayListPath = Utils.RemoveTrailingSlash(m_strPlayListPath);
@@ -233,7 +233,7 @@ namespace MediaPortal.GUI.Music
 
 		public override void DeInit()
 		{
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("music","startWindow",MusicState.StartWindow.ToString());
 				xmlwriter.SetValue("music","startview",MusicState.View);

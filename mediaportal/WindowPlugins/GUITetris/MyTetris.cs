@@ -70,7 +70,7 @@ namespace MediaPortal.Games.Tetris
 
 			public void Load()
 			{
-				using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					m_bMusic = xmlreader.GetValueAsBool("tetris", "music", true);
 					m_bSound = xmlreader.GetValueAsBool("tetris", "sound", true);
@@ -86,7 +86,7 @@ namespace MediaPortal.Games.Tetris
 
 			public void Save()
 			{
-				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					xmlwriter.SetValueAsBool("tetris", "music", m_bMusic);
 					xmlwriter.SetValueAsBool("tetris", "sound", m_bSound);

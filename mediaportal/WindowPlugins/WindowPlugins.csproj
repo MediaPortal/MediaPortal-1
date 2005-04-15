@@ -220,11 +220,6 @@
                     HintPath = "..\KCS.Utilities.dll"
                 />
                 <Reference
-                    Name = "X10Plugin"
-                    AssemblyName = "X10Plugin"
-                    HintPath = "..\X10Plugin.dll"
-                />
-                <Reference
                     Name = "X10Unified"
                     AssemblyName = "X10Unified"
                     HintPath = "..\X10Unified.dll"

@@ -62,7 +62,7 @@ namespace MediaPortal.Configuration
 			//
 
 			string strLanguage ;
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				strLanguage = xmlreader.GetValueAsString("skin","language","English");
 			}
@@ -519,7 +519,7 @@ namespace MediaPortal.Configuration
 		{
 			int MaximumShares = 20;
 			//Do we have 1 or more music,picture,video shares?
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
 				if (playlistFolder==String.Empty)

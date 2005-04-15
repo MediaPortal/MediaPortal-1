@@ -963,7 +963,7 @@ namespace GUIStatus
 	/// </summary>
 	private void SaveSettings() 
 	{
-	  using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) 
+	  using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 	  {
 		xmlwriter.SetValueAsBool("status","status_is_mbm",isMbm);
 		xmlwriter.SetValueAsBool("status","status_bar_show",checkBox39.Checked);
@@ -1038,7 +1038,7 @@ namespace GUIStatus
 	private void LoadSettings() 
 	{
 	  bool isver=false;
-	  using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) 
+	  using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 	  {
 		int ver=0;
 		ver=xmlreader.GetValueAsInt("status","status_ver",0);
@@ -1093,7 +1093,7 @@ namespace GUIStatus
 	  }
 	  if (isver==false) 
 	  {
-		using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) 
+		using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 		{
 		  xmlwriter.SetValue("status","status_ver",statusVer); 
 		}

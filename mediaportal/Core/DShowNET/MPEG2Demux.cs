@@ -530,7 +530,7 @@ namespace DShowNET
         if (m_bSink ==null) Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED to get IStreamBufferSink interface");
 
 				int iTimeShiftBuffer=30;
-				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					iTimeShiftBuffer= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
 					if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;

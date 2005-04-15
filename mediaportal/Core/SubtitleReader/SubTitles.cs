@@ -101,7 +101,7 @@ namespace MediaPortal.Subtitle
     #region Serialisation
     public void LoadSettings()
     {
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         string strTmp="";
         m_strFont=xmlreader.GetValueAsString("subtitles","fontface","Arial");

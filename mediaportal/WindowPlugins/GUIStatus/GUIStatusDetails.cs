@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.GUIStatus {
 		}
 
 		private void SaveSettings() {
-			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
 				xmlwriter.SetValueAsBool("status","status_"+GUIStatus.GetName()+"al",((GUIToggleButtonControl)GetControl((int)Controls.CONTROL_ALARM)).Selected);
 				GUIStatus.SetAlarm(((GUIToggleButtonControl)GetControl((int)Controls.CONTROL_ALARM)).Selected);
 			}

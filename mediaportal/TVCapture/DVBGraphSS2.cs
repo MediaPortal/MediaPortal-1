@@ -245,7 +245,7 @@ namespace MediaPortal.TV.Recording
 		{
 			m_rebuildCB=new RebuildFunc(RebuildTuner);
 
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				m_cardType=xmlreader.GetValueAsString("DVBSS2","cardtype","");
@@ -1092,7 +1092,7 @@ namespace MediaPortal.TV.Recording
 			string strAudioCodec="";
 			string strAudioRenderer="";
 			bool   bAddFFDshow=false;
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
 				strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
@@ -2230,7 +2230,7 @@ namespace MediaPortal.TV.Recording
 			int cbandMHZ=0;
 			int circularMHZ=0;
 
-			using(AMS.Profile.Xml xmlreader=new AMS.Profile.Xml(m_cardFilename))
+			using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(m_cardFilename))
 			{
 				lnb0MHZ=xmlreader.GetValueAsInt("dvbs","LNB0",9750);
 				lnb1MHZ=xmlreader.GetValueAsInt("dvbs","LNB1",10600);
@@ -2279,7 +2279,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 
-			}//using(AMS.Profile.Xml xmlreader=new AMS.Profile.Xml(m_cardFilename))
+			}//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(m_cardFilename))
 
 			// set values to dvbchannel-object
 			ch.DiSEqC=diseqc;

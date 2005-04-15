@@ -232,7 +232,7 @@ namespace MediaPortal.RedEyeIR
 		{
 			try
 			{
-				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					recInternalCommands = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
 					commport        = xmlreader.GetValueAsString("RedEye", "commport",     "COM1:");

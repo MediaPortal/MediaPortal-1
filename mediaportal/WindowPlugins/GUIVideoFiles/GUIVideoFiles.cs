@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Video
 
 		public override void DeInit()
 		{
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("movies","startWindow",VideoState.StartWindow.ToString());
 
@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.Video
 			catch(Exception){}
 			LoadSettings();
 			bool result=Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				
 				VideoState.StartWindow=xmlreader.GetValueAsInt("movies","startWindow", GetID);
@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.Video
     #region Serialisation
     protected override void LoadSettings()
     {
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
 				
         m_directory.Clear();
@@ -2104,7 +2104,7 @@ namespace MediaPortal.GUI.Video
           
 				bool askBeforePlayingDVDImage = false;
 
-				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
 				}

@@ -44,7 +44,7 @@ namespace MediaPortal.Player
       string strDVDNavigator="DVD Navigator";
       string strARMode="";
       string strDisplayMode="";
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
         if ( strARMode=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;

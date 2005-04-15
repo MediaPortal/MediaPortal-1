@@ -26,7 +26,7 @@ namespace MediaPortal.TVGuideScheduler
 			string FileToImport=null;
 			bool RunConfig=false;
 			
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				grabber=xmlreader.GetValueAsString("xmltv", "grabber","tv_grab_uk_rt");
 				multiGrab=xmlreader.GetValueAsString("xmltv", "advanced","yes");

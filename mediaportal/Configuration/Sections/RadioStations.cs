@@ -503,7 +503,7 @@ namespace MediaPortal.Configuration.Sections
 						strDefaultStation=radioStation.Name;
 					}
         }
-        using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           xmlwriter.SetValue("myradio", "default", strDefaultStation);
         }
@@ -513,7 +513,7 @@ namespace MediaPortal.Configuration.Sections
 		{
       string defaultStation = string.Empty;
 
-      using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         defaultStation = xmlreader.GetValueAsString("myradio", "default", "");
       }

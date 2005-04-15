@@ -34,7 +34,7 @@ namespace MediaPortal.TV.Recording
     {
       int    countryCode = 31;
       string tunerInput  = "Antenna";
-      using (AMS.Profile.Xml xmlReader = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         tunerInput  = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
         countryCode = xmlReader.GetValueAsInt("capture", "country", 31);

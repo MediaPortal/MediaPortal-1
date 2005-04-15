@@ -139,7 +139,7 @@ namespace WindowPlugins.GUIPrograms
 
 		void SaveSettings()
 		{
-			using(AMS.Profile.Xml xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				switch ((View)_MapSettings.ViewAs)
 				{
@@ -173,7 +173,7 @@ namespace WindowPlugins.GUIPrograms
 
 		void LoadSettings()
 		{
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string strTmp="";
 				strTmp=(string)xmlreader.GetValue("myprograms","viewby");
@@ -203,7 +203,7 @@ namespace WindowPlugins.GUIPrograms
 
 		void LoadLastAppIDFromSettings()
 		{
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				_MapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
 				_MapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);

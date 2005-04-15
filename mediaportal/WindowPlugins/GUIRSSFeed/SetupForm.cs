@@ -80,7 +80,7 @@ namespace GUIRSSFeed
 			string tempText;
 			for (int i=0; i<100; i++)
 			{
-				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
   				{
 					tempText = xmlreader.GetValueAsString("rss","siteName"+i,"");
   					if (tempText == (string)listBox.Items[iItem])
@@ -107,7 +107,7 @@ namespace GUIRSSFeed
 			string tempText;
 			for (int i=0; i<100; i++)
 			{
-				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
   				{
 					tempText = xmlreader.GetValueAsString("rss","siteName"+i,"");
   					if (tempText == (string)listBox.Items[iItem])
@@ -121,7 +121,7 @@ namespace GUIRSSFeed
 			string strNameTag=String.Format("siteName{0}",ID);
  			string strURLTag=String.Format("siteURL{0}",ID);
  			string strDescriptionTag=String.Format("siteDescription{0}",ID);
-			using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
    		{
 				xmlwriter.SetValue("rss",strNameTag,"");
      		xmlwriter.SetValue("rss",strURLTag,"");
@@ -154,7 +154,7 @@ namespace GUIRSSFeed
 		/// </summary>
 		public void PopulateFields()
 		{
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
      	{
 				for (int i=0; i < 100; i++)
 				{
@@ -377,7 +377,7 @@ namespace GUIRSSFeed
 
 		private void button3_Click(object sender, System.EventArgs e)
 		{
-			using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("rss","iRefreshTime",textRefreshInterval.Text);
 

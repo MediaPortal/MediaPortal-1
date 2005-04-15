@@ -349,7 +349,7 @@ namespace DShowNET
 				int videoSVHS=1;
 
 				string filename=String.Format(@"database\card_{0}.xml", cardName);
-				using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml(filename))
+				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
 				{
 					audioCVBS1 = 1+xmlreader.GetValueAsInt("mapping", "audio1", 0);
 					audioCVBS2 = 1+xmlreader.GetValueAsInt("mapping", "audio2", 1);

@@ -338,7 +338,7 @@ namespace MediaPortal.Player
           return false;
         }
 
-		  using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+		  using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 		  {
 			  m_strAudioLanguage   =xmlreader.GetValueAsString("dvdplayer","audiolanguage","english");
 			  m_strSubtitleLanguage=xmlreader.GetValueAsString("dvdplayer","subtitlelanguage","english");
@@ -549,7 +549,7 @@ namespace MediaPortal.Player
       string strARMode="";
       string strDisplayMode="";
       bool  bUseAC3Filter=false;
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         strDVDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","");
         strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
@@ -1516,7 +1516,7 @@ namespace MediaPortal.Player
         m_geometry.ScreenWidth =nw;
         m_geometry.ScreenHeight=nh;
         m_geometry.ARType=GUIGraphicsContext.ARType;
-        using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           bool bUseAR=xmlreader.GetValueAsBool("dvdplayer","pixelratiocorrection",false);
           if (bUseAR) m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
@@ -1876,7 +1876,7 @@ namespace MediaPortal.Player
 			string strAudioCodec="";
 			string strAudiorenderer="";
       bool   bAddFFDshow=false;
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         bAddFFDshow=xmlreader.GetValueAsBool("dvdplayer","ffdshow",false);
 				strVideoCodec=xmlreader.GetValueAsString("dvdplayer","videocodec","");

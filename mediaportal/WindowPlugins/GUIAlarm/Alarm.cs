@@ -457,7 +457,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				AlarmCollection Alarms = new AlarmCollection();
 
-				using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					for (int i=0; i < MAX_ALARMS; i++)
 					{
@@ -517,7 +517,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				int id = alarmToSave.Id;
 				
-				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					
 					xmlwriter.SetValue("alarm","alarmName"+id,alarmToSave.Name);
@@ -549,7 +549,7 @@ namespace MediaPortal.GUI.Alarm
 			/// <returns>true if suceeded</returns>
 			public static bool DeleteAlarm(int id)
 			{
-				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					xmlwriter.RemoveEntry("alarm","alarmName"+id);
 					xmlwriter.RemoveEntry("alarm","alarmEnabled"+id);
@@ -579,7 +579,7 @@ namespace MediaPortal.GUI.Alarm
 				string tempText;
 				for (int i=0; i < MAX_ALARMS; i++)
 				{
-					using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						tempText = xmlreader.GetValueAsString("alarm","alarmName"+i,"");
 						if (tempText.Length == 0)
@@ -631,7 +631,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				get
 				{ 
-					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						return  Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("alarm","alarmSoundsFolder",""));
 					}
@@ -645,7 +645,7 @@ namespace MediaPortal.GUI.Alarm
 
 				get
 				{ 
-					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						return  Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("music","playlists",""));
 					}
@@ -658,7 +658,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				get
 				{ 
-					using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						return xmlreader.GetValueAsInt("alarm","alarmSnoozeTime",5);
 					}

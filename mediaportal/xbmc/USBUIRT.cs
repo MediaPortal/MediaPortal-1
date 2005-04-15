@@ -208,7 +208,7 @@ using System.Windows.Forms;
 				{
 					urcb = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallback);		
 					UUIRTSetReceiveCallback(handle,urcb,0);
-					using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						recInternalCommands = xmlreader.GetValueAsString("USBUIRT", "internal", "false") == "true";
 						recExternalCommands = xmlreader.GetValueAsString("USBUIRT", "external", "false") == "true";

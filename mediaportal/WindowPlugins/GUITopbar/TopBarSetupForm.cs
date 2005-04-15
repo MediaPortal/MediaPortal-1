@@ -133,7 +133,7 @@ namespace MediaPortal.Topbar
 
     private void TopBarSetup_Load(object sender, System.EventArgs e)
     {      
-      using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         textTimeOut.Text = xmlreader.GetValueAsString("TopBar","autohidetimeout","15");
 
@@ -147,7 +147,7 @@ namespace MediaPortal.Topbar
 
     private void buttonOk_Click(object sender, System.EventArgs e)
     {
-      using (AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         xmlWriter.SetValue("TopBar","autohidetimeout",textTimeOut.Text);
 

@@ -403,7 +403,7 @@ namespace MediaPortal.Util
           {
             bool askBeforePlayingDVDImage = false;
 
-            using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
             {
               askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
             }

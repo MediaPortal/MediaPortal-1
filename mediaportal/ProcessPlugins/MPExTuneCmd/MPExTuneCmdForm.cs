@@ -54,7 +54,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		private void LoadSettings()
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				MpExTuneCmdLoc.Text = xmlreader.GetValueAsString("MPExTuneCmd","commandloc","C:\\dtvcon\\dtvcmd.exe");
 				MPExTuneCmdDelim.Text = xmlreader.GetValueAsString("MPExTuneCmd","commanddelim","#");
@@ -63,7 +63,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		private bool SaveSettings()
 		{
-			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("MPExTuneCmd","commandloc",MpExTuneCmdLoc.Text);
 				xmlwriter.SetValue("MPExTuneCmd","commanddelim",MPExTuneCmdDelim.Text);
@@ -167,25 +167,45 @@ namespace MediaPortal.MPExTuneCmd
 		#endregion
 
 		/// <summary>
+
 		/// This method is called whenever the browse button is click
+
 		/// </summary>
+
 		/// <param name="sender">the sender instance</param>
+
 		/// <param name="e">the event.  In this case click!</param>
+
 		private void browseButton_Click(object sender, System.EventArgs e)
+
 		{
+
 			string curDir = Directory.GetCurrentDirectory();
+
 			// The filter for the dialog window is foobar2000.exe
+
 			OpenFileDialog dlg = new OpenFileDialog();
+
 			dlg.AddExtension = true;
+
 			dlg.Filter = "dtvcmd (dtvcmd.exe)|dtvcmd.exe|dtvcl (dtvcl.exe)|dtvcl.exe|All files (*.*)|*.*" ;
+
 			// start in media folder
+
 			//dlg.InitialDirectory = @"C:\";    
+
 			// open dialog
+
 			if(dlg.ShowDialog(this) == DialogResult.OK)
+
 			{
+
 				MpExTuneCmdLoc.Text = dlg.FileName;
+
 			}
+
 			Directory.SetCurrentDirectory(curDir);
+
 		}
 		
 		private void ok_button_Click(object sender, System.EventArgs e)

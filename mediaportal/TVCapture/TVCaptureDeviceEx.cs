@@ -971,7 +971,7 @@ namespace MediaPortal.TV.Recording
 			_mNewRecordedTV.End = Utils.datetolong(DateTime.Now);
 			TVDatabase.AddRecordedTV(_mNewRecordedTV);
 
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				bool addMovieToDatabase= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
 				if (addMovieToDatabase)
@@ -1507,7 +1507,7 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				string filename=String.Format(@"database\card_{0}.xml",m_strFriendlyName);
-				using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml(filename))
+				using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 				{
 					int contrast=xmlreader.GetValueAsInt("tv","contrast",-1);
 					int brightness=xmlreader.GetValueAsInt("tv","brightness",-1);
@@ -1527,7 +1527,7 @@ namespace MediaPortal.TV.Recording
 		void SaveContrastGammaBrightnessSettings()
 		{
 			string filename=String.Format(@"database\card_{0}.xml",m_strFriendlyName);
-			using(AMS.Profile.Xml   xmlWriter=new AMS.Profile.Xml(filename))
+			using(MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml(filename))
 			{
 				xmlWriter.SetValue("tv","contrast",GUIGraphicsContext.Contrast);
 				xmlWriter.SetValue("tv","brightness",GUIGraphicsContext.Brightness);

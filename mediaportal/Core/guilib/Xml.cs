@@ -7,7 +7,7 @@ using System.Collections;
 using System.Reflection;
 using MediaPortal.GUI.Library;
 
-namespace AMS.Profile
+namespace MediaPortal.Profile
 {
 	public class Xml :IDisposable
 	{
@@ -114,7 +114,7 @@ namespace AMS.Profile
 		/// <seealso cref="GetValue" />
     public void Save()
     {
-			lock (typeof(AMS.Profile.Xml))
+			lock (typeof(MediaPortal.Profile.Xml))
 			{
 				if (m_doc==null) return;
 				if (m_doc.DocumentElement==null) return;

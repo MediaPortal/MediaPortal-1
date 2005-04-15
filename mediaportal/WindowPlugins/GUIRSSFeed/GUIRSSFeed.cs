@@ -251,7 +251,7 @@ namespace MediaPortal.GUI.RSS
 		{
 			String firstSite = "";
 			m_sites.Clear();
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				for (int i=0; i < NUM_STORIES; i++)
 				{

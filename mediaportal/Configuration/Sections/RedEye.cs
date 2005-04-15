@@ -63,7 +63,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void LoadSettings()
 		{
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				inputCheckBox.Checked        = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
 				CommandDelayCombo.Text       = xmlreader.GetValueAsString("RedEye", "delay", "300");
@@ -74,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("RedEye", "internal", inputCheckBox.Checked ? "true" : "false");
 				xmlwriter.SetValue("RedEye", "commport", CommPortCombo.Text);

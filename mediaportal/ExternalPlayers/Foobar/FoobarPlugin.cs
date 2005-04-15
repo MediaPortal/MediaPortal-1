@@ -161,7 +161,7 @@ namespace MediaPortal.FoobarPlugin
       string port = null;
       string windowName = null;
 
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         // extensions to play by this player
         strExt = xmlreader.GetValueAsString("foobarplugin", "enabledextensions","");

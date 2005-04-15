@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.Video
 			else if (g_Player.IsDVD)
 				key="dvdplayer";
 
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
 				m_bMSNChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
         m_iMaxTimeOSDOnscreen=1000*xmlreader.GetValueAsInt("movieplayer","osdtimeout",5);
@@ -110,7 +110,7 @@ namespace MediaPortal.GUI.Video
 
     void SaveSettings()
     {
-      using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
 				string strKey="movieplayer";
 				if (g_Player.IsTV || g_Player.IsTVRecording)

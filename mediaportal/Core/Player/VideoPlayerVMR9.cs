@@ -64,7 +64,7 @@ namespace MediaPortal.Player
         string strAudioCodec="";
 				string strAudiorenderer="";
         bool   bAddFFDshow=false;
-        using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           bAddFFDshow=xmlreader.GetValueAsBool("movieplayer","ffdshow",false);
           strVideoCodec=xmlreader.GetValueAsString("movieplayer","mpeg2videocodec","");
@@ -111,7 +111,7 @@ namespace MediaPortal.Player
         vobSub = filter as IDirectVobSub;
         if (vobSub!=null)
         {
-          using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+          using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
           {
             string strTmp="";
             string strFont=xmlreader.GetValueAsString("subtitles","fontface","Arial");

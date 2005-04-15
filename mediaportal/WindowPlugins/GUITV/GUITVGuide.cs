@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.TV
 		public override bool Init()
 		{
 			m_strTVGuideFile="xmltv";
-			using(AMS.Profile.Xml  xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml  xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_strTVGuideFile=xmlreader.GetValueAsString("xmltv","folder","xmltv");
 				m_strTVGuideFile=Utils.RemoveTrailingSlash(m_strTVGuideFile);
@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.TV
 		void CheckNewTVGuide()
 		{
 			bool bImport=false;
-			using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string strTmp=String.Empty;
 				strTmp=xmlreader.GetValueAsString("tvguide","date",String.Empty);
@@ -184,7 +184,7 @@ namespace MediaPortal.GUI.TV
 		#region Serialisation
 		void LoadSettings()
 		{
-			using (AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_strCurrentChannel=xmlreader.GetValueAsString("tvguide","channel",String.Empty);
 				m_iCursorY=xmlreader.GetValueAsInt("tvguide", "ypos",0);
@@ -194,7 +194,7 @@ namespace MediaPortal.GUI.TV
 
 		void SaveSettings()
 		{
-			using (AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("tvguide","channel",m_strCurrentChannel);
 				xmlwriter.SetValue("tvguide", "ypos",m_iCursorY.ToString());
@@ -1917,7 +1917,7 @@ namespace MediaPortal.GUI.TV
 				//
 				if(File.Exists(m_strTVGuideFile))
 				{
-					using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						string strFileTime=System.IO.File.GetLastWriteTime(m_strTVGuideFile).ToString();
 						xmlreader.SetValue("tvguide","date",strFileTime);

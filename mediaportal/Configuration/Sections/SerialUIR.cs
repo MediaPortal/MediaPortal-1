@@ -78,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void LoadSettings()
 		{
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				initialize = false;
 				inputCheckBox.Checked        = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
@@ -104,7 +104,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("SerialUIR", "internal", inputCheckBox.Checked ? "true" : "false");
 				xmlwriter.SetValue("SerialUIR", "baudrate", BaudRateCombo.Text);

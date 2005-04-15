@@ -350,7 +350,7 @@ namespace GUIRecipies
 		/// </summary>
 		
 		private void SaveSettings() {
-			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
 				xmlwriter.SetValueAsBool("recipie","subcats",checkBox1.Checked); 
 				xmlwriter.SetValueAsBool("recipie","online",checkBox2.Checked); 
 			}
@@ -360,7 +360,7 @@ namespace GUIRecipies
 		/// Loads my status settings from the profile xml.
 		/// </summary>
 		private void LoadSettings() {
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
 				checkBox1.Checked = xmlreader.GetValueAsBool("recipie","subcats",false);
 				checkBox2.Checked = xmlreader.GetValueAsBool("recipie","online",false);
 			}

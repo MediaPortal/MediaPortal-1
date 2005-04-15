@@ -322,7 +322,7 @@ namespace MyMail
       applicationPath=System.IO.Path.GetDirectoryName(applicationPath);
 
 			if(textBox1.Text.Equals(textBox2.Text))	
-				using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+				using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					MailBox tmpBox;
 					int boxCount=m_mailBox.Count;
@@ -432,7 +432,7 @@ namespace MyMail
 
 		void LoadSettings()
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int boxCount=0;
 				MailBox tmpBox;

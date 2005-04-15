@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		public override void LoadSettings()
 		{
-			using (AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
 				parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer","arguments", "");
@@ -86,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         xmlwriter.SetValue("dvdplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("dvdplayer","arguments", parametersTextBox.Text);

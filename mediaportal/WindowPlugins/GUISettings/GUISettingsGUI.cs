@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Settings
     #region Serialisation
     void LoadSettings()
     {
-      using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         m_iSpeed=xmlreader.GetValueAsInt("general","scrollspeed",5);
       }
@@ -122,7 +122,7 @@ namespace MediaPortal.GUI.Settings
 
     void SaveSettings()
     {
-      using(AMS.Profile.Xml   xmlwriter=new AMS.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
 				xmlwriter.SetValue("general","scrollspeed",m_iSpeed.ToString());
 				xmlwriter.SetValue("screen","maxfps",(int)GUIGraphicsContext.MaxFPS);

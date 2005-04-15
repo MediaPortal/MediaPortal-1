@@ -56,7 +56,7 @@ namespace MediaPortal.PowerScheduler
 
 		void LoadSettings()
 		{
-			using(AMS.Profile.Xml xmlreader = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				nud_wakeup.Value = xmlreader.GetValueAsInt("powerscheduler","wakeupinterval",1);
 				nud_shutdown.Value = xmlreader.GetValueAsInt("powerscheduler","shutdowninterval",3);
@@ -70,7 +70,7 @@ namespace MediaPortal.PowerScheduler
 
 		bool SaveSettings()
 		{
-			using(AMS.Profile.Xml xmlwriter = new AMS.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("powerscheduler","wakeupinterval",nud_wakeup.Value);
 				xmlwriter.SetValue("powerscheduler","shutdowninterval",nud_shutdown.Value);

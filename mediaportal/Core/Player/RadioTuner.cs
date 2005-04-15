@@ -44,7 +44,7 @@ namespace MediaPortal.Player
         
         int iTunerCountry=31;
         string strTunerType="Antenna";
-        using(AMS.Profile.Xml   xmlreader=new AMS.Profile.Xml("MediaPortal.xml"))
+        using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
 					m_bInternal   =xmlreader.GetValueAsBool("radio","internal",true);
 					strPlayerFile =xmlreader.GetValueAsString("radio","player","");
