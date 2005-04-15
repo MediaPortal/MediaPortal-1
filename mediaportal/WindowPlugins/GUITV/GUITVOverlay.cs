@@ -45,7 +45,8 @@ namespace MediaPortal.GUI.TV
     }    
     
     public override void PreInit()
-    {
+		{
+			base.PreInit();
       AllocResources();
     
     }

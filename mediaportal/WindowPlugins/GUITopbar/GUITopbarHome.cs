@@ -70,7 +70,8 @@ namespace MediaPortal.Topbar
       get { return false;}
     }    
     public override void PreInit()
-    {
+		{
+			base.PreInit();
       AllocResources();
     }
     public override void Render(float timePassed)

@@ -65,6 +65,7 @@ namespace MediaPortal.GUI.Music
     }    
     public override void PreInit()
     {
+			base.PreInit();
       AllocResources();
       m_iPosOrgIcon=0;    
     }

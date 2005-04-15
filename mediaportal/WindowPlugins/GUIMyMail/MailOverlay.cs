@@ -56,6 +56,7 @@ namespace MyMail
 		}    
 		public override void PreInit()
 		{
+			base.PreInit();
 			AllocResources();
 		}
 		public override void PostRender(float timePassed, int iLayer)

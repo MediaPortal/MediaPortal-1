@@ -46,7 +46,8 @@ namespace MediaPortal.GUI.Video
       get { return false; }
     }    
     public override void PreInit()
-    {
+		{
+			base.PreInit();
       AllocResources();
     
     }
