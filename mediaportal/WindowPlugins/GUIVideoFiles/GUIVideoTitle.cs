@@ -16,7 +16,7 @@ namespace MediaPortal.GUI.Video
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class GUIVideoTitle: GUIVideoBaseWindow, IComparer
+	public class GUIVideoTitle: GUIVideoBaseWindow
 	{ 
 		#region Base variabeles
 

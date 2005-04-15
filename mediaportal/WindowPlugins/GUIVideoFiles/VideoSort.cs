@@ -40,11 +40,11 @@ namespace MediaPortal.GUI.Video
 			else if (!item1.IsFolder && item2.IsFolder) return 1;
 
 
-			switch (CurrentSortMethod)
+			switch (currentSortMethod)
 			{
 				case SortMethod.Year : 
 				{
-					if (CurrentSortAsc)
+					if (sortAscending)
 					{
 						if (item1.Year > item2.Year) return 1;
 						if (item1.Year < item2.Year) return - 1;
@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Video
 				}
 				case SortMethod.Rating : 
 				{
-					if (CurrentSortAsc)
+					if (sortAscending)
 					{
 						if (item1.Rating > item2.Rating) return 1;
 						if (item1.Rating < item2.Rating) return - 1;
@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Video
 
 				case SortMethod.Name: 
           
-					if (CurrentSortAsc)
+					if (sortAscending)
 					{
 						return String.Compare(item1.Label, item2.Label, true);
 					}
@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.Video
 					}
         
 				case SortMethod.Label : 
-					if (CurrentSortAsc)
+					if (sortAscending)
 					{
 						return String.Compare(item1.DVDLabel, item2.DVDLabel, true);
 					}

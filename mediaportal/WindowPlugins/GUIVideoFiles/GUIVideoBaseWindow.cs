@@ -15,7 +15,7 @@ namespace MediaPortal.GUI.Video
 	/// <summary>
 	/// Summary description for GUIVideoBaseWindow.
 	/// </summary>
-	public class GUIVideoBaseWindow: GUIWindow, IComparer
+	public class GUIVideoBaseWindow: GUIWindow
 	{
 
 		protected enum View
@@ -86,8 +86,8 @@ namespace MediaPortal.GUI.Video
 				currentView=(View)xmlreader.GetValueAsInt(SerializeName,"view", (int)View.List);
 				currentViewRoot=(View)xmlreader.GetValueAsInt(SerializeName,"viewroot", (int)View.List);
 
-				currentSortMethod=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethod", (int)VideoSort.SortMethod.Name);
-				currentSortMethodRoot=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)VideoSort.SortMethod.Name);
+				currentSortMethod=(VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethod", (int)VideoSort.SortMethod.Name);
+				currentSortMethodRoot=(VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)VideoSort.SortMethod.Name);
 				m_bSortAscending=xmlreader.GetValueAsBool(SerializeName,"sortasc", true);
 				m_bSortAscendingRoot=xmlreader.GetValueAsBool(SerializeName,"sortascroot", true);
 			}
