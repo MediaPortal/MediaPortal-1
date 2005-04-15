@@ -1645,7 +1645,7 @@ namespace MediaPortal.GUI.Video
     {
       GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
       if (filmstrip==null) return;
-			if (item.Label="..")
+			if (item.Label=="..")
 			{
 				filmstrip.InfoImageFileName=String.Empty;
 				return;
