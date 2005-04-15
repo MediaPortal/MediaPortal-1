@@ -75,7 +75,9 @@ namespace MediaPortal.GUI.Library
 				GUI_MSG_VOLUME_INSERTED,
 				GUI_MSG_VOLUME_REMOVED,
 				GUI_MSG_AUTOPLAY_VOLUME,
-				GUI_MSG_SHOW_DIRECTORY
+				GUI_MSG_SHOW_DIRECTORY,
+				GUI_MSG_SHOW_MESSAGE,
+				GUI_MSG_HIDE_MESSAGE
 		};
 
 		private string 				m_strLabel="";

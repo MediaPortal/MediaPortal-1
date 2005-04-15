@@ -57,11 +57,21 @@ namespace MediaPortal.GUI.TV
 		bool				m_bLastDialogVisible=false;
 		bool				m_bMSNChatPopup=false;
 		GUIDialogMenu dlg;
+		
+		// Message box
+		bool				m_bMsgBoxVisible=false;
+		DateTime		m_dwMsgTimer=DateTime.Now;
+		int					m_iMsgBoxTimeout=0;
 
 
     enum Control 
 		{
 			BLUE_BAR    =0
+		, MSG_BOX = 2
+		, MSG_BOX_LABEL1 = 3
+		, MSG_BOX_LABEL2 = 4
+		, MSG_BOX_LABEL3 = 5
+		, MSG_BOX_LABEL4 = 6
 		, LABEL_ROW1 =10
 		, LABEL_ROW2 =11
 		, LABEL_ROW3 =12
@@ -341,8 +351,17 @@ namespace MediaPortal.GUI.TV
 					break;
 
 				case Action.ActionType.ACTION_KEY_PRESSED:
+				{
 					if ((action.m_key!=null) && (!m_bMSNChatVisible))
 						OnKeyCode((char)action.m_key.KeyChar);
+
+					HideControl(GetID, (int)Control.MSG_BOX);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL2);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL3);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL4);
+					m_bMsgBoxVisible = false;
+				}
 					break;
 
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
@@ -488,6 +507,52 @@ namespace MediaPortal.GUI.TV
 
 			switch ( message.Message )
 			{
+				case GUIMessage.MessageType.GUI_MSG_HIDE_MESSAGE:
+				{
+					HideControl(GetID, (int)Control.MSG_BOX);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL2);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL3);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL4);
+					m_bMsgBoxVisible = false;
+				}
+					break;
+
+				case GUIMessage.MessageType.GUI_MSG_SHOW_MESSAGE:
+				{
+					// Todo : Overlay mode
+					if (GUIGraphicsContext.Vmr9Active)
+					{
+						GUIMessage msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Control.MSG_BOX_LABEL1,0,0,null); 
+						msg.Label=message.Label;
+						OnMessage(msg);
+
+						msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Control.MSG_BOX_LABEL2,0,0,null); 
+						msg.Label=message.Label2;
+						OnMessage(msg);
+
+						msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Control.MSG_BOX_LABEL3,0,0,null); 
+						msg.Label=message.Label3;
+						OnMessage(msg);
+
+						msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Control.MSG_BOX_LABEL4,0,0,null); 
+						msg.Label=message.Label4;
+						OnMessage(msg);
+
+						if (message.Param2!=0) ShowControl(GetID, (int)Control.MSG_BOX);
+						ShowControl(GetID, (int)Control.MSG_BOX_LABEL1);
+						ShowControl(GetID, (int)Control.MSG_BOX_LABEL2);
+						ShowControl(GetID, (int)Control.MSG_BOX_LABEL3);
+						ShowControl(GetID, (int)Control.MSG_BOX_LABEL4);
+						m_bMsgBoxVisible = true;
+						
+						// Set specified timeout
+						m_iMsgBoxTimeout = message.Param1;
+						m_dwMsgTimer = DateTime.Now;
+					}
+				}
+					break;
+
 				case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
 					if (m_bMSNChatVisible)
 					{
@@ -570,6 +635,13 @@ namespace MediaPortal.GUI.TV
 					m_osdWindow=(GUITVOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVOSD);
 					m_zapWindow=(GUITVZAPOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVZAPOSD);
 					m_msnWindow=(GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);
+
+					HideControl(GetID, (int)Control.MSG_BOX);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL2);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL3);
+					HideControl(GetID, (int)Control.MSG_BOX_LABEL4);
+					m_bMsgBoxVisible = false;
 
 					HideControl(GetID,(int)Control.LABEL_ROW1);
 					HideControl(GetID,(int)Control.LABEL_ROW2);
@@ -935,6 +1007,20 @@ namespace MediaPortal.GUI.TV
 			{
 				base.Render(timePassed);
 
+				// Message box still visible?
+				if (m_bMsgBoxVisible && m_iMsgBoxTimeout>0)
+				{
+					TimeSpan ts = DateTime.Now - m_dwMsgTimer;
+					if ( ts.TotalSeconds > m_iMsgBoxTimeout)
+					{
+						HideControl(GetID, (int)Control.MSG_BOX);
+						HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
+						HideControl(GetID, (int)Control.MSG_BOX_LABEL2);
+						HideControl(GetID, (int)Control.MSG_BOX_LABEL3);
+						HideControl(GetID, (int)Control.MSG_BOX_LABEL4);
+						m_bMsgBoxVisible = false;
+					}
+				}
 
 				// do we need 2 render the OSD?
 				if (m_bOSDVisible)
