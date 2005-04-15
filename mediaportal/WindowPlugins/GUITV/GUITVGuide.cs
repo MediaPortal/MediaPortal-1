@@ -855,7 +855,7 @@ namespace MediaPortal.GUI.TV
 				while (channel >= m_channels.Count) channel -=m_channels.Count;
 				TVChannel chan=(TVChannel)m_channels[channel];
 				string strChannel=chan.Name;
-				string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,strChannel);
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,strChannel);
 				GUIPropertyManager.SetProperty("#TV.Guide.Title",String.Empty);
 				GUIPropertyManager.SetProperty("#TV.Guide.Time",String.Empty);
 				GUIPropertyManager.SetProperty("#TV.Guide.Description",String.Empty);
@@ -884,7 +884,7 @@ namespace MediaPortal.GUI.TV
 			}
 			else
 			{
-				string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,m_currentProgram.Channel);
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,m_currentProgram.Channel);
 				string strTime=String.Format("{0}-{1}", 
 					m_currentProgram.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
 					m_currentProgram.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
@@ -956,7 +956,7 @@ namespace MediaPortal.GUI.TV
 				{
 					TVChannel tvChan=(TVChannel)m_channels[chan];
           
-					string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,tvChan.Name);                   
+					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,tvChan.Name);                   
 					if (System.IO.File.Exists(strLogo))
 					{
 						GUIButton3PartControl img=GetControl(iChannel+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1155,7 +1155,7 @@ namespace MediaPortal.GUI.TV
 
 		void RenderChannel(int iChannel,TVChannel channel, long iStart, long iEnd)
 		{
-			string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,channel.Name);
+			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,channel.Name);
 			if (System.IO.File.Exists(strLogo))
 			{
 				GUIButton3PartControl img=GetControl(iChannel+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;

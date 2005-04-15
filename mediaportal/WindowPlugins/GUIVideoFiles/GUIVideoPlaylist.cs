@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Video
 		}
 		View currentView = View.VIEW_AS_LIST;
 		
-    const string ThumbsFolder=@"thumbs\Videos\Title";
+    
 		DirectoryHistory m_history = new DirectoryHistory();
 		string m_strDirectory = "";
 		int m_iItemSelected = -1;
@@ -583,7 +583,7 @@ namespace MediaPortal.GUI.Video
                   string strThumb;
                   if (Utils.IsDVD(pItem.Path))
                     pItem.Label=String.Format( "({0}:) {1}",  pItem.Path.Substring(0,1),  info.Title );
-                  strThumb = Utils.GetCoverArt(ThumbsFolder, info.Title );
+                  strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title );
                   if (System.IO.File.Exists(strThumb))
                   {
                     pItem.ThumbnailImage = strThumb;
@@ -610,7 +610,7 @@ namespace MediaPortal.GUI.Video
           if (movieid>=0)
           {
             string strThumb;
-            strThumb = Utils.GetCoverArt(ThumbsFolder, info.Title );
+            strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title );
             if (System.IO.File.Exists(strThumb))
             {
               pItem.ThumbnailImage = strThumb;

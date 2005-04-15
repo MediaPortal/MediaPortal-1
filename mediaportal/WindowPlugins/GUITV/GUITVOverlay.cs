@@ -184,7 +184,7 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
-        string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,m_strChannel);
+        string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,m_strChannel);
         if (System.IO.File.Exists(strLogo))
         {
           GUIPropertyManager.SetProperty("#thumb",strLogo); 

@@ -19,7 +19,6 @@ namespace MediaPortal.TV.Database
     string      m_strFilename;
     int         m_iID=-1;
     int         m_iPlayed=0;
-		static private string 	TVChannelCovertArt=@"thumbs\tv\logos";				
     /// <summary>
     /// Property to get/set the filename of this recorded tv program
     /// </summary>
@@ -128,7 +127,7 @@ namespace MediaPortal.TV.Database
 			GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre",Genre);
 			GUIPropertyManager.SetProperty("#TV.RecordedTV.Time",strTime);
 			GUIPropertyManager.SetProperty("#TV.RecordedTV.Description",Description);
-			string strLogo=Utils.GetCoverArt(TVChannelCovertArt,Channel);
+			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,Channel);
 			if (System.IO.File.Exists(strLogo))
 			{
 				GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb",strLogo);

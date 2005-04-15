@@ -30,8 +30,6 @@ namespace MediaPortal.GUI.TV
 			IMG_REC_RECTANGLE=23,
 
 		};
-		static public string 	TVChannelCovertArt=@"thumbs\tv\logos";
-		static public string 	TVShowCovertArt=@"thumbs\tv\shows";
 
 		static bool     			m_bTVON=true;
 		static bool     			m_bTimeShifting=true;

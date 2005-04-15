@@ -45,8 +45,6 @@ namespace MediaPortal.Configuration.Sections
     ArrayList availableFiles;
     string strLastThumb = "";
 
-    // This should really be in a common place?
-    const string AlbumThumbsFolder = @"thumbs\music\albums";
 
     public MusicDatabase() :  this("Music Database")
     {
@@ -583,7 +581,7 @@ namespace MediaPortal.Configuration.Sections
             {
               // What to call the thumb?
               string name = String.Format( "{0}-{1}", tag.Artist, tag.Album );
-              string strSmallThumb =  Utils.GetCoverArtName( AlbumThumbsFolder, name );
+              string strSmallThumb =  Utils.GetCoverArtName( Thumbs.MusicAlbum, name );
 
               if ( strSmallThumb != strLastThumb )
               {

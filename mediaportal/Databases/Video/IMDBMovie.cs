@@ -10,8 +10,6 @@ namespace MediaPortal.Video.Database
 	/// </summary>
 	public class IMDBMovie
 	{
-		const string ThumbsFolder=@"thumbs\Videos\Title";
-    
 		int					m_id=-1;
     string 			m_strDirector="";
     string 			m_strWritingCredits="";
@@ -213,7 +211,7 @@ namespace MediaPortal.Video.Database
 		}
 		public void SetProperties()
 		{
-			string strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,Title);
+			string strThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,Title);
 			GUIPropertyManager.SetProperty("#director",Director);
 			GUIPropertyManager.SetProperty("#genre",Genre);
 			GUIPropertyManager.SetProperty("#cast",Cast);

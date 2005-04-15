@@ -12,7 +12,7 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class GUIVideoOverlay : GUIWindow
 	{
-    const string ThumbsFolder=@"thumbs\Videos\Title";
+    
     string m_strFile = "";
 		string m_strProgram = "";
     enum Controls
@@ -27,7 +27,7 @@ namespace MediaPortal.GUI.Video
       , CONTROL_RW_LOGO = 8
     };
 
-    string TVChannelCovertArt=@"thumbs\tv\logos";
+    
 		string m_strThumb="";
 		public GUIVideoOverlay()
 		{
@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.Video
           GUIPropertyManager.SetProperty("#genre", recording.Genre);
           GUIPropertyManager.SetProperty("#year",strTime);
           GUIPropertyManager.SetProperty("#channel",recording.Channel);
-          string strLogo = Utils.GetCoverArt(TVChannelCovertArt,recording.Channel);
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel,recording.Channel);
           if (!System.IO.File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";

@@ -156,7 +156,7 @@ namespace MediaPortal.GUI.Music
 			if (song==null) return;
 			if (song.genreId>=0 && song.albumId<0 && song.artistId<0 && song.songId<0)
 			{
-				string strThumb=Utils.GetCoverArt(GUIMusicFiles.GenreThumbsFolder,item.Label);
+				string strThumb=Utils.GetCoverArt(Thumbs.MusicGenre,item.Label);
 				item.IconImage=strThumb;
 				item.IconImageBig=strThumb;
 				item.ThumbnailImage=strThumb;
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Music
 			}
 			else if (song.artistId>=0 && song.albumId<0 && song.songId<0)
 			{
-				string strThumb=Utils.GetCoverArt(GUIMusicFiles.ArtistsThumbsFolder,item.Label);
+				string strThumb=Utils.GetCoverArt(Thumbs.MusicAlbum,item.Label);
 				item.IconImage=strThumb;
 				item.IconImageBig=strThumb;
 				item.ThumbnailImage=strThumb;
@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Music
 			}
 			else if (song.albumId>=0 && song.songId<0)
 			{
-				string strThumb=Utils.GetCoverArt(GUIMusicFiles.AlbumThumbsFolder,item.Label);
+				string strThumb=Utils.GetCoverArt(Thumbs.MusicAlbum,item.Label);
 				item.IconImage=strThumb;
 				item.IconImageBig=strThumb;
 				item.ThumbnailImage=strThumb;
@@ -433,7 +433,7 @@ namespace MediaPortal.GUI.Music
 				  item.Label=strGenre;
 				  item.Path=strGenre;
 				  item.IsFolder=true;
-				  string strThumb=Utils.GetCoverArt(GUIMusicFiles.GenreThumbsFolder,item.Label);
+				  string strThumb=Utils.GetCoverArt(Thumbs.MusicGenre,item.Label);
 				  item.IconImage=strThumb;
 				  item.IconImageBig=strThumb;
 				  item.ThumbnailImage=strThumb;

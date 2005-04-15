@@ -27,8 +27,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Button cancelButton;
 		private System.ComponentModel.IContainer components = null;
 
-		const string TitleThumbsFolder=@"thumbs\Videos\Title";
-		const string ActorThumbsFolder=@"thumbs\Videos\Actors";
 
     internal class ComboBoxItemMovie
     {
@@ -1400,7 +1398,7 @@ namespace MediaPortal.Configuration.Sections
 					VideoDatabase.SetMovieInfoById(movieDetails.ID,ref movieDetails);
 					if (stopRebuild) return null;
 					//download thumbnail
-					DownloadThumnail(TitleThumbsFolder,movieDetails.ThumbURL,movieDetails.Title);
+					DownloadThumnail(Thumbs.MovieTitle,movieDetails.ThumbURL,movieDetails.Title);
 					
 					if (stopRebuild) return null;
 					Application.DoEvents();
@@ -1449,7 +1447,7 @@ namespace MediaPortal.Configuration.Sections
 			if(stopRebuild)  return;
 			IMDB imdb = new IMDB(this);
 			string actor=movieDetails.Director;
-			string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+			string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors,actor);
 			if (!System.IO.File.Exists(strThumb))
 			{
 				imdb.FindActor(actor);
@@ -1463,7 +1461,7 @@ namespace MediaPortal.Configuration.Sections
 				{
 					if (imdbActor.ThumbnailUrl.Length!=0)
 					{
-						DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+						DownloadThumnail(Thumbs.MovieActors,imdbActor.ThumbnailUrl,actor);
 					}
 					else Log.Write("url=empty for actor {0}", actor);
 				}
@@ -1482,7 +1480,7 @@ namespace MediaPortal.Configuration.Sections
 					int pos =actors[i].IndexOf(" as ");
 					if (pos <0) continue;
 					string actor=actors[i].Substring(0,pos);
-					string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+					string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors,actor);
 					if (!System.IO.File.Exists(strThumb))
 					{
 						imdb.FindActor(actor);
@@ -1496,7 +1494,7 @@ namespace MediaPortal.Configuration.Sections
 						{
 							if (imdbActor.ThumbnailUrl.Length!=0)
 							{
-								DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+								DownloadThumnail(Thumbs.MovieActors,imdbActor.ThumbnailUrl,actor);
 							}
 							else Log.Write("url=empty for actor {0}", actor);
 						}
@@ -1571,7 +1569,7 @@ namespace MediaPortal.Configuration.Sections
 				pictureBox1.Image.Dispose();
 				pictureBox1.Image=null;
 			}
-			string file=Utils.GetLargeCoverArtName(TitleThumbsFolder,movie.Title);
+			string file=Utils.GetLargeCoverArtName(Thumbs.MovieTitle,movie.Title);
 			if (System.IO.File.Exists(file))
 			{
 				using (Image img = Image.FromFile(file))
@@ -1924,13 +1922,13 @@ namespace MediaPortal.Configuration.Sections
 				pictureBox1.Image.Dispose();
 				pictureBox1.Image=null;
 			}			
-			string strThumb = Utils.GetCoverArtName(TitleThumbsFolder,tbTitle.Text);
-			string LargeThumb = Utils.GetLargeCoverArtName(TitleThumbsFolder,tbTitle.Text);
+			string strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle,tbTitle.Text);
+			string LargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,tbTitle.Text);
 			Utils.FileDelete(strThumb);
 			Utils.FileDelete(LargeThumb);
-			DownloadThumnail(TitleThumbsFolder,textBoxPictureURL.Text, tbTitle.Text);
+			DownloadThumnail(Thumbs.MovieTitle,textBoxPictureURL.Text, tbTitle.Text);
 
-			string file=Utils.GetLargeCoverArtName(TitleThumbsFolder,tbTitle.Text);
+			string file=Utils.GetLargeCoverArtName(Thumbs.MovieTitle,tbTitle.Text);
 			if (System.IO.File.Exists(file))
 			{
 				using (Image img = Image.FromFile(file))

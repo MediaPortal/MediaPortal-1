@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Video
 			{
 				System.IO.Directory.CreateDirectory(@"Thumbs\videos");
 				System.IO.Directory.CreateDirectory(@"Thumbs\videos\genre");
-				System.IO.Directory.CreateDirectory(ThumbsFolder);
+				System.IO.Directory.CreateDirectory(Thumbs.MovieTitle);
 			}
 			catch(Exception){}
 			LoadSettings();
@@ -1021,8 +1021,8 @@ namespace MediaPortal.GUI.Video
             string strImage = movieDetails.ThumbURL;
             if (strImage.Length > 0 && movieDetails.ThumbURL.Length > 0)
             { 
-              string LargeThumb=Utils.GetLargeCoverArtName(ThumbsFolder,movieDetails.Title);
-              strThumb = Utils.GetCoverArtName(ThumbsFolder,movieDetails.Title);
+              string LargeThumb=Utils.GetLargeCoverArtName(Thumbs.MovieTitle,movieDetails.Title);
+              strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle,movieDetails.Title);
               Utils.FileDelete(strThumb);
               Utils.FileDelete(LargeThumb);
               
@@ -1229,7 +1229,7 @@ namespace MediaPortal.GUI.Video
           if (bFolder && strFile != "")
           {
             // copy icon to folder also;
-            string strThumbOrg = Utils.GetCoverArt(ThumbsFolder,movieDetails.Title);
+            string strThumbOrg = Utils.GetCoverArt(Thumbs.MovieTitle,movieDetails.Title);
             string strFolderImage = System.IO.Path.GetFullPath(strFolder);
             strFolderImage += "\\folder.jpg";
             if (System.IO.File.Exists(strThumbOrg) )
@@ -1357,7 +1357,7 @@ namespace MediaPortal.GUI.Video
                     if (bFolder && strFile != "")
                     {
                       // copy icon to folder also;
-                      string strThumbOrg = Utils.GetCoverArt(ThumbsFolder,movieDetails.Title);
+                      string strThumbOrg = Utils.GetCoverArt(Thumbs.MovieTitle,movieDetails.Title);
                       if (System.IO.File.Exists(strThumbOrg))
                       {
                         string strFolderImage = System.IO.Path.GetFullPath(strFolder);
@@ -1453,7 +1453,7 @@ namespace MediaPortal.GUI.Video
                   string strThumb;
                   if (Utils.IsDVD(pItem.Path))
                     pItem.Label=String.Format( "({0}:) {1}",  pItem.Path.Substring(0,1),  info.Title );
-                  strThumb = Utils.GetCoverArt(ThumbsFolder, info.Title );
+                  strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title );
                   if (System.IO.File.Exists(strThumb))
                   {
                     pItem.ThumbnailImage = strThumb;
@@ -1489,7 +1489,7 @@ namespace MediaPortal.GUI.Video
               if (info.File == strFile /*|| pItem->GetLabel() == info.Title*/)
               {
                 string strThumb;
-                strThumb = Utils.GetCoverArt(ThumbsFolder, info.Title );
+                strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title );
                 if (System.IO.File.Exists(strThumb))
                 {
                   pItem.ThumbnailImage = strThumb;
@@ -2032,7 +2032,7 @@ namespace MediaPortal.GUI.Video
 		static void DownloadDirector(IMDBMovie movieDetails)
 		{
 			string actor=movieDetails.Director;
-			string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+			string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors,actor);
 			if (!System.IO.File.Exists(strThumb))
 			{
 				imdb.FindActor(actor);
@@ -2046,7 +2046,7 @@ namespace MediaPortal.GUI.Video
 				{
 					if (imdbActor.ThumbnailUrl.Length!=0)
 					{
-						DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+						DownloadThumnail(Thumbs.MovieActors,imdbActor.ThumbnailUrl,actor);
 					}
 					else Log.Write("url=empty for actor {0}", actor);
 				}
@@ -2063,7 +2063,7 @@ namespace MediaPortal.GUI.Video
 					int pos =actors[i].IndexOf(" as ");
 					if (pos <0) continue;
 					string actor=actors[i].Substring(0,pos);
-					string strThumb = Utils.GetCoverArtName(ActorThumbsFolder,actor);
+					string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors,actor);
 					if (!System.IO.File.Exists(strThumb))
 					{
 						imdb.FindActor(actor);
@@ -2077,7 +2077,7 @@ namespace MediaPortal.GUI.Video
 						{
 							if (imdbActor.ThumbnailUrl.Length!=0)
 							{
-								DownloadThumnail(ActorThumbsFolder,imdbActor.ThumbnailUrl,actor);
+								DownloadThumnail(Thumbs.MovieActors,imdbActor.ThumbnailUrl,actor);
 							}
 							else Log.Write("url=empty for actor {0}", actor);
 						}

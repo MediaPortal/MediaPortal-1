@@ -32,9 +32,7 @@ namespace MediaPortal.GUI.Music
 			Albums= 3,
 			FilmStrip=4
 		}
-		static public string AlbumThumbsFolder=@"thumbs\music\albums";
-		static public string ArtistsThumbsFolder=@"thumbs\music\artists";
-		static public string GenreThumbsFolder=@"thumbs\music\genre";
+		
 
 		protected   View currentView		    = View.List;
 		protected   View currentViewRoot    = View.List;
@@ -671,7 +669,7 @@ namespace MediaPortal.GUI.Music
 		
 		static public string GetArtistCoverArtName(string artist)
 		{
-			return Utils.GetCoverArtName(ArtistsThumbsFolder, artist);
+			return Utils.GetCoverArtName(Thumbs.MusicArtists, artist);
 		}
 
 		void OnInfoFile(GUIListItem item)
@@ -896,7 +894,7 @@ namespace MediaPortal.GUI.Music
 			if (ArtistName==String.Empty) return String.Empty;
 			if (AlbumName==String.Empty) return String.Empty;
 			string name=String.Format("{0}-{1}", ArtistName, AlbumName);
-			return Utils.GetCoverArtName(GUIMusicFiles.AlbumThumbsFolder, name);
+			return Utils.GetCoverArtName(Thumbs.MusicAlbum, name);
 		}
 		protected virtual void AddSongToFavorites(GUIListItem item)
 		{

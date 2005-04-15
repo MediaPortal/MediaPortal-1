@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.TV
     void SetCurrentChannelLogo()
     {
       string strChannel=GetChannelName();
-      string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,strChannel);
+      string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,strChannel);
       if (System.IO.File.Exists(strLogo))
       {
 		  

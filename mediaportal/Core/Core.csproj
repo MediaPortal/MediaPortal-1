@@ -1274,6 +1274,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Util\Thumbs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Util\Tokens.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -384,7 +384,7 @@ namespace MediaPortal.GUI.Video
 					if (movie.ID>=0)
 					{
 						string strThumb;
-						strThumb = Utils.GetCoverArt(ThumbsFolder,movie.Title);
+						strThumb = Utils.GetCoverArt(Thumbs.MovieTitle,movie.Title);
 						if (System.IO.File.Exists(strThumb))
 						{
 							pItem.ThumbnailImage = strThumb;
@@ -395,7 +395,7 @@ namespace MediaPortal.GUI.Video
 					else if (movie.Actor!=String.Empty)
 					{
 						string strThumb;
-						strThumb = Utils.GetCoverArt(ActorThumbsFolder,movie.Actor);
+						strThumb = Utils.GetCoverArt(Thumbs.MovieActors,movie.Actor);
 						if (System.IO.File.Exists(strThumb))
 						{
 							pItem.ThumbnailImage = strThumb;
@@ -415,7 +415,7 @@ namespace MediaPortal.GUI.Video
 			if (movie.ID>=0)
 			{
 				string strThumb;
-				strThumb = Utils.GetLargeCoverArtName(ThumbsFolder,movie.Title);
+				strThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,movie.Title);
 				if (System.IO.File.Exists(strThumb))
 				{
 					facadeView.FilmstripView.InfoImageFileName=strThumb;
@@ -424,7 +424,7 @@ namespace MediaPortal.GUI.Video
 			else if (movie.Actor!=String.Empty)
 			{
 				string strThumb;
-				strThumb = Utils.GetLargeCoverArtName(ActorThumbsFolder,movie.Actor);
+				strThumb = Utils.GetLargeCoverArtName(Thumbs.MovieActors,movie.Actor);
 				if (System.IO.File.Exists(strThumb))
 				{
 					facadeView.FilmstripView.InfoImageFileName=strThumb;

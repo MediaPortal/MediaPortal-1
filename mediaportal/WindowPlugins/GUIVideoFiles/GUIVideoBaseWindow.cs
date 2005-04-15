@@ -34,8 +34,6 @@ namespace MediaPortal.GUI.Video
 			LargeIcons = 2,
 			FilmStrip=3
 		}
-		protected   const string ThumbsFolder=@"thumbs\Videos\Title";
-		protected   const string ActorThumbsFolder=@"thumbs\Videos\Actors";
 
 		protected   View currentView		    = View.List;
 		protected   View currentViewRoot    = View.List;

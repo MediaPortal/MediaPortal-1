@@ -812,14 +812,14 @@ namespace MediaPortal.GUI.TV
 
     void SetChannelLogo(TVProgram prog, ref GUIListItem item)
     {
-			string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,prog.Channel);
+			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,prog.Channel);
 			if (!System.IO.File.Exists(strLogo))
 			{
 				strLogo="defaultVideoBig.png";
 			}			
 			if (_FilterShow=="")
 			{
-				strLogo=Utils.GetCoverArt(GUITVHome.TVShowCovertArt,prog.Title);
+				strLogo=Utils.GetCoverArt(Thumbs.TVShows,prog.Title);
 				if (!System.IO.File.Exists(strLogo))
 				{
 					strLogo="defaultVideoBig.png";
@@ -974,7 +974,7 @@ namespace MediaPortal.GUI.TV
 			}
 
     
-			string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,prog.Channel);
+			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,prog.Channel);
 			if (System.IO.File.Exists(strLogo))
 			{
 				GUIPropertyManager.SetProperty("#TV.Search.thumb",strLogo);

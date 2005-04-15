@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
-    const string ThumbsFolder=@"thumbs\Videos\Title";
+    
     ViewMode viewmode= ViewMode.Image;
     bool m_bRefresh = false;
     IMDBMovie m_movie = null;
@@ -237,7 +237,7 @@ namespace MediaPortal.GUI.Video
             {
               string strThumb = "";
               string strImage = m_movie.Title;
-              strThumb = Utils.GetCoverArt(ThumbsFolder,strImage);
+              strThumb = Utils.GetCoverArt(Thumbs.MovieTitle,strImage);
               Utils.FileDelete(strThumb);
             }
             m_bRefresh = true;
@@ -268,8 +268,8 @@ namespace MediaPortal.GUI.Video
               }
             }
 						
-            string strThumb = Utils.GetCoverArtName(ThumbsFolder,m_movie.Title);
-            string LargeThumb = Utils.GetLargeCoverArtName(ThumbsFolder,m_movie.Title);
+            string strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle,m_movie.Title);
+            string LargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,m_movie.Title);
             Utils.FileDelete(strThumb);
             Utils.FileDelete(LargeThumb);
             Refresh();            
@@ -394,8 +394,8 @@ namespace MediaPortal.GUI.Video
         string strImage = m_movie.ThumbURL;
         if (strImage.Length > 0)
         {
-          string LargeThumb = Utils.GetLargeCoverArtName(ThumbsFolder,m_movie.Title);
-          strThumb = Utils.GetCoverArtName(ThumbsFolder,m_movie.Title);
+          string LargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,m_movie.Title);
+          strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle,m_movie.Title);
           if (!System.IO.File.Exists(strThumb))
           {
             string strExtension;

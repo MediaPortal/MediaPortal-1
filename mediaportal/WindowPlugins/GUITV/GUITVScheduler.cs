@@ -385,7 +385,7 @@ namespace MediaPortal.GUI.TV
 					GUIListItem item= new GUIListItem();
 					item.Label		  = rec.Title;
 					item.TVTag			= rec;
-					string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,rec.Channel);
+					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
 					if (!System.IO.File.Exists(strLogo))
 					{
 						strLogo="defaultVideoBig.png";
@@ -415,7 +415,7 @@ namespace MediaPortal.GUI.TV
 						GUIListItem item=new GUIListItem();
 						item.Label=recSeries.Title;
 						item.TVTag=recSeries;
-						string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,recSeries.Channel);
+						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,recSeries.Channel);
 						if (!System.IO.File.Exists(strLogo))
 						{
 							strLogo="defaultVideoBig.png";

@@ -11,7 +11,7 @@ namespace MediaPortal.TV.Database
 	/// </summary>
 	public class TVRecording
 	{
-		static string				 TVChannelCovertArt=@"thumbs\tv\logos";
+		
     /// <summary>
     /// Type of recording
     /// </summary>
@@ -751,7 +751,7 @@ namespace MediaPortal.TV.Database
 			}
 
     
-			string strLogo=Utils.GetCoverArt(TVChannelCovertArt,Channel);
+			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,Channel);
 			if (System.IO.File.Exists(strLogo))
 			{
 				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",strLogo);

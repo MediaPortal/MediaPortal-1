@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.TV
             objects++;
             GUIListItem item=new GUIListItem();
             item.Label=rec.Genre;
-            string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,rec.Channel);
+            string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo="defaultVideoBig.png";
@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.TV
             item=new GUIListItem();
             item.Label=rec.Title;
             item.TVTag=rec;
-            string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,rec.Channel);
+            string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo="defaultVideoBig.png";
@@ -773,7 +773,7 @@ namespace MediaPortal.GUI.TV
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Time",strTime);
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Description",rec.Description);
         
-        string strLogo=Utils.GetCoverArt(GUITVHome.TVChannelCovertArt,rec.Channel);
+        string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
         if (System.IO.File.Exists(strLogo))
         {
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb",strLogo);

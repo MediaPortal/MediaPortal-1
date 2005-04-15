@@ -32,7 +32,7 @@ namespace MediaPortal.TV.Recording
 			Initialized,
 			Deinitializing
 		}
-		static string				 TVChannelCovertArt=@"thumbs\tv\logos";
+		
 		static bool          m_bRecordingsChanged=false;  // flag indicating that recordings have been added/changed/removed
 		static int           m_iPreRecordInterval =0;
 		static int           m_iPostRecordInterval=0;
@@ -1130,7 +1130,7 @@ namespace MediaPortal.TV.Recording
 		static void OnTVChannelChanged()
 		{
 			if (m_eState!= State.Initialized) return ;
-			string strLogo=Utils.GetCoverArt(TVChannelCovertArt,m_strTVChannel);
+			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,m_strTVChannel);
 			if (!System.IO.File.Exists(strLogo))
 			{
 				strLogo="defaultVideoBig.png";
@@ -1290,7 +1290,7 @@ namespace MediaPortal.TV.Recording
 				TVProgram   program   = ProgramRecording;
 				if (program==null)
 				{
-					string strLogo=Utils.GetCoverArt(TVChannelCovertArt,recording.Channel);
+					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,recording.Channel);
 					if (!System.IO.File.Exists(strLogo))
 					{
 						strLogo="defaultVideoBig.png";
@@ -1304,7 +1304,7 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					string strLogo=Utils.GetCoverArt(TVChannelCovertArt,program.Channel);
+					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,program.Channel);
 					if (!System.IO.File.Exists(strLogo))
 					{
 						strLogo="defaultVideoBig.png";
