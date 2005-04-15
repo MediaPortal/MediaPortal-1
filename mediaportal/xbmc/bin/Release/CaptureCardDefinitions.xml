@@ -105,6 +105,7 @@
 <!--    V-Stream Xpert DTV						-->
 <!--    Vstream Xpert TV PVR 883				-->
 <!--    WinFast PVR 2000						-->
+<!--    XFX NVTV Mpeg2 Dual TV-Tuner				-->
 <!--    YUAN DVB PG300							-->
 <!--    YUAN DVB PG700							-->
 <!--    YUAN PVR BMP837 USB2.0 MPEG2 Capture Box	-->
@@ -114,7 +115,7 @@
 <!--    general MCE card						-->
 <!--    general MPEG2 card						-->
 <!--                                                                                  -->
-<!-- version : 1.0.0.81                                                               -->
+<!-- version : 1.0.0.82                                                               -->
 <!-- changed : 15-April-2005 by DMAN                                                   -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -382,11 +383,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="false"></filter>
-        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="false"></filter>
-        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="false"></filter>
-        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="false"></filter>
-        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="false"></filter>
+        <filter cat="tvtuner"  name="WinFast PVR2000 WDM Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="WinFast PVR2000 WDM TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="WinFast PVR2000 WDM Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="WinFast PVR2000 WDM Video Capture" checkdevice="true"></filter>
+        <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
@@ -3323,11 +3324,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Conexant Falcon Tuner"  			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  			checkdevice="true"></filter>
-        <filter cat="crossbar" name="Conexant Falcon Crossbar" 			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant Falcon Crossbar" 		checkdevice="true"></filter>
         <filter cat="capture"  name="Conexant Falcon Audio Capture"  	checkdevice="true"></filter>
-        <filter cat="encoder"  name="Conexant Falcon Encoder"  			checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant Falcon Encoder"  		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -3345,12 +3346,12 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"		name="PG300 BDA DVB-T Tuner/Demod"			checkdevice="true"></filter>
-        <filter cat="capture"			name="PG300 BDA Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"	name="PG300 BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
+        <filter cat="capture"		name="PG300 BDA Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 		sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3361,12 +3362,39 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"		name="PG700 BDA DVB-T Tuner/Demod"			checkdevice="true"></filter>
-        <filter cat="capture"			name="PG700 BDA Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"	name="PG700 BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
+        <filter cat="capture"		name="PG700 BDA Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 		sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="XFX NVTV Mpeg2 Dual TV-Tuner" capturename="NVTV" devid="Ven_123f&amp;dev_8120&amp;subsys_024910de&amp;rev_b1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"      name="NVTV Tuner"              checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="NVTV Audio"              checkdevice="true"></filter>
+        <filter cat="crossbar"     name="NVTV Crossbar"           checkdevice="true"></filter>
+        <filter cat="capture"      name="NVTV"                    checkdevice="true"></filter>
+        <filter cat="encodervideo" name="NVTV Encoder"            checkdevice="true"></filter>
+        <filter cat="encoderaudio" name="NVIDIA Audio Encoder"    checkdevice="false"></filter>
+        <filter cat="mux"          name="NVIDIA MPEG Multiplexer" checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"      sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"     sinkpin="2"></connection>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"     sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"      sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"      sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"          sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"          sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
