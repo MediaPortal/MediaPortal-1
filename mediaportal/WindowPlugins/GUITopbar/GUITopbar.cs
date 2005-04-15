@@ -87,7 +87,7 @@ namespace MediaPortal.Topbar
     {
       if (!m_bFocused)
       {
-        foreach (GUIControl control in m_vecControls)
+        foreach (GUIControl control in controlList)
         {
           control.Focus=false;
         }
@@ -201,12 +201,12 @@ namespace MediaPortal.Topbar
             m_bTopBarHide = false;
           }
 
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS,GetID, 0,m_dwDefaultFocusControlID,0,0,null);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS,GetID, 0,defaultControlId,0,0,null);
           OnMessage(msg);
         }
         else
         {
-          foreach (GUIControl control in m_vecControls)
+          foreach (GUIControl control in controlList)
           {
             control.Focus=false;
           }
@@ -229,7 +229,7 @@ namespace MediaPortal.Topbar
           }
         }
 
-        foreach (GUIControl control in m_vecControls)
+        foreach (GUIControl control in controlList)
         {
           bool bFocus=control.Focus;
           int id;

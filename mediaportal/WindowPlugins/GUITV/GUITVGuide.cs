@@ -237,7 +237,7 @@ namespace MediaPortal.GUI.TV
 				{
 					int x=(int)action.fAmount1;
 					int y=(int)action.fAmount2;
-					foreach (GUIControl control in m_vecControls)
+					foreach (GUIControl control in controlList)
 					{
 						if (control.GetID>=(int)Controls.IMG_CHAN1+0 && control.GetID<=(int)Controls.IMG_CHAN1+m_iChannels)
 						{
@@ -801,9 +801,9 @@ namespace MediaPortal.GUI.TV
 					m_iCursorY=0;
 				}
 
-				for (int i=0; i < m_vecControls.Count;++i)
+				for (int i=0; i < controlList.Count;++i)
 				{
-					GUIControl cntl=(GUIControl)m_vecControls[i];
+					GUIControl cntl=(GUIControl)controlList[i];
 					if (cntl.GetID>=100)
 					{
 						cntl.IsVisible=false;

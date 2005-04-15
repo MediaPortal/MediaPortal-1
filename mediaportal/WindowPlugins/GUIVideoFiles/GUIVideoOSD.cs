@@ -1085,9 +1085,9 @@ namespace MediaPortal.GUI.Video
     }
     public bool InWindow(int x,int y)
     {
-      for (int i=0; i < m_vecControls.Count;++i)
+      for (int i=0; i < controlList.Count;++i)
       {
-        GUIControl control =(GUIControl )m_vecControls[i];
+        GUIControl control =(GUIControl )controlList[i];
         int controlID;
         if (control.IsVisible)
         {

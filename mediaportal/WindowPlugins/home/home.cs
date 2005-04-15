@@ -880,9 +880,9 @@ namespace MediaPortal.GUI.Home
 			
 			if (m_aryPreControlList.Count==0) 
 			{
-				for (int x=0; x < m_vecControls.Count;++x)
+				for (int x=0; x < controlList.Count;++x)
 				{
-					GUIControl control=(GUIControl)m_vecControls[x];
+					GUIControl control=(GUIControl)controlList[x];
 					if ((control.GetID<2 || control.GetID>60))
 					{
 						m_aryPreControlList.Add(control);
@@ -908,9 +908,9 @@ namespace MediaPortal.GUI.Home
 			GUIGraphicsContext.DX9Device.Viewport=m_newviewport;
 			if (m_aryPostControlList.Count==0) 
 			{	
-				for (int x=0; x < m_vecControls.Count;++x)
+				for (int x=0; x < controlList.Count;++x)
 				{
-					GUIControl control=(GUIControl)m_vecControls[x];
+					GUIControl control=(GUIControl)controlList[x];
 					if (control.GetID>=2 && control.GetID<=60)
 					{
 						m_aryPostControlList.Add(control);

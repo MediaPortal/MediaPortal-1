@@ -22,6 +22,7 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIWindow 
 	{
+		#region window ids
 		//enum of all standard windows in MP
 		public enum Window
 		{
@@ -119,22 +120,26 @@ namespace MediaPortal.GUI.Library
 			,WINDOW_TELETEXT = 7700
 			,WINDOW_FULLSCREEN_TELETEXT = 7701
 		}
+#endregion
 
-		private int m_dwWindowId = -1; 
-		private int m_dwPreviousWindowId = 0;
-		protected int m_dwDefaultFocusControlID = 0;
+		#region variables
+		private int windowId = -1; 
+		private int previousWindowId = 0;
+		protected int defaultControlId = 0;
 		protected ArrayList m_vecPositions = new ArrayList();
-		protected ArrayList m_vecControls = new ArrayList();
-		protected string m_strWindowXmlFile = "";
-		protected bool m_bAllowOverlay = true;
+		protected ArrayList controlList = new ArrayList();
+		protected string windowXmlFileName = "";
+		protected bool overlayAllowed = true;
 		
 		//-1=default from topbar.xml 
 		// 0=flase from skin.xml
 		// 1=true  from skin.xml
     protected int m_iAutoHideTopbar = -1;
 		protected bool m_bAutoHideTopbar = false;
-		bool m_bSkinLoaded = false;
+		bool isSkinLoaded = false;
+		#endregion
 
+		#region ctor
 		/// <summary>
 		/// The (emtpy) constructur of the GUIWindow
 		/// </summary>
@@ -146,14 +151,17 @@ namespace MediaPortal.GUI.Library
 		/// Constructor
 		/// </summary>
 		/// <param name="strXMLFile">filename of xml skin file which belongs to this window</param>
-    public GUIWindow(string strXMLFile)
+    public GUIWindow(string skinFile)
     {
-			if (strXMLFile==null) return;
-      m_dwPreviousWindowId=-1;
-      m_strWindowXmlFile=strXMLFile;
+			if (skinFile==null) return;
+      previousWindowId=-1;
+      windowXmlFileName=skinFile;
 
     }
 
+		#endregion
+
+		#region methods
     /// <summary>
     /// Clear() method. This method gets called when user switches skin. It removes any static vars
     /// the GUIWindow class has
@@ -162,12 +170,595 @@ namespace MediaPortal.GUI.Library
     {
     	GUIControlFactory.ClearReferences();
     }
-    public virtual bool Focused
+		/// <summary>
+		/// Property which returns an arraylist containing all controls 
+		/// of this window
+		/// </summary>
+    public ArrayList GUIControls
     {
-      get { return false; }
-      set {}
+      get { return controlList;}
     }
 
+		/// <summary>
+		/// add a new control to this window
+		/// </summary>
+		/// <param name="control">new control to add</param>
+		public void Add(ref GUIControl control)
+		{
+      if (control==null) return;
+			control.WindowId = GetID;
+			controlList.Add(control);
+		}
+
+		/// <summary>
+		/// remove a control by its id from this window
+		/// </summary>
+		/// <param name="dwId">ID of the control</param>
+		public void Remove(int dwId)
+		{
+			int index = 0;
+			foreach (GUIControl control in controlList)
+			{
+        GUIGroup grp = control as GUIGroup;
+        if (grp !=null)
+        {
+          grp.Remove(dwId);
+        }
+        else
+        {
+          if (control.GetID == dwId)
+          {
+						if (index >=0 && index < controlList.Count)
+							controlList.RemoveAt(index);
+            return;
+          }
+        }
+				index++;
+			}
+		}
+
+		/// <summary>
+		/// This method will call the OnInit() on each control belonging to this window
+		/// this gives the control a way to do some pre-initalisation stuff
+		/// </summary>
+    public void InitControls()
+    {
+			try
+			{
+				for (int x = 0; x < controlList.Count; ++x)
+				{
+					((GUIControl)controlList[x]).OnInit();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"InitControls exception:{0}", ex.ToString());
+			}
+    }
+
+		/// This method will call the OnDeInit() on each control belonging to this window
+		/// this gives the control a way to do some de-initalisation stuff
+    protected void DeInitControls()
+    {
+			try
+			{
+				for (int x = 0; x < controlList.Count; ++x)
+				{
+					((GUIControl)controlList[x]).OnDeInit();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DeInitControls exception:{0}", ex.ToString());
+			}
+    }
+
+
+		/// <summary>
+		/// return the id of the previous active window
+		/// </summary>
+		public int	PreviousWindowID
+		{
+			get { return previousWindowId; }
+		}
+
+		/// <summary>
+		/// remove all controls from the window
+		/// </summary>
+		public void ClearAll()
+		{
+			FreeResources();
+			controlList = new ArrayList();
+		}
+
+
+		/// <summary>
+		/// Restores the position of the control to its default position.
+		/// </summary>
+		/// <param name="iControl">The identifier of the control that needs to be restored.</param>
+
+		public void RestoreControlPosition(int iControl)
+		{
+			for (int x = 0; x < controlList.Count; ++x)
+			{
+				GUIControl cntl = (GUIControl)controlList[x];
+				cntl.ReStorePosition();
+			}
+		}
+		#endregion 
+
+		#region load skin file
+		/// <summary>
+		/// Load the XML file for this window which 
+		/// contains a definition of which controls the GUI has
+		/// </summary>
+		/// <param name="skinFileName">filename of the .xml file</param>
+		/// <returns></returns>
+		public virtual bool Load(string skinFileName)
+		{
+			if (skinFileName==null) return true;
+			isSkinLoaded = false;
+			if (skinFileName == "") return true;
+			windowXmlFileName = skinFileName;
+      
+			// if windows supports delayed loading then do nothing
+			if (SupportsDelayedLoad) return true;
+
+			//else load xml file now
+			return LoadSkin();
+		}
+
+
+		/// <summary>
+		/// Loads the xml file for the window.
+		/// </summary>
+		/// <returns></returns>
+		public bool LoadSkin()
+		{
+			// no filename is configured
+			if (windowXmlFileName == "") return false;
+			// TODO what is the reason for this check
+			if (controlList.Count > 0) return false;
+			defaultControlId = 0;
+			// Load the reference controls
+			int iPos = windowXmlFileName.LastIndexOf('\\');
+			string strReferenceFile = windowXmlFileName.Substring(0, iPos);
+			strReferenceFile += @"\references.xml";
+			GUIControlFactory.LoadReferences(strReferenceFile);
+			
+			if (!System.IO.File.Exists(windowXmlFileName))
+			{
+				Log.WriteFile(Log.LogType.Log,true,"SKIN: Missing {0}", windowXmlFileName);
+				return false;
+			}
+			try
+			{
+				// Load the XML file
+				XmlDocument doc = new XmlDocument();
+				doc.Load(windowXmlFileName);
+				if (doc.DocumentElement == null) return false;
+				string strRoot = doc.DocumentElement.Name;
+				// Check root element
+				if (strRoot != "window") return false;
+				// Load id value
+				XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
+				if (nodeId == null) return false;
+				// Set the default control that has the focus after loading the window
+				XmlNode nodeDefault = doc.DocumentElement.SelectSingleNode("/window/defaultcontrol");
+				if (nodeDefault == null) return false;
+				// Convert the id to an int
+				try
+				{
+					windowId = (int)System.Int32.Parse(nodeId.InnerText);
+				}
+				catch (Exception)
+				{
+					// TODO Add some error when conversion fails message here.
+				}
+				// Convert the id of the default control to an int
+				try
+				{
+					defaultControlId = System.Int32.Parse(nodeDefault.InnerText);
+				}
+				catch (Exception)
+				{
+					// TODO Add some error when conversion fails message here.
+				}
+				// Configure the overlay settings
+				XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowoverlay");
+				if (nodeOverlay != null) 
+				{
+					if (nodeOverlay.InnerText != null)
+					{
+						string strAllow = nodeOverlay.InnerText.ToLower();
+						if (strAllow == "yes" || strAllow == "true")
+							overlayAllowed = true;
+						if (strAllow == "no" || strAllow == "false")
+							overlayAllowed = false;
+					}
+				}
+
+        // Configure the autohide setting
+        XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
+        if (nodeAutoHideTopbar != null) 
+        {
+          if (nodeAutoHideTopbar.InnerText != null)
+          {
+						m_iAutoHideTopbar = -1;
+            string strAllow = nodeAutoHideTopbar.InnerText.ToLower();
+            if (strAllow == "yes" || strAllow == "true")
+              m_iAutoHideTopbar = 1;
+						if (strAllow == "no" || strAllow == "false")
+							m_iAutoHideTopbar = 0;
+          }
+        } 
+
+				// Load the list of the Controls that are used in the window
+				XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/control");
+				foreach (XmlNode node in nodeList)
+				{
+					LoadControl(node, controlList);
+				}
+				// initialize the controls
+				OnWindowLoaded();
+				isSkinLoaded = true;
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"exception loading window {0} err:{1}", windowXmlFileName, ex.Message);
+				return false;
+			}
+		}
+    
+		/// <summary>
+		/// This method will load a single control from the xml node
+		/// </summary>
+		/// <param name="node">XmlNode describing the control</param>
+		/// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
+    protected void LoadControl(XmlNode node, ArrayList controls)
+    {
+			if (node==null) return;
+			if (controls==null) return;
+			try
+			{
+				GUIControl newControl = GUIControlFactory.Create(windowId, node);
+				newControl.WindowId = GetID;
+				GUIImage img = newControl as GUIImage;
+				if (img!=null)
+				{
+					if (img.Width==0 || img.Height==0)
+					{
+						Log.Write("xml:{0} image id:{1} width:{2} height:{3} gfx:{4}",
+							windowXmlFileName, img.GetID, img.Width, img.Height, img.FileName);
+					}
+				}
+				controls.Add(newControl);
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"Unable to load control. exception:{0}",ex.ToString());
+			}
+    }
+		#endregion
+
+		#region virtual methods
+		/// <summary>
+		/// This function gets called once by the runtime when everything is up & running
+		/// directX is now initialized, but before the first window is activated. 
+		/// It gives the window the oppertunity to allocate any (directx) resources
+		/// it may need
+		/// </summary>
+		public virtual void PreInit()
+		{
+		}
+
+		/// <summary>
+		/// Restores all the (x,y) positions of the XML file to their original values
+		/// </summary>
+		public virtual void Restore()
+		{
+			controlList.Clear();
+			m_vecPositions.Clear();
+			Load(windowXmlFileName);
+		}
+
+		/// <summary>
+		/// Property indicating if the window supports delay loading or not
+		/// if a window returns true it means that its resources & XML will be loaded
+		/// just before it gets activated
+		/// for windows not supporting delayed loading, the xml is immediately loaded
+		/// at startup of the application
+		/// </summary>
+		public virtual bool SupportsDelayedLoad
+		{
+			get { return true; }
+		}
+
+		/// <summary>
+		///  Gets called when DirectX device has been restored. 
+		/// </summary>
+		public virtual void OnDeviceRestored()
+		{
+		}
+
+		/// <summary>
+		/// Gets called when DirectX device has been lost. Any texture/font is now invalid
+		/// </summary>
+		public virtual void OnDeviceLost()
+		{
+		}
+		/// <summary>
+		/// PostRender() gives the window the oppertunity to overlay itself ontop of
+		/// the other window(s)
+		/// It gets called at the end of every rendering cycle even 
+    /// if the window is not activated
+    /// <param name="iLayer">indicates which overlay layer is rendered (1-10)
+    /// this gives the plugins the oppertunity to tell which overlay layer they are using
+    /// For example the topbar is rendered on layer #1
+    /// while the music overlay is rendered on layer #2 (and thus on top of the topbar)</param>
+		/// </summary>
+		public virtual void PostRender(float timePassed,int iLayer)
+		{
+		}
+
+		/// <summary>
+		/// Returns wither or not the window does postrendering.
+		/// </summary>
+		/// <returns>false</returns>
+    public virtual bool DoesPostRender()
+    {
+      return false;
+    }
+
+    
+		/// <summary>
+		/// Returns whether the music/video/tv overlay is allowed on this screen
+		/// </summary>
+		public virtual bool OverlayAllowed
+		{
+			get { return overlayAllowed; }
+		}
+    
+    /// <summary>
+    /// Returns whether autohide the topbar is allowed on this screen
+    /// </summary>
+    public virtual bool AutoHideTopbar 
+    {
+      get
+			{
+				// set topbar autohide 
+				switch (m_iAutoHideTopbar)
+				{
+					case 0: 
+						return false;
+					case 1:
+						return true;
+					default:
+						return GUIGraphicsContext.DefaultTopBarHide;
+				}
+			}
+    }
+
+    public virtual void Process()
+    {
+    }
+
+		public virtual void SetObject(object obj)
+		{
+		}
+		protected virtual void OnPageLoad()
+		{
+		}
+		protected virtual void OnPageDestroy(int newWindowId)
+		{
+		}
+		protected virtual void OnShowContextMenu()
+		{
+		}
+		protected virtual void OnPreviousWindow()
+		{
+			GUIWindowManager.PreviousWindow();
+		}
+		protected virtual void OnClicked( int controlId, GUIControl control, Action.ActionType actionType) 
+		{
+		}
+
+		/// <summary>
+		/// Returns whether the user can goto full screen video,tv,visualisation from this window
+		/// </summary>
+		public virtual bool FullScreenVideoAllowed
+		{
+			get { return true; }
+		}
+
+		/// <summary>
+		/// Gets called by the runtime when a new window has been created
+		/// Every window window should override this method and load itself by calling
+		/// the Load() method
+		/// </summary>
+		/// <returns>true if initialisation was succesfull 
+		/// else false</returns>
+		public virtual bool Init()
+		{
+			return false;
+		}
+
+		/// <summary>
+		/// Gets called by the runtime when a  window will be destroyed
+		/// Every window window should override this method and cleanup any resources
+		/// </summary>
+		/// <returns></returns>
+		public virtual void DeInit()
+		{
+		}
+
+		/// <summary>
+		/// Gets called by the runtime just before the window gets shown. It
+		/// will ask every control of the window to allocate its (directx) resources 
+		/// </summary>
+		// 
+		public virtual void	AllocResources()
+		{
+			try
+			{
+				// tell every control we're gonna alloc the resources next
+				
+				for (int x = 0; x < controlList.Count; ++x)
+				{
+					((GUIControl)controlList[x]).PreAllocResources();
+				}
+
+				// ask every control to alloc its resources
+				for (int x = 0; x < controlList.Count; ++x)
+				{
+					((GUIControl)controlList[x]).AllocResources();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"AllocResources exception:{0}", ex.ToString());
+			}
+		}
+
+		/// <summary>
+		/// Gets called by the runtime when the window is not longer shown. It will
+		/// ask every control of the window 2 free its (directx) resources
+		/// </summary>
+		public virtual void	FreeResources()
+		{
+			try
+			{
+				// tell every control to free its resources
+				for (int x = 0; x < controlList.Count; ++x)
+				{
+					((GUIControl)controlList[x]).FreeResources();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"FreeResources exception:{0}", ex.ToString());
+			}
+		}
+		
+		/// <summary>
+		/// Resets all the controls to their original positions, width&height
+		/// </summary>
+		public virtual void	ResetAllControls()
+		{
+			try
+			{
+				for (int x = 0; x < controlList.Count; ++x)
+				{
+					((GUIControl)controlList[x]).DoUpdate();
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"ResetAllControls exception:{0}", ex.ToString());
+			}
+		}
+		
+		/// <summary>
+		/// Gets by the window manager when it has loaded the window
+		/// default implementation stores the position of all controls
+		/// in m_vecPositions
+		/// </summary>
+		protected virtual void OnWindowLoaded()
+		{
+			m_vecPositions = new ArrayList();
+			for (int i = 0; i < controlList.Count; ++i)
+			{
+				GUIControl control = (GUIControl)controlList[i];
+				control.StorePosition();
+				CPosition pos = new CPosition(ref control, control.XPosition, control.YPosition);
+				m_vecPositions.Add(pos);
+			}
+
+			FieldInfo[] allFields = this.GetType().GetFields(BindingFlags.Instance 
+				|BindingFlags.NonPublic
+				|BindingFlags.FlattenHierarchy
+				|BindingFlags.Public);
+			foreach (FieldInfo field in allFields)
+			{
+				if (field.IsDefined(typeof(SkinControlAttribute), false))
+				{
+					SkinControlAttribute atrb = (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
+				
+					GUIControl control = GetControl(atrb.ID);
+					if (control!=null)
+					{
+						try
+						{
+							field.SetValue(this, control);
+						}
+						catch(Exception ex)
+						{
+							Log.WriteFile(Log.LogType.Log,true,"GUIWindow:OnWindowLoaded ex:{0} {1}", ex.Message,ex.StackTrace);
+						}
+					}
+				}
+			}
+
+		}
+
+		/// <summary>
+		/// get a control by the control ID
+		/// </summary>
+		/// <param name="iControlId">id of control</param>
+		/// <returns>GUIControl or null if control is not found</returns>
+		public virtual GUIControl	GetControl(int iControlId) 
+		{
+			for (int x = 0; x < controlList.Count; ++x)
+			{
+				GUIControl cntl = (GUIControl)controlList[x];
+				GUIControl cntlFound =  cntl.GetControlById( iControlId  );
+				if (cntlFound!=null) return cntlFound;
+
+			}
+			return null;
+		}
+
+
+		/// <summary>
+		/// returns the ID of the control which has the focus
+		/// </summary>
+		/// <returns>id of control or -1 if no control has the focus</returns>
+		public virtual int GetFocusControlId()
+		{
+			for (int x = 0; x < controlList.Count; ++x)
+			{
+				GUIGroup grp = controlList[x] as GUIGroup;
+				if (grp!=null)
+				{
+					int iFocusedControlId=grp.GetFocusControlId();
+					if (iFocusedControlId>=0) return iFocusedControlId;
+				}
+				else
+				{
+					if (((GUIControl)controlList[x]).Focus) return ((GUIControl)controlList[x]).GetID;
+				}
+			}
+			return - 1;
+		}
+		
+		/// <summary>
+		/// This method will remove the focus from the currently focused control
+		/// </summary>
+		public virtual void LooseFocus()
+		{
+			GUIControl cntl= GetControl ( GetFocusControlId() );
+			if (cntl!=null) cntl.Focus=false;
+		}
+
+		/// <summary>
+		/// Return the id of this window
+		/// </summary>
+		public virtual int GetID
+		{
+			get { return windowId; }
+			set { windowId = value; }
+		}
 		/// <summary>
 		/// Render() method. This method draws the window by asking every control
 		/// of the window to render itself
@@ -178,7 +769,7 @@ namespace MediaPortal.GUI.Library
       {
 				try
 				{
-					if (!m_bSkinLoaded)
+					if (!isSkinLoaded)
 					{
 						if (GUIGraphicsContext.IsFullScreenVideo) return;
 						if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return;
@@ -190,16 +781,16 @@ namespace MediaPortal.GUI.Library
 						{
 							float fW = 0f;
 							float fH = 0f;
-							string strLine = String.Format("Missing or invalid file:{0}", m_strWindowXmlFile);
+							string strLine = String.Format("Missing or invalid file:{0}", windowXmlFileName);
 							font.GetTextExtent(strLine, ref fW, ref fH);
 							float x = (GUIGraphicsContext.Width - fW) / 2f;
 							float y = (GUIGraphicsContext.Height - fH) / 2f;
 							font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT,-1);
 						}
 					}
-					for (int x = 0; x < m_vecControls.Count; ++x)
+					for (int x = 0; x < controlList.Count; ++x)
 					{
-						((GUIControl)m_vecControls[x]).Render(timePassed);
+						((GUIControl)controlList[x]).Render(timePassed);
 					}
 				}
 				catch(Exception ex)
@@ -219,9 +810,9 @@ namespace MediaPortal.GUI.Library
     {
 			try
 			{
-				for (int x = 0; x < m_vecControls.Count; ++x)
+				for (int x = 0; x < controlList.Count; ++x)
 				{
-					if (((GUIControl)((GUIControl)m_vecControls[x])).NeedRefresh()) return true;
+					if (((GUIControl)((GUIControl)controlList[x])).NeedRefresh()) return true;
 				}
 			}
 			catch(Exception ex)
@@ -259,49 +850,16 @@ namespace MediaPortal.GUI.Library
 					// mouse moved, check which control has the focus
 					if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
 					{
-						for (int i=0; i < m_vecControls.Count;++i)
-						{
-							GUIControl control =(GUIControl )m_vecControls[i];
-							bool bFocus;
-							int controlID;
-							if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out controlID, out bFocus))
-							{	
-								if (!bFocus)
-								{
-									msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, controlID, 0, 0, null);
-									OnMessage(msg);
-									control.HitTest((int)action.fAmount1, (int)action.fAmount2,out controlID, out bFocus);
-								}
-								control.OnAction(action);
-								return;
-							}
-							else
-							{
-								// no control selected
-								LooseFocus();
-							}
-						}
+						OnMouseMove((int)action.fAmount1, (int)action.fAmount2,action);
 						return;
 					}
 					// mouse clicked if there is a hit pass the action
 					if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
 					{
-						for (int i=0; i < m_vecControls.Count;++i)
-						{
-							GUIControl control =(GUIControl )m_vecControls[i];
-							bool bFocus;
-							int controlID;
-							if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out controlID, out bFocus))
-							{	
-								GUIControl cntl=GetControl(controlID);
-								if (cntl!=null) cntl.OnAction(action);
-								return;
-							}
-						}
+						OnMouseClick((int)action.fAmount1, (int)action.fAmount2,action);
 						return;
 					}
 	  			
-
 					// send the action to the control which has the focus
 					GUIControl cntlFoc = GetControl(GetFocusControlId() );
 					if (cntlFoc!=null)
@@ -312,7 +870,7 @@ namespace MediaPortal.GUI.Library
 
 					// no control has focus?
 					// set focus to the default control then
-					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, m_dwDefaultFocusControlID, 0, 0, null);
+					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
 					OnMessage(msg);
 
 				}
@@ -323,14 +881,11 @@ namespace MediaPortal.GUI.Library
       }
 		}
 
-		/// <summary>
-		/// Property which returns an arraylist containing all controls 
-		/// of this window
-		/// </summary>
-    public ArrayList GUIControls
-    {
-      get { return m_vecControls;}
-    }
+		public virtual bool Focused
+		{
+			get { return false; }
+			set {}
+		}
 
 		/// <summary>
 		/// OnMessage() This method gets called when there's a new message. 
@@ -351,7 +906,8 @@ namespace MediaPortal.GUI.Library
 						case GUIMessage.MessageType.GUI_MSG_CLICKED:
 						{
 							int iControlId = message.SenderControlId;
-							if (iControlId != 0) OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
+							if (iControlId != 0) 
+								OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
 						}
 						break;
 
@@ -365,7 +921,7 @@ namespace MediaPortal.GUI.Library
 							LoadSkin();
 							AllocResources();
 							InitControls();
-							GUIGraphicsContext.Overlay = m_bAllowOverlay;
+							GUIGraphicsContext.Overlay = overlayAllowed;
 
 							// set topbar autohide 
 							switch (m_iAutoHideTopbar)
@@ -386,9 +942,9 @@ namespace MediaPortal.GUI.Library
 							if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
 							{
 								if (message.Param1 != GetID)
-									m_dwPreviousWindowId = message.Param1;
+									previousWindowId = message.Param1;
 							}
-							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, m_dwDefaultFocusControlID, 0, 0, null);
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
 							OnMessage(msg);
 
               if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
@@ -406,10 +962,10 @@ namespace MediaPortal.GUI.Library
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
 						{
 							OnPageDestroy(message.Param1);
-							if (m_dwPreviousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
+							if (previousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
               {
-                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId));
-                GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + m_dwPreviousWindowId);
+                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + previousWindowId));
+                GUIGraphicsContext.form.Text="Media Portal - "+  GUILocalizeStrings.Get(10000 + previousWindowId);
               }
 
 							Log.Write( "window:{0} deinit", this.ToString());
@@ -458,578 +1014,48 @@ namespace MediaPortal.GUI.Library
       }
 		}
 
-		/// <summary>
-		/// add a new control to this window
-		/// </summary>
-		/// <param name="control">new control to add</param>
-		public void Add(ref GUIControl control)
+		protected virtual void OnMouseMove(int cx, int cy, Action action)
 		{
-      if (control==null) return;
-			control.WindowId = GetID;
-			m_vecControls.Add(control);
-		}
-
-		/// <summary>
-		/// remove a control by its id from this window
-		/// </summary>
-		/// <param name="dwId">ID of the control</param>
-		public void Remove(int dwId)
-		{
-			int index = 0;
-			foreach (GUIControl control in m_vecControls)
+			for (int i=0; i < controlList.Count;++i)
 			{
-        GUIGroup grp = control as GUIGroup;
-        if (grp !=null)
-        {
-          grp.Remove(dwId);
-        }
-        else
-        {
-          if (control.GetID == dwId)
-          {
-						if (index >=0 && index < m_vecControls.Count)
-							m_vecControls.RemoveAt(index);
-            return;
-          }
-        }
-				index++;
-			}
-		}
-
-		/// <summary>
-		/// This method will call the PreInit() on each control belonging to this window
-		/// this gives the control a way to do some pre-initalisation stuff
-		/// </summary>
-    public void InitControls()
-    {
-			try
-			{
-				for (int x = 0; x < m_vecControls.Count; ++x)
-				{
-					((GUIControl)m_vecControls[x]).OnInit();
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"InitControls exception:{0}", ex.ToString());
-			}
-    }
-
-		/// This method will call the OnDeInit() on each control belonging to this window
-		/// this gives the control a way to do some de-initalisation stuff
-    protected void DeInitControls()
-    {
-			try
-			{
-				for (int x = 0; x < m_vecControls.Count; ++x)
-				{
-					((GUIControl)m_vecControls[x]).OnDeInit();
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"DeInitControls exception:{0}", ex.ToString());
-			}
-    }
-
-		/// <summary>
-		/// returns the ID of the control which has the focus
-		/// </summary>
-		/// <returns>id of control or -1 if no control has the focus</returns>
-		public virtual int GetFocusControlId()
-		{
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-        GUIGroup grp = m_vecControls[x] as GUIGroup;
-        if (grp!=null)
-        {
-          int iFocusedControlId=grp.GetFocusControlId();
-          if (iFocusedControlId>=0) return iFocusedControlId;
-        }
-        else
-        {
-          if (((GUIControl)m_vecControls[x]).Focus) return ((GUIControl)m_vecControls[x]).GetID;
-        }
-			}
-			return - 1;
-		}
-		
-		/// <summary>
-		/// This method will remove the focus from the currently focused control
-		/// </summary>
-    public virtual void LooseFocus()
-    {
-      GUIControl cntl= GetControl ( GetFocusControlId() );
-      if (cntl!=null) cntl.Focus=false;
-    }
-
-		/// <summary>
-		/// Return the id of this window
-		/// </summary>
-		public virtual int GetID
-		{
-			get { return m_dwWindowId; }
-			set { m_dwWindowId = value; }
-		}
-
-		/// <summary>
-		/// return the id of the previous active window
-		/// </summary>
-		public int	PreviousWindowID
-		{
-			get { return m_dwPreviousWindowId; }
-		}
-
-		/// <summary>
-		/// get a control by the control ID
-		/// </summary>
-		/// <param name="iControlId">id of control</param>
-		/// <returns>GUIControl or null if control is not found</returns>
-		public virtual GUIControl	GetControl(int iControlId) 
-		{
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-         GUIControl cntl = (GUIControl)m_vecControls[x];
-         GUIControl cntlFound =  cntl.GetControlById( iControlId  );
-         if (cntlFound!=null) return cntlFound;
-
-			}
-			return null;
-		}
-
-		/// <summary>
-		/// remove all controls from the window
-		/// </summary>
-		public void ClearAll()
-		{
-			FreeResources();
-			m_vecControls = new ArrayList();
-		}
-
-		/// <summary>
-		/// Gets called by the runtime just before the window gets shown. It
-		/// will ask every control of the window to allocate its (directx) resources 
-		/// </summary>
-		// 
-		public virtual void	AllocResources()
-		{
-			try
-			{
-				// tell every control we're gonna alloc the resources next
-				
-				for (int x = 0; x < m_vecControls.Count; ++x)
-				{
-					((GUIControl)m_vecControls[x]).PreAllocResources();
-				}
-
-				// ask every control to alloc its resources
-				for (int x = 0; x < m_vecControls.Count; ++x)
-				{
-					((GUIControl)m_vecControls[x]).AllocResources();
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"AllocResources exception:{0}", ex.ToString());
-			}
-		}
-
-		/// <summary>
-		/// Gets called by the runtime when the window is not longer shown. It will
-		/// ask every control of the window 2 free its (directx) resources
-		/// </summary>
-		public virtual void	FreeResources()
-		{
-			try
-			{
-				// tell every control to free its resources
-				for (int x = 0; x < m_vecControls.Count; ++x)
-				{
-					((GUIControl)m_vecControls[x]).FreeResources();
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"FreeResources exception:{0}", ex.ToString());
-			}
-		}
-		
-		/// <summary>
-		/// Resets all the controls to their original positions, width&height
-		/// </summary>
-		public virtual void	ResetAllControls()
-		{
-			try
-			{
-				for (int x = 0; x < m_vecControls.Count; ++x)
-				{
-					((GUIControl)m_vecControls[x]).DoUpdate();
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"ResetAllControls exception:{0}", ex.ToString());
-			}
-		}
-		
-		/// <summary>
-		/// Gets by the window manager when it has loaded the window
-		/// default implementation stores the position of all controls
-		/// in m_vecPositions
-		/// </summary>
-		protected virtual void OnWindowLoaded()
-		{
-			m_vecPositions = new ArrayList();
-			for (int i = 0; i < m_vecControls.Count; ++i)
-			{
-				GUIControl control = (GUIControl)m_vecControls[i];
-        control.StorePosition();
-				CPosition pos = new CPosition(ref control, control.XPosition, control.YPosition);
-				m_vecPositions.Add(pos);
-			}
-
-			FieldInfo[] allFields = this.GetType().GetFields(BindingFlags.Instance 
-																												|BindingFlags.NonPublic
-																												|BindingFlags.FlattenHierarchy
-																												|BindingFlags.Public);
-			foreach (FieldInfo field in allFields)
-			{
-				if (field.IsDefined(typeof(SkinControlAttribute), false))
-				{
-					SkinControlAttribute atrb = (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
-				
-					GUIControl control = GetControl(atrb.ID);
-					if (control!=null)
+				GUIControl control =(GUIControl )controlList[i];
+				bool bFocus;
+				int controlID;
+				if (control.HitTest(cx, cy, out controlID, out bFocus))
+				{	
+					if (!bFocus)
 					{
-						try
-						{
-							field.SetValue(this, control);
-						}
-						catch(Exception ex)
-						{
-							Log.WriteFile(Log.LogType.Log,true,"GUIWindow:OnWindowLoaded ex:{0} {1}", ex.Message,ex.StackTrace);
-						}
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, controlID, 0, 0, null);
+						OnMessage(msg);
+						control.HitTest(cx, cy,out controlID, out bFocus);
 					}
+					control.OnAction(action);
+					return;
+				}
+				else
+				{
+					// no control selected
+					LooseFocus();
 				}
 			}
-
 		}
-
-		/// <summary>
-		/// Gets called by the runtime when a new window has been created
-		/// Every window window should override this method and load itself by calling
-		/// the Load() method
-		/// </summary>
-		/// <returns>true if initialisation was succesfull 
-		/// else false</returns>
-		public virtual bool Init()
+		protected virtual void OnMouseClick(int posX, int posY, Action action)
 		{
-			return false;
-		}
-
-		/// <summary>
-		/// Gets called by the runtime when a  window will be destroyed
-		/// Every window window should override this method and cleanup any resources
-		/// </summary>
-		/// <returns></returns>
-    public virtual void DeInit()
-    {
-    }
-
-		/// <summary>
-		/// Property indicating if the window supports delay loading or not
-		/// if a window returns true it means that its resources & XML will be loaded
-		/// just before it gets activated
-		/// for windows not supporting delayed loading, the xml is immediately loaded
-		/// at startup of the application
-		/// </summary>
-		public virtual bool SupportsDelayedLoad
-		{
-			get { return true; }
-		}
-
-		/// <summary>
-		/// Load the XML file for this window which 
-		/// contains a definition of which controls the GUI has
-		/// </summary>
-		/// <param name="strFileName">filename of the .xml file</param>
-		/// <returns></returns>
-		public virtual bool Load(string strFileName)
-		{
-			if (strFileName==null) return true;
-			m_bSkinLoaded = false;
-			if (strFileName == "") return true;
-			m_strWindowXmlFile = strFileName;
-      
-			// if windows supports delayed loading then do nothing
-			if (SupportsDelayedLoad) return true;
-
-			//else load xml file now
-			return LoadSkin();
-		}
-
-
-		/// <summary>
-		/// Loads the xml file for the window.
-		/// </summary>
-		/// <returns></returns>
-		public bool LoadSkin()
-		{
-			// no filename is configured
-			if (m_strWindowXmlFile == "") return false;
-			// TODO what is the reason for this check
-			if (m_vecControls.Count > 0) return false;
-			m_dwDefaultFocusControlID = 0;
-			// Load the reference controls
-			int iPos = m_strWindowXmlFile.LastIndexOf('\\');
-			string strReferenceFile = m_strWindowXmlFile.Substring(0, iPos);
-			strReferenceFile += @"\references.xml";
-			GUIControlFactory.LoadReferences(strReferenceFile);
-			
-			if (!System.IO.File.Exists(m_strWindowXmlFile))
+			for (int i=0; i < controlList.Count;++i)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"SKIN: Missing {0}", m_strWindowXmlFile);
-				return false;
-			}
-			try
-			{
-				// Load the XML file
-				XmlDocument doc = new XmlDocument();
-				doc.Load(m_strWindowXmlFile);
-				if (doc.DocumentElement == null) return false;
-				string strRoot = doc.DocumentElement.Name;
-				// Check root element
-				if (strRoot != "window") return false;
-				// Load id value
-				XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
-				if (nodeId == null) return false;
-				// Set the default control that has the focus after loading the window
-				XmlNode nodeDefault = doc.DocumentElement.SelectSingleNode("/window/defaultcontrol");
-				if (nodeDefault == null) return false;
-				// Convert the id to an int
-				try
-				{
-					m_dwWindowId = (int)System.Int32.Parse(nodeId.InnerText);
-				}
-				catch (Exception)
-				{
-					// TODO Add some error when conversion fails message here.
-				}
-				// Convert the id of the default control to an int
-				try
-				{
-					m_dwDefaultFocusControlID = System.Int32.Parse(nodeDefault.InnerText);
-				}
-				catch (Exception)
-				{
-					// TODO Add some error when conversion fails message here.
-				}
-				// Configure the overlay settings
-				XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowoverlay");
-				if (nodeOverlay != null) 
-				{
-					if (nodeOverlay.InnerText != null)
-					{
-						string strAllow = nodeOverlay.InnerText.ToLower();
-						if (strAllow == "yes" || strAllow == "true")
-							m_bAllowOverlay = true;
-						if (strAllow == "no" || strAllow == "false")
-							m_bAllowOverlay = false;
-					}
-				}
-
-        // Configure the autohide setting
-        XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
-        if (nodeAutoHideTopbar != null) 
-        {
-          if (nodeAutoHideTopbar.InnerText != null)
-          {
-						m_iAutoHideTopbar = -1;
-            string strAllow = nodeAutoHideTopbar.InnerText.ToLower();
-            if (strAllow == "yes" || strAllow == "true")
-              m_iAutoHideTopbar = 1;
-						if (strAllow == "no" || strAllow == "false")
-							m_iAutoHideTopbar = 0;
-          }
-        } 
-
-				// Load the list of the Controls that are used in the window
-				XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/control");
-				foreach (XmlNode node in nodeList)
-				{
-					LoadControl(node, m_vecControls);
-				}
-				// initialize the controls
-				OnWindowLoaded();
-				m_bSkinLoaded = true;
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"exception loading window {0} err:{1}", m_strWindowXmlFile, ex.Message);
-				return false;
-			}
-		}
-    
-		/// <summary>
-		/// This method will load a single control from the xml node
-		/// </summary>
-		/// <param name="node">XmlNode describing the control</param>
-		/// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
-    protected void LoadControl(XmlNode node, ArrayList controls)
-    {
-			if (node==null) return;
-			if (controls==null) return;
-			try
-			{
-				GUIControl newControl = GUIControlFactory.Create(m_dwWindowId, node);
-				newControl.WindowId = GetID;
-				GUIImage img = newControl as GUIImage;
-				if (img!=null)
-				{
-					if (img.Width==0 || img.Height==0)
-					{
-						Log.Write("xml:{0} image id:{1} width:{2} height:{3} gfx:{4}",
-							m_strWindowXmlFile, img.GetID, img.Width, img.Height, img.FileName);
-					}
-				}
-				controls.Add(newControl);
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"Unable to load control. exception:{0}",ex.ToString());
-			}
-    }
-
-		/// <summary>
-		/// This function gets called once by the runtime when everything is up & running
-		/// directX is now initialized, but before the first window is activated. 
-		/// It gives the window the oppertunity to allocate any (directx) resources
-		/// it may need
-		/// </summary>
-		public virtual void PreInit()
-		{
-		}
-
-		/// <summary>
-		/// Restores all the (x,y) positions of the XML file to their original values
-		/// </summary>
-		public virtual void Restore()
-		{
-			m_vecControls.Clear();
-			m_vecPositions.Clear();
-			Load(m_strWindowXmlFile);
-		}
-
-		/// <summary>
-		///  Gets called when DirectX device has been restored. 
-		/// </summary>
-		public virtual void OnDeviceRestored()
-		{
-		}
-
-		/// <summary>
-		/// Gets called when DirectX device has been lost. Any texture/font is now invalid
-		/// </summary>
-		public virtual void OnDeviceLost()
-		{
-		}
-		/// <summary>
-		/// PostRender() gives the window the oppertunity to overlay itself ontop of
-		/// the other window(s)
-		/// It gets called at the end of every rendering cycle even 
-    /// if the window is not activated
-    /// <param name="iLayer">indicates which overlay layer is rendered (1-10)
-    /// this gives the plugins the oppertunity to tell which overlay layer they are using
-    /// For example the topbar is rendered on layer #1
-    /// while the music overlay is rendered on layer #2 (and thus on top of the topbar)</param>
-		/// </summary>
-		public virtual void PostRender(float timePassed,int iLayer)
-		{
-		}
-
-		/// <summary>
-		/// Returns wither or not the window does postrendering.
-		/// </summary>
-		/// <returns>false</returns>
-    public virtual bool DoesPostRender()
-    {
-      return false;
-    }
-
-    
-		/// <summary>
-		/// Returns whether the music/video/tv overlay is allowed on this screen
-		/// </summary>
-		public virtual bool OverlayAllowed
-		{
-			get { return m_bAllowOverlay; }
-		}
-    
-    /// <summary>
-    /// Returns whether autohide the topbar is allowed on this screen
-    /// </summary>
-    public virtual bool AutoHideTopbar 
-    {
-      get
-			{
-				// set topbar autohide 
-				switch (m_iAutoHideTopbar)
-				{
-					case 0: 
-						return false;
-					case 1:
-						return true;
-					default:
-						return GUIGraphicsContext.DefaultTopBarHide;
+				GUIControl control =(GUIControl )controlList[i];
+				bool bFocus;
+				int controlID;
+				if (control.HitTest(posX, posY, out controlID, out bFocus))
+				{	
+					GUIControl cntl=GetControl(controlID);
+					if (cntl!=null) cntl.OnAction(action);
+					return;
 				}
 			}
-    }
+		}
+		#endregion
 
-		/// <summary>
-		/// Returns whether the user can goto full screen video,tv,visualisation from this window
-		/// </summary>
-		public virtual bool FullScreenVideoAllowed
-		{
-			get { return true; }
-		}
-
-		/// <summary>
-		/// Restores the position of the control to its default position.
-		/// </summary>
-		/// <param name="iControl">The identifier of the control that needs to be restored.</param>
-    public void RestoreControlPosition(int iControl)
-    {
-      for (int x = 0; x < m_vecControls.Count; ++x)
-      {
-        GUIControl cntl = (GUIControl)m_vecControls[x];
-        cntl.ReStorePosition();
-      }
-    }
-
-    public virtual void Process()
-    {
-    }
-
-		public virtual void SetObject(object obj)
-		{
-		}
-		protected virtual void OnPageLoad()
-		{
-		}
-		protected virtual void OnPageDestroy(int newWindowId)
-		{
-		}
-		protected virtual void OnShowContextMenu()
-		{
-		}
-		protected virtual void OnPreviousWindow()
-		{
-			GUIWindowManager.PreviousWindow();
-		}
-		protected virtual void OnClicked( int controlId, GUIControl control, Action.ActionType actionType) 
-		{
-		}
 	}
 }
 
