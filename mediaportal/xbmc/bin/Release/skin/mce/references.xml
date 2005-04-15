@@ -21,6 +21,7 @@
 		  <change date="08-3-2005">added DialogMenuBottomRight.xml</change>
 		  <change date="10-3-2005">added my playlists button to mymusicsongs.xml</change>
 		  <change date="18-3-2005">added FileMenu dialog window DialogFile.xml</change>
+		  <change date="15-4-2005">added Subtitle box in myTVFullscreen.xml (in B2)</change>
 		</changelog>
 	</skin>
 	<control>
