@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Settings
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         {
-          GUIWindowManager.PreviousWindow();
+          GUIWindowManager.ShowPreviousWindow();
           return;
         }
       }

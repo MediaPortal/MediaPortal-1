@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Settings
 
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        GUIWindowManager.PreviousWindow();
+        GUIWindowManager.ShowPreviousWindow();
         return;
       }
       if (m_iSpeed>10) m_iSpeed=10; // Speed limit for accellerated cursors

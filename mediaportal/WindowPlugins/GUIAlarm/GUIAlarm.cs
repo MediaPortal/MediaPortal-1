@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					return;
 				}
 				case Action.ActionType.ACTION_KEY_PRESSED:

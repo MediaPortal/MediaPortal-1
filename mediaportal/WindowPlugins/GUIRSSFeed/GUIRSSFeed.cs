@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.RSS
 			{
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					return;
 				}
 			}

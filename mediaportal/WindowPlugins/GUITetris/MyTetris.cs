@@ -117,7 +117,7 @@ namespace MediaPortal.Games.Tetris
 				}
 				else
 				{
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 				}
 			}
 			else

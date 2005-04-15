@@ -327,7 +327,7 @@ namespace MediaPortal.GUI.Home
 					GoBackMenu();
 					return;
 				}
-				GUIWindowManager.PreviousWindow();
+				GUIWindowManager.ShowPreviousWindow();
 				return;
 			}
 			

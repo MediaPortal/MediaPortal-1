@@ -286,7 +286,7 @@ namespace WindowPlugins.GUIPrograms
 			{
 				// <ESC> keypress in some myProgram Menu => jump to main menu
 				SaveFolderSettings("");
-				GUIWindowManager.PreviousWindow();
+				GUIWindowManager.ShowPreviousWindow();
 				return;
 			}
 		
@@ -559,7 +559,7 @@ namespace WindowPlugins.GUIPrograms
 			else
 			{
 				// from root.... go back to main menu
-				GUIWindowManager.PreviousWindow(); 
+				GUIWindowManager.ShowPreviousWindow(); 
 			}
 
 

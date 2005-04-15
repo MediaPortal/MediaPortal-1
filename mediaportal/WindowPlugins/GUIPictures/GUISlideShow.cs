@@ -249,7 +249,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
           // How to exit back to GUIPictures?
-          GUIWindowManager.PreviousWindow();
+          GUIWindowManager.ShowPreviousWindow();
       }
     }
 
@@ -359,7 +359,7 @@ namespace MediaPortal.GUI.Pictures
                   }
                   else
                     // How to exit back to GUIPictures?
-                    GUIWindowManager.PreviousWindow();
+                    GUIWindowManager.ShowPreviousWindow();
                 }
               }
             }
@@ -1300,7 +1300,7 @@ namespace MediaPortal.GUI.Pictures
 					break;
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
-          GUIWindowManager.PreviousWindow();
+          GUIWindowManager.ShowPreviousWindow();
           break;
 				
         case Action.ActionType.ACTION_DELETE_ITEM:
@@ -1520,7 +1520,7 @@ namespace MediaPortal.GUI.Pictures
 					break;
 
 				case 970:
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					break;
 			}
 		}

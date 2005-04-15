@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Video
       {
         m_bOSDVisible=false;
         GUIGraphicsContext.IsFullScreenVideo=false;
-        GUIWindowManager.PreviousWindow();
+        GUIWindowManager.ShowPreviousWindow();
         return;
       }
 
@@ -295,7 +295,7 @@ namespace MediaPortal.GUI.Video
           // switch back to the menu
           m_bOSDVisible=false;
           GUIGraphicsContext.IsFullScreenVideo=false;
-          GUIWindowManager.PreviousWindow();
+          GUIWindowManager.ShowPreviousWindow();
           return;
         }
 
@@ -404,7 +404,7 @@ namespace MediaPortal.GUI.Video
 				{
 					Log.Write("GUIVideoFullscreen:stop");
           g_Player.Stop();
-          GUIWindowManager.PreviousWindow();
+          GUIWindowManager.ShowPreviousWindow();
         }
           break;
 
@@ -716,7 +716,7 @@ namespace MediaPortal.GUI.Video
 					m_bOSDVisible=false;
 					m_bMSNChatVisible=false;
 					GUIGraphicsContext.IsFullScreenVideo=false;
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					break;
 			}
 		}
@@ -967,7 +967,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
         m_bOSDVisible=false;
-        GUIWindowManager.PreviousWindow();
+        GUIWindowManager.ShowPreviousWindow();
         return;
       }
 			long lTimeSpan=( (DateTime.Now.Ticks/10000) - m_dwTimeStatusShowTime);

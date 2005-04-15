@@ -364,7 +364,7 @@ namespace MediaPortal.GUI.TV
 						{
 							Recorder.StopRecording();
 						}
-            //GUIWindowManager.PreviousWindow();							// go back to the previous window
+            //GUIWindowManager.ShowPreviousWindow();							// go back to the previous window
           }
           if (iControl == (int)Controls.OSD_REWIND)
           {

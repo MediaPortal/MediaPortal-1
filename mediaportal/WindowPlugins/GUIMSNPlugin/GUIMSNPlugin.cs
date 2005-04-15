@@ -131,7 +131,7 @@ namespace MediaPortal.GUI.MSN
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        GUIWindowManager.PreviousWindow();
+        GUIWindowManager.ShowPreviousWindow();
         return;
       }
 

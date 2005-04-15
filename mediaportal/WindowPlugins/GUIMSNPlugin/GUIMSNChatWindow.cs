@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.MSN
 				
 				GUIMSNPlugin.CloseConversation();
 
-				GUIWindowManager.PreviousWindow();
+				GUIWindowManager.ShowPreviousWindow();
         return;
       }
 

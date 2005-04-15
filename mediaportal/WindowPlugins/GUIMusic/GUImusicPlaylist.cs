@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Music
 		{
 			if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
 			{
-				GUIWindowManager.PreviousWindow();
+				GUIWindowManager.ShowPreviousWindow();
 				return;
 			}
 

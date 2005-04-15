@@ -558,7 +558,7 @@ namespace MediaPortal.GUI.Library
 		}
 		protected virtual void OnPreviousWindow()
 		{
-			GUIWindowManager.PreviousWindow();
+			GUIWindowManager.ShowPreviousWindow();
 		}
 		protected virtual void OnClicked( int controlId, GUIControl control, Action.ActionType actionType) 
 		{

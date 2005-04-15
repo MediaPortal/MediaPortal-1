@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.Weather
 			{
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					return;
 				}
 			}

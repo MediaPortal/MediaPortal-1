@@ -37,7 +37,7 @@ namespace MediaPortal.GUI.GUIStatus {
 
 		public override void OnAction(Action action) {
 			if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) {
-				GUIWindowManager.PreviousWindow();
+				GUIWindowManager.ShowPreviousWindow();
 				return;
 			}
 			base.OnAction(action);
@@ -57,7 +57,7 @@ namespace MediaPortal.GUI.GUIStatus {
 					int iControl=message.SenderControlId;
 					if (iControl==(int)Controls.CONTROL_BACK) {
 						SaveSettings();
-						GUIWindowManager.PreviousWindow();
+						GUIWindowManager.ShowPreviousWindow();
 						return true;
 					}
 					return true;

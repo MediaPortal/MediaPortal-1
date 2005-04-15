@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.TV
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         {
-          GUIWindowManager.PreviousWindow();
+          GUIWindowManager.ShowPreviousWindow();
           return;
         }
         case Action.ActionType.ACTION_SHOW_GUI:

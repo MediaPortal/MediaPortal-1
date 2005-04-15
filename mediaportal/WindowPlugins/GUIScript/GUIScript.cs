@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.GUIScript
 		{
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
 			{
-				GUIWindowManager.PreviousWindow();  
+				GUIWindowManager.ShowPreviousWindow();  
 				return;
 			}
 			base.OnAction(action);

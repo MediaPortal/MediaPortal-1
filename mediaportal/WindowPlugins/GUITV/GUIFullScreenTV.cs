@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.TV
 				m_bOSDVisible=false;
 				m_bMSNChatVisible=false;
 				GUIGraphicsContext.IsFullScreenVideo=false;
-				GUIWindowManager.PreviousWindow();
+				GUIWindowManager.ShowPreviousWindow();
 				return;
 			}
 
@@ -348,7 +348,7 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
 					Log.Write("fullscreentv:goto previous menu");
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					return;
 				}
 
@@ -376,7 +376,7 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_SHOW_GUI:
 					Log.Write("fullscreentv:show gui");
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					return;
 
 				case Action.ActionType.ACTION_SHOW_OSD:	// Show the OSD
@@ -732,7 +732,7 @@ namespace MediaPortal.GUI.TV
 					m_bOSDVisible=false;
 					m_bMSNChatVisible=false;
 					GUIGraphicsContext.IsFullScreenVideo=false;
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					break;
 			}
 		}
@@ -990,7 +990,7 @@ namespace MediaPortal.GUI.TV
 			m_bMSNChatVisible=false;
 
 			Log.Write("fullscreentv:not viewing anymore");
-			GUIWindowManager.PreviousWindow();
+			GUIWindowManager.ShowPreviousWindow();
 		}
 
 		public void ShowStatus()

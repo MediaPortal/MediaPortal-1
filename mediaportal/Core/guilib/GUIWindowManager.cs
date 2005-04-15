@@ -16,6 +16,7 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
   public class GUIWindowManager
   {
+		#region variables
 		static int					 windowCount=0;
 		public delegate void OnCallBackHandler();
 		static public event  SendMessageHandler Receivers;
@@ -32,12 +33,16 @@ namespace MediaPortal.GUI.Library
     static GUIWindow     m_pRouteWindow=null;
     static bool          m_bRefresh=false;
     static bool          m_bSwitching=false;
+		#endregion
 
+		#region ctor
     // singleton. Dont allow any instance of this class
     private GUIWindowManager()
     {
     }
+		#endregion
 
+		#region messaging
     /// <summary>
     /// Send message to a window/control
     /// </summary>
@@ -99,7 +104,137 @@ namespace MediaPortal.GUI.Library
 			if (activewindow!=null)
 			  activewindow.OnMessage(message);
     }
+		/// <summary>
+		/// send thread message. Same as sendmessage() however message is placed on a queue
+		/// which is processed later.
+		/// </summary>
+		/// <param name="message">new message to send</param>
+		static public void SendThreadMessage(GUIMessage message)
+		{
+			if (message!=null)
+				m_vecThreadMessages.Add(message);
+		}
 
+		/// <summary>
+		/// process the thread messages and actions
+		/// This method gets called by the main thread only and ensures that
+		/// all messages & actions are handled by 1 thread only
+		/// </summary>
+		static public void DispatchThreadMessages()
+		{
+			if (m_vecThreadMessages.Count>0)
+			{
+				ArrayList list=m_vecThreadMessages;
+				m_vecThreadMessages=new ArrayList();
+				foreach(GUIMessage message in list)
+				{
+					SendMessage(message);
+				}
+			}
+			if (m_vecThreadActions.Count>0)
+			{
+				ArrayList list=m_vecThreadActions;
+				m_vecThreadActions=new ArrayList();
+				foreach(Action action in list)
+				{
+					if (OnNewAction!=null) OnNewAction(action);
+				}
+			}
+		}
+
+		/// <summary>
+		/// event handler which is called by GUIGraphicsContext when a new action has occured
+		/// The method will add the action to a list which is processed later on in the process () function
+		/// The reason for this is that multiple threads can add new action and they should only be
+		/// processed by the main thread
+		/// </summary>
+		/// <param name="action">new action</param>
+		static void OnActionReceived(Action action)
+		{
+			if (action!=null)
+				m_vecThreadActions.Add(action);
+		}
+
+		/// <summary>
+		/// This method will handle a given action. Its called by the process() function
+		/// The window manager will give the action to the current active window 2 handle
+		/// </summary>
+		/// <param name="action">new action for current active window</param>
+		static public void OnAction(Action action)
+		{
+			if (action==null) return;
+			if (action.wID==Action.ActionType.ACTION_INVALID) return;
+			if( action.wID == Action.ActionType.ACTION_MOVE_LEFT ||
+				action.wID == Action.ActionType.ACTION_MOVE_RIGHT ||
+				action.wID == Action.ActionType.ACTION_MOVE_UP ||
+				action.wID == Action.ActionType.ACTION_MOVE_DOWN ||
+				action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+			{
+				for (int x=0; x < windowCount;++x)
+				{
+					if ( m_vecWindows[x].Focused && m_vecWindows[x].DoesPostRender()  )
+					{
+						int iActiveWindow=ActiveWindow;
+						m_vecWindows[x].OnAction(action);
+						if ( m_vecWindows[x].Focused || iActiveWindow!=ActiveWindow) return;
+					}
+				}
+			}
+
+			if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
+			{
+				for (int x=0; x < windowCount;++x)
+				{
+					if ( m_vecWindows[x].DoesPostRender() )
+					{
+						m_vecWindows[x].OnAction(action);
+					}
+				}
+			}
+
+			// if a dialog is onscreen then route the action to the dialog
+			if (null!=m_pRouteWindow)
+			{
+				if (action.wID != Action.ActionType.ACTION_KEY_PRESSED &&
+					action.wID != Action.ActionType.ACTION_MOUSE_CLICK)
+				{
+					Action newaction=new Action();
+					if (ActionTranslator.GetAction(m_pRouteWindow.GetID,action.m_key,ref newaction))
+					{
+						m_pRouteWindow.OnAction(newaction);
+						return;
+					}
+				}
+				m_pRouteWindow.OnAction(action);
+				return;
+			}
+
+			// else send it to the current active window
+			if (m_iActiveWindow < 0 || m_iActiveWindow >= windowCount) return;
+			GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
+			if (null!=pWindow) 
+			{
+				pWindow.OnAction(action);
+
+				if (action.wID == Action.ActionType.ACTION_MOVE_UP)
+				{
+					if (pWindow.GetFocusControlId()<0)
+					{
+						for (int x=0; x < windowCount;++x)
+						{
+							if ( m_vecWindows[x].DoesPostRender() )
+							{
+								m_vecWindows[x].Focused=true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		#endregion
+
+		#region window initialisation / deinitialisation
     /// <summary>
     /// Initialize the window manager
     /// </summary>
@@ -136,26 +271,95 @@ namespace MediaPortal.GUI.Library
 			windowCount++;
     }
 
-    static public bool IsSwitchingToNewWindow
-    {
-      get { return m_bSwitching;}
-			set { m_bSwitching=value;}
-    }
+		/// <summary>
+		/// call ResetallControls() for every window
+		/// This will cause each control to use the default
+		/// position, width & size as mentioned in the skin files
+		/// </summary>
+		static public void ResetAllControls()
+		{
+			for (int x=0; x < windowCount;++x)
+			{
+				m_vecWindows[x].ResetAllControls();
+			}
+		}
+		/// <summary>
+		/// Restore() will restore all the positions of all controls of all windows
+		/// to their original values as specified in the skin files
+		/// </summary>
+		static public void Restore()
+		{
+			// reload all controls from the xml file
+			for (int x=0; x < windowCount;++x)
+			{
+				m_vecWindows[x].Restore();
+			}
+		}
 
-    /// <summary>
-    /// call ResetallControls() for every window
-    /// This will cause each control to use the default
-    /// position, width & size as mentioned in the skin files
-    /// </summary>
-    static public void ResetAllControls()
-    {
-      for (int x=0; x < windowCount;++x)
-      {
-        m_vecWindows[x].ResetAllControls();
-      }
-    }
+		/// <summary>
+		/// Removes all windows 
+		/// </summary>
+		static public void Clear()
+		{
+			GUIGraphicsContext.Receivers -= new SendMessageHandler(SendThreadMessage);
+			GUIGraphicsContext.OnNewAction  -= new OnActionHandler(OnActionReceived);
+			for (int x=0; x < windowCount;++x)
+			{
+				m_vecWindows[x].DeInit();
+				m_vecWindows[x].FreeResources();
+			}
+			m_pRouteWindow=null;
+			m_vecThreadMessages.Clear();
+			m_vecThreadActions.Clear();
+			GUIWindow.Clear();
+		}
 
-    /// <summary>
+		/// <summary>
+		/// Asks all windows to cleanup their resources
+		/// </summary>
+		static public void Dispose()
+		{
+			for (int x=0; x < windowCount;++x)
+			{
+				m_vecWindows[x].FreeResources();
+			}
+		}
+
+		/// <summary>
+		/// Call preinit for every window
+		/// This function gets called once by the runtime when everything is up & running
+		/// directX is now initialized, but before the first window is activated. 
+		/// It gives the window the oppertunity to allocate any (directx) resources
+		/// it may need
+		/// </summary>
+		static public void PreInit()
+		{
+			for (int x=0; x < windowCount;++x)
+			{
+				GUIWindow window=m_vecWindows[x];
+				try
+				{
+					window.PreInit();
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"Exception in {0}.Preinit() {1}",
+						window.GetType().ToString(), ex.ToString());
+				}
+			}
+		}
+
+		/// <summary>
+		/// Tell window manager it should route all actions/messages to 
+		/// another window. This is used for dialogs
+		/// </summary>
+		/// <param name="dwID">id of window which should receive the actions/messages</param>
+
+		#endregion
+
+		#region DirectX lost/restore device handling
+    
+		/// <summary>
     /// called by the runtime when DirectX device has been restored
     /// Just let current active window know about this so they can re-allocate their directx resources
     /// </summary>
@@ -179,7 +383,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    /// <summary>
+		#endregion
+
+		#region window switching
+		/// <summary>
     /// ActivateWindow() 
     /// This function will show/present/activate the window specified
     /// </summary>
@@ -311,56 +518,56 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    /// <summary>
-    /// Show previous window. When user goes back (ESC)
-    /// this function will show the previous active window
-    /// </summary>
-    static public void PreviousWindow()
-    {
-      m_bSwitching=true;
-      try
-      {
-        // Exit if there is no previous window
-        if (m_vecWindowList.Count == 0) return;
+		/// <summary>
+		/// Show previous window. When user goes back (ESC)
+		/// this function will show the previous active window
+		/// </summary>
+		static public void ShowPreviousWindow()
+		{
+			m_bSwitching=true;
+			try
+			{
+				// Exit if there is no previous window
+				if (m_vecWindowList.Count == 0) return;
 
-        for (int x=0; x < windowCount;++x)
-        {
-          if (m_vecWindows[x].DoesPostRender() )
-          {
-            m_vecWindows[x].Focused=false;
-          }
-        }
+				for (int x=0; x < windowCount;++x)
+				{
+					if (m_vecWindows[x].DoesPostRender() )
+					{
+						m_vecWindows[x].Focused=false;
+					}
+				}
 
-        // deactivate any window
-        GUIMessage msg;
-        GUIWindow pWindow;        				
-        int m_iPrevActiveWindowID=(int)GUIWindow.Window.WINDOW_HOME;
-        if (m_vecWindowList.Count > 0)
-        {
-          m_iPrevActiveWindowID = (int)m_vecWindowList[m_vecWindowList.Count-1];
-          m_vecWindowList.RemoveAt(m_vecWindowList.Count-1);
-          //Log.Write("Window list remove Id:{0} new count: {1}", m_iPrevActiveWindowID, m_vecWindowList.Count);
-        }
+				// deactivate any window
+				GUIMessage msg;
+				GUIWindow pWindow;        				
+				int m_iPrevActiveWindowID=(int)GUIWindow.Window.WINDOW_HOME;
+				if (m_vecWindowList.Count > 0)
+				{
+					m_iPrevActiveWindowID = (int)m_vecWindowList[m_vecWindowList.Count-1];
+					m_vecWindowList.RemoveAt(m_vecWindowList.Count-1);
+					//Log.Write("Window list remove Id:{0} new count: {1}", m_iPrevActiveWindowID, m_vecWindowList.Count);
+				}
 
-        if ((m_iActiveWindow >=0 && m_iActiveWindow < windowCount))
-        {
+				if ((m_iActiveWindow >=0 && m_iActiveWindow < windowCount))
+				{
 					// deactivate current window
-          pWindow=m_vecWindows[m_iActiveWindow];
+					pWindow=m_vecWindows[m_iActiveWindow];
 
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,m_iPrevActiveWindowID,0,null);
-          pWindow.OnMessage(msg);
-          m_iActiveWindow=-1;
-          m_iActiveWindowID=-1;
-        }
+					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,m_iPrevActiveWindowID,0,null);
+					pWindow.OnMessage(msg);
+					m_iActiveWindow=-1;
+					m_iActiveWindowID=-1;
+				}
 
 				UnRoute();
 
-        // activate the new window
-        for (int i=0; i < windowCount; i++)
-        {
-          pWindow=m_vecWindows[i];
-          if (pWindow.GetID == m_iPrevActiveWindowID) 
-          {
+				// activate the new window
+				for (int i=0; i < windowCount; i++)
+				{
+					pWindow=m_vecWindows[i];
+					if (pWindow.GetID == m_iPrevActiveWindowID) 
+					{
 						try
 						{
 							m_iPrevActiveWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
@@ -375,11 +582,11 @@ namespace MediaPortal.GUI.Library
 						{
 							break;
 						}
-          }
-        }
+					}
+				}
 
-        // previous window doesnt exists. (maybe .xml file is invalid or doesnt exists)
-        // so we go back to the first (home) window cause its the only way to get back 
+				// previous window doesnt exists. (maybe .xml file is invalid or doesnt exists)
+				// so we go back to the first (home) window cause its the only way to get back 
 				// to a working window.
 				m_iActiveWindow=0;
 				m_iActiveWindowID=(int)GUIWindow.Window.WINDOW_HOME;
@@ -393,108 +600,98 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 
-        pWindow=m_vecWindows[m_iActiveWindow];
-        m_iActiveWindowID=pWindow.GetID;
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
-        pWindow.OnMessage(msg);
-      }
-      finally
-      {
-        m_bSwitching=false;
-      }
-    }
-
-		/// <summary>
-		/// event handler which is called by GUIGraphicsContext when a new action has occured
-		/// The method will add the action to a list which is processed later on in the process () function
-		/// The reason for this is that multiple threads can add new action and they should only be
-		/// processed by the main thread
-		/// </summary>
-		/// <param name="action">new action</param>
-		static void OnActionReceived(Action action)
-		{
-			if (action!=null)
-				m_vecThreadActions.Add(action);
+				pWindow=m_vecWindows[m_iActiveWindow];
+				m_iActiveWindowID=pWindow.GetID;
+				msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
+				pWindow.OnMessage(msg);
+			}
+			finally
+			{
+				m_bSwitching=false;
+			}
 		}
 
-    /// <summary>
-    /// This method will handle a given action. Its called by the process() function
-    /// The window manager will give the action to the current active window 2 handle
-    /// </summary>
-    /// <param name="action">new action for current active window</param>
-    static public void OnAction(Action action)
-    {
-			if (action==null) return;
-			if (action.wID==Action.ActionType.ACTION_INVALID) return;
-      if( action.wID == Action.ActionType.ACTION_MOVE_LEFT ||
-          action.wID == Action.ActionType.ACTION_MOVE_RIGHT ||
-          action.wID == Action.ActionType.ACTION_MOVE_UP ||
-          action.wID == Action.ActionType.ACTION_MOVE_DOWN ||
-          action.wID == Action.ActionType.ACTION_SELECT_ITEM)
-      {
-        for (int x=0; x < windowCount;++x)
-        {
-          if ( m_vecWindows[x].Focused && m_vecWindows[x].DoesPostRender()  )
-          {
-            int iActiveWindow=ActiveWindow;
-            m_vecWindows[x].OnAction(action);
-            if ( m_vecWindows[x].Focused || iActiveWindow!=ActiveWindow) return;
-          }
-        }
-      }
 
-      if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
-      {
-        for (int x=0; x < windowCount;++x)
-        {
-          if ( m_vecWindows[x].DoesPostRender() )
-          {
-            m_vecWindows[x].OnAction(action);
-          }
-        }
-      }
+		#endregion
 
-      // if a dialog is onscreen then route the action to the dialog
-			if (null!=m_pRouteWindow)
+		#region properties
+		/// <summary>
+		/// return true if window manager has been initialized 
+		/// else false
+		/// </summary>
+		static public bool Initalized
+		{
+			get { return (windowCount>0);}
+		}
+    
+
+		/// <summary>
+		/// returns true if we're busy switching from window A->window B
+		/// used because we want to prevent rendering during this time
+		/// </summary>
+		static public bool IsSwitchingToNewWindow
+		{
+			get { return m_bSwitching;}
+			set { m_bSwitching=value;}
+		}
+
+
+		/// <summary>
+		/// return the ID of the current active window
+		/// </summary>
+		static public int	ActiveWindow
+		{
+			get
 			{
-        if (action.wID != Action.ActionType.ACTION_KEY_PRESSED &&
-            action.wID != Action.ActionType.ACTION_MOUSE_CLICK)
-        {
-          Action newaction=new Action();
-          if (ActionTranslator.GetAction(m_pRouteWindow.GetID,action.m_key,ref newaction))
-          {
-            m_pRouteWindow.OnAction(newaction);
-            return;
-          }
-        }
-        m_pRouteWindow.OnAction(action);
-				return;
+				if (m_iActiveWindowID < 0) return 0;
+				else return m_iActiveWindowID;
 			}
+		}
+		/// <summary>
+		/// return the ID of the current active window or dialog
+		/// </summary>
+		static public int	ActiveWindowEx
+		{
+			get
+			{
+				if (IsRouted) return m_pRouteWindow.GetID;
+				if (m_iActiveWindowID < 0) return 0;
+				else return m_iActiveWindowID;
+			}
+		}
 
-      // else send it to the current active window
-			if (m_iActiveWindow < 0 || m_iActiveWindow >= windowCount) return;
+		/// <summary>
+		/// returns true if current window wants to refresh/redraw itself
+		/// other wise false
+		/// </summary>
+		/// <returns>true,false</returns>
+		static public bool NeedRefresh()
+		{
+			if (m_iActiveWindow < 0 || m_iActiveWindow >=windowCount) return false;
 			GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
-      if (null!=pWindow) 
-      {
-        pWindow.OnAction(action);
+			bool bRefresh=m_bRefresh;
+			m_bRefresh=false;
+			return (bRefresh|pWindow.NeedRefresh());
+		}
+		/// <summary>
+		/// GetWindow() returns the window with the specified ID
+		/// </summary>
+		/// <param name="dwID">id of window</param>
+		/// <returns>window found or null if not found</returns>
+		static public GUIWindow GetWindow(int dwID)
+		{
+			for (int x=0; x < windowCount;++x)
+			{
+				if ( m_vecWindows[x].GetID==dwID) return m_vecWindows[x];
+			}
+			return null;
+		}
 
-        if (action.wID == Action.ActionType.ACTION_MOVE_UP)
-        {
-          if (pWindow.GetFocusControlId()<0)
-          {
-            for (int x=0; x < windowCount;++x)
-            {
-              if ( m_vecWindows[x].DoesPostRender() )
-              {
-                m_vecWindows[x].Focused=true;
-              }
-            }
-          }
-        }
-      }
-    }
 
-    /// <summary>
+		#endregion
+
+		#region rendering
+		/// <summary>
     /// PostRender() gives the windows the oppertunity to overlay itself ontop of
     /// the other window(s)
     /// It gets called at the end of every rendering cycle 
@@ -578,20 +775,6 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// GetWindow() returns the window with the specified ID
-    /// </summary>
-    /// <param name="dwID">id of window</param>
-    /// <returns>window found or null if not found</returns>
-    static public GUIWindow GetWindow(int dwID)
-    {
-			for (int x=0; x < windowCount;++x)
-			{
-				if ( m_vecWindows[x].GetID==dwID) return m_vecWindows[x];
-			}
-			return null;
-    }
-
-    /// <summary>
     /// 
     /// </summary>
     static public void Process()
@@ -601,169 +784,10 @@ namespace MediaPortal.GUI.Library
 				Callbacks();
 			}
     }
-    /// <summary>
-    /// returns true if current window wants to refresh/redraw itself
-    /// other wise false
-    /// </summary>
-    /// <returns>true,false</returns>
-    static public bool NeedRefresh()
-    {
-      if (m_iActiveWindow < 0 || m_iActiveWindow >=windowCount) return false;
-      GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
-      bool bRefresh=m_bRefresh;
-      m_bRefresh=false;
-      return (bRefresh|pWindow.NeedRefresh());
-    }
 
-    /// <summary>
-    /// Restore() will restore all the positions of all controls of all windows
-    /// to their original values as specified in the skin files
-    /// </summary>
-    static public void Restore()
-    {
-      // reload all controls from the xml file
-      for (int x=0; x < windowCount;++x)
-      {
-        m_vecWindows[x].Restore();
-      }
-    }
+		#endregion
 
-    /// <summary>
-    /// Removes all windows 
-    /// </summary>
-    static public void Clear()
-    {
-			GUIGraphicsContext.Receivers -= new SendMessageHandler(SendThreadMessage);
-      GUIGraphicsContext.OnNewAction  -= new OnActionHandler(OnActionReceived);
-      for (int x=0; x < windowCount;++x)
-      {
-        m_vecWindows[x].DeInit();
-        m_vecWindows[x].FreeResources();
-      }
-      m_pRouteWindow=null;
-      m_vecThreadMessages.Clear();
-			m_vecThreadActions.Clear();
-      GUIWindow.Clear();
-    }
-
-    /// <summary>
-    /// Asks all windows to cleanup their resources
-    /// </summary>
-    static public void Dispose()
-    {
-      for (int x=0; x < windowCount;++x)
-      {
-        m_vecWindows[x].FreeResources();
-      }
-    }
-
-    /// <summary>
-    /// Call preinit for every window
-    /// This function gets called once by the runtime when everything is up & running
-    /// directX is now initialized, but before the first window is activated. 
-    /// It gives the window the oppertunity to allocate any (directx) resources
-    /// it may need
-    /// </summary>
-    static public void PreInit()
-    {
-      for (int x=0; x < windowCount;++x)
-      {
-				GUIWindow window=m_vecWindows[x];
-				try
-				{
-					window.PreInit();
-				}
-				catch(Exception ex)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"Exception in {0}.Preinit() {1}",
-										window.GetType().ToString(), ex.ToString());
-				}
-      }
-    }
-
-    /// <summary>
-    /// Tell window manager it should route all actions/messages to 
-    /// another window. This is used for dialogs
-    /// </summary>
-    /// <param name="dwID">id of window which should receive the actions/messages</param>
-    static public void RouteToWindow(int dwID)
-		{
-      m_bRefresh=true;
-			m_pRouteWindow=GetWindow(dwID);
-    }
-
-    /// <summary>
-    /// tell the window manager to unroute the current routing
-    /// </summary>
-    static public void UnRoute()
-		{
-			m_pRouteWindow=null;
-      m_bRefresh=true;
-      GUIPropertyManager.SetProperty("#currentmodule",GUILocalizeStrings.Get(10000+ActiveWindow));
-    }
-
-    /// <summary>
-    /// send thread message. Same as sendmessage() however message is placed on a queue
-    /// which is processed later.
-    /// </summary>
-    /// <param name="message">new message to send</param>
-    static public void SendThreadMessage(GUIMessage message)
-    {
-			if (message!=null)
-        m_vecThreadMessages.Add(message);
-    }
-
-    /// <summary>
-    /// process the thread messages and actions
-    /// This method gets called by the main thread only and ensures that
-    /// all messages & actions are handled by 1 thread only
-    /// </summary>
-    static public void DispatchThreadMessages()
-    {
-      if (m_vecThreadMessages.Count>0)
-      {
-        ArrayList list=m_vecThreadMessages;
-        m_vecThreadMessages=new ArrayList();
-        foreach(GUIMessage message in list)
-        {
-          SendMessage(message);
-        }
-      }
-			if (m_vecThreadActions.Count>0)
-			{
-				ArrayList list=m_vecThreadActions;
-				m_vecThreadActions=new ArrayList();
-				foreach(Action action in list)
-				{
-					if (OnNewAction!=null) OnNewAction(action);
-				}
-			}
-    }
-
-    /// <summary>
-    /// return the ID of the current active window
-    /// </summary>
-    static public int	ActiveWindow
-    {
-			get
-			{
-				if (m_iActiveWindowID < 0) return 0;
-				else return m_iActiveWindowID;
-			}
-    }
-		/// <summary>
-		/// return the ID of the current active window
-		/// </summary>
-		static public int	ActiveWindowEx
-		{
-			get
-			{
-				if (IsRouted) return m_pRouteWindow.GetID;
-				if (m_iActiveWindowID < 0) return 0;
-				else return m_iActiveWindowID;
-			}
-		}
-
+		#region dialog routing
     /// <summary>
     /// Property which returns true when there is a dialog on screen
     /// else false
@@ -790,17 +814,25 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    /// <summary>
-    /// return true if window managed has been initialized 
-    /// else false
-    /// </summary>
-    static public bool Initalized
-    {
-      get { return (windowCount>0);}
-    }
-    
-    
+		/// <summary>
+		/// tell the window manager to unroute the current routing
+		/// </summary>
+		static public void UnRoute()
+		{
+			m_pRouteWindow=null;
+			m_bRefresh=true;
+			GUIPropertyManager.SetProperty("#currentmodule",GUILocalizeStrings.Get(10000+ActiveWindow));
+		}
+		static public void RouteToWindow(int dialogId)
+		{
+			m_bRefresh=true;
+			m_pRouteWindow=GetWindow(dialogId);
+		}
 
+    
+		#endregion
+
+		#region various
     public static bool MyInterfaceFilter(Type typeObj,Object criteriaObj)
     {
       if( typeObj.ToString() .Equals( criteriaObj.ToString()))
@@ -823,5 +855,7 @@ namespace MediaPortal.GUI.Library
       msg.Param3=iLine2;
       GUIWindowManager.SendThreadMessage(msg);
     }
+
+		#endregion
   }
 }

@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				//save settings here
 				SaveSettings();
-				GUIWindowManager.PreviousWindow();
+				GUIWindowManager.ShowPreviousWindow();
 				return;
 			}
 			base.OnAction(action);
@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Alarm
 					{
 						DeleteAlarm();
 						Alarm.RefreshAlarms();
-						GUIWindowManager.PreviousWindow();
+						GUIWindowManager.ShowPreviousWindow();
 						return true;
 					}
 					if(iControl == (int)Controls.PlayType)

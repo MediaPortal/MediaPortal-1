@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Home
       // mouse moved, check which control has the focus
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
       {
-        GUIWindowManager.PreviousWindow();
+        GUIWindowManager.ShowPreviousWindow();
         return;
       }
       if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE )

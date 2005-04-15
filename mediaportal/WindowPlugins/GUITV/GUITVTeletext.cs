@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.TV
 			{
 				case Action.ActionType.ACTION_PREVIOUS_MENU:
 				{
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					return;
 				}
 				case Action.ActionType.ACTION_KEY_PRESSED:
@@ -121,7 +121,7 @@ namespace MediaPortal.GUI.TV
 					if(m_teleText==null)
 					{
 						Log.Write("dvb-teletext: no teletext object");
-						GUIWindowManager.PreviousWindow();
+						GUIWindowManager.ShowPreviousWindow();
 						return false;
 					}
 					m_teleText.GetPage(100,0);

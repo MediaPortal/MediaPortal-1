@@ -291,7 +291,7 @@ namespace MediaPortal.GUI.Video
 					//g_application.m_guiWindowFullScreen.m_bOSDVisible = false;	// toggle the OSD off so parent window can de-init
 					Log.Write("GUIVideoOSD:stop");
           g_Player.Stop();						// close our media
-          //GUIWindowManager.PreviousWindow();							// go back to the previous window
+          //GUIWindowManager.ShowPreviousWindow();							// go back to the previous window
         }
 
         if (iControl == (int)Controls.OSD_REWIND)

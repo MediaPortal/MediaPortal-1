@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.TV
 							Recorder.StopViewing();
 						}
 					}
-					GUIWindowManager.PreviousWindow();
+					GUIWindowManager.ShowPreviousWindow();
 					return;
 				}
 
