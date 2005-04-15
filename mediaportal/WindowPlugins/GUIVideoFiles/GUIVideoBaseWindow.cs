@@ -17,15 +17,6 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class GUIVideoBaseWindow: GUIWindow, IComparer
 	{
-		protected enum SortMethod
-		{
-			Name=0,
-			Date=1,
-			Size=2,
-			Year=3,
-			Rating=4,
-			Label=5,
-		}
 
 		protected enum View
 		{
@@ -37,8 +28,8 @@ namespace MediaPortal.GUI.Video
 
 		protected   View currentView		    = View.List;
 		protected   View currentViewRoot    = View.List;
-		protected   SortMethod currentSortMethod = SortMethod.Name;
-		protected   SortMethod currentSortMethodRoot = SortMethod.Name;
+		protected   VideoSort.SortMethod currentSortMethod = VideoSort.SortMethod.Name;
+		protected   VideoSort.SortMethod currentSortMethodRoot = VideoSort.SortMethod.Name;
 		protected   bool       m_bSortAscending;
 		protected   bool       m_bSortAscendingRoot;
 		protected   VideoViewHandler handler;
@@ -59,7 +50,7 @@ namespace MediaPortal.GUI.Video
 		{
 			return true;
 		}
-		protected virtual bool AllowSortMethod(SortMethod method)
+		protected virtual bool AllowSortMethod(VideoSort.SortMethod method)
 		{
 			return true;
 		}
@@ -69,7 +60,7 @@ namespace MediaPortal.GUI.Video
 			set { currentView=value;}
 		}
 
-		protected virtual SortMethod CurrentSortMethod
+		protected virtual VideoSort.SortMethod CurrentSortMethod
 		{
 			get { return currentSortMethod;}
 			set { currentSortMethod=value;}
@@ -95,8 +86,8 @@ namespace MediaPortal.GUI.Video
 				currentView=(View)xmlreader.GetValueAsInt(SerializeName,"view", (int)View.List);
 				currentViewRoot=(View)xmlreader.GetValueAsInt(SerializeName,"viewroot", (int)View.List);
 
-				currentSortMethod=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethod", (int)SortMethod.Name);
-				currentSortMethodRoot=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)SortMethod.Name);
+				currentSortMethod=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethod", (int)VideoSort.SortMethod.Name);
+				currentSortMethodRoot=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)VideoSort.SortMethod.Name);
 				m_bSortAscending=xmlreader.GetValueAsBool(SerializeName,"sortasc", true);
 				m_bSortAscendingRoot=xmlreader.GetValueAsBool(SerializeName,"sortascroot", true);
 			}
@@ -206,23 +197,23 @@ namespace MediaPortal.GUI.Video
 					shouldContinue=false;
 					switch (CurrentSortMethod)
 					{
-						case SortMethod.Name:
-							CurrentSortMethod=SortMethod.Date;
+						case VideoSort.SortMethod.Name:
+							CurrentSortMethod=VideoSort.SortMethod.Date;
 							break;
-						case SortMethod.Date:
-							CurrentSortMethod=SortMethod.Size;
+						case VideoSort.SortMethod.Date:
+							CurrentSortMethod=VideoSort.SortMethod.Size;
 							break;
-						case SortMethod.Size:
-							CurrentSortMethod=SortMethod.Year;
+						case VideoSort.SortMethod.Size:
+							CurrentSortMethod=VideoSort.SortMethod.Year;
 							break;
-						case SortMethod.Year:
-							CurrentSortMethod=SortMethod.Rating;
+						case VideoSort.SortMethod.Year:
+							CurrentSortMethod=VideoSort.SortMethod.Rating;
 							break;
-						case SortMethod.Rating:
-							CurrentSortMethod=SortMethod.Label;
+						case VideoSort.SortMethod.Rating:
+							CurrentSortMethod=VideoSort.SortMethod.Label;
 							break;
-						case SortMethod.Label:
-							CurrentSortMethod=SortMethod.Name;
+						case VideoSort.SortMethod.Label:
+							CurrentSortMethod=VideoSort.SortMethod.Name;
 							break;
 					}
 					if (!AllowSortMethod(CurrentSortMethod)) 
@@ -305,22 +296,22 @@ namespace MediaPortal.GUI.Video
 
 			switch (CurrentSortMethod)
 			{
-				case SortMethod.Name:
+				case VideoSort.SortMethod.Name:
 					strLine=GUILocalizeStrings.Get(365);
 					break;
-				case SortMethod.Date:
+				case VideoSort.SortMethod.Date:
 					strLine=GUILocalizeStrings.Get(104);
 					break;
-				case SortMethod.Size:
+				case VideoSort.SortMethod.Size:
 					strLine=GUILocalizeStrings.Get(105);
 					break;
-				case SortMethod.Year:
+				case VideoSort.SortMethod.Year:
 					strLine=GUILocalizeStrings.Get(366);
 					break;
-				case SortMethod.Rating:
+				case VideoSort.SortMethod.Rating:
 					strLine=GUILocalizeStrings.Get(367);
 					break;
-				case SortMethod.Label:
+				case VideoSort.SortMethod.Label:
 					strLine=GUILocalizeStrings.Get(430);
 					break;
 			}
@@ -357,78 +348,10 @@ namespace MediaPortal.GUI.Video
 		protected virtual void OnSort()
 		{
 			SetLabels();
-			facadeView.Sort(this);
+			facadeView.Sort( new VideoSort(CurrentSortMethod, CurrentSortAsc) );
 			UpdateButtonStates();
 		}
 
-		public int Compare(object x, object y)
-		{
-			if (x == y) return 0;
-			GUIListItem item1 = (GUIListItem)x;
-			GUIListItem item2 = (GUIListItem)y;
-			if (item1 == null) return - 1;
-			if (item2 == null) return - 1;
-			if (item1.IsFolder && item1.Label == "..") return - 1;
-			if (item2.IsFolder && item2.Label == "..") return - 1;
-			if (item1.IsFolder && !item2.IsFolder) return - 1;
-			else if (!item1.IsFolder && item2.IsFolder) return 1;
-
-
-			switch (CurrentSortMethod)
-			{
-				case SortMethod.Year : 
-				{
-					if (CurrentSortAsc)
-					{
-						if (item1.Year > item2.Year) return 1;
-						if (item1.Year < item2.Year) return - 1;
-					}
-					else
-					{
-						if (item1.Year > item2.Year) return - 1;
-						if (item1.Year < item2.Year) return 1;
-					}
-					return 0;
-				}
-				case SortMethod.Rating : 
-				{
-					if (CurrentSortAsc)
-					{
-						if (item1.Rating > item2.Rating) return 1;
-						if (item1.Rating < item2.Rating) return - 1;
-					}
-					else
-					{
-						if (item1.Rating > item2.Rating) return - 1;
-						if (item1.Rating < item2.Rating) return 1;
-					}
-					return 0;
-				}
-
-				case SortMethod.Name: 
-          
-					if (CurrentSortAsc)
-					{
-						return String.Compare(item1.Label, item2.Label, true);
-					}
-					else
-					{
-						return String.Compare(item2.Label, item1.Label, true);
-					}
-        
-				case SortMethod.Label : 
-					if (CurrentSortAsc)
-					{
-						return String.Compare(item1.DVDLabel, item2.DVDLabel, true);
-					}
-					else
-					{
-						return String.Compare(item2.DVDLabel, item1.DVDLabel, true);
-					}
-
-			} 
-			return 0;
-		}
 		#endregion
 
 
@@ -440,13 +363,13 @@ namespace MediaPortal.GUI.Video
 				IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 				if (movie!=null && movie.ID>0)
 				{
-					if (CurrentSortMethod==SortMethod.Name)
+					if (CurrentSortMethod==VideoSort.SortMethod.Name)
 						item.Label2 = movie.Rating.ToString();
-					else if (CurrentSortMethod==SortMethod.Year)
+					else if (CurrentSortMethod==VideoSort.SortMethod.Year)
 						item.Label2 = movie.Year.ToString();
-					else if (CurrentSortMethod==SortMethod.Rating)
+					else if (CurrentSortMethod==VideoSort.SortMethod.Rating)
 						item.Label2 = movie.Rating.ToString();
-					else if (CurrentSortMethod==SortMethod.Label)
+					else if (CurrentSortMethod==VideoSort.SortMethod.Label)
 						item.Label2 = movie.DVDLabel.ToString();
 				}
 				else
@@ -454,9 +377,9 @@ namespace MediaPortal.GUI.Video
 					string strSize1 = String.Empty,strDate=String.Empty;
 					if (item.FileInfo != null) strSize1 = Utils.GetSize(item.FileInfo.Length);
 					if (item.FileInfo != null) strDate = item.FileInfo.CreationTime.ToShortDateString() + " " + item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-					if (CurrentSortMethod==SortMethod.Name)
+					if (CurrentSortMethod==VideoSort.SortMethod.Name)
 						item.Label2 = strSize1;
-					else if (CurrentSortMethod==SortMethod.Date)
+					else if (CurrentSortMethod==VideoSort.SortMethod.Date)
 						item.Label2 = strDate;
 					else
 						item.Label2 = strSize1;

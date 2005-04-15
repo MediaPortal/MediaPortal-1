@@ -79,11 +79,11 @@ namespace MediaPortal.GUI.Video
 				sortasc[handler.CurrentLevel]=value;
 			}
 		}
-		protected override SortMethod CurrentSortMethod
+		protected override VideoSort.SortMethod CurrentSortMethod
 		{
 			get
 			{
-				return (SortMethod)sortby[handler.CurrentLevel];
+				return (VideoSort.SortMethod)sortby[handler.CurrentLevel];
 			}
 			set
 			{
