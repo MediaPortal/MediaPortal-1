@@ -21,7 +21,7 @@ namespace MediaPortal.GUI.Video
 		#region Base variabeles
 
 		DirectoryHistory  m_history = new DirectoryHistory();
-		string            m_strDirectory="";
+		string            m_strDirectory=String.Empty;
 		int               m_iItemSelected=-1;   
 		VirtualDirectory  m_directory = new VirtualDirectory();
 		int[]  views      = new int[50];
@@ -44,7 +44,7 @@ namespace MediaPortal.GUI.Video
 		#region overrides
 		public override bool Init()
 		{
-			m_strDirectory="";
+			m_strDirectory=String.Empty;
 			handler.CurrentView="Title";
 			return Load (GUIGraphicsContext.Skin+@"\myvideoTitle.xml");
 		}
@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.Video
 		{
 			if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
 			{
-				GUIListItem item = GetItem(0);
+				GUIListItem item = facadeView[0];
 				if (item!=null)
 				{
 					if (item.IsFolder && item.Label=="..")
@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.Video
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			m_iItemSelected=GetSelectedItemNo();
+			m_iItemSelected=facadeView.SelectedListItemIndex;
 			if (newWindowId==(int)GUIWindow.Window.WINDOW_VIDEO_TITLE ||
 					newWindowId==(int)GUIWindow.Window.WINDOW_VIDEOS)
 			{
@@ -140,7 +140,7 @@ namespace MediaPortal.GUI.Video
 		
 		protected override void OnClick(int iItem)
 		{
-			GUIListItem item = GetSelectedItem();
+			GUIListItem item = facadeView.SelectedListItem;
 			if (item==null) return;
 			if (item.IsFolder)
 			{
@@ -164,8 +164,8 @@ namespace MediaPortal.GUI.Video
 
 		protected override  void OnShowContextMenu()
 		{
-			GUIListItem item=GetSelectedItem();
-			int itemNo=GetSelectedItemNo();
+			GUIListItem item=facadeView.SelectedListItem;
+			int itemNo=facadeView.SelectedListItemIndex;
 			if (item==null) return;
 			IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 			if (movie==null) return;
@@ -201,7 +201,7 @@ namespace MediaPortal.GUI.Video
 		protected override  void OnQueueItem(int iItem)
 		{
 			// add item 2 playlist
-			GUIListItem pItem=GetItem(iItem);
+			GUIListItem pItem=facadeView[iItem];
 			if (handler.CurrentLevel < handler.MaxLevels-1)
 			{
 				//queue
@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Video
 		
 		protected override void LoadDirectory(string strNewDirectory)
 		{
-			GUIListItem SelectedItem = GetSelectedItem();
+			GUIListItem SelectedItem = facadeView.SelectedListItem;
 			if (SelectedItem!=null) 
 			{
 				if (SelectedItem.IsFolder && SelectedItem.Label!="..")
@@ -246,14 +246,14 @@ namespace MediaPortal.GUI.Video
 			
 			GUIControl.ClearControl(GetID,facadeView.GetID);
             
-			string strObjects="";
+			string strObjects=String.Empty;
 
 			ArrayList itemlist = new ArrayList();
 			ArrayList movies=handler.Execute();
 			if (handler.CurrentLevel>0)
 			{
 				GUIListItem pItem = new GUIListItem ("..");
-				pItem.Path="";
+				pItem.Path=String.Empty;
 				pItem.IsFolder=true;
 				Utils.SetDefaultIcons(pItem);
 				itemlist.Add(pItem);
@@ -295,9 +295,9 @@ namespace MediaPortal.GUI.Video
 
 			SetLabels();
 			OnSort();
-			for (int i=0; i< GetItemCount();++i)
+			for (int i=0; i< facadeView.Count;++i)
 			{
-				GUIListItem item =GetItem(i);
+				GUIListItem item =facadeView[iItem];
 				if (item.Label==strSelectedItem)
 				{
 					GUIControl.SelectItemControl(GetID,facadeView.GetID,iItem);
@@ -316,9 +316,9 @@ namespace MediaPortal.GUI.Video
 		protected override void SetLabels()
 		{
 			base.SetLabels ();
-			for (int i=0; i < GetItemCount();++i)
+			for (int i=0; i < facadeView.Count;++i)
 			{
-				GUIListItem item=GetItem(i);
+				GUIListItem item=facadeView[i];
 				handler.SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
 			}
 		}
@@ -333,15 +333,15 @@ namespace MediaPortal.GUI.Video
 			if (null==dlgYesNo) return;
 			dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
 			dlgYesNo.SetLine(1,movie.Title);
-			dlgYesNo.SetLine(2, "");
-			dlgYesNo.SetLine(3, "");
+			dlgYesNo.SetLine(2, String.Empty);
+			dlgYesNo.SetLine(3, String.Empty);
 			dlgYesNo.DoModal(GetID);
 
 			if (!dlgYesNo.IsConfirmed) return;
 			
 			DoDeleteItem(item);
 						
-			m_iItemSelected=GetSelectedItemNo();
+			m_iItemSelected=facadeView.SelectedListItemIndex;
 			if (m_iItemSelected>0) m_iItemSelected--;
 			LoadDirectory(m_strDirectory);
 			if (m_iItemSelected>=0)
@@ -364,7 +364,7 @@ namespace MediaPortal.GUI.Video
 
 		protected override void OnInfo(int iItem)
 		{
-			GUIListItem item=GetItem(iItem);
+			GUIListItem item=facadeView[iItem];
 			if (item==null) return;
 			IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 			if (movie==null) return;

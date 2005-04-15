@@ -118,26 +118,6 @@ namespace MediaPortal.GUI.Video
 		}
 		#endregion
 
-		protected GUIListItem GetSelectedItem()
-		{
-			return facadeView.SelectedListItem;
-		}
-
-		protected GUIListItem GetItem(int iItem)
-		{
-			return facadeView[iItem];
-		}
-
-		protected int GetSelectedItemNo()
-		{
-			return facadeView.SelectedListItemIndex;
-		}
-
-		protected int GetItemCount()
-		{
-			return facadeView.Count;
-		}
-
 		protected bool ViewByIcon
 		{
 			get 
@@ -285,7 +265,7 @@ namespace MediaPortal.GUI.Video
 		
 		protected void SelectCurrentItem()
 		{
-			int iItem = GetSelectedItemNo();
+			int iItem = facadeView.SelectedListItemIndex;
 			if (iItem > -1)
 			{
 				GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
@@ -303,7 +283,7 @@ namespace MediaPortal.GUI.Video
 			GUIControl.FocusControl(GetID, iControl);
       
 
-			string strLine = "";
+			string strLine = String.Empty;
 			View view = CurrentView;
 			switch (view)
 			{
@@ -345,14 +325,14 @@ namespace MediaPortal.GUI.Video
 					break;
 			}
 			if (btnSortBy!=null)
-				GUIControl.SetControlLabel(GetID,btnSortBy.GetID,strLine);
+				btnSortBy.Label=strLine;
 		
 			if (btnSortAsc!=null)
 			{
 				if (CurrentSortAsc)
-					GUIControl.DeSelectControl(GetID,btnSortAsc.GetID);
+					btnSortAsc.Selected=false;
 				else
-					GUIControl.SelectControl(GetID,btnSortAsc.GetID);
+					btnSortAsc.Selected=true;
 			}
 		}
 
@@ -454,9 +434,9 @@ namespace MediaPortal.GUI.Video
 
 		protected virtual void SetLabels()
 		{
-			for (int i=0; i < GetItemCount();++i)
+			for (int i=0; i < facadeView.Count;++i)
 			{
-				GUIListItem item=GetItem(i);
+				GUIListItem item=facadeView[i];
 				IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 				if (movie!=null && movie.ID>0)
 				{
@@ -471,7 +451,7 @@ namespace MediaPortal.GUI.Video
 				}
 				else
 				{
-					string strSize1 = "",strDate="";
+					string strSize1 = String.Empty,strDate=String.Empty;
 					if (item.FileInfo != null) strSize1 = Utils.GetSize(item.FileInfo.Length);
 					if (item.FileInfo != null) strDate = item.FileInfo.CreationTime.ToShortDateString() + " " + item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
 					if (CurrentSortMethod==SortMethod.Name)
@@ -556,7 +536,7 @@ namespace MediaPortal.GUI.Video
 				}
 				else
 				{
-					LoadDirectory("");
+					LoadDirectory(String.Empty);
 				}
 			}
 		}
