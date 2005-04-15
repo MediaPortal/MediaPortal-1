@@ -16,12 +16,12 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIMusicGenres: GUIMusicBaseWindow, IComparer
+  public class GUIMusicGenres: GUIMusicBaseWindow
   { 
     #region Base variabeles
 
     DirectoryHistory  m_history = new DirectoryHistory();
-    string            m_strDirectory="";
+    string            m_strDirectory=String.Empty;
     int               m_iItemSelected=-1;   
 		VirtualDirectory  m_directory = new VirtualDirectory();
 		int[]  views      = new int[50];
@@ -45,7 +45,7 @@ namespace MediaPortal.GUI.Music
 		#region overrides
     public override bool Init()
     {
-      m_strDirectory="";
+      m_strDirectory=String.Empty;
 			handler.CurrentView="Artists";
       return Load (GUIGraphicsContext.Skin+@"\mymusicgenres.xml");
     }
@@ -80,11 +80,11 @@ namespace MediaPortal.GUI.Music
 				sortasc[handler.CurrentLevel]=value;
 			}
 		}
-		protected override SortMethod CurrentSortMethod
+		protected override MusicSort.SortMethod CurrentSortMethod
 		{
 			get
 			{
-				return (SortMethod)sortby[handler.CurrentLevel];
+				return (MusicSort.SortMethod)sortby[handler.CurrentLevel];
 			}
 			set
 			{
@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.Music
     {
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
-        GUIListItem item = GetItem(0);
+        GUIListItem item = facadeView[0];
         if (item!=null)
         {
           if (item.IsFolder && item.Label=="..")
@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Music
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			m_iItemSelected=GetSelectedItemNo();
+			m_iItemSelected=facadeView.SelectedListItemIndex;
 			if (GUIMusicFiles.IsMusicWindow(newWindowId))
 			{
 				MusicState.StartWindow=newWindowId;
@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Music
 			{
 				int activeWindow=(int)GUIWindowManager.ActiveWindow;
 				VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
-				keyBoard.Text = "";
+				keyBoard.Text = String.Empty;
 				keyBoard.Reset();
 				keyBoard.TextChanged+=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
 				keyBoard.DoModal(activeWindow); // show it...
@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Music
 		
 		protected override void OnClick(int iItem)
 		{
-			GUIListItem item = GetSelectedItem();
+			GUIListItem item = facadeView.SelectedListItem;
 			if (item==null) return;
 			if (item.IsFolder)
 			{
@@ -206,9 +206,9 @@ namespace MediaPortal.GUI.Music
 				int nFolderCount=0;
 				PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP ).Clear();
 				PlayListPlayer.Reset();
-				for ( int i = 0; i < (int) GetItemCount(); i++ ) 
+				for ( int i = 0; i < (int) facadeView.Count; i++ ) 
 				{
-					GUIListItem pItem=GetItem(i);
+					GUIListItem pItem=facadeView[i];
 					if ( pItem.IsFolder ) 
 					{
 						nFolderCount++;
@@ -238,8 +238,8 @@ namespace MediaPortal.GUI.Music
 
 		protected override  void OnShowContextMenu()
 		{
-			GUIListItem item=GetSelectedItem();
-			int itemNo=GetSelectedItemNo();
+			GUIListItem item=facadeView.SelectedListItem;
+			int itemNo=facadeView.SelectedListItemIndex;
 			if (item==null) return;
 
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -279,7 +279,7 @@ namespace MediaPortal.GUI.Music
 					AddSongToFavorites(item);
 					break;
 				case 4:// Rating
-					OnSetRating(GetSelectedItemNo());
+					OnSetRating(facadeView.SelectedListItemIndex);
 					break;
 			}
 		}
@@ -287,7 +287,7 @@ namespace MediaPortal.GUI.Music
 		protected override  void OnQueueItem(int iItem)
 		{
 			// add item 2 playlist
-			GUIListItem pItem=GetItem(iItem);
+			GUIListItem pItem=facadeView[iItem];
 			if (handler.CurrentLevel < handler.MaxLevels-1)
 			{
 				//queue
@@ -331,7 +331,7 @@ namespace MediaPortal.GUI.Music
 		
     protected override void LoadDirectory(string strNewDirectory)
     {
-      GUIListItem SelectedItem = GetSelectedItem();
+      GUIListItem SelectedItem = facadeView.SelectedListItem;
       if (SelectedItem!=null) 
       {
         if (SelectedItem.IsFolder && SelectedItem.Label!="..")
@@ -343,14 +343,14 @@ namespace MediaPortal.GUI.Music
 			
       GUIControl.ClearControl(GetID,facadeView.GetID);
             
-      string strObjects="";
+      string strObjects=String.Empty;
 
 			ArrayList itemlist = new ArrayList();
 			ArrayList songs=handler.Execute();
 			if (handler.CurrentLevel>0)
 			{
 				GUIListItem pItem = new GUIListItem ("..");
-				pItem.Path="";
+				pItem.Path=String.Empty;
 				pItem.IsFolder=true;
 				Utils.SetDefaultIcons(pItem);
 				itemlist.Add(pItem);
@@ -400,9 +400,9 @@ namespace MediaPortal.GUI.Music
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 			SetLabels();
       OnSort();
-      for (int i=0; i< GetItemCount();++i)
+      for (int i=0; i< facadeView.Count;++i)
       {
-        GUIListItem item =GetItem(i);
+        GUIListItem item =facadeView[i];
         if (item.Label==strSelectedItem)
         {
           GUIControl.SelectItemControl(GetID,facadeView.GetID,iItem);
@@ -421,7 +421,7 @@ namespace MediaPortal.GUI.Music
 	  {
 		  GUIControl.ClearControl(GetID,facadeView.GetID);
             
-		  string strObjects="";
+		  string strObjects=String.Empty;
 
 		
 		  ArrayList itemlist=new ArrayList();
@@ -447,7 +447,7 @@ namespace MediaPortal.GUI.Music
 		  GUIListItem dirUp=new GUIListItem("..");
 		  dirUp.Path=m_strDirectory; // to get where we are
 		  dirUp.IsFolder=true;
-		  dirUp.ThumbnailImage="";
+		  dirUp.ThumbnailImage=String.Empty;
 		  dirUp.IconImage="defaultFolderBack.png";
 		  dirUp.IconImageBig="defaultFolderBackBig.png";
 		  itemlist.Insert(0,dirUp);
@@ -474,9 +474,9 @@ namespace MediaPortal.GUI.Music
 		protected override void SetLabels()
 		{
 			base.SetLabels ();
-			for (int i=0; i < GetItemCount();++i)
+			for (int i=0; i < facadeView.Count;++i)
 			{
-				GUIListItem item=GetItem(i);
+				GUIListItem item=facadeView[i];
 				handler.SetLabel(item.AlbumInfoTag as Song, ref item);
 			}
 		}

@@ -16,21 +16,8 @@ namespace MediaPortal.GUI.Music
 	/// <summary>
 	/// Summary description for GUIMusicBaseWindow.
 	/// </summary>
-	public class GUIMusicBaseWindow: GUIWindow, IComparer
+	public class GUIMusicBaseWindow: GUIWindow
 	{
-		protected enum SortMethod
-		{
-			Name=0,
-			Date=1,
-			Size=2,
-			Track=3,
-			Duration=4,
-			Title=5,
-			Artist=6,
-			Album=7,
-			Filename=8,
-			Rating=9
-		}
 
 		protected enum Level
 		{
@@ -51,8 +38,8 @@ namespace MediaPortal.GUI.Music
 
 		protected   View currentView		    = View.List;
 		protected   View currentViewRoot    = View.List;
-		protected   SortMethod currentSortMethod = SortMethod.Name;
-		protected   SortMethod currentSortMethodRoot = SortMethod.Name;
+		protected   MusicSort.SortMethod currentSortMethod = MusicSort.SortMethod.Name;
+		protected   MusicSort.SortMethod currentSortMethodRoot = MusicSort.SortMethod.Name;
 		protected   bool       m_bSortAscending;
 		protected   bool       m_bSortAscendingRoot;
 		private     bool       m_bUseID3=false;
@@ -78,7 +65,7 @@ namespace MediaPortal.GUI.Music
 		{
 			return true;
 		}
-		protected virtual bool AllowSortMethod(SortMethod method)
+		protected virtual bool AllowSortMethod(MusicSort.SortMethod method)
 		{
 			return true;
 		}
@@ -88,7 +75,7 @@ namespace MediaPortal.GUI.Music
 			set { currentView=value;}
 		}
 
-		protected virtual SortMethod CurrentSortMethod
+		protected virtual MusicSort.SortMethod CurrentSortMethod
 		{
 			get { return currentSortMethod;}
 			set { currentSortMethod=value;}
@@ -114,8 +101,8 @@ namespace MediaPortal.GUI.Music
 				currentView=(View)xmlreader.GetValueAsInt(SerializeName,"view", (int)View.List);
 				currentViewRoot=(View)xmlreader.GetValueAsInt(SerializeName,"viewroot", (int)View.List);
 
-				currentSortMethod=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethod", (int)SortMethod.Name);
-				currentSortMethodRoot=(SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)SortMethod.Name);
+				currentSortMethod=(MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethod", (int)MusicSort.SortMethod.Name);
+				currentSortMethodRoot=(MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName,"sortmethodroot", (int)MusicSort.SortMethod.Name);
 				m_bSortAscending=xmlreader.GetValueAsBool(SerializeName,"sortasc", true);
 				m_bSortAscendingRoot=xmlreader.GetValueAsBool(SerializeName,"sortascroot", true);
 				m_bUseID3 = xmlreader.GetValueAsBool("musicfiles","showid3",true);
@@ -138,25 +125,8 @@ namespace MediaPortal.GUI.Music
 		}
 		#endregion
 
-		protected GUIListItem GetSelectedItem()
-		{
-				return facadeView.SelectedListItem;
-		}
 
-		protected GUIListItem GetItem(int iItem)
-		{
-			return facadeView[iItem];
-		}
 
-		protected int GetSelectedItemNo()
-		{
-			return facadeView.SelectedListItemIndex;
-		}
-
-		protected int GetItemCount()
-		{
-			return facadeView.Count;
-		}
 
 		protected bool ViewByIcon
 		{
@@ -253,32 +223,32 @@ namespace MediaPortal.GUI.Music
 					shouldContinue=false;
 					switch (CurrentSortMethod)
 					{
-						case SortMethod.Name:
-							CurrentSortMethod=SortMethod.Date;
+						case MusicSort.SortMethod.Name:
+							CurrentSortMethod=MusicSort.SortMethod.Date;
 							break;
-						case SortMethod.Date:
-							CurrentSortMethod=SortMethod.Size;
+						case MusicSort.SortMethod.Date:
+							CurrentSortMethod=MusicSort.SortMethod.Size;
 							break;
-						case SortMethod.Size:
-							CurrentSortMethod=SortMethod.Track;
+						case MusicSort.SortMethod.Size:
+							CurrentSortMethod=MusicSort.SortMethod.Track;
 							break;
-						case SortMethod.Track:
-							CurrentSortMethod=SortMethod.Duration;
+						case MusicSort.SortMethod.Track:
+							CurrentSortMethod=MusicSort.SortMethod.Duration;
 							break;
-						case SortMethod.Duration:
-							CurrentSortMethod=SortMethod.Title;
+						case MusicSort.SortMethod.Duration:
+							CurrentSortMethod=MusicSort.SortMethod.Title;
 							break;
-						case SortMethod.Title:
-							CurrentSortMethod=SortMethod.Album;
+						case MusicSort.SortMethod.Title:
+							CurrentSortMethod=MusicSort.SortMethod.Album;
 							break;
-						case SortMethod.Album:
-							CurrentSortMethod=SortMethod.Filename;
+						case MusicSort.SortMethod.Album:
+							CurrentSortMethod=MusicSort.SortMethod.Filename;
 							break;
-						case SortMethod.Filename:
-							CurrentSortMethod=SortMethod.Rating;
+						case MusicSort.SortMethod.Filename:
+							CurrentSortMethod=MusicSort.SortMethod.Rating;
 							break;
-						case SortMethod.Rating:
-							CurrentSortMethod=SortMethod.Name;
+						case MusicSort.SortMethod.Rating:
+							CurrentSortMethod=MusicSort.SortMethod.Name;
 							break;
 					}
 					if (!AllowSortMethod(CurrentSortMethod)) 
@@ -316,7 +286,7 @@ namespace MediaPortal.GUI.Music
 		
 		protected void SelectCurrentItem()
 		{
-			int iItem = GetSelectedItemNo();
+			int iItem = facadeView.SelectedListItemIndex;
       if (iItem > -1)
 			{
 				GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
@@ -327,14 +297,13 @@ namespace MediaPortal.GUI.Music
 		protected virtual void UpdateButtonStates()
 		{
 			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
-			GUIControl.HideControl(GetID, facadeView.GetID);
-      
-			int iControl = facadeView.GetID;
-			GUIControl.ShowControl(GetID, iControl);
-			GUIControl.FocusControl(GetID, iControl);
+
+			facadeView.IsVisible=false;
+			facadeView.IsVisible=true;
+			GUIControl.FocusControl(GetID, facadeView.GetID);
       
 
-			string strLine = "";
+			string strLine = String.Empty;
 			View view = CurrentView;
 			switch (view)
 			{
@@ -354,50 +323,50 @@ namespace MediaPortal.GUI.Music
 					strLine = GUILocalizeStrings.Get(733);
 					break;
 			}
-			GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
+			btnViewAs.Label=strLine;
 
 			switch (CurrentSortMethod)
 			{
-				case SortMethod.Name:
+				case MusicSort.SortMethod.Name:
 					strLine=GUILocalizeStrings.Get(103);
 					break;
-				case SortMethod.Date:
+				case MusicSort.SortMethod.Date:
 					strLine=GUILocalizeStrings.Get(104);
 					break;
-				case SortMethod.Size:
+				case MusicSort.SortMethod.Size:
 					strLine=GUILocalizeStrings.Get(105);
 					break;
-				case SortMethod.Track:
+				case MusicSort.SortMethod.Track:
 					strLine=GUILocalizeStrings.Get(266);
 					break;
-				case SortMethod.Duration:
+				case MusicSort.SortMethod.Duration:
 					strLine=GUILocalizeStrings.Get(267);
 					break;
-				case SortMethod.Title:
+				case MusicSort.SortMethod.Title:
 					strLine=GUILocalizeStrings.Get(268);
 					break;
-				case SortMethod.Artist:
+				case MusicSort.SortMethod.Artist:
 					strLine=GUILocalizeStrings.Get(269);
 					break;
-				case SortMethod.Album:
+				case MusicSort.SortMethod.Album:
 					strLine=GUILocalizeStrings.Get(270);
 					break;
-				case SortMethod.Filename:
+				case MusicSort.SortMethod.Filename:
 					strLine=GUILocalizeStrings.Get(363);
 					break;
-				case SortMethod.Rating:
+				case MusicSort.SortMethod.Rating:
 					strLine=GUILocalizeStrings.Get(367);
 					break;
 			}
 			if (btnSortBy!=null)
-				GUIControl.SetControlLabel(GetID,btnSortBy.GetID,strLine);
+				btnSortBy.Label=strLine;
 		
 			if (btnSortAsc!=null)
 			{
 				if (CurrentSortAsc)
-					GUIControl.DeSelectControl(GetID,btnSortAsc.GetID);
+					btnSortAsc.Selected=false;
 				else
-					GUIControl.SelectControl(GetID,btnSortAsc.GetID);
+					btnSortAsc.Selected=true;
 			}
 		}
 
@@ -411,7 +380,7 @@ namespace MediaPortal.GUI.Music
 		
 		protected void OnSetRating(int itemNumber)
 		{
-			GUIListItem item = GetItem(itemNumber);
+			GUIListItem item = facadeView[itemNumber];
 			if (item ==null) return;
 			MusicTag tag=item.MusicTag as MusicTag;
 			GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_DIALOG_RATING);
@@ -432,7 +401,7 @@ namespace MediaPortal.GUI.Music
 				while (itemNumber >0)
 				{
 					itemNumber--;
-					item = GetItem(itemNumber);
+					item = facadeView[itemNumber];
 					if (!item.IsFolder && !item.IsRemote)
 					{
 						OnSetRating(itemNumber);
@@ -443,10 +412,10 @@ namespace MediaPortal.GUI.Music
 
 			if (dialog.Result == GUIDialogSetRating.ResultCode.Next)
 			{
-				while (itemNumber+1 < GetItemCount() )
+				while (itemNumber+1 < facadeView.Count )
 				{
 					itemNumber++;
-					item = GetItem(itemNumber);
+					item = facadeView[itemNumber];
 					if (!item.IsFolder && !item.IsRemote)
 					{
 						OnSetRating(itemNumber);
@@ -475,7 +444,7 @@ namespace MediaPortal.GUI.Music
 				{
 					dlgOK.SetHeading(6);
 					dlgOK.SetLine(1,477);
-					dlgOK.SetLine(2,"");
+					dlgOK.SetLine(2,String.Empty);
 					dlgOK.DoModal(GetID);
 				}
 				return;
@@ -519,184 +488,21 @@ namespace MediaPortal.GUI.Music
 			}
 		}
 
-		#region Sort Members
+		
 		protected virtual void OnSort()
 		{
 			SetLabels();
-			facadeView.Sort(this);
+			facadeView.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
 			UpdateButtonStates();
 		}
 
-		public int Compare(object x, object y)
-		{
-			if (x==y) return 0;
-			GUIListItem item1=(GUIListItem)x;
-			GUIListItem item2=(GUIListItem)y;
-			if (item1==null) return -1;
-			if (item2==null) return -1;
-			if (item1.IsFolder && item1.Label=="..") return -1;
-			if (item2.IsFolder && item2.Label=="..") return -1;
-			if (item1.IsFolder && !item2.IsFolder) return -1;
-			else if (!item1.IsFolder && item2.IsFolder) return 1; 
-
-			string strSize1="";
-			string strSize2="";
-			if (item1.FileInfo!=null) strSize1=Utils.GetSize(item1.FileInfo.Length);
-			if (item2.FileInfo!=null) strSize2=Utils.GetSize(item2.FileInfo.Length);
-
-			SortMethod method=CurrentSortMethod;
-			bool bAscending=CurrentSortAsc;
-
-			switch (method)
-			{
-				case SortMethod.Name:
-					if (bAscending)
-					{
-						return String.Compare(item1.Label ,item2.Label,true);
-					}
-					else
-					{
-						return String.Compare(item2.Label ,item1.Label,true);
-					}
-        
-
-				case SortMethod.Date:
-					if (item1.FileInfo==null) return -1;
-					if (item2.FileInfo==null) return -1;
-          
-					item1.Label2 =item1.FileInfo.CreationTime.ToShortDateString() + " "+item1.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-					item2.Label2 =item2.FileInfo.CreationTime.ToShortDateString() + " "+item2.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-					if (bAscending)
-					{
-						return DateTime.Compare(item1.FileInfo.CreationTime,item2.FileInfo.CreationTime);
-					}
-					else
-					{
-						return DateTime.Compare(item2.FileInfo.CreationTime,item1.FileInfo.CreationTime);
-					}
-
-				case SortMethod.Rating:
-					int iRating1 = 0;
-					int iRating2 = 0;
-					if (item1.MusicTag != null) iRating1 = ((MusicTag)item1.MusicTag).Rating;
-					if (item2.MusicTag != null) iRating2 = ((MusicTag)item2.MusicTag).Rating;
-					if (bAscending)
-					{
-						return (int)(iRating1 - iRating2);
-					}
-					else
-					{
-						return (int)(iRating2 - iRating1);
-					}
-
-				case SortMethod.Size:
-					if (item1.FileInfo==null) return -1;
-					if (item2.FileInfo==null) return -1;
-					if (bAscending)
-					{
-						return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
-					}
-					else
-					{
-						return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
-					}
-
-				case SortMethod.Track:
-					int iTrack1=0;
-					int iTrack2=0;
-					if (item1.MusicTag!=null) iTrack1=((MusicTag)item1.MusicTag).Track;
-					if (item2.MusicTag!=null) iTrack2=((MusicTag)item2.MusicTag).Track;
-					if (bAscending)
-					{
-						return (int)(iTrack1 - iTrack2);
-					}
-					else
-					{
-						return (int)(iTrack2 - iTrack1);
-					}
-          
-				case SortMethod.Duration:
-					int iDuration1=0;
-					int iDuration2=0;
-					if (item1.MusicTag!=null) iDuration1=((MusicTag)item1.MusicTag).Duration;
-					if (item2.MusicTag!=null) iDuration2=((MusicTag)item2.MusicTag).Duration;
-					if (bAscending)
-					{
-						return (int)(iDuration1 - iDuration2);
-					}
-					else
-					{
-						return (int)(iDuration2 - iDuration1);
-					}
-          
-				case SortMethod.Title:
-					string strTitle1=item1.Label;
-					string strTitle2=item2.Label;
-					if (item1.MusicTag!=null) strTitle1=((MusicTag)item1.MusicTag).Title;
-					if (item2.MusicTag!=null) strTitle2=((MusicTag)item2.MusicTag).Title;
-					if (bAscending)
-					{
-						return String.Compare(strTitle1 ,strTitle2,true);
-					}
-					else
-					{
-						return String.Compare(strTitle2 ,strTitle1,true);
-					}
-        
-				case SortMethod.Artist:
-					string strArtist1="";
-					string strArtist2="";
-					if (item1.MusicTag!=null) strArtist1=((MusicTag)item1.MusicTag).Artist;
-					if (item2.MusicTag!=null) strArtist2=((MusicTag)item2.MusicTag).Artist;
-					if (bAscending)
-					{
-						return String.Compare(strArtist1 ,strArtist2,true);
-					}
-					else
-					{
-						return String.Compare(strArtist2 ,strArtist1,true);
-					}
-        
-				case SortMethod.Album:
-					string strAlbum1="";
-					string strAlbum2="";
-					if (item1.MusicTag!=null) strAlbum1=((MusicTag)item1.MusicTag).Album;
-					if (item2.MusicTag!=null) strAlbum2=((MusicTag)item2.MusicTag).Album;
-					if (bAscending)
-					{
-						return String.Compare(strAlbum1 ,strAlbum2,true);
-					}
-					else
-					{
-						return String.Compare(strAlbum2 ,strAlbum1,true);
-					}
-          
-
-				case SortMethod.Filename:
-					string strFile1=System.IO.Path.GetFileName(item1.Path);
-					string strFile2=System.IO.Path.GetFileName(item2.Path);
-					if (bAscending)
-					{
-						return String.Compare(strFile1 ,strFile2,true);
-					}
-					else
-					{
-						return String.Compare(strFile2 ,strFile1,true);
-					}
-          
-			} 
-			return 0;
-		}
-		#endregion
-
-
 		protected virtual void SetLabels()
 		{
-			SortMethod method=CurrentSortMethod;
+			MusicSort.SortMethod method=CurrentSortMethod;
 
-			for (int i=0; i < GetItemCount();++i)
+			for (int i=0; i < facadeView.Count;++i)
 			{
-				GUIListItem item=GetItem(i);
+				GUIListItem item=facadeView[i];
 				MusicTag tag=(MusicTag)item.MusicTag;
 				if (tag!=null)
 				{
@@ -716,14 +522,14 @@ namespace MediaPortal.GUI.Music
 							else
 								item.Label=String.Format("{0}",tag.Title);
 						}
-						if (method==SortMethod.Album)
+						if (method==MusicSort.SortMethod.Album)
 						{
 							if (tag.Album.Length>0 && tag.Title.Length>0)
 							{
 								item.Label=String.Format("{0} - {1}", tag.Album,tag.Title);
 							}
 						}
-						if (method==SortMethod.Rating)
+						if (method==MusicSort.SortMethod.Rating)
 						{
 							item.Label2=String.Format("{0}", tag.Rating);
 						}
@@ -731,29 +537,29 @@ namespace MediaPortal.GUI.Music
 				}
         
         
-				if (method==SortMethod.Size||method==SortMethod.Filename)
+				if (method==MusicSort.SortMethod.Size||method==MusicSort.SortMethod.Filename)
 				{
-					if (item.IsFolder) item.Label2="";
+					if (item.IsFolder) item.Label2=String.Empty;
 					else
 					{
 						if (item.Size>0)
 						{
 							item.Label2=Utils.GetSize( item.Size);
 						}
-						if (method==SortMethod.Filename)
+						if (method==MusicSort.SortMethod.Filename)
 						{
 							item.Label=Utils.GetFilename(item.Path);
 						}
 					}
 				}
-				else if (method==SortMethod.Date)
+				else if (method==MusicSort.SortMethod.Date)
 				{
 					if (item.FileInfo!=null)
 					{
 						item.Label2 =item.FileInfo.CreationTime.ToShortDateString() + " "+item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
 					}
 				}
-				else if (method != SortMethod.Rating)
+				else if (method != MusicSort.SortMethod.Rating)
 				{
 					if (tag!=null)
 					{
@@ -855,7 +661,7 @@ namespace MediaPortal.GUI.Music
 				}
 				else
 				{
-					LoadDirectory("");
+					LoadDirectory(String.Empty);
 				}
 			}
 		}
@@ -878,7 +684,7 @@ namespace MediaPortal.GUI.Music
 
 		protected virtual void OnInfo(int iItem)
 		{
-			GUIListItem pItem = GetItem(iItem);
+			GUIListItem pItem = facadeView[iItem];
 
 			Song song = pItem.AlbumInfoTag as Song;
 			if (song==null)
@@ -1079,7 +885,7 @@ namespace MediaPortal.GUI.Music
 				{
 					dlgOk.SetHeading(187);
 					dlgOk.SetLine(1, 187);
-					dlgOk.SetLine(2, "");
+					dlgOk.SetLine(2, String.Empty);
 					dlgOk.DoModal(GetID);
 				}
 			}
