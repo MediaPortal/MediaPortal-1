@@ -624,6 +624,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\GUIOverlayWindow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\GUIProgressControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

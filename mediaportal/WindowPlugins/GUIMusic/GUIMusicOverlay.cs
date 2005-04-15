@@ -20,7 +20,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1. 
   /// </summary>
-  public class GUIMusicOverlay: GUIWindow
+  public class GUIMusicOverlay: GUIOverlayWindow
   {
     string m_strFile="";
     int                 m_iFrames=0;

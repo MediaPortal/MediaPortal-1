@@ -10,7 +10,7 @@ namespace MediaPortal.GUI.Video
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class GUIVideoOverlay : GUIWindow
+	public class GUIVideoOverlay : GUIOverlayWindow
 	{
     
     string m_strFile = "";

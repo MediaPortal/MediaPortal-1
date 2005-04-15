@@ -10,7 +10,7 @@ namespace MyMail
 	/// <summary>
 	/// Zusammenfassung für MailOverlay.
 	/// </summary>
-	public class MailOverlay : GUIWindow
+	public class MailOverlay : GUIOverlayWindow
 	{
     bool Enabled=false;
 		enum Controls

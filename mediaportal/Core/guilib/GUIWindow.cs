@@ -488,29 +488,6 @@ namespace MediaPortal.GUI.Library
 		public virtual void OnDeviceLost()
 		{
 		}
-		/// <summary>
-		/// PostRender() gives the window the oppertunity to overlay itself ontop of
-		/// the other window(s)
-		/// It gets called at the end of every rendering cycle even 
-    /// if the window is not activated
-    /// <param name="iLayer">indicates which overlay layer is rendered (1-10)
-    /// this gives the plugins the oppertunity to tell which overlay layer they are using
-    /// For example the topbar is rendered on layer #1
-    /// while the music overlay is rendered on layer #2 (and thus on top of the topbar)</param>
-		/// </summary>
-		public virtual void PostRender(float timePassed,int iLayer)
-		{
-		}
-
-		/// <summary>
-		/// Returns wither or not the window does postrendering.
-		/// </summary>
-		/// <returns>false</returns>
-    public virtual bool DoesPostRender()
-    {
-      return false;
-    }
-
     
 		/// <summary>
 		/// Returns whether the music/video/tv overlay is allowed on this screen

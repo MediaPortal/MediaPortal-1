@@ -16,12 +16,19 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
   public class GUIWindowManager
   {
-		#region variables
-		static int					 windowCount=0;
+		#region delegates and events
 		public delegate void OnCallBackHandler();
+		public delegate void PostRendererHandler(int level, float timePassed);
+		public delegate bool PostRenderActionHandler(Action action, GUIMessage msg);
 		static public event  SendMessageHandler Receivers;
 		static public event  OnActionHandler	  OnNewAction;
 		static public event  OnCallBackHandler  Callbacks;
+		static public event  PostRenderActionHandler  OnPostRenderAction;
+		static public event  PostRendererHandler  OnPostRender;
+
+		#endregion
+		#region variables
+		static int					 windowCount=0;
     static GUIWindow[]	 m_vecWindows				= new GUIWindow[100];
 		static ArrayList		 m_vecThreadMessages	= new ArrayList();
 		static ArrayList		 m_vecThreadActions	= new ArrayList();
@@ -53,6 +60,12 @@ namespace MediaPortal.GUI.Library
       if (message.Message==GUIMessage.MessageType.GUI_MSG_LOSTFOCUS||
           message.Message==GUIMessage.MessageType.GUI_MSG_SETFOCUS)
       {
+				if (OnPostRenderAction!=null)
+				{
+					if (OnPostRenderAction(null,message)) 
+						return;
+				}
+				/*
 				//SLOW
         for (int x=0; x < windowCount;++x)
         {
@@ -61,7 +74,7 @@ namespace MediaPortal.GUI.Library
             m_vecWindows[x].OnMessage(message);
             if ( m_vecWindows[x].Focused) return;
           }
-        }
+        }*/
       }
 
       // send message to other objects interested
@@ -170,6 +183,14 @@ namespace MediaPortal.GUI.Library
 				action.wID == Action.ActionType.ACTION_MOVE_DOWN ||
 				action.wID == Action.ActionType.ACTION_SELECT_ITEM)
 			{
+				if (OnPostRenderAction!=null)
+				{
+					int iActiveWindow=ActiveWindow;
+					bool focused=OnPostRenderAction(action,null);
+					if (focused || iActiveWindow!=ActiveWindow)
+						return;
+				}
+				/*
 				for (int x=0; x < windowCount;++x)
 				{
 					if ( m_vecWindows[x].Focused && m_vecWindows[x].DoesPostRender()  )
@@ -178,11 +199,16 @@ namespace MediaPortal.GUI.Library
 						m_vecWindows[x].OnAction(action);
 						if ( m_vecWindows[x].Focused || iActiveWindow!=ActiveWindow) return;
 					}
-				}
+				}*/
 			}
 
 			if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
 			{
+				if (OnPostRenderAction!=null)
+				{
+					OnPostRenderAction(action,null);
+				}
+/*
 				for (int x=0; x < windowCount;++x)
 				{
 					if ( m_vecWindows[x].DoesPostRender() )
@@ -190,6 +216,7 @@ namespace MediaPortal.GUI.Library
 						m_vecWindows[x].OnAction(action);
 					}
 				}
+*/				
 			}
 
 			// if a dialog is onscreen then route the action to the dialog
@@ -220,13 +247,18 @@ namespace MediaPortal.GUI.Library
 				{
 					if (pWindow.GetFocusControlId()<0)
 					{
+						if (OnPostRenderAction!=null)
+						{
+							OnPostRenderAction(action,null);
+						}
+						/*
 						for (int x=0; x < windowCount;++x)
 						{
 							if ( m_vecWindows[x].DoesPostRender() )
 							{
 								m_vecWindows[x].Focused=true;
 							}
-						}
+						}*/
 					}
 				}
 			}
@@ -404,13 +436,18 @@ namespace MediaPortal.GUI.Library
       m_bSwitching=true;
       try
       {
+				if (OnPostRenderAction!=null)
+				{
+					OnPostRenderAction(null,null);
+				}
+				/*
         for (int x=0; x < windowCount;++x)
         {
           if (m_vecWindows[x].DoesPostRender() )
           {
             m_vecWindows[x].Focused=false;
           }
-        } 
+        } */
      
         GUIMessage msg;
         GUIWindow pWindow;  
@@ -530,13 +567,18 @@ namespace MediaPortal.GUI.Library
 				// Exit if there is no previous window
 				if (m_vecWindowList.Count == 0) return;
 
+				if (OnPostRenderAction!=null)
+				{
+					OnPostRenderAction(null,null);
+				}
+				/*
 				for (int x=0; x < windowCount;++x)
 				{
 					if (m_vecWindows[x].DoesPostRender() )
 					{
 						m_vecWindows[x].Focused=false;
 					}
-				}
+				}*/
 
 				// deactivate any window
 				GUIMessage msg;
@@ -706,6 +748,15 @@ namespace MediaPortal.GUI.Library
     static void PostRender(float timePassed)
     {
       if (GUIGraphicsContext.IsFullScreenVideo && GUIGraphicsContext.ShowBackground) return;
+			if (OnPostRender!=null)
+			{
+				//render overlay layer 1-10
+				for (int iLayer=1; iLayer <= 2; iLayer++)
+				{
+					OnPostRender(iLayer,timePassed);
+				}
+			}
+			/*
 			//GUIFontManager.Present();
 			try
 			{
@@ -722,7 +773,7 @@ namespace MediaPortal.GUI.Library
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"PostRender exception:{0}", ex.ToString());
-			}
+			}*/
       GUIPropertyManager.Changed=false;
     }
 

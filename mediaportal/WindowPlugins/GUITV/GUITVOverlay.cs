@@ -11,7 +11,7 @@ namespace MediaPortal.GUI.TV
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUITVOverlay:GUIWindow
+	public class GUITVOverlay:GUIOverlayWindow
 	{
     enum Controls
     {

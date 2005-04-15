@@ -7,7 +7,7 @@ namespace MediaPortal.Topbar
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUITopbar: GUIWindow
+	public class GUITopbar: GUIOverlayWindow
 	{
     const int HIDE_SPEED = 8;
 
