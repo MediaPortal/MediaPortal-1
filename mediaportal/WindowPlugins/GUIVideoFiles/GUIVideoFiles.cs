@@ -1645,6 +1645,11 @@ namespace MediaPortal.GUI.Video
     {
       GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
       if (filmstrip==null) return;
+			if (item.Label="..")
+			{
+				filmstrip.InfoImageFileName=String.Empty;
+				return;
+			}
     
       if (item.IsFolder) filmstrip.InfoImageFileName=item.ThumbnailImage;
       else filmstrip.InfoImageFileName=Utils.ConvertToLargeCoverArt(item.ThumbnailImage);

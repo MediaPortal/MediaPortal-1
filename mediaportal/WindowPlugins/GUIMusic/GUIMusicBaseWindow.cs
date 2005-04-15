@@ -611,6 +611,7 @@ namespace MediaPortal.GUI.Music
 		protected virtual void OnRetrieveCoverArt(GUIListItem item)
 		{
 			Utils.SetDefaultIcons(item);
+			if (item.Label=="..") return;
 			MusicTag tag = (MusicTag)item.MusicTag;
 			string strThumb=GUIMusicFiles.GetCoverArt(item.IsFolder,item.Path,tag);
 			if (strThumb!=String.Empty)
