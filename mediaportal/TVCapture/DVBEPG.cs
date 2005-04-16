@@ -636,10 +636,6 @@ namespace MediaPortal.TV.Recording
 					prg.ID=(data[n+38]<<24)+(data[n+39]<<16)+(data[n+40]<<8)+data[n+41];
 					// get time
 					int d1=d;
-					if(d>1 && d<7)
-					{
-						int f=1;
-					}
 					int h1=h;
 					if (d1 == 7)
 						d1 = 0;
