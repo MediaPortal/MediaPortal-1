@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(3)]				protected GUIButtonControl btnSortBy=null;
 		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSortAsc=null;
 		[SkinControlAttribute(5)]				protected GUIButtonControl btnView=null;
-		[SkinControlAttribute(6)]				protected GUIListControl btnCleanup=null;
+		[SkinControlAttribute(6)]				protected GUIButtonControl btnCleanup=null;
 
 		[SkinControlAttribute(10)]			protected GUIListControl listAlbums=null;
 		[SkinControlAttribute(11)]			protected GUIListControl listViews=null;
