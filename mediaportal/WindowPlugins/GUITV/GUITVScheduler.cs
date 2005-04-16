@@ -27,7 +27,7 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(2)]				protected GUIButtonControl btnSortBy=null;
 		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSortAsc=null;
 		[SkinControlAttribute(6)]				protected GUIButtonControl btnNew=null;
-		[SkinControlAttribute(7)]				protected GUIListControl btnCleanup=null;
+		[SkinControlAttribute(7)]				protected GUIButtonControl btnCleanup=null;
 		[SkinControlAttribute(10)]			protected GUIListControl listSchedules=null;
 
     SortMethod        currentSortMethod=SortMethod.Date;
@@ -220,6 +220,7 @@ namespace MediaPortal.GUI.TV
 
     GUIListItem GetItem(int index)
     {
+			if (index < 0 || index >=listSchedules.Count) return null;
 			return listSchedules[index];
 		}
 
