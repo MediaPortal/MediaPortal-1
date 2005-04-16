@@ -1132,11 +1132,11 @@ namespace MediaPortal.TV.Recording
 							int version_number = ((pmtTable[5]>>1)&0x1F);
 							if (version_number != pmtVersionNumber)
 							{
-								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0}->{1}", pmtVersionNumber,version_number);
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0} version:{1}->{2}", currentTuningObject.ServiceName,pmtVersionNumber,version_number);
 								try
 								{
-									string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}_{4}.dat",
-										currentTuningObject.ServiceName,
+									string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+										Utils.FilterFileName(currentTuningObject.ServiceName),
 										currentTuningObject.NetworkID,
 										currentTuningObject.TransportStreamID,
 										currentTuningObject.ProgramNumber,
@@ -1147,8 +1147,10 @@ namespace MediaPortal.TV.Recording
 									pmtVersionNumber=version_number;
 									refreshPmtTable=true;
 								}
-								catch(Exception)
+								catch(Exception ex)
 								{
+									Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt file:{0} {1} {2}",
+												ex.Message,ex.Source,ex.StackTrace);
 								}
 							}
 						}
@@ -2242,8 +2244,8 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 
-				string pmtName=String.Format(@"database\pmt\pmt{0}_{1}_{2}_{3}_{4}.dat",
-					currentTuningObject.ServiceName,
+				string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+					Utils.FilterFileName(currentTuningObject.ServiceName),
 					currentTuningObject.NetworkID,
 					currentTuningObject.TransportStreamID,
 					currentTuningObject.ProgramNumber,
@@ -2266,8 +2268,10 @@ namespace MediaPortal.TV.Recording
 					return true;
 				}
 			}
-			catch(Exception)
+			catch(Exception ex)
 			{
+				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt file:{0} {1} {2}",
+							ex.Message,ex.Source,ex.StackTrace);
 			}
 			return false;
 		}//SendPMT()
