@@ -2261,8 +2261,10 @@ namespace MediaPortal.TV.Recording
 				stream.Read(pmt,0,(int)len);
 				stream.Close();
 
+				pmtVersionNumber = ((pmt[5]>>1)&0x1F);
+
 				//yes, then send the PMT table to the device
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT to fireDTV device");	
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to fireDTV device",pmtVersionNumber);	
 				if (props.SendPMTToFireDTV(pmt, (int)len))
 				{
 					return true;
@@ -2680,6 +2682,8 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
 
+				pmtVersionNumber= -1;
+				refreshPmtTable	= false;
 				SendPMT();
 
 				if(m_pluginsEnabled==true)
@@ -2688,8 +2692,6 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 				//unpause
-				pmtVersionNumber= -1;
-				refreshPmtTable	= false;
 				Continue();
 			}
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)

@@ -244,7 +244,8 @@ namespace MediaPortal.GUI.TV
     }
 
   	private void OnPreviousChannel()
-  	{
+		{
+			Log.Write("GUITV OSD: OnNextChannel");
   		if (!Recorder.View) return;
   		GUITVHome.Navigator.ZapToPreviousChannel(true);
 
@@ -254,6 +255,8 @@ namespace MediaPortal.GUI.TV
 
   	private void OnNextChannel()
   	{
+			
+			Log.Write("GUITV ZAPOSD: OnNextChannel");
   		if (!Recorder.View) return;
   		GUITVHome.Navigator.ZapToNextChannel(true);
   		SetCurrentChannelLogo();

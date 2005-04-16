@@ -655,7 +655,8 @@ namespace MediaPortal.GUI.TV
 		/// When called this method will switch to the previous TV channel
 		/// </summary>
 		static public void OnPreviousChannel()
-		{
+		{	
+			Log.Write("GUITVHome:OnPreviousChannel()");
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
 				// where in fullscreen so delayzap channel instead of immediatly tune..
@@ -711,6 +712,7 @@ namespace MediaPortal.GUI.TV
 		/// </summary>
 		static public void OnNextChannel()
 		{
+			Log.Write("GUITVHome:OnNextChannel()");
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
 				// where in fullscreen so delayzap channel instead of immediatly tune..

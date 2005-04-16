@@ -1126,7 +1126,8 @@ namespace MediaPortal.GUI.TV
     }
 
   	private void OnPreviousChannel()
-  	{
+		{
+			Log.Write("GUITV OSD: OnPreviousChannel");
   		if (!Recorder.View) return;
   		GUITVHome.Navigator.ZapToPreviousChannel(false);
 
@@ -1136,6 +1137,7 @@ namespace MediaPortal.GUI.TV
 
   	private void OnNextChannel()
   	{
+			Log.Write("GUITV OSD: OnNextChannel");
   		if (!Recorder.View) return;
 
   		GUITVHome.Navigator.ZapToNextChannel(false);
