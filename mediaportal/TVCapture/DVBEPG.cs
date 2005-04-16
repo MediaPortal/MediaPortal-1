@@ -523,7 +523,7 @@ namespace MediaPortal.TV.Recording
 					this.GrabState=false;
 				if(m_mhwCurrentPid==0xd2 && m_mhwTable!=0x90)
 					this.GrabState=false;
- 				if(m_savedData>=4096)
+ 				if(m_savedData>=1024)
 					this.GrabState=false;
 			}
 		}
