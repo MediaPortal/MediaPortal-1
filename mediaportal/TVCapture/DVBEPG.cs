@@ -671,9 +671,54 @@ namespace MediaPortal.TV.Recording
 			foreach(Programm prg in m_titleBuffer)
 			{
 				DVBSections.EITDescr eit=new MediaPortal.TV.Recording.DVBSections.EITDescr();
-				string channelName=TVDatabase.GetSatChannelName(prg.ProgrammID,prg.TransportStreamID);
+				string channelName=String.Empty;
+
+				switch(m_cardType)
+				{
+					case (int)EPGCard.TechnisatStarCards:
+						channelName=TVDatabase.GetSatChannelName(prg.ProgrammID,prg.TransportStreamID);
+						break;
+
+					case (int)EPGCard.BDACards:
+					{
+						ArrayList channels = new ArrayList();
+						TVDatabase.GetChannels(ref channels);
+						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
+						int audioPid, videoPid, teletextPid, pmtPid;
+						string provider="";
+						foreach (TVChannel chan in channels)
+						{
+							switch (m_networkType)
+							{
+								case NetworkType.DVBC:
+									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+									if (prg.ProgrammID==SID && prg.TransportStreamID==TSID)
+									{
+										channelName=chan.Name;
+									}
+									break;
+								case NetworkType.DVBS:
+									channelName=TVDatabase.GetSatChannelName(prg.ProgrammID,prg.TransportStreamID);
+									break;
+								case NetworkType.DVBT:
+									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+									if (prg.ProgrammID==SID && prg.TransportStreamID==TSID)
+									{
+										channelName=chan.Name;
+									}
+									break;
+							}
+							if (channelName!=String.Empty) break;
+						}//foreach (TVChannel chan in channels)
+					}
+						break;
+
+					case (int)EPGCard.ChannelName:
+						break;
+				}
 				if(channelName=="")
 					continue;
+
 				eit.event_name=prg.Title;
 				eit.program_number=prg.ProgrammID;
 				eit.event_text="unknown";
