@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
-		private bool OnPostRenderAction(Action action, GUIMessage msg)
+		private bool OnPostRenderAction(Action action, GUIMessage msg, bool focus)
 		{
 			if (msg!=null)
 			{
@@ -90,6 +90,14 @@ namespace MediaPortal.GUI.Library
 			}
 			if (action==null&&msg==null)
 			{
+				if (DoesPostRender())
+				{
+					if (focus)
+					{
+						Focused=true;
+						return true;
+					}
+				}
 				Focused=false;
 			}
 			return false;

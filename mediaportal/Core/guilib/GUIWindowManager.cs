@@ -19,7 +19,7 @@ namespace MediaPortal.GUI.Library
 		#region delegates and events
 		public delegate void OnCallBackHandler();
 		public delegate void PostRendererHandler(int level, float timePassed);
-		public delegate bool PostRenderActionHandler(Action action, GUIMessage msg);
+		public delegate bool PostRenderActionHandler(Action action, GUIMessage msg, bool focus);
 		static public event  SendMessageHandler Receivers;
 		static public event  OnActionHandler	  OnNewAction;
 		static public event  OnCallBackHandler  Callbacks;
@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.Library
       {
 				if (OnPostRenderAction!=null)
 				{
-					if (OnPostRenderAction(null,message)) 
+					if (OnPostRenderAction(null,message,false)) 
 						return;
 				}
 				/*
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Library
 				if (OnPostRenderAction!=null)
 				{
 					int iActiveWindow=ActiveWindow;
-					bool focused=OnPostRenderAction(action,null);
+					bool focused=OnPostRenderAction(action,null,false);
 					if (focused || iActiveWindow!=ActiveWindow)
 						return;
 				}
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (OnPostRenderAction!=null)
 				{
-					OnPostRenderAction(action,null);
+					OnPostRenderAction(action,null,false);
 				}
 /*
 				for (int x=0; x < windowCount;++x)
@@ -249,7 +249,7 @@ namespace MediaPortal.GUI.Library
 					{
 						if (OnPostRenderAction!=null)
 						{
-							OnPostRenderAction(action,null);
+							OnPostRenderAction(null,null,true);
 						}
 						/*
 						for (int x=0; x < windowCount;++x)
@@ -438,7 +438,7 @@ namespace MediaPortal.GUI.Library
       {
 				if (OnPostRenderAction!=null)
 				{
-					OnPostRenderAction(null,null);
+					OnPostRenderAction(null,null,false);
 				}
 				/*
         for (int x=0; x < windowCount;++x)
@@ -569,7 +569,7 @@ namespace MediaPortal.GUI.Library
 
 				if (OnPostRenderAction!=null)
 				{
-					OnPostRenderAction(null,null);
+					OnPostRenderAction(null,null,false);
 				}
 				/*
 				for (int x=0; x < windowCount;++x)
