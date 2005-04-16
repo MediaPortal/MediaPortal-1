@@ -523,13 +523,15 @@ namespace MediaPortal.TV.Recording
 					this.GrabState=false;
 				if(m_mhwCurrentPid==0xd2 && m_mhwTable!=0x90)
 					this.GrabState=false;
-
+ 				if(m_savedData>=4096)
+					this.GrabState=false;
 			}
 		}
 
 		void ParseChannels(byte[] data1)
 		{
 			
+			Log.Write("mhw-epg: ParseChannels");
 			if(m_namesBuffer==null)
 				return;
 			if(m_namesBuffer.Count>0)
@@ -597,6 +599,7 @@ namespace MediaPortal.TV.Recording
 		}
 		void ParseTitles(byte[] data)
 		{
+			Log.Write("mhw-epg: ParseTitles");
 			if(m_namesBuffer==null)
 				return;
 
@@ -663,7 +666,7 @@ namespace MediaPortal.TV.Recording
 
 		void SubmittMHW()
 		{
-			
+			Log.Write("mhw-epg: SubmittMHW");	
 			int count=0;
 			foreach(Programm prg in m_titleBuffer)
 			{
