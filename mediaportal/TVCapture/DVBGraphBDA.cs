@@ -1160,34 +1160,35 @@ namespace MediaPortal.TV.Recording
 			}
 
 			if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
-				for(int pointer=add;pointer<end;pointer+=188)
-				{
-					
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-
-					try
-					{
-						if(m_epgClass.GrabState==false && m_epgClass.CanStartGrabbing==true && header.AdaptionField==0 && (header.TableID==0x91 || header.TableID==0x90))
-						{
-							m_epgClass.GrabState=true;
-							m_epgClass.GrabbingLength=header.SectionLen;
-							m_epgClass.MHWTable=header.TableID;
-							m_epgClass.CurrentPid=header.Pid;
-						}
-						if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
-						{
-						
-							byte[] epgData=new byte[184];
-							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-							m_epgClass.SaveData(epgData,header);
-						}
-					}
-					catch(Exception ex)
-					{
-						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.Source);
-					}
+				return;
+			for(int pointer=add;pointer<end;pointer+=188)
+			{
 				
+				TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+
+				try
+				{
+					if(m_epgClass.GrabState==false && m_epgClass.CanStartGrabbing==true && header.AdaptionField==0 && (header.TableID==0x91 || header.TableID==0x90))
+					{
+						m_epgClass.GrabState=true;
+						m_epgClass.GrabbingLength=header.SectionLen;
+						m_epgClass.MHWTable=header.TableID;
+						m_epgClass.CurrentPid=header.Pid;
+					}
+					if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
+					{
+					
+						byte[] epgData=new byte[184];
+						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+						m_epgClass.SaveData(epgData,header);
+					}
 				}
+				catch(Exception ex)
+				{
+					Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.Source);
+				}
+			
+			}
 
 
 
