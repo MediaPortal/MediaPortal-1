@@ -35,6 +35,7 @@
 <!--    AverMedia UltraTV Media Center PCI 550	-->
 <!--    BlackGold GDI							-->
 <!--    Chaintech DTT-1000						-->
+<!--    Compro VideoMate DVB-T300/T200			-->
 <!--    Conexant DVB-T							-->
 <!--    Diamond XtremeTV PVR550					-->
 <!--    DNTV Live DVB-T							-->
@@ -66,7 +67,6 @@
 <!--    Hauppauge WinTV PVR 250MCE  			-->
 <!--    Hauppauge WinTV PVR 350					-->
 <!--    Hauppauge WinTV PVR 500MCE				-->
-<!--    Hauppauge WinTV PVR PCI model 883		-->
 <!--    Hauppauge WinTV PVR USB2				-->
 <!--    HP USB PVR 	 `							-->
 <!--    InnoDV DV-3300  `						-->
@@ -101,7 +101,6 @@
 <!--    Twinhan VisionDTV DVB-T					-->
 <!--    Typhoon TV PVR (USB)					-->
 <!--    VA2000									-->
-<!--    VideoMate DVB-T 300						-->
 <!--    V-Stream Xpert DTV						-->
 <!--    Vstream Xpert TV PVR 883				-->
 <!--    WinFast PVR 2000						-->
@@ -115,8 +114,8 @@
 <!--    general MCE card						-->
 <!--    general MPEG2 card						-->
 <!--                                                                                  -->
-<!-- version : 1.0.0.82                                                               -->
-<!-- changed : 15-April-2005 by DMAN                                                   -->
+<!-- version : 1.0.0.83                                                               -->
+<!-- changed : 16-April-2005 by DMAN                                                  -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -933,7 +932,7 @@
     </tv>
   </capturecard> 
 
-  <capturecard commercialname="VideoMate DVB-T 300" capturename="VideoMate BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_c900185b&amp;rev_01">
+  <capturecard commercialname="Compro VideoMate DVB-T300/T200" capturename="VideoMate BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_c900185b&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -3398,4 +3397,36 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Compro VideoMate DVB-T300/T200" capturename="VideoMate BDA Digital Capture" devid="ven_1131&amp;dev_7130&amp;subsys_c901185b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="true"></filter>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>  
+
+  <capturecard commercialname="Compro VideoMate DVB-T300/T200" capturename="VideoMate BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_c900185b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="true"></filter>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>  
 </capturecards>
