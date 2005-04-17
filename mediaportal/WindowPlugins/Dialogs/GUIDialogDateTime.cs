@@ -11,28 +11,28 @@ namespace MediaPortal.Dialogs
   public class GUIDialogDateTime: GUIWindow
   {
     int[] months = new int[] {0,31,28,31,30,31,30,31,31,30,31,30,31};
-    enum Controls : int
-    {
-      Channel=1,
-      StartTimeHours=2,
-      StartTimeMinutes=3,
-      StartDateDay=4,
-      StartDateMonth=5,
-      StartDateYear=6,
-      EndTimeHours=7,
-      EndTimeMinutes=8,
-      EndDateDay=9,
-      EndDateMonth=10,
-      EndDateYear=11,
-      OKButton=12,
-      Heading=13
-    }
+    
     #region Base Dialog Variables
     bool m_bRunning=false;
     int m_dwParentWindowID=0;
     GUIWindow m_pParentWindow=null;
     #endregion
     
+		
+		[SkinControlAttribute(1)]				protected GUISpinControl spinChannel=null;
+		[SkinControlAttribute(2)]				protected GUISpinControl spinStartHour=null;
+		[SkinControlAttribute(3)]				protected GUISpinControl spinStartMinute=null;
+		[SkinControlAttribute(4)]				protected GUISpinControl spinStartDay=null;
+		[SkinControlAttribute(5)]				protected GUISpinControl spinStartMonth=null;
+		[SkinControlAttribute(6)]				protected GUISpinControl spinStartYear=null;
+		[SkinControlAttribute(7)]				protected GUISpinControl spinEndHour=null;
+		[SkinControlAttribute(8)]				protected GUISpinControl spinEndMinute=null;
+		[SkinControlAttribute(9)]				protected GUISpinControl spinEndDay=null;
+		[SkinControlAttribute(10)]			protected GUISpinControl spinEndMonth=null;
+		[SkinControlAttribute(11)]			protected GUISpinControl spinEndYear=null;
+		[SkinControlAttribute(12)]			protected GUIButtonControl btnOK=null;
+		[SkinControlAttribute(13)]			protected GUILabelControl lblHeading=null;
+
     bool m_bConfirmed = false;
     bool m_bPrevOverlay=true;
     string m_strChannel="";
@@ -147,40 +147,30 @@ namespace MediaPortal.Dialogs
           base.OnMessage(message);
           m_bConfirmed = false;
           GUIGraphicsContext.Overlay=false;
-          GUISpinControl cntl=(GUISpinControl)GetControl((int)Controls.StartTimeHours);
-          cntl.SetRange(0,23);
-          
-          cntl.Value=m_dtStartDateTime.Hour;
+          spinStartHour.SetRange(0,23);
+          spinStartHour.Value=m_dtStartDateTime.Hour;
 
-          cntl=(GUISpinControl)GetControl((int)Controls.StartTimeMinutes);
-          cntl.SetRange(0,59);
-          
-          cntl.Value=m_dtStartDateTime.Minute;
+          spinStartMinute.SetRange(0,59);
+          spinStartMinute.Value=m_dtStartDateTime.Minute;
 
-          cntl=(GUISpinControl)GetControl((int)Controls.StartDateDay);
           if (DateTime.IsLeapYear(m_dtStartDateTime.Year) && m_dtStartDateTime.Month==2)
-            cntl.SetRange(1,29);
+            spinStartDay.SetRange(1,29);
           else 
-            cntl.SetRange(1,months[m_dtStartDateTime.Month]);
-          cntl.Value=m_dtStartDateTime.Day;
+            spinStartDay.SetRange(1,months[m_dtStartDateTime.Month]);
+          spinStartDay.Value=m_dtStartDateTime.Day;
           
+          spinStartMonth.SetRange(1,12);
+          spinStartMonth.Value=m_dtStartDateTime.Month;
           
-
-          cntl=(GUISpinControl)GetControl((int)Controls.StartDateMonth);
-          cntl.SetRange(1,12);
-          cntl.Value=m_dtStartDateTime.Month;
-          
-
-          cntl=(GUISpinControl)GetControl((int)Controls.StartDateYear);
-          cntl.Value=m_dtStartDateTime.Year;
-          cntl.SetRange(2004,2010);
+          spinStartYear.Value=m_dtStartDateTime.Year;
+          spinStartYear.SetRange(2004,2010);
           
 
-          ClearControl(GetID, (int)Controls.Channel);
+					spinChannel.Reset();
           int i=0,iSel=0;
           foreach (string strLabel in m_items)
           {
-            AddItemControl(GetID,(int)Controls.Channel,strLabel);
+            spinChannel.AddLabel(strLabel,0);
             if (m_strChannel==strLabel)
             {
               iSel=i;
@@ -188,64 +178,36 @@ namespace MediaPortal.Dialogs
             i++;
           }
           if (iSel>=0)
-            SelectItemControl(GetID, (int)Controls.Channel,iSel);
+            SelectItemControl(GetID, (int)spinChannel.GetID,iSel);
 
-          cntl=(GUISpinControl)GetControl((int)Controls.Channel);
-          
+          spinEndHour.SetRange(0,23);
+          spinEndHour.Value=m_dtEndDateTime.Hour;
 
-          
-          cntl=(GUISpinControl)GetControl((int)Controls.EndTimeHours);
-          cntl.SetRange(0,23);
-          
-          cntl.Value=m_dtEndDateTime.Hour;
+          spinEndMinute.SetRange(0,59);
+          spinEndMinute.Value=m_dtEndDateTime.Minute;
 
-          cntl=(GUISpinControl)GetControl((int)Controls.EndTimeMinutes);
-          cntl.SetRange(0,59);
-          
-          cntl.Value=m_dtEndDateTime.Minute;
-
-          cntl=(GUISpinControl)GetControl((int)Controls.EndDateDay);
           if (DateTime.IsLeapYear(m_dtEndDateTime.Year) && m_dtEndDateTime.Month==2)
-            cntl.SetRange(1,29);
+            spinEndMonth.SetRange(1,29);
           else
-            cntl.SetRange(1,months[m_dtEndDateTime.Month]);
-          cntl.Value=m_dtEndDateTime.Day;
+            spinEndMonth.SetRange(1,months[m_dtEndDateTime.Month]);
+          spinEndMonth.Value=m_dtEndDateTime.Day;
           
 
-          cntl=(GUISpinControl)GetControl((int)Controls.EndDateMonth);
-          cntl.SetRange(1,12);
-          cntl.Value=m_dtEndDateTime.Month;
+          spinEndMonth.SetRange(1,12);
+          spinEndMonth.Value=m_dtEndDateTime.Month;
           
 
-          cntl=(GUISpinControl)GetControl((int)Controls.EndDateYear);
-          cntl.Value=m_dtEndDateTime.Year;
-          cntl.SetRange(2004,2010);
+          spinEndYear.Value=m_dtEndDateTime.Year;
+          spinEndYear.SetRange(2004,2010);
           
-          if (!m_bEditStartTime)
-          {
-            DisableControl((int)Controls.StartTimeHours);
-            DisableControl((int)Controls.StartTimeMinutes);
-            DisableControl((int)Controls.StartDateDay);
-            DisableControl((int)Controls.StartDateMonth);
-            DisableControl((int)Controls.StartDateYear);
-          }
-          else
-          {
-            EnableControl((int)Controls.StartTimeHours);
-            EnableControl((int)Controls.StartTimeMinutes);
-            EnableControl((int)Controls.StartDateDay);
-            EnableControl((int)Controls.StartDateMonth);
-            EnableControl((int)Controls.StartDateYear);
-          }
+					spinStartHour.Disabled=!m_bEditStartTime;
+					spinStartMinute.Disabled=!m_bEditStartTime;
+					spinStartDay.Disabled=!m_bEditStartTime;
+					spinStartMonth.Disabled=!m_bEditStartTime;
+					spinStartYear.Disabled=!m_bEditStartTime;
+          
 
-          if (!m_bEditChannel)
-          {
-            DisableControl((int)Controls.Channel);
-          }
-          else
-          {
-            EnableControl((int)Controls.Channel);
-          }
+					spinChannel.Disabled=!m_bEditChannel;
 
         }
         return true;
@@ -255,77 +217,47 @@ namespace MediaPortal.Dialogs
           int iYear,iMonth,iDay;
           int iHour,iMin;
           int iControl=message.SenderControlId;
-          GUISpinControl cntl;
-          if ( iControl==(int)Controls.StartDateMonth)
+          if ( iControl==(int)spinStartMonth.GetID)
           {
-            cntl=(GUISpinControl)GetControl((int)Controls.StartDateYear);
-            iYear=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.StartDateMonth);
-            iMonth=cntl.Value;
-            cntl=(GUISpinControl)GetControl((int)Controls.StartDateDay);
+            iYear=spinStartYear.Value;
+            iMonth=spinStartMonth.Value;
             if (iMonth==2 && DateTime.IsLeapYear(iYear) )
             {
-              cntl.SetRange(1, 29);
+              spinStartDay.SetRange(1, 29);
             }
             else
             {
-              cntl.SetRange(1, months[iMonth]);
+              spinStartDay.SetRange(1, months[iMonth]);
             }
           }
-          if ( iControl==(int)Controls.EndDateMonth)
+          if ( iControl==(int)spinEndMonth.GetID)
           {
-            cntl=(GUISpinControl)GetControl((int)Controls.EndDateYear);
-            iYear=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.EndDateMonth);
-            iMonth=cntl.Value;
-            cntl=(GUISpinControl)GetControl((int)Controls.EndDateDay);
+            iYear=spinEndYear.Value;
+            iMonth=spinEndMonth.Value;
             if (iMonth==2 && DateTime.IsLeapYear(iYear) )
             {
-              cntl.SetRange(1, 29);
+              spinEndDay.SetRange(1, 29);
             }
             else
             {
-              cntl.SetRange(1, months[iMonth]);
+              spinEndDay.SetRange(1, months[iMonth]);
             }
           }
-          if ( iControl==(int)Controls.OKButton )
+          if ( iControl==(int)btnOK.GetID )
           {
-            cntl=(GUISpinControl)GetControl((int)Controls.StartTimeHours);
-            iHour=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.StartTimeMinutes);
-            iMin=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.StartDateDay);
-            iDay=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.StartDateMonth);
-            iMonth=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.StartDateYear);
-            iYear=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.Channel);
-            m_strChannel=cntl.GetLabel();
+            iHour=spinStartHour.Value;
+            iMin=spinStartMinute.Value;
+            iDay=spinStartDay.Value;
+            iMonth=spinStartMonth.Value;
+            iYear=spinStartYear.Value;
+            m_strChannel=spinChannel.GetLabel();
 
             m_dtStartDateTime = new DateTime(iYear,iMonth,iDay,iHour,iMin,0,0);
-        
-            cntl=(GUISpinControl)GetControl((int)Controls.EndTimeHours);
-            iHour=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.EndTimeMinutes);
-            iMin=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.EndDateDay);
-            iDay=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.EndDateMonth);
-            iMonth=cntl.Value;
-
-            cntl=(GUISpinControl)GetControl((int)Controls.EndDateYear);
-            iYear =cntl.Value;
+            iHour=spinEndHour.Value;
+            iMin=spinEndMinute.Value;
+            iDay=spinEndDay.Value;
+            iMonth=spinEndMonth.Value;
+            iYear =spinEndYear.Value;
             m_dtEndDateTime = new DateTime(iYear,iMonth,iDay,iHour,iMin,0,0);
 
             m_bConfirmed=true;
@@ -350,18 +282,7 @@ namespace MediaPortal.Dialogs
     {
       RenderDlg(timePassed);
     }
-    void ClearControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, iWindowId,0, iControlId,0,0,null);
-      OnMessage(msg);
-    }
 
-    void AddItemControl(int iWindowId, int iControlId,string strLabel)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId,0, iControlId,0,0,null);
-      msg.Label=strLabel;
-      OnMessage(msg);
-    }    
     void SelectItemControl(int iWindowId, int iControlId,int iItem)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, iWindowId,0, iControlId,iItem,0,null);
@@ -393,9 +314,7 @@ namespace MediaPortal.Dialogs
 			AllocResources();
 			InitControls();
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Controls.Heading,0,0,null);
-      msg.Label=strLine; 
-      OnMessage(msg);
+			lblHeading.Label=strLine;
     }
     public string Channel
     {
@@ -413,16 +332,5 @@ namespace MediaPortal.Dialogs
       set { m_bEditChannel=value;}
     }
 
-    void DisableControl(int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-		
-    void EnableControl( int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
   }
 }
