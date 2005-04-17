@@ -78,7 +78,7 @@ namespace MediaPortal.Player
 					if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
         }
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
-				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,true);
+				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
 
 
 				int hr = DsUtils.RenderFileToVMR9(graphBuilder, m_strCurrentFile, Vmr9.VMR9Filter, false);

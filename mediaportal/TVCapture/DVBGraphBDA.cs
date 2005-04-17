@@ -1531,7 +1531,7 @@ namespace MediaPortal.TV.Recording
 			}
 			if (video && strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strVideoCodec);
 			if (audio && strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(m_graphBuilder,strAudioCodec);
-			if (audio && strAudioRenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(m_graphBuilder,strAudioRenderer,true);
+			if (audio && strAudioRenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(m_graphBuilder,strAudioRenderer,false);
 			if (video && bAddFFDshow) DirectShowUtil.AddFilterToGraph(m_graphBuilder,"ffdshow raw video filter");
 		}//void AddPreferredCodecs()
 
@@ -1816,7 +1816,7 @@ namespace MediaPortal.TV.Recording
 					//Marshal.ReleaseComObject(streamBufferInitialize );
 				
 			}
-			(m_graphBuilder as IMediaFilter).SetSyncSource(m_MPEG2Demultiplexer as IReferenceClock);
+//			(m_graphBuilder as IMediaFilter).SetSyncSource(m_MPEG2Demultiplexer as IReferenceClock);
 			return true;
 		}//private bool CreateSinkSource(string fileName)
 
