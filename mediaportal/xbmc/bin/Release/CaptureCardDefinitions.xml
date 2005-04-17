@@ -114,8 +114,8 @@
 <!--    general MCE card						-->
 <!--    general MPEG2 card						-->
 <!--                                                                                  -->
-<!-- version : 1.0.0.84                                                               -->
-<!-- changed : 16-April-2005 by DMAN                                                  -->
+<!-- version : 1.0.0.85                                                               -->
+<!-- changed : 17-April-2005 by DMAN                                                  -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -469,7 +469,7 @@
   
 <!--   We use the 1.2.1.9 driver filter names now - drivers can be found here... http://www.digitalrise.biz/  -->
 
-  <capturecard commercialname="Twinhan VisionDTV DVB-T" capturename="TwinHan DVBT BDA Tuner Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+  <capturecard commercialname="Twinhan VisionDTV DVB-T" capturename="TwinHan DVBT BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -485,7 +485,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Twinhan VisionDTV DVB-S" capturename="TwinHan DVBS BDA Tuner Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+  <capturecard commercialname="Twinhan VisionDTV DVB-S" capturename="TwinHan DVBS BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -501,7 +501,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Twinhan VisionDTV DVB-C" capturename="TwinHan DVBC BDA Tuner Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11"> 
+  <capturecard commercialname="Twinhan VisionDTV DVB-C" capturename="TwinHan DVBC BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11"> 
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv> 
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
@@ -3229,7 +3229,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Twinhan MagicBox II (USB Box)" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3205">
+  <capturecard commercialname="Twinhan MagicBox II (USB Box)" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3206">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -3243,7 +3243,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="TwinhanDTV Alpha USB2" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3206">
+  <capturecard commercialname="TwinhanDTV Alpha USB2" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3205">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
