@@ -290,7 +290,7 @@
 			<description>Date</description>
 			<type>label</type>
 			<id>29</id>
-			<posX>500</posX>
+			<posX>520</posX>
 			<posY>68</posY>
 			<label>#date</label>
 			<align>left</align>
@@ -301,7 +301,7 @@
 			<description>Time</description>
 			<type>label</type>
 			<id>30</id>
-			<posX>440</posX>
+			<posX>430</posX>
 			<posY>68</posY>
 			<label>#time</label>
 			<align>left</align>

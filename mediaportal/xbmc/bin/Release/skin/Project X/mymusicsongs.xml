@@ -14,18 +14,6 @@
 			<texture>background.png</texture>
 		</control>
 		<control>
-			<description>Background TV</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>70</posX>
-			<posY>400</posY>
-			<width>-</width>
-			<height>-</height>
-			<colordiffuse>ffffffff</colordiffuse>
-			<texture>Background_Music.png</texture>
-			<colorkey>0</colorkey>
-		</control>
-		<control>
 			<type>image</type>
 			<id>1</id>
 			<posX>60</posX>
@@ -78,7 +66,7 @@
 			    <label>100</label>
 			    <onleft>2</onleft>
 			    <onright>50</onright>
-			    <onup>21</onup>
+			    <onup>17</onup>
 			    <ondown>3</ondown>
 		    </control>
 		    <control>
@@ -135,8 +123,8 @@
 			    <type>button</type>
 			    <id>9</id>
 			    <posX>60</posX>
-			    <posY>267</posY>
-			    <label>654</label>
+			    <posY>233</posY>
+			    <label>890</label>
 			    <onleft>9</onleft>
 			    <onright>50</onright>
 			    <onup>8</onup>
@@ -147,7 +135,7 @@
 			    <type>button</type>
 			    <id>10</id>
 			    <posX>60</posX>
-			    <posY>301</posY>
+			    <posY>267</posY>
 			    <label>983</label>
 			    <onleft>10</onleft>
 			    <onright>50</onright>

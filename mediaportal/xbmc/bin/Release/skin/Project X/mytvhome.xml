@@ -58,12 +58,12 @@
 				<label>600</label>
 				<hyperlink>600</hyperlink>
 				<onup>21</onup>
-				<ondown>13</ondown>
+				<ondown>11</ondown>
 				<onright>99</onright>
 			</control>
 			<control>
 				<description>Record Now</description>
-				<type>togglebutton</type>
+				<type>button</type>
 				<id>3</id>
 				<posX>552</posX>
 				<posY>97</posY>
@@ -71,28 +71,25 @@
 				<height>32</height>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font13</font>
+				<font>font14</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
 				<label>601</label>
-				<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-				<textureFocus>togglebutton-on-focus.png</textureFocus>
-				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 				<onup>21</onup>
 				<ondown>6</ondown>
 				<onleft>99</onleft>
 			</control>
 			<control>
-				<description>Teletext</description>
+			<description>Recordings</description>
 				<type>button</type>
-				<id>13</id>
+				<id>11</id>
 				<posX>20</posX>
 				<posY>131</posY>
 				<width>150</width>
 				<height>32</height>
-				<label>Teletext</label>
+				<label>604</label>
+				<hyperlink>603</hyperlink>
 				<onup>2</onup>
 				<ondown>7</ondown>
 				<onright>99</onright>
@@ -133,7 +130,7 @@
 				<height>32</height>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font13</font>
+				<font>font14</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -156,7 +153,7 @@
 				<height>32</height>
 				<textXOff>10</textXOff>
 				<textYOff>5</textYOff>
-				<font>font13</font>
+				<font>font14</font>
 				<textcolor>ffffffff</textcolor>
 				<colordiffuse>ffffffff</colordiffuse>
 				<disabledcolor>60ffffff</disabledcolor>
@@ -166,7 +163,7 @@
 				<textureFocus>togglebutton-on-focus.png</textureFocus>
 				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 				<onup>7</onup>
-				<ondown>11</ondown>
+				<ondown>13</ondown>
 				<onright>99</onright>
 			</control>
 			<control>
@@ -184,15 +181,14 @@
 				<onleft>99</onleft>
 			</control>
 			<control>
-				<description>Recordings</description>
+			<description>Teletext</description>
 				<type>button</type>
-				<id>11</id>
+				<id>13</id>
 				<posX>20</posX>
 				<posY>233</posY>
 				<width>150</width>
 				<height>32</height>
-				<label>604</label>
-				<hyperlink>603</hyperlink>
+				<label>Teletext</label>
 				<onup>9</onup>
 				<ondown>3</ondown>
 				<onright>99</onright>
@@ -243,7 +239,7 @@
 			<posY>418</posY>
 			<width>250</width>
 			<label>#TV.View.title</label>
-			<font>font13</font>
+			<font>font14</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -254,7 +250,7 @@
 			<posX>666</posX>
 			<posY>430</posY>
 			<label>Channel</label>
-			<font>font13</font>
+			<font>font14</font>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
@@ -265,7 +261,7 @@
 			<posX>175</posX>
 			<posY>438</posY>
 			<label>#TV.View.start-#TV.View.stop</label>
-			<font>font13</font>
+			<font>font14</font>
 			<align>left</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
@@ -289,7 +285,7 @@
 			<posY>470</posY>
 			<width>90</width>
 			<label>#TV.View.channel</label>
-			<font>font13</font>
+			<font>font14</font>
 			<align>left</align>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
@@ -303,7 +299,7 @@
 			<height>90</height>
 			<seperator>----------------------------------------------------------------------------------------------</seperator>
 			<label>#TV.View.description</label>
-			<font>font13</font>
+			<font>font14</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
@@ -358,7 +354,7 @@
 			<posY>530</posY>
 			<label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start-#TV.Record.stop</label>
 			<align>left</align>
-			<font>font13</font>
+			<font>font14</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>

@@ -34,7 +34,7 @@
 		<posX>90</posX>
 		<posY>180</posY>
 		<width>220</width>
-		<height>220</height>
+		<height>205</height>
 		<texture>-</texture>
 	</control>
 	<control>
@@ -88,7 +88,7 @@
 		<posY>540</posY>
 		<label>#date</label>
 		<align>right</align>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>ffffffff</textcolor>
 	</control>
 	<control>

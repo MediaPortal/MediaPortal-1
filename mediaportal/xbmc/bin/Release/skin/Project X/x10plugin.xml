@@ -16,11 +16,23 @@
 		<colordiffuse>ffffffff</colordiffuse>
 	</control>
 	<control>
+			<description>Background TV</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>70</posX>
+			<posY>400</posY>
+			<width>-</width>
+			<height>-</height>
+			<colordiffuse>ffffffff</colordiffuse>
+			<texture>Background_X10.png</texture>
+			<colorkey>0</colorkey>
+		</control>
+	<control>
 		<type>image</type>
 		<id>3</id>
 		<posX>60</posX>
 		<posY>20</posY>
-		<texture>x10_logo.png</texture> 
+		<texture>x10_logo.png</texture>
 	</control>
 	<control>
 		<description>X10 Plugin</description>
@@ -45,8 +57,8 @@
 		<onright>50</onright>
 		<onup>2</onup>
 		<ondown>10</ondown>
-	</control>	
-	
+	</control>
+
 	<control>
 		<description>On Button</description>
 		<type>button</type>
@@ -95,7 +107,7 @@
 		<onup>12</onup>
 		<ondown>15</ondown>
 	</control>
-	
+
 	<control>
 		<description>This room On</description>
 		<type>button</type>
@@ -174,7 +186,7 @@
 			<type>group</type>
 			<description>main appliance group</description>
 			<animation>FlyInFromRight</animation>
-			
+
 			<control>
 				<description>List appliance</description>
 				<type>listcontrol</type>
@@ -183,7 +195,7 @@
 				<onleft>10</onleft>
 				<onright>10</onright>
 				<onup>2</onup>
-				<ondown>2</ondown>	
+				<ondown>2</ondown>
 				<spinColor>FFFFFFFF</spinColor>
 				<textcolor>FFFFFFFF</textcolor>
 			</control>
