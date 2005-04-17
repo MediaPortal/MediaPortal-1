@@ -700,21 +700,22 @@ namespace MediaPortal.GUI.Music
 			}
 			else if (song.songId>=0)
 			{
-				ShowAlbumInfo(false,song.Artist,song.Album, song.FileName, pItem.MusicTag as MusicTag);
+				ShowAlbumInfo(false,song.Artist,song.Album, song.FileName, pItem.MusicTag as MusicTag, song.albumId);
 			}
 			else if (song.albumId>=0)
 			{
-				ShowAlbumInfo(false,song.Artist,song.Album, song.FileName, pItem.MusicTag as MusicTag);
+				
+				ShowAlbumInfo(false,song.Artist,song.Album, song.FileName, pItem.MusicTag as MusicTag,song.albumId);
 			}
 		}
 		
-		protected void ShowAlbumInfo(bool isFolder,string artistName,string strAlbumName, string strPath, MusicTag tag)
+		protected void ShowAlbumInfo(bool isFolder,string artistName,string strAlbumName, string strPath, MusicTag tag, int albumId)
 		{
 			// check cache
 			GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 			GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			AlbumInfo albuminfo = new AlbumInfo();
-			if (m_database.GetAlbumInfo(strAlbumName, strPath, ref albuminfo))
+			if (m_database.GetAlbumInfo(albumId, ref albuminfo))
 			{
 				ArrayList songs = new ArrayList();
 				MusicAlbumInfo album = new MusicAlbumInfo();
@@ -730,7 +731,7 @@ namespace MediaPortal.GUI.Music
 					if (pDlgAlbumInfo.NeedsRefresh)
 					{
 						m_database.DeleteAlbumInfo(strAlbumName);
-						ShowAlbumInfo(isFolder,artistName,strAlbumName, strPath, tag);
+						ShowAlbumInfo(isFolder,artistName,strAlbumName, strPath, tag,albumId);
 					}
 					return;
 				}
@@ -837,7 +838,7 @@ namespace MediaPortal.GUI.Music
 							if (pDlgAlbumInfo.NeedsRefresh)
 							{
 								m_database.DeleteAlbumInfo(album.Title);
-								ShowAlbumInfo(isFolder,artistName,strAlbumName, strPath, tag);
+								ShowAlbumInfo(isFolder,artistName,strAlbumName, strPath, tag,albumId);
 								return;
 							}
 							if (isFolder)

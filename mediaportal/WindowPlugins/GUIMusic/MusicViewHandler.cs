@@ -122,8 +122,8 @@ namespace MediaPortal.GUI.Music
 
 				if (table=="album")
 				{
-					sql=String.Format("select * from album ");
-					if (whereClause!=String.Empty) sql+= "where "+whereClause;
+					sql=String.Format("select * from album,artist where album.idArtist=artist.idArtist");
+					if (whereClause!=String.Empty) sql+= "and "+whereClause ;
 					if (orderClause!=String.Empty) sql+= orderClause;
 					database.GetSongsByFilter(sql, out songs,false, true, false, false);
 				}

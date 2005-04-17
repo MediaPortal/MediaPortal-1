@@ -355,6 +355,7 @@ namespace MediaPortal.Music.Database
 						song.Album =  (string)fields[2];
 						song.albumId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
 						song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[1]));
+						song.Artist = (string)fields[4];
 					}
 					if (genreTable && !songTable)
 					{
@@ -1331,6 +1332,39 @@ namespace MediaPortal.Music.Database
 
 			return false;
     }
+		public bool GetAlbumInfo(int albumId, ref AlbumInfo album)
+		{
+			try
+			{
+				string strSQL;
+				strSQL = String.Format("select * from albuminfo,album,genre,artist where albuminfo.idAlbum=album.idAlbum and albuminfo.idGenre=genre.idGenre and albuminfo.idArtist=artist.idArtist and album.idAlbum ={0}",albumId);
+				SQLiteResultSet results;
+				results = m_db.Execute(strSQL);
+				if (results.Rows.Count != 0) 
+				{
+					album.Rating = Int32.Parse(DatabaseUtility.Get(results, 0, "albuminfo.iRating"));
+					album.Year = Int32.Parse(DatabaseUtility.Get(results, 0, "albuminfo.iYear"));
+					album.Album = DatabaseUtility.Get(results, 0, "album.strAlbum");
+					album.Artist = DatabaseUtility.Get(results, 0, "artist.strArtist");
+					album.Genre = DatabaseUtility.Get(results, 0, "genre.strGenre");
+					album.Image = DatabaseUtility.Get(results, 0, "albuminfo.strImage");
+					album.Review = DatabaseUtility.Get(results, 0, "albuminfo.strReview");
+					album.Styles = DatabaseUtility.Get(results, 0, "albuminfo.strStyles");
+					album.Tones = DatabaseUtility.Get(results, 0, "albuminfo.strTones");
+					album.Tracks = DatabaseUtility.Get(results, 0, "albuminfo.strTracks");
+					//album.Path   = DatabaseUtility.Get(results,0,"path.strPath");
+					return true;
+				}
+				return false;
+			}
+			catch (Exception ex)
+			{
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
+			}
+
+			return false;
+		}
 
     public int AddArtistInfo(ArtistInfo artist1)
     {

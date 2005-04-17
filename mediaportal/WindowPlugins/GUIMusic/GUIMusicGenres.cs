@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Music
         {
           if (item.IsFolder && item.Label=="..")
           {
-				handler.CurrentLevel--;
+						handler.CurrentLevel--;
             LoadDirectory(item.Path);
           }
         }
@@ -152,6 +152,8 @@ namespace MediaPortal.GUI.Music
 
 		protected override void OnRetrieveCoverArt(GUIListItem item)
 		{
+			if (item.Label=="..") return;
+			Utils.SetDefaultIcons(item);
 			Song song = item.AlbumInfoTag as Song;
 			if (song==null) return;
 			if (song.genreId>=0 && song.albumId<0 && song.artistId<0 && song.songId<0)
@@ -164,19 +166,19 @@ namespace MediaPortal.GUI.Music
 			}
 			else if (song.artistId>=0 && song.albumId<0 && song.songId<0)
 			{
-				string strThumb=Utils.GetCoverArt(Thumbs.MusicAlbum,item.Label);
+				string strThumb=Utils.GetCoverArt(Thumbs.MusicArtists,item.Label);
 				item.IconImage=strThumb;
 				item.IconImageBig=strThumb;
 				item.ThumbnailImage=strThumb;
 				Utils.SetDefaultIcons(item);
 			}
-			else if (song.albumId>=0 && song.songId<0)
+			else if (song.albumId>=0)
 			{
-				string strThumb=Utils.GetCoverArt(Thumbs.MusicAlbum,item.Label);
+				MusicTag tag = item.MusicTag as MusicTag;
+				string strThumb=GUIMusicFiles.GetAlbumThumbName(tag.Artist,tag.Album);
 				item.IconImage=strThumb;
 				item.IconImageBig=strThumb;
 				item.ThumbnailImage=strThumb;
-				Utils.SetDefaultIcons(item);
 			}
 			else
 			{
