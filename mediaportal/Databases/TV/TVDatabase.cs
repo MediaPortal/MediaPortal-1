@@ -1430,7 +1430,45 @@ namespace MediaPortal.TV.Database
 			}
 			return GetTVPrograms(iStartTime, iEndTime, strSQL, ref progs);
 		}
+		static public int GetProgramByDescriptionID(string summaryID,ref TVProgram prog)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				if (null==m_db) return -1;
+				strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription ='{0}'", summaryID);
+				SQLiteResultSet results;
+				results=m_db.Execute(strSQL);
+				if (results.Rows.Count==1)
+				{
+					prog=new TVProgram();
+			
+					
+					long iStart=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iStartTime"));
+					long iEnd=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iEndTime"));
+					prog.Channel=DatabaseUtility.Get(results,0,"channel.strChannel");
+					prog.Start=iStart;
+					prog.End=iEnd;
+					prog.Genre=DatabaseUtility.Get(results,0,"genre.strGenre");
+					prog.Title=DatabaseUtility.Get(results,0,"tblPrograms.strTitle");
+					prog.Description=DatabaseUtility.Get(results,0,"tblPrograms.strDescription");
+					prog.Episode=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeName");
+					prog.Repeat=DatabaseUtility.Get(results,0,"tblPrograms.strRepeat");
+					prog.ID=Int32.Parse(DatabaseUtility.Get(results,0,"tblPrograms.idProgram"));
+					prog.SeriesNum=DatabaseUtility.Get(results,0,"tblPrograms.strSeriesNum");
+					prog.EpisodeNum=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeNum");
+					prog.EpisodePart=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodePart");
+					prog.Date=DatabaseUtility.Get(results,0,"tblPrograms.strDate");
+					prog.StarRating=DatabaseUtility.Get(results,0,"tblPrograms.strStarRating");
+					prog.Classification=DatabaseUtility.Get(results,0,"tblPrograms.strClassification");
+					return 0;
+				}
+				else
+					return -1;
 
+			}
+
+		}
 		static public bool GetPrograms(long iStartTime, long iEndTime,ref ArrayList progs)
 		{
 			return SearchPrograms(iStartTime, iEndTime,ref progs,-1,String.Empty);
