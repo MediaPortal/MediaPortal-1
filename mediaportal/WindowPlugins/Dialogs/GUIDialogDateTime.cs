@@ -10,7 +10,7 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogDateTime: GUIWindow
   {
-    int[] months = new int[] {0,31,28,31,30,31,30,31,31,30,31,30,31};
+    readonly int[] months = new int[] {0,31,28,31,30,31,30,31,31,30,31,30,31};
     
     #region Base Dialog Variables
     bool m_bRunning=false;
