@@ -1667,6 +1667,15 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
+				int iTimeShiftBuffer=30;
+				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				{
+					iTimeShiftBuffer= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
+					if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;
+				}
+				iTimeShiftBuffer*=60; //in seconds
+				int iFileDuration = iTimeShiftBuffer/6;
+
 				//create StreamBufferSink filter
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
 				hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
@@ -1770,7 +1779,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				
 				//set duration of each timeshift file
-				hr = m_IStreamBufferConfig.SetBackingFileDuration(300); // 60sec * 4 files= 4 mins
+				hr = m_IStreamBufferConfig.SetBackingFileDuration((uint)iFileDuration); // 60sec * 4 files= 4 mins
 				if(hr != 0)
 					return false;
 
