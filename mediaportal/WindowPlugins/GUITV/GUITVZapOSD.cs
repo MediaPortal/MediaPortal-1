@@ -283,7 +283,6 @@ namespace MediaPortal.GUI.TV
       if (lblOnTvNow!=null) lblOnTvNow.EnableUpDown=false;
       if (lblOnTvNext!=null) lblOnTvNext.EnableUpDown=false;
 
-      GUIMessage msg;
 
       // Set recorder status
       if (Recorder.IsRecordingChannel(GetChannelName()))
