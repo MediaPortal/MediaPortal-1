@@ -10,11 +10,6 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogOK: GUIWindow
   {
-    enum Controls
-    {
-      ID_BUTTON_NO   =10
-      , ID_BUTTON_YES  =11
-    };
 
     #region Base Dialog Variables
     bool m_bRunning=false;
@@ -22,6 +17,8 @@ namespace MediaPortal.Dialogs
     GUIWindow m_pParentWindow=null;
     #endregion
     
+		[SkinControlAttribute(10)]			protected GUIButtonControl btnNo=null;
+		[SkinControlAttribute(11)]			protected GUIButtonControl btnYes=null;
     bool m_bConfirmed = false;
     bool m_bPrevOverlay=true;
 
@@ -137,19 +134,19 @@ namespace MediaPortal.Dialogs
         {
           int iControl=message.SenderControlId;
         
-          if ( GetControl((int)Controls.ID_BUTTON_YES) == null)
+          if ( btnYes == null)
           {
             m_bConfirmed=true;
             Close();
             return true;
           }
-          if (iControl==(int)Controls.ID_BUTTON_NO)
+          if (iControl==btnNo.GetID)
           {
             m_bConfirmed=false;
             Close();
             return true;
           }
-          if (iControl==(int)Controls.ID_BUTTON_YES)
+          if (iControl==btnYes.GetID)
           {
             m_bConfirmed=true;
             Close();
@@ -174,17 +171,18 @@ namespace MediaPortal.Dialogs
 			AllocResources();
 			InitControls();
 
+
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2,0,0,null);
       msg.Label=strLine; 
       OnMessage(msg);
-      SetLine(1,"");
-      SetLine(2,"");
-      SetLine(3,"");
+      SetLine(1,String.Empty);
+      SetLine(2,String.Empty);
+      SetLine(3,String.Empty);
     }
 
     public void SetHeading(int iString)
     {
-      if (iString==0) SetHeading ("");
+      if (iString==0) SetHeading (String.Empty);
       else SetHeading (GUILocalizeStrings.Get(iString) );
     }
 
@@ -199,7 +197,7 @@ namespace MediaPortal.Dialogs
     public void SetLine(int iLine,int iString)
     {
       if (iLine<=0) return;
-      if (iString==0) SetLine (iLine, "");
+      if (iString==0) SetLine (iLine, String.Empty);
       SetLine (iLine, GUILocalizeStrings.Get(iString) );
     }
 

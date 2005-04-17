@@ -10,11 +10,6 @@ namespace MediaPortal.Dialogs
 	/// </summary>
 	public class GUIDialogYesNo: GUIWindow
 	{
-		enum Controls
-		{
-			ID_BUTTON_NO   =10
-				, ID_BUTTON_YES  =11
-		};
 
 		#region Base Dialog Variables
 		bool m_bRunning=false;
@@ -22,6 +17,8 @@ namespace MediaPortal.Dialogs
 		GUIWindow m_pParentWindow=null;
 		#endregion
     
+		[SkinControlAttribute(10)]			protected GUIButtonControl btnNo=null;
+		[SkinControlAttribute(11)]			protected GUIButtonControl btnYes=null;
 		bool m_bConfirmed = false;
     bool m_bPrevOverlay=true;
     bool m_DefaultYes=false;
@@ -164,13 +161,11 @@ namespace MediaPortal.Dialogs
 					GUIGraphicsContext.Overlay=false;
           if (m_DefaultYes)
           {
-            GUIControl.FocusControl(GetID,(int)Controls.ID_BUTTON_YES);
+            GUIControl.FocusControl(GetID,btnYes.GetID);
           }
           
-          GUIButtonControl btnYes = (GUIButtonControl)GetControl((int)Controls.ID_BUTTON_YES);
           iYesKey = (int)btnYes.Label.ToLower()[0];
 
-          GUIButtonControl btnNo = (GUIButtonControl)GetControl((int)Controls.ID_BUTTON_NO);
           iNoKey = (int)btnNo.Label.ToLower()[0];
 				}
 					return true;
@@ -179,21 +174,21 @@ namespace MediaPortal.Dialogs
 				{
 					int iControl=message.SenderControlId;
         
-					if ( GetControl((int)Controls.ID_BUTTON_YES) == null)
+					if ( btnYes == null)
 					{
 						m_bConfirmed=true;
             Close();
             m_DefaultYes=false;
 						return true;
 					}
-					if (iControl==(int)Controls.ID_BUTTON_NO)
+					if (iControl==btnNo.GetID)
 					{
 						m_bConfirmed=false;
             Close();
             m_DefaultYes=false;
 						return true;
 					}
-					if (iControl==(int)Controls.ID_BUTTON_YES)
+					if (iControl==btnYes.GetID)
 					{
 						m_bConfirmed=true;
             Close();
