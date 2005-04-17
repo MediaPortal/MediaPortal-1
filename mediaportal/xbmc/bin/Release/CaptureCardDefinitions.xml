@@ -114,7 +114,7 @@
 <!--    general MCE card						-->
 <!--    general MPEG2 card						-->
 <!--                                                                                  -->
-<!-- version : 1.0.0.85                                                               -->
+<!-- version : 1.0.0.86                                                               -->
 <!-- changed : 17-April-2005 by DMAN                                                  -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -491,7 +491,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan DVBS BDA Capture Filter"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TwinHan DVBS BDA Tuner Filter"	checkdevice="true"></filter>
         <filter cat="capture"         name="TwinHan DVBS BDA Capture Filter"	checkdevice="true"></filter>
       </filters>
       <connections>
@@ -507,7 +507,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
       <filters> 
 	<filter cat="networkprovider" 	name="Microsoft DVBC Network Provider"	checkdevice="false"></filter> 
-	<filter cat="tunerdevice" 	name="TwinHan DVBC BDA Capture Filter" 	checkdevice="true"></filter> 
+	<filter cat="tunerdevice" 	name="TwinHan DVBC BDA Tuner Filter" 	checkdevice="true"></filter> 
 	<filter cat="capture" 		name="TwinHan DVBC BDA Capture Filter" 	checkdevice="true"></filter> 
       </filters> 
       <connections> 
