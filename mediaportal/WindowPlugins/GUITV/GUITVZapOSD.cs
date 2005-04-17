@@ -154,7 +154,10 @@ namespace MediaPortal.GUI.TV
           prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
           prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
       }
-			lblCurrentTime.Label=strTime;
+			if (lblCurrentTime != null)
+			{
+				lblCurrentTime.Label=strTime;
+			}
     }
 
     void Handle_ControlSetting(int iControlID, long wID)
