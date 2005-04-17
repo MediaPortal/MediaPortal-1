@@ -1047,17 +1047,19 @@ namespace MediaPortal.Util
 			}
 			return false;
 		}
-    static public void DirectoryDelete(string strDir)
+    static public bool DirectoryDelete(string strDir)
     {
-      if (strDir==null) return ;
-      if (strDir.Length==0) return ;
+      if (strDir==null) return false;
+      if (strDir.Length==0) return false;
       try
       {
         System.IO.Directory.Delete(strDir);
+				return true;
       }
       catch(Exception)
-      {
+      {				
       }
+			return false;
     }
 		static public void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
 		{
