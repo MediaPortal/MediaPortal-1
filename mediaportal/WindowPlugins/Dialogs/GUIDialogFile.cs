@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
 using MediaPortal.Util;
+using MediaPortal.Picture.Database;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Dialogs
 {
@@ -49,6 +50,7 @@ namespace MediaPortal.Dialogs
 		bool							m_bBusy = false;
 		bool							m_bDialogActive = false;
 		bool							m_bReload = false;
+		PictureDatabase		dbPicture = null;
     
 		public GUIDialogFile()
 		{
@@ -775,7 +777,27 @@ namespace MediaPortal.Dialogs
 			}
 			else if (!item.IsRemote)
 			{  			
-				Utils.FileDelete(item.Path);
+				if (Utils.FileDelete(item.Path))
+				{
+					// delete from database
+					if (Utils.IsPicture(item.Path))
+					{
+						//Remove from picture database
+						if (dbPicture == null) dbPicture = new PictureDatabase();
+						if (dbPicture != null)
+						{
+							dbPicture.DeletePicture(item.Path);
+						}					
+					}
+					else if (Utils.IsVideo(item.Path))
+					{
+						//Remove from video database
+					} 
+					else if (Utils.IsAudio(item.Path))
+					{
+						//Remove from music database
+					}
+				}
 			}
 		}
 

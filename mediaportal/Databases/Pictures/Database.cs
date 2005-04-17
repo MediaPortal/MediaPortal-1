@@ -93,6 +93,28 @@ namespace MediaPortal.Picture.Database
       }
 		}
 
+		public void DeletePicture(string strPicture)
+		{
+			lock (typeof(PictureDatabase))
+			{
+				if (m_db==null) return;
+				string strSQL="";
+				try
+				{					
+					string strPic=strPicture;
+					DatabaseUtility.RemoveInvalidChars(ref strPic);
+
+					strSQL=String.Format("delete from picture where strFile like '{0}'",strPic);
+					m_db.Execute(strSQL);
+				}
+				catch (Exception ex) 
+				{
+					Log.Write("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+				return;
+			}
+		}
 
 		public int GetRotation(string strPicture)
 		{
