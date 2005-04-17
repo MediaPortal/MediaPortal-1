@@ -18,20 +18,13 @@ namespace MediaPortal.GUI.TV
 
   public class GUITVZAPOSD: GUIWindow
   {
-    enum Controls 
-    {
+		[SkinControlAttribute(35)]			  protected GUILabelControl lblCurrentChannel=null;
+		[SkinControlAttribute(36)]			  protected GUITextControl	lblOnTvNow=null;
+		[SkinControlAttribute(37)]			  protected GUITextControl	lblOnTvNext=null;
+		[SkinControlAttribute(100)]			  protected GUILabelControl lblCurrentTime=null;
+		[SkinControlAttribute(39)]				protected GUIImage				imgRecIcon=null;
+		[SkinControlAttribute(10)]				protected GUIImage				imgTvChannelLogo=null;
 
-	  LABEL_CURRENT_CHANNEL=35,
-      LABEL_ONTV_NOW=36,
-      LABEL_ONTV_NEXT=37,
-      PROGRESS_BAR=1,
-      REC_LOGO=39,
-      LABEL_CURRENT_TIME=100,
-
-  OSD_VIDEOPROGRESS =1
-  , OSD_TIMEINFO =100
-  , TV_LOGO=10
-    };
 
 	  bool m_bNeedRefresh=false;
     DateTime m_dateTime=DateTime.Now;
@@ -64,16 +57,6 @@ namespace MediaPortal.GUI.TV
       SetVideoProgress();			// get the percentage of playback complete so far
       Get_TimeInfo();				// show the time elapsed/total playing time
       base.Render(timePassed);		// render our controls to the screen
-    }
-    void HideControl (int dwSenderId, int dwControlID) 
-    {
-      GUIMessage msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_HIDDEN,GetID, dwSenderId, dwControlID,0,0,null); 
-      OnMessage(msg); 
-    }
-    void ShowControl (int dwSenderId, int dwControlID) 
-    {
-      GUIMessage msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_VISIBLE,GetID, dwSenderId, dwControlID,0,0,null); 
-      OnMessage(msg); 
     }
 
     void FocusControl (int dwSenderId, int dwControlID, int dwParam) 
@@ -171,9 +154,7 @@ namespace MediaPortal.GUI.TV
           prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
           prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
       }
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,(int)Controls.OSD_TIMEINFO,0,0,null);
-      msg.Label=strTime; 
-      OnMessage(msg);			// ask our label to update it's caption
+			lblCurrentTime.Label=strTime;
     }
 
     void Handle_ControlSetting(int iControlID, long wID)
@@ -273,21 +254,22 @@ namespace MediaPortal.GUI.TV
     {
       string strChannel=GetChannelName();
       string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,strChannel);
-      if (System.IO.File.Exists(strLogo))
+      if (System.IO.File.Exists(strLogo) )
       {
-		  
-        GUIImage img=GetControl((int)Controls.TV_LOGO) as GUIImage;
-        if (img!=null)
-        {
-          img.SetFileName(strLogo);
-          //img.SetPosition(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop);
-          m_bNeedRefresh=true;
-        }
-        ShowControl(GetID,(int)Controls.TV_LOGO);
+				if (imgTvChannelLogo!=null)
+				{
+					imgTvChannelLogo.SetFileName(strLogo);
+					//img.SetPosition(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop);
+					m_bNeedRefresh=true;
+					imgTvChannelLogo.IsVisible=true;
+				}
       }
       else
       {
-        HideControl(GetID,(int)Controls.TV_LOGO);
+				if (imgTvChannelLogo!=null)
+				{
+					imgTvChannelLogo.IsVisible=false;
+				}
       }
       ShowPrograms();
     }
@@ -298,43 +280,34 @@ namespace MediaPortal.GUI.TV
 		}
     void ShowPrograms()
     {
-      GUITextControl cntlNow=GetControl((int)Controls.LABEL_ONTV_NOW) as GUITextControl;
-      GUITextControl cntlNext=GetControl((int)Controls.LABEL_ONTV_NEXT) as GUITextControl;
-      GUILabelControl cntlTime=GetControl((int)Controls.LABEL_CURRENT_TIME) as GUILabelControl;
-      GUILabelControl cntlCurrentChannel=GetControl((int)Controls.LABEL_CURRENT_CHANNEL) as GUILabelControl;
-
-      if (cntlNow!=null) cntlNow.EnableUpDown=false;
-      if (cntlNext!=null) cntlNext.EnableUpDown=false;
+      if (lblOnTvNow!=null) lblOnTvNow.EnableUpDown=false;
+      if (lblOnTvNext!=null) lblOnTvNext.EnableUpDown=false;
 
       GUIMessage msg;
 
       // Set recorder status
       if (Recorder.IsRecordingChannel(GetChannelName()))
       {
-        ShowControl(GetID, (int)Controls.REC_LOGO);
+				imgRecIcon.IsVisible=true;
       }
       else
-      {
-        HideControl(GetID, (int)Controls.REC_LOGO);
+			{
+				imgRecIcon.IsVisible=false;
       }
 
-      if (cntlCurrentChannel!=null)
+      if (lblCurrentChannel!=null)
       {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlCurrentChannel.GetID,0,0,null); 
-        msg.Label=GetChannelName();
-        cntlCurrentChannel.OnMessage(msg);
+				lblCurrentChannel.Label=GetChannelName();
       }
 
-      if (cntlNow!=null)
+      if (lblOnTvNow!=null)
       {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID,0, cntlNow.GetID,0,0,null); 
-        cntlNow.OnMessage(msg);
+				lblOnTvNow.Clear();
 		
       }
-      if (cntlNext!=null)
+      if (lblOnTvNext!=null)
       {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID,0, cntlNext.GetID,0,0,null); 
-        cntlNext.OnMessage(msg);
+				lblOnTvNext.Clear();
       }
 
 		
@@ -346,19 +319,15 @@ namespace MediaPortal.GUI.TV
           prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
           prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
         
-        if (cntlTime!=null) 
+        if (lblCurrentTime!=null) 
         {
-          msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlTime.GetID,0,0,null); 
-          msg.Label=strTime;
-          cntlTime.OnMessage(msg);
+					lblCurrentTime.Label=strTime;
         }
         
         strTime=String.Format("{0}", prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));        
-        if (cntlNow!=null)
+        if (lblOnTvNow!=null)
         {
-          msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNow.GetID,0,0,null); 
-          msg.Label=prog.Title;
-          cntlNow.OnMessage(msg);
+					lblOnTvNow.Label=prog.Title;
           GUIPropertyManager.SetProperty("#TV.View.start", strTime);
         }
 
@@ -369,20 +338,16 @@ namespace MediaPortal.GUI.TV
           strTime=String.Format("{0} ", 
             prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
         
-          if (cntlNext!=null)
+          if (lblOnTvNext!=null)
           {
-            msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNext.GetID,0,0,null); 
-            msg.Label=prog.Title;
-            cntlNext.OnMessage(msg);
+						lblOnTvNext.Label=prog.Title;
 						GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
           }
         }
       }
-      else if (cntlTime!=null)
+      else if (lblCurrentTime!=null)
       {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlTime.GetID,0,0,null); 
-        msg.Label="";
-        cntlTime.OnMessage(msg);
+        lblCurrentTime.Label=String.Empty;
       }
       UpdateProgressBar();
     }

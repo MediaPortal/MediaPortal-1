@@ -283,17 +283,7 @@ namespace MediaPortal.GUI.Library
         {
 					if (message.Label!=null)
 					{
-						if (m_strProperty!=message.Label)
-						{
-							m_strProperty=message.Label;
-							if (m_strProperty.IndexOf("#")>=0) 
-								containsProperty=true;
-
-							m_vecItems.Clear();
-							m_upDown.SetRange(1,1);
-							m_upDown.Value=1;
-							SetText( message.Label );
-						}
+						Label=message.Label;
 					}
         }
 
@@ -717,6 +707,32 @@ namespace MediaPortal.GUI.Library
 				m_strProperty=value;
 				if (m_strProperty.IndexOf("#")>=0) 
 					containsProperty=true;
+			}
+		}
+		public void Clear()
+		{
+				containsProperty=false;
+			m_strProperty="";
+			m_iOffset=0;
+			m_vecItems.Clear();
+			m_upDown.SetRange(1,1);
+			m_upDown.Value=1;
+		}
+		public string Label
+		{
+			set
+			{
+				if (m_strProperty!=value)
+				{
+					m_strProperty=value;
+					if (m_strProperty.IndexOf("#")>=0) 
+						containsProperty=true;
+
+					m_vecItems.Clear();
+					m_upDown.SetRange(1,1);
+					m_upDown.Value=1;
+					SetText( value );
+				}
 			}
 		}
 	}
