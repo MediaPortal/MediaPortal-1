@@ -498,7 +498,7 @@
 		<id>800</id>
 		<posX>300</posX>
 		<posY>370</posY>
-		<subtype>float</subtype>
+		<spintype>float</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -552,7 +552,7 @@
 		<id>500</id>
 		<posX>300</posX>
 		<posY>370</posY>
-		<subtype>float</subtype>
+		<spintype>float</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -593,7 +593,7 @@
 		<id>700</id>
 		<posX>300</posX>
 		<posY>340</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -620,7 +620,7 @@
 		<id>701</id>
 		<posX>300</posX>
 		<posY>370</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -647,7 +647,7 @@
 		<id>703</id>
 		<posX>300</posX>
 		<posY>395</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -674,7 +674,7 @@
 		<id>704</id>
 		<posX>300</posX>
 		<posY>425</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -701,7 +701,7 @@
 		<id>705</id>
 		<posX>300</posX>
 		<posY>455</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -728,7 +728,7 @@
 		<id>706</id>
 		<posX>300</posX>
 		<posY>485</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>

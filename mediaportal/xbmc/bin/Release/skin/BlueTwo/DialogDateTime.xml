@@ -61,7 +61,7 @@
 		<control>
 			<description>time hours</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>2</id>
@@ -82,7 +82,7 @@
 		<control>
 			<description>time minutes</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>3</id>
@@ -113,7 +113,7 @@
 		<control>
 			<description>DD</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<id>4</id>
 			<posX>170</posX>
@@ -133,7 +133,7 @@
 		<control>
 			<description>MM</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<id>5</id>
 			<posX>220</posX>
@@ -153,7 +153,7 @@
 		<control>
 			<description>YYYY</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<digits>4</digits>
 			<orientation>vertical</orientation>
 			<id>6</id>
@@ -194,7 +194,7 @@
 		<control>
 			<description>time hours</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>7</id>
@@ -215,7 +215,7 @@
 		<control>
 			<description>time minutes</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>8</id>
@@ -246,7 +246,7 @@
 		<control>
 			<description>DD</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<id>9</id>
 			<posX>380</posX>
@@ -266,7 +266,7 @@
 		<control>
 			<description>MM</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<id>10</id>
 			<posX>430</posX>
@@ -286,7 +286,7 @@
 		<control>
 			<description>YYYY</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<digits>4</digits>
 			<orientation>vertical</orientation>
 			<id>11</id>

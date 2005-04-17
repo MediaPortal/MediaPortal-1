@@ -303,7 +303,7 @@
 		<reverse>yes</reverse>
 		<textcolor>ffffffff</textcolor>
 		<disabledcolor>80ffffff</disabledcolor>
-		<subtype>text</subtype>
+		<spintype>text</spintype>
 	</control>
 
 	<control>

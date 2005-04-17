@@ -317,7 +317,7 @@
 		<id>800</id>
 		<posX>294</posX>
 		<posY>110</posY>
-		<subtype>float</subtype>
+		<spintype>float</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -456,7 +456,7 @@
 		<id>700</id>
 		<posX>294</posX>
 		<posY>110</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<onup>700</onup>
 		<ondown>701</ondown>
 		<onleft>700</onleft>
@@ -524,7 +524,7 @@
 		<id>704</id>
 		<posX>294</posX>
 		<posY>200</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -550,7 +550,7 @@
 		<id>705</id>
 		<posX>294</posX>
 		<posY>230</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -576,7 +576,7 @@
 		<id>706</id>
 		<posX>294</posX>
 		<posY>260</posY>
-		<subtype>int</subtype>
+		<spintype>int</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -616,7 +616,7 @@
 		<id>500</id>
 		<posX>298</posX>
 		<posY>110</posY>
-		<subtype>float</subtype>
+		<spintype>float</spintype>
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>

@@ -141,7 +141,7 @@
 		<control>
 			<description>alarm time hours</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>7</id>
@@ -161,7 +161,7 @@
 		<control>
 			<description>alarm time minutes</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>8</id>
@@ -315,7 +315,7 @@
 		<control>
 			<description>DD</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>27</id>
@@ -335,7 +335,7 @@
 		<control>
 			<description>MM</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>28</id>
@@ -355,7 +355,7 @@
 		<control>
 			<description>YYYY</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>4</digits>
 			<id>29</id>

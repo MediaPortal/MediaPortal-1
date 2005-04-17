@@ -126,7 +126,7 @@
 		<control>
 			<description>alarm interval</description>
 			<type>spincontrol</type>
-			<subtype>int</subtype>
+			<spintype>int</spintype>
 			<orientation>vertical</orientation>
 			<digits>2</digits>
 			<id>4</id>

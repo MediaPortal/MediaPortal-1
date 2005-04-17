@@ -9,7 +9,7 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUISpinControl : GUIControl
 	{
-		public enum SpinType
+		public enum SpinType:int
 		{
 			SPIN_CONTROL_TYPE_INT,
 			SPIN_CONTROL_TYPE_FLOAT,
@@ -30,12 +30,9 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("textureUpFocus")]	protected string		m_strUpFocus; 
 		[XMLSkinElement("textureDownFocus")]protected string		m_strDownFocus;
 
-		[XMLSkinElement("align")]			
-		protected Alignment		m_dwAlign = Alignment.ALIGN_LEFT;
-		[XMLSkinElement("subtype")]			
-		protected SpinType		m_iType = SpinType.SPIN_CONTROL_TYPE_TEXT;
-		[XMLSkinElement("orientation")]		
-		protected eOrientation	m_orientation = eOrientation.Horizontal;
+		[XMLSkinElement("align")]					protected Alignment		m_dwAlign = Alignment.ALIGN_LEFT;
+		[XMLSkinElement("spintype")]				protected GUISpinControl.SpinType		m_iType = SpinType.SPIN_CONTROL_TYPE_TEXT;
+		[XMLSkinElement("orientation")]		protected eOrientation	m_orientation = eOrientation.Horizontal;
 		
 		protected int       m_iStart=0;
 		protected int       m_iEnd=100;

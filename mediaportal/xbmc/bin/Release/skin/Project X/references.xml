@@ -291,7 +291,7 @@
 		<reverse>yes</reverse>
 		<textcolor>ffffffff</textcolor>
 		<disabledcolor>60ffffff</disabledcolor>
-		<subtype>text</subtype>
+		<spintype>text</spintype>
 	</control>
 	<control>
 		<description>default checkmark</description>
