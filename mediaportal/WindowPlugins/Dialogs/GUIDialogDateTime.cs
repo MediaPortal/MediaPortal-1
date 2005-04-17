@@ -187,10 +187,10 @@ namespace MediaPortal.Dialogs
           spinEndMinute.Value=m_dtEndDateTime.Minute;
 
           if (DateTime.IsLeapYear(m_dtEndDateTime.Year) && m_dtEndDateTime.Month==2)
-            spinEndMonth.SetRange(1,29);
+            spinEndDay.SetRange(1,29);
           else
-            spinEndMonth.SetRange(1,months[m_dtEndDateTime.Month]);
-          spinEndMonth.Value=m_dtEndDateTime.Day;
+            spinEndDay.SetRange(1,months[m_dtEndDateTime.Month]);
+          spinEndDay.Value=m_dtEndDateTime.Day;
           
 
           spinEndMonth.SetRange(1,12);
