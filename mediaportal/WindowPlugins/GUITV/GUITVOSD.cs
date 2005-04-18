@@ -1278,13 +1278,13 @@ namespace MediaPortal.GUI.TV
 				
 				if (previousProgram==null)
 				{
-					ShowPrograms();
 					previousProgram=prog.Clone();
+					ShowPrograms();
 				}
 				else if (previousProgram.Start!=prog.Start)
 				{
-					ShowPrograms();
 					previousProgram=prog.Clone();
+					ShowPrograms();
 				}
 		  }
 	  }
