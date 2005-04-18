@@ -35,12 +35,12 @@ namespace MediaPortal.Dialogs
 
     bool m_bConfirmed = false;
     bool m_bPrevOverlay=true;
-    string m_strChannel="";
-    bool   m_bEditStartTime=true;
-    bool   m_bEditChannel=true;
-    DateTime m_dtStartDateTime=DateTime.Now;
-    DateTime m_dtEndDateTime=DateTime.Now;
-    ArrayList m_items = new ArrayList();
+    string channel=String.Empty;
+    bool   enableEditStartTime=true;
+    bool   enableEditChannel=true;
+    DateTime startDateTime=DateTime.Now;
+    DateTime endDateTime=DateTime.Now;
+    ArrayList itemList = new ArrayList();
 
     public GUIDialogDateTime()
     {
@@ -127,7 +127,61 @@ namespace MediaPortal.Dialogs
       }
     }
     #endregion
-	
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+      int iYear,iMonth,iDay;
+      int iHour,iMin;
+      if ( control==spinStartMonth)
+      {
+        iYear=spinStartYear.Value;
+        iMonth=spinStartMonth.Value;
+        if (iMonth==2 && DateTime.IsLeapYear(iYear) )
+        {
+          spinStartDay.SetRange(1, 29);
+        }
+        else
+        {
+          spinStartDay.SetRange(1, months[iMonth]);
+        }
+      }
+      if ( control==spinEndMonth)
+      {
+        iYear=spinEndYear.Value;
+        iMonth=spinEndMonth.Value;
+        if (iMonth==2 && DateTime.IsLeapYear(iYear) )
+        {
+          spinEndDay.SetRange(1, 29);
+        }
+        else
+        {
+          spinEndDay.SetRange(1, months[iMonth]);
+        }
+      }
+      if ( control==btnOK)
+      {
+        iHour=spinStartHour.Value;
+        iMin=spinStartMinute.Value;
+        iDay=spinStartDay.Value;
+        iMonth=spinStartMonth.Value;
+        iYear=spinStartYear.Value;
+        channel=spinChannel.GetLabel();
+
+        startDateTime = new DateTime(iYear,iMonth,iDay,iHour,iMin,0,0);
+        iHour=spinEndHour.Value;
+        iMin=spinEndMinute.Value;
+        iDay=spinEndDay.Value;
+        iMonth=spinEndMonth.Value;
+        iYear =spinEndYear.Value;
+        endDateTime = new DateTime(iYear,iMonth,iDay,iHour,iMin,0,0);
+
+        m_bConfirmed=true;
+        Close();
+        return ;
+      }
+		}
+
     public override bool OnMessage(GUIMessage message)
     {
       switch ( message.Message )
@@ -148,30 +202,30 @@ namespace MediaPortal.Dialogs
           m_bConfirmed = false;
           GUIGraphicsContext.Overlay=false;
           spinStartHour.SetRange(0,23);
-          spinStartHour.Value=m_dtStartDateTime.Hour;
+          spinStartHour.Value=startDateTime.Hour;
 
           spinStartMinute.SetRange(0,59);
-          spinStartMinute.Value=m_dtStartDateTime.Minute;
+          spinStartMinute.Value=startDateTime.Minute;
 
-          if (DateTime.IsLeapYear(m_dtStartDateTime.Year) && m_dtStartDateTime.Month==2)
+          if (DateTime.IsLeapYear(startDateTime.Year) && startDateTime.Month==2)
             spinStartDay.SetRange(1,29);
           else 
-            spinStartDay.SetRange(1,months[m_dtStartDateTime.Month]);
-          spinStartDay.Value=m_dtStartDateTime.Day;
+            spinStartDay.SetRange(1,months[startDateTime.Month]);
+          spinStartDay.Value=startDateTime.Day;
           
           spinStartMonth.SetRange(1,12);
-          spinStartMonth.Value=m_dtStartDateTime.Month;
+          spinStartMonth.Value=startDateTime.Month;
           
-          spinStartYear.Value=m_dtStartDateTime.Year;
+          spinStartYear.Value=startDateTime.Year;
           spinStartYear.SetRange(2004,2010);
           
 
 					spinChannel.Reset();
           int i=0,iSel=0;
-          foreach (string strLabel in m_items)
+          foreach (string strLabel in itemList)
           {
             spinChannel.AddLabel(strLabel,0);
-            if (m_strChannel==strLabel)
+            if (channel==strLabel)
             {
               iSel=i;
             }
@@ -181,91 +235,37 @@ namespace MediaPortal.Dialogs
             SelectItemControl(GetID, (int)spinChannel.GetID,iSel);
 
           spinEndHour.SetRange(0,23);
-          spinEndHour.Value=m_dtEndDateTime.Hour;
+          spinEndHour.Value=endDateTime.Hour;
 
           spinEndMinute.SetRange(0,59);
-          spinEndMinute.Value=m_dtEndDateTime.Minute;
+          spinEndMinute.Value=endDateTime.Minute;
 
-          if (DateTime.IsLeapYear(m_dtEndDateTime.Year) && m_dtEndDateTime.Month==2)
+          if (DateTime.IsLeapYear(endDateTime.Year) && endDateTime.Month==2)
             spinEndDay.SetRange(1,29);
           else
-            spinEndDay.SetRange(1,months[m_dtEndDateTime.Month]);
-          spinEndDay.Value=m_dtEndDateTime.Day;
+            spinEndDay.SetRange(1,months[endDateTime.Month]);
+          spinEndDay.Value=endDateTime.Day;
           
 
           spinEndMonth.SetRange(1,12);
-          spinEndMonth.Value=m_dtEndDateTime.Month;
+          spinEndMonth.Value=endDateTime.Month;
           
 
-          spinEndYear.Value=m_dtEndDateTime.Year;
+          spinEndYear.Value=endDateTime.Year;
           spinEndYear.SetRange(2004,2010);
           
-					spinStartHour.Disabled=!m_bEditStartTime;
-					spinStartMinute.Disabled=!m_bEditStartTime;
-					spinStartDay.Disabled=!m_bEditStartTime;
-					spinStartMonth.Disabled=!m_bEditStartTime;
-					spinStartYear.Disabled=!m_bEditStartTime;
+					spinStartHour.Disabled=!enableEditStartTime;
+					spinStartMinute.Disabled=!enableEditStartTime;
+					spinStartDay.Disabled=!enableEditStartTime;
+					spinStartMonth.Disabled=!enableEditStartTime;
+					spinStartYear.Disabled=!enableEditStartTime;
           
 
-					spinChannel.Disabled=!m_bEditChannel;
+					spinChannel.Disabled=!enableEditChannel;
 
         }
         return true;
 
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-        {
-          int iYear,iMonth,iDay;
-          int iHour,iMin;
-          int iControl=message.SenderControlId;
-          if ( iControl==(int)spinStartMonth.GetID)
-          {
-            iYear=spinStartYear.Value;
-            iMonth=spinStartMonth.Value;
-            if (iMonth==2 && DateTime.IsLeapYear(iYear) )
-            {
-              spinStartDay.SetRange(1, 29);
-            }
-            else
-            {
-              spinStartDay.SetRange(1, months[iMonth]);
-            }
-          }
-          if ( iControl==(int)spinEndMonth.GetID)
-          {
-            iYear=spinEndYear.Value;
-            iMonth=spinEndMonth.Value;
-            if (iMonth==2 && DateTime.IsLeapYear(iYear) )
-            {
-              spinEndDay.SetRange(1, 29);
-            }
-            else
-            {
-              spinEndDay.SetRange(1, months[iMonth]);
-            }
-          }
-          if ( iControl==(int)btnOK.GetID )
-          {
-            iHour=spinStartHour.Value;
-            iMin=spinStartMinute.Value;
-            iDay=spinStartDay.Value;
-            iMonth=spinStartMonth.Value;
-            iYear=spinStartYear.Value;
-            m_strChannel=spinChannel.GetLabel();
-
-            m_dtStartDateTime = new DateTime(iYear,iMonth,iDay,iHour,iMin,0,0);
-            iHour=spinEndHour.Value;
-            iMin=spinEndMinute.Value;
-            iDay=spinEndDay.Value;
-            iMonth=spinEndMonth.Value;
-            iYear =spinEndYear.Value;
-            m_dtEndDateTime = new DateTime(iYear,iMonth,iDay,iHour,iMin,0,0);
-
-            m_bConfirmed=true;
-            Close();
-            return true;
-          }
-        }
-        break;
       }
 
       return base.OnMessage(message);
@@ -291,45 +291,45 @@ namespace MediaPortal.Dialogs
     
     public ArrayList Items
     {
-      get { return m_items;}
+      get { return itemList;}
     }
 
     public DateTime StartDateTime
     {
-      get { return m_dtStartDateTime;}
-      set { m_dtStartDateTime=value;}
+      get { return startDateTime;}
+      set { startDateTime=value;}
     }
     public DateTime EndDateTime
     {
-      get { return m_dtEndDateTime;}
-      set { m_dtEndDateTime=value;}
+      get { return endDateTime;}
+      set { endDateTime=value;}
     }
     public void SetHeading(int iString)
     {
       SetHeading (GUILocalizeStrings.Get(iString) );
     }
-    public void  SetHeading( string strLine)
+    public void  SetHeading( string line)
     {
 			LoadSkin();
 			AllocResources();
 			InitControls();
 
-			lblHeading.Label=strLine;
+			lblHeading.Label=line;
     }
     public string Channel
     {
-      get { return m_strChannel;}
-      set { m_strChannel=value;}
+      get { return channel;}
+      set { channel=value;}
     }
     public bool EnableStartTime
     {
-      get { return m_bEditStartTime;}
-      set { m_bEditStartTime=value;}
+      get { return enableEditStartTime;}
+      set { enableEditStartTime=value;}
     }
     public bool EnableChannel
     {
-      get { return m_bEditChannel;}
-      set { m_bEditChannel=value;}
+      get { return enableEditChannel;}
+      set { enableEditChannel=value;}
     }
 
   }

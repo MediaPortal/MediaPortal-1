@@ -181,7 +181,7 @@ namespace MediaPortal.Dialogs
 
 		public void SetHeading(int iString)
 		{
-			if (iString==0) SetHeading ("");
+			if (iString==0) SetHeading (String.Empty);
 			else SetHeading (GUILocalizeStrings.Get(iString) );
 		}
 

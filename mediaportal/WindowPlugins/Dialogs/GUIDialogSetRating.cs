@@ -16,17 +16,20 @@ namespace MediaPortal.Dialogs
 			Next,
 			Previous
 		};
-		enum Controls
-		{
-			ID_LABEL_NAME  = 4
-			,	ID_BUTTON_MIN   =11
-			, ID_BUTTON_PLUS  =10
-			, ID_BUTTON_OK = 12
-			, ID_NEXTITEM=13
-			, ID_BUTTON_PLAY=14
-			, ID_PREVITEM=15
-			,	CONTROL_STARS=100
-		};
+
+		[SkinControlAttribute(2)]				protected GUILabelControl lblHeading=null;
+		[SkinControlAttribute(4)]				protected GUILabelControl lblName=null;
+		[SkinControlAttribute(10)]			protected GUIButtonControl btnPlus=null;
+		[SkinControlAttribute(11)]			protected GUIButtonControl btnMin=null;
+		[SkinControlAttribute(12)]			protected GUIButtonControl btnOk=null;
+		[SkinControlAttribute(13)]			protected GUIButtonControl btnNextItem=null;
+		[SkinControlAttribute(14)]			protected GUIButtonControl btnPlay=null;
+		[SkinControlAttribute(15)]			protected GUIButtonControl btnPreviousItem=null;
+		[SkinControlAttribute(100)]			protected GUIImage imgStar1=null;
+		[SkinControlAttribute(101)]			protected GUIImage imgStar2=null;
+		[SkinControlAttribute(102)]			protected GUIImage imgStar3=null;
+		[SkinControlAttribute(103)]			protected GUIImage imgStar4=null;
+		[SkinControlAttribute(104)]			protected GUIImage imgStar5=null;
 
 		#region Base Dialog Variables
 		bool m_bRunning=false;
@@ -35,7 +38,7 @@ namespace MediaPortal.Dialogs
 		#endregion
     
 		bool m_bPrevOverlay=true;
-		int  m_iRating=1;
+		int  rating=1;
 		string fileName;
 		ResultCode resultCode;
 
@@ -128,6 +131,47 @@ namespace MediaPortal.Dialogs
 		}
 		#endregion
 	
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+			if (control==btnOk)
+			{
+				Close();
+				resultCode=ResultCode.Close;
+				return ;
+			}
+			if (control==btnNextItem)
+			{
+				Close();
+				resultCode=ResultCode.Next;
+				return ;
+			}
+			if (control==btnPreviousItem)
+			{
+				Close();
+				resultCode=ResultCode.Previous;
+				return ;
+			}
+			if (control==btnPlay)
+			{
+				Log.Write("DialogSetRating:Play:{0}",FileName);
+				g_Player.Play(FileName);
+			}
+
+			if (control==btnMin)
+			{
+				if (rating >=1) rating--;
+				UpdateRating();
+				return ;
+			}
+			if (control==btnPlus)
+			{
+				if (rating<5) rating++;
+				UpdateRating();
+				return ;
+			}
+		}
+
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch ( message.Message )
@@ -146,52 +190,9 @@ namespace MediaPortal.Dialogs
 					m_bPrevOverlay=GUIGraphicsContext.Overlay;
 					base.OnMessage(message);
 					GUIGraphicsContext.Overlay=false;
-					Update();
+					UpdateRating();
 				}
 					return true;
-
-				case GUIMessage.MessageType.GUI_MSG_CLICKED:
-				{
-					int iControl=message.SenderControlId;
-        
-					if (iControl==(int)Controls.ID_BUTTON_OK)
-					{
-						Close();
-						resultCode=ResultCode.Close;
-						return true;
-					}
-					if (iControl==(int)Controls.ID_NEXTITEM)
-					{
-						Close();
-						resultCode=ResultCode.Next;
-						return true;
-					}
-					if (iControl==(int)Controls.ID_PREVITEM)
-					{
-						Close();
-						resultCode=ResultCode.Previous;
-						return true;
-					}
-					if (iControl==(int)Controls.ID_BUTTON_PLAY)
-					{
-						Log.Write("DialogSetRating:Play:{0}",FileName);
-						g_Player.Play(FileName);
-					}
-
-					if (iControl==(int)Controls.ID_BUTTON_MIN)
-					{
-						if (m_iRating >=1) m_iRating--;
-						Update();
-						return true;
-					}
-					if (iControl==(int)Controls.ID_BUTTON_PLUS)
-					{
-						if (m_iRating<5) m_iRating++;
-						Update();
-						return true;
-					}
-				}
-					break;
 			}
 
 			return base.OnMessage(message);
@@ -202,32 +203,32 @@ namespace MediaPortal.Dialogs
 			AllocResources();
 			InitControls();
 
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2,0,0,null);
-			msg.Label=strLine; 
-			OnMessage(msg);
+			lblHeading.Label=strLine; 
 		}
 
 		public void SetHeading(int iString)
 		{
-			if (iString==0) SetHeading ("");
+			if (iString==0) SetHeading (String.Empty);
 			else SetHeading (GUILocalizeStrings.Get(iString) );
 		}
 
 		public void SetTitle(string title)
 		{
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,(int)Controls.ID_LABEL_NAME,0,0,null);
-			msg.Label=title; 
-			OnMessage(msg);
+			LoadSkin();
+			AllocResources();
+			InitControls();
+			lblName.Label=title; 
 		}
 
-		void Update()
+		void UpdateRating()
 		{
+			GUIImage[] imgStars = new GUIImage[5]{imgStar1, imgStar2, imgStar3, imgStar4, imgStar5};
 			for (int i=0; i < 5; ++i)
 			{
 				if ( (i+1) > (int)(Rating) )
-					GUIControl.HideControl(GetID, (int)Controls.CONTROL_STARS+i);
+					imgStars[i].IsVisible=false;
 				else
-					GUIControl.ShowControl(GetID, (int)Controls.CONTROL_STARS+i);
+					imgStars[i].IsVisible=true;
 			}
 		}
 
@@ -237,8 +238,8 @@ namespace MediaPortal.Dialogs
 		}
 		public int Rating
 		{
-			get { return m_iRating;}
-			set {m_iRating=value;}
+			get { return rating;}
+			set {rating=value;}
 		}
 		public string FileName
 		{

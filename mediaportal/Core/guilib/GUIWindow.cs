@@ -671,7 +671,7 @@ namespace MediaPortal.GUI.Library
 						}
 						catch(Exception ex)
 						{
-							Log.WriteFile(Log.LogType.Log,true,"GUIWindow:OnWindowLoaded ex:{0} {1}", ex.Message,ex.StackTrace);
+							Log.WriteFile(Log.LogType.Log,true,"GUIWindow:OnWindowLoaded id:{0} ex:{1} {2}", atrb.ID,ex.Message,ex.StackTrace);
 						}
 					}
 				}
