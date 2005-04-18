@@ -64,12 +64,13 @@
 		<description>TV Logo</description> 
 		<type>image</type> 
 		<id>10</id> 
-		<posX>620</posX> 
-		<posY>435</posY>
-		<width>50</width>
+		<posX>615</posX> 
+		<posY>430</posY>
+		<width>60</width>
 		<height>80</height>
 		<texture>#TV.View.thumb</texture>		
 		<visible>yes</visible>
+		<centered>yes</centered>
 		<keepaspectratio>yes</keepaspectratio> 
 	</control>
 	<control>
