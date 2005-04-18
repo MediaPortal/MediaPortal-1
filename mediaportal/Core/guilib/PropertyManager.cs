@@ -136,6 +136,10 @@ namespace MediaPortal.GUI.Library
       if (tag==String.Empty) return;
       if (tag[0]!='#') return;
 
+			if (tag=="#currentmodule")
+			{
+					GUIGraphicsContext.form.Text="Media Portal - "+  tagvalue;
+			}
 			if (GetProperty(tag) == tagvalue) return;
 			m_properties[tag] = tagvalue;
 			m_bChanged=true;

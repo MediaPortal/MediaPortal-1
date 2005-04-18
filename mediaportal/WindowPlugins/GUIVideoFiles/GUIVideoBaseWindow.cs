@@ -267,6 +267,7 @@ namespace MediaPortal.GUI.Video
 		protected virtual void UpdateButtonStates()
 		{
 			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
+			GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(10006), handler.CurrentView) );
 			GUIControl.HideControl(GetID, facadeView.GetID);
       
 			int iControl = facadeView.GetID;

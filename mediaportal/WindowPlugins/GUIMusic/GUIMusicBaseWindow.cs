@@ -295,7 +295,8 @@ namespace MediaPortal.GUI.Music
 		protected virtual void UpdateButtonStates()
 		{
 			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
-
+			GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(10005), handler.CurrentView) );
+                
 			facadeView.IsVisible=false;
 			facadeView.IsVisible=true;
 			GUIControl.FocusControl(GetID, facadeView.GetID);
