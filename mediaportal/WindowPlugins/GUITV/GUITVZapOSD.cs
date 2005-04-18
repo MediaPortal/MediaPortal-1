@@ -83,6 +83,25 @@ namespace MediaPortal.GUI.TV
       base.OnAction(action);
     }
 
+		public override bool OnMessage(GUIMessage message)
+		{
+			switch ( message.Message )
+			{
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:	// fired when OSD is hidden
+				{
+					FreeResources();
+					return true;
+				}		  
+
+				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:	// fired when OSD is shown
+				{
+					AllocResources();
+					return true;
+				}
+			}
+			return base.OnMessage(message);
+		}
+
 		protected override void OnPageDestroy(int newWindowId)
 		{
 			FreeResources();

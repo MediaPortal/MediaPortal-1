@@ -206,9 +206,12 @@ namespace MediaPortal.GUI.TV
 							{
 								m_osdWindow.OnAction(action);	// route keys to OSD window
 
-								GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
-								m_zapWindow.OnMessage(msg);
-								m_bZapOSDVisible=false;
+								if (m_bZapOSDVisible)
+								{
+									GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+									m_zapWindow.OnMessage(msg);
+									m_bZapOSDVisible=false;
+								}
 								m_bUpdate=true;
 								return;
 							}
@@ -939,7 +942,7 @@ namespace MediaPortal.GUI.TV
 				if ( ts.TotalMilliseconds > m_iZapTimeOut)
 				{
 					//yes, then remove osd offscreen
-					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
 					m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					Log.Write("timeout->ZAP OSD:Off");
 					m_bZapOSDVisible=false;
@@ -1052,7 +1055,7 @@ namespace MediaPortal.GUI.TV
 						if ( ts.TotalMilliseconds > m_iZapTimeOut)
 						{
 							//yes, then remove osd offscreen
-							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
 							m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 							Log.Write("timeout->ZAP OSD:Off");
 							m_bZapOSDVisible=false;
@@ -1386,7 +1389,7 @@ namespace MediaPortal.GUI.TV
 					if ( ts.TotalMilliseconds > m_iZapTimeOut)
 					{
 						//yes, then remove osd offscreen
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
 						m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 						Log.Write("timeout->ZAP OSD:Off");
 						m_bZapOSDVisible=false;
