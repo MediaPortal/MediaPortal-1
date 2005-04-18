@@ -18,7 +18,7 @@
 		<description>Progress Bar</description> 
 		<type>progress</type> 
 		<id>1</id> 
-		<posX>180</posX> 
+		<posX>155</posX> 
 		<posY>483</posY> 
 		<width>200</width>
 		<height>5</height>
@@ -66,7 +66,7 @@
 		<id>36</id> 
 		<type>textbox</type> 
 		<width>300</width>
-		<height>50</height> 
+		<height>30</height> 
 		<posX>90</posX> 
 		<posY>500</posY>
 		<align>left</align>
@@ -78,9 +78,9 @@
 		<id>37</id> 
 		<type>textbox</type> 
 		<width>300</width> 
-		<height>50</height>
+		<height>30</height>
 		<posX>90</posX> 
-		<posY>525</posY>
+		<posY>530</posY>
 		<align>left</align> 
 		<font>font13</font> 
 		<textcolor>FFB2D4F5</textcolor>
