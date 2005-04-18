@@ -14,23 +14,21 @@ namespace MediaPortal.Dialogs
 	/// </summary>
 	public class GUIDialogExif: GUIWindow
 	{
-		enum Controls
-		{
-			Picture=3,
-			ImageTitleLabel=20,
-			ImageDimensions=21,
-			Resolutions=22,
-			Flash=23,
-			MeteringMode=24,
-			ExposureCompensation=25,
-			ShutterSpeed=26,
-			DateTakenLabel=27,
-			Fstop=28,
-			ExposureTime=29,
-			CameraModel=30,
-			EquipmentMake=31,
-			ViewComments=32
-		};
+		[SkinControlAttribute(2)]				protected GUILabelControl lblHeading=null;
+		[SkinControlAttribute(3)]				protected GUIImage imgPicture=null;
+		[SkinControlAttribute(20)]			protected GUILabelControl lblImgTitle=null;
+		[SkinControlAttribute(21)]			protected GUILabelControl lblImgDimensions=null;
+		[SkinControlAttribute(22)]			protected GUILabelControl lblResolutions=null;
+		[SkinControlAttribute(23)]			protected GUIFadeLabel		lblFlash=null;
+		[SkinControlAttribute(24)]			protected GUIFadeLabel	  lblMeteringMode=null;
+		[SkinControlAttribute(25)]			protected GUIFadeLabel		lblExposureCompensation=null;
+		[SkinControlAttribute(26)]			protected GUIFadeLabel		lblShutterSpeed=null;
+		[SkinControlAttribute(27)]			protected GUILabelControl lblDateTakenLabel=null;
+		[SkinControlAttribute(28)]			protected GUILabelControl lblFstop=null;
+		[SkinControlAttribute(29)]			protected GUILabelControl lblExposureTime=null;
+		[SkinControlAttribute(30)]			protected GUIFadeLabel		lblCameraModel=null;
+		[SkinControlAttribute(31)]			protected GUIFadeLabel		lblEquipmentMake=null;
+		[SkinControlAttribute(32)]			protected GUILabelControl lblViewComments=null;
 
 		#region Base Dialog Variables
 		bool m_bRunning=false;
@@ -178,9 +176,7 @@ namespace MediaPortal.Dialogs
 			AllocResources();
 			InitControls();
 
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2,0,0,null);
-			msg.Label=strLine; 
-			OnMessage(msg);
+			lblHeading.Label=strLine;
 		}
 
 		public void SetHeading(int iString)
@@ -208,68 +204,56 @@ namespace MediaPortal.Dialogs
 
 			m_pTexture = MediaPortal.Util.Picture.Load(FileName, iRotate, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
 
-			SetLabel((int)Controls.CameraModel         , String.Empty);
-			SetLabel((int)Controls.DateTakenLabel      , String.Empty);
-			SetLabel((int)Controls.EquipmentMake       , String.Empty);
-			SetLabel((int)Controls.ExposureCompensation, String.Empty);
-			SetLabel((int)Controls.ExposureTime        , String.Empty);
-			SetLabel((int)Controls.Flash               , String.Empty);
-			SetLabel((int)Controls.Fstop               , String.Empty);
-			SetLabel((int)Controls.ImageDimensions     , String.Empty);
-			SetLabel((int)Controls.ImageTitleLabel     , String.Empty);
-			SetLabel((int)Controls.MeteringMode        , String.Empty);
-			SetLabel((int)Controls.Resolutions			   , String.Empty);
-			SetLabel((int)Controls.ShutterSpeed				 , String.Empty);
-			SetLabel((int)Controls.ViewComments				 , String.Empty);
+			lblCameraModel.Label=String.Empty;
+			lblDateTakenLabel.Label=String.Empty;
+			lblEquipmentMake.Label=String.Empty;
+			lblExposureCompensation.Label=String.Empty;
+			lblExposureTime.Label=String.Empty;
+			lblFlash.Label=String.Empty;
+			lblFstop.Label=String.Empty;
+			lblImgDimensions.Label=String.Empty;
+			lblImgTitle.Label=String.Empty;
+			lblMeteringMode.Label=String.Empty;
+			lblResolutions.Label=String.Empty;
+			lblShutterSpeed.Label=String.Empty;
+			lblViewComments.Label=String.Empty;
 
 			using (ExifMetadata extractor = new ExifMetadata())
 			{
 				ExifMetadata.Metadata metaData=extractor.GetExifMetadata(FileName);
 
-				SetLabel((int)Controls.CameraModel         , metaData.CameraModel.DisplayValue);
-				SetLabel((int)Controls.DateTakenLabel      , metaData.DatePictureTaken.DisplayValue);
-				SetLabel((int)Controls.EquipmentMake       , metaData.EquipmentMake.DisplayValue);
-				SetLabel((int)Controls.ExposureCompensation, metaData.ExposureCompensation.DisplayValue);
-				SetLabel((int)Controls.ExposureTime        , metaData.ExposureTime.DisplayValue);
-				SetLabel((int)Controls.Flash               , metaData.Flash.DisplayValue);
-				SetLabel((int)Controls.Fstop               , metaData.Fstop.DisplayValue);
-				SetLabel((int)Controls.ImageDimensions     , metaData.ImageDimensions.DisplayValue);
-				SetLabel((int)Controls.ImageTitleLabel     , System.IO.Path.GetFileNameWithoutExtension(FileName));
-				SetLabel((int)Controls.MeteringMode        , metaData.MeteringMode.DisplayValue);
-				SetLabel((int)Controls.Resolutions			   , metaData.Resolution.DisplayValue);
-				SetLabel((int)Controls.ShutterSpeed				 , metaData.ShutterSpeed.DisplayValue);
-				SetLabel((int)Controls.ViewComments				 , metaData.ViewerComments.DisplayValue);
+				lblCameraModel.Label         = metaData.CameraModel.DisplayValue;
+				lblDateTakenLabel.Label      = metaData.DatePictureTaken.DisplayValue;
+				lblEquipmentMake.Label       = metaData.EquipmentMake.DisplayValue;
+				lblExposureCompensation.Label= metaData.ExposureCompensation.DisplayValue;
+				lblExposureTime.Label        = metaData.ExposureTime.DisplayValue;
+				lblFlash.Label               = metaData.Flash.DisplayValue;
+				lblFstop.Label               = metaData.Fstop.DisplayValue;
+				lblImgDimensions.Label			 = metaData.ImageDimensions.DisplayValue;
+				lblImgTitle.Label						 = System.IO.Path.GetFileNameWithoutExtension(FileName);
+				lblMeteringMode.Label        = metaData.MeteringMode.DisplayValue;
+				lblResolutions.Label			   = metaData.Resolution.DisplayValue;
+				lblShutterSpeed.Label				 = metaData.ShutterSpeed.DisplayValue;
+				lblViewComments.Label				 = metaData.ViewerComments.DisplayValue;
 
-				GUIImage image = GetControl((int)Controls.Picture) as GUIImage;
-				if (image!=null)
-					image.IsVisible=false;
+				imgPicture.IsVisible=false;
 			}
 		}
 
-		void SetLabel(int label, string strLine)
-		{
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,label,0,0,null);
-			msg.Label=strLine; 
-			OnMessage(msg);
-		}
 
 		public override void Render(float timePassed)
 		{
 			RenderDlg(timePassed);
 			if (null == m_pTexture) return;
-			GUIControl pControl = (GUIControl)GetControl((int)Controls.Picture);
-			if (null != pControl)
-			{
-				float x = (float)pControl.XPosition;
-				float y = (float)pControl.YPosition;
-				int width;
-				int height;
-				GUIGraphicsContext.Correct(ref x, ref y);
+			float x = (float)imgPicture.XPosition;
+			float y = (float)imgPicture.YPosition;
+			int width;
+			int height;
+			GUIGraphicsContext.Correct(ref x, ref y);
 
-				GUIFontManager.Present();
-				GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, pControl.Width, pControl.Height, out width, out height);
-				MediaPortal.Util.Picture.RenderImage(ref m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
-			}
+			GUIFontManager.Present();
+			GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width, out height);
+			MediaPortal.Util.Picture.RenderImage(ref m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
 		}
 	}
 }
