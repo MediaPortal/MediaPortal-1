@@ -29,13 +29,13 @@ namespace MediaPortal.GUI.TV
 	  bool m_bNeedRefresh=false;
     DateTime m_dateTime=DateTime.Now;
 	  
-    ArrayList m_channels = new ArrayList();
+    ArrayList tvChannelList = new ArrayList();
 
     public GUITVZAPOSD()
     {
 		
 			GetID=(int)GUIWindow.Window.WINDOW_TVZAPOSD;
-			TVDatabase.GetChannels(ref m_channels);
+			TVDatabase.GetChannels(ref tvChannelList);
     }
 
     public override bool Init()
@@ -54,17 +54,9 @@ namespace MediaPortal.GUI.TV
     public override void Render(float timePassed)
     {
       UpdateProgressBar();
-      SetVideoProgress();			// get the percentage of playback complete so far
-      Get_TimeInfo();				// show the time elapsed/total playing time
+      Get_TimeInfo();							// show the time elapsed/total playing time
       base.Render(timePassed);		// render our controls to the screen
     }
-
-    void FocusControl (int dwSenderId, int dwControlID, int dwParam) 
-    {
-      GUIMessage msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_SETFOCUS,GetID, dwSenderId, dwControlID, dwParam,0,null); 
-      OnMessage(msg); 
-    }
-
 
     public override void OnAction(Action action)
     {
@@ -74,7 +66,6 @@ namespace MediaPortal.GUI.TV
         {
           return;
         }
-		    
 
 				case Action.ActionType.ACTION_NEXT_CHANNEL:
 				{
@@ -92,58 +83,27 @@ namespace MediaPortal.GUI.TV
       base.OnAction(action);
     }
 
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch ( message.Message )
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:	// fired when OSD is hidden
-        {
-          //if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(true);
-          // following line should stay. Problems with OSD not
-          // appearing are already fixed elsewhere
-          FreeResources();
-          return true;
-        }
-		    
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			FreeResources();
+			base.OnPageDestroy (newWindowId);
+		}
+		protected override void OnPageLoad()
+		{
+			// following line should stay. Problems with OSD not
+			// appearing are already fixed elsewhere
+			AllocResources();
+			// if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
+			ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+			m_bNeedRefresh=false;
+			m_dateTime=DateTime.Now;
+			SetCurrentChannelLogo();
+			base.OnPageLoad ();
+		}
 
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:	// fired when OSD is shown
-        {
-          // following line should stay. Problems with OSD not
-          // appearing are already fixed elsewhere
-          AllocResources();
-          // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
-          ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
-          m_bNeedRefresh=false;
-          m_dateTime=DateTime.Now;
-          SetCurrentChannelLogo();
-          return true;
-        }
-      		    
-
-      }
-      return base.OnMessage(message);
-    }
-
-
-
-    void SetVideoProgress()
-    {
-    
-      if (g_Player.Playing)
-      {
-       //   double fPercentage=g_Player.CurrentPosition / g_Player.Duration;
-       //       GUIProgressControl pControl = (GUIProgressControl)GetControl((int)Controls.OSD_VIDEOPROGRESS);
-       //     if (null!=pControl) pControl.Percentage=(int)(100*fPercentage);			// Update our progress bar accordingly ...
-
-        //int iValue=g_Player.Volume;
-        //GUISliderControl pSlider = GetControl((int)Controls.OSD_VOLUMESLIDER) as GUISliderControl;
-        //if (null!=pSlider) pSlider.Percentage=iValue;			// Update our progress bar accordingly ...
-      }
-    }
 
     void Get_TimeInfo()
     {
-      
       string strChannel=GetChannelName();
       string strTime=strChannel;
       TVProgram prog=GUITVHome.Navigator.GetTVChannel(strChannel).CurrentProgram;
@@ -159,17 +119,6 @@ namespace MediaPortal.GUI.TV
 				lblCurrentTime.Label=strTime;
 			}
     }
-
-    void Handle_ControlSetting(int iControlID, long wID)
-    {
-    
-      string strMovie=g_Player.CurrentFile;
-      //      CVideoDatabase dbs;
-      //    VECBOOKMARKS bookmarks;
-
-    }
-
-   
 
     public override void	 ResetAllControls()
     {
@@ -378,4 +327,3 @@ namespace MediaPortal.GUI.TV
 	  }
   }
 }
-  
