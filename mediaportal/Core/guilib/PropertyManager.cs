@@ -12,7 +12,7 @@ namespace MediaPortal.GUI.Library
 	{
     static Hashtable m_properties = new Hashtable();
     static bool m_bChanged=false;
-		public delegate void OnPropertyChangedHandler(string tag, string value);
+		public delegate void OnPropertyChangedHandler(string tag, string tagValue);
 		static public event OnPropertyChangedHandler     OnPropertyChanged;
 
 		/// <summary>
