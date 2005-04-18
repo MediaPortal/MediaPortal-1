@@ -16,19 +16,19 @@ namespace MediaPortal.Music.Database
     public class CArtistCache
     {
       public int idArtist = 0;
-      public string strArtist = "";
+      public string strArtist = String.Empty;
     };
 
     public class CPathCache
     {
       public int idPath = 0;
-      public string strPath = "";
+      public string strPath = String.Empty;
     };
 
     public class CGenreCache
     {
       public int idGenre = 0;
-      public string strGenre = "";
+      public string strGenre = String.Empty;
     };
 
     public class AlbumInfoCache : AlbumInfo
@@ -475,21 +475,21 @@ namespace MediaPortal.Music.Database
         strTmp = song.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Genre = strTmp;
         strTmp = song.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Artist = strTmp;
         strTmp = song.Title; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Title = strTmp;
+				strTmp = song.FileName; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.FileName = strTmp;
 
         string strPath, strFileName;
-        DatabaseUtility.Split(song1.FileName, out strPath, out strFileName);
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
+        DatabaseUtility.Split(song.FileName, out strPath, out strFileName);
 
         if (null == m_db) return;
-        int lGenreId = AddGenre(song1.Genre);
-        int lArtistId = AddArtist(song1.Artist);
+        int lGenreId = AddGenre(song.Genre);
+        int lArtistId = AddArtist(song.Artist);
         int lPathId = AddPath(strPath);
-        int lAlbumId = AddAlbum(song1.Album, lArtistId);
+        int lAlbumId = AddAlbum(song.Album, lArtistId);
 
         ulong dwCRC = 0;
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
-        dwCRC = crc.calc(song1.FileName);
+        dwCRC = crc.calc(song.FileName);
         SQLiteResultSet results;
 
         if (bCheck)
@@ -517,7 +517,6 @@ namespace MediaPortal.Music.Database
           strFileName, 0,song.Rating, iFavorite);
 				song1.songId=m_db.LastInsertID();
 
-
         m_db.Execute(strSQL);
       }
       catch (Exception ex) 
@@ -526,6 +525,121 @@ namespace MediaPortal.Music.Database
 				Open();
       }
     }
+
+		public void DeleteSong(string strFileName, bool bCheck)
+		{
+			try
+			{
+				int lGenreId = -1;
+				int lArtistId = -1;
+				int lPathId = -1;
+				int lAlbumId = -1;
+				int lSongId = -1;
+			
+				DatabaseUtility.RemoveInvalidChars(ref strFileName);
+
+				string strPath, strFName;
+				DatabaseUtility.Split(strFileName, out strPath, out strFName);
+
+				if (null == m_db) return;
+
+				CRCTool crc = new CRCTool();
+				crc.Init(CRCTool.CRCCode.CRC32);
+				ulong dwCRC = crc.calc(strFileName);
+
+				string strSQL;
+				strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and dwFileNameCRC='{0}' and strPath='{1}'",
+					dwCRC, 
+					strPath);
+
+				SQLiteResultSet results;
+				results = m_db.Execute(strSQL);
+				if (results.Rows.Count > 0)
+				{
+					lArtistId= Int32.Parse(DatabaseUtility.Get(results, 0, "artist.idArtist"));
+					lAlbumId= Int32.Parse(DatabaseUtility.Get(results, 0, "album.idAlbum"));
+					lGenreId= Int32.Parse(DatabaseUtility.Get(results, 0, "genre.idGenre"));
+					lPathId= Int32.Parse(DatabaseUtility.Get(results, 0, "path.idPath"));
+					lSongId= Int32.Parse(DatabaseUtility.Get(results, 0, "song.idSong"));
+				
+					// Delete
+					strSQL = String.Format("delete from song where song.idSong={0}", lSongId);
+					m_db.Execute(strSQL);
+
+					if (bCheck)
+					{
+						// Check albums
+						strSQL = String.Format("select * from song where song.idAlbum={0}", lAlbumId);					
+						results = m_db.Execute(strSQL);
+						if (results.Rows.Count == 0)
+						{
+							// Delete album with no songs
+							strSQL = String.Format("delete from album where idAlbum={0}",lAlbumId);
+							m_db.Execute(strSQL);
+
+							// Delete album info
+							strSQL = String.Format("delete from albuminfo where idAlbum={0}",lAlbumId);
+							m_db.Execute(strSQL);
+						}
+					
+						// Check artists
+						strSQL = String.Format("select * from song where song.idArtist={0}", lArtistId);
+						results = m_db.Execute(strSQL);
+						if (results.Rows.Count == 0) 
+						{					
+							// Delete artist with no songs
+							strSQL = String.Format("delete from artist where idArtist={0}", lArtistId);
+							m_db.Execute(strSQL);
+
+							// Delete artist info
+							strSQL = String.Format("delete from artistinfo where idArtist={0}", lArtistId);
+							m_db.Execute(strSQL);
+						}
+
+						// Check path
+						strSQL = String.Format("select * from song where song.idPath={0}", lPathId);
+						results = m_db.Execute(strSQL);
+						if (results.Rows.Count == 0) 
+						{
+							// Delete path with no songs
+							strSQL = String.Format("delete from path where idPath={0}", lPathId);
+							m_db.Execute(strSQL);
+						
+							// remove from cache
+							foreach (CPathCache path in m_pathCache)
+							{
+								if (path.idPath == lPathId)
+								{
+									int iIndex=m_pathCache.IndexOf(path);
+									if (iIndex!=-1)
+									{
+										m_pathCache.RemoveAt(iIndex);
+									}
+								}
+							}
+						}
+
+						// Check genre
+						strSQL = String.Format("select * from song where song.idGenre={0}", lGenreId);
+						results = m_db.Execute(strSQL);
+						if (results.Rows.Count == 0) 
+						{
+							// delete genre with no songs
+							strSQL = String.Format("delete from genre where idGenre={0}", lGenreId);
+							m_db.Execute(strSQL);
+						}				
+					}
+				}
+				return;
+			}
+			catch (Exception ex) 
+			{
+				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Open();
+			}
+
+			return;
+		}
 
     public bool GetSongByFileName(string strFileName1, ref Song song)
     {
@@ -811,7 +925,7 @@ namespace MediaPortal.Music.Database
 			  if (null == m_db) 
 				  return false;
     		
-			  string strSQL="";
+			  string strSQL=String.Empty;
 			  switch (searchKind)
 			  {
 				  case 0:
@@ -826,6 +940,8 @@ namespace MediaPortal.Music.Database
 				  case 3:
 					  strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and strTitle like '{0}'",strTitle);
 					  break;
+					default:
+						return false;
 			  }
 			  
 			  SQLiteResultSet results;
@@ -839,8 +955,8 @@ namespace MediaPortal.Music.Database
 				  GUIListItem item = new GUIListItem();
 				  item.IsFolder = false;
 				  item.Label = Utils.GetFilename(strFileName);
-				  item.Label2 = "";
-				  item.Label3="";
+				  item.Label2 = String.Empty;
+				  item.Label3 = String.Empty;
 				  item.Path = strFileName;
 				  item.FileInfo = new FileInformation(strFileName);
 				  Utils.SetDefaultIcons(item);
@@ -865,11 +981,10 @@ namespace MediaPortal.Music.Database
 			  string strArtist2=strArtist1;
 			  if (null == m_db) return false;
     		
-
 			  // Exclude "Various Artists"
 			  string strVariousArtists = GUILocalizeStrings.Get(340);
 			  long lVariousArtistId = AddArtist(strVariousArtists);
-			  string strSQL="";
+			  string strSQL=String.Empty;
 			  switch (searchKind)
 			  {
 				  case 0:
@@ -884,6 +999,8 @@ namespace MediaPortal.Music.Database
 				  case 3:
 					  strSQL = String.Format("select * from artist where strArtist like '{0}' ", strArtist2);
 					  break;
+					default:
+						return false;
 			  }
 
 			  SQLiteResultSet results;
@@ -978,7 +1095,7 @@ namespace MediaPortal.Music.Database
 			  albums.Clear();
 			  if (null == m_db) return false;
     		
-			  string strSQL="";
+			  string strSQL=String.Empty;
 			  switch (searchKind)
 			  {
 				  case 0:
@@ -993,6 +1110,8 @@ namespace MediaPortal.Music.Database
 				  case 3:
 					  strSQL = String.Format("select * from album,artist where album.idArtist=artist.idArtist and album.strAlbum like '{0}'",strAlbum);
 					  break;
+					default:
+						return false;
 			  }
 					  //strSQL=String.Format("select distinct album.idAlbum, album.idArtist, album.strAlbum, artist.idArtist, artist.strArtist from album,artist,song where song.idArtist=artist.idArtist and song.idAlbum=album.idAlbum");
 			  SQLiteResultSet results;
@@ -1049,7 +1168,7 @@ namespace MediaPortal.Music.Database
 			  genres.Clear();
 			  string strGenere=strGenere1;
 			  if (null == m_db) return false;
-			  string strSQL="";
+			  string strSQL=String.Empty;
 			  switch (searchKind)
 			  {
 				  case 0:
@@ -1064,6 +1183,8 @@ namespace MediaPortal.Music.Database
 				  case 3:
 					  strSQL = String.Format("select * from genre where strGenre like '{0}'",strGenere);
 					  break;
+					default:
+						return false;
 			  }
 			  SQLiteResultSet results;
 			  results = m_db.Execute(strSQL);
