@@ -661,17 +661,23 @@ namespace MediaPortal.GUI.Library
 
     void Calculate()
     {
+
       float fWidth=0,fHeight=0;
-  
+			if (m_pFont==null) return;
       m_pFont.GetTextExtent( "y", ref fWidth,ref fHeight);
       //fHeight+=10.0f;
 
       //fHeight+=2;
-      m_iItemHeight			= (int)fHeight;
-
-      
+			if (fHeight<=0) fHeight=1;
+			m_iItemHeight			= (int)fHeight;
+			
       float fTotalHeight= (float)(m_dwHeight);
       m_iItemsPerPage		= (int)(fTotalHeight / fHeight);
+			if (m_iItemsPerPage==0) 
+			{
+				m_iItemsPerPage=1;
+			}
+
       int iPages=m_vecItems.Count / m_iItemsPerPage;
       if ((m_vecItems.Count % m_iItemsPerPage) >0)iPages++;
       if (iPages>1)
@@ -679,6 +685,8 @@ namespace MediaPortal.GUI.Library
         fTotalHeight= (float)(m_dwHeight-m_upDown.Height-5);
         m_iItemsPerPage		= (int)(fTotalHeight / fHeight);
 
+				if (m_iItemsPerPage==0) 
+					m_iItemsPerPage=1;
         iPages=m_vecItems.Count / m_iItemsPerPage;
         if ((m_vecItems.Count % m_iItemsPerPage) >0)iPages++;
       }
