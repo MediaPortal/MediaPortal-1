@@ -36,10 +36,8 @@ namespace MediaPortal.TV.Recording
     };
     protected int                     m_cardID=-1;
     protected string                  m_strVideoCaptureFilter="";
-#if (UseCaptureCardDefinitions)
 		protected TVCaptureDevice         mCard;
 		protected string									m_strVideoCaptureMoniker="";
-#endif
     protected IGraphBuilder           m_graphBuilder=null;
     protected ICaptureGraphBuilder2   m_captureGraphBuilder=null;
     protected IBaseFilter             m_captureFilter=null;
@@ -75,10 +73,7 @@ namespace MediaPortal.TV.Recording
       m_bUseCable=bCable;
       m_iCountryCode=iCountryCode;
       m_graphState=State.None;
-			// #MW# Mistake???
-			//#if (UseCaptureCardDefinitions)
       m_strVideoCaptureFilter=strVideoCaptureFilter;
-			//#endif
       m_FrameSize = frameSize;
       m_FrameRate = frameRate;
 
@@ -97,7 +92,6 @@ namespace MediaPortal.TV.Recording
       catch(Exception){}
 		}
 
-#if (UseCaptureCardDefinitions)
 		/// <summary>
 		/// #MW# Added simple call while passing card object
 		/// Easier to handle and to extent...
@@ -130,9 +124,6 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception){}
 		}
-#endif
-
-#if (UseCaptureCardDefinitions)
 		/// <summary>
 		/// #MW#, Added moniker name... ie the REAL device!!!
 		/// </summary>
@@ -169,7 +160,6 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception){}
 		}
-#endif
     /// <summary>
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
@@ -342,11 +332,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-#if (UseCaptureCardDefinitions)
 		public virtual void DeleteGraph()
-#else
-		public void DeleteGraph()
-#endif
     {
       if (m_graphState < State.Created) return;
 
@@ -724,10 +710,6 @@ namespace MediaPortal.TV.Recording
 
 			AddPreferredCodecs(true,true);
       
-#if (!UseCaptureCardDefinitions)
-			// #MW# Next call is already done while creating graph, so obsolete?!?!
-			ConnectVideoCaptureToMPEG2Demuxer();
-#endif
 			m_graphState=State.Viewing;
 			TuneChannel(channel);
 			m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9);

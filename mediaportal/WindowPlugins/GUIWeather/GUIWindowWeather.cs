@@ -84,31 +84,31 @@ namespace MediaPortal.GUI.Weather
 		ArrayList		m_locations		= new ArrayList();
 		string			m_strWeatherFTemp = "C";
 		string			m_strWeatherFSpeed = "K";
-		int             m_iWeatherRefresh = 30;
-		string			m_szLocation	= "";
-		string			m_szUpdated		= "";
+		int         m_iWeatherRefresh = 30;
+		string			m_szLocation	= String.Empty;
+		string			m_szUpdated		= String.Empty;
 		string			m_szNowIcon		= @"weather\128x128\na.png";
-		string			m_szNowCond		= "";
-		string			m_szNowTemp		= "";
-		string			m_szNowFeel		= "";
-		string			m_szNowUVId		= "";
-		string			m_szNowWind		= "";
-		string			m_szNowDewp		= "";
-		string			m_szNowHumd		= "";
-		string			m_szForcastUpdated = "";
+		string			m_szNowCond		= String.Empty;
+		string			m_szNowTemp		= String.Empty;
+		string			m_szNowFeel		= String.Empty;
+		string			m_szNowUVId		= String.Empty;
+		string			m_szNowWind		= String.Empty;
+		string			m_szNowDewp		= String.Empty;
+		string			m_szNowHumd		= String.Empty;
+		string			m_szForcastUpdated = String.Empty;
 
-		day_forcast[]	m_dfForcast		= new 	day_forcast[NUM_DAYS];
-		GUIImage		m_pNowImage		= null;
-		string          m_strSatelliteURL = "";
-		string          m_strTemperatureURL = "";
-		string          m_strUVIndexURL	= "";
-		string          m_strWindsURL	= "";
-		string          m_strHumidityURL= "";
-		string          m_strPrecipitationURL = "";
-		string			m_strViewImageURL= "";
+		day_forcast[]		m_dfForcast		= new 	day_forcast[NUM_DAYS];
+		GUIImage				m_pNowImage		= null;
+		string          m_strSatelliteURL = String.Empty;
+		string          m_strTemperatureURL = String.Empty;
+		string          m_strUVIndexURL	= String.Empty;
+		string          m_strWindsURL	= String.Empty;
+		string          m_strHumidityURL= String.Empty;
+		string          m_strPrecipitationURL = String.Empty;
+		string					m_strViewImageURL= String.Empty;
 		DateTime        m_lRefreshTime	= DateTime.Now.AddHours(-1);		//for autorefresh
-		int				m_iDayNum	= -2;
-		string			m_strSelectedDayName = "All";
+		int							m_iDayNum	= -2;
+		string					m_strSelectedDayName = "All";
 
 		enum Mode
 		{
@@ -135,10 +135,10 @@ namespace MediaPortal.GUI.Weather
 			{
 				m_dfForcast[i].m_szIconLow= @"weather\64x64\na.png";
 				m_dfForcast[i].m_szIconHigh= @"weather\128x128\na.png";
-				m_dfForcast[i].m_szOverview= "";
-				m_dfForcast[i].m_szDay= "";
-				m_dfForcast[i].m_szHigh= "";
-				m_dfForcast[i].m_szLow= "";
+				m_dfForcast[i].m_szOverview= String.Empty;
+				m_dfForcast[i].m_szDay= String.Empty;
+				m_dfForcast[i].m_szHigh= String.Empty;
+				m_dfForcast[i].m_szLow= String.Empty;
 			}
 			GetID=(int)GUIWindow.Window.WINDOW_WEATHER;
 
@@ -204,7 +204,7 @@ namespace MediaPortal.GUI.Weather
 					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT,iSelected);
 
 					TimeSpan ts=DateTime.Now-m_lRefreshTime;
-					if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!="" )
+					if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!=String.Empty )
 					{
 						RefreshMe(false);	//do an autoUpdate refresh
 					}
@@ -459,7 +459,7 @@ namespace MediaPortal.GUI.Weather
 			m_locations.Clear();
 			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				m_strLocation=xmlreader.GetValueAsString("weather","location","");
+				m_strLocation=xmlreader.GetValueAsString("weather","location",String.Empty);
 				m_strWeatherFTemp=xmlreader.GetValueAsString("weather","temperature","C");
 				m_strWeatherFSpeed=xmlreader.GetValueAsString("weather","speed","K");
 				m_iWeatherRefresh=xmlreader.GetValueAsInt("weather","refresh",30);
@@ -475,14 +475,14 @@ namespace MediaPortal.GUI.Weather
 					string strWindsUrlTag=String.Format("winds{0}",i);
 					string strHumidUrlTag=String.Format("humid{0}",i);
 					string strPrecipUrlTag=String.Format("precip{0}",i);
-					string strCity=xmlreader.GetValueAsString("weather",strCityTag,"");
-					string strCode=xmlreader.GetValueAsString("weather",strCodeTag,"");
-					string strSatURL=xmlreader.GetValueAsString("weather",strSatUrlTag,"");
-					string strTempURL=xmlreader.GetValueAsString("weather",strTempUrlTag,"");
-					string strUVURL=xmlreader.GetValueAsString("weather",strUVUrlTag,"");
-					string strWindsURL=xmlreader.GetValueAsString("weather",strWindsUrlTag,"");
-					string strHumidURL=xmlreader.GetValueAsString("weather",strHumidUrlTag,"");
-					string strPrecipURL=xmlreader.GetValueAsString("weather",strPrecipUrlTag,"");
+					string strCity=xmlreader.GetValueAsString("weather",strCityTag,String.Empty);
+					string strCode=xmlreader.GetValueAsString("weather",strCodeTag,String.Empty);
+					string strSatURL=xmlreader.GetValueAsString("weather",strSatUrlTag,String.Empty);
+					string strTempURL=xmlreader.GetValueAsString("weather",strTempUrlTag,String.Empty);
+					string strUVURL=xmlreader.GetValueAsString("weather",strUVUrlTag,String.Empty);
+					string strWindsURL=xmlreader.GetValueAsString("weather",strWindsUrlTag,String.Empty);
+					string strHumidURL=xmlreader.GetValueAsString("weather",strHumidUrlTag,String.Empty);
+					string strPrecipURL=xmlreader.GetValueAsString("weather",strPrecipUrlTag,String.Empty);
 					if (strCity.Length>0 && strCode.Length>0)
 					{
 						if (strSatURL.Length==0)
@@ -786,7 +786,7 @@ namespace MediaPortal.GUI.Weather
 		//convert weather.com day strings into localized string id's
 		string LocalizeDay(string szDay)
 		{
-			string strLocDay="";
+			string strLocDay=String.Empty;
 
 			if(szDay== "Monday" )			//monday is localized string 11
 				strLocDay = GUILocalizeStrings.Get(11);
@@ -803,7 +803,7 @@ namespace MediaPortal.GUI.Weather
 			else if(szDay== "Sunday" )
 				strLocDay = GUILocalizeStrings.Get(17);
 			else
-				strLocDay = "";
+				strLocDay = String.Empty;
 
 			return strLocDay ;
 		}
@@ -811,11 +811,11 @@ namespace MediaPortal.GUI.Weather
 		
 		string LocalizeOverview(string szToken)
 		{
-			string strLocStr="";
+			string strLocStr=String.Empty;
 
 			foreach (string szTokenSplit in szToken.Split(' '))
 			{
-				string strLocWord="";
+				string strLocWord=String.Empty;
 			
 				if(String.Compare(szTokenSplit, "T-Storms",true) == 0)
 					strLocWord = GUILocalizeStrings.Get(370);
@@ -868,7 +868,7 @@ namespace MediaPortal.GUI.Weather
 				else if(String.Compare(szTokenSplit, "N/A",true) == 0)
 					strLocWord = GUILocalizeStrings.Get(394);
 
-				if(strLocWord == "")
+				if(strLocWord == String.Empty)
 					strLocWord = szTokenSplit;	//if not found, let fallback
 					
 				strLocStr = strLocStr + strLocWord;
@@ -913,7 +913,7 @@ namespace MediaPortal.GUI.Weather
 				if(m_szLocation.Length > 1)							//got the location string yet?
 					pDlgProgress.SetLine(2, m_szLocation);
 				//else
-				//	pDlgProgress.SetLine(3, "");
+				//	pDlgProgress.SetLine(3, String.Empty);
 				pDlgProgress.StartModal(GetID);
 				pDlgProgress.Progress();
 			}	
@@ -933,8 +933,8 @@ namespace MediaPortal.GUI.Weather
 				// show failed dialog...
 				pDlgOK.SetHeading(412);	//"Unable to get weather data"
 				pDlgOK.SetLine(1, m_szLocation);
-				pDlgOK.SetLine(2, "");
-				pDlgOK.SetLine(3, "");
+				pDlgOK.SetLine(2, String.Empty);
+				pDlgOK.SetLine(3, String.Empty);
 				pDlgOK.DoModal(GetID);
 			} 
 			else if(dlRes && ldRes)	//download and load went ok so update
@@ -996,9 +996,9 @@ namespace MediaPortal.GUI.Weather
 		bool LoadWeather(string strWeatherFile)
 		{
 			int			iTmpInt=0;
-			string	iTmpStr="";
-			string	szUnitTemp="";
-			string	szUnitSpeed="";
+			string	iTmpStr=String.Empty;
+			string	szUnitTemp=String.Empty;
+			string	szUnitSpeed=String.Empty;
 			DateTime time=DateTime.Now;
 			
 			// load the xml file
@@ -1018,7 +1018,7 @@ namespace MediaPortal.GUI.Weather
 				pDlgOK.SetHeading(412);	//"Unable to get weather data"
 				pDlgOK.SetLine(1, szCheckError);
 				pDlgOK.SetLine(2, m_szLocation);
-				pDlgOK.SetLine(3, "");
+				pDlgOK.SetLine(3, String.Empty);
 				pDlgOK.DoModal(GetID);
 				return true;	//we got a message so do display a second in refreshme()
 			}
@@ -1037,19 +1037,19 @@ namespace MediaPortal.GUI.Weather
 			XmlNode pElement = pRootElement.SelectSingleNode("loc");
 			if(null!=pElement)
 			{
-				GetString(pElement, "dnam",out m_szLocation, "");
+				GetString(pElement, "dnam",out m_szLocation, String.Empty);
 			}
 
 			//current weather
 			pElement = pRootElement.SelectSingleNode("cc");
 			if(null!=pElement)
 			{
-				GetString(pElement, "lsup", out m_szUpdated, "");
+				GetString(pElement, "lsup", out m_szUpdated, String.Empty);
 
 				GetInteger(pElement, "icon",out iTmpInt);
 				m_szNowIcon=String.Format(@"weather\128x128\{0}.png", iTmpInt);
 
-				GetString(pElement, "t",out m_szNowCond, "");			//current condition
+				GetString(pElement, "t",out m_szNowCond, String.Empty);			//current condition
 				m_szNowCond=LocalizeOverview(m_szNowCond);
 				SplitLongString(ref m_szNowCond, 8, 15);				//split to 2 lines if needed
 
@@ -1082,7 +1082,7 @@ namespace MediaPortal.GUI.Weather
 				if(null!=pNestElement)
 				{
 					GetInteger(pNestElement, "i",out iTmpInt);	
-					GetString(pNestElement, "t",out  iTmpStr, "");
+					GetString(pNestElement, "t",out  iTmpStr, String.Empty);
 					m_szNowUVId=String.Format( "{0} {1}", iTmpInt, iTmpStr);
 				}
 
@@ -1092,7 +1092,7 @@ namespace MediaPortal.GUI.Weather
 			}
 			//future forcast
 			pElement = pRootElement.SelectSingleNode("dayf");
-			GetString(pElement, "lsup", out m_szForcastUpdated, "");
+			GetString(pElement, "lsup", out m_szForcastUpdated, String.Empty);
 			if(null!=pElement)
 			{
 				XmlNode pOneDayElement = pElement.SelectSingleNode("day");;
@@ -1103,27 +1103,27 @@ namespace MediaPortal.GUI.Weather
 						m_dfForcast[i].m_szDay= pOneDayElement.Attributes.GetNamedItem("t").InnerText;
 						m_dfForcast[i].m_szDay=LocalizeDay(m_dfForcast[i].m_szDay);
 
-						GetString(pOneDayElement, "hi",out  iTmpStr, "");	//string cause i've seen it return N/A
+						GetString(pOneDayElement, "hi",out  iTmpStr, String.Empty);	//string cause i've seen it return N/A
 						if(iTmpStr== "N/A")
-							m_dfForcast[i].m_szHigh= "";
+							m_dfForcast[i].m_szHigh= String.Empty;
 						else
 							m_dfForcast[i].m_szHigh=String.Format( "{0}{1}{2}", iTmpStr, DEGREE_CHARACTER, szUnitTemp);	
 
-						GetString(pOneDayElement, "low",out  iTmpStr, "");
+						GetString(pOneDayElement, "low",out  iTmpStr, String.Empty);
 						if(iTmpStr== "N/A")
-							m_dfForcast[i].m_szHigh= "";
+							m_dfForcast[i].m_szHigh= String.Empty;
 						else
 							m_dfForcast[i].m_szLow=String.Format( "{0}{1}{2}", iTmpStr, DEGREE_CHARACTER, szUnitTemp);
 
-						GetString(pOneDayElement, "sunr", out  iTmpStr, "");
+						GetString(pOneDayElement, "sunr", out  iTmpStr, String.Empty);
 						if(iTmpStr== "N/A")
-							m_dfForcast[i].m_szSunRise= "";
+							m_dfForcast[i].m_szSunRise= String.Empty;
 						else
 							m_dfForcast[i].m_szSunRise=String.Format( "{0}", iTmpStr);
 						
-						GetString(pOneDayElement, "suns", out  iTmpStr, "");
+						GetString(pOneDayElement, "suns", out  iTmpStr, String.Empty);
 						if(iTmpStr== "N/A")
-							m_dfForcast[i].m_szSunSet= "";
+							m_dfForcast[i].m_szSunSet= String.Empty;
 						else
 							m_dfForcast[i].m_szSunSet=String.Format( "{0}", iTmpStr);
 						XmlNode pDayTimeElement = pOneDayElement.SelectSingleNode("part");	//grab the first day/night part (should be day)
@@ -1135,7 +1135,7 @@ namespace MediaPortal.GUI.Weather
 							GetInteger(pDayTimeElement, "icon",out iTmpInt);
 							m_dfForcast[i].m_szIconLow=String.Format( "weather\\64x64\\{0}.png", iTmpInt);
 							m_dfForcast[i].m_szIconHigh=String.Format( "weather\\128x128\\{0}.png", iTmpInt);
-							GetString(pDayTimeElement, "t",out  m_dfForcast[i].m_szOverview, "");
+							GetString(pDayTimeElement, "t",out  m_dfForcast[i].m_szOverview, String.Empty);
 							m_dfForcast[i].m_szOverview=LocalizeOverview(m_dfForcast[i].m_szOverview);
 							SplitLongString(ref m_dfForcast[i].m_szOverview, 6, 15);
 							GetInteger(pDayTimeElement, "hmid",out iTmpInt);
@@ -1169,7 +1169,7 @@ namespace MediaPortal.GUI.Weather
 		
 		void GetString(XmlNode pRootElement, string strTagName, out string szValue, string strDefaultValue)
 		{
-			szValue="";
+			szValue=String.Empty;
 
 			XmlNode node=pRootElement.SelectSingleNode(strTagName);
 			if (node !=null)
@@ -1189,7 +1189,7 @@ namespace MediaPortal.GUI.Weather
 		public override void Process()
 		{
 			TimeSpan ts=DateTime.Now-m_lRefreshTime;
-			if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!="" )
+			if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!=String.Empty )
 			{
 				m_strSelectedDayName="All";
 				m_iDayNum=-2;
@@ -1245,9 +1245,9 @@ namespace MediaPortal.GUI.Weather
 		public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
 		{
 			strButtonText = GUILocalizeStrings.Get(8);
-			strButtonImage = "";
-			strButtonImageFocus = "";
-			strPictureImage = "";
+			strButtonImage = String.Empty;
+			strButtonImageFocus = String.Empty;
+			strPictureImage = String.Empty;
 			return true;
 		}
 

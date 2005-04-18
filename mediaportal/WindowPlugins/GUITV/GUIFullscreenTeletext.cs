@@ -22,21 +22,15 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVFullscreenTeletext : GUIWindow
 	{
-		enum Controls
-		{
-			LBL_MESSAGE=27,
-			IMG_TELETEXT_PAGE=500,
-		};
+		[SkinControlAttribute(27)]				protected GUILabelControl lblMessage=null;
+		[SkinControlAttribute(500)]				protected GUIImage imgTeletext=null;
 
-		DVBTeletext	m_teleText;
-		Bitmap	m_pageBitmap;
-		string	m_strInput="";
-		int		m_actualPage=100;
-		int		m_actualSubPage=0;
-		bool	m_pageDirty=false;
-
-
-
+		DVBTeletext	dvbTeletextParser;
+		Bitmap			bmpTeletextPage;
+		string			inputLine=String.Empty;
+		int					acutalPageNumber=100;
+		int					actualSubPageNumber=0;
+		bool				isPageDirty=false;
 
 		public  GUITVFullscreenTeletext()
 		{
@@ -69,14 +63,9 @@ namespace MediaPortal.GUI.TV
 		{
 			switch (action.wID)
 			{
-				case Action.ActionType.ACTION_PREVIOUS_MENU:
-				{
-					GUIWindowManager.ShowPreviousWindow();
-					return;
-				}
 				case Action.ActionType.ACTION_KEY_PRESSED:
 					if (action.m_key!=null)
-						OnKeyCode((char)action.m_key.KeyChar);
+						OnKeyPressed((char)action.m_key.KeyChar);
 					break;
 
 				case Action.ActionType.ACTION_SELECT_ITEM:
@@ -86,138 +75,118 @@ namespace MediaPortal.GUI.TV
 			base.OnAction(action);
 			
 		}
-		public override bool OnMessage(GUIMessage message)
+		protected override void OnPageDestroy(int newWindowId)
 		{
-			switch ( message.Message )
+			if ( !GUITVHome.IsTVWindow(newWindowId) )
 			{
-
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+				if (! g_Player.Playing)
 				{
-					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					if (GUIGraphicsContext.ShowBackground)
 					{
-						if (! g_Player.Playing)
-						{
-							if (GUIGraphicsContext.ShowBackground)
-							{
-								// stop timeshifting & viewing... 
+						// stop timeshifting & viewing... 
 	              
-								Recorder.StopViewing();
-							}
-						}
+						Recorder.StopViewing();
 					}
-					base.OnMessage(message);
-					return true;
 				}
-
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-				{
-					base.OnMessage(message);
-					ShowMessage(100,0);
-					
-					if(m_teleText==null)
-					{
-						Log.Write("dvb-teletext: no teletext object");
-						GUIWindowManager.ShowPreviousWindow();
-						return false;
-					}
-					GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
-					if(pictureBox!=null && m_teleText!=null)
-					{
-						pictureBox.Width=GUIGraphicsContext.OverScanWidth;
-						pictureBox.Height=GUIGraphicsContext.OverScanHeight;
-						pictureBox.XPosition=GUIGraphicsContext.OverScanLeft;
-						pictureBox.YPosition=GUIGraphicsContext.OverScanTop;
-						m_teleText.SetPageSize(pictureBox.Width,pictureBox.Height);
-					}
-					m_actualPage=100;
-					m_actualSubPage=0;
-					GetNewPage();
-
-					return true;
-				}
-					//break;
-
-				case GUIMessage.MessageType.GUI_MSG_CLICKED:
-					int iControl=message.SenderControlId;
-
-					break;
-
 			}
-			return base.OnMessage(message);;
+			base.OnPageDestroy (newWindowId);
 		}
+
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			ShowMessage(100,0);
+					
+			if(dvbTeletextParser==null)
+			{
+				Log.Write("dvb-teletext: no teletext object");
+				GUIWindowManager.ShowPreviousWindow();
+				return ;
+			}
+			if(imgTeletext!=null && dvbTeletextParser!=null)
+			{
+				imgTeletext.Width=GUIGraphicsContext.OverScanWidth;
+				imgTeletext.Height=GUIGraphicsContext.OverScanHeight;
+				imgTeletext.XPosition=GUIGraphicsContext.OverScanLeft;
+				imgTeletext.YPosition=GUIGraphicsContext.OverScanTop;
+				dvbTeletextParser.SetPageSize(imgTeletext.Width,imgTeletext.Height);
+			}
+			acutalPageNumber=100;
+			actualSubPageNumber=0;
+			GetNewPage();
+		}
+
 
 		void GetNewPage()
 		{
-			if(m_teleText!=null)
+			if(dvbTeletextParser!=null)
 			{
-				m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
+				bmpTeletextPage=dvbTeletextParser.GetPage(acutalPageNumber,actualSubPageNumber);
 				Redraw();
-				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage),Convert.ToString(m_actualSubPage));
+				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(acutalPageNumber),Convert.ToString(actualSubPageNumber));
 			}
 		}
 
 
-		void OnKeyCode(char chKey)
+		void OnKeyPressed(char chKey)
 		{
-
-
 			if(chKey=='w' || chKey=='W')
 			{
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
 			}
 			if((chKey>='0'&& chKey <='9') || (chKey=='+' || chKey=='-')) //navigation
 			{
-				if (chKey=='0' && m_strInput.Length==0) return;
+				if (chKey=='0' && inputLine.Length==0) return;
 
 				// page up
-				if((byte)chKey==0x2B && m_actualPage<899) // +
+				if((byte)chKey==0x2B && acutalPageNumber<899) // +
 				{
-					m_actualPage++;
-					m_actualSubPage=0;
-					if(m_teleText!=null)
+					acutalPageNumber++;
+					actualSubPageNumber=0;
+					if(dvbTeletextParser!=null)
 					{
-						m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
+						bmpTeletextPage=dvbTeletextParser.GetPage(acutalPageNumber,actualSubPageNumber);
 						Redraw();
-						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage),Convert.ToString(m_actualSubPage));
-						m_strInput="";
+						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(acutalPageNumber),Convert.ToString(actualSubPageNumber));
+						inputLine=String.Empty;
 						return;
 					}
 
 				}
 				// page down
-				if((byte)chKey==0x2D && m_actualPage>100) // -
+				if((byte)chKey==0x2D && acutalPageNumber>100) // -
 				{
-					m_actualPage--;
-					m_actualSubPage=0;
-					if(m_teleText!=null)
+					acutalPageNumber--;
+					actualSubPageNumber=0;
+					if(dvbTeletextParser!=null)
 					{
-						m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
+						bmpTeletextPage=dvbTeletextParser.GetPage(acutalPageNumber,actualSubPageNumber);
 						Redraw();
-						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage),Convert.ToString(m_actualSubPage));
-						m_strInput="";
+						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(acutalPageNumber),Convert.ToString(actualSubPageNumber));
+						inputLine=String.Empty;
 						return;
 					}
 
 				}
 				if(chKey>='0' && chKey<='9')
-					m_strInput+= chKey;
+					inputLine+= chKey;
 
-				if (m_strInput.Length==3)
+				if (inputLine.Length==3)
 				{
 					// change channel
-					m_actualPage=Convert.ToInt16(m_strInput);
-					m_actualSubPage=0;
-					if(m_actualPage<100)
-						m_actualPage=100;
-					if(m_actualPage>899)
-						m_actualPage=899;
-					if(m_teleText!=null)
+					acutalPageNumber=Convert.ToInt16(inputLine);
+					actualSubPageNumber=0;
+					if(acutalPageNumber<100)
+						acutalPageNumber=100;
+					if(acutalPageNumber>899)
+						acutalPageNumber=899;
+					if(dvbTeletextParser!=null)
 					{
-						m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
+						bmpTeletextPage=dvbTeletextParser.GetPage(acutalPageNumber,actualSubPageNumber);
 						Redraw();
 					}
-					Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(m_actualPage),Convert.ToString(m_actualSubPage));
-					m_strInput="";
+					Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(acutalPageNumber),Convert.ToString(actualSubPageNumber));
+					inputLine=String.Empty;
 					
 				}
 				//
@@ -230,26 +199,24 @@ namespace MediaPortal.GUI.TV
 		{
 			if(obj.GetType()==typeof(DVBTeletext))
 			{
-				m_teleText=(DVBTeletext)obj;
-				if(m_teleText==null)
+				dvbTeletextParser=(DVBTeletext)obj;
+				if(dvbTeletextParser==null)
 					return;
-				m_teleText.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(m_teleText_PageUpdatedEvent);
-				m_teleText.TransparentMode=true;
+				dvbTeletextParser.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
+				dvbTeletextParser.TransparentMode=true;
 			}
 		}
 		//
 		//
 		void ShowMessage(int page,int subpage)
 		{
-
-			string msg=String.Format("Waiting for Page {0}/{1}...",page,subpage);
-			GUIControl.SetControlLabel(GetID,(int)Controls.LBL_MESSAGE,msg);
-			GUIControl.ShowControl(GetID,(int)Controls.LBL_MESSAGE);
+			lblMessage.Label=String.Format("Waiting for Page {0}/{1}...",page,subpage);
+			lblMessage.IsVisible=true;
 
 		}
 		//
 		//
-		private void m_teleText_PageUpdatedEvent()
+		private void dvbTeletextParser_PageUpdatedEvent()
 		{
 			// make sure the callback returns as soon as possible!!
 			// here is only a flag set to true, the bitmap is getting
@@ -257,18 +224,18 @@ namespace MediaPortal.GUI.TV
 
 			if(GUIWindowManager.ActiveWindow==GetID)
 			{
-				m_pageDirty=true;
+				isPageDirty=true;
 			}
 		}
 
 		public override void Process()
 		{
-			if(m_pageDirty==true)
+			if(isPageDirty==true)
 			{
-				Log.Write("dvb-teletext page updated. {0:X}/{1}",m_actualPage,m_actualSubPage);
-				m_pageBitmap=m_teleText.GetPage(m_actualPage,m_actualSubPage);
+				Log.Write("dvb-teletext page updated. {0:X}/{1}",acutalPageNumber,actualSubPageNumber);
+				bmpTeletextPage=dvbTeletextParser.GetPage(acutalPageNumber,actualSubPageNumber);
 				Redraw();
-				m_pageDirty=false;
+				isPageDirty=false;
 			}
 		}
 
@@ -278,27 +245,26 @@ namespace MediaPortal.GUI.TV
 			try
 			{
 
-				GUIImage pictureBox = (GUIImage )GetControl( (int)Controls.IMG_TELETEXT_PAGE);
-				if(m_pageBitmap==null)
+				if(bmpTeletextPage==null)
 				{
-					ShowMessage(m_actualPage,m_actualSubPage);
-					pictureBox.FreeResources();
-					pictureBox.SetFileName("button_small_settings_nofocus.png");
-					pictureBox.AllocResources();
+					ShowMessage(acutalPageNumber,actualSubPageNumber);
+					imgTeletext.FreeResources();
+					imgTeletext.SetFileName("button_small_settings_nofocus.png");
+					imgTeletext.AllocResources();
 					return;
 				}
-				GUIControl.HideControl(GetID,(int)Controls.LBL_MESSAGE);
+				lblMessage.IsVisible=false;
 
 				
-				pictureBox.FileName="";
-				pictureBox.FreeResources();
-				pictureBox.IsVisible=false;
+				imgTeletext.FileName=String.Empty;
+				imgTeletext.FreeResources();
+				imgTeletext.IsVisible=false;
 				Utils.FileDelete(@"teletext.jpg");
 				GUITextureManager.ReleaseTexture(@"teletext.jpg");
-				m_pageBitmap.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
-				pictureBox.FileName=@"teletext.jpg";
-				pictureBox.AllocResources();
-				pictureBox.IsVisible=true;
+				bmpTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+				imgTeletext.FileName=@"teletext.jpg";
+				imgTeletext.AllocResources();
+				imgTeletext.IsVisible=true;
 			}
 			catch (Exception ex)
 			{
