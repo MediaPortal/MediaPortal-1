@@ -20,17 +20,6 @@ namespace MediaPortal.GUI.TV
   {
     enum Controls 
     {
-      BTN_CHANNEL_UP=31,
-      BTN_CHANNEL_DOWN=32,
-      BTN_PROGRAM_LEFT=33,
-      BTN_PROGRAM_RIGHT=34,
-      LABEL_CURRENT_CHANNEL=35,
-      LABEL_ONTV_NOW=36,
-      LABEL_ONTV_NEXT=37,
-      PROGRESS_BAR=38,
-      REC_LOGO=39,
-      LABEL_CURRENT_TIME=100,
-
       OSD_VIDEOPROGRESS =1
       , OSD_SKIPBWD =210
       , OSD_REWIND =211
@@ -75,20 +64,31 @@ namespace MediaPortal.GUI.TV
       , OSD_SUBMENU_BG_BOOKMARKS =303
       , OSD_SUBMENU_BG_VIDEO =304
       , OSD_SUBMENU_BG_AUDIO =305
-      , OSD_SUBMENU_NIB =350,
-      TV_LOGO=10
+      , OSD_SUBMENU_NIB =350
     };
-    bool m_bSubMenuOn = false;
+
+		[SkinControlAttribute(36)]				protected GUITextControl tbOnTvNow=null;
+		[SkinControlAttribute(37)]				protected GUITextControl tbOnTvNext=null;
+		[SkinControlAttribute(100)]				protected GUILabelControl lblCurrentTime=null;
+		[SkinControlAttribute(35)]				protected GUILabelControl lblCurrentChannel=null;
+		[SkinControlAttribute(39)]				protected GUIImage imgRecIcon=null;
+		[SkinControlAttribute(10)]				protected GUIImage imgTvChannelLogo=null;
+		[SkinControlAttribute(31)]				protected GUIButtonControl btnChannelUp=null;
+		[SkinControlAttribute(32)]				protected GUIButtonControl btnChannelDown=null;
+		[SkinControlAttribute(33)]				protected GUIButtonControl btnPreviousProgram=null;
+		[SkinControlAttribute(34)]				protected GUIButtonControl btnNextProgram=null;
+
+    bool isSubMenuVisible = false;
     int m_iActiveMenu = 0;
     int m_iActiveMenuButtonID = 0;
     bool m_bNeedRefresh=false;
     DateTime m_dateTime=DateTime.Now;
     
-    ArrayList m_channels = new ArrayList();
+    ArrayList listTvChannels = new ArrayList();
     public GUITVOSD()
     {
 			GetID=(int)GUIWindow.Window.WINDOW_TVOSD;
-			TVDatabase.GetChannels(ref m_channels);
+			TVDatabase.GetChannels(ref listTvChannels);
     }
 
     public override bool Init()
@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.TV
 
     public bool SubMenuVisible
     {
-      get { return m_bSubMenuOn;}
+      get { return isSubMenuVisible;}
 
     }
     public override bool SupportsDelayedLoad
@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.TV
           break;
         case Action.ActionType.ACTION_SHOW_OSD:
         {
-          if (m_bSubMenuOn)						// is sub menu on?
+          if (isSubMenuVisible)						// is sub menu on?
           {
             FocusControl(GetID, m_iActiveMenuButtonID, 0);	// set focus to last menu button
             ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
@@ -265,7 +265,7 @@ namespace MediaPortal.GUI.TV
           AllocResources();
           // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
           ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
-          m_bSubMenuOn=false;
+          isSubMenuVisible=false;
           m_iActiveMenuButtonID=0;
           m_iActiveMenu=0;
           m_bNeedRefresh=false;
@@ -288,15 +288,15 @@ namespace MediaPortal.GUI.TV
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
         {
           int iControl=message.SenderControlId;		// get the ID of the control sending us a message
-          if (iControl==(int)Controls.BTN_CHANNEL_UP)
+          if (iControl==btnChannelUp.GetID)
           {
             OnNextChannel();
           }
-          if (iControl==(int)Controls.BTN_CHANNEL_DOWN)
+          if (iControl==btnChannelDown.GetID)
           {
             OnPreviousChannel();
           }
-          if (iControl==(int)Controls.BTN_PROGRAM_LEFT)
+          if (iControl==btnPreviousProgram.GetID)
           {
 						TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(m_dateTime);
             if (prog!=null)
@@ -310,7 +310,7 @@ namespace MediaPortal.GUI.TV
             ShowPrograms();
 
           }
-          if (iControl==(int)Controls.BTN_PROGRAM_RIGHT)
+          if (iControl==btnNextProgram.GetID)
           {
 						TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(m_dateTime);
             if (prog!=null)
@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.TV
 
           if (iControl == (int)Controls.OSD_STOP)
           {
-            if (m_bSubMenuOn)	// sub menu currently active ?
+            if (isSubMenuVisible)	// sub menu currently active ?
             {
               FocusControl(GetID, m_iActiveMenuButtonID, 0);	// set focus to last menu button
               ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
@@ -424,7 +424,7 @@ namespace MediaPortal.GUI.TV
           {
   
             ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_VOL);			// hide or show the sub-menu
-            if (m_bSubMenuOn)										// is sub menu on?
+            if (isSubMenuVisible)										// is sub menu on?
             {
               ShowControl(GetID, (int)Controls.OSD_VOLUMESLIDER);		// show the volume control
               FocusControl(GetID, (int)Controls.OSD_VOLUMESLIDER, 0);	// set focus to it
@@ -447,7 +447,7 @@ namespace MediaPortal.GUI.TV
           {
   
             ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_SUBTITLES);	// hide or show the sub-menu
-            if (m_bSubMenuOn)
+            if (isSubMenuVisible)
             {
               // set the controls values
               //SetSliderValue(-10.0f, 10.0f, g_application.m_pPlayer.GetSubTitleDelay(), Controls.OSD_SUBTITLE_DELAY);
@@ -467,7 +467,7 @@ namespace MediaPortal.GUI.TV
           {
   
             ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_BOOKMARKS);	// hide or show the sub-menu
-            if (m_bSubMenuOn)
+            if (isSubMenuVisible)
             {
               // show the controls on this sub menu
               ShowControl(GetID, (int)Controls.OSD_CREATEBOOKMARK);
@@ -483,7 +483,7 @@ namespace MediaPortal.GUI.TV
           {
   
             ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_VIDEO);		// hide or show the sub-menu
-            if (m_bSubMenuOn)						// is sub menu on?
+            if (isSubMenuVisible)						// is sub menu on?
             {
               // set the controls values
               float fPercent=(float)(100*(g_Player.CurrentPosition/g_Player.Duration));
@@ -512,7 +512,7 @@ namespace MediaPortal.GUI.TV
           {
   
             ToggleSubMenu( iControl, (int)Controls.OSD_SUBMENU_BG_AUDIO);		// hide or show the sub-menu
-            if (m_bSubMenuOn)						// is sub menu on?
+            if (isSubMenuVisible)						// is sub menu on?
             {
               // set the controls values
               //SetSliderValue(-10.0f, 10.0f, g_application.m_pPlayer.GetAVDelay(), Controls.OSD_AVDELAY);
@@ -608,10 +608,10 @@ namespace MediaPortal.GUI.TV
       GUIToggleButtonControl pButton = GetControl(iButtonID) as GUIToggleButtonControl;	// pointer to the OSD menu button
 
       // check to see if we are currently showing a sub-menu and it's position is different
-      if (m_bSubMenuOn && iBackID != m_iActiveMenu)
+      if (isSubMenuVisible && iBackID != m_iActiveMenu)
       {
         m_bNeedRefresh=true;
-        m_bSubMenuOn = false;	// toggle it ready for the new menu requested
+        isSubMenuVisible = false;	// toggle it ready for the new menu requested
       }
 
       // Get button position
@@ -631,7 +631,7 @@ namespace MediaPortal.GUI.TV
       {		
         pImgNib.SetPosition(iX - (pImgNib.TextureWidth / 2), iY - pImgNib.TextureHeight);
 
-        if (!m_bSubMenuOn)	// sub menu not currently showing?
+        if (!isSubMenuVisible)	// sub menu not currently showing?
         {
           pImgNib.IsVisible=true;		// make it show
           pImgBG.IsVisible=true;		// make it show
@@ -643,8 +643,8 @@ namespace MediaPortal.GUI.TV
         }
       }
 
-      m_bSubMenuOn = !m_bSubMenuOn;		// toggle sub menu visible status
-      if (!m_bSubMenuOn) m_bNeedRefresh=true;
+      isSubMenuVisible = !isSubMenuVisible;		// toggle sub menu visible status
+      if (!isSubMenuVisible) m_bNeedRefresh=true;
       // Set all sub menu controls to hidden
       HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
@@ -831,7 +831,7 @@ namespace MediaPortal.GUI.TV
             if (g_Player.CurrentAudioStream != msg.Param1)	
             {
               g_Player.CurrentAudioStream = msg.Param1;				// Set the audio stream to the one selected
-              m_bSubMenuOn = false;										// hide the sub menu
+              isSubMenuVisible = false;										// hide the sub menu
               m_bNeedRefresh=true;
               PopulateAudioStreams();
             }
@@ -1113,8 +1113,8 @@ namespace MediaPortal.GUI.TV
       ToggleButton((int)Controls.OSD_STOP, false);		// buttons back to
       ToggleButton((int)Controls.OSD_SKIPFWD, false);		// their up state
       ToggleButton((int)Controls.OSD_MUTE, false);		// their up state
-
     }
+
     public override bool NeedRefresh()
     {
       if (m_bNeedRefresh) 
@@ -1156,67 +1156,52 @@ namespace MediaPortal.GUI.TV
     {
       string strChannel=GetChannelName();
       string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,strChannel);
-      if (System.IO.File.Exists(strLogo))
-      {
-        GUIImage img=GetControl((int)Controls.TV_LOGO) as GUIImage;
-        if (img!=null)
-        {
-          img.SetFileName(strLogo);
-          //img.SetPosition(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop);
-          m_bNeedRefresh=true;
-        }
-        ShowControl(GetID,(int)Controls.TV_LOGO);
-      }
-      else
-      {
-        HideControl(GetID,(int)Controls.TV_LOGO);
+      
+			if (imgTvChannelLogo!=null)
+			{
+				if (System.IO.File.Exists(strLogo))
+				{
+					imgTvChannelLogo.SetFileName(strLogo);
+					m_bNeedRefresh=true;
+					imgTvChannelLogo.IsVisible=true;
+				}
+				else
+				{
+					imgTvChannelLogo.IsVisible=false;
+				}
       }
       ShowPrograms();
     }
 
-	string GetChannelName()
-	{
-		return GUITVHome.Navigator.ZapChannel;
-	}
+		string GetChannelName()
+		{
+			return GUITVHome.Navigator.ZapChannel;
+		}
 
     void ShowPrograms()
     {
-      GUITextControl cntlNow=GetControl((int)Controls.LABEL_ONTV_NOW) as GUITextControl;
-      GUITextControl cntlNext=GetControl((int)Controls.LABEL_ONTV_NEXT) as GUITextControl;
-      GUILabelControl cntlTime=GetControl((int)Controls.LABEL_CURRENT_TIME) as GUILabelControl;
-      GUILabelControl cntlCurrentChannel=GetControl((int)Controls.LABEL_CURRENT_CHANNEL) as GUILabelControl;
-
-      if (cntlNow!=null) cntlNow.EnableUpDown=false;
-      if (cntlNext!=null) cntlNext.EnableUpDown=false;
+			if (tbOnTvNow!=null) 
+			{
+				tbOnTvNow.EnableUpDown=false;
+				tbOnTvNow.Clear();
+			}
+			if (tbOnTvNext!=null) 
+			{
+				tbOnTvNext.EnableUpDown=false;
+				tbOnTvNext.Clear();
+			}
 
       GUIMessage msg;
 
       // Set recorder status
-      if (Recorder.IsRecordingChannel(GetChannelName()))
-      {
-        ShowControl(GetID, (int)Controls.REC_LOGO);
-      }
-      else
-      {
-        HideControl(GetID, (int)Controls.REC_LOGO);
-      }
+			if (imgRecIcon!=null)
+			{
+				imgRecIcon.IsVisible = Recorder.IsRecordingChannel(GetChannelName());
+			}
 
-      if (cntlCurrentChannel!=null)
+      if (lblCurrentChannel!=null)
       {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlCurrentChannel.GetID,0,0,null); 
-        msg.Label=GetChannelName();
-        cntlCurrentChannel.OnMessage(msg);
-      }
-
-      if (cntlNow!=null)
-      {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID,0, cntlNow.GetID,0,0,null); 
-        cntlNow.OnMessage(msg);
-      }
-      if (cntlNext!=null)
-      {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID,0, cntlNext.GetID,0,0,null); 
-        cntlNext.OnMessage(msg);
+        lblCurrentChannel.Label=GetChannelName();
       }
 
 			TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(m_dateTime);
@@ -1227,19 +1212,15 @@ namespace MediaPortal.GUI.TV
           prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
           prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
         
-        if (cntlTime!=null) 
+        if (lblCurrentTime!=null) 
         {
-          msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlTime.GetID,0,0,null); 
-          msg.Label=strTime;
-          cntlTime.OnMessage(msg);
+          lblCurrentTime.Label=strTime;
         }
         // On TV Now
         strTime=String.Format("{0} ", prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));        
-        if (cntlNow!=null)
+        if (tbOnTvNow!=null)
         {
-          msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNow.GetID,0,0,null); 
-          msg.Label=strTime+prog.Title;
-          cntlNow.OnMessage(msg);
+          tbOnTvNow.Label=strTime+prog.Title;
           GUIPropertyManager.SetProperty("#TV.View.start", strTime);
         }
 
@@ -1250,20 +1231,16 @@ namespace MediaPortal.GUI.TV
           strTime=String.Format("{0} ", 
             prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
         
-          if (cntlNext!=null)
+          if (tbOnTvNext!=null)
           {
-            msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlNext.GetID,0,0,null); 
-            msg.Label=strTime+prog.Title;
-            cntlNext.OnMessage(msg);
+            tbOnTvNext.Label=strTime+prog.Title;
 						GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
           }
         }
       }
-      else if (cntlTime!=null)
+      else if (lblCurrentTime!=null)
       {
-        msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, cntlTime.GetID,0,0,null); 
-        msg.Label="";
-        cntlTime.OnMessage(msg);
+        lblCurrentTime.Label="";
       }
       UpdateProgressBar();
     }
@@ -1289,6 +1266,7 @@ namespace MediaPortal.GUI.TV
 			  Get_TimeInfo();
 		  }
 	  }
+
     public bool InWindow(int x,int y)
     {
       for (int i=0; i < controlList.Count;++i)
