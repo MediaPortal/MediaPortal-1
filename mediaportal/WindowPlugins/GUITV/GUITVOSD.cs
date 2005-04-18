@@ -1275,16 +1275,27 @@ namespace MediaPortal.GUI.TV
 			  fPercent *=100.0d;
 			  GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
 			  Get_TimeInfo();
-				
+
+				bool updateProperties=false;
 				if (previousProgram==null)
 				{
 					previousProgram=prog.Clone();
 					ShowPrograms();
+					updateProperties=true;
 				}
 				else if (previousProgram.Start!=prog.Start)
 				{
 					previousProgram=prog.Clone();
 					ShowPrograms();
+					updateProperties=true;
+				}
+				if (updateProperties)
+				{
+					GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
+					GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
+					GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
 				}
 		  }
 	  }
