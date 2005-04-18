@@ -133,6 +133,42 @@ namespace MediaPortal.GUI.Video
 			}
     }
 
+		protected override bool CurrentSortAsc
+		{
+			get
+			{
+				return _MapSettings.SortAscending;
+			}
+			set
+			{
+				_MapSettings.SortAscending=value;
+			}
+		}
+		protected override VideoSort.SortMethod CurrentSortMethod
+		{
+			get
+			{
+				return (VideoSort.SortMethod)_MapSettings.SortBy;
+			}
+			set
+			{
+				_MapSettings.SortBy = (int)value;
+			}
+		}
+		protected override View CurrentView
+		{
+			get
+			{
+				return (View)_MapSettings.ViewAs;
+			}
+			set
+			{
+				_MapSettings.ViewAs = (int)value;
+			}
+		}
+
+
+
 		public override void DeInit()
 		{
 			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -316,7 +352,9 @@ namespace MediaPortal.GUI.Video
       object o;
       FolderSettings.GetFolderSetting(strDirectory,"VideoFiles",typeof(GUIVideoFiles.MapSettings), out o);
       if (o!=null) _MapSettings = o as MapSettings;
-      if (_MapSettings==null) _MapSettings  = new MapSettings();
+			if (_MapSettings==null) _MapSettings  = new MapSettings();
+			SwitchView();
+			UpdateButtonStates();
     }
     void SaveFolderSettings(string strDirectory)
     {
