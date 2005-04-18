@@ -822,13 +822,7 @@ namespace MediaPortal.GUI.Library
 
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
         {
-          m_vecItems.Clear();
-          //GUITextureManager.CleanupThumbs();
-          m_upDown.SetRange(1, 1);
-          m_upDown.Value = 1;
-          m_iCursorX =  m_iOffset = 0;
-          m_bRefresh = true;
-          OnSelectionChanged();
+					Clear();
 
         }
         
@@ -2224,5 +2218,15 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
+		public void Clear()
+		{
+			m_vecItems.Clear();
+			//GUITextureManager.CleanupThumbs();
+			m_upDown.SetRange(1, 1);
+			m_upDown.Value = 1;
+			m_iCursorX =  m_iOffset = 0;
+			m_bRefresh = true;
+			OnSelectionChanged();
+		}
   }
 }

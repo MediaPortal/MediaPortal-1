@@ -1061,14 +1061,7 @@ namespace MediaPortal.GUI.Library
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
 				{
-					m_iCursorY = 0;
-					m_iOffset = 0;
-					m_vecItems.Clear();
-					//GUITextureManager.CleanupThumbs();
-					m_upDown.SetRange(1, 1);
-					m_upDown.Value = 1;
-					m_bRefresh = true;
-					OnSelectionChanged();
+					Clear();
 				}
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEMS)
 				{
@@ -2411,5 +2404,16 @@ namespace MediaPortal.GUI.Library
         if (m_upDown!=null) m_upDown.WindowId=value;
       }
     }
+		public void Clear()
+		{
+			m_iCursorY = 0;
+			m_iOffset = 0;
+			m_vecItems.Clear();
+			//GUITextureManager.CleanupThumbs();
+			m_upDown.SetRange(1, 1);
+			m_upDown.Value = 1;
+			m_bRefresh = true;
+			OnSelectionChanged();
+		}
 	}
 }

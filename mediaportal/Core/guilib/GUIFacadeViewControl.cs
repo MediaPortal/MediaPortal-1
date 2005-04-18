@@ -480,6 +480,18 @@ namespace MediaPortal.GUI.Library
 				return 0;
 			}
 		}
+		
+		public void Clear()
+		{
+			if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
+				m_FilmStripView.Clear();
+			else if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				m_ListView.Clear();
+			else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
+				m_ThumbnailView.Clear();
+			else if ( m_ViewMode==ViewMode.AlbumView && m_ListAlbumView!=null)  
+				m_ListAlbumView.Clear();
+		}
 		public int SelectedListItemIndex
 		{
 			get

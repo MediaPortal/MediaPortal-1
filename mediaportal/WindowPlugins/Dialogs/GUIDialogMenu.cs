@@ -10,14 +10,6 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogMenu: GUIWindow
   {
-    enum Controls
-    {
-			CONTROL_BACKGROUND=1
-      , CONTROL_CLOSEBTN      =2
-      , CONTROL_LIST          =3
-			, CONTROL_HEADING	      =4
-			, CONTROL_BACKGROUNDDLG	=6
-		};
 
     #region Base Dialog Variables
     bool m_bRunning=false;
@@ -25,11 +17,14 @@ namespace MediaPortal.Dialogs
     GUIWindow m_pParentWindow=null;
     #endregion
     
-    int m_iSelected      = -1;
-    int m_iItemId = -1;
+		[SkinControlAttribute(2)]			protected GUIButtonControl btnClose=null;
+		[SkinControlAttribute(3)]			protected GUIListControl listView=null;
+		[SkinControlAttribute(4)]			protected GUILabelControl lblHeading=null;
+    int selectedItemIndex      = -1;
+    int selectedId = -1;
 
-		string m_strSelected="";
-    ArrayList m_vecList   = new ArrayList();
+		string selectedItemLabel=String.Empty;
+    ArrayList listItems   = new ArrayList();
     bool    m_bPrevOverlay=false;
 
     public GUIDialogMenu()
@@ -68,14 +63,14 @@ namespace MediaPortal.Dialogs
           {
             // Get offset to item
             iSelection = action.m_key.KeyChar-'1';
-            if (iSelection < m_vecList.Count)
+            if (iSelection < listItems.Count)
             {
               // Select dialog item
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)Controls.CONTROL_LIST, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
               OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, (int)Controls.CONTROL_LIST, iSelection ,0 ,null);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, iSelection ,0 ,null);
               OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.CONTROL_LIST, 0, 0, 0, null);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
               OnMessage(msg);
             }
             else
@@ -123,7 +118,7 @@ namespace MediaPortal.Dialogs
 
     public void DoModal(int dwParentId)
     {
-      if (m_vecList.Count == 0)
+      if (listItems.Count == 0)
 				return;
 
       m_dwParentWindowID=dwParentId;
@@ -152,6 +147,24 @@ namespace MediaPortal.Dialogs
     }
     #endregion
 	
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+      if (control==listView)
+      {
+				selectedItemIndex=listView.SelectedListItemIndex;
+				selectedItemLabel=listView.SelectedListItem.Label;
+				int pos=selectedItemLabel.IndexOf(" ");
+				if (pos>0) selectedItemLabel=selectedItemLabel.Substring(pos+1);
+        selectedId=listView.SelectedListItem.ItemId;
+				Close();
+      }
+      if (control==btnClose)
+      {
+        Close();
+      }
+		}
+
     public override bool OnMessage(GUIMessage message)
     {
       switch ( message.Message )
@@ -169,45 +182,26 @@ namespace MediaPortal.Dialogs
           m_bPrevOverlay=GUIGraphicsContext.Overlay;
           base.OnMessage(message);
           GUIGraphicsContext.Overlay=false;
-          ClearControl(GetID,(int)Controls.CONTROL_LIST);
+					listView.Clear();
 
-          for (int i=0; i < m_vecList.Count; i++)
+          for (int i=0; i < listItems.Count; i++)
           {
-            GUIListItem pItem=(GUIListItem)m_vecList[i];
-            AddListItemControl(GetID,(int)Controls.CONTROL_LIST,pItem);
+            GUIListItem pItem=(GUIListItem)listItems[i];
+            listView.Add(pItem);
           }
 
-          if (m_iSelected>=0)
+          if (selectedItemIndex>=0)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,(int)Controls.CONTROL_LIST,m_iSelected,0,null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,listView.GetID,selectedItemIndex,0,null);
             OnMessage(msg);
           }
-          m_iSelected=-1;
-          m_iItemId=-1;
-          string wszText=String.Format("{0} {1}", m_vecList.Count,GUILocalizeStrings.Get(127) );
+          selectedItemIndex=-1;
+          selectedId=-1;
+          string wszText=String.Format("{0} {1}", listItems.Count,GUILocalizeStrings.Get(127) );
 
         }
           return true;
 
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-        {
-    			
-          int iControl=message.SenderControlId;
-          if ((int)Controls.CONTROL_LIST==iControl)
-          {
-						m_iSelected=GetSelectedItemNo();
-						m_strSelected=GetSelectedItem().Label;
-						int pos=m_strSelected.IndexOf(" ");
-						if (pos>0) m_strSelected=m_strSelected.Substring(pos+1);
-            m_iItemId=GetSelectedItem().ItemId;
-						Close();
-          }
-          if ((int)Controls.CONTROL_CLOSEBTN==iControl)
-          {
-            Close();
-          }
-        }
-          break;
       }
 
       return base.OnMessage(message);
@@ -219,41 +213,41 @@ namespace MediaPortal.Dialogs
 			AllocResources();
 			InitControls();
 
-      m_iSelected=-1;
-      m_vecList.Clear();
+      selectedItemIndex=-1;
+      listItems.Clear();
     }
 
     public void Add(string strLabel)
 		{
-			int iItemIndex = m_vecList.Count+1;
+			int iItemIndex = listItems.Count+1;
       GUIListItem pItem = new GUIListItem(iItemIndex.ToString()+" "+strLabel);
 			pItem.ItemId =iItemIndex;
-      m_vecList.Add(pItem);
+      listItems.Add(pItem);
     }
 
     public void AddLocalizedString(int iLocalizedString)
     {
-      int iItemIndex = m_vecList.Count+1;
+      int iItemIndex = listItems.Count+1;
       GUIListItem pItem = new GUIListItem(iItemIndex.ToString()+" "+GUILocalizeStrings.Get(iLocalizedString));     
       pItem.ItemId = iLocalizedString;
-      m_vecList.Add(pItem);      
+      listItems.Add(pItem);      
     }
 
     public int SelectedLabel 
     {
-      get { return m_iSelected;}
-      set { m_iSelected=value;}
+      get { return selectedItemIndex;}
+      set { selectedItemIndex=value;}
     }
     
     public int SelectedId 
     {
-      get { return m_iItemId;}
-      set { m_iItemId=value;}
+      get { return selectedId;}
+      set { selectedId=value;}
     }
 
     public string SelectedLabelText
     {
-      get { return m_strSelected;}
+      get { return selectedItemLabel;}
     }
 
     public void  SetHeading( string strLine)
@@ -262,7 +256,7 @@ namespace MediaPortal.Dialogs
 			AllocResources();
 			InitControls();
 
-      SetControlLabel(GetID,(int)Controls.CONTROL_HEADING,strLine);
+			lblHeading.Label=strLine;
     }
 
 
@@ -270,80 +264,16 @@ namespace MediaPortal.Dialogs
     {
 
       SetHeading (GUILocalizeStrings.Get(iString) );
+			selectedItemIndex=-1;
+			listItems.Clear();
     }
 
 
-    GUIListItem GetSelectedItem()
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, GetID, 0,(int)Controls.CONTROL_LIST,0,0,null);
-      OnMessage(msg);
-      return (GUIListItem)msg.Object;
-    }
-
-    GUIListItem GetItem(int iItem)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_ITEM, GetID, 0,(int)Controls.CONTROL_LIST,iItem,0,null);
-      OnMessage(msg);
-      return (GUIListItem)msg.Object;
-    }
-
-    int GetSelectedItemNo()
-    {
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,(int)Controls.CONTROL_LIST,0,0,null);
-      OnMessage(msg);         
-      int iItem=(int)msg.Param1;
-      return iItem;
-    }
-
-    int GetItemCount()
-    { 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEMS, GetID, 0,(int)Controls.CONTROL_LIST,0,0,null);
-      OnMessage(msg);
-      return msg.Param1;
-    }
 
     public override void Render(float timePassed)
     {
 			RenderDlg(timePassed);
     }
 
-    void ClearControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, iWindowId,0, iControlId,0,0,null);
-      OnMessage(msg);
-    }
-
-    void AddListItemControl(int iWindowId, int iControlId,GUIListItem item)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0,iControlId,0,0,item);
-      OnMessage(msg);
-    }    
-    void SetControlLabel(int iWindowId, int iControlId,string strText)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0,iControlId,0,0,null);
-      msg.Label=strText; 
-      OnMessage(msg);
-    }
-    void HideControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN,iWindowId, 0,iControlId,0,0,null); 
-      OnMessage(msg);
-    }
-    void ShowControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE,iWindowId, 0,iControlId,0,0,null); 
-      OnMessage(msg);
-    }
-
-    void DisableControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, iWindowId, 0,iControlId,0,0,null);
-      OnMessage(msg);
-    }
-    void EnableControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0,iControlId,0,0,null);
-      OnMessage(msg);
-    }
 	}
 }
