@@ -1853,8 +1853,9 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-		void ShowContextMenu()
+		protected override void OnShowContextMenu()
 		{
+			
 			GUIListItem item=facadeView.SelectedListItem;
 			int itemNo=facadeView.SelectedListItemIndex;
 			if (item==null) return;
