@@ -68,13 +68,18 @@ namespace MediaPortal.GUI.Music
     DirectoryHistory  m_history = new DirectoryHistory();
     string            m_strDirectory = String.Empty;
     int               m_iItemSelected = -1;
-    VirtualDirectory  m_directory = new VirtualDirectory();
+		GUIListItem				m_itemItemSelected=null;
+		VirtualDirectory  m_directory = new VirtualDirectory();
     bool			        m_bScan = false;
     bool              m_bAutoShuffle = true;
     string            m_strDiscId=String.Empty;    
 		string						m_strPlayListPath = String.Empty;
 		int               m_iSelectedAlbum=-1;
     static Freedb.CDInfoDetail m_musicCD = null;
+		// File menu
+		string						m_strDestination=String.Empty;
+		bool							m_bFileMenuEnabled=false;
+		string						m_strFileMenuPinCode=String.Empty;
     
 
 		[SkinControlAttribute(8)]			protected GUIButtonControl btnPlaylist;
@@ -185,6 +190,9 @@ namespace MediaPortal.GUI.Music
 			base.LoadSettings();
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
+				m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+				m_strFileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);
+
 				m_strPlayListPath = xmlreader.GetValueAsString("music","playlists",String.Empty);
 				m_strPlayListPath = Utils.RemoveTrailingSlash(m_strPlayListPath);
 
@@ -388,7 +396,8 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnShowContextMenu()
     {
-      GUIListItem item=facadeView.SelectedListItem;
+			GUIListItem item=facadeView.SelectedListItem;
+			m_itemItemSelected=item;
       int itemNo=facadeView.SelectedListItemIndex;
       if (item==null) return;
 
@@ -423,6 +432,12 @@ namespace MediaPortal.GUI.Music
         }
 
         if (Utils.getDriveType(item.Path) == 5) dlg.AddLocalizedString(654); //Eject
+
+				int iPincodeCorrect;
+				if (!m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && m_bFileMenuEnabled)
+				{
+					dlg.AddLocalizedString(500); // FileMenu
+				}
       }
 
       dlg.DoModal( GetID);
@@ -462,11 +477,68 @@ namespace MediaPortal.GUI.Music
 
 				case 102:
 					OnScan();
-				break;
+					break;
+
+				case 500: // File menu
+				{
+					// get pincode
+					if (m_strFileMenuPinCode != String.Empty)
+					{
+						string strUserCode=String.Empty;
+						if (GetUserInputString(ref strUserCode) && strUserCode==m_strFileMenuPinCode)
+						{
+							OnShowFileMenu();
+						}
+					}
+					else 
+						OnShowFileMenu();
+				}
+					break;
       }
     }
 
+		bool GetUserInputString(ref string sString)
+		{			
+			VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);			
+			keyBoard.Reset();
+			keyBoard.Text = sString;
+			keyBoard.DoModal(GetID); // show it...
+			System.GC.Collect(); // collect some garbage
+			if (keyBoard.IsConfirmed) sString=keyBoard.Text;
+			return keyBoard.IsConfirmed;
+		}
 
+		void OnShowFileMenu()
+		{
+			GUIListItem item=m_itemItemSelected;
+			if (item==null) return;
+			if (item.IsFolder && item.Label=="..") return;
+
+			// init
+			GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILE);
+			if (dlgFile == null) return;
+			
+			// File operation settings
+			dlgFile.SetSourceItem(item);
+			dlgFile.SetSourceDir(m_strDirectory);
+			dlgFile.SetDestinationDir(m_strDestination);
+			dlgFile.SetDirectoryStructure(m_directory);
+			dlgFile.DoModal(GetID);
+			m_strDestination = dlgFile.GetDestinationDir();
+
+			//final		
+			if (dlgFile.Reload())
+			{
+				LoadDirectory(m_strDirectory);
+				if (m_iItemSelected>=0)
+				{
+					GUIControl.SelectItemControl(GetID,facadeView.GetID,m_iItemSelected);
+				}
+			}
+
+			dlgFile.DeInit();
+			dlgFile=null;
+		}
 		
 		protected override void OnClick(int iItem)
 		{

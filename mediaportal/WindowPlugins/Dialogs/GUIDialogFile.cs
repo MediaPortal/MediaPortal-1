@@ -5,6 +5,7 @@ using System.Collections;
 using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.Picture.Database;
+using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Dialogs
 {
@@ -13,25 +14,21 @@ namespace MediaPortal.Dialogs
 	/// </summary>
 	public class GUIDialogFile : GUIWindow
 	{
-		enum Controls
-		{
-			ID_BUTTON_NO = 10,
-			ID_BUTTON_YES = 11,
-			ID_BUTTON_ALWAYS = 12,
-			ID_BUTTON_NEVER = 13,
-			ID_BUTTON_CANCEL = 14,
-			ID_BUTTON_OK = 15,
-			PROGRESS_BG = 100
-		};
-
-		const int CONTROL_PROGRESS_BAR =20;
-
 		#region Base Dialog Variables
 		bool m_bRunning=false;
 		int m_dwParentWindowID=0;
 		GUIWindow m_pParentWindow=null;
 		#endregion
-    
+    	
+		[SkinControlAttribute(10)]	protected GUIButtonControl btnNo=null;
+		[SkinControlAttribute(11)]	protected GUIButtonControl btnYes=null;
+		[SkinControlAttribute(12)]	protected GUIButtonControl btnAlways=null;
+		[SkinControlAttribute(13)]	protected GUIButtonControl btnNever=null;
+		[SkinControlAttribute(14)]	protected GUIButtonControl btnCancel=null;
+		[SkinControlAttribute(15)]	protected GUIButtonControl btnOk=null;
+		[SkinControlAttribute(100)]	protected GUIImage imgProgressBackground=null;
+		[SkinControlAttribute(20)]	protected GUIProgressControl prgProgressBar=null;
+
 		bool m_bCanceled=false;
 		bool m_bOverlay=false;
 		int m_iFileMode=-1;
@@ -51,6 +48,7 @@ namespace MediaPortal.Dialogs
 		bool							m_bDialogActive = false;
 		bool							m_bReload = false;
 		PictureDatabase		dbPicture = null;
+		MusicDatabase			dbMusic = null;
     
 		public GUIDialogFile()
 		{
@@ -178,48 +176,39 @@ namespace MediaPortal.Dialogs
 				{
 					int iAction=message.Param1;
 					int iControl=message.SenderControlId;
-					switch (iControl)
+					if (btnOk!=null && iControl == (int)btnOk.GetID)
 					{
-						case (int)Controls.ID_BUTTON_CANCEL:
-						{
-							m_bCanceled=true;
-							if (!m_bBusy) Close();
-						}
-							break;
-
-						case (int)Controls.ID_BUTTON_YES:
-						{
-							if (!m_bBusy)
-							{
-								m_bBusy=true;								
-								FileItemMC(m_itemSourceItem);
-								m_bBusy=false;
-								Close();
-							}
-							else
-								m_bButtonYes = true;
-						}
-							break;
-
-						case (int)Controls.ID_BUTTON_NO:
-						{
-							m_bButtonNo = true;
-						}
-							break;
-
-						case (int)Controls.ID_BUTTON_ALWAYS:
-						{
-							m_bAlways = true;
-						}
-							break;
-
-						case (int)Controls.ID_BUTTON_NEVER:
-						{
-							m_bNever = true;
-						}
-							break;
+						m_bCanceled=true;
+						if (!m_bBusy) Close();
 					}
 
+					if (btnYes!=null && iControl == (int)btnYes.GetID)
+					{
+						if (!m_bBusy)
+						{
+							m_bBusy=true;								
+							FileItemMC(m_itemSourceItem);
+							m_bBusy=false;
+							Close();
+						}
+						else
+							m_bButtonYes = true;
+					}
+					
+					if (btnNo!=null && iControl == (int)btnNo.GetID)
+					{
+						m_bButtonNo = true;
+					}
+					
+					if (btnAlways!=null && iControl == (int)btnAlways.GetID)
+					{
+						m_bAlways = true;
+					}
+					
+					if (btnNever!=null && iControl == (int)btnNever.GetID)
+					{
+						m_bNever = true;
+					}
 				}
 					break;
 			}
@@ -316,22 +305,20 @@ namespace MediaPortal.Dialogs
     
 		public void SetPercentage(int iPercentage)
 		{
-			//TODO
-			GUIProgressControl pControl = (GUIProgressControl)GetControl(CONTROL_PROGRESS_BAR);
-			if (pControl!=null) pControl.Percentage=iPercentage;
+			if (prgProgressBar != null) prgProgressBar.Percentage = iPercentage;
 		}
 
 		public void ShowProgressBar(bool bOnOff)
 		{
 			if (bOnOff)
 			{
-				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE,GetID,0, CONTROL_PROGRESS_BAR,0,0,null); 
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE,GetID,0, prgProgressBar.GetID,0,0,null); 
 				OnMessage(msg);
     
 			}
 			else
 			{
-				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN,GetID,0, CONTROL_PROGRESS_BAR,0,0,null); 
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN,GetID,0, prgProgressBar.GetID,0,0,null); 
 				OnMessage(msg);
 			}
 		}
@@ -459,6 +446,8 @@ namespace MediaPortal.Dialogs
 						if (m_iFileMode==1)
 						{
 							fi.MoveTo(m_strDestination+strItemFileName);
+							// delete from database
+							DeleteFromDatabase(item);
 						} 
 						else 
 						{
@@ -501,10 +490,10 @@ namespace MediaPortal.Dialogs
 			SetLine(1, SourceOfError);				
 			SetLine(2, iError);						
 			SetButtonsHidden(false);
-			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_ALWAYS);
-			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_NEVER);
-			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_CANCEL);
-			GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_NO);
+			GUIControl.HideControl(GetID, (int)btnAlways.GetID);
+			GUIControl.HideControl(GetID, (int)btnNever.GetID);
+			GUIControl.HideControl(GetID, (int)btnCancel.GetID);
+			GUIControl.HideControl(GetID, (int)btnNo.GetID);
 									
 			// wait for input
 			while (!m_bButtonYes)
@@ -515,8 +504,8 @@ namespace MediaPortal.Dialogs
 			SetLine(1, "");
 			SetLine(2, "");
 			SetButtonsHidden(true);
-			GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_CANCEL);
-			GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_NO);
+			GUIControl.ShowControl(GetID, (int)btnCancel.GetID);
+			GUIControl.ShowControl(GetID, (int)btnNo.GetID);
 		}
 
 		void ShowErrorDialog(int iError, string SourceOfError)
@@ -535,16 +524,16 @@ namespace MediaPortal.Dialogs
 		{
 			if (bHide)
 			{
-				GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_ALWAYS);
-				GUIControl.HideControl(GetID, (int)Controls.ID_BUTTON_NEVER);
-				GUIControl.ShowControl(GetID, (int)Controls.PROGRESS_BG);
+				GUIControl.HideControl(GetID, (int)btnAlways.GetID);
+				GUIControl.HideControl(GetID, (int)btnNever.GetID);
+				GUIControl.ShowControl(GetID, (int)imgProgressBackground.GetID);
 				ShowProgressBar(true);
 			}
 			else
 			{
-				GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_ALWAYS);
-				GUIControl.ShowControl(GetID, (int)Controls.ID_BUTTON_NEVER);
-				GUIControl.HideControl(GetID, (int)Controls.PROGRESS_BG);
+				GUIControl.ShowControl(GetID, (int)btnAlways.GetID);
+				GUIControl.ShowControl(GetID, (int)btnNever.GetID);
+				GUIControl.HideControl(GetID, (int)imgProgressBackground.GetID);
 				ShowProgressBar(false);
 			}
 
@@ -749,7 +738,17 @@ namespace MediaPortal.Dialogs
 			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 			if (null==dlgYesNo) return;
 			string strFileName=System.IO.Path.GetFileName(item.Path);
-			if (!item.IsFolder) dlgYesNo.SetHeading(664);
+			if (!item.IsFolder) 
+			{
+				if (Utils.IsAudio(item.Path))
+					dlgYesNo.SetHeading(518); // Audio
+				else if (Utils.IsVideo(item.Path))
+					dlgYesNo.SetHeading(925); // Movie
+				else if (Utils.IsPicture(item.Path)) 
+					dlgYesNo.SetHeading(664); // Picture
+				else 
+					dlgYesNo.SetHeading(125); // Unknown file
+			}
 			else dlgYesNo.SetHeading(503);
 			dlgYesNo.SetLine(1,strFileName);
 			dlgYesNo.SetLine(2, "");
@@ -772,6 +771,7 @@ namespace MediaPortal.Dialogs
 					{
 						DoDeleteItem(subItem);
 					}
+					
 					Utils.DirectoryDelete(item.Path);
 				}
 			}
@@ -780,23 +780,34 @@ namespace MediaPortal.Dialogs
 				if (Utils.FileDelete(item.Path))
 				{
 					// delete from database
-					if (Utils.IsPicture(item.Path))
-					{
-						//Remove from picture database
-						if (dbPicture == null) dbPicture = new PictureDatabase();
-						if (dbPicture != null)
-						{
-							dbPicture.DeletePicture(item.Path);
-						}					
-					}
-					else if (Utils.IsVideo(item.Path))
-					{
-						//Remove from video database
-					} 
-					else if (Utils.IsAudio(item.Path))
-					{
-						//Remove from music database
-					}
+					DeleteFromDatabase(item);
+				}
+			}
+		}
+
+		void DeleteFromDatabase(GUIListItem item)
+		{
+			// delete from database
+			if (Utils.IsPicture(item.Path))
+			{
+				//Remove from picture database
+				if (dbPicture == null) dbPicture = new PictureDatabase();
+				if (dbPicture != null)
+				{
+					dbPicture.DeletePicture(item.Path);
+				}					
+			}
+			else if (Utils.IsVideo(item.Path))
+			{
+				//Remove from video database
+			} 
+			else if (Utils.IsAudio(item.Path))
+			{
+				//Remove from music database
+				if (dbMusic == null) dbMusic= new MusicDatabase();
+				if (dbMusic != null)
+				{
+					dbMusic.DeleteSong(item.Path, true);
 				}
 			}
 		}
