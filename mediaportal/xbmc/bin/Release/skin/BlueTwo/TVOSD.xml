@@ -85,7 +85,7 @@
 	<control>
 		<description>Plot</description>
 		<type>textboxscrollup</type>
-		<id>0</id>
+		<id>38</id>
 		<posX>210</posX> 
 		<posY>450</posY>
 		<width>330</width> 

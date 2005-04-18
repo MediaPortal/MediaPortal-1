@@ -245,12 +245,7 @@ namespace MediaPortal.GUI.Library
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
         {
-          containsProperty=false;
-					m_strProperty="";
-					m_iFrames=0;
-					m_dtTime=DateTime.Now;
-					m_iOffset=0;
-					m_vecItems.Clear();
+					Clear();
 				}
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEMS)
 				{
@@ -261,17 +256,7 @@ namespace MediaPortal.GUI.Library
 				{
           if (message.Label!=null)
           {
-            if (m_strProperty!=message.Label)
-            {
-              m_strProperty=message.Label;
-              if (m_strProperty.IndexOf("#")>=0) 
-                containsProperty=true;
-
-              m_iOffset=0;
-              m_vecItems.Clear();
-              SetText( message.Label );
-              m_dtTime=DateTime.Now;
-            }
+						Label=message.Label;
           }
 				}
 			}
@@ -500,6 +485,33 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return m_strSeperator;}
 			set { m_strSeperator=value;}
+		}
+		public void Clear()
+		{
+			containsProperty=false;
+			m_strProperty="";
+			m_iFrames=0;
+			m_dtTime=DateTime.Now;
+			m_iOffset=0;
+			m_vecItems.Clear();
+		}
+
+		public string Label
+		{
+			set
+			{
+				if (m_strProperty!=value)
+				{
+					m_strProperty=value;
+					if (m_strProperty.IndexOf("#")>=0) 
+						containsProperty=true;
+
+					m_iOffset=0;
+					m_vecItems.Clear();
+					SetText( value );
+					m_dtTime=DateTime.Now;
+				}
+			}
 		}
 	}
 }

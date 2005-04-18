@@ -69,7 +69,7 @@
 	<control>
 		<description>Description1</description>
 		<type>textboxscrollup</type>
-		<id>15</id>
+		<id>38</id>
 		<posX>65</posX>
 		<posY>436</posY>
 		<width>310</width>

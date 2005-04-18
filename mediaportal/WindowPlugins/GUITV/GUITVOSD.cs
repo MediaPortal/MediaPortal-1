@@ -77,6 +77,7 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(32)]				protected GUIButtonControl btnChannelDown=null;
 		[SkinControlAttribute(33)]				protected GUIButtonControl btnPreviousProgram=null;
 		[SkinControlAttribute(34)]				protected GUIButtonControl btnNextProgram=null;
+		[SkinControlAttribute(38)]				protected GUITextScrollUpControl tbProgramDescription=null;
 
     bool isSubMenuVisible = false;
     int m_iActiveMenu = 0;
@@ -1180,6 +1181,10 @@ namespace MediaPortal.GUI.TV
 
     void ShowPrograms()
     {
+			if (tbProgramDescription!=null)
+			{
+				tbProgramDescription.Clear();
+			}
 			if (tbOnTvNow!=null) 
 			{
 				tbOnTvNow.EnableUpDown=false;
@@ -1223,6 +1228,10 @@ namespace MediaPortal.GUI.TV
           tbOnTvNow.Label=strTime+prog.Title;
           GUIPropertyManager.SetProperty("#TV.View.start", strTime);
         }
+				if (tbProgramDescription!=null)
+				{
+					tbProgramDescription.Label=prog.Description;
+				}
 
         // next program
 				prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(1));
