@@ -84,6 +84,7 @@ namespace MediaPortal.GUI.TV
     int m_iActiveMenuButtonID = 0;
     bool m_bNeedRefresh=false;
     DateTime m_dateTime=DateTime.Now;
+		TVProgram previousProgram=null;
     
     ArrayList listTvChannels = new ArrayList();
     public GUITVOSD()
@@ -263,6 +264,7 @@ namespace MediaPortal.GUI.TV
         {
           // following line should stay. Problems with OSD not
           // appearing are already fixed elsewhere
+					previousProgram=null;
           AllocResources();
           // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
           ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
@@ -1273,6 +1275,17 @@ namespace MediaPortal.GUI.TV
 			  fPercent *=100.0d;
 			  GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
 			  Get_TimeInfo();
+				
+				if (previousProgram==null)
+				{
+					ShowPrograms();
+					previousProgram=prog.Clone();
+				}
+				else if (previousProgram.Start!=prog.Start)
+				{
+					ShowPrograms();
+					previousProgram=prog.Clone();
+				}
 		  }
 	  }
 
