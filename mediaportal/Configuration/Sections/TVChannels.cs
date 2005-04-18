@@ -1829,11 +1829,11 @@ namespace MediaPortal.Configuration.Sections
 						channels.SetValueAsBool(listItem.Index.ToString(),"Visible in Guide",Selected_Chan.VisibleInGuide);	
 						if (Selected_Chan.Channel>=0)
 						{
-							int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid;
+							int bandWidth,freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid;
 							string provider;
 						
 							//DVB-T
-							TVDatabase.GetDVBTTuneRequest(Selected_Chan.ID,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
+							TVDatabase.GetDVBTTuneRequest(Selected_Chan.ID,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid,out bandWidth);
 							channels.SetValue(listItem.Index.ToString(),"DVBTFreq",freq.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBTONID",ONID.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBTTSID",TSID.ToString());
@@ -1843,6 +1843,7 @@ namespace MediaPortal.Configuration.Sections
 							channels.SetValue(listItem.Index.ToString(),"DVBTVideoPid",videoPid.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBTTeletextPid",teletextPid.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBTPmtPid",pmtPid.ToString());
+							channels.SetValue(listItem.Index.ToString(),"DVBTBandwidth",bandWidth.ToString());
 
 							//DVB-C
 							TVDatabase.GetDVBCTuneRequest(Selected_Chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
@@ -2193,7 +2194,7 @@ namespace MediaPortal.Configuration.Sections
 							if (Import_Chan.Channel>=0)
 							{
 								int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
-								int pmtPid,audioPid,videoPid,teletextPid;
+								int bandWidth,pmtPid,audioPid,videoPid,teletextPid;
 								string provider;
 								//dvb-T
 								try
@@ -2207,9 +2208,10 @@ namespace MediaPortal.Configuration.Sections
 									teletextPid=channels.GetValueAsInt(i.ToString(),"DVBTTeletextPid",0);
 									pmtPid=channels.GetValueAsInt(i.ToString(),"DVBTPmtPid",0);
 									provider=channels.GetValueAsString(i.ToString(),"DVBTProvider","");
+									bandWidth=channels.GetValueAsInt(i.ToString(),"DVBTBandwidth",-1);
 									if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 									{
-										TVDatabase.MapDVBTChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid);
+										TVDatabase.MapDVBTChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,bandWidth);
 									}
 								}
 								catch(Exception)

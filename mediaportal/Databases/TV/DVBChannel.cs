@@ -85,7 +85,7 @@ namespace MediaPortal.TV.Database
 		int m_sECMPid;
 		int m_sPMTPid;
 		int m_modulation;
-
+		int m_bandwidth;
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
 		public int ID
@@ -387,6 +387,16 @@ namespace MediaPortal.TV.Database
 			set
 			{m_modulation=value;}
 		}
+		[BrowsableAttribute(true),Category("Bandwidth"),
+		ReadOnly(false)]
+		public int Bandwidth
+		{
+			get
+			{return m_bandwidth;}
+			set
+			{m_bandwidth=value;}
+		}
+		
 		public override string ToString()
 		{
 			return m_sChannelName;

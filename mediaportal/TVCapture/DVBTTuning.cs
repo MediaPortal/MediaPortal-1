@@ -196,6 +196,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (currentFrequencyIndex >=frequencies.Count) return;
 
+			DVBChannel chan = new DVBChannel();
 			int[] tmp;
 			if (currentFrequencyIndex<0)
 			{
@@ -211,32 +212,35 @@ namespace MediaPortal.TV.Recording
 				}
 
 				tmp = (int[])frequencies[currentFrequencyIndex];
+				chan.Frequency=tmp[0];
+				chan.Bandwidth=tmp[1];
 				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency,0);
+				captureCard.Tune(chan,0);
 				return;
 			}
 
 			tmp = (int[])frequencies[currentFrequencyIndex];
-			tunedFrequency=tmp[0];
+			chan.Frequency=tmp[0];
+			chan.Bandwidth=tmp[1];
 			if (currentOffset==0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency,0);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
+				captureCard.Tune(chan,0);
 				if (scanOffset==0) currentOffset=3;
 				else currentOffset++;
 			}
 			else if (currentOffset==1)
 			{
 				tunedFrequency-=scanOffset;
-				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency,0);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
+				captureCard.Tune(chan,0);
 				currentOffset++;
 			}
 			else if (currentOffset==2)
 			{
 				tunedFrequency+=scanOffset;
-				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
-				captureCard.Tune(tunedFrequency,0);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
+				captureCard.Tune(chan,0);
 				currentOffset++;
 			}
 			else

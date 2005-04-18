@@ -2506,6 +2506,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 				
+				int bandWidth=-1;
 				int frequency=-1,ONID=-1,TSID=-1,SID=-1;
 				int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1;
 				string providerName;
@@ -2637,7 +2638,7 @@ namespace MediaPortal.TV.Recording
 						//get the DVB-T tuning details from the tv database
 						//for DVB-T this is the frequency, ONID , TSID and SID
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBT tuning details");
-						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth);
 						if (frequency<=0) 
 						{
 							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
@@ -2661,12 +2662,14 @@ namespace MediaPortal.TV.Recording
 						//set the properties on the new tuning request
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() set tuning properties to tuning request");
 						myLocator.CarrierFrequency		= frequency;
+						myLocator.Bandwidth=bandWidth;
 						myTuneRequest.ONID	= ONID;					//original network id
 						myTuneRequest.TSID	= TSID;					//transport stream id
 						myTuneRequest.SID		= SID;					//service id
 						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 
 						currentTuningObject=new DVBChannel();
+						currentTuningObject.Bandwidth=bandWidth;
 						currentTuningObject.Frequency=frequency;
 						currentTuningObject.NetworkID=ONID;
 						currentTuningObject.TransportStreamID=TSID;
@@ -2775,15 +2778,8 @@ namespace MediaPortal.TV.Recording
 				// for DVB-T
 				if (Network() == NetworkType.DVBT)
 				{
-					int frequency=0;
-					try
-					{
-						frequency=(int)tuningObject;
-					}
-					catch( Exception )
-					{
-						return;
-					}
+					DVBChannel chan=(DVBChannel)tuningObject;
+
 					
 					//get the IDVBTLocator interface
 					TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
@@ -2796,14 +2792,16 @@ namespace MediaPortal.TV.Recording
 					}
 					//set the properties for the new tuning request. For DVB-T we only set the frequency
 
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-T freq:{0}",frequency);
-					myLocator.CarrierFrequency		= frequency;
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-T freq:{0} bandwidth:{1}",chan.Frequency,chan.Bandwidth);
+					myLocator.CarrierFrequency		= chan.Frequency;
+					myLocator.Bandwidth=chan.Bandwidth;
+					
 					myTuneRequest.ONID						= -1;					//original network id
 					myTuneRequest.TSID						= -1;					//transport stream id
 					myTuneRequest.SID							= -1;					//service id
 					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
 					currentTuningObject = new DVBChannel();
-					currentTuningObject.Frequency=frequency;
+					currentTuningObject.Frequency=chan.Frequency;
 					currentTuningObject.NetworkID=-1;
 					currentTuningObject.TransportStreamID=-1;
 					currentTuningObject.ProgramNumber=-1;
@@ -2995,6 +2993,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.AudioPid=currentTuningObject.AudioPid;
 				newchannel.VideoPid=currentTuningObject.VideoPid;
 				newchannel.TeletextPid=currentTuningObject.TeletextPid;
+				newchannel.Bandwidth=currentTuningObject.Bandwidth;
 				newchannel.PMTPid=info.network_pmt_PID;
 				
 				if (info.serviceType==1)//tv
@@ -3042,7 +3041,7 @@ namespace MediaPortal.TV.Recording
 					if (Network() == NetworkType.DVBT)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
-						TVDatabase.MapDVBTChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,currentTuningObject.VideoPid, currentTuningObject.TeletextPid,newchannel.PMTPid);
+						TVDatabase.MapDVBTChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,currentTuningObject.VideoPid, currentTuningObject.TeletextPid,newchannel.PMTPid,newchannel.Bandwidth);
 					}
 					if (Network() == NetworkType.DVBC)
 					{

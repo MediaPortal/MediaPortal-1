@@ -117,6 +117,8 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label48;
 		private System.Windows.Forms.TextBox tbDVBSPmtPid;
 		private System.Windows.Forms.CheckBox checkBoxScrambled;
+		private System.Windows.Forms.TextBox tbBandWidth;
+		private System.Windows.Forms.Label label49;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -182,6 +184,7 @@ namespace MediaPortal.Configuration
 			this.label4 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.checkBoxScrambled = new System.Windows.Forms.CheckBox();
 			this.label45 = new System.Windows.Forms.Label();
 			this.label44 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -265,7 +268,8 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.checkBoxScrambled = new System.Windows.Forms.CheckBox();
+			this.tbBandWidth = new System.Windows.Forms.TextBox();
+			this.label49 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -470,6 +474,13 @@ namespace MediaPortal.Configuration
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+			// 
+			// checkBoxScrambled
+			// 
+			this.checkBoxScrambled.Location = new System.Drawing.Point(24, 80);
+			this.checkBoxScrambled.Name = "checkBoxScrambled";
+			this.checkBoxScrambled.TabIndex = 13;
+			this.checkBoxScrambled.Text = "Scrambled";
 			// 
 			// label45
 			// 
@@ -826,6 +837,8 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.label49);
+			this.tabPage3.Controls.Add(this.tbBandWidth);
 			this.tabPage3.Controls.Add(this.tbDVBTPmtPid);
 			this.tabPage3.Controls.Add(this.label47);
 			this.tabPage3.Controls.Add(this.label42);
@@ -1280,12 +1293,19 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// checkBoxScrambled
+			// tbBandWidth
 			// 
-			this.checkBoxScrambled.Location = new System.Drawing.Point(24, 80);
-			this.checkBoxScrambled.Name = "checkBoxScrambled";
-			this.checkBoxScrambled.TabIndex = 13;
-			this.checkBoxScrambled.Text = "Scrambled";
+			this.tbBandWidth.Location = new System.Drawing.Point(152, 296);
+			this.tbBandWidth.Name = "tbBandWidth";
+			this.tbBandWidth.TabIndex = 35;
+			this.tbBandWidth.Text = "";
+			// 
+			// label49
+			// 
+			this.label49.Location = new System.Drawing.Point(16, 296);
+			this.label49.Name = "label49";
+			this.label49.TabIndex = 36;
+			this.label49.Text = "Bandwidth:";
 			// 
 			// EditTVChannelForm
 			// 
@@ -1582,12 +1602,12 @@ namespace MediaPortal.Configuration
 
 					if (channel.Channel>=0)
 					{
-						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid;
+						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid,bandwidth;
 						string provider;
 						MediaPortal.TV.Recording.DVBSections dvbSections=new MediaPortal.TV.Recording.DVBSections();
 						
 						//DVB-T
-						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
+						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out bandwidth);
 						label42.Text=dvbSections.GetNetworkProvider(ONID);
 						tbDVBTFreq.Text=freq.ToString();;
 						tbDVBTONID.Text=ONID.ToString();;
@@ -1598,6 +1618,7 @@ namespace MediaPortal.Configuration
 						tbDVBTVideoPid.Text=videoPid.ToString();
 						tbDVBTTeletextPid.Text=teletextPid.ToString();
 						tbDVBTPmtPid.Text=pmtPid.ToString();
+						tbBandWidth.Text=bandwidth.ToString();
 
 						//DVB-C
 						TVDatabase.GetDVBCTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
@@ -1792,7 +1813,7 @@ namespace MediaPortal.Configuration
 			}
 
 			int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
-			int pmtPid,audioPid,videoPid,teletextPid;
+			int bandWidth,pmtPid,audioPid,videoPid,teletextPid;
 			string provider;
 			//dvb-T
 			try
@@ -1806,9 +1827,10 @@ namespace MediaPortal.Configuration
 				teletextPid=Int32.Parse(tbDVBTTeletextPid.Text);
 				pmtPid=Int32.Parse(tbDVBTPmtPid.Text);
 				provider=tbDVBTProvider.Text;
+				bandWidth=Int32.Parse(tbBandWidth.Text);
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid);
+					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,bandWidth);
 				}
 			}
 			catch(Exception){}

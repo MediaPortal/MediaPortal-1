@@ -387,7 +387,7 @@ namespace MediaPortal.TV.Recording
 							ArrayList channels = new ArrayList();
 							TVDatabase.GetChannels(ref channels);
 							int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
-							int audioPid, videoPid, teletextPid, pmtPid;
+							int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
 							string provider="";
 							foreach (TVChannel chan in channels)
 							{
@@ -405,7 +405,7 @@ namespace MediaPortal.TV.Recording
 										progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
 										break;
 									case NetworkType.DVBT:
-										TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+										TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth);
 										if (eit.program_number==SID && eit.ts_id==TSID)
 										{
 											Log.Write("epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
@@ -698,7 +698,7 @@ namespace MediaPortal.TV.Recording
 						ArrayList channels = new ArrayList();
 						TVDatabase.GetChannels(ref channels);
 						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
-						int audioPid, videoPid, teletextPid, pmtPid;
+						int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
 						string provider="";
 						foreach (TVChannel chan in channels)
 						{
@@ -715,7 +715,7 @@ namespace MediaPortal.TV.Recording
 									channelName=TVDatabase.GetSatChannelName(prg.ProgrammID,prg.TransportStreamID);
 									break;
 								case NetworkType.DVBT:
-									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth);
 									if (prg.ProgrammID==SID && prg.TransportStreamID==TSID)
 									{
 										channelName=chan.Name;
