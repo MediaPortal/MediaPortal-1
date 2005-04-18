@@ -210,6 +210,7 @@ namespace MediaPortal.GUI.TV
 		//
 		void ShowMessage(int page,int subpage)
 		{
+			if (lblMessage==null) return;
 			lblMessage.Label=String.Format("Waiting for Page {0}/{1}...",page,subpage);
 			lblMessage.IsVisible=true;
 
