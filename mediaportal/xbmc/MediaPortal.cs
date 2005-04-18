@@ -1452,7 +1452,7 @@ public class MediaPortalApp : D3DApp, IRender
     if (m_iLastMousePositionX != iCursorX || m_iLastMousePositionY != iCursorY)
     {
 			// check any still waiting single click events
-			if (GUIGraphicsContext.DBLClickAsRightClick)
+			if (GUIGraphicsContext.DBLClickAsRightClick && bMouseClickFired)
 			{
 				if ((Math.Abs(m_iLastMousePositionX - iCursorX) > 10) || (Math.Abs(m_iLastMousePositionY - iCursorY) > 10))
 				  CheckSingleClick();
@@ -1600,26 +1600,25 @@ public class MediaPortalApp : D3DApp, IRender
 	}
 	
 	private void tMouseClickTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-	{
-		// Check for touchscreen users and TVGuide items
-		if (GUIGraphicsContext.DBLClickAsRightClick)
-		{
-			if(GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVGUIDE)
-			{
-				GUIWindow pWindow=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-				if ( (pWindow.GetFocusControlId()==1) && (GUIWindowManager.RoutedWindow==-1) )
-				{
-					// Dont send single click (only the mouse move event is send)
-					return;
-				}
-			}
-		}
+	{		
 		CheckSingleClick();
 	}
 
 	void CheckSingleClick()
 	{
 		Action action;
+
+		// Check for touchscreen users and TVGuide items
+		if(GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVGUIDE)
+		{
+			GUIWindow pWindow=GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+			if ( (pWindow.GetFocusControlId()==1) && (GUIWindowManager.RoutedWindow==-1) )
+			{
+				// Dont send single click (only the mouse move event is send)
+				bMouseClickFired = false;
+				return;
+			}
+		}
 
 		if(tMouseClickTimer != null)
 		{
