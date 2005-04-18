@@ -254,7 +254,8 @@ namespace MediaPortal.GUI.TV
 					imgTeletext.AllocResources();
 					return;
 				}
-				lblMessage.IsVisible=false;
+				if (lblMessage!=null)
+					lblMessage.IsVisible=false;
 
 				
 				imgTeletext.FileName=String.Empty;
