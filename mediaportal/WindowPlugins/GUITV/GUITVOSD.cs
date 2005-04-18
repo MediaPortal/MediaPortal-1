@@ -1279,12 +1279,14 @@ namespace MediaPortal.GUI.TV
 				bool updateProperties=false;
 				if (previousProgram==null)
 				{
+					m_dateTime=DateTime.Now;
 					previousProgram=prog.Clone();
 					ShowPrograms();
 					updateProperties=true;
 				}
 				else if (previousProgram.Start!=prog.Start)
 				{
+					m_dateTime=DateTime.Now;
 					previousProgram=prog.Clone();
 					ShowPrograms();
 					updateProperties=true;
