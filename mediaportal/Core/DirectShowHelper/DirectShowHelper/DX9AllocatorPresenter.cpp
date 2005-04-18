@@ -25,7 +25,7 @@ void CVMR9AllocatorPresenter::Log(const char *fmt, ...)
 CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
 : m_refCount(1)
 {
-	Log("-------------------------------------");
+	Log("----------v0.1---------------------------");
 	m_hMonitor=monitor;
 	m_pD3DDev=direct3dDevice;
 	m_pCallback=callback;

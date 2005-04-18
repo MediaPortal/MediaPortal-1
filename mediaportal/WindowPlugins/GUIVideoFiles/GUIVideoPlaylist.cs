@@ -13,120 +13,54 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-	public class GUIVideoPlayList : GUIWindow
+	public class GUIVideoPlayList : GUIVideoBaseWindow
 	{
-		enum Controls
-		{
-			CONTROL_BTNVIEWASICONS = 2, 
-			CONTROL_BTNSHUFFLE = 20, 
-			CONTROL_BTNSAVE = 21, 
-			CONTROL_BTNCLEAR = 22, 
-
-			CONTROL_BTNPLAY = 23, 
-			CONTROL_BTNNEXT = 24, 
-			CONTROL_BTNPREVIOUS = 25, 
-
-			CONTROL_LABELFILES = 12, 
-
-			CONTROL_LIST = 50, 
-			CONTROL_THUMBS = 51
-
-		};
 		#region Base variabeles
-		enum SortMethod
-		{
-			SORT_NAME = 0, 
-			SORT_DATE = 1, 
-			SORT_SIZE = 2
-		}
-
-		enum View
-		{
-			VIEW_AS_LIST = 0, 
-			VIEW_AS_ICONS = 1, 
-			VIEW_AS_LARGEICONS = 2, 
-		}
-		View currentView = View.VIEW_AS_LIST;
 		
     
-		DirectoryHistory m_history = new DirectoryHistory();
-		string m_strDirectory = "";
-		int m_iItemSelected = -1;
-		int m_iLastControl = 0;
-		int m_nTempPlayListWindow = 0;
-		string m_strTempPlayListDirectory = "";
-		VirtualDirectory m_directory = new VirtualDirectory();
+		DirectoryHistory	m_history = new DirectoryHistory();
+		string						m_strDirectory = String.Empty;
+		int								m_iItemSelected = -1;
+		int								previousControlId = 0;
+		int								m_nTempPlayListWindow = 0;
+		string						m_strTempPlayListDirectory = String.Empty;
+		VirtualDirectory	m_directory = new VirtualDirectory();
 		#endregion
-    
+
+		[SkinControlAttribute(20)]			protected GUIButtonControl btnShuffle=null;
+		[SkinControlAttribute(21)]			protected GUIButtonControl btnSave=null;
+		[SkinControlAttribute(22)]			protected GUIButtonControl btnClear=null;
+		[SkinControlAttribute(23)]			protected GUIButtonControl btnPlay=null;
+		[SkinControlAttribute(24)]			protected GUIButtonControl btnNext=null;
+		[SkinControlAttribute(25)]			protected GUIButtonControl btnPrevious=null;
+
 		public GUIVideoPlayList()
 		{
 			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST;
-      
-			m_directory.AddDrives();
-			m_directory.SetExtensions(Utils.VideoExtensions);
-      LoadSettings();
-    }
-    ~GUIVideoPlayList()
-    {
     }
 
 		public override bool Init()
 		{
 			m_strDirectory = System.IO.Directory.GetCurrentDirectory();
-			return Load(GUIGraphicsContext.Skin + @"\myvideoplaylist.xml");
+			bool result= Load(GUIGraphicsContext.Skin + @"\myvideoplaylist.xml");
+			m_directory.AddDrives();
+			m_directory.SetExtensions(Utils.VideoExtensions);
+			return result;
 		}
 
-    #region Serialisation
-    void LoadSettings()
-    {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-      {
-        string strTmp = "";
-        strTmp = (string)xmlreader.GetValue("videoplaylist","viewby");
-        if (strTmp != null)
-        {
-          if (strTmp == "list") currentView = View.VIEW_AS_LIST;
-          else if (strTmp == "icons") currentView = View.VIEW_AS_ICONS;
-          else if (strTmp == "largeicons") currentView = View.VIEW_AS_LARGEICONS;
-        }
-      }
-    }
-
-    void SaveSettings()
-    {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-      {
-        switch (currentView)
-        {
-          case View.VIEW_AS_LIST : 
-            xmlwriter.SetValue("videoplaylist","viewby","list");
-            break;
-          case View.VIEW_AS_ICONS : 
-            xmlwriter.SetValue("videoplaylist","viewby","icons");
-            break;
-          case View.VIEW_AS_LARGEICONS : 
-            xmlwriter.SetValue("videoplaylist","viewby","largeicons");
-            break;
-        }
-      }
-    }
-    #endregion
+		protected override string SerializeName
+		{
+			get
+			{
+				return "videoplaylist";
+			}
+		}
 
 
 
 		#region BaseWindow Members
 		public override void OnAction(Action action)
 		{
-			if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
-			{
-				return;
-			}
-
-			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-			{
-				GUIWindowManager.ShowPreviousWindow();
-				return;
-			}
 			if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
 			{
 				GUIWindowManager.ShowPreviousWindow();
@@ -136,113 +70,75 @@ namespace MediaPortal.GUI.Video
 			base.OnAction(action);
 		}
 
-		
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			LoadSettings();
+			LoadDirectory(String.Empty);
+			if ((previousControlId == facadeView.GetID) && facadeView.Count <= 0)
+			{
+				previousControlId = btnViewAs.GetID;
+				GUIControl.FocusControl(GetID, previousControlId);
+			}
+			if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
+			{
+				int iSong = PlayListPlayer.CurrentSong;
+				if (iSong >= 0 && iSong <= facadeView.Count)
+				{
+					GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
+				}
+			}
+		}
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			base.OnPageDestroy (newWindowId);
+			m_iItemSelected = facadeView.SelectedListItemIndex;
+		}
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+			if (control==btnShuffle)
+			{
+				OnShufflePlayList();
+			}
+			else if (control==btnSave)
+			{
+				OnSavePlayList();
+			}
+			else if (control==btnClear)
+			{
+				OnClearPlayList();
+			}
+			else if (control==btnPlay)
+			{
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
+				PlayListPlayer.Reset();
+				PlayListPlayer.Play(facadeView.SelectedListItemIndex);
+				UpdateButtonStates();
+			}
+			else if (control==btnNext)
+			{
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
+				GUIVideoFiles.PlayMovieFromPlayList(true);
+			}
+			else if (control==btnPrevious)
+			{
+				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
+				PlayListPlayer.PlayPrevious();
+			}
+		}
+
+
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch (message.Message)
 			{
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
-					base.OnMessage(message);
-          
-					LoadSettings();
-					ShowThumbPanel();
-					LoadDirectory("");
-					if ((m_iLastControl == (int)Controls.CONTROL_THUMBS || m_iLastControl == (int)Controls.CONTROL_LIST) && GetItemCount() <= 0)
-					{
-						m_iLastControl = (int)Controls.CONTROL_BTNVIEWASICONS;
-						GUIControl.FocusControl(GetID, m_iLastControl);
-					}
-					if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
-					{
-						int iSong = PlayListPlayer.CurrentSong;
-						if (iSong >= 0 && iSong <= GetItemCount())
-						{
-							GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iSong);
-							GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iSong);
-						}
-					}
-
-					return true;
-
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-					m_iItemSelected = GetSelectedItemNo();
-          SaveSettings();
-					break;
-
-				case GUIMessage.MessageType.GUI_MSG_CLICKED : 
-					int iControl = message.SenderControlId;
-					if (iControl == (int)Controls.CONTROL_BTNVIEWASICONS)
-					{
-						switch (currentView)
-						{
-							case View.VIEW_AS_LIST : 
-								currentView = View.VIEW_AS_ICONS;
-								break;
-							case View.VIEW_AS_ICONS : 
-								currentView = View.VIEW_AS_LARGEICONS;
-								break;
-							case View.VIEW_AS_LARGEICONS : 
-								currentView = View.VIEW_AS_LIST;
-								break;
-						}
-            ShowThumbPanel();
-            GUIControl.FocusControl(GetID, iControl);
-					}
-          
-					if (iControl == (int)Controls.CONTROL_THUMBS || iControl == (int)Controls.CONTROL_LIST)
-					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-						OnMessage(msg);
-						int iItem = (int)msg.Param1;
-						int iAction = (int)message.Param1;
-						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-						{
-							OnClick(iItem);
-						}
-						if (iAction == (int)Action.ActionType.ACTION_QUEUE_ITEM)
-						{
-							OnQueueItem(iItem);
-						}
-
-					}
-
-					else if (iControl == (int)Controls.CONTROL_BTNSHUFFLE)
-					{
-						ShufflePlayList();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNSAVE)
-					{
-						SavePlayList();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNCLEAR)
-					{
-						ClearPlayList();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNPLAY)
-					{
-						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
-						PlayListPlayer.Reset();
-						PlayListPlayer.Play(GetSelectedItemNo());
-						UpdateButtons();
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNNEXT)
-					{
-						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
-						
-            GUIVideoFiles.PlayMovieFromPlayList(true);
-					}
-					else if (iControl == (int)Controls.CONTROL_BTNPREVIOUS)
-					{
-						PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
-						PlayListPlayer.PlayPrevious();
-					}
-					break;
-
 				case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED : 
 				{
-					for (int i = 0; i < GetItemCount(); ++i)
+					for (int i = 0; i < facadeView.Count; ++i)
 					{
-						GUIListItem item = GetItem(i);
+						GUIListItem item = facadeView[i];
 						if (item != null && item.Selected)
 						{
 							item.Selected = false;
@@ -250,19 +146,19 @@ namespace MediaPortal.GUI.Video
 						}
 					}
 
-					UpdateButtons();
+					UpdateButtonStates();
 				}
 					break;
 
 				case GUIMessage.MessageType.GUI_MSG_PLAYLIST_CHANGED : 
 				{
 					//	global playlist changed outside playlist window
-					LoadDirectory("");
+					LoadDirectory(String.Empty);
 
-					if ((m_iLastControl == (int)Controls.CONTROL_THUMBS || m_iLastControl == (int)Controls.CONTROL_LIST) && GetItemCount() <= 0)
+					if (previousControlId == facadeView.GetID && facadeView.Count <= 0)
 					{
-						m_iLastControl = (int)Controls.CONTROL_BTNVIEWASICONS;
-						GUIControl.FocusControl(GetID, m_iLastControl);
+						previousControlId = btnViewAs.GetID;
+						GUIControl.FocusControl(GetID, previousControlId);
           }
           SelectCurrentVideo();
 
@@ -272,157 +168,36 @@ namespace MediaPortal.GUI.Video
 			return base.OnMessage(message);
 		}
 
-
-		bool ViewByIcon
+		protected override void UpdateButtonStates()
 		{
-			get 
+			base.UpdateButtonStates();
+			if (facadeView.Count > 0)
 			{
-				if (currentView != View.VIEW_AS_LIST) return true;
-				return false;
-			}
-		}
-
-		bool ViewByLargeIcon
-		{
-			get
-			{
-				if (currentView == View.VIEW_AS_LARGEICONS) return true;
-				return false;
-			}
-		}
-
-		GUIListItem GetSelectedItem()
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-			GUIListItem item = GUIControl.GetSelectedListItem(GetID, iControl);
-			return item;
-		}
-
-		GUIListItem GetItem(int iItem)
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-			GUIListItem item = GUIControl.GetListItem(GetID, iControl, iItem);
-			return item;
-		}
-
-		int GetSelectedItemNo()
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-			OnMessage(msg);
-			int iItem = (int)msg.Param1;
-			return iItem;
-		}
-		int GetItemCount()
-		{
-			int iControl;
-			if (ViewByIcon)
-			{
-				iControl = (int)Controls.CONTROL_THUMBS;
-			}
-			else
-				iControl = (int)Controls.CONTROL_LIST;
-
-			return GUIControl.GetItemCount(GetID, iControl);
-		}
-
-		void UpdateButtons()
-		{
-
-      GUIControl.HideControl(GetID, (int)Controls.CONTROL_LIST);
-      GUIControl.HideControl(GetID, (int)Controls.CONTROL_THUMBS);
-      
-      int iControl = (int)Controls.CONTROL_LIST;
-      if (ViewByIcon)
-        iControl = (int)Controls.CONTROL_THUMBS;
-      GUIControl.ShowControl(GetID, iControl);
-      GUIControl.FocusControl(GetID, iControl);
-      
-			string strLine = "";
-			switch (currentView)
-			{
-				case View.VIEW_AS_LIST : 
-					strLine = GUILocalizeStrings.Get(101);
-					break;
-				case View.VIEW_AS_ICONS : 
-					strLine = GUILocalizeStrings.Get(100);
-					break;
-				case View.VIEW_AS_LARGEICONS : 
-					strLine = GUILocalizeStrings.Get(417);
-					break;
-			}
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEWASICONS, strLine);
-
-
-
-			if (GetItemCount() > 0)
-			{
-				GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNCLEAR);
-				GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNPLAY);
+				btnClear.Disabled=false;
+				btnPlay.Disabled=false;
 				if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
 				{
-					GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNNEXT);
-					GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BTNPREVIOUS);
+					btnNext.Disabled=false;
+					btnPrevious.Disabled=false;
 				}
 				else
 				{
-					GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNNEXT);
-					GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNPREVIOUS);
+					btnNext.Disabled=true;
+					btnPrevious.Disabled=true;
 				}
 			}
 			else
 			{
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNCLEAR);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNPLAY);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNNEXT);
-				GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BTNPREVIOUS);
+				btnClear.Disabled=true;
+				btnPlay.Disabled=true;
+				btnNext.Disabled=true;
+				btnPrevious.Disabled=true;
 			}
-
 		}
 
-		void ShowThumbPanel()
+		protected override void LoadDirectory(string strNewDirectory)
 		{
-			int iItem = GetSelectedItemNo();
-			if (ViewByLargeIcon)
-			{
-				GUIThumbnailPanel pControl = (GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-				pControl.ShowBigIcons(true);
-			}
-			else
-			{
-				GUIThumbnailPanel pControl = (GUIThumbnailPanel)GetControl((int)Controls.CONTROL_THUMBS);
-				pControl.ShowBigIcons(false);
-			}
-			if (iItem > -1)
-			{
-				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
-				GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
-			}
-			UpdateButtons();
-		}
-
-		void LoadDirectory(string strNewDirectory)
-		{
-			GUIListItem SelectedItem = GetSelectedItem();
+			GUIListItem SelectedItem = facadeView.SelectedListItem;
 			if (SelectedItem != null) 
 			{
 				if (SelectedItem.IsFolder && SelectedItem.Label != "..")
@@ -431,10 +206,9 @@ namespace MediaPortal.GUI.Video
 				}
 			}
 			m_strDirectory = strNewDirectory;
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS);
+			facadeView.Clear();
             
-			string strObjects = "";
+			string strObjects = String.Empty;
 
 			ArrayList itemlist = new ArrayList();
 
@@ -464,7 +238,7 @@ namespace MediaPortal.GUI.Video
 						pItem.Label2 = str;
 					}
 					else
-						pItem.Label2 = "";
+						pItem.Label2 = String.Empty;
 				}
 				itemlist.Add(pItem);
         Utils.SetDefaultIcons(pItem);
@@ -472,7 +246,7 @@ namespace MediaPortal.GUI.Video
       }
 
 			iCurrentSong = 0;
-			strFileName = "";
+			strFileName = String.Empty;
 			//	Search current playlist item
 			if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(m_strDirectory) >= 0 && g_Player.Playing 
 				&& PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP) 
@@ -497,8 +271,7 @@ namespace MediaPortal.GUI.Video
 			int iItem = 0;
 			foreach (GUIListItem item in itemlist)
 			{
-				GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST, item);
-				GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_THUMBS, item);
+				facadeView.Add(item);
         
 				//	synchronize playlist with current directory
 				if (strFileName.Length > 0 && item.Path == strFileName)
@@ -506,13 +279,12 @@ namespace MediaPortal.GUI.Video
 					item.Selected = true;
 				}
 			}
-			for (int i = 0; i < GetItemCount(); ++i)
+			for (int i = 0; i < facadeView.Count; ++i)
 			{
-				GUIListItem item = GetItem(i);
+				GUIListItem item = facadeView[i];
 				if (item.Label == strSelectedItem)
 				{
-					GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
-					GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
+					GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
 					break;
 				}
 				iItem++;
@@ -525,12 +297,9 @@ namespace MediaPortal.GUI.Video
 			}
 			strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount", strObjects);
-			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
-      ShowThumbPanel();
       if (m_iItemSelected >= 0)
       {
-        GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, m_iItemSelected);
-        GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, m_iItemSelected);
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
       }
 
 		}
@@ -540,20 +309,19 @@ namespace MediaPortal.GUI.Video
 
 		void ClearFileItems()
 		{
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
-			GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS);
+			facadeView.Clear();
 		}
   
-		void ClearPlayList()
+		void OnClearPlayList()
 		{
       m_iItemSelected = -1;
 			ClearFileItems();
 			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Clear();
 			if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
 				PlayListPlayer.Reset();
-			LoadDirectory("");
-			UpdateButtons();
-			GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BTNVIEWASICONS);
+			LoadDirectory(String.Empty);
+			UpdateButtonStates();
+			GUIControl.FocusControl(GetID, btnViewAs.GetID);
 		}
     void SetIMDBThumbs(ArrayList items)
     {
@@ -622,47 +390,47 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-		void OnClick(int iItem)
+
+		protected override void OnClick(int itemNumber)
 		{
-      m_iItemSelected = GetSelectedItemNo();
-			GUIListItem item = GetSelectedItem();
+      m_iItemSelected = facadeView.SelectedListItemIndex;
+			GUIListItem item = facadeView.SelectedListItem;
 			if (item == null) return;
 			if (item.IsFolder) return;
       
 			string strPath = item.Path;
 			PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
 			PlayListPlayer.Reset();
-			PlayListPlayer.Play(iItem);
+			PlayListPlayer.Play(itemNumber);
 		}
     
-		void OnQueueItem(int iItem)
+		protected override void OnQueueItem(int iItem)
 		{
 			RemovePlayListItem(iItem);
 		}
 
 		void RemovePlayListItem(int iItem)
 		{
-			GUIListItem pItem = GetItem(iItem);
+			GUIListItem pItem = facadeView[iItem];
       if (pItem==null) return;
 			string strFileName = pItem.Path;
 			
       PlayListPlayer.Remove(PlayListPlayer.PlayListType.PLAYLIST_VIDEO,strFileName);
 
 			LoadDirectory(m_strDirectory);
-			UpdateButtons();
-			GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iItem);
-			GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iItem);
+			UpdateButtonStates();
+			GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
       SelectCurrentVideo();
 		}
 
-		void ShufflePlayList()
+		void OnShufflePlayList()
 		{
-      m_iItemSelected = GetSelectedItemNo();
+      m_iItemSelected = facadeView.SelectedListItemIndex;
 			ClearFileItems();
 			PlayList playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO);
 	
       if (playlist.Count <= 0) return;
-      string strFileName = "";
+      string strFileName = String.Empty;
       if (PlayListPlayer.CurrentSong >= 0)
       {
         if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
@@ -689,30 +457,16 @@ namespace MediaPortal.GUI.Video
 
 		}
 		
-		bool GetKeyboard(ref string strLine)
-    {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard) return false;
-      keyboard.Reset();
-      keyboard.DoModal(GetID);
-      if (keyboard.IsConfirmed)
-      {
-        strLine = keyboard.Text;
-        return true;
-      }
-      return false;
-    }
-
-		void SavePlayList()
+		void OnSavePlayList()
 		{
-      m_iItemSelected = GetSelectedItemNo();
-			string strNewFileName = "";
+      m_iItemSelected = facadeView.SelectedListItemIndex;
+			string strNewFileName = String.Empty;
 			if (GetKeyboard(ref strNewFileName))
 			{
-        string strPlayListPath = "";
+        string strPlayListPath = String.Empty;
         using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
-          strPlayListPath = xmlreader.GetValueAsString("movies","playlists","");
+          strPlayListPath = xmlreader.GetValueAsString("movies","playlists",String.Empty);
           strPlayListPath = Utils.RemoveTrailingSlash(strPlayListPath);
         }
 
@@ -724,9 +478,9 @@ namespace MediaPortal.GUI.Video
           strPath = strPlayListPath + @"\" + strPath;
         }
 				PlayListM3U playlist = new PlayListM3U();
-				for (int i = 0; i < GetItemCount(); ++i)
+				for (int i = 0; i < facadeView.Count; ++i)
 				{
-					GUIListItem pItem = GetItem(i);
+					GUIListItem pItem = facadeView[i];
 					PlayList.PlayListItem newItem = new PlayList.PlayListItem();
 					newItem.FileName = pItem.Path;
 					newItem.Description = pItem.Label;
@@ -742,10 +496,9 @@ namespace MediaPortal.GUI.Video
       if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_VIDEO)
       {
         int iSong = PlayListPlayer.CurrentSong;
-        if (iSong >= 0 && iSong <= GetItemCount())
+        if (iSong >= 0 && iSong <= facadeView.Count)
         {
-          GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_LIST, iSong);
-          GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_THUMBS, iSong);
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
         }
       }
     }
