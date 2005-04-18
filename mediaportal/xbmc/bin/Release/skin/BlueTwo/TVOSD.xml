@@ -64,10 +64,10 @@
 		<description>TV Logo</description> 
 		<type>image</type> 
 		<id>10</id> 
-		<posX>615</posX> 
-		<posY>430</posY>
-		<width>60</width>
-		<height>80</height>
+		<posX>570</posX> 
+		<posY>435</posY>
+		<width>70</width>
+		<height>70</height>
 		<texture>#TV.View.thumb</texture>		
 		<visible>yes</visible>
 		<centered>yes</centered>
@@ -87,7 +87,7 @@
 		<description>Plot</description>
 		<type>textboxscrollup</type>
 		<id>38</id>
-		<posX>210</posX> 
+		<posX>220</posX> 
 		<posY>450</posY>
 		<width>330</width> 
 		<height>50</height>
@@ -100,9 +100,9 @@
 		<description>On tv NOW</description> 
 		<id>36</id> 
 		<type>textbox</type> 
-		<width>350</width>
+		<width>320</width>
 		<height>30</height> 
-		<posX>205</posX> 
+		<posX>220</posX> 
 		<posY>410</posY>
 		<align>left</align>
 		<font>font13</font> 
@@ -114,7 +114,7 @@
 		<type>textbox</type> 
 		<width>350</width> 
 		<height>30</height>
-		<posX>205</posX> 
+		<posX>220</posX> 
 		<posY>430</posY>
 		<align>left</align> 
 		<font>font10</font> 
@@ -124,12 +124,12 @@
 		<description>Program Button Up</description>
 		<type>button</type>
 		<id>33</id>
-		<posX>557</posX>
-		<posY>420</posY>
-		<width>26</width>
-		<height>26</height>
-		<textureFocus>arrow_round_up_focus.png</textureFocus>
-		<textureNoFocus>arrow_round_up_nofocus.png</textureNoFocus>
+		<posX>195</posX>
+		<posY>413</posY>
+		<width>20</width>
+		<height>20</height>
+		<textureFocus>arrow_round_left_focus.png</textureFocus>
+		<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
 		<label>-</label>
 		<onleft>221</onleft>
 		<onright>34</onright>
@@ -140,12 +140,12 @@
 		<description>Program Button Down</description>
 		<type>button</type>
 		<id>34</id>
-		<posX>582</posX>
-		<posY>420</posY>
-		<width>26</width>
-		<height>26</height>
-		<textureFocus>arrow_round_down_focus.png</textureFocus>
-		<textureNoFocus>arrow_round_down_nofocus.png</textureNoFocus>
+		<posX>570</posX>
+		<posY>413</posY>
+		<width>20</width>
+		<height>20</height>
+		<textureFocus>arrow_round_right_focus.png</textureFocus>
+		<textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
 		<label>-</label>
 		<onleft>33</onleft>
 		<onright>34</onright>
@@ -156,12 +156,12 @@
 		<description>Channel Button Up</description>
 		<type>button</type>
 		<id>31</id>
-		<posX>582</posX>
-		<posY>510</posY>
-		<width>26</width>
-		<height>26</height>
-		<textureFocus>arrow_round_right_focus.png</textureFocus>
-		<textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
+		<posX>620</posX>
+		<posY>520</posY>
+		<width>20</width>
+		<height>20</height>
+		<textureFocus>arrow_round_up_focus.png</textureFocus>
+		<textureNoFocus>arrow_round_up_nofocus.png</textureNoFocus>
 		<label>-</label>
 		<onleft>32</onleft>
 		<onright>31</onright>
@@ -172,12 +172,12 @@
 		<description>Channel Button Down</description>
 		<type>button</type>
 		<id>32</id>
-		<posX>557</posX>
-		<posY>510</posY>
-		<width>26</width>
-		<height>26</height>
-		<textureFocus>arrow_round_left_focus.png</textureFocus>
-		<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
+		<posX>570</posX>
+		<posY>520</posY>
+		<width>20</width>
+		<height>20</height>
+		<textureFocus>arrow_round_down_focus.png</textureFocus>
+		<textureNoFocus>arrow_round_down_nofocus.png</textureNoFocus>
 		<label>-</label>
 		<onleft>221</onleft>
 		<onright>31</onright>
@@ -188,8 +188,8 @@
 		<description>Current channel</description> 
 		<type>label</type> 
 		<id>35</id> 
-		<posX>615</posX> 
-		<posY>520</posY>
+		<posX>570</posX> 
+		<posY>505</posY>
 		<width>70</width> 
 		<label>-</label> 
 		<align>left</align> 

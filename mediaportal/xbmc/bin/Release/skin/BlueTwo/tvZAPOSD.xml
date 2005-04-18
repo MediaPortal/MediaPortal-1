@@ -83,7 +83,7 @@
 		<posY>530</posY>
 		<align>left</align> 
 		<font>font13</font> 
-		<textcolor>FFB2D4F5</textcolor>
+		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
 		<description>Current channel</description> 
