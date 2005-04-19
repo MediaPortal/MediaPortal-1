@@ -3468,4 +3468,20 @@
       </connections>
    </tv>
   </capturecard>
+
+  <capturecard commercialname="Lifeview DVB-S" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03005168&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBS Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
