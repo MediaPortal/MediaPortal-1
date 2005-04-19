@@ -98,6 +98,7 @@ namespace MediaPortal.TV.Recording
 					}
 					catch(Exception){}
 
+					if (carrier[1]==0) carrier[1]=8;
 					frequencies.Add(carrier);
 					Log.WriteFile(Log.LogType.Capture,"added:{0}", carrier[0]);
 				}
@@ -149,7 +150,7 @@ namespace MediaPortal.TV.Recording
 			//Log.WriteFile(Log.LogType.Capture,"FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
 			float frequency = tunedFrequency;
 			frequency /=1000;
-			string description=String.Format("frequency:{0:###.##} MHz.", frequency);
+			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
 			callback.OnStatus(description);
 
 			if (currentState==State.ScanFrequencies)
@@ -214,7 +215,7 @@ namespace MediaPortal.TV.Recording
 				tmp = (int[])frequencies[currentFrequencyIndex];
 				chan.Frequency=tmp[0];
 				chan.Bandwidth=tmp[1];
-				Log.WriteFile(Log.LogType.Capture,"tune:{0}",tunedFrequency);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				return;
 			}
@@ -222,6 +223,7 @@ namespace MediaPortal.TV.Recording
 			tmp = (int[])frequencies[currentFrequencyIndex];
 			chan.Frequency=tmp[0];
 			chan.Bandwidth=tmp[1];
+			tunedFrequency=chan.Frequency;
 			if (currentOffset==0)
 			{
 				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
@@ -232,6 +234,7 @@ namespace MediaPortal.TV.Recording
 			else if (currentOffset==1)
 			{
 				tunedFrequency-=scanOffset;
+				chan.Frequency-=scanOffset;
 				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				currentOffset++;
@@ -239,6 +242,7 @@ namespace MediaPortal.TV.Recording
 			else if (currentOffset==2)
 			{
 				tunedFrequency+=scanOffset;
+				chan.Frequency+=scanOffset;
 				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				currentOffset++;
