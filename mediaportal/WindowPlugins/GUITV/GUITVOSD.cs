@@ -1198,7 +1198,6 @@ namespace MediaPortal.GUI.TV
 				tbOnTvNext.Clear();
 			}
 
-      GUIMessage msg;
 
       // Set recorder status
 			if (imgRecIcon!=null)

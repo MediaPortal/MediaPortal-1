@@ -22,17 +22,6 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVTeletext : GUIWindow
 	{
-		enum Controls
-		{
-			LBL_MESSAGE=27,
-			IMG_TELETEXT_PAGE=500,
-			BTN_PAGE100=502,
-			BTN_PAGE200,
-			BTN_PAGE300,
-			BTN_HIDDEN,
-			BTN_SUBPAGE,
-			BTN_LANG
-		};
 		[SkinControlAttribute(27)]				protected GUILabelControl lblMessage=null;
 		[SkinControlAttribute(500)]				protected GUIImage imgTeletextPage=null;
 		[SkinControlAttribute(502)]				protected GUIButtonControl btnPage100=null;

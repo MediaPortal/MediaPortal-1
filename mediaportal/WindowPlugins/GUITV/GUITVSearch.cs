@@ -11,34 +11,25 @@ using MediaPortal.Player;
 namespace MediaPortal.GUI.TV
 {
 	/// <summary>
-	/// todo: 
-	///   -directory history
-	///   -nicer 'up' icon
-	///   -search by title
-	///   -filtering
-	///   -
 	/// </summary>
 	public class GUITVSearch:GUIWindow, IComparer
 	{
-    enum Controls:int
-    {
-      SortBy=2,
-      SortAscending=3,
-      SearchByGenre=4,
-			SearchByTitle=5,
-			SearchByDescription=6,
-      btnLetter=7,
-			btnShow=8,
-			btnEpisode=9,
-      ListControl=10,
-			TitleControl=11,
-			labelNumberOfItems=12,
-			LabelProgramTitle=13,
-			LabelProgramTime=14,
-			LabelProgramDescription=15,
-			LabelProgramGenre=17,
-			ImageThumb=18
-    }
+		[SkinControlAttribute(2)]				protected GUIButtonControl btnSortyBy=null;
+		[SkinControlAttribute(3)]				protected GUIToggleButtonControl btnSortAsc=null;
+		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSearchByGenre=null;
+		[SkinControlAttribute(5)]				protected GUIToggleButtonControl btnSearchByTitle=null;
+		[SkinControlAttribute(6)]				protected GUIToggleButtonControl btnSearchByDescription=null;
+		[SkinControlAttribute(7)]				protected GUISelectButtonControl btnLetter=null;
+		[SkinControlAttribute(8)]				protected GUISelectButtonControl btnShow=null;
+		[SkinControlAttribute(9)]				protected GUISelectButtonControl btnEpisode=null;
+		[SkinControlAttribute(10)]				protected GUIListControl listView=null;
+		[SkinControlAttribute(11)]				protected GUIListControl titleView=null;
+		[SkinControlAttribute(12)]				protected GUILabelControl lblNumberOfItems=null;
+		[SkinControlAttribute(13)]				protected GUIFadeLabel lblProgramTitle=null;
+		[SkinControlAttribute(14)]				protected GUILabelControl lblProgramTime=null;
+		[SkinControlAttribute(15)]				protected GUITextScrollUpControl lblProgramDescription=null;
+		[SkinControlAttribute(17)]				protected GUILabelControl lblProgramGenre=null;
+		[SkinControlAttribute(18)]				protected GUIImage imgTvLogo=null;
 
     enum SearchMode
     {
@@ -52,17 +43,17 @@ namespace MediaPortal.GUI.TV
       Date,
       Channel
     }
-    SearchMode _SearchMode=SearchMode.Title;
-    SortMethod _SortMethod=SortMethod.Name;
-    bool       _Ascending=true;
-    int        _Level=0;
-    string     _CurrentGenre=String.Empty;
-    ArrayList   _recordings=new ArrayList();
-    int        _SearchKind=-1;
-    string     _SearchCriteria=String.Empty;
-		string     _FilterLetter="a";
-		string     _FilterShow="";
-		string     _FilterEpsiode="";
+    SearchMode currentSearchMode=SearchMode.Title;
+    SortMethod currentSortMethod=SortMethod.Name;
+    bool       sortAscending=true;
+    int        currentLevel=0;
+    string     currentGenre=String.Empty;
+    ArrayList   listRecordings=new ArrayList();
+    int        currentSearchKind=-1;
+    string     currentSearchCriteria=String.Empty;
+		string     filterLetter="a";
+		string     filterShow=String.Empty;
+		string     filterEpisode=String.Empty;
 
 		public GUITVSearch()
     {
@@ -79,171 +70,177 @@ namespace MediaPortal.GUI.TV
     {
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_PREVIOUS_MENU:
-        {
-          GUIWindowManager.ShowPreviousWindow();
-          return;
-        }
-        case Action.ActionType.ACTION_SHOW_GUI:
-          if (Recorder.IsViewing() || (g_Player.Playing && g_Player.IsTVRecording))
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
+				case Action.ActionType.ACTION_SHOW_GUI:
+					if ( !g_Player.Playing && Recorder.IsViewing())
+					{
+						//if we're watching tv
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					}
+					else if (g_Player.Playing && (g_Player.IsTVRecording||g_Player.IsTV))
+					{
+						//if we're watching a tv recording
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					}
+					else if (g_Player.Playing&&g_Player.HasVideo)
+					{
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+					}
           break;
       }
       base.OnAction(action);
     }
 
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			base.OnPageDestroy (newWindowId);
+			listRecordings.Clear();
+					
+			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			{
+				if (! g_Player.Playing)
+				{
+					if (GUIGraphicsContext.ShowBackground)
+					{
+						// stop timeshifting & viewing... 
+	              
+						Recorder.StopViewing();
+					}
+				}
+			}
+		}
+
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			listRecordings.Clear();
+			currentSearchKind=-1;
+			currentSearchCriteria=String.Empty;
+			TVDatabase.GetRecordings(ref listRecordings);
+					
+			
+			btnShow.Clear();
+			btnEpisode.Clear();
+			for (char k='A'; k <='Z'; k++)
+			{
+				btnLetter.AddSubItem(k.ToString());
+			}
+			Update();
+		}
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+			if (control==btnSearchByGenre)
+			{
+				btnShow.Clear();
+				btnEpisode.Clear();
+				currentSearchMode=SearchMode.Genre;
+				currentLevel=0;
+				filterEpisode=String.Empty;
+				filterLetter="#";
+				filterShow=String.Empty;
+				currentSearchKind=-1;
+				currentSearchCriteria=String.Empty;
+				Update();
+				GUIControl.FocusControl(GetID,btnSearchByGenre.GetID);
+			}
+			if (control==btnSearchByTitle)
+			{
+				btnShow.Clear();
+				btnEpisode.Clear();
+				filterEpisode=String.Empty;
+				filterLetter="a";
+				filterShow=String.Empty;
+				currentSearchMode=SearchMode.Title;
+				currentLevel=0;
+				currentSearchKind=-1;
+				currentSearchCriteria=String.Empty;
+				Update();
+				GUIControl.FocusControl(GetID,btnSearchByTitle.GetID);
+			}
+			if (control==btnSearchByDescription)
+			{
+				btnShow.Clear();
+				btnEpisode.Clear();
+				filterEpisode=String.Empty;
+				filterLetter="#";
+				filterShow=String.Empty;
+				currentSearchMode=SearchMode.Description;
+				currentLevel=0;
+				currentSearchKind=-1;
+				currentSearchCriteria=String.Empty;
+				Update();
+				GUIControl.FocusControl(GetID,btnSearchByDescription.GetID);
+			}
+			if (control==btnSortAsc)
+			{
+				sortAscending=!sortAscending;
+				Update();
+				GUIControl.FocusControl(GetID, btnSortAsc.GetID);
+			}
+          
+			if (control==btnSortyBy)
+			{
+				switch ( currentSortMethod)
+				{
+					case SortMethod.Name: 
+						currentSortMethod = SortMethod.Channel;
+						break;
+					case SortMethod.Channel: 
+						currentSortMethod = SortMethod.Date;
+						break;
+					case SortMethod.Date: 
+						currentSortMethod = SortMethod.Name;
+						break;
+				}
+				Update();
+				GUIControl.FocusControl(GetID, btnSortyBy.GetID);
+			}
+
+			if (control==listView || control==titleView)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
+				OnMessage(msg);         
+				int iItem=(int)msg.Param1;
+				if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
+				{
+					OnClick(iItem);
+				}
+			}
+			if (control==btnLetter)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,controlId,0,0,null);
+				OnMessage(msg);
+				filterLetter=msg.Label;
+				filterShow=String.Empty;
+				filterEpisode=String.Empty;
+				Update();
+				GUIControl.FocusControl(GetID,btnLetter.GetID);
+			}
+			if (control==btnShow)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,controlId,0,0,null);
+				OnMessage(msg);
+				filterShow=msg.Label;
+				filterEpisode=String.Empty;
+				Update();
+				GUIControl.FocusControl(GetID,btnShow.GetID);
+			}
+			if (control==btnEpisode)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,controlId,0,0,null);
+				OnMessage(msg);
+				filterEpisode=msg.Label;
+				Update();
+				GUIControl.FocusControl(GetID,btnEpisode.GetID);
+			}
+
+		}
+
     public override bool OnMessage(GUIMessage message)
     {
       switch ( message.Message )
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-        {
-          _recordings.Clear();
-					
-					if ( !GUITVHome.IsTVWindow(message.Param1) )
-					{
-						if (! g_Player.Playing)
-						{
-							if (GUIGraphicsContext.ShowBackground)
-							{
-								// stop timeshifting & viewing... 
-	              
-								Recorder.StopViewing();
-							}
-						}
-					}
-        }
-        break;
-
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-        {
-          base.OnMessage(message);
-          _recordings.Clear();
-          _SearchKind=-1;
-          _SearchCriteria=String.Empty;
-          TVDatabase.GetRecordings(ref _recordings);
-					
-					GUIControl.ClearControl(GetID, (int)Controls.btnShow);
-					GUIControl.ClearControl(GetID, (int)Controls.btnEpisode);
-					GUIControl.AddItemLabelControl(GetID,(int)Controls.btnLetter,"#");
-					for (char k='A'; k <='Z'; k++)
-					{
-						GUIControl.AddItemLabelControl(GetID,(int)Controls.btnLetter,k.ToString());
-					}
-					Update();
-          return true;
-        }
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          int iControl=message.SenderControlId;
-          if (iControl==(int)Controls.SearchByGenre)
-          {
-						GUIControl.ClearControl(GetID, (int)Controls.btnShow);
-						GUIControl.ClearControl(GetID, (int)Controls.btnEpisode);
-            _SearchMode=SearchMode.Genre;
-            _Level=0;
-						_FilterEpsiode="";
-						_FilterLetter="#";
-						_FilterShow="";
-            _SearchKind=-1;
-            _SearchCriteria=String.Empty;
-						Update();
-						GUIControl.FocusControl(GetID,iControl);
-          }
-          if (iControl==(int)Controls.SearchByTitle)
-					{
-						GUIControl.ClearControl(GetID, (int)Controls.btnShow);
-						GUIControl.ClearControl(GetID, (int)Controls.btnEpisode);
-						_FilterEpsiode="";
-						_FilterLetter="a";
-						_FilterShow="";
-            _SearchMode=SearchMode.Title;
-            _Level=0;
-            _SearchKind=-1;
-            _SearchCriteria=String.Empty;
-						Update();
-						GUIControl.FocusControl(GetID,iControl);
-					}
-					if (iControl==(int)Controls.SearchByDescription)
-					{
-						GUIControl.ClearControl(GetID, (int)Controls.btnShow);
-						GUIControl.ClearControl(GetID, (int)Controls.btnEpisode);
-						_FilterEpsiode="";
-						_FilterLetter="#";
-						_FilterShow="";
-						_SearchMode=SearchMode.Description;
-						_Level=0;
-						_SearchKind=-1;
-						_SearchCriteria=String.Empty;
-						Update();
-						GUIControl.FocusControl(GetID,iControl);
-					}
-          if (iControl==(int)Controls.SortAscending)
-          {
-            _Ascending=!_Ascending;
-            Update();
-            GUIControl.FocusControl(GetID, iControl);
-          }
-          
-          if (iControl==(int)Controls.SortBy)
-          {
-            switch ( _SortMethod)
-            {
-              case SortMethod.Name: 
-                _SortMethod = SortMethod.Channel;
-                break;
-              case SortMethod.Channel: 
-                _SortMethod = SortMethod.Date;
-                break;
-              case SortMethod.Date: 
-                _SortMethod = SortMethod.Name;
-                break;
-            }
-            Update();
-            GUIControl.FocusControl(GetID, iControl);
-          }
-
-          if (iControl==(int)Controls.ListControl||iControl==(int)Controls.TitleControl)
-          {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-            OnMessage(msg);         
-            int iItem=(int)msg.Param1;
-            int iAction=(int)message.Param1;
-            if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
-            {
-              OnClick(iItem);
-            }
-          }
-					if (iControl==(int)Controls.btnLetter)
-					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						OnMessage(msg);
-						_FilterLetter=msg.Label;
-						_FilterShow="";
-						_FilterEpsiode="";
-						Update();
-						GUIControl.FocusControl(GetID,iControl);
-					}
-					if (iControl==(int)Controls.btnShow)
-					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						OnMessage(msg);
-						_FilterShow=msg.Label;
-						_FilterEpsiode="";
-						Update();
-						GUIControl.FocusControl(GetID,iControl);
-					}
-					if (iControl==(int)Controls.btnEpisode)
-					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						OnMessage(msg);
-						_FilterEpsiode=msg.Label;
-						Update();
-						GUIControl.FocusControl(GetID,iControl);
-					}
-					break;
-
 				case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
 					UpdateDescription();
 					break;
@@ -253,106 +250,106 @@ namespace MediaPortal.GUI.TV
 
     void Update()
     {
-			GUIListControl cntlList;
-			GUIControl.ClearControl(GetID,(int)Controls.ListControl);
-      GUIControl.ClearControl(GetID,(int)Controls.TitleControl);
-      if (_Level==0 && _SearchMode==SearchMode.Genre)
+			listView.Clear();
+			titleView.Clear();
+      if (currentLevel==0 && currentSearchMode==SearchMode.Genre)
       {
-        GUIControl.ShowControl(GetID,(int)Controls.ListControl);
-        GUIControl.HideControl(GetID,(int)Controls.TitleControl);
-        GUIControl.FocusControl(GetID,(int)Controls.ListControl);
-				GUIControl.DisableControl(GetID,(int)Controls.btnEpisode);
-				GUIControl.DisableControl(GetID,(int)Controls.btnLetter);
-				GUIControl.DisableControl(GetID,(int)Controls.btnShow);
-
-				GUIControl.HideControl(GetID,(int)Controls.LabelProgramDescription);
-				GUIControl.HideControl(GetID,(int)Controls.LabelProgramGenre);
-				GUIControl.HideControl(GetID,(int)Controls.LabelProgramTime);
-				GUIControl.HideControl(GetID,(int)Controls.LabelProgramTitle);
-				cntlList = (GUIListControl)GetControl((int)Controls.ListControl);
-				cntlList.Height = GetControl((int)Controls.LabelProgramTitle).YPosition - cntlList.YPosition;
+				listView.IsVisible=true;
+				titleView.IsVisible=false;
+        GUIControl.FocusControl(GetID,listView.GetID);
+				btnEpisode.Disabled=true;
+				btnLetter.Disabled=true;
+				btnShow.Disabled=true;
+				lblProgramDescription.IsVisible=false;
+				if (lblProgramGenre!=null) lblProgramGenre.IsVisible=false;
+				lblProgramTime.IsVisible=false;
+				lblProgramTitle.IsVisible=false;
+				listView.Height = lblProgramDescription.YPosition - listView.YPosition;
+				lblNumberOfItems.YPosition = listView.SpinY;
       }
       else
       {
-				if ( _FilterLetter!="#")
+				if ( filterLetter!="#")
 				{
-					GUIControl.HideControl(GetID,(int)Controls.ListControl);
-					GUIControl.ShowControl(GetID,(int)Controls.TitleControl);
-					GUIControl.FocusControl(GetID,(int)Controls.TitleControl);
-					cntlList = (GUIListControl)GetControl((int)Controls.TitleControl);
+					listView.IsVisible=false;
+					titleView.IsVisible=true;
+					GUIControl.FocusControl(GetID,titleView.GetID);
 					
-					if (_FilterShow=="")
+					if (filterShow==String.Empty)
 					{
-						GUIControl.HideControl(GetID,(int)Controls.LabelProgramDescription);
-						GUIControl.HideControl(GetID,(int)Controls.LabelProgramGenre);
-						GUIControl.HideControl(GetID,(int)Controls.LabelProgramTime);
-						GUIControl.HideControl(GetID,(int)Controls.LabelProgramTitle);
-						GUIControl.HideControl(GetID,(int)Controls.ImageThumb);
-						if (cntlList.SubItemCount==2)
+						lblProgramDescription.IsVisible=false;
+						if (lblProgramGenre!=null) lblProgramGenre.IsVisible=false;
+						lblProgramTime.IsVisible=false;
+						lblProgramTitle.IsVisible=false;
+						if (imgTvLogo!=null) 
+							imgTvLogo.IsVisible=false;
+						if (titleView.SubItemCount==2)
 						{
-							string subItem=(string)cntlList.GetSubItem(1);
+							string subItem=(string)titleView.GetSubItem(1);
 							int h=Int32.Parse(subItem.Substring(1));
 							GUIGraphicsContext.ScaleVertical(ref h);
-							cntlList.Height = h;
+							titleView.Height = h;
 							h=Int32.Parse(subItem.Substring(1));
 							h-=55;
 							GUIGraphicsContext.ScaleVertical(ref h);
-							cntlList.SpinY  = cntlList.YPosition+h;
-							cntlList.FreeResources();
-							cntlList.AllocResources();
+							titleView.SpinY  = titleView.YPosition+h;
+							titleView.FreeResources();
+							titleView.AllocResources();
 						}
 					}
 					else
 					{
-						GUIControl.ShowControl(GetID,(int)Controls.LabelProgramDescription);
-						GUIControl.ShowControl(GetID,(int)Controls.LabelProgramGenre);
-						GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTime);
-						GUIControl.ShowControl(GetID,(int)Controls.LabelProgramTitle);
-						GUIControl.ShowControl(GetID,(int)Controls.ImageThumb);
-						if (cntlList.SubItemCount==2)
+						lblProgramDescription.IsVisible=true;
+						if (lblProgramGenre!=null) lblProgramGenre.IsVisible=true;
+						lblProgramTime.IsVisible=true;
+						lblProgramTitle.IsVisible=true;
+						if (imgTvLogo!=null) 
+							imgTvLogo.IsVisible=true;
+						if (titleView.SubItemCount==2)
 						{
-							string subItem=(string)cntlList.GetSubItem(0);
+							string subItem=(string)titleView.GetSubItem(0);
 							int h=Int32.Parse(subItem.Substring(1));
 							GUIGraphicsContext.ScaleVertical(ref h);
-							cntlList.Height = h;
+							titleView.Height = h;
 							
 							h=Int32.Parse(subItem.Substring(1));
 							h-=50;
 							GUIGraphicsContext.ScaleVertical(ref h);
-							cntlList.SpinY  = cntlList.YPosition+h;
+							titleView.SpinY  = titleView.YPosition+h;
 							
-							cntlList.FreeResources();
-							cntlList.AllocResources();
+							titleView.FreeResources();
+							titleView.AllocResources();
 						}
+						lblNumberOfItems.YPosition = titleView.SpinY;
 					}
 				}
 				else
 				{
-					GUIControl.ShowControl(GetID,(int)Controls.ListControl);
-					GUIControl.HideControl(GetID,(int)Controls.TitleControl);
-					GUIControl.FocusControl(GetID,(int)Controls.ListControl);
+					listView.IsVisible=true;
+					titleView.IsVisible=false;
+					GUIControl.FocusControl(GetID,listView.GetID);
 					
-					GUIControl.HideControl(GetID,(int)Controls.LabelProgramDescription);
-					GUIControl.HideControl(GetID,(int)Controls.LabelProgramGenre);
-					GUIControl.HideControl(GetID,(int)Controls.LabelProgramTime);
-					GUIControl.HideControl(GetID,(int)Controls.LabelProgramTitle);
-					cntlList = (GUIListControl)GetControl((int)Controls.ListControl);
+					lblProgramDescription.IsVisible=false;
+					if (lblProgramGenre!=null) lblProgramGenre.IsVisible=false;
+					lblProgramTime.IsVisible=false;
+					lblProgramTitle.IsVisible=false;
+					if (imgTvLogo!=null) 
+						imgTvLogo.IsVisible=false;
 				}
-				GUIControl.EnableControl(GetID,(int)Controls.btnEpisode);
-				GUIControl.EnableControl(GetID,(int)Controls.btnLetter);
-				GUIControl.EnableControl(GetID,(int)Controls.btnShow);
+				btnEpisode.Disabled=false;
+				btnLetter.Disabled=false;
+				btnShow.Disabled=false;
+				lblNumberOfItems.YPosition = listView.SpinY;
 				
       }
-			GUIControl cntlLabel = GetControl((int)Controls.labelNumberOfItems);
-			cntlLabel.YPosition = cntlList.SpinY;
 
 			ArrayList programs = new ArrayList();
 			ArrayList episodes = new ArrayList();
 			int itemCount=0;
-      switch (_SearchMode)
+      switch (currentSearchMode)
       {
         case SearchMode.Genre:
-          if (_Level==0)
+          if (currentLevel==0)
           {
             ArrayList genres = new ArrayList();
             TVDatabase.GetGenres(ref genres);
@@ -363,7 +360,7 @@ namespace MediaPortal.GUI.TV
               item.Label=genre;
               item.Path=genre;
               Utils.SetDefaultIcons(item);
-              GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
+              listView.Add(item);
               itemCount++;
             }
           }
@@ -372,29 +369,28 @@ namespace MediaPortal.GUI.TV
             GUIListItem item = new GUIListItem();
             item.IsFolder=true;
             item.Label="..";
-            item.Label2="";
-            item.Path="";
+            item.Label2=String.Empty;
+            item.Path=String.Empty;
             item.IconImage="defaultFolderBackBig.png";
             item.IconImageBig="defaultFolderBackBig.png";
 
-            GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
-            GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
-
+						listView.Clear();
+						titleView.Clear();
             ArrayList titles = new ArrayList();
-            TVDatabase.SearchProgramsPerGenre(_CurrentGenre,titles, _SearchKind, _SearchCriteria);
+            TVDatabase.SearchProgramsPerGenre(currentGenre,titles, currentSearchKind, currentSearchCriteria);
             foreach(TVProgram program in titles)
             {
 							//dont show programs which have ended
 							if (program.EndTime < DateTime.Now) continue;
-							if (_FilterLetter!="#")
+							if (filterLetter!="#")
 							{
-								if (_SearchMode==SearchMode.Description)
+								if (currentSearchMode==SearchMode.Description)
 								{
-									if (!program.Description.ToLower().StartsWith(_FilterLetter.ToLower())) continue;
+									if (!program.Description.ToLower().StartsWith(filterLetter.ToLower())) continue;
 								}
-								else if (_SearchMode==SearchMode.Title)
+								else if (currentSearchMode==SearchMode.Title)
 								{
-									if (!program.Title.ToLower().StartsWith(_FilterLetter.ToLower())) continue;
+									if (!program.Title.ToLower().StartsWith(filterLetter.ToLower())) continue;
 								}
 								bool add=true;
 								foreach (TVProgram prog in programs)
@@ -404,26 +400,26 @@ namespace MediaPortal.GUI.TV
 										add=false;
 									}
 								}
-								if (!add && _FilterShow=="") continue;
+								if (!add && filterShow==String.Empty) continue;
 								if (add)
 								{
 									programs.Add(program);
 								}
 
-								if (_FilterShow!="")
+								if (filterShow!=String.Empty)
 								{
-									if (program.Title==_FilterShow)
+									if (program.Title==filterShow)
 									{
 										episodes.Add(program);
 									}
 								}
 							}
-							if (_FilterShow!="" && program.Title!=_FilterShow) continue;
+							if (filterShow!=String.Empty && program.Title!=filterShow) continue;
 
 							string strTime=String.Format("{0} {1}", 
 								Utils.GetShortDayString(program.StartTime) , 
 								program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							if (_FilterEpsiode!="" && strTime != _FilterEpsiode) continue;
+							if (filterEpisode!=String.Empty && strTime != filterEpisode) continue;
 		
 							strTime=String.Format("{0} {1} - {2}", 
 								Utils.GetShortDayString(program.StartTime) , 
@@ -446,8 +442,8 @@ namespace MediaPortal.GUI.TV
               }
               Utils.SetDefaultIcons(item);
               SetChannelLogo(program,ref item);
-              GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
-              GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
+							listView.Add(item);
+							titleView.Add(item);
               itemCount++;
             }
           }
@@ -457,18 +453,18 @@ namespace MediaPortal.GUI.TV
             ArrayList titles = new ArrayList();
             long start=Utils.datetolong( DateTime.Now );
             long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
-            TVDatabase.SearchPrograms(start,end, ref titles, _SearchKind, _SearchCriteria);
+            TVDatabase.SearchPrograms(start,end, ref titles, currentSearchKind, currentSearchCriteria);
             foreach(TVProgram program in titles)
 						{
-							if (_FilterLetter!="#")
+							if (filterLetter!="#")
 							{
-								if (_SearchMode==SearchMode.Description)
+								if (currentSearchMode==SearchMode.Description)
 								{
-									if (!program.Description.ToLower().StartsWith(_FilterLetter.ToLower())) continue;
+									if (!program.Description.ToLower().StartsWith(filterLetter.ToLower())) continue;
 								}
-								else if (_SearchMode==SearchMode.Title)
+								else if (currentSearchMode==SearchMode.Title)
 								{
-									if (!program.Title.ToLower().StartsWith(_FilterLetter.ToLower())) continue;
+									if (!program.Title.ToLower().StartsWith(filterLetter.ToLower())) continue;
 								}
 								bool add=true;
 								foreach (TVProgram prog in programs)
@@ -478,27 +474,27 @@ namespace MediaPortal.GUI.TV
 										add=false;
 									}
 								}
-								if (!add && _FilterShow=="") continue;
+								if (!add && filterShow==String.Empty) continue;
 								if (add)
 								{
 									programs.Add(program);
 								}
 
-								if (_FilterShow!="")
+								if (filterShow!=String.Empty)
 								{
-									if (program.Title==_FilterShow)
+									if (program.Title==filterShow)
 									{
 										episodes.Add(program);
 									}
 								}
 							}
 
-							if (_FilterShow!="" && program.Title!=_FilterShow) continue;
+							if (filterShow!=String.Empty && program.Title!=filterShow) continue;
 
 							string strTime=String.Format("{0} {1}", 
 								Utils.GetShortDayString(program.StartTime) , 
 								program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							if (_FilterEpsiode!="" && strTime != _FilterEpsiode) continue;
+							if (filterEpisode!=String.Empty && strTime != filterEpisode) continue;
 		
 							strTime=String.Format("{0} {1} - {2}", 
 								Utils.GetShortDayString(program.StartTime) , 
@@ -521,8 +517,8 @@ namespace MediaPortal.GUI.TV
               }
               Utils.SetDefaultIcons(item);
               SetChannelLogo(program,ref item);
-              GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
-              GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
+							listView.Add(item);
+							titleView.Add(item);
               itemCount++;
             }
           }
@@ -534,18 +530,18 @@ namespace MediaPortal.GUI.TV
 					ArrayList titles = new ArrayList();
 					long start=Utils.datetolong( DateTime.Now );
 					long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
-					TVDatabase.SearchProgramsByDescription(start,end, ref titles, _SearchKind, _SearchCriteria);
+					TVDatabase.SearchProgramsByDescription(start,end, ref titles, currentSearchKind, currentSearchCriteria);
 					foreach(TVProgram program in titles)
 					{
-						if (_FilterLetter!="#")
+						if (filterLetter!="#")
 						{
-							if (_SearchMode==SearchMode.Description)
+							if (currentSearchMode==SearchMode.Description)
 							{
-								if (!program.Description.ToLower().StartsWith(_FilterLetter.ToLower())) continue;
+								if (!program.Description.ToLower().StartsWith(filterLetter.ToLower())) continue;
 							}
-							else if (_SearchMode==SearchMode.Title)
+							else if (currentSearchMode==SearchMode.Title)
 							{
-								if (!program.Title.ToLower().StartsWith(_FilterLetter.ToLower())) continue;
+								if (!program.Title.ToLower().StartsWith(filterLetter.ToLower())) continue;
 							}
 							bool add=true;
 							foreach (TVProgram prog in programs)
@@ -555,27 +551,27 @@ namespace MediaPortal.GUI.TV
 									add=false;
 								}
 							}
-							if (!add && _FilterShow=="") continue;
+							if (!add && filterShow==String.Empty) continue;
 							if (add)
 							{
 								programs.Add(program);
 							}
 
-							if (_FilterShow!="")
+							if (filterShow!=String.Empty)
 							{
-								if (program.Title==_FilterShow)
+								if (program.Title==filterShow)
 								{
 									episodes.Add(program);
 								}
 							}
 						}
 
-						if (_FilterShow!="" && program.Title!=_FilterShow) continue;
+						if (filterShow!=String.Empty && program.Title!=filterShow) continue;
 
 						string strTime=String.Format("{0} {1}", 
 							Utils.GetShortDayString(program.StartTime) , 
 							program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-						if (_FilterEpsiode!="" && strTime != _FilterEpsiode) continue;
+						if (filterEpisode!=String.Empty && strTime != filterEpisode) continue;
 		
 						strTime=String.Format("{0} {1} - {2}", 
 							Utils.GetShortDayString(program.StartTime) , 
@@ -598,8 +594,8 @@ namespace MediaPortal.GUI.TV
 						}
 						Utils.SetDefaultIcons(item);
 						SetChannelLogo(program,ref item);
-						GUIControl.AddListItemControl(GetID,(int)Controls.ListControl,item);
-						GUIControl.AddListItemControl(GetID,(int)Controls.TitleControl,item);
+						listView.Add(item);
+						titleView.Add(item);
 						itemCount++;
 					}
 				}
@@ -608,37 +604,37 @@ namespace MediaPortal.GUI.TV
       string strObjects=String.Format("{0} {1}", itemCount, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount",strObjects);
 
-			GUIControl.ClearControl(GetID, (int)Controls.btnShow);
+			btnShow.Clear();
 			programs.Sort();
 			int selItem=0;
 			int count=0;
 			foreach (TVProgram prog in programs)
 			{
-				GUIControl.AddItemLabelControl(GetID,(int)Controls.btnShow,prog.Title.ToString());			
-				if (_FilterShow==prog.Title)
+				btnShow.Add(prog.Title.ToString());			
+				if (filterShow==prog.Title)
 					selItem=count;
 				count++;
 			}
-			GUIControl.SelectItemControl(GetID,(int)Controls.btnShow,selItem);
+			GUIControl.SelectItemControl(GetID,btnShow.GetID,selItem);
 
 			selItem=0;
 			count=0;
-			GUIControl.ClearControl(GetID, (int)Controls.btnEpisode);
+			btnEpisode.Clear();
 			foreach (TVProgram prog in episodes)
 			{
 				string strTime=String.Format("{0} {1}", 
 					Utils.GetShortDayString(prog.StartTime) , 
 					prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-				  GUIControl.AddItemLabelControl(GetID,(int)Controls.btnEpisode,strTime.ToString());			
-				if (_FilterEpsiode==strTime)
+				  btnEpisode.Add(strTime.ToString());			
+				if (filterEpisode==strTime)
 					selItem=count;
 				count++;
 			}
-			GUIControl.SelectItemControl(GetID,(int)Controls.btnEpisode,selItem);
+			GUIControl.SelectItemControl(GetID,btnEpisode.GetID,selItem);
       OnSort();
 
       string strLine=String.Empty;
-      switch (_SortMethod)
+      switch (currentSortMethod)
       {
         case SortMethod.Name: 
           strLine = GUILocalizeStrings.Get(622);
@@ -650,22 +646,21 @@ namespace MediaPortal.GUI.TV
           strLine = GUILocalizeStrings.Get(621);
           break;
       }
-      GUIControl.SetControlLabel(GetID, (int)Controls.SortBy, strLine);
+			btnSortyBy.Label=strLine;
 
-      if (_Ascending)
-        GUIControl.DeSelectControl(GetID, (int)Controls.SortAscending);
-      else
-        GUIControl.SelectControl(GetID, (int)Controls.SortAscending);
+      if (sortAscending)
+        btnSortAsc.Selected=false;
+			else
+				btnSortAsc.Selected=true;
 
-			UpdateStateButtons();
+			UpdateButtonStates();
     }
     #region Sort Members
     void OnSort()
     {
-      GUIListControl list=(GUIListControl)GetControl((int)Controls.ListControl);
-      list.Sort(this);
-      list=(GUIListControl)GetControl((int)Controls.TitleControl);
-      list.Sort(this);
+      
+      listView.Sort(this);
+      titleView.Sort(this);
     }
 
     public int Compare(object x, object y)
@@ -680,10 +675,10 @@ namespace MediaPortal.GUI.TV
       TVProgram prog2=item2.MusicTag as TVProgram;
 
       int iComp=0;
-      switch (_SortMethod)
+      switch (currentSortMethod)
       {
         case SortMethod.Name:
-          if (_Ascending)
+          if (sortAscending)
           { 
             iComp=String.Compare(item1.Label,item2.Label,true);
           }
@@ -697,7 +692,7 @@ namespace MediaPortal.GUI.TV
         case SortMethod.Channel:
           if (prog1!=null && prog2!=null)
           {
-           if (_Ascending)
+           if (sortAscending)
            { 
              iComp=String.Compare(prog1.Channel,prog2.Channel,true);
            }
@@ -713,7 +708,7 @@ namespace MediaPortal.GUI.TV
         case SortMethod.Date:
           if (prog1!=null && prog2!=null)
           {
-            if (_Ascending)
+            if (sortAscending)
             { 
               iComp=(int)(prog1.Start-prog2.Start);
             }
@@ -733,48 +728,44 @@ namespace MediaPortal.GUI.TV
 
     GUIListItem GetItem(int iItem)
     {
-      int iControl;
-      iControl=(int)Controls.ListControl;
-      if (_Level!=0)
-        iControl=(int)Controls.TitleControl;
-      
-      GUIListItem  item = GUIControl.GetListItem(GetID,iControl,iItem);
-      return item;
+      if (currentLevel!=0)
+        return titleView[iItem];
+			return listView[iItem];
     }
 
     void OnClick(int iItem)
     {
       GUIListItem item = GetItem(iItem);
       if (item==null) return;
-      switch (_SearchMode)
+      switch (currentSearchMode)
       {
         case SearchMode.Genre:
-          if (_Level==0)
+          if (currentLevel==0)
           {
-						_FilterLetter="#";
-						_FilterShow="";
-						_FilterEpsiode="";
-            _CurrentGenre=item.Label;
-            _Level++;
+						filterLetter="#";
+						filterShow=String.Empty;
+						filterEpisode=String.Empty;
+            currentGenre=item.Label;
+            currentLevel++;
             Update();
           }
           else
           {
             if (item.IsFolder) 
 						{
-							_FilterLetter="#";
-							_FilterShow="";
-							_FilterEpsiode="";
-              _CurrentGenre=String.Empty;
-              _Level=0;
+							filterLetter="#";
+							filterShow=String.Empty;
+							filterEpisode=String.Empty;
+              currentGenre=String.Empty;
+              currentLevel=0;
               Update();
             }
             else
             {
 							TVProgram program = item.MusicTag as TVProgram;
-							if (_FilterShow=="")
+							if (filterShow==String.Empty)
 							{
-								_FilterShow=program.Title;
+								filterShow=program.Title;
 								Update();
 								return;
 							}
@@ -785,9 +776,9 @@ namespace MediaPortal.GUI.TV
 				case SearchMode.Title:
 				{
 					TVProgram program = item.MusicTag as TVProgram;
-					if (_FilterShow=="")
+					if (filterShow==String.Empty)
 					{
-						_FilterShow=program.Title;
+						filterShow=program.Title;
 						Update();
 						return;
 					}
@@ -798,9 +789,9 @@ namespace MediaPortal.GUI.TV
 				{
 					TVProgram program = item.MusicTag as TVProgram;
 					
-					if (_FilterShow=="")
+					if (filterShow==String.Empty)
 					{
-						_FilterShow=program.Title;
+						filterShow=program.Title;
 						Update();
 						return;
 					}
@@ -817,7 +808,7 @@ namespace MediaPortal.GUI.TV
 			{
 				strLogo="defaultVideoBig.png";
 			}			
-			if (_FilterShow=="")
+			if (filterShow==String.Empty)
 			{
 				strLogo=Utils.GetCoverArt(Thumbs.TVShows,prog.Title);
 				if (!System.IO.File.Exists(strLogo))
@@ -864,7 +855,7 @@ namespace MediaPortal.GUI.TV
         switch (dlg.SelectedLabel)
         {
           case 0://none
-						foreach (TVRecording rec1 in _recordings)
+						foreach (TVRecording rec1 in listRecordings)
 						{
 							if (rec1.IsRecordingProgram(program,true))
 							{
@@ -883,8 +874,8 @@ namespace MediaPortal.GUI.TV
 								Recorder.StopRecording(rec1);
 							}
 						}
-            _recordings.Clear();
-            TVDatabase.GetRecordings(ref _recordings);
+            listRecordings.Clear();
+            TVDatabase.GetRecordings(ref listRecordings);
             Update();
             return;
           case 1://once
@@ -907,51 +898,50 @@ namespace MediaPortal.GUI.TV
             break;
         }
         TVDatabase.AddRecording(ref rec);
-        _recordings.Clear();
-        TVDatabase.GetRecordings(ref _recordings);
+        listRecordings.Clear();
+        TVDatabase.GetRecordings(ref listRecordings);
         Update();
       }
     }
 
     bool IsRecording(TVProgram program, out bool isSerie)
     {
-      bool bRecording=false;
+      bool isRecording=false;
 			isSerie=false;
-      foreach (TVRecording record in _recordings)
+      foreach (TVRecording record in listRecordings)
       {
         if (record.IsRecordingProgram(program,true) ) 
         {
 					if (record.RecType !=TVRecording.RecordingType.Once)
 						isSerie=true;
-          bRecording=true;
+          isRecording=true;
           break;
         }
       
       }
-      return bRecording;
+      return isRecording;
     }
 
     
 
 		GUIListItem GetSelectedItem()
 		{
-			int iControl;
-			iControl=(int)Controls.TitleControl;
-			GUIListItem item = GUIControl.GetSelectedListItem(GetID,iControl);
-			return item;
+			return titleView.SelectedListItem;
 		}
 		void UpdateDescription()
 		{
-			if (_Level==0 && _SearchMode==SearchMode.Genre) return;
+			if (currentLevel==0 && currentSearchMode==SearchMode.Genre) return;
 			GUIListItem item = GetSelectedItem();
-			TVProgram prog = item.MusicTag as TVProgram;
+			TVProgram prog = null;
+			if (item!=null)
+				prog = item.MusicTag as TVProgram;
 			if (prog==null)
 			{
-				GUIPropertyManager.SetProperty("#TV.Search.Title","");
-				GUIPropertyManager.SetProperty("#TV.Search.Genre","");
-				GUIPropertyManager.SetProperty("#TV.Search.Time","");
-				GUIPropertyManager.SetProperty("#TV.Search.Description","");
-				GUIPropertyManager.SetProperty("#TV.Search.thumb","");
+				GUIPropertyManager.SetProperty("#TV.Search.Title",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Search.Genre",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Search.Time",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Search.Description",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Search.thumb",String.Empty);
 				return;
 			}
 
@@ -969,8 +959,8 @@ namespace MediaPortal.GUI.TV
 			}
 			else
 			{
-				GUIPropertyManager.SetProperty("#TV.Search.Description","");
-				GUIPropertyManager.SetProperty("#TV.Search.Genre","");
+				GUIPropertyManager.SetProperty("#TV.Search.Description",String.Empty);
+				GUIPropertyManager.SetProperty("#TV.Search.Genre",String.Empty);
 			}
 
     
@@ -984,17 +974,19 @@ namespace MediaPortal.GUI.TV
 				GUIPropertyManager.SetProperty("#TV.Search.thumb","defaultVideoBig.png");
 			}
 		}
-		void UpdateStateButtons()
+
+		void UpdateButtonStates()
 		{
-				GUIControl.DeSelectControl(GetID,(int)Controls.SearchByDescription);
-			GUIControl.DeSelectControl(GetID,(int)Controls.SearchByTitle);
-			GUIControl.DeSelectControl(GetID,(int)Controls.SearchByGenre);
-			if (_SearchMode==SearchMode.Title)
-				GUIControl.SelectControl(GetID,(int)Controls.SearchByTitle);
-			if (_SearchMode==SearchMode.Description)
-				GUIControl.SelectControl(GetID,(int)Controls.SearchByDescription);
-			if (_SearchMode==SearchMode.Genre)
-				GUIControl.SelectControl(GetID,(int)Controls.SearchByGenre);
+			btnSearchByDescription.Selected=false;
+			btnSearchByTitle.Selected=false;
+			btnSearchByGenre.Selected=false;
+
+			if (currentSearchMode==SearchMode.Title)
+				btnSearchByTitle.Selected=true;
+			if (currentSearchMode==SearchMode.Description)
+				btnSearchByDescription.Selected=true;
+			if (currentSearchMode==SearchMode.Genre)
+				btnSearchByGenre.Selected=true;
 					
 		}
 	}

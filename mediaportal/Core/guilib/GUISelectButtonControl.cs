@@ -443,19 +443,12 @@ namespace MediaPortal.GUI.Library
 					// Adds an item to the list.
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
         {
-          if (m_SubItems.Count<=0)
-          {
-            SelectedItem=0;
-            m_iDefaultItem=0;
-          }
-          m_SubItems.Add( (string)message.Label);
+					Add(message.Label);
         }
 					// Resets the list of items.
         else if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
         {
-          m_SubItems.Clear();
-          SelectedItem=-1;
-          m_iDefaultItem=-1;
+					Clear();
         }
 					// Gets the selected item.
         else if (message.Message==GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED)
@@ -871,6 +864,21 @@ namespace MediaPortal.GUI.Library
 				}
 				return String.Empty;
 			}
+		}
+		public void Clear()
+		{
+			m_SubItems.Clear();
+			SelectedItem=-1;
+			m_iDefaultItem=-1;
+		}
+		public void Add(string line)
+		{
+			if (m_SubItems.Count<=0)
+			{
+				SelectedItem=0;
+				m_iDefaultItem=0;
+			}
+			m_SubItems.Add( line);
 		}
 	}
 }

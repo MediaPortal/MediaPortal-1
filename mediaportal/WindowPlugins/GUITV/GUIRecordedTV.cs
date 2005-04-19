@@ -139,11 +139,21 @@ namespace MediaPortal.GUI.TV
     {
       switch (action.wID)
       {
-      case Action.ActionType.ACTION_SHOW_GUI:
-				if (Recorder.IsViewing() || (g_Player.Playing && g_Player.IsTVRecording))
-				{
-					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-				}
+				case Action.ActionType.ACTION_SHOW_GUI:
+					if ( !g_Player.Playing && Recorder.IsViewing())
+					{
+						//if we're watching tv
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					}
+					else if (g_Player.Playing && (g_Player.IsTVRecording||g_Player.IsTV))
+					{
+						//if we're watching a tv recording
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					}
+					else if (g_Player.Playing&&g_Player.HasVideo)
+					{
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+					}
         break;
 
         case Action.ActionType.ACTION_DELETE_ITEM:  
@@ -184,6 +194,7 @@ namespace MediaPortal.GUI.TV
 			Recorder.ImportDvrMsFiles();
 			LoadSettings();
 			LoadDirectory();
+
 			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
 			msg.SendToTargetWindow=true;
 			GUIWindowManager.SendThreadMessage(msg);

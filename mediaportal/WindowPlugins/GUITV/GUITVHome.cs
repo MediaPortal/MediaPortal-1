@@ -177,17 +177,19 @@ namespace MediaPortal.GUI.TV
 				}
 
 				case Action.ActionType.ACTION_SHOW_GUI:
-					//switch to fullscreen TV
-					if ( Recorder.IsViewing())
+					if ( !g_Player.Playing && Recorder.IsViewing())
 					{
 						//if we're watching tv
-						StartPlaying(false);
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 					}
-					if (g_Player.Playing && g_Player.IsTVRecording)
+					else if (g_Player.Playing && (g_Player.IsTVRecording||g_Player.IsTV))
 					{
 						//if we're watching a tv recording
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+					}
+					else if (g_Player.Playing&&g_Player.HasVideo)
+					{
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
 					}
 					break;
 			}
@@ -197,7 +199,7 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			
+			/*
 			if (g_Player.Playing && !g_Player.IsTV)
 			{
 				if (!g_Player.IsTVRecording)
@@ -206,7 +208,7 @@ namespace MediaPortal.GUI.TV
 					g_Player.Stop();
 				}
 			}
-					
+			*/		
 
 			//set video window position
 			if (videoWindow!=null)
@@ -216,8 +218,8 @@ namespace MediaPortal.GUI.TV
 
 			// start viewing tv... 
 			GUIGraphicsContext.IsFullScreenVideo=false;
+				
 			ViewChannel(Navigator.CurrentChannel);
-
 			UpdateChannelButton();
 			UpdateStateOfButtons();
 			UpdateProgressPercentageBar();
@@ -334,6 +336,7 @@ namespace MediaPortal.GUI.TV
 			{
 				case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
 				{
+					
 					LoadSettings();
 
 					//restart viewing...  
@@ -671,7 +674,13 @@ namespace MediaPortal.GUI.TV
 
 		static public void ViewChannelAndCheck(string channel)
 		{
-			if (g_Player.Playing && g_Player.IsTVRecording) return;
+			if (g_Player.Playing)
+			{
+				if (g_Player.IsTVRecording) return;
+				if (g_Player.IsVideo) return;
+				if (g_Player.IsDVD) return;
+				if ( (g_Player.IsMusic && g_Player.HasVideo) ) return;
+			}
 			ViewChannel(channel);
 			if (Recorder.TVChannelName!=channel)
 			{
@@ -689,7 +698,13 @@ namespace MediaPortal.GUI.TV
 		{
 			Log.Write("GUITVHome.ViewChannel(): View channel=" + channel);
 
-			if (g_Player.Playing && g_Player.IsTVRecording) return;
+			if (g_Player.Playing)
+			{
+				if (g_Player.IsTVRecording) return;
+				if (g_Player.IsVideo) return;
+				if (g_Player.IsDVD) return;
+				if ( (g_Player.IsMusic && g_Player.HasVideo) ) return;
+			}
 			Recorder.StartViewing( channel, m_bTVON, m_bTimeShifting) ;
 			if (Recorder.IsViewing())
 			{
