@@ -75,6 +75,7 @@
 <!--    KNC ONE TV Station DVB-S       			-->
 <!--    KNC ONE TV-Station DVB-T				-->
 <!--    Leadtek LR6650							-->
+<!--    LifeView DVB-S							-->
 <!--    LifeView DVB-T							-->
 <!--    LifeView DVB-T Analog					-->
 <!--    Medion SAA1734 DVBS						-->
@@ -92,6 +93,7 @@
 <!--    Snazzi* III DVD Creator					-->
 <!--    Snazzi* III USB2						-->
 <!--    Sony MPEG RealTime Encoder				-->
+<!--    Terratec Cinergy 1200 DVB-S				-->
 <!--    Terratec Grabster AV 400				-->
 <!--    Toshiba Style Bay TV Tuner				-->
 <!--    TwinhanDTV Alpha USB2					-->
@@ -114,8 +116,8 @@
 <!--    general MCE card						-->
 <!--    general MPEG2 card						-->
 <!--                                                                                  -->
-<!-- version : 1.0.0.86                                                               -->
-<!-- changed : 17-April-2005 by DMAN                                                  -->
+<!-- version : 1.0.0.88                                                               -->
+<!-- changed : 19-April-2005 by DMAN                                                  -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -3477,6 +3479,22 @@
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="713x BDA DVBS Tuner"                checkdevice="true"></filter>
         <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 1200 DVB-S" capturename="TV Station DVB-S MCE (SU1200_K)" devid="ven_1131&amp;dev_7146&amp;subsys_1154153b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner (SU1200_K)"  checkdevice="true"></filter>
+        <filter cat="capture"         name="TV Station DVB-S MCE (SU1200_K)"    checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
