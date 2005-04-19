@@ -268,6 +268,70 @@
 			<texture>rec.png</texture> 
 			<colordiffuse>50ffffff</colordiffuse>
 			<visible>yes</visible> 
+		</control>
+		<control>
+			<description>MSGBox</description>
+			<type>button</type>
+			<id>2</id>
+			<posX>0</posX> 
+			<posY>370</posY> 
+			<width>720</width> 
+			<height>180</height> 
+			<label>-</label>
+			<textureFocus>bar_hor.png</textureFocus>
+			<textureNoFocus>bar_hor.png</textureNoFocus>
 		</control>	
+		<control>
+			<description>MSGBox label 1</description> 
+			<type>label</type> 
+			<id>3</id> 
+			<posX>50</posX> 
+			<posY>380</posY> 
+			<width>650</width> 
+			<label>-</label> 
+			<align>left</align> 
+			<font>dingbats</font> 
+			<textcolor>FFFFFFFF</textcolor> 
+			<visible>yes</visible> 
+		</control>
+		<control>
+			<description>MSGBox label 2</description> 
+			<type>label</type> 
+			<id>4</id> 
+			<posX>50</posX> 
+			<posY>420</posY> 
+			<width>650</width> 
+			<label>-</label> 
+			<align>left</align> 
+			<font>dingbats</font> 
+			<textcolor>FFFFFFFF</textcolor> 
+			<visible>yes</visible> 
+		</control>
+		<control>
+			<description>MSGBox label 3</description> 
+			<type>label</type> 
+			<id>5</id> 
+			<posX>50</posX> 
+			<posY>460</posY> 
+			<width>650</width> 
+			<label>-</label> 
+			<align>left</align> 
+			<font>dingbats</font> 
+			<textcolor>FFFFFFFF</textcolor> 
+			<visible>yes</visible> 
+		</control>
+		<control>
+			<description>MSGBox label 2</description> 
+			<type>label</type> 
+			<id>6</id> 
+			<posX>50</posX> 
+			<posY>500</posY> 
+			<width>650</width> 
+			<label>-</label> 
+			<align>left</align> 
+			<font>dingbats</font> 
+			<textcolor>FFFFFFFF</textcolor> 
+			<visible>yes</visible> 
+		</control>			
   </controls>
 </window>
