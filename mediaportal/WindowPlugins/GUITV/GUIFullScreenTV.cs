@@ -759,6 +759,7 @@ namespace MediaPortal.GUI.TV
 
 					if (dlg.SelectedLabel==-1) return;
 					string tvChannel=dlg.SelectedLabelText;
+					Log.Write("tv fs choose chan:{0}",tvChannel);
 					GUITVHome.ViewChannel(tvChannel);
 				}
 				break;
@@ -975,7 +976,18 @@ namespace MediaPortal.GUI.TV
 			
 
 			// Let the navigator zap channel if needed
-			GUITVHome.Navigator.CheckChannelChange();
+			if ( GUITVHome.Navigator.CheckChannelChange())
+			{
+				Log.Write("zap osd off");
+				if (m_bZapOSDVisible)
+				{
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+					m_zapWindow.OnMessage(msg);
+					m_bZapOSDVisible=false;
+				}
+				m_bUpdate=true;
+			}
+			GUIGraphicsContext.IsFullScreenVideo=true;
 
 			if (GUIGraphicsContext.Vmr9Active)
 			{

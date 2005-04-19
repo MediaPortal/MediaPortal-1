@@ -145,28 +145,34 @@ namespace MediaPortal.GUI.MSN
       {
 				case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
 					// Close conversation
-					while (GUIMSNPlugin.Messenger.Conversations.Count > 0)
+					if (GUIMSNPlugin.Messenger!=null)
 					{
-						Conversation conversation=(Conversation)GUIMSNPlugin.Messenger.Conversations[0];
-						if (conversation==null) break;
-						if (conversation.Connected==false) break;
-						conversation.Close();
+						while (GUIMSNPlugin.Messenger.Conversations.Count > 0)
+						{
+							Conversation conversation=(Conversation)GUIMSNPlugin.Messenger.Conversations[0];
+							if (conversation==null) break;
+							if (conversation.Connected==false) break;
+							conversation.Close();
+						}
+						CloseConversation();
 					}
-          CloseConversation();
 					break;
 
 				case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
-					GUIMessage msg2 = new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,(int)GUIWindow.Window.WINDOW_MSN_CHAT,GetID, 0,0,0,null );
-					msg2.Label = message.Label;
-					msg2.SendToTargetWindow = true;
-					GUIGraphicsContext.SendMessage(msg2);
+					if (GUIMSNPlugin.Messenger!=null)
+					{
+						GUIMessage msg2 = new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,(int)GUIWindow.Window.WINDOW_MSN_CHAT,GetID, 0,0,0,null );
+						msg2.Label = message.Label;
+						msg2.SendToTargetWindow = true;
+						GUIGraphicsContext.SendMessage(msg2);
 
-					if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT)
-					{																																				
-						GUIMessage msg3 = new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,GUIWindowManager.ActiveWindow,GetID, 0,0,0,null );
-						msg3.Label = message.Label;
-						msg3.SendToTargetWindow = true;
-						GUIGraphicsContext.SendMessage(msg3);
+						if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT)
+						{																																				
+							GUIMessage msg3 = new GUIMessage (GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE,GUIWindowManager.ActiveWindow,GetID, 0,0,0,null );
+							msg3.Label = message.Label;
+							msg3.SendToTargetWindow = true;
+							GUIGraphicsContext.SendMessage(msg3);
+						}
 					}
 					break;
 

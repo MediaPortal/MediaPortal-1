@@ -827,8 +827,8 @@ namespace MediaPortal.TV.Recording
 				return ;
 			}
 
-			Log.WriteFile(Log.LogType.Recorder,"Recorder:StartViewing() channel:{0} tvon:{1} timeshift:{2}",
-										channel,TVOnOff,timeshift);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:StartViewing() channel:{0} tvon:{1} timeshift:{2} {3}",
+										channel,TVOnOff,timeshift, GUIGraphicsContext.InVmr9Render);
 			TVCaptureDevice dev;
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
@@ -906,13 +906,21 @@ namespace MediaPortal.TV.Recording
 
 							//yes, we found our card
 							//stop viewing on any other card
-							foreach (TVCaptureDevice tvcard in m_tvcards)
+							for (int cardNo=0; cardNo < m_tvcards.Count;++cardNo)
 							{
+								TVCaptureDevice tvcard = (TVCaptureDevice)m_tvcards[cardNo];
 								if (!tvcard.IsRecording && tvcard.ID !=dev.ID)
 								{
+									strTimeShiftFileName=GetTimeShiftFileName(cardNo);
+
 									if (tvcard.IsTimeShifting || tvcard.IsRadio || tvcard.View)
 									{
-										Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop card:{0} channel:{1}", tvcard.ID, tvcard.TVChannel);
+										Log.WriteFile(Log.LogType.Recorder,"Recorder:  Stop card:{0} channel:{1} {2}", tvcard.ID, tvcard.TVChannel, GetTimeShiftFileName(cardNo));
+										if (g_Player.CurrentFile==strTimeShiftFileName)
+										{
+											g_Player.Stop();
+										}
+
 										tvcard.Stop();
 									}
 								}
@@ -922,6 +930,11 @@ namespace MediaPortal.TV.Recording
 							// do we want timeshifting?
 							if  (timeshift || dev.IsRecording)
 							{
+								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+								if (g_Player.CurrentFile!=strTimeShiftFileName)
+								{
+									g_Player.Stop();
+								}
 								TuneExternalChannel(channel);
 								dev.TVChannel=channel;
 								if (!dev.IsRecording  && !dev.IsTimeShifting && dev.SupportsTimeShifting)
@@ -1019,10 +1032,15 @@ namespace MediaPortal.TV.Recording
 			//do we want to use timeshifting ?
 			if (timeshift)
 			{
+				// yep, then turn timeshifting on
+				strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+				if (g_Player.CurrentFile!=strTimeShiftFileName)
+				{
+					g_Player.Stop();
+				}
 				// yes, does card support it?
 				if (dev.SupportsTimeShifting)
 				{
-					// yep, then turn timeshifting on
 					Log.WriteFile(Log.LogType.Recorder,"Recorder:  start timeshifting card {0} channel:{1}",dev.ID,channel);
 					TuneExternalChannel(channel);
 					dev.TVChannel=channel;

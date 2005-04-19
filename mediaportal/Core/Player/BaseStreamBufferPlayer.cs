@@ -207,6 +207,7 @@ namespace MediaPortal.Player
 
 			Log.Write("StreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)m_dDuration) );
 			m_state=PlayState.Playing;
+			OnInitialized();
 			return true;
 		}
 
@@ -931,8 +932,10 @@ namespace MediaPortal.Player
 		{
 			int p1, p2, hr = 0;
 			DsEvCode code;
+			int counter=0;
 			do
 			{
+				counter++;
         if (Playing && mediaEvt!=null)
         {
           hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
@@ -950,7 +953,7 @@ namespace MediaPortal.Player
           break;
         }
 			}
-			while( hr == 0 );
+			while( hr == 0 && counter < 20);
 		}
 
 		public override bool IsTV
@@ -1088,6 +1091,9 @@ namespace MediaPortal.Player
 				}
 				Log.Write("StreamBufferPlayer:SetRate to:{0}", m_speedRate);
 			}
+		}
+		protected virtual void OnInitialized()
+		{
 		}
 
 		#region IDisposable Members

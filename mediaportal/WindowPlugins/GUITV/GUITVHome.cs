@@ -219,6 +219,7 @@ namespace MediaPortal.GUI.TV
 			// start viewing tv... 
 			GUIGraphicsContext.IsFullScreenVideo=false;
 				
+			Log.Write("tv home init:{0}",Navigator.CurrentChannel);
 			ViewChannel(Navigator.CurrentChannel);
 			UpdateChannelButton();
 			UpdateStateOfButtons();
@@ -270,6 +271,7 @@ namespace MediaPortal.GUI.TV
 				}
 
 				// turn tv on/off
+				Log.Write("tv home onoff:{0}",Navigator.CurrentChannel);
 				ViewChannelAndCheck(Navigator.CurrentChannel);
 			}
 
@@ -278,6 +280,7 @@ namespace MediaPortal.GUI.TV
 				//turn timeshifting off 
 				m_bTimeShifting=btnTimeshiftingOnOff.Selected;
 				SaveSettings();
+				Log.Write("tv home timeshift onoff:{0}",Navigator.CurrentChannel);
 				ViewChannelAndCheck(Navigator.CurrentChannel);
 			}
 
@@ -291,6 +294,7 @@ namespace MediaPortal.GUI.TV
 					if(Navigator.CurrentGroup.tvChannels.Count > 0) 
 					{
 						TVChannel chan = (TVChannel)Navigator.CurrentGroup.tvChannels[0];
+						Log.Write("tv home timeshift btngroup:{0}",chan.Name);
 						ViewChannelAndCheck(chan.Name);
 						Navigator.UpdateCurrentChannel();
 					}
@@ -317,6 +321,7 @@ namespace MediaPortal.GUI.TV
 				string channel    =btnChannel.SelectedLabel;
 				if ((channel.Length > 0) && (Navigator.CurrentChannel != channel))
 				{
+					Log.Write("tv home timeshift btnchan:{0}",channel);
 					ViewChannelAndCheck(channel);
 					Navigator.UpdateCurrentChannel();
 
@@ -340,16 +345,19 @@ namespace MediaPortal.GUI.TV
 					LoadSettings();
 
 					//restart viewing...  
+					Log.Write("tv home msg resume tv:{0}",Navigator.CurrentChannel);
 					ViewChannel(Navigator.CurrentChannel);
 				}
 				break;
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
+					Log.Write("tv home msg view chan:{0}",message.Label);
 					ViewChannel(message.Label);
 					Navigator.UpdateCurrentChannel();
 					break;
 
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
 					m_bTVON=false;
+					Log.Write("tv home msg stop chan:{0}",message.Label);
 					ViewChannel(message.Label);
 					Navigator.UpdateCurrentChannel();
 					break;
@@ -359,6 +367,7 @@ namespace MediaPortal.GUI.TV
 
 		public override void Process()
 		{ 
+			if (GUIGraphicsContext.InVmr9Render) return;
 			//if we're not playing the timeshifting file
 			TimeSpan ts;
 			if (!g_Player.Playing)
@@ -477,6 +486,7 @@ namespace MediaPortal.GUI.TV
 
 					// and re-start viewing.... 
 					LoadSettings();
+					Log.Write("tv home onrecord chan:{0}",Navigator.CurrentChannel);
 					ViewChannel(Navigator.CurrentChannel);
 					Navigator.UpdateCurrentChannel();
 				}
@@ -696,7 +706,7 @@ namespace MediaPortal.GUI.TV
 		}
 		static public void ViewChannel(string channel)
 		{
-			Log.Write("GUITVHome.ViewChannel(): View channel=" + channel);
+			Log.Write("GUITVHome.ViewChannel(): View channel={0} {1}", channel, GUIGraphicsContext.InVmr9Render);
 
 			if (g_Player.Playing)
 			{
@@ -719,7 +729,6 @@ namespace MediaPortal.GUI.TV
 				if (TVWindow != null) TVWindow.UpdateOSD();
 			}
 			StartPlaying(false);
-
 		}
 
 		/// <summary>
@@ -959,8 +968,9 @@ namespace MediaPortal.GUI.TV
 		/// <summary>
 		/// Checks if it is time to zap to a different channel. This is called during Process().
 		/// </summary>
-		public void CheckChannelChange()
+		public bool CheckChannelChange()
 		{
+			if (GUIGraphicsContext.InVmr9Render) return false;
 			// Zapping to another group or channel?
 			if (m_zapgroup != -1 || m_zapchannel != null)
 			{
@@ -982,10 +992,13 @@ namespace MediaPortal.GUI.TV
 
           lastViewedChannel = m_currentchannel;
 					// Zap to desired channel
+					Log.Write("Channel change:{0}",m_zapchannel);
 					GUITVHome.ViewChannel(m_zapchannel);
 					m_zapchannel = null;
+					return true;
 				}
 			}
+			return false;
 		}
 
 		/// <summary>
@@ -1092,7 +1105,6 @@ namespace MediaPortal.GUI.TV
 			else
 			{
 				m_zaptime = DateTime.Now;
-				CheckChannelChange();
 			}
 		}
 
@@ -1126,7 +1138,6 @@ namespace MediaPortal.GUI.TV
 			else
 			{
 				m_zaptime = DateTime.Now;
-				CheckChannelChange();
 			}
 		}
 

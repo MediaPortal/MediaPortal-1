@@ -89,12 +89,14 @@ namespace MediaPortal.GUI.TV
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:	// fired when OSD is hidden
 				{
+					Log.Write("ZapOsd->off");
 					FreeResources();
 					return true;
 				}		  
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:	// fired when OSD is shown
 				{
+					Log.Write("ZapOsd->init");
 					AllocResources();
 					return true;
 				}

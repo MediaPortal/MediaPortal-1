@@ -174,6 +174,7 @@ namespace MediaPortal.Player
 		public void Repaint()
 		{
 			if (m_scene==null||VMR9Filter==null) return;
+			if (m_scene.Enabled==false) return;
 			m_scene.Repaint();
 		}
 
@@ -247,6 +248,10 @@ namespace MediaPortal.Player
 		{
 			if (vmr9Helper==null) return;
 			vmr9Helper.SetDeinterlaceMode();
+		}
+		public void Enable(bool onOff)
+		{
+			if (m_scene!=null) m_scene.Enabled=onOff;
 		}
 	}//public class VMR9Util
 }//namespace MediaPortal.Player 

@@ -18,6 +18,13 @@ namespace MediaPortal.Player
     public StreamBufferPlayer9()
     {
     }
+		protected override void OnInitialized()
+		{
+			if (Vmr9!=null)
+			{
+				Vmr9.Enable(true);
+			}
+		}
 
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
@@ -45,7 +52,8 @@ namespace MediaPortal.Player
         comobj = Activator.CreateInstance( comtype );
         graphBuilder = (IGraphBuilder) comobj; comobj = null;
 			
-        Vmr9.AddVMR9(graphBuilder);				
+				Vmr9.AddVMR9(graphBuilder);			
+				Vmr9.Enable(false);	
 
 				// create SBE source
         Guid clsid = Clsid.StreamBufferSource;
@@ -153,24 +161,34 @@ namespace MediaPortal.Player
 				if (graphBuilder==null) return;
 
         int hr;
-        Log.Write("StreamBufferPlayer9:cleanup DShow graph");
+        Log.Write("StreamBufferPlayer9:cleanup DShow graph {0}",GUIGraphicsContext.InVmr9Render);
         try 
         {
-          //          Log.Write("StreamBufferPlayer9:stop graph");
+					if(Vmr9!=null)
+						Vmr9.Enable(false);
+
+					while (GUIGraphicsContext.InVmr9Render)
+					{
+						Log.Write("wait...");
+					}
+
+Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
           if( mediaCtrl != null )
           {
             hr = mediaCtrl.Stop();
           }
           
-//          Log.Write("StreamBufferPlayer9:stop notifies");
-          if( mediaEvt != null )
-          {
-            hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-            mediaEvt = null;
-          }
+					Log.Write("StreamBufferPlayer9:stopped:{0}",GUIGraphicsContext.InVmr9Render);
 
+					Log.Write("StreamBufferPlayer9:stop notifies");
+					if( mediaEvt != null )
+					{
+						hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+						mediaEvt = null;
+					}
 				//added from agree: check if Vmr9 already null
-				if(Vmr9!=null)
+Log.Write("StreamBufferPlayer9:clean vmr9");
+					if(Vmr9!=null)
 				{
 					Vmr9.RemoveVMR9();
 					Vmr9.Release();
@@ -182,15 +200,18 @@ namespace MediaPortal.Player
 				mediaCtrl = null;
 
 
-				DsUtils.RemoveFilters(graphBuilder);
+Log.Write("StreamBufferPlayer9:remove filters");
+					DsUtils.RemoveFilters(graphBuilder);
 
+Log.Write("StreamBufferPlayer9:remove graph from rot");
 				if( rotCookie != 0 )
 				DsROT.RemoveGraphFromRot( ref rotCookie );
 				rotCookie=0;
-
+Log.Write("StreamBufferPlayer9:remove graph ");
 				if( graphBuilder != null )
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
 
+Log.Write("StreamBufferPlayer9:invalidate");
 
 				GUIGraphicsContext.form.Invalidate(true);
 				//GUIGraphicsContext.form.Update();
@@ -203,7 +224,8 @@ namespace MediaPortal.Player
         Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
 
-      //switch back to directx windowed mode
+Log.Write("StreamBufferPlayer9:switch");
+			//switch back to directx windowed mode
 			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
 			GUIWindowManager.SendMessage(msg);
 			Log.Write("StreamBufferPlayer9:cleanup done");

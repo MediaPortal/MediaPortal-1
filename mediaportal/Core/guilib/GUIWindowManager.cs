@@ -472,7 +472,7 @@ namespace MediaPortal.GUI.Library
             }
           }
 
-          // deactivate active windw
+          // deactivate active window
           msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iWindowID,0,null);
           pWindow.OnMessage(msg);
 

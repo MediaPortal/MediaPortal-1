@@ -93,6 +93,7 @@ namespace MediaPortal.GUI.Library
 		static float                    m_fCurrentFPS=0;
 		static float                    m_fVMR9FPS=0;
 		static float                    lasttime=0f;
+		static bool											vmr9RenderBusy=false;
 
 		// singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
@@ -793,6 +794,17 @@ namespace MediaPortal.GUI.Library
 				float difftime=time-lasttime;
 				lasttime=time;
 				return ( difftime );
+			}
+		}
+		static public bool InVmr9Render
+		{
+			get
+			{
+				return vmr9RenderBusy;
+			}
+			set 
+			{
+				vmr9RenderBusy=value;
 			}
 		}
   }
