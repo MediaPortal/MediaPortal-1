@@ -49,7 +49,6 @@ namespace MediaPortal.Util
 
     static public Texture Load(string strPic, int iRotate,int iMaxWidth,int iMaxHeight, bool bRGB, bool bZoom, bool bOversized, out int iWidth, out int iHeight)   
     {
-      GC.Collect();
       iWidth=0;
 			iHeight=0;
 			if (strPic==null) return null;
@@ -827,8 +826,7 @@ namespace MediaPortal.Util
     {
       if (strFile==null || strThumb==null || iMaxHeight<=0 || iMaxHeight<=0) return;
       if (strFile==String.Empty || strThumb==String.Empty) return;
-      GC.Collect();
-
+      
       Log.Write("create thumbnail for {0}", strFile);
       Image theImage = null;
 
@@ -870,7 +868,6 @@ namespace MediaPortal.Util
 			if (strThumb==String.Empty) return;
       if (theImage==null) return;
 
-      GC.Collect();
       Log.Write("create {0}x{1} thumbnail ->{2}", iMaxWidth,iMaxHeight,strThumb);
 
       try
