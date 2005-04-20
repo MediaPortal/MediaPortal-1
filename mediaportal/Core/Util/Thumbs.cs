@@ -16,5 +16,7 @@ namespace MediaPortal.Util
 
 		static public readonly string TVChannel=@"thumbs\tv\logos";
 		static public readonly string TVShows=@"thumbs\tv\shows";
+
+		static public readonly string Radio=@"Thumbs\Radio";
 	}
 }
