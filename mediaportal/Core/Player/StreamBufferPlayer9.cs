@@ -23,6 +23,8 @@ namespace MediaPortal.Player
 			if (Vmr9!=null)
 			{
 				Vmr9.Enable(true);
+				m_bUpdateNeeded=true;
+				SetVideoWindow();
 			}
 		}
 
@@ -169,7 +171,7 @@ namespace MediaPortal.Player
 
 					while (GUIGraphicsContext.InVmr9Render)
 					{
-						Log.Write("wait...");
+						System.Threading.Thread.Sleep(1);
 					}
 
 Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);

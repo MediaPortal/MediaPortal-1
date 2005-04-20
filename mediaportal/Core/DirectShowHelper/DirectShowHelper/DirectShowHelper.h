@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Sun Apr 17 21:46:48 2005
+/* at Wed Apr 20 09:35:01 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -159,11 +159,15 @@ EXTERN_C const IID IID_IVMR9Callback;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PresentImage( 
             /* [in] */ int width,
             /* [in] */ int height,
+            /* [in] */ int ARWidth,
+            /* [in] */ int ARHeight,
             /* [in] */ DWORD texture) = 0;
         
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PresentSurface( 
             /* [in] */ int width,
             /* [in] */ int height,
+            /* [in] */ int ARWidth,
+            /* [in] */ int ARHeight,
             /* [in] */ DWORD surface) = 0;
         
     };
@@ -189,12 +193,16 @@ EXTERN_C const IID IID_IVMR9Callback;
             IVMR9Callback * This,
             /* [in] */ int width,
             /* [in] */ int height,
+            /* [in] */ int ARWidth,
+            /* [in] */ int ARHeight,
             /* [in] */ DWORD texture);
         
         /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *PresentSurface )( 
             IVMR9Callback * This,
             /* [in] */ int width,
             /* [in] */ int height,
+            /* [in] */ int ARWidth,
+            /* [in] */ int ARHeight,
             /* [in] */ DWORD surface);
         
         END_INTERFACE
@@ -220,11 +228,11 @@ EXTERN_C const IID IID_IVMR9Callback;
     (This)->lpVtbl -> Release(This)
 
 
-#define IVMR9Callback_PresentImage(This,width,height,texture)	\
-    (This)->lpVtbl -> PresentImage(This,width,height,texture)
+#define IVMR9Callback_PresentImage(This,width,height,ARWidth,ARHeight,texture)	\
+    (This)->lpVtbl -> PresentImage(This,width,height,ARWidth,ARHeight,texture)
 
-#define IVMR9Callback_PresentSurface(This,width,height,surface)	\
-    (This)->lpVtbl -> PresentSurface(This,width,height,surface)
+#define IVMR9Callback_PresentSurface(This,width,height,ARWidth,ARHeight,surface)	\
+    (This)->lpVtbl -> PresentSurface(This,width,height,ARWidth,ARHeight,surface)
 
 #endif /* COBJMACROS */
 
@@ -237,6 +245,8 @@ EXTERN_C const IID IID_IVMR9Callback;
     IVMR9Callback * This,
     /* [in] */ int width,
     /* [in] */ int height,
+    /* [in] */ int ARWidth,
+    /* [in] */ int ARHeight,
     /* [in] */ DWORD texture);
 
 
@@ -251,6 +261,8 @@ void __RPC_STUB IVMR9Callback_PresentImage_Stub(
     IVMR9Callback * This,
     /* [in] */ int width,
     /* [in] */ int height,
+    /* [in] */ int ARWidth,
+    /* [in] */ int ARHeight,
     /* [in] */ DWORD surface);
 
 

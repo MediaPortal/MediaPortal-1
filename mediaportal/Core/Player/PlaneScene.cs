@@ -72,6 +72,8 @@ namespace MediaPortal.Player
 		VertexBuffer			m_vertexBuffer;
 		uint              m_surfAdr,m_texAdr;
 		bool							m_repaint;
+		int               arVideoWidth=4;
+		int								arVideoHeight=3;
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
 			m_repaint=false;
@@ -266,7 +268,7 @@ namespace MediaPortal.Player
 				m_geometry.ScreenHeight = (int)nh;
 				m_geometry.ARType       = GUIGraphicsContext.ARType;
 				m_geometry.PixelRatio   = GUIGraphicsContext.PixelRatio;
-				m_geometry.GetWindow(out rSource, out rDest);
+				m_geometry.GetWindow(arVideoWidth, arVideoHeight,out rSource, out rDest);
 				rDest.X += (int)x;
 				rDest.Y += (int)y;
 
@@ -275,6 +277,15 @@ namespace MediaPortal.Player
 				if (rDest.Height   < 10) return false;
 				if (rSource.Width  < 10) return false;
 				if (rSource.Height < 10) return false;
+
+				Log.Write("vmr9: video      : {0}x{1}",videoSize.Width,videoSize.Height);
+				Log.Write("vmr9: video AR   : {0}:{1}",arVideoWidth, arVideoHeight);
+				Log.Write("vmr9: screen     : {0}x{1}",nw,nh);
+				Log.Write("vmr9: AR type    : {0}",GUIGraphicsContext.ARType);
+				Log.Write("vmr9: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+				Log.Write("vmr9: src        : ({0},{1})-({2},{3}) dst:({4},{5})-({6},{7})",
+					rSource.X,rSource.Y, rSource.Width,rSource.Height,
+					rDest.X,rDest.Y,rDest.Width,rDest.Height);
 
 				//next calculate which part of the video texture should be copied
 				//into the video window
@@ -304,6 +315,7 @@ namespace MediaPortal.Player
 				_voff=voffs;
 				_umax=u;
 				_vmax=v;
+											
 				return true;
 			}
 			catch (Exception ex)
@@ -324,10 +336,12 @@ namespace MediaPortal.Player
 
 		#region IVMR9Callback Members
 
-		public void PresentImage(int width,int height,uint pTex)
+		public void PresentImage(int width,int height,int arWidth, int arHeight, uint pTex)
 		{
 			m_vmr9Util.VideoWidth=width;
 			m_vmr9Util.VideoHeight=height;
+			arVideoWidth=arWidth;
+			arVideoHeight=arHeight;
 			if (!isEnabled) 
 			{
 				m_vmr9Util.FrameCounter++;
@@ -460,10 +474,12 @@ namespace MediaPortal.Player
 			}
 		}
 
-		public void PresentSurface(int width,int height,uint pSurface)
+		public void PresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface)
 		{
 			m_vmr9Util.VideoWidth=width;
 			m_vmr9Util.VideoHeight=height;
+			arVideoWidth=arWidth;
+			arVideoHeight=arHeight;
 			if (!isEnabled) 
 			{
 				m_vmr9Util.FrameCounter++;
@@ -665,15 +681,15 @@ namespace MediaPortal.Player
 				m_repaint=true;
 				if (m_texAdr!=0)
 				{
-					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,m_texAdr);
+					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_texAdr);
 				}
 				else if (m_surfAdr!=0)
 				{
-					PresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,m_surfAdr);
+					PresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_surfAdr);
 				}
 				else
 				{
-					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,0);
+					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,0);
 				}
 			}
 			catch(Exception ex)

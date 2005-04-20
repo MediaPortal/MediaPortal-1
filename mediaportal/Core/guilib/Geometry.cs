@@ -95,9 +95,18 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		/// <param name="rSource">rectangle containing the source rectangle of the image/video</param>
 		/// <param name="rDest">rectangle  containing the destination rectangle of the image/video</param>
-    public void GetWindow(out System.Drawing.Rectangle rSource,out System.Drawing.Rectangle rDest)
-    {
-      float fSourceFrameRatio=CalculateFrameAspectRatio();
+		public void GetWindow(out System.Drawing.Rectangle rSource,out System.Drawing.Rectangle rDest)
+		{
+			float fSourceFrameRatio=CalculateFrameAspectRatio();
+			GetWindow(fSourceFrameRatio,out rSource,out rDest);
+		}
+		public void GetWindow(int arVideoWidth, int arVideoHeight,out System.Drawing.Rectangle rSource,out System.Drawing.Rectangle rDest)
+		{
+			float fSourceFrameRatio=(float)arVideoWidth / (float)arVideoHeight;
+			GetWindow(fSourceFrameRatio,out rSource,out rDest);
+		}
+		public void GetWindow(float fSourceFrameRatio,out System.Drawing.Rectangle rSource,out System.Drawing.Rectangle rDest)
+		{
       float fOutputFrameRatio = fSourceFrameRatio /PixelRatio;
       
       switch (ARType)

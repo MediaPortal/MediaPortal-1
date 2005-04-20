@@ -255,7 +255,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 		//DWORD dwPtr=(DWORD)(lpPresInfo->lpSurf);
 		//m_pCallback->PresentImage(VideoSize.cx, VideoSize.cy, dwPtr);
 		//Paint(lpPresInfo->lpSurf);
-		Paint(NULL);
+		Paint(NULL, lpPresInfo->szAspectRatio);
 
 		hr = S_OK;
 	}
@@ -387,7 +387,7 @@ CSize CVMR9AllocatorPresenter::GetVideoSize(bool fCorrectAR)
 	return(VideoSize);
 }
 
-void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
+void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRatio)
 {
 	if (m_pCallback!=NULL)
 	{
@@ -395,7 +395,7 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
 		if (pSurface!=NULL)
 		{
 			DWORD dwPtr=(DWORD)(pSurface);
-			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, dwPtr);
+			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy,dwPtr);
 			if (m_bfirstFrame)
 			{
 				m_bfirstFrame=false;
@@ -413,7 +413,7 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
 				m_bfirstFrame=false;
 				Log("vmr9:Paint() using PresentImage %dx%d",videoSize.cx,videoSize.cy);
 			}
-			m_pCallback->PresentImage(videoSize.cx, videoSize.cy, dwPtr);
+			m_pCallback->PresentImage(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy, dwPtr);
 		}
 		else
 		{
@@ -424,7 +424,7 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface)
 				m_bfirstFrame=false;
 				Log("vmr9:Paint() using PresentSurface %dx%d",videoSize.cx,videoSize.cy);
 			}
-			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, dwPtr);
+			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy, dwPtr);
 		}
 		//tex->Release();
 	}

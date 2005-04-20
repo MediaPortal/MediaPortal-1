@@ -195,14 +195,14 @@
                     HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
                 />
                 <Reference
-                    Name = "Interop.DirectShowHelperLib"
-                    AssemblyName = "Interop.DirectShowHelperLib"
-                    HintPath = "..\Interop.DirectShowHelperLib.dll"
-                />
-                <Reference
                     Name = "System.Web.Services"
                     AssemblyName = "System.Web.Services"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
+                />
+                <Reference
+                    Name = "Interop.DirectShowHelperLib"
+                    AssemblyName = "Interop.DirectShowHelperLib"
+                    HintPath = "..\Interop.DirectShowHelperLib.dll"
                 />
             </References>
         </Build>

@@ -41,7 +41,7 @@ public:
 
 
 protected:
-	void Paint(IDirect3DSurface9* pSurface);
+	void Paint(IDirect3DSurface9* pSurface,SIZE aspecRatio);
 	void DeleteSurfaces();
 	HRESULT AllocSurfaces();
 
