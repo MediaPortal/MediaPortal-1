@@ -91,6 +91,7 @@ namespace MediaPortal.TV.Database
 		static void UpdateFromPreviousVersion()
 		{
 			if (null==m_db) return ;
+			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.rgb).ToString() +" where strChannel like 'RGB'");
 			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.svhs).ToString() +" where strChannel like 'SVHS'");
 			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs1).ToString()+" where strChannel like 'Composite #1'");
 			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs2).ToString()+" where strChannel like 'Composite #2'");

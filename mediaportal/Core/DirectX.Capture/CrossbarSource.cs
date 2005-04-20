@@ -101,7 +101,15 @@ namespace DirectX.Capture
         if (this.ConnectorType==PhysicalConnectorType.Video_SVideo) return true;
         return false;
       }
-    }
+		}
+		public bool IsRgb
+		{
+			get
+			{
+				if (this.ConnectorType==PhysicalConnectorType.Video_RGB) return true;
+				return false;
+			}
+		}
 
 		/// <summary> Retrieve the friendly name of a connectorType. </summary>
 		private string getName( PhysicalConnectorType connectorType )

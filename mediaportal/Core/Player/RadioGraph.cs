@@ -276,7 +276,7 @@ namespace MediaPortal.Player
         m_TVTuner.ChannelMinMax(out chanmin, out chanmax);
         DirectShowUtil.DebugWrite("RadioGraph:minimal :{0} Hz, maximal:{1} Hz",chanmin,chanmax);
 		    if (m_strAudioDevice.Length>0)
-          DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, true, false,false,false,true);
+          DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, true, false,false,false,false,true);
         DirectShowUtil.DebugWrite("RadioGraph:start listening");
         int hr=m_mediaControl.Run();
         if (hr!=0) DirectShowUtil.DebugWrite("RadioGraph:start listening returned :0x{0:X}",hr);

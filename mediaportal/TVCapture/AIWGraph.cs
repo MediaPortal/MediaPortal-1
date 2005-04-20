@@ -903,7 +903,7 @@ namespace MediaPortal.TV.Recording
 				m_iCountryCode,standard.ToString(),
 				m_bUseCable);
 
-			DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < (int)ExternalInputs.svhs, (iChannel == (int)ExternalInputs.cvbs1),(iChannel == (int)ExternalInputs.cvbs2),(iChannel == (int)ExternalInputs.svhs),cardName);
+			DsUtils.FixCrossbarRoutingEx(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, iChannel < (int)ExternalInputs.svhs, (iChannel == (int)ExternalInputs.cvbs1),(iChannel == (int)ExternalInputs.cvbs2),(iChannel == (int)ExternalInputs.svhs),(iChannel == (int)ExternalInputs.rgb),cardName);
 		}
 
 		/// <summary>
@@ -1303,6 +1303,7 @@ namespace MediaPortal.TV.Recording
 					true, 
 					false, 
 					false, 
+					false ,
 					false ,
 					cardName);
 				TuneRadioChannel(station);

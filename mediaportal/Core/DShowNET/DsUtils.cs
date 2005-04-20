@@ -136,7 +136,7 @@ namespace DShowNET
       if (graphbuilder==null) return;
       if (m_captureGraphBuilder==null) return;
       if (captureFilter==null) return;
-			FixCrossbarRouting(graphbuilder, m_captureGraphBuilder,  captureFilter, true, false, false, false,false);
+			FixCrossbarRouting(graphbuilder, m_captureGraphBuilder,  captureFilter, true, false, false, false,false,false);
 		}
 
 		/// <summary>
@@ -153,7 +153,7 @@ namespace DShowNET
 		/// <param name="logActions">true : log all actions in the logfile
 		///                          false: dont log
 		/// </param>
-		static public void FixCrossbarRouting(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,  IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool logActions)
+		static public void FixCrossbarRouting(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,  IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb, bool logActions)
     {
       if (graphbuilder==null) return;
       if (m_captureGraphBuilder==null) return;
@@ -162,9 +162,10 @@ namespace DShowNET
 			int iCVBSVideo=0;
 			int iCVBSAudio=0;
 			int iSVHSVideo=0;
+			int iRgbVideo=0;
 
 			if (logActions) 
-				DirectShowUtil.DebugWrite("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3}",useTuner, useCVBS1, useCVBS2, useSVHS);
+				DirectShowUtil.DebugWrite("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}",useTuner, useCVBS1, useCVBS2, useSVHS,useRgb);
 			try
 			{
 				int icurrentCrossbar=0;
@@ -254,6 +255,15 @@ namespace DShowNET
 											iSVHSVideo++;
 											if (iSVHSVideo==1) bRoute=true;
 										}
+
+										// if the input pin is a RGB input and we want to use RGB then connect
+										if (useRgb && PhysicalTypeIn==PhysicalConnectorType.Video_RGB)
+										{
+											// make sure we only use the 1st SVHS input of the crossbar
+											// since the PVR150MCE crossbar has 2 SVHS inputs
+											iRgbVideo++;
+											if (iRgbVideo==1) bRoute=true;
+										}
                     
 										// Check audio input options
 
@@ -278,6 +288,9 @@ namespace DShowNET
 
 												// if we want to use SVHS then connect
 												if (useSVHS) bRoute=true;
+
+												// if we want to use RGB then connect
+												if (useRgb) bRoute=true;
 											}
 										}
 
@@ -331,7 +344,7 @@ namespace DShowNET
 			/// <param name="logActions">true : log all actions in the logfile
 			///                          false: dont log
 			/// </param>
-			static public void FixCrossbarRoutingEx(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,  IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, string cardName)
+			static public void FixCrossbarRoutingEx(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,  IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb,string cardName)
 			{
 				if (graphbuilder==null) return;
 				if (m_captureGraphBuilder==null) return;
@@ -340,13 +353,16 @@ namespace DShowNET
 				int iCVBSVideo=0;
 				int iCVBSAudio=0;
 				int iSVHSVideo=0;
+				int iRGBVideo=0;
 			
 				int audioCVBS1=1;
 				int audioCVBS2=2;
 				int audioSVHS=1;
+				int audioRgb=1;
 				int videoCVBS1=1;
 				int videoCVBS2=2;
 				int videoSVHS=1;
+				int videoRgb=1;
 
 				string filename=String.Format(@"database\card_{0}.xml", cardName);
 				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
@@ -354,14 +370,16 @@ namespace DShowNET
 					audioCVBS1 = 1+xmlreader.GetValueAsInt("mapping", "audio1", 0);
 					audioCVBS2 = 1+xmlreader.GetValueAsInt("mapping", "audio2", 1);
 					audioSVHS  = 1+xmlreader.GetValueAsInt("mapping", "audio3", 0);
+					audioRgb   = 1+xmlreader.GetValueAsInt("mapping", "audio4", 0);
 
 				
 					videoCVBS1 = 1+xmlreader.GetValueAsInt("mapping", "video1", 0);
 					videoCVBS2 = 1+xmlreader.GetValueAsInt("mapping", "video2", 1);
-					videoSVHS  = 1+xmlreader.GetValueAsInt("mapping", "Video3", 0);
+					videoSVHS  = 1+xmlreader.GetValueAsInt("mapping", "video3", 0);
+					videoRgb   = 1+xmlreader.GetValueAsInt("mapping", "video4", 0);
 				}
 
-				DirectShowUtil.DebugWrite("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3}",useTuner, useCVBS1, useCVBS2, useSVHS);
+				DirectShowUtil.DebugWrite("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}",useTuner, useCVBS1, useCVBS2, useSVHS, useRgb);
 				try
 				{
 					int icurrentCrossbar=0;
@@ -445,6 +463,14 @@ namespace DShowNET
 												if (iSVHSVideo==1) bRoute=true;
 												if (iSVHSVideo==videoSVHS) bRoute=true;
 											}
+
+											// if the input pin is a RGB input and we want to use RGB then connect
+											if (useRgb && PhysicalTypeIn==PhysicalConnectorType.Video_RGB)
+											{
+												iRGBVideo++;
+												if (iRGBVideo==1) bRoute=true;
+												if (iRGBVideo==videoRgb) bRoute=true;
+											}
                     
 											// Check audio input options
 											// if this is the audio tuner input and we want to use the tuner, then connect
@@ -468,6 +494,7 @@ namespace DShowNET
 													if (useCVBS1 && iCVBSAudio==audioCVBS1) bRoute=true;
 													if (useCVBS2 && iCVBSAudio==audioCVBS2) bRoute=true;
 													if (useSVHS  && iCVBSAudio==audioSVHS) bRoute=true;
+													if (useRgb  && iCVBSAudio==audioRgb) bRoute=true;
 												}
 											}
 

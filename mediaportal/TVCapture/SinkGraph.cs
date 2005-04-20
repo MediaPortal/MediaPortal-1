@@ -588,6 +588,7 @@ namespace MediaPortal.TV.Recording
       if (m_iPrevChannel>=0)
       {
         if (m_iPrevChannel< (int)ExternalInputs.svhs  && iChannel < (int)ExternalInputs.svhs) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.rgb  && iChannel ==(int)ExternalInputs.rgb) bFixCrossbar=false;
         if (m_iPrevChannel==(int)ExternalInputs.svhs  && iChannel ==(int)ExternalInputs.svhs) bFixCrossbar=false;
         if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && iChannel ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
         if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && iChannel ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
@@ -651,6 +652,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (m_iPrevChannel< (int)ExternalInputs.svhs  && channel.Number < (int)ExternalInputs.svhs) bFixCrossbar=false;
 				if (m_iPrevChannel==(int)ExternalInputs.svhs  && channel.Number ==(int)ExternalInputs.svhs) bFixCrossbar=false;
+				if (m_iPrevChannel==(int)ExternalInputs.rgb   && channel.Number ==(int)ExternalInputs.rgb) bFixCrossbar=false;
 				if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && channel.Number ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
 				if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && channel.Number ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
       }
@@ -662,7 +664,8 @@ namespace MediaPortal.TV.Recording
 																		 channel.Number<(int)ExternalInputs.svhs, 
 																	   (channel.Number==(int)ExternalInputs.cvbs1), 
 																		 (channel.Number==(int)ExternalInputs.cvbs2), 
-																		 (channel.Number==(int)ExternalInputs.svhs) ,
+																			(channel.Number==(int)ExternalInputs.svhs) , 
+																			(channel.Number==(int)ExternalInputs.rgb) ,
 																		 cardName);
       }
       m_iPrevChannel=channel.Number;
@@ -1134,6 +1137,7 @@ namespace MediaPortal.TV.Recording
 					true, 
 					false, 
 					false, 
+					false ,
 					false ,
 					cardName);
 				TuneRadioChannel(station);

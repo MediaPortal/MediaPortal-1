@@ -993,7 +993,8 @@ namespace MediaPortal.Configuration.Sections
                 if(tvChannel.Frequency.Herz > 0 && 
                   tvChannel.Channel != (int)ExternalInputs.svhs && 
                   tvChannel.Channel != (int)ExternalInputs.cvbs1 &&
-                  tvChannel.Channel != (int)ExternalInputs.cvbs2)
+                  tvChannel.Channel != (int)ExternalInputs.cvbs2 &&
+                  tvChannel.Channel != (int)ExternalInputs.rgb)
                 {
                   registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Herz);
                 }
@@ -1545,6 +1546,7 @@ namespace MediaPortal.Configuration.Sections
 			chan.Name="CVBS#1"; chan.Number=(int)ExternalInputs.cvbs1; TVDatabase.AddChannel(chan);
 			chan.Name="CVBS#2"; chan.Number=(int)ExternalInputs.cvbs2; TVDatabase.AddChannel(chan);
 			chan.Name="SVHS";   chan.Number=(int)ExternalInputs.svhs; TVDatabase.AddChannel(chan);
+			chan.Name="RGB";   chan.Number=(int)ExternalInputs.rgb; TVDatabase.AddChannel(chan);
 			LoadSettings();
 		}
 

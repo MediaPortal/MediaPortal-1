@@ -11,6 +11,7 @@ namespace MediaPortal.TV.Database
 		svhs =50000,
 		cvbs1=50001,
 		cvbs2=50002,
+		rgb=50002
 	}
 
 	public class TVGroup
