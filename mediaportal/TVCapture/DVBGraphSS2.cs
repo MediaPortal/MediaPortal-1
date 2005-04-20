@@ -167,7 +167,6 @@ namespace MediaPortal.TV.Recording
 		[ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
 		class StreamBufferConfig {}
 		// we dont use this callback yet
-		public delegate void RebuildFunc(IntPtr tunerData);
 		//
 		public  static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid( 0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
 		public  static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid( 0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
@@ -228,7 +227,6 @@ namespace MediaPortal.TV.Recording
 		protected string				m_filename="";
 		protected DVBSections			m_sections=new DVBSections();
 		protected bool					m_pluginsEnabled=false;
-		public RebuildFunc				m_rebuildCB=null;
 		int	[]							m_ecmPids=new int[3]{0,0,0};
 		int[]							m_ecmIDs=new int[3]{0,0,0};
 		//bool							m_vmr9Running=false;
@@ -244,7 +242,6 @@ namespace MediaPortal.TV.Recording
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
-			m_rebuildCB=new RebuildFunc(RebuildTuner);
 
 			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
@@ -269,7 +266,6 @@ namespace MediaPortal.TV.Recording
 				hkcu.CreateSubKey(@"Software\MediaPortal");
 				RegistryKey hklm = Registry.LocalMachine;
 				hklm.CreateSubKey(@"Software\MediaPortal");
-				SetAppHandle(GUIGraphicsContext.form.Handle);
 
 			}
 			catch(Exception){}
@@ -278,20 +274,6 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 		//
-		public void RebuildTuner(IntPtr data)
-		{
-
-			TunerData td=new TunerData();
-			try
-			{
-				td=(TunerData)Marshal.PtrToStructure(data,typeof(TunerData));
-				m_currentChannel.ECMPid=(int)td.ECM_0;
-				SetPidToPin(m_dataCtrl,0,(int)td.ECM_0);
-				TVDatabase.UpdateSatChannel(m_currentChannel);
-			}
-			catch{}
-		
-		}
 		public static void Message()
 		{
 		}
