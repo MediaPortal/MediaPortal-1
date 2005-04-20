@@ -14,6 +14,7 @@ using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 
 
+
 namespace MediaPortal.TV.Recording
 {
 	/// <summary>
@@ -268,6 +269,7 @@ namespace MediaPortal.TV.Recording
 				hkcu.CreateSubKey(@"Software\MediaPortal");
 				RegistryKey hklm = Registry.LocalMachine;
 				hklm.CreateSubKey(@"Software\MediaPortal");
+				SetAppHandle(GUIGraphicsContext.form.Handle);
 
 			}
 			catch(Exception){}
@@ -290,7 +292,9 @@ namespace MediaPortal.TV.Recording
 			catch{}
 		
 		}
-		
+		public static void Message()
+		{
+		}
 		//
 		void ExecTuner()
 		{
@@ -343,7 +347,7 @@ namespace MediaPortal.TV.Recording
 		//
 		public int BufferCB(double time,IntPtr data,int len)
 		{
-		
+		 
 			int add=(int)data;
 			int end=(add+len);
 
@@ -374,9 +378,7 @@ namespace MediaPortal.TV.Recording
 					}
 
 			}
-		
-
-			//			int pid=m_currentChannel.VideoPid;
+			// mhw epg
 			if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
 			for(int pointer=add;pointer<end;pointer+=188)
 			{
@@ -385,28 +387,40 @@ namespace MediaPortal.TV.Recording
 
 				try
 				{
-					if(m_epgClass.GrabState==false && m_epgClass.CanStartGrabbing==true && header.AdaptionField==0 && (header.TableID==0x91 || header.TableID==0x90))
+					if(header.Pid==0xd2 && header.SectionLen==0x2B && m_epgClass.TitlesParsing==false)
 					{
-						m_epgClass.GrabState=true;
-						m_epgClass.GrabbingLength=header.SectionLen;
-						m_epgClass.MHWTable=header.TableID;
-						m_epgClass.CurrentPid=header.Pid;
-					}
-					if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
-					{
-						
 						byte[] epgData=new byte[184];
 						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-						m_epgClass.SaveData(epgData,header);
+						m_epgClass.SaveTitleData(epgData);
+					}
+					if(m_epgClass.ChannelsReady==false && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
+					{
+						m_epgClass.ChannelsGrabLen=header.SectionLen+3;
+						m_epgClass.ChannelsParsing=true;
+					}
+					if(m_epgClass.ChannelsReady==true && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x90)
+					{
+						m_epgClass.SummaryParsing=true;
+					}
+					if(m_epgClass.SummaryParsing==true && header.Pid==0xd3)
+					{
+						byte[] epgData=new byte[184];
+						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+						m_epgClass.SaveSummaryData(epgData);
+					}
+					if(m_epgClass.ChannelsParsing==true && header.Pid==0xd3)
+					{
+						byte[] epgData=new byte[184];
+						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+						m_epgClass.SaveChannelData(epgData);
 					}
 				}
 				catch(Exception ex)
 				{
-					Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.Source);
+					Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
 				}
 				
 			}
-
 
 			return 0;
 		}
@@ -903,6 +917,9 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState < State.Created) return;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			
+			if(m_epgClass!=null)
+				m_epgClass.ClearBuffer();
+
 			m_iChannelNr=-1;
 			//m_fileWriter.Close();
 			if(m_pluginsEnabled)
