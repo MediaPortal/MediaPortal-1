@@ -278,14 +278,15 @@ namespace MediaPortal.Player
 				if (rSource.Width  < 10) return false;
 				if (rSource.Height < 10) return false;
 
-				Log.Write("vmr9: video      : {0}x{1}",videoSize.Width,videoSize.Height);
+				Log.Write("vmr9: video WxH  : {0}x{1}",videoSize.Width,videoSize.Height);
 				Log.Write("vmr9: video AR   : {0}:{1}",arVideoWidth, arVideoHeight);
-				Log.Write("vmr9: screen     : {0}x{1}",nw,nh);
+				Log.Write("vmr9: screen WxH : {0}x{1}",nw,nh);
 				Log.Write("vmr9: AR type    : {0}",GUIGraphicsContext.ARType);
 				Log.Write("vmr9: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
-				Log.Write("vmr9: src        : ({0},{1})-({2},{3}) dst:({4},{5})-({6},{7})",
-					rSource.X,rSource.Y, rSource.Width,rSource.Height,
-					rDest.X,rDest.Y,rDest.Width,rDest.Height);
+				Log.Write("vmr9: src        : ({0},{1})-({2},{3})",
+					rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
+			  Log.Write("vmr9: dst        : ({0},{1})-({2},{3})",
+					rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
 
 				//next calculate which part of the video texture should be copied
 				//into the video window
