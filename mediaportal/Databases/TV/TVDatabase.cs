@@ -258,7 +258,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 		
-		static public string GetSatChannelName(int program_number,int tsID)
+		static public string GetSatChannelName(int program_number,int id)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -269,7 +269,7 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return "";
 
 					SQLiteResultSet results;
-					strSQL=String.Format( "select * from tblDVBSMapping where sProgramNumber={0}", program_number);
+					strSQL=String.Format( "select * from tblDVBSMapping where sProgramNumber={0} AND sNetworkID={1}", program_number,id);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) return "";
 					channelName=DatabaseUtility.Get(results,0,"sChannelName");
