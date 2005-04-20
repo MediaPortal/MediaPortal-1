@@ -366,16 +366,18 @@ namespace MediaPortal.GUI.TV
           }
           else
           {
-            GUIListItem item = new GUIListItem();
+						listView.Clear();
+						titleView.Clear();
+						GUIListItem item = new GUIListItem();
             item.IsFolder=true;
             item.Label="..";
             item.Label2=String.Empty;
             item.Path=String.Empty;
             item.IconImage="defaultFolderBackBig.png";
             item.IconImageBig="defaultFolderBackBig.png";
+						listView.Add(item);
+						titleView.Add(item);
 
-						listView.Clear();
-						titleView.Clear();
             ArrayList titles = new ArrayList();
             TVDatabase.SearchProgramsPerGenre(currentGenre,titles, currentSearchKind, currentSearchCriteria);
             foreach(TVProgram program in titles)
