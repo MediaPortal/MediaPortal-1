@@ -1165,27 +1165,42 @@ namespace MediaPortal.TV.Recording
 			{
 				for(int pointer=add;pointer<end;pointer+=188)
 				{
+					
 					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+
 					try
 					{
-						if(m_epgClass.GrabState==false && m_epgClass.CanStartGrabbing==true && header.AdaptionField==0 && (header.TableID==0x91 || header.TableID==0x90))
+						if(header.Pid==0xd2 && header.SectionLen==0x2B && m_epgClass.TitlesParsing==false)
 						{
-							m_epgClass.GrabState=true;
-							m_epgClass.GrabbingLength=header.SectionLen;
-							m_epgClass.MHWTable=header.TableID;
-							m_epgClass.CurrentPid=header.Pid;
-						}
-						if(m_epgClass.GrabState==true & header.Pid==m_epgClass.CurrentPid)
-						{
-						
 							byte[] epgData=new byte[184];
 							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-							m_epgClass.SaveData(epgData,header);
+							m_epgClass.SaveTitleData(epgData);
+						}
+						if(m_epgClass.ChannelsReady==false && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
+						{
+							m_epgClass.ChannelsGrabLen=header.SectionLen+3;
+							m_epgClass.ChannelsParsing=true;
+						}
+						if(m_epgClass.ChannelsReady==true && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x90)
+						{
+							m_epgClass.SummaryParsing=true;
+						}
+						if(m_epgClass.SummaryParsing==true && header.Pid==0xd3)
+						{
+							byte[] epgData=new byte[184];
+							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+							m_epgClass.SaveSummaryData(epgData);
+						}
+						if(m_epgClass.ChannelsParsing==true && header.Pid==0xd3)
+						{
+							byte[] epgData=new byte[184];
+							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+							m_epgClass.SaveChannelData(epgData);
 						}
 					}
 					catch(Exception ex)
 					{
-						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.Source);
+						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
 					}
 				
 				}
