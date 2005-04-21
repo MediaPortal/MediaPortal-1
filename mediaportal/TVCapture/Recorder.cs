@@ -1914,5 +1914,24 @@ namespace MediaPortal.TV.Recording
 			}
 			importing=false;
 		} //static void ImportDvrMsFiles()
+
+		static public void SetAudioLanguage(int audioPid)
+		{
+			if (m_eState!= State.Initialized) return;
+			if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return;
+			TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
+			
+			dev.SetAudioLanguage(audioPid);
+		}
+
+		static public ArrayList GetAudioLanguage()
+		{
+			if (m_eState!= State.Initialized) return null;
+			if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return null;
+			TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
+									
+			return dev.GetAudioLanguage();
+		}
+
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

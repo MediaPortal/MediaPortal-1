@@ -779,6 +779,24 @@ namespace MediaPortal.TV.Recording
 		}
 
 		/// <summary>
+		/// Property which returns the available audio languages
+		/// </summary>
+		public ArrayList GetAudioLanguage()
+		{
+			if (_mGraph==null) return null;
+			return _mGraph.GetAudioLanguage();			
+		}
+
+		/// <summary>
+		/// Property which sets the new audio language
+		/// </summary>
+		public void SetAudioLanguage(int audioPid)
+		{
+			if (_mGraph==null) return;
+			_mGraph.SetAudioLanguage(audioPid);			
+		}
+
+		/// <summary>
 		/// Property which returns true if this card is currently timeshifting
 		/// </summary>
 		public bool IsTimeShifting

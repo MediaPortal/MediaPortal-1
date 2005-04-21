@@ -732,6 +732,12 @@ namespace MediaPortal.GUI.TV
 				dlg.AddLocalizedString(12902); // MSN Messenger
 				dlg.AddLocalizedString(902); // MSN Online contacts
 			}
+
+			ArrayList	audioPidList = Recorder.GetAudioLanguage();
+			if (audioPidList!=null && audioPidList.Count>0)
+			{
+				dlg.AddLocalizedString(248); // Audio language menu
+			}
 			dlg.AddLocalizedString(970); // Previous window
 
 			m_bDialogVisible=true;
@@ -787,7 +793,11 @@ namespace MediaPortal.GUI.TV
 				case 941: // Change aspect ratio
 					ShowAspectRatioMenu();
 					break;
-						
+
+				case 248: // Show audio language menu
+					ShowAudioLanguageMenu();
+					break;
+	
 				case 12902: // MSN Messenger
 					Log.Write("MSN CHAT:ON");     
 					m_bMSNChatVisible=true;
@@ -872,6 +882,42 @@ namespace MediaPortal.GUI.TV
 			}
 		}
     
+		void ShowAudioLanguageMenu()
+		{
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(248); // Language
+	
+			DVBSections.AudioLanguage al;
+			ArrayList	audioPidList = new ArrayList();
+			audioPidList = Recorder.GetAudioLanguage();
+
+			int iNumberOfLanguages = audioPidList.Count;
+			for (int i=0 ; i<iNumberOfLanguages ; i++)
+			{				
+				al = (DVBSections.AudioLanguage)audioPidList[i];
+				DVBSections sections = new DVBSections();
+				string strLanguage = sections.GetLanguageFromCode(al.AudioLanguageCode);
+				dlg.Add(strLanguage);
+			}
+
+			m_bDialogVisible=true;
+			m_bUpdate=true;
+			dlg.DoModal( GetID);
+			m_bDialogVisible=false;
+			m_bUpdate=true;
+			if (dlg.SelectedId==-1) return;
+
+			// Set new language			
+			if ( (dlg.SelectedId > 0) && (dlg.SelectedId <= audioPidList.Count) )
+			{
+				al = (DVBSections.AudioLanguage)audioPidList[dlg.SelectedId-1];
+				Recorder.SetAudioLanguage(al.AudioPid);
+			}
+
+			// TODO : SaveSettings();
+		}
+
 		public bool NeedUpdate()
 		{
 			OnKeyTimeout();
