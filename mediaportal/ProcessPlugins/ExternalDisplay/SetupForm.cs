@@ -366,7 +366,7 @@ namespace ProcessPlugins.ExternalDisplay
     }
 
     #endregion
-
+/*
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
@@ -375,7 +375,7 @@ namespace ProcessPlugins.ExternalDisplay
     {
       Application.Run(new SetupForm());
     }
-
+*/
     private void btnAdvanced_Click(object sender, EventArgs e)
     {
       this.Cursor = Cursors.WaitCursor;
