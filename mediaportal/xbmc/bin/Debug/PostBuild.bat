@@ -27,6 +27,9 @@ copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
+copy ..\..\..\FTD2XX.DLL .
+copy ..\..\..\SG_VFD.dll .
+copy ..\..\..\LUI.dll .
 copy ..\..\..\Communications.dll .
 copy ..\..\..\KCS.Utilities.dll .
 copy ..\..\..\X10Plugin.* .
