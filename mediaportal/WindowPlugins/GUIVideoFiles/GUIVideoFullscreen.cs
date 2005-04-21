@@ -241,15 +241,6 @@ namespace MediaPortal.GUI.Video
 					return;
 				}		
 			}
-			else if (g_Player.IsDVD)
-			{
-
-				Action newAction=new Action();
-				if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_DVD,action.m_key,ref newAction))
-				{
-					if ( g_Player.OnAction(newAction)) return;
-				}
-			}
 			else if (action.wID==Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport )
 			{
 				int y =(int)action.fAmount2;
@@ -262,6 +253,19 @@ namespace MediaPortal.GUI.Video
 					m_bUpdate=true;
 				}
 			}
+
+			if (g_Player.IsDVD)
+			{
+				Action newAction=new Action();
+				if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_DVD,action.m_key,ref newAction))
+				{
+					if ( g_Player.OnAction(newAction)) return;
+				}
+
+				// route all unhandled actions to the dvd player
+				g_Player.OnAction(action);
+
+			}			
       
       switch (action.wID)
       {

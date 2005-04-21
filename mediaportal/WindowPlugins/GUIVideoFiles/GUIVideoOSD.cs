@@ -335,15 +335,30 @@ namespace MediaPortal.GUI.Video
 
         if (iControl == (int)Controls.OSD_SKIPBWD)
         {
-            
-          PlayListPlayer.PlayPrevious();
+					if (g_Player.IsDVD && g_Player.Playing)
+					{
+						Action actionPrevChapter = new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+						GUIGraphicsContext.OnAction(actionPrevChapter);
+					}
+					else
+					{          
+						PlayListPlayer.PlayPrevious();
+					}
           return true;
 
         }
 
         if (iControl == (int)Controls.OSD_SKIPFWD)
         {   
-          PlayListPlayer.PlayNext(true);
+					if (g_Player.IsDVD && g_Player.Playing)
+					{
+						Action actionPrevChapter = new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
+						GUIGraphicsContext.OnAction(actionPrevChapter);
+					}
+					else
+					{
+						PlayListPlayer.PlayNext(true);
+					}
           return true;
         }
 
