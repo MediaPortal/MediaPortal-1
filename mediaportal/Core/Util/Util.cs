@@ -73,11 +73,6 @@ namespace MediaPortal.Util
 		}
 		static Utils()
 		{
-			try
-			{
-				System.IO.Directory.CreateDirectory("thumbs");
-			}
-			catch(Exception){}
 			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_bHideExtensions=xmlreader.GetValueAsBool("general","hideextensions",true);

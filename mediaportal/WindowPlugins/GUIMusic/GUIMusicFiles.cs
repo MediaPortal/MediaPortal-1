@@ -270,14 +270,7 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       m_strDirectory = String.Empty;
-			try
-			{
-				System.IO.Directory.CreateDirectory(@"thumbs\music");
-				System.IO.Directory.CreateDirectory(@"thumbs\music\albums");
-				System.IO.Directory.CreateDirectory(@"thumbs\music\artists");
-				System.IO.Directory.CreateDirectory(@"thumbs\music\genre");
-			}
-			catch(Exception){}
+
 			bool bResult = Load(GUIGraphicsContext.Skin + @"\mymusicsongs.xml");
       return bResult;
     }

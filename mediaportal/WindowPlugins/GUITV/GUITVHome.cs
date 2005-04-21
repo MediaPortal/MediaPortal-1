@@ -83,12 +83,6 @@ namespace MediaPortal.GUI.TV
 		#region overrides
 		public override bool Init()
 		{
-			try
-			{
-				System.IO.Directory.CreateDirectory(@"thumbs\tv");
-				System.IO.Directory.CreateDirectory(@"thumbs\tv\logos");
-			}
-			catch(Exception){}
 			bool bResult= Load (GUIGraphicsContext.Skin+@"\mytvhome.xml");
 			// Create the channel navigator (it will load groups and channels)
 			m_navigator = new ChannelNavigator();

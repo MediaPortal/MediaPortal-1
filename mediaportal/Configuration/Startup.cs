@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -94,24 +95,7 @@ namespace MediaPortal.Configuration
 			try
 			{
 
-				try
-				{
-					System.IO.Directory.CreateDirectory(@"thumbs");
-					System.IO.Directory.CreateDirectory(@"thumbs\music");
-					System.IO.Directory.CreateDirectory(@"thumbs\music\albums");
-					System.IO.Directory.CreateDirectory(@"thumbs\music\artists");
-					System.IO.Directory.CreateDirectory(@"thumbs\music\genre");
-					System.IO.Directory.CreateDirectory(@"thumbs\pictures");
-					System.IO.Directory.CreateDirectory(@"thumbs\radio");
-					System.IO.Directory.CreateDirectory(@"thumbs\tv");
-					System.IO.Directory.CreateDirectory(@"thumbs\tv\logos");
-					System.IO.Directory.CreateDirectory(@"thumbs\tv\shows");
-					System.IO.Directory.CreateDirectory(@"thumbs\videos");
-					System.IO.Directory.CreateDirectory(@"thumbs\videos\genre");
-					System.IO.Directory.CreateDirectory(@"thumbs\videos\title");
-					System.IO.Directory.CreateDirectory(@"thumbs\videos\actors");
-				}
-				catch(Exception){}
+				Thumbs.CreateFolders();
 
 				AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 				Application.EnableVisualStyles();

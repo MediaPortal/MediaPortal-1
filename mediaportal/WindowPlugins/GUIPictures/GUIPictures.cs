@@ -172,11 +172,7 @@ namespace MediaPortal.GUI.Pictures
     {
       m_strDirectory=String.Empty;
 			m_strDestination=String.Empty;
-			try
-			{
-      System.IO.Directory.CreateDirectory(Thumbs.Pictures);
-			}
-			catch(Exception){}
+
 			bool result= Load (GUIGraphicsContext.Skin+@"\mypics.xml");
 			LoadSettings();
 			return result;

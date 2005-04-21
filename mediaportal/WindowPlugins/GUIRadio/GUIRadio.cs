@@ -52,8 +52,8 @@ namespace MediaPortal.GUI.Radio
     bool              sortAscending=true;
     VirtualDirectory	virtualDirectory = new VirtualDirectory();
     DirectoryHistory  directoryHistory = new DirectoryHistory();
-    string            currentFolder="";
-		string            currentRadioFolder="";
+    string            currentFolder=String.Empty;
+		string            currentRadioFolder=String.Empty;
     int               selectedItemIndex=-1;   
 		PlayList          currentPlayList=null;
     #endregion
@@ -68,13 +68,8 @@ namespace MediaPortal.GUI.Radio
     
     public override bool Init()
     {
-      currentFolder="";
+      currentFolder=String.Empty;
       bool bResult=Load (GUIGraphicsContext.Skin+@"\MyRadio.xml");
-			try
-			{
-				System.IO.Directory.CreateDirectory(Thumbs.Radio);
-			}
-			catch(Exception){}
       return bResult;
     }
 
@@ -84,9 +79,9 @@ namespace MediaPortal.GUI.Radio
     {
       using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-				currentRadioFolder=xmlreader.GetValueAsString("radio","folder","");
+				currentRadioFolder=xmlreader.GetValueAsString("radio","folder",String.Empty);
 
-        string tmpLine="";
+        string tmpLine=String.Empty;
         tmpLine=(string)xmlreader.GetValue("myradio","viewby");
         if (tmpLine!=null)
         {
@@ -372,7 +367,7 @@ namespace MediaPortal.GUI.Radio
 			listView.Clear();
 			thumbnailView.Clear();
 
-      string objectCount="";
+      string objectCount=String.Empty;
 			int totalItems=0;
 
 			if (currentPlayList!=null)
@@ -382,7 +377,7 @@ namespace MediaPortal.GUI.Radio
 				item.Path=currentFolder;
 				item.IsFolder=true;
 				item.MusicTag = null;
-				item.ThumbnailImage="";
+				item.ThumbnailImage=String.Empty;
 				Utils.SetDefaultIcons(item);
 				listView.Add(item);
 				thumbnailView.Add(item);
@@ -394,7 +389,7 @@ namespace MediaPortal.GUI.Radio
 					item.Path=currentPlayList[i].FileName;
 					item.IsFolder=false;
 					item.MusicTag = null;
-					item.ThumbnailImage="";
+					item.ThumbnailImage=String.Empty;
 					item.IconImageBig="DefaultMyradioStreamBig.png";
 					item.IconImage="DefaultMyradioStream.png";
 
@@ -420,7 +415,7 @@ namespace MediaPortal.GUI.Radio
               item.IconImageBig="DefaultMyradioStreamBig.png";
               item.IconImage="DefaultMyradioStream.png";
               item.ThumbnailImage=Utils.GetCoverArt(Thumbs.Radio,station.Name);
-              //if (item.ThumbnailImage=="")
+              //if (item.ThumbnailImage==String.Empty)
               //  item.ThumbnailImage="DefaultMyradioStream.png";
             }
             else
@@ -436,7 +431,7 @@ namespace MediaPortal.GUI.Radio
 								item.IconImage="DefaultMyradio.png";
 							}
               item.ThumbnailImage=Utils.GetCoverArt(Thumbs.Radio,station.Name);
-              //if (item.ThumbnailImage=="")
+              //if (item.ThumbnailImage==String.Empty)
               //  item.ThumbnailImage="DefaultMyradioBig.png";
             }
 
@@ -557,8 +552,8 @@ namespace MediaPortal.GUI.Radio
 					}
         
 				case SortMethod.Type:
-					string strURL1="";
-					string strURL2="";
+					string strURL1=String.Empty;
+					string strURL2=String.Empty;
           if (station1!=null) strURL1=station1.URL;
           else 
           {
@@ -847,9 +842,9 @@ namespace MediaPortal.GUI.Radio
 		public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
 		{
 			strButtonText = GUILocalizeStrings.Get(665);
-			strButtonImage = "";
-			strButtonImageFocus = "";
-			strPictureImage = "";
+			strButtonImage = String.Empty;
+			strButtonImageFocus = String.Empty;
+			strPictureImage = String.Empty;
 			return true;
 		}
 

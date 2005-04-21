@@ -185,13 +185,7 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackEnded +=new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted +=new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
       currentFolder = String.Empty;
-			try
-			{
-				System.IO.Directory.CreateDirectory(@"Thumbs\videos");
-				System.IO.Directory.CreateDirectory(@"Thumbs\videos\genre");
-				System.IO.Directory.CreateDirectory(Thumbs.MovieTitle);
-			}
-			catch(Exception){}
+
 			LoadSettings();
 			bool result=Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
