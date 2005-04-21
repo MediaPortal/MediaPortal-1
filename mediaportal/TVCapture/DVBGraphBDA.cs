@@ -1328,6 +1328,13 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}
 
+		public void SetAudioLanguage(int audioPid)
+		{
+		}
+		public ArrayList GetAudioLanguage()
+		{
+			return new ArrayList();
+		}
 
 		public bool HasTeletext()
 		{

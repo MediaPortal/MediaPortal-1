@@ -2423,5 +2423,12 @@ namespace MediaPortal.TV.Recording
 			if (m_currentChannel.TeletextPid>0) return true;
 			return false;
 		}
+		public void SetAudioLanguage(int audioPid)
+		{
+		}
+		public ArrayList GetAudioLanguage()
+		{
+			return new ArrayList();
+		}
 	}// class
 }// namespace
