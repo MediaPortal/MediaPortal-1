@@ -237,7 +237,8 @@ namespace MediaPortal.TV.Recording
 		DVBChannel						m_currentTuningObject;
 		DVBEPG							m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
-//
+		ArrayList						m_audioPidList=new ArrayList();
+		//
 		
 		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
@@ -2425,10 +2426,27 @@ namespace MediaPortal.TV.Recording
 		}
 		public void SetAudioLanguage(int audioPid)
 		{
+
 		}
 		public ArrayList GetAudioLanguage()
 		{
-			return new ArrayList();
+			DVBSections.AudioLanguage al;
+			m_audioPidList.Clear();
+			if(m_currentChannel.Audio1!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=m_currentChannel.Audio1;
+				al.AudioLanguageCode=m_currentChannel.AudioLanguage1;
+				m_audioPidList.Add(al);
+			}
+			if(m_currentChannel.Audio2!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=m_currentChannel.Audio2;
+				al.AudioLanguageCode=m_currentChannel.AudioLanguage2;
+				m_audioPidList.Add(al);
+			}
+			return m_audioPidList;
 		}
 	}// class
 }// namespace
