@@ -86,7 +86,6 @@ namespace MediaPortal.GUI.Pictures
 		[SkinControlAttribute(10)]		protected GUIFacadeControl facadeView=null;
 
 
-    const string      ThumbsFolder=@"Thumbs\Pictures";
     int               m_iItemSelected=-1;
 		GUIListItem				m_itemItemSelected=null;
     DirectoryHistory  m_history = new DirectoryHistory();
@@ -175,7 +174,7 @@ namespace MediaPortal.GUI.Pictures
 			m_strDestination=String.Empty;
 			try
 			{
-      System.IO.Directory.CreateDirectory(ThumbsFolder);
+      System.IO.Directory.CreateDirectory(Thumbs.Pictures);
 			}
 			catch(Exception){}
 			bool result= Load (GUIGraphicsContext.Skin+@"\mypics.xml");
@@ -1202,12 +1201,12 @@ namespace MediaPortal.GUI.Pictures
     static public string GetThumbnail(string strPhoto)
     {
       if (strPhoto==String.Empty) return String.Empty;		
-      return String.Format(@"{0}\{1}.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
+      return String.Format(@"{0}\{1}.jpg",Thumbs.Pictures,Utils.EncryptLine(strPhoto) );
     }
     static public string GetLargeThumbnail(string strPhoto)
     {
       if (strPhoto==String.Empty) return String.Empty;
-      return String.Format(@"{0}\{1}L.jpg",ThumbsFolder,Utils.EncryptLine(strPhoto) );
+      return String.Format(@"{0}\{1}L.jpg",Thumbs.Pictures,Utils.EncryptLine(strPhoto) );
     }
 
 
