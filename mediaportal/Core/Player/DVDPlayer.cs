@@ -1621,8 +1621,10 @@ namespace MediaPortal.Player
 						break;
 
 					case Action.ActionType.ACTION_DVD_MENU:
+
 						if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
 							return false;
+						Speed=1;
 						dvdCtrl.ShowMenu( DvdMenuID.Root, DvdCmdFlags.Block | DvdCmdFlags.Flush, null );
 						return true;
 
@@ -1631,6 +1633,7 @@ namespace MediaPortal.Player
 						if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
 							return false;
 
+						Speed=1;
 						int hr = dvdCtrl.PlayNextChapter( DvdCmdFlags.SendEvt, cmdOption );
 						if( hr < 0 )
 						{
@@ -1653,6 +1656,7 @@ namespace MediaPortal.Player
 						if( (m_state != PlayState.Playing) || (dvdCtrl == null) )
 							return false;
 
+						Speed=1;
 						int hr = dvdCtrl.PlayPrevChapter( DvdCmdFlags.SendEvt, cmdOption );
 						if( hr < 0 )
 						{
