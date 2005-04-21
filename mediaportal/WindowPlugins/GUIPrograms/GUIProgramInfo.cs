@@ -47,19 +47,19 @@ namespace WindowPlugins.GUIPrograms
 		#endregion
 
 		#region Base & Content Variables
-		bool m_bRunning=false;
-		int m_dwParentWindowID=0;
-		GUIWindow m_pParentWindow=null;
-		FileItem m_pFile=null;
-		AppItem m_pApp=null;
-		Texture m_pTexture=null;
-		int m_iTextureWidth=0;
-		int m_iTextureHeight=0;
-		bool m_bOverlay=false;
-		bool m_bOverviewVisible=true;
-		int m_iSpeed=3;
-		int m_lSlideTime=0;
 
+		bool isRunning=false;
+		int parentWindowID=0;
+		GUIWindow parentWindow=null;
+		Texture curTexture=null;
+		FileItem curFile=null;
+		AppItem curApp=null;
+		int textureWidth=0;
+		int textureHeight=0;
+		bool isOverlay=false;
+		bool isOverviewVisible=true;
+		int slideSpeed=3;
+		int slideTime=0;
 
 		string strSystemLabel = "";
 		string strManufacturerLabel = "";
@@ -75,26 +75,28 @@ namespace WindowPlugins.GUIPrograms
 		#endregion
 
 		#region Constructor / Destructor
+
 		public GUIFileInfo()
 		{
 			GetID=(int)ProgramUtils.ProgramInfoID;
 		}
+
 		#endregion
 
 		#region Properties
 
 		public FileItem File
 		{
-			set {m_pFile=value; }
+			set {curFile=value; }
 		}
 
 		public AppItem App
 		{
 			set 
 			{
-				m_pApp=value; 
-				if (m_pApp != null)
-					m_pApp.ResetThumbs();
+				curApp=value; 
+				if (curApp != null)
+					curApp.ResetThumbs();
 			}
 		}
 		#endregion
@@ -110,19 +112,19 @@ namespace WindowPlugins.GUIPrograms
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			m_bOverlay=GUIGraphicsContext.Overlay;
-			m_pTexture=null;
+			isOverlay=GUIGraphicsContext.Overlay;
+			curTexture=null;
 
-			if (m_pApp != null)
+			if (curApp != null)
 			{
-				m_pApp.ResetThumbs();
+				curApp.ResetThumbs();
 			}
 			// if there is no overview text, default to bigger pictures
-			if (m_pFile != null)
+			if (curFile != null)
 			{
-				if (m_pFile.Overview == "")
+				if (curFile.Overview == "")
 				{
-					this.m_bOverviewVisible = false;
+					this.isOverviewVisible = false;
 				}
 			}
 			Refresh();
@@ -131,13 +133,13 @@ namespace WindowPlugins.GUIPrograms
 
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			m_pFile=null;
-			if (m_pTexture!=null)
+			curFile=null;
+			if (curTexture!=null)
 			{
-				m_pTexture.Dispose();
-				m_pTexture=null;
+				curTexture.Dispose();
+				curTexture=null;
 			}
-			GUIGraphicsContext.Overlay=m_bOverlay;
+			GUIGraphicsContext.Overlay=isOverlay;
 			base.OnPageDestroy (newWindowId);
 		}
 
@@ -151,28 +153,28 @@ namespace WindowPlugins.GUIPrograms
 			}
 			else if (control == btnPrev)
 			{
-				m_pFile = m_pApp.PrevFile(m_pFile);
-				m_pApp.ResetThumbs();
+				curFile = curApp.PrevFile(curFile);
+				curApp.ResetThumbs();
 				Refresh();
 			}
 			else if (control == btnNext)
 			{
-				m_pFile = m_pApp.NextFile(m_pFile);
-				m_pApp.ResetThumbs();
+				curFile = curApp.NextFile(curFile);
+				curApp.ResetThumbs();
 				Refresh();
 			}
 			else if (control == btnLaunch)
 			{
-				if (m_pApp != null)
+				if (curApp != null)
 				{
-					m_pApp.LaunchFile(m_pFile, true);
+					curApp.LaunchFile(curFile, true);
 					Refresh();
 				}
 
 			}
 			else if (control == btnToggleOverview)
 			{
-				m_bOverviewVisible = !m_bOverviewVisible;
+				isOverviewVisible = !isOverviewVisible;
 				Refresh();
 			}
 		}
@@ -193,38 +195,38 @@ namespace WindowPlugins.GUIPrograms
 		{
 			RenderDlg(timePassed);
 
-			if (null==m_pTexture) return;
+			if (null==curTexture) return;
 
 			// does the thumb needs replacing??
-			int dwTimeElapsed = ((int)(DateTime.Now.Ticks/10000)) - m_lSlideTime;
-			if (dwTimeElapsed >= (m_iSpeed*1000))
+			int timeElapsed = ((int)(DateTime.Now.Ticks/10000)) - slideTime;
+			if (timeElapsed >= (slideSpeed*1000))
 			{
 				RefreshPicture(); // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
 			}
 
 
-			GUIControl pControl = null;
-			if (this.m_bOverviewVisible)
+			GUIControl curImg = null;
+			if (this.isOverviewVisible)
 			{
-				pControl = imgSmall;
+				curImg = imgSmall;
 			}
 			else
 			{
-				pControl = imgBig;
+				curImg = imgBig;
 			}
-			if (null!=pControl)
+			if (curImg != null)
 			{
-				float x=(float)pControl.XPosition;
-				float y=(float)pControl.YPosition;
-				int iwidth;
-				int iheight;
+				float x=(float)curImg.XPosition;
+				float y=(float)curImg.YPosition;
+				int curWidth;
+				int curHeight;
 				GUIGraphicsContext.Correct(ref x,ref y);
 
-				int iMaxWidth=pControl.Width;
-				int iMaxHeight=pControl.Height;
-				GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight,iMaxWidth,iMaxHeight, out iwidth,out iheight);
+				int maxWidth=curImg.Width;
+				int maxHeight=curImg.Height;
+				GUIGraphicsContext.GetOutputRect(textureWidth, textureHeight, maxWidth, maxHeight, out curWidth,out curHeight);
 				GUIFontManager.Present();
-				Picture.RenderImage(ref m_pTexture,(int)x,(int)y,iwidth,iheight,m_iTextureWidth,m_iTextureHeight,0,0,true);
+				Picture.RenderImage(ref curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
 			}
 		}
 
@@ -238,29 +240,29 @@ namespace WindowPlugins.GUIPrograms
 			OnMessage(msg);
 
 			GUIWindowManager.UnRoute();
-			m_pParentWindow=null;
-			m_bRunning=false;
+			parentWindow=null;
+			isRunning=false;
 		}
 
 
-		public void DoModal(int dwParentId)
+		public void DoModal(int parentId)
 		{
-			m_dwParentWindowID=dwParentId;
-			m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
-			if (null==m_pParentWindow)
+			parentWindowID = parentId;
+			parentWindow = GUIWindowManager.GetWindow( parentWindowID);
+			if (null == parentWindow)
 			{
-				m_dwParentWindowID=0;
+				parentWindowID=0;
 				return;
 			}
 
-			GUIWindowManager.RouteToWindow( GetID );
+			GUIWindowManager.RouteToWindow(GetID);
 
 			// active this window...
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
 			OnMessage(msg);
 
-			m_bRunning=true;
-			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+			isRunning=true;
+			while (isRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
 			{
 				GUIWindowManager.Process();
 			}
@@ -268,23 +270,23 @@ namespace WindowPlugins.GUIPrograms
 
 		void RefreshPicture()
 		{
-			if (m_pTexture!=null)
+			if (curTexture!=null)
 			{
-				m_pTexture.Dispose();
-				m_pTexture=null;
+				curTexture.Dispose();
+				curTexture=null;
 			}
 
-			if (m_pFile != null)
+			if (curFile != null)
 			{
-				string strThumb = m_pApp.GetCurThumb(m_pFile); 
+				string strThumb = curApp.GetCurThumb(curFile); 
 				// load the found thumbnail picture
 				if (System.IO.File.Exists(strThumb) )
 				{
-					m_pTexture=Picture.Load(strThumb,0,512,512,true,false,out m_iTextureWidth,out m_iTextureHeight);
+					curTexture=Picture.Load(strThumb,0,512,512,true,false,out textureWidth,out textureHeight);
 				}
-				m_pApp.NextThumb(); // try to find a next thumbnail
+				curApp.NextThumb(); // try to find a next thumbnail
 			}
-			m_lSlideTime=(int)(DateTime.Now.Ticks/10000); // reset timer!
+			slideTime=(int)(DateTime.Now.Ticks/10000); // reset timer!
 		}
 		
 
@@ -297,11 +299,11 @@ namespace WindowPlugins.GUIPrograms
 
 		void Update()
 		{
-			if (null==m_pFile) return;
+			if (null==curFile) return;
 
 			ReadContent();
 
-			if (m_bOverviewVisible)
+			if (isOverviewVisible)
 			{
 				imgBig.IsVisible = false;
 				tbOverviewData.IsVisible = true;
@@ -317,7 +319,7 @@ namespace WindowPlugins.GUIPrograms
 				btnToggleOverview.Label = GUILocalizeStrings.Get(13007);
 			}
 
-			lblTitle.Label = m_pFile.Title;
+			lblTitle.Label = curFile.Title;
 
 			// if any title is overwritten, re-set the fresh text
 			if (strSystemLabel != "")
@@ -361,7 +363,7 @@ namespace WindowPlugins.GUIPrograms
 
 			btnBack.Label = GUILocalizeStrings.Get(8008);
 
-			if (m_pFile.Filename != "")
+			if (curFile.Filename != "")
 			{
 				btnLaunch.Disabled = false;
 			}
@@ -376,38 +378,26 @@ namespace WindowPlugins.GUIPrograms
 
 		void ReadContent()
 		{
+			string strNotAvailable = GUILocalizeStrings.Get(416);
 			// read fields out of the content profile
 			// fields can contain texts and / or references to fields
-			strSystemLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line1Label");
-			strManufacturerLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line2Label");
-			strRatingLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line3Label");
-			strGenreLabel = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line4Label");
+			strSystemLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line1Label", "");
+			strManufacturerLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line2Label", "");
+			strRatingLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line3Label", "");
+			strGenreLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line4Label", "");
 
-			strSystemText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line1Data");
-			strManufacturerText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line2Data");
-			strRatingText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line3Data");
-			strGenreText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "Line4Data");
-			strOverviewText = ProgramContentManager.GetFieldValue(m_pApp, m_pFile, "OverviewData");
+			strSystemText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line1Data", strNotAvailable);
+			strManufacturerText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line2Data", strNotAvailable);
+			strRatingText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line3Data", strNotAvailable);
+			strGenreText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line4Data", strNotAvailable);
+			strOverviewText = ProgramContentManager.GetFieldValue(curApp, curFile, "OverviewData", "");
 		}
-
-
-		void SetLabel(int iControl,  string strLabel)
-		{
-			string strLabel1=strLabel;
-			if (strLabel1.Length==0)
-				strLabel1=GUILocalizeStrings.Get(416);
-    	
-			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET,GetID,0,iControl,0,0,null);
-			msg.Label=(strLabel1);
-			OnMessage(msg);
-		}
-
 
 		public void RenderDlg(float timePassed)
 		{
 			// render the parent window
-			if (null!=m_pParentWindow) 
-				m_pParentWindow.Render(timePassed);
+			if (null!=parentWindow) 
+				parentWindow.Render(timePassed);
 			GUIFontManager.Present();
 			// render this dialog box
 			base.Render(timePassed);

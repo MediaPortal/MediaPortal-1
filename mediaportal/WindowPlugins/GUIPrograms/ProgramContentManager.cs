@@ -119,9 +119,9 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName)
+		static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName, string strValueIfEmpty)
 		{
-			string result = "";
+			string result = strValueIfEmpty;
 			if (rootElement == null) {return "";}
 			XmlNode node = rootElement.SelectSingleNode(String.Format("/contentprofiles/profile[@id={0}]", curApp.ContentID));
 			if (node != null)
