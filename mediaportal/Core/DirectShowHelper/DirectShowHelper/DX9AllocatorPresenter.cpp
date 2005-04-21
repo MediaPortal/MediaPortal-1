@@ -118,13 +118,18 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 			((char)(lpAllocInfo->Format>>24)&0xff));
 	// StretchRect's yv12 -> rgb conversion looks horribly bright compared to the result of yuy2 -> rgb
 	
+	if(lpAllocInfo->Format == '21VY')
+	{
+		Log("InitializeDevice()   invalid format");
+		return E_FAIL;
+	}
+	/*
 	if(lpAllocInfo->Format == '21VY' || lpAllocInfo->Format == '024Y' ||
 		lpAllocInfo->Format == '2YUY' || lpAllocInfo->Format=='YVYU')
 	{
 		Log("InitializeDevice()   invalid format");
 		return E_FAIL;
 	}
-	/*
 	(if (lpAllocInfo->Format!=D3DFMT_A8R8G8B8 &&
 		lpAllocInfo->Format!=D3DFMT_R5G6B5 &&
 		lpAllocInfo->Format!=D3DFMT_R8G8B8 &&
