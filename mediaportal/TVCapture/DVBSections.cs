@@ -283,7 +283,11 @@ namespace MediaPortal.TV.Recording
 			public int TPpol; // polarisation 0=hori, 1=vert
 			public int TPsymb; // symbol rate
 		}
-
+		public struct AudioLanguage
+		{
+			public int		AudioPid;
+			public string	AudioLanguageCode;
+		}
 		//
 		//
 		public struct Transponder
