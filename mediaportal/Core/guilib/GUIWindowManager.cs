@@ -62,8 +62,12 @@ namespace MediaPortal.GUI.Library
       {
 				if (OnPostRenderAction!=null)
 				{
-					if (OnPostRenderAction(null,message,false)) 
-						return;
+					System.Delegate[] delegates=OnPostRenderAction.GetInvocationList();
+					for (int i=0; i < delegates.Length;++i)
+					{
+						if ((bool)delegates[i].DynamicInvoke(new object[] {null,message,false} )) 
+							return;
+					}
 				}
 				/*
 				//SLOW
@@ -185,10 +189,14 @@ namespace MediaPortal.GUI.Library
 			{
 				if (OnPostRenderAction!=null)
 				{
-					int iActiveWindow=ActiveWindow;
-					bool focused=OnPostRenderAction(action,null,false);
-					if (focused || iActiveWindow!=ActiveWindow)
-						return;
+					System.Delegate[] delegates=OnPostRenderAction.GetInvocationList();
+					for (int i=0; i < delegates.Length;++i)
+					{
+						int iActiveWindow=ActiveWindow;
+						bool focused=(bool)delegates[i].DynamicInvoke(new object[] {action,null,false} );
+						if (focused || iActiveWindow!=ActiveWindow)
+							return;
+					}
 				}
 				/*
 				for (int x=0; x < windowCount;++x)
