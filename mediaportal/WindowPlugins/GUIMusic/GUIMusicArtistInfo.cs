@@ -17,23 +17,19 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicArtistInfo : GUIWindow
   { 
-    enum Controls
-    {
-        CONTROL_ARTIST		      =20
-      ,	CONTROL_ARTIST_NAME_AKA	=21
-      ,	CONTROL_BORN 		        =22
-      ,	CONTROL_YEARS_ACTIVE    =23
-      ,	CONTROL_GENRES	        =24
-      ,	CONTROL_TONES		        =25
-      ,	CONTROL_STYLES	        =26
-      ,	CONTROL_INSTRUMENTS	    =27
+		[SkinControlAttribute(20)]		protected GUILabelControl lblArtist=null;
+		[SkinControlAttribute(21)]		protected GUILabelControl lblArtistName=null;
+		[SkinControlAttribute(22)]		protected GUILabelControl lblBorn=null;
+		[SkinControlAttribute(23)]		protected GUILabelControl lblYearsActive=null;
+		[SkinControlAttribute(24)]		protected GUILabelControl lblGenre=null;
+		[SkinControlAttribute(25)]		protected GUIFadeLabel		lblTones=null;
+		[SkinControlAttribute(26)]		protected GUIFadeLabel		lblStyles=null;
+		[SkinControlAttribute(27)]		protected GUILabelControl lblInstruments=null;
+		[SkinControlAttribute(3)]			protected GUIImage				imgCoverArt=null;
+		[SkinControlAttribute(4)]			protected GUITextControl	tbReview=null;
+		[SkinControlAttribute(5)]			protected GUIButtonControl  btnBio=null;
+		[SkinControlAttribute(6)]			protected GUIButtonControl  btnRefresh=null;
 
-      , CONTROL_IMAGE		 =3
-      , CONTROL_TEXTAREA =4
-
-      , CONTROL_BTN_BIO	 =5
-      , CONTROL_BTN_REFRESH	=6
-    }
 
     #region Base Dialog Variables
     bool m_bRunning=false;
@@ -43,11 +39,11 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
-    Texture m_pTexture=null;
-    bool    m_bViewBio=false;
-    MusicArtistInfo m_pArtist=null;
-    int m_iTextureWidth=0;
-    int m_iTextureHeight=0;
+    Texture coverArtTexture=null;
+    bool    viewBio=false;
+    MusicArtistInfo artistInfo=null;
+    int coverArtTextureWidth=0;
+    int coverArtTextureHeight=0;
     bool m_bOverlay=false;
 
     public GUIMusicArtistInfo()
@@ -118,108 +114,86 @@ namespace MediaPortal.GUI.Music
     }
     #endregion
 	
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			base.OnPageDestroy (newWindowId);
+			artistInfo=null;
+			if (coverArtTexture!=null)
+			{
+				coverArtTexture.Dispose();
+				coverArtTexture=null;
+			}
+			GUIGraphicsContext.Overlay=m_bOverlay;
+		}
 
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch ( message.Message )
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-        {
-          m_pArtist=null;
-          if (m_pTexture!=null)
-          {
-            m_pTexture.Dispose();
-            m_pTexture=null;
-          }
-          GUIGraphicsContext.Overlay=m_bOverlay;
-        }
-          break;
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			m_bOverlay=GUIGraphicsContext.Overlay;
+			coverArtTexture=null;
+			viewBio=true;
+			Refresh();
+		}
 
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-        {
-          m_bOverlay=GUIGraphicsContext.Overlay;
-          base.OnMessage(message);
-          m_pTexture=null;
-          m_bViewBio=true;
-          Refresh();
-          return true;
-        }
-		
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-        {
-          int iControl=message.SenderControlId;
-          if (iControl==(int)Controls.CONTROL_BTN_REFRESH)
-          {
-            string strImage=m_pArtist.ImageURL;
-            string strThumb=GUIMusicFiles.GetArtistCoverArtName(m_pArtist.Artist);
-            if (strThumb!=String.Empty) Utils.FileDelete(strThumb);
-            m_bRefresh=true;
-            Close();
-            return true;
-          }
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			base.OnClicked (controlId, control, actionType);
+			if (control==btnRefresh)
+			{
+				string coverArtUrl=artistInfo.ImageURL;
+				string coverArtFileName=GUIMusicFiles.GetArtistCoverArtName(artistInfo.Artist);
+				if (coverArtFileName!=String.Empty) Utils.FileDelete(coverArtFileName);
+				m_bRefresh=true;
+				Close();
+				return ;
+			}
 
-          if (iControl==(int)Controls.CONTROL_BTN_BIO)
-          {
-            m_bViewBio=!m_bViewBio;
-            Update();
-          }
-        }
-          break;
-      }
-
-      return base.OnMessage(message);
-    }
-
+			if (control==btnBio)
+			{
+				viewBio=!viewBio;
+				Update();
+			}
+		}
 
     public MusicArtistInfo Artist
     {
-      set {m_pArtist=value; }
+      set {artistInfo=value; }
     }
 
     void Update()
     {
-      if (null==m_pArtist) return;
-      string strTmp;
-      string nameAKA = m_pArtist.Artist;
-      if(m_pArtist.Aka != null && m_pArtist.Aka.Length > 0)
-        nameAKA += "(" + m_pArtist.Aka + ")";
-      SetLabel((int)Controls.CONTROL_ARTIST, m_pArtist.Artist );
-      SetLabel((int)Controls.CONTROL_ARTIST_NAME_AKA, nameAKA );
-      SetLabel((int)Controls.CONTROL_BORN, m_pArtist.Born );
-      SetLabel((int)Controls.CONTROL_YEARS_ACTIVE, m_pArtist.YearsActive );
-      SetLabel((int)Controls.CONTROL_GENRES, m_pArtist.Genres );
-      SetLabel((int)Controls.CONTROL_INSTRUMENTS, m_pArtist.Instruments );
+      if (null==artistInfo) return;
+      string tmpLine;
+      string nameAKA = artistInfo.Artist;
+      if(artistInfo.Aka != null && artistInfo.Aka.Length > 0)
+        nameAKA += "(" + artistInfo.Aka + ")";
+      lblArtist.Label= artistInfo.Artist ;
+      lblArtistName.Label= nameAKA ;
+      lblBorn.Label= artistInfo.Born ;
+      lblYearsActive.Label= artistInfo.YearsActive ;
+      lblGenre.Label= artistInfo.Genres ;
+      lblInstruments.Label= artistInfo.Instruments ;
 
       // scroll Tones
-      GUIMessage msg1;
-      msg1=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID,0, (int)Controls.CONTROL_TONES,0,0,null); 
-      OnMessage(msg1);
-      strTmp=m_pArtist.Tones.Trim();
-      msg1=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID,0, (int)Controls.CONTROL_TONES,0,0,null); 
-      msg1.Label= strTmp ;
-      OnMessage(msg1);
+			lblTones.Clear();
+			lblTones.Add(artistInfo.Tones.Trim());
 
       // scroll Styles
-      GUIMessage msg2;
-      msg2=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID,0, (int)Controls.CONTROL_STYLES,0,0,null); 
-      OnMessage(msg2);
-      strTmp=m_pArtist.Styles.Trim();
-      msg2=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID,0, (int)Controls.CONTROL_STYLES,0,0,null); 
-      msg2.Label= strTmp ;
-      OnMessage(msg2);
+			lblStyles.Clear();
+			lblStyles.Add(artistInfo.Styles.Trim());
 
-      if (m_bViewBio)
+      if (viewBio)
       {
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,m_pArtist.AMGBiography);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_BIO,GUILocalizeStrings.Get(132));
+				tbReview.Label=artistInfo.AMGBiography;
+				btnBio.Label=GUILocalizeStrings.Get(132);
       }
       else
       {
         // translate the diff. discographys
-        string dAlbums = GUILocalizeStrings.Get(690);
-        string dCompilations = GUILocalizeStrings.Get(691);
-        string dSingles = GUILocalizeStrings.Get(700);
-        string dMisc = GUILocalizeStrings.Get(701);
+        string textAlbums = GUILocalizeStrings.Get(690);
+        string textCompilations = GUILocalizeStrings.Get(691);
+        string textSingles = GUILocalizeStrings.Get(700);
+        string textMisc = GUILocalizeStrings.Get(701);
 
         
         StringBuilder strLine = new StringBuilder(2048);
@@ -227,12 +201,12 @@ namespace MediaPortal.GUI.Music
         string discography = null;
 
         // get the Discography Album
-        list = m_pArtist.DiscographyAlbums;
+        list = artistInfo.DiscographyAlbums;
         strLine.Append('\t');
-        strLine.Append(dAlbums);
+        strLine.Append(textAlbums);
         strLine.Append('\n');
 
-        discography = m_pArtist.Albums;
+        discography = artistInfo.Albums;
         if(discography != null && discography.Length > 0)
         {
           strLine.Append(discography);
@@ -244,23 +218,23 @@ namespace MediaPortal.GUI.Music
           for (int i=0; i < list.Count;++i)
           {
             string[] listInfo = (string[])list[i];
-            strTmp=String.Format("{0} - {1} ({2})\n",
+            tmpLine=String.Format("{0} - {1} ({2})\n",
               listInfo[0],  // year 
               listInfo[1],  // title
               listInfo[2]); // label
-            strLine.Append(strTmp);
-            strLine2.Append(strTmp);
+            strLine.Append(tmpLine);
+            strLine2.Append(tmpLine);
           };
           strLine.Append('\n');
-          m_pArtist.Albums = strLine2.ToString();
+          artistInfo.Albums = strLine2.ToString();
         }
 
         // get the Discography Compilations
-        list = m_pArtist.DiscographyCompilations;
+        list = artistInfo.DiscographyCompilations;
         strLine.Append('\t');
-        strLine.Append(dCompilations);
+        strLine.Append(textCompilations);
         strLine.Append('\n');
-        discography = m_pArtist.Compilations;
+        discography = artistInfo.Compilations;
         if(discography != null && discography.Length > 0)
         {
           strLine.Append(discography);
@@ -272,23 +246,23 @@ namespace MediaPortal.GUI.Music
           for (int i=0; i < list.Count;++i)
           {
             string[] listInfo = (string[])list[i];
-            strTmp=String.Format("{0} - {1} ({2})\n",
+            tmpLine=String.Format("{0} - {1} ({2})\n",
               listInfo[0],  // year 
               listInfo[1],  // title
               listInfo[2]); // label
-            strLine.Append(strTmp);
-            strLine2.Append(strTmp);
+            strLine.Append(tmpLine);
+            strLine2.Append(tmpLine);
           };
           strLine.Append('\n');
-          m_pArtist.Compilations = strLine2.ToString();
+          artistInfo.Compilations = strLine2.ToString();
         }
 
         // get the Discography Singles
-        list = m_pArtist.DiscographySingles;
+        list = artistInfo.DiscographySingles;
         strLine.Append('\t');
-        strLine.Append(dSingles);
+        strLine.Append(textSingles);
         strLine.Append('\n');
-        discography = m_pArtist.Singles;
+        discography = artistInfo.Singles;
         if(discography != null && discography.Length > 0)
         {
           strLine.Append(discography);
@@ -300,23 +274,23 @@ namespace MediaPortal.GUI.Music
           for (int i=0; i < list.Count;++i)
           {
             string[] listInfo = (string[])list[i];
-            strTmp=String.Format("{0} - {1} ({2})\n",
+            tmpLine=String.Format("{0} - {1} ({2})\n",
               listInfo[0],  // year 
               listInfo[1],  // title
               listInfo[2]); // label
-            strLine.Append(strTmp);
-            strLine2.Append(strTmp);
+            strLine.Append(tmpLine);
+            strLine2.Append(tmpLine);
           };
           strLine.Append('\n');
-          m_pArtist.Singles = strLine2.ToString();
+          artistInfo.Singles = strLine2.ToString();
         }
 
         // get the Discography Misc
-        list = m_pArtist.DiscographyMisc;
+        list = artistInfo.DiscographyMisc;
         strLine.Append('\t');
-        strLine.Append(dMisc);
+        strLine.Append(textMisc);
         strLine.Append('\n');
-        discography = m_pArtist.Misc;
+        discography = artistInfo.Misc;
         if(discography != null && discography.Length > 0)
         {
           strLine.Append(discography);
@@ -328,81 +302,66 @@ namespace MediaPortal.GUI.Music
           for (int i=0; i < list.Count;++i)
           {
             string[] listInfo = (string[])list[i];
-            strTmp=String.Format("{0} - {1} ({2})\n",
+            tmpLine=String.Format("{0} - {1} ({2})\n",
               listInfo[0],  // year 
               listInfo[1],  // title
               listInfo[2]); // label
-            strLine.Append(strTmp);
-            strLine2.Append(strTmp);
+            strLine.Append(tmpLine);
+            strLine2.Append(tmpLine);
           };
           strLine.Append('\n');
-          m_pArtist.Misc = strLine2.ToString();
+          artistInfo.Misc = strLine2.ToString();
         }
 
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTAREA,strLine.ToString());
-        
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_BIO,GUILocalizeStrings.Get(689));
+				tbReview.Label=strLine.ToString();
+        btnBio.Label=GUILocalizeStrings.Get(689);
       }
     }
-
-    void SetLabel(int iControl,  string strLabel)
-    {
-      string strLabel1=strLabel;
-      if (strLabel1.Length==0)
-        strLabel1=GUILocalizeStrings.Get(416);
-    	
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET,GetID,0,iControl,0,0,null);
-      msg.Label=(strLabel1);
-      OnMessage(msg);
-
-    }
-
     public override void Render(float timePassed)
     {
       RenderDlg(timePassed);
 
-      if (null==m_pTexture) return;
+      if (null==coverArtTexture) return;
 
-      GUIControl pControl=(GUIControl)GetControl((int)Controls.CONTROL_IMAGE);
-      if (null!=pControl)
+      if (null!=imgCoverArt)
       {
-        float x=(float)pControl.XPosition;
-        float y=(float)pControl.YPosition;
-        int iwidth;
-        int iheight;
+        float x=(float)imgCoverArt.XPosition;
+        float y=(float)imgCoverArt.YPosition;
+        int width;
+        int height;
         GUIGraphicsContext.Correct(ref x,ref y);
 
-        int iMaxWidth=pControl.Width;
-        int iMaxHeight=pControl.Height;
-        GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight,iMaxWidth,iMaxHeight, out iwidth,out iheight);
+        int maxWidth=imgCoverArt.Width;
+        int maxHeight=imgCoverArt.Height;
+        GUIGraphicsContext.GetOutputRect(coverArtTextureWidth, coverArtTextureHeight,maxWidth,maxHeight, out width,out height);
 
 				GUIFontManager.Present();
-        MediaPortal.Util.Picture.RenderImage(ref m_pTexture,(int)x,(int)y,iwidth,iheight,m_iTextureWidth,m_iTextureHeight,0,0,true);
+        MediaPortal.Util.Picture.RenderImage(ref coverArtTexture,(int)x,(int)y,width,height,coverArtTextureWidth,coverArtTextureHeight,0,0,true);
       }
     }
 
 
     void Refresh()
     {
-      if (m_pTexture!=null)
+      if (coverArtTexture!=null)
       {
-        m_pTexture.Dispose();
-        m_pTexture=null;
+        coverArtTexture.Dispose();
+        coverArtTexture=null;
       }
 
-      string strThumb;
-      string strImage=m_pArtist.ImageURL;
-      strThumb=GUIMusicFiles.GetArtistCoverArtName(m_pArtist.Artist);
-      if (strThumb!=String.Empty )
+      string coverArtFileName;
+      string coverArtUrl=artistInfo.ImageURL;
+      coverArtFileName=GUIMusicFiles.GetArtistCoverArtName(artistInfo.Artist);
+      if (coverArtFileName!=String.Empty )
       {
         //	Download image and save as 
         //	permanent thumb
-        Utils.DownLoadImage(strImage,strThumb);
+        Utils.DownLoadImage(coverArtUrl,coverArtFileName);
       }
 
-      if (System.IO.File.Exists(strThumb) )
+      if (System.IO.File.Exists(coverArtFileName) )
       {
-        m_pTexture=MediaPortal.Util.Picture.Load(strThumb,0,128,128,true,false,out m_iTextureWidth,out m_iTextureHeight);
+        coverArtTexture=MediaPortal.Util.Picture.Load(coverArtFileName,0,128,128,true,false,out coverArtTextureWidth,out coverArtTextureHeight);
       }
       Update();
     }

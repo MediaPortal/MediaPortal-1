@@ -355,7 +355,8 @@ namespace MediaPortal.Music.Database
 						song.Album =  (string)fields[2];
 						song.albumId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
 						song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[1]));
-						song.Artist = (string)fields[4];
+						if (fields.Count>=5)
+							song.Artist = (string)fields[4];
 					}
 					if (genreTable && !songTable)
 					{
@@ -1565,20 +1566,12 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    public bool GetArtistInfo(string strArtist1, string strPath1, ref ArtistInfo artist)
+    public bool GetArtistInfo(string strArtist1,  ref ArtistInfo artist)
     {
       try
       {
-        if (strPath1 == null) return false;
-        if (strPath1.Length == 0) return false;
         string strArtist = strArtist1;
-        string strPath = strPath1;
-        //	musicdatabase always stores directories 
-        //	without a slash at the end 
-        if (strPath[strPath.Length - 1] == '/' || strPath[strPath.Length - 1] == '\\')
-          strPath = strPath.Substring(0, strPath.Length - 1);
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
-        DatabaseUtility.RemoveInvalidChars(ref strPath);
         string strSQL;
         strSQL = String.Format("select * from artist,artistinfo where artist.idArtist=artistinfo.idArtist and artist.strArtist like '{0}'",strArtist);
         SQLiteResultSet results;

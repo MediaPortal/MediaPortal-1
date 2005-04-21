@@ -695,7 +695,7 @@ namespace MediaPortal.GUI.Music
 				}
 				else
 				{
-						if (pItem.Path!=String.Empty) OnInfoFolder(pItem);
+					if (pItem.Path!=String.Empty) OnInfoFolder(pItem);
 				}
 				return;
 			}
@@ -708,8 +708,203 @@ namespace MediaPortal.GUI.Music
 				
 				ShowAlbumInfo(false,song.Artist,song.Album, song.FileName, pItem.MusicTag as MusicTag,song.albumId);
 			}
+			else if (song.artistId>=0)
+			{
+				ShowArtistInfo(song.Artist,song.Album, song.artistId, song.albumId);
+			}
 		}
 		
+		protected virtual void ShowArtistInfo(string artistName, string albumName, int artistId, int albumId)
+		{
+			GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+			GUIDialogProgress dlgProgress=(GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+
+			// check cache
+			bool bSaveDb=true;
+			ArtistInfo artistinfo=new ArtistInfo();
+			if ( m_database.GetArtistInfo(artistName, ref artistinfo) )
+			{
+				ArrayList songs=new ArrayList();
+				MusicArtistInfo artist = new MusicArtistInfo();
+				artist.Set(artistinfo);
+
+				// ok, show Artist info
+				GUIMusicArtistInfo pDlgArtistInfo= (GUIMusicArtistInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_ARTIST_INFO);
+				if (null!=pDlgArtistInfo)
+				{
+					pDlgArtistInfo.Artist=artist;
+					pDlgArtistInfo.DoModal(GetID);
+              
+					if (pDlgArtistInfo.NeedsRefresh)
+					{
+						m_database.DeleteArtistInfo(artist.Artist);
+						ShowArtistInfo(artistName, albumName, artistId, albumId);
+						return;
+					}
+				}
+				return;
+			}
+
+    
+			if (null!=pDlgOK && !Util.Win32API.IsConnectedToInternet())
+			{
+				pDlgOK.SetHeading(703);
+				pDlgOK.SetLine(1,703);
+				pDlgOK.SetLine(2,String.Empty);
+				pDlgOK.DoModal(GetID);
+				return;
+			}
+			else if(!Util.Win32API.IsConnectedToInternet())
+			{
+				return;
+			}
+
+			// show dialog box indicating we're searching the artist
+			if (dlgProgress!=null)
+			{
+				dlgProgress.SetHeading(320);
+				dlgProgress.SetLine(1,artistName);
+				dlgProgress.SetLine(2,String.Empty);
+				dlgProgress.StartModal(GetID);
+				dlgProgress.Progress();
+			}
+			bool bDisplayErr=false;
+
+			// find artist info
+			AllmusicSiteScraper scraper = new AllmusicSiteScraper();
+			if (scraper.FindInfo(AllmusicSiteScraper.SearchBy.Artists, artistName))
+			{
+				if (dlgProgress!=null) dlgProgress.Close();
+				// did we found at least 1 album?
+				if (scraper.IsMultiple())
+				{
+					//yes
+					// if we found more then 1 album, let user choose one
+					int iSelectedAlbum=0;
+					string[] artistsFound = scraper.GetItemsFound();
+					//show dialog with all albums found
+					string szText=GUILocalizeStrings.Get(181);
+					GUIDialogSelect pDlg= (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+					if (null!=pDlg)
+					{
+						pDlg.Reset();
+						pDlg.SetHeading(szText);
+						for (int i=0; i < artistsFound.Length; ++i)
+						{
+							pDlg.Add(artistsFound[i]);
+						}
+						pDlg.DoModal(GetID);
+
+						// and wait till user selects one
+						iSelectedAlbum= pDlg.SelectedLabel;
+						if (iSelectedAlbum< 0) return;
+					}
+
+					// ok, now show dialog we're downloading the artist info
+					if (null!=dlgProgress) 
+					{
+						dlgProgress.SetHeading(320);
+						dlgProgress.SetLine(1,artistName);
+						dlgProgress.SetLine(2,String.Empty);
+						dlgProgress.StartModal(GetID);
+						dlgProgress.Progress();
+					}
+
+					// download the artist info
+					if(scraper.FindInfoByIndex(iSelectedAlbum))
+					{
+						if (null!=dlgProgress) 
+							dlgProgress.Close();
+						MusicArtistInfo artistInfo = new MusicArtistInfo();
+						if(artistInfo.Parse(scraper.GetHtmlContent()))
+						{
+							// if the artist selected from allmusic.com does not match
+							// the one from the file, override the one from the allmusic
+							// with the one from the file so the info is correct in the
+							// database...
+							if(!artistInfo.Artist.Equals(artistName))
+								artistInfo.Artist = artistName;
+
+							if (bSaveDb)
+							{
+								m_database.AddArtistInfo(artistInfo.Get());
+							}
+
+							// ok, show Artist info
+							GUIMusicArtistInfo pDlgArtistInfo= (GUIMusicArtistInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_ARTIST_INFO);
+							if (null!=pDlgArtistInfo)
+							{
+								pDlgArtistInfo.Artist=artistInfo;
+								pDlgArtistInfo.DoModal(GetID);
+              
+								if (pDlgArtistInfo.NeedsRefresh)
+								{
+									m_database.DeleteArtistInfo(artistInfo.Artist);
+									ShowArtistInfo(artistName, albumName, artistId, albumId);
+									return;
+								}
+							}
+						}
+					}
+
+					if (null!=dlgProgress) 
+						dlgProgress.Close();
+				}
+				else // single
+				{
+					MusicArtistInfo artistInfo = new MusicArtistInfo();
+					if(artistInfo.Parse(scraper.GetHtmlContent()))
+					{
+						// if the artist selected from allmusic.com does not match
+						// the one from the file, override the one from the allmusic
+						// with the one from the file so the info is correct in the
+						// database...
+						if(!artistInfo.Artist.Equals(artistName))
+							artistInfo.Artist = artistName;
+
+						if (bSaveDb)
+						{
+							// save to database
+							m_database.AddArtistInfo(artistInfo.Get());
+						}
+
+						// ok, show Artist info
+						GUIMusicArtistInfo pDlgArtistInfo= (GUIMusicArtistInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_ARTIST_INFO);
+						if (null!=pDlgArtistInfo)
+						{
+							pDlgArtistInfo.Artist=artistInfo;
+							pDlgArtistInfo.DoModal(GetID);
+              
+							if (pDlgArtistInfo.NeedsRefresh)
+							{
+								m_database.DeleteArtistInfo(artistInfo.Artist);
+								ShowArtistInfo(artistName, albumName, artistId, albumId);
+								return;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				// unable 2 connect to www.allmusic.com
+				bDisplayErr=true;
+			}
+			// if an error occured, then notice the user
+			if (bDisplayErr)
+			{
+				if (null!=dlgProgress) 
+					dlgProgress.Close();
+				if (null!=pDlgOK)
+				{
+					pDlgOK.SetHeading(702);
+					pDlgOK.SetLine(1,702);
+					pDlgOK.SetLine(2,String.Empty);
+					pDlgOK.DoModal(GetID);
+				}
+			}
+		}
+
 		protected void ShowAlbumInfo(bool isFolder,string artistName,string strAlbumName, string strPath, MusicTag tag, int albumId)
 		{
 			// check cache

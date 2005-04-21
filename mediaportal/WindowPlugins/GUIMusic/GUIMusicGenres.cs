@@ -154,31 +154,39 @@ namespace MediaPortal.GUI.Music
 		{
 			if (item.Label=="..") return;
 			Utils.SetDefaultIcons(item);
+			if (item.IsRemote) return;
 			Song song = item.AlbumInfoTag as Song;
 			if (song==null) return;
 			if (song.genreId>=0 && song.albumId<0 && song.artistId<0 && song.songId<0)
 			{
 				string strThumb=Utils.GetCoverArt(Thumbs.MusicGenre,item.Label);
-				item.IconImage=strThumb;
-				item.IconImageBig=strThumb;
-				item.ThumbnailImage=strThumb;
-				Utils.SetDefaultIcons(item);
+				if (System.IO.File.Exists(strThumb))
+				{
+					item.IconImage=strThumb;
+					item.IconImageBig=strThumb;
+					item.ThumbnailImage=strThumb;
+				}
 			}
 			else if (song.artistId>=0 && song.albumId<0 && song.songId<0)
 			{
 				string strThumb=Utils.GetCoverArt(Thumbs.MusicArtists,item.Label);
-				item.IconImage=strThumb;
-				item.IconImageBig=strThumb;
-				item.ThumbnailImage=strThumb;
-				Utils.SetDefaultIcons(item);
+				if (System.IO.File.Exists(strThumb))
+				{
+					item.IconImage=strThumb;
+					item.IconImageBig=strThumb;
+					item.ThumbnailImage=strThumb;
+				}
 			}
 			else if (song.albumId>=0)
 			{
 				MusicTag tag = item.MusicTag as MusicTag;
 				string strThumb=GUIMusicFiles.GetAlbumThumbName(tag.Artist,tag.Album);
-				item.IconImage=strThumb;
-				item.IconImageBig=strThumb;
-				item.ThumbnailImage=strThumb;
+				if (System.IO.File.Exists(strThumb))
+				{
+					item.IconImage=strThumb;
+					item.IconImageBig=strThumb;
+					item.ThumbnailImage=strThumb;
+				}
 			}
 			else
 			{
