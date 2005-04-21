@@ -322,7 +322,6 @@ namespace MediaPortal.GUI.Radio
 
 		int GetItemCount()
     {
-      int iControl;
       if (ViewByIcon)
         return thumbnailView.Count;
       else

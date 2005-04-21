@@ -202,8 +202,6 @@ namespace MediaPortal.TV.Recording
 		/// <returns>bool indicating if graph is created or not</returns>
 		public bool CreateGraph(int Quality)
 		{
-			if (m_epgClass!=null)
-				m_epgClass.ClearBuffer();
 			try
 			{
 				//check if we didnt already create a graph
@@ -650,6 +648,8 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState < State.Created) 
 				return;
 			m_iPrevChannel = -1;
+			if (m_epgClass!=null)
+				m_epgClass.ClearBuffer();
 	
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
 			StopRecording();
