@@ -2426,7 +2426,15 @@ namespace MediaPortal.TV.Recording
 		}
 		public void SetAudioLanguage(int audioPid)
 		{
-
+			if(audioPid!=m_currentChannel.AudioPid)
+			{
+				int hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,audioPid,m_currentChannel.VideoPid);
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
+					return;
+				}
+			}
 		}
 		public ArrayList GetAudioLanguage()
 		{
