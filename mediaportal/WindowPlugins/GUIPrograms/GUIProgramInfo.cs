@@ -16,69 +16,70 @@ namespace WindowPlugins.GUIPrograms
 	{
 
 		#region SkinControls
+
 		// Labels
-		[SkinControlAttribute(20)]   protected GUILabelControl lblTitle=null;
-		[SkinControlAttribute(31)]   protected GUILabelControl lblSystemCaption=null;
-		[SkinControlAttribute(32)]   protected GUILabelControl lblYearManuCaption=null;
-		[SkinControlAttribute(33)]   protected GUILabelControl lblRatingCaption=null;
-		[SkinControlAttribute(34)]   protected GUILabelControl lblGenreCaption=null;
-		[SkinControlAttribute(6)]    protected GUILabelControl lblLaunchStat=null;
+		[SkinControlAttribute(20)]   protected GUILabelControl lblTitle = null;
+		[SkinControlAttribute(31)]   protected GUILabelControl lblSystemCaption = null;
+		[SkinControlAttribute(32)]   protected GUILabelControl lblYearManuCaption = null;
+		[SkinControlAttribute(33)]   protected GUILabelControl lblRatingCaption = null;
+		[SkinControlAttribute(34)]   protected GUILabelControl lblGenreCaption = null;
+		[SkinControlAttribute(6)]    protected GUILabelControl lblLaunchStat = null;
 
 		// Fadelabels
-		[SkinControlAttribute(21)]   protected GUIFadeLabel lblSystemData=null;
-		[SkinControlAttribute(22)]   protected GUIFadeLabel lblYearManuData=null;
-		[SkinControlAttribute(23)]   protected GUIFadeLabel lblRatingData=null;
-		[SkinControlAttribute(24)]   protected GUIFadeLabel lblGenreData=null;
+		[SkinControlAttribute(21)]   protected GUIFadeLabel lblSystemData = null;
+		[SkinControlAttribute(22)]   protected GUIFadeLabel lblYearManuData = null;
+		[SkinControlAttribute(23)]   protected GUIFadeLabel lblRatingData = null;
+		[SkinControlAttribute(24)]   protected GUIFadeLabel lblGenreData = null;
 
                                              
 		// Textbox                   
-		[SkinControlAttribute(4)]    protected GUITextScrollUpControl tbOverviewData=null;
+		[SkinControlAttribute(4)]    protected GUITextScrollUpControl tbOverviewData = null;
                                              
 		//Images                     
-		[SkinControlAttribute(3)]    protected GUIImage imgSmall=null;
-		[SkinControlAttribute(10)]   protected GUIImage imgBig=null;
+		[SkinControlAttribute(3)]    protected GUIImage imgSmall = null;
+		[SkinControlAttribute(10)]   protected GUIImage imgBig = null;
                                              
 		// Buttons                   
-		[SkinControlAttribute(5)]    protected GUIButtonControl btnBack=null;
-		[SkinControlAttribute(7)]    protected GUIButtonControl btnPrev=null;
-		[SkinControlAttribute(8)]    protected GUIButtonControl btnLaunch=null;
-		[SkinControlAttribute(9)]    protected GUIButtonControl btnNext=null;
-		[SkinControlAttribute(11)]   protected GUIButtonControl btnToggleOverview=null;
+		[SkinControlAttribute(5)]    protected GUIButtonControl btnBack = null;
+		[SkinControlAttribute(7)]    protected GUIButtonControl btnPrev = null;
+		[SkinControlAttribute(8)]    protected GUIButtonControl btnLaunch = null;
+		[SkinControlAttribute(9)]    protected GUIButtonControl btnNext = null;
+		[SkinControlAttribute(11)]   protected GUIButtonControl btnToggleOverview = null;
 		#endregion
 
 		#region Base & Content Variables
 
-		bool isRunning=false;
-		int parentWindowID=0;
-		GUIWindow parentWindow=null;
-		Texture curTexture=null;
-		FileItem curFile=null;
-		AppItem curApp=null;
-		int textureWidth=0;
-		int textureHeight=0;
-		bool isOverlay=false;
-		bool isOverviewVisible=true;
-		int slideSpeed=3;
-		int slideTime=0;
+		bool isRunning = false;
+		int parentWindowID = 0;
+		GUIWindow parentWindow = null;
+		Texture curTexture = null;
+		FileItem curFile = null;
+		AppItem curApp = null;
+		int textureWidth = 0;
+		int textureHeight = 0;
+		bool isOverlay = false;
+		bool isOverviewVisible = true;
+		int slideSpeed = 3;
+		int slideTime = 0;
 
-		string strSystemLabel = "";
-		string strManufacturerLabel = "";
-		string strRatingLabel = "";
-		string strGenreLabel = "";
+		string programSystemLabel = "";
+		string programManufacturerLabel = "";
+		string programRatingLabel = "";
+		string programGenreLabel = "";
 
-		string strSystemText = "";
-		string strManufacturerText = "";
-		string strRatingText = "";
-		string strGenreText = "";
+		string programSystem = "";
+		string programManufacturer = "";
+		string programRating = "";
+		string programGenre = "";
 
-		string strOverviewText = "";
+		string programOverview = "";
 		#endregion
 
 		#region Constructor / Destructor
 
 		public GUIFileInfo()
 		{
-			GetID=(int)ProgramUtils.ProgramInfoID;
+			GetID = (int)ProgramUtils.ProgramInfoID;
 		}
 
 		#endregion
@@ -87,14 +88,14 @@ namespace WindowPlugins.GUIPrograms
 
 		public FileItem File
 		{
-			set {curFile=value; }
+			set {curFile = value; }
 		}
 
 		public AppItem App
 		{
 			set 
 			{
-				curApp=value; 
+				curApp = value; 
 				if (curApp != null)
 					curApp.ResetThumbs();
 			}
@@ -112,8 +113,8 @@ namespace WindowPlugins.GUIPrograms
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			isOverlay=GUIGraphicsContext.Overlay;
-			curTexture=null;
+			isOverlay = GUIGraphicsContext.Overlay;
+			curTexture = null;
 
 			if (curApp != null)
 			{
@@ -133,13 +134,13 @@ namespace WindowPlugins.GUIPrograms
 
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			curFile=null;
+			curFile = null;
 			if (curTexture!=null)
 			{
 				curTexture.Dispose();
-				curTexture=null;
+				curTexture = null;
 			}
-			GUIGraphicsContext.Overlay=isOverlay;
+			GUIGraphicsContext.Overlay = isOverlay;
 			base.OnPageDestroy (newWindowId);
 		}
 
@@ -195,7 +196,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			RenderDlg(timePassed);
 
-			if (null==curTexture) return;
+			if (null == curTexture) return;
 
 			// does the thumb needs replacing??
 			int timeElapsed = ((int)(DateTime.Now.Ticks/10000)) - slideTime;
@@ -216,14 +217,14 @@ namespace WindowPlugins.GUIPrograms
 			}
 			if (curImg != null)
 			{
-				float x=(float)curImg.XPosition;
-				float y=(float)curImg.YPosition;
+				float x = (float)curImg.XPosition;
+				float y = (float)curImg.YPosition;
 				int curWidth;
 				int curHeight;
 				GUIGraphicsContext.Correct(ref x,ref y);
 
-				int maxWidth=curImg.Width;
-				int maxHeight=curImg.Height;
+				int maxWidth = curImg.Width;
+				int maxHeight = curImg.Height;
 				GUIGraphicsContext.GetOutputRect(textureWidth, textureHeight, maxWidth, maxHeight, out curWidth,out curHeight);
 				GUIFontManager.Present();
 				Picture.RenderImage(ref curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
@@ -236,12 +237,12 @@ namespace WindowPlugins.GUIPrograms
 
 		void Close()
 		{
-			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
 			OnMessage(msg);
 
 			GUIWindowManager.UnRoute();
-			parentWindow=null;
-			isRunning=false;
+			parentWindow = null;
+			isRunning = false;
 		}
 
 
@@ -251,7 +252,7 @@ namespace WindowPlugins.GUIPrograms
 			parentWindow = GUIWindowManager.GetWindow( parentWindowID);
 			if (null == parentWindow)
 			{
-				parentWindowID=0;
+				parentWindowID = 0;
 				return;
 			}
 
@@ -261,7 +262,7 @@ namespace WindowPlugins.GUIPrograms
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
 			OnMessage(msg);
 
-			isRunning=true;
+			isRunning = true;
 			while (isRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
 			{
 				GUIWindowManager.Process();
@@ -273,20 +274,20 @@ namespace WindowPlugins.GUIPrograms
 			if (curTexture!=null)
 			{
 				curTexture.Dispose();
-				curTexture=null;
+				curTexture = null;
 			}
 
 			if (curFile != null)
 			{
-				string strThumb = curApp.GetCurThumb(curFile); 
+				string thumbFile = curApp.GetCurThumb(curFile); 
 				// load the found thumbnail picture
-				if (System.IO.File.Exists(strThumb) )
+				if (System.IO.File.Exists(thumbFile) )
 				{
-					curTexture=Picture.Load(strThumb,0,512,512,true,false,out textureWidth,out textureHeight);
+					curTexture = Picture.Load(thumbFile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
 				}
 				curApp.NextThumb(); // try to find a next thumbnail
 			}
-			slideTime=(int)(DateTime.Now.Ticks/10000); // reset timer!
+			slideTime = (int)(DateTime.Now.Ticks/10000); // reset timer!
 		}
 		
 
@@ -308,7 +309,7 @@ namespace WindowPlugins.GUIPrograms
 				imgBig.IsVisible = false;
 				tbOverviewData.IsVisible = true;
 				tbOverviewData.Label = ""; // force clear first....
-				tbOverviewData.Label = strOverviewText; // ... and set text next!
+				tbOverviewData.Label = programOverview; // ... and set text next!
 				btnToggleOverview.Label = GUILocalizeStrings.Get(13006);
 			}
 			else 
@@ -322,44 +323,44 @@ namespace WindowPlugins.GUIPrograms
 			lblTitle.Label = curFile.Title;
 
 			// if any title is overwritten, re-set the fresh text
-			if (strSystemLabel != "")
+			if (programSystemLabel != "")
 			{
-				lblSystemCaption.Label = strSystemLabel;
+				lblSystemCaption.Label = programSystemLabel;
 			}
 			else
 			{
 				lblSystemCaption.Label = GUILocalizeStrings.Get(13000);
 			}
-			if (strManufacturerLabel != "")
+			if (programManufacturerLabel != "")
 			{
-				lblYearManuCaption.Label = strManufacturerLabel;
+				lblYearManuCaption.Label = programManufacturerLabel;
 			}
 			else
 			{
 				lblYearManuCaption.Label = GUILocalizeStrings.Get(13001);
 			}
 		
-			if (strRatingLabel != "")
+			if (programRatingLabel != "")
 			{
-				lblRatingCaption.Label = strRatingLabel;
+				lblRatingCaption.Label = programRatingLabel;
 			}
 			else
 			{
 				lblRatingCaption.Label = GUILocalizeStrings.Get(173);
 			}
-			if (strGenreLabel != "")
+			if (programGenreLabel != "")
 			{
-				lblGenreCaption.Label = strGenreLabel;
+				lblGenreCaption.Label = programGenreLabel;
 			}
 			else
 			{
 				lblGenreCaption.Label = GUILocalizeStrings.Get(174);
 			}
 
-			lblSystemData.Label = strSystemText;
-			lblYearManuData.Label = strManufacturerText;
-			lblRatingData.Label = strRatingText;
-			lblGenreData.Label = strGenreText;
+			lblSystemData.Label = programSystem;
+			lblYearManuData.Label = programManufacturer;
+			lblRatingData.Label = programRating;
+			lblGenreData.Label = programGenre;
 
 			btnBack.Label = GUILocalizeStrings.Get(8008);
 
@@ -378,25 +379,25 @@ namespace WindowPlugins.GUIPrograms
 
 		void ReadContent()
 		{
-			string strNotAvailable = GUILocalizeStrings.Get(416);
+			string notAvailableText = GUILocalizeStrings.Get(416);
 			// read fields out of the content profile
 			// fields can contain texts and / or references to fields
-			strSystemLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line1Label", "");
-			strManufacturerLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line2Label", "");
-			strRatingLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line3Label", "");
-			strGenreLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line4Label", "");
+			programSystemLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line1Label", "");
+			programManufacturerLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line2Label", "");
+			programRatingLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line3Label", "");
+			programGenreLabel = ProgramContentManager.GetFieldValue(curApp, curFile, "Line4Label", "");
 
-			strSystemText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line1Data", strNotAvailable);
-			strManufacturerText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line2Data", strNotAvailable);
-			strRatingText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line3Data", strNotAvailable);
-			strGenreText = ProgramContentManager.GetFieldValue(curApp, curFile, "Line4Data", strNotAvailable);
-			strOverviewText = ProgramContentManager.GetFieldValue(curApp, curFile, "OverviewData", "");
+			programSystem = ProgramContentManager.GetFieldValue(curApp, curFile, "Line1Data", notAvailableText);
+			programManufacturer = ProgramContentManager.GetFieldValue(curApp, curFile, "Line2Data", notAvailableText);
+			programRating = ProgramContentManager.GetFieldValue(curApp, curFile, "Line3Data", notAvailableText);
+			programGenre = ProgramContentManager.GetFieldValue(curApp, curFile, "Line4Data", notAvailableText);
+			programOverview = ProgramContentManager.GetFieldValue(curApp, curFile, "OverviewData", "");
 		}
 
 		public void RenderDlg(float timePassed)
 		{
 			// render the parent window
-			if (null!=parentWindow) 
+			if (null != parentWindow) 
 				parentWindow.Render(timePassed);
 			GUIFontManager.Present();
 			// render this dialog box

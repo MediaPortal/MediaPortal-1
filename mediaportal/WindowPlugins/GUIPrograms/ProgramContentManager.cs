@@ -121,7 +121,7 @@ namespace WindowPlugins.GUIPrograms
 
 		static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName, string strValueIfEmpty)
 		{
-			string result = strValueIfEmpty;
+			string result = "";
 			if (rootElement == null) {return "";}
 			XmlNode node = rootElement.SelectSingleNode(String.Format("/contentprofiles/profile[@id={0}]", curApp.ContentID));
 			if (node != null)
@@ -139,6 +139,10 @@ namespace WindowPlugins.GUIPrograms
 			else
 			{
 				Log.Write("ProgramContentManager Warning, no data found for \n{0}\n{1}", curApp.Title, curFile.Title);
+			}
+			if (result == "")
+			{
+				result = strValueIfEmpty;
 			}
 			return result;
 		}
