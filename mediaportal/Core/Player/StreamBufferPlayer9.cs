@@ -169,9 +169,12 @@ namespace MediaPortal.Player
 					if(Vmr9!=null)
 						Vmr9.Enable(false);
 
+					int counter=0;
 					while (GUIGraphicsContext.InVmr9Render)
 					{
+						counter++;
 						System.Threading.Thread.Sleep(1);
+						if (counter >200) break;
 					}
 
 Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);

@@ -957,19 +957,24 @@ namespace MediaPortal.GUI.Video
     }
 
 
+		
+		public override void Process()
+		{	
+			if (!g_Player.Playing)
+			{
+				if (PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC  ||
+					PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP)
+				{
+					return;
+				}
+				m_bOSDVisible=false;
+				GUIWindowManager.ShowPreviousWindow();
+				return;
+			}
+		}
     public override void Render(float timePassed)
     {
-      if (!g_Player.Playing)
-      {
-        if (PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC  ||
-           PlayListPlayer.CurrentPlaylist==PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP)
-        {
-          return;
-        }
-        m_bOSDVisible=false;
-        GUIWindowManager.ShowPreviousWindow();
-        return;
-      }
+
 			long lTimeSpan=( (DateTime.Now.Ticks/10000) - m_dwTimeStatusShowTime);
 			if ( lTimeSpan >=2000)
 			{
