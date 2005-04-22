@@ -14,9 +14,7 @@ namespace MediaPortal.TV.Recording
 	{
 		public DVBEPG(int card)
 		{
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			//
+
 			m_cardType=card;
 			m_networkType=NetworkType.DVBS;
 		}
@@ -28,6 +26,7 @@ namespace MediaPortal.TV.Recording
 			m_cardType=card;
 			m_networkType=networkType;
 		}
+		//public event SendCounter GiveFeedback;
 		DVBSections		m_sections=new DVBSections();
 		int				m_cardType=0;
 		string			m_channelName="";
@@ -49,6 +48,8 @@ namespace MediaPortal.TV.Recording
 		int				m_savedChannelData=0;
 		int				m_channelGrabLen=0;
 		int				m_summaryGrabLen=2048;
+		System.Windows.Forms.Label m_mhwChannels;
+		System.Windows.Forms.Label m_mhwTitles;
 		
 		// mhw
 		public struct Programm 
@@ -104,6 +105,14 @@ namespace MediaPortal.TV.Recording
 		//
 		// commits epg-data to database
 		//
+		public System.Windows.Forms.Label LabelChannels
+		{
+			set{m_mhwChannels=value;}
+		}
+		public System.Windows.Forms.Label LabelTitles
+		{
+			set{m_mhwTitles=value;}
+		}
 		public bool ChannelsReady
 		{
 			get{return m_mhwChannelsCount>0?true:false;}
@@ -137,7 +146,7 @@ namespace MediaPortal.TV.Recording
 		//
 		public int ChannelCount
 		{
-			get{return m_mhwChannelsCount;}
+			get{return m_namesBuffer.Count;}
 		}
 
 		public void ClearBuffer()
@@ -156,7 +165,6 @@ namespace MediaPortal.TV.Recording
 			m_titlesParsing=false;
 			m_summaryParsing=false;
 			m_channelsParsing=false;
-			m_addsToDatabase=0;
 		}
 		public int SetEITToDatabase(DVBSections.EITDescr data,string channelName,int eventKind)
 		{
@@ -185,8 +193,8 @@ namespace MediaPortal.TV.Recording
 					dur=dur.AddMinutes((double)data.duration_mm);
 					dur=dur.AddHours((double)data.duration_hh);
 					System.DateTime chStartDate=new DateTime((long)date.Ticks);
-					chStartDate=chStartDate.AddMinutes(1);
-					System.DateTime chEndDate=new DateTime((long)dur.Ticks-60000);
+					chStartDate=chStartDate.AddMinutes(2);
+					System.DateTime chEndDate=new DateTime((long)dur.Ticks-(4*60000));
 					chStart=GetLongFromDate(chStartDate.Year,chStartDate.Month,chStartDate.Day,chStartDate.Hour,chStartDate.Minute,chStartDate.Second);
 					chEnd=GetLongFromDate(chEndDate.Year,chEndDate.Month,chEndDate.Day,chEndDate.Hour,chEndDate.Minute,chEndDate.Second);
 					//
@@ -304,7 +312,7 @@ namespace MediaPortal.TV.Recording
 			int			lastTab=0;
 			int			dummyTab=0;
 
-			m_sections.Timeout=750;
+			m_sections.Timeout=50;
 			Log.Write("epg-grab: grabbing table {0}",80);
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
@@ -335,7 +343,7 @@ namespace MediaPortal.TV.Recording
 					switch(m_cardType)
 					{
 						case (int)EPGCard.TechnisatStarCards:
-							progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
+							progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id);
 							Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
 							break;
 
@@ -468,7 +476,7 @@ namespace MediaPortal.TV.Recording
 		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
 		public void SaveTitleData(byte[] data)
 		{
-			if(m_streamBuffer.Count<500)
+			if(m_streamBuffer.Count<400)
 				m_streamBuffer.Add(data);
 			else
 			{
@@ -654,6 +662,8 @@ namespace MediaPortal.TV.Recording
 		void SubmittMHW()
 		{
 			int count=0;
+			if(m_namesBuffer==null)
+				return;
 			if(m_namesBuffer.Count<1)
 				return;
 			Log.Write("mhw-epg: count of programms={0}",m_titleBuffer.Count);
@@ -753,6 +763,12 @@ namespace MediaPortal.TV.Recording
 				Log.Write("mhw-epg: summaries buffer contains {0} objects",m_summaryBuffer.Count);
 			}
 				//m_titleBuffer.Clear();
+			
+			if(m_mhwChannels!=null) 
+				m_mhwChannels.Text=string.Format("{0}",m_namesBuffer.Count);
+			if(m_mhwTitles!=null) 
+				m_mhwTitles.Text=string.Format("{0}",m_addsToDatabase);
+
 		}
 		//
 		string GetSummaryByPrgID(int id)

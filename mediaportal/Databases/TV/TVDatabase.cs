@@ -269,7 +269,7 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return "";
 
 					SQLiteResultSet results;
-					strSQL=String.Format( "select * from tblDVBSMapping where sProgramNumber={0} AND sNetworkID={1}", program_number,id);
+					strSQL=String.Format( "select * from tblDVBSMapping where sProgramNumber={0}", program_number);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) return "";
 					channelName=DatabaseUtility.Get(results,0,"sChannelName");

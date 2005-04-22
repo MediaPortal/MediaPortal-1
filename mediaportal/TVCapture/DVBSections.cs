@@ -462,7 +462,7 @@ namespace MediaPortal.TV.Recording
 					return m_langLanguage.GetValue(n).ToString();
 				n++;
 			}
-			return "";
+			return code;
 		}
 
 
@@ -2138,7 +2138,7 @@ namespace MediaPortal.TV.Recording
 		{
 			EIT_Program_Info eit=new EIT_Program_Info();
 			eit.eitList=new ArrayList();
-			GetStreamData(filter,18,0x4E,0,200);
+			GetStreamData(filter,18,0x4E,0,50);
 
 			foreach(byte[] arr in m_sectionsList)
 				decodeEITTable(arr,ref eit,0,false);
@@ -2161,7 +2161,7 @@ namespace MediaPortal.TV.Recording
 			bool endFlag=false;
 			int ret=-1;
 			m_breakAction=false;
-			m_eitTimeoutTimer.Interval=60000;// one minute
+			m_eitTimeoutTimer.Interval=10000;// one minute
 			m_eitTimeoutTimer.Start();
 			while(1!=0)
 			{
@@ -2217,17 +2217,6 @@ namespace MediaPortal.TV.Recording
 			}
 
 			return eit.eitList;
-		}
-		// get mhw epg
-		// program titles	= pid 0xD2, table 0x90
-		// program summaries= pid 0xD3, table 0x90
-		// theme names		= pid 0xD3, table 0x92
-		//
-		public void GetMHWData(DShowNET.IBaseFilter filter)
-		{
-			GetStreamData(filter,0xd2,0x90,1,m_timeoutMS);
-			if(m_sectionsList.Count>0)
-				System.Windows.Forms.MessageBox.Show("Sections: ");
 		}
 
 		#endregion
