@@ -1,26 +1,26 @@
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-
 using MediaPortal.GUI.Library;
-using ProgramsDatabase;
 using Programs.Utils;
+using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for SetupForm.
 	/// </summary>
-	public class SetupForm : System.Windows.Forms.Form, ISetupForm
+	public class SetupForm : Form, ISetupForm
 	{
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
-		private System.Windows.Forms.TreeView appTree;
+		private Container components = null;
+		private TreeView appTree;
 
 		private Applist apps = ProgramDatabase.AppList;
 		// create setting-tabs
@@ -33,38 +33,38 @@ namespace WindowPlugins.GUIPrograms
 		private AppSettingsRoot sectionRoot = new AppSettingsRoot();
 		private AppFilesView filesView = new AppFilesView();
 		private AppFilesImportProgress filesProgress = new AppFilesImportProgress();
-		private System.Windows.Forms.ToolBar toolBarMenu;
-		private System.Windows.Forms.ToolBarButton buttonAddChild;
-		private System.Windows.Forms.ToolBarButton buttonDelete;
-		private System.Windows.Forms.ToolBarButton buttonUp;
-		private System.Windows.Forms.ToolBarButton buttonDown;
-		private System.Windows.Forms.ContextMenu popupAddChild;
-		private System.Windows.Forms.ToolBarButton sep1;
-		private System.Windows.Forms.ToolBarButton sep2;
-		private System.Windows.Forms.ToolBarButton sep3;
-		private System.Windows.Forms.ToolBarButton sep4;
-		private System.Windows.Forms.MenuItem menuDirBrowse;
-		private System.Windows.Forms.MenuItem menuDirCache;
-		private System.Windows.Forms.MenuItem menuMyFile;
-		private System.Windows.Forms.MenuItem menuMLFFile;
-		private System.Windows.Forms.MenuItem menuFileLauncher;
-		private System.Windows.Forms.MenuItem menuGrouper;
-		private System.Windows.Forms.TabControl DetailsTabControl;
-		private System.Windows.Forms.TabPage DetailsPage;
-		private System.Windows.Forms.TabPage FilesPage;
-		private System.Windows.Forms.Panel holderPanel;
-		private System.Windows.Forms.ToolBarButton sep5;
-		private System.Windows.Forms.ContextMenu popupTools;
-		private System.Windows.Forms.MenuItem MenuItemChangeSourceType;
-		private System.Windows.Forms.MenuItem SourceTypeToDirBrowse;
-		private System.Windows.Forms.MenuItem SourceTypeToMyIni;
-		private System.Windows.Forms.MenuItem SourceTypeToMLF;
-		private System.Windows.Forms.MenuItem SourceTypeToDirCache;
-		private System.Windows.Forms.MenuItem SourceTypeToFilelauncher;
-		private System.Windows.Forms.ToolBarButton buttonTools;
-		private System.Windows.Forms.Panel holderPanelFiles;
-		private System.Windows.Forms.MenuItem menuItem2;
-		private System.Windows.Forms.MenuItem menuItemReadFromProfile;
+		private ToolBar toolBarMenu;
+		private ToolBarButton buttonAddChild;
+		private ToolBarButton buttonDelete;
+		private ToolBarButton buttonUp;
+		private ToolBarButton buttonDown;
+		private ContextMenu popupAddChild;
+		private ToolBarButton sep1;
+		private ToolBarButton sep2;
+		private ToolBarButton sep3;
+		private ToolBarButton sep4;
+		private MenuItem menuDirBrowse;
+		private MenuItem menuDirCache;
+		private MenuItem menuMyFile;
+		private MenuItem menuMLFFile;
+		private MenuItem menuFileLauncher;
+		private MenuItem menuGrouper;
+		private TabControl DetailsTabControl;
+		private TabPage DetailsPage;
+		private TabPage FilesPage;
+		private Panel holderPanel;
+		private ToolBarButton sep5;
+		private ContextMenu popupTools;
+		private MenuItem MenuItemChangeSourceType;
+		private MenuItem SourceTypeToDirBrowse;
+		private MenuItem SourceTypeToMyIni;
+		private MenuItem SourceTypeToMLF;
+		private MenuItem SourceTypeToDirCache;
+		private MenuItem SourceTypeToFilelauncher;
+		private ToolBarButton buttonTools;
+		private Panel holderPanelFiles;
+		private MenuItem menuItem2;
+		private MenuItem menuItemReadFromProfile;
 		// pointer to currently displayed sheet
 		private AppSettings pageCurrentSettings = null;
 		private bool m_ProfilesLoaded = false;
@@ -75,7 +75,7 @@ namespace WindowPlugins.GUIPrograms
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
-			filesView.OnRefreshClick += new System.EventHandler(this.RefreshClick);
+			filesView.OnRefreshClick += new EventHandler(this.RefreshClick);
 
 		}
 
@@ -503,11 +503,7 @@ namespace WindowPlugins.GUIPrograms
 			updateTree();
 		}
 
-		private void SelectNodeOfAppID(int appID)
-		{
-			// todo:
-		}
-
+/*
 		private TreeNode GetNodeOfApp(AppItem TargetApp)
 		{
 			TreeNode res = null;
@@ -521,6 +517,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 			return res;
 		}
+*/
 
 		private string GetSelectedIndexPath()
 		{
@@ -602,13 +599,6 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-
-
-
-		private void btnDelete_Click(object sender, System.EventArgs e)
-		{
-			DoDelete();
-		}
 
 		private void DoDelete()
 		{
@@ -693,8 +683,8 @@ namespace WindowPlugins.GUIPrograms
 			holderPanelFiles.Controls.Clear();
 			holderPanelFiles.Controls.Add(filesView);
 			filesView.SetBounds(0, 0, holderPanelFiles.Width, holderPanelFiles.Height);
-			filesView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left)));
+			filesView.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom) 
+				| AnchorStyles.Left;
 		}
 
 		private void AttachImportRunningView()
@@ -702,11 +692,11 @@ namespace WindowPlugins.GUIPrograms
 			holderPanelFiles.Controls.Clear();
 			holderPanelFiles.Controls.Add(filesProgress);
 			filesProgress.SetBounds(0, 0, holderPanelFiles.Width, holderPanelFiles.Height);
-			filesProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left)));
+			filesProgress.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom) 
+				| AnchorStyles.Left;
 		}
 
-		private void SetupForm_Load(object sender, System.EventArgs e)
+		private void SetupForm_Load(object sender, EventArgs e)
 		{
 			AttachFilesView();
 			apps.LoadAll(); // we need all apps, whether enabled or not => reload with LoadALL
@@ -757,17 +747,17 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void RefreshClick(object sender, System.EventArgs e)
+		private void RefreshClick(object sender, EventArgs e)
 		{
 			DoRefresh();
 		}
 
-		private void UpClick(object sender, System.EventArgs e)
+		private void UpClick(object sender, EventArgs e)
 		{
 			DoUp();
 		}
 
-		private void DownClick(object sender, System.EventArgs e)
+		private void DownClick(object sender, EventArgs e)
 		{
 			DoDown();
 		}
@@ -907,7 +897,7 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void appTree_AfterLabelEdit(object sender, System.Windows.Forms.NodeLabelEditEventArgs e)
+		private void appTree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
 		{
 			if (e.Label != null)
 			{
@@ -926,7 +916,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void appTree_BeforeLabelEdit(object sender, System.Windows.Forms.NodeLabelEditEventArgs e)
+		private void appTree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
 		{
 			// disallow edit for root node.....
 			if (e.Node.Tag == null)
@@ -935,7 +925,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void appTree_BeforeSelect(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
+		private void appTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
 		{
 			if (!SaveAppItem())
 			{
@@ -953,8 +943,8 @@ namespace WindowPlugins.GUIPrograms
 			{
 				if (pageCurrentSettings.EntriesOK(curApp))
 				{
-					pageCurrentSettings.OnUpClick -= new System.EventHandler(this.UpClick);
-					pageCurrentSettings.OnDownClick -= new System.EventHandler(this.DownClick);
+					pageCurrentSettings.OnUpClick -= new EventHandler(this.UpClick);
+					pageCurrentSettings.OnDownClick -= new EventHandler(this.DownClick);
 					pageCurrentSettings.Form2AppObj(curApp);
 					if (curApp != null)
 					{
@@ -973,7 +963,7 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void sectionTree_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		private void sectionTree_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			SyncDetails();
 		}
@@ -983,8 +973,8 @@ namespace WindowPlugins.GUIPrograms
 			pageCurrentSettings = GetCurrentSettingsPage();
 			if (pageCurrentSettings != null)
 			{
-				pageCurrentSettings.OnUpClick += new System.EventHandler(this.UpClick);
-				pageCurrentSettings.OnDownClick += new System.EventHandler(this.DownClick);
+				pageCurrentSettings.OnUpClick += new EventHandler(this.UpClick);
+				pageCurrentSettings.OnDownClick += new EventHandler(this.DownClick);
 			}
 			SyncPanel(pageCurrentSettings);
 			SyncButtons();
@@ -1045,7 +1035,7 @@ namespace WindowPlugins.GUIPrograms
 			return res;
 		}
 
-		private void appTree_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+		private void appTree_DragDrop(object sender, DragEventArgs e)
 		{
 			// Retrieve the client coordinates of the drop location.
 			Point targetPoint = appTree.PointToClient(new Point(e.X, e.Y));
@@ -1114,12 +1104,12 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void appTree_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
+		private void appTree_DragEnter(object sender, DragEventArgs e)
 		{
 			e.Effect = e.AllowedEffect;
 		}
 
-		private void appTree_ItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
+		private void appTree_ItemDrag(object sender, ItemDragEventArgs e)
 		{
 			// Move the dragged node when the left mouse button is used.
 			if (e.Button == MouseButtons.Left)
@@ -1150,13 +1140,13 @@ namespace WindowPlugins.GUIPrograms
 
 
 
-		private void toolBarMenu_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
+		private void toolBarMenu_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
 		{
 			switch(toolBarMenu.Buttons.IndexOf(e.Button))
 			{
 				// todo: avoid magic ints here..... use consts!
 				case 0:
-					popupAddChild.Show(toolBarMenu, new System.Drawing.Point(0, toolBarMenu.Height));
+					popupAddChild.Show(toolBarMenu, new Point(0, toolBarMenu.Height));
 					break; 
 				case 2:
 					DoDelete();
@@ -1168,44 +1158,44 @@ namespace WindowPlugins.GUIPrograms
 					DoDown();
 					break; 
 				case 8:
-					popupTools.Show(toolBarMenu, new System.Drawing.Point(buttonTools.Rectangle.Left, toolBarMenu.Height));
+					popupTools.Show(toolBarMenu, new Point(buttonTools.Rectangle.Left, toolBarMenu.Height));
 					break; 
 
 			}
 		}
 
 
-		private void menuDirBrowse_Click(object sender, System.EventArgs e)
+		private void menuDirBrowse_Click(object sender, EventArgs e)
 		{
 			DoAddChild(myProgSourceType.DIRBROWSE);
 		}
 
-		private void menuDirCache_Click(object sender, System.EventArgs e)
+		private void menuDirCache_Click(object sender, EventArgs e)
 		{
 			DoAddChild(myProgSourceType.DIRCACHE);
 		}
 
-		private void menuMyFile_Click(object sender, System.EventArgs e)
+		private void menuMyFile_Click(object sender, EventArgs e)
 		{
 			DoAddChild(myProgSourceType.MYFILEINI);
 		}
 
-		private void menuMLFFile_Click(object sender, System.EventArgs e)
+		private void menuMLFFile_Click(object sender, EventArgs e)
 		{
 			DoAddChild(myProgSourceType.MYFILEMEEDIO);
 		}
 
-		private void menuFileLauncher_Click(object sender, System.EventArgs e)
+		private void menuFileLauncher_Click(object sender, EventArgs e)
 		{
 			DoAddChild(myProgSourceType.FILELAUNCHER);
 		}
 
-		private void menuGrouper_Click(object sender, System.EventArgs e)
+		private void menuGrouper_Click(object sender, EventArgs e)
 		{
 		    DoAddChild(myProgSourceType.GROUPER);
 		}
 
-		private void SetupForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private void SetupForm_Closing(object sender, CancelEventArgs e)
 		{
 			AppItem curApp = this.GetSelectedAppItem();
 			pageCurrentSettings = GetCurrentSettingsPage();
@@ -1213,8 +1203,8 @@ namespace WindowPlugins.GUIPrograms
 			{
 				if (pageCurrentSettings.EntriesOK(curApp))
 				{
-					pageCurrentSettings.OnUpClick -= new System.EventHandler(this.UpClick);
-					pageCurrentSettings.OnDownClick -= new System.EventHandler(this.DownClick);
+					pageCurrentSettings.OnUpClick -= new EventHandler(this.UpClick);
+					pageCurrentSettings.OnDownClick -= new EventHandler(this.DownClick);
 					pageCurrentSettings.Form2AppObj(curApp);
 					if (curApp != null)
 					{
@@ -1228,7 +1218,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void appTree_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
+		private void appTree_DragOver(object sender, DragEventArgs e)
 		{
 			// Retrieve the client coordinates of the mouse position.
 			Point targetPoint = appTree.PointToClient(new Point(e.X, e.Y));
@@ -1237,7 +1227,7 @@ namespace WindowPlugins.GUIPrograms
 			appTree.SelectedNode = appTree.GetNodeAt(targetPoint);
 		}
 
-		private void popupTools_Popup(object sender, System.EventArgs e)
+		private void popupTools_Popup(object sender, EventArgs e)
 		{
 			AppItem curApp = this.GetSelectedAppItem();
 			if ((curApp == null) || (curApp.SourceType == myProgSourceType.GROUPER))
@@ -1252,7 +1242,7 @@ namespace WindowPlugins.GUIPrograms
 			this.menuItemReadFromProfile.Enabled = false;
 			if ((curApp != null) && (curApp.ProfileLoadingAllowed()))
 			{
-				if (System.IO.File.Exists("ProgramSettingProfiles.xml"))
+				if (File.Exists("ProgramSettingProfiles.xml"))
 				{
 					this.menuItemReadFromProfile.Enabled = true;
 					FillProfileMenu();
@@ -1261,33 +1251,33 @@ namespace WindowPlugins.GUIPrograms
 
 		}
 
-		private void SourceTypeToDirBrowse_Click(object sender, System.EventArgs e)
+		private void SourceTypeToDirBrowse_Click(object sender, EventArgs e)
 		{
 			this.DoModifySourceType(myProgSourceType.DIRBROWSE);
 		}
 
-		private void SourceTypeToDirCache_Click(object sender, System.EventArgs e)
+		private void SourceTypeToDirCache_Click(object sender, EventArgs e)
 		{
 			this.DoModifySourceType(myProgSourceType.DIRCACHE);
 		}
 
-		private void SourceTypeToMyIni_Click(object sender, System.EventArgs e)
+		private void SourceTypeToMyIni_Click(object sender, EventArgs e)
 		{
 			this.DoModifySourceType(myProgSourceType.MYFILEINI);
 		}
 
-		private void SourceTypeToMLF_Click(object sender, System.EventArgs e)
+		private void SourceTypeToMLF_Click(object sender, EventArgs e)
 		{
 			this.DoModifySourceType(myProgSourceType.MYFILEMEEDIO);
 		}
 
-		private void SourceTypeToFilelauncher_Click(object sender, System.EventArgs e)
+		private void SourceTypeToFilelauncher_Click(object sender, EventArgs e)
 		{
 			this.DoModifySourceType(myProgSourceType.FILELAUNCHER);
 		}
 
 
-		private void MenuItemChangeSourceType_Select(object sender, System.EventArgs e)
+		private void MenuItemChangeSourceType_Select(object sender, EventArgs e)
 		{
 			AppItem curApp = this.GetSelectedAppItem();
 			if (curApp == null) {return;}
@@ -1318,7 +1308,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void DetailsTabControl_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void DetailsTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			// save current app if switching to file-tab
 			if (DetailsTabControl.SelectedIndex == 1)
@@ -1355,7 +1345,7 @@ namespace WindowPlugins.GUIPrograms
 						taggedMenuItem newMenu = new taggedMenuItem(titleNode.InnerText);
 						newMenu.Tag = Convert.ToInt32(idNode.InnerText.Length > 0 ? idNode.InnerText : "0");
 						newMenu.XmlTag = node;
-						newMenu.Click += new System.EventHandler(this.ProfileItem_Click);
+						newMenu.Click += new EventHandler(this.ProfileItem_Click);
 						menuItemReadFromProfile.MenuItems.Add(newMenu);
 					}
 				}
@@ -1365,7 +1355,7 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void ProfileItem_Click(object sender, System.EventArgs e)
+		private void ProfileItem_Click(object sender, EventArgs e)
 		{
 			AppItem curApp = GetSelectedAppItem();
 			XmlNode profileNode = ((taggedMenuItem)sender).XmlTag;

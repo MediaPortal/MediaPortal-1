@@ -4,8 +4,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using MediaPortal.Util;
-
-using MediaPortal.GUI.Library;		
 using Programs.Utils;
 
 namespace ProgramsDatabase
@@ -374,7 +372,7 @@ namespace ProgramsDatabase
 
 				byte [] bytes = null;
 				// Get the data that is being posted (or sent) to the server
-				bytes = System.Text.Encoding.ASCII.GetBytes (strData);
+				bytes = Encoding.ASCII.GetBytes (strData);
 				req.ContentLength = bytes.Length;
 				// 1. Get an output stream from the request object
 				Stream outputStream = req.GetRequestStream ();
@@ -388,7 +386,7 @@ namespace ProgramsDatabase
 
 				WebResponse result = req.GetResponse();
 				Stream ReceiveStream = result.GetResponseStream();
-				Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
+				Encoding encode = Encoding.GetEncoding("utf-8");
 				StreamReader sr = new StreamReader( ReceiveStream, encode );
 				strBody=sr.ReadToEnd();
 

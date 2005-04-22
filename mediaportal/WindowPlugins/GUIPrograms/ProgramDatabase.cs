@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
-using SQLite.NET;
-using MediaPortal.Util;
+using System.IO;
 using MediaPortal.GUI.Library;
-using Programs.Utils;
-
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {
@@ -28,7 +26,7 @@ namespace ProgramsDatabase
 				// Open database
 				try
 				{
-					System.IO.Directory.CreateDirectory("database");
+					Directory.CreateDirectory("database");
 				}
 				catch(Exception){}
 				m_db = new SQLiteClient(@"database\ProgramDatabaseV3.db");

@@ -1,20 +1,14 @@
-using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-
-using Programs.Utils;
 using ProgramsDatabase;
-using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.GUIPrograms
 {
-	public class AppFilesImportProgress : WindowPlugins.GUIPrograms.AppSettings
+	public class AppFilesImportProgress : AppSettings
 	{
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox ProgressText;
-		private System.ComponentModel.IContainer components = null;
+		private Label label3;
+		private TextBox ProgressText;
+		private IContainer components = null;
 		private AppItem m_CurApp;
 		private bool m_ImportRunning = false;
 

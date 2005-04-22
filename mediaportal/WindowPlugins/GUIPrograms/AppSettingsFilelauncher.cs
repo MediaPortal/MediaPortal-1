@@ -1,40 +1,37 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Diagnostics;
-
-using ProgramsDatabase;
+using System.Windows.Forms;
 using Programs.Utils;
+using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-	public class AppSettingsFilelauncher : WindowPlugins.GUIPrograms.AppSettings
+	public class AppSettingsFilelauncher : AppSettings
 	{
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.CheckBox chkbUseShellExecute;
-		private System.Windows.Forms.CheckBox chkbUseQuotes;
-		private System.Windows.Forms.Button btnStartup;
-		private System.Windows.Forms.TextBox txtStartupDir;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.ComboBox cbWindowStyle;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.TextBox txtArguments;
-		private System.Windows.Forms.Label lblArg;
-		private System.Windows.Forms.Label lblImageFile;
-		private System.Windows.Forms.TextBox txtImageFile;
-		private System.Windows.Forms.CheckBox chkbEnabled;
-		private System.Windows.Forms.TextBox txtTitle;
-		private System.Windows.Forms.Label lblTitle;
-		private System.Windows.Forms.Label lblFilename;
-		private System.Windows.Forms.Button buttonImagefile;
-		private System.Windows.Forms.Button buttonLaunchingApp;
-		private System.Windows.Forms.Label LblPinCode;
-		private System.Windows.Forms.TextBox txtPinCode;
-		private System.Windows.Forms.CheckBox chkbWaitForExit;
-		private System.Windows.Forms.ComboBox cbFilename;
-		private System.ComponentModel.IContainer components = null;
+		private Label label3;
+		private CheckBox chkbUseShellExecute;
+		private CheckBox chkbUseQuotes;
+		private Button btnStartup;
+		private TextBox txtStartupDir;
+		private Label label5;
+		private ComboBox cbWindowStyle;
+		private Label label6;
+		private TextBox txtArguments;
+		private Label lblArg;
+		private Label lblImageFile;
+		private TextBox txtImageFile;
+		private CheckBox chkbEnabled;
+		private TextBox txtTitle;
+		private Label lblTitle;
+		private Label lblFilename;
+		private Button buttonImagefile;
+		private Button buttonLaunchingApp;
+		private Label LblPinCode;
+		private TextBox txtPinCode;
+		private CheckBox chkbWaitForExit;
+		private ComboBox cbFilename;
+		private IContainer components = null;
 
 
 		public AppSettingsFilelauncher()
@@ -358,7 +355,7 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void AppSettingsFilelauncher_Load(object sender, System.EventArgs e)
+		private void AppSettingsFilelauncher_Load(object sender, EventArgs e)
 		{
 			// set tooltip-stuff..... 
 			toolTip.SetToolTip(txtTitle, "This text will appear in the listitem of MediaPortal\r\n(mandatory)");
@@ -433,7 +430,7 @@ namespace WindowPlugins.GUIPrograms
 			{
 				string strHeader = "The following entries are invalid: \r\n\r\n";
 				string strFooter = "\r\n\r\n(Click DELETE to remove this item)";
-				System.Windows.Forms.MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
+				MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
 			}
 			else
 			{
@@ -441,7 +438,7 @@ namespace WindowPlugins.GUIPrograms
 			return m_Checker.IsOk;
 		}
 
-		private void buttonLaunchingApp_Click(object sender, System.EventArgs e)
+		private void buttonLaunchingApp_Click(object sender, EventArgs e)
 		{
 			dialogFile.FileName = cbFilename.Text;
 			dialogFile.RestoreDirectory = true;
@@ -451,7 +448,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void buttonImagefile_Click(object sender, System.EventArgs e)
+		private void buttonImagefile_Click(object sender, EventArgs e)
 		{
 			dialogFile.FileName = txtImageFile.Text;
 			dialogFile.RestoreDirectory = true;
@@ -461,7 +458,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void btnStartup_Click(object sender, System.EventArgs e)
+		private void btnStartup_Click(object sender, EventArgs e)
 		{
 			dialogFolder.SelectedPath = txtStartupDir.Text;
 			if( dialogFolder.ShowDialog( null ) == DialogResult.OK )
@@ -470,7 +467,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void txtPinCode_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+		private void txtPinCode_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			//
 			// Allow only numbers, and backspace.
@@ -482,7 +479,7 @@ namespace WindowPlugins.GUIPrograms
 		
 		}
 
-		private void txtPinCode_TextChanged(object sender, System.EventArgs e)
+		private void txtPinCode_TextChanged(object sender, EventArgs e)
 		{
 		
 		}

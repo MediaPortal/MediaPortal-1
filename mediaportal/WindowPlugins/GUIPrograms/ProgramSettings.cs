@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using SQLite.NET;
-using MediaPortal.GUI.Library;
 
 namespace ProgramsDatabase
 {

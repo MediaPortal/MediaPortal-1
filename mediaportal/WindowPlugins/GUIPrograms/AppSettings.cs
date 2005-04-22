@@ -1,25 +1,19 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-
 using ProgramsDatabase;
-using Programs.Utils;
-
 
 namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for AppSettings.
 	/// </summary>
-	public class AppSettings : System.Windows.Forms.UserControl
+	public class AppSettings : UserControl
 	{
-		private System.ComponentModel.IContainer components;
-		protected System.Windows.Forms.OpenFileDialog dialogFile;
-		protected System.Windows.Forms.FolderBrowserDialog dialogFolder;
-		public System.Windows.Forms.ToolTip toolTip;
+		private IContainer components;
+		protected OpenFileDialog dialogFile;
+		protected FolderBrowserDialog dialogFolder;
+		public ToolTip toolTip;
 		protected ProgramConditionChecker m_Checker = new ProgramConditionChecker();
 
 		public event EventHandler OnUpClick;

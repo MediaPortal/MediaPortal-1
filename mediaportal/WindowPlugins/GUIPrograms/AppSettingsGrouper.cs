@@ -1,27 +1,24 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-
-using ProgramsDatabase;
 using Programs.Utils;
+using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-	public class AppSettingsGrouper : WindowPlugins.GUIPrograms.AppSettings
+	public class AppSettingsGrouper : AppSettings
 	{
-		private System.Windows.Forms.Label lblImageFile;
-		private System.Windows.Forms.Button buttonImagefile;
-		private System.Windows.Forms.TextBox txtImageFile;
-		private System.Windows.Forms.CheckBox chkbEnabled;
-		private System.Windows.Forms.TextBox txtTitle;
-		private System.Windows.Forms.Label lblTitle;
-		private System.Windows.Forms.Label LabelTitle;
-		private System.Windows.Forms.Label LabelHint;
-		private System.Windows.Forms.Label LblPinCode;
-		private System.Windows.Forms.TextBox txtPinCode;
-		private System.ComponentModel.IContainer components = null;
+		private Label lblImageFile;
+		private Button buttonImagefile;
+		private TextBox txtImageFile;
+		private CheckBox chkbEnabled;
+		private TextBox txtTitle;
+		private Label lblTitle;
+		private Label LabelTitle;
+		private Label LabelHint;
+		private Label LblPinCode;
+		private TextBox txtPinCode;
+		private IContainer components = null;
 
 		public AppSettingsGrouper()
 		{
@@ -173,17 +170,6 @@ namespace WindowPlugins.GUIPrograms
 		}
 		#endregion
 
-		private void btnUp_Click(object sender, System.EventArgs e)
-		{
-			UpButtonClicked();
-		}
-
-		private void btnDown_Click(object sender, System.EventArgs e)
-		{
-			DownButtonClicked();
-		}
-
-
 		public override bool AppObj2Form(AppItem curApp)
 		{
 			this.chkbEnabled.Checked = curApp.Enabled;
@@ -217,7 +203,7 @@ namespace WindowPlugins.GUIPrograms
 			{
 				string strHeader = "The following entries are invalid: \r\n\r\n";
 				string strFooter = "\r\n\r\n(Click DELETE to remove this item)";
-				System.Windows.Forms.MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
+				MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
 			}
 			else
 			{
@@ -227,7 +213,7 @@ namespace WindowPlugins.GUIPrograms
 
 
 
-		private void buttonImagefile_Click(object sender, System.EventArgs e)
+		private void buttonImagefile_Click(object sender, EventArgs e)
 		{
 			dialogFile.FileName = txtImageFile.Text;
 			dialogFile.RestoreDirectory = true;
@@ -237,7 +223,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void txtPinCode_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+		private void txtPinCode_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			//
 			// Allow only numbers, and backspace.

@@ -1,63 +1,61 @@
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
-
-using MediaPortal.GUI.Library;		
-using ProgramsDatabase;
 using Programs.Utils;
+using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for Form1.
 	/// </summary>
-	public class FileInfoScraperForm : System.Windows.Forms.Form
+	public class FileInfoScraperForm : Form
 	{
 		private AppItem m_CurApp;
-		private System.Windows.Forms.Panel leftPanel;
-		private System.Windows.Forms.Panel rightPanel;
-		private System.Windows.Forms.Splitter splitterVert;
-		private System.Windows.Forms.ListView FileList;
-		private System.Windows.Forms.ColumnHeader FileTitle;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader status;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private System.Windows.Forms.ListView MatchList;
-		private System.Windows.Forms.Label lblFiles;
-		private System.Windows.Forms.Label lblMatches;
-		private System.Windows.Forms.Button btnStartSearch;
-		private System.Windows.Forms.Button btnSaveSearch;
-		private System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.LinkLabel allGameLink;
-		private System.Windows.Forms.Button checkAllButton;
-		private System.Windows.Forms.ToolTip toolTip1;
-		private System.Windows.Forms.Button uncheckAllButton;
-		private System.Windows.Forms.Button buttonSelectBestMatch;
-		private System.Windows.Forms.Label filterLabel;
-		private System.Windows.Forms.ComboBox filterComboBox;
-		private System.Windows.Forms.Button ResetFilterButton;
-		private System.Windows.Forms.NumericUpDown MinRelevanceNum;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button LaunchURLButton;
-		private System.Windows.Forms.Panel bottomPanel;
-		private System.Windows.Forms.ContextMenu menuFileList;
-		private System.Windows.Forms.MenuItem mnuCheckWithoutImages;
-		private System.Windows.Forms.MenuItem mnuCheckWithoutOverview;
-		private System.Windows.Forms.ProgressBar progressBar;
-		private System.Windows.Forms.Panel progressPanel;
-		private System.Windows.Forms.Label progressStatusLabel;
-		private System.Windows.Forms.Button cancelButton;
-		private System.ComponentModel.IContainer components;
+		private Panel leftPanel;
+		private Panel rightPanel;
+		private Splitter splitterVert;
+		private ListView FileList;
+		private ColumnHeader FileTitle;
+		private ColumnHeader columnHeader1;
+		private ColumnHeader status;
+		private ColumnHeader columnHeader2;
+		private ListView MatchList;
+		private Label lblFiles;
+		private Label lblMatches;
+		private Button btnStartSearch;
+		private Button btnSaveSearch;
+		private Button btnCancel;
+		private LinkLabel allGameLink;
+		private Button checkAllButton;
+		private ToolTip toolTip1;
+		private Button uncheckAllButton;
+		private Button buttonSelectBestMatch;
+		private Label filterLabel;
+		private ComboBox filterComboBox;
+		private Button ResetFilterButton;
+		private NumericUpDown MinRelevanceNum;
+		private Label label1;
+		private Button LaunchURLButton;
+		private Panel bottomPanel;
+		private ContextMenu menuFileList;
+		private MenuItem mnuCheckWithoutImages;
+		private MenuItem mnuCheckWithoutOverview;
+		private ProgressBar progressBar;
+		private Panel progressPanel;
+		private Label progressStatusLabel;
+		private Button cancelButton;
+		private IContainer components;
 
 
 		int mStartTime = 0; // timer stuff
-		private System.Windows.Forms.ContextMenu menuSaveDetails;
-		private System.Windows.Forms.MenuItem menuItem4;
-		private System.Windows.Forms.MenuItem menuDataAndImages;
-		private System.Windows.Forms.MenuItem menuData;
-		private System.Windows.Forms.MenuItem menuImages;
+		private ContextMenu menuSaveDetails;
+		private MenuItem menuItem4;
+		private MenuItem menuDataAndImages;
+		private MenuItem menuData;
+		private MenuItem menuImages;
 		bool stopSearching = false;
 
 		public AppItem CurApp
@@ -596,7 +594,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void button3_Click(object sender, System.EventArgs e)
+		private void button3_Click(object sender, EventArgs e)
 		{
 			if ((m_CurApp != null) && (filterComboBox.Text != ""))
 			{
@@ -626,8 +624,8 @@ namespace WindowPlugins.GUIPrograms
 				double TimePerItem = nTimeElapsed / progressBar.Value - 1;
 				int nTotalTime = (int)(progressBar.Maximum * TimePerItem);
 				int nTimeRemaining = nTotalTime - nTimeElapsed;
-				int nSecondsRemaining = (int)nTimeRemaining / 1000;
-				int nMinutesRemaining = (int)nSecondsRemaining / 60;
+				int nSecondsRemaining = nTimeRemaining / 1000;
+				int nMinutesRemaining = nSecondsRemaining / 60;
 				nSecondsRemaining = nSecondsRemaining - (nMinutesRemaining * 60);
 				strTimeRemaining = String.Format(" ({0}m {1}s remaining)", nMinutesRemaining, nSecondsRemaining);
 
@@ -641,7 +639,7 @@ namespace WindowPlugins.GUIPrograms
 			progressStatusLabel.Text = msg;
 		}
 
-		private void btnStartSearch_Click(object sender, System.EventArgs e)
+		private void btnStartSearch_Click(object sender, EventArgs e)
 		{
 			InitProgressBar("Starting search");
 			foreach (ListViewItem curItem in FileList.CheckedItems)
@@ -768,19 +766,19 @@ namespace WindowPlugins.GUIPrograms
 			SyncMatchesList(file);
 		}
 
-		private void FileList_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void FileList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 				ChangeFileSelection();
 		}
 
-		private void allGameLink_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+		private void allGameLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			if(allGameLink.Text==null)
 				return;
 			if(allGameLink.Text.Length>0)
 			{
-				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(allGameLink.Text);
-				System.Diagnostics.Process.Start(sInfo);
+				ProcessStartInfo sInfo = new ProcessStartInfo(allGameLink.Text);
+				Process.Start(sInfo);
 			}
 		}
 
@@ -792,12 +790,12 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void MatchList_DoubleClick(object sender, System.EventArgs e)
+		private void MatchList_DoubleClick(object sender, EventArgs e)
 		{
 			LaunchSelectedMatchURL();
 		}
 
-		private void checkAllButton_Click(object sender, System.EventArgs e)
+		private void checkAllButton_Click(object sender, EventArgs e)
 		{
 			foreach (ListViewItem curItem in FileList.Items)
 			{
@@ -807,7 +805,7 @@ namespace WindowPlugins.GUIPrograms
 			SyncFileLabel();
 		}
 
-		private void uncheckAllButton_Click(object sender, System.EventArgs e)
+		private void uncheckAllButton_Click(object sender, EventArgs e)
 		{
 			foreach (ListViewItem curItem in FileList.Items)
 			{
@@ -819,7 +817,7 @@ namespace WindowPlugins.GUIPrograms
 			SyncFileLabel();
 		}
 
-		private void MatchList_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void MatchList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			FileItem file = GetSelectedFileItem();
 			if (file == null) return;
@@ -839,9 +837,9 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void btnSaveSearch_Click(object sender, System.EventArgs e)
+		private void btnSaveSearch_Click(object sender, EventArgs e)
 		{
-			menuSaveDetails.Show(btnSaveSearch, new System.Drawing.Point(0, btnSaveSearch.Height));
+			menuSaveDetails.Show(btnSaveSearch, new Point(0, btnSaveSearch.Height));
 		}
 
 		void SaveSearch(ScraperSaveType saveType)
@@ -889,12 +887,12 @@ namespace WindowPlugins.GUIPrograms
 			stopSearching = false;
 		}
 
-		private void filterComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void filterComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			ChangeFileSelection();
 		}
 
-		private void filterComboBox_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void filterComboBox_KeyUp(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter)
 			{
@@ -902,13 +900,13 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void ResetFilterButton_Click(object sender, System.EventArgs e)
+		private void ResetFilterButton_Click(object sender, EventArgs e)
 		{
 			filterComboBox.Text = "";
 			ChangeFileSelection();
 		}
 
-		private void buttonSelectBestMatch_Click(object sender, System.EventArgs e)
+		private void buttonSelectBestMatch_Click(object sender, EventArgs e)
 		{
 			foreach (ListViewItem curItem in FileList.CheckedItems)
 			{
@@ -941,17 +939,17 @@ namespace WindowPlugins.GUIPrograms
 			ChangeFileSelection();
 		}
 
-		private void MinRelevanceNum_ValueChanged(object sender, System.EventArgs e)
+		private void MinRelevanceNum_ValueChanged(object sender, EventArgs e)
 		{
 			ChangeFileSelection();
 		}
 
-		private void LaunchURLButton_Click(object sender, System.EventArgs e)
+		private void LaunchURLButton_Click(object sender, EventArgs e)
 		{
 			LaunchSelectedMatchURL();
 		}
 
-		private void FileList_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+		private void FileList_MouseUp(object sender, MouseEventArgs e)
 		{
 			btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
 			if (!btnStartSearch.Enabled)
@@ -962,7 +960,7 @@ namespace WindowPlugins.GUIPrograms
 			SyncFileLabel();
 		}
 
-		private void mnuCheckWithoutImages_Click(object sender, System.EventArgs e)
+		private void mnuCheckWithoutImages_Click(object sender, EventArgs e)
 		{
 			FileItem curFile;
 			foreach (ListViewItem curItem in FileList.Items)
@@ -981,7 +979,7 @@ namespace WindowPlugins.GUIPrograms
 			SyncFileLabel();
 		}
 
-		private void mnuCheckWithoutOverview_Click(object sender, System.EventArgs e)
+		private void mnuCheckWithoutOverview_Click(object sender, EventArgs e)
 		{
 			FileItem curFile;
 			foreach (ListViewItem curItem in FileList.Items)
@@ -1005,29 +1003,29 @@ namespace WindowPlugins.GUIPrograms
 			lblFiles.Text = String.Format("Files: ({0} of {1} selected)", FileList.CheckedItems.Count, FileList.Items.Count);
 		}
 
-		private void FileList_AfterLabelEdit(object sender, System.Windows.Forms.LabelEditEventArgs e)
+		private void FileList_AfterLabelEdit(object sender, LabelEditEventArgs e)
 		{
 			FileItem curItem = GetSelectedFileItem();
 			if (curItem == null) return;
 			curItem.TitleOptimized = e.Label;
 		}
 
-		private void cancelButton_Click(object sender, System.EventArgs e)
+		private void cancelButton_Click(object sender, EventArgs e)
 		{
 			stopSearching = true;
 		}
 
-		private void menuDataAndImages_Click(object sender, System.EventArgs e)
+		private void menuDataAndImages_Click(object sender, EventArgs e)
 		{
 			SaveSearch(ScraperSaveType.DataAndImages);
 		}
 
-		private void menuData_Click(object sender, System.EventArgs e)
+		private void menuData_Click(object sender, EventArgs e)
 		{
 			SaveSearch(ScraperSaveType.Data);
 		}
 
-		private void menuImages_Click(object sender, System.EventArgs e)
+		private void menuImages_Click(object sender, EventArgs e)
 		{
 			SaveSearch(ScraperSaveType.Images);
 		}

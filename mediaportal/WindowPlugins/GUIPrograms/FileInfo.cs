@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Text;
 using MediaPortal.Util;
-using MediaPortal.GUI.Library;		
 
 namespace ProgramsDatabase
 {
@@ -146,8 +143,8 @@ namespace ProgramsDatabase
 			if(GameURL.Length>0)
 			{
 				string strGameURL = GameURL.Replace("|", ""); 
-				System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(strGameURL);
-				System.Diagnostics.Process.Start(sInfo);
+				ProcessStartInfo sInfo = new ProcessStartInfo(strGameURL);
+				Process.Start(sInfo);
 //				System.Diagnostics.Process.Start("iexplore.exe", GameURL);
 			}
 		}
@@ -198,7 +195,7 @@ namespace ProgramsDatabase
 				i++;
 				strFile = curFile.GetNewImageFile(curApp, Path.GetExtension(strImgUrl));
 				Utils.DownLoadImage(strImgUrl, strFile);
-				if ((System.IO.File.Exists(strFile)) && (curFile.Imagefile == ""))
+				if ((File.Exists(strFile)) && (curFile.Imagefile == ""))
 				{
 					// download successful
 					// make sure the first found pic is the imagefile...

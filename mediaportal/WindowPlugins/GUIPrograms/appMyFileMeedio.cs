@@ -1,21 +1,16 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
-using SQLite.NET;
-
-using Programs.Utils;
-using MediaPortal.GUI.Library;
+using System.IO;
 using MediaPortal.Dialogs;
-using MediaPortal.Util;
-using WindowPlugins.GUIPrograms;
-
+using MediaPortal.GUI.Library;
+using Programs.Utils;
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {
 	/// <summary>
 	/// Summary description for appMyFileMeedio.
 	/// </summary>
-	public class appItemMyFileMLF: ProgramsDatabase.AppItem
+	public class appItemMyFileMLF: AppItem
 	{
 		GUIDialogProgress pDlgProgress = null;
 
@@ -40,7 +35,7 @@ namespace ProgramsDatabase
 		{
 			if (m_db==null) return;
 			if (this.AppID < 0) return;
-			if ((this.SourceType != myProgSourceType.MYFILEMEEDIO) || (Source == "") || (!System.IO.File.Exists(Source))) return;
+			if ((this.SourceType != myProgSourceType.MYFILEMEEDIO) || (Source == "") || (!File.Exists(Source))) return;
 			// show progress dialog and run the import...
 			if (bGUIMode)
 			{

@@ -1,20 +1,16 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
-using SQLite.NET;
-
-using Programs.Utils;
-using MediaPortal.GUI.Library;
+using System.IO;
 using MediaPortal.Dialogs;
-using MediaPortal.Util;
-using WindowPlugins.GUIPrograms;
+using MediaPortal.GUI.Library;
+using Programs.Utils;
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {
 	/// <summary>
 	/// Summary description for appMyFileIni.
 	/// </summary>
-	public class appItemMyFileINI: ProgramsDatabase.AppItem
+	public class appItemMyFileINI: AppItem
 	{
 
 		GUIDialogProgress pDlgProgress = null;
@@ -38,7 +34,7 @@ namespace ProgramsDatabase
 		{
 			if (m_db==null) return;
 			if (this.AppID < 0) return;
-			if ((this.SourceType != myProgSourceType.MYFILEINI) || (Source == "") || (!System.IO.File.Exists(Source))) return;
+			if ((this.SourceType != myProgSourceType.MYFILEINI) || (Source == "") || (!File.Exists(Source))) return;
 			if (bGUIMode)
 			{
 				ShowProgressDialog();

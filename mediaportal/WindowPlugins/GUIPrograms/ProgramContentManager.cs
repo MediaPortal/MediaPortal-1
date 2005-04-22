@@ -102,10 +102,6 @@ namespace WindowPlugins.GUIPrograms
 					if((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
 					{
 						NodeList = rootElement.SelectNodes("/contentprofiles/profile");
-						foreach(XmlNode node in NodeList)
-						{
-							XmlNode titleNode = node.SelectSingleNode("title");
-						}
 					}
 				}
 				catch (Exception ex)
@@ -182,7 +178,7 @@ namespace WindowPlugins.GUIPrograms
 					{
 						Tail = "";
 					}
-					result = Head + ParseOneExpression(Expression, curApp, curFile) + Tail;
+					result = Head + ParseOneExpression(Expression, curFile) + Tail;
 				}
 				iNextValueTagStart = result.IndexOf("[");
 			}
@@ -190,25 +186,25 @@ namespace WindowPlugins.GUIPrograms
 			return result;
 		}
 
-		static string ParseOneExpression(string strTagExpression, AppItem curApp, FileItem curFile)
+		static string ParseOneExpression(string strTagExpression, FileItem curFile)
 		{
 			string result = "";
 			if (strTagExpression.StartsWith("[VALUEOFTAG("))
 			{
-				result = ParseVALUEOFTAG(strTagExpression, curApp, curFile);
+				result = ParseVALUEOFTAG(strTagExpression, curFile);
 			}
 			else if (strTagExpression.StartsWith("[NAMEOFCATEGORY("))
 			{
-				result = ParseNAMEOFCATEGORY(strTagExpression, curApp, curFile);
+				result = ParseNAMEOFCATEGORY(strTagExpression, curFile);
 			}
 			else if (strTagExpression.StartsWith("[VALUEOFCATEGORY("))
 			{
-				result = ParseVALUEOFCATEGORY(strTagExpression, curApp, curFile);
+				result = ParseVALUEOFCATEGORY(strTagExpression, curFile);
 			}
 			return result; 
 		}
 
-		static string ParseVALUEOFTAG(string strTagExpression, AppItem curApp, FileItem curFile)
+		static string ParseVALUEOFTAG(string strTagExpression, FileItem curFile)
 		{
 			string result = "";
 			string TagName = "";
@@ -274,7 +270,7 @@ namespace WindowPlugins.GUIPrograms
 			return result; 
 		}
 
-		static string ParseNAMEOFCATEGORY(string strTagExpression, AppItem curApp, FileItem curFile)
+		static string ParseNAMEOFCATEGORY(string strTagExpression, FileItem curFile)
 		{
 			string result = "";
 			string TagName = "";
@@ -300,7 +296,7 @@ namespace WindowPlugins.GUIPrograms
 			return result;
 		}
 
-		static string ParseVALUEOFCATEGORY(string strTagExpression, AppItem curApp, FileItem curFile)
+		static string ParseVALUEOFCATEGORY(string strTagExpression, FileItem curFile)
 		{
 			string result = "";
 			string TagName = "";

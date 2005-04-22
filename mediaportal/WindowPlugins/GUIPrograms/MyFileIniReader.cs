@@ -1,9 +1,6 @@
-using System;
 using System.IO;
 using System.Text;
-
-using MediaPortal.GUI.Library;		
-
+using MediaPortal.GUI.Library;
 
 namespace ProgramsDatabase
 {
@@ -54,7 +51,7 @@ namespace ProgramsDatabase
 			string strNextLine;
 			bool HasReadOneSection = false;
 			if (m_FileName =="") return;
-			if (!System.IO.File.Exists(m_FileName)) 
+			if (!File.Exists(m_FileName)) 
 			{
 				Log.Write("MyFileIniReader: INI-File not found ({0})", m_FileName);
 				return;

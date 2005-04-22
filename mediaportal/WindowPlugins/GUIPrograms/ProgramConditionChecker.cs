@@ -1,5 +1,3 @@
-using System;
-
 namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>

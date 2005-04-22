@@ -1,13 +1,9 @@
 using System;
-using System.IO;
 using System.Collections;
-using System.Diagnostics;
-using SQLite.NET;
-
-using MediaPortal.GUI.Library;		
-using WindowPlugins.GUIPrograms;
+using System.IO;
+using MediaPortal.GUI.Library;
 using Programs.Utils;
-
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {
@@ -242,7 +238,7 @@ namespace ProgramsDatabase
 			if (Filename == "") {return "";}
 			string strRes = "";
 			string strSep = "";
-			string[] parts = ((string)Filename).Split(' ');
+			string[] parts = Filename.Split(' ');
 			if (Filename.StartsWith("\""))
 			{
 				// filename is quoted => traverse array and concetenate strings until two quotes are found
@@ -275,7 +271,7 @@ namespace ProgramsDatabase
 		{
 			string strRes = "";
 			string strSep = "";
-			string[] parts = ((string)curFilename).Split('\\');
+			string[] parts = curFilename.Split('\\');
 			for (int i = 0; i < parts.Length - 1; i++)
 			{
 				strRes = strRes + strSep + parts[i];
@@ -288,7 +284,7 @@ namespace ProgramsDatabase
 		public string ExtractImageExtension()
 		{
 			string strRes = "";
-			string[] parts = ((string)this.Imagefile).Split('.');
+			string[] parts = this.Imagefile.Split('.');
 			if (parts.Length >= 2) 
 			{
 				// there was an extension
@@ -300,7 +296,7 @@ namespace ProgramsDatabase
 		public string ExtractImageFileNoPath()
 		{
 			string strRes = "";
-			string[] parts = ((string)this.Imagefile).Split('\\');
+			string[] parts = this.Imagefile.Split('\\');
 			if (parts.Length >= 1) 
 			{
 				strRes = parts[parts.Length-1];
@@ -314,7 +310,7 @@ namespace ProgramsDatabase
 		{
 			string strRes = "";
 			string strSep = "";
-			string[] parts = ((string)Filename).Split(' ');
+			string[] parts = Filename.Split(' ');
 			if (Filename.StartsWith("\""))
 			{
 				// filename is quoted => traverse array and concetenate strings after two quotes have been found
@@ -377,17 +373,7 @@ namespace ProgramsDatabase
 
 		private void Update()
 		{
-			string strLastLaunch = "";
-			string strLaunchCount = "";
 			string strYear = "";
-			if (LastTimeLaunched != DateTime.MinValue)
-			{
-				strLastLaunch = String.Format("{0}", LastTimeLaunched);
-			}
-			if (LaunchCount > 0)
-			{
-				strLaunchCount = String.Format("{0}", LaunchCount); // poor man's inttostr :-)
-			}
 			if (Year > 0)
 			{
 				strYear = String.Format("{0}", Year);
@@ -587,7 +573,7 @@ namespace ProgramsDatabase
 				{
 					strCand = String.Format("{0}\\{1}_{2}{3}", strFolder, strFileName, iImgIndex, strExtension);
 				}
-				bFound = !System.IO.File.Exists(strCand); 
+				bFound = !File.Exists(strCand); 
 			}
 			return strCand;
 		}

@@ -1,19 +1,12 @@
-using System;
-using System.Collections;
-using System.Diagnostics;
-using SQLite.NET;
-
-using Programs.Utils;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using WindowPlugins.GUIPrograms;
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {
 	/// <summary>
 	/// Summary description for appFilesEdit.
 	/// </summary>
-	public class appGrouper: ProgramsDatabase.AppItem
+	public class appGrouper: AppItem
 	{
 		
 		public appGrouper(SQLiteClient paramDB): base(paramDB)

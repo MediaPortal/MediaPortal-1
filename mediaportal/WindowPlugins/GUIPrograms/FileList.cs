@@ -1,13 +1,8 @@
 using System;
-using System.IO;
 using System.Collections;
-using System.Diagnostics;
-using SQLite.NET;
-
-using MediaPortal.GUI.Library;		
-using WindowPlugins.GUIPrograms;
+using MediaPortal.GUI.Library;
 using Programs.Utils;
-
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {

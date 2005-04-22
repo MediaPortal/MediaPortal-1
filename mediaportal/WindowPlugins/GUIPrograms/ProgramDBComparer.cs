@@ -1,10 +1,6 @@
 using System;
 using System.Collections;
-using System.Globalization;
-using System.Windows.Forms;
-
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms

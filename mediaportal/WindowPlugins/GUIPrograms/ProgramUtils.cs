@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-
 using MediaPortal.GUI.Library;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
 
 namespace Programs.Utils
 {
-
 	public enum myProgSourceType
 	{
 		//Directory (Browse-Mode)
@@ -25,7 +23,7 @@ namespace Programs.Utils
 		MYGAMESDIRECT = 5,
 		FILELAUNCHER = 6,
 		GROUPER = 7
-	};
+	} ;
 
 	public enum myProgScraperType
 	{
@@ -47,7 +45,7 @@ namespace Programs.Utils
 	/// </summary>
 	public class ProgramUtils
 	{
-		public const int GetID = (int)GUIWindow.Window.WINDOW_FILES;
+		public const int GetID = (int) GUIWindow.Window.WINDOW_FILES;
 		public const int ProgramInfoID = 1206; // some magic number, sync with DialogAppInfo.xml
 		public const string cBackLabel = "..";
 
@@ -60,7 +58,7 @@ namespace Programs.Utils
 		public const string cGROUPER = "GROUPER";
 
 		public const string cMIGRATIONKEY = "V1_V2MIGRATION";
-	    public const string cPLUGINTITLE = "PLUGINTITLE";
+		public const string cPLUGINTITLE = "PLUGINTITLE";
 
 		// singleton. Dont allow any instance of this class
 		private ProgramUtils()
@@ -76,18 +74,18 @@ namespace Programs.Utils
 			return strValue.Replace("'", "''");
 		}
 
-		static public string Get(SQLiteResultSet results,int iRecord,string strColumn)
+		static public string Get(SQLiteResultSet results, int iRecord, string strColumn)
 		{
-			if (null==results) return "";
-			if (results.Rows.Count<iRecord) return "";
-			ArrayList arr=(ArrayList)results.Rows[iRecord];
-			int iCol=0;
+			if (null == results) return "";
+			if (results.Rows.Count < iRecord) return "";
+			ArrayList arr = (ArrayList) results.Rows[iRecord];
+			int iCol = 0;
 			foreach (string columnName in results.ColumnNames)
 			{
-				if (strColumn==columnName)
+				if (strColumn == columnName)
 				{
 					if (arr[iCol] == null) return "";
-					return ((string)arr[iCol]).Trim();
+					return ((string) arr[iCol]).Trim();
 				}
 				iCol++;
 			}
@@ -115,18 +113,18 @@ namespace Programs.Utils
 		{
 			int nResult = nDefValue;
 			try
-			{ 
+			{
 				nResult = Int32.Parse(strVal);
 			}
-			catch (System.FormatException) 
+			catch (System.FormatException)
 			{
 				nResult = nDefValue;
 			}
 			return nResult;
 		}
 
-		static public int GetIntDef(SQLiteResultSet results,int iRecord,string strColumn, int nDefValue)
-		// do a safe conversion.....
+		static public int GetIntDef(SQLiteResultSet results, int iRecord, string strColumn, int nDefValue)
+			// do a safe conversion.....
 		{
 			int nResult = nDefValue;
 			string strValue = Get(results, iRecord, strColumn).Trim();
@@ -137,7 +135,7 @@ namespace Programs.Utils
 			return nResult;
 		}
 
- 
+
 		static public DateTime StrToDateDef(string strVal, DateTime dteDefValue)
 		{
 			DateTime dteResult = dteDefValue;
@@ -153,7 +151,7 @@ namespace Programs.Utils
 		}
 
 
-		static public DateTime GetDateDef(SQLiteResultSet results,int iRecord,string strColumn, DateTime dteDefValue)
+		static public DateTime GetDateDef(SQLiteResultSet results, int iRecord, string strColumn, DateTime dteDefValue)
 		{
 			DateTime dteResult = dteDefValue;
 			string strValue = Get(results, iRecord, strColumn);
@@ -165,17 +163,17 @@ namespace Programs.Utils
 		}
 
 
-		static public bool GetBool(SQLiteResultSet results,int iRecord,string strColumn)
+		static public bool GetBool(SQLiteResultSet results, int iRecord, string strColumn)
 		{
 			return (Get(results, iRecord, strColumn) == "T");
 		}
 
-		static public ProcessWindowStyle GetProcessWindowStyle(SQLiteResultSet results,int iRecord,string strColumn)
+		static public ProcessWindowStyle GetProcessWindowStyle(SQLiteResultSet results, int iRecord, string strColumn)
 		{
 			return (StringToWindowStyle(Get(results, iRecord, strColumn)));
 		}
 
-		static public myProgSourceType GetSourceType(SQLiteResultSet results,int iRecord,string strColumn)
+		static public myProgSourceType GetSourceType(SQLiteResultSet results, int iRecord, string strColumn)
 		{
 			return (StringToSourceType(Get(results, iRecord, strColumn)));
 		}
@@ -204,7 +202,7 @@ namespace Programs.Utils
 
 		static public ProcessWindowStyle StringToWindowStyle(string strValue)
 		{
-			if (strValue.ToLower().Trim() == "hidden") 
+			if (strValue.ToLower().Trim() == "hidden")
 			{
 				return ProcessWindowStyle.Hidden;
 			}
@@ -223,7 +221,7 @@ namespace Programs.Utils
 		static public string SourceTypeToStr(myProgSourceType val)
 		{
 			string res = "";
-			switch(val)
+			switch (val)
 			{
 				case myProgSourceType.MYFILEMEEDIO:
 					res = cMYFILEMEEDIO;
@@ -251,7 +249,6 @@ namespace Programs.Utils
 		}
 
 
-
 		static public myProgSourceType StringToSourceType(string strValue)
 		{
 //
@@ -261,7 +258,7 @@ namespace Programs.Utils
 //		public const string cDIRBROWSE = "DIR_BROWSE";
 //		public const string cDIRCACHE = "DIR_CACHE";
 
-			if (strValue == cMYFILEMEEDIO) 
+			if (strValue == cMYFILEMEEDIO)
 			{
 				return myProgSourceType.MYFILEMEEDIO;
 			}
@@ -295,38 +292,38 @@ namespace Programs.Utils
 
 		static public void RemoveInvalidChars(ref string strTxt)
 		{
-			string strReturn="";
-			for (int i=0; i < (int)strTxt.Length; ++i)
+			string strReturn = "";
+			for (int i = 0; i < strTxt.Length; ++i)
 			{
-				char k=strTxt[i];
-				if (k=='\'') 
+				char k = strTxt[i];
+				if (k == '\'')
 				{
 					strReturn += "'";
 				}
 				strReturn += k;
 			}
-			if (strReturn=="") 
-				strReturn="unknown";
-			strTxt=strReturn.Trim();
+			if (strReturn == "")
+				strReturn = "unknown";
+			strTxt = strReturn.Trim();
 		}
 
 		static public void AddBackButton()
 		{
 			// add BACK-Button
-			GUIListItem gliBack = new GUIListItem( ProgramUtils.cBackLabel );
-			gliBack.ThumbnailImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBackBig.png";
-			gliBack.IconImageBig = GUIGraphicsContext.Skin+@"\media\DefaultFolderBack.png";
-			gliBack.IconImage = GUIGraphicsContext.Skin+@"\media\DefaultFolderBack.png";
+			GUIListItem gliBack = new GUIListItem(ProgramUtils.cBackLabel);
+			gliBack.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBackBig.png";
+			gliBack.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultFolderBack.png";
+			gliBack.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBack.png";
 			gliBack.IsFolder = true;
 			gliBack.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(gliBack_OnItemSelected);
-			GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_VIEW,gliBack);
+			GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_VIEW, gliBack);
 		}
 
 		static private void gliBack_OnItemSelected(GUIListItem item, GUIControl parent)
 		{
-			GUIFilmstripControl filmstrip=parent as GUIFilmstripControl ;
-			if (filmstrip==null) return;
-			filmstrip.InfoImageFileName=""; // clear filmstrip image if back button is selected
+			GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
+			if (filmstrip == null) return;
+			filmstrip.InfoImageFileName = ""; // clear filmstrip image if back button is selected
 		}
 
 
@@ -337,8 +334,8 @@ namespace Programs.Utils
 			string sep = "";
 			if (System.IO.Directory.Exists(curDirectory))
 			{
-				string [] fileEntries = System.IO.Directory.GetFiles(curDirectory);
-				foreach(string fileName in fileEntries)
+				string[] fileEntries = System.IO.Directory.GetFiles(curDirectory);
+				foreach (string fileName in fileEntries)
 				{
 					string curExtension = System.IO.Path.GetExtension(fileName).ToLower();
 					if (curExtension.Trim() != "")
@@ -360,12 +357,12 @@ namespace Programs.Utils
 			string strRes = strVal;
 			// trim away trailing [..] (..) codes
 			int iPos = strRes.IndexOf("[");
-			if (iPos > 0) 
+			if (iPos > 0)
 			{
 				strRes = strRes.Substring(0, iPos - 1);
 			}
 			iPos = strRes.IndexOf("(");
-			if (iPos > 0) 
+			if (iPos > 0)
 			{
 				strRes = strRes.Substring(0, iPos - 1);
 			}

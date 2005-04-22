@@ -479,7 +479,7 @@ namespace ProgramsDatabase
 
 		public virtual void OnInfo(GUIListItem item)
 		{
-			GUIFileInfo pDlgFileInfo = (GUIFileInfo)GUIWindowManager.GetWindow((int)ProgramUtils.ProgramInfoID);
+			GUIFileInfo pDlgFileInfo = (GUIFileInfo)GUIWindowManager.GetWindow(ProgramUtils.ProgramInfoID);
 			if (null != pDlgFileInfo)
 			{
 				if (item.MusicTag == null) { return; }
@@ -570,7 +570,7 @@ namespace ProgramsDatabase
 		private void SetImageDirectory(string value)
 		{
 			mImageDirectory = value;
-			ImageDirs = ((string)mImageDirectory).Split('\r');
+			ImageDirs = mImageDirectory.Split('\r');
 			for (int i=0; i < ImageDirs.Length;i++)
 			{
 				ImageDirs[i] = ImageDirs[i].Trim();
@@ -844,13 +844,11 @@ namespace ProgramsDatabase
 
 				// 2) fix all fileids of the newly imported files
 				rows2fix = m_db.Execute(SQLSelect);
-				int nOldFileID;
 				int nNewFileID;
 				string strFilename;
 				if (rows2fix.Rows.Count == 0)  return;
 				for (int iRow=0; iRow < rows2fix.Rows.Count;iRow++)
 				{
-					nOldFileID = ProgramUtils.GetIntDef(rows2fix, iRow, "oldfileid", -1);
 					nNewFileID = ProgramUtils.GetIntDef(rows2fix, iRow, "newfileid", -1);
 					strFilename = ProgramUtils.Get(rows2fix, iRow, "filename");
 					m_db.Execute(String.Format(SQLUpdate, nNewFileID, this.AppID, ProgramUtils.Encode(strFilename)));

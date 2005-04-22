@@ -79,7 +79,7 @@ namespace WindowPlugins.GUIPrograms
 
 		public GUIFileInfo()
 		{
-			GetID = (int)ProgramUtils.ProgramInfoID;
+			GetID = ProgramUtils.ProgramInfoID;
 		}
 
 		#endregion

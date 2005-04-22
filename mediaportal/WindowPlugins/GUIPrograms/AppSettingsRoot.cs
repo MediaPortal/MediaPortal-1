@@ -1,23 +1,18 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-using ProgramsDatabase;
 using Programs.Utils;
-using MediaPortal.GUI.Library;
+using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-	public class AppSettingsRoot : WindowPlugins.GUIPrograms.AppSettings
+	public class AppSettingsRoot : AppSettings
 	{
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label rootItemLabel;
-		private System.Windows.Forms.TextBox PluginTitle;
-		private System.Windows.Forms.Button ResetButton;
-		private System.ComponentModel.IContainer components = null;
+		private Label label3;
+		private Label rootItemLabel;
+		private TextBox PluginTitle;
+		private Button ResetButton;
+		private IContainer components = null;
 
 		bool Loaded = false;
 
@@ -137,12 +132,12 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void ResetButton_Click(object sender, System.EventArgs e)
+		private void ResetButton_Click(object sender, EventArgs e)
 		{
 			PluginTitle.Text = "My Programs";
 		}
 
-		private void AppSettingsRoot_Load(object sender, System.EventArgs e)
+		private void AppSettingsRoot_Load(object sender, EventArgs e)
 		{
 			AppObj2Form(null);
 			Loaded = true;

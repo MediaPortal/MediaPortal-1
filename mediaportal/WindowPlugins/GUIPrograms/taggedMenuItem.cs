@@ -1,4 +1,4 @@
-using System;
+using System.Windows.Forms;
 using System.Xml;
 
 namespace WindowPlugins.GUIPrograms
@@ -6,7 +6,7 @@ namespace WindowPlugins.GUIPrograms
 	/// <summary>
 	/// Summary description for taggedMenuItem.
 	/// </summary>
-	public class taggedMenuItem: System.Windows.Forms.MenuItem
+	public class taggedMenuItem: MenuItem
 	{
 		public taggedMenuItem(string text): base(text)
 		{

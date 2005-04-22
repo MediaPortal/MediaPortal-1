@@ -1,10 +1,8 @@
 using System;
 using System.IO;
-using SQLite.NET;
-
-using MediaPortal.GUI.Library;		
-using WindowPlugins.GUIPrograms;
+using MediaPortal.GUI.Library;
 using Programs.Utils;
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {
@@ -47,7 +45,7 @@ namespace ProgramsDatabase
 				bOk = (strImagefile != "");  
 				if (bOk )
 				{
-					bOk = (System.IO.File.Exists(strImagefile));
+					bOk = (File.Exists(strImagefile));
 				}
 			}
 			if (bOk)

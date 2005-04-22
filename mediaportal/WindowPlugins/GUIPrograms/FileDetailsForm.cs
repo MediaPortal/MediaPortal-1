@@ -1,62 +1,60 @@
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
-
-using MediaPortal.GUI.Library;
-using ProgramsDatabase;
 using Programs.Utils;
+using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for FileDetailsForm.
 	/// </summary>
-	public class FileDetailsForm : System.Windows.Forms.Form
+	public class FileDetailsForm : Form
 	{
 		private AppItem m_CurApp;
 		private FileItem m_CurFile;
 		private ProgramConditionChecker m_Checker;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.ToolTip toolTip1;
-		private System.Windows.Forms.Button btnOk;
-		private System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.TabControl tcFileItemData;
-		private System.Windows.Forms.GroupBox gbFileDetails;
-		private System.Windows.Forms.Button buttonViewImg;
-		private System.Windows.Forms.TextBox txtFilepath;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox cbRating;
-		private System.Windows.Forms.TextBox txtOverview;
-		private System.Windows.Forms.Label lblOverview;
-		private System.Windows.Forms.TextBox txtSystem;
-		private System.Windows.Forms.Label lblSystem;
-		private System.Windows.Forms.TextBox txtCountry;
-		private System.Windows.Forms.Label lblCountry;
-		private System.Windows.Forms.Label lblRating;
-		private System.Windows.Forms.TextBox txtYear;
-		private System.Windows.Forms.Label lblYear;
-		private System.Windows.Forms.TextBox txtManufacturer;
-		private System.Windows.Forms.Label lblManufacturer;
-		private System.Windows.Forms.TextBox txtGenre;
-		private System.Windows.Forms.Label lblGenre;
-		private System.Windows.Forms.Label lblImageFile;
-		private System.Windows.Forms.Button btnImageFile;
-		private System.Windows.Forms.TextBox txtFilename;
-		private System.Windows.Forms.TextBox txtImageFile;
-		private System.Windows.Forms.TextBox txtTitle;
-		private System.Windows.Forms.Label lblTitle;
-		private System.Windows.Forms.Label lblFilename;
-		private System.Windows.Forms.Button btnFilename;
-		private System.Windows.Forms.GroupBox gbExtended;
-		private System.Windows.Forms.Label lblTagData;
-		private System.Windows.Forms.Label lblCategoryData;
-		private System.Windows.Forms.TextBox txtTagData;
-		private System.Windows.Forms.TextBox txtCategoryData;
-		private System.ComponentModel.IContainer components;
+		private OpenFileDialog openFileDialog1;
+		private ToolTip toolTip1;
+		private Button btnOk;
+		private Button btnCancel;
+		private TabPage tabPage1;
+		private TabPage tabPage2;
+		private TabControl tcFileItemData;
+		private GroupBox gbFileDetails;
+		private Button buttonViewImg;
+		private TextBox txtFilepath;
+		private Label label1;
+		private ComboBox cbRating;
+		private TextBox txtOverview;
+		private Label lblOverview;
+		private TextBox txtSystem;
+		private Label lblSystem;
+		private TextBox txtCountry;
+		private Label lblCountry;
+		private Label lblRating;
+		private TextBox txtYear;
+		private Label lblYear;
+		private TextBox txtManufacturer;
+		private Label lblManufacturer;
+		private TextBox txtGenre;
+		private Label lblGenre;
+		private Label lblImageFile;
+		private Button btnImageFile;
+		private TextBox txtFilename;
+		private TextBox txtImageFile;
+		private TextBox txtTitle;
+		private Label lblTitle;
+		private Label lblFilename;
+		private Button btnFilename;
+		private GroupBox gbExtended;
+		private Label lblTagData;
+		private Label lblCategoryData;
+		private TextBox txtTagData;
+		private TextBox txtCategoryData;
+		private IContainer components;
 
 		public AppItem CurApp
 		{
@@ -579,20 +577,15 @@ namespace WindowPlugins.GUIPrograms
 			txtCategoryData.Text = m_CurFile.CategoryData;
 		}
 
-		private void FileDetailsForm_Load(object sender, System.EventArgs e)
+		private void FileDetailsForm_Load(object sender, EventArgs e)
 		{
 			tcFileItemData.TabIndex = 0;
 			updateDisplay();
 		}
 
-		private void label6_Click(object sender, System.EventArgs e)
+		private void btnFilename_Click(object sender, EventArgs e)
 		{
-		
-		}
-
-		private void btnFilename_Click(object sender, System.EventArgs e)
-		{
-			if (System.IO.File.Exists(txtFilename.Text))
+			if (File.Exists(txtFilename.Text))
 			{
 				openFileDialog1.FileName = txtFilename.Text;
 			}
@@ -603,7 +596,7 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void btnImageFile_Click(object sender, System.EventArgs e)
+		private void btnImageFile_Click(object sender, EventArgs e)
 		{
 			openFileDialog1.FileName = txtImageFile.Text;
 			openFileDialog1.RestoreDirectory = true;
@@ -622,12 +615,12 @@ namespace WindowPlugins.GUIPrograms
 			if (!m_Checker.IsOk)
 			{
 				string strHeader = "The following entries are invalid: \r\n\r\n";
-				System.Windows.Forms.MessageBox.Show(strHeader + m_Checker.Problems, "Invalid Entries");
+				MessageBox.Show(strHeader + m_Checker.Problems, "Invalid Entries");
 			}
 			return m_Checker.IsOk;
 		}
 
-		private void btnOk_Click(object sender, System.EventArgs e)
+		private void btnOk_Click(object sender, EventArgs e)
 		{
 			CurFile.Title = txtTitle.Text;
 			CurFile.Filename = txtFilename.Text;
@@ -650,14 +643,14 @@ namespace WindowPlugins.GUIPrograms
 		
 		}
 
-		private void buttonViewImg_Click(object sender, System.EventArgs e)
+		private void buttonViewImg_Click(object sender, EventArgs e)
 		{
 			try
 			{
-				if (System.IO.File.Exists(txtImageFile.Text))
+				if (File.Exists(txtImageFile.Text))
 				{
-					System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(txtImageFile.Text);
-					System.Diagnostics.Process.Start(sInfo);
+					ProcessStartInfo sInfo = new ProcessStartInfo(txtImageFile.Text);
+					Process.Start(sInfo);
 				}
 			}
 			catch

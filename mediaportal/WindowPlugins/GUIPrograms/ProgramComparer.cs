@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using System.Windows.Forms;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
@@ -46,13 +44,13 @@ namespace WindowPlugins.GUIPrograms
 			SortMethod method = mCurrentSortMethod;
 			switch (method)
 			{
-				case ProgramComparer.SortMethod.SORT_NAME:
+				case SortMethod.SORT_NAME:
 					strLine=GUILocalizeStrings.Get(103);
 					break;
-				case ProgramComparer.SortMethod.SORT_DATE:
+				case SortMethod.SORT_DATE:
 					strLine=GUILocalizeStrings.Get(104);
 					break;
-				case ProgramComparer.SortMethod.SORT_SIZE:
+				case SortMethod.SORT_SIZE:
 					strLine=GUILocalizeStrings.Get(105);
 					break;
 			}

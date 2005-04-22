@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Diagnostics;
-using SQLite.NET;
-
 using Programs.Utils;
-
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {

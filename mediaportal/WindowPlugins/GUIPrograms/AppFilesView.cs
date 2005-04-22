@@ -1,42 +1,39 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
+using System.IO;
 using System.Windows.Forms;
-
 using Programs.Utils;
 using ProgramsDatabase;
-using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for AppFilesView.
 	/// </summary>
-	public class AppFilesView : System.Windows.Forms.UserControl
+	public class AppFilesView : UserControl
 	{
-		private System.ComponentModel.IContainer components;
-		private System.Windows.Forms.ToolTip ToolTip;
-		private System.Windows.Forms.ImageList smallListImages;
-		private System.Windows.Forms.Panel TopPanel;
-		private System.Windows.Forms.Button BackButton;
-		private System.Windows.Forms.Panel bottomPanel;
-		private System.Windows.Forms.ListView FileList;
-		private System.Windows.Forms.ColumnHeader FileTitle;
-		private System.Windows.Forms.Button btnLaunch;
-		private System.Windows.Forms.Button UpdateDatabaseButton;
-		private System.Windows.Forms.Button btnEdit;
-		private System.Windows.Forms.Button btnDelete;
-		private System.Windows.Forms.Button btnNew;
-		private System.Windows.Forms.Label FilePathLabel;
-		private System.Windows.Forms.Button btnAddToFavourites;
-		private System.Windows.Forms.ContextMenu popupFavourites;
-		private System.Windows.Forms.MenuItem menuItem1;
-		private System.Windows.Forms.MenuItem menuItem2;
+		private IContainer components;
+		private ToolTip ToolTip;
+		private ImageList smallListImages;
+		private Panel TopPanel;
+		private Button BackButton;
+		private Panel bottomPanel;
+		private ListView FileList;
+		private ColumnHeader FileTitle;
+		private Button btnLaunch;
+		private Button UpdateDatabaseButton;
+		private Button btnEdit;
+		private Button btnDelete;
+		private Button btnNew;
+		private Label FilePathLabel;
+		private Button btnAddToFavourites;
+		private ContextMenu popupFavourites;
+		private MenuItem menuItem1;
+		private MenuItem menuItem2;
 
 		private AppItem mCurApp = null;
-		private System.Windows.Forms.Button startScraperButton; 
+		private Button startScraperButton;
 		private Applist apps = ProgramDatabase.AppList;
 		public event EventHandler OnRefreshClick;
 
@@ -52,19 +49,20 @@ namespace WindowPlugins.GUIPrograms
 		/// <summary> 
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
+
 		/// <summary> 
 		/// Required method for Designer support - do not modify 
 		/// the contents of this method with the code editor.
@@ -72,7 +70,7 @@ namespace WindowPlugins.GUIPrograms
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppFilesView));
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof (AppFilesView));
 			this.smallListImages = new System.Windows.Forms.ImageList(this.components);
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.btnLaunch = new System.Windows.Forms.Button();
@@ -98,12 +96,12 @@ namespace WindowPlugins.GUIPrograms
 			// smallListImages
 			// 
 			this.smallListImages.ImageSize = new System.Drawing.Size(16, 16);
-			this.smallListImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("smallListImages.ImageStream")));
+			this.smallListImages.ImageStream = ((System.Windows.Forms.ImageListStreamer) (resources.GetObject("smallListImages.ImageStream")));
 			this.smallListImages.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// btnLaunch
 			// 
-			this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnLaunch.Enabled = false;
 			this.btnLaunch.Location = new System.Drawing.Point(296, 88);
 			this.btnLaunch.Name = "btnLaunch";
@@ -115,7 +113,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// UpdateDatabaseButton
 			// 
-			this.UpdateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.UpdateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.UpdateDatabaseButton.Location = new System.Drawing.Point(296, 328);
 			this.UpdateDatabaseButton.Name = "UpdateDatabaseButton";
 			this.UpdateDatabaseButton.Size = new System.Drawing.Size(88, 40);
@@ -126,7 +124,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnEdit
 			// 
-			this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnEdit.Enabled = false;
 			this.btnEdit.Location = new System.Drawing.Point(296, 24);
 			this.btnEdit.Name = "btnEdit";
@@ -138,7 +136,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnDelete
 			// 
-			this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnDelete.Enabled = false;
 			this.btnDelete.Location = new System.Drawing.Point(296, 48);
 			this.btnDelete.Name = "btnDelete";
@@ -150,7 +148,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnNew
 			// 
-			this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnNew.Location = new System.Drawing.Point(296, 0);
 			this.btnNew.Name = "btnNew";
 			this.btnNew.Size = new System.Drawing.Size(88, 23);
@@ -161,7 +159,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// btnAddToFavourites
 			// 
-			this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnAddToFavourites.Enabled = false;
 			this.btnAddToFavourites.Location = new System.Drawing.Point(296, 248);
 			this.btnAddToFavourites.Name = "btnAddToFavourites";
@@ -173,7 +171,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// startScraperButton
 			// 
-			this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.startScraperButton.Location = new System.Drawing.Point(296, 288);
 			this.startScraperButton.Name = "startScraperButton";
 			this.startScraperButton.Size = new System.Drawing.Size(88, 40);
@@ -196,7 +194,7 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			this.BackButton.Enabled = false;
 			this.BackButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BackButton.Image = ((System.Drawing.Image)(resources.GetObject("BackButton.Image")));
+			this.BackButton.Image = ((System.Drawing.Image) (resources.GetObject("BackButton.Image")));
 			this.BackButton.Location = new System.Drawing.Point(0, 0);
 			this.BackButton.Name = "BackButton";
 			this.BackButton.Size = new System.Drawing.Size(32, 32);
@@ -205,9 +203,9 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// FilePathLabel
 			// 
-			this.FilePathLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.FilePathLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.FilePathLabel.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.FilePathLabel.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
 			this.FilePathLabel.Location = new System.Drawing.Point(36, 8);
 			this.FilePathLabel.Name = "FilePathLabel";
 			this.FilePathLabel.Size = new System.Drawing.Size(344, 16);
@@ -233,11 +231,13 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// FileList
 			// 
-			this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
+			this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+				| System.Windows.Forms.AnchorStyles.Left)
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																							 this.FileTitle});
+			this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+				{
+					this.FileTitle
+				});
 			this.FileList.FullRowSelect = true;
 			this.FileList.HideSelection = false;
 			this.FileList.Location = new System.Drawing.Point(0, 0);
@@ -256,9 +256,11 @@ namespace WindowPlugins.GUIPrograms
 			// 
 			// popupFavourites
 			// 
-			this.popupFavourites.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																										this.menuItem1,
-																																										this.menuItem2});
+			this.popupFavourites.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
+				{
+					this.menuItem1,
+					this.menuItem2
+				});
 			this.popupFavourites.Popup += new System.EventHandler(this.popupFavourites_Popup);
 			// 
 			// menuItem1
@@ -282,8 +284,8 @@ namespace WindowPlugins.GUIPrograms
 			this.ResumeLayout(false);
 
 		}
-		#endregion
 
+		#endregion
 
 		public void Refresh(AppItem curApp)
 		{
@@ -306,7 +308,7 @@ namespace WindowPlugins.GUIPrograms
 				FileList.Items.Clear();
 
 				// add all files
-				foreach(FileItem file in mCurApp.Files)
+				foreach (FileItem file in mCurApp.Files)
 				{
 					ListViewItem curItem = new ListViewItem(file.Title);
 					curItem.Tag = file;
@@ -324,14 +326,13 @@ namespace WindowPlugins.GUIPrograms
 				}
 
 				// add all filelinks
-				foreach(FileItem filelink in mCurApp.Filelinks)
+				foreach (FileItem filelink in mCurApp.Filelinks)
 				{
 					ListViewItem curItem = new ListViewItem(filelink.Title);
 					curItem.Tag = filelink;
 					curItem.ImageIndex = 2;
 					FileList.Items.Add(curItem);
 				}
-
 
 
 			}
@@ -343,31 +344,31 @@ namespace WindowPlugins.GUIPrograms
 			SyncFilePath();
 		}
 
-		private void btnEdit_Click(object sender, System.EventArgs e)
+		private void btnEdit_Click(object sender, EventArgs e)
 		{
 			EditItem();
 		}
 
-		private void btnNew_Click(object sender, System.EventArgs e)
+		private void btnNew_Click(object sender, EventArgs e)
 		{
 			AddItem();
 		}
 
-		private void btnDelete_Click(object sender, System.EventArgs e)
+		private void btnDelete_Click(object sender, EventArgs e)
 		{
 			DeleteItems();
 		}
 
-		private void FileList_DoubleClick(object sender, System.EventArgs e)
+		private void FileList_DoubleClick(object sender, EventArgs e)
 		{
 			if (FileList.SelectedItems.Count == 1)
 			{
-				FileItem file = (FileItem)FileList.SelectedItems[0].Tag;
+				FileItem file = (FileItem) FileList.SelectedItems[0].Tag;
 				if (file != null)
 				{
 					if (file.IsFolder)
 					{
-						ChangeFilePath(file.Filename);// filename becomes filepath in next view... :)
+						ChangeFilePath(file.Filename); // filename becomes filepath in next view... :)
 					}
 					else
 					{
@@ -384,7 +385,7 @@ namespace WindowPlugins.GUIPrograms
 			FileDetailsForm frmFileDetails = new FileDetailsForm();
 			frmFileDetails.CurApp = mCurApp;
 			frmFileDetails.CurFile = file;
-			DialogResult dialogResult = frmFileDetails.ShowDialog( this );
+			DialogResult dialogResult = frmFileDetails.ShowDialog(this);
 			if (dialogResult == DialogResult.OK)
 			{
 				file.Write();
@@ -405,13 +406,13 @@ namespace WindowPlugins.GUIPrograms
 		{
 			if (FileList.SelectedItems.Count == 1)
 			{
-				FileItem file = (FileItem)FileList.SelectedItems[0].Tag;
+				FileItem file = (FileItem) FileList.SelectedItems[0].Tag;
 				if (file != null)
 				{
 					FileDetailsForm frmFileDetails = new FileDetailsForm();
 					frmFileDetails.CurApp = mCurApp;
 					frmFileDetails.CurFile = file;
-					DialogResult dialogResult = frmFileDetails.ShowDialog( this );
+					DialogResult dialogResult = frmFileDetails.ShowDialog(this);
 					if (dialogResult == DialogResult.OK)
 					{
 						file.Write();
@@ -428,13 +429,13 @@ namespace WindowPlugins.GUIPrograms
 		{
 			if (FileList.SelectedItems.Count == 1)
 			{
-				FileItem file = (FileItem)FileList.SelectedItems[0].Tag;
+				FileItem file = (FileItem) FileList.SelectedItems[0].Tag;
 				if (file != null)
 				{
 					mCurApp.LaunchFile(file, false); //launch in non-blocking mode
 					if ((mCurApp.LaunchErrorMsg != null) && (mCurApp.LaunchErrorMsg != ""))
 					{
-						System.Windows.Forms.MessageBox.Show(mCurApp.LaunchErrorMsg, "Launch Error: (check LOG for details)");
+						MessageBox.Show(mCurApp.LaunchErrorMsg, "Launch Error: (check LOG for details)");
 					}
 				}
 			}
@@ -449,22 +450,22 @@ namespace WindowPlugins.GUIPrograms
 				if (dialogResult == DialogResult.Yes)
 				{
 					foreach (ListViewItem curItem in FileList.SelectedItems)
-					if (curItem.Tag is FilelinkItem)
-					{
-						FilelinkItem filelink = (FilelinkItem)curItem.Tag;
-						if (filelink != null)
+						if (curItem.Tag is FilelinkItem)
 						{
-							filelink.Delete();
+							FilelinkItem filelink = (FilelinkItem) curItem.Tag;
+							if (filelink != null)
+							{
+								filelink.Delete();
+							}
 						}
-					}
-					else
-					{
-						FileItem file = (FileItem)curItem.Tag;
-						if (file != null)
+						else
 						{
-							file.Delete();
+							FileItem file = (FileItem) curItem.Tag;
+							if (file != null)
+							{
+								file.Delete();
+							}
 						}
-					}
 				}
 			}
 			mCurApp.Files.Load(mCurApp.AppID, "");
@@ -472,7 +473,7 @@ namespace WindowPlugins.GUIPrograms
 			SyncListView();
 		}
 
-		private void FileList_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void FileList_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			SyncListViewButtons();
 		}
@@ -488,7 +489,7 @@ namespace WindowPlugins.GUIPrograms
 
 			if (FileList.SelectedItems.Count == 1)
 			{
-				FileItem file = (FileItem)FileList.SelectedItems[0].Tag;
+				FileItem file = (FileItem) FileList.SelectedItems[0].Tag;
 				if (file != null)
 				{
 					if (!file.IsFolder)
@@ -505,17 +506,16 @@ namespace WindowPlugins.GUIPrograms
 			}
 
 
-
 			if (mCurApp != null)
 			{
 				btnNew.Enabled = mCurApp.FileAddAllowed();
 				btnAddToFavourites.Enabled = mCurApp.FilesCanBeFavourites()
-					                         && (FileList.SelectedItems.Count > 0);
+					&& (FileList.SelectedItems.Count > 0);
 				UpdateDatabaseButton.Visible = mCurApp.RefreshButtonVisible();
 				if (mCurApp.FileBrowseAllowed())
 				{
 					TopPanel.Visible = true;
-					BackButton.Enabled =(mCurApp.CurrentFilePath() != mCurApp.FileDirectory);
+					BackButton.Enabled = (mCurApp.CurrentFilePath() != mCurApp.FileDirectory);
 				}
 				else
 				{
@@ -530,7 +530,7 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 
-		private void UpdateDatabaseButton_Click(object sender, System.EventArgs e)
+		private void UpdateDatabaseButton_Click(object sender, EventArgs e)
 		{
 			if (this.OnRefreshClick != null)
 			{
@@ -547,34 +547,40 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void btnLaunch_Click(object sender, System.EventArgs e)
+		private void btnLaunch_Click(object sender, EventArgs e)
 		{
 			LaunchItem();
 		}
 
-		private void BackButton_Click(object sender, System.EventArgs e)
+		private void BackButton_Click(object sender, EventArgs e)
 		{
-			if (mCurApp == null) { return; }
+			if (mCurApp == null)
+			{
+				return;
+			}
 			if (mCurApp.CurrentFilePath() != mCurApp.FileDirectory)
 			{
 				// it's ok to go one level up!
-				string strNewPath = System.IO.Path.GetDirectoryName(mCurApp.CurrentFilePath());
+				string strNewPath = Path.GetDirectoryName(mCurApp.CurrentFilePath());
 				ChangeFilePath(strNewPath);
 			}
 		}
 
-		private void btnAddToFavourites_Click(object sender, System.EventArgs e)
+		private void btnAddToFavourites_Click(object sender, EventArgs e)
 		{
-			popupFavourites.Show(btnAddToFavourites, new System.Drawing.Point(0, btnAddToFavourites.Height));
+			popupFavourites.Show(btnAddToFavourites, new Point(0, btnAddToFavourites.Height));
 		}
 
-		private void FavouriteGrouperItem_Click(object sender, System.EventArgs e)
+		private void FavouriteGrouperItem_Click(object sender, EventArgs e)
 		{
-			if (mCurApp == null) { return; }
-			int GrouperAppID = ((taggedMenuItem)sender).Tag;
+			if (mCurApp == null)
+			{
+				return;
+			}
+			int GrouperAppID = ((taggedMenuItem) sender).Tag;
 			foreach (ListViewItem curItem in FileList.SelectedItems)
 			{
-				FileItem curFile = (FileItem)curItem.Tag;
+				FileItem curFile = (FileItem) curItem.Tag;
 				FilelinkItem newLink = new FilelinkItem(mCurApp.db);
 				// example: "add the 'MAME' game 'r-type' to the 'top 20 shooters'"
 				//          'MAME' :           targetAppID
@@ -589,27 +595,22 @@ namespace WindowPlugins.GUIPrograms
 			}
 		}
 
-		private void popupFavourites_Popup(object sender, System.EventArgs e)
+		private void popupFavourites_Popup(object sender, EventArgs e)
 		{
 			popupFavourites.MenuItems.Clear();
-			foreach(AppItem app in apps)
+			foreach (AppItem app in apps)
 			{
 				if (app.SourceType == myProgSourceType.GROUPER)
 				{
 					taggedMenuItem newMenu = new taggedMenuItem(app.Title);
 					newMenu.Tag = app.AppID;
-					newMenu.Click += new System.EventHandler(this.FavouriteGrouperItem_Click);
+					newMenu.Click += new EventHandler(this.FavouriteGrouperItem_Click);
 					popupFavourites.MenuItems.Add(newMenu);
 				}
 			}
 		}
 
-		private void btnRefresh_Click(object sender, System.EventArgs e)
-		{
-			SyncListView();
-		}
-
-		private void startScraperButton_Click(object sender, System.EventArgs e)
+		private void startScraperButton_Click(object sender, EventArgs e)
 		{
 			ShowFileScraper();
 		}
@@ -619,7 +620,7 @@ namespace WindowPlugins.GUIPrograms
 			FileInfoScraperForm frmScraper = new FileInfoScraperForm();
 			frmScraper.CurApp = mCurApp;
 			frmScraper.Setup();
-			frmScraper.ShowDialog( this );
+			frmScraper.ShowDialog(this);
 			SyncListView();
 		}
 

@@ -1,21 +1,18 @@
 using System;
-using System.IO;
 using System.Collections;
-using System.Diagnostics;
-using SQLite.NET;
-
-using Programs.Utils;
-using MediaPortal.GUI.Library;
+using System.IO;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using WindowPlugins.GUIPrograms;
+using Programs.Utils;
+using SQLite.NET;
 
 namespace ProgramsDatabase
 {
 	/// <summary>
 	/// Summary description for appItemDirCache.
 	/// </summary>
-	public class appItemDirCache: ProgramsDatabase.AppItem
+	public class appItemDirCache: AppItem
 	{
 
 		GUIDialogProgress pDlgProgress = null;
@@ -53,9 +50,9 @@ namespace ProgramsDatabase
 				strFilenameNoExt = Path.ChangeExtension(strFilenameNoExt, null);
 				strFilenameNoExt = Path.GetFileNameWithoutExtension(strFilenameNoExt);
 
-				string[] strExactMatchesJPG = System.IO.Directory.GetFiles(strDir, strFilenameNoExt+"*.jpg");
-				string[] strExactMatchesGIF = System.IO.Directory.GetFiles(strDir, strFilenameNoExt+"*.gif");
-				string[] strExactMatchesPNG = System.IO.Directory.GetFiles(strDir, strFilenameNoExt+"*.png");
+				string[] strExactMatchesJPG = Directory.GetFiles(strDir, strFilenameNoExt+"*.jpg");
+				string[] strExactMatchesGIF = Directory.GetFiles(strDir, strFilenameNoExt+"*.gif");
+				string[] strExactMatchesPNG = Directory.GetFiles(strDir, strFilenameNoExt+"*.png");
 				if (strExactMatchesJPG.Length > 0)
 				{
 					strFolderThumb = strExactMatchesJPG[0];
@@ -71,9 +68,9 @@ namespace ProgramsDatabase
 				else 
 				{
 					// no exact match found! Redo with near matches!
-					string[] strNearMatchesJPG = System.IO.Directory.GetFiles(strDir, fileTitle+"*.jpg");
-					string[] strNearMatchesGIF = System.IO.Directory.GetFiles(strDir, fileTitle+"*.gif");
-					string[] strNearMatchesPNG = System.IO.Directory.GetFiles(strDir, fileTitle+"*.png");
+					string[] strNearMatchesJPG = Directory.GetFiles(strDir, fileTitle+"*.jpg");
+					string[] strNearMatchesGIF = Directory.GetFiles(strDir, fileTitle+"*.gif");
+					string[] strNearMatchesPNG = Directory.GetFiles(strDir, fileTitle+"*.png");
 					if (strNearMatchesJPG.Length > 0)
 					{
 						strFolderThumb = strNearMatchesJPG[0];
@@ -106,7 +103,7 @@ namespace ProgramsDatabase
 			{
 				curFile.Filename = "\"" + curFile.Filename + "\"";
 			}
-			curFile.Filepath = System.IO.Path.GetDirectoryName(guiFile.Path);
+			curFile.Filepath = Path.GetDirectoryName(guiFile.Path);
 			curFile.Imagefile = GetThumbsFile(guiFile, curFile.TitleNormalized);
 			// not imported properties => set default values
 			curFile.ManualFilename = "";
@@ -121,8 +118,8 @@ namespace ProgramsDatabase
 			curFile.FileID = -1;
 			curFile.AppID = this.AppID;
 			curFile.Filename = directoryPath;
-			curFile.Title = System.IO.Path.GetFileNameWithoutExtension(directoryPath);
-			curFile.Filepath = System.IO.Path.GetDirectoryName(directoryPath);
+			curFile.Title = Path.GetFileNameWithoutExtension(directoryPath);
+			curFile.Filepath = Path.GetDirectoryName(directoryPath);
 			curFile.IsFolder = true;
 			curFile.ManualFilename = "";
 			curFile.LastTimeLaunched = DateTime.MinValue;
