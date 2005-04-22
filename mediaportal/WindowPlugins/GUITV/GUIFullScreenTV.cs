@@ -119,6 +119,7 @@ namespace MediaPortal.GUI.TV
 				if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
 				if (strValue.Equals("panscan")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.PanScan43;
 			}
+
 		}
 
 //		public string ZapChannel
@@ -736,7 +737,7 @@ namespace MediaPortal.GUI.TV
 			ArrayList	audioPidList = Recorder.GetAudioLanguage();
 			if (audioPidList!=null && audioPidList.Count>0)
 			{
-				dlg.AddLocalizedString(248); // Audio language menu
+				dlg.AddLocalizedString(292); // Audio language menu
 			}
 			dlg.AddLocalizedString(970); // Previous window
 
@@ -794,7 +795,7 @@ namespace MediaPortal.GUI.TV
 					ShowAspectRatioMenu();
 					break;
 
-				case 248: // Show audio language menu
+				case 292: // Show audio language menu
 					ShowAudioLanguageMenu();
 					break;
 	
@@ -886,8 +887,9 @@ namespace MediaPortal.GUI.TV
 		{
 			if (dlg==null) return;
 			dlg.Reset();
-			dlg.SetHeading(248); // Language
-	
+			//dlg.SetHeading(248); // Language by corl
+			dlg.SetHeading(292); // audio by agree
+
 			DVBSections.AudioLanguage al;
 			ArrayList	audioPidList = new ArrayList();
 			audioPidList = Recorder.GetAudioLanguage();
