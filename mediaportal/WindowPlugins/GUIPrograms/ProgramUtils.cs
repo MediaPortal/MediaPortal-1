@@ -307,7 +307,7 @@ namespace Programs.Utils
 			strTxt = strReturn.Trim();
 		}
 
-		static public void AddBackButton()
+		static public void AddBackButton(GUIFacadeControl facadeView)
 		{
 			// add BACK-Button
 			GUIListItem gliBack = new GUIListItem(ProgramUtils.cBackLabel);
@@ -316,7 +316,7 @@ namespace Programs.Utils
 			gliBack.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBack.png";
 			gliBack.IsFolder = true;
 			gliBack.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(gliBack_OnItemSelected);
-			GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_VIEW, gliBack);
+      facadeView.Add(gliBack);
 		}
 
 		static private void gliBack_OnItemSelected(GUIListItem item, GUIControl parent)

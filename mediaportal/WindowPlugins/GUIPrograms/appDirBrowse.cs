@@ -84,7 +84,7 @@ namespace ProgramsDatabase
 		}
 
 
-		int LoadDirectory(string strNewDirectory)
+		int LoadDirectory(string strNewDirectory, GUIFacadeControl facadeView)
 		{
 			ValidExtensions = ValidExtensions.Replace(" ", "");
 			ArrayList mExtensions = new ArrayList( this.ValidExtensions.Split( ',' ) );
@@ -113,7 +113,7 @@ namespace ProgramsDatabase
 				if (file.Label != ProgramUtils.cBackLabel)
 				{
 					file.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(file_OnItemSelected);
-					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_VIEW,file);
+          facadeView.Add(file);
 					iTotalItems++;
 				}
 			}
@@ -136,18 +136,18 @@ namespace ProgramsDatabase
 		}
 
 
-		override public int DisplayFiles(string Filepath)
+		override public int DisplayFiles(string Filepath, GUIFacadeControl facadeView)
 		{
 			int Total = 0;
 			if (Filepath == "")
 			{
 				// normal: load the main filelist of the application
-				Total = LoadDirectory(this.FileDirectory);
+				Total = LoadDirectory(this.FileDirectory, facadeView);
 			}
 			else
 			{
 				// subfolder is activated: load the filelist of the subfolder
-				Total = LoadDirectory(Filepath);
+				Total = LoadDirectory(Filepath, facadeView);
 			}
 			return Total;
 		}

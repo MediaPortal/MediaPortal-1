@@ -9,777 +9,801 @@ using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-	enum Controls
-	{
-		CONTROL_BTNVIEWASICONS = 2,
-		CONTROL_BTNSORTBY = 4,
-		CONTROL_BTNSORTASC = 5,
-		CONTROL_BTNREFRESH = 3,
-		CONTROL_LBLMYPROGRAMS = 9,
-		CONTROL_LBLCURAPP = 10,
-		CONTROL_VIEW = 7,
-	} ;
-
-
-	/// <summary>
-	/// The GUIPrograms plugin is used to list a collection of arbitrary files
-	/// and use them as arguments when launching external applications.
-	/// </summary>
-	/// 
-	public class GUIPrograms : GUIWindow
-	{
-		[Serializable]
-		public class MapSettings
-		{
-			protected int _SortBy;
-			protected int _ViewAs;
-			protected bool _SortAscending;
-			protected int _LastAppID;
-			protected int _LastFileID;
-
-			public MapSettings()
-			{
-				_SortBy = 0; //name
-				_ViewAs = 0; //list
-				_SortAscending = true;
-				_LastAppID = -1;
-				_LastFileID = -1;
-			}
-
-
-			[XmlElement("SortBy")]
-			public int SortBy
-			{
-				get { return _SortBy; }
-				set { _SortBy = value; }
-			}
-
-			[XmlElement("ViewAs")]
-			public int ViewAs
-			{
-				get { return _ViewAs; }
-				set { _ViewAs = value; }
-			}
-
-			[XmlElement("SortAscending")]
-			public bool SortAscending
-			{
-				get { return _SortAscending; }
-				set { _SortAscending = value; }
-			}
-
-			[XmlElement("LastAppID")]
-			public int LastAppID
-			{
-				get { return _LastAppID; }
-				set { _LastAppID = value; }
-			}
-
-			[XmlElement("LastFileID")]
-			public int LastFileID
-			{
-				get { return _LastFileID; }
-				set { _LastFileID = value; }
-			}
-
-		}
-
-		enum View
-		{
-			VIEW_AS_LIST = 0,
-			VIEW_AS_ICONS = 1,
-			VIEW_AS_LARGEICONS = 2,
-			VIEW_AS_FILMSTRIP = 3,
-		}
-
-		static Applist apps = ProgramDatabase.AppList;
-		AppItem lastApp = null;
-		string lastFilepath = "";
-		MapSettings _MapSettings = new MapSettings();
-		int m_iItemSelected = -1;
-
-		// filmstrip slideshow timer stuff
-		int m_iSpeed = 3; // speed in seconds between two slides
-		int m_lSlideTime = 0;
-
-
-		/// <summary>
-		/// Constructor used to specify to the MediaPortal Core the window that we 
-		/// are creating.
-		/// </summary>
-		public GUIPrograms()
-		{
-			GetID = (int) Window.WINDOW_FILES;
-			apps = ProgramDatabase.AppList;
-			LoadSettings();
-		}
-
-		~GUIPrograms()
-		{
-			SaveSettings();
-			FolderSettings.DeleteFolderSetting("root", "Programs");
-		}
-
-
-		/// <summary>
-		/// Overridden in order to load the skin we are going to use.
-		/// </summary>
-		/// <returns>Whether or not the skin could be loaded</returns>
-		public override bool Init()
-		{
-			return Load(GUIGraphicsContext.Skin + @"\myprograms.xml");
-		}
-
-
-		void SaveSettings()
-		{
-			using (Xml xmlwriter = new Xml("MediaPortal.xml"))
-			{
-				switch ((View) _MapSettings.ViewAs)
-				{
-					case View.VIEW_AS_LIST:
-						xmlwriter.SetValue("myprograms", "viewby", "list");
-						break;
-					case View.VIEW_AS_ICONS:
-						xmlwriter.SetValue("myprograms", "viewby", "icons");
-						break;
-					case View.VIEW_AS_LARGEICONS:
-						xmlwriter.SetValue("myprograms", "viewby", "largeicons");
-						break;
-					case View.VIEW_AS_FILMSTRIP:
-						xmlwriter.SetValue("myprograms", "viewby", "filmstrip");
-						break;
-				}
-				xmlwriter.SetValue("myprograms", "lastAppID", _MapSettings.LastAppID.ToString());
-				xmlwriter.SetValue("myprograms", "sortby", _MapSettings.SortBy);
-				// avoid bool conversion...... don't wanna know why it doesn't work! :-(
-				if (_MapSettings.SortAscending)
-				{
-					xmlwriter.SetValue("myprograms", "sortasc", "yes");
-				}
-				else
-				{
-					xmlwriter.SetValue("myprograms", "sortasc", "no");
-				}
-				//Log.Write("dw myPrograms: saving xmlsettings lastappid {0}", _MapSettings.LastAppID);
-			}
-		}
-
-		void LoadSettings()
-		{
-			using (Xml xmlreader = new Xml("MediaPortal.xml"))
-			{
-				string strTmp = "";
-				strTmp = (string) xmlreader.GetValue("myprograms", "viewby");
-				if (strTmp != null)
-				{
-					if (strTmp == "list") _MapSettings.ViewAs = (int) View.VIEW_AS_LIST;
-					else if (strTmp == "icons") _MapSettings.ViewAs = (int) View.VIEW_AS_ICONS;
-					else if (strTmp == "largeicons") _MapSettings.ViewAs = (int) View.VIEW_AS_LARGEICONS;
-					else if (strTmp == "filmstrip") _MapSettings.ViewAs = (int) View.VIEW_AS_FILMSTRIP;
-				}
-
-				_MapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
-				_MapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
-				strTmp = (string) xmlreader.GetValue("myprograms", "sortasc");
-				if (strTmp != null)
-				{
-					_MapSettings.SortAscending = (strTmp.ToLower() == "yes");
-				}
-				else
-				{
-					_MapSettings.SortAscending = true;
-				}
-
-			}
-		}
-
-		void LoadLastAppIDFromSettings()
-		{
-			using (Xml xmlreader = new Xml("MediaPortal.xml"))
-			{
-				_MapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
-				_MapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
-				_MapSettings.SortAscending = xmlreader.GetValueAsBool("myprograms", "sortasc", true);
-			}
-		}
-
-		void LoadFolderSettings(string strDirectory)
-		{
-			if (strDirectory == "") strDirectory = "root";
-			object o;
-			FolderSettings.GetFolderSetting(strDirectory, "Programs", typeof (MapSettings), out o);
-			if (o != null) _MapSettings = o as MapSettings;
-			if (_MapSettings == null) _MapSettings = new MapSettings();
-		}
-
-		void SaveFolderSettings(string strDirectory)
-		{
-			if (strDirectory == "") strDirectory = "root";
-			FolderSettings.AddFolderSetting(strDirectory, "Programs", typeof (MapSettings), _MapSettings);
-		}
-
-
-		public override void Render(float timePassed)
-		{
-			RenderFilmStrip();
-			base.Render(timePassed);
-		}
-
-		private void RenderFilmStrip()
-		{
-			// in filmstrip mode, start a slideshow if more than one
-			// pic is available for the selected item
-			GUIFacadeControl pControl = (GUIFacadeControl) GetControl((int) Controls.CONTROL_VIEW);
-			if (pControl == null) return;
-			if (pControl.FilmstripView == null) return;
-			if (pControl.FilmstripView.InfoImageFileName == "") return;
-			if (_MapSettings == null) return;
-			if (_MapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
-			{
-				// does the thumb needs replacing??
-				int dwTimeElapsed = ((int) (DateTime.Now.Ticks/10000)) - m_lSlideTime;
-				if (dwTimeElapsed >= (m_iSpeed*1000))
-				{
-					RefreshFilmstripThumb(pControl.FilmstripView); // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
-				}
-			}
-		}
-
-		private void RefreshFilmstripThumb(GUIFilmstripControl pControl)
-		{
-			GUIListItem item = GetSelectedItem();
-			// some preconditions...
-			if (lastApp == null) return;
-			if (item.MusicTag == null) return;
-			if (!(item.MusicTag is FileItem)) return;
-			FileItem curFile = item.MusicTag as FileItem;
-			// ok... let's get a filename
-			string strThumb = lastApp.GetCurThumb(curFile);
-			if (File.Exists(strThumb))
-			{
-				pControl.InfoImageFileName = strThumb;
-			}
-			lastApp.NextThumb(); // try to find a next thumbnail
-			m_lSlideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
-		}
-
-
-		public override void OnAction(Action action)
-		{
-			if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
-			{
-				// <U> keypress
-				BackItemClicked();
-				UpdateButtons();
-				return;
-			}
-
-			if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-			{
-				// <ESC> keypress in some myProgram Menu => jump to main menu
-				SaveFolderSettings("");
-				GUIWindowManager.ShowPreviousWindow();
-				return;
-			}
-
-			if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
-			{
-				// <F3> keypress
-				if (null != lastApp)
-				{
-					m_iItemSelected = GetSelectedItemNo();
-					GUIListItem item = GetSelectedItem();
-					if (!item.Label.Equals(ProgramUtils.cBackLabel) && (!item.IsFolder))
-					{
-						// show file info but only if the selected item is not the back button
-						lastApp.OnInfo(item);
-						UpdateListControl();
-					}
-				}
-				return;
-			}
-
-			base.OnAction(action);
-		}
-
-		public override bool OnMessage(GUIMessage message)
-		{
-			GUIFacadeControl view = (GUIFacadeControl) GetControl((int) Controls.CONTROL_VIEW);
-			switch (message.Message)
-			{
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-					// display application list
-					//					Log.Write("GUIPrograms: gui_msg_windows_init");
-					base.OnMessage(message);
-					LoadFolderSettings("");
-					LoadLastAppIDFromSettings(); // hacky load back the last app id, otherwise this can get lost from dx resets....
-					lastApp = apps.GetAppByID(_MapSettings.LastAppID);
-					if (lastApp != null)
-					{
-						lastFilepath = lastApp.DefaultFilepath();
-						lastApp.CurrentSortIndex = _MapSettings.SortBy;
-						lastApp.CurrentSortIsAscending = _MapSettings.SortAscending;
-						//Log.Write("dw myPrograms: lastApp initialized {0} {1}", lastApp.AppID, lastApp.Title);
-						//Log.Write("dw myPrograms: lastFilepath initialized {0}", lastFilepath);
-					}
-					else
-					{
-						lastFilepath = "";
-					}
-					UpdateListControl();
-					ShowThumbPanel();
-					m_lSlideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
-					return true;
-
-				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-					//					Log.Write("GUIPrograms: gui_msg_windows_deinit");
-					SaveSettings();
-					// make sure the selected index wasn't reseted already
-					// and save the index only if it's non-zero
-					// otherwise: DXDevice.Reset clears selection 
-					int iItemIndex = GetSelectedItemNo();
-					if (iItemIndex > 0)
-					{
-						m_iItemSelected = GetSelectedItemNo();
-					}
-					break;
-
-				case GUIMessage.MessageType.GUI_MSG_CLICKED:
-					int iControl = message.SenderControlId;
-					if (iControl == (int) Controls.CONTROL_BTNVIEWASICONS)
-					{
-						// switch to next view
-						switch ((View) _MapSettings.ViewAs)
-						{
-							case View.VIEW_AS_LIST:
-								_MapSettings.ViewAs = (int) View.VIEW_AS_ICONS;
-								break;
-							case View.VIEW_AS_ICONS:
-								_MapSettings.ViewAs = (int) View.VIEW_AS_LARGEICONS;
-								break;
-							case View.VIEW_AS_LARGEICONS:
-								_MapSettings.ViewAs = (int) View.VIEW_AS_FILMSTRIP;
-								break;
-							case View.VIEW_AS_FILMSTRIP:
-								_MapSettings.ViewAs = (int) View.VIEW_AS_LIST;
-								break;
-						}
-						ShowThumbPanel();
-						GUIControl.FocusControl(GetID, iControl);
-					}
-					else if (iControl == (int) Controls.CONTROL_VIEW)
-					{
-						// application or file-item was clicked....
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
-						OnMessage(msg);
-						int iAction = message.Param1;
-
-						if (iAction == (int) Action.ActionType.ACTION_SELECT_ITEM)
-						{
-							GUIListItem item = GetSelectedItem();
-							if (!item.IsFolder)
-							{
-								m_iItemSelected = GetSelectedItemNo();
-								//								Log.Write("GUIPrograms: ACTION_SELECT_ITEM writes itemsel: {0}", m_iItemSelected);
-								// non-folder item clicked => always a fileitem!
-								FileItemClicked(item);
-							}
-							else
-							{
-								// folder-item clicked.... 
-								m_iItemSelected = -1;
-								if (item.Label.Equals(ProgramUtils.cBackLabel))
-								{
-									BackItemClicked();
-									UpdateButtons();
-								}
-								else
-								{
-									// application-item or subfolder
-									FolderItemClicked(item);
-									UpdateButtons();
-								}
-							}
-						}
-					}
-					else if (iControl == (int) Controls.CONTROL_BTNSORTBY)
-					{
-						// get next sort method...
-						if (lastApp != null)
-						{
-							lastApp.OnSort(view, true);
-							_MapSettings.SortBy = lastApp.CurrentSortIndex;
-							UpdateButtons();
-						}
-						GUIControl.FocusControl(GetID, iControl);
-					}
-					else if (iControl == (int) Controls.CONTROL_BTNSORTASC)
-					{
-						// toggle asc / desc for current sort method...
-						if (lastApp != null)
-						{
-							lastApp.OnSortToggle(view);
-							_MapSettings.SortAscending = lastApp.CurrentSortIsAscending;
-							UpdateButtons();
-						}
-						GUIControl.FocusControl(GetID, iControl);
-					}
-					else if (iControl == (int) Controls.CONTROL_BTNREFRESH)
-					{
-						if (lastApp != null)
-						{
-							lastApp.Refresh(true);
-							lastFilepath = lastApp.DefaultFilepath();
-							UpdateListControl();
-						}
-					}
-					break;
-			}
-			return base.OnMessage(message);
-		}
-
-		bool RefreshButtonVisible()
-		{
-			if (lastApp == null)
-			{
-				return false;
-			}
-			else
-			{
-				return (lastApp.RefreshButtonVisible() && lastApp.GUIRefreshPossible && lastApp.EnableGUIRefresh);
-			}
-		}
-
-		void FileItemClicked(GUIListItem item)
-		{
-			// file item was clicked => launch it!
-			// string strFile = item.Label;
-			if (lastApp != null)
-			{
-				_MapSettings.LastAppID = lastApp.AppID;
-				lastFilepath = lastApp.DefaultFilepath();
-				//				Log.Write("dw myPrograms: FileItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
-
-				lastApp.LaunchFile(item);
-			}
-		}
-
-		void FolderItemClicked(GUIListItem item)
-		{
-			if (item.MusicTag != null)
-			{
-				if (item.MusicTag is AppItem)
-				{
-					bool bPinOk = true;
-					AppItem candidate = (AppItem) item.MusicTag;
-					if (candidate.Pincode > 0)
-					{
-						bPinOk = candidate.CheckPincode();
-					}
-					if (bPinOk)
-					{
-						lastApp = candidate;
-						_MapSettings.LastAppID = lastApp.AppID;
-						lastFilepath = lastApp.DefaultFilepath();
-						//						Log.Write("dw myPrograms: FolderItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
-
-					}
-				}
-				else if (item.MusicTag is FileItem)
-				{
-					// example: subfolder in directory-cache mode
-					// => set filepath which will be a search criteria for sql / browse
-					if (lastFilepath == "")
-					{
-						// first subfolder
-						lastFilepath = lastApp.FileDirectory + "\\" + item.Label;
-					}
-					else
-					{
-						// subsequent subfolder
-						lastFilepath = lastFilepath + "\\" + item.Label;
-					}
-				}
-				UpdateListControl();
-			}
-			else
-			{
-				// tag is null
-				// example: subfolder in directory-browse mode
-				lastFilepath = item.Path;
-				UpdateListControl();
-			}
-		}
-
-		void BackItemClicked()
-		{
-			if (lastApp != null)
-			{
-				// debug: Log.Write("lastFilepath {0} / lastApp.FileDirectory {1} / lastApp.Title {2}", this.lastFilepath, lastApp.FileDirectory, lastApp.Title);
-				if ((lastFilepath != null) && (lastFilepath != "") && (lastFilepath != lastApp.FileDirectory))
-				{
-					// back item in flielist clicked
-					string strNewPath = Path.GetDirectoryName(lastFilepath);
-					lastFilepath = strNewPath;
-				}
-				else
-				{
-					// back item in application list clicked
-					// go to father item
-					lastApp = apps.GetAppByID(lastApp.FatherID);
-					if (lastApp != null)
-					{
-						_MapSettings.LastAppID = lastApp.AppID;
-						lastFilepath = lastApp.DefaultFilepath();
-						//						Log.Write("dw myPrograms: BackItemClicked 1: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
-					}
-					else
-					{
-						// back to home screen.....
-						_MapSettings.LastAppID = -1;
-						lastFilepath = "";
-						//						Log.Write("dw myPrograms: BackItemClicked 2: lastAppID changes to {0}", _MapSettings.LastAppID);
-					}
-				}
-				UpdateListControl();
-			}
-			else
-			{
-				// from root.... go back to main menu
-				GUIWindowManager.ShowPreviousWindow();
-			}
-
-
-		}
-
-
-		void UpdateButtons()
-		{
-			if (RefreshButtonVisible())
-			{
-				GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BTNREFRESH);
-			}
-			else
-			{
-				GUIControl.HideControl(GetID, (int) Controls.CONTROL_BTNREFRESH);
-			}
-
-			// display apptitle if available.....
-			if (lastApp != null)
-			{
-				GUIControl.HideControl(GetID, (int) Controls.CONTROL_LBLMYPROGRAMS);
-				GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LBLCURAPP, lastApp.Title);
-				GUIControl.ShowControl(GetID, (int) Controls.CONTROL_LBLCURAPP);
-				GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BTNSORTBY);
-				GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BTNSORTASC);
-			}
-			else
-			{
-				GUIControl.HideControl(GetID, (int) Controls.CONTROL_LBLCURAPP);
-				GUIControl.ShowControl(GetID, (int) Controls.CONTROL_LBLMYPROGRAMS);
-				GUIControl.HideControl(GetID, (int) Controls.CONTROL_BTNSORTBY);
-				GUIControl.HideControl(GetID, (int) Controls.CONTROL_BTNSORTASC);
-			}
-
-			string strLine = "";
-			switch ((View) _MapSettings.ViewAs)
-			{
-				case View.VIEW_AS_LIST:
-					strLine = GUILocalizeStrings.Get(101);
-					break;
-				case View.VIEW_AS_ICONS:
-					strLine = GUILocalizeStrings.Get(100);
-					break;
-				case View.VIEW_AS_LARGEICONS:
-					strLine = GUILocalizeStrings.Get(417);
-					break;
-				case View.VIEW_AS_FILMSTRIP:
-					strLine = GUILocalizeStrings.Get(733);
-					break;
-			}
-			GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEWASICONS, strLine);
-
-			if (lastApp != null)
-			{
-				GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNSORTBY, lastApp.CurrentSortTitle());
-				if (lastApp.CurrentSortIsAscending)
-					GUIControl.DeSelectControl(GetID, (int) Controls.CONTROL_BTNSORTASC);
-				else
-					GUIControl.SelectControl(GetID, (int) Controls.CONTROL_BTNSORTASC);
-			}
-		}
-
-		void ShowThumbPanel()
-		{
-			int iItem = GetSelectedItemNo();
-			GUIFacadeControl pControl = (GUIFacadeControl) GetControl((int) Controls.CONTROL_VIEW);
-			if (_MapSettings.ViewAs == (int) View.VIEW_AS_LARGEICONS)
-			{
-				pControl.View = GUIFacadeControl.ViewMode.LargeIcons;
-			}
-			else if (_MapSettings.ViewAs == (int) View.VIEW_AS_ICONS)
-			{
-				pControl.View = GUIFacadeControl.ViewMode.SmallIcons;
-			}
-			else if (_MapSettings.ViewAs == (int) View.VIEW_AS_LIST)
-			{
-				pControl.View = GUIFacadeControl.ViewMode.List;
-			}
-			else if (_MapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
-			{
-				pControl.View = GUIFacadeControl.ViewMode.Filmstrip;
-			}
-			if (iItem > -1)
-			{
-				GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_VIEW, iItem);
-			}
-			UpdateButtons();
-		}
-
-		int GetCurrentFatherID()
-		{
-			if (lastApp != null)
-			{
-				return lastApp.AppID;
-			}
-			else
-			{
-				return -1; // root
-			}
-		}
-
-
-		bool thereAreAppsToDisplay()
-		{
-			if (lastApp == null)
-			{
-				return true; // root has apps
-			}
-			else
-			{
-				return lastApp.SubItemsAllowed(); // grouper items for example
-			}
-		}
-
-		bool thereAreFilesOrLinksToDisplay()
-		{
-			return (lastApp != null); // all apps can have files except the root
-		}
-
-		bool isBackButtonNecessary()
-		{
-			return (lastApp != null); // always show back button except for root
-		}
-
-		void UpdateListControl()
-		{
-			int TotalItems = 0;
-			GUIControl.ClearControl(GetID, (int) Controls.CONTROL_VIEW);
-			if (isBackButtonNecessary())
-			{
-				ProgramUtils.AddBackButton();
-			}
-
-			if (thereAreAppsToDisplay())
-			{
-				TotalItems = TotalItems + DisplayApps();
-			}
-
-			if (thereAreFilesOrLinksToDisplay())
-			{
-				TotalItems = TotalItems + DisplayFiles();
-			}
-
-			if (lastApp != null)
-			{
-				GUIFacadeControl pControl = (GUIFacadeControl) GetControl((int) Controls.CONTROL_VIEW);
-				lastApp.OnSort(pControl, false);
-			}
-
-
-			string strObjects = String.Format("{0} {1}", TotalItems, GUILocalizeStrings.Get(632));
-			GUIPropertyManager.SetProperty("#itemcount", strObjects);
-
-			if (m_iItemSelected >= 0)
-			{
-				//				int nIndex = IndexOfLabelText(this.m_iItemSelectedLabel);
-				//				if ((nIndex >= 0) && (nIndex <= pControl.ListView.Count - 1))
-				//				{
-				//				}
-				GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_VIEW, m_iItemSelected);
-			}
-		}
-
-
-		int DisplayFiles()
-		{
-			int Total = 0;
-			if (lastApp == null)
-			{
-				return Total;
-			}
-			Total = lastApp.DisplayFiles(this.lastFilepath);
-			return (Total);
-		}
-
-		int DisplayApps()
-		{
-			int Total = 0;
-			foreach (AppItem app in apps.appsOfFatherID(GetCurrentFatherID()))
-			{
-				if (app.Enabled)
-				{
-					Total = Total + 1;
-					GUIListItem gli = new GUIListItem(app.Title);
-					if (app.Imagefile != "")
-					{
-						gli.ThumbnailImage = app.Imagefile;
-						gli.IconImageBig = app.Imagefile;
-						gli.IconImage = app.Imagefile;
-					}
-					else
-					{
-						gli.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
-						gli.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
-						gli.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderNF.png";
-					}
-					gli.MusicTag = app;
-					gli.IsFolder = true; // pseudo-folder....
-					gli.OnItemSelected += new GUIListItem.ItemSelectedHandler(OnItemSelected);
-					GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_VIEW, gli);
-				}
-			}
-			return (Total);
-		}
-
-
-		private void OnItemSelected(GUIListItem item, GUIControl parent)
-		{
-			GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-			if (filmstrip == null) return;
-			string thumbName = "";
-			if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png")
-				&& (item.ThumbnailImage != ""))
-			{
-				// only show big thumb if there is really one....
-				thumbName = item.ThumbnailImage;
-			}
-			filmstrip.InfoImageFileName = thumbName;
-		}
-
-		private GUIListItem GetSelectedItem()
-		{
-			GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int) Controls.CONTROL_VIEW);
-			return item;
-		}
-
-		int GetSelectedItemNo()
-		{
-			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, (int) Controls.CONTROL_VIEW, 0, 0, null);
-			OnMessage(msg);
-			int iItem = msg.Param1;
-			return iItem;
-		}
-	}
+  /// <summary>
+  /// The GUIPrograms plugin is used to list a collection of arbitrary files
+  /// and use them as arguments when launching external applications.
+  /// </summary>
+  /// 
+  public class GUIPrograms : GUIWindow
+  {
+
+    #region Serialisation
+
+    [Serializable]
+    public class MapSettings
+    {
+      protected int _SortBy;
+      protected int _ViewAs;
+      protected bool _SortAscending;
+      protected int _LastAppID;
+      protected int _LastFileID;
+
+      public MapSettings()
+      {
+        _SortBy = 0; //name
+        _ViewAs = 0; //list
+        _SortAscending = true;
+        _LastAppID = -1;
+        _LastFileID = -1;
+      }
+
+
+      [XmlElement("SortBy")]
+      public int SortBy
+      {
+        get { return _SortBy; }
+        set { _SortBy = value; }
+      }
+
+      [XmlElement("ViewAs")]
+      public int ViewAs
+      {
+        get { return _ViewAs; }
+        set { _ViewAs = value; }
+      }
+
+      [XmlElement("SortAscending")]
+      public bool SortAscending
+      {
+        get { return _SortAscending; }
+        set { _SortAscending = value; }
+      }
+
+      [XmlElement("LastAppID")]
+      public int LastAppID
+      {
+        get { return _LastAppID; }
+        set { _LastAppID = value; }
+      }
+
+      [XmlElement("LastFileID")]
+      public int LastFileID
+      {
+        get { return _LastFileID; }
+        set { _LastFileID = value; }
+      }
+
+      public string ViewAsText
+      {
+        get { return GetViewAsText(); }
+      }
+
+      public void SwitchToNextView()
+      {
+        switch ((View) ViewAs)
+        {
+          case View.VIEW_AS_LIST:
+            ViewAs = (int) View.VIEW_AS_ICONS;
+            break;
+          case View.VIEW_AS_ICONS:
+            ViewAs = (int) View.VIEW_AS_LARGEICONS;
+            break;
+          case View.VIEW_AS_LARGEICONS:
+            ViewAs = (int) View.VIEW_AS_FILMSTRIP;
+            break;
+          case View.VIEW_AS_FILMSTRIP:
+            ViewAs = (int) View.VIEW_AS_LIST;
+            break;
+        }
+      }
+
+      string GetViewAsText()
+      {
+        string result = "";
+        switch ((View) ViewAs)
+        {
+          case View.VIEW_AS_LIST:
+            result = GUILocalizeStrings.Get(101);
+            break;
+          case View.VIEW_AS_ICONS:
+            result = GUILocalizeStrings.Get(100);
+            break;
+          case View.VIEW_AS_LARGEICONS:
+            result = GUILocalizeStrings.Get(417);
+            break;
+          case View.VIEW_AS_FILMSTRIP:
+            result = GUILocalizeStrings.Get(733);
+            break;
+        }
+        return result;
+      }
+    }
+
+
+
+    void SaveSettings()
+    {
+      using (Xml xmlwriter = new Xml("MediaPortal.xml"))
+      {
+        switch ((View) mapSettings.ViewAs)
+        {
+          case View.VIEW_AS_LIST:
+            xmlwriter.SetValue("myprograms", "viewby", "list");
+            break;
+          case View.VIEW_AS_ICONS:
+            xmlwriter.SetValue("myprograms", "viewby", "icons");
+            break;
+          case View.VIEW_AS_LARGEICONS:
+            xmlwriter.SetValue("myprograms", "viewby", "largeicons");
+            break;
+          case View.VIEW_AS_FILMSTRIP:
+            xmlwriter.SetValue("myprograms", "viewby", "filmstrip");
+            break;
+        }
+        xmlwriter.SetValue("myprograms", "lastAppID", mapSettings.LastAppID.ToString());
+        xmlwriter.SetValue("myprograms", "sortby", mapSettings.SortBy);
+        // avoid bool conversion...... don't wanna know why it doesn't work! :-(
+        if (mapSettings.SortAscending)
+        {
+          xmlwriter.SetValue("myprograms", "sortasc", "yes");
+        }
+        else
+        {
+          xmlwriter.SetValue("myprograms", "sortasc", "no");
+        }
+        //Log.Write("dw myPrograms: saving xmlsettings lastappid {0}", _MapSettings.LastAppID);
+      }
+    }
+
+    void LoadSettings()
+    {
+      using (Xml xmlreader = new Xml("MediaPortal.xml"))
+      {
+        string curText = "";
+        curText = (string) xmlreader.GetValue("myprograms", "viewby");
+        if (curText != null)
+        {
+          if (curText == "list") mapSettings.ViewAs = (int) View.VIEW_AS_LIST;
+          else if (curText == "icons") mapSettings.ViewAs = (int) View.VIEW_AS_ICONS;
+          else if (curText == "largeicons") mapSettings.ViewAs = (int) View.VIEW_AS_LARGEICONS;
+          else if (curText == "filmstrip") mapSettings.ViewAs = (int) View.VIEW_AS_FILMSTRIP;
+        }
+
+        mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
+        mapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
+        curText = (string) xmlreader.GetValue("myprograms", "sortasc");
+        if (curText != null)
+        {
+          mapSettings.SortAscending = (curText.ToLower() == "yes");
+        }
+        else
+        {
+          mapSettings.SortAscending = true;
+        }
+
+      }
+    }
+
+
+    void LoadLastAppIDFromSettings()
+    {
+      using (Xml xmlreader = new Xml("MediaPortal.xml"))
+      {
+        mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
+        mapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
+        mapSettings.SortAscending = xmlreader.GetValueAsBool("myprograms", "sortasc", true);
+      }
+    }
+
+    void LoadFolderSettings(string directoryName)
+    {
+      if (directoryName == "") directoryName = "root";
+      object o;
+      FolderSettings.GetFolderSetting(directoryName, "Programs", typeof (MapSettings), out o);
+      if (o != null) mapSettings = o as MapSettings;
+      if (mapSettings == null) mapSettings = new MapSettings();
+    }
+
+    void SaveFolderSettings(string directoryName)
+    {
+      if (directoryName == "") directoryName = "root";
+      FolderSettings.AddFolderSetting(directoryName, "Programs", typeof (MapSettings), mapSettings);
+    }
+
+    #endregion
+
+    #region SkinControls
+
+    enum View
+    {
+      VIEW_AS_LIST = 0,
+      VIEW_AS_ICONS = 1,
+      VIEW_AS_LARGEICONS = 2,
+      VIEW_AS_FILMSTRIP = 3,
+    }
+
+    // Labels
+    [SkinControlAttribute(9)] protected GUILabelControl lblMyPrograms = null;
+    [SkinControlAttribute(10)] protected GUILabelControl lblCurApp = null;
+
+    // Buttons
+    [SkinControlAttribute(2)] protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)] protected GUIButtonControl btnRefresh = null;
+    [SkinControlAttribute(4)] protected GUIButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)] protected GUIToggleButtonControl btnSortAsc = null;
+
+    // FacadeView
+    [SkinControlAttribute(7)] protected GUIFacadeControl facadeView = null;
+
+    #endregion
+
+    #region Constructor / Destructor
+
+    public GUIPrograms()
+    {
+      GetID = (int) Window.WINDOW_FILES;
+      apps = ProgramDatabase.AppList;
+      LoadSettings();
+    }
+
+    ~GUIPrograms()
+    {
+      SaveSettings();
+      FolderSettings.DeleteFolderSetting("root", "Programs");
+    }
+
+    #endregion
+
+    #region Init / DeInit
+
+    void DeInitMyPrograms()
+    {
+      SaveSettings();
+      // make sure the selected index wasn't reseted already
+      // and save the index only if it's non-zero
+      // otherwise: DXDevice.Reset clears selection 
+      int itemIndex = GetSelectedItemNo();
+      if (itemIndex > 0)
+      {
+        selectedItemIndex = GetSelectedItemNo();
+      }
+    }
+
+    void InitMyPrograms()
+    {
+      LoadFolderSettings("");
+      LoadLastAppIDFromSettings(); // hacky load back the last app id, otherwise this can get lost from dx resets....
+      lastApp = apps.GetAppByID(mapSettings.LastAppID);
+      if (lastApp != null)
+      {
+        lastFilepath = lastApp.DefaultFilepath();
+        lastApp.CurrentSortIndex = mapSettings.SortBy;
+        lastApp.CurrentSortIsAscending = mapSettings.SortAscending;
+      }
+      else
+      {
+        lastFilepath = "";
+      }
+      UpdateListControl();
+      ShowThumbPanel();
+      slideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
+    }
+
+    #endregion
+
+    #region Base & Content Variables
+
+    static Applist apps = ProgramDatabase.AppList;
+    MapSettings mapSettings = new MapSettings();
+    AppItem lastApp = null;
+    string lastFilepath = "";
+    int selectedItemIndex = -1;
+    int slideSpeed = 3; // speed in seconds between two slides
+    int slideTime = 0;
+
+    #endregion
+
+    #region Properties / Helper Routines
+
+    GUIListItem GetSelectedItem()
+    {
+      return facadeView.SelectedListItem;
+    }
+
+    int GetSelectedItemNo()
+    {
+      return facadeView.SelectedListItemIndex;
+    }
+
+    int GetCurrentFatherID()
+    {
+      if (lastApp != null)
+      {
+        return lastApp.AppID;
+      }
+      else
+      {
+        return -1; // root
+      }
+    }
+
+    #endregion
+
+    #region Overrides
+
+    public override bool Init()
+    {
+      return Load(GUIGraphicsContext.Skin + @"\myprograms.xml");
+    }
+
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      InitMyPrograms();
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      DeInitMyPrograms();
+      base.OnPageDestroy(newWindowId);
+    }
+
+    public override void Render(float timePassed)
+    {
+      RenderFilmStrip();
+      base.Render(timePassed);
+    }
+
+    void OnInfo()
+    {
+      // <F3> keypress
+      if (null != lastApp)
+      {
+        selectedItemIndex = GetSelectedItemNo();
+        GUIListItem item = GetSelectedItem();
+        if (!item.Label.Equals(ProgramUtils.cBackLabel) && (!item.IsFolder))
+        {
+          // show file info but only if the selected item is not the back button
+          lastApp.OnInfo(item);
+          UpdateListControl();
+        }
+      }
+    }
+
+
+    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    {
+      base.OnClicked(controlId, control, actionType);
+      if (control == btnViewAs)
+      {
+        mapSettings.SwitchToNextView();
+        ShowThumbPanel();
+        GUIControl.FocusControl(GetID, control.GetID);
+      }
+      else if (control == btnSortBy)
+      {
+        // get next sort method...
+        if (lastApp != null)
+        {
+          lastApp.OnSort(facadeView, true);
+          mapSettings.SortBy = lastApp.CurrentSortIndex;
+          UpdateButtons();
+        }
+        GUIControl.FocusControl(GetID, control.GetID);
+      }
+      else if (control == btnSortAsc)
+      {
+        // toggle asc / desc for current sort method...
+        if (lastApp != null)
+        {
+          lastApp.OnSortToggle(facadeView);
+          mapSettings.SortAscending = lastApp.CurrentSortIsAscending;
+          UpdateButtons();
+        }
+        GUIControl.FocusControl(GetID, control.GetID);
+      }
+      else if (control == btnRefresh)
+      {
+        if (lastApp != null)
+        {
+          lastApp.Refresh(true);
+          lastFilepath = lastApp.DefaultFilepath();
+          UpdateListControl();
+        }
+      }
+      else if (control == facadeView)
+      {
+        // application or file-item was clicked....
+//        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeView.GetID, 0, 0, null);
+//        OnMessage(msg);
+        if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
+        {
+          OnClick();
+        }
+      }
+    }
+
+
+    public override void OnAction(Action action)
+    {
+      if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
+      {
+        // <U> keypress
+        BackItemClicked();
+        UpdateButtons();
+        return;
+      }
+
+      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      {
+        // <ESC> keypress in some myProgram Menu => jump to main menu
+        SaveFolderSettings("");
+        GUIWindowManager.ShowPreviousWindow();
+        return;
+      }
+
+      if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
+      {
+        OnInfo();
+        return;
+      }
+      base.OnAction(action);
+    }
+
+    #endregion
+
+    #region Display
+
+    void UpdateButtons()
+    {
+      btnRefresh.IsVisible = RefreshButtonVisible();
+
+      // display apptitle if available.....
+      if (lastApp != null)
+      {
+        lblMyPrograms.IsVisible = false;
+        lblCurApp.Label = lastApp.Title;
+        lblCurApp.IsVisible = true;
+        btnSortBy.IsVisible = true;
+        btnSortAsc.IsVisible = true;
+      }
+      else
+      {
+        lblCurApp.IsVisible = false;
+        lblMyPrograms.IsVisible = true;
+        btnSortBy.IsVisible = false;
+        btnSortAsc.IsVisible = false;
+      }
+
+      btnViewAs.Label = mapSettings.ViewAsText;
+
+      if (lastApp != null)
+      {
+        btnSortBy.Label = lastApp.CurrentSortTitle();
+        btnSortAsc.Selected = lastApp.CurrentSortIsAscending;
+      }
+    }
+
+    void ShowThumbPanel()
+    {
+      int itemIndex = GetSelectedItemNo();
+      if (mapSettings.ViewAs == (int) View.VIEW_AS_LARGEICONS)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+      }
+      else if (mapSettings.ViewAs == (int) View.VIEW_AS_ICONS)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+      }
+      else if (mapSettings.ViewAs == (int) View.VIEW_AS_LIST)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.List;
+      }
+      else if (mapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
+      }
+      if (itemIndex > -1)
+      {
+        GUIControl.SelectItemControl(GetID,facadeView.GetID,itemIndex);
+      }
+      UpdateButtons();
+    }
+
+    void RenderFilmStrip()
+    {
+      // in filmstrip mode, start a slideshow if more than one
+      // pic is available for the selected item
+      if (facadeView == null) return;
+      if (facadeView.FilmstripView == null) return;
+      if (facadeView.FilmstripView.InfoImageFileName == "") return;
+      if (mapSettings == null) return;
+      if (mapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
+      {
+        // does the thumb needs replacing??
+        int timeElapsed = ((int) (DateTime.Now.Ticks/10000)) - slideTime;
+        if (timeElapsed >= (slideSpeed*1000))
+        {
+          RefreshFilmstripThumb(facadeView.FilmstripView); // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
+        }
+      }
+    }
+
+    void RefreshFilmstripThumb(GUIFilmstripControl pControl)
+    {
+      GUIListItem item = GetSelectedItem();
+      // some preconditions...
+      if (lastApp == null) return;
+      if (item.MusicTag == null) return;
+      if (!(item.MusicTag is FileItem)) return;
+      FileItem curFile = item.MusicTag as FileItem;
+      // ok... let's get a filename
+      string thumbFilename = lastApp.GetCurThumb(curFile);
+      if (File.Exists(thumbFilename))
+      {
+        pControl.InfoImageFileName = thumbFilename;
+      }
+      lastApp.NextThumb(); // try to find a next thumbnail
+      slideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
+    }
+
+    bool RefreshButtonVisible()
+    {
+      if (lastApp == null)
+      {
+        return false;
+      }
+      else
+      {
+        return (lastApp.RefreshButtonVisible() && lastApp.GUIRefreshPossible && lastApp.EnableGUIRefresh);
+      }
+    }
+
+    bool thereAreAppsToDisplay()
+    {
+      if (lastApp == null)
+      {
+        return true; // root has apps
+      }
+      else
+      {
+        return lastApp.SubItemsAllowed(); // grouper items for example
+      }
+    }
+
+    bool thereAreFilesOrLinksToDisplay()
+    {
+      return (lastApp != null); // all apps can have files except the root
+    }
+
+    bool isBackButtonNecessary()
+    {
+      return (lastApp != null); // always show back button except for root
+    }
+
+    void UpdateListControl()
+    {
+      int TotalItems = 0;
+      GUIControl.ClearControl(GetID, facadeView.GetID);
+      if (isBackButtonNecessary())
+      {
+        ProgramUtils.AddBackButton(facadeView);
+      }
+
+      if (thereAreAppsToDisplay())
+      {
+        TotalItems = TotalItems + DisplayApps();
+      }
+
+      if (thereAreFilesOrLinksToDisplay())
+      {
+        TotalItems = TotalItems + DisplayFiles();
+      }
+
+      if (lastApp != null)
+      {
+        lastApp.OnSort(facadeView, false);
+      }
+
+
+      string itemCountText = String.Format("{0} {1}", TotalItems, GUILocalizeStrings.Get(632));
+      GUIPropertyManager.SetProperty("#itemcount", itemCountText);
+
+      if (selectedItemIndex >= 0)
+      {
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+      }
+    }
+
+
+    int DisplayFiles()
+    {
+      int totalFiles = 0;
+      if (lastApp == null)
+      {
+        return totalFiles;
+      }
+      totalFiles = lastApp.DisplayFiles(this.lastFilepath, facadeView);
+      return (totalFiles);
+    }
+
+    int DisplayApps()
+    {
+      int totalApps = 0;
+      foreach (AppItem app in apps.appsOfFatherID(GetCurrentFatherID()))
+      {
+        if (app.Enabled)
+        {
+          totalApps = totalApps + 1;
+          GUIListItem item = new GUIListItem(app.Title);
+          if (app.Imagefile != "")
+          {
+            item.ThumbnailImage = app.Imagefile;
+            item.IconImageBig = app.Imagefile;
+            item.IconImage = app.Imagefile;
+          }
+          else
+          {
+            item.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
+            item.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
+            item.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderNF.png";
+          }
+          item.MusicTag = app;
+          item.IsFolder = true; // pseudo-folder....
+          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(OnItemSelected);
+          facadeView.Add(item);
+        }
+      }
+      return (totalApps);
+    }
+
+    #endregion
+
+    #region EventHandlers
+
+    void FileItemClicked(GUIListItem item)
+    {
+      // file item was clicked => launch it!
+      if (lastApp != null)
+      {
+        mapSettings.LastAppID = lastApp.AppID;
+        lastFilepath = lastApp.DefaultFilepath();
+        //        Log.Write("dw myPrograms: FileItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+
+        lastApp.LaunchFile(item);
+      }
+    }
+
+    void FolderItemClicked(GUIListItem item)
+    {
+      if (item.MusicTag != null)
+      {
+        if (item.MusicTag is AppItem)
+        {
+          bool bPinOk = true;
+          AppItem candidate = (AppItem) item.MusicTag;
+          if (candidate.Pincode > 0)
+          {
+            bPinOk = candidate.CheckPincode();
+          }
+          if (bPinOk)
+          {
+            lastApp = candidate;
+            mapSettings.LastAppID = lastApp.AppID;
+            lastFilepath = lastApp.DefaultFilepath();
+            //            Log.Write("dw myPrograms: FolderItemClicked: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+
+          }
+        }
+        else if (item.MusicTag is FileItem)
+        {
+          // example: subfolder in directory-cache mode
+          // => set filepath which will be a search criteria for sql / browse
+          if (lastFilepath == "")
+          {
+            // first subfolder
+            lastFilepath = lastApp.FileDirectory + "\\" + item.Label;
+          }
+          else
+          {
+            // subsequent subfolder
+            lastFilepath = lastFilepath + "\\" + item.Label;
+          }
+        }
+        UpdateListControl();
+      }
+      else
+      {
+        // tag is null
+        // example: subfolder in directory-browse mode
+        lastFilepath = item.Path;
+        UpdateListControl();
+      }
+    }
+
+    void BackItemClicked()
+    {
+      if (lastApp != null)
+      {
+        // debug: Log.Write("lastFilepath {0} / lastApp.FileDirectory {1} / lastApp.Title {2}", this.lastFilepath, lastApp.FileDirectory, lastApp.Title);
+        if ((lastFilepath != null) && (lastFilepath != "") && (lastFilepath != lastApp.FileDirectory))
+        {
+          // back item in flielist clicked
+          string newFilepath = Path.GetDirectoryName(lastFilepath);
+          lastFilepath = newFilepath;
+        }
+        else
+        {
+          // back item in application list clicked
+          // go to father item
+          lastApp = apps.GetAppByID(lastApp.FatherID);
+          if (lastApp != null)
+          {
+            mapSettings.LastAppID = lastApp.AppID;
+            lastFilepath = lastApp.DefaultFilepath();
+            //            Log.Write("dw myPrograms: BackItemClicked 1: lastAppID changes to {0} {1}", _MapSettings.LastAppID, lastApp.Title);
+          }
+          else
+          {
+            // back to home screen.....
+            mapSettings.LastAppID = -1;
+            lastFilepath = "";
+            //            Log.Write("dw myPrograms: BackItemClicked 2: lastAppID changes to {0}", _MapSettings.LastAppID);
+          }
+        }
+        UpdateListControl();
+      }
+      else
+      {
+        // from root.... go back to main menu
+        GUIWindowManager.ShowPreviousWindow();
+      }
+
+
+    }
+
+    void OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
+      if (filmstrip == null) return;
+      string thumbName = "";
+      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png")
+        && (item.ThumbnailImage != ""))
+      {
+        // only show big thumb if there is really one....
+        thumbName = item.ThumbnailImage;
+      }
+      filmstrip.InfoImageFileName = thumbName;
+    }
+
+
+    void OnClick()
+    {
+      GUIListItem item = GetSelectedItem();
+      if (!item.IsFolder)
+      {
+        selectedItemIndex = GetSelectedItemNo();
+        // non-folder item clicked => always a fileitem!
+        FileItemClicked(item);
+      }
+      else
+      {
+        // folder-item clicked.... 
+        selectedItemIndex = -1;
+        if (item.Label.Equals(ProgramUtils.cBackLabel))
+        {
+          BackItemClicked();
+          UpdateButtons();
+        }
+        else
+        {
+          // application-item or subfolder
+          FolderItemClicked(item);
+          UpdateButtons();
+        }
+      }
+    }
+
+    #endregion
+  }
 }

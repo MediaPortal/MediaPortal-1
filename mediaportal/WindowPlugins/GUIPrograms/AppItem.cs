@@ -322,7 +322,7 @@ namespace ProgramsDatabase
 			return ""; // override this if the appitem can have subfolders
 		}
 
-		public virtual int DisplayFiles(string Filepath)
+		public virtual int DisplayFiles(string Filepath, GUIFacadeControl facadeView)
 		{
 			int Total = 0;
 			if (Filepath != mLastFilepath)
@@ -330,13 +330,13 @@ namespace ProgramsDatabase
 				Files.Load(this.AppID, Filepath);
 				Filelinks.Load(this.AppID, Filepath);
 			}
-			Total = Total + DisplayArrayList(Filepath, this.Files);
-			Total = Total + DisplayArrayList(Filepath, this.Filelinks);
+			Total = Total + DisplayArrayList(Filepath, this.Files, facadeView);
+			Total = Total + DisplayArrayList(Filepath, this.Filelinks, facadeView);
 			mLastFilepath = Filepath;
 			return Total;
 		}
 
-		protected int DisplayArrayList(string Filepath, ArrayList dbItems)
+		protected int DisplayArrayList(string Filepath, ArrayList dbItems, GUIFacadeControl facadeView)
 		{
 			int Total = 0;
 			foreach(FileItem curFile in dbItems)
@@ -347,7 +347,7 @@ namespace ProgramsDatabase
 				gli.IsFolder = curFile.IsFolder; 
 				gli.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
 				gli.OnItemSelected +=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnItemSelected);
-				GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_VIEW,gli);
+        facadeView.Add(gli);
 			}
 			return Total;
 		}
