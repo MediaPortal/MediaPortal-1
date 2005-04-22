@@ -118,7 +118,7 @@
 <!--    general MCE card						-->
 <!--    general MPEG2 card						-->
 <!--                                                                                  -->
-<!-- version : 1.0.0.92                                                               -->
+<!-- version : 1.0.0.93                                                               -->
 <!-- changed : 22-April-2005 by DMAN                                                  -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
@@ -883,6 +883,44 @@
   </capturecard>
   
    <capturecard commercialname="Dvico FusionHDTV DVB-T Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
+        <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
+        <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+   <capturecard commercialname="Dvico FusionHDTV DVB-T (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db0018ac&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
+        <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
+        <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+   <capturecard commercialname="Dvico FusionHDTV DVB-T (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db0018ac&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="0" audio="" mpeg2=""></interface>
