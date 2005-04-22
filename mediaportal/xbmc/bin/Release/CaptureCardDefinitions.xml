@@ -39,10 +39,12 @@
 <!--    Conexant DVB-T							-->
 <!--    Diamond XtremeTV PVR550					-->
 <!--    DNTV Live DVB-T							-->
-<!--    Dvico Fusion HDTV Plus					-->
-<!--    Dvico Fusion HDTV Plus (Analog)			-->
-<!--    Dvico Fusion HDTV Lite					-->
-<!--    Dvico Fusion HDTV USB2					-->
+<!--    Dvico FusionHDTV DVB-S					-->
+<!--    Dvico FusionHDTV DVB-T					-->
+<!--    Dvico FusionHDTV DVB-T Plus					-->
+<!--    Dvico FusionHDTV DVB-T Plus (Analog)			-->
+<!--    Dvico FusionHDTV DVB-T Lite					-->
+<!--    Dvico FusionHDTV DVB-T USB2					-->
 <!--    Empire PCI DVB-T   						-->
 <!--    Emuzed Angel PCI MPEG					-->
 <!--    Emuzed Angel USB MPEG					-->
@@ -116,8 +118,8 @@
 <!--    general MCE card						-->
 <!--    general MPEG2 card						-->
 <!--                                                                                  -->
-<!-- version : 1.0.0.91                                                               -->
-<!-- changed : 21-April-2005 by DMAN                                                  -->
+<!-- version : 1.0.0.92                                                               -->
+<!-- changed : 22-April-2005 by DMAN                                                  -->
 <!-- 13-jan :																		  -->
 <!--   MP now supports multiple definitons for 1 card (needed for dual tuner cards)   -->
 <!--   now the combination of capturename and devid should be unique				  -->
@@ -779,7 +781,7 @@
     </tv> 
   </capturecard>
    
-  <capturecard commercialname="Dvico Fusion HDTV Plus" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_05">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -795,7 +797,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico Fusion HDTV Plus" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db1018ac&amp;rev_05">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T Plus" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db1018ac&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -811,7 +813,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico Fusion HDTV" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_03">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db0018ac&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
@@ -880,7 +882,7 @@
     </tv>
   </capturecard>
   
-   <capturecard commercialname="Dvico Fusion HDTV Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
+   <capturecard commercialname="Dvico FusionHDTV DVB-T Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="0" audio="" mpeg2=""></interface>
@@ -899,26 +901,7 @@
     </tv>
   </capturecard>
 
-   <capturecard commercialname="Dvico Fusion HDTV Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db0018ac&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
-        <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-  
-  <capturecard commercialname="Dvico Fusion HDTV Lite" capturename="FusionHDTV, Transport Stream Capture" devid="ven_109e&amp;dev_0878&amp;subsys_db1018ac&amp;rev_11">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T Lite" capturename="FusionHDTV, Transport Stream Capture" devid="ven_109e&amp;dev_0878&amp;subsys_db1018ac&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -1062,7 +1045,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico Fusion HDTV USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db10">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db10">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
