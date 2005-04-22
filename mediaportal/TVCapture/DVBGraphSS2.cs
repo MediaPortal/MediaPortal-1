@@ -237,7 +237,7 @@ namespace MediaPortal.TV.Recording
 		DVBChannel						m_currentTuningObject;
 		DVBEPG							m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
-		ArrayList						m_audioPidList=new ArrayList();
+		int								m_selectedAudioPid=0;
 		//
 		
 		//
@@ -1483,6 +1483,8 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 						return;
 					}
+					else
+						m_selectedAudioPid=ch.AudioPid;
 				}
 
 				m_StartTime=DateTime.Now;
@@ -2426,7 +2428,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public void SetAudioLanguage(int audioPid)
 		{
-			if(audioPid!=m_currentChannel.AudioPid)
+			if(audioPid!=m_selectedAudioPid)
 			{
 				int hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,audioPid,m_currentChannel.VideoPid);
 				if(hr!=0)
@@ -2434,27 +2436,37 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 					return;
 				}
+				else
+					m_selectedAudioPid=audioPid;
 			}
 		}
 		public ArrayList GetAudioLanguage()
 		{
 			DVBSections.AudioLanguage al;
-			m_audioPidList.Clear();
+			ArrayList alList=new ArrayList();
+
+			if(m_currentChannel.AudioPid!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=m_currentChannel.AudioPid;
+				al.AudioLanguageCode=m_currentChannel.AudioLanguage;
+				alList.Add(al);
+			}
 			if(m_currentChannel.Audio1!=0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
 				al.AudioPid=m_currentChannel.Audio1;
 				al.AudioLanguageCode=m_currentChannel.AudioLanguage1;
-				m_audioPidList.Add(al);
+				alList.Add(al);
 			}
 			if(m_currentChannel.Audio2!=0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
 				al.AudioPid=m_currentChannel.Audio2;
 				al.AudioLanguageCode=m_currentChannel.AudioLanguage2;
-				m_audioPidList.Add(al);
+				alList.Add(al);
 			}
-			return m_audioPidList;
+			return alList;
 		}
 	}// class
 }// namespace

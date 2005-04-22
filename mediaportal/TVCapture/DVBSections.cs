@@ -450,6 +450,12 @@ namespace MediaPortal.TV.Recording
 		public string GetLanguageFromCode(string code)
 		{
 			int n=0;
+			if(code==null)
+				return "Unknown";
+			if(code=="")
+				return "Unknown";
+			if(code.Length>3)
+				return code;
 			foreach(string langCode in m_langCodes)
 			{
 				if(langCode.Equals(code))
