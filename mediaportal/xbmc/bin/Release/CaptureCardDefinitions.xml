@@ -41,10 +41,10 @@
 <!--    DNTV Live DVB-T							-->
 <!--    Dvico FusionHDTV DVB-S					-->
 <!--    Dvico FusionHDTV DVB-T					-->
-<!--    Dvico FusionHDTV DVB-T Plus					-->
-<!--    Dvico FusionHDTV DVB-T Plus (Analog)			-->
-<!--    Dvico FusionHDTV DVB-T Lite					-->
-<!--    Dvico FusionHDTV DVB-T USB2					-->
+<!--    Dvico FusionHDTV DVB-T Plus				-->
+<!--    Dvico FusionHDTV DVB-T Plus (Analog)	-->
+<!--    Dvico FusionHDTV DVB-T Lite				-->
+<!--    Dvico FusionHDTV DVB-T USB2				-->
 <!--    Empire PCI DVB-T   						-->
 <!--    Emuzed Angel PCI MPEG					-->
 <!--    Emuzed Angel USB MPEG					-->
@@ -108,10 +108,10 @@
 <!--    V-Stream Xpert DTV						-->
 <!--    Vstream Xpert TV PVR 883				-->
 <!--    WinFast PVR 2000						-->
-<!--    XFX NVTV Mpeg2 Dual TV-Tuner				-->
+<!--    XFX NVTV Mpeg2 Dual TV-Tuner			-->
 <!--    YUAN DVB PG300							-->
 <!--    YUAN DVB PG700							-->
-<!--    YUAN PVR BMP837 USB2.0 MPEG2 Capture Box	-->
+<!--    YUAN PVR BMP837 USB2.0 MPEG2 Capture Box-->
 <!--    YUAN PVR MiniPCI MPC622					-->
 <!--    YUAN PVR PG600 Falcon 2					-->
 <!--    general s/w card						-->
@@ -393,7 +393,7 @@
         <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -415,7 +415,7 @@
         <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -433,8 +433,8 @@
         <filter cat="capture"         name="FireDTV BDA Receiver DVBT"       checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -449,8 +449,8 @@
         <filter cat="capture"         name="FireDTV BDA Receiver DVBS"       checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -465,8 +465,8 @@
         <filter cat="capture"         name="FireDTV BDA Receiver DVBC"       checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -483,8 +483,8 @@
         <filter cat="capture"         name="TwinHan DVBT BDA Capture Filter"   	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -499,8 +499,8 @@
         <filter cat="capture"         name="TwinHan DVBS BDA Capture Filter"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -510,19 +510,19 @@
     <tv> 
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
       <filters> 
-	<filter cat="networkprovider" 	name="Microsoft DVBC Network Provider"	checkdevice="false"></filter> 
-	<filter cat="tunerdevice" 	name="TwinHan DVBC BDA Tuner Filter" 	checkdevice="true"></filter> 
-	<filter cat="capture" 		name="TwinHan DVBC BDA Capture Filter" 	checkdevice="true"></filter> 
+		<filter cat="networkprovider" 	name="Microsoft DVBC Network Provider"	checkdevice="false"></filter> 
+		<filter cat="tunerdevice" 	name="TwinHan DVBC BDA Tuner Filter" 	checkdevice="true"></filter> 
+		<filter cat="capture" 		name="TwinHan DVBC BDA Capture Filter" 	checkdevice="true"></filter> 
       </filters> 
       <connections> 
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
-	<connection sourcefilter="tunerdevice" 	   sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice" 	   sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
       </connections> 
     </tv> 
   </capturecard> 
 
   <capturecard commercialname="Chaintech DTT-1000" capturename="THDTV DVB-t BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_fc00270&amp;rev_11">
-       <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
@@ -531,8 +531,8 @@
         <filter cat="capture"         name="THDTV DVB-t BDA Capture Filter"     checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -547,8 +547,8 @@
         <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -558,19 +558,19 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="crossbar" 		name="713x BDA Analog Xbar"      		checkdevice="true"></filter>
-        <filter cat="capture"  		name="713x BDA Analog Capture"   		checkdevice="true"></filter>
-        <filter cat="encodervideo"  	name="CyberLink MPEG Video Encoder"     	checkdevice="false"></filter>
-        <filter cat="encoderaudio"  	name="Cyberlink Audio Encoder(LifeView)"     	checkdevice="false"></filter>
-        <filter cat="mux"  		name="CyberLink MPEG Muxer"     		checkdevice="false"></filter>
+        <filter cat="crossbar" 		name="713x BDA Analog Xbar"      			checkdevice="true"></filter>
+        <filter cat="capture"  		name="713x BDA Analog Capture"   			checkdevice="true"></filter>
+        <filter cat="encodervideo"  name="CyberLink MPEG Video Encoder"     	checkdevice="false"></filter>
+        <filter cat="encoderaudio"  name="Cyberlink Audio Encoder(LifeView)"	checkdevice="false"></filter>
+        <filter cat="mux"  			name="CyberLink MPEG Muxer"     			checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
         <connection sourcefilter="crossbar" 	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
         <connection sourcefilter="capture"  	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
         <connection sourcefilter="capture"  	sourcepin="3" sinkfilter="encoderaudio" sinkpin="0"></connection>
-	<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
+		<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -585,8 +585,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -601,8 +601,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -617,8 +617,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -633,8 +633,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -649,8 +649,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -665,8 +665,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -681,8 +681,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -696,7 +696,7 @@
         <filter cat="tunerdevice"     name="Hauppauge Nova USB2 DVB-T TV Receiver"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -711,8 +711,8 @@
         <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -727,8 +727,8 @@
         <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -743,8 +743,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter> 
       </filters> 
       <connections> 
-      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
-      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
       </connections> 
     </tv> 
   </capturecard>
@@ -759,8 +759,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter> 
       </filters> 
       <connections> 
-      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
-      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
       </connections> 
     </tv> 
   </capturecard>
@@ -775,8 +775,8 @@
         <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter> 
       </filters> 
       <connections> 
-      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
-      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
       </connections> 
     </tv> 
   </capturecard>
@@ -791,8 +791,8 @@
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -807,8 +807,8 @@
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -823,8 +823,8 @@
         <filter cat="capture" 		name="FusionHDTV, Transport Stream Capture" 	checkdevice="true"></filter> 
       </filters> 
       <connections> 
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections> 
     </tv> 
   </capturecard>
@@ -839,8 +839,8 @@
         <filter cat="capture"         name="MEDION BDA Digital Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -855,8 +855,8 @@
         <filter cat="capture"         name="MEDION BDA Digital Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -944,8 +944,8 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 	name="FusionHDTV, BDA Tuner" 		    	checkdevice="true"></filter>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
+        <filter cat="tunerdevice" 		name="FusionHDTV, BDA Tuner"				checkdevice="true"></filter>
         <filter cat="capture"         	name="FusionHDTV, Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
@@ -960,9 +960,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="true"></filter>
-        <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"			checkdevice="true"></filter>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1042,24 +1042,24 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  	 checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  	 checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="713x BDA Analog Xbar"      	 checkdevice="true"></filter>
-        <filter cat="capture"  		name="713x BDA Analog Capture"   	 checkdevice="true"></filter>
-	<filter cat="encodervideo"  	name="CyberLink MPEG Video Encoder"      checkdevice="false"></filter>        
-	<filter cat="encoderaudio"  	name="Cyberlink Audio Encoder(LifeView)" checkdevice="false"></filter>
-        <filter cat="mux"  		name="CyberLink MPEG Muxer"     	 checkdevice="false"></filter>
+        <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
+        <filter cat="crossbar" 		name="713x BDA Analog Xbar"      			checkdevice="true"></filter>
+        <filter cat="capture"  		name="713x BDA Analog Capture"   			checkdevice="true"></filter>
+		<filter cat="encodervideo"  name="CyberLink MPEG Video Encoder"			checkdevice="false"></filter>        
+		<filter cat="encoderaudio"  name="Cyberlink Audio Encoder(LifeView)"	checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"     			checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
-        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encodervideo"  	sinkpin="0"></connection>
-        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoderaudio"  	sinkpin="0"></connection>
-	<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoderaudio" sinkpin="0"></connection>
+		<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1089,12 +1089,12 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"		checkdevice="true"></filter>
-        <filter cat="capture"         name="Bluebird, WDM TsCapture"		checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"				checkdevice="true"></filter>
+        <filter cat="capture"         name="Bluebird, WDM TsCapture"			checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1104,11 +1104,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="true"></filter>
         <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1127,13 +1127,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Pinnacle PCTV 300i PAL Stereo BDA DVBT Tuner"	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"					checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 300i PAL Stereo BDA DVBT Tuner"		checkdevice="true"></filter>
         <filter cat="capture"         name="Pinnacle PCTV 300i PAL Stereo BDA Digital Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -1143,10 +1143,10 @@
     <tv>
       <interface cat="capture" video="0" audio="3" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar" name="Pinnacle PCTV 300i PAL Stereo BDA Analog Xbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1163,13 +1163,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Conexant BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB-T Tuner/Demod"				checkdevice="true"></filter>
         <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -1184,8 +1184,8 @@
         <filter cat="capture"         name="ATI DTV Wonder Digital BDA Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -1195,13 +1195,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Conexant BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB-T Tuner/Demod"				checkdevice="true"></filter>
         <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1211,13 +1211,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner 1"		checkdevice="true"></filter>
         <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner 1"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>  
@@ -1228,10 +1228,10 @@
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  name="Conexant 2388x Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"			checkdevice="true"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"			checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"		checkdevice="true"></filter>
-        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"	checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1250,9 +1250,9 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"    name="ATI AVStream Analog Tuner"	checkdevice="true"></filter>
+        <filter cat="tvtuner"    name="ATI AVStream Analog Tuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"    name="ATI AVStream Analog TV Audio"	checkdevice="true"></filter>
-        <filter cat="crossbar"   name="ATI AVStream Analog Xbar"	checkdevice="true"></filter>
+        <filter cat="crossbar"   name="ATI AVStream Analog Xbar"		checkdevice="true"></filter>
         <filter cat="capture"    name="ATI AVStream Analog Capture"     checkdevice="true"></filter>
         <filter cat="mux"    	 name="ATI AVStream MPEG2 Multiplexer"  checkdevice="true"></filter>
       </filters>
@@ -1274,7 +1274,7 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Genesis BDA Tuner"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Genesis BDA Tuner"					checkdevice="true"></filter>
         <filter cat="capture"         name="Genesis BDA Transport Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
@@ -1289,18 +1289,16 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"	name="Xpert BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
-        <filter cat="capture"		name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"		name="Xpert BDA DVB-T Tuner/Demod"				checkdevice="true"></filter>
+        <filter cat="capture"			name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
-
-<!-- Diamond XtremeTV PVR550 - not sure if this works, it needs to be verified, please advise -->
 
   <capturecard commercialname="Diamond XtremeTV PVR550" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0070ff92&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
@@ -1310,7 +1308,7 @@
         <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		checkdevice="true"></filter>
         <filter cat="crossbar" name="Conexant Falcon Crossbar" 		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant Falcon Audio Capture"  	checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant Falcon Audio Capture" checkdevice="true"></filter>
         <filter cat="encoder"  name="Conexant Falcon Encoder"  		checkdevice="true"></filter>
       </filters>
       <connections>
@@ -1333,8 +1331,8 @@
         <filter cat="capture" 		name="AVerMedia BDA Digital Capture" 	checkdevice="true"></filter> 
       </filters> 
     <connections> 
-      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
-      <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection> 
+      <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+      <connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
     </connections> 
     </tv> 
   </capturecard>
@@ -1363,7 +1361,7 @@
         <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
         <filter cat="crossbar" name="Conexant 2388x Crossbar"  		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"  	checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1380,10 +1378,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"		checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"			checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Conexant 2388x TvAudio"		checkdevice="true"></filter>
         <filter cat="crossbar" name="Conexant 2388x Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"  	checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1403,8 +1401,8 @@
         <filter cat="tvtuner"  name="SMRT TV Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"  name="SMRT TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar" name="SMRT Crossbar"	checkdevice="true"></filter>
-        <filter cat="capture"  name="SMRT Capture"  	checkdevice="true"></filter>
-        <filter cat="encoder"  name="SMRT Encoder"  	checkdevice="true"></filter>
+        <filter cat="capture"  name="SMRT Capture"  checkdevice="true"></filter>
+        <filter cat="encoder"  name="SMRT Encoder"  checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1425,28 +1423,28 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  		name="ATI TV Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="ATI TV Audio"			checkdevice="true"></filter>
-        <filter cat="crossbaraudio" 	name="ATI TV Audio Crossbar"    	checkdevice="true"></filter>      
-        <filter cat="crossbarvideo" 	name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"></filter>
+        <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"></filter>      
+        <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
         <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
-        <filter cat="encodervideo"  	name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
-        <filter cat="encoderaudio"  	name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
-        <filter cat="mux"      		name="ATI Media Center Multiplexer"	checkdevice="false"></filter>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"  sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"  sinkpin="4"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"  sinkpin="0"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"  sinkpin="2"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"  sinkpin="1"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  	   sinkpin="1"></connection>
-        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
-        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"   sinkpin="0"></connection>
-        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"   sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  	   sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  	   sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  		sinkpin="1"></connection>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  		sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1465,13 +1463,13 @@
         <filter cat="encoder"      	name="AVerMedia 61051 MPEG Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	 sourcepin="1" sinkfilter="capture"        sinkpin="1"></connection>
-        <connection sourcefilter="capture"       sourcepin="2" sinkfilter="encoder"	   sinkpin="0"></connection>
-        <connection sourcefilter="capture" 	 sourcepin="3" sinkfilter="encoder"  	   sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="2" sinkfilter="encoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoder"	sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1484,18 +1482,18 @@
         <filter cat="tvtuner"  		name="Plextor ConvertX TV402U TV Tuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="Plextor ConvertX TV402U TV Audio"		checkdevice="true"></filter>
         <filter cat="crossbar"	 	name="Plextor ConvertX TV402U CrossBar"		checkdevice="true"></filter>
-        <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  	checkdevice="true"></filter>
-        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="false"></filter>
-        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="false"></filter>
+        <filter cat="capture"  		name="Plextor ConvertX TV402U A/V Capture"  checkdevice="true"></filter>
+        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  		checkdevice="false"></filter>
+        <filter cat="mux"  			name="InterVideo Multiplexer"		  		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  	   sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbar"  	   sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
-        <connection sourcefilter="capture"	 sourcepin="2" sinkfilter="encoderaudio"   sinkpin="0"></connection>
-        <connection sourcefilter="capture"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1506,8 +1504,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 	name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 		name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1521,24 +1519,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III-G TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III-G TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III-G Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III-G Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III-G Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III-G TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III-G TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III-G Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III-G Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III-G Encoder"		checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1548,24 +1546,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1575,24 +1573,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1602,24 +1600,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1629,13 +1627,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III PAL TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III PAL TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III PAL Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III PAL Device"	checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III PAL Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III PAL TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III PAL TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III PAL Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III PAL Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III PAL Encoder"		checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -1659,8 +1657,8 @@
         <filter cat="tvtuner"		name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"		name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"		name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
-	<filter cat="encoder"		name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+		<filter cat="capture"		name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+		<filter cat="encoder"		name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
@@ -1709,11 +1707,11 @@
         <filter cat="tvtuner"	name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"	name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"	name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
-	<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+		<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+		<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -1732,11 +1730,11 @@
         <filter cat="tvtuner"	name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"	name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"	name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
-	<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+		<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+		<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -1755,11 +1753,11 @@
         <filter cat="tvtuner"	name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"	name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"	name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
-	<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+		<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+		<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
- 	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+ 		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -1778,11 +1776,11 @@
         <filter cat="tvtuner"	name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"	name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"	name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
-	<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+		<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+		<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -1801,11 +1799,11 @@
         <filter cat="tvtuner"	name="ATI eHomeWonder TV Tuner"	checkdevice="true"></filter>
         <filter cat="tvaudio"	name="ATI eHomeWonder TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"	name="ATI eHomeWonder Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
-	<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
+		<filter cat="capture"	name="ATI eHomeWonder Capture"	checkdevice="true"></filter>
+		<filter cat="encoder"	name="ATI eHomeWonder Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -1823,14 +1821,14 @@
       <filters>
         <filter cat="crossbar"	 	name="Plextor ConvertX M402U CrossBar"		checkdevice="true"></filter>
         <filter cat="capture"  		name="Plextor ConvertX M402U A/V Capture"  	checkdevice="true"></filter>
-        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  	checkdevice="false"></filter>
-        <filter cat="mux"  		name="InterVideo Multiplexer"		  	checkdevice="false"></filter>
+        <filter cat="encoderaudio"	name="InterVideo Audio Encoder"		  		checkdevice="false"></filter>
+        <filter cat="mux"  			name="InterVideo Multiplexer"		  		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="crossbar"	 sourcepin="0" sinkfilter="capture"  	   sinkpin="0"></connection>
-        <connection sourcefilter="capture"	 sourcepin="2" sinkfilter="encoderaudio"   sinkpin="0"></connection>
-        <connection sourcefilter="capture"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio"	 sourcepin="0" sinkfilter="mux"  	   sinkpin="1"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="encoderaudio" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1840,11 +1838,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="true"></filter>
         <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1863,11 +1861,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="true"></filter>
         <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1886,11 +1884,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="true"></filter>
         <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   	checkdevice="true"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -1909,24 +1907,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui SE TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui SE TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui SE Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui SE TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui SE TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui SE Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1936,24 +1934,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui SE TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui SE TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui SE Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui SE TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui SE TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui SE Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui SE Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui SE Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1963,24 +1961,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui 2S TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui 2S TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui 2S Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui 2S Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -1990,24 +1988,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui 2S TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui 2S TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui 2S Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui 2S Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui 2S Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2017,24 +2015,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui 2S NTSC FM TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui 2S NTSC FM TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S NTSC FM TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S NTSC FM TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"	checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"	checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2044,24 +2042,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui 2S NTSC FM TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui 2S NTSC FM TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S NTSC FM TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S NTSC FM TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S NTSC FM Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui 2S NTSC FM Device"	checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui 2S NTSC FM Encoder"	checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2071,24 +2069,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui 2S PAL FM TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui 2S PAL FM TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S PAL FM TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S PAL FM TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"	checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2098,24 +2096,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui 2S PAL FM TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui 2S PAL FM TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui 2S PAL FM TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui 2S PAL FM TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui 2S PAL FM Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui 2S PAL FM Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui 2S PAL FM Encoder"	checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2125,9 +2123,9 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"    name="ATI AVStream Analog Tuner"	checkdevice="true"></filter>
+        <filter cat="tvtuner"    name="ATI AVStream Analog Tuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"    name="ATI AVStream Analog TV Audio"	checkdevice="true"></filter>
-        <filter cat="crossbar"   name="ATI AVStream Analog Xbar"	checkdevice="true"></filter>
+        <filter cat="crossbar"   name="ATI AVStream Analog Xbar"		checkdevice="true"></filter>
         <filter cat="capture"    name="ATI AVStream Analog Capture"     checkdevice="true"></filter>
         <filter cat="mux"    	 name="ATI AVStream MPEG2 Multiplexer"  checkdevice="true"></filter>
       </filters>
@@ -2164,13 +2162,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner X2 (SU1200_2)"      	checkdevice="true"></filter>
-        <filter cat="capture"         name="TV Station DVB-S X2 MCE (SU1200_2)"        	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner X2 (SU1200_2)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="TV Station DVB-S X2 MCE (SU1200_2)"		checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2181,12 +2179,12 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner X2 (SU1200_2)"      	checkdevice="true"></filter>
-        <filter cat="capture"         name="TV Station DVB-S X2 MCE (SU1200_2)"        	checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner X2 (SU1200_2)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="TV Station DVB-S X2 MCE (SU1200_2)"		checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2201,8 +2199,8 @@
         <filter cat="capture"         name="TV Station DVB-S MCE (SU1200_K)"    checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2213,12 +2211,12 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 	name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 		name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2229,12 +2227,12 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBC Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 	name="TV Station DVB-C Tuner (CU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 		name="TV Station DVB-C MCE (CU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="TV Station DVB-C Tuner (CU1216)" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="TV Station DVB-C MCE (CU1216)" 	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2245,8 +2243,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBC Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 	name="TV Station DVB-C Tuner (CU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 		name="TV Station DVB-C MCE (CU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="TV Station DVB-C Tuner (CU1216)" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="TV Station DVB-C MCE (CU1216)" 	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -2262,13 +2260,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed EvcapMaui TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed EvcapMaui TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed EvcapMaui Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed EvcapMaui Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed EvcapMaui Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed EvcapMaui TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed EvcapMaui TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed EvcapMaui Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed EvcapMaui Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed EvcapMaui Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2289,24 +2287,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed EvcapMaui TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed EvcapMaui TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed EvcapMaui Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed EvcapMaui Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed EvcapMaui Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed EvcapMaui TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed EvcapMaui TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed EvcapMaui Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed EvcapMaui Device"			checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed EvcapMaui Encoder"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2318,21 +2316,21 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="VBDVCR TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="VBDVCR TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="VBDVCR Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="VBDVCR Capture"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"	checkdevice="false"></filter>
-	<filter cat="mux"		name="InterVideo Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="VBDVCR TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="VBDVCR TvAudio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="VBDVCR Crossbar"			checkdevice="true"></filter>
+		<filter cat="capture"		name="VBDVCR Capture"			checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="InterVideo Audio Encoder"	checkdevice="false"></filter>
+		<filter cat="mux"			name="InterVideo Multiplexer"	checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="mux"  	sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"  	sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2344,24 +2342,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="PhTVTune"						checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Cap7134 TV Audio"					checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Cap7134 Crossbar"					checkdevice="true"></filter>
-	<filter cat="capture"		name="AVerMedia, AVerTV WDM Video Capture (E500)"	checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="InterVideo Video Encoder"				checkdevice="false"></filter>
-	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"				checkdevice="false"></filter>
-	<filter cat="mux"		name="InterVideo Multiplexer"				checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="PhTVTune"										checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Cap7134 TV Audio"								checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Cap7134 Crossbar"								checkdevice="true"></filter>
+		<filter cat="capture"		name="AVerMedia, AVerTV WDM Video Capture (E500)"	checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="InterVideo Video Encoder"						checkdevice="false"></filter>
+		<filter cat="encoderaudio"	name="InterVideo Audio Encoder"						checkdevice="false"></filter>
+		<filter cat="mux"			name="InterVideo Multiplexer"						checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2375,8 +2373,8 @@
         <filter cat="capture"   name="DVBT 2388x Video Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
-	<connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"></connection>
+		<connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+		<connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -2405,8 +2403,8 @@
         <filter cat="capture"         name="ADS 2388x Transport Stream Capture" checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2418,24 +2416,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="PhTVTune (TDA8275)"		checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="PhTVTune (TDA8275)"			checkdevice="true"></filter>
         <filter cat="tvaudio"		name="LifeView FlyVideo TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"		name="LifeView FlyVideo CrossBar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="FlyTV Platinum33 mini"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="InterVideo Video Encoder"		checkdevice="false"></filter>
-	<filter cat="encoderaudio"	name="InterVideo Audio Encoder"		checkdevice="false"></filter>
-	<filter cat="mux"		name="InterVideo Multiplexer"		checkdevice="false"></filter>
+		<filter cat="capture"		name="FlyTV Platinum33 mini"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="InterVideo Video Encoder"		checkdevice="false"></filter>
+		<filter cat="encoderaudio"	name="InterVideo Audio Encoder"		checkdevice="false"></filter>
+		<filter cat="mux"			name="InterVideo Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2446,12 +2444,12 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Genesis BDA Tuner"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Genesis BDA Tuner"					checkdevice="true"></filter>
         <filter cat="capture"         name="Genesis BDA Transport Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2462,12 +2460,12 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Genesis BDA Tuner"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Genesis BDA Tuner"					checkdevice="true"></filter>
         <filter cat="capture"         name="Genesis BDA Transport Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2478,12 +2476,12 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Genesis BDA Tuner"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Genesis BDA Tuner"					checkdevice="true"></filter>
         <filter cat="capture"         name="Genesis BDA Transport Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2509,24 +2507,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="MELCO INC. PC-MV5/PCI TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="MELCO INC. PC-MV5/PCI TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="MELCO INC. PC-MV5/PCI TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MELCO INC. PC-MV5/PCI TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"	checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2536,24 +2534,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="MELCO INC. PC-MV5/PCI TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="MELCO INC. PC-MV5/PCI TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="MELCO INC. PC-MV5/PCI TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="MELCO INC. PC-MV5/PCI TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="MELCO INC. PC-MV5/PCI Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"		name="MELCO INC. PC-MV5/PCI Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="MELCO INC. PC-MV5/PCI Encoder"	checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2563,24 +2561,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III SE TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III SE TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III SE Device"	checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III SE TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III SE TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III SE Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"		checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2590,24 +2588,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III SE TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III SE TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III SE Device"	checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III SE TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III SE TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III SE Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III SE Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III SE Encoder"		checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2617,13 +2615,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Viewsonic TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Viewsonic TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Viewsonic Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Viewsonic Device"			checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Viewsonic Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Viewsonic TvTuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Viewsonic TvAudio"				checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Viewsonic Crossbar"				checkdevice="true"></filter>
+		<filter cat="capture"		name="Viewsonic Device"					checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Viewsonic Encoder"				checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2644,24 +2642,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Viewsonic TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Viewsonic TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Viewsonic Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Viewsonic Device"			checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Viewsonic Encoder"		checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Viewsonic TvTuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Viewsonic TvAudio"				checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Viewsonic Crossbar"				checkdevice="true"></filter>
+		<filter cat="capture"		name="Viewsonic Device"					checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Viewsonic Encoder"				checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2671,24 +2669,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III BJ TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III BJ TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III BJ Device"	checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III BJ TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III BJ TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III BJ Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"		checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2698,24 +2696,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Maui III BJ TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Maui III BJ TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Maui III BJ Device"	checkdevice="true"></filter>
-	<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"	checkdevice="true"></filter>
-	<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
-	<filter cat="mux"		name="C-Cube DVx MPEG Multiplexer"	checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="Emuzed Maui III BJ TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Emuzed Maui III BJ TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Emuzed Maui III BJ Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"		name="Emuzed Maui III BJ Device"		checkdevice="true"></filter>
+		<filter cat="encodervideo"	name="Emuzed Maui III BJ Encoder"		checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"	checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"		sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2728,15 +2726,15 @@
         <filter cat="tvtuner"		name="I-O DATA GV-MDVD USB WDM TvTuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"		name="I-O DATA GV-MDVD USB WDM TvAudio"		checkdevice="true"></filter>
         <filter cat="crossbar"		name="I-O DATA GV-MDVD USB WDM Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="I-O DATA GV-MDVD USB WDM Device"		checkdevice="true"></filter>
-	<filter cat="encoder"		name="I-O DATA GV-MDVD USB WDM Encoder"		checkdevice="true"></filter>
+		<filter cat="capture"		name="I-O DATA GV-MDVD USB WDM Device"		checkdevice="true"></filter>
+		<filter cat="encoder"		name="I-O DATA GV-MDVD USB WDM Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
         <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
         <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
       </connections>
@@ -2751,15 +2749,15 @@
         <filter cat="tvtuner"		name="I-O DATA GV-MDVD USB WDM TvTuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"		name="I-O DATA GV-MDVD USB WDM TvAudio"		checkdevice="true"></filter>
         <filter cat="crossbar"		name="I-O DATA GV-MDVD USB WDM Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="I-O DATA GV-MDVD USB WDM Device"		checkdevice="true"></filter>
-	<filter cat="encoder"		name="I-O DATA GV-MDVD USB WDM Encoder"		checkdevice="true"></filter>
+		<filter cat="capture"		name="I-O DATA GV-MDVD USB WDM Device"		checkdevice="true"></filter>
+		<filter cat="encoder"		name="I-O DATA GV-MDVD USB WDM Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
         <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
         <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
       </connections>
@@ -2771,18 +2769,18 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed Sentosa USB TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed Sentosa USB TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed Sentosa USB Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed Sentosa USB Device"		checkdevice="true"></filter>
-	<filter cat="encoder"		name="Emuzed Sentosa USB WDM Encoder"		checkdevice="true"></filter>
+        <filter cat="tvtuner"	name="Emuzed Sentosa USB TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"	name="Emuzed Sentosa USB TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"	name="Emuzed Sentosa USB Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"	name="Emuzed Sentosa USB Device"		checkdevice="true"></filter>
+		<filter cat="encoder"	name="Emuzed Sentosa USB WDM Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
         <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
         <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
       </connections>
@@ -2796,16 +2794,16 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Pinnacle MP20 TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Pinnacle MP20 TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Pinnacle MP20 Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Pinnacle MP20 Device"		checkdevice="true"></filter>
+        <filter cat="tvtuner"	name="Pinnacle MP20 TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"	name="Pinnacle MP20 TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"	name="Pinnacle MP20 Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"	name="Pinnacle MP20 Device"		checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2815,8 +2813,8 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="crossbar"		name="Adaptec AVC-2000 Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="Adaptec AVC-2000 Device"		checkdevice="true"></filter>
+        <filter cat="crossbar"	name="Adaptec AVC-2000 Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"	name="Adaptec AVC-2000 Device"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
@@ -2831,16 +2829,16 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="V-One Bali TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="V-One Bali TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="V-One Bali Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="V-One Bali Device"	checkdevice="true"></filter>
+        <filter cat="tvtuner"	name="V-One Bali TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"	name="V-One Bali TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"	name="V-One Bali Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"	name="V-One Bali Device"	checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -2850,10 +2848,10 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="V-One Bali TvTuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="V-One Bali TvAudio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="V-One Bali Crossbar"	checkdevice="true"></filter>
-	<filter cat="capture"		name="V-One Bali Device"	checkdevice="true"></filter>
+        <filter cat="tvtuner"	name="V-One Bali TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"	name="V-One Bali TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"	name="V-One Bali Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"	name="V-One Bali Device"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2869,11 +2867,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed USB PVR TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed USB PVR TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed USB PVR Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed USB PVR Device"		checkdevice="true"></filter>
-	<filter cat="encoder"		name="Emuzed USB PVR Encoder"		checkdevice="true"></filter>
+        <filter cat="tvtuner"	name="Emuzed USB PVR TvTuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"	name="Emuzed USB PVR TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar"	name="Emuzed USB PVR Crossbar"		checkdevice="true"></filter>
+		<filter cat="capture"	name="Emuzed USB PVR Device"		checkdevice="true"></filter>
+		<filter cat="encoder"	name="Emuzed USB PVR Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
@@ -2892,18 +2890,18 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="Emuzed USB PVR TvTuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="Emuzed USB PVR TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar"		name="Emuzed USB PVR Crossbar"		checkdevice="true"></filter>
-	<filter cat="capture"		name="Emuzed USB PVR Device"		checkdevice="true"></filter>
-	<filter cat="encoder"		name="Emuzed USB PVR Encoder"		checkdevice="true"></filter>
+        <filter cat="tvtuner"	name="Emuzed USB PVR TvTuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"	name="Emuzed USB PVR TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar"	name="Emuzed USB PVR Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"	name="Emuzed USB PVR Device"	checkdevice="true"></filter>
+		<filter cat="encoder"	name="Emuzed USB PVR Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
         <connection sourcefilter="capture"	sourcepin="0" sinkfilter="encoder"	sinkpin="0"></connection>
         <connection sourcefilter="capture"	sourcepin="1" sinkfilter="encoder"	sinkpin="1"></connection>
       </connections>
@@ -2976,11 +2974,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="TOSHIBA Style Bay TV Tuner KiT TvTuner"  checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="TOSHIBA Style Bay TV Tuner KiT TvAudio"  checkdevice="true"></filter>
-        <filter cat="crossbar" name="TOSHIBA Style Bay TV Tuner KiT Crossbar" checkdevice="true"></filter>
-        <filter cat="capture"  name="TOSHIBA Style Bay TV Tuner KiT Device"   checkdevice="true"></filter>
-        <filter cat="encoder"  name="TOSHIBA Style Bay TV Tuner KiT Encoder/Multiplexer"  checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="TOSHIBA Style Bay TV Tuner KiT TvTuner"				checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="TOSHIBA Style Bay TV Tuner KiT TvAudio"				checkdevice="true"></filter>
+        <filter cat="crossbar" name="TOSHIBA Style Bay TV Tuner KiT Crossbar"				checkdevice="true"></filter>
+        <filter cat="capture"  name="TOSHIBA Style Bay TV Tuner KiT Device"					checkdevice="true"></filter>
+        <filter cat="encoder"  name="TOSHIBA Style Bay TV Tuner KiT Encoder/Multiplexer"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
@@ -3017,7 +3015,7 @@
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="crossbar" name="I-O DATA GV-MPEG2/USB2 Crossbar"	checkdevice="true"></filter>
-        <filter cat="capture"  name="I-O DATA GV-MPEG2/USB2 Device"	checkdevice="true"></filter>
+        <filter cat="capture"  name="I-O DATA GV-MPEG2/USB2 Device"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
@@ -3137,13 +3135,13 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"	name="EMPIRE BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
-        <filter cat="capture"		name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"		name="EMPIRE BDA DVB-T Tuner/Demod"				checkdevice="true"></filter>
+        <filter cat="capture"			name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3158,8 +3156,8 @@
         <filter cat="capture"         name="Genesis BDA Transport Capture"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3173,7 +3171,7 @@
         <filter cat="tunerdevice"     name="Twinhan USB2 DVB-T receiver"      checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3261,7 +3259,7 @@
         <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		checkdevice="true"></filter>
         <filter cat="crossbar" name="Conexant Falcon Crossbar" 		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant Falcon Audio Capture"  	checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant Falcon Audio Capture"	checkdevice="true"></filter>
         <filter cat="encoder"  name="Conexant Falcon Encoder"  		checkdevice="true"></filter>
       </filters>
       <connections>
@@ -3280,12 +3278,12 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"	name="PG300 BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
-        <filter cat="capture"		name="PG300 BDA Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"		name="PG300 BDA DVB-T Tuner/Demod"			checkdevice="true"></filter>
+        <filter cat="capture"			name="PG300 BDA Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3296,12 +3294,12 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"	name="PG700 BDA DVB-T Tuner/Demod"		checkdevice="true"></filter>
-        <filter cat="capture"		name="PG700 BDA Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"		name="PG700 BDA DVB-T Tuner/Demod"			checkdevice="true"></filter>
+        <filter cat="capture"			name="PG700 BDA Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3338,9 +3336,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VideoMate T200 BDA DVBT Tuner"          checkdevice="true"></filter>
-        <filter cat="capture"         name="VideoMate T200 BDA Digital Capture"     checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VideoMate T200 BDA DVBT Tuner"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VideoMate T200 BDA Digital Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -3354,9 +3352,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"               checkdevice="true"></filter>
-        <filter cat="capture"         name="VideoMate BDA Digital Capture"          checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"			checkdevice="true"></filter>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -3370,18 +3368,18 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"      name="VideoMate T200 BDA Analog TV Tuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"      name="VideoMate T200 BDA Analog TV Audio"		checkdevice="true"></filter>
-        <filter cat="crossbar"     name="VideoMate T200 BDA Analog Xbar"           	checkdevice="true"></filter>
+        <filter cat="tvtuner"      name="VideoMate T200 BDA Analog TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"      name="VideoMate T200 BDA Analog TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"     name="VideoMate T200 BDA Analog Xbar"		checkdevice="true"></filter>
         <filter cat="capture"      name="VideoMate T200 BDA Analog Capture"		checkdevice="true"></filter>
-        <filter cat="mux"          name="VideoMate T200 BDA MPEG PS Encoder"		checkdevice="true"></filter>
+        <filter cat="mux"          name="VideoMate T200 BDA MPEG PS Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"     sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"      sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"     sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"      sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
         <connection sourcefilter="capture"      sourcepin="4" sinkfilter="mux"		sinkpin="0"></connection>
         <connection sourcefilter="capture"      sourcepin="5" sinkfilter="mux"		sinkpin="1"></connection>
       </connections>
@@ -3393,13 +3391,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-	<filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
-	<filter cat="tunerdevice" 	name="TechnoTrend BDA/DVB-T Tuner" 	checkdevice="true"></filter>
-	<filter cat="capture" 		name="TechnoTrend BDA/DVB Capture"	checkdevice="true"></filter>
+		<filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
+		<filter cat="tunerdevice" 		name="TechnoTrend BDA/DVB-T Tuner" 		checkdevice="true"></filter>
+		<filter cat="capture" 			name="TechnoTrend BDA/DVB Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice" 	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 		sinkpin="0"></connection>
       </connections>
    </tv>
   </capturecard>
@@ -3414,8 +3412,8 @@
         <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3430,8 +3428,8 @@
         <filter cat="capture"         name="TV Station DVB-S MCE (SU1200_K)"    checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3441,13 +3439,13 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -3457,13 +3455,13 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
