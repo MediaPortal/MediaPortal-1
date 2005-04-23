@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
+using MediaPortal.Player;
 using SQLite.NET;
 
 using Programs.Utils;
@@ -209,7 +210,11 @@ namespace ProgramsDatabase
 				else
 				{
 					AutoPlay.StopListening();
-					Utils.StartProcess(procStart, WaitForExit);
+          if (g_Player.Playing)
+          {
+            g_Player.Stop();
+          }
+          Utils.StartProcess(procStart, WaitForExit);
 					GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
 					AutoPlay.StartListening();
 				}

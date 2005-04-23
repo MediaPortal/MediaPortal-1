@@ -276,9 +276,13 @@ namespace ProgramsDatabase
 				}
 				else
 				{
-					if (MPGUIMode)
-					{
-						AutoPlay.StopListening();
+          if (MPGUIMode)
+          {
+            AutoPlay.StopListening();
+            if (g_Player.Playing)
+            {
+              g_Player.Stop();
+            }
 					}
 					Utils.StartProcess(procStart, WaitForExit);
 					if (MPGUIMode) 
