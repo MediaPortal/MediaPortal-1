@@ -1677,6 +1677,10 @@
 		<value>Use big icons</value>
 	</string>
 	<string>
+		<id>492</id>
+		<value>Audio language</value>
+	</string>
+	<string>
 		<id>500</id>
 		<value>File menu</value>
 	</string>

@@ -737,7 +737,7 @@ namespace MediaPortal.GUI.TV
 			ArrayList	audioPidList = Recorder.GetAudioLanguageList();
 			if (audioPidList!=null && audioPidList.Count>0)
 			{
-				dlg.AddLocalizedString(292); // Audio language menu
+				dlg.AddLocalizedString(492); // Audio language menu
 			}
 			dlg.AddLocalizedString(970); // Previous window
 
@@ -795,7 +795,7 @@ namespace MediaPortal.GUI.TV
 					ShowAspectRatioMenu();
 					break;
 
-				case 292: // Show audio language menu
+				case 492: // Show audio language menu
 					ShowAudioLanguageMenu();
 					break;
 	
@@ -887,7 +887,7 @@ namespace MediaPortal.GUI.TV
 		{
 			if (dlg==null) return;
 			dlg.Reset();			
-			dlg.SetHeading(292); // set audio language menu
+			dlg.SetHeading(492); // set audio language menu
 
 			DVBSections.AudioLanguage al;
 			ArrayList	audioPidList = new ArrayList();
