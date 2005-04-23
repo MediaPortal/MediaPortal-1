@@ -220,10 +220,27 @@ namespace MediaPortal.Dialogs
     public void Add(string strLabel)
 		{
 			int iItemIndex = listItems.Count+1;
-      GUIListItem pItem = new GUIListItem(iItemIndex.ToString()+" "+strLabel);
-			pItem.ItemId =iItemIndex;
+      GUIListItem pItem = new GUIListItem();
+			if (iItemIndex < 10) 
+				pItem.Label = iItemIndex.ToString()+" "+strLabel;
+			else
+				pItem.Label = strLabel;
+
+			pItem.ItemId = iItemIndex;
       listItems.Add(pItem);
     }
+		
+		public void Add(GUIListItem pItem)
+		{
+			int iItemIndex = listItems.Count+1;			
+			if (iItemIndex < 10) 
+				pItem.Label = iItemIndex.ToString()+" "+pItem.Label;
+			else
+				pItem.Label = pItem.Label;
+
+			pItem.ItemId = iItemIndex;
+			listItems.Add(pItem);
+		}
 
     public void AddLocalizedString(int iLocalizedString)
     {
