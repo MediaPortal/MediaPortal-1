@@ -37,7 +37,7 @@ namespace ProcessPlugins.ExternalDisplay
     private GroupBox gbGraphMode;
     private CheckBox cbPropertyBrowser;
     private Button btnOK;
-    private System.Windows.Forms.Button btnAdvanced;
+    private Button btnAdvanced;
     private IDisplay lcd = null;
 
     public SetupForm()
@@ -52,7 +52,7 @@ namespace ProcessPlugins.ExternalDisplay
       cmbType.DisplayMember = "Description";
       cmbType.DataBindings.Add("SelectedItem", Settings.Instance, "LCDType");
       cmbType.SelectedIndex = 0;
-      cmbPort.DataBindings.Add("SelectedItem", Settings.Instance, "Port");
+      cmbPort.DataBindings.Add("SelectedItem", Settings.Instance, "GUIPort");
       cbPropertyBrowser.DataBindings.Add("Checked", Settings.Instance, "ShowPropertyBrowser");
       cbLight.DataBindings.Add("Checked", Settings.Instance, "BackLight");
       txtCols.DataBindings.Add("Text", Settings.Instance, "TextWidth");
@@ -129,10 +129,10 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbPort.Items.AddRange(new object[] {
-                                                 "378",
-                                                 "278",
-                                                 "3BC",
-                                                 "178",
+                                                 "LPT1",
+                                                 "LPT2",
+                                                 "LPT3",
+                                                 "LPT4",
                                                  "USB",
                                                  "COM1",
                                                  "COM2",
@@ -358,6 +358,7 @@ namespace ProcessPlugins.ExternalDisplay
       this.Controls.Add(this.groupBox1);
       this.Name = "SetupForm";
       this.Text = "ExternalDisplay Configuration";
+      this.Load += new System.EventHandler(this.SetupForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.gbGraphMode.ResumeLayout(false);
       this.gbTextMode.ResumeLayout(false);
@@ -366,16 +367,7 @@ namespace ProcessPlugins.ExternalDisplay
     }
 
     #endregion
-/*
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    private static void Main()
-    {
-      Application.Run(new SetupForm());
-    }
-*/
+
     private void btnAdvanced_Click(object sender, EventArgs e)
     {
       this.Cursor = Cursors.WaitCursor;
@@ -402,6 +394,11 @@ namespace ProcessPlugins.ExternalDisplay
       gbTextMode.Visible = lcd.SupportsText;
       Settings.Instance.LCDType = lcd;
     }
+
+    private void SetupForm_Load(object sender, EventArgs e)
+    {
+    }
+
 
   }
 }

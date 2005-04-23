@@ -83,7 +83,7 @@ namespace ProcessPlugins.ExternalDisplay
       set { Type = value.Name; }
     }
 
-    private bool m_ShowPropertyBrowser = true;
+    private bool m_ShowPropertyBrowser = false;
 
     /// <summary>
     /// Show the PropertyBrowser?
@@ -104,6 +104,48 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get { return m_Port; }
       set { m_Port = value; }
+    }
+
+    public string GUIPort
+    {
+      get
+      {
+        string p = this.Port;
+        switch(p)
+        {
+          case "378":
+            return "LPT1";
+          case "278":
+            return "LPT2";
+          case "3BC":
+            return "LPT3";
+          case "178":
+            return "LPT4";
+          default:
+            return p;
+        }
+      }
+      set
+      {
+        switch(value)
+        {
+          case "LPT1":
+            m_Port="378";
+            break;
+          case "LPT2":
+            m_Port="278";
+            break;
+          case "LPT3":
+            m_Port="3BC";
+            break;
+          case "LPT4":
+            m_Port="178";
+            break;
+          default:
+            m_Port=value;
+            break;
+        }
+      }
     }
 
     private int m_TextWidth = 16;

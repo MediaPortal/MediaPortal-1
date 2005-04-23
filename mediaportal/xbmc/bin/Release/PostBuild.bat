@@ -27,7 +27,8 @@ copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
 copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
-copy ..\..\..\LUI.dll .
+if not exist LUI\. mkdir LUI
+copy ..\..\..\LUI.dll LUI\.
 copy ..\..\..\Communications.dll .
 copy ..\..\..\KCS.Utilities.dll .
 copy ..\..\..\X10Plugin.* .

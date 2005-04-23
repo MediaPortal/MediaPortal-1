@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -39,6 +40,10 @@ namespace ProcessPlugins.ExternalDisplay
         {
           return;
         }
+				if (!VerifyDriverLynxDriver(false))
+				{
+					return;
+				}
         //Initialize display
         display = Settings.Instance.LCDType;
         Debug.Assert(display != null);
@@ -137,8 +142,11 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void ShowPlugin()
     {
-      Form settings = new SetupForm();
-      settings.ShowDialog();
+      if (VerifyDriverLynxDriver(true))
+      {
+        Form settings = new SetupForm();
+        settings.ShowDialog();
+      }
     }
 
     /// <summary>
@@ -336,5 +344,24 @@ namespace ProcessPlugins.ExternalDisplay
 
 			return false;
 		}
+
+    /// <summary>
+    /// Checks whether the DriverLYNX Port I/O driver is installed
+    /// </summary>
+    private bool VerifyDriverLynxDriver(bool showDialog)
+    {
+      FileInfo dll = new FileInfo(string.Concat(Environment.SystemDirectory, @"\DLPORTIO.dll"));
+      FileInfo sys = new FileInfo(string.Concat(Environment.SystemDirectory,@"\DRIVERS\DLPORTIO.SYS"));
+      if (!(dll.Exists && sys.Exists))
+      {
+				if (showDialog)
+				{
+					new DriverMissingForm().ShowDialog();
+				}
+        return false;
+      }
+      return true;
+    }
+
   }
 }

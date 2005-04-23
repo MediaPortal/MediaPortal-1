@@ -29,7 +29,8 @@ copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
 copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
-copy ..\..\..\LUI.dll .
+if not exist LUI\. mkdir LUI
+copy ..\..\..\LUI.dll LUI\.
 copy ..\..\..\Communications.dll .
 copy ..\..\..\KCS.Utilities.dll .
 copy ..\..\..\X10Plugin.* .
@@ -68,7 +69,7 @@ copy ..\..\..\WindowPlugins\bin\debug\WindowPlugins.pdb plugins\Windows
 copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
 
 copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.dll plugins\process\
-copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.dll.pdb  plugins\process\
+copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.pdb  plugins\process\
 
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
