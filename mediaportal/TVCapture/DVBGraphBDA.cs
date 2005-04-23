@@ -1335,7 +1335,7 @@ namespace MediaPortal.TV.Recording
 				int hr=SetupDemuxer(m_DemuxVideoPin,m_DemuxVideoPin,audioPid,currentTuningObject.VideoPid);
 				if(hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 					return;
 				}
 			}
