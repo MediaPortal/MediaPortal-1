@@ -58,6 +58,8 @@ namespace MediaPortal.TV.Recording
     protected VideoProcAmp            m_videoAmp=null;
 		protected VMR9Util							  Vmr9=null; 
 		protected string                     cardName;
+		ArrayList						m_audioPidList=new ArrayList();
+		int									SelectedLanguage = 11;
 
 
     /// <summary>
@@ -1214,12 +1216,34 @@ namespace MediaPortal.TV.Recording
 		{
 			return false;
 		}
+		
+		public int GetAudioLanguage()
+		{
+			return SelectedLanguage;
+		}
 		public void SetAudioLanguage(int audioPid)
 		{
+			SelectedLanguage = audioPid;
 		}
-		public ArrayList GetAudioLanguage()
+		public ArrayList GetAudioLanguageList()
 		{
-			return new ArrayList();
+#if DEBUG
+			DVBSections.AudioLanguage al;
+			m_audioPidList.Clear();
+
+			// Add two debug languages
+			al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+			al.AudioPid=10;
+			al.AudioLanguageCode="eng";
+			m_audioPidList.Add(al);
+
+			al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+			al.AudioPid=11;
+			al.AudioLanguageCode="dut";
+			m_audioPidList.Add(al);
+
+#endif
+			return m_audioPidList;
 		}
   }
 }

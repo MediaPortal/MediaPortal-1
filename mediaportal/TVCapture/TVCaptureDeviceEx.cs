@@ -781,9 +781,18 @@ namespace MediaPortal.TV.Recording
 		/// <summary>
 		/// Property which returns the available audio languages
 		/// </summary>
-		public ArrayList GetAudioLanguage()
+		public ArrayList GetAudioLanguageList()
 		{
 			if (_mGraph==null) return null;
+			return _mGraph.GetAudioLanguageList();			
+		}
+
+		/// <summary>
+		/// Property which gets the current audio language
+		/// </summary>
+		public int GetAudioLanguage()
+		{
+			if (_mGraph==null) return -1;
 			return _mGraph.GetAudioLanguage();			
 		}
 

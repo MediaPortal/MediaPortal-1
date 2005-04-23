@@ -2426,6 +2426,10 @@ namespace MediaPortal.TV.Recording
 			if (m_currentChannel.TeletextPid>0) return true;
 			return false;
 		}
+		public int GetAudioLanguage()
+		{
+			return m_selectedAudioPid;
+		}
 		public void SetAudioLanguage(int audioPid)
 		{
 			if(audioPid!=m_selectedAudioPid)
@@ -2440,7 +2444,7 @@ namespace MediaPortal.TV.Recording
 					m_selectedAudioPid=audioPid;
 			}
 		}
-		public ArrayList GetAudioLanguage()
+		public ArrayList GetAudioLanguageList()
 		{
 			DVBSections.AudioLanguage al;
 			ArrayList alList=new ArrayList();

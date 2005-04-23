@@ -226,7 +226,8 @@ namespace MediaPortal.TV.Recording
 		void TuneRadioChannel(RadioStation station);
 		void TuneRadioFrequency(int frequency);
 		bool HasTeletext();
+		int GetAudioLanguage();
 		void SetAudioLanguage(int audioPid);
-		ArrayList GetAudioLanguage();
+		ArrayList GetAudioLanguageList();		
 	}
 }

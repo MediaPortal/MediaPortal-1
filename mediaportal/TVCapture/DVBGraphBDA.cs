@@ -1328,6 +1328,10 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}
 
+		public int GetAudioLanguage()
+		{
+			return currentTuningObject.AudioPid;
+		}
 		public void SetAudioLanguage(int audioPid)
 		{
 			if(audioPid!=currentTuningObject.AudioPid)
@@ -1340,7 +1344,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
-		public ArrayList GetAudioLanguage()
+		public ArrayList GetAudioLanguageList()
 		{
 			if (currentTuningObject==null) return new ArrayList();
 			DVBSections.AudioLanguage al;

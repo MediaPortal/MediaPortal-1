@@ -1354,10 +1354,14 @@ namespace MediaPortal.TV.Recording
 		{
 			return false;
 		}
+		public int GetAudioLanguage()
+		{
+			return 0;
+		}
 		public void SetAudioLanguage(int audioPid)
 		{
 		}
-		public ArrayList GetAudioLanguage()
+		public ArrayList GetAudioLanguageList()
 		{
 			return new ArrayList();
 		}
