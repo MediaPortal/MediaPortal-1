@@ -74,7 +74,13 @@ namespace MediaPortal.TV.Recording
 			ofd.Filter = "Transponder-Listings (*.tpl)|*.tpl";
 			ofd.Title = "Choose Transponder-Listing Files";
 			DialogResult res=ofd.ShowDialog();
-			if(res!=DialogResult.OK) return;
+			if(res!=DialogResult.OK)
+			{
+				Stop();
+				callback.OnProgress(100);
+				callback.OnEnded();
+				return;
+			}
 			
 			count = 0;
 			string line;
@@ -137,7 +143,10 @@ namespace MediaPortal.TV.Recording
 		}
 		public void Stop()
 		{
-			timer1.Enabled=false;
+			if(timer1!=null)
+			{
+				timer1.Enabled=false;
+			}
 			captureCard.DeleteGraph();
 		}
 		public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
