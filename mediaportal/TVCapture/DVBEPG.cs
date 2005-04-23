@@ -353,13 +353,16 @@ namespace MediaPortal.TV.Recording
 							TVDatabase.GetChannels(ref channels);
 							int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
 							int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
+							int audio1, audio2, audio3, ac3Pid;
+							string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
+
 							string provider="";
 							foreach (TVChannel chan in channels)
 							{
 								switch (m_networkType)
 								{
 									case NetworkType.DVBC:
-										TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+										TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 										if (eit.program_number==SID && eit.ts_id==TSID)
 										{
 											progName=chan.Name;
@@ -370,7 +373,7 @@ namespace MediaPortal.TV.Recording
 										progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
 										break;
 									case NetworkType.DVBT:
-										TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth);
+										TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 										if (eit.program_number==SID && eit.ts_id==TSID)
 										{
 											Log.Write("epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
@@ -692,13 +695,16 @@ namespace MediaPortal.TV.Recording
 						TVDatabase.GetChannels(ref channels);
 						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
 						int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
+						int audio1, audio2, audio3, ac3Pid;
+						string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
+
 						string provider="";
 						foreach (TVChannel chan in channels)
 						{
 							switch (m_networkType)
 							{
 								case NetworkType.DVBC:
-									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 									if (programID==SID && tsID==TSID)
 									{
 										channelName=chan.Name;
@@ -708,7 +714,7 @@ namespace MediaPortal.TV.Recording
 									channelName=TVDatabase.GetSatChannelName(programID,tsID);
 									break;
 								case NetworkType.DVBT:
-									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth);
+									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 									if (programID==SID && tsID==TSID)
 									{
 										channelName=chan.Name;

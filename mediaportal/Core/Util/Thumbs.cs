@@ -20,6 +20,7 @@ namespace MediaPortal.Util
 
 		static public readonly string Radio=@"Thumbs\Radio";
 		static public readonly string Pictures=@"Thumbs\Pictures";
+		static public readonly string Yac=@"Thumbs\yac";
 		
 		static public void CreateFolders()
 		{
@@ -39,6 +40,7 @@ namespace MediaPortal.Util
 					System.IO.Directory.CreateDirectory(MovieGenre);
 					System.IO.Directory.CreateDirectory(MovieTitle);
 					System.IO.Directory.CreateDirectory(MovieActors);
+					System.IO.Directory.CreateDirectory(Yac);
 				}
 				catch(Exception){}
 		}

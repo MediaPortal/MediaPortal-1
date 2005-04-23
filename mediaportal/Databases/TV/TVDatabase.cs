@@ -59,7 +59,7 @@ namespace MediaPortal.TV.Database
 				try 
 				{
 					// Open database
-					Log.Write("opening tvdatabase");
+					Log.WriteFile(Log.LogType.Log,true,"opening tvdatabase");
 
 					String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
 						GetExecutingAssembly().Location); 
@@ -69,7 +69,7 @@ namespace MediaPortal.TV.Database
 					}
 					catch(Exception){}
 					//Upgrade();
-					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV18.db");
+					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV19.db");
 					CreateTables();
 					UpdateFromPreviousVersion();
 					if (m_db!=null)
@@ -82,9 +82,9 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 				}
-				Log.Write("tvdatabase opened");
+				Log.WriteFile(Log.LogType.Log,true,"tvdatabase opened");
 			}
 		}
 
@@ -135,8 +135,8 @@ namespace MediaPortal.TV.Database
 				DatabaseUtility.AddTable(m_db,"recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
 		
 				DatabaseUtility.AddTable(m_db,"tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)\n");
-				DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer)\n");
-				DatabaseUtility.AddTable(m_db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer)\n");
+				DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text)\n");
+				DatabaseUtility.AddTable(m_db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text)\n");
 				DatabaseUtility.AddTable(m_db,"tblGroups"      ,"CREATE TABLE tblGroups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)\n");
 				DatabaseUtility.AddTable(m_db,"tblGroupMapping","CREATE TABLE tblGroupMapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)\n");
 
@@ -199,7 +199,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -250,7 +250,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -277,7 +277,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -356,7 +356,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -387,7 +387,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -457,7 +457,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -480,7 +480,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -501,7 +501,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -537,7 +537,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -572,7 +572,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -595,7 +595,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -615,7 +615,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -638,7 +638,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -674,7 +674,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -742,7 +742,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -795,7 +795,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -848,7 +848,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -900,7 +900,7 @@ namespace MediaPortal.TV.Database
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count> 0)
 					{
-						//						Log.Write("Program Exists Ignoring:{0} {1} {2}", strTitle,prog.Start.ToString(),prog.End.ToString());
+						//						Log.WriteFile(Log.LogType.Log,true,"Program Exists Ignoring:{0} {1} {2}", strTitle,prog.Start.ToString(),prog.End.ToString());
 						return -1; //exit if the same program exists
 					}
 					//check if other programs exist between the start - finish time of this program
@@ -913,7 +913,7 @@ namespace MediaPortal.TV.Database
 						{
 							long iStart=Int64.Parse(DatabaseUtility.Get(results2,i,"iStartTime"));
 							long iEnd=Int64.Parse(DatabaseUtility.Get(results2,i,"iEndTime"));
-							//							Log.Write("Removing Program:{0} {1} {2}", DatabaseUtility.Get(results2,i,"strTitle"),iStart.ToString(),iEnd.ToString());
+							//							Log.WriteFile(Log.LogType.Log,true,"Removing Program:{0} {1} {2}", DatabaseUtility.Get(results2,i,"strTitle"),iStart.ToString(),iEnd.ToString());
 							strSQL=String.Format("DELETE FROM tblPrograms WHERE idChannel={0} AND iStartTime={1} AND iEndTime={2}",
 								iChannelId,iStart,iEnd);
 							m_db.Execute(strSQL);
@@ -928,7 +928,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -1010,7 +1010,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1076,7 +1076,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1105,7 +1105,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1149,7 +1149,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1170,7 +1170,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1260,7 +1260,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1320,7 +1320,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1375,7 +1375,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1515,7 +1515,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1561,7 +1561,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1583,7 +1583,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1639,7 +1639,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1685,7 +1685,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1702,7 +1702,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch (Exception ex)
 				{
-					Log.Write("tvdatabase begin transaction failed exception err:{0} ", ex.Message);		
+					Log.WriteFile(Log.LogType.Log,true,"tvdatabase begin transaction failed exception err:{0} ", ex.Message);		
 					Open();
 				}
 			}
@@ -1718,7 +1718,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch (Exception ex)
 				{
-					Log.Write("tvdatabase commit failed exception err:{0} ", ex.Message);		
+					Log.WriteFile(Log.LogType.Log,true,"tvdatabase commit failed exception err:{0} ", ex.Message);		
 					Open();
 				}
 			}
@@ -1732,7 +1732,7 @@ namespace MediaPortal.TV.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("tvdatabase rollback failed exception err:{0} ", ex.Message);		
+				Log.WriteFile(Log.LogType.Log,true,"tvdatabase rollback failed exception err:{0} ", ex.Message);		
 				Open();
 			}
 		}
@@ -1749,7 +1749,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1791,7 +1791,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1812,7 +1812,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1832,7 +1832,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -1873,7 +1873,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1917,7 +1917,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -1975,7 +1975,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return "";
@@ -2003,7 +2003,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return;
@@ -2053,7 +2053,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2089,7 +2089,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2143,13 +2143,13 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
 		}
 
-		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int bandWidth)
+		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int bandWidth, int audio1,int audio2, int audio3,int ac3Pid, string audioLanguage, string audioLanguage1, string audioLanguage2, string audioLanguage3)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -2172,25 +2172,28 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , audioPid,videoPid,teletextPid,pmtPid,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},1)",
-									strChannel,strProvider,idChannel,frequency,bandWidth,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid);
-						//Log.Write("sql:{0}", strSQL);
+						//ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3
+						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},'{16}','{17}','{18}','{19}',1)",
+									strChannel,strProvider,idChannel,frequency,bandWidth,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,
+									ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
 						return idChannel;
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6},videoPid={7},teletextPid={8},pmtPid={9}, bandwidth={10} where iLCN like '{11}'", 
-							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid, pmtPid,bandWidth,idChannel);
-						//	Log.Write("sql:{0}", strSQL);
+						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6},videoPid={7},teletextPid={8},pmtPid={9}, bandwidth={10},ac3Pid={11},audio1Pid={12},audio2Pid={13},audio3Pid={14},sAudioLang='{15}',sAudioLang1='{16}',sAudioLang2='{17}',sAudioLang3='{18}' where iLCN like '{19}'", 
+							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid, pmtPid,bandWidth,
+							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3,idChannel);
+						//	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
 					}
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -2198,12 +2201,12 @@ namespace MediaPortal.TV.Database
 			}
 		}
 		
-		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid)
+		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int audio1,int audio2, int audio3, int ac3Pid, string audioLanguage,string audioLanguage1, string audioLanguage2, string audioLanguage3)
 		{
 			lock (typeof(TVDatabase))
 			{
 				if (null==m_db) return -1;
-				string strSQL;
+				string strSQL=String.Empty;
 				try
 				{
 					string strChannel=channelName;
@@ -2221,25 +2224,28 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},1)"
-																	,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid);
-						//Log.Write("sql:{0}", strSQL);
+						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',1)"
+																	,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
+																	ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
 						return idChannel;
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12} where iLCN like '{13}'", 
-																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid,idChannel,pmtPid);
-						//Log.Write("sql:{0}", strSQL);
+						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}' where iLCN like '{21}'", 
+																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid,pmtPid,
+																	ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3,idChannel);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
 					}
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"sql:{0}",strSQL);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -2248,8 +2254,10 @@ namespace MediaPortal.TV.Database
 		}
 
 		
-		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth) 
+		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3) 
 		{
+			audio1=audio2=audio3=ac3Pid=-1;
+			audioLanguage=audioLanguage1=audioLanguage2=audioLanguage3="";
 			bandwidth=-1;
 			audioPid=videoPid=teletextPid=0;
 			strProvider="";
@@ -2259,7 +2267,7 @@ namespace MediaPortal.TV.Database
 			TSID=-1;
 			SID=-1;
 			if (m_db == null) return ;
-			//Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
+			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
 			{
 				try
@@ -2280,17 +2288,27 @@ namespace MediaPortal.TV.Database
 					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
 					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
 					bandwidth=Int32.Parse(DatabaseUtility.Get(results,0,"bandwidth"));
+					audio1=Int32.Parse(DatabaseUtility.Get(results,0,"audio1Pid"));
+					audio2=Int32.Parse(DatabaseUtility.Get(results,0,"audio2Pid"));
+					audio3=Int32.Parse(DatabaseUtility.Get(results,0,"audio3Pid"));
+					ac3Pid=Int32.Parse(DatabaseUtility.Get(results,0,"ac3Pid"));
+					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
+					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
+					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
+					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
 					return ;
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
 		}
-		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid) 
+		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3) 
 		{
+			audio1=audio2=audio3=ac3Pid=-1;
+			audioLanguage=audioLanguage1=audioLanguage2=audioLanguage3="";
 			pmtPid=-1;
 			audioPid=videoPid=teletextPid=0;
 			strProvider="";
@@ -2302,7 +2320,7 @@ namespace MediaPortal.TV.Database
 			TSID=-1;
 			SID=-1;
 			if (m_db == null) return ;
-			//Log.Write("GetTuneRequest for iLCN:{0}", iLCN);
+			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
 			{
 				try
@@ -2325,11 +2343,19 @@ namespace MediaPortal.TV.Database
 					videoPid=Int32.Parse(DatabaseUtility.Get(results,0,"videoPid"));
 					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
 					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
+					audio1=Int32.Parse(DatabaseUtility.Get(results,0,"audio1Pid"));
+					audio2=Int32.Parse(DatabaseUtility.Get(results,0,"audio2Pid"));
+					audio3=Int32.Parse(DatabaseUtility.Get(results,0,"audio3Pid"));
+					ac3Pid=Int32.Parse(DatabaseUtility.Get(results,0,"ac3Pid"));
+					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
+					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
+					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
+					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
 					return ;
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2365,7 +2391,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2402,7 +2428,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2429,7 +2455,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2457,7 +2483,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2491,7 +2517,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2512,7 +2538,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2551,7 +2577,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2585,7 +2611,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2607,7 +2633,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2631,7 +2657,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -2676,7 +2702,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -2701,7 +2727,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return -1;
@@ -2761,7 +2787,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -2776,7 +2802,7 @@ namespace MediaPortal.TV.Database
 			}
 			catch(Exception ex)
 			{
-				Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 				Open();
 			}
 		}
@@ -2792,7 +2818,7 @@ namespace MediaPortal.TV.Database
 			}
 			catch(Exception ex)
 			{
-				Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 				Open();
 			}
 		}
@@ -2817,7 +2843,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}		
