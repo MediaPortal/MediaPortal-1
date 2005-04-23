@@ -1853,6 +1853,24 @@ namespace MediaPortal.GUI.Library
 				}
 				return -1;
 			}
+			set
+			{
+				if (value >= 0 && value < m_vecItems.Count)
+				{
+					int iPage = 1;
+					m_iOffset = 0;
+					m_iCursorY = value;
+					while (m_iCursorY >= m_iItemsPerPage)
+					{
+						iPage++;
+						m_iOffset += m_iItemsPerPage;
+						m_iCursorY -= m_iItemsPerPage;
+					}
+					m_upDown.Value = iPage;
+					OnSelectionChanged();
+				}
+				m_bRefresh = true;
+			}
 		}
 
 		/// <summary>
