@@ -35,8 +35,7 @@ namespace MediaPortal.GUI.TV
       , OSD_AUDIO =221
       , OSD_VOLUMESLIDER =400
       , OSD_AVDELAY =500
-      , OSD_AVDELAY_LABEL =550
-      , OSD_AUDIOSTREAM_LIST =501
+      , OSD_AVDELAY_LABEL =550     
       , OSD_CREATEBOOKMARK =600
       , OSD_BOOKMARKS_LIST =601
       , OSD_BOOKMARKS_LIST_LABEL =650
@@ -78,6 +77,9 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(33)]				protected GUIButtonControl btnPreviousProgram=null;
 		[SkinControlAttribute(34)]				protected GUIButtonControl btnNextProgram=null;
 		[SkinControlAttribute(38)]				protected GUITextScrollUpControl tbProgramDescription=null;
+
+		// SUB AUDIO OSD
+		[SkinControlAttribute(501)]				protected GUIListControl lstAudioStreamList=null;		
 
     bool isSubMenuVisible = false;
     int m_iActiveMenu = 0;
@@ -291,7 +293,19 @@ namespace MediaPortal.GUI.TV
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
         {
           int iControl=message.SenderControlId;		// get the ID of the control sending us a message
-          if (iControl==btnChannelUp.GetID)
+					if (iControl==lstAudioStreamList.GetID)
+					{
+						// only change the audio stream if a different one has been asked for
+						if (Recorder.GetAudioLanguage() != lstAudioStreamList.SelectedListItem.ItemId)	
+						{
+							// Set the audio stream to the one selected
+							Recorder.SetAudioLanguage(lstAudioStreamList.SelectedListItem.ItemId);
+							isSubMenuVisible = false;
+							m_bNeedRefresh=true;
+							PopulateAudioStreams();
+						}
+					}
+					if (iControl==btnChannelUp.GetID)
           {
             OnNextChannel();
           }
@@ -522,8 +536,8 @@ namespace MediaPortal.GUI.TV
     				
               // show the controls on this sub menu
               ShowControl(GetID, (int)Controls.OSD_AVDELAY);
-              ShowControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
-              ShowControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
+              ShowControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);             
+							lstAudioStreamList.IsVisible = true;
 
               FocusControl(GetID, (int)Controls.OSD_AVDELAY, 0);	// set focus to the first control in our group
               PopulateAudioStreams();		// populate the list control with audio streams for this video
@@ -651,8 +665,9 @@ namespace MediaPortal.GUI.TV
       // Set all sub menu controls to hidden
       HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
-      HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
-      HideControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
+      HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);      
+			lstAudioStreamList.IsVisible = false;
+
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
       HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
       HideControl(GetID, (int)Controls.OSD_SHARPNESS);
@@ -731,13 +746,10 @@ namespace MediaPortal.GUI.TV
     }
 
     void Handle_ControlSetting(int iControlID, long wID)
-    {
-    
+    {   
       string strMovie=g_Player.CurrentFile;
-      //      CVideoDatabase dbs;
-      //    VECBOOKMARKS bookmarks;
 
-      switch (iControlID)
+			switch (iControlID)
       {
         case (int)Controls.OSD_VOLUMESLIDER:
         {
@@ -824,23 +836,7 @@ namespace MediaPortal.GUI.TV
           }
         }
           break;
-        case (int)Controls.OSD_AUDIOSTREAM_LIST:
-        {
-          if (wID!=0)	// check to see if list control has an action ID, remote can cause 0 based events
-          {
-            GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,(int)Controls.OSD_AUDIOSTREAM_LIST,0,0,null);
-            OnMessage(msg);
-            // only change the audio stream if a different one has been asked for
-            if (g_Player.CurrentAudioStream != msg.Param1)	
-            {
-              g_Player.CurrentAudioStream = msg.Param1;				// Set the audio stream to the one selected
-              isSubMenuVisible = false;										// hide the sub menu
-              m_bNeedRefresh=true;
-              PopulateAudioStreams();
-            }
-          }
-        }
-          break;
+
           /*
                   case Controls.OSD_AVDELAY:
                   {
@@ -921,51 +917,52 @@ namespace MediaPortal.GUI.TV
 
     void PopulateAudioStreams()
     {
-      
-      // get the number of audio strams for the current movie
-      int iValue=g_Player.AudioStreams;
+			string strLabel = GUILocalizeStrings.Get(460);					// "Audio Stream"
+			string strActiveLabel = GUILocalizeStrings.Get(461);		// "[active]"
 
-      // tell the list control not to show the page x/y spin control
-      GUIListControl pControl=GetControl((int)Controls.OSD_AUDIOSTREAM_LIST) as GUIListControl;
-      if (null!=pControl) pControl.SetPageControlVisible(false);
+			// tell the list control not to show the page x/y spin control
+			lstAudioStreamList.SetPageControlVisible(false);
+				
+			// empty the list ready for population
+			lstAudioStreamList.Clear();
 
-      // empty the list ready for population
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET,GetID,0,(int)Controls.OSD_AUDIOSTREAM_LIST,0,0,null);
-      OnMessage(msg);
+			// Add DVB audio streams
+			ArrayList	audioPidList = Recorder.GetAudioLanguageList();
+			if (audioPidList!=null && audioPidList.Count>0)
+			{
+				DVBSections.AudioLanguage al;				
+				DVBSections sections = new DVBSections();
+				int ActiveIndex=0;
+				for (int i=0 ; i<audioPidList.Count ; i++)
+				{				
+					al = (DVBSections.AudioLanguage)audioPidList[i];					
+					string strItem;
+					string strLang = sections.GetLanguageFromCode(al.AudioLanguageCode);
 
-      string strLabel = GUILocalizeStrings.Get(460);					// "Audio Stream"
-      string strActiveLabel = GUILocalizeStrings.Get(461);		// "[active]"
+					if (Recorder.GetAudioLanguage() == al.AudioPid)
+					{
+						// formats to 'Audio Stream X [active]'
+						strItem=String.Format(strLang + "  " + strActiveLabel);	// this audio stream is active, show as such
+						ActiveIndex = i;
+					}
+					else
+					{
+						// formats to 'Audio Stream X'
+						strItem=String.Format(strLang );
+					}
 
-      // cycle through each audio stream and add it to our list control
-      for (int i=0; i < iValue; ++i)
-      {
-        string strItem;
-        string strLang=g_Player.AudioLanguage(i);
-        int ipos=strLang.IndexOf("(");
-        if (ipos > 0) strLang=strLang.Substring(0,ipos);
-        if (g_Player.CurrentAudioStream == i)
-        {
-          // formats to 'Audio Stream X [active]'
-          strItem=String.Format(strLang + "  " + strActiveLabel);	// this audio stream is active, show as such
-        }
-        else
-        {
-          // formats to 'Audio Stream X'
-          strItem=String.Format(strLang );
-        }
+					// create a list item object to add to the list
+					GUIListItem pItem = new GUIListItem();
+					pItem.Label=strItem;
+					pItem.ItemId=al.AudioPid;
 
-        // create a list item object to add to the list
-        GUIListItem pItem = new GUIListItem();
-        pItem.Label=strItem;
+					// add it ...
+					lstAudioStreamList.Add(pItem);
+				}
 
-        // add it ...
-        GUIMessage msg2=new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD,GetID,0,(int)Controls.OSD_AUDIOSTREAM_LIST,0,0,pItem);
-        OnMessage(msg2);    
-      }
-
-      // set the current active audio stream as the selected item in the list control
-      GUIMessage msgSet=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT,GetID,0,(int)Controls.OSD_AUDIOSTREAM_LIST,g_Player.CurrentAudioStream,0,null);
-      OnMessage(msgSet);
+				// set the current active audio stream as the selected item in the list control
+				lstAudioStreamList.SelectedListItemIndex = ActiveIndex;
+			}
     }
 
     void PopulateSubTitles()
@@ -1076,7 +1073,8 @@ namespace MediaPortal.GUI.TV
       HideControl(GetID, (int)Controls.OSD_VOLUMESLIDER);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS);
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
-      HideControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
+			lstAudioStreamList.IsVisible = false;
+
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
       HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
       HideControl(GetID, (int)Controls.OSD_SATURATION);

@@ -734,7 +734,7 @@ namespace MediaPortal.GUI.TV
 				dlg.AddLocalizedString(902); // MSN Online contacts
 			}
 
-			ArrayList	audioPidList = Recorder.GetAudioLanguage();
+			ArrayList	audioPidList = Recorder.GetAudioLanguageList();
 			if (audioPidList!=null && audioPidList.Count>0)
 			{
 				dlg.AddLocalizedString(292); // Audio language menu
@@ -886,19 +886,17 @@ namespace MediaPortal.GUI.TV
 		void ShowAudioLanguageMenu()
 		{
 			if (dlg==null) return;
-			dlg.Reset();
-			//dlg.SetHeading(248); // Language by corl
-			dlg.SetHeading(292); // audio by agree
+			dlg.Reset();			
+			dlg.SetHeading(292); // set audio language menu
 
 			DVBSections.AudioLanguage al;
 			ArrayList	audioPidList = new ArrayList();
-			audioPidList = Recorder.GetAudioLanguage();
+			audioPidList = Recorder.GetAudioLanguageList();
 
-			int iNumberOfLanguages = audioPidList.Count;
-			for (int i=0 ; i<iNumberOfLanguages ; i++)
+			DVBSections sections = new DVBSections();
+			for (int i=0 ; i<audioPidList.Count ; i++)
 			{				
-				al = (DVBSections.AudioLanguage)audioPidList[i];
-				DVBSections sections = new DVBSections();
+				al = (DVBSections.AudioLanguage)audioPidList[i];				
 				string strLanguage = sections.GetLanguageFromCode(al.AudioLanguageCode);
 				dlg.Add(strLanguage);
 			}
