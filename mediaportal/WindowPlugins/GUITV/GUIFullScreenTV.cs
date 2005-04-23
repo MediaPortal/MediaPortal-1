@@ -755,7 +755,13 @@ namespace MediaPortal.GUI.TV
 					dlg.SetHeading(GUILocalizeStrings.Get(915));//TV Channels
 					foreach (TVChannel channel in GUITVHome.Navigator.CurrentGroup.tvChannels)
 					{
-						dlg.Add(channel.Name);
+						GUIListItem pItem = new GUIListItem(channel.Name);
+						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,channel.Name);                   
+						if (System.IO.File.Exists(strLogo))
+						{										
+							pItem.IconImage = strLogo;							
+						}						
+						dlg.Add(pItem);						
 					}
 
 					m_bDialogVisible=true;
