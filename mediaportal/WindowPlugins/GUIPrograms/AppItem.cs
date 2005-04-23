@@ -772,6 +772,27 @@ namespace ProgramsDatabase
 			}	
 		}
 
+    public bool FirstImageDirectoryValid()
+    {
+      if (this.ImageDirs.Length == 0)
+      {
+        return false;
+      }
+      else
+      {
+        string firstDirectory = ImageDirs[0];
+        if (firstDirectory == "")
+        {
+          return false;
+        }
+        else
+        {
+          return System.IO.Directory.Exists(firstDirectory);
+        }
+      }
+      
+    }
+
 
 
 		protected void DeleteFiles()

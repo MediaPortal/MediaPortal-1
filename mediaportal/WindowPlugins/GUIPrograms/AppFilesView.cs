@@ -617,11 +617,18 @@ namespace WindowPlugins.GUIPrograms
 
     void ShowFileScraper()
     {
-      FileInfoScraperForm frmScraper = new FileInfoScraperForm();
-      frmScraper.CurApp = mCurApp;
-      frmScraper.Setup();
-      frmScraper.ShowDialog(this);
-      SyncListView();
+      if (mCurApp.FirstImageDirectoryValid())
+      {
+        FileInfoScraperForm frmScraper = new FileInfoScraperForm();
+        frmScraper.CurApp = mCurApp;
+        frmScraper.Setup();
+        frmScraper.ShowDialog(this);
+        SyncListView();
+      }
+      else
+      {
+        MessageBox.Show("Please set the first imagedirectory before starting the scraper!", "Missing or Invalid Imagedirectory");
+      }
     }
 
 
