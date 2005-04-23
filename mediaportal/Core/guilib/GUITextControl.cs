@@ -145,8 +145,14 @@ namespace MediaPortal.GUI.Library
           dwPosY += (int)m_iItemHeight;
         }
       }
-      if (m_bEnableUpDown)
-	      m_upDown.Render(timePassed);
+			if (m_bEnableUpDown)
+			{
+				int iPages=m_vecItems.Count / m_iItemsPerPage;
+				if ( (m_vecItems.Count % m_iItemsPerPage) !=0) iPages++;
+
+				if (iPages>1)
+					m_upDown.Render(timePassed);
+			}
 		}
 
 		public override void OnAction(Action action)

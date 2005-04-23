@@ -1330,10 +1330,43 @@ namespace MediaPortal.TV.Recording
 
 		public void SetAudioLanguage(int audioPid)
 		{
+			if(audioPid!=currentTuningObject.AudioPid)
+			{
+				int hr=SetupDemuxer(m_DemuxVideoPin,m_DemuxVideoPin,audioPid,currentTuningObject.VideoPid);
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
+					return;
+				}
+			}
 		}
 		public ArrayList GetAudioLanguage()
 		{
-			return new ArrayList();
+			if (currentTuningObject==null) return new ArrayList();
+			DVBSections.AudioLanguage al;
+			ArrayList audioPidList = new ArrayList();
+			if(currentTuningObject.Audio1!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=currentTuningObject.Audio1;
+				al.AudioLanguageCode=currentTuningObject.AudioLanguage1;
+				audioPidList.Add(al);
+			}
+			if(currentTuningObject.Audio2!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=currentTuningObject.Audio2;
+				al.AudioLanguageCode=currentTuningObject.AudioLanguage2;
+				audioPidList.Add(al);
+			}
+			if(currentTuningObject.Audio3!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=currentTuningObject.Audio3;
+				al.AudioLanguageCode=currentTuningObject.AudioLanguage3;
+				audioPidList.Add(al);
+			}
+			return audioPidList;
 		}
 
 		public bool HasTeletext()
@@ -2534,6 +2567,8 @@ namespace MediaPortal.TV.Recording
 				int frequency=-1,ONID=-1,TSID=-1,SID=-1;
 				int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1;
 				string providerName;
+				int audio1,audio2,audio3,ac3Pid;
+				string audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3;
 				
 				switch (m_NetworkType)
 				{
@@ -2547,7 +2582,7 @@ namespace MediaPortal.TV.Recording
 						//get the DVB-C tuning details from the tv database
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBC tuning details");
 						int symbolrate=0,innerFec=0,modulation=0;
-						TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid);
+						TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 						if (frequency<=0) 
 						{
 							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
@@ -2594,6 +2629,14 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.TeletextPid=teletextPid;
 						currentTuningObject.PMTPid=pmtPid;
 						currentTuningObject.ServiceName=channel.Name;
+						currentTuningObject.AudioLanguage=audioLanguage;
+						currentTuningObject.AudioLanguage1=audioLanguage1;
+						currentTuningObject.AudioLanguage2=audioLanguage2;
+						currentTuningObject.AudioLanguage3=audioLanguage3;
+						currentTuningObject.AC3Pid=ac3Pid;
+						currentTuningObject.Audio1=audio1;
+						currentTuningObject.Audio2=audio2;
+						currentTuningObject.Audio3=audio3;
 
 
 					} break;
@@ -2655,6 +2698,15 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.TeletextPid=ch.TeletextPid;
 						currentTuningObject.PMTPid=ch.PMTPid;
 						currentTuningObject.ServiceName=channel.Name;
+						currentTuningObject.AudioLanguage=ch.AudioLanguage;
+						currentTuningObject.AudioLanguage1=ch.AudioLanguage1;
+						currentTuningObject.AudioLanguage2=ch.AudioLanguage2;
+						currentTuningObject.AudioLanguage3=ch.AudioLanguage3;
+						currentTuningObject.AC3Pid=ch.AC3Pid;
+						currentTuningObject.Audio1=ch.Audio1;
+						currentTuningObject.Audio2=ch.Audio2;
+						currentTuningObject.Audio3=ch.Audio3;
+
 					} break;
 
 					case NetworkType.DVBT: 
@@ -2662,7 +2714,7 @@ namespace MediaPortal.TV.Recording
 						//get the DVB-T tuning details from the tv database
 						//for DVB-T this is the frequency, ONID , TSID and SID
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBT tuning details");
-						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth);
+						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 						if (frequency<=0) 
 						{
 							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
@@ -2703,6 +2755,14 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.TeletextPid=teletextPid;
 						currentTuningObject.PMTPid=pmtPid;
 						currentTuningObject.ServiceName=channel.Name;
+						currentTuningObject.AudioLanguage=audioLanguage;
+						currentTuningObject.AudioLanguage1=audioLanguage1;
+						currentTuningObject.AudioLanguage2=audioLanguage2;
+						currentTuningObject.AudioLanguage3=audioLanguage3;
+						currentTuningObject.AC3Pid=ac3Pid;
+						currentTuningObject.Audio1=audio1;
+						currentTuningObject.Audio2=audio2;
+						currentTuningObject.Audio3=audio3;
 					} break;
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
@@ -2956,6 +3016,7 @@ namespace MediaPortal.TV.Recording
 				DVBChannel newchannel   = new DVBChannel();
 
 				//check if this channel has audio/video streams
+				int audioOptions=0;
 				if (info.pid_list!=null)
 				{
 					for (int pids =0; pids < info.pid_list.Count;pids++)
@@ -2966,16 +3027,57 @@ namespace MediaPortal.TV.Recording
 							currentTuningObject.VideoPid=data.elementary_PID;
 							hasVideo=true;
 						}
-						if (data.isAudio && hasAudio==false)
+						
+						if (data.isAudio) 
 						{
-							currentTuningObject.AudioPid=data.elementary_PID;
-							if(data.data!=null)
+							switch(audioOptions)
 							{
-								if(data.data.Length==3)
-									newchannel.AudioLanguage=sections.GetLanguageFromCode(data.data);
+								case 0:
+									currentTuningObject.Audio1=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											currentTuningObject.AudioLanguage1=sections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+								case 1:
+									currentTuningObject.Audio2=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											currentTuningObject.AudioLanguage2=sections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+								case 2:
+									currentTuningObject.Audio3=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											currentTuningObject.AudioLanguage3=sections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+
 							}
-							hasAudio=true;
+
+							if (hasAudio==false)
+							{
+								currentTuningObject.AudioPid=data.elementary_PID;
+								if(data.data!=null)
+								{
+									if(data.data.Length==3)
+										currentTuningObject.AudioLanguage=sections.GetLanguageFromCode(data.data);
+								}
+								hasAudio=true;
+							}
 						}
+						if (data.isAC3Audio)
+						{
+							currentTuningObject.AC3Pid=data.elementary_PID;
+						}
+
 						if (data.isTeletext)
 						{
 							currentTuningObject.TeletextPid=data.elementary_PID;
@@ -3015,10 +3117,18 @@ namespace MediaPortal.TV.Recording
 				newchannel.Symbolrate = currentTuningObject.Symbolrate;
 				newchannel.ServiceType=1;//tv
 				newchannel.AudioPid=currentTuningObject.AudioPid;
+				newchannel.AudioLanguage=currentTuningObject.AudioLanguage;
 				newchannel.VideoPid=currentTuningObject.VideoPid;
 				newchannel.TeletextPid=currentTuningObject.TeletextPid;
 				newchannel.Bandwidth=currentTuningObject.Bandwidth;
 				newchannel.PMTPid=info.network_pmt_PID;
+				newchannel.Audio1=currentTuningObject.Audio1;
+				newchannel.Audio2=currentTuningObject.Audio2;
+				newchannel.Audio3=currentTuningObject.Audio3;
+				newchannel.AudioLanguage1=currentTuningObject.AudioLanguage1;
+				newchannel.AudioLanguage2=currentTuningObject.AudioLanguage2;
+				newchannel.AudioLanguage3=currentTuningObject.AudioLanguage3;
+
 				
 				if (info.serviceType==1)//tv
 				{
@@ -3065,12 +3175,40 @@ namespace MediaPortal.TV.Recording
 					if (Network() == NetworkType.DVBT)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
-						TVDatabase.MapDVBTChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,currentTuningObject.VideoPid, currentTuningObject.TeletextPid,newchannel.PMTPid,newchannel.Bandwidth);
+						TVDatabase.MapDVBTChannel(newchannel.ServiceName,
+																			newchannel.ServiceProvider,
+																			channelId, 
+																			newchannel.Frequency, 
+																			newchannel.NetworkID,
+																			newchannel.TransportStreamID,
+																			newchannel.ProgramNumber,
+																			currentTuningObject.AudioPid,
+																			currentTuningObject.VideoPid, 
+																			currentTuningObject.TeletextPid,
+																			newchannel.PMTPid,
+																			newchannel.Bandwidth,
+																			newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,
+																			newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3);
 					}
 					if (Network() == NetworkType.DVBC)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
-						TVDatabase.MapDVBCChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.Symbolrate,newchannel.FEC,newchannel.Modulation,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,currentTuningObject.VideoPid, currentTuningObject.TeletextPid,newchannel.PMTPid);
+						TVDatabase.MapDVBCChannel(newchannel.ServiceName,
+																			newchannel.ServiceProvider,
+																			channelId, 
+																			newchannel.Frequency, 
+																			newchannel.Symbolrate,
+																			newchannel.FEC,
+																			newchannel.Modulation,
+																			newchannel.NetworkID,
+																			newchannel.TransportStreamID,
+																			newchannel.ProgramNumber,
+																			currentTuningObject.AudioPid,
+																			currentTuningObject.VideoPid, 
+																			currentTuningObject.TeletextPid,
+																			newchannel.PMTPid,
+																			newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,
+																			newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3);
 					}
 					if (Network() == NetworkType.DVBS)
 					{
@@ -3511,7 +3649,7 @@ namespace MediaPortal.TV.Recording
 /*
 			tu.ECM_1=(Int16)m_ecmPids[1];
 			tu.ECM_2=(Int16)m_ecmPids[2];
-			tu.CAID_0=(Int16)m_currentChannel.Audio3;
+			tu.CAID_0=(Int16)currentTuningObject.Audio3;
 			tu.CAID_1=(Int16)m_ecmIDs[1];
 			tu.CAID_2=(Int16)m_ecmIDs[2];
 */

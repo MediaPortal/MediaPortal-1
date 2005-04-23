@@ -187,6 +187,9 @@ namespace MediaPortal.GUI.Home
 		{
 			switch (message.Message)
 			{
+				case GUIMessage.MessageType.GUI_MSG_NOTIFY:
+					ShowNotify(message.Label,message.Label2,message.Label3);
+				break;
 				case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
 					string Head="",Line1="",Line2="",Line3="";;
 					if (message.Param1!=0) Head=GUILocalizeStrings.Get(message.Param1);
@@ -254,6 +257,14 @@ namespace MediaPortal.GUI.Home
 			pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
 		}
 
+		void ShowNotify(string strHeading,string description,string imgFileName)
+		{
+			GUIDialogNotify dlgYesNo = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+			dlgYesNo.SetHeading(strHeading);
+			dlgYesNo.SetText(description);
+			dlgYesNo.SetImage(imgFileName);
+			dlgYesNo.DoModal( GUIWindowManager.ActiveWindow);
+		}
 		bool AskYesNo(string strHeading, string strLine1, string strLine2,string strLine3)
 		{
 			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);

@@ -119,6 +119,54 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.CheckBox checkBoxScrambled;
 		private System.Windows.Forms.TextBox tbBandWidth;
 		private System.Windows.Forms.Label label49;
+		private System.Windows.Forms.Label label50;
+		private System.Windows.Forms.Label label51;
+		private System.Windows.Forms.Label label52;
+		private System.Windows.Forms.Label label53;
+		private System.Windows.Forms.Label label54;
+		private System.Windows.Forms.Label label55;
+		private System.Windows.Forms.Label label56;
+		private System.Windows.Forms.Label label57;
+		private System.Windows.Forms.TextBox tbDVBCAudio1;
+		private System.Windows.Forms.TextBox tbDVBCAudioLanguage3;
+		private System.Windows.Forms.TextBox tbDVBCAudioLanguage2;
+		private System.Windows.Forms.TextBox tbDVBCAudioLanguage1;
+		private System.Windows.Forms.TextBox tbDVBCAudioLanguage;
+		private System.Windows.Forms.TextBox tbDVBCAC3;
+		private System.Windows.Forms.TextBox tbDVBCAudio3;
+		private System.Windows.Forms.TextBox tbDVBCAudio2;
+		private System.Windows.Forms.Label label58;
+		private System.Windows.Forms.TextBox tbDVBTAudioLanguage3;
+		private System.Windows.Forms.TextBox tbDVBTAudioLanguage2;
+		private System.Windows.Forms.TextBox tbDVBTAudioLanguage1;
+		private System.Windows.Forms.TextBox tbDVBTAudioLanguage;
+		private System.Windows.Forms.Label label59;
+		private System.Windows.Forms.Label label60;
+		private System.Windows.Forms.Label label61;
+		private System.Windows.Forms.TextBox tbDVBTAC3;
+		private System.Windows.Forms.TextBox tbDVBTAudio3;
+		private System.Windows.Forms.TextBox tbDVBTAudio2;
+		private System.Windows.Forms.TextBox tbDVBTAudio1;
+		private System.Windows.Forms.Label label62;
+		private System.Windows.Forms.Label label63;
+		private System.Windows.Forms.Label label64;
+		private System.Windows.Forms.Label label65;
+		private System.Windows.Forms.Label label66;
+		private System.Windows.Forms.TextBox tbDVBSAudioLanguage3;
+		private System.Windows.Forms.TextBox tbDVBSAudioLanguage2;
+		private System.Windows.Forms.TextBox tbDVBSAudioLanguage1;
+		private System.Windows.Forms.TextBox tbDVBSAudioLanguage;
+		private System.Windows.Forms.Label label67;
+		private System.Windows.Forms.Label label68;
+		private System.Windows.Forms.Label label69;
+		private System.Windows.Forms.TextBox tbDVBSAC3;
+		private System.Windows.Forms.TextBox tbDVBSAudio3;
+		private System.Windows.Forms.TextBox tbDVBSAudio2;
+		private System.Windows.Forms.TextBox tbDVBSAudio1;
+		private System.Windows.Forms.Label label70;
+		private System.Windows.Forms.Label label71;
+		private System.Windows.Forms.Label label72;
+		private System.Windows.Forms.Label label73;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -194,6 +242,22 @@ namespace MediaPortal.Configuration
 			this.countryComboBox = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.label57 = new System.Windows.Forms.Label();
+			this.tbDVBCAudioLanguage3 = new System.Windows.Forms.TextBox();
+			this.tbDVBCAudioLanguage2 = new System.Windows.Forms.TextBox();
+			this.tbDVBCAudioLanguage1 = new System.Windows.Forms.TextBox();
+			this.tbDVBCAudioLanguage = new System.Windows.Forms.TextBox();
+			this.label54 = new System.Windows.Forms.Label();
+			this.label55 = new System.Windows.Forms.Label();
+			this.label56 = new System.Windows.Forms.Label();
+			this.tbDVBCAC3 = new System.Windows.Forms.TextBox();
+			this.tbDVBCAudio3 = new System.Windows.Forms.TextBox();
+			this.tbDVBCAudio2 = new System.Windows.Forms.TextBox();
+			this.tbDVBCAudio1 = new System.Windows.Forms.TextBox();
+			this.label53 = new System.Windows.Forms.Label();
+			this.label52 = new System.Windows.Forms.Label();
+			this.label51 = new System.Windows.Forms.Label();
+			this.label50 = new System.Windows.Forms.Label();
 			this.tbDVBCPmtPid = new System.Windows.Forms.TextBox();
 			this.label46 = new System.Windows.Forms.Label();
 			this.label41 = new System.Windows.Forms.Label();
@@ -220,6 +284,8 @@ namespace MediaPortal.Configuration
 			this.tbDVBCONID = new System.Windows.Forms.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.label49 = new System.Windows.Forms.Label();
+			this.tbBandWidth = new System.Windows.Forms.TextBox();
 			this.tbDVBTPmtPid = new System.Windows.Forms.TextBox();
 			this.label47 = new System.Windows.Forms.Label();
 			this.label42 = new System.Windows.Forms.Label();
@@ -268,8 +334,38 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.tbBandWidth = new System.Windows.Forms.TextBox();
-			this.label49 = new System.Windows.Forms.Label();
+			this.label58 = new System.Windows.Forms.Label();
+			this.tbDVBTAudioLanguage3 = new System.Windows.Forms.TextBox();
+			this.tbDVBTAudioLanguage2 = new System.Windows.Forms.TextBox();
+			this.tbDVBTAudioLanguage1 = new System.Windows.Forms.TextBox();
+			this.tbDVBTAudioLanguage = new System.Windows.Forms.TextBox();
+			this.label59 = new System.Windows.Forms.Label();
+			this.label60 = new System.Windows.Forms.Label();
+			this.label61 = new System.Windows.Forms.Label();
+			this.tbDVBTAC3 = new System.Windows.Forms.TextBox();
+			this.tbDVBTAudio3 = new System.Windows.Forms.TextBox();
+			this.tbDVBTAudio2 = new System.Windows.Forms.TextBox();
+			this.tbDVBTAudio1 = new System.Windows.Forms.TextBox();
+			this.label62 = new System.Windows.Forms.Label();
+			this.label63 = new System.Windows.Forms.Label();
+			this.label64 = new System.Windows.Forms.Label();
+			this.label65 = new System.Windows.Forms.Label();
+			this.label66 = new System.Windows.Forms.Label();
+			this.tbDVBSAudioLanguage3 = new System.Windows.Forms.TextBox();
+			this.tbDVBSAudioLanguage2 = new System.Windows.Forms.TextBox();
+			this.tbDVBSAudioLanguage1 = new System.Windows.Forms.TextBox();
+			this.tbDVBSAudioLanguage = new System.Windows.Forms.TextBox();
+			this.label67 = new System.Windows.Forms.Label();
+			this.label68 = new System.Windows.Forms.Label();
+			this.label69 = new System.Windows.Forms.Label();
+			this.tbDVBSAC3 = new System.Windows.Forms.TextBox();
+			this.tbDVBSAudio3 = new System.Windows.Forms.TextBox();
+			this.tbDVBSAudio2 = new System.Windows.Forms.TextBox();
+			this.tbDVBSAudio1 = new System.Windows.Forms.TextBox();
+			this.label70 = new System.Windows.Forms.Label();
+			this.label71 = new System.Windows.Forms.Label();
+			this.label72 = new System.Windows.Forms.Label();
+			this.label73 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -326,7 +422,7 @@ namespace MediaPortal.Configuration
 			this.frequencyTextBox.Location = new System.Drawing.Point(128, 16);
 			this.frequencyTextBox.MaxLength = 10;
 			this.frequencyTextBox.Name = "frequencyTextBox";
-			this.frequencyTextBox.Size = new System.Drawing.Size(80, 20);
+			this.frequencyTextBox.Size = new System.Drawing.Size(168, 20);
 			this.frequencyTextBox.TabIndex = 2;
 			this.frequencyTextBox.Text = "0";
 			this.frequencyTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.frequencyTextBox_KeyPress);
@@ -347,7 +443,7 @@ namespace MediaPortal.Configuration
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.nameTextBox.Location = new System.Drawing.Point(128, 16);
 			this.nameTextBox.Name = "nameTextBox";
-			this.nameTextBox.Size = new System.Drawing.Size(176, 20);
+			this.nameTextBox.Size = new System.Drawing.Size(264, 20);
 			this.nameTextBox.TabIndex = 0;
 			this.nameTextBox.Text = "";
 			this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
@@ -365,7 +461,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cancelButton.Location = new System.Drawing.Point(333, 407);
+			this.cancelButton.Location = new System.Drawing.Point(421, 407);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.TabIndex = 3;
 			this.cancelButton.Text = "Cancel";
@@ -375,7 +471,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.okButton.Location = new System.Drawing.Point(253, 407);
+			this.okButton.Location = new System.Drawing.Point(341, 407);
 			this.okButton.Name = "okButton";
 			this.okButton.TabIndex = 2;
 			this.okButton.Text = "OK";
@@ -431,7 +527,7 @@ namespace MediaPortal.Configuration
 			this.externalChannelTextBox.Enabled = false;
 			this.externalChannelTextBox.Location = new System.Drawing.Point(128, 88);
 			this.externalChannelTextBox.Name = "externalChannelTextBox";
-			this.externalChannelTextBox.Size = new System.Drawing.Size(184, 20);
+			this.externalChannelTextBox.Size = new System.Drawing.Size(272, 20);
 			this.externalChannelTextBox.TabIndex = 2;
 			this.externalChannelTextBox.Text = "";
 			this.externalChannelTextBox.TextChanged += new System.EventHandler(this.externalChannelTextBox_TextChanged);
@@ -455,7 +551,7 @@ namespace MediaPortal.Configuration
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(400, 384);
+			this.tabControl1.Size = new System.Drawing.Size(488, 384);
 			this.tabControl1.TabIndex = 4;
 			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
@@ -470,7 +566,7 @@ namespace MediaPortal.Configuration
 			this.tabPage1.Controls.Add(this.nameTextBox);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(392, 358);
+			this.tabPage1.Size = new System.Drawing.Size(480, 358);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
@@ -531,7 +627,7 @@ namespace MediaPortal.Configuration
 			this.tabPage2.Controls.Add(this.comboTvStandard);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(392, 358);
+			this.tabPage2.Size = new System.Drawing.Size(480, 358);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Analog";
 			this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
@@ -552,7 +648,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Location = new System.Drawing.Point(128, 80);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(224, 20);
+			this.countryComboBox.Size = new System.Drawing.Size(312, 20);
 			this.countryComboBox.Sorted = true;
 			this.countryComboBox.TabIndex = 15;
 			this.countryComboBox.SelectedIndexChanged += new System.EventHandler(this.countryComboBox_SelectedIndexChanged);
@@ -568,6 +664,22 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage4
 			// 
+			this.tabPage4.Controls.Add(this.label57);
+			this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage3);
+			this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage2);
+			this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage1);
+			this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage);
+			this.tabPage4.Controls.Add(this.label54);
+			this.tabPage4.Controls.Add(this.label55);
+			this.tabPage4.Controls.Add(this.label56);
+			this.tabPage4.Controls.Add(this.tbDVBCAC3);
+			this.tabPage4.Controls.Add(this.tbDVBCAudio3);
+			this.tabPage4.Controls.Add(this.tbDVBCAudio2);
+			this.tabPage4.Controls.Add(this.tbDVBCAudio1);
+			this.tabPage4.Controls.Add(this.label53);
+			this.tabPage4.Controls.Add(this.label52);
+			this.tabPage4.Controls.Add(this.label51);
+			this.tabPage4.Controls.Add(this.label50);
 			this.tabPage4.Controls.Add(this.tbDVBCPmtPid);
 			this.tabPage4.Controls.Add(this.label46);
 			this.tabPage4.Controls.Add(this.label41);
@@ -595,10 +707,130 @@ namespace MediaPortal.Configuration
 			this.tabPage4.Controls.Add(this.label16);
 			this.tabPage4.Location = new System.Drawing.Point(4, 22);
 			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(392, 358);
+			this.tabPage4.Size = new System.Drawing.Size(480, 358);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "DVB-C";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
+			// 
+			// label57
+			// 
+			this.label57.Location = new System.Drawing.Point(288, 232);
+			this.label57.Name = "label57";
+			this.label57.Size = new System.Drawing.Size(72, 16);
+			this.label57.TabIndex = 48;
+			this.label57.Text = "Audio 3:";
+			// 
+			// tbDVBCAudioLanguage3
+			// 
+			this.tbDVBCAudioLanguage3.Location = new System.Drawing.Point(360, 232);
+			this.tbDVBCAudioLanguage3.Name = "tbDVBCAudioLanguage3";
+			this.tbDVBCAudioLanguage3.TabIndex = 47;
+			this.tbDVBCAudioLanguage3.Text = "";
+			// 
+			// tbDVBCAudioLanguage2
+			// 
+			this.tbDVBCAudioLanguage2.Location = new System.Drawing.Point(360, 208);
+			this.tbDVBCAudioLanguage2.Name = "tbDVBCAudioLanguage2";
+			this.tbDVBCAudioLanguage2.TabIndex = 46;
+			this.tbDVBCAudioLanguage2.Text = "";
+			// 
+			// tbDVBCAudioLanguage1
+			// 
+			this.tbDVBCAudioLanguage1.Location = new System.Drawing.Point(360, 184);
+			this.tbDVBCAudioLanguage1.Name = "tbDVBCAudioLanguage1";
+			this.tbDVBCAudioLanguage1.TabIndex = 45;
+			this.tbDVBCAudioLanguage1.Text = "";
+			// 
+			// tbDVBCAudioLanguage
+			// 
+			this.tbDVBCAudioLanguage.Location = new System.Drawing.Point(360, 160);
+			this.tbDVBCAudioLanguage.Name = "tbDVBCAudioLanguage";
+			this.tbDVBCAudioLanguage.TabIndex = 44;
+			this.tbDVBCAudioLanguage.Text = "";
+			// 
+			// label54
+			// 
+			this.label54.Location = new System.Drawing.Point(288, 208);
+			this.label54.Name = "label54";
+			this.label54.Size = new System.Drawing.Size(72, 16);
+			this.label54.TabIndex = 43;
+			this.label54.Text = "Audio 2:";
+			// 
+			// label55
+			// 
+			this.label55.Location = new System.Drawing.Point(288, 184);
+			this.label55.Name = "label55";
+			this.label55.Size = new System.Drawing.Size(72, 16);
+			this.label55.TabIndex = 42;
+			this.label55.Text = "Audio 1:";
+			// 
+			// label56
+			// 
+			this.label56.Location = new System.Drawing.Point(288, 160);
+			this.label56.Name = "label56";
+			this.label56.Size = new System.Drawing.Size(72, 16);
+			this.label56.TabIndex = 41;
+			this.label56.Text = "Audio :";
+			// 
+			// tbDVBCAC3
+			// 
+			this.tbDVBCAC3.Location = new System.Drawing.Point(360, 128);
+			this.tbDVBCAC3.Name = "tbDVBCAC3";
+			this.tbDVBCAC3.TabIndex = 40;
+			this.tbDVBCAC3.Text = "";
+			// 
+			// tbDVBCAudio3
+			// 
+			this.tbDVBCAudio3.Location = new System.Drawing.Point(360, 104);
+			this.tbDVBCAudio3.Name = "tbDVBCAudio3";
+			this.tbDVBCAudio3.TabIndex = 39;
+			this.tbDVBCAudio3.Text = "";
+			// 
+			// tbDVBCAudio2
+			// 
+			this.tbDVBCAudio2.Location = new System.Drawing.Point(360, 80);
+			this.tbDVBCAudio2.Name = "tbDVBCAudio2";
+			this.tbDVBCAudio2.TabIndex = 38;
+			this.tbDVBCAudio2.Text = "";
+			// 
+			// tbDVBCAudio1
+			// 
+			this.tbDVBCAudio1.Location = new System.Drawing.Point(360, 56);
+			this.tbDVBCAudio1.Name = "tbDVBCAudio1";
+			this.tbDVBCAudio1.TabIndex = 37;
+			this.tbDVBCAudio1.Text = "";
+			// 
+			// label53
+			// 
+			this.label53.Location = new System.Drawing.Point(288, 128);
+			this.label53.Name = "label53";
+			this.label53.Size = new System.Drawing.Size(72, 16);
+			this.label53.TabIndex = 36;
+			this.label53.Text = "AC3 Pid:";
+			// 
+			// label52
+			// 
+			this.label52.Location = new System.Drawing.Point(288, 104);
+			this.label52.Name = "label52";
+			this.label52.Size = new System.Drawing.Size(72, 16);
+			this.label52.TabIndex = 35;
+			this.label52.Text = "Audio Pid3:";
+			// 
+			// label51
+			// 
+			this.label51.Location = new System.Drawing.Point(288, 80);
+			this.label51.Name = "label51";
+			this.label51.Size = new System.Drawing.Size(72, 16);
+			this.label51.TabIndex = 34;
+			this.label51.Text = "Audio Pid2:";
+			// 
+			// label50
+			// 
+			this.label50.Location = new System.Drawing.Point(288, 56);
+			this.label50.Name = "label50";
+			this.label50.Size = new System.Drawing.Size(72, 16);
+			this.label50.TabIndex = 33;
+			this.label50.Text = "Audio Pid1:";
 			// 
 			// tbDVBCPmtPid
 			// 
@@ -837,6 +1069,22 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.label58);
+			this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage3);
+			this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage2);
+			this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage1);
+			this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage);
+			this.tabPage3.Controls.Add(this.label59);
+			this.tabPage3.Controls.Add(this.label60);
+			this.tabPage3.Controls.Add(this.label61);
+			this.tabPage3.Controls.Add(this.tbDVBTAC3);
+			this.tabPage3.Controls.Add(this.tbDVBTAudio3);
+			this.tabPage3.Controls.Add(this.tbDVBTAudio2);
+			this.tabPage3.Controls.Add(this.tbDVBTAudio1);
+			this.tabPage3.Controls.Add(this.label62);
+			this.tabPage3.Controls.Add(this.label63);
+			this.tabPage3.Controls.Add(this.label64);
+			this.tabPage3.Controls.Add(this.label65);
 			this.tabPage3.Controls.Add(this.label49);
 			this.tabPage3.Controls.Add(this.tbBandWidth);
 			this.tabPage3.Controls.Add(this.tbDVBTPmtPid);
@@ -860,10 +1108,24 @@ namespace MediaPortal.Configuration
 			this.tabPage3.Controls.Add(this.label9);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(392, 358);
+			this.tabPage3.Size = new System.Drawing.Size(480, 358);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "DVB-T";
 			this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
+			// 
+			// label49
+			// 
+			this.label49.Location = new System.Drawing.Point(16, 296);
+			this.label49.Name = "label49";
+			this.label49.TabIndex = 36;
+			this.label49.Text = "Bandwidth:";
+			// 
+			// tbBandWidth
+			// 
+			this.tbBandWidth.Location = new System.Drawing.Point(152, 296);
+			this.tbBandWidth.Name = "tbBandWidth";
+			this.tbBandWidth.TabIndex = 35;
+			this.tbBandWidth.Text = "";
 			// 
 			// tbDVBTPmtPid
 			// 
@@ -1018,6 +1280,22 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.label66);
+			this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage3);
+			this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage2);
+			this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage1);
+			this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage);
+			this.tabPage5.Controls.Add(this.label67);
+			this.tabPage5.Controls.Add(this.label68);
+			this.tabPage5.Controls.Add(this.label69);
+			this.tabPage5.Controls.Add(this.tbDVBSAC3);
+			this.tabPage5.Controls.Add(this.tbDVBSAudio3);
+			this.tabPage5.Controls.Add(this.tbDVBSAudio2);
+			this.tabPage5.Controls.Add(this.tbDVBSAudio1);
+			this.tabPage5.Controls.Add(this.label70);
+			this.tabPage5.Controls.Add(this.label71);
+			this.tabPage5.Controls.Add(this.label72);
+			this.tabPage5.Controls.Add(this.label73);
 			this.tabPage5.Controls.Add(this.tbDVBSPmtPid);
 			this.tabPage5.Controls.Add(this.label48);
 			this.tabPage5.Controls.Add(this.label40);
@@ -1047,7 +1325,7 @@ namespace MediaPortal.Configuration
 			this.tabPage5.Controls.Add(this.label26);
 			this.tabPage5.Location = new System.Drawing.Point(4, 22);
 			this.tabPage5.Name = "tabPage5";
-			this.tabPage5.Size = new System.Drawing.Size(392, 358);
+			this.tabPage5.Size = new System.Drawing.Size(480, 358);
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "DVB-S";
 			this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
@@ -1288,31 +1566,257 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Controls.Add(this.inputComboBox);
 			this.tabPage6.Location = new System.Drawing.Point(4, 22);
 			this.tabPage6.Name = "tabPage6";
-			this.tabPage6.Size = new System.Drawing.Size(392, 358);
+			this.tabPage6.Size = new System.Drawing.Size(480, 358);
 			this.tabPage6.TabIndex = 5;
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// tbBandWidth
+			// label58
 			// 
-			this.tbBandWidth.Location = new System.Drawing.Point(152, 296);
-			this.tbBandWidth.Name = "tbBandWidth";
-			this.tbBandWidth.TabIndex = 35;
-			this.tbBandWidth.Text = "";
+			this.label58.Location = new System.Drawing.Point(288, 256);
+			this.label58.Name = "label58";
+			this.label58.Size = new System.Drawing.Size(72, 16);
+			this.label58.TabIndex = 64;
+			this.label58.Text = "Audio 3:";
 			// 
-			// label49
+			// tbDVBTAudioLanguage3
 			// 
-			this.label49.Location = new System.Drawing.Point(16, 296);
-			this.label49.Name = "label49";
-			this.label49.TabIndex = 36;
-			this.label49.Text = "Bandwidth:";
+			this.tbDVBTAudioLanguage3.Location = new System.Drawing.Point(360, 256);
+			this.tbDVBTAudioLanguage3.Name = "tbDVBTAudioLanguage3";
+			this.tbDVBTAudioLanguage3.TabIndex = 63;
+			this.tbDVBTAudioLanguage3.Text = "";
+			// 
+			// tbDVBTAudioLanguage2
+			// 
+			this.tbDVBTAudioLanguage2.Location = new System.Drawing.Point(360, 232);
+			this.tbDVBTAudioLanguage2.Name = "tbDVBTAudioLanguage2";
+			this.tbDVBTAudioLanguage2.TabIndex = 62;
+			this.tbDVBTAudioLanguage2.Text = "";
+			// 
+			// tbDVBTAudioLanguage1
+			// 
+			this.tbDVBTAudioLanguage1.Location = new System.Drawing.Point(360, 208);
+			this.tbDVBTAudioLanguage1.Name = "tbDVBTAudioLanguage1";
+			this.tbDVBTAudioLanguage1.TabIndex = 61;
+			this.tbDVBTAudioLanguage1.Text = "";
+			// 
+			// tbDVBTAudioLanguage
+			// 
+			this.tbDVBTAudioLanguage.Location = new System.Drawing.Point(360, 184);
+			this.tbDVBTAudioLanguage.Name = "tbDVBTAudioLanguage";
+			this.tbDVBTAudioLanguage.TabIndex = 60;
+			this.tbDVBTAudioLanguage.Text = "";
+			// 
+			// label59
+			// 
+			this.label59.Location = new System.Drawing.Point(288, 232);
+			this.label59.Name = "label59";
+			this.label59.Size = new System.Drawing.Size(72, 16);
+			this.label59.TabIndex = 59;
+			this.label59.Text = "Audio 2:";
+			// 
+			// label60
+			// 
+			this.label60.Location = new System.Drawing.Point(288, 208);
+			this.label60.Name = "label60";
+			this.label60.Size = new System.Drawing.Size(72, 16);
+			this.label60.TabIndex = 58;
+			this.label60.Text = "Audio 1:";
+			// 
+			// label61
+			// 
+			this.label61.Location = new System.Drawing.Point(288, 184);
+			this.label61.Name = "label61";
+			this.label61.Size = new System.Drawing.Size(72, 16);
+			this.label61.TabIndex = 57;
+			this.label61.Text = "Audio :";
+			// 
+			// tbDVBTAC3
+			// 
+			this.tbDVBTAC3.Location = new System.Drawing.Point(360, 152);
+			this.tbDVBTAC3.Name = "tbDVBTAC3";
+			this.tbDVBTAC3.TabIndex = 56;
+			this.tbDVBTAC3.Text = "";
+			// 
+			// tbDVBTAudio3
+			// 
+			this.tbDVBTAudio3.Location = new System.Drawing.Point(360, 128);
+			this.tbDVBTAudio3.Name = "tbDVBTAudio3";
+			this.tbDVBTAudio3.TabIndex = 55;
+			this.tbDVBTAudio3.Text = "";
+			// 
+			// tbDVBTAudio2
+			// 
+			this.tbDVBTAudio2.Location = new System.Drawing.Point(360, 104);
+			this.tbDVBTAudio2.Name = "tbDVBTAudio2";
+			this.tbDVBTAudio2.TabIndex = 54;
+			this.tbDVBTAudio2.Text = "";
+			// 
+			// tbDVBTAudio1
+			// 
+			this.tbDVBTAudio1.Location = new System.Drawing.Point(360, 80);
+			this.tbDVBTAudio1.Name = "tbDVBTAudio1";
+			this.tbDVBTAudio1.TabIndex = 53;
+			this.tbDVBTAudio1.Text = "";
+			// 
+			// label62
+			// 
+			this.label62.Location = new System.Drawing.Point(288, 152);
+			this.label62.Name = "label62";
+			this.label62.Size = new System.Drawing.Size(72, 16);
+			this.label62.TabIndex = 52;
+			this.label62.Text = "AC3 Pid:";
+			// 
+			// label63
+			// 
+			this.label63.Location = new System.Drawing.Point(288, 128);
+			this.label63.Name = "label63";
+			this.label63.Size = new System.Drawing.Size(72, 16);
+			this.label63.TabIndex = 51;
+			this.label63.Text = "Audio Pid3:";
+			// 
+			// label64
+			// 
+			this.label64.Location = new System.Drawing.Point(288, 104);
+			this.label64.Name = "label64";
+			this.label64.Size = new System.Drawing.Size(72, 16);
+			this.label64.TabIndex = 50;
+			this.label64.Text = "Audio Pid2:";
+			// 
+			// label65
+			// 
+			this.label65.Location = new System.Drawing.Point(288, 80);
+			this.label65.Name = "label65";
+			this.label65.Size = new System.Drawing.Size(72, 16);
+			this.label65.TabIndex = 49;
+			this.label65.Text = "Audio Pid1:";
+			// 
+			// label66
+			// 
+			this.label66.Location = new System.Drawing.Point(296, 256);
+			this.label66.Name = "label66";
+			this.label66.Size = new System.Drawing.Size(72, 16);
+			this.label66.TabIndex = 80;
+			this.label66.Text = "Audio 3:";
+			// 
+			// tbDVBSAudioLanguage3
+			// 
+			this.tbDVBSAudioLanguage3.Location = new System.Drawing.Point(368, 256);
+			this.tbDVBSAudioLanguage3.Name = "tbDVBSAudioLanguage3";
+			this.tbDVBSAudioLanguage3.TabIndex = 79;
+			this.tbDVBSAudioLanguage3.Text = "";
+			// 
+			// tbDVBSAudioLanguage2
+			// 
+			this.tbDVBSAudioLanguage2.Location = new System.Drawing.Point(368, 232);
+			this.tbDVBSAudioLanguage2.Name = "tbDVBSAudioLanguage2";
+			this.tbDVBSAudioLanguage2.TabIndex = 78;
+			this.tbDVBSAudioLanguage2.Text = "";
+			// 
+			// tbDVBSAudioLanguage1
+			// 
+			this.tbDVBSAudioLanguage1.Location = new System.Drawing.Point(368, 208);
+			this.tbDVBSAudioLanguage1.Name = "tbDVBSAudioLanguage1";
+			this.tbDVBSAudioLanguage1.TabIndex = 77;
+			this.tbDVBSAudioLanguage1.Text = "";
+			// 
+			// tbDVBSAudioLanguage
+			// 
+			this.tbDVBSAudioLanguage.Location = new System.Drawing.Point(368, 184);
+			this.tbDVBSAudioLanguage.Name = "tbDVBSAudioLanguage";
+			this.tbDVBSAudioLanguage.TabIndex = 76;
+			this.tbDVBSAudioLanguage.Text = "";
+			// 
+			// label67
+			// 
+			this.label67.Location = new System.Drawing.Point(296, 232);
+			this.label67.Name = "label67";
+			this.label67.Size = new System.Drawing.Size(72, 16);
+			this.label67.TabIndex = 75;
+			this.label67.Text = "Audio 2:";
+			// 
+			// label68
+			// 
+			this.label68.Location = new System.Drawing.Point(296, 208);
+			this.label68.Name = "label68";
+			this.label68.Size = new System.Drawing.Size(72, 16);
+			this.label68.TabIndex = 74;
+			this.label68.Text = "Audio 1:";
+			// 
+			// label69
+			// 
+			this.label69.Location = new System.Drawing.Point(296, 184);
+			this.label69.Name = "label69";
+			this.label69.Size = new System.Drawing.Size(72, 16);
+			this.label69.TabIndex = 73;
+			this.label69.Text = "Audio :";
+			// 
+			// tbDVBSAC3
+			// 
+			this.tbDVBSAC3.Location = new System.Drawing.Point(368, 152);
+			this.tbDVBSAC3.Name = "tbDVBSAC3";
+			this.tbDVBSAC3.TabIndex = 72;
+			this.tbDVBSAC3.Text = "";
+			// 
+			// tbDVBSAudio3
+			// 
+			this.tbDVBSAudio3.Location = new System.Drawing.Point(368, 128);
+			this.tbDVBSAudio3.Name = "tbDVBSAudio3";
+			this.tbDVBSAudio3.TabIndex = 71;
+			this.tbDVBSAudio3.Text = "";
+			// 
+			// tbDVBSAudio2
+			// 
+			this.tbDVBSAudio2.Location = new System.Drawing.Point(368, 104);
+			this.tbDVBSAudio2.Name = "tbDVBSAudio2";
+			this.tbDVBSAudio2.TabIndex = 70;
+			this.tbDVBSAudio2.Text = "";
+			// 
+			// tbDVBSAudio1
+			// 
+			this.tbDVBSAudio1.Location = new System.Drawing.Point(368, 80);
+			this.tbDVBSAudio1.Name = "tbDVBSAudio1";
+			this.tbDVBSAudio1.TabIndex = 69;
+			this.tbDVBSAudio1.Text = "";
+			// 
+			// label70
+			// 
+			this.label70.Location = new System.Drawing.Point(296, 152);
+			this.label70.Name = "label70";
+			this.label70.Size = new System.Drawing.Size(72, 16);
+			this.label70.TabIndex = 68;
+			this.label70.Text = "AC3 Pid:";
+			// 
+			// label71
+			// 
+			this.label71.Location = new System.Drawing.Point(296, 128);
+			this.label71.Name = "label71";
+			this.label71.Size = new System.Drawing.Size(72, 16);
+			this.label71.TabIndex = 67;
+			this.label71.Text = "Audio Pid3:";
+			// 
+			// label72
+			// 
+			this.label72.Location = new System.Drawing.Point(296, 104);
+			this.label72.Name = "label72";
+			this.label72.Size = new System.Drawing.Size(72, 16);
+			this.label72.TabIndex = 66;
+			this.label72.Text = "Audio Pid2:";
+			// 
+			// label73
+			// 
+			this.label73.Location = new System.Drawing.Point(296, 80);
+			this.label73.Name = "label73";
+			this.label73.Size = new System.Drawing.Size(72, 16);
+			this.label73.TabIndex = 65;
+			this.label73.Text = "Audio Pid1:";
 			// 
 			// EditTVChannelForm
 			// 
 			this.AcceptButton = this.okButton;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(416, 438);
+			this.ClientSize = new System.Drawing.Size(504, 438);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
@@ -1605,9 +2109,11 @@ namespace MediaPortal.Configuration
 						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid,bandwidth;
 						string provider;
 						MediaPortal.TV.Recording.DVBSections dvbSections=new MediaPortal.TV.Recording.DVBSections();
+						int audio1, audio2, audio3, ac3Pid;
+						string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
 						
 						//DVB-T
-						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out bandwidth);
+						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out bandwidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 						label42.Text=dvbSections.GetNetworkProvider(ONID);
 						tbDVBTFreq.Text=freq.ToString();;
 						tbDVBTONID.Text=ONID.ToString();;
@@ -1619,9 +2125,17 @@ namespace MediaPortal.Configuration
 						tbDVBTTeletextPid.Text=teletextPid.ToString();
 						tbDVBTPmtPid.Text=pmtPid.ToString();
 						tbBandWidth.Text=bandwidth.ToString();
+						tbDVBTAudio1.Text=audio1.ToString();
+						tbDVBTAudio2.Text=audio2.ToString();
+						tbDVBTAudio3.Text=audio3.ToString();
+						tbDVBTAC3.Text=ac3Pid.ToString();
+						tbDVBTAudioLanguage.Text=audioLanguage;
+						tbDVBTAudioLanguage1.Text=audioLanguage1;
+						tbDVBTAudioLanguage2.Text=audioLanguage2;
+						tbDVBTAudioLanguage3.Text=audioLanguage3;
 
 						//DVB-C
-						TVDatabase.GetDVBCTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid);
+						TVDatabase.GetDVBCTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 						label41.Text=dvbSections.GetNetworkProvider(ONID);
 						tbDVBCFreq.Text=freq.ToString();;
 						tbDVBCONID.Text=ONID.ToString();;
@@ -1635,6 +2149,14 @@ namespace MediaPortal.Configuration
 						tbDVBCVideoPid.Text=videoPid.ToString();
 						tbDVBCTeletextPid.Text=teletextPid.ToString();
 						tbDVBCPmtPid.Text=pmtPid.ToString();
+						tbDVBCAudio1.Text=audio1.ToString();
+						tbDVBCAudio2.Text=audio2.ToString();
+						tbDVBCAudio3.Text=audio3.ToString();
+						tbDVBCAC3.Text=ac3Pid.ToString();
+						tbDVBCAudioLanguage.Text=audioLanguage;
+						tbDVBCAudioLanguage1.Text=audioLanguage1;
+						tbDVBCAudioLanguage2.Text=audioLanguage2;
+						tbDVBCAudioLanguage3.Text=audioLanguage3;
 
 
 						//DVB-S
@@ -1654,7 +2176,15 @@ namespace MediaPortal.Configuration
 						tbDVBSVideoPid.Text=ch.VideoPid.ToString();
 						tbDVBSTeletextPid.Text=ch.TeletextPid.ToString();
 						tbDVBSECMpid.Text = ch.ECMPid.ToString();
-						tbDVBCPmtPid.Text=ch.PMTPid.ToString();
+						tbDVBSPmtPid.Text=ch.PMTPid.ToString();
+						tbDVBSAudio1.Text=ch.Audio1.ToString();
+						tbDVBSAudio2.Text=ch.Audio2.ToString();
+						tbDVBSAudio3.Text=ch.Audio3.ToString();
+						tbDVBSAC3.Text=ch.AC3Pid.ToString();
+						tbDVBSAudioLanguage.Text=ch.AudioLanguage;
+						tbDVBSAudioLanguage1.Text=ch.AudioLanguage1;
+						tbDVBSAudioLanguage2.Text=ch.AudioLanguage2;
+						tbDVBSAudioLanguage3.Text=ch.AudioLanguage3;
 
 					}
 				}//if(channel != null)
@@ -1816,6 +2346,9 @@ namespace MediaPortal.Configuration
 			int bandWidth,pmtPid,audioPid,videoPid,teletextPid;
 			string provider;
 			//dvb-T
+			int audio1, audio2, audio3, ac3Pid;
+			string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
+						
 			try
 			{
 				freq=Int32.Parse(tbDVBTFreq.Text);
@@ -1828,9 +2361,17 @@ namespace MediaPortal.Configuration
 				pmtPid=Int32.Parse(tbDVBTPmtPid.Text);
 				provider=tbDVBTProvider.Text;
 				bandWidth=Int32.Parse(tbBandWidth.Text);
+				audio1=Int32.Parse(tbDVBTAudio1.Text);
+				audio2=Int32.Parse(tbDVBTAudio2.Text);
+				audio3=Int32.Parse(tbDVBTAudio3.Text);
+				ac3Pid=Int32.Parse(tbDVBTAC3.Text);
+				audioLanguage=tbDVBTAudioLanguage.Text;
+				audioLanguage1=tbDVBTAudioLanguage1.Text;
+				audioLanguage2=tbDVBTAudioLanguage2.Text;
+				audioLanguage3=tbDVBTAudioLanguage3.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,bandWidth);
+					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,bandWidth,audio1,audio2,audio3,ac3Pid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
 				}
 			}
 			catch(Exception){}
@@ -1851,9 +2392,17 @@ namespace MediaPortal.Configuration
 				videoPid=Int32.Parse(tbDVBCVideoPid.Text);
 				teletextPid=Int32.Parse(tbDVBCTeletextPid.Text);
 				pmtPid=Int32.Parse(tbDVBCPmtPid.Text);
+				audio1=Int32.Parse(tbDVBCAudio1.Text);
+				audio2=Int32.Parse(tbDVBCAudio2.Text);
+				audio3=Int32.Parse(tbDVBCAudio3.Text);
+				ac3Pid=Int32.Parse(tbDVBCAC3.Text);
+				audioLanguage=tbDVBCAudioLanguage.Text;
+				audioLanguage1=tbDVBCAudioLanguage1.Text;
+				audioLanguage2=tbDVBCAudioLanguage2.Text;
+				audioLanguage3=tbDVBCAudioLanguage3.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
-					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid,pmtPid);
+					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid,pmtPid,audio1,audio2,audio3,ac3Pid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
 				}
 			}
 			catch(Exception){}
@@ -1876,6 +2425,14 @@ namespace MediaPortal.Configuration
 				videoPid=Int32.Parse(tbDVBSVideoPid.Text);
 				teletextPid=Int32.Parse(tbDVBSTeletextPid.Text);
 				pmtPid=Int32.Parse(tbDVBSPmtPid.Text);
+				audio1=Int32.Parse(tbDVBSAudio1.Text);
+				audio2=Int32.Parse(tbDVBSAudio2.Text);
+				audio3=Int32.Parse(tbDVBSAudio3.Text);
+				ac3Pid=Int32.Parse(tbDVBSAC3.Text);
+				audioLanguage=tbDVBSAudioLanguage.Text;
+				audioLanguage1=tbDVBSAudioLanguage1.Text;
+				audioLanguage2=tbDVBSAudioLanguage2.Text;
+				audioLanguage3=tbDVBSAudioLanguage3.Text;
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
 					ch.ServiceType=1;
@@ -1894,6 +2451,14 @@ namespace MediaPortal.Configuration
 					ch.TeletextPid=teletextPid;
 					ch.ECMPid = Int32.Parse(tbDVBSECMpid.Text);
 					ch.PMTPid=pmtPid;
+					ch.Audio1=audio1;
+					ch.Audio2=audio2;
+					ch.Audio3=audio3;
+					ch.AC3Pid=ac3Pid;
+					ch.AudioLanguage=audioLanguage;
+					ch.AudioLanguage1=audioLanguage1;
+					ch.AudioLanguage2=audioLanguage2;
+					ch.AudioLanguage3=audioLanguage3;
 					TVDatabase.UpdateSatChannel(ch);
 				}
 			}

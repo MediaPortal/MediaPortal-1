@@ -1177,6 +1177,7 @@ public class MediaPortalApp : D3DApp, IRender
 					msg.Param1=630;
 					msg.Param2=0;
 					msg.Param3=0;
+					GUIWindowManager.SendMessage(msg);
 
 					if (msg.Param1==1)
 					{
