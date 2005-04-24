@@ -904,16 +904,21 @@ namespace MediaPortal.TV.Recording
               GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
               return;
             }*/
+						g_Player.Pause();
 						_mGraph.TuneChannel(channel);
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
 							{
+								g_Player.SeekAbsolute(g_Player.Duration);
+								/*
 								GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END, 0, 0, 0, 0, 0, null);
 								msg.Param1 = 99;
 								GUIWindowManager.SendThreadMessage(msg);
+								*/
 							}
 						}
+						g_Player.Pause();
 					}
 				}
 			}
