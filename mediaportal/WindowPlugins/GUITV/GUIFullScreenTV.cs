@@ -797,7 +797,12 @@ namespace MediaPortal.GUI.TV
 					m_bUpdate=true;
 
 					if (dlg.SelectedLabel==-1) return;
-					GUITVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
+					int selectedItem=dlg.SelectedLabel;
+					if (selectedItem>=0 && selectedItem < GUITVHome.Navigator.Groups.Count)
+					{
+						TVGroup group = (TVGroup )GUITVHome.Navigator.Groups[selectedItem];
+						GUITVHome.Navigator.SetCurrentGroup(group.GroupName);
+					}
 				}
 					break;
 
