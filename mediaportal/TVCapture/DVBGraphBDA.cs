@@ -1112,132 +1112,138 @@ namespace MediaPortal.TV.Recording
 		public int BufferCB(double time,IntPtr data,int len)
 		{
 			if (currentTuningObject==null) return 0;
-			int add=(int)data;
-			int end=(add+len);
-
-			if(m_pluginsEnabled==true)
+			try
 			{
-				for(int pointer=add;pointer<end;pointer+=188)
-					PidCallback((IntPtr)pointer);
-			}
+				int add=(int)data;
+				int end=(add+len);
 
-			//
-			// here write code to record raw ts or mp3 etc.
-			// the callback needs to return as soon as possible!!
-			//
-			if (currentTuningObject.TeletextPid!=0)
-			{
-				for(int pointer=add;pointer<end;pointer+=188)
+				if(m_pluginsEnabled==true)
 				{
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-					if (header.Pid==currentTuningObject.TeletextPid)
+					for(int pointer=add;pointer<end;pointer+=188)
+						PidCallback((IntPtr)pointer);
+				}
+
+				//
+				// here write code to record raw ts or mp3 etc.
+				// the callback needs to return as soon as possible!!
+				//
+				if (currentTuningObject.TeletextPid!=0)
+				{
+					for(int pointer=add;pointer<end;pointer+=188)
 					{
-						m_teleText.SaveData((IntPtr)pointer);
+						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+						if (header.Pid==currentTuningObject.TeletextPid)
+						{
+							m_teleText.SaveData((IntPtr)pointer);
+						}
 					}
 				}
-			}
 
-			if (currentTuningObject.PMTPid>=0 && !refreshPmtTable )
-			{
-				for(int pointer=add;pointer<end;pointer+=188)
+				if (currentTuningObject.PMTPid>=0 && !refreshPmtTable )
 				{
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-					if (header.Pid==currentTuningObject.PMTPid )
+					for(int pointer=add;pointer<end;pointer+=188)
 					{
-						//copy pmt pid...
-						byte[] pmtTable=new byte[188];
-						Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
-						int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
-						section_length+=3;
-						if (section_length>0 && section_length < 183)
+						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+						if (header.Pid==currentTuningObject.PMTPid )
 						{
-							int version_number = ((pmtTable[5]>>1)&0x1F);
-							if (version_number != pmtVersionNumber)
+							//copy pmt pid...
+							byte[] pmtTable=new byte[188];
+							Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
+							int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
+							section_length+=3;
+							if (section_length>0 && section_length < 183)
 							{
-								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0} version:{1}->{2}", currentTuningObject.ServiceName,pmtVersionNumber,version_number);
-								try
+								int version_number = ((pmtTable[5]>>1)&0x1F);
+								if (version_number != pmtVersionNumber)
 								{
-									string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-										Utils.FilterFileName(currentTuningObject.ServiceName),
-										currentTuningObject.NetworkID,
-										currentTuningObject.TransportStreamID,
-										currentTuningObject.ProgramNumber,
-										(int)Network());
-									System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-									stream.Write(pmtTable,0,section_length);
-									stream.Close();
-									pmtVersionNumber=version_number;
-									refreshPmtTable=true;
-								}
-								catch(Exception ex)
-								{
-									Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt file:{0} {1} {2}",
-												ex.Message,ex.Source,ex.StackTrace);
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0} version:{1}->{2}", currentTuningObject.ServiceName,pmtVersionNumber,version_number);
+									try
+									{
+										string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+											Utils.FilterFileName(currentTuningObject.ServiceName),
+											currentTuningObject.NetworkID,
+											currentTuningObject.TransportStreamID,
+											currentTuningObject.ProgramNumber,
+											(int)Network());
+										System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+										stream.Write(pmtTable,0,section_length);
+										stream.Close();
+										pmtVersionNumber=version_number;
+										refreshPmtTable=true;
+									}
+									catch(Exception ex)
+									{
+										Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt file:{0} {1} {2}",
+											ex.Message,ex.Source,ex.StackTrace);
+									}
 								}
 							}
+							break;
 						}
-						break;
 					}
 				}
-			}
 
-			if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
-			{
-				for(int pointer=add;pointer<end;pointer+=188)
+				if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
 				{
-					
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+					for(int pointer=add;pointer<end;pointer+=188)
+					{
+						
+						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
 
-					try
-					{
-						if(header.Pid==0xd2 && header.SectionLen==0x2B && m_epgClass.TitlesParsing==false)
+						try
 						{
-							byte[] epgData=new byte[184];
-							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-							m_epgClass.SaveTitleData(epgData);
+							if(header.Pid==0xd2 && header.SectionLen==0x2B && m_epgClass.TitlesParsing==false)
+							{
+								byte[] epgData=new byte[184];
+								Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+								m_epgClass.SaveTitleData(epgData);
+							}
+							if(m_epgClass.ChannelsReady==false && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
+							{
+								m_epgClass.ChannelsGrabLen=header.SectionLen+3;
+								m_epgClass.ChannelsParsing=true;
+							}
+							if(m_epgClass.ChannelsReady==true && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x90)
+							{
+								m_epgClass.SummaryParsing=true;
+							}
+							if(m_epgClass.SummaryParsing==true && header.Pid==0xd3)
+							{
+								byte[] epgData=new byte[184];
+								Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+								m_epgClass.SaveSummaryData(epgData);
+							}
+							if(m_epgClass.ChannelsParsing==true && header.Pid==0xd3)
+							{
+								byte[] epgData=new byte[184];
+								Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
+								m_epgClass.SaveChannelData(epgData);
+							}
 						}
-						if(m_epgClass.ChannelsReady==false && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
+						catch(Exception ex)
 						{
-							m_epgClass.ChannelsGrabLen=header.SectionLen+3;
-							m_epgClass.ChannelsParsing=true;
+							Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
 						}
-						if(m_epgClass.ChannelsReady==true && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x90)
-						{
-							m_epgClass.SummaryParsing=true;
-						}
-						if(m_epgClass.SummaryParsing==true && header.Pid==0xd3)
-						{
-							byte[] epgData=new byte[184];
-							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-							m_epgClass.SaveSummaryData(epgData);
-						}
-						if(m_epgClass.ChannelsParsing==true && header.Pid==0xd3)
-						{
-							byte[] epgData=new byte[184];
-							Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-							m_epgClass.SaveChannelData(epgData);
-						}
+					
 					}
-					catch(Exception ex)
-					{
-						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
-					}
-				
 				}
-			}
 
 
 
 #if DUMP
-			for(int pointer=add;pointer<end;pointer+=188)
-			{
-				TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-				byte[] tmpBuffer=new byte[188];
-				Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
-				fileout.Write(tmpBuffer,0,tmpBuffer.Length);
-			}
+				for(int pointer=add;pointer<end;pointer+=188)
+				{
+					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
+					byte[] tmpBuffer=new byte[188];
+					Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
+					fileout.Write(tmpBuffer,0,tmpBuffer.Length);
+				}
 #endif
-
+			}
+			catch(Exception ex)
+			{
+				Log.Write("dvbGrapgBDA: exception {0} source:{1} {2}",ex.Message,ex.Source,ex.StackTrace);
+			}
 			return 0;
 		}
 
