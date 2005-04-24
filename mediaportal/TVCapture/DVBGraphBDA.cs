@@ -2932,6 +2932,7 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject = new DVBChannel();
 					currentTuningObject.Frequency=chan.Frequency;
 					currentTuningObject.NetworkID=-1;
+					currentTuningObject.Bandwidth=chan.Bandwidth;
 					currentTuningObject.TransportStreamID=-1;
 					currentTuningObject.ProgramNumber=-1;
 
