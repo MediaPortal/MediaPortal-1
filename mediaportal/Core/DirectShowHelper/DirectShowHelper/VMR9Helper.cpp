@@ -123,7 +123,7 @@ STDMETHODIMP CVMR9Helper::Deinit(void)
 	return S_OK;
 }
 STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)
-{/*
+{
 	int hr;
 	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
 	switch (dwMethod)
@@ -140,12 +140,12 @@ STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)
 			Log("vmr9:SetDeinterlace() preference to NextBest");
 			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
 		break;
-	}*/
+	}
 	return S_OK;
 }
 
 STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
-{/*
+{
 	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
 	VMR9VideoDesc VideoDesc; 
 	DWORD dwNumModes = 0;
@@ -296,6 +296,6 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
 		}
 	}
 
-*/
+
 	return S_OK;
 }
