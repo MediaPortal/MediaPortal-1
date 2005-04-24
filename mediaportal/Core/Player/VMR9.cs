@@ -206,6 +206,7 @@ namespace MediaPortal.Player
 			if (ts.TotalMilliseconds>1000)
 			{
 				int framesDrawn=FrameCounter;
+				framesDrawn*=1000;
 				GUIGraphicsContext.Vmr9FPS    = ((float)framesDrawn) / ((float)ts.TotalMilliseconds);
 				//Log.Write("vmr9:frames:{0} fps:{1} time:{2}", framesDrawn, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
 				repaintTimer=DateTime.Now;
