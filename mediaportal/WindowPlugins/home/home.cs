@@ -1070,7 +1070,9 @@ namespace MediaPortal.GUI.Home
 				if (useMyPlugins==true && inMyPlugins==false) // if My Plugin Call make MyPlugin Button
 				{
 					string strBtnPic=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"hover_my plugins.png");
-					AddPluginButton(34,GUILocalizeStrings.Get(913), "",  "", strBtnPic);	
+					string strButtonImageFocus=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"button_my plugins.png");
+					string strButtonImage=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"buttonNF_my plugins.png");
+					AddPluginButton(34,GUILocalizeStrings.Get(913), strButtonImageFocus,  strButtonImage, strBtnPic);	
 				}
 			}
 		}
