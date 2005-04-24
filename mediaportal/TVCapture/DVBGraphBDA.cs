@@ -645,134 +645,154 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void DeleteGraph()
 		{
-			if (m_graphState < State.Created) 
-				return;
-			m_iPrevChannel = -1;
-			if (m_epgClass!=null)
-				m_epgClass.ClearBuffer();
-	
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
-			StopRecording();
-			StopViewing();
-
-			if (m_TunerStatistics!=null)
+			try
 			{
-				for (int i = 0; i < m_TunerStatistics.Length; i++) 
+				if (m_graphState < State.Created) 
+					return;
+				m_iPrevChannel = -1;
+				if (m_epgClass!=null)
+					m_epgClass.ClearBuffer();
+		
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
+				StopRecording();
+				StopViewing();
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free tuner interfaces");
+			
+				if (m_TunerStatistics!=null)
 				{
-					if (m_TunerStatistics[i] != null)
+					for (int i = 0; i < m_TunerStatistics.Length; i++) 
 					{
-						Marshal.ReleaseComObject(m_TunerStatistics[i]); 
-						m_TunerStatistics[i] = null;
+						if (m_TunerStatistics[i] != null)
+						{
+							Marshal.ReleaseComObject(m_TunerStatistics[i]); 
+							m_TunerStatistics[i] = null;
+						}
 					}
+					m_TunerStatistics=null;
 				}
-				m_TunerStatistics=null;
-			}
 
-			if (Vmr9!=null)
-			{
-				Vmr9.RemoveVMR9();
-				Vmr9.Release();
-				Vmr9=null;
-			}
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free vmr9");
+				if (Vmr9!=null)
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9.Release();
+					Vmr9=null;
+				}
 
-//			UnAdviseProgramInfo();
-			
-			if (m_recorder!=null) 
-			{
-				m_recorder.Stop();
-				m_recorder=null;
+				//			UnAdviseProgramInfo();
 				
-			}
-			    
-			if (m_StreamBufferSink!=null) 
-			{
-				Marshal.ReleaseComObject(m_StreamBufferSink); m_StreamBufferSink=null;
-			}
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
+				if (m_recorder!=null) 
+				{
+					m_recorder.Stop();
+					m_recorder=null;
+					
+				}
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free streambuffer");
+				if (m_StreamBufferSink!=null) 
+				{
+					Marshal.ReleaseComObject(m_StreamBufferSink); m_StreamBufferSink=null;
+				}
 
-			if (m_mediaControl != null)
-				m_mediaControl.Stop();
-     
-			graphRunning=false;
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
+				if (m_mediaControl != null)
+					m_mediaControl.Stop();
+	     
+				graphRunning=false;
 
-			if (m_videoWindow != null)
-			{
-				m_videoWindow.put_Visible(DsHlp.OAFALSE);
-				//m_videoWindow.put_Owner(IntPtr.Zero);
-				m_videoWindow = null;
-			}
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: hide video window");
+				if (m_videoWindow != null)
+				{
+					m_videoWindow.put_Visible(DsHlp.OAFALSE);
+					//m_videoWindow.put_Owner(IntPtr.Zero);
+					m_videoWindow = null;
+				}
 
-			if (m_sampleGrabber != null) 
-				Marshal.ReleaseComObject(m_sampleGrabber); m_sampleGrabber=null;
-			m_sampleInterface=null;
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free other interfaces");
+				if (m_sampleGrabber != null) 
+					Marshal.ReleaseComObject(m_sampleGrabber); m_sampleGrabber=null;
+				m_sampleInterface=null;
 
-			if (m_StreamBufferConfig != null) 
-				Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
+				if (m_StreamBufferConfig != null) 
+					Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
 
-			if (m_IStreamBufferConfig != null) 
-				Marshal.ReleaseComObject(m_IStreamBufferConfig); m_IStreamBufferConfig=null;
+				if (m_IStreamBufferConfig != null) 
+					Marshal.ReleaseComObject(m_IStreamBufferConfig); m_IStreamBufferConfig=null;
 
-			if (m_pinStreamBufferIn1 != null) 
-				Marshal.ReleaseComObject(m_pinStreamBufferIn1); m_pinStreamBufferIn1=null;
+				if (m_pinStreamBufferIn1 != null) 
+					Marshal.ReleaseComObject(m_pinStreamBufferIn1); m_pinStreamBufferIn1=null;
 
-			if (m_pinStreamBufferIn0 != null) 
-				Marshal.ReleaseComObject(m_pinStreamBufferIn0); m_pinStreamBufferIn0=null;
+				if (m_pinStreamBufferIn0 != null) 
+					Marshal.ReleaseComObject(m_pinStreamBufferIn0); m_pinStreamBufferIn0=null;
 
-			if (m_IStreamBufferSink != null) 
-				Marshal.ReleaseComObject(m_IStreamBufferSink); m_IStreamBufferSink=null;
+				if (m_IStreamBufferSink != null) 
+					Marshal.ReleaseComObject(m_IStreamBufferSink); m_IStreamBufferSink=null;
 
-			if (m_NetworkProvider != null)
-				Marshal.ReleaseComObject(m_NetworkProvider); m_NetworkProvider = null;
+				if (m_NetworkProvider != null)
+					Marshal.ReleaseComObject(m_NetworkProvider); m_NetworkProvider = null;
 
-			if (m_TunerDevice != null)
-				Marshal.ReleaseComObject(m_TunerDevice); m_TunerDevice = null;
+				if (m_TunerDevice != null)
+					Marshal.ReleaseComObject(m_TunerDevice); m_TunerDevice = null;
 
-			if (m_CaptureDevice != null)
-				Marshal.ReleaseComObject(m_CaptureDevice); m_CaptureDevice = null;
-			
-			if (m_MPEG2Demultiplexer != null)
-				Marshal.ReleaseComObject(m_MPEG2Demultiplexer); m_MPEG2Demultiplexer = null;
+				if (m_CaptureDevice != null)
+					Marshal.ReleaseComObject(m_CaptureDevice); m_CaptureDevice = null;
+				
+				if (m_MPEG2Demultiplexer != null)
+					Marshal.ReleaseComObject(m_MPEG2Demultiplexer); m_MPEG2Demultiplexer = null;
 
-			if (m_TIF != null)
-				Marshal.ReleaseComObject(m_TIF); m_TIF = null;
+				if (m_TIF != null)
+					Marshal.ReleaseComObject(m_TIF); m_TIF = null;
 
-			if (m_SectionsTables != null)
-				Marshal.ReleaseComObject(m_SectionsTables); m_SectionsTables = null;
+				if (m_SectionsTables != null)
+					Marshal.ReleaseComObject(m_SectionsTables); m_SectionsTables = null;
 
-			m_basicVideo = null;
-			m_mediaControl = null;
-		      
-			if (m_graphBuilder!=null)
-				DsUtils.RemoveFilters(m_graphBuilder);
+				m_basicVideo = null;
+				m_mediaControl = null;
+			      
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove filters");
+				if (m_graphBuilder!=null)
+					DsUtils.RemoveFilters(m_graphBuilder);
 
-			if (m_rotCookie != 0)
-				DsROT.RemoveGraphFromRot(ref m_rotCookie);
-			m_rotCookie = 0;
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove graph from rot");
+				if (m_rotCookie != 0)
+					DsROT.RemoveGraphFromRot(ref m_rotCookie);
+				m_rotCookie = 0;
 
-			if (m_captureGraphBuilder != null)
-				Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove graph");
+				if (m_captureGraphBuilder != null)
+					Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
 
-			if (m_graphBuilder != null)
-				Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
+				if (m_graphBuilder != null)
+					Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
 
 
-			foreach (string strfName in m_Card.TvFilterDefinitions.Keys)
-			{
-				FilterDefinition dsFilter = m_Card.TvFilterDefinitions[strfName] as FilterDefinition;
-				if (dsFilter.DSFilter != null)
-					Marshal.ReleaseComObject(dsFilter.DSFilter);
-				((FilterDefinition)m_Card.TvFilterDefinitions[strfName]).DSFilter = null;
-				dsFilter = null;
-			}
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
+				foreach (string strfName in m_Card.TvFilterDefinitions.Keys)
+				{
+					FilterDefinition dsFilter = m_Card.TvFilterDefinitions[strfName] as FilterDefinition;
+					if (dsFilter.DSFilter != null)
+						Marshal.ReleaseComObject(dsFilter.DSFilter);
+					((FilterDefinition)m_Card.TvFilterDefinitions[strfName]).DSFilter = null;
+					dsFilter = null;
+				}
 
 #if DUMP
-			if (fileout!=null)
-			{
-				fileout.Close();
-				fileout=null;
-			}
+				if (fileout!=null)
+				{
+					fileout.Close();
+					fileout=null;
+				}
 #endif
-			m_graphState = State.None;
-			return;
+				m_graphState = State.None;
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: delete graph done");
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: deletegraph() {0} {1} {2}",
+											ex.Message,ex.Source,ex.StackTrace);
+			}
 		}//public void DeleteGraph()
 		
 		#endregion
