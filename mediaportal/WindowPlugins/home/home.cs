@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Home
 
 		#region Private Variables
 
-		private int		m_iDateLayout=0; //0=dd-mm-yyyy, 1=mm-dd-yyyy
+		private int		m_iDateLayout=0; //0=Day DD. Month, 1=Day Month DD
 		private int		m_iButtons=0;
 		private int		m_iCurrentButton=0;
 		private State m_eState=State.Idle;

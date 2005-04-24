@@ -610,7 +610,7 @@ namespace home
 			this.radioButton2.Location = new System.Drawing.Point(16, 56);
 			this.radioButton2.Name = "radioButton2";
 			this.radioButton2.TabIndex = 1;
-			this.radioButton2.Text = "MM-DD-YYYY";
+			this.radioButton2.Text = "Day Month DD";
 			this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
 			// 
 			// radioButton1
@@ -619,7 +619,7 @@ namespace home
 			this.radioButton1.Name = "radioButton1";
 			this.radioButton1.Size = new System.Drawing.Size(112, 24);
 			this.radioButton1.TabIndex = 0;
-			this.radioButton1.Text = "DD-MM-YYYY";
+			this.radioButton1.Text = "Day DD. Month";
 			this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
 			// 
 			// treeView
