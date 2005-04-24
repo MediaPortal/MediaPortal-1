@@ -7,7 +7,7 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class appItemMyGamesDirect: AppItem
 	{
-		public appItemMyGamesDirect(SQLiteClient paramDB): base(paramDB)
+		public appItemMyGamesDirect(SQLiteClient initSqlDB): base(initSqlDB)
 		{
 			//
 			// TODO: Add constructor logic here

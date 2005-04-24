@@ -473,7 +473,7 @@ namespace WindowPlugins.GUIPrograms
 		{
 			if (SaveAppItem())
 			{
-				AppItem newApp = new AppItem(ProgramDatabase.m_db);
+				AppItem newApp = new AppItem(ProgramDatabase.sqlDB);
 				apps.Add(newApp);
 				newApp.FatherID = GetSelectedAppID();
 				newApp.Position = apps.GetMaxPosition(newApp.FatherID) + 10;

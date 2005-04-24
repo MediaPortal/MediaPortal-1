@@ -14,7 +14,7 @@ namespace ProgramsDatabase
 	{
 		GUIDialogProgress pDlgProgress = null;
 
-		public appItemMyFileMLF(SQLiteClient paramDB): base(paramDB)
+		public appItemMyFileMLF(SQLiteClient initSqlDB): base(initSqlDB)
 		{
 			// nothing to create here...
 		}
@@ -33,7 +33,7 @@ namespace ProgramsDatabase
 	
 		private void DoMyFileMeedioImport(bool bGUIMode)
 		{
-			if (m_db==null) return;
+			if (sqlDB==null) return;
 			if (this.AppID < 0) return;
 			if ((this.SourceType != myProgSourceType.MYFILEMEEDIO) || (Source == "") || (!File.Exists(Source))) return;
 			// show progress dialog and run the import...
@@ -43,7 +43,7 @@ namespace ProgramsDatabase
 			}
 			try
 			{
-				MyFileMeedioImporter objImporter = new MyFileMeedioImporter(this, m_db);
+				MyFileMeedioImporter objImporter = new MyFileMeedioImporter(this, sqlDB);
 				objImporter.OnReadNewFile += new MyFileMeedioImporter.MlfEventHandler(ReadNewFile);
 				try
 				{

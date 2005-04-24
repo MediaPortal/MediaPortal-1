@@ -8,410 +8,411 @@ using Programs.Utils;
 
 namespace ProgramsDatabase
 {
-	/// <summary>
-	/// Summary description for AllGameInfoScraper.
-	/// Heavily inspired by Frodo's MusicInfoScraper..... :-)
-	/// </summary>
-	public class AllGameInfoScraper
-	{
-		ArrayList m_games = new ArrayList();
-		public AllGameInfoScraper()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-		public int Count
-		{
-			get { return m_games.Count;}
-		}
-		public FileInfo this[int index]
-		{
-			get { return (FileInfo)m_games[index];}
-		}
+  /// <summary>
+  /// Summary description for AllGameInfoScraper.
+  /// Heavily inspired by Frodo's MusicInfoScraper..... :-)
+  /// </summary>
+  public class AllGameInfoScraper
+  {
+    ArrayList gameList = new ArrayList();
 
-		public ArrayList FileInfos
-		{
-			get { return m_games; }
-		}
+    public AllGameInfoScraper()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
-		string AddMissingRowTags(string strTable)
-		{
-			// poor man's replace.... let's try:
-			string strOrig = "</TD>\r\n<TR";
-			string strReplace = "</TD>\r\n</TR>\r\n<TR";
-			strTable = strTable.Replace(strOrig, strReplace);
-			return strTable;
-		}
+    public int Count
+    {
+      get { return gameList.Count; }
+    }
 
-		public bool FindGameinfo(string strGameTitle)
-		{
-			m_games.Clear();
+    public FileInfo this[int index]
+    {
+      get { return (FileInfo) gameList[index]; }
+    }
 
-			// make request
-			// type is 
-			// http://www.allgame.com/cg/agg.dll?p=agg&type=1&SRCH=SuperMario64
+    public ArrayList FileInfos
+    {
+      get { return gameList; }
+    }
 
-			string strPostData=String.Format("P=agg&TYPE=1&SRCH={0}", strGameTitle ); 
-		
-			string strHTML=PostHTTP("http://www.allgame.com/cg/agg.dll", strPostData);
-			if (strHTML.Length==0) return false;
+    string AddMissingRowTags(string htmlTableText)
+    {
+      // poor man's replace.... let's try:
+      string origText = "</TD>\r\n<TR";
+      string replaceText = "</TD>\r\n</TR>\r\n<TR";
+      htmlTableText = htmlTableText.Replace(origText, replaceText);
+      return htmlTableText;
+    }
 
-			string strHTMLLow=strHTML;
-			strHTMLLow=strHTMLLow.ToLower();
-			int iStartOfTable=strHTMLLow.IndexOf(">games with titles matching");
-			if (iStartOfTable< 0) return false;
-			iStartOfTable=strHTMLLow.IndexOf("<table",iStartOfTable);
-			if (iStartOfTable < 0) return false;
-      
-			HTMLUtil  util=new HTMLUtil();
-			HTMLTable table=new HTMLTable();
-			string strTable=strHTML.Substring(iStartOfTable);
+    public bool FindGameinfo(string gameTitle)
+    {
+      gameList.Clear();
 
-			// now the allgame thing is that <tr> tags are not closed
-			// for the decisive rows.... so I add them manually
-			// otherwise the parser doesn't split up the string correctly
-			strTable = AddMissingRowTags(strTable);
-			table.Parse(strTable); // call frodo's html parser
-			for (int i=1; i < table.Rows; ++i)  // skip first row (contains table header)
-			{
-				FileInfo newGame = new FileInfo();
+      // make request
+      // type is 
+      // http://www.allgame.com/cg/agg.dll?p=agg&type=1&SRCH=SuperMario64
 
-				//							FileItem newGameInfo = new FileItem(null);  // todo: sqldb necessary????
-				//							util.ConvertHTMLToAnsi(strAlbumName, out strAlbumNameStripped);
-				//							newGameInfo.Title2=strAlbumNameStripped;
-				//							newGameInfo.URL=strAlbumURL;
-				//							m_games.Add(newGameInfo);
+      string httpPostLine = String.Format("P=agg&TYPE=1&SRCH={0}", gameTitle);
 
+      string htmlText = PostHTTP("http://www.allgame.com/cg/agg.dll", httpPostLine);
+      if (htmlText.Length == 0) return false;
 
-				HTMLTable.HTMLRow row=table.GetRow(i);
-				for (int iCol=0; iCol < row.Columns; ++iCol)
-				{
-					string strColumn=row.GetColumValue(iCol);
+      string htmlLowText = htmlText;
+      htmlLowText = htmlLowText.ToLower();
+      int startOfTable = htmlLowText.IndexOf(">games with titles matching");
+      if (startOfTable < 0) return false;
+      startOfTable = htmlLowText.IndexOf("<table", startOfTable);
+      if (startOfTable < 0) return false;
 
-					// ok here we cycle throuh the 8 columns of one table row:
-					// col 0: "Relevance" => see width of the picture to measure this
-					// col 1: "Year" 
-					// col 2: "buy it"-link
-					// col 3: "Title" => includes the detail URL
-					// col 4: "Genre"
-					// col 5: "Style"
-					// col 6: "Platform"
-					// col 7: "Rating" => use imagename to get rating: "st_gt1.gif" to "st_gt9.gif" 
+      HTMLUtil util = new HTMLUtil();
+      HTMLTable table = new HTMLTable();
+      string htmlTableText = htmlText.Substring(startOfTable);
 
-					if (iCol == 0) 
-					{
-						string strRelevance = "";
-						int iStartOfWidth = -1;
-						int iEndOfWidth = -1;
-						// ex:
-						// "<img src="/im/agg/red_dot.jpg" valign=center width="56" height=5 border=0>&nbsp;"
-						// the WIDTH attribute is the relevance: maximum value is 56, negative values are possible
-						iStartOfWidth = strColumn.IndexOf("width=\"");
-						if (iStartOfWidth != -1)
-						{
-							iStartOfWidth = strColumn.IndexOf("\"", iStartOfWidth);
-							if (iStartOfWidth != -1)
-							{
-								iEndOfWidth = strColumn.IndexOf("\"", iStartOfWidth + 1);
-								if ((iEndOfWidth != -1) && (iEndOfWidth > iStartOfWidth))
-								{
-									strRelevance = strColumn.Substring(iStartOfWidth + 1, iEndOfWidth - iStartOfWidth - 1);
-								}
-							}
-						}
-						newGame.RelevanceOrig = strRelevance;
-						newGame.RelevanceNorm =	(ProgramUtils.StrToIntDef(strRelevance, -1) + 44);
-					}
-					else if (iCol == 1)
-					{
-						string strYear = "";
-						util.RemoveTags(ref strColumn);
-						strYear = strColumn.Replace("&nbsp;", "");
-						newGame.Year = strYear;
-					}
-					else if (iCol == 2)
-					{
-						// NOTHING TO DO, skip the bloody "buy-it" link ;-)
-					}
-					else if (iCol == 3)
-					{
-						// ex:
-						// "<FONT SIZE=-1><A HREF=/cg/agg.dll?p=agg&SQL=GIH|||||1002>Super Mario 64</A></FONT>"
-						string strGameURL = "";
-						int iStartOfURL = -1;
-						int iEndOfURL = -1;
-						iStartOfURL = strColumn.ToLower().IndexOf("<a href");
-						if (iStartOfURL != -1)
-						{
-							iStartOfURL = strColumn.IndexOf("/", iStartOfURL);
-							if (iStartOfURL != -1)
-							{
-								iEndOfURL = strColumn.IndexOf(">", iStartOfURL + 1);
-								if ((iEndOfURL != -1) && (iEndOfURL > iStartOfURL))
-								{
-									strGameURL = strColumn.Substring(iStartOfURL, iEndOfURL - iStartOfURL);
-									// and add the prefix!
-									strGameURL = "http://www.allgame.com" + strGameURL;
-								}
-							}
-						}
+      // now the allgame thing is that <tr> tags are not closed
+      // for the decisive rows.... so I add them manually
+      // otherwise the parser doesn't split up the string correctly
+      htmlTableText = AddMissingRowTags(htmlTableText);
+      table.Parse(htmlTableText); // call frodo's html parser
+      for (int i = 1; i < table.Rows; ++i) // skip first row (contains table header)
+      {
+        FileInfo newGame = new FileInfo();
 
-						string strTitle = "";
-						util.RemoveTags(ref strColumn);
-						strTitle = strColumn.Replace("&nbsp;", "");
-						newGame.Title = strTitle;
-						newGame.GameURL = strGameURL;
-
-					}
-					else if (iCol == 4)
-					{
-						string strGenre = "";
-						util.RemoveTags(ref strColumn);
-						strGenre = strColumn.Replace("&nbsp;", "");
-						newGame.Genre = strGenre;
-					}
-					else if (iCol == 5)
-					{
-						string strStyle = "";
-						util.RemoveTags(ref strColumn);
-						strStyle = strColumn.Replace("&nbsp;", "");
-						newGame.Style = strStyle;
-					}
-					else if (iCol == 6)
-					{
-						string strPlatform = "";
-						util.RemoveTags(ref strColumn);
-						strPlatform = strColumn.Replace("&nbsp;", "");
-						newGame.Platform = strPlatform;
-					}
-					else if (iCol == 7)
-					{
-						string strRating = "";
-						// ex.
-						// <A HREF=/cg/agg.dll?p=agg&SQL=GRH|||||1002><IMG SRC=/im/agg/st_gt9.gif BORDER=0 WIDTH=75 HEIGHT=15 VSPACE=2></A>
-						// the rating is coded in the gif - filename
-						// st_gt1.gif is the worst rating
-						// st_gt9.gif is the best rating
-						strRating = "";
-						int iStartOfRating = -1;
-						int iEndOfRating = -1;
-						iStartOfRating = strColumn.ToLower().IndexOf("<img src=");
-						if (iStartOfRating != -1)
-						{
-							iStartOfRating = strColumn.IndexOf("/st_gt", iStartOfRating);
-							if (iStartOfRating != -1)
-							{
-								iEndOfRating = strColumn.IndexOf(".gif", iStartOfRating);
-								if ((iEndOfRating != -1) && (iEndOfRating > iStartOfRating))
-								{
-									strRating = strColumn.Substring(iStartOfRating + 6, 1); // 6 is the length of the IndexOf searchstring...
-								}
-							}
-						}
-						newGame.RatingOrig = strRating;
-						newGame.RatingNorm = (ProgramUtils.StrToIntDef(strRating, 4) + 1); // add 1 to get a max rating of 10!
-						m_games.Add(newGame);
-					}
-				}
-			}
-			return true;
-		}
+        //							FileItem newGameInfo = new FileItem(null);  // todo: initSqlDB necessary????
+        //							util.ConvertHTMLToAnsi(strAlbumName, out strAlbumNameStripped);
+        //							newGameInfo.Title2=strAlbumNameStripped;
+        //							newGameInfo.URL=strAlbumURL;
+        //							m_games.Add(newGameInfo);
 
 
+        HTMLTable.HTMLRow row = table.GetRow(i);
+        for (int column = 0; column < row.Columns; ++column)
+        {
+          string columnHTML = row.GetColumValue(column);
 
-		public bool FindGameinfoDetail(AppItem curApp, FileItem curItem, FileInfo curGame, ScraperSaveType saveType)
-		{
-			if (curItem == null) return false;
-			if (curGame == null) return false;
-			if (curGame.GameURL == "") return false;
+          // ok here we cycle throuh the 8 columns of one table row:
+          // col 0: "Relevance" => see width of the picture to measure this
+          // col 1: "Year" 
+          // col 2: "buy it"-link
+          // col 3: "Title" => includes the detail URL
+          // col 4: "Genre"
+          // col 5: "Style"
+          // col 6: "Platform"
+          // col 7: "Rating" => use imagename to get rating: "st_gt1.gif" to "st_gt9.gif" 
 
-			HTMLUtil  util=new HTMLUtil();
+          if (column == 0)
+          {
+            string gameRelevance = "";
+            int startOfWidthTag = -1;
+            int endOfWidthTag = -1;
+            // ex:
+            // "<img src="/im/agg/red_dot.jpg" valign=center width="56" height=5 border=0>&nbsp;"
+            // the WIDTH attribute is the relevance: maximum value is 56, negative values are possible
+            startOfWidthTag = columnHTML.IndexOf("width=\"");
+            if (startOfWidthTag != -1)
+            {
+              startOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag);
+              if (startOfWidthTag != -1)
+              {
+                endOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag + 1);
+                if ((endOfWidthTag != -1) && (endOfWidthTag > startOfWidthTag))
+                {
+                  gameRelevance = columnHTML.Substring(startOfWidthTag + 1, endOfWidthTag - startOfWidthTag - 1);
+                }
+              }
+            }
+            newGame.RelevanceOrig = gameRelevance;
+            newGame.RelevanceNorm = (ProgramUtils.StrToIntDef(gameRelevance, -1) + 44);
+          }
+          else if (column == 1)
+          {
+            string gameYear = "";
+            util.RemoveTags(ref columnHTML);
+            gameYear = columnHTML.Replace("&nbsp;", "");
+            newGame.Year = gameYear;
+          }
+          else if (column == 2)
+          {
+            // NOTHING TO DO, skip the bloody "buy-it" link ;-)
+          }
+          else if (column == 3)
+          {
+            // ex:
+            // "<FONT SIZE=-1><A HREF=/cg/agg.dll?p=agg&SQL=GIH|||||1002>Super Mario 64</A></FONT>"
+            string gameURL = "";
+            int startOfURLTag = -1;
+            int endOfURLTag = -1;
+            startOfURLTag = columnHTML.ToLower().IndexOf("<a href");
+            if (startOfURLTag != -1)
+            {
+              startOfURLTag = columnHTML.IndexOf("/", startOfURLTag);
+              if (startOfURLTag != -1)
+              {
+                endOfURLTag = columnHTML.IndexOf(">", startOfURLTag + 1);
+                if ((endOfURLTag != -1) && (endOfURLTag > startOfURLTag))
+                {
+                  gameURL = columnHTML.Substring(startOfURLTag, endOfURLTag - startOfURLTag);
+                  // and add the prefix!
+                  gameURL = "http://www.allgame.com" + gameURL;
+                }
+              }
+            }
 
-			// query string is as in the following example:
-			// ALTERED BEAST for sega genesis
-			// http://www.allgame.com/cg/agg.dll?p=agg&SQL=GIH|||||||66
-			// To use PostHTTP, we have to split the parameters from the full url
+            string gameTitleHTML = "";
+            util.RemoveTags(ref columnHTML);
+            gameTitleHTML = columnHTML.Replace("&nbsp;", "");
+            newGame.Title = gameTitleHTML;
+            newGame.GameURL = gameURL;
 
-			//string strPostData="p=agg&SQL=GIH|||||||66";
-			string strPostData = curGame.GetGameURLPostParams();
-			if (strPostData == "") return false;
-			string strHTML=PostHTTP("http://www.allgame.com/cg/agg.dll", strPostData);
-
-			if (strHTML.Length==0) return false;
-
-			string strHTMLLow=strHTML;
-			strHTMLLow=strHTMLLow.ToLower();
-
-
-			// 1) get MANUFACTURER
-			string strManufacturer = "";
-			int iStartOf = -1;
-			int iEndOf = -1;
-			// ex:
-			// <TR><TD ALIGN=RIGHT BGCOLOR="#FF9933" WIDTH=122><FONT COLOR="#000000" SIZE=-1>Developer</FONT></TD>
-			// <TD WIDTH=482 BGCOLOR="#D8D8D8" VALIGN=bottom><TABLE WIDTH=484 BGCOLOR="#D8D8D8" BORDER=0 CELLSPACING=0 CELLPADDING=0><TR>
-			// <TD WIDTH=4><IMG SRC=/im/agg/1.gif WIDTH=4 HEIGHT=1></TD><TD WIDTH=478><A HREF=/cg/agg.dll?p=agg&SQL=CIB||||||970>Mythos Games, Ltd.</A></TD></TR>
-
-			// a) FIND the "DEVELOPER" text
-			// b) FIND the next table row
-			// c) remove tags, trim "developer" away
-			iStartOf = strHTMLLow.IndexOf(">developer<");
-			if (iStartOf != -1)
-			{
-				iStartOf = strHTMLLow.IndexOf("<tr>", iStartOf);
-				iEndOf = strHTMLLow.IndexOf("</tr>", iStartOf);
-				if ((iEndOf != -1) && (iEndOf > iStartOf))
-				{
-					strManufacturer = strHTML.Substring(iStartOf, iEndOf - iStartOf);
-					util.RemoveTags(ref strManufacturer);
-
-					if (strManufacturer != "")
-					{
-						curGame.Manufacturer = strManufacturer;
-					}
-
-				}
-			}
-
-			curGame.ImageURLs = ""; // clear all imageurls
-
-			// 2) get OVERVIEW / COVERSHOT
-			string strOverview = "";
-			string strCovershot = "";
-			int iStartOfOV = -1;
-			int iEndOfOV = -1;
-			iStartOfOV = strHTMLLow.IndexOf("<img src=\"http://image.allmusic.com/00/agg/cov200");
-			if (iStartOfOV == -1)
-			{
-				// no covershot found: maybe there's still a review there....
-				iStartOfOV = strHTMLLow.IndexOf("<table border=0 bgcolor=\"#d8d8d8\"");
-			//	Log.Write("dw scraper: {0}", iStartOfOV);
-			}
-			if (iStartOfOV != -1)
-			{
-				iEndOfOV = strHTMLLow.IndexOf("</tr>", iStartOfOV);
-				if ((iEndOfOV != -1) && (iEndOfOV > iStartOfOV))
-				{
-					strOverview = strHTML.Substring(iStartOfOV, iEndOfOV - iStartOfOV);
-					util.RemoveTags(ref strOverview);
-
-					if (strOverview != "")
-					{
-						strOverview = strOverview.Replace("\r", "\r\n");
-						strOverview = strOverview.Replace("\n", "\r\n");
-						strOverview = strOverview.Replace("&#151;", "\r\n");
-						curGame.Overview = strOverview;
-					}
-
-				}
-				int iStartOfCovershot = iStartOfOV;
-				int iEndOfCovershot = -1;
-				if (iStartOfCovershot != -1)
-				{
-					iStartOfCovershot = strHTMLLow.IndexOf("\"", iStartOfCovershot);
-					if (iStartOfCovershot != -1)
-					{
-						iEndOfCovershot = strHTMLLow.IndexOf("\"", iStartOfCovershot+1);
-						if ((iEndOfCovershot != -1) && (iEndOfCovershot > iStartOfCovershot))
-						{
-							strCovershot = strHTML.Substring(iStartOfCovershot + 1, iEndOfCovershot - iStartOfCovershot - 1);
-							curGame.AddImageURL(strCovershot);
-						}
-					}
-				}
-			}
-
-
-			// 3) get SCREENSHOTS
-			string strCurScreen = "";
-			int iStartOfImg = -1;
-			int iStartOfLink = -1;
-			int iEndOfLink = -1;
-			bool bGoOn = true;
-			iStartOfImg = strHTMLLow.IndexOf("<a href=http://image.allmusic.com/00/agg/screen250");
-			bGoOn = (iStartOfImg != -1);
-			while (bGoOn)
-			{
-				iStartOfLink = strHTMLLow.IndexOf("=", iStartOfImg);
-				if (iStartOfLink != -1)
-				{
-					iStartOfLink++;
-					iEndOfLink = strHTMLLow.IndexOf(">", iStartOfLink);
-					if ((iEndOfLink != -1) && (iEndOfLink > iStartOfLink))
-					{
-						strCurScreen = strHTML.Substring(iStartOfLink, iEndOfLink - iStartOfLink);
-						if (strCurScreen != "")
-						{
-							curGame.AddImageURL(strCurScreen);
-						}
-					}
-				}
-
-				iStartOfImg = strHTMLLow.IndexOf("<a href=http://image.allmusic.com/00/agg/screen250", iStartOfImg + 1);
-				bGoOn = (iStartOfImg != -1);
-			}
-
-			if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Images))
-			{
-				curGame.DownloadImages(curApp, curItem);
-			}
-			return true;
-		}
-
-    
-    
-		string PostHTTP(string strURL, string strData)
-		{
-			try
-			{
-				string strBody;
-				WebRequest req = WebRequest.Create(strURL);
-				req.Method="POST";
-				req.ContentType = "application/x-www-form-urlencoded";
-
-				byte [] bytes = null;
-				// Get the data that is being posted (or sent) to the server
-				bytes = Encoding.ASCII.GetBytes (strData);
-				req.ContentLength = bytes.Length;
-				// 1. Get an output stream from the request object
-				Stream outputStream = req.GetRequestStream ();
-
-				// 2. Post the data out to the stream
-				outputStream.Write (bytes, 0, bytes.Length);
-
-				// 3. Close the output stream and send the data out to the web server
-				outputStream.Close ();
+          }
+          else if (column == 4)
+          {
+            string strGenre = "";
+            util.RemoveTags(ref columnHTML);
+            strGenre = columnHTML.Replace("&nbsp;", "");
+            newGame.Genre = strGenre;
+          }
+          else if (column == 5)
+          {
+            string strStyle = "";
+            util.RemoveTags(ref columnHTML);
+            strStyle = columnHTML.Replace("&nbsp;", "");
+            newGame.Style = strStyle;
+          }
+          else if (column == 6)
+          {
+            string strPlatform = "";
+            util.RemoveTags(ref columnHTML);
+            strPlatform = columnHTML.Replace("&nbsp;", "");
+            newGame.Platform = strPlatform;
+          }
+          else if (column == 7)
+          {
+            string strRating = "";
+            // ex.
+            // <A HREF=/cg/agg.dll?p=agg&SQL=GRH|||||1002><IMG SRC=/im/agg/st_gt9.gif BORDER=0 WIDTH=75 HEIGHT=15 VSPACE=2></A>
+            // the rating is coded in the gif - filename
+            // st_gt1.gif is the worst rating
+            // st_gt9.gif is the best rating
+            strRating = "";
+            int startOfRatingTag = -1;
+            int endOfRatingTag = -1;
+            startOfRatingTag = columnHTML.ToLower().IndexOf("<img src=");
+            if (startOfRatingTag != -1)
+            {
+              startOfRatingTag = columnHTML.IndexOf("/st_gt", startOfRatingTag);
+              if (startOfRatingTag != -1)
+              {
+                endOfRatingTag = columnHTML.IndexOf(".gif", startOfRatingTag);
+                if ((endOfRatingTag != -1) && (endOfRatingTag > startOfRatingTag))
+                {
+                  strRating = columnHTML.Substring(startOfRatingTag + 6, 1); // 6 is the length of the IndexOf searchstring...
+                }
+              }
+            }
+            newGame.RatingOrig = strRating;
+            newGame.RatingNorm = (ProgramUtils.StrToIntDef(strRating, 4) + 1); // add 1 to get a max rating of 10!
+            gameList.Add(newGame);
+          }
+        }
+      }
+      return true;
+    }
 
 
-				WebResponse result = req.GetResponse();
-				Stream ReceiveStream = result.GetResponseStream();
-				Encoding encode = Encoding.GetEncoding("utf-8");
-				StreamReader sr = new StreamReader( ReceiveStream, encode );
-				strBody=sr.ReadToEnd();
+    public bool FindGameinfoDetail(AppItem curApp, FileItem curItem, FileInfo curGame, ScraperSaveType saveType)
+    {
+      if (curItem == null) return false;
+      if (curGame == null) return false;
+      if (curGame.GameURL == "") return false;
 
-				outputStream.Close();
-				ReceiveStream.Close();
-				sr.Close();
-				result.Close();
+      HTMLUtil util = new HTMLUtil();
 
-				
-				req = null;
-				outputStream = null;
-				result = null;
-				ReceiveStream = null;
-				sr = null;
+      // query string is as in the following example:
+      // ALTERED BEAST for sega genesis
+      // http://www.allgame.com/cg/agg.dll?p=agg&SQL=GIH|||||||66
+      // To use PostHTTP, we have to split the parameters from the full url
 
-				return strBody;
-			}
+      //string strPostData="p=agg&SQL=GIH|||||||66";
+      string strPostData = curGame.GetGameURLPostParams();
+      if (strPostData == "") return false;
+      string strHTML = PostHTTP("http://www.allgame.com/cg/agg.dll", strPostData);
+
+      if (strHTML.Length == 0) return false;
+
+      string strHTMLLow = strHTML;
+      strHTMLLow = strHTMLLow.ToLower();
+
+
+      // 1) get MANUFACTURER
+      string strManufacturer = "";
+      int startOfManuTag = -1;
+      int endOfManuTag = -1;
+      // ex:
+      // <TR><TD ALIGN=RIGHT BGCOLOR="#FF9933" WIDTH=122><FONT COLOR="#000000" SIZE=-1>Developer</FONT></TD>
+      // <TD WIDTH=482 BGCOLOR="#D8D8D8" VALIGN=bottom><TABLE WIDTH=484 BGCOLOR="#D8D8D8" BORDER=0 CELLSPACING=0 CELLPADDING=0><TR>
+      // <TD WIDTH=4><IMG SRC=/im/agg/1.gif WIDTH=4 HEIGHT=1></TD><TD WIDTH=478><A HREF=/cg/agg.dll?p=agg&SQL=CIB||||||970>Mythos Games, Ltd.</A></TD></TR>
+
+      // a) FIND the "DEVELOPER" text
+      // b) FIND the next table row
+      // c) remove tags, trim "developer" away
+      startOfManuTag = strHTMLLow.IndexOf(">developer<");
+      if (startOfManuTag != -1)
+      {
+        startOfManuTag = strHTMLLow.IndexOf("<tr>", startOfManuTag);
+        endOfManuTag = strHTMLLow.IndexOf("</tr>", startOfManuTag);
+        if ((endOfManuTag != -1) && (endOfManuTag > startOfManuTag))
+        {
+          strManufacturer = strHTML.Substring(startOfManuTag, endOfManuTag - startOfManuTag);
+          util.RemoveTags(ref strManufacturer);
+
+          if (strManufacturer != "")
+          {
+            curGame.Manufacturer = strManufacturer;
+          }
+
+        }
+      }
+
+      curGame.ImageURLs = ""; // clear all imageurls
+
+      // 2) get OVERVIEW / COVERSHOT
+      string strOverview = "";
+      string strCovershot = "";
+      int startOfOvTag = -1;
+      int endOfOvTag = -1;
+      startOfOvTag = strHTMLLow.IndexOf("<img src=\"http://image.allmusic.com/00/agg/cov200");
+      if (startOfOvTag == -1)
+      {
+        // no covershot found: maybe there's still a review there....
+        startOfOvTag = strHTMLLow.IndexOf("<table border=0 bgcolor=\"#d8d8d8\"");
+        //	Log.Write("dw scraper: {0}", iStartOfOV);
+      }
+      if (startOfOvTag != -1)
+      {
+        endOfOvTag = strHTMLLow.IndexOf("</tr>", startOfOvTag);
+        if ((endOfOvTag != -1) && (endOfOvTag > startOfOvTag))
+        {
+          strOverview = strHTML.Substring(startOfOvTag, endOfOvTag - startOfOvTag);
+          util.RemoveTags(ref strOverview);
+
+          if (strOverview != "")
+          {
+            strOverview = strOverview.Replace("\r", "\r\n");
+            strOverview = strOverview.Replace("\n", "\r\n");
+            strOverview = strOverview.Replace("&#151;", "\r\n");
+            curGame.Overview = strOverview;
+          }
+
+        }
+        int startOfCovershot = startOfOvTag;
+        int endOfCovershot = -1;
+        if (startOfCovershot != -1)
+        {
+          startOfCovershot = strHTMLLow.IndexOf("\"", startOfCovershot);
+          if (startOfCovershot != -1)
+          {
+            endOfCovershot = strHTMLLow.IndexOf("\"", startOfCovershot + 1);
+            if ((endOfCovershot != -1) && (endOfCovershot > startOfCovershot))
+            {
+              strCovershot = strHTML.Substring(startOfCovershot + 1, endOfCovershot - startOfCovershot - 1);
+              curGame.AddImageURL(strCovershot);
+            }
+          }
+        }
+      }
+
+
+      // 3) get SCREENSHOTS
+      string strCurScreen = "";
+      int startOfImgTag = -1;
+      int startOfLink = -1;
+      int endOfLink = -1;
+      bool bGoOn = true;
+      startOfImgTag = strHTMLLow.IndexOf("<a href=http://image.allmusic.com/00/agg/screen250");
+      bGoOn = (startOfImgTag != -1);
+      while (bGoOn)
+      {
+        startOfLink = strHTMLLow.IndexOf("=", startOfImgTag);
+        if (startOfLink != -1)
+        {
+          startOfLink++;
+          endOfLink = strHTMLLow.IndexOf(">", startOfLink);
+          if ((endOfLink != -1) && (endOfLink > startOfLink))
+          {
+            strCurScreen = strHTML.Substring(startOfLink, endOfLink - startOfLink);
+            if (strCurScreen != "")
+            {
+              curGame.AddImageURL(strCurScreen);
+            }
+          }
+        }
+
+        startOfImgTag = strHTMLLow.IndexOf("<a href=http://image.allmusic.com/00/agg/screen250", startOfImgTag + 1);
+        bGoOn = (startOfImgTag != -1);
+      }
+
+      if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Images))
+      {
+        curGame.DownloadImages(curApp, curItem);
+      }
+      return true;
+    }
+
+
+    string PostHTTP(string strURL, string strData)
+    {
+      try
+      {
+        string strBody;
+        WebRequest req = WebRequest.Create(strURL);
+        req.Method = "POST";
+        req.ContentType = "application/x-www-form-urlencoded";
+
+        byte[] bytes = null;
+        // Get the data that is being posted (or sent) to the server
+        bytes = Encoding.ASCII.GetBytes(strData);
+        req.ContentLength = bytes.Length;
+        // 1. Get an output stream from the request object
+        Stream outputStream = req.GetRequestStream();
+
+        // 2. Post the data out to the stream
+        outputStream.Write(bytes, 0, bytes.Length);
+
+        // 3. Close the output stream and send the data out to the web server
+        outputStream.Close();
+
+
+        WebResponse result = req.GetResponse();
+        Stream ReceiveStream = result.GetResponseStream();
+        Encoding encode = Encoding.GetEncoding("utf-8");
+        StreamReader sr = new StreamReader(ReceiveStream, encode);
+        strBody = sr.ReadToEnd();
+
+        outputStream.Close();
+        ReceiveStream.Close();
+        sr.Close();
+        result.Close();
+
+
+        req = null;
+        outputStream = null;
+        result = null;
+        ReceiveStream = null;
+        sr = null;
+
+        return strBody;
+      }
 //			catch(Exception ex)
-			catch(Exception)
-			{
+      catch (Exception)
+      {
 //				Log.Write("AllGameInfoScraper exception: {0}", ex.ToString());
-			}
+      }
 
-			return "";
-		}
-	}
+      return "";
+    }
+  }
 
 }

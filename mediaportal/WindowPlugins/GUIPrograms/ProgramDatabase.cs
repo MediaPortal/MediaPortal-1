@@ -11,7 +11,7 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class ProgramDatabase
 	{
-		public static SQLiteClient m_db = null;
+		public static SQLiteClient sqlDB = null;
 		static Applist mAppList = null;
 
 		// singleton. Dont allow any instance of this class
@@ -29,18 +29,18 @@ namespace ProgramsDatabase
 					Directory.CreateDirectory("database");
 				}
 				catch(Exception){}
-				m_db = new SQLiteClient(@"database\ProgramDatabaseV3.db");
+				sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db");
 				// make sure the DB-structure is complete
 				CreateObjects();
-				// dirty hack: propagate the m_db to the singleton objects...
-				ProgramSettings.m_db = m_db;
+				// dirty hack: propagate the sqlDB to the singleton objects...
+				ProgramSettings.sqlDB = sqlDB;
 			} 
 			catch (SQLiteException ex) 
 			{
 				Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 			}
-			mAppList = new Applist(m_db, new AppItem.FilelinkLaunchEventHandler(LaunchFilelink));
-			//			mAppList = new Applist(m_db);
+			mAppList = new Applist(sqlDB, new AppItem.FilelinkLaunchEventHandler(LaunchFilelink));
+			//			mAppList = new Applist(sqlDB);
 			//			mAppList.OnLaunchFilelink += new AppItem.FilelinkLaunchEventHandler(LaunchFilelink);
 
 		}
@@ -59,7 +59,7 @@ namespace ProgramsDatabase
 		{
 			SQLiteResultSet results;
 			bool res = true;
-			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strName+"' and type='"+strType+"' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='"+strType+"' ORDER BY name");
+			results = sqlDB.Execute("SELECT name FROM sqlite_master WHERE name='"+strName+"' and type='"+strType+"' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='"+strType+"' ORDER BY name");
 			if (results!=null&& results.Rows.Count>0) 
 			{
 				if (results.Rows.Count==1) 
@@ -81,11 +81,11 @@ namespace ProgramsDatabase
 		static bool AddObject( string strName, string strType, string strSQL)
 		// checks if object exists and returns true if it newly added the object
 		{
-			if (m_db==null) return false;
+			if (sqlDB==null) return false;
 			if (!ObjectExists(strName, strType)) return false;
 			try 
 			{
-				m_db.Execute(strSQL);
+				sqlDB.Execute(strSQL);
 			}
 			catch (SQLiteException ex) 
 			{
@@ -100,19 +100,19 @@ namespace ProgramsDatabase
 			try 
 			{
 				Log.Write("programdatabase migration: started");
-				m_db.Execute("attach database \"database\\ProgramDatabaseV2.db\" as progV2;\n");
+				sqlDB.Execute("attach database \"database\\ProgramDatabaseV2.db\" as progV2;\n");
 				Log.Write("programdatabase migration: attached v2 database");
-				m_db.Execute("insert into application (appid, fatherid, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled) select appid, fatherid,title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled from progV2.application;\n");
+				sqlDB.Execute("insert into application (appid, fatherid, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled) select appid, fatherid,title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled from progV2.application;\n");
 				Log.Write("programdatabase migration: table APPLICATION migrated");
-				m_db.Execute("insert into file (fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle) select fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle from progV2.file;");
+				sqlDB.Execute("insert into file (fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle) select fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle from progV2.file;");
 				Log.Write("programdatabase migration: table FILE migrated");
-				m_db.Execute("insert into filteritem (appid, grouperAppID, fileID, filename, tag) select appid, grouperAppID, fileID, filename, tag from progV2.filteritem;");
+				sqlDB.Execute("insert into filteritem (appid, grouperAppID, fileID, filename, tag) select appid, grouperAppID, fileID, filename, tag from progV2.filteritem;");
 				Log.Write("programdatabase migration: table FILTERITEM migrated");
-				m_db.Execute("insert into setting (settingid, key, value) select settingid, key, value from progV2.setting;");
+				sqlDB.Execute("insert into setting (settingid, key, value) select settingid, key, value from progV2.setting;");
 				Log.Write("programdatabase migration: table SETTING migrated");
-				m_db.Execute("detach database progV2;\n");
+				sqlDB.Execute("detach database progV2;\n");
 				Log.Write("programdatabase migration: detached v2 database.");
-				m_db.Execute("update application set waitforexit = 'T' where waitforexit IS NULL;");
+				sqlDB.Execute("update application set waitforexit = 'T' where waitforexit IS NULL;");
 				Log.Write("programdatabase migration: complete");
 			}
 			catch (SQLiteException ex) 
@@ -124,7 +124,7 @@ namespace ProgramsDatabase
 		static bool CreateObjects()
 		{
 			bool bTryMigration = false;
-			if (m_db==null) return false;
+			if (sqlDB==null) return false;
 			bTryMigration = AddObject("application", "table", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer);\n");
 			AddObject("file", "table", "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text);\n");
 			AddObject("filterItem", "table", "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer);\n");

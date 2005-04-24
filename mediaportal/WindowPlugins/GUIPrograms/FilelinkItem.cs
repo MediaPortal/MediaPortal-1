@@ -13,7 +13,7 @@ namespace ProgramsDatabase
 	{
 		int mTargetAppID;
 
-		public FilelinkItem(SQLiteClient paramDB): base(paramDB)
+		public FilelinkItem(SQLiteClient initSqlDB): base(initSqlDB)
 		{
 		}
 
@@ -45,14 +45,14 @@ namespace ProgramsDatabase
 		{	
 			try
 			{
-				//m_db.Execute("begin");
+				//sqlDB.Execute("begin");
 				string strSQL2 = String.Format(String.Format("DELETE FROM filterItem WHERE appid = {0} AND grouperAppID = {1} AND fileID = {2}", this.TargetAppID, this.AppID, this.FileID));
-				m_db.Execute(strSQL2);
-				//m_db.Execute("commit");
+				sqlDB.Execute(strSQL2);
+				//sqlDB.Execute("commit");
 			}
 			catch (SQLiteException ex) 
 			{	
-				m_db.Execute("rollback");
+				sqlDB.Execute("rollback");
 				Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 			}
 		}
@@ -62,7 +62,7 @@ namespace ProgramsDatabase
 		{
 			SQLiteResultSet results;
 			int res = 0;
-			results = m_db.Execute(String.Format("SELECT COUNT(*) FROM filterItem WHERE appid = {0} AND grouperAppID = {1} AND fileID = {2};", this.TargetAppID, this.AppID, this.FileID));
+			results = sqlDB.Execute(String.Format("SELECT COUNT(*) FROM filterItem WHERE appid = {0} AND grouperAppID = {1} AND fileID = {2};", this.TargetAppID, this.AppID, this.FileID));
 			if (results!=null&& results.Rows.Count>0) 
 			{
 				ArrayList arr = (ArrayList)results.Rows[0];
@@ -75,15 +75,15 @@ namespace ProgramsDatabase
 		{
 			try
 			{
-				//m_db.Execute("begin");
+				//sqlDB.Execute("begin");
 				string strSQL2 = String.Format(String.Format("INSERT INTO filterItem (appid, grouperAppID, fileID, filename) VALUES ({0}, {1}, {2}, '{3}');", this.TargetAppID, this.AppID, this.FileID, ProgramUtils.Encode(Filename)));
 				Log.Write("hi from filelinkiteminsert: {0}", strSQL2);
-				m_db.Execute(strSQL2);
-				//m_db.Execute("commit");
+				sqlDB.Execute(strSQL2);
+				//sqlDB.Execute("commit");
 			}
 			catch (SQLiteException ex) 
 			{	
-				m_db.Execute("rollback");
+				sqlDB.Execute("rollback");
 				Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 			}
 		}

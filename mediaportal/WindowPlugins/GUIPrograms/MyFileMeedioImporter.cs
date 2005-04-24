@@ -12,7 +12,7 @@ namespace ProgramsDatabase
 	public class MyFileMeedioImporter
 	{
 		private AppItem m_App = null;
-		private SQLiteClient m_db = null;
+		private SQLiteClient sqlDB = null;
 
 		// event: read new file
 		public delegate void MlfEventHandler (string strLine);
@@ -34,7 +34,7 @@ namespace ProgramsDatabase
 			//overview	    tag_10
 			//system		tag_11
 			//external_id	tag_12
-			FileItem curFile = new FileItem(m_db);
+			FileItem curFile = new FileItem(sqlDB);
 			string strFilename = ProgramUtils.Get(results,iRecord,"item_location").Trim();
 			string strImagefile = ProgramUtils.Get(results,iRecord,"item_image").Trim();
 			// check if item is complete for importing
@@ -104,7 +104,7 @@ namespace ProgramsDatabase
 		public MyFileMeedioImporter(AppItem objApp, SQLiteClient objDB)
 		{
 			m_App = objApp;
-			m_db = objDB;
+			sqlDB = objDB;
 		}
 	}
 }

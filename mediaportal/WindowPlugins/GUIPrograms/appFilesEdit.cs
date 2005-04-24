@@ -7,7 +7,7 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class appFilesEdit: AppItem
 	{
-		public appFilesEdit(SQLiteClient paramDB): base(paramDB)
+		public appFilesEdit(SQLiteClient initSqlDB): base(initSqlDB)
 		{
 		}
 

@@ -9,7 +9,7 @@ namespace ProgramsDatabase
 {
 	public class FileItem
 	{
-		protected static SQLiteClient m_db=null;
+		protected static SQLiteClient sqlDB=null;
 
 		int mFileID;
 		int mAppID;
@@ -36,10 +36,10 @@ namespace ProgramsDatabase
 		FileInfo mFileInfoFavourite = null;
 
 
-		public FileItem(SQLiteClient paramDB)
+		public FileItem(SQLiteClient initSqlDB)
 		{
 			// constructor: save SQLiteDB object 
-			m_db = paramDB;
+			sqlDB = initSqlDB;
 			Clear();
 		}
 
@@ -362,7 +362,7 @@ namespace ProgramsDatabase
 				string strSQL = String.Format("insert into file (fileid, appid, title, filename, filepath, imagefile, genre, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id, uppertitle, tagdata, categorydata) values (null, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}')", 
 					AppID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), Country, ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), 
 					ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount, ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
-				m_db.Execute(strSQL);
+				sqlDB.Execute(strSQL);
 			}
 			catch (SQLiteException ex) 
 			{
@@ -399,7 +399,7 @@ namespace ProgramsDatabase
 					ProgramUtils.Encode(TagData),
 					ProgramUtils.Encode(CategoryData)
 					);
-				m_db.Execute(strSQL);
+				sqlDB.Execute(strSQL);
 			}
 			catch (SQLiteException ex) 
 			{
@@ -414,7 +414,7 @@ namespace ProgramsDatabase
 				LastTimeLaunched = DateTime.Now;
 				LaunchCount = LaunchCount + 1;
 				string strSQL = String.Format("update file set lastTimeLaunched = '{0}', launchcount = {1} where fileid = {2}", LastTimeLaunched, LaunchCount, FileID);
-				m_db.Execute(strSQL);
+				sqlDB.Execute(strSQL);
 			}
 			catch (SQLiteException ex) 
 			{
@@ -438,8 +438,8 @@ namespace ProgramsDatabase
 				{
 					string strSQL1 = String.Format("delete from filteritem where fileid = {0}", this.FileID);
 					string strSQL2 = String.Format("delete from file where fileid = {0}", this.FileID);
-					m_db.Execute(strSQL1);
-					m_db.Execute(strSQL2);
+					sqlDB.Execute(strSQL1);
+					sqlDB.Execute(strSQL2);
 				}
 				catch (SQLiteException ex) 
 				{	
@@ -536,8 +536,8 @@ namespace ProgramsDatabase
 		public string GetNewImageFile(AppItem curApp, string strExtension)
 		{
 			if (curApp == null) return "";
-			if (curApp.ImageDirs == null) return "";
-			if (curApp.ImageDirs.Length == 0) return "";
+			if (curApp.imageDirs == null) return "";
+			if (curApp.imageDirs.Length == 0) return "";
 			if ((this.Imagefile == "") && (this.Filename == "")) return "";
 
 			string strFolder = "";
@@ -546,7 +546,7 @@ namespace ProgramsDatabase
 			int iImgIndex = -1;
 			bool bFound = false;
 
-			strFolder = curApp.ImageDirs[0];
+			strFolder = curApp.imageDirs[0];
 
 			if (Imagefile != "")
 			{
@@ -581,12 +581,12 @@ namespace ProgramsDatabase
 		public void DeleteImages(AppItem curApp)
 		{
 			if (curApp == null) return;
-			if (curApp.ImageDirs == null) return;
-			if (curApp.ImageDirs.Length == 0) return;
+			if (curApp.imageDirs == null) return;
+			if (curApp.imageDirs.Length == 0) return;
 			string strFolder = "";
 			string strFileName = "";
 
-			strFolder = curApp.ImageDirs[0];
+			strFolder = curApp.imageDirs[0];
 			strFileName = Filename.TrimEnd('\"');
 			strFileName = strFileName.TrimStart('\"');
 			strFileName = Path.GetFileName(strFileName);

@@ -9,7 +9,7 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class ProgramSettings
 	{
-		static public SQLiteClient m_db=null;
+		static public SQLiteClient sqlDB=null;
 
 		// singleton. Dont allow any instance of this class
 		private ProgramSettings()
@@ -26,7 +26,7 @@ namespace ProgramsDatabase
 			SQLiteResultSet results;
 			string res = null;
 			string SQL = "SELECT value FROM setting WHERE key ='"+Key+"'";
-			results = m_db.Execute(SQL);
+			results = sqlDB.Execute(SQL);
 			if (results!=null&& results.Rows.Count>0) 
 			{
 				ArrayList arr = (ArrayList)results.Rows[0];
@@ -40,7 +40,7 @@ namespace ProgramsDatabase
 		{
 			SQLiteResultSet results;
 			int res = 0;
-			results = m_db.Execute("SELECT COUNT(*) FROM setting WHERE key ='"+Key+"'");
+			results = sqlDB.Execute("SELECT COUNT(*) FROM setting WHERE key ='"+Key+"'");
 			if (results!=null&& results.Rows.Count>0) 
 			{
 				ArrayList arr = (ArrayList)results.Rows[0];
@@ -58,17 +58,17 @@ namespace ProgramsDatabase
 		{
 			if (KeyExists(Key))
 			{
-				m_db.Execute("update setting set value = '" + Value + "' where key = '" + Key + "'");
+				sqlDB.Execute("update setting set value = '" + Value + "' where key = '" + Key + "'");
 			}
 			else
 			{
-				m_db.Execute("insert into setting (key, value) values ('" + Key + "', '" + Value + "');");
+				sqlDB.Execute("insert into setting (key, value) values ('" + Key + "', '" + Value + "');");
 			}
 		}
 
 		static public void DeleteSetting(string Key)
 		{
-			m_db.Execute("delete from setting where key = '" + Key + "'");
+			sqlDB.Execute("delete from setting where key = '" + Key + "'");
 		}
 
 

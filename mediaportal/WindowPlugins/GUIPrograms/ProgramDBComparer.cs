@@ -19,7 +19,7 @@ namespace WindowPlugins.GUIPrograms
 		}
 
 		SortMethod  mCurrentSortMethod=SortMethod.SORT_NAME;
-		public bool bAsc = true;
+		public bool sortAscending = true;
 		
 
 		public ProgramDBComparer()
@@ -84,19 +84,19 @@ namespace WindowPlugins.GUIPrograms
 				
 				case SortMethod.SORT_NAME:
 					mCurrentSortMethod = SortMethod.SORT_LAUNCHES;
-					bAsc = false;
+			    sortAscending = false;
 					break;
 				case SortMethod.SORT_LAUNCHES:
 					mCurrentSortMethod = SortMethod.SORT_RECENT;
-					bAsc = false;
+			    sortAscending = false;
 					break;
 				case SortMethod.SORT_RECENT:
 					mCurrentSortMethod = SortMethod.SORT_RATING;
-					bAsc = false;
+			    sortAscending = false;
 					break;
 				case SortMethod.SORT_RATING:
 					mCurrentSortMethod = SortMethod.SORT_NAME;
-					bAsc = true;
+			    sortAscending = true;
 					break;
 			}
 		}
@@ -134,7 +134,7 @@ namespace WindowPlugins.GUIPrograms
 				case SortMethod.SORT_NAME:
 					item1.Label2 = "";
 					item2.Label2 = "";
-					if (bAsc)
+					if (sortAscending)
 					{
 						return String.Compare(item1.Label ,item2.Label,true);
 					}
@@ -160,7 +160,7 @@ namespace WindowPlugins.GUIPrograms
 						{
 							nTemp = 1;
 						}
-						if (bAsc)
+						if (sortAscending)
 						{
 							return nTemp;
 						}
@@ -188,7 +188,7 @@ namespace WindowPlugins.GUIPrograms
 						{
 							nTemp = 1;
 						}
-						if (bAsc)
+						if (sortAscending)
 						{
 							return nTemp;
 						}
@@ -231,7 +231,7 @@ namespace WindowPlugins.GUIPrograms
 						{
 							nTemp = 1;
 						}
-						if (bAsc)
+						if (sortAscending)
 						{
 							return nTemp;
 						}

@@ -15,7 +15,7 @@ namespace ProgramsDatabase
 
 		GUIDialogProgress pDlgProgress = null;
 		
-		public appItemMyFileINI(SQLiteClient paramDB): base(paramDB)
+		public appItemMyFileINI(SQLiteClient initSqlDB): base(initSqlDB)
 		{
 		}
 
@@ -32,7 +32,7 @@ namespace ProgramsDatabase
 
 		private void DoMyFileIniImport(bool bGUIMode)
 		{
-			if (m_db==null) return;
+			if (sqlDB==null) return;
 			if (this.AppID < 0) return;
 			if ((this.SourceType != myProgSourceType.MYFILEINI) || (Source == "") || (!File.Exists(Source))) return;
 			if (bGUIMode)
@@ -41,7 +41,7 @@ namespace ProgramsDatabase
 			}
 			try
 			{
-				MyFileIniImporter objImporter = new MyFileIniImporter(this, m_db);
+				MyFileIniImporter objImporter = new MyFileIniImporter(this, sqlDB);
 				objImporter.OnReadNewFile += new MyFileIniImporter.MyEventHandler(ReadNewFile);
 				try
 				{

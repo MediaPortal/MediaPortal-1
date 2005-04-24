@@ -12,12 +12,12 @@ namespace ProgramsDatabase
 
 		string mFilepath = "";
 
-		static SQLiteClient m_db=null;
+		static SQLiteClient sqlDB=null;
 
-		public Filelist(SQLiteClient paramDB)
+		public Filelist(SQLiteClient initSqlDB)
 		{
 			// constructor: save SQLiteDB object 
-			m_db = paramDB;
+			sqlDB = initSqlDB;
 		}
 
 		public string Filepath
@@ -41,7 +41,7 @@ namespace ProgramsDatabase
 
 		static private FileItem DBGetFileItem(SQLiteResultSet results,int iRecord)
 		{
-			FileItem newFile = new FileItem(m_db);
+			FileItem newFile = new FileItem(sqlDB);
 			newFile.FileID = ProgramUtils.GetIntDef(results, iRecord, "fileid", -1);
 			newFile.AppID = ProgramUtils.GetIntDef(results, iRecord, "appid", -1);
 			newFile.Title = ProgramUtils.Get(results,iRecord,"title");
@@ -67,11 +67,11 @@ namespace ProgramsDatabase
 
 		public void Load(int nAppID, string strPath)
 		{
-			if (m_db==null) return;
+			if (sqlDB==null) return;
 			try
 			{
 				Clear();
-				if (null==m_db) return ;
+				if (null==sqlDB) return ;
 				SQLiteResultSet results;
 				string strSQL = "";
 				mFilepath = strPath;
@@ -83,7 +83,7 @@ namespace ProgramsDatabase
 				{
 					strSQL = String.Format("select * from file where appid = {0} and filepath = '{1}' order by isfolder desc, uppertitle", nAppID, strPath);
 				}
-				results=m_db.Execute(strSQL);
+				results=sqlDB.Execute(strSQL);
 				if (results.Rows.Count == 0)  return;
 				for (int iRow=0; iRow < results.Rows.Count;iRow++)
 				{

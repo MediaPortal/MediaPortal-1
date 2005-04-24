@@ -12,7 +12,7 @@ namespace ProgramsDatabase
 	public class MyFileIniImporter
 	{
 		private AppItem m_App = null;
-		private SQLiteClient m_db = null;
+		private SQLiteClient sqlDB = null;
 		private FileItem curFile = null;
 		private bool m_bOverviewReading = false;
 
@@ -46,7 +46,7 @@ namespace ProgramsDatabase
 			// Log.Write("MyFileINI: ReadNewSection: {0}", strLine);
 			if (curFile == null)
 			{
-				curFile = new FileItem(this.m_db);
+				curFile = new FileItem(this.sqlDB);
 			}
 			curFile.Clear();
 			curFile.AppID = this.m_App.AppID;
@@ -301,7 +301,7 @@ namespace ProgramsDatabase
 		public MyFileIniImporter(AppItem objApp, SQLiteClient objDB)
 		{
 			m_App = objApp;
-			m_db = objDB;
+			sqlDB = objDB;
 		}
 	}
 }

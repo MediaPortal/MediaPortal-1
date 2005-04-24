@@ -11,18 +11,18 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class FilelinkList: ArrayList
 	{
-		public FilelinkList(SQLiteClient paramDB)
+		public FilelinkList(SQLiteClient initSqlDB)
 		{
 			// constructor: save SQLiteDB object 
-			m_db = paramDB;
+			sqlDB = initSqlDB;
 		}
 
-		static SQLiteClient m_db=null;
+		static SQLiteClient sqlDB=null;
 
 
 		static private FilelinkItem DBGetFilelinkItem(SQLiteResultSet results,int iRecord)
 		{
-			FilelinkItem newLink = new FilelinkItem(m_db);
+			FilelinkItem newLink = new FilelinkItem(sqlDB);
 			newLink.FileID = ProgramUtils.GetIntDef(results, iRecord, "fileid", -1);
 			newLink.AppID = ProgramUtils.GetIntDef(results, iRecord, "grouperappid", -1);
 			newLink.TargetAppID = ProgramUtils.GetIntDef(results, iRecord, "targetappid", -1);
@@ -47,18 +47,18 @@ namespace ProgramsDatabase
 
 		public void Load(int nAppID, string strPath)
 		{
-			if (m_db==null) return;
+			if (sqlDB==null) return;
 			try
 			{
 				Clear();
-				if (null==m_db) return ;
+				if (null==sqlDB) return ;
 				SQLiteResultSet results;
 				string strSQL = "";
 				// mFilepath = strPath;
 				// app.
 				// SPECIAL: the current application IS NOT the application with the launchinfo!
 				strSQL = String.Format("SELECT fi.appid AS targetappid, fi.grouperappid AS grouperappid, f.fileid AS fileid, title, uppertitle, f.filename as filename, filepath, imagefile, genre, genre2, genre3, genre4, genre5, country, manufacturer, YEAR, rating, overview, SYSTEM, import_flag, manualfilename, lasttimelaunched, launchcount, isfolder, external_id FROM FILE f, filteritem fi WHERE f.fileid = fi.fileid AND grouperappid = {0} ORDER BY filepath, uppertitle", nAppID);
-				results=m_db.Execute(strSQL);
+				results=sqlDB.Execute(strSQL);
 				if (results.Rows.Count == 0)  return;
 				for (int iRow=0; iRow < results.Rows.Count;iRow++)
 				{

@@ -22,31 +22,31 @@ namespace ProgramsDatabase
 			// nothing to create......
 		}
 
-		public AppItem GetAppItem(SQLiteClient m_db, myProgSourceType sourceType)
+		public AppItem GetAppItem(SQLiteClient sqlDB, myProgSourceType sourceType)
 		{
 			AppItem res = null;
 			switch (sourceType)
 			{
 				case myProgSourceType.DIRBROWSE:
-					res = new appItemDirBrowse(m_db);
+					res = new appItemDirBrowse(sqlDB);
 					break;
 				case myProgSourceType.DIRCACHE:
-					res = new appItemDirCache(m_db);
+					res = new appItemDirCache(sqlDB);
 					break;
 				case myProgSourceType.MYFILEINI:
-					res = new appItemMyFileINI(m_db);
+					res = new appItemMyFileINI(sqlDB);
 					break;
 				case myProgSourceType.MYFILEMEEDIO:
-					res = new appItemMyFileMLF(m_db);
+					res = new appItemMyFileMLF(sqlDB);
 					break;
 				case myProgSourceType.MYGAMESDIRECT:
-					res = new appItemMyGamesDirect(m_db);
+					res = new appItemMyGamesDirect(sqlDB);
 					break;
 				case myProgSourceType.FILELAUNCHER:
-					res = new appFilesEdit(m_db);
+					res = new appFilesEdit(sqlDB);
 					break;
 				case myProgSourceType.GROUPER:
-					res = new appGrouper(m_db);
+					res = new appGrouper(sqlDB);
 					break;
 			}
 			return res;

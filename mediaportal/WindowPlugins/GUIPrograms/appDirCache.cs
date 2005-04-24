@@ -9,256 +9,250 @@ using SQLite.NET;
 
 namespace ProgramsDatabase
 {
-	/// <summary>
-	/// Summary description for appItemDirCache.
-	/// </summary>
-	public class appItemDirCache: AppItem
-	{
+  /// <summary>
+  /// Summary description for appItemDirCache.
+  /// </summary>
+  public class appItemDirCache : AppItem
+  {
+    GUIDialogProgress progressDialog = null;
 
-		GUIDialogProgress pDlgProgress = null;
-		
-		public appItemDirCache(SQLiteClient paramDB): base(paramDB)
-		{
-		}
-
-		private void ShowProgressDialog()
-		{
-			pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-			pDlgProgress.SetHeading("scanning directory");
-			pDlgProgress.SetLine(0, "scanning directory");		//todo: localize! 13004...
-			pDlgProgress.SetLine(1, "");
-			pDlgProgress.SetLine(2, "");
-			pDlgProgress.StartModal(GetID);
-			pDlgProgress.Progress();
-		}
-
-		private void CloseProgressDialog()
-		{
-			pDlgProgress.Close();
-		}
-
-		private string GetThumbsFile(GUIListItem guiFile, string fileTitle)
-		{
-			string strFolderThumb = "";
-			if (ImageDirs.Length > 0)
-			{
-
-				string strMainImgDir = ImageDirs[0];
-
-				string strDir = strMainImgDir + "\\";
-				string strFilenameNoExt = strMainImgDir + "\\" + guiFile.Label;
-				strFilenameNoExt = Path.ChangeExtension(strFilenameNoExt, null);
-				strFilenameNoExt = Path.GetFileNameWithoutExtension(strFilenameNoExt);
-
-				string[] strExactMatchesJPG = Directory.GetFiles(strDir, strFilenameNoExt+"*.jpg");
-				string[] strExactMatchesGIF = Directory.GetFiles(strDir, strFilenameNoExt+"*.gif");
-				string[] strExactMatchesPNG = Directory.GetFiles(strDir, strFilenameNoExt+"*.png");
-				if (strExactMatchesJPG.Length > 0)
-				{
-					strFolderThumb = strExactMatchesJPG[0];
-				}
-				else if (strExactMatchesGIF.Length > 0)
-				{
-					strFolderThumb = strExactMatchesGIF[0];
-				}
-				else if (strExactMatchesPNG.Length > 0)
-				{
-					strFolderThumb = strExactMatchesPNG[0];
-				}
-				else 
-				{
-					// no exact match found! Redo with near matches!
-					string[] strNearMatchesJPG = Directory.GetFiles(strDir, fileTitle+"*.jpg");
-					string[] strNearMatchesGIF = Directory.GetFiles(strDir, fileTitle+"*.gif");
-					string[] strNearMatchesPNG = Directory.GetFiles(strDir, fileTitle+"*.png");
-					if (strNearMatchesJPG.Length > 0)
-					{
-						strFolderThumb = strNearMatchesJPG[0];
-					}
-					else if (strNearMatchesGIF.Length > 0)
-					{
-						strFolderThumb = strNearMatchesGIF[0];
-					}
-					else if (strNearMatchesPNG.Length > 0)
-					{
-						strFolderThumb = strNearMatchesPNG[0];
-					}
-				}
-				
-			}
-			return strFolderThumb;
-		}
-
-		
-
-		private void ImportFileItem(GUIListItem guiFile)
-		{
-			FileItem curFile = new FileItem(m_db);
-			curFile.FileID = -1; // to force an INSERT statement when writing the item
-			curFile.AppID = this.AppID;
-			curFile.Title = guiFile.Label;
-			curFile.Title = curFile.TitleNormalized;
-			curFile.Filename = guiFile.Path;
-			if (this.UseQuotes)
-			{
-				curFile.Filename = "\"" + curFile.Filename + "\"";
-			}
-			curFile.Filepath = Path.GetDirectoryName(guiFile.Path);
-			curFile.Imagefile = GetThumbsFile(guiFile, curFile.TitleNormalized);
-			// not imported properties => set default values
-			curFile.ManualFilename = "";
-			curFile.LastTimeLaunched = DateTime.MinValue;
-			curFile.LaunchCount = 0;
-			curFile.Write();
-		}
-
-		private void WriteFolderItem(string directoryPath)
-		{
-			FileItem curFile = new FileItem(m_db);
-			curFile.FileID = -1;
-			curFile.AppID = this.AppID;
-			curFile.Filename = directoryPath;
-			curFile.Title = Path.GetFileNameWithoutExtension(directoryPath);
-			curFile.Filepath = Path.GetDirectoryName(directoryPath);
-			curFile.IsFolder = true;
-			curFile.ManualFilename = "";
-			curFile.LastTimeLaunched = DateTime.MinValue;
-			curFile.LaunchCount = 0;
-			curFile.Write();
-		}
-
-
-
-
-
-		private void UpdateProgressDialog(GUIListItem guiFile, bool bGUIMode)
-		{
-			if (bGUIMode)
-			{
-				pDlgProgress.SetLine(2, String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label)); // "last imported file {0}"
-				pDlgProgress.Progress();
-			}
-			SendRefreshInfo(String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label));
-		}
-
-		private void ImportDirectory(string curPath, bool bGUIMode)
-		{
-			VirtualDirectory  m_directory = new VirtualDirectory();
-			ArrayList mExtensions = new ArrayList( this.ValidExtensions.Split( ',' ) );
-			m_directory.SetExtensions(mExtensions);
-
-			// read files
-			ArrayList arrFiles = m_directory.GetDirectory( curPath );
-			foreach (GUIListItem file in arrFiles)
-			{
-				if (!file.IsFolder)
-				{
-					ImportFileItem(file);
-					UpdateProgressDialog(file, bGUIMode);
-				}
-			}
-
-			//read subdirectories
-			try
-			{
-				string[] directories = Directory.GetDirectories(curPath);
-				foreach(string directory in directories)
-				{
-					WriteFolderItem(directory);
-					// recursively call importer for every subdirectory
-					ImportDirectory(directory, bGUIMode);
-				}
-			}
-			catch
-			{
-				// Ignore
-			}
-
-		}
-
-		private void DoDirCacheImport(bool bGUIMode)
-		{
-			if (m_db==null) return;
-			if (this.AppID < 0) return;
-			if (this.SourceType != myProgSourceType.DIRCACHE) return;
-			if (bGUIMode)
-			{
-				ShowProgressDialog();
-			}
-			try
-			{
-				ValidExtensions = ValidExtensions.Replace(" ", "");
-				ImportDirectory(this.FileDirectory, bGUIMode);
-			}
-			finally
-			{
-				if (bGUIMode)
-				{
-					CloseProgressDialog();
-				}
-			}
-
-		}
-
-
-		override public void LoadFiles()
-		{
-			// load Files and fill Files-arraylist here!
-			if (mFiles == null) 
-			{
-				mFiles = new Filelist(m_db);}
-			else 
-			{ 
-				mFiles.Clear();
-			}
-			mFiles.Load(AppID, FileDirectory);
-			bFilesLoaded = true;
-		}
-
-
-
-		override public string CurrentFilePath()
-		{
-			if (Files.Filepath != "")
-			{
-				return Files.Filepath;
-			}
-			else 
-			{
-				return base.CurrentFilePath();
-			}
-		}
-
-
-		override public string DefaultFilepath()
-		{
-			return this.FileDirectory; 
-		}
-
-		override public bool RefreshButtonVisible()
-		{
-			return true;
-		}
-
-
-		override public bool FileBrowseAllowed()
-		{
-			return true;  
-		}
-
-		override public bool ProfileLoadingAllowed()
-		{
-			return true;
-		}
-
-		override public void Refresh(bool bGUIMode)
-		{
-			base.Refresh(bGUIMode);
-			DeleteFiles();
-			DoDirCacheImport(bGUIMode);
-			FixFileLinks();
-			LoadFiles();
-		}
+    public appItemDirCache(SQLiteClient initSqlDB) : base(initSqlDB)
+    {
     }
+
+    private void ShowProgressDialog()
+    {
+      progressDialog = (GUIDialogProgress) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      progressDialog.SetHeading("scanning directory");
+      progressDialog.SetLine(0, "scanning directory"); //todo: localize! 13004...
+      progressDialog.SetLine(1, "");
+      progressDialog.SetLine(2, "");
+      progressDialog.StartModal(GetID);
+      progressDialog.Progress();
+    }
+
+    private void CloseProgressDialog()
+    {
+      progressDialog.Close();
+    }
+
+    private string GetThumbsFile(GUIListItem guiFile, string fileTitle)
+    {
+      string thumbFolder = "";
+      if (imageDirs.Length > 0)
+      {
+        string mainImgFolder = imageDirs[0];
+
+        string curDir = mainImgFolder + "\\";
+        string filenameNoExtension = mainImgFolder + "\\" + guiFile.Label;
+        filenameNoExtension = Path.ChangeExtension(filenameNoExtension, null);
+        filenameNoExtension = Path.GetFileNameWithoutExtension(filenameNoExtension);
+
+        string[] exactMatchesJPG = Directory.GetFiles(curDir, filenameNoExtension + "*.jpg");
+        string[] exactMatchesGIF = Directory.GetFiles(curDir, filenameNoExtension + "*.gif");
+        string[] exactMatchesPNG = Directory.GetFiles(curDir, filenameNoExtension + "*.png");
+        if (exactMatchesJPG.Length > 0)
+        {
+          thumbFolder = exactMatchesJPG[0];
+        }
+        else if (exactMatchesGIF.Length > 0)
+        {
+          thumbFolder = exactMatchesGIF[0];
+        }
+        else if (exactMatchesPNG.Length > 0)
+        {
+          thumbFolder = exactMatchesPNG[0];
+        }
+        else
+        {
+          // no exact match found! Redo with near matches!
+          string[] nearMatchesJPG = Directory.GetFiles(curDir, fileTitle + "*.jpg");
+          string[] nearMatchesGIF = Directory.GetFiles(curDir, fileTitle + "*.gif");
+          string[] nearMatchesPNG = Directory.GetFiles(curDir, fileTitle + "*.png");
+          if (nearMatchesJPG.Length > 0)
+          {
+            thumbFolder = nearMatchesJPG[0];
+          }
+          else if (nearMatchesGIF.Length > 0)
+          {
+            thumbFolder = nearMatchesGIF[0];
+          }
+          else if (nearMatchesPNG.Length > 0)
+          {
+            thumbFolder = nearMatchesPNG[0];
+          }
+        }
+
+      }
+      return thumbFolder;
+    }
+
+
+    private void ImportFileItem(GUIListItem guiFile)
+    {
+      FileItem curFile = new FileItem(sqlDB);
+      curFile.FileID = -1; // to force an INSERT statement when writing the item
+      curFile.AppID = this.AppID;
+      curFile.Title = guiFile.Label;
+      curFile.Title = curFile.TitleNormalized;
+      curFile.Filename = guiFile.Path;
+      if (this.UseQuotes)
+      {
+        curFile.Filename = "\"" + curFile.Filename + "\"";
+      }
+      curFile.Filepath = Path.GetDirectoryName(guiFile.Path);
+      curFile.Imagefile = GetThumbsFile(guiFile, curFile.TitleNormalized);
+      // not imported properties => set default values
+      curFile.ManualFilename = "";
+      curFile.LastTimeLaunched = DateTime.MinValue;
+      curFile.LaunchCount = 0;
+      curFile.Write();
+    }
+
+    private void WriteFolderItem(string directoryPath)
+    {
+      FileItem curFile = new FileItem(sqlDB);
+      curFile.FileID = -1;
+      curFile.AppID = this.AppID;
+      curFile.Filename = directoryPath;
+      curFile.Title = Path.GetFileNameWithoutExtension(directoryPath);
+      curFile.Filepath = Path.GetDirectoryName(directoryPath);
+      curFile.IsFolder = true;
+      curFile.ManualFilename = "";
+      curFile.LastTimeLaunched = DateTime.MinValue;
+      curFile.LaunchCount = 0;
+      curFile.Write();
+    }
+
+
+    private void UpdateProgressDialog(GUIListItem guiFile, bool mpGuiMode)
+    {
+      if (mpGuiMode)
+      {
+        progressDialog.SetLine(2, String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label)); // "last imported file {0}"
+        progressDialog.Progress();
+      }
+      SendRefreshInfo(String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label));
+    }
+
+    private void ImportDirectory(string curPath, bool mpGuiMode)
+    {
+      VirtualDirectory virtDir = new VirtualDirectory();
+      ArrayList dirExtensions = new ArrayList(this.ValidExtensions.Split(','));
+      virtDir.SetExtensions(dirExtensions);
+
+      // read files
+      ArrayList arrFiles = virtDir.GetDirectory(curPath);
+      foreach (GUIListItem file in arrFiles)
+      {
+        if (!file.IsFolder)
+        {
+          ImportFileItem(file);
+          UpdateProgressDialog(file, mpGuiMode);
+        }
+      }
+
+      //read subdirectories
+      try
+      {
+        string[] directories = Directory.GetDirectories(curPath);
+        foreach (string directory in directories)
+        {
+          WriteFolderItem(directory);
+          // recursively call importer for every subdirectory
+          ImportDirectory(directory, mpGuiMode);
+        }
+      }
+      catch
+      {
+        // Ignore
+      }
+
+    }
+
+    private void DoDirCacheImport(bool mpGuiMode)
+    {
+      if (sqlDB == null) return;
+      if (this.AppID < 0) return;
+      if (this.SourceType != myProgSourceType.DIRCACHE) return;
+      if (mpGuiMode)
+      {
+        ShowProgressDialog();
+      }
+      try
+      {
+        ValidExtensions = ValidExtensions.Replace(" ", "");
+        ImportDirectory(this.FileDirectory, mpGuiMode);
+      }
+      finally
+      {
+        if (mpGuiMode)
+        {
+          CloseProgressDialog();
+        }
+      }
+
+    }
+
+
+    override public void LoadFiles()
+    {
+      // load Files and fill Files-arraylist here!
+      if (fileList == null)
+      {
+        fileList = new Filelist(sqlDB);
+      }
+      else
+      {
+        fileList.Clear();
+      }
+      fileList.Load(AppID, FileDirectory);
+      filesAreLoaded = true;
+    }
+
+
+    override public string CurrentFilePath()
+    {
+      if (Files.Filepath != "")
+      {
+        return Files.Filepath;
+      }
+      else
+      {
+        return base.CurrentFilePath();
+      }
+    }
+
+
+    override public string DefaultFilepath()
+    {
+      return this.FileDirectory;
+    }
+
+    override public bool RefreshButtonVisible()
+    {
+      return true;
+    }
+
+
+    override public bool FileBrowseAllowed()
+    {
+      return true;
+    }
+
+    override public bool ProfileLoadingAllowed()
+    {
+      return true;
+    }
+
+    override public void Refresh(bool mpGuiMode)
+    {
+      base.Refresh(mpGuiMode);
+      DeleteFiles();
+      DoDirCacheImport(mpGuiMode);
+      FixFileLinks();
+      LoadFiles();
+    }
+  }
 
 }

@@ -9,7 +9,7 @@ namespace ProgramsDatabase
 	public class appGrouper: AppItem
 	{
 		
-		public appGrouper(SQLiteClient paramDB): base(paramDB)
+		public appGrouper(SQLiteClient initSqlDB): base(initSqlDB)
 		{
 		}
 
