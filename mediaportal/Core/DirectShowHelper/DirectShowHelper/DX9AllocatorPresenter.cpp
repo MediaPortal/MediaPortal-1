@@ -412,6 +412,8 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
 				m_bfirstFrame=false;
 				Log("vmr9:Paint() using PresentSurface %dx%d",videoSize.cx,videoSize.cy);
 			}
+			pTexture->Release();
+			
 			return;
 		}
 
