@@ -79,13 +79,18 @@ namespace MediaPortal.Playlists
           Log.Write("Playlistplayer.SeekPercent({0}%) done",message.Param1);
         }
         break;
-        case GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END:
-        {
-          Log.Write("Playlistplayer.SeekEnd({0})",g_Player.Duration);
-          g_Player.SeekAbsolute(g_Player.Duration-0.5d);
-          Log.Write("Playlistplayer.SeekEnd({0}) done",g_Player.CurrentPosition);
-        }
-        break;
+				case GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END:
+				{
+					double duration=g_Player.Duration;
+					double position=g_Player.CurrentPosition;
+					if (position < position-1d)
+					{
+						Log.Write("Playlistplayer.SeekEnd({0})",duration);
+						g_Player.SeekAbsolute(duration-0.5d);
+						Log.Write("Playlistplayer.SeekEnd({0}) done",g_Player.CurrentPosition);
+					}
+				}
+					break;
       }
     }
 

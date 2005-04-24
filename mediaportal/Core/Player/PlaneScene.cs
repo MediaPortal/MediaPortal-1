@@ -348,6 +348,18 @@ namespace MediaPortal.Player
 				m_vmr9Util.FrameCounter++;
 				return;
 			}
+
+			if (!GUIGraphicsContext.IsFullScreenVideo)
+			{
+				if (GUIGraphicsContext.Vmr9FPS>40)
+				{
+					if ( (m_vmr9Util.FrameCounter%2)==1)
+					{
+						m_vmr9Util.FrameCounter++;
+						return;
+					}
+				}
+			}
 			try
 			{
 				GUIGraphicsContext.InVmr9Render=true;
@@ -486,6 +498,18 @@ namespace MediaPortal.Player
 				m_vmr9Util.FrameCounter++;
 				return;
 			}			
+
+			if (!GUIGraphicsContext.IsFullScreenVideo)
+			{
+				if (GUIGraphicsContext.Vmr9FPS>40)
+				{
+					if ( (m_vmr9Util.FrameCounter%2)==1)
+					{
+						m_vmr9Util.FrameCounter++;
+						return;
+					}
+				}
+			}
 			try
 			{
 				GUIGraphicsContext.InVmr9Render=true;
