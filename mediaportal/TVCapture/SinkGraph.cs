@@ -427,6 +427,12 @@ namespace MediaPortal.TV.Recording
         return true;
       }
 
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
 			Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartTimeShifting()");
       m_graphState=State.TimeShifting;
       TuneChannel(channel);
@@ -531,6 +537,13 @@ namespace MediaPortal.TV.Recording
       {
         TuneChannel(channel);
       }
+			
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
 			if (recording.Quality != TVRecording.QualityType.NotSet)
 			{

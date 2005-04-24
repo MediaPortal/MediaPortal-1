@@ -1266,6 +1266,12 @@ namespace MediaPortal.TV.Recording
 			if(m_channelFound==false)
 				return false;
 			
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
 
 			if(CreateSinkSource(fileName)==true)
 			{
@@ -1324,6 +1330,12 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
 			uint iRecordingType=0;
 			if (bContentRecording) iRecordingType=0;
 			else iRecordingType=1;										

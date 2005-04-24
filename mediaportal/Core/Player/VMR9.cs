@@ -30,8 +30,9 @@ namespace MediaPortal.Player
 		public int                  textureCount=0;
 		int												  videoHeight,videoWidth;
 		DirectShowHelperLib.VMR9HelperClass vmr9Helper=null;
-		float                       lastTime=0;
+		
 		int													frameCounter=0;
+		DateTime										repaintTimer=DateTime.Now;
 		enum Vmr9PlayState
 		{
 			Playing,
@@ -140,8 +141,18 @@ namespace MediaPortal.Player
 
 		public int FrameCounter
 		{
-			get { return frameCounter;}
-			set { frameCounter=value;}
+			get { 
+				lock (this)
+				{
+					return frameCounter;
+				}
+			}
+			set { 
+				lock (this)
+				{
+					frameCounter=value;
+				}
+			}
 		}
 
 		/// <summary>
@@ -191,15 +202,16 @@ namespace MediaPortal.Player
 
 		public void Process()
 		{
-			float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-			if (time - lastTime >= 1f)
+			TimeSpan ts=DateTime.Now-repaintTimer;
+			if (ts.TotalMilliseconds>1000)
 			{
-				GUIGraphicsContext.Vmr9FPS    = ((float)frameCounter) / (time - lastTime);
-				//Log.Write("vmr9:{0} {1} {2}", frameCounter, GUIGraphicsContext.Vmr9FPS,(time - lastTime));
-				lastTime=time;
-				frameCounter=0;
+				int framesDrawn=FrameCounter;
+				GUIGraphicsContext.Vmr9FPS    = ((float)framesDrawn) / ((float)ts.TotalMilliseconds);
+				//Log.Write("vmr9:frames:{0} fps:{1} time:{2}", framesDrawn, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
+				repaintTimer=DateTime.Now;
+				FrameCounter=0;
 			}
-			if (GUIGraphicsContext.Vmr9FPS>5f)
+			if (GUIGraphicsContext.Vmr9FPS>1f)
 			{
 				if (currentVmr9State==Vmr9PlayState.Repaint)
 				{

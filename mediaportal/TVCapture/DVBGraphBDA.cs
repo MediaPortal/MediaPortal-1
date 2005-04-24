@@ -824,6 +824,12 @@ namespace MediaPortal.TV.Recording
 			if (m_StreamBufferSink == null) 
 				return false;
 
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
 			uint iRecordingType=0;
 			if (bContentRecording) 
@@ -1057,7 +1063,12 @@ namespace MediaPortal.TV.Recording
 		{
 			if(m_graphState!=State.Created)
 				return false;
-			
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartTimeShifting()");
 
 			if(CreateSinkSource(strFileName))
