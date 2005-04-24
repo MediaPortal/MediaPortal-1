@@ -82,7 +82,7 @@ namespace MediaPortal.Playlists
         case GUIMessage.MessageType.GUI_MSG_SEEK_FILE_END:
         {
           Log.Write("Playlistplayer.SeekEnd({0})",g_Player.Duration);
-          g_Player.SeekAbsolute(g_Player.Duration);
+          g_Player.SeekAbsolute(g_Player.Duration-0.5d);
           Log.Write("Playlistplayer.SeekEnd({0}) done",g_Player.CurrentPosition);
         }
         break;
