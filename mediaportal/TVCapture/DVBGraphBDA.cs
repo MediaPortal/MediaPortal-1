@@ -2359,6 +2359,10 @@ namespace MediaPortal.TV.Recording
 				{
 					return true;
 				}
+				else
+				{
+					pmtVersionNumber=-1;
+				}
 			}
 			catch(Exception ex)
 			{

@@ -1129,7 +1129,8 @@ namespace MediaPortal
 
     void DoSleep(int sleepTime)
     {
-			if (sleepTime<=0) return;
+			if (sleepTime<=0) 
+				sleepTime=5;
 #if !PROFILING
       System.Threading.Thread.Sleep(sleepTime);
 #endif
@@ -1282,7 +1283,7 @@ namespace MediaPortal
 			// Render the scene as normal
 			if (GUIGraphicsContext.Vmr9Active) 
 			{
-				if (GUIGraphicsContext.Vmr9FPS>1f)
+				if (GUIGraphicsContext.Vmr9FPS>5f)
 				{
 					// if we're playing a movie with vmr9 then the player will draw the GUI
 					// so we just sleep 50msec here ...
@@ -1319,7 +1320,7 @@ namespace MediaPortal
 				GUIGraphicsContext.CurrentFPS=framePerSecond;
         lastTime = time;
         frames  = 0;
-				if ( ShouldUseSleepingTime() )
+				if ( !GUIGraphicsContext.Vmr9Active )
 				{
 					if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
 					if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
@@ -1365,11 +1366,11 @@ namespace MediaPortal
           case Direct3D.MultiSampleType.SixteenSamples: strMultiSample = " (16x Multisample)"; break;
           default: strMultiSample = string.Empty; break;
         }
-        frameStats = String.Format("{0} fps ({1}x{2}), {3} {4}{5}{6}", 
+        frameStats = String.Format("{0} fps ({1}x{2}), {3} {4}{5}{6} {7}", 
                                     framePerSecond.ToString("f2"),
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, 
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight, 
-                                    m_iSleepingTime,strFmt, strDepthFmt, strMultiSample);
+                                    GetSleepingTime(),strFmt, strDepthFmt, strMultiSample,ShouldUseSleepingTime());
 				if (GUIGraphicsContext.Vmr9Active)
 					frameStats += String.Format(" VMR9 {0}",GUIGraphicsContext.Vmr9FPS.ToString("f2"));
       }

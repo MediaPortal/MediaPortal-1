@@ -736,7 +736,8 @@ namespace DShowNET
 			Marshal.FreeCoTaskMem(pDataInstance);
 			if (hr!=0)
 			{
-				Log.Write("SetStructure() failed 0x{0:X} offs:{1}",hr, offs);
+				Log.WriteFile(Log.LogType.Log,true,"FireDTV:SetStructure() failed 0x{0:X} offs:{1}",hr, offs);
+				return false;
 			}
 			return true;
 		}//public bool SendPMTToFireDTV(byte[] PMT)

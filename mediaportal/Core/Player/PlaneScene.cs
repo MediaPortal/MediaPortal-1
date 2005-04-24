@@ -355,7 +355,7 @@ namespace MediaPortal.Player
 			arVideoHeight=arHeight;
 			if (!isEnabled) 
 			{
-				m_vmr9Util.FrameCounter++;
+				if (!m_repaint) m_vmr9Util.FrameCounter++;
 				return;
 			}
 
@@ -365,7 +365,7 @@ namespace MediaPortal.Player
 				{
 					if ( (m_vmr9Util.FrameCounter%2)==1)
 					{
-						m_vmr9Util.FrameCounter++;
+						if (!m_repaint) m_vmr9Util.FrameCounter++;
 						return;
 					}
 				}
@@ -460,6 +460,10 @@ namespace MediaPortal.Player
 								DrawTexture(pTex,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
 							}
 						}
+						else
+						{
+								if (!m_repaint) m_vmr9Util.FrameCounter++;
+						}
 						//render GUI if needed
 						if (!bRenderGUIFirst)
 						{
@@ -505,7 +509,7 @@ namespace MediaPortal.Player
 			arVideoHeight=arHeight;
 			if (!isEnabled) 
 			{
-				m_vmr9Util.FrameCounter++;
+				if (!m_repaint) m_vmr9Util.FrameCounter++;
 				return;
 			}			
 
@@ -515,7 +519,7 @@ namespace MediaPortal.Player
 				{
 					if ( (m_vmr9Util.FrameCounter%2)==1)
 					{
-						m_vmr9Util.FrameCounter++;
+						if (!m_repaint) m_vmr9Util.FrameCounter++;
 						return;
 					}
 				}
@@ -606,7 +610,11 @@ namespace MediaPortal.Player
 								DrawSurface(pSurface,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
 							}
 						}
+						else
+						{
+							if (!m_repaint) m_vmr9Util.FrameCounter++;
 
+						}
 						//render GUI if needed
 						if (!bRenderGUIFirst)
 						{

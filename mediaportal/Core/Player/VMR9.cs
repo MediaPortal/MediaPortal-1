@@ -32,6 +32,12 @@ namespace MediaPortal.Player
 		DirectShowHelperLib.VMR9HelperClass vmr9Helper=null;
 		float                       lastTime=0;
 		int													frameCounter=0;
+		enum Vmr9PlayState
+		{
+			Playing,
+			Repaint
+		}
+		Vmr9PlayState												currentVmr9State=Vmr9PlayState.Playing;
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -175,6 +181,11 @@ namespace MediaPortal.Player
 		{
 			if (m_scene==null||VMR9Filter==null) return;
 			if (m_scene.Enabled==false) return;
+			if (currentVmr9State==Vmr9PlayState.Playing)
+			{
+				Log.Write("VMR9: playing->repaint");
+				currentVmr9State=Vmr9PlayState.Repaint;
+			}
 			m_scene.Repaint();
 		}
 
@@ -187,6 +198,14 @@ namespace MediaPortal.Player
 				//Log.Write("vmr9:{0} {1} {2}", frameCounter, GUIGraphicsContext.Vmr9FPS,(time - lastTime));
 				lastTime=time;
 				frameCounter=0;
+			}
+			if (GUIGraphicsContext.Vmr9FPS>5f)
+			{
+				if (currentVmr9State==Vmr9PlayState.Repaint)
+				{
+					Log.Write("VMR9: repaint->playing");
+					currentVmr9State=Vmr9PlayState.Playing;
+				}
 			}
 		}
 
