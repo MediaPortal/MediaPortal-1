@@ -58,6 +58,7 @@ using namespace ATL;
 #include <mmsystem.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <d3d9types.h>
 #include <strsafe.h>
 #include <dshow.h>
 #include <vmr9.h>

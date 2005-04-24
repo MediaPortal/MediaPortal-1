@@ -70,11 +70,11 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 		Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
 		return E_FAIL;
 	}
-	/*if(FAILED(hr = pConfig->SetNumberOfStreams(4)))
+	if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
 	{
 		Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
 		return E_FAIL;
-	}*/
+	}
 
 	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
 	if(!pSAN)
