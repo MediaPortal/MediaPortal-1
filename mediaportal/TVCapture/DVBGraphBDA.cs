@@ -141,6 +141,7 @@ namespace MediaPortal.TV.Recording
 		int                         pmtVersionNumber=-1;
 		protected bool							m_pluginsEnabled=false;
 		DVBEPG											m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.BDACards);
+		DateTime										timeResendPid=DateTime.Now;
 		
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 #if DUMP
@@ -2514,8 +2515,16 @@ namespace MediaPortal.TV.Recording
 				if (GUIGraphicsContext.Vmr9FPS < 1f)
 				{
 					Vmr9.Repaint();// repaint vmr9
+					TimeSpan ts = DateTime.Now-timeResendPid;
+					if (ts.TotalSeconds>5)
+					{
+						refreshPmtTable=true;
+						timeResendPid=DateTime.Now;
+					}
 				}
+				else timeResendPid=DateTime.Now;
 			}
+			else timeResendPid=DateTime.Now;
 			
 			if (!refreshPmtTable) return;
 
@@ -2824,6 +2833,8 @@ namespace MediaPortal.TV.Recording
 				//unpause
 				Continue();
 			}
+			
+			timeResendPid=DateTime.Now;
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 		public void TuneFrequency(int frequency)
