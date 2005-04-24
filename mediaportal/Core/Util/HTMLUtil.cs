@@ -100,6 +100,12 @@ namespace MediaPortal.Util
 	    }
 	    strHTML=strReturn;
     }
+		public string ConvertHTMLToAnsi(string strHTML)
+		{
+			string strippedHtml=String.Empty;
+			ConvertHTMLToAnsi( strHTML, out strippedHtml);
+			return strippedHtml;
+		}
     public void ConvertHTMLToAnsi(string strHTML, out string strStripped)
     {
       strStripped="";
@@ -113,7 +119,7 @@ namespace MediaPortal.Util
       StringWriter writer = new StringWriter ( );
       System.Web.HttpUtility.HtmlDecode( strHTML, writer );
       String DecodedString = writer.ToString ( );
-      strStripped = DecodedString;
+      strStripped = DecodedString.Replace("<br>","\n");
       if(true)
         return;
 /*

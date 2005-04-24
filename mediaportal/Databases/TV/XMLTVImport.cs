@@ -85,6 +85,7 @@ namespace MediaPortal.TV.Database
         return false;
       }
       m_bImport=true;
+			HTMLUtil htmlUtil = new HTMLUtil();
 			TVDatabase.SupressEvents=true;
       bool bUseTimeZone=false;
       int iTimeZoneCorrection=0;
@@ -283,7 +284,7 @@ namespace MediaPortal.TV.Database
 
 				        if (nodeRepeat!=null)strRepeat="Repeat";
 				         
-							  string strTitle=nodeTitle.InnerText;
+							  string strTitle=htmlUtil.ConvertHTMLToAnsi(nodeTitle.InnerText);
 							  long iStart=0;
                 if (nodeStart.InnerText.Length>=14)
                 {
@@ -391,21 +392,21 @@ namespace MediaPortal.TV.Database
 	              
 							  if (nodeCategory!=null && nodeCategory.InnerText!=null)
 							  {
-								  strCategory=nodeCategory.InnerText;
+								  strCategory=htmlUtil.ConvertHTMLToAnsi(nodeCategory.InnerText);
 							  }
 							  if (nodeDescription!=null && nodeDescription.InnerText!=null)
 							  {
-								  strDescription=nodeDescription.InnerText;
+								  strDescription=htmlUtil.ConvertHTMLToAnsi(nodeDescription.InnerText);
 							  }
 								if (nodeEpisode!=null && nodeEpisode.InnerText!=null)
 								{
-									strEpisode=nodeEpisode.InnerText;
+									strEpisode=htmlUtil.ConvertHTMLToAnsi(nodeEpisode.InnerText);
 								}
 								if (nodeEpisodeNum!=null && nodeEpisodeNum.InnerText!=null)
 								{
                   if (nodeEpisodeNum.Attributes.GetNamedItem("system").InnerText=="xmltv_ns")
                   {
-									strSerEpNum=nodeEpisodeNum.InnerText.Replace(" ","");
+									strSerEpNum=htmlUtil.ConvertHTMLToAnsi(nodeEpisodeNum.InnerText.Replace(" ",""));
 									int pos=0;
 									int Epos=0;
 									pos = strSerEpNum.IndexOf(".",pos);
@@ -472,11 +473,11 @@ namespace MediaPortal.TV.Database
 								}
 								if (nodeStarRating!=null && nodeStarRating.InnerText!=null)
 								{
-									strStarRating = nodeStarRating.InnerText;
+									strStarRating = htmlUtil.ConvertHTMLToAnsi(nodeStarRating.InnerText);
 								}
 								if (nodeClasification!=null && nodeClasification.InnerText!=null)
 								{
-									strClasification = nodeClasification.InnerText;
+									strClasification = htmlUtil.ConvertHTMLToAnsi(nodeClasification.InnerText);
 								}
 							  TVProgram prog=new TVProgram();
 							  prog.Description=strDescription;
