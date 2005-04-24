@@ -245,7 +245,7 @@ namespace MediaPortal.Player
 				//sanity check
 				if (nw <= 10  || nh <= 10) return false;
 				if (x  < 0    || y  <   0) return false;
-/*
+
 				//did the video window,aspect ratio change? if not
 				//then we dont need to recalculate and just return the previous settings
 				if (x ==previousRect.X     && y ==previousRect.Y      && 
@@ -258,7 +258,7 @@ namespace MediaPortal.Player
 					//not changed, return previous settings
 					return renderTexture;
 				}
-*/
+
 				//settings (position,size,aspect ratio) changed.
 				//Store these settings and start calucating the new video window
 				previousRect = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
