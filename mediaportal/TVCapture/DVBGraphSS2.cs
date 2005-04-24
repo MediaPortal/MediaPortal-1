@@ -25,9 +25,8 @@ namespace MediaPortal.TV.Recording
 	
 	{
 
-	// iids 0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b
-	//
-	static byte[] Mpeg2ProgramVideo = 
+		#region Mpeg2-Arrays
+		static byte[] Mpeg2ProgramVideo = 
 				{
 					0x00, 0x00, 0x00, 0x00,                         //00  .hdr.rcSource.left              = 0x00000000
 					0x00, 0x00, 0x00, 0x00,                         //04  .hdr.rcSource.top               = 0x00000000
@@ -83,8 +82,9 @@ namespace MediaPortal.TV.Recording
 		  0x10, 0x00,             // wBitsPerSample   = 0
 		  0x00, 0x00,             // extra size       = 0x0000 = 0 bytes
 		};
+		#endregion
 		//
-
+		#region Enums
 		protected enum State
 		{ 
 			None,
@@ -104,6 +104,8 @@ namespace MediaPortal.TV.Recording
 			ttATSC
 		
 		}
+		#endregion
+		#region Structs
 		public struct TunerData
 		{
 			public int tt;
@@ -136,7 +138,9 @@ namespace MediaPortal.TV.Recording
 			public UInt16 PCRPID;
 
 		} 
+		#endregion
 		//
+		#region Imports 
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern bool EventMsg(int eventType,[In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
@@ -166,7 +170,8 @@ namespace MediaPortal.TV.Recording
 
 		[ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
 		class StreamBufferConfig {}
-		// we dont use this callback yet
+		#endregion
+		#region Definitions
 		//
 		public  static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid( 0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
 		public  static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid( 0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
@@ -238,6 +243,7 @@ namespace MediaPortal.TV.Recording
 		DVBEPG							m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 		int								m_selectedAudioPid=0;
+		#endregion
 		//
 		
 		//
@@ -279,6 +285,7 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 		//
+		#region Plugin-Handling
 		void ExecTuner()
 		{
 			TunerData tu=new TunerData();
@@ -327,7 +334,9 @@ namespace MediaPortal.TV.Recording
 			}
 			Marshal.FreeHGlobal(data);
 		}
+		#endregion
 		//
+		#region Callback
 		public int BufferCB(double time,IntPtr data,int len)
 		{
 		 
@@ -413,50 +422,12 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		
 		}
-		
+		#endregion
 
 		/// <summary>
 		/// Callback from Card. Sets an information struct with video settings
 		/// </summary>
 
-		void CyclePid()
-		{
-			int		currentPid=m_currentChannel.ECMPid;
-			int		nextPid=0;
-			int		startCheck=1;
-			string	pidString=m_currentChannel.AudioLanguage3;
-
-			// get actual pid position
-			for(int t=1;t<20;t++)
-			{
-				if(GetPidNumber(pidString,t+1)==-1)
-				{
-					startCheck=1;
-					break;
-				}
-				if(GetPidNumber(pidString,t)==currentPid)
-				{
-					startCheck=t;
-					break;
-				}
-			}
-			// get next pid
-			for(int t=startCheck;t<20;t++)
-			{
-				nextPid=GetPidNumber(pidString,t);
-				if(nextPid==-1)
-					break;
-				if(nextPid!=currentPid && nextPid>0)
-				{
-					m_currentChannel.ECMPid=nextPid;
-					TVDatabase.UpdateSatChannel(m_currentChannel);
-					break;
-				}
-			}
-			
-		}
-		//
-		//
 		public bool CreateGraph(int Quality)
 		{
 			if (m_graphState != State.None) return false;
@@ -2426,6 +2397,7 @@ namespace MediaPortal.TV.Recording
 			if (m_currentChannel.TeletextPid>0) return true;
 			return false;
 		}
+		#region Stream-Audio handling
 		public int GetAudioLanguage()
 		{
 			return m_selectedAudioPid;
@@ -2444,11 +2416,13 @@ namespace MediaPortal.TV.Recording
 					m_selectedAudioPid=audioPid;
 			}
 		}
+
 		public ArrayList GetAudioLanguageList()
 		{
+				
 			DVBSections.AudioLanguage al;
 			ArrayList alList=new ArrayList();
-
+			if(m_currentChannel==null) return alList;
 			if(m_currentChannel.AudioPid!=0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
@@ -2472,5 +2446,6 @@ namespace MediaPortal.TV.Recording
 			}
 			return alList;
 		}
+		#endregion
 	}// class
 }// namespace
