@@ -328,8 +328,28 @@ namespace MediaPortal.GUI.Home
 							ProcessPlugins(ref plugins);
 					}
 					plugins=null;
+
 					m_iCurrentButton=m_iButtons/2;
+					VerifyButtonIndex(ref m_iCurrentButton);
 					LayoutButtons(0);
+					if (m_iOffset!=0)
+					{
+						FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
+					}
+					else
+					{
+						int buttonIndex = m_iCurrentButton;
+
+						//
+						// Verify the button index
+						//
+						VerifyButtonIndex(ref buttonIndex);
+						
+						//
+						// Focus the currently selected control
+						//
+						FocusControl(GetID, buttonIndex + 2);
+					}
 					return;
 				}
 
@@ -629,7 +649,26 @@ namespace MediaPortal.GUI.Home
 									}
 									plugins=null;
 									m_iCurrentButton=m_iButtons/2;
+									VerifyButtonIndex(ref m_iCurrentButton);
 									LayoutButtons(0);
+									if (m_iOffset!=0)
+									{
+										FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
+									}
+									else
+									{
+										int buttonIndex = m_iCurrentButton;
+
+										//
+										// Verify the button index
+										//
+										VerifyButtonIndex(ref buttonIndex);
+						
+										//
+										// Focus the currently selected control
+										//
+										FocusControl(GetID, buttonIndex + 2);
+									}
 								}
 							}
 							if (useMenus==true) // Call submenu new style
@@ -948,6 +987,9 @@ namespace MediaPortal.GUI.Home
 			string tnText="";
 			int mainnodes=treeView.Nodes.Count;
 
+			// Clear plugin count
+			if (m_iButtons==0) myPluginsCount=0;
+
 			if (useMenus==true) 
 			{
 				if (inSubMenu==true)  // search submenu tree
@@ -1263,6 +1305,7 @@ namespace MediaPortal.GUI.Home
 					GUIImage hoverimg=GetControl((int)Controls.TemplateHoverImage) as GUIImage;
 
 					img = new GUIImage(GetID,iButtonId+100,xpos,ypos,width,height,strPictureImage,0);
+					img.IsVisible=false;
 					img.AllocResources();
 					width = GetControl( (int)Controls.TemplateHoverImage).Width;
 					if (width == 0) width = img.TextureWidth; 
@@ -1549,7 +1592,7 @@ namespace MediaPortal.GUI.Home
 		}
 
 		void ResetButtons()
-		{
+		{			
 			m_aryPreControlList.Clear();
 			m_aryPostControlList.Clear();
 			m_iMaxHeight    = GetControl( (int)Controls.TemplatePanel).Height;
