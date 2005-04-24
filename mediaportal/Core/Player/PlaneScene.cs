@@ -74,6 +74,10 @@ namespace MediaPortal.Player
 		bool							m_repaint;
 		int               arVideoWidth=4;
 		int								arVideoHeight=3;
+		int               prevVideoWidth=0;
+		int               prevVideoHeight=0;
+		int               prevArVideoWidth=0;
+		int               prevArVideoHeight=0;
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
 			m_repaint=false;
@@ -241,23 +245,29 @@ namespace MediaPortal.Player
 				//sanity check
 				if (nw <= 10  || nh <= 10) return false;
 				if (x  < 0    || y  <   0) return false;
-
+/*
 				//did the video window,aspect ratio change? if not
 				//then we dont need to recalculate and just return the previous settings
 				if (x ==previousRect.X     && y ==previousRect.Y      && 
 					nw==previousRect.Width && nh==previousRect.Height &&
 					GUIGraphicsContext.ARType  == arType              &&
-					GUIGraphicsContext.Overlay == lastOverlay && renderTexture)
+					GUIGraphicsContext.Overlay == lastOverlay && renderTexture &&
+					prevVideoWidth==videoSize.Width && prevVideoHeight==videoSize.Height &&
+					prevArVideoWidth==arVideoWidth && prevArVideoHeight==arVideoHeight)
 				{
 					//not changed, return previous settings
 					return renderTexture;
 				}
-
+*/
 				//settings (position,size,aspect ratio) changed.
 				//Store these settings and start calucating the new video window
 				previousRect = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
 				arType       = GUIGraphicsContext.ARType;
 				lastOverlay  = GUIGraphicsContext.Overlay;
+				prevVideoWidth=videoSize.Width;
+				prevVideoHeight=videoSize.Height;
+				prevArVideoWidth=arVideoWidth;
+				prevArVideoHeight=arVideoHeight;
         
 				//calculate the video window according to the current aspect ratio settings
 				float fVideoWidth  = (float)videoSize.Width;
