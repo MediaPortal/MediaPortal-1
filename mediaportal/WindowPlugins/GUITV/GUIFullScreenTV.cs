@@ -771,9 +771,13 @@ namespace MediaPortal.GUI.TV
 					m_bUpdate=true;
 
 					if (dlg.SelectedLabel==-1) return;
-					string tvChannel=dlg.SelectedLabelText;
-					Log.Write("tv fs choose chan:{0}",tvChannel);
-					GUITVHome.ViewChannel(tvChannel);
+					int tvChannelIndex=dlg.SelectedLabel;
+					if (tvChannelIndex>=0 && tvChannelIndex < GUITVHome.Navigator.CurrentGroup.tvChannels.Count)
+					{
+						TVChannel channel = (TVChannel )GUITVHome.Navigator.CurrentGroup.tvChannels[tvChannelIndex];
+						Log.Write("tv fs choose chan:{0}",channel.Name);
+						GUITVHome.ViewChannel(channel.Name);
+					}
 				}
 				break;
 
