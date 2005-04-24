@@ -1355,6 +1355,7 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}
 
+		#region Stream-Audio handling
 		public int GetAudioLanguage()
 		{
 			return currentTuningObject.AudioPid;
@@ -1369,6 +1370,10 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 					return;
 				}
+				else
+				{
+					currentTuningObject.AudioPid=audioPid;
+				}
 			}
 		}
 		public ArrayList GetAudioLanguageList()
@@ -1376,6 +1381,13 @@ namespace MediaPortal.TV.Recording
 			if (currentTuningObject==null) return new ArrayList();
 			DVBSections.AudioLanguage al;
 			ArrayList audioPidList = new ArrayList();
+			if(currentTuningObject.AudioPid!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=currentTuningObject.AudioPid;
+				al.AudioLanguageCode=currentTuningObject.AudioLanguage;
+				audioPidList.Add(al);
+			}
 			if(currentTuningObject.Audio1!=0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
@@ -1399,6 +1411,7 @@ namespace MediaPortal.TV.Recording
 			}
 			return audioPidList;
 		}
+		#endregion
 
 		public bool HasTeletext()
 		{
