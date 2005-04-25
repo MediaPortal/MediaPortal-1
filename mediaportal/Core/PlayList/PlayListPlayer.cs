@@ -83,7 +83,7 @@ namespace MediaPortal.Playlists
 				{
 					double duration=g_Player.Duration;
 					double position=g_Player.CurrentPosition;
-					if (position < position-1d)
+					if (position < duration-1d)
 					{
 						Log.Write("Playlistplayer.SeekEnd({0})",duration);
 						g_Player.SeekAbsolute(duration-0.5d);
