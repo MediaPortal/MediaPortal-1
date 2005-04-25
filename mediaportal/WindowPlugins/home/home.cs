@@ -1113,8 +1113,16 @@ namespace MediaPortal.GUI.Home
 				{
 					string strBtnPic=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"hover_my plugins.png");
 					string strButtonImageFocus=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"button_my plugins.png");
+					if (!System.IO.File.Exists(strButtonImageFocus))
+					{
+						strButtonImageFocus="";
+					}
 					string strButtonImage=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"buttonNF_my plugins.png");
-					AddPluginButton(34,GUILocalizeStrings.Get(913), strButtonImageFocus,  strButtonImage, strBtnPic);	
+					if (!System.IO.File.Exists(strButtonImage))
+					{
+						strButtonImage="";
+					}
+					AddPluginButton(34,GUILocalizeStrings.Get(913), strButtonImageFocus,  strButtonImage, strBtnPic);						
 				}
 			}
 		}
