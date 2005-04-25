@@ -1542,12 +1542,22 @@ namespace MediaPortal.TV.Recording
 		///  
 		///  GUI_MSG_RECORDER_STOP_TIMESHIFT
 		///  When received the scheduler will stop timeshifting.
+		///  
+		///  GUI_MSG_RECORDER_STOP_TV
+		///  When received the scheduler will stop viewing tv on any card.
+		///  
+		///  GUI_MSG_RECORDER_STOP_RADIO
+		///  When received the scheduler will stop listening radio on any card.
 		/// </remarks>
 		static public void OnMessage(GUIMessage message)
 		{
 			if (message==null) return;
 			switch(message.Message)
 			{
+					
+				case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TV:
+					StopViewing();
+					break;
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO:
 					StopRadio();
 				break;

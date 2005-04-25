@@ -298,7 +298,17 @@ namespace MediaPortal.Ripper
 			}
       msg.Param3=0;
       GUIWindowManager.SendMessage(msg);
-      if (msg.Param1!=0) return true;
+			if (msg.Param1!=0) 
+			{
+				//stop tv...
+				msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TV,0,0,0,0,0,null);
+				GUIWindowManager.SendMessage(msg);
+
+				//stop radio...
+				msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+				GUIWindowManager.SendMessage(msg);
+				return true;
+			}
       return false;
     }
     
