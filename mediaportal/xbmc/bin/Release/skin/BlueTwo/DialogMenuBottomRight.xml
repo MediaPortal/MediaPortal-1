@@ -20,8 +20,8 @@
 				<description>Heading text label</description> 
 				<type>label</type> 
 				<id>4</id> 
-				<posX>485</posX> 
-				<posY>422</posY> 
+				<posX>495</posX> 
+				<posY>435</posY> 
 				<label>181</label> 
 				<font>font10</font> 
 				<textcolor>FFFFFFFF</textcolor> 
@@ -31,7 +31,7 @@
 				<type>button</type>
 				<id>2</id>
 				<posX>635</posX>
-				<posY>510</posY>
+				<posY>435</posY>
 				<width>32</width>
 				<height>32</height>
 				<textureFocus>button_close_focus.png</textureFocus>
@@ -46,9 +46,9 @@
 				<description>options listcontrol</description> 
 				<type>listcontrol</type> 
 				<id>3</id> 
-				<posX>485</posX> 
-				<posY>440</posY> 
-				<width>180</width> 
+				<posX>500</posX> 
+				<posY>470</posY> 
+				<width>165</width> 
 				<height>120</height> 
 				<onleft>2</onleft> 
 				<onright>2</onright>
@@ -60,7 +60,8 @@
 				<spinHeight>16</spinHeight>
 				<textureHeight>22</textureHeight>
 				<font>font12</font>
-				<textYOff>2</textYOff>
+				<textYOff>0</textYOff>
+				<textXOff>-20</textXOff>
 			</control>
 		</control>
     </controls>

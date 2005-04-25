@@ -60,7 +60,8 @@
 				<spinHeight>16</spinHeight>
 				<textureHeight>22</textureHeight>
 				<font>font12</font>
-				<textYOff>2</textYOff>
+				<textYOff>0</textYOff>
+				<textXOff>-20</textXOff>				
 			</control>
 		</control>
     </controls>
