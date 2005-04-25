@@ -416,13 +416,16 @@ namespace MediaPortal.GUI.Video
             {
               if (!item1.IsFolder || !item2.IsFolder)
               {
-                if (Utils.ShouldStack(item1.Path, item2.Path))
-                {
-                  if (String.Compare(item1.Path, item2.Path, true) > 0)
-                  {
-                    addItem = false;
-                  }
-                }
+								if (!item1.IsRemote && !item2.IsRemote)
+								{
+									if (Utils.ShouldStack(item1.Path, item2.Path))
+									{
+										if (String.Compare(item1.Path, item2.Path, true) > 0)
+										{
+											addItem = false;
+										}
+									}
+								}
               }
             }
           }
