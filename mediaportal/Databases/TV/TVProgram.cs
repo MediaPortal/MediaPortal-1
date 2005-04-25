@@ -10,24 +10,24 @@ namespace MediaPortal.TV.Database
   /// </summary>
   public class TVProgram : IComparable
 	{
-		string m_strChannel="";
-    string m_strGenre="";
-    string m_strTitle="";
-    string m_strEpisode="";
-    string m_strDescription="";
-    string m_strRepeat="";
-    string m_strDate="";
-    string m_strSeriesNum="";
-    string m_strEpisodeNum="";
-    string m_strEpisodePart="";
-    string m_strEpisodeFullDetails="";
-    string m_strStarRating="";
-    string m_strClassification="";
+		string m_strChannel=String.Empty;
+    string m_strGenre=String.Empty;
+    string m_strTitle=String.Empty;
+    string m_strEpisode=String.Empty;
+    string m_strDescription=String.Empty;
+    string m_strRepeat=String.Empty;
+    string m_strDate=String.Empty;
+    string m_strSeriesNum=String.Empty;
+    string m_strEpisodeNum=String.Empty;
+    string m_strEpisodePart=String.Empty;
+    string m_strEpisodeFullDetails=String.Empty;
+    string m_strStarRating=String.Empty;
+    string m_strClassification=String.Empty;
     long   m_iStartTime=0;
     long   m_iEndTime=0;
     int    m_iID=0;
-    string m_strDuration="";
-    string m_strTimeFromNow="";
+    string m_strDuration=String.Empty;
+    string m_strTimeFromNow=String.Empty;
     /// <summary>
     /// Constructor
     /// </summary>
@@ -335,7 +335,7 @@ namespace MediaPortal.TV.Database
     {
       if (m_strTitle == "No TVGuide data available") return;
       string space = " ";
-      string strRemaining="";
+      string strRemaining=String.Empty;
       DateTime progStart = longtodate(m_iStartTime);
       TimeSpan timeRelative = progStart.Subtract(DateTime.Now);
       if (timeRelative.Days==0)
@@ -418,14 +418,14 @@ namespace MediaPortal.TV.Database
     {
       string space = " ";
       StringBuilder epDetail = new StringBuilder();
-      if ((m_strEpisode != "-")&(m_strEpisode !="")) epDetail.Append(m_strEpisode);
-      if ((m_strSeriesNum !="-")&(m_strSeriesNum !=""))
+      if ((m_strEpisode != "-")&(m_strEpisode !=String.Empty)) epDetail.Append(m_strEpisode);
+      if ((m_strSeriesNum !="-")&(m_strSeriesNum !=String.Empty))
       {
         epDetail.Append(space+"()");
         epDetail.Insert(epDetail.Length-1,GUILocalizeStrings.Get(3019)+space+m_strSeriesNum);
       }
-      if ((m_strEpisodeNum !="-")&(m_strEpisodeNum !="")) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+m_strEpisodeNum);
-      if ((m_strEpisodePart !="-")&(m_strEpisodePart !="")) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+m_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+m_strEpisodePart.Substring(2,1));
+      if ((m_strEpisodeNum !="-")&(m_strEpisodeNum !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+m_strEpisodeNum);
+      if ((m_strEpisodePart !="-")&(m_strEpisodePart !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+m_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+m_strEpisodePart.Substring(2,1));
       m_strEpisodeFullDetails = epDetail.ToString();
 		}
 		#region IComparable Members

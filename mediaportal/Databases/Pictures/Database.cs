@@ -25,7 +25,7 @@ namespace MediaPortal.Picture.Database
 		{
       lock (typeof(PictureDatabase))
       {
-        Log.Write("opening picture database");
+        Log.WriteFile(Log.LogType.Log,false,"opening picture database");
         try 
         {
 					// Open database
@@ -43,10 +43,10 @@ namespace MediaPortal.Picture.Database
         } 
         catch (Exception ex) 
         {
-					Log.Write("picture database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"picture database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
-        Log.Write("picture database opened");
+        Log.WriteFile(Log.LogType.Log,false,"picture database opened");
       }
 		}
 		bool CreateTables()
@@ -86,7 +86,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex) 
         {
-					Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
         return -1;
@@ -109,7 +109,7 @@ namespace MediaPortal.Picture.Database
 				}
 				catch (Exception ex) 
 				{
-					Log.Write("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return;
@@ -140,7 +140,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex) 
         {
-					Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
         return 0;
@@ -168,7 +168,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex) 
         {
-					Log.Write("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
       }

@@ -26,7 +26,7 @@ namespace MediaPortal.Radio.Database
       try 
       {
         // Open database
-				Log.Write("open radiodatabase");
+				Log.WriteFile(Log.LogType.Log,false,"open radiodatabase");
 
 				String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
 					GetExecutingAssembly().Location); 
@@ -48,9 +48,9 @@ namespace MediaPortal.Radio.Database
       } 
       catch (Exception ex) 
       {
-        Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
-      Log.Write("Radio database opened");
+      Log.WriteFile(Log.LogType.Log,false,"Radio database opened");
     }
   
     static bool CreateTables()
@@ -123,7 +123,7 @@ namespace MediaPortal.Radio.Database
         }
         catch(Exception ex)
         {
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
         return ;
@@ -182,7 +182,7 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 					return false;
 				}
@@ -207,12 +207,12 @@ namespace MediaPortal.Radio.Database
 					if (channel.Scrambled) scrambled=1;
 					strSQL=String.Format("update station set strName='{0}',iChannelNr={1} ,frequency='{2}',URL='{3}',bitrate={4},genre='{5}',scrambled={6} where idChannel={7}", 
 																strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled, channel.ID);
-					Log.Write(strSQL);
+					Log.WriteFile(Log.LogType.Log,true,strSQL);
 					m_db.Execute(strSQL);
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -257,7 +257,7 @@ namespace MediaPortal.Radio.Database
           } 
           catch (Exception ex) 
           {
-						Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+						Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 						Open();
           }
 
@@ -282,7 +282,7 @@ namespace MediaPortal.Radio.Database
         } 
         catch (Exception ex) 
         {
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
 
@@ -316,7 +316,7 @@ namespace MediaPortal.Radio.Database
         }
         catch(Exception ex)
         {
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
       }
@@ -345,7 +345,7 @@ namespace MediaPortal.Radio.Database
         }
         catch(Exception ex)
         {
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
         }
       }
@@ -373,7 +373,7 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -419,7 +419,7 @@ namespace MediaPortal.Radio.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -449,7 +449,7 @@ namespace MediaPortal.Radio.Database
 						// doesnt exists, add it
 						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider,frequency , bandwidth , ONID , TSID , SID , audioPid,pmtPid,Visible) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},1)",
 							idChannel,strChannel,strProvider,frequency,bandWidth,ONID,TSID,SID,audioPid,pmtPid);
-						//Log.Write("sql:{0}", strSQL);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
 						return idChannel;
@@ -458,14 +458,14 @@ namespace MediaPortal.Radio.Database
 					{
 						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6}, pmtPid={7}, bandwidth={8} where idChannel ={9}", 
 							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid, bandWidth,idChannel);
-						//	Log.Write("sql:{0}", strSQL);
+						//	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
 					}
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -495,7 +495,7 @@ namespace MediaPortal.Radio.Database
 						// doesnt exists, add it
 						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,Visible) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},1)"
 							,idChannel,strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid);
-						//Log.Write("sql:{0}", strSQL);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
 						return idChannel;
@@ -504,14 +504,14 @@ namespace MediaPortal.Radio.Database
 					{
 						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, pmtPid={10} where idChannel like '{11}'", 
 							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid,idChannel);
-						//Log.Write("sql:{0}", strSQL);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
 					}
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -531,7 +531,7 @@ namespace MediaPortal.Radio.Database
 			SID=-1;
 			bandWidth=-1;
 			if (m_db == null) return ;
-			//Log.Write("GetTuneRequest for idChannel:{0}", idChannel);
+			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for idChannel:{0}", idChannel);
 			lock (typeof(RadioDatabase))
 			{
 				try
@@ -554,7 +554,7 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -572,7 +572,7 @@ namespace MediaPortal.Radio.Database
 			TSID=-1;
 			SID=-1;
 			if (m_db == null) return ;
-			//Log.Write("GetTuneRequest for idChannel:{0}", idChannel);
+			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for idChannel:{0}", idChannel);
 			lock (typeof(RadioDatabase))
 			{
 				try
@@ -597,7 +597,7 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -673,7 +673,7 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return false;
@@ -702,7 +702,7 @@ namespace MediaPortal.Radio.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -737,7 +737,7 @@ namespace MediaPortal.Radio.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -758,7 +758,7 @@ namespace MediaPortal.Radio.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -798,7 +798,7 @@ namespace MediaPortal.Radio.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 			}
@@ -862,7 +862,7 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception ex)
 				{
-					Log.Write("RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"RadioDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 					Open();
 				}
 				return ;

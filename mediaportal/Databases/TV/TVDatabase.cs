@@ -59,7 +59,7 @@ namespace MediaPortal.TV.Database
 				try 
 				{
 					// Open database
-					Log.WriteFile(Log.LogType.Log,true,"opening tvdatabase");
+					Log.WriteFile(Log.LogType.Log,false,"opening tvdatabase");
 
 					String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
 						GetExecutingAssembly().Location); 
@@ -84,7 +84,7 @@ namespace MediaPortal.TV.Database
 				{
 					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
 				}
-				Log.WriteFile(Log.LogType.Log,true,"tvdatabase opened");
+				Log.WriteFile(Log.LogType.Log,false,"tvdatabase opened");
 			}
 		}
 

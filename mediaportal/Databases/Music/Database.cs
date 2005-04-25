@@ -55,7 +55,7 @@ namespace MediaPortal.Music.Database
 		}
 		static void Open()
 		{
-      Log.Write("Opening music database");
+      Log.WriteFile(Log.LogType.Log,false,"Opening music database");
       try 
       {
 				// Open database
@@ -76,9 +76,9 @@ namespace MediaPortal.Music.Database
       } 
       catch (Exception ex) 
       {
-        Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
-      Log.Write("music database opened");
+      Log.WriteFile(Log.LogType.Log,false,"music database opened");
     }
     ~MusicDatabase()
     {
@@ -154,7 +154,7 @@ namespace MediaPortal.Music.Database
       } 
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -200,7 +200,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -247,7 +247,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -266,7 +266,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 		}
@@ -307,7 +307,7 @@ namespace MediaPortal.Music.Database
 					}
 					catch (Exception ex)
 					{
-					Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 					Open();
 					}
 
@@ -325,7 +325,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex) 
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -391,7 +391,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex) 
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -443,7 +443,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -466,7 +466,7 @@ namespace MediaPortal.Music.Database
 
     public void AddSong(Song song1, bool bCheck)
     {
-      //Log.Write("database.AddSong {0} {1} {2}  {3}", song1.FileName,song1.Album, song1.Artist, song1.Title);
+      //Log.WriteFile(Log.LogType.Log,true,"database.AddSong {0} {1} {2}  {3}", song1.FileName,song1.Album, song1.Artist, song1.Title);
       string strSQL;
       try
       {
@@ -522,7 +522,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
     }
@@ -635,7 +635,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex) 
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -687,7 +687,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -732,7 +732,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -788,7 +788,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception ex) 
 		  {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 		  }
 
@@ -813,7 +813,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception ex) 
 		  {
-			Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+			Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 			Open();
 		  }
 
@@ -862,7 +862,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception ex) 
 		  {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 		  }
 
@@ -910,7 +910,7 @@ namespace MediaPortal.Music.Database
 	    }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -968,7 +968,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception ex) 
 		  {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 		  }
 		  return false;
@@ -1017,7 +1017,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception ex) 
 		  {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 		  }
 
@@ -1051,7 +1051,7 @@ namespace MediaPortal.Music.Database
 	    }
       catch (Exception ex) 
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -1082,7 +1082,7 @@ namespace MediaPortal.Music.Database
 	    }
 	    catch (Exception ex)
 	    {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 	    }
 
@@ -1129,7 +1129,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception ex)
 		  {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 		  }
 
@@ -1156,7 +1156,7 @@ namespace MediaPortal.Music.Database
 	    }
 	    catch (Exception ex)
 	    {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
       return false;
@@ -1200,7 +1200,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception ex)
 		  {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 		  }
 		  return false;
@@ -1252,7 +1252,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 			return false;
@@ -1283,7 +1283,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 			return false;
@@ -1298,7 +1298,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
     }
@@ -1340,7 +1340,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -1389,7 +1389,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -1448,7 +1448,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -1481,7 +1481,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -1544,7 +1544,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -1597,7 +1597,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
       }
 
@@ -1655,7 +1655,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex)
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -1714,7 +1714,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch (Exception ex) 
 			{
-				Log.Write("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
 				Open();
 			}
 
@@ -1787,7 +1787,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-				Log.Write("musicdatabase begin transaction failed exception err:{0} ", ex.Message);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase begin transaction failed exception err:{0} ", ex.Message);
 				Open();
       }
     }
@@ -1801,7 +1801,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-				Log.Write("musicdatabase commit failed exception err:{0} ", ex.Message);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase commit failed exception err:{0} ", ex.Message);
 				Open();
       }
     }
@@ -1814,7 +1814,7 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-				Log.Write("musicdatabase rollback failed exception err:{0} ", ex.Message);
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase rollback failed exception err:{0} ", ex.Message);
 				Open();
       }
     }

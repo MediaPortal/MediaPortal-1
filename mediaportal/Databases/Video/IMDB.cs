@@ -238,7 +238,7 @@ namespace MediaPortal.Video.Database
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message,ex.StackTrace);
 			}
 			return strBody;
 		} // END GetPage()
@@ -437,7 +437,7 @@ namespace MediaPortal.Video.Database
 
 							default:
 								// unsupported database?
-								Log.Write("Movie database lookup - database not supported: {0}",aDatabases[i].ToUpper());
+								Log.WriteFile(Log.LogType.Log,true,"Movie database lookup - database not supported: {0}",aDatabases[i].ToUpper());
 								break;
 						}
 					}
@@ -513,7 +513,7 @@ namespace MediaPortal.Video.Database
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
 			}
 		}
 		public bool GetActorDetails(IMDB.IMDBUrl url, out IMDBActor actor)
@@ -584,7 +584,7 @@ namespace MediaPortal.Video.Database
 
 					default:
 						// Not supported Database / Host
-						Log.Write("Movie DB lookup GetDetails(): Unknown Database {0}",url.Database);
+						Log.WriteFile(Log.LogType.Log,true,"Movie DB lookup GetDetails(): Unknown Database {0}",url.Database);
 						return	false;
 				}
 			}
@@ -714,7 +714,7 @@ namespace MediaPortal.Video.Database
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"exception for imdb lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
 			}
 		}
 
@@ -912,7 +912,7 @@ namespace MediaPortal.Video.Database
 					}
 					catch (Exception ex)
 					{
-						Log.Write("exception for imdb lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message,ex.StackTrace);
+						Log.WriteFile(Log.LogType.Log,true,"exception for imdb lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message,ex.StackTrace);
 					}
 				}
 
@@ -1004,7 +1004,7 @@ namespace MediaPortal.Video.Database
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("exception for imdb lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"exception for imdb lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
 			}
 			return false;
 		}
@@ -1093,7 +1093,7 @@ namespace MediaPortal.Video.Database
 				// Nothing found? What to do....?
 				if (iStartOfMovieList<0)
 				{
-					Log.Write("OFDB: Keine Titel gefunden. Layout verändert?");
+					Log.WriteFile(Log.LogType.Log,true,"OFDB: Keine Titel gefunden. Layout verändert?");
 					return;
 				}
 				// No matches....
@@ -1172,7 +1172,7 @@ namespace MediaPortal.Video.Database
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
 			}
 		} // END FindOFDB()
 
@@ -1189,7 +1189,7 @@ namespace MediaPortal.Video.Database
 			if ((iStart==2) || (iEnd==3))
 			{
 				// possible change of sitelayout
-				Log.Write("OFDB: error getting list, no start or end found.");
+				Log.WriteFile(Log.LogType.Log,true,"OFDB: error getting list, no start or end found.");
 				return "";
 			}
 			// strip the infos, they are in an bold Tag
@@ -1226,7 +1226,7 @@ namespace MediaPortal.Video.Database
 				else
 				{
 					// End not found, possible error in OFDB
-					Log.Write("OFDB: error getting end of entry");
+					Log.WriteFile(Log.LogType.Log,true,"OFDB: error getting end of entry");
 					return "";
 				}
 				// Ende erreicht?
@@ -1439,26 +1439,26 @@ namespace MediaPortal.Video.Database
 								if (movieDetails.Plot.Length==0)
 								{
 									// Could not get link to plot description
-									Log.Write("OFDB: could extract the plot description from {0}","http://www.ofdb.de/"+strPlotURL);
+									Log.WriteFile(Log.LogType.Log,true,"OFDB: could extract the plot description from {0}","http://www.ofdb.de/"+strPlotURL);
 								}
 							}
 						}
 						catch (Exception ex)
 						{
-							Log.Write("Error getting plot: exception for db lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message,ex.StackTrace);
+							Log.WriteFile(Log.LogType.Log,true,"Error getting plot: exception for db lookup of {0} err:{1} stack:{2}", strPlotURL, ex.Message,ex.StackTrace);
 						}
 					}
 				}
 				else
 				{
 					// Could not get link to plot description
-					Log.Write("OFDB: could not find link to plot description");
+					Log.WriteFile(Log.LogType.Log,true,"OFDB: could not find link to plot description");
 				}
 				return true;
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
 			}
 			return false;
 		} // END GetDetailsOFDB()
@@ -1545,7 +1545,7 @@ namespace MediaPortal.Video.Database
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"Error getting Movielist: exception for db lookup of {0} err:{1} stack:{2}", strURL, ex.Message,ex.StackTrace);
 			}
 
 			return;
@@ -1637,7 +1637,7 @@ namespace MediaPortal.Video.Database
 			}
 			catch(Exception ex) 
 			{
-				Log.Write("Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"Error getting detailed movie information: exception for db lookup of {0} err:{1} stack:{2}", url.URL, ex.Message,ex.StackTrace);
 				return false;
 			}
 			return true;

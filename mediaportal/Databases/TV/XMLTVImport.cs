@@ -119,7 +119,7 @@ namespace MediaPortal.TV.Database
 			  if (xml.DocumentElement==null)
 			  {
 				  m_strErrorMessage="Invalid XMLTV file";
-				  Log.Write("  {0} is not a valid xml file");
+				  Log.WriteFile(Log.LogType.Log,true,"  {0} is not a valid xml file");
 				  xml=null;
 				  m_bImport=false;
 				  TVDatabase.SupressEvents=false;
@@ -129,7 +129,7 @@ namespace MediaPortal.TV.Database
 			  if (channelList==null || channelList.Count==0)
 			  {
 				  m_strErrorMessage="No channels found";
-				  Log.Write("  {0} does not contain any channels");
+				  Log.WriteFile(Log.LogType.Log,true,"  {0} does not contain any channels");
 				  xml=null;
 				  m_bImport=false;
 				  TVDatabase.SupressEvents=false;
@@ -219,17 +219,17 @@ namespace MediaPortal.TV.Database
 						  }
 						  else
 						  {
-							  Log.Write("  channel#{0} doesnt contain an displayname",iChannel);
+							  Log.WriteFile(Log.LogType.Log,true,"  channel#{0} doesnt contain an displayname",iChannel);
 						  }
 					  }
 					  else
 					  {
-						  Log.Write("  channel#{0} doesnt contain an id",iChannel);
+						  Log.WriteFile(Log.LogType.Log,true,"  channel#{0} doesnt contain an id",iChannel);
 					  }
 				  }
 				  else
 				  {
-					  Log.Write("  channel#{0} doesnt contain an id",iChannel);
+					  Log.WriteFile(Log.LogType.Log,true,"  channel#{0} doesnt contain an id",iChannel);
 				  }
 				  iChannel++;
 			  }
@@ -386,7 +386,7 @@ namespace MediaPortal.TV.Database
 							  }
 							  if (iChannelId<0)
 							  {
-								  Log.Write("Unknown TV channel xmlid:{0}", nodeChannel.InnerText);
+								  Log.WriteFile(Log.LogType.Log,true,"Unknown TV channel xmlid:{0}", nodeChannel.InnerText);
 								  continue;
 							  }
 	              
@@ -567,7 +567,7 @@ namespace MediaPortal.TV.Database
       {
         m_strErrorMessage=String.Format("Invalid XML file:{0}",ex.Message);
         m_stats.Status=String.Format("invalid XML file:{0}", ex.Message);
-        Log.Write("XML tv import error loading {0} err:{1} ", strFileName, ex.Message);
+        Log.WriteFile(Log.LogType.Log,true,"XML tv import error loading {0} err:{1} ", strFileName, ex.Message);
         TVDatabase.RollbackTransaction();
       }
 			Programs.Clear();
