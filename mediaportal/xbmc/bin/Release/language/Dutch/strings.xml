@@ -1730,6 +1730,31 @@
 		<value>Nooit</value>
 	</string>
 	<string>
+		<id>513</id>
+		<value>Object is beschermd, aktie is afgebroken</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Fout tijdens aanmaken van map, aktie is afgebroken</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Fout tijdens verwijdern van map, aktie is afgebroken</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Kan doelbestand niet verwijderen, aktie is afgebroken</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Fatale fout opgetreden, aktie is afgebroken</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Dit liedje verwijderen?</value>
+	</string>
+
+	<string>
 		<id>530</id>
 		<value>CD met afbeeldingen gevonden, wilt U de CD bekijken?</value>
 	</string>
@@ -1741,6 +1766,12 @@
 		<id>532</id>
 		<value>Audio CD gevonden, wilt U de CD luisteren?</value>
 	</string>
+
+	<string>
+		<id>550</id>
+		<value>Bijsnijden</value>
+	</string>
+
 	<string>
 		<id>600</id>
 		<value>TV gids</value>
@@ -2783,6 +2814,14 @@
   	<id>985</id>
   	<value>Informatie over film ophalen</value>
   </string>
+  <string>
+  	<id>986</id>
+  	<value>Gegevens van acteur ophalen</value>
+  </string>
+  <string>
+  	<id>987</id>
+  	<value>Jaren</value>
+  </string>
 
   <string>
   	<id>1440</id>
@@ -3821,7 +3860,7 @@
 	</string>
 	<string>
 		<id>10501</id>
-		<value>Mijn Muziek/Liedjes</value>
+		<value>Mijn Muziek/Bestanden</value>
 	</string>
 	<string>
 		<id>10502</id>

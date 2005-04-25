@@ -76,7 +76,7 @@
 		<posY>149</posY>
 		<label>-</label>
 		<onleft>3</onleft>
-		<onright>10</onright>
+		<onright>50</onright>
 		<onup>4</onup>
 		<ondown>4</ondown>
 	</control>
@@ -162,7 +162,18 @@
 		<onup>9</onup>
 		<ondown>2</ondown>
 		<action>100</action>
-	</control>		
+	</control>
+
+	<control>
+		<description>View text label</description>
+		<type>label</type>
+		<id>15</id>
+		<posX>670</posX>
+		<posY>80</posY>
+		<label>342</label>
+		<align>right</align>
+	</control>
+
 	<control>
 		<description>composite control consisting of a list control and a thumbnail panel</description>
     <type>facadeview</type>
@@ -171,6 +182,7 @@
    		<description>listcontrol</description>
    		<type>listcontrol</type>
    		<id>50</id>
+   		<posY>110</posY>
    		<onleft>2</onleft>
    		<onright>2</onright>
    		<onup>2</onup>
@@ -180,10 +192,27 @@
    		<description>Thumbnail Panel</description>
    		<type>thumbnailpanel</type>
    		<id>50</id>
+   		<posY>100</posY>
    		<onleft>2</onleft>
    		<onright>2</onright>
    		<onup>2</onup>
    		<ondown>2</ondown>
+   		<itemWidth>115</itemWidth>
+   		<itemHeight>111</itemHeight>
+   		<textureWidth>80</textureWidth>
+   		<textureHeight>76</textureHeight>
+   		<thumbWidth>64</thumbWidth>
+   		<thumbHeight>60</thumbHeight>
+   		<thumbPosX>8</thumbPosX>
+   		<thumbPosY>6</thumbPosY>
+   		<textureWidthBig>128</textureWidthBig>
+   		<textureHeightBig>120</textureHeightBig>
+   		<itemWidthBig>150</itemWidthBig>
+   		<itemHeightBig>142</itemHeightBig>
+   		<thumbWidthBig>100</thumbWidthBig>
+   		<thumbHeightBig>92</thumbHeightBig>
+   		<thumbPosXBig>14</thumbPosXBig>
+   		<thumbPosYBig>10</thumbPosYBig>
    	</control>
     <control>
       <description>Filmstrip view</description>
@@ -203,7 +232,6 @@
 		<posX>250</posX>
 		<posY>530</posY>
 		<label>-</label>
-		<font>font13</font>
 	</control>
 
 </controls>

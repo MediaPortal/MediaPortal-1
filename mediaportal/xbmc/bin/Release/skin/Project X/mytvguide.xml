@@ -297,16 +297,5 @@
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
 		</control>
-		<control>
-			<description>Time</description>
-			<type>label</type>
-			<id>30</id>
-			<posX>430</posX>
-			<posY>68</posY>
-			<label>#time</label>
-			<align>left</align>
-			<font>font13</font>
-			<textcolor>ffa9d0f7</textcolor>
-		</control>
 </controls>
 </window>

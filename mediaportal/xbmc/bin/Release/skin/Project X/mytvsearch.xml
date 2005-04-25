@@ -227,7 +227,7 @@
 
 				<width>425</width>
 				<height>370</height>
-				<textXOff>50</textXOff>
+				<textXOff>58</textXOff>
 				<textYOff>2</textYOff>
 				<textXOff2>420</textXOff2>
 				<textYOff2>29</textYOff2>
@@ -304,7 +304,7 @@
 		<control>
 		<description>TV background</description>
 		<type>image</type>
-		<id>1</id>
+		<id>18</id>
 		<posX>60</posX>
 		<posY>420</posY>
 		<width>160</width>

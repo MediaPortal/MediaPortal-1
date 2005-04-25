@@ -49,9 +49,13 @@
 		<onright>2</onright>
 		<onup>3</onup>
 		<ondown>3</ondown>
-		<spinPosX>318</spinPosX>
-		<spinPosY>503</spinPosY>
-		<spincolor>FF484848</spincolor>
+		<spinPosX>423</spinPosX>
+		<spinPosY>406</spinPosY>
+		<spinColor>FF484848</spinColor>
+		<!-- Hide scrollbar -->
+		<scrollbarbg>-</scrollbarbg>
+		<scrollbartop>-</scrollbartop>
+		<scrollbarbottom>-</scrollbarbottom>
 	</control>
     </controls>
 </window>
