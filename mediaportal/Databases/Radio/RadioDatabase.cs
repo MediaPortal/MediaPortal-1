@@ -427,7 +427,7 @@ namespace MediaPortal.Radio.Database
 			}
 		}
 
-		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int pmtPid)
+		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int pmtPid, int bandWidth)
 		{
 			lock (typeof(RadioDatabase))
 			{
@@ -448,7 +448,7 @@ namespace MediaPortal.Radio.Database
 					{
 						// doesnt exists, add it
 						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider,frequency , bandwidth , ONID , TSID , SID , audioPid,pmtPid,Visible) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},1)",
-							idChannel,strChannel,strProvider,frequency,0,ONID,TSID,SID,audioPid,pmtPid);
+							idChannel,strChannel,strProvider,frequency,bandWidth,ONID,TSID,SID,audioPid,pmtPid);
 						//Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -456,8 +456,8 @@ namespace MediaPortal.Radio.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6}, pmtPid={7} where idChannel ={8}", 
-							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid, idChannel);
+						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6}, pmtPid={7}, bandwidth={8} where idChannel ={9}", 
+							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid, bandWidth,idChannel);
 						//	Log.Write("sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
@@ -520,7 +520,7 @@ namespace MediaPortal.Radio.Database
 		}
 
 		
-		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid) 
+		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int bandWidth) 
 		{
 			pmtPid=-1;
 			audioPid=-1;
@@ -529,6 +529,7 @@ namespace MediaPortal.Radio.Database
 			ONID=-1;
 			TSID=-1;
 			SID=-1;
+			bandWidth=-1;
 			if (m_db == null) return ;
 			//Log.Write("GetTuneRequest for idChannel:{0}", idChannel);
 			lock (typeof(RadioDatabase))
@@ -548,6 +549,7 @@ namespace MediaPortal.Radio.Database
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
 					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
 					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
+					bandWidth=Int32.Parse(DatabaseUtility.Get(results,0,"bandwidth"));
 					return ;
 				}
 				catch(Exception ex)

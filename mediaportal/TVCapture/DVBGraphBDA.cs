@@ -3367,7 +3367,7 @@ namespace MediaPortal.TV.Recording
 					if (Network() == NetworkType.DVBC)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
-						RadioDatabase.MapDVBCChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.Symbolrate,newchannel.FEC,newchannel.Modulation,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,newchannel.PMTPid);
+						RadioDatabase.MapDVBCChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.Symbolrate,newchannel.FEC,newchannel.Modulation,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,newchannel.PMTPid,newchannel.Bandwidth);
 					}
 					if (Network() == NetworkType.DVBS)
 					{
@@ -3442,7 +3442,7 @@ namespace MediaPortal.TV.Recording
 
 				
 				int frequency=-1,ONID=-1,TSID=-1,SID=-1,  pmtPid=-1;
-				int audioPid=-1;
+				int audioPid=-1,bandwidth=8;
 				string providerName;
 				switch (m_NetworkType)
 				{
@@ -3569,7 +3569,7 @@ namespace MediaPortal.TV.Recording
 						//get the DVB-T tuning details from the tv database
 						//for DVB-T this is the frequency, ONID , TSID and SID
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() get DVBT tuning details");
-						RadioDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid,out pmtPid);
+						RadioDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid,out pmtPid, out bandwidth);
 						if (frequency<=0) 
 						{
 							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Channel);
@@ -3593,6 +3593,7 @@ namespace MediaPortal.TV.Recording
 						//set the properties on the new tuning request
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() set tuning properties to tuning request");
 						myLocator.CarrierFrequency		= frequency;
+						myLocator.Bandwidth=bandwidth;
 						myTuneRequest.ONID	= ONID;					//original network id
 						myTuneRequest.TSID	= TSID;					//transport stream id
 						myTuneRequest.SID		= SID;					//service id
@@ -3607,6 +3608,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.VideoPid=0;
 						currentTuningObject.TeletextPid=0;
 						currentTuningObject.PMTPid=pmtPid;
+						currentTuningObject.Bandwidth=bandwidth;
 					} break;
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
