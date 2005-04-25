@@ -1,3 +1,6 @@
+rem Check for Microsoft Antispyware .BAT bug
+if exist .\kernel32.dll exit 1
+
 cd
 mkdir plugins
 mkdir plugins\windows
