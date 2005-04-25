@@ -20,8 +20,8 @@
 				<description>Heading text label</description> 
 				<type>label</type> 
 				<id>3</id> 
-				<posX>360</posX> 
-				<posY>420</posY> 
+				<posX>350</posX> 
+				<posY>403</posY> 
 				<label>181</label> 
 				<font>font10</font> 
 				<textcolor>FFFFFFFF</textcolor> 
@@ -30,12 +30,12 @@
 				<description>OK button</description>
 				<type>button</type>
 				<id>4</id>
-				<posX>610</posX>
-				<posY>420</posY>
-				<width>32</width>
-				<height>32</height>
-				<textureFocus>dialogue_ok_focus.png</textureFocus>
-				<textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+				<posX>630</posX>
+				<posY>402</posY>
+				<width>20</width>
+				<height>20</height>
+				<textureFocus>button_close_focus.png</textureFocus>
+				<textureNoFocus>button_close_nofocus.png</textureNoFocus>
 				<label>-</label>
 				<onleft>4</onleft>
 				<onright>4</onright>
