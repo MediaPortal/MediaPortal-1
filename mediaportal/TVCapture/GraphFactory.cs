@@ -55,10 +55,10 @@ namespace MediaPortal.TV.Recording
 			}
 
 			// Special graph building for the ATI AIW cards
-			if (card.ToString() == "ATI Rage Theater Video Capture")
-			{
-				return new AIWGraph(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel,card.FriendlyName);
-			}
+//			if (card.ToString() == "ATI Rage Theater Video Capture")
+//			{
+//				return new AIWGraph(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel,card.FriendlyName);
+//			}
 			
 			if (card.DeviceType!=null)
 			{
