@@ -639,8 +639,16 @@ namespace MediaPortal.GUI.TV
 
 		GUIListItem GetItem(int iItem)
 		{
-			if (currentViewMethod==ViewAs.List) return listViews[iItem];
-			else return listAlbums[iItem];
+			if (currentViewMethod==ViewAs.List) 
+			{
+				if (iItem<0 || iItem>=listViews.Count) return null;
+				return listViews[iItem];
+			}
+			else 
+			{
+				if (iItem<0 || iItem>=listAlbums.Count) return null;
+				return listAlbums[iItem];
+			}
 		}
 
     int GetSelectedItemNo()

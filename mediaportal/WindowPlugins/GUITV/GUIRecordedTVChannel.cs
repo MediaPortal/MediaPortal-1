@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.TV
     {
       using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        string strTmp="";
+        string strTmp=String.Empty;
         strTmp=(string)xmlreader.GetValue("tvrecordedchannel","sort");
         if (strTmp!=null)
         {
@@ -384,7 +384,7 @@ namespace MediaPortal.GUI.TV
 
     void UpdateButtons()
     {
-      string strLine="";
+      string strLine=String.Empty;
       switch (currentSortMethod)
       {
         case SortMethod.Channel:
@@ -422,9 +422,17 @@ namespace MediaPortal.GUI.TV
     }
 
     GUIListItem GetItem(int iItem)
-    {
-      if (showRoot) return listViews[iItem];
-			else return listAlbums[iItem];
+		{
+				if (showRoot) 
+		 {
+			 if (iItem<0 || iItem>=listViews.Count) return null;
+			 return listViews[iItem];
+		 }
+		 else 
+		 {
+			 if (iItem<0 || iItem>=listAlbums.Count) return null;
+			 return listAlbums[iItem];
+		 }
     }
 
     int GetSelectedItemNo()
@@ -720,7 +728,7 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
 			dlgYesNo.SetLine(1, rec.Channel);
 			dlgYesNo.SetLine(2, rec.Title);
-			dlgYesNo.SetLine(3, "");
+			dlgYesNo.SetLine(3, String.Empty);
 			dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
@@ -737,9 +745,9 @@ namespace MediaPortal.GUI.TV
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null==dlgYesNo) return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(676));//delete watched recordings?
-      dlgYesNo.SetLine(1, "");
-      dlgYesNo.SetLine(2, "");
-			dlgYesNo.SetLine(3, "");
+      dlgYesNo.SetLine(1, String.Empty);
+      dlgYesNo.SetLine(2, String.Empty);
+			dlgYesNo.SetLine(3, String.Empty);
 			dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
@@ -772,11 +780,11 @@ namespace MediaPortal.GUI.TV
       GUIListItem pItem=GetItem( GetSelectedItemNo() );
       if (pItem==null)
       {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title","");
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre","");
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time","");
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description","");
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb","");
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb",String.Empty);
         return;
       }
       TVRecorded rec=pItem.TVTag as TVRecorded;
@@ -804,20 +812,20 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title","");
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre","");
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time","");
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description","");
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time",String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description",String.Empty);
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb","defaultVideoBig.png");
       }
 
     
     }
-    void DeleteRecording(string strFilename)
+    void DeleteRecording(string fileName)
 		{
 			try
 			{
-					Utils.FileDelete(strFilename);
+					Utils.FileDelete(fileName);
 			}
 			catch(Exception)
 			{}
