@@ -3502,6 +3502,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.VideoPid=0;
 						currentTuningObject.TeletextPid=0;
 						currentTuningObject.PMTPid=pmtPid;
+						currentTuningObject.ServiceName=channel.Name;
 
 
 					} break;
@@ -3562,6 +3563,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.VideoPid=0;
 						currentTuningObject.TeletextPid=0;
 						currentTuningObject.PMTPid=ch.PMTPid;
+						currentTuningObject.ServiceName=channel.Name;
 					} break;
 
 					case NetworkType.DVBT: 
@@ -3609,6 +3611,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.TeletextPid=0;
 						currentTuningObject.PMTPid=pmtPid;
 						currentTuningObject.Bandwidth=bandwidth;
+						currentTuningObject.ServiceName=channel.Name;
 					} break;
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
