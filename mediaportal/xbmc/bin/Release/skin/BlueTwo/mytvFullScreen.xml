@@ -266,7 +266,7 @@
 			<posX>400</posX> 
 			<posY>484</posY> 
 			<texture>rec.png</texture> 
-			<colordiffuse>50ffffff</colordiffuse>
+			<colordiffuse>ffffffff</colordiffuse>
 			<visible>yes</visible> 
 		</control>
 		<control>
