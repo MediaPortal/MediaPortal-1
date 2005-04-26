@@ -10,40 +10,58 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// 
   /// </summary>
-  public class GUIFileInfo : GUIWindow
+  public class GUIFileInfo: GUIWindow
   {
     #region SkinControls
 
     // Labels
-    [SkinControlAttribute(20)] protected GUILabelControl lblTitle = null;
-    [SkinControlAttribute(31)] protected GUILabelControl lblSystemCaption = null;
-    [SkinControlAttribute(32)] protected GUILabelControl lblYearManuCaption = null;
-    [SkinControlAttribute(33)] protected GUILabelControl lblRatingCaption = null;
-    [SkinControlAttribute(34)] protected GUILabelControl lblGenreCaption = null;
-    [SkinControlAttribute(6)] protected GUILabelControl lblLaunchStat = null;
+    [SkinControlAttribute(20)]
+    protected GUILabelControl lblTitle = null;
+    [SkinControlAttribute(31)]
+    protected GUILabelControl lblSystemCaption = null;
+    [SkinControlAttribute(32)]
+    protected GUILabelControl lblYearManuCaption = null;
+    [SkinControlAttribute(33)]
+    protected GUILabelControl lblRatingCaption = null;
+    [SkinControlAttribute(34)]
+    protected GUILabelControl lblGenreCaption = null;
+    [SkinControlAttribute(6)]
+    protected GUILabelControl lblLaunchStat = null;
 
     // Fadelabels
-    [SkinControlAttribute(21)] protected GUIFadeLabel lblSystemData = null;
-    [SkinControlAttribute(22)] protected GUIFadeLabel lblYearManuData = null;
-    [SkinControlAttribute(23)] protected GUIFadeLabel lblRatingData = null;
-    [SkinControlAttribute(24)] protected GUIFadeLabel lblGenreData = null;
+    [SkinControlAttribute(21)]
+    protected GUIFadeLabel lblSystemData = null;
+    [SkinControlAttribute(22)]
+    protected GUIFadeLabel lblYearManuData = null;
+    [SkinControlAttribute(23)]
+    protected GUIFadeLabel lblRatingData = null;
+    [SkinControlAttribute(24)]
+    protected GUIFadeLabel lblGenreData = null;
 
 
     // Textbox                   
-    [SkinControlAttribute(4)] protected GUITextScrollUpControl tbOverviewData = null;
+    [SkinControlAttribute(4)]
+    protected GUITextScrollUpControl tbOverviewData = null;
 
     //Images                     
-    [SkinControlAttribute(3)] protected GUIImage imgSmall = null;
-    [SkinControlAttribute(10)] protected GUIImage imgBig = null;
+    [SkinControlAttribute(3)]
+    protected GUIImage imgSmall = null;
+    [SkinControlAttribute(10)]
+    protected GUIImage imgBig = null;
 
     // Buttons                   
-    [SkinControlAttribute(5)] protected GUIButtonControl btnBack = null;
-    [SkinControlAttribute(7)] protected GUIButtonControl btnPrev = null;
-    [SkinControlAttribute(8)] protected GUIButtonControl btnLaunch = null;
-    [SkinControlAttribute(9)] protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(11)] protected GUIButtonControl btnToggleOverview = null;
+    [SkinControlAttribute(5)]
+    protected GUIButtonControl btnBack = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnPrev = null;
+    [SkinControlAttribute(8)]
+    protected GUIButtonControl btnLaunch = null;
+    [SkinControlAttribute(9)]
+    protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(11)]
+    protected GUIButtonControl btnToggleOverview = null;
 
-    #endregion
+    #endregion 
 
     #region Base & Content Variables
 
@@ -72,7 +90,7 @@ namespace WindowPlugins.GUIPrograms
 
     string programOverview = "";
 
-    #endregion
+    #endregion 
 
     #region Constructor / Destructor
 
@@ -81,13 +99,16 @@ namespace WindowPlugins.GUIPrograms
       GetID = ProgramUtils.ProgramInfoID;
     }
 
-    #endregion
+    #endregion 
 
     #region Properties
 
     public FileItem File
     {
-      set { curFile = value; }
+      set
+      {
+        curFile = value;
+      }
     }
 
     public AppItem App
@@ -100,7 +121,7 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-    #endregion
+    #endregion 
 
     #region Overrides
 
@@ -186,7 +207,7 @@ namespace WindowPlugins.GUIPrograms
       if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) || (action.wID == Action.ActionType.ACTION_PARENT_DIR))
       {
         Close();
-        return;
+        return ;
       }
 
       base.OnAction(action);
@@ -196,11 +217,12 @@ namespace WindowPlugins.GUIPrograms
     {
       RenderDlg(timePassed);
 
-      if (null == curTexture) return;
+      if (null == curTexture)
+        return ;
 
       // does the thumb needs replacing??
-      int timeElapsed = ((int) (DateTime.Now.Ticks/10000)) - slideTime;
-      if (timeElapsed >= (slideSpeed*1000))
+      int timeElapsed = ((int)(DateTime.Now.Ticks / 10000)) - slideTime;
+      if (timeElapsed >= (slideSpeed * 1000))
       {
         RefreshPicture(); // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
       }
@@ -217,8 +239,8 @@ namespace WindowPlugins.GUIPrograms
       }
       if (curImg != null)
       {
-        float x = (float) curImg.XPosition;
-        float y = (float) curImg.YPosition;
+        float x = (float)curImg.XPosition;
+        float y = (float)curImg.YPosition;
         int curWidth;
         int curHeight;
         GUIGraphicsContext.Correct(ref x, ref y);
@@ -227,11 +249,11 @@ namespace WindowPlugins.GUIPrograms
         int maxHeight = curImg.Height;
         GUIGraphicsContext.GetOutputRect(textureWidth, textureHeight, maxWidth, maxHeight, out curWidth, out curHeight);
         GUIFontManager.Present();
-        Picture.RenderImage(ref curTexture, (int) x, (int) y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
+        Picture.RenderImage(ref curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
       }
     }
 
-    #endregion
+    #endregion 
 
     #region Display
 
@@ -253,7 +275,7 @@ namespace WindowPlugins.GUIPrograms
       if (null == parentWindow)
       {
         parentWindowID = 0;
-        return;
+        return ;
       }
 
       GUIWindowManager.RouteToWindow(GetID);
@@ -287,7 +309,7 @@ namespace WindowPlugins.GUIPrograms
         }
         curApp.NextThumb(); // try to find a next thumbnail
       }
-      slideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
+      slideTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
     }
 
 
@@ -300,7 +322,8 @@ namespace WindowPlugins.GUIPrograms
 
     void Update()
     {
-      if (null == curFile) return;
+      if (null == curFile)
+        return ;
 
       ReadContent();
 
@@ -404,6 +427,6 @@ namespace WindowPlugins.GUIPrograms
       base.Render(timePassed);
     }
 
-    #endregion
+    #endregion 
   }
 }

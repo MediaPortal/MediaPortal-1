@@ -7,65 +7,65 @@ using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-	public class AppSettingsFilelauncher : AppSettings
-	{
-		private Label label3;
-		private CheckBox chkbUseShellExecute;
-		private CheckBox chkbUseQuotes;
-		private Button btnStartup;
-		private TextBox txtStartupDir;
-		private Label label5;
-		private ComboBox cbWindowStyle;
-		private Label label6;
-		private TextBox txtArguments;
-		private Label lblArg;
-		private Label lblImageFile;
-		private TextBox txtImageFile;
-		private CheckBox chkbEnabled;
-		private TextBox txtTitle;
-		private Label lblTitle;
-		private Label lblFilename;
-		private Button buttonImagefile;
-		private Button buttonLaunchingApp;
-		private Label LblPinCode;
-		private TextBox txtPinCode;
-		private CheckBox chkbWaitForExit;
-		private ComboBox cbFilename;
+  public class AppSettingsFilelauncher: AppSettings
+  {
+    private Label label3;
+    private CheckBox chkbUseShellExecute;
+    private CheckBox chkbUseQuotes;
+    private Button btnStartup;
+    private TextBox txtStartupDir;
+    private Label label5;
+    private ComboBox cbWindowStyle;
+    private Label label6;
+    private TextBox txtArguments;
+    private Label lblArg;
+    private Label lblImageFile;
+    private TextBox txtImageFile;
+    private CheckBox chkbEnabled;
+    private TextBox txtTitle;
+    private Label lblTitle;
+    private Label lblFilename;
+    private Button buttonImagefile;
+    private Button buttonLaunchingApp;
+    private Label LblPinCode;
+    private TextBox txtPinCode;
+    private CheckBox chkbWaitForExit;
+    private ComboBox cbFilename;
     private System.Windows.Forms.Label lblImgDirectories;
     private System.Windows.Forms.TextBox txtImageDirs;
     private System.Windows.Forms.Button btnImageDirs;
-		private IContainer components = null;
+    private IContainer components = null;
 
 
-		public AppSettingsFilelauncher()
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
-			this.txtPinCode.PasswordChar = (char)0x25CF;
-		}
+    public AppSettingsFilelauncher()
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
+      this.txtPinCode.PasswordChar = (char)0x25CF;
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsFilelauncher));
       this.label3 = new System.Windows.Forms.Label();
       this.chkbUseShellExecute = new System.Windows.Forms.CheckBox();
@@ -148,11 +148,11 @@ namespace WindowPlugins.GUIPrograms
       // cbWindowStyle
       // 
       this.cbWindowStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbWindowStyle.Items.AddRange(new object[] {
-                                                       "Normal",
-                                                       "Minimized",
-                                                       "Maximized",
-                                                       "Hidden"});
+      this.cbWindowStyle.Items.AddRange(new object[]
+      {
+        "Normal", "Minimized", "Maximized", "Hidden"
+      }
+      );
       this.cbWindowStyle.Location = new System.Drawing.Point(120, 184);
       this.cbWindowStyle.Name = "cbWindowStyle";
       this.cbWindowStyle.Size = new System.Drawing.Size(250, 21);
@@ -209,7 +209,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.chkbEnabled.Checked = true;
       this.chkbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
+        (System.Byte)(0)));
       this.chkbEnabled.Location = new System.Drawing.Point(320, 8);
       this.chkbEnabled.Name = "chkbEnabled";
       this.chkbEnabled.Size = new System.Drawing.Size(72, 24);
@@ -280,10 +281,11 @@ namespace WindowPlugins.GUIPrograms
       // 
       // cbFilename
       // 
-      this.cbFilename.Items.AddRange(new object[] {
-                                                    "%PLAY%",
-                                                    "%PLAYAUDIOSTREAM%",
-                                                    "%PLAYVIDEOSTREAM%"});
+      this.cbFilename.Items.AddRange(new object[]
+      {
+        "%PLAY%", "%PLAYAUDIOSTREAM%", "%PLAYVIDEOSTREAM%"
+      }
+      );
       this.cbFilename.Location = new System.Drawing.Point(120, 64);
       this.cbFilename.Name = "cbFilename";
       this.cbFilename.Size = new System.Drawing.Size(250, 21);
@@ -348,178 +350,172 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion 
 
-		private void SetWindowStyle(ProcessWindowStyle val) 
-		{
-			switch (val)
-			{
-				case ProcessWindowStyle.Normal:
-					cbWindowStyle.SelectedIndex = 0;
-					break;
-				case ProcessWindowStyle.Minimized:
-					cbWindowStyle.SelectedIndex = 1;
-					break;
-				case ProcessWindowStyle.Maximized:
-					cbWindowStyle.SelectedIndex = 2;
-					break;
-				case ProcessWindowStyle.Hidden:
-					cbWindowStyle.SelectedIndex = 3;
-					break;
-			}
+    private void SetWindowStyle(ProcessWindowStyle val)
+    {
+      switch (val)
+      {
+        case ProcessWindowStyle.Normal:
+          cbWindowStyle.SelectedIndex = 0;
+          break;
+        case ProcessWindowStyle.Minimized:
+          cbWindowStyle.SelectedIndex = 1;
+          break;
+        case ProcessWindowStyle.Maximized:
+          cbWindowStyle.SelectedIndex = 2;
+          break;
+        case ProcessWindowStyle.Hidden:
+          cbWindowStyle.SelectedIndex = 3;
+          break;
+      }
 
-		}
-		
-		private ProcessWindowStyle GetSelectedWindowStyle()
-		{
-			if (this.cbWindowStyle.SelectedIndex == 1)
-			{
-				return ProcessWindowStyle.Minimized;
-			}
-			else if (this.cbWindowStyle.SelectedIndex == 2)
-			{
-				return ProcessWindowStyle.Maximized;
-			} 
-			else if (this.cbWindowStyle.SelectedIndex == 3)
-			{
-				return ProcessWindowStyle.Hidden;
-			}
-			else
-				return ProcessWindowStyle.Normal;
+    }
 
-		}
+    private ProcessWindowStyle GetSelectedWindowStyle()
+    {
+      if (this.cbWindowStyle.SelectedIndex == 1)
+      {
+        return ProcessWindowStyle.Minimized;
+      }
+      else if (this.cbWindowStyle.SelectedIndex == 2)
+      {
+        return ProcessWindowStyle.Maximized;
+      }
+      else if (this.cbWindowStyle.SelectedIndex == 3)
+      {
+        return ProcessWindowStyle.Hidden;
+      }
+      else
+        return ProcessWindowStyle.Normal;
+
+    }
 
 
-		private void AppSettingsFilelauncher_Load(object sender, EventArgs e)
-		{
-			// set tooltip-stuff..... 
-			toolTip.SetToolTip(txtTitle, "This text will appear in the listitem of MediaPortal\r\n(mandatory)");
-			toolTip.SetToolTip(chkbUseShellExecute, "Enable this if you want to run a program that is associated with a specific file-" +
-				"extension.\r\nYou can omit the \"Launching Application\" in this case.");
-			toolTip.SetToolTip(chkbUseQuotes, "Quotes are usually needed to handle filenames with spaces correctly. \r\nAvoid double" +
-				" quotes though!");
-			toolTip.SetToolTip(txtStartupDir, "Optional path that is passed as the launch-directory \r\n\r\n(advanced hint: Use %FILEDIR" +
-				"% if you want to use the directory where the launched file is stored)");
-			toolTip.SetToolTip(cbWindowStyle, "Appearance of the launched program. \r\nTry HIDDEN or MINIMIZED for a seamless integr" +
-				"ation in MediaPortal");
-			toolTip.SetToolTip(txtArguments, "Optional arguments that are needed to launch the program \r\n\r\n(advanced hint: Use %FIL" +
-				"E% if the filename needs to be placed in some specific place between several arg" +
-				"uments)");
-			toolTip.SetToolTip(txtImageFile, "Optional filename for an image to display in MediaPortal");
-			toolTip.SetToolTip(chkbEnabled, "Only enabled items will appear in MediaPortal");
-			toolTip.SetToolTip(cbFilename, "Program you wish to execute, include the full path (mandatory if ShellExecute is " +
-				"OFF)");
-		
-		}
+    private void AppSettingsFilelauncher_Load(object sender, EventArgs e)
+    {
+      // set tooltip-stuff..... 
+      toolTip.SetToolTip(txtTitle, "This text will appear in the listitem of MediaPortal\r\n(mandatory)");
+      toolTip.SetToolTip(chkbUseShellExecute, "Enable this if you want to run a program that is associated with a specific file-" + 
+        "extension.\r\nYou can omit the \"Launching Application\" in this case.");
+      toolTip.SetToolTip(chkbUseQuotes, "Quotes are usually needed to handle filenames with spaces correctly. \r\nAvoid double" + " quotes though!");
+      toolTip.SetToolTip(txtStartupDir, "Optional path that is passed as the launch-directory \r\n\r\n(advanced hint: Use %FILEDIR" + 
+        "% if you want to use the directory where the launched file is stored)");
+      toolTip.SetToolTip(cbWindowStyle, "Appearance of the launched program. \r\nTry HIDDEN or MINIMIZED for a seamless integr" + "ation in MediaPortal");
+      toolTip.SetToolTip(txtArguments, "Optional arguments that are needed to launch the program \r\n\r\n(advanced hint: Use %FIL" + 
+        "E% if the filename needs to be placed in some specific place between several arg" + "uments)");
+      toolTip.SetToolTip(txtImageFile, "Optional filename for an image to display in MediaPortal");
+      toolTip.SetToolTip(chkbEnabled, "Only enabled items will appear in MediaPortal");
+      toolTip.SetToolTip(cbFilename, "Program you wish to execute, include the full path (mandatory if ShellExecute is " + "OFF)");
 
-		public override bool AppObj2Form(AppItem curApp)
-		{
-			this.chkbEnabled.Checked = curApp.Enabled;
-			this.txtTitle.Text = curApp.Title;
-			this.cbFilename.Text = curApp.Filename;
-			this.txtArguments.Text = curApp.Arguments;
-			SetWindowStyle(curApp.WindowStyle);
-			this.txtStartupDir.Text = curApp.Startupdir;
-			this.chkbUseShellExecute.Checked = (curApp.UseShellExecute);
-			this.chkbUseQuotes.Checked = (curApp.UseQuotes);
-			this.chkbWaitForExit.Checked = (curApp.WaitForExit);
-			this.txtImageFile.Text = curApp.Imagefile;
+    }
+
+    public override bool AppObj2Form(AppItem curApp)
+    {
+      this.chkbEnabled.Checked = curApp.Enabled;
+      this.txtTitle.Text = curApp.Title;
+      this.cbFilename.Text = curApp.Filename;
+      this.txtArguments.Text = curApp.Arguments;
+      SetWindowStyle(curApp.WindowStyle);
+      this.txtStartupDir.Text = curApp.Startupdir;
+      this.chkbUseShellExecute.Checked = (curApp.UseShellExecute);
+      this.chkbUseQuotes.Checked = (curApp.UseQuotes);
+      this.chkbWaitForExit.Checked = (curApp.WaitForExit);
+      this.txtImageFile.Text = curApp.Imagefile;
       if (curApp.Pincode > 0)
-			{
-				this.txtPinCode.Text = String.Format("{0}", curApp.Pincode);
-			}
-			else
-			{
-				this.txtPinCode.Text = "";
-			}
+      {
+        this.txtPinCode.Text = String.Format("{0}", curApp.Pincode);
+      }
+      else
+      {
+        this.txtPinCode.Text = "";
+      }
       this.txtImageDirs.Text = curApp.ImageDirectory;
       return true;
-		}
+    }
 
 
-		public override void Form2AppObj(AppItem curApp)
-		{
-			curApp.Enabled = this.chkbEnabled.Checked;
-			curApp.Title = this.txtTitle.Text;
-			curApp.Filename = this.cbFilename.Text;
-			curApp.Arguments = this.txtArguments.Text;
-			curApp.WindowStyle = GetSelectedWindowStyle();
-			curApp.Startupdir = this.txtStartupDir.Text;
-			curApp.UseShellExecute = (this.chkbUseShellExecute.Checked);
-			curApp.UseQuotes = (this.chkbUseQuotes.Checked);
-			curApp.WaitForExit = (this.chkbWaitForExit.Checked);
-			curApp.SourceType = myProgSourceType.FILELAUNCHER;
-			curApp.Imagefile = this.txtImageFile.Text;
-			curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
+    public override void Form2AppObj(AppItem curApp)
+    {
+      curApp.Enabled = this.chkbEnabled.Checked;
+      curApp.Title = this.txtTitle.Text;
+      curApp.Filename = this.cbFilename.Text;
+      curApp.Arguments = this.txtArguments.Text;
+      curApp.WindowStyle = GetSelectedWindowStyle();
+      curApp.Startupdir = this.txtStartupDir.Text;
+      curApp.UseShellExecute = (this.chkbUseShellExecute.Checked);
+      curApp.UseQuotes = (this.chkbUseQuotes.Checked);
+      curApp.WaitForExit = (this.chkbWaitForExit.Checked);
+      curApp.SourceType = myProgSourceType.FILELAUNCHER;
+      curApp.Imagefile = this.txtImageFile.Text;
+      curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text,  - 1);
       curApp.ImageDirectory = this.txtImageDirs.Text;
-		}
+    }
 
-		public override bool EntriesOK(AppItem curApp)
-		{
-			m_Checker.Clear();
-			m_Checker.DoCheck(txtTitle.Text != "", "No title entered!");
-			if (cbFilename.Text == "") 
-			{
-				m_Checker.DoCheck(chkbUseShellExecute.Checked, "No launching filename entered!");
-			}
+    public override bool EntriesOK(AppItem curApp)
+    {
+      m_Checker.Clear();
+      m_Checker.DoCheck(txtTitle.Text != "", "No title entered!");
+      if (cbFilename.Text == "")
+      {
+        m_Checker.DoCheck(chkbUseShellExecute.Checked, "No launching filename entered!");
+      }
 
-			if (!m_Checker.IsOk)
-			{
-				string strHeader = "The following entries are invalid: \r\n\r\n";
-				string strFooter = "\r\n\r\n(Click DELETE to remove this item)";
-				MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
-			}
-			else
-			{
-			}
-			return m_Checker.IsOk;
-		}
+      if (!m_Checker.IsOk)
+      {
+        string strHeader = "The following entries are invalid: \r\n\r\n";
+        string strFooter = "\r\n\r\n(Click DELETE to remove this item)";
+        MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
+      }
+      else
+      {}
+        return m_Checker.IsOk;
+    }
 
-		private void buttonLaunchingApp_Click(object sender, EventArgs e)
-		{
-			dialogFile.FileName = cbFilename.Text;
-			dialogFile.RestoreDirectory = true;
-			if( dialogFile.ShowDialog(null) == DialogResult.OK )
-			{
-				cbFilename.Text = dialogFile.FileName;
-			}
-		}
+    private void buttonLaunchingApp_Click(object sender, EventArgs e)
+    {
+      dialogFile.FileName = cbFilename.Text;
+      dialogFile.RestoreDirectory = true;
+      if (dialogFile.ShowDialog(null) == DialogResult.OK)
+      {
+        cbFilename.Text = dialogFile.FileName;
+      }
+    }
 
-		private void buttonImagefile_Click(object sender, EventArgs e)
-		{
-			dialogFile.FileName = txtImageFile.Text;
-			dialogFile.RestoreDirectory = true;
-			if( dialogFile.ShowDialog(null) == DialogResult.OK )
-			{
-				txtImageFile.Text = dialogFile.FileName;
-			}
-		}
+    private void buttonImagefile_Click(object sender, EventArgs e)
+    {
+      dialogFile.FileName = txtImageFile.Text;
+      dialogFile.RestoreDirectory = true;
+      if (dialogFile.ShowDialog(null) == DialogResult.OK)
+      {
+        txtImageFile.Text = dialogFile.FileName;
+      }
+    }
 
-		private void btnStartup_Click(object sender, EventArgs e)
-		{
-			dialogFolder.SelectedPath = txtStartupDir.Text;
-			if( dialogFolder.ShowDialog( null ) == DialogResult.OK )
-			{
-				txtStartupDir.Text = dialogFolder.SelectedPath;
-			}
-		}
+    private void btnStartup_Click(object sender, EventArgs e)
+    {
+      dialogFolder.SelectedPath = txtStartupDir.Text;
+      if (dialogFolder.ShowDialog(null) == DialogResult.OK)
+      {
+        txtStartupDir.Text = dialogFolder.SelectedPath;
+      }
+    }
 
-		private void txtPinCode_KeyPress(object sender, KeyPressEventArgs e)
-		{
-			//
-			// Allow only numbers, and backspace.
-			//
-			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-			{
-				e.Handled = true;
-			}
-		
-		}
+    private void txtPinCode_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      //
+      // Allow only numbers, and backspace.
+      //
+      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
 
-		private void txtPinCode_TextChanged(object sender, EventArgs e)
-		{
-		
-		}
+    }
+
+    private void txtPinCode_TextChanged(object sender, EventArgs e){
+
+    }
 
     private void btnImageDirs_Click(object sender, System.EventArgs e)
     {
@@ -527,7 +523,7 @@ namespace WindowPlugins.GUIPrograms
       {
         dialogFolder.SelectedPath = txtImageDirs.Lines[0];
       }
-      if( dialogFolder.ShowDialog( null ) == DialogResult.OK )
+      if (dialogFolder.ShowDialog(null) == DialogResult.OK)
       {
         string strSep = "";
         if (txtImageDirs.Text != "")
@@ -538,6 +534,5 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-	}
+  }
 }
-

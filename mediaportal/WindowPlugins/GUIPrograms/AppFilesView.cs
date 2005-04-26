@@ -11,7 +11,7 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// Summary description for AppFilesView.
   /// </summary>
-  public class AppFilesView : UserControl
+  public class AppFilesView: UserControl
   {
     private IContainer components;
     private ToolTip toolTip;
@@ -70,7 +70,7 @@ namespace WindowPlugins.GUIPrograms
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof (AppFilesView));
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppFilesView));
       this.smallListImages = new System.Windows.Forms.ImageList(this.components);
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.btnLaunch = new System.Windows.Forms.Button();
@@ -96,12 +96,12 @@ namespace WindowPlugins.GUIPrograms
       // smallListImages
       // 
       this.smallListImages.ImageSize = new System.Drawing.Size(16, 16);
-      this.smallListImages.ImageStream = ((System.Windows.Forms.ImageListStreamer) (resources.GetObject("smallListImages.ImageStream")));
+      this.smallListImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("smallListImages.ImageStream")));
       this.smallListImages.TransparentColor = System.Drawing.Color.Transparent;
       // 
       // btnLaunch
       // 
-      this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnLaunch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnLaunch.Enabled = false;
       this.btnLaunch.Location = new System.Drawing.Point(296, 88);
       this.btnLaunch.Name = "btnLaunch";
@@ -113,7 +113,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // UpdateDatabaseButton
       // 
-      this.updateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.updateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom |
+        System.Windows.Forms.AnchorStyles.Right)));
       this.updateDatabaseButton.Location = new System.Drawing.Point(296, 328);
       this.updateDatabaseButton.Name = "updateDatabaseButton";
       this.updateDatabaseButton.Size = new System.Drawing.Size(88, 40);
@@ -124,7 +125,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // btnEdit
       // 
-      this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnEdit.Enabled = false;
       this.btnEdit.Location = new System.Drawing.Point(296, 24);
       this.btnEdit.Name = "btnEdit";
@@ -136,7 +137,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // btnDelete
       // 
-      this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnDelete.Enabled = false;
       this.btnDelete.Location = new System.Drawing.Point(296, 48);
       this.btnDelete.Name = "btnDelete";
@@ -148,7 +149,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // btnNew
       // 
-      this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnNew.Location = new System.Drawing.Point(296, 0);
       this.btnNew.Name = "btnNew";
       this.btnNew.Size = new System.Drawing.Size(88, 23);
@@ -159,7 +160,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // btnAddToFavourites
       // 
-      this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)
+        ));
       this.btnAddToFavourites.Enabled = false;
       this.btnAddToFavourites.Location = new System.Drawing.Point(296, 248);
       this.btnAddToFavourites.Name = "btnAddToFavourites";
@@ -171,7 +173,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // startScraperButton
       // 
-      this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)
+        ));
       this.startScraperButton.Location = new System.Drawing.Point(296, 288);
       this.startScraperButton.Name = "startScraperButton";
       this.startScraperButton.Size = new System.Drawing.Size(88, 40);
@@ -194,7 +197,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.backButton.Enabled = false;
       this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.backButton.Image = ((System.Drawing.Image) (resources.GetObject("BackButton.Image")));
+      this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("BackButton.Image")));
       this.backButton.Location = new System.Drawing.Point(0, 0);
       this.backButton.Name = "backButton";
       this.backButton.Size = new System.Drawing.Size(32, 32);
@@ -203,9 +206,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // FilePathLabel
       // 
-      this.filePathLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.filePathLabel.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
+      this.filePathLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
+        System.Windows.Forms.AnchorStyles.Right)));
+      this.filePathLabel.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.filePathLabel.Location = new System.Drawing.Point(36, 8);
       this.filePathLabel.Name = "filePathLabel";
       this.filePathLabel.Size = new System.Drawing.Size(344, 16);
@@ -231,13 +234,13 @@ namespace WindowPlugins.GUIPrograms
       // 
       // FileList
       // 
-      this.fileList.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
+        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
       this.fileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-        {
-          this.fileTitle
-        });
+      {
+        this.fileTitle
+      }
+      );
       this.fileList.FullRowSelect = true;
       this.fileList.HideSelection = false;
       this.fileList.Location = new System.Drawing.Point(0, 0);
@@ -257,10 +260,10 @@ namespace WindowPlugins.GUIPrograms
       // popupFavourites
       // 
       this.popupFavourites.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-        {
-          this.menuItem1,
-          this.menuItem2
-        });
+      {
+        this.menuItem1, this.menuItem2
+      }
+      );
       this.popupFavourites.Popup += new System.EventHandler(this.popupFavourites_Popup);
       // 
       // menuItem1
@@ -285,7 +288,7 @@ namespace WindowPlugins.GUIPrograms
 
     }
 
-    #endregion
+    #endregion 
 
     public void Refresh(AppItem curApp)
     {
@@ -300,7 +303,8 @@ namespace WindowPlugins.GUIPrograms
 
     private void SyncListView()
     {
-      if (mCurApp == null) return;
+      if (mCurApp == null)
+        return ;
 
       fileList.BeginUpdate();
       try
@@ -363,7 +367,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           if (file.IsFolder)
@@ -406,7 +410,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           FileDetailsForm frmFileDetails = new FileDetailsForm();
@@ -429,7 +433,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           mCurApp.LaunchFile(file, false); //launch in non-blocking mode
@@ -446,26 +450,27 @@ namespace WindowPlugins.GUIPrograms
     {
       if (fileList.SelectedItems.Count >= 1)
       {
-        DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the selected item(s)?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the selected item(s)?", "Information", MessageBoxButtons.YesNo,
+          MessageBoxIcon.Question);
         if (dialogResult == DialogResult.Yes)
         {
           foreach (ListViewItem curItem in fileList.SelectedItems)
-            if (curItem.Tag is FilelinkItem)
+          if (curItem.Tag is FilelinkItem)
+          {
+            FilelinkItem filelink = (FilelinkItem)curItem.Tag;
+            if (filelink != null)
             {
-              FilelinkItem filelink = (FilelinkItem) curItem.Tag;
-              if (filelink != null)
-              {
-                filelink.Delete();
-              }
+              filelink.Delete();
             }
-            else
+          }
+          else
+          {
+            FileItem file = (FileItem)curItem.Tag;
+            if (file != null)
             {
-              FileItem file = (FileItem) curItem.Tag;
-              if (file != null)
-              {
-                file.Delete();
-              }
+              file.Delete();
             }
+          }
         }
       }
       mCurApp.Files.Load(mCurApp.AppID, "");
@@ -489,7 +494,7 @@ namespace WindowPlugins.GUIPrograms
 
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           if (!file.IsFolder)
@@ -509,8 +514,7 @@ namespace WindowPlugins.GUIPrograms
       if (mCurApp != null)
       {
         btnNew.Enabled = mCurApp.FileAddAllowed();
-        btnAddToFavourites.Enabled = mCurApp.FilesCanBeFavourites()
-          && (fileList.SelectedItems.Count > 0);
+        btnAddToFavourites.Enabled = mCurApp.FilesCanBeFavourites() && (fileList.SelectedItems.Count > 0);
         updateDatabaseButton.Visible = mCurApp.RefreshButtonVisible();
         if (mCurApp.FileBrowseAllowed())
         {
@@ -556,7 +560,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (mCurApp == null)
       {
-        return;
+        return ;
       }
       if (mCurApp.CurrentFilePath() != mCurApp.FileDirectory)
       {
@@ -575,12 +579,12 @@ namespace WindowPlugins.GUIPrograms
     {
       if (mCurApp == null)
       {
-        return;
+        return ;
       }
-      int GrouperAppID = ((taggedMenuItem) sender).Tag;
+      int GrouperAppID = ((taggedMenuItem)sender).Tag;
       foreach (ListViewItem curItem in fileList.SelectedItems)
       {
-        FileItem curFile = (FileItem) curItem.Tag;
+        FileItem curFile = (FileItem)curItem.Tag;
         FilelinkItem newLink = new FilelinkItem(mCurApp.db);
         // example: "add the 'MAME' game 'r-type' to the 'top 20 shooters'"
         //          'MAME' :           targetAppID
@@ -591,7 +595,7 @@ namespace WindowPlugins.GUIPrograms
         newLink.TargetAppID = curFile.AppID; // the app where the launch will effectively happen....
         newLink.Filename = curFile.Filename;
         newLink.Write();
-//				Log.Write("Add to Favourites groupAppID:{0} Title:{1} fileID:{2} appID:{3}", GrouperAppID, curFile.Title, curFile.FileID, curFile.AppID);
+        //				Log.Write("Add to Favourites groupAppID:{0} Title:{1} fileID:{2} appID:{3}", GrouperAppID, curFile.Title, curFile.FileID, curFile.AppID);
       }
     }
 

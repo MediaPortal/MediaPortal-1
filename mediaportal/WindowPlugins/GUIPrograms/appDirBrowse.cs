@@ -15,14 +15,12 @@ namespace ProgramsDatabase
   /// <summary>
   /// Summary description for appDirBrowse.
   /// </summary>
-  public class appItemDirBrowse : ProgramsDatabase.AppItem
+  public class appItemDirBrowse: ProgramsDatabase.AppItem
   {
     VirtualDirectory curDirectory = new VirtualDirectory();
     ProgramComparer pc = new ProgramComparer(); // slightly hacky: pc replaces the base.dbPc object....
 
-    public appItemDirBrowse(SQLiteClient initSqlDB) : base(initSqlDB)
-    {
-    }
+    public appItemDirBrowse(SQLiteClient initSqlDB): base(initSqlDB){}
 
     override public void LoadFiles()
     {
@@ -124,10 +122,10 @@ namespace ProgramsDatabase
     private void file_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null) return;
+      if (filmstrip == null)
+        return ;
       string thumbName = "";
-      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png")
-        && (item.ThumbnailImage != ""))
+      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != ""))
       {
         // only show big thumb if there is really one....
         thumbName = item.ThumbnailImage;
@@ -160,9 +158,7 @@ namespace ProgramsDatabase
 
     override public void LaunchFile(GUIListItem item)
     {
-      bool bUseGenericPlayer = (Filename.ToUpper() == "%PLAY%") ||
-        (Filename.ToUpper() == "%PLAYAUDIOSTREAM%") ||
-        (Filename.ToUpper() == "%PLAYVIDEOSTREAM%");
+      bool bUseGenericPlayer = (Filename.ToUpper() == "%PLAY%") || (Filename.ToUpper() == "%PLAYAUDIOSTREAM%") || (Filename.ToUpper() == "%PLAYVIDEOSTREAM%");
 
       string curFilename = item.Path;
       ProcessStartInfo procStart = new ProcessStartInfo();
@@ -174,7 +170,7 @@ namespace ProgramsDatabase
         {
           curFilename = " \"" + item.Path + "\"";
         }
-        if (procStart.Arguments.IndexOf("%FILE%") == -1)
+        if (procStart.Arguments.IndexOf("%FILE%") ==  - 1)
         {
           // no placeholder found => default handling: add the fileitem as the last argument
           procStart.Arguments = procStart.Arguments + curFilename;
@@ -191,7 +187,7 @@ namespace ProgramsDatabase
         procStart.FileName = item.Path;
       }
       procStart.WorkingDirectory = Startupdir;
-      if (procStart.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
+      if (procStart.WorkingDirectory.IndexOf("%FILEDIR%") !=  - 1)
       {
         procStart.WorkingDirectory = procStart.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(item.Path));
       }
@@ -217,13 +213,8 @@ namespace ProgramsDatabase
       }
       catch (Exception ex)
       {
-        Log.Write("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
-                  procStart.FileName,
-                  procStart.Arguments,
-                  procStart.WorkingDirectory,
-                  ex.Message,
-                  ex.Source,
-                  ex.StackTrace);
+        Log.Write("myPrograms: error launching program\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}", procStart.FileName,
+          procStart.Arguments, procStart.WorkingDirectory, ex.Message, ex.Source, ex.StackTrace);
       }
 
     }

@@ -4,7 +4,7 @@ using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-  public class AppFilesImportProgress : AppSettings
+  public class AppFilesImportProgress: AppSettings
   {
     private Label titleLabel;
     private TextBox progressText;
@@ -52,7 +52,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // label3
       // 
-      this.titleLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
+      this.titleLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)))
+        ;
       this.titleLabel.Location = new System.Drawing.Point(0, 0);
       this.titleLabel.Name = "titleLabel";
       this.titleLabel.Size = new System.Drawing.Size(248, 32);
@@ -61,9 +62,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // ProgressText
       // 
-      this.progressText.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
+        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
       this.progressText.Location = new System.Drawing.Point(8, 32);
       this.progressText.Multiline = true;
       this.progressText.Name = "progressText";
@@ -83,7 +83,7 @@ namespace WindowPlugins.GUIPrograms
 
     }
 
-    #endregion
+    #endregion 
 
     public void RunImport()
     {
@@ -118,16 +118,27 @@ namespace WindowPlugins.GUIPrograms
 
     public AppItem CurApp
     {
-      get { return curApp; }
-      set { curApp = value; }
+      get
+      {
+        return curApp;
+      }
+      set
+      {
+        curApp = value;
+      }
     }
 
     public bool ImportRunning
     {
-      get { return isImportRunning; }
-      set { isImportRunning = value; }
+      get
+      {
+        return isImportRunning;
+      }
+      set
+      {
+        isImportRunning = value;
+      }
     }
 
   }
 }
-

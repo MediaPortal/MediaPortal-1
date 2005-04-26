@@ -25,17 +25,26 @@ namespace ProgramsDatabase
 
     public int Count
     {
-      get { return gameList.Count; }
+      get
+      {
+        return gameList.Count;
+      }
     }
 
     public FileInfo this[int index]
     {
-      get { return (FileInfo) gameList[index]; }
+      get
+      {
+        return (FileInfo)gameList[index];
+      }
     }
 
     public ArrayList FileInfos
     {
-      get { return gameList; }
+      get
+      {
+        return gameList;
+      }
     }
 
     string AddMissingRowTags(string htmlTableText)
@@ -58,14 +67,17 @@ namespace ProgramsDatabase
       string httpPostLine = String.Format("P=agg&TYPE=1&SRCH={0}", gameTitle);
 
       string htmlText = PostHTTP("http://www.allgame.com/cg/agg.dll", httpPostLine);
-      if (htmlText.Length == 0) return false;
+      if (htmlText.Length == 0)
+        return false;
 
       string htmlLowText = htmlText;
       htmlLowText = htmlLowText.ToLower();
       int startOfTable = htmlLowText.IndexOf(">games with titles matching");
-      if (startOfTable < 0) return false;
+      if (startOfTable < 0)
+        return false;
       startOfTable = htmlLowText.IndexOf("<table", startOfTable);
-      if (startOfTable < 0) return false;
+      if (startOfTable < 0)
+        return false;
 
       HTMLUtil util = new HTMLUtil();
       HTMLTable table = new HTMLTable();
@@ -76,7 +88,8 @@ namespace ProgramsDatabase
       // otherwise the parser doesn't split up the string correctly
       htmlTableText = AddMissingRowTags(htmlTableText);
       table.Parse(htmlTableText); // call frodo's html parser
-      for (int i = 1; i < table.Rows; ++i) // skip first row (contains table header)
+      for (int i = 1; i < table.Rows; ++i)
+      // skip first row (contains table header)
       {
         FileInfo newGame = new FileInfo();
 
@@ -105,26 +118,26 @@ namespace ProgramsDatabase
           if (column == 0)
           {
             string gameRelevance = "";
-            int startOfWidthTag = -1;
-            int endOfWidthTag = -1;
+            int startOfWidthTag =  - 1;
+            int endOfWidthTag =  - 1;
             // ex:
             // "<img src="/im/agg/red_dot.jpg" valign=center width="56" height=5 border=0>&nbsp;"
             // the WIDTH attribute is the relevance: maximum value is 56, negative values are possible
             startOfWidthTag = columnHTML.IndexOf("width=\"");
-            if (startOfWidthTag != -1)
+            if (startOfWidthTag !=  - 1)
             {
               startOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag);
-              if (startOfWidthTag != -1)
+              if (startOfWidthTag !=  - 1)
               {
                 endOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag + 1);
-                if ((endOfWidthTag != -1) && (endOfWidthTag > startOfWidthTag))
+                if ((endOfWidthTag !=  - 1) && (endOfWidthTag > startOfWidthTag))
                 {
                   gameRelevance = columnHTML.Substring(startOfWidthTag + 1, endOfWidthTag - startOfWidthTag - 1);
                 }
               }
             }
             newGame.RelevanceOrig = gameRelevance;
-            newGame.RelevanceNorm = (ProgramUtils.StrToIntDef(gameRelevance, -1) + 44);
+            newGame.RelevanceNorm = (ProgramUtils.StrToIntDef(gameRelevance,  - 1) + 44);
           }
           else if (column == 1)
           {
@@ -142,16 +155,16 @@ namespace ProgramsDatabase
             // ex:
             // "<FONT SIZE=-1><A HREF=/cg/agg.dll?p=agg&SQL=GIH|||||1002>Super Mario 64</A></FONT>"
             string gameURL = "";
-            int startOfURLTag = -1;
-            int endOfURLTag = -1;
+            int startOfURLTag =  - 1;
+            int endOfURLTag =  - 1;
             startOfURLTag = columnHTML.ToLower().IndexOf("<a href");
-            if (startOfURLTag != -1)
+            if (startOfURLTag !=  - 1)
             {
               startOfURLTag = columnHTML.IndexOf("/", startOfURLTag);
-              if (startOfURLTag != -1)
+              if (startOfURLTag !=  - 1)
               {
                 endOfURLTag = columnHTML.IndexOf(">", startOfURLTag + 1);
-                if ((endOfURLTag != -1) && (endOfURLTag > startOfURLTag))
+                if ((endOfURLTag !=  - 1) && (endOfURLTag > startOfURLTag))
                 {
                   gameURL = columnHTML.Substring(startOfURLTag, endOfURLTag - startOfURLTag);
                   // and add the prefix!
@@ -197,16 +210,16 @@ namespace ProgramsDatabase
             // st_gt1.gif is the worst rating
             // st_gt9.gif is the best rating
             strRating = "";
-            int startOfRatingTag = -1;
-            int endOfRatingTag = -1;
+            int startOfRatingTag =  - 1;
+            int endOfRatingTag =  - 1;
             startOfRatingTag = columnHTML.ToLower().IndexOf("<img src=");
-            if (startOfRatingTag != -1)
+            if (startOfRatingTag !=  - 1)
             {
               startOfRatingTag = columnHTML.IndexOf("/st_gt", startOfRatingTag);
-              if (startOfRatingTag != -1)
+              if (startOfRatingTag !=  - 1)
               {
                 endOfRatingTag = columnHTML.IndexOf(".gif", startOfRatingTag);
-                if ((endOfRatingTag != -1) && (endOfRatingTag > startOfRatingTag))
+                if ((endOfRatingTag !=  - 1) && (endOfRatingTag > startOfRatingTag))
                 {
                   strRating = columnHTML.Substring(startOfRatingTag + 6, 1); // 6 is the length of the IndexOf searchstring...
                 }
@@ -224,9 +237,12 @@ namespace ProgramsDatabase
 
     public bool FindGameinfoDetail(AppItem curApp, FileItem curItem, FileInfo curGame, ScraperSaveType saveType)
     {
-      if (curItem == null) return false;
-      if (curGame == null) return false;
-      if (curGame.GameURL == "") return false;
+      if (curItem == null)
+        return false;
+      if (curGame == null)
+        return false;
+      if (curGame.GameURL == "")
+        return false;
 
       HTMLUtil util = new HTMLUtil();
 
@@ -237,10 +253,12 @@ namespace ProgramsDatabase
 
       //string strPostData="p=agg&SQL=GIH|||||||66";
       string strPostData = curGame.GetGameURLPostParams();
-      if (strPostData == "") return false;
+      if (strPostData == "")
+        return false;
       string strHTML = PostHTTP("http://www.allgame.com/cg/agg.dll", strPostData);
 
-      if (strHTML.Length == 0) return false;
+      if (strHTML.Length == 0)
+        return false;
 
       string strHTMLLow = strHTML;
       strHTMLLow = strHTMLLow.ToLower();
@@ -248,8 +266,8 @@ namespace ProgramsDatabase
 
       // 1) get MANUFACTURER
       string strManufacturer = "";
-      int startOfManuTag = -1;
-      int endOfManuTag = -1;
+      int startOfManuTag =  - 1;
+      int endOfManuTag =  - 1;
       // ex:
       // <TR><TD ALIGN=RIGHT BGCOLOR="#FF9933" WIDTH=122><FONT COLOR="#000000" SIZE=-1>Developer</FONT></TD>
       // <TD WIDTH=482 BGCOLOR="#D8D8D8" VALIGN=bottom><TABLE WIDTH=484 BGCOLOR="#D8D8D8" BORDER=0 CELLSPACING=0 CELLPADDING=0><TR>
@@ -259,11 +277,11 @@ namespace ProgramsDatabase
       // b) FIND the next table row
       // c) remove tags, trim "developer" away
       startOfManuTag = strHTMLLow.IndexOf(">developer<");
-      if (startOfManuTag != -1)
+      if (startOfManuTag !=  - 1)
       {
         startOfManuTag = strHTMLLow.IndexOf("<tr>", startOfManuTag);
         endOfManuTag = strHTMLLow.IndexOf("</tr>", startOfManuTag);
-        if ((endOfManuTag != -1) && (endOfManuTag > startOfManuTag))
+        if ((endOfManuTag !=  - 1) && (endOfManuTag > startOfManuTag))
         {
           strManufacturer = strHTML.Substring(startOfManuTag, endOfManuTag - startOfManuTag);
           util.RemoveTags(ref strManufacturer);
@@ -281,19 +299,19 @@ namespace ProgramsDatabase
       // 2) get OVERVIEW / COVERSHOT
       string strOverview = "";
       string strCovershot = "";
-      int startOfOvTag = -1;
-      int endOfOvTag = -1;
+      int startOfOvTag =  - 1;
+      int endOfOvTag =  - 1;
       startOfOvTag = strHTMLLow.IndexOf("<img src=\"http://image.allmusic.com/00/agg/cov200");
-      if (startOfOvTag == -1)
+      if (startOfOvTag ==  - 1)
       {
         // no covershot found: maybe there's still a review there....
         startOfOvTag = strHTMLLow.IndexOf("<table border=0 bgcolor=\"#d8d8d8\"");
         //	Log.Write("dw scraper: {0}", iStartOfOV);
       }
-      if (startOfOvTag != -1)
+      if (startOfOvTag !=  - 1)
       {
         endOfOvTag = strHTMLLow.IndexOf("</tr>", startOfOvTag);
-        if ((endOfOvTag != -1) && (endOfOvTag > startOfOvTag))
+        if ((endOfOvTag !=  - 1) && (endOfOvTag > startOfOvTag))
         {
           strOverview = strHTML.Substring(startOfOvTag, endOfOvTag - startOfOvTag);
           util.RemoveTags(ref strOverview);
@@ -308,14 +326,14 @@ namespace ProgramsDatabase
 
         }
         int startOfCovershot = startOfOvTag;
-        int endOfCovershot = -1;
-        if (startOfCovershot != -1)
+        int endOfCovershot =  - 1;
+        if (startOfCovershot !=  - 1)
         {
           startOfCovershot = strHTMLLow.IndexOf("\"", startOfCovershot);
-          if (startOfCovershot != -1)
+          if (startOfCovershot !=  - 1)
           {
             endOfCovershot = strHTMLLow.IndexOf("\"", startOfCovershot + 1);
-            if ((endOfCovershot != -1) && (endOfCovershot > startOfCovershot))
+            if ((endOfCovershot !=  - 1) && (endOfCovershot > startOfCovershot))
             {
               strCovershot = strHTML.Substring(startOfCovershot + 1, endOfCovershot - startOfCovershot - 1);
               curGame.AddImageURL(strCovershot);
@@ -327,20 +345,20 @@ namespace ProgramsDatabase
 
       // 3) get SCREENSHOTS
       string strCurScreen = "";
-      int startOfImgTag = -1;
-      int startOfLink = -1;
-      int endOfLink = -1;
+      int startOfImgTag =  - 1;
+      int startOfLink =  - 1;
+      int endOfLink =  - 1;
       bool bGoOn = true;
       startOfImgTag = strHTMLLow.IndexOf("<a href=http://image.allmusic.com/00/agg/screen250");
-      bGoOn = (startOfImgTag != -1);
+      bGoOn = (startOfImgTag !=  - 1);
       while (bGoOn)
       {
         startOfLink = strHTMLLow.IndexOf("=", startOfImgTag);
-        if (startOfLink != -1)
+        if (startOfLink !=  - 1)
         {
           startOfLink++;
           endOfLink = strHTMLLow.IndexOf(">", startOfLink);
-          if ((endOfLink != -1) && (endOfLink > startOfLink))
+          if ((endOfLink !=  - 1) && (endOfLink > startOfLink))
           {
             strCurScreen = strHTML.Substring(startOfLink, endOfLink - startOfLink);
             if (strCurScreen != "")
@@ -351,7 +369,7 @@ namespace ProgramsDatabase
         }
 
         startOfImgTag = strHTMLLow.IndexOf("<a href=http://image.allmusic.com/00/agg/screen250", startOfImgTag + 1);
-        bGoOn = (startOfImgTag != -1);
+        bGoOn = (startOfImgTag !=  - 1);
       }
 
       if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Images))
@@ -405,10 +423,10 @@ namespace ProgramsDatabase
 
         return strBody;
       }
-//			catch(Exception ex)
+      //			catch(Exception ex)
       catch (Exception)
       {
-//				Log.Write("AllGameInfoScraper exception: {0}", ex.ToString());
+        //				Log.Write("AllGameInfoScraper exception: {0}", ex.ToString());
       }
 
       return "";

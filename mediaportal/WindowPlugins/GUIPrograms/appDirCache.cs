@@ -12,17 +12,15 @@ namespace ProgramsDatabase
   /// <summary>
   /// Summary description for appItemDirCache.
   /// </summary>
-  public class appItemDirCache : AppItem
+  public class appItemDirCache: AppItem
   {
     GUIDialogProgress progressDialog = null;
 
-    public appItemDirCache(SQLiteClient initSqlDB) : base(initSqlDB)
-    {
-    }
+    public appItemDirCache(SQLiteClient initSqlDB): base(initSqlDB){}
 
     private void ShowProgressDialog()
     {
-      progressDialog = (GUIDialogProgress) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      progressDialog = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       progressDialog.SetHeading("scanning directory");
       progressDialog.SetLine(0, "scanning directory"); //todo: localize! 13004...
       progressDialog.SetLine(1, "");
@@ -91,7 +89,7 @@ namespace ProgramsDatabase
     private void ImportFileItem(GUIListItem guiFile)
     {
       FileItem curFile = new FileItem(sqlDB);
-      curFile.FileID = -1; // to force an INSERT statement when writing the item
+      curFile.FileID =  - 1; // to force an INSERT statement when writing the item
       curFile.AppID = this.AppID;
       curFile.Title = guiFile.Label;
       curFile.Title = curFile.TitleNormalized;
@@ -112,7 +110,7 @@ namespace ProgramsDatabase
     private void WriteFolderItem(string directoryPath)
     {
       FileItem curFile = new FileItem(sqlDB);
-      curFile.FileID = -1;
+      curFile.FileID =  - 1;
       curFile.AppID = this.AppID;
       curFile.Filename = directoryPath;
       curFile.Title = Path.GetFileNameWithoutExtension(directoryPath);
@@ -163,7 +161,7 @@ namespace ProgramsDatabase
           ImportDirectory(directory, mpGuiMode);
         }
       }
-      catch
+      catch 
       {
         // Ignore
       }
@@ -172,9 +170,12 @@ namespace ProgramsDatabase
 
     private void DoDirCacheImport(bool mpGuiMode)
     {
-      if (sqlDB == null) return;
-      if (this.AppID < 0) return;
-      if (this.SourceType != myProgSourceType.DIRCACHE) return;
+      if (sqlDB == null)
+        return ;
+      if (this.AppID < 0)
+        return ;
+      if (this.SourceType != myProgSourceType.DIRCACHE)
+        return ;
       if (mpGuiMode)
       {
         ShowProgressDialog();

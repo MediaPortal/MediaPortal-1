@@ -14,7 +14,7 @@ namespace WindowPlugins.GUIPrograms
   /// and use them as arguments when launching external applications.
   /// </summary>
   /// 
-  public class GUIPrograms : GUIWindow
+  public class GUIPrograms: GUIWindow
   {
 
     #region Serialisation
@@ -33,66 +33,99 @@ namespace WindowPlugins.GUIPrograms
         _SortBy = 0; //name
         _ViewAs = 0; //list
         _SortAscending = true;
-        _LastAppID = -1;
-        _LastFileID = -1;
+        _LastAppID =  - 1;
+        _LastFileID =  - 1;
       }
 
 
       [XmlElement("SortBy")]
       public int SortBy
       {
-        get { return _SortBy; }
-        set { _SortBy = value; }
+        get
+        {
+          return _SortBy;
+        }
+        set
+        {
+          _SortBy = value;
+        }
       }
 
       [XmlElement("ViewAs")]
       public int ViewAs
       {
-        get { return _ViewAs; }
-        set { _ViewAs = value; }
+        get
+        {
+          return _ViewAs;
+        }
+        set
+        {
+          _ViewAs = value;
+        }
       }
 
       [XmlElement("SortAscending")]
       public bool SortAscending
       {
-        get { return _SortAscending; }
-        set { _SortAscending = value; }
+        get
+        {
+          return _SortAscending;
+        }
+        set
+        {
+          _SortAscending = value;
+        }
       }
 
       [XmlElement("LastAppID")]
       public int LastAppID
       {
-        get { return _LastAppID; }
-        set { _LastAppID = value; }
+        get
+        {
+          return _LastAppID;
+        }
+        set
+        {
+          _LastAppID = value;
+        }
       }
 
       [XmlElement("LastFileID")]
       public int LastFileID
       {
-        get { return _LastFileID; }
-        set { _LastFileID = value; }
+        get
+        {
+          return _LastFileID;
+        }
+        set
+        {
+          _LastFileID = value;
+        }
       }
 
       public string ViewAsText
       {
-        get { return GetViewAsText(); }
+        get
+        {
+          return GetViewAsText();
+        }
       }
 
       public void SwitchToNextView()
       {
-        switch ((View) ViewAs)
+        switch ((View)ViewAs)
         {
           case View.VIEW_AS_LIST:
-            ViewAs = (int) View.VIEW_AS_ICONS;
+            ViewAs = (int)View.VIEW_AS_ICONS;
             break;
           case View.VIEW_AS_ICONS:
-            ViewAs = (int) View.VIEW_AS_LARGEICONS;
+            ViewAs = (int)View.VIEW_AS_LARGEICONS;
             break;
           case View.VIEW_AS_LARGEICONS:
-            ViewAs = (int) View.VIEW_AS_FILMSTRIP;
+            ViewAs = (int)View.VIEW_AS_FILMSTRIP;
             break;
           case View.VIEW_AS_FILMSTRIP:
-            ViewAs = (int) View.VIEW_AS_LIST;
+            ViewAs = (int)View.VIEW_AS_LIST;
             break;
         }
       }
@@ -100,7 +133,7 @@ namespace WindowPlugins.GUIPrograms
       string GetViewAsText()
       {
         string result = "";
-        switch ((View) ViewAs)
+        switch ((View)ViewAs)
         {
           case View.VIEW_AS_LIST:
             result = GUILocalizeStrings.Get(101);
@@ -123,9 +156,9 @@ namespace WindowPlugins.GUIPrograms
 
     void SaveSettings()
     {
-      using (Xml xmlwriter = new Xml("MediaPortal.xml"))
+      using(Xml xmlwriter = new Xml("MediaPortal.xml"))
       {
-        switch ((View) mapSettings.ViewAs)
+        switch ((View)mapSettings.ViewAs)
         {
           case View.VIEW_AS_LIST:
             xmlwriter.SetValue("myprograms", "viewby", "list");
@@ -157,21 +190,25 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadSettings()
     {
-      using (Xml xmlreader = new Xml("MediaPortal.xml"))
+      using(Xml xmlreader = new Xml("MediaPortal.xml"))
       {
         string curText = "";
-        curText = (string) xmlreader.GetValue("myprograms", "viewby");
+        curText = (string)xmlreader.GetValue("myprograms", "viewby");
         if (curText != null)
         {
-          if (curText == "list") mapSettings.ViewAs = (int) View.VIEW_AS_LIST;
-          else if (curText == "icons") mapSettings.ViewAs = (int) View.VIEW_AS_ICONS;
-          else if (curText == "largeicons") mapSettings.ViewAs = (int) View.VIEW_AS_LARGEICONS;
-          else if (curText == "filmstrip") mapSettings.ViewAs = (int) View.VIEW_AS_FILMSTRIP;
+          if (curText == "list")
+            mapSettings.ViewAs = (int)View.VIEW_AS_LIST;
+          else if (curText == "icons")
+            mapSettings.ViewAs = (int)View.VIEW_AS_ICONS;
+          else if (curText == "largeicons")
+            mapSettings.ViewAs = (int)View.VIEW_AS_LARGEICONS;
+          else if (curText == "filmstrip")
+            mapSettings.ViewAs = (int)View.VIEW_AS_FILMSTRIP;
         }
 
-        mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
+        mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID",  - 1);
         mapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
-        curText = (string) xmlreader.GetValue("myprograms", "sortasc");
+        curText = (string)xmlreader.GetValue("myprograms", "sortasc");
         if (curText != null)
         {
           mapSettings.SortAscending = (curText.ToLower() == "yes");
@@ -187,9 +224,9 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadLastAppIDFromSettings()
     {
-      using (Xml xmlreader = new Xml("MediaPortal.xml"))
+      using(Xml xmlreader = new Xml("MediaPortal.xml"))
       {
-        mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", -1);
+        mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID",  - 1);
         mapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
         mapSettings.SortAscending = xmlreader.GetValueAsBool("myprograms", "sortasc", true);
       }
@@ -197,51 +234,59 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadFolderSettings(string directoryName)
     {
-      if (directoryName == "") directoryName = "root";
+      if (directoryName == "")
+        directoryName = "root";
       object o;
-      FolderSettings.GetFolderSetting(directoryName, "Programs", typeof (MapSettings), out o);
-      if (o != null) mapSettings = o as MapSettings;
-      if (mapSettings == null) mapSettings = new MapSettings();
+      FolderSettings.GetFolderSetting(directoryName, "Programs", typeof(MapSettings), out o);
+      if (o != null)
+        mapSettings = o as MapSettings;
+      if (mapSettings == null)
+        mapSettings = new MapSettings();
     }
 
     void SaveFolderSettings(string directoryName)
     {
-      if (directoryName == "") directoryName = "root";
-      FolderSettings.AddFolderSetting(directoryName, "Programs", typeof (MapSettings), mapSettings);
+      if (directoryName == "")
+        directoryName = "root";
+      FolderSettings.AddFolderSetting(directoryName, "Programs", typeof(MapSettings), mapSettings);
     }
 
-    #endregion
+    #endregion 
 
     #region SkinControls
 
     enum View
     {
-      VIEW_AS_LIST = 0,
-      VIEW_AS_ICONS = 1,
-      VIEW_AS_LARGEICONS = 2,
-      VIEW_AS_FILMSTRIP = 3,
-    }
+      VIEW_AS_LIST = 0, VIEW_AS_ICONS = 1, VIEW_AS_LARGEICONS = 2, VIEW_AS_FILMSTRIP = 3, 
+    } 
 
     // Labels
-    [SkinControlAttribute(9)] protected GUILabelControl lblMyPrograms = null;
-    [SkinControlAttribute(10)] protected GUILabelControl lblCurApp = null;
+    [SkinControlAttribute(9)]
+    protected GUILabelControl lblMyPrograms = null;
+    [SkinControlAttribute(10)]
+    protected GUILabelControl lblCurApp = null;
 
     // Buttons
-    [SkinControlAttribute(2)] protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)] protected GUIButtonControl btnRefresh = null;
-    [SkinControlAttribute(4)] protected GUIButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)] protected GUIToggleButtonControl btnSortAsc = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]
+    protected GUIButtonControl btnRefresh = null;
+    [SkinControlAttribute(4)]
+    protected GUIButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]
+    protected GUIToggleButtonControl btnSortAsc = null;
 
     // FacadeView
-    [SkinControlAttribute(7)] protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(7)]
+    protected GUIFacadeControl facadeView = null;
 
-    #endregion
+    #endregion 
 
     #region Constructor / Destructor
 
     public GUIPrograms()
     {
-      GetID = (int) Window.WINDOW_FILES;
+      GetID = (int)Window.WINDOW_FILES;
       apps = ProgramDatabase.AppList;
       LoadSettings();
     }
@@ -252,7 +297,7 @@ namespace WindowPlugins.GUIPrograms
       FolderSettings.DeleteFolderSetting("root", "Programs");
     }
 
-    #endregion
+    #endregion 
 
     #region Init / DeInit
 
@@ -286,10 +331,10 @@ namespace WindowPlugins.GUIPrograms
       }
       UpdateListControl();
       ShowThumbPanel();
-      slideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
+      slideTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
     }
 
-    #endregion
+    #endregion 
 
     #region Base & Content Variables
 
@@ -297,11 +342,11 @@ namespace WindowPlugins.GUIPrograms
     MapSettings mapSettings = new MapSettings();
     AppItem lastApp = null;
     string lastFilepath = "";
-    int selectedItemIndex = -1;
+    int selectedItemIndex =  - 1;
     int slideSpeed = 3; // speed in seconds between two slides
     int slideTime = 0;
 
-    #endregion
+    #endregion 
 
     #region Properties / Helper Routines
 
@@ -323,11 +368,11 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        return -1; // root
+        return  - 1; // root
       }
     }
 
-    #endregion
+    #endregion 
 
     #region Overrides
 
@@ -414,8 +459,8 @@ namespace WindowPlugins.GUIPrograms
       else if (control == facadeView)
       {
         // application or file-item was clicked....
-//        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeView.GetID, 0, 0, null);
-//        OnMessage(msg);
+        //        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeView.GetID, 0, 0, null);
+        //        OnMessage(msg);
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick();
@@ -431,7 +476,7 @@ namespace WindowPlugins.GUIPrograms
         // <U> keypress
         BackItemClicked();
         UpdateButtons();
-        return;
+        return ;
       }
 
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -439,18 +484,18 @@ namespace WindowPlugins.GUIPrograms
         // <ESC> keypress in some myProgram Menu => jump to main menu
         SaveFolderSettings("");
         GUIWindowManager.ShowPreviousWindow();
-        return;
+        return ;
       }
 
       if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
       {
         OnInfo();
-        return;
+        return ;
       }
       base.OnAction(action);
     }
 
-    #endregion
+    #endregion 
 
     #region Display
 
@@ -487,25 +532,25 @@ namespace WindowPlugins.GUIPrograms
     void ShowThumbPanel()
     {
       int itemIndex = GetSelectedItemNo();
-      if (mapSettings.ViewAs == (int) View.VIEW_AS_LARGEICONS)
+      if (mapSettings.ViewAs == (int)View.VIEW_AS_LARGEICONS)
       {
         facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
       }
-      else if (mapSettings.ViewAs == (int) View.VIEW_AS_ICONS)
+      else if (mapSettings.ViewAs == (int)View.VIEW_AS_ICONS)
       {
         facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
       }
-      else if (mapSettings.ViewAs == (int) View.VIEW_AS_LIST)
+      else if (mapSettings.ViewAs == (int)View.VIEW_AS_LIST)
       {
         facadeView.View = GUIFacadeControl.ViewMode.List;
       }
-      else if (mapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
+      else if (mapSettings.ViewAs == (int)View.VIEW_AS_FILMSTRIP)
       {
         facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
       }
-      if (itemIndex > -1)
+      if (itemIndex >  - 1)
       {
-        GUIControl.SelectItemControl(GetID,facadeView.GetID,itemIndex);
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, itemIndex);
       }
       UpdateButtons();
     }
@@ -514,17 +559,22 @@ namespace WindowPlugins.GUIPrograms
     {
       // in filmstrip mode, start a slideshow if more than one
       // pic is available for the selected item
-      if (facadeView == null) return;
-      if (facadeView.FilmstripView == null) return;
-      if (facadeView.FilmstripView.InfoImageFileName == "") return;
-      if (mapSettings == null) return;
-      if (mapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
+      if (facadeView == null)
+        return ;
+      if (facadeView.FilmstripView == null)
+        return ;
+      if (facadeView.FilmstripView.InfoImageFileName == "")
+        return ;
+      if (mapSettings == null)
+        return ;
+      if (mapSettings.ViewAs == (int)View.VIEW_AS_FILMSTRIP)
       {
         // does the thumb needs replacing??
-        int timeElapsed = ((int) (DateTime.Now.Ticks/10000)) - slideTime;
-        if (timeElapsed >= (slideSpeed*1000))
+        int timeElapsed = ((int)(DateTime.Now.Ticks / 10000)) - slideTime;
+        if (timeElapsed >= (slideSpeed * 1000))
         {
-          RefreshFilmstripThumb(facadeView.FilmstripView); // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
+          RefreshFilmstripThumb(facadeView.FilmstripView); 
+            // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
         }
       }
     }
@@ -533,9 +583,12 @@ namespace WindowPlugins.GUIPrograms
     {
       GUIListItem item = GetSelectedItem();
       // some preconditions...
-      if (lastApp == null) return;
-      if (item.MusicTag == null) return;
-      if (!(item.MusicTag is FileItem)) return;
+      if (lastApp == null)
+        return ;
+      if (item.MusicTag == null)
+        return ;
+      if (!(item.MusicTag is FileItem))
+        return ;
       FileItem curFile = item.MusicTag as FileItem;
       // ok... let's get a filename
       string thumbFilename = lastApp.GetCurThumb(curFile);
@@ -544,7 +597,7 @@ namespace WindowPlugins.GUIPrograms
         pControl.InfoImageFileName = thumbFilename;
       }
       lastApp.NextThumb(); // try to find a next thumbnail
-      slideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
+      slideTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
     }
 
     bool RefreshButtonVisible()
@@ -657,7 +710,7 @@ namespace WindowPlugins.GUIPrograms
       return (totalApps);
     }
 
-    #endregion
+    #endregion 
 
     #region EventHandlers
 
@@ -681,7 +734,7 @@ namespace WindowPlugins.GUIPrograms
         if (item.MusicTag is AppItem)
         {
           bool bPinOk = true;
-          AppItem candidate = (AppItem) item.MusicTag;
+          AppItem candidate = (AppItem)item.MusicTag;
           if (candidate.Pincode > 0)
           {
             bPinOk = candidate.CheckPincode();
@@ -746,7 +799,7 @@ namespace WindowPlugins.GUIPrograms
           else
           {
             // back to home screen.....
-            mapSettings.LastAppID = -1;
+            mapSettings.LastAppID =  - 1;
             lastFilepath = "";
             //            Log.Write("dw myPrograms: BackItemClicked 2: lastAppID changes to {0}", _MapSettings.LastAppID);
           }
@@ -765,10 +818,10 @@ namespace WindowPlugins.GUIPrograms
     void OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null) return;
+      if (filmstrip == null)
+        return ;
       string thumbName = "";
-      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png")
-        && (item.ThumbnailImage != ""))
+      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != ""))
       {
         // only show big thumb if there is really one....
         thumbName = item.ThumbnailImage;
@@ -789,7 +842,7 @@ namespace WindowPlugins.GUIPrograms
       else
       {
         // folder-item clicked.... 
-        selectedItemIndex = -1;
+        selectedItemIndex =  - 1;
         if (item.Label.Equals(ProgramUtils.cBackLabel))
         {
           BackItemClicked();
@@ -804,6 +857,6 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-    #endregion
+    #endregion 
   }
 }

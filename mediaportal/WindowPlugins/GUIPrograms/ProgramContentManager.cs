@@ -7,321 +7,339 @@ using Programs.Utils;
 
 namespace WindowPlugins.GUIPrograms
 {
-	/// <summary>
-	/// Summary description for ProgramContentManager.
-	/// </summary>
-	public class ProgramContentManager
-	{
+  /// <summary>
+  /// Summary description for ProgramContentManager.
+  /// </summary>
+  public class ProgramContentManager
+  {
 
-		static XmlNodeList NodeList = null;
-		static XmlElement rootElement = null;
+    static XmlNodeList NodeList = null;
+    static XmlElement rootElement = null;
 
-		static public int NodeCount
-		{
-			get{if (NodeList != null) 
-					{return NodeList.Count;} 
-					else 
-					{return -1;}
-			}
-		}
+    static public int NodeCount
+    {
+      get
+      {
+        if (NodeList != null)
+        {
+          return NodeList.Count;
+        }
+        else
+        {
+          return  - 1;
+        }
+      }
+    }
 
-		static public int NodeID(int Index)
-		{
-			int result = -1;
-			if (NodeList == null) {return -1;}
-			if ((Index >= 0) && (Index <= NodeList.Count - 1))
-			{
-				XmlNode node = NodeList.Item(Index);
-				if (node != null)
-				{
-					//				string strVal = node.Attributes["id"].Value;
-					//				result = Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
-					result = ExtractNodeID(node);
-				}
-			}
-			return result;
-		}
+    static public int NodeID(int Index)
+    {
+      int result =  - 1;
+      if (NodeList == null)
+      {
+        return  - 1;
+      }
+      if ((Index >= 0) && (Index <= NodeList.Count - 1))
+      {
+        XmlNode node = NodeList.Item(Index);
+        if (node != null)
+        {
+          //				string strVal = node.Attributes["id"].Value;
+          //				result = Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
+          result = ExtractNodeID(node);
+        }
+      }
+      return result;
+    }
 
-		static int ExtractNodeID(XmlNode node)
-		{
-			string strVal = node.Attributes["id"].Value;
-			return Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
-		}
+    static int ExtractNodeID(XmlNode node)
+    {
+      string strVal = node.Attributes["id"].Value;
+      return Convert.ToInt32(strVal.Length > 0 ? strVal : "-1");
+    }
 
-		static public string NodeTitle(int Index)
-		{
-			string result = "";
-			if (NodeList == null) {return "";}
-			if ((Index >= 0) && (Index <= NodeList.Count - 1))
-			{
-				XmlNode node = NodeList.Item(Index);
-				if (node != null)
-				{
-					XmlNode titleNode = node.SelectSingleNode("title");
-					if (titleNode != null)
-					{
-						result = titleNode.InnerText;
-					}
-				}
-			}
-			return result;
-		}
+    static public string NodeTitle(int Index)
+    {
+      string result = "";
+      if (NodeList == null)
+      {
+        return "";
+      }
+      if ((Index >= 0) && (Index <= NodeList.Count - 1))
+      {
+        XmlNode node = NodeList.Item(Index);
+        if (node != null)
+        {
+          XmlNode titleNode = node.SelectSingleNode("title");
+          if (titleNode != null)
+          {
+            result = titleNode.InnerText;
+          }
+        }
+      }
+      return result;
+    }
 
-		static public int GetIndexOfID(int ContentID)
-		{
-			int result = -1;
-			XmlNode node = null;
-			for (int i=0; i < NodeCount; i++)
-			{
-				node = NodeList.Item(i);
-				if (ExtractNodeID(node) == ContentID)
-				{
-					result = i;
-					break;
-				}
-			}
-			return result;
-		}
-		
-		private ProgramContentManager()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
+    static public int GetIndexOfID(int ContentID)
+    {
+      int result =  - 1;
+      XmlNode node = null;
+      for (int i = 0; i < NodeCount; i++)
+      {
+        node = NodeList.Item(i);
+        if (ExtractNodeID(node) == ContentID)
+        {
+          result = i;
+          break;
+        }
+      }
+      return result;
+    }
 
-		static ProgramContentManager()
-		{
-			if (System.IO.File.Exists("FileDetailContents.xml"))
-			{
-				try
-				{
-					XmlDocument document = new XmlDocument();
-					document.Load("FileDetailContents.xml");
-					rootElement = document.DocumentElement;
-					if((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
-					{
-						NodeList = rootElement.SelectNodes("/contentprofiles/profile");
-					}
-				}
-				catch (Exception ex)
-				{
-					Log.Write("exception in ProgramContentManager err:{0} stack:{1}", ex.Message,ex.StackTrace);
-				}
-			}
-			else
-			{
-				Log.Write("Warning: myPrograms did not find the expected 'FileDetailContents.xml' in your MP root directory!");
-			}
-		}
+    private ProgramContentManager()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
-		static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName, string strValueIfEmpty)
-		{
-			string result = "";
-			if (rootElement == null) {return "";}
-			XmlNode node = rootElement.SelectSingleNode(String.Format("/contentprofiles/profile[@id={0}]", curApp.ContentID));
-			if (node != null)
-			{
-				XmlNode fieldnode = node.SelectSingleNode(String.Format("fields/field[@fieldid=\"{0}\"]", strFieldName));
-				if (fieldnode != null)
-				{
-					result = ParseExpressions(fieldnode.InnerText, curApp, curFile);
-				}
-				else
-				{
-					Log.Write("ProgramContentManager Warning, no data found for \n{0}\n{1}\n{2}", curApp.Title, curFile.Title, node.InnerXml);
-				}
-			}
-			else
-			{
-				Log.Write("ProgramContentManager Warning, no data found for \n{0}\n{1}", curApp.Title, curFile.Title);
-			}
-			if (result == "")
-			{
-				result = strValueIfEmpty;
-			}
-			return result;
-		}
+    static ProgramContentManager()
+    {
+      if (System.IO.File.Exists("FileDetailContents.xml"))
+      {
+        try
+        {
+          XmlDocument document = new XmlDocument();
+          document.Load("FileDetailContents.xml");
+          rootElement = document.DocumentElement;
+          if ((rootElement != null) && (rootElement.Name.Equals("contentprofiles")))
+          {
+            NodeList = rootElement.SelectNodes("/contentprofiles/profile");
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Write("exception in ProgramContentManager err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+      }
+      else
+      {
+        Log.Write("Warning: myPrograms did not find the expected 'FileDetailContents.xml' in your MP root directory!");
+      }
+    }
 
-		static string ParseExpressions(string strExpression, AppItem curApp, FileItem curFile)
-		{
-			string result = strExpression;
-			if (curApp == null) return result;
-			if (curFile == null) return result;
-			if (result.Length == 0) return result;
+    static public string GetFieldValue(AppItem curApp, FileItem curFile, string strFieldName, string strValueIfEmpty)
+    {
+      string result = "";
+      if (rootElement == null)
+      {
+        return "";
+      }
+      XmlNode node = rootElement.SelectSingleNode(String.Format("/contentprofiles/profile[@id={0}]", curApp.ContentID));
+      if (node != null)
+      {
+        XmlNode fieldnode = node.SelectSingleNode(String.Format("fields/field[@fieldid=\"{0}\"]", strFieldName));
+        if (fieldnode != null)
+        {
+          result = ParseExpressions(fieldnode.InnerText, curApp, curFile);
+        }
+        else
+        {
+          Log.Write("ProgramContentManager Warning, no data found for \n{0}\n{1}\n{2}", curApp.Title, curFile.Title, node.InnerXml);
+        }
+      }
+      else
+      {
+        Log.Write("ProgramContentManager Warning, no data found for \n{0}\n{1}", curApp.Title, curFile.Title);
+      }
+      if (result == "")
+      {
+        result = strValueIfEmpty;
+      }
+      return result;
+    }
 
-			int iNextValueTagStart = result.IndexOf("[");
-			int iNextValueTagEnd = -1;
-			string Head = "";
-			string Expression = "";
-			string Tail = "";
-			while (iNextValueTagStart >= 0)
-			{
-				iNextValueTagEnd = result.IndexOf("]", iNextValueTagStart);
-				if (iNextValueTagEnd > iNextValueTagStart)
-				{
-					iNextValueTagEnd = iNextValueTagEnd + 1;
-					if (iNextValueTagStart > 0)
-					{
-						Head = result.Substring(0, iNextValueTagStart);
-					}
-					else
-					{
-						Head = "";
-					}
-					Expression = result.Substring(iNextValueTagStart, iNextValueTagEnd - iNextValueTagStart);
-					if (result.Length - iNextValueTagEnd > 0)
-					{
-						Tail = result.Substring(iNextValueTagEnd, result.Length - iNextValueTagEnd);
-					}
-					else
-					{
-						Tail = "";
-					}
-					result = Head + ParseOneExpression(Expression, curFile) + Tail;
-				}
-				iNextValueTagStart = result.IndexOf("[");
-			}
+    static string ParseExpressions(string strExpression, AppItem curApp, FileItem curFile)
+    {
+      string result = strExpression;
+      if (curApp == null)
+        return result;
+      if (curFile == null)
+        return result;
+      if (result.Length == 0)
+        return result;
 
-			return result;
-		}
+      int iNextValueTagStart = result.IndexOf("[");
+      int iNextValueTagEnd =  - 1;
+      string Head = "";
+      string Expression = "";
+      string Tail = "";
+      while (iNextValueTagStart >= 0)
+      {
+        iNextValueTagEnd = result.IndexOf("]", iNextValueTagStart);
+        if (iNextValueTagEnd > iNextValueTagStart)
+        {
+          iNextValueTagEnd = iNextValueTagEnd + 1;
+          if (iNextValueTagStart > 0)
+          {
+            Head = result.Substring(0, iNextValueTagStart);
+          }
+          else
+          {
+            Head = "";
+          }
+          Expression = result.Substring(iNextValueTagStart, iNextValueTagEnd - iNextValueTagStart);
+          if (result.Length - iNextValueTagEnd > 0)
+          {
+            Tail = result.Substring(iNextValueTagEnd, result.Length - iNextValueTagEnd);
+          }
+          else
+          {
+            Tail = "";
+          }
+          result = Head + ParseOneExpression(Expression, curFile) + Tail;
+        }
+        iNextValueTagStart = result.IndexOf("[");
+      }
 
-		static string ParseOneExpression(string strTagExpression, FileItem curFile)
-		{
-			string result = "";
-			if (strTagExpression.StartsWith("[VALUEOFTAG("))
-			{
-				result = ParseVALUEOFTAG(strTagExpression, curFile);
-			}
-			else if (strTagExpression.StartsWith("[NAMEOFCATEGORY("))
-			{
-				result = ParseNAMEOFCATEGORY(strTagExpression, curFile);
-			}
-			else if (strTagExpression.StartsWith("[VALUEOFCATEGORY("))
-			{
-				result = ParseVALUEOFCATEGORY(strTagExpression, curFile);
-			}
-			return result; 
-		}
+      return result;
+    }
 
-		static string ParseVALUEOFTAG(string strTagExpression, FileItem curFile)
-		{
-			string result = "";
-			string TagName = "";
-			int Start = strTagExpression.IndexOf("\"");
-			int End = strTagExpression.IndexOf("\"", Start + 1);
-			if ((Start >= 0) && (End > Start))
-			{
-				TagName = strTagExpression.Substring(Start, End - Start + 1);
-				TagName = TagName.TrimStart('"');
-				TagName = TagName.TrimEnd('"');
-				TagName = TagName.ToLower();
+    static string ParseOneExpression(string strTagExpression, FileItem curFile)
+    {
+      string result = "";
+      if (strTagExpression.StartsWith("[VALUEOFTAG("))
+      {
+        result = ParseVALUEOFTAG(strTagExpression, curFile);
+      }
+      else if (strTagExpression.StartsWith("[NAMEOFCATEGORY("))
+      {
+        result = ParseNAMEOFCATEGORY(strTagExpression, curFile);
+      }
+      else if (strTagExpression.StartsWith("[VALUEOFCATEGORY("))
+      {
+        result = ParseVALUEOFCATEGORY(strTagExpression, curFile);
+      }
+      return result;
+    }
 
-				switch (TagName)
-				{
-					case "system" : 
-					{
-						result = curFile.System_;
-						break;
-					}
-					case "yearmanu" : 
-					{
-						result = curFile.YearManu;
-						break;
-					}
-					case "rating" : 
-					{
-						if (curFile.Rating >= 0)
-						{
-							result = String.Format("{0}/10", curFile.Rating);
-						}
-						break;
-					}
-					case "genre" : 
-					{
-						result = curFile.Genre;
-						break;
-					}
-					case "overview" : 
-					{
-						result = curFile.Overview;
-						break;
-					}
-					case "year" : 
-					{
-						if (curFile.Year >= 1900)
-						{
-							result = String.Format("{0}", curFile.Year);
-						}
-						break;
-					}
-					case "manufacturer" : 
-					{
-						result = curFile.Manufacturer;
-						break;
-					}
-					default:
-					{
-						result = curFile.GetValueOfTag(TagName);
-						break;
-					}
-				}
-			}
-			return result; 
-		}
+    static string ParseVALUEOFTAG(string strTagExpression, FileItem curFile)
+    {
+      string result = "";
+      string TagName = "";
+      int Start = strTagExpression.IndexOf("\"");
+      int End = strTagExpression.IndexOf("\"", Start + 1);
+      if ((Start >= 0) && (End > Start))
+      {
+        TagName = strTagExpression.Substring(Start, End - Start + 1);
+        TagName = TagName.TrimStart('"');
+        TagName = TagName.TrimEnd('"');
+        TagName = TagName.ToLower();
 
-		static string ParseNAMEOFCATEGORY(string strTagExpression, FileItem curFile)
-		{
-			string result = "";
-			string TagName = "";
-			int TagNumber = -1;
-			int Start = strTagExpression.IndexOf("(");
-			int End = strTagExpression.IndexOf(")", Start + 1);
-			if ((Start >= 0) && (End > Start))
-			{
-				TagName = strTagExpression.Substring(Start, End - Start + 1);
-				TagName = TagName.TrimStart('(');
-				TagName = TagName.TrimEnd(')');
-				TagName = TagName.ToLower();
-				TagNumber = ProgramUtils.StrToIntDef(TagName, -1);
-				if (TagNumber >= 0)
-				{
-					result = curFile.GetNameOfCategory(TagNumber);
-				}
-				else
-				{
-					Log.Write("Warning: ProgramContentManager: Invalid number {0}", TagName);
-				}
-			}
-			return result;
-		}
+        switch (TagName)
+        {
+          case "system":
+            {
+              result = curFile.System_;
+              break;
+            }
+          case "yearmanu":
+            {
+              result = curFile.YearManu;
+              break;
+            }
+          case "rating":
+            {
+              if (curFile.Rating >= 0)
+              {
+                result = String.Format("{0}/10", curFile.Rating);
+              }
+              break;
+            }
+          case "genre":
+            {
+              result = curFile.Genre;
+              break;
+            }
+          case "overview":
+            {
+              result = curFile.Overview;
+              break;
+            }
+          case "year":
+            {
+              if (curFile.Year >= 1900)
+              {
+                result = String.Format("{0}", curFile.Year);
+              }
+              break;
+            }
+          case "manufacturer":
+            {
+              result = curFile.Manufacturer;
+              break;
+            }
+          default:
+            {
+              result = curFile.GetValueOfTag(TagName);
+              break;
+            }
+        }
+      }
+      return result;
+    }
 
-		static string ParseVALUEOFCATEGORY(string strTagExpression, FileItem curFile)
-		{
-			string result = "";
-			string TagName = "";
-			int TagNumber = -1;
-			int Start = strTagExpression.IndexOf("(");
-			int End = strTagExpression.IndexOf(")", Start + 1);
-			if ((Start >= 0) && (End > Start))
-			{
-				TagName = strTagExpression.Substring(Start, End - Start + 1);
-				TagName = TagName.TrimStart('(');
-				TagName = TagName.TrimEnd(')');
-				TagName = TagName.ToLower();
-				TagNumber = ProgramUtils.StrToIntDef(TagName, -1);
-				if (TagNumber >= 0)
-				{
-					result = curFile.GetValueOfCategory(TagNumber);
-				}
-				else
-				{
-					Log.Write("Warning: ProgramContentManager: Invalid number {0}", TagName);
-				}
+    static string ParseNAMEOFCATEGORY(string strTagExpression, FileItem curFile)
+    {
+      string result = "";
+      string TagName = "";
+      int TagNumber =  - 1;
+      int Start = strTagExpression.IndexOf("(");
+      int End = strTagExpression.IndexOf(")", Start + 1);
+      if ((Start >= 0) && (End > Start))
+      {
+        TagName = strTagExpression.Substring(Start, End - Start + 1);
+        TagName = TagName.TrimStart('(');
+        TagName = TagName.TrimEnd(')');
+        TagName = TagName.ToLower();
+        TagNumber = ProgramUtils.StrToIntDef(TagName,  - 1);
+        if (TagNumber >= 0)
+        {
+          result = curFile.GetNameOfCategory(TagNumber);
+        }
+        else
+        {
+          Log.Write("Warning: ProgramContentManager: Invalid number {0}", TagName);
+        }
+      }
+      return result;
+    }
 
-			}
-			return result;
-		}
+    static string ParseVALUEOFCATEGORY(string strTagExpression, FileItem curFile)
+    {
+      string result = "";
+      string TagName = "";
+      int TagNumber =  - 1;
+      int Start = strTagExpression.IndexOf("(");
+      int End = strTagExpression.IndexOf(")", Start + 1);
+      if ((Start >= 0) && (End > Start))
+      {
+        TagName = strTagExpression.Substring(Start, End - Start + 1);
+        TagName = TagName.TrimStart('(');
+        TagName = TagName.TrimEnd(')');
+        TagName = TagName.ToLower();
+        TagNumber = ProgramUtils.StrToIntDef(TagName,  - 1);
+        if (TagNumber >= 0)
+        {
+          result = curFile.GetValueOfCategory(TagNumber);
+        }
+        else
+        {
+          Log.Write("Warning: ProgramContentManager: Invalid number {0}", TagName);
+        }
 
-	}
+      }
+      return result;
+    }
+
+  }
 }

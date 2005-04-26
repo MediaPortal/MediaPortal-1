@@ -8,7 +8,7 @@ namespace ProgramsDatabase
   /// <summary>
   /// Summary description for Applist.
   /// </summary>
-  public class Applist : ArrayList
+  public class Applist: ArrayList
   {
     public static SQLiteClient sqlDB = null;
     static ApplicationFactory appFactory = ApplicationFactory.AppFactory;
@@ -29,8 +29,8 @@ namespace ProgramsDatabase
       AppItem newApp = appFactory.GetAppItem(sqlDB, ProgramUtils.GetSourceType(results, recordIndex, "source_type"));
       newApp.OnLaunchFilelink += new AppItem.FilelinkLaunchEventHandler(LaunchFilelink);
       newApp.Enabled = ProgramUtils.GetBool(results, recordIndex, "enabled");
-      newApp.AppID = ProgramUtils.GetIntDef(results, recordIndex, "appid", -1);
-      newApp.FatherID = ProgramUtils.GetIntDef(results, recordIndex, "fatherID", -1);
+      newApp.AppID = ProgramUtils.GetIntDef(results, recordIndex, "appid",  - 1);
+      newApp.FatherID = ProgramUtils.GetIntDef(results, recordIndex, "fatherID",  - 1);
       newApp.Title = ProgramUtils.Get(results, recordIndex, "title");
       newApp.ShortTitle = ProgramUtils.Get(results, recordIndex, "shorttitle");
       newApp.Filename = ProgramUtils.Get(results, recordIndex, "filename");
@@ -51,7 +51,7 @@ namespace ProgramsDatabase
       newApp.ContentID = ProgramUtils.GetIntDef(results, recordIndex, "contentID", 100);
       newApp.SystemDefault = ProgramUtils.Get(results, recordIndex, "systemdefault");
       newApp.WaitForExit = ProgramUtils.GetBool(results, recordIndex, "waitforexit");
-      newApp.Pincode = ProgramUtils.GetIntDef(results, recordIndex, "pincode", -1);
+      newApp.Pincode = ProgramUtils.GetIntDef(results, recordIndex, "pincode",  - 1);
       return newApp;
     }
 
@@ -72,7 +72,7 @@ namespace ProgramsDatabase
     {
       if (father == null)
       {
-        return appsOfFatherID(-1); // return children of root node!
+        return appsOfFatherID( - 1); // return children of root node!
       }
       else
       {
@@ -97,7 +97,7 @@ namespace ProgramsDatabase
     {
       AppItem newApp = appFactory.GetAppItem(sqlDB, sourceApp.SourceType);
       newApp.Assign(sourceApp);
-      newApp.AppID = -1; // to force a sql INSERT when written
+      newApp.AppID =  - 1; // to force a sql INSERT when written
       Add(newApp);
       return newApp;
     }
@@ -125,14 +125,17 @@ namespace ProgramsDatabase
 
     public void LoadAll()
     {
-      if (sqlDB == null) return;
+      if (sqlDB == null)
+        return ;
       try
       {
         Clear();
-        if (null == sqlDB) return;
+        if (null == sqlDB)
+          return ;
         SQLiteResultSet results;
         results = sqlDB.Execute("select * from application order by position");
-        if (results.Rows.Count == 0) return;
+        if (results.Rows.Count == 0)
+          return ;
         for (int row = 0; row < results.Rows.Count; row++)
         {
           AppItem curApp = DBGetApp(results, row);
