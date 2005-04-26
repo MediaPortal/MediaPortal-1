@@ -904,7 +904,8 @@ namespace MediaPortal.TV.Recording
               GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
               return;
             }*/
-						g_Player.Pause();
+						
+
 						_mGraph.TuneChannel(channel);
 						if (IsTimeShifting && !View)
 						{
@@ -918,7 +919,7 @@ namespace MediaPortal.TV.Recording
 								*/
 							}
 						}
-						g_Player.Pause();
+
 					}
 				}
 			}
