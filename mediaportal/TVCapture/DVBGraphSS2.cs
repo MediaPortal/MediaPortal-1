@@ -690,6 +690,8 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,18);
 					SetPidToPin(m_dataCtrl,0,ttxtPID);
 					SetPidToPin(m_dataCtrl,0,AudioPID);
+					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio1);
+					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio2);
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
 					SetPidToPin(m_dataCtrl,0,dvbsubPID);
@@ -735,6 +737,8 @@ namespace MediaPortal.TV.Recording
 
 					SetPidToPin(m_dataCtrl,0,ttxtPID);
 					SetPidToPin(m_dataCtrl,0,AudioPID);
+					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio1);
+					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio2);
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,dvbsubPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
@@ -1446,13 +1450,13 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 				m_channelFound=true;
-				
+				m_currentChannel=ch;
+				m_selectedAudioPid=ch.AudioPid;
 				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3)==false)
 				{
 					m_channelFound=false;
 					return;
 				}
-				m_currentChannel=ch;
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
@@ -1466,8 +1470,6 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 						return;
 					}
-					else
-						m_selectedAudioPid=ch.AudioPid;
 				}
 
 				m_StartTime=DateTime.Now;
@@ -1953,6 +1955,7 @@ namespace MediaPortal.TV.Recording
 				//check if this channel has audio/video streams
 				if (info.pid_list!=null)
 				{
+					audioOptions=0;
 					for (int pids =0; pids < info.pid_list.Count;pids++)
 					{
 						DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
@@ -1967,7 +1970,7 @@ namespace MediaPortal.TV.Recording
 										if(data.data.Length==3)
 											newchannel.AudioLanguage1=sections.GetLanguageFromCode(data.data);
 									}
-									audioOptions++;
+									audioOptions=1;
 									break;
 								case 1:
 									newchannel.Audio2=data.elementary_PID;
@@ -1976,7 +1979,7 @@ namespace MediaPortal.TV.Recording
 										if(data.data.Length==3)
 											newchannel.AudioLanguage2=sections.GetLanguageFromCode(data.data);
 									}
-									audioOptions++;
+									audioOptions=2;
 									break;
 
 							}
@@ -2003,6 +2006,10 @@ namespace MediaPortal.TV.Recording
 						if (data.isTeletext)
 						{
 							m_currentTuningObject.TeletextPid=data.elementary_PID;
+						}
+						if(data.isDVBSubtitle)
+						{
+							m_currentTuningObject.Audio3=data.elementary_PID;
 						}
 					}
 				}
@@ -2085,9 +2092,6 @@ namespace MediaPortal.TV.Recording
 						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
-
-				
-
 					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
 					newchannel.ID=channelId;
 					TVDatabase.AddSatChannel(newchannel);
@@ -2177,7 +2181,7 @@ namespace MediaPortal.TV.Recording
 							int scrambled=0;
 							if (newchannel.IsScrambled) scrambled=1;
 							RadioDatabase.MapDVBSChannel(newchannel.ID,newchannel.Frequency,newchannel.Symbolrate,
-								newchannel.FEC,newchannel.LNBKHz,0,newchannel.ProgramNumber,
+								newchannel.FEC,newchannel.LNBKHz,newchannel.DiSEqC,newchannel.ProgramNumber,
 								0,newchannel.ServiceProvider,newchannel.ServiceName,
 								0,0,newchannel.AudioPid,0,newchannel.AC3Pid,
 								0,0,0,0,scrambled,
