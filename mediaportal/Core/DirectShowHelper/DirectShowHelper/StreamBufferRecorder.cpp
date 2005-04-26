@@ -90,7 +90,7 @@ STDMETHODIMP CStreamBufferRecorder::Stop(void)
 		if (!SUCCEEDED(hr))
 		{
 			Log("stop failed:%x", hr);
-			return E_FAIL;
+			return S_OK;
 		}
 		for (int x=0; x < 10;++x)
 		{

@@ -98,6 +98,7 @@ ULONG CVMR9AllocatorPresenter::Release()
 
 STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9AllocationInfo* lpAllocInfo, DWORD* lpNumBuffers)
 {
+	previousEndFrame=0;
 	m_bfirstFrame=true;
 	if(!lpAllocInfo || !lpNumBuffers)
 		return E_POINTER;
@@ -232,6 +233,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::StopPresenting(DWORD_PTR dwUserID)
 	return S_OK;
 }
 
+
 STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9PresentationInfo* lpPresInfo)
 {
     HRESULT hr;
@@ -244,6 +246,14 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 	}
 	{
 
+		/*
+		if (lpPresInfo->rtStart>previousEndFrame)
+		{
+			Log("vmr9:Paint() begin:%d", lpPresInfo->rtStart);
+			Log("             end:  %d",lpPresInfo->rtEnd);
+			Log("             prev: %d",previousEndFrame);
+		}*/
+		previousEndFrame=lpPresInfo->rtEnd;
 		CAutoLock cAutoLock(this);
 
 //		hr = m_pD3DDev->StretchRect(lpPresInfo->lpSurf, NULL, m_pVideoSurface[0], NULL, D3DTEXF_NONE);

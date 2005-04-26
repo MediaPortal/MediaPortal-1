@@ -66,6 +66,7 @@ protected:
 	CRect m_VideoRect;
 	bool m_fVMRSyncFix;
 	double m_fps ;
+	long   previousEndFrame;
 	D3DTEXTUREFILTERTYPE m_Filter;
 	bool m_bfirstFrame;
 };
