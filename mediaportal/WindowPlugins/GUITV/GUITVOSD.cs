@@ -1281,7 +1281,7 @@ namespace MediaPortal.GUI.TV
 					ShowPrograms();
 					updateProperties=true;
 				}
-				else if (previousProgram.Start!=prog.Start)
+				else if (previousProgram.Start!=prog.Start || previousProgram.Channel != prog.Channel)
 				{
 					m_dateTime=DateTime.Now;
 					previousProgram=prog.Clone();
