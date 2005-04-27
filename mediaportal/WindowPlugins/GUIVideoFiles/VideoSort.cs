@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Collections;
 using MediaPortal.GUI.Library;
 
@@ -91,6 +92,35 @@ namespace MediaPortal.GUI.Video
 					{
 						return String.Compare(item2.DVDLabel, item1.DVDLabel, true);
 					}
+				case SortMethod.Size:
+					if (item1.FileInfo==null) return -1;
+					if (item2.FileInfo==null) return -1;
+					if (sortAscending)
+					{
+						return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+					}
+					else
+					{
+						return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+					}
+
+        
+
+				case SortMethod.Date:
+					if (item1.FileInfo==null) return -1;
+					if (item2.FileInfo==null) return -1;
+          
+					item1.Label2 =item1.FileInfo.CreationTime.ToShortDateString() + " "+item1.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					item2.Label2 =item2.FileInfo.CreationTime.ToShortDateString() + " "+item2.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					if (sortAscending)
+					{
+						return DateTime.Compare(item1.FileInfo.CreationTime,item2.FileInfo.CreationTime);
+					}
+					else
+					{
+						return DateTime.Compare(item2.FileInfo.CreationTime,item1.FileInfo.CreationTime);
+					}
+
 
 			} 
 			return 0;
