@@ -11,8 +11,8 @@
      <control>
       <type>image</type>
     	<id>0</id>
-    	<posX>405</posX>
-    	<posY>390</posY>
+    	<posX>368</posX>
+    	<posY>368</posY>
     	<width>310</width>
     	<height>180</height>
     	<texture>dialog_background.png</texture>
@@ -21,8 +21,8 @@
   		<description>Heading text label</description>
   		<type>label</type>
   		<id>4</id>
-  		<posX>420</posX>
-  		<posY>403</posY>
+  		<posX>398</posX>
+  		<posY>381</posY>
   		<label>181</label>
   		<textcolor>FF000000</textcolor>
   	</control>
@@ -30,8 +30,8 @@
   		<description>Exit button</description>
   		<type>button</type>
   		<id>2</id>
-  		<posX>679</posX>
-  		<posY>402</posY>
+  		<posX>642</posX>
+  		<posY>380</posY>
   		<width>22</width>
   		<height>22</height>
   		<textureFocus>exitfocus.png</textureFocus>
@@ -46,8 +46,8 @@
   		<description>options listcontrol</description>
   		<type>listcontrol</type>
   		<id>3</id>
-  		<posX>425</posX>
-  		<posY>445</posY>
+  		<posX>388</posX>
+  		<posY>423</posY>
   		<width>272</width>
   		<height>115</height>
   		<onleft>2</onleft>

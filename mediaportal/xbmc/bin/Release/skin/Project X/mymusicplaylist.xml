@@ -78,7 +78,7 @@
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
-				<onup>21</onup>
+				<onup>26</onup>
 				<ondown>20</ondown>
 			</control>
 			<control>
@@ -186,7 +186,7 @@
 			<control>
 				<description>composite control consisting of a list control and a thumbnail panel</description>
 			    <type>facadeview</type>
-			    <id>50</id>			
+			    <id>50</id>
 				<control>
 					<description>listcontrol</description>
 					<type>listcontrol</type>
@@ -235,4 +235,4 @@
 			</control>
 		</control>
 	</controls>
-</window>		
+</window>

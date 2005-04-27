@@ -52,8 +52,8 @@
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>260</posX>
-			<posY>530</posY>
+			<posX>360</posX>
+			<posY>533</posY>
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
@@ -155,7 +155,7 @@
 			<control>
 				<description>composite control consisting of a list control and a thumbnail panel</description>
 			    <type>facadeview</type>
-			    <id>50</id>			
+			    <id>50</id>
 			        <control>
 				        <description>listcontrol</description>
 				        <type>listcontrol</type>
@@ -183,7 +183,7 @@
 				        <onup>2</onup>
 				        <ondown>2</ondown>
 			        </control>
-		    </control>	
-		</control>	
+		    </control>
+		</control>
 	</controls>
 </window>

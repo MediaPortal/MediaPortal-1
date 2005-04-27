@@ -116,7 +116,7 @@
 				<width>150</width>
 				<height>32</height>
 				<label>602</label>
-				<onup>13</onup>
+				<onup>11</onup>
 				<ondown>9</ondown>
 				<onright>99</onright>
 			</control>

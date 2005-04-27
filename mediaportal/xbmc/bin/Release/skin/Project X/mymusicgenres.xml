@@ -68,10 +68,21 @@
 		<control>
 			<description>View text label</description>
 			<type>label</type>
+			<id>1</id>
+			<posX>250</posX>
+			<posY>70</posY>
+			<label>#view</label>
+			<font>font16</font>
+			<align>right</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<description>genre name text label</description>
+			<type>label</type>
 			<id>15</id>
 			<posX>260</posX>
 			<posY>50</posY>
-			<label>#view</label>
+			<label>132</label>
 			<font>font16</font>
 			<align>left</align>
 			<textcolor>FFB2D4F5</textcolor>
@@ -89,7 +100,7 @@
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
-				<onup>21</onup>
+				<onup>9</onup>
 				<ondown>3</ondown>
 			</control>
 			<control>
@@ -174,7 +185,7 @@
 			<control>
 				<description>composite control consisting of a list control and a thumbnail panel</description>
 			    <type>facadeview</type>
-			    <id>50</id>			
+			    <id>50</id>
 				<control>
 					<description>listcontrol</description>
 					<type>listcontrol</type>
@@ -223,4 +234,4 @@
 			</control>
 		</control>
 	</controls>
-</window>		
+</window>

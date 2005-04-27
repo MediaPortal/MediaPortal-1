@@ -78,7 +78,7 @@
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
-				<onup>21</onup>
+				<onup>25</onup>
 				<ondown>20</ondown>
 			</control>
 		 	<control>
@@ -92,12 +92,12 @@
 		 		<onleft>20</onleft>
 		 		<onright>50</onright>
 				<onup>2</onup>
-				<ondown>26</ondown>
+				<ondown>21</ondown>
 			</control>
 		 	<control>
 				<description>Save button</description>
 				<type>button</type>
-				<id>26</id>
+				<id>21</id>
 				<posX>60</posX>
 				<posY>165</posY>
 				<label>190</label>
@@ -165,23 +165,37 @@
 			<description>group element</description>
 			<animation>FlyInFromTop</animation>
 			<control>
-				<description>listcontrol</description>
-				<type>listcontrol</type>
-				<id>50</id>
-				<onleft>51</onleft>
-				<onright>51</onright>
-				<onup>2</onup>
-				<ondown>2</ondown>
-			</control>
-			<control>
-				<description>Thumbnail Panel</description>
-				<type>thumbnailpanel</type>
-				<id>51</id>
-				<onleft>2</onleft>
-				<onright>2</onright>
-				<onup>2</onup>
-				<ondown>2</ondown>
-			</control>
+				<description>composite control consisting of a list control and a thumbnail panel</description>
+			    <type>facadeview</type>
+			    <id>50</id>
+			        <control>
+				        <description>listcontrol</description>
+				        <type>listcontrol</type>
+				        <id>50</id>
+				        <onleft>2</onleft>
+				        <onright>2</onright>
+				        <onup>2</onup>
+				        <ondown>2</ondown>
+			        </control>
+			        <control>
+				        <description>Thumbnail Panel</description>
+				        <type>thumbnailpanel</type>
+				        <id>50</id>
+				        <onleft>2</onleft>
+				        <onright>2</onright>
+				        <onup>2</onup>
+				        <ondown>2</ondown>
+			        </control>
+			        <control>
+				        <description>Filmstrip view</description>
+				        <type>filmstrip</type>
+				        <id>50</id>
+				        <onleft>2</onleft>
+				        <onright>2</onright>
+				        <onup>2</onup>
+				        <ondown>2</ondown>
+			        </control>
+		    </control>
 		</control>
 	</controls>
 </window>
