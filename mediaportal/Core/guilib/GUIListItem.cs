@@ -468,6 +468,11 @@ namespace MediaPortal.GUI.Library
       m_bArtRetrieved=true;
       if (OnRetrieveArt!=null) OnRetrieveArt(this);
     }
+		public void RefreshCoverArt()
+		{
+			FreeIcons();
+			m_bArtRetrieved=false;
+		}
     
     
     /// <summary>

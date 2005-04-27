@@ -523,5 +523,20 @@ namespace MediaPortal.GUI.Library
 				return null;
 			}
 		}
+		public void RefreshCoverArt()
+		{
+			GUIListItem item;
+			for (int i=0; i < Count; ++i)
+			{
+				if (m_FilmStripView!=null)
+					m_FilmStripView[i].RefreshCoverArt();
+				if (m_ListView!=null)
+					m_ListView[i].RefreshCoverArt();
+				if (m_ThumbnailView!=null)
+					m_ThumbnailView[i].RefreshCoverArt();
+				if (m_ListAlbumView!=null)
+					m_ListAlbumView[i].RefreshCoverArt();
+			}
+		}
 	}
 }

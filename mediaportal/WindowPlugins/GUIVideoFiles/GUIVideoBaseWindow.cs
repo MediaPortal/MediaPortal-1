@@ -242,6 +242,7 @@ namespace MediaPortal.GUI.Video
 				if (actionType == Action.ActionType.ACTION_SHOW_INFO) 
 				{
 					OnInfo(iItem);
+					facadeView.RefreshCoverArt();
 				}
 				if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
 				{

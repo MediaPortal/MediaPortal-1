@@ -697,6 +697,7 @@ namespace MediaPortal.GUI.Music
 				{
 					if (pItem.Path!=String.Empty) OnInfoFolder(pItem);
 				}
+				facadeView.RefreshCoverArt();
 				return;
 			}
 			else if (song.songId>=0)
@@ -712,6 +713,8 @@ namespace MediaPortal.GUI.Music
 			{
 				ShowArtistInfo(song.Artist,song.Album, song.artistId, song.albumId);
 			}
+			facadeView.RefreshCoverArt();
+			
 		}
 		
 		protected virtual void ShowArtistInfo(string artistName, string albumName, int artistId, int albumId)
