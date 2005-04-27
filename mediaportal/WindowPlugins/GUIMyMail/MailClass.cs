@@ -810,7 +810,7 @@ namespace MyMail
 				foreach(System.IO.FileInfo fInfo in fInfoList)
 					list.Add(fInfo);
 				//ArrayList list=new ArrayList();
-				list.Sort(new CompareCreationTime());
+				list.Sort(new CompareModificationTime());
 				theMailFileList=new System.IO.FileInfo[list.Count];
 				int c=0;
 				foreach(System.IO.FileInfo fInfo in list)
@@ -1439,15 +1439,15 @@ namespace MyMail
 		}
 
 	}
-	public class CompareCreationTime : System.Collections.IComparer
+	public class CompareModificationTime : System.Collections.IComparer
 	{
 		public int Compare(object objA,object objB)// : System.Collections.IComparer
 		{
 			System.IO.FileInfo fInfoA=(System.IO.FileInfo)objA;
 			System.IO.FileInfo fInfoB=(System.IO.FileInfo)objB;
-			if(fInfoA.CreationTime>fInfoB.CreationTime) return -1;
-			if(fInfoA.CreationTime==fInfoB.CreationTime) return 0;
-			if(fInfoA.CreationTime<fInfoB.CreationTime) return 1;
+			if(fInfoA.LastWriteTime>fInfoB.LastWriteTime) return -1;
+			if(fInfoA.LastWriteTime==fInfoB.LastWriteTime) return 0;
+			if(fInfoA.LastWriteTime<fInfoB.LastWriteTime) return 1;
 			return 0;
 		}
 

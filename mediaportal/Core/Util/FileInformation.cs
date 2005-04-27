@@ -10,11 +10,13 @@ namespace Core.Util
   {
     long      length=0;
     DateTime  creationTime=DateTime.MinValue;
+		DateTime  modificationTime=DateTime.MinValue;
     string    name=String.Empty;
 
     public FileInformation()
     {
     }
+
     public FileInformation(string file)
     {
       System.IO.FileInfo info = new System.IO.FileInfo(file);
@@ -23,10 +25,12 @@ namespace Core.Util
       try
       {
         CreationTime=info.CreationTime;
+				ModificationTime=info.LastWriteTime;
       }
       catch(Exception)
       {
-        creationTime=DateTime.MinValue;
+				creationTime=DateTime.MinValue;
+				ModificationTime=DateTime.MinValue;
       }
     }
     public long Length
@@ -44,6 +48,11 @@ namespace Core.Util
     {
       get { return creationTime;}
       set { creationTime=value;}
-    }
+		}
+		public DateTime ModificationTime
+		{
+			get { return modificationTime;}
+			set { modificationTime=value;}
+		}
  	}
 }

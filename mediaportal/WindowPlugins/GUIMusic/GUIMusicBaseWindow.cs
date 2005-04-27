@@ -555,7 +555,7 @@ namespace MediaPortal.GUI.Music
 				{
 					if (item.FileInfo!=null)
 					{
-						item.Label2 =item.FileInfo.CreationTime.ToShortDateString() + " "+item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+						item.Label2 =item.FileInfo.ModificationTime.ToShortDateString() + " "+item.FileInfo.ModificationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
 					}
 				}
 				else if (method != MusicSort.SortMethod.Rating)

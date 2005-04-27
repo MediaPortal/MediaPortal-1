@@ -110,15 +110,15 @@ namespace MediaPortal.GUI.Video
 					if (item1.FileInfo==null) return -1;
 					if (item2.FileInfo==null) return -1;
           
-					item1.Label2 =item1.FileInfo.CreationTime.ToShortDateString() + " "+item1.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
-					item2.Label2 =item2.FileInfo.CreationTime.ToShortDateString() + " "+item2.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					item1.Label2 =item1.FileInfo.ModificationTime.ToShortDateString() + " "+item1.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					item2.Label2 =item2.FileInfo.ModificationTime.ToShortDateString() + " "+item2.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
 					if (sortAscending)
 					{
-						return DateTime.Compare(item1.FileInfo.CreationTime,item2.FileInfo.CreationTime);
+						return DateTime.Compare(item1.FileInfo.ModificationTime,item2.FileInfo.CreationTime);
 					}
 					else
 					{
-						return DateTime.Compare(item2.FileInfo.CreationTime,item1.FileInfo.CreationTime);
+						return DateTime.Compare(item2.FileInfo.ModificationTime,item1.FileInfo.CreationTime);
 					}
 
 

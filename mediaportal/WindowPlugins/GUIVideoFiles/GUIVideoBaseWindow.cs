@@ -377,7 +377,7 @@ namespace MediaPortal.GUI.Video
 				{
 					string strSize1 = String.Empty,strDate=String.Empty;
 					if (item.FileInfo != null) strSize1 = Utils.GetSize(item.FileInfo.Length);
-					if (item.FileInfo != null) strDate = item.FileInfo.CreationTime.ToShortDateString() + " " + item.FileInfo.CreationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
+					if (item.FileInfo != null) strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat);
 					if (CurrentSortMethod==VideoSort.SortMethod.Name)
 						item.Label2 = strSize1;
 					else if (CurrentSortMethod==VideoSort.SortMethod.Date)
