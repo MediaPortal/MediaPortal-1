@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.TV
 						//if we're watching tv
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 					}
-					else if (g_Player.Playing && (g_Player.IsTVRecording||g_Player.IsTV))
+					else if (g_Player.Playing  && g_Player.IsTV && !g_Player.IsTVRecording)
 					{
 						//if we're watching a tv recording
 						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);

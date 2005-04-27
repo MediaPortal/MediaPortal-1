@@ -1226,7 +1226,7 @@ public class MediaPortalApp : D3DApp, IRender
 							GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 							if (win.FullScreenVideoAllowed)
 							{
-								if (!g_Player.IsTV)
+								if (!g_Player.IsTV || g_Player.IsTVRecording)
 								{
 									if (g_Player.HasVideo)
 									{

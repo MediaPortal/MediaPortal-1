@@ -222,7 +222,7 @@ namespace MediaPortal.GUI.Video
                                 Utils.GetShortDayString(recording.StartTime) , 
                                 Utils.SecondsToHMString((int)ts.TotalSeconds));
           GUIPropertyManager.SetProperty("#title",recording.Title);
-          GUIPropertyManager.SetProperty("#plot",recording.Description);
+          GUIPropertyManager.SetProperty("#plot",recording.Title+"\n"+recording.Description);
           GUIPropertyManager.SetProperty("#plotoutline",recording.Description);
           GUIPropertyManager.SetProperty("#genre", recording.Genre);
           GUIPropertyManager.SetProperty("#year",strTime);
