@@ -974,6 +974,8 @@ namespace MediaPortal.GUI.TV
 		public bool CheckChannelChange()
 		{
 			if (GUIGraphicsContext.InVmr9Render) return false;
+			UpdateCurrentChannel();
+
 			// Zapping to another group or channel?
 			if (m_zapgroup != -1 || m_zapchannel != null)
 			{
@@ -993,7 +995,7 @@ namespace MediaPortal.GUI.TV
 					}
 					m_zapgroup = -1;
 
-          lastViewedChannel = m_currentchannel;
+					lastViewedChannel = m_currentchannel;
 					// Zap to desired channel
 					Log.Write("Channel change:{0}",m_zapchannel);
 					GUITVHome.ViewChannel(m_zapchannel);
