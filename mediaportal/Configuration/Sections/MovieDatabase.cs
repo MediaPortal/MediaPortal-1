@@ -1767,6 +1767,7 @@ namespace MediaPortal.Configuration.Sections
 		private void buttonAddFile_Click(object sender, System.EventArgs e)
 		{
 			System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+      find_file.RestoreDirectory = true;
 			find_file.DefaultExt = "avi";
 			find_file.Filter = "Avi Files|*.avi|Recordings|*.dvr-ms|Mpeg files|*.mpeg|Mpeg files|*.mpg|Windows Media|*.wmv|All files|*.*";
 			find_file.InitialDirectory = ".";

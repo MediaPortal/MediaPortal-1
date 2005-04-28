@@ -71,6 +71,7 @@ namespace MediaPortal.TV.Recording
 			currentIndex=-1;
 
 			OpenFileDialog ofd =new OpenFileDialog();
+      ofd.RestoreDirectory = true;
 			ofd.Filter = "Transponder-Listings (*.tpl)|*.tpl";
 			ofd.Title = "Choose Transponder-Listing Files";
 			DialogResult res=ofd.ShowDialog();

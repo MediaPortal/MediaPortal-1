@@ -2661,6 +2661,7 @@ namespace MediaPortal.Configuration.Sections
 											bool quit=false;
 											//Build open dialog for user to find file
 											System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+                      find_file.RestoreDirectory = true;
 											find_file.DefaultExt = "dvr-ms";
 											find_file.Filter = "dvr-ms|*.dvr-ms";
 											find_file.InitialDirectory = ".";
@@ -2701,6 +2702,7 @@ namespace MediaPortal.Configuration.Sections
 										bool quit=false;
 										//Build open dialog for user to find file
 										System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+                    find_file.RestoreDirectory = true;
 										find_file.DefaultExt = "dvr-ms";
 										find_file.Filter = "dvr-ms|*.dvr-ms";
 										find_file.InitialDirectory = ".";
@@ -2915,6 +2917,8 @@ namespace MediaPortal.Configuration.Sections
 		}
 		private void xmlExport_Click_1(object sender, System.EventArgs e)
 		{
+
+      XMLSaveDialog.RestoreDirectory = true;
 			if(XMLSaveDialog.ShowDialog(this)==DialogResult.OK)
 			{
 				Export_to_XML(XMLSaveDialog.FileName.ToString());
@@ -2923,6 +2927,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void xmlImport_Click_1(object sender, System.EventArgs e)
 		{
+      XMLOpenDialog.RestoreDirectory = true;
 			if(XMLOpenDialog.ShowDialog(this)==DialogResult.OK)
 			{
 				Import_From_XML(XMLOpenDialog.FileName.ToString());

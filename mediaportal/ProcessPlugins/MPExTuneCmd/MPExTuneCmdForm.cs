@@ -185,7 +185,7 @@ namespace MediaPortal.MPExTuneCmd
 			// The filter for the dialog window is foobar2000.exe
 
 			OpenFileDialog dlg = new OpenFileDialog();
-
+      dlg.RestoreDirectory = true;
 			dlg.AddExtension = true;
 
 			dlg.Filter = "dtvcmd (dtvcmd.exe)|dtvcmd.exe|dtvcl (dtvcl.exe)|dtvcl.exe|All files (*.*)|*.*" ;
