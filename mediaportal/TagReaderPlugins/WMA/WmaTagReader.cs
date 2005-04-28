@@ -13,6 +13,11 @@ namespace MediaPortal.TagReader.WmaTagReader
     {
       // nothing to do here
     }
+
+    public override int Priority
+    {
+      get { return 2; }
+    }
     /// <summary>
     /// Returns true if the file is supported.
     /// </summary>

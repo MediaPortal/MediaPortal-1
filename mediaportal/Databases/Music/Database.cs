@@ -472,9 +472,9 @@ namespace MediaPortal.Music.Database
       {
         Song song = song1.Clone();
         string strTmp;
-        strTmp = song.Album; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Album = strTmp;
-        strTmp = song.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Genre = strTmp;
-        strTmp = song.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Artist = strTmp;
+//        strTmp = song.Album; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Album = strTmp;
+//        strTmp = song.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Genre = strTmp;
+//        strTmp = song.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Artist = strTmp;
         strTmp = song.Title; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Title = strTmp;
 				strTmp = song.FileName; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.FileName = strTmp;
 
@@ -1354,9 +1354,9 @@ namespace MediaPortal.Music.Database
 			{
 				AlbumInfo album = album1.Clone();
 				string strTmp;
-				strTmp = album.Album; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Album = strTmp;
-				strTmp = album.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Genre = strTmp;
-				strTmp = album.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Artist = strTmp;
+//				strTmp = album.Album; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Album = strTmp;
+//				strTmp = album.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Genre = strTmp;
+//				strTmp = album.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Artist = strTmp;
 				strTmp = album.Tones; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Tones = strTmp;
 				strTmp = album.Styles; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Styles = strTmp;
 				strTmp = album.Review; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Review = strTmp;
@@ -1495,7 +1495,7 @@ namespace MediaPortal.Music.Database
       {
         ArtistInfo artist = artist1.Clone();
         string strTmp;
-        strTmp = artist.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); artist.Artist = strTmp;
+        //strTmp = artist.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); artist.Artist = strTmp;
         strTmp = artist.Born; DatabaseUtility.RemoveInvalidChars(ref strTmp); artist.Born = strTmp;
         strTmp = artist.YearsActive; DatabaseUtility.RemoveInvalidChars(ref strTmp); artist.YearsActive = strTmp;
         strTmp = artist.Genres; DatabaseUtility.RemoveInvalidChars(ref strTmp); artist.Genres = strTmp;
