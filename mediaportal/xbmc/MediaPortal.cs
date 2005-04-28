@@ -17,7 +17,7 @@ using System.Globalization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using Microsoft.ApplicationBlocks.ApplicationUpdater;
+//using Microsoft.ApplicationBlocks.ApplicationUpdater;
 
 using MediaPortal.GUI.Library;
 using MediaPortal;
@@ -146,12 +146,15 @@ public class MediaPortalApp : D3DApp, IRender
       {
         form.ShowDialog();
       }
-
+#if AUTOUPDATE
 			ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
+#endif
 #if !DEBUG
 			splashScreen = new SplashScreen();
+#if AUTOUPDATE
 			splashScreen.SetVersion(clientInfo.InstalledVersion);
-			splashScreen.Show();
+#endif
+            splashScreen.Show();
 			splashScreen.Update();
 #endif
       Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
@@ -528,6 +531,7 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 #if DEBUG
 #else
+#if AUTOUPDATE
         UpdaterConfiguration config = UpdaterConfiguration.Instance;
 				config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
 				config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
@@ -546,8 +550,6 @@ public class MediaPortalApp : D3DApp, IRender
 				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
 				ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName, clientInfo.InstalledVersion);
-
-#if AUTOUPDATE
 				m_strCurrentVersion = clientInfo.InstalledVersion;
 				Text += (" - [v" + m_strCurrentVersion + "]");
 				//  make an Updater for use in-process with us
@@ -591,7 +593,7 @@ public class MediaPortalApp : D3DApp, IRender
           float fStep = (GUIGraphicsContext.Width - 100);
           fStep /= (2f * 16f);
 
-          fStep /= framePerSecond;
+          fStep /= GUIGraphicsContext.CurrentFPS;
           m_iFrameCount++;
           if (m_iFrameCount >= (int)fStep)
           {

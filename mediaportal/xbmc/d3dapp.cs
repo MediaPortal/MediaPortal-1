@@ -49,6 +49,9 @@ namespace MediaPortal
     private float lastTime = 0.0f; // The last time
     protected int frames = 0; // Number of frames since our last update
 
+    float lastframetime = 0.0f;
+    float curframetime = 0.0f;
+    float deltatime = 0.0f;
     // We need to keep track of our enumeration settings
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
     protected D3DSettings graphicsSettings = new D3DSettings();
@@ -87,7 +90,7 @@ namespace MediaPortal
     // Variables for timing
     protected float appTime;             // Current time in seconds
     protected float elapsedTime;      // Time elapsed since last frame
-    protected float framePerSecond=25;              // Instanteous frame rate
+//    protected float framePerSecond=25;              // Instanteous frame rate
     protected string deviceStats;// String to hold D3D device stats
     protected string frameStats; // String to hold frame stats
 
@@ -1317,17 +1320,17 @@ namespace MediaPortal
       // Update the scene stats once per second
       if (time - lastTime >= 0.01f)
       {
-        framePerSecond    = frames / (time - lastTime);
-				GUIGraphicsContext.CurrentFPS=framePerSecond;
+//        framePerSecond    = frames / (time - lastTime);
+//				GUIGraphicsContext.CurrentFPS=framePerSecond;
         lastTime = time;
         frames  = 0;
-				if ( !GUIGraphicsContext.Vmr9Active )
-				{
-					if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
-					if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
-					if (m_iSleepingTime<0) m_iSleepingTime=0;
-					if (m_iSleepingTime>100) m_iSleepingTime=100;
-				}
+//				if ( !GUIGraphicsContext.Vmr9Active )
+//				{
+//					if (framePerSecond>GUIGraphicsContext.MaxFPS) m_iSleepingTime++;
+//					if (framePerSecond<GUIGraphicsContext.MaxFPS) m_iSleepingTime--;
+//					if (m_iSleepingTime<0) m_iSleepingTime=0;
+//					if (m_iSleepingTime>100) m_iSleepingTime=100;
+//				}
 
         string strFmt;
         Format fmtAdapter = graphicsSettings.DisplayMode.Format;
@@ -1368,7 +1371,7 @@ namespace MediaPortal
           default: strMultiSample = string.Empty; break;
         }
         frameStats = String.Format("{0} fps ({1}x{2}), {3} {4}{5}{6} {7}", 
-                                    framePerSecond.ToString("f2"),
+                                    GUIGraphicsContext.CurrentFPS.ToString("f2"),
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, 
                                     GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight, 
                                     GetSleepingTime(),strFmt, strDepthFmt, strMultiSample,ShouldUseSleepingTime());
@@ -2176,24 +2179,38 @@ namespace MediaPortal
       storedSize=this.ClientSize;
       storedLocation=this.Location ;
 
+      lastframetime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
       while(true)
       {
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           break;
         try
         {
-					OnProcess();
-          FrameMove();
-          FullRender();
-          int SleepingTime=GetSleepingTime();
-					if (g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-					{
-						//dont sleep
-					}
-					else
-					{
-						DoSleep(SleepingTime);
-					}
+            OnProcess();
+            FrameMove();
+            FullRender();
+            if (ShouldUseSleepingTime())
+            {
+                curframetime = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+                deltatime = curframetime - lastframetime;
+                GUIGraphicsContext.CurrentFPS = 1f / ((float)deltatime);
+                m_iSleepingTime = (int)((1000f / ((float)GUIGraphicsContext.MaxFPS)) - ((float)deltatime));
+                if (m_iSleepingTime < 0) m_iSleepingTime = 0;
+                lastframetime = curframetime;
+                if (g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+                {
+                    //dont sleep
+                }
+                else if (m_iSleepingTime>0)
+                {
+                    DoSleep(m_iSleepingTime);
+                }
+            }
+            else
+            {
+                GUIGraphicsContext.CurrentFPS = 0f;
+                DoSleep(100);
+            }
           HandleMessage();
         }
         catch(Exception ex)
