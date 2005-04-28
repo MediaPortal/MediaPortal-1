@@ -173,7 +173,23 @@ namespace MediaPortal.GUI.Music
 				sql=String.Format("select distinct {0}.* from song,album,genre,artist,path {1} {2}",
 													table,whereClause,orderClause);
 				database.GetSongsByFilter(sql, out songs,useArtistTable, useAlbumTable, useSongTable, useGenreTable);
-				
+
+        if (table == "album")
+        {
+            ArrayList albums = new ArrayList();
+            database.GetAlbums(ref albums);
+            foreach (Song song in songs)
+            {
+              foreach (AlbumInfo album in albums)
+              {
+                if (song.Album.Equals(album.Album))
+                {
+                  song.Artist = album.Artist;
+                  break;
+                }
+              }
+            }
+        }
 			}
 			else
 			{
@@ -261,6 +277,20 @@ namespace MediaPortal.GUI.Music
 			if (where=="favorites") return "favorite";
 			return null;
 		}
+
+        string SetField(Song song, string where, string newValue)
+        {
+            if (where == "album")  song.Album=newValue;
+            if (where == "artist")  song.Artist=newValue;
+            if (where == "title")  song.Title=newValue;
+            if (where == "genre")  song.Genre=newValue;
+            if (where == "year")  song.Year=Int32.Parse(newValue);
+            if (where == "track")  song.Track=Int32.Parse(newValue);
+            if (where == "timesplayed") song.TimesPlayed = Int32.Parse(newValue);
+            if (where == "rating") song.Rating = Int32.Parse(newValue);
+            if (where == "favorites") song.Favorite = (Int32.Parse(newValue)!=0);
+            return null;
+        }
 		string GetFieldId(string where)
 		{
 			if (where=="album") return "album.idAlbum";
@@ -304,6 +334,7 @@ namespace MediaPortal.GUI.Music
 			}
 			return -1;
 		}
+
 
 		public void SetLabel(Song song,ref GUIListItem item)
 		{
