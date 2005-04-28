@@ -387,7 +387,7 @@ namespace MediaPortal.GUI.Music
 					tag.Rating=song.Rating;
           item.Duration = tag.Duration;
           item.Rating = song.Rating;
-          item.Year=song.Year
+          item.Year = song.Year;
 					item.AlbumInfoTag = song;
 					item.MusicTag=tag;
           item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
