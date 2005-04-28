@@ -60,6 +60,7 @@ namespace MediaPortal.TV.Recording
 			currentIndex=-1;
 
 			OpenFileDialog ofd =new OpenFileDialog();
+      ofd.RestoreDirectory = true;
 			ofd.Filter = "DVBC-Listings (*.dvbc)|*.dvbc";
 			ofd.Title = "Choose DVB-C Listing Files";
 			DialogResult res=ofd.ShowDialog();
