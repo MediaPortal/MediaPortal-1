@@ -255,6 +255,16 @@ namespace MediaPortal.TagReader.ID3
                 //Log.Write (" error reading id3tagv2");
               }
             }
+            try
+            {
+              m_tag.Duration = ReadDuration(s);
+
+            }
+            catch (Exception)
+            {
+              //Log.Write (" error reading id3tagv1");
+            }
+
           }
           catch(Exception)
           {
