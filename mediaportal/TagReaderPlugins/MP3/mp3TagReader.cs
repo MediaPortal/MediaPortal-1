@@ -184,7 +184,11 @@ namespace MediaPortal.TagReader.ID3
       if (System.IO.Path.GetExtension(strFileName).ToLower()==".mp3") return true;
       return false;
     }
-
+    
+    public override int Priority
+    {
+      get { return 2; }
+    }
     /// <summary>
     /// Liest die angegebene Datei ein und speichert, so vorhanden, die
     /// ID3v1-Titelinformationen in den Properties der Instanz dieser Klasse.

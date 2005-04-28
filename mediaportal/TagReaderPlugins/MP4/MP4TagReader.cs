@@ -19,6 +19,11 @@ namespace MediaPortal.TagReader.MP4
 			// TODO: Add constructor logic here
 			//
 		}
+
+    public override int Priority
+    {
+      get { return 2; }
+    }
 		public override bool SupportsFile(string strFileName)
 		{
 			if (System.IO.Path.GetExtension(strFileName).ToLower()==".m4a") return true;

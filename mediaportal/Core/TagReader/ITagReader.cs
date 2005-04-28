@@ -17,6 +17,10 @@ namespace MediaPortal.TagReader
     {
     }
 
+    public virtual int Priority
+    {
+      get { return 0; }
+    }
 		/// <summary>
 		/// This method is called by mediaportal when it needs information about a media file
 		/// The method should look if it can read the media tags for the given file and return

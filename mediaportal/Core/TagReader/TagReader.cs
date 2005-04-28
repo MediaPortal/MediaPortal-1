@@ -72,7 +72,17 @@ namespace MediaPortal.TagReader
 		/// </returns>
     static public MusicTag ReadTag(string strFile)
     {
-      foreach (ITagReader reader in m_readers)
+      ITagReader reader = null;
+      int prio = -1;
+      foreach (ITagReader tmpReader in m_readers)
+      {
+        if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)
+        {
+          prio = tmpReader.Priority;
+          reader = tmpReader;
+        }
+      }
+      if (reader!=null)
       {
         try
         {
