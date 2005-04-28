@@ -27,7 +27,7 @@ namespace MediaPortal.Playlists
     static PlayList		  m_PlaylistVideo=new PlayList();
     static PlayList		  m_PlaylistVideoTemp=new PlayList();
     static PlayList		  m_PlaylistEmpty=new PlayList();
-    static bool         m_bRepeat=true;
+    static bool         repeatPlaylist=true;
 
     // singleton. Dont allow any instance of this class
     private PlayListPlayer()
@@ -109,13 +109,10 @@ namespace MediaPortal.Playlists
           return String.Empty;
         }
 
-        if (m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC||m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC_TEMP)
-        {
-          if (!m_bRepeat)
+          if (!repeatPlaylist)
           {
             return  String.Empty;;
           }
-        }
         iSong=0;
       }
 
@@ -150,13 +147,10 @@ namespace MediaPortal.Playlists
           return String.Empty;
         }
 
-        if (m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC||m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC_TEMP)
-        {
-          if (!m_bRepeat)
+          if (!repeatPlaylist)
           {
             return  String.Empty;;
           }
-        }
         iSong=0;
       }
 
@@ -183,14 +177,11 @@ namespace MediaPortal.Playlists
           return;
         }
 
-        if (m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC||m_iCurrentPlayList==PlayListType.PLAYLIST_MUSIC_TEMP)
-        {
-          if (!m_bRepeat)
+          if (!repeatPlaylist)
           {
             m_iCurrentPlayList=PlayListType.PLAYLIST_NONE;
             return;
           }
-        }
         iSong=0;
       }
 
@@ -320,11 +311,11 @@ namespace MediaPortal.Playlists
           {
             if (value==PlayListType.PLAYLIST_MUSIC||value==PlayListType.PLAYLIST_MUSIC_TEMP)
             {
-              m_bRepeat=xmlreader.GetValueAsBool("musicfiles","repeat",true);
+              repeatPlaylist=xmlreader.GetValueAsBool("musicfiles","repeat",true);
             }
             else
             {
-              m_bRepeat=xmlreader.GetValueAsBool("movies","repeat",true);
+              repeatPlaylist=xmlreader.GetValueAsBool("movies","repeat",true);
             }
           }
         }
