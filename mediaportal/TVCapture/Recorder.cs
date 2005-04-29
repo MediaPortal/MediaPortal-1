@@ -844,10 +844,13 @@ namespace MediaPortal.TV.Recording
 				}
 
 				//if card is not recording, then stop the card
-				if (dev.IsTimeShifting || dev.View || dev.IsRadio)
+				if (!dev.IsRecording)
 				{
-					Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop card:{0}", dev.ID);
-					dev.Stop();
+					if (dev.IsTimeShifting || dev.View || dev.IsRadio)
+					{
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop card:{0}", dev.ID);
+						dev.Stop();
+					}
 				}
 			}
 		}
