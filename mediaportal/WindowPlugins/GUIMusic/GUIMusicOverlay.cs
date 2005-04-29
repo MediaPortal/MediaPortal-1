@@ -22,7 +22,7 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicOverlay: GUIOverlayWindow
   {
-    string m_strFile="";
+    string m_strFile=String.Empty;
     int                 m_iFrames=0;
     int                 m_iPosOrgIcon=0;
     int                 m_iPosOrgPlay=0;
@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Music
     int                 m_iPosXRect=0;
     int                 m_iPosYRect=0;
     int                 m_iFrame=0;
-		string							m_strThumb="";
+		string							m_strThumb=String.Empty;
     enum Controls
     {
       CONTROL_LOGO_RECT    =0
@@ -407,7 +407,7 @@ namespace MediaPortal.GUI.Music
         }
         catch(Exception)
         {
-          m_strFile="";
+          m_strFile=String.Empty;
         }
       }
       base.Render(timePassed);
@@ -432,8 +432,8 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.RemovePlayerProperties();
       m_iFrames=0;
       string skin = GUIGraphicsContext.Skin;
-      GUIPropertyManager.SetProperty("#thumb","");
-      GUIPropertyManager.SetProperty("#thumbnext","");
+      GUIPropertyManager.SetProperty("#thumb",String.Empty);
+      GUIPropertyManager.SetProperty("#thumbnext",String.Empty);
 
       base.RestoreControlPosition((int)Controls.CONTROL_LOGO_PIC);
 
@@ -492,7 +492,7 @@ namespace MediaPortal.GUI.Music
       }
 
       tag=null;
-      thumb="";
+      thumb=String.Empty;
       tag=GetInfo(strFile, out thumb);
 
       GUIPropertyManager.SetProperty("#thumbNext",thumb);
@@ -539,7 +539,7 @@ namespace MediaPortal.GUI.Music
     MusicTag GetInfo(string strFile , out string thumb)
     {
       string skin = GUIGraphicsContext.Skin;
-      thumb="";
+      thumb=String.Empty;
       MusicTag tag=null;
 			Song song=new Song();
 			bool bFound=false;
