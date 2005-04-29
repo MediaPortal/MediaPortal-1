@@ -1,5 +1,6 @@
 //#define AUTOUPDATE
 using System;
+using System.Text;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
@@ -89,6 +90,7 @@ public class MediaPortalApp : D3DApp, IRender
     const int WM_SYSCOMMAND = 0x0112;
     const int SC_SCREENSAVE = 0xF140;
     const int SW_RESTORE = 9;
+    const int WM_CLOSE = 0x0010;
     bool supportsFiltering = false;
     bool bSupportsAlphaBlend = false;
     int g_nAnisotropy;
@@ -97,14 +99,34 @@ public class MediaPortalApp : D3DApp, IRender
 
     static SplashScreen splashScreen;
 
+    public delegate bool IECallBack(int hwnd, int lParam);
+    const int SW_SHOWNORMAL = 1;
     [DllImport("user32.dll")]
-    private static extern
-bool SetForegroundWindow(IntPtr hWnd);
+    public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
     [DllImport("user32.dll")]
-    private static extern
-bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [DllImport("user32.Dll")]
+    public static extern int EnumWindows(IECallBack x, int y);
+    [DllImport("User32.Dll")]
+    public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
+    [DllImport("User32.Dll")]
+    public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
 
 
+  private bool EnumWindowCallBack(int hwnd, int lParam)
+  {
+    IntPtr windowHandle = (IntPtr)hwnd;
+    StringBuilder sb = new StringBuilder(1024);
+    GetWindowText((int)windowHandle, sb, sb.Capacity);
+    string window = sb.ToString().ToLower();
+    if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
+    {
+      ShowWindow(windowHandle, SW_SHOWNORMAL);
+    }
+    return true;
+  }
     //NProf doesnt work if the [STAThread] attribute is set
     //but is needed when you want to play music or video
     [STAThread]
@@ -363,30 +385,8 @@ bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
         {
             Log.Write("  Check if mediaportal is already running...");
             string strMsg = "Mediaportal is already running!";
-
-            // Find the other instance of MP (use System.Diagnostics. because Process is also a method in this class)
-            string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-            Process[] processes = System.Diagnostics.Process.GetProcessesByName(processName);
-
-            // The array returned from the previous call will contain 2 processes, the already running
-            // process and this process. Figure out what process the running one is and focus that window
-
-            int pid = System.Diagnostics.Process.GetCurrentProcess().Id;
-            Process otherProcess;
-
-            if (processes[0].Id == pid)
-            {
-                otherProcess = processes[1];
-            }
-            else
-            {
-                otherProcess = processes[0];
-            }
-
-            // bring the window of the other process to the foreground
-            IntPtr hWnd = otherProcess.MainWindowHandle;
-            ShowWindowAsync(hWnd, SW_RESTORE);
-            SetForegroundWindow(hWnd);
+            IECallBack ewp = new IECallBack(EnumWindowCallBack);
+            EnumWindows(ewp, 0);
 
             // Exit this process
             throw new Exception(strMsg);
@@ -833,13 +833,13 @@ bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
             GUIGraphicsContext.DX9Device.EndScene();
             try
             {
-                // Show the frame on the primary surface.
-                GUIGraphicsContext.DX9Device.Present();//SLOW
+              // Show the frame on the primary surface.
+              GUIGraphicsContext.DX9Device.Present();//SLOW
             }
             catch (DeviceLostException)
             {
-                g_Player.Stop();
-                deviceLost = true;
+              g_Player.Stop();
+              deviceLost = true;
             }
         }
         finally

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
@@ -20,9 +21,23 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class SettingsForm : System.Windows.Forms.Form
 	{
+    public delegate bool IECallBack(int hwnd, int lParam); 
+
+    const int SW_SHOWNORMAL = 1;
+    const int SW_RESTORE = 9;
     [DllImport("user32.dll")]
     public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
-    
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [DllImport("user32.Dll")]
+    public static extern int EnumWindows(IECallBack x, int y);
+    [DllImport("User32.Dll")]
+    public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
+    [DllImport("User32.Dll")]
+    public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
+
     private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.Button okButton;
 		private MPBeveledLine beveledLine1;
@@ -618,6 +633,8 @@ namespace MediaPortal.Configuration
               //
               // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
               //
+              IECallBack ewp = new IECallBack(EnumWindowCallBack);
+              EnumWindows(ewp, 0);
               process.CloseMainWindow();
   
               //
@@ -641,5 +658,18 @@ namespace MediaPortal.Configuration
         }
       }
 		}
+    private bool EnumWindowCallBack(int hwnd, int lParam)
+    {
+      IntPtr windowHandle = (IntPtr)hwnd;
+      StringBuilder sb = new StringBuilder(1024);
+      GetWindowText((int)windowHandle, sb, sb.Capacity);
+      string window = sb.ToString().ToLower();
+      if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
+      {
+        ShowWindow(windowHandle, SW_SHOWNORMAL);
+      }
+      return true;
+    }
+
 	}
 }

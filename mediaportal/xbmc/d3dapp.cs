@@ -1958,6 +1958,10 @@ namespace MediaPortal
                     this.Hide();
                     return;
                 }
+                else if (notifyIcon1.Visible == true && this.WindowState != FormWindowState.Minimized)
+                {
+                  notifyIcon1.Visible = false;
+                }
             }
 
             active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized);
@@ -2245,8 +2249,8 @@ namespace MediaPortal
         protected void Restore_OnClick(System.Object sender, System.EventArgs e)
         {
             Show();
-            this.WindowState = FormWindowState.Normal;
             notifyIcon1.Visible = false;
+            this.WindowState = FormWindowState.Normal;
             active = true;
         }
         protected void Exit_OnClick(System.Object sender, System.EventArgs e)
