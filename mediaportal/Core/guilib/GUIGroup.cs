@@ -147,7 +147,7 @@ namespace MediaPortal.GUI.Library
     {
       controlID=-1;
       focused=false;
-      for (int i=0; i < m_Controls.Count;++i)
+      for (int i=m_Controls.Count-1 ;  i>=0 ; i--)
       {
         if ( ((GUIControl)m_Controls[i]).HitTest(x,y, out controlID,out  focused) ) return true;
       }

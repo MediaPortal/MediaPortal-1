@@ -994,7 +994,7 @@ namespace MediaPortal.GUI.Library
 
 		protected virtual void OnMouseMove(int cx, int cy, Action action)
 		{
-			for (int i=0; i < controlList.Count;++i)
+			for (int i=controlList.Count-1 ; i>=0 ; i--)
 			{
 				GUIControl control =(GUIControl )controlList[i];
 				bool bFocus;
@@ -1019,7 +1019,7 @@ namespace MediaPortal.GUI.Library
 		}
 		protected virtual void OnMouseClick(int posX, int posY, Action action)
 		{
-			for (int i=0; i < controlList.Count;++i)
+			for (int i=controlList.Count-1 ; i>=0 ; i--)
 			{
 				GUIControl control =(GUIControl )controlList[i];
 				bool bFocus;
