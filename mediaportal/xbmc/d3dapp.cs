@@ -597,7 +597,7 @@ namespace MediaPortal
 
         public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
         {
-            return true;
+            //return true;
             if (bRemoveHandler)
                 GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
             if (bWindowed)
