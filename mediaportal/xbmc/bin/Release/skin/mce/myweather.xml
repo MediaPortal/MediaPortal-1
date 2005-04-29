@@ -506,7 +506,7 @@
 			<height>350</height>
 			<texture></texture>
 			<visible>no</visible>
-			<colorkey>FFFF00FF</colorkey>
+			<colorkey>00000000</colorkey>
 			<colordiffuse>FFFFFFFF</colordiffuse>
 			<filtered>yes</filtered>
 			<centered>yes</centered>
