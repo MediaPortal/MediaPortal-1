@@ -273,7 +273,6 @@ namespace MediaPortal.GUI.TV
 				}
 
 				// turn tv on/off
-				Log.Write("tv home onoff:{0}",Navigator.CurrentChannel);
 				ViewChannelAndCheck(Navigator.CurrentChannel);
 			}
 
@@ -695,7 +694,7 @@ namespace MediaPortal.GUI.TV
 				if ( (g_Player.IsMusic && g_Player.HasVideo) ) return;
 			}
 			ViewChannel(channel);
-			if (Recorder.TVChannelName!=channel)
+			if (Recorder.TVChannelName!=channel && m_bTVON)
 			{
 				GUIDialogOK pDlgOK	= (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 				if (pDlgOK!=null)
@@ -709,8 +708,6 @@ namespace MediaPortal.GUI.TV
 		}
 		static public void ViewChannel(string channel)
 		{
-			Log.Write("GUITVHome.ViewChannel(): View channel={0} {1}", channel, GUIGraphicsContext.InVmr9Render);
-
 			if (g_Player.Playing)
 			{
 				if (g_Player.IsTVRecording) return;
@@ -718,6 +715,11 @@ namespace MediaPortal.GUI.TV
 				if (g_Player.IsDVD) return;
 				if ( (g_Player.IsMusic && g_Player.HasVideo) ) return;
 			}
+			if (m_bTVON)
+				Log.Write("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, m_bTimeShifting);
+			else
+				Log.Write("GUITVHome.ViewChannel(): turn tv off");
+
 			Recorder.StartViewing( channel, m_bTVON, m_bTimeShifting) ;
 			if (Recorder.IsViewing())
 			{

@@ -827,8 +827,8 @@ namespace MediaPortal.TV.Recording
 				return ;
 			}
 
-			Log.WriteFile(Log.LogType.Recorder,"Recorder:StartViewing() channel:{0} tvon:{1} timeshift:{2} {3}",
-										channel,TVOnOff,timeshift, GUIGraphicsContext.InVmr9Render);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder:StartViewing() channel:{0} tvon:{1} timeshift:{2} vmr9:{3}",
+										channel,TVOnOff,timeshift, GUIGraphicsContext.Vmr9Active);
 			TVCaptureDevice dev;
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
