@@ -484,7 +484,27 @@ namespace MediaPortal.GUI.Video
 		protected void OnPlayDVD()
 		{
 			Log.Write("GUIVideoFiles playDVD");
-			g_Player.PlayDVD();
+      //check if dvd is inserted
+      string[] drives = Environment.GetLogicalDrives();
+
+      foreach (string drive in drives)
+      {
+        if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
+        {
+          string driverLetter = drive.Substring(0, 1);
+          string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+          if (System.IO.File.Exists(fileName))
+          {
+            g_Player.PlayDVD();
+            return;
+          }
+        }
+      }
+      //no disc in drive...
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      dlgOk.SetHeading(3);//my videos
+      dlgOk.SetLine(1,219);//no disc
+      dlgOk.DoModal(GetID);
 		}
 		
 
