@@ -110,7 +110,28 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox tbViewName;
 		DataSet ds = new DataSet();
 		bool updating=false;
+		string[] selections= new string[]
+			{
+				"actor",
+				"title",
+				"genre",
+				"year",
+				"rating",
+				"watched",
+		};
+		string[] sqloperators = new string[]
+			{
+				"",
+				"=",
+				">",
+				"<",
+				">=",
+				"<=",
+				"<>",
+				"like",
 
+		};
+			
 		public MovieViews() :  this("Movie Views")
     {
     }
@@ -165,28 +186,7 @@ namespace MediaPortal.Configuration.Sections
 				currentView.Name="new...";
 			}
 			tbViewName.Text=currentView.Name;
-			string[] selections= new string[]
-			{
-					"actor",
-					"title",
-					"genre",
-					"year",
-					"rating",
-					"watched",
-			};
-			string[] sqloperators = new string[]
-			{
-				"",
-				"=",
-				">",
-			  "<",
-			  ">=",
-				"<=",
-				"<>",
-				"like",
 
-			};
-			
 			//Declare and initialize local variables used
 			DataColumn dtCol = null;//Data Column variable
 			string[]   arrColumnNames = null;//string array variable
@@ -450,30 +450,41 @@ namespace MediaPortal.Configuration.Sections
 
 		private void cbSelection_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			if (updating) return;
-			SyncedComboBox box = sender as SyncedComboBox;
-			if (box ==null) return;
-			DataGridCell currentCell=dataGrid1.CurrentCell;
-			DataTable table = dataGrid1.DataSource as DataTable;
+			try
+			{
+				if (updating) return;
+				SyncedComboBox box = sender as SyncedComboBox;
+				if (box ==null) return;
+				DataGridCell currentCell=dataGrid1.CurrentCell;
+				DataTable table = dataGrid1.DataSource as DataTable;
 
-			if (currentCell.RowNumber==table.Rows.Count)
-				table.Rows.Add( new object[] {"","","",""});
-			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
+				if (currentCell.RowNumber==table.Rows.Count)
+					table.Rows.Add( new object[] {"","","",""});
+				table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
+			}
+			catch(Exception)
+			{
+			}
 		}
 
 
 		private void cbOperators_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			if (updating) return;
-			SyncedComboBox box = sender as SyncedComboBox;
-			if (box ==null) return;
-			DataGridCell currentCell=dataGrid1.CurrentCell;
-			DataTable table = dataGrid1.DataSource as DataTable;
+			try
+			{
+				if (updating) return;
+				SyncedComboBox box = sender as SyncedComboBox;
+				if (box ==null) return;
+				DataGridCell currentCell=dataGrid1.CurrentCell;
+				DataTable table = dataGrid1.DataSource as DataTable;
 
-			if (currentCell.RowNumber==table.Rows.Count)
-				table.Rows.Add( new object[] {"","","",""});
-			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
-
+				if (currentCell.RowNumber==table.Rows.Count)
+					table.Rows.Add( new object[] {"","","",""});
+				table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
+			}
+			catch(Exception)
+			{
+			}
 		}
 
 		private void btnSave_Click(object sender, System.EventArgs e)
@@ -496,82 +507,94 @@ namespace MediaPortal.Configuration.Sections
 
 		void StoreGridInView()
 		{
-			if (updating) return;
-			if (dataGrid1.DataSource==null) return;
-			if (currentView==null) return;
-			ViewDefinition view =null;
-			for (int i=0; i < views.Count;++i)
+			try
 			{
-				ViewDefinition tmp= views[i] as ViewDefinition;
-				if (tmp.Name==currentView.Name)
+				if (updating) return;
+				if (dataGrid1.DataSource==null) return;
+				if (currentView==null) return;
+				ViewDefinition view =null;
+				for (int i=0; i < views.Count;++i)
 				{
-					view=tmp;
-					break;
-				}
-			}
-			DataTable dt = dataGrid1.DataSource as DataTable;
-			if (view==null)
-			{
-				if (dt.Rows.Count==0) return;
-				view = new ViewDefinition();
-				view.Name=tbViewName.Text;
-				views.Add(view);
-				currentView=view;
-				cbViews.Items.Insert(cbViews.Items.Count-1,view.Name);
-				updating=true;
-				cbViews.SelectedItem=view.Name;
-				updating=false;
-			}
-			else
-			{
-				updating=true;
-				for (int i=0; i < cbViews.Items.Count;++i)
-				{
-					string label=(string)cbViews.Items[i];
-					if (label==currentView.Name)
+					ViewDefinition tmp= views[i] as ViewDefinition;
+					if (tmp.Name==currentView.Name)
 					{
-						cbViews.Items[i]=tbViewName.Text;
+						view=tmp;
 						break;
 					}
 				}
-				updating=false;
+				DataTable dt = dataGrid1.DataSource as DataTable;
+				if (view==null)
+				{
+					if (dt.Rows.Count==0) return;
+					view = new ViewDefinition();
+					view.Name=tbViewName.Text;
+					views.Add(view);
+					currentView=view;
+					cbViews.Items.Insert(cbViews.Items.Count-1,view.Name);
+					updating=true;
+					cbViews.SelectedItem=view.Name;
+					updating=false;
+				}
+				else
+				{
+					updating=true;
+					for (int i=0; i < cbViews.Items.Count;++i)
+					{
+						string label=(string)cbViews.Items[i];
+						if (label==currentView.Name)
+						{
+							cbViews.Items[i]=tbViewName.Text;
+							break;
+						}
+					}
+					updating=false;
+				}
+				view.Name=tbViewName.Text;
+				view.Filters.Clear();
+				
+				foreach (DataRow row in dt.Rows)
+				{
+					FilterDefinition def = new FilterDefinition();
+					def.Where = row[0] as string;
+					def.SqlOperator = row[1].ToString();
+					def.Restriction = row[2].ToString();
+					try
+					{
+						def.Limit = Int32.Parse(row[3].ToString());
+					}
+					catch(Exception)
+					{
+						def.Limit=-1;
+					}
+					def.SortAscending = (bool)row[4] ;
+					view.Filters.Add(def);
+				}
 			}
-			view.Name=tbViewName.Text;
-			view.Filters.Clear();
-			
-			foreach (DataRow row in dt.Rows)
+			catch(Exception)
 			{
-				FilterDefinition def = new FilterDefinition();
-				def.Where = row[0] as string;
-				def.SqlOperator = row[1].ToString();
-				def.Restriction = row[2].ToString();
-				try
-				{
-					def.Limit = Int32.Parse(row[3].ToString());
-				}
-				catch(Exception)
-				{
-					def.Limit=-1;
-				}
-				def.SortAscending = (bool)row[4] ;
-				view.Filters.Add(def);
 			}
 		}
 		
 		private void btnDelete_Click(object sender, System.EventArgs e)
 		{
-			string viewName=cbViews.SelectedItem as string;
-			if (viewName==null) return;
-			for (int i=0; i < views.Count;++i)
+			try
 			{
-				ViewDefinition view = views[i] as ViewDefinition;
-				if (view.Name==viewName)
+				string viewName=cbViews.SelectedItem as string;
+				if (viewName==null) return;
+				for (int i=0; i < views.Count;++i)
 				{
-					views.RemoveAt(i);
-					break;
+					ViewDefinition view = views[i] as ViewDefinition;
+					if (view.Name==viewName)
+					{
+						views.RemoveAt(i);
+						break;
+					}
 				}
+				LoadViews();
 			}
-			LoadViews();
+			catch(Exception)
+			{
+			}
 		}
 	}
 }
