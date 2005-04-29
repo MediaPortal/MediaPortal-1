@@ -530,9 +530,7 @@ namespace MediaPortal.Dialogs
 		void DeInitialize()
 		{
 			if (image!=null) image.FreeResources();
-			image=null;
-			if (m_pKeyTexture!=null) m_pKeyTexture.Dispose();
-			m_pKeyTexture=null;
+			image=null;			
 		}
 
 		public void Reset()
