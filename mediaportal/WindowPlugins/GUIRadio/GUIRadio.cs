@@ -430,7 +430,13 @@ namespace MediaPortal.GUI.Radio
 								item.IconImageBig="DefaultMyradioBig.png";
 								item.IconImage="DefaultMyradio.png";
 							}
-              item.ThumbnailImage=Utils.GetCoverArt(Thumbs.Radio,station.Name);
+              string thumbnail=Utils.GetCoverArt(Thumbs.Radio,station.Name);
+              if (System.IO.File.Exists(thumbnail))
+              {
+                item.IconImageBig = thumbnail;
+                item.IconImage = thumbnail;
+                item.ThumbnailImage = thumbnail;
+              }
               //if (item.ThumbnailImage==String.Empty)
               //  item.ThumbnailImage="DefaultMyradioBig.png";
             }
