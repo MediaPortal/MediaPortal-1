@@ -354,41 +354,81 @@ namespace MediaPortal.TV.Recording
 			int cardNo=0;
 			int highestPrio=-1;
 			int highestCard=-1;
-			foreach (TVCaptureDevice dev in m_tvcards)
+			for (int loop=0; loop <= 1; loop++)
 			{
-				//is card used for recording tv?
-				if (dev.UseForRecording)
+				highestPrio=-1;
+				highestCard=-1;
+				cardNo=0;
+				foreach (TVCaptureDevice dev in m_tvcards)
 				{
-					// and is it not recording already?
-					if (!dev.IsRecording)
+					//is card used for recording tv?
+					if (dev.UseForRecording)
 					{
-						//an can it receive the channel we want to record?
-						if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || m_tvcards.Count==1 )
+						// and is it not recording already?
+						if (!dev.IsRecording)
 						{
-							// does this card have a higher priority?
-							if (dev.Priority>highestPrio)
+							//an can it receive the channel we want to record?
+							if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || m_tvcards.Count==1 )
 							{
-								//yes then we use this card
-								highestPrio=dev.Priority;
-								highestCard=cardNo;
-							}
-
-							//if this card has the same priority and is already watching this channel
-							//then we use this card
-							if (dev.Priority==highestPrio)
-							{
-								if ( (dev.IsTimeShifting||dev.View==true) && dev.TVChannel==rec.Channel)
+								// does this card have a higher priority?
+								if (dev.Priority>highestPrio)
 								{
-									highestPrio=dev.Priority;
-									highestCard=cardNo;
-								}
-							}
-						}
-					}
-				}
-				cardNo++;
-			}
+									//yes then we use this card
+									//but do we want to use it?
+									//if a users is using this card to watch tv on another channel
+									//then we prefer to use another tuner for the recording
+									bool preferCard=false;
+									if (m_iCurrentCard==i)
+									{
+										//user is watching tv on this tuner
+										if (loop>=1) 
+										{
+											//first loop didnt find any other free card,
+											//so no other choice then to use this one.
+											preferCard=true; 
+										}
+										else
+										{
+											//is user watching same channel as we wanna record?
+											if (dev.IsTimeShifting && dev.TVChannel==rec.Channel) 
+											{
+												//yes, then he wont notice anything, so we can use the card
+												preferCard=true;
+											}
+										}
+									}
+									else
+									{
+										//user is not using this tuner, so we can use this card
+										preferCard=true;
+									}
+									if (preferCard)
+									{
+										highestPrio=dev.Priority;
+										highestCard=cardNo;
+									}
+								}//if (dev.Priority>highestPrio)
 
+								//if this card has the same priority and is already watching this channel
+								//then we use this card
+								if (dev.Priority==highestPrio)
+								{
+									if ( (dev.IsTimeShifting||dev.View==true) && dev.TVChannel==rec.Channel)
+									{
+										highestPrio=dev.Priority;
+										highestCard=cardNo;
+									}
+								}
+							}//if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || m_tvcards.Count==1 )
+						}//if (!dev.IsRecording)
+					}//if (dev.UseForRecording)
+					cardNo++;
+				}//foreach (TVCaptureDevice dev in m_tvcards)
+				if (highestCard>=0)
+				{
+					break;
+				}
+			}//for (int loop=0; loop <= 1; loop++)
 			//did we found a card available for recording
 			if (highestCard>=0)
 			{
@@ -424,8 +464,7 @@ namespace MediaPortal.TV.Recording
 						{
 							//an can it receive the channel we want to record?
 							if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || m_tvcards.Count==1 )
-							{
-								
+							{	
 								// does this card have a higher priority?
 								if (dev.Priority>highestPrio)
 								{
@@ -444,12 +483,12 @@ namespace MediaPortal.TV.Recording
 										highestCard=cardNo;
 									}
 								}
-							}
-						}
-					}
+							}//if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || m_tvcards.Count==1 )
+						}//if (dev.IsPostRecording)
+					}//if (dev.UseForRecording)
 					cardNo++;
-				}
-			}
+				}//foreach (TVCaptureDevice dev in m_tvcards)
+			}//if ( rec.IsRecordingProgramAtTime(currentTime,currentProgram,0,0) )
 			
 			//did we found a card available for recording
 			if (highestCard>=0)
