@@ -1407,11 +1407,20 @@ namespace MediaPortal.TV.Recording
 		{
 			get
 			{
-				if (CreateGraph())
+				bool result=false;
+				if (_mGraph==null)
 				{
-					return (_mGraph.SupportsTimeshifting());
+					_mGraph = GraphFactory.CreateGraph(this);
+					if (_mGraph == null) return false;
+					result=_mGraph.SupportsTimeshifting();
+					_mGraph=null;
 				}
-				return false;
+				else
+				{
+					result=_mGraph.SupportsTimeshifting();
+				}
+
+				return result;
 			}
 		}
 

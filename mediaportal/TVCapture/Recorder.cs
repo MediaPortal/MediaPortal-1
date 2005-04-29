@@ -865,7 +865,6 @@ namespace MediaPortal.TV.Recording
 		
 		static private void TurnTvOff(int exceptCard)
 		{
-			Log.WriteFile(Log.LogType.Recorder,"Recorder:  turn TV off");
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 			for (int i=0; i< m_tvcards.Count;++i)
 			{

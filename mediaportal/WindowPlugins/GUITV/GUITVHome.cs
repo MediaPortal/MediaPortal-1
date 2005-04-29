@@ -256,7 +256,7 @@ namespace MediaPortal.GUI.TV
 		{
 			if (control==btnTvOnOff)
 			{
-				if (!btnTvOnOff.Selected)
+				if (Recorder.IsViewing())
 				{
 					//tv off
 					Log.Write("TVHome:turn tv off");
@@ -279,9 +279,9 @@ namespace MediaPortal.GUI.TV
 			if (control==btnTimeshiftingOnOff)
 			{
 				//turn timeshifting off 
-				m_bTimeShifting=btnTimeshiftingOnOff.Selected;
+				m_bTimeShifting=!Recorder.IsTimeShifting();
+				Log.Write("tv home timeshift onoff:{0}",m_bTimeShifting);
 				SaveSettings();
-				Log.Write("tv home timeshift onoff:{0}",Navigator.CurrentChannel);
 				ViewChannelAndCheck(Navigator.CurrentChannel);
 			}
 
