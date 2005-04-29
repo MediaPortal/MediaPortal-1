@@ -67,33 +67,38 @@ namespace MediaPortal.Configuration.Sections
 			}
 			protected override void OnLayout(LayoutEventArgs levent)
 			{
-
-				if (true||SelectedIndex<0)
+				try
 				{
-					DataGridCell currentCell=Grid.CurrentCell;
-
-					if (currentCell.ColumnNumber==Cell)
+					if (true||SelectedIndex<0)
 					{
-						DataTable ds= Grid.DataSource as DataTable;
-						if (ds!=null)
+						DataGridCell currentCell=Grid.CurrentCell;
+
+						if (currentCell.ColumnNumber==Cell)
 						{
-							foreach (string item in Items)
+							DataTable ds= Grid.DataSource as DataTable;
+							if (ds!=null)
 							{
-								if (currentCell.RowNumber < ds.Rows.Count)
+								foreach (string item in Items)
 								{
-									DataRow row=ds.Rows[currentCell.RowNumber];
-									string currentValue = (string)row.ItemArray[Cell];
-									if (currentValue==item)
+									if (currentCell.RowNumber < ds.Rows.Count)
 									{
-										SelectedItem=item;
-										break;
+										DataRow row=ds.Rows[currentCell.RowNumber];
+										string currentValue = (string)row.ItemArray[Cell];
+										if (currentValue==item)
+										{
+											SelectedItem=item;
+											break;
+										}
 									}
 								}
 							}
 						}
 					}
+					base.OnLayout (levent);
 				}
-				base.OnLayout (levent);
+				catch(Exception)
+				{
+				}
 			}
 		}
     private System.Windows.Forms.GroupBox groupBox1;
@@ -111,6 +116,30 @@ namespace MediaPortal.Configuration.Sections
 		DataSet ds = new DataSet();
 		bool updating=false;
 
+		string[] selections= new string[]
+			{
+				"album",
+				"artist",
+				"title",
+				"genre",
+				"year",
+				"track",
+				"timesplayed",
+				"rating",
+				"favorites"
+			};
+		string[] sqloperators = new string[]
+			{
+				"",
+				"=",
+				">",
+				"<",
+				">=",
+				"<=",
+				"<>",
+				"like",
+
+		};
 		public MusicViews() :  this("Music Views")
     {
     }
@@ -165,30 +194,6 @@ namespace MediaPortal.Configuration.Sections
 				currentView.Name="new...";
 			}
 			tbViewName.Text=currentView.Name;
-			string[] selections= new string[]
-			{
-					"album",
-					"artist",
-					"title",
-					"genre",
-					"year",
-					"track",
-					"timesplayed",
-					"rating",
-					"favorites"
-			};
-			string[] sqloperators = new string[]
-			{
-				"",
-				"=",
-				">",
-			  "<",
-			  ">=",
-				"<=",
-				"<>",
-				"like",
-
-			};
 			
 			//Declare and initialize local variables used
 			DataColumn dtCol = null;//Data Column variable
@@ -215,11 +220,11 @@ namespace MediaPortal.Configuration.Sections
 			cbOperators.DropDownStyle=System.Windows.Forms.ComboBoxStyle.DropDownList;
 			cbOperators.Dock          = DockStyle.Fill;
 			cbOperators.DisplayMember="Operator";
+			foreach (string strText in sqloperators)
+				cbOperators.Items.Add(strText);
 			cbOperators.Grid=dataGrid1;
 			cbOperators.Cell=1;
 			cbOperators.SelectionChangeCommitted+=new EventHandler(cbOperators_SelectionChangeCommitted);
-			foreach (string strText in sqloperators)
-				cbOperators.Items.Add(strText);
      
 			//Create the String array object, initialize the array with the column
 			//names to be displayed

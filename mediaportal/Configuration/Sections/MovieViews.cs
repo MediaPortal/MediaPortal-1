@@ -68,32 +68,39 @@ namespace MediaPortal.Configuration.Sections
 			protected override void OnLayout(LayoutEventArgs levent)
 			{
 
-				if (true||SelectedIndex<0)
+				try
 				{
-					DataGridCell currentCell=Grid.CurrentCell;
 
-					if (currentCell.ColumnNumber==Cell)
+					if (true||SelectedIndex<0)
 					{
-						DataTable ds= Grid.DataSource as DataTable;
-						if (ds!=null)
+						DataGridCell currentCell=Grid.CurrentCell;
+
+						if (currentCell.ColumnNumber==Cell)
 						{
-							foreach (string item in Items)
+							DataTable ds= Grid.DataSource as DataTable;
+							if (ds!=null)
 							{
-								if (currentCell.RowNumber < ds.Rows.Count)
+								foreach (string item in Items)
 								{
-									DataRow row=ds.Rows[currentCell.RowNumber];
-									string currentValue = (string)row.ItemArray[Cell];
-									if (currentValue==item)
+									if (currentCell.RowNumber < ds.Rows.Count)
 									{
-										SelectedItem=item;
-										break;
+										DataRow row=ds.Rows[currentCell.RowNumber];
+										string currentValue = (string)row.ItemArray[Cell];
+										if (currentValue==item)
+										{
+											SelectedItem=item;
+											break;
+										}
 									}
 								}
 							}
 						}
 					}
+					base.OnLayout (levent);
 				}
-				base.OnLayout (levent);
+				catch(Exception)
+				{
+				}
 			}
 		}
     private System.Windows.Forms.GroupBox groupBox1;
@@ -212,11 +219,11 @@ namespace MediaPortal.Configuration.Sections
 			cbOperators.DropDownStyle=System.Windows.Forms.ComboBoxStyle.DropDownList;
 			cbOperators.Dock          = DockStyle.Fill;
 			cbOperators.DisplayMember="Operator";
+			foreach (string strText in sqloperators)
+				cbOperators.Items.Add(strText);
 			cbOperators.Grid=dataGrid1;
 			cbOperators.Cell=1;
 			cbOperators.SelectionChangeCommitted+=new EventHandler(cbOperators_SelectionChangeCommitted);
-			foreach (string strText in sqloperators)
-				cbOperators.Items.Add(strText);
      
 			//Create the String array object, initialize the array with the column
 			//names to be displayed
@@ -284,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
 				GridColumnStylesCollection    colStyle;
 				colStyle                = dataGrid1.TableStyles[0].GridColumnStyles;
 				colStyle[0].Width       = 100;
-				colStyle[1].Width       = 50;
+				colStyle[1].Width       = 90;
 				colStyle[2].Width       = 50;
 				colStyle[3].Width       = 80;
 				
@@ -335,13 +342,13 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.tbViewName = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.btnDelete = new System.Windows.Forms.Button();
 			this.btnSave = new System.Windows.Forms.Button();
 			this.cbViews = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.dataGrid1 = new System.Windows.Forms.DataGrid();
-			this.label2 = new System.Windows.Forms.Label();
-			this.tbViewName = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
 			this.SuspendLayout();
@@ -363,7 +370,22 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Size = new System.Drawing.Size(440, 432);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Music Views";
+			this.groupBox1.Text = "Movie Views";
+			// 
+			// tbViewName
+			// 
+			this.tbViewName.Location = new System.Drawing.Point(80, 56);
+			this.tbViewName.Name = "tbViewName";
+			this.tbViewName.TabIndex = 6;
+			this.tbViewName.Text = "";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(24, 56);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(40, 23);
+			this.label2.TabIndex = 5;
+			this.label2.Text = "Name:";
 			// 
 			// btnDelete
 			// 
@@ -408,21 +430,6 @@ namespace MediaPortal.Configuration.Sections
 			this.dataGrid1.Name = "dataGrid1";
 			this.dataGrid1.Size = new System.Drawing.Size(408, 248);
 			this.dataGrid1.TabIndex = 0;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(24, 56);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(40, 23);
-			this.label2.TabIndex = 5;
-			this.label2.Text = "Name:";
-			// 
-			// tbViewName
-			// 
-			this.tbViewName.Location = new System.Drawing.Point(80, 56);
-			this.tbViewName.Name = "tbViewName";
-			this.tbViewName.TabIndex = 6;
-			this.tbViewName.Text = "";
 			// 
 			// MovieViews
 			// 
