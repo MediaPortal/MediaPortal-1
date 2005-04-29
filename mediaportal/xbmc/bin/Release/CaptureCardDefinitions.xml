@@ -3906,4 +3906,30 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="AVerTV USB 2.0 Plus" capturename="AVerTV USB 2.0 Plus Video Capture" devid="vid_07ca&amp;pid_0036&amp;mi_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="AVerTV USB 2.0 Plus TvTuner"  		checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="AVerTV USB 2.0 Plus TvAudio"  		checkdevice="true"></filter>
+        <filter cat="crossbar" 		name="AVerTV USB 2.0 Plus CrossBar"      	checkdevice="true"></filter>
+        <filter cat="capture"  		name="AVerTV USB 2.0 Plus Video Capture"   	checkdevice="true"></filter>
+		<filter cat="encodervideo"  name="AVerMedia MPEG Video Encoder"			checkdevice="false"></filter>        
+		<filter cat="encoderaudio"  name="AVerMedia MPEG Audio Encoder"			checkdevice="false"></filter>
+        <filter cat="mux"			name="AVerMedia MPEG-2 Multiplexer"     	checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
+		<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
