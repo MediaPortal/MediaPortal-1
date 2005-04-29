@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 
 namespace MediaPortal.GUI.Library
 {
@@ -9,6 +10,15 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIFacadeControl : GUIControl
 	{
+		// enum search kinds
+		public enum SearchKinds
+		{
+			SEARCH_STARTS_WITH=0,
+			SEARCH_CONTAINS,
+			SEARCH_ENDS_WITH,
+			SEARCH_IS
+		}
+
 			//enum of all possible views
       public enum ViewMode
       {
@@ -23,6 +33,7 @@ namespace MediaPortal.GUI.Library
 			GUIThumbnailPanel   m_ThumbnailView=null; // instance of the thumbnail control
       GUIFilmstripControl m_FilmStripView=null; // instance of the filmstrip control
       ViewMode            m_ViewMode;						// current view
+			ArrayList						vecItems=new ArrayList(); // unfiltered itemlist
 
 		public GUIFacadeControl(int dwParentID) : base(dwParentID)
 		{
@@ -170,90 +181,93 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// pre-Allocate any resources needed for the controls
 		/// </summary>
-    public override void PreAllocResources()
+		public override void PreAllocResources()
 		{
-				if (AlbumListView!=null) AlbumListView.PreAllocResources();
-        if (m_ListView!=null) m_ListView.PreAllocResources();
-        if (m_ThumbnailView!=null) m_ThumbnailView.PreAllocResources();
-        if (m_FilmStripView!=null) m_FilmStripView.PreAllocResources();
-        UpdateView();
-    }
+			if (AlbumListView!=null) AlbumListView.PreAllocResources();
+			if (m_ListView!=null) m_ListView.PreAllocResources();
+			if (m_ThumbnailView!=null) m_ThumbnailView.PreAllocResources();
+			if (m_FilmStripView!=null) m_FilmStripView.PreAllocResources();
+			UpdateView();
+		}
 
 		/// <summary>
 		/// Free all resources of the controls
 		/// </summary>
-    public override void FreeResources()
-    {
-        if (AlbumListView!=null) AlbumListView.FreeResources();
-        if (m_ListView!=null) m_ListView.FreeResources();
-        if (m_ThumbnailView!=null) m_ThumbnailView.FreeResources();
-        if (m_FilmStripView!=null) m_FilmStripView.FreeResources();
-    }
+		public override void FreeResources()
+		{
+			if (AlbumListView!=null) AlbumListView.FreeResources();
+			if (m_ListView!=null) m_ListView.FreeResources();
+			if (m_ThumbnailView!=null) m_ThumbnailView.FreeResources();
+			if (m_FilmStripView!=null) m_FilmStripView.FreeResources();
+			vecItems.Clear();
+		}
 
-    public override bool HitTest(int x, int y, out int controlID, out bool focused)
-    {
+		public override bool HitTest(int x, int y, out int controlID, out bool focused)
+		{
 			controlID=-1;
 			focused=false;
-      if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
-          return m_FilmStripView.HitTest (x, y, out controlID, out focused);
-      else if (m_ViewMode==ViewMode.List && m_ListView!=null)
-            return m_ListView.HitTest (x, y, out controlID, out focused);
-      else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
+			if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
+				return m_FilmStripView.HitTest (x, y, out controlID, out focused);
+			else if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				return m_ListView.HitTest (x, y, out controlID, out focused);
+			else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 				return m_ThumbnailView.HitTest (x, y, out controlID, out focused);
 			else if ( m_ViewMode==ViewMode.AlbumView && m_ListAlbumView!=null)  
 				return m_ListAlbumView.HitTest (x, y, out controlID, out focused);
 			return false;
-    }
+		}
 
-    public override void OnAction(Action action)
-    {
-      if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
-          m_FilmStripView.OnAction( action);
-      else if (m_ViewMode==ViewMode.List&& m_ListView!=null)
-          m_ListView.OnAction( action);
+		public override void OnAction(Action action)
+		{
+			if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
+				m_FilmStripView.OnAction( action);
+			else if (m_ViewMode==ViewMode.List&& m_ListView!=null)
+				m_ListView.OnAction( action);
 			else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 				m_ThumbnailView.OnAction( action);
 			else if ( m_ViewMode==ViewMode.AlbumView && m_ListAlbumView!=null)  
 				m_ListAlbumView.OnAction( action);
-    }
+		}
 
-    public override bool OnMessage(GUIMessage message)
-    {
-      if (message.TargetControlId == GetID)
-      {
-        if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
-        {
-          GUIListItem pItem = (GUIListItem)message.Object;
-          Add(pItem);
-          return true;
-        }
+		public override bool OnMessage(GUIMessage message)
+		{
+			if (message.TargetControlId == GetID)
+			{
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
+				{
+					GUIListItem pItem = (GUIListItem)message.Object;					
+					Add(pItem);
+					return true;
+				}
 
-        if (message.Message== GUIMessage.MessageType.GUI_MSG_REFRESH)
-        {
-          RouteMessage (message);
-          return true;
-        }
-        if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
-        {
-          RouteMessage (message);
-          return true;
-        }
-        if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
-        {
-          RouteMessage (message);
-          return true;
-        }
-      }
-      if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
-        return m_FilmStripView.OnMessage (message);
-      if (m_ViewMode==ViewMode.List && m_ListView!=null)
-          return m_ListView.OnMessage (message);
+				if (message.Message== GUIMessage.MessageType.GUI_MSG_REFRESH)
+				{
+					RouteMessage (message);
+					return true;
+				}
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
+				{
+					RouteMessage (message);
+					vecItems.Clear();
+					return true;
+				}
+				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
+				{
+					RouteMessage (message);
+					return true;
+				}
+			}
+			if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
+				return m_FilmStripView.OnMessage (message);
+			if (m_ViewMode==ViewMode.List && m_ListView!=null)
+				return m_ListView.OnMessage (message);
 			else if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 				return m_ThumbnailView.OnMessage( message);
 			else if ( m_ViewMode==ViewMode.AlbumView && m_ListAlbumView!=null)  
 				return m_ListAlbumView.OnMessage( message);
 			return false;
-    }
+		}
+
 		void RouteMessage(GUIMessage message)
 		{
 			if (m_ListAlbumView!=null) m_ListAlbumView.OnMessage(message);
@@ -321,6 +335,11 @@ namespace MediaPortal.GUI.Library
 			if (m_ListView!=null) m_ListView.Sort(comparer);
       if (m_ThumbnailView!=null) m_ThumbnailView.Sort(comparer);
       if (m_FilmStripView!=null) m_FilmStripView.Sort(comparer);
+			try
+			{
+				vecItems.Sort(comparer);
+			}
+			catch(Exception){}
     }
 
     public void Add(GUIListItem item)
@@ -329,8 +348,67 @@ namespace MediaPortal.GUI.Library
 			if (m_ListAlbumView!=null) m_ListAlbumView.Add(item);
 			if (m_ListView!=null) m_ListView.Add(item);
       if (m_ThumbnailView!=null) m_ThumbnailView.Add(item);
-      if (m_FilmStripView!=null) m_FilmStripView.Add(item);
+      if (m_FilmStripView!=null) m_FilmStripView.Add(item);			
+			vecItems.Add(item);
     }
+
+		public void Filter(int searchKind, string searchString)
+		{
+			if (m_ListAlbumView!=null) m_ListAlbumView.Clear();
+			if (m_ListView!=null) m_ListView.Clear();
+			if (m_ThumbnailView!=null) m_ThumbnailView.Clear();
+			if (m_FilmStripView!=null) m_FilmStripView.Clear();
+
+			if (searchString!="")
+			{
+				// Set active selection
+				GUIListItem dirUp=new GUIListItem("..");
+				dirUp.Path="Selection";
+				dirUp.IsFolder=true;
+				dirUp.ThumbnailImage=String.Empty;
+				dirUp.IconImage="defaultFolderBack.png";
+				dirUp.IconImageBig="defaultFolderBackBig.png";
+				if (m_ListAlbumView!=null) m_ListAlbumView.Add(dirUp);
+				if (m_ListView!=null) m_ListView.Add(dirUp);
+				if (m_ThumbnailView!=null) m_ThumbnailView.Add(dirUp);
+				if (m_FilmStripView!=null) m_FilmStripView.Add(dirUp);			
+			}
+
+			int iTotalItems=0;
+			bool validItem=false;
+			for (int i=0 ; i<vecItems.Count ; i++)
+			{
+				validItem=false;
+				GUIListItem item = (GUIListItem)vecItems[i];
+				switch ((SearchKinds)searchKind)
+				{
+					case SearchKinds.SEARCH_STARTS_WITH:
+						if ( item.Label.ToLower().StartsWith(searchString.ToLower()) ) validItem=true;
+						break;
+					case SearchKinds.SEARCH_CONTAINS:
+						if ( item.Label.ToLower().IndexOf(searchString.ToLower())>=0 ) validItem=true;
+						break;
+					case SearchKinds.SEARCH_ENDS_WITH:
+						if ( item.Label.ToLower().EndsWith(searchString.ToLower()) ) validItem=true;
+						break;
+					case SearchKinds.SEARCH_IS:
+						if ( item.Label.ToLower().Equals(searchString.ToLower()) ) validItem=true;
+						break;
+				}				
+
+				if (validItem || searchString=="")
+				{
+					if (m_ListAlbumView!=null) m_ListAlbumView.Add(item);
+					if (m_ListView!=null) m_ListView.Add(item);
+					if (m_ThumbnailView!=null) m_ThumbnailView.Add(item);
+					if (m_FilmStripView!=null) m_FilmStripView.Add(item);			
+					iTotalItems++;
+				}
+			}
+			string strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
+			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+		}
+
     void UpdateView()
     {
       if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
@@ -491,6 +569,7 @@ namespace MediaPortal.GUI.Library
 				m_ThumbnailView.Clear();
 			else if ( m_ViewMode==ViewMode.AlbumView && m_ListAlbumView!=null)  
 				m_ListAlbumView.Clear();
+			vecItems.Clear();
 		}
 		public int SelectedListItemIndex
 		{
