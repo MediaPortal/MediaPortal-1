@@ -363,7 +363,8 @@ namespace MediaPortal.GUI.Library
 			{
 				// Set active selection
 				GUIListItem dirUp=new GUIListItem("..");
-				dirUp.Path="Selection";
+				dirUp.Path=searchString;
+				dirUp.ItemId=searchKind;				
 				dirUp.IsFolder=true;
 				dirUp.ThumbnailImage=String.Empty;
 				dirUp.IconImage="defaultFolderBack.png";
