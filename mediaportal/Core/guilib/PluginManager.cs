@@ -155,6 +155,8 @@ namespace MediaPortal.GUI.Library
               if (t.IsClass)
               {
 								if( t.IsAbstract ) continue;
+
+                Object newObj = null;
 								IPlugin  plugin=null;
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
 								try
@@ -162,11 +164,8 @@ namespace MediaPortal.GUI.Library
 									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IPlugin");
 									if (foundInterfaces.Length>0)
 									{
-										object newObj=(object)Activator.CreateInstance(t);
+										newObj=(object)Activator.CreateInstance(t);
 										plugin=(IPlugin)newObj;
-										//_NonGUIPlugins.Add(plugin);
-	                  
-										//Log.Write("  load plugin:{0} in {1}",t.ToString(), strFile);
 									}
 								}
 								catch( Exception iPluginException )
@@ -184,7 +183,8 @@ namespace MediaPortal.GUI.Library
 									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
 									if (foundInterfaces.Length>0)
 									{
-										object newObj=(object)Activator.CreateInstance(t);
+										if (newObj==null)
+                      newObj=(object)Activator.CreateInstance(t);
 										ISetupForm  setup=(ISetupForm)newObj;
 	                  
 										if (IsPluginNameEnabled(setup.PluginName()))
@@ -206,7 +206,8 @@ namespace MediaPortal.GUI.Library
 									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IWakeable");
 									if (foundInterfaces.Length>0)
 									{
-										object newObj=(object)Activator.CreateInstance(t);
+										if (newObj==null)
+                      newObj=(object)Activator.CreateInstance(t);
 										IWakeable  setup=(IWakeable)newObj;
 										if (IsPluginNameEnabled(setup.PluginName()))
 										{
@@ -255,11 +256,12 @@ namespace MediaPortal.GUI.Library
               if (t.IsClass)
 							{
 								if( t.IsAbstract ) continue;
+                Object newObj = null;
                 if (t.IsSubclassOf (typeof(MediaPortal.GUI.Library.GUIWindow)))
 								{
 									try
 									{
-										object newObj=(object)Activator.CreateInstance(t);
+										newObj=(object)Activator.CreateInstance(t);
 										GUIWindow win=(GUIWindow)newObj;
 										
 										if (win.GetID>=0 && IsWindowPlugInEnabled(win.GetType().ToString()))
@@ -289,7 +291,8 @@ namespace MediaPortal.GUI.Library
 									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
 									if (foundInterfaces.Length>0)
 									{
-										object newObj=(object)Activator.CreateInstance(t);
+										if (newObj==null)
+                      newObj=(object)Activator.CreateInstance(t);
 										ISetupForm  setup=(ISetupForm)newObj;
 										if (IsPluginNameEnabled(setup.PluginName()))
 										{
@@ -310,7 +313,8 @@ namespace MediaPortal.GUI.Library
 									foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IWakeable");
 									if (foundInterfaces.Length>0)
 									{
-										object newObj=(object)Activator.CreateInstance(t);
+										if (newObj==null)
+										  newObj=(object)Activator.CreateInstance(t);
 										IWakeable  setup=(IWakeable)newObj;
 										if (IsPluginNameEnabled(setup.PluginName()))
 										{
