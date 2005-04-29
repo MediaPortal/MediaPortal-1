@@ -101,13 +101,21 @@ namespace MediaPortal.GUI.Music
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];
-        if (item!=null)
-        {
-          if (item.IsFolder && item.Label=="..")
-          {
-						handler.CurrentLevel--;
-            LoadDirectory(item.Path);
-          }
+        if (item!=null && item.IsFolder)
+				{
+					if (item.Label=="..")
+					{
+						if (item.Path!=String.Empty)
+						{
+							// Remove selection
+							LoadDirectory(m_strDirectory);
+						}
+						else 
+						{
+							handler.CurrentLevel--;							
+							LoadDirectory(item.Path);							
+						}
+					}
         }
         return;
       }
@@ -141,6 +149,7 @@ namespace MediaPortal.GUI.Music
 				VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
 				keyBoard.Text = String.Empty;
 				keyBoard.Reset();
+				keyboard_TextChanged(0, "");
 				keyBoard.TextChanged+=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
 				keyBoard.DoModal(activeWindow); // show it...
 				keyBoard.TextChanged-=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged);	// remove the handler			
@@ -193,8 +202,6 @@ namespace MediaPortal.GUI.Music
 				base.OnRetrieveCoverArt(item);
 			}
 		}
-
-
 		
 		protected override void OnClick(int iItem)
 		{
@@ -202,12 +209,24 @@ namespace MediaPortal.GUI.Music
 			if (item==null) return;
 			if (item.IsFolder)
 			{
-				m_iItemSelected=-1;
-				if (item.Label=="..")
-					handler.CurrentLevel--;
+				if (item.Label==".." && item.Path!=String.Empty)
+				{
+					// Remove selection
+					m_iItemSelected=-1;
+					LoadDirectory(m_strDirectory);
+				}
 				else
-					handler.Select(item.AlbumInfoTag as Song);
-				LoadDirectory(item.Path);
+				{
+					if (item.Label=="..")
+					{
+						handler.CurrentLevel--;
+					}
+					else
+						handler.Select(item.AlbumInfoTag as Song);
+					
+					m_iItemSelected=-1;
+					LoadDirectory(item.Path);
+				}				
 			}
 			else
 			{
@@ -335,7 +354,10 @@ namespace MediaPortal.GUI.Music
 
 	  void keyboard_TextChanged(int kindOfSearch,string data)
 	  {
-		  DisplayGeneresList(kindOfSearch,data);
+			if (data!="")
+				facadeView.Filter(kindOfSearch, data);
+			else
+				LoadDirectory(m_strDirectory);
 	  }
     
 		
@@ -365,6 +387,7 @@ namespace MediaPortal.GUI.Music
 				Utils.SetDefaultIcons(pItem);
 				itemlist.Add(pItem);
 			}
+
 			foreach (Song song in songs)
 			{
 					GUIListItem item=new GUIListItem();
@@ -429,61 +452,7 @@ namespace MediaPortal.GUI.Music
       }
 			SwitchView();
 		}
-	  
-	  void DisplayGeneresList(int searchKind,string searchText)
-	  {
-		  GUIControl.ClearControl(GetID,facadeView.GetID);
-            
-		  string strObjects=String.Empty;
-
-		
-		  ArrayList itemlist=new ArrayList();
-		  ArrayList genres=new ArrayList();
-		  m_database.GetGenres(searchKind,searchText,ref genres);
-			  foreach(string strGenre in genres)
-			  {
-				  GUIListItem item=new GUIListItem();
-				  item.Label=strGenre;
-				  item.Path=strGenre;
-				  item.IsFolder=true;
-				  string strThumb=Utils.GetCoverArt(Thumbs.MusicGenre,item.Label);
-				  item.IconImage=strThumb;
-				  item.IconImageBig=strThumb;
-				  item.ThumbnailImage=strThumb;
-
-				  Utils.SetDefaultIcons(item);
-				  itemlist.Add(item);
-			  }
-
-		  //
-		  m_history.Set(m_strDirectory, m_strDirectory); //save where we are
-		  GUIListItem dirUp=new GUIListItem("..");
-		  dirUp.Path=m_strDirectory; // to get where we are
-		  dirUp.IsFolder=true;
-		  dirUp.ThumbnailImage=String.Empty;
-		  dirUp.IconImage="defaultFolderBack.png";
-		  dirUp.IconImageBig="defaultFolderBackBig.png";
-		  itemlist.Insert(0,dirUp);
-		  //
-
-		  foreach (GUIListItem item in itemlist)
-		  {
-				facadeView.Add(item);
-		  }
-
-		  int iTotalItems=itemlist.Count;
-		  if (itemlist.Count>0)
-		  {
-			  GUIListItem rootItem=(GUIListItem)itemlist[0];
-			  if (rootItem.Label=="..") iTotalItems--;
-		  }
-		  strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-		  GUIPropertyManager.SetProperty("#itemcount",strObjects);
-		  SetLabels();
-		  OnSort();
-
-	  }
-
+	  	  
 		protected override void SetLabels()
 		{
 			base.SetLabels ();
