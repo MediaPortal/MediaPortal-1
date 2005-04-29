@@ -24,7 +24,7 @@ namespace MediaPortal.FoobarPlugin
     {
       public IntPtr dwData;
       public int cbData;
-      [MarshalAs(UnmanagedType.LPStr)] public string lpData;
+      public IntPtr lpData;
     }
 
 
@@ -439,13 +439,15 @@ namespace MediaPortal.FoobarPlugin
         // check if the player is running, if not run it.
         startPlayerIfNecessary();
 
+        string playListName="MPPlaylist";
         COPYDATASTRUCT cds;
         cds.dwData = (IntPtr) 1;  // find/create playlist
-        cds.lpData = "MPPlaylist";  // name of the playlist
-        cds.cbData = "MPPlaylist".Length + 1;
+        cds.lpData = Marshal.StringToCoTaskMemAnsi(playListName);
+        cds.cbData = playListName.Length + 1;
 
         // create the playlist or switch to it if there
         int index = SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds);
+        Marshal.FreeCoTaskMem(cds.lpData);
 
         // set the playlist as the active one
         SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETACTIVEPLAYLIST, index);
@@ -454,17 +456,27 @@ namespace MediaPortal.FoobarPlugin
         SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_CLEARPLAYLIST, 0);
 
 
+        Encoding encode = System.Text.Encoding.Default;
+        byte[] byData = encode.GetBytes(strFile);
         cds.dwData = (IntPtr) 0;  // Play song
-        cds.lpData = strFile;  // name of the playlist
+        cds.lpData = Marshal.AllocCoTaskMem(byData.Length+1);
         cds.cbData = strFile.Length + 1;
-        if(SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
+        for (int i=0; i < byData.Length;++i)
         {
+          Marshal.WriteByte(cds.lpData,i,byData[i]);
+        }
+        if (SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
+        {
+          Marshal.FreeCoTaskMem(cds.lpData);
           Thread.Sleep(1000); // wait for 1 secs so that foobar starts playing
           m_strCurrentFile = strFile;
           return true;
         }
         else
+        {
+          Marshal.FreeCoTaskMem(cds.lpData);
           return false;
+        }
       }
       catch
       {
