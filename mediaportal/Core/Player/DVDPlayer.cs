@@ -1419,8 +1419,8 @@ namespace MediaPortal.Player
 		void HandleMouseMessages()
 		{
 			try
-			{
-				if (GUIGraphicsContext.IsFullScreenVideo)
+			{				
+				if (GUIGraphicsContext.IsFullScreenVideo && !GUIGraphicsContext.Vmr9Active)
 				{
 					DsPOINT  pt;
 					foreach(Message m in mouseMsg)
@@ -1433,7 +1433,7 @@ namespace MediaPortal.Player
 							pt.Y = (int)((lParam>>16)  & 0xffff); 
 
 							// Select the button at the current position, if it exists
-							dvdCtrl.SelectAtPosition(ref pt);
+							dvdCtrl.SelectAtPosition(pt);
 						}
 
 						if( m.Msg==WM_LBUTTONUP)
@@ -1443,7 +1443,7 @@ namespace MediaPortal.Player
 							pt.Y = (int)((lParam>>16)  & 0xffff); 
 
 							// Highlight the button at the current position, if it exists
-							dvdCtrl.ActivateAtPosition(ref pt);
+							dvdCtrl.ActivateAtPosition(pt);
 						}
 					}
 				}
