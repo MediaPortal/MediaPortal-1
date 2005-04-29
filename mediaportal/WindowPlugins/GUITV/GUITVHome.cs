@@ -295,7 +295,7 @@ namespace MediaPortal.GUI.TV
 					if(Navigator.CurrentGroup.tvChannels.Count > 0) 
 					{
 						TVChannel chan = (TVChannel)Navigator.CurrentGroup.tvChannels[0];
-						Log.Write("tv home timeshift btngroup:{0}",chan.Name);
+						Log.Write("tv home btngroup:{0}",chan.Name);
 						ViewChannelAndCheck(chan.Name);
 						Navigator.UpdateCurrentChannel();
 					}
@@ -322,7 +322,8 @@ namespace MediaPortal.GUI.TV
 				string channel    =btnChannel.SelectedLabel;
 				if ((channel.Length > 0) && (Navigator.CurrentChannel != channel))
 				{
-					Log.Write("tv home timeshift btnchan:{0}",channel);
+					m_bTVON=true;
+					Log.Write("tv home btnchan:{0}",channel);
 					ViewChannelAndCheck(channel);
 					Navigator.UpdateCurrentChannel();
 
