@@ -1361,16 +1361,12 @@ namespace MediaPortal.GUI.Pictures
         case Action.ActionType.ACTION_SHOW_INFO:
           if (m_bShowInfo)
           { 
-            m_bOSDAutoHide = !m_bOSDAutoHide;
-            if (m_bPictureZoomed) m_bShowZoomInfo=true;
-            if (m_bOSDAutoHide)
-            {
-              m_bShowInfo = false;
-              m_bShowZoomInfo = false;
-            }
+            m_bShowInfo = false;
+            m_bShowZoomInfo = false;
           }
           else
           {
+            if (m_bPictureZoomed) m_bShowZoomInfo = true;
             m_bShowInfo=true;
             m_bOSDAutoHide=true;
             m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
