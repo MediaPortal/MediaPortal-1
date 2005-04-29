@@ -378,7 +378,7 @@ namespace MediaPortal.TV.Recording
 									//if a users is using this card to watch tv on another channel
 									//then we prefer to use another tuner for the recording
 									bool preferCard=false;
-									if (m_iCurrentCard==i)
+									if (m_iCurrentCard==cardNo)
 									{
 										//user is watching tv on this tuner
 										if (loop>=1) 
