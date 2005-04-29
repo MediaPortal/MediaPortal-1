@@ -833,7 +833,7 @@ namespace MediaPortal.TV.Recording
 				if (i==exceptCard) continue;
 
 				TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
-				string strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+				string strTimeShiftFileName=GetTimeShiftFileName(i);
 				if (dev.SupportsTimeShifting)
 				{
 					if (g_Player.CurrentFile==strTimeShiftFileName)

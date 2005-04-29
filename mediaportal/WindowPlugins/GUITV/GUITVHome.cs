@@ -504,26 +504,23 @@ namespace MediaPortal.GUI.TV
 		/// </summary>
 		void UpdateStateOfButtons()
 		{
+			btnTvOnOff.Selected=Recorder.IsViewing();;
 			//are we recording a tv program?
 			if (Recorder.IsRecording())
 			{
-				//yes then disable the tv on/off and timeshifting on/off buttons
+				//yes then disable the timeshifting on/off buttons
 				//and change the Record Now button into Stop Record
-				btnTvOnOff.Disabled=true;
-				btnTvOnOff.Selected=true;
 				btnTimeshiftingOnOff.Disabled=true;
 				btnTimeshiftingOnOff.Selected=true;
 				btnRecord.Label=GUILocalizeStrings.Get(629);//stop record
 			}
 			else
 			{
-				//nop. then enable the tv on/off button and change the Record Now button
+				//nop. then change the Record Now button
 				//to Record Now
-				btnTvOnOff.Disabled=false;
-				btnTvOnOff.Selected=Recorder.IsViewing();;
 				btnRecord.Label=GUILocalizeStrings.Get(601);// record
       
-				//is tv turned off or is the current card not supporting timeshifting
+				//is current card is not supporting timeshifting
 				bool supportstimeshifting=Recorder.DoesSupportTimeshifting();
 				if (btnTvOnOff.Selected==false || supportstimeshifting==false)
 				{
