@@ -662,8 +662,13 @@ namespace MediaPortal.GUI.Music
 			pItem.Path=strDriveLetter;
 			pItem.IsFolder=true;
 			AddItemToPlayList(pItem) ;
-			if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 &&  !g_Player.Playing)
-			{
+      if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0)
+      {
+        // waeberd: mantis #470
+        if (g_Player.Playing)
+        {
+          g_Player.Stop();
+        }
 				PlayListPlayer.Reset();
 				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
 				PlayListPlayer.Play(0);
