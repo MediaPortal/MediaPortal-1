@@ -321,6 +321,23 @@ namespace MediaPortal.TV.Recording
 		/// <param name="iPreRecordInterval">Pre record interval in minutes</param>
 		/// <param name="iPostRecordInterval">Post record interval in minutes</param>
 		/// <returns>true if recording has been started</returns>
+		/// <remarks>
+		/// MP will first use the following algorithm to find a card to use for the recording:
+		///		- card must be able to record the selected channel
+		///		- card must be free (or viewing the channel we need to record)
+		///		- of all cards found it will use the one with the highest priority
+		///		
+		///	if no card is found then MP will try to use the following algorithm:
+		///		- card must be able to record the selected channel
+		///		- card must be free  (or viewing the channel we need to record) or postrecording on any channel !!!
+		///		- of all cards found it will use the one with the highest priority
+		///	
+		///	Note. If the determined card is in use and the user is currently watching different channel on it
+		///	then the one we need to record then MP will look if there are other cards available with maybe have a
+		///	lower priority. reason for this is that we want to prevent the situation where the user
+		///	is watching channel A, and then when the recording starts on channel B the user suddenly 
+		///	sees channel B
+		/// </remarks>
 		static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 		{
 			if (rec==null) return false;
@@ -402,6 +419,7 @@ namespace MediaPortal.TV.Recording
 										//user is not using this tuner, so we can use this card
 										preferCard=true;
 									}
+
 									if (preferCard)
 									{
 										highestPrio=dev.Priority;
@@ -552,6 +570,9 @@ namespace MediaPortal.TV.Recording
 		/// <summary>
 		/// Stops all recording on the current channel. 
 		/// </summary>
+		/// <remarks>
+		/// Only stops recording. timeshifting wont be stopped so user can continue to watch the channel
+		/// </remarks>
 		static public void StopRecording()
 		{
 			if (m_eState!= State.Initialized) return ;
@@ -848,6 +869,10 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio()  no free card which can listen to radio channel:{0}", radioStationName);
 		}
 
+		/// <summary>
+		/// Shows in the log file which cards are in use and what they are doing
+		/// Also logs which file is currently being played
+		/// </summary>
 		static private void LogTvStatistics()
 		{
 			TVCaptureDevice dev;
@@ -863,6 +888,17 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 		
+		/// <summary>
+		/// Turns of watching TV /radio on all capture cards
+		/// </summary>
+		/// <param name="exceptCard">
+		/// index in m_tvcards so 0<= exceptCard< m_tvcards.Count
+		/// if exceptCard==-1 then tv/radio is turned on all cards
+		/// else this tells which card should be ignored and not turned off 
+		/// </param>
+		/// <remarks>
+		/// Only viewing is stopped. If a card is recording then this wont be stopped
+		/// </remarks>
 		static private void TurnTvOff(int exceptCard)
 		{
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
@@ -893,6 +929,30 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 
+		/// <summary>
+		/// Start watching TV.
+		/// </summary>
+		/// <param name="channel">name of the tv channel</param>
+		/// <param name="TVOnOff">
+		/// true : turn tv on (start watching)
+		/// false: turn tv off (stop watching)
+		/// </param>
+		/// <param name="timeshift">
+		/// true: use timeshifting if possible
+		/// false: dont use timeshifting
+		/// </param>
+		/// <remarks>
+		/// The following algorithm is used to determine which tuner card will be used:
+		/// 1. if a card is already recording the channel requested then that card will be used for viewing
+		///    by just starting to play the timeshift buffer of the card
+		/// 2. if a card is already timeshifting (on same or other channel) and it can also view
+		///    the channel requested, then that card will be used for viewing
+		/// else MP will determine which card:
+		///   - is free
+		///   - has the highest priority
+		///   - and can view the selected tv channel
+		/// if it finds a card matching these criteria it will start viewing on the card found
+		/// </remarks>
 		static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
 		{
 			// checks
