@@ -809,6 +809,11 @@ public class MediaPortalApp : D3DApp, IRender
     protected override void Render(float timePassed)
     {
         if (reentrant) return;
+				if (GUIGraphicsContext.InVmr9Render)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"render() called while in vmr9 render");
+					return;
+				}
         try
         {
             reentrant = true;

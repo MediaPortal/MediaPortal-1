@@ -78,6 +78,7 @@ namespace MediaPortal.Player
 		int               prevVideoHeight=0;
 		int               prevArVideoWidth=0;
 		int               prevArVideoHeight=0;
+		static            bool reentrant=false;
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
 			m_repaint=false;
@@ -352,6 +353,11 @@ namespace MediaPortal.Player
 			//avoid multiple threads accessing this method simultanously
 			lock (typeof(PlaneScene))
 			{
+				if (reentrant)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"VMR9: re-entrancy in presentimage");
+					return;
+				}
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
 				arVideoWidth=arWidth;
@@ -377,6 +383,7 @@ namespace MediaPortal.Player
 				}
 				try
 				{
+					reentrant=true;
 					GUIGraphicsContext.InVmr9Render=true;
 					//if we're stopping then just return
 					float timePassed=GUIGraphicsContext.TimePassed;
@@ -502,6 +509,7 @@ namespace MediaPortal.Player
 				}
 				finally
 				{
+					reentrant=false;
 					GUIGraphicsContext.InVmr9Render=false;
 				}
 			}
@@ -512,6 +520,11 @@ namespace MediaPortal.Player
 			//avoid multiple threads accessing this method simultanously
 			lock (typeof(PlaneScene))
 			{
+				if (reentrant)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"VMR9: re-entrancy in PresentSurface");
+					return;
+				}
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
 				arVideoWidth=arWidth;
@@ -536,6 +549,7 @@ namespace MediaPortal.Player
 				}
 				try
 				{
+					reentrant=true;
 					GUIGraphicsContext.InVmr9Render=true;
 					//if we're stopping then just return
 					float timePassed=GUIGraphicsContext.TimePassed;
@@ -658,6 +672,7 @@ namespace MediaPortal.Player
 				}
 				finally
 				{
+					reentrant=false;
 					GUIGraphicsContext.InVmr9Render=false;
 				}
 			}
