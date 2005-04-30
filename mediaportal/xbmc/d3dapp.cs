@@ -2204,7 +2204,7 @@ namespace MediaPortal
                         m_iSleepingTime = (int)((1000f / ((float)GUIGraphicsContext.MaxFPS)) - ((float)deltatime));
                         if (m_iSleepingTime < 0) m_iSleepingTime = 0;
                         lastframetime = curframetime;
-                        if (g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+                        if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
                         {
                             //dont sleep
                         }
@@ -2215,8 +2215,15 @@ namespace MediaPortal
                     }
                     else
                     {
-                        GUIGraphicsContext.CurrentFPS = 0f;
-                        DoSleep(100);
+											if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+											{
+												//dont sleep
+											}
+											else
+											{
+												GUIGraphicsContext.CurrentFPS = 0f;
+												DoSleep(100);
+											}
                     }
                     HandleMessage();
                 }
