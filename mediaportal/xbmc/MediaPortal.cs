@@ -811,7 +811,12 @@ public class MediaPortalApp : D3DApp, IRender
         if (reentrant) return;
 				if (GUIGraphicsContext.InVmr9Render)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"render() called while in vmr9 render");
+					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called while in vmr9 render");
+					return;
+				}
+				if (GUIGraphicsContext.Vmr9Active) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called while vmr9 active");
 					return;
 				}
         try
