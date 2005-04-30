@@ -252,6 +252,13 @@ namespace GUIRecipies
 			SQLiteResultSet rs = m_db.Execute( cSQL );
 			return;
 		}
+		
+		public void DeleteFavorite(string id )	
+		{
+			string cSQL = String.Format( "DELETE FROM FAVORITE WHERE TITLE = '{0}'", id );
+			SQLiteResultSet rs = m_db.Execute( cSQL );
+			return;
+		}
 
 		public void DeleteRecipie(string id ) // delete a recipie from database
 		{

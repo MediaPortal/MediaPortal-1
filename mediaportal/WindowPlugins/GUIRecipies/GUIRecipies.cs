@@ -47,7 +47,8 @@ namespace GUIRecipies
 			STATE_MAIN = 0,
 			STATE_CATEGORY = 1,
 			STATE_RECIPIE  = 2,
-			STATE_SUB = 3
+			STATE_SUB = 3,
+			STATE_FAVORITES = 4
 		};
 
 		enum Search_Types
@@ -97,17 +98,89 @@ namespace GUIRecipies
 				return;
 			}
 			if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)	{
-				if(action.m_key.KeyChar == 89 || action.m_key.KeyChar == 121 ) {
-					if (titstr.Length>1) RecipieDatabase.GetInstance().AddFavorite(titstr);
+				if(action.m_key.KeyChar == 89 || action.m_key.KeyChar == 121 ) 
+				{
+					GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST );
+					if (item != null)
+					{
+						if (item.Label.Length>1) RecipieDatabase.GetInstance().AddFavorite(item.Label);
+					}
 				}
 				return;
 			}
 			if (action.wID == Action.ActionType.ACTION_QUEUE_ITEM) // add recipie to favorites
 			{
-				if( currentState == States.STATE_RECIPIE  )	{
-					RecipieDatabase.GetInstance().AddFavorite(titstr);
+				if( currentState == States.STATE_RECIPIE  )	
+				{
+					GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST );
+					if (item != null)
+					{
+						if (item.Label.Length>1) RecipieDatabase.GetInstance().AddFavorite(item.Label);
+					}
 				}
 				return;
+			}
+			if (action.wID == Action.ActionType.ACTION_DELETE_ITEM) 
+			{
+				GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST );
+				if (item != null)
+				{
+					GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+					if (null!=dlgYesNo)
+					{
+						titstr=item.Label;
+						dlgYesNo.SetLine(1, "");
+						dlgYesNo.SetLine(2, "");						
+						if( currentState == States.STATE_RECIPIE || currentState == States.STATE_CATEGORY ) 
+						{ 
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2049)); 
+							dlgYesNo.SetLine(1,titstr);
+						} 
+						if( currentState == States.STATE_MAIN )
+						{
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2050)); 
+							dlgYesNo.SetLine(1,titstr);
+						}
+						if( currentState == States.STATE_FAVORITES ) 
+						{
+							dlgYesNo.SetHeading(GUILocalizeStrings.Get(933)); 
+							dlgYesNo.SetLine(1,titstr);
+						}
+						dlgYesNo.DoModal(GetID);
+
+						if (dlgYesNo.IsConfirmed)
+						{
+							switch (currentState)
+							{
+								case States.STATE_FAVORITES:
+								{
+									RecipieDatabase.GetInstance().DeleteFavorite(titstr);
+									ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForFavorites();
+									UpDateList(recipies);
+									GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
+									currentState = States.STATE_FAVORITES;
+									UpdateButtons();
+								}
+									break;
+								case States.STATE_CATEGORY:
+								case States.STATE_RECIPIE:
+								{
+									RecipieDatabase.GetInstance().DeleteRecipie(titstr);
+									currentState = States.STATE_CATEGORY;
+									UpdateButtons();
+									ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForCategory( catstr );
+									UpDateList(recipies);
+									GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
+								}
+									break;
+								case States.STATE_MAIN:
+								{
+								}
+									break;
+							}
+						}
+					}
+				}
 			}
 			base.OnAction(action);
 		}
@@ -158,9 +231,11 @@ namespace GUIRecipies
 						OnMessage(msg);         
 						int iItem=(int)msg.Param1;
 						int iAction=(int)message.Param1;
-						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM) {
+						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM && iItem!=-1) 
+						{
 							GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST );
-							if( currentState == States.STATE_CATEGORY ) {	// show recipie details
+							if (currentState == States.STATE_CATEGORY || currentState == States.STATE_FAVORITES)	// show recipie details
+							{
 								if (item.Label!=GUILocalizeStrings.Get(2054)) { 
 									rec = RecipieDatabase.GetInstance().GetRecipie( item.Label );
 									titstr=item.Label;
@@ -214,7 +289,7 @@ namespace GUIRecipies
 								UpDateList(recipies);
 							}
 							GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
-						} else if(currentState == States.STATE_CATEGORY) {
+						} else if(currentState == States.STATE_CATEGORY || currentState == States.STATE_FAVORITES) {
 							search = false;
 							if (subcat==true) {
 								currentState = States.STATE_SUB;
@@ -264,33 +339,13 @@ namespace GUIRecipies
 						ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForFavorites();
 						UpDateList(recipies);
 						GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
-						currentState = States.STATE_CATEGORY;
+						currentState = States.STATE_FAVORITES;
 						UpdateButtons();
 					}
-
 					else if( iControl == (int) Controls.CONTROL_DELETE )		// click on delete button
 					{
-						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-						if (null==dlgYesNo) break;
-						if( currentState == States.STATE_RECIPIE || currentState == States.STATE_CATEGORY ) { 
-							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2049)); 
-							dlgYesNo.SetLine(1,titstr);
-						} 
-						if( currentState == States.STATE_MAIN ) {
-							dlgYesNo.SetHeading(GUILocalizeStrings.Get(2050)); 
-							dlgYesNo.SetLine(1,catstr);
-						}
-						dlgYesNo.SetLine(1, "");
-						dlgYesNo.SetLine(2, "");
-						dlgYesNo.DoModal(GetID);
-
-						if (!dlgYesNo.IsConfirmed) break; // Recipie will not delete
-						RecipieDatabase.GetInstance().DeleteRecipie(titstr);
-						currentState = States.STATE_CATEGORY;
-						UpdateButtons();
-						ArrayList recipies = RecipieDatabase.GetInstance().GetRecipiesForCategory( catstr );
-						UpDateList(recipies);
-						GUIControl.FocusControl(GetID, (int)Controls.CONTROL_BACKBUTTON);
+						Action action = new Action(Action.ActionType.ACTION_DELETE_ITEM, 0, 0);
+						OnAction(action);
 					}					
 					else if( iControl == (int) Controls.CONTROL_PRINT ) {		// click on Print button
 						if( currentState == States.STATE_RECIPIE ) {
@@ -347,7 +402,9 @@ namespace GUIRecipies
 					GUIControl.FocusControl(GetID, (int) Controls.CONTROL_LIST );
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_DELETE );
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_BACKBUTTON);
+					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_PRINT);
 					break;
+				case States.STATE_FAVORITES:
 				case States.STATE_CATEGORY :
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_TEXTBOX );
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_SPIN );
@@ -358,6 +415,7 @@ namespace GUIRecipies
 					GUIControl.FocusControl(GetID, (int) Controls.CONTROL_LIST );
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_DELETE );
 					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_BACKBUTTON );
+					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_PRINT);
 					break;
 				case States.STATE_SUB :
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_TEXTBOX );
@@ -369,6 +427,7 @@ namespace GUIRecipies
 					GUIControl.FocusControl(GetID, (int) Controls.CONTROL_LIST );
 					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_DELETE );
 					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_BACKBUTTON );
+					GUIControl.DisableControl( GetID, (int) Controls.CONTROL_PRINT);
 					break;
 				case States.STATE_RECIPIE :
 					GUIControl.HideControl( GetID, (int) Controls.CONTROL_LIST );
@@ -380,6 +439,7 @@ namespace GUIRecipies
 					GUIControl.ShowControl( GetID, (int) Controls.CONTROL_SPIN );			
 					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_DELETE );
 					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_BACKBUTTON );
+					GUIControl.EnableControl( GetID, (int) Controls.CONTROL_PRINT);
 					break;
 			}
 		}
