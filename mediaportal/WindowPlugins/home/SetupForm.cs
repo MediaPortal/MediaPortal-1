@@ -197,43 +197,6 @@ namespace home
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
-
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-
-			this.NodeCount = 0;
-			this.FolderCount= 0;
-
-			ImageList TreeviewIL = new ImageList();
-			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.folder.png")));
-			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.node.png")));
-			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.script.png")));
-			
-			this.treeView.ImageList = TreeviewIL;
-			this.treeView.HideSelection = false;
-			this.treeView.ItemHeight = this.treeView.ItemHeight + 3;
-			this.treeView.Indent = this.treeView.Indent + 3;
-
-			EnumeratePlugins();
-			LoadPlugins();
-			PopulateListBox();
-			LoadSettings();
-			PopulateListViewBox();
-			MakeMenu.Visible=false;
-
-			textBox1.Text="";
-			textBox2.Text="";
-			textBox3.Text="";
-			textBox4.Text="";
-			textBox5.Text="";
-			textBox6.Text="";
-			
-			this.treeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseDown);
-			this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
-			this.treeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView_DragEnter);
-			this.treeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeView_ItemDrag);
-			this.treeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
 		}
 
 		/// <summary>
@@ -1194,6 +1157,7 @@ namespace home
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "SetupForm";
 			this.Text = "Home Setup";
+			this.Load += new System.EventHandler(this.SetupForm_Load);
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
@@ -2367,6 +2331,42 @@ namespace home
 			label8.Visible=false;
 			textBox6.Visible=false;
 			comboBox1.Focus();
+		}
+
+		private void SetupForm_Load(object sender, System.EventArgs e)
+		{
+			this.NodeCount = 0;
+			this.FolderCount= 0;
+
+			ImageList TreeviewIL = new ImageList();
+			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.folder.png")));
+			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.node.png")));
+			TreeviewIL.Images.Add(System.Drawing.Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("WindowPlugins.home.resources.script.png")));
+			
+			this.treeView.ImageList = TreeviewIL;
+			this.treeView.HideSelection = false;
+			this.treeView.ItemHeight = this.treeView.ItemHeight + 3;
+			this.treeView.Indent = this.treeView.Indent + 3;
+
+			EnumeratePlugins();
+			LoadPlugins();
+			PopulateListBox();
+			LoadSettings();
+			PopulateListViewBox();
+			MakeMenu.Visible=false;
+
+			textBox1.Text="";
+			textBox2.Text="";
+			textBox3.Text="";
+			textBox4.Text="";
+			textBox5.Text="";
+			textBox6.Text="";
+			
+			this.treeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseDown);
+			this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
+			this.treeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView_DragEnter);
+			this.treeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeView_ItemDrag);
+			this.treeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
 		}
 	}
 }
