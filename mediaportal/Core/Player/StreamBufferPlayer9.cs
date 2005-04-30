@@ -33,7 +33,6 @@ namespace MediaPortal.Player
     {
 			
 			Log.Write("StreamBufferPlayer9: GetInterfaces()");
-			Vmr9= new VMR9Util("mytv");
       Type comtype = null;
       object comobj = null;
       
@@ -53,7 +52,7 @@ namespace MediaPortal.Player
         }
         comobj = Activator.CreateInstance( comtype );
         graphBuilder = (IGraphBuilder) comobj; comobj = null;
-			
+				Vmr9= new VMR9Util("mytv");
 				Vmr9.AddVMR9(graphBuilder);			
 				Vmr9.Enable(false);	
 
