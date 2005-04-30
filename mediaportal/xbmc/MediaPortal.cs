@@ -18,7 +18,7 @@ using System.Globalization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-//using Microsoft.ApplicationBlocks.ApplicationUpdater;
+using Microsoft.ApplicationBlocks.ApplicationUpdater;
 
 using MediaPortal.GUI.Library;
 using MediaPortal;
@@ -170,14 +170,10 @@ public class MediaPortalApp : D3DApp, IRender
         {
             form.ShowDialog();
         }
-#if AUTOUPDATE
 			ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
-#endif
 #if !DEBUG
         splashScreen = new SplashScreen();
-#if AUTOUPDATE
-			splashScreen.SetVersion(clientInfo.InstalledVersion);
-#endif
+				splashScreen.SetVersion(clientInfo.InstalledVersion);
         splashScreen.Show();
         splashScreen.Update();
 #endif

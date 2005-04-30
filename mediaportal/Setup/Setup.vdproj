@@ -501,6 +501,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_05F938B6411C41F38CE79F1788A28ED5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_061BEA75DF414EEB9B31B55C4AF81AA1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1348,6 +1354,12 @@
         "Entry"
         {
         "MsmKey" = "8:_18A9F7B3A2AF41A092D4546C3D98DDF1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_18F819805689409494AE896F530A78CF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4419,6 +4431,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5B8631E6B8E9423290D28A91ACDF1F39"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5B900787B87A458BB0A1CF57BE9D9400"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7150,6 +7168,12 @@
         "Entry"
         {
         "MsmKey" = "8:_8CC8A5154FB34789AAD7B00EAD920E1C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8CC8FE76002D4F6091D2604C4E59F514"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -13776,6 +13800,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_05F938B6411C41F38CE79F1788A28ED5"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\wireless-caller.jpg"
+            "TargetName" = "8:wireless-caller.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_061BEA75DF414EEB9B31B55C4AF81AA1"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\progress_back.png"
@@ -16626,6 +16670,26 @@
             "TargetName" = "8:DialogDateTime.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_18F819805689409494AE896F530A78CF"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\out-of-area.jpg"
+            "TargetName" = "8:out-of-area.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -25988,6 +26052,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5B8631E6B8E9423290D28A91ACDF1F39"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\yac-area-codes.xml"
+            "TargetName" = "8:yac-area-codes.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_5B900787B87A458BB0A1CF57BE9D9400"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\button-cd-nofocus.png"
@@ -33057,6 +33141,26 @@
             "TargetName" = "8:video_window_focus.png"
             "Tag" = "8:"
             "Folder" = "8:_36716BB99E0A479DA4F30DA702F6C737"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8CC8FE76002D4F6091D2604C4E59F514"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\text-message.jpg"
+            "TargetName" = "8:text-message.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -50781,6 +50885,17 @@
                     "Property" = "8:_34ABED3D11DC494FAD6585A99C4F0A41"
                         "Folders"
                         {
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_5BCD45BC34E7483F8CA0D6DE082D592C"
+                            {
+                            "Name" = "8:yac"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_D55150FD9AF541A196FE25CD9AECD800"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_C390BA181EBE411A960BA23CECE80512"
                             {
                             "Name" = "8:tv"
