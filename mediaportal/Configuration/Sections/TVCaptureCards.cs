@@ -226,7 +226,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 			} while (found);
 
-			EditCaptureCardForm editCard = new EditCaptureCardForm(cardid);
+			EditCaptureCardForm editCard = new EditCaptureCardForm(cardid, true,null);
 
 			DialogResult dialogResult = editCard.ShowDialog(this);
 			if(dialogResult == DialogResult.OK)
@@ -244,7 +244,7 @@ namespace MediaPortal.Configuration.Sections
 			foreach(ListViewItem listItem in cardsListView.SelectedItems)
 			{
 				TVCaptureDevice device=listItem.Tag as TVCaptureDevice;
-				EditCaptureCardForm editCard = new EditCaptureCardForm(device.ID);
+				EditCaptureCardForm editCard = new EditCaptureCardForm(device.ID,false,device);
         editCard.CaptureCard = device;
 
         DialogResult dialogResult = editCard.ShowDialog(this);

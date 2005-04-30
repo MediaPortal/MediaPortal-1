@@ -358,7 +358,7 @@ namespace MediaPortal.TV.Recording
 				foreach (TVCaptureDevice dev in m_tvcards)
 				{
 					//if we may use the  card for recording tv?
-					if (!dev.UseForRecording)
+					if (dev.UseForRecording)
 					{
 						// and is it not recording already?
 						// or is it postrecording and we want to skip postrecording

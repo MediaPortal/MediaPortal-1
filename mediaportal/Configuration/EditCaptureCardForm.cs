@@ -1,10 +1,13 @@
 using System;
+using System.IO;
 using System.Management;
-using System.Drawing;
 using System.Collections;
+using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Runtime.InteropServices; 
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
 using DShowNET;
 using DShowNET.Device;
 using DirectX.Capture;
@@ -160,8 +163,34 @@ namespace MediaPortal.Configuration
 		/// <summary>
 		/// 
 		/// </summary>
-		public EditCaptureCardForm(int cardId)
+		public EditCaptureCardForm(int cardId, bool addNewCard,TVCaptureDevice deviceToEdit)
 		{
+			ArrayList captureCards= new ArrayList();
+			if (addNewCard)
+			{
+				try
+				{
+					using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+					{
+
+						SoapFormatter formatter = new SoapFormatter();
+						captureCards = (ArrayList)formatter.Deserialize(fileStream);
+						for (int i=0; i < captureCards.Count; i++)
+						{
+							((TVCaptureDevice)captureCards[i]).ID=(i+1);
+							((TVCaptureDevice)captureCards[i]).LoadDefinitions();
+						}
+						//
+						// Finally close our file stream
+						//
+						fileStream.Close();
+					}
+				}
+				catch
+				{
+				}
+			}
+
 			CardId=cardId;
 			//
 			// Required for Windows Form Designer support
@@ -208,19 +237,19 @@ namespace MediaPortal.Configuration
 			ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
 
 			/* below is used for testing only
-			availableVideoDevices.Add("713x BDA Analog Capture");
-			availableVideoDevices.Add("713x BDA Analog Capture");
-			availableVideoDevices.Add("713x BDA Analog Capture");
-			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&1");
-			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&2");
-			availableVideoDeviceMonikers.Add("ven_1131&dev_7133&subsys_05025168&rev_f0&3");		
-			*/
 			
+			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
+			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
+			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
+			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&267465cb&0&4828f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
+			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&e6752e3&0&4820f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
+			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8070070&rev_01#5&e6752e3&0&4020f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");		
+		*/
 			FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
 			FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
 			for (int i=0; i < availableVideoDevices.Count;++i)
 			{
-				//	Log.Write("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
+					Log.Write("device:{0} id:{1}", availableVideoDevices[i].ToString(), availableVideoDeviceMonikers[i].ToString());
 			}
 
 
@@ -355,7 +384,44 @@ namespace MediaPortal.Configuration
 								cb.MaxCards=nr;
 							}
 						}
-						cardComboBox.Items.Add(cbcc); 
+						if (!addNewCard)
+						{
+							if (deviceToEdit.DeviceType!=null)
+							{
+								if (cbcc.CaptureDevice.DeviceId==deviceToEdit.DeviceType)
+								{
+									if (deviceToEdit.VideoDeviceMoniker==cbcc.VideoDeviceMoniker &&
+										deviceToEdit.VideoDevice    ==cbcc.CaptureDevice.CaptureName)
+									{
+										cardComboBox.Items.Add(cbcc); 
+									}
+								}
+							}
+						}
+						else
+						{
+							bool alreadyAdded=false;
+							foreach (TVCaptureDevice dev in captureCards)
+							{
+								if (dev.DeviceType!=null)
+								{
+									if (cbcc.CaptureDevice.DeviceId==dev.DeviceType)
+									{
+										if (dev.VideoDeviceMoniker==cbcc.VideoDeviceMoniker &&
+											dev.VideoDevice    ==cbcc.CaptureDevice.CaptureName)
+										{
+											alreadyAdded=true;
+										}
+									}
+								}
+							}
+							if (!alreadyAdded)
+							{
+								cardComboBox.Items.Add(cbcc); 
+								if (cardComboBox.SelectedItem==null)
+									cardComboBox.SelectedIndex=0;
+							}
+						}
 					}
 				}
 			}
@@ -3111,9 +3177,6 @@ public class ComboBoxCaptureCard
 	// Display a more readable name by adding the commercial name of the card to the capture device
 	public override string ToString()
 	{
-		if (m_iMax>1)
-			return String.Format("#{0} {1} ({2})",m_iNumber,CaptureName,_mCaptureDevice.CommercialName );
-		else
 			return String.Format("{1} ({2})",m_iNumber,CaptureName,_mCaptureDevice.CommercialName );
 	}
 
