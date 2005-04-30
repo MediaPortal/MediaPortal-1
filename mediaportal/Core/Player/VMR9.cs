@@ -78,7 +78,6 @@ namespace MediaPortal.Player
       {
         RemoveVMR9();
       }
-      Log.Write("VMR9Helper:AddVMR9()");
 
       Type comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
       object comobj = Activator.CreateInstance(comtype);
@@ -118,7 +117,8 @@ namespace MediaPortal.Player
         return;
       }
       SetDeinterlacePrefs();
-      GUIGraphicsContext.Vmr9Active = true;
+			Log.Write("VMR9Helper:start vmr9");
+			GUIGraphicsContext.Vmr9Active = true;
     }
     public void Release()
     {
@@ -130,15 +130,15 @@ namespace MediaPortal.Player
     public void RemoveVMR9()
     {
       if (!UseVMR9inMYTV) return;
-      Log.Write("VMR9Helper:RemoveVMR9()");
-      GUIGraphicsContext.Vmr9Active = false;
       if (vmr9Helper != null)
       {
         vmr9Helper = null;
       }
 
       if (m_scene != null)
-      {
+			{
+				Log.Write("VMR9Helper:stop vmr9");
+				GUIGraphicsContext.Vmr9Active = false;
         instanceCounter--;
         m_scene.Stop();
         m_scene.Deinit();
@@ -247,7 +247,6 @@ namespace MediaPortal.Player
         // check if vmr9 is enabled and if initialized
         if (VMR9Filter == null || !UseVMR9inMYTV)
         {
-          GUIGraphicsContext.Vmr9Active = false;
           return false;
         }
 
@@ -257,7 +256,6 @@ namespace MediaPortal.Player
         if (pinIn == null)
         {
           //no input pin found, vmr9 is not possible
-          GUIGraphicsContext.Vmr9Active = false;
           return false;
         }
         //Marshal.ReleaseComObject(pinIn);
@@ -267,7 +265,6 @@ namespace MediaPortal.Player
         if (pinConnected == null)
         {
           //no pin is not connected so vmr9 is not possible
-          GUIGraphicsContext.Vmr9Active = false;
           return false;
         }
         //Marshal.ReleaseComObject(pinConnected);

@@ -1089,6 +1089,16 @@ namespace MediaPortal
         /// </summary>
         protected void FullRender()
         {
+					if (GUIGraphicsContext.Vmr9Active)
+					{
+						HandleCursor();
+
+						if ((System.Windows.Forms.Form.ActiveForm != this) && (alwaysOnTop))
+						{
+							this.Activate();
+						}
+						return;
+					}
             // Render a frame during idle time (no messages are waiting)
             if (active && ready)
             {

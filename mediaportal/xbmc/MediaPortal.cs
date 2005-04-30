@@ -688,10 +688,7 @@ public class MediaPortalApp : D3DApp, IRender
         g_Player.Process();
         HandleMessage();
         FrameMove();
-        if (!GUIGraphicsContext.Vmr9Active)
-        {
-            FullRender();
-        }
+        FullRender();
     }
 
     public void RenderFrame(float timePassed)
@@ -811,7 +808,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (reentrant) return;
 				if (GUIGraphicsContext.InVmr9Render)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called while in vmr9 render");
+					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called while in vmr9 render {0} {1}",GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS);
 					return;
 				}
 				if (GUIGraphicsContext.Vmr9Active) 
@@ -819,6 +816,7 @@ public class MediaPortalApp : D3DApp, IRender
 					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called while vmr9 active");
 					return;
 				}
+			
         try
         {
             reentrant = true;
