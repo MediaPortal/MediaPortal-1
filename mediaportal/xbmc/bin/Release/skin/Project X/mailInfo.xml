@@ -154,7 +154,7 @@
 				<posY>225</posY>
 				<width>640</width>
 				<height>350</height>
-				<onup>27</onup>
+				<onleft>27</onleft>
 			</control>
 		</controls>
 </window>
