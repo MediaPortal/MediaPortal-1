@@ -149,6 +149,7 @@ namespace MediaPortal.GUI.Music
 				VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
 				keyBoard.Text = String.Empty;
 				keyBoard.Reset();
+				keyBoard.KindOfSearch=(int)MediaPortal.Dialogs.VirtualSearchKeyboard.SearchKinds.SEARCH_STARTS_WITH;
 				keyboard_TextChanged(0, "");
 				keyBoard.TextChanged+=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
 				keyBoard.DoModal(activeWindow); // show it...
