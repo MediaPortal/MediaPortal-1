@@ -327,8 +327,8 @@ namespace MediaPortal.GUI.RSS
 			m_pSiteImage.ColourDiffuse=0xffffffff;
 			m_pSiteImage.SetFileName(m_strSiteIcon);
 
-			m_pSiteImage.Width = m_pSiteImage.TextureWidth;
-			m_pSiteImage.Height = m_pSiteImage.TextureHeight;
+//			m_pSiteImage.Width = m_pSiteImage.TextureWidth;
+//			m_pSiteImage.Height = m_pSiteImage.TextureHeight;
 
 			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST);
 

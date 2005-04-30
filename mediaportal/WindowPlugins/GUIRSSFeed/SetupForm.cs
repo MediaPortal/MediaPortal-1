@@ -103,6 +103,8 @@ namespace GUIRSSFeed
 		/// </summary>
 		void deleteSite(object obj, System.EventArgs ea)
 		{
+			if (listBox.SelectedIndices==null) return;
+			if (listBox.SelectedIndices.Count==0) return;
 			int iItem = listBox.SelectedIndices[0];
 			int ID = 0;
 			//find the index of the item in question
