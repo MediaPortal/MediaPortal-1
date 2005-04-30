@@ -484,11 +484,11 @@ namespace MediaPortal.GUI.TV
 				if (Recorder.IsRecording())
 				{
 					//yes then stop recording
+					Navigator.UpdateCurrentChannel();
 					Recorder.StopRecording();
 
 					// and re-start viewing.... 
-					LoadSettings();
-					Log.Write("tv home onrecord chan:{0}",Navigator.CurrentChannel);
+					Log.Write("tv home stoprecording chan:{0}",Navigator.CurrentChannel);
 					ViewChannel(Navigator.CurrentChannel);
 					Navigator.UpdateCurrentChannel();
 				}
