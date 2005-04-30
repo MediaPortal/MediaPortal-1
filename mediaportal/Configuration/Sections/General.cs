@@ -107,7 +107,8 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "baloontips", "false" },
 												new string[] { "general", "dblclickasrightclick", "false" },
 												new string[] { "general", "hidetaskbar", "true" },
-												new string[] { "general", "alwaysontop", "false" }
+												new string[] { "general", "alwaysontop", "false" },
+												new string[] { "general", "exclusivemode", "false" }
 												};
 
 		/// <summary>
@@ -269,7 +270,8 @@ namespace MediaPortal.Configuration.Sections
 																																"Disable Windows XP balloon tips",
 																																"Use mouse left double click as right click",
 																																"Hide taskbar in fullscreen mode",
-																																"MediaPortal always on top"});
+																																"MediaPortal always on top",
+																																"use Exclusive DirectX Mode for fullscreen tv/video"});
 			this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
 			this.settingsCheckedListBox.Name = "settingsCheckedListBox";
 			this.settingsCheckedListBox.Size = new System.Drawing.Size(416, 304);

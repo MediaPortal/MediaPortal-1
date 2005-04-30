@@ -152,7 +152,8 @@ namespace MediaPortal
         DirectDraw.Device m_dddevice = null;
         DirectDraw.SurfaceDescription m_dddescription = null;
         DirectDraw.Surface m_ddfront = null;
-        DirectDraw.Surface m_ddback = null;
+				DirectDraw.Surface m_ddback = null;
+				bool useExclusiveDirectXMode;
 
         [DllImport("winmm.dll")]
         internal static extern uint timeBeginPeriod(uint period);
@@ -196,7 +197,8 @@ namespace MediaPortal
 
 
             using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-            {
+						{
+								useExclusiveDirectXMode= xmlreader.GetValueAsBool("general", "exclusivemode", true);
                 autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
                 alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
             }
@@ -597,7 +599,8 @@ namespace MediaPortal
 
         public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
         {
-            return true;
+            if (!useExclusiveDirectXMode) 
+							return true;
             if (bRemoveHandler)
                 GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
             if (bWindowed)
