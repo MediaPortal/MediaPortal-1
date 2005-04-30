@@ -951,7 +951,7 @@
     </action>
     <action>
       <id>111</id>
-      <key>Enter</key>
+      <key>Z</key>
       <sound />
       <description>Zap to last viewed Channel</description>
     </action>
