@@ -81,45 +81,52 @@ namespace MediaPortal.GUI.Library
         }*/
       }
 
-      // send message to other objects interested
-			if (Receivers!=null)
+			try
 			{
-				Receivers(message);
-			}
+				// send message to other objects interested
+				if (Receivers!=null)
+				{
+					Receivers(message);
+				}
 
-      // if dialog is onscreen, then send message to that window
-			if (null!=m_pRouteWindow)
+				// if dialog is onscreen, then send message to that window
+				if (null!=m_pRouteWindow)
+				{
+					if (message.TargetWindowId==m_pRouteWindow.GetID)
+					{
+						m_pRouteWindow.OnMessage(message);
+						return;
+					}
+				}
+
+				GUIWindow pWindow=null;
+				GUIWindow activewindow=null;
+				if (m_iActiveWindow >= 0 && m_iActiveWindow < windowCount) 
+				{
+					activewindow=m_vecWindows[m_iActiveWindow];
+					if (message.SendToTargetWindow==true)
+					{
+						for (int i=0; i < windowCount;++i)
+						{
+							pWindow=m_vecWindows[i];
+							if (pWindow.GetID==message.TargetWindowId)
+							{
+								pWindow.OnMessage(message);
+								return;
+							}
+						}
+						return;
+					}
+				}
+
+				// else send message to the current active window
+				if (activewindow!=null)
+					activewindow.OnMessage(message);
+			}
+			catch(Exception ex)
 			{
-        if (message.TargetWindowId==m_pRouteWindow.GetID)
-        {
-          m_pRouteWindow.OnMessage(message);
-          return;
-        }
+				Log.WriteFile(Log.LogType.Log,true,"Exception: {0}",ex.ToString());
 			}
-
-      GUIWindow pWindow=null;
-      GUIWindow activewindow=null;
-      if (m_iActiveWindow >= 0 && m_iActiveWindow < windowCount) 
-      {
-        activewindow=m_vecWindows[m_iActiveWindow];
-        if (message.SendToTargetWindow==true)
-        {
-          for (int i=0; i < windowCount;++i)
-          {
-            pWindow=m_vecWindows[i];
-            if (pWindow.GetID==message.TargetWindowId)
-            {
-              pWindow.OnMessage(message);
-              return;
-            }
-          }
-          return;
-        }
-      }
-
-      // else send message to the current active window
-			if (activewindow!=null)
-			  activewindow.OnMessage(message);
     }
 		/// <summary>
 		/// send thread message. Same as sendmessage() however message is placed on a queue
