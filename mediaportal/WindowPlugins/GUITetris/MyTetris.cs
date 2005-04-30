@@ -784,7 +784,7 @@ namespace MediaPortal.Games.Tetris
 
 			if(nBlock < 0 || nBlock > 6)
 			{
-				Log.Write("MyTetrisControl.RenderNext: Block index is out of range");
+				//Log.Write("MyTetrisControl.RenderNext: Block index is out of range");
 				return;
 			}
 
