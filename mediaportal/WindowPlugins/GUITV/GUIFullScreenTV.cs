@@ -288,6 +288,12 @@ namespace MediaPortal.GUI.TV
 			}
 			switch (action.wID)
 			{
+				case Action.ActionType.ACTION_SELECT_ITEM:
+				{
+					GUITVHome.OnLastViewedChannel();
+				}
+					break;
+
 				case Action.ActionType.ACTION_SHOW_INFO:
 				{
 					m_dwOSDTimeOut=DateTime.Now;
