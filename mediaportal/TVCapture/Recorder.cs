@@ -456,7 +456,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			// not recording this yet
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record a {0} on channel:{1} from {2}-{3}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString());
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(),rec.ID);
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  find free capture card");
 			LogTvStatistics();
 
@@ -1689,8 +1689,16 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				dev=(TVCaptureDevice)m_tvcards[i];
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} channel:{4}",
-					dev.ID,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
+				if (!dev.IsRecording)
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} channel:{4}",
+						dev.ID,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel);
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} channel:{4} id:{5}",
+						dev.ID,dev.View,dev.IsRecording,dev.IsTimeShifting,dev.TVChannel,dev.CurrentTVRecording.ID);
+				}
 			}
 			if (g_Player.Playing)
 			{

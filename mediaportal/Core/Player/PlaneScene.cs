@@ -71,7 +71,7 @@ namespace MediaPortal.Player
 		float							_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
 		VertexBuffer			m_vertexBuffer;
 		uint              m_surfAdr,m_texAdr;
-		bool							m_repaint;
+		bool							inRepaint;
 		int               arVideoWidth=4;
 		int								arVideoHeight=3;
 		int               prevVideoWidth=0;
@@ -79,9 +79,11 @@ namespace MediaPortal.Player
 		int               prevArVideoWidth=0;
 		int               prevArVideoHeight=0;
 		static            bool reentrant=false;
+		bool              drawVideoAllowed=true;
+
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
-			m_repaint=false;
+			inRepaint=false;
 			m_surfAdr=0;
 			m_texAdr=0;
 			m_vmr9Util=util;
@@ -109,6 +111,15 @@ namespace MediaPortal.Player
 			{
 				Log.Write("exception in planescene.cs Stop()"+ex.ToString());
 			}
+		}
+		public bool DrawVideo
+		{
+			get { return drawVideoAllowed;}
+			set { 
+				drawVideoAllowed=value;
+				Log.Write("vmr9: video draw allowed:{0}", drawVideoAllowed);
+			}
+
 		}
 
 		/// <summary>
@@ -362,9 +373,16 @@ namespace MediaPortal.Player
 				m_vmr9Util.VideoHeight=height;
 				arVideoWidth=arWidth;
 				arVideoHeight=arHeight;
+
+				if (!drawVideoAllowed && !inRepaint) 
+				{
+					m_vmr9Util.FrameCounter++;
+					return;
+				}
+
 				if (!isEnabled) 
 				{
-					if (!m_repaint) m_vmr9Util.FrameCounter++;
+					if (!inRepaint) m_vmr9Util.FrameCounter++;
 					return;
 				}
 
@@ -376,7 +394,7 @@ namespace MediaPortal.Player
 					{
 						if ( (m_vmr9Util.FrameCounter%2)==1)
 						{
-							if (!m_repaint) m_vmr9Util.FrameCounter++;
+							if (!inRepaint) m_vmr9Util.FrameCounter++;
 							return;
 						}
 					}
@@ -474,7 +492,7 @@ namespace MediaPortal.Player
 							}
 							else
 							{
-								if (!m_repaint) m_vmr9Util.FrameCounter++;
+								if (!inRepaint) m_vmr9Util.FrameCounter++;
 							}
 							//render GUI if needed
 							if (!bRenderGUIFirst)
@@ -529,11 +547,18 @@ namespace MediaPortal.Player
 				m_vmr9Util.VideoHeight=height;
 				arVideoWidth=arWidth;
 				arVideoHeight=arHeight;
+				if (!drawVideoAllowed && !inRepaint) 
+				{
+					m_vmr9Util.FrameCounter++;
+					return;
+				}
+
 				if (!isEnabled) 
 				{
-					if (!m_repaint) m_vmr9Util.FrameCounter++;
+					if (!inRepaint) m_vmr9Util.FrameCounter++;
 					return;
-				}			
+				}
+
 				// when we're only showing the preview window and not in fullscreen tv/video mode
 				// then only update the video preview max 25 fps to save cpu%
 				if (!GUIGraphicsContext.IsFullScreenVideo)
@@ -542,7 +567,7 @@ namespace MediaPortal.Player
 					{
 						if ( (m_vmr9Util.FrameCounter%2)==1)
 						{
-							if (!m_repaint) m_vmr9Util.FrameCounter++;
+							if (!inRepaint) m_vmr9Util.FrameCounter++;
 							return;
 						}
 					}
@@ -636,7 +661,7 @@ namespace MediaPortal.Player
 							}
 							else
 							{
-								if (!m_repaint) m_vmr9Util.FrameCounter++;
+								if (!inRepaint) m_vmr9Util.FrameCounter++;
 
 							}
 							//render GUI if needed
@@ -723,7 +748,7 @@ namespace MediaPortal.Player
 
 				// unset the texture and palette or the texture caching crashes because the runtime still has a reference
 				GUIGraphicsContext.DX9Device.SetTexture( 0, null);
-				if (!m_repaint) m_vmr9Util.FrameCounter++;
+				if (!inRepaint) m_vmr9Util.FrameCounter++;
 			}
 		}
 
@@ -738,7 +763,7 @@ namespace MediaPortal.Player
 				FontEngineDrawSurface(rSource.Left,rSource.Top,rSource.Width,rSource.Height,
 															rDest.Left,rDest.Top,rDest.Width,rDest.Height,
 																ptr.ToPointer());
-				if (!m_repaint) m_vmr9Util.FrameCounter++;
+				if (!inRepaint) m_vmr9Util.FrameCounter++;
 			}
 		}
 
@@ -747,7 +772,7 @@ namespace MediaPortal.Player
 			if (!isEnabled) return;
 			try
 			{
-				m_repaint=true;
+				inRepaint=true;
 				if (m_texAdr!=0)
 				{
 					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_texAdr);
@@ -768,7 +793,7 @@ namespace MediaPortal.Player
 			}
 			finally
 			{
-				m_repaint=false;
+				inRepaint=false;
 			}
 		}
 		#endregion

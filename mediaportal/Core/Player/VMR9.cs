@@ -207,6 +207,7 @@ namespace MediaPortal.Player
       {
         Log.Write("VMR9: playing->repaint");
         currentVmr9State = Vmr9PlayState.Repaint;
+				m_scene.DrawVideo=false;
       }
       m_scene.Repaint();
     }
@@ -229,6 +230,7 @@ namespace MediaPortal.Player
         {
           Log.Write("VMR9: repaint->playing");
           currentVmr9State = Vmr9PlayState.Playing;
+					m_scene.DrawVideo=true;
         }
       }
     }
