@@ -600,9 +600,14 @@ namespace MediaPortal.Dialogs
 			set { m_strData=value;}
 		}
 
-		public int KindOfSearch // this name sucks, do you have a better?
+		public int KindOfSearch
 		{
 			get {return m_searchKind;}
+			set
+			{
+				m_searchKind=value;
+				SetSearchKind();
+			}
 		}
 
 		public void SelectActiveButton(float x, float y)
@@ -1266,30 +1271,49 @@ namespace MediaPortal.Dialogs
 					 
 					 case Xkey.XK_SEARCH_IS:
 						 m_searchKind=(int)SearchKinds.SEARCH_STARTS_WITH;
-						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_START_WITH, MODEKEY_WIDTH ));
-						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
+						 SetSearchKind();
 						 break;
 
 					 case Xkey.XK_SEARCH_CONTAINS:
 						 m_searchKind=(int)SearchKinds.SEARCH_ENDS_WITH;
-						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_ENDS_WITH, MODEKEY_WIDTH ));
-						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
+						 SetSearchKind();
 						 break;
 					 
 					 case Xkey.XK_SEARCH_ENDS_WITH:
 						 m_searchKind=(int)SearchKinds.SEARCH_IS;
-						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_IS, MODEKEY_WIDTH ));
-						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
+						 SetSearchKind();
 						 break;
 					 
 					 case Xkey.XK_SEARCH_START_WITH:
 						 m_searchKind=(int)SearchKinds.SEARCH_CONTAINS;
-						 ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH ));
-						 if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
+						 SetSearchKind();
 						 break;
 					// code by Agree ends here
 					//
 				 }
+		}
+
+		void SetSearchKind()
+		{
+			switch (m_searchKind)
+			{
+				case (int)SearchKinds.SEARCH_STARTS_WITH:
+				ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_START_WITH, MODEKEY_WIDTH ));
+					break;
+				
+				case (int)SearchKinds.SEARCH_ENDS_WITH:
+				ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_ENDS_WITH, MODEKEY_WIDTH ));
+					break;
+					 
+				case (int)SearchKinds.SEARCH_IS:
+				ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_IS, MODEKEY_WIDTH ));
+					break;
+					 
+				case (int)SearchKinds.SEARCH_CONTAINS:
+				ChangeKey((int)m_iCurrBoard,1,0 , new Key( Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH ));
+					break;
+			}
+			if (TextChanged!=null) TextChanged(m_searchKind,m_strData);
 		}
 
 		void MoveUp()
