@@ -52,7 +52,7 @@ namespace MediaPortal.Player
 																														void* surface);
 
 		bool					  m_bStop = false;
-		static Surface	rTarget = null;
+		Surface					rTarget = null;
 		//VertexBuffer		vertexBuffer = null;
 		IRender				  m_renderer;
 		long					  m_lColorDiffuse = 0xFFFFFFFF;
@@ -102,14 +102,21 @@ namespace MediaPortal.Player
 		public void Stop()
 		{
 			m_bStop = true;
+			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			try
 			{
-				if (rTarget != null)
-					GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+				if (rTarget != null && GUIGraphicsContext.DX9Device!=null)
+				{
+					if (!GUIGraphicsContext.DX9Device.Disposed)
+					{
+						GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+					}
+				}
 			}
 			catch(Exception ex)
 			{
-				Log.Write("exception in planescene.cs Stop()"+ex.ToString());
+				Log.WriteFile(Log.LogType.Log,true,"exception in planescene.cs Stop() {0} {1} {2}",
+							ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
 		public bool DrawVideo
@@ -362,6 +369,7 @@ namespace MediaPortal.Player
 		public void PresentImage(int width,int height,int arWidth, int arHeight, uint pTex)
 		{
 			//avoid multiple threads accessing this method simultanously
+			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			lock (typeof(PlaneScene))
 			{
 				if (reentrant)
@@ -536,6 +544,7 @@ namespace MediaPortal.Player
 		public void PresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface)
 		{
 			//avoid multiple threads accessing this method simultanously
+			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			lock (typeof(PlaneScene))
 			{
 				if (reentrant)
@@ -769,6 +778,7 @@ namespace MediaPortal.Player
 
 		public void Repaint()
 		{	
+			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			if (!isEnabled) return;
 			try
 			{
