@@ -736,7 +736,7 @@ namespace MediaPortal.GUI.Library
 		{
 			set
 			{
-				if (m_strProperty!=value)
+				if (m_strProperty!=value || m_vecItems.Count==0)
 				{
 					m_strProperty=value;
 					if (m_strProperty.IndexOf("#")>=0) 
