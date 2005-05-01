@@ -147,6 +147,7 @@ namespace MediaPortal.Configuration.Sections
 			this.upButton.Size = new System.Drawing.Size(48, 23);
 			this.upButton.TabIndex = 5;
 			this.upButton.Text = "Up";
+			this.upButton.Visible = false;
 			this.upButton.Click += new System.EventHandler(this.upButton_Click);
 			// 
 			// downButton
@@ -159,6 +160,7 @@ namespace MediaPortal.Configuration.Sections
 			this.downButton.Size = new System.Drawing.Size(48, 23);
 			this.downButton.TabIndex = 6;
 			this.downButton.Text = "Down";
+			this.downButton.Visible = false;
 			this.downButton.Click += new System.EventHandler(this.downButton_Click);
 			// 
 			// deleteButton
@@ -240,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
 			// columnHeader6
 			// 
 			this.columnHeader6.Text = "Server";
-			this.columnHeader6.Width = 94;
+			this.columnHeader6.Width = 78;
 			// 
 			// tabControl1
 			// 
