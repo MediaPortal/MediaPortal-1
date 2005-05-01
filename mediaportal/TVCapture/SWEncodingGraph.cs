@@ -2007,6 +2007,13 @@ namespace MediaPortal.TV.Recording
 																			false ,
 																			false ,
 																			cardName);
+
+				if (m_filterCaptureAudio!=null)
+				{
+					Log.WriteFile(Log.LogType.Capture,"SWGraph: render audio outputs");
+					DirectShowUtil.RenderOutputPins(m_graphBuilder, m_filterCaptureAudio,2);
+				}
+			
 				TuneRadioChannel(station);
 
 
