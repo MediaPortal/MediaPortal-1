@@ -387,7 +387,7 @@ namespace MediaPortal.Configuration.Sections
 								name=String.Format("({0}:) Fixed",drive.Substring(0, 1).ToUpper());
 								break;
 							case DriveType.RemoteDisk:
-								name=String.Format("{0}:) Remote",drive.Substring(0, 1).ToUpper());
+								name=String.Format("({0}:) Remote",drive.Substring(0, 1).ToUpper());
 								break;
 							case DriveType.DVD: // or cd
 								name=String.Format("({0}:) CD/DVD",drive.Substring(0, 1).ToUpper());
