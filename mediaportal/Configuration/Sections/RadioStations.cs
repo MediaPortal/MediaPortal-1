@@ -804,17 +804,23 @@ namespace MediaPortal.Configuration.Sections
 				}
 				if (!mapped)
 				{
-					ListViewItem newItem = new ListViewItem(chan.Name);
-					newItem.Tag=chan;
-					listViewRadioChannels.Items.Add(newItem);
+					if (chan.URL==String.Empty)
+					{
+						ListViewItem newItem = new ListViewItem(chan.Name);
+						newItem.Tag=chan;
+						listViewRadioChannels.Items.Add(newItem);
+					}
 				}
 			}
 
 			foreach (MediaPortal.Radio.Database.RadioStation chanCard in cardChannels)
 			{
-				ListViewItem newItemCard = new ListViewItem(chanCard.Name);
-				newItemCard.Tag=chanCard;
-				listviewCardChannels.Items.Add(newItemCard);
+				if (chanCard.URL==String.Empty)
+				{
+					ListViewItem newItemCard = new ListViewItem(chanCard.Name);
+					newItemCard.Tag=chanCard;
+					listviewCardChannels.Items.Add(newItemCard);
+				}
 			}
 		}
 
