@@ -184,16 +184,10 @@ namespace MediaPortal.Dialogs
 
 		public void SetText(string text)
 		{
-			LoadSkin();
-			AllocResources();
-			InitControls();
 			txtArea.Label=text;
 		}
 		public void SetImage(string filename)
 		{
-			LoadSkin();
-			AllocResources();
-			InitControls();
 			imgLogo.FreeResources();
 			imgLogo.SetFileName(filename);
 			imgLogo.AllocResources();
