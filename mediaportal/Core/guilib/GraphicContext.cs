@@ -90,6 +90,7 @@ namespace MediaPortal.GUI.Library
 		static IRender                  m_renderFrame=null;
 		static bool                     vmr9Active=false;
 		static int											m_iMaxFPS=20;
+    static long                     m_iDesiredFrameTime=100;
 		static float                    m_fCurrentFPS=0;
 		static float                    m_fVMR9FPS=0;
 		static float                    lasttime=0f;
@@ -173,6 +174,7 @@ namespace MediaPortal.GUI.Library
       using (MediaPortal.Profile.Xml xmlReader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",20);
+        SyncFrameTime();
         m_iScrollSpeed=xmlReader.GetValueAsInt("general","scrollspeed",5);
         m_bAnimations=xmlReader.GetValueAsBool("general","animations",true);
       }
@@ -736,8 +738,17 @@ namespace MediaPortal.GUI.Library
 			{ 
 				if (m_iMaxFPS<0) return;
 				m_iMaxFPS=value;
+        SyncFrameTime();
 			}
 		}
+
+    /// <summary>
+    /// Get the number of ticks for each frame to get MaxFPS
+    /// </summary>
+    static public long DesiredFrameTime
+    {
+      get { return m_iDesiredFrameTime; }
+    }
 
 		/// <summary>
 		/// Get/Set the current maximum number of FPS
@@ -807,5 +818,12 @@ namespace MediaPortal.GUI.Library
 				vmr9RenderBusy=value;
 			}
 		}
+
+    static void SyncFrameTime()
+    {
+      m_iDesiredFrameTime = DXUtil.TicksPerSecond / m_iMaxFPS;
+    }
+
+
   }
 }

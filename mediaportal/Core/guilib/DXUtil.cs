@@ -54,6 +54,7 @@ public class DXUtil
 	private static double m_fLastElapsedTime = 0.0;
 	private static double m_fBaseTime = 0.0;
 	private static double m_fStopTime = 0.0;
+  public static long TicksPerSecond{ get { return m_llQPFTicksPerSec; } }
 	#endregion
 
 	// Constants for SDK Path registry keys
