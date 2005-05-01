@@ -277,7 +277,7 @@ namespace MediaPortal.GUI.TV
           m_dateTime=DateTime.Now;
           Reset();
           FocusControl(GetID, (int)Controls.OSD_PLAY, 0);	// set focus to play button by default when window is shown
-          SetCurrentChannelLogo();
+          ShowPrograms();
           return true;
         }
       		    
@@ -1132,7 +1132,7 @@ namespace MediaPortal.GUI.TV
   		if (!Recorder.View) return;
   		GUITVHome.Navigator.ZapToPreviousChannel(false);
 
-  		SetCurrentChannelLogo();
+  		ShowPrograms();
   		m_dateTime = DateTime.Now;
   	}
 
@@ -1143,13 +1143,13 @@ namespace MediaPortal.GUI.TV
 
   		GUITVHome.Navigator.ZapToNextChannel(false);
 
-  		SetCurrentChannelLogo();
+  		ShowPrograms();
   		m_dateTime = DateTime.Now;
   	}
 
 		public void UpdateChannelInfo()
 		{
-			SetCurrentChannelLogo();
+			ShowPrograms();			
 		}
 
 
@@ -1170,8 +1170,7 @@ namespace MediaPortal.GUI.TV
 				{
 					imgTvChannelLogo.IsVisible=false;
 				}
-      }
-      ShowPrograms();
+      }      
     }
 
 		string GetChannelName()
@@ -1196,11 +1195,16 @@ namespace MediaPortal.GUI.TV
 				tbOnTvNext.Clear();
 			}
 
-
       // Set recorder status
 			if (imgRecIcon!=null)
 			{
 				imgRecIcon.IsVisible = Recorder.IsRecordingChannel(GetChannelName());
+			}
+
+			// Channel icon
+			if (imgTvChannelLogo!=null)
+			{
+				SetCurrentChannelLogo();
 			}
 
       if (lblCurrentChannel!=null)
