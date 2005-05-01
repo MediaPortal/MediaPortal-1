@@ -1221,11 +1221,14 @@ namespace MediaPortal.GUI.TV
           lblCurrentTime.Label=strTime;
         }
         // On TV Now
-        strTime=String.Format("{0} ", prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));        
         if (tbOnTvNow!=null)
         {
-          tbOnTvNow.Label=strTime+prog.Title;
+					strTime=String.Format("{0} ", prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));        
+          tbOnTvNow.Label=strTime+prog.Title;				
           GUIPropertyManager.SetProperty("#TV.View.start", strTime);
+
+					strTime=String.Format("{0} ", prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
         }
 				if (tbProgramDescription!=null)
 				{
@@ -1236,20 +1239,21 @@ namespace MediaPortal.GUI.TV
 				prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(1));
         if (prog!=null)
         {
-          strTime=String.Format("{0} ", 
-            prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-        
-          if (tbOnTvNext!=null)
+					if (tbOnTvNext!=null)
           {
-            tbOnTvNext.Label=strTime+prog.Title;
-						GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
+            tbOnTvNext.Label=strTime+prog.Title;						
           }
         }
       }
-      else if (lblCurrentTime!=null)
-      {
-        lblCurrentTime.Label="";
-      }
+      else
+			{
+				GUIPropertyManager.SetProperty("#TV.View.start", "");
+				GUIPropertyManager.SetProperty("#TV.View.stop", "");
+				if (lblCurrentTime!=null)
+				{
+					lblCurrentTime.Label=String.Empty;
+				}	
+			}
       UpdateProgressBar();
     }
 
@@ -1259,7 +1263,11 @@ namespace MediaPortal.GUI.TV
 		  if (g_Player.Playing)
 		  {
 				TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).CurrentProgram;
-			  if (prog==null) return;
+				if (prog==null)
+				{
+					GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+					return;
+				}
 			  string strTime=String.Format("{0}-{1}", 
 				  prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
 				  prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
