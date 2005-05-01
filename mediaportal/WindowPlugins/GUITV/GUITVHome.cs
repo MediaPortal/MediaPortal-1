@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.TV
 									pDlgOK.SetHeading(605);//my tv
 									pDlgOK.AddLocalizedString(875); //current program
 									pDlgOK.AddLocalizedString(876); //till manual stop
-									pDlgOK.DoModal(this.GetID);
+									pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
 									switch (pDlgOK.SelectedId)
 									{
 										case 875:
