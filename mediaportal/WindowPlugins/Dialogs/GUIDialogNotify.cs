@@ -22,7 +22,7 @@ namespace MediaPortal.Dialogs
 		[SkinControlAttribute(6)]			protected GUITextControl txtArea=null;
 
 		bool    m_bPrevOverlay=false;
-		int     timeOutInSeconds=5;
+		int     timeOutInSeconds=8;
 
 		public GUIDialogNotify()
 		{
