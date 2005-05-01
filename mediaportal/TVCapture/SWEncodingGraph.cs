@@ -2004,6 +2004,13 @@ namespace MediaPortal.TV.Recording
 					Vmr9.Release();
 					Vmr9=null;
 				}
+				m_videoWindow = m_graphBuilder as IVideoWindow;
+				if (m_videoWindow!=null)
+				{
+					m_videoWindow.put_Visible(DsHlp.OAFALSE);
+					m_videoWindow.put_Owner(IntPtr.Zero);
+				}
+				
 				DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
 																			m_captureGraphBuilder,
 																			m_filterCaptureVideo, 
