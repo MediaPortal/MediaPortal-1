@@ -253,16 +253,21 @@ namespace MediaPortal.GUI.GUIBurner
 								currentState=States.STATE_MAIN;			// If Data change Folder to Main
 								UpdateButtons();
 								break;
-							case States.STATE_CONVERT :
-								currentState=States.STATE_VIDEO;		// If Convert change Folder to Video
-								UpdateButtons();
-								break;
+//							case States.STATE_CONVERT :
+//								currentState=States.STATE_VIDEO;		// If Convert change Folder to Video
+//								UpdateButtons();
+//								break;
 							case States.STATE_DISK_INFO :					// If Disk Info change Folder to Main
 								currentState=States.STATE_MAIN;		
 								UpdateButtons();
 								break;
-							case States.STATE_MAKE_BACKUP :					// If MP Backup change Folder to Main
+							case States.STATE_MAKE_BACKUP :				// If MP Backup change Folder to Main
 								currentState=States.STATE_MAIN;		
+								UpdateButtons();
+								break;
+							
+							default:
+								currentState=States.STATE_MAIN;			// default goto main
 								UpdateButtons();
 								break;
 						}
