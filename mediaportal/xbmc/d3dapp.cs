@@ -1331,7 +1331,7 @@ namespace MediaPortal
             float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
 
             // Update the scene stats once per second
-            if (time - lastTime >= 0.01f)
+            if (time - lastTime >= 1.0f)
             {
                 //        framePerSecond    = frames / (time - lastTime);
                 //				GUIGraphicsContext.CurrentFPS=framePerSecond;
