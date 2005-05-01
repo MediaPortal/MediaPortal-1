@@ -1997,7 +1997,13 @@ namespace MediaPortal.TV.Recording
 			{
 				if (m_graphState != State.Created)  return;
 				if (m_videoCaptureDevice == null) return ;
-				
+
+				if (Vmr9!=null)
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9.Release();
+					Vmr9=null;
+				}
 				DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
 																			m_captureGraphBuilder,
 																			m_filterCaptureVideo, 
@@ -2023,7 +2029,6 @@ namespace MediaPortal.TV.Recording
 				}
 				if (m_mediaControl != null)
 				{
-					if (Vmr9!=null) Vmr9.SetDeinterlaceMode();
 					m_mediaControl.Run();
 				}
 
