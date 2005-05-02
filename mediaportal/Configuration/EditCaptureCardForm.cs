@@ -2889,25 +2889,7 @@ namespace MediaPortal.Configuration
 					if(tn.Checked==true)
 					{
 						TVChannel ch=(TVChannel)tn.Tag;
-						bool addChannel=true;
-						if(capture.VideoDevice!="B2C2 MPEG-2 Source")
-						{
-							if (capture.Network==NetworkType.DVBC || capture.Network==NetworkType.DVBT)
-							{
-								foreach (TVChannel chan in tvchannels)
-								{
-									if (chan.Frequency==ch.Frequency)
-									{
-										addChannel=false;
-										break;
-									}
-								}
-							}
-						}
-						if (addChannel)
-						{
-							tvchannels.Add(ch);
-						}
+						tvchannels.Add(ch);
 					}
 				}
 
