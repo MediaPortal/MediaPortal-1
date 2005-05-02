@@ -812,7 +812,7 @@ namespace MediaPortal.TV.Recording
 			DirectShowUtil.RenderOutputPins(m_graphBuilder, m_filterCaptureAudio,2);
 			*/
 
-			Log.WriteFile(Log.LogType.Capture,true,"SWGraph:FAILED:render video preview");
+			Log.WriteFile(Log.LogType.Capture,true,"SWGraph:render video preview");
       m_videoCaptureDevice.RenderPreview();
 			m_mediaControl = (IMediaControl)m_graphBuilder;
 
@@ -2008,7 +2008,7 @@ namespace MediaPortal.TV.Recording
 					Vmr9=null;
 				}
 
-				Log.WriteFile(Log.LogType.Capture,true,"SWGraph:FAILED:render video preview");
+				Log.WriteFile(Log.LogType.Capture,true,"SWGraph:render video preview");
 				m_videoCaptureDevice.RenderPreview();
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow!=null)
