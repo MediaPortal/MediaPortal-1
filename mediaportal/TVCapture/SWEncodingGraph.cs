@@ -800,7 +800,10 @@ namespace MediaPortal.TV.Recording
 			m_iCountryCode=channel.Country;
       TuneChannel(channel);
 
-			Vmr9.AddVMR9(m_graphBuilder);
+			if (Vmr9!=null)
+			{
+				Vmr9.AddVMR9(m_graphBuilder);
+			}
 
 
 			/* disabled. this causes a audio-echo because now both the video capture filter audio out
@@ -2004,6 +2007,9 @@ namespace MediaPortal.TV.Recording
 					Vmr9.Release();
 					Vmr9=null;
 				}
+
+				Log.WriteFile(Log.LogType.Capture,true,"SWGraph:FAILED:render video preview");
+				m_videoCaptureDevice.RenderPreview();
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow!=null)
 				{
@@ -2021,12 +2027,6 @@ namespace MediaPortal.TV.Recording
 																			false ,
 																			cardName);
 
-				if (m_filterCaptureAudio!=null)
-				{
-					Log.WriteFile(Log.LogType.Capture,"SWGraph: render audio outputs");
-					DirectShowUtil.RenderOutputPins(m_graphBuilder, m_filterCaptureAudio,2);
-				}
-			
 				TuneRadioChannel(station);
 
 
