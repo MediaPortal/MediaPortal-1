@@ -26,6 +26,8 @@ namespace MediaPortal.Util
     ArrayList m_shares = new ArrayList();
     ArrayList m_extensions = null;
     string	  m_strPreviousDir = String.Empty;
+		string		currentShare = String.Empty;
+		string		previousShare = String.Empty;
     string    m_strLocalFolder=String.Empty;
 		/// <summary>
 		/// constructor
@@ -40,6 +42,7 @@ namespace MediaPortal.Util
 
 		public void Reset()
 		{
+			previousShare = String.Empty;
 			m_strPreviousDir = String.Empty;
 		}
     
@@ -95,6 +98,8 @@ namespace MediaPortal.Util
 		/// </returns>
     public ArrayList GetRoot()
     {
+			previousShare = String.Empty;
+
       ArrayList items = new ArrayList();
       foreach (Share share in m_shares)
       {
@@ -270,6 +275,7 @@ namespace MediaPortal.Util
 						string strFullPath = System.IO.Path.GetFullPath(share.Path);
             if ( strRoot.ToLower().StartsWith(strFullPath.ToLower()) )
             {
+							currentShare = strFullPath;
               iPincode = share.Pincode;
               if (share.Pincode >= 0)
                 return true;
@@ -365,7 +371,8 @@ namespace MediaPortal.Util
       if (IsProtectedShare(strDir, out iPincodeCorrect))
       {
         //yes, check if this is a subdirectory of the share
-        if (m_strPreviousDir.IndexOf(strDir) < 0)
+				if (previousShare != currentShare)
+        //if (previousShare==String.Empty || strDir.IndexOf(previousShare) < 0)
         {
           //no, then ask user to enter the pincode
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
@@ -392,7 +399,7 @@ namespace MediaPortal.Util
           }
         }
       }
-
+			previousShare = currentShare;
 
       //check if this is an image file like .iso, .nrg,...
       //ifso then ask daemontools to automount it
