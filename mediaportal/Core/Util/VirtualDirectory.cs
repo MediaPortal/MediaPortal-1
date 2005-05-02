@@ -37,6 +37,11 @@ namespace MediaPortal.Util
     public void AddDrives()
     {
     }
+
+		public void Reset()
+		{
+			m_strPreviousDir = String.Empty;
+		}
     
 		/// <summary>
 		/// Method to set a list of all file extensions
@@ -263,7 +268,7 @@ namespace MediaPortal.Util
           else
           {
 						string strFullPath = System.IO.Path.GetFullPath(share.Path);
-            if (strFullPath.ToLower() == strRoot.ToLower())
+            if ( strRoot.ToLower().StartsWith(strFullPath.ToLower()) )
             {
               iPincode = share.Pincode;
               if (share.Pincode >= 0)
@@ -368,8 +373,7 @@ namespace MediaPortal.Util
           int iPincode = -1;
           try
           {
-             iPincode = Int32.Parse(msg.Label);
-            
+             iPincode = Int32.Parse(msg.Label);            
           }
           catch (Exception)
           {
