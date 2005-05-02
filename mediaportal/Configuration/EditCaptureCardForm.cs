@@ -2889,6 +2889,7 @@ namespace MediaPortal.Configuration
 					if(tn.Checked==true)
 					{
 						TVChannel ch=(TVChannel)tn.Tag;
+						/*
 						bool addChannel=true;
 						if(capture.VideoDevice!="B2C2 MPEG-2 Source")
 						{
@@ -2907,7 +2908,8 @@ namespace MediaPortal.Configuration
 						if (addChannel)
 						{
 							tvchannels.Add(ch);
-						}
+						}*/
+						tvchannels.Add(ch);
 					}
 				}
 
