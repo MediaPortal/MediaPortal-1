@@ -2882,43 +2882,61 @@ namespace MediaPortal.Configuration
 				Form prevForm=GUIGraphicsContext.form;
 				GUIGraphicsContext.ActiveForm = this.Handle;
 				GUIGraphicsContext.form=this;
-				do
+				capture.View=true;
+				ArrayList tvchannels=new ArrayList();
+				foreach(TreeNode tn in treeView5.Nodes)
 				{
-					GC.Collect();
-					progressBar2.Value=progressBar2.Minimum;
-					foreach(TreeNode tn in treeView5.Nodes)
+					if(tn.Checked==true)
 					{
-						if(m_stopEPGGrab==true)
-							break;
-						if(tn.Checked==true)
+						TVChannel ch=(TVChannel)tn.Tag;
+						bool addChannel=true;
+						if(capture.VideoDevice!="B2C2 MPEG-2 Source")
 						{
-							
-							TVChannel ch=(TVChannel)tn.Tag;
-							chName.Text=ch.Name;
-							capture.TVChannel=ch.Name;
-							capture.View=true;
-							if (!capture.SignalPresent()) continue;
-							ssEPG.LabelChannels=channelsCount;
-							ssEPG.LabelTitles=addsToDB;
-							int dvbAdds=ssEPG.GetEPG(capture.Mpeg2DataFilter,0/*all services*/);
-							if(dvbAdds<0) dvbAdds=0;
-							counter+=dvbAdds;
-							label27.Text=String.Format("{0}",counter);
-							capture.View=false;
-							try
+							if (capture.Network==NetworkType.DVBC || capture.Network==NetworkType.DVBT)
 							{
-								progressBar2.Value+=1;
+								foreach (TVChannel chan in tvchannels)
+								{
+									if (chan.Frequency==ch.Frequency)
+									{
+										addChannel=false;
+										break;
+									}
+								}
 							}
-							catch
-							{
-								progressBar2.Value=progressBar2.Minimum;
-							}		
 						}
-						Application.DoEvents();
-						Application.DoEvents();
-
+						if (addChannel)
+						{
+							tvchannels.Add(ch);
+						}
 					}
-				}while(m_stopEPGGrab==false);
+				}
+
+				GC.Collect();
+				progressBar2.Value=progressBar2.Minimum;
+				foreach(TVChannel ch in tvchannels)
+				{
+					if(m_stopEPGGrab==true)
+						break;
+					chName.Text=ch.Name;
+					capture.TVChannel=ch.Name;
+					if (!capture.SignalPresent()) continue;
+					ssEPG.LabelChannels=channelsCount;
+					ssEPG.LabelTitles=addsToDB;
+					int dvbAdds=ssEPG.GetEPG(capture.Mpeg2DataFilter,0/*all services*/);
+					if(dvbAdds<0) dvbAdds=0;
+					counter+=dvbAdds;
+					label27.Text=String.Format("{0}",counter);
+					try
+					{
+						progressBar2.Value+=1;
+					}
+					catch
+					{
+						progressBar2.Value=progressBar2.Minimum;
+					}
+					Application.DoEvents();
+					Application.DoEvents();
+				}
 				Log.Write("EPG Stopped...");
 				chName.Text="Stopped";
 				progressBar2.Value=0;
@@ -2926,6 +2944,7 @@ namespace MediaPortal.Configuration
 				button16.Enabled=false;
 				label27.Text="0";
 				capture.View=false;
+				capture.DeleteGraph();
 				capture=null;
 				GC.Collect();
 				GUIGraphicsContext.ActiveForm = prevFormPtr;

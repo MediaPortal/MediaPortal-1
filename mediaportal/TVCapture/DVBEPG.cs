@@ -312,7 +312,10 @@ namespace MediaPortal.TV.Recording
 			int			lastTab=0;
 			int			dummyTab=0;
 
-			m_sections.Timeout=50;
+			if (m_cardType==(int)EPGCard.BDACards)
+				m_sections.Timeout=500;
+			else
+				m_sections.Timeout=50;
 			Log.Write("epg-grab: grabbing table {0}",80);
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
