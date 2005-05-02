@@ -2013,8 +2013,9 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow!=null)
 				{
+					m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
+					m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 					m_videoWindow.put_Visible(DsHlp.OAFALSE);
-					m_videoWindow.put_Owner(IntPtr.Zero);
 				}
 				
 				DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
