@@ -2595,7 +2595,7 @@ namespace MediaPortal.TV.Recording
 				m_iCurrentChannel = channel.Number;
 				m_StartTime				= DateTime.Now;
 				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() tune to channel:{0}", channel.Number);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() tune to channel:{0}", channel.ID);
 
 				//get the ITuner interface from the network provider filter
 				TunerLib.TuneRequest newTuneRequest = null;
@@ -2652,7 +2652,7 @@ namespace MediaPortal.TV.Recording
 						TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 						if (frequency<=0) 
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
 							return;
 						}
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
@@ -2716,7 +2716,7 @@ namespace MediaPortal.TV.Recording
 						DVBChannel ch=new DVBChannel();
 						if(TVDatabase.GetSatChannel(channel.ID,1,ref ch)==false)//only television
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
 							return;
 						}
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
@@ -2784,7 +2784,7 @@ namespace MediaPortal.TV.Recording
 						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 						if (frequency<=0) 
 						{
-							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.Number);
+							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
 							return;
 						}
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);

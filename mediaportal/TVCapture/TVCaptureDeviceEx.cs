@@ -1386,11 +1386,6 @@ namespace MediaPortal.TV.Recording
 			{
 				if (String.Compare(strChannelName, chan.Name, true) == 0)
 				{
-					if (chan.Number <= 0)
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"error TV Channel:{0} has an invalid channel number:{1} (freq:{2})", 
-							strChannelName, chan.Number, chan.Frequency);
-					}
 					if (chan.Country<=0) chan.Country=CountryCode;
 					return chan;
 				}
