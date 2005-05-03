@@ -204,7 +204,7 @@ namespace MediaPortal.GUI.Video
 						}
 					}
 					Action newAction=new Action();
-					if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_OSD,action.m_key,ref newAction))
+					if (action.wID != Action.ActionType.ACTION_KEY_PRESSED && ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_OSD,action.m_key,ref newAction))
 					{
 						m_osdWindow.OnAction(newAction);	// route keys to OSD window
 						m_bUpdate=true;
