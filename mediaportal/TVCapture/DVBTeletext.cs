@@ -29,7 +29,7 @@ namespace MediaPortal.TV.Recording
 		bool					m_hiddenMode=true;
 		bool					m_transparentMode=false;
 		string					m_pageSelectText="";
-
+		System.Drawing.Font		m_teletextFont=null;
 		//
 		//
 		enum TextColors
@@ -736,24 +736,24 @@ namespace MediaPortal.TV.Recording
 			int x;
 			int width=m_pageWidth/40;
 			int height=m_pageHeight/24;
-			int fontSize=10;
-
+			int fntSize=(width-3<10)?10:width-3;
+			m_teletextFont=new System.Drawing.Font("Arial",fntSize,System.Drawing.FontStyle.Bold);
 			m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
 			for (row = 0; row < 24; row++)
 			{
 				x = 0;
 
 				for (col = 0; col < 40; col++)
-					Render(m_renderGraphics,pageChars[row*40 + col], pageAttribs[row*40 + col],ref x,ref y,width,height,fontSize);
+					Render(m_renderGraphics,pageChars[row*40 + col], pageAttribs[row*40 + col],ref x,ref y,width,height);
 
 				y+=height;
 			}
-
+			m_teletextFont.Dispose();
 			return true;
 			// send the bitmap to the callback
 		}
 
-		void Render(System.Drawing.Graphics graph,byte chr,int attrib,ref int x,ref int y,int w,int h,int fontSize)
+		void Render(System.Drawing.Graphics graph,byte chr,int attrib,ref int x,ref int y,int w,int h)
 		{
 			bool charReady=false;
 			
@@ -959,12 +959,11 @@ namespace MediaPortal.TV.Recording
 			}
 			if(charReady==false)
 			{
-				int fntSize=w-3;
-				if(fntSize<10) fntSize=10;
-				string text=new string((char)chr,1);
+				string text=""+((char)chr);
 				graph.FillRectangle(backBrush,x, y, w, h);
-				System.Drawing.SizeF width=graph.MeasureString(text,new System.Drawing.Font("Arial",fntSize,System.Drawing.FontStyle.Bold));
-				graph.DrawString(text,new System.Drawing.Font("Arial",fntSize,System.Drawing.FontStyle.Bold),foreBrush,new System.Drawing.PointF((float)x+((w-((int)width.Width))/2),(float)y));
+				System.Drawing.SizeF width=graph.MeasureString(text,m_teletextFont);
+				System.Drawing.PointF xyPos=new System.Drawing.PointF((float)x+((w-((int)width.Width))/2),(float)y);
+				graph.DrawString(text,m_teletextFont,foreBrush,xyPos);
 				if(factor==2)
 				{
 					graph.FillRectangle(backBrush,x, y+h, w, h);
