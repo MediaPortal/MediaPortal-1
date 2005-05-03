@@ -716,16 +716,23 @@ namespace MediaPortal.TV.Recording
 			{
 				int i;
 				string pageNumber="";
+				int lineColor=0;
 				if(m_pageSelectText.IndexOf("-")==-1)
+				{
+					lineColor=(int)TextColors.Green;
 					pageNumber=Convert.ToString(mPage,16)+"/"+Convert.ToString(sPage,16);
+				}
 				else
+				{
+					lineColor=(int)TextColors.Red;
 					pageNumber=m_pageSelectText;
+				}
 				string headline="MediaPortal P."+pageNumber;
 				headline+=new string((char)32,32-headline.Length);
 				byte[] mpText=System.Text.Encoding.ASCII.GetBytes(headline);
 				System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
 				for (i = 0; i < 11; i++)
-					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.Yellow);
+					pageAttribs[i] = ((int)TextColors.Black<<4) | lineColor;
 				for (i = 12; i < 40; i++)
 					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.White);
 
@@ -736,8 +743,8 @@ namespace MediaPortal.TV.Recording
 			int x;
 			int width=m_pageWidth/40;
 			int height=m_pageHeight/24;
-			int fntSize=(width-3<10)?10:width-3;
-			m_teletextFont=new System.Drawing.Font("Arial",fntSize,System.Drawing.FontStyle.Bold);
+			int fntSize=(width-1<10)?10:width-1;
+			m_teletextFont=new System.Drawing.Font("Courier New",fntSize,System.Drawing.FontStyle.Bold);
 			m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
 			for (row = 0; row < 24; row++)
 			{
