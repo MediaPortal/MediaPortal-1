@@ -40,6 +40,7 @@ namespace MediaPortal.GUI.Library
     static GUIWindow     m_pRouteWindow=null;
     static bool          m_bRefresh=false;
     static bool          m_bSwitching=false;
+		static string        m_strCurrentWindowName = String.Empty;
 		#endregion
 
 		#region ctor
@@ -887,12 +888,17 @@ namespace MediaPortal.GUI.Library
 		{
 			m_pRouteWindow=null;
 			m_bRefresh=true;
-			GUIPropertyManager.SetProperty("#currentmodule",GUILocalizeStrings.Get(10000+ActiveWindow));
+			if (m_strCurrentWindowName != String.Empty)
+				GUIPropertyManager.SetProperty("#currentmodule", m_strCurrentWindowName);
+			else
+				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000+ActiveWindow));
 		}
+
 		static public void RouteToWindow(int dialogId)
 		{
 			m_bRefresh=true;
 			m_pRouteWindow=GetWindow(dialogId);
+			m_strCurrentWindowName=GUIPropertyManager.GetProperty("#currentmodule");
 		}
 
     
