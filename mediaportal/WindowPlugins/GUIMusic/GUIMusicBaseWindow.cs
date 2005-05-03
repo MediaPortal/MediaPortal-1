@@ -295,7 +295,14 @@ namespace MediaPortal.GUI.Music
 		protected virtual void UpdateButtonStates()
 		{
 			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
-			GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(10005), handler.CurrentView) );
+			if (GetID == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
+			{
+				GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(10005), handler.CurrentView) );
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
+			}			
                 
 			facadeView.IsVisible=false;
 			facadeView.IsVisible=true;

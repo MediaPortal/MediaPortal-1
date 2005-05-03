@@ -988,14 +988,7 @@ namespace MediaPortal.GUI.Music
 			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES) return true;
 			return false;
 		}
-		protected override void UpdateButtonStates()
-		{
-			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
-			GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(10005), handler.CurrentView) );
-
-			base.UpdateButtonStates ();
-		}
-
+		
 
 		void OnRetrieveMusicInfo(ref ArrayList items)
 		{
