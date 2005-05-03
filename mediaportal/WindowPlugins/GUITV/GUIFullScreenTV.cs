@@ -1260,13 +1260,22 @@ namespace MediaPortal.GUI.TV
 			//if (GUIGraphicsContext.Vmr9Active && (m_bShowStatus||m_bShowInfo || m_bShowStep || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
 			if ((m_bShowStatus || m_bShowInfo || m_bShowStep || (!m_bOSDVisible && g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
 			{
-				for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
-					ShowControl(GetID,i);
-
-				// Set recorder status
-				if (Recorder.IsRecordingChannel(GUITVHome.Navigator.CurrentChannel))
+				if (!m_bOSDVisible)
 				{
-					ShowControl(GetID, (int)Control.REC_LOGO);
+					for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
+						ShowControl(GetID,i);
+
+					// Set recorder status
+					if (Recorder.IsRecordingChannel(GUITVHome.Navigator.CurrentChannel))
+					{
+						ShowControl(GetID, (int)Control.REC_LOGO);
+					}
+				}
+				else
+				{
+					for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
+						HideControl(GetID,i);
+					HideControl(GetID, (int)Control.REC_LOGO);
 				}
 			}
 			else

@@ -877,13 +877,23 @@ namespace MediaPortal.GUI.Video
     }
     public void SetFFRWLogos()
     {
-
+		
       if (GUIGraphicsContext.Vmr9Active && (m_bShowStep||m_bShowInfo || (!m_bOSDVisible&& g_Player.Speed!=1) || (!m_bOSDVisible&& g_Player.Paused)) )
       {
-        for (int i=(int)Control.PANEL1; i < (int)Control.PANEL2;++i)
-          ShowControl(GetID,i);
-        ShowControl(GetID,(int)Control.OSD_TIMEINFO);  
-        ShowControl(GetID,(int)Control.OSD_VIDEOPROGRESS);  
+				if (!m_bOSDVisible)
+				{
+					for (int i=(int)Control.PANEL1; i < (int)Control.PANEL2;++i)
+						ShowControl(GetID,i);
+					ShowControl(GetID,(int)Control.OSD_TIMEINFO);  
+					ShowControl(GetID,(int)Control.OSD_VIDEOPROGRESS);  
+				}
+				else
+				{
+					for (int i=(int)Control.PANEL1; i < (int)Control.PANEL2;++i)
+						HideControl(GetID,i);
+					HideControl(GetID,(int)Control.OSD_TIMEINFO); 
+					HideControl(GetID,(int)Control.OSD_VIDEOPROGRESS);  
+				}
       }
       else
       {
@@ -1207,7 +1217,7 @@ namespace MediaPortal.GUI.Video
           HideControl(GetID,(int)Control.LABEL_ROW3);
           HideControl(GetID,(int)Control.BLUE_BAR);
         }
-        if (m_bShowInfo||m_bShowStep)
+        if (!m_bOSDVisible && (m_bShowInfo||m_bShowStep))
         {
 
           ShowControl(GetID,(int)Control.OSD_TIMEINFO);  
