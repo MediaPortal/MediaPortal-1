@@ -105,8 +105,7 @@ namespace MediaPortal.GUI.TV
 				GUIWindowManager.ShowPreviousWindow();
 				return ;
 			}
-			dvbTeletextParser.GetPage(100,0);
-			
+			dvbTeletextParser.PageSelectText="";
 			if(imgTeletextPage!=null && dvbTeletextParser!=null)
 			{
 				dvbTeletextParser.SetPageSize(imgTeletextPage.Width,imgTeletextPage.Height);
@@ -186,6 +185,15 @@ namespace MediaPortal.GUI.TV
 			{
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
 			}
+			if(chKey=='c' || chKey=='C')
+			{
+				if(dvbTeletextParser!=null)
+					dvbTeletextParser.PageSelectText="";
+				inputLine="";
+				GetNewPage();
+				return;
+			}
+
 			if((chKey>='0'&& chKey <='9') || (chKey=='+' || chKey=='-')) //navigation
 			{
 				if (chKey=='0' && inputLine.Length==0) return;
@@ -221,7 +229,14 @@ namespace MediaPortal.GUI.TV
 
 				}
 				if(chKey>='0' && chKey<='9')
+				{
 					inputLine+= chKey;
+					if(dvbTeletextParser!=null)
+					{
+						dvbTeletextParser.PageSelectText=inputLine;
+						GetNewPage();
+					}
+				}
 
 				if (inputLine.Length==3)
 				{
@@ -235,6 +250,7 @@ namespace MediaPortal.GUI.TV
 
 					if(dvbTeletextParser!=null)
 					{
+						dvbTeletextParser.PageSelectText="";
 						bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
 						Redraw();
 					}
@@ -279,6 +295,10 @@ namespace MediaPortal.GUI.TV
 			// here is only a flag set to true, the bitmap is getting
 			// in a timer-elapsed event!
 
+			if(dvbTeletextParser==null)
+				return;
+			if(dvbTeletextParser.PageSelectText.IndexOf("-")!=-1)// page select is running
+				return;
 			if(GUIWindowManager.ActiveWindow==GetID)
 			{
 				isPageDirty=true;
@@ -290,6 +310,7 @@ namespace MediaPortal.GUI.TV
 			if(isPageDirty==true)
 			{
 				Log.Write("dvb-teletext page updated. {0:X}/{1}",currentPageNumber,currentSubPageNumber);
+				dvbTeletextParser.PageSelectText=Convert.ToString(currentPageNumber);
 				bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
 				Redraw();
 				isPageDirty=false;

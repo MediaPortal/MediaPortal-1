@@ -28,6 +28,7 @@ namespace MediaPortal.TV.Recording
 		int						m_pageHeight=0;
 		bool					m_hiddenMode=true;
 		bool					m_transparentMode=false;
+		string					m_pageSelectText="";
 
 		//
 		//
@@ -148,6 +149,19 @@ namespace MediaPortal.TV.Recording
 				for(int n=0;n<0x80;n++)
 					if((int)m_cacheTable[t,n]!=0)
 						Marshal.FreeHGlobal(m_cacheTable[t,n]);
+		}
+		public string PageSelectText
+		{
+			get
+			{
+				return m_pageSelectText;
+			}
+			set
+			{
+				m_pageSelectText="";
+				if(value.Length>0 && value.Length<3)
+					m_pageSelectText=value+(new string('-',3-value.Length));
+			}
 		}
 		public bool HiddenMode
 		{
@@ -701,9 +715,12 @@ namespace MediaPortal.TV.Recording
 			if (IsDEC(mPage))
 			{
 				int i;
-				string pageNumber=Convert.ToString(mPage,16);
-				string subpageNumber=Convert.ToString(sPage,16);
-				string headline="MediaPortal P."+pageNumber+"/"+subpageNumber;
+				string pageNumber="";
+				if(m_pageSelectText.IndexOf("-")==-1)
+					pageNumber=Convert.ToString(mPage,16)+"/"+Convert.ToString(sPage,16);
+				else
+					pageNumber=m_pageSelectText;
+				string headline="MediaPortal P."+pageNumber;
 				headline+=new string((char)32,32-headline.Length);
 				byte[] mpText=System.Text.Encoding.ASCII.GetBytes(headline);
 				System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
@@ -942,10 +959,12 @@ namespace MediaPortal.TV.Recording
 			}
 			if(charReady==false)
 			{
+				int fntSize=w-3;
+				if(fntSize<10) fntSize=10;
 				string text=new string((char)chr,1);
 				graph.FillRectangle(backBrush,x, y, w, h);
-				System.Drawing.SizeF width=graph.MeasureString(text,new System.Drawing.Font("Arial",w-2,System.Drawing.FontStyle.Bold));
-				graph.DrawString(text,new System.Drawing.Font("Arial",w-2,System.Drawing.FontStyle.Bold),foreBrush,new System.Drawing.PointF((float)x+((w-((int)width.Width))/2),(float)y));
+				System.Drawing.SizeF width=graph.MeasureString(text,new System.Drawing.Font("Arial",fntSize,System.Drawing.FontStyle.Bold));
+				graph.DrawString(text,new System.Drawing.Font("Arial",fntSize,System.Drawing.FontStyle.Bold),foreBrush,new System.Drawing.PointF((float)x+((w-((int)width.Width))/2),(float)y));
 				if(factor==2)
 				{
 					graph.FillRectangle(backBrush,x, y+h, w, h);

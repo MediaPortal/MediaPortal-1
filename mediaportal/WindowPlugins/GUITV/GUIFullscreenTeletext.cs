@@ -99,6 +99,7 @@ namespace MediaPortal.GUI.TV
 					
 			if(dvbTeletextParser==null)
 			{
+				dvbTeletextParser.PageSelectText="";
 				Log.Write("dvb-teletext: no teletext object");
 				GUIWindowManager.ShowPreviousWindow();
 				return ;
@@ -133,6 +134,14 @@ namespace MediaPortal.GUI.TV
 			if(chKey=='w' || chKey=='W')
 			{
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
+			}
+			if(chKey=='c' || chKey=='C')
+			{
+				if(dvbTeletextParser!=null)
+					dvbTeletextParser.PageSelectText="";
+				inputLine="";
+				GetNewPage();
+				return;
 			}
 			if((chKey>='0'&& chKey <='9') || (chKey=='+' || chKey=='-')) //navigation
 			{
@@ -169,7 +178,14 @@ namespace MediaPortal.GUI.TV
 
 				}
 				if(chKey>='0' && chKey<='9')
+				{
 					inputLine+= chKey;
+					if(dvbTeletextParser!=null)
+					{
+						dvbTeletextParser.PageSelectText=inputLine;
+						GetNewPage();
+					}
+				}
 
 				if (inputLine.Length==3)
 				{
@@ -182,6 +198,7 @@ namespace MediaPortal.GUI.TV
 						acutalPageNumber=899;
 					if(dvbTeletextParser!=null)
 					{
+						dvbTeletextParser.PageSelectText="";
 						bmpTeletextPage=dvbTeletextParser.GetPage(acutalPageNumber,actualSubPageNumber);
 						Redraw();
 					}
@@ -222,6 +239,10 @@ namespace MediaPortal.GUI.TV
 			// make sure the callback returns as soon as possible!!
 			// here is only a flag set to true, the bitmap is getting
 			// in a timer-elapsed event!
+			if(dvbTeletextParser==null)
+				return;
+			if(dvbTeletextParser.PageSelectText.IndexOf("-")!=-1)// page select is running
+				return;
 
 			if(GUIWindowManager.ActiveWindow==GetID)
 			{
