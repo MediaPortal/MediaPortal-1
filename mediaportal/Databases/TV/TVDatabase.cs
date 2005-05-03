@@ -1534,9 +1534,17 @@ namespace MediaPortal.TV.Database
 					string strTitle=recording.Title;
 					DatabaseUtility.RemoveInvalidChars(ref strTitle);
 
-					if (null==m_db) return -1;
+					if (null==m_db) 
+					{
+						Log.WriteFile(Log.LogType.Log,true,"TVDatabase.AddRecording:tvdatabase not opened");
+						return -1;
+					}
 					int iChannelId=GetChannelId(recording.Channel);
-					if (iChannelId<0) return -1;
+					if (iChannelId<0) 
+					{
+						Log.WriteFile(Log.LogType.Log,true,"TVDatabase.AddRecording:invalid channel:{0}",recording.Channel);
+						return -1;
+					}
 					int iContentRec=1;
 					if (!recording.IsContentRecording) iContentRec=0;
           
