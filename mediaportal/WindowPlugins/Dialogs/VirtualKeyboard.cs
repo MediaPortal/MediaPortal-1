@@ -539,29 +539,25 @@ namespace MediaPortal.Dialogs
       set {_Password=value;}
     }
 
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch ( message.Message )
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-        {
-          GUIGraphicsContext.Overlay=m_bPrevOverlay;	
-					DeInitialize();
-          return true;
-        }
+		protected void PageLoad()
+		{
+			m_bPrevOverlay=GUIGraphicsContext.Overlay;
+			m_bConfirmed = false;
+			GUIGraphicsContext.Overlay=false;
+			GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD));
+			Log.Write( "window:{0} init", this.ToString());
+			Initialize();
+		}
 
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-        {
-          m_bPrevOverlay=GUIGraphicsContext.Overlay;
-          m_bConfirmed = false;
-          base.OnMessage(message);
-          GUIGraphicsContext.Overlay=false;
-          Initialize();
-        }
-        return true;
-      }
-      return base.OnMessage(message);
-    }
+		protected void PageDestroy()
+		{
+			GUIGraphicsContext.Overlay=m_bPrevOverlay;				
+			DeInitialize();
+			
+			Log.Write( "window:{0} deinit", this.ToString());
+			FreeResources();
+			GC.Collect();
+		}
 
     public string Text
     {
@@ -615,6 +611,10 @@ namespace MediaPortal.Dialogs
 
         }
       }
+
+			// Default no key found no key highlighted
+			if (m_iCurrKey != -1) m_iLastColumn = m_iCurrKey;
+			m_iCurrKey = -1;
     }
 
     public override void OnAction(Action action)
@@ -637,6 +637,11 @@ namespace MediaPortal.Dialogs
           break;
 
         case Action.ActionType.ACTION_SELECT_ITEM:
+					if (m_iCurrKey == -1) 
+					{
+						Close();
+						m_bConfirmed=true;
+					}
           ev=Event.EV_A_BUTTON;
           UpdateState( ev );
           break;
@@ -685,8 +690,8 @@ namespace MediaPortal.Dialogs
 			GUIWindowManager.IsSwitchingToNewWindow=true;
 			lock (this)
 			{
-				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
-				OnMessage(msg);
+				// deactive this window... (with its own OnPageDestroy)
+				PageDestroy();
 
 				GUIWindowManager.UnRoute();
 				m_pParentWindow=null;
@@ -710,10 +715,8 @@ namespace MediaPortal.Dialogs
 
       GUIWindowManager.RouteToWindow( GetID );
 
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
-      OnMessage(msg);
-
+			// active this window... (with its own OnPageLoad)
+			PageLoad();
 			
 			GUIWindowManager.IsSwitchingToNewWindow=false;
       m_bRunning=true;
@@ -1051,6 +1054,8 @@ namespace MediaPortal.Dialogs
 
     void PressCurrent()
     {
+			if (m_iCurrKey == -1) return;
+
       ArrayList board=(ArrayList)m_KeyboardList[(int)m_iCurrBoard];
       ArrayList row=(ArrayList)board[m_iCurrRow];
       Key key = (Key)row[m_iCurrKey ];
@@ -1171,6 +1176,7 @@ namespace MediaPortal.Dialogs
 
     void MoveUp()
     {
+			if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
 
       do
       {
@@ -1214,6 +1220,7 @@ namespace MediaPortal.Dialogs
 
     void MoveDown()
     {
+			if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
 
       do
       {
@@ -1265,9 +1272,10 @@ namespace MediaPortal.Dialogs
 
     void MoveLeft()
     {
+			if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
       do
       {
-        if( m_iCurrKey == 0 )
+				if( m_iCurrKey <= 0 )
         {
           ArrayList board=(ArrayList)m_KeyboardList[(int)m_iCurrBoard];
           ArrayList row=(ArrayList)board[m_iCurrRow];
@@ -1284,6 +1292,7 @@ namespace MediaPortal.Dialogs
 
     void MoveRight()
     {
+			if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
       do
       {
         ArrayList board=(ArrayList)m_KeyboardList[(int)m_iCurrBoard];
@@ -1301,6 +1310,7 @@ namespace MediaPortal.Dialogs
 
     void SetLastColumn()
     {
+			if (m_iCurrKey == -1) return;
       // If the new key is a single character, remember it for later
       ArrayList board=(ArrayList)m_KeyboardList[(int)m_iCurrBoard];
       ArrayList row=(ArrayList)board[m_iCurrRow];
@@ -1325,6 +1335,8 @@ namespace MediaPortal.Dialogs
 
     bool IsKeyDisabled() 
     {
+			if (m_iCurrKey == -1) return true;
+
       ArrayList board=(ArrayList)m_KeyboardList[(int)m_iCurrBoard];
       ArrayList row=(ArrayList)board[m_iCurrRow];
       Key key=(Key)row[m_iCurrKey];
