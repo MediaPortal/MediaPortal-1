@@ -2882,7 +2882,6 @@ namespace MediaPortal.Configuration
 				Form prevForm=GUIGraphicsContext.form;
 				GUIGraphicsContext.ActiveForm = this.Handle;
 				GUIGraphicsContext.form=this;
-				capture.View=true;
 				ArrayList tvchannels=new ArrayList();
 				foreach(TreeNode tn in treeView5.Nodes)
 				{
@@ -2919,8 +2918,11 @@ namespace MediaPortal.Configuration
 				{
 					if(m_stopEPGGrab==true)
 						break;
+					Log.Write("epg: grab:{0}", ch.Name);
 					chName.Text=ch.Name;
 					capture.TVChannel=ch.Name;
+					if (!capture.View)
+						capture.View=true;
 					if (!capture.SignalPresent()) continue;
 					ssEPG.LabelChannels=channelsCount;
 					ssEPG.LabelTitles=addsToDB;
