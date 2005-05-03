@@ -156,6 +156,7 @@ namespace MediaPortal.GUI.Video
 				IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 				if (movie==null) return;
 				if (movie.ID<0) return;
+				GUIVideoFiles.Reset(); // reset pincode
 				GUIVideoFiles.PlayMovie(movie.ID);
 			}
 		}

@@ -1764,6 +1764,8 @@ namespace MediaPortal.GUI.Video
 			}
 
 			ArrayList itemlist = m_directory.GetDirectory(file);
+			if (itemlist.Count <= 1 && file!=String.Empty) return itemlist; // protected share, with wrong pincode
+
 			if (DaemonTools.IsMounted(file) && !g_Player.Playing)
 			{
 				string strDir = DaemonTools.GetVirtualDrive();
@@ -2125,6 +2127,11 @@ namespace MediaPortal.GUI.Video
 			}
 		}
 
+		static public void Reset()
+		{
+			m_directory.Reset();
+		}
+
 		static public void PlayMovie(int idMovie)
 		{
 			int selectedFileIndex = 1;
@@ -2165,6 +2172,7 @@ namespace MediaPortal.GUI.Video
 		{
 			//get all movies belonging to each other
 			ArrayList items = m_directory.GetDirectory(System.IO.Path.GetDirectoryName((string)movies[0]));
+			if (items.Count <= 1) return; // first item always ".." so 1 item means prob. protected share
 
 			//check if we can resume 1 of those movies
 			int timeMovieStopped=0;
