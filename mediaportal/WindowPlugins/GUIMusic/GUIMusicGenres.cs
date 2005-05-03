@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Music
 				VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);
 				keyBoard.Text = String.Empty;
 				keyBoard.Reset();
-				keyBoard.KindOfSearch=(int)MediaPortal.Dialogs.VirtualSearchKeyboard.SearchKinds.SEARCH_STARTS_WITH;
+				//keyBoard.KindOfSearch=(int)MediaPortal.Dialogs.VirtualSearchKeyboard.SearchKinds.SEARCH_STARTS_WITH;
 				keyboard_TextChanged(0, "");
 				keyBoard.TextChanged+=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
 				keyBoard.DoModal(activeWindow); // show it...
@@ -355,10 +355,7 @@ namespace MediaPortal.GUI.Music
 
 	  void keyboard_TextChanged(int kindOfSearch,string data)
 	  {
-			if (data!="")
-				facadeView.Filter(kindOfSearch, data);
-			else
-				LoadDirectory(m_strDirectory);
+			facadeView.Filter(kindOfSearch, data);
 	  }
     
 		
