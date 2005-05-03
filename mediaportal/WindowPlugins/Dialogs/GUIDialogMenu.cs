@@ -55,32 +55,41 @@ namespace MediaPortal.Dialogs
         return;
       }
 
-      if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
+      // if we have a keypress or a remote button press
+      if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED) || ( (Action.ActionType.REMOTE_0 <= action.wID) && (Action.ActionType.REMOTE_9 >= action.wID)))
       {
+				iSelection=-1;
         if (action.m_key!=null)
         {
           if (action.m_key.KeyChar >'0' && action.m_key.KeyChar <='9')         
           {
             // Get offset to item
             iSelection = action.m_key.KeyChar-'1';
-            if (iSelection < listItems.Count)
-            {
-              // Select dialog item
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
-              OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, iSelection ,0 ,null);
-              OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
-              OnMessage(msg);
-            }
-            else
-            {
-              // Exit dialog box
-              Close();
-            }
-            return;
           }
         }
+        else
+        {
+          iSelection = ( action.wID - Action.ActionType.REMOTE_0 );
+        }
+        
+        if (iSelection>=0 && iSelection < listItems.Count)
+        {
+          // Select dialog item
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
+          OnMessage(msg);
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, iSelection ,0 ,null);
+          OnMessage(msg);
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
+          OnMessage(msg);
+        }
+        else
+        {
+          // Exit dialog box
+          Close();
+        }
+        return;
+          
+        
       }
 
       base.OnAction(action);

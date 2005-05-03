@@ -655,7 +655,7 @@ namespace MediaPortal.TV.Recording
 				prg.Time=prg.Time.AddSeconds(minVal);
 				if(prg.Time.Hour==18 && prg.Time.Minute==25 && prg.Time.Day==20)
 				{
-					int a=0;
+//					int a=0;
 				}
 				if(ProgramExists(prg.ID)==false)
 				{

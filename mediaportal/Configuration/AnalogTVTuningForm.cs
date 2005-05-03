@@ -33,7 +33,7 @@ namespace MediaPortal
     private System.Windows.Forms.ColumnHeader columnHeader2;
 		ITuning				tuningInterface;
 		private System.Windows.Forms.ProgressBar progressBar1;
-		int videoRenderer;
+		//int videoRenderer;
 		private System.Windows.Forms.Button buttonAdd;
 		private System.Windows.Forms.Label labelStatus2;
 		private System.Windows.Forms.Button button1;

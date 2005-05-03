@@ -605,7 +605,7 @@ namespace MediaPortal.GUI.Library
 		}
 		public void RefreshCoverArt()
 		{
-			GUIListItem item;
+			//GUIListItem item;
 			for (int i=0; i < Count; ++i)
 			{
 				if (m_FilmStripView!=null)
