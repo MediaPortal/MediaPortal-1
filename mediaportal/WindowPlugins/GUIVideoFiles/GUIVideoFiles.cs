@@ -167,17 +167,6 @@ namespace MediaPortal.GUI.Video
 			}
 		}
 
-
-
-		public override void DeInit()
-		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("movies","startWindow",VideoState.StartWindow.ToString());
-
-			}
-		}
-
 		public override bool Init()
 		{
 			imdb = new IMDB(this);
@@ -189,8 +178,7 @@ namespace MediaPortal.GUI.Video
 			LoadSettings();
 			bool result=Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				
+			{			
 				VideoState.StartWindow=xmlreader.GetValueAsInt("movies","startWindow", GetID);
 			}
 			LoadSettings();
@@ -247,9 +235,6 @@ namespace MediaPortal.GUI.Video
 
     
     #endregion
-
-
-
 
 		#region BaseWindow Members
 		public override void OnAction(Action action)

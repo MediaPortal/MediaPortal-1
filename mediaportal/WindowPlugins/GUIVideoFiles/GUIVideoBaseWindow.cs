@@ -352,6 +352,12 @@ namespace MediaPortal.GUI.Video
 		protected override void OnPageDestroy(int newWindowId)
 		{
 			SaveSettings();
+
+			// Save view
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("movies","startWindow",VideoState.StartWindow.ToString());
+			}
 		}
 		
 		#region Sort Members
