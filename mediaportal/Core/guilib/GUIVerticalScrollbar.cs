@@ -70,21 +70,20 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      int iHeight=m_dwHeight; //25;
+      int iHeight=m_dwHeight;
       m_guiBackground.Height=iHeight;
       m_guiBackground.Render(timePassed);
 
-      //iHeight=20;
       float fPercent= (float)m_fPercent;
       float fPosYOff= (fPercent/100.0f);
 
-      m_iStartY    =12+m_guiBackground.YPosition;
-      m_iEndY      =m_iStartY+(m_guiBackground.Height-12);
+			m_iStartY    =m_guiBackground.YPosition;
+			m_iEndY      =m_iStartY+m_guiBackground.Height;
 
-      fPosYOff    *= (float) (m_iEndY-m_iStartY);
       int iKnobHeight = (int)(m_guiTop.TextureHeight);
+			fPosYOff    *= (float) (m_iEndY-m_iStartY-iKnobHeight);
       
-      m_iYStartKnob=m_iStartY+(int)fPosYOff - (iKnobHeight/2);
+      m_iYStartKnob=m_iStartY+(int)fPosYOff;
       int iXPos=m_guiBackground.XPosition+ ((m_guiBackground.Width / 2) - (m_guiTop.TextureWidth ));
       int iYPos=m_iYStartKnob;
 

@@ -68,11 +68,10 @@ namespace MediaPortal.GUI.Library
 				return;
 			}
 
-			int iHeight=m_guiBackground.Height; //25;
+			int iHeight=m_guiBackground.Height;
 			m_guiBackground.Render(timePassed);
 			m_guiBackground.Height=iHeight;
 
-			//iHeight=20;
 			float fPercent= (float)m_fPercent;
 			float fPosXOff= (fPercent/100.0f);
 
@@ -80,12 +79,14 @@ namespace MediaPortal.GUI.Library
 			int inset=4;
 			GUIGraphicsContext.ScaleHorizontal(ref inset);
 			inset+=(m_iKnobWidth/2);
+			
+			inset=0;
 			m_iStartX    =inset+m_guiBackground.XPosition;
 			m_iEndX      =m_iStartX+(m_guiBackground.Width-inset);
 
-			fPosXOff    *= (float) (m_iEndX-m_iStartX);
+			fPosXOff    *= (float) (m_iEndX-m_iStartX-m_iKnobWidth);
       
-			m_iXStartKnob=m_iStartX+(int)fPosXOff - (m_iKnobWidth/2);
+			m_iXStartKnob=m_iStartX+(int)fPosXOff;
 			int iXPos=m_iXStartKnob;
 			int iYPos= m_guiBackground.YPosition + ((m_guiBackground.Height / 2) - (m_guiLeft.TextureHeight / 2));
 
