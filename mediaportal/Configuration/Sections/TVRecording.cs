@@ -173,7 +173,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 1));
 				endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 1));				
-				cbDeleteWatchedShows.Checked= xmlreader.GetValueAsBool("capture", "deletewatchedshows", true);
+				cbDeleteWatchedShows.Checked= xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
 				cbAddRecordingsToMovie.Checked= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
 
 			}		

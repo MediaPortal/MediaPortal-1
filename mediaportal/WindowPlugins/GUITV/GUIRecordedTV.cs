@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.TV
 				}
 				
 				m_bSortAscending=xmlreader.GetValueAsBool("tvrecorded","sortascending",true);
-				m_bDeleteWatchedShow= xmlreader.GetValueAsBool("capture", "deletewatchedshows", true);
+				m_bDeleteWatchedShow= xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
       }
     }
 
