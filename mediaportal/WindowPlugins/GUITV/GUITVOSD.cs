@@ -1264,51 +1264,48 @@ namespace MediaPortal.GUI.TV
 	  void UpdateProgressBar()
 	  {
 		  double fPercent;
-		  if (g_Player.Playing)
-		  {
-				TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).CurrentProgram;
-				if (prog==null)
-				{
-					GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
-					return;
-				}
-			  string strTime=String.Format("{0}-{1}", 
-				  prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-				  prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+			TVProgram prog=GUITVHome.Navigator.GetTVChannel(GetChannelName()).CurrentProgram;
+			if (prog==null)
+			{
+				GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+				return;
+			}
+			string strTime=String.Format("{0}-{1}", 
+				prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+				prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 
-			  TimeSpan ts=prog.EndTime-prog.StartTime;
-			  double iTotalSecs=ts.TotalSeconds;
-			  ts=DateTime.Now-prog.StartTime; 
-			  double iCurSecs=ts.TotalSeconds;
-			  fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
-			  fPercent *=100.0d;
-			  GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
-			  Get_TimeInfo();
+			TimeSpan ts=prog.EndTime-prog.StartTime;
+			double iTotalSecs=ts.TotalSeconds;
+			ts=DateTime.Now-prog.StartTime; 
+			double iCurSecs=ts.TotalSeconds;
+			fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+			fPercent *=100.0d;
+			GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+			Get_TimeInfo();
 
-				bool updateProperties=false;
-				if (previousProgram==null)
-				{
-					m_dateTime=DateTime.Now;
-					previousProgram=prog.Clone();
-					ShowPrograms();
-					updateProperties=true;
-				}
-				else if (previousProgram.Start!=prog.Start || previousProgram.Channel != prog.Channel)
-				{
-					m_dateTime=DateTime.Now;
-					previousProgram=prog.Clone();
-					ShowPrograms();
-					updateProperties=true;
-				}
-				if (updateProperties)
-				{
-					GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-					GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-					GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
-					GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
-					GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
-				}
-		  }
+			bool updateProperties=false;
+			if (previousProgram==null)
+			{
+				m_dateTime=DateTime.Now;
+				previousProgram=prog.Clone();
+				ShowPrograms();
+				updateProperties=true;
+			}
+			else if (previousProgram.Start!=prog.Start || previousProgram.Channel != prog.Channel)
+			{
+				m_dateTime=DateTime.Now;
+				previousProgram=prog.Clone();
+				ShowPrograms();
+				updateProperties=true;
+			}
+			if (updateProperties)
+			{
+				GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+				GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+				GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
+				GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
+				GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
+			}	  
 	  }
 
     public bool InWindow(int x,int y)
