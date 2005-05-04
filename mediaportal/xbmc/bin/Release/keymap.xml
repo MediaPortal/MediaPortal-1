@@ -762,6 +762,12 @@
     <id>25</id>
     <description>my video / titles</description>
     <action>
+      <id>33</id>
+      <key>F1</key>
+      <sound />
+      <description>Switch to Video Playlist</description>
+    </action>
+    <action>
       <id>80</id>
       <key>0</key>
       <sound />
