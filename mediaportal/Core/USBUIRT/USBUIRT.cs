@@ -23,7 +23,7 @@ namespace MediaPortal.IR
 	/// </summary>
 	public class LearningEventArgs : System.EventArgs
 	{
-		bool					Succeeded=false;
+		public bool		Succeeded=false;
 		public string Button;
 		public string IrCode=String.Empty;
 		public LearningEventArgs(string button)
@@ -492,27 +492,32 @@ namespace MediaPortal.IR
 			bool result;
 			for (int i = 0; i< 10; i++) 
 			{
-				//
-				// Let any subscriber know that we're about to start learning a remote code
-				//
-				NotifyStartLearn(i.ToString());
+				for (int retry=0; retry < 3; retry++)
+				{
+					NotifyStartLearn(i.ToString());
 
-				result=IRLearn();
+					result=IRLearn();
 
-				externalTunerCodes[i] = this.ircode.ToString();
-				
-				NotifyEventLearned(i.ToString(),this.ircode.ToString(),result);
+					externalTunerCodes[i] = this.ircode.ToString();
+					
+					NotifyEventLearned(i.ToString(),this.ircode.ToString(),result);
+					if (result) break;
+				}
 			}
 
 			if (tunerNeedsEnter)
 			{
-				NotifyStartLearn("Enter");
+				for (int retry=0; retry < 3; retry++)
+				{
+					NotifyStartLearn("Enter");
 
-				result=IRLearn();
+					result=IRLearn();
 
-				externalTunerCodes[10] = this.ircode.ToString();
+					externalTunerCodes[10] = this.ircode.ToString();
 
-				NotifyEventLearned("Enter",this.ircode.ToString(),result);
+					NotifyEventLearned("Enter",this.ircode.ToString(),result);
+					if (result) break;
+				}
 			}
 		}
 
@@ -524,10 +529,14 @@ namespace MediaPortal.IR
 
 			for(int i= 0; i< commands.Length; i++)
 			{
-				NotifyStartLearn(buttonNames[i]);
-				bool result=IRLearn();
-				commandsLearned[i]=this.ircode.ToString();
-				NotifyEventLearned(buttonNames[i],this.ircode.ToString(),result);
+				for (int retry=0; retry < 3; retry++)
+				{
+					NotifyStartLearn(buttonNames[i]);
+					bool result=IRLearn();
+					commandsLearned[i]=this.ircode.ToString();
+					NotifyEventLearned(buttonNames[i],this.ircode.ToString(),result);
+					if (result) break;
+				}
 			}
 		}
 		#endregion

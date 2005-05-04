@@ -310,21 +310,25 @@ namespace MediaPortal.Configuration.Sections
 			};
 
 			MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);
+			MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
 
 			MediaPortal.IR.USBUIRT.Instance.BulkLearn(commands, buttonNames);
 			MediaPortal.IR.USBUIRT.Instance.SaveInternalValues();
 
 			MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);
+			MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
 		}
 
 		private void tunerCommandsButton_Click(object sender, System.EventArgs e)
 		{
 			MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);
+			MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
 
 			MediaPortal.IR.USBUIRT.Instance.LearnTunerCodes();
 			MediaPortal.IR.USBUIRT.Instance.SaveTunerValues();
 
 			MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);			
+			MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
 		}
 
 		private void outputCheckBox_CheckedChanged(object sender, System.EventArgs e)
@@ -346,6 +350,21 @@ namespace MediaPortal.Configuration.Sections
 		private void label1_Click(object sender, System.EventArgs e)
 		{
 		
+		}
+
+		private void Instance_OnEventLearned(object sender, LearningEventArgs e)
+		{
+			if (e.Succeeded)
+			{
+				MessageBox.Show("Successfully learned IR code for button:"+e.Button,
+												"USBUIRT",MessageBoxButtons.OK, MessageBoxIcon.Information);
+        
+			}
+			else
+			{
+				MessageBox.Show("Failed to learn IR code for button:"+e.Button,
+					"USBUIRT",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
 		}
 	}
 }
