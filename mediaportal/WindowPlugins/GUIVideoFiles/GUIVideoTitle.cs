@@ -296,6 +296,8 @@ namespace MediaPortal.GUI.Video
 
 			SetLabels();
 			OnSort();
+			
+			SwitchView();
 			for (int i=0; i< facadeView.Count;++i)
 			{
 				GUIListItem item =facadeView[itemIndex];
@@ -310,7 +312,6 @@ namespace MediaPortal.GUI.Video
 			{
 				GUIControl.SelectItemControl(GetID,facadeView.GetID,currentSelectedItem);
 			}
-			SwitchView();
 		}
 	  
 
