@@ -1028,10 +1028,13 @@ namespace MediaPortal.GUI.TV
 				else
 				{
 					program = new TVProgram();
-					program.Start=Utils.datetolong(DateTime.Now);
-					program.End=Utils.datetolong(DateTime.Now);
-					program.Title="-";
-					program.Genre="-";
+					if (ichan==0)
+					{
+						program.Start=Utils.datetolong(DateTime.Now);
+						program.End=Utils.datetolong(DateTime.Now);
+						program.Title="-";
+						program.Genre="-";
+					}
 					program.Channel=channel.Name;
 				}
 
@@ -1096,22 +1099,28 @@ namespace MediaPortal.GUI.TV
 				img.TextOffsetY1=5;
 				img.FontName1="font13";
 				img.TextColor1=0xffffffff;
-				string strTimeSingle=String.Format("{0}", 
-					program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 
-				string strTime=String.Format("{0}-{1}", 
-					program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-					program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-
-				if (program.StartTime.Date != DateTime.Now.Date)
+				string strTimeSingle=String.Empty;
+				string strTime=String.Empty;
+				if (program.Start != 0)
 				{
+					strTimeSingle=String.Format("{0}", 
+						program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+				
+					strTime=String.Format("{0}-{1}", 
+						program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+						program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));				
+
+					if (program.StartTime.Date != DateTime.Now.Date)
+					{
 						strTime=String.Format("{0} {1}-{2}", 
 							Utils.GetShortDayString(program.StartTime),
-					 program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-					 program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-					strTimeSingle=String.Format("{0} {1}", 
-						Utils.GetShortDayString(program.StartTime),
-						program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+							program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+							program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						strTimeSingle=String.Format("{0} {1}", 
+							Utils.GetShortDayString(program.StartTime),
+							program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					}
 				}
 				img.Label1=program.Title;
 				GUILabelControl labelTemplate;
@@ -1200,7 +1209,7 @@ namespace MediaPortal.GUI.TV
 			if (programs.Count==0)
 			{
 				DateTime dt=Utils.longtodate(iEnd);
-				dt=dt.AddMinutes(30);
+				//dt=dt.AddMinutes(m_iBlockTime);
 				long iProgEnd=Utils.datetolong(dt);
 				TVProgram prog = new TVProgram();
 				prog.Start=iStart;
@@ -1715,6 +1724,7 @@ namespace MediaPortal.GUI.TV
             Update();
           }
 					SetFocus();
+					SetProperties();
 					return;
 				}
 				m_iCursorX--;
@@ -1735,6 +1745,7 @@ namespace MediaPortal.GUI.TV
 			if (m_iCursorX<0) return;
 			if (m_iCursorX==0)
 			{
+				SetProperties();
 				SetFocus();
 				return;
 			}
@@ -2355,7 +2366,7 @@ namespace MediaPortal.GUI.TV
 			GUIHorizontalScrollbar scrollbar = GetControl((int)Controls.HORZ_SCROLLBAR) as GUIHorizontalScrollbar;
 			if (scrollbar!=null)
 			{
-				float percentage=(float)m_dtTime.Hour*60+m_dtTime.Minute;
+				float percentage=(float)m_dtTime.Hour*60+m_dtTime.Minute+(float)m_iBlockTime*((float)m_dtTime.Hour/24.0f);
 				percentage/=(24.0f*60.0f);
 				percentage*=100.0f;
 				if (percentage < 0) percentage=0;
