@@ -297,11 +297,11 @@ namespace MediaPortal.GUI.Music
 			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
 			if (GetID == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
 			{
-				GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(100005), handler.CurrentView) );
+				GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(10005), handler.CurrentView) );
 			}
 			else
 			{
-				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
 			}			
                 
 			facadeView.IsVisible=false;
@@ -437,6 +437,13 @@ namespace MediaPortal.GUI.Music
 		protected override void OnPageDestroy(int newWindowId)
 		{
 			SaveSettings();
+
+			// Save view
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("music","startWindow",MusicState.StartWindow.ToString());
+				xmlwriter.SetValue("music","startview",MusicState.View);
+			}
 		}
 		
 		protected void LoadPlayList(string strPlayList)

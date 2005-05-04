@@ -238,17 +238,6 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
-
-		public override void DeInit()
-		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("music","startWindow",MusicState.StartWindow.ToString());
-				xmlwriter.SetValue("music","startview",MusicState.View);
-			}
-		}
-
-
 		#endregion
 
 		#region overrides
