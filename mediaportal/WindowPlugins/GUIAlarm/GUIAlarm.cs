@@ -196,7 +196,7 @@ namespace MediaPortal.GUI.Alarm
 				if (!objAlarm.Enabled)
 					item.Shaded = true;
 
-				item.IconImage = GetIcon((Alarm.MediaType)objAlarm.AlarmMediaType);
+				item.IconImage = GetIcon(objAlarm,(Alarm.MediaType)objAlarm.AlarmMediaType);
 				
 				GUIControl.AddListItemControl(GetID,(int)Controls.AlarmList,item);
 			}
@@ -210,7 +210,7 @@ namespace MediaPortal.GUI.Alarm
 
 			GUIWindowManager.ActivateWindow(GUIAlarmDetails.WINDOW_ALARM_DETAILS);				
 		}
-		private string GetIcon(Alarm.MediaType mediaType)
+		private string GetIcon(Alarm alarm,Alarm.MediaType mediaType)
 		{
 			switch(mediaType)
 			{
@@ -219,7 +219,11 @@ namespace MediaPortal.GUI.Alarm
 				case Alarm.MediaType.PlayList:
 					return "DefaultPlaylist.png";
 				case Alarm.MediaType.Radio:
+				{
+					string thumb=Utils.GetCoverArt(Thumbs.Radio,alarm.Sound);
+					if (thumb!=String.Empty) return thumb;
 					return "DefaultMyradio.png";	
+				}
 			}
 			return string.Empty;
 		}

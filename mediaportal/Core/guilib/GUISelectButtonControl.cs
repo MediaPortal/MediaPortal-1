@@ -48,7 +48,8 @@ namespace MediaPortal.GUI.Library
 		protected bool                    m_bUpdateNeeded=false;
 		protected bool                    m_bAutoHide=true;
     protected GUILabelControl         m_label=null;
-
+		protected bool										resetSelectionAfterFocusLost=true;
+		
 	
 
 	  public GUISelectButtonControl(int dwParentID) : base(dwParentID)
@@ -398,7 +399,10 @@ namespace MediaPortal.GUI.Library
         {
           //	Disable selection mode when moving up or down
           m_bShowSelect=false;
-          SelectedItem=m_iDefaultItem;
+					if (resetSelectionAfterFocusLost)
+					{
+						SelectedItem=m_iDefaultItem;
+					}
         }
 
       }
@@ -879,6 +883,17 @@ namespace MediaPortal.GUI.Library
 				m_iDefaultItem=0;
 			}
 			m_SubItems.Add( line);
+		}
+		public bool RestoreSelection
+		{
+			get
+			{
+				return resetSelectionAfterFocusLost;
+			}
+			set
+			{
+				resetSelectionAfterFocusLost=value;
+			}
 		}
 	}
 }

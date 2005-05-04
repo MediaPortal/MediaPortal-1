@@ -67,6 +67,8 @@ namespace MediaPortal.GUI.Alarm
 			Sunday = 16
 		}
 		#endregion
+		[SkinControlAttribute(4)]			protected GUISelectButtonControl btnMediaType=null;
+		[SkinControlAttribute(24)]		protected GUISelectButtonControl btnAlarmType=null;
 		
 		#region Overrides
 		public override bool Init()
@@ -93,7 +95,9 @@ namespace MediaPortal.GUI.Alarm
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
-					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) );
+					GUIPropertyManager.SetProperty("#cur2rentmodule", GUILocalizeStrings.Get(850) );
+					btnMediaType.RestoreSelection=false;
+					btnAlarmType.RestoreSelection=false;
 					GetAlarmId();
 					LoadListControl(_CurrentAlarm.AlarmMediaType);
 					return true;
@@ -146,19 +150,8 @@ namespace MediaPortal.GUI.Alarm
 						OnMessage(msg);
 						int nSelected = (int)msg.Param1;
 
-						switch(nSelected)
-						{
-							case (int)Alarm.MediaType.PlayList:
-								LoadListControl(Alarm.MediaType.PlayList);
-								break;
-							case (int)Alarm.MediaType.Radio:
-								LoadListControl(Alarm.MediaType.Radio);
-								break;
-							case (int)Alarm.MediaType.File:
-								LoadListControl(Alarm.MediaType.File);
-								break;
-
-						}
+						_CurrentAlarm.AlarmMediaType = (Alarm.MediaType)nSelected;
+						LoadListControl(_CurrentAlarm.AlarmMediaType);
 						return true;
 					}
 					if(iControl == (int)Controls.AlarmTypeButton)
@@ -167,18 +160,8 @@ namespace MediaPortal.GUI.Alarm
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
 						OnMessage(msg);
 						int nSelected = (int)msg.Param1;
-
-						switch(nSelected)
-						{
-							case (int)Alarm.AlarmType.Once:
-								//show date controls.
-								SetTypeControls(Alarm.AlarmType.Once);
-								break;
-							case (int)Alarm.AlarmType.Recurring:
-								SetTypeControls(Alarm.AlarmType.Recurring);
-								break;
-						}
-
+						_CurrentAlarm.AlarmOccurrenceType = (Alarm.AlarmType)nSelected;
+						SetTypeControls(_CurrentAlarm.AlarmOccurrenceType);
 					}
 				}
 					break;
@@ -434,7 +417,7 @@ namespace MediaPortal.GUI.Alarm
 				_CurrentAlarm.Time = AlarmDate;
 				_CurrentAlarm.Name = ((GUILabelControl)GetControl((int)Controls.NameLabel)).Label;
 				_CurrentAlarm.Enabled = ((GUIToggleButtonControl)GetControl((int)Controls.EnabledButton)).Selected;
-				_CurrentAlarm.AlarmMediaType = (Alarm.MediaType)((GUISelectButtonControl)GetControl((int)Controls.PlayType)).SelectedItem;
+
 				_CurrentAlarm.Mon = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Monday)).Selected;
 				_CurrentAlarm.Tue = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Tuesday)).Selected;
 				_CurrentAlarm.Wed = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Wednesday)).Selected;
@@ -444,7 +427,8 @@ namespace MediaPortal.GUI.Alarm
 				_CurrentAlarm.Sun = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Sunday)).Selected;
 				_CurrentAlarm.VolumeFade = ((GUICheckMarkControl)GetControl((int)Controls.VolumeFadeButton)).Selected;
 				_CurrentAlarm.WakeUpPC = ((GUICheckMarkControl)GetControl((int)Controls.WakeUpButton)).Selected;
-				_CurrentAlarm.AlarmOccurrenceType = (Alarm.AlarmType)((GUISelectButtonControl)GetControl((int)Controls.AlarmTypeButton)).SelectedItem;
+
+				
 
 				Alarm.SaveAlarm(_CurrentAlarm);
 
