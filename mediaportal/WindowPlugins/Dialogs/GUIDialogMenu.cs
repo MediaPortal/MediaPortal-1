@@ -82,11 +82,6 @@ namespace MediaPortal.Dialogs
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
           OnMessage(msg);
         }
-        else
-        {
-          // Exit dialog box
-          Close();
-        }
         return;
           
         
