@@ -131,6 +131,10 @@ namespace MediaPortal.GUI.Music
 			handler.CurrentView = view;
 			base.OnPageLoad ();
 			LoadDirectory(m_strDirectory);
+			if (facadeView.Count <=0)
+			{
+				GUIControl.FocusControl(GetID, btnViewAs.GetID);
+			}
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
