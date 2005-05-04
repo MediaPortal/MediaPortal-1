@@ -130,7 +130,7 @@ namespace MediaPortal.IR
 		string[]								externalTunerCodes = new string[11]; // 10 digits + Enter
 		Hashtable								commandsLearned = new Hashtable();
 		DateTime								timestamp = DateTime.Now;
-		
+		private bool            isLearning=false;
 
 		#endregion
 
@@ -369,6 +369,7 @@ namespace MediaPortal.IR
 
 		public void UUIRTReceiveCallback( string irid )
 		{
+			if (isLearning) return;
 			if (!ReceiveEnabled) return;
 			object command = commandsLearned[irid];
 			if (command==null) return;
@@ -387,8 +388,12 @@ namespace MediaPortal.IR
 		{
 			try
 			{
-				if (instance == null)
-					instance = new USBUIRT(remoteCommandCallback);
+				if (instance!=null)
+				{
+					instance.Close();
+					instance=null;
+				}
+				instance = new USBUIRT(remoteCommandCallback);
 			}
 			catch (Exception)
 			{
@@ -489,6 +494,7 @@ namespace MediaPortal.IR
 
 		public void LearnTunerCodes()
 		{
+			isLearning=true;
 			bool result;
 			for (int i = 0; i< 10; i++) 
 			{
@@ -519,6 +525,7 @@ namespace MediaPortal.IR
 					if (result) break;
 				}
 			}
+			isLearning=false;
 		}
 
 
@@ -527,6 +534,7 @@ namespace MediaPortal.IR
 			if (commands.Length != buttonNames.Length)
 				throw new Exception("invalid call to BulkLearn");
 
+			isLearning=true;
 			for(int i= 0; i< commands.Length; i++)
 			{
 				for (int retry=0; retry < 3; retry++)
@@ -538,6 +546,7 @@ namespace MediaPortal.IR
 					if (result) break;
 				}
 			}
+			isLearning=false;
 		}
 		#endregion
 

@@ -99,9 +99,9 @@ namespace MediaPortal.Configuration.Sections
 			this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.statusLabel = new System.Windows.Forms.Label();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.label3 = new System.Windows.Forms.Label();
+			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -129,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// lblUSBUIRTVersion
 			// 
-			this.lblUSBUIRTVersion.Location = new System.Drawing.Point(144, 216);
+			this.lblUSBUIRTVersion.Location = new System.Drawing.Point(144, 240);
 			this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
 			this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 48);
 			this.lblUSBUIRTVersion.TabIndex = 14;
@@ -137,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 216);
+			this.label1.Location = new System.Drawing.Point(16, 240);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(100, 40);
 			this.label1.TabIndex = 13;
@@ -149,7 +149,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.tunerCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.tunerCommandsButton.Location = new System.Drawing.Point(16, 144);
+			this.tunerCommandsButton.Location = new System.Drawing.Point(16, 120);
 			this.tunerCommandsButton.Name = "tunerCommandsButton";
 			this.tunerCommandsButton.Size = new System.Drawing.Size(408, 23);
 			this.tunerCommandsButton.TabIndex = 12;
@@ -161,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
 			this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.internalCommandsButton.Location = new System.Drawing.Point(16, 112);
+			this.internalCommandsButton.Location = new System.Drawing.Point(16, 96);
 			this.internalCommandsButton.Name = "internalCommandsButton";
 			this.internalCommandsButton.Size = new System.Drawing.Size(408, 23);
 			this.internalCommandsButton.TabIndex = 11;
@@ -211,10 +211,10 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.statusLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.statusLabel.Location = new System.Drawing.Point(16, 176);
+			this.statusLabel.Font = new System.Drawing.Font("Verdana", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.statusLabel.Location = new System.Drawing.Point(16, 152);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(408, 23);
+			this.statusLabel.Size = new System.Drawing.Size(408, 72);
 			this.statusLabel.TabIndex = 1;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -230,16 +230,13 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "General Information";
 			// 
-			// label2
+			// label3
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 24);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(408, 56);
-			this.label2.TabIndex = 0;
-			this.label2.Text = "The USBUIRT is an external USB device which allows Mediaportal to both Transmit a" +
-				"nd Receive infrared signals. With USBUIRT you can tell mediaportal to remote con" +
-				"trol your settop box and/or you can control mediaportal using any remote control" +
-				" you may have";
+			this.label3.Location = new System.Drawing.Point(16, 88);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(96, 16);
+			this.label3.TabIndex = 2;
+			this.label3.Text = "More information:";
 			// 
 			// linkLabel1
 			// 
@@ -250,13 +247,16 @@ namespace MediaPortal.Configuration.Sections
 			this.linkLabel1.TabStop = true;
 			this.linkLabel1.Text = "http://www.usbuirt.com/";
 			// 
-			// label3
+			// label2
 			// 
-			this.label3.Location = new System.Drawing.Point(16, 88);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(96, 16);
-			this.label3.TabIndex = 2;
-			this.label3.Text = "More information:";
+			this.label2.Location = new System.Drawing.Point(16, 24);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(408, 56);
+			this.label2.TabIndex = 0;
+			this.label2.Text = "The USBUIRT is an external USB device which allows Mediaportal to both Transmit a" +
+				"nd Receive infrared signals. With USBUIRT you can tell mediaportal to remote con" +
+				"trol your settop box and/or you can control mediaportal using any remote control" +
+				" you may have";
 			// 
 			// USBUIRT
 			// 
@@ -308,6 +308,10 @@ namespace MediaPortal.Configuration.Sections
 									   "FULLSCREEN",
 									   "QUEUE",
 			};
+			
+			statusLabel.Text="";
+			SaveSettings();
+			MediaPortal.IR.USBUIRT.Create(new MediaPortal.IR.USBUIRT.OnRemoteCommand(OnRemoteCommand));
 
 			MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);
 			MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
@@ -317,10 +321,16 @@ namespace MediaPortal.Configuration.Sections
 
 			MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);
 			MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
+			
+			statusLabel.Text="";
 		}
 
 		private void tunerCommandsButton_Click(object sender, System.EventArgs e)
 		{
+			statusLabel.Text="";
+			SaveSettings();
+			MediaPortal.IR.USBUIRT.Create(new MediaPortal.IR.USBUIRT.OnRemoteCommand(OnRemoteCommand));
+			lblUSBUIRTVersion.Text=MediaPortal.IR.USBUIRT.Instance.GetVersions();
 			MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);
 			MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
 
@@ -329,6 +339,8 @@ namespace MediaPortal.Configuration.Sections
 
 			MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartLearning);			
 			MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnEventLearned);
+			
+			statusLabel.Text="";
 		}
 
 		private void outputCheckBox_CheckedChanged(object sender, System.EventArgs e)
