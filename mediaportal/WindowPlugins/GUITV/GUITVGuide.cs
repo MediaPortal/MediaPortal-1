@@ -578,11 +578,6 @@ namespace MediaPortal.GUI.TV
 						m_dtStartTime=m_currentProgram.StartTime;
 					}
 
-					if (!g_Player.Playing || (!g_Player.IsVideo && !g_Player.IsTV))
-					{
-						if (videoBackground!=null) videoBackground.IsVisible=false;
-						if (videoWindow!=null) videoWindow.IsVisible=false;
-					}
 					GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
 					msg.SendToTargetWindow=true;
 					GUIWindowManager.SendThreadMessage(msg);
