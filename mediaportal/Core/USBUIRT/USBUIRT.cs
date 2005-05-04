@@ -13,6 +13,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.IR
 {
+	#region LearningEventArgs
 	/// <summary>
 	/// This class will handle all communication with an external USBUIRT device
 	/// The USB-UIRT, allows your PC to both Receive and Transmit infrared signals -- 
@@ -22,25 +23,25 @@ namespace MediaPortal.IR
 	/// </summary>
 	public class LearningEventArgs : System.EventArgs
 	{
+		bool					Succeeded=false;
 		public string Button;
+		public string IrCode=String.Empty;
 		public LearningEventArgs(string button)
 		{
 			this.Button = button;
 		}
+		public LearningEventArgs(string button, string ircode, bool succeeded)
+		{
+			this.Button = button;
+			this.IrCode = ircode;
+			this.Succeeded=succeeded;
+		}
 	}
-
-	public delegate void StartLearningEventHandler(object sender, LearningEventArgs e);
+	#endregion
 
 	public class USBUIRT
 	{
-		/// <summary>
-		/// Private constructor disables the user from creating an instance of the class. All access
-		/// to methods should be done through the singleton property "Instance".
-		/// </summary>
-		private USBUIRT()
-		{
-		}
-
+		#region USBUIRT imports
 		[StructLayout(LayoutKind.Sequential)]
 			struct UUINFO
 		{
@@ -94,68 +95,51 @@ namespace MediaPortal.IR
 		static extern bool UUIRTGetUUIRTGPIOCfg(IntPtr hHandle, ref int numSlots, ref uint dwPortPins,ref UUGPIO GpioSt);
 	
 		//(HUUHANDLE hHandle, int *pNumSlots, UINT32 *pdwPortPins, PUUGPIO pGPIOStruct);
+		#endregion
 
-
-
+		#region delegates
+		public delegate void StartLearningEventHandler(object sender, LearningEventArgs e);
+		public delegate void EventLearnedHandler(object sender, LearningEventArgs e);
+	
 		private delegate void UUIRTReceiveCallbackDelegate( string val );
 		public delegate void IRLearnCallbackDelegate( uint val, uint val2, ulong val3);
 		public delegate void OnRemoteCommand(object command);
-
-		static int UUIRTDRV_IRFMT_UUIRT	= 0x0000;
-		//static int UUIRTDRV_IRFMT_PRONTO=	0x0010;
-
-		private IntPtr handle = IntPtr.Zero;
-		private  StringBuilder ircode = new StringBuilder("1",2048);
-
-		private int abort = 0;
-		private int timelaps = 300; // time in milliseconds between two accepted commands
-
 		private UUIRTReceiveCallbackDelegate urcb = null;
+		#endregion
 
-		private IntPtr empty = new IntPtr(-1);
-		private bool loaded = false;
-		private string lastchannel;
+		#region constants
+		static int UUIRTDRV_IRFMT_UUIRT	= 0x0000;
+		private const string		remotefile = "UIRTUSB-remote.xml";
+		private const string		tunerfile = "UIRTUSB-tuner.xml";
+		#endregion
 
+		#region variables
+		private IntPtr					UsbUirtHandle = IntPtr.Zero;
+		private StringBuilder		ircode = new StringBuilder("1",2048);
+		private int							abort = 0;
+		private int							timelaps = 300; // time in milliseconds between two accepted commands
+		private IntPtr					empty = new IntPtr(-1);
+		private bool						isUsbUirtLoaded = false;
+		private string					lastchannel;
 		private OnRemoteCommand remoteCommandCallback = null;
-
-		private bool recInternalCommands = false;
-		private bool recExternalCommands = false;
-		private bool is3DigitTuner = false;
-		private bool tunerNeedsEnter = false;
-		private const string remotefile = "remotevalues.xml";
-		private const string tunerfile = "tunervalues.xml";
-
-		static USBUIRT instance = null;
-		string[] externalTunerCodes = new string[11]; // 10 digits + Enter
-
-		/// <summary>
-		/// Event fired when we start learning a remote command
-		/// </summary>
-		public event StartLearningEventHandler StartLearning;
-
-		public OnRemoteCommand RemoteCommandCallback
-		{
-			set 
-			{
-				remoteCommandCallback = value;
-			}
-		}
+		private bool 						accepRemoteCommands = false;
+		private bool 						transmitEventsEnabled = false;
+		private bool 						is3DigitTuner = false;
+		private bool 						tunerNeedsEnter = false;
+		static USBUIRT					instance = null;
+		string[]								externalTunerCodes = new string[11]; // 10 digits + Enter
+		Hashtable								commandsLearned = new Hashtable();
+		DateTime								timestamp = DateTime.Now;
 		
-		Hashtable commandsLearned = new Hashtable();
 
-		public static USBUIRT Create(OnRemoteCommand remoteCommandCallback)
-		{
-			try
-			{
-				if (instance == null)
-					instance = new USBUIRT(remoteCommandCallback);
-			}
-			catch (Exception)
-			{
-			}
-			return instance;
-		}
+		#endregion
 
+		#region events
+		public event StartLearningEventHandler StartLearning;
+		public event EventLearnedHandler OnEventLearned;
+		#endregion
+
+		#region properties
 		public static USBUIRT Instance 
 		{
 			get 
@@ -191,29 +175,29 @@ namespace MediaPortal.IR
 		}
 
 
-		public bool InternalCommandsActive 
+		public bool ReceiveEnabled 
 		{
 			get 
 			{
-				return this.recInternalCommands;
+				return this.accepRemoteCommands;
 			}
 
 			set 
 			{
-				this.recInternalCommands = value;
+				this.accepRemoteCommands = value;
 			}
 		}
 
-		public bool ExternalCommandsActive 
+		public bool TransmitEnabled 
 		{
 			get 
 			{
-				return this.recExternalCommands;
+				return this.transmitEventsEnabled;
 			}
 
 			set 
 			{
-				this.recExternalCommands = value;
+				this.transmitEventsEnabled = value;
 			}
 		}
 
@@ -228,51 +212,49 @@ namespace MediaPortal.IR
 				return timelaps;
 			}
 		}
+		#endregion
 
-		private USBUIRT(OnRemoteCommand remoteCommandCallback)
+		#region ctor
+		private USBUIRT()
+		{
+		}
+
+		private USBUIRT(OnRemoteCommand callback)
 		{
 			try
 			{
-				handle = UUIRTOpen();
-				if(handle !=  empty )
-					loaded = true;
+				commandsLearned = new Hashtable();
+				UsbUirtHandle = UUIRTOpen();
+				if(UsbUirtHandle !=  empty )
+					isUsbUirtLoaded = true;
 
-				if(loaded)
+				if(isUsbUirtLoaded)
 				{
-					urcb = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallback);		
-					UUIRTSetReceiveCallback(handle,urcb,0);
 					using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
-						recInternalCommands = xmlreader.GetValueAsString("USBUIRT", "internal", "false") == "true";
-						recExternalCommands = xmlreader.GetValueAsString("USBUIRT", "external", "false") == "true";
-						is3DigitTuner = xmlreader.GetValueAsString("USBUIRT", "is3digit", "false") == "true";
-						tunerNeedsEnter = xmlreader.GetValueAsString("USBUIRT", "needsenter", "false") == "true";
+						ReceiveEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false) ;
+						TransmitEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false) ;
+						Is3Digit = xmlreader.GetValueAsBool("USBUIRT", "is3digit", false) ;
+						tunerNeedsEnter = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false) ;
 					}
-					this.remoteCommandCallback = remoteCommandCallback;
-					commandsLearned = new Hashtable();
 					if (System.IO.File.Exists(remotefile))
 						LoadValues();
 					if (System.IO.File.Exists(tunerfile))
 						LoadTunerValues();
 				}
+				//setup callack to receive IR messages
+				urcb = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallback);		
+				UUIRTSetReceiveCallback(UsbUirtHandle,urcb,0);
+				RemoteCommandCallback = callback;
 			}
 			catch(Exception )
 			{
 				//most users dont have the dll on their system so will get a exception here
 			}
-
-			//Thread t = new Thread(new ThreadStart(s));
-			//t.Start();
-			//ShowDialog();
-			//int slots = 4;
-			//UUIRTGetUUIRTGPIOCfg(handle, ref slots, ref uint m,
 		}
+		#endregion
 
-		public string GetName()
-		{
-			return "USB-UIRT";
-		}
-
+		#region serialisation
 		private void LoadValues()
 		{
 			System.Xml.XmlTextReader reader = new System.Xml.XmlTextReader(remotefile);
@@ -374,13 +356,58 @@ namespace MediaPortal.IR
 			{
 			}
 		}
+		#endregion
+
+		#region remote receiver methods
+		public OnRemoteCommand RemoteCommandCallback
+		{
+			set 
+			{
+				remoteCommandCallback = value;
+			}
+		}
+
+		public void UUIRTReceiveCallback( string irid )
+		{
+			if (!ReceiveEnabled) return;
+			object command = commandsLearned[irid];
+			if (command==null) return;
+			TimeSpan ts=DateTime.Now - timestamp;
+			if (ts.TotalMilliseconds >= timelaps) 
+			{
+				this.remoteCommandCallback(command);
+				timestamp = DateTime.Now;
+			}
+		}
+
+		#endregion
+
+		#region methods
+		public static USBUIRT Create(OnRemoteCommand remoteCommandCallback)
+		{
+			try
+			{
+				if (instance == null)
+					instance = new USBUIRT(remoteCommandCallback);
+			}
+			catch (Exception)
+			{
+			}
+			return instance;
+		}
+
+		public string GetName()
+		{
+			return "USB-UIRT";
+		}
+
 
 		public string GetVersions()
 		{
-			if(loaded)
+			if(isUsbUirtLoaded)
 			{
 				UUINFO p = new UUINFO();			
-				UUIRTGetUUIRTInfo(handle,ref p);	
+				UUIRTGetUUIRTInfo(UsbUirtHandle,ref p);	
 				DateTime firmdate = new DateTime(p.fwDateYear + 2000,p.fwDateMonth,p.fwDateDay);
 				DateTime plugdate = new DateTime(2004,4,1);
 				string firmversion = (p.fwVersion>>8) +"."+(p.fwVersion&0xff);
@@ -397,24 +424,56 @@ namespace MediaPortal.IR
 		public int GetCurrentPreferences()
 		{
 			uint config = 0;
-			if(loaded)
-				UUIRTGetUUIRTConfig(this.handle,ref config);
+			if(isUsbUirtLoaded)
+				UUIRTGetUUIRTConfig(this.UsbUirtHandle,ref config);
 			return (int) config;
 		}
 
 		public void SetPreferences(int pref)
 		{			
-			if(loaded)
-				UUIRTSetUUIRTConfig(this.handle,(uint)pref);
+			if(isUsbUirtLoaded)
+				UUIRTSetUUIRTConfig(this.UsbUirtHandle,(uint)pref);
+		}
+		public void Close()
+		{			
+			if(isUsbUirtLoaded)
+				UUIRTClose(UsbUirtHandle);
+			isUsbUirtLoaded=false;
+			UsbUirtHandle=IntPtr.Zero;
+		}
+		#endregion 
+
+		#region notify events
+		/// <summary>
+		/// Method used to fire the "StartLearning" event. Any subscribers will be notified with the name of
+		/// the button that is to be learned.
+		/// </summary>
+		/// <param name="button"></param>
+		protected void NotifyStartLearn(string button)
+		{
+			if(StartLearning != null)
+			{
+				StartLearning(this, new LearningEventArgs(button));
+			}
 		}
 
-		private void IRLearn()
+		protected void NotifyEventLearned(string button, string ircode, bool isSuccess)
+		{
+			if(OnEventLearned != null)
+			{
+				OnEventLearned(this, new LearningEventArgs(button, ircode,isSuccess));
+			}
+		}
+		#endregion
+
+		#region Learning methods
+		private bool IRLearn()
 		{
 			try
 			{
-				if(!UUIRTLearnIR(handle,UUIRTDRV_IRFMT_UUIRT, this.ircode,null,0,ref this.abort,0,null,null))
+				if(!UUIRTLearnIR(UsbUirtHandle,UUIRTDRV_IRFMT_UUIRT, this.ircode,null,0,ref this.abort,0,null,null))
 				{
-					//Console.WriteLine("ERROR calling UUIRTLearnIR!");
+					return false;
 				}
 				else
 				{
@@ -423,138 +482,63 @@ namespace MediaPortal.IR
 			}
 			catch(Exception )
 			{
+				return false;
 			}
-		}
-
-		/// <summary>
-		/// Method used to fire the "StartLearning" event. Any subscribers will be notified with the name of
-		/// the button that is to be learned.
-		/// </summary>
-		/// <param name="button"></param>
-		protected void OnStartLearning(string button)
-		{
-			if(StartLearning != null)
-			{
-				StartLearning(this, new LearningEventArgs(button));
-			}
+			return true;
 		}
 
 		public void LearnTunerCodes()
 		{
+			bool result;
 			for (int i = 0; i< 10; i++) 
 			{
 				//
 				// Let any subscriber know that we're about to start learning a remote code
 				//
-				OnStartLearning(i.ToString());
+				NotifyStartLearn(i.ToString());
 
-//				form.label1.Text = "Press and hold the '" + i + "' button on your TUNER remote";
-//				form.Show();
-//
-//				form.Refresh();
-
-				IRLearn();
+				result=IRLearn();
 
 				externalTunerCodes[i] = this.ircode.ToString();
-
-//				form.Hide();
-				Thread.Sleep(1000);
-			}
-
-			//
-			// Let any subscriber know that we want to learn the Enter command
-			//
-			OnStartLearning("Enter");
-//			form.label1.Text = "Press and hold the 'ENTER' button on your TUNER remote";
-//			form.Show();
-//
-//			form.Refresh();
-
-			IRLearn();
-
-			externalTunerCodes[10] = this.ircode.ToString();
-
-//			form.Hide();
-		}
-
-		public void Close()
-		{			
-			if(loaded)
-				UUIRTClose(handle);
-		}
-
-		object commandToLearn = null;
-		bool   internalLearnDone = false;
-		
-		private void InternalLearn(object command, string buttonName) 
-		{
-			try
-			{
-				this.commandToLearn = command;
-				internalLearnDone = false;
-
-				OnStartLearning(buttonName);
 				
-				//			form.label1.Text = "Press the " + buttonName + " button on your remote";
-				//			form.Show();
-				//
-				//			form.Refresh();
-				
-
-				UUIRTReceiveCallbackDelegate urcblearn = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallbackLearn);		
-				UUIRTSetReceiveCallback(handle,urcblearn,0);
-				while (! internalLearnDone )
-				{
-					Thread.Sleep(100);
-				}
-				UUIRTSetReceiveCallback(handle,urcb,0);
-				//			form.Hide();
+				NotifyEventLearned(i.ToString(),this.ircode.ToString(),result);
 			}
-			catch(Exception ex)
+
+			if (tunerNeedsEnter)
 			{
-				Log.Write("exception while initializing USBUIRT:{0}",ex.ToString());
+				NotifyStartLearn("Enter");
+
+				result=IRLearn();
+
+				externalTunerCodes[10] = this.ircode.ToString();
+
+				NotifyEventLearned("Enter",this.ircode.ToString(),result);
 			}
 		}
+
 
 		public void BulkLearn(object[] commands, string[] buttonNames)
 		{
 			if (commands.Length != buttonNames.Length)
 				throw new Exception("invalid call to BulkLearn");
+
 			for(int i= 0; i< commands.Length; i++)
-				InternalLearn(commands[i], buttonNames[i]);
-		}
-
-		//string lastCommand = null;
-		DateTime timestamp = DateTime.Now;
-		
-		public void UUIRTReceiveCallbackLearn( string irid )
-		{
-			internalLearnDone = true;
-			commandsLearned[irid] = commandToLearn;			
-			timestamp = DateTime.Now;
-		}
-
-		public void UUIRTReceiveCallback( string irid )
-		{
-			internalLearnDone = true;
-			//Trace.WriteLine("received IR command "+DateTime.Now.ToString());
-			if (recInternalCommands)
 			{
-				object command = commandsLearned[irid];
-				if ((DateTime.Now - timestamp) > new TimeSpan(0,0,0,0,timelaps) && command != null) 
-				{
-
-					Trace.WriteLine("invoking callback");
-					this.remoteCommandCallback(command);
-					timestamp = DateTime.Now;
-				}
+				NotifyStartLearn(buttonNames[i]);
+				bool result=IRLearn();
+				commandsLearned[i]=this.ircode.ToString();
+				NotifyEventLearned(buttonNames[i],this.ircode.ToString(),result);
 			}
 		}
+		#endregion
 
+		#region remote control methods
 		public void ChangeTunerChannel(string channel)
 		{
-			if(!loaded)
+			if(!isUsbUirtLoaded)
 				return;
+
+			if (!TransmitEnabled) return;
 
 			Log.Write("USBUIRT: NewChannel={0} LastChannel={1}", channel, lastchannel);
 
@@ -562,7 +546,7 @@ namespace MediaPortal.IR
 			if(channel == lastchannel)
 				return;
 			int length = channel.Length;
-			if ((!this.is3DigitTuner && length >2) || (length >3))
+			if ((!this.Is3Digit && length >2) || (length >3))
 				throw new System.Exception("invalid channel length");
 
 			for (int i = 0; i<length; i++ )
@@ -581,19 +565,20 @@ namespace MediaPortal.IR
 
 		public void Transmit(string gIRCode, int gIRCodeFormat, int repeatCount)
 		{
-			if(loaded)
-			{
-				UUIRTTransmitIR(handle,
-					gIRCode, // IRCode 
-					gIRCodeFormat, // codeFormat 
-					repeatCount, // repeatCount 
-					0, // inactivityWaitTime 
-					IntPtr.Zero, // hEvent 
-					0, // reserved1
-					0 // reserved2 
-					);
-			}
+			if(!isUsbUirtLoaded) return;
+			if (!TransmitEnabled) return;
+			
+			UUIRTTransmitIR(UsbUirtHandle,
+				gIRCode, // IRCode 
+				gIRCodeFormat, // codeFormat 
+				repeatCount, // repeatCount 
+				0, // inactivityWaitTime 
+				IntPtr.Zero, // hEvent 
+				0, // reserved1
+				0 // reserved2 
+				);
 		}
+		#endregion
 		
 	}
 }

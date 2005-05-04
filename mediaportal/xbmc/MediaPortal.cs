@@ -455,8 +455,8 @@ public class MediaPortalApp : D3DApp, IRender
         //
         using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
-            bool inputEnabled = xmlreader.GetValueAsString("USBUIRT", "internal", "false") == "true";
-            bool outputEnabled = xmlreader.GetValueAsString("USBUIRT", "external", "false") == "true";
+            bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false) ;
+            bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false) ;
 
             if (inputEnabled == true || outputEnabled == true)
             {
