@@ -393,9 +393,13 @@ namespace MediaPortal.GUI.Alarm
 					GUIControl.SetControlLabel(GetID,(int)Controls.NameLabel,_CurrentAlarm.Name);
 					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) + @"/" + _CurrentAlarm.Name);
 					
-					((GUISelectButtonControl)GetControl((int)Controls.AlarmTypeButton)).SelectedItem = (int)_CurrentAlarm.AlarmOccurrenceType;
-					((GUISelectButtonControl)GetControl((int)Controls.PlayType)).SelectedItem = (int)_CurrentAlarm.AlarmMediaType;
-					((GUISpinControl)GetControl((int)Controls.AlarmHour)).Value = _CurrentAlarm.Time.Hour;
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT,0,0,(int)Controls.AlarmTypeButton,(int)_CurrentAlarm.AlarmOccurrenceType,0,null);
+					((GUISelectButtonControl)GetControl((int)Controls.AlarmTypeButton)).OnMessage(msg);
+
+					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT,0,0,(int)Controls.PlayType,(int)_CurrentAlarm.AlarmMediaType,0,null);
+					((GUISelectButtonControl)GetControl((int)Controls.PlayType)).OnMessage(msg);
+
+				((GUISpinControl)GetControl((int)Controls.AlarmHour)).Value = _CurrentAlarm.Time.Hour;
 					((GUISpinControl)GetControl((int)Controls.AlarmMinute)).Value = _CurrentAlarm.Time.Minute;
 					((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Monday)).Selected = _CurrentAlarm.Mon;
 					((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Tuesday)).Selected = _CurrentAlarm.Tue;
