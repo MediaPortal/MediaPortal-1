@@ -583,6 +583,9 @@ namespace MediaPortal.GUI.TV
 						if (videoBackground!=null) videoBackground.IsVisible=false;
 						if (videoWindow!=null) videoWindow.IsVisible=false;
 					}
+					GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
+					msg.SendToTargetWindow=true;
+					GUIWindowManager.SendThreadMessage(msg);
 
 					return true;
 				}
