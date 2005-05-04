@@ -489,61 +489,61 @@
 	<string><id>674</id><value>R&#233;glages IHM</value></string>
 	<string><id>675</id><value>Exemple :</value></string>
 	<string><id>676</id><value>Effacer les enregistrements visionn&#233;s ?</value></string>
-	<string><id>10000</id><value>Accueil</value></string>
-	<string><id>10001</id><value>Programmes</value></string>
-	<string><id>10002</id><value>Photos</value></string>
-	<string><id>10003</id><value>Fichiers</value></string>
-	<string><id>10004</id><value>R&#233;glages</value></string>
-	<string><id>10005</id><value>Musique</value></string>
-	<string><id>10006</id><value>Vid&#233;os</value></string>
-	<string><id>10007</id><value>Informations syst&#232;me</value></string>
-	<string><id>10008</id><value>R&#233;glages->G&#233;n&#233;ral</value></string>
-	<string><id>10009</id><value>R&#233;glages->Ecran</value></string>
-	<string><id>10010</id><value>R&#233;glages->Ecran->Calibration IU</value></string>
-	<string><id>10011</id><value>R&#233;glages->Ecran->Calibration &#233;cran</value></string>
-	<string><id>10012</id><value>R&#233;glages->Diaporamas</value></string>
-	<string><id>10013</id><value>R&#233;glages->Ecran->Filtres</value></string>
-	<string><id>10014</id><value>R&#233;glages->Musique</value></string>
-	<string><id>10015</id><value>R&#233;glages->Ecran->Sous-titres</value></string>
-	<string><id>10016</id><value>R&#233;glages->Ecran->Economiseur d'&#233;cran</value></string>
-	<string><id>10017</id><value>R&#233;glages->M&#233;t&#233;o</value></string>
-	<string><id>10020</id><value>R&#233;glages->Scripts</value></string>
-	<string><id>10021</id><value>Vid&#233;os/genre</value></string>
-	<string><id>10022</id><value>Vid&#233;os/acteur</value></string>
-	<string><id>10023</id><value>Vid&#233;os/ann&#233;e</value></string>
-	<string><id>10024</id><value>R&#233;glages->Programmes</value></string>
-	<string><id>10025</id><value>Vid&#233;os/titre</value></string>
-	<string><id>10026</id><value>R&#233;glages->G&#233;n&#233;ral->Cache</value></string>
-	<string><id>10027</id><value>R&#233;glages->G&#233;n&#233;ral->Lanceur auto</value></string>
-	<string><id>10028</id><value>Vid&#233;os/playlist</value></string>
-	<string><id>10029</id><value>R&#233;glages->G&#233;n&#233;ral->LCD</value></string>
-	<string><id>10030</id><value>Radio</value></string>
-	<string><id>10031</id><value>R&#233;glages->Ecran->Vitesse d&#233;filement</value></string>
-	<string><id>10100</id><value>Bo&#238;te Oui/Non</value></string>
-	<string><id>10101</id><value>Bo&#238;te de progression</value></string>
-	<string><id>10500</id><value>Musique/playlist</value></string>
-	<string><id>10501</id><value>Musique/fichiers</value></string>
-	<string><id>10502</id><value>Musique/albums</value></string>
-	<string><id>10503</id><value>Musique/artistes</value></string>
-	<string><id>10504</id><value>Musique/genres</value></string>
-	<string><id>10505</id><value>Musique/top100</value></string>
-	<string><id>10600</id><value>TV/Guide</value></string>
-	<string><id>10601</id><value>TV/Programmation</value></string>
-	<string><id>10602</id><value>TV/Plein &#233;cran</value></string>
-	<string><id>10603</id><value>TV/TV enregistr&#233;e</value></string>
-	<string><id>11000</id><value>Clavier</value></string>
-	<string><id>12000</id><value>Bo&#238;te de s&#233;lection</value></string>
-	<string><id>12001</id><value>Musique/info</value></string>
-	<string><id>12002</id><value>Bo&#238;te OK</value></string>
-	<string><id>12003</id><value>Vid&#233;os/Info</value></string>
-	<string><id>12004</id><value>Scripts/Infos</value></string>
-	<string><id>12005</id><value>Vid&#233;o plein &#233;cran</value></string>
-	<string><id>12006</id><value>Visualisation Audio</value></string>
-	<string><id>12007</id><value>Photos/diaporama</value></string>
-	<string><id>12008</id><value>Bo&#238;te Empiler</value></string>
-	<string><id>12600</id><value>M&#233;t&#233;o</value></string>
-	<string><id>12900</id><value>Economiseur d'&#233;cran</value></string>
-	<string><id>12901</id><value>OSD plein &#233;cran</value></string>
+	<string><id>100000</id><value>Accueil</value></string>
+	<string><id>100001</id><value>Programmes</value></string>
+	<string><id>100002</id><value>Photos</value></string>
+	<string><id>100003</id><value>Fichiers</value></string>
+	<string><id>100004</id><value>R&#233;glages</value></string>
+	<string><id>100005</id><value>Musique</value></string>
+	<string><id>100006</id><value>Vid&#233;os</value></string>
+	<string><id>100007</id><value>Informations syst&#232;me</value></string>
+	<string><id>100008</id><value>R&#233;glages->G&#233;n&#233;ral</value></string>
+	<string><id>100009</id><value>R&#233;glages->Ecran</value></string>
+	<string><id>100010</id><value>R&#233;glages->Ecran->Calibration IU</value></string>
+	<string><id>100011</id><value>R&#233;glages->Ecran->Calibration &#233;cran</value></string>
+	<string><id>100012</id><value>R&#233;glages->Diaporamas</value></string>
+	<string><id>100013</id><value>R&#233;glages->Ecran->Filtres</value></string>
+	<string><id>100014</id><value>R&#233;glages->Musique</value></string>
+	<string><id>100015</id><value>R&#233;glages->Ecran->Sous-titres</value></string>
+	<string><id>100016</id><value>R&#233;glages->Ecran->Economiseur d'&#233;cran</value></string>
+	<string><id>100017</id><value>R&#233;glages->M&#233;t&#233;o</value></string>
+	<string><id>100020</id><value>R&#233;glages->Scripts</value></string>
+	<string><id>100021</id><value>Vid&#233;os/genre</value></string>
+	<string><id>100022</id><value>Vid&#233;os/acteur</value></string>
+	<string><id>100023</id><value>Vid&#233;os/ann&#233;e</value></string>
+	<string><id>100024</id><value>R&#233;glages->Programmes</value></string>
+	<string><id>100025</id><value>Vid&#233;os/titre</value></string>
+	<string><id>100026</id><value>R&#233;glages->G&#233;n&#233;ral->Cache</value></string>
+	<string><id>100027</id><value>R&#233;glages->G&#233;n&#233;ral->Lanceur auto</value></string>
+	<string><id>100028</id><value>Vid&#233;os/playlist</value></string>
+	<string><id>100029</id><value>R&#233;glages->G&#233;n&#233;ral->LCD</value></string>
+	<string><id>100030</id><value>Radio</value></string>
+	<string><id>100031</id><value>R&#233;glages->Ecran->Vitesse d&#233;filement</value></string>
+	<string><id>100100</id><value>Bo&#238;te Oui/Non</value></string>
+	<string><id>100101</id><value>Bo&#238;te de progression</value></string>
+	<string><id>100500</id><value>Musique/playlist</value></string>
+	<string><id>100501</id><value>Musique/fichiers</value></string>
+	<string><id>100502</id><value>Musique/albums</value></string>
+	<string><id>100503</id><value>Musique/artistes</value></string>
+	<string><id>100504</id><value>Musique/genres</value></string>
+	<string><id>100505</id><value>Musique/top100</value></string>
+	<string><id>100600</id><value>TV/Guide</value></string>
+	<string><id>100601</id><value>TV/Programmation</value></string>
+	<string><id>100602</id><value>TV/Plein &#233;cran</value></string>
+	<string><id>100603</id><value>TV/TV enregistr&#233;e</value></string>
+	<string><id>101000</id><value>Clavier</value></string>
+	<string><id>102000</id><value>Bo&#238;te de s&#233;lection</value></string>
+	<string><id>102001</id><value>Musique/info</value></string>
+	<string><id>102002</id><value>Bo&#238;te OK</value></string>
+	<string><id>102003</id><value>Vid&#233;os/Info</value></string>
+	<string><id>102004</id><value>Scripts/Infos</value></string>
+	<string><id>102005</id><value>Vid&#233;o plein &#233;cran</value></string>
+	<string><id>102006</id><value>Visualisation Audio</value></string>
+	<string><id>102007</id><value>Photos/diaporama</value></string>
+	<string><id>102008</id><value>Bo&#238;te Empiler</value></string>
+	<string><id>102600</id><value>M&#233;t&#233;o</value></string>
+	<string><id>102900</id><value>Economiseur d'&#233;cran</value></string>
+	<string><id>102901</id><value>OSD plein &#233;cran</value></string>
 	<string><id>686</id><value>N&#233; le</value></string>
 	<string><id>687</id><value>Ann&#233;es d'activit&#233;</value></string>
 	<string><id>688</id><value>Instruments</value></string>

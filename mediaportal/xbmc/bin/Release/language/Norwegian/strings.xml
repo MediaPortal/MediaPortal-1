@@ -2018,80 +2018,80 @@
 		<value>Sorter etter: Status</value>
 	</string>	
 	
-<string><id>10000</id><value>Hjem</value></string>
-<string><id>10001</id><value>Min TV</value></string>
-<string><id>10002</id><value>Mine Bilder</value></string>
-<string><id>10003</id><value>Mine Filer</value></string>
-<string><id>10004</id><value>Innstillinger</value></string>
-<string><id>10005</id><value>Min Musikk</value></string>
-<string><id>10006</id><value>Mine Videoer</value></string>
-<string><id>10007</id><value>System informasjon</value></string>
-<string><id>10008</id><value>Innstillinger->Generelt</value></string>
-<string><id>10009</id><value>Innstillinger->Skjerm</value></string>
-<string><id>10010</id><value>Innstillinger->Skjerm->UI Fininnstilling</value></string>
-<string><id>10011</id><value>Innstillinger->Skjerm->Skjerm Fininnstilling</value></string>
-<string><id>10012</id><value>Innstillinger->Lysbildefremvisning</value></string>
-<string><id>10013</id><value>Innstillinger->Skjerm->Filter</value></string>
-<string><id>10014</id><value>Innstillinger->Musikk</value></string>
-<string><id>10015</id><value>Innstillinger->Skjerm->Undertitler</value></string>
-<string><id>10016</id><value>Innstillinger->Skjerm->Skjermsparer</value></string>
-<string><id>10017</id><value>Innstillinger->V&#230;r</value></string>
-<string><id>10020</id><value>Innstillinger->Skript</value></string>
-<string><id>10021</id><value>Mine Videoer/sjanger</value></string>
-<string><id>10022</id><value>Mine Videoer/skuespiller</value></string>
-<string><id>10023</id><value>Mine Videoer/&#229;r</value></string>
-<string><id>10024</id><value>Innstillinger->Programmer</value></string>
-<string><id>10025</id><value>Mine Videoer/tittel</value></string>
-<string><id>10026</id><value>Innstillinger->Generelt->Cache</value></string>
-<string><id>10027</id><value>Innstillinger->Generelt->Autokj&#248;r</value></string>
-<string><id>10028</id><value>Mine Videoer/spillelister</value></string>
-<string><id>10029</id><value>Innstillinger->Generelt->LCD</value></string>
-<string><id>10030</id><value>Min Radio</value></string>
-<string><id>10031</id><value>Innstillinger->Skjerm->rulle hastighet</value></string>
-<string><id>10032</id><value>MSN Messenger</value></string>
-<string><id>10033</id><value>MSN Messenger snakk</value></string>
-<string><id>10034</id><value>Mine Programtilegg</value></string>
-<string><id>10100</id><value>Ja/nei dialog</value></string>
-<string><id>10101</id><value>Fremdrifts dialog</value></string>
-<string><id>10500</id><value>Min Musikk/spilleliste</value></string>
-<string><id>10501</id><value>Min Musikk/filer</value></string>
-<string><id>10502</id><value>Min Musikk/album</value></string>
-<string><id>10503</id><value>Min Musikk/artister</value></string>
-<string><id>10504</id><value>Min Musikk/sjanger</value></string>
-<string><id>10505</id><value>Min Musikk/top100</value></string>
-<string><id>10506</id><value>Min Musikk/Favoritter</value></string>
-<string><id>10600</id><value>Min TV/Guide</value></string>
-<string><id>10601</id><value>Min TV/Planlegger</value></string>
-<string><id>10602</id><value>Min TV/fullskjerm</value></string>
-<string><id>10603</id><value>Min TV/Arkivert TV</value></string>
-<string><id>10604</id><value>Min TV/S&#248;k</value></string>
-<string><id>10605</id><value>Min TV/Arkivert TV/Sjanger</value></string>
-<string><id>10606</id><value>Min TV/Arkivert TV/Kanaler</value></string>
-<string><id>10750</id><value>Mine Oppskrifter</value></string>
-<string><id>10755</id><value>Min Status</value></string>
-<string><id>10756</id><value>Min Status detaljer</value></string>
-<string><id>10757</id><value>Min Status innstillinger</value></string>
-<string><id>10770</id><value>Utforsker</value></string>
-<string><id>11000</id><value>tastatur</value></string>
-<string><id>12000</id><value>Valg dialog</value></string>
-<string><id>12001</id><value>Min Musikk/info</value></string>
-<string><id>12002</id><value>Dialog OK</value></string>
-<string><id>12003</id><value>Mine Videoer/Info</value></string>
-<string><id>12004</id><value>Mine Skript/Info</value></string>
-<string><id>12005</id><value>Fullskjerm video</value></string>
-<string><id>12006</id><value>Audio visualisering</value></string>
-<string><id>12007</id><value>Mine Bilder/Lysbildefremvisning</value></string>
-<string><id>12008</id><value>Filstabel dialog</value></string>
-<string><id>12010</id><value>Dato/Tid</value></string>
-<string><id>12011</id><value>Artist info</value></string>
-<string><id>12012</id><value>Kontekst meny</value></string>
-<string><id>12013</id><value>Set Rating</value></string>i
-<string><id>12014</id><value>Bildeinfo</value></string>
-<string><id>12600</id><value>Mitt V&#230;r</value></string>
-<string><id>12700</id><value>Mine Nyheter</value></string>
-<string><id>12900</id><value>Skjermsparer</value></string>
-<string><id>12901</id><value>Fullskjerm OSD</value></string>
-<string><id>12902</id><value>MSN Messenger OSD</value></string>
+<string><id>100000</id><value>Hjem</value></string>
+<string><id>100001</id><value>Min TV</value></string>
+<string><id>100002</id><value>Mine Bilder</value></string>
+<string><id>100003</id><value>Mine Filer</value></string>
+<string><id>100004</id><value>Innstillinger</value></string>
+<string><id>100005</id><value>Min Musikk</value></string>
+<string><id>100006</id><value>Mine Videoer</value></string>
+<string><id>100007</id><value>System informasjon</value></string>
+<string><id>100008</id><value>Innstillinger->Generelt</value></string>
+<string><id>100009</id><value>Innstillinger->Skjerm</value></string>
+<string><id>100010</id><value>Innstillinger->Skjerm->UI Fininnstilling</value></string>
+<string><id>100011</id><value>Innstillinger->Skjerm->Skjerm Fininnstilling</value></string>
+<string><id>100012</id><value>Innstillinger->Lysbildefremvisning</value></string>
+<string><id>100013</id><value>Innstillinger->Skjerm->Filter</value></string>
+<string><id>100014</id><value>Innstillinger->Musikk</value></string>
+<string><id>100015</id><value>Innstillinger->Skjerm->Undertitler</value></string>
+<string><id>100016</id><value>Innstillinger->Skjerm->Skjermsparer</value></string>
+<string><id>100017</id><value>Innstillinger->V&#230;r</value></string>
+<string><id>100020</id><value>Innstillinger->Skript</value></string>
+<string><id>100021</id><value>Mine Videoer/sjanger</value></string>
+<string><id>100022</id><value>Mine Videoer/skuespiller</value></string>
+<string><id>100023</id><value>Mine Videoer/&#229;r</value></string>
+<string><id>100024</id><value>Innstillinger->Programmer</value></string>
+<string><id>100025</id><value>Mine Videoer/tittel</value></string>
+<string><id>100026</id><value>Innstillinger->Generelt->Cache</value></string>
+<string><id>100027</id><value>Innstillinger->Generelt->Autokj&#248;r</value></string>
+<string><id>100028</id><value>Mine Videoer/spillelister</value></string>
+<string><id>100029</id><value>Innstillinger->Generelt->LCD</value></string>
+<string><id>100030</id><value>Min Radio</value></string>
+<string><id>100031</id><value>Innstillinger->Skjerm->rulle hastighet</value></string>
+<string><id>100032</id><value>MSN Messenger</value></string>
+<string><id>100033</id><value>MSN Messenger snakk</value></string>
+<string><id>100034</id><value>Mine Programtilegg</value></string>
+<string><id>100100</id><value>Ja/nei dialog</value></string>
+<string><id>100101</id><value>Fremdrifts dialog</value></string>
+<string><id>100500</id><value>Min Musikk/spilleliste</value></string>
+<string><id>100501</id><value>Min Musikk/filer</value></string>
+<string><id>100502</id><value>Min Musikk/album</value></string>
+<string><id>100503</id><value>Min Musikk/artister</value></string>
+<string><id>100504</id><value>Min Musikk/sjanger</value></string>
+<string><id>100505</id><value>Min Musikk/top100</value></string>
+<string><id>100506</id><value>Min Musikk/Favoritter</value></string>
+<string><id>100600</id><value>Min TV/Guide</value></string>
+<string><id>100601</id><value>Min TV/Planlegger</value></string>
+<string><id>100602</id><value>Min TV/fullskjerm</value></string>
+<string><id>100603</id><value>Min TV/Arkivert TV</value></string>
+<string><id>100604</id><value>Min TV/S&#248;k</value></string>
+<string><id>100605</id><value>Min TV/Arkivert TV/Sjanger</value></string>
+<string><id>100606</id><value>Min TV/Arkivert TV/Kanaler</value></string>
+<string><id>100750</id><value>Mine Oppskrifter</value></string>
+<string><id>100755</id><value>Min Status</value></string>
+<string><id>100756</id><value>Min Status detaljer</value></string>
+<string><id>100757</id><value>Min Status innstillinger</value></string>
+<string><id>100770</id><value>Utforsker</value></string>
+<string><id>101000</id><value>tastatur</value></string>
+<string><id>102000</id><value>Valg dialog</value></string>
+<string><id>102001</id><value>Min Musikk/info</value></string>
+<string><id>102002</id><value>Dialog OK</value></string>
+<string><id>102003</id><value>Mine Videoer/Info</value></string>
+<string><id>102004</id><value>Mine Skript/Info</value></string>
+<string><id>102005</id><value>Fullskjerm video</value></string>
+<string><id>102006</id><value>Audio visualisering</value></string>
+<string><id>102007</id><value>Mine Bilder/Lysbildefremvisning</value></string>
+<string><id>102008</id><value>Filstabel dialog</value></string>
+<string><id>102010</id><value>Dato/Tid</value></string>
+<string><id>102011</id><value>Artist info</value></string>
+<string><id>102012</id><value>Kontekst meny</value></string>
+<string><id>102013</id><value>Set Rating</value></string>i
+<string><id>102014</id><value>Bildeinfo</value></string>
+<string><id>102600</id><value>Mitt V&#230;r</value></string>
+<string><id>102700</id><value>Mine Nyheter</value></string>
+<string><id>102900</id><value>Skjermsparer</value></string>
+<string><id>102901</id><value>Fullskjerm OSD</value></string>
+<string><id>102902</id><value>MSN Messenger OSD</value></string>
 <string><id>686</id><value>F&#248;dt</value></string>
 <string><id>687</id><value>Aktive &#229;r</value></string>
 <string><id>688</id><value>Instrumenter</value></string>

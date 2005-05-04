@@ -912,103 +912,6 @@
 	<string><id>9010</id><value>Udstyr:</value></string>
 	<string><id>9011</id><value>Kommentar:</value></string>
 
-	<string><id>10000</id><value>Hjem</value></string>
-	<string><id>10001</id><value>TV</value></string>
-	<string><id>10002</id><value>Billeder</value></string>
-	<string><id>10003</id><value>Filer</value></string>
-	<string><id>10004</id><value>Indstillinger</value></string>
-	<string><id>10005</id><value>Musik</value></string>
-	<string><id>10006</id><value>Film</value></string>
-	<string><id>10007</id><value>Systeminformation</value></string>
-	<string><id>10008</id><value>Indstillinger->General</value></string>
-	<string><id>10009</id><value>Indstillinger->Skærm</value></string>
-	<string><id>10010</id><value>Indstillinger->Skærm->GUI Kalibrering</value></string>
-	<string><id>10011</id><value>Indstillinger->Skærm->Skærm Calibration</value></string>
-	<string><id>10012</id><value>Indstillinger->Billedserier</value></string>
-	<string><id>10013</id><value>Indstillinger->Skærm->Filtre</value></string>
-	<string><id>10014</id><value>Indstillinger->Musik</value></string>
-	<string><id>10015</id><value>Indstillinger->Skærm->Undertekster</value></string>
-	<string><id>10016</id><value>Indstillinger->Skærm->Screensaver</value></string>
-	<string><id>10017</id><value>Indstillinger->Vejr</value></string>
-	<string><id>10020</id><value>Indstillinger->Scripts</value></string>
-	<string><id>10021</id><value>Film/Genre</value></string>
-	<string><id>10022</id><value>Film/Skuespiller</value></string>
-	<string><id>10023</id><value>Film/År</value></string>
-	<string><id>10024</id><value>Indstillinger->Programmer</value></string>
-	<string><id>10025</id><value>Film/Titel</value></string>
-	<string><id>10026</id><value>Indstillinger->Generel->Cache</value></string>
-	<string><id>10027</id><value>Indstillinger->Generel->Autorun</value></string>
-	<string><id>10028</id><value>Film/Playliste</value></string>
-	<string><id>10029</id><value>Indstillinger->Generel->LCD</value></string>
-	<string><id>10030</id><value>Radio</value></string>
-	<string><id>10031</id><value>Indstillinger->Skærm->scroll hastighed</value></string>
-	<string><id>10032</id><value>MSN Messenger</value></string>
-	<string><id>10033</id><value>MSN Messenger chat</value></string>
-	<string><id>10034</id><value>Moduler</value></string>
-
-	<string><id>10100</id><value>Ja/nej dialog</value></string>
-	<string><id>10101</id><value>Progress dialog</value></string>
-
-	<string><id>10500</id><value>Musik/playliste</value></string>
-	<string><id>10501</id><value>Musik/Filer</value></string>
-	<string><id>10502</id><value>Musik/Albums</value></string>
-	<string><id>10503</id><value>Musik/Kunstnere</value></string>
-	<string><id>10504</id><value>Musik/Genrer</value></string>
-	<string><id>10505</id><value>Musik/Top100</value></string>
-	<string><id>10506</id><value>Musik/Favoritter</value></string>
-
-	<string><id>10600</id><value>TV/TV-Guide</value></string>
-	<string><id>10601</id><value>TV/Scheduler</value></string>
-	<string><id>10602</id><value>TV/Fuldskærm</value></string>
-	<string><id>10603</id><value>TV/TV Optagelser</value></string>
-	<string><id>10604</id><value>TV/Søgning</value></string>
-	<string><id>10605</id><value>TV/Optagelser/Genre</value></string>
-	<string><id>10606</id><value>TV/Optagelser/kanaler</value></string>
-
-	<string><id>10750</id><value>Opskrifter</value></string>
-	<string><id>10755</id><value>Status</value></string>
-	<string><id>10756</id><value>Statusdetaljer</value></string>
-	<string><id>10757</id><value>Statusindstillinger</value></string>
-
-	<string><id>10770</id><value>Explorer</value></string>
-
-	<string><id>11000</id><value>Tastatur</value></string>
-
-	<string><id>12000</id><value>Valg dialog</value></string>
-	<string><id>12001</id><value>Musik/Information</value></string>
-	<string><id>12002</id><value>Bekræft</value></string>
-	<string><id>12003</id><value>Film/Information</value></string>
-	<string><id>12004</id><value>Scripts/Information</value></string>
-	<string><id>12005</id><value>Fuldskærmsvideo</value></string>
-	<string><id>12006</id><value>Audio visualisering</value></string>
-	<string><id>12007</id><value>Billeder/Billedserie</value></string>
-	<string><id>12008</id><value>Filkø dialog</value></string>
-	<string><id>12010</id><value>Dato/Tid</value></string>
-	<string><id>12011</id><value>Kunstner information</value></string>
-	<string><id>12012</id><value>Kontekst menu</value></string>
-	<string><id>12013</id><value>Sæt karakter</value></string>
-	<string><id>12014</id><value>Billed info</value></string>
-
-	<string><id>12600</id><value>Vejret</value></string>
-
-	<string><id>12700</id><value>Nyheder</value></string>
-
-	<string><id>12900</id><value>Screensaver</value></string>
-	<string><id>12901</id><value>Fuldskærms OSD</value></string>
-	<string><id>12902</id><value>MSN Messenger OSD</value></string>
-
-	<string><id>13000</id><value>System:</value></string>
-	<string><id>13001</id><value>Producent:</value></string>
-	<string><id>13002</id><value>Start</value></string>
-	<string><id>13003</id><value>Importerer *.mlf fil</value></string>
-	<string><id>13004</id><value>Importerer *.my fil</value></string>
-	<string><id>13005</id><value>Senest importerede fil:</value></string>
-	<string><id>13006</id><value>Lille billede</value></string>
-	<string><id>13007</id><value>Stort billede</value></string>
-	<string><id>13008</id><value>K.Burns effekt</value></string>
-	<string><id>13009</id><value>Tilfældig transitions</value></string>
-	<string><id>13010</id><value>X-fade transitions</value></string>
-	<string><id>13011</id><value>K.Burns hastighed</value></string>
 
 	<string><id>16001</id><value>Fest afspilning</value></string>
 
@@ -1030,6 +933,104 @@
 <!-- My Splatt Strings -->
 	<string><id>19401</id><value>Splatt</value></string>
 <!-- End My Splatt Strings -->
+
+	<string><id>100000</id><value>Hjem</value></string>
+	<string><id>100001</id><value>TV</value></string>
+	<string><id>100002</id><value>Billeder</value></string>
+	<string><id>100003</id><value>Filer</value></string>
+	<string><id>100004</id><value>Indstillinger</value></string>
+	<string><id>100005</id><value>Musik</value></string>
+	<string><id>100006</id><value>Film</value></string>
+	<string><id>100007</id><value>Systeminformation</value></string>
+	<string><id>100008</id><value>Indstillinger->General</value></string>
+	<string><id>100009</id><value>Indstillinger->Skærm</value></string>
+	<string><id>100010</id><value>Indstillinger->Skærm->GUI Kalibrering</value></string>
+	<string><id>100011</id><value>Indstillinger->Skærm->Skærm Calibration</value></string>
+	<string><id>100012</id><value>Indstillinger->Billedserier</value></string>
+	<string><id>100013</id><value>Indstillinger->Skærm->Filtre</value></string>
+	<string><id>100014</id><value>Indstillinger->Musik</value></string>
+	<string><id>100015</id><value>Indstillinger->Skærm->Undertekster</value></string>
+	<string><id>100016</id><value>Indstillinger->Skærm->Screensaver</value></string>
+	<string><id>100017</id><value>Indstillinger->Vejr</value></string>
+	<string><id>100020</id><value>Indstillinger->Scripts</value></string>
+	<string><id>100021</id><value>Film/Genre</value></string>
+	<string><id>100022</id><value>Film/Skuespiller</value></string>
+	<string><id>100023</id><value>Film/År</value></string>
+	<string><id>100024</id><value>Indstillinger->Programmer</value></string>
+	<string><id>100025</id><value>Film/Titel</value></string>
+	<string><id>100026</id><value>Indstillinger->Generel->Cache</value></string>
+	<string><id>100027</id><value>Indstillinger->Generel->Autorun</value></string>
+	<string><id>100028</id><value>Film/Playliste</value></string>
+	<string><id>100029</id><value>Indstillinger->Generel->LCD</value></string>
+	<string><id>100030</id><value>Radio</value></string>
+	<string><id>100031</id><value>Indstillinger->Skærm->scroll hastighed</value></string>
+	<string><id>100032</id><value>MSN Messenger</value></string>
+	<string><id>100033</id><value>MSN Messenger chat</value></string>
+	<string><id>100034</id><value>Moduler</value></string>
+
+	<string><id>100100</id><value>Ja/nej dialog</value></string>
+	<string><id>100101</id><value>Progress dialog</value></string>
+
+	<string><id>100500</id><value>Musik/playliste</value></string>
+	<string><id>100501</id><value>Musik/Filer</value></string>
+	<string><id>100502</id><value>Musik/Albums</value></string>
+	<string><id>100503</id><value>Musik/Kunstnere</value></string>
+	<string><id>100504</id><value>Musik/Genrer</value></string>
+	<string><id>100505</id><value>Musik/Top100</value></string>
+	<string><id>100506</id><value>Musik/Favoritter</value></string>
+
+	<string><id>100600</id><value>TV/TV-Guide</value></string>
+	<string><id>100601</id><value>TV/Scheduler</value></string>
+	<string><id>100602</id><value>TV/Fuldskærm</value></string>
+	<string><id>100603</id><value>TV/TV Optagelser</value></string>
+	<string><id>100604</id><value>TV/Søgning</value></string>
+	<string><id>100605</id><value>TV/Optagelser/Genre</value></string>
+	<string><id>100606</id><value>TV/Optagelser/kanaler</value></string>
+
+	<string><id>100750</id><value>Opskrifter</value></string>
+	<string><id>100755</id><value>Status</value></string>
+	<string><id>100756</id><value>Statusdetaljer</value></string>
+	<string><id>100757</id><value>Statusindstillinger</value></string>
+
+	<string><id>100770</id><value>Explorer</value></string>
+
+	<string><id>101000</id><value>Tastatur</value></string>
+
+	<string><id>102000</id><value>Valg dialog</value></string>
+	<string><id>102001</id><value>Musik/Information</value></string>
+	<string><id>102002</id><value>Bekræft</value></string>
+	<string><id>102003</id><value>Film/Information</value></string>
+	<string><id>102004</id><value>Scripts/Information</value></string>
+	<string><id>102005</id><value>Fuldskærmsvideo</value></string>
+	<string><id>102006</id><value>Audio visualisering</value></string>
+	<string><id>102007</id><value>Billeder/Billedserie</value></string>
+	<string><id>102008</id><value>Filkø dialog</value></string>
+	<string><id>102010</id><value>Dato/Tid</value></string>
+	<string><id>102011</id><value>Kunstner information</value></string>
+	<string><id>102012</id><value>Kontekst menu</value></string>
+	<string><id>102013</id><value>Sæt karakter</value></string>
+	<string><id>102014</id><value>Billed info</value></string>
+
+	<string><id>102600</id><value>Vejret</value></string>
+
+	<string><id>102700</id><value>Nyheder</value></string>
+
+	<string><id>102900</id><value>Screensaver</value></string>
+	<string><id>102901</id><value>Fuldskærms OSD</value></string>
+	<string><id>102902</id><value>MSN Messenger OSD</value></string>
+
+	<string><id>103000</id><value>System:</value></string>
+	<string><id>103001</id><value>Producent:</value></string>
+	<string><id>103002</id><value>Start</value></string>
+	<string><id>103003</id><value>Importerer *.mlf fil</value></string>
+	<string><id>103004</id><value>Importerer *.my fil</value></string>
+	<string><id>103005</id><value>Senest importerede fil:</value></string>
+	<string><id>103006</id><value>Lille billede</value></string>
+	<string><id>103007</id><value>Stort billede</value></string>
+	<string><id>103008</id><value>K.Burns effekt</value></string>
+	<string><id>103009</id><value>Tilfældig transitions</value></string>
+	<string><id>103010</id><value>X-fade transitions</value></string>
+	<string><id>103011</id><value>K.Burns hastighed</value></string>
 
 </strings>
 

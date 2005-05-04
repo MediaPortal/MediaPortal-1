@@ -889,7 +889,7 @@ namespace MediaPortal.GUI.Library
 			if (m_strCurrentWindowName != String.Empty && m_pRouteWindow != null)
 				GUIPropertyManager.SetProperty("#currentmodule", m_strCurrentWindowName);
 			else
-				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000+ActiveWindow));
+				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000+ActiveWindow));
 			m_pRouteWindow=null;
 			m_bRefresh=true;
 		}

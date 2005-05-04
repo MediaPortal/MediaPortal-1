@@ -3427,299 +3427,299 @@
 		<value>zeige Kommentare:</value>
 	</string>
 	<string>
-		<id>10000</id>
+		<id>100000</id>
 		<value>Hauptmenü</value>
 	</string>
 	<string>
-		<id>10001</id>
+		<id>100001</id>
 		<value>Fernsehen</value>
 	</string>
 	<string>
-		<id>10002</id>
+		<id>100002</id>
 		<value>Bilder</value>
 	</string>
 	<string>
-		<id>10003</id>
+		<id>100003</id>
 		<value>Dateien</value>
 	</string>
 	<string>
-		<id>10004</id>
+		<id>100004</id>
 		<value>Einstellungen</value>
 	</string>
 	<string>
-		<id>10005</id>
+		<id>100005</id>
 		<value>Musik</value>
 	</string>
 	<string>
-		<id>10006</id>
+		<id>100006</id>
 		<value>Videos</value>
 	</string>
 	<string>
-		<id>10007</id>
+		<id>100007</id>
 		<value>Systeminformation</value>
 	</string>
 	<string>
-		<id>10008</id>
+		<id>100008</id>
 		<value>Einstellungen > Allgemein</value>
 	</string>
 	<string>
-		<id>10009</id>
+		<id>100009</id>
 		<value>Einstellungen > Bildschirm</value>
 	</string>
 	<string>
-		<id>10010</id>
+		<id>100010</id>
 		<value>Einstellungen > Bildschirm > UI-Kalibrierung</value>
 	</string>
 	<string>
-		<id>10011</id>
+		<id>100011</id>
 		<value>Einstellungen > Bildschirm > Kalibrierung</value>
 	</string>
 	<string>
-		<id>10012</id>
+		<id>100012</id>
 		<value>Einstellungen > Diashow</value>
 	</string>
 	<string>
-		<id>10013</id>
+		<id>100013</id>
 		<value>Einstellungen > Bildschirm > Filter</value>
 	</string>
 	<string>
-		<id>10014</id>
+		<id>100014</id>
 		<value>Einstellungen > Musik</value>
 	</string>
 	<string>
-		<id>10015</id>
+		<id>100015</id>
 		<value>Einstellungen > Bildschirm > Untertitel</value>
 	</string>
 	<string>
-		<id>10016</id>
+		<id>100016</id>
 		<value>Einstellungen > Bildschirm > Bildschirmschoner</value>
 	</string>
 	<string>
-		<id>10017</id>
+		<id>100017</id>
 		<value>Einstellungen > Wetter</value>
 	</string>
 	<string>
-		<id>10020</id>
+		<id>100020</id>
 		<value>Einstellungen > Skripte</value>
 	</string>
 	<string>
-		<id>10021</id>
+		<id>100021</id>
 		<value>Video/Genre</value>
 	</string>
 	<string>
-		<id>10022</id>
+		<id>100022</id>
 		<value>Video/Künstler</value>
 	</string>
 	<string>
-		<id>10023</id>
+		<id>100023</id>
 		<value>Video/Jahr</value>
 	</string>
 	<string>
-		<id>10024</id>
+		<id>100024</id>
 		<value>Einstellungen > Programme</value>
 	</string>
 	<string>
-		<id>10025</id>
+		<id>100025</id>
 		<value>Video/Titel</value>
 	</string>
 	<string>
-		<id>10026</id>
+		<id>100026</id>
 		<value>Einstellungen > Allgemein > Speicher</value>
 	</string>
 	<string>
-		<id>10027</id>
+		<id>100027</id>
 		<value>Einstellungen > Allgemein > Autostart</value>
 	</string>
 	<string>
-		<id>10028</id>
+		<id>100028</id>
 		<value>Video/Wiedergabeliste</value>
 	</string>
 	<string>
-		<id>10029</id>
+		<id>100029</id>
 		<value>Einstellungen > Allgemein > LCD</value>
 	</string>
 	<string>
-		<id>10030</id>
+		<id>100030</id>
 		<value>Radio</value>
 	</string>
 	<string>
-		<id>10031</id>
+		<id>100031</id>
 		<value>Einstellungen > Bildschirm > Scroll-Geschwindigkeit</value>
 	</string>
 	<string>
-		<id>10032</id>
+		<id>100032</id>
 		<value>MSN Messenger</value>
 	</string>
 	<string>
-		<id>10033</id>
+		<id>100033</id>
 		<value>MSN Chat</value>
 	</string>
 	<string>
-		<id>10034</id>
+		<id>100034</id>
 		<value>sonstiges</value>
 	</string>
 	<string>
-		<id>10100</id>
+		<id>100100</id>
 		<value>ja/nein Dialog</value>
 	</string>
 	<string>
-		<id>10101</id>
+		<id>100101</id>
 		<value>in Arbeit Dialog</value>
 	</string>
 	<string>
-		<id>10500</id>
+		<id>100500</id>
 		<value>Musik/Wiedergabeliste</value>
 	</string>
 	<string>
-		<id>10501</id>
+		<id>100501</id>
 		<value>Musik/Dateien</value>
 	</string>
 	<string>
-		<id>10502</id>
+		<id>100502</id>
 		<value>Musik/Alben</value>
 	</string>
 	<string>
-		<id>10503</id>
+		<id>100503</id>
 		<value>Musik/Künstler</value>
 	</string>
 	<string>
-		<id>10504</id>
+		<id>100504</id>
 		<value>Musik/Genre</value>
 	</string>
 	<string>
-		<id>10505</id>
+		<id>100505</id>
 		<value>Musik/Top100</value>
 	</string>
 	<string>
-		<id>10506</id>
+		<id>100506</id>
 		<value>Musik/Favouriten</value>
 	</string>
 	<string>
-		<id>10600</id>
+		<id>100600</id>
 		<value>Fernsehen/Programm</value>
 	</string>
 	<string>
-		<id>10601</id>
+		<id>100601</id>
 		<value>Fernsehen/Zeitplan</value>
 	</string>
 	<string>
-		<id>10602</id>
+		<id>100602</id>
 		<value>Fernsehen/Vollbild</value>
 	</string>
 	<string>
-		<id>10603</id>
+		<id>100603</id>
 		<value>Fernsehen/Aufnahmen</value>
 	</string>
 	<string>
-		<id>10604</id>
+		<id>100604</id>
 		<value>Fernsehen/suche</value>
 	</string>
 	<string>
-		<id>10605</id>
+		<id>100605</id>
 		<value>Fernsehen/Aufnahmen/Genres</value>
 	</string>
 	<string>
-		<id>10606</id>
+		<id>100606</id>
 		<value>Fernsehen/Aufnahmen/Programme</value>
 	</string>
 	<string>
-		<id>10750</id>
+		<id>100750</id>
 		<value>Rezepte</value>
 	</string>
 	<string>
-		<id>10755</id>
+		<id>100755</id>
 		<value>Status</value>
 	</string>
 	<string>
-		<id>10756</id>
+		<id>100756</id>
 		<value>Status-Details</value>
 	</string>
 	<string>
-		<id>10757</id>
+		<id>100757</id>
 		<value>Status-Vorzüge</value>
 	</string>
 	<string>
-		<id>10770</id>
+		<id>100770</id>
 		<value>Datei-Explorer</value>
 	</string>
 	<string>
-		<id>11000</id>
+		<id>101000</id>
 		<value>Tastatur</value>
 	</string>
 	<string>
-		<id>12000</id>
+		<id>102000</id>
 		<value>Dialogauswahl</value>
 	</string>
 	<string>
-		<id>12001</id>
+		<id>102001</id>
 		<value>Musik/Info</value>
 	</string>
 	<string>
-		<id>12002</id>
+		<id>102002</id>
 		<value>Dialog OK</value>
 	</string>
 	<string>
-		<id>12003</id>
+		<id>102003</id>
 		<value>Video/Info</value>
 	</string>
 	<string>
-		<id>12004</id>
+		<id>102004</id>
 		<value>Skripte/Info</value>
 	</string>
 	<string>
-		<id>12005</id>
+		<id>102005</id>
 		<value>Vollbild-Video</value>
 	</string>
 	<string>
-		<id>12006</id>
+		<id>102006</id>
 		<value>Audio-Visualisierung</value>
 	</string>
 	<string>
-		<id>12007</id>
+		<id>102007</id>
 		<value>Bilder/Diashow</value>
 	</string>
 	<string>
-		<id>12008</id>
+		<id>102008</id>
 		<value>Dateikomprimierung</value>
 	</string>
 	<string>
-		<id>12010</id>
+		<id>102010</id>
 		<value>Datum/Zeit</value>
 	</string>
 	<string>
-		<id>12011</id>
+		<id>102011</id>
 		<value>Interpret-Information</value>
 	</string>
 	<string>
-		<id>12012</id>
+		<id>102012</id>
 		<value>Kontextmenü</value>
 	</string>
 	<string>
-		<id>12013</id>
+		<id>102013</id>
 		<value>bewerten</value>
 	</string>
 	<string>
-		<id>12014</id>
+		<id>102014</id>
 		<value>Bildinformationen</value>
 	</string>
 	<string>
-		<id>12600</id>
+		<id>102600</id>
 		<value>Wetter</value>
 	</string>
 	<string>
-		<id>12700</id>
+		<id>102700</id>
 		<value>Neuigkeiten</value>
 	</string>
 	<string>
-		<id>12900</id>
+		<id>102900</id>
 		<value>Bildschirmschoner</value>
 	</string>
 	<string>
-		<id>12901</id>
+		<id>102901</id>
 		<value>Vollbild OSD</value>
 	</string>
 	<string>
-		<id>12902</id>
+		<id>102902</id>
 		<value>MSN Messenger OSD</value>
 	</string>
 	<string>

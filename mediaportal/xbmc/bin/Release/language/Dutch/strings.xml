@@ -3714,306 +3714,6 @@
   	<value>Opmerkingen:</value>
   </string>
 
-	<string>
-		<id>10000</id>
-		<value>Startscherm</value>
-	</string>
-	<string>
-		<id>10001</id>
-		<value>Mijn TV</value>
-	</string>
-	<string>
-		<id>10002</id>
-		<value>Mijn Afbeeldingen</value>
-	</string>
-	<string>
-		<id>10003</id>
-		<value>Mijn Bestanden</value>
-	</string>
-	<string>
-		<id>10004</id>
-		<value>Instellingen</value>
-	</string>
-	<string>
-		<id>10005</id>
-		<value>Mijn Muziek</value>
-	</string>
-	<string>
-		<id>10006</id>
-		<value>Mijn Films</value>
-	</string>
-	<string>
-		<id>10007</id>
-		<value>Systeem informatie</value>
-	</string>
-	<string>
-		<id>10008</id>
-		<value>Instellingen/Algemeen</value>
-	</string>
-	<string>
-		<id>10009</id>
-		<value>Instellingen/Scherm</value>
-	</string>
-	<string>
-		<id>10010</id>
-		<value>Instellingen/Scherm/UI calibratie</value>
-	</string>
-	<string>
-		<id>10011</id>
-		<value>Instellingen/Scherm/Scherm calibratie</value>
-	</string>
-	<string>
-		<id>10012</id>
-		<value>Instellingen/Diavoorstelling</value>
-	</string>
-	<string>
-		<id>10013</id>
-		<value>Instellingen/Scherm/Filters</value>
-	</string>
-	<string>
-		<id>10014</id>
-		<value>Instellingen/Muziek</value>
-	</string>
-	<string>
-		<id>10015</id>
-		<value>Instellingen/Scherm/Ondertitels</value>
-	</string>
-	<string>
-		<id>10016</id>
-		<value>Instellingen/Scherm/Schermbeveiliging</value>
-	</string>
-	<string>
-		<id>10017</id>
-		<value>Instellingen/Weer</value>
-	</string>
-	<string>
-		<id>10020</id>
-		<value>Instellingen/Scripts</value>
-	</string>
-	<string>
-		<id>10021</id>
-		<value>Mijn Films/Genre</value>
-	</string>
-	<string>
-		<id>10022</id>
-		<value>Mijn Films/Acteur</value>
-	</string>
-	<string>
-		<id>10023</id>
-		<value>Mijn Films/Jaar</value>
-	</string>
-	<string>
-		<id>10024</id>
-		<value>Instellingen/Programma's</value>
-	</string>
-	<string>
-		<id>10025</id>
-		<value>Mijn Films/Titel</value>
-	</string>
-	<string>
-		<id>10026</id>
-		<value>Instellingen/Algemeen/Buffer</value>
-	</string>
-	<string>
-		<id>10027</id>
-		<value>Instellingen/Algemeen/Autostart</value>
-	</string>
-	<string>
-		<id>10028</id>
-		<value>Mijn Films/Playlist</value>
-	</string>
-	<string>
-		<id>10029</id>
-		<value>Instellingen/Algemeen/LCD</value>
-	</string>
-	<string>
-		<id>10030</id>
-		<value>Mijn Radio</value>
-	</string>
-	<string>
-		<id>10031</id>
-		<value>Instellingen/Scherm/Rol snelheid</value>
-	</string>
-  <string>
-    <id>10032</id>
-    <value>MSN Messenger</value>
-  </string>
-  <string>
-    <id>10033</id>
-    <value>MSN Messenger (chat)</value>
-  </string>
-  <string>
-    <id>10034</id>
-    <value>Mijn Plugins</value>
-  </string>
-	<string>
-		<id>10100</id>
-		<value>Ja/nee dialoog</value>
-	</string>
-	<string>
-		<id>10101</id>
-		<value>Voortgangs dialoog</value>
-	</string>
-	<string>
-		<id>10500</id>
-		<value>Mijn Muziek/Playlist</value>
-	</string>
-	<string>
-		<id>10501</id>
-		<value>Mijn Muziek/Bestanden</value>
-	</string>
-	<string>
-		<id>10502</id>
-		<value>Mijn Muziek/Albums</value>
-	</string>
-	<string>
-		<id>10503</id>
-		<value>Mijn Muziek/Artiesten</value>
-	</string>
-	<string>
-		<id>10504</id>
-		<value>Mijn Muziek/Genres</value>
-	</string>
-	<string>
-		<id>10505</id>
-		<value>Mijn Muziek/Top100</value>
-	</string>
-	<string>
-		<id>10506</id>
-		<value>Mijn Muziek/Favorieten</value>
-	</string>
-	<string>
-		<id>10600</id>
-		<value>Mijn TV/TV gids</value>
-	</string>
-	<string>
-		<id>10601</id>
-		<value>Mijn TV/Planner</value>
-	</string>
-	<string>
-		<id>10602</id>
-		<value>Mijn TV/Volledig scherm</value>
-	</string>
-	<string>
-		<id>10603</id>
-		<value>Mijn TV/TV opnamen</value>
-	</string>
-  <string>
-    <id>10604</id>
-    <value>Mijn TV/Zoeken</value>
-  </string>
-  <string>
-    <id>10605</id>
-    <value>Mijn TV/Opnamen/Genre</value>
-  </string>
-  <string>
-    <id>10606</id>
-    <value>Mijn TV/Opnamen/Kanalen</value>
-  </string>
-  <string>
-    <id>10750</id>
-    <value>Mijn Recepten</value>
-  </string>
-  <string>
-    <id>10755</id>
-    <value>Mijn Status</value>
-  </string>
-  <string>
-    <id>10756</id>
-    <value>Mijn Status/Detail</value>
-  </string>
-  <string>
-    <id>10757</id>
-    <value>Mijn Status/Instellingen</value>
-  </string>
-  <string>
-    <id>10770</id>
-    <value>Mijn Verkenner</value>
-  </string>
-	<string>
-		<id>11000</id>
-		<value>Toetsenbord</value>
-	</string>
-	<string>
-		<id>12000</id>
-		<value>Kies dialoog</value>
-	</string>
-	<string>
-		<id>12001</id>
-		<value>Mijn Muziek/info</value>
-	</string>
-	<string>
-		<id>12002</id>
-		<value>Dialoog OK</value>
-	</string>
-	<string>
-		<id>12003</id>
-		<value>Mijn Films/Info</value>
-	</string>
-	<string>
-		<id>12004</id>
-		<value>Mijn Scripts/Info</value>
-	</string>
-	<string>
-		<id>12005</id>
-		<value>Beeldvullend video</value>
-	</string>
-	<string>
-		<id>12006</id>
-		<value>Audio visualisaties</value>
-	</string>
-	<string>
-		<id>12007</id>
-		<value>Mijn afbeeldingen/Diavoorstelling</value>
-	</string>
-	<string>
-		<id>12008</id>
-		<value>Bestand stapelen dialoog</value>
-	</string>
-  <string>
-    <id>12010</id>
-    <value>Datum/Tijd</value>
-  </string>
-  <string>
-    <id>12011</id>
-    <value>Artiest informatie</value>
-  </string>
-  <string>
-    <id>12012</id>
-    <value>Contekst menu</value>
-  </string>
-  <string>
-    <id>12013</id>
-    <value>Waardering instellen</value>
-  </string>
-  <string>
-    <id>12014</id>
-    <value>Afbeelding informatie</value>
-  </string>
-	<string>
-		<id>12600</id>
-		<value>Mijn Weer</value>
-	</string>
-	<string>
-		<id>12700</id>
-		<value>Mijn Nieuws</value>
-	</string>
-	<string>
-		<id>12701</id>
-		<value>Kies kanaal</value>
-	</string>
-	<string>
-		<id>12900</id>
-		<value>Schermbeveiliging</value>
-	</string>
-	<string>
-		<id>12901</id>
-		<value>Beeldvullend OSD</value>
-	</string>
-  <string>
-    <id>12902</id>
-    <value>MSN Messenger OSD</value>
-  </string>
   <string>
   	<id>13000</id>
   	<value>Systeem:</value>
@@ -4120,5 +3820,307 @@
     <id>19012</id>
     <value>Spel voorbij</value>
   </string>
+  
+ 	<string>
+		<id>100000</id>
+		<value>Startscherm</value>
+	</string>
+	<string>
+		<id>100001</id>
+		<value>Mijn TV</value>
+	</string>
+	<string>
+		<id>100002</id>
+		<value>Mijn Afbeeldingen</value>
+	</string>
+	<string>
+		<id>100003</id>
+		<value>Mijn Bestanden</value>
+	</string>
+	<string>
+		<id>100004</id>
+		<value>Instellingen</value>
+	</string>
+	<string>
+		<id>100005</id>
+		<value>Mijn Muziek</value>
+	</string>
+	<string>
+		<id>100006</id>
+		<value>Mijn Films</value>
+	</string>
+	<string>
+		<id>100007</id>
+		<value>Systeem informatie</value>
+	</string>
+	<string>
+		<id>100008</id>
+		<value>Instellingen/Algemeen</value>
+	</string>
+	<string>
+		<id>100009</id>
+		<value>Instellingen/Scherm</value>
+	</string>
+	<string>
+		<id>100010</id>
+		<value>Instellingen/Scherm/UI calibratie</value>
+	</string>
+	<string>
+		<id>100011</id>
+		<value>Instellingen/Scherm/Scherm calibratie</value>
+	</string>
+	<string>
+		<id>100012</id>
+		<value>Instellingen/Diavoorstelling</value>
+	</string>
+	<string>
+		<id>100013</id>
+		<value>Instellingen/Scherm/Filters</value>
+	</string>
+	<string>
+		<id>100014</id>
+		<value>Instellingen/Muziek</value>
+	</string>
+	<string>
+		<id>100015</id>
+		<value>Instellingen/Scherm/Ondertitels</value>
+	</string>
+	<string>
+		<id>100016</id>
+		<value>Instellingen/Scherm/Schermbeveiliging</value>
+	</string>
+	<string>
+		<id>100017</id>
+		<value>Instellingen/Weer</value>
+	</string>
+	<string>
+		<id>100020</id>
+		<value>Instellingen/Scripts</value>
+	</string>
+	<string>
+		<id>100021</id>
+		<value>Mijn Films/Genre</value>
+	</string>
+	<string>
+		<id>100022</id>
+		<value>Mijn Films/Acteur</value>
+	</string>
+	<string>
+		<id>100023</id>
+		<value>Mijn Films/Jaar</value>
+	</string>
+	<string>
+		<id>100024</id>
+		<value>Instellingen/Programma's</value>
+	</string>
+	<string>
+		<id>100025</id>
+		<value>Mijn Films/Titel</value>
+	</string>
+	<string>
+		<id>100026</id>
+		<value>Instellingen/Algemeen/Buffer</value>
+	</string>
+	<string>
+		<id>100027</id>
+		<value>Instellingen/Algemeen/Autostart</value>
+	</string>
+	<string>
+		<id>100028</id>
+		<value>Mijn Films/Playlist</value>
+	</string>
+	<string>
+		<id>100029</id>
+		<value>Instellingen/Algemeen/LCD</value>
+	</string>
+	<string>
+		<id>100030</id>
+		<value>Mijn Radio</value>
+	</string>
+	<string>
+		<id>100031</id>
+		<value>Instellingen/Scherm/Rol snelheid</value>
+	</string>
+  <string>
+    <id>100032</id>
+    <value>MSN Messenger</value>
+  </string>
+  <string>
+    <id>100033</id>
+    <value>MSN Messenger (chat)</value>
+  </string>
+  <string>
+    <id>100034</id>
+    <value>Mijn Plugins</value>
+  </string>
+	<string>
+		<id>100100</id>
+		<value>Ja/nee dialoog</value>
+	</string>
+	<string>
+		<id>100101</id>
+		<value>Voortgangs dialoog</value>
+	</string>
+	<string>
+		<id>100500</id>
+		<value>Mijn Muziek/Playlist</value>
+	</string>
+	<string>
+		<id>100501</id>
+		<value>Mijn Muziek/Bestanden</value>
+	</string>
+	<string>
+		<id>100502</id>
+		<value>Mijn Muziek/Albums</value>
+	</string>
+	<string>
+		<id>100503</id>
+		<value>Mijn Muziek/Artiesten</value>
+	</string>
+	<string>
+		<id>100504</id>
+		<value>Mijn Muziek/Genres</value>
+	</string>
+	<string>
+		<id>100505</id>
+		<value>Mijn Muziek/Top100</value>
+	</string>
+	<string>
+		<id>100506</id>
+		<value>Mijn Muziek/Favorieten</value>
+	</string>
+	<string>
+		<id>100600</id>
+		<value>Mijn TV/TV gids</value>
+	</string>
+	<string>
+		<id>100601</id>
+		<value>Mijn TV/Planner</value>
+	</string>
+	<string>
+		<id>100602</id>
+		<value>Mijn TV/Volledig scherm</value>
+	</string>
+	<string>
+		<id>100603</id>
+		<value>Mijn TV/TV opnamen</value>
+	</string>
+  <string>
+    <id>100604</id>
+    <value>Mijn TV/Zoeken</value>
+  </string>
+  <string>
+    <id>100605</id>
+    <value>Mijn TV/Opnamen/Genre</value>
+  </string>
+  <string>
+    <id>100606</id>
+    <value>Mijn TV/Opnamen/Kanalen</value>
+  </string>
+  <string>
+    <id>100750</id>
+    <value>Mijn Recepten</value>
+  </string>
+  <string>
+    <id>100755</id>
+    <value>Mijn Status</value>
+  </string>
+  <string>
+    <id>100756</id>
+    <value>Mijn Status/Detail</value>
+  </string>
+  <string>
+    <id>100757</id>
+    <value>Mijn Status/Instellingen</value>
+  </string>
+  <string>
+    <id>100770</id>
+    <value>Mijn Verkenner</value>
+  </string>
+	<string>
+		<id>101000</id>
+		<value>Toetsenbord</value>
+	</string>
+	<string>
+		<id>102000</id>
+		<value>Kies dialoog</value>
+	</string>
+	<string>
+		<id>102001</id>
+		<value>Mijn Muziek/info</value>
+	</string>
+	<string>
+		<id>102002</id>
+		<value>Dialoog OK</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Mijn Films/Info</value>
+	</string>
+	<string>
+		<id>102004</id>
+		<value>Mijn Scripts/Info</value>
+	</string>
+	<string>
+		<id>102005</id>
+		<value>Beeldvullend video</value>
+	</string>
+	<string>
+		<id>102006</id>
+		<value>Audio visualisaties</value>
+	</string>
+	<string>
+		<id>102007</id>
+		<value>Mijn afbeeldingen/Diavoorstelling</value>
+	</string>
+	<string>
+		<id>102008</id>
+		<value>Bestand stapelen dialoog</value>
+	</string>
+  <string>
+    <id>102010</id>
+    <value>Datum/Tijd</value>
+  </string>
+  <string>
+    <id>102011</id>
+    <value>Artiest informatie</value>
+  </string>
+  <string>
+    <id>102012</id>
+    <value>Contekst menu</value>
+  </string>
+  <string>
+    <id>102013</id>
+    <value>Waardering instellen</value>
+  </string>
+  <string>
+    <id>102014</id>
+    <value>Afbeelding informatie</value>
+  </string>
+	<string>
+		<id>102600</id>
+		<value>Mijn Weer</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>Mijn Nieuws</value>
+	</string>
+	<string>
+		<id>102701</id>
+		<value>Kies kanaal</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Schermbeveiliging</value>
+	</string>
+	<string>
+		<id>102901</id>
+		<value>Beeldvullend OSD</value>
+	</string>
+  <string>
+    <id>102902</id>
+    <value>MSN Messenger OSD</value>
+  </string>
+ 
 </strings>
 

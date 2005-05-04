@@ -1989,76 +1989,6 @@
 		<id>685</id>
 		<value>Ordernar per Estatus</value>
 	</string>		
-<string><id>10000</id><value>Casa</value></string>
-<string><id>10001</id><value>Tele</value></string>
-<string><id>10002</id><value>Imatges</value></string>
-<string><id>10003</id><value>Arxius</value></string>
-<string><id>10004</id><value>Configuració</value></string>
-<string><id>10005</id><value>Música</value></string>
-<string><id>10006</id><value>Videos</value></string>
-<string><id>10007</id><value>Informació Sistema</value></string>
-<string><id>10008</id><value>Configuració->General</value></string>
-<string><id>10009</id><value>Configuració->Pantalla</value></string>
-<string><id>10010</id><value>Configuració->Pantalla->Calibratge UI</value></string>
-<string><id>10011</id><value>Configuració->Pantalla->Calibratge de Pantalla</value></string>
-<string><id>10012</id><value>Configuració->SlideShow</value></string>
-<string><id>10013</id><value>Configuració->Screen->Filtres</value></string>
-<string><id>10014</id><value>Configuració->Música</value></string>
-<string><id>10015</id><value>Configuració->Pantalla->Subtítols</value></string>
-<string><id>10016</id><value>Configuració->Pantalla->Salvapantalla</value></string>
-<string><id>10017</id><value>Configuració->El Temps</value></string>
-<string><id>10020</id><value>Configuració->Scripts</value></string>
-<string><id>10021</id><value>Videos/gènere</value></string>
-<string><id>10022</id><value>Videos/actor</value></string>
-<string><id>10023</id><value>Videos/any</value></string>
-<string><id>10024</id><value>Configuració->Programes</value></string>
-<string><id>10025</id><value>Videos/títol</value></string>
-<string><id>10026</id><value>Configuració->General->Cache</value></string>
-<string><id>10027</id><value>Configuració->General->Autocomençar</value></string>
-<string><id>10028</id><value>Videos/llista rep.</value></string>
-<string><id>10029</id><value>Configuració->General->LCD</value></string>
-<string><id>10030</id><value>Ràdio</value></string>
-<string><id>10031</id><value>Configuració->Pantalla->velocitat scroll</value></string>
-<string><id>10032</id><value>MSN Messenger</value></string>
-<string><id>10033</id><value>MSN Messenger chat</value></string>
-<string><id>10034</id><value>Plugins</value></string>
-<string><id>10100</id><value>Finestra Sí/No</value></string>
-<string><id>10101</id><value>Finestra de Progrés</value></string>
-<string><id>10500</id><value>Música/llista rep.</value></string>
-<string><id>10501</id><value>Música/arxius</value></string>
-<string><id>10502</id><value>Música/albums</value></string>
-<string><id>10503</id><value>Música/artistes</value></string>
-<string><id>10504</id><value>Música/gèneres</value></string>
-<string><id>10505</id><value>Música/top100</value></string>
-<string><id>10506</id><value>Music/Preferits</value></string>
-<string><id>10600</id><value>Tele/Guia</value></string>
-<string><id>10601</id><value>Tele/Programador</value></string>
-<string><id>10602</id><value>Tele/Pantalla completa</value></string>
-<string><id>10603</id><value>Tele/Gravats TV</value></string>
-<string><id>10604</id><value>Tele/Cercar</value></string>
-<string><id>10605</id><value>Tele/Gravats TV/Gènere</value></string>
-<string><id>10606</id><value>Tele/Gravats TV/Canals</value></string>
-<string><id>10750</id><value>Receptes</value></string>
-<string><id>10755</id><value>Status</value></string>
-<string><id>10756</id><value>Detalls de Status</value></string>
-<string><id>10757</id><value>Preferències de Status</value></string>
-<string><id>11000</id><value>teclat</value></string>
-<string><id>12000</id><value>Seleccionar finestra</value></string>
-<string><id>12001</id><value>Música/informació</value></string>
-<string><id>12002</id><value>Finestra OK</value></string>
-<string><id>12003</id><value>Videos/informació</value></string>
-<string><id>12004</id><value>Scripts/informació</value></string>
-<string><id>12005</id><value>Video pantalla completa</value></string>
-<string><id>12006</id><value>Audio visualització</value></string>
-<string><id>12007</id><value>Imatges/slideshow</value></string>
-<string><id>12008</id><value>Finestra d'enllaç de fitxers</value></string>
-<string><id>12010</id><value>Data/Hora</value></string>
-<string><id>12011</id><value>Info Artista</value></string>
-<string><id>12012</id><value>Menú contexte</value></string>
-<string><id>12013</id><value>Puntuar</value></string>
-<string><id>12600</id><value>El Temps</value></string>
-<string><id>12900</id><value>Salvapantalla</value></string>
-<string><id>12901</id><value>OSD pantalla completa</value></string>
 <string><id>686</id><value>Nascut(da)</value></string>
 <string><id>687</id><value>Anys Actius</value></string>
 <string><id>688</id><value>Instruments</value></string>
@@ -2512,4 +2442,76 @@
 	<id>16001</id>
 	<value>Selecció per a Festa</value>
 </string>
+
+<string><id>100000</id><value>Casa</value></string>
+<string><id>100001</id><value>Tele</value></string>
+<string><id>100002</id><value>Imatges</value></string>
+<string><id>100003</id><value>Arxius</value></string>
+<string><id>100004</id><value>Configuració</value></string>
+<string><id>100005</id><value>Música</value></string>
+<string><id>100006</id><value>Videos</value></string>
+<string><id>100007</id><value>Informació Sistema</value></string>
+<string><id>100008</id><value>Configuració->General</value></string>
+<string><id>100009</id><value>Configuració->Pantalla</value></string>
+<string><id>100010</id><value>Configuració->Pantalla->Calibratge UI</value></string>
+<string><id>100011</id><value>Configuració->Pantalla->Calibratge de Pantalla</value></string>
+<string><id>100012</id><value>Configuració->SlideShow</value></string>
+<string><id>100013</id><value>Configuració->Screen->Filtres</value></string>
+<string><id>100014</id><value>Configuració->Música</value></string>
+<string><id>100015</id><value>Configuració->Pantalla->Subtítols</value></string>
+<string><id>100016</id><value>Configuració->Pantalla->Salvapantalla</value></string>
+<string><id>100017</id><value>Configuració->El Temps</value></string>
+<string><id>100020</id><value>Configuració->Scripts</value></string>
+<string><id>100021</id><value>Videos/gènere</value></string>
+<string><id>100022</id><value>Videos/actor</value></string>
+<string><id>100023</id><value>Videos/any</value></string>
+<string><id>100024</id><value>Configuració->Programes</value></string>
+<string><id>100025</id><value>Videos/títol</value></string>
+<string><id>100026</id><value>Configuració->General->Cache</value></string>
+<string><id>100027</id><value>Configuració->General->Autocomençar</value></string>
+<string><id>100028</id><value>Videos/llista rep.</value></string>
+<string><id>100029</id><value>Configuració->General->LCD</value></string>
+<string><id>100030</id><value>Ràdio</value></string>
+<string><id>100031</id><value>Configuració->Pantalla->velocitat scroll</value></string>
+<string><id>100032</id><value>MSN Messenger</value></string>
+<string><id>100033</id><value>MSN Messenger chat</value></string>
+<string><id>100034</id><value>Plugins</value></string>
+<string><id>100100</id><value>Finestra Sí/No</value></string>
+<string><id>100101</id><value>Finestra de Progrés</value></string>
+<string><id>100500</id><value>Música/llista rep.</value></string>
+<string><id>100501</id><value>Música/arxius</value></string>
+<string><id>100502</id><value>Música/albums</value></string>
+<string><id>100503</id><value>Música/artistes</value></string>
+<string><id>100504</id><value>Música/gèneres</value></string>
+<string><id>100505</id><value>Música/top100</value></string>
+<string><id>100506</id><value>Music/Preferits</value></string>
+<string><id>100600</id><value>Tele/Guia</value></string>
+<string><id>100601</id><value>Tele/Programador</value></string>
+<string><id>100602</id><value>Tele/Pantalla completa</value></string>
+<string><id>100603</id><value>Tele/Gravats TV</value></string>
+<string><id>100604</id><value>Tele/Cercar</value></string>
+<string><id>100605</id><value>Tele/Gravats TV/Gènere</value></string>
+<string><id>100606</id><value>Tele/Gravats TV/Canals</value></string>
+<string><id>100750</id><value>Receptes</value></string>
+<string><id>100755</id><value>Status</value></string>
+<string><id>100756</id><value>Detalls de Status</value></string>
+<string><id>100757</id><value>Preferències de Status</value></string>
+<string><id>101000</id><value>teclat</value></string>
+<string><id>102000</id><value>Seleccionar finestra</value></string>
+<string><id>102001</id><value>Música/informació</value></string>
+<string><id>102002</id><value>Finestra OK</value></string>
+<string><id>102003</id><value>Videos/informació</value></string>
+<string><id>102004</id><value>Scripts/informació</value></string>
+<string><id>102005</id><value>Video pantalla completa</value></string>
+<string><id>102006</id><value>Audio visualització</value></string>
+<string><id>102007</id><value>Imatges/slideshow</value></string>
+<string><id>102008</id><value>Finestra d'enllaç de fitxers</value></string>
+<string><id>102010</id><value>Data/Hora</value></string>
+<string><id>102011</id><value>Info Artista</value></string>
+<string><id>102012</id><value>Menú contexte</value></string>
+<string><id>102013</id><value>Puntuar</value></string>
+<string><id>102600</id><value>El Temps</value></string>
+<string><id>102900</id><value>Salvapantalla</value></string>
+<string><id>102901</id><value>OSD pantalla completa</value></string>
+
 </strings>

@@ -1989,55 +1989,55 @@
 		<id>685</id>
 		<value>Ordernar Por: Estatus</value>
 	</string>		
-<string><id>10000</id><value>Casa</value></string>
-<string><id>10001</id><value>Mis Programas</value></string>
-<string><id>10002</id><value>Mis Fotos</value></string>
-<string><id>10003</id><value>Mis Archivos</value></string>
-<string><id>10004</id><value>Configuraciones</value></string>
-<string><id>10005</id><value>Mi Música</value></string>
-<string><id>10006</id><value>Mi Videos</value></string>
-<string><id>10007</id><value>Información del Sistema</value></string>
-<string><id>10008</id><value>Configuración->General</value></string>
-<string><id>10009</id><value>Configuración->Pantalla</value></string>
-<string><id>10010</id><value>Configuración->Pantalla->Calibración UI</value></string>
-<string><id>10011</id><value>Configuración->Pantalla->Calibración de Pantalla</value></string>
-<string><id>10012</id><value>Configuración->SlideShow</value></string>
-<string><id>10013</id><value>Configuración->Screen->Filtros</value></string>
-<string><id>10014</id><value>Configuración->Música</value></string>
-<string><id>10015</id><value>Configuración->Pantalla->Subtítulos</value></string>
-<string><id>10016</id><value>Configuración->Pantalla->Screensaver</value></string>
-<string><id>10017</id><value>Configuración->Clima</value></string>
-<string><id>10020</id><value>Configuración->Scripts</value></string>
-<string><id>10021</id><value>Mi Videos/genre</value></string>
-<string><id>10022</id><value>Mi Videos/actor</value></string>
-<string><id>10023</id><value>Mi Videos/Año</value></string>
-<string><id>10024</id><value>Ajustes->Programs</value></string>
-<string><id>10025</id><value>Mi Videos/title</value></string>
-<string><id>10026</id><value>Ajustes->General->Cache</value></string>
-<string><id>10027</id><value>Ajustes->General->Autorun</value></string>
-<string><id>10028</id><value>Mi Videos/playlist</value></string>
-<string><id>10029</id><value>Configuración->General->LCD</value></string>
-<string><id>10100</id><value>Dialogo Sí/No</value></string>
-<string><id>10101</id><value>Dialogo de Progreso</value></string>
-<string><id>10500</id><value>Mi Música/playlist</value></string>
-<string><id>10501</id><value>Mi Música/archivos</value></string>
-<string><id>10502</id><value>Mi Música/albunes</value></string>
-<string><id>10503</id><value>Mi Música/artistas</value></string>
-<string><id>10504</id><value>Mi Música/generos</value></string>
-<string><id>10505</id><value>Mi Música/top100</value></string>
-<string><id>11000</id><value>keyboard</value></string>
-<string><id>12000</id><value>Select dialog</value></string>
-<string><id>12001</id><value>Mi Música/información</value></string>
-<string><id>12002</id><value>Dialogo OK</value></string>
-<string><id>12003</id><value>Mi Videos/información</value></string>
-<string><id>12004</id><value>My Scripts/información</value></string>
-<string><id>12005</id><value>Video de toda la pantalla</value></string>
-<string><id>12006</id><value>Audio visisalisación</value></string>
-<string><id>12007</id><value>My Picture/slideshow</value></string>
-<string><id>12008</id><value>Dialogo de Archivo stacking</value></string>
-<string><id>12600</id><value>Mi Clima</value></string>
-<string><id>12900</id><value>Screensaver</value></string>
-<string><id>12901</id><value>OSD de toda la pantalla</value></string>
+<string><id>100000</id><value>Casa</value></string>
+<string><id>100001</id><value>Mis Programas</value></string>
+<string><id>100002</id><value>Mis Fotos</value></string>
+<string><id>100003</id><value>Mis Archivos</value></string>
+<string><id>100004</id><value>Configuraciones</value></string>
+<string><id>100005</id><value>Mi Música</value></string>
+<string><id>100006</id><value>Mi Videos</value></string>
+<string><id>100007</id><value>Información del Sistema</value></string>
+<string><id>100008</id><value>Configuración->General</value></string>
+<string><id>100009</id><value>Configuración->Pantalla</value></string>
+<string><id>100010</id><value>Configuración->Pantalla->Calibración UI</value></string>
+<string><id>100011</id><value>Configuración->Pantalla->Calibración de Pantalla</value></string>
+<string><id>100012</id><value>Configuración->SlideShow</value></string>
+<string><id>100013</id><value>Configuración->Screen->Filtros</value></string>
+<string><id>100014</id><value>Configuración->Música</value></string>
+<string><id>100015</id><value>Configuración->Pantalla->Subtítulos</value></string>
+<string><id>100016</id><value>Configuración->Pantalla->Screensaver</value></string>
+<string><id>100017</id><value>Configuración->Clima</value></string>
+<string><id>100020</id><value>Configuración->Scripts</value></string>
+<string><id>100021</id><value>Mi Videos/genre</value></string>
+<string><id>100022</id><value>Mi Videos/actor</value></string>
+<string><id>100023</id><value>Mi Videos/Año</value></string>
+<string><id>100024</id><value>Ajustes->Programs</value></string>
+<string><id>100025</id><value>Mi Videos/title</value></string>
+<string><id>100026</id><value>Ajustes->General->Cache</value></string>
+<string><id>100027</id><value>Ajustes->General->Autorun</value></string>
+<string><id>100028</id><value>Mi Videos/playlist</value></string>
+<string><id>100029</id><value>Configuración->General->LCD</value></string>
+<string><id>100100</id><value>Dialogo Sí/No</value></string>
+<string><id>100101</id><value>Dialogo de Progreso</value></string>
+<string><id>100500</id><value>Mi Música/playlist</value></string>
+<string><id>100501</id><value>Mi Música/archivos</value></string>
+<string><id>100502</id><value>Mi Música/albunes</value></string>
+<string><id>100503</id><value>Mi Música/artistas</value></string>
+<string><id>100504</id><value>Mi Música/generos</value></string>
+<string><id>100505</id><value>Mi Música/top100</value></string>
+<string><id>101000</id><value>keyboard</value></string>
+<string><id>102000</id><value>Select dialog</value></string>
+<string><id>102001</id><value>Mi Música/información</value></string>
+<string><id>102002</id><value>Dialogo OK</value></string>
+<string><id>102003</id><value>Mi Videos/información</value></string>
+<string><id>102004</id><value>My Scripts/información</value></string>
+<string><id>102005</id><value>Video de toda la pantalla</value></string>
+<string><id>102006</id><value>Audio visisalisación</value></string>
+<string><id>102007</id><value>My Picture/slideshow</value></string>
+<string><id>102008</id><value>Dialogo de Archivo stacking</value></string>
+<string><id>102600</id><value>Mi Clima</value></string>
+<string><id>102900</id><value>Screensaver</value></string>
+<string><id>102901</id><value>OSD de toda la pantalla</value></string>
 <string><id>686</id><value>Nacido(a)</value></string>
 <string><id>687</id><value>Años Activos</value></string>
 <string><id>688</id><value>Instrumentos</value></string>

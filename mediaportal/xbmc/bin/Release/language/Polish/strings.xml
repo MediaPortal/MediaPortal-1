@@ -2083,299 +2083,299 @@
 		<value>Sortuj: Status</value>
 	</string>
 	<string>
-		<id>10000</id>
+		<id>100000</id>
 		<value>Start</value>
 	</string>
 	<string>
-		<id>10001</id>
+		<id>100001</id>
 		<value>TV</value>
 	</string>
 	<string>
-		<id>10002</id>
+		<id>100002</id>
 		<value>Zdjêcia</value>
 	</string>
 	<string>
-		<id>10003</id>
+		<id>100003</id>
 		<value>Pliki</value>
 	</string>
 	<string>
-		<id>10004</id>
+		<id>100004</id>
 		<value>Ustawienia</value>
 	</string>
 	<string>
-		<id>10005</id>
+		<id>100005</id>
 		<value>Muzyka</value>
 	</string>
 	<string>
-		<id>10006</id>
+		<id>100006</id>
 		<value>Filmy</value>
 	</string>
 	<string>
-		<id>10007</id>
+		<id>100007</id>
 		<value>Informacje o systemie</value>
 	</string>
 	<string>
-		<id>10008</id>
+		<id>100008</id>
 		<value>Ustawienia-&gt;Ogólne</value>
 	</string>
 	<string>
-		<id>10009</id>
+		<id>100009</id>
 		<value>Ustawienia-&gt;Ekran</value>
 	</string>
 	<string>
-		<id>10010</id>
+		<id>100010</id>
 		<value>Ustawienia-&gt;Ekran-&gt;Kalibracja interfejsu</value>
 	</string>
 	<string>
-		<id>10011</id>
+		<id>100011</id>
 		<value>Ustawienia-&gt;Ekran-&gt;Kalibracja ekranu</value>
 	</string>
 	<string>
-		<id>10012</id>
+		<id>100012</id>
 		<value>Ustawienia-&gt;Pokaz slajdów</value>
 	</string>
 	<string>
-		<id>10013</id>
+		<id>100013</id>
 		<value>Ustawienia-&gt;Ekran-&gt;Filtry</value>
 	</string>
 	<string>
-		<id>10014</id>
+		<id>100014</id>
 		<value>Ustawienia-&gt;Muzyka</value>
 	</string>
 	<string>
-		<id>10015</id>
+		<id>100015</id>
 		<value>Ustawienia-&gt;Ekran-&gt;Napisy</value>
 	</string>
 	<string>
-		<id>10016</id>
+		<id>100016</id>
 		<value>Ustawienia-&gt;Ekran-&gt;Wygaszacz</value>
 	</string>
 	<string>
-		<id>10017</id>
+		<id>100017</id>
 		<value>Ustawienia-&gt;Pogoda</value>
 	</string>
 	<string>
-		<id>10020</id>
+		<id>100020</id>
 		<value>Ustawienia-&gt;Skrypty</value>
 	</string>
 	<string>
-		<id>10021</id>
+		<id>100021</id>
 		<value>Filmy/Gatunek</value>
 	</string>
 	<string>
-		<id>10022</id>
+		<id>100022</id>
 		<value>Filmy/Aktor</value>
 	</string>
 	<string>
-		<id>10023</id>
+		<id>100023</id>
 		<value>Filmy/Rok</value>
 	</string>
 	<string>
-		<id>10024</id>
+		<id>100024</id>
 		<value>Ustawienia-&gt;Programy</value>
 	</string>
 	<string>
-		<id>10025</id>
+		<id>100025</id>
 		<value>Filmy/Tytu³</value>
 	</string>
 	<string>
-		<id>10026</id>
+		<id>100026</id>
 		<value>Ustawienia-&gt;Ustawienia-&gt;Ogólne-Cache</value>
 	</string>
 	<string>
-		<id>10027</id>
+		<id>100027</id>
 		<value>Ustawienia-&gt;Ogólne-&gt;Autoodtwarzanie</value>
 	</string>
 	<string>
-		<id>10028</id>
+		<id>100028</id>
 		<value>Filmy/Playlista</value>
 	</string>
 	<string>
-		<id>10029</id>
+		<id>100029</id>
 		<value>Ustawienia-&gt;Ogólne-&gt;LCD</value>
 	</string>
 	<string>
-		<id>10030</id>
+		<id>100030</id>
 		<value>Radio</value>
 	</string>
 	<string>
-		<id>10031</id>
+		<id>100031</id>
 		<value>Ustawienia-&gt;Ekran-&gt;Szybko¶æ scrolla</value>
 	</string>
 	<string>
-		<id>10032</id>
+		<id>100032</id>
 		<value>MSN Messenger</value>
 	</string>
 	<string>
-		<id>10033</id>
+		<id>100033</id>
 		<value>MSN Messenger czat</value>
 	</string>
 	<string>
-		<id>10034</id>
+		<id>100034</id>
 		<value>Pluginy</value>
 	</string>
 	<string>
-		<id>10100</id>
+		<id>100100</id>
 		<value>Okno Tak/Nie</value>
 	</string>
 	<string>
-		<id>10101</id>
+		<id>100101</id>
 		<value>Okno postêpu</value>
 	</string>
 	<string>
-		<id>10500</id>
+		<id>100500</id>
 		<value>Muzyka/Playlista</value>
 	</string>
 	<string>
-		<id>10501</id>
+		<id>100501</id>
 		<value>Muzyka/Pliki</value>
 	</string>
 	<string>
-		<id>10502</id>
+		<id>100502</id>
 		<value>Muzyka/Albumy</value>
 	</string>
 	<string>
-		<id>10503</id>
+		<id>100503</id>
 		<value>Muzyka/Arty¶ci</value>
 	</string>
 	<string>
-		<id>10504</id>
+		<id>100504</id>
 		<value>Muzyka/Gatunki</value>
 	</string>
 	<string>
-		<id>10505</id>
+		<id>100505</id>
 		<value>Muzyka/Top100</value>
 	</string>
 	<string>
-		<id>10506</id>
+		<id>100506</id>
 		<value>Muzyka/Ulubione</value>
 	</string>
 	<string>
-		<id>10600</id>
+		<id>100600</id>
 		<value>TV/Program TV</value>
 	</string>
 	<string>
-		<id>10601</id>
+		<id>100601</id>
 		<value>TV/Harmonogram</value>
 	</string>
 	<string>
-		<id>10602</id>
+		<id>100602</id>
 		<value>TV/Pe³ny ekran</value>
 	</string>
 	<string>
-		<id>10603</id>
+		<id>100603</id>
 		<value>TV/Nagrania</value>
 	</string>
 	<string>
-		<id>10604</id>
+		<id>100604</id>
 		<value>TV/Szukaj</value>
 	</string>
 	<string>
-		<id>10605</id>
+		<id>100605</id>
 		<value>TV/Nagrania/Gatunek</value>
 	</string>
 	<string>
-		<id>10606</id>
+		<id>100606</id>
 		<value>TV/Nagrania/Programy</value>
 	</string>
 	<string>
-		<id>10750</id>
+		<id>100750</id>
 		<value>Przepisy</value>
 	</string>
 	<string>
-		<id>10755</id>
+		<id>100755</id>
 		<value>Status</value>
 	</string>
 	<string>
-		<id>10756</id>
+		<id>100756</id>
 		<value>Szczegó³y statusu</value>
 	</string>
 	<string>
-		<id>10757</id>
+		<id>100757</id>
 		<value>Ustawienia statusu</value>
 	</string>
 	<string>
-		<id>10770</id>
+		<id>100770</id>
 		<value>Explorer</value>
 	</string>
 	<string>
-		<id>11000</id>
+		<id>101000</id>
 		<value>klawiatura</value>
 	</string>
 	<string>
-		<id>12000</id>
+		<id>102000</id>
 		<value>Wybierz okno</value>
 	</string>
 	<string>
-		<id>12001</id>
+		<id>102001</id>
 		<value>Muzyka/Informacje</value>
 	</string>
 	<string>
-		<id>12002</id>
+		<id>102002</id>
 		<value>Okno OK</value>
 	</string>
 	<string>
-		<id>12003</id>
+		<id>102003</id>
 		<value>Filmy/Info</value>
 	</string>
 	<string>
-		<id>12004</id>
+		<id>102004</id>
 		<value>Skrypty/Informacje</value>
 	</string>
 	<string>
-		<id>12005</id>
+		<id>102005</id>
 		<value>Pe³ny ekran</value>
 	</string>
 	<string>
-		<id>12006</id>
+		<id>102006</id>
 		<value>Wizualizacja d¼wiêku</value>
 	</string>
 	<string>
-		<id>12007</id>
+		<id>102007</id>
 		<value>Zdjêcia/Pokaz slajdów</value>
 	</string>
 	<string>
-		<id>12008</id>
+		<id>102008</id>
 		<value>Okno Po³±czenie plików</value>
 	</string>
 	<string>
-		<id>12010</id>
+		<id>102010</id>
 		<value>Data/Czas</value>
 	</string>
 	<string>
-		<id>12011</id>
+		<id>102011</id>
 		<value>Informacje o arty¶cie</value>
 	</string>
 	<string>
-		<id>12012</id>
+		<id>102012</id>
 		<value>Menu kontekstowe</value>
 	</string>
 	<string>
-		<id>12013</id>
+		<id>102013</id>
 		<value>Ustaw ocenê</value>
 	</string>
 	<string>
-		<id>12014</id>
+		<id>102014</id>
 		<value>Informacje o obrazie</value>
 	</string>
 	<string>
-		<id>12700</id>
+		<id>102700</id>
 		<value>Wiadomo¶ci</value>
 	</string>
 	<string>
-		<id>12900</id>
+		<id>102900</id>
 		<value>Wygaszacz ekranu</value>
 	</string>
 	<string>
-		<id>12901</id>
+		<id>102901</id>
 		<value>Pe³noekranowe OSD</value>
 	</string>
 	<string>
-		<id>12902</id>
+		<id>102902</id>
 		<value>MSN Messenger OSD</value>
 	</string>
 	<string>
-		<id>12600</id>
+		<id>102600</id>
 		<value>Pogoda</value>
 	</string>
 	<string>

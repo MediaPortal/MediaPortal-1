@@ -46,23 +46,23 @@
 	</string>
 	<string>
 		<id>11</id>
-		<value>Luned√¨</value>
+		<value>LunedÏ</value>
 	</string>
 	<string>
 		<id>12</id>
-		<value>Marted√¨</value>
+		<value>MartedÏ</value>
 	</string>
 	<string>
 		<id>13</id>
-		<value>Mercoled√¨</value>
+		<value>MercoledÏ</value>
 	</string>
 	<string>
 		<id>14</id>
-		<value>Gioved√¨</value>
+		<value>GiovedÏ</value>
 	</string>
 	<string>
 		<id>15</id>
-		<value>Venerd√¨</value>
+		<value>VenerdÏ</value>
 	</string>
 	<string>
 		<id>16</id>
@@ -150,7 +150,7 @@
 	</string>
 	<string>
 		<id>107</id>
-		<value>S√¨</value>
+		<value>SÏ</value>
 	</string>
 	<string>
 		<id>108</id>
@@ -338,7 +338,7 @@
 	</string>
 	<string>
 		<id>154</id>
-		<value>Capacit√†</value>
+		<value>Capacit‡</value>
 	</string>
 	<string>
 		<id>155</id>
@@ -606,7 +606,7 @@
 	</string>
 	<string>
 		<id>221</id>
-		<value>La rete √® disconnessa</value>
+		<value>La rete Ë disconnessa</value>
 	</string>
 	<string>
 		<id>222</id>
@@ -618,7 +618,7 @@
 	</string>
 	<string>
 		<id>224</id>
-		<value>Velocit√†</value>
+		<value>Velocit‡</value>
 	</string>
 	<string>
 		<id>225</id>
@@ -954,7 +954,7 @@
 	</string>
 	<string>
 		<id>310</id>
-		<value>Luminosit√†/contrasto automatici</value>
+		<value>Luminosit‡/contrasto automatici</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -1034,7 +1034,7 @@
 	</string>
 	<string>
 		<id>330</id>
-		<value>Questa operazione pu√≤ durare a lungo...</value>
+		<value>Questa operazione puÚ durare a lungo...</value>
 	</string>
 	<string>
 		<id>331</id>
@@ -1138,7 +1138,7 @@
 	</string>
 	<string>
 		<id>356</id>
-		<value>Modalit√† salvaschermo</value>
+		<value>Modalit‡ salvaschermo</value>
 	</string>
 	<string>
 		<id>357</id>
@@ -1274,7 +1274,7 @@
 	</string>
 	<string>
 		<id>390</id>
-		<value>Scarsa visibilit√†</value>
+		<value>Scarsa visibilit‡</value>
 	</string>
 	<string>
 		<id>391</id>
@@ -1294,7 +1294,7 @@
 	</string>
 	<string>
 		<id>396</id>
-		<value>Seleziona Localit√†</value>
+		<value>Seleziona Localit‡</value>
 	</string>
 	<string>
 		<id>397</id>
@@ -1306,7 +1306,7 @@
 	</string>
 	<string>
 		<id>399</id>
-		<value>Scala Velocit√†</value>
+		<value>Scala Velocit‡</value>
 	</string>
 	<string>
 		<id>400</id>
@@ -1334,7 +1334,7 @@
 	</string>
 	<string>
 		<id>406</id>
-		<value>Umidit√†</value>
+		<value>Umidit‡</value>
 	</string>
 	<string>
 		<id>407</id>
@@ -1562,7 +1562,7 @@
 	</string>
 	<string>
 		<id>464</id>
-		<value>Luminosit√†</value>
+		<value>Luminosit‡</value>
 	</string>
 	<string>
 		<id>465</id>
@@ -1598,7 +1598,7 @@
 	</string>
 	<string>
 		<id>473</id>
-		<value>Ricampionamento Alta Qualit√†</value>
+		<value>Ricampionamento Alta Qualit‡</value>
 	</string>
 	<string>
 		<id>474</id>
@@ -1966,7 +1966,7 @@
 	</string>
 	<string>
 		<id>673</id>
-		<value>Velocit√† scorrimento</value>
+		<value>Velocit‡ scorrimento</value>
 	</string>
 	<string>
 		<id>674</id>
@@ -2017,299 +2017,299 @@
 		<value>Ordina per: Stato</value>
 	</string>
 	<string>
-		<id>10000</id>
+		<id>100000</id>
 		<value>Home</value>
 	</string>
 	<string>
-		<id>10001</id>
+		<id>100001</id>
 		<value>TV</value>
 	</string>
 	<string>
-		<id>10002</id>
+		<id>100002</id>
 		<value>Immagini</value>
 	</string>
 	<string>
-		<id>10003</id>
+		<id>100003</id>
 		<value>File</value>
 	</string>
 	<string>
-		<id>10004</id>
+		<id>100004</id>
 		<value>Impostazioni</value>
 	</string>
 	<string>
-		<id>10005</id>
+		<id>100005</id>
 		<value>Musica</value>
 	</string>
 	<string>
-		<id>10006</id>
+		<id>100006</id>
 		<value>Filmati</value>
 	</string>
 	<string>
-		<id>10007</id>
+		<id>100007</id>
 		<value>Informazioni sul sistema</value>
 	</string>
 	<string>
-		<id>10008</id>
+		<id>100008</id>
 		<value>Impostazioni-&gt;Generali</value>
 	</string>
 	<string>
-		<id>10009</id>
+		<id>100009</id>
 		<value>Impostazioni-&gt;Schermo</value>
 	</string>
 	<string>
-		<id>10010</id>
+		<id>100010</id>
 		<value>Impostazioni-&gt;Schermo-&gt;Calibrazione I. U.</value>
 	</string>
 	<string>
-		<id>10011</id>
+		<id>100011</id>
 		<value>Impostazioni-&gt;Schermo-&gt;Calibrazione dello schermo</value>
 	</string>
 	<string>
-		<id>10012</id>
+		<id>100012</id>
 		<value>Impostazioni-&gt;Presentazione</value>
 	</string>
 	<string>
-		<id>10013</id>
+		<id>100013</id>
 		<value>Impostazioni-&gt;Schermo-&gt;Filtri</value>
 	</string>
 	<string>
-		<id>10014</id>
+		<id>100014</id>
 		<value>Impostazioni-&gt;Musica</value>
 	</string>
 	<string>
-		<id>10015</id>
+		<id>100015</id>
 		<value>Impostazioni-&gt;Schermo-&gt;Sottotitoli</value>
 	</string>
 	<string>
-		<id>10016</id>
+		<id>100016</id>
 		<value>Impostazioni-&gt;Schermo-&gt;Salvaschermo</value>
 	</string>
 	<string>
-		<id>10017</id>
+		<id>100017</id>
 		<value>Impostazioni-&gt;Meteo</value>
 	</string>
 	<string>
-		<id>10020</id>
+		<id>100020</id>
 		<value>Impostazioni-&gt;Script</value>
 	</string>
 	<string>
-		<id>10021</id>
+		<id>100021</id>
 		<value>Filmati/Genere</value>
 	</string>
 	<string>
-		<id>10022</id>
+		<id>100022</id>
 		<value>Filmati/Attore</value>
 	</string>
 	<string>
-		<id>10023</id>
+		<id>100023</id>
 		<value>Filmati/Anno</value>
 	</string>
 	<string>
-		<id>10024</id>
+		<id>100024</id>
 		<value>Impostazioni-&gt;Programmi</value>
 	</string>
 	<string>
-		<id>10025</id>
+		<id>100025</id>
 		<value>Filmati/Titolo</value>
 	</string>
 	<string>
-		<id>10026</id>
+		<id>100026</id>
 		<value>Impostazioni-&gt;Generali-&gt;Cache</value>
 	</string>
 	<string>
-		<id>10027</id>
+		<id>100027</id>
 		<value>Impostazioni-&gt;Generali-&gt;Esecuzione automatica</value>
 	</string>
 	<string>
-		<id>10028</id>
+		<id>100028</id>
 		<value>Filmati/Playlist</value>
 	</string>
 	<string>
-		<id>10029</id>
+		<id>100029</id>
 		<value>Impostazioni-&gt;Generali-&gt;LCD</value>
 	</string>
 	<string>
-		<id>10030</id>
+		<id>100030</id>
 		<value>Radio</value>
 	</string>
 	<string>
-		<id>10031</id>
-		<value>Impostazioni-&gt;Schermo-&gt;Velocit√† di scorrimento</value>
+		<id>100031</id>
+		<value>Impostazioni-&gt;Schermo-&gt;Velocit‡ di scorrimento</value>
 	</string>
 	<string>
-		<id>10032</id>
+		<id>100032</id>
 		<value>MSN Messenger</value>
 	</string>
 	<string>
-		<id>10033</id>
+		<id>100033</id>
 		<value>Conversazione di MSN Messenger</value>
 	</string>
 	<string>
-		<id>10034</id>
+		<id>100034</id>
 		<value>Altri programmi</value>
 	</string>
 	<string>
-		<id>10100</id>
-		<value>Dialogo S√¨/No</value>
+		<id>100100</id>
+		<value>Dialogo SÏ/No</value>
 	</string>
 	<string>
-		<id>10101</id>
+		<id>100101</id>
 		<value>Dialogo di progresso</value>
 	</string>
 	<string>
-		<id>10500</id>
+		<id>100500</id>
 		<value>Musica/Playlist</value>
 	</string>
 	<string>
-		<id>10501</id>
+		<id>100501</id>
 		<value>Musica/File</value>
 	</string>
 	<string>
-		<id>10502</id>
+		<id>100502</id>
 		<value>Musica/Album</value>
 	</string>
 	<string>
-		<id>10503</id>
+		<id>100503</id>
 		<value>Musica/Artisti</value>
 	</string>
 	<string>
-		<id>10504</id>
+		<id>100504</id>
 		<value>Musica/Generi</value>
 	</string>
 	<string>
-		<id>10505</id>
+		<id>100505</id>
 		<value>Musica/Top100</value>
 	</string>
 	<string>
-		<id>10506</id>
+		<id>100506</id>
 		<value>Musica/Preferiti</value>
 	</string>
 	<string>
-		<id>10600</id>
+		<id>100600</id>
 		<value>TV/Guida</value>
 	</string>
 	<string>
-		<id>10601</id>
+		<id>100601</id>
 		<value>TV/Programmazione</value>
 	</string>
 	<string>
-		<id>10602</id>
+		<id>100602</id>
 		<value>TV/Schermo intero</value>
 	</string>
 	<string>
-		<id>10603</id>
+		<id>100603</id>
 		<value>TV/Registrazioni</value>
 	</string>
 	<string>
-		<id>10604</id>
+		<id>100604</id>
 		<value>TV/Ricerca</value>
 	</string>
 	<string>
-		<id>10605</id>
+		<id>100605</id>
 		<value>TV/TV Registrata/Genere</value>
 	</string>
 	<string>
-		<id>10606</id>
+		<id>100606</id>
 		<value>TV/TV Registrata/Canali</value>
 	</string>
 	<string>
-		<id>10750</id>
+		<id>100750</id>
 		<value>Ricette</value>
 	</string>
 	<string>
-		<id>10755</id>
+		<id>100755</id>
 		<value>Stato</value>
 	</string>
 	<string>
-		<id>10756</id>
+		<id>100756</id>
 		<value>Dettagli di stato</value>
 	</string>
 	<string>
-		<id>10757</id>
+		<id>100757</id>
 		<value>Preferenze di Stato</value>
 	</string>
 	<string>
-		<id>10770</id>
+		<id>100770</id>
 		<value>Explorer</value>
 	</string>
 	<string>
-		<id>11000</id>
+		<id>101000</id>
 		<value>Tastiera</value>
 	</string>
 	<string>
-		<id>12000</id>
+		<id>102000</id>
 		<value>Dialogo di selezione</value>
 	</string>
 	<string>
-		<id>12001</id>
+		<id>102001</id>
 		<value>Musica/Info</value>
 	</string>
 	<string>
-		<id>12002</id>
+		<id>102002</id>
 		<value>Dialogo OK</value>
 	</string>
 	<string>
-		<id>12003</id>
+		<id>102003</id>
 		<value>Filmati/Info</value>
 	</string>
 	<string>
-		<id>12004</id>
+		<id>102004</id>
 		<value>Script/Info</value>
 	</string>
 	<string>
-		<id>12005</id>
+		<id>102005</id>
 		<value>Filmati a schermo intero</value>
 	</string>
 	<string>
-		<id>12006</id>
+		<id>102006</id>
 		<value>Visualizzazione audio</value>
 	</string>
 	<string>
-		<id>12007</id>
+		<id>102007</id>
 		<value>Immagini/Presentazione</value>
 	</string>
 	<string>
-		<id>12008</id>
+		<id>102008</id>
 		<value>Dialogo di raggruppamento</value>
 	</string>
 	<string>
-		<id>12010</id>
+		<id>102010</id>
 		<value>Data/Ora</value>
 	</string>
 	<string>
-		<id>12011</id>
-		<value>Informazioni sull‚ÄôArtista</value>
+		<id>102011</id>
+		<value>Informazioni sullíArtista</value>
 	</string>
 	<string>
-		<id>12012</id>
+		<id>102012</id>
 		<value>Menu contestuale</value>
 	</string>
 	<string>
-		<id>12013</id>
+		<id>102013</id>
 		<value>Imposta Valutazione</value>
 	</string>
 	<string>
-		<id>12014</id>
-		<value>Informazioni sull‚ÄôImmagine</value>
+		<id>102014</id>
+		<value>Informazioni sullíImmagine</value>
 	</string>
 	<string>
-		<id>12600</id>
+		<id>102600</id>
 		<value>Tempo</value>
 	</string>
 	<string>
-		<id>12700</id>
+		<id>102700</id>
 		<value>Notizie</value>
 	</string>
 	<string>
-		<id>12900</id>
+		<id>102900</id>
 		<value>Salvaschermo</value>
 	</string>
 	<string>
-		<id>12901</id>
+		<id>102901</id>
 		<value>OSD a schermo intero</value>
 	</string>
 	<string>
-		<id>12902</id>
+		<id>102902</id>
 		<value>OSD di MSN Messenger</value>
 	</string>
 	<string>
@@ -2378,7 +2378,7 @@
 	</string>
 	<string>
 		<id>710</id>
-		<value>Una nuova versione √® disponibile</value>
+		<value>Una nuova versione Ë disponibile</value>
 	</string>
 	<string>
 		<id>711</id>
@@ -2458,11 +2458,11 @@
 	</string>
 	<string>
 		<id>730</id>
-		<value>Questa programmazione √® in registrazione. Se cancelli</value>
+		<value>Questa programmazione Ë in registrazione. Se cancelli</value>
 	</string>
 	<string>
 		<id>731</id>
-		<value>la programmazione la registrazione sar√† interrotta</value>
+		<value>la programmazione la registrazione sar‡ interrotta</value>
 	</string>
 	<string>
 		<id>732</id>
@@ -2502,7 +2502,7 @@
 	</string>
 	<string>
 		<id>741</id>
-		<value>Vedi: Umidit√†</value>
+		<value>Vedi: Umidit‡</value>
 	</string>
 	<string>
 		<id>742</id>
@@ -2550,7 +2550,7 @@
 	</string>
 	<string>
 		<id>803</id>
-		<value>√®</value>
+		<value>Ë</value>
 	</string>
 	<string>
 		<id>804</id>
@@ -2628,7 +2628,7 @@
 	</string>
 	<string>
 		<id>861</id>
-		<value>Dettagli dell‚ÄôAllarme</value>
+		<value>Dettagli dellíAllarme</value>
 	</string>
 	<string>
 		<id>862</id>
@@ -2692,7 +2692,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Ricomincia il video dall‚Äôultimo segnalibro?</value>
+		<value>Ricomincia il video dallíultimo segnalibro?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2724,7 +2724,7 @@
 	</string>
 	<string>
 		<id>908</id>
-		<value>sta scrivendo un messaggio‚Ä¶</value>
+		<value>sta scrivendo un messaggioÖ</value>
 	</string>
 	<string>
 		<id>909</id>
@@ -2760,7 +2760,7 @@
 	</string>
 	<string>
 		<id>917</id>
-		<value>Questo file √® su una condivisione remota</value>
+		<value>Questo file Ë su una condivisione remota</value>
 	</string>
 	<string>
 		<id>918</id>
@@ -2848,11 +2848,11 @@
 	</string>
 	<string>
 		<id>939</id>
-		<value>Cambia modalit√†</value>
+		<value>Cambia modalit‡</value>
 	</string>
 	<string>
 		<id>940</id>
-		<value>Propriet√†</value>
+		<value>Propriet‡</value>
 	</string>
 	<string>
 		<id>941</id>
@@ -2928,7 +2928,7 @@
 	</string>
 	<string>
 		<id>959</id>
-		<value>si √® unito alla conversazione</value>
+		<value>si Ë unito alla conversazione</value>
 	</string>
 	<string>
 		<id>960</id>
@@ -3074,7 +3074,7 @@
 	</string>
 	<string>
 		<id>1970</id>
-		<value>Intervallo dell‚Äôallarme (secondi)</value>
+		<value>Intervallo dellíallarme (secondi)</value>
 	</string>
 	<string>
 		<id>1971</id>
@@ -3412,7 +3412,7 @@
 	</string>
 	<string>
 		<id>2124</id>
-		<value>Non Cancellato: Il supporto mom √® scrivibile</value>
+		<value>Non Cancellato: Il supporto mom Ë scrivibile</value>
 	</string>
 	<string>
 		<id>2125</id>
@@ -3424,7 +3424,7 @@
 	</string>
 	<string>
 		<id>2127</id>
-		<value>Il CD non √® scrivibile</value>
+		<value>Il CD non Ë scrivibile</value>
 	</string>
 	<string>
 		<id>2128</id>
@@ -3645,7 +3645,7 @@
 	</string>
 	<string>
 		<id>8012</id>
-		<value>almeno una Email per usare questa funzionalit√†</value>
+		<value>almeno una Email per usare questa funzionalit‡</value>
 	</string>
 	<string>
 		<id>8013</id>
@@ -3809,7 +3809,7 @@
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Velocit√† di Ken Burns</value>
+		<value>Velocit‡ di Ken Burns</value>
 	</string>
 	<string>
 		<id>13012</id>
@@ -3943,7 +3943,7 @@
 	</string>
 	<string>
 		<id>3016</id>
-		<value>Gi√† Finito</value>
+		<value>Gi‡ Finito</value>
 	</string>
 	<string>
 		<id>3017</id>

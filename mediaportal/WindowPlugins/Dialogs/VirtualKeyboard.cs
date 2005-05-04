@@ -544,7 +544,7 @@ namespace MediaPortal.Dialogs
 			m_bPrevOverlay=GUIGraphicsContext.Overlay;
 			m_bConfirmed = false;
 			GUIGraphicsContext.Overlay=false;
-			GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD));
+			GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD));
 			Log.Write( "window:{0} init", this.ToString());
 			Initialize();
 		}

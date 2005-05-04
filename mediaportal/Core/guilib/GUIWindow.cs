@@ -927,7 +927,7 @@ namespace MediaPortal.GUI.Library
 
               if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
               {
-                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
+                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
               }
 							Log.Write( "window:{0} init", this.ToString());
 						}
@@ -941,7 +941,7 @@ namespace MediaPortal.GUI.Library
 							OnPageDestroy(message.Param1);
 							if (previousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
               {
-                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + previousWindowId));
+                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + previousWindowId));
               }
 
 							Log.Write( "window:{0} deinit", this.ToString());
