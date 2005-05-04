@@ -88,6 +88,7 @@ namespace MediaPortal.GUI.Video
 					GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
 				}
 			}
+			UpdateButtonStates();
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
