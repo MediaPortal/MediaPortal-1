@@ -669,6 +669,10 @@ namespace MediaPortal.GUI.Music
 				else
 				{
 					LoadDirectory(String.Empty);
+					if (facadeView.Count <=0)
+					{
+						GUIControl.FocusControl(GetID, btnViewAs.GetID);
+					}
 				}
 			}
 		}
