@@ -248,7 +248,7 @@
 	<control>
 		<description>TV preview window</description>
 		<type>videowindow</type>
-		<id>1</id>
+		<id>99</id>
 		<posX>610</posX>
 		<posY>20</posY>
 		<width>1</width>

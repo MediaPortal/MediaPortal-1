@@ -260,7 +260,7 @@
 	<control>
 		<description>TV background</description> 
   		<type>image</type> 
-  		<id>1</id> 
+  		<id>98</id> 
   		<posX>60</posX> 
   		<posY>422</posY> 
   		<width>160</width> 
@@ -271,7 +271,7 @@
 - 	<control>
   		<description>TV preview window</description> 
   		<type>videowindow</type> 
-  		<id>1</id> 
+  		<id>99</id> 
   		<posX>75</posX> 
   		<posY>427</posY> 
   		<width>130</width> 

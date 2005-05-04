@@ -45,6 +45,8 @@ namespace MediaPortal.GUI.TV
 			IMG_REC_PIN=31
 		};
 
+		[SkinControlAttribute(98)]		protected GUIImage videoBackground;
+		[SkinControlAttribute(99)]		protected GUIVideoControl videoWindow;
     
 		DateTime                            m_dtTime=DateTime.Now;
 		int                                 m_iChannelOffset=0;
@@ -574,6 +576,12 @@ namespace MediaPortal.GUI.TV
 					if (m_currentProgram!=null)
 					{
 						m_dtStartTime=m_currentProgram.StartTime;
+					}
+
+					if (!g_Player.Playing || (!g_Player.IsVideo && !g_Player.IsTV))
+					{
+						if (videoBackground!=null) videoBackground.IsVisible=false;
+						if (videoWindow!=null) videoWindow.IsVisible=false;
 					}
 
 					return true;
