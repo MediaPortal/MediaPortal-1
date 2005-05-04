@@ -69,7 +69,7 @@ namespace MediaPortal.Dialogs
         }
         else
         {
-          iSelection = ( action.wID - Action.ActionType.REMOTE_0 );
+          iSelection = ( action.wID - Action.ActionType.REMOTE_1 );
         }
         
         if (iSelection>=0 && iSelection < listItems.Count)
