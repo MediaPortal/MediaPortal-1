@@ -914,6 +914,10 @@
 		<value>Slider</value>
 	</string>
 	<string>
+		<id>299</id>
+		<value>Kesto:</value>
+	</string>
+	<string>
 		<id>300</id>
 		<value>1. Kieli</value>
 	</string>
@@ -1673,6 +1677,107 @@
 		<id>491</id>
 		<value>K‰yt‰ isoja ikoneja</value>
 	</string>
+	<string>
+		<id>492</id>
+		<value>Audio kieli</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Tiedostovalikko</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Aseta kohteeksi</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Toiminto ep‰onnistui</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Poista t‰m‰ kansio</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Siirry kohde kansioon</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Laskee...</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Oletko varma?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>kohtia</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>To</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Ylikirjoitetaanko tiedosto?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Peruuta</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Aina</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Ei koskaan</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Kohde kirjoitussuojattu, toiminto ep‰onnistui</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Virhe luotaessa kansiota, toiminto ep‰onnistui</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Virhe poistaessa kansiota, toiminto ep‰onnistui</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Virhe poistaessa kohde tiedostoa, toiminto ep‰onnistui</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Vakava virhe, toiminto ep‰onnistui</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Poistetaanko kappale?</value>
+	</string>
+
+
+         <string>
+		<id>530</id>
+		<value>Haluatko avata valokuva CD:n?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Haluatko avata video CD:n?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Haluatko avata CD:n?</value>
+	</string>
+
+
+	<string>
+		<id>550</id>
+		<value>Rajaa</value>
+	</string>		
+
 	<string>
 		<id>600</id>
 		<value>Ohjelmaopas</value>
@@ -2693,6 +2798,26 @@
         <string>
         	<id>982</id>
          	<value>Poista tallennus</value>
+        </string>
+        <string>
+	        <id>983</id>
+	        <value>Soittolistat</value>
+        </string>
+        <string>
+	        <id>984</id>
+	        <value>Haetaan elokuvaa</value>
+        </string>
+        <string>
+	        <id>985</id>
+	        <value>Haetaan elokuvan tietoja</value>
+        </string>
+        <string>
+	        <id>986</id>
+	        <value>Haetaan n‰yttelij‰‰</value>
+        </string>
+        <string>
+	        <id>987</id>
+	        <value>Vuosia</value>
         </string>
 
         <string>
@@ -3915,6 +4040,10 @@
         <string>
 	        <id>13012</id>
 	        <value>Avataan kuvaa, odota hetkinen</value>
+        </string>
+        <string>
+	        <id>13013</id>
+	        <value>Avataan videota, odota hetkinen</value>
         </string>
 
         <string>
