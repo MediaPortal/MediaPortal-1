@@ -89,6 +89,8 @@ namespace MediaPortal.GUI.TV
 		{
 			FreeResources();
 			base.OnPageDestroy (newWindowId);
+			
+			GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + newWindowId));
 		}
 		protected override void OnPageLoad()
 		{
@@ -101,6 +103,8 @@ namespace MediaPortal.GUI.TV
 			m_dateTime=DateTime.Now;
 			SetCurrentChannelLogo();
 			base.OnPageLoad ();
+			
+			GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
 		}
 
 

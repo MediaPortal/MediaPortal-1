@@ -254,11 +254,9 @@ namespace MediaPortal.GUI.TV
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:	// fired when OSD is hidden
         {
-          //if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(true);
-          // following line should stay. Problems with OSD not
-          // appearing are already fixed elsewhere
           FreeResources();
-          return true;
+					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + message.Param1));
+					return true;
         }
 		    
 
@@ -266,6 +264,7 @@ namespace MediaPortal.GUI.TV
         {
           // following line should stay. Problems with OSD not
           // appearing are already fixed elsewhere
+					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
 					previousProgram=null;
           AllocResources();
           // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);

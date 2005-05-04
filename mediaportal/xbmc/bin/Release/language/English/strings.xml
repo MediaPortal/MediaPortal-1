@@ -2121,81 +2121,6 @@
 		<value>Sort by: Status</value>
 	</string>	
 	
-<string><id>10000</id><value>Home</value></string>
-<string><id>10001</id><value>My TV</value></string>
-<string><id>10002</id><value>My Pictures</value></string>
-<string><id>10003</id><value>My Files</value></string>
-<string><id>10004</id><value>Settings</value></string>
-<string><id>10005</id><value>My Music</value></string>
-<string><id>10006</id><value>My Videos</value></string>
-<string><id>10007</id><value>System information</value></string>
-<string><id>10008</id><value>Settings->General</value></string>
-<string><id>10009</id><value>Settings->Screen</value></string>
-<string><id>10010</id><value>Settings->Screen->UI Calibration</value></string>
-<string><id>10011</id><value>Settings->Screen->Screen Calibration</value></string>
-<string><id>10012</id><value>Settings->SlideShow</value></string>
-<string><id>10013</id><value>Settings->Screen->Filters</value></string>
-<string><id>10014</id><value>Settings->Music</value></string>
-<string><id>10015</id><value>Settings->Screen->Subtitles</value></string>
-<string><id>10016</id><value>Settings->Screen->Screensaver</value></string>
-<string><id>10017</id><value>Settings->Weather</value></string>
-<string><id>10020</id><value>Settings->Scripts</value></string>
-<string><id>10021</id><value>My Videos/genre</value></string>
-<string><id>10022</id><value>My Videos/actor</value></string>
-<string><id>10023</id><value>My Videos/year</value></string>
-<string><id>10024</id><value>Settings->Programs</value></string>
-<string><id>10025</id><value>My Videos/title</value></string>
-<string><id>10026</id><value>Settings->General->Cache</value></string>
-<string><id>10027</id><value>Settings->General->Autorun</value></string>
-<string><id>10028</id><value>My Videos/playlist</value></string>
-<string><id>10029</id><value>Settings->General->LCD</value></string>
-<string><id>10030</id><value>My Radio</value></string>
-<string><id>10031</id><value>Settings->Screen->scroll speed</value></string>
-<string><id>10032</id><value>MSN Messenger</value></string>
-<string><id>10033</id><value>MSN Messenger chat</value></string>
-<string><id>10034</id><value>My Plugins</value></string>
-<string><id>10100</id><value>Yes/no dialog</value></string>
-<string><id>10101</id><value>Progress dialog</value></string>
-<string><id>10500</id><value>My Music/playlist</value></string>
-<string><id>10501</id><value>My Music/files</value></string>
-<string><id>10502</id><value>My Music/albums</value></string>
-<string><id>10503</id><value>My Music/artists</value></string>
-<string><id>10504</id><value>My Music/genres</value></string>
-<string><id>10505</id><value>My Music/top100</value></string>
-<string><id>10506</id><value>My Music/Favorites</value></string>
-<string><id>10600</id><value>My TV/Guide</value></string>
-<string><id>10601</id><value>My TV/Scheduler</value></string>
-<string><id>10602</id><value>My TV/fullscreen</value></string>
-<string><id>10603</id><value>My TV/Recorded TV</value></string>
-<string><id>10604</id><value>My TV/Search</value></string>
-<string><id>10605</id><value>My TV/Recorded Tv/Genre</value></string>
-<string><id>10606</id><value>My TV/Recorded Tv/channels</value></string>
-<string><id>10750</id><value>My Recipies</value></string>
-<string><id>10755</id><value>My Status</value></string>
-<string><id>10756</id><value>My Status details</value></string>
-<string><id>10757</id><value>My Status preferences</value></string>
-<string><id>10770</id><value>Explorer</value></string>
-<string><id>11000</id><value>keyboard</value></string>
-<string><id>12000</id><value>Select dialog</value></string>
-<string><id>12001</id><value>My Music/info</value></string>
-<string><id>12002</id><value>Dialog OK</value></string>
-<string><id>12003</id><value>My Videos/Info</value></string>
-<string><id>12004</id><value>My Scripts/Info</value></string>
-<string><id>12005</id><value>Fullscreen video</value></string>
-<string><id>12006</id><value>Audio visisalisation</value></string>
-<string><id>12007</id><value>My Picture/slideshow</value></string>
-<string><id>12008</id><value>Filestacking dialog</value></string>
-<string><id>12010</id><value>Date/Time</value></string>
-<string><id>12011</id><value>Artis info</value></string>
-<string><id>12012</id><value>Context menu</value></string>
-<string><id>12013</id><value>Set Rating</value></string>
-<string><id>12014</id><value>Picture info</value></string>
-<string><id>12600</id><value>My Weather</value></string>
-<string><id>12700</id><value>My News</value></string>
-<string><id>12900</id><value>Screensaver</value></string>
-<string><id>12901</id><value>Fullscreen OSD</value></string>
-<string><id>12902</id><value>MSN Messenger OSD</value></string>
-
 <string><id>686</id><value>Born</value></string>
 <string><id>687</id><value>Years Active</value></string>
 <string><id>688</id><value>Instruments</value></string>
@@ -2851,6 +2776,14 @@
 	<value>Years</value>
 </string>
 
+<string>
+	<id>1440</id>
+	<value>My TeleText</value>
+</string>
+<string>
+	<id>1441</id>
+	<value>TeleText</value>
+</string>
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My status</value></string>
@@ -2982,8 +2915,8 @@
 	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
 	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
 	<string><id>2143</id><value>Home</value></string>
-
 	<!-- End of My Burner Strings -->
+	
 
 	<!-- My Explorer Strings -->
 	<string><id>2200</id><value>Explorer</value></string>
@@ -3013,6 +2946,30 @@
 	<string><id>2224</id><value>Folder exists!</value></string>
 	<string><id>2225</id><value>Folder created</value></string>
 	<!-- End of My Explorer Strings -->
+	
+	<string><id>3000</id><value>Program Options</value></string>
+	<string><id>3001</id><value>Hour</value></string>
+	<string><id>3002</id><value>Hours</value></string>
+	<string><id>3003</id><value>Minute</value></string>
+	<string><id>3004</id><value>Minutes</value></string>
+	<string><id>3005</id><value>Hour ago</value></string>
+	<string><id>3006</id><value>Hours ago</value></string>
+	<string><id>3007</id><value>Minute ago</value></string>
+	<string><id>3008</id><value>Minutes ago</value></string>
+	<string><id>3009</id><value>Starts in</value></string>
+	<string><id>3010</id><value>Minutes Remaining</value></string>
+	<string><id>3011</id><value>Hour Remaining</value></string>
+	<string><id>3012</id><value>Hours Remaining</value></string>
+	<string><id>3013</id><value>Starting Now</value></string>
+	<string><id>3014</id><value>Day</value></string>
+	<string><id>3015</id><value>Days</value></string>
+	<string><id>3016</id><value>Already Ended</value></string>
+	<string><id>3017</id><value>Started </value></string>
+	<string><id>3018</id><value>Minute Remaining</value></string>
+	<string><id>3019</id><value>Series</value></string>
+	<string><id>3020</id><value>Episode</value></string>
+	<string><id>3021</id><value>Part</value></string>
+	<string><id>3022</id><value>of</value></string>
 	
 <string>
 	<id>8000</id>
@@ -3178,6 +3135,93 @@
 	<id>9011</id>
 	<value>View comments:</value>
 </string>
+
+<string><id>10000</id><value>Home</value></string>
+<string><id>10001</id><value>My TV</value></string>
+<string><id>10002</id><value>My Pictures</value></string>
+<string><id>10003</id><value>My Files</value></string>
+<string><id>10004</id><value>Settings</value></string>
+<string><id>10005</id><value>My Music</value></string>
+<string><id>10006</id><value>My Videos</value></string>
+<string><id>10007</id><value>System information</value></string>
+<string><id>10008</id><value>Settings->General</value></string>
+<string><id>10009</id><value>Settings->Screen</value></string>
+<string><id>10010</id><value>Settings->Screen->UI Calibration</value></string>
+<string><id>10011</id><value>Settings->Screen->Screen Calibration</value></string>
+<string><id>10012</id><value>Settings->SlideShow</value></string>
+<string><id>10013</id><value>Settings->Screen->Filters</value></string>
+<string><id>10014</id><value>Settings->Music</value></string>
+<string><id>10015</id><value>Settings->Screen->Subtitles</value></string>
+<string><id>10016</id><value>Settings->Screen->Screensaver</value></string>
+<string><id>10017</id><value>Settings->Weather</value></string>
+<string><id>10020</id><value>Settings->Scripts</value></string>
+<string><id>10021</id><value>My Videos/genre</value></string>
+<string><id>10022</id><value>My Videos/actor</value></string>
+<string><id>10023</id><value>My Videos/year</value></string>
+<string><id>10024</id><value>Settings->Programs</value></string>
+<string><id>10025</id><value>My Videos/title</value></string>
+<string><id>10026</id><value>Settings->General->Cache</value></string>
+<string><id>10027</id><value>Settings->General->Autorun</value></string>
+<string><id>10028</id><value>My Videos/playlist</value></string>
+<string><id>10029</id><value>Settings->General->LCD</value></string>
+<string><id>10030</id><value>My Radio</value></string>
+<string><id>10031</id><value>Settings->Screen->scroll speed</value></string>
+<string><id>10032</id><value>MSN Messenger</value></string>
+<string><id>10033</id><value>MSN Messenger chat</value></string>
+<string><id>10034</id><value>My Plugins</value></string>
+<string><id>10100</id><value>Yes/no dialog</value></string>
+<string><id>10101</id><value>Progress dialog</value></string>
+<string><id>10500</id><value>My Music/playlist</value></string>
+<string><id>10501</id><value>My Music/files</value></string>
+<string><id>10502</id><value>My Music/albums</value></string>
+<string><id>10503</id><value>My Music/artists</value></string>
+<string><id>10504</id><value>My Music/genres</value></string>
+<string><id>10505</id><value>My Music/top100</value></string>
+<string><id>10506</id><value>My Music/Favorites</value></string>
+<string><id>10600</id><value>My TV/Guide</value></string>
+<string><id>10601</id><value>My TV/Scheduler</value></string>
+<string><id>10602</id><value>My TV/fullscreen</value></string>
+<string><id>10603</id><value>My TV/Recorded TV</value></string>
+<string><id>10604</id><value>My TV/Search</value></string>
+<string><id>10605</id><value>My TV/Recorded Tv/Genre</value></string>
+<string><id>10606</id><value>My TV/Recorded Tv/channels</value></string>
+<string><id>10750</id><value>My Recipies</value></string>
+<string><id>10755</id><value>My Status</value></string>
+<string><id>10756</id><value>My Status details</value></string>
+<string><id>10757</id><value>My Status preferences</value></string>
+<string><id>10758</id><value>File dialog</value></string>
+<string><id>10760</id><value>My Burner</value></string>
+<string><id>10770</id><value>Explorer</value></string>
+<string><id>11000</id><value>keyboard</value></string>
+<string><id>12000</id><value>Select dialog</value></string>
+<string><id>12001</id><value>My Music/info</value></string>
+<string><id>12002</id><value>Dialog OK</value></string>
+<string><id>12003</id><value>My Videos/Info</value></string>
+<string><id>12004</id><value>My Scripts/Info</value></string>
+<string><id>12005</id><value>Fullscreen video</value></string>
+<string><id>12006</id><value>Audio visisalisation</value></string>
+<string><id>12007</id><value>My Picture/slideshow</value></string>
+<string><id>12008</id><value>Filestacking dialog</value></string>
+<string><id>12009</id><value>Selection dialog</value></string>
+<string><id>12010</id><value>Date/Time</value></string>
+<string><id>12011</id><value>Artis info</value></string>
+<string><id>12012</id><value>Context menu</value></string>
+<string><id>12013</id><value>Set Rating</value></string>
+<string><id>12014</id><value>Picture info</value></string>
+<string><id>12015</id><value>Mini Menu</value></string>
+<string><id>12016</id><value>Notification</value></string>
+<string><id>12600</id><value>My Weather</value></string>
+<string><id>12700</id><value>My News</value></string>
+<string><id>12900</id><value>Screensaver</value></string>
+<string><id>12901</id><value>Fullscreen OSD</value></string>
+<string><id>12902</id><value>MSN Messenger OSD</value></string>
+<string><id>13003</id><value>My TV/OSD</value></string>
+<string><id>13006</id><value>My TV/MSN OSD</value></string>
+<string><id>13007</id><value>My TV/Zap OSD</value></string>
+<string><id>17700</id><value>My TV/Teletext</value></string>
+<string><id>17701</id><value>My TV/Teletext</value></string>
+
+
 <string>
 	<id>13000</id>
 	<value>System:</value>
@@ -3234,18 +3278,8 @@
 	<id>13013</id>
 	<value>Loading video, please wait</value>
 </string>
-<string>
-	<id>1440</id>
-	<value>My TeleText</value>
-</string>
-<string>
-	<id>1441</id>
-	<value>TeleText</value>
-</string>
-<string>
-	<id>16001</id>
-	<value>Party Shuffle</value>
-</string>
+
+
 <!-- My Tetris --> 
 <string><id>19001</id><value>My Tetris</value></string> 
 <string><id>19002</id><value>New Game</value></string> 
@@ -3260,27 +3294,4 @@
 <string><id>19011</id><value>Paused</value></string> 
 <string><id>19012</id><value>Game Over</value></string> 
 
-<string><id>3000</id><value>Program Options</value></string>
-<string><id>3001</id><value>Hour</value></string>
-<string><id>3002</id><value>Hours</value></string>
-<string><id>3003</id><value>Minute</value></string>
-<string><id>3004</id><value>Minutes</value></string>
-<string><id>3005</id><value>Hour ago</value></string>
-<string><id>3006</id><value>Hours ago</value></string>
-<string><id>3007</id><value>Minute ago</value></string>
-<string><id>3008</id><value>Minutes ago</value></string>
-<string><id>3009</id><value>Starts in</value></string>
-<string><id>3010</id><value>Minutes Remaining</value></string>
-<string><id>3011</id><value>Hour Remaining</value></string>
-<string><id>3012</id><value>Hours Remaining</value></string>
-<string><id>3013</id><value>Starting Now</value></string>
-<string><id>3014</id><value>Day</value></string>
-<string><id>3015</id><value>Days</value></string>
-<string><id>3016</id><value>Already Ended</value></string>
-<string><id>3017</id><value>Started </value></string>
-<string><id>3018</id><value>Minute Remaining</value></string>
-<string><id>3019</id><value>Series</value></string>
-<string><id>3020</id><value>Episode</value></string>
-<string><id>3021</id><value>Part</value></string>
-<string><id>3022</id><value>of</value></string>
 </strings>
