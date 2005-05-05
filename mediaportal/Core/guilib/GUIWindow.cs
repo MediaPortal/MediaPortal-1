@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.Library
 
 		#region variables
 		private int windowId = -1; 
-		private int previousWindowId = 0;
+		private int previousWindowId = -1;
 		protected int defaultControlId = 0;
 		protected ArrayList m_vecPositions = new ArrayList();
 		protected ArrayList controlList = new ArrayList();

@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.TV
 				{
 					lock(this)
 					{ 
-						GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 						m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 						m_bOSDVisible=false;
 						m_bUpdate=true;
@@ -209,7 +209,7 @@ namespace MediaPortal.GUI.TV
 
 								if (m_bZapOSDVisible)
 								{
-									GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+									GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
 									m_zapWindow.OnMessage(msg);
 									m_bZapOSDVisible=false;
 								}
@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.TV
 							}
 							else
 							{
-								GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+								GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 								m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 								m_bOSDVisible=false;
 								m_bUpdate=true;
@@ -249,7 +249,7 @@ namespace MediaPortal.GUI.TV
 				{
 					lock(this)
 					{ 
-						GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,GetID,0,null);
 						m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 						m_bMSNChatVisible=false;
 						m_bUpdate=true;
@@ -270,7 +270,7 @@ namespace MediaPortal.GUI.TV
 				if (y > GUIGraphicsContext.Height-100)
 				{
 					m_dwOSDTimeOut=DateTime.Now;
-					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,0,0,null);
+					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,GetID,0,null);
 					m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
 					m_bOSDVisible=true;
 					m_bUpdate=true;
@@ -280,7 +280,7 @@ namespace MediaPortal.GUI.TV
 			{
 				if ((action.wID==Action.ActionType.ACTION_SHOW_GUI) || (action.wID==Action.ActionType.ACTION_SHOW_OSD))
 				{
-					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
 					m_zapWindow.OnMessage(msg);
 					m_bZapOSDVisible=false;
 					m_bUpdate=true;
@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_SHOW_INFO:
 				{
 					m_dwOSDTimeOut=DateTime.Now;
-					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_zapWindow.GetID,0,0,0,0,null);
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_zapWindow.GetID,0,0,GetID,0,null);
 					m_zapWindow.OnMessage(msg);
 					Log.Write("ZAP OSD:ON");
 					m_bUpdate=true;
@@ -412,7 +412,7 @@ namespace MediaPortal.GUI.TV
 				{	
 					Log.Write("OSD:ON");
 					m_dwOSDTimeOut=DateTime.Now;
-					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,0,0,null);
+					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_osdWindow.GetID,0,0,GetID,0,null);
 					m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
 					m_bOSDVisible=true;
 					m_bUpdate=true;
@@ -566,7 +566,7 @@ namespace MediaPortal.GUI.TV
 				case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
 					if (m_bMSNChatVisible)
 					{
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,GetID,0,null);
 						m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					}
 					m_bMSNChatVisible=false;
@@ -576,7 +576,7 @@ namespace MediaPortal.GUI.TV
 				case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
 					if (m_bOSDVisible && m_bMSNChatPopup)
 					{
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 						m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 						m_bOSDVisible=false;
 						m_bUpdate=true;
@@ -597,14 +597,14 @@ namespace MediaPortal.GUI.TV
 					Log.Write("deinit->OSD:Off");
 					if (m_bOSDVisible)
 					{
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 						m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					}
 					m_bOSDVisible=false;
 
 					if (m_bMSNChatVisible)
 					{
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,GetID,0,null);
 						m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					}
 					m_bMSNChatVisible=false;
@@ -1010,7 +1010,7 @@ namespace MediaPortal.GUI.TV
 				if ( ts.TotalMilliseconds > m_iZapTimeOut)
 				{
 					//yes, then remove osd offscreen
-					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
 					m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					Log.Write("timeout->ZAP OSD:Off");
 					m_bZapOSDVisible=false;
@@ -1048,7 +1048,7 @@ namespace MediaPortal.GUI.TV
 				Log.Write("zap osd off");
 				if (m_bZapOSDVisible)
 				{
-					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
 					m_zapWindow.OnMessage(msg);
 					m_bZapOSDVisible=false;
 				}
@@ -1117,7 +1117,7 @@ namespace MediaPortal.GUI.TV
 						if ( ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
 						{
 							//yes, then remove osd offscreen
-							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 							m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 							Log.Write("timeout->OSD:Off");
 							m_bOSDVisible=false;
@@ -1134,7 +1134,7 @@ namespace MediaPortal.GUI.TV
 						if ( ts.TotalMilliseconds > m_iZapTimeOut)
 						{
 							//yes, then remove osd offscreen
-							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+							GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
 							m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 							Log.Write("timeout->ZAP OSD:Off");
 							m_bZapOSDVisible=false;
@@ -1147,13 +1147,13 @@ namespace MediaPortal.GUI.TV
 			if (g_Player.Playing && g_Player.IsTVRecording) return;
 
 			//close window
-			GUIMessage msg2= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+			GUIMessage msg2= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 			m_osdWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
 			Log.Write("timeout->OSD:Off");
 			m_bOSDVisible=false;
 
 			//close window
-			msg2= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,0,0,null);
+			msg2= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,GetID,0,null);
 			m_msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
 			m_bMSNChatVisible=false;
 
@@ -1460,7 +1460,7 @@ namespace MediaPortal.GUI.TV
 					if ( ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
 					{
 						//yes, then remove osd offscreen
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 						m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 
 						m_bOSDVisible=false;
@@ -1477,7 +1477,7 @@ namespace MediaPortal.GUI.TV
 					if ( ts.TotalMilliseconds > m_iZapTimeOut)
 					{
 						//yes, then remove osd offscreen
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,0,0,null);
+						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
 						m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 						Log.Write("timeout->ZAP OSD:Off");
 						m_bZapOSDVisible=false;
