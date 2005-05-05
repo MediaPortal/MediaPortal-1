@@ -286,19 +286,24 @@ namespace MediaPortal.Configuration
 			//
 			progressBar.Value = progressBar.Minimum;
 
-			//
-			// Update control status
-			//
-			cancelButton.Enabled = okButton.Enabled = startButton.Enabled = sensitivityComboBox.Enabled = true;
-			stopButton.Enabled = false;
-
-			OnStopTuning();
-
-			//
-			// Stop timer
-			//
-			tunerTimer.Stop();
+      DoStop();
 		}
+
+    protected void DoStop()
+    {
+      //
+      // Update control status
+      //
+      cancelButton.Enabled = okButton.Enabled = startButton.Enabled = sensitivityComboBox.Enabled = true;
+      stopButton.Enabled = false;
+
+      OnStopTuning();
+
+      //
+      // Stop timer
+      //
+      tunerTimer.Stop();
+    }
 
 		public void AddItem(object item)
 		{
@@ -344,7 +349,7 @@ namespace MediaPortal.Configuration
 			//
 			if(progressBar.Value == progressBar.Maximum)
 			{
-				stopButton_Click(this, EventArgs.Empty);
+				DoStop();
 			}
 		}
 
