@@ -608,13 +608,13 @@ namespace MediaPortal.GUI.Library
 			//GUIListItem item;
 			for (int i=0; i < Count; ++i)
 			{
-				if (m_FilmStripView!=null)
+				if (m_ViewMode==ViewMode.Filmstrip && m_FilmStripView!=null)
 					m_FilmStripView[i].RefreshCoverArt();
-				if (m_ListView!=null)
+				if (m_ViewMode==ViewMode.List && m_ListView!=null)
 					m_ListView[i].RefreshCoverArt();
-				if (m_ThumbnailView!=null)
+				if ( (m_ViewMode==ViewMode.SmallIcons ||m_ViewMode==ViewMode.LargeIcons ) && m_ThumbnailView!=null)  
 					m_ThumbnailView[i].RefreshCoverArt();
-				if (m_ListAlbumView!=null)
+				if ( m_ViewMode==ViewMode.AlbumView && m_ListAlbumView!=null)  
 					m_ListAlbumView[i].RefreshCoverArt();
 			}
 		}

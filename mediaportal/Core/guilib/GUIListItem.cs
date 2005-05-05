@@ -18,19 +18,19 @@ namespace MediaPortal.GUI.Library
     //even which gets fired if the list,thumbnail or filmstrip few needs the
     //coverart for the specified item
     public event            RetrieveCoverArtHandler OnRetrieveArt=null;
-		protected string        m_strLabel="";							// text of column1
-		protected string        m_strLabel2="";							// text of column2
-		protected string        m_strLabel3="";							// text of column3
-		protected string        m_strThumbnailImage="";			// filename of thumbnail 
-		protected string        m_strIcon="";								// filename of icon
-    protected string        m_strIconBig="";						// filename of icon
+		protected string        m_strLabel=String.Empty;							// text of column1
+		protected string        m_strLabel2=String.Empty;							// text of column2
+		protected string        m_strLabel3=String.Empty;							// text of column3
+		protected string        m_strThumbnailImage=String.Empty;			// filename of thumbnail 
+		protected string        m_strIcon=String.Empty;								// filename of icon
+    protected string        m_strIconBig=String.Empty;						// filename of icon
     protected GUIImage      m_pThumbnailImage=null;			// pointer to CImage containing the thumbnail
 		protected GUIImage      m_pIconImage=null;					// pointer to CImage containing the icon
     protected GUIImage      m_pIconImageBig=null;				// pointer to CImage containing the icon
     protected bool          m_bSelected=false;					// item is selected or not
 		protected bool					m_bFolder=false;						// indicated if the item is a folder or a path
-		protected string        m_strPath="";								// path + filename of the item
-		protected string        m_strDVDLabel="";						// indicates the disc number of movie
+		protected string        m_strPath=String.Empty;								// path + filename of the item
+		protected string        m_strDVDLabel=String.Empty;						// indicates the disc number of movie
 		protected int           m_iDuration=0;							// duration (in seconds) of the movie or song
     FileInformation         m_info=null;								// file info (size, date/time etc.) of the file
     bool                    m_bShaded=false;						// indicates if the item needs to be rendered shaded
@@ -39,13 +39,13 @@ namespace MediaPortal.GUI.Library
     object                  m_musicTag;									// object containing the tag info of a music file (e.g., id3 tag)
     object                  m_TVTag;										// object containing the tag info of a tv-recording
     object                  m_AlbumInfoTag;							// object tag info of a music album
-    bool                    m_bArtRetrieved=false;
+    bool                    isCoverArtRetrieved=false;
 	  string                  m_PinIcon=String.Empty;
 	  protected GUIImage      m_PinIconImage=null;
     protected bool          m_isRemote=false;           // indicating if this is a local or remote file
     protected bool          m_isDownloading=false;            // indicating if this file is being downloaded
     int                     m_iItemId=0;                // General item id
-		bool										m_bRetrieveArt=true;
+		bool										retrieveCoverArtAllowed=true;
 
     /// <summary>
 		/// The (empty) constructor of the GUIListItem.
@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public void FreeMemory()
 		{
-      m_bArtRetrieved=false;
+      isCoverArtRetrieved=false;
 
 			if (null!=m_pThumbnailImage) 
 			{
@@ -452,9 +452,12 @@ namespace MediaPortal.GUI.Library
 		public void FreeIcons()
 		{
 			FreeMemory();
-			m_strThumbnailImage="";
-			m_strIcon="";
-      m_PinIcon="";
+			if (OnRetrieveArt!=null)
+			{
+				m_strThumbnailImage=String.Empty;
+				m_strIcon=String.Empty;
+				m_PinIcon=String.Empty;
+			}
 		}
     
     /// <summary>
@@ -463,15 +466,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     void DoRetrieveArt()
     {
-			if (!m_bRetrieveArt) return;
-      if (m_bArtRetrieved) return;
-      m_bArtRetrieved=true;
+			if (!retrieveCoverArtAllowed) return;
+      if (isCoverArtRetrieved) return;
+      isCoverArtRetrieved=true;
       if (OnRetrieveArt!=null) OnRetrieveArt(this);
     }
 		public void RefreshCoverArt()
 		{
 			FreeIcons();
-			m_bArtRetrieved=false;
+			isCoverArtRetrieved=false;
 		}
     
     
@@ -506,8 +509,8 @@ namespace MediaPortal.GUI.Library
     }
 		public bool RetrieveArt
 		{
-			get { return m_bRetrieveArt;}
-			set { m_bRetrieveArt=value;}
+			get { return retrieveCoverArtAllowed;}
+			set { retrieveCoverArtAllowed=value;}
 		}
 	}
 }

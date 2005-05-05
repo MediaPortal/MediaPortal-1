@@ -1176,8 +1176,9 @@ namespace MediaPortal.GUI.Video
         {
           // no Video file in this folder?
           // then just lookup IMDB info and show it
-          if ( ShowIMDB(-1,strMovie, strFolder, strFolder, false))
-            LoadDirectory(currentFolder);
+					ShowIMDB(-1,strMovie, strFolder, strFolder, false);
+					facadeView.RefreshCoverArt();
+					LoadDirectory(currentFolder);
           GUIControl.SelectItemControl(GetID, facadeView.GetID, iSelectedItem);
           return;
         }
@@ -1187,8 +1188,9 @@ namespace MediaPortal.GUI.Video
 
  
 
-      if ( ShowIMDB(-1,strMovie, strFile, strFolder, bFolder))
-        LoadDirectory(currentFolder);
+			ShowIMDB(-1,strMovie, strFile, strFolder, bFolder);
+			facadeView.RefreshCoverArt();
+			LoadDirectory(currentFolder);
       GUIControl.SelectItemControl(GetID, facadeView.GetID, iSelectedItem);
 		}
 
