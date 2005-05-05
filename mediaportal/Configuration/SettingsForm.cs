@@ -603,7 +603,7 @@ namespace MediaPortal.Configuration
 			return true;
 		}
 
-		private void applyButton_Click(object sender, System.EventArgs e)
+		void SaveAllSettings()
 		{
 			foreach(TreeNode treeNode in sectionTree.Nodes)
 			{
@@ -612,6 +612,9 @@ namespace MediaPortal.Configuration
 				//
 				SaveSectionSettings(treeNode);
 			}		
+		}
+		private void applyButton_Click(object sender, System.EventArgs e)
+		{
 
       //
       // Check if MediaPortal is running, if so inform user that it needs to be restarted
@@ -642,10 +645,12 @@ namespace MediaPortal.Configuration
               //
               if(process.WaitForExit(10000) == true)
               {
+								SaveAllSettings();
                 //
                 // Start the MediaPortal process
                 // 
                 Process.Start(processName + ".exe");
+								return;
               }
             }
             catch
@@ -656,7 +661,8 @@ namespace MediaPortal.Configuration
             break;
           }
         }
-      }
+			}
+			SaveAllSettings();
 		}
     private bool EnumWindowCallBack(int hwnd, int lParam)
     {

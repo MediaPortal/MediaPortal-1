@@ -297,11 +297,11 @@ namespace MediaPortal.GUI.Music
 			GUIPropertyManager.SetProperty("#view", handler.CurrentView);
 			if (GetID == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
 			{
-				GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(10005), handler.CurrentView) );
+				GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}",GUILocalizeStrings.Get(100005), handler.CurrentView) );
 			}
 			else
 			{
-				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(10000 + GetID));
+				GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
 			}			
                 
 			facadeView.IsVisible=false;
