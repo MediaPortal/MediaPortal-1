@@ -37,7 +37,7 @@ namespace MediaPortal.GUI.TV
 		
 		DateTime        			m_updateTimer=DateTime.Now;
 		bool            			m_bAlwaysTimeshift=false;
-		
+		bool									settingsLoaded=false;
 		DateTime						  dtlastTime=DateTime.Now;
 
 		[SkinControlAttribute(2)]			protected GUIButtonControl btnTvGuide=null;
@@ -60,6 +60,8 @@ namespace MediaPortal.GUI.TV
 		#region Serialisation
 		void LoadSettings()
 		{
+			if (settingsLoaded) return;
+			settingsLoaded=true;
 			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_navigator.LoadSettings(xmlreader);
