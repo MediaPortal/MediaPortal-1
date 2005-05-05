@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-
+using MediaPortal.Configuration.Sections;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -212,6 +212,8 @@ namespace MediaPortal.Configuration
 
 		protected void okButton_Click(object sender, System.EventArgs e)
 		{
+			TVChannels.UpdateList();
+			RadioStations.UpdateList();
 			this.DialogResult = DialogResult.OK;
 			this.Hide();
 		}

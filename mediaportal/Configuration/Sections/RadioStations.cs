@@ -62,6 +62,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ListView listviewCardChannels;
 		private System.Windows.Forms.ListView listViewRadioChannels;
     ListViewItem currentlyCheckedItem = null;
+		static bool reloadList=false;
 
 		public RadioStations() : this("Stations")
 		{
@@ -513,6 +514,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void LoadRadioStations()
 		{
+			stationsListView.Items.Clear();
       string defaultStation = string.Empty;
 
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -829,6 +831,21 @@ namespace MediaPortal.Configuration.Sections
 		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			LoadCards();
+		}
+
+		static public void UpdateList()
+		{
+			reloadList=true;
+		}
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			if (reloadList)
+			{
+				reloadList=false;
+				LoadSettings();
+				FillInChannelCardMappings();
+			}
+			base.OnPaint (e);
 		}
 
 

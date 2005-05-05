@@ -232,6 +232,7 @@ namespace MediaPortal
 			//	xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
 			//}
 			TVChannels.UpdateList();
+			RadioStations.UpdateList();
       this.Close();
     }
 
