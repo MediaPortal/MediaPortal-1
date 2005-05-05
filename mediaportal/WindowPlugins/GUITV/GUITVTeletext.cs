@@ -98,6 +98,8 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
+			btnSubPage.RestoreSelection=false;
+			btnLanguage.RestoreSelection=false;
 			ShowMessage(100,0);
 			if(dvbTeletextParser==null)
 			{
