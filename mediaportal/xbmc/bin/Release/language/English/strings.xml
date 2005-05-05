@@ -3217,7 +3217,7 @@
 <string><id>100003</id><value>My Files</value></string>
 <string><id>100004</id><value>Settings</value></string>
 <string><id>100005</id><value>My Music</value></string>
-<string><id>100006</id><value>My Videos</value></string>
+<string><id>100006</id><value>My Videos/shares</value></string>
 <string><id>100007</id><value>System information</value></string>
 <string><id>100008</id><value>Settings->General</value></string>
 <string><id>100009</id><value>Settings->Screen</value></string>
@@ -3247,7 +3247,7 @@
 <string><id>100100</id><value>Yes/no dialog</value></string>
 <string><id>100101</id><value>Progress dialog</value></string>
 <string><id>100500</id><value>My Music/playlist</value></string>
-<string><id>100501</id><value>My Music/files</value></string>
+<string><id>100501</id><value>My Music/shares</value></string>
 <string><id>100502</id><value>My Music/albums</value></string>
 <string><id>100503</id><value>My Music/artists</value></string>
 <string><id>100504</id><value>My Music/genres</value></string>

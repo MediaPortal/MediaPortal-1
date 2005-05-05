@@ -21,12 +21,12 @@
 			<texture>videos_logo.png</texture>
 		</control>
 		<control>
-			<description>My videos text label</description>
+			<description>Shares text label</description>
 			<type>label</type>
 			<id>1</id>
 			<posX>250</posX>
 			<posY>70</posY>
-			<label>3</label>
+			<label>134</label>
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>

@@ -35,12 +35,12 @@
 		<texture>panel.png</texture>
 	</control>
 	<control>
-		<description>My Videos Label</description>
+		<description>Shares text Label</description>
 		<type>label</type>
 		<id>1</id>
 		<posX>280</posX>
 		<posY>50</posY>
-		<label>3</label>
+		<label>134</label>
 		<font>font10</font>
 		<align>right</align>
 	</control>
