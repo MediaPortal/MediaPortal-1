@@ -1224,7 +1224,7 @@ public class MediaPortalApp : D3DApp, IRender
 
             }
 
-            if (g_Player.Playing)
+            if (g_Player.Playing || Recorder.IsRadio())
             {
                 switch (action.wID)
                 {

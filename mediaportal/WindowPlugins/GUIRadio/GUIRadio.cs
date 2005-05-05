@@ -793,21 +793,8 @@ namespace MediaPortal.GUI.Radio
 				RadioStation station = item.MusicTag as RadioStation;
         FillPlayList();
 
-				if (station!=null)
-        {
-					if (station.URL.Length>5)
-						PlayListPlayer.Play ( GetPlayPath(station));
-					else
-					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,0,0,0,0,0,null);
-						msg.Label=station.Name;
-						GUIGraphicsContext.SendMessage(msg);
-					}
-        }
-				else
-				{
-					PlayListPlayer.Play (item.Path);
-				}
+				PlayListPlayer.Play ( GetPlayPath(station));
+				
 			}
 		}
 

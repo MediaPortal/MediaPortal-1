@@ -251,6 +251,15 @@ namespace MediaPortal.Playlists
       }
 
 			Log.Write("PlaylistPlayer.Play({0})",item.FileName);
+			if (item.Type == PlayList.PlayListItem.PlayListItemType.Radio)
+			{		
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,0,0,0,0,0,null);
+				msg.Label=item.Description;
+				GUIGraphicsContext.SendMessage(msg);
+				item.Played=true;
+				return;
+			}
+
       if(!g_Player.Play(item.FileName))
       {
         //	Count entries in current playlist
