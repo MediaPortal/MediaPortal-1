@@ -23,7 +23,7 @@
 	<control>
 		<description>Select text label</description>
 		<type>label</type>
-		<id>1</id>
+		<id>4</id>
 		<posX>250</posX>
 		<posY>70</posY>
 		<label>181</label>

@@ -1310,7 +1310,7 @@ namespace MediaPortal.GUI.Video
               {
                 // more then 1 movie found
                 // ask user to select 1
-                pDlgSelect.SetHeading(196);
+                pDlgSelect.SetHeading(196);//select movie
                 pDlgSelect.Reset();
                 for (int i = 0; i < iMoviesFound; ++i)
                 {
