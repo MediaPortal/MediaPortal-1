@@ -79,6 +79,7 @@ namespace MediaPortal.GUI.Library
 		Texture													_packedTexture=null;
 		int															_packedTextureNo=-1;
 		static bool											logtextures=false;
+		System.Drawing.Image			memoryImage=null;
 
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
@@ -113,6 +114,11 @@ namespace MediaPortal.GUI.Library
 			FinalizeConstruction();
 			
     }
+		public System.Drawing.Image MemoryImage
+		{
+			get{return memoryImage;}
+			set{memoryImage=value;}
+		}
     /// <summary>
     /// Does any scaling on the inital size\position values to fit them to screen 
     /// resolution. 
@@ -356,12 +362,24 @@ namespace MediaPortal.GUI.Library
 			}
 
       //load the texture
-			int iImages = GUITextureManager.Load(strFile, m_dwColorKey,m_iRenderWidth,m_iTextureHeight);
-			if (0==iImages) 
+			int iImages=0;
+			if(strFile=="#useMemoryImage")
 			{
-				return;// unable to load texture
-			}
+				iImages = GUITextureManager.LoadFromMemory(memoryImage, m_dwColorKey,m_iRenderWidth,m_iTextureHeight);
+				if (0==iImages) 
+				{
+					return;// unable to load texture
+				}
 
+			}
+			else
+			{
+				iImages = GUITextureManager.Load(strFile, m_dwColorKey,m_iRenderWidth,m_iTextureHeight);
+				if (0==iImages) 
+				{
+					return;// unable to load texture
+				}
+			}
       //get each frame of the texture
 			m_vecTextures = new CachedTexture.Frame [iImages];
 			for (int i=0; i < iImages; i++)

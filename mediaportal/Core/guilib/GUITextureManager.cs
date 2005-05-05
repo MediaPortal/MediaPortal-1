@@ -261,7 +261,68 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
-    
+	  static public int LoadFromMemory(System.Drawing.Image memoryImage, long lColorKey, int iMaxWidth, int iMaxHeight)
+	  {
+		  if (memoryImage==null) return 0;
+
+		  for (int i=0; i < m_cache.Count;++i)
+		  {
+			  CachedTexture cached =(CachedTexture ) m_cache[i];
+      
+			  if (cached.Name=="#useMemoryImage") 
+			  {
+				  return cached.Frames;
+			  }
+		  }
+
+
+		  try
+		  {
+			  CachedTexture newCache = new CachedTexture();
+
+			  newCache.Name="#useMemoryImage";
+			  FrameDimension oDimension = new FrameDimension(memoryImage.FrameDimensionsList[0]);
+			  newCache.Frames=memoryImage.GetFrameCount(oDimension);
+			  if(newCache.Frames!=1) return 0;
+			  //load gif into texture
+			  using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+			  {
+				  memoryImage.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
+				  ImageInformation info2 = new ImageInformation();
+				  stream.Flush();
+				  stream.Seek(0,System.IO.SeekOrigin.Begin);
+				  Direct3D.Texture texture=TextureLoader.FromStream(
+					  GUIGraphicsContext.DX9Device,
+					  stream,
+					  0,0,//width/height
+					  1,//mipslevels
+					  0,//Usage.Dynamic,
+					  Direct3D.Format.A8R8G8B8,
+					  Pool.Managed,
+					  Filter.None,
+					  Filter.None,
+					  (int)lColorKey,
+					  ref info2);
+				  newCache.Width=info2.Width;
+				  newCache.Height=info2.Height;
+				  newCache.texture=new CachedTexture.Frame("#useMemoryImage",texture, 0);
+			  }
+			  memoryImage.Dispose();
+			  memoryImage=null;
+			  m_cache.Add(newCache);
+            
+			  Log.Write("  texturemanager:added: memoryImage  " + " total:"+m_cache.Count + " mem left:"+GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString() );
+			  return newCache.Frames;
+				  
+		  }
+		  catch (Exception ex)
+		  {
+			  Log.Write("exception loading texture {0} err:{1} stack:{2}", "memoryImage", ex.Message,ex.StackTrace);
+		  }
+		  return 0;
+		  
+
+	  }
     static Direct3D.Texture LoadGraphic(string strFileName,long lColorKey, int iMaxWidth,int iMaxHeight,out int iWidth, out int iHeight)
     {
       iWidth=0;
@@ -411,6 +472,8 @@ namespace MediaPortal.GUI.Library
     static public Image GetImage(string strFileNameOrg)
     {
       string strFileName=GetFileName(strFileNameOrg);
+		if(strFileNameOrg=="#useMemoryImage")
+		  strFileName="useMemoryImage";
       if (strFileName=="") return null;
       
       for (int i=0; i < m_cache.Count;++i)
@@ -466,10 +529,14 @@ namespace MediaPortal.GUI.Library
     {
       iTextureWidth=0;
       iTextureHeight=0;
-
-      string strFileName=GetFileName(strFileNameOrg);
-      if (strFileName=="") return null;
-      
+		  string strFileName="";
+		  if(strFileNameOrg!="#useMemoryImage")
+		  {
+			  strFileName=GetFileName(strFileNameOrg);
+			  if (strFileName=="") return null;
+		  }
+		  else
+			  strFileName="#useMemoryImage";
       for (int i=0; i < m_cache.Count;++i)
       {
         CachedTexture cached=(CachedTexture)m_cache[i];

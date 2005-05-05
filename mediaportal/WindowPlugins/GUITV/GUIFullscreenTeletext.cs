@@ -279,21 +279,35 @@ namespace MediaPortal.GUI.TV
 					lblMessage.IsVisible=false;
 
 				
-				imgTeletext.FileName=String.Empty;
-				imgTeletext.FreeResources();
-				imgTeletext.IsVisible=false;
-				Utils.FileDelete(@"teletext.jpg");
-				GUITextureManager.ReleaseTexture(@"teletext.jpg");
-				bmpTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
-				imgTeletext.FileName=@"teletext.jpg";
-				imgTeletext.AllocResources();
-				imgTeletext.IsVisible=true;
+				lock (imgTeletext)
+				{
+					System.Drawing.Image img=(Image)bmpTeletextPage.Clone();
+					imgTeletext.FileName="";
+					imgTeletext.FreeResources();
+					imgTeletext.IsVisible=false;
+					//Utils.FileDelete(@"teletext.jpg");
+					GUITextureManager.ReleaseTexture("#useMemoryImage");
+					//bitmapTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+					imgTeletext.FileName="#useMemoryImage";
+					imgTeletext.MemoryImage=img;
+					imgTeletext.AllocResources();
+					imgTeletext.IsVisible=true;
+				}
 			}
 			catch (Exception ex)
 			{
 				Log.Write("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
+
+		public override void Render(float timePassed)
+		{
+			lock (imgTeletext)
+			{
+				base.Render (timePassed);
+			}
+		}
+
 
 	}// class
 }// namespace
