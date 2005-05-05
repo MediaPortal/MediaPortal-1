@@ -292,6 +292,13 @@ namespace MediaPortal.GUI.TV
 					imgTeletext.MemoryImage=img;
 					imgTeletext.AllocResources();
 					imgTeletext.IsVisible=true;
+					imgTeletext.Centered=false;
+					imgTeletext.KeepAspectRatio=false;
+					int left=GUIGraphicsContext.Width/20; // 5%
+					int top=GUIGraphicsContext.Height/20; // 5%
+					imgTeletext.SetPosition(left,top);
+					imgTeletext.Width=GUIGraphicsContext.Width-(2*left);
+					imgTeletext.Height=GUIGraphicsContext.Height-(2*top);
 				}
 			}
 			catch (Exception ex)

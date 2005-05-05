@@ -3136,7 +3136,7 @@
 	<value>View comments:</value>
 </string>
 
-
+<string><id>12902</id><value>MSN Messenger OSD</value></string>
 <string>
 	<id>13000</id>
 	<value>System:</value>
@@ -3289,7 +3289,7 @@
 <string><id>102700</id><value>My News</value></string>
 <string><id>102900</id><value>Screensaver</value></string>
 <string><id>102901</id><value>Fullscreen OSD</value></string>
-<string><id>102902</id><value>MSN Messenger OSD</value></string>
+
 <string><id>103003</id><value>My TV/OSD</value></string>
 <string><id>103006</id><value>My TV/MSN OSD</value></string>
 <string><id>103007</id><value>My TV/Zap OSD</value></string>
