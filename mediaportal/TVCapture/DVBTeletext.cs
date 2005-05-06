@@ -1167,8 +1167,6 @@ namespace MediaPortal.TV.Recording
 					}
 					pos+=40;
 				}
-			
-				
 			}
 			// render
 			if((int)m_cacheTable[496,0]!=0)
@@ -1182,7 +1180,7 @@ namespace MediaPortal.TV.Recording
 			int x;
 			int width=m_pageWidth/40;
 			int height=(m_pageHeight-2)/25;
-			int fntSize=(width-1<10)?10:width-1;
+			int fntSize=(width-2<10)?10:width-2;
 			m_teletextFont=new System.Drawing.Font("Courier New",fntSize,System.Drawing.FontStyle.Bold);
 			m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
 			int[] topColors=new int[]{(int)TextColors.Red,(int)TextColors.Green,(int)TextColors.Yellow,(int)TextColors.Blue};
