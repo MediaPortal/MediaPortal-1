@@ -73,7 +73,6 @@ namespace MediaPortal.GUI.TV
 		bool                                m_bSingleChannel=false;
 		int                                 m_iProgramOffset=0;
 		int                                 m_iTotalPrograms=0;
-    int                                 m_iGuideDayRange=10;
     int                                 m_iSingleChannel=0;
     bool                                m_bUseChannelLogos=false;
 
@@ -547,7 +546,7 @@ namespace MediaPortal.GUI.TV
 					if (cntlDay!=null)
 					{
 						cntlDay.Reset();
-            cntlDay.SetRange(0, m_iGuideDayRange-1);
+            cntlDay.SetRange(0, MaxDaysInGuide-1);
 						for (int iDay=0; iDay < MaxDaysInGuide; iDay++)
 						{
 							DateTime dtTemp=m_dtTime.AddDays(iDay);
@@ -646,7 +645,7 @@ namespace MediaPortal.GUI.TV
 				{
 					m_dtTime = m_dtTime.AddDays(1.0);
 				}
-				for ( ; iDay>=m_iGuideDayRange ; --iDay)
+				for ( ; iDay>=MaxDaysInGuide ; --iDay)
 				{
 					m_dtTime = m_dtTime.AddDays(-1.0);
 				}
@@ -1778,7 +1777,7 @@ namespace MediaPortal.GUI.TV
 				m_dtTime=m_dtTime.AddMinutes(m_iBlockTime);
         // Check new day
         int iDay=m_dtTime.DayOfYear - DateTime.Now.DayOfYear;
-        if (iDay>=m_iGuideDayRange)
+        if (iDay>=MaxDaysInGuide)
           m_dtTime=m_dtTime.AddMinutes(-m_iBlockTime);
 			}
 			Correct();
