@@ -91,7 +91,7 @@
 		<height>60</height>
 		<align>left</align>
 		<label>#TV.View.description</label>
-		<font>font10</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -115,7 +115,7 @@
 		<posX>205</posX>
 		<posY>443</posY>
 		<align>left</align>
-		<font>font10</font>
+		<font>font13</font>
 		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>

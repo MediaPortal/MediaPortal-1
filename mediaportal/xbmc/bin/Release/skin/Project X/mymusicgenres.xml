@@ -33,6 +33,17 @@
 			<texture>music_logo.png</texture>
 		</control>
 		<control>
+			<description>View label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>250</posX>
+			<posY>70</posY>
+			<label>#view</label>
+			<font>font16</font>
+			<align>right</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
 			<description>Selected item Label</description>
 			<type>fadelabel</type>
 			<id>1</id>
@@ -48,8 +59,8 @@
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>360</posX>
-			<posY>533</posY>
+			<posX>260</posX>
+			<posY>530</posY>
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
@@ -66,28 +77,6 @@
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
-			<description>View text label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
-			<label>#view</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<description>genre name text label</description>
-			<type>label</type>
-			<id>15</id>
-			<posX>260</posX>
-			<posY>50</posY>
-			<label>132</label>
-			<font>font16</font>
-			<align>left</align>
-			<textcolor>FFB2D4F5</textcolor>
-		</control>
-		<control>
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
@@ -100,7 +89,7 @@
 				<label>100</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
-				<onup>9</onup>
+				<onup>17</onup>
 				<ondown>3</ondown>
 			</control>
 			<control>
@@ -134,7 +123,7 @@
 				<posX>60</posX>
 				<posY>165</posY>
 				<label>457</label>
-				<onleft>6</onleft>
+				<onleft>7</onleft>
 				<onright>50</onright>
 				<onup>3</onup>
 				<ondown>8</ondown>

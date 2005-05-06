@@ -20,10 +20,10 @@
 				<description>Heading text label</description> 
 				<type>label</type> 
 				<id>3</id> 
-				<posX>320</posX> 
-				<posY>435</posY> 
+				<posX>330</posX> 
+				<posY>425</posY> 
 				<label>181</label> 
-				<font>font10</font> 
+				<font>font12</font> 
 				<textcolor>FFFFFFFF</textcolor> 
 			</control>	
 				<control>
