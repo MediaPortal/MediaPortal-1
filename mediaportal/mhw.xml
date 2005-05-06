@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="12515000">
+    <entry name="channelCount">24</entry>
+    <entry name="chID0">4011;53;1105</entry>
+    <entry name="chID1">4012;53;1105</entry>
+    <entry name="chID2">4013;53;1105</entry>
+    <entry name="chID3">2004;53;1097</entry>
+    <entry name="chID4">2005;53;1097</entry>
+    <entry name="chID5">5005;53;1109</entry>
+    <entry name="chID6">5010;53;1109</entry>
+    <entry name="chID7">5004;53;1109</entry>
+    <entry name="chID8">5020;53;1109</entry>
+    <entry name="chID9">5015;53;1109</entry>
+    <entry name="chID10">4005;53;1105</entry>
+    <entry name="chID11">4006;53;1105</entry>
+    <entry name="chID12">4007;53;1105</entry>
+    <entry name="chID13">5025;53;1109</entry>
+    <entry name="chID14">28658;1;1066</entry>
+    <entry name="chID15">2025;53;1097</entry>
+    <entry name="chID16">2015;53;1097</entry>
+    <entry name="chID17">2020;53;1097</entry>
+    <entry name="chID18">2010;53;1097</entry>
+    <entry name="chID19">2030;53;1097</entry>
+    <entry name="chID20">17027;1;1094</entry>
+    <entry name="chID21">2035;53;1097</entry>
+    <entry name="chID22">4015;53;1105</entry>
+    <entry name="chID23">4009;53;1105</entry>
+  </section>
+</profile>
