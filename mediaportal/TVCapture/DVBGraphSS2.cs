@@ -1791,14 +1791,21 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Viewing) 
 				return false;
-			m_mediaControl.Stop();
-			m_mediaControl=null;
+			
 			GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			DirectShowUtil.DebugWrite("DVBGraphSS2:StopViewing()");
 			if(m_videoWindow!=null)
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 			m_bOverlayVisible=false;
 
+			if (Vmr9!=null)
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
+			m_mediaControl.Stop();
+			m_mediaControl=null;
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
