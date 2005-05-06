@@ -1282,33 +1282,18 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.Viewing) return;
 			int iVideoWidth, iVideoHeight;
+			int aspectX, aspectY;
 			if (Vmr9.IsVMR9Connected)
 			{
-				iVideoWidth=Vmr9.VideoWidth;
-				iVideoHeight=Vmr9.VideoHeight;
+				aspectX=iVideoWidth=Vmr9.VideoWidth;
+				aspectY=iVideoHeight=Vmr9.VideoHeight;
 			}
 			else
 			{
 				m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
+				m_basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
 			}
-			/*if (GUIGraphicsContext.Overlay==false)
-			{
-				if (Overlay!=false)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:overlay disabled");
-					Overlay=false;
-				}
-				return;
-			}
-			else
-			{
-				if (Overlay!=true)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:overlay enabled");
-					Overlay=true;
-				}
-			}*/
-      
+
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
 				float x = GUIGraphicsContext.OverScanLeft;
@@ -1326,21 +1311,29 @@ namespace MediaPortal.TV.Recording
 				m_geometry.ScreenHeight = nh;
 				m_geometry.ARType = GUIGraphicsContext.ARType;
 				m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
-				m_geometry.GetWindow(out rSource, out rDest);
+				m_geometry.GetWindow(aspectX,aspectY,out rSource, out rDest);
 				rDest.X += (int)x;
 				rDest.Y += (int)y;
 
 				if (!Vmr9.IsVMR9Connected)
-				{
-					
+				{					
 					if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
 					if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
+
+					Log.Write("overlay: video WxH  : {0}x{1}",iVideoWidth,iVideoHeight);
+					Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
+					Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
+					Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
+					Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+					Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+						rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
+					Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+						rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
+
+
 					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
 					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
 					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
 				}
 			}
 			else
@@ -1350,12 +1343,10 @@ namespace MediaPortal.TV.Recording
 					if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
 						GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
 					if (iVideoHeight<=0 || iVideoWidth<=0) return;
+
 					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
 					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
 					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
 				}
 
 			}

@@ -800,58 +800,75 @@ namespace MediaPortal.TV.Recording
 					m_mpeg2Demux.Overlay=true;
 				}
 			}
+			int aspectX, aspectY;
       int iVideoWidth,iVideoHeight;
 			if (!Vmr9.IsVMR9Connected)
 			{
 				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
+				m_mpeg2Demux.GetPreferredAspectRatio(out aspectX, out aspectY);
 			}
 			else
 			{
 				iVideoWidth=Vmr9.VideoWidth;
 				iVideoHeight=Vmr9.VideoHeight;
+				aspectX=iVideoWidth;
+				aspectY=iVideoHeight;
 			}
-      if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
-      {
-        float x=GUIGraphicsContext.OverScanLeft;
-        float y=GUIGraphicsContext.OverScanTop;
-        int  nw=GUIGraphicsContext.OverScanWidth;
-        int  nh=GUIGraphicsContext.OverScanHeight;
-        if (nw <=0 || nh <=0) return;
+			if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
+			{
+				float x=GUIGraphicsContext.OverScanLeft;
+				float y=GUIGraphicsContext.OverScanTop;
+				int  nw=GUIGraphicsContext.OverScanWidth;
+				int  nh=GUIGraphicsContext.OverScanHeight;
+				if (nw <=0 || nh <=0) return;
 
 
-        System.Drawing.Rectangle rSource,rDest;
-        MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
-        m_geometry.ImageWidth=iVideoWidth;
-        m_geometry.ImageHeight=iVideoHeight;
-        m_geometry.ScreenWidth=nw;
-        m_geometry.ScreenHeight=nh;
-        m_geometry.ARType=GUIGraphicsContext.ARType;
-        m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
-        m_geometry.GetWindow(out rSource, out rDest);
-        rDest.X += (int)x;
-        rDest.Y += (int)y;
+				System.Drawing.Rectangle rSource,rDest;
+				MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
+				m_geometry.ImageWidth=iVideoWidth;
+				m_geometry.ImageHeight=iVideoHeight;
+				m_geometry.ScreenWidth=nw;
+				m_geometry.ScreenHeight=nh;
+				m_geometry.ARType=GUIGraphicsContext.ARType;
+				m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
+				m_geometry.GetWindow(out rSource, out rDest);
+				m_geometry.GetWindow(aspectX,aspectY,out rSource, out rDest);
+				rDest.X += (int)x;
+				rDest.Y += (int)y;
 
-				
-				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
-				if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
-        m_mpeg2Demux.SetSourcePosition( rSource.Left,rSource.Top,rSource.Width,rSource.Height);
-        m_mpeg2Demux.SetDestinationPosition(0,0,rDest.Width,rDest.Height );
-        m_mpeg2Demux.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
-      }
-      else
-      {
+				if (!Vmr9.IsVMR9Connected)
+				{					
+					Log.Write("overlay: video WxH  : {0}x{1}",iVideoWidth,iVideoHeight);
+					Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
+					Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
+					Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
+					Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+					Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+						rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
+					Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+						rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
+
+					if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+					if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
+					m_mpeg2Demux.SetSourcePosition( rSource.Left,rSource.Top,rSource.Width,rSource.Height);
+					m_mpeg2Demux.SetDestinationPosition(0,0,rDest.Width,rDest.Height );
+					m_mpeg2Demux.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
+				}
+			}
+			else
+			{
 				if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
-					   GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
-        if (iVideoHeight<=0 || iVideoWidth<=0) return;
+					GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
+				if (iVideoHeight<=0 || iVideoWidth<=0) return;
         
 				m_mpeg2Demux.SetSourcePosition(0,0,iVideoWidth,iVideoHeight);
         
-        if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
-          m_mpeg2Demux.SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+				if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
+					m_mpeg2Demux.SetDestinationPosition(0,0,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
         
-        if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
-          m_mpeg2Demux.SetWindowPosition( GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
-      }
+				if (GUIGraphicsContext.VideoWindow.Width>0 && GUIGraphicsContext.VideoWindow.Height>0)
+					m_mpeg2Demux.SetWindowPosition( GUIGraphicsContext.VideoWindow.Left,GUIGraphicsContext.VideoWindow.Top,GUIGraphicsContext.VideoWindow.Width,GUIGraphicsContext.VideoWindow.Height);
+			}
     }
 
  

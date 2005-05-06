@@ -336,7 +336,9 @@ namespace DShowNET
 			if (m_videoWindow==null) return;
 			
 			int iVideoWidth,iVideoHeight;
+			int aspectX, aspectY;
 			GetVideoSize( out iVideoWidth, out iVideoHeight );
+			GetPreferredAspectRatio(out aspectX, out aspectY);
 			if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
 			{
 				float x=GUIGraphicsContext.OverScanLeft;
@@ -353,9 +355,19 @@ namespace DShowNET
 				m_geometry.ScreenHeight=nh;
 				m_geometry.ARType=GUIGraphicsContext.ARType;
 				m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
-				m_geometry.GetWindow(out rSource, out rDest);
+				m_geometry.GetWindow(aspectX,aspectY,out rSource, out rDest);
 				rDest.X += (int)x;
 				rDest.Y += (int)y;
+
+				Log.Write("overlay: video WxH  : {0}x{1}",iVideoWidth,iVideoHeight);
+				Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
+				Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
+				Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
+				Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+				Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+					rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
+				Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+					rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
 
 				SetSourcePosition( rSource.Left,rSource.Top,rSource.Width,rSource.Height);
 				SetDestinationPosition(0,0,rDest.Width,rDest.Height );
@@ -386,6 +398,13 @@ namespace DShowNET
 			if (m_basicVideo==null) return;
       m_basicVideo.GetVideoSize( out iWidth, out iHeight );
     }
+		public void GetPreferredAspectRatio(out int aspectX, out int aspectY)
+		{
+			aspectX=4; aspectY=3;
+			if (m_basicVideo==null) return;
+			m_basicVideo.GetPreferredAspectRatio( out aspectX, out aspectY );
+
+		}
 
     public void SetDestinationPosition( int x,int y, int width, int height)
     {

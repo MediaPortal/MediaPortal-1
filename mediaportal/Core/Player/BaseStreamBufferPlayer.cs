@@ -248,17 +248,41 @@ namespace MediaPortal.Player
 			if (nw <=0 || nh <=0) return;
 			if (x  < 0 || y  < 0) return;
 
-			System.Drawing.Rectangle rSource,rDest;
+			
+			int aspectX, aspectY;
+			if (basicVideo!=null)
+			{
+				basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+			}
+			aspectX=m_iVideoWidth;
+			aspectY=m_iVideoHeight;
+			if (basicVideo!=null)
+			{
+				basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+			}
 			MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
+			System.Drawing.Rectangle rSource,rDest;
 			m_geometry.ImageWidth=m_iVideoWidth;
 			m_geometry.ImageHeight=m_iVideoHeight;
 			m_geometry.ScreenWidth=nw;
 			m_geometry.ScreenHeight=nh;
 			m_geometry.ARType=GUIGraphicsContext.ARType;
 			m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
-			m_geometry.GetWindow(out rSource, out rDest);
+			m_geometry.GetWindow(aspectX,aspectY,out rSource, out rDest);
+
 			rDest.X += (int)x;
 			rDest.Y += (int)y;
+
+			Log.Write("overlay: video WxH  : {0}x{1}",m_iVideoWidth,m_iVideoHeight);
+			Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
+			Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
+			Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
+			Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+			Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+				rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
+			Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+				rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
+
         
 			Log.Write("StreamBufferPlayer:Window ({0},{1})-({2},{3}) - ({4},{5})-({6},{7})", 
 				rSource.X,rSource.Y, rSource.Right, rSource.Bottom,
