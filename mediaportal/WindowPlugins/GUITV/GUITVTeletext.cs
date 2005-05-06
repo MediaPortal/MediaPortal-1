@@ -29,7 +29,6 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(504)]				protected GUIButtonControl btnPage300=null;
 		[SkinControlAttribute(505)]				protected GUIToggleButtonControl btnHidden=null;
 		[SkinControlAttribute(506)]				protected GUISelectButtonControl btnSubPage=null;
-		[SkinControlAttribute(507)]				protected GUISelectButtonControl btnLanguage=null;
 
 		DVBTeletext	dvbTeletextParser;
 		Bitmap	bitmapTeletextPage;
@@ -99,7 +98,6 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageLoad ();
 			btnSubPage.RestoreSelection=false;
-			btnLanguage.RestoreSelection=false;
 			ShowMessage(100,0);
 			if(dvbTeletextParser==null)
 			{
@@ -148,16 +146,6 @@ namespace MediaPortal.GUI.TV
 					dvbTeletextParser.HiddenMode=btnHidden.Selected;
 					GetNewPage();
 				}
-			}
-
-			if(control==btnLanguage)
-			{
-				if(dvbTeletextParser!=null && btnLanguage!=null)
-				{
-					dvbTeletextParser.PageLanguage=btnLanguage.SelectedItem;
-					GetNewPage();
-				}
-
 			}
 			if(control==btnSubPage)
 			{
