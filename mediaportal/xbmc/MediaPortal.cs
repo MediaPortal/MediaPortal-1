@@ -827,6 +827,9 @@ public class MediaPortalApp : D3DApp, IRender
 						return;
 					}
 
+					
+					Surface rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+					GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
             ++frames;
             // clear the surface
             //if (prevwindow!=GUIWindowManager.ActiveWindow)
