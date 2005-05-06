@@ -2085,6 +2085,7 @@ namespace MediaPortal.Configuration
 			try
 			{
 				btnRadio.Visible=false;
+				button1.Visible=false;
 				//
 				// Setup frame sizes
 				//
@@ -2118,6 +2119,7 @@ namespace MediaPortal.Configuration
 							capture.Network!=NetworkType.DVBT)
 						{
 							btnRadio.Visible=true;
+							button1.Visible=true;
 						}
 						//
 						// Clear combo box
