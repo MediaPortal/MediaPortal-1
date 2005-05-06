@@ -413,7 +413,7 @@ namespace MediaPortal.GUI.TV
           strLine=GUILocalizeStrings.Get(671);//Sort by: Watched
           break;
 			}
-			GUIControl.SetControlLabel(GetID,btnViewAs.GetID,strLine);
+			GUIControl.SetControlLabel(GetID,btnSortBy.GetID,strLine);
 			switch (currentViewMethod)
 			{
 				case ViewAs.Album:
