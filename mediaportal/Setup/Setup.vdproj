@@ -13257,7 +13257,7 @@
             "SourcePath" = "8:..\\LUI.dll"
             "TargetName" = "8:LUI.dll"
             "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Folder" = "8:_5DC25A72C5CB4A8484809668569D5B7A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -50776,6 +50776,17 @@
                             }
                         }
                     }
+                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_5DC25A72C5CB4A8484809668569D5B7A"
+                    {
+                    "Name" = "8:LUI"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_8BBC7926E18E49D4A95AB555E29F9194"
+                        "Folders"
+                        {
+                        }
+                    }
                     "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_6C315C96DB0E461CA03C0F35479EC599"
                     {
                     "Name" = "8:Docs"
@@ -51047,7 +51058,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{20B94F20-547C-4818-BA9B-2ACDB5498835}"
+        "PackageCode" = "8:{BDD29416-50B7-44BD-93DF-209B6248E3DD}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
