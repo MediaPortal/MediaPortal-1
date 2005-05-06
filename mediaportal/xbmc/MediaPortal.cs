@@ -801,7 +801,11 @@ public class MediaPortalApp : D3DApp, IRender
     static bool reentrant = false;
     protected override void Render(float timePassed)
     {
-        if (reentrant) return;
+				if (reentrant) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called reentrant");
+					return;
+				}
 				if (GUIGraphicsContext.InVmr9Render)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called while in vmr9 render {0} {1}",GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS);
@@ -813,11 +817,15 @@ public class MediaPortalApp : D3DApp, IRender
 					return;
 				}
 			
+			
         try
         {
             reentrant = true;
             // if there's no DX9 device (during resizing for exmaple) then just return
-            if (GUIGraphicsContext.DX9Device == null) return;
+					if (GUIGraphicsContext.DX9Device == null) 
+					{
+						return;
+					}
 
             ++frames;
             // clear the surface
@@ -835,16 +843,16 @@ public class MediaPortalApp : D3DApp, IRender
 
             GUIFontManager.Present();
             GUIGraphicsContext.DX9Device.EndScene();
-            try
-            {
-              // Show the frame on the primary surface.
-              GUIGraphicsContext.DX9Device.Present();//SLOW
-            }
-            catch (DeviceLostException)
-            {
-              g_Player.Stop();
-              deviceLost = true;
-            }
+					try
+					{
+						// Show the frame on the primary surface.
+						GUIGraphicsContext.DX9Device.Present();//SLOW
+					}
+					catch (DeviceLostException)
+					{
+						g_Player.Stop();
+						deviceLost = true;
+					}
         }
         finally
         {

@@ -138,13 +138,14 @@ namespace MediaPortal.Player
       if (m_scene != null)
 			{
 				Log.Write("VMR9Helper:stop vmr9");
-				GUIGraphicsContext.Vmr9Active = false;
-				GUIGraphicsContext.Vmr9FPS=0f;
-				currentVmr9State = Vmr9PlayState.Playing;
         instanceCounter--;
         m_scene.Stop();
         m_scene.Deinit();
-        m_scene = null;
+				m_scene = null;
+				GUIGraphicsContext.Vmr9Active = false;
+				GUIGraphicsContext.Vmr9FPS=0f;
+				GUIGraphicsContext.InVmr9Render=false;
+				currentVmr9State = Vmr9PlayState.Playing;
       }
       if (VMR9Filter != null)
         Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
@@ -207,7 +208,7 @@ namespace MediaPortal.Player
       if (m_scene.Enabled == false) return;
       if (currentVmr9State == Vmr9PlayState.Playing)
       {
-        Log.Write("VMR9: playing->repaint");
+        Log.Write("VMR9Helper: playing->repaint");
         currentVmr9State = Vmr9PlayState.Repaint;
 				m_scene.DrawVideo=false;
       }
@@ -222,7 +223,7 @@ namespace MediaPortal.Player
         int framesDrawn = FrameCounter;
         framesDrawn *= 1000;
         GUIGraphicsContext.Vmr9FPS = ((float)framesDrawn) / ((float)ts.TotalMilliseconds);
-        //Log.Write("vmr9:frames:{0} fps:{1} time:{2}", framesDrawn, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
+        //Log.Write("VMR9Helper:frames:{0} fps:{1} time:{2}", framesDrawn, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         repaintTimer = DateTime.Now;
         FrameCounter = 0;
       }
@@ -230,7 +231,7 @@ namespace MediaPortal.Player
       {
         if (currentVmr9State == Vmr9PlayState.Repaint)
         {
-          Log.Write("VMR9: repaint->playing");
+          Log.Write("VMR9Helper: repaint->playing");
           currentVmr9State = Vmr9PlayState.Playing;
 					m_scene.DrawVideo=true;
         }

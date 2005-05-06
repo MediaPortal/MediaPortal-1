@@ -794,7 +794,15 @@ namespace MediaPortal.GUI.Library
 			}
 			set 
 			{
-				vmr9Active=value;
+				if (value!=vmr9Active)
+				{
+					vmr9Active=value;
+					if (vmr9Active) Log.Write("VMR9: now active");
+					else 
+					{
+						Log.Write("VMR9: not active");
+					}
+				}
 			}
 		}
 		static public float TimePassed

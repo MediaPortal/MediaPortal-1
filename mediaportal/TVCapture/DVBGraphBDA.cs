@@ -672,9 +672,9 @@ namespace MediaPortal.TV.Recording
 					m_TunerStatistics=null;
 				}
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free vmr9");
 				if (Vmr9!=null)
 				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free vmr9");
 					Vmr9.RemoveVMR9();
 					Vmr9.Release();
 					Vmr9=null;
@@ -682,29 +682,29 @@ namespace MediaPortal.TV.Recording
 
 				//			UnAdviseProgramInfo();
 				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
 				if (m_recorder!=null) 
 				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
 					m_recorder.Stop();
 					m_recorder=null;
-					
 				}
 				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free streambuffer");
 				if (m_StreamBufferSink!=null) 
 				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free streambuffer");
 					Marshal.ReleaseComObject(m_StreamBufferSink); m_StreamBufferSink=null;
 				}
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
 				if (m_mediaControl != null)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
 					m_mediaControl.Stop();
-	     
+				}
 				graphRunning=false;
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: hide video window");
 				if (m_videoWindow != null)
 				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: hide video window");
 					m_videoWindow.put_Visible(DsHlp.OAFALSE);
 					//m_videoWindow.put_Owner(IntPtr.Zero);
 					m_videoWindow = null;

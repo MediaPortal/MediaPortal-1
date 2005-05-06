@@ -53,7 +53,6 @@ namespace MediaPortal.Player
 
 		bool					  m_bStop = false;
 		Surface					rTarget = null;
-		//VertexBuffer		vertexBuffer = null;
 		IRender				  m_renderer;
 		long					  m_lColorDiffuse = 0xFFFFFFFF;
 		int						  m_iFrame = 0;
@@ -83,6 +82,7 @@ namespace MediaPortal.Player
 
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
+			Log.Write("PlaneScene: ctor()");
 			inRepaint=false;
 			m_surfAdr=0;
 			m_texAdr=0;
@@ -101,6 +101,8 @@ namespace MediaPortal.Player
 		/// </summary>
 		public void Stop()
 		{
+			Log.Write("PlaneScene: Stop()");
+			DrawVideo=false;
 			m_bStop = true;
 			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			try
@@ -109,7 +111,11 @@ namespace MediaPortal.Player
 				{
 					if (!GUIGraphicsContext.DX9Device.Disposed)
 					{
-						GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+						lock (typeof(PlaneScene))
+						{
+							Log.Write("PlaneScene: Stop() restore target");
+							GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+						}
 					}
 				}
 			}
@@ -124,7 +130,7 @@ namespace MediaPortal.Player
 			get { return drawVideoAllowed;}
 			set { 
 				drawVideoAllowed=value;
-				Log.Write("vmr9: video draw allowed:{0}", drawVideoAllowed);
+				Log.Write("PlaneScene: video draw allowed:{0}", drawVideoAllowed);
 			}
 
 		}
@@ -167,8 +173,7 @@ namespace MediaPortal.Player
 		{
 			lock(this) 
 			{
-				//if (vertexBuffer != null) vertexBuffer.Dispose();
-				//vertexBuffer = null;
+				Log.Write("PlaneScene: deinit()");
 
 				if (rTarget!=null)
 				{
@@ -191,9 +196,8 @@ namespace MediaPortal.Player
 		/// <param name="device">Direct3d devices</param>
 		public void Init() 
 		{
-			if (rTarget == null)
-				rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-			//m_iFrameCounter=0;
+			Log.Write("PlaneScene: init()");
+			rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
 		}
 
 		public bool InTv
@@ -307,14 +311,14 @@ namespace MediaPortal.Player
 				if (rSource.Width  < 10) return false;
 				if (rSource.Height < 10) return false;
 
-				Log.Write("vmr9: video WxH  : {0}x{1}",videoSize.Width,videoSize.Height);
-				Log.Write("vmr9: video AR   : {0}:{1}",arVideoWidth, arVideoHeight);
-				Log.Write("vmr9: screen WxH : {0}x{1}",nw,nh);
-				Log.Write("vmr9: AR type    : {0}",GUIGraphicsContext.ARType);
-				Log.Write("vmr9: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
-				Log.Write("vmr9: src        : ({0},{1})-({2},{3})",
+				Log.Write("PlaneScene: video WxH  : {0}x{1}",videoSize.Width,videoSize.Height);
+				Log.Write("PlaneScene: video AR   : {0}:{1}",arVideoWidth, arVideoHeight);
+				Log.Write("PlaneScene: screen WxH : {0}x{1}",nw,nh);
+				Log.Write("PlaneScene: AR type    : {0}",GUIGraphicsContext.ARType);
+				Log.Write("PlaneScene: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+				Log.Write("PlaneScene: src        : ({0},{1})-({2},{3})",
 					rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
-			  Log.Write("vmr9: dst        : ({0},{1})-({2},{3})",
+			  Log.Write("PlaneScene: dst        : ({0},{1})-({2},{3})",
 					rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
 
 				//next calculate which part of the video texture should be copied
@@ -360,7 +364,7 @@ namespace MediaPortal.Player
 			get { return isEnabled;}
 			set { 
 				isEnabled=value;
-				Log.Write("vmr9 enabled:{0}", isEnabled);
+				Log.Write("planescene: enabled:{0}", isEnabled);
 			}
 		}
 
@@ -374,7 +378,7 @@ namespace MediaPortal.Player
 			{
 				if (reentrant)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"VMR9: re-entrancy in presentimage");
+					Log.WriteFile(Log.LogType.Log,true,"PlaneScene: re-entrancy in presentimage");
 					return;
 				}
 				m_vmr9Util.VideoWidth=width;
@@ -523,7 +527,7 @@ namespace MediaPortal.Player
 						}
 						catch (Exception ex)
 						{
-							Log.WriteFile(Log.LogType.Log,true,"Unhandled exception in {0} {1} {2}",
+							Log.WriteFile(Log.LogType.Log,true,"Planescene:Unhandled exception in {0} {1} {2}",
 								ex.Message,ex.Source,ex.StackTrace);
 						}
 						finally
@@ -549,7 +553,7 @@ namespace MediaPortal.Player
 			{
 				if (reentrant)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"VMR9: re-entrancy in PresentSurface");
+					Log.WriteFile(Log.LogType.Log,true,"PlaneScene: re-entrancy in PresentSurface");
 					return;
 				}
 				m_vmr9Util.VideoWidth=width;
@@ -694,7 +698,7 @@ namespace MediaPortal.Player
 						}
 						catch (Exception ex)
 						{
-							Log.WriteFile(Log.LogType.Log,true,"Unhandled exception in {0} {1} {2}",
+							Log.WriteFile(Log.LogType.Log,true,"Planescene:Unhandled exception in {0} {1} {2}",
 								ex.Message,ex.Source,ex.StackTrace);
 						}
 						finally
@@ -798,7 +802,7 @@ namespace MediaPortal.Player
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"Unhandled exception in {0} {1} {2}",
+				Log.WriteFile(Log.LogType.Log,true,"planescene:Unhandled exception in {0} {1} {2}",
 						ex.Message,ex.Source,ex.StackTrace);
 			}
 			finally
