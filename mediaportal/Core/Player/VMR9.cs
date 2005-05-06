@@ -34,6 +34,7 @@ namespace MediaPortal.Player
     int frameCounter = 0;
     DateTime repaintTimer = DateTime.Now;
     static int instanceCounter = 0;
+		IGraphBuilder m_graphBuilder=null;
     enum Vmr9PlayState
     {
       Playing,
@@ -104,6 +105,7 @@ namespace MediaPortal.Player
       instanceCounter++;
       m_scene = new PlaneScene(m_renderFrame, this);
       m_scene.Init();
+			m_graphBuilder=graphBuilder;
       vmr9Helper = new DirectShowHelperLib.VMR9HelperClass();
       DirectShowHelperLib.IBaseFilter baseFilter = VMR9Filter as DirectShowHelperLib.IBaseFilter;
 
@@ -138,8 +140,18 @@ namespace MediaPortal.Player
       if (m_scene != null)
 			{
 				Log.Write("VMR9Helper:stop vmr9");
+				m_scene.Stop();
+				// we need to pause the graph because otherwise media samples will still be
+				// delivered to vmr9 and vmr9 will change the directx9 render target
+				// by pausing we make sure that no media samples are delivered to vmr9 anymore
+				IMediaControl media=m_graphBuilder as IMediaControl;
+				if (media!=null)
+				{
+					media.Pause();
+					media = null;
+				}
+				m_graphBuilder = null;
         instanceCounter--;
-        m_scene.Stop();
         m_scene.Deinit();
 				m_scene = null;
 				GUIGraphicsContext.Vmr9Active = false;

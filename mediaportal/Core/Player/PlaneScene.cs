@@ -157,6 +157,8 @@ namespace MediaPortal.Player
 
 				if (rTarget!=null)
 				{
+					//VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+					GUIGraphicsContext.DX9Device.SetRenderTarget(0,rTarget);
 					rTarget.Dispose();
 					rTarget=null;
 				}
@@ -409,9 +411,9 @@ namespace MediaPortal.Player
 								return;
 							if (GUIGraphicsContext.DX9Device.Disposed) 
 								return;
-							if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 							if (GUIWindowManager.IsSwitchingToNewWindow) 
 								return; //dont present video during window transitions
+							if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 
 							//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 							//first time, fade in the video in 12 steps

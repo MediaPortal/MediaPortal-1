@@ -1041,9 +1041,7 @@ namespace MediaPortal.TV.Recording
 			if (Vmr9!=null)
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop vmr9");
-				Vmr9.RemoveVMR9();
-				Vmr9.Release();
-				Vmr9=null;
+				Vmr9.Enable(false);
 			}
 
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");

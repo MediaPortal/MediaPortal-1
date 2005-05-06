@@ -880,6 +880,11 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("SWGraph:StopViewing()");
 			if (m_videoWindow!=null)
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
+			if (Vmr9!=null)
+			{
+				Vmr9.Enable(false);
+			}
+			
       m_bOverlayVisible=false;
       m_mediaControl.Stop();
       m_graphState = State.Created;

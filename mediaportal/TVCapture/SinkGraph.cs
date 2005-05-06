@@ -770,9 +770,14 @@ namespace MediaPortal.TV.Recording
        
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:StopViewing()");
+			if (Vmr9!=null)
+			{
+				Vmr9.Enable(false);
+			}
 			if (m_mpeg2Demux!=null)
 				m_mpeg2Demux.StopViewing();
-      m_graphState=State.Created;
+			
+			m_graphState=State.Created;
       DeleteGraph();
       return true;
     }

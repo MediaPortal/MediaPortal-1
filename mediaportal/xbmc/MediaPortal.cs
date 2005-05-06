@@ -803,7 +803,6 @@ public class MediaPortalApp : D3DApp, IRender
     {
 				if (reentrant) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"Mediaportal.Render() called reentrant");
 					return;
 				}
 				if (GUIGraphicsContext.InVmr9Render)
@@ -818,7 +817,6 @@ public class MediaPortalApp : D3DApp, IRender
 				}
 			
 			
-				Surface rTarget =null;
         try
         {
             reentrant = true;
@@ -829,9 +827,7 @@ public class MediaPortalApp : D3DApp, IRender
 					}
 
 					
-						rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-						GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
-            ++frames;
+			      ++frames;
             // clear the surface
             //if (prevwindow!=GUIWindowManager.ActiveWindow)
             {
@@ -860,9 +856,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         finally
         {
-					if (rTarget!=null) rTarget.Dispose();
-            reentrant = false;
-        }
+			  }
     }
 
     protected override void OnProcess()

@@ -1812,9 +1812,7 @@ namespace MediaPortal.TV.Recording
 
 			if (Vmr9!=null)
 			{
-				Vmr9.RemoveVMR9();
-				Vmr9.Release();
-				Vmr9=null;
+				Vmr9.Enable(false);
 			}
 			m_mediaControl.Stop();
 			m_mediaControl=null;
