@@ -22,6 +22,7 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVGuide : GUIWindow
 	{
+		const int MaxDaysInGuide=30;
 		enum Controls
 		{
 			PANEL_BACKGROUND=2,
@@ -547,7 +548,7 @@ namespace MediaPortal.GUI.TV
 					{
 						cntlDay.Reset();
             cntlDay.SetRange(0, m_iGuideDayRange-1);
-						for (int iDay=0; iDay < 10; iDay++)
+						for (int iDay=0; iDay < MaxDaysInGuide; iDay++)
 						{
 							DateTime dtTemp=m_dtTime.AddDays(iDay);
 							string day;
