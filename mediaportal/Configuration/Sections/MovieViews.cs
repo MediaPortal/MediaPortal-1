@@ -169,7 +169,10 @@ namespace MediaPortal.Configuration.Sections
 			cbViews.Items.Clear();
 			foreach (ViewDefinition view in views)
 			{
-				cbViews.Items.Add(view.Name);
+				if (cbViews.Name!=String.Empty)
+				{
+					cbViews.Items.Add(view.Name);
+				}
 			}
 			cbViews.Items.Add("new...");
 			if (cbViews.Items.Count>0)
@@ -563,6 +566,7 @@ namespace MediaPortal.Configuration.Sections
 				{
 					FilterDefinition def = new FilterDefinition();
 					def.Where = row[0] as string;
+					if (def.Where==String.Empty) continue;
 					def.SqlOperator = row[1].ToString();
 					def.Restriction = row[2].ToString();
 					try

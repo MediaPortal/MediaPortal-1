@@ -653,7 +653,8 @@ namespace MediaPortal.TV.Recording
 				m_iPrevChannel = -1;
 				if (m_epgClass!=null)
 					m_epgClass.ClearBuffer();
-		
+				if (m_teleText!=null)
+					m_teleText.ClearBuffer(); 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
 				StopRecording();
 				StopViewing();
@@ -2880,6 +2881,8 @@ namespace MediaPortal.TV.Recording
 			if(m_epgClass!=null)
 				m_epgClass.ClearBuffer();
 
+			if (m_teleText!=null)
+				m_teleText.ClearBuffer();
 			try
 			{
 
