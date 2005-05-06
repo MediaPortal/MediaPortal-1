@@ -1044,9 +1044,11 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Enable(false);
 			}
 
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
 			if (m_mediaControl!=null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
 				m_mediaControl.Stop();
+			}
 			graphRunning=false;
 			m_graphState = State.Created;
 			DeleteGraph();

@@ -158,6 +158,7 @@ namespace MediaPortal.Player
 				if (rTarget!=null)
 				{
 					//VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+					GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 					rTarget.Dispose();
 					rTarget=null;
 				}

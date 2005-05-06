@@ -96,7 +96,6 @@ public class MediaPortalApp : D3DApp, IRender
     int g_nAnisotropy;
     DateTime m_updateTimer = DateTime.MinValue;
     int m_iDateLayout;
-
     static SplashScreen splashScreen;
 
     public delegate bool IECallBack(int hwnd, int lParam);
@@ -803,6 +802,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
 				if (reentrant) 
 				{
+					Log.Write("dx9 re-entrant");//remove
 					return;
 				}
 				if (GUIGraphicsContext.InVmr9Render)
@@ -823,10 +823,16 @@ public class MediaPortalApp : D3DApp, IRender
             // if there's no DX9 device (during resizing for exmaple) then just return
 					if (GUIGraphicsContext.DX9Device == null) 
 					{
+						reentrant = false;
+						//Log.Write("dx9 device=null");//remove
 						return;
 					}
 
 					
+					//Log.Write("render frame:{0}",frames);//remove
+					Surface rTarget ;
+					rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+					GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 			      ++frames;
             // clear the surface
             //if (prevwindow!=GUIWindowManager.ActiveWindow)
@@ -848,14 +854,21 @@ public class MediaPortalApp : D3DApp, IRender
 						// Show the frame on the primary surface.
 						GUIGraphicsContext.DX9Device.Present();//SLOW
 					}
-					catch (DeviceLostException)
+					catch (DeviceLostException )
 					{
+						//Log.Write("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
 						g_Player.Stop();
 						deviceLost = true;
 					}
+						/*
+					catch (Exception ex) // remove
+					{
+						Log.Write("exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+					}*/
         }
         finally
         {
+					reentrant = false;
 			  }
     }
 
@@ -1028,6 +1041,8 @@ public class MediaPortalApp : D3DApp, IRender
                                                                                                         GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, GUIGraphicsContext.DX9Device.DisplayMode.Format,
                                                                                                         Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface,
                                                                                                         Format.A8R8G8B8);
+
+			
     }
 
     /// <summary>
@@ -1367,7 +1382,10 @@ public class MediaPortalApp : D3DApp, IRender
             return;
         }
 
-        if (key.KeyChar == '!') m_bShowStats = !m_bShowStats;
+			if (key.KeyChar == '!') 
+			{
+				m_bShowStats = !m_bShowStats;
+			}
 
         if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
         {
