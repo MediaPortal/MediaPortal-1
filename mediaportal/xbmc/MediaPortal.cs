@@ -818,6 +818,7 @@ public class MediaPortalApp : D3DApp, IRender
 				}
 			
 			
+				Surface rTarget =null;
         try
         {
             reentrant = true;
@@ -828,8 +829,8 @@ public class MediaPortalApp : D3DApp, IRender
 					}
 
 					
-					Surface rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-					GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+						rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+						GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
             ++frames;
             // clear the surface
             //if (prevwindow!=GUIWindowManager.ActiveWindow)
@@ -859,6 +860,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         finally
         {
+					if (rTarget!=null) rTarget.Dispose();
             reentrant = false;
         }
     }

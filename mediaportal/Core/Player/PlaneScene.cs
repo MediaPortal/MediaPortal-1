@@ -104,26 +104,6 @@ namespace MediaPortal.Player
 			Log.Write("PlaneScene: Stop()");
 			DrawVideo=false;
 			m_bStop = true;
-			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
-			try
-			{
-				if (rTarget != null && GUIGraphicsContext.DX9Device!=null)
-				{
-					if (!GUIGraphicsContext.DX9Device.Disposed)
-					{
-						lock (typeof(PlaneScene))
-						{
-							Log.Write("PlaneScene: Stop() restore target");
-							GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
-						}
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"exception in planescene.cs Stop() {0} {1} {2}",
-							ex.Message,ex.Source,ex.StackTrace);
-			}
 		}
 		public bool DrawVideo
 		{
@@ -600,8 +580,8 @@ namespace MediaPortal.Player
 							//sanity checks
 							if (GUIGraphicsContext.DX9Device==null) return;
 							if (GUIGraphicsContext.DX9Device.Disposed) return;
-							if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 							if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
+							if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 
 							//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 							//first time, fade in the video in 12 steps
