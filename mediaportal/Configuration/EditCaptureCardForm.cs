@@ -2801,6 +2801,7 @@ namespace MediaPortal.Configuration
 				dialog.Tuning=tuning;
 				dialog.Card=CaptureCard;
 				dialog.ShowDialog(this);
+				FillEpgGrabberTreeView();
 			}
 			else
 			{
@@ -3025,17 +3026,7 @@ namespace MediaPortal.Configuration
 						return;
 					}
 					capture.DeleteGraph();
-					ArrayList channelList=new ArrayList();
-					TVDatabase.GetChannels(ref channelList);
-					treeView5.Nodes.Clear();
-					
-					foreach (TVChannel chan in channelList)
-					{
-						TreeNode node=new TreeNode(chan.Name);
-						node.Tag=chan;
-						node.Checked=true;
-						treeView5.Nodes.Add(node);
-					}
+					FillEpgGrabberTreeView();
 				}
 			}
 			catch(Exception ex)
@@ -3045,6 +3036,21 @@ namespace MediaPortal.Configuration
 			}
 		}
 
+		void FillEpgGrabberTreeView()
+		{
+			ArrayList channelList=new ArrayList();
+			TVDatabase.GetChannels(ref channelList);
+			treeView5.Nodes.Clear();
+					
+			foreach (TVChannel chan in channelList)
+			{
+				TreeNode node=new TreeNode(chan.Name);
+				node.Tag=chan;
+				node.Checked=true;
+				treeView5.Nodes.Add(node);
+			}
+		}
+		
 		private void groupBox2_Enter(object sender, System.EventArgs e)
 		{
 		
@@ -3140,6 +3146,7 @@ namespace MediaPortal.Configuration
 
 			RadioAutoTuningForm dialog = new RadioAutoTuningForm(dev);
 			dialog.ShowDialog(this);
+			FillEpgGrabberTreeView();
 		}
 
 
