@@ -665,6 +665,7 @@ namespace MediaPortal.GUI.Library
 						}
 						if ( ((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) || (action.m_key.KeyChar == (int)Keys.Space) )
 						{
+							if (action.m_key.KeyChar == (int)Keys.Space && m_strSearchString==String.Empty) return;
 							m_strSearchString += (char)action.m_key.KeyChar;
 							SearchItem(m_strSearchString, SearchType.SEARCH_FIRST);
 						}
