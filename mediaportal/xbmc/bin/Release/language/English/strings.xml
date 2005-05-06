@@ -3193,7 +3193,8 @@
 	<id>13013</id>
 	<value>Loading video, please wait</value>
 </string>
-
+<!-- Teletext --> 
+<string><id>25001</id><value>Waiting for Page {0:X}...!</value></string> 
 
 <!-- My Tetris --> 
 <string><id>19001</id><value>My Tetris</value></string> 
