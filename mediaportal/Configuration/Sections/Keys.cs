@@ -37,8 +37,8 @@ namespace MediaPortal.Configuration.Sections
 		TreeNode	globalNode, windowsNode;
 
 		KeyMappings	keyMappings = new KeyMappings();
-    private System.Windows.Forms.ComboBox idComboBox;
-    private System.Windows.Forms.TextBox idTextBox;
+		private System.Windows.Forms.ComboBox idComboBox;
+		private System.Windows.Forms.TextBox idTextBox;
 
 		public Keys() : this("Keys and Sounds")
 		{
@@ -59,11 +59,11 @@ namespace MediaPortal.Configuration.Sections
 			//
 			PopulateKeyTree();
 
-      //
-      // Fill action combo
-      //
-      string[] names = Enum.GetNames(typeof(Action.ActionType));
-      idComboBox.Items.AddRange(names);
+			//
+			// Fill action combo
+			//
+			string[] names = Enum.GetNames(typeof(Action.ActionType));
+			idComboBox.Items.AddRange(names);
 		}
 
 		private void PopulateKeyTree()
@@ -94,20 +94,20 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-    private string GetActionName(int id)
-    {
-      string action = "Unknown";
+		private string GetActionName(int id)
+		{
+			string action = "Unknown";
 
-      try
-      {
-        action = Enum.GetName(typeof(Action.ActionType), id);
-      }
-      catch
-      {
-      }
+			try
+			{
+				action = Enum.GetName(typeof(Action.ActionType), id);
+			}
+			catch
+			{
+			}
 
-      return action;
-    }
+			return action;
+		}
 
 		private void AddActionsToNode(ref TreeNode treeNode, ArrayList actions)
 		{
@@ -218,32 +218,32 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-//		private void CreateActionNodes(ArrayList list, XmlDocument document)
-//		{
-//			foreach(KeyAction action in list)
-//			{
-//				XmlNode actionNode = document.CreateNode(XmlNodeType.Element, "action", "");
-//
-//				XmlNode idNode = document.CreateNode(XmlNodeType.Text, "action", "");
-//				idNode.InnerText = action.Id.ToString();
-//
-//				XmlNode keyNode = new XmlNode();
-//				keyNode.InnerText = action.Key;
-//
-//				XmlNode soundNode = new XmlNode();
-//				soundNode.InnerText = action.Sound;
-//
-//				XmlNode descriptionNode = new XmlNode();
-//				descriptionNode.InnerText = action.Description;
-//
-//				actionNode.AppendChild(idNode);
-//				actionNode.AppendChild(keyNode);
-//				actionNode.AppendChild(soundNode);
-//				actionNode.AppendChild(descriptionNode);
-//
-//				node.AppendChild(actionNode);
-//			}
-//		}
+		//		private void CreateActionNodes(ArrayList list, XmlDocument document)
+		//		{
+		//			foreach(KeyAction action in list)
+		//			{
+		//				XmlNode actionNode = document.CreateNode(XmlNodeType.Element, "action", "");
+		//
+		//				XmlNode idNode = document.CreateNode(XmlNodeType.Text, "action", "");
+		//				idNode.InnerText = action.Id.ToString();
+		//
+		//				XmlNode keyNode = new XmlNode();
+		//				keyNode.InnerText = action.Key;
+		//
+		//				XmlNode soundNode = new XmlNode();
+		//				soundNode.InnerText = action.Sound;
+		//
+		//				XmlNode descriptionNode = new XmlNode();
+		//				descriptionNode.InnerText = action.Description;
+		//
+		//				actionNode.AppendChild(idNode);
+		//				actionNode.AppendChild(keyNode);
+		//				actionNode.AppendChild(soundNode);
+		//				actionNode.AppendChild(descriptionNode);
+		//
+		//				node.AppendChild(actionNode);
+		//			}
+		//		}
 
 		public override void SaveSettings()
 		{
@@ -365,203 +365,203 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.idTextBox = new System.Windows.Forms.TextBox();
-      this.idComboBox = new System.Windows.Forms.ComboBox();
-      this.addButton = new System.Windows.Forms.Button();
-      this.deleteButton = new System.Windows.Forms.Button();
-      this.fileNameButton = new System.Windows.Forms.Button();
-      this.soundTextBox = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.keyTextBox = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.descriptionTextBox = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.keyTreeView = new System.Windows.Forms.TreeView();
-      this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.groupBox1.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.idTextBox);
-      this.groupBox1.Controls.Add(this.idComboBox);
-      this.groupBox1.Controls.Add(this.addButton);
-      this.groupBox1.Controls.Add(this.deleteButton);
-      this.groupBox1.Controls.Add(this.fileNameButton);
-      this.groupBox1.Controls.Add(this.soundTextBox);
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.keyTextBox);
-      this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.descriptionTextBox);
-      this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.Controls.Add(this.keyTreeView);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 432);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Key Settings";
-      // 
-      // idTextBox
-      // 
-      this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.idTextBox.Enabled = false;
-      this.idTextBox.Location = new System.Drawing.Point(120, 346);
-      this.idTextBox.MaxLength = 3;
-      this.idTextBox.Name = "idTextBox";
-      this.idTextBox.Size = new System.Drawing.Size(40, 20);
-      this.idTextBox.TabIndex = 34;
-      this.idTextBox.Text = "";
-      this.idTextBox.Visible = false;
-      this.idTextBox.TextChanged += new System.EventHandler(this.idTextBox_TextChanged);
-      // 
-      // idComboBox
-      // 
-      this.idComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.idComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.idComboBox.Enabled = false;
-      this.idComboBox.Location = new System.Drawing.Point(120, 346);
-      this.idComboBox.Name = "idComboBox";
-      this.idComboBox.Size = new System.Drawing.Size(303, 21);
-      this.idComboBox.TabIndex = 33;
-      this.idComboBox.SelectedIndexChanged += new System.EventHandler(this.idComboBox_SelectedIndexChanged);
-      // 
-      // addButton
-      // 
-      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.addButton.Enabled = false;
-      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.addButton.Location = new System.Drawing.Point(16, 285);
-      this.addButton.Name = "addButton";
-      this.addButton.TabIndex = 4;
-      this.addButton.Text = "Add";
-      this.addButton.Click += new System.EventHandler(this.addButton_Click);
-      // 
-      // deleteButton
-      // 
-      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.deleteButton.Enabled = false;
-      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.deleteButton.Location = new System.Drawing.Point(96, 285);
-      this.deleteButton.Name = "deleteButton";
-      this.deleteButton.TabIndex = 3;
-      this.deleteButton.Text = "Delete";
-      this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
-      // 
-      // fileNameButton
-      // 
-      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.Enabled = false;
-      this.fileNameButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.fileNameButton.Location = new System.Drawing.Point(369, 396);
-      this.fileNameButton.Name = "fileNameButton";
-      this.fileNameButton.Size = new System.Drawing.Size(56, 20);
-      this.fileNameButton.TabIndex = 32;
-      this.fileNameButton.Text = "Browse";
-      this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
-      // 
-      // soundTextBox
-      // 
-      this.soundTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.soundTextBox.Enabled = false;
-      this.soundTextBox.Location = new System.Drawing.Point(120, 396);
-      this.soundTextBox.Name = "soundTextBox";
-      this.soundTextBox.Size = new System.Drawing.Size(242, 20);
-      this.soundTextBox.TabIndex = 31;
-      this.soundTextBox.Text = "";
-      this.soundTextBox.TextChanged += new System.EventHandler(this.soundTextBox_TextChanged);
-      // 
-      // label4
-      // 
-      this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label4.Location = new System.Drawing.Point(16, 399);
-      this.label4.Name = "label4";
-      this.label4.TabIndex = 30;
-      this.label4.Text = "Sound";
-      // 
-      // keyTextBox
-      // 
-      this.keyTextBox.AcceptsReturn = true;
-      this.keyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.keyTextBox.Enabled = false;
-      this.keyTextBox.Location = new System.Drawing.Point(120, 371);
-      this.keyTextBox.Name = "keyTextBox";
-      this.keyTextBox.ReadOnly = true;
-      this.keyTextBox.Size = new System.Drawing.Size(304, 20);
-      this.keyTextBox.TabIndex = 29;
-      this.keyTextBox.Text = "";
-      this.keyTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyTextBox_KeyDown);
-      // 
-      // label3
-      // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label3.Location = new System.Drawing.Point(16, 374);
-      this.label3.Name = "label3";
-      this.label3.TabIndex = 28;
-      this.label3.Text = "Key";
-      // 
-      // label2
-      // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label2.Location = new System.Drawing.Point(16, 349);
-      this.label2.Name = "label2";
-      this.label2.TabIndex = 5;
-      this.label2.Text = "Action";
-      // 
-      // descriptionTextBox
-      // 
-      this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.descriptionTextBox.Enabled = false;
-      this.descriptionTextBox.Location = new System.Drawing.Point(120, 321);
-      this.descriptionTextBox.Name = "descriptionTextBox";
-      this.descriptionTextBox.Size = new System.Drawing.Size(304, 20);
-      this.descriptionTextBox.TabIndex = 2;
-      this.descriptionTextBox.Text = "";
-      this.descriptionTextBox.TextChanged += new System.EventHandler(this.descriptionTextBox_TextChanged);
-      // 
-      // label1
-      // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label1.Location = new System.Drawing.Point(16, 324);
-      this.label1.Name = "label1";
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Description";
-      // 
-      // keyTreeView
-      // 
-      this.keyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.keyTreeView.FullRowSelect = true;
-      this.keyTreeView.HideSelection = false;
-      this.keyTreeView.ImageIndex = -1;
-      this.keyTreeView.Location = new System.Drawing.Point(16, 24);
-      this.keyTreeView.Name = "keyTreeView";
-      this.keyTreeView.SelectedImageIndex = -1;
-      this.keyTreeView.Size = new System.Drawing.Size(408, 256);
-      this.keyTreeView.TabIndex = 0;
-      this.keyTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.keyTreeView_AfterSelect);
-      // 
-      // Keys
-      // 
-      this.Controls.Add(this.groupBox1);
-      this.Name = "Keys";
-      this.Size = new System.Drawing.Size(456, 448);
-      this.groupBox1.ResumeLayout(false);
-      this.ResumeLayout(false);
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.idTextBox = new System.Windows.Forms.TextBox();
+			this.idComboBox = new System.Windows.Forms.ComboBox();
+			this.addButton = new System.Windows.Forms.Button();
+			this.deleteButton = new System.Windows.Forms.Button();
+			this.fileNameButton = new System.Windows.Forms.Button();
+			this.soundTextBox = new System.Windows.Forms.TextBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this.keyTextBox = new System.Windows.Forms.TextBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.descriptionTextBox = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.keyTreeView = new System.Windows.Forms.TreeView();
+			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.groupBox1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.idTextBox);
+			this.groupBox1.Controls.Add(this.idComboBox);
+			this.groupBox1.Controls.Add(this.addButton);
+			this.groupBox1.Controls.Add(this.deleteButton);
+			this.groupBox1.Controls.Add(this.fileNameButton);
+			this.groupBox1.Controls.Add(this.soundTextBox);
+			this.groupBox1.Controls.Add(this.label4);
+			this.groupBox1.Controls.Add(this.keyTextBox);
+			this.groupBox1.Controls.Add(this.label3);
+			this.groupBox1.Controls.Add(this.label2);
+			this.groupBox1.Controls.Add(this.descriptionTextBox);
+			this.groupBox1.Controls.Add(this.label1);
+			this.groupBox1.Controls.Add(this.keyTreeView);
+			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox1.Location = new System.Drawing.Point(8, 8);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(440, 432);
+			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Key Settings";
+			// 
+			// idTextBox
+			// 
+			this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.idTextBox.Enabled = false;
+			this.idTextBox.Location = new System.Drawing.Point(120, 346);
+			this.idTextBox.MaxLength = 3;
+			this.idTextBox.Name = "idTextBox";
+			this.idTextBox.Size = new System.Drawing.Size(40, 20);
+			this.idTextBox.TabIndex = 34;
+			this.idTextBox.Text = "";
+			this.idTextBox.Visible = false;
+			this.idTextBox.TextChanged += new System.EventHandler(this.idTextBox_TextChanged);
+			// 
+			// idComboBox
+			// 
+			this.idComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.idComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.idComboBox.Enabled = false;
+			this.idComboBox.Location = new System.Drawing.Point(120, 346);
+			this.idComboBox.Name = "idComboBox";
+			this.idComboBox.Size = new System.Drawing.Size(303, 21);
+			this.idComboBox.TabIndex = 33;
+			this.idComboBox.SelectedIndexChanged += new System.EventHandler(this.idComboBox_SelectedIndexChanged);
+			// 
+			// addButton
+			// 
+			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.addButton.Enabled = false;
+			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.addButton.Location = new System.Drawing.Point(16, 285);
+			this.addButton.Name = "addButton";
+			this.addButton.TabIndex = 4;
+			this.addButton.Text = "Add";
+			this.addButton.Click += new System.EventHandler(this.addButton_Click);
+			// 
+			// deleteButton
+			// 
+			this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.deleteButton.Enabled = false;
+			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.deleteButton.Location = new System.Drawing.Point(96, 285);
+			this.deleteButton.Name = "deleteButton";
+			this.deleteButton.TabIndex = 3;
+			this.deleteButton.Text = "Delete";
+			this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+			// 
+			// fileNameButton
+			// 
+			this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.fileNameButton.Enabled = false;
+			this.fileNameButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.fileNameButton.Location = new System.Drawing.Point(369, 396);
+			this.fileNameButton.Name = "fileNameButton";
+			this.fileNameButton.Size = new System.Drawing.Size(56, 20);
+			this.fileNameButton.TabIndex = 32;
+			this.fileNameButton.Text = "Browse";
+			this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
+			// 
+			// soundTextBox
+			// 
+			this.soundTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.soundTextBox.Enabled = false;
+			this.soundTextBox.Location = new System.Drawing.Point(120, 396);
+			this.soundTextBox.Name = "soundTextBox";
+			this.soundTextBox.Size = new System.Drawing.Size(242, 20);
+			this.soundTextBox.TabIndex = 31;
+			this.soundTextBox.Text = "";
+			this.soundTextBox.TextChanged += new System.EventHandler(this.soundTextBox_TextChanged);
+			// 
+			// label4
+			// 
+			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label4.Location = new System.Drawing.Point(16, 399);
+			this.label4.Name = "label4";
+			this.label4.TabIndex = 30;
+			this.label4.Text = "Sound";
+			// 
+			// keyTextBox
+			// 
+			this.keyTextBox.AcceptsReturn = true;
+			this.keyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.keyTextBox.Enabled = false;
+			this.keyTextBox.Location = new System.Drawing.Point(120, 371);
+			this.keyTextBox.Name = "keyTextBox";
+			this.keyTextBox.ReadOnly = true;
+			this.keyTextBox.Size = new System.Drawing.Size(304, 20);
+			this.keyTextBox.TabIndex = 29;
+			this.keyTextBox.Text = "";
+			this.keyTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyTextBox_KeyDown);
+			// 
+			// label3
+			// 
+			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label3.Location = new System.Drawing.Point(16, 374);
+			this.label3.Name = "label3";
+			this.label3.TabIndex = 28;
+			this.label3.Text = "Key";
+			// 
+			// label2
+			// 
+			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label2.Location = new System.Drawing.Point(16, 349);
+			this.label2.Name = "label2";
+			this.label2.TabIndex = 5;
+			this.label2.Text = "Action";
+			// 
+			// descriptionTextBox
+			// 
+			this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.descriptionTextBox.Enabled = false;
+			this.descriptionTextBox.Location = new System.Drawing.Point(120, 321);
+			this.descriptionTextBox.Name = "descriptionTextBox";
+			this.descriptionTextBox.Size = new System.Drawing.Size(304, 20);
+			this.descriptionTextBox.TabIndex = 2;
+			this.descriptionTextBox.Text = "";
+			this.descriptionTextBox.TextChanged += new System.EventHandler(this.descriptionTextBox_TextChanged);
+			// 
+			// label1
+			// 
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label1.Location = new System.Drawing.Point(16, 324);
+			this.label1.Name = "label1";
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Description";
+			// 
+			// keyTreeView
+			// 
+			this.keyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.keyTreeView.FullRowSelect = true;
+			this.keyTreeView.HideSelection = false;
+			this.keyTreeView.ImageIndex = -1;
+			this.keyTreeView.Location = new System.Drawing.Point(16, 24);
+			this.keyTreeView.Name = "keyTreeView";
+			this.keyTreeView.SelectedImageIndex = -1;
+			this.keyTreeView.Size = new System.Drawing.Size(408, 256);
+			this.keyTreeView.TabIndex = 0;
+			this.keyTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.keyTreeView_AfterSelect);
+			// 
+			// Keys
+			// 
+			this.Controls.Add(this.groupBox1);
+			this.Name = "Keys";
+			this.Size = new System.Drawing.Size(456, 448);
+			this.groupBox1.ResumeLayout(false);
+			this.ResumeLayout(false);
 
-    }
+		}
 		#endregion
 
 		private void keyTreeView_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
@@ -570,30 +570,30 @@ namespace MediaPortal.Configuration.Sections
 
 			addButton.Enabled = currentlySelectedNode != null && (!(currentlySelectedNode.Tag is KeyAction) && currentlySelectedNode.Tag != null);
 
-      if(addButton.Enabled == false)
-      {
-        addButton.Enabled = currentlySelectedNode == globalNode || currentlySelectedNode == windowsNode;
-      }
+			if(addButton.Enabled == false)
+			{
+				addButton.Enabled = currentlySelectedNode == globalNode || currentlySelectedNode == windowsNode;
+			}
 
 			//
 			// Enable/Disable controls
 			//
 			deleteButton.Enabled = keyTextBox.Enabled = fileNameButton.Enabled = idComboBox.Enabled = idTextBox.Enabled = soundTextBox.Enabled = descriptionTextBox.Enabled = e.Node.Tag is KeyAction;
 
-      if(deleteButton.Enabled == false)
-      {
-        deleteButton.Enabled = currentlySelectedNode.Tag is ActionWindow;
-      }
+			if(deleteButton.Enabled == false)
+			{
+				deleteButton.Enabled = currentlySelectedNode.Tag is ActionWindow;
+			}
 
 			if(e.Node.Tag is ActionWindow)
 			{
-        //
-        // Enable correct controls
-        //
-        idTextBox.Visible = true;
-        idComboBox.Visible = false;
+				//
+				// Enable correct controls
+				//
+				idTextBox.Visible = true;
+				idComboBox.Visible = false;
 
-        idTextBox.Enabled = true;
+				idTextBox.Enabled = true;
 
 				ActionWindow window = e.Node.Tag as ActionWindow;
 
@@ -607,16 +607,16 @@ namespace MediaPortal.Configuration.Sections
 			}
 			else if(e.Node.Tag is KeyAction)
 			{
-        //
-        // Enable correct controls
-        //
-        idTextBox.Visible = false;
-        idComboBox.Visible = true;
+				//
+				// Enable correct controls
+				//
+				idTextBox.Visible = false;
+				idComboBox.Visible = true;
         
-        KeyAction action = e.Node.Tag as KeyAction;
+				KeyAction action = e.Node.Tag as KeyAction;
 
 				descriptionTextBox.Text = action.Description;
-        idComboBox.Text = GetActionName(action.Id);
+				idComboBox.Text = GetActionName(action.Id);
 				keyTextBox.Text = action.Key;
 				soundTextBox.Text = action.Sound;
 			}
@@ -822,14 +822,14 @@ namespace MediaPortal.Configuration.Sections
 				{
 					ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
 					
-          if(idTextBox.Text.Length > 0)
-          {
-            window.Id = Convert.ToInt32(idTextBox.Text);
-          }
-          else
-          {
-            window.Id = -1;
-          }
+					if(idTextBox.Text.Length > 0)
+					{
+						window.Id = Convert.ToInt32(idTextBox.Text);
+					}
+					else
+					{
+						window.Id = -1;
+					}
 
 					currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
 				}
@@ -859,35 +859,37 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-    private void idComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      if(currentlySelectedNode != null)
-      {
-        //
-        // Update the actual node
-        //
-        if(currentlySelectedNode.Tag is ActionWindow)
-        {
-          ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
-//          window.Id = Convert.ToInt32(idTextBox.Text);
-//
-//          currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
-        }
-        else if(currentlySelectedNode.Tag is KeyAction)
-        {
-          KeyAction action = currentlySelectedNode.Tag as KeyAction;
+		private void idComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if(currentlySelectedNode != null)
+			{
+				//
+				// Update the actual node
+				//
+				if(currentlySelectedNode.Tag is ActionWindow)
+				{
+					ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
+					//          window.Id = Convert.ToInt32(idTextBox.Text);
+					//
+					//          currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
+				}
+				else if(currentlySelectedNode.Tag is KeyAction)
+				{
+					if(idComboBox.Text!=null)
+					{
+						KeyAction action = currentlySelectedNode.Tag as KeyAction;
 
-          Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof(Action.ActionType), idComboBox.Text);
+						Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof(Action.ActionType), idComboBox.Text);
           
-          action.Id = (int)actionType;
+						action.Id = (int)actionType;
 
-          currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
-          currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
-        }
-      }		
-    }
+						currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
+						currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
+					}
+				}
+			}		
+		}
 	}
-
 	public class KeyMappings : Hashtable
 	{
 		public class KeyMap
