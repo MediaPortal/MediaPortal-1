@@ -260,7 +260,7 @@
 			<height>108</height> 
 			<onup>5</onup>
 			<action>18</action>
-			<textureFocus>video_window_focus.png</textureFocus> 
+			<textureFocus>tv_green_border.png</textureFocus> 
 		</control>
 	</controls>
 </window>

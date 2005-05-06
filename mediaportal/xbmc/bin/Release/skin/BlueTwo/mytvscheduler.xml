@@ -239,7 +239,7 @@
 			<height>125</height>
 			<onup>7</onup>
 			<action>18</action>
-			<textureFocus>video_window_focus.png</textureFocus> 
+			<textureFocus>tv_green_border.png</textureFocus> 
 		</control>
 	</controls>
 </window>
