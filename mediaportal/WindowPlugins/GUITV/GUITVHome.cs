@@ -355,6 +355,7 @@ namespace MediaPortal.GUI.TV
 					LoadSettings();
 
 					//restart viewing...  
+					m_bTVON=true;
 					Log.Write("tv home msg resume tv:{0}",Navigator.CurrentChannel);
 					ViewChannel(Navigator.CurrentChannel);
 				}

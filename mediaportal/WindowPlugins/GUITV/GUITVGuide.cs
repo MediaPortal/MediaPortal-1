@@ -578,6 +578,7 @@ namespace MediaPortal.GUI.TV
 						m_dtStartTime=m_currentProgram.StartTime;
 					}
 
+					Log.Write("turn tv on");
 					GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
 					msg.SendToTargetWindow=true;
 					GUIWindowManager.SendThreadMessage(msg);
