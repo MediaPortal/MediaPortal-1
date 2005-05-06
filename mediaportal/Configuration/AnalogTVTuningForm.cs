@@ -419,6 +419,13 @@ namespace MediaPortal
 		{
 			if (tuningInterface==null) return;
 			tuningInterface.Stop();		
+
+			buttonMap.Enabled=false;
+			buttonSkip.Enabled=false;
+			buttonAdd.Enabled=false;
+			button1.Enabled=false;
+			btnOk.Enabled=true;
+			btnOk.Focus();
 		}
 	}
 }
