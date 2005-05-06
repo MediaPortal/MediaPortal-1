@@ -143,6 +143,37 @@ namespace MediaPortal.GUI.TV
 				GetNewPage();
 				return;
 			}
+			// top text
+			if(chKey=='h' || chKey=='j' || chKey=='k' || chKey=='l' ||
+				chKey=='H' || chKey=='J' || chKey=='K' || chKey=='L')
+			{
+
+				if(dvbTeletextParser==null)
+					return;
+				
+				string topButton=new string(chKey,1);
+				switch(topButton.ToLower())
+				{
+					case "h":
+						acutalPageNumber=dvbTeletextParser.PageRed;
+						break;
+					case "j":
+						acutalPageNumber=dvbTeletextParser.PageGreen;
+						break;
+					case "k":
+						acutalPageNumber=dvbTeletextParser.PageYellow;
+						break;
+					case "l":
+						acutalPageNumber=dvbTeletextParser.PageBlue;
+						break;
+				}
+				actualSubPageNumber=0;
+				bmpTeletextPage=dvbTeletextParser.GetPage(acutalPageNumber,actualSubPageNumber);
+				Redraw();
+				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(acutalPageNumber),Convert.ToString(actualSubPageNumber));
+				inputLine="";
+				return;
+			}
 			if((chKey>='0'&& chKey <='9') || (chKey=='+' || chKey=='-')) //navigation
 			{
 				if (chKey=='0' && inputLine.Length==0) return;
