@@ -3027,6 +3027,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3F8AE4DFB8104C02932639DE911B8720"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3FBF4639DBC7480FB0EC1D5695ADF6F6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -9256,6 +9262,12 @@
         "Entry"
         {
         "MsmKey" = "8:_B803658C5D354211957F91FC9E3C3D62"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B80E9E0A3BE8489086ED927F0DFEC082"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -21895,6 +21907,26 @@
             "TargetName" = "8:dialogOK.xml"
             "Tag" = "8:"
             "Folder" = "8:_985169F5319B4A4193208F60F14C18A2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3F8AE4DFB8104C02932639DE911B8720"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\28degreesEast.tpl"
+            "TargetName" = "8:28degreesEast.tpl"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -39530,6 +39562,26 @@
             "TargetName" = "8:MyTetris.Block.wav"
             "Tag" = "8:"
             "Folder" = "8:_7B123D9ADA8D409FAC8996E7FF060D0D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B80E9E0A3BE8489086ED927F0DFEC082"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\Configuration.exe.config"
+            "TargetName" = "8:Configuration.exe.config"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
