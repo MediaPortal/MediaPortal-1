@@ -879,12 +879,16 @@ namespace MediaPortal.Configuration.Sections
 					{
 						KeyAction action = currentlySelectedNode.Tag as KeyAction;
 
-						Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof(Action.ActionType), idComboBox.Text);
+						try
+						{
+							Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof(Action.ActionType), idComboBox.Text);
           
-						action.Id = (int)actionType;
+							action.Id = (int)actionType;
 
-						currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
-						currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
+							currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
+							currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
+						}
+						catch{}
 					}
 				}
 			}		
