@@ -139,6 +139,8 @@ namespace MediaPortal.Player
 			{
 				Log.Write("VMR9Helper:stop vmr9");
 				GUIGraphicsContext.Vmr9Active = false;
+				GUIGraphicsContext.Vmr9FPS=0f;
+				currentVmr9State = Vmr9PlayState.Playing;
         instanceCounter--;
         m_scene.Stop();
         m_scene.Deinit();

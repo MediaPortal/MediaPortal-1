@@ -1038,6 +1038,14 @@ namespace MediaPortal.TV.Recording
 			if (m_videoWindow!=null)
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
 
+			if (Vmr9!=null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop vmr9");
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
+
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
 			if (m_mediaControl!=null)
 				m_mediaControl.Stop();

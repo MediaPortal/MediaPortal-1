@@ -374,22 +374,25 @@ namespace MediaPortal.GUI.TV
 			if (GUIGraphicsContext.InVmr9Render) return;
 			//if we're not playing the timeshifting file
 			TimeSpan ts;
-			if (!g_Player.Playing)
+			if (Recorder.IsTimeShifting() || Recorder.IsRecording())
 			{
-				//then try to start it
-				ts=DateTime.Now-dtlastTime;
-				if (ts.TotalMilliseconds>=1000)
+				if (!g_Player.Playing)
 				{
-					dtlastTime=DateTime.Now;
-					string fileName=Recorder.GetTimeShiftFileName();
-					try
+					//then try to start it
+					ts=DateTime.Now-dtlastTime;
+					if (ts.TotalMilliseconds>=1000)
 					{
-						if (System.IO.File.Exists(fileName))
+						dtlastTime=DateTime.Now;
+						string fileName=Recorder.GetTimeShiftFileName();
+						try
 						{
-							StartPlaying(true);
+							if (System.IO.File.Exists(fileName))
+							{
+								StartPlaying(true);
+							}
 						}
+						catch(Exception){}
 					}
-					catch(Exception){}
 				}
 			}
 
@@ -480,6 +483,11 @@ namespace MediaPortal.GUI.TV
 					//manual record
 					Recorder.RecordNow(Navigator.CurrentChannel,true);
 				}
+				
+				
+				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
+				msg.SendToTargetWindow=true;
+				GUIWindowManager.SendThreadMessage(msg);
 			}
 			else
 			{
