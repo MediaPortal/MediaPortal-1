@@ -505,18 +505,37 @@ namespace MediaPortal.GUI.Radio
 				if (item.MusicTag!=null)
 				{
 					RadioStation station=(RadioStation) item.MusicTag;
-          if (method==SortMethod.Bitrate) 
-          {
-            if (station.BitRate>0)
-              item.Label2=station.BitRate.ToString();
-            else
-            {
-              double frequency=station.Frequency;
-              frequency/=1000000d;
-              item.Label2=System.String.Format("{0:###.##} MHz.", frequency);
-            }
-          }
-          else item.Label2=station.Genre;
+					if (method==SortMethod.Bitrate) 
+					{
+						if (station.BitRate>0)
+							item.Label2=station.BitRate.ToString();
+						else
+						{
+							double frequency=station.Frequency;
+							frequency/=1000000d;
+							item.Label2=System.String.Format("{0:###.##} MHz.", frequency);
+						}
+					}
+					else 
+					{
+						if (station.Genre=="unknown" && station.Frequency>0)
+						{
+							double frequency=station.Frequency;
+							frequency/=1000000d;
+							if (frequency>80 && frequency <120)
+							{
+								item.Label2=System.String.Format("{0:###.##} MHz.", frequency);
+							}
+							else
+							{
+								item.Label2=station.Genre;
+							}
+						}
+						else
+						{
+							item.Label2=station.Genre;
+						}
+					}
 				}
       }
     }

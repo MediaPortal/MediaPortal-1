@@ -44,6 +44,16 @@ namespace MediaPortal.Playlists
       {
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
         {
+					PlayList.PlayListItem item=GetCurrentItem();
+					if (item!=null)
+					{
+						if (item.Type==PlayList.PlayListItem.PlayListItemType.Radio ||
+							item.Type==PlayList.PlayListItem.PlayListItemType.AudioStream)
+						{
+							
+							return;
+						}
+					}
           Reset();
           m_iCurrentPlayList=PlayListType.PLAYLIST_NONE;
         }
