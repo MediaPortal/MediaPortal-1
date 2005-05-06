@@ -27,6 +27,21 @@ namespace MediaPortal.Player
 				SetVideoWindow();
 			}
 		}
+		public override void SetVideoWindow()
+		{
+			if (GUIGraphicsContext.IsFullScreenVideo!= m_bFullScreen)
+			{
+				m_bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
+				m_bUpdateNeeded=true;
+			}
+
+			if (!m_bUpdateNeeded) return;
+      
+			m_bUpdateNeeded=false;
+			m_bStarted=true;
+
+		}
+
 
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
