@@ -17,6 +17,7 @@ namespace MediaPortal.TV.Recording
 
 			m_cardType=card;
 			m_networkType=NetworkType.DVBS;
+
 		}
 		public DVBEPG(int card, NetworkType networkType)
 		{
@@ -48,6 +49,7 @@ namespace MediaPortal.TV.Recording
 		int				m_savedChannelData=0;
 		int				m_channelGrabLen=0;
 		int				m_summaryGrabLen=2048;
+		int				m_mhwFreq=0;
 		System.Windows.Forms.Label m_mhwChannels;
 		System.Windows.Forms.Label m_mhwTitles;
 		
@@ -140,7 +142,14 @@ namespace MediaPortal.TV.Recording
 		{
 			get{return m_addsToDatabase;}
 		}
-
+		public int MHWFreq
+		{
+			set
+			{
+				m_mhwFreq=value;
+				LoadChannelCache();
+			}
+		}
 		//
 		//
 		//
@@ -315,7 +324,7 @@ namespace MediaPortal.TV.Recording
 			if (m_cardType==(int)EPGCard.BDACards)
 				m_sections.Timeout=500;
 			else
-				m_sections.Timeout=50;
+				m_sections.Timeout=500;
 			Log.Write("epg-grab: grabbing table {0}",80);
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
@@ -482,7 +491,7 @@ namespace MediaPortal.TV.Recording
 		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
 		public void SaveTitleData(byte[] data)
 		{
-			if(m_streamBuffer.Count<400)
+			if(m_streamBuffer.Count<200)
 				m_streamBuffer.Add(data);
 			else
 			{
@@ -544,7 +553,7 @@ namespace MediaPortal.TV.Recording
 				ch.ChannelID=(data[n+4]<<8)+data[n+5];
 				ch.ChannelName=System.Text.Encoding.ASCII.GetString(data,n+6,16);
 				ch.ChannelName=ch.ChannelName.Trim();
-
+				
 				if(m_namesBuffer.Contains(ch)==false)
 				{
 					m_namesBuffer.Add(ch);
@@ -553,7 +562,69 @@ namespace MediaPortal.TV.Recording
 			}// for(int n=0
 			//Log.Write("mhw-epg: found {0} channels for mhw",m_namesBuffer.Count);
 			m_mhwChannelsCount=m_namesBuffer.Count;
+			try
+			{
+				using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\mhw.xml"))
+				{
+					int chID=0;
+					xmlwriter.SetValue(String.Format("{0}",m_mhwFreq),"channelCount",m_namesBuffer.Count);
+					foreach(MHWChannel ch in m_namesBuffer)
+					{
+						xmlwriter.SetValue(String.Format("{0}",m_mhwFreq),String.Format("chID{0}",chID),String.Format("{0};{1};{2}",ch.ChannelID,ch.NetworkID,ch.TransponderID));// ned1
+						chID++;
+					}
+				}
+			}
+			catch{}
+
 			m_channelsParsing=false;
+		}
+		//
+		//
+		//
+		void LoadChannelCache()
+		{
+			if(m_namesBuffer==null)
+				return;
+			if(m_namesBuffer.Count>0)
+				return;
+			if(m_channelsParsing==true)
+				return;
+
+			string freqSection=String.Format("{0}",m_mhwFreq);
+			try
+			{
+				using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\mhw.xml"))
+				{
+					int chID=xmlreader.GetValueAsInt(freqSection,"channelCount",0);
+					for(int i=0;i<chID;i++)
+					{
+						string channel=xmlreader.GetValueAsString(freqSection,String.Format("chID{0}",i),"");
+						string[] channelDetail=channel.Split(new char[]{';'});
+						if(channelDetail!=null)
+						{
+							if(channelDetail.Length==3)
+							{
+								MHWChannel ch=new MHWChannel();
+								ch.ChannelID=Convert.ToInt16(channelDetail[0]);
+								ch.NetworkID=Convert.ToInt16(channelDetail[1]);
+								ch.TransponderID=Convert.ToInt16(channelDetail[2]);
+								ch.ChannelName=TVDatabase.GetSatChannelName(ch.ChannelID,ch.NetworkID);
+								Log.Write("mhw-epg: channel from cache id:{0} name:{1}",i,ch.ChannelName);
+								if(m_namesBuffer.Contains(ch)==false)
+									m_namesBuffer.Add(ch);
+							}
+						}
+					}
+					//xmlreader.SetValue(String.Format("{0}",m_mhwFreq),String.Format("{0}",chID),String.Format("{0};{1};{2}",ch.ChannelID,ch.NetworkID,ch.TransponderID));// ned1
+				}
+			}
+			catch
+			{
+				m_namesBuffer.Clear();
+			}
+			m_channelsParsing=false;
+			m_mhwChannelsCount=m_namesBuffer.Count;
 		}
 		void ParseSummaries(byte[] data1)
 		{

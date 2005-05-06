@@ -376,16 +376,16 @@ namespace MediaPortal.TV.Recording
 			{
 					
 				TSHelperTools.TSHeader header=m_tsHelper.GetHeader((IntPtr)pointer);
-
 				try
 				{
+					m_epgClass.MHWFreq=m_currentChannel.Frequency;
 					if(header.Pid==0xd2 && header.SectionLen==0x2B && m_epgClass.TitlesParsing==false)
 					{
 						byte[] epgData=new byte[184];
 						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
 						m_epgClass.SaveTitleData(epgData);
 					}
-					if(m_epgClass.ChannelsReady==false && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
+					if(m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
 					{
 						m_epgClass.ChannelsGrabLen=header.SectionLen+3;
 						m_epgClass.ChannelsParsing=true;
