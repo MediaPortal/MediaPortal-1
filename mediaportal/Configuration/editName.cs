@@ -72,6 +72,7 @@ namespace MediaPortal
 			this.textBoxName.Name = "textBoxName";
 			this.textBoxName.Size = new System.Drawing.Size(256, 20);
 			this.textBoxName.TabIndex = 0;
+			this.textBoxName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.editName_KeyDown);
 			this.textBoxName.Text = "";
 			// 
 			// btnOk
@@ -96,6 +97,14 @@ namespace MediaPortal
 
 		}
 		#endregion
+
+		private void editName_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+			if (e.KeyCode== Keys.Enter && textBoxName.Text != String.Empty)
+			{
+				this.Close();
+			}
+		}
 
 		private void btnOk_Click(object sender, System.EventArgs e)
 		{
