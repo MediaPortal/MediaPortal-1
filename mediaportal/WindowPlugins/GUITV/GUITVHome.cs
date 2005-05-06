@@ -491,9 +491,6 @@ namespace MediaPortal.GUI.TV
 				}
 				
 				
-				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
-				msg.SendToTargetWindow=true;
-				GUIWindowManager.SendThreadMessage(msg);
 			}
 			else
 			{

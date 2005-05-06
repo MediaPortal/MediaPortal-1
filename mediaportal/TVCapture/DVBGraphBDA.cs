@@ -1046,7 +1046,7 @@ namespace MediaPortal.TV.Recording
 
 			if (m_mediaControl!=null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph {0}", GUIGraphicsContext.InVmr9Render);
 				m_mediaControl.Stop();
 			}
 			graphRunning=false;
