@@ -276,6 +276,9 @@ namespace MediaPortal.GUI.TV
 
 				// turn tv on/off
 				ViewChannelAndCheck(Navigator.CurrentChannel);
+				UpdateChannelButton();
+				UpdateStateOfButtons();
+				UpdateProgressPercentageBar();
 			}
 
 			if (control==btnTimeshiftingOnOff)
@@ -285,6 +288,9 @@ namespace MediaPortal.GUI.TV
 				Log.Write("tv home timeshift onoff:{0}",m_bTimeShifting);
 				SaveSettings();
 				ViewChannelAndCheck(Navigator.CurrentChannel);
+				UpdateChannelButton();
+				UpdateStateOfButtons();
+				UpdateProgressPercentageBar();
 			}
 
 			if (control==btnGroup)
