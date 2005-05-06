@@ -37,7 +37,33 @@ namespace MediaPortal.TV.Recording
 		int[]					m_topNavigationPages=new int[]{256,256,256,256};
 		//
 		//
-		enum TextColors
+		string[]				m_mpPage=new string[]
+			{
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000001111100000111110000111111100000",
+				"0000000011111110001111111001111111110000",
+				"0000000011111110001111111001110001110000",
+				"0000000011111110001111111001110001110000",
+				"0000000011111110001111111001111111110000",
+				"0000000011111110001111111000111111100000",
+				"0000000011111110001111111000000000000000",
+				"0000000011111110001111111000000000000000",
+				"0000000011111110001111111000000000000000",
+				"0000000001111100000111110000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+				"0000000000000000000000000000000000000000",
+
+
+		};
+			enum TextColors
 		{
 			None,
 			Black,
@@ -1114,7 +1140,7 @@ namespace MediaPortal.TV.Recording
 					pageNumber=m_pageSelectText;
 				}
 				string headline="MediaPortal P."+pageNumber;
-				string hintLine="waiting for page "+String.Format("{0:X}...!",m_actualPage);
+				string hintLine=String.Format(GUILocalizeStrings.Get(25001),m_actualPage);
 				headline+=new string((char)32,32-headline.Length);
 				byte[] mpText=System.Text.Encoding.ASCII.GetBytes(headline);
 				System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
@@ -1126,10 +1152,32 @@ namespace MediaPortal.TV.Recording
 					pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.White);
 				for(i=40;i<80;i++)
 					pageAttribs[i] = ((int)TextColors.Black<<4) | (int)TextColors.Yellow;
+				int pos=80;
+				foreach(string line in m_mpPage)
+				{
+					for(i=0;i<line.Length;i++)
+					{
+						
+						pageAttribs[pos+i] = ((int)TextColors.Blue<<4) | (int)TextColors.White;
+						if(line.Substring(i,1)=="1")
+							pageChars[pos+i] = 0xEC;
+						else
+							pageChars[pos+i]=0;
+
+					}
+					pos+=40;
+				}
+			
+				
 			}
 			// render
-			BasicTopTable();
-			AdditionalInformationTable();
+			if((int)m_cacheTable[496,0]!=0)
+				BasicTopTable();
+			if((int)m_cacheTable[498,0]!=0)
+				AdditionalInformationTable();
+			if((int)m_cacheTable[496,0]==0 && (int)m_cacheTable[498,0]!=0)
+			{
+			}
 			int y = 0;
 			int x;
 			int width=m_pageWidth/40;
@@ -1218,7 +1266,7 @@ namespace MediaPortal.TV.Recording
 				int y1;
 		
 				chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
-				if ((attrib & 0x200)>0) /* separated mosaic */
+				if ((attrib & 0x200)>0) 
 					for (y1 = 0; y1 < 3; y1++)
 					{
 						graph.FillRectangle(backBrush,x,y+mosaicY[y1],w1,mosaicY[y1+1] - mosaicY[y1]);
