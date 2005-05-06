@@ -595,6 +595,10 @@ namespace MediaPortal.TV.Recording
 					m_epgClass.ClearBuffer();
 				}
 
+			if(m_teleText!=null)
+			{
+				m_teleText.ClearBuffer();
+			}
 				if(Frequency>13000)
 					Frequency/=1000;
 
