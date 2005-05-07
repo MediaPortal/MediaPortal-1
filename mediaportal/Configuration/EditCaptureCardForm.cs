@@ -2119,8 +2119,8 @@ namespace MediaPortal.Configuration
 							capture.Network!=NetworkType.DVBT)
 						{
 							btnRadio.Visible=true;
-							button1.Visible=true;
 						}
+						button1.Visible=true;
 						//
 						// Clear combo box
 						//
