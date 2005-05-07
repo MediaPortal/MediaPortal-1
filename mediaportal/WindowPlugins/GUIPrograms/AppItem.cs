@@ -106,7 +106,7 @@ namespace ProgramsDatabase
       importValidImagesOnly = false;
       enableGUIRefresh = false;
       pincode = -1;
-      contentID = -1;
+      contentID = 100;
       systemDefault = "";
       waitForExit = true;
       filesAreLoaded = false;
