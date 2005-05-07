@@ -30,6 +30,8 @@ namespace ProgramsDatabase
         sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db");
         // make sure the DB-structure is complete
         CreateObjects();
+        // patch old ContentID values...
+        PatchContentID();
         // dirty hack: propagate the sqlDB to the singleton objects...
         ProgramSettings.sqlDB = sqlDB;
       }
@@ -147,6 +149,17 @@ namespace ProgramsDatabase
         DoV2_V3Migration();
       }
       return true;
+    }
+
+    static void PatchContentID()
+    {
+      if (sqlDB == null)
+        return;
+      Log.Write("dw");
+      sqlDB.Execute("update application set contentID = 100 where contentID IS NULL;");
+      Log.Write("dw");
+      sqlDB.Execute("update application set contentID = 100 where contentID <= 0;");
+      Log.Write("dw");
     }
 
 
