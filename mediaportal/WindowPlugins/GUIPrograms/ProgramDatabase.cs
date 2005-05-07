@@ -155,11 +155,8 @@ namespace ProgramsDatabase
     {
       if (sqlDB == null)
         return;
-      Log.Write("dw");
       sqlDB.Execute("update application set contentID = 100 where contentID IS NULL;");
-      Log.Write("dw");
       sqlDB.Execute("update application set contentID = 100 where contentID <= 0;");
-      Log.Write("dw");
     }
 
 
