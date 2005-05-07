@@ -1678,6 +1678,10 @@
 		<value>Gebruik gr.iconen</value>
 	</string>
 	<string>
+		<id>492</id>
+		<value>Audio taal</value>
+	</string>
+	<string>
 		<id>500</id>
 		<value>Bestand menu</value>
 	</string>
@@ -3843,11 +3847,11 @@
 	</string>
 	<string>
 		<id>100005</id>
-		<value>Mijn Muziek</value>
+		<value>Mijn Muziek/Bestanden</value>
 	</string>
 	<string>
 		<id>100006</id>
-		<value>Mijn Films</value>
+		<value>Mijn Films/Bestanden</value>
 	</string>
 	<string>
 		<id>100007</id>
@@ -4122,5 +4126,57 @@
     <value>MSN Messenger OSD</value>
   </string>
  
+  <string>
+    <id>102016</id>
+    <value>Notificatie</value>
+  </string>
+  <string>
+    <id>102015</id>
+    <value>Mini menu</value>
+  </string>
+  <string>
+    <id>102009</id>
+    <value>Selection dialoog</value>
+  </string>
+  <string>
+    <id>107701</id>
+    <value>Mijn TV/Teletekst</value>
+  </string>
+  <string>
+    <id>107700</id>
+    <value>Mijn TV/Teletekst</value>
+  </string>
+  <string>
+    <id>13013</id>
+    <value>Video wordt gestart, even geduld a.u.b.</value>
+  </string>
+  <string>
+    <id>100760</id>
+    <value>CD/DVD Branden</value>
+  </string>
+  <string>
+    <id>100758</id>
+    <value>Bestand menu</value>
+  </string>
+  <string>
+    <id>103007</id>
+    <value>Mijn TV/Zap OSD</value>
+  </string>
+  <string>
+    <id>103006</id>
+    <value>Mijn TV/MSN OSD</value>
+  </string>
+  <string>
+    <id>103003</id>
+    <value>Mijn TV/OSD</value>
+  </string>
+  <string>
+    <id>12902</id>
+    <value>MSN Messenger OSD</value>
+  </string>
+  <string>
+    <id>25001</id>
+    <value>Wachten op pagina {0:X}...</value>
+  </string>
 </strings>
 
