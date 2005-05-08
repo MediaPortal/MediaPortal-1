@@ -74,6 +74,19 @@ namespace MediaPortal.GUI.TV
 					if (action.m_key!=null)
 						OnKeyPressed((char)action.m_key.KeyChar);
 					break;
+				case Action.ActionType.ACTION_REMOTE_RED_BUTTON:
+					OnKeyPressed((char)'h');
+					break;
+				case Action.ActionType.ACTION_REMOTE_GREEN_BUTTON:
+					OnKeyPressed((char)'j');
+					break;
+				case Action.ActionType.ACTION_REMOTE_YELLOW_BUTTON:
+					OnKeyPressed((char)'k');
+					break;
+				case Action.ActionType.ACTION_REMOTE_BLUE_BUTTON:
+					OnKeyPressed((char)'l');
+					break;
+
 			}
 			base.OnAction(action);
 		}
@@ -98,6 +111,7 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageLoad ();
 			btnSubPage.RestoreSelection=false;
+
 			ShowMessage(100,0);
 			if(dvbTeletextParser==null)
 			{

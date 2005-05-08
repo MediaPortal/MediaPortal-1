@@ -70,6 +70,19 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_SELECT_ITEM:
 					break;
+				case Action.ActionType.ACTION_REMOTE_RED_BUTTON:
+					OnKeyPressed((char)'h');
+					break;
+				case Action.ActionType.ACTION_REMOTE_GREEN_BUTTON:
+					OnKeyPressed((char)'j');
+					break;
+				case Action.ActionType.ACTION_REMOTE_YELLOW_BUTTON:
+					OnKeyPressed((char)'k');
+					break;
+				case Action.ActionType.ACTION_REMOTE_BLUE_BUTTON:
+					OnKeyPressed((char)'l');
+					break;
+
 
 			}
 			base.OnAction(action);
