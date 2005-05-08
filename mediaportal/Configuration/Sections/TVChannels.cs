@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Xml;
 using MWCommon;
 using MWControls;
 using Microsoft.Win32;
@@ -84,6 +85,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button xmlImport;
 		private System.Windows.Forms.Button xmlExport;
 		private System.Windows.Forms.ImageList imageList1;
+		private System.Windows.Forms.Button buttonLookup;
 
 		//
 		// Private members
@@ -178,6 +180,7 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxCard = new System.Windows.Forms.ComboBox();
 			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
 			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
+			this.buttonLookup = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -220,6 +223,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.buttonLookup);
 			this.tabPage1.Controls.Add(this.xmlImport);
 			this.tabPage1.Controls.Add(this.xmlExport);
 			this.tabPage1.Controls.Add(this.buttonCVS);
@@ -243,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
 			this.xmlImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.xmlImport.Location = new System.Drawing.Point(328, 344);
 			this.xmlImport.Name = "xmlImport";
-			this.xmlImport.Size = new System.Drawing.Size(88, 23);
+			this.xmlImport.Size = new System.Drawing.Size(88, 16);
 			this.xmlImport.TabIndex = 12;
 			this.xmlImport.Text = "Import from XML";
 			this.xmlImport.Click += new System.EventHandler(this.xmlImport_Click_1);
@@ -252,9 +256,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.xmlExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.xmlExport.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.xmlExport.Location = new System.Drawing.Point(232, 344);
+			this.xmlExport.Location = new System.Drawing.Point(328, 360);
 			this.xmlExport.Name = "xmlExport";
-			this.xmlExport.Size = new System.Drawing.Size(88, 23);
+			this.xmlExport.Size = new System.Drawing.Size(88, 16);
 			this.xmlExport.TabIndex = 11;
 			this.xmlExport.Text = "Export to XML";
 			this.xmlExport.Click += new System.EventHandler(this.xmlExport_Click_1);
@@ -702,6 +706,15 @@ namespace MediaPortal.Configuration.Sections
 			this.XMLSaveDialog.Filter = "xml|*.xml";
 			this.XMLSaveDialog.InitialDirectory = ".";
 			this.XMLSaveDialog.Title = "Save to....";
+			// 
+			// buttonLookup
+			// 
+			this.buttonLookup.Location = new System.Drawing.Point(232, 352);
+			this.buttonLookup.Name = "buttonLookup";
+			this.buttonLookup.Size = new System.Drawing.Size(75, 24);
+			this.buttonLookup.TabIndex = 13;
+			this.buttonLookup.Text = "Lookup";
+			this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
 			// 
 			// TVChannels
 			// 
@@ -2932,6 +2945,13 @@ namespace MediaPortal.Configuration.Sections
 			{
 				Import_From_XML(XMLOpenDialog.FileName.ToString());
 			}
+		}
+
+		private void buttonLookup_Click(object sender, System.EventArgs e)
+		{
+			TvChannelLookupService dlg = new TvChannelLookupService();
+			dlg.ShowDialog(this);
+			reloadList=true;
 		}
 	}
 }

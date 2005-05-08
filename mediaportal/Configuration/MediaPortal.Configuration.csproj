@@ -886,6 +886,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\TvChannelLookupService.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\TvChannelLookupService.resx"
+                    DependentUpon = "TvChannelLookupService.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\TVChannels.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
