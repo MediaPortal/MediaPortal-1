@@ -133,8 +133,10 @@ namespace MediaPortal.GUI.Library
       , ACTION_MOUSE_MOVE=2000
       , ACTION_MOUSE_CLICK=2001
       , ACTION_MOUSE_DOUBLECLICK=2002
-			
-
+			,ACTION_REMOTE_RED_BUTTON=9975
+			,ACTION_REMOTE_GREEN_BUTTON
+			,ACTION_REMOTE_YELLOW_BUTTON
+			,ACTION_REMOTE_BLUE_BUTTON
 		};
 		public ActionType   wID=0;
 		public float        fAmount1=0.0f;
