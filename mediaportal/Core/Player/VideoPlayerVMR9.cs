@@ -193,11 +193,21 @@ namespace MediaPortal.Player
       Log.Write("VideoPlayer9:cleanup DShow graph");
       try 
       {
+				if (Vmr9!=null)
+				{
+					Vmr9.Enable(false);
+				}
         if( mediaCtrl != null )
         {
+					
+					int counter=0;
+					while (GUIGraphicsContext.InVmr9Render)
+					{
+						counter++;
+						System.Threading.Thread.Sleep(1);
+						if (counter >200) break;
+					}
           hr = mediaCtrl.Stop();
-          System.Threading.Thread.Sleep(500);
-          System.Threading.Thread.Sleep(500);
         }
   	    if( mediaEvt != null )
         {
