@@ -137,6 +137,8 @@ namespace MediaPortal.GUI.Library
 			,ACTION_REMOTE_GREEN_BUTTON
 			,ACTION_REMOTE_YELLOW_BUTTON
 			,ACTION_REMOTE_BLUE_BUTTON
+			,ACTION_REMOTE_SUBPAGE_UP
+			,ACTION_REMOTE_SUBPAGE_DOWN
 		};
 		public ActionType   wID=0;
 		public float        fAmount1=0.0f;

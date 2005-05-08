@@ -82,6 +82,12 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_REMOTE_BLUE_BUTTON:
 					OnKeyPressed((char)'l');
 					break;
+				case Action.ActionType.ACTION_REMOTE_SUBPAGE_UP:
+					SubpageUp();
+					break;
+				case Action.ActionType.ACTION_REMOTE_SUBPAGE_DOWN:
+					SubpageDown();
+					break;
 
 
 			}
@@ -130,6 +136,22 @@ namespace MediaPortal.GUI.TV
 			GetNewPage();
 		}
 
+		void SubpageUp()
+		{
+			if(actualSubPageNumber<128)
+			{
+				actualSubPageNumber++;
+				GetNewPage();
+			}
+		}
+		void SubpageDown()
+		{
+			if(actualSubPageNumber>0)
+			{
+				actualSubPageNumber--;
+				GetNewPage();
+			}
+		}
 
 		void GetNewPage()
 		{
