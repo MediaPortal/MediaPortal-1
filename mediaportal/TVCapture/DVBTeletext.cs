@@ -749,9 +749,6 @@ namespace MediaPortal.TV.Recording
 			Marshal.Copy(m_cacheTable[pageNumber,subPage],buffer,0,1000);
 			int pointer=960;
 
-			if(pageNumber==0x100)
-				pointer=960;
-			
 			string table=System.Text.Encoding.ASCII.GetString(buffer,pointer,40);
 			int button=1;
 			int buttonNumber=-1;
@@ -775,8 +772,6 @@ namespace MediaPortal.TV.Recording
 					tmpLink+=""+((char)buffer[pointer]); // add the char
 				}
 
-				if(pointer>=0x3FF)
-					break;
 
 				m_flofAIT[m_flofTable[pageNumber,buttonNumber-1]]=tmpLink;
 				button++;
