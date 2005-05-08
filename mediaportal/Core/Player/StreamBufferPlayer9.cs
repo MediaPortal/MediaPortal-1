@@ -56,6 +56,7 @@ namespace MediaPortal.Player
 			Log.Write("StreamBufferPlayer9: switch to fullscreen mode");
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);
+Log.Write("StreamBufferPlayer9: build graph");
 
       try 
       {
@@ -67,9 +68,13 @@ namespace MediaPortal.Player
         }
         comobj = Activator.CreateInstance( comtype );
         graphBuilder = (IGraphBuilder) comobj; comobj = null;
+Log.Write("StreamBufferPlayer9: add vmr9");
+
 				Vmr9= new VMR9Util("mytv");
 				Vmr9.AddVMR9(graphBuilder);			
 				Vmr9.Enable(false);	
+
+				Log.Write("StreamBufferPlayer9: add sbe");
 
 				// create SBE source
         Guid clsid = Clsid.StreamBufferSource;
@@ -97,7 +102,8 @@ namespace MediaPortal.Player
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to get IFileSourceFilter");
           return false;
         }	
-        hr = fileSource.Load(filename, IntPtr.Zero);
+Log.Write("StreamBufferPlayer9: open file:{0}",filename);
+				hr = fileSource.Load(filename, IntPtr.Zero);
         if (hr!=0) 
         {
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to open file:{0} :0x{1:x}",filename,hr);
@@ -105,6 +111,7 @@ namespace MediaPortal.Player
         }	
 
 
+Log.Write("StreamBufferPlayer9: add codecs");
 				// add preferred video & audio codecs
 				string strVideoCodec="";
         string strAudioCodec="";
@@ -149,7 +156,8 @@ namespace MediaPortal.Player
 				}
 
 				Vmr9.SetDeinterlaceMode();
-        return true;
+				Log.Write("StreamBufferPlayer9: done");
+				return true;
       }
       catch( Exception  ex)
       {
