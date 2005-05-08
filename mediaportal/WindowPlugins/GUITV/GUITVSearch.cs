@@ -118,8 +118,12 @@ namespace MediaPortal.GUI.TV
 			TVDatabase.GetRecordings(ref listRecordings);
 					
 			
+			btnShow.RestoreSelection=false;
+			btnEpisode.RestoreSelection=false;
+			btnLetter.RestoreSelection=false;
 			btnShow.Clear();
 			btnEpisode.Clear();
+			btnLetter.AddSubItem("#");
 			for (char k='A'; k <='Z'; k++)
 			{
 				btnLetter.AddSubItem(k.ToString());
