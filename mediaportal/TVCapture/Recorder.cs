@@ -1884,6 +1884,7 @@ namespace MediaPortal.TV.Recording
 						totalSize -= fi.info.Length;
 						if (Utils.FileDelete(fi.filename))
 						{
+							DeleteRecording(fi.filename);
 							VideoDatabase.DeleteMovie(fi.filename);
 							VideoDatabase.DeleteMovieInfo(fi.filename);
 						}
