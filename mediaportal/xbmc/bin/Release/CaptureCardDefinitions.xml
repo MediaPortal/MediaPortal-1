@@ -3987,4 +3987,23 @@
       </connections>
     </tv>
   </capturecard>
+  
+  <capturecard commercialname="ATI HDTV Wonder (Analog)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_a1031002">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="ATI DTV Wonder Analog TV Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="ATI DTV Wonder Analog Audio Capture"	checkdevice="true"></filter>
+        <filter cat="crossbar" 		name="ATI DTV Wonder Analog AV Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  		name="ATI DTV Wonder Analog AV Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
+        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
  </capturecards>
