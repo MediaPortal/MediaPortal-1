@@ -559,7 +559,7 @@ namespace MediaPortal.GUI.TV
 			TVDatabase.RemoveRecordedTV(rec);
 			VideoDatabase.DeleteMovieInfo(rec.FileName);
 			VideoDatabase.DeleteMovie(rec.FileName);
-			Utils.FileDelete(rec.FileName);
+			Recorder.DeleteRecording(rec.FileName);
 			LoadDirectory();
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
 			GUIControl.SelectItemControl(GetID,listViews.GetID,m_iSelectedItem);
@@ -585,7 +585,7 @@ namespace MediaPortal.GUI.TV
 			{
 				if (rec.Played>0)
 				{
-					Utils.FileDelete(rec.FileName);
+					Recorder.DeleteRecording(rec.FileName);
 					TVDatabase.RemoveRecordedTV(rec);
 					VideoDatabase.DeleteMovieInfo(rec.FileName);
 					VideoDatabase.DeleteMovie(rec.FileName);
@@ -822,7 +822,7 @@ namespace MediaPortal.GUI.TV
 						break;
 					}
 				}
-				Utils.FileDelete(filename);
+				Recorder.DeleteRecording(filename);
 				VideoDatabase.DeleteMovieInfo(filename);
 				VideoDatabase.DeleteMovie(filename);
 			}
@@ -832,6 +832,7 @@ namespace MediaPortal.GUI.TV
       if (type!=g_Player.MediaType.Recording) return;
       VideoDatabase.AddMovieFile(filename);
     }
+
 		#endregion
   }
 }

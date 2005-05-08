@@ -1896,6 +1896,38 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
 		#region dvr-ms importing
+		static public void DeleteRecording(string recordingFilename)
+		{
+			Utils.FileDelete(recordingFilename);
+			int pos=recordingFilename.LastIndexOf(@"\");
+			if (pos<0) return;
+			string path=recordingFilename.Substring(0,pos);
+			string filename=recordingFilename.Substring(pos+1);
+			pos=filename.LastIndexOf(".");
+			if (pos>=0)
+				filename=filename.Substring(0,pos);
+			filename=filename.ToLower();
+			string[] strFiles;
+			try
+			{
+				strFiles=System.IO.Directory.GetFiles(path);
+				foreach (string strFile in strFiles)
+				{
+					try
+					{
+						if (strFile.ToLower().IndexOf(filename)>=0)
+						{
+							if (strFile.ToLower().IndexOf(".sbe")>=0)
+							{
+								System.IO.File.Delete(strFile);
+							}
+						}
+					}
+					catch(Exception){}
+				}
+			}
+			catch(Exception){}
+		}
 		static public void ImportDvrMsFiles()
 		{
 			//dont import during recording...
