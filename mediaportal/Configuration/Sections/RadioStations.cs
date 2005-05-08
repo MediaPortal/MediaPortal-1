@@ -143,7 +143,7 @@ namespace MediaPortal.Configuration.Sections
 			this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.upButton.Enabled = false;
 			this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.upButton.Location = new System.Drawing.Point(280, 304);
+			this.upButton.Location = new System.Drawing.Point(296, 304);
 			this.upButton.Name = "upButton";
 			this.upButton.Size = new System.Drawing.Size(48, 23);
 			this.upButton.TabIndex = 5;

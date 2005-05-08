@@ -430,7 +430,15 @@ namespace MediaPortal.Configuration.Sections
 
 				foreach(WeatherChannel.City city in cities)
 				{
-					citiesListView.Items.Add(new ListViewItem(new string[] { city.Name, city.Id, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty }));
+					citiesListView.Items.Add(new ListViewItem(new string[] {	city.Name, 
+																																		city.Id,
+																																	 searchForm.SatteliteImage, 
+																																	 searchForm.TemperatureImage, 
+																																	 searchForm.UVIndexImage, 
+																																	 searchForm.WindsImage, 
+																																	 searchForm.HumidityImage, 
+																																	 searchForm.PrecipitationImage }));
+
 				}
 			}
 		}
@@ -460,11 +468,11 @@ namespace MediaPortal.Configuration.Sections
         // Set current image location
         //
         cityForm.SatteliteImage = listItem.SubItems[2].Text;
-		cityForm.TemperatureImage = listItem.SubItems[3].Text;
-	    cityForm.UVIndexImage = listItem.SubItems[4].Text;
-	    cityForm.WindsImage = listItem.SubItems[5].Text;
-	    cityForm.HumidityImage = listItem.SubItems[6].Text;
-	    cityForm.PrecipitationImage = listItem.SubItems[7].Text;
+				cityForm.TemperatureImage = listItem.SubItems[3].Text;
+				cityForm.UVIndexImage = listItem.SubItems[4].Text;
+				cityForm.WindsImage = listItem.SubItems[5].Text;
+				cityForm.HumidityImage = listItem.SubItems[6].Text;
+				cityForm.PrecipitationImage = listItem.SubItems[7].Text;
 
         DialogResult dialogResult = cityForm.ShowDialog(this);
 
@@ -474,11 +482,11 @@ namespace MediaPortal.Configuration.Sections
           // Fetch selected image location
           //
           listItem.SubItems[2].Text = cityForm.SatteliteImage;
-	      listItem.SubItems[3].Text = cityForm.TemperatureImage;
-		  listItem.SubItems[4].Text = cityForm.UVIndexImage;
-		  listItem.SubItems[5].Text = cityForm.WindsImage;
-		  listItem.SubItems[6].Text = cityForm.HumidityImage;
-		  listItem.SubItems[7].Text = cityForm.PrecipitationImage;
+					listItem.SubItems[3].Text = cityForm.TemperatureImage;
+					listItem.SubItems[4].Text = cityForm.UVIndexImage;
+					listItem.SubItems[5].Text = cityForm.WindsImage;
+					listItem.SubItems[6].Text = cityForm.HumidityImage;
+					listItem.SubItems[7].Text = cityForm.PrecipitationImage;
         }
       }
     }

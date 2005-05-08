@@ -74,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Size = new System.Drawing.Size(440, 72);
 			this.groupBox2.TabIndex = 2;
 			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Stream Settings";
+			this.groupBox2.Text = "Internet Radio Stream Settings";
 			// 
 			// browseFolderButton
 			// 
@@ -101,9 +101,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameLabel.Location = new System.Drawing.Point(16, 16);
 			this.folderNameLabel.Name = "folderNameLabel";
-			this.folderNameLabel.Size = new System.Drawing.Size(240, 16);
+			this.folderNameLabel.Size = new System.Drawing.Size(304, 16);
 			this.folderNameLabel.TabIndex = 11;
-			this.folderNameLabel.Text = "Folder where internet streams are stored:";
+			this.folderNameLabel.Text = "Folder where internet streams  (.asx, .pls,...) are stored:";
 			// 
 			// Radio
 			// 
