@@ -47,8 +47,8 @@
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>260</posX>
-			<posY>530</posY>
+			<posX>360</posX>
+			<posY>533</posY>
 			<label>#itemcount</label>
 			<align>left</align>
 			<textcolor>ffffffff</textcolor>
