@@ -35,6 +35,9 @@ namespace MediaPortal.TV.Recording
 		int						m_aitCount=-1;
 		string[]				m_aitTable=new string[2352];
 		int[]					m_topNavigationPages=new int[]{256,256,256,256};
+		string[]				m_flofAIT=new string[2352];
+		int[,]					m_flofTable=new int[2352,4];
+		bool					m_fastTextDecode=false;
 		//
 		//
 		string[]				m_mpPage=new string[]
@@ -179,6 +182,9 @@ namespace MediaPortal.TV.Recording
 				m_aitCount=-1;
 				m_aitTable=new string[2352];
 				m_topNavigationPages=new int[]{256,512,768,1024};
+				m_fastTextDecode=false;
+				m_flofAIT=new string[2352];
+				m_flofTable=new int[2352,4];
 
 				// free alloctated memory
 			
@@ -437,9 +443,9 @@ namespace MediaPortal.TV.Recording
 			if (dataPtr==IntPtr.Zero) return;
 			byte[] txtRow=new byte[42];
 			int line=0;
-			int b=0,b1=0, b2=0, b3=0, b4=0;
+			int b=0,byte1=0, byte2=0, byte3=0, byte4=0;
 			int actualTransmittingPage=0;
-			byte[] tmpBuffer=new byte[184];
+			byte[] tmpBuffer=new byte[46];
 			int packetNumber;
 			byte magazine;
 			int pointer=0;
@@ -449,7 +455,7 @@ namespace MediaPortal.TV.Recording
 				for (line = 0; line < 4; line++)
 				{
 
-					Marshal.Copy((IntPtr)((dataAdd+4)+(line*0x2e)),tmpBuffer,0,184);
+					Marshal.Copy((IntPtr)((dataAdd+4)+(line*0x2e)),tmpBuffer,0,46);
 
 					pointer = line*0x2e;
 					if ((tmpBuffer[0]==0x02 || tmpBuffer[0]==0x03) && (tmpBuffer[1]==0x2C))
@@ -463,72 +469,70 @@ namespace MediaPortal.TV.Recording
 							tmpBuffer[b-4] = (byte)((m_lutTable[upper]) | (m_lutTable[lower+16]));
 						}//for(b=4;
 
-						b1 = m_deHamTable[tmpBuffer[0]];
-						b2 = m_deHamTable[tmpBuffer[1]];
+						byte1 = m_deHamTable[tmpBuffer[0]];
+						byte2 = m_deHamTable[tmpBuffer[1]];
 
-						if (b1 == 0xFF || b2 == 0xFF)
-						{
+						if (byte1 == 0xFF || byte2 == 0xFF)
 							continue;
-						}
 
-						b1 &= 8;
-						packetNumber = b1>>3 | b2<<1;
+						byte1 &= 8;
+						packetNumber = byte1>>3 | byte2<<1;
 						//  mag number
 						magazine =(byte)(m_deHamTable[tmpBuffer[0]] & 7);
 						if (packetNumber == 0)
 						{
-							b1 = m_deHamTable[tmpBuffer[0]];
-							b2 = m_deHamTable[tmpBuffer[3]];
-							b3 = m_deHamTable[tmpBuffer[2]];
+							byte1 = m_deHamTable[tmpBuffer[0]];
+							byte2 = m_deHamTable[tmpBuffer[3]];
+							byte3 = m_deHamTable[tmpBuffer[2]];
 
-							if (b1 == 0xFF || b2 == 0xFF || b3 == 0xFF)
+							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF)
 							{
 								m_currentPage[magazine] = -1;
 								actualTransmittingPage = -1;
 								continue;
 							}
 
-							b1 &= 7;
-							if (b1==0)
-								b1 = 8;
-							actualTransmittingPage = b1<<8 | b2<<4 | b3;
+							byte1 &= 7;
+							if (byte1==0)
+								byte1 = 8;
+							actualTransmittingPage = byte1<<8 | byte2<<4 | byte3;
 							m_currentPage[magazine] = actualTransmittingPage;
 
-							if (b2 > 9 || b3 > 9) 
+							if (byte2 > 9 || byte3 > 9) 
 							{
 								m_currentSubPage[magazine] = 0;
 								m_subPageTable[m_currentPage[magazine]] = 0;
 								continue;
 							}
 
-							b1 = m_deHamTable[tmpBuffer[7]];
-							b2 = m_deHamTable[tmpBuffer[6]];
-							b3 = m_deHamTable[tmpBuffer[5]];
-							b4 = m_deHamTable[tmpBuffer[4]];
+							byte1 = m_deHamTable[tmpBuffer[7]];
+							byte2 = m_deHamTable[tmpBuffer[6]];
+							byte3 = m_deHamTable[tmpBuffer[5]];
+							byte4 = m_deHamTable[tmpBuffer[4]];
 
-							if (b1 == 0xFF || b2 == 0xFF || b3 == 0xFF || b4 == 0xFF)
+							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF || byte4 == 0xFF)
 							{
 								m_currentSubPage[magazine] = -1;
 								continue;
 							}
 
-							b1 &= 3;
-							b3 &= 7;
+							byte1 &= 3;
+							byte3 &= 7;
 
-							if (b1 != 0 || b2 != 0 || b4 > 9)
+							if (byte1 != 0 || byte2 != 0 || byte4 > 9)
 							{
 								m_currentSubPage[magazine] = -1;
 								continue;
 							}
 							else
-								m_currentSubPage[magazine] = b3<<4 | b4;
+								m_currentSubPage[magazine] = byte3<<4 | byte4;
 
 							int languageCode=0;
-							b1 = m_deHamTable[tmpBuffer[9]];
-							if (b1 == 0xFF)
+							byte1 = m_deHamTable[tmpBuffer[9]];
+							if (byte1 == 0xFF)
 								languageCode = 0;
 							else
-								languageCode =((b1 >> 3) & 0x01) | (((b1 >> 2) & 0x01) << 1) | (((b1 >> 1) & 0x01) << 2);
+								languageCode =((byte1 >> 3) & 0x01) | (((byte1 >> 2) & 0x01) << 1) | (((byte1 >> 1) & 0x01) << 2);
 
 							switch(languageCode)
 							{
@@ -580,7 +584,7 @@ namespace MediaPortal.TV.Recording
 									Marshal.WriteByte(m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]],t,32);
 							}
 						}
-						else if (packetNumber < 24)
+						else if (packetNumber <= 24)
 						{
 							if(SetMemory(1000,m_currentPage[magazine],m_currentSubPage[magazine])==false)
 								return;
@@ -599,9 +603,39 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
+						else if(packetNumber==27)
+						{
+							int pageNumber=m_currentPage[magazine];
+							int subPageNumber=m_currentSubPage[magazine];
+							if(m_deHamTable[tmpBuffer[2]]==0)
+							{
 
-						if (m_currentPage[magazine] != -1 && m_currentSubPage[magazine] != -1 &&
-							packetNumber < 24 && ((int)m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]]!=0))
+								byte1 = m_deHamTable[tmpBuffer[0]];
+								if (byte1!=255)
+								{
+									byte1 &= 7;
+									for (b = 0; b < 4; b++)
+									{
+										m_flofTable[pageNumber,b]=0;
+										byte2 = m_deHamTable[tmpBuffer[b*6+4]];
+										byte3 = m_deHamTable[tmpBuffer[b*6+3]];
+
+										if (byte2!=255 && byte3!=255)
+										{
+											byte4 = ((byte1 & 4)^((m_deHamTable[tmpBuffer[b*6+8]]>>1) & 4)) | ((byte1 & 2)^((m_deHamTable[tmpBuffer[b*6+8]]>>1) & 2)) |  ((byte1 & 1)^((m_deHamTable[tmpBuffer[b*6+6]]>>3) & 1));
+											if (byte4 == 0) byte4 = 8;
+											if (byte2<=9 && byte3<= 9)
+												m_flofTable[pageNumber,b] = byte4<<8 | byte2<<4 | byte3;
+										}
+									}
+
+								}
+							}
+						}
+						
+
+						if (m_currentPage[magazine]!= -1 && m_currentSubPage[magazine] != -1 &&
+							packetNumber <= 24 && ((int)m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]]!=0))
 						{
 							IntPtr adr=m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]];
 							int offset=packetNumber*40;
@@ -623,7 +657,6 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception )
 			{ 
-				//int a=0;
 			}
 		}
 		bool IsDEC(int i)
@@ -698,12 +731,65 @@ namespace MediaPortal.TV.Recording
 		}
 		//
 		//
+		void FastTextTable(int pageNumber,int subPage)
+		{
+
+			m_flofAIT=new string[2352];
+			if(pageNumber==0xFFFF)
+				return;
+
+			if((int)m_cacheTable[pageNumber,subPage]==0)
+				return;
+
+			byte[] buffer=new byte[1024];
+
+			if(m_flofTable[pageNumber,0]!=0 || m_flofTable[pageNumber,1]!=0 || m_flofTable[pageNumber,2]!=0 || m_flofTable[pageNumber,3]!=0)
+				m_fastTextDecode=true;
+
+			Marshal.Copy(m_cacheTable[pageNumber,subPage],buffer,0,1000);
+			int pointer=960;
+
+			if(pageNumber==0x100)
+				pointer=960;
+			
+			string table=System.Text.Encoding.ASCII.GetString(buffer,pointer,40);
+			int button=1;
+			int buttonNumber=-1;
+			do			
+			{
+				
+				string tmpLink="";
+				for(;IsText(buffer[pointer])==false;pointer++)
+				{ 
+					if(buttonNumber==-1)
+						buttonNumber=buffer[pointer];
+					if(buttonNumber>4) buttonNumber=4;
+					// search for the start
+					if(pointer>=1000)
+						break;
+				}
+				if(pointer>=1000)
+					break;
+				for(;IsText(buffer[pointer])==true;pointer++)
+				{
+					tmpLink+=""+((char)buffer[pointer]); // add the char
+				}
+
+				if(pointer>=0x3FF)
+					break;
+
+				m_flofAIT[m_flofTable[pageNumber,buttonNumber-1]]=tmpLink;
+				button++;
+				buttonNumber=-1;
+			}
+			while(pointer<1000 && button<=4);
+		}
 		void AdditionalInformationTable()
 		{
 			int page=0;
-			int b1=0;
-			int b2=0;
-			int b3=0; 
+			int byte1=0;
+			int byte2=0;
+			int byte3=0; 
 			bool found=false;
 
 			for (int i = 0; i <= m_aitCount; i++)
@@ -716,47 +802,47 @@ namespace MediaPortal.TV.Recording
 					{
 						for (int j = 0; j < 44; j++)
 						{
-							b1 = m_deHamTable[Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j))];
+							byte1 = m_deHamTable[Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j))];
 
-							if (b1 == 0xE)
+							if (byte1 == 0xE)
 								continue; 
 
-							if (b1 == 0xF)
+							if (byte1 == 0xF)
 								break;
 
-							b2 = m_deHamTable[Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j+1))];
-							b3 = m_deHamTable[Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j+2))];
+							byte2 = m_deHamTable[Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j+1))];
+							byte3 = m_deHamTable[Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j+2))];
 
-							if (b1 == 0xFF || b2 == 0xFF || b3 == 0xFF)
+							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF)
 							{
 								return;
 							}
 
-							if (b1>8 || b2>9 || b3>9)
+							if (byte1>8 || byte2>9 || byte3>9)
 							{
 								continue;
 							}
 
-							b1 = b1<<8 | b2<<4 | b3; 
+							byte1 = byte1<<8 | byte2<<4 | byte3; 
 							found = false;
 
-							for (b2 = 0; b2 <11; b2++)
+							for (byte2 = 0; byte2 <11; byte2++)
 							{
-								b3 = Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j+b2+8));
-								if (((b3&1) ^ ((b3>>1)&1) ^ ((b3>>2)&1) ^ ((b3>>3)&1) ^
-									((b3>>4)&1) ^ ((b3>>5)&1) ^ ((b3>>6)&1) ^ (b3>>7))!=0)
-									b3 &= 0x7F;
+								byte3 = Marshal.ReadByte((IntPtr)(((int)m_cacheTable[page,0])+40+20*j+byte2+8));
+								if (((byte3&1) ^ ((byte3>>1)&1) ^ ((byte3>>2)&1) ^ ((byte3>>3)&1) ^
+									((byte3>>4)&1) ^ ((byte3>>5)&1) ^ ((byte3>>6)&1) ^ (byte3>>7))!=0)
+									byte3 &= 0x7F;
 								else
-									b3 = ' ';
+									byte3 = ' ';
 
-								if (b3 < ' ')
-									b3 = ' ';
+								if (byte3 < ' ')
+									byte3 = ' ';
 
-								if (b3 == ' ' && found==false)
-									m_aitTable[b1]= new string(' ',10);
+								if (byte3 == ' ' && found==false)
+									m_aitTable[byte1]= new string(' ',10);
 								else
 								{
-									m_aitTable[b1]+=""+((char)b3);
+									m_aitTable[byte1]+=""+((char)byte3);
 									found = true;
 								}
 							}
@@ -784,6 +870,23 @@ namespace MediaPortal.TV.Recording
 				ret=256;
 
 			return ret;
+		}
+		bool IsText(byte val)
+		{
+			if(val>=' ') 
+				return true;
+			return false;
+
+		}
+		bool IsAlphaNumeric(byte val)
+		{
+			if(val>='A' && val<='Z')
+				return true;
+			if(val>='a' && val<='z')
+				return true;
+			if(val>='0' && val<='9')
+				return true;
+			return false;
 		}
 		int GetPreviousDecimal(int val)           /* counting down */
 		{
@@ -1157,8 +1260,11 @@ namespace MediaPortal.TV.Recording
 				{
 					for(i=0;i<line.Length;i++)
 					{
-						
-						pageAttribs[pos+i] = ((int)TextColors.Blue<<4) | (int)TextColors.White;
+						if(m_hiddenMode==false)
+							pageAttribs[pos+i] = ((int)TextColors.Black<<4) | (int)TextColors.Black;
+						else
+							pageAttribs[pos+i] = ((int)TextColors.Blue<<4) | (int)TextColors.White;
+
 						if(line.Substring(i,1)=="1")
 							pageChars[pos+i] = 0xEC;
 						else
@@ -1169,12 +1275,17 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			// render
+			bool hasTopText=true;
+
+
 			if((int)m_cacheTable[496,0]!=0)
 				BasicTopTable();
 			if((int)m_cacheTable[498,0]!=0)
 				AdditionalInformationTable();
-			if((int)m_cacheTable[496,0]==0 && (int)m_cacheTable[498,0]!=0)
+			if((int)m_cacheTable[496,0]==0)
 			{
+				hasTopText=false;
+				FastTextTable(mPage,sPage);
 			}
 			int y = 0;
 			int x;
@@ -1183,9 +1294,16 @@ namespace MediaPortal.TV.Recording
 			int fntSize=(width-2<10)?10:width-2;
 			m_teletextFont=new System.Drawing.Font("Courier New",fntSize,System.Drawing.FontStyle.Bold);
 			m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
-			int[] topColors=new int[]{(int)TextColors.Red,(int)TextColors.Green,(int)TextColors.Yellow,(int)TextColors.Blue};
+			int[] topColors=new int[]{(int)TextColors.Red,(int)TextColors.Green,(int)TextColors.Yellow,(int)TextColors.Cyan};
 			int colorCounter=0;
-			if(mPage!=0xFFFF)
+			if(mPage==0xFFFF)
+			{
+				m_topNavigationPages[0]=256;
+				m_topNavigationPages[1]=512;
+				m_topNavigationPages[2]=768;
+				m_topNavigationPages[3]=1024;
+			}
+			else if(hasTopText)
 			{
 				int redButton= TopNavigation(mPage, true, false); /* arguments: startpage, up, findgroup */
 				int greenButton= TopNavigation(redButton, false, false);
@@ -1197,27 +1315,59 @@ namespace MediaPortal.TV.Recording
 				m_topNavigationPages[2]=yellowButton;
 				m_topNavigationPages[3]=blueButton;
 			}
-			else
+			else if(m_fastTextDecode==true)
 			{
-				m_topNavigationPages[0]=256;
-				m_topNavigationPages[1]=512;
-				m_topNavigationPages[2]=768;
-				m_topNavigationPages[3]=1024;
+				for(int button=0;button<4;button++)
+				{
+					if(m_flofTable[mPage,button]!=0)
+						m_topNavigationPages[button]=m_flofTable[mPage,button];
+					else
+						m_topNavigationPages[button]=mPage;
+				}
 			}
 			//
 			// build control line
-			for(int lastLine=0;lastLine<40;lastLine+=10)
+			if(mPage!=0xFFFF) // no top or fast text for not found page
 			{
-				for(int i=0;i<10;i++)
+				if(hasTopText && m_fastTextDecode==false)
 				{
-					pageAttribs[960+lastLine+i]=topColors[colorCounter]<<4 | (int)TextColors.Black;
+					for(int lastLine=0;lastLine<40;lastLine+=10)
+					{
+						for(int i=0;i<10;i++)
+						{
+							pageAttribs[960+lastLine+i]=topColors[colorCounter]<<4 | (int)TextColors.Black;
+						}
+						if(m_aitTable[m_topNavigationPages[colorCounter]]!=null)
+							System.Text.Encoding.ASCII.GetBytes(m_aitTable[m_topNavigationPages[colorCounter]],0,10,pageChars,960+lastLine);
+
+						colorCounter++;
+					}
 				}
-				if(m_aitTable[m_topNavigationPages[colorCounter]]!=null)
-					System.Text.Encoding.ASCII.GetBytes(m_aitTable[m_topNavigationPages[colorCounter]],0,10,pageChars,960+lastLine);
+				else
+					if(m_fastTextDecode==true && hasTopText==false)
+				{
+					int charCounter=0;
+					for(int button=0;button<4;button++)
+					{
+						string text=m_flofAIT[m_flofTable[mPage,button]];
+						if(text==null)
+						{
+							text="";
+						}
+						text+=" ";
+						if(charCounter>=40)
+							break;
+						for(int l=0;l<text.Length;l++)
+						{
+							System.Text.Encoding.ASCII.GetBytes(text,l,1,pageChars,960+charCounter+l);
+							pageAttribs[960+charCounter+l]=(int)TextColors.Black<<4 | topColors[button];
+							
+						}
+						charCounter+=text.Length;
+					}
 
-				colorCounter++;
+				}
 			}
-
 			//
 			for (row = 0; row < 25; row++)
 			{
