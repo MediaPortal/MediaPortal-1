@@ -78,6 +78,10 @@ namespace MediaPortal.GUI.Video
 		static VirtualDirectory		m_directory = new VirtualDirectory();
     MapSettings								mapSettings = new MapSettings();
     bool											m_askBeforePlayingDVDImage = false;
+		// File menu
+		string										destinationFolder=String.Empty;
+		bool											fileMenuEnabled=false;
+		string										fileMenuPinCode=String.Empty;
 
 		public GUIVideoFiles()
 		{
@@ -190,7 +194,9 @@ namespace MediaPortal.GUI.Video
     {
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-				
+				fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+				fileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);
+
         m_directory.Clear();
         string strDefault = xmlreader.GetValueAsString("movies", "default",String.Empty);
         for (int i = 0; i < 20; i++)
@@ -1868,6 +1874,12 @@ namespace MediaPortal.GUI.Video
 					dlg.AddLocalizedString(926); //Queue
 				}
 				if (Utils.getDriveType(item.Path) == 5) dlg.AddLocalizedString(654); //Eject
+
+				int iPincodeCorrect;
+				if (!m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && fileMenuEnabled)
+				{
+					dlg.AddLocalizedString(500); // FileMenu
+				}
 			}
 
 			dlg.DoModal( GetID);
@@ -1921,7 +1933,70 @@ namespace MediaPortal.GUI.Video
 					OnScan(itemlist);
 					LoadDirectory(currentFolder);
 					break;
+
+				case 500: // File menu
+				{
+					// get pincode
+					if (fileMenuPinCode != String.Empty)
+					{
+						string userCode=String.Empty;
+						if (GetUserInputString(ref userCode) && userCode==fileMenuPinCode)
+						{
+							OnShowFileMenu();
+						}
+					}
+					else 
+						OnShowFileMenu();
+				}
+					break;
 			}
+		}
+
+		bool GetUserInputString(ref string sString)
+		{			
+			VirtualSearchKeyboard keyBoard=(VirtualSearchKeyboard)GUIWindowManager.GetWindow(1001);			
+			keyBoard.Reset();
+			keyBoard.Text = sString;
+			keyBoard.DoModal(GetID); // show it...
+			System.GC.Collect(); // collect some garbage
+			if (keyBoard.IsConfirmed) sString=keyBoard.Text;
+			return keyBoard.IsConfirmed;
+		}
+
+		void OnShowFileMenu()
+		{
+			GUIListItem item=facadeView.SelectedListItem;
+			if (item==null) return;
+			if (item.IsFolder && item.Label=="..") return;
+
+			// init
+			GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_FILE);
+			if (dlgFile == null) return;
+			
+			// File operation settings
+			dlgFile.SetSourceItem(item);
+			dlgFile.SetSourceDir(currentFolder);
+			dlgFile.SetDestinationDir(destinationFolder);
+			dlgFile.SetDirectoryStructure(m_directory);
+			dlgFile.DoModal(GetID);
+			destinationFolder = dlgFile.GetDestinationDir();
+
+			//final		
+			if (dlgFile.Reload())
+			{
+				int selectedItem = facadeView.SelectedListItemIndex;
+				if (currentFolder != dlgFile.GetSourceDir()) selectedItem = -1;
+	
+				currentFolder = System.IO.Path.GetDirectoryName(dlgFile.GetSourceDir());
+				LoadDirectory(currentFolder);
+				if (selectedItem >= 0)
+				{
+					GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItem);
+				}
+			}
+
+			dlgFile.DeInit();
+			dlgFile=null;
 		}
 
 		void OnDeleteItem(GUIListItem item)

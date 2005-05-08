@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.Picture.Database;
 using MediaPortal.Music.Database;
+using MediaPortal.Video.Database;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Dialogs
 {
@@ -37,8 +38,8 @@ namespace MediaPortal.Dialogs
 		long							m_dwTotalSize=0;
 		int								m_iFileNr=0;
 		DirectoryHistory  m_history = new DirectoryHistory();
-		string            m_strDirectory="";
-		string						m_strDestination="";
+		string            sourceFolder=String.Empty;
+		string						destinationFolder=String.Empty;
 		VirtualDirectory  m_directory = null;
 		bool							m_bButtonYes = false;
 		bool							m_bButtonNo = false;
@@ -241,12 +242,17 @@ namespace MediaPortal.Dialogs
 
 		public void SetSourceDir(string value)
 		{
-			m_strDirectory = value;
+			sourceFolder = value;
+		}
+
+		public string GetSourceDir()
+		{
+			return sourceFolder;
 		}
 
 		public void SetDestinationDir(string value)
 		{
-			m_strDestination = value;
+			destinationFolder = value;
 		}
 
 		public void SetDirectoryStructure(VirtualDirectory value)
@@ -256,7 +262,7 @@ namespace MediaPortal.Dialogs
 
 		public string GetDestinationDir()
 		{
-			return m_strDestination;			
+			return destinationFolder;			
 		}
 
 		public void SetNewHeading( string strLine )
@@ -328,7 +334,7 @@ namespace MediaPortal.Dialogs
 			if (m_bCanceled) return;			
       
 			// source file name
-			string strItemFileName = item.Path.Replace(m_strDirectory, "");
+			string strItemFileName = item.Path.Replace(sourceFolder, "");
 			if (strItemFileName.StartsWith("\\") == true)
 			{
 				strItemFileName = strItemFileName.Remove(0, 1);
@@ -358,7 +364,7 @@ namespace MediaPortal.Dialogs
 			{
 				if (item.Label != "..")
 				{
-					string path = m_strDestination+strItemFileName;
+					string path = destinationFolder+strItemFileName;
 					try
 					{
 						DirectoryInfo di = Directory.CreateDirectory(path);
@@ -401,7 +407,7 @@ namespace MediaPortal.Dialogs
 				bool doNot=false;
 				try 
 				{
-					if (File.Exists(m_strDestination+strItemFileName))
+					if (File.Exists(destinationFolder+strItemFileName))
 					{
 						m_bButtonYes = false;
 						m_bButtonNo = false;
@@ -426,11 +432,11 @@ namespace MediaPortal.Dialogs
 							doNot=false;
 							try
 							{
-								File.Delete(m_strDestination+strItemFileName);
+								File.Delete(destinationFolder+strItemFileName);
 							}
 							catch (Exception) 
 							{
-								ShowError(516, m_strDestination+strItemFileName);
+								ShowError(516, destinationFolder+strItemFileName);
 								doNot=true;
 							}
 						}
@@ -445,13 +451,13 @@ namespace MediaPortal.Dialogs
 						FileInfo fi = new FileInfo(item.Path);
 						if (m_iFileMode==1)
 						{
-							fi.MoveTo(m_strDestination+strItemFileName);
+							fi.MoveTo(destinationFolder+strItemFileName);
 							// delete from database
 							DeleteFromDatabase(item);
 						} 
 						else 
 						{
-							fi.CopyTo(m_strDestination+strItemFileName,false);
+							fi.CopyTo(destinationFolder+strItemFileName,false);
 						}
 					}
 				}
@@ -461,7 +467,7 @@ namespace MediaPortal.Dialogs
 					ShowError(517, item.Path);
 					m_bCanceled=true;
 
-					Log.Write("FileMenu Error: from {0} to {1} MC:{2}",item.Path, m_strDestination+strItemFileName, m_iFileMode);
+					Log.Write("FileMenu Error: from {0} to {1} MC:{2}",item.Path, destinationFolder+strItemFileName, m_iFileMode);
 				}
 			}		
 		}
@@ -555,13 +561,13 @@ namespace MediaPortal.Dialogs
 				return;
 			}
       
-
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg==null) return;
 			dlg.Reset();
 			dlg.SetHeading(500); // File menu
 	
-			if (m_strDestination != "")
+			sourceFolder = System.IO.Path.GetDirectoryName(item.Path);
+			if ( (destinationFolder != "") && (destinationFolder != sourceFolder) )
 			{
 				dlg.AddLocalizedString(115); //copy
 				if (!Utils.IsDVD(item.Path)) dlg.AddLocalizedString(116); //move					
@@ -574,7 +580,7 @@ namespace MediaPortal.Dialogs
 			{
 				dlg.AddLocalizedString(501); // Set as destination
 			}
-			if (m_strDestination != "") dlg.AddLocalizedString(504); // Goto destination
+			if (destinationFolder != "") dlg.AddLocalizedString(504); // Goto destination
 			     
 			dlg.DoModal(m_dwParentWindowID);
 			if (dlg.SelectedId==-1) return;
@@ -600,15 +606,15 @@ namespace MediaPortal.Dialogs
 						if (item.IsFolder)
 						{
 							// directory rename
-							if (Directory.Exists(m_strDirectory+"\\"+strSourceName))
+							if (Directory.Exists(sourceFolder+"\\"+strSourceName))
 							{
 								try
 								{
-									Directory.Move(m_strDirectory+"\\"+strSourceName, m_strDirectory+"\\"+strDestinationName);
+									Directory.Move(sourceFolder+"\\"+strSourceName, sourceFolder+"\\"+strDestinationName);
 								}
 								catch(Exception) 
 								{
-									ShowErrorDialog(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
+									ShowErrorDialog(dlg.SelectedId, sourceFolder+"\\"+strSourceName);
 								}
 								m_bReload = true;
 							}
@@ -618,14 +624,14 @@ namespace MediaPortal.Dialogs
 							// file rename
 							if (File.Exists(item.Path))
 							{
-								string strDestinationFile = m_strDirectory+"\\"+strDestinationName+strExtension;
+								string strDestinationFile = sourceFolder+"\\"+strDestinationName+strExtension;
 								try
 								{									
 									File.Move(item.Path, strDestinationFile);
 								}
 								catch(Exception) 
 								{
-									ShowErrorDialog(dlg.SelectedId, m_strDirectory+"\\"+strSourceName);
+									ShowErrorDialog(dlg.SelectedId, sourceFolder+"\\"+strSourceName);
 								}
 								m_bReload = true;
 							}
@@ -657,12 +663,12 @@ namespace MediaPortal.Dialogs
 					break;
 
 				case 501: // set as destiantion
-					m_strDestination = System.IO.Path.GetFullPath(item.Path)+"\\";					
+					destinationFolder = System.IO.Path.GetFullPath(item.Path)+"\\";					
 					break;
 
 				case 504: // goto destination
 				{
-					m_strDirectory = m_strDestination;
+					sourceFolder = destinationFolder;
 					m_bReload = true;
 				}
 					break;
@@ -699,7 +705,7 @@ namespace MediaPortal.Dialogs
 			else if (m_dwTotalSize > 1024) strFileOperation += (m_dwTotalSize/1024).ToString()+" KB)";
 			else strFileOperation += m_dwTotalSize.ToString()+" Bytes)";
 			SetNewHeading( strFileOperation );
-			SetLine(1, GUILocalizeStrings.Get(508)+" \""+m_strDestination+"\" ?");
+			SetLine(1, GUILocalizeStrings.Get(508)+" \""+destinationFolder+"\" ?");
 
 			m_bButtonYes = false;
 			m_bCanceled = false;
@@ -709,7 +715,7 @@ namespace MediaPortal.Dialogs
 			m_bNever = false;			
 			m_bReload = false;
 			m_iFileNr = 1;
-			m_strDirectory = System.IO.Path.GetDirectoryName(m_itemSourceItem.Path);
+			sourceFolder = System.IO.Path.GetDirectoryName(m_itemSourceItem.Path);
 
 			GUIWindowManager.IsSwitchingToNewWindow=false;
 
@@ -800,6 +806,7 @@ namespace MediaPortal.Dialogs
 			else if (Utils.IsVideo(item.Path))
 			{
 				//Remove from video database
+				VideoDatabase.DeleteMovie(item.Path);
 			} 
 			else if (Utils.IsAudio(item.Path))
 			{
@@ -819,7 +826,7 @@ namespace MediaPortal.Dialogs
 			GetUserInputString(ref verStr);
 
 			// Ask user confirmation
-			string path = m_strDirectory+"\\"+verStr;
+			string path = sourceFolder+"\\"+verStr;
 			try 
 			{
 				// Determine whether the directory exists.
