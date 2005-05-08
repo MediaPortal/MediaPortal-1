@@ -3037,21 +3037,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Twinhan MagicBox II (USB Box)" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3205">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Twinhan USB2 DVB-T receiver"      checkdevice="true"></filter>
-      </filters>
-      <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="TwinhanDTV Alpha USB2" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3206">
+  <capturecard commercialname="MagicBox II / TwinhanDTV Alpha" capturename="Twinhan USB2 DVB-T receiver" devid="vid_13d3&amp;pid_3206">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -3956,6 +3942,8 @@
     </tv>
   </capturecard>
   
+<!--    Cards after release 0.1.2.0   -->  
+
   <capturecard commercialname="ATI HDTV Wonder" capturename="ATI DTV Wonder Digital BDA Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_a1011002">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -3972,7 +3960,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="ATI HDTV Wonder" capturename="ATI DTV Wonder Digital BDA Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_a1031002">
+  <capturecard commercialname="ATI HDTV Wonder" capturename="ATI DTV Wonder Digital BDA Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_a1031002&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -3988,7 +3976,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="ATI HDTV Wonder (Analog)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_a1031002">
+  <capturecard commercialname="ATI HDTV Wonder (Analog)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_a1031002&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="0" audio="" mpeg2=""></interface>
@@ -4006,4 +3994,50 @@
       </connections>
     </tv>
   </capturecard>
+  
+  <capturecard commercialname="AVerMedia A169" capturename="AVerMedia Capture" devid="ven_1131&amp;dev_7134&amp;subsys_63601461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  	name="PhTVTune"  			checkdevice="true"></filter>
+        <filter cat="tvaudio"  	name="AVerMedia TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar" 	name="AVerMedia Crossbar"  	checkdevice="true"></filter>
+        <filter cat="capture"  	name="AVerMedia Capture"   	checkdevice="true"></filter>
+        <filter cat="encoder"	name="AVerMedia Encoder"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
+		<connection sourcefilter="capture"	sourcepin="5" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="6" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="AVerMedia A169" capturename="AVerMedia Capture" devid="ven_1131&amp;dev_7134&amp;subsys_73601461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  	name="PhTVTune"  			checkdevice="true"></filter>
+        <filter cat="tvaudio"  	name="AVerMedia TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar" 	name="AVerMedia Crossbar"  	checkdevice="true"></filter>
+        <filter cat="capture"  	name="AVerMedia Capture"   	checkdevice="true"></filter>
+        <filter cat="encoder"	name="AVerMedia Encoder"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
+		<connection sourcefilter="capture"	sourcepin="5" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="6" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard> 
  </capturecards>
