@@ -204,7 +204,7 @@ namespace MediaPortal.Configuration.Sections
 				XmlNode frequency			 = nodeChannel.Attributes.GetNamedItem("frequency");
 				MediaPortal.Radio.Database.RadioStation chan =new MediaPortal.Radio.Database.RadioStation();
 				chan.Name=name.Value;
-				chan.Frequency=(long)(Convert.ToDouble(frequency.Value)*10000);
+				chan.Frequency=(long)(Convert.ToDouble(frequency.Value)*100000);
 				RadioDatabase.AddStation(ref chan);
 			}
 		}

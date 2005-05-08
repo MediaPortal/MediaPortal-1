@@ -2952,6 +2952,7 @@ namespace MediaPortal.Configuration.Sections
 			TvChannelLookupService dlg = new TvChannelLookupService();
 			dlg.ShowDialog(this);
 			reloadList=true;
+			RadioStations.UpdateList();
 		}
 	}
 }
