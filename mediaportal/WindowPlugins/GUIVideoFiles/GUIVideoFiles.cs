@@ -1848,14 +1848,15 @@ namespace MediaPortal.GUI.Video
 			dlg.Reset();
 			dlg.SetHeading(924); // menu
 
+			if (!mapSettings.Stack) dlg.AddLocalizedString(346); //Stack
+			else dlg.AddLocalizedString(347); //Unstack
+			dlg.AddLocalizedString(654); //Eject
+
 			if (!facadeView.Focus)
 			{
 				// Menu button context menuu
 				dlg.AddLocalizedString(368); //IMDB
 				if (!m_directory.IsRemote(currentFolder)) dlg.AddLocalizedString(102); //Scan
-				if (!mapSettings.Stack) dlg.AddLocalizedString(346); //Stack
-				else dlg.AddLocalizedString(347); //Unstack
-				dlg.AddLocalizedString(654); //Eject
 			}
 			else
 			{

@@ -389,12 +389,13 @@ namespace MediaPortal.GUI.Music
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
+			if (!m_directory.IsRemote(m_strDirectory)) dlg.AddLocalizedString(102); //Scan
+			dlg.AddLocalizedString(654); //Eject
+
       if (!facadeView.Focus)
       {
         // control view has no focus
 				dlg.AddLocalizedString(368); //IMDB
-				if (!m_directory.IsRemote(m_strDirectory)) dlg.AddLocalizedString(102); //Scan
-				dlg.AddLocalizedString(654); //Eject
       }
       else
       {

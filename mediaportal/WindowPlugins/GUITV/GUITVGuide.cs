@@ -304,7 +304,8 @@ namespace MediaPortal.GUI.TV
 					m_dtTime=DateTime.Now;
 					Update();
 					break;
-				
+
+					
         case Action.ActionType.ACTION_CONTEXT_MENU:
 				{
 					if (m_iCursorX>=0&& m_iCursorY>=0)

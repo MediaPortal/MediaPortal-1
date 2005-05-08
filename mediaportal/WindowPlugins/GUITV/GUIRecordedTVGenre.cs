@@ -276,6 +276,11 @@ namespace MediaPortal.GUI.TV
 						}
 					}
 				}
+				
+				if (actionType == Action.ActionType.ACTION_SHOW_INFO) 
+				{
+					OnShowContextMenu();
+				}
 			}
 		}
 

@@ -271,6 +271,10 @@ namespace MediaPortal.GUI.TV
 				{
 					OnPlayRecording(iItem);
 				}
+				if (actionType == Action.ActionType.ACTION_SHOW_INFO) 
+				{
+					OnShowContextMenu();
+				}
 			}
 		}
 
