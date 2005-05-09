@@ -1234,7 +1234,7 @@ namespace MediaPortal.TV.Recording
 			int service_id;
 			int version_number;
 			int current_next_indicator;
-			int section_number;
+			int section_number=0;
 			int last_section_number;
 			int transport_stream_id;
 			int original_network_id;
@@ -1252,129 +1252,135 @@ namespace MediaPortal.TV.Recording
 			int len2;
 			int x;
 
-			if (buf.Length < 14)
+			try
 			{
-				return 0;
-			}
-			table_id = buf[0];
-			section_syntax_indicator = (buf[1]>>7) & 1;
-			section_length = ((buf[1]& 0xF)<<8) + buf[2];
-			service_id = (buf[3]<<8)+buf[4];
-			version_number = ((buf[5]>>1)&0x1F);
-			current_next_indicator = buf[5] & 1;
-			section_number = buf[6];
-			last_section_number = buf[7];
-			transport_stream_id = (buf[8]<<8)+buf[9];
-			original_network_id = (buf[10]<<8)+buf[11];
-			segment_last_section_number = buf[12];
-			last_table_id = buf[13];
-			//
-			if (service_id == 0xFFFF) // scrambled
-			{
-				return 0;
-			}
-
-			len1 = section_length - 11;
-			int pointer = 14;
-			//
-			//
-			while (len1 > 4)
-			{
-				EITDescr eit=new EITDescr();
-				event_id = (buf[pointer]<<8)+buf[pointer+1];
-				start_time_MJD = (buf[pointer+2]<<8)+buf[pointer+3];
-				start_time_UTC = (buf[pointer+4]<<16)+(buf[pointer+5]<<8)+buf[pointer+6];
-				duration = (buf[pointer+7]<<16)+(buf[pointer+8]<<8)+buf[pointer+9];
-				running_status = (buf[pointer+10]>>5)&7;
-				free_CA_mode = (buf[pointer+10]>>4)& 1;
-				descriptors_loop_length = ((buf[pointer+10]&0xF)<<8)+buf[pointer+11];
-
-				pointer += 12;
-				len1 -= 12 + descriptors_loop_length;
-				len2 = descriptors_loop_length;
-				
-				while (len2 > 0)
+				if (buf.Length < 14)
 				{
-					indicator = buf[pointer];
-					x = buf[pointer + 1] + 2;
-					byte[] descrEIT = new byte[x + 1];
-					try
+					return 0;
+				}
+				table_id = buf[0];
+				section_syntax_indicator = (buf[1]>>7) & 1;
+				section_length = ((buf[1]& 0xF)<<8) + buf[2];
+				service_id = (buf[3]<<8)+buf[4];
+				version_number = ((buf[5]>>1)&0x1F);
+				current_next_indicator = buf[5] & 1;
+				section_number = buf[6];
+				last_section_number = buf[7];
+				transport_stream_id = (buf[8]<<8)+buf[9];
+				original_network_id = (buf[10]<<8)+buf[11];
+				segment_last_section_number = buf[12];
+				last_table_id = buf[13];
+				//
+				if (service_id == 0xFFFF) // scrambled
+				{
+					return 0;
+				}
+
+				len1 = section_length - 11;
+				int pointer = 14;
+				//
+				//
+				while (len1 > 4)
+				{
+					EITDescr eit=new EITDescr();
+					event_id = (buf[pointer]<<8)+buf[pointer+1];
+					start_time_MJD = (buf[pointer+2]<<8)+buf[pointer+3];
+					start_time_UTC = (buf[pointer+4]<<16)+(buf[pointer+5]<<8)+buf[pointer+6];
+					duration = (buf[pointer+7]<<16)+(buf[pointer+8]<<8)+buf[pointer+9];
+					running_status = (buf[pointer+10]>>5)&7;
+					free_CA_mode = (buf[pointer+10]>>4)& 1;
+					descriptors_loop_length = ((buf[pointer+10]&0xF)<<8)+buf[pointer+11];
+
+					pointer += 12;
+					len1 -= 12 + descriptors_loop_length;
+					len2 = descriptors_loop_length;
+				
+					while (len2 > 0)
 					{
-						System.Array.Copy(buf, pointer, descrEIT, 0, x);
-						switch (indicator)
+						indicator = buf[pointer];
+						x = buf[pointer + 1] + 2;
+						byte[] descrEIT = new byte[x + 1];
+						try
 						{
-							case 0x4E:
-								Log.Write("dvbsection: extended event found...");
-								DVB_ExtendedEvent(descrEIT,ref eit);
-								break;
-							case 0x4D:
-								Log.Write("dvbsection: short event found...");
-								DVB_ShortEvent(descrEIT,ref eit);
-								break;
-							case 0x54:
-								DVB_ContentDescription(descrEIT,ref eit);
-								break;
+							System.Array.Copy(buf, pointer, descrEIT, 0, x);
+							switch (indicator)
+							{
+								case 0x4E:
+									Log.Write("dvbsection: extended event found...");
+									DVB_ExtendedEvent(descrEIT,ref eit);
+									break;
+								case 0x4D:
+									Log.Write("dvbsection: short event found...");
+									DVB_ShortEvent(descrEIT,ref eit);
+									break;
+								case 0x54:
+									DVB_ContentDescription(descrEIT,ref eit);
+									break;
 							
+							}
+
+						}
+						catch(Exception ex)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
 						}
 
-					}
-					catch(Exception ex)
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
-					}
-
-					eit.section=section_number;
-					eit.lastSection=last_section_number;
-					eit.table=table_id;
-					eit.lastTable=last_table_id;
-					eit.program_number=service_id;
-					eit.org_network_id=original_network_id;
-					eit.ts_id=transport_stream_id;
-					eit.starttime_y=0;
-					eit.starttime_d=0;
-					eit.starttime_m=0;
-					eit.event_id = event_id;
-					eit.version = version_number;
-					eit.duration_hh = getUTC((int) ((duration >> 16) )& 255);
-					eit.duration_mm = getUTC((int) ((duration >> 8) )& 255);
-					eit.duration_ss = getUTC((int) (duration )& 255);
-					eit.starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
-					eit.starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
-					eit.starttime_ss =getUTC((int) (start_time_UTC )& 255);
-					// convert the julian date
-					int year = (int) ((start_time_MJD - 15078.2) / 365.25);
-					int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
-					int day = (int) (start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
-					int k = (month == 14 || month == 15) ? 1 : 0;
-					year += 1900+ k; // start from year 1900, so add that here
-					month = month - 1 - k * 12;
-					eit.starttime_y=year;
-					eit.starttime_m=month;
-					eit.starttime_d=day;
-					eitInfo.program_id = service_id;
-					eitInfo.running_status = running_status;
-					if (free_CA_mode == 0)
-					{
-						eitInfo.scrambled = false;
-					}
-					else
-					{
-						eitInfo.scrambled = true;
-					}
-					eit.handled=true;
+						eit.section=section_number;
+						eit.lastSection=last_section_number;
+						eit.table=table_id;
+						eit.lastTable=last_table_id;
+						eit.program_number=service_id;
+						eit.org_network_id=original_network_id;
+						eit.ts_id=transport_stream_id;
+						eit.starttime_y=0;
+						eit.starttime_d=0;
+						eit.starttime_m=0;
+						eit.event_id = event_id;
+						eit.version = version_number;
+						eit.duration_hh = getUTC((int) ((duration >> 16) )& 255);
+						eit.duration_mm = getUTC((int) ((duration >> 8) )& 255);
+						eit.duration_ss = getUTC((int) (duration )& 255);
+						eit.starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
+						eit.starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
+						eit.starttime_ss =getUTC((int) (start_time_UTC )& 255);
+						// convert the julian date
+						int year = (int) ((start_time_MJD - 15078.2) / 365.25);
+						int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
+						int day = (int) (start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
+						int k = (month == 14 || month == 15) ? 1 : 0;
+						year += 1900+ k; // start from year 1900, so add that here
+						month = month - 1 - k * 12;
+						eit.starttime_y=year;
+						eit.starttime_m=month;
+						eit.starttime_d=day;
+						eitInfo.program_id = service_id;
+						eitInfo.running_status = running_status;
+						if (free_CA_mode == 0)
+						{
+							eitInfo.scrambled = false;
+						}
+						else
+						{
+							eitInfo.scrambled = true;
+						}
+						eit.handled=true;
 				
-					pointer += x;
-					len2 -= x;
+						pointer += x;
+						len2 -= x;
+					}
+					if(eit.program_number>0)
+						eitInfo.eitList.Add(eit);
 				}
-				if(eit.program_number>0)
-					eitInfo.eitList.Add(eit);
+				//eitInfo.evt_info_act_ts=eit;
+				if(section_number==0 && lastSection==last_section_number && flag==false)
+					return -1;// start grab
+				if(section_number==0 && lastSection==last_section_number && flag==true)
+					return -2;// end grab
 			}
-			//eitInfo.evt_info_act_ts=eit;
-			if(section_number==0 && lastSection==last_section_number && flag==false)
-				return -1;// start grab
-			if(section_number==0 && lastSection==last_section_number && flag==true)
-				return -2;// end grab
-
+			catch
+			{
+				// empty. data error found
+			}
 			return section_number; // normal grab
 		}
 
