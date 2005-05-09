@@ -194,7 +194,7 @@ namespace MediaPortal.Configuration.Sections
 				TVChannel chan =new TVChannel();
 				chan.Name=name.Value;
 				chan.Number=Int32.Parse(number.Value);
-				chan.Frequency=(long)(Convert.ToDouble(frequency.Value)*10000);
+				chan.Frequency=ConvertToFrequency(frequency.Value);
 				TVDatabase.AddChannel(chan);
 			}
 			XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
@@ -204,9 +204,19 @@ namespace MediaPortal.Configuration.Sections
 				XmlNode frequency			 = nodeChannel.Attributes.GetNamedItem("frequency");
 				MediaPortal.Radio.Database.RadioStation chan =new MediaPortal.Radio.Database.RadioStation();
 				chan.Name=name.Value;
-				chan.Frequency=(long)(Convert.ToDouble(frequency.Value)*100000);
+				chan.Frequency=ConvertToFrequency(frequency.Value);
 				RadioDatabase.AddStation(ref chan);
 			}
+		}
+		long ConvertToFrequency(string frequency)
+		{
+			float testValue=189.24f;
+			string usage=testValue.ToString("f2");
+			if (usage.IndexOf(".")>=0) frequency=frequency.Replace(",",".");
+			if (usage.IndexOf(",")>=0) frequency=frequency.Replace(".",",");
+			double freqValue=Convert.ToDouble(frequency);
+			freqValue*=1000000;
+			return (long)(freqValue);
 		}
 	}
 }
