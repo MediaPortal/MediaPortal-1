@@ -364,6 +364,16 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition() captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 			bool filterFound;
 
+			foreach (string key in AvailableFilters.Filters.Keys)
+			{
+				Log.Write("filter:{0}", key);
+				ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+				for (int i=0; i < al.Count; i++)
+				{
+					Filter f = al[i] as Filter;
+					Log.Write("  #{0}={1}={2}", i,f.Name,f.MonikerString);
+				}
+			}
 			int Instance=-1;
 			//first find the unqiue capture filter
 			Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition() Find card instance");
