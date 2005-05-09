@@ -434,6 +434,24 @@ namespace MediaPortal.TV.Recording
 						// to make sure that we found the right filter...
 						if (fd.CheckDevice)
 						{	
+
+
+							if (!filterFound)
+							{
+								// Check all filters with same name for capture card device...
+								for (int i=0; i < al.Count; i++)
+								{
+									filter = al[i] as Filter;
+									Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     #{0}={1} {2}",i,filter.Name,filter.MonikerString);
+									if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
+									{
+										// Filter found matching the capture card device!!!!!!!!!!!!!!!
+										filterFound = true;
+										break;
+									}
+								}
+							}
+
 							// no filter found? then find & use the # Instance of the available filters
 							if (!filterFound)
 							{
@@ -450,22 +468,6 @@ namespace MediaPortal.TV.Recording
 										Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     #{0}={1} {2}",Instance,filter.Name,filter.MonikerString);
 										filter = al[Instance] as Filter;
 										filterFound = true;
-									}
-								}
-							}
-
-							if (!filterFound)
-							{
-								// Check all filters with same name for capture card device...
-								for (int i=0; i < al.Count; i++)
-								{
-									filter = al[i] as Filter;
-									Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     #{0}={1} {2}",i,filter.Name,filter.MonikerString);
-									if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
-									{
-										// Filter found matching the capture card device!!!!!!!!!!!!!!!
-										filterFound = true;
-										break;
 									}
 								}
 							}

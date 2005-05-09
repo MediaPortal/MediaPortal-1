@@ -73,7 +73,7 @@ namespace DShowNET
 				while(true);
 
 				// Sort
-				InnerList.Sort();
+				//InnerList.Sort();
 			}
 			finally
 			{
