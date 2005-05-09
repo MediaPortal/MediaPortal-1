@@ -271,6 +271,12 @@ namespace MediaPortal.GUI.TV
 					// tv on
 					Log.Write("TVHome:turn tv on {0}", Navigator.CurrentChannel);
 					m_bTVON=true;
+
+					//stop playing anything
+					if (g_Player.Playing && !g_Player.IsTV)
+					{
+						g_Player.Stop();
+					}
 					SaveSettings();
 				}
 
