@@ -89,6 +89,8 @@ namespace MediaPortal.Configuration
 			}
 			else
 			{
+				Sections.TVCaptureCards sect = new Sections.TVCaptureCards();
+				sect.AddAllCards();
 				//
 				// Build default wizard pages
 				//
@@ -100,10 +102,10 @@ namespace MediaPortal.Configuration
 				AddSection(new Sections.MovieShares(), "Movie Folders", "Movie folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Movies.", "Plugin Selection.Plugin.MyMovies");
 				AddSection(new Sections.PictureShares(), "Picture Folders", "Picture folder information, By checking one of the shares you will make that share the default share, this folder will be automatically shown when you enter My Pictures.", "Plugin Selection.Plugin.MyPictures");
 	
-				AddSection(new Sections.TVCaptureCards() , "Television Capture cards", "TV Capture cards. Add and configure one or more tv capture cards", "");
-				AddSection(new Sections.TVProgramGuide() , "Television Program Guid", "Configure the Electronic Program Guide using XMLTV listings", "");
+//				AddSection(new Sections.TVCaptureCards() , "Television Capture cards", "TV Capture cards. Add and configure one or more tv capture cards", "");
+				AddSection(new Sections.TVProgramGuide() , "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
 				AddSection(new Sections.TVChannels()     , "Television channels", "Configure one or more television channels", "");
-				AddSection(new Sections.TVRecording()    , "Television Recording", "Configure settings for recording tv show", "");
+//				AddSection(new Sections.TVRecording()    , "Television Recording", "Configure settings for recording tv show", "");
 				AddSection(new Sections.RadioStations()  , "Radio", "Configure local radio and internet radio stations", "");
 				AddSection(new Sections.Remote()			   , "Remote Control", "Configure MCE Remote control", "");
 				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");

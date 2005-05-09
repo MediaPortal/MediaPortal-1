@@ -8,7 +8,7 @@ namespace MediaPortal.Configuration.Sections
 {
 	public abstract class Shares : MediaPortal.Configuration.SectionSettings
 	{
-    protected class ShareData
+    public class ShareData
     {
 
       public string Name;

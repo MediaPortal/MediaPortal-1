@@ -4,6 +4,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using DShowNET;
+using DShowNET.Device;
+using DirectX.Capture;
+using MediaPortal.GUI.Library;
+using TVCapture;
 
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
@@ -328,25 +333,14 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-		public override void SaveSettings()
+		void SaveCaptureCards(ArrayList availableCards)
 		{
-
 			using(FileStream fileStream = new FileStream("capturecards.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				//
 				// Create Soap Formatter
 				//
 				SoapFormatter formatter = new SoapFormatter();
-
-        //
-        // Fetch list of capture cards
-        //
-        ArrayList availableCards = new ArrayList();
-
-        foreach(ListViewItem listItem in cardsListView.Items)
-        {
-          availableCards.Add(listItem.Tag);
-        }
 
 				//
 				// Serialize
@@ -357,7 +351,18 @@ namespace MediaPortal.Configuration.Sections
 				// Finally close our file stream
 				//
 				fileStream.Close();
+
 			}
+		}
+		public override void SaveSettings()
+		{
+      ArrayList availableCards = new ArrayList();
+
+      foreach(ListViewItem listItem in cardsListView.Items)
+      {
+        availableCards.Add(listItem.Tag);
+      }
+			SaveCaptureCards(availableCards);
 		}
 
 		private void cardsListView_DoubleClick(object sender, System.EventArgs e)
@@ -369,6 +374,73 @@ namespace MediaPortal.Configuration.Sections
     {
       editButton.Enabled = deleteButton.Enabled = (cardsListView.SelectedItems.Count > 0);
     }
+
+		public void AddAllCards()
+		{
+			captureCards = new ArrayList();
+			
+			ArrayList availableVideoDevices = FilterHelper.GetVideoInputDevices();
+			ArrayList availableVideoDeviceMonikers	= FilterHelper.GetVideoInputDeviceMonikers();
+			ArrayList availableAudioDevices = FilterHelper.GetAudioInputDevices();
+/*			
+			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
+			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
+			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
+			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&267465cb&0&4828f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
+			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&e6752e3&0&4820f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
+			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8070070&rev_01#5&e6752e3&0&4020f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");		
+*/
+			//enum all cards known in capturedefinitions.xml
+			foreach (CaptureCardDefinition ccd  in CaptureCardDefinitions.CaptureCards)
+			{
+				//enum all video capture devices on this system
+				for (int i = 0; i < availableVideoDevices.Count; i++)
+				{
+					//treat the SSE2 DVB-S card as a general H/W card
+					if( ((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
+					{
+						if (ccd.CommercialName=="General S/W encoding card" ) continue;
+						if (ccd.CommercialName=="General MCE card" ) continue;
+					}
+					if (ccd.CaptureName==String.Empty) continue;
+					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
+						((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) 
+					{
+						TVCaptureDevice cd		= new TVCaptureDevice();
+						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
+						cd.VideoDevice				= ccd.CaptureName;
+						cd.CommercialName			= ccd.CommercialName;
+						cd.LoadDefinitions();
+						cd.IsBDACard					= ccd.Capabilities.IsBDADevice;
+						cd.IsMCECard					= ccd.Capabilities.IsMceDevice;
+						cd.SupportsMPEG2			= ccd.Capabilities.IsMpeg2Device;
+						cd.DeviceId						= ccd.DeviceId;
+						cd.RecordingPath=GetDefaultRecordingPath();
+						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
+						cd.DeviceType					= ccd.DeviceId;
+						captureCards.Add(cd);
+					}
+				}
+			}
+			SaveCaptureCards(captureCards);
+		}
+
+		string GetDefaultRecordingPath()
+		{
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				for (int i = 0; i < 20; i++)
+				{
+					string strSharePath = String.Format("sharepath{0}",i);
+					string path=xmlreader.GetValueAsString("movies", strSharePath, "");
+					if (path!="" && Util.Utils.IsHD(path))
+					{
+						return path;
+					}
+				}
+			}
+			return "C:";
+		}
 	}
 }
 

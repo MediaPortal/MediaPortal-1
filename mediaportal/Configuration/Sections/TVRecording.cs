@@ -171,8 +171,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 1));
-				endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 1));				
+				startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 5));
+				endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 5));				
 				cbDeleteWatchedShows.Checked= xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
 				cbAddRecordingsToMovie.Checked= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
 

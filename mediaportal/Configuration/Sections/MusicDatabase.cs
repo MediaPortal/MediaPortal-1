@@ -28,7 +28,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Button cancelButton;
 		private System.ComponentModel.IContainer components = null;
 
-    internal class MusicData
+    public class MusicData
     {
       public string FilePath;
       public MusicTag Tag;
