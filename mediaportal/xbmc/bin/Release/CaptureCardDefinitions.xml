@@ -4040,4 +4040,66 @@
       </connections>
     </tv>
   </capturecard> 
+
+  <capturecard commercialname="ATI AIW 8x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv33">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"></filter>
+        <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"></filter>      
+        <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  		sinkpin="1"></connection>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  		sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  			sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI AIW 7x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv32">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"></filter>
+        <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"></filter>      
+        <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  		sinkpin="1"></connection>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  		sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  			sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
  </capturecards>
