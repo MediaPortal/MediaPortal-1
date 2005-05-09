@@ -94,13 +94,13 @@ namespace MediaPortal.Configuration
 				//
 				// Build default wizard pages
 				//
-				AddSection(new Sections.Wizard_Welcome(), "Welcome to Mediaportal", "");
+				AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
 				AddSection(new Sections.General(), "General", "General information...");
 				AddSection(new Sections.Skin(), "Skin", "Skin settings...");
-				AddSection(new Sections.Wizard_SelectPlugins(), "Plugins", "Please check which plugins you would like to be loaded when MediaPortal starts.");
-				AddSection(new Sections.MusicShares(), "Music Folders", "Music folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Music.", "Plugin Selection.Plugin.MyMusic");
-				AddSection(new Sections.MovieShares(), "Movie Folders", "Movie folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Movies.", "Plugin Selection.Plugin.MyMovies");
-				AddSection(new Sections.PictureShares(), "Picture Folders", "Picture folder information, By checking one of the shares you will make that share the default share, this folder will be automatically shown when you enter My Pictures.", "Plugin Selection.Plugin.MyPictures");
+				AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
+				//AddSection(new Sections.MusicShares(), "Music Folders", "Music folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Music.", "Plugin Selection.Plugin.MyMusic");
+				//AddSection(new Sections.MovieShares(), "Movie Folders", "Movie folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Movies.", "Plugin Selection.Plugin.MyMovies");
+				//AddSection(new Sections.PictureShares(), "Picture Folders", "Picture folder information, By checking one of the shares you will make that share the default share, this folder will be automatically shown when you enter My Pictures.", "Plugin Selection.Plugin.MyPictures");
 	
 //				AddSection(new Sections.TVCaptureCards() , "Television Capture cards", "TV Capture cards. Add and configure one or more tv capture cards", "");
 				AddSection(new Sections.TVProgramGuide() , "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
