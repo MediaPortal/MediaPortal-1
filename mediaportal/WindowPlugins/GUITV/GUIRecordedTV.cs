@@ -510,7 +510,6 @@ namespace MediaPortal.GUI.TV
 					if (stoptime>0)
 					{
 						string title=System.IO.Path.GetFileName(rec.FileName);
-						VideoDatabase.GetMovieInfoById( movieid, ref movieDetails);
 						if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
           
 						GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
