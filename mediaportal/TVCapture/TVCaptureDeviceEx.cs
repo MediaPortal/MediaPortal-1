@@ -302,7 +302,7 @@ namespace MediaPortal.TV.Recording
 			// Determine the deviceid "hidden" in the moniker of the capture device and use that to load
 			// the definitions of the card... The id is between the first and second "#" character
 			// example:
-			// @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
+			// @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capturez
 			string 	 deviceId =m_strVideoDeviceMoniker;
 			string[] tmp1			= m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
 			if (tmp1.Length>=2) 
@@ -407,9 +407,9 @@ namespace MediaPortal.TV.Recording
 			//for each video filter we need
 			foreach (string friendlyName in _mCaptureCardDefinition.Tv.FilterDefinitions.Keys)
 			{
-				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()   video filter:{0}",friendlyName);
 				FilterDefinition fd = _mCaptureCardDefinition.Tv.FilterDefinitions[friendlyName] as FilterDefinition;
 				filterFound         = false;
+				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()   video filter:{0}={1}",friendlyName,fd.FriendlyName);
 
 				//for each directshow filter present
 				foreach (string key in AvailableFilters.Filters.Keys)
@@ -424,19 +424,6 @@ namespace MediaPortal.TV.Recording
 						// to make sure that we found the right filter...
 						if (fd.CheckDevice)
 						{	
-							// Check all filters with same name for capture card device...
-							for (int i=0; i < al.Count; i++)
-							{
-								filter = al[i] as Filter;
-								Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     {0} {1}",filter.Name,filter.MonikerString);
-								if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
-								{
-									// Filter found matching the capture card device!!!!!!!!!!!!!!!
-									filterFound = true;
-									break;
-								}
-							}
-						
 							// no filter found? then find & use the # Instance of the available filters
 							if (!filterFound)
 							{
@@ -444,17 +431,35 @@ namespace MediaPortal.TV.Recording
 								{
 									if (Instance >= al.Count)
 									{
+										Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     #{0}={1} {2}",al.Count-1,filter.Name,filter.MonikerString);
 										filter = al[al.Count-1] as Filter;
 										filterFound = true;
 									}
 									else
 									{
+										Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     #{0}={1} {2}",Instance,filter.Name,filter.MonikerString);
 										filter = al[Instance] as Filter;
 										filterFound = true;
 									}
 								}
 							}
 
+							if (!filterFound)
+							{
+								// Check all filters with same name for capture card device...
+								for (int i=0; i < al.Count; i++)
+								{
+									filter = al[i] as Filter;
+									Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()     #{0}={1} {2}",i,filter.Name,filter.MonikerString);
+									if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
+									{
+										// Filter found matching the capture card device!!!!!!!!!!!!!!!
+										filterFound = true;
+										break;
+									}
+								}
+							}
+						
 							if (!filterFound)
 							{
 								Log.WriteFile(Log.LogType.Capture,true,"TVCaptureDevice.LoadDefinition: ERROR Cannot find unique filter for filter:{0}", filter.Name);
