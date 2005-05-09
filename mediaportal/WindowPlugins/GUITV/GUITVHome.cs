@@ -273,9 +273,16 @@ namespace MediaPortal.GUI.TV
 					m_bTVON=true;
 
 					//stop playing anything
-					if (g_Player.Playing && !g_Player.IsTV)
+					if (g_Player.Playing)
 					{
-						g_Player.Stop();
+						if (g_Player.IsTV && !g_Player.IsTVRecording)
+						{
+							//already playing tv...
+						}
+						else
+						{
+							g_Player.Stop();
+						}
 					}
 					SaveSettings();
 				}
