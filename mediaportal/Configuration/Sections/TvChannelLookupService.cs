@@ -78,6 +78,7 @@ namespace MediaPortal.Configuration.Sections
 			this.cbCountries.Location = new System.Drawing.Point(80, 16);
 			this.cbCountries.Name = "cbCountries";
 			this.cbCountries.Size = new System.Drawing.Size(184, 21);
+			this.cbCountries.Sorted = true;
 			this.cbCountries.TabIndex = 1;
 			// 
 			// label2
@@ -93,6 +94,7 @@ namespace MediaPortal.Configuration.Sections
 			this.cbCities.Location = new System.Drawing.Point(80, 48);
 			this.cbCities.Name = "cbCities";
 			this.cbCities.Size = new System.Drawing.Size(184, 21);
+			this.cbCities.Sorted = true;
 			this.cbCities.TabIndex = 3;
 			// 
 			// button1
@@ -132,6 +134,7 @@ namespace MediaPortal.Configuration.Sections
 				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
 				cbCountries.Items.Add(nodeCountryName.Value);
 			}
+			
 			if (cbCountries.Items.Count> 0 && cbCountries.SelectedIndex<0)
 				cbCountries.SelectedIndex=0;
 			string country=(string)cbCountries.SelectedItem;
@@ -210,6 +213,7 @@ namespace MediaPortal.Configuration.Sections
 		}
 		long ConvertToFrequency(string frequency)
 		{
+			if (frequency.Trim()==String.Empty) return 0;
 			float testValue=189.24f;
 			string usage=testValue.ToString("f2");
 			if (usage.IndexOf(".")>=0) frequency=frequency.Replace(",",".");
