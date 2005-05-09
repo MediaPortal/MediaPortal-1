@@ -830,9 +830,6 @@ public class MediaPortalApp : D3DApp, IRender
 
 					
 					//Log.Write("render frame:{0}",frames);//remove
-					Surface rTarget ;
-					rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
-					GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 			      ++frames;
             // clear the surface
             //if (prevwindow!=GUIWindowManager.ActiveWindow)
