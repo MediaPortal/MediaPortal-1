@@ -19,6 +19,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.ComboBox cbCountries;
 		private System.Windows.Forms.ComboBox cbCities;
+		XmlDocument docSetup;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -80,6 +81,7 @@ namespace MediaPortal.Configuration.Sections
 			this.cbCountries.Size = new System.Drawing.Size(184, 21);
 			this.cbCountries.Sorted = true;
 			this.cbCountries.TabIndex = 1;
+			this.cbCountries.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged);
 			// 
 			// label2
 			// 
@@ -126,9 +128,9 @@ namespace MediaPortal.Configuration.Sections
 		{
 			cbCountries.Items.Clear();
 			cbCities.Items.Clear();
-			XmlDocument doc = new XmlDocument();
-			doc.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
-			XmlNodeList listCountries = doc.DocumentElement.SelectNodes("/mediaportal/country");
+			docSetup = new XmlDocument();
+			docSetup.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
+			XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
 			foreach (XmlNode nodeCountry in listCountries)
 			{
 				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
@@ -137,7 +139,14 @@ namespace MediaPortal.Configuration.Sections
 			
 			if (cbCountries.Items.Count> 0 && cbCountries.SelectedIndex<0)
 				cbCountries.SelectedIndex=0;
+			FillInCities();
+		}
+
+		void FillInCities()
+		{
 			string country=(string)cbCountries.SelectedItem;
+			cbCities.Items.Clear();
+			XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
 			foreach (XmlNode nodeCountry in listCountries)
 			{
 				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
@@ -154,7 +163,6 @@ namespace MediaPortal.Configuration.Sections
 			}
 			if (cbCities.Items.Count> 0 && cbCities.SelectedIndex<0)
 				cbCities.SelectedIndex=0;
-
 		}
 
 		private void button1_Click(object sender, System.EventArgs e)
@@ -221,6 +229,11 @@ namespace MediaPortal.Configuration.Sections
 			double freqValue=Convert.ToDouble(frequency);
 			freqValue*=1000000;
 			return (long)(freqValue);
+		}
+
+		private void cbCountries_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			FillInCities();
 		}
 	}
 }
