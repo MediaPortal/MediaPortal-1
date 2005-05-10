@@ -71,7 +71,7 @@ namespace MediaPortal.Configuration
 			//
 			// Set caption
 			//
-			this.Text = "Media Portal Configuration - " + Application.ProductVersion;
+			this.Text = "Media Portal - Setup";
 
 			//
 			// Build options tree
