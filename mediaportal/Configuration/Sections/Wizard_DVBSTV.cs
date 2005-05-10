@@ -56,6 +56,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.ComboBox comboBox2;
 		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.Panel panel1;
 		int m_currentDiseqc=1;
 
 		public Wizard_DVBSTV() : this("DVB-S TV")
@@ -113,6 +114,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label7 = new System.Windows.Forms.Label();
 			this.comboBox2 = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -206,6 +208,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.panel1);
 			this.groupBox3.Controls.Add(this.label6);
 			this.groupBox3.Controls.Add(this.progressBar3);
 			this.groupBox3.Controls.Add(this.button3);
@@ -265,6 +268,13 @@ namespace MediaPortal.Configuration.Sections
 			this.label8.TabIndex = 0;
 			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
 				"ess auto tune to scan for the tv and radio channels";
+			// 
+			// panel1
+			// 
+			this.panel1.Location = new System.Drawing.Point(280, 216);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(160, 120);
+			this.panel1.TabIndex = 13;
 			// 
 			// Wizard_DVBSTV
 			// 
@@ -389,6 +399,9 @@ namespace MediaPortal.Configuration.Sections
 
 		private void DoScan()
 		{
+			GUIGraphicsContext.form=this;
+			GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
+
 			while (m_currentDiseqc <m_diseqcLoops)
 			{
 				while (currentIndex < count)

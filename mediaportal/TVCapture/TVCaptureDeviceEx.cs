@@ -1049,6 +1049,17 @@ namespace MediaPortal.TV.Recording
 			_mCurrentTVRecording = null;
 			_mPreRecordInterval = 0;
 			_mPostRecordInterval = 0;
+			if (!g_Player.Playing)
+			{
+				DeleteGraph();
+				return;
+			}
+			string timeshiftFilename=String.Format(@"{0}\card{1}\live.tv",RecordingPath, ID);
+			if (g_Player.CurrentFile==timeshiftFilename)
+			{
+				DeleteGraph();
+				return;
+			}
 		}
 
 		/// <summary>
