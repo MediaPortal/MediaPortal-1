@@ -166,26 +166,7 @@ namespace MediaPortal.GUI.Video
 				if (g_Player.Playing && GUIGraphicsContext.IsFullScreenVideo)
 				{
 					GUIVideoFullscreen win=(GUIVideoFullscreen)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-					if ( win.NeedUpdate() )
-					{ 
-						Invalidate();
-						/*
-						int iDC=g_Player.GetHDC();
-						if (iDC==0)
-						{
-							Invalidate();
-						}
-						else
-						{
-							using (Graphics g = Graphics.FromHdc(new IntPtr(iDC)))
-							{
-								GUIGraphicsContext.graphics=g;
-								win.RenderForm();
-								GUIGraphicsContext.graphics=null;
-							}
-							g_Player.ReleaseHDC(iDC);
-						}*/
-					}
+					Invalidate();
 				}
 			}
 		}
