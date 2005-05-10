@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 namespace MediaPortal.Configuration.Sections
@@ -240,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void DoScan()
 		{
-			GUIGraphicsContext.form=this;
+			GUIGraphicsContext.form=this.FindForm();
 			GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
 
 			TVCaptureCards cards = new TVCaptureCards();

@@ -399,7 +399,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void DoScan()
 		{
-			GUIGraphicsContext.form=this;
+			GUIGraphicsContext.form=this.FindForm();
 			GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
 
 			while (m_currentDiseqc <m_diseqcLoops)
