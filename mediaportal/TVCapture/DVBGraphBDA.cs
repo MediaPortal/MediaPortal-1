@@ -115,7 +115,7 @@ namespace MediaPortal.TV.Recording
 		IBasicVideo2            m_basicVideo						= null;
 		IMediaControl						m_mediaControl					= null;
 		IBDA_SignalStatistics[] m_TunerStatistics       = null;
-		NetworkType							m_NetworkType;
+		NetworkType							m_NetworkType=NetworkType.Unknown;
 		IBaseFilter							m_sampleGrabber=null;
 		ISampleGrabber					m_sampleInterface=null;
 		
@@ -1554,6 +1554,31 @@ namespace MediaPortal.TV.Recording
 		/// <returns>network type</returns>
 		public NetworkType Network()
 		{
+			if (m_NetworkType==NetworkType.Unknown)
+			{
+				if (m_Card.LoadDefinitions())
+				{
+					foreach (string catName in m_Card.TvFilterDefinitions.Keys)
+					{
+						FilterDefinition dsFilter = m_Card.TvFilterDefinitions[catName] as FilterDefinition;
+						if (dsFilter.MonikerDisplayName==@"@device:sw:{71985F4B-1CA1-11D3-9CC8-00C04F7971E0}\Microsoft DVBC Network Provider") 
+						{
+							m_NetworkType=NetworkType.DVBC;
+							return m_NetworkType;
+						}
+						if (dsFilter.MonikerDisplayName==@"@device:sw:{71985F4B-1CA1-11D3-9CC8-00C04F7971E0}\Microsoft DVBT Network Provider") 
+						{
+							m_NetworkType=NetworkType.DVBT;
+							return m_NetworkType;
+						}
+						if (dsFilter.MonikerDisplayName==@"@device:sw:{71985F4B-1CA1-11D3-9CC8-00C04F7971E0}\Microsoft DVBS Network Provider") 
+						{
+							m_NetworkType=NetworkType.DVBS;
+							return m_NetworkType;
+						}
+					}
+				}
+			}
 			return m_NetworkType;
 		}
 		

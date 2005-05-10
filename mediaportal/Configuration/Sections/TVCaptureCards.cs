@@ -33,7 +33,7 @@ namespace MediaPortal.Configuration.Sections
 		//
 		// Privare members
 		//
-		ArrayList captureCards = new ArrayList();
+		public ArrayList captureCards = new ArrayList();
 
 		public TVCaptureCards() : this("Capture Cards")
 		{
@@ -419,6 +419,8 @@ namespace MediaPortal.Configuration.Sections
 						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
 						cd.DeviceType					= ccd.DeviceId;
 						captureCards.Add(cd);
+						availableVideoDeviceMonikers.RemoveAt(i);
+						availableVideoDevices.RemoveAt(i);
 					}
 				}
 			}

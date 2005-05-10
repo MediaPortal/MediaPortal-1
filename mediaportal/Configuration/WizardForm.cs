@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
 using System.Reflection;
+using MediaPortal.GUI.Library;
+using MediaPortal.TV.Recording;
 
 namespace MediaPortal.Configuration
 {
@@ -91,22 +93,53 @@ namespace MediaPortal.Configuration
 			{
 				Sections.TVCaptureCards sect = new Sections.TVCaptureCards();
 				sect.AddAllCards();
-				//
-				// Build default wizard pages
-				//
+				sect.LoadCaptureCards();
+				bool analogCard=false;
+				bool DVBTCard=false;
+				bool DVBCCard=false;
+				bool DVBSCard=false;
+				Log.Write("found {0} tv cards",sect.captureCards.Count);
+				foreach (TVCaptureDevice dev in sect.captureCards)
+				{
+					if (dev.Network==NetworkType.ATSC) 
+					{
+						Log.Write("Analog TV Card:{0}",dev.CommercialName);
+						analogCard=true;
+					}
+					if (dev.Network==NetworkType.DVBT) 
+					{
+						Log.Write("Digital DVB-T Card:{0}",dev.CommercialName);
+						DVBTCard=true;
+					}
+					if (dev.Network==NetworkType.DVBC)  
+					{
+						Log.Write("Digital DVB-C Card:{0}",dev.CommercialName);
+						DVBCCard=true;
+					}
+					if (dev.Network==NetworkType.DVBS)  
+					{
+						Log.Write("Digital DVB-S Card:{0}",dev.CommercialName);
+						DVBCCard=true;
+					}
+				}
+
 				AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
 				AddSection(new Sections.General(), "General", "General information...");
 				AddSection(new Sections.Skin(), "Skin", "Skin settings...");
 				AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
-				//AddSection(new Sections.MusicShares(), "Music Folders", "Music folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Music.", "Plugin Selection.Plugin.MyMusic");
-				//AddSection(new Sections.MovieShares(), "Movie Folders", "Movie folder information, By checking one of the shares you will make that share the default folder, this folder will be automatically shown when you enter My Movies.", "Plugin Selection.Plugin.MyMovies");
-				//AddSection(new Sections.PictureShares(), "Picture Folders", "Picture folder information, By checking one of the shares you will make that share the default share, this folder will be automatically shown when you enter My Pictures.", "Plugin Selection.Plugin.MyPictures");
-	
-//				AddSection(new Sections.TVCaptureCards() , "Television Capture cards", "TV Capture cards. Add and configure one or more tv capture cards", "");
+				if (analogCard)
+				{
+					AddSection(new Sections.Wizard_AnalogTV() , "TV - analog", "Analog TV/Radio configuration", "");
+				}
+				if (DVBTCard)
+				{
+					AddSection(new Sections.Wizard_DVBTTV() , "TV - DVB-T", "Digital TV Terresital configuration", "");
+				}
+				if (DVBCCard)
+				{
+					AddSection(new Sections.Wizard_DVBCTV() , "TV - DVB-C", "Digital TV Cable configuration", "");
+				}
 				AddSection(new Sections.TVProgramGuide() , "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
-				AddSection(new Sections.TVChannels()     , "Television channels", "Configure one or more television channels", "");
-//				AddSection(new Sections.TVRecording()    , "Television Recording", "Configure settings for recording tv show", "");
-				AddSection(new Sections.RadioStations()  , "Radio", "Configure local radio and internet radio stations", "");
 				AddSection(new Sections.Remote()			   , "Remote Control", "Configure MCE Remote control", "");
 				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
 			}

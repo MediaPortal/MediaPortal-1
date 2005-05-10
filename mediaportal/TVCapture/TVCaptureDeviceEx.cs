@@ -1532,7 +1532,13 @@ namespace MediaPortal.TV.Recording
 		{
 			get
 			{
-				if (_mGraph==null) return NetworkType.ATSC;
+				if (_mGraph==null) 
+				{
+					_mGraph = GraphFactory.CreateGraph(this);
+					NetworkType netType=_mGraph.Network();
+					_mGraph = null;
+					return netType;
+				}
 				return _mGraph.Network();
 			}
 		}

@@ -1,0 +1,375 @@
+using System;
+using System.IO;
+using System.Xml;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
+namespace MediaPortal.Configuration.Sections
+{
+	public class Wizard_DVBTTV : MediaPortal.Configuration.SectionSettings
+	{
+		private System.ComponentModel.IContainer components = null;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.ProgressBar progressBar1;
+		private System.Windows.Forms.Label labelStatus;
+		private System.Windows.Forms.ComboBox cbCountry;
+		
+
+		enum State
+		{
+			ScanFrequencies,
+			ScanChannels,
+			ScanOffset
+		}
+		TVCaptureDevice											captureCard;
+		
+		ArrayList                           frequencies=new ArrayList();
+		int                                 currentFrequencyIndex=0;
+		int																	scanOffset = 0;
+		
+		State                               currentState;
+		int																	currentOffset=0;
+		int                                 tunedFrequency=0;
+		int																	newChannels, updatedChannels;
+
+		public Wizard_DVBTTV() : this("DVBT TV")
+		{
+		}
+
+		public Wizard_DVBTTV(string name) : base(name)
+		{
+			// This call is required by the Windows Form Designer.
+			InitializeComponent();
+
+			// TODO: Add any initialization after the InitializeComponent call
+		}
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose( bool disposing )
+		{
+			if( disposing )
+			{
+				if (components != null) 
+				{
+					components.Dispose();
+				}
+			}
+			base.Dispose( disposing );
+		}
+
+		#region Designer generated code
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.labelStatus = new System.Windows.Forms.Label();
+			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.button1 = new System.Windows.Forms.Button();
+			this.label2 = new System.Windows.Forms.Label();
+			this.cbCountry = new System.Windows.Forms.ComboBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.groupBox1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.labelStatus);
+			this.groupBox1.Controls.Add(this.progressBar1);
+			this.groupBox1.Controls.Add(this.button1);
+			this.groupBox1.Controls.Add(this.label2);
+			this.groupBox1.Controls.Add(this.cbCountry);
+			this.groupBox1.Controls.Add(this.label1);
+			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox1.Location = new System.Drawing.Point(8, 8);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(480, 360);
+			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Setup digital tv (DVBT terrestial)";
+			// 
+			// labelStatus
+			// 
+			this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.labelStatus.Location = new System.Drawing.Point(40, 169);
+			this.labelStatus.Name = "labelStatus";
+			this.labelStatus.Size = new System.Drawing.Size(400, 23);
+			this.labelStatus.TabIndex = 11;
+			// 
+			// progressBar1
+			// 
+			this.progressBar1.Location = new System.Drawing.Point(32, 128);
+			this.progressBar1.Name = "progressBar1";
+			this.progressBar1.Size = new System.Drawing.Size(416, 16);
+			this.progressBar1.TabIndex = 4;
+			this.progressBar1.Visible = false;
+			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(344, 72);
+			this.button1.Name = "button1";
+			this.button1.TabIndex = 3;
+			this.button1.Text = "Scan...";
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(32, 72);
+			this.label2.Name = "label2";
+			this.label2.TabIndex = 2;
+			this.label2.Text = "Country/Region:";
+			// 
+			// cbCountry
+			// 
+			this.cbCountry.Location = new System.Drawing.Point(144, 72);
+			this.cbCountry.Name = "cbCountry";
+			this.cbCountry.Size = new System.Drawing.Size(168, 21);
+			this.cbCountry.TabIndex = 1;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(24, 24);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(432, 40);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
+				"ess auto tune to scan for the tv and radio channels";
+			// 
+			// Wizard_DVBTTV
+			// 
+			this.Controls.Add(this.groupBox1);
+			this.Name = "Wizard_DVBTTV";
+			this.Size = new System.Drawing.Size(496, 384);
+			this.groupBox1.ResumeLayout(false);
+			this.ResumeLayout(false);
+
+		}
+		#endregion
+
+
+
+
+		public override void OnSectionActivated()
+		{
+			base.OnSectionActivated ();
+			labelStatus.Text="";
+			XmlDocument doc= new XmlDocument();
+			doc.Load("dvbt.xml");
+
+			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
+			foreach (XmlNode nodeCountry in countryList)
+			{
+				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
+				cbCountry.Items.Add(name);
+			}
+			if (cbCountry.Items.Count>0)
+				cbCountry.SelectedIndex=0;
+
+		}
+
+		void LoadFrequencies()
+		{
+			
+			string countryName=(string)cbCountry.SelectedItem;
+			if (countryName==String.Empty) return;
+			frequencies.Clear();
+
+			XmlDocument doc= new XmlDocument();
+			doc.Load("dvbt.xml");
+			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
+			foreach (XmlNode nodeCountry in countryList)
+			{
+				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
+				if (name!=countryName) continue;
+				try
+				{
+					scanOffset =  XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
+				}
+				catch(Exception){}
+
+				XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
+				int[] carrier;
+				foreach (XmlNode node in frequencyList)
+				{
+					carrier = new int[2];
+					carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
+					try
+					{
+						carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
+					}
+					catch(Exception){}
+
+					if (carrier[1]==0) carrier[1]=8;
+					frequencies.Add(carrier);
+				}
+			}
+		}
+	
+
+		private void button1_Click(object sender, System.EventArgs e)
+		{
+			LoadFrequencies();
+			if (frequencies.Count==0) return;
+			progressBar1.Visible=true;
+			newChannels=0; updatedChannels=0;
+			DoScan();
+			labelStatus.Text=String.Format("Imported {0} channels",newChannels);
+		}
+
+		private void DoScan()
+		{
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.DVBT)
+				{
+					captureCard = dev;
+					captureCard.CreateGraph();
+					break;
+				}
+			}
+
+			while (currentFrequencyIndex <frequencies.Count)
+			{
+				Application.DoEvents();
+				int currentFreq=currentFrequencyIndex;
+				if (currentFrequencyIndex<0) currentFreq=0;
+				float percent = ((float)currentFreq) / ((float)frequencies.Count);
+				percent *= 100.0f;
+				progressBar1.Value=((int)percent);
+				int[] tmp = frequencies[currentFreq] as int[];
+				
+				float frequency = tunedFrequency;
+				frequency /=1000;
+				string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
+				labelStatus.Text=description;
+
+				if (currentState==State.ScanFrequencies)
+				{
+					if (frequency>0)
+					{
+						if (captureCard.SignalPresent())
+						{
+							currentState=State.ScanChannels;
+							currentOffset=0;
+						}
+					}
+				}
+
+				if (currentState==State.ScanFrequencies)
+				{
+					labelStatus.Text=description;
+					ScanNextFrequency();
+				}
+
+				if (currentState==State.ScanChannels)
+				{
+					description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
+					labelStatus.Text=description;
+					ScanChannels();
+				}
+			}
+			captureCard.DeleteGraph();
+			captureCard=null;
+		}
+
+		void ScanChannels()
+		{
+			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
+			currentState=State.ScanFrequencies;
+			currentOffset=0;
+			currentFrequencyIndex++;
+			ScanNextFrequency();
+		}
+
+		void ScanNextFrequency()
+		{
+			if (currentFrequencyIndex >=frequencies.Count) return;
+
+			DVBChannel chan = new DVBChannel();
+			int[] tmp;
+			if (currentFrequencyIndex<0)
+			{
+				currentOffset=0;
+				currentFrequencyIndex=0;
+				if (currentFrequencyIndex>=frequencies.Count)
+				{
+					
+					progressBar1.Value=100;
+					
+					captureCard.DeleteGraph();
+					return;
+				}
+
+				tmp = (int[])frequencies[currentFrequencyIndex];
+				chan.Frequency=tmp[0];
+				chan.Bandwidth=tmp[1];
+				captureCard.Tune(chan,0);
+				Application.DoEvents();
+				System.Threading.Thread.Sleep(100);
+				Application.DoEvents();
+				return;
+			}
+
+			tmp = (int[])frequencies[currentFrequencyIndex];
+			chan.Frequency=tmp[0];
+			chan.Bandwidth=tmp[1];
+			tunedFrequency=chan.Frequency;
+			if (currentOffset==0)
+			{
+				captureCard.Tune(chan,0);
+				Application.DoEvents();
+				System.Threading.Thread.Sleep(100);
+				Application.DoEvents();
+				if (scanOffset==0) currentOffset=3;
+				else currentOffset++;
+			}
+			else if (currentOffset==1)
+			{
+				tunedFrequency-=scanOffset;
+				chan.Frequency-=scanOffset;
+				captureCard.Tune(chan,0);
+				Application.DoEvents();
+				System.Threading.Thread.Sleep(100);
+				Application.DoEvents();
+				currentOffset++;
+			}
+			else if (currentOffset==2)
+			{
+				tunedFrequency+=scanOffset;
+				chan.Frequency+=scanOffset;
+				captureCard.Tune(chan,0);
+				Application.DoEvents();
+				System.Threading.Thread.Sleep(100);
+				Application.DoEvents();
+				currentOffset++;
+			}
+			else
+			{
+				currentOffset=0;
+				currentFrequencyIndex++;
+				if (currentFrequencyIndex>=frequencies.Count)
+				{
+					
+					progressBar1.Value=100;
+					captureCard.DeleteGraph();
+					return;
+				}
+			}
+		}
+	}
+}
+
