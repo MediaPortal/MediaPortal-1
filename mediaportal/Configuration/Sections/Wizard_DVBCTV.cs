@@ -178,6 +178,8 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
+			if (cbCountry.Items.Count>0)
+				cbCountry.SelectedIndex=0;
 		}
 
 		void LoadFrequencies()

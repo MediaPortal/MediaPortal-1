@@ -986,6 +986,26 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\Wizard_DVBSTV.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Wizard_DVBSTV.resx"
+                    DependentUpon = "Wizard_DVBSTV.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\Wizard_DVBSTVSetting.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Wizard_DVBSTVSetting.resx"
+                    DependentUpon = "Wizard_DVBSTVSetting.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\Wizard_DVBTTV.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
