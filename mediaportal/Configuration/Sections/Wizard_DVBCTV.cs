@@ -309,10 +309,27 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 			captureCard.DeleteGraph();
+
+			MapToOtherCards(captureCard.ID);
 			captureCard=null;
 		}
-
-
+		void MapToOtherCards(int id)
+		{
+			ArrayList tvchannels = new ArrayList();
+			TVDatabase.GetChannelsForCard(ref tvchannels,id);
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.DVBC && dev.ID != id)
+				{
+					foreach (TVChannel chan in tvchannels)
+					{
+						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
+					}
+				}
+			}
+		}
 		void ScanChannels()
 		{
 			DVBCList dvbcChan=dvbcChannels[currentIndex];
