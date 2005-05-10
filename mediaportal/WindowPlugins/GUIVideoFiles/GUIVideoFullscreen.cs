@@ -1092,16 +1092,20 @@ namespace MediaPortal.GUI.Video
     
     public void RenderForm(float timePassed)
     {
-			if (needToClearScreen)
+      if (!g_Player.Playing) return;
+			else
 			{
-				needToClearScreen=false;
-				GUIGraphicsContext.graphics.Clear(Color.Black);
-			}
-			base.Render(timePassed); 
-			if (isOsdVisible)
-			{
-				m_osdWindow.Render(timePassed);
-			}
+				if (needToClearScreen)
+				{
+					needToClearScreen=false;
+					GUIGraphicsContext.graphics.Clear(Color.Black);
+				}
+				base.Render(timePassed); 
+				if (isOsdVisible)
+				{
+					m_osdWindow.Render(timePassed);
+				}
+			}		
 		}
 
 		#region helper functions

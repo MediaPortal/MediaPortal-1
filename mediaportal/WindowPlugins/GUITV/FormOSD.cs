@@ -159,11 +159,7 @@ namespace MediaPortal.GUI.TV
         if (Recorder.View &&GUIGraphicsContext.IsFullScreenVideo)
         {
           GUIFullScreenTV win=(GUIFullScreenTV)GUIWindowManager.GetWindow( (int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          if ( win.NeedUpdate() )
-          {
-            
-            Invalidate();
-          }
+          Invalidate();
         }
       }
     }
