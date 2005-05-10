@@ -3979,7 +3979,7 @@
     </tv>
   </capturecard>
 
-capturecard commercialname="ATI HDTV Wonder (Analog)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_a1011002&amp;rev_05">
+  <capturecard commercialname="ATI HDTV Wonder (Analog)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_a1011002&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="0" audio="" mpeg2=""></interface>
