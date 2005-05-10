@@ -156,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.mpGroupBox1.Location = new System.Drawing.Point(8, 8);
 			this.mpGroupBox1.Name = "mpGroupBox1";
-			this.mpGroupBox1.Size = new System.Drawing.Size(440, 336);
+			this.mpGroupBox1.Size = new System.Drawing.Size(440, 368);
 			this.mpGroupBox1.TabIndex = 0;
 			this.mpGroupBox1.TabStop = false;
 			this.mpGroupBox1.Text = "General Settings";
@@ -164,9 +164,9 @@ namespace MediaPortal.Configuration.Sections
 			// pictureBoxEU
 			// 
 			this.pictureBoxEU.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxEU.Image")));
-			this.pictureBoxEU.Location = new System.Drawing.Point(168, 24);
+			this.pictureBoxEU.Location = new System.Drawing.Point(216, 8);
 			this.pictureBoxEU.Name = "pictureBoxEU";
-			this.pictureBoxEU.Size = new System.Drawing.Size(171, 296);
+			this.pictureBoxEU.Size = new System.Drawing.Size(145, 352);
 			this.pictureBoxEU.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.pictureBoxEU.TabIndex = 4;
 			this.pictureBoxEU.TabStop = false;
@@ -174,10 +174,10 @@ namespace MediaPortal.Configuration.Sections
 			// pictureBoxUSA
 			// 
 			this.pictureBoxUSA.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxUSA.Image")));
-			this.pictureBoxUSA.Location = new System.Drawing.Point(168, 24);
+			this.pictureBoxUSA.Location = new System.Drawing.Point(216, 8);
 			this.pictureBoxUSA.Name = "pictureBoxUSA";
-			this.pictureBoxUSA.Size = new System.Drawing.Size(258, 300);
-			this.pictureBoxUSA.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this.pictureBoxUSA.Size = new System.Drawing.Size(136, 352);
+			this.pictureBoxUSA.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.pictureBoxUSA.TabIndex = 3;
 			this.pictureBoxUSA.TabStop = false;
 			// 
@@ -206,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
 			this.checkBoxMCE.Name = "checkBoxMCE";
 			this.checkBoxMCE.Size = new System.Drawing.Size(136, 24);
 			this.checkBoxMCE.TabIndex = 0;
-			this.checkBoxMCE.Text = "Enable MCE2005 Remote";
+			this.checkBoxMCE.Text = "Use Microsoft MCE remote";
 			this.checkBoxMCE.CheckedChanged += new System.EventHandler(this.checkBoxMCE_CheckedChanged);
 			// 
 			// label4
