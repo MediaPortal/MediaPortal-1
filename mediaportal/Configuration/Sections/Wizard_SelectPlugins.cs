@@ -531,7 +531,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				string defaultShare = String.Empty;
 
 				for(int index = 0; index < MaximumShares; index++)
 				{
@@ -574,8 +573,6 @@ namespace MediaPortal.Configuration.Sections
 							sharePortData = shareData.Port;
 							shareRemotePathData=shareData.RemoteFolder;
 
-							if(index==0)
-								defaultShare = shareNameData;
 						}
 					}
 
@@ -591,7 +588,6 @@ namespace MediaPortal.Configuration.Sections
 					xmlwriter.SetValue(mediaType, shareRemotePath, shareRemotePathData);
 				}
 
-				xmlwriter.SetValue(mediaType, "default", defaultShare);
 			}
 		}
 
