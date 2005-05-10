@@ -453,11 +453,15 @@ namespace MediaPortal.Configuration.Sections
 				{
 					if (file.ToLower() !="folder.jpg")
 					{
-						totalPhotos++;
-						if (scanForPhotos)
+						FileInfo info = new FileInfo(file);
+						if (info.Length>= 500*1024) // > 500KByte
 						{
-							isPhotoFolder=true;
-							scanForPhotos=false;//no need to scan subfolders
+							totalPhotos++;
+							if (scanForPhotos)
+							{
+								isPhotoFolder=true;
+								scanForPhotos=false;//no need to scan subfolders
+							}
 						}
 					}
 				}
