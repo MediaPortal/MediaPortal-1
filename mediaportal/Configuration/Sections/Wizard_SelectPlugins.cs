@@ -264,7 +264,19 @@ namespace MediaPortal.Configuration.Sections
 			totalPhotos=0;
 			totalVideo=0;
 			string[] drives = Environment.GetLogicalDrives();
+			foreach(string drive in drives)
+			{
+				int driveType=Util.Utils.getDriveType(drive) ;
+				if (driveType==(int)DriveType.DVD)
+				{
+					string driveName=String.Format("({0}:) CD/DVD",drive.Substring(0, 1).ToUpper());
+					Shares.ShareData share = new Shares.ShareData(driveName,drive,"");
+					sharesMusic.Add(share);
+					sharesPhotos.Add(share);
+					sharesVideos.Add(share);
 
+				}
+			}
 			foreach(string drive in drives)
 			{
 				int driveType=Util.Utils.getDriveType(drive) ;
@@ -390,6 +402,10 @@ namespace MediaPortal.Configuration.Sections
 
 		void ScanFolder(string folder, bool scanForAudio, bool scanForVideo, bool scanForPhotos)
 		{
+			//dont go into dvd folders
+			if (folder.ToLower().IndexOf(@"\video_ts")>=0) return;
+			if (folder.ToLower().IndexOf(@":\recycler")>=0) return;
+			if (folder.ToLower().IndexOf(@":\$win")>=0) return;
 			string[] files;
 			string[] folders;
 			try
@@ -428,6 +444,8 @@ namespace MediaPortal.Configuration.Sections
 			long videoCount=totalVideo;
 			long audioCount=totalAudio;
 			long photoCount=totalPhotos;
+			bool isDVD=false;
+
 			foreach (string file in files)
 			{
 				if (stopScanning) return;
@@ -471,6 +489,22 @@ namespace MediaPortal.Configuration.Sections
 				if (stopScanning) return;
 				if (subfolder!="." && subfolder!="..")
 				{
+					if (scanForVideo)
+					{
+						foreach (string tmpFolder in folders)
+						{
+							try
+							{
+								string[] subfolders= Directory.GetDirectories(tmpFolder);
+								if (subfolder.ToLower().IndexOf(@"\video_ts")>=0)
+								{
+									isDVD=true;
+								}
+							}
+							catch(Exception){}
+						}
+					}
+					if (isDVD && !isVideoFolder) AddVideoShare(folder);
 					ScanFolder (subfolder,scanForAudio,scanForVideo,scanForPhotos);
 				}
 			}
@@ -483,7 +517,6 @@ namespace MediaPortal.Configuration.Sections
 			if (isVideoFolder)
 			{
 				videoCount= (totalVideo-videoCount);
-				if (videoCount>=5)
 				AddVideoShare(folder);
 			}
 			if (isPhotoFolder)
