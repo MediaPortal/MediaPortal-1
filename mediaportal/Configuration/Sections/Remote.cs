@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -17,6 +18,18 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.PictureBox pictureBoxUSA;
 		private System.Windows.Forms.PictureBox pictureBoxEU;
 		private System.ComponentModel.IContainer components = null;
+		public struct RAWINPUTDEVICE 
+		{
+			public ushort usUsagePage;
+			public ushort usUsage;
+			public uint dwFlags;
+			public IntPtr hwndTarget;
+		} ;
+		[DllImport("User32.dll",EntryPoint="RegisterRawInputDevices",SetLastError=true)]
+		public extern static bool RegisterRawInputDevices(
+			[In] RAWINPUTDEVICE[] pRawInputDevices,
+			[In] uint uiNumDevices,
+			[In] uint cbSize);  
 
 		public Remote() : this("Remote")
 		{
@@ -27,6 +40,31 @@ namespace MediaPortal.Configuration.Sections
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
+		}
+		static public bool IsMceRemoteInstalled(IntPtr hwnd)
+		{
+			RAWINPUTDEVICE[] rid1= new RAWINPUTDEVICE[1];
+
+			rid1[0].usUsagePage = 0xFFBC;
+			rid1[0].usUsage = 0x88;
+			rid1[0].dwFlags = 0;
+			rid1[0].hwndTarget=hwnd;
+			bool Success=RegisterRawInputDevices(rid1, (uint)rid1.Length,(uint)Marshal.SizeOf(rid1[0]));
+			if (Success) 
+			{
+				return true;
+			}
+
+			rid1[0].usUsagePage = 0x0C;
+			rid1[0].usUsage = 0x01;
+			rid1[0].dwFlags = 0;
+			rid1[0].hwndTarget=hwnd;
+			Success=RegisterRawInputDevices(rid1, (uint)rid1.Length,(uint)Marshal.SizeOf(rid1[0]));
+			if (Success) 
+			{
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>

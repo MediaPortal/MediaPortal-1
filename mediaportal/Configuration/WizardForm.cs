@@ -145,7 +145,10 @@ namespace MediaPortal.Configuration
 					AddSection(new Sections.Wizard_DVBCTV() , "TV - DVB-S", "Digital TV Satellite configuration", "");
 				}
 				AddSection(new Sections.TVProgramGuide() , "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
-				AddSection(new Sections.Remote()			   , "Remote Control", "Configure MCE Remote control", "");
+				if (Sections.Remote.IsMceRemoteInstalled(this.Handle) )
+				{
+					AddSection(new Sections.Remote()			   , "Remote Control", "Configure MCE Remote control", "");
+				}
 				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
 			}
 		}
