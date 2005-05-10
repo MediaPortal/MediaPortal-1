@@ -1134,19 +1134,19 @@ namespace MediaPortal.GUI.TV
 				ShowControl(GetID, (int)Control.BLUE_BAR);
 				ShowControl(GetID, (int)Control.LABEL_ROW1);
 			}
-			ShowControl(GetID, (int)Control.MSG_BOX);
-			ShowControl(GetID, (int)Control.MSG_BOX_LABEL1);
-			ShowControl(GetID, (int)Control.MSG_BOX_LABEL2);
-			ShowControl(GetID, (int)Control.MSG_BOX_LABEL3);
-			ShowControl(GetID, (int)Control.MSG_BOX_LABEL4);
+			HideControl(GetID, (int)Control.MSG_BOX);
+			HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
+			HideControl(GetID, (int)Control.MSG_BOX_LABEL2);
+			HideControl(GetID, (int)Control.MSG_BOX_LABEL3);
+			HideControl(GetID, (int)Control.MSG_BOX_LABEL4);
 
 			if (isMsgBoxVisible)
 			{
-				HideControl(GetID, (int)Control.MSG_BOX);
-				HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
-				HideControl(GetID, (int)Control.MSG_BOX_LABEL2);
-				HideControl(GetID, (int)Control.MSG_BOX_LABEL3);
-				HideControl(GetID, (int)Control.MSG_BOX_LABEL4);
+				ShowControl(GetID, (int)Control.MSG_BOX);
+				ShowControl(GetID, (int)Control.MSG_BOX_LABEL1);
+				ShowControl(GetID, (int)Control.MSG_BOX_LABEL2);
+				ShowControl(GetID, (int)Control.MSG_BOX_LABEL3);
+				ShowControl(GetID, (int)Control.MSG_BOX_LABEL4);
 			}
 
 
