@@ -52,6 +52,7 @@ namespace MediaPortal.TV.Recording
 		int				m_mhwFreq=0;
 		System.Windows.Forms.Label m_mhwChannels;
 		System.Windows.Forms.Label m_mhwTitles;
+		bool			m_isLocked=false;
 		
 		// mhw
 		public struct Programm 
@@ -107,6 +108,10 @@ namespace MediaPortal.TV.Recording
 		//
 		// commits epg-data to database
 		//
+		public bool Locked
+		{
+			get{return m_isLocked;}
+		}
 		public System.Windows.Forms.Label LabelChannels
 		{
 			set{m_mhwChannels=value;}
@@ -160,6 +165,7 @@ namespace MediaPortal.TV.Recording
 
 		public void ClearBuffer()
 		{
+			m_isLocked=true;
 			SubmittMHW(); // save all data now
 			if(m_streamBuffer!=null)
 				m_streamBuffer.Clear();
@@ -174,6 +180,7 @@ namespace MediaPortal.TV.Recording
 			m_titlesParsing=false;
 			m_summaryParsing=false;
 			m_channelsParsing=false;
+			m_isLocked=false;
 		}
 		public int SetEITToDatabase(DVBSections.EITDescr data,string channelName,int eventKind)
 		{
@@ -491,6 +498,8 @@ namespace MediaPortal.TV.Recording
 		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
 		public void SaveTitleData(byte[] data)
 		{
+			if(m_isLocked==true)
+				return;
 			if(m_streamBuffer.Count<200)
 				m_streamBuffer.Add(data);
 			else
@@ -504,21 +513,34 @@ namespace MediaPortal.TV.Recording
 		}
 		public void SaveChannelData(byte[] data)
 		{
-			if(m_savedChannelData<65535)
-			{
-				Array.Copy(data,0,m_mhwEpgChannelBuffer,m_savedChannelData,data.Length);
-				m_savedChannelData+=data.Length;
-			}
-			if(m_savedChannelData>=m_channelGrabLen)
-			{
-				ParseChannels(m_mhwEpgChannelBuffer);
-				m_savedChannelData=0;
-				m_channelsParsing=false;
-			}
+//			if(m_isLocked==true)
+//				return;
+//
+//			if(m_savedChannelData<65535-188)
+//			{
+//				Array.Copy(data,0,m_mhwEpgChannelBuffer,m_savedChannelData,data.Length);
+//				m_savedChannelData+=data.Length;
+//			}
+//			else
+//			{
+//				m_savedChannelData=0;
+//			}
+//			if(m_savedChannelData>=m_channelGrabLen)
+//			{
+//				lock(m_mhwEpgChannelBuffer.SyncRoot)
+//				{
+//					ParseChannels(m_mhwEpgChannelBuffer);
+//				}
+//				m_savedChannelData=0;
+//				m_channelsParsing=false;
+//			}
 
 		}
 		public void SaveSummaryData(byte[] data)
 		{
+			if(m_isLocked==true)
+				return;
+
 			if(m_savedSummaryData<65535)
 			{
 				Array.Copy(data,0,m_mhwEpgSummaryBuffer,m_savedSummaryData,data.Length);
@@ -540,44 +562,45 @@ namespace MediaPortal.TV.Recording
 				return; // error
 			if(m_namesBuffer.Count>0)
 				return; // already got channles table
+			if(m_channelGrabLen>65535 || m_channelGrabLen<0)
+				return;
+
 			Log.Write("mhw-epg: start parse channels for mhw",m_namesBuffer.Count);
 			byte[] data=new byte[m_channelGrabLen+5];
 			Array.Copy(data1,5,data,0,m_channelGrabLen);
-			for(int n=0;n<m_channelGrabLen;n+=22)
+			lock(m_namesBuffer.SyncRoot)
 			{
-				if(m_namesBuffer.Count>=(m_channelGrabLen/22))
-					break;
-				MHWChannel ch=new MHWChannel();
-				ch.NetworkID=(data[n]<<8)+data[n+1];
-				ch.TransponderID=(data[n+2]<<8)+data[n+3];
-				ch.ChannelID=(data[n+4]<<8)+data[n+5];
-				ch.ChannelName=System.Text.Encoding.ASCII.GetString(data,n+6,16);
-				ch.ChannelName=ch.ChannelName.Trim();
-				
-				if(m_namesBuffer.Contains(ch)==false)
+				for(int n=0;n<m_channelGrabLen;n+=22)
 				{
+					if(m_namesBuffer.Count>=(m_channelGrabLen/22))
+						break;
+					MHWChannel ch=new MHWChannel();
+					ch.NetworkID=(data[n]<<8)+data[n+1];
+					ch.TransponderID=(data[n+2]<<8)+data[n+3];
+					ch.ChannelID=(data[n+4]<<8)+data[n+5];
+					ch.ChannelName=System.Text.Encoding.ASCII.GetString(data,n+6,16);
+					ch.ChannelName=ch.ChannelName.Trim();
 					m_namesBuffer.Add(ch);
 					Log.Write("mhw-epg: added channel {0} to mhw channels table",ch.ChannelName);
-				}
-			}// for(int n=0
-			//Log.Write("mhw-epg: found {0} channels for mhw",m_namesBuffer.Count);
-			m_mhwChannelsCount=m_namesBuffer.Count;
-			try
-			{
-				using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\mhw.xml"))
+				}// for(int n=0
+				//Log.Write("mhw-epg: found {0} channels for mhw",m_namesBuffer.Count);
+				m_mhwChannelsCount=m_namesBuffer.Count;
+				try
 				{
-					int chID=0;
-					xmlwriter.SetValue(String.Format("{0}",m_mhwFreq),"channelCount",m_namesBuffer.Count);
-					foreach(MHWChannel ch in m_namesBuffer)
+					using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\mhw.xml"))
 					{
-						xmlwriter.SetValue(String.Format("{0}",m_mhwFreq),String.Format("chID{0}",chID),String.Format("{0};{1};{2}",ch.ChannelID,ch.NetworkID,ch.TransponderID));// ned1
-						chID++;
+						int chID=0;
+						xmlwriter.SetValue(String.Format("{0}",m_mhwFreq),"channelCount",m_namesBuffer.Count);
+						foreach(MHWChannel ch in m_namesBuffer)
+						{
+							xmlwriter.SetValue(String.Format("{0}",m_mhwFreq),String.Format("chID{0}",chID),String.Format("{0};{1};{2}",ch.ChannelID,ch.NetworkID,ch.TransponderID));// ned1
+						}
 					}
 				}
-			}
-			catch{}
+				catch{}
 
-			m_channelsParsing=false;
+				m_channelsParsing=false;
+			}
 		}
 		//
 		//
@@ -606,9 +629,9 @@ namespace MediaPortal.TV.Recording
 							if(channelDetail.Length==3)
 							{
 								MHWChannel ch=new MHWChannel();
-								ch.ChannelID=Convert.ToInt16(channelDetail[0]);
-								ch.NetworkID=Convert.ToInt16(channelDetail[1]);
-								ch.TransponderID=Convert.ToInt16(channelDetail[2]);
+								ch.ChannelID=Convert.ToInt32(channelDetail[0]);
+								ch.NetworkID=Convert.ToInt32(channelDetail[1]);
+								ch.TransponderID=Convert.ToInt32(channelDetail[2]);
 								ch.ChannelName=TVDatabase.GetSatChannelName(ch.ChannelID,ch.NetworkID);
 								Log.Write("mhw-epg: channel from cache id:{0} name:{1}",i,ch.ChannelName);
 								if(m_namesBuffer.Contains(ch)==false)
@@ -616,10 +639,9 @@ namespace MediaPortal.TV.Recording
 							}
 						}
 					}
-					//xmlreader.SetValue(String.Format("{0}",m_mhwFreq),String.Format("{0}",chID),String.Format("{0};{1};{2}",ch.ChannelID,ch.NetworkID,ch.TransponderID));// ned1
 				}
 			}
-			catch
+			catch(Exception ex)
 			{
 				m_namesBuffer.Clear();
 			}
@@ -628,112 +650,119 @@ namespace MediaPortal.TV.Recording
 		}
 		void ParseSummaries(byte[] data1)
 		{
+			
 			if(m_summaryBuffer==null)
 				return;
 		
-			byte[] data=new byte[data1.Length];
-			Array.Copy(data1,1,data,0,data1.Length-1);
-			for(int n=0;n<data.Length;)
+			lock(m_summaryBuffer.SyncRoot)
 			{
-				Summary sum=new Summary();
-				sum.ProgramID=(data[n+3]<<24)+(data[n+4]<<16)+(data[n+5]<<8)+data[n+6];
-				sum.Description="";
-				n+=11+(data[n+10]*7);
-				do
+				byte[] data=new byte[data1.Length];
+				Array.Copy(data1,1,data,0,data1.Length-1);
+				for(int n=0;n<data.Length;)
 				{
-					if(n>=data.Length)
+					Summary sum=new Summary();
+					sum.ProgramID=(data[n+3]<<24)+(data[n+4]<<16)+(data[n+5]<<8)+data[n+6];
+					sum.Description="";
+					n+=11+(data[n+10]*7);
+					do
 					{
-						sum.ProgramID=-1;
-						break;
-					}
-					if(data[n]<32 || data[n]==0xFF)
+						if(n>=data.Length)
+						{
+							sum.ProgramID=-1;
+							break;
+						}
+						if(data[n]<32 || data[n]==0xFF)
+						{
+							if(data[n]==13 && data[n+1]==10)
+								sum.Description+=" ";
+							//skip char
+						}
+						else
+							sum.Description+=(char)data[n];
+						n++;
+						if(n>=data.Length)
+							break;
+					}while(!(data[n]==0x90 && (data[n+1] &0x70)==0x70 && data[n+7]==0xFF & data[n+8]==0xFF && data[n+9]==0xFF));
+					if(SummaryExists(sum.ProgramID)==false && sum.ProgramID!=-1)
 					{
-						if(data[n]==13 && data[n+1]==10)
-							sum.Description+=" ";
-						//skip char
-					}
-					else
-						sum.Description+=(char)data[n];
-					n++;
-					if(n>=data.Length)
-						break;
-				}while(!(data[n]==0x90 && (data[n+1] &0x70)==0x70 && data[n+7]==0xFF & data[n+8]==0xFF && data[n+9]==0xFF));
-				if(SummaryExists(sum.ProgramID)==false && sum.ProgramID!=-1)
-				{
-					m_summaryBuffer.Add(sum);
-//					if(m_summaryBuffer.Count>=20)
-//					{
-//						foreach(Summary sum1 in m_summaryBuffer)
-//						{
-//							string id=String.Format("0x{0:X}",sum1.ProgramID);
-//							TVProgram prog=new TVProgram();
-//							if(TVDatabase.GetProgramByDescriptionID(id,ref prog)==0)
-//							{
-//								prog.Description=sum1.Description;
-//								TVDatabase.UpdateProgram(prog);
-//							}
-//						}
-//						m_summaryBuffer.Clear();
-//					}//if(m_summaryBuffer.Count>=200)
-				}//if(m_summaryBuffer.Contains(sum)==false)
+						m_summaryBuffer.Add(sum);
+						//					if(m_summaryBuffer.Count>=20)
+						//					{
+						//						foreach(Summary sum1 in m_summaryBuffer)
+						//						{
+						//							string id=String.Format("0x{0:X}",sum1.ProgramID);
+						//							TVProgram prog=new TVProgram();
+						//							if(TVDatabase.GetProgramByDescriptionID(id,ref prog)==0)
+						//							{
+						//								prog.Description=sum1.Description;
+						//								TVDatabase.UpdateProgram(prog);
+						//							}
+						//						}
+						//						m_summaryBuffer.Clear();
+						//					}//if(m_summaryBuffer.Count>=200)
+					}//if(m_summaryBuffer.Contains(sum)==false)
 				
+				}
+				m_summaryParsing=false;
 			}
-			m_summaryParsing=false;
 		}
 		void ParseTitles(byte[] data)
 		{
 			//foreach(byte[] data in m_progtabBuffer)
 
-			m_titlesParsing=true;
-			for(int n=1;n<184;n+=46)
+			lock(m_titleBuffer.SyncRoot)
 			{
-				Programm prg=new Programm();
-				if(data[n+3]==0xff)
-					continue;
-				prg.ChannelID=(data[n+3])-1;
-				prg.ThemeID=data[n+4];
-				int h=data[n+5] & 0x1F;
-				int d=(data[n+5] & 0xE0)>>5;
-				prg.Summaries=(data[n+6] & 0x80)==0?false:true;
-				int m=data[n+6] >>2;
-				prg.Duration=((data[n+9]<<8)+data[n+10]);// minutes
-				prg.Title=System.Text.Encoding.ASCII.GetString(data,n+11,23);
-				prg.Title=prg.Title.Trim();
-				prg.PPV=(data[n+34]<<24)+(data[n+35]<<16)+(data[n+36]<<8)+data[n+37];
-				prg.ID=(data[n+38]<<24)+(data[n+39]<<16)+(data[n+40]<<8)+data[n+41];
-				// get time
-				int d1=d;
-				int h1=h;
-				if (d1 == 7)
-					d1 = 0;
-				if (h1>15)
-					h1 = h1-4;
-				else if (h1>7)
-					h1 = h1-2;
-				else
-					d1= (d1==6) ? 0 : d1+1;
+				m_titlesParsing=true;
+				for(int n=1;n<184;n+=46)
+				{
+					Programm prg=new Programm();
+					if(data[n+3]==0xff)
+						continue;
+					prg.ChannelID=(data[n+3])-1;
+					prg.ThemeID=data[n+4];
+					int h=data[n+5] & 0x1F;
+					int d=(data[n+5] & 0xE0)>>5;
+					prg.Summaries=(data[n+6] & 0x80)==0?false:true;
+					int m=data[n+6] >>2;
+					prg.Duration=((data[n+9]<<8)+data[n+10]);// minutes
+					prg.Title=System.Text.Encoding.ASCII.GetString(data,n+11,23);
+					prg.Title=prg.Title.Trim();
+					prg.PPV=(data[n+34]<<24)+(data[n+35]<<16)+(data[n+36]<<8)+data[n+37];
+					prg.ID=(data[n+38]<<24)+(data[n+39]<<16)+(data[n+40]<<8)+data[n+41];
+					// get time
+					int d1=d;
+					int h1=h;
+					if (d1 == 7)
+						d1 = 0;
+					if (h1>15)
+						h1 = h1-4;
+					else if (h1>7)
+						h1 = h1-2;
+					else
+						d1= (d1==6) ? 0 : d1+1;
 
-				prg.Time=new DateTime(System.DateTime.Now.Ticks);
-				DateTime dayStart=new DateTime(System.DateTime.Now.Ticks);
-				dayStart=dayStart.Subtract(new TimeSpan(1,dayStart.Hour,dayStart.Minute,dayStart.Second,dayStart.Millisecond));
-				int day=(int)dayStart.DayOfWeek;
+					prg.Time=new DateTime(System.DateTime.Now.Ticks);
+					DateTime dayStart=new DateTime(System.DateTime.Now.Ticks);
+					dayStart=dayStart.Subtract(new TimeSpan(1,dayStart.Hour,dayStart.Minute,dayStart.Second,dayStart.Millisecond));
+					int day=(int)dayStart.DayOfWeek;
 				
-				prg.Time=dayStart;
-				int minVal=(d1-day)*86400+h1*3600+m*60;
-				if(minVal<21600)
-					minVal+=604800;
+					prg.Time=dayStart;
+					int minVal=(d1-day)*86400+h1*3600+m*60;
+					if(minVal<21600)
+						minVal+=604800;
 
-				prg.Time=prg.Time.AddSeconds(minVal);
-				if(prg.Time.Hour==18 && prg.Time.Minute==25 && prg.Time.Day==20)
-				{
-//					int a=0;
+					prg.Time=prg.Time.AddSeconds(minVal);
+					if(prg.Time.Hour==18 && prg.Time.Minute==25 && prg.Time.Day==20)
+					{
+						//					int a=0;
+					}
+					if(ProgramExists(prg.ID)==false)
+					{
+						m_titleBuffer.Add(prg);
+					}
 				}
-				if(ProgramExists(prg.ID)==false)
-				{
-					m_titleBuffer.Add(prg);
-				}
+				m_titlesParsing=false;
 			}
-			m_titlesParsing=false;
 		}
 
 		void SubmittMHW()
@@ -743,112 +772,116 @@ namespace MediaPortal.TV.Recording
 				return;
 			if(m_namesBuffer.Count<1)
 				return;
-			Log.Write("mhw-epg: count of programms={0}",m_titleBuffer.Count);
-			Log.Write("mhw-epg: buffer contains {0} summaries now",m_summaryBuffer.Count);
-			ArrayList list=new ArrayList();
-			foreach(Programm prg in m_titleBuffer)
-			{
-				DVBSections.EITDescr eit=new MediaPortal.TV.Recording.DVBSections.EITDescr();
-				string channelName=String.Empty;
-				if(prg.ChannelID>=m_namesBuffer.Count || prg.ChannelID<0)
-				{
-					list.Add(prg);
-					continue;
-				}
-				int programID=((MHWChannel)m_namesBuffer[prg.ChannelID]).ChannelID;
-				int tsID=((MHWChannel)m_namesBuffer[prg.ChannelID]).NetworkID;
-				switch(m_cardType)
-				{
-					case (int)EPGCard.TechnisatStarCards:
-						channelName=TVDatabase.GetSatChannelName(programID,tsID);
-						break;
 
-					case (int)EPGCard.BDACards:
+			lock(m_titleBuffer.SyncRoot)
+			{
+				Log.Write("mhw-epg: count of programms={0}",m_titleBuffer.Count);
+				Log.Write("mhw-epg: buffer contains {0} summaries now",m_summaryBuffer.Count);
+				ArrayList list=new ArrayList();
+				foreach(Programm prg in m_titleBuffer)
+				{
+					DVBSections.EITDescr eit=new MediaPortal.TV.Recording.DVBSections.EITDescr();
+					string channelName=String.Empty;
+					if(prg.ChannelID>=m_namesBuffer.Count || prg.ChannelID<0)
 					{
-						ArrayList channels = new ArrayList();
-						TVDatabase.GetChannels(ref channels);
-						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
-						int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
-						int audio1, audio2, audio3, ac3Pid;
-						string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
-
-						string provider="";
-						foreach (TVChannel chan in channels)
-						{
-							switch (m_networkType)
-							{
-								case NetworkType.DVBC:
-									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
-									if (programID==SID && tsID==TSID)
-									{
-										channelName=chan.Name;
-									}
-									break;
-								case NetworkType.DVBS:
-									channelName=TVDatabase.GetSatChannelName(programID,tsID);
-									break;
-								case NetworkType.DVBT:
-									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
-									if (programID==SID && tsID==TSID)
-									{
-										channelName=chan.Name;
-									}
-									break;
-							}
-							if (channelName!=String.Empty) break;
-						}//foreach (TVChannel chan in channels)
+						list.Add(prg);
+						continue;
 					}
-						break;
+					int programID=((MHWChannel)m_namesBuffer[prg.ChannelID]).ChannelID;
+					int tsID=((MHWChannel)m_namesBuffer[prg.ChannelID]).NetworkID;
+					switch(m_cardType)
+					{
+						case (int)EPGCard.TechnisatStarCards:
+							channelName=TVDatabase.GetSatChannelName(programID,tsID);
+							break;
 
-					case (int)EPGCard.ChannelName:
-						break;
-				}
-				if(channelName=="")
-				{
-					list.Add(prg);
-					//m_titleBuffer.Remove(prg);// remove if it is in database
-					continue;
-				}
-				eit.event_name=prg.Title;
-				eit.program_number=programID;
-				eit.event_text=GetSummaryByPrgID(prg.ID);
-				if(eit.event_text=="")
-					eit.event_text=String.Format("0x{0:X}",prg.ID);
-				eit.genere_text="unknown";
-				eit.duration_mm=prg.Duration;
-				eit.isMHWEvent=true;
-				eit.shortEventUseable=true;
-				eit.mhwStartTime=prg.Time;
-				int result=SetEITToDatabase(eit,channelName,0);
-				if(result==1)
-				{
-					count++;
-					list.Add(prg);
-					//m_titleBuffer.Remove(prg);// remove if it is in database
-				}
-				if(result==-2)
-					list.Add(prg);
+						case (int)EPGCard.BDACards:
+						{
+							ArrayList channels = new ArrayList();
+							TVDatabase.GetChannels(ref channels);
+							int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
+							int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
+							int audio1, audio2, audio3, ac3Pid;
+							string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
 
-			}
-			foreach(Programm prg in list)
-			{
-				m_titleBuffer.Remove(prg);
-			}
-			m_titleBuffer.TrimToSize();
-			m_addsToDatabase+=count;
-			if(count>0)
-			{
-				Log.Write("mhw-epg: added {0} entries to database",m_addsToDatabase);
-				Log.Write("mhw-epg: titles buffer contains {0} objects",m_titleBuffer.Count);
-				Log.Write("mhw-epg: summaries buffer contains {0} objects",m_summaryBuffer.Count);
-			}
+							string provider="";
+							foreach (TVChannel chan in channels)
+							{
+								switch (m_networkType)
+								{
+									case NetworkType.DVBC:
+										TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+										if (programID==SID && tsID==TSID)
+										{
+											channelName=chan.Name;
+										}
+										break;
+									case NetworkType.DVBS:
+										channelName=TVDatabase.GetSatChannelName(programID,tsID);
+										break;
+									case NetworkType.DVBT:
+										TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+										if (programID==SID && tsID==TSID)
+										{
+											channelName=chan.Name;
+										}
+										break;
+								}
+								if (channelName!=String.Empty) break;
+							}//foreach (TVChannel chan in channels)
+						}
+							break;
+
+						case (int)EPGCard.ChannelName:
+							break;
+					}
+					if(channelName=="")
+					{
+						list.Add(prg);
+						//m_titleBuffer.Remove(prg);// remove if it is in database
+						continue;
+					}
+					eit.event_name=prg.Title;
+					eit.program_number=programID;
+					eit.event_text=GetSummaryByPrgID(prg.ID);
+					if(eit.event_text=="")
+						eit.event_text=String.Format("0x{0:X}",prg.ID);
+					eit.genere_text="unknown";
+					eit.duration_mm=prg.Duration;
+					eit.isMHWEvent=true;
+					eit.shortEventUseable=true;
+					eit.mhwStartTime=prg.Time;
+					int result=SetEITToDatabase(eit,channelName,0);
+					if(result==1)
+					{
+						count++;
+						list.Add(prg);
+						//m_titleBuffer.Remove(prg);// remove if it is in database
+					}
+					if(result==-2)
+						list.Add(prg);
+				}
+
+			
+				foreach(Programm prg in list)
+				{
+					m_titleBuffer.Remove(prg);
+				}
+				m_titleBuffer.TrimToSize();
+				m_addsToDatabase+=count;
+				if(count>0)
+				{
+					Log.Write("mhw-epg: added {0} entries to database",m_addsToDatabase);
+					Log.Write("mhw-epg: titles buffer contains {0} objects",m_titleBuffer.Count);
+					Log.Write("mhw-epg: summaries buffer contains {0} objects",m_summaryBuffer.Count);
+				}
 				//m_titleBuffer.Clear();
 			
-			if(m_mhwChannels!=null) 
-				m_mhwChannels.Text=string.Format("{0}",m_namesBuffer.Count);
-			if(m_mhwTitles!=null) 
-				m_mhwTitles.Text=string.Format("{0}",m_addsToDatabase);
-
+				if(m_mhwChannels!=null) 
+					m_mhwChannels.Text=string.Format("{0}",m_namesBuffer.Count);
+				if(m_mhwTitles!=null) 
+					m_mhwTitles.Text=string.Format("{0}",m_addsToDatabase);
+			}
 		}
 		//
 		string GetSummaryByPrgID(int id)
