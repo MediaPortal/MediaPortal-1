@@ -811,7 +811,7 @@ namespace MediaPortal.TV.Recording
 		{
 			get 
 			{
-				if (g_Player.Playing && g_Player.IsTV) return true;
+				if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording) return true;
 				for (int i=0; i < m_tvcards.Count;++i)
 				{
 					TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
