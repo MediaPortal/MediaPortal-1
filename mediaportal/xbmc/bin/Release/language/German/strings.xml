@@ -914,6 +914,10 @@
 		<value>Suchleiste</value>
 	</string>
 	<string>
+		<id>299</id>
+		<value>Laufzeit:</value>
+	</string>
+	<string>
 		<id>300</id>
 		<value>Sprache</value>
 	</string>
@@ -1673,6 +1677,102 @@
 		<id>491</id>
 		<value>Benutze grosse Symbole</value>
 	</string>
+	<string>
+		<id>492</id>
+		<value>Tonsprache</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Datei Menü</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Als Ziel festlegen</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Kann Aktion nicht ausführen</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Diesen Ordner löschen</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Zum Ziel</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Berechne</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Bist Du sicher?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>Elemente</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>Nach</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Zieldatei existiert bereits! Überschreiben?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Abbrechen</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>immer</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>nie</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Element ist geschützt. Aktion nicht beendet.</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Fehler beim Anlegen des Ordners. Aktion nicht beendet.</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Fehler beim Löschen des Ordners. Aktion nicht beendet.</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Fehler beim Löschen der Zieldatei. Aktion nicht beendet.</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Ausnahmefehler! Aktion nicht beendet.</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Dieses Lied löschen?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Photo CD einglegt! Öffnen?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Film CD einglegt! Öffnen?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Audio CD einglegt! Öffnen?</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Abschneiden</value>
+	</string>
 
 	<string>
 		<id>600</id>
@@ -2387,6 +2487,14 @@
 		<value>Folge</value>
 	</string>
 	<string>
+		<id>875</id>
+		<value>Aktuelles Programm</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Bis manueller Stop</value>
+	</string>
+	<string>
 		<id>890</id>
 		<value>CD-Wiedergabe</value>
 	</string>
@@ -2689,6 +2797,26 @@
 	<string>
 		<id>982</id>
 		<value>Aufnahme vollständig löschen</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Playlisten</value>
+	</string>
+	<string>
+		<id>984</id>
+		<value>Hole Filme</value>
+	</string>
+	<string>
+		<id>985</id>
+		<value>Hole Filmdetails</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Hole Schauspieler</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Jahre</value>
 	</string>
 	<string>
 		<id>1440</id>
@@ -3639,6 +3767,14 @@
 		<value>Status-Vorzüge</value>
 	</string>
 	<string>
+		<id>100758</id>
+		<value>Datei Dialog</value>
+	</string>
+	<string>
+		<id>100760</id>
+		<value>Brenner</value>
+	</string>
+	<string>
 		<id>100770</id>
 		<value>Datei-Explorer</value>
 	</string>
@@ -3683,6 +3819,10 @@
 		<value>Dateikomprimierung</value>
 	</string>
 	<string>
+		<id>102009</id>
+		<value>Auswahl Dialog</value>
+	</string>
+	<string>
 		<id>102010</id>
 		<value>Datum/Zeit</value>
 	</string>
@@ -3703,6 +3843,15 @@
 		<value>Bildinformationen</value>
 	</string>
 	<string>
+
+		<id>102015</id>
+		<value>Mini Menü</value>
+	</string>
+	<string>
+		<id>102016</id>
+		<value>Benachrichtigung</value>
+	</string>
+	<string>
 		<id>102600</id>
 		<value>Wetter</value>
 	</string>
@@ -3720,6 +3869,30 @@
 	</string>
 	<string>
 		<id>102902</id>
+		<value>MSN Messenger OSD</value>
+	</string>
+	<string>
+		<id>103003</id>
+		<value>TV/OSD</value>
+	</string>
+	<string>
+		<id>103006</id>
+		<value>TV/MSN Messenger OSD</value>
+	</string>
+	<string>
+		<id>103007</id>
+		<value>TV/Zap OSD</value>
+	</string>
+	<string>
+		<id>107700</id>
+		<value>TV/Teletext</value>
+	</string>
+	<string>
+		<id>107701</id>
+		<value>TV/Teletext</value>
+	</string>
+	<string>
+		<id>12902</id>
 		<value>MSN Messenger OSD</value>
 	</string>
 	<string>
@@ -3775,6 +3948,10 @@
 		<value>Bild wird geladen, bitte warten</value>
 	</string>
 	<string>
+		<id>13013</id>
+		<value>Video wird geladen, bitte warten</value>
+	</string>
+	<string>
 		<id>16001</id>
 		<value>Partymix</value>
 	</string>
@@ -3826,4 +4003,9 @@
 		<id>19012</id>
 		<value>Spiel beendet</value>
 	</string>
+	<string>
+		<id>25001</id>
+		<value>Warte auf Seite {0:X}...!</value>
+	</string>
+
 </strings>
