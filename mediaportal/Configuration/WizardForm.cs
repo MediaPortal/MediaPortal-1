@@ -149,6 +149,7 @@ namespace MediaPortal.Configuration
 				{
 					AddSection(new Sections.Remote()			   , "Remote Control", "Configure MCE Remote control", "");
 				}
+				AddSection(new Sections.Weather()			   , "Weather", "My weather setup", "");
 				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
 			}
 		}

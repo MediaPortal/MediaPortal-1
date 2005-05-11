@@ -232,7 +232,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Size = new System.Drawing.Size(440, 128);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General settings";
+			this.groupBox1.Text = "General Weather settings";
 			// 
 			// intervalTextBox
 			// 
@@ -300,14 +300,14 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox1.Size = new System.Drawing.Size(440, 160);
 			this.mpGroupBox1.TabIndex = 1;
 			this.mpGroupBox1.TabStop = false;
-			this.mpGroupBox1.Text = "Cities";
+			this.mpGroupBox1.Text = "Show weather information for following cities";
 			// 
 			// editButton
 			// 
 			this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.editButton.Enabled = false;
 			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.editButton.Location = new System.Drawing.Point(176, 126);
+			this.editButton.Location = new System.Drawing.Point(200, 126);
 			this.editButton.Name = "editButton";
 			this.editButton.TabIndex = 3;
 			this.editButton.Text = "Edit";
@@ -319,8 +319,9 @@ namespace MediaPortal.Configuration.Sections
 			this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.searchButton.Location = new System.Drawing.Point(16, 126);
 			this.searchButton.Name = "searchButton";
+			this.searchButton.Size = new System.Drawing.Size(88, 23);
 			this.searchButton.TabIndex = 2;
-			this.searchButton.Text = "Add";
+			this.searchButton.Text = "Add new City";
 			this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
 			// 
 			// removeButton
@@ -328,7 +329,7 @@ namespace MediaPortal.Configuration.Sections
 			this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.removeButton.Enabled = false;
 			this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.removeButton.Location = new System.Drawing.Point(96, 126);
+			this.removeButton.Location = new System.Drawing.Point(120, 126);
 			this.removeButton.Name = "removeButton";
 			this.removeButton.TabIndex = 1;
 			this.removeButton.Text = "Remove";
@@ -340,14 +341,14 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.citiesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																							 this.columnHeader1,
-																							 this.columnHeader2,
-																							 this.columnHeader3,
-																							 this.columnHeader4,
-																							 this.columnHeader5,
-																							 this.columnHeader6,
-																							 this.columnHeader7,
-																							 this.columnHeader8});
+																																										 this.columnHeader1,
+																																										 this.columnHeader2,
+																																										 this.columnHeader3,
+																																										 this.columnHeader4,
+																																										 this.columnHeader5,
+																																										 this.columnHeader6,
+																																										 this.columnHeader7,
+																																										 this.columnHeader8});
 			this.citiesListView.FullRowSelect = true;
 			this.citiesListView.Location = new System.Drawing.Point(16, 24);
 			this.citiesListView.Name = "citiesListView";
