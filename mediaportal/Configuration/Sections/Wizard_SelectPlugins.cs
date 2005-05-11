@@ -448,6 +448,15 @@ namespace MediaPortal.Configuration.Sections
 
 			foreach (string file in files)
 			{
+				string ext=System.IO.Path.GetExtension(file).ToLower();
+				if (ext==".exe" || ext==".dll" || ext==".ocx")
+				{
+					isAudioFolder=false;
+					isVideoFolder=false;
+					isPhotoFolder=false;
+					break;
+				}
+
 				if (stopScanning) return;
 				if (Utils.IsAudio(file))
 				{
