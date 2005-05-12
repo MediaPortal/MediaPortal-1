@@ -2407,17 +2407,17 @@ namespace MediaPortal.TV.Recording
 				stream.Read(pmt,0,(int)len);
 				stream.Close();
 
-				pmtVersionNumber = ((pmt[5]>>1)&0x1F);
+				int pmtVersion= ((pmt[5]>>1)&0x1F);
 
 				//yes, then send the PMT table to the device
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to fireDTV device",pmtVersionNumber);	
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to fireDTV device",pmtVersion);	
 				if (props.SendPMTToFireDTV(pmt, (int)len))
 				{
 					return true;
 				}
 				else
 				{
-					pmtVersionNumber=-1;
+					pmtVersion=-1;
 				}
 			}
 			catch(Exception ex)
