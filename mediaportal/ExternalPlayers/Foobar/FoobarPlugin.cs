@@ -457,14 +457,19 @@ namespace MediaPortal.FoobarPlugin
 
 
         Encoding encode = System.Text.Encoding.Default;
-        byte[] byData = encode.GetBytes(strFile);
+        // Let's encode the filename so any extended ASCII character is played correctly
+        // by the Foobar Plugin
+        byte[] byData = encode.GetBytes(HttpUtility.UrlEncode(strFile).Replace("+","%20"));
         cds.dwData = (IntPtr) 0;  // Play song
         cds.lpData = Marshal.AllocCoTaskMem(byData.Length+1);
-        cds.cbData = strFile.Length + 1;
+        cds.cbData = byData.Length + 1;
+        // write all the bytes to the lpData byte by byte
         for (int i=0; i < byData.Length;++i)
         {
           Marshal.WriteByte(cds.lpData,i,byData[i]);
         }
+        // write the end of string '\0'
+        Marshal.WriteByte(cds.lpData,byData.Length,(byte)0);
         if (SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
         {
           Marshal.FreeCoTaskMem(cds.lpData);

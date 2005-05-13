@@ -310,7 +310,7 @@ namespace MediaPortal.FoobarPlugin
 
       this.linkLabel1.TabStop = true;
 
-      this.linkLabel1.Text = "NOTE:  Remember to install/setup foo_httpserver_ctrl (version 0.2) in your foobar" +
+      this.linkLabel1.Text = "NOTE:  Remember to install/setup foo_httpserver_ctrl (version B1) in your foobar" +
 
         "/components directory.";
 
