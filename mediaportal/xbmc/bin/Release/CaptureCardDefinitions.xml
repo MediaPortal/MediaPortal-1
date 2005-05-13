@@ -1065,7 +1065,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="DNTV Live DVB-T" capturename="DNTV Live! Transport Stream Capture Tuner 1" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
+  <capturecard commercialname="DNTV Live DVB-T (Tuner 1)" capturename="DNTV Live! Transport Stream Capture Tuner 1" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -1073,6 +1073,22 @@
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner 1"		checkdevice="true"></filter>
         <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner 1"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>  
+
+  <capturecard commercialname="DNTV Live DVB-T (Tuner 2)" capturename="DNTV Live! Transport Stream Capture Tuner 2" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner 2"		checkdevice="true"></filter>
+        <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner 2"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -4044,19 +4060,16 @@
     </tv>
   </capturecard> 
 
-  <capturecard commercialname="ATI AIW 8x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv33">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+  <capturecard commercialname="ATI AIW 7x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
       <filters>
         <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"></filter>
         <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"></filter>
         <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"></filter>      
         <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
         <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
-        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
-        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
-        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"></connection>
@@ -4065,43 +4078,7 @@
         <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"></connection>
         <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"></connection>
         <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  		sinkpin="1"></connection>
         <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  		sinkpin="0"></connection>
-        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
-        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  			sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  			sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="ATI AIW 7x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv32">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
-    <tv>
-      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
-      <filters>
-        <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"></filter>
-        <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"></filter>      
-        <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
-        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
-        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
-        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
-        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  		sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"></connection>
-        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  		sinkpin="1"></connection>
-        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  		sinkpin="0"></connection>
-        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
-        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  			sinkpin="1"></connection>
-        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -4162,6 +4139,22 @@
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="Cinergy 1200 DVB-S Tuner (BDA)"		checkdevice="true"></filter>
         <filter cat="capture"         name="Cinergy 1200 DVB-S Capture (BDA)"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox DTT-150" capturename="VBox DTT-150 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_b15014f3&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"							checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (Microtune MT7202DTF)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox DTT-150 Receiver, BDA Capture Driver"					checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
