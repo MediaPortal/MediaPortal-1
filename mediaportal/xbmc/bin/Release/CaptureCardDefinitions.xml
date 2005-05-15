@@ -4830,4 +4830,100 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle 100i DVBT" capturename="Pinnacle PCTV Stereo BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002b11bd&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV Stereo BDA DVBT Tuner"		checkdevice="true"></filter>
+        <filter cat="capture"         name="Pinnacle PCTV Stereo BDA Digital Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Adaptec VideOh! PCI (AVC-2010)" capturename="Adaptec PCI Capture Device" devid="ven_4444&amp;dev_0016&amp;subsys_00929005&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Adaptec PCI TV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Adaptec PCI TV Audio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="Adaptec PCI Crossbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Adaptec PCI Capture Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Adaptec VideOh! DVD Media Center PCI Edition" capturename="Adaptec PCI Capture Device" devid="ven_4444&amp;dev_0016&amp;subsys_00939005&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Adaptec PCI TV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Adaptec PCI TV Audio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="Adaptec PCI Crossbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Adaptec PCI Capture Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Adaptec VideOh! DVD (AVC-2210)" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_0088">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Adaptec USB TV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Adaptec USB TV Audio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Adaptec VideOh! DVD Media Center USB Edition" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_008c">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Adaptec USB TV Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Adaptec USB TV Audio"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"></filter>
+        <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
  </capturecards>
