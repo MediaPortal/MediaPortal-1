@@ -4177,5 +4177,19 @@
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
-  </capturecard> 
+  </capturecard>
+  
+  <capturecard commercialname="ATI AIW VIVO Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
+      <filters>
+        <filter cat="crossbar"	name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"	name="ATI Rage Theater Video Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
  </capturecards>
