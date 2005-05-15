@@ -4569,4 +4569,265 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="AverMedia M172" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_800a1461&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia, MPEG TVAudio (88x)"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia, MPEG Video Capture (88x)"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia 61051 MPEG Encoder"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M172" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_800b1461&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia, MPEG TVAudio (88x)"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia, MPEG Video Capture (88x)"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia 61051 MPEG Encoder"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M172 (NTSC-J)" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_800e1461&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia, MPEG TVAudio (88x)"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia, MPEG Video Capture (88x)"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia 61051 MPEG Encoder"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M172 (NTSC-J)" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_810e1461&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia, MPEG TVAudio (88x)"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia, MPEG Video Capture (88x)"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia 61051 MPEG Encoder"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M172" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_80101461&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia, MPEG TVAudio (88x)"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia, MPEG Video Capture (88x)"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia 61051 MPEG Encoder"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M172" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_80111461&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia, MPEG TVAudio (88x)"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia, MPEG Video Capture (88x)"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia 61051 MPEG Encoder"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M172" capturename="AVerMedia, MPEG Video Capture (88x)" devid="ven_14f1&amp;dev_8800&amp;subsys_82111461&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia, MPEG TVAudio (88x)"			checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia, MPEG Video Capture (88x)"   checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia 61051 MPEG Encoder"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M179" capturename="PVR-PCI Capture" devid="ven_4444&amp;dev_0016&amp;subsys_a3ff1461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="PVR-PCI TV Tuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="PVR-PCI TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="PVR-PCI Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="PVR-PCI Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M179" capturename="PVR-PCI Capture" devid="ven_4444&amp;dev_0016&amp;subsys_bbcf1461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="PVR-PCI TV Tuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="PVR-PCI TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="PVR-PCI Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="PVR-PCI Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M179" capturename="PVR-PCI Capture" devid="ven_4444&amp;dev_0803&amp;subsys_bfcf1461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="PVR-PCI TV Tuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="PVR-PCI TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="PVR-PCI Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="PVR-PCI Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M179" capturename="PVR-PCI Capture" devid="ven_4444&amp;dev_0803&amp;subsys_bfaf1461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="PVR-PCI TV Tuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="PVR-PCI TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="PVR-PCI Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="PVR-PCI Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AverMedia M179" capturename="PVR-PCI Capture" devid="ven_4444&amp;dev_0803&amp;subsys_a3cf1461&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="PVR-PCI TV Tuner"	checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="PVR-PCI TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="PVR-PCI Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="PVR-PCI Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="5"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
  </capturecards>
