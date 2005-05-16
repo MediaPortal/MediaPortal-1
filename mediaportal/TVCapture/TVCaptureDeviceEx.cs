@@ -376,6 +376,48 @@ namespace MediaPortal.TV.Recording
 			return String.Empty;
 		}
 
+		bool FilterBelongsToDevice(Filter filter, string deviceInstance)
+		{
+			Log.Write("FilterBelongsToFilter device={0}",deviceInstance);
+			Log.Write("name:{0}",filter.Name);
+			Log.Write("moniker:{0}",filter.MonikerString);
+
+			int p1=filter.MonikerString.IndexOf("{");
+			int p2=filter.MonikerString.IndexOf("}");
+			string classid=filter.MonikerString.Substring(p1,(p2-p1)+1);
+
+			string registryKeyName=String.Format(@"SYSTEM\CurrentControlSet\Control\DeviceClasses\{0}", classid);
+			Log.Write("key:{0}", registryKeyName);
+			RegistryKey hklm = Registry.LocalMachine;
+			RegistryKey subkey=hklm.OpenSubKey(registryKeyName,false);
+			if (subkey!=null)
+			{
+				string[] subkeynames=subkey.GetSubKeyNames();
+				for (int i=0; i < subkeynames.Length;++i)
+				{
+					Log.Write("  {0}", subkeynames[i]);
+					registryKeyName=String.Format(@"SYSTEM\CurrentControlSet\Control\DeviceClasses\{0}\{1}", classid,subkeynames[i]);
+					subkey=hklm.OpenSubKey(registryKeyName,false);
+					string instance=(string)subkey.GetValue("DeviceInstance");
+					
+					instance=instance.Replace(@"\", "#");
+					instance=instance.Replace(@"/", "#");
+					Log.Write("    {0}", instance);
+					if (deviceInstance.ToLower().IndexOf(instance.ToLower()) >=0 )
+					{
+						//found
+						subkey.Close();
+						hklm.Close();
+						Log.Write("   found");
+						return true;
+					}
+				}
+				subkey.Close();
+			}
+			hklm.Close();
+			return false;
+		}
+
 		/// <summary>
 		/// #MW#
 		/// </summary>
@@ -464,8 +506,8 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture," video device moniker   :{0}", m_strVideoDeviceMoniker);
 			Log.WriteFile(Log.LogType.Capture," captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
-			Instance = FindInstance(captureDeviceDeviceName);
-			Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
+			//Instance = FindInstance(captureDeviceDeviceName);
+			//Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
 			//for each video filter we need
 			foreach (string friendlyName in _mCaptureCardDefinition.Tv.FilterDefinitions.Keys)
 			{
@@ -486,6 +528,16 @@ namespace MediaPortal.TV.Recording
 						// to make sure that we found the right filter...
 						if (fd.CheckDevice)
 						{	
+							for (int filterInst=0; filterInst < al.Count;++filterInst)
+							{
+								filter=al[filterInst] as Filter;
+								if (FilterBelongsToDevice(filter,captureDeviceDeviceName))
+								{
+									filterFound=true;
+									break;
+								}
+							}
+							/*
 							filter=al[0] as Filter;
 							string 	 filterMoniker = filter.MonikerString;
 							int posTmp = filterMoniker.LastIndexOf("#");
@@ -500,7 +552,7 @@ namespace MediaPortal.TV.Recording
 									filterFound = true;
 									break;
 								}
-							}
+							}*/
 						
 							if (!filterFound)
 							{
@@ -970,6 +1022,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
+
 
 		void RebuildGraph()
 		{
