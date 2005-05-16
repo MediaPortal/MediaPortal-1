@@ -259,7 +259,10 @@ namespace ProgramsDatabase
         string guessedFilename = curFile.ExtractFileName();
         procStart.FileName = guessedFilename;
         procStart.Arguments = curFile.ExtractArguments();
-        guessedFilename = procStart.Arguments;
+        if (procStart.Arguments != "")
+        {
+          guessedFilename = procStart.Arguments;
+        }
         procStart.WorkingDirectory = curFile.ExtractDirectory(guessedFilename);
         procStart.UseShellExecute = UseShellExecute;
       }
