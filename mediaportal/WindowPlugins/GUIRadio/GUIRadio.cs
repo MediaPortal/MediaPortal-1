@@ -812,11 +812,16 @@ namespace MediaPortal.GUI.Radio
 				RadioStation station = item.MusicTag as RadioStation;
         FillPlayList();
 
-				if (station!=null)
-					PlayListPlayer.Play ( GetPlayPath(station));
-				else
-					PlayListPlayer.Play ( item.Path);
-				
+				PlayList playlist=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP);
+				for (int i=0; i < playlist.Count;++i)
+				{
+					PlayList.PlayListItem playItem=playlist[i];
+					if (playItem.Description.Equals(item.Label))
+					{
+						PlayListPlayer.Play (i);
+						break;
+					}
+				}
 			}
 		}
 
