@@ -282,9 +282,9 @@ namespace MediaPortal.GUI.Music
 			dlg.Reset();
 			dlg.SetHeading(924); // menu
 
-			dlg.Add( GUILocalizeStrings.Get(208)); //play
-			dlg.Add( GUILocalizeStrings.Get(926)); //Queue
-			dlg.Add( GUILocalizeStrings.Get(136)); //PlayList
+			dlg.AddLocalizedString( 208); //play
+			dlg.AddLocalizedString( 926); //Queue
+			dlg.AddLocalizedString( 136); //PlayList
 			if (!item.IsFolder && !item.IsRemote)
 			{
 				Song song = item.AlbumInfoTag as Song;
@@ -294,27 +294,35 @@ namespace MediaPortal.GUI.Music
 					dlg.AddLocalizedString(931); //Rating
 				}
 			}
+			if (handler.CurrentView=="Top100")
+			{
+				dlg.AddLocalizedString(718); //Clear top100
+			}
 
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;
-			switch (dlg.SelectedLabel)
+			switch (dlg.SelectedId)
 			{
-				case 0: // play
+				case 208: // play
 					OnClick(itemNo);	
 					break;
 					
-				case 1: // add to playlist
+				case 926: // add to playlist
 					OnQueueItem(itemNo);	
 					break;
 					
-				case 2: // show playlist
+				case 136: // show playlist
 					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
 					break;
-				case 3: // add to favorites
+				case 930: // add to favorites
 					AddSongToFavorites(item);
 					break;
-				case 4:// Rating
+				case 931:// Rating
 					OnSetRating(facadeView.SelectedListItemIndex);
+					break;
+				case 718:// Clear top 100
+					m_database.ResetTop100();
+					LoadDirectory(m_strDirectory);
 					break;
 			}
 		}
