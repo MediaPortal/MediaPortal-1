@@ -29,12 +29,12 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label6;
 		private System.ComponentModel.IContainer components = null;
 		private System.Windows.Forms.GroupBox groupBox4;
-		private MediaPortal.UserInterface.Controls.MPCheckBox alwaysTimeShiftCheckBox;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox textBoxTimeShiftBuffer;
 		private System.Windows.Forms.Label lblminutes;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.ComboBox cbDeinterlace;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTv;
 
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -90,6 +90,8 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.cbDeinterlace = new System.Windows.Forms.ComboBox();
+			this.label8 = new System.Windows.Forms.Label();
 			this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.rendererComboBox = new System.Windows.Forms.ComboBox();
@@ -109,9 +111,7 @@ namespace MediaPortal.Configuration.Sections
 			this.lblminutes = new System.Windows.Forms.Label();
 			this.textBoxTimeShiftBuffer = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.alwaysTimeShiftCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.label8 = new System.Windows.Forms.Label();
-			this.cbDeinterlace = new System.Windows.Forms.ComboBox();
+			this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -135,6 +135,26 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "General Settings";
+			// 
+			// cbDeinterlace
+			// 
+			this.cbDeinterlace.Items.AddRange(new object[] {
+																											 "None",
+																											 "Bob",
+																											 "Weave",
+																											 "Best"});
+			this.cbDeinterlace.Location = new System.Drawing.Point(168, 72);
+			this.cbDeinterlace.Name = "cbDeinterlace";
+			this.cbDeinterlace.Size = new System.Drawing.Size(160, 21);
+			this.cbDeinterlace.TabIndex = 31;
+			// 
+			// label8
+			// 
+			this.label8.Location = new System.Drawing.Point(16, 72);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(100, 16);
+			this.label8.TabIndex = 30;
+			this.label8.Text = "Deinterlace mode:";
 			// 
 			// defaultZoomModeComboBox
 			// 
@@ -299,7 +319,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox4.Controls.Add(this.lblminutes);
 			this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
 			this.groupBox4.Controls.Add(this.label7);
-			this.groupBox4.Controls.Add(this.alwaysTimeShiftCheckBox);
+			this.groupBox4.Controls.Add(this.cbTurnOnTv);
 			this.groupBox4.Location = new System.Drawing.Point(8, 328);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(440, 88);
@@ -331,34 +351,14 @@ namespace MediaPortal.Configuration.Sections
 			this.label7.TabIndex = 1;
 			this.label7.Text = "Timeshift buffer:";
 			// 
-			// alwaysTimeShiftCheckBox
+			// cbTurnOnTv
 			// 
-			this.alwaysTimeShiftCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.alwaysTimeShiftCheckBox.Location = new System.Drawing.Point(16, 16);
-			this.alwaysTimeShiftCheckBox.Name = "alwaysTimeShiftCheckBox";
-			this.alwaysTimeShiftCheckBox.Size = new System.Drawing.Size(280, 24);
-			this.alwaysTimeShiftCheckBox.TabIndex = 0;
-			this.alwaysTimeShiftCheckBox.Text = "Always use timeshifting";
-			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(16, 72);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(100, 16);
-			this.label8.TabIndex = 30;
-			this.label8.Text = "Deinterlace mode:";
-			// 
-			// cbDeinterlace
-			// 
-			this.cbDeinterlace.Items.AddRange(new object[] {
-																											 "None",
-																											 "Bob",
-																											 "Weave",
-																											 "Best"});
-			this.cbDeinterlace.Location = new System.Drawing.Point(168, 72);
-			this.cbDeinterlace.Name = "cbDeinterlace";
-			this.cbDeinterlace.Size = new System.Drawing.Size(160, 21);
-			this.cbDeinterlace.TabIndex = 31;
+			this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.cbTurnOnTv.Location = new System.Drawing.Point(16, 16);
+			this.cbTurnOnTv.Name = "cbTurnOnTv";
+			this.cbTurnOnTv.Size = new System.Drawing.Size(280, 24);
+			this.cbTurnOnTv.TabIndex = 0;
+			this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
 			// 
 			// Television
 			// 
@@ -381,7 +381,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				alwaysTimeShiftCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "alwaystimeshift", false);
+				cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
 				textBoxTimeShiftBuffer.Text= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
 				int DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
@@ -481,7 +481,7 @@ namespace MediaPortal.Configuration.Sections
 				if (cbDeinterlace.SelectedIndex>=0)
 					xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
 
-				xmlwriter.SetValueAsBool("mytv", "alwaystimeshift", alwaysTimeShiftCheckBox.Checked);
+				xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
 				xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
 				try
 				{

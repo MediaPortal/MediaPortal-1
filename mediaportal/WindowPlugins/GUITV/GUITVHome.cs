@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.TV
 		static ChannelNavigator		m_navigator;
 		
 		DateTime        			m_updateTimer=DateTime.Now;
-		bool            			m_bAlwaysTimeshift=false;
+		bool            			autoTurnOnTv=false;
 		bool									settingsLoaded=false;
 		DateTime						  dtlastTime=DateTime.Now;
 
@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.TV
 				m_navigator.LoadSettings(xmlreader);
 				m_bTVON=xmlreader.GetValueAsBool("mytv","tvon",true);
 				m_bTimeShifting=xmlreader.GetValueAsBool("mytv","timeshifting",true);
-				m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
+				autoTurnOnTv   = xmlreader.GetValueAsBool("mytv","autoturnontv",false);
 
 				string strValue=xmlreader.GetValueAsString("mytv","defaultar","normal");
 				if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -364,13 +364,14 @@ namespace MediaPortal.GUI.TV
 			{
 				case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
 				{
-					
 					LoadSettings();
-
-					//restart viewing...  
-					m_bTVON=true;
-					Log.Write("tv home msg resume tv:{0}",Navigator.CurrentChannel);
-					ViewChannel(Navigator.CurrentChannel);
+					if (autoTurnOnTv)
+					{
+						//restart viewing...  
+						m_bTVON=true;
+						Log.Write("tv home msg resume tv:{0}",Navigator.CurrentChannel);
+						ViewChannel(Navigator.CurrentChannel);
+					}
 				}
 				break;
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
