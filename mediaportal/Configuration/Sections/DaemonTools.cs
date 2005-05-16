@@ -169,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
 																											 "D:",
 																											 "E:",
 																											 "F:",
-																											 "G",
+																											 "G:",
 																											 "H:",
 																											 "I:",
 																											 "J:",

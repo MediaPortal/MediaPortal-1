@@ -1757,7 +1757,7 @@ namespace MediaPortal.GUI.Video
 			}
 
 			ArrayList itemlist = m_directory.GetDirectory(file);
-			if (itemlist.Count <= 1 && file!=String.Empty) return itemlist; // protected share, with wrong pincode
+			if (itemlist.Count == 1 && file!=String.Empty) return itemlist; // protected share, with wrong pincode
 
 			if (DaemonTools.IsMounted(file) && !g_Player.Playing)
 			{
