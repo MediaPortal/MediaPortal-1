@@ -47,6 +47,7 @@ namespace MediaPortal.GUI.Music
     {
       m_strDirectory=String.Empty;
 			handler.CurrentView="Artists";
+			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load (GUIGraphicsContext.Skin+@"\mymusicgenres.xml");
     }
 		protected override string SerializeName
@@ -494,5 +495,27 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
+
+		void OnThreadMessage(GUIMessage message)
+		{
+			
+			switch (message.Message)
+			{
+				case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC : 
+					if( GUIWindowManager.ActiveWindow != GetID ||
+						handler.CurrentView!="Top100")
+					{
+						string strFile = message.Label;
+						if (Utils.IsAudio(strFile))
+						{
+							if (GUIWindowManager.ActiveWindow != GetID)
+							{
+								m_database.IncrTop100CounterByFileName(strFile);
+							}
+						}
+					}
+					break;
+			}
+		}
   }
 }
