@@ -355,6 +355,7 @@ namespace MediaPortal.TV.Recording
 				string moniker=(string)subkey.GetValue(instance.ToString());
 				moniker=moniker.Replace(@"\", "#");
 				moniker=moniker.Replace(@"/", "#");
+				Log.Write(" {0}={1}",instance,moniker);
 				subkey.Close();
 				hklm.Close();
 				return moniker;
@@ -486,6 +487,7 @@ namespace MediaPortal.TV.Recording
 								if (filter.MonikerString.ToLower().IndexOf(moniker.ToLower())>=0)
 								{
 									filterFound = true;
+									break;
 								}
 							}
 						
