@@ -4926,4 +4926,40 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Medion MD95700 Digital" capturename="USB Hybrid BDA Tuner (Philips FMD1216ME)" devid="vid_1660&amp;pid_0932">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="USB Hybrid BDA Tuner (Philips FMD1216ME)"			checkdevice="true"></filter>
+        <filter cat="capture"  	name="USB Hybrid AVStream TS Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Medion MD95700 Analog" capturename="USB Hybrid Video Capture" devid="vid_1660&amp;pid_0932">
+    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="1" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  name="USB Hybrid Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="USB Hybrid TvAudio"	checkdevice="true"></filter>
+        <filter cat="crossbar" name="USB Hybrid Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="USB Hybrid Video Capture"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
