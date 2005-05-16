@@ -234,7 +234,6 @@ namespace MediaPortal.GUI.GUIExplorer
 							keyBoard.TextChanged+=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
 							keyBoard.DoModal(activeWindow); // show it...
 							keyBoard.TextChanged-=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged);	// remove the handler			
-							System.GC.Collect(); // collect some garbage
 							string verStr = keyBoard.Text;
 							GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 							if (null==dlgYesNo) break;

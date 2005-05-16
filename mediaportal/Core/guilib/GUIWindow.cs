@@ -948,7 +948,6 @@ namespace MediaPortal.GUI.Library
 							FreeResources();
 							DeInitControls();
 							GUITextureManager.CleanupThumbs();
-							GC.Collect();
 							return true;
 						}
 	  				

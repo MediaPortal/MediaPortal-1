@@ -181,8 +181,6 @@ namespace MediaPortal.GUI.Pictures
       Texture texture=MediaPortal.Util.Picture.Load(strSlide,m_iRotate,iMaxWidth,iMaxHeight, true, false, true, out X,out Y);
       dwWidth=X;
       dwHeight=Y;
-      GC.Collect();
-      GC.Collect();
 
       CalculateBestZoom(dwWidth, dwHeight);      
       m_fZoomFactorCurrent = m_fDefaultZoomFactor;

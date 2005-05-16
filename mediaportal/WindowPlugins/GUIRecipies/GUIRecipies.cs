@@ -320,7 +320,6 @@ namespace GUIRecipies
 						keyBoard.TextChanged+=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
 						keyBoard.DoModal(activeWindow); // show it...
 						keyBoard.TextChanged-=new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged);	// remove the handler			
-						System.GC.Collect(); // collect some garbage
 						seastr = keyBoard.Text;
 						GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST );
 						byte styp=0;

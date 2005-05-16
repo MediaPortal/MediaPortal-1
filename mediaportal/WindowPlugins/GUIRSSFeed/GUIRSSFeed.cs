@@ -217,7 +217,6 @@ namespace MediaPortal.GUI.RSS
 
 		private void RefreshNews(object sender,System.EventArgs e)
 		{
-			System.GC.Collect();
 		}
 
 		void UpdateNews(bool bShowWarning)

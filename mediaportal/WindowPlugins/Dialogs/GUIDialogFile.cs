@@ -161,7 +161,6 @@ namespace MediaPortal.Dialogs
 					//base.OnMessage(message);
 					FreeResources();
 					DeInitControls();
-					GC.Collect();
 					return true;
 				}
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
@@ -732,7 +731,6 @@ namespace MediaPortal.Dialogs
 			keyBoard.Reset();
 			keyBoard.Text = sString;
 			keyBoard.DoModal(m_dwParentWindowID); // show it...
-			System.GC.Collect(); // collect some garbage
 			if (keyBoard.IsConfirmed) sString=keyBoard.Text;
 			return keyBoard.IsConfirmed;
 		}

@@ -142,7 +142,6 @@ namespace MyMail
 				m_mailSocket.BeginConnect(ePoint , callback , m_mailSocket ) ;
 				m_mailAction=(int)MailAction.MAIL_SEND_STAT;
 				m_mailBuffer.Initialize();
-				System.GC.Collect();
 
 			}
 			else
@@ -194,8 +193,6 @@ namespace MyMail
 			int bytesCount = socket.EndReceive(ar);
 			System.String strData = System.Text.Encoding.ASCII.GetString(m_mailBuffer,0,bytesCount);				
 			//m_timeOutTimer.Stop();
-			GC.Collect();
-			GC.Collect();
 			m_timeOutTimer.Stop();
 			try
 			{
@@ -361,8 +358,6 @@ namespace MyMail
 								m_mb.MailCount=CountMail(m_mb);
 								m_timeOutTimer.Stop();
 								m_mailSocket.Close();
-								GC.Collect();
-								GC.Collect();
 								if(m_ierrorNumber!=0)
 								{
 									Log.Write("mymail: an error occured. errornumber {0} on mailbox {1}",Convert.ToString(m_ierrorNumber),m_mb.ServerAddress);
@@ -429,7 +424,6 @@ namespace MyMail
 				sock1.Send(toSend,0,toSend.Length,noFlags);
 				m_mailBuffer=System.Text.Encoding.ASCII.GetBytes(m_emptyBuffer);
 				m_timeOutTimer.Start();
-				System.GC.Collect();
 				sock1.BeginReceive( m_mailBuffer, 0, m_buffSize, noFlags, recieveData , sock1 );
 			}
 			return 0;
@@ -439,8 +433,6 @@ namespace MyMail
 		{
 			
 			m_mailSocket.Close();
-			GC.Collect();
-			GC.Collect();
 			m_ierrorNumber=(int)SocketError.ERROR_TIMEOUT; // error timeout
 			GotMailData(m_errorMessage,"Ready",m_ierrorNumber); // ready
 
@@ -786,7 +778,6 @@ namespace MyMail
 							retMail.Body+=line+_CRLF_;
 					}
 				}
-				GC.Collect();GC.Collect();GC.Collect();
 				retMail.Body=TextToIntText(retMail.Body);
 				retMail.HTML=TextToIntText(retMail.HTML);
 				// TODO: body extracting improvement

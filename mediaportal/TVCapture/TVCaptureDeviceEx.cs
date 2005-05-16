@@ -1233,9 +1233,6 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"Card:{0} DeleteGraph",ID);
 				_mGraph.DeleteGraph();
 				_mGraph = null;
-				GC.Collect();
-				GC.Collect();
-				GC.Collect();
 			}
 			_mState = State.Initialized;
 			return true;

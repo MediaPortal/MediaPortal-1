@@ -486,7 +486,6 @@ namespace MediaPortal.GUI.Music
 			keyBoard.Reset();
 			keyBoard.Text = sString;
 			keyBoard.DoModal(GetID); // show it...
-			System.GC.Collect(); // collect some garbage
 			if (keyBoard.IsConfirmed) sString=keyBoard.Text;
 			return keyBoard.IsConfirmed;
 		}

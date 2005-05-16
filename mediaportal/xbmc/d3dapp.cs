@@ -800,9 +800,6 @@ namespace MediaPortal
                     InitializeDeviceObjects();
                     //OnDeviceReset(null, null);
                     active = true;
-                    GC.Collect();
-                    GC.Collect();
-                    GC.Collect();
                     return;
                 }
                 catch (Exception ex)

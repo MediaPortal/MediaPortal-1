@@ -587,7 +587,6 @@ namespace MediaPortal.Dialogs
 			
 			Log.Write( "window:{0} deinit", this.ToString());
 			FreeResources();
-			GC.Collect();
 		}
 
 		public string Text

@@ -172,13 +172,11 @@ namespace MyMail
 						else
 							SetMailsList();
 					}
-					System.GC.Collect();
 					return true;
 
 
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT :
-					System.GC.Collect();
 					SaveSettings();
 					m_checkMailTimer.Start();
 					break;
@@ -246,7 +244,6 @@ namespace MyMail
 		}
 		private void checkMails(object sender,System.EventArgs e)
 		{
-			System.GC.Collect(); // collect garbage
 			if(m_mailBox.Count>0)
 				if(m_bAutoCheck)
 				{

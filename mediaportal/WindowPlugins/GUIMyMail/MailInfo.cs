@@ -117,7 +117,6 @@ namespace MyMail
 					
 
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-					System.GC.Collect();
 					break;
 
 				case GUIMessage.MessageType.GUI_MSG_CLICKED : 
