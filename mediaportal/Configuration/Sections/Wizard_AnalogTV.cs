@@ -119,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
 			this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbCities.Location = new System.Drawing.Point(96, 64);
 			this.cbCities.Name = "cbCities";
-			this.cbCities.Size = new System.Drawing.Size(184, 21);
+			this.cbCities.Size = new System.Drawing.Size(344, 21);
 			this.cbCities.Sorted = true;
 			this.cbCities.TabIndex = 8;
 			// 
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
 			this.cbCountries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbCountries.Location = new System.Drawing.Point(96, 32);
 			this.cbCountries.Name = "cbCountries";
-			this.cbCountries.Size = new System.Drawing.Size(184, 21);
+			this.cbCountries.Size = new System.Drawing.Size(344, 21);
 			this.cbCountries.Sorted = true;
 			this.cbCountries.TabIndex = 6;
 			this.cbCountries.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged_1);

@@ -78,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
 			this.cbCountries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbCountries.Location = new System.Drawing.Point(80, 16);
 			this.cbCountries.Name = "cbCountries";
-			this.cbCountries.Size = new System.Drawing.Size(184, 21);
+			this.cbCountries.Size = new System.Drawing.Size(280, 21);
 			this.cbCountries.Sorted = true;
 			this.cbCountries.TabIndex = 1;
 			this.cbCountries.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged);
@@ -95,13 +95,13 @@ namespace MediaPortal.Configuration.Sections
 			this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbCities.Location = new System.Drawing.Point(80, 48);
 			this.cbCities.Name = "cbCities";
-			this.cbCities.Size = new System.Drawing.Size(184, 21);
+			this.cbCities.Size = new System.Drawing.Size(280, 21);
 			this.cbCities.Sorted = true;
 			this.cbCities.TabIndex = 3;
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(192, 88);
+			this.button1.Location = new System.Drawing.Point(288, 88);
 			this.button1.Name = "button1";
 			this.button1.TabIndex = 4;
 			this.button1.Text = "Import";
@@ -110,7 +110,7 @@ namespace MediaPortal.Configuration.Sections
 			// TvChannelLookupService
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(292, 158);
+			this.ClientSize = new System.Drawing.Size(384, 134);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.cbCities);
 			this.Controls.Add(this.label2);
