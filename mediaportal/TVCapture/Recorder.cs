@@ -939,6 +939,10 @@ namespace MediaPortal.TV.Recording
 					dev.Stop();
 				}
 			}
+			if (g_Player.Playing && g_Player.IsRadio)
+			{
+				g_Player.Stop();
+			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}
 
