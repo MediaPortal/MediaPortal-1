@@ -425,13 +425,69 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 
+					
+					
 					//log if connection failed
+					//if (sourceFilter.Category =="tunerdevice" && sinkFilter.Category=="capture")
+					//	hr=1;
 					if (hr != 0)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:  Error: Unable to connect Pins 0x{0:X}", hr);
-						if (hr == -2147220969)
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   unable to connect pins");
+						if (sourceFilter.Category =="tunerdevice" && sinkFilter.Category=="capture")
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try other instances");
+							m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
+							Marshal.ReleaseComObject(sinkPin);
+							Marshal.ReleaseComObject(sinkFilter.DSFilter);
+							sinkPin=null;
+							foreach (string key in AvailableFilters.Filters.Keys)
+							{
+								Filter    filter;
+								ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+								filter    = (Filter)al[0];
+								if (filter.Name.Equals(sinkFilter.FriendlyName))
+								{
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   found {0} instances",al.Count);
+									for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
+									{
+										filter    = (Filter)al[filterInstance];
+										Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try:{0}",filter.MonikerString);
+										sinkFilter.MonikerDisplayName=filter.MonikerString;
+										sinkFilter.DSFilter  = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
+										hr = m_graphBuilder.AddFilter(sinkFilter.DSFilter, sinkFilter.FriendlyName);
+										//find the pin of the sink filter
+										sinkPin      = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
+										if (sinkPin == null)
+										{
+											String strPinName = ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName;
+											if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
+											{
+												sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+												if (sinkPin==null)
+													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
+												else
+													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+											}
+										}
+										if (sinkPin!=null)
+										{
+											hr = m_graphBuilder.Connect(sourcePin, sinkPin);
+											if (hr == 0)
+											{
+												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Pins connected...");
+												break;
+											}
+											else
+											{
+												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   cannot connect pins.");
+												m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
+												Marshal.ReleaseComObject(sinkPin);
+												Marshal.ReleaseComObject(sinkFilter.DSFilter);
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}

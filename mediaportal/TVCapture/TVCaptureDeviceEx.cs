@@ -507,7 +507,7 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture," video device moniker   :{0}", m_strVideoDeviceMoniker);
 			Log.WriteFile(Log.LogType.Capture," captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
-			//Instance = FindInstance(captureDeviceDeviceName);
+			Instance = FindInstance(captureDeviceDeviceName);
 			//Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
 			//for each video filter we need
 			foreach (string friendlyName in _mCaptureCardDefinition.Tv.FilterDefinitions.Keys)
