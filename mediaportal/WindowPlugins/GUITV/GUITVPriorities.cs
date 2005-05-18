@@ -15,6 +15,21 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVPriorities :GUIWindow
 	{
+		public class PriorityComparer: IComparer
+		{
+			#region IComparer Members
+
+			public int Compare(object x, object y)
+			{
+				TVRecording rec1=x as TVRecording;
+				TVRecording rec2=y as TVRecording;
+				if (rec1.Priority<rec2.Priority) return -1;
+				if (rec1.Priority>rec2.Priority) return 1;
+				return 0;
+			}
+
+			#endregion
+		};
 		#region variables, ctor/dtor
 		[SkinControlAttribute(10)]			protected GUIListControl listSchedules=null;
 
@@ -112,6 +127,27 @@ namespace MediaPortal.GUI.TV
 
 		}
 
+		protected override void OnClickedUp( int controlId, GUIControl control, Action.ActionType actionType) 
+		{
+			if (control == listSchedules)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
+				OnMessage(msg);         
+				int iItem=(int)msg.Param1;
+				OnMoveUp(iItem);
+			}
+		}
+		protected override void OnClickedDown( int controlId, GUIControl control, Action.ActionType actionType) 
+		{
+			if (control == listSchedules)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
+				OnMessage(msg);         
+				int iItem=(int)msg.Param1;
+				OnMoveDown(iItem);
+			}
+		}
+
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch ( message.Message )
@@ -163,72 +199,36 @@ namespace MediaPortal.GUI.TV
 
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordings(ref itemlist);
+			itemlist.Sort(new PriorityComparer());
 			int total=0;
 			foreach (TVRecording rec in itemlist)
 			{
-				ArrayList recs = util.GetRecordingTimes(rec);
-				if (recs.Count== 0)
+				GUIListItem item= new GUIListItem();
+				item.Label		  = rec.Title;
+				item.TVTag			= rec;
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
+				if (!System.IO.File.Exists(strLogo))
 				{
-					GUIListItem item= new GUIListItem();
-					item.Label		  = rec.Title;
-					item.TVTag			= rec;
-					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
-					if (!System.IO.File.Exists(strLogo))
-					{
-						strLogo="defaultVideoBig.png";
-					}
-					int card;
-					if (Recorder.IsRecordingSchedule(rec,out card))
-					{
-						if (rec.RecType !=TVRecording.RecordingType.Once)
-							item.PinImage="tvguide_recordserie_button.png";
-						else
-							item.PinImage="tvguide_record_button.png";
-					}
-					item.ThumbnailImage=strLogo;
-					item.IconImageBig=strLogo;
-					item.IconImage=strLogo;
-					listSchedules.Add(item);
-					total++;
+					strLogo="defaultVideoBig.png";
 				}
-				else
+				int card;
+				if (Recorder.IsRecordingSchedule(rec,out card))
 				{
-					for (int x=0; x < recs.Count;++x)
-					{
-						TVRecording recSeries=(TVRecording )recs[x];
-						if (DateTime.Now > recSeries.EndTime) continue;
-						if (recSeries.Canceled!=0) continue;						
-						
-						GUIListItem item=new GUIListItem();
-						item.Label=recSeries.Title;
-						item.TVTag=recSeries;
-						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,recSeries.Channel);
-						if (!System.IO.File.Exists(strLogo))
-						{
-							strLogo="defaultVideoBig.png";
-						}
-						int card;
-						if (Recorder.IsRecordingSchedule(recSeries,out card))
-						{
-							if (rec.StartTime<= DateTime.Now && rec.EndTime >= DateTime.Now)
-							{
-								if (rec.RecType !=TVRecording.RecordingType.Once)
-									item.PinImage="tvguide_recordserie_button.png";
-								else
-									item.PinImage="tvguide_record_button.png";
-							}
-						}
-						item.ThumbnailImage=strLogo;
-						item.IconImageBig=strLogo;
-						item.IconImage=strLogo;
-						listSchedules.Add(item);
-						total++;
-					}
+					if (rec.RecType !=TVRecording.RecordingType.Once)
+						item.PinImage="tvguide_recordserie_button.png";
+					else
+						item.PinImage="tvguide_record_button.png";
 				}
+				item.ThumbnailImage=strLogo;
+				item.IconImageBig=strLogo;
+				item.IconImage=strLogo;
+				listSchedules.Add(item);
+				total++;
 			}
       
 			string strObjects=String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+			GUIControl.SelectItemControl(GetID,listSchedules.GetID,m_iSelectedItem);
 
 		}
 		void SetLabels()
@@ -558,6 +558,85 @@ namespace MediaPortal.GUI.TV
 			return strType;
 		}
 
+		void OnMoveDown(int item)
+		{
+
+			if (item==GetItemCount()-1) return;
+			m_iSelectedItem=item+1;
+			GUIListItem pItem=GetItem( GetSelectedItemNo() );
+			if (pItem==null)
+			{
+				return;
+			}
+			TVRecording rec=pItem.TVTag as TVRecording;
+			if (rec==null) return;
+			GUIListItem tmpItem;
+			TVRecording tmprec;
+			//0
+			//1
+			//2 ---->3
+			//3 ----
+			//4
+			//5
+
+			for (int i=0; i < item;++i)
+			{
+				tmpItem=GetItem( i );
+				tmprec=tmpItem.TVTag as TVRecording;
+				tmprec.Priority=i;
+				TVDatabase.UpdateRecording(tmprec);
+			}
+			tmpItem=GetItem( item+1 );
+			tmprec=tmpItem.TVTag as TVRecording;
+			tmprec.Priority=item;
+			TVDatabase.UpdateRecording(tmprec);
+			for (int i=item+2; i < GetItemCount();++i)
+			{
+				tmpItem=GetItem( i );
+				tmprec=tmpItem.TVTag as TVRecording;
+				tmprec.Priority=i;
+				TVDatabase.UpdateRecording(tmprec);
+			}
+			
+			rec.Priority=item+1;
+			TVDatabase.UpdateRecording(rec);
+			LoadDirectory();
+		}
+
+		void OnMoveUp(int item)
+		{
+			if (item==0) return;
+			m_iSelectedItem=item-1;
+			GUIListItem pItem=GetItem( GetSelectedItemNo() );
+			if (pItem==null)
+			{
+				return;
+			}
+			TVRecording rec=pItem.TVTag as TVRecording;
+			if (rec==null) return;
+			GUIListItem tmpItem;
+			TVRecording tmprec;
+
+			for (int i=0; i < item-1;++i)
+			{
+				tmpItem=GetItem( i );
+				tmprec=tmpItem.TVTag as TVRecording;
+				tmprec.Priority=i;
+				TVDatabase.UpdateRecording(tmprec);
+			}
+			for (int i=item-1; i < GetItemCount();++i)
+			{
+				if (item==i) continue;
+				tmpItem=GetItem( i );
+				tmprec=tmpItem.TVTag as TVRecording;
+				tmprec.Priority=i+1;
+				TVDatabase.UpdateRecording(tmprec);
+			}
+			
+			rec.Priority=item-1;
+			TVDatabase.UpdateRecording(rec);
+			LoadDirectory();
+		}
 
 		void UpdateDescription()
 		{

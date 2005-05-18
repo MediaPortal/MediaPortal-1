@@ -260,9 +260,9 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
 					if (message.Label!=null)
-						Label = (string)(message.Label.Clone());
+						Label = message.Label;
 					else
-						Label="";
+						Label=String.Empty;
 					return true;
 				}
 			}

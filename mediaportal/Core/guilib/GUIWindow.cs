@@ -543,6 +543,12 @@ namespace MediaPortal.GUI.Library
 		protected virtual void OnClicked( int controlId, GUIControl control, Action.ActionType actionType) 
 		{
 		}
+		protected virtual void OnClickedUp( int controlId, GUIControl control, Action.ActionType actionType) 
+		{
+		}
+		protected virtual void OnClickedDown( int controlId, GUIControl control, Action.ActionType actionType) 
+		{
+		}
 
 		/// <summary>
 		/// Returns whether the user can goto full screen video,tv,visualisation from this window
@@ -890,6 +896,22 @@ namespace MediaPortal.GUI.Library
 								OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
 						}
 						break;
+						case GUIMessage.MessageType.GUI_MSG_CLICKED_DOWN:
+						{
+							int iControlId = message.SenderControlId;
+							if (iControlId != 0) 
+								OnClickedDown( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
+						}
+							break;
+
+						case GUIMessage.MessageType.GUI_MSG_CLICKED_UP:
+						{
+							int iControlId = message.SenderControlId;
+							if (iControlId != 0) 
+								OnClickedUp( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
+						}
+							break;
+
 
 							// Initialize the window.
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
