@@ -283,6 +283,16 @@ namespace MediaPortal.GUI.Library
 				base.OnDefaultAction (action);
 			}
 		}
+		public override bool OnMessage(GUIMessage message)
+		{
+			bool result= base.OnMessage (message);
+			if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
+			{
+				UpdateUpDownControls();
+			}
+			return result;
+		}
+
 
 
 
