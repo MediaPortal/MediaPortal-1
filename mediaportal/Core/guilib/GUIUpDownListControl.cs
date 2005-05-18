@@ -128,7 +128,7 @@ namespace MediaPortal.GUI.Library
 				bool gotFocus;
 				for (int i=0; i < m_iItemsPerPage;++i)
 				{
-					GUIUpDownButton btn = (GUIUpDownButton)m_imgButton[i+m_iOffset];
+					GUIUpDownButton btn = (GUIUpDownButton)m_imgButton[i];
 					btn.HitTest(x,y,out cntlId, out gotFocus);
 					if (i==m_iCursorY)
 					{
@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.Library
 		{
 			for (int i=0; i < m_iItemsPerPage;++i)
 			{
-				GUIUpDownButton btn = (GUIUpDownButton)m_imgButton[i+m_iOffset];
+				GUIUpDownButton btn = (GUIUpDownButton)m_imgButton[i];
 				if (i==m_iCursorY)
 				{
 					switch (currentSelection)
