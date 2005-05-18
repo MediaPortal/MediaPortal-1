@@ -973,6 +973,11 @@ namespace MediaPortal.GUI.TV
 				screenState.OsdVisible=isOsdVisible;
 				updateGUI=true;
 			}
+            if (m_bZapOSDVisible != screenState.ZapOsdVisible)
+            {
+                screenState.ZapOsdVisible=m_bZapOSDVisible;
+                updateGUI=true;
+            }
 			if (isMsnChatVisible != screenState.MsnVisible)
 			{
 				screenState.MsnVisible=isMsnChatVisible;
@@ -1194,18 +1199,6 @@ namespace MediaPortal.GUI.TV
 			OnKeyTimeout();
 			
 
-			// Let the navigator zap channel if needed
-			if ( GUITVHome.Navigator.CheckChannelChange())
-			{
-				Log.Write("zap osd off");
-				if (m_bZapOSDVisible)
-				{
-					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
-					m_zapWindow.OnMessage(msg);
-					m_bZapOSDVisible=false;
-				}
-				
-			}
 			if (isMsgBoxVisible && m_iMsgBoxTimeout>0)
 			{
 				TimeSpan ts = DateTime.Now - m_dwMsgTimer;
@@ -1216,20 +1209,17 @@ namespace MediaPortal.GUI.TV
 			}
 
 
-			if (m_bZapOSDVisible)
+            // Let the navigator zap channel if needed
+            if (GUITVHome.Navigator.CheckChannelChange() || m_bZapOSDVisible && m_iZapTimeOut>0)
 			{
-
-				if (m_iZapTimeOut>0)
+				TimeSpan ts =DateTime.Now - m_dwZapTimer;
+				if ( ts.TotalMilliseconds > m_iZapTimeOut)
 				{
-					TimeSpan ts =DateTime.Now - m_dwZapTimer;
-					if ( ts.TotalMilliseconds > m_iZapTimeOut)
-					{
-						//yes, then remove osd offscreen
-						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
-						m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-						Log.Write("timeout->ZAP OSD:Off");
-						m_bZapOSDVisible=false;
-					}
+					//yes, then remove osd offscreen
+					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
+					m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+					Log.Write("timeout->ZAP OSD:Off");
+					m_bZapOSDVisible=false;
 				}
 			}
 		}
