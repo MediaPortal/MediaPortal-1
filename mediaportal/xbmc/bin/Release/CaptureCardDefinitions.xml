@@ -3971,6 +3971,7 @@
         <filter cat="tvaudio"  		name="AVerTV USB 2.0 Plus TvAudio"  		checkdevice="true"></filter>
         <filter cat="crossbar" 		name="AVerTV USB 2.0 Plus CrossBar"      	checkdevice="true"></filter>
         <filter cat="capture"  		name="AVerTV USB 2.0 Plus Video Capture"   	checkdevice="true"></filter>
+        <filter cat="captureaudio"  		name="USB-audioapparaat"   	checkdevice="true"></filter>
 		<filter cat="encodervideo"  name="AVerMedia MPEG Video Encoder"			checkdevice="false"></filter>        
 		<filter cat="encoderaudio"  name="AVerMedia MPEG Audio Encoder"			checkdevice="false"></filter>
         <filter cat="mux"			name="AVerMedia MPEG-2 Multiplexer"     	checkdevice="false"></filter>
@@ -3981,7 +3982,7 @@
         <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="encoderaudio" sinkpin="0"></connection>
+        <connection sourcefilter="captureaudio"		sourcepin="0" sinkfilter="encoderaudio" sinkpin="0"></connection>
 		<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
         <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
       </connections>
