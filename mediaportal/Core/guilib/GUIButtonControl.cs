@@ -27,7 +27,7 @@ namespace MediaPortal.GUI.Library
     protected int       m_dwFrameCounter=0;
 		protected GUIImage	m_imgFocus=null;
 		protected GUIImage  m_imgNoFocus=null; 
-    GUILabelControl     m_label=null;
+    protected GUILabelControl     m_label=null;
 
 		public GUIButtonControl(int dwParentID) : base(dwParentID)
 		{

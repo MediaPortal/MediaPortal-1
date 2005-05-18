@@ -25,6 +25,7 @@ namespace MediaPortal.TV.Database
       WeekDays
 		};
 
+		//quality of recording
 		public enum QualityType
 		{
 			NotSet,
@@ -689,21 +690,33 @@ namespace MediaPortal.TV.Database
         return RecordingStatus.Waiting;        
       }
     }
+		/// <summary>
+		/// Property indicating if this recording belongs to a tv series or not
+		/// </summary>
 		public bool Series
 		{
 			get { return m_bSeries;}
 			set { m_bSeries=value;}
 		}
+
+
+		/// <summary>
+		/// Priority of this recording (1-10) where 1=lowest, 10=highest
+		/// </summary>
 		public int Priority
 		{
 			get { return m_iPriority;}
 			set { m_iPriority=value;}
 		}
+		/// <summary>
+		/// quality of this recording
+		/// </summary>
 		public QualityType Quality
 		{
 			get { return m_iQuality;}
 			set { m_iQuality=value;}
 		}
+
 		public void CancelSerie(long datetime)
 		{
 			m_canceledSeries.Add(datetime);

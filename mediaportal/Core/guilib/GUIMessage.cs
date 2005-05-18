@@ -80,6 +80,8 @@ namespace MediaPortal.GUI.Library
 				GUI_MSG_HIDE_MESSAGE,
 				GUI_MSG_NOTIFY,
 				GUI_MSG_RECORDER_STOP_TV,
+				GUI_MSG_CLICKED_UP,
+				GUI_MSG_CLICKED_DOWN,
 	};
 
 		private string 				m_strLabel="";

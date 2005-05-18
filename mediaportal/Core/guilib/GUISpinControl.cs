@@ -33,7 +33,8 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("align")]					protected Alignment		m_dwAlign = Alignment.ALIGN_LEFT;
 		[XMLSkinElement("spintype")]				protected GUISpinControl.SpinType		m_iType = SpinType.SPIN_CONTROL_TYPE_TEXT;
 		[XMLSkinElement("orientation")]		protected eOrientation	m_orientation = eOrientation.Horizontal;
-		
+
+		protected bool      autoCheck=true;
 		protected int       m_iStart=0;
 		protected int       m_iEnd=100;
 		protected float     m_fStart=0.0f;
@@ -813,6 +814,7 @@ namespace MediaPortal.GUI.Library
     }
     protected bool			CanMoveDown()
     {
+			if (!AutoCheck) return true;
       switch (m_iType)
       {
         case SpinType.SPIN_CONTROL_TYPE_INT:
@@ -840,7 +842,8 @@ namespace MediaPortal.GUI.Library
     }
 
     protected bool CanMoveUp()
-    {
+		{
+			if (!AutoCheck) return true;
       switch (m_iType)
       {
         case SpinType.SPIN_CONTROL_TYPE_INT:
@@ -1038,5 +1041,15 @@ namespace MediaPortal.GUI.Library
       }
       return true;
     }
+		public bool AutoCheck
+		{
+			get { return autoCheck;}
+			set { autoCheck=value;}
+		}
+		public GUISpinControl.SpinSelect SelectedButton
+		{
+			get { return m_iSelect;}
+			set { m_iSelect=value;}
+		}
 	}
 }

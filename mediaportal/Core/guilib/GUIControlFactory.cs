@@ -374,6 +374,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUILabelControl);
 				case ("button"):
 					return typeof (GUIButtonControl);
+				case ("updownbutton"):
+					return typeof (GUIUpDownButton);
 				case ("button3part"):
 					return typeof (GUIButton3PartControl);
 			    case ("statusbar"):
@@ -400,6 +402,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUISelectButtonControl);
 				case ("listcontrol"):
 					return typeof (GUIListControl);
+				case ("updownlistcontrol"):
+					return typeof (GUIUpDownListControl);
 				case ("togglebutton"):
 					return typeof (GUIToggleButtonControl);
 				case ("group"):

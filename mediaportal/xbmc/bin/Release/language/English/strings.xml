@@ -2445,6 +2445,14 @@
 	<id>876</id>
 	<value>Until manual stop</value>
 </string>
+<string>
+	<id>877</id>
+	<value>Priorities</value>
+</string>
+<string>
+	<id>878</id>
+	<value>Storage</value>
+</string>
 
 <!-- End My Alarm Strings -->
 <string>
