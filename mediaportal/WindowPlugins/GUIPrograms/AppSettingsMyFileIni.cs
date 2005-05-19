@@ -592,7 +592,6 @@ namespace WindowPlugins.GUIPrograms
       {
         txtImageFile.Text = dialogFile.FileName;
       }
-
     }
 
     private void btnStartup_Click(object sender, EventArgs e)

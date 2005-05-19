@@ -29,6 +29,7 @@ namespace WindowPlugins.GUIPrograms
     private AppSettingsMyFileIni sectionMyFileIni = new AppSettingsMyFileIni();
     private AppSettingsMyFileMeedio sectionMyFileMeedio = new AppSettingsMyFileMeedio();
     private AppSettingsFilelauncher sectionFilelauncher = new AppSettingsFilelauncher();
+    private AppSettingsMameDirect sectionMameDirect = new AppSettingsMameDirect();
     private AppSettingsGrouper sectionGrouper = new AppSettingsGrouper();
     private AppSettingsRoot sectionRoot = new AppSettingsRoot();
     private AppFilesView filesView = new AppFilesView();
@@ -46,7 +47,6 @@ namespace WindowPlugins.GUIPrograms
     private MenuItem menuDirBrowse;
     private MenuItem menuDirCache;
     private MenuItem menuMyFile;
-    private MenuItem menuMLFFile;
     private MenuItem menuFileLauncher;
     private MenuItem menuGrouper;
     private TabControl DetailsTabControl;
@@ -67,6 +67,9 @@ namespace WindowPlugins.GUIPrograms
     private MenuItem menuItemReadFromProfile;
     // pointer to currently displayed sheet
     private AppSettings pageCurrentSettings = null;
+    private System.Windows.Forms.MenuItem menuItem1;
+    private System.Windows.Forms.MenuItem menuMlfFile;
+    private System.Windows.Forms.MenuItem menuMAMEDirect;
     private bool m_ProfilesLoaded = false;
 
     public SetupForm()
@@ -158,12 +161,14 @@ namespace WindowPlugins.GUIPrograms
       this.toolBarMenu = new System.Windows.Forms.ToolBar();
       this.buttonAddChild = new System.Windows.Forms.ToolBarButton();
       this.popupAddChild = new System.Windows.Forms.ContextMenu();
-      this.menuDirBrowse = new System.Windows.Forms.MenuItem();
       this.menuDirCache = new System.Windows.Forms.MenuItem();
-      this.menuMyFile = new System.Windows.Forms.MenuItem();
-      this.menuMLFFile = new System.Windows.Forms.MenuItem();
       this.menuFileLauncher = new System.Windows.Forms.MenuItem();
       this.menuGrouper = new System.Windows.Forms.MenuItem();
+      this.menuMyFile = new System.Windows.Forms.MenuItem();
+      this.menuDirBrowse = new System.Windows.Forms.MenuItem();
+      this.menuItem1 = new System.Windows.Forms.MenuItem();
+      this.menuMAMEDirect = new System.Windows.Forms.MenuItem();
+      this.menuMlfFile = new System.Windows.Forms.MenuItem();
       this.sep1 = new System.Windows.Forms.ToolBarButton();
       this.buttonDelete = new System.Windows.Forms.ToolBarButton();
       this.sep2 = new System.Windows.Forms.ToolBarButton();
@@ -195,26 +200,20 @@ namespace WindowPlugins.GUIPrograms
       // appTree
       // 
       this.appTree.AllowDrop = true;
-      this.appTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left)));
+      this.appTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left)));
       this.appTree.HideSelection = false;
       this.appTree.HotTracking = true;
-      this.appTree.ImageIndex =  - 1;
+      this.appTree.ImageIndex = -1;
       this.appTree.Indent = 19;
       this.appTree.ItemHeight = 16;
       this.appTree.LabelEdit = true;
       this.appTree.Location = new System.Drawing.Point(8, 40);
       this.appTree.Name = "appTree";
-      this.appTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[]
-      {
-        new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[]
-        {
-          new System.Windows.Forms.TreeNode("whazzz up")
-        }
-        )
-      }
-      );
-      this.appTree.SelectedImageIndex =  - 1;
+      this.appTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+                                                                        new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
+                                                                                                                                                               new System.Windows.Forms.TreeNode("whazzz up")})});
+      this.appTree.SelectedImageIndex = -1;
       this.appTree.Size = new System.Drawing.Size(224, 468);
       this.appTree.TabIndex = 8;
       this.appTree.DragOver += new System.Windows.Forms.DragEventHandler(this.appTree_DragOver);
@@ -230,11 +229,17 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.toolBarMenu.Appearance = System.Windows.Forms.ToolBarAppearance.Flat;
       this.toolBarMenu.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.toolBarMenu.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[]
-      {
-        this.buttonAddChild, this.sep1, this.buttonDelete, this.sep2, this.buttonUp, this.sep3, this.buttonDown, this.sep4, this.buttonTools, this.sep5
-      }
-      );
+      this.toolBarMenu.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
+                                                                                   this.buttonAddChild,
+                                                                                   this.sep1,
+                                                                                   this.buttonDelete,
+                                                                                   this.sep2,
+                                                                                   this.buttonUp,
+                                                                                   this.sep3,
+                                                                                   this.buttonDown,
+                                                                                   this.sep4,
+                                                                                   this.buttonTools,
+                                                                                   this.sep5});
       this.toolBarMenu.ButtonSize = new System.Drawing.Size(60, 36);
       this.toolBarMenu.Divider = false;
       this.toolBarMenu.DropDownArrows = true;
@@ -254,47 +259,63 @@ namespace WindowPlugins.GUIPrograms
       // 
       // popupAddChild
       // 
-      this.popupAddChild.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-      {
-        this.menuDirBrowse, this.menuDirCache, this.menuMyFile, this.menuMLFFile, this.menuFileLauncher, this.menuGrouper
-      }
-      );
-      // 
-      // menuDirBrowse
-      // 
-      this.menuDirBrowse.Index = 0;
-      this.menuDirBrowse.Text = "Directory-Browse";
-      this.menuDirBrowse.Click += new System.EventHandler(this.menuDirBrowse_Click);
+      this.popupAddChild.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                                  this.menuDirCache,
+                                                                                  this.menuFileLauncher,
+                                                                                  this.menuGrouper,
+                                                                                  this.menuMyFile,
+                                                                                  this.menuDirBrowse,
+                                                                                  this.menuItem1});
       // 
       // menuDirCache
       // 
-      this.menuDirCache.Index = 1;
+      this.menuDirCache.Index = 0;
       this.menuDirCache.Text = "Directory-Cache";
       this.menuDirCache.Click += new System.EventHandler(this.menuDirCache_Click);
       // 
-      // menuMyFile
-      // 
-      this.menuMyFile.Index = 2;
-      this.menuMyFile.Text = "*.my File Importer";
-      this.menuMyFile.Click += new System.EventHandler(this.menuMyFile_Click);
-      // 
-      // menuMLFFile
-      // 
-      this.menuMLFFile.Index = 3;
-      this.menuMLFFile.Text = "*.mlf File Importer";
-      this.menuMLFFile.Click += new System.EventHandler(this.menuMLFFile_Click);
-      // 
       // menuFileLauncher
       // 
-      this.menuFileLauncher.Index = 4;
+      this.menuFileLauncher.Index = 1;
       this.menuFileLauncher.Text = "Filelauncher";
       this.menuFileLauncher.Click += new System.EventHandler(this.menuFileLauncher_Click);
       // 
       // menuGrouper
       // 
-      this.menuGrouper.Index = 5;
+      this.menuGrouper.Index = 2;
       this.menuGrouper.Text = "Grouper";
       this.menuGrouper.Click += new System.EventHandler(this.menuGrouper_Click);
+      // 
+      // menuMyFile
+      // 
+      this.menuMyFile.Index = 3;
+      this.menuMyFile.Text = "*.my File Importer";
+      this.menuMyFile.Click += new System.EventHandler(this.menuMyFile_Click);
+      // 
+      // menuDirBrowse
+      // 
+      this.menuDirBrowse.Index = 4;
+      this.menuDirBrowse.Text = "Directory-Browse";
+      this.menuDirBrowse.Click += new System.EventHandler(this.menuDirBrowse_Click);
+      // 
+      // menuItem1
+      // 
+      this.menuItem1.Index = 5;
+      this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                              this.menuMAMEDirect,
+                                                                              this.menuMlfFile});
+      this.menuItem1.Text = "Extended";
+      // 
+      // menuMAMEDirect
+      // 
+      this.menuMAMEDirect.Index = 0;
+      this.menuMAMEDirect.Text = "MAME Direct Importer";
+      this.menuMAMEDirect.Click += new System.EventHandler(this.menuMAMEDirect_Click);
+      // 
+      // menuMlfFile
+      // 
+      this.menuMlfFile.Index = 1;
+      this.menuMlfFile.Text = "*.mlf File Importer";
+      this.menuMlfFile.Click += new System.EventHandler(this.menuMLFFile_Click);
       // 
       // sep1
       // 
@@ -332,21 +353,20 @@ namespace WindowPlugins.GUIPrograms
       // 
       // popupTools
       // 
-      this.popupTools.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-      {
-        this.MenuItemChangeSourceType, this.menuItemReadFromProfile
-      }
-      );
+      this.popupTools.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                               this.MenuItemChangeSourceType,
+                                                                               this.menuItemReadFromProfile});
       this.popupTools.Popup += new System.EventHandler(this.popupTools_Popup);
       // 
       // MenuItemChangeSourceType
       // 
       this.MenuItemChangeSourceType.Index = 0;
-      this.MenuItemChangeSourceType.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-      {
-        this.SourceTypeToDirBrowse, this.SourceTypeToDirCache, this.SourceTypeToMyIni, this.SourceTypeToMLF, this.SourceTypeToFilelauncher
-      }
-      );
+      this.MenuItemChangeSourceType.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                                             this.SourceTypeToDirBrowse,
+                                                                                             this.SourceTypeToDirCache,
+                                                                                             this.SourceTypeToMyIni,
+                                                                                             this.SourceTypeToMLF,
+                                                                                             this.SourceTypeToFilelauncher});
       this.MenuItemChangeSourceType.Text = "Change Source Type to";
       this.MenuItemChangeSourceType.Select += new System.EventHandler(this.MenuItemChangeSourceType_Select);
       // 
@@ -383,11 +403,8 @@ namespace WindowPlugins.GUIPrograms
       // menuItemReadFromProfile
       // 
       this.menuItemReadFromProfile.Index = 1;
-      this.menuItemReadFromProfile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-      {
-        this.menuItem2
-      }
-      );
+      this.menuItemReadFromProfile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                                            this.menuItem2});
       this.menuItemReadFromProfile.Text = "Read From Profile";
       // 
       // menuItem2
@@ -401,8 +418,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // DetailsTabControl
       // 
-      this.DetailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.DetailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.DetailsTabControl.Controls.Add(this.DetailsPage);
       this.DetailsTabControl.Controls.Add(this.FilesPage);
       this.DetailsTabControl.Location = new System.Drawing.Point(240, 40);
@@ -423,8 +441,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // holderPanel
       // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.Location = new System.Drawing.Point(3, 3);
       this.holderPanel.Name = "holderPanel";
       this.holderPanel.Size = new System.Drawing.Size(397, 436);
@@ -435,17 +454,18 @@ namespace WindowPlugins.GUIPrograms
       this.FilesPage.Controls.Add(this.holderPanelFiles);
       this.FilesPage.Location = new System.Drawing.Point(4, 22);
       this.FilesPage.Name = "FilesPage";
-      this.FilesPage.Size = new System.Drawing.Size(408, 422);
+      this.FilesPage.Size = new System.Drawing.Size(408, 442);
       this.FilesPage.TabIndex = 1;
       this.FilesPage.Text = "Files";
       // 
       // holderPanelFiles
       // 
       this.holderPanelFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanelFiles.Location = new System.Drawing.Point(6, 3);
       this.holderPanelFiles.Name = "holderPanelFiles";
-      this.holderPanelFiles.Size = new System.Drawing.Size(397, 416);
+      this.holderPanelFiles.Size = new System.Drawing.Size(397, 436);
       this.holderPanelFiles.TabIndex = 13;
       // 
       // SetupForm
@@ -472,7 +492,8 @@ namespace WindowPlugins.GUIPrograms
     {
       if (SaveAppItem())
       {
-        AppItem newApp = new AppItem(ProgramDatabase.sqlDB);
+//        AppItem newApp = new AppItem(ProgramDatabase.sqlDB);
+        AppItem newApp = ApplicationFactory.AppFactory.GetAppItem(ProgramDatabase.sqlDB, newSourceType);
         apps.Add(newApp);
         newApp.FatherID = GetSelectedAppID();
         newApp.Position = apps.GetMaxPosition(newApp.FatherID) + 10;
@@ -832,8 +853,8 @@ namespace WindowPlugins.GUIPrograms
           case myProgSourceType.MYFILEMEEDIO:
             res = sectionMyFileMeedio;
             break;
-          case myProgSourceType.MYGAMESDIRECT:
-            res = null; // todo:
+          case myProgSourceType.MAMEDIRECT:
+            res = sectionMameDirect;
             break;
           case myProgSourceType.FILELAUNCHER:
             res = sectionFilelauncher;
@@ -1194,6 +1215,11 @@ namespace WindowPlugins.GUIPrograms
     private void menuGrouper_Click(object sender, EventArgs e)
     {
       DoAddChild(myProgSourceType.GROUPER);
+    }
+
+    private void menuMAMEDirect_Click(object sender, System.EventArgs e)
+    {
+      DoAddChild(myProgSourceType.MAMEDIRECT);
     }
 
     private void SetupForm_Closing(object sender, CancelEventArgs e)

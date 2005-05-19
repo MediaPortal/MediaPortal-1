@@ -554,6 +554,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\appItemMameDirect.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIPrograms\ApplicationFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -626,6 +631,16 @@
                 <File
                     RelPath = "GUIPrograms\AppSettingsGrouper.resx"
                     DependentUpon = "AppSettingsGrouper.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsMameDirect.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsMameDirect.resx"
+                    DependentUpon = "AppSettingsMameDirect.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -729,6 +744,11 @@
                 />
                 <File
                     RelPath = "GUIPrograms\MyFileMeedioImporter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\MyMameImporter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

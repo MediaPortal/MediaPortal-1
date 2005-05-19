@@ -600,7 +600,7 @@ namespace ProgramsDatabase
       }
     }
 
-    public void FindFileInfo(myProgScraperType ScraperType)
+    public bool FindFileInfo(myProgScraperType ScraperType)
     {
       int iRetries = 0;
       bool bSuccess = false;
@@ -625,9 +625,10 @@ namespace ProgramsDatabase
           }
           break;
       }
+      return bSuccess;
     }
 
-    public void FindFileInfoDetail(AppItem curApp, FileInfo curInfo, myProgScraperType scraperType, ScraperSaveType saveType)
+    public bool FindFileInfoDetail(AppItem curApp, FileInfo curInfo, myProgScraperType scraperType, ScraperSaveType saveType)
     {
       int iRetries = 0;
       bool bSuccess = false;
@@ -649,6 +650,7 @@ namespace ProgramsDatabase
           }
           break;
       }
+      return bSuccess;
     }
 
 

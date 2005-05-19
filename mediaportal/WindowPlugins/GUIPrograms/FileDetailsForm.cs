@@ -659,10 +659,5 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-
-    //		private void button1_Click(object sender, System.EventArgs e)
-    //		{
-    //			CurFile.FindFileInfo(myProgScraperType.ALLGAME);
-    //		}
   }
 }

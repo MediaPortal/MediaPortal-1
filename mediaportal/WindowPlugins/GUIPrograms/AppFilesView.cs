@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -111,10 +112,9 @@ namespace WindowPlugins.GUIPrograms
       this.toolTip.SetToolTip(this.btnLaunch, "Launch selected fileitem now for testing the settings");
       this.btnLaunch.Click += new System.EventHandler(this.btnLaunch_Click);
       // 
-      // UpdateDatabaseButton
+      // updateDatabaseButton
       // 
-      this.updateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.updateDatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.updateDatabaseButton.Location = new System.Drawing.Point(296, 328);
       this.updateDatabaseButton.Name = "updateDatabaseButton";
       this.updateDatabaseButton.Size = new System.Drawing.Size(88, 40);
@@ -160,8 +160,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // btnAddToFavourites
       // 
-      this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)
-        ));
+      this.btnAddToFavourites.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnAddToFavourites.Enabled = false;
       this.btnAddToFavourites.Location = new System.Drawing.Point(296, 248);
       this.btnAddToFavourites.Name = "btnAddToFavourites";
@@ -173,8 +172,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // startScraperButton
       // 
-      this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)
-        ));
+      this.startScraperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.startScraperButton.Location = new System.Drawing.Point(296, 288);
       this.startScraperButton.Name = "startScraperButton";
       this.startScraperButton.Size = new System.Drawing.Size(88, 40);
@@ -183,7 +181,7 @@ namespace WindowPlugins.GUIPrograms
       this.toolTip.SetToolTip(this.startScraperButton, "removes a file / filelink from the database");
       this.startScraperButton.Click += new System.EventHandler(this.startScraperButton_Click);
       // 
-      // TopPanel
+      // topPanel
       // 
       this.topPanel.Controls.Add(this.backButton);
       this.topPanel.Controls.Add(this.filePathLabel);
@@ -193,21 +191,21 @@ namespace WindowPlugins.GUIPrograms
       this.topPanel.Size = new System.Drawing.Size(392, 32);
       this.topPanel.TabIndex = 14;
       // 
-      // BackButton
+      // backButton
       // 
       this.backButton.Enabled = false;
       this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("BackButton.Image")));
+      this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("backButton.Image")));
       this.backButton.Location = new System.Drawing.Point(0, 0);
       this.backButton.Name = "backButton";
       this.backButton.Size = new System.Drawing.Size(32, 32);
       this.backButton.TabIndex = 1;
       this.backButton.Click += new System.EventHandler(this.BackButton_Click);
       // 
-      // FilePathLabel
+      // filePathLabel
       // 
-      this.filePathLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.filePathLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.filePathLabel.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.filePathLabel.Location = new System.Drawing.Point(36, 8);
       this.filePathLabel.Name = "filePathLabel";
@@ -232,15 +230,13 @@ namespace WindowPlugins.GUIPrograms
       this.bottomPanel.Size = new System.Drawing.Size(392, 376);
       this.bottomPanel.TabIndex = 15;
       // 
-      // FileList
+      // fileList
       // 
-      this.fileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-      {
-        this.fileTitle
-      }
-      );
+      this.fileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                               this.fileTitle});
       this.fileList.FullRowSelect = true;
       this.fileList.HideSelection = false;
       this.fileList.Location = new System.Drawing.Point(0, 0);
@@ -252,18 +248,16 @@ namespace WindowPlugins.GUIPrograms
       this.fileList.DoubleClick += new System.EventHandler(this.FileList_DoubleClick);
       this.fileList.SelectedIndexChanged += new System.EventHandler(this.FileList_SelectedIndexChanged);
       // 
-      // FileTitle
+      // fileTitle
       // 
       this.fileTitle.Text = "Title";
       this.fileTitle.Width = 280;
       // 
       // popupFavourites
       // 
-      this.popupFavourites.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-      {
-        this.menuItem1, this.menuItem2
-      }
-      );
+      this.popupFavourites.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                                    this.menuItem1,
+                                                                                    this.menuItem2});
       this.popupFavourites.Popup += new System.EventHandler(this.popupFavourites_Popup);
       // 
       // menuItem1

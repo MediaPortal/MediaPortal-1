@@ -1,3 +1,4 @@
+using MediaPortal.Dialogs;
 using SQLite.NET;
 
 namespace ProgramsDatabase
@@ -7,12 +8,15 @@ namespace ProgramsDatabase
   /// </summary>
   public class appItemMyGamesDirect: AppItem
   {
+
     public appItemMyGamesDirect(SQLiteClient initSqlDB): base(initSqlDB)
     {
       //
       // TODO: Add constructor logic here
       //
     }
+
+
 
   }
 }

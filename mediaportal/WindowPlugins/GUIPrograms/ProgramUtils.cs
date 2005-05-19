@@ -11,11 +11,12 @@ namespace Programs.Utils
   {
     //Directory (Browse-Mode)
     //Directory (DBCache-Mode)
-    //MyGames myHTPC output 
+    //my-Files (myGames my-File output / kino.de scraper output, etc.)
     //MyGames Meedio output
-    //MyGames Direct-Link
+    //Mame direct input
     //File-Editor based launcher
-    UNKNOWN = 0, DIRBROWSE = 1, DIRCACHE = 2, MYFILEINI = 3, MYFILEMEEDIO = 4, MYGAMESDIRECT = 5, FILELAUNCHER = 6, GROUPER = 7
+    //Item-Grouper
+    UNKNOWN = 0, DIRBROWSE = 1, DIRCACHE = 2, MYFILEINI = 3, MYFILEMEEDIO = 4, MAMEDIRECT = 5, FILELAUNCHER = 6, GROUPER = 7
   };
 
   public enum myProgScraperType
@@ -41,7 +42,7 @@ namespace Programs.Utils
 
     public const string cMYFILEMEEDIO = "MY_FILE_MEEDIO";
     public const string cMYFILEINI = "MY_FILE_INI";
-    public const string cMYGAMESDIRECT = "MY_GAMES_DIRECT";
+    public const string cMAMEDIRECT = "MAME_DIRECT";
     public const string cDIRBROWSE = "DIR_BROWSE";
     public const string cDIRCACHE = "DIR_CACHE";
     public const string cFILELAUNCHER = "FILELAUNCHER";
@@ -218,8 +219,8 @@ namespace Programs.Utils
         case myProgSourceType.MYFILEINI:
           res = cMYFILEINI;
           break;
-        case myProgSourceType.MYGAMESDIRECT:
-          res = cMYGAMESDIRECT;
+        case myProgSourceType.MAMEDIRECT:
+          res = cMAMEDIRECT;
           break;
         case myProgSourceType.DIRBROWSE:
           res = cDIRBROWSE;
@@ -255,9 +256,9 @@ namespace Programs.Utils
       {
         return myProgSourceType.MYFILEINI;
       }
-      else if (strValue == cMYGAMESDIRECT)
+      else if (strValue == cMAMEDIRECT)
       {
-        return myProgSourceType.MYGAMESDIRECT;
+        return myProgSourceType.MAMEDIRECT;
       }
       else if (strValue == cDIRBROWSE)
       {

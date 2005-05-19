@@ -37,8 +37,8 @@ namespace ProgramsDatabase
         case myProgSourceType.MYFILEMEEDIO:
           res = new appItemMyFileMLF(sqlDB);
           break;
-        case myProgSourceType.MYGAMESDIRECT:
-          res = new appItemMyGamesDirect(sqlDB);
+        case myProgSourceType.MAMEDIRECT:
+          res = new appItemMameDirect(sqlDB);
           break;
         case myProgSourceType.FILELAUNCHER:
           res = new appFilesEdit(sqlDB);
@@ -49,8 +49,6 @@ namespace ProgramsDatabase
       }
       return res;
     }
-
-
 
   }
 }

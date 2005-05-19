@@ -643,6 +643,7 @@ namespace WindowPlugins.GUIPrograms
 
     private void btnStartSearch_Click(object sender, EventArgs e)
     {
+      bool bSuccess = true;
       InitProgressBar("Starting search");
       foreach (ListViewItem curItem in FileList.CheckedItems)
       {
@@ -661,10 +662,15 @@ namespace WindowPlugins.GUIPrograms
             nextItem = curItem;
           }
           nextItem.EnsureVisible();
+//          if (!bSuccess)
+//          {
+//            curItem.SubItems[1].Text = String.Format("waiting for reconnection...");
+//            System.Threading.Thread.Sleep(5126);
+//          }
           curItem.SubItems[1].Text = String.Format("searching...");
           curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
           Application.DoEvents();
-          file.FindFileInfo(myProgScraperType.ALLGAME);
+          bSuccess = file.FindFileInfo(myProgScraperType.ALLGAME);
           curItem.SubItems[1].Text = String.Format("{0} matches", file.FileInfoList.Count);
           StepProgressBar();
           buttonSelectBestMatch.Enabled = true;

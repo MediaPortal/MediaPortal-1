@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "C:\erwin\mediaportal\;C:\erwin\mediaportal\WindowPlugins\GUIMSNPlugin\" >
+            <Settings ReferencePath = "C:\erwin\mediaportal\;C:\erwin\mediaportal\WindowPlugins\GUIMSNPlugin\;d:\dev\mediaportal\;d:\dev\mediaportal\WindowPlugins\GUIMSNPlugin\" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"
