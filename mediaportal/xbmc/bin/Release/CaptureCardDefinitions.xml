@@ -1298,9 +1298,9 @@
   </capturecard>
 
   <capturecard commercialname="Vstream Xpert TV PVR 883(NTSC)" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
       <filters>
         <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
@@ -1312,19 +1312,18 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
 
   <capturecard commercialname="Vstream Xpert TV PVR 883(PAL)" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_088217de&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
       <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"		checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"  		checkdevice="true"></filter>
         <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
       </filters>
       <connections>
@@ -1332,7 +1331,6 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -4960,6 +4958,62 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend DVB-T USB 2.0" capturename="TTUSB2BDA - TechnoTrend DVB-T USB 2.0 BDA Device" devid="vid_0b48&amp;pid_3003">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"					checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TTUSB2BDA - TechnoTrend DVB-T USB 2.0 BDA Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend DVB-T USB 2.0 Stick" capturename="TTUSB2BDA - TechnoTrend DVB-T Stick USB 2.0 BDA Device" devid="vid_0b48&amp;pid_3004">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"						checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TTUSB2BDA - TechnoTrend DVB-T Stick USB 2.0 BDA Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend DVB-S USB 2.0" capturename="TTUSB2BDA - TechnoTrend DVB-S USB 2.0 BDA Device" devid="vid_0b48&amp;pid_3001">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"					checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TTUSB2BDA - TechnoTrend DVB-S USB 2.0 BDA Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend DVB-C USB 2.0" capturename="TTUSB2BDA - TechnoTrend DVB-C USB 2.0 BDA Device" devid="vid_0b48&amp;pid_3002">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"					checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TTUSB2BDA - TechnoTrend DVB-C USB 2.0 BDA Device"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
