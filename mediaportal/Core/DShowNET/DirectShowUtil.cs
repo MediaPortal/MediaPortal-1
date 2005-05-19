@@ -16,32 +16,40 @@ namespace DShowNET
 
     static public IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
-      IBaseFilter NewFilter=null;
-      Log.WriteFile(Log.LogType.Capture,"add filter:{0} to graph", strFilterName);
-      Filters filters = new Filters();
-      foreach (Filter filter in filters.LegacyFilters)
-      {
-        if (String.Compare(filter.Name,strFilterName,true) ==0)
-        {
-          NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
-          int hr = graphBuilder.AddFilter( NewFilter, strFilterName );
-          if( hr < 0 ) 
-          {
-            Log.WriteFile(Log.LogType.Capture,true,"failed:unable to add filter:{0} to graph", strFilterName);
-            NewFilter=null;
-          }
-          else
-          {
-            Log.WriteFile(Log.LogType.Capture,"added filter:{0} to graph", strFilterName);
-          }
-          break;
-        }
-      }
-      if (NewFilter==null)
-      {
-        Log.WriteFile(Log.LogType.Capture,true,"failed filter:{0} not found", strFilterName);
-      }
-      return NewFilter;
+			try
+			{
+				IBaseFilter NewFilter=null;
+				Log.WriteFile(Log.LogType.Capture,"add filter:{0} to graph", strFilterName);
+				Filters filters = new Filters();
+				foreach (Filter filter in filters.LegacyFilters)
+				{
+					if (String.Compare(filter.Name,strFilterName,true) ==0)
+					{
+						NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
+						int hr = graphBuilder.AddFilter( NewFilter, strFilterName );
+						if( hr < 0 ) 
+						{
+							Log.WriteFile(Log.LogType.Error,true,"failed:unable to add filter:{0} to graph", strFilterName);
+							NewFilter=null;
+						}
+						else
+						{
+							Log.WriteFile(Log.LogType.Capture,"added filter:{0} to graph", strFilterName);
+						}
+						break;
+					}
+				}
+				if (NewFilter==null)
+				{
+					Log.WriteFile(Log.LogType.Error,true,"failed filter:{0} not found", strFilterName);
+				}
+				return NewFilter;
+			}
+			catch(Exception)
+			{
+				Log.WriteFile(Log.LogType.Error,true,"failed filter:{0} not found", strFilterName);
+				return null;
+			}
     }
 
     static public void RemoveAudioRendererFromGraph(IGraphBuilder graphBuilder)
