@@ -131,51 +131,39 @@ public class MediaPortalApp : D3DApp, IRender
     [STAThread]
     public static void Main()
     {
+      Log.Write("Mediaportal is starting up");
 
-        /*
-			TranscodeInfo info = new TranscodeInfo();
-			info.file=@"C:\media\movies\Chart Show TV (90)_Manual_200412121542p4224.dvr-ms";
-        info.Title="Circular floor";
-        info.Description="test movie";
-        info.Rating="6";
-        info.Author="i dont know";
+      //Set current directory
+      string applicationPath = Application.ExecutablePath;
+      applicationPath = System.IO.Path.GetFullPath(applicationPath);
+      applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
+      System.IO.Directory.SetCurrentDirectory(applicationPath);
+      Log.Write("  Set current directory to :{0}", applicationPath);
+			applicationPath=null;
 
-        TranscodeFactory factory = new TranscodeFactory();
-        ITranscode transcoder=factory.GetTranscoder(info,VideoFormat.Mpeg2,Quality.High);
-        transcoder.Transcode(info,VideoFormat.Mpeg2,Quality.High);
-        */
+			//check if mediaportal has been configured
+      if (!System.IO.File.Exists("mediaportal.xml"))
+      {
+          //no, then start configuration.exe in wizard form
+          System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
+          return;
+      }
+      CodecsForm form = new CodecsForm();
+      if (!form.AreCodecsInstalled())
+      {
+          form.ShowDialog();
+      }
+			form=null;
 
-        Log.Write("Mediaportal is starting up");
-
-        //Set current directory
-        string applicationPath = Application.ExecutablePath;
-        applicationPath = System.IO.Path.GetFullPath(applicationPath);
-        applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
-        System.IO.Directory.SetCurrentDirectory(applicationPath);
-
-        Log.Write("  Set current directory to :{0}", applicationPath);
-        // Display splash screen
-        //
-
-        //check if mediaportal has been configured
-        if (!System.IO.File.Exists("mediaportal.xml"))
-        {
-            //no, then start configuration.exe in wizard form
-            System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
-            return;
-        }
-        CodecsForm form = new CodecsForm();
-        if (!form.AreCodecsInstalled())
-        {
-            form.ShowDialog();
-        }
-			ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 #if !DEBUG
-        splashScreen = new SplashScreen();
-				splashScreen.SetVersion(clientInfo.InstalledVersion);
-        splashScreen.Show();
-        splashScreen.Update();
+			ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
+      splashScreen = new SplashScreen();
+			splashScreen.SetVersion(clientInfo.InstalledVersion);
+      splashScreen.Show();
+      splashScreen.Update();
+			clientInfo=null;
 #endif
+
         Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
         // Set Intervideo registry keys 
         try
@@ -206,7 +194,7 @@ public class MediaPortalApp : D3DApp, IRender
             SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
             SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
             hklm.Close();
-
+						hklm=null;
         }
         catch (Exception)
         {
@@ -288,7 +276,8 @@ public class MediaPortalApp : D3DApp, IRender
                 return;
             }
             hklm.Close();
-            hklm = null;
+            subkey=null;
+						hklm = null;
         }
         catch (Exception)
         {
@@ -329,7 +318,10 @@ public class MediaPortalApp : D3DApp, IRender
 #if DEBUG
 #else
         if (splashScreen != null)
+				{
             splashScreen.Close();
+						splashScreen=null;
+				}
 #endif
     }
 
