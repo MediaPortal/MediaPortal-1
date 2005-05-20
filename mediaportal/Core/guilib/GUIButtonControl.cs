@@ -81,6 +81,22 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextOffsetX, ref m_iTextOffsetY);
 		}
 
+		public override bool Focus
+		{
+			get
+			{
+				return base.Focus;
+			}
+			set
+			{
+				if (value != m_bHasFocus && value)
+				{
+					GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+				}
+				base.Focus = value;
+			}
+		}
+
 		/// <summary>
 		/// Renders the GUIButtonControl.
 		/// </summary>
@@ -97,7 +113,6 @@ namespace MediaPortal.GUI.Library
 			{
 				//render the focused image
 				m_imgFocus.Render(timePassed);
-				GUIPropertyManager.SetProperty("#highlightedbutton", Label);
       }
 			else 
 			{

@@ -114,8 +114,8 @@ namespace MediaPortal.GUI.Library
           textheight=(int)fH;
         }
 
-			  string renderText=m_strText;
-        /*if (m_dwWidth>0)
+			  /*string renderText=m_strText;
+        if (m_dwWidth>0)
         {
           while (textwidth > m_dwWidth && renderText.Length>0)
           {
@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Library
          
           int xoff= (int)((m_dwWidth-textwidth)/2);
           int yoff= (int)((m_dwHeight-textheight)/2);
-          m_pFont.DrawText((float)m_dwPosX+xoff, (float)m_dwPosY+yoff,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT,m_dwWidth); 
+          m_pFont.DrawText((float)m_dwPosX+xoff, (float)m_dwPosY+yoff,m_dwTextColor,m_strText,GUIControl.Alignment.ALIGN_LEFT,m_dwWidth); 
         }
         else
         {
@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Library
           {
             if (m_dwWidth==0 || textwidth < m_dwWidth)
             {
-							m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT,-1); 
+							m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,m_strText,GUIControl.Alignment.ALIGN_LEFT,-1); 
             }
             else
             {
@@ -179,7 +179,7 @@ namespace MediaPortal.GUI.Library
 								GUIGraphicsContext.DX9Device.Viewport = newviewport;
 							}*/
 
-              m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,renderText,GUIControl.Alignment.ALIGN_LEFT,(int)fwidth); 
+              m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,m_strText,GUIControl.Alignment.ALIGN_LEFT,(int)fwidth); 
               //if (useViewport)
 	            //  GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Library
 
           if (m_dwWidth==0 || textwidth < m_dwWidth)
           {
-            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,renderText,m_dwTextAlign,m_dwWidth); 
+            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,m_strText,m_dwTextAlign,m_dwWidth); 
           }
           else
           {
@@ -223,7 +223,7 @@ namespace MediaPortal.GUI.Library
 							GUIGraphicsContext.DX9Device.Viewport = newviewport;
 						}*/
 
-            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,renderText,m_dwTextAlign,(int)fwidth); 
+            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,m_strText,m_dwTextAlign,(int)fwidth); 
             //if (useViewport)
 						//	GUIGraphicsContext.DX9Device.Viewport = oldviewport;
           }
