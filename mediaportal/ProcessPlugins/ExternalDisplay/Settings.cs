@@ -337,6 +337,7 @@ namespace ProcessPlugins.ExternalDisplay
       {
         list.Add(new LCDHypeWrapper(fi.FullName));
       }
+      list.Add(new VLSYSLis2()); // Added by Nopap
       list.Add(new iMON());
       list.Add(new DebugForm());
       list.Add(new Clipboard());

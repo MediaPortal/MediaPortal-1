@@ -40,7 +40,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
         while(pos>0)
         {
           StringBuilder b = new StringBuilder();
-          while(pos>=1 && text[pos]>='0' && text[pos]<='9')
+          while(pos>=1 && pos<text.Length && text[pos]>='0' && text[pos]<='9')
           {
             b.Append(text[pos++]);
           }
