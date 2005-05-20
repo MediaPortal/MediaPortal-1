@@ -116,7 +116,8 @@ namespace MediaPortal.TV.Recording
 		IMediaControl						m_mediaControl					= null;
 		IBDA_SignalStatistics[] m_TunerStatistics       = null;
 		NetworkType							m_NetworkType=NetworkType.Unknown;
-		
+		IBaseFilter							m_sampleGrabber=null;
+		ISampleGrabber					m_sampleInterface=null;
 		
 		TVCaptureDevice					m_Card;
 		
@@ -264,6 +265,9 @@ namespace MediaPortal.TV.Recording
 				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 
+				m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
+				m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
+				m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
 
 				// Loop through configured filters for this card, bind them and add them to the graph
 				// Note that while adding filters to a graph, some connections may already be created...
@@ -494,6 +498,12 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED interface filter not found");
 					return false;
 				}
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
+				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+					return false;
+				}
 				//=========================================================================================================
 				// add the MPEG-2 Demultiplexer 
 				//=========================================================================================================
@@ -509,9 +519,9 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
 				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
 				
-				if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
+				if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
 					return false;
 				}
 				for (int i=0; i < 10; ++i)
@@ -652,8 +662,21 @@ namespace MediaPortal.TV.Recording
 					win.SetObject(m_streamDemuxer.Teletext);
 
 
-				 m_streamDemuxer.AudioHasChanged +=new MediaPortal.TV.Recording.DVBDemuxer.AudioChanged(m_streamDemuxer_AudioHasChanged);
+				m_streamDemuxer.AudioHasChanged +=new MediaPortal.TV.Recording.DVBDemuxer.AudioChanged(m_streamDemuxer_AudioHasChanged);
 				m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.BDACards;
+
+				if(m_sampleInterface!=null)
+				{
+					AMMediaType mt=new AMMediaType();
+					mt.majorType=DShowNET.MediaType.Stream;
+					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
+					m_sampleInterface.SetCallback(m_streamDemuxer,1);
+					m_sampleInterface.SetMediaType(ref mt);
+					m_sampleInterface.SetBufferSamples(false);
+				}
+				else
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
+					
 				return true;
 			}
 			catch(Exception)
@@ -734,6 +757,9 @@ namespace MediaPortal.TV.Recording
 				}
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free other interfaces");
+				if (m_sampleGrabber != null) 
+					Marshal.ReleaseComObject(m_sampleGrabber); m_sampleGrabber=null;
+				m_sampleInterface=null;
 
 				if (m_StreamBufferConfig != null) 
 					Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
@@ -2731,6 +2757,10 @@ namespace MediaPortal.TV.Recording
 				myTuner.TuneRequest = newTuneRequest;
 				Marshal.ReleaseComObject(myTuneRequest);
 
+				if (m_streamDemuxer != null)
+				{
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName);
+				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
 				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid);
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
@@ -2915,6 +2945,7 @@ namespace MediaPortal.TV.Recording
 					//todo: add tuning for ATSC
 				}
 
+
 				//and submit the tune request
 				myTuner.TuneRequest  = newTuneRequest;
 				Marshal.ReleaseComObject(myTuneRequest);
@@ -2922,6 +2953,11 @@ namespace MediaPortal.TV.Recording
 				{
 					SetLNBSettings(myTuneRequest);
 				}
+				if (m_streamDemuxer != null)
+				{
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName);
+				}
+
 			}
 			catch(Exception ex)
 			{
@@ -3507,6 +3543,11 @@ namespace MediaPortal.TV.Recording
 				myTuner.TuneRequest = newTuneRequest;
 				Marshal.ReleaseComObject(myTuneRequest);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() done");
+
+				if (m_streamDemuxer != null)
+				{
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName);
+				}
 
 				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid);
 				SendPMT();
