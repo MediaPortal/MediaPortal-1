@@ -796,7 +796,6 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
 
-    static int prevwindow = 0;
     static bool reentrant = false;
     protected override void Render(float timePassed)
     {
@@ -832,11 +831,7 @@ public class MediaPortalApp : D3DApp, IRender
 					//Log.Write("render frame:{0}",frames);//remove
 			      ++frames;
             // clear the surface
-            //if (prevwindow!=GUIWindowManager.ActiveWindow)
-            {
                 GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-                prevwindow = GUIWindowManager.ActiveWindow;
-            }
             CreateStateBlock();
             GUIGraphicsContext.DX9Device.BeginScene();
 
