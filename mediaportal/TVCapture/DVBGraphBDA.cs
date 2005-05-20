@@ -31,7 +31,7 @@ namespace MediaPortal.TV.Recording
 	/// -tv timeshifting
 	/// -radio
 	/// </summary>
-	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph, ISampleGrabberCB
+	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
 
 		#region imports
@@ -70,7 +70,7 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetupDemuxer(IPin videoPin,IPin audioPin,int audio,int video);
+		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1);
 
 		#endregion
 
@@ -116,8 +116,7 @@ namespace MediaPortal.TV.Recording
 		IMediaControl						m_mediaControl					= null;
 		IBDA_SignalStatistics[] m_TunerStatistics       = null;
 		NetworkType							m_NetworkType=NetworkType.Unknown;
-		IBaseFilter							m_sampleGrabber=null;
-		ISampleGrabber					m_sampleInterface=null;
+		
 		
 		TVCaptureDevice					m_Card;
 		
@@ -135,13 +134,13 @@ namespace MediaPortal.TV.Recording
 		//int                         adviseCookie;
 		bool												graphRunning=false;
 		DVBChannel									currentTuningObject=null;
-		DVBTeletext									m_teleText=new DVBTeletext();
 		TSHelperTools								transportHelper=new TSHelperTools();
 		bool												refreshPmtTable=false;
 		int                         pmtVersionNumber=-1;
 		protected bool							m_pluginsEnabled=false;
-		DVBEPG											m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.BDACards);
+
 		DateTime										timeResendPid=DateTime.Now;
+		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
 		
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 #if DUMP
@@ -182,14 +181,6 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception){}
 			
-			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
-			if(win!=null)
-				win.SetObject(m_teleText);
-
-			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-			if(win!=null)
-				win.SetObject(m_teleText);
-
 		}
 
 		#endregion
@@ -273,10 +264,6 @@ namespace MediaPortal.TV.Recording
 				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 
-				//add the sample grabber filter to the graph
-				m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
-				m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
-				m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
 
 				// Loop through configured filters for this card, bind them and add them to the graph
 				// Note that while adding filters to a graph, some connections may already be created...
@@ -507,14 +494,6 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED interface filter not found");
 					return false;
 				}
-
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
-				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
-					return false;
-				}
-				
 				//=========================================================================================================
 				// add the MPEG-2 Demultiplexer 
 				//=========================================================================================================
@@ -530,19 +509,11 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
 				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
 				
-				if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
-					return false;
-				}
-/*
-				// connect the interface filter->mpeg2 demultiplexer
 				if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect interface filter->mpeg2 demultiplexer");
 					return false;
 				}
-*/
 				for (int i=0; i < 10; ++i)
 				{
 					IPin pin;
@@ -669,21 +640,20 @@ namespace MediaPortal.TV.Recording
 				m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 				m_graphState=State.Created;
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:creategraph() setup SampleGrabber-Interface");
-				if(m_sampleInterface!=null)
-				{
-					AMMediaType mt=new AMMediaType();
-					mt.majorType=DShowNET.MediaType.Stream;
-					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
-					//m_sampleInterface.SetOneShot(true);
-					m_sampleInterface.SetCallback(this,1);
-					m_sampleInterface.SetMediaType(ref mt);
-					m_sampleInterface.SetBufferSamples(true);
-				}
-				else
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
-
 				m_TunerStatistics=GetTunerSignalStatistics();
+
+				// teletext settings
+				GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
+				if(win!=null)
+					win.SetObject(m_streamDemuxer.Teletext);
+			
+				win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+				if(win!=null)
+					win.SetObject(m_streamDemuxer.Teletext);
+
+
+				 m_streamDemuxer.AudioHasChanged +=new MediaPortal.TV.Recording.DVBDemuxer.AudioChanged(m_streamDemuxer_AudioHasChanged);
+				m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.BDACards;
 				return true;
 			}
 			catch(Exception)
@@ -707,10 +677,6 @@ namespace MediaPortal.TV.Recording
 				if (m_graphState < State.Created) 
 					return;
 				m_iPrevChannel = -1;
-				if (m_epgClass!=null)
-					m_epgClass.ClearBuffer();
-				if (m_teleText!=null)
-					m_teleText.ClearBuffer(); 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
 				StopRecording();
 				StopViewing();
@@ -768,9 +734,6 @@ namespace MediaPortal.TV.Recording
 				}
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free other interfaces");
-				if (m_sampleGrabber != null) 
-					Marshal.ReleaseComObject(m_sampleGrabber); m_sampleGrabber=null;
-				m_sampleInterface=null;
 
 				if (m_StreamBufferConfig != null) 
 					Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
@@ -1183,39 +1146,11 @@ namespace MediaPortal.TV.Recording
 		
 		#endregion
 		#endregion
-
+/*
 		#region helper functions
 		#region SampleGrabberCallback
 		public int BufferCB(double time,IntPtr data,int len)
 		{
-			if (currentTuningObject==null) return 0;
-			try
-			{
-				int add=(int)data;
-				int end=(add+len);
-
-				if(m_pluginsEnabled==true)
-				{
-					for(int pointer=add;pointer<end;pointer+=188)
-						PidCallback((IntPtr)pointer);
-				}
-
-				//
-				// here write code to record raw ts or mp3 etc.
-				// the callback needs to return as soon as possible!!
-				//
-				if (currentTuningObject.TeletextPid!=0)
-				{
-					for(int pointer=add;pointer<end;pointer+=188)
-					{
-						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-						if (header.Pid==currentTuningObject.TeletextPid)
-						{
-							m_teleText.SaveData((IntPtr)pointer);
-						}
-					}
-				}
-
 				if (currentTuningObject.PMTPid>=0 && !refreshPmtTable )
 				{
 					for(int pointer=add;pointer<end;pointer+=188)
@@ -1259,78 +1194,14 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-/*
-				if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
-				{
-					for(int pointer=add;pointer<end;pointer+=188)
-					{
-						
-						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-
-						try
-						{
-							if(header.Pid==0xd2 && header.SectionLen==0x2B && m_epgClass.TitlesParsing==false)
-							{
-								byte[] epgData=new byte[184];
-								Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-								m_epgClass.SaveTitleData(epgData);
-							}
-							if(m_epgClass.ChannelsReady==false && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
-							{
-								m_epgClass.ChannelsGrabLen=header.SectionLen+3;
-								m_epgClass.ChannelsParsing=true;
-							}
-							if(m_epgClass.ChannelsReady==true && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x90)
-							{
-								m_epgClass.SummaryParsing=true;
-							}
-							if(m_epgClass.SummaryParsing==true && header.Pid==0xd3)
-							{
-								byte[] epgData=new byte[184];
-								Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-								m_epgClass.SaveSummaryData(epgData);
-							}
-							if(m_epgClass.ChannelsParsing==true && header.Pid==0xd3)
-							{
-								byte[] epgData=new byte[184];
-								Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-								m_epgClass.SaveChannelData(epgData);
-							}
-						}
-						catch(Exception ex)
-						{
-							Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
-						}
-					
-					}
-				}
+			return 0;
+		}
 */
 
-
-#if DUMP
-				for(int pointer=add;pointer<end;pointer+=188)
-				{
-					TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-					byte[] tmpBuffer=new byte[188];
-					Marshal.Copy((IntPtr)((pointer)),tmpBuffer,0,188);
-					fileout.Write(tmpBuffer,0,tmpBuffer.Length);
-				}
-#endif
-			}
-			catch(Exception ex)
-			{
-				Log.Write("dvbGrapgBDA: exception {0} source:{1} {2}",ex.Message,ex.Source,ex.StackTrace);
-			}
-			return 0;
-		}
-
-		public int SampleCB(double time,IMediaSample sample)
+		private bool m_streamDemuxer_AudioHasChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
 		{
-			return 0;
-		
+			return false;
 		}
-		#endregion
-
 		#region overrides
 		/// <summary>
 		/// Callback from GUIGraphicsContext. Will get called when the video window position or width/height changes
@@ -1431,7 +1302,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if(audioPid!=currentTuningObject.AudioPid)
 			{
-				int hr=SetupDemuxer(m_DemuxVideoPin,m_DemuxVideoPin,audioPid,currentTuningObject.VideoPid);
+				int hr=SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,audioPid);
 				if(hr!=0)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
@@ -1650,63 +1521,6 @@ namespace MediaPortal.TV.Recording
 
 		#endregion
 
-		void Pause()
-		{	
-			/*
-			Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Pause() {0}",m_cardID);
-			//pause playing graph
-			if (g_Player.Playing && !g_Player.Paused && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID-1))
-			{
-				Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Pause() pause player");
-				g_Player.Pause();
-			}
-
-			//pause recording/timeshifting graph
-			FilterState state;
-			if (m_mediaControl!=null)
-			{
-				m_mediaControl.GetState(10,out  state);
-				if (state==FilterState.Running)
-				{
-					Log.WriteFile(Log.LogType.Log,"Pause() capture graph");
-					m_mediaControl.Pause();
-				}
-				m_mediaControl.GetState(10,out  state);
-				Log.WriteFile(Log.LogType.Log,"Pause() capture graph state:{0}", state.ToString());
-			}*/
-		}
-
-		void Continue()
-		{
-			//continue recording/timeshifting graph
-			/*
-			Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() {0}",m_cardID);
-			if (m_mediaControl!=null)
-			{
-				FilterState state;
-				m_mediaControl.GetState(10,out  state);
-				if (state==FilterState.Paused)
-				{
-					Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() run capture graph");
-					m_mediaControl.Run();
-				}
-				m_mediaControl.GetState(10,out  state);
-				Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() capture graph state:{0}", state.ToString());
-			}
-			
-			//continue playing graph
-			if (g_Player.Playing && g_Player.CurrentFile==Recorder.GetTimeShiftFileName(this.m_cardID-1))
-			{
-
-				Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:Continue() reset player");
-				g_Player.Reset();
-				if (g_Player.Paused)
-				{
-					Log.WriteFile(Log.LogType.Log,"Continue() continue timeshift file");
-					g_Player.Pause();
-				}
-			}*/
-		}
 		#region graph building helper functions
 		void AddPreferredCodecs(bool audio, bool video)
 		{
@@ -2635,7 +2449,7 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,currentTuningObject.VideoPid);
+				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid);
 				if (!SendPMT())
 				{
 					pmtVersionNumber=-1;
@@ -2653,7 +2467,6 @@ namespace MediaPortal.TV.Recording
 
 #endregion
 
-		#endregion
 
 		#region Tuning
 		/// <summary>
@@ -2669,8 +2482,6 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				//pause
-				Pause();
 
 				m_iPrevChannel		= m_iCurrentChannel;
 				m_iCurrentChannel = channel.Number;
@@ -2921,7 +2732,7 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(myTuneRequest);
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
-				SetupDemuxer(m_DemuxVideoPin, m_DemuxAudioPin,currentTuningObject.AudioPid, currentTuningObject.VideoPid);
+				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid);
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
@@ -2935,8 +2746,6 @@ namespace MediaPortal.TV.Recording
 			}
 			finally
 			{
-				//unpause
-				Continue();
 			}
 			
 			timeResendPid=DateTime.Now;
@@ -2959,11 +2768,7 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void Tune(object tuningObject, int disecqNo)
 		{
-			if(m_epgClass!=null)
-				m_epgClass.ClearBuffer();
-
-			if (m_teleText!=null)
-				m_teleText.ClearBuffer();
+			
 			try
 			{
 
@@ -3485,7 +3290,6 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{	
-				Pause();
 				m_iPrevChannel		= m_iCurrentChannel;
 				m_iCurrentChannel = channel.Channel;
 				m_StartTime				= DateTime.Now;
@@ -3704,7 +3508,7 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(myTuneRequest);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() done");
 
-				SetupDemuxer(m_DemuxVideoPin,m_DemuxAudioPin,currentTuningObject.AudioPid,0);
+				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid);
 				SendPMT();
 				if(m_pluginsEnabled==true)
 					ExecTuner();
@@ -3713,7 +3517,6 @@ namespace MediaPortal.TV.Recording
 			{
 				refreshPmtTable=false;
 				pmtVersionNumber=-1;
-				Continue();
 			}
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
