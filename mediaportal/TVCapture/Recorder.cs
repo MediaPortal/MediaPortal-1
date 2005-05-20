@@ -907,8 +907,9 @@ namespace MediaPortal.TV.Recording
 		#region Radio
 		static public bool IsRadio()
 		{
-			foreach (TVCaptureDevice dev in m_tvcards)
+			for (int i=0; i < m_tvcards.Count;++i)
 			{
+				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
 				if (dev.IsRadio)
 				{
 					return true;
@@ -919,8 +920,9 @@ namespace MediaPortal.TV.Recording
 
 		static public string RadioStationName()
 		{
-			foreach (TVCaptureDevice dev in m_tvcards)
+			for (int i=0; i < m_tvcards.Count;++i)
 			{
+				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
 				if (dev.IsRadio)
 				{
 					return dev.RadioStation;

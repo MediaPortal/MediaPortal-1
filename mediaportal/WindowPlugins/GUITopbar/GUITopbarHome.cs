@@ -174,8 +174,9 @@ namespace MediaPortal.Topbar
       }
       if (!m_bFocused)
       {
-        foreach (GUIControl control in controlList)
+        for (int i=0; i < controlList.Count;++i)
         {
+					GUIControl control =(GUIControl )controlList[i];
           control.Focus=false;
         }
       }

@@ -2224,6 +2224,11 @@ namespace MediaPortal
             storedSize = this.ClientSize;
             storedLocation = this.Location;
 
+						GC.Collect();
+						GC.Collect();
+						GC.Collect();
+						GC.WaitForPendingFinalizers();
+					
             while (true)
             {
                 if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)

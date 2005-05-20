@@ -498,9 +498,9 @@ namespace MediaPortal.Player
     public static bool Playing
     {
       get 
-      { 
+			{ 
+				if (m_player==null) return false;
         if (m_bInit) return false;
-        if (m_player==null) return false;
         bool bResult=m_player.Playing;
         return bResult;
       }
