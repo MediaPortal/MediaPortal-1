@@ -20,34 +20,34 @@ namespace MediaPortal.TV.Recording
         #region Global Arrays
 		int[,,] AudioBitrates = new int[,,]{{
 		{-1,8000,16000,24000,32000,40000,48000,56000,64000,
-		80000,96000,112000,128000,144000,160000,0 },		//MPG-2, L3
+		80000,96000,112000,128000,144000,160000,0 },		
 		{-1,8000,16000,24000,32000,40000,48000,56000,64000,
-		80000,96000,112000,128000,144000,160000,0 },		//MPG-2, L2
+		80000,96000,112000,128000,144000,160000,0 },		
 		{-1,32000,48000,56000,64000,80000,96000,112000,128000,
-		144000,160000,176000,192000,224000,256000,0 }		//MPG-2, L1
+		144000,160000,176000,192000,224000,256000,0 }		
 	},{
 		{-1,32000,40000,48000,56000,64000,80000,96000,
-		112000,128000,160000,192000,224000,256000,320000, 0 },	//MPG-1, L3
+		112000,128000,160000,192000,224000,256000,320000, 0 },	
 		{-1,32000,48000,56000,64000,80000,96000,112000,
-		128000,160000,192000,224000,256000,320000,384000, 0 },	//MPG-1, L2
+		128000,160000,192000,224000,256000,320000,384000, 0 },	
 		{-1,32000,64000,96000,128000,160000,192000,224000,
-		256000,288000,320000,352000,384000,416000,448000,0 }	//MPG-1, L1
+		256000,288000,320000,352000,384000,416000,448000,0 }	
 	},{
-		{-1, 6000, 8000, 10000, 12000, 16000, 20000, 24000,    //MPG-2.5, L3??
+		{-1, 6000, 8000, 10000, 12000, 16000, 20000, 24000,    
 		28000, 320000, 40000, 48000, 56000, 64000, 80000, 0 },
-		{-1, 6000, 8000, 10000, 12000, 16000, 20000, 24000,    //MPG-2.5, L2
+		{-1, 6000, 8000, 10000, 12000, 16000, 20000, 24000,    
 		28000, 320000, 40000, 48000, 56000, 64000, 80000, 0 },
-		{-1, 8000, 12000, 16000, 20000, 24000, 32000, 40000,    //MPG-2.5, L1
+		{-1, 8000, 12000, 16000, 20000, 24000, 32000, 40000,    
 		48000, 560000, 64000, 80000, 96000, 112000, 128000, 0 }
 	}};
 	
 	int[,] AudioFrequencies = new int[,]{
-		{ 22050,24000,16000,0 },	//MPG2 - 22.05,24,16khz
-		{ 44100,48000,32000,0 },	//MPG1 - 44.1 ,48,32khz
-		{ 11025,12000,8000,0 }		//MPG2.5 - 11.025,12,8khz
+		{ 22050,24000,16000,0 },	
+		{ 44100,48000,32000,0 },	
+		{ 11025,12000,8000,0 }		
 	};
 	
-	double[] AudioTimes = new double[]{ 0.0,103680000.0,103680000.0,34560000.0 };	//L3,L2,L1 * 90
+	double[] AudioTimes = new double[]{ 0.0,103680000.0,103680000.0,34560000.0 };
 	 
 	#endregion
 
@@ -96,6 +96,7 @@ namespace MediaPortal.TV.Recording
         int m_subtitlePid = 0;
         int m_videoPid = 0;
         int m_audioPid = 0;
+		int m_pmtPid = 0;
         string m_channelName = "";
         bool m_pluginsEnabled = false;
 		int m_lastCounter=0;
@@ -111,6 +112,8 @@ namespace MediaPortal.TV.Recording
 		byte[] m_tableBufferD2=new byte[65535];
 		int m_bufferPositionD2=0;
 		int m_currentTableIDD2=0;
+		// pmt
+		int m_currentPMTVersion=0;
 
         #endregion
 
@@ -130,13 +133,15 @@ namespace MediaPortal.TV.Recording
         #endregion
 
         #region Delegates/Events
-		public delegate bool AudioChanged(AudioHeader audioFormat);
-        public event AudioChanged AudioHasChanged; 
+		public delegate bool OnAudioChanged(AudioHeader audioFormat);
+        public event OnAudioChanged OnAudioFormatChanged; 
+		public delegate void OnPMTChanged(byte[] pmtTable);
+		public event OnPMTChanged OnPMTIsChanged;
 	    #endregion
 
         #region public functions
 
-        public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName)
+        public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
         {
             // audio
             if (audio > 0x1FFD)
@@ -158,13 +163,19 @@ namespace MediaPortal.TV.Recording
                 m_subtitlePid = 0;
             else
                 m_subtitlePid = subtitle;
-            // name
+			// pmt pid
+			if (pmtPid > 0x1FFD)
+				m_pmtPid = 0;
+			else
+				m_pmtPid = pmtPid;
+			// name
            m_channelName = "";
            if (channelName != null)
                 if (channelName != "")
                 {
                     m_channelName = channelName;
                 }
+
 
             // clear buffers
             m_epgClass.ClearBuffer();
@@ -193,7 +204,7 @@ namespace MediaPortal.TV.Recording
         {
 
             header = new AudioHeader();
-            int Sblimit = 32;
+            int limit = 32;
 
             if ((data[0] & 0xFF) != 0xFF || (data[1] & 0xF0) != 0xF0)
                 return false;
@@ -224,7 +235,7 @@ namespace MediaPortal.TV.Recording
             if (header.Mode == 0)
                 header.ModeExtension = 0;
 
-            header.Bound = (header.Mode == 1) ? ((header.ModeExtension + 1) << 2) : Sblimit;
+            header.Bound = (header.Mode == 1) ? ((header.ModeExtension + 1) << 2) : limit;
             header.Channel = (header.Mode == 3) ? 1 : 2;
             header.Copyright = ((data[3]>>3) & 0x01);
             header.Original = ((data[3] >>2)& 0x01) ;
@@ -232,8 +243,8 @@ namespace MediaPortal.TV.Recording
 
             if (header.ID == 1 && header.Layer == 2)
             {	
-                // MPEG-1, L2 restrictions
-                if (header.Bitrate / header.Channel < 32000)
+
+				if (header.Bitrate / header.Channel < 32000)
                     return false;
                 if (header.Bitrate / header.Channel > 192000)
                     return false;
@@ -241,37 +252,37 @@ namespace MediaPortal.TV.Recording
                 if (header.Bitrate < 56000)
                 {
                     if (header.SamplingFreq == 32000)
-                        Sblimit = 12;
+                        limit = 12;
                     else
-                        Sblimit = 8;
+                        limit = 8;
                 }
                 else if (header.Bitrate < 96000)
-                    Sblimit = 27;
+                    limit = 27;
                 else
                 {
                     if (header.SamplingFreq == 48000)
-                        Sblimit = 27;
+                        limit = 27;
                     else
-                        Sblimit = 30;
+                        limit = 30;
                 }
-                if (header.Bound > Sblimit)
-                    header.Bound = Sblimit;
+                if (header.Bound > limit)
+                    header.Bound = limit;
             }
             else if (header.Layer == 2)  // MPEG-2
             {
-                Sblimit = 30;
+                limit = 30;
             }
 
             if (header.Layer < 3)
             {
-                if (header.Bound > Sblimit)
-                    header.Bound = Sblimit;
+                if (header.Bound > limit)
+                    header.Bound = limit;
                 header.Size = (header.SizeBase = 144 * header.Bitrate / header.SamplingFreq) + header.PaddingBit;
                 return true;
             }
             else
             {
-                Sblimit = 32;
+                limit = 32;
                 header.Size = (header.SizeBase = (12 * header.Bitrate / header.SamplingFreq) * 4) + (4 * header.PaddingBit);
                 return true;
             }
@@ -367,40 +378,42 @@ namespace MediaPortal.TV.Recording
             int add = (int)pBuffer;
             int end = add + BufferLen;
 
-            for (int ptr = add; ptr < end; ptr += 188)//main loop
-            {
-               m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-               if(m_packetHeader.TransportError==true)
+			for (int ptr = add; ptr < end; ptr += 188)//main loop
+			{
+				if (m_pluginsEnabled == true)
+					PidCallback((IntPtr)ptr);
+				
+				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
+				if(m_packetHeader.TransportError==true)
 					continue;// error, ignore packet
 				// teletext
-                if (m_teleText != null)
-                    m_teleText.SaveData((IntPtr)ptr);
-                // plugins
-                if (m_pluginsEnabled == true)
-                    PidCallback((IntPtr)ptr);
-                // get the header object
-                // audio & video
-                if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
-                {
-                    if (m_packetHeader.PayloadUnitStart == true)// start
-                    {
-                        AudioHeader ah = new AudioHeader();
-                        byte[] packet = new byte[184];
-                        Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
-                        if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
-                        {
-                            if (ah.Equals(m_usedAudioFormat) == false)
-                            {
-								if(AudioHasChanged!=null)
+				if (m_teleText != null)
+					m_teleText.SaveData((IntPtr)ptr);
+				// plugins
+				// get the header object
+				// audio & video
+				#region Audio & Video
+				if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
+				{
+					if (m_packetHeader.PayloadUnitStart == true)// start
+					{
+						AudioHeader ah = new AudioHeader();
+						byte[] packet = new byte[184];
+						Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
+						if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
+						{
+							if (ah.Equals(m_usedAudioFormat) == false)
+							{
+								if(OnAudioFormatChanged!=null)
 								{
-									bool success=AudioHasChanged(ah);
+									bool success=OnAudioFormatChanged(ah);
 									if(success) m_usedAudioFormat = ah;
 								}
                                 
-                            }
-                        }
-                    }
-                }
+							}
+						}
+					}
+				}
 				if (m_packetHeader.Pid == m_videoPid && m_videoPid > 0)
 				{
 					if (m_packetHeader.PayloadUnitStart == true)// start
@@ -409,9 +422,13 @@ namespace MediaPortal.TV.Recording
 						Marshal.Copy((IntPtr)ptr, packet, 0, 188);
 					}
 				}
+				#endregion
+
+				#region mhw grabbing
 				if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
 				{
-				
+					m_packetHeader.Payload=new byte[184];
+					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
 					try
 					{
 
@@ -664,11 +681,38 @@ namespace MediaPortal.TV.Recording
 					{
 						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
 					}
+
 				
 				}
+				#endregion
+
+				#region pmt handling
+				if(m_packetHeader.Pid==m_pmtPid)
+				{
+					m_packetHeader.Payload=new byte[183];
+					Marshal.Copy((IntPtr)(ptr+5),m_packetHeader.Payload,0,183);
+					int sectionLen = ((m_packetHeader.Payload[1]& 0xF)<<8) + m_packetHeader.Payload[2];
+					sectionLen+=3;
+					if (sectionLen>0 && sectionLen < 183)
+					{
+						int version=((m_packetHeader.Payload[5]>>1)&0x1F);;
+						if(m_currentPMTVersion!=version)
+						{
+							if(OnPMTIsChanged!=null)
+							{
+								byte[] pmtData=new byte[sectionLen];
+								Array.Copy(m_packetHeader.Payload,0,pmtData,0,sectionLen);
+								OnPMTIsChanged(pmtData);
+							}
+							m_currentPMTVersion=version;
+						}
+					}
+
+				}
+				#endregion
 
 
-            }
+			}
             return 0;
         }
 

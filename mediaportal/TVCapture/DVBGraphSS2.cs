@@ -262,8 +262,9 @@ namespace MediaPortal.TV.Recording
 			if(win!=null)
                 win.SetObject(m_streamDemuxer.Teletext);
 
-            m_streamDemuxer.AudioHasChanged += new DVBDemuxer.AudioChanged(m_streamDemuxer_AudioHasChanged);
+            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(m_streamDemuxer_AudioHasChanged);
 			m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.TechnisatStarCards;
+			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 			// reg. settings
 			try
 			{
@@ -1392,7 +1393,7 @@ namespace MediaPortal.TV.Recording
 
                 if (m_streamDemuxer != null)
                 {
-                    m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName);
+                    m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid);
                 }
 				if(m_pluginsEnabled==true)
 					ExecTuner();
@@ -2375,7 +2376,7 @@ namespace MediaPortal.TV.Recording
                 {
                     m_selectedAudioPid = audioPid;
                     if(m_streamDemuxer!=null)
-                        m_streamDemuxer.SetChannelData(audioPid, m_currentChannel.VideoPid, m_currentChannel.TeletextPid, m_currentChannel.Audio3, m_currentChannel.ServiceName);
+                        m_streamDemuxer.SetChannelData(audioPid, m_currentChannel.VideoPid, m_currentChannel.TeletextPid, m_currentChannel.Audio3, m_currentChannel.ServiceName,m_currentChannel.PMTPid);
 
                 }
 			}
@@ -2412,5 +2413,9 @@ namespace MediaPortal.TV.Recording
 		}
 		#endregion
 
+		private void m_streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
+		{
+			int a=0;
+		}
 	}// class
 }// namespace

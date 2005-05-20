@@ -35,12 +35,9 @@ namespace MediaPortal.TV.Recording{
 
 		public TSHeader GetHeader(IntPtr streamData)
 		{
-			IntPtr payloadStart=(IntPtr)(((int)streamData)+4);
 			byte[] data=new byte[8];
 			Marshal.Copy(streamData,data,0,8);
 			TSHeader header=new TSHeader();
-			header.Payload=new byte[184];
-			Marshal.Copy(payloadStart,header.Payload,0,184);
 			header.SyncByte=data[0]; // indicates header is not valid
 			if(data[0]!=0x47)
 				return header;// no ts-header, return
