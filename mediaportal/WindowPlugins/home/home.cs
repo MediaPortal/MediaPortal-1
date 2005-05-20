@@ -42,6 +42,8 @@ namespace MediaPortal.GUI.Home
 		#endregion
 
 		#region Private Variables
+		[SkinControlAttribute(200)]			protected GUILabelControl lblDate=null;
+		[SkinControlAttribute(201)]			protected GUILabelControl lblTime=null;
 
 		private int		m_iDateLayout=0; //0=Day DD. Month, 1=Day Month DD
 		private int		m_iButtons=0;
@@ -176,8 +178,8 @@ namespace MediaPortal.GUI.Home
 			plugins=null;
 			m_iCurrentButton=m_iButtons/2;
 			LayoutButtons(0);
-			GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
-			GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
+			if (lblDate!=null) lblDate.Label=GetDate(); 
+			if (lblTime!=null) lblTime.Label=GUIPropertyManager.GetProperty("#time") ;
 			GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 			topBar.UseTopBarSub=false;
 			topBarHome.UseTopBarSub=false;
@@ -1594,8 +1596,8 @@ namespace MediaPortal.GUI.Home
 			if (DateTime.Now.Minute != m_updateTimer.Minute)
 			{
 				m_updateTimer=DateTime.Now;	 
-				GUIControl.SetControlLabel(GetID, 200,GetDate()); 	 
-				GUIControl.SetControlLabel(GetID, 201,GUIPropertyManager.GetProperty("#time") );
+				if (lblDate!=null) lblDate.Label=GetDate(); 
+				if (lblTime!=null) lblTime.Label=GUIPropertyManager.GetProperty("#time") ;
 			}
 		}
 

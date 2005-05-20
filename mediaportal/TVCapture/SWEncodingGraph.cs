@@ -1960,7 +1960,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public NetworkType Network()
 		{
-				return NetworkType.ATSC;
+				return NetworkType.Analog;
 		}
 		public void Tune(object tuningObject, int disecqNo)
 		{

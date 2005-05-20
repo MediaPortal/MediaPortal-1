@@ -12,7 +12,8 @@ namespace MediaPortal.TV.Recording
 	public enum NetworkType 
 	{
 		Unknown,
-		ATSC,	// analog TV tuning
+		Analog,
+		ATSC,	// ATSC
 		DVBC,	// DVB-cable
 		DVBS, // DVB-Sattelite
 		DVBT  // DVB-Terrestial

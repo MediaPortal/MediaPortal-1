@@ -255,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
 				TVDatabase.AddChannel(chan);
 				foreach (TVCaptureDevice dev in cards.captureCards)
 				{
-					if (dev.Network==NetworkType.ATSC)
+					if (dev.Network==NetworkType.Analog)
 					{
 						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
 					}
@@ -274,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
 				radioChannels++;
 				foreach (TVCaptureDevice dev in cards.captureCards)
 				{
-					if (dev.Network==NetworkType.ATSC)
+					if (dev.Network==NetworkType.Analog)
 					{
 						RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
 					}

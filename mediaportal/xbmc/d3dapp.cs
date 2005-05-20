@@ -2231,10 +2231,10 @@ namespace MediaPortal
                 try
                 {
                     OnProcess();
-                  //  StartFrameClock();
+										StartFrameClock();
                     FrameMove();
                     FullRender();
-									/*
+									
                     if (ShouldUseSleepingTime())
                     {
                         if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
@@ -2258,7 +2258,7 @@ namespace MediaPortal
 												GUIGraphicsContext.CurrentFPS = 0f;
 												DoSleep(100);
 											}
-                    }*/
+                    }
                     HandleMessage();
                 }
                 catch (Exception ex)

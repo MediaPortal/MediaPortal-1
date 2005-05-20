@@ -16,7 +16,7 @@ namespace MediaPortal.TV.Recording
 		static public ITuning CreateTuning(TVCaptureDevice card)
 		{
 			if (!card.CreateGraph()) return null;
-			if (card.Network == NetworkType.ATSC) return new AnalogTVTuning();
+			if (card.Network == NetworkType.Analog) return new AnalogTVTuning();
 			if (card.Network == NetworkType.DVBT) return new DVBTTuning();
 			if (card.Network == NetworkType.DVBS) return new DVBSTuning();
 			if (card.Network == NetworkType.DVBC) return new DVBCTuning();

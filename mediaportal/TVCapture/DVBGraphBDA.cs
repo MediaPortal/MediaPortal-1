@@ -1259,7 +1259,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-
+/*
 				if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
 				{
 					for(int pointer=add;pointer<end;pointer+=188)
@@ -1304,7 +1304,7 @@ namespace MediaPortal.TV.Recording
 					
 					}
 				}
-
+*/
 
 
 #if DUMP

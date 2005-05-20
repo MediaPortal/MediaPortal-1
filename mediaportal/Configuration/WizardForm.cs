@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration
 				Log.Write("found {0} tv cards",sect.captureCards.Count);
 				foreach (TVCaptureDevice dev in sect.captureCards)
 				{
-					if (dev.Network==NetworkType.ATSC) 
+					if (dev.Network==NetworkType.Analog) 
 					{
 						Log.Write("Analog TV Card:{0}",dev.CommercialName);
 						analogCard=true;
