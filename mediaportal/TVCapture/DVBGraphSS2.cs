@@ -21,7 +21,7 @@ namespace MediaPortal.TV.Recording
 	/// Zusammenfassung für DVBGraphSS2.
 	/// </summary>
 	/// 
-	public class DVBGraphSS2 : IGraph, ISampleGrabberCB
+	public class DVBGraphSS2 : IGraph
 	
 	{
 
@@ -145,15 +145,13 @@ namespace MediaPortal.TV.Recording
 		public static extern bool EventMsg(int eventType,[In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
-		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern void PidCallback([In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern int MenuItemClick([In] int ptr);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetMenuHandle([In] long menu);
 
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetupDemuxer(IPin videoPin,IPin audioPin,int audio,int video);
+		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1);
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid, int tid, ref int secCount,int tabSec,int timeout);
@@ -234,15 +232,13 @@ namespace MediaPortal.TV.Recording
 		protected bool					m_pluginsEnabled=false;
 		int	[]							m_ecmPids=new int[3]{0,0,0};
 		int[]							m_ecmIDs=new int[3]{0,0,0};
-		//bool							m_vmr9Running=false;
-		DVBTeletext						m_teleText=new DVBTeletext();
-		TSHelperTools					m_tsHelper=new TSHelperTools();
+        DVBDemuxer m_streamDemuxer = new DVBDemuxer();
 		string							m_cardType="";
 		string							m_cardFilename="";
 		DVBChannel						m_currentTuningObject;
-		DVBEPG							m_epgClass=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 		int								m_selectedAudioPid=0;
+
 		#endregion
 		//
 		
@@ -256,16 +252,18 @@ namespace MediaPortal.TV.Recording
 				m_cardType=xmlreader.GetValueAsString("DVBSS2","cardtype","");
 				m_cardFilename=xmlreader.GetValueAsString("dvb_ts_cards","filename","");
 			}
-			
+
 			// teletext settings
 			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
 			if(win!=null)
-				win.SetObject(m_teleText);
+				win.SetObject(m_streamDemuxer.Teletext);
 			
 			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
 			if(win!=null)
-				win.SetObject(m_teleText);
+                win.SetObject(m_streamDemuxer.Teletext);
 
+            m_streamDemuxer.AudioHasChanged += new DVBDemuxer.AudioChanged(m_streamDemuxer_AudioHasChanged);
+			m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.TechnisatStarCards;
 			// reg. settings
 			try
 			{
@@ -276,6 +274,25 @@ namespace MediaPortal.TV.Recording
 
 			}
 			catch(Exception){}
+		}
+
+		bool m_streamDemuxer_AudioHasChanged(DVBDemuxer.AudioHeader audioFormat)
+		{
+			// set demuxer
+			// release memory
+//				AMMediaType mpegAudioOut = new AMMediaType();
+//				mpegAudioOut.majorType = MediaType.Audio;
+//				mpegAudioOut.subType = MediaSubType.MPEG2_Audio;
+//				mpegAudioOut.sampleSize = 0;
+//				mpegAudioOut.temporalCompression = false;
+//				mpegAudioOut.fixedSizeSamples = true;
+//				mpegAudioOut.unkPtr = IntPtr.Zero;
+//				mpegAudioOut.formatType = FormatType.WaveEx;
+//				mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
+//				mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
+//				System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
+				
+			return true;
 		}
 		~DVBGraphSS2()
 		{
@@ -336,94 +353,6 @@ namespace MediaPortal.TV.Recording
 		}
 		#endregion
 		//
-		#region Callback
-		public int BufferCB(double time,IntPtr data,int len)
-		{
-		 
-			int add=(int)data;
-			int end=(add+len);
-
-			if(m_teleText==null)
-			{
-				if(m_pluginsEnabled==true)
-				{
-					for(int pointer=add;pointer<end;pointer+=188)
-						PidCallback((IntPtr)pointer);
-					
-				}
-			}
-			else
-			{
-				if(m_pluginsEnabled==true)
-				{
-					for(int pointer=add;pointer<end;pointer+=188)
-					{
-						PidCallback((IntPtr)pointer);
-						m_teleText.SaveData((IntPtr)pointer);
-					}
-					
-				}
-				else
-					for(int pointer=add;pointer<end;pointer+=188)
-					{
-						m_teleText.SaveData((IntPtr)pointer);
-					}
-
-			}
-			// mhw epg
-			if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
-			for(int pointer=add;pointer<end;pointer+=188)
-			{
-					
-				TSHelperTools.TSHeader header=m_tsHelper.GetHeader((IntPtr)pointer);
-				try
-				{
-					m_epgClass.MHWFreq=m_currentChannel.Frequency;
-					if(header.Pid==0xd2 && header.SectionLen==0x2B && m_epgClass.TitlesParsing==false)
-					{
-						byte[] epgData=new byte[184];
-						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-						m_epgClass.SaveTitleData(epgData);
-					}
-					if(m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x91)
-					{
-						m_epgClass.ChannelsGrabLen=header.SectionLen+3;
-						m_epgClass.ChannelsParsing=true;
-					}
-					if(m_epgClass.ChannelsReady==true && m_epgClass.ChannelsParsing==false && m_epgClass.SummaryParsing==false && header.Pid==0xd3 && header.TableID==0x90)
-					{
-						m_epgClass.SummaryParsing=true;
-					}
-					if(m_epgClass.SummaryParsing==true && header.Pid==0xd3)
-					{
-						byte[] epgData=new byte[184];
-						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-						m_epgClass.SaveSummaryData(epgData);
-					}
-					if(m_epgClass.ChannelsParsing==true && header.Pid==0xd3)
-					{
-						byte[] epgData=new byte[184];
-						Marshal.Copy((IntPtr)(pointer+4),epgData,0,184);
-						m_epgClass.SaveChannelData(epgData);
-					}
-				}
-				catch(Exception ex)
-				{
-					Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
-				}
-				
-			}
-
-			return 0;
-		}
-
-		public int SampleCB(double time,IMediaSample sample)
-		{
-			return 0;
-		
-		}
-		#endregion
-
 		/// <summary>
 		/// Callback from Card. Sets an information struct with video settings
 		/// </summary>
@@ -436,9 +365,6 @@ namespace MediaPortal.TV.Recording
 			Vmr9 =new VMR9Util("mytv");
 
 			m_graphBuilder=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
-			
-//			if(m_pluginsEnabled)
-//				GetGraph(m_graphBuilder,false,IntPtr.Zero);
 			
 			int n=0;
 			m_b2c2Adapter=null;
@@ -462,10 +388,12 @@ namespace MediaPortal.TV.Recording
 				return false;
 				//System.Windows.Forms.MessageBox.Show(ex.Message);
 			}
+
 			if(m_b2c2Adapter==null)
 				return false;
 			try
 			{
+
 				n=m_graphBuilder.AddFilter(m_b2c2Adapter,"B2C2-Source");
 				if(n!=0)
 				{
@@ -563,7 +491,7 @@ namespace MediaPortal.TV.Recording
 					mt.majorType=DShowNET.MediaType.Stream;
 					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
 					//m_sampleInterface.SetOneShot(true);
-					m_sampleInterface.SetCallback(this,1);
+					m_sampleInterface.SetCallback(m_streamDemuxer,1);
 					m_sampleInterface.SetMediaType(ref mt);
 					m_sampleInterface.SetBufferSamples(false);
 				}
@@ -589,16 +517,6 @@ namespace MediaPortal.TV.Recording
 			int hr=0; // the result
 
 			// clear epg
-				if(m_epgClass!=null)
-				{
-					Log.Write("dvbgrabss2: clear mhw buffer");
-					m_epgClass.ClearBuffer();
-				}
-
-			if(m_teleText!=null)
-			{
-				m_teleText.ClearBuffer();
-			}
 				if(Frequency>13000)
 					Frequency/=1000;
 
@@ -891,9 +809,6 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState < State.Created) return;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			
-			if(m_epgClass!=null)
-				m_epgClass.ClearBuffer();
-
 			m_iChannelNr=-1;
 			//m_fileWriter.Close();
 			if(m_pluginsEnabled)
@@ -1475,20 +1390,26 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 
+                if (m_streamDemuxer != null)
+                {
+                    m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName);
+                }
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 
 				if(m_mediaControl!=null && m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
 				{
-				
-					int hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,ch.AudioPid,ch.VideoPid);
+
+                    int hr = SetupDemuxer(m_demuxVideoPin, ch.VideoPid,m_demuxAudioPin, ch.AudioPid);
 					if(hr!=0)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 						return;
 					}
-				}
+                }
 
+				//SetMediaType();
+				//m_gotAudioFormat=false;
 				m_StartTime=DateTime.Now;
 
 
@@ -1522,40 +1443,39 @@ namespace MediaPortal.TV.Recording
 			mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem( mpegVideoOut.formatSize);
 			System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo,0,mpegVideoOut.formatPtr,mpegVideoOut.formatSize) ;
 
-			AMMediaType mpegAudioOut = new AMMediaType();
-			mpegAudioOut.majorType = MediaType.Audio;
-			mpegAudioOut.subType = MediaSubType.MPEG2_Audio;
-			mpegAudioOut.sampleSize = 0;
-			mpegAudioOut.temporalCompression = false;
-			mpegAudioOut.fixedSizeSamples = true;
-			mpegAudioOut.unkPtr = IntPtr.Zero;
-			mpegAudioOut.formatType = FormatType.WaveEx;
-			mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
-			mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
-			System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mpegAudioOut.formatPtr,mpegAudioOut.formatSize) ;
-			
-			//IPin pinVideoOut,pinAudioOut;
-
-
-			hr=m_demuxInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_demuxVideoPin);
+            AMMediaType mpegAudioOut = new AMMediaType();
+            mpegAudioOut.majorType = MediaType.Audio;
+            mpegAudioOut.subType = MediaSubType.MPEG2_Audio;
+            mpegAudioOut.sampleSize = 0;
+            mpegAudioOut.temporalCompression = false;
+            mpegAudioOut.fixedSizeSamples = true;
+            mpegAudioOut.unkPtr = IntPtr.Zero;
+            mpegAudioOut.formatType = FormatType.WaveEx;
+            mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
+            mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
+            System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
+            ////IPin pinVideoOut,pinAudioOut;
+ 
+            hr=m_demuxInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_demuxVideoPin);
 			if (hr!=0)
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
 				return;
 			}
-			hr=m_demuxInterface.CreateOutputPin(ref mpegAudioOut, "audio", out m_demuxAudioPin);
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
-				return;
-			}
+            hr = m_demuxInterface.CreateOutputPin(ref mpegAudioOut, "audio", out m_demuxAudioPin);
+            if (hr != 0)
+            {
+                Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
+                return;
+            }
 
-			hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,audioPid,videoPid);
-			if(hr!=0)
+			hr=SetupDemuxer(m_demuxVideoPin,videoPid,m_demuxAudioPin,audioPid);
+			if(hr!=0)//ignore audio pin
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to config Demuxer");
 				return;
 			}
+			
 
 
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:SetDemux() done:{0}", hr);
@@ -1609,72 +1529,74 @@ namespace MediaPortal.TV.Recording
 			}
 
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() Using plugins");
-				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
-				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
-
-				if (samplePin==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
-					return false;
-				}
-				if (demuxInPin==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
-					return false;
-				}
-
-				hr=m_graphBuilder.Connect(m_data0,samplePin);
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
-					return false;
-				}
-				samplePin=null;
-				samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Output,0);			
-				if(samplePin==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find sampleGrabber output pin");
-					return false;
-				}
-				hr=m_graphBuilder.Connect(samplePin,demuxInPin);
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: connect sample->demux");
-					return false;
-				}
-
-				SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() Using plugins");
+			IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
+			IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
 			
-				if(m_demuxVideoPin==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demux video output pin");
-					return false;
-				}
-				if(m_demuxAudioPin==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demux audio output pin");
-					return false;
-				}
+			hr=m_graphBuilder.Connect(m_data0,samplePin);
+			if(hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
+				return false;
+			}
 
-				hr=m_graphBuilder.Render(m_demuxVideoPin);
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot render demux video output pin");
-					return false;
-				}
-				hr=m_graphBuilder.Render(m_demuxAudioPin);
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot render demux audio output pin");
-					return false;
-				}
-				//
-				//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
-				if(demuxInPin!=null)
-					Marshal.ReleaseComObject(demuxInPin);
-				if(samplePin!=null)
-					Marshal.ReleaseComObject(samplePin);
+
+			if (samplePin==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
+				return false;
+			}
+			if (demuxInPin==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
+				return false;
+			}
+
+			samplePin=null;
+			samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Output,0);			
+			if(samplePin==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find sampleGrabber output pin");
+				return false;
+			}
+			hr=m_graphBuilder.Connect(samplePin,demuxInPin);
+			if(hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: connect sample->demux");
+				return false;
+			}
+
+			SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+			
+			if(m_demuxVideoPin==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot find demux video output pin");
+				return false;
+			}
+			if (m_demuxAudioPin == null)
+			{
+				Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot find demux audio output pin");
+				return false;
+			}
+
+			hr=m_graphBuilder.Render(m_demuxVideoPin);
+			if(hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot render demux video output pin");
+				return false;
+			}
+			hr = m_graphBuilder.Render(m_demuxAudioPin);
+			if (hr != 0)
+			{
+				Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot render demux audio output pin");
+				return false;
+			}
+			//
+			//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
+			if(demuxInPin!=null)
+				Marshal.ReleaseComObject(demuxInPin);
+			if(samplePin!=null)
+				Marshal.ReleaseComObject(samplePin);
 
 			//
 
@@ -1744,7 +1666,6 @@ namespace MediaPortal.TV.Recording
 				}
 
 			}
-
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() startviewing done");
 			return true;
 		}
@@ -2330,7 +2251,7 @@ namespace MediaPortal.TV.Recording
 			m_currentChannel=ch;
 			
 			if(m_demuxVideoPin!=null && m_demuxAudioPin!=null)
-				SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+				SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,m_currentChannel.AudioPid);
 
 		}
 
@@ -2444,14 +2365,19 @@ namespace MediaPortal.TV.Recording
 		{
 			if(audioPid!=m_selectedAudioPid)
 			{
-				int hr=SetupDemuxer(m_demuxVideoPin,m_demuxAudioPin,audioPid,m_currentChannel.VideoPid);
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
-					return;
-				}
-				else
-					m_selectedAudioPid=audioPid;
+				int hr=SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,audioPid);
+                if (hr != 0)
+                {
+                    Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}", hr.ToString());
+                    return;
+                }
+                else
+                {
+                    m_selectedAudioPid = audioPid;
+                    if(m_streamDemuxer!=null)
+                        m_streamDemuxer.SetChannelData(audioPid, m_currentChannel.VideoPid, m_currentChannel.TeletextPid, m_currentChannel.Audio3, m_currentChannel.ServiceName);
+
+                }
 			}
 		}
 
@@ -2485,5 +2411,6 @@ namespace MediaPortal.TV.Recording
 			return alList;
 		}
 		#endregion
+
 	}// class
 }// namespace

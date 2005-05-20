@@ -214,6 +214,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DVBDemuxer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DVBEPG.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
