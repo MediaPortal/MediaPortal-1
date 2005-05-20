@@ -23,95 +23,95 @@ namespace MediaPortal.GUI.Library
     }
     static  GUIPropertyManager()
     {
-			m_properties["#highlightedbutton"]="";
-			m_properties["#itemcount"]="";
-      m_properties["#selecteditem"]="";
-      m_properties["#selecteditem2"]="";
-      m_properties["#selectedthumb"]="";
-      m_properties["#title"]="";			// song title, imdb movie title, recording title
-      m_properties["#artist"]="";			// song artist
-      m_properties["#album"]="";			// song album
-      m_properties["#track"]="";			// song track number
-      m_properties["#year"]="";				// song year , imdb movie year
-      m_properties["#comment"]="";		// song comment
-      m_properties["#director"]="";		// imdb movie director
-      m_properties["#genre"]="";			// imdb movie genres
-      m_properties["#cast"]="";				// imdb movie cast 
-      m_properties["#dvdlabel"]="";		// imdb movie dvd label
-      m_properties["#imdbnumber"]=""; // imdb movie number
-      m_properties["#file"]="";				// imdb movie filename
-      m_properties["#plot"]="";				// imdb movie plot 
-      m_properties["#plotoutline"]="";// imdb movie plot outline
-      m_properties["#rating"]="";		  // imdb movie rating (0-10)
-      m_properties["#tagline"]="";    // imdb movie tag line
-      m_properties["#votes"]="";		  // imdb movie votes
-      m_properties["#credits"]="";    // imdb movie writing credits
-			m_properties["#mpaarating"]=""; // imdb movie MPAA rating
-			m_properties["#runtime"]="";    // imdb movie runtime 
-			m_properties["#iswatched"]="";  // boolean indication movie has been watched
-			m_properties["#thumb"]="";
-      m_properties["#currentplaytime"]="";
-      m_properties["#shortcurrentplaytime"]="";
-      m_properties["#duration"]="";
-      m_properties["#shortduration"]="";
-      m_properties["#playlogo"]="";
-      m_properties["#playspeed"]="";
-      m_properties["#percentage"]="";
-      m_properties["#currentmodule"]="";
-      m_properties["#channel"]="";
-      m_properties["#TV.start"]="";
-      m_properties["#TV.stop"]="";
-      m_properties["#TV.current"]="";
-      m_properties["#TV.Record.channel"]="";
-      m_properties["#TV.Record.start"]="";
-      m_properties["#TV.Record.stop"]="";
-      m_properties["#TV.Record.genre"]="";
-      m_properties["#TV.Record.title"]="";
-      m_properties["#TV.Record.description"]="";
-      m_properties["#TV.Record.thumb"]="";
-      m_properties["#TV.View.channel"]="";    
-      m_properties["#TV.View.thumb"]="";      
-      m_properties["#TV.View.start"]="";      
-      m_properties["#TV.View.stop"]="";       
-      m_properties["#TV.View.genre"]="";      
-      m_properties["#TV.View.title"]="";      
-      m_properties["#TV.View.description"]="";
-      m_properties["#TV.View.Percentage"]="";
-      m_properties["#TV.Guide.Day"]="";          
-      m_properties["#TV.Guide.thumb"]="";        
-      m_properties["#TV.Guide.Title"]="";        
-      m_properties["#TV.Guide.Time"]="";         
-      m_properties["#TV.Guide.Duration"]="";
-      m_properties["#TV.Guide.TimeFromNow"]="";
-      m_properties["#TV.Guide.Description"]="";  
-      m_properties["#TV.Guide.Genre"]="";        
-      m_properties["#TV.Guide.EpisodeName"]="";        
-      m_properties["#TV.Guide.SeriesNumber"]="";        
-      m_properties["#TV.Guide.EpisodeNumber"]="";        
-      m_properties["#TV.Guide.EpisodePart"]="";        
-      m_properties["#TV.Guide.EpisodeDetail"]="";        
-      m_properties["#TV.Guide.Date"]="";        
-      m_properties["#TV.Guide.StarRating"]="";        
-      m_properties["#TV.Guide.Classification"]="";
-      m_properties["#TV.RecordedTV.Title"]="";              
-      m_properties["#TV.RecordedTV.Time"]="";               
-      m_properties["#TV.RecordedTV.Description"]="";        
-      m_properties["#TV.RecordedTV.thumb"]="";              
-      m_properties["#TV.RecordedTV.Genre"]="";  
+			m_properties["#highlightedbutton"]=String.Empty;
+			m_properties["#itemcount"]=String.Empty;
+      m_properties["#selecteditem"]=String.Empty;
+      m_properties["#selecteditem2"]=String.Empty;
+      m_properties["#selectedthumb"]=String.Empty;
+      m_properties["#title"]=String.Empty;			// song title, imdb movie title, recording title
+      m_properties["#artist"]=String.Empty;			// song artist
+      m_properties["#album"]=String.Empty;			// song album
+      m_properties["#track"]=String.Empty;			// song track number
+      m_properties["#year"]=String.Empty;				// song year , imdb movie year
+      m_properties["#comment"]=String.Empty;		// song comment
+      m_properties["#director"]=String.Empty;		// imdb movie director
+      m_properties["#genre"]=String.Empty;			// imdb movie genres
+      m_properties["#cast"]=String.Empty;				// imdb movie cast 
+      m_properties["#dvdlabel"]=String.Empty;		// imdb movie dvd label
+      m_properties["#imdbnumber"]=String.Empty; // imdb movie number
+      m_properties["#file"]=String.Empty;				// imdb movie filename
+      m_properties["#plot"]=String.Empty;				// imdb movie plot 
+      m_properties["#plotoutline"]=String.Empty;// imdb movie plot outline
+      m_properties["#rating"]=String.Empty;		  // imdb movie rating (0-10)
+      m_properties["#tagline"]=String.Empty;    // imdb movie tag line
+      m_properties["#votes"]=String.Empty;		  // imdb movie votes
+      m_properties["#credits"]=String.Empty;    // imdb movie writing credits
+			m_properties["#mpaarating"]=String.Empty; // imdb movie MPAA rating
+			m_properties["#runtime"]=String.Empty;    // imdb movie runtime 
+			m_properties["#iswatched"]=String.Empty;  // boolean indication movie has been watched
+			m_properties["#thumb"]=String.Empty;
+      m_properties["#currentplaytime"]=String.Empty;
+      m_properties["#shortcurrentplaytime"]=String.Empty;
+      m_properties["#duration"]=String.Empty;
+      m_properties["#shortduration"]=String.Empty;
+      m_properties["#playlogo"]=String.Empty;
+      m_properties["#playspeed"]=String.Empty;
+      m_properties["#percentage"]=String.Empty;
+      m_properties["#currentmodule"]=String.Empty;
+      m_properties["#channel"]=String.Empty;
+      m_properties["#TV.start"]=String.Empty;
+      m_properties["#TV.stop"]=String.Empty;
+      m_properties["#TV.current"]=String.Empty;
+      m_properties["#TV.Record.channel"]=String.Empty;
+      m_properties["#TV.Record.start"]=String.Empty;
+      m_properties["#TV.Record.stop"]=String.Empty;
+      m_properties["#TV.Record.genre"]=String.Empty;
+      m_properties["#TV.Record.title"]=String.Empty;
+      m_properties["#TV.Record.description"]=String.Empty;
+      m_properties["#TV.Record.thumb"]=String.Empty;
+      m_properties["#TV.View.channel"]=String.Empty;    
+      m_properties["#TV.View.thumb"]=String.Empty;      
+      m_properties["#TV.View.start"]=String.Empty;      
+      m_properties["#TV.View.stop"]=String.Empty;       
+      m_properties["#TV.View.genre"]=String.Empty;      
+      m_properties["#TV.View.title"]=String.Empty;      
+      m_properties["#TV.View.description"]=String.Empty;
+      m_properties["#TV.View.Percentage"]=String.Empty;
+      m_properties["#TV.Guide.Day"]=String.Empty;          
+      m_properties["#TV.Guide.thumb"]=String.Empty;        
+      m_properties["#TV.Guide.Title"]=String.Empty;        
+      m_properties["#TV.Guide.Time"]=String.Empty;         
+      m_properties["#TV.Guide.Duration"]=String.Empty;
+      m_properties["#TV.Guide.TimeFromNow"]=String.Empty;
+      m_properties["#TV.Guide.Description"]=String.Empty;  
+      m_properties["#TV.Guide.Genre"]=String.Empty;        
+      m_properties["#TV.Guide.EpisodeName"]=String.Empty;        
+      m_properties["#TV.Guide.SeriesNumber"]=String.Empty;        
+      m_properties["#TV.Guide.EpisodeNumber"]=String.Empty;        
+      m_properties["#TV.Guide.EpisodePart"]=String.Empty;        
+      m_properties["#TV.Guide.EpisodeDetail"]=String.Empty;        
+      m_properties["#TV.Guide.Date"]=String.Empty;        
+      m_properties["#TV.Guide.StarRating"]=String.Empty;        
+      m_properties["#TV.Guide.Classification"]=String.Empty;
+      m_properties["#TV.RecordedTV.Title"]=String.Empty;              
+      m_properties["#TV.RecordedTV.Time"]=String.Empty;               
+      m_properties["#TV.RecordedTV.Description"]=String.Empty;        
+      m_properties["#TV.RecordedTV.thumb"]=String.Empty;              
+      m_properties["#TV.RecordedTV.Genre"]=String.Empty;  
       
-			m_properties["#TV.Scheduled.Title"]="";              
-			m_properties["#TV.Scheduled.Time"]="";               
-			m_properties["#TV.Scheduled.Description"]="";        
-			m_properties["#TV.Scheduled.thumb"]="";              
-			m_properties["#TV.Scheduled.Genre"]="";       
+			m_properties["#TV.Scheduled.Title"]=String.Empty;              
+			m_properties["#TV.Scheduled.Time"]=String.Empty;               
+			m_properties["#TV.Scheduled.Description"]=String.Empty;        
+			m_properties["#TV.Scheduled.thumb"]=String.Empty;              
+			m_properties["#TV.Scheduled.Genre"]=String.Empty;       
       
-			m_properties["#TV.Search.Title"]="";              
-			m_properties["#TV.Search.Time"]="";               
-			m_properties["#TV.Search.Description"]="";        
-			m_properties["#TV.Search.thumb"]="";              
-			m_properties["#TV.Search.Genre"]="";        
+			m_properties["#TV.Search.Title"]=String.Empty;              
+			m_properties["#TV.Search.Time"]=String.Empty;               
+			m_properties["#TV.Search.Description"]=String.Empty;        
+			m_properties["#TV.Search.thumb"]=String.Empty;              
+			m_properties["#TV.Search.Genre"]=String.Empty;        
  
-			m_properties["#view"]="";        
+			m_properties["#view"]=String.Empty;        
 
     }
 
@@ -131,18 +131,21 @@ namespace MediaPortal.GUI.Library
 		/// <param name="tagvalue">property value</param>
     static public void SetProperty(string tag, string tagvalue)
     {
-      if (tag==null) return;
-      if (tagvalue==null) return;
-      if (tag==String.Empty) return;
-      if (tag[0]!='#') return;
+			if (tag==null) return;
+			if (tagvalue==null) return;
+			if (tag==String.Empty) return;
+			if (tag[0]!='#') return;
 
 			if (tag.Equals("#currentmodule"))
 			{
-					GUIGraphicsContext.form.Text="Media Portal - "+  tagvalue;
+				GUIGraphicsContext.form.Text="Media Portal - "+  tagvalue;
 			}
-			if (GetProperty(tag) == tagvalue) return;
-			m_properties[tag] = tagvalue;
-			m_bChanged=true;
+			lock (typeof(GUIPropertyManager))
+			{
+				if (GetProperty(tag) == tagvalue) return;
+				m_properties[tag] = tagvalue;
+				m_bChanged=true;
+			}
 			if (OnPropertyChanged!=null)
 			{
 				OnPropertyChanged(tag, tagvalue);
@@ -158,8 +161,11 @@ namespace MediaPortal.GUI.Library
       if (tag==null) return String.Empty;
       if (tag==String.Empty) return String.Empty;
       if (tag[0]!='#') return String.Empty;
-			if (m_properties.ContainsKey(tag))
-				return (string)m_properties[tag];
+			lock (typeof(GUIPropertyManager))
+			{
+					if (m_properties.ContainsKey(tag))
+					return (string)m_properties[tag];
+			}
 			return String.Empty;
     }
 
@@ -219,20 +225,23 @@ namespace MediaPortal.GUI.Library
       if (strTxt==null) return String.Empty;
       if (strTxt==String.Empty) return String.Empty;
       if (strTxt.IndexOf('#')==-1) return strTxt;
-      try
-      {
-        IDictionaryEnumerator myEnumerator = m_properties.GetEnumerator();
-        if (myEnumerator==null) return strTxt;
-        myEnumerator.Reset();
-        while ( myEnumerator.MoveNext() && strTxt.IndexOf('#') >=0)
-        {
-          strTxt=strTxt.Replace((string)myEnumerator.Key,(string)myEnumerator.Value);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write("GUIProp {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-      }
+			lock (typeof(GUIPropertyManager))
+			{
+				try
+				{
+					IDictionaryEnumerator myEnumerator = m_properties.GetEnumerator();
+					if (myEnumerator==null) return strTxt;
+					myEnumerator.Reset();
+					while ( myEnumerator.MoveNext() && strTxt.IndexOf('#') >=0)
+					{
+						strTxt=strTxt.Replace((string)myEnumerator.Key,(string)myEnumerator.Value);
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Write("GUIProp {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+				}
+			}
       return strTxt;
     }
 	}
