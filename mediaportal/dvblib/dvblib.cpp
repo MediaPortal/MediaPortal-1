@@ -273,7 +273,7 @@ HRESULT GetPidMap(IPin* pin, unsigned long* pid, unsigned long* mediasampletype)
 	return 0;
 }
 
-HRESULT SetupDemuxer(IPin *pVideo,IPin *pAudio,int audioPID,int videoPID)
+HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID)
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
@@ -306,6 +306,7 @@ HRESULT SetupDemuxer(IPin *pVideo,IPin *pAudio,int audioPID,int videoPID)
 	if(FAILED(hr))
 		return 2;
 	pMap->Release();
+	
 	// audio 
 	hr=pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 	if(FAILED(hr))
@@ -332,7 +333,9 @@ HRESULT SetupDemuxer(IPin *pVideo,IPin *pAudio,int audioPID,int videoPID)
 	
 	
 	return S_OK;
+
 }
+
 //
 
 IPin *GetPin(IBaseFilter *pFilter, PIN_DIRECTION PinDir)
