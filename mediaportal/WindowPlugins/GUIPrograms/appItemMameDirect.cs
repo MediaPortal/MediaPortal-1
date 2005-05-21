@@ -13,7 +13,9 @@ namespace ProgramsDatabase
 	/// </summary>
 	public class appItemMameDirect: AppItem
 	{
-	  GUIDialogProgress pDlgProgress = null;
+
+    GUIDialogProgress pDlgProgress = null;
+    bool importOriginalsOnly = true; 
 
     public appItemMameDirect(SQLiteClient initSqlDB): base(initSqlDB)
     {
@@ -26,6 +28,13 @@ namespace ProgramsDatabase
       Arguments = "-joy -skip_disclaimer -skip_gameinfo";
       WindowStyle = ProcessWindowStyle.Minimized;
     }
+
+    public bool ImportOriginalsOnly
+    {
+      get { return importOriginalsOnly; }
+      set { importOriginalsOnly = value; }
+    }
+
 
     override public bool RefreshButtonVisible()
     {

@@ -362,7 +362,6 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.chkbOriginalsOnly.Checked = true;
       this.chkbOriginalsOnly.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkbOriginalsOnly.Enabled = false;
       this.chkbOriginalsOnly.Location = new System.Drawing.Point(120, 208);
       this.chkbOriginalsOnly.Name = "chkbOriginalsOnly";
       this.chkbOriginalsOnly.Size = new System.Drawing.Size(224, 24);
@@ -462,6 +461,7 @@ namespace WindowPlugins.GUIPrograms
       this.txtImageDirs.Text = curApp.ImageDirectory;
       this.txtFiles.Text = curApp.FileDirectory;
       this.chkbValidImagesOnly.Checked = curApp.ImportValidImagesOnly;
+      this.chkbOriginalsOnly.Checked = ((appItemMameDirect)curApp).ImportOriginalsOnly;
       if (curApp.Pincode > 0)
       {
         this.txtPinCode.Text = String.Format("{0}", curApp.Pincode);
@@ -486,6 +486,7 @@ namespace WindowPlugins.GUIPrograms
       curApp.FileDirectory = this.txtFiles.Text;
       curApp.ImageDirectory = this.txtImageDirs.Text;
       curApp.ImportValidImagesOnly = this.chkbValidImagesOnly.Checked;
+      ((appItemMameDirect)curApp).ImportOriginalsOnly = chkbOriginalsOnly.Checked;
       curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text,  - 1);
     }
 

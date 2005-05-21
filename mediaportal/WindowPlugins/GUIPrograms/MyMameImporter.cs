@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using Programs.Utils;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
@@ -73,7 +72,14 @@ namespace ProgramsDatabase
 
       Process myProcess = new Process();
       ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(curApp.Filename);
-      myProcessStartInfo.Arguments = "-listfull -noclones";
+      if (((appItemMameDirect)curApp).ImportOriginalsOnly)
+      {
+        myProcessStartInfo.Arguments = "-listfull -noclones";
+      }
+      else
+      {
+        myProcessStartInfo.Arguments = "-listfull";
+      }
       myProcessStartInfo.UseShellExecute = false;
       myProcessStartInfo.RedirectStandardOutput = true;
       myProcessStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
@@ -106,7 +112,14 @@ namespace ProgramsDatabase
       string line;
       Process myProcess = new Process();
       ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(curApp.Filename);
-      myProcessStartInfo.Arguments = "-listgames -noclones";
+      if (((appItemMameDirect)curApp).ImportOriginalsOnly)
+      {
+        myProcessStartInfo.Arguments = "-listgames -noclones";
+      }
+      else
+      {
+        myProcessStartInfo.Arguments = "-listgames";
+      }
       myProcessStartInfo.UseShellExecute = false;
       myProcessStartInfo.RedirectStandardOutput = true;
       myProcessStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
@@ -134,7 +147,6 @@ namespace ProgramsDatabase
     void ReadHistoryDat()
     {
       string line;
-      string prevline = "<nonemptydummystring>";
       historyDat.Clear();
       cacheHistoryRomnames.Clear();
       StreamReader sr = File.OpenText(historyDatFile);
@@ -165,7 +177,6 @@ namespace ProgramsDatabase
               }
             }
           }
-          prevline = line;
         }
       }
     }
@@ -200,22 +211,6 @@ namespace ProgramsDatabase
         mameRoms = System.IO.Directory.GetFiles(curApp.FileDirectory, "*.zip");
       }
       return Checker.IsOk;
-    }
-
-
-    void CreateMameLists()
-    {
-      ProcessStartInfo procStart = new ProcessStartInfo();
-      procStart.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-      procStart.CreateNoWindow = true;
-      procStart.FileName = curApp.Filename;
-      procStart.Arguments = "-listfull -noclones > listfull.txt";
-      procStart.WorkingDirectory = this.mameDir;
-      Utils.StartProcess(procStart, true);
-
-      procStart.Arguments = "-listgames -noclones > listgames.txt";
-      procStart.WorkingDirectory = this.mameDir;
-      Utils.StartProcess(procStart, true);
     }
 
     void SendText(string msg)
