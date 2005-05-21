@@ -662,7 +662,8 @@ namespace MediaPortal.TV.Recording
 					win.SetObject(m_streamDemuxer.Teletext);
 
 
-				m_streamDemuxer.AudioHasChanged +=new MediaPortal.TV.Recording.DVBDemuxer.AudioChanged(m_streamDemuxer_AudioHasChanged);
+				m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
+				m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 				m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.BDACards;
 
 				if(m_sampleInterface!=null)
@@ -2759,7 +2760,7 @@ namespace MediaPortal.TV.Recording
 
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName);
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
 				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid);
@@ -2955,7 +2956,7 @@ namespace MediaPortal.TV.Recording
 				}
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName);
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
 				}
 
 			}
@@ -3546,7 +3547,7 @@ namespace MediaPortal.TV.Recording
 
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName);
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
 				}
 
 				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid);
@@ -3673,6 +3674,47 @@ namespace MediaPortal.TV.Recording
 			Marshal.FreeHGlobal(data);
 		}
 		#endregion
+
+		private bool m_streamDemuxer_OnAudioFormatChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
+		{
+			return false;
+		}
+
+		private void m_streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
+		{
+			if (pmtTable==null) return;
+			if (pmtTable.Length==0) return;
+			//copy pmt pid...
+			int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
+			section_length+=3;
+			if (section_length>0 && section_length < 183)
+			{
+				int version_number = ((pmtTable[5]>>1)&0x1F);
+				if (version_number != pmtVersionNumber)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0} version:{1}->{2}", currentTuningObject.ServiceName,pmtVersionNumber,version_number);
+					try
+					{
+						string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+							Utils.FilterFileName(currentTuningObject.ServiceName),
+							currentTuningObject.NetworkID,
+							currentTuningObject.TransportStreamID,
+							currentTuningObject.ProgramNumber,
+							(int)Network());
+						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+						stream.Write(pmtTable,0,section_length);
+						stream.Close();
+						pmtVersionNumber=version_number;
+						refreshPmtTable=true;
+					}
+					catch(Exception ex)
+					{
+						Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt file:{0} {1} {2}",
+							ex.Message,ex.Source,ex.StackTrace);
+					}
+				}
+			}
+		}
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file
