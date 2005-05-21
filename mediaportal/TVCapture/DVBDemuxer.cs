@@ -404,7 +404,11 @@ namespace MediaPortal.TV.Recording
 						Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
 						if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
 						{
-							if (ah.Equals(m_usedAudioFormat) == false)
+							if (ah.Bitrate!=m_usedAudioFormat.Bitrate || 
+								ah.Channel!=m_usedAudioFormat.Channel ||
+								ah.SamplingFreq!=m_usedAudioFormat.SamplingFreq ||
+								ah.Layer!=m_usedAudioFormat.Layer ||
+								ah.Mode!=m_usedAudioFormat.Mode)
 							{
 								if(OnAudioFormatChanged!=null)
 								{

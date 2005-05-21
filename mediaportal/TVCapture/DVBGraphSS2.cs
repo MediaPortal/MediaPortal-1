@@ -262,7 +262,7 @@ namespace MediaPortal.TV.Recording
 			if(win!=null)
                 win.SetObject(m_streamDemuxer.Teletext);
 
-            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(m_streamDemuxer_AudioHasChanged);
+            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.TechnisatStarCards;
 			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 			// reg. settings
@@ -277,10 +277,27 @@ namespace MediaPortal.TV.Recording
 			catch(Exception){}
 		}
 
-		bool m_streamDemuxer_AudioHasChanged(DVBDemuxer.AudioHeader audioFormat)
+		bool OnAudioFormatChanged(DVBDemuxer.AudioHeader audioFormat)
 		{
 			// set demuxer
 			// release memory
+			Log.Write("DVBGraphSS2:Audio format changed");
+			Log.Write("DVBGraphSS2:  Bitrate:{0}",audioFormat.Bitrate);
+			Log.Write("DVBGraphSS2:  Layer:{0}",audioFormat.Layer);
+			Log.Write("DVBGraphSS2:  SamplingFreq:{0}",audioFormat.SamplingFreq);
+			Log.Write("DVBGraphSS2:  Channel:{0}",audioFormat.Channel);
+			Log.Write("DVBGraphSS2:  Bound:{0}",audioFormat.Bound);
+			Log.Write("DVBGraphSS2:  Copyright:{0}",audioFormat.Copyright);
+			Log.Write("DVBGraphSS2:  Emphasis:{0}",audioFormat.Emphasis);
+			Log.Write("DVBGraphSS2:  ID:{0}",audioFormat.ID);
+			Log.Write("DVBGraphSS2:  Mode:{0}",audioFormat.Mode);
+			Log.Write("DVBGraphSS2:  ModeExtension:{0}",audioFormat.ModeExtension);
+			Log.Write("DVBGraphSS2:  Original:{0}",audioFormat.Original);
+			Log.Write("DVBGraphSS2:  PaddingBit:{0}",audioFormat.PaddingBit);
+			Log.Write("DVBGraphSS2:  PrivateBit:{0}",audioFormat.PrivateBit);
+			Log.Write("DVBGraphSS2:  ProtectionBit:{0}",audioFormat.ProtectionBit);
+			Log.Write("DVBGraphSS2:  TimeLength:{0}",audioFormat.TimeLength);
+
 //				AMMediaType mpegAudioOut = new AMMediaType();
 //				mpegAudioOut.majorType = MediaType.Audio;
 //				mpegAudioOut.subType = MediaSubType.MPEG2_Audio;
