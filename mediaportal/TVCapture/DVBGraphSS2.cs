@@ -83,7 +83,7 @@ namespace MediaPortal.TV.Recording
 		  0x00, 0x00,             // extra size       = 0x0000 = 0 bytes
 		};
 		#endregion
-		//
+
 		#region Enums
 		protected enum State
 		{ 
@@ -105,6 +105,7 @@ namespace MediaPortal.TV.Recording
 		
 		}
 		#endregion
+
 		#region Structs
 		public struct TunerData
 		{
@@ -139,7 +140,7 @@ namespace MediaPortal.TV.Recording
 
 		} 
 		#endregion
-		//
+
 		#region Imports 
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern bool EventMsg(int eventType,[In] IntPtr data);
@@ -169,6 +170,7 @@ namespace MediaPortal.TV.Recording
 		[ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
 		class StreamBufferConfig {}
 		#endregion
+
 		#region Definitions
 		//
 		public  static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid( 0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
@@ -240,9 +242,8 @@ namespace MediaPortal.TV.Recording
 		int								m_selectedAudioPid=0;
 
 		#endregion
-		//
+
 		
-		//
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
 
@@ -264,7 +265,7 @@ namespace MediaPortal.TV.Recording
 
             m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.TechnisatStarCards;
-			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+			//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 			// reg. settings
 			try
 			{
@@ -2268,6 +2269,11 @@ namespace MediaPortal.TV.Recording
 
 			m_currentChannel=ch;
 			
+			if (m_streamDemuxer != null)
+			{
+				m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid);
+			}
+
 			if(m_demuxVideoPin!=null && m_demuxAudioPin!=null)
 				SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,m_currentChannel.AudioPid);
 
@@ -2357,6 +2363,7 @@ namespace MediaPortal.TV.Recording
 				m_graphState = State.Radio;
 				//
 				m_mediaControl.Run();
+
 
 			}
 

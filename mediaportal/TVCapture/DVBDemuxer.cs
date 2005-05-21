@@ -705,7 +705,7 @@ namespace MediaPortal.TV.Recording
 				#endregion
 
 				#region pmt handling
-				if(m_packetHeader.Pid==m_pmtPid)
+				if(m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
 				{
 					bool pmtComplete=false;
 					m_packetHeader.Payload=new byte[184];
