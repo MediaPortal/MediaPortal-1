@@ -114,6 +114,14 @@ namespace MediaPortal.TV.Recording
 		int m_currentTableIDD2=0;
 		// pmt
 		int m_currentPMTVersion=0;
+		// card
+		int m_currentDVBCard=0;
+		// for pmt pid
+		int m_grabbingLenPMT=0;
+		bool m_grabbingPMT=false;
+		byte[] m_tableBufferPMT=new byte[65535];
+		int m_bufferPositionPMT=0;
+
 
         #endregion
 
@@ -196,7 +204,11 @@ namespace MediaPortal.TV.Recording
         }
         public int CardType
         {
-            set {m_epgClass=new DVBEPG(value);}
+            set 
+			{
+				m_currentDVBCard=value;
+				m_epgClass=new DVBEPG(value);
+			}
         }
 
         #endregion
@@ -695,23 +707,76 @@ namespace MediaPortal.TV.Recording
 				#region pmt handling
 				if(m_packetHeader.Pid==m_pmtPid)
 				{
-					m_packetHeader.Payload=new byte[183];
-					Marshal.Copy((IntPtr)(ptr+5),m_packetHeader.Payload,0,183);
-					int sectionLen = ((m_packetHeader.Payload[1]& 0xF)<<8) + m_packetHeader.Payload[2];
+					bool pmtComplete=false;
+					m_packetHeader.Payload=new byte[184];
+					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
+					int sectionLen = ((m_packetHeader.Payload[2]& 0xF)<<8) + m_packetHeader.Payload[3];
 					sectionLen+=3;
-					if (sectionLen>0 && sectionLen < 183)
+					int ptr1=-1;
+					int offset=0;
+					
+					if(m_packetHeader.PayloadUnitStart==true)
+						m_grabbingLenPMT=sectionLen;
+
+					if(m_grabbingLenPMT>183)
 					{
-						int version=((m_packetHeader.Payload[5]>>1)&0x1F);;
-						if(m_currentPMTVersion!=version)
+						
+						pmtComplete=false;
+						if(m_packetHeader.AdaptionFieldControl==3)
+							offset++;
+						if(m_packetHeader.AdaptionFieldControl==1 && m_packetHeader.PayloadUnitStart==true)
+							ptr1=m_packetHeader.AdaptionField+1;
+	
+						if(ptr1==1 && m_grabbingPMT==false)
 						{
-							Log.Write("DVB Demuxer PMT version={0}",version);
-							if(OnPMTIsChanged!=null)
+							// copy from packet
+							Array.Copy(m_packetHeader.Payload,1,m_tableBufferPMT,0,183);
+							m_bufferPositionPMT=183;
+							m_grabbingPMT=true;
+						}
+						if(ptr1>1)
+						{
+							if(m_grabbingPMT==true && m_bufferPositionPMT!=0)
 							{
-								byte[] pmtData=new byte[sectionLen];
-								Array.Copy(m_packetHeader.Payload,0,pmtData,0,sectionLen);
-								OnPMTIsChanged(pmtData);
+								Array.Copy(m_packetHeader.Payload,0,m_tableBufferPMT,m_bufferPositionPMT,183-ptr1);
+								m_grabbingPMT=false;
+								m_bufferPositionPMT=0;
+								pmtComplete=true;
 							}
-							m_currentPMTVersion=version;
+						}
+						if(ptr1<1 && m_grabbingPMT==true)
+						{
+							Array.Copy(m_packetHeader.Payload,0,m_tableBufferPMT,m_bufferPositionPMT,184);
+							m_bufferPositionPMT+=184;
+							if(m_bufferPositionPMT>=m_grabbingLenPMT)
+								pmtComplete=true;
+
+						}
+					}
+					else if (sectionLen < 183)// in one packet
+					{
+						pmtComplete=true;
+						Array.Copy(m_packetHeader.Payload,0,m_tableBufferPMT,0,sectionLen);
+					}
+					if(pmtComplete && m_grabbingLenPMT>0)
+					{
+						lock(m_tableBufferPMT.SyncRoot)
+						{
+							int version=((m_tableBufferPMT[5]>>1)&0x1F);
+							if(m_currentPMTVersion!=version)
+							{
+								Log.Write("DVB Demuxer PMT: new version={0}, old version={1}",version,m_currentPMTVersion);
+								if(OnPMTIsChanged!=null)
+								{
+									byte[] pmtData=new byte[m_grabbingLenPMT];
+									Array.Copy(m_tableBufferPMT,0,pmtData,0,m_grabbingLenPMT);
+									OnPMTIsChanged(pmtData);
+									m_currentPMTVersion=version;
+								}
+							}
+							m_tableBufferPMT=new byte[65535];
+							m_bufferPositionPMT=0;
+							m_grabbingPMT=false;
 						}
 					}
 
