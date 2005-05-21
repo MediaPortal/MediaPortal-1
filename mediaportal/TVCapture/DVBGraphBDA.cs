@@ -3676,7 +3676,23 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
 		private bool m_streamDemuxer_OnAudioFormatChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
-		{
+		{/*
+			Log.Write("DVBGraphBDA:Audio format changed");
+			Log.Write("DVBGraphBDA:  Bitrate:{0}",audioFormat.Bitrate);
+			Log.Write("DVBGraphBDA:  Layer:{0}",audioFormat.Layer);
+			Log.Write("DVBGraphBDA:  SamplingFreq:{0}",audioFormat.SamplingFreq);
+			Log.Write("DVBGraphBDA:  Channel:{0}",audioFormat.Channel);
+			Log.Write("DVBGraphBDA:  Bound:{0}",audioFormat.Bound);
+			Log.Write("DVBGraphBDA:  Copyright:{0}",audioFormat.Copyright);
+			Log.Write("DVBGraphBDA:  Emphasis:{0}",audioFormat.Emphasis);
+			Log.Write("DVBGraphBDA:  ID:{0}",audioFormat.ID);
+			Log.Write("DVBGraphBDA:  Mode:{0}",audioFormat.Mode);
+			Log.Write("DVBGraphBDA:  ModeExtension:{0}",audioFormat.ModeExtension);
+			Log.Write("DVBGraphBDA:  Original:{0}",audioFormat.Original);
+			Log.Write("DVBGraphBDA:  PaddingBit:{0}",audioFormat.PaddingBit);
+			Log.Write("DVBGraphBDA:  PrivateBit:{0}",audioFormat.PrivateBit);
+			Log.Write("DVBGraphBDA:  ProtectionBit:{0}",audioFormat.ProtectionBit);
+			Log.Write("DVBGraphBDA:  TimeLength:{0}",audioFormat.TimeLength);*/
 			return false;
 		}
 
