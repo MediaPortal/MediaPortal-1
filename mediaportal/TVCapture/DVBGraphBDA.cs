@@ -3701,6 +3701,8 @@ namespace MediaPortal.TV.Recording
 							currentTuningObject.TransportStreamID,
 							currentTuningObject.ProgramNumber,
 							(int)Network());
+						
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
 						System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 						stream.Write(pmtTable,0,section_length);
 						stream.Close();

@@ -181,6 +181,8 @@ namespace MediaPortal.TV.Recording
             m_epgClass.ClearBuffer();
             m_teleText.ClearBuffer();
 
+					Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
+										channelName,audio, video, teletext, pmtPid,subtitle);
         }
 
 
@@ -698,6 +700,7 @@ namespace MediaPortal.TV.Recording
 						int version=((m_packetHeader.Payload[5]>>1)&0x1F);;
 						if(m_currentPMTVersion!=version)
 						{
+							Log.Write("DVB Demuxer PMT version={0}",version);
 							if(OnPMTIsChanged!=null)
 							{
 								byte[] pmtData=new byte[sectionLen];
