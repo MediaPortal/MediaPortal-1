@@ -1318,6 +1318,7 @@ namespace home
 					SpecialFunctions.Enabled=true;
 				}
 			}
+            treeView.Nodes.Clear();
 			if (System.IO.File.Exists(Application.StartupPath + @"\menu2.bin"))
 			{
 				loadTree(treeView, Application.StartupPath + @"\menu2.bin");
