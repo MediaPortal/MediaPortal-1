@@ -22,6 +22,8 @@ namespace MediaPortal.Dialogs
 
     int selectedItemIndex      = -1;
     int selectedId = -1;
+		int timeoutInSeconds=-1;
+		bool timedOut=false;
 
 		string selectedItemLabel=String.Empty;
     ArrayList listItems   = new ArrayList();
@@ -138,11 +140,21 @@ namespace MediaPortal.Dialogs
 
 			GUIWindowManager.IsSwitchingToNewWindow=false;
       m_bRunning=true;
+			DateTime startTime=DateTime.Now;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
 				if (!GUIGraphicsContext.Vmr9Active)
 					System.Threading.Thread.Sleep(100);
+				TimeSpan ts = DateTime.Now - startTime;
+				if (timeoutInSeconds> 0 && ts.TotalSeconds > timeoutInSeconds) 
+				{
+					Close();
+					selectedItemIndex=-1;
+					selectedId=-1;
+					timedOut=true;
+					return;
+				}
       }
     }
     #endregion
@@ -214,6 +226,8 @@ namespace MediaPortal.Dialogs
 			AllocResources();
 			InitControls();
 
+			timedOut=true;
+			timeoutInSeconds=-1;
       selectedItemIndex=-1;
       listItems.Clear();
     }
@@ -274,6 +288,15 @@ namespace MediaPortal.Dialogs
 			RenderDlg(timePassed);
     }
 
+		public int TimeOut
+		{
+			get { return timeoutInSeconds;}
+			set { timeoutInSeconds=value;}
+		}
+		public bool TimedOut
+		{
+			get { return timedOut;}
+		}
 
 	}
 }
