@@ -486,7 +486,9 @@ namespace MediaPortal.TV.Recording
 			{
 				GUIDialogMenuBottomRight pDlgOK	= GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT) as GUIDialogMenuBottomRight;
 				pDlgOK.Reset();
-				pDlgOK.SetHeading(879);//Choose recording to stop
+				pDlgOK.SetHeading(879);//Recording Conflict
+				pDlgOK.SetHeadingRow2( GUILocalizeStrings.Get(880) + " " + rec.Channel);
+				pDlgOK.SetHeadingRow3(881);
 				int	cardWithLowestPriority=-1;
 				int	lowestPriority=TVRecording.HighestPriority;
 				int count=0;
@@ -495,16 +497,8 @@ namespace MediaPortal.TV.Recording
 					TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
 					if (dev.IsRecording)
 					{
-						count++;
 						GUIListItem item = new GUIListItem();
-						if (dev.CurrentProgramRecording!=null)
-						{
-							item.Label= dev.CurrentProgramRecording.Title ;
-						}
-						else
-						{
-							item.Label= GUILocalizeStrings.Get(413) ;
-						}
+						item.Label= dev.CurrentTVRecording.Title;
 						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,dev.CurrentTVRecording.Channel);                   
 						if (System.IO.File.Exists(strLogo))
 						{										
@@ -517,7 +511,7 @@ namespace MediaPortal.TV.Recording
 							cardWithLowestPriority=i;
 							lowestPriority=prio;
 						}
-						
+						count++;
 					}
 				}
 				

@@ -11,9 +11,9 @@
 			<type>image</type> 
 			<id>0</id> 
 			<posX>480</posX> 
-			<posY>420</posY> 
+			<posY>407</posY> 
 			<width>200</width> 
-			<height>126</height> 
+			<height>139</height> 
 			<texture>dialog_background.png</texture> 
 		</control>
 			<control>
@@ -21,7 +21,27 @@
 				<type>label</type> 
 				<id>4</id> 
 				<posX>495</posX> 
+				<posY>422</posY> 
+				<label>181</label> 
+				<font>font10</font> 
+				<textcolor>FFFFFFFF</textcolor> 
+			</control>	
+			<control>
+				<description>Label text </description> 
+				<type>label</type> 
+				<id>5</id> 
+				<posX>495</posX> 
 				<posY>435</posY> 
+				<label>181</label> 
+				<font>font10</font> 
+				<textcolor>FFFFFFFF</textcolor> 
+			</control>	
+			<control>
+				<description>Label text </description> 
+				<type>label</type> 
+				<id>6</id> 
+				<posX>495</posX> 
+				<posY>448</posY> 
 				<label>181</label> 
 				<font>font10</font> 
 				<textcolor>FFFFFFFF</textcolor> 
@@ -31,7 +51,7 @@
 				<type>button</type>
 				<id>2</id>
 				<posX>635</posX>
-				<posY>435</posY>
+				<posY>422</posY>
 				<width>32</width>
 				<height>32</height>
 				<textureFocus>button_close_focus.png</textureFocus>
@@ -60,8 +80,6 @@
 				<spinHeight>16</spinHeight>
 				<textureHeight>22</textureHeight>
 				<font>font12</font>
-				<textYOff>0</textYOff>
-				<textXOff>-20</textXOff>
 			</control>
 		</control>
     </controls>

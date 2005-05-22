@@ -2455,7 +2455,15 @@
 </string>
 <string>
 	<id>879</id>
-	<value>Choose recording to stop</value>
+	<value>Recording conflict</value>
+</string>
+<string>
+	<id>880</id>
+	<value>Time to record:</value>
+</string>
+<string>
+	<id>881</id>
+	<value>Choose recording to stop:</value>
 </string>
 
 <!-- End My Alarm Strings -->

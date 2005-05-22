@@ -2300,17 +2300,24 @@ namespace MediaPortal.TV.Recording
 					
 				System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
 				long len=stream.Length;
-				byte[] pmt = new byte[len];
-				stream.Read(pmt,0,(int)len);
-				stream.Close();
-
-				int pmtVersion= ((pmt[5]>>1)&0x1F);
-
-				//yes, then send the PMT table to the device
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to fireDTV device",pmtVersion);	
-				if (props.SendPMTToFireDTV(pmt, (int)len))
+				if (len>6)
 				{
-					return true;
+					byte[] pmt = new byte[len];
+					stream.Read(pmt,0,(int)len);
+					stream.Close();
+
+					int pmtVersion= ((pmt[5]>>1)&0x1F);
+
+					//yes, then send the PMT table to the device
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to fireDTV device",pmtVersion);	
+					if (props.SendPMTToFireDTV(pmt, (int)len))
+					{
+						return true;
+					}
+					else
+					{
+						pmtVersion=-1;
+					}
 				}
 				else
 				{
@@ -2319,7 +2326,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt file:{0} {1} {2}",
+				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt {0} {1} {2}",
 							ex.Message,ex.Source,ex.StackTrace);
 			}
 			return false;

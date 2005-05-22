@@ -19,6 +19,8 @@ namespace MediaPortal.Dialogs
 		[SkinControlAttribute(2)]			protected GUIButtonControl btnClose=null;
 		[SkinControlAttribute(3)]			protected GUIListControl listView=null;
 		[SkinControlAttribute(4)]			protected GUILabelControl lblHeading=null;
+		[SkinControlAttribute(5)]			protected GUILabelControl lblHeading2=null;
+		[SkinControlAttribute(6)]			protected GUILabelControl lblHeading3=null;
 
     int selectedItemIndex      = -1;
     int selectedId = -1;
@@ -284,12 +286,42 @@ namespace MediaPortal.Dialogs
 			InitControls();
 
 			lblHeading.Label=strLine;
-    }
+		}
+		public void  SetHeadingRow2( string strLine)
+		{
+			LoadSkin();
+			AllocResources();
+			InitControls();
 
+			if (lblHeading2!=null)
+				lblHeading2.Label=strLine;
+		}
+		public void  SetHeadingRow3( string strLine)
+		{
+			LoadSkin();
+			AllocResources();
+			InitControls();
+
+			if (lblHeading3!=null)
+				lblHeading3.Label=strLine;
+		}
+
+		public void SetHeadingRow2(int iString)
+		{
+			SetHeadingRow2 (GUILocalizeStrings.Get(iString) );
+			selectedItemIndex=-1;
+			listItems.Clear();
+		}
+
+		public void SetHeadingRow3(int iString)
+		{
+			SetHeadingRow3 (GUILocalizeStrings.Get(iString) );
+			selectedItemIndex=-1;
+			listItems.Clear();
+		}
 
     public void SetHeading(int iString)
     {
-
 			SetHeading (GUILocalizeStrings.Get(iString) );
 			selectedItemIndex=-1;
 			listItems.Clear();
