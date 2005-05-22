@@ -484,35 +484,43 @@ namespace MediaPortal.TV.Recording
 
 			if (cardNo<0) 
 			{
-				GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+				GUIDialogMenuBottomRight pDlgOK	= GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT) as GUIDialogMenuBottomRight;
 				pDlgOK.Reset();
 				pDlgOK.SetHeading(879);//Choose recording to stop
-
 				int	cardWithLowestPriority=-1;
 				int	lowestPriority=TVRecording.HighestPriority;
 				int count=0;
-				for (int i=0; i < m_tvcards.Count;++i)
+				for (int i=0; i < m_tvcards.Count;i++)
 				{
 					TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
 					if (dev.IsRecording)
 					{
 						count++;
+						GUIListItem item = new GUIListItem();
 						if (dev.CurrentProgramRecording!=null)
 						{
-							pDlgOK.Add( String.Format("{0} {1}", dev.CurrentProgramRecording.Channel,dev.CurrentProgramRecording.Title) );
+							item.Label= dev.CurrentProgramRecording.Title ;
 						}
 						else
 						{
-							pDlgOK.Add( String.Format("{0} {1}", dev.CurrentProgramRecording.Channel,GUILocalizeStrings.Get(413) ) );
+							item.Label= GUILocalizeStrings.Get(413) ;
 						}
+						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,dev.CurrentTVRecording.Channel);                   
+						if (System.IO.File.Exists(strLogo))
+						{										
+							item.IconImage = strLogo;							
+						}
+						pDlgOK.Add(item);
 						int prio=dev.CurrentTVRecording.Priority;
 						if (prio < lowestPriority)
 						{
 							cardWithLowestPriority=i;
 							lowestPriority=prio;
 						}
+						
 					}
 				}
+				
 				if (count>0)
 				{
 					pDlgOK.TimeOut=60;
@@ -521,7 +529,7 @@ namespace MediaPortal.TV.Recording
 					{
 						cardNo=cardWithLowestPriority;
 						TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[cardNo];
-						dev.StopRecording();
+						StopRecording(dev.CurrentTVRecording);
 					}
 					else
 					{
@@ -536,7 +544,7 @@ namespace MediaPortal.TV.Recording
 									if (count==selectedIndex)
 									{
 										cardNo=i;
-										dev.StopRecording();
+										StopRecording(dev.CurrentTVRecording);
 										break;
 									}
 									count++;
@@ -551,7 +559,6 @@ namespace MediaPortal.TV.Recording
 					return false;//no card free
 				}
 			}
-
 			TVCaptureDevice card =(TVCaptureDevice)m_tvcards[cardNo];
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  using card:{0} prio:{1}", card.ID,card.Priority);
 			if (card.IsRecording)

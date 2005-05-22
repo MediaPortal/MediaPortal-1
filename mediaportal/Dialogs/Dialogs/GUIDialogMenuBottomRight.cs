@@ -232,6 +232,18 @@ namespace MediaPortal.Dialogs
       listItems.Clear();
     }
 
+		public void Add(GUIListItem pItem)
+		{
+			int iItemIndex = listItems.Count+1;			
+			if (iItemIndex < 10) 
+				pItem.Label = iItemIndex.ToString()+" "+pItem.Label;
+			else
+				pItem.Label = pItem.Label;
+
+			pItem.ItemId = iItemIndex;
+			listItems.Add(pItem);
+		}
+
     public void Add(string strLabel)
 		{
 			int iItemIndex = listItems.Count+1;
