@@ -137,7 +137,7 @@ namespace MediaPortal.TV.Recording
 		DVBChannel									currentTuningObject=null;
 		TSHelperTools								transportHelper=new TSHelperTools();
 		bool												refreshPmtTable=false;
-		int                         pmtVersionNumber=-1;
+		
 		protected bool							m_pluginsEnabled=false;
 
 		DateTime										timeResendPid=DateTime.Now;
@@ -1173,57 +1173,6 @@ namespace MediaPortal.TV.Recording
 		
 		#endregion
 		#endregion
-/*
-		#region helper functions
-		#region SampleGrabberCallback
-		public int BufferCB(double time,IntPtr data,int len)
-		{
-				if (currentTuningObject.PMTPid>=0 && !refreshPmtTable )
-				{
-					for(int pointer=add;pointer<end;pointer+=188)
-					{
-						TSHelperTools.TSHeader header=transportHelper.GetHeader((IntPtr)pointer);
-						if (header.Pid==currentTuningObject.PMTPid )
-						{
-							//copy pmt pid...
-							byte[] pmtTable=new byte[188];
-							Marshal.Copy((IntPtr)((pointer+5)),pmtTable,0,183);
-							int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
-							section_length+=3;
-							if (section_length>0 && section_length < 183)
-							{
-								int version_number = ((pmtTable[5]>>1)&0x1F);
-								if (version_number != pmtVersionNumber)
-								{
-									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0} version:{1}->{2}", currentTuningObject.ServiceName,pmtVersionNumber,version_number);
-									try
-									{
-										string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-											Utils.FilterFileName(currentTuningObject.ServiceName),
-											currentTuningObject.NetworkID,
-											currentTuningObject.TransportStreamID,
-											currentTuningObject.ProgramNumber,
-											(int)Network());
-										System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-										stream.Write(pmtTable,0,section_length);
-										stream.Close();
-										pmtVersionNumber=version_number;
-										refreshPmtTable=true;
-									}
-									catch(Exception ex)
-									{
-										Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt file:{0} {1} {2}",
-											ex.Message,ex.Source,ex.StackTrace);
-									}
-								}
-							}
-							break;
-						}
-					}
-				}
-			return 0;
-		}
-*/
 
 		private bool m_streamDemuxer_AudioHasChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
 		{
@@ -2478,7 +2427,6 @@ namespace MediaPortal.TV.Recording
 				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid);
 				if (!SendPMT())
 				{
-					pmtVersionNumber=-1;
 					return;
 				}
 			}
@@ -2766,8 +2714,6 @@ namespace MediaPortal.TV.Recording
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
-
-				pmtVersionNumber= -1;
 				refreshPmtTable	= false;
 				SendPMT();
 
@@ -3557,7 +3503,6 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 				refreshPmtTable=false;
-				pmtVersionNumber=-1;
 			}
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -3699,34 +3644,25 @@ namespace MediaPortal.TV.Recording
 		{
 			if (pmtTable==null) return;
 			if (pmtTable.Length<6) return;
-			//copy pmt pid...
-			int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
-			section_length+=3;
-			int version_number = ((pmtTable[5]>>1)&0x1F);
-			if (version_number != pmtVersionNumber)
+			try
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: update PMT table:{0} version:{1}->{2}", currentTuningObject.ServiceName,pmtVersionNumber,version_number);
-				try
-				{
-					string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-						Utils.FilterFileName(currentTuningObject.ServiceName),
-						currentTuningObject.NetworkID,
-						currentTuningObject.TransportStreamID,
-						currentTuningObject.ProgramNumber,
-						(int)Network());
-					
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
-					System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-					stream.Write(pmtTable,0,section_length);
-					stream.Close();
-					pmtVersionNumber=version_number;
-					refreshPmtTable=true;
-				}
-				catch(Exception ex)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt file:{0} {1} {2}",
-						ex.Message,ex.Source,ex.StackTrace);
-				}
+				string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+					Utils.FilterFileName(currentTuningObject.ServiceName),
+					currentTuningObject.NetworkID,
+					currentTuningObject.TransportStreamID,
+					currentTuningObject.ProgramNumber,
+					(int)Network());
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
+				System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+				stream.Write(pmtTable,0,pmtTable.Length);
+				stream.Close();
+				refreshPmtTable=true;
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt {0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
 	}//public class DVBGraphBDA 
