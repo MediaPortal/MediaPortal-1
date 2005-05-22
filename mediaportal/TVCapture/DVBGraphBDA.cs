@@ -2314,14 +2314,6 @@ namespace MediaPortal.TV.Recording
 					{
 						return true;
 					}
-					else
-					{
-						pmtVersion=-1;
-					}
-				}
-				else
-				{
-					pmtVersion=-1;
 				}
 			}
 			catch(Exception ex)
