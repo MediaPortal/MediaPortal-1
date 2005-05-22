@@ -205,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
 				TVChannel chan =new TVChannel();
 				chan.Name=name.Value;
 				chan.Number=Int32.Parse(number.Value);
-				chan.Frequency=ConvertToFrequency(frequency.Value);
+				chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
 				TVDatabase.AddChannel(chan);
 			}
 			XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
@@ -222,6 +222,49 @@ namespace MediaPortal.Configuration.Sections
 		long ConvertToFrequency(string frequency)
 		{
 			if (frequency.Trim()==String.Empty) return 0;
+			float testValue=189.24f;
+			string usage=testValue.ToString("f2");
+			if (usage.IndexOf(".")>=0) frequency=frequency.Replace(",",".");
+			if (usage.IndexOf(",")>=0) frequency=frequency.Replace(".",",");
+			double freqValue=Convert.ToDouble(frequency);
+			freqValue*=1000000;
+			return (long)(freqValue);
+		}
+		
+		int FindFreeTvChannelNumber(int preferenceNumber)
+		{
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			bool found=false;
+			do
+			{
+				found=false;
+				foreach (TVChannel chan in channels)
+				{
+					if (chan.Number==preferenceNumber)
+					{
+						found=true;
+						preferenceNumber++;
+						break;
+					}
+				}
+			} while (found==true);
+			return preferenceNumber;
+		}
+
+		long ConvertToTvFrequency(string frequency, ref TVChannel chan)
+		{
+			if (frequency.Trim()==String.Empty) return 0;
+			chan.Number=FindFreeTvChannelNumber(chan.Number);
+			frequency=frequency.ToUpper();
+			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
+			{
+				if (frequency.Equals(TVChannel.SpecialChannels[i].Name))
+				{
+					return TVChannel.SpecialChannels[i].Frequency;
+				}
+			}
+
 			float testValue=189.24f;
 			string usage=testValue.ToString("f2");
 			if (usage.IndexOf(".")>=0) frequency=frequency.Replace(",",".");

@@ -77,7 +77,6 @@ namespace MediaPortal.Configuration
 		private int sortPlace=0;
 		private int channelId=-1;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox channelTextBox;
 		private System.Windows.Forms.Label label27;
 		private System.Windows.Forms.TextBox tbDVBTProvider;
 		private System.Windows.Forms.TextBox tbDVBCProvider;
@@ -167,10 +166,12 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label71;
 		private System.Windows.Forms.Label label72;
 		private System.Windows.Forms.Label label73;
+		private System.Windows.Forms.ComboBox comboBoxChannels;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+		int orgChannelNumber=-1;
 
 		public EditTVChannelForm()
 		{
@@ -187,6 +188,17 @@ namespace MediaPortal.Configuration
 			TunerCountry country = new TunerCountry(-1,"Default");
 			countryComboBox.Items.Add(country);
 			countryComboBox.Items.AddRange(TunerCountries.Countries);
+			comboBoxChannels.Items.Clear();
+			for (int i=1; i < 255; ++i)
+				comboBoxChannels.Items.Add( i.ToString());
+			for (int i=0; i < TVChannel.SpecialChannels.Length; ++i)
+				comboBoxChannels.Items.Add( TVChannel.SpecialChannels[i].Name);
+
+			comboBoxChannels.Items.Add("SVHS");
+			comboBoxChannels.Items.Add("RGB");
+			comboBoxChannels.Items.Add("CVBS#1");
+			comboBoxChannels.Items.Add("CVBS#2");
+			
 		}
 
 		public int SortingPlace
@@ -232,11 +244,11 @@ namespace MediaPortal.Configuration
 			this.label4 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.comboBoxChannels = new System.Windows.Forms.ComboBox();
 			this.checkBoxScrambled = new System.Windows.Forms.CheckBox();
 			this.label45 = new System.Windows.Forms.Label();
 			this.label44 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.channelTextBox = new System.Windows.Forms.TextBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.label43 = new System.Windows.Forms.Label();
 			this.countryComboBox = new System.Windows.Forms.ComboBox();
@@ -483,14 +495,13 @@ namespace MediaPortal.Configuration
 			this.inputComboBox.Enabled = false;
 			this.inputComboBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.inputComboBox.Items.AddRange(new object[] {
-																											 "Composite #1",
-																											 "Composite #2",
+																											 "CVBS#1",
+																											 "CVBS#2",
 																											 "SVHS"});
 			this.inputComboBox.Location = new System.Drawing.Point(128, 56);
 			this.inputComboBox.Name = "inputComboBox";
 			this.inputComboBox.Size = new System.Drawing.Size(224, 21);
 			this.inputComboBox.TabIndex = 1;
-			this.inputComboBox.SelectedIndexChanged += new System.EventHandler(this.inputComboBox_SelectedIndexChanged);
 			// 
 			// label6
 			// 
@@ -557,11 +568,11 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.comboBoxChannels);
 			this.tabPage1.Controls.Add(this.checkBoxScrambled);
 			this.tabPage1.Controls.Add(this.label45);
 			this.tabPage1.Controls.Add(this.label44);
 			this.tabPage1.Controls.Add(this.label3);
-			this.tabPage1.Controls.Add(this.channelTextBox);
 			this.tabPage1.Controls.Add(this.label2);
 			this.tabPage1.Controls.Add(this.nameTextBox);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -570,6 +581,14 @@ namespace MediaPortal.Configuration
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+			// 
+			// comboBoxChannels
+			// 
+			this.comboBoxChannels.Location = new System.Drawing.Point(128, 48);
+			this.comboBoxChannels.Name = "comboBoxChannels";
+			this.comboBoxChannels.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxChannels.TabIndex = 14;
+			this.comboBoxChannels.SelectedIndexChanged += new System.EventHandler(this.comboBoxChannels_SelectedIndexChanged);
 			// 
 			// checkBoxScrambled
 			// 
@@ -605,16 +624,6 @@ namespace MediaPortal.Configuration
 			this.label3.TabIndex = 10;
 			this.label3.Text = "Channel";
 			this.label3.Click += new System.EventHandler(this.label3_Click_1);
-			// 
-			// channelTextBox
-			// 
-			this.channelTextBox.Location = new System.Drawing.Point(128, 48);
-			this.channelTextBox.MaxLength = 5;
-			this.channelTextBox.Name = "channelTextBox";
-			this.channelTextBox.Size = new System.Drawing.Size(40, 20);
-			this.channelTextBox.TabIndex = 9;
-			this.channelTextBox.Text = "0";
-			this.channelTextBox.TextChanged += new System.EventHandler(this.channelTextBox_TextChanged_1);
 			// 
 			// tabPage2
 			// 
@@ -1881,38 +1890,13 @@ namespace MediaPortal.Configuration
 			this.Hide();
 		}
 
-		private void channelTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-			if(channelTextBox.Text.Length > 0)
-			{
-				int channel = Int32.Parse(channelTextBox.Text);
-				frequencyTextBox.Enabled = (channel > 0 && channel < (int)ExternalInputs.svhs);
-			}
-		}    
 
 		private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			externalChannelTextBox.Enabled = inputComboBox.Enabled = typeComboBox.Text.Equals("External");
-			channelTextBox.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
+			comboBoxChannels.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
 		}
 
-		private void inputComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			switch(inputComboBox.Text)
-			{
-				case "SVHS":
-					channelTextBox.Text = ((int)ExternalInputs.svhs).ToString();
-					break;
-
-				case "Composite #1":
-					channelTextBox.Text = ((int)ExternalInputs.cvbs1).ToString();
-					break;
-
-				case "Composite #2":
-					channelTextBox.Text = ((int)ExternalInputs.cvbs2).ToString();
-					break;
-			}
-		}
 
 		private void comboTvStandard_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
@@ -1928,6 +1912,26 @@ namespace MediaPortal.Configuration
 		{
 		
 		}
+		int FindFreeTvChannelNumber(int preferenceNumber)
+		{
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			bool found=false;
+			do
+			{
+				found=false;
+				foreach (TVChannel chan in channels)
+				{
+					if (chan.Number==preferenceNumber)
+					{
+						found=true;
+						preferenceNumber++;
+						break;
+					}
+				}
+			} while (found==true);
+			return preferenceNumber;
+		}
 
 		public TelevisionChannel Channel
 		{
@@ -1937,7 +1941,31 @@ namespace MediaPortal.Configuration
 
 				channel.ID=channelId;
 				channel.Name = nameTextBox.Text;
-				channel.Channel = Convert.ToInt32(channelTextBox.Text.Length > 0 ? channelTextBox.Text : "0");
+				string chanNr=(string)comboBoxChannels.SelectedItem;
+				channel.Channel = -1;
+				for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
+				{
+					if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
+					{
+						//get free nr
+						if (orgChannelNumber==-1)
+						{
+							channel.Channel=FindFreeTvChannelNumber(orgChannelNumber);
+						}
+						else
+						{
+							channel.Channel=orgChannelNumber;
+						}
+					}
+				}
+				if (chanNr.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
+				if (chanNr.Equals("CVBS#1")) channel.Channel=(int)ExternalInputs.cvbs1;
+				if (chanNr.Equals("CVBS#2")) channel.Channel=(int)ExternalInputs.cvbs2;
+				if (chanNr.Equals("RGB")) channel.Channel=(int)ExternalInputs.rgb;
+				if (channel.Channel ==-1)
+				{
+					channel.Channel = Convert.ToInt32(chanNr);
+				}
 				
 				channel.Scrambled=checkBoxScrambled.Checked;
 				try
@@ -2037,6 +2065,7 @@ namespace MediaPortal.Configuration
 
 				if(channel != null)
 				{
+					orgChannelNumber=channel.Channel;
 					channelId=channel.ID;
 					for (int i=0; i < countryComboBox.Items.Count;++i)
 					{
@@ -2049,7 +2078,7 @@ namespace MediaPortal.Configuration
 					}
 					checkBoxScrambled.Checked=channel.Scrambled;
 					nameTextBox.Text = channel.Name;
-					channelTextBox.Text = channel.Channel.ToString();
+					comboBoxChannels.SelectedItem= channel.Channel.ToString();
 					frequencyTextBox.Text = channel.Frequency.ToString();
 
 					typeComboBox.Text = channel.External ? "External" : "Internal";
@@ -2064,11 +2093,11 @@ namespace MediaPortal.Configuration
 								break;
 
 							case (int)ExternalInputs.cvbs1:
-								inputComboBox.Text = "Composite #1";
+								inputComboBox.Text = "CVBS#1";
 								break;
 
 							case (int)ExternalInputs.cvbs2:
-								inputComboBox.Text = "Composite #2";
+								inputComboBox.Text = "CVBS#2";
 								break;
 						}
 					}
@@ -2076,10 +2105,11 @@ namespace MediaPortal.Configuration
 					//
 					// Disable boxes for static channels
 					//
-					if(channel.Name.Equals("Composite #1") || channel.Name.Equals("Composite #2") || channel.Name.Equals("SVHS"))
+					if(channel.Name.Equals("CVBS#1") || channel.Name.Equals("CVBS#2") || channel.Name.Equals("SVHS") || channel.Name.Equals("RGB"))
 					{
+						comboBoxChannels.SelectedItem=channel.Name;
 						comboTvStandard.Enabled = true;
-						nameTextBox.Enabled = channelTextBox.Enabled = frequencyTextBox.Enabled =false;
+						nameTextBox.Enabled = comboBoxChannels.Enabled = frequencyTextBox.Enabled =false;
 					}
 					comboTvStandard.SelectedIndex=0;
 					if ( channel.standard == AnalogVideoStandard.None) comboTvStandard.SelectedIndex=0;
@@ -2326,7 +2356,7 @@ namespace MediaPortal.Configuration
 					}
 					if (ok) break;
 				}
-				channelTextBox.Text=tvchannel.Number.ToString();
+				comboBoxChannels.SelectedItem=tvchannel.Number.ToString();
 			}
 
 			tvchannel.Frequency=chan.Frequency.Herz;
@@ -2744,6 +2774,19 @@ namespace MediaPortal.Configuration
 		private void label21_Click(object sender, System.EventArgs e)
 		{
 		
+		}
+
+		private void comboBoxChannels_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			string chanNr=(string)comboBoxChannels.SelectedItem;
+			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
+			{
+				if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
+				{
+					Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
+					frequencyTextBox.Text=freq.ToString();
+				}
+			}
 		}
 	}
 
