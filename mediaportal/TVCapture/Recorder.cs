@@ -176,6 +176,9 @@ namespace MediaPortal.TV.Recording
 		{ 
 			if (m_eState!= State.Initialized) return;
 			DateTime dtCurrentTime=DateTime.Now;
+			// no TV cards? then we cannot record anything, so just return
+			if (m_tvcards.Count==0)  return;
+
 
 			// If the recording schedules have been changed since last time
 			if (m_bRecordingsChanged)
@@ -202,9 +205,8 @@ namespace MediaPortal.TV.Recording
 				}//foreach (TVRecording recording in m_Recordings)
 			}//if (m_bRecordingsChanged)
 
-			// no TV cards? then we cannot record anything, so just return
-			if (m_tvcards.Count==0)  return;
 
+			int card;
 			for (int i=0; i < m_TVChannels.Count;++i)
 			{
 				TVChannel chan =(TVChannel)m_TVChannels[i];
@@ -221,19 +223,21 @@ namespace MediaPortal.TV.Recording
 					TVRecording rec =(TVRecording)m_Recordings[j];
 					if (rec.Canceled>0) continue;
 					if (rec.IsDone()) continue;
-					if (rec.RecType==TVRecording.RecordingType.EveryTimeOnEveryChannel ||
-						chan.Name==rec.Channel)
+					if (rec.RecType==TVRecording.RecordingType.EveryTimeOnEveryChannel || chan.Name==rec.Channel)
 					{
-						// check which program is running 
-						TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
-
-						// if the recording should record the tv program
-						if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,m_iPreRecordInterval, m_iPostRecordInterval) )
+						if (!IsRecordingSchedule(rec, out card)) 
 						{
-							// yes, then record it
-							if (Record(dtCurrentTime,rec,prog, m_iPreRecordInterval, m_iPostRecordInterval))
+							// check which program is running 
+							TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
+
+							// if the recording should record the tv program
+							if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,m_iPreRecordInterval, m_iPostRecordInterval) )
 							{
-								break;
+								// yes, then record it
+								if (Record(dtCurrentTime,rec,prog, m_iPreRecordInterval, m_iPostRecordInterval))
+								{
+									break;
+								}
 							}
 						}
 					}
@@ -250,10 +254,13 @@ namespace MediaPortal.TV.Recording
 				// 1st check if the recording itself should b recorded
 				if ( rec.IsRecordingProgramAtTime(DateTime.Now,null,m_iPreRecordInterval, m_iPostRecordInterval) )
 				{
-					// yes, then record it
-					if ( Record(dtCurrentTime,rec,null,m_iPreRecordInterval, m_iPostRecordInterval))
+					if (!IsRecordingSchedule(rec, out card)) 
 					{
-						// recording it
+						// yes, then record it
+						if ( Record(dtCurrentTime,rec,null,m_iPreRecordInterval, m_iPostRecordInterval))
+						{
+							// recording it
+						}
 					}
 				}
 			}

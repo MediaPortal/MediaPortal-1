@@ -12,6 +12,8 @@ namespace MediaPortal.TV.Database
 	public class TVRecording
 	{
 		
+		public readonly int HighestPriority=0;
+		public readonly int LowestPriority=Int32.MaxValue;
     /// <summary>
     /// Type of recording
     /// </summary>
