@@ -13,6 +13,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.Player;
+using MediaPortal.Dialogs;
 using Toub.MediaCenter.Dvrms.Metadata;
 
 namespace MediaPortal.TV.Recording
@@ -483,8 +484,72 @@ namespace MediaPortal.TV.Recording
 
 			if (cardNo<0) 
 			{
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:  no card available for recording");
-				return false;//no card free
+				GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+				pDlgOK.Reset();
+				pDlgOK.SetHeading(879);//Choose recording to stop
+
+				int	cardWithLowestPriority=-1;
+				int	lowestPriority=TVRecording.HighestPriority;
+				int count=0;
+				for (int i=0; i < m_tvcards.Count;++i)
+				{
+					TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
+					if (dev.IsRecording)
+					{
+						count++;
+						if (dev.CurrentProgramRecording!=null)
+						{
+							pDlgOK.Add( String.Format("{0} {1}", dev.CurrentProgramRecording.Channel,dev.CurrentProgramRecording.Title) );
+						}
+						else
+						{
+							pDlgOK.Add( String.Format("{0} {1}", dev.CurrentProgramRecording.Channel,GUILocalizeStrings.Get(413) ) );
+						}
+						int prio=dev.CurrentTVRecording.Priority;
+						if (prio < lowestPriority)
+						{
+							cardWithLowestPriority=i;
+							lowestPriority=prio;
+						}
+					}
+				}
+				if (count>0)
+				{
+					pDlgOK.TimeOut=60;
+					pDlgOK.DoModal( GUIWindowManager.ActiveWindow);
+					if (pDlgOK.TimedOut)
+					{
+						cardNo=cardWithLowestPriority;
+						TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[cardNo];
+						dev.StopRecording();
+					}
+					else
+					{
+						int selectedIndex=pDlgOK.SelectedLabel;
+						if (selectedIndex>=0)
+						{
+							for (int i=0; i < m_tvcards.Count;++i)
+							{
+								TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
+								if (dev.IsRecording)
+								{
+									if (count==selectedIndex)
+									{
+										cardNo=i;
+										dev.StopRecording();
+										break;
+									}
+									count++;
+								}
+							}
+						}
+					}
+				}
+				if (cardNo<0)
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:  no card available for recording");
+					return false;//no card free
+				}
 			}
 
 			TVCaptureDevice card =(TVCaptureDevice)m_tvcards[cardNo];

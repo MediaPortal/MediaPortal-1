@@ -229,87 +229,17 @@
                     AssemblyName = "xAPMessage"
                     HintPath = "..\xAPMessage.dll"
                 />
+                <Reference
+                    Name = "Dialogs"
+                    Project = "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
             <Include>
                 <File
                     RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogDateTime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogExif.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogFile.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogFileStacking.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogMenu.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogMenuBottomRight.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogNotify.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogOK.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogProgress.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogSelect.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogSelect2.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogSetRating.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\GUIDialogYesNo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\VirtualKeyboard.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dialogs\VirtualSearchKeyboard.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -487,11 +417,6 @@
                     RelPath = "GUIMyMail\MailSetupFrom.resx"
                     DependentUpon = "MailSetupFrom.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "GUIPictures\ExifExtractor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "GUIPictures\GUIPictures.cs"

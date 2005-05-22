@@ -55,6 +55,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPo
 		{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D} = {DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialogs", "Dialogs\Dialogs.csproj", "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -158,6 +162,14 @@ Global
 		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
 		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
 		{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}.UseCaptureDefintionsRelease.Build.0 = UseCaptureDefintionsRelease|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.Debug.ActiveCfg = Debug|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.Debug.Build.0 = Debug|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.Release.ActiveCfg = Release|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.Release.Build.0 = Release|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureCardDefinitions.Build.0 = Release|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
+		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

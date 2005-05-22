@@ -2453,6 +2453,10 @@
 	<id>878</id>
 	<value>Storage</value>
 </string>
+<string>
+	<id>879</id>
+	<value>Choose recording to stop</value>
+</string>
 
 <!-- End My Alarm Strings -->
 <string>

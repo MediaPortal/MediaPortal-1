@@ -70,9 +70,11 @@ copy ..\..\..\ExternalPlayers\bin\debug\ExternalPlayers.pdb plugins\ExternalPlay
 copy ..\..\..\WindowPlugins\bin\debug\WindowPlugins.dll plugins\Windows
 copy ..\..\..\WindowPlugins\bin\debug\WindowPlugins.pdb plugins\Windows
 copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
-
+copy ..\..\..\Dialogs\bin\debug\Dialogs.dll .
+copy ..\..\..\Dialogs\bin\debug\Dialogs.pdb .
 copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.dll plugins\process\
 copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.pdb  plugins\process\
+
 
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
