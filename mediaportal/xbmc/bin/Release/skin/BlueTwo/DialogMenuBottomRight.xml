@@ -10,9 +10,9 @@
 		<control>
 			<type>image</type> 
 			<id>0</id> 
-			<posX>480</posX> 
+			<posX>380</posX> 
 			<posY>407</posY> 
-			<width>200</width> 
+			<width>300</width> 
 			<height>139</height> 
 			<texture>dialog_background.png</texture> 
 		</control>
@@ -20,7 +20,7 @@
 				<description>Heading text label</description> 
 				<type>label</type> 
 				<id>4</id> 
-				<posX>495</posX> 
+				<posX>406</posX> 
 				<posY>422</posY> 
 				<label>181</label> 
 				<font>font10</font> 
@@ -30,9 +30,9 @@
 				<description>Label text </description> 
 				<type>label</type> 
 				<id>5</id> 
-				<posX>495</posX> 
+				<posX>406</posX> 
 				<posY>435</posY> 
-				<label>181</label> 
+				<label>-</label> 
 				<font>font10</font> 
 				<textcolor>FFFFFFFF</textcolor> 
 			</control>	
@@ -40,9 +40,9 @@
 				<description>Label text </description> 
 				<type>label</type> 
 				<id>6</id> 
-				<posX>495</posX> 
+				<posX>406</posX> 
 				<posY>448</posY> 
-				<label>181</label> 
+				<label>-</label> 
 				<font>font10</font> 
 				<textcolor>FFFFFFFF</textcolor> 
 			</control>	
@@ -66,9 +66,9 @@
 				<description>options listcontrol</description> 
 				<type>listcontrol</type> 
 				<id>3</id> 
-				<posX>500</posX> 
+				<posX>400</posX> 
 				<posY>470</posY> 
-				<width>165</width> 
+				<width>265</width> 
 				<height>120</height> 
 				<onleft>2</onleft> 
 				<onright>2</onright>
