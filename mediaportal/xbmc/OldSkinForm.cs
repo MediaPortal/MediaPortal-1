@@ -116,16 +116,16 @@ namespace MediaPortal
 				if (ignoreErrors) return true;
 			}
 
-			string versionMCE="";
+			string versionBlueTwoSkin="";
 			string versionSkin="";
-			string filename=@"skin\mce\references.xml";
+			string filename=@"skin\BlueTwo\references.xml";
 			if(File.Exists(filename))
 			{	
 				XmlDocument doc=new XmlDocument();
 				doc.Load(filename);
 				XmlNode node=doc.SelectSingleNode("/controls/skin/version");
 				if (node!=null && node.InnerText!=null)
-					versionMCE=node.InnerText;
+					versionBlueTwoSkin=node.InnerText;
 			}
 			filename=String.Format(@"skin\{0}\references.xml",skin);
 			if(File.Exists(filename))
@@ -136,7 +136,7 @@ namespace MediaPortal
 				if (node!=null && node.InnerText!=null)
 					versionSkin=node.InnerText;
 			}
-			if (versionMCE==versionSkin) return true;
+			if (versionBlueTwoSkin==versionSkin) return true;
 			return false;
 		}
 	}

@@ -125,6 +125,7 @@ namespace MediaPortal.GUI.TV
 								GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
 								if (pDlgOK!=null)
 								{
+									pDlgOK.Reset();
 									pDlgOK.SetHeading(605);//my tv
 									pDlgOK.AddLocalizedString(875); //current program
 									pDlgOK.AddLocalizedString(876); //till manual stop

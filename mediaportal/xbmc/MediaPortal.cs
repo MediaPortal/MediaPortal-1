@@ -401,7 +401,7 @@ public class MediaPortalApp : D3DApp, IRender
         {
             using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
             {
-                m_strSkin = xmlreader.GetValueAsString("skin", "name", "mce");
+                m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
                 m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
                 m_bAutoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
                 GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", true);
@@ -410,7 +410,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         catch (Exception)
         {
-            m_strSkin = "mce";
+            m_strSkin = "BlueTwo";
             m_strLanguage = "english";
         }
 

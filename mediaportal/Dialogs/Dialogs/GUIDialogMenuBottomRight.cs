@@ -227,6 +227,8 @@ namespace MediaPortal.Dialogs
 			LoadSkin();
 			AllocResources();
 			InitControls();
+			SetHeadingRow2(String.Empty);
+			SetHeadingRow3(String.Empty);
 
 			timedOut=true;
 			timeoutInSeconds=-1;
