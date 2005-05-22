@@ -756,7 +756,7 @@ namespace MediaPortal.TV.Recording
 					else if (sectionLen < 183)// in one packet
 					{
 						pmtComplete=true;
-						Array.Copy(m_packetHeader.Payload,0,m_tableBufferPMT,0,sectionLen);
+						Array.Copy(m_packetHeader.Payload,1,m_tableBufferPMT,0,sectionLen);
 					}
 					if(pmtComplete && m_grabbingLenPMT>0)
 					{
