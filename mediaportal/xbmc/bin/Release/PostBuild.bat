@@ -61,7 +61,7 @@ copy ..\..\..\ExternalPlayers\bin\release\ExternalPlayers.dll plugins\ExternalPl
 copy ..\..\..\WindowPlugins\bin\release\WindowPlugins.dll plugins\Windows
 copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
 copy ..\..\..\ProcessPlugins\bin\release\ProcessPlugins.dll plugins\process\
-copy ..\..\..\Dialogs\bin\release\Dialogs.dll .
+copy ..\..\..\Dialogs\bin\release\Dialogs.dll plugins\Windows
 
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
