@@ -3699,7 +3699,7 @@ namespace MediaPortal.TV.Recording
 		private void m_streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
 		{
 			if (pmtTable==null) return;
-			if (pmtTable.Length==0) return;
+			if (pmtTable.Length<6) return;
 			//copy pmt pid...
 			int section_length = ((pmtTable[1]& 0xF)<<8) + pmtTable[2];
 			section_length+=3;

@@ -179,7 +179,7 @@ namespace MediaPortal.TV.Recording
 			DateTime dtCurrentTime=DateTime.Now;
 			// no TV cards? then we cannot record anything, so just return
 			if (m_tvcards.Count==0)  return;
-
+			if (GUIWindowManager.IsRouted) return;
 
 			// If the recording schedules have been changed since last time
 			if (m_bRecordingsChanged)
