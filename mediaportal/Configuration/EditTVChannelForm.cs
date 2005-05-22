@@ -171,6 +171,7 @@ namespace MediaPortal.Configuration
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+		private System.Windows.Forms.Label labelSpecial;
 		int orgChannelNumber=-1;
 
 		public EditTVChannelForm()
@@ -378,6 +379,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.labelSpecial = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -568,6 +570,7 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.labelSpecial);
 			this.tabPage1.Controls.Add(this.comboBoxChannels);
 			this.tabPage1.Controls.Add(this.checkBoxScrambled);
 			this.tabPage1.Controls.Add(this.label45);
@@ -1820,6 +1823,13 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
+			// labelSpecial
+			// 
+			this.labelSpecial.Location = new System.Drawing.Point(264, 56);
+			this.labelSpecial.Name = "labelSpecial";
+			this.labelSpecial.Size = new System.Drawing.Size(64, 16);
+			this.labelSpecial.TabIndex = 15;
+			// 
 			// EditTVChannelForm
 			// 
 			this.AcceptButton = this.okButton;
@@ -2079,6 +2089,15 @@ namespace MediaPortal.Configuration
 					checkBoxScrambled.Checked=channel.Scrambled;
 					nameTextBox.Text = channel.Name;
 					comboBoxChannels.SelectedItem= channel.Channel.ToString();
+					labelSpecial.Text=String.Empty;
+					string chanNr=(string)comboBoxChannels.SelectedItem;
+					for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
+					{
+						if (channel.Frequency.Herz==TVChannel.SpecialChannels[i].Frequency)
+						{
+							labelSpecial.Text=TVChannel.SpecialChannels[i].Name;
+						}
+					}
 					frequencyTextBox.Text = channel.Frequency.ToString();
 
 					typeComboBox.Text = channel.External ? "External" : "Internal";
@@ -2778,6 +2797,7 @@ namespace MediaPortal.Configuration
 
 		private void comboBoxChannels_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
+			labelSpecial.Text=String.Empty;
 			string chanNr=(string)comboBoxChannels.SelectedItem;
 			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 			{
@@ -2785,6 +2805,7 @@ namespace MediaPortal.Configuration
 				{
 					Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
 					frequencyTextBox.Text=freq.ToString();
+					labelSpecial.Text=TVChannel.SpecialChannels[i].Name;
 				}
 			}
 		}
