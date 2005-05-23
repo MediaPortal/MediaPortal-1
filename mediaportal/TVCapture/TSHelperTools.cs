@@ -43,7 +43,7 @@ namespace MediaPortal.TV.Recording{
 				return header;// no ts-header, return
 			header.SyncByte=data[0];
 			header.TransportError=(data[1] & 0x80)>0?true:false;
-			header.PayloadUnitStart=(data[1] & 0x40)>0?true:false;
+			header.PayloadUnitStart=((data[1]>>6) & 0x01)>0?true:false;
 			header.TransportPriority=(data[1] & 0x20)>0?true:false;
 			header.Pid=((data[1] & 0x1F) <<8)+data[2];
 			header.TransportScrambling=data[3] & 0xC0;

@@ -705,7 +705,13 @@ namespace MediaPortal.TV.Recording
 				StopRecording();
 				StopViewing();
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free tuner interfaces");
-			
+				
+				// to clear buffers for epg and teletext
+				if (m_streamDemuxer != null)
+				{
+					m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0);
+				}
+
 				if (m_TunerStatistics!=null)
 				{
 					for (int i = 0; i < m_TunerStatistics.Length; i++) 

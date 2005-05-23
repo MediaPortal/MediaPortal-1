@@ -197,6 +197,9 @@ namespace MediaPortal.Database
 				{
 					strReturn += "'";
 				}
+				if((byte)k==0)// remove 0-bytes from the string
+					k=(char)32;
+
 				strReturn += k;
 			}
 			strReturn=strReturn.Trim();

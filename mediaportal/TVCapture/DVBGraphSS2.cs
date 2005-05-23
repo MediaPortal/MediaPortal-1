@@ -265,7 +265,7 @@ namespace MediaPortal.TV.Recording
 
             m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.TechnisatStarCards;
-			//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 			// reg. settings
 			try
 			{
@@ -830,10 +830,10 @@ namespace MediaPortal.TV.Recording
 			
 			m_iChannelNr=-1;
 			//m_fileWriter.Close();
-			if(m_pluginsEnabled)
+
+			if (m_streamDemuxer != null)
 			{
-				//StopGraph();
-				//m_sampleInterface.SetCallback(null,0);
+				m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0);
 			}
 
 			StopRecording();
@@ -2439,7 +2439,6 @@ namespace MediaPortal.TV.Recording
 
 		private void m_streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
 		{
-			int a=0;
 		}
 	}// class
 }// namespace

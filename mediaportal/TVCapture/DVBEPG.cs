@@ -43,17 +43,12 @@ namespace MediaPortal.TV.Recording
 		ArrayList		m_summaryBuffer=new ArrayList();
 		NetworkType		m_networkType;
 		ArrayList		m_streamBuffer=new ArrayList();
-		byte[]			m_mhwEpgChannelBuffer=new byte[65535];
-		byte[]			m_mhwEpgSummaryBuffer=new byte[65535];
 		int				m_addsToDatabase=0;
 		int				m_mhwChannelsCount=0;
 		bool			m_titlesParsing=false;
 		bool			m_summaryParsing=false;
 		bool			m_channelsParsing=false;
-		int				m_savedSummaryData=0;
-		int				m_savedChannelData=0;
 		int				m_channelGrabLen=0;
-		int				m_summaryGrabLen=2048;
 		int				m_mhwFreq=0;
 		System.Windows.Forms.Label m_mhwChannels;
 		System.Windows.Forms.Label m_mhwTitles;
@@ -177,15 +172,10 @@ namespace MediaPortal.TV.Recording
 		{
 			m_isLocked=true;
 			SubmittMHW(); // save all data now
-			if(m_streamBuffer!=null)
-				m_streamBuffer.Clear();
-			if(m_namesBuffer!=null)
-				m_namesBuffer.Clear();
-			if(m_titleBuffer!=null)
-				m_titleBuffer.Clear();
-			if(m_summaryBuffer!=null)
-				m_summaryBuffer.Clear();
-
+			m_streamBuffer=new ArrayList();
+			m_namesBuffer=new ArrayList();
+			m_titleBuffer=new ArrayList();
+			m_summaryBuffer=new ArrayList();
 			m_mhwChannelsCount=0;
 			m_titlesParsing=false;
 			m_summaryParsing=false;
@@ -507,7 +497,7 @@ namespace MediaPortal.TV.Recording
 
 		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
 
-		public void ParseChannels(byte[] data1)
+		public void ParseChannels(byte[] data)
 		{
 			
 			if(m_namesBuffer==null)
@@ -515,15 +505,13 @@ namespace MediaPortal.TV.Recording
 			if(m_namesBuffer.Count>0)
 				return; // already got channles table
 
-			int dataLen=((data1[1]-0x70)<<8)+data1[2];
+			int dataLen=data.Length;
 			Log.Write("mhw-epg: start parse channels for mhw",m_namesBuffer.Count);
-			byte[] data=new byte[dataLen];
-			Array.Copy(data1,3,data,0,dataLen);
 			lock(m_namesBuffer.SyncRoot)
 			{
-				for(int n=1;n<dataLen;n+=22)
+				for(int n=4;n<dataLen;n+=22)
 				{
-					if(m_namesBuffer.Count>=(dataLen/22))
+					if(m_namesBuffer.Count>=((dataLen-3)/22))
 						break;
 					MHWChannel ch=new MHWChannel();
 					ch.NetworkID=(data[n]<<8)+data[n+1];

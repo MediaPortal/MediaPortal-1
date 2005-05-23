@@ -99,19 +99,12 @@ namespace MediaPortal.TV.Recording
 		int m_pmtPid = 0;
         string m_channelName = "";
         bool m_pluginsEnabled = false;
-		int m_lastCounter=0;
 		// for pid 0xd3
-		int m_grabbingLenD3=0;
-		bool m_grabbingD3=false;
 		byte[] m_tableBufferD3=new byte[65535];
 		int m_bufferPositionD3=0;
-		int m_currentTableIDD3=0;
 		// for pid 0xd2
-		int m_grabbingLenD2=0;
-		bool m_grabbingD2=false;
 		byte[] m_tableBufferD2=new byte[65535];
 		int m_bufferPositionD2=0;
-		int m_currentTableIDD2=0;
 		// pmt
 		int m_currentPMTVersion=0;
 		// card
@@ -302,26 +295,22 @@ namespace MediaPortal.TV.Recording
             }
 
         }
-		void SaveData(int pid,int tableID)
+		void SaveData(int pid,int tableID,byte[] data)
 		{
-			lock(m_tableBufferD3.SyncRoot)
+			lock(data.SyncRoot)
 			{
 				if(pid==0xd3)
 				{
 					if(tableID==0x91)
-						m_epgClass.ParseChannels(m_tableBufferD3);
-					if(tableID==0x90)
-						m_epgClass.ParseSummaries(m_tableBufferD3);
-					m_tableBufferD3=new byte[65535];
-					m_bufferPositionD3=0;
+						m_epgClass.ParseChannels(data);
+					else if(tableID==0x90)
+						m_epgClass.ParseSummaries(data);
+
 				}
 				if(pid==0xd2)
 				{
 					if(tableID==0x90)
-						m_epgClass.ParseTitles(m_tableBufferD2);
-					m_tableBufferD2=new byte[65535];
-					m_bufferPositionD2=0;
-
+						m_epgClass.ParseTitles(data);
 				}
 
 			}
@@ -450,249 +439,38 @@ namespace MediaPortal.TV.Recording
 					try
 					{
 
-						int offset=4;
-						int ptr1=-1;
-						int tableID=0;
-						int sectionLen=0;
+						int offset=0;
 						//
 						// calc offset & pointers
-						if(m_packetHeader.AdaptionFieldControl==3)
-							offset++;
-						if(m_packetHeader.AdaptionFieldControl==1 && m_packetHeader.PayloadUnitStart==true)
-							ptr1=m_packetHeader.AdaptionField+1;
+						if(m_packetHeader.PayloadUnitStart==true && m_packetHeader.AdaptionFieldControl==1)
+							offset=1;
 						//
 						// copy data and set grabbing flag
 						// mhw (pids 0xd3 & 0xd2)
 
-						if(m_packetHeader.Pid==0xd2)
-						{
-							if(ptr1==1 && m_grabbingD2==false)
+							if(m_packetHeader.Pid==0xd2)
 							{
-								// table starts after adaption_field
-								m_grabbingLenD2=m_packetHeader.SectionLen;
-								m_currentTableIDD2=m_packetHeader.TableID;
-								// the data is in more then one packet
-								if(m_grabbingLenD2>180)
+								if(m_bufferPositionD2+(184-offset)<65534)
 								{
-									Array.Copy(m_packetHeader.Payload,1,m_tableBufferD2,0,183);
-									m_bufferPositionD2=183;
-									m_grabbingD2=true;
-								}
-								else if(m_grabbingLenD2==180)
-								{
-									Array.Copy(m_packetHeader.Payload,1,m_tableBufferD2,0,183);
-									m_bufferPositionD2=183;
-									SaveData(m_packetHeader.Pid,m_currentTableIDD2);
-									m_bufferPositionD2=0;
-									m_currentTableIDD2=-1;
-									m_grabbingD2=false;
-								}
-								else if(m_grabbingLenD2<180)
-								{
-									int n=1;
-									do
-									{									
-										if(m_grabbingLenD2>180 || (m_grabbingLenD2+2+n>183))
-										{
-											Array.Copy(m_packetHeader.Payload,n,m_tableBufferD2,0,184-n);
-											m_bufferPositionD2=184-n;
-											m_grabbingD2=true;
-											break;
-										}
-										Array.Copy(m_packetHeader.Payload,n,m_tableBufferD2,0,m_grabbingLenD2+2);
-										n+=m_grabbingLenD2+3;
-										m_grabbingD2=false;
-										SaveData(m_packetHeader.Pid,m_currentTableIDD2);
-										if(n<182)
-										{
-											tableID=m_packetHeader.Payload[n];
-											sectionLen=((m_packetHeader.Payload[n+1]-0x70)<<8)+m_packetHeader.Payload[n+2];
-											m_grabbingLenD2=sectionLen;
-											m_currentTableIDD2=tableID;
-										}
-										else break;
-									}while(n<185 && tableID<0xFF);
-	
-								}
-							}
-							if(ptr1>1)
-							{
-								// table starts after somewhere in the packet
-								// we copy the remaining data to the buffer and check the len
-								// and start the new grabbing
-								if(m_grabbingD2==true)
-								{
-									Array.Copy(m_packetHeader.Payload,1,m_tableBufferD2,m_bufferPositionD2,ptr1-1);
-									// save the table-data
-									SaveData(m_packetHeader.Pid,m_currentTableIDD2);
-								}
-								// start new grabbing process
-								tableID=m_packetHeader.Payload[ptr1];
-								sectionLen=((m_packetHeader.Payload[ptr1+1]-0x70)<<8)+m_packetHeader.Payload[ptr1+2];
-								m_grabbingLenD2=sectionLen;
-								m_currentTableIDD2=tableID;
-								if(ptr1+m_grabbingLenD2+2>183)
-								{
-									Array.Copy(m_packetHeader.Payload,ptr1,m_tableBufferD2,0,184-ptr1);
-									m_bufferPositionD2=184-ptr1;
-									m_grabbingD2=true;
+									Array.Copy(m_packetHeader.Payload,offset,m_tableBufferD2,m_bufferPositionD2,184-offset);
+									m_bufferPositionD2+=(184-offset);
 								}
 								else
-								{
-									int n=ptr1;
-									do
-									{
-										if(m_grabbingLenD2>180 || (m_grabbingLenD2+2+n>183))
-										{
-											Array.Copy(m_packetHeader.Payload,n,m_tableBufferD2,0,184-n);
-											m_bufferPositionD2=184-n;
-											m_grabbingD2=true;
-											break;
-										}
-										Array.Copy(m_packetHeader.Payload,n,m_tableBufferD2,0,m_grabbingLenD2+2);
-										n+=m_grabbingLenD2+3;
-										m_grabbingD2=false;
-										SaveData(m_packetHeader.Pid,m_currentTableIDD2);
-										if(n<182)
-										{
-											tableID=m_packetHeader.Payload[n];
-											sectionLen=((m_packetHeader.Payload[n+1]-0x70)<<8)+m_packetHeader.Payload[n+2];
-											m_grabbingLenD2=sectionLen;
-											m_currentTableIDD2=tableID;
-										}
-										else break;
-									}while(n<185 && tableID<0xFF);
-								}
+									GetTablesD2();
 							}
-							//no start, just copy the payload
-							if(ptr1<1 && m_grabbingD2==true)
+							if(m_packetHeader.Pid==0xd3)
 							{
-								Array.Copy(m_packetHeader.Payload,0,m_tableBufferD2,m_bufferPositionD2,184);
-								m_bufferPositionD2+=184;
-							}
-							m_lastCounter=m_packetHeader.ContinuityCounter;
-			
-						}
-						//
-						// pid d3
-						tableID=0;
-						sectionLen=0;
-
-						if(m_packetHeader.Pid==0xd3)
-						{
-							if(ptr1==1 && m_grabbingD3==false)
-							{
-								// table starts after adaption_field
-							
-								m_grabbingLenD3=m_packetHeader.SectionLen;
-								m_currentTableIDD3=m_packetHeader.TableID;
-								// the data is in more then one packet
-								if(m_grabbingLenD3>180)
+								if(m_bufferPositionD3+(184-offset)<65534)
 								{
-									Array.Copy(m_packetHeader.Payload,1,m_tableBufferD3,0,183);
-									m_bufferPositionD3=183;
-									m_currentTableIDD3=m_packetHeader.Pid;
-									m_grabbingD3=true;
-								}
-								else if(m_grabbingLenD3==180)
-								{
-									Array.Copy(m_packetHeader.Payload,1,m_tableBufferD3,0,183);
-									m_bufferPositionD3=183;
-									SaveData(m_packetHeader.Pid,m_currentTableIDD3);
-									m_bufferPositionD3=0;
-									m_currentTableIDD3=-1;
-									m_grabbingD3=false;
-								}
-								else if(m_grabbingLenD3<180)
-								{
-									int n=1;
-									do
-									{									
-										if(m_grabbingLenD3>180 || (m_grabbingLenD3+2+n>183))
-										{
-											Array.Copy(m_packetHeader.Payload,n,m_tableBufferD3,0,184-n);
-											m_bufferPositionD3=184-n;
-											m_grabbingD3=true;
-											break;
-										}
-
-										Array.Copy(m_packetHeader.Payload,n,m_tableBufferD3,0,m_grabbingLenD3+2);
-										m_grabbingD3=false;
-										SaveData(m_packetHeader.Pid,m_currentTableIDD3);
-										n+=m_grabbingLenD3+3;
-										if(n<182)
-										{
-											tableID=m_packetHeader.Payload[n];
-											sectionLen=((m_packetHeader.Payload[n+1]-0x70)<<8)+m_packetHeader.Payload[n+2];
-											m_grabbingLenD3=sectionLen;
-											m_currentTableIDD3=tableID;
-										}
-										else break;
-									}while(n<185 && tableID<0xFF);
-
-	
-								}
-							}
-							if(ptr1>1)
-							{
-								// table starts after somewhere in the packet
-								// we copy the remaining data to the buffer and check the len
-								// and start the new grabbing
-								if(m_grabbingD3==true)
-								{
-									Array.Copy(m_packetHeader.Payload,1,m_tableBufferD3,m_bufferPositionD3,ptr1-1);
-									// save the table-data
-									SaveData(m_packetHeader.Pid,m_currentTableIDD3);
-								}
-								// start new grabbing process
-								tableID=m_packetHeader.Payload[ptr1];
-								sectionLen=((m_packetHeader.Payload[ptr1+1]-0x70)<<8)+m_packetHeader.Payload[ptr1+2];
-								m_grabbingLenD3=sectionLen;
-								m_currentTableIDD3=tableID;
-								if(ptr1+m_grabbingLenD3+2>183)
-								{
-									Array.Copy(m_packetHeader.Payload,ptr1,m_tableBufferD3,0,184-ptr1);
-									m_bufferPositionD3=184-ptr1;
-									m_grabbingD3=true;
+									Array.Copy(m_packetHeader.Payload,offset,m_tableBufferD3,m_bufferPositionD3,184-offset);
+									m_bufferPositionD3+=(184-offset);
 								}
 								else
-								{
-									int n=ptr1;
-									do
-									{
-										if(m_grabbingLenD3>180 || (m_grabbingLenD3+2+n>183))
-										{
-											Array.Copy(m_packetHeader.Payload,n,m_tableBufferD3,0,184-n);
-											m_bufferPositionD3=184-n;
-											m_grabbingD3=true;
-											break;
-										}
-										Array.Copy(m_packetHeader.Payload,n,m_tableBufferD3,0,m_grabbingLenD3+2);
-										SaveData(m_packetHeader.Pid,m_currentTableIDD3);
-										n+=m_grabbingLenD3+3;
-										m_grabbingD3=false;
-										if(n<182)
-										{
-											tableID=m_packetHeader.Payload[n];
-											sectionLen=((m_packetHeader.Payload[n+1]-0x70)<<8)+m_packetHeader.Payload[n+2];
-											m_grabbingLenD3=sectionLen;
-											m_currentTableIDD3=tableID;
-										}
-										else
-											break;
-									}while(n<185 && tableID<0xFF);
-								}						
+									GetTablesD3();
+								
 							}
-							//no start, just copy the payload
-							if(ptr1<1 && m_grabbingD3==true)
-							{
-								Array.Copy(m_packetHeader.Payload,0,m_tableBufferD3,m_bufferPositionD3,184);
-								m_bufferPositionD3+=184;
-							}
-							m_lastCounter=m_packetHeader.ContinuityCounter;
-						
-					
-						}
+
+
 
 					}
 					catch(Exception ex)
@@ -702,6 +480,7 @@ namespace MediaPortal.TV.Recording
 
 				
 				}
+
 				#endregion
 
 				#region pmt handling
@@ -789,6 +568,101 @@ namespace MediaPortal.TV.Recording
         }
 
         #endregion
+		#region Table Handling / saving data
+		void GetTablesD2()
+		{
+			int tableID=0;
+			int sectionLen=0;
+
+			lock(m_tableBufferD2.SyncRoot)
+			{
+				int ptr=0;
+				// find first start of table
+				do
+				{
+					if(ptr<65533)
+					{
+						tableID=m_tableBufferD2[ptr];
+						sectionLen=((m_tableBufferD2[ptr+1]-0x70)<<8)+m_tableBufferD2[ptr+2];
+						// table ok?
+						if((tableID==0x90 || tableID==0x91) && (m_tableBufferD2[ptr+1]>=0x70 && m_tableBufferD2[ptr+1]<=0x7F))
+						{
+							// found table
+							// ignore last data and ready
+							if(ptr+sectionLen+3>=65535) break;
+							if(sectionLen<1) continue;
+							if(sectionLen+3>65533) continue;
+							byte[] data=new byte[sectionLen+3];
+							try
+							{
+								Array.Copy(m_tableBufferD2,ptr,data,0,sectionLen+3);
+								SaveData(0xd2,tableID,data);
+							}
+							catch
+							{
+							}
+							ptr+=sectionLen+3;
+						}// else ptr+=1
+						else
+							ptr++;
+						
+					}
+					else break;
+				}while(1!=0);
+				// clear up
+				m_tableBufferD2=new byte[65535];
+				m_bufferPositionD2=0;
+			}
+		}
+		void GetTablesD3()
+		{
+			int tableID=0;
+			int sectionLen=0;
+
+			lock(m_tableBufferD3.SyncRoot)
+			{
+				int ptr=0;
+				// find first start of table
+				do
+				{
+					if(ptr<65533)
+					{
+						tableID=m_tableBufferD3[ptr];
+						sectionLen=((m_tableBufferD3[ptr+1]-0x70)<<8)+m_tableBufferD3[ptr+2];
+						// table ok?
+						if((tableID==0x90 || tableID==0x91) && (m_tableBufferD3[ptr+1]>=0x70 && m_tableBufferD3[ptr+1]<=0x7F))
+						{
+							// found table
+							// ignore last data and ready
+							
+							if(ptr+sectionLen+3>=65535) break;
+							if(sectionLen<1) continue;
+							if(sectionLen+3>65533) continue;
+							byte[] data=new byte[sectionLen+3];
+							try
+							{
+								Array.Copy(m_tableBufferD3,ptr,data,0,sectionLen+3);
+								SaveData(0xd3,tableID,data);
+							}
+							catch
+							{
+							}
+							ptr+=sectionLen+3;
+						}// else ptr+=1
+						else
+							ptr++;
+						
+					}
+					else break;
+				}while(1!=0);
+				// clear up
+				m_tableBufferD3=new byte[65535];
+				m_bufferPositionD3=0;
+			}
+
+		}
+
+		#endregion
     }//class dvbdemuxer
  
 }//namespace
