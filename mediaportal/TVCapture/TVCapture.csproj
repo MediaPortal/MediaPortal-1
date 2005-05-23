@@ -204,6 +204,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ATSCTuning.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "CaptureCardDefinitions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -86,6 +86,7 @@ namespace MediaPortal.TV.Database
 		int m_sPMTPid;
 		int m_modulation;
 		int m_bandwidth;
+		int m_physicalChannel;
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
 		public int ID
@@ -395,6 +396,15 @@ namespace MediaPortal.TV.Database
 			{return m_bandwidth;}
 			set
 			{m_bandwidth=value;}
+		}
+		[BrowsableAttribute(true),Category("PhysicalChannel"),
+		ReadOnly(false)]
+		public int PhysicalChannel
+		{
+			get
+			{return m_physicalChannel;}
+			set
+			{m_physicalChannel=value;}
 		}
 		
 		public override string ToString()

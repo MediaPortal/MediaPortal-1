@@ -20,6 +20,7 @@ namespace MediaPortal.TV.Recording
 			if (card.Network == NetworkType.DVBT) return new DVBTTuning();
 			if (card.Network == NetworkType.DVBS) return new DVBSTuning();
 			if (card.Network == NetworkType.DVBC) return new DVBCTuning();
+			if (card.Network == NetworkType.ATSC) return new ATSCTuning();
 			return null;
 		}
 

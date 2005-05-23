@@ -136,6 +136,7 @@ namespace MediaPortal.TV.Database
 		
 				DatabaseUtility.AddTable(m_db,"tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)\n");
 				DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text)\n");
+				DatabaseUtility.AddTable(m_db,"tblATSCMapping" ,"CREATE TABLE tblATSCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, channelNumber integer)\n");
 				DatabaseUtility.AddTable(m_db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text)\n");
 				DatabaseUtility.AddTable(m_db,"tblGroups"      ,"CREATE TABLE tblGroups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)\n");
 				DatabaseUtility.AddTable(m_db,"tblGroupMapping","CREATE TABLE tblGroupMapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)\n");
@@ -950,7 +951,8 @@ namespace MediaPortal.TV.Database
 				  strSQL+="left join tblDVBCMapping on tblDVBCMapping.iLCN=channel.idChannel ";
 					strSQL+="left join tblDVBTMapping on tblDVBTMapping.iLCN=channel.idChannel ";
 					strSQL+="left join tblDVBSMapping on tblDVBSMapping.idChannel=channel.idChannel ";
-					strSQL+="order by tblDVBCMapping.strProvider, tblDVBTMapping.strProvider, tblDVBSMapping.sProviderName,channel.strChannel";
+					strSQL+="left join tblATSCMapping on tblATSCMapping.idChannel=channel.idChannel ";
+					strSQL+="order by tblDVBCMapping.strProvider, tblDVBTMapping.strProvider, tblDVBSMapping.sProviderName, tblATSCMapping.sProviderName,channel.strChannel";
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
@@ -999,7 +1001,11 @@ namespace MediaPortal.TV.Database
 								chan.ProviderName=DatabaseUtility.Get(results,i,"tblDVBTMapping.strProvider");
 								if (chan.ProviderName=="")
 								{
-									chan.ProviderName="Unknown";
+									chan.ProviderName=DatabaseUtility.Get(results,i,"tblATSCMapping.strProvider");
+									if (chan.ProviderName=="")
+									{
+										chan.ProviderName="Unknown";
+									}
 								}
 							}
 						}
@@ -1143,6 +1149,8 @@ namespace MediaPortal.TV.Database
 					strSQL = String.Format("delete from tblDVBCMapping where iLCN={0}",iChannelId);
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from tblDVBTMapping where iLCN={0}",iChannelId);
+					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from tblATSCMapping where iLCN={0}",iChannelId);
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from tblChannelCard where idChannel={0}",iChannelId);
 					m_db.Execute(strSQL);
@@ -2261,6 +2269,58 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
+		static public int MapATSCChannel(string channelName, int physicalChannel,string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int audio1,int audio2, int audio3, int ac3Pid, string audioLanguage,string audioLanguage1, string audioLanguage2, string audioLanguage3)
+		{
+			lock (typeof(TVDatabase))
+			{
+				if (null==m_db) return -1;
+				string strSQL=String.Empty;
+				try
+				{
+					string strChannel=channelName;
+					string strProvider=providerName;
+					DatabaseUtility.RemoveInvalidChars(ref strChannel);
+					DatabaseUtility.RemoveInvalidChars(ref strProvider);
+
+					SQLiteResultSet results;
+					strSQL=String.Format( "select * from channel ");
+					results=m_db.Execute(strSQL);
+					int totalchannels=results.Rows.Count;
+
+					strSQL=String.Format( "select * from tblATSCMapping where iLCN like {0}", idChannel);
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count==0) 
+					{
+						// doesnt exists, add it
+						strSQL=String.Format("insert into tblATSCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,channelNumber,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},1)"
+							,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
+							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3, physicalChannel);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+						m_db.Execute(strSQL);
+						int iNewID=m_db.LastInsertID();
+						return idChannel;
+					}
+					else
+					{
+						strSQL=String.Format( "update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}', channelNumber={21} where iLCN like '{22}'", 
+							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid,pmtPid,
+							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3, physicalChannel,idChannel);
+						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
+						m_db.Execute(strSQL);
+						return idChannel;
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"sql:{0}",strSQL);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+
+				return -1;
+			}
+		}
+
 		
 		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3) 
 		{
@@ -2369,6 +2429,63 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
+		static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3) 
+		{
+			audio1=audio2=audio3=ac3Pid=-1;
+			physicalChannel=-1;
+			audioLanguage=audioLanguage1=audioLanguage2=audioLanguage3="";
+			pmtPid=-1;
+			audioPid=videoPid=teletextPid=0;
+			strProvider="";
+			frequency=-1;
+			symbolrate=-1;
+			innerFec=-1;
+			modulation=-1;
+			ONID=-1;
+			TSID=-1;
+			SID=-1;
+			if (m_db == null) return ;
+			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null == m_db) return ;
+					string strSQL;
+					strSQL = String.Format("select * from tblATSCMapping where iLCN={0}",idChannel);
+					SQLiteResultSet results;
+					results = m_db.Execute(strSQL);
+					if (results.Rows.Count != 1) return ;
+					frequency=Int32.Parse(DatabaseUtility.Get(results,0,"frequency"));
+					symbolrate=Int32.Parse(DatabaseUtility.Get(results,0,"symbolrate"));
+					innerFec=Int32.Parse(DatabaseUtility.Get(results,0,"innerFec"));
+					modulation=Int32.Parse(DatabaseUtility.Get(results,0,"modulation"));
+					ONID=Int32.Parse(DatabaseUtility.Get(results,0,"ONID"));
+					TSID=Int32.Parse(DatabaseUtility.Get(results,0,"TSID"));
+					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
+					strProvider=DatabaseUtility.Get(results,0,"strProvider");
+					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
+					videoPid=Int32.Parse(DatabaseUtility.Get(results,0,"videoPid"));
+					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
+					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
+					audio1=Int32.Parse(DatabaseUtility.Get(results,0,"audio1Pid"));
+					audio2=Int32.Parse(DatabaseUtility.Get(results,0,"audio2Pid"));
+					audio3=Int32.Parse(DatabaseUtility.Get(results,0,"audio3Pid"));
+					ac3Pid=Int32.Parse(DatabaseUtility.Get(results,0,"ac3Pid"));
+					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
+					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
+					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
+					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
+					physicalChannel=Int32.Parse(DatabaseUtility.Get(results,0,"channelNumber"));
+					return ;
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
 		
 		static public void GetGroups(ref ArrayList groups)
 		{
