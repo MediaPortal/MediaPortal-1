@@ -2279,133 +2279,139 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}//SendPMT()
 
+		void LoadLNBSettings(ref DVBChannel ch, int disNo)
+		{
+			try
+			{
+				string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
+
+				int lnbKhz=0;
+				int lnbKhzVal=0;
+				int diseqc=0;
+				int lnbKind=0;
+				// lnb config
+				int lnb0MHZ=0;
+				int lnb1MHZ=0;
+				int lnbswMHZ=0;
+				int cbandMHZ=0;
+				int circularMHZ=0;
+
+				using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(filename))
+				{
+					lnb0MHZ=xmlreader.GetValueAsInt("dvbs","LNB0",9750);
+					lnb1MHZ=xmlreader.GetValueAsInt("dvbs","LNB1",10600);
+					lnbswMHZ=xmlreader.GetValueAsInt("dvbs","Switch",11700);
+					cbandMHZ=xmlreader.GetValueAsInt("dvbs","CBand",5150);
+					circularMHZ=xmlreader.GetValueAsInt("dvbs","Circular",10750);
+					switch(disNo)
+					{
+						case 1:
+							// config a
+							lnbKhz=xmlreader.GetValueAsInt("dvbs","lnb",44);
+							diseqc=xmlreader.GetValueAsInt("dvbs","diseqc",0);
+							lnbKind=xmlreader.GetValueAsInt("dvbs","lnbKind",0);
+							break;
+						case 2:
+							// config b
+							lnbKhz=xmlreader.GetValueAsInt("dvbs","lnb2",44);
+							diseqc=xmlreader.GetValueAsInt("dvbs","diseqc2",0);
+							lnbKind=xmlreader.GetValueAsInt("dvbs","lnbKind2",0);
+							break;
+						case 3:
+							// config c
+							lnbKhz=xmlreader.GetValueAsInt("dvbs","lnb3",44);
+							diseqc=xmlreader.GetValueAsInt("dvbs","diseqc3",0);
+							lnbKind=xmlreader.GetValueAsInt("dvbs","lnbKind3",0);
+							break;
+							//
+						case 4:
+							// config d
+							lnbKhz=xmlreader.GetValueAsInt("dvbs","lnb4",44);
+							diseqc=xmlreader.GetValueAsInt("dvbs","diseqc4",0);
+							lnbKind=xmlreader.GetValueAsInt("dvbs","lnbKind4",0);
+							//
+							break;
+					}// switch(disNo)
+					switch (lnbKhz)
+					{
+						case 0: lnbKhzVal=0;break;
+						case 22: lnbKhzVal=1;break;
+						case 33: lnbKhzVal=2;break;
+						case 44: lnbKhzVal=3;break;
+					}
+
+
+				}//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(m_cardFilename))
+
+				// set values to dvbchannel-object
+				ch.DiSEqC=diseqc;
+				// set the lnb parameter 
+				if(ch.Frequency>=lnbswMHZ*1000)
+				{
+					ch.LNBFrequency=lnb1MHZ;
+					ch.LNBKHz=lnbKhzVal;
+				}
+				else
+				{
+					ch.LNBFrequency=lnb0MHZ;
+					ch.LNBKHz=0;
+				}
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: LNB Settings: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}",ch.Frequency,ch.LNBKHz,ch.LNBFrequency,ch.DiSEqC); 
+			}
+			catch(Exception)
+			{
+			}
+		} //void LoadLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
+		
 		void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		{
 			try
 			{
 				if (tuneRequest==null) return;
 				if (tuneRequest.TuningSpace==null) return;
-				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetLNBSettings()");
 				TunerLib.IDVBSTuningSpace space = tuneRequest.TuningSpace as TunerLib.IDVBSTuningSpace;
 				if (space==null)
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: cannot get IDVBSTuningSpace in SetLNBSettings()");
-					return;
+					return ;
 				}
-
-				string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
-				using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
+			//
+			//LOWORD -> LOBYTE -> Bit0 for Position (0-A,1-B)
+			//HIWORD -> LOBYTE -> Bit0 for Option   (0-A,1-B)
+			//LOWORD -> HIBYTE -> Bit0 for 22Khz    (0-Off,1-On)
+			//HIWORD -> HIBYTE -> Bit0 for Burst    (0-Off,1-On)
+				long inputRange=0;
+				switch (currentTuningObject.DiSEqC)
 				{
-					int lnb_0=0;
-					int lnb_1=0;
-					int lnb_switch=0;
-					int lnb0		 = xmlreader.GetValueAsInt("dvbs","LNB0"    ,9750);
-					int lnb1		 = xmlreader.GetValueAsInt("dvbs","LNB1"    ,10600);
-					int lnbSwitch= xmlreader.GetValueAsInt("dvbs","Switch"  ,11700);
-					int CBand		 = xmlreader.GetValueAsInt("dvbs","CBand"   ,5150);
-					int Circular = xmlreader.GetValueAsInt("dvbs","Circular",10750);
-					int lnbKhz	 = xmlreader.GetValueAsInt("dvbs","lnb"     ,44);
-					int lnbKind  = xmlreader.GetValueAsInt("dvbs","lnbKind" ,0);
-					switch (lnbKind)
-					{
-						case 0:	// ku			
-							lnb_0=lnb0;
-							lnb_1=lnb1;
-							lnb_switch=lnbSwitch;
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using KU-band LNB:{0}-{1} MHz, Switch:{2} MHz", lnb_0,lnb_1,lnb_switch);
-							break;
-						case 1: // circular
-							lnb_0=Circular;
-							lnb_1=-1;
-							lnb_switch=-1;
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using Circular-band LNB:{0} MHz", Circular);
-							break;
-						case 2: // c-band
-							lnb_0=CBand;
-							lnb_1=-1;
-							lnb_switch=-1;
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: using C-Band LNB:{0} MHz", CBand);
-							break;
-					}
-					if (lnb_switch>0)
-						space.LNBSwitch     = lnb_switch*1000;
-					else 
-						space.LNBSwitch     =0;
-
-					if (lnb_0>0)
-						space.LowOscillator = lnb_0*1000;
-					else
-						space.LowOscillator =0;
-
-					if (lnb_1>0)
-						space.HighOscillator= lnb_1*1000;
-					else
-						space.HighOscillator=0;
-					//space.SpectralInversion=??
-					//space.InputRange=(lnbKhz*1000).ToString();
-					/*
-									if (m_TunerDevice!=null)
-									{
-										IBDA_LNBInfo[] info = GetBDALNBInfoInterface();
-										if (info==null)
-										{
-											Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to get IBDA_LNBInfo");
-										}
-										else
-										{
-											if (lnb_1 < 0) lnb_1=0;
-											if (lnb_0 < 0) lnb_0=0;
-											if (lnbKhz < 0) lnbKhz=0;
-											for (int i=0; i < info.Length;++i)
-											{
-												if (info[i] !=null)
-												{
-													bool ok=true;
-													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got IBDA_LNBInfo #{0}",i);
-													int hr=info[i].put_HighLowSwitchFrequency((uint)lnbKhz);//22KHz, 44KHz
-													if (hr!=0) 
-													{
-														Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_HighLowSwitchFrequency ({0}) hr:0x{1:X}",lnbKhz,hr);
-														ok=false;
-													}
-													else 
-													{
-														Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  put_HighLowSwitchFrequency ({0}) ok",lnbKhz);
-													}
-													hr=info[i].put_LocalOscilatorFrequencyLowBand((uint)lnb_0*1000);
-													if (hr!=0) 
-													{
-														Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable put_LocalOscilatorFrequencyLowBand({0} hr:0x{1:X}",lnb_0,hr);
-														ok=false;
-													}
-													else
-													{
-														Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: put_LocalOscilatorFrequencyLowBand({0}) ok",lnb_0);
-													}
-													hr=info[i].put_LocalOscilatorFrequencyHighBand((uint)lnb_1*1000);
-													if (hr!=0) 
-													{
-														Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: unable to set put_LocalOscilatorFrequencyHighBand({0} hr:0x{1:X}",lnb_1,hr);
-														ok=false;
-													}
-													else
-													{
-														Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: set put_LocalOscilatorFrequencyHighBand({0}) ok",lnb_1);
-													}
-													if (ok) break;
-												}//if (info[i] !=null)
-											}//for (int i=0; i < info.Length;++i)
-										}
-									}//if (m_TunerDevice!=null)
-									*/
+					case 0: //none
+						return; 
+					case 1: //simple A
+						return; 
+					case 2: //simple B
+						return;
+					case 3: //Level 1 A/A
+						inputRange=0;
+					break;
+					case 4: //Level 1 B/A
+						inputRange=1;
+					break;
+					case 5: //Level 1 A/B
+						inputRange=1<<16;
+					break;
+					case 6: //Level 1 B/B
+						inputRange=(1<<16)+1;
+					break;
 				}
+				if (currentTuningObject.LNBKHz==1) // 22khz 
+					inputRange |= (1<<8);
+
+				space.InputRange=inputRange.ToString();
 			}
 			catch(Exception)
 			{
 			}
-		} //void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
-		
+		}
+
 		public void Process()
 		{
 			if (m_SectionsTables==null) return;
@@ -2621,7 +2627,6 @@ namespace MediaPortal.TV.Recording
 						myTuneRequest.TSID	= ch.TransportStreamID;		//transport stream id
 						myTuneRequest.SID		= ch.ProgramNumber;		//service id
 						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-						SetLNBSettings(myTuneRequest);
 						
 
 						currentTuningObject=new DVBChannel();
@@ -2645,6 +2650,10 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio1=ch.Audio1;
 						currentTuningObject.Audio2=ch.Audio2;
 						currentTuningObject.Audio3=ch.Audio3;
+						currentTuningObject.DiSEqC=ch.DiSEqC;
+						currentTuningObject.LNBFrequency=ch.LNBFrequency;
+						currentTuningObject.LNBKHz=ch.LNBKHz;
+						SetLNBSettings(myTuneRequest);
 
 					} break;
 
@@ -2888,9 +2897,10 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.TSID						= chan.TransportStreamID;	//transport stream id
 					myTuneRequest.SID							= chan.ProgramNumber;		//service id
 					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
+					currentTuningObject = chan;
+					LoadLNBSettings(ref chan,disecqNo);
 					SetLNBSettings(myTuneRequest);
 					
-					currentTuningObject = chan;
 				}
 				else if (Network() == NetworkType.ATSC)
 				{
@@ -2901,10 +2911,8 @@ namespace MediaPortal.TV.Recording
 				//and submit the tune request
 				myTuner.TuneRequest  = newTuneRequest;
 				Marshal.ReleaseComObject(myTuneRequest);
-				if (Network()==NetworkType.DVBS)
-				{
-					SetLNBSettings(myTuneRequest);
-				}
+				
+
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
@@ -3074,6 +3082,9 @@ namespace MediaPortal.TV.Recording
 				newchannel.AudioLanguage1=currentTuningObject.AudioLanguage1;
 				newchannel.AudioLanguage2=currentTuningObject.AudioLanguage2;
 				newchannel.AudioLanguage3=currentTuningObject.AudioLanguage3;
+				newchannel.DiSEqC=currentTuningObject.DiSEqC;
+				newchannel.LNBFrequency=currentTuningObject.LNBFrequency;
+				newchannel.LNBKHz=currentTuningObject.LNBKHz;
 
 				
 				if (info.serviceType==1)//tv
@@ -3423,7 +3434,6 @@ namespace MediaPortal.TV.Recording
 						myTuneRequest.TSID	= ch.TransportStreamID;		//transport stream id
 						myTuneRequest.SID		= ch.ProgramNumber;		//service id
 						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-						SetLNBSettings(myTuneRequest);
 						
 
 						currentTuningObject=new DVBChannel();
@@ -3439,6 +3449,10 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.TeletextPid=0;
 						currentTuningObject.PMTPid=ch.PMTPid;
 						currentTuningObject.ServiceName=channel.Name;
+						currentTuningObject.DiSEqC=ch.DiSEqC;
+						currentTuningObject.LNBFrequency=ch.LNBFrequency;
+						currentTuningObject.LNBKHz=ch.LNBKHz;
+						SetLNBSettings(myTuneRequest);
 					} break;
 
 					case NetworkType.DVBT: 
