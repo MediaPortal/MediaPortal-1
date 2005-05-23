@@ -1472,4 +1472,56 @@ public interface IMediaSample
   }
 
 
+	enum CompressionCaps
+		{
+			CompressionCaps_CanQuality =  0x01,
+			CompressionCaps_CanCrunch =   0x02,
+			CompressionCaps_CanKeyFrame = 0x04,
+			CompressionCaps_CanBFrame =   0x08,
+			CompressionCaps_CanWindow =   0x10
+		} ;
+	[ComVisible(true), ComImport,
+	Guid("C6E13343-30AC-11d0-A18C-00A0C9118956"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IAMVideoCompression 
+	{
+		[PreserveSig]
+		int put_KeyFrameRate ([In] long KeyFrameRate);
+		[PreserveSig]
+		int get_KeyFrameRate ([Out] out long  pKeyFrameRate);
+
+		[PreserveSig]
+		int put_PFramesPerKeyFrame ([In] long PFramesPerKeyFrame);
+		[PreserveSig]
+		int get_PFramesPerKeyFrame ([Out] out long  pPFramesPerKeyFrame);
+		
+		[PreserveSig]
+		int put_Quality ([In] double Quality);
+		[PreserveSig]
+		int get_Quality ([Out] out double  pQuality);
+
+		[PreserveSig]
+		int put_WindowSize ([In] ulong WindowSize);
+		[PreserveSig]
+		int get_WindowSize ([Out] out ulong pWindowSize);
+
+		[PreserveSig]
+		int GetInfo(
+				[Out, MarshalAs(UnmanagedType.LPWStr)] out string pszVersion,
+				[In,Out] ref int pcbVersion,
+				[Out, MarshalAs(UnmanagedType.LPWStr)] out string pszDescription,
+				[In,Out] ref int pcbDescription,
+				[Out] out long pDefaultKeyFrameRate,
+				[Out] out long pDefaultPFramesPerKey,
+				[Out] out double pDefaultQuality,
+				[Out] out long pCapabilities  //CompressionCaps
+				);
+
+		[PreserveSig]
+		int OverrideKeyFrame([In]  long FrameNumber);
+		[PreserveSig]
+		int OverrideFrameSize([In]  long FrameNumber,[In]  long Size);
+
+	}
+
 } // namespace DShowNET
