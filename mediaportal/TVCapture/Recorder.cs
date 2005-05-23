@@ -950,6 +950,14 @@ namespace MediaPortal.TV.Recording
 			get { return m_strTVChannel;}
 		}
 
+		static public string GetRecordingFileName(TVRecording rec)
+		{
+			int card;
+			if (!IsRecordingSchedule(rec, out card) ) return String.Empty;
+			TVCaptureDevice dev = m_tvcards[card] as TVCaptureDevice;
+			
+			return dev.RecordingFileName;
+		}
 
 		/// <summary>
 		/// Property which returns the timeshifting file for the current channel

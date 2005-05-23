@@ -732,17 +732,15 @@ namespace MediaPortal.GUI.TV
         break;
 
 				case 979: // Play recording from beginning
-					if (g_Player.Playing && g_Player.IsTVRecording)
+					string filename=Recorder.GetRecordingFileName(rec);
+					if (filename!=String.Empty)
 					{
-						g_Player.Stop();
-					}
-					GUITVHome.IsTVOn=true;
-					GUITVHome.ViewChannel(rec.Channel);
-					g_Player.SeekAbsolute(0);
-					if (Recorder.IsViewing())
-					{
-						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-						return;
+						g_Player.Play(filename);
+						if (g_Player.Playing)
+						{
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+							return;
+						}
 					}
 					break;
 

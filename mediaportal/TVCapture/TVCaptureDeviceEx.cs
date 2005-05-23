@@ -1350,6 +1350,17 @@ namespace MediaPortal.TV.Recording
 			return true;
 		}
 
+		public string RecordingFileName
+		{
+			get
+			{
+				if (!IsRecording) 
+					return String.Empty;
+				if (recordedTvObject==null)
+					return String.Empty;
+				return recordedTvObject.FileName;
+			}
+		}
 		/// <summary>
 		/// Starts recording live TV to a file
 		/// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
