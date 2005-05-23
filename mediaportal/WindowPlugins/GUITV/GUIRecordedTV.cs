@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.TV
     bool              m_bSortAscending=true;
 		bool							m_bDeleteWatchedShow=false;
 		int								m_iSelectedItem=0;
+		string            currentShow=String.Empty;
 		
 		[SkinControlAttribute(2)]			  protected GUIButtonControl btnViewAs=null;
 		[SkinControlAttribute(3)]				protected GUIButtonControl btnSortBy=null;
@@ -362,21 +363,77 @@ namespace MediaPortal.GUI.TV
 			GUIControl.ClearControl(GetID,listAlbums.GetID);
 			GUIControl.ClearControl(GetID,listViews.GetID);
 
+			ArrayList recordings = new ArrayList();
       ArrayList itemlist = new ArrayList();
-      TVDatabase.GetRecordedTV(ref itemlist);
-      foreach (TVRecorded rec in itemlist)
+			TVDatabase.GetRecordedTV(ref recordings);
+			if (currentShow==String.Empty)
+			{
+				foreach (TVRecorded rec in recordings)
+				{
+					bool add=true;
+					foreach (GUIListItem item in itemlist)
+					{
+						TVRecorded rec2 = item.TVTag as TVRecorded;
+						if (rec.Title.Equals(rec2.Title)) 
+						{
+							item.IsFolder=true;
+							Utils.SetDefaultIcons(item);
+							string strLogo=Utils.GetCoverArt(Thumbs.TVShows,rec.Title);
+							if (System.IO.File.Exists(strLogo))
+							{
+								item.ThumbnailImage=strLogo;
+								item.IconImageBig=strLogo;
+								item.IconImage=strLogo;
+							}
+							add=false;
+							break;
+						}
+					}
+					if (add)
+					{
+						GUIListItem item=new GUIListItem();
+						item.Label=rec.Title;
+						item.TVTag=rec;
+						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
+						if (!System.IO.File.Exists(strLogo))
+						{
+							strLogo="defaultVideoBig.png";
+						}
+						item.ThumbnailImage=strLogo;
+						item.IconImageBig=strLogo;
+						item.IconImage=strLogo;
+						itemlist.Add(item);
+					}
+				}
+			}
+			else
+			{
+				GUIListItem item=new GUIListItem();
+				item.Label="..";
+				item.IsFolder=true;
+				Utils.SetDefaultIcons(item);
+				itemlist.Add(item);
+				foreach (TVRecorded rec in recordings)
+				{
+					if (rec.Title.Equals(currentShow))
+					{
+						item=new GUIListItem();
+						item.Label=rec.Title;
+						item.TVTag=rec;
+						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
+						if (!System.IO.File.Exists(strLogo))
+						{
+							strLogo="defaultVideoBig.png";
+						}
+						item.ThumbnailImage=strLogo;
+						item.IconImageBig=strLogo;
+						item.IconImage=strLogo;
+						itemlist.Add(item);
+					}
+				}
+			}
+			foreach (GUIListItem item in itemlist)
       {
-        GUIListItem item=new GUIListItem();
-        item.Label=rec.Title;
-        item.TVTag=rec;
-        string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
-        if (!System.IO.File.Exists(strLogo))
-        {
-          strLogo="defaultVideoBig.png";
-        }
-        item.ThumbnailImage=strLogo;
-				item.IconImageBig=strLogo;
-				item.IconImage=strLogo;
 				listAlbums.Add(item);
 				listViews.Add(item);
       }
@@ -464,7 +521,7 @@ namespace MediaPortal.GUI.TV
 			{
 				GUIListItem item1=listAlbums[i];
 				GUIListItem item2=listViews[i];
-
+				if (item1.Label=="..") continue;
 				TVRecorded rec=(TVRecorded)item1.TVTag;
 				item1.Label=item2.Label=rec.Title;
 				TimeSpan ts = rec.EndTime-rec.StartTime;
@@ -488,7 +545,15 @@ namespace MediaPortal.GUI.TV
 		{
 			GUIListItem pItem=GetItem(iItem);
 			if (pItem==null) return false;
-			if (pItem.IsFolder) return false;
+			if (pItem.IsFolder) 
+			{
+				if (pItem.Label.Equals("..")) 
+					currentShow=String.Empty;
+				else 
+					currentShow=pItem.Label;
+				LoadDirectory();
+				return false;
+			}
 
 			TVRecorded rec=(TVRecorded)pItem.TVTag;
 			if (System.IO.File.Exists(rec.FileName))
