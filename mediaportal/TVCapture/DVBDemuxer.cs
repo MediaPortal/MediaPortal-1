@@ -112,7 +112,7 @@ namespace MediaPortal.TV.Recording
 		// for pmt pid
 		int m_grabbingLenPMT=0;
 		bool m_grabbingPMT=false;
-		byte[] m_tableBufferPMT=new byte[65535];
+		byte[] m_tableBufferPMT=new byte[4096];
 		int m_bufferPositionPMT=0;
 
 
@@ -142,49 +142,47 @@ namespace MediaPortal.TV.Recording
 
         #region public functions
 
-        public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
-        {
-            // audio
-            if (audio > 0x1FFD)
-                m_audioPid = 0;
-            else
-                m_audioPid = audio;
-            // video
-            if (video > 0x1FFD)
-                m_videoPid = 0;
-            else
-                m_videoPid = audio;
-            // teletext
-            if (teletext > 0x1FFD)
-                m_teletextPid = 0;
-            else
-                m_teletextPid = teletext;
-            // subtitle
-            if (subtitle > 0x1FFD)
-                m_subtitlePid = 0;
-            else
-                m_subtitlePid = subtitle;
+		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
+		{
+			// audio
+			if (audio > 0x1FFD)
+				m_audioPid = 0;
+			else
+				m_audioPid = audio;
+			// video
+			if (video > 0x1FFD)
+				m_videoPid = 0;
+			else
+				m_videoPid = audio;
+			// teletext
+			if (teletext > 0x1FFD)
+				m_teletextPid = 0;
+			else
+				m_teletextPid = teletext;
+			// subtitle
+			if (subtitle > 0x1FFD)
+				m_subtitlePid = 0;
+			else
+				m_subtitlePid = subtitle;
 			// pmt pid
 			if (pmtPid > 0x1FFD)
 				m_pmtPid = 0;
 			else
 				m_pmtPid = pmtPid;
 			// name
-           m_channelName = "";
-           if (channelName != null)
-                if (channelName != "")
-                {
-                    m_channelName = channelName;
-                }
+			m_channelName = "";
+			if (channelName != null)
+				if (channelName != "")
+				{
+					m_channelName = channelName;
+				}
 
-
-            // clear buffers
-            m_epgClass.ClearBuffer();
-            m_teleText.ClearBuffer();
-
-					Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
-										channelName,audio, video, teletext, pmtPid,subtitle);
-        }
+			// clear buffers
+			m_epgClass.ClearBuffer();
+			m_teleText.ClearBuffer();
+			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
+				channelName,audio, video, teletext, pmtPid,subtitle);
+		}
 
 
         #endregion
@@ -305,6 +303,8 @@ namespace MediaPortal.TV.Recording
 						m_epgClass.ParseChannels(data);
 					else if(tableID==0x90)
 						m_epgClass.ParseSummaries(data);
+					else if(tableID==0x92)
+						m_epgClass.ParseThemes(data);
 
 				}
 				if(pid==0xd2)
@@ -432,7 +432,7 @@ namespace MediaPortal.TV.Recording
 				#endregion
 
 				#region mhw grabbing
-				if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
+				if(GUIGraphicsContext.DX9Device!=null)// only grab from epg-grabber
 				{
 					m_packetHeader.Payload=new byte[184];
 					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
@@ -553,7 +553,7 @@ namespace MediaPortal.TV.Recording
 									m_currentPMTVersion=version;
 								}
 							}
-							m_tableBufferPMT=new byte[65535];
+							m_tableBufferPMT=new byte[4096];
 							m_bufferPositionPMT=0;
 							m_grabbingPMT=false;
 						}
@@ -568,6 +568,7 @@ namespace MediaPortal.TV.Recording
         }
 
         #endregion
+
 		#region Table Handling / saving data
 		void GetTablesD2()
 		{
@@ -630,7 +631,7 @@ namespace MediaPortal.TV.Recording
 						tableID=m_tableBufferD3[ptr];
 						sectionLen=((m_tableBufferD3[ptr+1]-0x70)<<8)+m_tableBufferD3[ptr+2];
 						// table ok?
-						if((tableID==0x90 || tableID==0x91) && (m_tableBufferD3[ptr+1]>=0x70 && m_tableBufferD3[ptr+1]<=0x7F))
+						if((tableID==0x90 || tableID==0x91 || tableID==0x92) && (m_tableBufferD3[ptr+1]>=0x70 && m_tableBufferD3[ptr+1]<=0x7F))
 						{
 							// found table
 							// ignore last data and ready

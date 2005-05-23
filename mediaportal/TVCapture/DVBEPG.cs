@@ -71,6 +71,11 @@ namespace MediaPortal.TV.Recording
 			public int		NetworkID;
 		};
 		//
+		public struct MHWTheme
+		{
+			public int ThemeIndex;
+			public string ThemeText;
+		}
 		public struct MHWChannel
 		{
 			public int		NetworkID;
@@ -331,7 +336,7 @@ namespace MediaPortal.TV.Recording
 			if (m_cardType==(int)EPGCard.BDACards)
 				m_sections.Timeout=500;
 			else
-				m_sections.Timeout=500;
+				m_sections.Timeout=750;
 			Log.Write("epg-grab: grabbing table {0}",80);
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
@@ -526,6 +531,46 @@ namespace MediaPortal.TV.Recording
 				m_mhwChannelsCount=m_namesBuffer.Count;
 			}
 		}
+
+		public void ParseThemes(byte[] data)
+		{
+			
+			if(m_themeBuffer==null)
+				return; // error
+			if(m_themeBuffer.Count>0)
+				return; // already got channles table
+
+			int dataLen=data.Length;
+			
+			lock(m_themeBuffer.SyncRoot)
+			{
+				try
+				{
+					int themesIndex = 3;
+					int themesNames = 19;
+					int theme=0;			
+					int val=0;
+					int count = (dataLen-19)/15;
+					for (int i=0; i<count; i++)
+					{
+						if (data[themesIndex+theme] == i)	/* New theme */
+						{
+							val = (val+15) & 0xF0;
+							theme++;
+						}
+						MHWTheme th=new MHWTheme();
+						th.ThemeText=System.Text.Encoding.ASCII.GetString(data,themesNames,15);
+						th.ThemeText=th.ThemeText.Trim();
+						th.ThemeIndex=val;
+						m_themeBuffer.Add(th);
+						Log.Write("mhw-epg: theme '{0}' with id 0x{1:X} found",th.ThemeText,th.ThemeIndex);
+						val++;
+						themesNames+=15;
+					}
+				}
+				catch{}
+			}// lock
+		}
 		//
 		//
 		//
@@ -688,7 +733,7 @@ namespace MediaPortal.TV.Recording
 					eit.event_text=GetSummaryByPrgID(prg.ID);
 					if(eit.event_text=="")
 						eit.event_text=String.Format("0x{0:X}",prg.ID);
-					eit.genere_text="unknown";
+					eit.genere_text=GetThemeText(prg.ThemeID);
 					eit.duration_mm=prg.Duration;
 					eit.isMHWEvent=true;
 					eit.shortEventUseable=true;
@@ -741,6 +786,22 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			return "";
+		}
+		string GetThemeText(int themeID)
+		{
+			if(m_themeBuffer==null)
+				return "unknown";
+			if(m_themeBuffer.Count<1)
+				return "unknown";
+			lock(m_themeBuffer.SyncRoot)
+			{
+				foreach(MHWTheme th in m_themeBuffer)
+				{
+					if(th.ThemeIndex==themeID)
+						return th.ThemeText;
+				}
+				return "unknown";
+			}
 		}
 		bool ProgramExists(int prgID)
 		{
