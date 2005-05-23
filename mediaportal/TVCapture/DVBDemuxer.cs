@@ -106,7 +106,7 @@ namespace MediaPortal.TV.Recording
 		byte[] m_tableBufferD2=new byte[65535];
 		int m_bufferPositionD2=0;
 		// pmt
-		int m_currentPMTVersion=0;
+		int m_currentPMTVersion=-1;
 		// card
 		int m_currentDVBCard=0;
 		// for pmt pid
@@ -144,6 +144,7 @@ namespace MediaPortal.TV.Recording
 
 		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
 		{
+			m_currentPMTVersion=-1;
 			// audio
 			if (audio > 0x1FFD)
 				m_audioPid = 0;
@@ -542,6 +543,7 @@ namespace MediaPortal.TV.Recording
 						lock(m_tableBufferPMT.SyncRoot)
 						{
 							int version=((m_tableBufferPMT[5]>>1)&0x1F);
+							
 							if(m_currentPMTVersion!=version)
 							{
 								Log.Write("DVB Demuxer PMT: new version={0}, old version={1}",version,m_currentPMTVersion);
