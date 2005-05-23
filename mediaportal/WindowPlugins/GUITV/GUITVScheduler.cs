@@ -732,6 +732,7 @@ namespace MediaPortal.GUI.TV
         break;
 
 				case 979: // Play recording from beginning
+					Recorder.StopViewing();
 					string filename=Recorder.GetRecordingFileName(rec);
 					if (filename!=String.Empty)
 					{
