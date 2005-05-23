@@ -204,7 +204,7 @@ namespace MediaPortal.GUI.TV
 			foreach (TVRecording rec in itemlist)
 			{
 				GUIListItem item= new GUIListItem();
-				item.Label		  = rec.Title;
+				item.Label		  = String.Format("{0}.{1}",total,rec.Title);
 				item.TVTag			= rec;
 				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
 				if (!System.IO.File.Exists(strLogo))
