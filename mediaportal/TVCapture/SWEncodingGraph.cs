@@ -1061,6 +1061,26 @@ namespace MediaPortal.TV.Recording
       return ( ( (int)strength ) >=1 );
     }
 
+		public int  SignalQuality()
+		{
+			if (m_graphState!=State.Recording && m_graphState!=State.Viewing) return 1;
+			if (m_TVTuner==null) return 1;
+			AMTunerSignalStrength strength;
+			m_TVTuner.SignalPresent(out strength);
+			if (strength==AMTunerSignalStrength.SignalPresent) return 100;
+			return 1;
+		}
+		
+		public int  SignalStrength()
+		{
+			if (m_graphState!=State.Recording && m_graphState!=State.Viewing) return 1;
+			if (m_TVTuner==null) return 1;
+			AMTunerSignalStrength strength;
+			m_TVTuner.SignalPresent(out strength);
+			if (strength==AMTunerSignalStrength.SignalPresent) return 100;
+			return 1;
+		}
+
     public long VideoFrequency()
     {
       

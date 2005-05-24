@@ -196,6 +196,8 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     bool SignalPresent();
 
+		int  SignalQuality();
+		int  SignalStrength();
     /// <summary>
     /// This method returns the frequency to which the tv tuner is currently tuned
     /// </summary>

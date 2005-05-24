@@ -1409,7 +1409,7 @@ namespace MediaPortal.TV.Recording
 				{
 					//is a signal quality ok?
 					long quality=0;
-					m_TunerStatistics[i].get_SignalQuality(ref quality);
+					m_TunerStatistics[i].get_SignalQuality(ref quality); //1-100
 					if (quality>0) signalQuality += quality;
 				}
 				catch (COMException)
@@ -1430,6 +1430,31 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}//public bool SignalPresent()
 
+		
+		public int  SignalQuality()
+		{
+			if (m_TunerStatistics==null) return 1;
+			int signalQuality=1;
+			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+			{
+				long quality=0;
+				m_TunerStatistics[i].get_SignalQuality(ref quality); //1-100
+				if (quality>signalQuality) signalQuality = (int)quality;
+			}
+			return signalQuality;
+		}
+		public int  SignalStrength()
+		{
+			if (m_TunerStatistics==null) return 1;
+			int signalStrength=1;
+			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+			{
+				long strength=0;
+				m_TunerStatistics[i].get_SignalStrength(ref strength); //1-100
+				if (strength>signalStrength) signalStrength = (int)strength;
+			}
+			return signalStrength;
+		}
 		/// <summary>
 		/// not used
 		/// </summary>

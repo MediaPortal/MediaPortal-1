@@ -1782,6 +1782,16 @@ namespace MediaPortal.TV.Recording
 		{
 				return true;
 		}
+		
+		public int  SignalQuality()
+		{
+			return 100;
+		}
+		
+		public int  SignalStrength()
+		{
+			return 100;
+		}
 
 		/// <summary>
 		/// This method returns the frequency to which the tv tuner is currently tuned

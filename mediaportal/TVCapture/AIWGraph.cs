@@ -1098,6 +1098,23 @@ namespace MediaPortal.TV.Recording
 			return ( ( (int)strength ) >=1 );
 		}
 
+		public int  SignalQuality()
+		{
+			if (m_TVTuner==null) return 1;
+			AMTunerSignalStrength strength;
+			m_TVTuner.SignalPresent(out strength);
+			if (strength==AMTunerSignalStrength.SignalPresent) return 100;
+			return 1;
+		}
+		
+		public int  SignalStrength()
+		{
+			if (m_TVTuner==null) return 1;
+			AMTunerSignalStrength strength;
+			m_TVTuner.SignalPresent(out strength);
+			if (strength==AMTunerSignalStrength.SignalPresent) return 100;
+			return 1;
+		}
 		/// <summary>
 		/// This method returns the frequency to which the tv tuner is currently tuned
 		/// </summary>
