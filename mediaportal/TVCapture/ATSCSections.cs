@@ -78,14 +78,48 @@ namespace MediaPortal.TV.Recording
 			//    0        1        2         3        4       5       6         7        8       9        10
 			for (int i=0; i < tables_defined; ++i)
 			{
-				int table_type     =  (buf[start]<<8) + (buf[start+1]);
-				int table_type_PID =   ((buf[start+2]&0xf)<<8) + (buf[start+3]);
-				int table_type_version = buf[start+4] & 0x1f;
-				int number_of_bytes = (buf[start+5]<<24) + (buf[start+6]<<16) + (buf[start+7]<<8)+ buf[start+8];
-				int table_descriptors_len = ((buf[9]&0xf)<<8) + buf[10];
-				//todo decode descriptors...
-			
+				int table_type								 =  (buf[start]<<8) + (buf[start+1]);
+				int table_type_PID						 = ((buf[start+2]&0xf)<<8) + (buf[start+3]);
+				int table_type_version				 =   buf[start+4] & 0x1f;
+				int number_of_bytes					   =  (buf[start+5]<<24) + (buf[start+6]<<16) + (buf[start+7]<<8)+ buf[start+8];
+				int table_type_descriptors_len = ((buf[start+9]&0xf)<<8) + buf[start+10];
+				int pos=0;
+				int ofs=start+11;
+				while (pos < table_type_descriptors_len)
+				{
+					int descriptor_tag = buf[ofs];
+					int descriptor_len = buf[ofs+1];
+					switch (descriptor_tag)
+					{
+						case 0x80: //stuffing
+							break;
+						case 0x81: //AC3 audio descriptor
+							break;
+						case 0x86: //caption service descriptor
+							break;
+						case 0x87: //content advisory descriptor
+							break;
+						case 0xa0: //extended channel name descriptor
+							break;
+						case 0xa1: //service location descriptor
+							break;
+						case 0xa2: //time-shifted service descriptor
+							break;
+						case 0xa3: //component name descriptor
+							break;
+						case 0xa8: //DCC departing request descriptor
+							break;
+						case 0xa9: //DCC arriving request descriptor
+							break;
+						case 0xaa: //redistribution control descriptor
+							break;
+					}
+					pos += (2+descriptor_len);
+					ofs += (2+descriptor_len);
+				}
+				start= start + 11 + table_type_descriptors_len;
 			}
+			//todo decoder other descriptors
 		}
 
 		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
