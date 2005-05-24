@@ -172,7 +172,6 @@ Global
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
-		..\MediaPortal.vsd = ..\MediaPortal.vsd
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

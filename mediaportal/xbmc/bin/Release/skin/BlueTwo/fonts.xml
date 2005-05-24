@@ -1,4 +1,13 @@
 <fonts>
+  <!-- format: 
+	<font>
+		<name>name of font used in the skin .xml files</name>
+		<filename>name of the font</filename>
+		<height>height of the font</height>
+		<bold>[yes|no]</bold>
+		<italic>[yes|no]</italic>
+	</font>
+  !-->
   <font>
     <name>font10</name>
     <filename>Arial</filename>

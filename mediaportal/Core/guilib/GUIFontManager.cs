@@ -61,8 +61,16 @@ namespace MediaPortal.GUI.Library
 					XmlNode nodeName = node.SelectSingleNode("name");
 					XmlNode nodeFileName = node.SelectSingleNode("filename");
 					XmlNode nodeHeight = node.SelectSingleNode("height");
+					XmlNode nodeBold = node.SelectSingleNode("bold");
+					XmlNode nodeItalics = node.SelectSingleNode("italic");
 					if (nodeHeight!=null&&nodeName!=null &&  nodeFileName!=null)
 					{
+						bool   bold=false;
+						bool   italic=false;
+						if (nodeBold!=null && nodeBold.InnerText!=null && nodeBold.InnerText.Equals("yes") ) 
+							bold=true;
+						if (nodeItalics!=null && nodeItalics.InnerText!=null && nodeItalics.InnerText.Equals("yes") ) 
+							italic=true;
 						string strName=nodeName.InnerText;
 						string strFileName=nodeFileName.InnerText;
 						int iHeight=Int32.Parse(nodeHeight.InnerText);
@@ -71,7 +79,13 @@ namespace MediaPortal.GUI.Library
             float fPercent =( (float)GUIGraphicsContext.Height) / 576.0f;
             fPercent*=iHeight;
             iHeight=(int)fPercent;
-						GUIFont font = new GUIFont(strName,strFileName,iHeight);
+						System.Drawing.FontStyle style = new System.Drawing.FontStyle();
+						style=System.Drawing.FontStyle.Regular;
+						if (bold)
+							style|=System.Drawing.FontStyle.Bold;
+						if (italic)
+							style|=System.Drawing.FontStyle.Italic;
+						GUIFont font = new GUIFont(strName,strFileName,iHeight,style);
 						font.ID=counter++;
             if (nodeStart!=null && nodeStart.InnerText!="" && nodeEnd!=null&& nodeEnd.InnerText!="" )
             {
