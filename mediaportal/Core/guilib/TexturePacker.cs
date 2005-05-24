@@ -1,11 +1,13 @@
 using System;
+using System.IO;
 using System.Drawing;
 using System.Collections;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D=Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
-
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
@@ -29,13 +31,16 @@ namespace MediaPortal.GUI.Library
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEnginePresentTextures();
 
+		[Serializable]
 		public class PackedTexture
 		{
 			public PackedTextureNode root;
-			public Texture           texture;
 			public int               textureNo;
+			[NonSerialized]
+			public Texture           texture;
 		};
 
+		[Serializable]
 		public class PackedTextureNode
 		{
 			public PackedTextureNode	 ChildLeft;
@@ -146,10 +151,46 @@ namespace MediaPortal.GUI.Library
 			return false;
 		}
 
-		
+		void SavePackedSkin(string skinName)
+		{
+			string packedXml=String.Format(@"{0}\packedTexures.xml",skinName);
+			using(FileStream fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
+			{
+				SoapFormatter formatter = new SoapFormatter();
+				formatter.Serialize(fileStream, packedTextures);
+				fileStream.Close();
+			}
+		}
+
+		bool LoadPackedSkin(string skinName)
+		{
+			string packedXml=String.Format(@"{0}\packedTexures.xml",skinName);
+			if(File.Exists(packedXml))
+			{
+				using(FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				{
+					try
+					{
+						packedTextures=new ArrayList();
+						SoapFormatter formatter = new SoapFormatter();
+						packedTextures = (ArrayList)formatter.Deserialize(fileStream);
+						fileStream.Close();
+						LoadPackedGraphics();
+						return true;
+					}
+					catch
+					{
+					}
+				}
+			}
+			return false;
+
+		}
+
 		public void PackSkinGraphics(string skinName)
 		{
-			//return ;
+			if (LoadPackedSkin(skinName)) return;
+
 			packedTextures=new ArrayList();
 			string[] files1 =System.IO.Directory.GetFiles( String.Format(@"{0}\media",skinName),"*.png" );
 			string[] files2 =System.IO.Directory.GetFiles( @"thumbs\tv\logos","*.png" );
@@ -206,6 +247,7 @@ namespace MediaPortal.GUI.Library
 				packedTextures.Add(bigOne);
 				if (!ImagesLeft) break;
 			}
+			SavePackedSkin(skinName);
 			LoadPackedGraphics();
 		}
 
