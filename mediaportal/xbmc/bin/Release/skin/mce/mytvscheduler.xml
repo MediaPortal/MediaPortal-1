@@ -124,9 +124,34 @@
 				<label>624</label>
 				<onleft>10</onleft>
 				<onright>10</onright>
-				<onup>6</onup>
+				<onup>7</onup>
+				<ondown>8</ondown>
+			</control>
+			<control>
+				<description>Priorities</description>
+				<type>button</type>
+				<id>8</id>
+				<posX>60</posX>
+				<posY>199</posY>
+				<label>877</label>
+				<hyperlink>607</hyperlink>
+				<onleft>10</onleft>
+				<onright>10</onright>
+				<onup>7</onup>
+				<ondown>9</ondown>
+			</control>	
+			<control>
+				<description>Storage</description>
+				<type>button</type>
+				<id>9</id>
+				<posX>60</posX>
+				<posY>233</posY>
+				<label>878</label>
+				<onleft>10</onleft>
+				<onright>10</onright>
+				<onup>8</onup>
 				<ondown>99</ondown>
-			</control>		
+			</control>			
 		</control>
 		<control>
 			<type>group</type>
@@ -146,10 +171,10 @@
 				<textYOff3>29</textYOff3>
 				<IconXOff>12</IconXOff>
 				<IconYOff>8</IconYOff>
-				<spinPosX>606</spinPosX>
-				<spinPosY>418</spinPosY>
 				<PinIconXOff>45</PinIconXOff>
 				<PinIconYOff>19</PinIconYOff>		
+				<spinPosX>606</spinPosX>
+				<spinPosY>418</spinPosY>
 				<itemWidth>35</itemWidth>
 				<itemHeight>35</itemHeight>
 				<textureFocus>recording_background_focus.png</textureFocus>
@@ -165,7 +190,6 @@
 				<ondown>2</ondown>
 			</control>
 		</control>	
-	
 		<control>
 			<description>Current program title</description>
 			<type>fadelabel</type>

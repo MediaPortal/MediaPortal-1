@@ -2,7 +2,7 @@
 	<skin>
 		<width>720</width>
 		<height>576</height>
-		<version>0.1.0.14</version>
+		<version>0.1.0.15</version>
 		<changelog>
 		  <change date="28-1-2005">Added my tetris gfx,sounds and xml</change>
 		  <change date="10-2-2005">Added my zap osd gfx and xml</change>
