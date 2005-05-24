@@ -2031,7 +2031,7 @@ namespace MediaPortal.TV.Recording
 			serviceData.serviceName = getString468A(sn, service_name_length);
 			return serviceData;
 		}
-		private string getString468A(byte[] b, int l1)
+		static public  string getString468A(byte[] b, int l1)
 		{
 			//			int in_emphasis = 0;
 			int i = 0;
