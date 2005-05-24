@@ -45,7 +45,7 @@ namespace MediaPortal.TV.Recording
       if (!tunerInput.Equals("Antenna")) isCableInput = true;
 
       card.IsCableInput = isCableInput;
-      card.CountryCode  = countryCode;
+      card.DefaultCountryCode  = countryCode;
 
       if(card.IsBDACard)
 				return new DVBGraphBDA(card);
@@ -64,8 +64,8 @@ namespace MediaPortal.TV.Recording
 			if (card.DeviceType!=null)
 			{
 				if (card.DeviceType.ToLower()=="hw") return new SinkGraph(card);
-				if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate,card.FriendlyName);
-				if (card.DeviceType.ToLower()=="s/w") return new SWEncodingGraph(card.ID,card.CountryCode,card.IsCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel,card.FriendlyName);
+				if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.DefaultCountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate,card.FriendlyName);
+				if (card.DeviceType.ToLower()=="s/w") return new SWEncodingGraph(card.ID,card.DefaultCountryCode,card.IsCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel,card.FriendlyName);
 			}
 
 			if (card.SupportsMPEG2)

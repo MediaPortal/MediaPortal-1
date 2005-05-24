@@ -90,7 +90,7 @@ namespace MediaPortal.TV.Recording
 		}
 
 		[NonSerialized] private bool				isAnalogCable;				// #MW# Should be made serializable...??
-		[NonSerialized] private int					countryCode;				// #MW# Should be made serializable...??
+		[NonSerialized] private int					defaultCountryCode;				// #MW# Should be made serializable...??
 		[NonSerialized] private int					cardId;
 		[NonSerialized] private State       currentGraphState										= State.None;
 		[NonSerialized] private TVRecording currentTvRecording			= null;
@@ -664,10 +664,10 @@ namespace MediaPortal.TV.Recording
 		/// <summary>
 		/// #MW#
 		/// </summary>
-		public int CountryCode
+		public int DefaultCountryCode
 		{
-			get { return countryCode; }
-			set { countryCode = value; }
+			get { return defaultCountryCode; }
+			set { defaultCountryCode = value; }
 		}
 
 		public bool IsMCECard
@@ -1488,7 +1488,7 @@ namespace MediaPortal.TV.Recording
 			retChannel.Name=strChannelName;
 			retChannel.ID=0;
 			retChannel.TVStandard=AnalogVideoStandard.None;
-			retChannel.Country=CountryCode;
+			retChannel.Country=defaultCountryCode;
 			
 			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels);
@@ -1496,7 +1496,8 @@ namespace MediaPortal.TV.Recording
 			{
 				if (String.Compare(strChannelName, chan.Name, true) == 0)
 				{
-					if (chan.Country<=0) chan.Country=CountryCode;
+					if (chan.Country<=0) 
+						chan.Country=defaultCountryCode;
 					return chan;
 				}
 			}

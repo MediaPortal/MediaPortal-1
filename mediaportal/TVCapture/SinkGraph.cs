@@ -108,7 +108,7 @@ namespace MediaPortal.TV.Recording
 			m_graphState             = State.None;
 			m_cardID                 = mCard.ID;
 			m_bUseCable              = mCard.IsCableInput;
-			m_iCountryCode           = mCard.CountryCode;
+			m_iCountryCode           = mCard.DefaultCountryCode;
 			m_strVideoCaptureFilter  = mCard.VideoDevice;
 			m_strVideoCaptureMoniker = mCard.VideoDeviceMoniker;
 			m_FrameSize              = mCard.FrameSize;
@@ -627,7 +627,8 @@ namespace MediaPortal.TV.Recording
 			m_iCountryCode=channel.Country;
     
 			AnalogVideoStandard standard=channel.TVStandard;
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tune to channel:{0}", m_iChannelNr);
+      Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}", 
+																												m_iChannelNr, m_iCountryCode, standard, channel.Name);
       if (m_iChannelNr < (int)ExternalInputs.svhs)
       {
         if (m_TVTuner==null) return;
@@ -638,11 +639,13 @@ namespace MediaPortal.TV.Recording
         
         
 					Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
-						m_iCountryCode,standard.ToString(),
-						m_bUseCable);
-          int iCurrentChannel,iVideoSubChannel,iAudioSubChannel;
+																						m_iCountryCode,standard.ToString(),
+																						m_bUseCable);
+					int currentCountry,iCurrentChannel,iVideoSubChannel,iAudioSubChannel;
+
           m_TVTuner.get_TVFormat(out standard);
-          m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
+					m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
+					m_TVTuner.get_CountryCode(out currentCountry);
           if (iCurrentChannel!=m_iChannelNr)
           {
             m_TVTuner.put_Channel(channel.Number,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
@@ -652,7 +655,8 @@ namespace MediaPortal.TV.Recording
           double dFreq;
           m_TVTuner.get_VideoFrequency(out iFreq);
           dFreq=iFreq/1000000d;
-          Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuned to {0} MHz. tvformat:{1}", dFreq,standard.ToString());
+          Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3}", 
+																			iCurrentChannel,currentCountry, dFreq,standard.ToString());
 			
         }
         catch(Exception){} 

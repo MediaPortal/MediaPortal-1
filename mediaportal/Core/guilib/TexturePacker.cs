@@ -231,11 +231,11 @@ namespace MediaPortal.GUI.Library
 				for (int i=0; i < files.Length;++i)
 				{
 					files[i]=files[i].ToLower();
-					if (files[i]!="") 
+					if (files[i]!=String.Empty) 
 					{
 						if (AddBitmap(bigOne.root,rootImage,files[i]))
 						{
-							files[i]="";
+							files[i]=String.Empty;
 						}
 						else
 							ImagesLeft=true;

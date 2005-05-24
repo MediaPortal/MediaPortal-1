@@ -96,7 +96,7 @@ namespace MediaPortal.TV.Recording
 
 			TVChannel chan = new TVChannel();
 			chan.Number=currentChannel;
-			chan.Country=captureCard.CountryCode;
+			chan.Country=captureCard.DefaultCountryCode;
 			chan.TVStandard=AnalogVideoStandard.None;
 			if (!captureCard.ViewChannel(chan) )
 			{
