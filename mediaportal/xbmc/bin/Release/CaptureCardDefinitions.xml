@@ -279,21 +279,26 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Typhoon TV PVR" capturename="Typhoon TV PVR A/V Capture" devid="vid_10fd&amp;pid_de00">
-    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+  <capturecard commercialname="Typhoon TV PVR Universal" capturename="Typhoon TV PVR A/V Capture" devid="vid_10fd&amp;pid_de00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="0" audio="2" mpeg2=""></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Typhoon TV PVR Tuner"       checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Typhoon TV PVR Audio"       checkdevice="true"></filter>
-        <filter cat="crossbar" name="Typhoon TV PVR CrossBar"    checkdevice="true"></filter>
-        <filter cat="capture"  name="Typhoon TV PVR A/V Capture" checkdevice="true"></filter>
+        <filter cat="tvtuner"		name="Typhoon TV PVR Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Typhoon TV PVR Audio"			checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Typhoon TV PVR CrossBar"		checkdevice="true"></filter>
+        <filter cat="capture"		name="Typhoon TV PVR A/V Capture"	checkdevice="true"></filter>
+        <filter cat="encoderaudio"  name="HT MPEG1 Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="HT MPEG Multiplexer"			checkdevice="false"></filter>
       </filters>
       <connections>
-		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"			sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"			sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"			sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"			sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"				sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="encoderaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"				sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard> 
@@ -5159,9 +5164,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5175,9 +5180,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5191,9 +5196,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5207,9 +5212,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5223,9 +5228,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5239,9 +5244,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5255,9 +5260,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5271,9 +5276,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5287,9 +5292,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5303,9 +5308,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5319,9 +5324,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5335,9 +5340,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5351,9 +5356,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5367,9 +5372,9 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5383,13 +5388,136 @@
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
-        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"></filter>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox DTT-150" capturename="VBox DTT-150 (RevB) Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_150b14f3&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"					checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (DTF8600)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox DTT-150 (RevB) Receiver, BDA Capture Driver"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox DTA-110" capturename="VBox DTA-110 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a11014f3&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (BCM3510 - ATSC)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox DTA-110 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox DTA-111" capturename="VBox DTA-111 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a11114f3&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (BCM3510 - ATSC)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox DTA-111 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox DTA-150" capturename="VBox DTA-150 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15014f3&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (DTF8600 - ATSC)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox DTA-150 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox DTA-151" capturename="VBox DTA-151 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15114f3&amp;rev_03">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (DTF8600 - ATSC)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox DTA-151 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Mini" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03075168&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+  
+  <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03075168&amp;rev_d0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
+        <filter cat="crossbar" 		name="713x BDA Analog Xbar"      			checkdevice="true"></filter>
+        <filter cat="capture"  		name="713x BDA Analog Capture"   			checkdevice="true"></filter>
+		<filter cat="encodervideo"  name="CyberLink MPEG Video Encoder"			checkdevice="false"></filter>        
+		<filter cat="encoderaudio"  name="Cyberlink Audio Encoder(LifeView)"	checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"     			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"  	sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoderaudio" sinkpin="0"></connection>
+		<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
