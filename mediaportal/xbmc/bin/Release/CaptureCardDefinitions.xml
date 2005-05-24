@@ -280,9 +280,9 @@
   </capturecard>
   
   <capturecard commercialname="Typhoon TV PVR" capturename="Typhoon TV PVR A/V Capture" devid="vid_10fd&amp;pid_de00">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
       <filters>
         <filter cat="tvtuner"  name="Typhoon TV PVR Tuner"       checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Typhoon TV PVR Audio"       checkdevice="true"></filter>
@@ -1133,6 +1133,22 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="DNTV Live DVB-T" capturename="DNTV Live! Transport Stream Capture Tuner" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner"		checkdevice="true"></filter>
+        <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>  
 
   <capturecard commercialname="DNTV Live DVB-T (Tuner 1)" capturename="DNTV Live! Transport Stream Capture Tuner 1" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
@@ -3961,28 +3977,20 @@
   </capturecard>
 
   <capturecard commercialname="AVerTV USB 2.0 Plus" capturename="AVerTV USB 2.0 Plus Video Capture" devid="vid_07ca&amp;pid_0036&amp;mi_00">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
-      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
       <filters>
         <filter cat="tvtuner"  		name="AVerTV USB 2.0 Plus TvTuner"  		checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="AVerTV USB 2.0 Plus TvAudio"  		checkdevice="true"></filter>
         <filter cat="crossbar" 		name="AVerTV USB 2.0 Plus CrossBar"      	checkdevice="true"></filter>
         <filter cat="capture"  		name="AVerTV USB 2.0 Plus Video Capture"   	checkdevice="true"></filter>
-        <filter cat="captureaudio"  		name="USB-audioapparaat"   	checkdevice="true"></filter>
-		<filter cat="encodervideo"  name="AVerMedia MPEG Video Encoder"			checkdevice="false"></filter>        
-		<filter cat="encoderaudio"  name="AVerMedia MPEG Audio Encoder"			checkdevice="false"></filter>
-        <filter cat="mux"			name="AVerMedia MPEG-2 Multiplexer"     	checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
-        <connection sourcefilter="captureaudio"		sourcepin="0" sinkfilter="encoderaudio" sinkpin="0"></connection>
-		<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
-        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
