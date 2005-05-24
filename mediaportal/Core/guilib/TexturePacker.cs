@@ -320,8 +320,14 @@ namespace MediaPortal.GUI.Library
 						Log.Write("TexturePacker: fontengine remove texture:{0}",bigOne.textureNo);
 						FontEngineRemoveTexture(bigOne.textureNo);
 					}
-					bigOne.texture.Dispose();
-					bigOne.texture=null;
+					if (bigOne.texture!=null)
+					{
+						if (!bigOne.texture.Disposed)
+						{
+							bigOne.texture.Dispose();
+						}
+						bigOne.texture=null;
+					}
 				}
 			}
 		}
