@@ -433,7 +433,7 @@ namespace MediaPortal.TV.Recording
 				#endregion
 
 				#region mhw grabbing
-				if(GUIGraphicsContext.DX9Device!=null)// only grab from epg-grabber
+				if(GUIGraphicsContext.DX9Device==null)// only grab from epg-grabber
 				{
 					m_packetHeader.Payload=new byte[184];
 					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
@@ -562,6 +562,10 @@ namespace MediaPortal.TV.Recording
 					}
 
 				}
+				#endregion
+
+				#region sections
+
 				#endregion
 
 
