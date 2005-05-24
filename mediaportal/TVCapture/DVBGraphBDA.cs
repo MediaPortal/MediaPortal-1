@@ -3532,7 +3532,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}", 
 							frequency,physicalChannel,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
 
-						//get the IDVBCLocator interface from the new tuning request
+						//get the IATSCLocator interface from the new tuning request
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IATSCLocator interface");
 						TunerLib.IATSCLocator myLocator = myATSCTuneRequest.Locator as TunerLib.IATSCLocator;	
 						if (myLocator==null)
