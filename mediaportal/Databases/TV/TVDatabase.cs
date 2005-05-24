@@ -2429,8 +2429,9 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3) 
+		static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out int minorChannel, out int majorChannel) 
 		{
+			minorChannel=-1; majorChannel=-1;
 			audio1=audio2=audio3=ac3Pid=-1;
 			physicalChannel=-1;
 			audioLanguage=audioLanguage1=audioLanguage2=audioLanguage3="";
@@ -2477,6 +2478,8 @@ namespace MediaPortal.TV.Database
 					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
 					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
 					physicalChannel=Int32.Parse(DatabaseUtility.Get(results,0,"channelNumber"));
+					minorChannel=Int32.Parse(DatabaseUtility.Get(results,0,"minorChannel"));
+					majorChannel=Int32.Parse(DatabaseUtility.Get(results,0,"majorChannel"));
 					return ;
 				}
 				catch(Exception ex)

@@ -2503,13 +2503,28 @@ namespace MediaPortal.TV.Recording
 					return ;
 				}
 
-				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IDVBTuneRequest");
-				TunerLib.IDVBTuneRequest myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
-				if (myTuneRequest ==null)
+
+				TunerLib.IDVBTuneRequest myTuneRequest=null;
+				TunerLib.IATSCChannelTuneRequest myATSCTuneRequest=null;
+				if (m_NetworkType!=NetworkType.ATSC)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
-					return ;
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IDVBTuneRequest");
+					myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
+					if (myTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
+					}
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IATSCChannelTuneRequest");
+					myATSCTuneRequest = newTuneRequest as TunerLib.IATSCChannelTuneRequest;
+					if (myTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
+					}
 				}
 
 				
@@ -2527,7 +2542,8 @@ namespace MediaPortal.TV.Recording
 						//get the ATSC tuning details from the tv database
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBC tuning details");
 						int symbolrate=0,innerFec=0,modulation=0,physicalChannel=0;
-						TVDatabase.GetATSCTuneRequest(channel.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+						int minorChannel=0,majorChannel=0;
+						TVDatabase.GetATSCTuneRequest(channel.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minorChannel,out majorChannel);
 						if (frequency<=0) 
 						{
 							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
@@ -2538,11 +2554,12 @@ namespace MediaPortal.TV.Recording
 
 						//get the IDVBCLocator interface from the new tuning request
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBCLocator interface");
-						TunerLib.IATSCLocator myLocator = myTuneRequest.Locator as TunerLib.IATSCLocator;	
+						TunerLib.IATSCLocator myLocator = myATSCTuneRequest.Locator as TunerLib.IATSCLocator;	
 						if (myLocator==null)
 						{
 							myLocator = myTuningSpace.DefaultLocator as TunerLib.IATSCLocator;
 						}
+						
 						
 						if (myLocator ==null)
 						{
@@ -2558,12 +2575,13 @@ namespace MediaPortal.TV.Recording
 						myLocator.SymbolRate				  = symbolrate;
 						myLocator.InnerFEC						= (TunerLib.FECMethod)innerFec;
 						myLocator.Modulation					= (TunerLib.ModulationType)modulation;
-						myTuneRequest.ONID	= ONID;					//original network id
-						myTuneRequest.TSID	= TSID;					//transport stream id
-						myTuneRequest.SID		= SID;					//service id
-						myTuneRequest.Locator=(TunerLib.Locator)myLocator;
+						myATSCTuneRequest.MinorChannel= minorChannel;
+						myATSCTuneRequest.Channel		  = majorChannel;
+						myATSCTuneRequest.Locator=(TunerLib.Locator)myLocator;
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.PhysicalChannel=physicalChannel;
+						currentTuningObject.MinorChannel=minorChannel;
+						currentTuningObject.MajorChannel=majorChannel;
 						currentTuningObject.Frequency=frequency;
 						currentTuningObject.Symbolrate=symbolrate;
 						currentTuningObject.FEC=innerFec;
@@ -2584,6 +2602,10 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio1=audio1;
 						currentTuningObject.Audio2=audio2;
 						currentTuningObject.Audio3=audio3;
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
+						myTuner.TuneRequest = newTuneRequest;
+						Marshal.ReleaseComObject(myATSCTuneRequest);
+
 					} break;
 					
 					case NetworkType.DVBC: 
@@ -2646,6 +2668,9 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio1=audio1;
 						currentTuningObject.Audio2=audio2;
 						currentTuningObject.Audio3=audio3;
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
+						myTuner.TuneRequest = newTuneRequest;
+						Marshal.ReleaseComObject(myTuneRequest);
 
 
 					} break;
@@ -2718,6 +2743,9 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.LNBFrequency=ch.LNBFrequency;
 						currentTuningObject.LNBKHz=ch.LNBKHz;
 						SetLNBSettings(myTuneRequest);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
+						myTuner.TuneRequest = newTuneRequest;
+						Marshal.ReleaseComObject(myTuneRequest);
 
 					} break;
 
@@ -2775,14 +2803,15 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio1=audio1;
 						currentTuningObject.Audio2=audio2;
 						currentTuningObject.Audio3=audio3;
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
+						myTuner.TuneRequest = newTuneRequest;
+						Marshal.ReleaseComObject(myTuneRequest);
+
 					} break;
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
 			
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
-				myTuner.TuneRequest = newTuneRequest;
-				Marshal.ReleaseComObject(myTuneRequest);
 
 				if (m_streamDemuxer != null)
 				{

@@ -87,6 +87,8 @@ namespace MediaPortal.TV.Database
 		int m_modulation;
 		int m_bandwidth;
 		int m_physicalChannel;
+		int m_minorChannel;
+		int m_majorChannel;
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
 		public int ID
@@ -406,7 +408,27 @@ namespace MediaPortal.TV.Database
 			set
 			{m_physicalChannel=value;}
 		}
-		
+
+		[BrowsableAttribute(true),Category("MinorChannel"),
+		ReadOnly(false)]
+		public int MinorChannel
+		{
+			get
+			{return m_minorChannel;}
+			set
+			{m_minorChannel=value;}
+		}
+
+		[BrowsableAttribute(true),Category("MajorChannel"),
+		ReadOnly(false)]
+		public int MajorChannel
+		{
+			get
+			{return m_majorChannel;}
+			set
+			{m_majorChannel=value;}
+		}
+
 		public override string ToString()
 		{
 			return m_sChannelName;
