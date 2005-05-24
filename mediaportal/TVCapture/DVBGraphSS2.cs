@@ -1930,7 +1930,7 @@ namespace MediaPortal.TV.Recording
 									if(data.data!=null)
 									{
 										if(data.data.Length==3)
-											newchannel.AudioLanguage1=sections.GetLanguageFromCode(data.data);
+											newchannel.AudioLanguage1=DVBSections.GetLanguageFromCode(data.data);
 									}
 									audioOptions=1;
 									break;
@@ -1939,7 +1939,7 @@ namespace MediaPortal.TV.Recording
 									if(data.data!=null)
 									{
 										if(data.data.Length==3)
-											newchannel.AudioLanguage2=sections.GetLanguageFromCode(data.data);
+											newchannel.AudioLanguage2=DVBSections.GetLanguageFromCode(data.data);
 									}
 									audioOptions=2;
 									break;
@@ -1961,7 +1961,7 @@ namespace MediaPortal.TV.Recording
 							if(data.data!=null)
 							{
 								if(data.data.Length==3)
-									newchannel.AudioLanguage=sections.GetLanguageFromCode(data.data);
+									newchannel.AudioLanguage=DVBSections.GetLanguageFromCode(data.data);
 							}
 							hasAudio=true;
 						}

@@ -41,7 +41,7 @@ namespace MediaPortal.TV.Recording
 		bool								m_breakAction=false;
 		object								m_dataCtrl=null;
 		
-		string[] m_langCodes=new string[]{
+		static string[] m_langCodes=new string[]{
 																			 "abk","ace","ach","ada","aar",
 																			 "afh","afr","afa","aka","akk",
 																			 "alb","sqi","ale","alg","tut",
@@ -127,7 +127,7 @@ namespace MediaPortal.TV.Recording
 																			 "wal","war","was","cym","wel",
 																			 "wol","xho","sah","yao","yap",
 																			 "yid","yor","zap","zen","zha","zul"};
-		string[] m_langLanguage=new string[]{
+		static string[] m_langLanguage=new string[]{
 																					"Abkhazian","Achinese","Acoli","Adangme","Afar",
 																					"Afrihili","Afrikaans","Afro-Asiatic","Akan",
 																					"Akkadian","Albanian","Albanian","Aleut","Algonquian",
@@ -447,7 +447,7 @@ namespace MediaPortal.TV.Recording
 		}
 		//
 		//
-		public string GetLanguageFromCode(string code)
+		static public string GetLanguageFromCode(string code)
 		{
 			int n=0;
 			if(code==null)

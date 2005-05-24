@@ -2216,7 +2216,7 @@ namespace MediaPortal.Configuration
 				treeView1.Nodes.Clear();
 				foreach(string code in codes)
 				{
-					TreeNode tn=new TreeNode(dvbSections.GetLanguageFromCode(code)+" ("+code+")");
+					TreeNode tn=new TreeNode(DVBSections.GetLanguageFromCode(code)+" ("+code+")");
 					tn.Tag=code;
 					n++;
 					treeView1.Nodes.Add(tn);

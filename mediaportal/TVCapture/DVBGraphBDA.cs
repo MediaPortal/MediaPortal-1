@@ -3078,9 +3078,19 @@ namespace MediaPortal.TV.Recording
 			TVDatabase.GetChannels(ref tvChannels);
 
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels()");
-			DVBSections sections = new DVBSections();
-			sections.Timeout=8000;
-			DVBSections.Transponder transp = sections.Scan(m_SectionsTables);
+			DVBSections.Transponder transp;
+			if (Network() == NetworkType.ATSC)
+			{
+				ATSCSections sections = new ATSCSections();
+				sections.Timeout=8000;
+				transp = sections.Scan(m_SectionsTables);
+			}
+			else
+			{
+				DVBSections sections = new DVBSections();
+				sections.Timeout=8000;
+				transp = sections.Scan(m_SectionsTables);
+			}
 			if (transp.channels==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: found no channels", transp.channels);
@@ -3128,7 +3138,7 @@ namespace MediaPortal.TV.Recording
 									if(data.data!=null)
 									{
 										if(data.data.Length==3)
-											currentTuningObject.AudioLanguage1=sections.GetLanguageFromCode(data.data);
+											currentTuningObject.AudioLanguage1=DVBSections.GetLanguageFromCode(data.data);
 									}
 									audioOptions++;
 									break;
@@ -3137,7 +3147,7 @@ namespace MediaPortal.TV.Recording
 									if(data.data!=null)
 									{
 										if(data.data.Length==3)
-											currentTuningObject.AudioLanguage2=sections.GetLanguageFromCode(data.data);
+											currentTuningObject.AudioLanguage2=DVBSections.GetLanguageFromCode(data.data);
 									}
 									audioOptions++;
 									break;
@@ -3146,7 +3156,7 @@ namespace MediaPortal.TV.Recording
 									if(data.data!=null)
 									{
 										if(data.data.Length==3)
-											currentTuningObject.AudioLanguage3=sections.GetLanguageFromCode(data.data);
+											currentTuningObject.AudioLanguage3=DVBSections.GetLanguageFromCode(data.data);
 									}
 									audioOptions++;
 									break;
@@ -3159,7 +3169,7 @@ namespace MediaPortal.TV.Recording
 								if(data.data!=null)
 								{
 									if(data.data.Length==3)
-										currentTuningObject.AudioLanguage=sections.GetLanguageFromCode(data.data);
+										currentTuningObject.AudioLanguage=DVBSections.GetLanguageFromCode(data.data);
 								}
 								hasAudio=true;
 							}

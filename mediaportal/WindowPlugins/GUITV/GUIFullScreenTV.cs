@@ -921,7 +921,7 @@ namespace MediaPortal.GUI.TV
 			for (int i=0 ; i<audioPidList.Count ; i++)
 			{				
 				al = (DVBSections.AudioLanguage)audioPidList[i];				
-				string strLanguage = sections.GetLanguageFromCode(al.AudioLanguageCode);
+				string strLanguage = DVBSections.GetLanguageFromCode(al.AudioLanguageCode);
 				dlg.Add(strLanguage);
 			}
 
