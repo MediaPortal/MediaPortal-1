@@ -653,11 +653,17 @@ namespace MediaPortal.TV.Recording
           }
           int iFreq;
           double dFreq;
+					AMTunerSignalStrength signalStrength;
+					m_TVTuner.SignalPresent(out signalStrength);
           m_TVTuner.get_VideoFrequency(out iFreq);
-          dFreq=iFreq/1000000d;
-          Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3}", 
-																			iCurrentChannel,currentCountry, dFreq,standard.ToString());
+					m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
+					m_TVTuner.get_CountryCode(out currentCountry);
+					m_TVTuner.get_TVFormat(out standard);
+					dFreq=iFreq/1000000d;
+          Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}", 
+																			iCurrentChannel,currentCountry, dFreq,standard.ToString(),signalStrength.ToString());
 			
+					
         }
         catch(Exception){} 
       }
