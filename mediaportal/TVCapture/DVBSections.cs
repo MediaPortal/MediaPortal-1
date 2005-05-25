@@ -903,7 +903,7 @@ namespace MediaPortal.TV.Recording
 								{
 									case 0x02: // video
 									case 0x03: // audio
-										Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
+										//Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
 										break;
 									case 0x09:
 										string tmpString=DVB_CADescriptor(data);
@@ -1284,6 +1284,7 @@ namespace MediaPortal.TV.Recording
 				//
 				while (len1 > 4)
 				{
+					System.Windows.Forms.Application.DoEvents();
 					EITDescr eit=new EITDescr();
 					event_id = (buf[pointer]<<8)+buf[pointer+1];
 					start_time_MJD = (buf[pointer+2]<<8)+buf[pointer+3];
@@ -1304,28 +1305,35 @@ namespace MediaPortal.TV.Recording
 						byte[] descrEIT = new byte[x + 1];
 						try
 						{
-							System.Array.Copy(buf, pointer, descrEIT, 0, x);
-							switch (indicator)
+							try
 							{
-								case 0x4E:
-									Log.Write("dvbsection: extended event found...");
-									DVB_ExtendedEvent(descrEIT,ref eit);
-									break;
-								case 0x4D:
-									Log.Write("dvbsection: short event found...");
-									DVB_ShortEvent(descrEIT,ref eit);
-									break;
-								case 0x54:
-									DVB_ContentDescription(descrEIT,ref eit);
-									break;
+								System.Array.Copy(buf, pointer, descrEIT, 0, x);
+								switch (indicator)
+								{
+									case 0x4E:
+										//Log.Write("dvbsection: extended event found...");
+										DVB_ExtendedEvent(descrEIT,ref eit);
+										break;
+									case 0x4D:
+										//Log.Write("dvbsection: short event found...");
+										DVB_ShortEvent(descrEIT,ref eit);
+										break;
+									case 0x54:
+										DVB_ContentDescription(descrEIT,ref eit);
+										break;
 							
+								}
 							}
-
+							catch
+							{
+								// ignore on error
+							}
 						}
-						catch(Exception ex)
+						catch(Exception)
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
+							//Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
 						}
+						System.Windows.Forms.Application.DoEvents();
 
 						eit.section=section_number;
 						eit.lastSection=last_section_number;
@@ -1374,6 +1382,7 @@ namespace MediaPortal.TV.Recording
 						eitInfo.eitList.Add(eit);
 				}
 				//eitInfo.evt_info_act_ts=eit;
+				System.Windows.Forms.Application.DoEvents();
 				if(section_number==0 && lastSection==last_section_number && flag==false)
 					return -1;// start grab
 				if(section_number==0 && lastSection==last_section_number && flag==true)
@@ -1579,7 +1588,7 @@ namespace MediaPortal.TV.Recording
 			eit.seLanguageCode=System.Text.Encoding.ASCII.GetString(buf,2,3);
 			if(eit.seLanguageCode.Length>0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.seLanguageCode);
+				//Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.seLanguageCode);
 			}
 			eit.event_name = "";
 			eit.event_text = "";
@@ -1597,9 +1606,9 @@ namespace MediaPortal.TV.Recording
 					System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
 					eit.event_text = getString468A(b, text_length);
 				}
-				catch(Exception ex)
+				catch(Exception)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+					//Log.WriteFile(Log.LogType.Capture,true,"dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
 					eit.event_text="";
 					eit.event_name="";
 				}
@@ -1842,7 +1851,7 @@ namespace MediaPortal.TV.Recording
 
 				if(eit.eeLanguageCode.Length>0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.eeLanguageCode);
+					//Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.eeLanguageCode);
 				}
 				pointer += 7;
 				lenB = descriptor_length - 5;
@@ -1857,7 +1866,7 @@ namespace MediaPortal.TV.Recording
 					string testText=getString468A(b, item_description_length);
 					if (testText==null)
 						testText="-not avail.-";
-					Log.WriteFile(Log.LogType.Capture,"dvbsections: item-description={0}",testText);
+					//Log.WriteFile(Log.LogType.Capture,"dvbsections: item-description={0}",testText);
 					item_length = b[0];
 					System.Array.Copy(buf, pointer + 1, b, 0, item_length);
 					item = getString468A(b, item_length);
@@ -1874,9 +1883,9 @@ namespace MediaPortal.TV.Recording
 				eit.event_item += item;
 				eit.event_item_text += text;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
-				Log.WriteFile(Log.LogType.Capture,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+				//Log.WriteFile(Log.LogType.Capture,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
 			}
 			if(eit.event_item==null)
 				eit.event_item="";
@@ -2204,7 +2213,7 @@ namespace MediaPortal.TV.Recording
 				}
 				
 				if(ret>=0 && startFlag==true)
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: grab section {0} complete",ret);
+					//Log.WriteFile(Log.LogType.Capture,"epg-grab: grab section {0} complete",ret);
 
 				if(startFlag==false)
 				{
@@ -2226,7 +2235,29 @@ namespace MediaPortal.TV.Recording
 
 			return eit.eitList;
 		}
+		public ArrayList GetEITSchedule(ArrayList epgData)
+		{
+			if(epgData==null)
+				return null;
+			if(epgData.Count<1)
+				return null;
 
+			EIT_Program_Info eit=new EIT_Program_Info();
+			eit.eitList=new ArrayList();
+			EITDescr descr=new EITDescr();
+			bool startFlag=false;
+			int ret=-1;
+
+			foreach(byte[] arr in epgData)
+			{
+				System.Windows.Forms.Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
+				ret=decodeEITTable(arr,ref eit,ret,startFlag);
+				System.Windows.Forms.Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
+			}
+			return eit.eitList;
+		}
 		#endregion
 
 		#region Scanning

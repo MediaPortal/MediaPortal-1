@@ -265,7 +265,9 @@ namespace MediaPortal.TV.Recording
 
             m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.TechnisatStarCards;
-			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+			//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+			m_streamDemuxer.OnGotSection+=new MediaPortal.TV.Recording.DVBDemuxer.OnSectionReceived(m_streamDemuxer_OnGotSection);
+			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 			// reg. settings
 			try
 			{
@@ -1430,8 +1432,8 @@ namespace MediaPortal.TV.Recording
 				//SetMediaType();
 				//m_gotAudioFormat=false;
 				m_StartTime=DateTime.Now;
-
-
+				if(m_streamDemuxer!=null)
+					m_streamDemuxer.GetEPGSchedule(0x50,ch.ProgramNumber);
 			}
 			
 		}
@@ -1686,7 +1688,14 @@ namespace MediaPortal.TV.Recording
 
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() startviewing done");
+			if(m_streamDemuxer!=null)
+			{
+				
+				//m_streamDemuxer.GetEPGSchedule(0x50,m_currentChannel.ProgramNumber);
+				//int a=0;
+			}
 			return true;
+
 		}
 
 		int GetPidNumber(string pidText,int number)
@@ -2449,6 +2458,23 @@ namespace MediaPortal.TV.Recording
 
 		private void m_streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
 		{
+		}
+
+		private void m_streamDemuxer_OnGotSection(int pid, int tableID, byte[] sectionData)
+		{
+		}
+
+		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
+		{
+			if(tableList==null)
+				return;
+			if(tableList.Count<1)
+				return;
+			if(pid==0x12 && (tableID>=0x50 && tableID<=0x6f))
+			{
+				int count=m_streamDemuxer.ProcessEPGData(tableList,m_currentChannel.ProgramNumber);
+				Log.Write("added {0} events to database. grabbing ready",count);
+			}
 		}
 	}// class
 }// namespace

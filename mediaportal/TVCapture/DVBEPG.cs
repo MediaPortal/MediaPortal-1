@@ -189,6 +189,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public int SetEITToDatabase(DVBSections.EITDescr data,string channelName,int eventKind)
 		{
+			System.Windows.Forms.Application.DoEvents();
 			try
 			{
 				int retVal=0;
@@ -196,7 +197,7 @@ namespace MediaPortal.TV.Recording
 				//
 				if(data.extendedEventUseable==false && data.shortEventUseable==false)
 				{
-					Log.Write("epg-grabbing: event IGNORED by language selection");
+					//Log.Write("epg-grabbing: event IGNORED by language selection");
 					return 0;
 				}
 				
@@ -207,7 +208,15 @@ namespace MediaPortal.TV.Recording
 
 				if(data.isMHWEvent==false)
 				{
-					System.DateTime date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
+					System.DateTime date;
+					try
+					{
+						date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
+					}
+					catch
+					{
+						return 0;
+					}
 					date=date.ToLocalTime();
 					System.DateTime dur=new DateTime(date.Ticks);
 					dur=dur.AddSeconds((double)data.duration_ss);
@@ -256,15 +265,10 @@ namespace MediaPortal.TV.Recording
 				if(tv.Title=="")
 					tv.Title=data.event_name;
 
-				if(tv.Description.Length<2)
-				{
-					tv.Title=data.event_name;
-					tv.Description=data.event_text;
-				}
 				//
 				if(tv.Title=="" || tv.Title=="n.a.") 
 				{
-					Log.Write("epg: entrie without title found");
+					//Log.Write("epg: entrie without title found");
 					return 0;
 				}
 
@@ -275,7 +279,7 @@ namespace MediaPortal.TV.Recording
 				TVDatabase.GetProgramsPerChannel(tv.Channel,chStart,chEnd,ref programsInDatabase);
 				if(channelName=="")
 				{
-					Log.Write("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
+					//Log.Write("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
 					return 0;
 				}
 				if(programsInDatabase.Count==0)
@@ -288,7 +292,8 @@ namespace MediaPortal.TV.Recording
 					}
 
 				}else
-					retVal=-2;
+					retVal=0;
+				System.Windows.Forms.Application.DoEvents();
 
 				return retVal;
 			}
@@ -501,7 +506,176 @@ namespace MediaPortal.TV.Recording
 			return 	eventsCount;
 
 		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
+		//
+		public int GetEPG(ArrayList epgData,int serviceID)
+		{
+			if(m_cardType==(int)EPGCard.Invalid || m_cardType==(int)EPGCard.Unknown)
+				return 0;
 
+			int			eventsCount=0;
+			ArrayList	eitList=new ArrayList();
+			ArrayList	tableList=new ArrayList();
+			DVBSections tmpSections=new DVBSections();
+
+			eitList=tmpSections.GetEITSchedule(epgData);
+
+			int n=0;
+			foreach(DVBSections.EITDescr eit in eitList)
+			{
+				System.Windows.Forms.Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
+
+				// the progName must be get from the database
+				// to submitt to correct channel
+				string progName="";
+				
+				switch(m_cardType)
+				{
+					case (int)EPGCard.TechnisatStarCards:
+						progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id);
+						//Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
+						break;
+
+					case (int)EPGCard.BDACards:
+					{
+						ArrayList channels = new ArrayList();
+						TVDatabase.GetChannels(ref channels);
+						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
+						int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
+						int audio1, audio2, audio3, ac3Pid;
+						string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
+
+						string provider="";
+						foreach (TVChannel chan in channels)
+						{
+							switch (m_networkType)
+							{
+								case NetworkType.DVBC:
+									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+									if (eit.program_number==SID && eit.ts_id==TSID)
+									{
+										progName=chan.Name;
+										Log.Write("epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+									}
+									break;
+								case NetworkType.DVBS:
+									progName=TVDatabase.GetSatChannelName(eit.program_number,eit.ts_id);
+									break;
+								case NetworkType.DVBT:
+									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+									if (eit.program_number==SID && eit.ts_id==TSID)
+									{
+										Log.Write("epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+										progName=chan.Name;
+									}
+									break;
+							}
+							if (progName!=String.Empty) break;
+						}//foreach (TVChannel chan in channels)
+					}
+						break;
+
+					case (int)EPGCard.ChannelName:
+						progName=m_channelName;
+						break;
+				}
+				if(progName==null)
+				{
+					//Log.Write("epg-grab: FAILED name is NULL");
+					continue;
+				}
+				System.Windows.Forms.Application.DoEvents();
+
+				if(progName=="")
+				{
+					//Log.Write("epg-grab: FAILED empty name service-id:{0}",eit.program_number);
+					continue;
+				}
+				DVBSections.EITDescr eit2DB=new MediaPortal.TV.Recording.DVBSections.EITDescr();
+				eit2DB=eit;
+				if(m_languagesToGrab!="")
+				{
+					eit2DB.extendedEventUseable=false;
+					eit2DB.shortEventUseable=false;
+				}
+				else
+				{
+					eit2DB.extendedEventUseable=true;
+					eit2DB.shortEventUseable=true;
+				}
+
+				if(m_languagesToGrab!="")
+				{
+					string[] langs=m_languagesToGrab.Split(new char[]{'/'});
+					foreach(string lang in langs)
+					{
+						System.Windows.Forms.Application.DoEvents();
+						System.Windows.Forms.Application.DoEvents();
+						if(lang=="")
+							continue;
+						//Log.Write("epg-grabbing: language selected={0}",lang);
+						string codeEE="";
+						string codeSE="";
+
+						string eitItem=eit.event_item_text;
+						if(eitItem==null)
+							eitItem="";
+
+						if(eit.eeLanguageCode!=null)
+						{
+							//Log.Write("epg-grabbing: e-event-lang={0}",eit.eeLanguageCode);
+							codeEE=eit.eeLanguageCode.ToLower();
+							if(codeEE.Length==3)
+							{
+								if(lang.ToLower().Equals(codeEE))
+								{
+									eit2DB.extendedEventUseable=true;
+									break;
+								}
+							}
+						}
+
+						if(eit.seLanguageCode!=null)
+						{
+							//Log.Write("epg-grabbing: s-event-lang={0}",eit.seLanguageCode);
+							codeSE=eit.seLanguageCode.ToLower();
+							if(codeSE.Length==3)
+							{
+								if(lang.ToLower().Equals(codeSE))
+								{
+									eit2DB.shortEventUseable=true;
+									break;
+								}
+
+							}
+
+						}
+
+
+					}
+				}
+				System.Windows.Forms.Application.DoEvents();
+
+				if(serviceID!=0)
+				{
+					if(eit.program_number==serviceID)
+						eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
+				}
+				else
+					eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
+				n++;
+				System.Windows.Forms.Application.DoEvents();
+
+			}
+			
+			GC.Collect();
+			return 	eventsCount;
+
+		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
+
+		//
+		//
 		public void ParseChannels(byte[] data)
 		{
 			
