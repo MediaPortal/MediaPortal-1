@@ -263,6 +263,10 @@ namespace MediaPortal.GUI.TV
       GUIListItem item2=(GUIListItem)y;
       if (item1==null) return -1;
       if (item2==null) return -1;
+			if (item1.IsFolder && item1.Label=="..") return -1;
+			if (item2.IsFolder && item2.Label=="..") return -1;
+			if (item1.IsFolder && !item2.IsFolder) return -1;
+			else if (!item1.IsFolder && item2.IsFolder) return 1; 
 
       int iComp=0;
       TimeSpan ts;
