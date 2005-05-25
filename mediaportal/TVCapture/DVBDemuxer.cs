@@ -504,13 +504,10 @@ namespace MediaPortal.TV.Recording
         {
             get { return m_teleText; }
         }
-        public int CardType
+        public void SetCardType(int cardType, NetworkType networkType)
         {
-            set 
-			{
-				m_currentDVBCard=value;
-				m_epgClass=new DVBEPG(value);
-			}
+							m_currentDVBCard=cardType;
+							m_epgClass=new DVBEPG(cardType,networkType);
         }
 
         #endregion

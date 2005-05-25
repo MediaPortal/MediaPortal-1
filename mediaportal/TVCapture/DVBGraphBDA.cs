@@ -664,7 +664,7 @@ namespace MediaPortal.TV.Recording
 
 				m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
 				m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
-				m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.BDACards;
+				m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
 				m_streamDemuxer.OnGotSection+=new MediaPortal.TV.Recording.DVBDemuxer.OnSectionReceived(m_streamDemuxer_OnGotSection);
 				m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
@@ -2843,6 +2843,7 @@ namespace MediaPortal.TV.Recording
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
+					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
 				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid);
@@ -3080,6 +3081,7 @@ namespace MediaPortal.TV.Recording
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
+					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 
 			}
@@ -3791,6 +3793,7 @@ namespace MediaPortal.TV.Recording
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
+					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 
 				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid);
@@ -3973,6 +3976,8 @@ namespace MediaPortal.TV.Recording
 				return;
 			if(tableList.Count<1)
 				return;
+
+		//	Log.Write("pid:{0:X} table:{1:X}", pid,tableID);
 			if(pid==0x12 && (tableID>=0x50 && tableID<=0x6f))
 			{
 				int count=m_streamDemuxer.ProcessEPGData(tableList,currentTuningObject.ProgramNumber);
