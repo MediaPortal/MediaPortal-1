@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Diagnostics;
 using System.Collections;
 using System.Runtime.InteropServices;
@@ -46,28 +47,103 @@ namespace MediaPortal.TV.Recording
 			transponder.PMTTable = new ArrayList();
 
 			//get Master Guide table (pid=0x1FFB, table id 0xc7)
-			GetStreamData(filter,0x1ffb, 0xc7,0,Timeout);
-			if (m_sectionsList.Count==0) return transponder;
-			foreach(byte[] arr in m_sectionsList)
-				DecodeMasterGuideTable(arr);
+			//GetStreamData(filter,0x1ffb, 0xc7,0,Timeout);
+			//if (m_sectionsList.Count==0) return transponder;
+			//foreach(byte[] arr in m_sectionsList)
+			//	DecodeMasterGuideTable(arr);
 
 			//get Terrestial Virtual Channel Table (pid=0x1FFB, table id 0xc8)
 			GetStreamData(filter,0x1ffb, 0xc8,0,Timeout);
-			if (m_sectionsList.Count==0) return transponder;
 			foreach(byte[] arr in m_sectionsList)
-				DecodeTerrestialVirtualChannelTable(arr);
+				DecodeTerrestialVirtualChannelTable(transponder,arr);
 
 			
 			//get Terrestial Virtual Channel Table (pid=0x1FFB, table id 0xc9)
 			GetStreamData(filter,0x1ffb, 0xc9,0,Timeout);
-			if (m_sectionsList.Count==0) return transponder;
 			foreach(byte[] arr in m_sectionsList)
-				DecodeCableVirtualChannelTable(arr);
+				DecodeCableVirtualChannelTable(transponder,arr);
 			
 			return transponder;
 		}
 
-		void DecodeTerrestialVirtualChannelTable(byte[] buf)
+		void DecodeServiceLocationDescriptor( byte[] buf,ref DVBSections.ChannelInfo channelInfo)
+		{
+			//  8------ 8------- 3--13--- -------- 8-------       
+			// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
+			//    0        1        2         3        4       5       6         7        8       9     
+			int pcr_pid = ((buf[2]&0x1f)<<8) + buf[3];
+			int number_of_elements = buf[4];
+			int off=5;
+			channelInfo.pcr_pid=pcr_pid;
+			for (int i=0; i < number_of_elements;++i)
+			{
+				//  8------ 3--13--- -------- 24------ -------- --------
+				// 76543210|76543210|76543210|76543210|76543210|76543210|
+				//    0        1        2         3        4       5     
+				int streamtype						= buf[off];
+				int elementary_pid				= ((buf[off+1]&0x1f)<<8) + buf[off+2];
+				int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
+				off+=6;
+				DVBSections.PMTData pmtData = new DVBSections.PMTData();
+				pmtData.elementary_PID=elementary_pid;
+				//pmtData.data=ISO_639_language_code;
+				switch (streamtype)
+				{
+					case 0x2: // video
+						pmtData.isVideo=true;
+					break;
+					case 0x81: // audio
+						pmtData.isAudio=true;
+					break;
+				}
+				channelInfo.pid_list.Add(pmtData);
+			}
+		}
+
+		string DecodeString(byte[] buf, int offset, int compression_type, int mode, int number_of_bytes)
+		{
+			return String.Empty;
+		}
+		string[] DecodeMultipleStrings(byte[] buf, int offset)
+		{
+			int number_of_strings = buf[offset];
+			
+			string[] labels = new string[number_of_strings];
+
+			for (int i=0; i < number_of_strings;++i)
+			{
+				int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+2]);
+				int number_of_segments=buf[offset+3];
+				int start=offset+4;
+				for (int k=0; k < number_of_segments;++k)
+				{
+					int compression_type = buf[start];
+					int mode             = buf[start+1];
+					int number_bytes     = buf[start+2];
+					//decode text....
+					labels[i]=DecodeString(buf, start+3, compression_type,mode,number_bytes);
+					start += (number_bytes+3);
+				}
+			}
+			return labels;
+		}
+
+		void DecodeExtendedChannelNameDescriptor( byte[] buf,ref DVBSections.ChannelInfo channelInfo)
+		{
+			// tid   
+			//  8       8------- 8-------
+			// 76543210|76543210|76543210
+			//    0        1        2    
+
+			int descriptor_tag = buf[0];
+			int descriptor_len = buf[1];
+			string[] labels = DecodeMultipleStrings(buf,2);
+			if (labels.Length==0) return ;
+			if (labels[0].Length==0) return;
+			channelInfo.service_name=labels[0];
+		}
+
+		void DecodeTerrestialVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
 		{
 			// tid   
 			//  8       112-12-- -------- 16------ -------- 2-5----1 8------- 8------- 8------- 8------- 
@@ -89,9 +165,10 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < num_channels_in_section;i++)
 			{
 				//shortname 7*16 bytes (112 bytes)
+				Encoding encoding = new System.Text.UnicodeEncoding();
 				byte[] byShortName = new byte[7*16];
 				System.Array.Copy(buf,start,byShortName,0,7*16);
-				string shortName=DVBSections.getString468A(byShortName, 7*16);
+				string shortName=encoding.GetString(byShortName);
 
 				start+= 7*16;
 				// 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
@@ -115,14 +192,41 @@ namespace MediaPortal.TV.Recording
 				int source_id						 = ((buf[start+14])<<8) + buf[start+15];
 				int descriptors_length	 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
+				DVBSections.ChannelInfo channelInfo = new DVBSections.ChannelInfo();
+				channelInfo.minorChannel = minor_channel;
+				channelInfo.majorChannel = major_channel;
+				channelInfo.modulation   = modulation_mode;
+				channelInfo.freq         = carrier_frequency;
+				channelInfo.program_number= program_number;
+				channelInfo.serviceType   = service_type;
+				channelInfo.service_name  =shortName;
+				channelInfo.transportStreamID = channel_TSID;
+				channelInfo.pid_list = new ArrayList();
+
 				start += 18;
-				//todo decode descriptors
+				int len=0;
+				while (len < descriptors_length)
+				{
+					int descriptor_tag = buf[len];
+					int descriptor_len = buf[len+1];
+					switch (descriptor_tag)
+					{
+						case 0xa1:
+							DecodeServiceLocationDescriptor( buf,ref channelInfo);
+						break;
+						case 0xa0:
+							DecodeExtendedChannelNameDescriptor( buf,ref channelInfo);
+						break;
+					}
+					len += (descriptor_len+2);
+				}
 				start += descriptors_length;
+				transponder.channels.Add(channelInfo);
 			}
 			//todo decode additional descriptors
 		}
 
-		void DecodeCableVirtualChannelTable(byte[] buf)
+		void DecodeCableVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
 		{
 
 		}

@@ -374,7 +374,9 @@ namespace MediaPortal.TV.Recording
 			public int			serviceID;
 			public int			networkID;
 			public string		pidCache;
-
+			public int      minorChannel;
+			public int      majorChannel;
+			public int      modulation;
 		}
 		//
 		//
