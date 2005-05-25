@@ -58,7 +58,7 @@ namespace MediaPortal.TV.Recording
 				DecodeTerrestialVirtualChannelTable(transponder,arr);
 
 			
-			//get Terrestial Virtual Channel Table (pid=0x1FFB, table id 0xc9)
+			//get Cable Virtual Channel Table (pid=0x1FFB, table id 0xc9)
 			GetStreamData(filter,0x1ffb, 0xc9,0,Timeout);
 			foreach(byte[] arr in m_sectionsList)
 				DecodeCableVirtualChannelTable(transponder,arr);

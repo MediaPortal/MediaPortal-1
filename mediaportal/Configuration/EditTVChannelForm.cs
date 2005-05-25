@@ -172,6 +172,49 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 		private System.Windows.Forms.Label labelSpecial;
+		private System.Windows.Forms.TabPage tabPage7;
+		private System.Windows.Forms.Label label74;
+		private System.Windows.Forms.Label label75;
+		private System.Windows.Forms.Label label76;
+		private System.Windows.Forms.Label label77;
+		private System.Windows.Forms.Label label78;
+		private System.Windows.Forms.Label label79;
+		private System.Windows.Forms.Label label80;
+		private System.Windows.Forms.Label label81;
+		private System.Windows.Forms.Label label82;
+		private System.Windows.Forms.Label label84;
+		private System.Windows.Forms.Label label85;
+		private System.Windows.Forms.Label label86;
+		private System.Windows.Forms.Label label87;
+		private System.Windows.Forms.Label label88;
+		private System.Windows.Forms.Label label89;
+		private System.Windows.Forms.Label label90;
+		private System.Windows.Forms.Label label91;
+		private System.Windows.Forms.Label label92;
+		private System.Windows.Forms.Label label93;
+		private System.Windows.Forms.Label label94;
+		private System.Windows.Forms.Label label83;
+		private System.Windows.Forms.TextBox tbATSCPhysicalChannel;
+		private System.Windows.Forms.ComboBox cbATSCInnerFec;
+		private System.Windows.Forms.TextBox tbATSCSymbolRate;
+		private System.Windows.Forms.TextBox tbATSCFrequency;
+		private System.Windows.Forms.TextBox tbATSCTSID;
+		private System.Windows.Forms.TextBox tbATSCMajor;
+		private System.Windows.Forms.TextBox tbATSCMinor;
+		private System.Windows.Forms.TextBox tbATSCAudioLanguage3;
+		private System.Windows.Forms.TextBox tbATSCAudioLanguage2;
+		private System.Windows.Forms.TextBox tbATSCAudioLanguage1;
+		private System.Windows.Forms.TextBox tbATSCAudioLanguage;
+		private System.Windows.Forms.TextBox tbATSCAC3Pid;
+		private System.Windows.Forms.TextBox tbATSCAudio3Pid;
+		private System.Windows.Forms.TextBox tbATSCAudio2Pid;
+		private System.Windows.Forms.TextBox tbATSCAudio1Pid;
+		private System.Windows.Forms.TextBox tbATSCPMTPid;
+		private System.Windows.Forms.TextBox tbATSCTeletextPid;
+		private System.Windows.Forms.TextBox tbATSCVideoPid;
+		private System.Windows.Forms.TextBox tbATSCAudioPid;
+		private System.Windows.Forms.TextBox tbATSCProvider;
+		private System.Windows.Forms.ComboBox cbATSCModulation;
 		int orgChannelNumber=-1;
 
 		public EditTVChannelForm()
@@ -245,6 +288,7 @@ namespace MediaPortal.Configuration
 			this.label4 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.labelSpecial = new System.Windows.Forms.Label();
 			this.comboBoxChannels = new System.Windows.Forms.ComboBox();
 			this.checkBoxScrambled = new System.Windows.Forms.CheckBox();
 			this.label45 = new System.Windows.Forms.Label();
@@ -379,7 +423,49 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.labelSpecial = new System.Windows.Forms.Label();
+			this.tabPage7 = new System.Windows.Forms.TabPage();
+			this.label74 = new System.Windows.Forms.Label();
+			this.tbATSCAudioLanguage3 = new System.Windows.Forms.TextBox();
+			this.tbATSCAudioLanguage2 = new System.Windows.Forms.TextBox();
+			this.tbATSCAudioLanguage1 = new System.Windows.Forms.TextBox();
+			this.tbATSCAudioLanguage = new System.Windows.Forms.TextBox();
+			this.label75 = new System.Windows.Forms.Label();
+			this.label76 = new System.Windows.Forms.Label();
+			this.label77 = new System.Windows.Forms.Label();
+			this.tbATSCAC3Pid = new System.Windows.Forms.TextBox();
+			this.tbATSCAudio3Pid = new System.Windows.Forms.TextBox();
+			this.tbATSCAudio2Pid = new System.Windows.Forms.TextBox();
+			this.tbATSCAudio1Pid = new System.Windows.Forms.TextBox();
+			this.label78 = new System.Windows.Forms.Label();
+			this.label79 = new System.Windows.Forms.Label();
+			this.label80 = new System.Windows.Forms.Label();
+			this.label81 = new System.Windows.Forms.Label();
+			this.tbATSCPMTPid = new System.Windows.Forms.TextBox();
+			this.label82 = new System.Windows.Forms.Label();
+			this.tbATSCTeletextPid = new System.Windows.Forms.TextBox();
+			this.tbATSCVideoPid = new System.Windows.Forms.TextBox();
+			this.tbATSCAudioPid = new System.Windows.Forms.TextBox();
+			this.label84 = new System.Windows.Forms.Label();
+			this.label85 = new System.Windows.Forms.Label();
+			this.label86 = new System.Windows.Forms.Label();
+			this.tbATSCProvider = new System.Windows.Forms.TextBox();
+			this.label87 = new System.Windows.Forms.Label();
+			this.cbATSCModulation = new System.Windows.Forms.ComboBox();
+			this.cbATSCInnerFec = new System.Windows.Forms.ComboBox();
+			this.label88 = new System.Windows.Forms.Label();
+			this.label89 = new System.Windows.Forms.Label();
+			this.tbATSCSymbolRate = new System.Windows.Forms.TextBox();
+			this.label90 = new System.Windows.Forms.Label();
+			this.tbATSCFrequency = new System.Windows.Forms.TextBox();
+			this.label91 = new System.Windows.Forms.Label();
+			this.tbATSCTSID = new System.Windows.Forms.TextBox();
+			this.label92 = new System.Windows.Forms.Label();
+			this.tbATSCMajor = new System.Windows.Forms.TextBox();
+			this.label93 = new System.Windows.Forms.Label();
+			this.tbATSCPhysicalChannel = new System.Windows.Forms.TextBox();
+			this.label94 = new System.Windows.Forms.Label();
+			this.label83 = new System.Windows.Forms.Label();
+			this.tbATSCMinor = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -387,6 +473,7 @@ namespace MediaPortal.Configuration
 			this.tabPage3.SuspendLayout();
 			this.tabPage5.SuspendLayout();
 			this.tabPage6.SuspendLayout();
+			this.tabPage7.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// comboTvStandard
@@ -557,10 +644,11 @@ namespace MediaPortal.Configuration
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage6);
+			this.tabControl1.Controls.Add(this.tabPage7);
+			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
@@ -584,6 +672,13 @@ namespace MediaPortal.Configuration
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+			// 
+			// labelSpecial
+			// 
+			this.labelSpecial.Location = new System.Drawing.Point(264, 56);
+			this.labelSpecial.Name = "labelSpecial";
+			this.labelSpecial.Size = new System.Drawing.Size(64, 16);
+			this.labelSpecial.TabIndex = 15;
 			// 
 			// comboBoxChannels
 			// 
@@ -660,7 +755,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Location = new System.Drawing.Point(128, 80);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(312, 20);
+			this.countryComboBox.Size = new System.Drawing.Size(312, 21);
 			this.countryComboBox.Sorted = true;
 			this.countryComboBox.TabIndex = 15;
 			this.countryComboBox.SelectedIndexChanged += new System.EventHandler(this.countryComboBox_SelectedIndexChanged);
@@ -1823,12 +1918,404 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// labelSpecial
+			// tabPage7
 			// 
-			this.labelSpecial.Location = new System.Drawing.Point(264, 56);
-			this.labelSpecial.Name = "labelSpecial";
-			this.labelSpecial.Size = new System.Drawing.Size(64, 16);
-			this.labelSpecial.TabIndex = 15;
+			this.tabPage7.Controls.Add(this.tbATSCMinor);
+			this.tabPage7.Controls.Add(this.label83);
+			this.tabPage7.Controls.Add(this.label74);
+			this.tabPage7.Controls.Add(this.tbATSCAudioLanguage3);
+			this.tabPage7.Controls.Add(this.tbATSCAudioLanguage2);
+			this.tabPage7.Controls.Add(this.tbATSCAudioLanguage1);
+			this.tabPage7.Controls.Add(this.tbATSCAudioLanguage);
+			this.tabPage7.Controls.Add(this.label75);
+			this.tabPage7.Controls.Add(this.label76);
+			this.tabPage7.Controls.Add(this.label77);
+			this.tabPage7.Controls.Add(this.tbATSCAC3Pid);
+			this.tabPage7.Controls.Add(this.tbATSCAudio3Pid);
+			this.tabPage7.Controls.Add(this.tbATSCAudio2Pid);
+			this.tabPage7.Controls.Add(this.tbATSCAudio1Pid);
+			this.tabPage7.Controls.Add(this.label78);
+			this.tabPage7.Controls.Add(this.label79);
+			this.tabPage7.Controls.Add(this.label80);
+			this.tabPage7.Controls.Add(this.label81);
+			this.tabPage7.Controls.Add(this.tbATSCPMTPid);
+			this.tabPage7.Controls.Add(this.label82);
+			this.tabPage7.Controls.Add(this.tbATSCTeletextPid);
+			this.tabPage7.Controls.Add(this.tbATSCVideoPid);
+			this.tabPage7.Controls.Add(this.tbATSCAudioPid);
+			this.tabPage7.Controls.Add(this.label84);
+			this.tabPage7.Controls.Add(this.label85);
+			this.tabPage7.Controls.Add(this.label86);
+			this.tabPage7.Controls.Add(this.tbATSCProvider);
+			this.tabPage7.Controls.Add(this.label87);
+			this.tabPage7.Controls.Add(this.cbATSCModulation);
+			this.tabPage7.Controls.Add(this.cbATSCInnerFec);
+			this.tabPage7.Controls.Add(this.label88);
+			this.tabPage7.Controls.Add(this.label89);
+			this.tabPage7.Controls.Add(this.tbATSCSymbolRate);
+			this.tabPage7.Controls.Add(this.label90);
+			this.tabPage7.Controls.Add(this.tbATSCFrequency);
+			this.tabPage7.Controls.Add(this.label91);
+			this.tabPage7.Controls.Add(this.tbATSCTSID);
+			this.tabPage7.Controls.Add(this.label92);
+			this.tabPage7.Controls.Add(this.tbATSCMajor);
+			this.tabPage7.Controls.Add(this.label93);
+			this.tabPage7.Controls.Add(this.tbATSCPhysicalChannel);
+			this.tabPage7.Controls.Add(this.label94);
+			this.tabPage7.Location = new System.Drawing.Point(4, 22);
+			this.tabPage7.Name = "tabPage7";
+			this.tabPage7.Size = new System.Drawing.Size(480, 358);
+			this.tabPage7.TabIndex = 6;
+			this.tabPage7.Text = "ATSC";
+			// 
+			// label74
+			// 
+			this.label74.Location = new System.Drawing.Point(286, 304);
+			this.label74.Name = "label74";
+			this.label74.Size = new System.Drawing.Size(72, 16);
+			this.label74.TabIndex = 89;
+			this.label74.Text = "Audio 3:";
+			// 
+			// tbATSCAudioLanguage3
+			// 
+			this.tbATSCAudioLanguage3.Location = new System.Drawing.Point(358, 304);
+			this.tbATSCAudioLanguage3.Name = "tbATSCAudioLanguage3";
+			this.tbATSCAudioLanguage3.TabIndex = 88;
+			this.tbATSCAudioLanguage3.Text = "";
+			// 
+			// tbATSCAudioLanguage2
+			// 
+			this.tbATSCAudioLanguage2.Location = new System.Drawing.Point(358, 280);
+			this.tbATSCAudioLanguage2.Name = "tbATSCAudioLanguage2";
+			this.tbATSCAudioLanguage2.TabIndex = 87;
+			this.tbATSCAudioLanguage2.Text = "";
+			// 
+			// tbATSCAudioLanguage1
+			// 
+			this.tbATSCAudioLanguage1.Location = new System.Drawing.Point(358, 256);
+			this.tbATSCAudioLanguage1.Name = "tbATSCAudioLanguage1";
+			this.tbATSCAudioLanguage1.TabIndex = 86;
+			this.tbATSCAudioLanguage1.Text = "";
+			// 
+			// tbATSCAudioLanguage
+			// 
+			this.tbATSCAudioLanguage.Location = new System.Drawing.Point(358, 232);
+			this.tbATSCAudioLanguage.Name = "tbATSCAudioLanguage";
+			this.tbATSCAudioLanguage.TabIndex = 85;
+			this.tbATSCAudioLanguage.Text = "";
+			// 
+			// label75
+			// 
+			this.label75.Location = new System.Drawing.Point(286, 280);
+			this.label75.Name = "label75";
+			this.label75.Size = new System.Drawing.Size(72, 16);
+			this.label75.TabIndex = 84;
+			this.label75.Text = "Audio 2:";
+			// 
+			// label76
+			// 
+			this.label76.Location = new System.Drawing.Point(286, 256);
+			this.label76.Name = "label76";
+			this.label76.Size = new System.Drawing.Size(72, 16);
+			this.label76.TabIndex = 83;
+			this.label76.Text = "Audio 1:";
+			// 
+			// label77
+			// 
+			this.label77.Location = new System.Drawing.Point(286, 232);
+			this.label77.Name = "label77";
+			this.label77.Size = new System.Drawing.Size(72, 16);
+			this.label77.TabIndex = 82;
+			this.label77.Text = "Audio :";
+			// 
+			// tbATSCAC3Pid
+			// 
+			this.tbATSCAC3Pid.Location = new System.Drawing.Point(358, 200);
+			this.tbATSCAC3Pid.Name = "tbATSCAC3Pid";
+			this.tbATSCAC3Pid.TabIndex = 81;
+			this.tbATSCAC3Pid.Text = "";
+			// 
+			// tbATSCAudio3Pid
+			// 
+			this.tbATSCAudio3Pid.Location = new System.Drawing.Point(358, 176);
+			this.tbATSCAudio3Pid.Name = "tbATSCAudio3Pid";
+			this.tbATSCAudio3Pid.TabIndex = 80;
+			this.tbATSCAudio3Pid.Text = "";
+			// 
+			// tbATSCAudio2Pid
+			// 
+			this.tbATSCAudio2Pid.Location = new System.Drawing.Point(358, 152);
+			this.tbATSCAudio2Pid.Name = "tbATSCAudio2Pid";
+			this.tbATSCAudio2Pid.TabIndex = 79;
+			this.tbATSCAudio2Pid.Text = "";
+			// 
+			// tbATSCAudio1Pid
+			// 
+			this.tbATSCAudio1Pid.Location = new System.Drawing.Point(358, 128);
+			this.tbATSCAudio1Pid.Name = "tbATSCAudio1Pid";
+			this.tbATSCAudio1Pid.TabIndex = 78;
+			this.tbATSCAudio1Pid.Text = "";
+			// 
+			// label78
+			// 
+			this.label78.Location = new System.Drawing.Point(286, 200);
+			this.label78.Name = "label78";
+			this.label78.Size = new System.Drawing.Size(72, 16);
+			this.label78.TabIndex = 77;
+			this.label78.Text = "AC3 Pid:";
+			// 
+			// label79
+			// 
+			this.label79.Location = new System.Drawing.Point(286, 176);
+			this.label79.Name = "label79";
+			this.label79.Size = new System.Drawing.Size(72, 16);
+			this.label79.TabIndex = 76;
+			this.label79.Text = "Audio Pid3:";
+			// 
+			// label80
+			// 
+			this.label80.Location = new System.Drawing.Point(286, 152);
+			this.label80.Name = "label80";
+			this.label80.Size = new System.Drawing.Size(72, 16);
+			this.label80.TabIndex = 75;
+			this.label80.Text = "Audio Pid2:";
+			// 
+			// label81
+			// 
+			this.label81.Location = new System.Drawing.Point(286, 128);
+			this.label81.Name = "label81";
+			this.label81.Size = new System.Drawing.Size(72, 16);
+			this.label81.TabIndex = 74;
+			this.label81.Text = "Audio Pid1:";
+			// 
+			// tbATSCPMTPid
+			// 
+			this.tbATSCPMTPid.Location = new System.Drawing.Point(360, 96);
+			this.tbATSCPMTPid.Name = "tbATSCPMTPid";
+			this.tbATSCPMTPid.TabIndex = 73;
+			this.tbATSCPMTPid.Text = "";
+			// 
+			// label82
+			// 
+			this.label82.Location = new System.Drawing.Point(286, 96);
+			this.label82.Name = "label82";
+			this.label82.Size = new System.Drawing.Size(64, 16);
+			this.label82.TabIndex = 72;
+			this.label82.Text = "PMT pid:";
+			// 
+			// tbATSCTeletextPid
+			// 
+			this.tbATSCTeletextPid.Location = new System.Drawing.Point(360, 72);
+			this.tbATSCTeletextPid.Name = "tbATSCTeletextPid";
+			this.tbATSCTeletextPid.TabIndex = 70;
+			this.tbATSCTeletextPid.Text = "";
+			// 
+			// tbATSCVideoPid
+			// 
+			this.tbATSCVideoPid.Location = new System.Drawing.Point(360, 48);
+			this.tbATSCVideoPid.Name = "tbATSCVideoPid";
+			this.tbATSCVideoPid.TabIndex = 69;
+			this.tbATSCVideoPid.Text = "";
+			// 
+			// tbATSCAudioPid
+			// 
+			this.tbATSCAudioPid.Location = new System.Drawing.Point(360, 24);
+			this.tbATSCAudioPid.Name = "tbATSCAudioPid";
+			this.tbATSCAudioPid.TabIndex = 68;
+			this.tbATSCAudioPid.Text = "";
+			// 
+			// label84
+			// 
+			this.label84.Location = new System.Drawing.Point(286, 72);
+			this.label84.Name = "label84";
+			this.label84.Size = new System.Drawing.Size(72, 16);
+			this.label84.TabIndex = 67;
+			this.label84.Text = "Teletext pid:";
+			// 
+			// label85
+			// 
+			this.label85.Location = new System.Drawing.Point(286, 48);
+			this.label85.Name = "label85";
+			this.label85.Size = new System.Drawing.Size(72, 16);
+			this.label85.TabIndex = 66;
+			this.label85.Text = "Video pid:";
+			// 
+			// label86
+			// 
+			this.label86.Location = new System.Drawing.Point(286, 24);
+			this.label86.Name = "label86";
+			this.label86.Size = new System.Drawing.Size(72, 16);
+			this.label86.TabIndex = 65;
+			this.label86.Text = "Audio pid:";
+			// 
+			// tbATSCProvider
+			// 
+			this.tbATSCProvider.Location = new System.Drawing.Point(158, 232);
+			this.tbATSCProvider.Name = "tbATSCProvider";
+			this.tbATSCProvider.TabIndex = 64;
+			this.tbATSCProvider.Text = "";
+			// 
+			// label87
+			// 
+			this.label87.Location = new System.Drawing.Point(16, 232);
+			this.label87.Name = "label87";
+			this.label87.Size = new System.Drawing.Size(100, 16);
+			this.label87.TabIndex = 63;
+			this.label87.Text = "Provider:";
+			// 
+			// cbATSCModulation
+			// 
+			this.cbATSCModulation.Items.AddRange(new object[] {
+																													"Not Set",
+																													"1024QAM",
+																													"112QAM",
+																													"128QAM",
+																													"160QAM",
+																													"16QAM",
+																													"16VSB",
+																													"192QAM",
+																													"224QAM",
+																													"256QAM",
+																													"320QAM",
+																													"384QAM",
+																													"448QAM",
+																													"512QAM",
+																													"640QAM",
+																													"64QAM",
+																													"768QAM",
+																													"80QAM",
+																													"896QAM",
+																													"8VSB",
+																													"96QAM",
+																													"ANALOG_AMPLITUDE",
+																													"ANALOG_FREQUENCY",
+																													"BPSK",
+																													"OQPSK",
+																													"QPSK"});
+			this.cbATSCModulation.Location = new System.Drawing.Point(158, 200);
+			this.cbATSCModulation.Name = "cbATSCModulation";
+			this.cbATSCModulation.Size = new System.Drawing.Size(121, 21);
+			this.cbATSCModulation.TabIndex = 62;
+			// 
+			// cbATSCInnerFec
+			// 
+			this.cbATSCInnerFec.Items.AddRange(new object[] {
+																												"Max",
+																												"Not Defined",
+																												"Not set",
+																												"RS 204/188",
+																												"ViterBi"});
+			this.cbATSCInnerFec.Location = new System.Drawing.Point(158, 176);
+			this.cbATSCInnerFec.Name = "cbATSCInnerFec";
+			this.cbATSCInnerFec.Size = new System.Drawing.Size(121, 21);
+			this.cbATSCInnerFec.TabIndex = 61;
+			// 
+			// label88
+			// 
+			this.label88.Location = new System.Drawing.Point(16, 200);
+			this.label88.Name = "label88";
+			this.label88.Size = new System.Drawing.Size(100, 16);
+			this.label88.TabIndex = 60;
+			this.label88.Text = "Modulation";
+			// 
+			// label89
+			// 
+			this.label89.Location = new System.Drawing.Point(16, 176);
+			this.label89.Name = "label89";
+			this.label89.Size = new System.Drawing.Size(100, 16);
+			this.label89.TabIndex = 59;
+			this.label89.Text = "InnerFEC";
+			// 
+			// tbATSCSymbolRate
+			// 
+			this.tbATSCSymbolRate.Location = new System.Drawing.Point(158, 152);
+			this.tbATSCSymbolRate.Name = "tbATSCSymbolRate";
+			this.tbATSCSymbolRate.TabIndex = 58;
+			this.tbATSCSymbolRate.Text = "";
+			// 
+			// label90
+			// 
+			this.label90.Location = new System.Drawing.Point(16, 152);
+			this.label90.Name = "label90";
+			this.label90.Size = new System.Drawing.Size(100, 16);
+			this.label90.TabIndex = 57;
+			this.label90.Text = "Symbolrate";
+			// 
+			// tbATSCFrequency
+			// 
+			this.tbATSCFrequency.Location = new System.Drawing.Point(158, 128);
+			this.tbATSCFrequency.Name = "tbATSCFrequency";
+			this.tbATSCFrequency.TabIndex = 56;
+			this.tbATSCFrequency.Text = "";
+			// 
+			// label91
+			// 
+			this.label91.Location = new System.Drawing.Point(16, 128);
+			this.label91.Name = "label91";
+			this.label91.Size = new System.Drawing.Size(128, 16);
+			this.label91.TabIndex = 55;
+			this.label91.Text = "Carrier Frequency (KHz)";
+			// 
+			// tbATSCTSID
+			// 
+			this.tbATSCTSID.Location = new System.Drawing.Point(158, 104);
+			this.tbATSCTSID.Name = "tbATSCTSID";
+			this.tbATSCTSID.TabIndex = 54;
+			this.tbATSCTSID.Text = "";
+			// 
+			// label92
+			// 
+			this.label92.Location = new System.Drawing.Point(16, 104);
+			this.label92.Name = "label92";
+			this.label92.Size = new System.Drawing.Size(72, 16);
+			this.label92.TabIndex = 53;
+			this.label92.Text = "Transport ID:";
+			// 
+			// tbATSCMajor
+			// 
+			this.tbATSCMajor.Location = new System.Drawing.Point(158, 49);
+			this.tbATSCMajor.Name = "tbATSCMajor";
+			this.tbATSCMajor.TabIndex = 52;
+			this.tbATSCMajor.Text = "";
+			// 
+			// label93
+			// 
+			this.label93.Location = new System.Drawing.Point(16, 49);
+			this.label93.Name = "label93";
+			this.label93.Size = new System.Drawing.Size(88, 16);
+			this.label93.TabIndex = 51;
+			this.label93.Text = "Major channel";
+			// 
+			// tbATSCPhysicalChannel
+			// 
+			this.tbATSCPhysicalChannel.Location = new System.Drawing.Point(158, 25);
+			this.tbATSCPhysicalChannel.Name = "tbATSCPhysicalChannel";
+			this.tbATSCPhysicalChannel.Size = new System.Drawing.Size(56, 20);
+			this.tbATSCPhysicalChannel.TabIndex = 50;
+			this.tbATSCPhysicalChannel.Text = "";
+			// 
+			// label94
+			// 
+			this.label94.Location = new System.Drawing.Point(16, 25);
+			this.label94.Name = "label94";
+			this.label94.Size = new System.Drawing.Size(138, 16);
+			this.label94.TabIndex = 49;
+			this.label94.Text = "Physical channel number";
+			// 
+			// label83
+			// 
+			this.label83.Location = new System.Drawing.Point(16, 72);
+			this.label83.Name = "label83";
+			this.label83.Size = new System.Drawing.Size(88, 16);
+			this.label83.TabIndex = 90;
+			this.label83.Text = "Minor channel";
+			// 
+			// tbATSCMinor
+			// 
+			this.tbATSCMinor.Location = new System.Drawing.Point(158, 72);
+			this.tbATSCMinor.Name = "tbATSCMinor";
+			this.tbATSCMinor.TabIndex = 91;
+			this.tbATSCMinor.Text = "";
 			// 
 			// EditTVChannelForm
 			// 
@@ -1854,6 +2341,7 @@ namespace MediaPortal.Configuration
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage6.ResumeLayout(false);
+			this.tabPage7.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -2235,6 +2723,32 @@ namespace MediaPortal.Configuration
 						tbDVBSAudioLanguage2.Text=ch.AudioLanguage2;
 						tbDVBSAudioLanguage3.Text=ch.AudioLanguage3;
 
+
+						//ATSC
+						int physical,minor,major;
+						TVDatabase.GetATSCTuneRequest(channelId,out  physical, out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minor, out major);
+						tbATSCPhysicalChannel.Text=physical.ToString();
+						tbATSCMinor.Text=minor.ToString();
+						tbATSCMajor.Text=major.ToString();
+						tbATSCFrequency.Text=freq.ToString();;
+						tbATSCTSID.Text=TSID.ToString();;
+						tbATSCSymbolRate.Text=symbolrate.ToString();
+						cbATSCInnerFec.SelectedIndex=FecToIndex(innerFec);
+						cbATSCModulation.SelectedIndex=ModulationToIndex(modulation);
+						tbATSCProvider.Text=provider;
+						tbATSCAudioPid.Text=audioPid.ToString();
+						tbATSCVideoPid.Text=videoPid.ToString();
+						tbATSCTeletextPid.Text=teletextPid.ToString();
+						tbATSCPMTPid.Text=pmtPid.ToString();
+						tbATSCAudio1Pid.Text=audio1.ToString();
+						tbATSCAudio2Pid.Text=audio2.ToString();
+						tbATSCAudio3Pid.Text=audio3.ToString();
+						tbATSCAC3Pid.Text=ac3Pid.ToString();
+						tbATSCAudioLanguage.Text=audioLanguage;
+						tbATSCAudioLanguage1.Text=audioLanguage1;
+						tbATSCAudioLanguage2.Text=audioLanguage2;
+						tbATSCAudioLanguage3.Text=audioLanguage3;
+
 					}
 				}//if(channel != null)
 			}//set
@@ -2452,6 +2966,39 @@ namespace MediaPortal.Configuration
 				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 				{
 					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid,pmtPid,audio1,audio2,audio3,ac3Pid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
+				}
+			}
+			catch(Exception){}
+
+			//ATSC
+			try
+			{
+				int physical,minor,major;
+				physical=Int32.Parse(tbATSCPhysicalChannel.Text);
+				minor=Int32.Parse(tbATSCMinor.Text);
+				major=Int32.Parse(tbATSCMajor.Text);
+				freq=Int32.Parse(tbATSCFrequency.Text);
+				TSID=Int32.Parse(tbATSCTSID.Text);
+				symbolrate=Int32.Parse(tbATSCSymbolRate.Text);
+				innerFec=IndexToFec(cbATSCInnerFec.SelectedIndex);
+				modulation=IndexToModulation(cbATSCModulation.SelectedIndex);
+				provider=tbATSCProvider.Text;
+				audioPid=Int32.Parse(tbATSCAudioPid.Text);
+				videoPid=Int32.Parse(tbATSCVideoPid.Text);
+				teletextPid=Int32.Parse(tbATSCTeletextPid.Text);
+				pmtPid=Int32.Parse(tbATSCPMTPid.Text);
+				audio1=Int32.Parse(tbATSCAudio1Pid.Text);
+				audio2=Int32.Parse(tbATSCAudio2Pid.Text);
+				audio3=Int32.Parse(tbATSCAudio3Pid.Text);
+				ac3Pid=Int32.Parse(tbATSCAC3Pid.Text);
+				audioLanguage=tbATSCAudioLanguage.Text;
+				audioLanguage1=tbATSCAudioLanguage1.Text;
+				audioLanguage2=tbATSCAudioLanguage2.Text;
+				audioLanguage3=tbATSCAudioLanguage3.Text;
+
+				if (major>0 && TSID>0 && freq>0)
+				{
+					TVDatabase.MapATSCChannel(tvchannel.Name,physical,minor,major,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,-1,TSID,-1, audioPid,videoPid,teletextPid,pmtPid,audio1,audio2,audio3,ac3Pid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
 				}
 			}
 			catch(Exception){}
