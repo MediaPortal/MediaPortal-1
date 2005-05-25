@@ -590,7 +590,7 @@ namespace MediaPortal.GUI.Library
 					// render the text
 					RenderLabel(timePassed,i,dwPosX, dwPosY);
 
-					RenderPinIcon(timePassed,i,m_dwPosX,m_dwPosY);
+					RenderPinIcon(timePassed,i,m_dwPosX,dwPosY);
 
 					dwPosY += (int)(m_iItemHeight + m_iSpaceBetweenItems);
 				}//if (i + m_iOffset < m_vecItems.Count)
