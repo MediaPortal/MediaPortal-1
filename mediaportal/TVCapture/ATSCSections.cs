@@ -109,19 +109,20 @@ namespace MediaPortal.TV.Recording
 			int number_of_strings = buf[offset];
 			
 			string[] labels = new string[number_of_strings];
-
+		
 			for (int i=0; i < number_of_strings;++i)
 			{
-				int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+2]);
-				int number_of_segments=buf[offset+3];
-				int start=offset+4;
+				int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+3]);
+				int number_of_segments=buf[offset+4];
+				int start=offset+5;
+				labels[i]=String.Empty;
 				for (int k=0; k < number_of_segments;++k)
 				{
 					int compression_type = buf[start];
 					int mode             = buf[start+1];
 					int number_bytes     = buf[start+2];
 					//decode text....
-					labels[i]=DecodeString(buf, start+3, compression_type,mode,number_bytes);
+					labels[i]+=DecodeString(buf, start+3, compression_type,mode,number_bytes);
 					start += (number_bytes+3);
 				}
 			}
@@ -164,7 +165,7 @@ namespace MediaPortal.TV.Recording
 			int start=10;
 			for (int i=0; i < num_channels_in_section;i++)
 			{
-				//shortname 7*16 bytes (112 bytes)
+				//shortname 7*16 bytes (112 bytes) in UTF-16
 				Encoding encoding = new System.Text.UnicodeEncoding();
 				byte[] byShortName = new byte[7*16];
 				System.Array.Copy(buf,start,byShortName,0,7*16);
