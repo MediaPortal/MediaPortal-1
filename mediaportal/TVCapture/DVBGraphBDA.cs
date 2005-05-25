@@ -665,6 +665,8 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
 				m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 				m_streamDemuxer.CardType=(int)DVBEPG.EPGCard.BDACards;
+				m_streamDemuxer.OnGotSection+=new MediaPortal.TV.Recording.DVBDemuxer.OnSectionReceived(m_streamDemuxer_OnGotSection);
+				m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
 				if(m_sampleInterface!=null)
 				{
@@ -3961,6 +3963,23 @@ namespace MediaPortal.TV.Recording
 					ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
+		private void m_streamDemuxer_OnGotSection(int pid, int tableID, byte[] sectionData)
+		{
+		}
+
+		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
+		{
+			if(tableList==null)
+				return;
+			if(tableList.Count<1)
+				return;
+			if(pid==0x12 && (tableID>=0x50 && tableID<=0x6f))
+			{
+				int count=m_streamDemuxer.ProcessEPGData(tableList,currentTuningObject.ProgramNumber);
+				Log.Write("added {0} events to database. grabbing ready",count);
+			}
+		}
+
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file
