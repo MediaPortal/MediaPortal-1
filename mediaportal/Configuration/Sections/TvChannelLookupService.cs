@@ -204,7 +204,11 @@ namespace MediaPortal.Configuration.Sections
 				XmlNode frequency			 = nodeChannel.Attributes.GetNamedItem("frequency");
 				TVChannel chan =new TVChannel();
 				chan.Name=name.Value;
-				chan.Number=Int32.Parse(number.Value);
+				try
+				{
+					chan.Number=Int32.Parse(number.Value);
+				}
+				catch(Exception){}
 				chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
 				TVDatabase.AddChannel(chan);
 			}
