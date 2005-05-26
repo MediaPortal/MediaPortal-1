@@ -443,9 +443,9 @@ namespace MediaPortal.GUI.TV
 				if (rec!= null)
 				{	
 					if (rec.RecType != TVRecording.RecordingType.Once)
-						imgRecordingIcon.SetFileName("tvguide_recordserie_button.png");
+						imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
 					else
-						imgRecordingIcon.SetFileName("tvguide_record_button.png");
+						imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
 				}				
 				imgRecordingIcon.IsVisible=true;
 			}

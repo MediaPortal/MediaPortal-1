@@ -957,9 +957,9 @@ namespace MediaPortal.GUI.TV
 				{
 					GUIImage img=(GUIImage)GetControl((int)Controls.IMG_REC_PIN);
 					if (bSeries)
-						img.SetFileName("tvguide_recordserie_button.png");
+						img.SetFileName(Thumbs.TvRecordingSeriesIcon);
 					else
-						img.SetFileName("tvguide_record_button.png");
+						img.SetFileName(Thumbs.TvRecordingIcon);
 					GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_PIN);
 				}
 				else
@@ -1171,9 +1171,9 @@ namespace MediaPortal.GUI.TV
 				if (bRecording)
 				{
 					if (bSeries)
-						img.TexutureIcon="tvguide_recordserie_button.png";
+						img.TexutureIcon=Thumbs.TvRecordingSeriesIcon;
 					else
-						img.TexutureIcon="tvguide_record_button.png";
+						img.TexutureIcon=Thumbs.TvRecordingIcon;
 				}
 				else
 				{
@@ -1341,9 +1341,9 @@ namespace MediaPortal.GUI.TV
 						if (bRecording)
 						{
 							if (bSeries)
-								img.TexutureIcon="tvguide_recordserie_button.png";
+								img.TexutureIcon=Thumbs.TvRecordingSeriesIcon;
 							else
-								img.TexutureIcon="tvguide_record_button.png";
+								img.TexutureIcon=Thumbs.TvRecordingIcon;
 						}
 						else
 							img.TexutureIcon=String.Empty;

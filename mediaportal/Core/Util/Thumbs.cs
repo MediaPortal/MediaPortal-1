@@ -7,6 +7,10 @@ namespace MediaPortal.Util
 	/// </summary>
 	public class Thumbs
 	{
+
+		static public readonly string TvRecordingIcon="tvguide_record_button.png";
+		static public readonly string TvRecordingSeriesIcon="tvguide_recordserie_button.png";
+
 		static public readonly string MusicAlbum=@"thumbs\music\albums";
 		static public readonly string MusicArtists=@"thumbs\music\artists";
 		static public readonly string MusicGenre=@"thumbs\music\genre";

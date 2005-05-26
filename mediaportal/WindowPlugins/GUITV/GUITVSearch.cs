@@ -442,9 +442,9 @@ namespace MediaPortal.GUI.TV
               if (IsRecording(program, out isSerie))
               {
 								if (isSerie)
-									item.PinImage="tvguide_recordserie_button.png";
+									item.PinImage=Thumbs.TvRecordingSeriesIcon;
 								else
-									item.PinImage="tvguide_record_button.png";
+									item.PinImage=Thumbs.TvRecordingIcon;
               }
               Utils.SetDefaultIcons(item);
               SetChannelLogo(program,ref item);
@@ -517,9 +517,9 @@ namespace MediaPortal.GUI.TV
               if (IsRecording(program, out isSerie))
               {
                 if (isSerie)
-									item.PinImage="tvguide_recordserie_button.png";
+									item.PinImage=Thumbs.TvRecordingSeriesIcon;
 								else
-									item.PinImage="tvguide_record_button.png";
+									item.PinImage=Thumbs.TvRecordingIcon;
               }
               Utils.SetDefaultIcons(item);
               SetChannelLogo(program,ref item);
@@ -594,9 +594,9 @@ namespace MediaPortal.GUI.TV
 						if (IsRecording(program,out isSerie))
 						{
 							if (isSerie)
-								item.PinImage="tvguide_recordserie_button.png";
+								item.PinImage=Thumbs.TvRecordingSeriesIcon;
 							else
-								item.PinImage="tvguide_record_button.png";
+								item.PinImage=Thumbs.TvRecordingIcon;
 						}
 						Utils.SetDefaultIcons(item);
 						SetChannelLogo(program,ref item);

@@ -215,9 +215,9 @@ namespace MediaPortal.GUI.TV
 				if (Recorder.IsRecordingSchedule(rec,out card))
 				{
 					if (rec.RecType !=TVRecording.RecordingType.Once)
-						item.PinImage="tvguide_recordserie_button.png";
+						item.PinImage=Thumbs.TvRecordingSeriesIcon;
 					else
-						item.PinImage="tvguide_record_button.png";
+						item.PinImage=Thumbs.TvRecordingIcon;
 				}
 				item.ThumbnailImage=strLogo;
 				item.IconImageBig=strLogo;
@@ -258,9 +258,9 @@ namespace MediaPortal.GUI.TV
 				{
 					item.Label3=GUILocalizeStrings.Get(682);//Recording
 					if (rec.RecType !=TVRecording.RecordingType.Once)
-						item.PinImage="tvguide_recordserie_button.png";
+						item.PinImage=Thumbs.TvRecordingSeriesIcon;
 					else
-						item.PinImage="tvguide_record_button.png";
+						item.PinImage=Thumbs.TvRecordingIcon;
 				}
 				else 
 				{
