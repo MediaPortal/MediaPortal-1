@@ -291,6 +291,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			if(m_sectionPid!=-1)
 				return;
+			m_eitScheduleLastTable=0x50;
 			m_epgMaxTimer.Interval =180000;// max. grabbing time 3 min.
 			m_epgMaxTimer.Start();
 			GetTable(0x12,tableID);
