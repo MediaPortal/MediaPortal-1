@@ -190,7 +190,6 @@ namespace MediaPortal.TV.Recording
 		}
 		public int SetEITToDatabase(DVBSections.EITDescr data,string channelName,int eventKind)
 		{
-			System.Windows.Forms.Application.DoEvents();
 			try
 			{
 				int retVal=0;
@@ -294,7 +293,6 @@ namespace MediaPortal.TV.Recording
 
 				}else
 					retVal=0;
-				System.Windows.Forms.Application.DoEvents();
 
 				return retVal;
 			}
@@ -523,9 +521,6 @@ namespace MediaPortal.TV.Recording
 			int n=0;
 			foreach(DVBSections.EITDescr eit in eitList)
 			{
-				System.Windows.Forms.Application.DoEvents();
-				System.Windows.Forms.Application.DoEvents();
-				System.Windows.Forms.Application.DoEvents();
 
 				// the progName must be get from the database
 				// to submitt to correct channel
@@ -586,7 +581,6 @@ namespace MediaPortal.TV.Recording
 					//Log.Write("epg-grab: FAILED name is NULL");
 					continue;
 				}
-				System.Windows.Forms.Application.DoEvents();
 
 				if(progName=="")
 				{
@@ -611,8 +605,6 @@ namespace MediaPortal.TV.Recording
 					string[] langs=m_languagesToGrab.Split(new char[]{'/'});
 					foreach(string lang in langs)
 					{
-						System.Windows.Forms.Application.DoEvents();
-						System.Windows.Forms.Application.DoEvents();
 						if(lang=="")
 							continue;
 						//Log.Write("epg-grabbing: language selected={0}",lang);
@@ -656,7 +648,6 @@ namespace MediaPortal.TV.Recording
 
 					}
 				}
-				System.Windows.Forms.Application.DoEvents();
 
 				if(serviceID!=0)
 				{
@@ -666,7 +657,6 @@ namespace MediaPortal.TV.Recording
 				else
 					eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
 				n++;
-				System.Windows.Forms.Application.DoEvents();
 
 			}
 			

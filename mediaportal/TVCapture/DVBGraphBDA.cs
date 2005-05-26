@@ -665,7 +665,6 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
 				m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 				m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
-				m_streamDemuxer.OnGotSection+=new MediaPortal.TV.Recording.DVBDemuxer.OnSectionReceived(m_streamDemuxer_OnGotSection);
 				m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
 				if(m_sampleInterface!=null)

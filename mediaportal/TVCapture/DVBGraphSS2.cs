@@ -266,7 +266,6 @@ namespace MediaPortal.TV.Recording
             m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards,NetworkType.DVBS);
 			//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
-			m_streamDemuxer.OnGotSection+=new MediaPortal.TV.Recording.DVBDemuxer.OnSectionReceived(m_streamDemuxer_OnGotSection);
 			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 			// reg. settings
 			try
@@ -1411,29 +1410,31 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 
-                if (m_streamDemuxer != null)
-                {
-                    m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid);
-                }
+				if (m_streamDemuxer != null)
+				{
+					m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid);
+				}
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 
 				if(m_mediaControl!=null && m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
 				{
 
-                    int hr = SetupDemuxer(m_demuxVideoPin, ch.VideoPid,m_demuxAudioPin, ch.AudioPid);
+					int hr = SetupDemuxer(m_demuxVideoPin, ch.VideoPid,m_demuxAudioPin, ch.AudioPid);
 					if(hr!=0)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 						return;
 					}
-                }
+				}
 
 				//SetMediaType();
 				//m_gotAudioFormat=false;
 				m_StartTime=DateTime.Now;
 				if(m_streamDemuxer!=null)
+				{
 					m_streamDemuxer.GetEPGSchedule(0x50,ch.ProgramNumber);
+				}
 			}
 			
 		}
@@ -1688,12 +1689,6 @@ namespace MediaPortal.TV.Recording
 
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() startviewing done");
-			if(m_streamDemuxer!=null)
-			{
-				
-				//m_streamDemuxer.GetEPGSchedule(0x50,m_currentChannel.ProgramNumber);
-				//int a=0;
-			}
 			return true;
 
 		}
