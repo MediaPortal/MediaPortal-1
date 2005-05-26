@@ -181,6 +181,7 @@ namespace MediaPortal.TV.Recording
 			m_namesBuffer=new ArrayList();
 			m_titleBuffer=new ArrayList();
 			m_summaryBuffer=new ArrayList();
+			m_themeBuffer=new ArrayList();
 			m_mhwChannelsCount=0;
 			m_titlesParsing=false;
 			m_summaryParsing=false;
@@ -715,7 +716,6 @@ namespace MediaPortal.TV.Recording
 				return; // already got channles table
 
 			int dataLen=data.Length;
-			
 			lock(m_themeBuffer.SyncRoot)
 			{
 				try
