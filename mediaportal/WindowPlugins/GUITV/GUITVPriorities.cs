@@ -31,7 +31,7 @@ namespace MediaPortal.GUI.TV
 			#endregion
 		};
 		#region variables, ctor/dtor
-		[SkinControlAttribute(10)]			protected GUIListControl listSchedules=null;
+		[SkinControlAttribute(10)]			protected GUIListControl listPriorities=null;
 
 		int								m_iSelectedItem=0;
 		TVUtil						util =null;
@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.TV
 			LoadDirectory();
 					
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
-			GUIControl.SelectItemControl(GetID,listSchedules.GetID,m_iSelectedItem);
+			GUIControl.SelectItemControl(GetID,listPriorities.GetID,m_iSelectedItem);
 
 		}
 		protected override void OnPageDestroy(int newWindowId)
@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.TV
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
 			base.OnClicked (controlId, control, actionType);
-			if (control == listSchedules)
+			if (control == listPriorities)
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
 				OnMessage(msg);         
@@ -129,7 +129,7 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnClickedUp( int controlId, GUIControl control, Action.ActionType actionType) 
 		{
-			if (control == listSchedules)
+			if (control == listPriorities)
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
 				OnMessage(msg);         
@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.TV
 		}
 		protected override void OnClickedDown( int controlId, GUIControl control, Action.ActionType actionType) 
 		{
-			if (control == listSchedules)
+			if (control == listPriorities)
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
 				OnMessage(msg);         
@@ -169,25 +169,25 @@ namespace MediaPortal.GUI.TV
 		#region list management 
 		GUIListItem GetSelectedItem()
 		{
-			return listSchedules.SelectedListItem;
+			return listPriorities.SelectedListItem;
 		}
 
 		GUIListItem GetItem(int index)
 		{
-			if (index < 0 || index >=listSchedules.Count) return null;
-			return listSchedules[index];
+			if (index < 0 || index >=listPriorities.Count) return null;
+			return listPriorities[index];
 		}
 
 		int GetSelectedItemNo()
 		{
-			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,listSchedules.GetID,0,0,null);
+			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,listPriorities.GetID,0,0,null);
 			OnMessage(msg);         
 			int iItem=(int)msg.Param1;
 			return iItem;
 		}
 		int GetItemCount()
 		{
-			return listSchedules.Count;
+			return listPriorities.Count;
 		}
 		#endregion
 
@@ -195,7 +195,7 @@ namespace MediaPortal.GUI.TV
 		#region scheduled tv methods
 		void LoadDirectory()
 		{
-			GUIControl.ClearControl(GetID,listSchedules.GetID);
+			GUIControl.ClearControl(GetID,listPriorities.GetID);
 
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordings(ref itemlist);
@@ -222,13 +222,16 @@ namespace MediaPortal.GUI.TV
 				item.ThumbnailImage=strLogo;
 				item.IconImageBig=strLogo;
 				item.IconImage=strLogo;
-				listSchedules.Add(item);
+				listPriorities.Add(item);
 				total++;
 			}
       
 			string strObjects=String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
-			GUIControl.SelectItemControl(GetID,listSchedules.GetID,m_iSelectedItem);
+			GUIControl.SelectItemControl(GetID,listPriorities.GetID,m_iSelectedItem);
+			GUIControl cntlLabel = GetControl(12);
+			if (cntlLabel!=null)
+				cntlLabel.YPosition = listPriorities.SpinY;
 
 		}
 		void SetLabels()
@@ -454,7 +457,7 @@ namespace MediaPortal.GUI.TV
 					break;
 			}
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
-			GUIControl.SelectItemControl(GetID,listSchedules.GetID,m_iSelectedItem);
+			GUIControl.SelectItemControl(GetID,listPriorities.GetID,m_iSelectedItem);
 		}
     
 		void ChangeType(TVRecording rec)
