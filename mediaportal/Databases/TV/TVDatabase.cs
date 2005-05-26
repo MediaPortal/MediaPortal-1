@@ -2965,7 +2965,7 @@ namespace MediaPortal.TV.Database
 					results=m_db.Execute(strSQL);
 					for (int x=0; x < results.Rows.Count;++x)
 					{
-						long datetime=Int64.Parse(DatabaseUtility.Get(results,0,"iCancelTime"));
+						long datetime=Int64.Parse(DatabaseUtility.Get(results,x,"iCancelTime"));
 						rec.CanceledSeries.Add(datetime);
 					}
 				} 
