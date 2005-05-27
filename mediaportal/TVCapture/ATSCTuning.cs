@@ -155,6 +155,9 @@ namespace MediaPortal.TV.Recording
 			newchan.NetworkID=-1;
 			newchan.TransportStreamID=-1;
 			newchan.ProgramNumber=-1;
+			newchan.MinorChannel=-1;
+			newchan.MajorChannel=-1;
+			newchan.Frequency=-1;
 			newchan.PhysicalChannel=currentIndex;
 
 			newchan.Modulation=(int)TunerLib.ModulationType.BDA_MOD_NOT_SET;

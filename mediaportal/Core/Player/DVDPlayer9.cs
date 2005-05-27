@@ -46,7 +46,8 @@ namespace MediaPortal.Player
       string strDisplayMode="";
       using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
+				strDVDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","");
+				strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
         if ( strARMode=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;
         if ( strARMode=="letterbox") arMode=AmAspectRatioMode.AM_ARMODE_LETTER_BOX;
         if ( strARMode=="stretch") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED;
