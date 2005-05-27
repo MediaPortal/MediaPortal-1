@@ -1,3 +1,4 @@
+
 using System;
 using System.Drawing;
 using MediaPortal.GUI.Library;
@@ -353,9 +354,12 @@ namespace MediaPortal.Player
 
 		#region IVMR9Callback Members
 
+		static long frameCounter=0;
 		public void PresentImage(int width,int height,int arWidth, int arHeight, uint pTex)
 		{
 			//avoid multiple threads accessing this method simultanously
+			//Log.Write("{0}",frameCounter);
+			frameCounter++;
 			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			try
 			{
@@ -799,15 +803,18 @@ namespace MediaPortal.Player
 				inRepaint=true;
 				if (m_texAdr!=0)
 				{
-					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_texAdr);
+					if (!GUIGraphicsContext.InVmr9Render)
+						PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_texAdr);
 				}
 				else if (m_surfAdr!=0)
 				{
-					PresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_surfAdr);
+					if (!GUIGraphicsContext.InVmr9Render)
+						PresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_surfAdr);
 				}
 				else
 				{
-					PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,0);
+					if (!GUIGraphicsContext.InVmr9Render)
+						PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,0);
 				}
 			}
 			catch(Exception ex)
