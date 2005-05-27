@@ -1419,11 +1419,8 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_eState!=State.Initialized) return;
 			if (GUIGraphicsContext.InVmr9Render) return;
-			if (GUIGraphicsContext.Vmr9Active && g_Player.Playing==false)
-			{
-				ProcessCards();
-			}
-
+			ProcessCards();
+			
 			TimeSpan ts=DateTime.Now-m_dtProgresBar;
 			if (ts.TotalMilliseconds>10000)
 			{
@@ -1434,7 +1431,6 @@ namespace MediaPortal.TV.Recording
 			ts=DateTime.Now-m_dtStart;
 			if (ts.TotalMilliseconds<30000) return;
 			Recorder.HandleRecordings();
-			ProcessCards();	
 			Recorder.CheckRecordingDiskSpace();
 			m_dtStart=DateTime.Now;
 		}//static public void Process()
