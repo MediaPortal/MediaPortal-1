@@ -456,6 +456,9 @@ namespace GUIRecipies
 
 		private void ShowDetails(Recipie rec) // show recipie directions
 		{
+			GUITextControl control = (GUITextControl)this.GetControl((int)Controls.CONTROL_TEXTBOX);
+			control.OnMessage(new GUIMessage( GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID, 0, (int)Controls.CONTROL_TEXTBOX, 0, 0, null ) ); 
+
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_TEXTBOX, rec.ToString() );
 			GUIPropertyManager.SetProperty("#itemcount"," ");
 		}
