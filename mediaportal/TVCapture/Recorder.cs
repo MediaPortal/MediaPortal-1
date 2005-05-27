@@ -53,6 +53,13 @@ namespace MediaPortal.TV.Recording
 		static bool					 importing=false;
 		#endregion
 
+		#region delegates and events
+		public delegate void OnTvChannelChangeHandler(string tvChannelName);
+		public delegate void OnTvRecordingChangedHandler();
+		static public event OnTvChannelChangeHandler OnTvChannelChanged=null;
+		static public event OnTvRecordingChangedHandler OnTvRecordingChanged=null;
+		#endregion
+
 		#region initialisation
 		/// <summary>
 		/// singleton. Dont allow any instance of this class so make the constructor private
@@ -113,7 +120,7 @@ namespace MediaPortal.TV.Recording
 				m_iPreRecordInterval = xmlreader.GetValueAsInt("capture","prerecord", 5);
 				m_iPostRecordInterval= xmlreader.GetValueAsInt("capture","postrecord", 5);
 				//m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
-				m_strTVChannel  = xmlreader.GetValueAsString("mytv","channel",String.Empty);
+				TVChannelName  = xmlreader.GetValueAsString("mytv","channel",String.Empty);
 				
 			}
 
@@ -567,13 +574,15 @@ namespace MediaPortal.TV.Recording
 			
 			if (m_iCurrentCard==cardNo) 
 			{
-				m_strTVChannel=rec.Channel;
+				TVChannelName=rec.Channel;
 				
 				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,(int)GUIWindow.Window.WINDOW_TV,0,0,0,null);
 				msg.SendToTargetWindow=true;
 				GUIWindowManager.SendThreadMessage(msg);
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
+			if (OnTvRecordingChanged!=null)
+				OnTvRecordingChanged();
 			return true;
 		}//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
@@ -610,6 +619,8 @@ namespace MediaPortal.TV.Recording
 							//then stop card
 							dev.Stop();
 						}
+						if (OnTvRecordingChanged!=null)
+							OnTvRecordingChanged();
 					}
 				}
 			}
@@ -652,6 +663,8 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				dev.StopRecording();
+				if (OnTvRecordingChanged!=null)
+					OnTvRecordingChanged();
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void StopRecording()
@@ -930,6 +943,14 @@ namespace MediaPortal.TV.Recording
 		static public string TVChannelName
 		{
 			get { return m_strTVChannel;}
+			set { 
+				if (value!=m_strTVChannel)
+				{
+					m_strTVChannel=value;
+					if (OnTvChannelChanged!=null)
+						OnTvChannelChanged(m_strTVChannel);
+				}
+			}
 		}
 
 		static public string GetRecordingFileName(TVRecording rec)
@@ -1210,7 +1231,7 @@ namespace MediaPortal.TV.Recording
 			if (TVOnOff==false)
 			{
 				TurnTvOff(-1);
-				m_strTVChannel=String.Empty;
+				TVChannelName=String.Empty;
 				m_iCurrentCard=-1;
 				return;
 			}
@@ -1237,7 +1258,7 @@ namespace MediaPortal.TV.Recording
 							TurnTvOff(i);
 
 							m_iCurrentCard=i;
-							m_strTVChannel=channel;
+							TVChannelName=channel;
 
 							// do we want timeshifting?
 							if  (timeshift || dev.IsRecording)
@@ -1325,7 +1346,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			m_iCurrentCard=card;
-			m_strTVChannel=channel;
+			TVChannelName=channel;
 			dev=(TVCaptureDevice)m_tvcards[m_iCurrentCard];
 			
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  found card {0}",dev.ID);
@@ -1346,7 +1367,7 @@ namespace MediaPortal.TV.Recording
 					TuneExternalChannel(channel);
 					dev.TVChannel=channel;
 					dev.StartTimeShifting();
-					m_strTVChannel=channel;
+					TVChannelName=channel;
 
 					// and play the timeshift file (if its not already playing it)
 					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
@@ -1367,7 +1388,7 @@ namespace MediaPortal.TV.Recording
 			TuneExternalChannel(channel);
 			dev.TVChannel=channel;
 			dev.View=true;
-			m_strTVChannel=channel;
+			TVChannelName=channel;
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
 
@@ -1401,12 +1422,19 @@ namespace MediaPortal.TV.Recording
 			ts=DateTime.Now-m_dtStart;
 			if (ts.TotalMilliseconds<30000) return;
 			Recorder.HandleRecordings();
+			bool recordingsChanged=false;
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
+				bool recordingStatus=dev.IsRecording;
 				dev.Process();
+				if (recordingStatus!=recordingsChanged)
+				{
+					recordingsChanged=true;
+				}
 			}			
-			RecorderProperties.UpdateViewProperties();
+			if (recordingsChanged && OnTvRecordingChanged!=null)
+				OnTvRecordingChanged();
 			Recorder.CheckRecordingDiskSpace();
 			m_dtStart=DateTime.Now;
 		}//static public void Process()
