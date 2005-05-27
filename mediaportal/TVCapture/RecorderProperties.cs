@@ -92,23 +92,21 @@ namespace MediaPortal.TV.Recording
 
 			if (Recorder.IsRecording())
 			{
-				TVProgram prog=Recorder.ProgramRecording;
 				DateTime dtStart,dtEnd,dtStarted;
-				if (prog !=null)
+				if (lastProgramRecording !=null)
 				{
-					dtStart=prog.StartTime;
-					dtEnd=prog.EndTime;
+					dtStart=lastProgramRecording.StartTime;
+					dtEnd=lastProgramRecording.EndTime;
 					dtStarted=Recorder.TimeRecordingStarted;
 					if (dtStarted<dtStart) dtStarted=dtStart;
 					SetProgressBarProperties(dtStart,dtStarted,dtEnd);
 				}
 				else 
 				{
-					TVRecording rec=Recorder.CurrentTVRecording;
-					if (rec!=null)
+					if (lastTvRecording!=null)
 					{
-						dtStart=rec.StartTime;
-						dtEnd=rec.EndTime;
+						dtStart=lastTvRecording.StartTime;
+						dtEnd=lastTvRecording.EndTime;
 						dtStarted=Recorder.TimeRecordingStarted;
 						if (dtStarted<dtStart) dtStarted=dtStart;
 						SetProgressBarProperties(dtStart,dtStarted,dtEnd);
