@@ -519,20 +519,19 @@ namespace MediaPortal.Player
 
 		public override void Pause()
 		{
-			//lock (this)
-		{
 			if (m_state==PlayState.Paused) 
 			{
+				Log.Write("BaseStreamBufferPlayer:resume");
 				m_speedRate = 10000;
 				mediaCtrl.Run();
 				m_state=PlayState.Playing;
 			}
 			else if (m_state==PlayState.Playing) 
 			{
+				Log.Write("BaseStreamBufferPlayer:pause");
 				m_state=PlayState.Paused;
 				mediaCtrl.Pause();
 			}
-		}
 		}
 
 		public override bool Paused
@@ -566,14 +565,11 @@ namespace MediaPortal.Player
 
 		public override void Stop()
 		{
-			//lock (this)
+			if (m_state!=PlayState.Init)
 			{
-				if (m_state!=PlayState.Init)
-				{
-					Log.Write("StreamBufferPlayer:stop");
+				Log.Write("StreamBufferPlayer:stop");
 
-					CloseInterfaces();
-				}
+				CloseInterfaces();
 			}
 		}
 /*
@@ -613,8 +609,6 @@ namespace MediaPortal.Player
 				if (m_iVolume!=value)
 				{
 					m_iVolume=value;
-					//lock (this)
-				{
 					if (m_state!=PlayState.Init)
 					{
 						if (basicAudio!=null)
@@ -625,7 +619,6 @@ namespace MediaPortal.Player
 							basicAudio.put_Volume( (iVolume-5000));
 						}
 					}
-				}
 				}
 			}
 		}
@@ -961,7 +954,7 @@ namespace MediaPortal.Player
 			do
 			{
 				counter++;
-        if (Playing && mediaEvt!=null)
+        if (/*Playing && */mediaEvt!=null)
         {
           hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
           if( hr < 0 )
@@ -972,6 +965,8 @@ namespace MediaPortal.Player
             Log.Write("StreamBufferPlayer:on notify complete");
             MovieEnded();
           }
+					Log.Write("basestreambufferplayer: event:{0} {1} {2}",
+										code.ToString(),p1,p2);
         }
         else
         {
@@ -1011,6 +1006,7 @@ namespace MediaPortal.Player
       
 			if ((m_speedRate == 10000) || (m_mediaSeeking == null))
 				return;
+
 
 			double newPosition;
 

@@ -2,23 +2,29 @@
 #include ".\dx9allocatorpresenter.h"
 #include ".\Vector.h"
 
+static char buffer[1000]; 
 
 void CVMR9AllocatorPresenter::Log(const char *fmt, ...) 
 {
-	va_list ap;
-	va_start(ap,fmt);
-
-	char buffer[1000]; 
-	int tmp;
-	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
-	va_end(ap); 
-
-	FILE* fp = fopen("log/vmr9.log","a+");
-	if (fp!=NULL)
+	try
 	{
-		fprintf(fp,"%s\n",buffer);
-		fclose(fp);
+		va_list ap;
+		va_start(ap,fmt);
+
+		int tmp;
+		va_start(ap,fmt);
+		tmp=vsprintf(buffer, fmt, ap);
+		va_end(ap); 
+
+		FILE* fp = fopen("log/vmr9.log","a+");
+		if (fp!=NULL)
+		{
+			fprintf(fp,"%s\n",buffer);
+			fclose(fp);
+		}
+	}
+	catch(...)
+	{
 	}
 };
 
@@ -118,13 +124,13 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 			((char)(lpAllocInfo->Format>>16)&0xff),
 			((char)(lpAllocInfo->Format>>24)&0xff));
 	// StretchRect's yv12 -> rgb conversion looks horribly bright compared to the result of yuy2 -> rgb
-/*
+
 	if(lpAllocInfo->Format == '21VY')
 	{
 		Log("InitializeDevice()   invalid format");
 		return E_FAIL;
 	}
-
+/*
 	if(lpAllocInfo->Format == '21VY' || lpAllocInfo->Format == '024Y' ||
 		lpAllocInfo->Format == '2YUY' || lpAllocInfo->Format=='YVYU')
 	{
@@ -187,6 +193,7 @@ STDMETHODIMP CVMR9AllocatorPresenter::TerminateDevice(DWORD_PTR dwUserID)
 
 STDMETHODIMP CVMR9AllocatorPresenter::GetSurface(DWORD_PTR dwUserID, DWORD SurfaceIndex, DWORD SurfaceFlags, IDirect3DSurface9** lplpSurface)
 {
+	//Log("vmr9:GetSurface()");
     if(!lplpSurface)
 	{
 		Log("vmr9:GetSurface() invalid pointer");
@@ -242,6 +249,9 @@ STDMETHODIMP CVMR9AllocatorPresenter::StopPresenting(DWORD_PTR dwUserID)
 STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9PresentationInfo* lpPresInfo)
 {
     HRESULT hr;
+	static long frameCounter=0;
+	frameCounter++;
+	//Log("vmr9:PresentImage(%d)",frameCounter);
 	if(!m_pIVMRSurfAllocNotify)
 	{
 		Log("vmr9:PresentImage() allocNotify not set");

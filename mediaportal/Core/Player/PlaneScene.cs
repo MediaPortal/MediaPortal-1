@@ -359,6 +359,7 @@ namespace MediaPortal.Player
 		{
 			//avoid multiple threads accessing this method simultanously
 			//Log.Write("{0}",frameCounter);
+			
 			frameCounter++;
 			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			try
@@ -368,6 +369,7 @@ namespace MediaPortal.Player
 					Log.WriteFile(Log.LogType.Log,true,"PlaneScene: re-entrancy in presentimage");
 					return;
 				}
+				GUIGraphicsContext.InVmr9Render=true;
 				m_idebugstep=0;
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
@@ -415,7 +417,7 @@ namespace MediaPortal.Player
 				}
 				m_idebugstep=13;
 				reentrant=true;
-				GUIGraphicsContext.InVmr9Render=true;
+				
 				//if we're stopping then just return
 				float timePassed=GUIGraphicsContext.TimePassed;
 				m_idebugstep=14;
@@ -796,8 +798,8 @@ namespace MediaPortal.Player
 		{	
 			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			if (!isEnabled) return;
-			//Log.Write("scene.repaint :{0}",m_idebugstep);
-			//return;
+//			Log.Write("scene.repaint :{0}",m_idebugstep);
+//			return;
 			try
 			{
 				inRepaint=true;
