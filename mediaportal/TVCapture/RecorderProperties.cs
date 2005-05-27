@@ -227,7 +227,7 @@ namespace MediaPortal.TV.Recording
 		{
 			// for each tv-channel
 
-			if (currentTvChannel==null ||currentTvChannel.Name.Equals(Recorder.TVChannelName))
+			if (currentTvChannel==null || !currentTvChannel.Name.Equals(Recorder.TVChannelName))
 			{
 				for (int i=0; i < m_TVChannels.Count;++i)
 				{
