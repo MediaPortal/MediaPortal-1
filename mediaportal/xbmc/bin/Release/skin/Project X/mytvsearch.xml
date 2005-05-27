@@ -304,7 +304,7 @@
 		<control>
 		<description>TV background</description>
 		<type>image</type>
-		<id>18</id>
+		<id>1</id>
 		<posX>60</posX>
 		<posY>420</posY>
 		<width>160</width>
