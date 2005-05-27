@@ -1395,6 +1395,22 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
 		#region Process and properties
+		static void ProcessCards()
+		{
+			bool recordingsChanged=false;
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
+				bool recordingStatus=dev.IsRecording;
+				dev.Process();
+				if (recordingStatus!=dev.IsRecording)
+				{
+					recordingsChanged=true;
+				}
+			}
+			if (recordingsChanged && OnTvRecordingChanged!=null)
+				OnTvRecordingChanged();
+		}
 		/// <summary>
 		/// Scheduler main loop. This function needs to get called on a regular basis.
 		/// It will handle all scheduler tasks
@@ -1403,13 +1419,9 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_eState!=State.Initialized) return;
 			if (GUIGraphicsContext.InVmr9Render) return;
-			if (GUIGraphicsContext.Vmr9Active)
+			if (GUIGraphicsContext.Vmr9Active && g_Player.Playing==false)
 			{
-				for (int i=0; i < m_tvcards.Count;++i)
-				{
-					TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-					dev.Process();
-				}
+				ProcessCards();
 			}
 
 			TimeSpan ts=DateTime.Now-m_dtProgresBar;
@@ -1422,19 +1434,7 @@ namespace MediaPortal.TV.Recording
 			ts=DateTime.Now-m_dtStart;
 			if (ts.TotalMilliseconds<30000) return;
 			Recorder.HandleRecordings();
-			bool recordingsChanged=false;
-			for (int i=0; i < m_tvcards.Count;++i)
-			{
-				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-				bool recordingStatus=dev.IsRecording;
-				dev.Process();
-				if (recordingStatus!=recordingsChanged)
-				{
-					recordingsChanged=true;
-				}
-			}			
-			if (recordingsChanged && OnTvRecordingChanged!=null)
-				OnTvRecordingChanged();
+			ProcessCards();	
 			Recorder.CheckRecordingDiskSpace();
 			m_dtStart=DateTime.Now;
 		}//static public void Process()
