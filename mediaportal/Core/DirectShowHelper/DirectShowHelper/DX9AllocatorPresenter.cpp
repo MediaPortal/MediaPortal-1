@@ -25,7 +25,7 @@ void CVMR9AllocatorPresenter::Log(const char *fmt, ...)
 CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
 : m_refCount(1)
 {
-	Log("----------v0.1---------------------------");
+	Log("----------v0.2---------------------------");
 	m_hMonitor=monitor;
 	m_pD3DDev=direct3dDevice;
 	m_pCallback=callback;
@@ -179,38 +179,43 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 
 STDMETHODIMP CVMR9AllocatorPresenter::TerminateDevice(DWORD_PTR dwUserID)
 {
-    DeleteSurfaces();
 	
 	Log("vmr9:TerminateDevice()");
+    DeleteSurfaces();
     return S_OK;
 }
 
 STDMETHODIMP CVMR9AllocatorPresenter::GetSurface(DWORD_PTR dwUserID, DWORD SurfaceIndex, DWORD SurfaceFlags, IDirect3DSurface9** lplpSurface)
 {
     if(!lplpSurface)
+	{
+		Log("vmr9:GetSurface() invalid pointer");
 		return E_POINTER;
+	}
 
 
-
-    if (SurfaceIndex >= m_pSurfaces.size() ) 
+    if (SurfaceIndex < 0 || SurfaceIndex >= m_pSurfaces.size() ) 
     {
+		Log("vmr9:GetSurface() invalid SurfaceIndex:%d",SurfaceIndex);
         return E_FAIL;
     }
-    CAutoLock cAutoLock(this);
-
+    //CAutoLock cAutoLock(this);
 	return m_pSurfaces[SurfaceIndex].CopyTo(lplpSurface) ;
 }
 
 STDMETHODIMP CVMR9AllocatorPresenter::AdviseNotify(IVMRSurfaceAllocatorNotify9* lpIVMRSurfAllocNotify)
 {
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 	
+	Log("vmr9:AdviseNotify()");
 	m_pIVMRSurfAllocNotify = lpIVMRSurfAllocNotify;
 
 	HRESULT hr;
     if(FAILED(hr = m_pIVMRSurfAllocNotify->SetD3DDevice(m_pD3DDev, m_hMonitor)))
+	{
+		Log("vmr9:AdviseNotify() failed to set d3d device:%x",hr);
 		return hr;
-
+	}
     return S_OK;
 }
 
@@ -218,9 +223,9 @@ STDMETHODIMP CVMR9AllocatorPresenter::AdviseNotify(IVMRSurfaceAllocatorNotify9* 
 
 STDMETHODIMP CVMR9AllocatorPresenter::StartPresenting(DWORD_PTR dwUserID)
 {
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
-    ASSERT(m_pD3DDev);
+    //ASSERT(m_pD3DDev);
 
 	
 	Log("vmr9:StartPresenting()");
@@ -237,15 +242,19 @@ STDMETHODIMP CVMR9AllocatorPresenter::StopPresenting(DWORD_PTR dwUserID)
 STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9PresentationInfo* lpPresInfo)
 {
     HRESULT hr;
-
+	if(!m_pIVMRSurfAllocNotify)
 	{
-		if(!m_pIVMRSurfAllocNotify)
-			return E_FAIL;
-		if(!lpPresInfo || !lpPresInfo->lpSurf)
-			return E_POINTER;
+		Log("vmr9:PresentImage() allocNotify not set");
+		return E_FAIL;
 	}
+	if(!lpPresInfo || !lpPresInfo->lpSurf)
 	{
+		Log("vmr9:PresentImage() no surface");
+		return E_POINTER;
+	}
 
+	try
+	{
 		/*
 		if (lpPresInfo->rtStart>previousEndFrame)
 		{
@@ -254,9 +263,9 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 			Log("             prev: %d",previousEndFrame);
 		}*/
 		previousEndFrame=lpPresInfo->rtEnd;
-		CAutoLock cAutoLock(this);
+		//CAutoLock cAutoLock(this);
 
-//		hr = m_pD3DDev->StretchRect(lpPresInfo->lpSurf, NULL, m_pVideoSurface[0], NULL, D3DTEXF_NONE);
+	//		hr = m_pD3DDev->StretchRect(lpPresInfo->lpSurf, NULL, m_pVideoSurface[0], NULL, D3DTEXF_NONE);
 
 		m_fps = 10000000.0 / (lpPresInfo->rtEnd - lpPresInfo->rtStart);
 
@@ -273,16 +282,20 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
 		//m_pCallback->PresentImage(VideoSize.cx, VideoSize.cy, dwPtr);
 		Paint(lpPresInfo->lpSurf, lpPresInfo->szAspectRatio);
 		//Paint(NULL, lpPresInfo->szAspectRatio);
-
-		hr = S_OK;
 	}
+	catch(...)
+	{
+		Log("vmr9:PresentImage() exception");
+	}
+	hr = S_OK;
 
     return hr;
 }
 
 void CVMR9AllocatorPresenter::DeleteSurfaces()
 {
-    CAutoLock cAutoLock(this);
+	Log("vmr9:DeleteSurfaces()");
+    //CAutoLock cAutoLock(this);
 
 	m_pVideoSurfaceOff=NULL;
 	m_pVideoSurfaceYUY2=NULL;
@@ -300,7 +313,9 @@ void CVMR9AllocatorPresenter::DeleteSurfaces()
 
 HRESULT CVMR9AllocatorPresenter::AllocSurfaces()
 {
-    CAutoLock cAutoLock(this);
+	
+	Log("vmr9:AllocSurfaces()");
+    //CAutoLock cAutoLock(this);
 
 	m_pVideoSurfaceOff = NULL;
 	m_pVideoSurfaceYUY2 = NULL;
@@ -406,49 +421,56 @@ CSize CVMR9AllocatorPresenter::GetVideoSize(bool fCorrectAR)
 
 void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRatio)
 {
-	if (m_pCallback!=NULL)
+	try
 	{
-		CSize videoSize = GetVideoSize(false);
-		if (pSurface!=NULL)
+		if (m_pCallback!=NULL)
 		{
-			void *pContainer = NULL;
-			pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
-			LPDIRECT3DTEXTURE9 pTexture=(LPDIRECT3DTEXTURE9)pContainer;
+			CSize videoSize = GetVideoSize(false);
+			if (pSurface!=NULL)
+			{
+				void *pContainer = NULL;
+				pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
+				LPDIRECT3DTEXTURE9 pTexture=(LPDIRECT3DTEXTURE9)pContainer;
 
-			DWORD dwPtr=(DWORD)(pTexture);
-			m_pCallback->PresentImage(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy,dwPtr);
-			if (m_bfirstFrame)
-			{
-				m_bfirstFrame=false;
-				Log("vmr9:Paint() using PresentSurface %dx%d",videoSize.cx,videoSize.cy);
+				DWORD dwPtr=(DWORD)(pTexture);
+				m_pCallback->PresentImage(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy,dwPtr);
+				if (m_bfirstFrame)
+				{
+					m_bfirstFrame=false;
+					Log("vmr9:Paint() using PresentImage %dx%d",videoSize.cx,videoSize.cy);
+				}
+				pTexture->Release();
+				
+				return;
 			}
-			pTexture->Release();
-			
-			return;
-		}
 
-		if (m_pVideoTexture[0]!=NULL)
-		{
-			IDirect3DTexture9* tex=m_pVideoTexture[0];
-			DWORD dwPtr=(DWORD)(tex);
-			if (m_bfirstFrame)
+			if (m_pVideoTexture[0]!=NULL)
 			{
-				m_bfirstFrame=false;
-				Log("vmr9:Paint() using PresentImage %dx%d",videoSize.cx,videoSize.cy);
+				IDirect3DTexture9* tex=m_pVideoTexture[0];
+				DWORD dwPtr=(DWORD)(tex);
+				if (m_bfirstFrame)
+				{
+					m_bfirstFrame=false;
+					Log("vmr9:Paint() using PresentImage %dx%d",videoSize.cx,videoSize.cy);
+				}
+				m_pCallback->PresentImage(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy, dwPtr);
 			}
-			m_pCallback->PresentImage(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy, dwPtr);
-		}
-		else
-		{
-			IDirect3DSurface9* tex=m_pVideoSurface[0];
-			DWORD dwPtr=(DWORD)(tex);
-			if (m_bfirstFrame)
+			else
 			{
-				m_bfirstFrame=false;
-				Log("vmr9:Paint() using PresentSurface %dx%d",videoSize.cx,videoSize.cy);
+				IDirect3DSurface9* tex=m_pVideoSurface[0];
+				DWORD dwPtr=(DWORD)(tex);
+				if (m_bfirstFrame)
+				{
+					m_bfirstFrame=false;
+					Log("vmr9:Paint() using PresentSurface %dx%d",videoSize.cx,videoSize.cy);
+				}
+				m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy, dwPtr);
 			}
-			m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy, dwPtr);
+			//tex->Release();
 		}
-		//tex->Release();
+	}
+	catch(...)
+	{
+		Log("vmr9:Paint() invalid exception");
 	}
 }

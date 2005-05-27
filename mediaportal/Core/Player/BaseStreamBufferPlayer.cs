@@ -66,7 +66,7 @@ namespace MediaPortal.Player
 		protected const int WS_CHILD			= 0x40000000;	// attributes for video window
 		protected const int WS_CLIPCHILDREN	= 0x02000000;
 		protected const int WS_CLIPSIBLINGS	= 0x04000000;
-		
+		protected DateTime updateTimer=DateTime.Now;
 		protected MediaPortal.GUI.Library.Geometry.Type             m_ar=MediaPortal.GUI.Library.Geometry.Type.Normal;
 
 		public BaseStreamBufferPlayer()
@@ -174,7 +174,7 @@ namespace MediaPortal.Player
 				DateTime dt=DateTime.Now;
 				do
 				{
-					Process();
+					UpdateDuration();
 					Application.DoEvents();						
 					TimeSpan ts=DateTime.Now-dt;
 					if (ts.TotalSeconds>=2) break;
@@ -342,78 +342,68 @@ namespace MediaPortal.Player
 		{
 			if ( !Playing) return;
 			if ( !m_bStarted) return;
-			//lock(this)
+			TimeSpan ts=DateTime.Now-updateTimer;
+			if (ts.TotalMilliseconds>=800 || m_speedRate != 10000) 
 			{
-
-				long lDuration;
-
 				UpdateCurrentPosition();
-
-
-				
-				//GetDuration(): Returns (content start – content stop). 
-				//content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
-				//content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
-				m_mediaSeeking.GetDuration(out lDuration); 
-				m_dDuration=lDuration;
-				m_dDuration/=10000000d;
-
-				double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
-				double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
-
-
-
-				if (IsTimeShifting)
-				{
-					if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
-					{
-						Log.Write("BaseStreambufferPlayer: unpause since timeshiftbuffer gets rolled over");
-						Pause();
-					}
-
-					if (Speed<0 && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
-					{
-						Log.Write("BaseStreambufferPlayer: stop RWD since timeshiftbuffer gets rolled over");
-						Speed=1;
-					}
-					if (Speed>1 && CurrentPosition+5d >=Duration) 
-					{
-						Log.Write("BaseStreambufferPlayer: stop FFWD since end of timeshiftbuffer reached");
-						Speed=1;
-						SeekAsolutePercentage(99);
-					}
-					if (Speed<0 && CurrentPosition<5d)
-					{
-						Log.Write("BaseStreambufferPlayer: stop RWD since begin of timeshiftbuffer reached");
-						Speed=1;
-						SeekAsolutePercentage(0);
-					}/*
-					if (Speed<0 && CurrentPosition > m_dLastPosition)
-					{
-						Speed=1;
-						SeekAsolutePercentage(0);
-					}*/
-				}
-				m_dLastPosition=CurrentPosition;
-				
-
-				if (GUIGraphicsContext.VideoWindow.Width<=10&& GUIGraphicsContext.IsFullScreenVideo==false)
-				{
-					m_bIsVisible=false;
-				}
-				if (m_bWindowVisible && !m_bIsVisible)
-				{
-					m_bWindowVisible=false;
-					Log.Write("StreamBufferPlayer:hide window");
-					if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
-				}
-				else if (!m_bWindowVisible && m_bIsVisible)
-				{
-					m_bWindowVisible=true;
-					Log.Write("StreamBufferPlayer:show window");
-					if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
-				}      
+					
+				UpdateDuration();
+				updateTimer=DateTime.Now;
 			}
+
+			double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
+			double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
+
+			if (IsTimeShifting)
+			{
+				if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
+				{
+					Log.Write("BaseStreambufferPlayer: unpause since timeshiftbuffer gets rolled over");
+					Pause();
+				}
+
+				if (Speed<0 && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
+				{
+					Log.Write("BaseStreambufferPlayer: stop RWD since timeshiftbuffer gets rolled over");
+					Speed=1;
+				}
+				if (Speed>1 && CurrentPosition+5d >=Duration) 
+				{
+					Log.Write("BaseStreambufferPlayer: stop FFWD since end of timeshiftbuffer reached");
+					Speed=1;
+					SeekAsolutePercentage(99);
+				}
+				if (Speed<0 && CurrentPosition<5d)
+				{
+					Log.Write("BaseStreambufferPlayer: stop RWD since begin of timeshiftbuffer reached");
+					Speed=1;
+					SeekAsolutePercentage(0);
+				}/*
+				if (Speed<0 && CurrentPosition > m_dLastPosition)
+				{
+					Speed=1;
+					SeekAsolutePercentage(0);
+				}*/
+			}
+			m_dLastPosition=CurrentPosition;
+				
+
+			if (GUIGraphicsContext.VideoWindow.Width<=10&& GUIGraphicsContext.IsFullScreenVideo==false)
+			{
+				m_bIsVisible=false;
+			}
+			if (m_bWindowVisible && !m_bIsVisible)
+			{
+				m_bWindowVisible=false;
+				Log.Write("StreamBufferPlayer:hide window");
+				if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
+			}
+			else if (!m_bWindowVisible && m_bIsVisible)
+			{
+				m_bWindowVisible=true;
+				Log.Write("StreamBufferPlayer:show window");
+				if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
+			}      
 			DoFFRW();
 			OnProcess();
 		}
@@ -743,6 +733,17 @@ namespace MediaPortal.Player
       }
 #endif
     }
+		void UpdateDuration()
+		{
+			//GetDuration(): Returns (content start – content stop). 
+			//content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
+			//content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
+			
+			long lDuration;
+			m_mediaSeeking.GetDuration(out lDuration); 
+			m_dDuration=lDuration;
+			m_dDuration/=10000000d;
+		}
 
 		public override void SeekRelativePercentage(int iPercentage)
 		{
