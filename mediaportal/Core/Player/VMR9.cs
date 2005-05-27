@@ -159,17 +159,11 @@ namespace MediaPortal.Player
     {
       get
       {
-        lock (this)
-        {
           return frameCounter;
-        }
       }
       set
       {
-        lock (this)
-        {
           frameCounter = value;
-        }
       }
     }
 
