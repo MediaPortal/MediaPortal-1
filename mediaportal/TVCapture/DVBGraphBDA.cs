@@ -3977,11 +3977,6 @@ namespace MediaPortal.TV.Recording
 				return;
 
 		//	Log.Write("pid:{0:X} table:{1:X}", pid,tableID);
-			if(pid==0x12 && (tableID>=0x50 && tableID<=0x6f))
-			{
-				int count=m_streamDemuxer.ProcessEPGData(tableList,currentTuningObject.ProgramNumber);
-				Log.Write("added {0} events to database. grabbing ready",count);
-			}
 		}
 
 	}//public class DVBGraphBDA 

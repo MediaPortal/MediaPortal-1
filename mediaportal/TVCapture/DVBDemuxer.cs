@@ -129,10 +129,10 @@ namespace MediaPortal.TV.Recording
 			public int CurrentNextIndicator;
 			public int SectionNumber;
 			public int LastSectionNumber;
-			public int TransportStreamID;
-			public int OrgNetworkID;
-			public int SegmentLastSectionNumber;
-			public int LastTableID;
+			public int HeaderExtB8B9;
+			public int HeaderExtB10B11;
+			public int HeaderExtB12;
+			public int HeaderExtB13;
 		}
         #endregion
 
@@ -153,6 +153,7 @@ namespace MediaPortal.TV.Recording
         #endregion
 
         #region global Vars
+		int SECTIONS_BUFFER_WIDTH=65535;// 32kb for tables
         const int m_mhwPid1 = 0xD2;
         const int m_mhwPid2 = 0xD3;
         int m_teletextPid = 0;
@@ -173,14 +174,14 @@ namespace MediaPortal.TV.Recording
 		int m_sectionTableID=-1;
 		byte[] m_tableBufferSec=new byte[65535];
 		int m_bufferPositionSec=0;
-		ArrayList m_tableSections=new ArrayList();
+		static ArrayList m_tableSections=new ArrayList();
 		System.Timers.Timer m_secTimer=new System.Timers.Timer();
 		int m_eitScheduleLastTable=0x50;
-		bool m_waitForTable=false;
 		// pmt
 		int m_currentPMTVersion=-1;
 		// card
-		int m_currentDVBCard=0;
+		static int m_currentDVBCard=0;
+		static NetworkType m_currentNetworkType;
 		// for pmt pid
 		int m_grabbingLenPMT=0;
 		bool m_grabbingPMT=false;
@@ -221,6 +222,7 @@ namespace MediaPortal.TV.Recording
 		public void SetCardType(int cardType, NetworkType networkType)
 		{
 			m_currentDVBCard=cardType;
+			m_currentNetworkType=networkType;
 			m_epgClass=new DVBEPG(cardType,networkType);
 		}
 
@@ -246,27 +248,28 @@ namespace MediaPortal.TV.Recording
 			header.CurrentNextIndicator = data[offset+5] & 1;
 			header.SectionNumber = data[offset+6];
 			header.LastSectionNumber = data[offset+7];
-			header.TransportStreamID=(data[offset+8]<<8)+data[offset+9];
-			header.OrgNetworkID = (data[offset+10]<<8)+data[offset+11];
-			header.SegmentLastSectionNumber = data[offset+12];
-			header.LastTableID = data[offset+13];
+			header.HeaderExtB8B9=(data[offset+8]<<8)+data[offset+9];
+			header.HeaderExtB10B11 = (data[offset+10]<<8)+data[offset+11];
+			header.HeaderExtB12 = data[offset+12];
+			header.HeaderExtB13 = data[offset+13];
 			return header;
 		}
-		public void GetTable(int pid,int tableID,int timeout)
+		public bool GetTable(int pid,int tableID,int timeout)
 		{
 			m_secTimer.Interval=timeout;
-			GetTable(pid,tableID);
+			return GetTable(pid,tableID);
 		}
-		public void GetTable(int pid,int tableID)
+		public bool GetTable(int pid,int tableID)
 		{
 			if(m_sectionPid!=-1)
-				return;
-			m_tableBufferSec=new byte[65535];
+				return false;
+			m_tableBufferSec=new byte[SECTIONS_BUFFER_WIDTH+1];
 			m_tableSections=new ArrayList();
 			m_sectionPid=pid;
 			m_sectionTableID=tableID;
 			m_secTimer.AutoReset=false;
 			m_secTimer.Start();
+			return true;
 		}
 		public void GetEPGSchedule(int tableID,int programID)
 		{
@@ -277,13 +280,15 @@ namespace MediaPortal.TV.Recording
 			m_eitScheduleLastTable=0x50;
 			GetTable(0x12,tableID,10000);// timeout 10 sec
 		}
-		public int ProcessEPGData(ArrayList data,int programID)
+		void ProcessEPGData()
 		{
-			if(m_epgClass!=null)
-			{
-				return m_epgClass.GetEPG(data,0);
-			}
-			return 0;
+			Thread epgThread=new Thread(new ThreadStart(ProcessEPG));
+			epgThread.IsBackground=false;
+			epgThread.Priority=ThreadPriority.Lowest;
+			epgThread.Name="EPG-Parser";
+			epgThread.Start();
+			if(epgThread.Join(1000)==true)
+				Log.Write("thread end:{0}",epgThread.Name);
 		}
 		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
 		{
@@ -338,14 +343,14 @@ namespace MediaPortal.TV.Recording
 		{
 			if(m_tableBufferSec==null)
 				return;
-			if(m_tableBufferSec.Length<65535)
+			if(m_tableBufferSec.Length<SECTIONS_BUFFER_WIDTH)
 				return;
 			lock(m_tableBufferSec.SyncRoot)
 			{
 				byte[] data=(byte[])m_tableBufferSec.Clone();
-				for(int i=0;i<65535;)
+				for(int i=0;i<SECTIONS_BUFFER_WIDTH;)
 				{
-					if(i+13>=65535)
+					if(i+13>=SECTIONS_BUFFER_WIDTH)
 						break;
 					if(data[i]==0xff)
 					{
@@ -353,7 +358,7 @@ namespace MediaPortal.TV.Recording
 						continue;
 					}
 					DVBSectionHeader header=GetSectionHeader(data,i);
-					if(header.SectionLength<1 || header.SectionLength+4+i>65535)
+					if(header.SectionLength<1 || header.SectionLength+4+i>SECTIONS_BUFFER_WIDTH)
 						break;
 					try
 					{
@@ -373,14 +378,20 @@ namespace MediaPortal.TV.Recording
 			// timeout for grabbing sections
 			// clean up
 			m_secTimer.Stop();
-			if(OnGotTable!=null && m_waitForTable==false)
+			int currentTable=m_sectionTableID;
+			int currentPid=m_sectionPid;
+			if(currentTable>=0x50 && currentTable<=0x6f && currentPid==0x12)
 			{
+				m_sectionPid=-1;
+				ProcessEPGData();
+			}
+			else if(OnGotTable!=null)
+			{
+				m_sectionPid=-1;
 				OnGotTable(m_sectionPid,m_sectionTableID,(ArrayList)m_tableSections.Clone());
 				m_tableSections.Clear();
 			}
 			
-			int currentTable=m_sectionTableID;
-			int currentPid=m_sectionPid;
 			ClearSectionsGrabber();
 
 			if(currentTable>=0x50 && currentTable<=0x6f && currentPid==0x12)
@@ -401,7 +412,6 @@ namespace MediaPortal.TV.Recording
 			m_sectionTableID=-1;
 			m_bufferPositionSec=0;
 			m_tableSections=new ArrayList();
-			m_waitForTable=false;
 		}
 		UInt32 GetCRC32(byte[] data)
 		{
@@ -856,7 +866,7 @@ namespace MediaPortal.TV.Recording
 						//
 						// copy data
 						DVBSectionHeader header=GetHeader();
-						if(m_bufferPositionSec+(184-offset)<=65535)
+						if(m_bufferPositionSec+(184-offset)<=SECTIONS_BUFFER_WIDTH)
 						{
 							Array.Copy(m_packetHeader.Payload,offset,m_tableBufferSec,m_bufferPositionSec,184-offset);
 							m_bufferPositionSec+=(184-offset);
@@ -1007,17 +1017,17 @@ namespace MediaPortal.TV.Recording
 						if(crc1==crc2)
 						{
 							if(header.TableID>m_eitScheduleLastTable)
-								m_eitScheduleLastTable=header.LastTableID;
+								m_eitScheduleLastTable=header.HeaderExtB13;
 							sectionOK=true;
 						}
 						else
 						{
 							// reject the section
-							sectionOK=false;
 						}
 					}
 					catch
 					{
+						sectionOK=false;
 					}
 				}
 
@@ -1036,7 +1046,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if(SectionIsInBuffer(header.SectionNumber,header.TableIDExtension)==false)
 					{
-						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.SegmentLastSectionNumber,header.LastSectionNumber,header.SectionLength);
+						//Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
 						m_tableSections.Add(data);
 						m_secTimer.Stop();
 						m_secTimer.Interval=6000;
@@ -1048,7 +1058,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if(SectionIsInBuffer(header.SectionNumber)==false)
 					{
-						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.SegmentLastSectionNumber,header.LastSectionNumber,header.SectionLength);
+						//Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
 						m_tableSections.Add(data);
 						m_secTimer.Stop();
 						m_secTimer.Interval=6000;
@@ -1057,8 +1067,8 @@ namespace MediaPortal.TV.Recording
 					// timeout only after grabbing last section
 				}
 				// check if table is complete
-				if((grabEitSchedule==false && m_tableSections.Count-1==header.LastSectionNumber) ||
-					(grabEitSchedule==true && m_tableSections.Count==256))
+				if((grabEitSchedule==false && m_tableSections.Count-1==header.LastSectionNumber)/* ||
+					(grabEitSchedule==true && m_tableSections.Count==256)*/)
 				{
 					// ready, clean up
 					m_secTimer.Stop();
@@ -1079,6 +1089,24 @@ namespace MediaPortal.TV.Recording
 			m_secTimer.Stop();
 			int tableID=m_sectionTableID;
 			ClearGrabber();// clear up
+		}
+		//
+		//
+		public static void ProcessEPG()
+		{
+			if(m_currentDVBCard==(int)DVBEPG.EPGCard.Invalid || m_currentDVBCard==(int)DVBEPG.EPGCard.Unknown)
+				return ;
+			if(m_tableSections==null)
+				return;
+			if(m_tableSections.Count==0)
+				return;
+			ArrayList dataList=(ArrayList)m_tableSections.Clone();
+			m_tableSections.Clear();
+			
+			DVBEPG		tmpEPGClass=new DVBEPG(m_currentDVBCard,m_currentNetworkType);
+			Log.Write("started thread {0}",System.Threading.Thread.CurrentThread.Name);
+			int count=tmpEPGClass.GetEPG(dataList,0);
+			Log.Write("epg ready. added {0} events to database!",count);
 		}
 	}//class dvbdemuxer
  

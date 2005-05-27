@@ -2465,11 +2465,6 @@ namespace MediaPortal.TV.Recording
 				return;
 			if(tableList.Count<1)
 				return;
-			if(pid==0x12 && (tableID>=0x50 && tableID<=0x6f))
-			{
-				int count=m_streamDemuxer.ProcessEPGData(tableList,m_currentChannel.ProgramNumber);
-				Log.Write("added {0} events to database. grabbing ready",count);
-			}
 		}
 	}// class
 }// namespace
