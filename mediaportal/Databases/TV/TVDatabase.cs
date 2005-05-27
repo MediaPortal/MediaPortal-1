@@ -2016,6 +2016,8 @@ namespace MediaPortal.TV.Database
 					long longYesterday = Utils.datetolong(yesterday);
 					strSQL=String.Format("DELETE FROM tblPrograms WHERE iEndTime < {0}",longYesterday);
 					m_db.Execute(strSQL);
+					strSQL=String.Format("DELETE FROM canceledseries where iCancelTime < {0}",longYesterday);
+					m_db.Execute(strSQL);
 				}
 				catch(Exception ex)
 				{
