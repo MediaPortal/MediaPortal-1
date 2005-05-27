@@ -124,13 +124,13 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 			((char)(lpAllocInfo->Format>>16)&0xff),
 			((char)(lpAllocInfo->Format>>24)&0xff));
 	// StretchRect's yv12 -> rgb conversion looks horribly bright compared to the result of yuy2 -> rgb
-
+/*
 	if(lpAllocInfo->Format == '21VY')
 	{
 		Log("InitializeDevice()   invalid format");
 		return E_FAIL;
 	}
-/*
+
 	if(lpAllocInfo->Format == '21VY' || lpAllocInfo->Format == '024Y' ||
 		lpAllocInfo->Format == '2YUY' || lpAllocInfo->Format=='YVYU')
 	{
@@ -151,13 +151,32 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 
 	m_pSurfaces.resize(*lpNumBuffers);
 	
-	lpAllocInfo->dwFlags |= VMR9AllocFlag_TextureSurface;
+	Log("vmr9:IntializeDevice() try TexureSurface|DXVA|3DRenderTarget");
+	DWORD dwFlags=lpAllocInfo->dwFlags;
+	lpAllocInfo->dwFlags =dwFlags| VMR9AllocFlag_TextureSurface|VMR9AllocFlag_DXVATarget|VMR9AllocFlag_3DRenderTarget;
 	hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, & m_pSurfaces.at(0) );
 	if(FAILED(hr))
 	{
-		
-		Log("vmr9:InitializeDevice()   AllocateSurfaceHelper returned:0x%x",hr);
-		return hr;
+		Log("vmr9:IntializeDevice() try TexureSurface|DXVA");
+		lpAllocInfo->dwFlags =dwFlags|  VMR9AllocFlag_TextureSurface|VMR9AllocFlag_DXVATarget;
+		hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, & m_pSurfaces.at(0) );
+		if(FAILED(hr))
+		{
+			Log("vmr9:IntializeDevice() try TexureSurface|3DRenderTarget");
+			lpAllocInfo->dwFlags =dwFlags|   VMR9AllocFlag_TextureSurface|VMR9AllocFlag_3DRenderTarget;
+			hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, & m_pSurfaces.at(0) );
+			if(FAILED(hr))
+			{
+				Log("vmr9:IntializeDevice() try TexureSurface");
+				lpAllocInfo->dwFlags =dwFlags|   VMR9AllocFlag_TextureSurface;
+				hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, & m_pSurfaces.at(0) );
+				if(FAILED(hr))
+				{
+					Log("vmr9:InitializeDevice()   AllocateSurfaceHelper returned:0x%x",hr);
+					return hr;
+				}
+			}
+		}
 	}
 	m_NativeVideoSize = CSize(lpAllocInfo->dwWidth, abs((int)lpAllocInfo->dwHeight));
 	m_AspectRatio = m_NativeVideoSize;
