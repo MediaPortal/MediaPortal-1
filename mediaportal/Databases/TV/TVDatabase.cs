@@ -69,7 +69,7 @@ namespace MediaPortal.TV.Database
 					}
 					catch(Exception){}
 					//Upgrade();
-					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV19.db");
+					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV20.db");
 					CreateTables();
 					UpdateFromPreviousVersion();
 					if (m_db!=null)
@@ -129,7 +129,7 @@ namespace MediaPortal.TV.Database
 					m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre)");
 				}
 
-				DatabaseUtility.AddTable(m_db,"recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer, priority integer, quality integer)\n");
+				DatabaseUtility.AddTable(m_db,"recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer, priority integer, quality integer, episodesToKeep integer)\n");
 				DatabaseUtility.AddTable(m_db,"canceledseries","CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text)\n");
 
 				DatabaseUtility.AddTable(m_db,"recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer)\n");
@@ -1501,7 +1501,7 @@ namespace MediaPortal.TV.Database
 					int iContentRec=1;
 					if (!recording.IsContentRecording) iContentRec=0;
 
-					strSQL=String.Format("update recording set idChannel={0},iRecordingType={1},strProgram='{2}',iStartTime='{3}',iEndTime='{4}', iCancelTime='{5}', bContentRecording={6}, quality={7}, priority={8} where idRecording={9}", 
+					strSQL=String.Format("update recording set idChannel={0},iRecordingType={1},strProgram='{2}',iStartTime='{3}',iEndTime='{4}', iCancelTime='{5}', bContentRecording={6}, quality={7}, priority={8},episodesToKeep={9} where idRecording={9}", 
 						iChannelId,
 						(int)recording.RecType,
 						strTitle,
@@ -1511,6 +1511,7 @@ namespace MediaPortal.TV.Database
 						iContentRec,
 						(int)recording.Quality,
 						recording.Priority,
+						recording.EpisodesToKeep,
 						recording.ID);
 					m_db.Execute(strSQL);
 
@@ -1556,6 +1557,33 @@ namespace MediaPortal.TV.Database
 			}
 			RecordingsChanged();
 		}
+		static public void SetRecordingEpisodesToKeep(TVRecording recording)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					string strTitle=recording.Title;
+					DatabaseUtility.RemoveInvalidChars(ref strTitle);
+
+					if (null==m_db) return ;
+					if (recording.ID<0) return ;
+          
+					strSQL=String.Format("update recording set episodesToKeep={0} where idRecording={1}", 
+						(int)recording.EpisodesToKeep,
+						recording.ID);
+					m_db.Execute(strSQL);
+
+				} 
+				catch (Exception ex) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+			RecordingsChanged();
+		}
 
   
 		static public int AddRecording(ref TVRecording recording)
@@ -1583,7 +1611,7 @@ namespace MediaPortal.TV.Database
 					int iContentRec=1;
 					if (!recording.IsContentRecording) iContentRec=0;
           
-					strSQL=String.Format("insert into recording (idRecording,idChannel,iRecordingType,strProgram,iStartTime,iEndTime,iCancelTime,bContentRecording,quality,priority ) values ( NULL, {0}, {1}, '{2}','{3}', '{4}', '{5}', {6}, {7}, {8})", 
+					strSQL=String.Format("insert into recording (idRecording,idChannel,iRecordingType,strProgram,iStartTime,iEndTime,iCancelTime,bContentRecording,quality,priority,episodesToKeep ) values ( NULL, {0}, {1}, '{2}','{3}', '{4}', '{5}', {6}, {7}, {8},{9})", 
 						iChannelId,
 						(int)recording.RecType,
 						strTitle,
@@ -1592,7 +1620,8 @@ namespace MediaPortal.TV.Database
 						recording.Canceled.ToString(),
 						iContentRec,
 						(int)recording.Quality,
-						recording.Priority);
+						recording.Priority,
+						recording.EpisodesToKeep);
 					m_db.Execute(strSQL);
 					lNewId=m_db.LastInsertID();
 					recording.ID=lNewId;
@@ -1670,6 +1699,7 @@ namespace MediaPortal.TV.Database
 							rec.RecType=(TVRecording.RecordingType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.iRecordingType"));
 							rec.Quality=(TVRecording.QualityType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.quality"));
 							rec.Priority=Int32.Parse(DatabaseUtility.Get(results,i,"recording.priority"));
+							rec.EpisodesToKeep=Int32.Parse(DatabaseUtility.Get(results,i,"recording.episodesToKeep"));
 							int iContectRec=Int32.Parse(DatabaseUtility.Get(results,i,"recording.bContentRecording"));
 							if (iContectRec==1) rec.IsContentRecording=true;
 							else rec.IsContentRecording=false;
@@ -1716,6 +1746,7 @@ namespace MediaPortal.TV.Database
 						rec.RecType=(TVRecording.RecordingType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.iRecordingType"));
 						rec.Quality=(TVRecording.QualityType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.quality"));
 						rec.Priority=Int32.Parse(DatabaseUtility.Get(results,i,"recording.priority"));
+						rec.EpisodesToKeep=Int32.Parse(DatabaseUtility.Get(results,i,"recording.episodesToKeep"));
 
 						int iContectRec=Int32.Parse(DatabaseUtility.Get(results,i,"recording.bContentRecording"));
 						if (iContectRec==1) rec.IsContentRecording=true;

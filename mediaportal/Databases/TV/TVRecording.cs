@@ -57,6 +57,7 @@ namespace MediaPortal.TV.Database
 		bool				m_bContentRecording=true;
 		bool        m_bSeries=false;
 		int         m_iPriority=0;
+		int         episodesToKeep=Int32.MaxValue;//all
 		QualityType	m_iQuality=QualityType.NotSet;
 		ArrayList   m_canceledSeries = new ArrayList();
 
@@ -104,6 +105,12 @@ namespace MediaPortal.TV.Database
 			set { m_bContentRecording=value;}
 		}
 
+		public int EpisodesToKeep
+		{
+			get { return episodesToKeep;}
+			set { episodesToKeep=value;}
+		}
+		
     /// <summary>
     /// Property to get/set the TV channel name on which the recording should be done
     /// </summary>

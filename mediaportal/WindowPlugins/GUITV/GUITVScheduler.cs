@@ -665,6 +665,7 @@ namespace MediaPortal.GUI.TV
 			{
 				dlg.AddLocalizedString( 981);//Delete this recording
 				dlg.AddLocalizedString( 982);//Delete series recording
+				dlg.AddLocalizedString( 888);//Episodes management
 			}
 			int card;
 			if (Recorder.IsRecordingSchedule(rec,out card))
@@ -680,7 +681,10 @@ namespace MediaPortal.GUI.TV
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
       switch (dlg.SelectedId)
-      {
+			{
+				case 888:////Episodes management
+					GUITVPriorities.OnSetEpisodesToKeep(rec);
+					break;
 				case 882:////Quality settings
 					GUITVPriorities.OnSetQuality(rec);
 				break;

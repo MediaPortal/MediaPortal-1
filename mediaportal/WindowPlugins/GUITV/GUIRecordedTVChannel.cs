@@ -741,7 +741,7 @@ namespace MediaPortal.GUI.TV
 			TVDatabase.RemoveRecordedTV(rec);
 			VideoDatabase.DeleteMovieInfo(rec.FileName);
 			VideoDatabase.DeleteMovie(rec.FileName);
-      Recorder.DeleteRecording(rec.FileName);
+      DiskManagement.DeleteRecording(rec.FileName);
       LoadDirectory();
     }
 
@@ -763,7 +763,7 @@ namespace MediaPortal.GUI.TV
       {
         if (rec.Played>0)
         {
-					Recorder.DeleteRecording(rec.FileName);
+					DiskManagement.DeleteRecording(rec.FileName);
 					TVDatabase.RemoveRecordedTV(rec);
 					VideoDatabase.DeleteMovieInfo(rec.FileName);
 					VideoDatabase.DeleteMovie(rec.FileName);

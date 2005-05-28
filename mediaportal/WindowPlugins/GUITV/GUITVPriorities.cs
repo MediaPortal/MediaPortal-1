@@ -354,6 +354,7 @@ namespace MediaPortal.GUI.TV
 			{
 				dlg.AddLocalizedString( 981);//Delete this recording
 				dlg.AddLocalizedString( 982);//Delete series recording
+				dlg.AddLocalizedString( 888);//Episodes management
 			}
 			int card;
 			if (Recorder.IsRecordingSchedule(rec,out card))
@@ -370,6 +371,10 @@ namespace MediaPortal.GUI.TV
 			if (dlg.SelectedLabel==-1) return;
 			switch (dlg.SelectedId)
 			{
+					
+				case 888:////Episodes management
+					OnSetEpisodesToKeep(rec);
+					break;
 				case 882:
 					OnSetQuality(rec);
 				break;
@@ -662,6 +667,29 @@ namespace MediaPortal.GUI.TV
 			if (rec==null) return;
 			TVProgram prog=util.GetProgramAt(rec.Channel,rec.StartTime);
 			rec.SetProperties(prog);
+		}
+
+		static public void OnSetEpisodesToKeep(TVRecording rec)
+		{
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(887);//quality settings
+			dlg.ShowQuickNumbers=false;
+			dlg.AddLocalizedString(889);//All episodes
+			for (int i=1; i < 40; ++i)
+				dlg.Add( i.ToString() + " " +GUILocalizeStrings.Get(874));
+			if (rec.EpisodesToKeep==Int32.MaxValue) 
+				dlg.SelectedLabel=0;
+			else
+				dlg.SelectedLabel=rec.EpisodesToKeep;
+			
+			dlg.DoModal( GUIWindowManager.ActiveWindow);
+			if (dlg.SelectedLabel==-1) return;
+
+			if (dlg.SelectedLabel==0) rec.EpisodesToKeep=Int32.MaxValue;
+			else rec.EpisodesToKeep=dlg.SelectedLabel;
+			TVDatabase.SetRecordingEpisodesToKeep(rec);
 		}
 
 		static public void OnSetQuality(TVRecording rec)

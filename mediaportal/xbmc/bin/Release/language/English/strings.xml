@@ -2485,6 +2485,18 @@
 	<id>886</id>
 	<value>Default</value>
 </string>
+<string>
+	<id>887</id>
+	<value>Specify number of episodes to keep</value>
+</string>
+<string>
+	<id>888</id>
+	<value>Episodes Management</value>
+</string>
+<string>
+	<id>889</id>
+	<value>All episodes</value>
+</string>
 
 <!-- End My Alarm Strings -->
 <string>

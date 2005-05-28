@@ -22,7 +22,7 @@ namespace MediaPortal.Dialogs
 		[SkinControlAttribute(4)]			protected GUILabelControl lblHeading=null;
     int selectedItemIndex      = -1;
     int selectedId = -1;
-
+		bool showQuickNumbers=true;
 		string selectedItemLabel=String.Empty;
     ArrayList listItems   = new ArrayList();
     bool    m_bPrevOverlay=false;
@@ -219,13 +219,14 @@ namespace MediaPortal.Dialogs
 
       selectedItemIndex=-1;
       listItems.Clear();
+			showQuickNumbers=true;
     }
 
     public void Add(string strLabel)
 		{
 			int iItemIndex = listItems.Count+1;
       GUIListItem pItem = new GUIListItem();
-			if (iItemIndex < 10) 
+			if (iItemIndex < 10 && showQuickNumbers) 
 				pItem.Label = iItemIndex.ToString()+" "+strLabel;
 			else
 				pItem.Label = strLabel;
@@ -237,7 +238,7 @@ namespace MediaPortal.Dialogs
 		public void Add(GUIListItem pItem)
 		{
 			int iItemIndex = listItems.Count+1;			
-			if (iItemIndex < 10) 
+			if (iItemIndex < 10 && showQuickNumbers) 
 				pItem.Label = iItemIndex.ToString()+" "+pItem.Label;
 			else
 				pItem.Label = pItem.Label;
@@ -246,12 +247,26 @@ namespace MediaPortal.Dialogs
 			listItems.Add(pItem);
 		}
 
+		public bool ShowQuickNumbers
+		{
+			get { return showQuickNumbers;}
+			set {showQuickNumbers=value;}
+		}
     public void AddLocalizedString(int iLocalizedString)
     {
       int iItemIndex = listItems.Count+1;
-      GUIListItem pItem = new GUIListItem(iItemIndex.ToString()+" "+GUILocalizeStrings.Get(iLocalizedString));     
-      pItem.ItemId = iLocalizedString;
-      listItems.Add(pItem);      
+			if (showQuickNumbers)
+			{
+				GUIListItem pItem = new GUIListItem(iItemIndex.ToString()+" "+GUILocalizeStrings.Get(iLocalizedString));     
+				pItem.ItemId = iLocalizedString;
+				listItems.Add(pItem);      
+			}
+			else
+			{
+				GUIListItem pItem = new GUIListItem(GUILocalizeStrings.Get(iLocalizedString));     
+				pItem.ItemId = iLocalizedString;
+				listItems.Add(pItem);      
+			}
     }
 
     public int SelectedLabel 
