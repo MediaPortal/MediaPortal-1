@@ -361,11 +361,19 @@ namespace MediaPortal.GUI.TV
 				dlg.AddLocalizedString( 979); //Play recording from beginning
 				dlg.AddLocalizedString( 980); //Play recording from live point
 			}
+			else
+			{
+				dlg.AddLocalizedString( 882);//Quality settings
+			}
 
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;
 			switch (dlg.SelectedId)
 			{
+				case 882:
+					OnSetQuality(rec);
+				break;
+
 				case 981: //Delete this recording only
 				{
 					if (Recorder.IsRecordingSchedule(rec, out card))
@@ -654,6 +662,37 @@ namespace MediaPortal.GUI.TV
 			if (rec==null) return;
 			TVProgram prog=util.GetProgramAt(rec.Channel,rec.StartTime);
 			rec.SetProperties(prog);
+		}
+
+		static public void OnSetQuality(TVRecording rec)
+		{
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+      
+			dlg.Reset();
+			dlg.SetHeading(882);//quality settings
+			dlg.AddLocalizedString(886);//Default
+			dlg.AddLocalizedString(883);//Low
+			dlg.AddLocalizedString(884);//Medium
+			dlg.AddLocalizedString(885);//High
+			switch (rec.Quality)
+			{
+				case TVRecording.QualityType.NotSet: dlg.SelectedLabel=0; break;
+				case TVRecording.QualityType.Low: dlg.SelectedLabel=1; break;
+				case TVRecording.QualityType.Medium: dlg.SelectedLabel=2; break;
+				case TVRecording.QualityType.High: dlg.SelectedLabel=3; break;
+				
+			}
+			dlg.DoModal( GUIWindowManager.ActiveWindow);
+			if (dlg.SelectedLabel==-1) return;
+			switch (dlg.SelectedId)
+			{
+				case 886: rec.Quality=TVRecording.QualityType.NotSet; break;
+				case 883: rec.Quality=TVRecording.QualityType.Low; break;
+				case 884: rec.Quality=TVRecording.QualityType.Medium; break;
+				case 885: rec.Quality=TVRecording.QualityType.High; break;
+			}
+			TVDatabase.UpdateRecording(rec);
 		}
 		#endregion
 	}

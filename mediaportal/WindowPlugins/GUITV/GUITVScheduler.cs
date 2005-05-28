@@ -672,11 +672,19 @@ namespace MediaPortal.GUI.TV
 				dlg.AddLocalizedString( 979); //Play recording from beginning
 				dlg.AddLocalizedString( 980); //Play recording from live point
 			}
+			else
+			{
+				dlg.AddLocalizedString( 882);//Quality settings
+			}
 
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
       switch (dlg.SelectedId)
       {
+				case 882:////Quality settings
+					GUITVPriorities.OnSetQuality(rec);
+				break;
+
 				case 981: //Delete this recording only
 				{
 					if (Recorder.IsRecordingSchedule(rec, out card))

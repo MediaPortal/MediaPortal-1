@@ -2465,6 +2465,26 @@
 	<id>881</id>
 	<value>Choose recording to stop:</value>
 </string>
+<string>
+	<id>882</id>
+	<value>Quality setting</value>
+</string>
+<string>
+	<id>883</id>
+	<value>Low</value>
+</string>
+<string>
+	<id>884</id>
+	<value>Medium</value>
+</string>
+<string>
+	<id>885</id>
+	<value>High</value>
+</string>
+<string>
+	<id>886</id>
+	<value>Default</value>
+</string>
 
 <!-- End My Alarm Strings -->
 <string>

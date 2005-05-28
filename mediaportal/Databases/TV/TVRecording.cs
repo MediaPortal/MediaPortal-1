@@ -14,6 +14,7 @@ namespace MediaPortal.TV.Database
 		
 		static public readonly int HighestPriority=Int32.MaxValue;
 		static public readonly int LowestPriority=0;
+		
     /// <summary>
     /// Type of recording
     /// </summary>
