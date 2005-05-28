@@ -131,6 +131,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.buttonLookup = new System.Windows.Forms.Button();
 			this.xmlImport = new System.Windows.Forms.Button();
 			this.xmlExport = new System.Windows.Forms.Button();
 			this.buttonCVS = new System.Windows.Forms.Button();
@@ -180,7 +181,6 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBoxCard = new System.Windows.Forms.ComboBox();
 			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
 			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-			this.buttonLookup = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -240,6 +240,15 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.Size = new System.Drawing.Size(432, 390);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "TV Channels";
+			// 
+			// buttonLookup
+			// 
+			this.buttonLookup.Location = new System.Drawing.Point(232, 352);
+			this.buttonLookup.Name = "buttonLookup";
+			this.buttonLookup.Size = new System.Drawing.Size(75, 24);
+			this.buttonLookup.TabIndex = 13;
+			this.buttonLookup.Text = "Lookup";
+			this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
 			// 
 			// xmlImport
 			// 
@@ -707,20 +716,12 @@ namespace MediaPortal.Configuration.Sections
 			this.XMLSaveDialog.InitialDirectory = ".";
 			this.XMLSaveDialog.Title = "Save to....";
 			// 
-			// buttonLookup
-			// 
-			this.buttonLookup.Location = new System.Drawing.Point(232, 352);
-			this.buttonLookup.Name = "buttonLookup";
-			this.buttonLookup.Size = new System.Drawing.Size(75, 24);
-			this.buttonLookup.TabIndex = 13;
-			this.buttonLookup.Text = "Lookup";
-			this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
-			// 
 			// TVChannels
 			// 
 			this.Controls.Add(this.groupBox1);
 			this.Name = "TVChannels";
 			this.Size = new System.Drawing.Size(472, 448);
+			this.Load += new System.EventHandler(this.TVChannels_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
@@ -2015,25 +2016,19 @@ namespace MediaPortal.Configuration.Sections
 					RECORDED_EXPORT=true;
 				}
 				
-				for(int i=1;i<Recorded.Count+1;i++)
-				{
-					foreach(TVRecorded show in Recorded)
-					{	
-						//Found one save it
-						if(i==show.ID)
-						{
-							channels.SetValue("Recorded "+i.ToString(),"ID",show.ID.ToString());
-							channels.SetValue("Recorded "+i.ToString(),"TITLE",show.Title);
-							channels.SetValue("Recorded "+i.ToString(),"CHANNEL",show.Channel);
-							channels.SetValue("Recorded "+i.ToString(),"DESC",show.Description);
-							channels.SetValue("Recorded "+i.ToString(),"GENRE",show.Genre);
-							channels.SetValue("Recorded "+i.ToString(),"FILENAME",show.FileName);
-							channels.SetValue("Recorded "+i.ToString(),"STARTTIME",show.Start.ToString());
-							channels.SetValue("Recorded "+i.ToString(),"ENDTIME",show.End.ToString());
-							channels.SetValue("Recorded "+i.ToString(),"PLAYED",show.Played.ToString());
-							break;
-						}
-					}
+				int count=0;
+				foreach(TVRecorded show in Recorded)
+				{	
+					channels.SetValue("Recorded "+count.ToString(),"ID",show.ID.ToString());
+					channels.SetValue("Recorded "+count.ToString(),"TITLE",show.Title);
+					channels.SetValue("Recorded "+count.ToString(),"CHANNEL",show.Channel);
+					channels.SetValue("Recorded "+count.ToString(),"DESC",show.Description);
+					channels.SetValue("Recorded "+count.ToString(),"GENRE",show.Genre);
+					channels.SetValue("Recorded "+count.ToString(),"FILENAME",show.FileName);
+					channels.SetValue("Recorded "+count.ToString(),"START",show.Start.ToString());
+					channels.SetValue("Recorded "+count.ToString(),"ENDTIME",show.End.ToString());
+					channels.SetValue("Recorded "+count.ToString(),"PLAYED",show.Played.ToString());
+					count++;
 				}
 
 				//Backup recording shows information
@@ -2053,37 +2048,32 @@ namespace MediaPortal.Configuration.Sections
 
 				for(int i=1;i<Recordings.Count+1;i++)
 				{
-					foreach(MediaPortal.TV.Database.TVRecording show in Recordings)
+					MediaPortal.TV.Database.TVRecording show=(MediaPortal.TV.Database.TVRecording )Recordings[i-1];
+					channels.SetValue("Recording "+i.ToString(),"ID",show.ID.ToString());
+					channels.SetValue("Recording "+i.ToString(),"TITLE",show.Title);
+					channels.SetValue("Recording "+i.ToString(),"CHANNEL",show.Channel);
+					channels.SetValue("Recording "+i.ToString(),"STARTTIME",show.Start.ToString());
+					channels.SetValue("Recording "+i.ToString(),"ENDTIME",show.End.ToString());
+					channels.SetValue("Recording "+i.ToString(),"CANCELEDTIME",show.Canceled.ToString());
+					channels.SetValue("Recording "+i.ToString(),"TYPE",show.RecType.ToString());
+					channels.SetValue("Recording "+i.ToString(),"PRIORITY",show.Priority.ToString());
+					channels.SetValue("Recording "+i.ToString(),"QUALITY",show.Quality.ToString());
+					//channels.SetValue("Recording "+i.ToString(),"STATUS",show.Status.ToString());
+					channels.SetValueAsBool("Recording "+i.ToString(),"ISCONTENTREC",show.IsContentRecording);
+					channels.SetValueAsBool("Recording "+i.ToString(),"SERIES",show.Series);
+					channels.SetValue("Recording "+i.ToString(),"EPISODES",show.EpisodesToKeep.ToString());
+					
+					
+					//Check if this recording has had any cancels
+					channels.SetValue("Recording "+i.ToString(),"CANCELED SERIES TOTAL",show.CanceledSeries.Count.ToString());
+					if(show.CanceledSeries.Count>0)
 					{	
-						//Found one save it
-						if(i==show.ID)
+						int canx_count = 0;
+						ArrayList get_show = (ArrayList)show.CanceledSeries;
+						foreach(long canx_show in get_show)
 						{
-							channels.SetValue("Recording "+i.ToString(),"ID",show.ID.ToString());
-							channels.SetValue("Recording "+i.ToString(),"TITLE",show.Title);
-							channels.SetValue("Recording "+i.ToString(),"CHANNEL",show.Channel);
-							channels.SetValue("Recording "+i.ToString(),"STARTTIME",show.Start.ToString());
-							channels.SetValue("Recording "+i.ToString(),"ENDTIME",show.End.ToString());
-							channels.SetValue("Recording "+i.ToString(),"CANCELEDTIME",show.Canceled.ToString());
-							channels.SetValue("Recording "+i.ToString(),"TYPE",show.RecType.ToString());
-							channels.SetValue("Recording "+i.ToString(),"PRIORITY",show.Priority.ToString());
-							channels.SetValue("Recording "+i.ToString(),"QUALITY",show.Quality.ToString());
-							//channels.SetValue("Recording "+i.ToString(),"STATUS",show.Status.ToString());
-							channels.SetValueAsBool("Recording "+i.ToString(),"ISCONTENTREC",show.IsContentRecording);
-							channels.SetValueAsBool("Recording "+i.ToString(),"SERIES",show.Series);
-							
-							//Check if this recording has had any cancels
-							channels.SetValue("Recording "+i.ToString(),"CANCELED SERIES TOTAL",show.CanceledSeries.Count.ToString());
-							if(show.CanceledSeries.Count>0)
-							{	
-								int canx_count = 0;
-								ArrayList get_show = (ArrayList)show.CanceledSeries;
-								foreach(long canx_show in get_show)
-								{
-									channels.SetValue("Recording "+i.ToString(),"CANCELED SERIES CANCELEDTIME "+canx_count.ToString(),canx_show.ToString());
-									canx_count++;
-								}
-							}
-							break;
+							channels.SetValue("Recording "+i.ToString(),"CANCELED SERIES CANCELEDTIME "+canx_count.ToString(),canx_show.ToString());
+							canx_count++;
 						}
 					}
 				}
@@ -2796,6 +2786,7 @@ namespace MediaPortal.Configuration.Sections
 							//temp_recording.Status=(MediaPortal.TV.Database.TVRecording.RecordingStatus)channels.GetValue("Recording "+i.ToString(),"STATUS");
 							temp_recording.IsContentRecording=channels.GetValueAsBool("Recording "+i.ToString(),"ISCONTENTREC",false);
 							temp_recording.Series=channels.GetValueAsBool("Recording "+i.ToString(),"SERIES",false);
+							temp_recording.EpisodesToKeep=channels.GetValueAsInt("Recording "+i.ToString(),"EPISODES",Int32.MaxValue);
 							
 							//Add this recording to TVDatabase
 							bool recording_overwrite = false;
@@ -2953,6 +2944,11 @@ namespace MediaPortal.Configuration.Sections
 			dlg.ShowDialog(this);
 			reloadList=true;
 			RadioStations.UpdateList();
+		}
+
+		private void TVChannels_Load(object sender, System.EventArgs e)
+		{
+		
 		}
 	}
 }
