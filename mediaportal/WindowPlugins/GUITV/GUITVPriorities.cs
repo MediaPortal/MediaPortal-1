@@ -692,7 +692,7 @@ namespace MediaPortal.GUI.TV
 				case 884: rec.Quality=TVRecording.QualityType.Medium; break;
 				case 885: rec.Quality=TVRecording.QualityType.High; break;
 			}
-			TVDatabase.UpdateRecording(rec);
+			TVDatabase.SetRecordingQuality(rec);
 		}
 		#endregion
 	}

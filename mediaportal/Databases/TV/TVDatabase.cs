@@ -1529,6 +1529,33 @@ namespace MediaPortal.TV.Database
 			}
 			RecordingsChanged();
 		}
+		static public void SetRecordingQuality(TVRecording recording)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					string strTitle=recording.Title;
+					DatabaseUtility.RemoveInvalidChars(ref strTitle);
+
+					if (null==m_db) return ;
+					if (recording.ID<0) return ;
+          
+					strSQL=String.Format("update recording set quality={0} where idRecording={1}", 
+						(int)recording.Quality,
+						recording.ID);
+					m_db.Execute(strSQL);
+
+				} 
+				catch (Exception ex) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+			RecordingsChanged();
+		}
 
   
 		static public int AddRecording(ref TVRecording recording)
