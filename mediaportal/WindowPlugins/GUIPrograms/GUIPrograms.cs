@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using Microsoft.DirectX.Direct3D;
 using Programs.Utils;
 using ProgramsDatabase;
 
@@ -276,8 +277,14 @@ namespace WindowPlugins.GUIPrograms
     [SkinControlAttribute(5)]
     protected GUIToggleButtonControl btnSortAsc = null;
 
+    //Images                     
+    [SkinControlAttribute(6)]
+    protected GUIImage screenShotImage = null;
+
+
     // FacadeView
-    [SkinControlAttribute(7)]
+    const int cFacadeID = 7;
+    [SkinControlAttribute(cFacadeID)]
     protected GUIFacadeControl facadeView = null;
 
     #endregion 
@@ -304,6 +311,11 @@ namespace WindowPlugins.GUIPrograms
     void DeInitMyPrograms()
     {
       SaveSettings();
+      if (curTexture != null)
+      {
+        curTexture.Dispose();
+        curTexture = null;
+      }
       // make sure the selected index wasn't reseted already
       // and save the index only if it's non-zero
       // otherwise: DXDevice.Reset clears selection 
@@ -331,7 +343,8 @@ namespace WindowPlugins.GUIPrograms
       }
       UpdateListControl();
       ShowThumbPanel();
-      slideTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
+      curTexture = null;
+//      slideTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
     }
 
     #endregion 
@@ -345,6 +358,9 @@ namespace WindowPlugins.GUIPrograms
     int selectedItemIndex =  - 1;
     int slideSpeed = 3; // speed in seconds between two slides
     int slideTime = 0;
+    Texture curTexture = null;
+    int textureWidth = 0;
+    int textureHeight = 0;
 
     #endregion 
 
@@ -395,8 +411,9 @@ namespace WindowPlugins.GUIPrograms
 
     public override void Render(float timePassed)
     {
-      RenderFilmStrip();
       base.Render(timePassed);
+      RenderFilmStrip();
+      RenderScreenShot();
     }
 
     void OnInfo()
@@ -459,14 +476,34 @@ namespace WindowPlugins.GUIPrograms
       else if (control == facadeView)
       {
         // application or file-item was clicked....
-        //        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeView.GetID, 0, 0, null);
-        //        OnMessage(msg);
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick();
         }
       }
     }
+
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch ( message.Message )
+      {
+        case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
+        {
+          int iControl=message.SenderControlId;
+          if (iControl==cFacadeID)
+          {
+            if (lastApp != null)
+            {
+              lastApp.ResetThumbs();
+            }
+          }
+        }
+          break;
+      }
+      return base.OnMessage(message);
+    }
+
 
 
     public override void OnAction(Action action)
@@ -555,6 +592,50 @@ namespace WindowPlugins.GUIPrograms
       UpdateButtons();
     }
 
+
+    void RenderScreenShot()
+    {
+      if (mapSettings == null)
+        return ;
+      if (mapSettings.ViewAs == (int)View.VIEW_AS_LIST)
+      {
+        // does the thumb needs replacing??
+        int timeElapsed = ((int)(DateTime.Now.Ticks / 10000)) - slideTime;
+        if (timeElapsed >= (slideSpeed * 1000))
+        {
+          RefreshScreenShot(); 
+          // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
+        }
+
+        if ((screenShotImage != null) && (curTexture != null))
+        {
+          float x = (float)screenShotImage.XPosition;
+          float y = (float)screenShotImage.YPosition;
+          int curWidth;
+          int curHeight;
+          GUIGraphicsContext.Correct(ref x, ref y);
+
+          int maxWidth = screenShotImage.Width;
+          int maxHeight = screenShotImage.Height;
+          GUIGraphicsContext.GetOutputRect(textureWidth, textureHeight, maxWidth, maxHeight, out curWidth, out curHeight);
+          GUIFontManager.Present();
+          int deltaX = ((screenShotImage.Width - curWidth) / 2);
+          if (deltaX < 0)
+          {
+            deltaX = 0;
+          }
+          int deltaY = ((screenShotImage.Height - curHeight) / 2);
+          if (deltaY < 0)
+          {
+            deltaY = 0;
+          }
+          x = x + deltaX;
+          y = y + deltaY;
+          Picture.RenderImage(ref curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
+        }
+      }
+    }
+
     void RenderFilmStrip()
     {
       // in filmstrip mode, start a slideshow if more than one
@@ -577,6 +658,33 @@ namespace WindowPlugins.GUIPrograms
             // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
         }
       }
+    }
+
+
+    void RefreshScreenShot()
+    {
+      GUIListItem item = GetSelectedItem();
+      if (curTexture != null)
+      {
+        curTexture.Dispose();
+        curTexture = null;
+      }
+      // some preconditions...
+      if (lastApp == null)
+        return ;
+      if (item.MusicTag == null)
+        return ;
+      if (!(item.MusicTag is FileItem))
+        return ;
+      FileItem curFile = item.MusicTag as FileItem;
+      // ok... let's get a filename
+      string thumbFilename = lastApp.GetCurThumb(curFile);
+      if (System.IO.File.Exists(thumbFilename))
+      {
+        curTexture = Picture.Load(thumbFilename, 0, 512, 512, true, false, out textureWidth, out textureHeight);
+      }
+      lastApp.NextThumb(); // try to find a next thumbnail
+      slideTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
     }
 
     void RefreshFilmstripThumb(GUIFilmstripControl pControl)

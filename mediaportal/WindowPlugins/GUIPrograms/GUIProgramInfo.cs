@@ -249,6 +249,18 @@ namespace WindowPlugins.GUIPrograms
         int maxHeight = curImg.Height;
         GUIGraphicsContext.GetOutputRect(textureWidth, textureHeight, maxWidth, maxHeight, out curWidth, out curHeight);
         GUIFontManager.Present();
+        int deltaX = ((curImg.Width - curWidth) / 2);
+        if (deltaX < 0)
+        {
+          deltaX = 0;
+        }
+        int deltaY = ((curImg.Height - curHeight) / 2);
+        if (deltaY < 0)
+        {
+          deltaY = 0;
+        }
+        x = x + deltaX;
+        y = y + deltaY;
         Picture.RenderImage(ref curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
       }
     }
