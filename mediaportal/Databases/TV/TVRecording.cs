@@ -83,7 +83,7 @@ namespace MediaPortal.TV.Database
 			m_iPriority=rec.m_iPriority;
 			m_iQuality=rec.m_iQuality;
 			m_canceledSeries=(ArrayList)rec.m_canceledSeries.Clone();
-
+			EpisodesToKeep = rec.EpisodesToKeep;
 		}
 
     /// <summary>
