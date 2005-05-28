@@ -1379,9 +1379,10 @@
     </tv>
   </capturecard>
 
-<!--    Requires AIW bypass patch to work properly (TVCapture.dll)   --> 
+<!--  Requires 0.1.2.0 or later  -->
+<!--  Requires Catalyst 5.5 WDM_NSP drivers or later -->
 
-  <capturecard commercialname="ATI AIW 9x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv40">
+  <capturecard commercialname="ATI AIW 9600 Cards or later" capturename="ATI Rage Theater Video Capture" devid="ntativrv40">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -4141,7 +4142,10 @@
     </tv>
   </capturecard> 
 
-  <capturecard commercialname="ATI AIW 7x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
+<!--  Requires 0.1.2.0 or later  -->
+<!--  Requires Catalyst 5.5 WDM_SP drivers or later -->
+
+  <capturecard commercialname="ATI AIW 9200 Cards or earlier" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
     <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
     <tv>
       <interface cat="capture" video="0" audio="" mpeg2=""></interface>
@@ -5518,6 +5522,59 @@
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoderaudio" sinkpin="0"></connection>
 		<connection sourcefilter="encodervideo" sourcepin="0" sinkfilter="mux"  		sinkpin="0"></connection>
         <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"  		sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Vstream Xpert TV PVR 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
+    <tv>
+      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"  		checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+<!--  Requires 0.1.2.0 or later  -->
+<!--  For Catalyst 5.4 WDM_NSP drivers only -->
+
+  <capturecard commercialname="ATI AIW 9x00 Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"></filter>
+        <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"></filter>      
+        <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"></filter>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"></filter>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"></filter>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"  		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"></connection>
+        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"  		sinkpin="1"></connection>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"  		sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"  			sinkpin="1"></connection>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"  			sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
