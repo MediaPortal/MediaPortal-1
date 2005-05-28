@@ -215,6 +215,9 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TextBox tbATSCAudioPid;
 		private System.Windows.Forms.TextBox tbATSCProvider;
 		private System.Windows.Forms.ComboBox cbATSCModulation;
+		private System.Windows.Forms.Label label95;
+		private System.Windows.Forms.Label label96;
+		private System.Windows.Forms.Label label97;
 		int orgChannelNumber=-1;
 
 		public EditTVChannelForm()
@@ -422,8 +425,9 @@ namespace MediaPortal.Configuration
 			this.label25 = new System.Windows.Forms.Label();
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
-			this.tabPage6 = new System.Windows.Forms.TabPage();
 			this.tabPage7 = new System.Windows.Forms.TabPage();
+			this.tbATSCMinor = new System.Windows.Forms.TextBox();
+			this.label83 = new System.Windows.Forms.Label();
 			this.label74 = new System.Windows.Forms.Label();
 			this.tbATSCAudioLanguage3 = new System.Windows.Forms.TextBox();
 			this.tbATSCAudioLanguage2 = new System.Windows.Forms.TextBox();
@@ -464,16 +468,18 @@ namespace MediaPortal.Configuration
 			this.label93 = new System.Windows.Forms.Label();
 			this.tbATSCPhysicalChannel = new System.Windows.Forms.TextBox();
 			this.label94 = new System.Windows.Forms.Label();
-			this.label83 = new System.Windows.Forms.Label();
-			this.tbATSCMinor = new System.Windows.Forms.TextBox();
+			this.tabPage6 = new System.Windows.Forms.TabPage();
+			this.label95 = new System.Windows.Forms.Label();
+			this.label96 = new System.Windows.Forms.Label();
+			this.label97 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage4.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.tabPage5.SuspendLayout();
-			this.tabPage6.SuspendLayout();
 			this.tabPage7.SuspendLayout();
+			this.tabPage6.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// comboTvStandard
@@ -658,6 +664,9 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.label97);
+			this.tabPage1.Controls.Add(this.label96);
+			this.tabPage1.Controls.Add(this.label95);
 			this.tabPage1.Controls.Add(this.labelSpecial);
 			this.tabPage1.Controls.Add(this.comboBoxChannels);
 			this.tabPage1.Controls.Add(this.checkBoxScrambled);
@@ -692,18 +701,17 @@ namespace MediaPortal.Configuration
 			// 
 			this.checkBoxScrambled.Location = new System.Drawing.Point(24, 80);
 			this.checkBoxScrambled.Name = "checkBoxScrambled";
+			this.checkBoxScrambled.Size = new System.Drawing.Size(264, 24);
 			this.checkBoxScrambled.TabIndex = 13;
-			this.checkBoxScrambled.Text = "Scrambled";
+			this.checkBoxScrambled.Text = "Tv channel is encrypted (only for digital TV)";
 			// 
 			// label45
 			// 
 			this.label45.Location = new System.Drawing.Point(16, 160);
 			this.label45.Name = "label45";
-			this.label45.Size = new System.Drawing.Size(344, 56);
+			this.label45.Size = new System.Drawing.Size(344, 16);
 			this.label45.TabIndex = 12;
-			this.label45.Text = "The channel number tells MediaPortal on which channel this tv channel is transmit" +
-				"ed. This is not the logical channel number you use to zap to this channel!! Norm" +
-				"ally you can find this information on the website of your cable tv provider.  ";
+			this.label45.Text = "Analog TV:";
 			// 
 			// label44
 			// 
@@ -755,7 +763,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Location = new System.Drawing.Point(128, 80);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(312, 21);
+			this.countryComboBox.Size = new System.Drawing.Size(312, 20);
 			this.countryComboBox.Sorted = true;
 			this.countryComboBox.TabIndex = 15;
 			this.countryComboBox.SelectedIndexChanged += new System.EventHandler(this.countryComboBox_SelectedIndexChanged);
@@ -1903,21 +1911,6 @@ namespace MediaPortal.Configuration
 			this.label26.Text = "Network ID:";
 			this.label26.Click += new System.EventHandler(this.label26_Click);
 			// 
-			// tabPage6
-			// 
-			this.tabPage6.Controls.Add(this.typeComboBox);
-			this.tabPage6.Controls.Add(this.label4);
-			this.tabPage6.Controls.Add(this.externalChannelTextBox);
-			this.tabPage6.Controls.Add(this.label5);
-			this.tabPage6.Controls.Add(this.label6);
-			this.tabPage6.Controls.Add(this.inputComboBox);
-			this.tabPage6.Location = new System.Drawing.Point(4, 22);
-			this.tabPage6.Name = "tabPage6";
-			this.tabPage6.Size = new System.Drawing.Size(480, 358);
-			this.tabPage6.TabIndex = 5;
-			this.tabPage6.Text = "External";
-			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
-			// 
 			// tabPage7
 			// 
 			this.tabPage7.Controls.Add(this.tbATSCMinor);
@@ -1967,6 +1960,21 @@ namespace MediaPortal.Configuration
 			this.tabPage7.Size = new System.Drawing.Size(480, 358);
 			this.tabPage7.TabIndex = 6;
 			this.tabPage7.Text = "ATSC";
+			// 
+			// tbATSCMinor
+			// 
+			this.tbATSCMinor.Location = new System.Drawing.Point(158, 72);
+			this.tbATSCMinor.Name = "tbATSCMinor";
+			this.tbATSCMinor.TabIndex = 91;
+			this.tbATSCMinor.Text = "";
+			// 
+			// label83
+			// 
+			this.label83.Location = new System.Drawing.Point(16, 72);
+			this.label83.Name = "label83";
+			this.label83.Size = new System.Drawing.Size(88, 16);
+			this.label83.TabIndex = 90;
+			this.label83.Text = "Minor channel";
 			// 
 			// label74
 			// 
@@ -2302,20 +2310,44 @@ namespace MediaPortal.Configuration
 			this.label94.TabIndex = 49;
 			this.label94.Text = "Physical channel number";
 			// 
-			// label83
+			// tabPage6
 			// 
-			this.label83.Location = new System.Drawing.Point(16, 72);
-			this.label83.Name = "label83";
-			this.label83.Size = new System.Drawing.Size(88, 16);
-			this.label83.TabIndex = 90;
-			this.label83.Text = "Minor channel";
+			this.tabPage6.Controls.Add(this.typeComboBox);
+			this.tabPage6.Controls.Add(this.label4);
+			this.tabPage6.Controls.Add(this.externalChannelTextBox);
+			this.tabPage6.Controls.Add(this.label5);
+			this.tabPage6.Controls.Add(this.label6);
+			this.tabPage6.Controls.Add(this.inputComboBox);
+			this.tabPage6.Location = new System.Drawing.Point(4, 22);
+			this.tabPage6.Name = "tabPage6";
+			this.tabPage6.Size = new System.Drawing.Size(480, 358);
+			this.tabPage6.TabIndex = 5;
+			this.tabPage6.Text = "External";
+			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// tbATSCMinor
+			// label95
 			// 
-			this.tbATSCMinor.Location = new System.Drawing.Point(158, 72);
-			this.tbATSCMinor.Name = "tbATSCMinor";
-			this.tbATSCMinor.TabIndex = 91;
-			this.tbATSCMinor.Text = "";
+			this.label95.Location = new System.Drawing.Point(16, 248);
+			this.label95.Name = "label95";
+			this.label95.Size = new System.Drawing.Size(344, 16);
+			this.label95.TabIndex = 16;
+			this.label95.Text = "Digital TV:";
+			// 
+			// label96
+			// 
+			this.label96.Location = new System.Drawing.Point(32, 176);
+			this.label96.Name = "label96";
+			this.label96.Size = new System.Drawing.Size(328, 64);
+			this.label96.TabIndex = 17;
+			this.label96.Text = @"For analog tv the channel number is the number on which the tv channel can be received. Note that for most countries this is not the logical number you use when zapping. Channel numbers and frequencies can be found at the website of your analog tv (cable) provider";
+			// 
+			// label97
+			// 
+			this.label97.Location = new System.Drawing.Point(32, 264);
+			this.label97.Name = "label97";
+			this.label97.Size = new System.Drawing.Size(248, 23);
+			this.label97.TabIndex = 18;
+			this.label97.Text = "For digital TV, the channel number is not used. ";
 			// 
 			// EditTVChannelForm
 			// 
@@ -2340,8 +2372,8 @@ namespace MediaPortal.Configuration
 			this.tabPage4.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
-			this.tabPage6.ResumeLayout(false);
 			this.tabPage7.ResumeLayout(false);
+			this.tabPage6.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
