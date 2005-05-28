@@ -4026,7 +4026,7 @@
   
 <!--    Cards after release 0.1.2.0   -->  
 
-  <capturecard commercialname="ATI HDTV Wonder" capturename="ATI DTV Wonder Digital BDA Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_a1011002">
+  <capturecard commercialname="ATI HDTV Wonder" capturename="ATI DTV Wonder Digital BDA Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_a1011002&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
