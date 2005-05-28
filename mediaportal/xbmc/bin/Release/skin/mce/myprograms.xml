@@ -120,6 +120,19 @@
 			</control>
 		</control>
 		<control>
+			<description>Screenshot</description> 
+			<type>image</type> 
+			<id>6</id> 
+			<posX>60</posX> 
+			<posY>200</posY> 
+			<width>190</width> 
+			<height>190</height> 
+			<texture>-</texture> 
+			<colorkey>FFFF00FF</colorkey> 
+			<colordiffuse>FFFFFFFF</colordiffuse>
+			<keepaspectratio>yes</keepaspectratio>
+		</control>
+		<control>
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromTop</animation>
