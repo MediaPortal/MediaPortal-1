@@ -121,6 +121,18 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
+    public bool IsOverviewVisible
+    {
+      get
+      {
+        return isOverviewVisible;
+      }
+      set
+      {
+        isOverviewVisible = value;
+      }
+    }
+
     #endregion 
 
     #region Overrides

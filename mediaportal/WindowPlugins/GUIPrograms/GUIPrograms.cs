@@ -28,12 +28,14 @@ namespace WindowPlugins.GUIPrograms
       protected bool _SortAscending;
       protected int _LastAppID;
       protected int _LastFileID;
+      protected bool _OverviewVisible;
 
       public MapSettings()
       {
         _SortBy = 0; //name
         _ViewAs = 0; //list
         _SortAscending = true;
+        _OverviewVisible = true;
         _LastAppID =  - 1;
         _LastFileID =  - 1;
       }
@@ -75,6 +77,19 @@ namespace WindowPlugins.GUIPrograms
         set
         {
           _SortAscending = value;
+        }
+      }
+
+      [XmlElement("OverviewVisible")]
+      public bool OverviewVisible
+      {
+        get
+        {
+          return _OverviewVisible;
+        }
+        set
+        {
+          _OverviewVisible = value;
         }
       }
 
@@ -185,6 +200,16 @@ namespace WindowPlugins.GUIPrograms
         {
           xmlwriter.SetValue("myprograms", "sortasc", "no");
         }
+
+        if (mapSettings.OverviewVisible)
+        {
+          xmlwriter.SetValue("myprograms", "overviewvisible", "yes");
+        }
+        else
+        {
+          xmlwriter.SetValue("myprograms", "overviewvisible", "no");
+        }
+
         //Log.Write("dw myPrograms: saving xmlsettings lastappid {0}", _MapSettings.LastAppID);
       }
     }
@@ -219,6 +244,16 @@ namespace WindowPlugins.GUIPrograms
           mapSettings.SortAscending = true;
         }
 
+        curText = (string)xmlreader.GetValue("myprograms", "overviewvisible");
+        if (curText != null)
+        {
+          mapSettings.OverviewVisible = (curText.ToLower() == "yes");
+        }
+        else
+        {
+          mapSettings.OverviewVisible = true;
+        }
+
       }
     }
 
@@ -230,6 +265,7 @@ namespace WindowPlugins.GUIPrograms
         mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID",  - 1);
         mapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
         mapSettings.SortAscending = xmlreader.GetValueAsBool("myprograms", "sortasc", true);
+        mapSettings.OverviewVisible = xmlreader.GetValueAsBool("myprograms", "overviewvisible", true);
       }
     }
 
@@ -426,7 +462,9 @@ namespace WindowPlugins.GUIPrograms
         if (!item.Label.Equals(ProgramUtils.cBackLabel) && (!item.IsFolder))
         {
           // show file info but only if the selected item is not the back button
-          lastApp.OnInfo(item);
+          bool ovVisible = mapSettings.OverviewVisible;
+          lastApp.OnInfo(item, ref ovVisible); // quickndirty..
+          mapSettings.OverviewVisible = ovVisible;
           UpdateListControl();
         }
       }

@@ -219,7 +219,7 @@ namespace ProgramsDatabase
 
     }
 
-    override public void OnInfo(GUIListItem item)
+    override public void OnInfo(GUIListItem item, ref bool isOverviewVisible)
     {
       // no info screen for directory items
     }

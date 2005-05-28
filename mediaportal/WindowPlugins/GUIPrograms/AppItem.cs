@@ -505,7 +505,7 @@ namespace ProgramsDatabase
     }
 
 
-    public virtual void OnInfo(GUIListItem item)
+    public virtual void OnInfo(GUIListItem item, ref bool isOverviewVisible)
     {
       GUIFileInfo fileInfoDialog = (GUIFileInfo) GUIWindowManager.GetWindow(ProgramUtils.ProgramInfoID);
       if (null != fileInfoDialog)
@@ -517,7 +517,9 @@ namespace ProgramsDatabase
         FileItem curFile = (FileItem) item.MusicTag;
         fileInfoDialog.App = this;
         fileInfoDialog.File = curFile;
+        fileInfoDialog.IsOverviewVisible = isOverviewVisible;
         fileInfoDialog.DoModal(GetID);
+        isOverviewVisible = fileInfoDialog.IsOverviewVisible;
         return;
       }
     }
