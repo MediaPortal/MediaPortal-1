@@ -40,6 +40,7 @@ namespace MediaPortal.TV.Recording
 
 		public DVBSections.Transponder Scan(DShowNET.IBaseFilter filter)
 		{
+			Log.Write("ATSC-scan:");
 			m_sectionsList=new ArrayList();	
 			DVBSections.Transponder transponder = new DVBSections.Transponder();
 
@@ -53,12 +54,15 @@ namespace MediaPortal.TV.Recording
 			//	DecodeMasterGuideTable(arr);
 
 			//get Terrestial Virtual Channel Table (pid=0x1FFB, table id 0xc8)
+			
+			Log.Write("ATSC-scan: get Terrestial Virtual Channel Table");
 			GetStreamData(filter,0x1ffb, 0xc8,0,Timeout);
 			foreach(byte[] arr in m_sectionsList)
 				DecodeTerrestialVirtualChannelTable(transponder,arr);
 
 			
 			//get Cable Virtual Channel Table (pid=0x1FFB, table id 0xc9)
+			Log.Write("ATSC-scan: get Cable Virtual Channel Table");
 			GetStreamData(filter,0x1ffb, 0xc9,0,Timeout);
 			foreach(byte[] arr in m_sectionsList)
 				DecodeCableVirtualChannelTable(transponder,arr);
@@ -66,14 +70,16 @@ namespace MediaPortal.TV.Recording
 			return transponder;
 		}
 
-		void DecodeServiceLocationDescriptor( byte[] buf,ref DVBSections.ChannelInfo channelInfo)
+		void DecodeServiceLocationDescriptor( byte[] buf,int start,ref DVBSections.ChannelInfo channelInfo)
 		{
+
 			//  8------ 8------- 3--13--- -------- 8-------       
 			// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
 			//    0        1        2         3        4       5       6         7        8       9     
-			int pcr_pid = ((buf[2]&0x1f)<<8) + buf[3];
-			int number_of_elements = buf[4];
-			int off=5;
+			int pcr_pid = ((buf[start+2]&0x1f)<<8) + buf[start+3];
+			int number_of_elements = buf[start+4];
+			int off=start+5;
+			Log.Write("DecodeServiceLocationDescriptor() pcr pid:{0} elements:{1}", pcr_pid,number_of_elements);
 			channelInfo.pcr_pid=pcr_pid;
 			for (int i=0; i < number_of_elements;++i)
 			{
@@ -83,6 +89,7 @@ namespace MediaPortal.TV.Recording
 				int streamtype						= buf[off];
 				int elementary_pid				= ((buf[off+1]&0x1f)<<8) + buf[off+2];
 				int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
+				Log.Write("  element:{0} streamtype:{1} pid:{2}", i,streamtype,elementary_pid);
 				off+=6;
 				DVBSections.PMTData pmtData = new DVBSections.PMTData();
 				pmtData.elementary_PID=elementary_pid;
@@ -146,6 +153,9 @@ namespace MediaPortal.TV.Recording
 
 		void DecodeTerrestialVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
 		{
+			Log.Write("ATSC-scan: DecodeTerrestialVirtualChannelTable() len={0}",buf.Length);
+			if (buf.Length<10) return;
+
 			// tid   
 			//  8       112-12-- -------- 16------ -------- 2-5----1 8------- 8------- 8------- 8------- 
 			// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
@@ -162,6 +172,7 @@ namespace MediaPortal.TV.Recording
 			int protocol_version = buf[8];
 			int num_channels_in_section = buf[9];
 
+			Log.Write("atsc: channels:{0}", num_channels_in_section);
 			int start=10;
 			for (int i=0; i < num_channels_in_section;i++)
 			{
@@ -171,6 +182,7 @@ namespace MediaPortal.TV.Recording
 				System.Array.Copy(buf,start,byShortName,0,7*16);
 				string shortName=encoding.GetString(byShortName);
 
+				Log.Write("atsc: chan:{0} name:{1}", i,shortName);
 				start+= 7*16;
 				// 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
 				// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
@@ -193,6 +205,12 @@ namespace MediaPortal.TV.Recording
 				int source_id						 = ((buf[start+14])<<8) + buf[start+15];
 				int descriptors_length	 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
+				
+				Log.Write("atsc: chan:{0} minor:{1} major:{2} modulation:{3} freq:{4} tsid:{5} program:{6}", i,
+										major_channel,minor_channel,modulation_mode, carrier_frequency,channel_TSID, program_number);
+				Log.Write("atsc: chan:{0} etm:{1} access:{2} hidden:{3} path:{4} oub:{5} hide:{6} service:{7} source:{8}",
+										i,ETM_location,access_controlled,hidden, path_select, out_of_band,hide_guide, service_type, source_id);
+				Log.Write("atsc: chan:{0} description length:{1}", i,descriptors_length);
 				DVBSections.ChannelInfo channelInfo = new DVBSections.ChannelInfo();
 				channelInfo.minorChannel = minor_channel;
 				channelInfo.majorChannel = major_channel;
@@ -208,15 +226,16 @@ namespace MediaPortal.TV.Recording
 				int len=0;
 				while (len < descriptors_length)
 				{
-					int descriptor_tag = buf[len];
-					int descriptor_len = buf[len+1];
+					int descriptor_tag = buf[start+len];
+					int descriptor_len = buf[start+len+1];
+					Log.Write("  decription:{0:X} len:{1} {2}", descriptor_tag, descriptor_len, start);
 					switch (descriptor_tag)
 					{
 						case 0xa1:
-							DecodeServiceLocationDescriptor( buf,ref channelInfo);
+							DecodeServiceLocationDescriptor( buf,start+len,ref channelInfo);
 						break;
 						case 0xa0:
-							DecodeExtendedChannelNameDescriptor( buf,ref channelInfo);
+							//DecodeExtendedChannelNameDescriptor( buf,start+len,ref channelInfo);
 						break;
 					}
 					len += (descriptor_len+2);
