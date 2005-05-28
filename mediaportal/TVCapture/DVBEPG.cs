@@ -188,10 +188,11 @@ namespace MediaPortal.TV.Recording
 			m_channelsParsing=false;
 			m_isLocked=false;
 		}
-		public int SetEITToDatabase(DVBSections.EITDescr data,string channelName,int eventKind)
+		public int SetEITToDatabase(DVBSections.EITDescr data,string channelName,int eventKind, out DateTime dateProgramEnd)
 		{
 			try
 			{
+				dateProgramEnd=DateTime.MinValue;
 				int retVal=0;
 				//
 				//
@@ -231,6 +232,7 @@ namespace MediaPortal.TV.Recording
 					//
 					tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
 					tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
+					dateProgramEnd=new DateTime(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
 				}
 				else
 				{
@@ -246,6 +248,7 @@ namespace MediaPortal.TV.Recording
 					//
 					tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
 					tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
+					dateProgramEnd=new DateTime(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
 				}
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
@@ -269,6 +272,7 @@ namespace MediaPortal.TV.Recording
 				if(tv.Title=="" || tv.Title=="n.a.") 
 				{
 					//Log.Write("epg: entrie without title found");
+					dateProgramEnd=DateTime.MinValue;
 					return 0;
 				}
 
@@ -280,6 +284,7 @@ namespace MediaPortal.TV.Recording
 				if(channelName=="")
 				{
 					//Log.Write("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
+					dateProgramEnd=DateTime.MinValue;
 					return 0;
 				}
 				if(programsInDatabase.Count==0)
@@ -299,6 +304,7 @@ namespace MediaPortal.TV.Recording
 			catch(Exception ex)
 			{
 				Log.Write("epg-grab: FAILED to add to database. message:{0} stack:{1} source:{2}",ex.Message,ex.StackTrace,ex.Source);
+				dateProgramEnd=DateTime.MinValue;
 				return 0;
 			}
 		}
@@ -491,13 +497,14 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 
+					DateTime dateProgramEnd;
 					if(serviceID!=0)
 					{
 						if(eit.program_number==serviceID)
-							eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
+							eventsCount+=SetEITToDatabase(eit2DB,progName,0x50, out dateProgramEnd);
 					}
 					else
-						eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
+						eventsCount+=SetEITToDatabase(eit2DB,progName,0x50, out dateProgramEnd);
 					n++;
 				}
 		
@@ -506,8 +513,9 @@ namespace MediaPortal.TV.Recording
 
 		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
 		//
-		public int GetEPG(ArrayList epgData,int serviceID)
+		public int GetEPG(ArrayList epgData,int serviceID, out DateTime reGrabTime)
 		{
+			reGrabTime=DateTime.MinValue;
 			if(m_cardType==(int)EPGCard.Invalid || m_cardType==(int)EPGCard.Unknown)
 				return 0;
 
@@ -515,8 +523,18 @@ namespace MediaPortal.TV.Recording
 			ArrayList	eitList=new ArrayList();
 			ArrayList	tableList=new ArrayList();
 			DVBSections tmpSections=new DVBSections();
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
 
+			DateTime[] reGrabTimes = new DateTime[channels.Count];
+			for (int i=0; i < reGrabTimes.Length;++i)
+			{
+				reGrabTimes[i] = new DateTime();
+				reGrabTimes[i] = DateTime.MinValue;
+			}
 			eitList=tmpSections.GetEITSchedule(epgData);
+
+			TVDatabase.RemoveOldPrograms();
 
 			int n=0;
 			foreach(DVBSections.EITDescr eit in eitList)
@@ -535,8 +553,6 @@ namespace MediaPortal.TV.Recording
 
 					case (int)EPGCard.BDACards:
 					{
-						ArrayList channels = new ArrayList();
-						TVDatabase.GetChannels(ref channels);
 						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
 						int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
 						int audio1, audio2, audio3, ac3Pid;
@@ -649,18 +665,42 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 
+				DateTime dateProgramEnd=DateTime.MinValue;
 				if(serviceID!=0)
 				{
 					if(eit.program_number==serviceID)
-						eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
+						eventsCount+=SetEITToDatabase(eit2DB,progName,0x50, out dateProgramEnd);
 				}
 				else
-					eventsCount+=SetEITToDatabase(eit2DB,progName,0x50);
-				n++;
+					eventsCount+=SetEITToDatabase(eit2DB,progName,0x50, out dateProgramEnd);
 
+				if (dateProgramEnd!=DateTime.MinValue)
+				{
+					for (int i=0; i < channels.Count;++i)
+					{
+						TVChannel chan = (TVChannel)channels[i];
+						if (chan.Name.Equals(progName))
+						{
+							if (dateProgramEnd > reGrabTimes[i])
+							{
+								reGrabTimes[i]=dateProgramEnd;
+							}
+							break;
+						}
+					}
+				}
+				n++;
 			}
 			
-			GC.Collect();
+			for (int i=0; i < reGrabTimes.Length;++i)
+			{
+				TVChannel ch=(TVChannel)channels[i];
+				if (reGrabTimes[i]!=DateTime.MinValue)
+				{
+					if (reGrabTimes[i] < reGrabTime || reGrabTime==DateTime.MinValue)
+						reGrabTime = reGrabTimes[i];
+				}
+			}
 			return 	eventsCount;
 
 		}//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
@@ -902,7 +942,9 @@ namespace MediaPortal.TV.Recording
 					eit.isMHWEvent=true;
 					eit.shortEventUseable=true;
 					eit.mhwStartTime=prg.Time;
-					int result=SetEITToDatabase(eit,channelName,0);
+
+					DateTime dateProgramEnd;
+					int result=SetEITToDatabase(eit,channelName,0, out dateProgramEnd);
 					if(result==1)
 					{
 						count++;

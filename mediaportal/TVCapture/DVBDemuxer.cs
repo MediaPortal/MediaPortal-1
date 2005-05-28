@@ -187,7 +187,7 @@ namespace MediaPortal.TV.Recording
 		bool m_grabbingPMT=false;
 		byte[] m_tableBufferPMT=new byte[4096];
 		int m_bufferPositionPMT=0;
-
+		static DateTime epgRegrabTime=DateTime.MinValue;
 		
         #endregion
 
@@ -292,6 +292,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
 		{
+			epgRegrabTime= DateTime.MinValue;
 			m_currentPMTVersion=-1;
 			// audio
 			if (audio > 0x1FFD)
@@ -1078,8 +1079,17 @@ namespace MediaPortal.TV.Recording
 				{
 					m_bufferPositionSec=0;// grab next
 				}
-				
-				
+			
+				if (grabEitSchedule==false)
+				{
+					if (epgRegrabTime!=DateTime.MinValue)
+					{
+						if (DateTime.Now.AddMinutes(10) > epgRegrabTime)
+						{
+							GetEPGSchedule(0x50,0);
+						}
+					}
+				}
 			}
 		}// parsesection
 		#endregion
@@ -1105,8 +1115,8 @@ namespace MediaPortal.TV.Recording
 			
 			DVBEPG		tmpEPGClass=new DVBEPG(m_currentDVBCard,m_currentNetworkType);
 			Log.Write("started thread {0}",System.Threading.Thread.CurrentThread.Name);
-			int count=tmpEPGClass.GetEPG(dataList,0);
-			Log.Write("epg ready. added {0} events to database!",count);
+			int count=tmpEPGClass.GetEPG(dataList,0, out epgRegrabTime);
+			Log.Write("epg ready. added {0} events to database! Next grab at{1}",count, epgRegrabTime.ToString() );
 		}
 	}//class dvbdemuxer
  
