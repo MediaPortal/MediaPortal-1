@@ -3291,6 +3291,7 @@ namespace MediaPortal.TV.Recording
 					iChannelNumber=tvChan.Number;
 					if (isNewChannel)
 					{
+						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(0);
 						//then add a new channel to the database
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}",newchannel.ServiceName);
 						int id=TVDatabase.AddChannel(tvChan);

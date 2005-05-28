@@ -2979,5 +2979,26 @@ namespace MediaPortal.TV.Database
 			}		
 		}//static public void GetCanceledRecordings(ref TVRecording rec)
 
+		static public int FindFreeTvChannelNumber(int preferenceNumber)
+		{
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			bool found=false;
+			do
+			{
+				found=false;
+				foreach (TVChannel chan in channels)
+				{
+					if (chan.Number==preferenceNumber)
+					{
+						found=true;
+						preferenceNumber++;
+						break;
+					}
+				}
+			} while (found==true);
+			return preferenceNumber;
+		}
+
 	}//public class TVDatabase
 }//namespace MediaPortal.TV.Database

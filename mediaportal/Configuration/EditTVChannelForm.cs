@@ -2393,6 +2393,7 @@ namespace MediaPortal.Configuration
 		{
 			externalChannelTextBox.Enabled = inputComboBox.Enabled = typeComboBox.Text.Equals("External");
 			comboBoxChannels.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
+			
 		}
 
 
@@ -2410,26 +2411,6 @@ namespace MediaPortal.Configuration
 		{
 		
 		}
-		int FindFreeTvChannelNumber(int preferenceNumber)
-		{
-			ArrayList channels = new ArrayList();
-			TVDatabase.GetChannels(ref channels);
-			bool found=false;
-			do
-			{
-				found=false;
-				foreach (TVChannel chan in channels)
-				{
-					if (chan.Number==preferenceNumber)
-					{
-						found=true;
-						preferenceNumber++;
-						break;
-					}
-				}
-			} while (found==true);
-			return preferenceNumber;
-		}
 
 		public TelevisionChannel Channel
 		{
@@ -2439,30 +2420,35 @@ namespace MediaPortal.Configuration
 
 				channel.ID=channelId;
 				channel.Name = nameTextBox.Text;
-				string chanNr=(string)comboBoxChannels.SelectedItem;
-				channel.Channel = -1;
-				for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
+				if (orgChannelNumber>255)
+					channel.Channel=orgChannelNumber;
+				else
 				{
-					if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
+					string chanNr=(string)comboBoxChannels.SelectedItem;
+					channel.Channel = -1;
+					for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 					{
-						//get free nr
-						if (orgChannelNumber==-1)
+						if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
 						{
-							channel.Channel=FindFreeTvChannelNumber(orgChannelNumber);
-						}
-						else
-						{
-							channel.Channel=orgChannelNumber;
+							//get free nr
+							if (orgChannelNumber==-1)
+							{
+								channel.Channel=TVDatabase.FindFreeTvChannelNumber(orgChannelNumber);
+							}
+							else
+							{
+								channel.Channel=orgChannelNumber;
+							}
 						}
 					}
-				}
-				if (chanNr.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
-				if (chanNr.Equals("CVBS#1")) channel.Channel=(int)ExternalInputs.cvbs1;
-				if (chanNr.Equals("CVBS#2")) channel.Channel=(int)ExternalInputs.cvbs2;
-				if (chanNr.Equals("RGB")) channel.Channel=(int)ExternalInputs.rgb;
-				if (channel.Channel ==-1)
-				{
-					channel.Channel = Convert.ToInt32(chanNr);
+					if (chanNr.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
+					if (chanNr.Equals("CVBS#1")) channel.Channel=(int)ExternalInputs.cvbs1;
+					if (chanNr.Equals("CVBS#2")) channel.Channel=(int)ExternalInputs.cvbs2;
+					if (chanNr.Equals("RGB")) channel.Channel=(int)ExternalInputs.rgb;
+					if (channel.Channel ==-1)
+					{
+						channel.Channel = Convert.ToInt32(chanNr);
+					}
 				}
 				
 				channel.Scrambled=checkBoxScrambled.Checked;
@@ -2577,6 +2563,9 @@ namespace MediaPortal.Configuration
 					checkBoxScrambled.Checked=channel.Scrambled;
 					nameTextBox.Text = channel.Name;
 					comboBoxChannels.SelectedItem= channel.Channel.ToString();
+					comboBoxChannels.Text= channel.Channel.ToString();
+					if (channel.Channel>255)
+						comboBoxChannels.Enabled=false;
 					labelSpecial.Text=String.Empty;
 					string chanNr=(string)comboBoxChannels.SelectedItem;
 					for (int i=0; i < TVChannel.SpecialChannels.Length;++i)

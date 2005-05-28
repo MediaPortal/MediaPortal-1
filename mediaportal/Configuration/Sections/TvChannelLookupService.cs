@@ -235,31 +235,11 @@ namespace MediaPortal.Configuration.Sections
 			return (long)(freqValue);
 		}
 		
-		int FindFreeTvChannelNumber(int preferenceNumber)
-		{
-			ArrayList channels = new ArrayList();
-			TVDatabase.GetChannels(ref channels);
-			bool found=false;
-			do
-			{
-				found=false;
-				foreach (TVChannel chan in channels)
-				{
-					if (chan.Number==preferenceNumber)
-					{
-						found=true;
-						preferenceNumber++;
-						break;
-					}
-				}
-			} while (found==true);
-			return preferenceNumber;
-		}
 
 		long ConvertToTvFrequency(string frequency, ref TVChannel chan)
 		{
 			if (frequency.Trim()==String.Empty) return 0;
-			chan.Number=FindFreeTvChannelNumber(chan.Number);
+			chan.Number=TVDatabase.FindFreeTvChannelNumber(chan.Number);
 			frequency=frequency.ToUpper();
 			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 			{

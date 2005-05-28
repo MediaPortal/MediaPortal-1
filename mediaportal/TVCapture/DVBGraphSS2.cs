@@ -2055,6 +2055,7 @@ namespace MediaPortal.TV.Recording
 					if (isNewChannel)
 					{
 						//then add a new channel to the database
+						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(0);
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: create new tv channel for {0}",newchannel.ServiceName);
 						iChannelNumber=tvChan.Number;
 						int id=TVDatabase.AddChannel(tvChan);
