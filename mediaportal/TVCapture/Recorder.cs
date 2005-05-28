@@ -56,8 +56,11 @@ namespace MediaPortal.TV.Recording
 		#region delegates and events
 		public delegate void OnTvChannelChangeHandler(string tvChannelName);
 		public delegate void OnTvRecordingChangedHandler();
-		static public event OnTvChannelChangeHandler OnTvChannelChanged=null;
+		public delegate void OnTvRecordingHandler(string recordingFilename, TVRecording recording, TVProgram program);
+		static public event OnTvChannelChangeHandler    OnTvChannelChanged=null;
 		static public event OnTvRecordingChangedHandler OnTvRecordingChanged=null;
+		static public event OnTvRecordingHandler			  OnTvRecordingStarted=null;
+		static public event OnTvRecordingHandler				OnTvRecordingEnded=null;
 		#endregion
 
 		#region initialisation
@@ -108,6 +111,8 @@ namespace MediaPortal.TV.Recording
 			{
 				TVCaptureDevice card=(TVCaptureDevice)m_tvcards[i];
 				card.ID=(i+1);
+				card.OnTvRecordingEnded+=new MediaPortal.TV.Recording.TVCaptureDevice.OnTvRecordingHandler(card_OnTvRecordingEnded);
+				card.OnTvRecordingStarted+=new MediaPortal.TV.Recording.TVCaptureDevice.OnTvRecordingHandler(card_OnTvRecordingStarted);
 				Log.WriteFile(Log.LogType.Recorder,"Recorder:    card:{0} video device:{1} TV:{2}  record:{3} priority:{4}",
 															card.ID,card.VideoDevice,card.UseForTV,card.UseForRecording,card.Priority);
 			}
@@ -581,8 +586,6 @@ namespace MediaPortal.TV.Recording
 				GUIWindowManager.SendThreadMessage(msg);
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
-			if (OnTvRecordingChanged!=null)
-				OnTvRecordingChanged();
 			return true;
 		}//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
@@ -619,8 +622,6 @@ namespace MediaPortal.TV.Recording
 							//then stop card
 							dev.Stop();
 						}
-						if (OnTvRecordingChanged!=null)
-							OnTvRecordingChanged();
 					}
 				}
 			}
@@ -663,8 +664,6 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				dev.StopRecording();
-				if (OnTvRecordingChanged!=null)
-					OnTvRecordingChanged();
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void StopRecording()
@@ -1397,19 +1396,11 @@ namespace MediaPortal.TV.Recording
 		#region Process and properties
 		static void ProcessCards()
 		{
-			bool recordingsChanged=false;
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
-				bool recordingStatus=dev.IsRecording;
 				dev.Process();
-				if (recordingStatus!=dev.IsRecording)
-				{
-					recordingsChanged=true;
-				}
 			}
-			if (recordingsChanged && OnTvRecordingChanged!=null)
-				OnTvRecordingChanged();
 		}
 		/// <summary>
 		/// Scheduler main loop. This function needs to get called on a regular basis.
@@ -1925,5 +1916,21 @@ namespace MediaPortal.TV.Recording
 			return dev.GetAudioLanguageList();
 		}
 		#endregion
+
+		private static void card_OnTvRecordingEnded(string recordingFileName, TVRecording recording, TVProgram program)
+		{
+			if (OnTvRecordingEnded!=null)
+				OnTvRecordingEnded(recordingFileName,recording, program);
+			if (OnTvRecordingChanged!=null)
+				OnTvRecordingChanged();
+		}
+
+		private static void card_OnTvRecordingStarted(string recordingFileName, TVRecording recording, TVProgram program)
+		{
+			if (OnTvRecordingStarted!=null)
+				OnTvRecordingStarted(recordingFileName,recording, program);
+			if (OnTvRecordingChanged!=null)
+				OnTvRecordingChanged();
+		}
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

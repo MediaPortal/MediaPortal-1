@@ -112,6 +112,10 @@ namespace MediaPortal.TV.Recording
 		[NonSerialized] private TVCapture.CaptureCardDefinition _mCaptureCardDefinition	= new CaptureCardDefinition();
 		[NonSerialized]	private bool														_mDefinitionLoaded			= false;
 
+		public delegate void OnTvRecordingHandler(string recordingFilename, TVRecording recording, TVProgram program);
+		public event OnTvRecordingHandler OnTvRecordingEnded=null;
+		public event OnTvRecordingHandler OnTvRecordingStarted=null;
+
 		/// <summary>
 		/// Default constructor
 		/// </summary>
@@ -1117,6 +1121,11 @@ namespace MediaPortal.TV.Recording
 
 			recordedTvObject = null;
 
+			if (OnTvRecordingEnded!=null)
+			{
+				OnTvRecordingEnded(RecordingFileName,currentTvRecording, currentTvProgramRecording);
+			}
+
 			// cleanup...
 			currentTvProgramRecording = null;
 			currentTvRecording = null;
@@ -1456,6 +1465,11 @@ namespace MediaPortal.TV.Recording
 			timeRecordingStarted = DateTime.Now;
 			currentGraphState = State.Recording;
 			SetTvSettings();
+
+			if (OnTvRecordingStarted!=null)
+			{
+				OnTvRecordingStarted(RecordingFileName,currentTvRecording, currentTvProgramRecording);
+			}
 			return bResult;
 		}
 
