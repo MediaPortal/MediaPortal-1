@@ -2511,22 +2511,47 @@ namespace MediaPortal.TV.Recording
 				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 				if (myTuner==null) return;
 
-				//get the IDVBTuningSpace2 from the tuner
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
-				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
-				if (myTuningSpace==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
-					return ;
-				}
 
-				//create a new tuning request
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
-				newTuneRequest = myTuningSpace.CreateTuneRequest();
-				if (newTuneRequest ==null)
+				TunerLib.IATSCTuningSpace myAtscTuningSpace =null;
+				TunerLib.IDVBTuningSpace2 myTuningSpace =null;
+				if (Network()==NetworkType.ATSC)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
-					return ;
+					//get the IATSCTuningSpace from the tuner
+					myAtscTuningSpace = myTuner.TuningSpace as TunerLib.IATSCTuningSpace;
+					if (myAtscTuningSpace ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() tuningspace=null");
+						return;
+					}
+
+					//create a new tuning request
+					newTuneRequest = myAtscTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
+						return;
+					}
+				}
+				else
+				{
+					//get the IDVBTuningSpace2 from the tuner
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
+					myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+					if (myTuningSpace==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
+						return ;
+					}
+
+
+					//create a new tuning request
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
+					newTuneRequest = myTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
+					}
 				}
 
 
@@ -2583,7 +2608,7 @@ namespace MediaPortal.TV.Recording
 						TunerLib.IATSCLocator myLocator = myATSCTuneRequest.Locator as TunerLib.IATSCLocator;	
 						if (myLocator==null)
 						{
-							myLocator = myTuningSpace.DefaultLocator as TunerLib.IATSCLocator;
+							myLocator = myAtscTuningSpace.DefaultLocator as TunerLib.IATSCLocator;
 						}
 						
 						
@@ -2904,21 +2929,48 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 
-				//get the IDVBTuningSpace2 from the tuner
-				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
-				if (myTuningSpace ==null)
+				TunerLib.IATSCTuningSpace myAtscTuningSpace =null;
+				TunerLib.IDVBTuningSpace2 myTuningSpace =null;
+				if (Network()==NetworkType.ATSC)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() tuningspace=null");
-					return;
+					//get the IATSCTuningSpace from the tuner
+					myAtscTuningSpace = myTuner.TuningSpace as TunerLib.IATSCTuningSpace;
+					if (myAtscTuningSpace ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() tuningspace=null");
+						return;
+					}
+
+					//create a new tuning request
+					newTuneRequest = myAtscTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
+						return;
+					}
+				}
+				else
+				{
+					//get the IDVBTuningSpace2 from the tuner
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
+					myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+					if (myTuningSpace==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
+						return ;
+					}
+
+
+					//create a new tuning request
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
+					newTuneRequest = myTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
+					}
 				}
 
-				//create a new tuning request
-				newTuneRequest = myTuningSpace.CreateTuneRequest();
-				if (newTuneRequest ==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
-					return;
-				}
 					
 				TunerLib.IDVBTuneRequest myTuneRequest =null;
 				TunerLib.IATSCChannelTuneRequest myATSCTuneRequest =null;
@@ -2982,7 +3034,7 @@ namespace MediaPortal.TV.Recording
 					//get the IDVBCLocator interface
 					TunerLib.IATSCLocator myLocator = myATSCTuneRequest.Locator as TunerLib.IATSCLocator;	
 					if (myLocator == null)
-						myLocator = myTuningSpace.DefaultLocator as TunerLib.IATSCLocator;
+						myLocator = myAtscTuningSpace.DefaultLocator as TunerLib.IATSCLocator;
 					if (myLocator ==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IATSCLocator");
@@ -3507,25 +3559,48 @@ namespace MediaPortal.TV.Recording
 				TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 				if (myTuner==null) return;
 
-				//get the IDVBTuningSpace2 from the tuner
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() get IDVBTuningSpace2");
-				TunerLib.IDVBTuningSpace2 myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
-				if (myTuningSpace==null)
+				TunerLib.IATSCTuningSpace myAtscTuningSpace =null;
+				TunerLib.IDVBTuningSpace2 myTuningSpace =null;
+				if (Network()==NetworkType.ATSC)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
-					return ;
-				}
+					//get the IATSCTuningSpace from the tuner
+					myAtscTuningSpace = myTuner.TuningSpace as TunerLib.IATSCTuningSpace;
+					if (myAtscTuningSpace ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() tuningspace=null");
+						return;
+					}
 
-				//create a new tuning request
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() create new tuningrequest");
-				newTuneRequest = myTuningSpace.CreateTuneRequest();
-				if (newTuneRequest ==null)
+					//create a new tuning request
+					newTuneRequest = myAtscTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
+						return;
+					}
+				}
+				else
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
-					return ;
-				}
+					//get the IDVBTuningSpace2 from the tuner
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
+					myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
+					if (myTuningSpace==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. Invalid tuningspace");
+						return ;
+					}
 
-				
+
+					//create a new tuning request
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
+					newTuneRequest = myTuningSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
+					}
+				}
+	
 
 				TunerLib.IDVBTuneRequest myTuneRequest=null;
 				TunerLib.IATSCChannelTuneRequest myATSCTuneRequest=null;
@@ -3576,7 +3651,7 @@ namespace MediaPortal.TV.Recording
 						TunerLib.IATSCLocator myLocator = myATSCTuneRequest.Locator as TunerLib.IATSCLocator;	
 						if (myLocator==null)
 						{
-							myLocator = myTuningSpace.DefaultLocator as TunerLib.IATSCLocator;
+							myLocator = myAtscTuningSpace.DefaultLocator as TunerLib.IATSCLocator;
 						}
 						
 						
