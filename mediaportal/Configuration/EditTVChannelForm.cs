@@ -2377,6 +2377,25 @@ namespace MediaPortal.Configuration
 
 		private void okButton_Click(object sender, System.EventArgs e)
 		{
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			TelevisionChannel newChannel=Channel;
+			bool channelAlreadyExists=false;
+			foreach (TVChannel chan in channels)
+			{
+				if (chan.ID == newChannel.ID) continue;
+				if (chan.Number == newChannel.Channel)
+				{
+					channelAlreadyExists=true;
+					break;
+				}
+			}
+			if (channelAlreadyExists)
+			{
+					MessageBox.Show("A channel already exists with this channel number", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+
 			SaveChannel();
 			this.DialogResult = DialogResult.OK;
 			this.Hide();
