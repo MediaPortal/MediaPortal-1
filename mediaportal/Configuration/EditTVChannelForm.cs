@@ -223,6 +223,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label100;
 		private System.Windows.Forms.Label label101;
 		private System.Windows.Forms.Label label102;
+		private System.Windows.Forms.Label label103;
 		int orgChannelNumber=-1;
 
 		public EditTVChannelForm()
@@ -235,7 +236,7 @@ namespace MediaPortal.Configuration
 			//
 			// Set size of window
 			//
-			typeComboBox.Text = "Internal";
+			typeComboBox.SelectedIndex=0;
 			comboTvStandard.Text = "Default";
 			TunerCountry country = new TunerCountry(-1,"Default");
 			countryComboBox.Items.Add(country);
@@ -296,6 +297,9 @@ namespace MediaPortal.Configuration
 			this.label4 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label97 = new System.Windows.Forms.Label();
+			this.label96 = new System.Windows.Forms.Label();
+			this.label95 = new System.Windows.Forms.Label();
 			this.labelSpecial = new System.Windows.Forms.Label();
 			this.comboBoxChannels = new System.Windows.Forms.ComboBox();
 			this.checkBoxScrambled = new System.Windows.Forms.CheckBox();
@@ -303,10 +307,12 @@ namespace MediaPortal.Configuration
 			this.label44 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.label98 = new System.Windows.Forms.Label();
 			this.label43 = new System.Windows.Forms.Label();
 			this.countryComboBox = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.label99 = new System.Windows.Forms.Label();
 			this.label57 = new System.Windows.Forms.Label();
 			this.tbDVBCAudioLanguage3 = new System.Windows.Forms.TextBox();
 			this.tbDVBCAudioLanguage2 = new System.Windows.Forms.TextBox();
@@ -349,6 +355,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBCONID = new System.Windows.Forms.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.label100 = new System.Windows.Forms.Label();
 			this.label58 = new System.Windows.Forms.Label();
 			this.tbDVBTAudioLanguage3 = new System.Windows.Forms.TextBox();
 			this.tbDVBTAudioLanguage2 = new System.Windows.Forms.TextBox();
@@ -387,6 +394,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBTONID = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
+			this.label101 = new System.Windows.Forms.Label();
 			this.label66 = new System.Windows.Forms.Label();
 			this.tbDVBSAudioLanguage3 = new System.Windows.Forms.TextBox();
 			this.tbDVBSAudioLanguage2 = new System.Windows.Forms.TextBox();
@@ -431,6 +439,7 @@ namespace MediaPortal.Configuration
 			this.tbDVBSONID = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.tabPage7 = new System.Windows.Forms.TabPage();
+			this.label102 = new System.Windows.Forms.Label();
 			this.tbATSCMinor = new System.Windows.Forms.TextBox();
 			this.label83 = new System.Windows.Forms.Label();
 			this.label74 = new System.Windows.Forms.Label();
@@ -474,14 +483,7 @@ namespace MediaPortal.Configuration
 			this.tbATSCPhysicalChannel = new System.Windows.Forms.TextBox();
 			this.label94 = new System.Windows.Forms.Label();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.label95 = new System.Windows.Forms.Label();
-			this.label96 = new System.Windows.Forms.Label();
-			this.label97 = new System.Windows.Forms.Label();
-			this.label98 = new System.Windows.Forms.Label();
-			this.label99 = new System.Windows.Forms.Label();
-			this.label100 = new System.Windows.Forms.Label();
-			this.label101 = new System.Windows.Forms.Label();
-			this.label102 = new System.Windows.Forms.Label();
+			this.label103 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -613,15 +615,15 @@ namespace MediaPortal.Configuration
 			this.label6.Location = new System.Drawing.Point(24, 56);
 			this.label6.Name = "label6";
 			this.label6.TabIndex = 12;
-			this.label6.Text = "Input";
+			this.label6.Text = "Input via";
 			this.label6.Click += new System.EventHandler(this.label6_Click);
 			// 
 			// typeComboBox
 			// 
 			this.typeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.typeComboBox.Items.AddRange(new object[] {
-																											"Internal",
-																											"External"});
+																											"Received by tv card",
+																											"Received by external settop box"});
 			this.typeComboBox.Location = new System.Drawing.Point(128, 24);
 			this.typeComboBox.Name = "typeComboBox";
 			this.typeComboBox.Size = new System.Drawing.Size(224, 21);
@@ -652,8 +654,9 @@ namespace MediaPortal.Configuration
 			// 
 			this.label4.Location = new System.Drawing.Point(24, 88);
 			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(88, 32);
 			this.label4.TabIndex = 8;
-			this.label4.Text = "External channel";
+			this.label4.Text = "channel number on settopbox";
 			this.label4.Click += new System.EventHandler(this.label4_Click);
 			// 
 			// tabControl1
@@ -691,6 +694,30 @@ namespace MediaPortal.Configuration
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+			// 
+			// label97
+			// 
+			this.label97.Location = new System.Drawing.Point(32, 264);
+			this.label97.Name = "label97";
+			this.label97.Size = new System.Drawing.Size(248, 23);
+			this.label97.TabIndex = 18;
+			this.label97.Text = "For digital TV, the channel number is not used. ";
+			// 
+			// label96
+			// 
+			this.label96.Location = new System.Drawing.Point(32, 176);
+			this.label96.Name = "label96";
+			this.label96.Size = new System.Drawing.Size(328, 64);
+			this.label96.TabIndex = 17;
+			this.label96.Text = @"For analog tv the channel number is the number on which the tv channel can be received. Note that for most countries this is not the logical number you use when zapping. Channel numbers and frequencies can be found at the website of your analog tv (cable) provider";
+			// 
+			// label95
+			// 
+			this.label95.Location = new System.Drawing.Point(16, 248);
+			this.label95.Name = "label95";
+			this.label95.Size = new System.Drawing.Size(344, 16);
+			this.label95.TabIndex = 16;
+			this.label95.Text = "Digital TV:";
 			// 
 			// labelSpecial
 			// 
@@ -758,6 +785,15 @@ namespace MediaPortal.Configuration
 			this.tabPage2.Text = "Analog";
 			this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
 			// 
+			// label98
+			// 
+			this.label98.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.label98.Location = new System.Drawing.Point(24, 8);
+			this.label98.Name = "label98";
+			this.label98.Size = new System.Drawing.Size(224, 23);
+			this.label98.TabIndex = 18;
+			this.label98.Text = "Analog TV settings for this TV channel";
+			// 
 			// label43
 			// 
 			this.label43.Location = new System.Drawing.Point(24, 152);
@@ -774,7 +810,7 @@ namespace MediaPortal.Configuration
 			this.countryComboBox.Location = new System.Drawing.Point(128, 112);
 			this.countryComboBox.MaxDropDownItems = 16;
 			this.countryComboBox.Name = "countryComboBox";
-			this.countryComboBox.Size = new System.Drawing.Size(312, 21);
+			this.countryComboBox.Size = new System.Drawing.Size(312, 20);
 			this.countryComboBox.Sorted = true;
 			this.countryComboBox.TabIndex = 15;
 			this.countryComboBox.SelectedIndexChanged += new System.EventHandler(this.countryComboBox_SelectedIndexChanged);
@@ -838,6 +874,15 @@ namespace MediaPortal.Configuration
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "DVB-C";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
+			// 
+			// label99
+			// 
+			this.label99.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.label99.Location = new System.Drawing.Point(24, 8);
+			this.label99.Name = "label99";
+			this.label99.Size = new System.Drawing.Size(272, 23);
+			this.label99.TabIndex = 49;
+			this.label99.Text = "Digital Cable TV settings for this TV channel";
 			// 
 			// label57
 			// 
@@ -1241,6 +1286,15 @@ namespace MediaPortal.Configuration
 			this.tabPage3.Text = "DVB-T";
 			this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
 			// 
+			// label100
+			// 
+			this.label100.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.label100.Location = new System.Drawing.Point(16, 8);
+			this.label100.Name = "label100";
+			this.label100.Size = new System.Drawing.Size(272, 23);
+			this.label100.TabIndex = 65;
+			this.label100.Text = "Digital TV Terrestial settings for this TV channel";
+			// 
 			// label58
 			// 
 			this.label58.Location = new System.Drawing.Point(288, 288);
@@ -1578,6 +1632,15 @@ namespace MediaPortal.Configuration
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "DVB-S";
 			this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
+			// 
+			// label101
+			// 
+			this.label101.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.label101.Location = new System.Drawing.Point(24, 8);
+			this.label101.Name = "label101";
+			this.label101.Size = new System.Drawing.Size(272, 23);
+			this.label101.TabIndex = 81;
+			this.label101.Text = "Digital TV Satelite settings for this TV channel";
 			// 
 			// label66
 			// 
@@ -1976,6 +2039,15 @@ namespace MediaPortal.Configuration
 			this.tabPage7.TabIndex = 6;
 			this.tabPage7.Text = "ATSC";
 			// 
+			// label102
+			// 
+			this.label102.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.label102.Location = new System.Drawing.Point(24, 8);
+			this.label102.Name = "label102";
+			this.label102.Size = new System.Drawing.Size(272, 23);
+			this.label102.TabIndex = 92;
+			this.label102.Text = "Digital TV (ATSC) settings for this TV channel";
+			// 
 			// tbATSCMinor
 			// 
 			this.tbATSCMinor.Location = new System.Drawing.Point(160, 88);
@@ -2327,6 +2399,7 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage6
 			// 
+			this.tabPage6.Controls.Add(this.label103);
 			this.tabPage6.Controls.Add(this.typeComboBox);
 			this.tabPage6.Controls.Add(this.label4);
 			this.tabPage6.Controls.Add(this.externalChannelTextBox);
@@ -2340,74 +2413,13 @@ namespace MediaPortal.Configuration
 			this.tabPage6.Text = "External";
 			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
 			// 
-			// label95
+			// label103
 			// 
-			this.label95.Location = new System.Drawing.Point(16, 248);
-			this.label95.Name = "label95";
-			this.label95.Size = new System.Drawing.Size(344, 16);
-			this.label95.TabIndex = 16;
-			this.label95.Text = "Digital TV:";
-			// 
-			// label96
-			// 
-			this.label96.Location = new System.Drawing.Point(32, 176);
-			this.label96.Name = "label96";
-			this.label96.Size = new System.Drawing.Size(328, 64);
-			this.label96.TabIndex = 17;
-			this.label96.Text = @"For analog tv the channel number is the number on which the tv channel can be received. Note that for most countries this is not the logical number you use when zapping. Channel numbers and frequencies can be found at the website of your analog tv (cable) provider";
-			// 
-			// label97
-			// 
-			this.label97.Location = new System.Drawing.Point(32, 264);
-			this.label97.Name = "label97";
-			this.label97.Size = new System.Drawing.Size(248, 23);
-			this.label97.TabIndex = 18;
-			this.label97.Text = "For digital TV, the channel number is not used. ";
-			// 
-			// label98
-			// 
-			this.label98.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label98.Location = new System.Drawing.Point(24, 8);
-			this.label98.Name = "label98";
-			this.label98.Size = new System.Drawing.Size(224, 23);
-			this.label98.TabIndex = 18;
-			this.label98.Text = "Analog TV settings for this TV channel";
-			// 
-			// label99
-			// 
-			this.label99.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label99.Location = new System.Drawing.Point(24, 8);
-			this.label99.Name = "label99";
-			this.label99.Size = new System.Drawing.Size(272, 23);
-			this.label99.TabIndex = 49;
-			this.label99.Text = "Digital Cable TV settings for this TV channel";
-			// 
-			// label100
-			// 
-			this.label100.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label100.Location = new System.Drawing.Point(16, 8);
-			this.label100.Name = "label100";
-			this.label100.Size = new System.Drawing.Size(272, 23);
-			this.label100.TabIndex = 65;
-			this.label100.Text = "Digital TV Terrestial settings for this TV channel";
-			// 
-			// label101
-			// 
-			this.label101.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label101.Location = new System.Drawing.Point(24, 8);
-			this.label101.Name = "label101";
-			this.label101.Size = new System.Drawing.Size(272, 23);
-			this.label101.TabIndex = 81;
-			this.label101.Text = "Digital TV Satelite settings for this TV channel";
-			// 
-			// label102
-			// 
-			this.label102.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.label102.Location = new System.Drawing.Point(24, 8);
-			this.label102.Name = "label102";
-			this.label102.Size = new System.Drawing.Size(272, 23);
-			this.label102.TabIndex = 92;
-			this.label102.Text = "Digital TV (ATSC) settings for this TV channel";
+			this.label103.Location = new System.Drawing.Point(32, 128);
+			this.label103.Name = "label103";
+			this.label103.Size = new System.Drawing.Size(416, 80);
+			this.label103.TabIndex = 13;
+			this.label103.Text = @"If you would like mediaportal to remote control your settopbox (sattelite receiver for example) then specify that the channel is received by the external settopbox. Next specify which video input of your tvcard receives the video output of your settop box and on which channel number the settopbox receives this tvchannel. To get mediaportal to remote control the settop box you will need a USBUIRT, MCE remote blaster or other remote control device.";
 			// 
 			// EditTVChannelForm
 			// 
@@ -2502,7 +2514,7 @@ namespace MediaPortal.Configuration
 
 		private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			externalChannelTextBox.Enabled = inputComboBox.Enabled = typeComboBox.Text.Equals("External");
+			externalChannelTextBox.Enabled = inputComboBox.Enabled = (typeComboBox.SelectedIndex>0);
 			comboBoxChannels.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
 			
 		}
@@ -2615,7 +2627,7 @@ namespace MediaPortal.Configuration
 				//
 				// Fetch advanced settings
 				//
-				channel.External = typeComboBox.Text.Equals("External");
+				channel.External = (typeComboBox.SelectedIndex>0);
 				channel.ExternalTunerChannel = externalChannelTextBox.Text;
 
 				if(channel.External)
@@ -2688,7 +2700,7 @@ namespace MediaPortal.Configuration
 					}
 					frequencyTextBox.Text = channel.Frequency.ToString();
 
-					typeComboBox.Text = channel.External ? "External" : "Internal";
+					typeComboBox.SelectedIndex = channel.External ? 1 : 0;
 					externalChannelTextBox.Text = channel.ExternalTunerChannel;
 
 					if(channel.External == true)
