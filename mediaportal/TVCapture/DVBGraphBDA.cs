@@ -2571,7 +2571,7 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IATSCChannelTuneRequest");
 					myATSCTuneRequest = newTuneRequest as TunerLib.IATSCChannelTuneRequest;
-					if (myTuneRequest ==null)
+					if (myATSCTuneRequest ==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
 						return ;
@@ -2986,7 +2986,7 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					myATSCTuneRequest = newTuneRequest as  TunerLib.IATSCChannelTuneRequest;
-					if (myTuneRequest ==null)
+					if (myATSCTuneRequest ==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IATSCChannelTuneRequest");
 						return;
@@ -3618,7 +3618,7 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IATSCChannelTuneRequest");
 					myATSCTuneRequest = newTuneRequest as TunerLib.IATSCChannelTuneRequest;
-					if (myTuneRequest ==null)
+					if (myATSCTuneRequest ==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
 						return ;
