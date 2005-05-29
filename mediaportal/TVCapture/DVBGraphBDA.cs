@@ -3162,7 +3162,7 @@ namespace MediaPortal.TV.Recording
 			if (Network() == NetworkType.ATSC)
 			{
 				ATSCSections atscSections = new ATSCSections(m_streamDemuxer);
-				atscSections.Timeout=1000;
+				atscSections.Timeout=8000;
 				transp = atscSections.Scan(m_SectionsTables);
 			}
 			else
@@ -4021,6 +4021,9 @@ namespace MediaPortal.TV.Recording
 		{
 			if (pmtTable==null) return;
 			if (pmtTable.Length<6) return;
+			if (currentTuningObject.NetworkID<0 ||
+				  currentTuningObject.TransportStreamID<0 ||
+					currentTuningObject.ProgramNumber<0) return;
 			try
 			{
 				string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
