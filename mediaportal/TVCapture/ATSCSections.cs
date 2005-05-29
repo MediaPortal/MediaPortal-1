@@ -47,10 +47,10 @@ namespace MediaPortal.TV.Recording
 			transponder.PMTTable = new ArrayList();
 
 			//get Master Guide table (pid=0x1FFB, table id 0xc7)
-			//GetStreamData(filter,0x1ffb, 0xc7,0,Timeout);
-			//if (m_sectionsList.Count==0) return transponder;
-			//foreach(byte[] arr in m_sectionsList)
-			//	DecodeMasterGuideTable(arr);
+			GetStreamData(filter,0x1ffb, 0xc7,0,Timeout);
+			if (m_sectionsList.Count==0) return transponder;
+			foreach(byte[] arr in m_sectionsList)
+				DecodeMasterGuideTable(arr);
 
 			//get Terrestial Virtual Channel Table (pid=0x1FFB, table id 0xc8)
 			
@@ -61,10 +61,10 @@ namespace MediaPortal.TV.Recording
 
 			
 			//get Cable Virtual Channel Table (pid=0x1FFB, table id 0xc9)
-			//Log.Write("ATSC-scan: get Cable Virtual Channel Table");
-			//GetStreamData(filter,0x1ffb, 0xc9,0,Timeout);
-			//foreach(byte[] arr in m_sectionsList)
-			//	DecodeCableVirtualChannelTable(transponder,arr);
+			Log.Write("ATSC-scan: get Cable Virtual Channel Table");
+			GetStreamData(filter,0x1ffb, 0xc9,0,Timeout);
+			foreach(byte[] arr in m_sectionsList)
+				DecodeCableVirtualChannelTable(transponder,arr);
 			
 			return transponder;
 		}
@@ -247,11 +247,13 @@ namespace MediaPortal.TV.Recording
 
 		void DecodeCableVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
 		{
-
+			Log.Write("DecodeCableVirtualChannelTable()");
 		}
 
 		void DecodeMasterGuideTable(byte[] buf)
 		{
+			Log.Write("DecodeMasterGuideTable()");
+#if DONTUSE
 			// tid   
 			//  8       112-12-- -------- 16------ -------- 2-5----1 8------- 8------- 8------- 16------ --------
       // 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
@@ -317,6 +319,7 @@ namespace MediaPortal.TV.Recording
 				start= start + 11 + table_type_descriptors_len;
 			}
 			//todo decoder other descriptors
+#endif
 		}
 
 		public bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
