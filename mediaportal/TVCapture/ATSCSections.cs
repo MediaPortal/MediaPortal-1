@@ -251,8 +251,12 @@ namespace MediaPortal.TV.Recording
 					channelInfo.modulation   = modulation_mode;
 					channelInfo.freq         = carrier_frequency;
 					channelInfo.program_number= program_number;
-					channelInfo.serviceType   = service_type;
-					channelInfo.service_name  =shortName;
+					if (service_type==0 || service_type==1|| service_type==2)
+							channelInfo.serviceType   = 1;
+					else if (service_type==3)
+						channelInfo.serviceType   = 2;
+					else 
+						channelInfo.serviceType  =3;
 					channelInfo.transportStreamID = channel_TSID;
 					channelInfo.serviceID = major_channel*1000+minor_channel;
 					channelInfo.pid_list = new ArrayList();
