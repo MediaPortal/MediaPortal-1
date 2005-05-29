@@ -14,21 +14,20 @@ namespace MediaPortal.TV.Recording
 	public class ATSCSections
 	{
 
-		#region imports
 
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool GetSectionPtr(int section,ref IntPtr dataPointer,ref int len,ref int header,ref int tableExtId,ref int version,ref int secNum,ref int lastSecNum);
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool ReleaseSectionsBuffer();
-		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid,int tid,ref int sectionCount,int tableSection,int timeout);
-		// globals
-		#endregion
-
-		ArrayList							m_sectionsList;	
+		bool								m_syncWait=false;
+		ArrayList						m_sectionsList;	
+		static DVBDemuxer		m_streamDemuxer;
+		System.Timers.Timer	m_eitTimeoutTimer=null;
+		bool								m_breakAction=false;
 		int									m_timeoutMS=1000; // the timeout in milliseconds
-		public ATSCSections()
+
+		public ATSCSections(DVBDemuxer demuxer)
 		{
+			m_streamDemuxer=demuxer;
+			m_eitTimeoutTimer=new System.Timers.Timer(3000);
+			m_eitTimeoutTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_eitTimeoutTimer_Elapsed);
+
 		}
 		
 		//
@@ -320,85 +319,28 @@ namespace MediaPortal.TV.Recording
 			//todo decoder other descriptors
 		}
 
-		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
+		public bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
-			bool flag;
-			int dataLen=0;
-			int header=0;
-			int tableExt=0;
-			int sectNum=0;
-			int sectLast=0;
-			int version=0;
-			byte[] arr = new byte[1];
-			IntPtr sectionBuffer=IntPtr.Zero;
-
 			m_sectionsList=new ArrayList();
-			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
-			if(flag==false)
-			{
-				Log.WriteFile(Log.LogType.Capture,"ATSCSections:GetStreamdata() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-				return false;
-			}
-			if (sectLast<=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,"ATSCSections:Sections:GetStreamdata() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-			}
-			for(int n=0;n<sectLast;n++)
-			{
-				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
-				if(flag)
-				{
-					if (tableExt != - 1)
-					{
-						arr = new byte[dataLen+8 + 1];
-						try
-						{
-							Marshal.Copy(sectionBuffer, arr, 8, dataLen);
-						}
-						catch
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"ATSCSections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-							m_sectionsList.Clear();
-							break;
-						}
-						arr[0] = (byte)tid;
-						arr[1] = (byte)((header >> 8) & 255);
-						arr[2] =(byte) (header & 255);
-						arr[3] = (byte)((tableExt >> 8) & 255);
-						arr[4] = (byte)(tableExt & 255);
-						arr[5] =(byte) version;
-						arr[6] = (byte)sectNum;
-						arr[7] = (byte)sectLast;
-						m_sectionsList.Add(arr);
-						if(tableSection!=0)
-							break;
-					}
-					else
-					{
-						arr = new byte[dataLen+3 + 1];
-						try
-						{
-							Marshal.Copy(sectionBuffer, arr, 3, dataLen);
-						}
-						catch
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"ATSCSections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-							m_sectionsList.Clear();
-							break;
-						}
-						arr[0] = System.Convert.ToByte(tid);
-						arr[1] = System.Convert.ToByte((header >> 8) & 255);
-						arr[2] = System.Convert.ToByte(header & 255);
-						m_sectionsList.Add(arr);
-						if(tableSection!=0)
-							break;
-					}// else
+			bool flag=false;
 
-				}// if(flag)
-			}//for
-			ReleaseSectionsBuffer();
-			return true;
+			m_streamDemuxer.GetTable(pid,tid,timeout);
+			m_syncWait=false;
+			m_eitTimeoutTimer.Interval=timeout*2;
+			m_eitTimeoutTimer.Start();
+			while(m_syncWait==false)
+			{
+				System.Windows.Forms.Application.DoEvents();
+			}
+			m_eitTimeoutTimer.Stop();
+			return flag;	
+
 		}
-		
+
+		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			m_breakAction=true;
+			m_syncWait=true;
+		}		
 	}
 }

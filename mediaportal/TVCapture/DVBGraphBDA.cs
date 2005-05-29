@@ -3161,9 +3161,9 @@ namespace MediaPortal.TV.Recording
 			DVBSections.Transponder transp;
 			if (Network() == NetworkType.ATSC)
 			{
-				ATSCSections sections = new ATSCSections();
-				sections.Timeout=8000;
-				transp = sections.Scan(m_SectionsTables);
+				ATSCSections atscSections = new ATSCSections(m_streamDemuxer);
+				atscSections.Timeout=4000;
+				transp = atscSections.Scan(m_SectionsTables);
 			}
 			else
 			{

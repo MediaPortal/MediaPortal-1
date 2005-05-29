@@ -574,7 +574,7 @@ namespace MediaPortal.TV.Recording
 //			return true;
 //		}
 		// get stream data with mps demuxer-class
-		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
+		public bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
 			m_sectionsList=new ArrayList();
 			bool flag=false;
