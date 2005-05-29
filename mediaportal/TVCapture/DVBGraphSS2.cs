@@ -240,6 +240,10 @@ namespace MediaPortal.TV.Recording
 		DVBChannel						m_currentTuningObject;
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 		int								m_selectedAudioPid=0;
+		int m_iVideoWidth=1;
+		int m_iVideoHeight=1;
+		int m_aspectX=1;
+		int m_aspectY=1;
 
 		#endregion
 
@@ -744,6 +748,11 @@ namespace MediaPortal.TV.Recording
 				aspectY=iVideoHeight=Vmr9.VideoHeight;
 			}
 			
+			m_iVideoWidth=iVideoWidth;
+			m_iVideoHeight=iVideoHeight;
+			m_aspectX=aspectX;
+			m_aspectY=aspectY;
+
 			if (GUIGraphicsContext.IsFullScreenVideo || GUIGraphicsContext.ShowBackground==false)
 			{
 				float x = GUIGraphicsContext.OverScanLeft;
@@ -1795,6 +1804,29 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 		
+		void CheckVideoResolutionChanges()
+		{
+			if (m_graphState != State.Viewing) return ;
+			if (m_videoWindow==null || m_basicVideo==null) return;
+			int aspectX, aspectY;
+			int videoWidth=1, videoHeight=1;
+			if (m_basicVideo!=null)
+			{
+				m_basicVideo.GetVideoSize(out videoWidth, out videoHeight);
+			}
+			aspectX=videoWidth;
+			aspectY=videoHeight;
+			if (m_basicVideo!=null)
+			{
+				m_basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+			}
+			if (videoHeight!=m_iVideoHeight || videoWidth != m_iVideoWidth ||
+				aspectX != m_aspectX || aspectY != m_aspectY)
+			{
+				GUIGraphicsContext_OnVideoWindowChanged();
+			}
+		}
+
 		public void Process()
 		{
 			//
@@ -1806,7 +1838,10 @@ namespace MediaPortal.TV.Recording
 					Vmr9.Repaint();// repaint vmr9
 				}
 			}
-
+			if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
+			{
+				CheckVideoResolutionChanges();
+			}
 
 
 
