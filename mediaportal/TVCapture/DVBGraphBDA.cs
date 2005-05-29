@@ -1171,7 +1171,8 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.TimeShifting) return false;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StopTimeShifting()");
-			m_mediaControl.Stop();
+			if (m_mediaControl!=null)
+				m_mediaControl.Stop();
 			graphRunning=false;
 			m_graphState = State.Created;
 			DeleteGraph();
