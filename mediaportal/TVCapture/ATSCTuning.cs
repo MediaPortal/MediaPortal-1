@@ -26,7 +26,7 @@ namespace MediaPortal.TV.Recording
 		}
 		TVCaptureDevice											captureCard;
 		AutoTuneCallback										callback = null;
-		int                                 currentIndex=46;//change
+		int                                 currentIndex=-1;
 		private System.Windows.Forms.Timer  timer1;
 		
 		int																	retryCount=0;
@@ -50,7 +50,7 @@ namespace MediaPortal.TV.Recording
 			captureCard=card;
 			callback=statusCallback;
 
-			currentIndex=46;//change
+			currentIndex=-1;
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;

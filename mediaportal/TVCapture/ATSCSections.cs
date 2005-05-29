@@ -189,9 +189,15 @@ namespace MediaPortal.TV.Recording
 					Log.Write("  channel:{0}", i);
 					try
 					{
-						//shortname 7*16 bytes (112 bytes) in UTF-16
+						//shortname 7*16 bits (14 bytes) in UTF-16
+						byte[] bufRev = new byte[14];
+						for (int count=0; count < 7; count++)
+						{
+							bufRev[count*2] = buf[start+count*2+1];
+							bufRev[count*2+1] = buf[start+count*2];
+						}
 						UnicodeEncoding encoding = new UnicodeEncoding();
-						shortName=encoding.GetString(buf,start,7*16);
+						shortName=encoding.GetString(bufRev,0,7*2).Trim();
 					}
 					catch(Exception ex)
 					{
@@ -199,7 +205,7 @@ namespace MediaPortal.TV.Recording
 					}
 
 					Log.Write("atsc: chan:{0} name:{1}", i,shortName);
-					start+= 7*16;
+					start+= 7*2;
 					// 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
 					// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
 					//    112      113      114       115      116    117      118       119     120     121       123      124      125      126      127      128      129      130
