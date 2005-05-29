@@ -98,18 +98,6 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label22;
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.TabPage tabPage6;
-		private System.Windows.Forms.Label label26;
-		private System.Windows.Forms.Label label27;
-		private System.Windows.Forms.Button button18;
-		private System.Windows.Forms.Button button17;
-		private System.Windows.Forms.ProgressBar progressBar2;
-		private System.Windows.Forms.Label chName;
-		private System.Windows.Forms.Label label28;
-		private System.Windows.Forms.Button button16;
-		private System.Windows.Forms.Button button15;
-		private System.Windows.Forms.Label label29;
-		private System.Windows.Forms.TreeView treeView5;
 		private System.Windows.Forms.CheckBox checkBoxHiQuality;
 		bool m_stopEPGGrab;
 		private System.Windows.Forms.NumericUpDown updownPrio;
@@ -136,11 +124,6 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.CheckBox useLNB4;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox checkBox1;
-		private System.Windows.Forms.TreeView treeView1;
-		private System.Windows.Forms.Label label18;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.GroupBox groupBox5;
 		private System.Windows.Forms.TabPage tabPage7;
 		private System.Windows.Forms.Button buttonBrowse;
 		private System.Windows.Forms.TextBox tbRecordingFolder;
@@ -151,13 +134,9 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label labelPercent;
 		private System.Windows.Forms.Label label33;
 		private System.Windows.Forms.Button btnRadio;
-		private System.Windows.Forms.Label label34;
-		private System.Windows.Forms.Label channelsCount;
 		private System.Windows.Forms.Label label35;
 		private System.Windows.Forms.ComboBox cbRgbVideo;
 		private System.Windows.Forms.ComboBox cbRgbAudio;
-		private System.Windows.Forms.Label addsToDB;
-		private System.Windows.Forms.Label label37;
 		int  CardId;
 		
 		/// <summary>
@@ -498,25 +477,6 @@ namespace MediaPortal.Configuration
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.label24 = new System.Windows.Forms.Label();
 			this.updownPrio = new System.Windows.Forms.NumericUpDown();
-			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.groupBox5 = new System.Windows.Forms.GroupBox();
-			this.label34 = new System.Windows.Forms.Label();
-			this.channelsCount = new System.Windows.Forms.Label();
-			this.label28 = new System.Windows.Forms.Label();
-			this.chName = new System.Windows.Forms.Label();
-			this.progressBar2 = new System.Windows.Forms.ProgressBar();
-			this.label26 = new System.Windows.Forms.Label();
-			this.label27 = new System.Windows.Forms.Label();
-			this.button15 = new System.Windows.Forms.Button();
-			this.button16 = new System.Windows.Forms.Button();
-			this.button3 = new System.Windows.Forms.Button();
-			this.button2 = new System.Windows.Forms.Button();
-			this.label18 = new System.Windows.Forms.Label();
-			this.treeView1 = new System.Windows.Forms.TreeView();
-			this.button18 = new System.Windows.Forms.Button();
-			this.button17 = new System.Windows.Forms.Button();
-			this.label29 = new System.Windows.Forms.Label();
-			this.treeView5 = new System.Windows.Forms.TreeView();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.cbRgbAudio = new System.Windows.Forms.ComboBox();
 			this.cbRgbVideo = new System.Windows.Forms.ComboBox();
@@ -583,14 +543,10 @@ namespace MediaPortal.Configuration
 			this.label22 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
 			this.btnRadio = new System.Windows.Forms.Button();
-			this.addsToDB = new System.Windows.Forms.Label();
-			this.label37 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
-			this.tabPage6.SuspendLayout();
-			this.groupBox5.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage5.SuspendLayout();
@@ -714,7 +670,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.ItemHeight = 13;
 			this.audioCompressorComboBox.Location = new System.Drawing.Point(128, 88);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
-			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 20);
+			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 21);
 			this.audioCompressorComboBox.TabIndex = 6;
 			this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
 			// 
@@ -734,7 +690,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.ItemHeight = 13;
 			this.videoCompressorComboBox.Location = new System.Drawing.Point(128, 56);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
-			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 20);
+			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 21);
 			this.videoCompressorComboBox.TabIndex = 5;
 			this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
 			// 
@@ -878,11 +834,10 @@ namespace MediaPortal.Configuration
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage6);
-			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage7);
+			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
@@ -950,202 +905,6 @@ namespace MediaPortal.Configuration
 																	 0,
 																	 0,
 																	 0});
-			// 
-			// tabPage6
-			// 
-			this.tabPage6.Controls.Add(this.groupBox5);
-			this.tabPage6.Controls.Add(this.button3);
-			this.tabPage6.Controls.Add(this.button2);
-			this.tabPage6.Controls.Add(this.label18);
-			this.tabPage6.Controls.Add(this.treeView1);
-			this.tabPage6.Controls.Add(this.button18);
-			this.tabPage6.Controls.Add(this.button17);
-			this.tabPage6.Controls.Add(this.label29);
-			this.tabPage6.Controls.Add(this.treeView5);
-			this.tabPage6.Location = new System.Drawing.Point(4, 22);
-			this.tabPage6.Name = "tabPage6";
-			this.tabPage6.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.tabPage6.Size = new System.Drawing.Size(448, 406);
-			this.tabPage6.TabIndex = 5;
-			this.tabPage6.Text = "EPG-Grabber";
-			this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
-			// 
-			// groupBox5
-			// 
-			this.groupBox5.Controls.Add(this.label37);
-			this.groupBox5.Controls.Add(this.addsToDB);
-			this.groupBox5.Controls.Add(this.label34);
-			this.groupBox5.Controls.Add(this.channelsCount);
-			this.groupBox5.Controls.Add(this.label28);
-			this.groupBox5.Controls.Add(this.chName);
-			this.groupBox5.Controls.Add(this.progressBar2);
-			this.groupBox5.Controls.Add(this.label26);
-			this.groupBox5.Controls.Add(this.label27);
-			this.groupBox5.Controls.Add(this.button15);
-			this.groupBox5.Controls.Add(this.button16);
-			this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox5.Location = new System.Drawing.Point(8, 240);
-			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(432, 160);
-			this.groupBox5.TabIndex = 35;
-			this.groupBox5.TabStop = false;
-			this.groupBox5.Text = "Grabbing-Progress";
-			// 
-			// label34
-			// 
-			this.label34.Location = new System.Drawing.Point(8, 72);
-			this.label34.Name = "label34";
-			this.label34.Size = new System.Drawing.Size(112, 16);
-			this.label34.TabIndex = 33;
-			this.label34.Text = "MHW-EPG Channels";
-			// 
-			// channelsCount
-			// 
-			this.channelsCount.Location = new System.Drawing.Point(128, 72);
-			this.channelsCount.Name = "channelsCount";
-			this.channelsCount.Size = new System.Drawing.Size(32, 16);
-			this.channelsCount.TabIndex = 32;
-			this.channelsCount.Text = "0";
-			this.channelsCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// label28
-			// 
-			this.label28.Location = new System.Drawing.Point(8, 24);
-			this.label28.Name = "label28";
-			this.label28.Size = new System.Drawing.Size(96, 16);
-			this.label28.TabIndex = 24;
-			this.label28.Text = "Current Channel:";
-			// 
-			// chName
-			// 
-			this.chName.Location = new System.Drawing.Point(128, 24);
-			this.chName.Name = "chName";
-			this.chName.Size = new System.Drawing.Size(296, 16);
-			this.chName.TabIndex = 25;
-			this.chName.Text = "Stopped.";
-			// 
-			// progressBar2
-			// 
-			this.progressBar2.Location = new System.Drawing.Point(8, 130);
-			this.progressBar2.Name = "progressBar2";
-			this.progressBar2.Size = new System.Drawing.Size(320, 16);
-			this.progressBar2.TabIndex = 26;
-			// 
-			// label26
-			// 
-			this.label26.Location = new System.Drawing.Point(8, 48);
-			this.label26.Name = "label26";
-			this.label26.Size = new System.Drawing.Size(80, 16);
-			this.label26.TabIndex = 30;
-			this.label26.Text = "Events found:";
-			// 
-			// label27
-			// 
-			this.label27.Location = new System.Drawing.Point(128, 48);
-			this.label27.Name = "label27";
-			this.label27.Size = new System.Drawing.Size(104, 16);
-			this.label27.TabIndex = 29;
-			this.label27.Text = "0";
-			this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// button15
-			// 
-			this.button15.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button15.Location = new System.Drawing.Point(336, 104);
-			this.button15.Name = "button15";
-			this.button15.Size = new System.Drawing.Size(88, 21);
-			this.button15.TabIndex = 22;
-			this.button15.Text = "Start Grab";
-			this.button15.Click += new System.EventHandler(this.button15_Click);
-			// 
-			// button16
-			// 
-			this.button16.Enabled = false;
-			this.button16.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button16.Location = new System.Drawing.Point(336, 128);
-			this.button16.Name = "button16";
-			this.button16.Size = new System.Drawing.Size(88, 21);
-			this.button16.TabIndex = 23;
-			this.button16.Text = "Stop";
-			this.button16.Click += new System.EventHandler(this.button16_Click);
-			// 
-			// button3
-			// 
-			this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button3.Location = new System.Drawing.Point(216, 208);
-			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(48, 21);
-			this.button3.TabIndex = 34;
-			this.button3.Text = "None";
-			this.button3.Click += new System.EventHandler(this.button3_Click);
-			// 
-			// button2
-			// 
-			this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button2.Location = new System.Drawing.Point(160, 208);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(48, 21);
-			this.button2.TabIndex = 33;
-			this.button2.Text = "All";
-			this.button2.Click += new System.EventHandler(this.button2_Click);
-			// 
-			// label18
-			// 
-			this.label18.Location = new System.Drawing.Point(160, 8);
-			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(152, 16);
-			this.label18.TabIndex = 32;
-			this.label18.Text = "Only grab those Languages:";
-			// 
-			// treeView1
-			// 
-			this.treeView1.CheckBoxes = true;
-			this.treeView1.ImageIndex = -1;
-			this.treeView1.Location = new System.Drawing.Point(160, 32);
-			this.treeView1.Name = "treeView1";
-			this.treeView1.SelectedImageIndex = -1;
-			this.treeView1.Size = new System.Drawing.Size(152, 168);
-			this.treeView1.TabIndex = 31;
-			// 
-			// button18
-			// 
-			this.button18.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button18.Location = new System.Drawing.Point(64, 208);
-			this.button18.Name = "button18";
-			this.button18.Size = new System.Drawing.Size(48, 21);
-			this.button18.TabIndex = 28;
-			this.button18.Text = "None";
-			this.button18.Click += new System.EventHandler(this.button18_Click);
-			// 
-			// button17
-			// 
-			this.button17.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button17.Location = new System.Drawing.Point(8, 208);
-			this.button17.Name = "button17";
-			this.button17.Size = new System.Drawing.Size(48, 21);
-			this.button17.TabIndex = 27;
-			this.button17.Text = "All";
-			this.button17.Click += new System.EventHandler(this.button17_Click);
-			// 
-			// label29
-			// 
-			this.label29.Location = new System.Drawing.Point(8, 8);
-			this.label29.Name = "label29";
-			this.label29.Size = new System.Drawing.Size(128, 16);
-			this.label29.TabIndex = 21;
-			this.label29.Text = "TV-Channels:";
-			// 
-			// treeView5
-			// 
-			this.treeView5.CheckBoxes = true;
-			this.treeView5.HideSelection = false;
-			this.treeView5.ImageIndex = -1;
-			this.treeView5.Location = new System.Drawing.Point(8, 32);
-			this.treeView5.Name = "treeView5";
-			this.treeView5.SelectedImageIndex = -1;
-			this.treeView5.Size = new System.Drawing.Size(144, 168);
-			this.treeView5.Sorted = true;
-			this.treeView5.TabIndex = 20;
 			// 
 			// tabPage3
 			// 
@@ -1826,22 +1585,6 @@ namespace MediaPortal.Configuration
 			this.btnRadio.Text = "Autotune Radio";
 			this.btnRadio.Click += new System.EventHandler(this.btnRadio_Click);
 			// 
-			// addsToDB
-			// 
-			this.addsToDB.Location = new System.Drawing.Point(128, 96);
-			this.addsToDB.Name = "addsToDB";
-			this.addsToDB.Size = new System.Drawing.Size(64, 16);
-			this.addsToDB.TabIndex = 34;
-			this.addsToDB.Text = "0";
-			// 
-			// label37
-			// 
-			this.label37.Location = new System.Drawing.Point(8, 96);
-			this.label37.Name = "label37";
-			this.label37.Size = new System.Drawing.Size(112, 16);
-			this.label37.TabIndex = 35;
-			this.label37.Text = "MHW Events found:";
-			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1863,8 +1606,6 @@ namespace MediaPortal.Configuration
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
-			this.tabPage6.ResumeLayout(false);
-			this.groupBox5.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
@@ -2208,18 +1949,6 @@ namespace MediaPortal.Configuration
 						frameSizeComboBox.SelectedIndex = i;
 						break;
 					}
-				}
-				DVBSections dvbSections=new DVBSections();
-				ArrayList codes=new ArrayList();
-				codes=dvbSections.GetLanguageCodes();
-				int n=0;
-				treeView1.Nodes.Clear();
-				foreach(string code in codes)
-				{
-					TreeNode tn=new TreeNode(DVBSections.GetLanguageFromCode(code)+" ("+code+")");
-					tn.Tag=code;
-					n++;
-					treeView1.Nodes.Add(tn);
 				}
 			}
 				//
@@ -2803,7 +2532,6 @@ namespace MediaPortal.Configuration
 				dialog.Tuning=tuning;
 				dialog.Card=CaptureCard;
 				dialog.ShowDialog(this);
-				FillEpgGrabberTreeView();
 			}
 			else
 			{
@@ -2811,166 +2539,6 @@ namespace MediaPortal.Configuration
 			}
 		}
 
-		private void button17_Click(object sender, System.EventArgs e)
-		{
-			
-			foreach(TreeNode tn in treeView5.Nodes)
-			{
-				tn.Checked=true;
-			}
-		}
-
-		private void button18_Click(object sender, System.EventArgs e)
-		{
-		
-			foreach(TreeNode tn in treeView5.Nodes)
-			{
-				tn.Checked=false;
-			}
-		}
-		int CountSelectedNodes()
-		{
-			int retCount=0;
-			foreach(TreeNode tn in treeView5.Nodes)
-			{
-				if(tn.Checked==true)
-					retCount++;
-			}
-
-			return retCount;
-
-		}
-
-		private void button15_Click(object sender, System.EventArgs e)
-		{
-			string langCodes="";
-			TVChannel oldChannel=new TVChannel();
-
-			foreach(TreeNode tn in treeView1.Nodes)
-			{
-				if(tn.Checked==true)
-					langCodes+=((string)tn.Tag)+"/";
-			}
-			Log.Write("epg-grabbing: start grab for languages {0}",langCodes);
-			try
-			{
-				progressBar2.Step=1;
-				progressBar2.Maximum=CountSelectedNodes();
-				progressBar2.Minimum=0;
-				progressBar2.Value=0;
-				m_stopEPGGrab=false;
-				button16.Enabled=true;
-				button15.Enabled=false;
-				int counter=0;
-				TVCaptureDevice capture = CaptureCard;
-				if(capture == null)
-				{
-					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return;
-				}
-				if (!capture.CreateGraph())
-				{
-					MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return;
-				}
-
-				DVBEPG	ssEPG;
-				if(capture.VideoDevice!="B2C2 MPEG-2 Source")
-					ssEPG=new DVBEPG((int)DVBEPG.EPGCard.BDACards, capture.Network);
-				else
-					ssEPG=new DVBEPG((int)DVBEPG.EPGCard.TechnisatStarCards);
-				ssEPG.Languages=langCodes;
-				GUIGraphicsContext.VideoWindow = new Rectangle(337,90,110,110);
-				IntPtr prevFormPtr=GUIGraphicsContext.ActiveForm;
-				Form prevForm=GUIGraphicsContext.form;
-				GUIGraphicsContext.ActiveForm = this.Handle;
-				GUIGraphicsContext.form=this;
-				ArrayList tvchannels=new ArrayList();
-				foreach(TreeNode tn in treeView5.Nodes)
-				{
-					if(tn.Checked==true)
-					{
-						TVChannel ch=(TVChannel)tn.Tag;
-						/*
-						bool addChannel=true;
-						if(capture.VideoDevice!="B2C2 MPEG-2 Source")
-						{
-							if (capture.Network==NetworkType.DVBC || capture.Network==NetworkType.DVBT)
-							{
-								foreach (TVChannel chan in tvchannels)
-								{
-									if (chan.Frequency==ch.Frequency)
-									{
-										addChannel=false;
-										break;
-									}
-								}
-							}
-						}
-						if (addChannel)
-						{
-							tvchannels.Add(ch);
-						}*/
-						tvchannels.Add(ch);
-					}
-				}
-
-				GC.Collect();
-				progressBar2.Value=progressBar2.Minimum;
-				foreach(TVChannel ch in tvchannels)
-				{
-					if(m_stopEPGGrab==true)
-						break;
-					Log.Write("epg: grab:{0}", ch.Name);
-					chName.Text=ch.Name;
-					capture.TVChannel=ch.Name;
-					if (!capture.View)
-						capture.View=true;
-					if (!capture.SignalPresent()) continue;
-					ssEPG.LabelChannels=channelsCount;
-					ssEPG.LabelTitles=addsToDB;
-					int dvbAdds=ssEPG.GetEPG(capture.Mpeg2DataFilter,0/*all services*/);
-					if(dvbAdds<0) dvbAdds=0;
-					counter+=dvbAdds;
-					label27.Text=String.Format("{0}",counter);
-					try
-					{
-						progressBar2.Value+=1;
-					}
-					catch
-					{
-						progressBar2.Value=progressBar2.Minimum;
-					}
-					Application.DoEvents();
-					Application.DoEvents();
-				}
-				Log.Write("EPG Stopped...");
-				chName.Text="Stopped";
-				progressBar2.Value=0;
-				button15.Enabled=true;
-				button16.Enabled=false;
-				label27.Text="0";
-				capture.View=false;
-				capture.DeleteGraph();
-				capture=null;
-				GC.Collect();
-				GUIGraphicsContext.ActiveForm = prevFormPtr;
-				GUIGraphicsContext.form=prevForm;
-				TVDatabase.RemoveOverlappingPrograms();
-			}
-			catch(Exception ex)
-			{
-				Log.Write("epggrabber exception:{0} {1} {2}",
-					ex.Message,ex.Source,ex.StackTrace);
-			}
-		}
-
-		private void button16_Click(object sender, System.EventArgs e)
-		{
-			m_stopEPGGrab=true;
-			button16.Enabled=false;
-			chName.Text="Stopping. DONT close Window until 'Stopped' appears!";
-		}
 
 		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
@@ -3003,33 +2571,7 @@ namespace MediaPortal.Configuration
 					capture.DeleteGraph();
 				}
 
-				if(tabControl1.SelectedTab==tabPage6)
-				{	
-					TVCaptureDevice capture = CaptureCard;
-					if (capture==null)
-					{
-						MessageBox.Show("Please fill in the capture card details first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						tabControl1.SelectedIndex=0;
-						return;
-					}
-					if (!capture.CreateGraph())
-					{
-						MessageBox.Show("Unable to create directshow graph", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						tabControl1.SelectedIndex=0;
-						return;
-					}
-					if (capture.Network != NetworkType.DVBC &&
-						capture.Network != NetworkType.DVBS &&
-						capture.Network != NetworkType.DVBT)
-					{
-						capture.DeleteGraph();
-						MessageBox.Show("EPG grabber only supports DVB-T / DVB-S / DVB-T cards", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						tabControl1.SelectedIndex=0;
-						return;
-					}
-					capture.DeleteGraph();
-					FillEpgGrabberTreeView();
-				}
+
 			}
 			catch(Exception ex)
 			{
@@ -3038,21 +2580,7 @@ namespace MediaPortal.Configuration
 			}
 		}
 
-		void FillEpgGrabberTreeView()
-		{
-			ArrayList channelList=new ArrayList();
-			TVDatabase.GetChannels(ref channelList);
-			treeView5.Nodes.Clear();
-					
-			foreach (TVChannel chan in channelList)
-			{
-				TreeNode node=new TreeNode(chan.Name);
-				node.Tag=chan;
-				node.Checked=true;
-				treeView5.Nodes.Add(node);
-			}
-		}
-		
+	
 		private void groupBox2_Enter(object sender, System.EventArgs e)
 		{
 		
@@ -3079,19 +2607,6 @@ namespace MediaPortal.Configuration
 		private void diseqcd_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 		}
-
-		private void button2_Click(object sender, System.EventArgs e)
-		{
-			foreach(TreeNode tn in treeView1.Nodes)
-				tn.Checked=true;
-		}
-
-		private void button3_Click(object sender, System.EventArgs e)
-		{
-			foreach(TreeNode tn in treeView1.Nodes)
-				tn.Checked=false;
-		}
-
 
 		private void trackBar1_ValueChanged(object sender, System.EventArgs e)
 		{
@@ -3148,7 +2663,6 @@ namespace MediaPortal.Configuration
 
 			RadioAutoTuningForm dialog = new RadioAutoTuningForm(dev);
 			dialog.ShowDialog(this);
-			FillEpgGrabberTreeView();
 		}
 
 

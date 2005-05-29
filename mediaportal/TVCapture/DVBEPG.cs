@@ -31,6 +31,10 @@ namespace MediaPortal.TV.Recording
 			//
 			m_cardType=card;
 			m_networkType=networkType;
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\MediaPortal.xml"))
+			{
+				m_languagesToGrab=xmlreader.GetValueAsString("epg-grabbing","grabLanguages","");
+			}
 		}
 		//public event SendCounter GiveFeedback;
 		DVBSections		m_sections=new DVBSections();
