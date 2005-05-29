@@ -1053,8 +1053,8 @@ namespace MediaPortal.TV.Recording
 						}
 						else
 						{
-							//Log.Write("CRC error:{0:X} != {1:X}", crc1,crc2);
-							sectionOK=false;
+							Log.Write("CRC error:{0:X} != {1:X}", crc1,crc2);
+							sectionOK=true;
 							// reject the section
 						}
 					}
@@ -1158,7 +1158,7 @@ namespace MediaPortal.TV.Recording
 
 		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-		//	Log.Write("dvb-demuxer: timeout");//change
+			Log.Write("dvb-demuxer: timeout");//change
 			if(m_mhwGrabbing==false)
 			{
 				m_secTimer.Stop();

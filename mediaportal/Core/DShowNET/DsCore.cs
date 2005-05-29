@@ -1524,4 +1524,24 @@ public interface IMediaSample
 
 	}
 
+
+	[ComVisible(true), ComImport,
+	Guid("1BD0ECB0-F8E2-11CE-AAC6-0020AF0B99A3"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IQualProp
+	{
+		[PreserveSig]
+		int get_FramesDroppedInRenderer( out int pcFrames) ;  // Out
+		[PreserveSig]
+		int get_FramesDrawn( out int pcFramesDrawn) ;         // Out
+		[PreserveSig]
+		int get_AvgFrameRate( out int piAvgFrameRate) ;       // Out
+		[PreserveSig]
+		int get_Jitter( out int iJitter) ;                    // Out
+		[PreserveSig]
+		int get_AvgSyncOffset( out int piAvg) ;               // Out
+		[PreserveSig]
+		int get_DevSyncOffset( out int piDev) ;               // Out
+	}
+
 } // namespace DShowNET
