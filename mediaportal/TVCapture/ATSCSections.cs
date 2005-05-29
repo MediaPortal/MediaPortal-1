@@ -25,7 +25,6 @@ namespace MediaPortal.TV.Recording
 		public ATSCSections(DVBDemuxer demuxer)
 		{
 			m_streamDemuxer=demuxer;
-			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 			m_eitTimeoutTimer=new System.Timers.Timer(3000);
 			m_eitTimeoutTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_eitTimeoutTimer_Elapsed);
 
@@ -153,7 +152,15 @@ namespace MediaPortal.TV.Recording
 
 		void DecodeTerrestialVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
 		{
+
 			Log.Write("ATSC-scan: DecodeTerrestialVirtualChannelTable() len={0}",buf.Length);
+			if (!System.IO.File.Exists("vct.dat"))
+			{
+				System.IO.FileStream stream = new System.IO.FileStream("vct.dat",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+				stream.Write(buf,0,buf.Length);
+				stream.Close();
+			}
+
 			if (buf.Length<10) return;
 			try
 			{
@@ -183,10 +190,8 @@ namespace MediaPortal.TV.Recording
 					try
 					{
 						//shortname 7*16 bytes (112 bytes) in UTF-16
-						Encoding encoding = new System.Text.UnicodeEncoding();
-						byte[] byShortName = new byte[7*16];
-						System.Array.Copy(buf,start,byShortName,0,7*16);
-						shortName=encoding.GetString(byShortName,0,7*16);
+						UnicodeEncoding encoding = new UnicodeEncoding();
+						shortName=encoding.GetString(buf,start,7*16);
 					}
 					catch(Exception ex)
 					{
@@ -346,6 +351,7 @@ namespace MediaPortal.TV.Recording
 			m_sectionsList=new ArrayList();
 			bool flag=false;
 
+			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 			m_streamDemuxer.GetTable(pid,tid,timeout);
 			m_syncWait=false;
 			m_eitTimeoutTimer.Interval=timeout*2;
@@ -355,12 +361,14 @@ namespace MediaPortal.TV.Recording
 				System.Windows.Forms.Application.DoEvents();
 			}
 			m_eitTimeoutTimer.Stop();
+			m_streamDemuxer.OnGotTable-=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 			return flag;	
 
 		}
 
 		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			Log.Write("timeout...");
 			m_breakAction=true;
 			m_syncWait=true;
 		}		
@@ -368,9 +376,10 @@ namespace MediaPortal.TV.Recording
 		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
 		{
 			m_syncWait=true;
+			if (pid==0x1ffb)
+				Log.Write("Got table {0:X} {1:X} count:{2}", pid, tableID,tableList.Count);
 			if(tableList.Count>0)
 			{
-			
 				try
 				{
 					m_sectionsList=(ArrayList)tableList.Clone();
@@ -379,7 +388,6 @@ namespace MediaPortal.TV.Recording
 				{
 				}
 			}
-
 		}
 	}
 }

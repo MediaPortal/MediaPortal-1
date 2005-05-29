@@ -11,7 +11,7 @@ namespace MediaPortal.TV.Recording
 	/// <summary>
 	/// Zusammenfassung für DVB_SECTIONS.
 	/// </summary>
-	public class DVBSections
+	public class DVBSections : IDisposable
 	{
 		#region imports
 
@@ -2662,5 +2662,17 @@ namespace MediaPortal.TV.Recording
 			}
 
 		}
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			if (m_streamDemuxer!=null)
+			{
+				m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
+				m_streamDemuxer=null;
+			}
+		}
+
+		#endregion
 	}// class
 }// namespace

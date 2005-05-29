@@ -3167,10 +3167,12 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
-				DVBSections sections = new DVBSections();
-				sections.DemuxerObject=m_streamDemuxer;
-				sections.Timeout=8000;
-				transp = sections.Scan(m_SectionsTables);
+				using (DVBSections sections = new DVBSections())
+				{
+					sections.DemuxerObject=m_streamDemuxer;
+					sections.Timeout=8000;
+					transp = sections.Scan(m_SectionsTables);
+				}
 			}
 			if (transp.channels==null)
 			{

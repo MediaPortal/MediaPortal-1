@@ -275,7 +275,10 @@ namespace MediaPortal.TV.Recording
 		bool GetTable(int pid,int tableID)
 		{
 			if(m_sectionPid!=-1)
+			{
+				Log.Write("dvb-demuxer: sectionpid already set to:{0:X}", m_sectionPid);
 				return false;
+			}
 			m_tableBufferSec=new byte[SECTIONS_BUFFER_WIDTH+1];
 			m_tableSections=new ArrayList();
 			m_sectionPid=pid;
@@ -810,7 +813,7 @@ namespace MediaPortal.TV.Recording
 				#endregion
 
 				#region pmt handling
-				if(m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
+				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
 				{
 					m_packetHeader.Payload=new byte[184];
 					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
@@ -1050,6 +1053,7 @@ namespace MediaPortal.TV.Recording
 						}
 						else
 						{
+							Log.Write("CRC error:{0:X} != {1:X}", crc1,crc2);
 							sectionOK=false;
 							// reject the section
 						}
@@ -1149,11 +1153,12 @@ namespace MediaPortal.TV.Recording
 					m_mhwSummaries.Clear();
 				}
 			}
-			Log.Write("epg ready. added {0} events to database! Next grab at{1}",count, epgRegrabTime.ToString() );
+			Log.Write("epg ready. added {0} events to database! Next grab at {1}",count, epgRegrabTime.ToString() );
 		}
 
 		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			//Log.Write("dvb-demuxer: timeout");//change
 			if(m_mhwGrabbing==false)
 			{
 				m_secTimer.Stop();

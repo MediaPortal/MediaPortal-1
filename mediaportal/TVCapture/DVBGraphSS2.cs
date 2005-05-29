@@ -1875,12 +1875,15 @@ namespace MediaPortal.TV.Recording
 			SetPidToPin(m_dataCtrl,0,16);
 			SetPidToPin(m_dataCtrl,0,17);
 			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: StoreChannels()");
-			DVBSections sections = new DVBSections();
-			sections.SetPidsForTechnisat=true;
-			sections.DataControl=m_dataCtrl;
-			sections.Timeout=5000;
-			sections.DemuxerObject=m_streamDemuxer;
-            DVBSections.Transponder transp = sections.Scan(m_mpeg2Data);
+			DVBSections.Transponder transp ;
+			using (DVBSections sections = new DVBSections())
+			{
+				sections.SetPidsForTechnisat=true;
+				sections.DataControl=m_dataCtrl;
+				sections.Timeout=5000;
+				sections.DemuxerObject=m_streamDemuxer;
+				transp = sections.Scan(m_mpeg2Data);
+			}
 			if (transp.channels==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: found no channels", transp.channels);
