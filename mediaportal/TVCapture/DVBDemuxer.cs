@@ -189,11 +189,8 @@ namespace MediaPortal.TV.Recording
 		static int m_currentDVBCard=0;
 		static NetworkType m_currentNetworkType;
 		// for pmt pid
-		int m_grabbingLenPMT=0;
-		bool m_grabbingPMT=false;
 		byte[] m_tableBufferPMT=new byte[4096];
 		int m_bufferPositionPMT=0;
-
 
 		static DateTime epgRegrabTime=DateTime.MinValue;
         #endregion
@@ -815,7 +812,6 @@ namespace MediaPortal.TV.Recording
 				#region pmt handling
 				if(m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
 				{
-					bool pmtComplete=false;
 					m_packetHeader.Payload=new byte[184];
 					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
 					try
@@ -847,7 +843,7 @@ namespace MediaPortal.TV.Recording
 							{
 								if(header.VersionNumber!=m_currentPMTVersion)
 								{
-									OnPMTIsChanged(data);
+									OnPMTIsChanged((byte[])data.Clone());
 									m_currentPMTVersion=header.VersionNumber;
 								}
 
@@ -1051,9 +1047,6 @@ namespace MediaPortal.TV.Recording
 							if(header.TableID>m_eitScheduleLastTable)
 								m_eitScheduleLastTable=header.HeaderExtB13;
 							sectionOK=true;
-//							byte[] data1=new byte[data.Length+5];
-//							data.CopyTo(data1,0);
-//							data=(byte[])data1.Clone();
 						}
 						else
 						{
