@@ -544,7 +544,7 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Release();
 				Vmr9=null;
 			}
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartRecording({0} {1})",strFileName,bContentRecording);
+      Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartRecording({0} {1} {2})",strFileName,bContentRecording,recording.Quality);
 			if (recording.Quality != TVRecording.QualityType.NotSet)
 			{
 				if (recording.Quality ==TVRecording.QualityType.Low)
@@ -1250,20 +1250,24 @@ namespace MediaPortal.TV.Recording
 					switch (Quality)
 					{
 						case 0://low
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:low");
 							newBitRate.wBitrate     =2*400;  //2 mbps
 							newBitRate.dwPeak       =2200;   //4.5 mbps
 							break;
 						case 1://medium
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:medium");
 							newBitRate.wBitrate     =4*400;  //4 mbps
 							newBitRate.dwPeak       =6*400;  //6 mbps
 							break;
 								
 						case 2://hi
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:high");
 							newBitRate.wBitrate     =8*400;  //8 mbps
 							newBitRate.dwPeak       =12*400; //12 mbps
 							break;
 								
 						default://medium
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality to default (medium)");
 							newBitRate.wBitrate     =4*400;  //6 mbps
 							newBitRate.dwPeak       =6*400; //12 mbps
 							break;
