@@ -3043,7 +3043,7 @@ namespace MediaPortal.TV.Recording
 
 					//set the properties for the new tuning request. For ATSC we only set the frequency
 					DVBChannel chan=(DVBChannel)tuningObject;
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-C freq:{0} channel:{1} fec:{2} mod:{3} sr:{4} ONID:{5}, TSID:{6} SID:{7}",
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() ATSC freq:{0} channel:{1} fec:{2} mod:{3} sr:{4} ONID:{5}, TSID:{6} SID:{7}",
 						chan.Frequency,chan.PhysicalChannel,chan.FEC,chan.Modulation,chan.Symbolrate,chan.NetworkID,chan.TransportStreamID,chan.ProgramNumber);
 
 					myLocator.PhysicalChannel       = chan.PhysicalChannel;
