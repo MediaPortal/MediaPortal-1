@@ -597,27 +597,12 @@ namespace MediaPortal.TV.Recording
 
 				// final
 				hr = m_tunerCtrl.SetTunerStatus();
-				if (hr!=0)	
-				{
-					// some more tries...
-					int retryCount=0;
-					while(1>0)
-					{
-						hr=m_tunerCtrl.SetTunerStatus();
-						if(hr!=0)
-							retryCount++;
-						else
-							break;
-
-						if(retryCount>=20)
-						{
-							Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetTunerStatus (in loop)");
-							return false;	// *** FUNCTION EXIT POINT
-						}
-					}
-					//
-				
-				}
+			if (hr!=0)	
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetTunerStatus");
+				return false;	// *** FUNCTION EXIT POINT
+				//
+			}
 			
 
 			if(AudioPID!=-1 && VideoPID!=-1)
@@ -1433,7 +1418,10 @@ namespace MediaPortal.TV.Recording
 				m_StartTime=DateTime.Now;
 				if(m_streamDemuxer!=null)
 				{
-					m_streamDemuxer.GetEPGSchedule(0x50,ch.ProgramNumber);
+					if(ch.HasEITSchedule==true)
+						m_streamDemuxer.GetEPGSchedule(0x50,ch.ProgramNumber);
+					else
+						m_streamDemuxer.GetMHWEPG();
 				}
 			}
 			
@@ -1891,8 +1879,8 @@ namespace MediaPortal.TV.Recording
 			sections.SetPidsForTechnisat=true;
 			sections.DataControl=m_dataCtrl;
 			sections.Timeout=5000;
-			
-			DVBSections.Transponder transp = sections.Scan(m_mpeg2Data);
+			sections.DemuxerObject=m_streamDemuxer;
+            DVBSections.Transponder transp = sections.Scan(m_mpeg2Data);
 			if (transp.channels==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: found no channels", transp.channels);
@@ -1917,6 +1905,7 @@ namespace MediaPortal.TV.Recording
 					info.service_provider_name="Unknown";
 				if (info.service_name.Length==0)
 					info.service_name=String.Format("NoName:{0}{1}{2}{3}",info.networkID,info.transportStreamID, info.serviceID,i );
+
 
 				if (info.serviceID==0) 
 				{

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
+using System.Threading;
 
 namespace MediaPortal.TV.Recording
 {
@@ -25,7 +26,7 @@ namespace MediaPortal.TV.Recording
 
 		#region variables
 		TPList[]							transp;
-		ArrayList							m_sectionsList;	
+		static ArrayList							m_sectionsList;	
 		int									m_diseqc=0;
 		int									m_lnb0=0;
 		int									m_lnb1=0;
@@ -40,7 +41,10 @@ namespace MediaPortal.TV.Recording
 		System.Timers.Timer					m_eitTimeoutTimer=null;
 		bool								m_breakAction=false;
 		object								m_dataCtrl=null;
-		
+		static DVBDemuxer					m_streamDemuxer;
+		bool								m_syncWait=false;
+		static object						m_syncRelease=false;
+
 		static string[] m_langCodes=new string[]{
 																			 "abk","ace","ach","ada","aar",
 																			 "afh","afr","afa","aka","akk",
@@ -219,6 +223,17 @@ namespace MediaPortal.TV.Recording
 		//
 
 		//
+		public DVBDemuxer DemuxerObject
+		{
+			set
+			{
+				if(value!=null)
+				{
+					m_streamDemuxer=value;
+					m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
+				}
+			}
+		}
 		public DVBSections()
 		{
 			m_sectionsList=new ArrayList();	
@@ -476,88 +491,107 @@ namespace MediaPortal.TV.Recording
 		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			m_breakAction=true;
+			m_syncWait=true;
 		}
-
+//		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
+//		{
+//			bool flag;
+//			int dataLen=0;
+//			int header=0;
+//			int tableExt=0;
+//			int sectNum=0;
+//			int sectLast=0;
+//			int version=0;
+//			byte[] arr = new byte[1];
+//			IntPtr sectionBuffer=IntPtr.Zero;
+//
+//			m_sectionsList=new ArrayList();
+//			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
+//			if(flag==false)
+//			{
+//				
+//				Log.WriteFile(Log.LogType.Capture,"DVBSections:GetStreamdata() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
+//				return false;
+//			}
+//			if (sectLast<=0)
+//			{
+//				Log.WriteFile(Log.LogType.Capture,"DVBSections:Sections:GetStreamdata() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
+//			}
+//			for(int n=0;n<sectLast;n++)
+//			{
+//				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
+//				if(flag)
+//				{
+//					if (tableExt != - 1)
+//					{
+//						arr = new byte[dataLen+8 + 1];
+//						try
+//						{
+//							Marshal.Copy(sectionBuffer, arr, 8, dataLen);
+//						}
+//						catch
+//						{
+//							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+//							m_sectionsList.Clear();
+//							break;
+//						}
+//						arr[0] = (byte)tid;
+//						arr[1] = (byte)((header >> 8) & 255);
+//						arr[2] =(byte) (header & 255);
+//						arr[3] = (byte)((tableExt >> 8) & 255);
+//						arr[4] = (byte)(tableExt & 255);
+//						arr[5] =(byte) version;
+//						arr[6] = (byte)sectNum;
+//						arr[7] = (byte)sectLast;
+//						m_sectionsList.Add(arr);
+//						if(tableSection!=0)
+//							break;
+//					}
+//					else
+//					{
+//						arr = new byte[dataLen+3 + 1];
+//						try
+//						{
+//							Marshal.Copy(sectionBuffer, arr, 3, dataLen);
+//						}
+//						catch
+//						{
+//							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+//							m_sectionsList.Clear();
+//							break;
+//						}
+//						arr[0] = System.Convert.ToByte(tid);
+//						arr[1] = System.Convert.ToByte((header >> 8) & 255);
+//						arr[2] = System.Convert.ToByte(header & 255);
+//						m_sectionsList.Add(arr);
+//						if(tableSection!=0)
+//							break;
+//					}// else
+//
+//				}// if(flag)
+//			}//for
+//			ReleaseSectionsBuffer();
+//			return true;
+//		}
+		// get stream data with mps demuxer-class
 		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
-			bool flag;
-			int dataLen=0;
-			int header=0;
-			int tableExt=0;
-			int sectNum=0;
-			int sectLast=0;
-			int version=0;
-			byte[] arr = new byte[1];
-			IntPtr sectionBuffer=IntPtr.Zero;
-
 			m_sectionsList=new ArrayList();
-			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
-			if(flag==false)
-			{
-				
-				Log.WriteFile(Log.LogType.Capture,"DVBSections:GetStreamdata() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-				return false;
-			}
-			if (sectLast<=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,"DVBSections:Sections:GetStreamdata() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-			}
-			for(int n=0;n<sectLast;n++)
-			{
-				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
-				if(flag)
-				{
-					if (tableExt != - 1)
-					{
-						arr = new byte[dataLen+8 + 1];
-						try
-						{
-							Marshal.Copy(sectionBuffer, arr, 8, dataLen);
-						}
-						catch
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-							m_sectionsList.Clear();
-							break;
-						}
-						arr[0] = (byte)tid;
-						arr[1] = (byte)((header >> 8) & 255);
-						arr[2] =(byte) (header & 255);
-						arr[3] = (byte)((tableExt >> 8) & 255);
-						arr[4] = (byte)(tableExt & 255);
-						arr[5] =(byte) version;
-						arr[6] = (byte)sectNum;
-						arr[7] = (byte)sectLast;
-						m_sectionsList.Add(arr);
-						if(tableSection!=0)
-							break;
-					}
-					else
-					{
-						arr = new byte[dataLen+3 + 1];
-						try
-						{
-							Marshal.Copy(sectionBuffer, arr, 3, dataLen);
-						}
-						catch
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-							m_sectionsList.Clear();
-							break;
-						}
-						arr[0] = System.Convert.ToByte(tid);
-						arr[1] = System.Convert.ToByte((header >> 8) & 255);
-						arr[2] = System.Convert.ToByte(header & 255);
-						m_sectionsList.Add(arr);
-						if(tableSection!=0)
-							break;
-					}// else
+			bool flag=false;
 
-				}// if(flag)
-			}//for
-			ReleaseSectionsBuffer();
-			return true;
+			m_streamDemuxer.GetTable(pid,tid,timeout);
+			m_syncWait=false;
+			m_eitTimeoutTimer.Interval=timeout*2;
+			m_eitTimeoutTimer.Start();
+			while(m_syncWait==false)
+			{
+				System.Windows.Forms.Application.DoEvents();
+			}
+			m_eitTimeoutTimer.Stop();
+			return flag;	
+
 		}
+		
 		string DVB_GetLanguageFromISOCode(string code)
 		{
 			return "";
@@ -862,12 +896,17 @@ namespace MediaPortal.TV.Recording
 			{
 				pmt=new PMTData();
 				//System.Array.Copy(buf, pointer, b, 0, 5);
-				pmt.stream_type = buf[pointer];
-				pmt.reserved_1 = (buf[pointer+1]>>5)& 7;
-				pmt.elementary_PID = ((buf[pointer+1]&0x1F)<<8)+buf[pointer+2];
-				pmt.reserved_2 = (buf[pointer+3]>>4) & 0xF;
-				pmt.ES_info_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
-
+				try
+				{
+					pmt.stream_type = buf[pointer];
+					pmt.reserved_1 = (buf[pointer+1]>>5)& 7;
+					pmt.elementary_PID = ((buf[pointer+1]&0x1F)<<8)+buf[pointer+2];
+					pmt.reserved_2 = (buf[pointer+3]>>4) & 0xF;
+					pmt.ES_info_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
+				}
+				catch
+				{
+				}
 				switch(pmt.stream_type)
 				{
 					case 0x1:
@@ -968,6 +1007,7 @@ namespace MediaPortal.TV.Recording
 				Log.Write("decodeSDTTable() len < 12 len={0}", buf.Length);
 				return -1;
 			}
+			
 			int table_id = buf[0];
 			int section_syntax_indicator = (buf[1]>>7) & 1;
 			int section_length = ((buf[1]& 0xF)<<8) + buf[2];
@@ -977,7 +1017,6 @@ namespace MediaPortal.TV.Recording
 			int section_number = buf[6];
 			int last_section_number = buf[7];
 			int original_network_id = (buf[8]<<8)+buf[9];
-
 			int len1 = section_length - 11 - 4;
 			int descriptors_loop_length;
 			int len2;
@@ -988,8 +1027,7 @@ namespace MediaPortal.TV.Recording
 			int EIT_present_following_flag;
 			int pointer = 11;
 			int x = 0;
-
-
+		
 			while (len1 > 0)
 			{
 				service_id = (buf[pointer]<<8)+buf[pointer+1];
@@ -1027,7 +1065,6 @@ namespace MediaPortal.TV.Recording
 						}
 						if(service_id==pat.program_number)
 						{
-
 							pat.serviceType=serviceData.serviceType;
 							pat.service_name=serviceData.serviceName ;
 							pat.service_provider_name=serviceData.serviceProviderName;
@@ -1046,7 +1083,7 @@ namespace MediaPortal.TV.Recording
 							pat.fec=6; // always auto for b2c2
 							pat.lnb01=m_lnbfreq;
 						}
-						//
+							//
 						//tp.serviceData.Add(serviceData);
 
 					}
@@ -1218,7 +1255,6 @@ namespace MediaPortal.TV.Recording
 					{
 						foreach(byte[] wdata in tab42)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-
 						foreach(byte[] wdata in tab46)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 					}
@@ -2609,5 +2645,22 @@ namespace MediaPortal.TV.Recording
 
 		// get current/next info
 		//
+
+		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
+		{
+			m_syncWait=true;
+			if(tableList.Count>0)
+			{
+			
+				try
+				{
+					m_sectionsList=(ArrayList)tableList.Clone();
+				}
+				catch
+				{
+				}
+			}
+
+		}
 	}// class
 }// namespace
