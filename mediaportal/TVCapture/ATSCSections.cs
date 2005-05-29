@@ -88,7 +88,6 @@ namespace MediaPortal.TV.Recording
 				int streamtype						= buf[off];
 				int elementary_pid				= ((buf[off+1]&0x1f)<<8) + buf[off+2];
 				int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
-				Log.Write("  element:{0} streamtype:{1} pid:{2}", i,streamtype,elementary_pid);
 				off+=6;
 				DVBSections.PMTData pmtData = new DVBSections.PMTData();
 				pmtData.elementary_PID=elementary_pid;
@@ -97,10 +96,15 @@ namespace MediaPortal.TV.Recording
 				{
 					case 0x2: // video
 						pmtData.isVideo=true;
-					break;
+						Log.Write("  element:{0} Video streamtype:{1} pid:{2}", i,streamtype,elementary_pid);
+						break;
 					case 0x81: // audio
 						pmtData.isAudio=true;
-					break;
+						Log.Write("  element:{0} Audio streamtype:{1} pid:{2}", i,streamtype,elementary_pid);
+						break;
+					default:
+						Log.Write("  element:{0} Unknown streamtype:{1} pid:{2}", i,streamtype,elementary_pid);
+						break;
 				}
 				channelInfo.pid_list.Add(pmtData);
 			}
@@ -155,18 +159,19 @@ namespace MediaPortal.TV.Recording
 			if (labels.Length==0) return ;
 			if (labels[0].Length==0) return;
 			channelInfo.service_name=labels[0].Trim();
+			Log.Write("Channel name={0}", channelInfo.service_name);
 		}
 
 		void DecodeTerrestialVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
 		{
 
 			Log.Write("ATSC-scan: DecodeTerrestialVirtualChannelTable() len={0}",buf.Length);
-			if (!System.IO.File.Exists("vct.dat"))
+			/*if (!System.IO.File.Exists("vct.dat"))
 			{
 				System.IO.FileStream stream = new System.IO.FileStream("vct.dat",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 				stream.Write(buf,0,buf.Length);
 				stream.Close();
-			}
+			}*/
 
 			if (buf.Length<10) return;
 			try
@@ -249,6 +254,7 @@ namespace MediaPortal.TV.Recording
 					channelInfo.serviceType   = service_type;
 					channelInfo.service_name  =shortName;
 					channelInfo.transportStreamID = channel_TSID;
+					channelInfo.serviceID = major_channel*1000+minor_channel;
 					channelInfo.pid_list = new ArrayList();
 
 					Log.Write("decode descriptors...");
@@ -371,6 +377,7 @@ namespace MediaPortal.TV.Recording
 			m_eitTimeoutTimer.Start();
 			while(m_syncWait==false)
 			{
+				System.Threading.Thread.Sleep(100);
 				System.Windows.Forms.Application.DoEvents();
 			}
 			m_eitTimeoutTimer.Stop();
