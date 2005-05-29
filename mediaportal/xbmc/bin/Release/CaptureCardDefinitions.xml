@@ -920,7 +920,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Cardbus Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_05025168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3451,7 +3451,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03065168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3494,7 +3494,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03065168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3537,7 +3537,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7130&amp;subsys_03065168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3580,7 +3580,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03075168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3623,7 +3623,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03075168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3666,7 +3666,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7130&amp;subsys_03075168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3899,7 +3899,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Cardbus Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7130&amp;subsys_05025168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -3942,7 +3942,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Cardbus Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_05025168&amp;rev_f0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
@@ -5502,7 +5502,7 @@
   <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03075168&amp;rev_d0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="713x BDA Analog TV Tuner"  			checkdevice="true"></filter>
         <filter cat="tvaudio"  		name="713x BDA Analog TV Audio"  			checkdevice="true"></filter>
