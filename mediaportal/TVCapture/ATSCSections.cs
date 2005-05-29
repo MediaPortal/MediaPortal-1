@@ -118,6 +118,11 @@ namespace MediaPortal.TV.Recording
 				string label=encoding.GetString(buf,offset,number_of_bytes);
 				return label;
 			}
+			Log.Write("DecodeString() type:{0} mode:{1}", compression_type,mode);
+			string data="";
+			for (int i=0; i < number_of_bytes;++i)
+				data += String.Format(" {0:X}", buf[offset+i]);
+			Log.Write("DecodeString() {0}", data);
 			return String.Empty;
 		}
 
@@ -152,13 +157,14 @@ namespace MediaPortal.TV.Recording
 			//  8       8------- 8-------
 			// 76543210|76543210|76543210
 			//    0        1        2    
-
+			Log.Write("DecodeExtendedChannelNameDescriptor()");
 			int descriptor_tag = buf[start+0];
 			int descriptor_len = buf[start+1];
 			string[] labels = DecodeMultipleStrings(buf,start+2);
 			if (labels.Length==0) return ;
-			if (labels[0].Length==0) return;
-			channelInfo.service_name=labels[0].Trim();
+			string channelName=labels[0].Trim();
+			if (channelName.Length==0) return;
+			channelInfo.service_name=channelName;
 			Log.Write("Channel name={0}", channelInfo.service_name);
 		}
 
@@ -246,6 +252,7 @@ namespace MediaPortal.TV.Recording
 											i,ETM_location,access_controlled,hidden, path_select, out_of_band,hide_guide, service_type, source_id);
 					Log.Write("atsc: chan:{0} description length:{1}", i,descriptors_length);
 					DVBSections.ChannelInfo channelInfo = new DVBSections.ChannelInfo();
+					channelInfo.service_name = shortName;
 					channelInfo.minorChannel = minor_channel;
 					channelInfo.majorChannel = major_channel;
 					channelInfo.modulation   = modulation_mode;
