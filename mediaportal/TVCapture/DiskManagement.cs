@@ -335,6 +335,7 @@ namespace MediaPortal.TV.Recording
 		private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
 		{
 			if (recording.EpisodesToKeep == Int32.MaxValue) return;
+			if (recording.RecType==TVRecording.RecordingType.Once) return;
 			
 			//check how many episodes we got
 			ArrayList recordings = new ArrayList();
@@ -354,7 +355,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
-			if (recordingsFound < recording.EpisodesToKeep) return;
+			if (recordingsFound <= recording.EpisodesToKeep) return;
 			if (Utils.FileDelete(oldestFileName))
 			{
 				DeleteRecording(oldestFileName);
