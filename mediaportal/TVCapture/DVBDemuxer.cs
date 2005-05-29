@@ -705,10 +705,10 @@ namespace MediaPortal.TV.Recording
             return 0;
         }
         #endregion
-        public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
-        {
-            int add = (int)pBuffer;
-            int end = add + BufferLen;
+		public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
+		{
+			int add = (int)pBuffer;
+			int end = add + BufferLen;
 
 			// when here, we can set graph as running
 
@@ -779,27 +779,27 @@ namespace MediaPortal.TV.Recording
 						// copy data and set grabbing flag
 						// mhw (pids 0xd3 & 0xd2)
 
-							if(m_packetHeader.Pid==0xd2)
+						if(m_packetHeader.Pid==0xd2)
+						{
+							if(m_bufferPositionD2+(184-offset)<65534)
 							{
-								if(m_bufferPositionD2+(184-offset)<65534)
-								{
-									Array.Copy(m_packetHeader.Payload,offset,m_tableBufferD2,m_bufferPositionD2,184-offset);
-									m_bufferPositionD2+=(184-offset);
-								}
-								else
-									GetTablesD2();
+								Array.Copy(m_packetHeader.Payload,offset,m_tableBufferD2,m_bufferPositionD2,184-offset);
+								m_bufferPositionD2+=(184-offset);
 							}
-							if(m_packetHeader.Pid==0xd3)
+							else
+								GetTablesD2();
+						}
+						if(m_packetHeader.Pid==0xd3)
+						{
+							if(m_bufferPositionD3+(184-offset)<65534)
 							{
-								if(m_bufferPositionD3+(184-offset)<65534)
-								{
-									Array.Copy(m_packetHeader.Payload,offset,m_tableBufferD3,m_bufferPositionD3,184-offset);
-									m_bufferPositionD3+=(184-offset);
-								}
-								else
-									GetTablesD3();
+								Array.Copy(m_packetHeader.Payload,offset,m_tableBufferD3,m_bufferPositionD3,184-offset);
+								m_bufferPositionD3+=(184-offset);
+							}
+							else
+								GetTablesD3();
 								
-							}
+						}
 
 					}
 					catch(Exception ex)
@@ -818,78 +818,51 @@ namespace MediaPortal.TV.Recording
 					bool pmtComplete=false;
 					m_packetHeader.Payload=new byte[184];
 					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
-					int sectionLen = ((m_packetHeader.Payload[2]& 0xF)<<8) + m_packetHeader.Payload[3];
-					sectionLen+=3;
-					int ptr1=-1;
-					int offset=0;
-					
-					if(m_packetHeader.PayloadUnitStart==true)
-						m_grabbingLenPMT=sectionLen;
-
-					if(m_grabbingLenPMT>183)
+					try
 					{
+						int offset=0;
+						//
+						// calc offset & pointers
+						if(m_packetHeader.PayloadUnitStart==true)
+							offset=1;
+						if(m_packetHeader.PayloadUnitStart==true && m_bufferPositionSec==0)
+							offset=m_packetHeader.AdaptionField+1;
 						
-						pmtComplete=false;
-						if(m_packetHeader.AdaptionFieldControl==3)
-							offset++;
-						if(m_packetHeader.AdaptionFieldControl==1 && m_packetHeader.PayloadUnitStart==true)
-							ptr1=m_packetHeader.AdaptionField+1;
-	
-						if(ptr1==1 && m_grabbingPMT==false)
+						if(m_bufferPositionPMT+(184-offset)<=4093)
 						{
-							// copy from packet
-							Array.Copy(m_packetHeader.Payload,1,m_tableBufferPMT,0,183);
-							m_bufferPositionPMT=183;
-							m_grabbingPMT=true;
+							Array.Copy(m_packetHeader.Payload,offset,m_tableBufferPMT,m_bufferPositionPMT,184-offset);
+							m_bufferPositionPMT+=(184-offset);
 						}
-						if(ptr1>1)
-						{
-							if(m_grabbingPMT==true && m_bufferPositionPMT!=0)
-							{
-								Array.Copy(m_packetHeader.Payload,0,m_tableBufferPMT,m_bufferPositionPMT,183-ptr1);
-								m_grabbingPMT=false;
-								m_bufferPositionPMT=0;
-								pmtComplete=true;
-							}
-						}
-						if(ptr1<1 && m_grabbingPMT==true)
-						{
-							Array.Copy(m_packetHeader.Payload,0,m_tableBufferPMT,m_bufferPositionPMT,184);
-							m_bufferPositionPMT+=184;
-							if(m_bufferPositionPMT>=m_grabbingLenPMT)
-								pmtComplete=true;
-
-						}
-					}
-					else if (sectionLen < 183)// in one packet
-					{
-						pmtComplete=true;
-						Array.Copy(m_packetHeader.Payload,1,m_tableBufferPMT,0,sectionLen);
-					}
-					if(pmtComplete && m_grabbingLenPMT>0)
-					{
-						lock(m_tableBufferPMT.SyncRoot)
-						{
-							int version=((m_tableBufferPMT[5]>>1)&0x1F);
-							
-							if(m_currentPMTVersion!=version)
-							{
-								Log.Write("DVB Demuxer PMT: new version={0}, old version={1}",version,m_currentPMTVersion);
-								if(OnPMTIsChanged!=null)
-								{
-									byte[] pmtData=new byte[m_grabbingLenPMT];
-									Array.Copy(m_tableBufferPMT,0,pmtData,0,m_grabbingLenPMT);
-									OnPMTIsChanged(pmtData);
-									m_currentPMTVersion=version;
-								}
-							}
-							m_tableBufferPMT=new byte[4096];
+						DVBSectionHeader header=GetSectionHeader(m_tableBufferPMT,0);
+						if(header.TableID!=0x02)
 							m_bufferPositionPMT=0;
-							m_grabbingPMT=false;
+						if(m_bufferPositionPMT>=header.SectionLength+3 && header.TableID==0x02 && header.SectionLength>0)
+						{
+							header.SectionLength+=3;
+							byte[] data=new byte[header.SectionLength];
+							Array.Copy(m_tableBufferPMT,0,data,0,header.SectionLength);
+							UInt32 crc1=GetCRC32(data);
+							UInt32 crc2=GetSectionCRCValue(data,header.SectionLength-4);
+							if(crc1==crc2)
+							{
+								if(header.VersionNumber!=m_currentPMTVersion)
+								{
+									OnPMTIsChanged(data);
+									m_currentPMTVersion=header.VersionNumber;
+								}
+
+							}
+							m_bufferPositionPMT=0;
 						}
 					}
+					catch(Exception ex)
+					{
+						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
+					}
 
+				
 				}
+			
 				#endregion
 
 				#region sections
