@@ -3195,7 +3195,7 @@ namespace MediaPortal.TV.Recording
 			if (Network() == NetworkType.ATSC)
 			{
 				ATSCSections atscSections = new ATSCSections(m_streamDemuxer);
-				atscSections.Timeout=1000;
+				atscSections.Timeout=4000;
 				transp = atscSections.Scan(m_SectionsTables);
 			}
 			else
