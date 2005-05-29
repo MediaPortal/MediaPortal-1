@@ -108,8 +108,15 @@ namespace MediaPortal.TV.Recording
 
 		string DecodeString(byte[] buf, int offset, int compression_type, int mode, int number_of_bytes)
 		{
+			if (compression_type==0 && mode==0)
+			{
+				ASCIIEncoding encoding = new ASCIIEncoding();
+				string label=encoding.GetString(buf,offset,number_of_bytes);
+				return label;
+			}
 			return String.Empty;
 		}
+
 		string[] DecodeMultipleStrings(byte[] buf, int offset)
 		{
 			int number_of_strings = buf[offset];
@@ -135,19 +142,19 @@ namespace MediaPortal.TV.Recording
 			return labels;
 		}
 
-		void DecodeExtendedChannelNameDescriptor( byte[] buf,ref DVBSections.ChannelInfo channelInfo)
+		void DecodeExtendedChannelNameDescriptor( byte[] buf,int start,ref DVBSections.ChannelInfo channelInfo)
 		{
 			// tid   
 			//  8       8------- 8-------
 			// 76543210|76543210|76543210
 			//    0        1        2    
 
-			int descriptor_tag = buf[0];
-			int descriptor_len = buf[1];
-			string[] labels = DecodeMultipleStrings(buf,2);
+			int descriptor_tag = buf[start+0];
+			int descriptor_len = buf[start+1];
+			string[] labels = DecodeMultipleStrings(buf,start+2);
 			if (labels.Length==0) return ;
 			if (labels[0].Length==0) return;
-			channelInfo.service_name=labels[0];
+			channelInfo.service_name=labels[0].Trim();
 		}
 
 		void DecodeTerrestialVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
@@ -259,7 +266,7 @@ namespace MediaPortal.TV.Recording
 								DecodeServiceLocationDescriptor( buf,start+len,ref channelInfo);
 							break;
 							case 0xa0:
-								//DecodeExtendedChannelNameDescriptor( buf,start+len,ref channelInfo);
+								DecodeExtendedChannelNameDescriptor( buf,start+len,ref channelInfo);
 							break;
 						}
 						len += (descriptor_len+2);
