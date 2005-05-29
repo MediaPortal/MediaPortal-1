@@ -38,6 +38,8 @@ namespace MediaPortal.Player
     protected long                      m_speedRate = 10000;
 		protected double                    m_dCurrentPos;
 		protected double                    m_dDuration;
+		protected int                       m_aspectX=1;
+		protected int                       m_aspectY=1;
 
     protected bool                      m_bStarted=false;
     protected int		                    rotCookie = 0;
@@ -204,6 +206,21 @@ namespace MediaPortal.Player
 					GUIGraphicsContext.VideoWindow.Bottom,
 					GUIGraphicsContext.IsFullScreenVideo);
 
+				
+				int aspectX, aspectY;
+				if (basicVideo!=null)
+				{
+					basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+				}
+				aspectX=m_iVideoWidth;
+				aspectY=m_iVideoHeight;
+				if (basicVideo!=null)
+				{
+					basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+				}
+				m_aspectX=aspectX;
+				m_aspectY=aspectY;
+
         System.Drawing.Rectangle rSource,rDest;
         MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
         m_geometry.ImageWidth=m_iVideoWidth;
@@ -212,8 +229,8 @@ namespace MediaPortal.Player
         m_geometry.ScreenHeight=nh;
         m_geometry.ARType=GUIGraphicsContext.ARType;
         m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
-        m_geometry.GetWindow(out rSource, out rDest);
-        rDest.X += (int)x;
+				m_geometry.GetWindow(aspectX,aspectY,out rSource, out rDest);
+				rDest.X += (int)x;
         rDest.Y += (int)y;
         
 
@@ -289,8 +306,31 @@ namespace MediaPortal.Player
       }      
       DoFFRW();
 			OnProcess();
+			CheckVideoResolutionChanges();
 
     }
+		void CheckVideoResolutionChanges()
+		{
+			if (videoWin==null || basicVideo==null) return;
+			int aspectX, aspectY;
+			int videoWidth=1, videoHeight=1;
+			if (basicVideo!=null)
+			{
+				basicVideo.GetVideoSize(out videoWidth, out videoHeight);
+			}
+			aspectX=videoWidth;
+			aspectY=videoHeight;
+			if (basicVideo!=null)
+			{
+				basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+			}
+			if (videoHeight!=m_iVideoHeight || videoWidth != m_iVideoWidth ||
+				aspectX != m_aspectX || aspectY != m_aspectY)
+			{
+				m_bUpdateNeeded=true;
+				SetVideoWindow();
+			}
+		}
 		protected virtual void OnProcess()
 		{
 		}

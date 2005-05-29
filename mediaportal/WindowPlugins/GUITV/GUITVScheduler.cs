@@ -857,32 +857,134 @@ namespace MediaPortal.GUI.TV
 
     void OnNewShedule()
     {
-      GUIDialogDateTime dlg = (GUIDialogDateTime)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_DATETIME);
-      if (dlg!=null)
-      {
-        ArrayList channels = new ArrayList();
-        TVDatabase.GetChannels(ref channels);
-        dlg.SetHeading(638);
-        dlg.Items.Clear();
-        foreach (TVChannel chan in channels)
-        {
-          dlg.Items.Add(chan.Name);
-        }
-        dlg.StartDateTime=DateTime.Now;
-        dlg.EndDateTime=DateTime.Now.AddHours(2);
-        dlg.DoModal(GetID);
-        if (dlg.IsConfirmed)
-        {
-          TVRecording rec = new TVRecording();
-          rec.Channel=dlg.Channel;
-          rec.Start=Utils.datetolong(dlg.StartDateTime);
-          rec.End=Utils.datetolong(dlg.EndDateTime);
-          rec.RecType = TVRecording.RecordingType.Once;
-          rec.Title=GUILocalizeStrings.Get(413);
-          TVDatabase.AddRecording(ref rec);
-          LoadDirectory();
-        }
-      }
+			//Channel
+			//Type (once,daily,....)
+			//Date
+			//Time
+			//Duration
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+      
+			dlg.Reset();
+			dlg.SetHeading(GUILocalizeStrings.Get(890));//Select TV Channel
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			foreach (TVChannel chan in channels)
+			{
+				GUIListItem item = new GUIListItem(chan.Name);
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,chan.Name);
+				if (!System.IO.File.Exists(strLogo))
+				{
+					strLogo="defaultVideoBig.png";
+				}
+				item.ThumbnailImage=strLogo;
+				item.IconImageBig=strLogo;
+				item.IconImage=strLogo;
+				dlg.Add(item);
+			}
+			dlg.DoModal(GetID);
+			if (dlg.SelectedLabel<=0) return;
+
+			TVChannel selectedChannel=channels[dlg.SelectedLabel] as TVChannel;
+			dlg.Reset();
+			dlg.SetHeading(616);//select recording type
+			for (int i=611; i <= 615; ++i)
+			{
+				dlg.Add( GUILocalizeStrings.Get(i));
+			}
+			dlg.Add( GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
+				
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) return;
+			TVRecording rec=new TVRecording();
+			
+			rec.Channel=selectedChannel.Name;
+			switch (dlg.SelectedLabel)
+			{
+				case 0://once
+					rec.RecType=TVRecording.RecordingType.Once;
+					break;
+				case 1://everytime, this channel
+					rec.RecType=TVRecording.RecordingType.EveryTimeOnThisChannel;
+					break;
+				case 2://everytime, all channels
+					rec.RecType=TVRecording.RecordingType.EveryTimeOnEveryChannel;
+					break;
+				case 3://weekly
+					rec.RecType=TVRecording.RecordingType.Weekly;
+					break;
+				case 4://daily
+					rec.RecType=TVRecording.RecordingType.Daily;
+					break;
+				case 5://Mo-Fi
+					rec.RecType=TVRecording.RecordingType.WeekDays;
+					break;
+			}
+			//Date
+			dlg.Reset();
+			dlg.SetHeading(636);//select day
+			dlg.ShowQuickNumbers=false;
+			DateTime dtNow =DateTime.Now;
+			int day;
+			for (day=0; day < 30;day++)
+			{
+				if (day>0)
+					dtNow=DateTime.Now.AddDays(day);
+					dlg.Add( dtNow.ToLongDateString());
+			}
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) return;
+			day=dlg.SelectedLabel;
+			
+			dlg.Reset();
+			dlg.SetHeading(142);//select time
+			dlg.ShowQuickNumbers=false;
+			//time
+			int no=0;
+			int hour,minute;
+			for (hour=0; hour <= 23; hour++)
+			{
+				for (minute=0; minute < 60; minute+=15)
+				{
+					string time="";
+					if (hour<10) time="0"+hour.ToString();
+					else time=hour.ToString();
+					time+=":";
+					if (minute<10) time=time+ "0"+minute.ToString();
+					else time+= minute.ToString();
+
+					dlg.Add(time);
+
+					if (DateTime.Now.Hour <= hour  && DateTime.Now.Minute <= minute)
+						dlg.SelectedLabel=no;
+					no++;
+				}
+			}
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) return;
+
+			hour=dlg.SelectedLabel/4;
+			minute=(dlg.SelectedLabel%4)*15;
+
+			
+			dlg.Reset();
+			dlg.SetHeading(180);//select time
+			dlg.ShowQuickNumbers=false;
+			//duration
+			for (float hours =0.5f ; hours <=3f; hours+=0.5f)
+			{
+				dlg.Add(String.Format("{0} {1}", hours.ToString("f2"),GUILocalizeStrings.Get(3002) ));
+			}
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) return;
+			int duration=(dlg.SelectedLabel+1)*30;
+
+			dtNow =DateTime.Now.AddDays(day);
+			rec.Start=Utils.datetolong( new DateTime(dtNow.Year,dtNow.Month,dtNow.Day,hour,minute,0,0) );
+			rec.End=Utils.datetolong( rec.StartTime.AddMinutes(duration) );
+      rec.Title=GUILocalizeStrings.Get(413);
+      TVDatabase.AddRecording(ref rec);
+      LoadDirectory();
     }
 
     void OnEdit(TVRecording rec)

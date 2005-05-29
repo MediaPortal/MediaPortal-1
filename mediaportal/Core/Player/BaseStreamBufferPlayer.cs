@@ -46,6 +46,8 @@ namespace MediaPortal.Player
 		protected bool                              m_bWindowVisible=false;
 		protected long                      m_speedRate = 10000;
 		protected int												rotCookie = 0;
+		protected int                       m_aspectX=1;
+		protected int                       m_aspectY=1;
 		/// <summary> control interface. </summary>
 		protected IMediaControl							mediaCtrl =null;
 
@@ -260,6 +262,8 @@ namespace MediaPortal.Player
 			{
 				basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
 			}
+			m_aspectX=aspectX;
+			m_aspectY=aspectY;
 			MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
 			System.Drawing.Rectangle rSource,rDest;
 			m_geometry.ImageWidth=m_iVideoWidth;
@@ -406,8 +410,31 @@ namespace MediaPortal.Player
 			}      
 			DoFFRW();
 			OnProcess();
+			CheckVideoResolutionChanges();
 		}
 
+		void CheckVideoResolutionChanges()
+		{
+			if (videoWin==null || basicVideo==null) return;
+			int aspectX, aspectY;
+			int videoWidth=1, videoHeight=1;
+			if (basicVideo!=null)
+			{
+				basicVideo.GetVideoSize(out videoWidth, out videoHeight);
+			}
+			aspectX=videoWidth;
+			aspectY=videoHeight;
+			if (basicVideo!=null)
+			{
+				basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+			}
+			if (videoHeight!=m_iVideoHeight || videoWidth != m_iVideoWidth ||
+				  aspectX != m_aspectX || aspectY != m_aspectY)
+			{
+				m_bUpdateNeeded=true;
+				SetVideoWindow();
+			}
+		}
 
 		protected virtual void OnProcess()
 		{
