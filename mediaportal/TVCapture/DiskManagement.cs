@@ -332,6 +332,7 @@ namespace MediaPortal.TV.Recording
 		
 		#endregion
 
+		#region episode disk management
 		private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
 		{
 			if (recording.EpisodesToKeep == Int32.MaxValue) return;
@@ -363,5 +364,6 @@ namespace MediaPortal.TV.Recording
 				VideoDatabase.DeleteMovieInfo(oldestFileName);
 			}
 		}
+		#endregion
 	}
 }

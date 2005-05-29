@@ -141,13 +141,14 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 	/// <summary>Metadata editor for DVR-MS files.</summary>
 	public  class DvrmsMetadataEditor : MetadataEditor
 	{
+		Toub.MediaCenter.Dvrms.Metadata.IFileSourceFilter sourceFilter=null;
 		Toub.MediaCenter.Dvrms.Metadata.IStreamBufferRecordingAttribute _editor=null;
 
 		/// <summary>Initializes the editor.</summary>
 		/// <param name="filepath">The path to the file.</param>
 		public DvrmsMetadataEditor(string filepath) : base()
 		{
-			Toub.MediaCenter.Dvrms.Metadata.IFileSourceFilter sourceFilter = ClassId.CoCreateInstance(ClassId.RecordingAttributes) as Toub.MediaCenter.Dvrms.Metadata.IFileSourceFilter;
+			sourceFilter = ClassId.CoCreateInstance(ClassId.RecordingAttributes) as Toub.MediaCenter.Dvrms.Metadata.IFileSourceFilter;
 			if (sourceFilter==null)
 			{
 				Log.WriteFile(Log.LogType.Recorder,true,"Unable to create IFileSourceFilter");
@@ -241,10 +242,14 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 		/// <param name="disposing">Whether this is being called from IDisposable.Dispose.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && _editor != null)
+			if (disposing)
 			{
-				while(Marshal.ReleaseComObject(_editor) > 0);
+				if (_editor != null)
+					Marshal.ReleaseComObject(_editor);
+				if (sourceFilter != null)
+					Marshal.ReleaseComObject(sourceFilter);
 				_editor = null;
+				sourceFilter=null;
 			}
 		}
 	}
