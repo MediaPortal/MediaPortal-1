@@ -643,6 +643,7 @@ namespace WindowPlugins.GUIPrograms
 
     private void btnStartSearch_Click(object sender, EventArgs e)
     {
+      int numberOfSearches = 0;
       bool bSuccess = true;
       InitProgressBar("Starting search");
       foreach (ListViewItem curItem in FileList.CheckedItems)
@@ -667,6 +668,14 @@ namespace WindowPlugins.GUIPrograms
 //            curItem.SubItems[1].Text = String.Format("waiting for reconnection...");
 //            System.Threading.Thread.Sleep(5126);
 //          }
+          numberOfSearches = numberOfSearches + 1;
+          if (numberOfSearches > 20)
+          {
+            curItem.SubItems[1].Text = String.Format("waiting...");
+            System.Threading.Thread.Sleep(20000);
+            Application.DoEvents();
+            numberOfSearches = 0;
+          }
           curItem.SubItems[1].Text = String.Format("searching...");
           curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
           Application.DoEvents();
@@ -855,6 +864,7 @@ namespace WindowPlugins.GUIPrograms
 
     void SaveSearch(ScraperSaveType saveType)
     {
+      int numberOfSearches = 0;
       InitProgressBar("Starting search");
       ListViewItem nextItem = null;
       foreach (ListViewItem curItem in FileList.CheckedItems)
@@ -876,6 +886,15 @@ namespace WindowPlugins.GUIPrograms
           StepProgressBar();
           if (file.FileInfoFavourite != null)
           {
+            numberOfSearches ++;
+            numberOfSearches = numberOfSearches + 1;
+            if (numberOfSearches > 20)
+            {
+              curItem.SubItems[1].Text = String.Format("waiting...");
+              Application.DoEvents();
+              System.Threading.Thread.Sleep(20000);
+              numberOfSearches = 0;
+            }
             curItem.SubItems[1].Text = String.Format("<searching...>");
             Application.DoEvents();
             file.FindFileInfoDetail(m_CurApp, file.FileInfoFavourite, myProgScraperType.ALLGAME, saveType);
