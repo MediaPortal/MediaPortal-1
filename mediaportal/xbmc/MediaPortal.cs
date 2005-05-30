@@ -810,6 +810,7 @@ public class MediaPortalApp : D3DApp, IRender
 			
         try
         {
+				//	Log.Write("app:render()");
             reentrant = true;
             // if there's no DX9 device (during resizing for exmaple) then just return
 					if (GUIGraphicsContext.DX9Device == null) 
@@ -852,6 +853,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         finally
         {
+//					Log.Write("app:render() done");
 					reentrant = false;
 			  }
     }

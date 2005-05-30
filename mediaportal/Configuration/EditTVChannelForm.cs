@@ -259,6 +259,18 @@ namespace MediaPortal.Configuration
 			get { return sortPlace;}
 			set { sortPlace=value;}
 		}
+		int ParseInt(string label)
+		{
+			try
+			{
+				int number=Int32.Parse(label);
+				return number;
+			}
+			catch(Exception)
+			{
+			}
+			return -1;
+		}
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -2547,30 +2559,37 @@ namespace MediaPortal.Configuration
 					channel.Channel=orgChannelNumber;
 				else
 				{
-					string chanNr=(string)comboBoxChannels.SelectedItem;
-					channel.Channel = -1;
-					for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
+					if (comboBoxChannels.SelectedIndex<0 && orgChannelNumber==-1)
 					{
-						if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
+						channel.Channel=TVDatabase.FindFreeTvChannelNumber(1);
+					}
+					else
+					{
+						string chanNr=(string)comboBoxChannels.SelectedItem;
+						channel.Channel = -1;
+						for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 						{
-							//get free nr
-							if (orgChannelNumber==-1)
+							if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
 							{
-								channel.Channel=TVDatabase.FindFreeTvChannelNumber(orgChannelNumber);
-							}
-							else
-							{
-								channel.Channel=orgChannelNumber;
+								//get free nr
+								if (orgChannelNumber==-1)
+								{
+									channel.Channel=TVDatabase.FindFreeTvChannelNumber(orgChannelNumber);
+								}
+								else
+								{
+									channel.Channel=orgChannelNumber;
+								}
 							}
 						}
-					}
-					if (chanNr.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
-					if (chanNr.Equals("CVBS#1")) channel.Channel=(int)ExternalInputs.cvbs1;
-					if (chanNr.Equals("CVBS#2")) channel.Channel=(int)ExternalInputs.cvbs2;
-					if (chanNr.Equals("RGB")) channel.Channel=(int)ExternalInputs.rgb;
-					if (channel.Channel ==-1)
-					{
-						channel.Channel = Convert.ToInt32(chanNr);
+						if (chanNr.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
+						if (chanNr.Equals("CVBS#1")) channel.Channel=(int)ExternalInputs.cvbs1;
+						if (chanNr.Equals("CVBS#2")) channel.Channel=(int)ExternalInputs.cvbs2;
+						if (chanNr.Equals("RGB")) channel.Channel=(int)ExternalInputs.rgb;
+						if (channel.Channel ==-1)
+						{
+							channel.Channel = Convert.ToInt32(chanNr);
+						}
 					}
 				}
 				
@@ -2955,7 +2974,7 @@ namespace MediaPortal.Configuration
 				case 24: return (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
 				case 25: return (int)TunerLib.ModulationType.BDA_MOD_QPSK; 
 			}
-			return 0;
+			return (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
 		}
 		int PolarisationToIndex(int polarisation)
 		{
@@ -3026,20 +3045,20 @@ namespace MediaPortal.Configuration
 						
 			try
 			{
-				freq=Int32.Parse(tbDVBTFreq.Text);
-				ONID=Int32.Parse(tbDVBTONID.Text);
-				TSID=Int32.Parse(tbDVBTTSID.Text);
-				SID=Int32.Parse(tbDVBTSID.Text);
-				audioPid=Int32.Parse(tbDVBTAudioPid.Text);
-				videoPid=Int32.Parse(tbDVBTVideoPid.Text);
-				teletextPid=Int32.Parse(tbDVBTTeletextPid.Text);
-				pmtPid=Int32.Parse(tbDVBTPmtPid.Text);
+				freq=ParseInt(tbDVBTFreq.Text);
+				ONID=ParseInt(tbDVBTONID.Text);
+				TSID=ParseInt(tbDVBTTSID.Text);
+				SID=ParseInt(tbDVBTSID.Text);
+				audioPid=ParseInt(tbDVBTAudioPid.Text);
+				videoPid=ParseInt(tbDVBTVideoPid.Text);
+				teletextPid=ParseInt(tbDVBTTeletextPid.Text);
+				pmtPid=ParseInt(tbDVBTPmtPid.Text);
 				provider=tbDVBTProvider.Text;
-				bandWidth=Int32.Parse(tbBandWidth.Text);
-				audio1=Int32.Parse(tbDVBTAudio1.Text);
-				audio2=Int32.Parse(tbDVBTAudio2.Text);
-				audio3=Int32.Parse(tbDVBTAudio3.Text);
-				ac3Pid=Int32.Parse(tbDVBTAC3.Text);
+				bandWidth=ParseInt(tbBandWidth.Text);
+				audio1=ParseInt(tbDVBTAudio1.Text);
+				audio2=ParseInt(tbDVBTAudio2.Text);
+				audio3=ParseInt(tbDVBTAudio3.Text);
+				ac3Pid=ParseInt(tbDVBTAC3.Text);
 				audioLanguage=tbDVBTAudioLanguage.Text;
 				audioLanguage1=tbDVBTAudioLanguage1.Text;
 				audioLanguage2=tbDVBTAudioLanguage2.Text;
@@ -3055,22 +3074,22 @@ namespace MediaPortal.Configuration
 			//dvb-C
 			try
 			{
-				freq=Int32.Parse(tbDVBCFreq.Text);
-				ONID=Int32.Parse(tbDVBCONID.Text);
-				TSID=Int32.Parse(tbDVBCTSID.Text);
-				SID=Int32.Parse(tbDVBCSID.Text);
-				symbolrate=Int32.Parse(tbDVBCSR.Text);
+				freq=ParseInt(tbDVBCFreq.Text);
+				ONID=ParseInt(tbDVBCONID.Text);
+				TSID=ParseInt(tbDVBCTSID.Text);
+				SID=ParseInt(tbDVBCSID.Text);
+				symbolrate=ParseInt(tbDVBCSR.Text);
 				innerFec=IndexToFec(cbDVBCInnerFeq.SelectedIndex);
 				modulation=IndexToModulation(cbDVBCModulation.SelectedIndex);
 				provider=tbDVBCProvider.Text;
-				audioPid=Int32.Parse(tbDVBCAudioPid.Text);
-				videoPid=Int32.Parse(tbDVBCVideoPid.Text);
-				teletextPid=Int32.Parse(tbDVBCTeletextPid.Text);
-				pmtPid=Int32.Parse(tbDVBCPmtPid.Text);
-				audio1=Int32.Parse(tbDVBCAudio1.Text);
-				audio2=Int32.Parse(tbDVBCAudio2.Text);
-				audio3=Int32.Parse(tbDVBCAudio3.Text);
-				ac3Pid=Int32.Parse(tbDVBCAC3.Text);
+				audioPid=ParseInt(tbDVBCAudioPid.Text);
+				videoPid=ParseInt(tbDVBCVideoPid.Text);
+				teletextPid=ParseInt(tbDVBCTeletextPid.Text);
+				pmtPid=ParseInt(tbDVBCPmtPid.Text);
+				audio1=ParseInt(tbDVBCAudio1.Text);
+				audio2=ParseInt(tbDVBCAudio2.Text);
+				audio3=ParseInt(tbDVBCAudio3.Text);
+				ac3Pid=ParseInt(tbDVBCAC3.Text);
 				audioLanguage=tbDVBCAudioLanguage.Text;
 				audioLanguage1=tbDVBCAudioLanguage1.Text;
 				audioLanguage2=tbDVBCAudioLanguage2.Text;
@@ -3086,29 +3105,29 @@ namespace MediaPortal.Configuration
 			try
 			{
 				int physical,minor,major;
-				physical=Int32.Parse(tbATSCPhysicalChannel.Text);
-				minor=Int32.Parse(tbATSCMinor.Text);
-				major=Int32.Parse(tbATSCMajor.Text);
-				freq=Int32.Parse(tbATSCFrequency.Text);
-				TSID=Int32.Parse(tbATSCTSID.Text);
-				symbolrate=Int32.Parse(tbATSCSymbolRate.Text);
+				physical=ParseInt(tbATSCPhysicalChannel.Text);
+				minor=ParseInt(tbATSCMinor.Text);
+				major=ParseInt(tbATSCMajor.Text);
+				freq=ParseInt(tbATSCFrequency.Text);
+				TSID=ParseInt(tbATSCTSID.Text);
+				symbolrate=ParseInt(tbATSCSymbolRate.Text);
 				innerFec=IndexToFec(cbATSCInnerFec.SelectedIndex);
 				modulation=IndexToModulation(cbATSCModulation.SelectedIndex);
 				provider=tbATSCProvider.Text;
-				audioPid=Int32.Parse(tbATSCAudioPid.Text);
-				videoPid=Int32.Parse(tbATSCVideoPid.Text);
-				teletextPid=Int32.Parse(tbATSCTeletextPid.Text);
-				pmtPid=Int32.Parse(tbATSCPMTPid.Text);
-				audio1=Int32.Parse(tbATSCAudio1Pid.Text);
-				audio2=Int32.Parse(tbATSCAudio2Pid.Text);
-				audio3=Int32.Parse(tbATSCAudio3Pid.Text);
-				ac3Pid=Int32.Parse(tbATSCAC3Pid.Text);
+				audioPid=ParseInt(tbATSCAudioPid.Text);
+				videoPid=ParseInt(tbATSCVideoPid.Text);
+				teletextPid=ParseInt(tbATSCTeletextPid.Text);
+				pmtPid=ParseInt(tbATSCPMTPid.Text);
+				audio1=ParseInt(tbATSCAudio1Pid.Text);
+				audio2=ParseInt(tbATSCAudio2Pid.Text);
+				audio3=ParseInt(tbATSCAudio3Pid.Text);
+				ac3Pid=ParseInt(tbATSCAC3Pid.Text);
 				audioLanguage=tbATSCAudioLanguage.Text;
 				audioLanguage1=tbATSCAudioLanguage1.Text;
 				audioLanguage2=tbATSCAudioLanguage2.Text;
 				audioLanguage3=tbATSCAudioLanguage3.Text;
 
-				if (major>0 && TSID>0 && freq>0)
+				if (major>0 && TSID>0 && minor>0 && physical>0 )
 				{
 					TVDatabase.MapATSCChannel(tvchannel.Name,physical,minor,major,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,-1,TSID,-1, audioPid,videoPid,teletextPid,pmtPid,audio1,audio2,audio3,ac3Pid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
 				}
@@ -3121,22 +3140,22 @@ namespace MediaPortal.Configuration
 				DVBChannel ch = new DVBChannel();
 				TVDatabase.GetSatChannel(tvchannel.ID,1,ref ch);
 
-				freq=Int32.Parse(tbDVBSFreq.Text);
-				ONID=Int32.Parse(tbDVBSONID.Text);
-				TSID=Int32.Parse(tbDVBSTSID.Text);
-				SID=Int32.Parse(tbDVBSSID.Text);
-				symbolrate=Int32.Parse(tbDVBSSymbolrate.Text);
+				freq=ParseInt(tbDVBSFreq.Text);
+				ONID=ParseInt(tbDVBSONID.Text);
+				TSID=ParseInt(tbDVBSTSID.Text);
+				SID=ParseInt(tbDVBSSID.Text);
+				symbolrate=ParseInt(tbDVBSSymbolrate.Text);
 				innerFec=IndexToFec(cbDvbSInnerFec.SelectedIndex);
 				polarisation=IndexToPolarisation(cbDVBSPolarisation.SelectedIndex);
 				provider=tbDVBSProvider.Text;
-				audioPid=Int32.Parse(tbDVBSAudioPid.Text);
-				videoPid=Int32.Parse(tbDVBSVideoPid.Text);
-				teletextPid=Int32.Parse(tbDVBSTeletextPid.Text);
-				pmtPid=Int32.Parse(tbDVBSPmtPid.Text);
-				audio1=Int32.Parse(tbDVBSAudio1.Text);
-				audio2=Int32.Parse(tbDVBSAudio2.Text);
-				audio3=Int32.Parse(tbDVBSAudio3.Text);
-				ac3Pid=Int32.Parse(tbDVBSAC3.Text);
+				audioPid=ParseInt(tbDVBSAudioPid.Text);
+				videoPid=ParseInt(tbDVBSVideoPid.Text);
+				teletextPid=ParseInt(tbDVBSTeletextPid.Text);
+				pmtPid=ParseInt(tbDVBSPmtPid.Text);
+				audio1=ParseInt(tbDVBSAudio1.Text);
+				audio2=ParseInt(tbDVBSAudio2.Text);
+				audio3=ParseInt(tbDVBSAudio3.Text);
+				ac3Pid=ParseInt(tbDVBSAC3.Text);
 				audioLanguage=tbDVBSAudioLanguage.Text;
 				audioLanguage1=tbDVBSAudioLanguage1.Text;
 				audioLanguage2=tbDVBSAudioLanguage2.Text;
@@ -3157,7 +3176,7 @@ namespace MediaPortal.Configuration
 					ch.AudioPid=audioPid;
 					ch.VideoPid=videoPid;
 					ch.TeletextPid=teletextPid;
-					ch.ECMPid = Int32.Parse(tbDVBSECMpid.Text);
+					ch.ECMPid = ParseInt(tbDVBSECMpid.Text);
 					ch.PMTPid=pmtPid;
 					ch.Audio1=audio1;
 					ch.Audio2=audio2;

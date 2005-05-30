@@ -71,7 +71,7 @@ namespace MediaPortal.Player
 		float							_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax;
 		VertexBuffer			m_vertexBuffer;
 		uint              m_surfAdr,m_texAdr;
-		bool							inRepaint;
+		
 		int               arVideoWidth=4;
 		int								arVideoHeight=3;
 		int               prevVideoWidth=0;
@@ -85,7 +85,7 @@ namespace MediaPortal.Player
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
 			Log.Write("PlaneScene: ctor()");
-			inRepaint=false;
+			
 			m_surfAdr=0;
 			m_texAdr=0;
 			m_vmr9Util=util;
@@ -354,88 +354,57 @@ namespace MediaPortal.Player
 
 		#region IVMR9Callback Members
 
-		static long frameCounter=0;
+		
 		public void PresentImage(int width,int height,int arWidth, int arHeight, uint pTex)
 		{
-			//avoid multiple threads accessing this method simultanously
-			//Log.Write("{0}",frameCounter);
-			
-			frameCounter++;
 			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+			if (!drawVideoAllowed  || !isEnabled)
+			{
+				m_vmr9Util.FrameCounter++;
+				return;
+			}
+			m_vmr9Util.FrameCounter++;
+//			Log.Write("vmr9:present image()");
+			InternalPresentImage(width,height,arWidth, arHeight, pTex, false);
+//			Log.Write("vmr9:present image() done");
+		}
+		public void PresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface)
+		{
+			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+			if (!drawVideoAllowed  || !isEnabled)
+			{
+				m_vmr9Util.FrameCounter++;
+				return;
+			}
+			m_vmr9Util.FrameCounter++;
+			InternalPresentSurface(width,height,arWidth, arHeight, pSurface, false);
+		}
+
+		private void InternalPresentImage(int width,int height,int arWidth, int arHeight, uint pTex, bool isRepaint)
+		{
+			if (reentrant)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"PlaneScene: re-entrancy in presentimage");
+				return;
+			}
 			try
 			{
-				if (reentrant)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"PlaneScene: re-entrancy in presentimage");
-					return;
-				}
+				reentrant=true;
 				GUIGraphicsContext.InVmr9Render=true;
-				m_idebugstep=0;
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
-				m_idebugstep=1;
 				arVideoWidth=arWidth;
 				arVideoHeight=arHeight;
-
-				m_idebugstep=2;
-				if (!drawVideoAllowed && !inRepaint) 
-				{
-					m_idebugstep=3;
-					m_vmr9Util.FrameCounter++;
-					m_idebugstep=4;
-					return;
-				}
-
-				m_idebugstep=5;
-				if (!isEnabled) 
-				{
-					m_idebugstep=6;
-					if (!inRepaint) m_vmr9Util.FrameCounter++;
-					
-					m_idebugstep=7;
-					return;
-				}
-
-				
-				m_idebugstep=8;
-				// when we're only showing the preview window and not in fullscreen tv/video mode
-				// then only update the video preview max 25 fps to save cpu%
-				if (!GUIGraphicsContext.IsFullScreenVideo)
-				{
-					m_idebugstep=9;
-					if (GUIGraphicsContext.Vmr9FPS>40)
-					{
-						m_idebugstep=10;
-						if ( (m_vmr9Util.FrameCounter%2)==1)
-						{
-							m_idebugstep=11;
-							if (!inRepaint) m_vmr9Util.FrameCounter++;
-							m_idebugstep=12;
-							return;
-						}
-					}
-				}
-				m_idebugstep=13;
-				reentrant=true;
 				
 				//if we're stopping then just return
 				float timePassed=GUIGraphicsContext.TimePassed;
-				m_idebugstep=14;
-				if (m_bStop)
-					return;
-				m_idebugstep=15;
-				m_idebugstep=16;
+				if (m_bStop) return;
 				//sanity checks
-				if (GUIGraphicsContext.DX9Device==null) 
-					return;
-				if (GUIGraphicsContext.DX9Device.Disposed) 
-					return;
-				if (GUIWindowManager.IsSwitchingToNewWindow) 
-					return; //dont present video during window transitions
-				m_idebugstep=17;
+				if (GUIGraphicsContext.DX9Device==null)  return;
+				if (GUIGraphicsContext.DX9Device.Disposed) return;
+				if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
 				if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
-				m_idebugstep=18;
 
 				//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 				//first time, fade in the video in 12 steps
@@ -463,17 +432,14 @@ namespace MediaPortal.Player
 					//after 12 steps, just present the video texture
 					m_lColorDiffuse = 0xFFffffff;
 				}
-				m_idebugstep=19;
 
 				//get desired video window
 				Size nativeSize = new Size(width, height);
 				renderTexture= SetVideoWindow(nativeSize);
-				m_idebugstep=20;
 
 				//clear screen
 				GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
 				GUIGraphicsContext.DX9Device.BeginScene();
-				m_idebugstep=21;
 
 				//check if we should render the GUI first and then the video or
 				//first the video and then the GUI
@@ -489,63 +455,43 @@ namespace MediaPortal.Player
 						bRenderGUIFirst = true;
 					}
 				}
-				m_idebugstep=22;
 
 				//render GUI if needed
 				if (bRenderGUIFirst)
 				{
 					if (m_renderer != null) 
 					{
-						m_idebugstep=23;
 						m_renderer.RenderFrame(timePassed);
 					}
 				}
-				m_idebugstep=24;
 	
 				//Render video texture
 				if (renderTexture)
 				{
-					m_idebugstep=25;
 					GUIFontManager.Present();
-					m_idebugstep=26;
 					unsafe
 					{
 						m_texAdr=pTex;
 						DrawTexture(pTex,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
-						m_idebugstep=27;
 					}
 				}
-				else
-				{
-					m_idebugstep=28;
-					if (!inRepaint) m_vmr9Util.FrameCounter++;
-					m_idebugstep=29;
-				}
-				m_idebugstep=30;
 				//render GUI if needed
 				if (!bRenderGUIFirst)
 				{
 					if (m_renderer != null) 
 					{
-						m_idebugstep=31;
 						m_renderer.RenderFrame(timePassed);
-						m_idebugstep=32;
 					}
 				}
 
-				m_idebugstep=33;
 				//using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
 				//{
 				//}
 				//backBuffer.UnlockRectangle();
 				GUIFontManager.Present();
-				m_idebugstep=34;
 				//and present it onscreen
-
 				GUIGraphicsContext.DX9Device.EndScene();
 				GUIGraphicsContext.DX9Device.Present();
-				
-				m_idebugstep=35;
 			}
 			catch (Exception ex)
 			{
@@ -559,178 +505,129 @@ namespace MediaPortal.Player
 			}
 		}
 
-		public void PresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface)
+		
+		private void InternalPresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface, bool InRepaint)
 		{
-			//avoid multiple threads accessing this method simultanously
-			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
-			//lock (typeof(PlaneScene))
+			if (reentrant)
 			{
-				if (reentrant)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"PlaneScene: re-entrancy in PresentSurface");
-					return;
-				}
+				Log.WriteFile(Log.LogType.Log,true,"PlaneScene: re-entrancy in PresentSurface");
+				return;
+			}
+			try
+			{
+				reentrant=true;
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
 				arVideoWidth=arWidth;
 				arVideoHeight=arHeight;
-				if (!drawVideoAllowed && !inRepaint) 
+				GUIGraphicsContext.InVmr9Render=true;
+				//if we're stopping then just return
+				float timePassed=GUIGraphicsContext.TimePassed;
+				if (m_bStop) return;
+				//Direct3D.Surface backBuffer=null;
+				//sanity checks
+				if (GUIGraphicsContext.DX9Device==null) return;
+				if (GUIGraphicsContext.DX9Device.Disposed) return;
+				if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
+				if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+
+				//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
+				//first time, fade in the video in 12 steps
+				int iMaxSteps = 12;
+				if (m_iFrame < iMaxSteps)
 				{
-					m_vmr9Util.FrameCounter++;
-					return;
+					// fade in
+					int iStep = 0xff / iMaxSteps;
+					if (m_bFadeIn)
+					{
+						m_lColorDiffuse = iStep * m_iFrame;
+						m_lColorDiffuse <<= 24;
+						m_lColorDiffuse |= 0xffffff;
+					}
+					else
+					{
+						m_lColorDiffuse = (iMaxSteps - iStep) * m_iFrame;
+						m_lColorDiffuse <<= 24;
+						m_lColorDiffuse |= 0xffffff;
+					}
+					m_iFrame++;
+				}
+				else 
+				{
+					//after 12 steps, just present the video texture
+					m_lColorDiffuse = 0xFFffffff;
 				}
 
-				if (!isEnabled) 
-				{
-					if (!inRepaint) m_vmr9Util.FrameCounter++;
-					return;
-				}
+				//get desired video window
+				Size nativeSize = new Size(width, height);
+				renderTexture= SetVideoWindow(nativeSize);
 
-				// when we're only showing the preview window and not in fullscreen tv/video mode
-				// then only update the video preview max 25 fps to save cpu%
+				//clear screen
+				GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+				GUIGraphicsContext.DX9Device.BeginScene();
+
+				//check if we should render the GUI first and then the video or
+				//first the video and then the GUI
+				bool bRenderGUIFirst = false;
 				if (!GUIGraphicsContext.IsFullScreenVideo)
 				{
-					if (GUIGraphicsContext.Vmr9FPS>40)
+					if (GUIGraphicsContext.ShowBackground)
 					{
-						if ( (m_vmr9Util.FrameCounter%2)==1)
-						{
-							if (!inRepaint) m_vmr9Util.FrameCounter++;
-							return;
-						}
+						//when we're looking at the GUI and the video is presented in a video preview window
+						//then first render the GUI
+						//In the other case the video is presented fullscreen. Then we first draw the video
+						//and after that we draw the GUI (like the OSD)
+						bRenderGUIFirst = true;
 					}
 				}
-				try
+
+				//render GUI if needed
+				if (bRenderGUIFirst)
 				{
-					reentrant=true;
-					GUIGraphicsContext.InVmr9Render=true;
-					//if we're stopping then just return
-					float timePassed=GUIGraphicsContext.TimePassed;
-					if (m_bStop) return;
-					//lock(this) 
+					if (m_renderer != null) 
 					{
-						//Direct3D.Surface backBuffer=null;
-						try
-						{
-							//sanity checks
-							if (GUIGraphicsContext.DX9Device==null) return;
-							if (GUIGraphicsContext.DX9Device.Disposed) return;
-							if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
-							if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
-
-							//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
-							//first time, fade in the video in 12 steps
-							int iMaxSteps = 12;
-							if (m_iFrame < iMaxSteps)
-							{
-								// fade in
-								int iStep = 0xff / iMaxSteps;
-								if (m_bFadeIn)
-								{
-									m_lColorDiffuse = iStep * m_iFrame;
-									m_lColorDiffuse <<= 24;
-									m_lColorDiffuse |= 0xffffff;
-								}
-								else
-								{
-									m_lColorDiffuse = (iMaxSteps - iStep) * m_iFrame;
-									m_lColorDiffuse <<= 24;
-									m_lColorDiffuse |= 0xffffff;
-								}
-								m_iFrame++;
-							}
-							else 
-							{
-								//after 12 steps, just present the video texture
-								m_lColorDiffuse = 0xFFffffff;
-							}
-
-							//get desired video window
-							Size nativeSize = new Size(width, height);
-							renderTexture= SetVideoWindow(nativeSize);
-
-							//clear screen
-							GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-							GUIGraphicsContext.DX9Device.BeginScene();
-
-							//check if we should render the GUI first and then the video or
-							//first the video and then the GUI
-							bool bRenderGUIFirst = false;
-							if (!GUIGraphicsContext.IsFullScreenVideo)
-							{
-								if (GUIGraphicsContext.ShowBackground)
-								{
-									//when we're looking at the GUI and the video is presented in a video preview window
-									//then first render the GUI
-									//In the other case the video is presented fullscreen. Then we first draw the video
-									//and after that we draw the GUI (like the OSD)
-									bRenderGUIFirst = true;
-								}
-							}
-
-							//render GUI if needed
-							if (bRenderGUIFirst)
-							{
-								if (m_renderer != null) 
-								{
-									m_renderer.RenderFrame(timePassed);
-								}
-							}
-	    
-							//Render video texture
-							if (renderTexture )
-							{
-								GUIFontManager.Present();
-								unsafe
-								{
-									m_surfAdr=pSurface;
-									DrawSurface(pSurface,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
-								}
-							}
-							else
-							{
-								if (!inRepaint) m_vmr9Util.FrameCounter++;
-
-							}
-							//render GUI if needed
-							if (!bRenderGUIFirst)
-							{
-								if (m_renderer != null) 
-								{
-									m_renderer.RenderFrame(timePassed);
-								}
-							}
-
-							//using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
-							//{
-							//}
-							//backBuffer.UnlockRectangle();
-							GUIFontManager.Present();
-							//and present it onscreen
-
-							GUIGraphicsContext.DX9Device.EndScene();
-							GUIGraphicsContext.DX9Device.Present();
-						}
-						catch (Exception ex)
-						{
-							Log.WriteFile(Log.LogType.Log,true,"Planescene:Unhandled exception in {0} {1} {2}",
-								ex.Message,ex.Source,ex.StackTrace);
-						}
-						finally
-						{
-							//if (backBuffer!=null)
-							//	backBuffer.Dispose();
-						}
-					}//lock(this)
+						m_renderer.RenderFrame(timePassed);
+					}
 				}
-				finally
+
+				//Render video texture
+				if (renderTexture )
 				{
-					reentrant=false;
-					GUIGraphicsContext.InVmr9Render=false;
+					GUIFontManager.Present();
+					unsafe
+					{
+						m_surfAdr=pSurface;
+						DrawSurface(pSurface,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
+					}
 				}
+
+				//render GUI if needed
+				if (!bRenderGUIFirst)
+				{
+					if (m_renderer != null) 
+					{
+						m_renderer.RenderFrame(timePassed);
+					}
+				}
+
+				//using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
+				//{
+				//}
+				//backBuffer.UnlockRectangle();
+				GUIFontManager.Present();
+				//and present it onscreen
+
+				GUIGraphicsContext.DX9Device.EndScene();
+				GUIGraphicsContext.DX9Device.Present();
+			}
+			finally
+			{
+				reentrant=false;
+				GUIGraphicsContext.InVmr9Render=false;
 			}
 		}
 
-		void DrawTexture(uint texAddr, float fx,float fy,float nw,float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
+		private void DrawTexture(uint texAddr, float fx,float fy,float nw,float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
 		{
 			if (texAddr==0) return;
 			CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vertexBuffer.Lock(0,0); // Lock the buffer (which will return our structs)
@@ -775,13 +672,11 @@ namespace MediaPortal.Player
 
 				// unset the texture and palette or the texture caching crashes because the runtime still has a reference
 				GUIGraphicsContext.DX9Device.SetTexture( 0, null);
-				if (!inRepaint) m_vmr9Util.FrameCounter++;
 			}
 		}
 
-		void DrawSurface(uint texAddr, float fx,float fy,float nw,float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
+		private void DrawSurface(uint texAddr, float fx,float fy,float nw,float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
 		{
-			
 			if (texAddr==0) return;
 			unsafe
 			{
@@ -790,7 +685,6 @@ namespace MediaPortal.Player
 				FontEngineDrawSurface(rSource.Left,rSource.Top,rSource.Width,rSource.Height,
 															rDest.Left,rDest.Top,rDest.Width,rDest.Height,
 																ptr.ToPointer());
-				if (!inRepaint) m_vmr9Util.FrameCounter++;
 			}
 		}
 
@@ -798,25 +692,24 @@ namespace MediaPortal.Player
 		{	
 			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			if (!isEnabled) return;
-//			Log.Write("scene.repaint :{0}",m_idebugstep);
-//			return;
+//			Log.Write("scene.repaint");
 			try
 			{
-				inRepaint=true;
+				
 				if (m_texAdr!=0)
 				{
 					if (!GUIGraphicsContext.InVmr9Render)
-						PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_texAdr);
+						InternalPresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_texAdr,true);
 				}
 				else if (m_surfAdr!=0)
 				{
 					if (!GUIGraphicsContext.InVmr9Render)
-						PresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_surfAdr);
+						InternalPresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_surfAdr,true);
 				}
 				else
 				{
 					if (!GUIGraphicsContext.InVmr9Render)
-						PresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,0);
+						InternalPresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,0,true);
 				}
 			}
 			catch(Exception ex)
@@ -824,11 +717,7 @@ namespace MediaPortal.Player
 				Log.WriteFile(Log.LogType.Log,true,"planescene:Unhandled exception in {0} {1} {2}",
 						ex.Message,ex.Source,ex.StackTrace);
 			}
-			finally
-			{
-				inRepaint=false;
-			}
-			//Log.Write("scene.repaint done");
+//			Log.Write("scene.repaint done");
 		}
 		#endregion
 	}//public class PlaneScene 
