@@ -272,7 +272,11 @@ namespace MediaPortal.TV.Recording
 		public bool GetTable(int pid,int tableID,int timeout)
 		{
 			if(pid<0 || pid>0x1FFF)
+			{
+				
+				Log.Write("dvb-demuxer: GetTable invalid pid:{0:X}", pid);
 				return false;
+			}
 			SECTIONS_BUFFER_WIDTH=1280;
 			m_secTimer.Interval=timeout;
 			return GetTable(pid,tableID);

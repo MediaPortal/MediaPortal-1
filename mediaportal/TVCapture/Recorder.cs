@@ -507,6 +507,10 @@ namespace MediaPortal.TV.Recording
 					TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
 					if (dev.IsRecording)
 					{
+						if (dev.CurrentTVRecording.Channel == rec.Channel)
+						{
+							if (dev.IsPostRecording) return;
+						}
 						GUIListItem item = new GUIListItem();
 						item.Label= dev.CurrentTVRecording.Title;
 						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,dev.CurrentTVRecording.Channel);                   
