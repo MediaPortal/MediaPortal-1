@@ -537,6 +537,10 @@ namespace MediaPortal.TV.Recording
 					{
 						cardNo=cardWithLowestPriority;
 						TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[cardNo];
+						Log.WriteFile(Log.LogType.Recorder,"Canceled recording:{0} priority:{1} on card:{2}",
+													 dev.CurrentTVRecording.ToString(),
+													 dev.CurrentTVRecording.Priority,
+													 dev.ID);
 						StopRecording(dev.CurrentTVRecording);
 					}
 					else
@@ -552,6 +556,10 @@ namespace MediaPortal.TV.Recording
 									if (count==selectedIndex)
 									{
 										cardNo=i;
+										Log.WriteFile(Log.LogType.Recorder,"User canceled recording:{0} priority:{1} on card:{2}",
+											dev.CurrentTVRecording.ToString(),
+											dev.CurrentTVRecording.Priority,
+											dev.ID);
 										StopRecording(dev.CurrentTVRecording);
 										break;
 									}
