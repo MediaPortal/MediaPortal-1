@@ -121,6 +121,7 @@ namespace MediaPortal.Player
         return;
       }
       SetDeinterlacePrefs();
+			SetDeinterlaceMode();
 			quality = VMR9Filter as IQualProp ;
 			Log.Write("VMR9Helper:start vmr9");
 			
@@ -294,7 +295,7 @@ namespace MediaPortal.Player
       }
       vmr9Helper.SetDeinterlacePrefs((uint)DeInterlaceMode);
     }
-    public void SetDeinterlaceMode()
+    void SetDeinterlaceMode()
     {
       if (vmr9Helper == null) return;
       vmr9Helper.SetDeinterlaceMode();

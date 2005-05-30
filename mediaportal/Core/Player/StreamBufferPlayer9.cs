@@ -155,7 +155,6 @@ Log.Write("StreamBufferPlayer9: add codecs");
 					return base.GetInterfaces(filename);
 				}
 
-				Vmr9.SetDeinterlaceMode();
 				Log.Write("StreamBufferPlayer9: done");
 				return true;
       }
