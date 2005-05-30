@@ -245,6 +245,7 @@ namespace MediaPortal.TV.Recording
 		int m_aspectX=1;
 		int m_aspectY=1;
 
+		bool m_lastTuneError=false;
 		#endregion
 
 		
@@ -540,6 +541,7 @@ namespace MediaPortal.TV.Recording
 		{
 			int hr=0; // the result
 
+			m_lastTuneError=false;
 			// clear epg
 				if(Frequency>13000)
 					Frequency/=1000;
@@ -1400,10 +1402,12 @@ namespace MediaPortal.TV.Recording
 				m_selectedAudioPid=ch.AudioPid;
 				if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3)==false)
 				{
+					m_lastTuneError=true;
 					m_channelFound=false;
 					return;
 				}
 
+				m_lastTuneError=false;
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid);
@@ -1780,7 +1784,7 @@ namespace MediaPortal.TV.Recording
 		/// </returns>
 		public bool SignalPresent()
 		{
-				return true;
+				return (m_lastTuneError==true?false:true);
 		}
 		
 		public int  SignalQuality()
@@ -1885,12 +1889,16 @@ namespace MediaPortal.TV.Recording
 			catch{}
 			if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,-1,-1,ch.LNBFrequency,0,0,0,0,"",0)==false)
 			{
+				m_lastTuneError=true;
 				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: FAILED to tune channel");
 				return;
 			}
 			else
+			{
+				m_lastTuneError=false;
 				Log.WriteFile(Log.LogType.Capture,"called Tune(object)");
-			m_currentTuningObject=ch;
+			}
+				m_currentTuningObject=ch;
 
 		}
 		//

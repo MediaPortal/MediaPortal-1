@@ -145,6 +145,9 @@ namespace MediaPortal.TV.Recording
 			}
 			m_secTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_secTimer_Elapsed);
 			m_secTimer.Interval=5000;
+			m_packetTimer.Interval=1000; // 1000ms to receive a packet
+			m_packetTimer.AutoReset=false;
+			m_packetTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_packetTimer_Elapsed);
 			// calc crc table
 		}
         ~DVBDemuxer()
@@ -154,8 +157,6 @@ namespace MediaPortal.TV.Recording
 
         #region global Vars
 		int SECTIONS_BUFFER_WIDTH=1024+187;// 32kb for tables
-        const int m_mhwPid1 = 0xD2;
-        const int m_mhwPid2 = 0xD3;
         int m_teletextPid = 0;
         int m_subtitlePid = 0;
         int m_videoPid = 0;
@@ -182,6 +183,7 @@ namespace MediaPortal.TV.Recording
 		int m_bufferPositionSec=0;
 		static ArrayList m_tableSections=new ArrayList();
 		System.Timers.Timer m_secTimer=new System.Timers.Timer();
+		System.Timers.Timer m_packetTimer=new System.Timers.Timer();
 		int m_eitScheduleLastTable=0x50;
 		// pmt
 		int m_currentPMTVersion=-1;
@@ -191,6 +193,8 @@ namespace MediaPortal.TV.Recording
 		// for pmt pid
 		byte[] m_tableBufferPMT=new byte[4096];
 		int m_bufferPositionPMT=0;
+		bool m_packetsReceived=false;
+		bool m_secTimerStarted=false;
 
 		static DateTime epgRegrabTime=DateTime.MinValue;
         #endregion
@@ -230,7 +234,6 @@ namespace MediaPortal.TV.Recording
 			m_epgClass=new DVBEPG(cardType,networkType);
 		}
 
-
 		public DVBSectionHeader GetSectionHeader(byte[] data)
 		{
 			return GetSectionHeader(data,0);
@@ -268,6 +271,8 @@ namespace MediaPortal.TV.Recording
 		}
 		public bool GetTable(int pid,int tableID,int timeout)
 		{
+			if(pid<0 || pid>0x1FFF)
+				return false;
 			SECTIONS_BUFFER_WIDTH=1280;
 			m_secTimer.Interval=timeout;
 			return GetTable(pid,tableID);
@@ -281,6 +286,8 @@ namespace MediaPortal.TV.Recording
 			}
 			m_tableBufferSec=new byte[SECTIONS_BUFFER_WIDTH+1];
 			m_tableSections=new ArrayList();
+			m_packetsReceived=false;
+			m_secTimerStarted=false;
 			m_sectionPid=pid;
 			m_sectionTableID=tableID;
 			m_secTimer.Start();
@@ -321,6 +328,10 @@ namespace MediaPortal.TV.Recording
 		}
 		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
 		{
+			m_secTimer.Stop();
+			m_packetTimer.Stop();
+			m_secTimerStarted=false;
+			m_packetsReceived=false;
 			epgRegrabTime= DateTime.MinValue;
 			m_currentPMTVersion=-1;
 			// audio
@@ -417,6 +428,9 @@ namespace MediaPortal.TV.Recording
 			// timeout for grabbing sections
 			// clean up
 			m_secTimer.Stop();
+			m_secTimerStarted=false;
+			m_packetsReceived=false;
+
 			int currentTable=m_sectionTableID;
 			int currentPid=m_sectionPid;
 
@@ -721,8 +735,15 @@ namespace MediaPortal.TV.Recording
 				if(m_packetHeader.TransportError==true)
 					continue;// error, ignore packet
 				// teletext
+				
 				if (m_teleText != null)
 					m_teleText.SaveData((IntPtr)ptr);
+
+				if(m_packetsReceived==false)
+				{
+					m_packetTimer.Start();
+					m_packetsReceived=true;
+				}
 				// plugins
 				// get the header object
 				// audio & video
@@ -868,6 +889,12 @@ namespace MediaPortal.TV.Recording
 
 				if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
 				{
+					if(m_secTimerStarted==false)
+					{
+						m_packetTimer.Stop();
+						m_secTimer.Start();
+						m_secTimerStarted=true;
+					}
 					m_packetHeader.Payload=new byte[184];
 					Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
 					try
@@ -969,7 +996,6 @@ namespace MediaPortal.TV.Recording
 					else break;
 				}while(1!=0);
 				// clear up
-				m_tableBufferD2=new byte[65535];
 				m_bufferPositionD2=0;
 			}
 		}
@@ -1017,7 +1043,6 @@ namespace MediaPortal.TV.Recording
 					else break;
 				}while(1!=0);
 				// clear up
-				m_tableBufferD3=new byte[65535];
 				m_bufferPositionD3=0;
 			}
 
@@ -1058,7 +1083,7 @@ namespace MediaPortal.TV.Recording
 						else
 						{
 							Log.Write("CRC error:{0:X} != {1:X}", crc1,crc2);
-							sectionOK=true;
+							sectionOK=false;
 							// reject the section
 						}
 					}
@@ -1162,6 +1187,7 @@ namespace MediaPortal.TV.Recording
 
 		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			m_packetTimer.Stop();
 			if(m_mhwGrabbing==false)
 			{
 				Log.Write("dvb-demuxer: timeout");//change
@@ -1180,6 +1206,14 @@ namespace MediaPortal.TV.Recording
 				m_tableBufferD3=new byte[0];
 
 			}
+		}
+
+		private void m_packetTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			Log.Write("dvb-demuxer: no packet for pid: {0} and table-id: {1} for 1000ms found",m_sectionPid,m_sectionTableID);
+			m_packetTimer.Stop();
+			m_secTimer.Stop();
+			ClearGrabber();
 		}
 	}//class dvbdemuxer
  

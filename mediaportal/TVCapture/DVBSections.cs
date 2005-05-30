@@ -579,15 +579,17 @@ namespace MediaPortal.TV.Recording
 			m_sectionsList=new ArrayList();
 			bool flag=false;
 
-			m_streamDemuxer.GetTable(pid,tid,timeout);
-			m_syncWait=false;
-			m_eitTimeoutTimer.Interval=timeout*2;
-			m_eitTimeoutTimer.Start();
-			while(m_syncWait==false)
+			if(m_streamDemuxer.GetTable(pid,tid,timeout)==true)
 			{
-				System.Windows.Forms.Application.DoEvents();
+				m_syncWait=false;
+				m_eitTimeoutTimer.Interval=timeout*2;
+				m_eitTimeoutTimer.Start();
+				while(m_syncWait==false)
+				{
+					System.Windows.Forms.Application.DoEvents();
+				}
+				m_eitTimeoutTimer.Stop();
 			}
-			m_eitTimeoutTimer.Stop();
 			return flag;	
 
 		}
@@ -1027,7 +1029,8 @@ namespace MediaPortal.TV.Recording
 			int EIT_present_following_flag;
 			int pointer = 11;
 			int x = 0;
-		
+		 
+
 			while (len1 > 0)
 			{
 				service_id = (buf[pointer]<<8)+buf[pointer+1];
@@ -1218,8 +1221,8 @@ namespace MediaPortal.TV.Recording
 			//get SDT table (pid 0x11)
 			GetStreamData(filter,0x11, 0x42,0,m_timeoutMS);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
-			tab46=(ArrayList)m_sectionsList.Clone();
+//			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
+//			tab46=(ArrayList)m_sectionsList.Clone();
 
 			//for each PMT table...
 			ChannelInfo pat;
@@ -1255,8 +1258,8 @@ namespace MediaPortal.TV.Recording
 					{
 						foreach(byte[] wdata in tab42)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-						foreach(byte[] wdata in tab46)
-							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
+//						foreach(byte[] wdata in tab46)
+//							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 					}
 					tp.channels.Add(pat);
 				}
