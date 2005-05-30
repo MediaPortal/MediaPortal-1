@@ -310,6 +310,11 @@ namespace DShowNET
 					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:could not get IVideoWindow");
 				}
 			}
+			else
+			{
+				if (vmr9!=null)
+					vmr9.SetDeinterlaceMode();
+			}
 
 			Overlay=false;
 

@@ -121,7 +121,6 @@ namespace MediaPortal.Player
         return;
       }
       SetDeinterlacePrefs();
-			SetDeinterlaceMode();
 			quality = VMR9Filter as IQualProp ;
 			Log.Write("VMR9Helper:start vmr9");
 			
@@ -295,10 +294,19 @@ namespace MediaPortal.Player
       }
       vmr9Helper.SetDeinterlacePrefs((uint)DeInterlaceMode);
     }
-    void SetDeinterlaceMode()
+    public void SetDeinterlaceMode()
     {
-      if (vmr9Helper == null) return;
-      vmr9Helper.SetDeinterlaceMode();
+			if (vmr9Helper == null) return;
+			int DeInterlaceMode = 3;
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				//None
+				//Bob
+				//Weave
+				//Best
+				DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+			}
+			vmr9Helper.SetDeinterlaceMode(DeInterlaceMode);
     }
     public void Enable(bool onOff)
     {

@@ -100,7 +100,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="STRMBASE.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib"
+				AdditionalDependencies="STRMBASE.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib quartz.lib"
 				OutputFile="$(OutDir)/DirectShowHelper.dll"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""

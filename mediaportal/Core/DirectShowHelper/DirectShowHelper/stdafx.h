@@ -64,7 +64,7 @@ using namespace ATL;
 #include <vmr9.h>
 #include <sbe.h>
 #include <windows.h>
-
+#include <dxva.h>
 #ifndef QI
 #define QI(i) (riid == __uuidof(i)) ? GetInterface((i*)this, ppv) :
 #endif

@@ -40,7 +40,7 @@ public:
 
 	STDMETHOD(Init)(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor);
 	STDMETHOD(Deinit)(void);
-	STDMETHOD(SetDeinterlaceMode)(void);
+	STDMETHOD(SetDeinterlaceMode)(int mode);
 	STDMETHOD(SetDeinterlacePrefs)(DWORD dwMethod);
 protected:
 	CComPtr<IVMRSurfaceAllocator9>  g_allocator;

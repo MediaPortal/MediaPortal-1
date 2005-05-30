@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Fri May 27 14:55:40 2005
+/* at Mon May 30 14:51:09 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -301,7 +301,8 @@ EXTERN_C const IID IID_IVMR9Helper;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlacePrefs( 
             /* [in] */ DWORD dwInterlace) = 0;
         
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlaceMode( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlaceMode( 
+            /* [in] */ int mode) = 0;
         
     };
     
@@ -334,7 +335,8 @@ EXTERN_C const IID IID_IVMR9Helper;
             /* [in] */ DWORD dwInterlace);
         
         /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *SetDeinterlaceMode )( 
-            IVMR9Helper * This);
+            IVMR9Helper * This,
+            /* [in] */ int mode);
         
         END_INTERFACE
     } IVMR9HelperVtbl;
@@ -365,8 +367,8 @@ EXTERN_C const IID IID_IVMR9Helper;
 #define IVMR9Helper_SetDeinterlacePrefs(This,dwInterlace)	\
     (This)->lpVtbl -> SetDeinterlacePrefs(This,dwInterlace)
 
-#define IVMR9Helper_SetDeinterlaceMode(This)	\
-    (This)->lpVtbl -> SetDeinterlaceMode(This)
+#define IVMR9Helper_SetDeinterlaceMode(This,mode)	\
+    (This)->lpVtbl -> SetDeinterlaceMode(This,mode)
 
 #endif /* COBJMACROS */
 
@@ -403,7 +405,8 @@ void __RPC_STUB IVMR9Helper_SetDeinterlacePrefs_Stub(
 
 
 /* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_SetDeinterlaceMode_Proxy( 
-    IVMR9Helper * This);
+    IVMR9Helper * This,
+    /* [in] */ int mode);
 
 
 void __RPC_STUB IVMR9Helper_SetDeinterlaceMode_Stub(

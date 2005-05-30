@@ -198,6 +198,7 @@ namespace MediaPortal.Player
 					Cleanup();
 					return base.GetInterfaces(strPath);
 				}
+				Vmr9.SetDeinterlaceMode();
         Log.Write("Dvdplayer9:graph created");
         m_bStarted=true;
         return true;

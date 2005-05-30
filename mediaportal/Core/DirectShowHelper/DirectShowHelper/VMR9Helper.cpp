@@ -11,6 +11,14 @@
 #define IsInterlaced(x) ((x) & AMINTERLACE_IsInterlaced)
 #define IsSingleField(x) ((x) & AMINTERLACE_1FieldPerSample)
 #define IsField1First(x) ((x) & AMINTERLACE_Field1First)
+
+#define INIT_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+		const GUID name \
+				= { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
+
+
+INIT_GUID(bobDxvaGuid,0x335aa36e,0x7884,0x43a4,0x9c,0x91,0x7f,0x87,0xfa,0xf3,0xe3,0x7e);
+
 void Log(const char *fmt, ...) 
 {
 	va_list ap;
@@ -144,17 +152,60 @@ STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)
 	return S_OK;
 }
 
-STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
+STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 {
+	//0=None
+	//1=Bob
+	//2=Weave
+	//3=Best
+	Log("vmr9:SetDeinterlace() SetDeinterlaceMode(%d)",mode);
 	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
 	VMR9VideoDesc VideoDesc; 
 	DWORD dwNumModes = 0;
+	GUID deintMode;
+	int hr;
+	if (mode==0)
+	{
+		//off
+		hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&GUID_NULL);
+		if (!SUCCEEDED(hr)) Log("vmr9:SetDeinterlace() failed hr:0x%x",hr);
+		hr=pDeint->GetDeinterlaceMode(0,&deintMode);
+		if (!SUCCEEDED(hr)) Log("vmr9:GetDeinterlaceMode() failed hr:0x%x",hr);
+		Log("vmr9:SetDeinterlace() deinterlace mode OFF: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
+				deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
+
+		return S_OK;
+	}
+	if (mode==1)
+	{
+		//BOB
+
+		hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&bobDxvaGuid);
+		if (!SUCCEEDED(hr)) Log("vmr9:SetDeinterlace() failed hr:0x%x",hr);
+		hr=pDeint->GetDeinterlaceMode(0,&deintMode);
+		if (!SUCCEEDED(hr)) Log("vmr9:GetDeinterlaceMode() failed hr:0x%x",hr);
+		Log("vmr9:SetDeinterlace() deinterlace mode BOB: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
+				deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
+
+		return S_OK;
+	}
+	if (mode==2)
+	{
+		//WEAVE
+		hr=pDeint->SetDeinterlaceMode(0xFFFFFFFF,(LPGUID)&GUID_NULL);
+		if (!SUCCEEDED(hr)) Log("vmr9:SetDeinterlace() failed hr:0x%x",hr);
+		hr=pDeint->GetDeinterlaceMode(0,&deintMode);
+		if (!SUCCEEDED(hr)) Log("vmr9:GetDeinterlaceMode() failed hr:0x%x",hr);
+		Log("vmr9:SetDeinterlace() deinterlace mode WEAVE: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
+				deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
+		return S_OK;
+	}
 
 	AM_MEDIA_TYPE pmt;
 	ULONG fetched;
 	IPin* pins[10];
 	CComPtr<IEnumPins> pinEnum;
-	int hr=m_pVMR9Filter->EnumPins(&pinEnum);
+	hr=m_pVMR9Filter->EnumPins(&pinEnum);
 	pinEnum->Reset();
 	pinEnum->Next(1,&pins[0],&fetched);
 	hr=pins[0]->ConnectionMediaType(&pmt);
@@ -286,15 +337,31 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode()
 					if (SUCCEEDED(hr)) 
 					{
 						Log("vmr9:SetDeinterlace() set deinterlace mode:%d",i);
+
+						
+						
+						pDeint->GetDeinterlaceMode(0,&deintMode);
+						if (deintMode.Data1==pModes[0].Data1 &&
+							deintMode.Data2==pModes[0].Data2 &&
+							deintMode.Data3==pModes[0].Data3 &&
+							deintMode.Data4==pModes[0].Data4)
+						{
+							Log("vmr9:SetDeinterlace() succeeded");
+						}
+						else
+							Log("vmr9:SetDeinterlace() deinterlace mode set to: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
+									deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
 						break;
 					}
 					else
 						Log("vmr9:SetDeinterlace() deinterlace mode:%d failed 0x:%x",i,hr);
+
 				}
 			}
 			delete [] pModes;
 		}
 	}
+
 
 
 	return S_OK;
