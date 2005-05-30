@@ -784,6 +784,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\VideoRendererStatistics.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\ViewDefinition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

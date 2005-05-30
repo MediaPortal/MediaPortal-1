@@ -34,7 +34,6 @@ namespace MediaPortal.Player
     int frameCounter = 0;
     DateTime repaintTimer = DateTime.Now;
     static int instanceCounter = 0;
-		int framesDrawn=0,avgFrameRate=0,avgSyncOffset=0,avgDevSyncOffset=0,framesDropped=0,jitter=0;
 
     enum Vmr9PlayState
     {
@@ -219,31 +218,6 @@ namespace MediaPortal.Player
       m_scene.Repaint();
     }
 
-		public float AverageFrameRate
-		{
-			get { return ((float)avgFrameRate)/100.0f;}
-		}
-		public int AverageSyncOffset
-		{
-			get { return avgSyncOffset;}
-		}
-		public int AverageDeviationSyncOffset
-		{
-			get { return avgDevSyncOffset;}
-		}
-		public int FramesDrawn
-		{
-			get { return framesDrawn;}
-		}
-		public int FramesDropped
-		{
-			get { return framesDropped;}
-		}
-		public int Jitter
-		{
-			get { return jitter;}
-		}
-
     public void Process()
     {
       TimeSpan ts = DateTime.Now - repaintTimer;
@@ -255,16 +229,7 @@ namespace MediaPortal.Player
         //Log.Write("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         repaintTimer = DateTime.Now;
         FrameCounter = 0;
-				if (quality!=null)
-				{
-					quality.get_AvgFrameRate(out avgFrameRate);
-					quality.get_AvgSyncOffset(out avgSyncOffset);
-					quality.get_DevSyncOffset(out avgDevSyncOffset);
-					quality.get_FramesDrawn(out framesDrawn);
-					quality.get_FramesDroppedInRenderer(out framesDropped);
-					quality.get_Jitter(out jitter);
-					//Log.Write("vmr9: fps:{0} sync:{1} devsync:{2} drawn:{3} dropped:{4} jitter:{5}",avgFrameRate,avgSyncOffset,avgDevSyncOffset,framesDrawn,framesDropped,jitter);
-				}
+				VideoRendererStatistics.Update(quality);
       }
       if (GUIGraphicsContext.Vmr9FPS > 1f)
       {

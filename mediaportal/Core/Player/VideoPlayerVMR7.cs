@@ -70,6 +70,7 @@ namespace MediaPortal.Player
     protected const int WS_CLIPCHILDREN	= 0x02000000;
     protected const int WS_CLIPSIBLINGS	= 0x04000000;
     protected bool        m_bVisible=false;
+		IQualProp quality=null;
 
     public VideoPlayerVMR7()
     {
@@ -290,6 +291,8 @@ namespace MediaPortal.Player
 				//mediaPos.get_Duration(out m_dDuration);
 				mediaPos.get_CurrentPosition(out m_dCurrentPos);
 			}
+			if (quality!=null) 
+				VideoRendererStatistics.Update(quality);
 
       if (GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false)
       {
@@ -784,6 +787,7 @@ namespace MediaPortal.Player
         videoWin	= graphBuilder as IVideoWindow;
         basicVideo	= graphBuilder as IBasicVideo2;
         basicAudio	= graphBuilder as IBasicAudio;
+				quality = videoWin as IQualProp;
 
 //        m_ovMgr = new OVTOOLLib.OvMgrClass();
 //        m_ovMgr.SetGraph(graphBuilder);
@@ -859,7 +863,7 @@ namespace MediaPortal.Player
         basicVideo	= null;
         videoStep	= null;
         basicAudio	= null;
-
+				quality     = null;
         if( vobSub != null )
           Marshal.ReleaseComObject( vobSub ); vobSub = null;
 

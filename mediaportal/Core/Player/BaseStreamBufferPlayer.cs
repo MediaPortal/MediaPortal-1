@@ -63,6 +63,7 @@ namespace MediaPortal.Player
 
 		/// <summary> audio interface used to control volume. </summary>
 		protected IBasicAudio								basicAudio=null;
+		IQualProp quality=null;
 
 		protected const int WM_GRAPHNOTIFY	= 0x00008001;	// message from graph
 		protected const int WS_CHILD			= 0x40000000;	// attributes for video window
@@ -353,6 +354,9 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
+				if (quality!=null) 
+					VideoRendererStatistics.Update(quality);
+
 			}
 
 			double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
@@ -872,7 +876,7 @@ namespace MediaPortal.Player
 
 				basicVideo	= graphBuilder as IBasicVideo2;
 				basicAudio	= graphBuilder as IBasicAudio;
-        
+				quality = videoWin as IQualProp;    
 				Log.Write("StreamBufferPlayer:SetARMode");
 				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
@@ -935,8 +939,8 @@ namespace MediaPortal.Player
         
         
 				basicVideo	= null;
-        
 				basicAudio	= null;
+				quality     = null;
 
 				if ( bufferSource != null )
 					Marshal.ReleaseComObject( bufferSource );

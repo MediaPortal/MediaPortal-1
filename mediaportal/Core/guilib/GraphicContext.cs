@@ -785,7 +785,6 @@ namespace MediaPortal.GUI.Library
 			get { return m_fVMR9FPS;}
 			set { m_fVMR9FPS=value;}
 		}
-
 		static public bool Vmr9Active
 		{
 			get 
