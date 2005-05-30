@@ -303,8 +303,8 @@ namespace MediaPortal.TV.Recording
 		{
 			if(m_sectionPid!=-1)
 				return; // only grab when no other grabbing was started
-			m_tableBufferD2=new byte[65535];
-			m_tableBufferD3=new byte[65535];
+			m_tableBufferD2=new byte[66000];
+			m_tableBufferD3=new byte[66000];
 			m_mhwGrabbing=true;
 			m_secTimer.Interval=30000;// grab for 30 sec.
 			m_secTimer.Start();
@@ -937,8 +937,10 @@ namespace MediaPortal.TV.Recording
 				// find first start of table
 				do
 				{
-					if(ptr<65533)
+					if(ptr>=0 && ptr<65533)
 					{
+						if(ptr>65534 || ptr<0)
+							break;
 						tableID=m_tableBufferD2[ptr];
 						sectionLen=((m_tableBufferD2[ptr+1]-0x70)<<8)+m_tableBufferD2[ptr+2];
 						// table ok?
@@ -982,8 +984,10 @@ namespace MediaPortal.TV.Recording
 				// find first start of table
 				do
 				{
-					if(ptr<65533)
+					if(ptr>=0 && ptr<65533)
 					{
+						if(ptr>65534 || ptr<0)
+							break;
 						tableID=m_tableBufferD3[ptr];
 						sectionLen=((m_tableBufferD3[ptr+1]-0x70)<<8)+m_tableBufferD3[ptr+2];
 						// table ok?
@@ -1158,16 +1162,16 @@ namespace MediaPortal.TV.Recording
 
 		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			Log.Write("dvb-demuxer: timeout");//change
 			if(m_mhwGrabbing==false)
 			{
+				Log.Write("dvb-demuxer: timeout");//change
 				m_secTimer.Stop();
 				ClearGrabber();// clear up
 			}
 			else
 			{
 				// delete buffers and save epg-data
-				
+				Log.Write("MHW-EPG grabbing stop");
 				m_secTimer.Stop();
 				m_mhwGrabbing=false;
 				m_epgClass.GetMHWBuffer(ref m_mhwChannels,ref m_mhwTitles,ref m_mhwSummaries,ref m_mhwThemes);
