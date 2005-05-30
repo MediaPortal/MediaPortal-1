@@ -1395,6 +1395,15 @@ namespace MediaPortal
                                             GetSleepingTime(), strFmt, strDepthFmt, strMultiSample, ShouldUseSleepingTime());
                 if (GUIGraphicsContext.Vmr9Active)
                     frameStats += String.Format(" VMR9 {0}", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+							string quality=String.Format("\nfps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
+										VideoRendererStatistics.AverageFrameRate.ToString("f2"),
+										VideoRendererStatistics.AverageSyncOffset,
+										VideoRendererStatistics.FramesDrawn,
+										VideoRendererStatistics.FramesDropped,
+										VideoRendererStatistics.Jitter);
+							frameStats+=quality;
+									
+
             }
         }
 

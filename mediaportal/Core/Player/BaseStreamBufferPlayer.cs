@@ -876,7 +876,17 @@ namespace MediaPortal.Player
 
 				basicVideo	= graphBuilder as IBasicVideo2;
 				basicAudio	= graphBuilder as IBasicAudio;
-				quality = videoWin as IQualProp;    
+				
+				//find vmr7 video renderer
+				IBaseFilter overlayFilter;
+				DsUtils.FindFilterByClassID(graphBuilder,new Guid("B87BEB7B-8D29-423F-AE4D-6582C10175AC"),out overlayFilter);
+
+				if (overlayFilter!=null)
+				{
+					//get quality interface
+					quality = overlayFilter as IQualProp;    
+					overlayFilter=null;
+				}
 				Log.Write("StreamBufferPlayer:SetARMode");
 				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
