@@ -652,26 +652,19 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
 				int ID=dev.CurrentTVRecording.ID;
-				for (int i=0; i < m_Recordings.Count;++i)
+
+				if (dev.CurrentTVRecording.RecType==TVRecording.RecordingType.Once)
 				{
-					TVRecording rec =(TVRecording )m_Recordings[i];
-					if (rec.ID==ID)
-					{	
-						if (rec.RecType==TVRecording.RecordingType.Once)
-						{
-							rec.Canceled=Utils.datetolong(DateTime.Now);
-						}
-						else
-						{
-							long datetime=Utils.datetolong(DateTime.Now);
-							TVProgram prog=dev.CurrentProgramRecording;
-							if (prog!=null) datetime=Utils.datetolong(prog.StartTime);
-							rec.CanceledSeries.Add(datetime);
-						}
-						TVDatabase.UpdateRecording(rec);
-						break;
-					}
+					dev.CurrentTVRecording.Canceled=Utils.datetolong(DateTime.Now);
 				}
+				else
+				{
+					long datetime=Utils.datetolong(DateTime.Now);
+					TVProgram prog=dev.CurrentProgramRecording;
+					if (prog!=null) datetime=Utils.datetolong(prog.StartTime);
+					dev.CurrentTVRecording.CanceledSeries.Add(datetime);
+				}
+				TVDatabase.UpdateRecording(dev.CurrentTVRecording);
 				dev.StopRecording();
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);

@@ -1501,7 +1501,7 @@ namespace MediaPortal.TV.Database
 					int iContentRec=1;
 					if (!recording.IsContentRecording) iContentRec=0;
 
-					strSQL=String.Format("update recording set idChannel={0},iRecordingType={1},strProgram='{2}',iStartTime='{3}',iEndTime='{4}', iCancelTime='{5}', bContentRecording={6}, quality={7}, priority={8},episodesToKeep={9} where idRecording={9}", 
+					strSQL=String.Format("update recording set idChannel={0},iRecordingType={1},strProgram='{2}',iStartTime='{3}',iEndTime='{4}', iCancelTime='{5}', bContentRecording={6}, quality={7}, priority={8},episodesToKeep={9} where idRecording={10}", 
 						iChannelId,
 						(int)recording.RecType,
 						strTitle,
@@ -1513,8 +1513,9 @@ namespace MediaPortal.TV.Database
 						recording.Priority,
 						recording.EpisodesToKeep,
 						recording.ID);
+					Log.Write("{0}",strSQL);
 					m_db.Execute(strSQL);
-
+	
 					DeleteCanceledSeries(recording);
 					foreach (long datetime in recording.CanceledSeries)
 					{
