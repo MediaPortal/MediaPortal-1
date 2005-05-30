@@ -1214,7 +1214,8 @@ namespace MediaPortal.TV.Recording
 
 		private void m_packetTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			Log.Write("dvb-demuxer: no packet for pid: {0} and table-id: {1} for 1000ms found",m_sectionPid,m_sectionTableID);
+			if (m_sectionPid>=0) 
+				Log.Write("dvb-demuxer: no packet for pid: {0} and table-id: {1} for 1000ms found",m_sectionPid,m_sectionTableID);
 			m_packetTimer.Stop();
 			m_secTimer.Stop();
 			ClearGrabber();

@@ -474,7 +474,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			// not recording this yet
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(),rec.ID);
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(),rec.ID, rec.Priority,rec.Quality.ToString());
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  find free capture card");
 			LogTvStatistics();
 
