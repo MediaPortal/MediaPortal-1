@@ -509,7 +509,7 @@ namespace MediaPortal.TV.Recording
 					{
 						if (dev.CurrentTVRecording.Channel == rec.Channel)
 						{
-							if (dev.IsPostRecording) return;
+							if (dev.IsPostRecording) return false;
 						}
 						GUIListItem item = new GUIListItem();
 						item.Label= dev.CurrentTVRecording.Title;
