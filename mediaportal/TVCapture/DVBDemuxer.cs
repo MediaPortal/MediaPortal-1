@@ -146,7 +146,6 @@ namespace MediaPortal.TV.Recording
 			m_secTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_secTimer_Elapsed);
 			m_secTimer.Interval=5000;
 			m_secTimer.AutoReset=false;
-			// calc crc table
 		}
         ~DVBDemuxer()
         {
@@ -718,6 +717,60 @@ namespace MediaPortal.TV.Recording
 			}
 			return false;
 		}
+		static void ProcessEPG()
+		{
+			if(m_currentDVBCard==(int)DVBEPG.EPGCard.Invalid || m_currentDVBCard==(int)DVBEPG.EPGCard.Unknown)
+				return ;
+			ArrayList dataList=new ArrayList();
+			if(m_tableSections!=null)
+			{
+				dataList=(ArrayList)m_tableSections.Clone();
+				m_tableSections.Clear();
+			}
+			DVBEPG		tmpEPGClass=new DVBEPG(m_currentDVBCard,m_currentNetworkType);
+			Log.Write("started thread {0}",System.Threading.Thread.CurrentThread.Name);
+			int count=0;
+			if(dataList!=null)
+			{
+				count+=tmpEPGClass.GetEPG(dataList,0, out epgRegrabTime);
+			}
+			if(m_mhwChannels!=null && m_mhwTitles!=null && m_mhwThemes!=null && m_mhwSummaries!=null)
+			{
+				if(m_mhwChannels.Count>0)
+				{
+					tmpEPGClass.SetMHWBuffer(m_mhwChannels,m_mhwTitles,m_mhwSummaries,m_mhwThemes);
+					count+=tmpEPGClass.GetEPG( out epgRegrabTime);
+					m_mhwChannels.Clear();
+					m_mhwTitles.Clear();
+					m_mhwThemes.Clear();
+					m_mhwSummaries.Clear();
+				}
+			}
+			Log.Write("epg ready. added {0} events to database! Next grab at {1}",count, epgRegrabTime.ToString() );
+		}
+
+		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			if(m_mhwGrabbing==false)
+			{
+				Log.Write("dvb-demuxer: timeout");//change
+				m_secTimer.Stop();
+				ClearGrabber();// clear up
+			}
+			else
+			{
+				// delete buffers and save epg-data
+				Log.Write("MHW-EPG grabbing stop");
+				m_secTimer.Stop();
+				m_mhwGrabbing=false;
+				m_epgClass.GetMHWBuffer(ref m_mhwChannels,ref m_mhwTitles,ref m_mhwSummaries,ref m_mhwThemes);
+				ProcessEPGData();
+				m_tableBufferD2=new byte[0];
+				m_tableBufferD3=new byte[0];
+
+			}
+		}
+
 		#endregion
 
         #region Properties
@@ -727,7 +780,6 @@ namespace MediaPortal.TV.Recording
             get { return m_teleText; }
         }
         #endregion
-
 
         #region ISampleGrabberCB Members
         #region Unused SampleCB()
@@ -1182,60 +1234,6 @@ namespace MediaPortal.TV.Recording
 
 		//
 		//
-		public static void ProcessEPG()
-		{
-			if(m_currentDVBCard==(int)DVBEPG.EPGCard.Invalid || m_currentDVBCard==(int)DVBEPG.EPGCard.Unknown)
-				return ;
-			ArrayList dataList=new ArrayList();
-			if(m_tableSections!=null)
-			{
-				dataList=(ArrayList)m_tableSections.Clone();
-				m_tableSections.Clear();
-			}
-			DVBEPG		tmpEPGClass=new DVBEPG(m_currentDVBCard,m_currentNetworkType);
-			Log.Write("started thread {0}",System.Threading.Thread.CurrentThread.Name);
-			int count=0;
-			if(dataList!=null)
-			{
-				count+=tmpEPGClass.GetEPG(dataList,0, out epgRegrabTime);
-			}
-			if(m_mhwChannels!=null && m_mhwTitles!=null && m_mhwThemes!=null && m_mhwSummaries!=null)
-			{
-				if(m_mhwChannels.Count>0)
-				{
-					tmpEPGClass.SetMHWBuffer(m_mhwChannels,m_mhwTitles,m_mhwSummaries,m_mhwThemes);
-					count+=tmpEPGClass.GetEPG( out epgRegrabTime);
-					m_mhwChannels.Clear();
-					m_mhwTitles.Clear();
-					m_mhwThemes.Clear();
-					m_mhwSummaries.Clear();
-				}
-			}
-			Log.Write("epg ready. added {0} events to database! Next grab at {1}",count, epgRegrabTime.ToString() );
-		}
-
-		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if(m_mhwGrabbing==false)
-			{
-				Log.Write("dvb-demuxer: timeout");//change
-				m_secTimer.Stop();
-				ClearGrabber();// clear up
-			}
-			else
-			{
-				// delete buffers and save epg-data
-				Log.Write("MHW-EPG grabbing stop");
-				m_secTimer.Stop();
-				m_mhwGrabbing=false;
-				m_epgClass.GetMHWBuffer(ref m_mhwChannels,ref m_mhwTitles,ref m_mhwSummaries,ref m_mhwThemes);
-				ProcessEPGData();
-				m_tableBufferD2=new byte[0];
-				m_tableBufferD3=new byte[0];
-
-			}
-		}
-
 	}//class dvbdemuxer
  
 }//namespace
