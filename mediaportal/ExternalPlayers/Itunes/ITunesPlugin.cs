@@ -27,7 +27,7 @@ namespace MediaPortal.ITunesPlayer
 
 		public override string PlayerName
 		{
-			get {return "ITunes";}
+			get {return "iTunes audio player";}
 		}
 		/// <summary>
 		/// This method returns the version number of the plugin
@@ -103,14 +103,21 @@ namespace MediaPortal.ITunesPlayer
 
 		public override bool Play(string strFile)
 		{
-			if (iTunesApp==null)
+			try
 			{
-				iTunesApp= new iTunesLib.iTunesAppClass();
+				if (iTunesApp==null)
+				{
+					iTunesApp= new iTunesLib.iTunesAppClass();
+				}
+				iTunesApp.PlayFile(strFile);
+				playerPaused=false;
+				currentFile=strFile;
+				return true;
 			}
-			iTunesApp.PlayFile(strFile);
-			playerPaused=false;
-			currentFile=strFile;
-			return true;
+			catch(Exception)
+			{
+			}
+			return false;
 		}
 
 		public override double Duration
@@ -118,7 +125,15 @@ namespace MediaPortal.ITunesPlayer
 			get 
 			{
 				if (iTunesApp==null) return 0.0d;
-				return iTunesApp.CurrentTrack.Duration;
+				try
+				{
+					return iTunesApp.CurrentTrack.Duration;
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
+					return 0.0d;
+				}
 			}
 		}
 
@@ -126,33 +141,56 @@ namespace MediaPortal.ITunesPlayer
 		{
 			get 
 			{
-				if (iTunesApp==null) return 0.0d;
-				return (double)iTunesApp.PlayerPosition;
+				try
+				{
+					if (iTunesApp==null) return 0.0d;
+					return (double)iTunesApp.PlayerPosition;
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
+					return 0.0d;
+				}
 			}
 		}
 
 		public override void Pause()
 		{
 			if (iTunesApp==null) return ;
-			if (Paused) 
+			try
 			{
-				iTunesApp.Play();
-				playerPaused=false;
+				if (Paused) 
+				{
+					iTunesApp.Play();
+					playerPaused=false;
+				}
+				else 
+				{
+					iTunesApp.Pause();
+					playerPaused=true;
+				}
 			}
-			else 
+			catch(Exception)
 			{
-				iTunesApp.Pause();
-				playerPaused=true;
+				iTunesApp=null;
+				return ;
 			}
-
 		}
 
 		public override bool Paused
 		{
 			get 
 			{
-				if (iTunesApp==null) return false;
-				return playerPaused;
+				try
+				{
+					if (iTunesApp==null) return false;
+					return playerPaused;
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
+					return false;
+				}
 			}
 		}
 
@@ -160,10 +198,19 @@ namespace MediaPortal.ITunesPlayer
 		{
 			get 
 			{ 
-				if (iTunesApp==null) 
+				try
+				{
+					if (iTunesApp==null) 
+						return false;
+					if (Paused) return true;
+					return (iTunesApp.PlayerState != ITPlayerState.ITPlayerStateStopped);
+
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
 					return false;
-				if (Paused) return true;
-				return (iTunesApp.PlayerState != ITPlayerState.ITPlayerStateStopped);
+				}
 			}
 		}
 
@@ -173,8 +220,17 @@ namespace MediaPortal.ITunesPlayer
 			{
 				if (iTunesApp==null) 
 					return true;
-				if (Paused) return false;
-				return (iTunesApp.PlayerState == ITPlayerState.ITPlayerStateStopped);
+				try
+				{
+					if (Paused) return false;
+					return (iTunesApp.PlayerState == ITPlayerState.ITPlayerStateStopped);
+
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
+					return true;
+				}
 			}
 		}
 
@@ -182,10 +238,19 @@ namespace MediaPortal.ITunesPlayer
 		{
 			get 
 			{ 
-				if (iTunesApp==null) 
+				try
+				{
+					if (iTunesApp==null) 
+						return true;
+					if (Paused) return false;
+					return (iTunesApp.PlayerState == ITPlayerState.ITPlayerStateStopped);
+
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
 					return true;
-				if (Paused) return false;
-				return (iTunesApp.PlayerState == ITPlayerState.ITPlayerStateStopped);
+				}
 			}
 		}
 
@@ -199,20 +264,44 @@ namespace MediaPortal.ITunesPlayer
 		public override void Stop()
 		{
 			if (iTunesApp==null) return ;
-			iTunesApp.Stop();
-			playerPaused=false;
+			try
+			{
+				iTunesApp.Stop();
+				playerPaused=false;
+
+			}
+			catch(Exception)
+			{
+				iTunesApp=null;
+			}
 		}
 
 		public override int Volume
 		{
 			get { 
 				if (iTunesApp==null) return 0;
-				return iTunesApp.SoundVolume;
+				try
+				{
+					return iTunesApp.SoundVolume;
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
+					return 0;
+				}
 			}
 			set 
 			{
 				if (iTunesApp==null || value < 0 || value>100) return ;
 				iTunesApp.SoundVolume=value;
+				try
+				{
+					
+				}
+				catch(Exception)
+				{
+					iTunesApp=null;
+				}
 			}
 		}
 
@@ -234,7 +323,11 @@ namespace MediaPortal.ITunesPlayer
 			{
 				//m_winampController.Position = dTime;
 				if (iTunesApp==null) return;
-				iTunesApp.PlayerPosition=(int)dTime;
+				try
+				{
+					iTunesApp.PlayerPosition=(int)dTime;
+				}
+				catch(Exception){}
 			}
 		}
 

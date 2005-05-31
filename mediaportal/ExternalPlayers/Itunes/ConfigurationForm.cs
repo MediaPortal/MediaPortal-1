@@ -62,7 +62,7 @@ namespace MediaPortal.ITunesPlayer
 			// 
 			// buttonEnable
 			// 
-			this.buttonEnable.Location = new System.Drawing.Point(136, 56);
+			this.buttonEnable.Location = new System.Drawing.Point(256, 48);
 			this.buttonEnable.Name = "buttonEnable";
 			this.buttonEnable.TabIndex = 3;
 			this.buttonEnable.Text = "Save";
@@ -74,7 +74,7 @@ namespace MediaPortal.ITunesPlayer
 			this.extensionBox.Name = "extensionBox";
 			this.extensionBox.Size = new System.Drawing.Size(256, 20);
 			this.extensionBox.TabIndex = 4;
-			this.extensionBox.Text = ".mp3, .m4a, .m4p";
+			this.extensionBox.Text = ".mp3, .m4a, .m4p, .m4b";
 			// 
 			// label1
 			// 
@@ -125,6 +125,7 @@ namespace MediaPortal.ITunesPlayer
       {
         xmlWriter.SetValue("itunesplugin", "enabledextensions", extensionBox.Text);
       }
+			this.Close();
     }
     
 	}
