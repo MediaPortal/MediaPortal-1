@@ -526,6 +526,7 @@ namespace MediaPortal.TV.Recording
 			Log.Write("timeout...");
 			m_breakAction=true;
 			m_syncWait=true;
+			m_streamDemuxer.ResetGrabber();
 		}		
 
 		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
