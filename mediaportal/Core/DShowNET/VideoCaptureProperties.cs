@@ -65,7 +65,7 @@ namespace DShowNET
 			{
 				if (hauppauge.IsHauppage)
 				{
-					return ivac.VersionInfo;
+					return hauppauge.VersionInfo;
 				}
 				if (ivac.IsIVAC)
 				{

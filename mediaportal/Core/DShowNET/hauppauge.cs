@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
@@ -94,7 +94,7 @@ namespace DShowNET
 		};
 
 		[StructLayout(LayoutKind.Sequential,Pack=1), ComVisible(true)]
-			public struct driverVersion
+		public struct driverVersion
 		{
 			public uint			size;			
 			public uint			isnull;
@@ -129,6 +129,8 @@ namespace DShowNET
 
 		public bool GetVideoBitRate(out int minKbps, out int maxKbps,out bool isVBR)
 		{
+			
+			Log.Write("hauppauge: getvideobitrate()");
 			VideoBitRate bitrate = new VideoBitRate();
 			bitrate.size=(uint)Marshal.SizeOf(bitrate);
 			object obj =GetStructure(HauppaugeGuid,(uint)PropertyId.VideoBitRate, typeof(VideoBitRate)) ;
@@ -140,14 +142,17 @@ namespace DShowNET
 			isVBR = (bitrate.isvbr!=0);
 			minKbps=(int)bitrate.bitrate;
 			maxKbps=(int)bitrate.maxBitrate;
+			Log.Write("hauppauge: min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
 			return true;
 		}
 		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
 		{
+			Log.Write("hauppauge: setvideobitrate min:{0} max:{1} vbr:{2} {3}",minKbps,maxKbps,isVBR,Marshal.SizeOf(typeof(VideoBitRate)));
 			VideoBitRate bitrate=new VideoBitRate();
 			if (isVBR) bitrate.isvbr=1;
 			else bitrate.isvbr=0;
 
+			bitrate.size=(uint)Marshal.SizeOf(typeof(VideoBitRate));
 			bitrate.bitrate=(uint)minKbps;
 			bitrate.maxBitrate=(uint)maxKbps;
 			SetStructure(HauppaugeGuid,(uint)PropertyId.VideoBitRate, typeof(VideoBitRate), (object)bitrate) ;
@@ -158,8 +163,9 @@ namespace DShowNET
 		{
 			get
 			{
+				Log.Write("hauppauge: get version info {0}",Marshal.SizeOf(typeof(driverVersion) ));
 				driverVersion version = new driverVersion();
-				version.size=(uint)Marshal.SizeOf(version);
+				version.size=(uint)Marshal.SizeOf(typeof(driverVersion) );
 				object obj =GetStructure(HauppaugeGuid,(uint)PropertyId.DriverVersion, typeof(driverVersion)) ;
 				try
 				{ 
