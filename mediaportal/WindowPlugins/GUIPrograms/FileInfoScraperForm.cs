@@ -56,6 +56,7 @@ namespace WindowPlugins.GUIPrograms
     private MenuItem menuDataAndImages;
     private MenuItem menuData;
     private MenuItem menuImages;
+    private System.Windows.Forms.Label label2;
     bool stopSearching = false;
 
     public AppItem CurApp
@@ -150,9 +151,10 @@ namespace WindowPlugins.GUIPrograms
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.menuSaveDetails = new System.Windows.Forms.ContextMenu();
       this.menuDataAndImages = new System.Windows.Forms.MenuItem();
+      this.menuItem4 = new System.Windows.Forms.MenuItem();
       this.menuData = new System.Windows.Forms.MenuItem();
       this.menuImages = new System.Windows.Forms.MenuItem();
-      this.menuItem4 = new System.Windows.Forms.MenuItem();
+      this.label2 = new System.Windows.Forms.Label();
       this.bottomPanel.SuspendLayout();
       this.progressPanel.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).BeginInit();
@@ -163,6 +165,7 @@ namespace WindowPlugins.GUIPrograms
       // bottomPanel
       // 
       this.bottomPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+      this.bottomPanel.Controls.Add(this.label2);
       this.bottomPanel.Controls.Add(this.progressPanel);
       this.bottomPanel.Controls.Add(this.label1);
       this.bottomPanel.Controls.Add(this.MinRelevanceNum);
@@ -225,27 +228,26 @@ namespace WindowPlugins.GUIPrograms
       // 
       // MinRelevanceNum
       // 
-      this.MinRelevanceNum.Increment = new System.Decimal(new int[]
-      {
-        10, 0, 0, 0
-      }
-      );
+      this.MinRelevanceNum.Increment = new System.Decimal(new int[] {
+                                                                      10,
+                                                                      0,
+                                                                      0,
+                                                                      0});
       this.MinRelevanceNum.Location = new System.Drawing.Point(432, 3);
       this.MinRelevanceNum.Name = "MinRelevanceNum";
       this.MinRelevanceNum.Size = new System.Drawing.Size(56, 20);
       this.MinRelevanceNum.TabIndex = 24;
       this.toolTip1.SetToolTip(this.MinRelevanceNum, "This is the minimal RELEVANCE value to autoselect a match");
-      this.MinRelevanceNum.Value = new System.Decimal(new int[]
-      {
-        70, 0, 0, 0
-      }
-      );
+      this.MinRelevanceNum.Value = new System.Decimal(new int[] {
+                                                                  70,
+                                                                  0,
+                                                                  0,
+                                                                  0});
       this.MinRelevanceNum.ValueChanged += new System.EventHandler(this.MinRelevanceNum_ValueChanged);
       // 
       // ResetFilterButton
       // 
-      this.ResetFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-        ((System.Byte)(0)));
+      this.ResetFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.ResetFilterButton.Location = new System.Drawing.Point(282, 3);
       this.ResetFilterButton.Name = "ResetFilterButton";
       this.ResetFilterButton.Size = new System.Drawing.Size(40, 21);
@@ -256,15 +258,29 @@ namespace WindowPlugins.GUIPrograms
       // 
       // filterComboBox
       // 
-      this.filterComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
-        (System.Byte)(0)));
-      this.filterComboBox.Items.AddRange(new object[]
-      {
-        "Arcade", "Atari 5200", "Atari 7800", "Atari Lynx", "Atari ST", "Atari Video Computer System", "Commodore 64/128", "Commodore Amiga", "Game Boy", 
-          "Game Boy Advance", "Game Boy Color", "Neo Geo", "Nintendo 64", "Nintendo Entertainment System", "PlayStation", "Sega Dreamcast", "Sega Game Gear", 
-          "Sega Genesis", "Sega Master System", "Super NES", "TurboGrafx-16"
-      }
-      );
+      this.filterComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.filterComboBox.Items.AddRange(new object[] {
+                                                        "Arcade",
+                                                        "Atari 5200",
+                                                        "Atari 7800",
+                                                        "Atari Lynx",
+                                                        "Atari ST",
+                                                        "Atari Video Computer System",
+                                                        "Commodore 64/128",
+                                                        "Commodore Amiga",
+                                                        "Game Boy",
+                                                        "Game Boy Advance",
+                                                        "Game Boy Color",
+                                                        "Neo Geo",
+                                                        "Nintendo 64",
+                                                        "Nintendo Entertainment System",
+                                                        "PlayStation",
+                                                        "Sega Dreamcast",
+                                                        "Sega Game Gear",
+                                                        "Sega Genesis",
+                                                        "Sega Master System",
+                                                        "Super NES",
+                                                        "TurboGrafx-16"});
       this.filterComboBox.Location = new System.Drawing.Point(72, 3);
       this.filterComboBox.Name = "filterComboBox";
       this.filterComboBox.Size = new System.Drawing.Size(208, 21);
@@ -275,8 +291,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // filterLabel
       // 
-      this.filterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
-        (System.Byte)(0)));
+      this.filterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.filterLabel.Location = new System.Drawing.Point(8, 5);
       this.filterLabel.Name = "filterLabel";
       this.filterLabel.Size = new System.Drawing.Size(80, 16);
@@ -286,8 +301,7 @@ namespace WindowPlugins.GUIPrograms
       // buttonSelectBestMatch
       // 
       this.buttonSelectBestMatch.Enabled = false;
-      this.buttonSelectBestMatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
-        System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.buttonSelectBestMatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.buttonSelectBestMatch.Location = new System.Drawing.Point(168, 32);
       this.buttonSelectBestMatch.Name = "buttonSelectBestMatch";
       this.buttonSelectBestMatch.Size = new System.Drawing.Size(160, 32);
@@ -299,7 +313,7 @@ namespace WindowPlugins.GUIPrograms
       // allGameLink
       // 
       this.allGameLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.allGameLink.Location = new System.Drawing.Point(612, 8);
+      this.allGameLink.Location = new System.Drawing.Point(616, 56);
       this.allGameLink.Name = "allGameLink";
       this.allGameLink.Size = new System.Drawing.Size(128, 16);
       this.allGameLink.TabIndex = 3;
@@ -375,8 +389,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblFiles
       // 
-      this.lblFiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
-        (System.Byte)(0)));
+      this.lblFiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.lblFiles.Location = new System.Drawing.Point(8, 16);
       this.lblFiles.Name = "lblFiles";
       this.lblFiles.Size = new System.Drawing.Size(200, 16);
@@ -385,14 +398,13 @@ namespace WindowPlugins.GUIPrograms
       // 
       // FileList
       // 
-      this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.FileList.CheckBoxes = true;
-      this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-      {
-        this.FileTitle, this.status
-      }
-      );
+      this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                               this.FileTitle,
+                                                                               this.status});
       this.FileList.ContextMenu = this.menuFileList;
       this.FileList.FullRowSelect = true;
       this.FileList.HideSelection = false;
@@ -418,11 +430,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // menuFileList
       // 
-      this.menuFileList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-      {
-        this.mnuCheckWithoutImages, this.mnuCheckWithoutOverview
-      }
-      );
+      this.menuFileList.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                                 this.mnuCheckWithoutImages,
+                                                                                 this.mnuCheckWithoutOverview});
       // 
       // mnuCheckWithoutImages
       // 
@@ -470,8 +480,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblMatches
       // 
-      this.lblMatches.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
-        (System.Byte)(0)));
+      this.lblMatches.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.lblMatches.Location = new System.Drawing.Point(16, 18);
       this.lblMatches.Name = "lblMatches";
       this.lblMatches.Size = new System.Drawing.Size(56, 16);
@@ -480,13 +489,12 @@ namespace WindowPlugins.GUIPrograms
       // 
       // MatchList
       // 
-      this.MatchList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-      this.MatchList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-      {
-        this.columnHeader1, this.columnHeader2
-      }
-      );
+      this.MatchList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.MatchList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                this.columnHeader1,
+                                                                                this.columnHeader2});
       this.MatchList.FullRowSelect = true;
       this.MatchList.HideSelection = false;
       this.MatchList.Location = new System.Drawing.Point(16, 40);
@@ -510,17 +518,22 @@ namespace WindowPlugins.GUIPrograms
       // 
       // menuSaveDetails
       // 
-      this.menuSaveDetails.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
-      {
-        this.menuDataAndImages, this.menuItem4, this.menuData, this.menuImages
-      }
-      );
+      this.menuSaveDetails.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                                                                                    this.menuDataAndImages,
+                                                                                    this.menuItem4,
+                                                                                    this.menuData,
+                                                                                    this.menuImages});
       // 
       // menuDataAndImages
       // 
       this.menuDataAndImages.Index = 0;
       this.menuDataAndImages.Text = "Save Data and download images";
       this.menuDataAndImages.Click += new System.EventHandler(this.menuDataAndImages_Click);
+      // 
+      // menuItem4
+      // 
+      this.menuItem4.Index = 1;
+      this.menuItem4.Text = "-";
       // 
       // menuData
       // 
@@ -534,10 +547,15 @@ namespace WindowPlugins.GUIPrograms
       this.menuImages.Text = "Download images only";
       this.menuImages.Click += new System.EventHandler(this.menuImages_Click);
       // 
-      // menuItem4
+      // label2
       // 
-      this.menuItem4.Index = 1;
-      this.menuItem4.Text = "-";
+      this.label2.Location = new System.Drawing.Point(520, 8);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(224, 40);
+      this.label2.TabIndex = 28;
+      this.label2.Text = "Warning: Don\'t overuse the allgame scraper! Do lookups with small sets of games (" +
+        "max. 20 games).";
+      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
       // FileInfoScraperForm
       // 
