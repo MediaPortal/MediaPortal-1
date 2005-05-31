@@ -288,22 +288,6 @@ namespace MediaPortal.TV.Recording
 		{
 			// set demuxer
 			// release memory
-			Log.Write("DVBGraphSS2:Audio format changed");
-			Log.Write("DVBGraphSS2:  Bitrate:{0}",audioFormat.Bitrate);
-			Log.Write("DVBGraphSS2:  Layer:{0}",audioFormat.Layer);
-			Log.Write("DVBGraphSS2:  SamplingFreq:{0}",audioFormat.SamplingFreq);
-			Log.Write("DVBGraphSS2:  Channel:{0}",audioFormat.Channel);
-			Log.Write("DVBGraphSS2:  Bound:{0}",audioFormat.Bound);
-			Log.Write("DVBGraphSS2:  Copyright:{0}",audioFormat.Copyright);
-			Log.Write("DVBGraphSS2:  Emphasis:{0}",audioFormat.Emphasis);
-			Log.Write("DVBGraphSS2:  ID:{0}",audioFormat.ID);
-			Log.Write("DVBGraphSS2:  Mode:{0}",audioFormat.Mode);
-			Log.Write("DVBGraphSS2:  ModeExtension:{0}",audioFormat.ModeExtension);
-			Log.Write("DVBGraphSS2:  Original:{0}",audioFormat.Original);
-			Log.Write("DVBGraphSS2:  PaddingBit:{0}",audioFormat.PaddingBit);
-			Log.Write("DVBGraphSS2:  PrivateBit:{0}",audioFormat.PrivateBit);
-			Log.Write("DVBGraphSS2:  ProtectionBit:{0}",audioFormat.ProtectionBit);
-			Log.Write("DVBGraphSS2:  TimeLength:{0}",audioFormat.TimeLength);
 
 //				AMMediaType mpegAudioOut = new AMMediaType();
 //				mpegAudioOut.majorType = MediaType.Audio;
@@ -2061,6 +2045,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.HasEITSchedule=info.eitSchedule;
 				newchannel.HasEITPresentFollow=info.eitPreFollow;
 				newchannel.AudioLanguage3=info.pidCache;
+				newchannel.Audio3=m_currentTuningObject.Audio3;
 			
 				if (info.serviceType==1 && tv)
 				{

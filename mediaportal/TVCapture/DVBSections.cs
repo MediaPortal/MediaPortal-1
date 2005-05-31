@@ -492,87 +492,10 @@ namespace MediaPortal.TV.Recording
 		{
 			m_breakAction=true;
 			m_syncWait=true;
+			if(m_streamDemuxer!=null)
+				m_streamDemuxer.ResetGrabber();//stop timer and set pid to -1
 		}
-//		private bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
-//		{
-//			bool flag;
-//			int dataLen=0;
-//			int header=0;
-//			int tableExt=0;
-//			int sectNum=0;
-//			int sectLast=0;
-//			int version=0;
-//			byte[] arr = new byte[1];
-//			IntPtr sectionBuffer=IntPtr.Zero;
-//
-//			m_sectionsList=new ArrayList();
-//			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
-//			if(flag==false)
-//			{
-//				
-//				Log.WriteFile(Log.LogType.Capture,"DVBSections:GetStreamdata() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-//				return false;
-//			}
-//			if (sectLast<=0)
-//			{
-//				Log.WriteFile(Log.LogType.Capture,"DVBSections:Sections:GetStreamdata() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
-//			}
-//			for(int n=0;n<sectLast;n++)
-//			{
-//				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
-//				if(flag)
-//				{
-//					if (tableExt != - 1)
-//					{
-//						arr = new byte[dataLen+8 + 1];
-//						try
-//						{
-//							Marshal.Copy(sectionBuffer, arr, 8, dataLen);
-//						}
-//						catch
-//						{
-//							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-//							m_sectionsList.Clear();
-//							break;
-//						}
-//						arr[0] = (byte)tid;
-//						arr[1] = (byte)((header >> 8) & 255);
-//						arr[2] =(byte) (header & 255);
-//						arr[3] = (byte)((tableExt >> 8) & 255);
-//						arr[4] = (byte)(tableExt & 255);
-//						arr[5] =(byte) version;
-//						arr[6] = (byte)sectNum;
-//						arr[7] = (byte)sectLast;
-//						m_sectionsList.Add(arr);
-//						if(tableSection!=0)
-//							break;
-//					}
-//					else
-//					{
-//						arr = new byte[dataLen+3 + 1];
-//						try
-//						{
-//							Marshal.Copy(sectionBuffer, arr, 3, dataLen);
-//						}
-//						catch
-//						{
-//							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
-//							m_sectionsList.Clear();
-//							break;
-//						}
-//						arr[0] = System.Convert.ToByte(tid);
-//						arr[1] = System.Convert.ToByte((header >> 8) & 255);
-//						arr[2] = System.Convert.ToByte(header & 255);
-//						m_sectionsList.Add(arr);
-//						if(tableSection!=0)
-//							break;
-//					}// else
-//
-//				}// if(flag)
-//			}//for
-//			ReleaseSectionsBuffer();
-//			return true;
-//		}
+
 		// get stream data with mps demuxer-class
 		public bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
@@ -963,8 +886,11 @@ namespace MediaPortal.TV.Recording
 										break;
 										//case 0xc2:
 									case 0x59:
-										pmt.isDVBSubtitle=true;
-										pmt.data=DVB_SubtitleDescriptior(data);
+										if(pmt.stream_type==0x05 || pmt.stream_type==0x06)
+										{
+											pmt.isDVBSubtitle=true;
+											pmt.data=DVB_SubtitleDescriptior(data);
+										}
 										break;
 									default:
 										pmt.data="";
@@ -1221,8 +1147,8 @@ namespace MediaPortal.TV.Recording
 			//get SDT table (pid 0x11)
 			GetStreamData(filter,0x11, 0x42,0,m_timeoutMS);
 			tab42=(ArrayList)m_sectionsList.Clone();
-//			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
-//			tab46=(ArrayList)m_sectionsList.Clone();
+			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
+			tab46=(ArrayList)m_sectionsList.Clone();
 
 			//for each PMT table...
 			ChannelInfo pat;
@@ -1258,8 +1184,8 @@ namespace MediaPortal.TV.Recording
 					{
 						foreach(byte[] wdata in tab42)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-//						foreach(byte[] wdata in tab46)
-//							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
+						foreach(byte[] wdata in tab46)
+							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 					}
 					tp.channels.Add(pat);
 				}
