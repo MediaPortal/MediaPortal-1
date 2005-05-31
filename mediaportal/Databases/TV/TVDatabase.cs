@@ -3058,27 +3058,26 @@ namespace MediaPortal.TV.Database
 			} while (found==true);
 			return preferenceNumber;
 		}
-		static public bool DoesChannelExist(string name, int TSID, int ONID)
+		static public bool DoesChannelExist(int channelId, int TSID, int ONID)
 		{
 			//check dvbs
-			DatabaseUtility.RemoveInvalidChars(ref name);
-			string strSQL=String.Format( "select * from channel,tblDVBSMapping where tblDVBSMapping.idChannel = channel.idChannel and strChannel like '{0}' and sTSID={1} and sNetworkID={2}", name,TSID,ONID);
+			string strSQL=String.Format( "select * from channel,tblDVBSMapping where tblDVBSMapping.idChannel = channel.idChannel and sTSID={0} and sNetworkID={1} and channel.idChannel={2}", TSID,ONID, channelId);
 			SQLiteResultSet results;
 			results=m_db.Execute(strSQL);
 			if (results.Rows.Count>0) return true;
 
 			//check dvbc
-			strSQL=String.Format( "select * from channel,tblDVBCMapping where tblDVBCMapping.iLCN = channel.idChannel and channel.strChannel like '{0}' and TSID={1} and ONID={2}", name,TSID,ONID);
+			strSQL=String.Format( "select * from channel,tblDVBCMapping where tblDVBCMapping.iLCN = channel.idChannel  and TSID={0} and ONID={1} and channel.idChannel={2}", TSID,ONID, channelId);
 			results=m_db.Execute(strSQL);
 			if (results.Rows.Count>0) return true;
 
 			//check DVBT
-			strSQL=String.Format( "select * from channel,tblDVBTMapping where tblDVBTMapping.iLCN = channel.idChannel and channel.strChannel like '{0}' and TSID={1} and ONID={2}", name,TSID,ONID);
+			strSQL=String.Format( "select * from channel,tblDVBTMapping where tblDVBTMapping.iLCN = channel.idChannel  and TSID={0} and ONID={1} and channel.idChannel={2}", TSID,ONID, channelId);
 			results=m_db.Execute(strSQL);
 			if (results.Rows.Count>0) return true;
 
 			//check ATSC
-			strSQL=String.Format( "select * from channel,tblATSCMapping where tblATSCMapping.iLCN = channel.idChannel and channel.strChannel like '{0}' and TSID={1} and ONID={2}", name,TSID,ONID);
+			strSQL=String.Format( "select * from channel,tblATSCMapping where tblATSCMapping.iLCN = channel.idChannel  and TSID={0} and ONID={1} and channel.idChannel={2}", TSID,ONID, channelId);
 			results=m_db.Execute(strSQL);
 			if (results.Rows.Count>0) return true;
 
