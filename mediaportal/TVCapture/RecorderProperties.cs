@@ -18,7 +18,7 @@ namespace MediaPortal.TV.Recording
 		static TVRecording	 lastTvRecording=null;
 		static TVProgram     lastProgramRecording=null;
 		static ArrayList     m_TVChannels=new ArrayList();
-
+		static long					 programStart=-1;
 		static public void Init()
 		{
 			m_TVChannels.Clear();
@@ -39,6 +39,14 @@ namespace MediaPortal.TV.Recording
 		static public void UpdateRecordingProperties()
 		{
 			// handle properties...
+			if (currentTvChannel!=null)
+			{
+				TVProgram currentTvProgram=currentTvChannel.CurrentProgram;
+				if (currentTvProgram!=null && currentTvProgram.Start!=programStart)
+				{
+					Recorder_OnTvChannelChanged(currentTvChannel.Name);
+				}
+			}
 			if (Recorder.IsRecording())
 			{
 				DateTime dtStart,dtEnd,dtStarted;
@@ -168,6 +176,7 @@ namespace MediaPortal.TV.Recording
 		private static void Recorder_OnTvChannelChanged(string tvChannelName)
 		{
 			Log.WriteFile(Log.LogType.Recorder,"Recorder: tv channel changed:{0}",tvChannelName);
+			programStart=-1;
 			// for each tv-channel
 			for (int i=0; i < m_TVChannels.Count;++i)
 			{
@@ -191,6 +200,7 @@ namespace MediaPortal.TV.Recording
 				TVProgram prog=currentTvChannel.CurrentProgram;
 				if (prog!=null)
 				{
+					programStart=prog.Start;
 					GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 					GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 					GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
