@@ -58,6 +58,13 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.TreeView treeView1;
+		private System.Windows.Forms.Label label17;
     int   OldTimeZoneOffsetMins=0;
 
 		public TVProgramGuide() : this("Program Guide")
@@ -142,10 +149,19 @@ namespace MediaPortal.Configuration.Sections
 			this.label16 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.label14 = new System.Windows.Forms.Label();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.button3 = new System.Windows.Forms.Button();
+			this.button2 = new System.Windows.Forms.Button();
+			this.label18 = new System.Windows.Forms.Label();
+			this.treeView1 = new System.Windows.Forms.TreeView();
+			this.label17 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
+			this.groupBox1.SuspendLayout();
+			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// useColorCheckBox
@@ -159,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(224, 130);
+			this.label15.Location = new System.Drawing.Point(216, 96);
 			this.label15.Name = "label15";
 			this.label15.Size = new System.Drawing.Size(56, 16);
 			this.label15.TabIndex = 69;
@@ -176,7 +192,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// textBoxMinutes
 			// 
-			this.textBoxMinutes.Location = new System.Drawing.Point(184, 128);
+			this.textBoxMinutes.Location = new System.Drawing.Point(184, 96);
 			this.textBoxMinutes.Name = "textBoxMinutes";
 			this.textBoxMinutes.Size = new System.Drawing.Size(32, 20);
 			this.textBoxMinutes.TabIndex = 4;
@@ -184,7 +200,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// btnClearTVDatabase
 			// 
-			this.btnClearTVDatabase.Location = new System.Drawing.Point(152, 320);
+			this.btnClearTVDatabase.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.btnClearTVDatabase.Location = new System.Drawing.Point(288, 336);
 			this.btnClearTVDatabase.Name = "btnClearTVDatabase";
 			this.btnClearTVDatabase.Size = new System.Drawing.Size(120, 48);
 			this.btnClearTVDatabase.TabIndex = 11;
@@ -193,7 +210,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// btnUpdateTvGuide
 			// 
-			this.btnUpdateTvGuide.Location = new System.Drawing.Point(16, 320);
+			this.btnUpdateTvGuide.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.btnUpdateTvGuide.Location = new System.Drawing.Point(160, 336);
 			this.btnUpdateTvGuide.Name = "btnUpdateTvGuide";
 			this.btnUpdateTvGuide.Size = new System.Drawing.Size(120, 48);
 			this.btnUpdateTvGuide.TabIndex = 5;
@@ -224,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// compensateTextBox
 			// 
-			this.compensateTextBox.Location = new System.Drawing.Point(136, 128);
+			this.compensateTextBox.Location = new System.Drawing.Point(136, 96);
 			this.compensateTextBox.MaxLength = 3;
 			this.compensateTextBox.Name = "compensateTextBox";
 			this.compensateTextBox.Size = new System.Drawing.Size(24, 20);
@@ -234,7 +252,7 @@ namespace MediaPortal.Configuration.Sections
 			// useTimeZoneCheckBox
 			// 
 			this.useTimeZoneCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.useTimeZoneCheckBox.Location = new System.Drawing.Point(24, 96);
+			this.useTimeZoneCheckBox.Location = new System.Drawing.Point(16, 64);
 			this.useTimeZoneCheckBox.Name = "useTimeZoneCheckBox";
 			this.useTimeZoneCheckBox.Size = new System.Drawing.Size(240, 24);
 			this.useTimeZoneCheckBox.TabIndex = 2;
@@ -243,7 +261,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(24, 124);
+			this.label1.Location = new System.Drawing.Point(16, 96);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(112, 28);
 			this.label1.TabIndex = 50;
@@ -253,9 +271,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.browseButton.Location = new System.Drawing.Point(344, 64);
+			this.browseButton.Location = new System.Drawing.Point(336, 32);
 			this.browseButton.Name = "browseButton";
-			this.browseButton.Size = new System.Drawing.Size(56, 20);
+			this.browseButton.Size = new System.Drawing.Size(48, 20);
 			this.browseButton.TabIndex = 1;
 			this.browseButton.Text = "Browse";
 			this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
@@ -264,15 +282,15 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.folderNameTextBox.Location = new System.Drawing.Point(32, 64);
+			this.folderNameTextBox.Location = new System.Drawing.Point(24, 32);
 			this.folderNameTextBox.Name = "folderNameTextBox";
-			this.folderNameTextBox.Size = new System.Drawing.Size(296, 20);
+			this.folderNameTextBox.Size = new System.Drawing.Size(304, 20);
 			this.folderNameTextBox.TabIndex = 0;
 			this.folderNameTextBox.Text = "";
 			// 
 			// folderNameLabel
 			// 
-			this.folderNameLabel.Location = new System.Drawing.Point(16, 48);
+			this.folderNameLabel.Location = new System.Drawing.Point(8, 16);
 			this.folderNameLabel.Name = "folderNameLabel";
 			this.folderNameLabel.Size = new System.Drawing.Size(264, 16);
 			this.folderNameLabel.TabIndex = 47;
@@ -535,18 +553,12 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(432, 416);
 			this.tabControl1.TabIndex = 3;
+			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
 			// tabPage1
 			// 
-			this.tabPage1.Controls.Add(this.label16);
-			this.tabPage1.Controls.Add(this.browseButton);
-			this.tabPage1.Controls.Add(this.folderNameTextBox);
-			this.tabPage1.Controls.Add(this.folderNameLabel);
-			this.tabPage1.Controls.Add(this.textBoxMinutes);
-			this.tabPage1.Controls.Add(this.compensateTextBox);
-			this.tabPage1.Controls.Add(this.useTimeZoneCheckBox);
-			this.tabPage1.Controls.Add(this.label1);
-			this.tabPage1.Controls.Add(this.label15);
+			this.tabPage1.Controls.Add(this.groupBox2);
+			this.tabPage1.Controls.Add(this.groupBox1);
 			this.tabPage1.Controls.Add(this.btnUpdateTvGuide);
 			this.tabPage1.Controls.Add(this.btnClearTVDatabase);
 			this.tabPage1.Controls.Add(this.useColorCheckBox);
@@ -558,7 +570,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(168, 134);
+			this.label16.Location = new System.Drawing.Point(160, 104);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(8, 9);
 			this.label16.TabIndex = 70;
@@ -596,6 +608,86 @@ namespace MediaPortal.Configuration.Sections
 			this.label14.TabIndex = 69;
 			this.label14.Text = "Parameters";
 			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.folderNameTextBox);
+			this.groupBox1.Controls.Add(this.browseButton);
+			this.groupBox1.Controls.Add(this.label1);
+			this.groupBox1.Controls.Add(this.useTimeZoneCheckBox);
+			this.groupBox1.Controls.Add(this.compensateTextBox);
+			this.groupBox1.Controls.Add(this.textBoxMinutes);
+			this.groupBox1.Controls.Add(this.label15);
+			this.groupBox1.Controls.Add(this.label16);
+			this.groupBox1.Controls.Add(this.folderNameLabel);
+			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox1.Location = new System.Drawing.Point(16, 40);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(392, 128);
+			this.groupBox1.TabIndex = 71;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = " XMLTV ";
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Controls.Add(this.label17);
+			this.groupBox2.Controls.Add(this.button3);
+			this.groupBox2.Controls.Add(this.button2);
+			this.groupBox2.Controls.Add(this.label18);
+			this.groupBox2.Controls.Add(this.treeView1);
+			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox2.Location = new System.Drawing.Point(16, 184);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(392, 144);
+			this.groupBox2.TabIndex = 72;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = " DVB-EPG ";
+			// 
+			// button3
+			// 
+			this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button3.Location = new System.Drawing.Point(328, 112);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(56, 20);
+			this.button3.TabIndex = 38;
+			this.button3.Text = "None";
+			this.button3.Click += new System.EventHandler(this.button3_Click);
+			// 
+			// button2
+			// 
+			this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button2.Location = new System.Drawing.Point(264, 112);
+			this.button2.Name = "button2";
+			this.button2.Size = new System.Drawing.Size(56, 20);
+			this.button2.TabIndex = 37;
+			this.button2.Text = "All";
+			this.button2.Click += new System.EventHandler(this.button2_Click);
+			// 
+			// label18
+			// 
+			this.label18.Location = new System.Drawing.Point(168, -64);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(192, 8);
+			this.label18.TabIndex = 36;
+			this.label18.Text = "Only grab those Languages:";
+			// 
+			// treeView1
+			// 
+			this.treeView1.CheckBoxes = true;
+			this.treeView1.ImageIndex = -1;
+			this.treeView1.Location = new System.Drawing.Point(16, 32);
+			this.treeView1.Name = "treeView1";
+			this.treeView1.SelectedImageIndex = -1;
+			this.treeView1.Size = new System.Drawing.Size(200, 104);
+			this.treeView1.TabIndex = 35;
+			// 
+			// label17
+			// 
+			this.label17.Location = new System.Drawing.Point(16, 16);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(176, 16);
+			this.label17.TabIndex = 39;
+			this.label17.Text = "Only grab those Languages:";
+			// 
 			// TVProgramGuide
 			// 
 			this.Controls.Add(this.tabControl1);
@@ -605,6 +697,8 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -635,20 +729,21 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void LoadSettings()
 		{
+			FillInEPGLanguages();
+
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
-
 				useTimeZoneCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
-        OldTimeZoneCompensation=useTimeZoneCheckBox.Checked;
-        OldTimeZoneOffsetHours=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);
-        OldTimeZoneOffsetMins=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionmins", 0);
+				OldTimeZoneCompensation=useTimeZoneCheckBox.Checked;
+				OldTimeZoneOffsetHours=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionhours", 0);
+				OldTimeZoneOffsetMins=xmlreader.GetValueAsInt("xmltv", "timezonecorrectionmins", 0);
 
-        compensateTextBox.Text = OldTimeZoneOffsetHours.ToString();
-        textBoxMinutes.Text = OldTimeZoneOffsetMins.ToString();
+				compensateTextBox.Text = OldTimeZoneOffsetHours.ToString();
+				textBoxMinutes.Text = OldTimeZoneOffsetMins.ToString();
 
-        string strDir=System.IO.Directory.GetCurrentDirectory();
-        strDir+=@"\xmltv";
+				string strDir=System.IO.Directory.GetCurrentDirectory();
+				strDir+=@"\xmltv";
 				folderNameTextBox.Text = xmlreader.GetValueAsString("xmltv", "folder", strDir);
 
 				GrabbercomboBox.SelectedItem = xmlreader.GetValueAsString("xmltv","grabber","");
@@ -657,31 +752,51 @@ namespace MediaPortal.Configuration.Sections
 				daysToKeepTextBox.Text = xmlreader.GetValueAsString("xmltv","daystokeep", "7");
 				advancedRadioButton.Checked = xmlreader.GetValueAsBool("xmltv", "advanced", false);
 				basicRadioButton.Checked = !advancedRadioButton.Checked;
-        btnUpdateTvGuide.Enabled =useTimeZoneCheckBox.Checked;
-			}						
-      short[] taskSettings = new short[3];
-      string userAccount = null;
-      int index = 0;
-      bool taskExists = TaskScheduler.GetTask(ref taskSettings, ref userAccount);
-      hoursTextBox.Text = taskSettings[0].ToString();
-      if (hoursTextBox.Text.Length==1) hoursTextBox.Text="0"+taskSettings[0];
-      minutesTextBox.Text = taskSettings[1].ToString();
-      if (minutesTextBox.Text.Length==1) minutesTextBox.Text="0"+taskSettings[1];
-      dayIntervalTextBox.Text = taskSettings[2].ToString();
-      if (userAccount != null && userAccount != "")
-      {  
-        index = userAccount.IndexOf(@"\");
-        if (index > 0) index++;
-        UserTextBox.Text=userAccount.Substring(index);
-      }
-      if (taskExists)
-      {
-        DeleteTaskButton.Enabled=true;
-      }
-      else
-      {
-        DeleteTaskButton.Enabled=false;
-      }
+				btnUpdateTvGuide.Enabled =useTimeZoneCheckBox.Checked;
+
+				string langGrabText=xmlreader.GetValueAsString("epg-grabbing","grabLanguages","");
+				string[] langs=langGrabText.Split(new char[]{'/'});
+				if(langs!=null)
+				{
+					foreach(string language in langs)
+						foreach(TreeNode tn in treeView1.Nodes)
+						{
+							string tag=(string)tn.Tag;
+							if(tag!=null)
+							{
+								if(tag==language)
+								{
+									tn.Checked=true;
+									break;
+								}
+							}
+						}
+				}
+			
+			}
+			short[] taskSettings = new short[3];
+			string userAccount = null;
+			int index = 0;
+			bool taskExists = TaskScheduler.GetTask(ref taskSettings, ref userAccount);
+			hoursTextBox.Text = taskSettings[0].ToString();
+			if (hoursTextBox.Text.Length==1) hoursTextBox.Text="0"+taskSettings[0];
+			minutesTextBox.Text = taskSettings[1].ToString();
+			if (minutesTextBox.Text.Length==1) minutesTextBox.Text="0"+taskSettings[1];
+			dayIntervalTextBox.Text = taskSettings[2].ToString();
+			if (userAccount != null && userAccount != "")
+			{  
+				index = userAccount.IndexOf(@"\");
+				if (index > 0) index++;
+				UserTextBox.Text=userAccount.Substring(index);
+			}
+			if (taskExists)
+			{
+				DeleteTaskButton.Enabled=true;
+			}
+			else
+			{
+				DeleteTaskButton.Enabled=false;
+			}
 		}
 
 		public override void SaveSettings()
@@ -692,7 +807,7 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValueAsBool("xmltv", "usetimezone", useTimeZoneCheckBox.Checked);
 
 				xmlwriter.SetValue("xmltv", "timezonecorrectionhours", compensateTextBox.Text);
-        xmlwriter.SetValue("xmltv", "timezonecorrectionmins", textBoxMinutes.Text);
+				xmlwriter.SetValue("xmltv", "timezonecorrectionmins", textBoxMinutes.Text);
 				xmlwriter.SetValue("xmltv", "folder", folderNameTextBox.Text);
 
 				xmlwriter.SetValue("xmltv", "grabber",GrabbercomboBox.Text);
@@ -700,6 +815,15 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValueAsBool("xmltv", "advanced", advancedRadioButton.Checked);
 				xmlwriter.SetValue("xmltv", "days",AdvancedDaystextBox.Text);
 				xmlwriter.SetValue("xmltv", "args",parametersTextBox.Text);
+				string langGrabText="";
+				foreach(TreeNode tn in treeView1.Nodes)
+				{
+					if(tn.Checked==true)
+						langGrabText+=((string)tn.Tag)+"/";
+				}
+
+				xmlwriter.SetValue("epg-grabbing","grabLanguages",langGrabText);
+
 			}
 
       if (createScheduleCheckBox.Checked)
@@ -1009,6 +1133,55 @@ namespace MediaPortal.Configuration.Sections
     {
     
     }
+
+		void FillInEPGLanguages()
+		{
+			if(treeView1!=null)
+			{
+				if(treeView1.Nodes.Count<1)
+				{
+					MediaPortal.TV.Recording.DVBSections dvbSections=new MediaPortal.TV.Recording.DVBSections();
+					ArrayList codes=new ArrayList();
+					codes=dvbSections.GetLanguageCodes();
+					int n=0;
+					treeView1.Nodes.Clear();
+					foreach(string code in codes)
+					{
+						TreeNode tn=new TreeNode(MediaPortal.TV.Recording.DVBSections.GetLanguageFromCode(code)+" ("+code+")");
+						tn.Tag=code;
+						n++;
+						treeView1.Nodes.Add(tn);
+					}
+				}
+			}
+		}
+		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if(tabControl1.SelectedIndex==0)
+			{
+				FillInEPGLanguages();
+			}
+		}
+
+		private void button2_Click(object sender, System.EventArgs e)
+		{
+			if(treeView1!=null)
+			{
+				foreach(TreeNode tn in treeView1.Nodes)
+					tn.Checked=true;
+			}
+
+		}
+
+		private void button3_Click(object sender, System.EventArgs e)
+		{
+			if(treeView1!=null)
+			{
+				foreach(TreeNode tn in treeView1.Nodes)
+					tn.Checked=false;
+			}
+
+		}
 	}
 }
 
