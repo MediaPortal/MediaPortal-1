@@ -270,7 +270,7 @@ namespace MediaPortal.TV.Recording
 
             m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards,NetworkType.DVBS);
-			//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 			// reg. settings
 			try
@@ -809,6 +809,18 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState < State.Created) return;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			
+			if(m_streamDemuxer!=null)
+			{
+				try
+				{
+					m_streamDemuxer.OnAudioFormatChanged -= new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
+					m_streamDemuxer.OnPMTIsChanged-=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+					m_streamDemuxer.OnGotTable-=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
+				}
+				catch
+				{
+				}
+			}
 			m_iChannelNr=-1;
 			//m_fileWriter.Close();
 

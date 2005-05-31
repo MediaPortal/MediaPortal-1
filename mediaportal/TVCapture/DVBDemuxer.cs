@@ -223,6 +223,29 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
         #region public functions
+		public void GetEPGSchedule(int tableID,int programID)
+		{
+			
+			if(tableID<0x50 || tableID>0x6f)
+				return;
+			if(m_sectionPid!=-1)
+				return;
+			SECTIONS_BUFFER_WIDTH=65535;
+			m_eitScheduleLastTable=0x50;
+			m_secTimer.Interval=10000;
+			GetTable(0x12,tableID);// timeout 10 sec
+			Log.Write("start getting epg for table 0x{0:X}",tableID);
+		}
+		public void GetMHWEPG()
+		{
+			if(m_sectionPid!=-1)
+				return; // only grab when no other grabbing was started
+			m_tableBufferD2=new byte[66000];
+			m_tableBufferD3=new byte[66000];
+			m_mhwGrabbing=true;
+			m_secTimer.Interval=30000;// grab for 30 sec.
+			m_secTimer.Start();
+		}
 		public void ResetGrabber()
 		{
 			m_packetsReceived=false;
@@ -264,14 +287,6 @@ namespace MediaPortal.TV.Recording
 			header.HeaderExtB13 = data[offset+13];
 			return header;
 		}
-		bool IsEPGScheduleGrabbing()
-		{
-			if(m_sectionTableID>=0x50 && m_sectionTableID<=0x6f && m_sectionPid==0x12)
-			{
-				return true;
-			}
-			return false;
-		}
 		public bool GetTable(int pid,int tableID,int timeout)
 		{
 			if(pid<0 || pid>0x1FFF)
@@ -283,53 +298,6 @@ namespace MediaPortal.TV.Recording
 			SECTIONS_BUFFER_WIDTH=1280;
 			m_secTimer.Interval=timeout;
 			return GetTable(pid,tableID);
-		}
-		bool GetTable(int pid,int tableID)
-		{
-			if(m_sectionPid!=-1)
-			{
-				Log.Write("dvb-demuxer: sectionpid already set to:{0:X}", m_sectionPid);
-				return false;
-			}
-			m_tableBufferSec=new byte[SECTIONS_BUFFER_WIDTH+1];
-			m_tableSections=new ArrayList();
-			m_packetsReceived=false;
-			m_sectionPid=pid;
-			m_sectionTableID=tableID;
-			return true;
-		}
-		public void GetEPGSchedule(int tableID,int programID)
-		{
-			
-			if(tableID<0x50 || tableID>0x6f)
-				return;
-			if(m_sectionPid!=-1)
-				return;
-			SECTIONS_BUFFER_WIDTH=65535;
-			m_eitScheduleLastTable=0x50;
-			m_secTimer.Interval=10000;
-			GetTable(0x12,tableID);// timeout 10 sec
-			Log.Write("start getting epg for table 0x{0:X}",tableID);
-		}
-		public void GetMHWEPG()
-		{
-			if(m_sectionPid!=-1)
-				return; // only grab when no other grabbing was started
-			m_tableBufferD2=new byte[66000];
-			m_tableBufferD3=new byte[66000];
-			m_mhwGrabbing=true;
-			m_secTimer.Interval=30000;// grab for 30 sec.
-			m_secTimer.Start();
-		}
-		void ProcessEPGData()
-		{
-			Thread epgThread=new Thread(new ThreadStart(ProcessEPG));
-			epgThread.IsBackground=false;
-			epgThread.Priority=ThreadPriority.Lowest;
-			epgThread.Name="EPG-Parser";
-			epgThread.Start();
-			if(epgThread.Join(1000)==true)
-				Log.Write("thread end:{0}",epgThread.Name);
 		}
 		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
 		{
@@ -388,10 +356,42 @@ namespace MediaPortal.TV.Recording
 		
 		}
 
-
         #endregion
 
 		#region functions
+		bool IsEPGScheduleGrabbing()
+		{
+			if(m_sectionTableID>=0x50 && m_sectionTableID<=0x6f && m_sectionPid==0x12)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		bool GetTable(int pid,int tableID)
+		{
+			if(m_sectionPid!=-1)
+			{
+				Log.Write("dvb-demuxer: sectionpid already set to:{0:X}", m_sectionPid);
+				return false;
+			}
+			m_tableBufferSec=new byte[SECTIONS_BUFFER_WIDTH+1];
+			m_tableSections=new ArrayList();
+			m_packetsReceived=false;
+			m_sectionPid=pid;
+			m_sectionTableID=tableID;
+			return true;
+		}
+		void ProcessEPGData()
+		{
+			Thread epgThread=new Thread(new ThreadStart(ProcessEPG));
+			epgThread.IsBackground=false;
+			epgThread.Priority=ThreadPriority.Lowest;
+			epgThread.Name="EPG-Parser";
+			epgThread.Start();
+			if(epgThread.Join(1000)==true)
+				Log.Write("thread end:{0}",epgThread.Name);
+		}
 		void GetAllSections()
 		{
 			if(m_tableBufferSec==null)

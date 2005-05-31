@@ -481,12 +481,9 @@ namespace MediaPortal.TV.Recording
 			}
 			return code;
 		}
-
-
 		//
 		//
 		// iso 639 language codes
-
 
 		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
