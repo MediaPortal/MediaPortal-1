@@ -53,6 +53,7 @@ copy ..\..\..\dvblib.dll .
 copy ..\..\..\*.tpl .
 copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
+copy ..\..\..\Interop.iTunesLib.dll .
 copy ..\..\..\XPBurnComponent.dll .
 
 copy ..\..\..\core\bin\debug\Core.dll .
