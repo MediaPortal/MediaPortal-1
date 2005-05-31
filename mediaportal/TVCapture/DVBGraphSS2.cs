@@ -2070,11 +2070,14 @@ namespace MediaPortal.TV.Recording
 					{
 						if (tvchan.Name.Equals(newchannel.ServiceName))
 						{
-							//yes already exists
-							iChannelNumber=tvchan.Number;
-							isNewChannel=false;
-							channelId=tvchan.ID;
-							break;
+							if (TVDatabase.DoesChannelExist(tvchan.ID, newchannel.TransportStreamID, newchannel.NetworkID))
+							{
+								//yes already exists
+								iChannelNumber=tvchan.Number;
+								isNewChannel=false;
+								channelId=tvchan.ID;
+								break;
+							}
 						}
 					}
 
