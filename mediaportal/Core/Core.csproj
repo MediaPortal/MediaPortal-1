@@ -389,6 +389,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DShowNET\hauppauge.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DShowNET\IksPropertyUtils.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DShowNET\ivac.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DShowNET\MPEG2Demux.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

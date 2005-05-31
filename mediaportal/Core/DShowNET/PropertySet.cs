@@ -1,104 +1,121 @@
 using System;
 using System.Runtime.InteropServices;
-
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
-  public class IVac
-  {
-    static public readonly Guid IvacGuid=new Guid(0xd2185a40, 0x0398, 0x11d3, 0xa5, 0x3e, 0x0, 0xa0, 0xc9, 0xef, 0x50, 0x6a );
-    public enum PropertyId
-    {
-      IVAC_OUTPUT_TYPE			= 0,		// Get & Set
-      IVAC_BITRATE				= 1,		// Get & Set
-      IVAC_VIDEO_INPUT_TYPE		= 2,		// Get & Set
-      IVAC_VIDEO_RESOLUTION		= 3,		// Get & Set
-      IVAC_TV_ENCODE_FORMAT		= 4,		// Get & Set
-      IVAC_AUDIO_DATARATE			= 5,		// Get & Set
-      IVAC_GOP_SIZE				= 6,		// Get & Set
-      IVAC_CLOSED_GOP				= 7,		// Get & Set
-      IVAC_SAMPLING_RATE			= 11,		// Get & Set
-      IVAC_AUDIO_OUTPUT_MODE		= 12,		// Get & Set
-      IVAC_AUDIO_CRC				= 13,		// Get & Set
-      IVAC_CAPTURE_STATUS			= 16,		// Get only
-      IVAC_RUN_STATUS				= 17,		// Get only
-      IVAC_BOARD_DESCRIPTION		= 18,		// Get only
-      IVAC_I2C_REGISTER_VALUE		= 20,		// Get & Set
-      IVAC_TV_CHANNEL				= 21,		// Set only
-      IVAC_GPIO_BIT_DIRECTION		= 22,		// Set only
-      IVAC_GPIO_BYTE_DIRECTION 	= 23,		// Set only
-      IVAC_GPIO_BIT_VALUE 		= 24,		// Set only
-      IVAC_GPIO_BYTE_VALUE 		= 25,		// Set only
-      IVAC_VBI_INFO				= 26,		// Set only
-      IVAC_VERSION_INFO			= 27,		// Get only
-      IVAC_GPIO_STATUS			= 28,		// Get only
-      IVAC_I2C_INITIALIZE			= 34,		// Set only
-      IVAC_GOP_STRUCTURE			= 39,		// Get & Set
-      IVAC_TRICK_MODE				= 40,		// Get & Set
-      IVAC_PREPARE_TO_STOP		= 41,		// Set Only
-      IVAC_PREFILTER_SETTINGS     = 42,       // Get & Set
-      IVAC_RUN_MODE				= 43,		// Set only _Shyam
-      IVAC_INVERSE_TELECINE		= 50,		// Get & Set
-      IVAC_VBI_LINE_INFO			= 51,		// Set Only _Shyam
-      IVAC_ASPECT_RATIO			= 52,		// Set _Shyam
-      IVAC_GPIO_WRITE_READ        = 53,       // Get & Set
-      IVAC_TRANSPORT_OUTPUT_MODE	= 54,		// Set Only
-      IVAC_DEVICE_STATE			= 55,		// Get & Set
-      IVAC_SLOW_DECODER			= 56,		// Set only
-      IVAC_FLUSH					= 57,		// Get only
-      IVAC_NORMAL_PLAYMODE		= 58,		// set only
-      IVAC_SET_NUMBER_BFRAMES		= 59,		// set only
-      IVAC_OUTPUT_SIGNAL_STD		= 60,		// Get & Set
-      IVAC_DONT_SENDAPI_STARTPLAY	= 61,		// Set only
-      IVAC_VBI_INSERT_MODE		= 62,		// Set Only
-      IVAC_BEGIN_CHANNEL_CHANGE	= 63,		// Set Only
-      IVAC_END_CHANNEL_CHANGE		= 64,		// Set Only
-      IVAC_CURRENT_FRAME_INFO		= 65,		// Get Only
-      IVAC_DISPLAY_BUFFERS		= 66,		// Set Only
-      IVAC_COPYPROTECTION			= 67,		// Set Only
-      IVAC_PASS_THROUGH			= 68,		// Set Only
-      IVAC_DEBUG					= 0xFF		// Set only
-    } ;
-  }
+	public class DigitalEverywhere : IksPropertyUtils
+	{
+		static public readonly Guid KSPROPSETID_Firesat = new Guid( 0xab132414, 0xd060, 0x11d0,  0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba,0xf3  );
+		public DigitalEverywhere(IBaseFilter filter) 
+			:base(filter)
+		{
+		}
 
-  enum KsPropertySupport:uint
-  {
-    Get=1,
-    Set=2
-  };
+		public bool IsDigitalEverywhere
+		{
+			get 
+			{
+				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+				if (propertySet==null) return false;
+				Guid propertyGuid=KSPROPSETID_Firesat;
+				uint IsTypeSupported=0;
+				int hr=propertySet.QuerySupported( ref propertyGuid, 22, out IsTypeSupported);
+				if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
+				{
+					return false;
+				}
+				return true;
+			}
+		}
+		/// <summary>
+		/// This function sends the PMT (Program Map Table) to the FireDTV DVB-T/DVB-C/DVB-S card
+		/// This allows the integrated CI & CAM module inside the FireDTv device to decrypt the current TV channel
+		/// (provided that offcourse a smartcard with the correct subscription and its inserted in the CAM)
+		/// </summary>
+		/// <param name="PMT">Program Map Table received from digital transport stream</param>
+		/// <remarks>
+		/// 1. first byte in PMT is 0x02=tableId for PMT
+		/// 2. This function is vender specific. It will only work on the FireDTV devices
+		/// </remarks>
+		/// <preconditions>
+		/// 1. FireDTV device should be tuned to a digital DVB-C/S/T TV channel 
+		/// 2. PMT should have been received 
+		/// </preconditions>
+		public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
+		{
+			if (PMT==null) return false;
+			if (pmtLength==0) return false;
 
+			Log.Write("SendPMTToFireDTV pmt:{0}", pmtLength);
+			Guid propertyGuid=KSPROPSETID_Firesat;
+			int propId=22;
+			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+			uint IsTypeSupported=0;
+			if (propertySet==null) 
+			{
+				Log.Write("SendPMTToFireDTV() properySet=null");
+				return true;
+			}
 
-  // used by IKsPropertySet set AMPROPSETID_Pin
-  enum AmPropertyPin:int
-    {
-      AMPROPERTY_PIN_CATEGORY,
-      AMPROPERTY_PIN_MEDIUM
-    } ;
+			int hr=propertySet.QuerySupported( ref propertyGuid, (uint)propId, out IsTypeSupported);
+			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
+			{
+				Log.Write("SendPMTToFireDTV() GetStructure is not supported");
+				return true;
+			}
 
-  [ComVisible(true), ComImport,
-  Guid("31EFAC30-515C-11d0-A9AA-00AA0061BE93"),
-  InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-  public interface IKsPropertySet
-  {
-    [PreserveSig]
-    int RemoteSet([In] ref Guid guidPropSet, 
-                  [In] uint dwPropID, 
-                  [In] IntPtr pInstanceData, 
-                  [In] uint cbInstanceData, 
-                  [In] IntPtr pPropData, 
-                  [In] uint cbPropData);
-    [PreserveSig]
-    int RemoteGet([In] ref Guid guidPropSet, 
-                  [In] uint dwPropID, 
-                  [In] IntPtr pInstanceData, 
-                  [In] uint cbInstanceData, 
-                  [In]  IntPtr pPropData, 
-                  [In] uint cbPropData, 
-                  out uint pcbReturned);
-    [PreserveSig]
-    int QuerySupported([In] ref Guid guidPropSet, [In] uint dwPropID, out uint pTypeSupport);
-  }
- 
+			int iSize=12+2+pmtLength;
+			IntPtr pDataInstance = Marshal.AllocCoTaskMem(1036);
+			IntPtr pDataReturned = Marshal.AllocCoTaskMem(1036);
+			int offs=0;
 
+			//example data:0x0 0x2 0x0 0x0 0x0 0x0 0x0 0x0 0x14 0x0 0x3 0x1 | 0x2 0xB0 0x12 0x1 0x3D 0xC1 0x0 0x0 0xFF 0xFF 0xF0 0x0 0x3 0xEC 0x8C 0xF0 0x0 0xD3 
+			byte[] byData = new byte[1036];
+			uint uLength=(uint)(2+pmtLength);
+			byData[offs]= 0; offs++;//slot
+			byData[offs]= 2; offs++;//utag
 
+			byData[offs]= 0; offs++;//padding
+			byData[offs]= 0; offs++;//padding
+
+			byData[offs]= 0; offs++;//bmore
+			
+			byData[offs]= 0; offs++;//padding
+			byData[offs]= 0; offs++;//padding
+			byData[offs]= 0; offs++;//padding
+			
+			byData[offs]= (byte)(uLength%256); offs++;		//ulength lo
+			byData[offs]= (byte)(uLength/256); offs++;		//ulength hi
+			
+			//byData[offs]= 0; offs++;
+			//byData[offs]= 0; offs++;
+			
+			byData[offs]= 3; offs++;// List Management = ONLY
+			byData[offs]= 1; offs++;// pmt_cmd = OK DESCRAMBLING		
+			for (int i=0; i < pmtLength;++i)
+			{
+				byData[offs]=PMT[i];
+				offs++;
+			}
+			string log="data:";
+			for (int i=0; i < offs;++i)
+			{
+				Marshal.WriteByte(pDataInstance,i,byData[i]);
+				Marshal.WriteByte(pDataReturned,i,byData[i]);
+				log += String.Format("0x{0:X} ",byData[i]);
+			}
+
+			Log.Write(log);
+			hr=propertySet.RemoteSet(ref propertyGuid,(uint)propId,pDataInstance,(uint)1036, pDataReturned,(uint)1036 );
+			Marshal.FreeCoTaskMem(pDataReturned);
+			Marshal.FreeCoTaskMem(pDataInstance);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"FireDTV:SetStructure() failed 0x{0:X} offs:{1}",hr, offs);
+				return false;
+			}
+			return true;
+		}//public bool SendPMTToFireDTV(byte[] PMT)
+	}
 }

@@ -2277,10 +2277,6 @@ namespace MediaPortal.TV.Recording
 		bool SendPMT()
 		{
 			VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-			if (!props.SupportsFireDTVProperties)
-			{
-				return true;
-			}
 			try
 			{
 

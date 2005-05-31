@@ -279,21 +279,6 @@ namespace MediaPortal.TV.Recording
             SetVideoStandard(videoStandard);
           }
       }
-#if DEBUG
-      VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
-      if (props.SupportsProperties)
-      {
-        VideoCaptureProperties.versionInfo info = props.VersionInfo;
-        VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
-        Log.WriteFile(Log.LogType.Capture," driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
-        Log.WriteFile(Log.LogType.Capture," encoding:{0} bitrate:{1} peak:{2}", bitrate.bEncodingMode.ToString(),
-          ((float)bitrate.wBitrate)/400.0f,bitrate.dwPeak);
-        Log.WriteFile(Log.LogType.Capture," gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",
-          props.GopSize, props.ClosedGop, props.InverseTelecine,
-          props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,
-          props.StreamOutput.ToString());
-      }
-#endif
       m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder,m_captureGraphBuilder, m_captureFilter);
       
 
@@ -324,6 +309,12 @@ namespace MediaPortal.TV.Recording
 				m_videoAmp.Sharpness=m_videoAmp.SharpnessDefault;
 
       }
+			VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
+			int minKbps, maxKbps;
+			bool isVBR;
+			props.GetVideoBitRate(out minKbps, out maxKbps,out isVBR);
+			Log.WriteFile(Log.LogType.Capture," driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo,minKbps, maxKbps,isVBR);
+
       m_graphState=State.Created;
       return true;
     }
@@ -1240,47 +1231,36 @@ namespace MediaPortal.TV.Recording
 		protected void SetQuality(int Quality)
 		{
 			VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
-			if (props.SupportsHauppaugePVRProperties)
+			if (Quality>=0)
 			{
-					
-				if (Quality>=0)
+				switch (Quality)
 				{
-					VideoCaptureProperties.videoBitRate newBitRate = new VideoCaptureProperties.videoBitRate();
-					newBitRate.bEncodingMode=VideoCaptureProperties.eBitRateMode.Vbr;
-					switch (Quality)
-					{
-						case 0://low
-							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:low");
-							newBitRate.wBitrate     =2*400;  //2 mbps
-							newBitRate.dwPeak       =2200;   //4.5 mbps
-							break;
-						case 1://medium
-							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:medium");
-							newBitRate.wBitrate     =4*400;  //4 mbps
-							newBitRate.dwPeak       =6*400;  //6 mbps
-							break;
-								
-						case 2://hi
-							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:high");
-							newBitRate.wBitrate     =8*400;  //8 mbps
-							newBitRate.dwPeak       =12*400; //12 mbps
-							break;
-								
-						default://medium
-							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality to default (medium)");
-							newBitRate.wBitrate     =4*400;  //6 mbps
-							newBitRate.dwPeak       =6*400; //12 mbps
-							break;
-					}
-					props.VideoBitRate=newBitRate;
-				}//if (Quality>=0)
-				VideoCaptureProperties.versionInfo info = props.VersionInfo;
-				VideoCaptureProperties.videoBitRate bitrate = props.VideoBitRate;
-				Log.WriteFile(Log.LogType.Capture," driver version:{0} fw version:{1}", info.DriverVersion,info.FWVersion);
-				Log.WriteFile(Log.LogType.Capture," encoding:{0} bitrate:{1} MBps peak:{2} MBps", bitrate.bEncodingMode.ToString(),((float)bitrate.wBitrate)/400.0f,((float)bitrate.dwPeak)/400.0f );
-				Log.WriteFile(Log.LogType.Capture," gopsize:{0} closedgop:{1} invtelecine:{2} format:{3} size:{4}x{5} output:{6}",props.GopSize, props.ClosedGop, props.InverseTelecine,props.VideoFormat.ToString(), props.VideoResolution.Width,props.VideoResolution.Height,props.StreamOutput.ToString());
-			}//if (props.SupportsHauppaugePVRProperties)
+					case 0://low
+						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:low");
+						props.SetVideoBitRate(2000,4500,true);
+						break;
+					case 1://medium
+						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:medium");
+						props.SetVideoBitRate(4000,6000,true);
+						break;
+							
+					case 2://hi
+						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:high");
+						props.SetVideoBitRate(8000,12000,true);
+						break;
+							
+					default://medium
+						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality to default (medium)");
+						props.SetVideoBitRate(4000,6000,true);
+						break;
+				}
+			}//if (Quality>=0)
+			int minKbps, maxKbps;
+			bool isVBR;
+			props.GetVideoBitRate(out minKbps, out maxKbps,out isVBR);
+			Log.WriteFile(Log.LogType.Capture," driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo,minKbps, maxKbps,isVBR);
 		}//protected void SetQuality(int Quality)
+
 		public bool HasTeletext()
 		{
 			return false;
