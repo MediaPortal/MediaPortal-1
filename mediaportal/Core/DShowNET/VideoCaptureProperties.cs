@@ -14,16 +14,14 @@ namespace DShowNET
 	/// </summary>
 	public class VideoCaptureProperties
 	{
-    IBaseFilter captureFilter;
 		IVac ivac ;
 		Hauppauge hauppauge ;
 		DigitalEverywhere digitalEverywhere;
-		public VideoCaptureProperties(IBaseFilter capturefilter)
+		public VideoCaptureProperties(IBaseFilter filter)
 		{
-			ivac=new IVac(captureFilter);
-			hauppauge =new Hauppauge(captureFilter);
-			digitalEverywhere=new DigitalEverywhere(captureFilter);
-      captureFilter=capturefilter;
+			ivac=new IVac(filter);
+			hauppauge =new Hauppauge(filter);
+			digitalEverywhere=new DigitalEverywhere(filter);
 			if (hauppauge.IsHauppage) Log.Write("Hauppauge card properties supported");
 			if (ivac.IsIVAC) Log.Write("IVAC card properties supported");
 			if (digitalEverywhere.IsDigitalEverywhere) Log.Write("Digital Everywhere card properties supported");
