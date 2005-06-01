@@ -33,6 +33,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label infoDriverStatus;
     private System.Windows.Forms.GroupBox groupBoxInformation;
     private System.Windows.Forms.TabControl tabControlRemotes;
+    private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabPage tabPageMCE;
     private System.Windows.Forms.TabPage tabPageHCW;
     private System.Windows.Forms.Label label2sec;
@@ -110,6 +111,8 @@ namespace MediaPortal.Configuration.Sections
         trackBarDelay.Value               = xmlreader.GetValueAsInt("remote", "HCWDelay", 0);
         comboBoxPowerButton.SelectedIndex = xmlreader.GetValueAsInt("remote", "HCWPower", 0);
       }
+
+      radioButtonEurope.Checked = !radioButtonUSA.Checked;
 
       if (checkBoxMCE.Checked)
       {
@@ -212,6 +215,7 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBoxUSA = new System.Windows.Forms.PictureBox();
       this.checkBoxMCE = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes = new System.Windows.Forms.TabControl();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabPageMCE = new System.Windows.Forms.TabPage();
       this.radioButtonEurope = new System.Windows.Forms.RadioButton();
       this.radioButtonUSA = new System.Windows.Forms.RadioButton();
@@ -271,6 +275,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControlRemotes
       // 
+      this.tabControlRemotes.Controls.Add(this.tabPage1);
       this.tabControlRemotes.Controls.Add(this.tabPageMCE);
       this.tabControlRemotes.Controls.Add(this.tabPageHCW);
       this.tabControlRemotes.Location = new System.Drawing.Point(8, 16);
@@ -278,6 +283,14 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlRemotes.SelectedIndex = 0;
       this.tabControlRemotes.Size = new System.Drawing.Size(472, 408);
       this.tabControlRemotes.TabIndex = 5;
+      // 
+      // tabPage1
+      // 
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Size = new System.Drawing.Size(464, 382);
+      this.tabPage1.TabIndex = 2;
+      this.tabPage1.Text = "General";
       // 
       // tabPageMCE
       // 
