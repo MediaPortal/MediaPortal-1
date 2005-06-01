@@ -2507,6 +2507,10 @@
 	<id>891</id>
 	<value>Select TV Channel</value>
 </string>
+<string>
+	<id>892</id>
+	<value>Conflicts</value>
+</string>
 
 <string>
 	<id>900</id>

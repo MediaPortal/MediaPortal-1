@@ -89,6 +89,7 @@ namespace MediaPortal.TV.Recording
 						// other    ---------s-----------------------------
 						// other ------------------e
 						if ( (otherEpisode.Start >= epsiode.Start && otherEpisode.Start <= epsiode.End) ||
+							   (otherEpisode.Start <= epsiode.Start && otherEpisode.End >= epsiode.End)     ||
 							(otherEpisode.End >= epsiode.Start && otherEpisode.End <= epsiode.End) )
 						{
 							if (AllocateCard(otherEpisode.Channel))
@@ -101,6 +102,57 @@ namespace MediaPortal.TV.Recording
 			}
 			return false;
 		}
+
+		static public TVRecording[] GetConflictingRecordings(TVRecording rec)
+		{
+			if (Recorder.Count<=0) return null;
+			
+			if (recordings==null || util==null) 
+			{
+				Initialize();
+			}
+			cards = new int[Recorder.Count];
+			if (recordings.Count==0) return null;
+			
+			ArrayList conflicts = new ArrayList();
+			ArrayList epsiodes = util.GetRecordingTimes(rec);
+			foreach (TVRecording epsiode in epsiodes)
+			{
+				if (epsiode.Canceled!=0) continue;
+				
+				FreeCards();
+				AllocateCard(epsiode.Channel);
+				foreach (TVRecording otherRecording in recordings)
+				{
+					ArrayList otherEpisodes = util.GetRecordingTimes(otherRecording);
+					foreach ( TVRecording otherEpisode in otherEpisodes)
+					{
+						if (otherEpisode.Canceled!=0) continue;
+						if (otherEpisode.ID==epsiode.ID && 
+							otherEpisode.Start==epsiode.Start && 
+							otherEpisode.End==epsiode.End) continue;
+						// episode        s------------------------e
+						// other    ---------s-----------------------------
+						// other ------------------e
+						if ( (otherEpisode.Start >= epsiode.Start && otherEpisode.Start <= epsiode.End) ||
+							(otherEpisode.Start <= epsiode.Start && otherEpisode.End >= epsiode.End)     ||
+							(otherEpisode.End >= epsiode.Start && otherEpisode.End <= epsiode.End) )
+						{
+							if (AllocateCard(otherEpisode.Channel))
+							{
+								conflicts.Add(otherRecording);
+								break;
+							}
+						}
+					}
+				}
+			}
+			TVRecording[] conflictingRecordings = new TVRecording[conflicts.Count];
+			for (int i=0; i < conflicts.Count;++i)
+				conflictingRecordings[i] = (TVRecording)conflicts[i];
+			return conflictingRecordings;
+		}
+
 		static public TVUtil Util
 		{
 			get { 
