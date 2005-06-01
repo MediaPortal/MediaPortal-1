@@ -866,7 +866,7 @@ namespace MediaPortal.GUI.TV
 			if (dlg==null) return;
       
 			dlg.Reset();
-			dlg.SetHeading(GUILocalizeStrings.Get(890));//Select TV Channel
+			dlg.SetHeading(GUILocalizeStrings.Get(891));//Select TV Channel
 			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels);
 			foreach (TVChannel chan in channels)
@@ -967,8 +967,8 @@ namespace MediaPortal.GUI.TV
 			if (dlg.SelectedLabel==-1) return;
 
 			int mins=dlg.SelectedLabel*15;
-			hour=dlg.SelectedLabel/60;
-			minute=(dlg.SelectedLabel%60);
+			hour=(dlg.SelectedLabel*15)/60;
+			minute=((dlg.SelectedLabel*15)%60);
 
 			
 			dlg.Reset();
