@@ -328,6 +328,31 @@ namespace MediaPortal.GUI.TV
 				LoadDirectory();
 				return;
 			}
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null != dlgYesNo)
+			{
+				dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
+				dlgYesNo.SetLine(1, rec.Channel);
+				dlgYesNo.SetLine(2, rec.Title);
+				dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+				dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+				if (dlgYesNo.IsConfirmed) 
+				{
+					if (rec.Series)
+					{
+						rec.CanceledSeries.Add(Utils.datetolong(rec.StartTime));
+						TVDatabase.AddCanceledSerie(rec,Utils.datetolong(rec.StartTime));
+					}
+					else
+					{
+						TVDatabase.RemoveRecording(rec);
+					}
+					currentShow=null;
+					LoadDirectory();
+				}
+			}
+
 		}
     
 		string GetRecType(TVRecording.RecordingType recType)
