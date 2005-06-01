@@ -1,6 +1,7 @@
 using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+
 using iTunesLib;
 
 namespace MediaPortal.ITunesPlayer 
@@ -109,13 +110,17 @@ namespace MediaPortal.ITunesPlayer
 				{
 					iTunesApp= new iTunesLib.iTunesAppClass();
 				}
+
 				iTunesApp.PlayFile(strFile);
+
+				
 				playerPaused=false;
 				currentFile=strFile;
 				return true;
 			}
 			catch(Exception)
 			{
+				iTunesApp=null;
 			}
 			return false;
 		}
