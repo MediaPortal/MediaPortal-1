@@ -119,5 +119,28 @@
 				<ondown>2</ondown>
 			</control>
 		</control>
+		<control>
+			<description>TV background</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>60</posX>
+			<posY>420</posY>
+			<width>180</width>
+			<height>135</height>
+			<colordiffuse>60ffffff</colordiffuse>
+			<texture>playback_background.png</texture>
+		</control>
+		<control>
+			<description>TV preview window</description> 
+			<type>videowindow</type> 
+			<id>99</id> 
+			<posX>65</posX> 
+			<posY>425</posY> 
+			<width>170</width> 
+			<height>125</height>
+			<onup>7</onup>
+			<action>18</action>
+			<textureFocus>tv_green_border.png</textureFocus> 
+		</control>		
 	</controls>
 </window>

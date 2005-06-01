@@ -196,6 +196,8 @@ namespace MediaPortal.Player
 					windowId==(int)GUIWindow.Window.WINDOW_SCHEDULER||  
 					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTV||
 					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL||
+					windowId==(int)GUIWindow.Window.WINDOW_TV_CONFLICTS||
+					windowId==(int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES||
 					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
 					return true;
 				return false;

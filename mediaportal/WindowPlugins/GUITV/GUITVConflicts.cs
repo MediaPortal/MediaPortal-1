@@ -19,7 +19,7 @@ namespace MediaPortal.GUI.TV
 
 		[SkinControlAttribute(10)]			protected GUIListControl listConflicts=null;
 		int								m_iSelectedItem=0;
-		
+		TVRecording				currentShow=null;
 
 		public  GUITVConflicts()
 		{
@@ -144,10 +144,46 @@ namespace MediaPortal.GUI.TV
 		void LoadDirectory()
 		{
 			GUIControl.ClearControl(GetID,listConflicts.GetID);
+			GUIControl cntlLabel ;
 
+			string strObjects;
+			int total=0;
+			if (currentShow!=null)
+			{
+				GUIListItem item= new GUIListItem();
+				item.Label		  = "..";
+				item.IsFolder=true;
+				Utils.SetDefaultIcons(item);
+				listConflicts.Add(item);
+				TVRecording[] conflicts=ConflictManager.GetConflictingRecordings(currentShow);
+				for (int i=0; i < conflicts.Length;++i)
+				{
+					item=new GUIListItem();
+					item.Label=conflicts[i].Title;
+					item.TVTag=conflicts[i];
+					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,conflicts[i].Channel);
+					if (!System.IO.File.Exists(strLogo))
+					{
+						strLogo="defaultVideoBig.png";
+					}
+					item.PinImage=Thumbs.TvConflictRecordingIcon;
+					item.ThumbnailImage=strLogo;
+					item.IconImageBig=strLogo;
+					item.IconImage=strLogo;
+					listConflicts.Add(item);
+					total++;
+				}
+				strObjects=String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
+				GUIPropertyManager.SetProperty("#itemcount",strObjects);
+				cntlLabel = GetControl(12);
+				if (cntlLabel!=null)
+					cntlLabel.YPosition = listConflicts.SpinY;
+
+				SetLabels();
+				return;
+			}
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordings(ref itemlist);
-			int total=0;
 			foreach (TVRecording rec in itemlist)
 			{
 				if (!ConflictManager.IsConflict(rec)) continue;
@@ -172,15 +208,16 @@ namespace MediaPortal.GUI.TV
 						item.ThumbnailImage=strLogo;
 						item.IconImageBig=strLogo;
 						item.IconImage=strLogo;
+						item.IsFolder=true;
 						listConflicts.Add(item);
 						total++;
 					}
 				}
 			}
       
-			string strObjects=String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
+			strObjects=String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
-			GUIControl cntlLabel = GetControl(12);
+			cntlLabel = GetControl(12);
 			if (cntlLabel!=null)
 				cntlLabel.YPosition = listConflicts.SpinY;
 
@@ -264,6 +301,18 @@ namespace MediaPortal.GUI.TV
 			GUIListItem item = GetItem(iItem);
 			if (item==null) return;
 			TVRecording rec=item.TVTag as TVRecording;
+			if (item.IsFolder)
+			{
+				if (item.Label=="..")
+				{
+					currentShow=null;
+					LoadDirectory();
+					return;
+				}
+				currentShow=rec;
+				LoadDirectory();
+				return;
+			}
 		}
     
 		string GetRecType(TVRecording.RecordingType recType)
