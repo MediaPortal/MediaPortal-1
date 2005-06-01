@@ -201,34 +201,34 @@ namespace MediaPortal.GUI.TV
 					rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
 					rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 				string strType="";
-					switch (rec.RecType)
-					{
-						case TVRecording.RecordingType.Once:
-							item.Label2=String.Format("{0} {1} - {2}", 
-								Utils.GetShortDayString(rec.StartTime) , 
-								rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-								rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));;
-							break;
-						case TVRecording.RecordingType.Daily:
-							strTime=String.Format("{0}-{1}", 
-								rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-								rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							strType=GUILocalizeStrings.Get(648) ;
-							item.Label2=String.Format("{0} {1}",strType,strTime);
-							break;
+				switch (rec.RecType)
+				{
+					case TVRecording.RecordingType.Once:
+						item.Label2=String.Format("{0} {1} - {2}", 
+							Utils.GetShortDayString(rec.StartTime) , 
+							rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+							rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));;
+						break;
+					case TVRecording.RecordingType.Daily:
+						strTime=String.Format("{0}-{1}", 
+							rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+							rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						strType=GUILocalizeStrings.Get(648) ;
+						item.Label2=String.Format("{0} {1}",strType,strTime);
+						break;
 
-						case TVRecording.RecordingType.WeekDays:
-							strTime=String.Format("{0}-{1} {2}-{3}",
-								GUILocalizeStrings.Get(657),//657=Mon
-								GUILocalizeStrings.Get(661),//661=Fri
-								rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-								rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							strType=GUILocalizeStrings.Get(648) ;
-							item.Label2=String.Format("{0} {1}",strType,strTime);
-							break;
+					case TVRecording.RecordingType.WeekDays:
+						strTime=String.Format("{0}-{1} {2}-{3}",
+							GUILocalizeStrings.Get(657),//657=Mon
+							GUILocalizeStrings.Get(661),//661=Fri
+							rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+							rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						strType=GUILocalizeStrings.Get(648) ;
+						item.Label2=String.Format("{0} {1}",strType,strTime);
+						break;
 
-						case TVRecording.RecordingType.Weekly:
-							string day;
+					case TVRecording.RecordingType.Weekly:
+						string day;
 						switch (rec.StartTime.DayOfWeek)
 						{
 							case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(11);	break;
@@ -240,22 +240,21 @@ namespace MediaPortal.GUI.TV
 							default:	day = GUILocalizeStrings.Get(17);	break;
 						}
 
-							strTime=String.Format("{0}-{1}", 
-								rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-								rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							strType=GUILocalizeStrings.Get(649) ;
-							item.Label2=String.Format("{0} {1} {2}",strType,day,strTime);
-							break;
-						case TVRecording.RecordingType.EveryTimeOnThisChannel:
-							item.Label=rec.Title;
-							item.Label2=GUILocalizeStrings.Get(650);
-							break;
-						case TVRecording.RecordingType.EveryTimeOnEveryChannel:
-							item.Label=rec.Title;
-							item.Label2=GUILocalizeStrings.Get(651);
-							break;
-					}
+						strTime=String.Format("{0}-{1}", 
+							rec.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+							rec.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						strType=GUILocalizeStrings.Get(649) ;
+						item.Label2=String.Format("{0} {1} {2}",strType,day,strTime);
 						break;
+					case TVRecording.RecordingType.EveryTimeOnThisChannel:
+						item.Label=rec.Title;
+						item.Label2=GUILocalizeStrings.Get(650);
+						break;
+					case TVRecording.RecordingType.EveryTimeOnEveryChannel:
+						item.Label=rec.Title;
+						item.Label2=GUILocalizeStrings.Get(651);
+						break;
+				}
 			}
 		}
 
