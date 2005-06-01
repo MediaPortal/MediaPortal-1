@@ -803,7 +803,6 @@ namespace MediaPortal.TV.Recording
 					PidCallback((IntPtr)ptr);
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-				m_sectionHeader=GetSectionHeader((IntPtr)ptr,4);
 				if(m_packetHeader.TransportError==true)
 					continue;// error, ignore packet
 				// teletext
@@ -906,8 +905,6 @@ namespace MediaPortal.TV.Recording
 				#region pmt handling
 				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
 				{
-					//m_packetHeader.Payload=new byte[184];
-					//Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
 					try
 					{
 						int offset=0;
@@ -928,21 +925,21 @@ namespace MediaPortal.TV.Recording
 							Marshal.Copy((IntPtr)(ptr+4+offset),m_tableBufferPMT,m_bufferPositionPMT,184-offset);
 							m_bufferPositionPMT+=(184-offset);
 						}
-						//DVBSectionHeader header=GetSectionHeader(m_tableBufferPMT,0);
+						DVBSectionHeader header=GetSectionHeader(m_tableBufferPMT,0);
 
-						if(m_bufferPositionPMT>=m_sectionHeader.SectionLength+3 && m_sectionHeader.TableID==0x02 && m_sectionHeader.SectionLength>0)
+						if(m_bufferPositionPMT>=header.SectionLength+3 && header.TableID==0x02 && header.SectionLength>0)
 						{
-							int len=m_sectionHeader.SectionLength+3;
+							int len=header.SectionLength+3;
 							byte[] data=new byte[len];
 							Array.Copy(m_tableBufferPMT,0,data,0,len);
 							UInt32 crc1=GetCRC32(data);
 							UInt32 crc2=GetSectionCRCValue(data,len-4);
 							if(crc1==crc2)
 							{
-								if(m_sectionHeader.VersionNumber!=m_currentPMTVersion)
+								if(header.VersionNumber!=m_currentPMTVersion)
 								{
 									OnPMTIsChanged((byte[])data.Clone());
-									m_currentPMTVersion=m_sectionHeader.VersionNumber;
+									m_currentPMTVersion=header.VersionNumber;
 								}
 
 							}
@@ -963,8 +960,6 @@ namespace MediaPortal.TV.Recording
 
 				if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
 				{
-					//m_packetHeader.Payload=new byte[184];
-					//Marshal.Copy((IntPtr)(ptr+4),m_packetHeader.Payload,0,184);
 					try
 					{
 						int offset=0;
@@ -1001,16 +996,18 @@ namespace MediaPortal.TV.Recording
 						{
 							Marshal.Copy((IntPtr)(ptr+4+offset),m_tableBufferSec,m_bufferPositionSec,184-offset);
 							m_bufferPositionSec+=(184-offset);
-							//DVBSectionHeader header=GetHeader();
+							
+							DVBSectionHeader header=GetHeader();
 							m_lastContinuityCounter=m_packetHeader.ContinuityCounter;
 
-							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>=m_sectionHeader.SectionLength && m_sectionHeader.SectionLength>0)
+							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>=header.SectionLength && header.SectionLength>0)
 								ParseSection();
 								
 						}
 						else 
 						{
-							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>=m_sectionHeader.SectionLength && m_sectionHeader.SectionLength>0)
+							DVBSectionHeader header=GetHeader();
+							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>header.SectionLength && header.SectionLength>0)
 								ParseSection();
 							else if(IsEPGScheduleGrabbing()==true)
 								GetAllSections();
