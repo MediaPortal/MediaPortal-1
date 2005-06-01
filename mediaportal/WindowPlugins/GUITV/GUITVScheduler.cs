@@ -883,7 +883,7 @@ namespace MediaPortal.GUI.TV
 				dlg.Add(item);
 			}
 			dlg.DoModal(GetID);
-			if (dlg.SelectedLabel<=0) return;
+			if (dlg.SelectedLabel<0) return;
 
 			TVChannel selectedChannel=channels[dlg.SelectedLabel] as TVChannel;
 			dlg.Reset();
@@ -946,12 +946,15 @@ namespace MediaPortal.GUI.TV
 			{
 				for (minute=0; minute < 60; minute+=15)
 				{
+					if (hour==0 && minute==0) continue;
 					string time="";
 					if (hour<10) time="0"+hour.ToString();
 					else time=hour.ToString();
 					time+=":";
 					if (minute<10) time=time+ "0"+minute.ToString();
 					else time+= minute.ToString();
+
+					if (hour < 1) time=String.Format("{0} {1}",minute,GUILocalizeStrings.Get(3004));
 
 					dlg.Add(time);
 
@@ -963,8 +966,9 @@ namespace MediaPortal.GUI.TV
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;
 
-			hour=dlg.SelectedLabel/4;
-			minute=(dlg.SelectedLabel%4)*15;
+			int mins=dlg.SelectedLabel*15;
+			hour=dlg.SelectedLabel/60;
+			minute=(dlg.SelectedLabel%60);
 
 			
 			dlg.Reset();

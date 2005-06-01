@@ -2497,15 +2497,15 @@
 	<id>889</id>
 	<value>All episodes</value>
 </string>
-<string>
-	<id>890</id>
-	<value>Select TV Channel</value>
-</string>
 
 <!-- End My Alarm Strings -->
 <string>
 	<id>890</id>
 	<value>Play CD</value>
+</string>
+<string>
+	<id>891</id>
+	<value>Select TV Channel</value>
 </string>
 
 <string>
