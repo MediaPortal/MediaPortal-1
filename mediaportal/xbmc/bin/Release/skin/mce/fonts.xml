@@ -37,6 +37,20 @@
   <font>
 	<start>48</start>
 	<end>58</end>
+    <name>font32</name>
+    <filename>Arial</filename>
+    <height>32</height>
+  </font>
+    <font>
+	<start>48</start>
+	<end>58</end>
+    <name>font48</name>
+    <filename>Arial</filename>
+    <height>48</height>
+  </font>
+  <font>
+	<start>48</start>
+	<end>58</end>
     <name>font72</name>
     <filename>Arial</filename>
     <height>72</height>
