@@ -59,6 +59,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialogs", "Dialogs\Dialogs.
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlugins", "RemotePlugins\RemotePlugins.csproj", "{0A234721-1F13-4DF8-9B1E-64D9E3111203}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -170,6 +174,14 @@ Global
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureCardDefinitions.Build.0 = Release|.NET
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.Debug.ActiveCfg = Debug|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.Debug.Build.0 = Debug|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.Release.ActiveCfg = Release|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.Release.Build.0 = Release|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureCardDefinitions.Build.0 = Release|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
+		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 	EndGlobalSection

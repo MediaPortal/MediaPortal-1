@@ -82,6 +82,7 @@ public class MediaPortalApp : D3DApp, IRender
 #endif
     //string m_strCurrentVersion = "";
     MCE2005Remote MCE2005Remote = new MCE2005Remote();
+    HCWRemote HCWRemote = new HCWRemote();
     MouseEventArgs eLastMouseClickEvent = null;
     private System.Timers.Timer tMouseClickTimer = null;
     private bool bMouseClickFired = false;
@@ -487,7 +488,6 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Write("  Init players");
         g_Player.Init();
 
-
         //  hook ProcessExit for a chance to clean up when closed peremptorily
 
 #if AUTOUPDATE
@@ -605,6 +605,9 @@ public class MediaPortalApp : D3DApp, IRender
     protected override void WndProc(ref Message msg)
     {
         PluginManager.ReceiveMsg(msg);	// Send received messages to PluginManager / added by mPod
+
+        if (HCWRemote.Enabled()) HCWRemote.WndProc(msg);  // Send received messages to HCWRemote / added by mPod
+
         Action action;
         char key;
         Keys keyCode;
@@ -766,10 +769,12 @@ public class MediaPortalApp : D3DApp, IRender
         g_Player.Stop();
 
         // tell window manager that application is closing
-        // this gives the windows the change to do some cleanup
+        // this gives the windows the chance to do some cleanup
         Recorder.Stop();
 
         MCE2005Remote.DeInit();
+
+        HCWRemote.DeInit();
 
         AutoPlay.StopListening();
 
@@ -1012,6 +1017,12 @@ public class MediaPortalApp : D3DApp, IRender
         }
 
         MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
+
+        if (HCWRemote.Enabled())
+        {
+          if (splashScreen != null) splashScreen.SetInformation("Initializing Hauppauge remote...");
+          HCWRemote.Init();
+        }
 
         SetupCamera2D();
 
@@ -1393,9 +1404,7 @@ public class MediaPortalApp : D3DApp, IRender
                 Utils.PlaySound(action.SoundFileName, false, true);
             GUIGraphicsContext.OnAction(action);
         }
-
     }
-
 
 
     protected override void OnMouseWheel(MouseEventArgs e)

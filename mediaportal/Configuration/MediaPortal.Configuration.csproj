@@ -187,6 +187,11 @@
                     Lcid = "0"
                     WrapperTool = "tlbimp"
                 />
+                <Reference
+                    Name = "RemotePlugins"
+                    Project = "{0A234721-1F13-4DF8-9B1E-64D9E3111203}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>

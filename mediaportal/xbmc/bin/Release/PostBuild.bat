@@ -63,6 +63,7 @@ copy ..\..\..\WindowPlugins\bin\release\WindowPlugins.dll plugins\Windows
 copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
 copy ..\..\..\ProcessPlugins\bin\release\ProcessPlugins.dll plugins\process\
 copy ..\..\..\Dialogs\bin\release\Dialogs.dll plugins\Windows
+copy ..\..\..\RemotePlugins\bin\release\RemotePlugins.dll .
 
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
