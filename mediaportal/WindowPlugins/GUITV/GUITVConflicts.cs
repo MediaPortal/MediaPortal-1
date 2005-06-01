@@ -156,12 +156,27 @@ namespace MediaPortal.GUI.TV
 				Utils.SetDefaultIcons(item);
 				listConflicts.Add(item);
 				TVRecording[] conflicts=ConflictManager.GetConflictingRecordings(currentShow);
+				item=new GUIListItem();
+				item.Label=currentShow.Title;
+				item.TVTag=currentShow;
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,currentShow.Channel);
+				if (!System.IO.File.Exists(strLogo))
+				{
+					strLogo="defaultVideoBig.png";
+				}
+				item.PinImage=Thumbs.TvConflictRecordingIcon;
+				item.ThumbnailImage=strLogo;
+				item.IconImageBig=strLogo;
+				item.IconImage=strLogo;
+				listConflicts.Add(item);
+				total++;
+
 				for (int i=0; i < conflicts.Length;++i)
 				{
 					item=new GUIListItem();
 					item.Label=conflicts[i].Title;
 					item.TVTag=conflicts[i];
-					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,conflicts[i].Channel);
+					strLogo=Utils.GetCoverArt(Thumbs.TVChannel,conflicts[i].Channel);
 					if (!System.IO.File.Exists(strLogo))
 					{
 						strLogo="defaultVideoBig.png";
@@ -342,5 +357,32 @@ namespace MediaPortal.GUI.TV
 			return strType;
 		}
 		#endregion
+
+		
+		public override bool OnMessage(GUIMessage message)
+		{
+			switch ( message.Message )
+			{
+				case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
+					UpdateDescription();
+					break;
+			}
+			return base.OnMessage(message);
+		}
+		void UpdateDescription()
+		{
+			TVRecording rec = new TVRecording();
+			rec.SetProperties(null);
+			GUIListItem pItem=GetItem( GetSelectedItemNo() );
+			if (pItem==null)
+			{
+				return;
+			}
+			rec=pItem.TVTag as TVRecording;
+			if (rec==null) return;
+			TVProgram prog=ConflictManager.Util.GetProgramAt(rec.Channel,rec.StartTime);
+			rec.SetProperties(prog);
+		}
+
 	}
 }
