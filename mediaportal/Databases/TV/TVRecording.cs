@@ -784,5 +784,6 @@ namespace MediaPortal.TV.Database
 				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb","defaultVideoBig.png");
 			}
 		}
+
 	}
 }

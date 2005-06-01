@@ -219,6 +219,10 @@ namespace MediaPortal.GUI.TV
 					else
 						item.PinImage=Thumbs.TvRecordingIcon;
 				}
+				else if (ConflictManager.IsConflict(rec))
+				{
+					item.PinImage=Thumbs.TvConflictRecordingIcon;
+				}
 				item.ThumbnailImage=strLogo;
 				item.IconImageBig=strLogo;
 				item.IconImage=strLogo;
@@ -264,6 +268,10 @@ namespace MediaPortal.GUI.TV
 						item.PinImage=Thumbs.TvRecordingSeriesIcon;
 					else
 						item.PinImage=Thumbs.TvRecordingIcon;
+				}
+				else if (ConflictManager.IsConflict(rec))
+				{
+					item.PinImage=Thumbs.TvConflictRecordingIcon;
 				}
 				else 
 				{

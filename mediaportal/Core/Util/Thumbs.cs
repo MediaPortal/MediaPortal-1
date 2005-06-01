@@ -10,6 +10,7 @@ namespace MediaPortal.Util
 
 		static public readonly string TvRecordingIcon="tvguide_record_button.png";
 		static public readonly string TvRecordingSeriesIcon="tvguide_recordserie_button.png";
+		static public readonly string TvConflictRecordingIcon="tvguide_recordconflict_button.png";
 
 		static public readonly string MusicAlbum=@"thumbs\music\albums";
 		static public readonly string MusicArtists=@"thumbs\music\artists";

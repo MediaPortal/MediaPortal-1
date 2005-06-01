@@ -943,10 +943,13 @@ namespace MediaPortal.GUI.TV
 
 				bool bRecording=false;
 				bool bSeries=false;
+				bool bConflict=false;
 				foreach (TVRecording record in m_recordings)
 				{
 					if (record.IsRecordingProgram(m_currentProgram,true) ) 
-					{
+					{	
+						if (ConflictManager.IsConflict(record))
+							bConflict=true;
 						if (record.RecType !=TVRecording.RecordingType.Once)
 							bSeries=true;
 						bRecording=true;
@@ -956,7 +959,10 @@ namespace MediaPortal.GUI.TV
 				if (bRecording)
 				{
 					GUIImage img=(GUIImage)GetControl((int)Controls.IMG_REC_PIN);
-					if (bSeries)
+
+					if (bConflict)
+						img.SetFileName(Thumbs.TvConflictRecordingIcon);
+					else if (bSeries)
 						img.SetFileName(Thumbs.TvRecordingSeriesIcon);
 					else
 						img.SetFileName(Thumbs.TvRecordingIcon);
@@ -1076,10 +1082,13 @@ namespace MediaPortal.GUI.TV
 				}
 				bool bRecording=false;
 				bool bSeries=false;
+				bool bConflict=false;
 				foreach (TVRecording record in m_recordings)
 				{
 					if (record.IsRecordingProgram(program,true) ) 
 					{
+						if (ConflictManager.IsConflict(record))
+							bConflict=true;
 						if (record.RecType !=TVRecording.RecordingType.Once)
 							bSeries=true;
 						bRecording=true;
@@ -1170,7 +1179,10 @@ namespace MediaPortal.GUI.TV
 
 				if (bRecording)
 				{
-					if (bSeries)
+
+					if (bConflict)
+						img.TexutureIcon=Thumbs.TvConflictRecordingIcon;
+					else if (bSeries)
 						img.TexutureIcon=Thumbs.TvRecordingSeriesIcon;
 					else
 						img.TexutureIcon=Thumbs.TvRecordingIcon;
@@ -1252,10 +1264,13 @@ namespace MediaPortal.GUI.TV
 
 					bool bSeries=false;
 					bool bRecording=false;
+					bool bConflict=false;
 					foreach (TVRecording record in m_recordings)
 					{
 						if (record.IsRecordingProgram(program,true) ) 
 						{
+							if (ConflictManager.IsConflict(record))
+								bConflict=true;
 							if (record.RecType !=TVRecording.RecordingType.Once)
 								bSeries=true;
 							bRecording=true;
@@ -1340,7 +1355,9 @@ namespace MediaPortal.GUI.TV
 						}
 						if (bRecording)
 						{
-							if (bSeries)
+							if (bConflict)
+								img.TexutureIcon=Thumbs.TvConflictRecordingIcon;
+							else if (bSeries)
 								img.TexutureIcon=Thumbs.TvRecordingSeriesIcon;
 							else
 								img.TexutureIcon=Thumbs.TvRecordingIcon;

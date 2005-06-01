@@ -220,6 +220,7 @@ namespace MediaPortal.TV.Database
 				{
 					TVRecording recNew= new TVRecording(rec);
 					recNew.RecType=TVRecording.RecordingType.Once;
+					recNew.Channel=prog.Channel;
 					recNew.Start=Utils.datetolong(prog.StartTime);
 					recNew.End=Utils.datetolong(prog.EndTime);
 					recNew.Series=true;

@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.TV
     SortMethod        currentSortMethod=SortMethod.Date;
 		bool              m_bSortAscending=true;
 		int								m_iSelectedItem=0;
-		TVUtil						util =null;
+		
 		string						currentShow=String.Empty;
 
     public  GUITVScheduler()
@@ -127,10 +127,6 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			if (util==null)
-			{
-				util = new TVUtil(31);
-			}
 					
 			LoadSettings();
 			LoadDirectory();
@@ -397,7 +393,7 @@ namespace MediaPortal.GUI.TV
 			{
 				foreach (TVRecording rec in itemlist)
 				{
-					ArrayList recs = util.GetRecordingTimes(rec);
+					ArrayList recs = ConflictManager.Util.GetRecordingTimes(rec);
 					GUIListItem item= new GUIListItem();
 					item.Label		  = rec.Title;
 					item.TVTag			= rec;
@@ -425,6 +421,13 @@ namespace MediaPortal.GUI.TV
 						else
 							item.PinImage=Thumbs.TvRecordingIcon;
 					}
+					else
+					{
+						if (ConflictManager.IsConflict(rec))
+						{
+							item.PinImage=Thumbs.TvConflictRecordingIcon;
+						}
+					}
 					listSchedules.Add(item);
 					total++;
 				}
@@ -442,7 +445,7 @@ namespace MediaPortal.GUI.TV
 				foreach (TVRecording rec in itemlist)
 				{
 					if (!rec.Title.Equals(currentShow)) continue;
-					ArrayList recs = util.GetRecordingTimes(rec);
+					ArrayList recs = ConflictManager.Util.GetRecordingTimes(rec);
 					if (recs.Count>= 1)
 					{
 						for (int x=0; x < recs.Count;++x)
@@ -468,6 +471,13 @@ namespace MediaPortal.GUI.TV
 										item.PinImage=Thumbs.TvRecordingSeriesIcon;
 									else
 										item.PinImage=Thumbs.TvRecordingIcon;
+								}
+							}
+							else
+							{
+								if (ConflictManager.IsConflict(rec))
+								{
+									item.PinImage=Thumbs.TvConflictRecordingIcon;
 								}
 							}
 							item.ThumbnailImage=strLogo;
@@ -552,6 +562,10 @@ namespace MediaPortal.GUI.TV
 							item.PinImage=Thumbs.TvRecordingSeriesIcon;
 						else
 							item.PinImage=Thumbs.TvRecordingIcon;
+				}
+				else if (ConflictManager.IsConflict(rec))
+				{
+					item.PinImage=Thumbs.TvConflictRecordingIcon;
 				}
 				else 
 				{
@@ -1090,7 +1104,7 @@ namespace MediaPortal.GUI.TV
 			}
 			rec=pItem.TVTag as TVRecording;
 			if (rec==null) return;
-			TVProgram prog=util.GetProgramAt(rec.Channel,rec.StartTime);
+			TVProgram prog=ConflictManager.Util.GetProgramAt(rec.Channel,rec.StartTime);
 			rec.SetProperties(prog);
 		}
 		#endregion
