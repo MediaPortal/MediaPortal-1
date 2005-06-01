@@ -61,7 +61,8 @@ namespace MediaPortal.TV.Recording
 
 		static public bool IsConflict(TVRecording rec)
 		{
-			if (Recorder.Count<=0) return false;
+			if (Recorder.Count<=0) 
+				return false;
 			
 			if (recordings==null || util==null) 
 			{
