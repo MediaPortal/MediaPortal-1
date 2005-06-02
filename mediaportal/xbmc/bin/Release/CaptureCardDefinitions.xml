@@ -5578,4 +5578,27 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Hauppauge PVR 250BTV" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_28010070&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV 88x Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV 88x TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV 88x Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV 88x Video Capture" checkdevice="true"></filter>
+		<filter cat="encoder"  name="Hauppauge WinTV 88x MPEG Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="7"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="4" sinkfilter="capture"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>  
 </capturecards>
