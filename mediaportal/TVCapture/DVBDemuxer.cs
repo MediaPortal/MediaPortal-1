@@ -806,8 +806,8 @@ namespace MediaPortal.TV.Recording
 				if(m_packetHeader.TransportError==true)
 					continue;// error, ignore packet
 				// teletext
-				
-				if (m_teleText != null)
+
+				if (m_packetHeader.Pid==m_teletextPid && m_teleText != null && m_teletextPid>0)
 					m_teleText.SaveData((IntPtr)ptr);
 
 				if(m_packetsReceived==false)
@@ -818,6 +818,13 @@ namespace MediaPortal.TV.Recording
 				// plugins
 				// get the header object
 				// audio & video
+				#region subtitles
+				if(m_subtitlePid>0 && m_subtitlePid==m_packetHeader.Pid)
+				{
+				}
+
+				#endregion
+
 				#region Audio & Video
 				if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
 				{
