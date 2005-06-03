@@ -5600,5 +5600,53 @@
         <connection sourcefilter="capture"	sourcepin="4" sinkfilter="encoder"  sinkpin="1"></connection>
       </connections>
     </tv>
-  </capturecard>  
+  </capturecard>
+
+  <capturecard commercialname="LifeView TV Walker Ultra" capturename="LifeView TV Walker Ultra A/V Capture" devid="vid_10fd&amp;pid_de00&amp;rev_0001">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="LifeView TV Walker Ultra Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="LifeView TV Walker Ultra Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="LifeView TV Walker Ultra CrossBar"	checkdevice="true"></filter>
+        <filter cat="capture"		name="LifeView TV Walker Ultra A/V Capture"	checkdevice="true"></filter>
+        <filter cat="encoderaudio"  name="HT MPEG1 Audio Encoder"				checkdevice="false"></filter>
+        <filter cat="mux"			name="HT MPEG Multiplexer"					checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard> 
+  
+  <capturecard commercialname="LifeView TV Walker Mini" capturename="LifeView TV Walker Mini A/V Capture" devid="vid_10fd&amp;pid_de00&amp;rev_0001">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="LifeView TV Walker Mini Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="LifeView TV Walker Mini Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="LifeView TV Walker Mini CrossBar"		checkdevice="true"></filter>
+        <filter cat="capture"		name="LifeView TV Walker Mini A/V Capture"	checkdevice="true"></filter>
+        <filter cat="encoderaudio"  name="HT MPEG1 Audio Encoder"				checkdevice="false"></filter>
+        <filter cat="mux"			name="HT MPEG Multiplexer"					checkdevice="false"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard> 
 </capturecards>
