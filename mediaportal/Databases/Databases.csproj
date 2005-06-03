@@ -154,6 +154,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SQLSelectBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Music\AlbumInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
