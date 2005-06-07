@@ -61,167 +61,168 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AnalogTVTuningForm));
-			this.labelStatus = new System.Windows.Forms.Label();
-			this.btnOk = new System.Windows.Forms.Button();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.buttonMap = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.buttonSkip = new System.Windows.Forms.Button();
-			this.listView1 = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.buttonAdd = new System.Windows.Forms.Button();
-			this.labelStatus2 = new System.Windows.Forms.Label();
-			this.button1 = new System.Windows.Forms.Button();
-			this.labelChannels = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// labelStatus
-			// 
-			this.labelStatus.Location = new System.Drawing.Point(16, 8);
-			this.labelStatus.Name = "labelStatus";
-			this.labelStatus.Size = new System.Drawing.Size(496, 16);
-			this.labelStatus.TabIndex = 0;
-			// 
-			// btnOk
-			// 
-			this.btnOk.Location = new System.Drawing.Point(472, 296);
-			this.btnOk.Name = "btnOk";
-			this.btnOk.Size = new System.Drawing.Size(32, 23);
-			this.btnOk.TabIndex = 4;
-			this.btnOk.Text = "Ok";
-			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-			// 
-			// panel1
-			// 
-			this.panel1.Location = new System.Drawing.Point(16, 104);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(248, 200);
-			this.panel1.TabIndex = 3;
-			// 
-			// buttonMap
-			// 
-			this.buttonMap.Enabled = false;
-			this.buttonMap.Location = new System.Drawing.Point(328, 296);
-			this.buttonMap.Name = "buttonMap";
-			this.buttonMap.Size = new System.Drawing.Size(40, 23);
-			this.buttonMap.TabIndex = 2;
-			this.buttonMap.Text = "Map";
-			this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(288, 96);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(56, 16);
-			this.label1.TabIndex = 6;
-			this.label1.Text = "Channels:";
-			// 
-			// buttonSkip
-			// 
-			this.buttonSkip.Enabled = false;
-			this.buttonSkip.Location = new System.Drawing.Point(376, 296);
-			this.buttonSkip.Name = "buttonSkip";
-			this.buttonSkip.Size = new System.Drawing.Size(40, 23);
-			this.buttonSkip.TabIndex = 3;
-			this.buttonSkip.Text = "Skip";
-			this.buttonSkip.Click += new System.EventHandler(this.buttonSkip_Click);
-			// 
-			// listView1
-			// 
-			this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																								this.columnHeader1,
-																																								this.columnHeader2});
-			this.listView1.Location = new System.Drawing.Point(288, 120);
-			this.listView1.MultiSelect = false;
-			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(216, 168);
-			this.listView1.SmallImageList = this.imageList1;
-			this.listView1.TabIndex = 5;
-			this.listView1.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Name";
-			this.columnHeader1.Width = 147;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Channel";
-			// 
-			// imageList1
-			// 
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
-			// progressBar1
-			// 
-			this.progressBar1.Location = new System.Drawing.Point(24, 64);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(472, 16);
-			this.progressBar1.TabIndex = 9;
-			// 
-			// buttonAdd
-			// 
-			this.buttonAdd.Location = new System.Drawing.Point(280, 296);
-			this.buttonAdd.Name = "buttonAdd";
-			this.buttonAdd.Size = new System.Drawing.Size(40, 23);
-			this.buttonAdd.TabIndex = 1;
-			this.buttonAdd.Text = "Add";
-			this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
-			// 
-			// labelStatus2
-			// 
-			this.labelStatus2.Location = new System.Drawing.Point(8, 32);
-			this.labelStatus2.Name = "labelStatus2";
-			this.labelStatus2.Size = new System.Drawing.Size(336, 16);
-			this.labelStatus2.TabIndex = 10;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(424, 296);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(40, 23);
-			this.button1.TabIndex = 11;
-			this.button1.Text = "Stop";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// labelChannels
-			// 
-			this.labelChannels.Location = new System.Drawing.Point(360, 96);
-			this.labelChannels.Name = "labelChannels";
-			this.labelChannels.Size = new System.Drawing.Size(100, 16);
-			this.labelChannels.TabIndex = 12;
-			// 
-			// AnalogTVTuningForm
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(520, 341);
-			this.Controls.Add(this.labelChannels);
-			this.Controls.Add(this.button1);
-			this.Controls.Add(this.labelStatus2);
-			this.Controls.Add(this.buttonAdd);
-			this.Controls.Add(this.progressBar1);
-			this.Controls.Add(this.listView1);
-			this.Controls.Add(this.buttonSkip);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.buttonMap);
-			this.Controls.Add(this.panel1);
-			this.Controls.Add(this.btnOk);
-			this.Controls.Add(this.labelStatus);
-			this.Name = "AnalogTVTuningForm";
-			this.Text = "Find all TV channels";
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.AnalogTVTuningForm_Closing);
-			this.Load += new System.EventHandler(this.AnalogTVTuningForm_Load);
-			this.Closed += new System.EventHandler(this.AnalogTVTuningForm_Closed);
-			this.ResumeLayout(false);
+      this.components = new System.ComponentModel.Container();
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AnalogTVTuningForm));
+      this.labelStatus = new System.Windows.Forms.Label();
+      this.btnOk = new System.Windows.Forms.Button();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.buttonMap = new System.Windows.Forms.Button();
+      this.label1 = new System.Windows.Forms.Label();
+      this.buttonSkip = new System.Windows.Forms.Button();
+      this.listView1 = new System.Windows.Forms.ListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+      this.progressBar1 = new System.Windows.Forms.ProgressBar();
+      this.buttonAdd = new System.Windows.Forms.Button();
+      this.labelStatus2 = new System.Windows.Forms.Label();
+      this.button1 = new System.Windows.Forms.Button();
+      this.labelChannels = new System.Windows.Forms.Label();
+      this.SuspendLayout();
+      // 
+      // labelStatus
+      // 
+      this.labelStatus.Location = new System.Drawing.Point(16, 8);
+      this.labelStatus.Name = "labelStatus";
+      this.labelStatus.Size = new System.Drawing.Size(496, 16);
+      this.labelStatus.TabIndex = 0;
+      // 
+      // btnOk
+      // 
+      this.btnOk.Location = new System.Drawing.Point(472, 296);
+      this.btnOk.Name = "btnOk";
+      this.btnOk.Size = new System.Drawing.Size(32, 23);
+      this.btnOk.TabIndex = 4;
+      this.btnOk.Text = "Ok";
+      this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+      // 
+      // panel1
+      // 
+      this.panel1.Location = new System.Drawing.Point(16, 104);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(248, 200);
+      this.panel1.TabIndex = 3;
+      // 
+      // buttonMap
+      // 
+      this.buttonMap.Enabled = false;
+      this.buttonMap.Location = new System.Drawing.Point(328, 296);
+      this.buttonMap.Name = "buttonMap";
+      this.buttonMap.Size = new System.Drawing.Size(40, 23);
+      this.buttonMap.TabIndex = 2;
+      this.buttonMap.Text = "Map";
+      this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(288, 96);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(56, 16);
+      this.label1.TabIndex = 6;
+      this.label1.Text = "Channels:";
+      // 
+      // buttonSkip
+      // 
+      this.buttonSkip.Enabled = false;
+      this.buttonSkip.Location = new System.Drawing.Point(376, 296);
+      this.buttonSkip.Name = "buttonSkip";
+      this.buttonSkip.Size = new System.Drawing.Size(40, 23);
+      this.buttonSkip.TabIndex = 3;
+      this.buttonSkip.Text = "Skip";
+      this.buttonSkip.Click += new System.EventHandler(this.buttonSkip_Click);
+      // 
+      // listView1
+      // 
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                this.columnHeader1,
+                                                                                this.columnHeader2});
+      this.listView1.Location = new System.Drawing.Point(288, 120);
+      this.listView1.MultiSelect = false;
+      this.listView1.Name = "listView1";
+      this.listView1.Size = new System.Drawing.Size(216, 168);
+      this.listView1.SmallImageList = this.imageList1;
+      this.listView1.TabIndex = 5;
+      this.listView1.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Name";
+      this.columnHeader1.Width = 147;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Channel";
+      // 
+      // imageList1
+      // 
+      this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
+      this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      // 
+      // progressBar1
+      // 
+      this.progressBar1.Location = new System.Drawing.Point(24, 64);
+      this.progressBar1.Name = "progressBar1";
+      this.progressBar1.Size = new System.Drawing.Size(472, 16);
+      this.progressBar1.TabIndex = 9;
+      // 
+      // buttonAdd
+      // 
+      this.buttonAdd.Location = new System.Drawing.Point(280, 296);
+      this.buttonAdd.Name = "buttonAdd";
+      this.buttonAdd.Size = new System.Drawing.Size(40, 23);
+      this.buttonAdd.TabIndex = 1;
+      this.buttonAdd.Text = "Add";
+      this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+      // 
+      // labelStatus2
+      // 
+      this.labelStatus2.Location = new System.Drawing.Point(8, 32);
+      this.labelStatus2.Name = "labelStatus2";
+      this.labelStatus2.Size = new System.Drawing.Size(336, 16);
+      this.labelStatus2.TabIndex = 10;
+      // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(424, 296);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(40, 23);
+      this.button1.TabIndex = 11;
+      this.button1.Text = "Stop";
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // labelChannels
+      // 
+      this.labelChannels.Location = new System.Drawing.Point(360, 96);
+      this.labelChannels.Name = "labelChannels";
+      this.labelChannels.Size = new System.Drawing.Size(100, 16);
+      this.labelChannels.TabIndex = 12;
+      // 
+      // AnalogTVTuningForm
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(520, 341);
+      this.Controls.Add(this.labelChannels);
+      this.Controls.Add(this.button1);
+      this.Controls.Add(this.labelStatus2);
+      this.Controls.Add(this.buttonAdd);
+      this.Controls.Add(this.progressBar1);
+      this.Controls.Add(this.listView1);
+      this.Controls.Add(this.buttonSkip);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.buttonMap);
+      this.Controls.Add(this.panel1);
+      this.Controls.Add(this.btnOk);
+      this.Controls.Add(this.labelStatus);
+      this.Name = "AnalogTVTuningForm";
+      this.Text = "Find all TV channels";
+      this.Closing += new System.ComponentModel.CancelEventHandler(this.AnalogTVTuningForm_Closing);
+      this.Load += new System.EventHandler(this.AnalogTVTuningForm_Load);
+      this.Closed += new System.EventHandler(this.AnalogTVTuningForm_Closed);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
     private void btnOk_Click(object sender, System.EventArgs e)
