@@ -131,11 +131,13 @@ namespace MediaPortal.Devices
 		{
 			string devicePath = FindDevice(_deviceClass);
 
-			if(devicePath == null) return;
+			if(devicePath == null)
+				return;
 
 			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 
-			if(deviceHandle.ToInt32() == -1) throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
+			if(deviceHandle.ToInt32() == -1)
+				throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
 
 			_notifyWindow.RegisterDeviceRemoval(deviceHandle);
 
@@ -152,14 +154,16 @@ namespace MediaPortal.Devices
 				{
 					if(_deviceBuffer[5] == (int)_doubleClickButton && Environment.TickCount - _doubleClickTick <= _doubleClickTime)
 					{
-						if(DoubleClick != null) DoubleClick(_doubleClickButton);
+						if(DoubleClick != null)
+							DoubleClick(_doubleClickButton);
 					}
 					else
 					{
 						_doubleClickButton = (RemoteButton)_deviceBuffer[5];
 						_doubleClickTick = Environment.TickCount;
 
-						if(Click != null) Click(_doubleClickButton);
+						if(Click != null)
+							Click(_doubleClickButton);
 					}
 				}
 
@@ -225,7 +229,8 @@ namespace MediaPortal.Devices
 
 		public static void Send(int blasterPort, byte[] packet)
 		{
-			if(blasterPort != 1 && blasterPort != 2) throw new ArgumentException("blasterPort must be 1 or 2");
+			if(blasterPort != 1 && blasterPort != 2)
+				throw new ArgumentException("blasterPort must be 1 or 2");
 
 			byte[][] packetCommand = new byte[][] 
 			{
@@ -305,11 +310,13 @@ namespace MediaPortal.Devices
 		{
 			string devicePath = FindDevice(_deviceClass);
 
-			if(devicePath == null) return;
+			if(devicePath == null)
+				return;
 
 			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 
-			if(deviceHandle.ToInt32() == -1) throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
+			if(deviceHandle.ToInt32() == -1)
+				throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
 
 			_notifyWindow.RegisterDeviceRemoval(deviceHandle);
 
@@ -421,9 +428,7 @@ namespace MediaPortal.Devices
 				for(int byteIndex = 1; byteIndex < packetBytes.Length; byteIndex++)
 				{
 					if(packetOffset == 0 || packetOffset == 31 || packetOffset % 31 == 0)
-					{
 						packetFinal[packetOffset++] = (byte)((packetOffset + 31 <= packetLength) ? 0x9E : 0x9B);
-					}
 
 					packetFinal[packetOffset++] = packetBytes[byteIndex];
 				}
@@ -459,18 +464,21 @@ namespace MediaPortal.Devices
 
 		protected void OnDeviceArrival()
 		{
-			if(_deviceStream != null) return;
+			if(_deviceStream != null)
+				return;
 
 			Open();
 	
-			if(DeviceArrival != null) DeviceArrival();
+			if(DeviceArrival != null)
+				DeviceArrival();
 		}
 
 		protected abstract void Open();
 
 		protected void OnDeviceRemoval()
 		{
-			if(_deviceStream == null) return;
+			if(_deviceStream == null)
+				return;
 
 			try
 			{
@@ -482,7 +490,8 @@ namespace MediaPortal.Devices
 				// we are closing the stream so ignore this
 			}
 
-			if(DeviceRemoval != null) DeviceRemoval();
+			if(DeviceRemoval != null)
+				DeviceRemoval();
 		}
 
 		protected string FindDevice(Guid classGuid)
@@ -491,9 +500,7 @@ namespace MediaPortal.Devices
 			string devicePath = null;
 
 			if(handle.ToInt32() == -1)
-			{
 				throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
-			}
 
 			for(int deviceIndex = 0; ; deviceIndex++)
 			{
@@ -709,7 +716,8 @@ namespace MediaPortal.Devices
 
 		internal void Create()
 		{
-			if(Handle != IntPtr.Zero) return;
+			if(Handle != IntPtr.Zero)
+				return;
 
 			CreateParams Params = new CreateParams();
 			Params.ExStyle = 0x80;
@@ -743,7 +751,8 @@ namespace MediaPortal.Devices
 			}
 			else if(m.Msg == WM_SETTINGSCHANGE)
 			{
-				if(SettingsChanged != null) SettingsChanged();
+				if(SettingsChanged != null)
+					SettingsChanged();
 			}
 
 			base.WndProc(ref m);
@@ -763,7 +772,8 @@ namespace MediaPortal.Devices
 
 			_handleDeviceArrival = RegisterDeviceNotification(Handle, ref dbi, 0);
 
-			if(_handleDeviceArrival == IntPtr.Zero) throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+			if(_handleDeviceArrival == IntPtr.Zero)
+				throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
 		}
 
 		internal void RegisterDeviceRemoval(IntPtr deviceHandle)
@@ -777,12 +787,14 @@ namespace MediaPortal.Devices
 			_deviceHandle = deviceHandle;
 			_handleDeviceRemoval = RegisterDeviceNotification(Handle, ref dbh, 0);
 
-			if(_handleDeviceRemoval == IntPtr.Zero) throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+			if(_handleDeviceRemoval == IntPtr.Zero)
+				throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
 		}
 
 		internal void UnregisterDeviceArrival()
 		{
-			if(_handleDeviceArrival == IntPtr.Zero) return;
+			if(_handleDeviceArrival == IntPtr.Zero)
+				return;
 
 			UnregisterDeviceNotification(_handleDeviceArrival);
 			_handleDeviceArrival = IntPtr.Zero;
@@ -790,7 +802,8 @@ namespace MediaPortal.Devices
 
 		internal void UnregisterDeviceRemoval()
 		{
-			if(_handleDeviceRemoval == IntPtr.Zero) return;
+			if(_handleDeviceRemoval == IntPtr.Zero)
+				return;
 
 			UnregisterDeviceNotification(_handleDeviceRemoval);
 			_handleDeviceRemoval = IntPtr.Zero;
@@ -803,7 +816,8 @@ namespace MediaPortal.Devices
 			{
 				DeviceBroadcastInterface dbi = (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof(DeviceBroadcastInterface));
 
-				if(dbi.ClassGuid == _deviceClass && DeviceArrival != null) DeviceArrival();
+				if(dbi.ClassGuid == _deviceClass && DeviceArrival != null)
+					DeviceArrival();
 			}
 		}
 
