@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="zaposdSkin">
+	  <entry name="rect0">frect:0:380:720:3:188,188,188</entry>
+	  <entry name="rect1">frect:0:383:720:25:20,20,120</entry>
+	  <entry name="rect2">frect:0:408:720:3:188,188,188</entry>
+	  <entry name="rect3">frect:0:411:720:80:40,90,180</entry>
+	  <entry name="rect4">frect:0:491:720:3:188,188,188</entry>
+	  <entry name="rect5">frect:0:494:720:25:20,20,120</entry>
+	  <entry name="rect6">frect:0:519:720:3:188,188,188</entry>
+	  <entry name="chName">text:0:382:Arial:255,255,255:0,0,0:18</entry>
+	  <entry name="chNow">text:0:415:Arial:255,120,131:0,0,0:14</entry>
+	  <entry name="chNext">text:0:455:Arial:230,230,230:0,0,0:14</entry>
+	  <entry name="chProgress">progressbar:0:496:120:16:230,230,230:84,84,160</entry>
+	  <entry name="signalBar">progressbar:150:496:120:16:14,230,21:84,84,160:255,255,255:Arial:14:Quality</entry>
+	  <entry name="time">time:520:382:Arial:255,255,255:0,0,0:18</entry>
+	  <entry name="mute">icon:450:60:spker_symbol.png</entry>
+  </section>
+</profile>
