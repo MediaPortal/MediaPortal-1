@@ -170,10 +170,6 @@ namespace MediaPortal
 				// register for Start button clicks for non-MCE XP users
 				Remote.Click += new RemoteEventHandler(OnRemoteClick);
 
-				// consume arrival/removal events for testing purposes only
-				Remote.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-				Remote.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
-
 				//register device
 				RAWINPUTDEVICE[] rid1= new RAWINPUTDEVICE[1];
 
@@ -579,30 +575,25 @@ namespace MediaPortal
 
 		#region Green Button
 
-		void OnDeviceArrival()
-		{
-			Log.Write("MCE2005Remote.OnDeviceArrival: Device installed");
-		}
-
-		void OnDeviceRemoval()
-		{
-			Log.Write("MCE2005Remote.OnDeviceRemoval: Device removed");
-		}
-
 		void OnRemoteClick(RemoteButton button)
 		{
-			if(button != RemoteButton.Start) return;
+			if(button != RemoteButton.Start)
+				return;
 
 			IntPtr window = GUIGraphicsContext.ActiveForm;
 
-			if(window == IntPtr.Zero) window = Process.GetCurrentProcess().MainWindowHandle;
+			if(window == IntPtr.Zero)
+				window = Process.GetCurrentProcess().MainWindowHandle;
+
 			if(window == IntPtr.Zero)
 			{
 				Log.Write("MCE2005Remote.OnGreenButton: Invalid window handle");
 				return;
 			}
 
-			if(IsIconic(window) || !IsWindowVisible(window)) ShowWindowAsync(window, 0x9);;
+			if(IsIconic(window) || !IsWindowVisible(window))
+				ShowWindowAsync(window, 0x9);
+
 			if(GetForegroundWindow() != window)
 			{
 				SetForegroundWindow(window, true);
@@ -621,16 +612,25 @@ namespace MediaPortal
 		{
 			IntPtr windowForeground = GetForegroundWindow(); 
 
-			if(window == windowForeground || SetForegroundWindow(window)) return true;
-			if(force == false) return false;
-			if(windowForeground == IntPtr.Zero) return false;
-			if(!AttachThreadInput(AppDomain.GetCurrentThreadId(), GetWindowThreadProcessId(windowForeground, 0), true)) return false;
+			if(window == windowForeground || SetForegroundWindow(window))
+				return true;
+
+			if(force == false)
+				return false;
+			
+			if(windowForeground == IntPtr.Zero)
+				return false;
+
+			// if we don't attach successfully to the windows thread then we're out of options
+			if(!AttachThreadInput(AppDomain.GetCurrentThreadId(), GetWindowThreadProcessId(windowForeground, 0), true))
+				return false;
 
 			SetForegroundWindow(window);
 			BringWindowToTop(window);
 
 			AttachThreadInput(AppDomain.GetCurrentThreadId(), GetWindowThreadProcessId(windowForeground, 0), false);
 
+			// we've done all that we can so base our return value on whether we have succeeded or not
 			return (GetForegroundWindow() == window);
 		}
 
