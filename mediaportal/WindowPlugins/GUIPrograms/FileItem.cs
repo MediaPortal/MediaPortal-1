@@ -14,6 +14,7 @@ namespace ProgramsDatabase
     int mFileID;
     int mAppID;
     string mTitle;
+    string mTitle2;
     string mTitleOptimized;
     string mFilename;
     string mFilepath;
@@ -49,6 +50,7 @@ namespace ProgramsDatabase
       mFileID =  - 1;
       mAppID =  - 1;
       mTitle = "";
+      mTitle2 = "";
       mTitleOptimized = "";
       mFilename = "";
       mFilepath = "";
@@ -115,6 +117,17 @@ namespace ProgramsDatabase
       set
       {
         mTitle = value;
+      }
+    }
+    public string Title2
+    {
+      get
+      {
+        return mTitle2;
+      }
+      set
+      {
+        mTitle2 = value;
       }
     }
     public string TitleNormalized

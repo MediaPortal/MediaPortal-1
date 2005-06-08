@@ -2,6 +2,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -25,7 +26,6 @@ namespace ProgramsDatabase
 
     static private AppItem DBGetApp(SQLiteResultSet results, int recordIndex)
     {
-      // AppItem newApp = new AppItem(sqlDB);
       AppItem newApp = appFactory.GetAppItem(sqlDB, ProgramUtils.GetSourceType(results, recordIndex, "source_type"));
       newApp.OnLaunchFilelink += new AppItem.FilelinkLaunchEventHandler(LaunchFilelink);
       newApp.Enabled = ProgramUtils.GetBool(results, recordIndex, "enabled");

@@ -1,5 +1,6 @@
 using Programs.Utils;
 using SQLite.NET;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {

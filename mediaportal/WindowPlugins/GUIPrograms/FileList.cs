@@ -3,6 +3,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -64,37 +65,88 @@ namespace ProgramsDatabase
       newFile.IsFolder = ProgramUtils.GetBool(results, iRecord, "isfolder");
       newFile.TagData = ProgramUtils.Get(results, iRecord, "tagdata");
       newFile.CategoryData = ProgramUtils.Get(results, iRecord, "categorydata");
+      string fieldtype2 = ProgramUtils.Get(results, iRecord, "fieldtype2");
+      if (fieldtype2 == "INT")
+      {
+        // so much to avoid round-differences!
+        newFile.Title2 = ProgramUtils.GetIntDef(results, iRecord, "title2", -1).ToString();
+        if (newFile.Title2 == "-1")
+        {
+          newFile.Title2 = "";
+        }
+      }
+      else if (fieldtype2 == "STR")
+      {
+        newFile.Title2 = ProgramUtils.Get(results, iRecord, "title2");
+      }
       return newFile;
     }
 
+    static private ProgramFilterItem DBGetFilterItem(SQLiteResultSet results, int iRecord)
+    {
+      ProgramFilterItem newFilter = new ProgramFilterItem();
+      string fieldtype = ProgramUtils.Get(results, iRecord, "fieldtype");
+      if (fieldtype == "INT")
+      {
+        // so much to avoid round-differences!
+        newFilter.Title = ProgramUtils.GetIntDef(results, iRecord, "title", -1).ToString();
+        if (newFilter.Title == "-1")
+        {
+          newFilter.Title = "";
+        }
+      }
+      else
+      {
+        newFilter.Title = ProgramUtils.Get(results, iRecord, "title");
+      }
+      string fieldtype2 = ProgramUtils.Get(results, iRecord, "fieldtype2");
+      if (fieldtype2 == "INT")
+      {
+        // so much to avoid round-differences!
+        newFilter.Title2 = ProgramUtils.GetIntDef(results, iRecord, "title2", -1).ToString();
+        if (newFilter.Title2 == "-1")
+        {
+          newFilter.Title2 = "";
+        }
+      }
+      else if (fieldtype2 == "STR")
+      {
+        newFilter.Title2 = ProgramUtils.Get(results, iRecord, "title2");
+      }
+      return newFilter;
+    }
 
-    public void Load(int nAppID, string strPath)
+
+    public void Load(int appID, string pathSubfolders)
     {
       if (sqlDB == null)
         return ;
+      if (ProgramSettings.viewHandler == null)
+        return;
       try
       {
         Clear();
         if (null == sqlDB)
           return ;
         SQLiteResultSet results;
-        string strSQL = "";
-        mFilepath = strPath;
-        if (strPath == "")
-        {
-          strSQL = String.Format("select * from file where appid = {0} order by isfolder desc, uppertitle", nAppID);
-        }
-        else
-        {
-          strSQL = String.Format("select * from file where appid = {0} and filepath = '{1}' order by isfolder desc, uppertitle", nAppID, strPath);
-        }
-        results = sqlDB.Execute(strSQL);
+        mFilepath = pathSubfolders;
+        string sqlQuery = ProgramSettings.viewHandler.BuildQuery(appID, pathSubfolders);
+        // Log.Write("dw \n{0}", sqlQuery);
+        results = sqlDB.Execute(sqlQuery);
         if (results.Rows.Count == 0)
           return ;
-        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        for (int curRow = 0; curRow < results.Rows.Count; curRow++)
         {
-          FileItem curFile = DBGetFileItem(results, iRow);
-          Add(curFile);
+          if (ProgramSettings.viewHandler.IsFilterQuery)
+          {
+            ProgramFilterItem curFilter = DBGetFilterItem(results, curRow);
+            Add(curFilter);
+          }
+          else
+          {
+            FileItem curFile = DBGetFileItem(results, curRow);
+            Add(curFile);
+          }
         }
       }
       catch (SQLiteException ex)
@@ -102,8 +154,6 @@ namespace ProgramsDatabase
         Log.Write("Filedatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
-
-
   }
 
 }

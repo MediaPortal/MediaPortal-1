@@ -33,6 +33,7 @@ namespace WindowPlugins.GUIPrograms
     private AppSettingsGrouper sectionGrouper = new AppSettingsGrouper();
     private AppSettingsRoot sectionRoot = new AppSettingsRoot();
     private AppFilesView filesView = new AppFilesView();
+    private ProgramViews programsView = new ProgramViews();
     private AppFilesImportProgress filesProgress = new AppFilesImportProgress();
     private ToolBar toolBarMenu;
     private ToolBarButton buttonAddChild;
@@ -49,9 +50,9 @@ namespace WindowPlugins.GUIPrograms
     private MenuItem menuMyFile;
     private MenuItem menuFileLauncher;
     private MenuItem menuGrouper;
-    private TabControl DetailsTabControl;
-    private TabPage DetailsPage;
-    private TabPage FilesPage;
+    private TabControl detailsTabControl;
+    private TabPage detailsPage;
+    private TabPage filesPage;
     private Panel holderPanel;
     private ToolBarButton sep5;
     private ContextMenu popupTools;
@@ -70,6 +71,8 @@ namespace WindowPlugins.GUIPrograms
     private System.Windows.Forms.MenuItem menuItem1;
     private System.Windows.Forms.MenuItem menuMlfFile;
     private System.Windows.Forms.MenuItem menuMAMEDirect;
+    private System.Windows.Forms.TabPage viewsPage;
+    private System.Windows.Forms.Panel holderPanelViews;
     private bool m_ProfilesLoaded = false;
 
     public SetupForm()
@@ -79,7 +82,6 @@ namespace WindowPlugins.GUIPrograms
       //
       InitializeComponent();
       filesView.OnRefreshClick += new EventHandler(this.RefreshClick);
-
     }
 
     /// <summary>
@@ -138,7 +140,7 @@ namespace WindowPlugins.GUIPrograms
     }
     public string Author()
     {
-      return "waeberd/Domi_Fan";
+      return "waeberd";
     }
     public void ShowPlugin()
     {
@@ -187,14 +189,17 @@ namespace WindowPlugins.GUIPrograms
       this.menuItemReadFromProfile = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
       this.sep5 = new System.Windows.Forms.ToolBarButton();
-      this.DetailsTabControl = new System.Windows.Forms.TabControl();
-      this.DetailsPage = new System.Windows.Forms.TabPage();
+      this.detailsTabControl = new System.Windows.Forms.TabControl();
+      this.detailsPage = new System.Windows.Forms.TabPage();
       this.holderPanel = new System.Windows.Forms.Panel();
-      this.FilesPage = new System.Windows.Forms.TabPage();
+      this.filesPage = new System.Windows.Forms.TabPage();
       this.holderPanelFiles = new System.Windows.Forms.Panel();
-      this.DetailsTabControl.SuspendLayout();
-      this.DetailsPage.SuspendLayout();
-      this.FilesPage.SuspendLayout();
+      this.viewsPage = new System.Windows.Forms.TabPage();
+      this.holderPanelViews = new System.Windows.Forms.Panel();
+      this.detailsTabControl.SuspendLayout();
+      this.detailsPage.SuspendLayout();
+      this.filesPage.SuspendLayout();
+      this.viewsPage.SuspendLayout();
       this.SuspendLayout();
       // 
       // appTree
@@ -418,26 +423,27 @@ namespace WindowPlugins.GUIPrograms
       // 
       // DetailsTabControl
       // 
-      this.DetailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+      this.detailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.DetailsTabControl.Controls.Add(this.DetailsPage);
-      this.DetailsTabControl.Controls.Add(this.FilesPage);
-      this.DetailsTabControl.Location = new System.Drawing.Point(240, 40);
-      this.DetailsTabControl.Name = "DetailsTabControl";
-      this.DetailsTabControl.SelectedIndex = 0;
-      this.DetailsTabControl.Size = new System.Drawing.Size(416, 468);
-      this.DetailsTabControl.TabIndex = 14;
-      this.DetailsTabControl.SelectedIndexChanged += new System.EventHandler(this.DetailsTabControl_SelectedIndexChanged);
+      this.detailsTabControl.Controls.Add(this.detailsPage);
+      this.detailsTabControl.Controls.Add(this.filesPage);
+      this.detailsTabControl.Controls.Add(this.viewsPage);
+      this.detailsTabControl.Location = new System.Drawing.Point(240, 40);
+      this.detailsTabControl.Name = "detailsTabControl";
+      this.detailsTabControl.SelectedIndex = 0;
+      this.detailsTabControl.Size = new System.Drawing.Size(416, 468);
+      this.detailsTabControl.TabIndex = 14;
+      this.detailsTabControl.SelectedIndexChanged += new System.EventHandler(this.DetailsTabControl_SelectedIndexChanged);
       // 
       // DetailsPage
       // 
-      this.DetailsPage.Controls.Add(this.holderPanel);
-      this.DetailsPage.Location = new System.Drawing.Point(4, 22);
-      this.DetailsPage.Name = "DetailsPage";
-      this.DetailsPage.Size = new System.Drawing.Size(408, 442);
-      this.DetailsPage.TabIndex = 0;
-      this.DetailsPage.Text = "Details";
+      this.detailsPage.Controls.Add(this.holderPanel);
+      this.detailsPage.Location = new System.Drawing.Point(4, 22);
+      this.detailsPage.Name = "detailsPage";
+      this.detailsPage.Size = new System.Drawing.Size(408, 442);
+      this.detailsPage.TabIndex = 0;
+      this.detailsPage.Text = "Details";
       // 
       // holderPanel
       // 
@@ -451,12 +457,12 @@ namespace WindowPlugins.GUIPrograms
       // 
       // FilesPage
       // 
-      this.FilesPage.Controls.Add(this.holderPanelFiles);
-      this.FilesPage.Location = new System.Drawing.Point(4, 22);
-      this.FilesPage.Name = "FilesPage";
-      this.FilesPage.Size = new System.Drawing.Size(408, 442);
-      this.FilesPage.TabIndex = 1;
-      this.FilesPage.Text = "Files";
+      this.filesPage.Controls.Add(this.holderPanelFiles);
+      this.filesPage.Location = new System.Drawing.Point(4, 22);
+      this.filesPage.Name = "filesPage";
+      this.filesPage.Size = new System.Drawing.Size(408, 442);
+      this.filesPage.TabIndex = 1;
+      this.filesPage.Text = "Files";
       // 
       // holderPanelFiles
       // 
@@ -468,11 +474,30 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanelFiles.Size = new System.Drawing.Size(397, 436);
       this.holderPanelFiles.TabIndex = 13;
       // 
+      // viewsPage
+      // 
+      this.viewsPage.Controls.Add(this.holderPanelViews);
+      this.viewsPage.Location = new System.Drawing.Point(4, 22);
+      this.viewsPage.Name = "viewsPage";
+      this.viewsPage.Size = new System.Drawing.Size(408, 442);
+      this.viewsPage.TabIndex = 2;
+      this.viewsPage.Text = "Views";
+      // 
+      // holderPanelViews
+      // 
+      this.holderPanelViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.holderPanelViews.Location = new System.Drawing.Point(6, 3);
+      this.holderPanelViews.Name = "holderPanelViews";
+      this.holderPanelViews.Size = new System.Drawing.Size(397, 436);
+      this.holderPanelViews.TabIndex = 14;
+      // 
       // SetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(666, 514);
-      this.Controls.Add(this.DetailsTabControl);
+      this.Controls.Add(this.detailsTabControl);
       this.Controls.Add(this.toolBarMenu);
       this.Controls.Add(this.appTree);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -480,9 +505,10 @@ namespace WindowPlugins.GUIPrograms
       this.Text = "my Programs Setup";
       this.Closing += new System.ComponentModel.CancelEventHandler(this.SetupForm_Closing);
       this.Load += new System.EventHandler(this.SetupForm_Load);
-      this.DetailsTabControl.ResumeLayout(false);
-      this.DetailsPage.ResumeLayout(false);
-      this.FilesPage.ResumeLayout(false);
+      this.detailsTabControl.ResumeLayout(false);
+      this.detailsPage.ResumeLayout(false);
+      this.filesPage.ResumeLayout(false);
+      this.viewsPage.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -492,7 +518,6 @@ namespace WindowPlugins.GUIPrograms
     {
       if (SaveAppItem())
       {
-//        AppItem newApp = new AppItem(ProgramDatabase.sqlDB);
         AppItem newApp = ApplicationFactory.AppFactory.GetAppItem(ProgramDatabase.sqlDB, newSourceType);
         apps.Add(newApp);
         newApp.FatherID = GetSelectedAppID();
@@ -710,6 +735,14 @@ namespace WindowPlugins.GUIPrograms
       filesView.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left;
     }
 
+    void AttachProgramsView()
+    {
+      holderPanelViews.Controls.Clear();
+      holderPanelViews.Controls.Add(programsView);
+      programsView.SetBounds(0, 0, holderPanelViews.Width, holderPanelViews.Height);
+      programsView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+    }
+
     private void AttachImportRunningView()
     {
       holderPanelFiles.Controls.Clear();
@@ -722,6 +755,7 @@ namespace WindowPlugins.GUIPrograms
     {
       AttachFilesView();
       apps.LoadAll(); // we need all apps, whether enabled or not => reload with LoadALL
+      AttachProgramsView();
       updateTree();
     }
 
@@ -871,20 +905,50 @@ namespace WindowPlugins.GUIPrograms
       return res;
     }
 
+    bool TabIsDisplayed(TabPage view)
+    {
+      bool res = false;
+      foreach (Control curCtl in detailsTabControl.Controls)
+      {
+        if (curCtl == view)
+        {
+          res = true;
+          break;
+        }
+      }
+      return res;
+    }
     private void AddFilesPage(AppItem curApp)
     {
-      if (DetailsTabControl.TabCount == 1)
+      if (!TabIsDisplayed(filesPage))
       {
-        DetailsTabControl.Controls.Add(this.FilesPage);
+        detailsTabControl.Controls.Add(this.filesPage);
       }
       filesView.Refresh(curApp);
     }
 
+    private void AddViewsPage()
+    {
+      if (!TabIsDisplayed(viewsPage))
+      {
+        detailsTabControl.Controls.Add(this.viewsPage);
+      }
+      viewsPage.Refresh();
+    }
+
     private void RemoveFilesPage()
     {
-      if (DetailsTabControl.TabCount == 2)
+      if (TabIsDisplayed(filesPage))
       {
-        DetailsTabControl.Controls.Remove(this.FilesPage);
+        detailsTabControl.Controls.Remove(this.filesPage);
+      }
+    }
+
+    void RemoveViewsPage()
+    {
+      if (TabIsDisplayed(viewsPage))
+      {
+        detailsTabControl.Controls.Remove(this.viewsPage);
       }
     }
 
@@ -901,6 +965,7 @@ namespace WindowPlugins.GUIPrograms
         pageSettings.SetBounds(0, 0, holderPanel.Width, holderPanel.Height);
         if (curApp != null)
         {
+          RemoveViewsPage();
           if (curApp.FileEditorAllowed())
           {
             AddFilesPage(curApp);
@@ -914,6 +979,7 @@ namespace WindowPlugins.GUIPrograms
         {
           // special treatment for root node
           RemoveFilesPage();
+          AddViewsPage();
         }
       }
     }
@@ -1341,11 +1407,11 @@ namespace WindowPlugins.GUIPrograms
     private void DetailsTabControl_SelectedIndexChanged(object sender, EventArgs e)
     {
       // save current app if switching to file-tab
-      if (DetailsTabControl.SelectedIndex == 1)
+      if (detailsTabControl.SelectedIndex == 1)
       {
         if (!SaveAppItem())
         {
-          DetailsTabControl.SelectedIndex = 0;
+          detailsTabControl.SelectedIndex = 0;
         }
       }
     }

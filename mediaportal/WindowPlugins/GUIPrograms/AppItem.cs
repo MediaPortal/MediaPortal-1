@@ -367,15 +367,30 @@ namespace ProgramsDatabase
     protected int DisplayArrayList(string filePath, ArrayList dbItems, GUIFacadeControl facadeView)
     {
       int totalItems = 0;
-      foreach (FileItem curFile in dbItems)
+      //foreach (FileItem curFile in dbItems)
+      foreach (object obj in dbItems)
       {
         totalItems = totalItems + 1;
-        GUIListItem gli = new GUIListItem(curFile.Title);
-        gli.MusicTag = curFile;
-        gli.IsFolder = curFile.IsFolder;
-        gli.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-        gli.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnItemSelected);
-        facadeView.Add(gli);
+        if (obj is FileItem)
+        {
+          FileItem curFile = obj as FileItem;
+          GUIListItem gli = new GUIListItem(curFile.Title);
+          gli.Label2 = curFile.Title2; 
+          gli.MusicTag = curFile;
+          gli.IsFolder = curFile.IsFolder;
+          gli.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          gli.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnItemSelected);
+          facadeView.Add(gli);
+        }
+        else if (obj is ProgramFilterItem)
+        {
+          ProgramFilterItem curFilter = obj as ProgramFilterItem;
+          GUIListItem gli = new GUIListItem(curFilter.Title);
+          gli.Label2 = curFilter.Title2; // some filters may have more than one text
+          gli.MusicTag = curFilter;
+          gli.IsFolder = true;
+          facadeView.Add(gli);
+        }
       }
       return totalItems;
     }
@@ -419,7 +434,8 @@ namespace ProgramsDatabase
 
     public virtual void OnSort(GUIFacadeControl view, bool doSwitchState)
     {
-      if (!filesAreLoaded)
+/*
+ *       if (!filesAreLoaded)
       {
         LoadFiles();
       }
@@ -429,6 +445,7 @@ namespace ProgramsDatabase
         dbPc.updateState();
       }
       view.Sort(dbPc);
+*/      
     }
 
     public virtual void OnSortToggle(GUIFacadeControl view)

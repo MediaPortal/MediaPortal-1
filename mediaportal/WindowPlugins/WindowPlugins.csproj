@@ -703,6 +703,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\ProgramFilterItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIPrograms\ProgramSettingProfiles.xml"
                     BuildAction = "Content"
                 />
@@ -712,9 +717,29 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\ProgramState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIPrograms\ProgramUtils.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\ProgramViewHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\ProgramViews.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\ProgramViews.resx"
+                    DependentUpon = "ProgramViews.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUIPrograms\SetupForm.cs"

@@ -1,11 +1,15 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Data;
+using System.Data.OleDb;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using Programs.Utils;
 using ProgramsDatabase;
+
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -35,6 +39,7 @@ namespace WindowPlugins.GUIPrograms
 
     private AppItem mCurApp = null;
     private Button startScraperButton;
+    private System.Windows.Forms.Button button1;
     private Applist apps = ProgramDatabase.AppList;
     public event EventHandler OnRefreshClick;
 
@@ -90,6 +95,7 @@ namespace WindowPlugins.GUIPrograms
       this.popupFavourites = new System.Windows.Forms.ContextMenu();
       this.menuItem1 = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
+      this.button1 = new System.Windows.Forms.Button();
       this.topPanel.SuspendLayout();
       this.bottomPanel.SuspendLayout();
       this.SuspendLayout();
@@ -216,6 +222,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // bottomPanel
       // 
+      this.bottomPanel.Controls.Add(this.button1);
       this.bottomPanel.Controls.Add(this.startScraperButton);
       this.bottomPanel.Controls.Add(this.btnAddToFavourites);
       this.bottomPanel.Controls.Add(this.btnLaunch);
@@ -269,6 +276,15 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.menuItem2.Index = 1;
       this.menuItem2.Text = "Grouper B";
+      // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(296, 200);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(80, 32);
+      this.button1.TabIndex = 21;
+      this.button1.Text = "test";
+      this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // AppFilesView
       // 
@@ -627,6 +643,45 @@ namespace WindowPlugins.GUIPrograms
       {
         MessageBox.Show("Please set the first imagedirectory before starting the scraper!", "Missing or Invalid Imagedirectory");
       }
+    }
+
+    private void button1_Click(object sender, System.EventArgs e)
+    {
+      string strCon = "Provider=Microsoft.Jet.OLEDB.4.0 ;Data Source=C:\\media\\GameBase\\snes\\Snes.mdb";
+      OleDbConnection myCon = new OleDbConnection( strCon ) ;
+      //Make a Select Command
+      string sqlStr = "SELECT Name FROM games" ;
+      OleDbCommand myCmd =new OleDbCommand( sqlStr , myCon );
+      try
+      {
+        myCon.Open();
+        OleDbDataReader myReader = myCmd.ExecuteReader();
+        try 
+        {
+          while (myReader.Read()) 
+          {
+            Log.Write(" dw found SNES game {0}", myReader.GetString(0));
+           }
+        }
+        finally 
+        {
+          // always call Close when done reading.
+          myReader.Close();
+        }
+      }
+      catch(Exception er)
+      {
+        MessageBox.Show("Error in connecting! "+er.ToString(), "Error");
+      }
+      finally
+      {
+        myCmd.Dispose();
+        myCon.Close();
+        myCon.Dispose();
+      }
+
+
+    
     }
 
 

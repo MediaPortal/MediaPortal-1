@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using MediaPortal.GUI.Library;
 using SQLite.NET;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -13,6 +14,7 @@ namespace ProgramsDatabase
   {
     public static SQLiteClient sqlDB = null;
     static Applist mAppList = null;
+    static ProgramViewHandler viewHandler = null;
 
     // singleton. Dont allow any instance of this class
     private ProgramDatabase(){}
@@ -39,6 +41,8 @@ namespace ProgramsDatabase
       {
         Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
+      viewHandler = new ProgramViewHandler();
+      ProgramSettings.viewHandler = viewHandler;
       mAppList = new Applist(sqlDB, new AppItem.FilelinkLaunchEventHandler(LaunchFilelink));
       //			mAppList = new Applist(sqlDB);
       //			mAppList.OnLaunchFilelink += new AppItem.FilelinkLaunchEventHandler(LaunchFilelink);
@@ -166,6 +170,91 @@ namespace ProgramsDatabase
       {
         return mAppList;
       }
+    }
+
+    static public void GetFilesByFilter(string sql, out ArrayList files, bool artistTable, bool albumTable, bool songTable, bool genreTable)
+    {
+      files=new ArrayList();
+      try
+      {
+        SQLiteResultSet results=GetResults(sql);
+        FileItem file;
+
+        for (int i=0; i<results.Rows.Count; i++)
+        {
+          file = new FileItem(sqlDB);
+/*
+ *           song = new Song();
+          ArrayList fields = (ArrayList)results.Rows[i];
+          if (artistTable && !songTable)
+          {
+            song.Artist = (string)fields[1];
+            song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+          }
+          if (albumTable && !songTable)
+          {
+            song.Album =  (string)fields[2];
+            song.albumId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+            song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[1]));
+            if (fields.Count>=5)
+              song.Artist = (string)fields[4];
+          }
+          if (genreTable && !songTable)
+          {
+            song.Genre = (string)fields[1];
+            song.genreId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+          }
+          if (songTable)
+          {
+            song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+            song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+            song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+            song.artistId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idArtist")));
+            song.Track = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iTrack")));
+            song.Duration = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iDuration")));
+            song.Year = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iYear")));
+            song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
+            song.TimesPlayed = (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iTimesPlayed")));
+            song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+            song.Rating= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.iRating")));
+            song.Favorite=(int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.favorite")))!=0;
+            song.songId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idSong")));
+            song.albumId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idAlbum")));
+            song.genreId= (int)Math.Floor(0.5d+Double.Parse(DatabaseUtility.Get(results, i, "song.idGenre")));
+            string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
+            strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
+            song.FileName = strFileName;
+          }
+*/          
+          files.Add(file);
+        }	  
+
+        return ;
+      }
+      catch (Exception ex) 
+      {
+        Log.WriteFile(Log.LogType.Log,true,"programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+
+      return ;		
+    }
+
+
+    static public SQLiteResultSet GetResults(string sql)
+    {
+      try
+      {
+        if (null == sqlDB) return null;
+        SQLiteResultSet results;
+        results = sqlDB.Execute(sql);
+        return results;
+      }
+      catch (Exception ex) 
+      {
+        Log.WriteFile(Log.LogType.Log,true,"programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+
+      return null;	
     }
 
   }

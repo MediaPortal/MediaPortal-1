@@ -526,7 +526,6 @@ namespace WindowPlugins.GUIPrograms
       {
         this.txtPinCode.Text = "";
       }
-      Log.Write("dw: getindexofid {0}", curApp.ContentID);
       this.cbContentProfile.SelectedIndex = ProgramContentManager.GetIndexOfID(curApp.ContentID);
       return true;
     }

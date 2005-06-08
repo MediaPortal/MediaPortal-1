@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using SQLite.NET;
+using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -10,6 +11,7 @@ namespace ProgramsDatabase
   public class ProgramSettings
   {
     static public SQLiteClient sqlDB = null;
+    static public ProgramViewHandler viewHandler = null;
 
     // singleton. Dont allow any instance of this class
     private ProgramSettings(){}

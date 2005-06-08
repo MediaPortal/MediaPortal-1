@@ -104,7 +104,9 @@ namespace Programs.Utils
       int nResult = nDefValue;
       try
       {
-        nResult = Int32.Parse(strVal);
+        // nResult = Int32.Parse(strVal);
+        // avoid round errors and accept DOUBLEs
+        nResult = (int)Math.Floor(0.5d + Double.Parse(strVal));
       }
       catch (System.FormatException)
       {
