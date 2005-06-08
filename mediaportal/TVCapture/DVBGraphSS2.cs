@@ -162,7 +162,10 @@ namespace MediaPortal.TV.Recording
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		public static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,int pin);
-		
+			
+		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		public static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl,[Out] out int a,[Out] out int b);
+
 		// registry settings
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
 		private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
@@ -244,6 +247,9 @@ namespace MediaPortal.TV.Recording
 		int m_iVideoHeight=1;
 		int m_aspectX=1;
 		int m_aspectY=1;
+		DateTime m_timeDisplayed=DateTime.Now;
+		bool m_useVMR9Zap=false;
+		VMR9OSD	m_osd=new VMR9OSD();
 
 		bool m_lastTuneError=false;
 		#endregion
@@ -252,11 +258,13 @@ namespace MediaPortal.TV.Recording
 		public DVBGraphSS2(int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
 		{
 
+			
 			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				m_cardType=xmlreader.GetValueAsString("DVBSS2","cardtype","");
 				m_cardFilename=xmlreader.GetValueAsString("dvb_ts_cards","filename","");
+				m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
 			}
 
 			// teletext settings
@@ -594,7 +602,7 @@ namespace MediaPortal.TV.Recording
 				//
 			}
 			
-
+			
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
 				if(m_pluginsEnabled==false)
@@ -1150,7 +1158,6 @@ namespace MediaPortal.TV.Recording
 
 			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
 			hr=pTemp.SetHKEY(subKey);
-			
 			hr=m_config.SetDirectory(strDir);	
 			if(hr!=0)
 				return false;
@@ -1229,7 +1236,6 @@ namespace MediaPortal.TV.Recording
 
 			}
 			else {m_graphState=State.Created;return false;}
-
 			return true;
 		}
     
@@ -1432,8 +1438,25 @@ namespace MediaPortal.TV.Recording
 					else
 						m_streamDemuxer.GetMHWEPG();
 				}
+				SetZapOSDData(channel);
+
 			}
 			
+		}
+		// this sets the channel to render the osd
+		void SetZapOSDData(TVChannel channel)
+		{
+			if(GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+				return;
+			if(m_osd!=null && channel!=null && m_useVMR9Zap==true)
+			{
+
+				int level=0;
+				int quality=0;
+				GetSNR(m_tunerCtrl,out level,out quality);
+				m_osd.ShowBitmap(m_osd.RenderZapOSD(channel,quality),0.8f);
+				
+			}
 		}
 		void SetDemux(int audioPid,int videoPid)
 		{
@@ -1627,12 +1650,16 @@ namespace MediaPortal.TV.Recording
 				Vmr9.RemoveVMR9();
 				Vmr9.UseVMR9inMYTV=false;
 			}
-			//
-			//
-			if(Vmr9.IsVMR9Connected==true && Vmr9.UseVMR9inMYTV==true)// fallback
+			if(Vmr9.IsVMR9Connected==true && Vmr9.UseVMR9inMYTV==true)// 
 			{
-				//m_vmr9Running=true;
+				m_osd.VMR9=Vmr9;
+				m_osd.Mute=false;
+				GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				if(win!=null)
+					win.SetObject(m_osd);
 			}
+			//
+			//
 			//
 			//
 			m_mediaControl = (IMediaControl)m_graphBuilder;
@@ -1830,6 +1857,7 @@ namespace MediaPortal.TV.Recording
 		public void Process()
 		{
 			//
+
 			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
 			{
 				Vmr9.Process();
@@ -1837,6 +1865,10 @@ namespace MediaPortal.TV.Recording
 				{
 					Vmr9.Repaint();// repaint vmr9
 				}
+			}
+			if(m_timeDisplayed.AddSeconds(5)<=DateTime.Now)
+			{
+				//m_osd.HideBitmap();
 			}
 			if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
 			{
@@ -2502,5 +2534,6 @@ namespace MediaPortal.TV.Recording
 			if(tableList.Count<1)
 				return;
 		}
+
 	}// class
 }// namespace

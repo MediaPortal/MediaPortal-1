@@ -72,6 +72,8 @@ namespace MediaPortal.GUI.TV
 		DateTime		m_dwMsgTimer=DateTime.Now;
 		int					m_iMsgBoxTimeout=0;
 		bool				needToClearScreen=false;
+		bool				m_useVMR9Zap=false;
+		VMR9OSD				m_vmr9OSD=null;
 		FullScreenState screenState=new FullScreenState();
 
 
@@ -111,6 +113,10 @@ namespace MediaPortal.GUI.TV
     
 		public override bool Init()
 		{
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
+			}
 			return Load (GUIGraphicsContext.Skin+@"\mytvFullScreen.xml");
 		}
 
@@ -189,7 +195,6 @@ namespace MediaPortal.GUI.TV
 				GUIWindowManager.ShowPreviousWindow();
 				return;
 			}
-
 			if (isOsdVisible)
 			{
 				if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI)) && !m_osdWindow.SubMenuVisible) // hide the OSD
@@ -310,13 +315,20 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_SHOW_INFO:
 				{
-					m_dwOSDTimeOut=DateTime.Now;
-					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_zapWindow.GetID,0,0,GetID,0,null);
-					m_zapWindow.OnMessage(msg);
-					Log.Write("ZAP OSD:ON");
+					if(m_useVMR9Zap==true && GUIGraphicsContext.Vmr9Active==true)
+					{
+						m_dwZapTimer=DateTime.Now;
+					}
+					else
+					{
+						m_dwOSDTimeOut=DateTime.Now;
+						GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,m_zapWindow.GetID,0,0,GetID,0,null);
+						m_zapWindow.OnMessage(msg);
+						Log.Write("ZAP OSD:ON");
 					
-					m_bZapOSDVisible=true;
-					m_dwZapTimer=DateTime.Now;
+						m_bZapOSDVisible=true;
+						m_dwZapTimer=DateTime.Now;
+					}
 
 				}
 					break;
@@ -514,6 +526,13 @@ namespace MediaPortal.GUI.TV
 			}
 
 			base.OnAction(action);
+		}
+		public override void SetObject(object obj)
+		{
+			if(obj.GetType()==typeof(VMR9OSD))
+			{
+				m_vmr9OSD=(VMR9OSD)obj;
+			}
 		}
 
 		public override bool OnMessage(GUIMessage message)
@@ -951,7 +970,7 @@ namespace MediaPortal.GUI.TV
 			{
 				UpdateGUI();
 			}
-
+			
 			GUIGraphicsContext.IsFullScreenVideo=true;
 		}
 
@@ -1180,6 +1199,15 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
+			if(m_useVMR9Zap==true && GUIGraphicsContext.Vmr9Active==true)
+			{
+				TimeSpan ts =DateTime.Now - m_dwZapTimer;
+				if ( ts.TotalMilliseconds > m_iZapTimeOut)
+				{
+					if(m_vmr9OSD!=null)
+						m_vmr9OSD.HideBitmap();
+				}
+			}
 
 
 			// OSD Timeout?

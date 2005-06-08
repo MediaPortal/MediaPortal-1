@@ -35,6 +35,7 @@ namespace MediaPortal.Player
     DateTime repaintTimer = DateTime.Now;
     static int instanceCounter = 0;
 
+	  IVMRMixerBitmap9 m_mixerBitmap=null;
     enum Vmr9PlayState
     {
       Playing,
@@ -107,6 +108,7 @@ namespace MediaPortal.Player
       m_scene.Init();
       vmr9Helper = new DirectShowHelperLib.VMR9HelperClass();
       DirectShowHelperLib.IBaseFilter baseFilter = VMR9Filter as DirectShowHelperLib.IBaseFilter;
+		m_mixerBitmap=baseFilter as IVMRMixerBitmap9;
 
       vmr9Helper.Init(m_scene, (uint)upDevice.ToInt32(), baseFilter, (uint)hMonitor.ToInt32());
 
@@ -241,6 +243,13 @@ namespace MediaPortal.Player
         }
       }
     }
+	  /// <summary>
+	  /// returns a IVMRMixerBitmap9 interface
+	  /// </summary>
+	  public IVMRMixerBitmap9 MixerBitmapInterface
+	  {
+		  get{return m_mixerBitmap;}
+	  }
 
     /// <summary>
     /// This method returns true if VMR9 is enabled AND WORKING!

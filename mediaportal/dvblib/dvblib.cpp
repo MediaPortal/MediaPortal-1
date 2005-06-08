@@ -15,6 +15,7 @@
 #include "Include\ib2c2mpeg2tunerctrl.h"
 #include "Include\ib2c2mpeg2datactrl.h"
 #include "Include\ib2c2mpeg2avctrl.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -26,6 +27,9 @@
 
 // copied from "../sky2pcavsrc/constants.h"; better move b2c2_defs.h
 #define SKY2PC_E_OUTOFLOCK						0x90010115
+#define ALPHA_VALUE    0.6f     // Alpha value for bitmap (0.0 to 1.0)
+#define BMP_SIZE_X     0.3f     // Width of bitmap in comp. space
+#define BMP_SIZE_Y     0.3f     // Height of bitmap in comp. space
 
 DEFINE_GUID(CLSID_Demux, 0xAFB6C280, 0x2C41, 0x11D3, 0x8A, 0x60, 0x00, 0x00, 0xF8, 0x1E, 0x0E, 0x4A);
 DEFINE_GUID(CLSID_MPSECTAB, 0xC666E115, 0xBB62, 0x4027, 0xA1, 0x13, 0x82, 0xD6, 0x43, 0xFE, 0x2D, 0x99);
@@ -95,7 +99,12 @@ BOOL CdvblibApp::InitInstance()
 	CWinApp::InitInstance();
 	return TRUE;
 }
-
+HRESULT GetSNR(IB2C2MPEG2TunerCtrl2 *pTunerCtrl,long *sigStrength,long *sigQuality)
+{
+	pTunerCtrl->GetSignalStrength(sigStrength);
+	pTunerCtrl->GetSignalQuality(sigQuality);
+	return S_OK;
+}
 bool GetSectionData(IBaseFilter *filter,PID pid,TID tid,WORD *sectionCount,int tableSection,int timeout)
 {
 	
@@ -272,6 +281,7 @@ HRESULT GetPidMap(IPin* pin, unsigned long* pid, unsigned long* mediasampletype)
 	pMap->Release();
 	return 0;
 }
+
 
 HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID)
 {
