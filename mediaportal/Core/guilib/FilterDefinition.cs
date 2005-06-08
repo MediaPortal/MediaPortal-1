@@ -25,13 +25,19 @@ namespace MediaPortal.GUI.View
 		{
 		}
 
-		[XmlElement("SortAscending")]
-		public bool SortAscending
-		{
-			get { return sortAscending;}
-			set { sortAscending=value;}
-		}
-		[XmlElement("Restriction")]
+    [XmlElement("distinct")]
+    public bool Distinct
+    {
+      get { return distinct;}
+      set { distinct=value;}
+    }
+    [XmlElement("SortAscending")]
+    public bool SortAscending
+    {
+      get { return sortAscending;}
+      set { sortAscending=value;}
+    }
+    [XmlElement("Restriction")]
 		public string Restriction
 		{
 			get { return restriction;}
