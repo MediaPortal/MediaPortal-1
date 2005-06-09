@@ -2441,7 +2441,7 @@ namespace MediaPortal.TV.Recording
 					break;
 				}
 				// test with burst on
-				inputRange|=1<<24;
+				//inputRange|=1<<24;
 
 				if (currentTuningObject.LNBKHz==1) // 22khz 
 					inputRange |= (1<<8);
