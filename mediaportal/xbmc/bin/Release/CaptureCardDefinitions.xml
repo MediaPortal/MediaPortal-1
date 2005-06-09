@@ -4232,14 +4232,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VBox DTT-150" capturename="VBox DTT-150 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_b15014f3&amp;rev_03">
+  <capturecard commercialname="VBox DTT-150" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_b15014f3&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"							checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (Microtune MT7202DTF)"	checkdevice="true"></filter>
-        <filter cat="capture"         name="VBox DTT-150 Receiver, BDA Capture Driver"					checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (Microtune MT7202DTF)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Bic951 Capture"			checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5403,14 +5403,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VBox DTT-150" capturename="VBox DTT-150 (RevB) Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_150b14f3&amp;rev_03">
+  <capturecard commercialname="VBox DTT-150 Rev B" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_150b14f3&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"					checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (DTF8600)"		checkdevice="true"></filter>
-        <filter cat="capture"         name="VBox DTT-150 (RevB) Receiver, BDA Capture Driver"	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (Thomson DTF8575)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Bic951 Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5419,14 +5419,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VBox DTA-110" capturename="VBox DTA-110 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a11014f3&amp;rev_03">
+  <capturecard commercialname="VBox DTA-110" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_a11014f3&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (BCM3510 - ATSC)"	checkdevice="true"></filter>
-        <filter cat="capture"         name="VBox DTA-110 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (BCM3510)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Bic951 Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5435,14 +5435,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VBox DTA-111" capturename="VBox DTA-111 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a11114f3&amp;rev_03">
+  <capturecard commercialname="VBox DTA-111" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_a11114f3&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (BCM3510 - ATSC)"	checkdevice="true"></filter>
-        <filter cat="capture"         name="VBox DTA-111 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (BCM3510)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Bic951 Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5451,14 +5451,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VBox DTA-150" capturename="VBox DTA-150 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15014f3&amp;rev_03">
+  <capturecard commercialname="VBox DTA-150" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15014f3&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (DTF8600 - ATSC)"	checkdevice="true"></filter>
-        <filter cat="capture"         name="VBox DTA-150 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Bic951 Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5467,14 +5467,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VBox DTA-151" capturename="VBox DTA-151 Receiver, BDA Capture Driver" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15114f3&amp;rev_03">
+  <capturecard commercialname="VBox DTA-151" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15114f3&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"						checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Receiver, BDA Tuner Driver (DTF8600 - ATSC)"	checkdevice="true"></filter>
-        <filter cat="capture"         name="VBox DTA-151 Receiver, BDA Capture Driver"				checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Bic951 Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -5757,6 +5757,102 @@
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"			checkdevice="true"></filter>
         <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox USB-T 3550" capturename="VBox Vb35xx Capture" devid="vid_14f3&amp;pid_a550">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (Thomson DTF8575)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Vb35xx Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox USB-T 3550" capturename="VBox Vb35xx Capture" devid="vid_14f3&amp;pid_b550&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (Thomson DTF8575)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Vb35xx Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox USB-T 3550" capturename="VBox Vb35xx Capture" devid="vid_14f3&amp;pid_c550&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (Thomson DTF8575)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Vb35xx Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox USB-A 3560" capturename="VBox Vb35xx Capture" devid="vid_14f3&amp;pid_a560">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Vb35xx Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox USB-A 3560" capturename="VBox Vb35xx Capture" devid="vid_14f3&amp;pid_b560&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Vb35xx Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="VBox USB-A 3560" capturename="VBox Vb35xx Capture" devid="vid_14f3&amp;pid_c560&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"></filter>
+        <filter cat="capture"         name="VBox Vb35xx Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
