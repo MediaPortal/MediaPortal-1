@@ -9,7 +9,6 @@ using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
-using System.Management; 
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -1028,43 +1027,33 @@ namespace MediaPortal.GUI.GUIBurner
 			GUIControl.DisableControl(GetID,(int)Controls.CONTROL_EJECT_CD);
 		}
  
+		enum DriveType
+		{
+			Removable = 2,
+			Fixed = 3,
+			RemoteDisk = 4,
+			CD = 5,
+			DVD = 5,
+			RamDisk = 6
+		}
+		
 		/// <summary>
 		/// fills the drive array. 3=HD 5=CD
 		/// </summary>
 		private void GetDrives() 
 		{
-			ManagementObjectSearcher query;
-			ManagementObjectCollection queryCollection;
-			System.Management.ObjectQuery oq;
-			string stringMachineName = "localhost";
-			string lw;
-			int m;
-			char d='C';
-			for (int i=0; i<24; i++) 
+			foreach(string drive in Environment.GetLogicalDrives())
 			{
-				m=0;
-				lw=d+":";
-				//Connect to the remote computer
-				ConnectionOptions co = new ConnectionOptions();
-
-				//Point to machine
-				System.Management.ManagementScope ms = new System.Management.ManagementScope("\\\\" + stringMachineName + "\\root\\cimv2", co);
-
-				oq = new System.Management.ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID = '"+lw+"'");
-				query = new ManagementObjectSearcher(ms,oq);
-				queryCollection = query.Get();
-				foreach ( ManagementObject mo in queryCollection) 
+				switch((DriveType)Util.Utils.getDriveType(drive))
 				{
-					m=Convert.ToInt32(mo["DriveType"]);
+					case DriveType.Removable:
+					case DriveType.Fixed:
+					case DriveType.RemoteDisk:
+					case DriveType.RamDisk:
+						drives[driveCount]=drive;
+						driveCount++;
+						break;
 				}
-				if (m==4) m=3; // shows Netdrives
-				if (m==2) m=3; // shows Cardreader
-				if (m==3) 
-				{
-					drives[driveCount]=d+":\\";
-					driveCount++;
-				}
-				d++;
 			}
 		}
 
