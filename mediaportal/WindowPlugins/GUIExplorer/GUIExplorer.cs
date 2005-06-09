@@ -579,6 +579,9 @@ namespace MediaPortal.GUI.GUIExplorer
 			currentFolder="";
 			//clear the list
 			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LIST_DIR);
+
+			cd = false;
+
 			if (cd==true) 
 			{
 				for (int i=0; i<driveCdCount; i++) 
@@ -589,8 +592,8 @@ namespace MediaPortal.GUI.GUIExplorer
 					Utils.SetDefaultIcons(pItem);
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
 				}
-			} 
-			else 
+			}
+			else
 			{
 				for (int i=0; i<driveCount; i++) 
 				{
@@ -601,6 +604,7 @@ namespace MediaPortal.GUI.GUIExplorer
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
 				}
 			}
+
 			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 		}
