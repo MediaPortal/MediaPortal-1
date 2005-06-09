@@ -90,12 +90,12 @@ namespace WindowPlugins.GUIPrograms
       this.backButton = new System.Windows.Forms.Button();
       this.filePathLabel = new System.Windows.Forms.Label();
       this.bottomPanel = new System.Windows.Forms.Panel();
+      this.button1 = new System.Windows.Forms.Button();
       this.fileList = new System.Windows.Forms.ListView();
       this.fileTitle = new System.Windows.Forms.ColumnHeader();
       this.popupFavourites = new System.Windows.Forms.ContextMenu();
       this.menuItem1 = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
-      this.button1 = new System.Windows.Forms.Button();
       this.topPanel.SuspendLayout();
       this.bottomPanel.SuspendLayout();
       this.SuspendLayout();
@@ -237,6 +237,15 @@ namespace WindowPlugins.GUIPrograms
       this.bottomPanel.Size = new System.Drawing.Size(392, 376);
       this.bottomPanel.TabIndex = 15;
       // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(296, 200);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(80, 32);
+      this.button1.TabIndex = 21;
+      this.button1.Text = "test";
+      this.button1.Visible = false;
+      // 
       // fileList
       // 
       this.fileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -276,15 +285,6 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.menuItem2.Index = 1;
       this.menuItem2.Text = "Grouper B";
-      // 
-      // button1
-      // 
-      this.button1.Location = new System.Drawing.Point(296, 200);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(80, 32);
-      this.button1.TabIndex = 21;
-      this.button1.Text = "test";
-      this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // AppFilesView
       // 
@@ -645,7 +645,8 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-    private void button1_Click(object sender, System.EventArgs e)
+/*
+ *     private void button1_Click(object sender, System.EventArgs e)
     {
       string strCon = "Provider=Microsoft.Jet.OLEDB.4.0 ;Data Source=C:\\media\\GameBase\\snes\\Snes.mdb";
       OleDbConnection myCon = new OleDbConnection( strCon ) ;
@@ -683,7 +684,7 @@ namespace WindowPlugins.GUIPrograms
 
     
     }
-
+*/
 
   }
 }
