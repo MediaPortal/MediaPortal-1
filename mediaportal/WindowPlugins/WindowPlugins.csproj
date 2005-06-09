@@ -504,11 +504,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GUIPrograms\appMyGamesDirect.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "GUIPrograms\AppSettings.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

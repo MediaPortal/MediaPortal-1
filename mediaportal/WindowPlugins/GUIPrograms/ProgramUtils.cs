@@ -243,13 +243,6 @@ namespace Programs.Utils
 
     static public myProgSourceType StringToSourceType(string strValue)
     {
-      //
-      //					public const string cMYFILEMEEDIO = "MY_FILE_MEEDIO";
-      //		public const string cMYFILEINI = "MY_FILE_INI";
-      //		public const string cMYGAMESDIRECT = "MY_GAMES_DIRECT";
-      //		public const string cDIRBROWSE = "DIR_BROWSE";
-      //		public const string cDIRCACHE = "DIR_CACHE";
-
       if (strValue == cMYFILEMEEDIO)
       {
         return myProgSourceType.MYFILEMEEDIO;
