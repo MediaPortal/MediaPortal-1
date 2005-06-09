@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Management;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -10,108 +9,108 @@ using MediaPortal.Dialogs;
 
 namespace MediaPortal.GUI.GUIExplorer
 {
-  /// <summary>
-  /// Summary description for GUIExplorer
-  /// </summary>
-  public class GUIExplorer : GUIWindow 
-  {
-	public static int WINDOW_STATUS = 770;
-
-	#region Private Enumerations
-
-	enum Controls 
+	/// <summary>
+	/// Summary description for GUIExplorer
+	/// </summary>
+	public class GUIExplorer : GUIWindow 
 	{
-	  CONTROL_SELECT_SOURCE		= 2,	 
-	  CONTROL_SELECT_DEST			= 3,	 
-	  CONTROL_COPY						= 4,	 
-		CONTROL_MOVE						= 5,	
-		CONTROL_DELETE					= 6,
-		CONTROL_MAKE_DIR				= 7,	 
-	  CONTROL_RESET_SELECT		= 8,
-		CONTROL_MARK_ALL				= 9,
-		CONTROL_TRASHCAN				= 10,
-		CONTROL_LIST_DIR				= 20
-	};
+		public static int WINDOW_STATUS = 770;
 
-	enum States
-	{
-	  STATE_MAIN					= 0,
-	  STATE_SELECT_SOURCE = 1,
-	  STATE_SELECT_DEST		= 2,
-		STATE_COPY					= 3,
-	  STATE_MAKE_DIR			= 4,
-		STATE_RESET_SELECT	= 5
-	};
+		#region Private Enumerations
 
-	private States currentState = States.STATE_MAIN;
+		enum Controls 
+		{
+			CONTROL_SELECT_SOURCE		= 2,	 
+			CONTROL_SELECT_DEST			= 3,	 
+			CONTROL_COPY						= 4,	 
+			CONTROL_MOVE						= 5,	
+			CONTROL_DELETE					= 6,
+			CONTROL_MAKE_DIR				= 7,	 
+			CONTROL_RESET_SELECT		= 8,
+			CONTROL_MARK_ALL				= 9,
+			CONTROL_TRASHCAN				= 10,
+			CONTROL_LIST_DIR				= 20
+		};
 
-	#endregion
+		enum States
+		{
+			STATE_MAIN					= 0,
+			STATE_SELECT_SOURCE = 1,
+			STATE_SELECT_DEST		= 2,
+			STATE_COPY					= 3,
+			STATE_MAKE_DIR			= 4,
+			STATE_RESET_SELECT	= 5
+		};
 
-	#region Private Variables
-	private struct file 
-	{
-		public string name;
-		public long size;
-		public string fullpath;
-		public string path;
-	}
+		private States currentState = States.STATE_MAIN;
 
-	string[] video = new string[20];		// video shares folder
-	string[] vname = new string[20];		// video share names
-	string[] sound = new string[20];		// sound shares folder
-	string[] sname = new string[20];		// sound shares names
-	string[] pictures = new string[20]; // pictures shares folder
-	string[] pname = new string[20];		// pictures shares names
+		#endregion
 
-	private string tempFolder="";				// trashcan folder
-	private bool showOnlyShares=false;	// shows only shares in destination folder
-	private bool enableDelete=false;		// shows delete button
-	private bool deleteImmed=false;			// enable immediate delete funtion
-	private bool deleteTemp=false;			// enable trashcan
+		#region Private Variables
+		private struct file 
+		{
+			public string name;
+			public long size;
+			public string fullpath;
+			public string path;
+		}
 
-	private ArrayList files = new ArrayList(); 
-	private ArrayList selected = new ArrayList();
-	private string tmpStr;
-	private ArrayList currentExt= new ArrayList();
-	private string currentFolder=null;
-	private string[] drives=new string[27];
-	private string[] drivesCd=new string[27];
-	private int driveCount=0;
-	private int driveCdCount=0;
-	private long actSize=0;
-	private int fileCount=0;
-	#endregion
+		string[] video = new string[20];		// video shares folder
+		string[] vname = new string[20];		// video share names
+		string[] sound = new string[20];		// sound shares folder
+		string[] sname = new string[20];		// sound shares names
+		string[] pictures = new string[20]; // pictures shares folder
+		string[] pname = new string[20];		// pictures shares names
 
-	#region Constructor
-	public GUIExplorer()
-	{
-	  //
-	  // TODO: Add constructor logic here
-	  //
-	}
-	#endregion
+		private string tempFolder="";				// trashcan folder
+		private bool showOnlyShares=false;	// shows only shares in destination folder
+		private bool enableDelete=false;		// shows delete button
+		private bool deleteImmed=false;			// enable immediate delete funtion
+		private bool deleteTemp=false;			// enable trashcan
+
+		private ArrayList files = new ArrayList(); 
+		private ArrayList selected = new ArrayList();
+		private string tmpStr;
+		private ArrayList currentExt= new ArrayList();
+		private string currentFolder=null;
+		private string[] drives=new string[27];
+		private string[] drivesCd=new string[27];
+		private int driveCount=0;
+		private int driveCdCount=0;
+		private long actSize=0;
+		private int fileCount=0;
+		#endregion
+
+		#region Constructor
+		public GUIExplorer()
+		{
+			//
+			// TODO: Add constructor logic here
+			//
+		}
+		#endregion
 	
-	#region Overrides		
-	public override int GetID 
-	{
-	  get { return WINDOW_STATUS; }
-	  set { base.GetID = value; }
-	}
+		#region Overrides		
+		public override int GetID 
+		{
+			get { return WINDOW_STATUS; }
+			set { base.GetID = value; }
+		}
 
-	public override bool Init() 
-	{
-	  return Load (GUIGraphicsContext.Skin+@"\myexplorer.xml");
-	}
+		public override bool Init() 
+		{
+			return Load (GUIGraphicsContext.Skin+@"\myexplorer.xml");
+		}
 
-	public override void OnAction(Action action) 
-	{
-	  if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
-	  {
-			GUIWindowManager.ShowPreviousWindow();  
-			return;
-	  }
-	  base.OnAction(action);
-	}
+		public override void OnAction(Action action) 
+		{
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
+			{
+				GUIWindowManager.ShowPreviousWindow();  
+				return;
+			}
+			base.OnAction(action);
+		}
 
 		public override bool OnMessage(GUIMessage message) 
 		{
@@ -133,7 +132,6 @@ namespace MediaPortal.GUI.GUIExplorer
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					//get sender control
 					base.OnMessage(message);
-					Log.Write("Count:{0} I:{1}",currentExt.Count,currentExt[0]);
 					int iControl=message.SenderControlId;
 					if (iControl==(int)Controls.CONTROL_SELECT_SOURCE)		// select source
 					{
@@ -385,7 +383,11 @@ namespace MediaPortal.GUI.GUIExplorer
 									LoadDriveListControl(true);
 								else
 									LoadListControl(item.Path,currentExt);
-							} 
+							}
+							else if(item.Label.StartsWith("("))
+							{
+								LoadListControl(item.Label[1] + @":\", currentExt);
+							}
 							else if (item.Label.StartsWith("["))		// is a share
 							{ 
 								String shareName=item.Label.Substring(1);
@@ -496,7 +498,7 @@ namespace MediaPortal.GUI.GUIExplorer
 
 		#endregion
 
-	#region Private Methods
+		#region Private Methods
 
 		/// <summary>
 		/// Reset all Values to start settings
@@ -554,10 +556,10 @@ namespace MediaPortal.GUI.GUIExplorer
 					pItem.Path=String.Format(@"{0}\{1}", folder,item.Label);
 					if (item.Label=="..")
 					{
-							string prevFolder="";
-							int pos=folder.LastIndexOf(@"\");
-							if (pos>=0) prevFolder=folder.Substring(0,pos);
-							pItem.Path=prevFolder;
+						string prevFolder="";
+						int pos=folder.LastIndexOf(@"\");
+						if (pos>=0) prevFolder=folder.Substring(0,pos);
+						pItem.Path=prevFolder;
 					}
 					Utils.SetDefaultIcons(pItem);
 					GUIControl.AddListItemControl(GetID,(int)Controls.CONTROL_LIST_DIR,pItem);
@@ -609,51 +611,58 @@ namespace MediaPortal.GUI.GUIExplorer
 			//
 		}
 
+		enum DriveType
+		{
+			Removable = 2,
+			Fixed = 3,
+			RemoteDisk = 4,
+			CD = 5,
+			DVD = 5,
+			RamDisk = 6
+		}
+
 		/// <summary>
 		/// fills the drive array. 
 		/// when showOnlyShares==false then the array drives contains all drives witout CD. 
 		/// array drivesCd contains all drives 
 		/// </summary>
-		private void GetDrives() 
+		void GetDrives()
 		{
-			ManagementObjectSearcher query;
-			ManagementObjectCollection queryCollection;
-			System.Management.ObjectQuery oq;
-			string stringMachineName = "localhost";
-			string lw;
-			int m;
-			char d='C';
-			for (int i=0; i<24; i++) 
+			foreach(string drive in Environment.GetLogicalDrives())
 			{
-				m=0;
-				lw=d+":";
-				//Connect to the remote computer
-				ConnectionOptions co = new ConnectionOptions();
+				DriveType driveType = (DriveType)Util.Utils.getDriveType(drive);
+				string name="";
 
-				//Point to machine
-				System.Management.ManagementScope ms = new System.Management.ManagementScope("\\\\" + stringMachineName + "\\root\\cimv2", co);
-
-				oq = new System.Management.ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID = '"+lw+"'");
-				query = new ManagementObjectSearcher(ms,oq);
-				queryCollection = query.Get();
-				foreach ( ManagementObject mo in queryCollection) 
+				switch(driveType)
 				{
-					m=Convert.ToInt32(mo["DriveType"]);
+					case DriveType.Removable:
+						name=String.Format("({0}:) Removable",drive.Substring(0, 1).ToUpper());								
+						break;
+					case DriveType.Fixed:
+						name=String.Format("({0}:) Fixed",drive.Substring(0, 1).ToUpper());
+						break;
+					case DriveType.RemoteDisk:
+						name=String.Format("({0}:) Remote",drive.Substring(0, 1).ToUpper());
+						break;
+					case DriveType.DVD:
+						name=String.Format("({0}:) CD/DVD",drive.Substring(0, 1).ToUpper());
+						break;
+					case DriveType.RamDisk:
+						name=String.Format("({0}:) Ram",drive.Substring(0, 1).ToUpper());
+						break;
 				}
-				if (m==5 || m==3 || m==4 || m==2) 
+
+				if(showOnlyShares == false)
 				{
-					drivesCd[driveCdCount]=d+":";
+					drives[driveCount]=name;
+					driveCount++;
+				}
+
+				if(driveType == DriveType.DVD)
+				{
+					drivesCd[driveCdCount]=name;
 					driveCdCount++;
-				} 
-				if (m==3 || m==4 || m==2) 
-				{
-					if (showOnlyShares==false) 
-					{
-						drives[driveCount]=d+":";
-						driveCount++;
-					}
 				}
-				d++;
 			}
 		}
 
@@ -760,5 +769,5 @@ namespace MediaPortal.GUI.GUIExplorer
 			}
 		}
 		#endregion
-  }
+	}
 }
