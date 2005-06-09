@@ -44,7 +44,7 @@
                 />
                 <Config
                     Name = "Release"
-                    AllowUnsafeBlocks = "false"
+                    AllowUnsafeBlocks = "true"
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
