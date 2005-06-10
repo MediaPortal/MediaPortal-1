@@ -238,12 +238,17 @@ namespace MediaPortal.TV.Recording
 		}
 		public Bitmap RenderZapOSD(TVChannel channel,int signalLevel)
 		{
+			Log.Write("start rendering zaposd");
 			Bitmap bm=new Bitmap(720,576);//m_mediaPath+@"bgimage.png");
 			Graphics gr=Graphics.FromImage(bm);
 			int x=60;
 			int y=0;
 			if(bm==null || gr==null || channel==null)
+			{
+				Log.Write("end rendering zaposd: no bitmap (memory problem?)");
+
 				return null;
+			}
 			m_actualChannel=channel;
 			m_channelSNR=signalLevel;
 			// set the tvchannel data
@@ -501,11 +506,13 @@ namespace MediaPortal.TV.Recording
 		}
 		bool SaveVMR9Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
-			
 			if(Vmr9!=null)
 			{
 				if(Vmr9.IsVMR9Connected==false)
+				{
+					Log.Write("SaveVMR9Bitmap() failed, no VMR9");
 					return false;
+				}
 				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
 				int hr=0;
 				// transparent image?
@@ -536,9 +543,11 @@ namespace MediaPortal.TV.Recording
 					bmp.rDest.bottom=1.0f;
 					bmp.rDest.right=1.0f;
 					bmp.fAlpha=alphaValue;
+					Log.Write("SaveVMR9Bitmap() called");
 					hr=Vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
 					if(hr!=0)
 					{
+						Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
 						return false;
 					}
 					surface.Dispose();
@@ -550,7 +559,8 @@ namespace MediaPortal.TV.Recording
 					if(hr!=0)
 					{
 						return false;
-					}		
+					}
+		
 				}
 				// dispose
 				return true;
