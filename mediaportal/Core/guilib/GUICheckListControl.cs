@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Library
 					GUIListItem item = (GUIListItem)m_vecItems[i+m_iOffset];
 					if (item.Selected) selected=true;
 				}
-				GUICheckMarkControl btn = (GUICheckMarkControl)m_imgButton[i];
+				GUIControl btn = (GUIControl)m_imgButton[i];
 				btn.Focus=false;
 				btn.Selected=selected;
 				if (i==m_iCursorY)

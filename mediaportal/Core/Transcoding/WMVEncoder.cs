@@ -142,7 +142,7 @@ namespace MediaPortal.Core.Transcoding
 
 				// Start the encoding process.
 				// Wait until the encoding process stops before exiting the application.
-				//Encoder.PrepareToEncode(true);
+				Encoder.PrepareToEncode(true);
 				Encoder.Start();
 			} 
 			catch (Exception e) 
