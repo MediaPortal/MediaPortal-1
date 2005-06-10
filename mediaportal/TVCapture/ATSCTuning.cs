@@ -97,6 +97,7 @@ namespace MediaPortal.TV.Recording
 				ScanNextChannel();
 				if (captureCard.SignalPresent())
 				{
+					callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 					ScanChannels();
 				}
 				retryCount=1;
@@ -106,6 +107,7 @@ namespace MediaPortal.TV.Recording
 				ScanChannel();
 				if (captureCard.SignalPresent())
 				{
+					callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 					ScanChannels();
 				}
 				retryCount=0;
@@ -165,6 +167,7 @@ namespace MediaPortal.TV.Recording
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.Frequency=-1;
 			captureCard.Tune(newchan,0);
+			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			Application.DoEvents();
 		}
 		#endregion

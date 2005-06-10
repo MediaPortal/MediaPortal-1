@@ -155,6 +155,23 @@ namespace MediaPortal.TV.Recording
 			set {m_strRecordingPath=value;}
 		}
 
+		public int SignalQuality
+		{
+			get 
+			{
+				if (currentGraph==null) return 0;
+				return currentGraph.SignalQuality();
+			}
+		}
+		
+		public int SignalStrength
+		{
+			get 
+			{
+				if (currentGraph==null) return 0;
+				return currentGraph.SignalStrength();
+			}
+		}
 		public int Quality
 		{
 			get { return m_iQuality;}

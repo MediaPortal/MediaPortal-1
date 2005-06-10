@@ -20,6 +20,7 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		void OnNewChannel();
 
+		void OnSignal(int quality, int strength);
 		/// <summary>
 		/// Shows current status of the tuning progress
 		/// </summary>

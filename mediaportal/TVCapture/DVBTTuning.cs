@@ -159,6 +159,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (captureCard.SignalPresent())
 					{
+						callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 						Log.WriteFile(Log.LogType.Capture,"Found signal at:{0} MHz,scan for channels",frequency);
 						currentState=State.ScanChannels;
 						currentOffset=0;
@@ -170,6 +171,7 @@ namespace MediaPortal.TV.Recording
 			{
 				callback.OnStatus(description);
 				ScanNextFrequency();
+				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			}
 
 			if (currentState==State.ScanChannels)
@@ -177,6 +179,7 @@ namespace MediaPortal.TV.Recording
 				description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
 				callback.OnStatus(description);
 				ScanChannels();
+				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			}
 		}
 
@@ -217,6 +220,7 @@ namespace MediaPortal.TV.Recording
 				chan.Bandwidth=tmp[1];
 				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
+				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 				return;
 			}
 
@@ -230,6 +234,7 @@ namespace MediaPortal.TV.Recording
 				captureCard.Tune(chan,0);
 				if (scanOffset==0) currentOffset=3;
 				else currentOffset++;
+				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			}
 			else if (currentOffset==1)
 			{
@@ -237,6 +242,7 @@ namespace MediaPortal.TV.Recording
 				chan.Frequency-=scanOffset;
 				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
+				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 				currentOffset++;
 			}
 			else if (currentOffset==2)
@@ -245,6 +251,7 @@ namespace MediaPortal.TV.Recording
 				chan.Frequency+=scanOffset;
 				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
+				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 				currentOffset++;
 			}
 			else
