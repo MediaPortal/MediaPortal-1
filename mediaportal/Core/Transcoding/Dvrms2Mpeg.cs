@@ -17,6 +17,7 @@ namespace MediaPortal.Core.Transcoding
 		protected IMediaControl											mediaControl=null;
 		protected IMediaSeeking											mediaSeeking=null;
 		protected IBaseFilter												powerDvdMuxer =null;
+		protected IMediaEventEx											mediaEvt=null;
 
 		public Dvrms2Mpeg()
 		{
@@ -36,7 +37,7 @@ namespace MediaPortal.Core.Transcoding
 		{
 			if (!Supports(format)) return false;
 			string ext=System.IO.Path.GetExtension(info.file);
-			if (ext.ToLower() !=".dvr-ms") return false;
+			if (ext.ToLower() !=".dvr-ms" && ext.ToLower() !=".sbe" ) return false;
 
 			Type comtype = null;
 			object comobj = null;
@@ -66,7 +67,7 @@ namespace MediaPortal.Core.Transcoding
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
 
-				string monikerPowerDvdMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{4B5C6BC0-D60E-11D2-8F3F-0080C84E9806}";
+				string monikerPowerDvdMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9}";
 				powerDvdMuxer = Marshal.BindToMoniker( monikerPowerDvdMuxer ) as IBaseFilter;
 				if (powerDvdMuxer==null)
 				{
@@ -84,7 +85,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				//add filewriter 
-				string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}";
+				string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{3E8868CB-5FE8-402C-AA90-CB1AC6AE3240}";
 				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerFileWrite ) as IBaseFilter;
 				if (fileWriterbase==null)
 				{
@@ -97,7 +98,7 @@ namespace MediaPortal.Core.Transcoding
 				fileWriterFilter = fileWriterbase as IFileSinkFilter;
 				if (fileWriterFilter ==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Add unable to get IFileSinkFilte for filewriter");
+					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Add unable to get IFileSinkFilter for filewriter");
 					Cleanup();
 					return false;
 				}
@@ -190,6 +191,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= graphBuilder as IMediaSeeking;
+				mediaEvt    = graphBuilder as IMediaEventEx;
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -214,6 +216,15 @@ namespace MediaPortal.Core.Transcoding
 
 			mediaControl.GetState(200, out state);
 			if (state==FilterState.Stopped)
+			{
+				Cleanup();
+				return true;
+			}
+			int p1, p2, hr = 0;
+			DsEvCode code;
+			hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
+			hr = mediaEvt.FreeEventParams( code, p1, p2 );
+			if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
 			{
 				Cleanup();
 				return true;
@@ -249,6 +260,7 @@ namespace MediaPortal.Core.Transcoding
 				mediaControl = null;
 			}
 			mediaSeeking=null;
+			mediaEvt=null;
 
 			if ( powerDvdMuxer != null )
 				Marshal.ReleaseComObject( powerDvdMuxer );

@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using WMEncoderLib;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Core.Transcoding
@@ -10,9 +11,54 @@ namespace MediaPortal.Core.Transcoding
 	{
 		WMEncoder Encoder ;
 		bool      finishedEncoding=false;
+		WMEncProfile2  profile = null;
 
 		public TranscodeToWMV()
 		{
+		}
+		public void CreateProfile(string name, int KBPS, Size videoSize, int bitRate, int FPS)
+		{
+			profile =new WMEncProfile2 ();
+			profile.ValidateMode=true;
+			profile.ProfileName=name;
+			profile.ContentType=17;//audio & video
+			profile.set_VBRMode(WMENC_SOURCE_TYPE.WMENC_VIDEO, 0, WMENC_PROFILE_VBR_MODE.WMENC_PVM_BITRATE_BASED);
+			profile.AddAudience(KBPS);
+			// Create an audience object then loop through all of the audiences
+			// in the current profile, making the same changes to each audience.
+			IWMEncAudienceObj Audnc;
+			for (int i = 0; i < profile.AudienceCount; i++)
+			{
+				Audnc = profile.get_Audience(i);
+				// The Windows Media 9 codec is used by default, but you can change
+				// it as follows. Be sure to make this change for each audience.
+				//Audnc.set_VideoCodec(0, 2);
+
+				// Make the video output size match the input size by setting
+				// the height and width to 0.
+				Audnc.set_VideoHeight(0, videoSize.Height);
+				Audnc.set_VideoWidth(0, videoSize.Width);
+				Audnc.set_VideoFPS(0,FPS);
+				
+				Audnc.SetAudioConfig(0,2,44100,192000,16);
+				
+				int videoBitRate=KBPS;
+				videoBitRate-=9*1024;//overhead
+				videoBitRate-= (192000);//audio
+				Audnc.set_VideoBitrate(0,videoBitRate);
+			
+
+				// Change the buffer size to 5 seconds. By default, the end user's
+				// default setting is used.
+				Audnc.set_VideoBufferSize(0, 5000);
+				Audnc.set_VideoImageSharpness(0, 85);
+
+			}
+
+			profile.Validate();
+
+
+
 		}
 		
 		public bool Supports(VideoFormat format)
@@ -55,22 +101,29 @@ namespace MediaPortal.Core.Transcoding
 				File.LocalFileName = outputFile;
 
 				// Choose a profile from the collection.
-				IWMEncProfileCollection ProColl = Encoder.ProfileCollection;
-				IWMEncProfile Pro;
-				string name="Windows Media Video 8 for Local Area Network (384 Kbps)";
-				if (quality==Quality.Medium)
-					name="Windows Media Video 8 for Local Area Network (100 Kbps)";
-				if (quality==Quality.Low)
-					name="Windows Media Video 8 for Dial-up Modems (56 Kbps)";
-				for (int i = 0; i < ProColl.Count; i++)
+				if (profile==null)
 				{
-					Pro = ProColl.Item(i);
-					//Trace.WriteLine(Pro.Name+" - "+Pro.Description);
-					if (Pro.Name == name)
+					IWMEncProfileCollection ProColl = Encoder.ProfileCollection;
+					IWMEncProfile Pro;
+					string name="Windows Media Video 8 for Local Area Network (384 Kbps)";
+					if (quality==Quality.Medium)
+						name="Windows Media Video 8 for Local Area Network (100 Kbps)";
+					if (quality==Quality.Low)
+						name="Windows Media Video 8 for Dial-up Modems (56 Kbps)";
+					for (int i = 0; i < ProColl.Count; i++)
 					{
-						SrcGrp.set_Profile(Pro);
-						break;
+						Pro = ProColl.Item(i);
+						//Trace.WriteLine(Pro.Name+" - "+Pro.Description);
+						if (Pro.Name == name)
+						{
+							SrcGrp.set_Profile(Pro);
+							break;
+						}
 					}
+				}
+				else
+				{
+					SrcGrp.set_Profile(profile);
 				}
 
 				// Fill in the description object members.
@@ -89,7 +142,7 @@ namespace MediaPortal.Core.Transcoding
 
 				// Start the encoding process.
 				// Wait until the encoding process stops before exiting the application.
-				Encoder.PrepareToEncode(true);
+				//Encoder.PrepareToEncode(true);
 				Encoder.Start();
 			} 
 			catch (Exception e) 
