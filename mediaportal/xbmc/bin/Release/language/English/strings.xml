@@ -2884,6 +2884,10 @@
 	<id>992</id>
 	<value>Delete original file</value>
 </string>
+<string>
+	<id>993</id>
+	<value>Custom</value>
+</string>
 
 <string>
 	<id>1440</id>
