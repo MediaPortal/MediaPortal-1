@@ -206,6 +206,11 @@ namespace MediaPortal.GUI.TV
 			}
 			if (control==btnSelectAll)
 			{
+				for (int i=0; i < GetItemCount();++i)
+				{
+					listAlbums[i].Selected=true;
+					listViews[i].Selected=true;
+				}
 				return;
 			}
 
@@ -249,6 +254,12 @@ namespace MediaPortal.GUI.TV
 
 			if (control==btnSelectNone)
 			{
+				
+				for (int i=0; i < GetItemCount();++i)
+				{
+					listAlbums[i].Selected=false;
+					listViews[i].Selected=false;
+				}
 			}
 			if (control==listAlbums || control==listViews)
 			{
@@ -257,6 +268,11 @@ namespace MediaPortal.GUI.TV
 				int iItem=(int)msg.Param1;
 				if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
 				{
+					GUIListItem item = GetItem(iItem);
+					if (item!=null)
+					{
+						item.Selected=!item.Selected;
+					}
 				}
 				if (actionType == Action.ActionType.ACTION_SHOW_INFO) 
 				{
@@ -284,6 +300,7 @@ namespace MediaPortal.GUI.TV
 			ArrayList recordings = new ArrayList();
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordedTV(ref recordings);
+
 			foreach (TVRecorded rec in recordings)
 			{
 				GUIListItem item=new GUIListItem();
