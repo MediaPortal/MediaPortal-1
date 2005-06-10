@@ -334,6 +334,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Transcoder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TSHelperTools.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

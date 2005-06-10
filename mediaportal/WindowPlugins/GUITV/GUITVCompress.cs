@@ -154,7 +154,6 @@ namespace MediaPortal.GUI.TV
 					}
 					break;
 
-					break;
 			}
 			base.OnAction(action);
 		}
@@ -274,9 +273,10 @@ namespace MediaPortal.GUI.TV
 						item.Selected=!item.Selected;
 					}
 				}
-				if (actionType == Action.ActionType.ACTION_SHOW_INFO) 
-				{
-				}
+			}
+			if (control==btnOK)
+			{
+				OnTranscode();
 			}
 		}
 
@@ -312,6 +312,8 @@ namespace MediaPortal.GUI.TV
 			recordings.Add(rec1);*/
 			foreach (TVRecorded rec in recordings)
 			{
+				if (Transcoder.IsTranscoding(rec)) continue; //already transcoding...
+
 				GUIListItem item=new GUIListItem();
 				item.Label=rec.Title;
 				item.TVTag=rec;
@@ -432,6 +434,37 @@ namespace MediaPortal.GUI.TV
 						item1.Label2=item2.Label2=rec.Channel;
 				}
 			}
+		}
+
+		void OnTranscode()
+		{
+			ArrayList transcodings = new ArrayList();
+			for (int i=0; i < GetItemCount();++i)
+			{
+				GUIListItem item = GetItem(i);
+				if (item.Selected)
+				{
+					TVRecorded rec = item.TVTag as TVRecorded;
+					transcodings.Add(rec);
+				}
+			}
+
+			if (transcodings.Count==0) return;//nothing selected
+
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			dlgYesNo.SetHeading(894);
+			dlgYesNo.SetLine(1,995);
+			dlgYesNo.SetLine(2,996);
+			dlgYesNo.DoModal(GetID);
+			if (!dlgYesNo.IsConfirmed) return;
+
+			foreach (TVRecorded rec in transcodings)
+			{
+				Transcoder.Transcode(rec);
+			}
+
+			//now switch to status screen....
+
 		}
 
 		void UpdateProperties()

@@ -2892,6 +2892,14 @@
 	<id>994</id>
 	<value>Enable Auto compress</value>
 </string>
+<string>
+	<id>995</id>
+	<value>Are you sure to compress the</value>
+</string>
+<string>
+	<id>996</id>
+	<value>selected recordings?</value>
+</string>
 
 <string>
 	<id>1440</id>
