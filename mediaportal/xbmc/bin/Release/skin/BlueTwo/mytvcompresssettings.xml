@@ -90,6 +90,10 @@
 				<subitem>898</subitem>
 				<subitem>899</subitem>
 			</subitems>
+			<textureUp>arrow_round_right_nofocus.png</textureUp>
+			<textureDown>arrow_round_left_nofocus.png</textureDown>
+			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 		</control>
 		
 		<control>
@@ -124,6 +128,10 @@
 				<subitem>885</subitem>
 				<subitem>993</subitem>
 			</subitems>
+			<textureUp>arrow_round_right_nofocus.png</textureUp>
+			<textureDown>arrow_round_left_nofocus.png</textureDown>
+			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 		</control>
 		<control>
 			<description>Screensize label</description>
@@ -163,6 +171,10 @@
 				<subitem>352x288</subitem>
 				<subitem>352x240</subitem>
 			</subitems>
+			<textureUp>arrow_round_right_nofocus.png</textureUp>
+			<textureDown>arrow_round_left_nofocus.png</textureDown>
+			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 		</control>
 
 		<control>
@@ -195,6 +207,10 @@
 				<subitem>25</subitem>
 				<subitem>30</subitem>
 			</subitems>
+			<textureUp>arrow_round_right_nofocus.png</textureUp>
+			<textureDown>arrow_round_left_nofocus.png</textureDown>
+			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 		</control>
 
 
@@ -231,6 +247,10 @@
 				<subitem>4096 Kbps</subitem>
 				<subitem>8192 Kbps</subitem>
 			</subitems>
+			<textureUp>arrow_round_right_nofocus.png</textureUp>
+			<textureDown>arrow_round_left_nofocus.png</textureDown>
+			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 		</control>
 
 		<control>
@@ -262,6 +282,10 @@
 				<subitem>747</subitem>
 				<subitem>746</subitem>
 			</subitems>
+			<textureUp>arrow_round_right_nofocus.png</textureUp>
+			<textureDown>arrow_round_left_nofocus.png</textureDown>
+			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
+			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 		</control>
 
 

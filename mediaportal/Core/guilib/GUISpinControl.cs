@@ -263,7 +263,9 @@ namespace MediaPortal.GUI.Library
         m_label.FontName=m_strFont;
         m_label.TextColor=m_dwTextColor;
         m_label.Label=wszText;
-        
+	  
+				if (Disabled)
+					m_label.TextColor &= 0x80ffffff;
         if ( m_dwAlign!= GUIControl.Alignment.ALIGN_CENTER)
 				{
 					if (wszText!=null && wszText.Length>0)
