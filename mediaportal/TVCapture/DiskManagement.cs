@@ -65,6 +65,7 @@ namespace MediaPortal.TV.Recording
 		}
 		static void ImportWorkerThreadFunction()
 		{
+			System.Threading.Thread.CurrentThread.Priority=ThreadPriority.BelowNormal;
 			importing=true;
 			try
 			{
