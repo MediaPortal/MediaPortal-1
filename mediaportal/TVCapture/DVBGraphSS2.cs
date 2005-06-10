@@ -1657,6 +1657,9 @@ namespace MediaPortal.TV.Recording
 				GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 				if(win!=null)
 					win.SetObject(m_osd);
+				win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+				if(win!=null)
+					win.SetObject(m_osd);
 			}
 			//
 			//

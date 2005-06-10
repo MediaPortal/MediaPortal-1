@@ -437,6 +437,8 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_SHOW_GUI:
 					Log.Write("fullscreentv:show gui");
+					if(m_vmr9OSD!=null)
+						m_vmr9OSD.HideBitmap();
 					GUIWindowManager.ShowPreviousWindow();
 					return;
 
@@ -532,6 +534,7 @@ namespace MediaPortal.GUI.TV
 			if(obj.GetType()==typeof(VMR9OSD))
 			{
 				m_vmr9OSD=(VMR9OSD)obj;
+				
 			}
 		}
 
@@ -703,6 +706,7 @@ namespace MediaPortal.GUI.TV
 						m_form.Show();
 						GUIGraphicsContext.form.Focus();
 					}
+
 					ScreenStateChanged();
 					UpdateGUI();
                             
@@ -970,7 +974,7 @@ namespace MediaPortal.GUI.TV
 			{
 				UpdateGUI();
 			}
-			
+
 			GUIGraphicsContext.IsFullScreenVideo=true;
 		}
 
@@ -1412,6 +1416,10 @@ namespace MediaPortal.GUI.TV
 		{
 			GUITVHome.Navigator.ZapToPreviousChannel(true);
 			UpdateOSD();
+			if(m_useVMR9Zap==true && m_vmr9OSD!=null)
+			{
+				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
+			}
 			m_dwZapTimer = DateTime.Now;
 		}
 
@@ -1419,6 +1427,10 @@ namespace MediaPortal.GUI.TV
 		{
 			GUITVHome.Navigator.ZapToNextChannel(true);
 			UpdateOSD();
+			if(m_useVMR9Zap==true && m_vmr9OSD!=null)
+			{
+				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
+			}
 			m_dwZapTimer = DateTime.Now;
 		}
 
