@@ -34,10 +34,6 @@ namespace ProcessPlugins.CallerId
 
     ISDNWatch ISDNWatch;
 
-    public CallerIdISDN()
-    {
-    }
-
     static private Hashtable AreaCodeLookup
     {
       get
@@ -221,7 +217,6 @@ namespace ProcessPlugins.CallerId
 
     public void ShowPlugin()
     {
-      // TODO:  Add CallerIdISDN.ShowPlugin implementation
     }
 
     #endregion

@@ -97,10 +97,6 @@ namespace ProcessPlugins.CallerId
     const int CAPI_CONNECT = 0x02;
     const int CAPI_IND = 0x82;
 
-    public ISDNWatch()
-    {
-    }
-
     public void Start()
     {
       Thread watchThread = new Thread(new ThreadStart(WatchThread));
@@ -115,7 +111,6 @@ namespace ProcessPlugins.CallerId
 
     void WatchThread()
     {
-      Log.Write("ISDN: WatchThread");
       int applicationId = 0;
 
       // Registering with CAPI
