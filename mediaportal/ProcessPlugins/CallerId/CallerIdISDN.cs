@@ -36,20 +36,6 @@ namespace ProcessPlugins.CallerId
 
     public CallerIdISDN()
     {
-      OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");  // First Outlook-lookup might take some time, so let's do this here
-
-      ISDNWatch.LocationInfo locationInfo = ISDNWatch.GetLocationInfo();
-      myCountryCode = "+" + locationInfo.CountryCode;
-      string myCountry = (string)CountryCodeLookup[myCountryCode];
-      if (myCountry == null)
-        myCountry = "unknown";
-      string myCountryLong = (string)CountryTranslator[myCountry];
-      myAreaCode = locationInfo.AreaCode;
-      string myArea = (string)AreaCodeLookup[myAreaCode];
-      if (myArea == null)
-        myArea = "unknown";
-      if (myAreaCode != "")
-        Log.Write("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
     }
 
     static private Hashtable AreaCodeLookup
@@ -244,6 +230,21 @@ namespace ProcessPlugins.CallerId
 
     public void Start()
     {
+      OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");  // First Outlook-lookup might take some time, so let's do this here
+
+      ISDNWatch.LocationInfo locationInfo = ISDNWatch.GetLocationInfo();
+      myCountryCode = "+" + locationInfo.CountryCode;
+      string myCountry = (string)CountryCodeLookup[myCountryCode];
+      if (myCountry == null)
+        myCountry = "unknown";
+      string myCountryLong = (string)CountryTranslator[myCountry];
+      myAreaCode = locationInfo.AreaCode;
+      string myArea = (string)AreaCodeLookup[myAreaCode];
+      if (myArea == null)
+        myArea = "unknown";
+      if (myAreaCode != "")
+        Log.Write("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
+
       ISDNWatch = new ISDNWatch();
       ISDNWatch.CidReceiver  += new ISDNWatch.EventHandler(ProcessCallerId);
     }
