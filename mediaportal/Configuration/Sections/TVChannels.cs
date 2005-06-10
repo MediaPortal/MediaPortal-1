@@ -2900,6 +2900,7 @@ namespace MediaPortal.Configuration.Sections
 		private TV.Database.TVRecording.QualityType Convert_QualityType(object quality)
 		{
 			if ((string)quality=="NotSet") return TV.Database.TVRecording.QualityType.NotSet;
+			if ((string)quality=="Portable") return TV.Database.TVRecording.QualityType.Portable;
 			if ((string)quality=="Low") return TV.Database.TVRecording.QualityType.Low;
 			if ((string)quality=="Medium") return TV.Database.TVRecording.QualityType.Medium;
 			if ((string)quality=="High") return TV.Database.TVRecording.QualityType.High;

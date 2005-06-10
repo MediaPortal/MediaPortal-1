@@ -708,15 +708,17 @@ namespace MediaPortal.GUI.TV
 			dlg.Reset();
 			dlg.SetHeading(882);//quality settings
 			dlg.AddLocalizedString(886);//Default
+			dlg.AddLocalizedString(893);//Portable
 			dlg.AddLocalizedString(883);//Low
 			dlg.AddLocalizedString(884);//Medium
 			dlg.AddLocalizedString(885);//High
 			switch (rec.Quality)
 			{
 				case TVRecording.QualityType.NotSet: dlg.SelectedLabel=0; break;
-				case TVRecording.QualityType.Low: dlg.SelectedLabel=1; break;
-				case TVRecording.QualityType.Medium: dlg.SelectedLabel=2; break;
-				case TVRecording.QualityType.High: dlg.SelectedLabel=3; break;
+				case TVRecording.QualityType.Portable: dlg.SelectedLabel=1; break;
+				case TVRecording.QualityType.Low: dlg.SelectedLabel=2; break;
+				case TVRecording.QualityType.Medium: dlg.SelectedLabel=3; break;
+				case TVRecording.QualityType.High: dlg.SelectedLabel=4; break;
 				
 			}
 			dlg.DoModal( GUIWindowManager.ActiveWindow);
@@ -724,6 +726,7 @@ namespace MediaPortal.GUI.TV
 			switch (dlg.SelectedId)
 			{
 				case 886: rec.Quality=TVRecording.QualityType.NotSet; break;
+				case 893: rec.Quality=TVRecording.QualityType.Portable; break;
 				case 883: rec.Quality=TVRecording.QualityType.Low; break;
 				case 884: rec.Quality=TVRecording.QualityType.Medium; break;
 				case 885: rec.Quality=TVRecording.QualityType.High; break;

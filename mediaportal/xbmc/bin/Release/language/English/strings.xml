@@ -2511,6 +2511,10 @@
 	<id>892</id>
 	<value>Conflicts</value>
 </string>
+<string>
+	<id>893</id>
+	<value>Portable</value>
+</string>
 
 <string>
 	<id>900</id>

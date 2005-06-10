@@ -538,14 +538,18 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartRecording({0} {1} {2})",strFileName,bContentRecording,recording.Quality);
 			if (recording.Quality != TVRecording.QualityType.NotSet)
 			{
-				if (recording.Quality ==TVRecording.QualityType.Low)
+				
+				if (recording.Quality ==TVRecording.QualityType.Portable)
 					SetQuality(0);
 
-				if (recording.Quality ==TVRecording.QualityType.Medium)
+				if (recording.Quality ==TVRecording.QualityType.Low)
 					SetQuality(1);
 
-				if (recording.Quality ==TVRecording.QualityType.High)
+				if (recording.Quality ==TVRecording.QualityType.Medium)
 					SetQuality(2);
+
+				if (recording.Quality ==TVRecording.QualityType.High)
+					SetQuality(3);
 			}
       m_mpeg2Demux.Record(attribtutes,strFileName, bContentRecording, timeProgStart,m_StartTime);
       m_graphState=State.Recording;
@@ -1235,16 +1239,20 @@ namespace MediaPortal.TV.Recording
 			{
 				switch (Quality)
 				{
-					case 0://low
+					case 0://Portable
+						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:portable");
+						props.SetVideoBitRate(300,500,true);
+						break;
+					case 1://low
 						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:low");
 						props.SetVideoBitRate(2000,4500,true);
 						break;
-					case 1://medium
+					case 2://medium
 						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:medium");
 						props.SetVideoBitRate(4000,6000,true);
 						break;
 							
-					case 2://hi
+					case 3://hi
 						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:high");
 						props.SetVideoBitRate(8000,12000,true);
 						break;

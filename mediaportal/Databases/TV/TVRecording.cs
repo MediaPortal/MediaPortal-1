@@ -32,6 +32,7 @@ namespace MediaPortal.TV.Database
 		public enum QualityType
 		{
 			NotSet,
+			Portable,
 			Low,
 			Medium,
 			High
