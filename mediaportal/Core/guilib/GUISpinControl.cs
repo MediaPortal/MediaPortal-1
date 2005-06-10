@@ -544,6 +544,19 @@ namespace MediaPortal.GUI.Library
       m_pFont=GUIFontManager.GetFont(m_strFont);
       SetPosition(m_dwPosX, m_dwPosY);
 
+			if (SubItemCount>0)
+			{
+				m_iType = SpinType.SPIN_CONTROL_TYPE_TEXT;
+				m_vecLabels.Clear();
+				m_vecValues.Clear();
+				for (int i=0; i < SubItemCount;++i)
+				{
+					string subitem= (string)GetSubItem(i);
+					
+					m_vecLabels.Add(subitem);
+					m_vecValues.Add(i);
+				}
+			}
     }
     public override void 	FreeResources()
     {

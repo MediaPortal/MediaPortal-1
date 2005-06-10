@@ -15,6 +15,7 @@ namespace MediaPortal.Core.Transcoding
 		protected  IStreamBufferSource 			        bufferSource=null ;
 		protected IFileSinkFilter										fileWriterFilter = null;			// DShow Filter: file writer
 		protected IMediaControl											mediaControl=null;
+		protected IMediaSeeking											mediaSeeking=null;
 		protected IBaseFilter												powerDvdMuxer =null;
 
 		public Dvrms2Mpeg()
@@ -188,6 +189,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 				mediaControl= graphBuilder as IMediaControl;
+				mediaSeeking= graphBuilder as IMediaSeeking;
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -219,6 +221,17 @@ namespace MediaPortal.Core.Transcoding
 			return false;
 		}
 
+		public int Percentage()
+		{
+			if (mediaSeeking==null) return 100;
+			long lDuration,lCurrent;
+			mediaSeeking.GetCurrentPosition(out lCurrent);
+			mediaSeeking.GetDuration(out lDuration);
+			float percent = ((float)lCurrent) / ((float)lDuration);
+			percent*=100.0f;
+			return (int)percent;
+		}
+
 		public bool IsTranscoding()
 		{
 			if (IsFinished()) return false;
@@ -235,6 +248,7 @@ namespace MediaPortal.Core.Transcoding
 				mediaControl.Stop();
 				mediaControl = null;
 			}
+			mediaSeeking=null;
 
 			if ( powerDvdMuxer != null )
 				Marshal.ReleaseComObject( powerDvdMuxer );

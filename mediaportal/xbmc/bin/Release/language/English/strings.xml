@@ -2515,6 +2515,30 @@
 	<id>893</id>
 	<value>Portable</value>
 </string>
+<string>
+	<id>894</id>
+	<value>Compress TV Recordings</value>
+</string>
+<string>
+	<id>895</id>
+	<value>Auto compress</value>
+</string>
+<string>
+	<id>896</id>
+	<value>Compress</value>
+</string>
+<string>
+	<id>897</id>
+	<value>Settings</value>
+</string>
+<string>
+	<id>898</id>
+	<value>MPEG-2</value>
+</string>
+<string>
+	<id>899</id>
+	<value>WMV</value>
+</string>
 
 <string>
 	<id>900</id>
@@ -2838,6 +2862,27 @@
 <string>
 	<id>987</id>
 	<value>Years</value>
+</string>
+
+<string>
+	<id>988</id>
+	<value>Quality</value>
+</string>
+<string>
+	<id>989</id>
+	<value>FPS</value>
+</string>
+<string>
+	<id>990</id>
+	<value>Bitrate</value>
+</string>
+<string>
+	<id>991</id>
+	<value>Priority</value>
+</string>
+<string>
+	<id>992</id>
+	<value>Delete original file</value>
 </string>
 
 <string>

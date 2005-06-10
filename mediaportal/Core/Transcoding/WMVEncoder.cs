@@ -119,6 +119,13 @@ namespace MediaPortal.Core.Transcoding
 			return true;
 		}
 
+		
+		public int Percentage()
+		{
+			if (Encoder==null) return 100;
+			return -1;
+		}
+
 		private void OnStateChange(WMENC_ENCODER_STATE enumState)
 		{
 				switch( enumState )
