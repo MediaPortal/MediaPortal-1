@@ -127,7 +127,6 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TabPage tabPage7;
 		private System.Windows.Forms.Button buttonBrowse;
 		private System.Windows.Forms.TextBox tbRecordingFolder;
-		private System.Windows.Forms.Label label19;
 		private System.Windows.Forms.GroupBox groupBox6;
 		private System.Windows.Forms.TrackBar trackBar1;
 		private System.Windows.Forms.CheckBox checkBoxDeleteLow;
@@ -137,6 +136,9 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label35;
 		private System.Windows.Forms.ComboBox cbRgbVideo;
 		private System.Windows.Forms.ComboBox cbRgbAudio;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.Label label26;
+		private System.Windows.Forms.GroupBox groupBox5;
 		int  CardId;
 		
 		/// <summary>
@@ -477,6 +479,16 @@ namespace MediaPortal.Configuration
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.label24 = new System.Windows.Forms.Label();
 			this.updownPrio = new System.Windows.Forms.NumericUpDown();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.label13 = new System.Windows.Forms.Label();
+			this.tabPage7 = new System.Windows.Forms.TabPage();
+			this.groupBox6 = new System.Windows.Forms.GroupBox();
+			this.trackBar1 = new System.Windows.Forms.TrackBar();
+			this.checkBoxDeleteLow = new System.Windows.Forms.CheckBox();
+			this.labelPercent = new System.Windows.Forms.Label();
+			this.label33 = new System.Windows.Forms.Label();
+			this.buttonBrowse = new System.Windows.Forms.Button();
+			this.tbRecordingFolder = new System.Windows.Forms.TextBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.cbRgbAudio = new System.Windows.Forms.ComboBox();
 			this.cbRgbVideo = new System.Windows.Forms.ComboBox();
@@ -491,20 +503,9 @@ namespace MediaPortal.Configuration
 			this.label15 = new System.Windows.Forms.Label();
 			this.label16 = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.label13 = new System.Windows.Forms.Label();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.label25 = new System.Windows.Forms.Label();
 			this.comboBoxQuality = new System.Windows.Forms.ComboBox();
-			this.tabPage7 = new System.Windows.Forms.TabPage();
-			this.groupBox6 = new System.Windows.Forms.GroupBox();
-			this.trackBar1 = new System.Windows.Forms.TrackBar();
-			this.checkBoxDeleteLow = new System.Windows.Forms.CheckBox();
-			this.labelPercent = new System.Windows.Forms.Label();
-			this.label33 = new System.Windows.Forms.Label();
-			this.buttonBrowse = new System.Windows.Forms.Button();
-			this.tbRecordingFolder = new System.Windows.Forms.TextBox();
-			this.label19 = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -543,21 +544,25 @@ namespace MediaPortal.Configuration
 			this.label22 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
 			this.btnRadio = new System.Windows.Forms.Button();
+			this.label18 = new System.Windows.Forms.Label();
+			this.label26 = new System.Windows.Forms.Label();
+			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
-			this.tabPage3.SuspendLayout();
 			this.tabPage2.SuspendLayout();
-			this.tabPage5.SuspendLayout();
 			this.tabPage7.SuspendLayout();
 			this.groupBox6.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+			this.tabPage3.SuspendLayout();
+			this.tabPage5.SuspendLayout();
 			this.tabPage4.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
+			this.groupBox5.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// checkBoxHiQuality
@@ -566,7 +571,7 @@ namespace MediaPortal.Configuration
 			this.checkBoxHiQuality.Name = "checkBoxHiQuality";
 			this.checkBoxHiQuality.Size = new System.Drawing.Size(368, 16);
 			this.checkBoxHiQuality.TabIndex = 7;
-			this.checkBoxHiQuality.Text = "Use quality profile for Hauppauge PVR cards";
+			this.checkBoxHiQuality.Text = "Use default quality for recordings";
 			// 
 			// lblRecordingLevel
 			// 
@@ -670,7 +675,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.ItemHeight = 13;
 			this.audioCompressorComboBox.Location = new System.Drawing.Point(128, 88);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
-			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 21);
+			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 20);
 			this.audioCompressorComboBox.TabIndex = 6;
 			this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
 			// 
@@ -690,7 +695,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.ItemHeight = 13;
 			this.videoCompressorComboBox.Location = new System.Drawing.Point(128, 56);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
-			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 21);
+			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 20);
 			this.videoCompressorComboBox.TabIndex = 5;
 			this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
 			// 
@@ -834,9 +839,9 @@ namespace MediaPortal.Configuration
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Controls.Add(this.tabPage7);
 			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage7);
+			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
@@ -888,23 +893,120 @@ namespace MediaPortal.Configuration
 			// 
 			this.updownPrio.Location = new System.Drawing.Point(152, 272);
 			this.updownPrio.Maximum = new System.Decimal(new int[] {
-																	   10,
-																	   0,
-																	   0,
-																	   0});
+																															 10,
+																															 0,
+																															 0,
+																															 0});
 			this.updownPrio.Minimum = new System.Decimal(new int[] {
-																	   1,
-																	   0,
-																	   0,
-																	   0});
+																															 1,
+																															 0,
+																															 0,
+																															 0});
 			this.updownPrio.Name = "updownPrio";
 			this.updownPrio.Size = new System.Drawing.Size(56, 20);
 			this.updownPrio.TabIndex = 51;
 			this.updownPrio.Value = new System.Decimal(new int[] {
-																	 1,
-																	 0,
-																	 0,
-																	 0});
+																														 1,
+																														 0,
+																														 0,
+																														 0});
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.label13);
+			this.tabPage2.Controls.Add(this.audioCompressorComboBox);
+			this.tabPage2.Controls.Add(this.label5);
+			this.tabPage2.Controls.Add(this.videoCompressorComboBox);
+			this.tabPage2.Controls.Add(this.label3);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(448, 406);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "Codecs";
+			// 
+			// label13
+			// 
+			this.label13.Location = new System.Drawing.Point(16, 16);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(408, 40);
+			this.label13.TabIndex = 39;
+			this.label13.Text = "Specify which codecs should be used when recording.  You only need to specify cod" +
+				"ecs if your card is a s/w encoding card";
+			// 
+			// tabPage7
+			// 
+			this.tabPage7.Controls.Add(this.groupBox5);
+			this.tabPage7.Controls.Add(this.groupBox6);
+			this.tabPage7.Location = new System.Drawing.Point(4, 22);
+			this.tabPage7.Name = "tabPage7";
+			this.tabPage7.Size = new System.Drawing.Size(448, 406);
+			this.tabPage7.TabIndex = 6;
+			this.tabPage7.Text = "Recordings";
+			// 
+			// groupBox6
+			// 
+			this.groupBox6.Controls.Add(this.trackBar1);
+			this.groupBox6.Controls.Add(this.checkBoxDeleteLow);
+			this.groupBox6.Controls.Add(this.labelPercent);
+			this.groupBox6.Controls.Add(this.label33);
+			this.groupBox6.Location = new System.Drawing.Point(8, 120);
+			this.groupBox6.Name = "groupBox6";
+			this.groupBox6.Size = new System.Drawing.Size(428, 120);
+			this.groupBox6.TabIndex = 59;
+			this.groupBox6.TabStop = false;
+			this.groupBox6.Text = "Diskspace management";
+			// 
+			// trackBar1
+			// 
+			this.trackBar1.Location = new System.Drawing.Point(144, 24);
+			this.trackBar1.Maximum = 100;
+			this.trackBar1.Name = "trackBar1";
+			this.trackBar1.Size = new System.Drawing.Size(104, 45);
+			this.trackBar1.TabIndex = 5;
+			this.trackBar1.TickFrequency = 10;
+			this.trackBar1.Value = 50;
+			this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+			// 
+			// checkBoxDeleteLow
+			// 
+			this.checkBoxDeleteLow.Location = new System.Drawing.Point(32, 80);
+			this.checkBoxDeleteLow.Name = "checkBoxDeleteLow";
+			this.checkBoxDeleteLow.Size = new System.Drawing.Size(360, 16);
+			this.checkBoxDeleteLow.TabIndex = 4;
+			this.checkBoxDeleteLow.Text = "Automaticly delete oldest recordings when low on free diskspace";
+			// 
+			// labelPercent
+			// 
+			this.labelPercent.Location = new System.Drawing.Point(272, 32);
+			this.labelPercent.Name = "labelPercent";
+			this.labelPercent.Size = new System.Drawing.Size(128, 23);
+			this.labelPercent.TabIndex = 2;
+			this.labelPercent.Text = "%";
+			// 
+			// label33
+			// 
+			this.label33.Location = new System.Drawing.Point(24, 24);
+			this.label33.Name = "label33";
+			this.label33.Size = new System.Drawing.Size(112, 32);
+			this.label33.TabIndex = 0;
+			this.label33.Text = "Limit diskspace used for recordings to:";
+			// 
+			// buttonBrowse
+			// 
+			this.buttonBrowse.Location = new System.Drawing.Point(280, 56);
+			this.buttonBrowse.Name = "buttonBrowse";
+			this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
+			this.buttonBrowse.TabIndex = 58;
+			this.buttonBrowse.Text = "Browse";
+			this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click_1);
+			// 
+			// tbRecordingFolder
+			// 
+			this.tbRecordingFolder.Location = new System.Drawing.Point(24, 56);
+			this.tbRecordingFolder.Name = "tbRecordingFolder";
+			this.tbRecordingFolder.Size = new System.Drawing.Size(248, 20);
+			this.tbRecordingFolder.TabIndex = 57;
+			this.tbRecordingFolder.Text = "";
 			// 
 			// tabPage3
 			// 
@@ -1023,30 +1125,9 @@ namespace MediaPortal.Configuration
 			this.label17.TabIndex = 9;
 			this.label17.Text = "CVBS #1";
 			// 
-			// tabPage2
-			// 
-			this.tabPage2.Controls.Add(this.label13);
-			this.tabPage2.Controls.Add(this.audioCompressorComboBox);
-			this.tabPage2.Controls.Add(this.label5);
-			this.tabPage2.Controls.Add(this.videoCompressorComboBox);
-			this.tabPage2.Controls.Add(this.label3);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(448, 406);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Codecs";
-			// 
-			// label13
-			// 
-			this.label13.Location = new System.Drawing.Point(16, 16);
-			this.label13.Name = "label13";
-			this.label13.Size = new System.Drawing.Size(408, 40);
-			this.label13.TabIndex = 39;
-			this.label13.Text = "Specify which codecs should be used when recording.  You only need to specify cod" +
-				"ecs if your card is a s/w encoding card";
-			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.label18);
 			this.tabPage5.Controls.Add(this.label25);
 			this.tabPage5.Controls.Add(this.comboBoxQuality);
 			this.tabPage5.Controls.Add(this.checkBoxHiQuality);
@@ -1060,105 +1141,20 @@ namespace MediaPortal.Configuration
 			// 
 			this.label25.Location = new System.Drawing.Point(40, 48);
 			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(48, 16);
+			this.label25.Size = new System.Drawing.Size(80, 16);
 			this.label25.TabIndex = 9;
-			this.label25.Text = "Quality:";
+			this.label25.Text = "Default quality:";
 			// 
 			// comboBoxQuality
 			// 
 			this.comboBoxQuality.Items.AddRange(new object[] {
-																 "Low (VBR 2-4.5 MBPS)",
-																 "Medium (VBR 4-6 MBPS)",
-																 "High (VBR 8-12 MBPS)"});
-			this.comboBoxQuality.Location = new System.Drawing.Point(96, 48);
+																												 "Low (VBR 2-4.5 MBPS)",
+																												 "Medium (VBR 4-6 MBPS)",
+																												 "High (VBR 8-12 MBPS)"});
+			this.comboBoxQuality.Location = new System.Drawing.Point(128, 48);
 			this.comboBoxQuality.Name = "comboBoxQuality";
-			this.comboBoxQuality.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
 			this.comboBoxQuality.TabIndex = 8;
-			// 
-			// tabPage7
-			// 
-			this.tabPage7.Controls.Add(this.groupBox6);
-			this.tabPage7.Controls.Add(this.buttonBrowse);
-			this.tabPage7.Controls.Add(this.tbRecordingFolder);
-			this.tabPage7.Controls.Add(this.label19);
-			this.tabPage7.Location = new System.Drawing.Point(4, 22);
-			this.tabPage7.Name = "tabPage7";
-			this.tabPage7.Size = new System.Drawing.Size(448, 406);
-			this.tabPage7.TabIndex = 6;
-			this.tabPage7.Text = "Recordings";
-			// 
-			// groupBox6
-			// 
-			this.groupBox6.Controls.Add(this.trackBar1);
-			this.groupBox6.Controls.Add(this.checkBoxDeleteLow);
-			this.groupBox6.Controls.Add(this.labelPercent);
-			this.groupBox6.Controls.Add(this.label33);
-			this.groupBox6.Location = new System.Drawing.Point(8, 72);
-			this.groupBox6.Name = "groupBox6";
-			this.groupBox6.Size = new System.Drawing.Size(428, 120);
-			this.groupBox6.TabIndex = 59;
-			this.groupBox6.TabStop = false;
-			this.groupBox6.Text = "Diskspace management";
-			// 
-			// trackBar1
-			// 
-			this.trackBar1.Location = new System.Drawing.Point(144, 24);
-			this.trackBar1.Maximum = 100;
-			this.trackBar1.Name = "trackBar1";
-			this.trackBar1.Size = new System.Drawing.Size(104, 45);
-			this.trackBar1.TabIndex = 5;
-			this.trackBar1.TickFrequency = 10;
-			this.trackBar1.Value = 50;
-			this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
-			// 
-			// checkBoxDeleteLow
-			// 
-			this.checkBoxDeleteLow.Location = new System.Drawing.Point(32, 80);
-			this.checkBoxDeleteLow.Name = "checkBoxDeleteLow";
-			this.checkBoxDeleteLow.Size = new System.Drawing.Size(360, 16);
-			this.checkBoxDeleteLow.TabIndex = 4;
-			this.checkBoxDeleteLow.Text = "Automaticly delete oldest recordings when low on free diskspace";
-			// 
-			// labelPercent
-			// 
-			this.labelPercent.Location = new System.Drawing.Point(272, 32);
-			this.labelPercent.Name = "labelPercent";
-			this.labelPercent.Size = new System.Drawing.Size(128, 23);
-			this.labelPercent.TabIndex = 2;
-			this.labelPercent.Text = "%";
-			// 
-			// label33
-			// 
-			this.label33.Location = new System.Drawing.Point(24, 24);
-			this.label33.Name = "label33";
-			this.label33.Size = new System.Drawing.Size(112, 32);
-			this.label33.TabIndex = 0;
-			this.label33.Text = "Limit diskspace used for recordings to:";
-			// 
-			// buttonBrowse
-			// 
-			this.buttonBrowse.Location = new System.Drawing.Point(368, 24);
-			this.buttonBrowse.Name = "buttonBrowse";
-			this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
-			this.buttonBrowse.TabIndex = 58;
-			this.buttonBrowse.Text = "Browse";
-			this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click_1);
-			// 
-			// tbRecordingFolder
-			// 
-			this.tbRecordingFolder.Location = new System.Drawing.Point(112, 24);
-			this.tbRecordingFolder.Name = "tbRecordingFolder";
-			this.tbRecordingFolder.Size = new System.Drawing.Size(248, 20);
-			this.tbRecordingFolder.TabIndex = 57;
-			this.tbRecordingFolder.Text = "";
-			// 
-			// label19
-			// 
-			this.label19.Location = new System.Drawing.Point(8, 32);
-			this.label19.Name = "label19";
-			this.label19.Size = new System.Drawing.Size(100, 16);
-			this.label19.TabIndex = 56;
-			this.label19.Text = "Recording folder:";
 			// 
 			// tabPage4
 			// 
@@ -1266,9 +1262,9 @@ namespace MediaPortal.Configuration
 			// lnbkind4
 			// 
 			this.lnbkind4.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind4.Location = new System.Drawing.Point(232, 109);
 			this.lnbkind4.Name = "lnbkind4";
 			this.lnbkind4.Size = new System.Drawing.Size(72, 21);
@@ -1277,9 +1273,9 @@ namespace MediaPortal.Configuration
 			// lnbkind3
 			// 
 			this.lnbkind3.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind3.Location = new System.Drawing.Point(232, 85);
 			this.lnbkind3.Name = "lnbkind3";
 			this.lnbkind3.Size = new System.Drawing.Size(72, 21);
@@ -1288,9 +1284,9 @@ namespace MediaPortal.Configuration
 			// lnbkind2
 			// 
 			this.lnbkind2.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind2.Location = new System.Drawing.Point(232, 61);
 			this.lnbkind2.Name = "lnbkind2";
 			this.lnbkind2.Size = new System.Drawing.Size(72, 21);
@@ -1323,10 +1319,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig4
 			// 
 			this.lnbconfig4.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig4.Location = new System.Drawing.Point(136, 109);
 			this.lnbconfig4.Name = "lnbconfig4";
 			this.lnbconfig4.Size = new System.Drawing.Size(80, 21);
@@ -1335,10 +1331,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig3
 			// 
 			this.lnbconfig3.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig3.Location = new System.Drawing.Point(136, 85);
 			this.lnbconfig3.Name = "lnbconfig3";
 			this.lnbconfig3.Size = new System.Drawing.Size(80, 21);
@@ -1347,10 +1343,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig2
 			// 
 			this.lnbconfig2.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig2.Location = new System.Drawing.Point(136, 61);
 			this.lnbconfig2.Name = "lnbconfig2";
 			this.lnbconfig2.Size = new System.Drawing.Size(80, 21);
@@ -1359,13 +1355,13 @@ namespace MediaPortal.Configuration
 			// diseqcd
 			// 
 			this.diseqcd.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqcd.Location = new System.Drawing.Point(16, 109);
 			this.diseqcd.Name = "diseqcd";
 			this.diseqcd.Size = new System.Drawing.Size(104, 21);
@@ -1376,13 +1372,13 @@ namespace MediaPortal.Configuration
 			// diseqcc
 			// 
 			this.diseqcc.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqcc.Location = new System.Drawing.Point(16, 85);
 			this.diseqcc.Name = "diseqcc";
 			this.diseqcc.Size = new System.Drawing.Size(104, 21);
@@ -1393,13 +1389,13 @@ namespace MediaPortal.Configuration
 			// diseqcb
 			// 
 			this.diseqcb.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqcb.Location = new System.Drawing.Point(16, 61);
 			this.diseqcb.Name = "diseqcb";
 			this.diseqcb.Size = new System.Drawing.Size(104, 21);
@@ -1410,13 +1406,13 @@ namespace MediaPortal.Configuration
 			// diseqca
 			// 
 			this.diseqca.Items.AddRange(new object[] {
-														 "None",
-														 "Simple A",
-														 "Simple B",
-														 "Level 1 A/A",
-														 "Level 1 B/A",
-														 "Level 1 A/B",
-														 "Level 1 B/B"});
+																								 "None",
+																								 "Simple A",
+																								 "Simple B",
+																								 "Level 1 A/A",
+																								 "Level 1 B/A",
+																								 "Level 1 A/B",
+																								 "Level 1 B/B"});
 			this.diseqca.Location = new System.Drawing.Point(16, 37);
 			this.diseqca.Name = "diseqca";
 			this.diseqca.Size = new System.Drawing.Size(104, 21);
@@ -1427,9 +1423,9 @@ namespace MediaPortal.Configuration
 			// lnbkind1
 			// 
 			this.lnbkind1.Items.AddRange(new object[] {
-														  "Ku-Band",
-														  "C-Band",
-														  "Circular"});
+																									"Ku-Band",
+																									"C-Band",
+																									"Circular"});
 			this.lnbkind1.Location = new System.Drawing.Point(232, 37);
 			this.lnbkind1.Name = "lnbkind1";
 			this.lnbkind1.Size = new System.Drawing.Size(72, 21);
@@ -1438,10 +1434,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig1
 			// 
 			this.lnbconfig1.Items.AddRange(new object[] {
-															"0 KHz",
-															"22 KHz",
-															"33 Khz",
-															"44 KHz"});
+																										"0 KHz",
+																										"22 KHz",
+																										"33 Khz",
+																										"44 KHz"});
 			this.lnbconfig1.Location = new System.Drawing.Point(136, 37);
 			this.lnbconfig1.Name = "lnbconfig1";
 			this.lnbconfig1.Size = new System.Drawing.Size(80, 21);
@@ -1585,6 +1581,34 @@ namespace MediaPortal.Configuration
 			this.btnRadio.Text = "Autotune Radio";
 			this.btnRadio.Click += new System.EventHandler(this.btnRadio_Click);
 			// 
+			// label18
+			// 
+			this.label18.Location = new System.Drawing.Point(24, 80);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(408, 208);
+			this.label18.TabIndex = 10;
+			this.label18.Text = @"Here you can specify the default quality for tv recordings. Note this is only supported for hauppauge PVR cards like the PVR 150,250,350,500. When scheduling a new recording in Mediaportal you can always overwrite the default setting and choose another quality.";
+			// 
+			// label26
+			// 
+			this.label26.Location = new System.Drawing.Point(16, 24);
+			this.label26.Name = "label26";
+			this.label26.Size = new System.Drawing.Size(384, 23);
+			this.label26.TabIndex = 60;
+			this.label26.Text = "Specify the folder in which the recordings of this tv card should be saved:";
+			// 
+			// groupBox5
+			// 
+			this.groupBox5.Controls.Add(this.buttonBrowse);
+			this.groupBox5.Controls.Add(this.tbRecordingFolder);
+			this.groupBox5.Controls.Add(this.label26);
+			this.groupBox5.Location = new System.Drawing.Point(8, 8);
+			this.groupBox5.Name = "groupBox5";
+			this.groupBox5.Size = new System.Drawing.Size(424, 100);
+			this.groupBox5.TabIndex = 61;
+			this.groupBox5.TabStop = false;
+			this.groupBox5.Text = "Recording folder:";
+			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1606,17 +1630,18 @@ namespace MediaPortal.Configuration
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
-			this.tabPage3.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
-			this.tabPage5.ResumeLayout(false);
 			this.tabPage7.ResumeLayout(false);
 			this.groupBox6.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+			this.tabPage3.ResumeLayout(false);
+			this.tabPage5.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
+			this.groupBox5.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
