@@ -88,6 +88,7 @@
 				<onright>3</onright>
 				<onup>2</onup>
 				<ondown>4</ondown>
+				<hyperlink>612</hyperlink>
 			</control>
 			<control>
 				<description>Settings button</description>

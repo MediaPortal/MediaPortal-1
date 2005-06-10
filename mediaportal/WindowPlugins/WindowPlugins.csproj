@@ -1145,6 +1145,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUITV\GUITVCompress.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUITV\GUITVCompressAuto.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
