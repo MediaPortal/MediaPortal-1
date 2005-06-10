@@ -216,7 +216,7 @@ namespace ProcessPlugins.CallerId
 
     public bool HasSetup()
     {
-      return true;
+      return false;
     }
 
     public void ShowPlugin()

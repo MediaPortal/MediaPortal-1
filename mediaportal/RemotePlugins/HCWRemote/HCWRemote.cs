@@ -14,7 +14,7 @@ using MediaPortal.TV.Recording;
 namespace MediaPortal
 {
   /// <summary>
-  /// Hauppauge HCW remote control class
+  /// Hauppauge HCW remote control class / by mPod
   /// 34 and 45 buttons are supported
   /// </summary>
   public class HCWRemote
@@ -236,23 +236,26 @@ namespace MediaPortal
         repeatDelay    = xmlreader.GetValueAsInt ("remote", "HCWDelay", 0);
         powerButton    = xmlreader.GetValueAsInt ("remote", "HCWPower", (int)PowerButtonAction.ShutdownMP);
       }
-      if (allowExternal)
+      if (controlEnabled)
       {
-        Utils.OnStartExternal  += new Utils.UtilEventHandler(OnStartExternal);
-        Utils.OnStopExternal  += new Utils.UtilEventHandler(OnStopExternal);
-      }
-      if (logVerbose && controlEnabled) Log.Write("HCW: Repeat-delay: {0}", repeatDelay);
-
-      try
-      {
-        if (!SetDllDirectory(GetDllPath()))
+        if (allowExternal)
         {
-          Log.Write("HCW: Set DLL path failed!");
+          Utils.OnStartExternal  += new Utils.UtilEventHandler(OnStartExternal);
+          Utils.OnStopExternal  += new Utils.UtilEventHandler(OnStopExternal);
         }
-      }
-      catch (Exception e)
-      {
-        if (logVerbose) Log.Write("HCW Exception: SetDllDirectory: " + e.Message);
+        if (logVerbose) Log.Write("HCW: Repeat-delay: {0}", repeatDelay);
+
+        try
+        {
+          if (!SetDllDirectory(GetDllPath()))
+          {
+            Log.Write("HCW: Set DLL path failed!");
+          }
+        }
+        catch (Exception e)
+        {
+          if (logVerbose) Log.Write("HCW Exception: SetDllDirectory: " + e.Message);
+        }
       }
     }
 
@@ -300,7 +303,7 @@ namespace MediaPortal
         {
           restartIRApp = true;
           int i = 0;
-          while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 99))
+          while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
           {
             i++;
             if (logVerbose) Log.Write("HCW: Terminating external control: attempt #{0}", i);
@@ -498,9 +501,7 @@ namespace MediaPortal
         case WM_POWERBROADCAST:
         {
           if (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC)
-          {
             StartHCW();
-          }
         }
           break;
       }
