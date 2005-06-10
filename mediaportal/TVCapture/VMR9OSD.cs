@@ -190,12 +190,13 @@ namespace MediaPortal.TV.Recording
 			int startAt=positionActChannel-(channelCount/2);
 			Log.Write("start list at={0} position={1}",startAt,positionActChannel);
 			// draw
-			if(group.tvChannels.Count<channelCount)
+			if(group.tvChannels.Count<channelCount || positionActChannel<10)
 				startAt=0;
 			for(int i=startAt;i<group.tvChannels.Count;i++)
 			{
 				
-				
+				if(i<0)
+					break;
 				if(i>positionActChannel+channelCount)
 					continue;
 				if(i>=group.tvChannels.Count)
