@@ -141,10 +141,6 @@ namespace MediaPortal.TV.Recording
 				return;
 			if(group.tvChannels.Count<2)
 				return;
-			//HideBitmap();
-			string nextChannel="";
-			string prevChannel="";
-			bool breakLoop=false;
 			int positionActChannel=0;
 			int counter=0;
 			foreach(TVChannel chan in group.tvChannels)
@@ -158,7 +154,7 @@ namespace MediaPortal.TV.Recording
 
 			}
 
-			// render screen
+			// render list
 			Bitmap bm=new Bitmap(720,576);//m_mediaPath+@"bgimage.png");
 			Graphics gr=Graphics.FromImage(bm);
 			int x=60;
