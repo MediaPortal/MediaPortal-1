@@ -47,6 +47,7 @@ copy ..\..\..\*.tpl .
 copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
 copy ..\..\..\Interop.iTunesLib.dll .
+copy ..\..\..\Microsoft.Office.Interop.Outlook.dll .
 copy ..\..\..\XPBurnComponent.dll .
 
 copy ..\..\..\Configuration\Wizards\*.* Wizards

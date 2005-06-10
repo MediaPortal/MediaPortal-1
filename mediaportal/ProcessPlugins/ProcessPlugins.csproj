@@ -169,12 +169,32 @@
                     AssemblyName = "Communications"
                     HintPath = "..\Communications.dll"
                 />
+                <Reference
+                    Name = "Microsoft.Office.Interop.Outlook"
+                    AssemblyName = "Microsoft.Office.Interop.Outlook"
+                    HintPath = "..\Microsoft.Office.Interop.Outlook.dll"
+                />
             </References>
         </Build>
         <Files>
             <Include>
                 <File
+                    RelPath = "CallerId\CallerIdISDN.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "CallerId\CallerIdPlugin.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CallerId\ISDNWatch.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CallerId\OutlookHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

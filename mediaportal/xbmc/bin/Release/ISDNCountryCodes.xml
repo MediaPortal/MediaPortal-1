@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<countrycodes>
+	<country countryshort="de" countrylong="Germany"/>
+	<code country="de" countrycode="+49"/>
+	<country countryshort="lu" countrylong="Luxembourg"/>
+	<code country="lu" countrycode="+352"/>
+	<country countryshort="nl" countrylong="Netherlands"/>
+	<code country="nl" countrycode="+31"/>
+</countrycodes>
