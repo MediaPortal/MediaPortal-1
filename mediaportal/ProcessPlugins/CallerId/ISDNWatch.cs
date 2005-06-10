@@ -99,6 +99,10 @@ namespace ProcessPlugins.CallerId
 
     public ISDNWatch()
     {
+    }
+
+    public void Start()
+    {
       Thread watchThread = new Thread(new ThreadStart(WatchThread));
       watchThread.Name = "CAPI Monitoring";
       watchThread.Start();
@@ -111,6 +115,7 @@ namespace ProcessPlugins.CallerId
 
     void WatchThread()
     {
+      Log.Write("ISDN: WatchThread");
       int applicationId = 0;
 
       // Registering with CAPI

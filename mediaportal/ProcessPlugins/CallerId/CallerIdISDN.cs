@@ -246,6 +246,7 @@ namespace ProcessPlugins.CallerId
         Log.Write("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
 
       ISDNWatch = new ISDNWatch();
+      ISDNWatch.Start();
       ISDNWatch.CidReceiver  += new ISDNWatch.EventHandler(ProcessCallerId);
     }
 
