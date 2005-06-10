@@ -301,6 +301,15 @@ namespace MediaPortal.GUI.TV
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordedTV(ref recordings);
 
+			TVRecorded rec1= new TVRecorded();
+			rec1.Channel="RTL 4";
+			rec1.Title="Friends";
+			rec1.Description="blabla";
+			rec1.Start=Utils.datetolong(DateTime.Now);
+			rec1.End=Utils.datetolong(DateTime.Now.AddHours(2));
+			recordings.Add(rec1);
+			recordings.Add(rec1);
+			recordings.Add(rec1);
 			foreach (TVRecorded rec in recordings)
 			{
 				GUIListItem item=new GUIListItem();

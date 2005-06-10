@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (buttonNr>=0 && buttonNr < m_imgButton.Count)
 				{
-					GUIButtonControl btn=m_imgButton[buttonNr] as GUIButtonControl;
+					GUIControl btn=m_imgButton[buttonNr] as GUIControl;
 					if (btn!=null)
 					{
 						btn.Focus = gotFocus;

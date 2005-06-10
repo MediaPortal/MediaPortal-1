@@ -404,6 +404,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUIListControl);
 				case ("updownlistcontrol"):
 					return typeof (GUIUpDownListControl);
+				case ("checklistcontrol"):
+					return typeof (GUICheckListControl);
 				case ("togglebutton"):
 					return typeof (GUIToggleButtonControl);
 				case ("group"):

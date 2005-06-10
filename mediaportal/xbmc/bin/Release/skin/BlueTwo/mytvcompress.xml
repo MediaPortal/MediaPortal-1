@@ -166,7 +166,7 @@
 			<animation>FlyInFromTop</animation>
 			<control>
 				<description>scheduler recordings listcontrol</description>
-				<type>listcontrol</type>
+				<type>checklistcontrol</type>
 				<id>10</id>
 				<width>425</width>
 				<height>370</height>		
