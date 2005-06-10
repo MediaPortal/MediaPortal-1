@@ -95,7 +95,7 @@ namespace ProcessPlugins.CallerId
           {
             XmlDocument source = new XmlDocument();
             source.Load(countryCodeXMLFile); 
-            XmlNodeList countryCodeNodes = source.SelectNodes("/countrycodes/code");
+            XmlNodeList countryCodeNodes = source.SelectNodes("/countrycodes/country");
 
             XmlNode countryCodeNode;
             countryTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
@@ -103,12 +103,12 @@ namespace ProcessPlugins.CallerId
             for (int i=0; i<countryCodeNodes.Count; i++)  // Loop through, pulling countrycode and country
             {
               countryCodeNode = countryCodeNodes[i];
-              countryCode = countryCodeNode.Attributes["countrycode"].Value;
-              country = countryCodeNode.Attributes["country"].Value;
+              countryCode = countryCodeNode.Attributes["code"].Value;
+              country = countryCodeNode.Attributes["iso"].Value;
 
               if (!countryTable.Contains(countryCode))
               {
-                countryTable.Add(countryCode, country);
+                countryTable.Add("+" + countryCode, country);
               }
             }
           }
@@ -147,8 +147,8 @@ namespace ProcessPlugins.CallerId
             for (int i=0; i<translatorNodes.Count; i++)  // Loop through, pulling areacode and location
             {
               translatorNode = translatorNodes[i];
-              countryShort = translatorNode.Attributes["countryshort"].Value;
-              countryLong = translatorNode.Attributes["countrylong"].Value;
+              countryShort = translatorNode.Attributes["iso"].Value;
+              countryLong = translatorNode.Attributes["name"].Value;
 
               if (!translatorTable.Contains(countryShort))
               {

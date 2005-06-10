@@ -111,77 +111,86 @@ namespace ProcessPlugins.CallerId
 
     void WatchThread()
     {
-      int applicationId = 0;
-
-      // Registering with CAPI
-      int capiResult = CAPI_REGISTER(3072, 2, 7, 2048, ref applicationId);
-      if (capiResult != 0)
-        Log.Write("ISDN: Application cannot register with CAPI");
-      else
+      try
       {
-        Log.Write("ISDN: Application registered with CAPI ({0})", applicationId);
+        int applicationId = 0;
 
-        capiRequest capiRequest = new capiRequest();
-        capiRequest.Length = 26;
-        capiRequest.ApplicationId = (short)applicationId;
-        capiRequest.Command = 0x0005;
-        capiRequest.SubCommand = 0x0080;
-        capiRequest.MessageNumber = 1;
-        capiRequest.Controller = 1;
-        capiRequest.InfoMask = 0x0000;
-        capiRequest.CIPMask1 = 1;
-        capiRequest.CIPMask2 = 0x0000;
-        capiRequest.CallingParty = 0x0000;
-        capiRequest.CallingPartySub = 0x0000;
-        capiResult = CAPI_PUT_MESSAGE(applicationId, capiRequest);
-
+        // Registering with CAPI
+        int capiResult = CAPI_REGISTER(3072, 2, 7, 2048, ref applicationId);
         if (capiResult != 0)
-          Log.Write("ISDN: CAPI signaling cannot be activated");
+          Log.Write("ISDN: Application cannot register with CAPI");
         else
         {
-          Log.Write("ISDN: CAPI signaling activated");
-        }
-      }
+          Log.Write("ISDN: Application registered with CAPI ({0})", applicationId);
 
-      // Waiting for signal and signal-processing
-      string CallerId = null;
-      capiMessageHeader MessageHeader = new capiMessageHeader();
-      IntPtr capiBufferPointer = new IntPtr();
-      while (!stopThread)
-      {
-        //        CAPI_WAIT_FOR_SIGNAL(applicationId);
-        if (CAPI_GET_MESSAGE(applicationId, ref capiBufferPointer) == 0)
-        {
-          RtlMoveMemory(ref MessageHeader, capiBufferPointer, HeaderLength);
-          if ((MessageHeader.Command == CAPI_CONNECT) && (MessageHeader.SubCommand == CAPI_IND))
+          capiRequest capiRequest = new capiRequest();
+          capiRequest.Length = 26;
+          capiRequest.ApplicationId = (short)applicationId;
+          capiRequest.Command = 0x0005;
+          capiRequest.SubCommand = 0x0080;
+          capiRequest.MessageNumber = 1;
+          capiRequest.Controller = 1;
+          capiRequest.InfoMask = 0x0000;
+          capiRequest.CIPMask1 = 1;
+          capiRequest.CIPMask2 = 0x0000;
+          capiRequest.CallingParty = 0x0000;
+          capiRequest.CallingPartySub = 0x0000;
+          capiResult = CAPI_PUT_MESSAGE(applicationId, capiRequest);
+
+          if (capiResult != 0)
+            Log.Write("ISDN: CAPI signaling cannot be activated");
+          else
           {
-            capiConnectInd ConnectInd = new capiConnectInd();
-            RtlMoveMemory (ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (MessageHeader.Length - HeaderLength));
-            int lengthCalledId = ConnectInd.buffer[0];
-            string CalledId = ConnectInd.buffer.Substring(2, (lengthCalledId - 1));
-            int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
-            CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4), (lengthCallerId - 2));
-
-            if (ConnectInd.buffer[lengthCalledId+2] != 33)
-              CallerId = "+" + CallerId;
-
-            Log.Write("ISDN: CalledID: {0}", CalledId);
-            Log.Write("ISDN: CallerID: {0}", CallerId);
-
-            CidReceiver(CallerId);
+            Log.Write("ISDN: CAPI signaling activated");
           }
         }
-        Thread.Sleep(200);
-      }
 
-      // Release CAPI
-      if (CAPI_RELEASE(applicationId) == 0)
+        // Waiting for signal and signal-processing
+        string CallerId = null;
+        capiMessageHeader MessageHeader = new capiMessageHeader();
+        IntPtr capiBufferPointer = new IntPtr();
+        while (!stopThread)
+        {
+          //        CAPI_WAIT_FOR_SIGNAL(applicationId);
+          if (CAPI_GET_MESSAGE(applicationId, ref capiBufferPointer) == 0)
+          {
+            RtlMoveMemory(ref MessageHeader, capiBufferPointer, HeaderLength);
+            if ((MessageHeader.Command == CAPI_CONNECT) && (MessageHeader.SubCommand == CAPI_IND))
+            {
+              capiConnectInd ConnectInd = new capiConnectInd();
+              RtlMoveMemory (ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (MessageHeader.Length - HeaderLength));
+              int lengthCalledId = ConnectInd.buffer[0];
+              string CalledId = ConnectInd.buffer.Substring(2, (lengthCalledId - 1));
+              int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
+              CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4), (lengthCallerId - 2));
+
+              if (ConnectInd.buffer[lengthCalledId+2] != 33)
+                CallerId = "+" + CallerId;
+
+              Log.Write("ISDN: CalledID: {0}", CalledId);
+              Log.Write("ISDN: CallerID: {0}", CallerId);
+
+              CidReceiver(CallerId);
+            }
+          }
+          Thread.Sleep(200);
+        }
+
+        // Release CAPI
+        if (CAPI_RELEASE(applicationId) == 0)
+        {
+          stopThread = false;
+          Log.Write("ISDN: CAPI released ({0})", applicationId);
+        }
+        else
+          Log.Write("ISDN: CAPI cannot be released");
+      }
+      catch (System.DllNotFoundException)
       {
         stopThread = false;
-        Log.Write("ISDN: CAPI released ({0})", applicationId);
+        Log.Write("ISDN: Can't find CAPI2032.dll");
+        return;
       }
-      else
-        Log.Write("ISDN: CAPI cannot be released");
     }
 
     public class LocationInfo
