@@ -2888,6 +2888,10 @@
 	<id>993</id>
 	<value>Custom</value>
 </string>
+<string>
+	<id>994</id>
+	<value>Enable Auto compress</value>
+</string>
 
 <string>
 	<id>1440</id>
