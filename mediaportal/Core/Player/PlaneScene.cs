@@ -198,7 +198,11 @@ namespace MediaPortal.Player
 					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL||
 					windowId==(int)GUIWindow.Window.WINDOW_TV_CONFLICTS||
 					windowId==(int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES||
-					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
+					windowId==(int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE ||
+					windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN ||
+					windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO ||
+					windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS ||
+					windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS)
 					return true;
 				return false;
 			}
