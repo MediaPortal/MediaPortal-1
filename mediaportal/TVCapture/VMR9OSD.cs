@@ -194,16 +194,13 @@ namespace MediaPortal.TV.Recording
 				startAt=0;
 			for(int i=startAt;i<group.tvChannels.Count;i++)
 			{
-				
-				if(i<0)
-					break;
-				if(i>positionActChannel+channelCount)
-					continue;
-				if(i>=group.tvChannels.Count)
-					break;
+				// stop render / continue
+				if(i<0) break;
+				if(i>positionActChannel+channelCount) continue;
+				if(i>=group.tvChannels.Count) break;
 				TVChannel chan=(TVChannel)group.tvChannels[i];
-				if(chan==null)
-					break;
+				if(chan==null) break;
+
 				TVProgram prog=chan.GetProgramAt(DateTime.Now);
 				string channelText="";
 				if(prog!=null)
@@ -447,7 +444,7 @@ namespace MediaPortal.TV.Recording
 			}
 			// mute
 			string mute=m_osdSkin.mute;
-			if(mute!=null)
+			if(mute!=null && m_muteState==true)
 			{
 				string[] seg =mute.Split(new char[]{':'});
 				if(seg!=null)
