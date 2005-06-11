@@ -569,6 +569,21 @@ namespace MediaPortal.TV.Recording
 									break;
 								}
 							}
+							if (!filterFound)
+							{
+								for (int filterInst=0; filterInst < al.Count;++filterInst)
+								{
+									filter=al[filterInst] as Filter;
+									Log.Write("check:#{0} {1}", filterInst,filter.MonikerString);
+									string tmpMoniker=captureDeviceDeviceName.Replace(@"\", "#");
+									tmpMoniker=captureDeviceDeviceName.Replace(@"/", "#");
+									if (tmpMoniker.ToLower().IndexOf(moniker.ToLower())>=0)
+									{
+										filterFound = true;
+										break;
+									}
+								}
+							}
 						
 							if (!filterFound)
 							{
