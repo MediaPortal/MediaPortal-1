@@ -1414,23 +1414,29 @@ namespace MediaPortal.GUI.TV
 
 		public void ZapPreviousChannel()
 		{
-			GUITVHome.Navigator.ZapToPreviousChannel(true);
-			UpdateOSD();
-			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
-			{
-				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
-			}
-			m_dwZapTimer = DateTime.Now;
-		}
-
-		public void ZapNextChannel()
-		{
 			GUITVHome.Navigator.ZapToNextChannel(true);
 			UpdateOSD();
 			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
 			{
 				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}
+			else
+			{
+				GUITVHome.Navigator.ZapToPreviousChannel(true);
+				UpdateOSD();
+			}
+			m_dwZapTimer = DateTime.Now;
+		}
+
+		public void ZapNextChannel()
+		{
+			GUITVHome.Navigator.ZapToPreviousChannel(true);
+			UpdateOSD();
+			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
+			{
+				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
+			}
+
 			m_dwZapTimer = DateTime.Now;
 		}
 
