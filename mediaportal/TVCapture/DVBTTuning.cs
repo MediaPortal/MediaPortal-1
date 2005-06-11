@@ -169,9 +169,11 @@ namespace MediaPortal.TV.Recording
 
 			if (currentState==State.ScanFrequencies)
 			{
+				timer1.Enabled=false;
 				callback.OnStatus(description);
 				ScanNextFrequency();
 				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
+				timer1.Enabled=true;
 			}
 
 			if (currentState==State.ScanChannels)
@@ -185,6 +187,7 @@ namespace MediaPortal.TV.Recording
 
 		void ScanChannels()
 		{
+			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			timer1.Enabled=false;
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
 			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
@@ -198,6 +201,8 @@ namespace MediaPortal.TV.Recording
 
 		void ScanNextFrequency()
 		{
+		
+			Log.Write("ScanNextFrequency() {0}/{1} {2}",currentFrequencyIndex,frequencies.Count,currentOffset);
 			if (currentFrequencyIndex >=frequencies.Count) return;
 
 			DVBChannel chan = new DVBChannel();
@@ -218,7 +223,7 @@ namespace MediaPortal.TV.Recording
 				tmp = (int[])frequencies[currentFrequencyIndex];
 				chan.Frequency=tmp[0];
 				chan.Bandwidth=tmp[1];
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (i)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 				return;
@@ -228,31 +233,32 @@ namespace MediaPortal.TV.Recording
 			chan.Frequency=tmp[0];
 			chan.Bandwidth=tmp[1];
 			tunedFrequency=chan.Frequency;
+
 			if (currentOffset==0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (1)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				if (scanOffset==0) currentOffset=3;
-				else currentOffset++;
+				else currentOffset=1;
 				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			}
 			else if (currentOffset==1)
 			{
 				tunedFrequency-=scanOffset;
 				chan.Frequency-=scanOffset;
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (2)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
-				currentOffset++;
+				currentOffset=2;
 			}
 			else if (currentOffset==2)
 			{
-				tunedFrequency+=scanOffset;
-				chan.Frequency+=scanOffset;
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1}",chan.Frequency, chan.Bandwidth);
+				tunedFrequency+=(scanOffset);
+				chan.Frequency+=(scanOffset);
+				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (3)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
-				currentOffset++;
+				currentOffset=3;
 			}
 			else
 			{

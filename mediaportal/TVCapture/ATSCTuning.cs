@@ -147,6 +147,8 @@ namespace MediaPortal.TV.Recording
 				captureCard.DeleteGraph();
 				return;
 			}
+			timer1.Enabled=false;
+
 			string chanDesc=String.Format("Channel:{0} retry:{1}",currentIndex, retryCount);
 			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,MaxATSCChannel,chanDesc);
 			callback.OnStatus(description);
@@ -169,6 +171,7 @@ namespace MediaPortal.TV.Recording
 			captureCard.Tune(newchan,0);
 			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			Application.DoEvents();
+			timer1.Enabled=true;
 		}
 		#endregion
 	}

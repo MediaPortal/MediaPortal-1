@@ -233,6 +233,7 @@ namespace MediaPortal.TV.Recording
 				captureCard.DeleteGraph();
 				return;
 			}
+			timer1.Enabled=false;
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",
 												dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate, retryCount);
 			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,count,chanDesc);
@@ -252,6 +253,7 @@ namespace MediaPortal.TV.Recording
 			captureCard.Tune(newchan,0);
 			Application.DoEvents();
 			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
+			timer1.Enabled=true;
 		}
 		#endregion
 	}

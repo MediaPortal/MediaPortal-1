@@ -14,7 +14,7 @@ namespace MediaPortal.GUI.TV
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUITVCompress :GUIWindow, IComparer
+	public class GUITVCompressStatus :GUIWindow, IComparer
 	{
 		#region variables
 		enum Controls
@@ -41,23 +41,19 @@ namespace MediaPortal.GUI.TV
 
 		ViewAs						currentViewMethod=ViewAs.Album;
 		SortMethod        currentSortMethod=SortMethod.Date;
-		bool              m_bSortAscending=true;
-		bool							m_bDeleteWatchedShow=false;
 		int								m_iSelectedItem=0;
-		
+		bool              m_bSortAscending=true;
 		
 		[SkinControlAttribute(2)]			  protected GUIButtonControl btnViewAs=null;
 		[SkinControlAttribute(3)]				protected GUIButtonControl btnSortBy=null;
 		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSortAsc=null;
-		[SkinControlAttribute(5)]				protected GUIButtonControl btnSelectAll=null;
-		[SkinControlAttribute(6)]				protected GUIButtonControl btnSelectNone=null;
-		[SkinControlAttribute(7)]				protected GUIButtonControl btnOK=null;
+		[SkinControlAttribute(5)]				protected GUIButtonControl btnClear=null;
 
 		[SkinControlAttribute(10)]			protected GUIListControl listAlbums=null;
 		[SkinControlAttribute(11)]			protected GUIListControl listViews=null;
 
 		#endregion
-		public  GUITVCompress()
+		public  GUITVCompressStatus()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS ;
 		}
@@ -68,7 +64,7 @@ namespace MediaPortal.GUI.TV
 			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				string strTmp=String.Empty;
-				strTmp=(string)xmlreader.GetValue("tvcompress","sort");
+				strTmp=(string)xmlreader.GetValue("tvcompressstatus","sort");
 				if (strTmp!=null)
 				{
 					if (strTmp=="channel") currentSortMethod=SortMethod.Channel;
@@ -77,15 +73,13 @@ namespace MediaPortal.GUI.TV
 					else if (strTmp=="type") currentSortMethod=SortMethod.Genre;
 					else if (strTmp=="played") currentSortMethod=SortMethod.Played;
 				}
-				strTmp=(string)xmlreader.GetValue("tvcompress","view");
+				strTmp=(string)xmlreader.GetValue("tvcompressstatus","view");
 				if (strTmp!=null)
 				{
 					if (strTmp=="albu,") currentViewMethod=ViewAs.Album;
 					else if (strTmp=="list") currentViewMethod=ViewAs.List;
 				}
 				
-				m_bSortAscending=xmlreader.GetValueAsBool("tvcompress","sortascending",true);
-				m_bDeleteWatchedShow= xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
 			}
 		}
 
@@ -96,31 +90,31 @@ namespace MediaPortal.GUI.TV
 				switch (currentSortMethod)
 				{
 					case SortMethod.Channel:
-						xmlwriter.SetValue("tvcompress","sort","channel");
+						xmlwriter.SetValue("tvcompressstatus","sort","channel");
 						break;
 					case SortMethod.Date:
-						xmlwriter.SetValue("tvcompress","sort","date");
+						xmlwriter.SetValue("tvcompressstatus","sort","date");
 						break;
 					case SortMethod.Name:
-						xmlwriter.SetValue("tvcompress","sort","name");
+						xmlwriter.SetValue("tvcompressstatus","sort","name");
 						break;
 					case SortMethod.Genre:
-						xmlwriter.SetValue("tvcompress","sort","type");
+						xmlwriter.SetValue("tvcompressstatus","sort","type");
 						break;
 					case SortMethod.Played:
-						xmlwriter.SetValue("tvcompress","sort","played");
+						xmlwriter.SetValue("tvcompressstatus","sort","played");
 						break;
 				}
 				switch (currentViewMethod)
 				{
 					case ViewAs.Album:
-						xmlwriter.SetValue("tvcompress","view","album");
+						xmlwriter.SetValue("tvcompressstatus","view","album");
 						break;
 					case ViewAs.List:
-						xmlwriter.SetValue("tvcompress","view","list");
+						xmlwriter.SetValue("tvcompressstatus","view","list");
 						break;
 				}
-				xmlwriter.SetValueAsBool("tvcompress","sortascending",m_bSortAscending);
+				xmlwriter.SetValueAsBool("tvcompressstatus","sortascending",m_bSortAscending);
 			}
 		}
 		#endregion
@@ -128,7 +122,7 @@ namespace MediaPortal.GUI.TV
 		#region overrides
 		public override bool Init()
 		{
-			bool bResult=Load (GUIGraphicsContext.Skin+@"\mytvcompress.xml");
+			bool bResult=Load (GUIGraphicsContext.Skin+@"\mytvcompressstatus.xml");
 			LoadSettings();
 			return bResult;
 		}
@@ -203,14 +197,10 @@ namespace MediaPortal.GUI.TV
 				m_bSortAscending=!m_bSortAscending;
 				OnSort();
 			}
-			if (control==btnSelectAll)
+			if (control==btnClear)
 			{
-				for (int i=0; i < GetItemCount();++i)
-				{
-					listAlbums[i].Selected=true;
-					listViews[i].Selected=true;
-				}
-				return;
+				Transcoder.Clear();
+				LoadDirectory();
 			}
 
 
@@ -251,33 +241,6 @@ namespace MediaPortal.GUI.TV
 				OnSort();
 			}
 
-			if (control==btnSelectNone)
-			{
-				
-				for (int i=0; i < GetItemCount();++i)
-				{
-					listAlbums[i].Selected=false;
-					listViews[i].Selected=false;
-				}
-			}
-			if (control==listAlbums || control==listViews)
-			{
-				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
-				OnMessage(msg);         
-				int iItem=(int)msg.Param1;
-				if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
-				{
-					GUIListItem item = GetItem(iItem);
-					if (item!=null)
-					{
-						item.Selected=!item.Selected;
-					}
-				}
-			}
-			if (control==btnOK)
-			{
-				OnTranscode();
-			}
 		}
 
 		public override bool OnMessage(GUIMessage message)
@@ -297,27 +260,14 @@ namespace MediaPortal.GUI.TV
 			GUIControl.ClearControl(GetID,listAlbums.GetID);
 			GUIControl.ClearControl(GetID,listViews.GetID);
 
-			ArrayList recordings = new ArrayList();
 			ArrayList itemlist = new ArrayList();
-			TVDatabase.GetRecordedTV(ref recordings);
-/*
-			TVRecorded rec1= new TVRecorded();
-			rec1.Channel="RTL 4";
-			rec1.Title="Friends";
-			rec1.Description="blabla";
-			rec1.Start=Utils.datetolong(DateTime.Now);
-			rec1.End=Utils.datetolong(DateTime.Now.AddHours(2));
-			recordings.Add(rec1);
-			recordings.Add(rec1);
-			recordings.Add(rec1);*/
-			foreach (TVRecorded rec in recordings)
+			ArrayList recordings = Transcoder.Queue;
+			foreach (Transcoder.TranscoderInfo info in recordings)
 			{
-				if (Transcoder.IsTranscoding(rec)) continue; //already transcoding...
-
 				GUIListItem item=new GUIListItem();
-				item.Label=rec.Title;
-				item.TVTag=rec;
-				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
+				item.Label=info.recorded.Title;
+				item.TVTag=info;
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,info.recorded.Channel);
 				if (!System.IO.File.Exists(strLogo))
 				{
 					strLogo="defaultVideoBig.png";
@@ -417,57 +367,29 @@ namespace MediaPortal.GUI.TV
 				GUIListItem item1=listAlbums[i];
 				GUIListItem item2=listViews[i];
 				if (item1.Label=="..") continue;
-				TVRecorded rec=(TVRecorded)item1.TVTag;
-				item1.Label=item2.Label=rec.Title;
-				TimeSpan ts = rec.EndTime-rec.StartTime;
-				string strTime=String.Format("{0} {1} ", 
-					Utils.GetShortDayString(rec.StartTime) , 
-					Utils.SecondsToHMString( (int)ts.TotalSeconds));
-				item1.Label2=item2.Label2=strTime;
-				if (currentViewMethod==ViewAs.Album)
+				Transcoder.TranscoderInfo info=(Transcoder.TranscoderInfo )item1.TVTag;
+				TVRecorded rec=info.recorded;
+				item1.Label=rec.Title;
+				switch (info.status)
 				{
-					item1.Label3=item2.Label3=rec.Genre;
+					case Transcoder.Status.Waiting:
+						item1.Label2=item2.Label2=GUILocalizeStrings.Get(681);
+						break;
+					case Transcoder.Status.Busy:
+						item1.Label2=item2.Label2=String.Format("{0}%", info.percentDone);
+						break;
+					case Transcoder.Status.Error:
+						item1.Label2=item2.Label2=GUILocalizeStrings.Get(257);
+						break;
+					case Transcoder.Status.Completed:
+						item1.Label2=item2.Label2=GUILocalizeStrings.Get(997);
+						break;
 				}
-				else 
-				{
-					if (currentSortMethod==SortMethod.Channel)
-						item1.Label2=item2.Label2=rec.Channel;
-				}
+				
 			}
 		}
 
-		void OnTranscode()
-		{
-			ArrayList transcodings = new ArrayList();
-			for (int i=0; i < GetItemCount();++i)
-			{
-				GUIListItem item = GetItem(i);
-				if (item.Selected)
-				{
-					TVRecorded rec = item.TVTag as TVRecorded;
-					transcodings.Add(rec);
-				}
-			}
-
-			if (transcodings.Count==0) return;//nothing selected
-
-			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-			dlgYesNo.SetHeading(894);
-			dlgYesNo.SetLine(1,995);
-			dlgYesNo.SetLine(2,996);
-			dlgYesNo.DoModal(GetID);
-			if (!dlgYesNo.IsConfirmed) return;
-
-			foreach (TVRecorded rec in transcodings)
-			{
-				Transcoder.Transcode(rec);
-			}
-
-			//now switch to status screen....
-
-			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS);
-		}
-
+		
 		void UpdateProperties()
 		{
 			TVRecorded rec;
@@ -478,7 +400,7 @@ namespace MediaPortal.GUI.TV
 				rec.SetProperties();
 				return;
 			}
-			rec=pItem.TVTag as TVRecorded;
+			rec=(pItem.TVTag as Transcoder.TranscoderInfo).recorded;
 			if (rec==null)
 			{
 				rec = new TVRecorded();

@@ -13,6 +13,25 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class Transcoder
 	{
+		public class TranscoderInfo
+		{
+			public TVRecorded recorded;
+			public Status     status;
+			public int        percentDone;
+			public TranscoderInfo(TVRecorded recording)
+			{
+				recorded=recording;
+				status=Status.Waiting;
+				percentDone=0;
+			}
+		}
+		public enum Status
+		{
+			Waiting,
+			Busy,
+			Completed,
+			Error
+		}
 		enum Quality
 		{
 			Portable=0,
@@ -23,7 +42,7 @@ namespace MediaPortal.TV.Recording
 		}
 		static ArrayList  queue = new ArrayList();
 		static Thread		  WorkerThread =null;
-		static TVRecorded currentRecord=null;
+		
 		static Dvrms2Mpeg convertToMpg=null;
 		static TranscodeToWMV	convertToWMV=null;
 		static Transcoder()
@@ -36,7 +55,8 @@ namespace MediaPortal.TV.Recording
 		{
 			lock(queue)
 			{
-				queue.Add(rec);
+				TranscoderInfo info = new TranscoderInfo(rec);
+				queue.Add(info);
 			}
 
 			if (WorkerThread==null)
@@ -44,20 +64,44 @@ namespace MediaPortal.TV.Recording
 				WorkerThread = new Thread(new ThreadStart(TranscodeWorkerThread));
 				WorkerThread.Start();
 			}
-
 		}
 
-		static public bool IsTranscoding(TVRecorded rec)
+		static public void Clear()
 		{
-			if (currentRecord!=null)
-			{
-				if (currentRecord.FileName==rec.FileName) return true;
-			}
 			lock(queue)
 			{
-				foreach (TVRecorded rec1 in queue)
+				bool deleted=false;
+				do
 				{
-					if (rec1.FileName==rec.FileName) return true;
+					deleted=false;
+					for (int i=0; i < queue.Count;++i)
+					{
+						TranscoderInfo info = (TranscoderInfo)queue[i];
+						if (info.status==Status.Error || info.status==Status.Completed)
+						{
+							deleted=true;
+							queue.RemoveAt(i);
+							break;
+						}
+					}
+				} while (deleted);
+			}
+		}
+		static public ArrayList Queue
+		{
+			get
+			{
+				return queue;
+			}
+		}
+		static public bool IsTranscoding(TVRecorded rec)
+		{
+			lock(queue)
+			{
+				foreach (TranscoderInfo info in queue)
+				{
+					if (info.status==Status.Error || info.status==Status.Completed) continue;
+					if (info.recorded.FileName==info.recorded.FileName) return true;
 				}
 			}
 			return false;
@@ -75,31 +119,40 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					TVRecorded recording=null;
+					TranscoderInfo info =null;
 					lock(queue)
 					{
-						recording = (TVRecorded)queue[0];
-						queue.RemoveAt(0);
+						for (int i=0; i < queue.Count;++i)
+						{
+							info = (TranscoderInfo)queue[i];
+							if (info.status==Status.Waiting)
+							{
+								break;
+							}
+						}
 					}
-					DoTranscode(recording);
+					if (info!=null && info.status==Status.Waiting)
+					{
+						DoTranscode(info);
+					}
 
-					//transcode recording...
 				}
 			}
 		}
-		static void DoTranscode(TVRecorded recording)
+		static void DoTranscode(TranscoderInfo tinfo)
 		{
-			currentRecord=recording;
+			
+			tinfo.status=Status.Busy;
 			TranscodeInfo info = new TranscodeInfo();
 			info.Author="Mediaportal";
-			info.Channel=currentRecord.Channel;
-			info.Description=currentRecord.Description;
-			info.Title=currentRecord.Title;
-			info.Start=currentRecord.StartTime;
-			info.End=currentRecord.EndTime;
-			TimeSpan ts=(currentRecord.EndTime-currentRecord.StartTime);
+			info.Channel=tinfo.recorded.Channel;
+			info.Description=tinfo.recorded.Description;
+			info.Title=tinfo.recorded.Title;
+			info.Start=tinfo.recorded.StartTime;
+			info.End=tinfo.recorded.EndTime;
+			TimeSpan ts=(tinfo.recorded.EndTime-tinfo.recorded.StartTime);
 			info.Duration=(int)ts.TotalSeconds;
-			info.file=recording.FileName;
+			info.file=tinfo.recorded.FileName;
 
 			int		bitRate,FPS,Priority,QualityIndex,ScreenSizeIndex,Type,AutoHours;
 			bool	deleteOriginal,AutoDeleteOriginal,AutoCompress;
@@ -199,13 +252,19 @@ namespace MediaPortal.TV.Recording
 					
 					while (!convertToMpg.IsFinished() )
 					{
+						tinfo.percentDone=convertToMpg.Percentage();
 						System.Threading.Thread.Sleep(100);
 					}
 
 					if (deleteOriginal)
 					{
-						DiskManagement.DeleteRecording(recording.FileName);
+						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
 					}
+					tinfo.status=Status.Completed;
+				}
+				else
+				{
+					tinfo.status=Status.Error;
 				}
 			}
 			if (isWMV)
@@ -239,20 +298,22 @@ namespace MediaPortal.TV.Recording
 					{
 						while (!convertToWMV.IsFinished() )
 						{
+							tinfo.percentDone=convertToWMV.Percentage();
 							System.Threading.Thread.Sleep(100);
 						}
 
 						if (deleteOriginal)
 						{
-							DiskManagement.DeleteRecording(recording.FileName);//.dvr-ms
+							DiskManagement.DeleteRecording(tinfo.recorded.FileName);//.dvr-ms
 							DiskManagement.DeleteRecording(info.file);//.mpg
 						}
+						tinfo.status=Status.Completed;
 					}
+					else tinfo.status=Status.Error;
 				}
+				else
+					tinfo.status=Status.Error;
 			}
-			
-
-			currentRecord=null;
 		
 		}
 	}

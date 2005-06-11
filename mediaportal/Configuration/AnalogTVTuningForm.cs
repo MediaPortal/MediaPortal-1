@@ -209,7 +209,7 @@ namespace MediaPortal
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 96);
+			this.label2.Location = new System.Drawing.Point(16, 88);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(100, 16);
 			this.label2.TabIndex = 13;
@@ -225,9 +225,9 @@ namespace MediaPortal
 			// 
 			// signalStrength
 			// 
-			this.signalStrength.Location = new System.Drawing.Point(120, 96);
+			this.signalStrength.Location = new System.Drawing.Point(120, 88);
 			this.signalStrength.Name = "signalStrength";
-			this.signalStrength.Size = new System.Drawing.Size(232, 8);
+			this.signalStrength.Size = new System.Drawing.Size(232, 16);
 			this.signalStrength.Step = 1;
 			this.signalStrength.TabIndex = 15;
 			// 
@@ -235,7 +235,7 @@ namespace MediaPortal
 			// 
 			this.signalQuality.Location = new System.Drawing.Point(120, 112);
 			this.signalQuality.Name = "signalQuality";
-			this.signalQuality.Size = new System.Drawing.Size(232, 8);
+			this.signalQuality.Size = new System.Drawing.Size(232, 16);
 			this.signalQuality.Step = 1;
 			this.signalQuality.TabIndex = 16;
 			// 

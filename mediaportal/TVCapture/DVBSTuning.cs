@@ -246,6 +246,7 @@ namespace MediaPortal.TV.Recording
 				}
 				return;
 			}
+			timer1.Enabled=false;
 			DVBChannel newchan = new DVBChannel();
 			newchan.NetworkID=-1;
 			newchan.TransportStreamID=-1;
@@ -266,6 +267,7 @@ namespace MediaPortal.TV.Recording
 			captureCard.Tune(newchan,m_currentDiseqc);
 			Application.DoEvents();
 			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
+			timer1.Enabled=true;
 		}
 
 		#endregion

@@ -2961,6 +2961,7 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 
+
 				TunerLib.IATSCTuningSpace myAtscTuningSpace =null;
 				TunerLib.IDVBTuningSpace2 myTuningSpace =null;
 				if (Network()==NetworkType.ATSC)
@@ -3003,25 +3004,27 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 
-					
-				TunerLib.IDVBTuneRequest myTuneRequest =null;
-				TunerLib.IATSCChannelTuneRequest myATSCTuneRequest =null;
-				if (Network() != NetworkType.ATSC)
+
+				TunerLib.IDVBTuneRequest myTuneRequest=null;
+				TunerLib.IATSCChannelTuneRequest myATSCTuneRequest=null;
+				if (m_NetworkType!=NetworkType.ATSC)
 				{
-					myTuneRequest = newTuneRequest as  TunerLib.IDVBTuneRequest;
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IDVBTuneRequest");
+					myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
 					if (myTuneRequest ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IDVBTuneRequest");
-						return;
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
 					}
 				}
 				else
 				{
-					myATSCTuneRequest = newTuneRequest as  TunerLib.IATSCChannelTuneRequest;
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IATSCChannelTuneRequest");
+					myATSCTuneRequest = newTuneRequest as TunerLib.IATSCChannelTuneRequest;
 					if (myATSCTuneRequest ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IATSCChannelTuneRequest");
-						return;
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
 					}
 				}
 
@@ -3163,7 +3166,7 @@ namespace MediaPortal.TV.Recording
 
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
+					m_streamDemuxer.SetChannelData(-1, -1, -1, -1, "",-1);
 					//m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 
