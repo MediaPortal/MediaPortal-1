@@ -43,6 +43,7 @@ namespace MediaPortal.GUI.TV
 		SortMethod        currentSortMethod=SortMethod.Date;
 		int								m_iSelectedItem=0;
 		bool              m_bSortAscending=true;
+		DateTime          updateTimer=DateTime.Now;
 		
 		[SkinControlAttribute(2)]			  protected GUIButtonControl btnViewAs=null;
 		[SkinControlAttribute(3)]				protected GUIButtonControl btnSortBy=null;
@@ -576,6 +577,18 @@ namespace MediaPortal.GUI.TV
 			return 0;
 		}
 		#endregion
+
+		public override void Process()
+		{
+			TimeSpan ts = DateTime.Now-updateTimer;
+			if (ts.TotalSeconds>1)
+			{
+				m_iSelectedItem=GetSelectedItemNo();
+				LoadDirectory();
+				updateTimer=DateTime.Now;
+			}
+			base.Process ();
+		}
 
 	}
 }

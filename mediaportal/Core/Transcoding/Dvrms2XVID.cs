@@ -51,9 +51,12 @@ namespace MediaPortal.Core.Transcoding
 				RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD");
 				if (subkey != null)
 				{
-					long uivalue=0;
-					subkey.SetValue("display_status", (int)uivalue);
+					Int32 uivalue=0;
+					subkey.SetValue("display_status", (Int32)uivalue);
+					subkey.SetValue("debug", (Int32)uivalue);
+					subkey.Close();
 				}
+				hkcu.Close();
 			}
 			catch(Exception)
 			{

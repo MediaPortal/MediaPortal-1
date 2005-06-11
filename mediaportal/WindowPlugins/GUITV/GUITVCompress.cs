@@ -465,7 +465,7 @@ namespace MediaPortal.GUI.TV
 
 			//now switch to status screen....
 
-			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS);
+			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS);
 		}
 
 		void UpdateProperties()
