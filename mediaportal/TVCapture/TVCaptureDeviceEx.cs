@@ -555,30 +555,34 @@ namespace MediaPortal.TV.Recording
 							int posTmp = filterMoniker.LastIndexOf("#");
 							if (posTmp>=0)filterMoniker = filterMoniker.Substring(0,posTmp);
 
-							string moniker=FindUniqueFilter(filterMoniker,Instance);
 							
-							for (int filterInst=0; filterInst < al.Count;++filterInst)
-							{
-								filter=al[filterInst] as Filter;
-								Log.Write("check:#{0} {1}", filterInst,filter.MonikerString);
-								string tmpMoniker=filter.MonikerString.Replace(@"\", "#");
-								tmpMoniker=tmpMoniker.Replace(@"/", "#");
-								if (tmpMoniker.ToLower().IndexOf(moniker.ToLower())>=0)
-								{
-									filterFound = true;
-									break;
-								}
-							}
 							if (!filterFound)
 							{
 								for (int filterInst=0; filterInst < al.Count;++filterInst)
 								{
 									filter=al[filterInst] as Filter;
+									Log.Write("check:#{0} {1} {2}", filterInst,filter.MonikerString,captureDeviceDeviceName);
+									if (filter.MonikerString.ToLower().IndexOf(captureDeviceDeviceName.ToLower())>=0)
+									{
+										Log.Write("use capture moniker");
+										filterFound = true;
+										break;
+									}
+								}
+							}
+
+							if (!filterFound)
+							{
+								string moniker=FindUniqueFilter(filterMoniker,Instance);
+								for (int filterInst=0; filterInst < al.Count;++filterInst)
+								{
+									filter=al[filterInst] as Filter;
 									Log.Write("check:#{0} {1}", filterInst,filter.MonikerString);
-									string tmpMoniker=captureDeviceDeviceName.Replace(@"\", "#");
-									tmpMoniker=captureDeviceDeviceName.Replace(@"/", "#");
+									string tmpMoniker=filter.MonikerString.Replace(@"\", "#");
+									tmpMoniker=tmpMoniker.Replace(@"/", "#");
 									if (tmpMoniker.ToLower().IndexOf(moniker.ToLower())>=0)
 									{
+										Log.Write("use filter moniker");
 										filterFound = true;
 										break;
 									}
