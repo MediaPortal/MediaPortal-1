@@ -474,6 +474,8 @@ namespace MediaPortal
 		}
 		public void OnSignal(int quality, int strength)
 		{
+			if (quality< 0 || quality>100) quality=0;
+			if (strength< 0 || strength>100) strength=0;
 			signalQuality.Value=quality;
 			signalStrength.Value=strength;
 			Application.DoEvents();
