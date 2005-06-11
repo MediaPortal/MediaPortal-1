@@ -685,8 +685,16 @@ namespace MediaPortal.TV.Recording
 					m_sampleInterface.SetBufferSamples(false);
 				}
 				else
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
-					
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
+
+				m_osd.Mute=false;
+				win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				if(win!=null)
+					win.SetObject(m_osd);
+				win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+				if(win!=null)
+					win.SetObject(m_osd);
+			
 				return true;
 			}
 			catch(Exception)
@@ -1057,7 +1065,7 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
-				if (Vmr9!=null) Vmr9.SetDeinterlaceMode();
+		
 			}
 
 			//start the graph

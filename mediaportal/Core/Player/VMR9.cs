@@ -23,6 +23,8 @@ namespace MediaPortal.Player
   /// </summary>
   public class VMR9Util
   {
+		static public VMR9Util g_vmr9=null;
+
     public PlaneScene m_scene = null;
     public bool UseVMR9inMYTV = false;
     IRender m_renderFrame;
@@ -50,7 +52,6 @@ namespace MediaPortal.Player
     /// </param>
     public VMR9Util(string key)
     {
-
       // add vmr9 if necessary
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
@@ -127,7 +128,8 @@ namespace MediaPortal.Player
 			Log.Write("VMR9Helper:start vmr9");
 			
 			GUIGraphicsContext.Vmr9Active = true;
-    }
+			g_vmr9=this;
+		}
     public void Release()
     {
     }
@@ -160,7 +162,9 @@ namespace MediaPortal.Player
 				
       if (VMR9Filter != null)
         Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
-    }
+			g_vmr9=null;
+
+		}
 
     public int FrameCounter
     {

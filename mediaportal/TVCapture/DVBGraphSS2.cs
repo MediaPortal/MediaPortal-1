@@ -523,7 +523,15 @@ namespace MediaPortal.TV.Recording
 				System.Windows.Forms.MessageBox.Show(ex.Message);
 				return false;
 			}
-			
+
+			m_osd.Mute=false;
+			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+			if(win!=null)
+				win.SetObject(m_osd);
+			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+			if(win!=null)
+				win.SetObject(m_osd);
+	
 			m_graphState=State.Created;
 			return true;
 		}
@@ -1649,17 +1657,6 @@ namespace MediaPortal.TV.Recording
 					m_graphBuilder.RemoveFilter(Vmr9.VMR9Filter);
 				Vmr9.RemoveVMR9();
 				Vmr9.UseVMR9inMYTV=false;
-			}
-			if(Vmr9.IsVMR9Connected==true && Vmr9.UseVMR9inMYTV==true)// 
-			{
-				m_osd.VMR9=Vmr9;
-				m_osd.Mute=false;
-				GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-				if(win!=null)
-					win.SetObject(m_osd);
-				win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-				if(win!=null)
-					win.SetObject(m_osd);
 			}
 			//
 			//

@@ -1416,7 +1416,7 @@ namespace MediaPortal.GUI.TV
 		{
 			GUITVHome.Navigator.ZapToPreviousChannel(true);
 			UpdateOSD();
-			if(m_useVMR9Zap==true && m_vmr9OSD!=null)
+			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
 			{
 				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}
@@ -1427,7 +1427,7 @@ namespace MediaPortal.GUI.TV
 		{
 			GUITVHome.Navigator.ZapToNextChannel(true);
 			UpdateOSD();
-			if(m_useVMR9Zap==true && m_vmr9OSD!=null)
+			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
 			{
 				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}

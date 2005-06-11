@@ -5,7 +5,7 @@ using System.Drawing;
 using MediaPortal.GUI.Library;
 using DShowNET;
 using MediaPortal.TV.Database;
-
+using MediaPortal.Player;
 
 namespace MediaPortal.TV.Recording
 {
@@ -112,7 +112,7 @@ namespace MediaPortal.TV.Recording
 			public string baseRect;
 		}
 		//
-		Player.VMR9Util Vmr9=null;
+		
 		DateTime m_timeDisplayed=DateTime.Now;
 		bool m_muteState=false;
 		string m_mediaPath=System.Windows.Forms.Application.StartupPath+@"\osdskin-media\";
@@ -126,14 +126,6 @@ namespace MediaPortal.TV.Recording
 		{
 			get{return m_muteState;}
 			set{m_muteState=value;}
-		}
-		public Player.VMR9Util VMR9
-		{
-			set
-			{
-				if(value!=null)
-					Vmr9=value;
-			}
 		}
 		public void RenderChannelList(TVGroup group,string currentChannel)
 		{
@@ -506,9 +498,9 @@ namespace MediaPortal.TV.Recording
 		}
 		bool SaveVMR9Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
-			if(Vmr9!=null)
+			if(VMR9Util.g_vmr9!=null)
 			{
-				if(Vmr9.IsVMR9Connected==false)
+				if(VMR9Util.g_vmr9.IsVMR9Connected==false)
 				{
 					Log.Write("SaveVMR9Bitmap() failed, no VMR9");
 					return false;
@@ -544,7 +536,7 @@ namespace MediaPortal.TV.Recording
 					bmp.rDest.right=1.0f;
 					bmp.fAlpha=alphaValue;
 					Log.Write("SaveVMR9Bitmap() called");
-					hr=Vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
+					hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
 					if(hr!=0)
 					{
 						Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
@@ -555,7 +547,7 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					hr=Vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
+					hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
 					if(hr!=0)
 					{
 						return false;
