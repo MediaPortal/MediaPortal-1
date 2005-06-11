@@ -560,6 +560,7 @@ namespace MediaPortal.TV.Recording
 							for (int filterInst=0; filterInst < al.Count;++filterInst)
 							{
 								filter=al[filterInst] as Filter;
+								Log.Write("check:#{0} {1}", filterInst,filter.MonikerString);
 								string tmpMoniker=filter.MonikerString.Replace(@"\", "#");
 								tmpMoniker=tmpMoniker.Replace(@"/", "#");
 								if (tmpMoniker.ToLower().IndexOf(moniker.ToLower())>=0)
