@@ -556,10 +556,13 @@ namespace MediaPortal.TV.Recording
 							if (posTmp>=0)filterMoniker = filterMoniker.Substring(0,posTmp);
 
 							string moniker=FindUniqueFilter(filterMoniker,Instance);
+							
 							for (int filterInst=0; filterInst < al.Count;++filterInst)
 							{
 								filter=al[filterInst] as Filter;
-								if (filter.MonikerString.ToLower().IndexOf(moniker.ToLower())>=0)
+								string tmpMoniker=filter.MonikerString.Replace(@"\", "#");
+								tmpMoniker=tmpMoniker.Replace(@"/", "#");
+								if (tmpMoniker.ToLower().IndexOf(moniker.ToLower())>=0)
 								{
 									filterFound = true;
 									break;
