@@ -17,7 +17,7 @@
 			<sound>click.wav</sound>
 			<label>-</label>
 			<action>102</action>
-			<onleft>319</onleft>
+			<onleft>3000</onleft>
 			<onright>102</onright>
 			<onup>103</onup>
 			<ondown>2</ondown>
@@ -107,108 +107,6 @@
 		<onright>103</onright>
 		<onup>12</onup>
 		<ondown>2</ondown>
-	</control>
-	<control>
-		<description>stop button</description>
-		<type>button</type>
-		<id>319</id>
-		<posX>77</posX>
-		<posY>507</posY>
-		<width>24</width>
-		<height>24</height>
-		<textureFocus>stop_focus.png</textureFocus>
-		<textureNoFocus>stop_nofocus.png</textureNoFocus>
-		<action>13</action>
-		<label>-</label>
-		<onleft>17</onleft>
-		<onright>315</onright>
-		<onup>17</onup>
-		<ondown>-</ondown>
-	</control>
-	<control>
-		<description>pause button</description>
-		<type>button</type>
-		<id>315</id>
-		<posX>104</posX>
-		<posY>507</posY>
-		<width>24</width>
-		<height>24</height>
-		<textureFocus>pause_focus.png</textureFocus>
-		<textureNoFocus>pause_nofocus.png</textureNoFocus>
-		<action>12</action>
-		<label>-</label>
-		<onleft>319</onleft>
-		<onright>312</onright>
-		<onup>17</onup>
-		<ondown>-</ondown>
-	</control>
-	<control>
-		<description>back button</description>
-		<type>button</type>
-		<id>312</id>
-		<posX>131</posX>
-		<posY>507</posY>
-		<width>24</width>
-		<height>24</height>
-		<textureFocus>back_focus.png</textureFocus>
-		<textureNoFocus>back_nofocus.png</textureNoFocus>
-		<action>15</action>
-		<label>-</label>
-		<onleft>315</onleft>
-		<onright>322</onright>
-		<onup>17</onup>
-		<ondown>-</ondown>
-	</control>
-	<control>
-		<description>next button</description>
-		<type>button</type>
-		<id>322</id>
-		<posX>158</posX>
-		<posY>507</posY>
-		<width>24</width>
-		<height>24</height>
-		<textureFocus>next_focus.png</textureFocus>
-		<textureNoFocus>next_nofocus.png</textureNoFocus>
-		<action>14</action>
-		<label>-</label>
-		<onleft>312</onleft>
-		<onright>313</onright>
-		<onup>17</onup>
-		<ondown>-</ondown>
-	</control>
-		<control>
-		<description>rewind button</description>
-		<type>button</type>
-		<id>313</id>
-		<posX>185</posX>
-		<posY>507</posY>
-		<width>24</width>
-		<height>24</height>
-		<textureFocus>rewind_focus.png</textureFocus>
-		<textureNoFocus>rewind_nofocus.png</textureNoFocus>
-		<action>78</action>
-		<label>-</label>
-		<onleft>322</onleft>
-		<onright>323</onright>
-		<onup>17</onup>
-		<ondown>-</ondown>
-	</control>
-	<control>
-		<description>fast forward button</description>
-		<type>button</type>
-		<id>323</id>
-		<posX>212</posX>
-		<posY>507</posY>
-		<width>24</width>
-		<height>24</height>
-		<textureFocus>fastforward_focus.png</textureFocus>
-		<textureNoFocus>fastforward_nofocus.png</textureNoFocus>
-		<action>77</action>
-		<label>-</label>
-		<onleft>313</onleft>
-		<onright>319</onright>
-		<onup>17</onup>
-		<ondown>-</ondown>
 	</control>
   </controls>
 </window>

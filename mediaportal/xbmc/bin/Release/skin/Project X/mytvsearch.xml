@@ -17,8 +17,8 @@
 			<description>Background TV</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>70</posX>
-			<posY>328</posY>
+			<posX>87</posX>
+			<posY>278</posY>
 			<width>-</width>
 			<height>-</height>
 			<colordiffuse>ffffffff</colordiffuse>
@@ -305,8 +305,8 @@
 		<description>TV background</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>60</posX>
-		<posY>420</posY>
+		<posX>77</posX>
+		<posY>390</posY>
 		<width>160</width>
 		<height>115</height>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -316,8 +316,8 @@
 		<description>TV preview window</description>
 		<type>videowindow</type>
 		<id>1</id>
-		<posX>75</posX>
-		<posY>425</posY>
+		<posX>92</posX>
+		<posY>395</posY>
 		<width>130</width>
 		<height>104</height>
 		<action>18</action>
