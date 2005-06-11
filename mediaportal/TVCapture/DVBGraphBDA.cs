@@ -142,6 +142,8 @@ namespace MediaPortal.TV.Recording
 
 		DateTime										timeResendPid=DateTime.Now;
 		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
+		VMR9OSD	m_osd=new VMR9OSD();
+		bool m_useVMR9Zap=false;
 		
 		int m_iVideoWidth=1;
 		int m_iVideoHeight=1;
@@ -215,6 +217,7 @@ namespace MediaPortal.TV.Recording
 				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
+				 m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
 				}
 
 				//no card defined? then we cannot build a graph
@@ -2915,9 +2918,23 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 			}
-			
+			SetZapOSDData(channel);
 			timeResendPid=DateTime.Now;
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
+		// this sets the channel to render the osd
+		void SetZapOSDData(TVChannel channel)
+		{
+			if(GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+				return;
+			if(m_osd!=null && channel!=null && m_useVMR9Zap==true)
+			{
+
+				int level=SignalStrength();
+				int quality=SignalQuality();
+				m_osd.ShowBitmap(m_osd.RenderZapOSD(channel,quality),0.8f);
+				
+			}
+		}
 
 		public void TuneFrequency(int frequency)
 		{
