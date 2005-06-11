@@ -89,9 +89,9 @@ namespace MediaPortal.TV.Recording
 						// episode        s------------------------e
 						// other    ---------s-----------------------------
 						// other ------------------e
-						if ( (otherEpisode.Start >= epsiode.Start && otherEpisode.Start <= epsiode.End) ||
+						if ( (otherEpisode.Start >= epsiode.Start && otherEpisode.Start < epsiode.End) ||
 							   (otherEpisode.Start <= epsiode.Start && otherEpisode.End >= epsiode.End)     ||
-							(otherEpisode.End >= epsiode.Start && otherEpisode.End <= epsiode.End) )
+							(otherEpisode.End > epsiode.Start && otherEpisode.End <= epsiode.End) )
 						{
 							if (AllocateCard(otherEpisode.Channel))
 							{
@@ -135,9 +135,9 @@ namespace MediaPortal.TV.Recording
 						// episode        s------------------------e
 						// other    ---------s-----------------------------
 						// other ------------------e
-						if ( (otherEpisode.Start >= epsiode.Start && otherEpisode.Start <= epsiode.End) ||
+						if ( (otherEpisode.Start >= epsiode.Start && otherEpisode.Start < epsiode.End) ||
 							(otherEpisode.Start <= epsiode.Start && otherEpisode.End >= epsiode.End)     ||
-							(otherEpisode.End >= epsiode.Start && otherEpisode.End <= epsiode.End) )
+							(otherEpisode.End > epsiode.Start && otherEpisode.End <= epsiode.End) )
 						{
 							if (AllocateCard(otherEpisode.Channel))
 							{

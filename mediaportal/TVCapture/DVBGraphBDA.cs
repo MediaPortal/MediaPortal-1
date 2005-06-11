@@ -2348,6 +2348,7 @@ namespace MediaPortal.TV.Recording
 
 		void LoadLNBSettings(ref DVBChannel ch, int disNo)
 		{
+			/*
 			try
 			{
 				string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
@@ -2427,11 +2428,12 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception)
 			{
-			}
+			}*/
 		} //void LoadLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		
 		void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		{
+			/*
 			try
 			{
 				if (tuneRequest==null) return;
@@ -2479,7 +2481,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception)
 			{
-			}
+			}*/
 		}
 
 		void CheckVideoResolutionChanges()
@@ -2586,7 +2588,7 @@ namespace MediaPortal.TV.Recording
 					myAtscTuningSpace = myTuner.TuningSpace as TunerLib.IATSCTuningSpace;
 					if (myAtscTuningSpace ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() tuningspace=null");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed TuneChannel() tuningspace=null");
 						return;
 					}
 
@@ -2594,7 +2596,7 @@ namespace MediaPortal.TV.Recording
 					newTuneRequest = myAtscTuningSpace.CreateTuneRequest();
 					if (newTuneRequest ==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed TuneChannel() could not create new tuningrequest");
 						return;
 					}
 				}
@@ -4049,13 +4051,7 @@ namespace MediaPortal.TV.Recording
 			tu.TransportStreamID=(UInt16)currentTuningObject.TransportStreamID;
 			tu.VideoPID=(UInt16)currentTuningObject.VideoPid;
 			tu.Reserved1=0;
-/*
-			tu.ECM_1=(Int16)m_ecmPids[1];
-			tu.ECM_2=(Int16)m_ecmPids[2];
-			tu.CAID_0=(Int16)currentTuningObject.Audio3;
-			tu.CAID_1=(Int16)m_ecmIDs[1];
-			tu.CAID_2=(Int16)m_ecmIDs[2];
-*/
+
 			IntPtr data=Marshal.AllocHGlobal(50);
 			Marshal.StructureToPtr(tu,data,true);
 
@@ -4064,7 +4060,7 @@ namespace MediaPortal.TV.Recording
 			{
 				try
 				{
-					flag=EventMsg(999, data/*,out pids*/);
+					flag=EventMsg(999, data);
 				}
 				catch(Exception ex)
 				{
