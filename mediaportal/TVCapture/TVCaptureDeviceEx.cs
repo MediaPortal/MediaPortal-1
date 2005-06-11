@@ -380,10 +380,10 @@ namespace MediaPortal.TV.Recording
 				Log.Write("        filters available:{0}", count);
 				for (int i=0; i < count;++i)
 				{
-					string moniker=(string)subkey.GetValue(instance.ToString());
+					string moniker=(string)subkey.GetValue(i.ToString());
 					moniker=moniker.Replace(@"\", "#");
 					moniker=moniker.Replace(@"/", "#");
-					Log.Write("          filter#:{0}={1}",instance,moniker);
+					Log.Write("          filter#:{0}={1}",i,moniker);
 				}
 				string monikerToUse=(string)subkey.GetValue(instance.ToString());
 				monikerToUse=monikerToUse.Replace(@"\", "#");
