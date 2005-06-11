@@ -1468,10 +1468,8 @@ namespace MediaPortal.TV.Recording
 				}
 				return signalQuality;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"DVBGraphBDA: ERROR: exception getting SignalQuality {0} {1} {2}",
-					ex.Message,ex.Source,ex.StackTrace);
 			}
 			return 0;
 		}
@@ -1489,10 +1487,8 @@ namespace MediaPortal.TV.Recording
 				}
 				return signalStrength;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{	
-				Log.WriteFile(Log.LogType.Log,true,"DVBGraphBDA: ERROR: exception getting SignalStrength {0} {1} {2}",
-					ex.Message,ex.Source,ex.StackTrace);
 			}
 			return 0;
 		}

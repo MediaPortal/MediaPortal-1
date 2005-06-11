@@ -803,16 +803,20 @@ namespace MediaPortal.TV.Recording
 					PidCallback((IntPtr)ptr);
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
+				if(m_packetHeader.SyncByte!=0x47) continue;
 				if(m_packetHeader.TransportError==true)
 				{
-					if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
-						Log.Write("pid:0x{0:X} transport error", m_sectionPid);
+//					if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
+//						Log.Write("pid:0x{0:X} transport error", m_sectionPid);
 					continue;// error, ignore packet
 				}
 				// teletext
 
 				if (m_packetHeader.Pid==m_teletextPid && m_teleText != null && m_teletextPid>0)
+				{
+//					Log.Write("grab teletext 0x{0:X}",m_teletextPid);
 					m_teleText.SaveData((IntPtr)ptr);
+				}
 
 				if(m_packetsReceived==false)
 				{
@@ -832,6 +836,7 @@ namespace MediaPortal.TV.Recording
 				#region Audio & Video
 				if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
 				{
+//					Log.Write("got audio pid:0x{0:X}", m_audioPid);
 					if (m_packetHeader.PayloadUnitStart == true)// start
 					{
 						AudioHeader ah = new AudioHeader();
@@ -857,6 +862,7 @@ namespace MediaPortal.TV.Recording
 				}
 				if (m_packetHeader.Pid == m_videoPid && m_videoPid > 0)
 				{
+//					Log.Write("got video pid:0x{0:X}", m_videoPid);
 					if (m_packetHeader.PayloadUnitStart == true)// start
 					{
 						byte[] packet = new byte[188];
@@ -868,6 +874,7 @@ namespace MediaPortal.TV.Recording
 				#region mhw grabbing
 				if(m_mhwGrabbing==true)// only grab from epg-grabber
 				{
+//					Log.Write("grab mhw");
 					try
 					{
 
@@ -916,6 +923,7 @@ namespace MediaPortal.TV.Recording
 				#region pmt handling
 				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
 				{
+//					Log.Write("grab pmt:0x{0:X}",m_pmtPid);
 					try
 					{
 						int offset=0;
@@ -973,7 +981,7 @@ namespace MediaPortal.TV.Recording
 				{
 					try
 					{
-						Log.Write("pid:0x:{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5}",
+						Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5}",
 												m_packetHeader.Pid,
 												m_bufferPositionSec,
 												m_packetHeader.ContinuityCounter,
@@ -1029,7 +1037,7 @@ namespace MediaPortal.TV.Recording
 
 							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>=header.SectionLength && header.SectionLength>0)
 							{
-								Log.Write("Parse...");
+//								Log.Write("Parse...");
 								ParseSection();
 							}
 								
@@ -1039,7 +1047,7 @@ namespace MediaPortal.TV.Recording
 							DVBSectionHeader header=GetHeader();
 							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>header.SectionLength && header.SectionLength>0)
 							{
-								Log.Write("Parse2...");
+//								Log.Write("Parse2...");
 								ParseSection();
 							}
 							else if(IsEPGScheduleGrabbing()==true)
@@ -1172,7 +1180,7 @@ namespace MediaPortal.TV.Recording
 				header.SectionLength+=3;
 				bool sectionOK=false;
 				// table ok?
-				Log.Write("table id:{0} =={1}",header.TableID,m_sectionTableID);
+//				Log.Write("table id:{0} =={1}",header.TableID,m_sectionTableID);
 				if(header.TableID==m_sectionTableID)
 				{
 					// found table
@@ -1216,7 +1224,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if(SectionIsInBuffer(header.SectionNumber,header.TableIDExtension)==false)
 					{
-						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
+//						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
 						m_secTimer.Stop();
 						m_secTimer.Interval=6000;
 						m_secTimer.Start();
@@ -1228,7 +1236,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if(SectionIsInBuffer(header.SectionNumber)==false)
 					{
-						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
+//						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
 						m_secTimer.Stop();
 						m_secTimer.Start();
 						m_tableSections.Add(data);
