@@ -345,42 +345,37 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     static public bool IsPlugInEnabled(string strDllname)
     {
       if (strDllname.IndexOf("WindowPlugins.dll")>=0) return true;
 			if (strDllname.IndexOf("ProcessPlugins.dll")>=0) return true;
 
-      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         // from the assembly name check the reference to plugin name
         // if available check to see if the plugin is enabled
-        // if the plugin name is unknown suggest the assembly should be loaded
-        
-        strDllname=strDllname.Substring(strDllname.LastIndexOf(@"\")+1);
-        bool bEnabled=xmlreader.GetValueAsBool("pluginsdlls",strDllname,true);
+        // if the plugin name is unknown suggest the assembly should NOT be loaded
+        strDllname = strDllname.Substring(strDllname.LastIndexOf(@"\") + 1);
+        bool bEnabled = xmlreader.GetValueAsBool("pluginsdlls", strDllname, false);
         return bEnabled;
-        
       } 
     }
+
     static public bool IsWindowPlugInEnabled(string strType)
     {
-
-      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        bool bEnabled=xmlreader.GetValueAsBool("pluginswindows",strType,true);
+        bool bEnabled = xmlreader.GetValueAsBool("pluginswindows", strType, false);
         return bEnabled;
-        
       } 
     }
+
     static public bool IsPluginNameEnabled(string strPluginName)
     {
-
-      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        bool bEnabled=xmlreader.GetValueAsBool("plugins",strPluginName,true);
+        bool bEnabled = xmlreader.GetValueAsBool("plugins", strPluginName, false);
         return bEnabled;
-        
       } 
     }
 
@@ -395,6 +390,5 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 		}
-
 	}
 }
