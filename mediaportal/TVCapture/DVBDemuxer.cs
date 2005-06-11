@@ -804,7 +804,11 @@ namespace MediaPortal.TV.Recording
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
 				if(m_packetHeader.TransportError==true)
+				{
+					if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
+						Log.Write("pid:0x{0:X} transport error", m_sectionPid);
 					continue;// error, ignore packet
+				}
 				// teletext
 
 				if (m_packetHeader.Pid==m_teletextPid && m_teleText != null && m_teletextPid>0)
@@ -969,6 +973,13 @@ namespace MediaPortal.TV.Recording
 				{
 					try
 					{
+						Log.Write("pid:0x:{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5}",
+												m_packetHeader.Pid,
+												m_bufferPositionSec,
+												m_packetHeader.ContinuityCounter,
+												m_packetHeader.AdaptionFieldControl,
+												m_packetHeader.PayloadUnitStart,
+												m_packetHeader.SectionLen);
 						int offset=0;
 						//
 						// 
@@ -986,9 +997,15 @@ namespace MediaPortal.TV.Recording
 						}
 						// calc offset
 						if(m_packetHeader.AdaptionFieldControl==2)
+						{
+							Log.Write("ignore adapt=2");
 							continue;
+						}
 						if(m_packetHeader.AdaptionFieldControl==3)
+						{
+							Log.Write("ignore adapt=3");
 							continue;
+						}
 						if(m_packetHeader.PayloadUnitStart==true && m_bufferPositionSec==0)
 							offset=m_packetHeader.AdaptionField+1;
 						else if(m_packetHeader.PayloadUnitStart==true)
@@ -996,7 +1013,10 @@ namespace MediaPortal.TV.Recording
 						//
 						// start copy data for every section on its table-id-byte
 						if(m_bufferPositionSec==0 && m_sectionTableID!=Marshal.ReadByte((IntPtr)(ptr+4+offset)))
+						{
+							Log.Write("ignore sectiontableid wrong");
 							continue;
+						}
 						//
 						// copy data
 						if(m_bufferPositionSec+(184-offset)<=SECTIONS_BUFFER_WIDTH)
@@ -1008,14 +1028,20 @@ namespace MediaPortal.TV.Recording
 							m_lastContinuityCounter=m_packetHeader.ContinuityCounter;
 
 							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>=header.SectionLength && header.SectionLength>0)
+							{
+								Log.Write("Parse...");
 								ParseSection();
+							}
 								
 						}
 						else 
 						{
 							DVBSectionHeader header=GetHeader();
 							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>header.SectionLength && header.SectionLength>0)
+							{
+								Log.Write("Parse2...");
 								ParseSection();
+							}
 							else if(IsEPGScheduleGrabbing()==true)
 								GetAllSections();
 							m_bufferPositionSec=0;
@@ -1146,6 +1172,7 @@ namespace MediaPortal.TV.Recording
 				header.SectionLength+=3;
 				bool sectionOK=false;
 				// table ok?
+				Log.Write("table id:{0} =={1}",header.TableID,m_sectionTableID);
 				if(header.TableID==m_sectionTableID)
 				{
 					// found table
@@ -1189,7 +1216,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if(SectionIsInBuffer(header.SectionNumber,header.TableIDExtension)==false)
 					{
-						//Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
+						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
 						m_secTimer.Stop();
 						m_secTimer.Interval=6000;
 						m_secTimer.Start();
@@ -1201,7 +1228,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if(SectionIsInBuffer(header.SectionNumber)==false)
 					{
-						//Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
+						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
 						m_secTimer.Stop();
 						m_secTimer.Start();
 						m_tableSections.Add(data);
