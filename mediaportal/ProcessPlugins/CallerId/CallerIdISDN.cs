@@ -31,6 +31,7 @@ namespace ProcessPlugins.CallerId
     static Hashtable countryTranslator;
     static string myCountryCode;
     static string myAreaCode;
+    bool ISDNdisabled = false;
 
     ISDNWatch ISDNWatch;
 
@@ -49,7 +50,7 @@ namespace ProcessPlugins.CallerId
           {
             XmlDocument source = new XmlDocument();
             source.Load(areaCodeXMLFile); 
-            XmlNodeList areaCodeNodes = source.SelectNodes("/areacodes/country_" + (string)CountryCodeLookup[myCountryCode]);
+            XmlNodeList areaCodeNodes = source.SelectNodes("/areacodes/area");
 						
             XmlNode areaCodeNode;
             areaTable.Add("000", SUCCESS_LOADED_AREACODE_XML);	// slot 000 reserved for hashtable status
@@ -57,12 +58,15 @@ namespace ProcessPlugins.CallerId
             for (int i=0; i<areaCodeNodes.Count; i++)  // Loop through, pulling areacode and location
             {
               areaCodeNode = areaCodeNodes[i];
-              areaCode = areaCodeNode.Attributes["areacode"].Value;
-              location = areaCodeNode.Attributes["location"].Value;
-
-              if (!areaTable.Contains(areaCode))
+              if (areaCodeNode.Attributes["iso"].Value == (string)CountryCodeLookup[myCountryCode])
               {
-                areaTable.Add(areaCode, location);
+                areaCode = areaCodeNode.Attributes["areacode"].Value;
+                location = areaCodeNode.Attributes["location"].Value;
+
+                if (!areaTable.Contains(areaCode))
+                {
+                  areaTable.Add(areaCode, location);
+                }
               }
             }
           }
@@ -225,29 +229,38 @@ namespace ProcessPlugins.CallerId
 
     public void Start()
     {
-      OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");  // First Outlook-lookup might take some time, so let's do this here
+      if (ISDNWatch.CapiInstalled)
+      {
+        OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");  // First Outlook-lookup might take some time, so let's do this here
 
-      ISDNWatch.LocationInfo locationInfo = ISDNWatch.GetLocationInfo();
-      myCountryCode = "+" + locationInfo.CountryCode;
-      string myCountry = (string)CountryCodeLookup[myCountryCode];
-      if (myCountry == null)
-        myCountry = "unknown";
-      string myCountryLong = (string)CountryTranslator[myCountry];
-      myAreaCode = locationInfo.AreaCode;
-      string myArea = (string)AreaCodeLookup[myAreaCode];
-      if (myArea == null)
-        myArea = "unknown";
-      if (myAreaCode != "")
-        Log.Write("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
+        ISDNWatch.LocationInfo locationInfo = ISDNWatch.GetLocationInfo();
+        myCountryCode = "+" + locationInfo.CountryCode;
+        string myCountry = (string)CountryCodeLookup[myCountryCode];
+        if (myCountry == null)
+          myCountry = "unknown";
+        string myCountryLong = (string)CountryTranslator[myCountry];
+        myAreaCode = locationInfo.AreaCode;
+        string myArea = (string)AreaCodeLookup[myAreaCode];
+        if (myArea == null)
+          myArea = "unknown";
+        if (myAreaCode != "")
+          Log.Write("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
 
-      ISDNWatch = new ISDNWatch();
-      ISDNWatch.Start();
-      ISDNWatch.CidReceiver  += new ISDNWatch.EventHandler(ProcessCallerId);
+        ISDNWatch = new ISDNWatch();
+        ISDNWatch.Start();
+        ISDNWatch.CidReceiver  += new ISDNWatch.EventHandler(ProcessCallerId);
+      }
+      else
+      {
+        ISDNdisabled = true;
+        Log.Write("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
+      }
     }
 
     public void Stop()
     {
-      ISDNWatch.Stop();
+      if (!ISDNdisabled)
+        ISDNWatch.Stop();
     }
 
     #endregion
