@@ -1423,7 +1423,7 @@ namespace MediaPortal.GUI.Library
 				{
 					for (int i=0; i < m_imgButton.Count;++i)
 					{
-						((GUIButtonControl)m_imgButton[i]).FreeResources();
+						((GUIControl)m_imgButton[i]).FreeResources();
 					}
 				}
 		}
