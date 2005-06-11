@@ -121,6 +121,7 @@ namespace MediaPortal.TV.Recording
 		// osd skin
 		OSDSkin m_osdSkin;
 		OSDChannelList m_osdChannels;
+		bool m_bitmapIsVisible=false;
 
 		public bool Mute
 		{
@@ -216,7 +217,7 @@ namespace MediaPortal.TV.Recording
 				if(pos>=yMax-textHeight)
 					break;
 			}
-			
+			m_bitmapIsVisible=false;
 			SaveVMR9Bitmap(bm,true,true,0.8f);
 			bm.Dispose();
 			gr.Dispose();
@@ -224,13 +225,21 @@ namespace MediaPortal.TV.Recording
 			textBrush.Dispose();
 	
 		}
+		public void RefreshCurrentChannel(int signal)
+		{
+			if(signal!=m_channelSNR && m_bitmapIsVisible==true)
+			{
+				m_channelSNR=signal;
+				ShowBitmap(RenderZapOSD(m_actualChannel,m_channelSNR),0.8f);
+			}
+		}
+
 		public void RefreshCurrentChannel()
 		{
 			ShowBitmap(RenderZapOSD(m_actualChannel,m_channelSNR),0.8f);
 		}
 		public Bitmap RenderZapOSD(TVChannel channel,int signalLevel)
 		{
-			Log.Write("start rendering zaposd");
 			Bitmap bm=new Bitmap(720,576);//m_mediaPath+@"bgimage.png");
 			Graphics gr=Graphics.FromImage(bm);
 			int x=60;
@@ -460,6 +469,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}
+			m_bitmapIsVisible=true;
 			return bm;
 		}
 		Color GetColor(string colString)
@@ -486,10 +496,14 @@ namespace MediaPortal.TV.Recording
 		}
 		public void ShowBitmap(Bitmap bmp)
 		{
+			if(bmp==null)
+				return;
 			SaveVMR9Bitmap(bmp,true,true,1.0f);
 		}
 		public void ShowBitmap(Bitmap bmp,float alpha)
 		{
+			if(bmp==null)
+				return;
 			SaveVMR9Bitmap(bmp,true,true,alpha);
 		}
 		public void HideBitmap()
@@ -535,11 +549,11 @@ namespace MediaPortal.TV.Recording
 					bmp.rDest.bottom=1.0f;
 					bmp.rDest.right=1.0f;
 					bmp.fAlpha=alphaValue;
-					Log.Write("SaveVMR9Bitmap() called");
+					//Log.Write("SaveVMR9Bitmap() called");
 					hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
 					if(hr!=0)
 					{
-						Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+						//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
 						return false;
 					}
 					surface.Dispose();
@@ -547,12 +561,15 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
-					if(hr!=0)
+					if(m_bitmapIsVisible==true)
 					{
-						return false;
+						hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
+						if(hr!=0)
+						{
+							return false;
+						}
+						m_bitmapIsVisible=false;
 					}
-		
 				}
 				// dispose
 				return true;

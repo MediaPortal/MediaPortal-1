@@ -1866,9 +1866,12 @@ namespace MediaPortal.TV.Recording
 					Vmr9.Repaint();// repaint vmr9
 				}
 			}
-			if(m_timeDisplayed.AddSeconds(5)<=DateTime.Now)
+			if(m_osd!=null)
 			{
-				//m_osd.HideBitmap();
+				int level;
+				int quality;
+				GetSNR(m_tunerCtrl,out level,out quality);
+				m_osd.RefreshCurrentChannel(quality);
 			}
 			if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
 			{
