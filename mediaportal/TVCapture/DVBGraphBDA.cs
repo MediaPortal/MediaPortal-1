@@ -3187,8 +3187,8 @@ namespace MediaPortal.TV.Recording
 
 					DVBChannel chan=(DVBChannel)tuningObject;
 					
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-S freq:{0} fec:{1} pol:{2} sr:{3} ONID:{4}, TSID:{5} SID:{6}",
-						chan.Frequency,chan.FEC,chan.Polarity,chan.Symbolrate,chan.NetworkID,chan.TransportStreamID,chan.ProgramNumber);
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Tune() DVB-S freq:{0} fec:{1} pol:{2} sr:{3} ONID:{4}, TSID:{5} SID:{6} disecq:{7}",
+						chan.Frequency,chan.FEC,chan.Polarity,chan.Symbolrate,chan.NetworkID,chan.TransportStreamID,chan.ProgramNumber, disecqNo);
 					//set the properties for the new tuning request. 
 					myLocator.CarrierFrequency		= chan.Frequency;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)chan.FEC;
