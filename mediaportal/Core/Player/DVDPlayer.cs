@@ -391,7 +391,7 @@ namespace MediaPortal.Player
         hr = mediaCtrl.Run();
         if (hr<0 || hr >1)
         {
-          Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to start playing()");
+          Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:Unable to start playing() 0x:{0:X}",hr);
           CloseInterfaces();
           return false;
         }
