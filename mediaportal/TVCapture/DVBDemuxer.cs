@@ -980,7 +980,7 @@ namespace MediaPortal.TV.Recording
 								counter=-1;
 							if(counter+1!=m_packetHeader.ContinuityCounter)
 							{
-								Log.Write("dvb-demuxer: continuity counter dont match for pid");
+								Log.Write("dvb-demuxer: continuity counter dont match for pid {0}!={1}",counter+1,m_packetHeader.ContinuityCounter);
 								m_bufferPositionSec=0;
 							}
 						}
