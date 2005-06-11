@@ -179,22 +179,32 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "CallerId\CallerIdISDN.cs"
+                    RelPath = "CallerId\ISDN\CallerIdISDN.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "CallerId\CallerIdPlugin.cs"
+                    RelPath = "CallerId\ISDN\ISDNWatch.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "CallerId\ISDNWatch.cs"
+                    RelPath = "CallerId\ISDN\OutlookHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "CallerId\OutlookHelper.cs"
+                    RelPath = "CallerId\ISDN\SetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CallerId\ISDN\SetupForm.resx"
+                    DependentUpon = "SetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "CallerId\YAC\CallerIdPlugin.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

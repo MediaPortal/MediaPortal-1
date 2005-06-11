@@ -96,6 +96,7 @@ namespace ProcessPlugins.CallerId
     static public event EventHandler CidReceiver = null;
     
     bool stopThread = false;
+    int stripPrefix;
     const int HeaderLength = 8;
     const int CAPI_CONNECT = 0x02;
     const int CAPI_IND = 0x82;
@@ -134,6 +135,10 @@ namespace ProcessPlugins.CallerId
 
     public void Start()
     {
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        stripPrefix = xmlreader.GetValueAsInt("isdn", "stripprefix", 0);
+      }
       Thread watchThread = new Thread(new ThreadStart(WatchThread));
       watchThread.Name = "CAPI Monitoring";
       watchThread.Start();
@@ -193,7 +198,8 @@ namespace ProcessPlugins.CallerId
                 int lengthCalledId = ConnectInd.buffer[0];
                 string CalledId = ConnectInd.buffer.Substring(2, (lengthCalledId - 1));
                 int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
-                CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4), (lengthCallerId - 2));
+                Log.Write("ISDN: {0}", stripPrefix);
+                CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4 + stripPrefix), (lengthCallerId - 2 - stripPrefix));
 
                 if (ConnectInd.buffer[lengthCalledId+2] != 33)
                   CallerId = "+" + CallerId;
