@@ -3172,9 +3172,28 @@ namespace MediaPortal.TV.Recording
 				else if (Network() == NetworkType.DVBS)
 				{
 					//get the IDVBSLocator interface
+					TunerLib.IDVBTuningSpace2 dvbSpace =myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
+					if (dvbSpace==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed could not get IDVBSTuningSpace");
+						return;
+					}
+					newTuneRequest = dvbSpace.CreateTuneRequest();
+					if (newTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not create new tuningrequest");
+						return;
+					}
+					myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
+					if (myTuneRequest ==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED tuning. cannot create new tuningrequest");
+						return ;
+					}
+
 					TunerLib.IDVBSLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBSLocator;	
 					if (myLocator == null)
-						myLocator = myTuningSpace.DefaultLocator as TunerLib.IDVBSLocator;
+						myLocator = dvbSpace.DefaultLocator as TunerLib.IDVBSLocator;
 					if (myLocator ==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed Tune() could not get IDVBSLocator");
