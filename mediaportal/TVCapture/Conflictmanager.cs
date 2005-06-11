@@ -63,6 +63,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (Recorder.Count<=0) 
 				return false;
+			if (rec.Canceled>0 || rec.IsDone()) return false;
 			
 			if (recordings==null || util==null) 
 			{
