@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.TV.Recording{
+namespace MediaPortal.TV.Recording
+{
 	/// <summary>
 	/// Zusammenfassung für TSHelperTools.
 	/// </summary>
@@ -38,7 +39,9 @@ namespace MediaPortal.TV.Recording{
 			TSHeader header=new TSHeader();
 			header.SyncByte=Marshal.ReadByte(streamData,0); // indicates header is not valid
 			if(header.SyncByte!=0x47)
+			{
 				return header;// no ts-header, return
+			}
 			header.SyncByte=Marshal.ReadByte(streamData,0);
 			header.TransportError=(Marshal.ReadByte(streamData,1) & 0x80)>0?true:false;
 			header.PayloadUnitStart=((Marshal.ReadByte(streamData,1)>>6) & 0x01)>0?true:false;

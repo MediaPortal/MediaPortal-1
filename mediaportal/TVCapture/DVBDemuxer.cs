@@ -810,6 +810,18 @@ namespace MediaPortal.TV.Recording
 //						Log.Write("pid:0x{0:X} transport error", m_sectionPid);
 					continue;// error, ignore packet
 				}
+
+				if (m_packetHeader.Pid==0)
+				{
+					Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5} {0:X}",
+						m_packetHeader.Pid,
+						m_bufferPositionSec,
+						m_packetHeader.ContinuityCounter,
+						m_packetHeader.AdaptionFieldControl,
+						m_packetHeader.PayloadUnitStart,
+						m_packetHeader.SectionLen,
+						m_sectionPid);
+				}
 				// teletext
 
 				if (m_packetHeader.Pid==m_teletextPid && m_teleText != null && m_teletextPid>0)
@@ -981,13 +993,13 @@ namespace MediaPortal.TV.Recording
 				{
 					try
 					{
-						Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5}",
+/*						Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5}",
 												m_packetHeader.Pid,
 												m_bufferPositionSec,
 												m_packetHeader.ContinuityCounter,
 												m_packetHeader.AdaptionFieldControl,
 												m_packetHeader.PayloadUnitStart,
-												m_packetHeader.SectionLen);
+												m_packetHeader.SectionLen);*/
 						int offset=0;
 						//
 						// 
@@ -1006,12 +1018,12 @@ namespace MediaPortal.TV.Recording
 						// calc offset
 						if(m_packetHeader.AdaptionFieldControl==2)
 						{
-							Log.Write("ignore adapt=2");
+							//Log.Write("ignore adapt=2");
 							continue;
 						}
 						if(m_packetHeader.AdaptionFieldControl==3)
 						{
-							Log.Write("ignore adapt=3");
+							//Log.Write("ignore adapt=3");
 							continue;
 						}
 						if(m_packetHeader.PayloadUnitStart==true && m_bufferPositionSec==0)
@@ -1022,7 +1034,7 @@ namespace MediaPortal.TV.Recording
 						// start copy data for every section on its table-id-byte
 						if(m_bufferPositionSec==0 && m_sectionTableID!=Marshal.ReadByte((IntPtr)(ptr+4+offset)))
 						{
-							Log.Write("ignore sectiontableid wrong");
+							//Log.Write("ignore sectiontableid wrong");
 							continue;
 						}
 						//

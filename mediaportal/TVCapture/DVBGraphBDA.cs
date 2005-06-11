@@ -3026,7 +3026,7 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					//get the IDVBTuningSpace2 from the tuner
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tune() get IDVBTuningSpace2");
 					myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 					if (myTuningSpace==null)
 					{
@@ -3036,7 +3036,7 @@ namespace MediaPortal.TV.Recording
 
 
 					//create a new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tune() create new tuningrequest");
 					newTuneRequest = myTuningSpace.CreateTuneRequest();
 					if (newTuneRequest ==null)
 					{
@@ -3050,7 +3050,7 @@ namespace MediaPortal.TV.Recording
 				TunerLib.IATSCChannelTuneRequest myATSCTuneRequest=null;
 				if (m_NetworkType!=NetworkType.ATSC)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IDVBTuneRequest");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tune() cast new tuningrequest to IDVBTuneRequest");
 					myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
 					if (myTuneRequest ==null)
 					{
@@ -3060,7 +3060,7 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() cast new tuningrequest to IATSCChannelTuneRequest");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tune() cast new tuningrequest to IATSCChannelTuneRequest");
 					myATSCTuneRequest = newTuneRequest as TunerLib.IATSCChannelTuneRequest;
 					if (myATSCTuneRequest ==null)
 					{
@@ -3204,13 +3204,6 @@ namespace MediaPortal.TV.Recording
 					myTuner.TuneRequest  = newTuneRequest;
 					Marshal.ReleaseComObject(myTuneRequest);
 				}
-
-				if (m_streamDemuxer != null)
-				{
-					m_streamDemuxer.SetChannelData(-1, -1, -1, -1, "",-1);
-					//m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
-				}
-
 			}
 			catch(Exception ex)
 			{
@@ -3664,7 +3657,7 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					//get the IDVBTuningSpace2 from the tuner
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get IDVBTuningSpace2");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tune() get IDVBTuningSpace2");
 					myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 					if (myTuningSpace==null)
 					{
@@ -3674,7 +3667,7 @@ namespace MediaPortal.TV.Recording
 
 
 					//create a new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() create new tuningrequest");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Tune() create new tuningrequest");
 					newTuneRequest = myTuningSpace.CreateTuneRequest();
 					if (newTuneRequest ==null)
 					{
