@@ -43,12 +43,14 @@ namespace MediaPortal.TV.Recording
 		static ArrayList  queue = new ArrayList();
 		static Thread		  WorkerThread =null;
 		
-		static Dvrms2Mpeg convertToMpg=null;
+		static Dvrms2Mpeg			convertToMpg=null;
 		static TranscodeToWMV	convertToWMV=null;
+		static Dvrms2XVID			convertToXVID=null;
 		static Transcoder()
 		{
 			convertToMpg = new Dvrms2Mpeg();
 			convertToWMV = new TranscodeToWMV();
+			convertToXVID = new Dvrms2XVID();
 		}
 
 		static public void Transcode(TVRecorded rec)
@@ -243,6 +245,7 @@ namespace MediaPortal.TV.Recording
 			}
 			bool isMpeg=(Type==0);
 			bool isWMV=(Type==1);
+			bool isXVID=(Type==2);
 			quality= (Quality)QualityIndex;
 
 			if (isMpeg)
@@ -313,6 +316,28 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 					tinfo.status=Status.Error;
+			}
+			if (isXVID)
+			{
+				if ( convertToXVID.Transcode(info,VideoFormat.Xvid,MediaPortal.Core.Transcoding.Quality.High) )
+				{
+					
+					while (!convertToXVID.IsFinished() )
+					{
+						tinfo.percentDone=convertToXVID.Percentage();
+						System.Threading.Thread.Sleep(100);
+					}
+
+					if (deleteOriginal)
+					{
+						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
+					}
+					tinfo.status=Status.Completed;
+				}
+				else
+				{
+					tinfo.status=Status.Error;
+				}
 			}
 		
 		}

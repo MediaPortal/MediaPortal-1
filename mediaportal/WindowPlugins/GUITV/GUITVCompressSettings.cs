@@ -74,12 +74,14 @@ namespace WindowPlugins.GUITV
 		void UpdateButtons()
 		{
 			bool isMpeg2=(spinType.Value==0);
-			spinBitrate.Disabled=isMpeg2;
-			spinFPS.Disabled=isMpeg2;
-			spinQuality.Disabled=isMpeg2;
-			spinScreenSize.Disabled=isMpeg2;
+			bool isWMV=(spinType.Value==1);
+			bool isXVID=(spinType.Value==2);
+			spinBitrate.Disabled=(isMpeg2||isXVID);
+			spinFPS.Disabled=(isMpeg2||isXVID);
+			spinQuality.Disabled=(isMpeg2||isXVID);
+			spinScreenSize.Disabled=(isMpeg2||isXVID);
 
-			if (!isMpeg2)
+			if (isWMV)
 			{
 				bool isCustom=(spinQuality.Value==4);
 				spinBitrate.Disabled=!isCustom;

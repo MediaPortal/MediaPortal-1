@@ -1224,6 +1224,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Transcoding\Dvrms2XVID.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Transcoding\ITranscode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
