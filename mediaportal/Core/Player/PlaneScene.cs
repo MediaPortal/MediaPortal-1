@@ -395,6 +395,7 @@ namespace MediaPortal.Player
 			}
 			try
 			{
+				m_idebugstep=0;
 				reentrant=true;
 				GUIGraphicsContext.InVmr9Render=true;
 				m_vmr9Util.VideoWidth=width;
@@ -410,8 +411,11 @@ namespace MediaPortal.Player
 				if (GUIGraphicsContext.DX9Device.Disposed) return;
 				if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 
+				
+				m_idebugstep=1;
 				if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
 
+				m_idebugstep=2;
 				//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 				//first time, fade in the video in 12 steps
 				int iMaxSteps = 12;
@@ -439,14 +443,19 @@ namespace MediaPortal.Player
 					m_lColorDiffuse = 0xFFffffff;
 				}
 
+				m_idebugstep=3;
 				//get desired video window
 				Size nativeSize = new Size(width, height);
 				renderTexture= SetVideoWindow(nativeSize);
 
+				m_idebugstep=4;
 				//clear screen
 				GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+				
+				m_idebugstep=5;
 				GUIGraphicsContext.DX9Device.BeginScene();
 
+				m_idebugstep=6;
 				//check if we should render the GUI first and then the video or
 				//first the video and then the GUI
 				bool bRenderGUIFirst = false;
@@ -462,46 +471,64 @@ namespace MediaPortal.Player
 					}
 				}
 
+				m_idebugstep=7;
 				//render GUI if needed
 				if (bRenderGUIFirst)
 				{
 					if (m_renderer != null) 
 					{
+						m_idebugstep=8;
 						m_renderer.RenderFrame(timePassed);
+						m_idebugstep=9;
 					}
 				}
 	
+				m_idebugstep=10;
 				//Render video texture
 				if (renderTexture)
 				{
+					m_idebugstep=11;
 					GUIFontManager.Present();
+					
+					m_idebugstep=12;
 					unsafe
 					{
 						m_texAdr=pTex;
 						DrawTexture(pTex,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
 					}
+					
+					m_idebugstep=13;
 				}
+				
+				m_idebugstep=14;
 				//render GUI if needed
 				if (!bRenderGUIFirst)
 				{
 					if (m_renderer != null) 
 					{
+						m_idebugstep=15;
 						m_renderer.RenderFrame(timePassed);
+						m_idebugstep=16;
 					}
 				}
+				m_idebugstep=17;
 
 				//using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
 				//{
 				//}
 				//backBuffer.UnlockRectangle();
 				GUIFontManager.Present();
+				m_idebugstep=18;
 				//and present it onscreen
 				GUIGraphicsContext.DX9Device.EndScene();
+				m_idebugstep=19;
 				GUIGraphicsContext.DX9Device.Present();
+				m_idebugstep=20;
 			}
 			catch (Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"Planescene:Unhandled exception in {0} {1} {2}",
+				Log.WriteFile(Log.LogType.Log,true,"Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
+					width,height,arWidth, arHeight, pTex, isRepaint,m_idebugstep,
 					ex.Message,ex.Source,ex.StackTrace);
 			}
 			finally
