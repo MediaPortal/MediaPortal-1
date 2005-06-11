@@ -121,6 +121,7 @@ namespace MediaPortal.TV.Recording
 
 			timer1.Enabled=false;
 			Application.DoEvents();
+			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
 			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			callback.UpdateList();

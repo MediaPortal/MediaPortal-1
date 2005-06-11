@@ -186,6 +186,7 @@ namespace MediaPortal.TV.Recording
 		{
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			timer1.Enabled=false;
+			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
 			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			callback.UpdateList();

@@ -551,7 +551,6 @@ namespace MediaPortal
 			try
 			{
 				reentrant=true;
-				this.Text=DateTime.Now.ToLongTimeString();
 				OnSignal(captureCard.SignalQuality,captureCard.SignalStrength);
 			}
 			finally
