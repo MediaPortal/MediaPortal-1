@@ -479,6 +479,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIPrograms\AppItemGamebase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIPrograms\appItemMameDirect.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -541,6 +546,16 @@
                 <File
                     RelPath = "GUIPrograms\AppSettingsFilelauncher.resx"
                     DependentUpon = "AppSettingsFilelauncher.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsGamebase.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsGamebase.resx"
+                    DependentUpon = "AppSettingsGamebase.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -664,6 +679,11 @@
                 />
                 <File
                     RelPath = "GUIPrograms\MyFileMeedioImporter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\MyGamebaseImporter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

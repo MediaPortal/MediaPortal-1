@@ -1,22 +1,17 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Data;
-using System.Data.OleDb;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
 using Programs.Utils;
 using ProgramsDatabase;
-
 
 namespace WindowPlugins.GUIPrograms
 {
   /// <summary>
   /// Summary description for AppFilesView.
   /// </summary>
-  public class AppFilesView: UserControl
+  public class AppFilesView : UserControl
   {
     private IContainer components;
     private ToolTip toolTip;
@@ -39,7 +34,6 @@ namespace WindowPlugins.GUIPrograms
 
     private AppItem mCurApp = null;
     private Button startScraperButton;
-    private System.Windows.Forms.Button button1;
     private Applist apps = ProgramDatabase.AppList;
     public event EventHandler OnRefreshClick;
 
@@ -90,7 +84,6 @@ namespace WindowPlugins.GUIPrograms
       this.backButton = new System.Windows.Forms.Button();
       this.filePathLabel = new System.Windows.Forms.Label();
       this.bottomPanel = new System.Windows.Forms.Panel();
-      this.button1 = new System.Windows.Forms.Button();
       this.fileList = new System.Windows.Forms.ListView();
       this.fileTitle = new System.Windows.Forms.ColumnHeader();
       this.popupFavourites = new System.Windows.Forms.ContextMenu();
@@ -222,7 +215,6 @@ namespace WindowPlugins.GUIPrograms
       // 
       // bottomPanel
       // 
-      this.bottomPanel.Controls.Add(this.button1);
       this.bottomPanel.Controls.Add(this.startScraperButton);
       this.bottomPanel.Controls.Add(this.btnAddToFavourites);
       this.bottomPanel.Controls.Add(this.btnLaunch);
@@ -236,15 +228,6 @@ namespace WindowPlugins.GUIPrograms
       this.bottomPanel.Name = "bottomPanel";
       this.bottomPanel.Size = new System.Drawing.Size(392, 376);
       this.bottomPanel.TabIndex = 15;
-      // 
-      // button1
-      // 
-      this.button1.Location = new System.Drawing.Point(296, 200);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(80, 32);
-      this.button1.TabIndex = 21;
-      this.button1.Text = "test";
-      this.button1.Visible = false;
       // 
       // fileList
       // 
@@ -314,7 +297,7 @@ namespace WindowPlugins.GUIPrograms
     private void SyncListView()
     {
       if (mCurApp == null)
-        return ;
+        return;
 
       fileList.BeginUpdate();
       try
@@ -377,7 +360,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           if (file.IsFolder)
@@ -420,7 +403,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           FileDetailsForm frmFileDetails = new FileDetailsForm();
@@ -443,7 +426,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           mCurApp.LaunchFile(file, false); //launch in non-blocking mode
@@ -461,26 +444,26 @@ namespace WindowPlugins.GUIPrograms
       if (fileList.SelectedItems.Count >= 1)
       {
         DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the selected item(s)?", "Information", MessageBoxButtons.YesNo,
-          MessageBoxIcon.Question);
+                                                    MessageBoxIcon.Question);
         if (dialogResult == DialogResult.Yes)
         {
           foreach (ListViewItem curItem in fileList.SelectedItems)
-          if (curItem.Tag is FilelinkItem)
-          {
-            FilelinkItem filelink = (FilelinkItem)curItem.Tag;
-            if (filelink != null)
+            if (curItem.Tag is FilelinkItem)
             {
-              filelink.Delete();
+              FilelinkItem filelink = (FilelinkItem) curItem.Tag;
+              if (filelink != null)
+              {
+                filelink.Delete();
+              }
             }
-          }
-          else
-          {
-            FileItem file = (FileItem)curItem.Tag;
-            if (file != null)
+            else
             {
-              file.Delete();
+              FileItem file = (FileItem) curItem.Tag;
+              if (file != null)
+              {
+                file.Delete();
+              }
             }
-          }
         }
       }
       mCurApp.Files.Load(mCurApp.AppID, "");
@@ -504,7 +487,7 @@ namespace WindowPlugins.GUIPrograms
 
       if (fileList.SelectedItems.Count == 1)
       {
-        FileItem file = (FileItem)fileList.SelectedItems[0].Tag;
+        FileItem file = (FileItem) fileList.SelectedItems[0].Tag;
         if (file != null)
         {
           if (!file.IsFolder)
@@ -570,7 +553,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (mCurApp == null)
       {
-        return ;
+        return;
       }
       if (mCurApp.CurrentFilePath() != mCurApp.FileDirectory)
       {
@@ -589,12 +572,12 @@ namespace WindowPlugins.GUIPrograms
     {
       if (mCurApp == null)
       {
-        return ;
+        return;
       }
-      int GrouperAppID = ((taggedMenuItem)sender).Tag;
+      int GrouperAppID = ((taggedMenuItem) sender).Tag;
       foreach (ListViewItem curItem in fileList.SelectedItems)
       {
-        FileItem curFile = (FileItem)curItem.Tag;
+        FileItem curFile = (FileItem) curItem.Tag;
         FilelinkItem newLink = new FilelinkItem(mCurApp.db);
         // example: "add the 'MAME' game 'r-type' to the 'top 20 shooters'"
         //          'MAME' :           targetAppID
@@ -645,46 +628,8 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-/*
- *     private void button1_Click(object sender, System.EventArgs e)
-    {
-      string strCon = "Provider=Microsoft.Jet.OLEDB.4.0 ;Data Source=C:\\media\\GameBase\\snes\\Snes.mdb";
-      OleDbConnection myCon = new OleDbConnection( strCon ) ;
-      //Make a Select Command
-      string sqlStr = "SELECT Name FROM games" ;
-      OleDbCommand myCmd =new OleDbCommand( sqlStr , myCon );
-      try
-      {
-        myCon.Open();
-        OleDbDataReader myReader = myCmd.ExecuteReader();
-        try 
-        {
-          while (myReader.Read()) 
-          {
-            Log.Write(" dw found SNES game {0}", myReader.GetString(0));
-           }
-        }
-        finally 
-        {
-          // always call Close when done reading.
-          myReader.Close();
-        }
-      }
-      catch(Exception er)
-      {
-        MessageBox.Show("Error in connecting! "+er.ToString(), "Error");
-      }
-      finally
-      {
-        myCmd.Dispose();
-        myCon.Close();
-        myCon.Dispose();
-      }
 
-
-    
-    }
-*/
-
+  
+  
   }
 }

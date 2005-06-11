@@ -158,6 +158,7 @@ namespace WindowPlugins.GUIPrograms
       this.txtFiles.Size = new System.Drawing.Size(250, 20);
       this.txtFiles.TabIndex = 21;
       this.txtFiles.Text = "";
+      this.txtFiles.TextChanged += new System.EventHandler(this.txtFiles_TextChanged);
       // 
       // label4
       // 
@@ -172,6 +173,7 @@ namespace WindowPlugins.GUIPrograms
       this.label2.Name = "label2";
       this.label2.TabIndex = 20;
       this.label2.Text = "File Directory:";
+      this.label2.Click += new System.EventHandler(this.label2_Click);
       // 
       // btnImageDirs
       // 
@@ -227,11 +229,11 @@ namespace WindowPlugins.GUIPrograms
       // cbWindowStyle
       // 
       this.cbWindowStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbWindowStyle.Items.AddRange(new object[]
-      {
-        "Normal", "Minimized", "Maximized", "Hidden"
-      }
-      );
+      this.cbWindowStyle.Items.AddRange(new object[] {
+                                                       "Normal",
+                                                       "Minimized",
+                                                       "Maximized",
+                                                       "Hidden"});
       this.cbWindowStyle.Location = new System.Drawing.Point(120, 184);
       this.cbWindowStyle.Name = "cbWindowStyle";
       this.cbWindowStyle.Size = new System.Drawing.Size(250, 21);
@@ -288,8 +290,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.chkbEnabled.Checked = true;
       this.chkbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
-        (System.Byte)(0)));
+      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.chkbEnabled.Location = new System.Drawing.Point(320, 8);
       this.chkbEnabled.Name = "chkbEnabled";
       this.chkbEnabled.Size = new System.Drawing.Size(72, 24);
@@ -359,8 +360,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // buttonGetExtensions
       // 
-      this.buttonGetExtensions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 
-        ((System.Byte)(0)));
+      this.buttonGetExtensions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.buttonGetExtensions.Location = new System.Drawing.Point(376, 288);
       this.buttonGetExtensions.Name = "buttonGetExtensions";
       this.buttonGetExtensions.Size = new System.Drawing.Size(20, 20);
@@ -381,11 +381,10 @@ namespace WindowPlugins.GUIPrograms
       // 
       // cbFilename
       // 
-      this.cbFilename.Items.AddRange(new object[]
-      {
-        "%PLAY%", "%PLAYAUDIOSTREAM%", "%PLAYVIDEOSTREAM%"
-      }
-      );
+      this.cbFilename.Items.AddRange(new object[] {
+                                                    "%PLAY%",
+                                                    "%PLAYAUDIOSTREAM%",
+                                                    "%PLAYVIDEOSTREAM%"});
       this.cbFilename.Location = new System.Drawing.Point(120, 64);
       this.cbFilename.Name = "cbFilename";
       this.cbFilename.Size = new System.Drawing.Size(250, 21);
@@ -658,6 +657,16 @@ namespace WindowPlugins.GUIPrograms
       {
         this.txtExtensions.Text = tempApp.ValidExtensions;
       }
+    }
+
+    private void txtFiles_TextChanged(object sender, System.EventArgs e)
+    {
+    
+    }
+
+    private void label2_Click(object sender, System.EventArgs e)
+    {
+    
     }
 
   }

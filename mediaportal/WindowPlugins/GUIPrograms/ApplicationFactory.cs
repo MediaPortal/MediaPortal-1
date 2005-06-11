@@ -47,6 +47,9 @@ namespace ProgramsDatabase
         case myProgSourceType.GROUPER:
           res = new appGrouper(sqlDB);
           break;
+        case myProgSourceType.GAMEBASE:
+          res = new AppItemGamebase(sqlDB);
+          break;
       }
       return res;
     }

@@ -16,7 +16,8 @@ namespace Programs.Utils
     //Mame direct input
     //File-Editor based launcher
     //Item-Grouper
-    UNKNOWN = 0, DIRBROWSE = 1, DIRCACHE = 2, MYFILEINI = 3, MYFILEMEEDIO = 4, MAMEDIRECT = 5, FILELAUNCHER = 6, GROUPER = 7
+    //Gamebase 
+    UNKNOWN = 0, DIRBROWSE = 1, DIRCACHE = 2, MYFILEINI = 3, MYFILEMEEDIO = 4, MAMEDIRECT = 5, FILELAUNCHER = 6, GROUPER = 7, GAMEBASE = 8
   };
 
   public enum myProgScraperType
@@ -47,6 +48,7 @@ namespace Programs.Utils
     public const string cDIRCACHE = "DIR_CACHE";
     public const string cFILELAUNCHER = "FILELAUNCHER";
     public const string cGROUPER = "GROUPER";
+    public const string cGAMEBASE = "GAMEBASE";
 
     public const string cMIGRATIONKEY = "V1_V2MIGRATION";
     public const string cPLUGINTITLE = "PLUGINTITLE";
@@ -236,6 +238,9 @@ namespace Programs.Utils
         case myProgSourceType.GROUPER:
           res = cGROUPER;
           break;
+        case myProgSourceType.GAMEBASE:
+          res = cGAMEBASE;
+          break;
       }
       return res;
     }
@@ -270,6 +275,10 @@ namespace Programs.Utils
       else if (strValue == cGROUPER)
       {
         return myProgSourceType.GROUPER;
+      }
+      else if (strValue == cGAMEBASE)
+      {
+        return myProgSourceType.GAMEBASE;
       }
       else
         return myProgSourceType.UNKNOWN;

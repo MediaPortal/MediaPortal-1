@@ -30,6 +30,7 @@ namespace WindowPlugins.GUIPrograms
     private AppSettingsMyFileMeedio sectionMyFileMeedio = new AppSettingsMyFileMeedio();
     private AppSettingsFilelauncher sectionFilelauncher = new AppSettingsFilelauncher();
     private AppSettingsMameDirect sectionMameDirect = new AppSettingsMameDirect();
+    private AppSettingsGamebase sectionGamebase = new AppSettingsGamebase();
     private AppSettingsGrouper sectionGrouper = new AppSettingsGrouper();
     private AppSettingsRoot sectionRoot = new AppSettingsRoot();
     private AppFilesView filesView = new AppFilesView();
@@ -73,6 +74,8 @@ namespace WindowPlugins.GUIPrograms
     private System.Windows.Forms.MenuItem menuMAMEDirect;
     private System.Windows.Forms.TabPage viewsPage;
     private System.Windows.Forms.Panel holderPanelViews;
+    private System.Windows.Forms.MenuItem menuGamebaseImporter;
+    private System.Windows.Forms.MenuItem SourceTypeToGamebase;
     private bool m_ProfilesLoaded = false;
 
     public SetupForm()
@@ -196,6 +199,8 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanelFiles = new System.Windows.Forms.Panel();
       this.viewsPage = new System.Windows.Forms.TabPage();
       this.holderPanelViews = new System.Windows.Forms.Panel();
+      this.menuGamebaseImporter = new System.Windows.Forms.MenuItem();
+      this.SourceTypeToGamebase = new System.Windows.Forms.MenuItem();
       this.detailsTabControl.SuspendLayout();
       this.detailsPage.SuspendLayout();
       this.filesPage.SuspendLayout();
@@ -307,6 +312,7 @@ namespace WindowPlugins.GUIPrograms
       this.menuItem1.Index = 5;
       this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
                                                                               this.menuMAMEDirect,
+                                                                              this.menuGamebaseImporter,
                                                                               this.menuMlfFile});
       this.menuItem1.Text = "Extended";
       // 
@@ -318,7 +324,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // menuMlfFile
       // 
-      this.menuMlfFile.Index = 1;
+      this.menuMlfFile.Index = 2;
       this.menuMlfFile.Text = "*.mlf File Importer";
       this.menuMlfFile.Click += new System.EventHandler(this.menuMLFFile_Click);
       // 
@@ -370,6 +376,7 @@ namespace WindowPlugins.GUIPrograms
                                                                                              this.SourceTypeToDirBrowse,
                                                                                              this.SourceTypeToDirCache,
                                                                                              this.SourceTypeToMyIni,
+                                                                                             this.SourceTypeToGamebase,
                                                                                              this.SourceTypeToMLF,
                                                                                              this.SourceTypeToFilelauncher});
       this.MenuItemChangeSourceType.Text = "Change Source Type to";
@@ -395,13 +402,13 @@ namespace WindowPlugins.GUIPrograms
       // 
       // SourceTypeToMLF
       // 
-      this.SourceTypeToMLF.Index = 3;
+      this.SourceTypeToMLF.Index = 4;
       this.SourceTypeToMLF.Text = "*.mlf File Importer";
       this.SourceTypeToMLF.Click += new System.EventHandler(this.SourceTypeToMLF_Click);
       // 
       // SourceTypeToFilelauncher
       // 
-      this.SourceTypeToFilelauncher.Index = 4;
+      this.SourceTypeToFilelauncher.Index = 5;
       this.SourceTypeToFilelauncher.Text = "Filelauncher";
       this.SourceTypeToFilelauncher.Click += new System.EventHandler(this.SourceTypeToFilelauncher_Click);
       // 
@@ -421,7 +428,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.sep5.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
       // 
-      // DetailsTabControl
+      // detailsTabControl
       // 
       this.detailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
@@ -436,7 +443,7 @@ namespace WindowPlugins.GUIPrograms
       this.detailsTabControl.TabIndex = 14;
       this.detailsTabControl.SelectedIndexChanged += new System.EventHandler(this.DetailsTabControl_SelectedIndexChanged);
       // 
-      // DetailsPage
+      // detailsPage
       // 
       this.detailsPage.Controls.Add(this.holderPanel);
       this.detailsPage.Location = new System.Drawing.Point(4, 22);
@@ -455,7 +462,7 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanel.Size = new System.Drawing.Size(397, 436);
       this.holderPanel.TabIndex = 12;
       // 
-      // FilesPage
+      // filesPage
       // 
       this.filesPage.Controls.Add(this.holderPanelFiles);
       this.filesPage.Location = new System.Drawing.Point(4, 22);
@@ -492,6 +499,18 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanelViews.Name = "holderPanelViews";
       this.holderPanelViews.Size = new System.Drawing.Size(397, 436);
       this.holderPanelViews.TabIndex = 14;
+      // 
+      // menuGamebaseImporter
+      // 
+      this.menuGamebaseImporter.Index = 1;
+      this.menuGamebaseImporter.Text = "GAMEBASE Importer";
+      this.menuGamebaseImporter.Click += new System.EventHandler(this.menuGamebase_Click);
+      // 
+      // SourceTypeToGamebase
+      // 
+      this.SourceTypeToGamebase.Index = 3;
+      this.SourceTypeToGamebase.Text = "Gamebase Importer";
+      this.SourceTypeToGamebase.Click += new System.EventHandler(this.SourceTypeToGamebase_Click);
       // 
       // SetupForm
       // 
@@ -896,6 +915,9 @@ namespace WindowPlugins.GUIPrograms
           case myProgSourceType.GROUPER:
             res = sectionGrouper;
             break;
+          case myProgSourceType.GAMEBASE:
+            res = sectionGamebase;
+            break;
         }
       }
       else
@@ -1273,6 +1295,11 @@ namespace WindowPlugins.GUIPrograms
       DoAddChild(myProgSourceType.MYFILEMEEDIO);
     }
 
+    private void menuGamebase_Click(object sender, EventArgs e)
+    {
+      DoAddChild(myProgSourceType.GAMEBASE);
+    }
+
     private void menuFileLauncher_Click(object sender, EventArgs e)
     {
       DoAddChild(myProgSourceType.FILELAUNCHER);
@@ -1364,6 +1391,11 @@ namespace WindowPlugins.GUIPrograms
       this.DoModifySourceType(myProgSourceType.MYFILEMEEDIO);
     }
 
+    private void SourceTypeToGamebase_Click(object sender, EventArgs e)
+    {
+      this.DoModifySourceType(myProgSourceType.GAMEBASE);
+    }
+
     private void SourceTypeToFilelauncher_Click(object sender, EventArgs e)
     {
       this.DoModifySourceType(myProgSourceType.FILELAUNCHER);
@@ -1383,6 +1415,7 @@ namespace WindowPlugins.GUIPrograms
       this.SourceTypeToMyIni.Enabled = true;
       this.SourceTypeToMLF.Enabled = true;
       this.SourceTypeToFilelauncher.Enabled = true;
+      this.SourceTypeToGamebase.Enabled = true;
 
       switch (curApp.SourceType)
       {
@@ -1400,6 +1433,9 @@ namespace WindowPlugins.GUIPrograms
           break;
         case myProgSourceType.FILELAUNCHER:
           this.SourceTypeToFilelauncher.Enabled = false;
+          break;
+        case myProgSourceType.GAMEBASE:
+          this.SourceTypeToGamebase.Enabled = false;
           break;
       }
     }
