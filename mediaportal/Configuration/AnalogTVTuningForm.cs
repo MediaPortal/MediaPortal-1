@@ -551,6 +551,8 @@ namespace MediaPortal
 			try
 			{
 				reentrant=true;
+				if (captureCard.SignalPresent())
+					System.Threading.Thread.Sleep(500);
 				OnSignal(captureCard.SignalQuality,captureCard.SignalStrength);
 			}
 			finally
