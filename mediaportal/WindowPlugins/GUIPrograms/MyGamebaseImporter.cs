@@ -1,7 +1,6 @@
 using System;
 using System.Data.OleDb;
 using System.IO;
-using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using ProgramsDatabase;
 using SQLite.NET;
@@ -71,7 +70,7 @@ namespace WindowPlugins.GUIPrograms
       string strCon = String.Format("Provider=Microsoft.Jet.OLEDB.4.0 ;Data Source={0}", m_App.Source);
       OleDbConnection myCon = new OleDbConnection(strCon);
       //Make a Select Command for querying the gamebase-MDB-file
-      string sqlStr = "SELECT Games.Filename, Games.Name, Games.Comment, Games.Rating, Games.Classic, Games.MemoText, Genres.Genre, PGenres.ParentGenre, Publishers.Publisher, Years.Year "
+      string sqlStr = "SELECT Games.Filename, Games.Name, Games.Comment, Games.Rating, Games.Classic, Games.MemoText, Genres.Genre, PGenres.ParentGenre, Publishers.Publisher, Years.Year, Games.ScrnshotFilename "
         + "FROM Games, Genres, PGenres, Publishers, Years "
         + "WHERE Games.GE_Id = Genres.GE_Id "
         + "AND Genres.PG_Id = PGenres.PG_Id "
@@ -93,39 +92,43 @@ namespace WindowPlugins.GUIPrograms
         {
           while (myReader.Read())
           {
-            curTitleImage = "";
             curRomname = myReader.GetString(0);
             curFullRomname = m_App.FileDirectory + "\\" + curRomname;
+
             if (m_App.ImageDirectory != "")
             {
-              curTitleImage = m_App.imageDirs[0] + "\\" + curRomname;
-              curTitleImage = Path.ChangeExtension(curTitleImage, ".png");
+              curTitleImage = m_App.imageDirs[0] + "\\"+ myReader.GetString(10);
             }
-
-//            curSnapImage = m_App.imageDirs[1] + "\\" + curRomname;
-//            curSnapImage = Path.ChangeExtension(curSnapImage, ".png");
+            else
+            {
+              curTitleImage = "";
+            }
 
             if (File.Exists(curFullRomname))
             {
               // rom-name from gamebase exists in users filedirectory
               // => ready to import item
               bDoImport = true;
+
               if (m_App.ImportValidImagesOnly)
               {
                 // skip item if no thumbnail image is found
-                bDoImport = (File.Exists(curTitleImage));
+                bDoImport = ((curTitleImage != null) && (curTitleImage != "") && (File.Exists(curTitleImage)));
               }
 
               if (bDoImport)
               {
                 DBImportGamebaseItem(myReader, curFullRomname, curTitleImage);
               }
+              else
+              {
+                Log.Write("*skipped* gamebase game {0} image{1}", curRomname, curTitleImage);
+              }
 
             }
             else
             {
-//              Log.Write("*missing* gamebase game {0}", curRomname);
-//              Log.Write("\n");
+              Log.Write("*missing* gamebase game {0}", curRomname);
             }
           }
         }
@@ -144,7 +147,6 @@ namespace WindowPlugins.GUIPrograms
         myCon.Close();
         myCon.Dispose();
       }
-
     }
 
 
