@@ -284,7 +284,6 @@ namespace MediaPortal
 			// 
 			// timer1
 			// 
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			// 
 			// AnalogTVTuningForm
 			// 
@@ -322,7 +321,7 @@ namespace MediaPortal
 
     private void btnOk_Click(object sender, System.EventArgs e)
     {
-     timer1.Enabled=false;
+     
 			//using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			//{
 			//	xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
@@ -350,8 +349,8 @@ namespace MediaPortal
 
     private void AnalogTVTuningForm_Load(object sender, System.EventArgs e)
     {	
-			timer1.Interval=100;
-			timer1.Enabled=true;
+			
+			
 			btnOk.Enabled=false;
 			UpdateList();
 			GUIGraphicsContext.form=this;
@@ -397,10 +396,12 @@ namespace MediaPortal
 
 		public void OnEnded()
 		{
+			UpdateSignal();
 			btnOk.Enabled=true;
 		}
 		public void OnNewChannel()
 		{
+			UpdateSignal();
 			buttonMap.Enabled=true;
 			buttonSkip.Enabled=true;
 			buttonAdd.Enabled=true;
@@ -408,21 +409,25 @@ namespace MediaPortal
 
 		public void OnProgress(int percentDone)
 		{
+			UpdateSignal();
 			progressBar1.Value=percentDone;
 		}
 
 		public void OnStatus(string description)
 		{
+			UpdateSignal();
 			labelStatus.Text=description;
 		}
 
 		public void OnStatus2(string description)
 		{
+			UpdateSignal();
 			labelStatus2.Text=description;
 		}
 
 		public void UpdateList()
 		{
+			UpdateSignal();
 			listView1.Items.Clear();
       
 			ArrayList channels=new ArrayList();
@@ -494,7 +499,7 @@ namespace MediaPortal
 		private void AnalogTVTuningForm_Closed(object sender, System.EventArgs e)
 		{
 			
-			timer1.Enabled=false;
+			
 			try
 			{
 				if (tuningInterface==null) return;
@@ -506,7 +511,7 @@ namespace MediaPortal
 		private void AnalogTVTuningForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			
-			timer1.Enabled=false;
+			
 			try
 			{
 				if (tuningInterface==null) return;
@@ -518,7 +523,7 @@ namespace MediaPortal
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
-			timer1.Enabled=false;
+			
 			if (tuningInterface==null) return;
 			tuningInterface.Stop();		
 
@@ -538,12 +543,21 @@ namespace MediaPortal
 			Application.DoEvents();
 		}
 
-		private void timer1_Tick(object sender, System.EventArgs e)
+		static bool reentrant=false;
+		void UpdateSignal()
 		{
 			if (captureCard==null) return;
-			timer1.Enabled=false;
-			OnSignal(captureCard.SignalQuality,captureCard.SignalStrength);
-			timer1.Enabled=true;
+			if (reentrant) return;
+			try
+			{
+				reentrant=true;
+				this.Text=DateTime.Now.ToLongTimeString();
+				OnSignal(captureCard.SignalQuality,captureCard.SignalStrength);
+			}
+			finally
+			{
+				reentrant=false;
+			}
 		}
 	}
 }

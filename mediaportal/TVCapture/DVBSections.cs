@@ -2574,7 +2574,7 @@ namespace MediaPortal.TV.Recording
 
 		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
 		{
-			Log.Write("dvbsections:OnGotTable() pid:{0:X} tid:{1:X} count:{2}", pid,tableID,tableList.Count);
+			//Log.Write("dvbsections:OnGotTable() pid:{0:X} tid:{1:X} count:{2}", pid,tableID,tableList.Count);
 			m_syncWait=true;
 			if(tableList.Count>0)
 			{
