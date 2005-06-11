@@ -1473,7 +1473,7 @@ namespace MediaPortal.TV.Recording
 			for (int i = 0; i < m_TunerStatistics.Length; i++) 
 			{
 				long strength=0;
-				m_TunerStatistics[i].get_SignalStrength(ref strength); //1-100
+				m_TunerStatistics[i].get_SignalStrength(ref strength); //in decibels
 				if (strength>signalStrength) signalStrength = (int)strength;
 			}
 			return signalStrength;

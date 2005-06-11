@@ -180,6 +180,7 @@ namespace MediaPortal.TV.Recording
 			{
 				description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
 				callback.OnStatus(description);
+				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 				ScanChannels();
 				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			}
@@ -189,7 +190,9 @@ namespace MediaPortal.TV.Recording
 		{
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			timer1.Enabled=false;
+			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
+			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			callback.UpdateList();
 			currentState=State.ScanFrequencies;
