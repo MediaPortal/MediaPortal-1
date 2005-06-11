@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.TV
 		#endregion
 		public  GUITVCompressStatus()
 		{
-			GetID=(int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS ;
+			GetID=(int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS ;
 		}
 
 		#region Serialisation
