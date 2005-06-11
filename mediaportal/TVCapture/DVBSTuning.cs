@@ -190,7 +190,6 @@ namespace MediaPortal.TV.Recording
 			{
 				if (captureCard.SignalPresent())
 				{
-					callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 					Log.WriteFile(Log.LogType.Capture,"Found signal for transponder:{0} {1}",currentIndex,chanDesc);
 					currentState=State.ScanChannels;
 				}
@@ -198,7 +197,6 @@ namespace MediaPortal.TV.Recording
 
 			if (currentState==State.ScanTransponders || currentState==State.ScanStart)
 			{
-				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 				currentState=State.ScanTransponders ;
 				callback.OnStatus(description);
 				ScanNextTransponder();
@@ -206,7 +204,6 @@ namespace MediaPortal.TV.Recording
 
 			if (currentState==State.ScanChannels)
 			{
-				callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 				description=String.Format("Found signal for transponder:{0} {1}, Scanning channels", currentIndex,chanDesc);
 				callback.OnStatus(description);
 				ScanChannels();
@@ -217,9 +214,7 @@ namespace MediaPortal.TV.Recording
 		void ScanChannels()
 		{
 			timer1.Enabled=false;
-			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
-			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			callback.UpdateList();
 			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning transponders");
@@ -268,7 +263,6 @@ namespace MediaPortal.TV.Recording
 			Application.DoEvents();
 			captureCard.Tune(newchan,m_currentDiseqc);
 			Application.DoEvents();
-			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			timer1.Enabled=true;
 		}
 

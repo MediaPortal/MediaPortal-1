@@ -48,6 +48,7 @@ namespace MediaPortal
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Timer timer1;
 		TVCaptureDevice captureCard;
 
 		public AnalogTVTuningForm()
@@ -94,6 +95,7 @@ namespace MediaPortal
 			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
 			// 
 			// labelStatus
@@ -280,6 +282,10 @@ namespace MediaPortal
 			this.label7.TabIndex = 20;
 			this.label7.Text = "100%";
 			// 
+			// timer1
+			// 
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			// 
 			// AnalogTVTuningForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -316,7 +322,7 @@ namespace MediaPortal
 
     private void btnOk_Click(object sender, System.EventArgs e)
     {
-     
+     timer1.Enabled=false;
 			//using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			//{
 			//	xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
@@ -343,8 +349,9 @@ namespace MediaPortal
     }
 
     private void AnalogTVTuningForm_Load(object sender, System.EventArgs e)
-    {
-			
+    {	
+			timer1.Interval=100;
+			timer1.Enabled=true;
 			btnOk.Enabled=false;
 			UpdateList();
 			GUIGraphicsContext.form=this;
@@ -486,6 +493,8 @@ namespace MediaPortal
 
 		private void AnalogTVTuningForm_Closed(object sender, System.EventArgs e)
 		{
+			
+			timer1.Enabled=false;
 			try
 			{
 				if (tuningInterface==null) return;
@@ -496,6 +505,8 @@ namespace MediaPortal
 
 		private void AnalogTVTuningForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			
+			timer1.Enabled=false;
 			try
 			{
 				if (tuningInterface==null) return;
@@ -507,6 +518,7 @@ namespace MediaPortal
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
+			timer1.Enabled=false;
 			if (tuningInterface==null) return;
 			tuningInterface.Stop();		
 
@@ -524,6 +536,14 @@ namespace MediaPortal
 			signalQuality.Value=quality;
 			signalStrength.Value=strength;
 			Application.DoEvents();
+		}
+
+		private void timer1_Tick(object sender, System.EventArgs e)
+		{
+			if (captureCard==null) return;
+			timer1.Enabled=false;
+			OnSignal(captureCard.SignalQuality,captureCard.SignalStrength);
+			timer1.Enabled=true;
 		}
 	}
 }

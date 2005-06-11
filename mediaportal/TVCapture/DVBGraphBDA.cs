@@ -1457,26 +1457,40 @@ namespace MediaPortal.TV.Recording
 		public int  SignalQuality()
 		{
 			if (m_TunerStatistics==null) return 1;
-			int signalQuality=1;
-			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+			try
 			{
-				long quality=0;
-				m_TunerStatistics[i].get_SignalQuality(ref quality); //1-100
-				if (quality>signalQuality) signalQuality = (int)quality;
+				int signalQuality=1;
+				for (int i = 0; i < m_TunerStatistics.Length; i++) 
+				{
+					long quality=0;
+					m_TunerStatistics[i].get_SignalQuality(ref quality); //1-100
+					if (quality>signalQuality) signalQuality = (int)quality;
+				}
+				return signalQuality;
 			}
-			return signalQuality;
+			catch(Exception)
+			{
+			}
+			return 0;
 		}
 		public int  SignalStrength()
 		{
 			if (m_TunerStatistics==null) return 1;
-			int signalStrength=1;
-			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+			try
 			{
-				long strength=0;
-				m_TunerStatistics[i].get_SignalStrength(ref strength); //in decibels
-				if (strength>signalStrength) signalStrength = (int)strength;
+				int signalStrength=1;
+				for (int i = 0; i < m_TunerStatistics.Length; i++) 
+				{
+					long strength=0;
+					m_TunerStatistics[i].get_SignalStrength(ref strength); //in decibels
+					if (strength>signalStrength) signalStrength = (int)strength;
+				}
+				return signalStrength;
 			}
-			return signalStrength;
+			catch(Exception)
+			{
+			}
+			return 0;
 		}
 		/// <summary>
 		/// not used

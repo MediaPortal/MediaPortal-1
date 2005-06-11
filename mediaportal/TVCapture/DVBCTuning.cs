@@ -182,7 +182,6 @@ namespace MediaPortal.TV.Recording
 				ScanNextDVBCChannel();
 				if (captureCard.SignalPresent())
 				{
-					callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 					ScanChannels();
 				}
 				retryCount=1;
@@ -192,7 +191,6 @@ namespace MediaPortal.TV.Recording
 				ScanDVBCChannel();
 				if (captureCard.SignalPresent())
 				{
-					callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 					ScanChannels();
 				}
 				retryCount=0;
@@ -209,9 +207,7 @@ namespace MediaPortal.TV.Recording
 
 			timer1.Enabled=false;
 			Application.DoEvents();
-			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
-			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
 			callback.UpdateList();
 			timer1.Enabled=true;
@@ -254,7 +250,6 @@ namespace MediaPortal.TV.Recording
 			newchan.Frequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan,0);
 			Application.DoEvents();
-			callback.OnSignal(captureCard.SignalStrength,captureCard.SignalQuality);
 			timer1.Enabled=true;
 		}
 		#endregion
