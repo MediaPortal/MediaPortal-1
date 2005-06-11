@@ -3172,7 +3172,7 @@ namespace MediaPortal.TV.Recording
 				else if (Network() == NetworkType.DVBS)
 				{
 					//get the IDVBSLocator interface
-					TunerLib.IDVBTuningSpace2 dvbSpace =myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
+					TunerLib.IDVBSTuningSpace dvbSpace =myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
 					if (dvbSpace==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed could not get IDVBSTuningSpace");
