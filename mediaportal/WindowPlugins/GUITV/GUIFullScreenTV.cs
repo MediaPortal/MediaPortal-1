@@ -1414,7 +1414,7 @@ namespace MediaPortal.GUI.TV
 
 		public void ZapPreviousChannel()
 		{
-			GUITVHome.Navigator.ZapToNextChannel(true);
+			GUITVHome.Navigator.ZapToPreviousChannel(true);
 			UpdateOSD();
 			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
 			{
@@ -1430,7 +1430,7 @@ namespace MediaPortal.GUI.TV
 
 		public void ZapNextChannel()
 		{
-			GUITVHome.Navigator.ZapToPreviousChannel(true);
+			GUITVHome.Navigator.ZapToNextChannel(true);
 			UpdateOSD();
 			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
 			{
