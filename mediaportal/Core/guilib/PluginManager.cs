@@ -365,7 +365,7 @@ namespace MediaPortal.GUI.Library
     {
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        bool bEnabled = xmlreader.GetValueAsBool("pluginswindows", strType, false);
+        bool bEnabled = xmlreader.GetValueAsBool("pluginswindows", strType, true);
         return bEnabled;
       } 
     }
