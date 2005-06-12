@@ -158,6 +158,9 @@ namespace MediaPortal.TV.Recording
 		}
 		public void RenderChannelList(TVGroup group,string currentChannel)
 		{
+			int gWidth=GUIGraphicsContext.Width;
+			int gHeight=GUIGraphicsContext.Height;
+
 			if(group==null)
 				return;
 			if(group.tvChannels.Count<2)
@@ -184,7 +187,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			// render list
-			Bitmap bm=new Bitmap(720,576);//m_mediaPath+@"bgimage.png");
+			Bitmap bm=new Bitmap(gWidth,gHeight);//m_mediaPath+@"bgimage.png");
 			Graphics gr=Graphics.FromImage(bm);
 			int x=60;
 			int y=20;
@@ -202,7 +205,7 @@ namespace MediaPortal.TV.Recording
 			//
 			Font drawFont=new Font(seg[5],Convert.ToInt16(seg[6]));
 			SolidBrush textBrush=new SolidBrush(textColor);
-			RectangleF layoutRect=new RectangleF(x,y,720-(x*2),576-(y*2));
+			RectangleF layoutRect=new RectangleF(x,y,gWidth-(x*2),gHeight-(y*2));
 			//
 			SizeF textSize=gr.MeasureString("AAA",drawFont);
 			int textHeight;
@@ -218,10 +221,10 @@ namespace MediaPortal.TV.Recording
 
 			string headText=group.GroupName;
 			
-			gr.FillRectangle(new SolidBrush(headColor),x,y,720-(2*x),textHeight);
+			gr.FillRectangle(new SolidBrush(headColor),x,y,gWidth-(2*x),textHeight);
 			gr.DrawString(headText,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
 			layoutRect.Y+=textHeight;
-			int yMax=576-(y*2);
+			int yMax=gHeight-(y*2);
 			int channelCount=yMax/textHeight;
 			channelCount--;
 			int pos=y+textHeight;
@@ -248,12 +251,12 @@ namespace MediaPortal.TV.Recording
 
 				if(chan.Name==currentChannel)
 				{
-					gr.FillRectangle(new SolidBrush(sBoxColor),x,pos,720-(2*x),textHeight);
+					gr.FillRectangle(new SolidBrush(sBoxColor),x,pos,gWidth-(2*x),textHeight);
 					gr.DrawString(channelText,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
 				}
 				else
 				{
-					gr.FillRectangle(new SolidBrush(nBoxColor),x,pos,720-(2*x),textHeight);
+					gr.FillRectangle(new SolidBrush(nBoxColor),x,pos,gWidth-(2*x),textHeight);
 					gr.DrawString(channelText,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
 				}
 				if(logosFound==true)
@@ -308,6 +311,8 @@ namespace MediaPortal.TV.Recording
 		}
 		public void RenderVolumeOSD()
 		{
+			int gWidth=GUIGraphicsContext.Width;
+			int gHeight=GUIGraphicsContext.Height;
 			int max;
 			int min;
 			int currentVolume=AudioMixerHelper.GetMinMaxVolume(out min,out max);
@@ -335,13 +340,24 @@ namespace MediaPortal.TV.Recording
 					{
 						if(seg[0]=="icon" && seg.Length==4)
 						{
-							Bitmap osd=new Bitmap(720,576);
+							Bitmap osd=new Bitmap(gWidth,gHeight);
 							Graphics gr=Graphics.FromImage(osd);
 							
 							//Bitmap gfx=new Bitmap(m_mediaPath+String.Format("volume_level_{0}.png",volume));
 							//gfx.MakeTransparent(Color.White);
-							int xPos=Convert.ToInt16(seg[1]);
-							int yPos=Convert.ToInt16(seg[2]);
+							int xPos=0;
+							int yPos=0;
+
+							if(seg[1].StartsWith("m"))
+								xPos=GetPosition(gWidth,seg[1]);
+							else
+								xPos=Convert.ToInt16(seg[1]);
+
+							if(seg[2].StartsWith("m"))
+								yPos=GetPosition(gHeight,seg[2]);
+							else
+								yPos=Convert.ToInt16(seg[2]);
+							
 							if(volume>0)
 							{
 								if(m_volumeBitmap!=null)
@@ -363,7 +379,9 @@ namespace MediaPortal.TV.Recording
 		}
 		public Bitmap RenderZapOSD(TVChannel channel,int signalLevel)
 		{
-			Bitmap bm=new Bitmap(720,576);//m_mediaPath+@"bgimage.png");
+			int gWidth=GUIGraphicsContext.Width;
+			int gHeight=GUIGraphicsContext.Height;
+			Bitmap bm=new Bitmap(gWidth,gHeight);//m_mediaPath+@"bgimage.png");
 			Graphics gr=Graphics.FromImage(bm);
 			int x=60;
 			int y=0;
@@ -428,10 +446,25 @@ namespace MediaPortal.TV.Recording
 						int height=0;
 						try
 						{
-							xpos=Convert.ToInt16(seg[1]);
-							ypos=Convert.ToInt16(seg[2]);
-							width=Convert.ToInt16(seg[3]);
-							height=Convert.ToInt16(seg[4]);
+							if(seg[1].StartsWith("m"))
+								xpos=GetPosition(gWidth,seg[1]);
+							else
+								xpos=Convert.ToInt16(seg[1]);
+							
+							if(seg[2].StartsWith("m"))
+								ypos=GetPosition(gHeight,seg[2]);
+							else
+								ypos=Convert.ToInt16(seg[2]);
+							
+							if(seg[3]=="max")
+								width=gWidth;
+							else
+								width=Convert.ToInt16(seg[3]);
+							
+							if(seg[4]=="max")
+								height=gHeight;
+							else
+								height=Convert.ToInt16(seg[4]);
 						}
 						catch{ break;}
 						if(seg[0]=="frect")
@@ -452,10 +485,29 @@ namespace MediaPortal.TV.Recording
 				{
 					if(seg[0]=="chLogo" && seg.Length==7)
 					{
-						int xPos=x+Convert.ToInt16(seg[1]);
-						int yPos=y+Convert.ToInt16(seg[2]);
-						int width=Convert.ToInt16(seg[3]);
-						int height=Convert.ToInt16(seg[4]);
+						int xPos=0;
+						int yPos=0;
+						int width=0;
+						int height=0;
+
+						if(seg[1].StartsWith("m"))
+							xPos=GetPosition(gWidth,seg[1]);
+						else
+							xPos=x+Convert.ToInt16(seg[1]);
+
+						if(seg[2].StartsWith("m"))
+							yPos=GetPosition(gHeight,seg[2]);
+						else
+							yPos=y+Convert.ToInt16(seg[2]);
+						if(seg[3]=="max")
+							width=gWidth;
+						else
+							width=Convert.ToInt16(seg[3]);
+						if(seg[4]=="max")
+							height=gHeight;
+						else
+							height=Convert.ToInt16(seg[4]);
+						
 						Color oColor=GetColor(seg[5]);
 						int outline=Convert.ToInt16(seg[6]);
 						string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
@@ -479,8 +531,19 @@ namespace MediaPortal.TV.Recording
 				{
 					if(seg[0]=="text" && seg.Length==7)
 					{
-						int xPos=x+Convert.ToInt16(seg[1]);
-						int yPos=y+Convert.ToInt16(seg[2]);
+						int xPos=0;
+						int yPos=0;
+
+						if(seg[1].StartsWith("m"))
+							xPos=GetPosition(gWidth,seg[1]);
+						else
+							xPos=x+Convert.ToInt16(seg[1]);
+
+						if(seg[2].StartsWith("m"))
+							yPos=GetPosition(gHeight,seg[2]);
+						else
+							yPos=y+Convert.ToInt16(seg[2]);
+
 						Color fColor=GetColor(seg[4]);
 						Color bColor=GetColor(seg[5]);
 						gr.DrawString(serviceName,new System.Drawing.Font(seg[3],Convert.ToInt16(seg[6])),new SolidBrush(fColor),xPos,yPos,StringFormat.GenericTypographic);
@@ -496,14 +559,25 @@ namespace MediaPortal.TV.Recording
 				{
 					if(seg[0]=="text" && seg.Length==7)
 					{
-						int xPos=x+Convert.ToInt16(seg[1]);
-						int yPos=y+Convert.ToInt16(seg[2]);
+						int xPos=0;
+						int yPos=0;
+
+						if(seg[1].StartsWith("m"))
+							xPos=GetPosition(gWidth,seg[1]);
+						else
+							xPos=x+Convert.ToInt16(seg[1]);
+
+						if(seg[2].StartsWith("m"))
+							yPos=GetPosition(gHeight,seg[2]);
+						else
+							yPos=y+Convert.ToInt16(seg[2]);
+
 						Color fColor=GetColor(seg[4]);
 						Color bColor=GetColor(seg[5]);
 						Font drawFont=new System.Drawing.Font(seg[3],Convert.ToInt16(seg[6]));
 						Brush drawBrush=new SolidBrush(fColor);
 						SizeF xEnd=gr.MeasureString(nowDur,drawFont);
-						int xPosEnd=650-((int)xEnd.Width);
+						int xPosEnd=(gWidth-70)-((int)xEnd.Width);
 						gr.DrawString(nowDur,drawFont,drawBrush,xPosEnd,yPos,StringFormat.GenericTypographic);
 						gr.DrawString(nowStart+"  "+nowTitle,drawFont,drawBrush,new RectangleF(xPos,yPos,xPosEnd-xPos-5,xEnd.Height),StringFormat.GenericTypographic);
 						drawFont.Dispose();
@@ -520,14 +594,24 @@ namespace MediaPortal.TV.Recording
 				{
 					if(seg[0]=="text" && seg.Length==7)
 					{
-						int xPos=x+Convert.ToInt16(seg[1]);
-						int yPos=y+Convert.ToInt16(seg[2]);
+						int xPos=0;
+						int yPos=0;
+
+						if(seg[1].StartsWith("m"))
+							xPos=GetPosition(gWidth,seg[1]);
+						else
+							xPos=x+Convert.ToInt16(seg[1]);
+
+						if(seg[2].StartsWith("m"))
+							yPos=GetPosition(gHeight,seg[2]);
+						else
+							yPos=y+Convert.ToInt16(seg[2]);
 						Color fColor=GetColor(seg[4]);
 						Color bColor=GetColor(seg[5]);
 						Font drawFont=new System.Drawing.Font(seg[3],Convert.ToInt16(seg[6]));
 						Brush drawBrush=new SolidBrush(fColor);
 						SizeF xEnd=gr.MeasureString(nextDur,drawFont);
-						int xPosEnd=650-((int)xEnd.Width);
+						int xPosEnd=(gWidth-70)-((int)xEnd.Width);
 						gr.DrawString(nextDur,drawFont,drawBrush,xPosEnd,yPos,StringFormat.GenericTypographic);
 						gr.DrawString(nextStart+"  "+nextTitle,drawFont,drawBrush,new RectangleF(xPos,yPos,xPosEnd-xPos-5,xEnd.Height),StringFormat.GenericTypographic);
 						drawFont.Dispose();
@@ -544,10 +628,28 @@ namespace MediaPortal.TV.Recording
 				{
 					if(seg[0]=="progressbar" && seg.Length==7)
 					{
-						int xPos=x+Convert.ToInt16(seg[1]);
-						int yPos=y+Convert.ToInt16(seg[2]);
-						int width=Convert.ToInt16(seg[3]);
-						int height=Convert.ToInt16(seg[4]);
+						int xPos=0;
+						int yPos=0;
+						int width=0;
+						int height=0;
+
+						if(seg[1].StartsWith("m"))
+							xPos=GetPosition(gWidth,seg[1]);
+						else
+							xPos=x+Convert.ToInt16(seg[1]);
+
+						if(seg[2].StartsWith("m"))
+							yPos=GetPosition(gHeight,seg[2]);
+						else
+							yPos=y+Convert.ToInt16(seg[2]);
+						if(seg[3]=="max")
+							width=gWidth;
+						else
+							width=Convert.ToInt16(seg[3]);
+						if(seg[4]=="max")
+							height=gHeight;
+						else
+							height=Convert.ToInt16(seg[4]);
 						Color fColor=GetColor(seg[5]);
 						Color bColor=GetColor(seg[6]);
 						gr.FillRectangle(new SolidBrush(bColor),xPos,yPos,width,height);
@@ -566,10 +668,28 @@ namespace MediaPortal.TV.Recording
 					{
 						if(seg[0]=="progressbar" && seg.Length==11)
 						{
-							int xPos=x+Convert.ToInt16(seg[1]);
-							int yPos=y+Convert.ToInt16(seg[2]);
-							int width=Convert.ToInt16(seg[3]);
-							int height=Convert.ToInt16(seg[4]);
+							int xPos=0;
+							int yPos=0;
+							int width=0;
+							int height=0;
+
+							if(seg[1].StartsWith("m"))
+								xPos=GetPosition(gWidth,seg[1]);
+							else
+								xPos=x+Convert.ToInt16(seg[1]);
+
+							if(seg[2].StartsWith("m"))
+								yPos=GetPosition(gHeight,seg[2]);
+							else
+								yPos=y+Convert.ToInt16(seg[2]);
+							if(seg[3]=="max")
+								width=gWidth;
+							else
+								width=Convert.ToInt16(seg[3]);
+							if(seg[4]=="max")
+								height=gHeight;
+							else
+								height=Convert.ToInt16(seg[4]);
 							Color fColor=GetColor(seg[5]);
 							Color bColor=GetColor(seg[6]);
 							Color tColor=GetColor(seg[7]);
@@ -592,8 +712,18 @@ namespace MediaPortal.TV.Recording
 				{
 					if(seg[0]=="time" && seg.Length==7)
 					{
-						int xPos=x+Convert.ToInt16(seg[1]);
-						int yPos=y+Convert.ToInt16(seg[2]);
+						int xPos=0;
+						int yPos=0;
+
+						if(seg[1].StartsWith("m"))
+							xPos=GetPosition(gWidth,seg[1]);
+						else
+							xPos=x+Convert.ToInt16(seg[1]);
+
+						if(seg[2].StartsWith("m"))
+							yPos=GetPosition(gHeight,seg[2]);
+						else
+							yPos=y+Convert.ToInt16(seg[2]);
 						Color fColor=GetColor(seg[4]);
 						Color bColor=GetColor(seg[5]);
 						gr.DrawString(DateTime.Now.ToShortTimeString(),new System.Drawing.Font(seg[3],Convert.ToInt16(seg[6])),new SolidBrush(fColor),xPos,yPos,StringFormat.GenericTypographic);
@@ -613,8 +743,18 @@ namespace MediaPortal.TV.Recording
 						{
 							Bitmap muteBmp=new Bitmap(m_mediaPath+"volume_level_0.png");
 							muteBmp.MakeTransparent(Color.White);
-							int xPos=Convert.ToInt16(seg[1]);
-							int yPos=Convert.ToInt16(seg[2]);
+							int xPos=0;
+							int yPos=0;
+
+							if(seg[1].StartsWith("m"))
+								xPos=GetPosition(gWidth,seg[1]);
+							else
+								xPos=x+Convert.ToInt16(seg[1]);
+
+							if(seg[2].StartsWith("m"))
+								yPos=GetPosition(gHeight,seg[2]);
+							else
+								yPos=y+Convert.ToInt16(seg[2]);
 							gr.DrawImageUnscaled(muteBmp,xPos,yPos,60,60);
 							muteBmp.Dispose();
 						}
@@ -624,6 +764,13 @@ namespace MediaPortal.TV.Recording
 			m_bitmapIsVisible=true;
 			return bm;
 		}
+		int GetPosition(int baseVal,string val)
+		{
+			string val1=val.Substring(1,val.Length-1);
+			int val2=Convert.ToInt16(val1);
+			return (baseVal-val2<0)?0:baseVal-val2;
+		}
+
 		Color GetColor(string colString)
 		{
 			Color col=new Color();
