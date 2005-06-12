@@ -124,19 +124,23 @@ namespace WindowPlugins.GUIPrograms
     bool updating=false;
 
     string[] selections= new string[]
-      {
-        "title",
-        "filename",
-        "country",
-        "genre",
-        "year",
-        "manufacturer",
-        "rating",
-        "launchcount",
-        "lastTimeLaunched"
-      };
+    {
+      "title",
+      "filename",
+      "country",
+      "genre",
+      "year",
+      "manufacturer",
+      "rating",
+      "launchcount",
+      "lastTimeLaunched",
+      "genre2",
+      "genre3",
+      "genre4",
+      "genre5"
+    };
     string[] sqloperators = new string[]
-      {
+    {
         "",
         "=",
         ">",
@@ -156,9 +160,9 @@ namespace WindowPlugins.GUIPrograms
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
       views=new ArrayList();
-      if (System.IO.File.Exists("programViews.xml"))
+      if (System.IO.File.Exists("programViews2.xml"))
       {
-        using(FileStream fileStream = new FileStream("programViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using(FileStream fileStream = new FileStream("programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -173,7 +177,7 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        Log.Write("Warning: no programViews.xml found!");
+        Log.Write("Warning: no programViews2.xml found!");
       }
       LoadViews();
     }
@@ -505,7 +509,7 @@ namespace WindowPlugins.GUIPrograms
       StoreGridInView();
       try
       {
-        using(FileStream fileStream = new FileStream("programViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using(FileStream fileStream = new FileStream("programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           SoapFormatter formatter = new SoapFormatter();
           formatter.Serialize(fileStream, views);

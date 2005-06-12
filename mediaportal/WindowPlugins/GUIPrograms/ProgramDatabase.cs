@@ -34,6 +34,8 @@ namespace ProgramsDatabase
         CreateObjects();
         // patch old ContentID values...
         PatchContentID();
+        // patch genre-values
+        PatchGenreValues();
         // dirty hack: propagate the sqlDB to the singleton objects...
         ProgramSettings.sqlDB = sqlDB;
       }
@@ -162,6 +164,18 @@ namespace ProgramsDatabase
       sqlDB.Execute("update application set contentID = 100 where contentID IS NULL;");
       sqlDB.Execute("update application set contentID = 100 where contentID <= 0;");
     }
+
+    static void PatchGenreValues()
+    {
+      if (sqlDB == null)
+        return;
+      sqlDB.Execute("update file set genre = '' where genre IS NULL;");
+      sqlDB.Execute("update file set genre2 = '' where genre2 IS NULL;");
+      sqlDB.Execute("update file set genre3 = '' where genre3 IS NULL;");
+      sqlDB.Execute("update file set genre4 = '' where genre4 IS NULL;");
+      sqlDB.Execute("update file set genre5 = '' where genre5 IS NULL;");
+    }
+
 
 
     static public Applist AppList

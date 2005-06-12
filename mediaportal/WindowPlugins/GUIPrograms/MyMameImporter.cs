@@ -389,7 +389,28 @@ namespace ProgramsDatabase
         ArrayList temp = new ArrayList(genreEntry.Split('='));
         if (temp.Count == 2)
         {
-          curFile.Genre = temp[1].ToString();
+          string allGenres = temp[1].ToString();
+          ArrayList temp2 = new ArrayList(allGenres.Split('/'));
+          if (temp2.Count > 0)
+          {
+            curFile.Genre = temp2[0].ToString().Trim();
+          }
+          if (temp2.Count > 1)
+          {
+            curFile.Genre2 = temp2[1].ToString().Trim();
+          }
+          if (temp2.Count > 2)
+          {
+            curFile.Genre3 = temp2[2].ToString().Trim();
+          }
+          if (temp2.Count > 3)
+          {
+            curFile.Genre4 = temp2[3].ToString().Trim();
+          }
+          if (temp2.Count > 4)
+          {
+            curFile.Genre5 = temp2[4].ToString().Trim();
+          }
         }
         else
         {

@@ -22,9 +22,14 @@ namespace WindowPlugins.GUIPrograms
 
     public ProgramViewHandler()
     {
-      if (!System.IO.File.Exists("programViews.xml"))
+      if (!System.IO.File.Exists("programViews2.xml"))
       {
-        FilterDefinition filter1,filter2;
+        FilterDefinition filter1 = null;
+        FilterDefinition filter2 = null;
+        FilterDefinition filter3 = null;
+        FilterDefinition filter4 = null;
+        FilterDefinition filter5 = null;
+        FilterDefinition filter6 = null;
 
         //manufacturer
         ViewDefinition viewManufacturer = new ViewDefinition();
@@ -38,9 +43,17 @@ namespace WindowPlugins.GUIPrograms
         ViewDefinition viewGenre = new ViewDefinition();
         viewGenre.Name="Genre";
         filter1 = new FilterDefinition();filter1.Where="genre";;filter1.SortAscending=true;
-        filter2 = new FilterDefinition();filter2.Where="filename";;filter2.SortAscending=true;
+        filter2 = new FilterDefinition();filter2.Where="genre2";;filter2.SortAscending=true;
+        filter3 = new FilterDefinition();filter3.Where="genre3";;filter3.SortAscending=true;
+        filter4 = new FilterDefinition();filter4.Where="genre4";;filter4.SortAscending=true;
+        filter5 = new FilterDefinition();filter5.Where="genre5";;filter5.SortAscending=true;
+        filter6 = new FilterDefinition();filter6.Where="filename";;filter6.SortAscending=true;
         viewGenre.Filters.Add(filter1);
         viewGenre.Filters.Add(filter2);
+        viewGenre.Filters.Add(filter3);
+        viewGenre.Filters.Add(filter4);
+        viewGenre.Filters.Add(filter5);
+        viewGenre.Filters.Add(filter6);
 
         //rating
         ViewDefinition viewRating = new ViewDefinition();
@@ -79,7 +92,7 @@ namespace WindowPlugins.GUIPrograms
         listViews.Add(viewMostLaunched);
         listViews.Add(viewMostRecentlyLaunched);
 
-        using(FileStream fileStream = new FileStream("programViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+        using(FileStream fileStream = new FileStream("programViews2.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
         {
           SoapFormatter formatter = new SoapFormatter();
           formatter.Serialize(fileStream, listViews);
@@ -87,9 +100,9 @@ namespace WindowPlugins.GUIPrograms
         }
         
       }
-      if (System.IO.File.Exists("programViews.xml"))
+      if (System.IO.File.Exists("programViews2.xml"))
       {
-        using (FileStream fileStream = new FileStream("programViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (FileStream fileStream = new FileStream("programViews2.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -346,9 +359,12 @@ namespace WindowPlugins.GUIPrograms
     {
       if (where == "title") return "title";
       if (where == "genre") return "genre";
+      if (where == "genre2") return "genre2";
+      if (where == "genre3") return "genre3";
+      if (where == "genre4") return "genre4";
+      if (where == "genre5") return "genre5";
       if (where == "country") return "country";
       if (where == "manufacturer") return "manufacturer";
-      if (where == "genre") return "genre";
       if (where == "year") return "year";
       if (where == "rating") return "rating";
       if (where == "launchcount") return "launchcount";
@@ -360,9 +376,12 @@ namespace WindowPlugins.GUIPrograms
     {
       if (where == "title") return "title";
       if (where == "genre") return "genre";
+      if (where == "genre2") return "genre2";
+      if (where == "genre3") return "genre3";
+      if (where == "genre4") return "genre4";
+      if (where == "genre5") return "genre5";
       if (where == "country") return "country";
       if (where == "manufacturer") return "manufacturer";
-      if (where == "genre") return "genre";
       if (where == "year") return "year";
       if (where == "rating") return "rating";
       if (where == "launchcount") return "launchcount";
@@ -377,6 +396,10 @@ namespace WindowPlugins.GUIPrograms
       // and the MAY be different in the future.....
       if (where == "title") return "title";
       else if (where == "genre") return "genre";
+      else if (where == "genre2") return "genre2";
+      else if (where == "genre3") return "genre3";
+      else if (where == "genre4") return "genre4";
+      else if (where == "genre5") return "genre5";
       else if (where == "manufacturer") return "manufacturer";
       else if (where == "country") return "country";
       else if (where == "year") return "year";
@@ -434,6 +457,10 @@ namespace WindowPlugins.GUIPrograms
     {
       if (where == "title") return "'STR' as fieldtype"; // watch quotes... these are SQL-strings!
       else if (where == "genre") return "'STR' as fieldtype";
+      else if (where == "genre2") return "'STR' as fieldtype";
+      else if (where == "genre3") return "'STR' as fieldtype";
+      else if (where == "genre4") return "'STR' as fieldtype";
+      else if (where == "genre5") return "'STR' as fieldtype";
       else if (where == "manufacturer") return "'STR' as fieldtype";
       else if (where == "country") return "'STR' as fieldtype";
       else if (where == "year") return "'INT' as fieldtype";
@@ -455,6 +482,10 @@ namespace WindowPlugins.GUIPrograms
     {
       if (where == "title") return false;
       else if (where == "genre") return true;
+      else if (where == "genre2") return true;
+      else if (where == "genre3") return true;
+      else if (where == "genre4") return true;
+      else if (where == "genre5") return true;
       else if (where == "manufacturer") return true;
       else if (where == "country") return true;
       else if (where == "year") return true;
@@ -484,7 +515,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if (filterItem == null) return;
       FilterDefinition definition = (FilterDefinition) currentView.Filters[CurrentLevel];
-      if (definition.Where == "genre")
+      if ((definition.Where == "genre") || (definition.Where == "genre2") || (definition.Where == "genre3") || (definition.Where == "genre4") || (definition.Where == "genre5"))
       {
         item.Label = filterItem.Genre;
         item.Label2 = String.Empty;

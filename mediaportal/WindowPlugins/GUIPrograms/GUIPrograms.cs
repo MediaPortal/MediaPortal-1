@@ -972,13 +972,7 @@ namespace WindowPlugins.GUIPrograms
         }
         else if (item.MusicTag is ProgramFilterItem)
         {
-          SaveItemIndex(GetSelectedItemNo().ToString(), lastApp, lastFilepath);
-          ProgramSettings.viewHandler.AddFilterItem(item.MusicTag as ProgramFilterItem);
-          if (lastApp != null)
-          {
-            // force reload, this will load the next filter-level.....
-            lastApp.LoadFiles();
-          }
+          AddNextFilter(item);
         }
         UpdateListControl();
       }
@@ -1006,8 +1000,28 @@ namespace WindowPlugins.GUIPrograms
         {
           if (ProgramSettings.viewHandler.RemoveFilterItem())
           {
+            ProgramFilterItem curFilter;
             // force reload, this will load the next filter-level.....
             lastApp.LoadFiles();
+            // auto-remove filters if there is only ONE EMPTY Filteritem
+            // displaying
+            bool doAutoRemove = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+            while (doAutoRemove)
+            {
+              doAutoRemove = false;
+              if (lastApp.Files[0] is ProgramFilterItem)
+              {
+                curFilter = lastApp.Files[0] as ProgramFilterItem;
+                if ((curFilter.Title == "") && (curFilter.Title2 == ""))
+                {
+                  if (ProgramSettings.viewHandler.RemoveFilterItem())
+                  {
+                    lastApp.LoadFiles();
+                    doAutoRemove = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+                  }
+                }
+              }
+            }
           }
           else
           {
@@ -1038,6 +1052,35 @@ namespace WindowPlugins.GUIPrograms
       }
 
 
+    }
+
+    void AddNextFilter(GUIListItem item)
+    {
+      ProgramFilterItem curFilter;
+      SaveItemIndex(GetSelectedItemNo().ToString(), lastApp, lastFilepath);
+      ProgramSettings.viewHandler.AddFilterItem(item.MusicTag as ProgramFilterItem);
+      if (lastApp != null)
+      {
+        // force reload, this will load the next filter-level.....
+        lastApp.LoadFiles();
+        // check if the next filter is only displaying ONE EMPTY item
+        // if yes, autoselect this filteritem
+        bool doAutoSelect = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+        while (doAutoSelect)
+        {
+          doAutoSelect = false;
+          if (lastApp.Files[0] is ProgramFilterItem)
+          {
+            curFilter = lastApp.Files[0] as ProgramFilterItem;
+            if ((curFilter.Title == "") && (curFilter.Title2 == ""))
+            {
+              ProgramSettings.viewHandler.AddFilterItem(curFilter);
+              lastApp.LoadFiles();
+              doAutoSelect = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+            }
+          }
+        }
+      }
     }
 
     void OnItemSelected(GUIListItem item, GUIControl parent)

@@ -4,7 +4,6 @@ using MediaPortal.GUI.Library;
 using ProgramsDatabase;
 using Programs.Utils;
 
-
 namespace WindowPlugins.GUIPrograms
 {
   /// <summary>
@@ -12,7 +11,6 @@ namespace WindowPlugins.GUIPrograms
   /// </summary>
   public class ProgramContentManager
   {
-
     static XmlNodeList NodeList = null;
     static XmlElement rootElement = null;
 
@@ -26,17 +24,17 @@ namespace WindowPlugins.GUIPrograms
         }
         else
         {
-          return  - 1;
+          return - 1;
         }
       }
     }
 
     static public int NodeID(int Index)
     {
-      int result =  - 1;
+      int result = - 1;
       if (NodeList == null)
       {
-        return  - 1;
+        return - 1;
       }
       if ((Index >= 0) && (Index <= NodeList.Count - 1))
       {
@@ -81,7 +79,7 @@ namespace WindowPlugins.GUIPrograms
 
     static public int GetIndexOfID(int ContentID)
     {
-      int result =  - 1;
+      int result = - 1;
       XmlNode node = null;
       for (int i = 0; i < NodeCount; i++)
       {
@@ -169,7 +167,7 @@ namespace WindowPlugins.GUIPrograms
         return result;
 
       int iNextValueTagStart = result.IndexOf("[");
-      int iNextValueTagEnd =  - 1;
+      int iNextValueTagEnd = - 1;
       string Head = "";
       string Expression = "";
       string Tail = "";
@@ -238,51 +236,76 @@ namespace WindowPlugins.GUIPrograms
         switch (TagName)
         {
           case "system":
-            {
-              result = curFile.System_;
-              break;
-            }
+          {
+            result = curFile.System_;
+            break;
+          }
           case "yearmanu":
-            {
-              result = curFile.YearManu;
-              break;
-            }
+          {
+            result = curFile.YearManu;
+            break;
+          }
           case "rating":
+          {
+            if (curFile.Rating >= 0)
             {
-              if (curFile.Rating >= 0)
-              {
-                result = String.Format("{0}/10", curFile.Rating);
-              }
-              break;
+              result = String.Format("{0}/10", curFile.Rating);
             }
+            break;
+          }
           case "genre":
+          {
+            string sep = "";
+            if (curFile.Genre != "")
             {
               result = curFile.Genre;
-              break;
+              sep = " / ";
             }
+            if (curFile.Genre2 != "")
+            {
+              result = result + sep + curFile.Genre2;
+              sep = " / ";
+            }
+            if (curFile.Genre3 != "")
+            {
+              result = result + sep + curFile.Genre3;
+              sep = " / ";
+            }
+            if (curFile.Genre4 != "")
+            {
+              result = result + sep + curFile.Genre4;
+              sep = " / ";
+            }
+            if (curFile.Genre5 != "")
+            {
+              result = result + sep + curFile.Genre5;
+              sep = " / ";
+            }
+            break;
+          }
           case "overview":
-            {
-              result = curFile.Overview;
-              break;
-            }
+          {
+            result = curFile.Overview;
+            break;
+          }
           case "year":
+          {
+            if (curFile.Year >= 1900)
             {
-              if (curFile.Year >= 1900)
-              {
-                result = String.Format("{0}", curFile.Year);
-              }
-              break;
+              result = String.Format("{0}", curFile.Year);
             }
+            break;
+          }
           case "manufacturer":
-            {
-              result = curFile.Manufacturer;
-              break;
-            }
+          {
+            result = curFile.Manufacturer;
+            break;
+          }
           default:
-            {
-              result = curFile.GetValueOfTag(TagName);
-              break;
-            }
+          {
+            result = curFile.GetValueOfTag(TagName);
+            break;
+          }
         }
       }
       return result;
@@ -292,7 +315,7 @@ namespace WindowPlugins.GUIPrograms
     {
       string result = "";
       string TagName = "";
-      int TagNumber =  - 1;
+      int TagNumber = - 1;
       int Start = strTagExpression.IndexOf("(");
       int End = strTagExpression.IndexOf(")", Start + 1);
       if ((Start >= 0) && (End > Start))
@@ -301,7 +324,7 @@ namespace WindowPlugins.GUIPrograms
         TagName = TagName.TrimStart('(');
         TagName = TagName.TrimEnd(')');
         TagName = TagName.ToLower();
-        TagNumber = ProgramUtils.StrToIntDef(TagName,  - 1);
+        TagNumber = ProgramUtils.StrToIntDef(TagName, - 1);
         if (TagNumber >= 0)
         {
           result = curFile.GetNameOfCategory(TagNumber);
@@ -318,7 +341,7 @@ namespace WindowPlugins.GUIPrograms
     {
       string result = "";
       string TagName = "";
-      int TagNumber =  - 1;
+      int TagNumber = - 1;
       int Start = strTagExpression.IndexOf("(");
       int End = strTagExpression.IndexOf(")", Start + 1);
       if ((Start >= 0) && (End > Start))
@@ -327,7 +350,7 @@ namespace WindowPlugins.GUIPrograms
         TagName = TagName.TrimStart('(');
         TagName = TagName.TrimEnd(')');
         TagName = TagName.ToLower();
-        TagNumber = ProgramUtils.StrToIntDef(TagName,  - 1);
+        TagNumber = ProgramUtils.StrToIntDef(TagName, - 1);
         if (TagNumber >= 0)
         {
           result = curFile.GetValueOfCategory(TagNumber);

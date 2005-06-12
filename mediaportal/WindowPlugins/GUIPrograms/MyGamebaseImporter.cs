@@ -38,7 +38,9 @@ namespace WindowPlugins.GUIPrograms
       curFile.Imagefile = imgFilename;
       string strGenre1 = myReader.GetString(7);
       string strGenre2 = myReader.GetString(6);
-      curFile.Genre = String.Format("{0} {1}", strGenre1, strGenre2);
+      //      curFile.Genre = String.Format("{0} {1}", strGenre1, strGenre2);
+      curFile.Genre = strGenre1;
+      curFile.Genre2 = strGenre2;
       // todo: country
       curFile.Country = "";
       curFile.Manufacturer = myReader.GetString(8);
