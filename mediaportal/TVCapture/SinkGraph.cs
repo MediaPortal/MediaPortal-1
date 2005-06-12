@@ -60,6 +60,8 @@ namespace MediaPortal.TV.Recording
 		protected string                     cardName;
 		ArrayList						m_audioPidList=new ArrayList();
 		int									SelectedLanguage = 11;
+		VMR9OSD	m_osd=new VMR9OSD();
+		bool m_useVMR9Zap=false;
 
 
     /// <summary>
@@ -314,6 +316,17 @@ namespace MediaPortal.TV.Recording
 			bool isVBR;
 			props.GetVideoBitRate(out minKbps, out maxKbps,out isVBR);
 			Log.WriteFile(Log.LogType.Capture," driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo,minKbps, maxKbps,isVBR);
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
+			}
+			m_osd.Mute=false;
+			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+			if(win!=null)
+				win.SetObject(m_osd);
+			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+			if(win!=null)
+				win.SetObject(m_osd);
 
       m_graphState=State.Created;
       return true;
@@ -690,7 +703,22 @@ namespace MediaPortal.TV.Recording
       }
       m_iPrevChannel=channel.Number;
       m_StartTime=DateTime.Now;
+			SetZapOSDData(channel);
     }
+		// this sets the channel to render the osd
+		void SetZapOSDData(TVChannel channel)
+		{
+			if(GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+				return;
+			if(m_osd!=null && channel!=null && m_useVMR9Zap==true)
+			{
+
+				int level=SignalStrength();
+				int quality=SignalQuality();
+				m_osd.ShowBitmap(m_osd.RenderZapOSD(channel,quality),0.8f);
+				
+			}
+		}
 
 
     /// <summary>
