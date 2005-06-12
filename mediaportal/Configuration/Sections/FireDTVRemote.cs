@@ -147,9 +147,12 @@ namespace MediaPortal.Configuration.Sections
 		private void LoadDrivers()
 		{
 			FireDTV.OpenDrivers();
-			comboBoxFireDTVDevice.DataSource	= FireDTV.SourceFilterCollection;
-			comboBoxFireDTVDevice.DisplayMember = "DeviceFriendlyName";
-			comboBoxFireDTVDevice.ValueMember	= "DisplayString";
+			if (FireDTV.SourceFilterCollection!=null)
+			{
+				comboBoxFireDTVDevice.DataSource	= FireDTV.SourceFilterCollection;
+				comboBoxFireDTVDevice.DisplayMember = "DeviceFriendlyName";
+				comboBoxFireDTVDevice.ValueMember	= "DisplayString";
+			}
 		}
 		#endregion
 		#region LoadSettings

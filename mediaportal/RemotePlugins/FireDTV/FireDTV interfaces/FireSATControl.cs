@@ -396,26 +396,40 @@ namespace MadMouse.FireDTV
 
 		internal void CloseFireDTVHandle(FireDTVSourceFilterInfo currentSourceFilter)
 		{
-			uint returnCode = FireDTVAPI.FS_CloseDeviceHandle(currentSourceFilter.DeviceHandle);
-			if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
-				throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,"Device Close Failure");
+			try
+			{
+				uint returnCode = FireDTVAPI.FS_CloseDeviceHandle(currentSourceFilter.DeviceHandle);
+				if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+					throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,"Device Close Failure");
+			}
+			catch(Exception){}
 		}
 		internal int getWDMCount()
 		{
-			uint WDMCount;
-			uint returnCode = FireDTVAPI.FS_GetNumberOfWDMDevices(out WDMCount);
-			if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
-				throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,"Unable to WDM Driver Count");
-			return (int)WDMCount;
+			try
+			{
+				uint WDMCount;
+				uint returnCode = FireDTVAPI.FS_GetNumberOfWDMDevices(out WDMCount);
+				if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+					throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,"Unable to WDM Driver Count");
+				return (int)WDMCount;
+			}
+			catch (Exception){}
+			return 0;
 		}
 
 		internal int getBDACount()
 		{
-			uint BDACount;
-			uint returnCode = FireDTVAPI.FS_GetNumberOfBDADevices(out BDACount);
-			if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
-				throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,"Unable to BDA Driver Count");
-			return (int)BDACount;
+			try
+			{
+				uint BDACount;
+				uint returnCode = FireDTVAPI.FS_GetNumberOfBDADevices(out BDACount);
+				if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+					throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,"Unable to BDA Driver Count");
+				return (int)BDACount;
+			}
+			catch(Exception){}
+			return 0;
 		}
 		#endregion
 		#region FireDTV Register Notifications
