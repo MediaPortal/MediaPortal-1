@@ -76,7 +76,7 @@ namespace WindowPlugins.GUIPrograms
     bool isOverlay = false;
     bool isOverviewVisible = true;
     int slideSpeed = 3;
-    int slideTime = 0;
+    long slideTime = 0;
 
     string programSystemLabel = "";
     string programManufacturerLabel = "";
@@ -233,7 +233,7 @@ namespace WindowPlugins.GUIPrograms
         return ;
 
       // does the thumb needs replacing??
-      int timeElapsed = ((int)(DateTime.Now.Ticks / 10000)) - slideTime;
+      long timeElapsed = (DateTime.Now.Ticks / 10000) - slideTime;
       if (timeElapsed >= (slideSpeed * 1000))
       {
         RefreshPicture(); // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
@@ -333,7 +333,7 @@ namespace WindowPlugins.GUIPrograms
         }
         curApp.NextThumb(); // try to find a next thumbnail
       }
-      slideTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
+      slideTime = (DateTime.Now.Ticks / 10000); // reset timer!
     }
 
 

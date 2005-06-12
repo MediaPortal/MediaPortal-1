@@ -381,7 +381,7 @@ namespace WindowPlugins.GUIPrograms
     string lastFilepath = "";
     int selectedItemIndex = - 1;
     int slideSpeed = 3; // speed in seconds between two slides
-    int slideTime = 0;
+    long slideTime = 0;
     Texture curTexture = null;
     int textureWidth = 0;
     int textureHeight = 0;
@@ -664,7 +664,8 @@ namespace WindowPlugins.GUIPrograms
       if (mapSettings.ViewAs == (int) View.VIEW_AS_LIST)
       {
         // does the thumb needs replacing??
-        int timeElapsed = ((int) (DateTime.Now.Ticks/10000)) - slideTime;
+        long now = (DateTime.Now.Ticks/10000);
+        long timeElapsed = now - slideTime;
         if (timeElapsed >= (slideSpeed*1000))
         {
           RefreshScreenShot();
@@ -715,7 +716,7 @@ namespace WindowPlugins.GUIPrograms
       if (mapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
       {
         // does the thumb needs replacing??
-        int timeElapsed = ((int) (DateTime.Now.Ticks/10000)) - slideTime;
+        long timeElapsed = (DateTime.Now.Ticks/10000) - slideTime;
         if (timeElapsed >= (slideSpeed*1000))
         {
           RefreshFilmstripThumb(facadeView.FilmstripView);
@@ -748,7 +749,7 @@ namespace WindowPlugins.GUIPrograms
         curTexture = Picture.Load(thumbFilename, 0, 512, 512, true, false, out textureWidth, out textureHeight);
       }
       lastApp.NextThumb(); // try to find a next thumbnail
-      slideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
+      slideTime = (DateTime.Now.Ticks/10000); // reset timer!
     }
 
     void RefreshFilmstripThumb(GUIFilmstripControl pControl)
@@ -769,7 +770,7 @@ namespace WindowPlugins.GUIPrograms
         pControl.InfoImageFileName = thumbFilename;
       }
       lastApp.NextThumb(); // try to find a next thumbnail
-      slideTime = (int) (DateTime.Now.Ticks/10000); // reset timer!
+      slideTime = (DateTime.Now.Ticks/10000); // reset timer!
     }
 
     bool RefreshButtonVisible()
