@@ -9,7 +9,7 @@
 	  <entry name="rect5">frect:0:494:720:25:20,20,120</entry>
 	  <entry name="rect6">frect:0:519:720:3:188,188,188</entry>
 	  <entry name="rect7">rect:60:312:68:68:188,188,188</entry>
-	  <entry name="chLogo">chLogo:2:314:64:64:20,20,120:2</entry>  
+	  <entry name="chLogo">chLogo:1:314:64:64:255,255,255:2</entry>  
 	  <entry name="chName">text:0:382:Arial:255,255,255:0,0,0:18</entry>
 	  <entry name="chNow">text:0:415:Arial:255,120,131:0,0,0:14</entry>
 	  <entry name="chNext">text:0:455:Arial:230,230,230:0,0,0:14</entry>
