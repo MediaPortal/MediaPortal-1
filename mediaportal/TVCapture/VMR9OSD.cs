@@ -109,6 +109,14 @@ namespace MediaPortal.TV.Recording
 				// channel list
 				m_osdChannels.baseRect=xmlreader.GetValueAsString("zaposdChannels","rect","");
 			}
+			try
+			{
+				m_volumeBitmap=new Bitmap(m_mediaPath+"volume_level_10.png");
+				m_volumeBitmap.MakeTransparent(Color.White);
+				m_muteBitmap=new Bitmap(m_mediaPath+"volume_level_0.png");
+				m_muteBitmap.MakeTransparent(Color.White);
+			}
+			catch{}
 		}
 		// structs
 		struct OSDSkin
@@ -140,6 +148,8 @@ namespace MediaPortal.TV.Recording
 		bool m_bitmapIsVisible=false;
 		int m_timeout=0;
 		OSD m_osdRendered=OSD.None;
+		Bitmap m_volumeBitmap;
+		Bitmap m_muteBitmap;
 
 		public bool Mute
 		{
@@ -155,9 +165,9 @@ namespace MediaPortal.TV.Recording
 			int positionActChannel=0;
 			int counter=0;
 			bool logosFound=false;
-			m_timeout=0;
+			m_timeout=10000;
 			m_osdRendered=OSD.ZapList;
-
+			
 			foreach(TVChannel chan in group.tvChannels)
 			{
 				string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,chan.Name);				
@@ -310,6 +320,8 @@ namespace MediaPortal.TV.Recording
 				m_muteState=true;
 			else
 				m_muteState=false;
+			
+			int[] drawWidth=new int[]{0,25,43,62,82,99,117,137,155,173,200};
 
 			m_osdRendered=OSD.VolumeOSD;
 			m_bitmapIsVisible=false;
@@ -325,15 +337,23 @@ namespace MediaPortal.TV.Recording
 						{
 							Bitmap osd=new Bitmap(720,576);
 							Graphics gr=Graphics.FromImage(osd);
-							Bitmap gfx=new Bitmap(m_mediaPath+String.Format("volume_level_{0}.png",volume));
-							gfx.MakeTransparent(Color.White);
+							
+							//Bitmap gfx=new Bitmap(m_mediaPath+String.Format("volume_level_{0}.png",volume));
+							//gfx.MakeTransparent(Color.White);
 							int xPos=Convert.ToInt16(seg[1]);
 							int yPos=Convert.ToInt16(seg[2]);
-							gr.DrawImageUnscaled(gfx,xPos,yPos,gfx.Width,gfx.Height);
+							if(volume>0)
+							{
+								if(m_volumeBitmap!=null)
+									gr.DrawImage(m_volumeBitmap,xPos,yPos,new RectangleF(0f,0f,drawWidth[volume],m_volumeBitmap.Height),System.Drawing.GraphicsUnit.Pixel);
+							}
+							else
+								if(m_muteBitmap!=null)
+									gr.DrawImageUnscaled(m_muteBitmap,xPos,yPos,m_muteBitmap.Width,m_muteBitmap.Height);
+
 							SaveVMR9Bitmap(osd,true,true,0.9f);
 							gr.Dispose();
 							osd.Dispose();
-							gfx.Dispose();
 							m_timeDisplayed=DateTime.Now;
 						}
 					}
@@ -691,8 +711,7 @@ namespace MediaPortal.TV.Recording
 						//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
 						return false;
 					}
-					surface.Dispose();
-					
+					surface.Dispose();					
 					m_timeDisplayed=DateTime.Now;
 				}
 				else
