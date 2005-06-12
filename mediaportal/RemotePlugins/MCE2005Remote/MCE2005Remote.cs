@@ -244,6 +244,20 @@ namespace MediaPortal
 				if (msg.LParam!=IntPtr.Zero) lparam=msg.LParam.ToInt32();
 			}
 			catch(Exception){}
+
+			if(msg.Msg == WM_APPCOMMAND)
+			{
+				switch((lparam >> 16) & ~0xF000)
+				{
+					case 0x8:
+					case 0x9:
+				 	case 0xA:
+						// we simply want to consume these messages to prevent the OS from handling them
+						Log.Write("MCERemote2005.WndProc: Consuming WM_APPCOMMAND");
+						return true;
+				}
+			}
+
 			/*
 				  if (msg.Msg==WM_APPCOMMAND)
 				  {
@@ -527,11 +541,11 @@ namespace MediaPortal
 						break;
           
 					case 0xe9: //volume+
-						action=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+						action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
 						break;
           
 					case 0xea: //volume-
-						action=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+						action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
 						break;
           
 					case 0x9c: //channel+
@@ -543,7 +557,7 @@ namespace MediaPortal
 						break;
           
 					case 0xe2: //mute
-						action=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+						action=new Action(Action.ActionType.ACTION_VOLUME_MUTE,0,0);
 						break;
 
 					case 0x5A: //teletext
