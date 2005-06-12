@@ -198,9 +198,9 @@ namespace MediaPortal.TV.Recording
 			int textHeight;
 			if(logosFound)
 			{
-				textHeight=66;
-				layoutRect.X+=66;
-				layoutRect.Width-=128;
+				textHeight=50;
+				layoutRect.X+=50;
+				layoutRect.Width-=100;
 			}
 			else
 				textHeight=2+((int)textSize.Height);
@@ -252,8 +252,9 @@ namespace MediaPortal.TV.Recording
 					if(System.IO.File.Exists(tvlogo))
 					{
 						Bitmap logo=new Bitmap(tvlogo);
-						gr.FillRectangle(new SolidBrush(Color.FromArgb(144,144,144)),x,pos+1,64,64);
-						gr.DrawImage(logo,x,pos+1,64,64);
+						Util.BitmapResize.Resize(ref logo,48,48,true,true);
+						gr.FillRectangle(new SolidBrush(Color.FromArgb(144,144,144)),x,pos+1,48,48);
+						gr.DrawImage(logo,x,pos+1,48,48);
 						logo.Dispose();
 					}
 				}
