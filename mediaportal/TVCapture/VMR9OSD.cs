@@ -6,6 +6,7 @@ using MediaPortal.GUI.Library;
 using DShowNET;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
+using MediaPortal.Util;
 
 namespace MediaPortal.TV.Recording
 {
@@ -91,6 +92,13 @@ namespace MediaPortal.TV.Recording
 					if(mute!="")
 						m_osdSkin.mute=mute;
 				}
+				// mute
+				string chLogo=xmlreader.GetValueAsString("zaposdSkin","chLogo","");
+				if(chLogo!=null)
+				{
+					if(chLogo!="")
+						m_osdSkin.chLogo=chLogo;
+				}
 				// channel list
 				m_osdChannels.baseRect=xmlreader.GetValueAsString("zaposdChannels","rect","");
 			}
@@ -106,6 +114,7 @@ namespace MediaPortal.TV.Recording
 			public string sigBar;
 			public string time;
 			public string mute;
+			public string chLogo;
 		}
 		struct OSDChannelList
 		{
@@ -136,15 +145,21 @@ namespace MediaPortal.TV.Recording
 				return;
 			int positionActChannel=0;
 			int counter=0;
+			bool logosFound=false;
+
 			foreach(TVChannel chan in group.tvChannels)
 			{
+				string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,chan.Name);				
+				if(System.IO.File.Exists(tvlogo))
+				{
+					logosFound=true;
+				}
 				if(chan.Name==currentChannel)
 				{
 					positionActChannel=counter;
-					break;
+					//break;
 				}
 				counter++;
-
 			}
 
 			// render list
@@ -169,7 +184,17 @@ namespace MediaPortal.TV.Recording
 			RectangleF layoutRect=new RectangleF(x,y,720-(x*2),576-(y*2));
 			//
 			SizeF textSize=gr.MeasureString("AAA",drawFont);
-			int textHeight=(int)textSize.Height;
+			int textHeight;
+			if(logosFound)
+			{
+				textHeight=64;
+				layoutRect.X+=66;
+				layoutRect.Width-=132;
+			}
+			else
+				textHeight=(int)textSize.Height;
+
+
 			textHeight+=2;
 			string headText=group.GroupName;
 			
@@ -183,7 +208,7 @@ namespace MediaPortal.TV.Recording
 			int startAt=positionActChannel-(channelCount/2);
 			Log.Write("start list at={0} position={1}",startAt,positionActChannel);
 			// draw
-			if(group.tvChannels.Count<channelCount || positionActChannel<10)
+			if(group.tvChannels.Count<channelCount || positionActChannel<(channelCount/2))
 				startAt=0;
 			for(int i=startAt;i<group.tvChannels.Count;i++)
 			{
@@ -211,6 +236,17 @@ namespace MediaPortal.TV.Recording
 					gr.FillRectangle(new SolidBrush(nBoxColor),x,pos,720-(2*x),textHeight);
 					gr.DrawString(channelText,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
 				}
+				if(logosFound==true)
+				{
+					string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,chan.Name);				
+					if(System.IO.File.Exists(tvlogo))
+					{
+						Bitmap logo=new Bitmap(tvlogo);
+						gr.DrawImageUnscaled(logo,x,pos,logo.Width,logo.Height);
+						logo.Dispose();
+					}
+				}
+
 				pos+=textHeight;
 				layoutRect.Y+=textHeight;
 
@@ -318,6 +354,32 @@ namespace MediaPortal.TV.Recording
 				else break;
 			}
 			// text always gets an x-offset 40 pix.
+			// tv channel logo
+			string chLogo=m_osdSkin.chLogo;
+			if(chLogo!=null)
+			{
+				string[] seg =chLogo.Split(new char[]{':'});
+				if(seg!=null)
+				{
+					if(seg[0]=="chLogo" && seg.Length==7)
+					{
+						int xPos=x+Convert.ToInt16(seg[1]);
+						int yPos=y+Convert.ToInt16(seg[2]);
+						int width=Convert.ToInt16(seg[3]);
+						int height=Convert.ToInt16(seg[4]);
+						Color oColor=GetColor(seg[5]);
+						int outline=Convert.ToInt16(seg[6]);
+						string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
+						if(System.IO.File.Exists(tvlogo))
+						{
+							gr.FillRectangle(new SolidBrush(oColor),xPos,yPos,width+outline,height+outline);
+							Bitmap logo=new Bitmap(tvlogo);
+							gr.DrawImageUnscaled(logo,xPos+(outline/2),yPos+(outline/2),logo.Width,logo.Height);
+							logo.Dispose();
+						}
+					}
+				}
+			}
 			//channel name (chName)
 			string chName=m_osdSkin.chName;
 			if(chName!=null)
@@ -512,6 +574,9 @@ namespace MediaPortal.TV.Recording
 		}
 		bool SaveVMR9Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
+			if(VMR9Util.g_vmr9.MixerBitmapInterface==null)
+				return false;
+
 			if(VMR9Util.g_vmr9!=null)
 			{
 				if(VMR9Util.g_vmr9.IsVMR9Connected==false)
