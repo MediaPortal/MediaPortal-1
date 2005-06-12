@@ -99,6 +99,7 @@ public class MediaPortalApp : D3DApp, IRender
     int g_nAnisotropy;
     DateTime m_updateTimer = DateTime.MinValue;
     int m_iDateLayout;
+	int _volumeBeforeMute = int.MinValue;
     static SplashScreen splashScreen;
 
     public delegate bool IECallBack(int hwnd, int lParam);
@@ -1151,11 +1152,47 @@ public class MediaPortalApp : D3DApp, IRender
                     return;
                 //break;
 
-                case Action.ActionType.ACTION_VOLUME_DOWN:
+				case Action.ActionType.ACTION_VOLUME_MUTE:
+					iCurrent = AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
+
+					if(_volumeBeforeMute != int.MinValue)
+					{
+						// restore previous volume
+						AudioMixerHelper.SetVolume(_volumeBeforeMute);
+						_volumeBeforeMute = int.MinValue;
+					}
+					else
+					{
+						// mute and remember the previous volume so that we can restore it
+						AudioMixerHelper.SetVolume(0 /* iMin */);
+						_volumeBeforeMute = iCurrent;
+					}
+
+					if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+					{
+						Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+						GUIGraphicsContext.OnAction(showVolume);
+					}
+
+					break;
+				
+				case Action.ActionType.ACTION_VOLUME_DOWN:
                     iCurrent = AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
-                    iStep = (iMax - iMin) / 10;
-                    iCurrent -= iStep;
-                    if (iCurrent < iMin) iCurrent = iMin;
+
+					// are we muted?
+					if(_volumeBeforeMute != int.MinValue)
+					{
+						iCurrent = _volumeBeforeMute;
+						_volumeBeforeMute = int.MinValue;
+					}
+					else
+					{
+						iStep = (iMax - iMin) / 10;
+						iCurrent -= iStep;
+
+						if (iCurrent < iMin) iCurrent = 0; /* iMin */
+					}
+
                     AudioMixerHelper.SetVolume(iCurrent);
 					if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 					{
@@ -1167,10 +1204,22 @@ public class MediaPortalApp : D3DApp, IRender
 
                 case Action.ActionType.ACTION_VOLUME_UP:
                     iCurrent = AudioMixerHelper.GetMinMaxVolume(out iMin, out iMax);
-                    iStep = (iMax - iMin) / 10;
-                    iCurrent += iStep;
-                    if (iCurrent > iMax) iCurrent = iMax;
-                    AudioMixerHelper.SetVolume(iCurrent);
+
+					// are we muted?
+					if(_volumeBeforeMute != int.MinValue)
+					{
+						iCurrent = _volumeBeforeMute;
+						_volumeBeforeMute = int.MinValue;
+					}
+					else
+					{
+						iStep = (iMax - iMin) / 10;
+
+						iCurrent += iStep;
+						if (iCurrent > iMax) iCurrent = iMax;
+					}
+
+					AudioMixerHelper.SetVolume(iCurrent);
 					if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 					{
 						Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
