@@ -212,7 +212,7 @@ namespace ProcessPlugins.CallerId
                 Log.Write("ISDN: stripping {0} digits", stripPrefix);
                 CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4 + stripPrefix), (lengthCallerId - 2 - stripPrefix));
 
-                if (ConnectInd.buffer[lengthCalledId+2] != 33)
+                if (ConnectInd.buffer[lengthCalledId+2] == 17)
                   CallerId = "+" + CallerId;
 
                 Log.Write("ISDN: CalledID: {0}", CalledId);
