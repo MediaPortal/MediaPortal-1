@@ -431,7 +431,7 @@ namespace MediaPortal.GUI.Video
     			
         case Action.ActionType.ACTION_SHOW_SUBTITLES:
         {	
-          //g_application.m_pPlayer.ToggleSubtitles();
+			g_Player.EnableSubtitle = !g_Player.EnableSubtitle;
         }
           break;
 
