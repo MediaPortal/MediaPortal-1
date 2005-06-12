@@ -586,6 +586,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\FireDTVRemote.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\FireDTVRemote.resx"
+                    DependentUpon = "FireDTVRemote.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\General.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

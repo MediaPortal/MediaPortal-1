@@ -83,6 +83,8 @@ public class MediaPortalApp : D3DApp, IRender
     //string m_strCurrentVersion = "";
     MCE2005Remote MCE2005Remote = new MCE2005Remote();
     HCWRemote HCWRemote = new HCWRemote();
+	MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
+
     MouseEventArgs eLastMouseClickEvent = null;
     private System.Timers.Timer tMouseClickTimer = null;
     private bool bMouseClickFired = false;
@@ -612,7 +614,8 @@ public class MediaPortalApp : D3DApp, IRender
         Action action;
         char key;
         Keys keyCode;
-        if (MCE2005Remote.WndProc(ref msg, out action, out  key, out keyCode))
+        if (MCE2005Remote.WndProc(ref msg, out action, out  key, out keyCode) ||
+			FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
         {
 
             msg.Result = new IntPtr(0);
@@ -776,6 +779,7 @@ public class MediaPortalApp : D3DApp, IRender
         MCE2005Remote.DeInit();
 
         HCWRemote.DeInit();
+		FireDTVRemote.DeInit();
 
         AutoPlay.StopListening();
 
@@ -1018,6 +1022,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
 
         MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
+		FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
 
         if (HCWRemote.Enabled())
         {

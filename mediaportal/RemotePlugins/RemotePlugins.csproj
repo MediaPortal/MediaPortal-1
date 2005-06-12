@@ -104,6 +104,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "FireDTV\FireDTVRemote.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FireDTV\MPRemoteInterface.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FireDTV\FireDTV interfaces\FireSATControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "FireDTV\FireDTV interfaces\FireSATDefines.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "HCWRemote\HCWRemote.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
