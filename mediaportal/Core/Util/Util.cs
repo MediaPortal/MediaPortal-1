@@ -66,6 +66,7 @@ namespace MediaPortal.Util
 		static ArrayList m_VideoExtensions		=new ArrayList();
 		static ArrayList m_PictureExtensions		=new ArrayList();
 		static bool m_bHideExtensions=false;
+    static bool enableGuiSounds;
 
 		// singleton. Dont allow any instance of this class
 		private Utils()
@@ -97,6 +98,8 @@ namespace MediaPortal.Util
 				{
 					m_PictureExtensions.Add(strExt.ToLower());
 				}
+
+        enableGuiSounds = xmlreader.GetValueAsBool("general", "enableguisounds", true);
 			}
 		}
 
@@ -1290,6 +1293,9 @@ namespace MediaPortal.Util
 		public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors,
 			bool bNoDefault, bool bLoop, bool bNoStop) 
 		{
+      if (!enableGuiSounds)
+        return 0;
+
 			const int SND_ASYNC = 1;
 			const int SND_NODEFAULT = 2;
 			const int SND_LOOP = 8;
