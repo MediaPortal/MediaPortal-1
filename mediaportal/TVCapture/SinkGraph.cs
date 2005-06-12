@@ -60,8 +60,8 @@ namespace MediaPortal.TV.Recording
 		protected string                     cardName;
 		ArrayList						m_audioPidList=new ArrayList();
 		int									SelectedLanguage = 11;
-		VMR9OSD	m_osd=new VMR9OSD();
-		bool m_useVMR9Zap=false;
+		protected VMR9OSD	m_osd=new VMR9OSD();
+		protected bool m_useVMR9Zap=false;
 
 
     /// <summary>
