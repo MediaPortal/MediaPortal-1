@@ -5,11 +5,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 
+using SQLite.NET;
+
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
-using MediaPortal.Music.Database;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+using MediaPortal.Database;
+using MediaPortal.Music.Database;
+
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -26,7 +30,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label countLabel;
     private System.Windows.Forms.Label fileLabel;
     private System.Windows.Forms.Button cancelButton;
-		private System.ComponentModel.IContainer components = null;
+	private System.ComponentModel.IContainer components = null;
 
     public class MusicData
     {
@@ -40,11 +44,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    bool stopRebuild = false;
-    ArrayList extractedTags;
-    ArrayList availableFiles;
-    string strLastThumb = "";
-
+	MediaPortal.Music.Database.MusicDatabase m_dbs=new MediaPortal.Music.Database.MusicDatabase();
 
     public MusicDatabase() :  this("Music Database")
     {
@@ -329,166 +329,30 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
+    /// 
+
+	void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
+		{
+		progressBar.Value = e.progress;
+		SetStatus(e.phase);
+		}
+
     private void startButton_Click(object sender, System.EventArgs e)
     {
-      groupBox2.Enabled = true;
-      groupBox1.Enabled = false;
-
-      RebuildDatabase();
-    }
-
-    private enum RebuildState
-    {
-      None,
-      Counting,
-      Scanning,
-      Updating,
-      Done
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private void RebuildDatabase()
-    {
-      int totalFiles = 0;
-
-      //
-      // Start by counting files
-      //
-      RebuildState rebuildState = RebuildState.None;
-
-      while(stopRebuild != true)
-      {
-        switch(rebuildState)
-        {
-          case RebuildState.None:
-            rebuildState = RebuildState.Counting;
-            break;
-
-          case RebuildState.Counting:
-          {
-            SetStatus("Counting files in selected folders");
-
-            //
-            // Count files
-            //
-            availableFiles = new ArrayList();
-            totalFiles = CountFiles();
+	  m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
+	  groupBox1.Enabled = false;
+	  groupBox2.Enabled = true;
       
-            //
-            // Initialize progress bar
-            //
-            progressBar.Value = 0;
-            progressBar.Maximum = totalFiles;
-            progressBar.Step = 1;
-            rebuildState = RebuildState.Scanning;
-            break;
-          }
+	  //RebuildDatabase();
+	  progressBar.Maximum = 100;
+	  int appel = m_dbs.MusicDatabaseReorg( );
+	  progressBar.Value = 100;
 
-          case RebuildState.Scanning:
-          {
-            SetStatus("Scanning files for valid tags");
-            extractedTags = new ArrayList(totalFiles);
-            ScanFiles(totalFiles);
-            rebuildState = RebuildState.Updating; 
-            break;
-          }
+	  groupBox1.Enabled = true;
+	  groupBox2.Enabled = false;
+	}
 
-          case RebuildState.Updating:
-          {
-            SetStatus("Updating database with tag information from " + extractedTags.Count + " files");
-            UpdateDatabase();
-            rebuildState = RebuildState.Done; 
-            break;
-          }
 
-          case RebuildState.Done:
-            SetStatus("Database has been successfully rebuilt");
-            stopRebuild = true;
-            rebuildState = RebuildState.None;
-            break;
-        }
-      }
-      
-      stopRebuild = false;
-      groupBox1.Enabled = true;
-      groupBox2.Enabled = false;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    private int CountFiles()
-    {
-      int totalFiles = 0;
-
-      for(int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
-      {
-        string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
-
-        //
-        // Make sure the path exists
-        //
-        if(Directory.Exists(path))
-        {
-          CountFiles(path, ref totalFiles);
-        }
-      }
-
-      return totalFiles;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="totalFiles"></param>
-    private void CountFiles(string path, ref int totalFiles)
-    {
-      //
-      // Exit counting if we requested so
-      //
-      if(stopRebuild) 
-        return;
-
-      SetCount(0, totalFiles);
-
-      //
-      // Count the files in the current directory
-      //
-      try
-      {
-        foreach(string extension in Extensions)
-        {
-          string[] files = Directory.GetFiles(path, String.Format("*{0}", extension));
-          availableFiles.AddRange(files);
-          totalFiles += files.Length;
-        }
-      }
-      catch
-      {
-        // Ignore
-      }
-
-      //
-      // Count files in subdirectories
-      //
-      try
-      {
-        string[] directories = Directory.GetDirectories(path);
-
-        foreach(string directory in directories)
-        {
-          CountFiles(directory, ref totalFiles);
-        }
-      }
-      catch
-      {
-        // Ignore
-      }
-    }
 
     /// <summary>
     /// 
@@ -500,17 +364,7 @@ namespace MediaPortal.Configuration.Sections
       Application.DoEvents();
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="count"></param>
-    /// <param name="total"></param>
-    private void SetCount(int count, int total)
-    {
-      countLabel.Text = String.Format("{0} of {1}", count.ToString(), total.ToString());
-      Application.DoEvents();
-    }
-
+    
     /// <summary>
     /// 
     /// </summary>
@@ -518,180 +372,10 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void cancelButton_Click(object sender, System.EventArgs e)
     {
-      stopRebuild = true;
+      //Not yet an option to stop rebuildin the database
+	  //stopRebuild = true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="totalFiles"></param>
-    private void ScanFiles(int totalFiles)
-    {
-      int currentCount = 0;
-
-      foreach(string file in availableFiles)
-      {
-        ScanFile(file);
-
-        //
-        // Update stats
-        //
-        SetCount(++currentCount, totalFiles);
-
-        progressBar.PerformStep();
-
-        //
-        // Exit counting if we requested so
-        //
-        if(stopRebuild) 
-          return;
-      }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="file"></param>
-    private void ScanFile(string file)
-    {
-      //
-      // Don't scan playlists
-      //
-      if(PlayListFactory.IsPlayList(file) == false)
-      {
-        //
-        // Don't load tags from CD's
-        //
-        string fileExtension = Path.GetExtension(file).ToLower();
-        if(fileExtension.Equals(".cda") == false)
-        {
-          //
-          // Use tag reader to extract information.  Added ref to embedded image, which
-          // adds little overhead as the image is always parsed out (at least for id3).
-          //
-          byte[] imageBytes = null;
-          MusicTag tag = TagReader.TagReader.ReadTag( file, ref imageBytes );
-
-          if(tag != null)
-          {
-            //
-            // Add to list of extracted tags
-            //
-            extractedTags.Add(new MusicData(file, tag));
-
-            //
-            // Create thumbnail for the album
-            //
-            if ( buildThumbsCheckBox.Checked )
-            {
-              // What to call the thumb?
-              string name = String.Format( "{0}-{1}", tag.Artist, tag.Album );
-              string strSmallThumb =  Utils.GetCoverArtName( Thumbs.MusicAlbum, name );
-
-              if ( strSmallThumb != strLastThumb )
-              {
-                // Use the folder.jpg if it's there
-                string strImageFile = Utils.GetFolderThumb( file );
-
-                try
-                {
-                  if ( System.IO.File.Exists( strImageFile ) )
-                  {
-                    MediaPortal.Util.Picture.CreateThumbnail( strImageFile, strSmallThumb, 128, 128, 0 );
-                    // MediaPortal.Util.Picture.CreateThumbnail( strImageFile, strLargeThumb, 512, 512, 0 );
-
-                    strLastThumb = strSmallThumb;
-                  }
-                  else if ( imageBytes != null )
-                  {
-                    MemoryStream memoryStream = new MemoryStream( imageBytes );
-                    Image image = Image.FromStream( memoryStream );
-
-                    MediaPortal.Util.Picture.CreateThumbnail( image, strSmallThumb, 128, 128, 0 );
-                    // MediaPortal.Util.Picture.CreateThumbnail( image, strLargeThumb, 512, 512, 0 );
-
-                    strLastThumb = strSmallThumb;
-                  }
-                }
-                catch ( Exception )
-                {
-                  // Just skip this one
-                  Log.Write( "Invalid image in {0}", file );
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private void UpdateDatabase()
-    {
-      int totalFiles = extractedTags.Count;
-      int currentFile = 0;
-
-      progressBar.Value = 0;
-      progressBar.Maximum = totalFiles;
-
-      //
-      // Setup database
-      //
-      MediaPortal.Music.Database.MusicDatabase database = null;
-      
-      try
-      {
-        //
-        // Allocate and open database
-        //
-        database = new MediaPortal.Music.Database.MusicDatabase();
-        database.BeginTransaction();
-
-        foreach(MusicData data in extractedTags)
-        {
-          if(stopRebuild)
-          {
-            database.RollbackTransaction();
-            return;
-          }
-
-          Song song         = new Song();
-
-          song.FileName     = data.FilePath;
-
-          song.Title		    = data.Tag.Title;
-          song.Genre		    = data.Tag.Genre;
-          song.Artist	      = data.Tag.Artist;
-          song.Album		    = data.Tag.Album;
-          song.Year			    =	data.Tag.Year;
-          song.Track			  = data.Tag.Track;
-          song.Duration	    = data.Tag.Duration;
-
-          //
-          // Add to database
-          //
-          database.AddSong(song, true);
-
-          SetCount(++currentFile, totalFiles);
-          progressBar.PerformStep();
-        }
-
-        database.CommitTransaction();
-
-        extractedTags.Clear();
-      }
-      catch
-      {
-        if(database != null)
-          database.RollbackTransaction();
-      }
-      finally
-      {
-      }
-    }
 
     private void clearButton_Click(object sender, System.EventArgs e)
     {

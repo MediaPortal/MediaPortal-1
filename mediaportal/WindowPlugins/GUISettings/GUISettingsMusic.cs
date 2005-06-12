@@ -68,7 +68,6 @@ namespace MediaPortal.GUI.Settings
 			base.OnAction(action);
 		}
 
-
 		public override bool OnMessage(GUIMessage message)
 		{
 			switch ( message.Message )

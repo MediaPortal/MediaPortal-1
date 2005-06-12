@@ -1,18 +1,35 @@
 using System;
 using System.Collections;
+using System.Threading;
 using SQLite.NET;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.TagReader;
 using MediaPortal.Database;
 using MediaPortal.Music.Database;
+
+
+///TODO list for the reorganisation
+///24-5-2005	New files in the shares must be found too (now only through configuration
+///24-5-2005	test how fast this works with 2000 songs, then we can fire this one always when starting up. Maybe as background process
+///24-5-2005	Move reorg to music/database.cs. Then we can also use it in the configuration.exe
+///24-5-2005	Delete all unnecessary coding for remembering relationships, this is now automatic
+///24-5-2005	Solve the "first time reorg" bug
+///24-5-2005	Adding extra indexes on the musictables for performance ?
+///24-5-2005	recode the delete song thing for songs that don't have corresponding files
+///24-5-2005	put code to delete files in non-existing MusicFolders in seperate procedure
+///24-5-2005	make the body of the mainprocedure easier and put more in seperate procedures
+///24-5-2005	Delete any thumbs going with a deleted song or album
 
 namespace MediaPortal.GUI.Settings
 {
 	/// <summary>
 	/// 
 	/// </summary>
+	/// 
+
+
 	public class MusicDatabaseReorg
 	{
 		//	return codes of ReorgDatabase
@@ -20,35 +37,44 @@ namespace MediaPortal.GUI.Settings
 		enum Errors
 		{
 
-			ERROR_OK							=317
-			, ERROR_CANCEL				=		0
+			  ERROR_OK					=	317
+			, ERROR_CANCEL				=	0
 			, ERROR_DATABASE			=	315
-			, ERROR_REORG_SONGS		=	319			
-			, ERROR_REORG_ARTIST	=	321
-			, ERROR_REORG_GENRE		=	323
-			, ERROR_REORG_PATH		=	325
-			, ERROR_REORG_ALBUM		=	327
-			, ERROR_WRITING_CHANGES=	329	
-			, ERROR_COMPRESSING		=	332
+			, ERROR_REORG_SONGS			=	319			
+			, ERROR_REORG_ARTIST		=	321
+			, ERROR_REORG_GENRE			=	323
+			, ERROR_REORG_PATH			=	325
+			, ERROR_REORG_ALBUM			=	327
+			, ERROR_WRITING_CHANGES		=	329	
+			, ERROR_COMPRESSING			=	332
 		}
 
 		MusicDatabase m_dbs=new MusicDatabase();
-		ArrayList m_songids = new ArrayList();
-		ArrayList m_albumids = new ArrayList();
-		ArrayList m_artistids = new ArrayList();
 		ArrayList m_pathids = new ArrayList();
-		ArrayList m_genreids = new ArrayList();
-    ArrayList m_albumnames = new ArrayList();
+		ArrayList m_shares = new ArrayList ();
 
 		public MusicDatabaseReorg()
 		{
+		 
 		}
 
-		void SetPercentDone(int nPercent)
+
+		/// This code seems obsolete. Comment it out and we'll see later
+		/// tfro71 4 june 2005
+		//void SetPercentDone(int nPercent)
+		//{
+		//	GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+		//	if (null==pDlgProgress) return;
+		//	pDlgProgress.SetPercentage(nPercent);
+		//	pDlgProgress.Progress();
+		//}
+
+		void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
 		{
 			GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			if (null==pDlgProgress) return;
-			pDlgProgress.SetPercentage(nPercent);
+			pDlgProgress.SetPercentage(e.progress);
+			pDlgProgress.SetLine(1, e.phase );
 			pDlgProgress.Progress();
 		}
 
@@ -72,467 +98,34 @@ namespace MediaPortal.GUI.Settings
 			return false;
 		}
 
-		public int DoReorg()
+    	public int DoReorg()
 		{
-			string strSQL;
+			/// Todo: move this statement to the GUI.
+			/// Database Reorg now fully in music.database
+			/// 
 
-			try
-			{
-				MusicDatabase.DBHandle.Execute("begin"); 
-			}
-			catch (Exception )
-			{
-				return (int)Errors.ERROR_DATABASE;
-			}
-
-			SQLiteResultSet results;
-			strSQL=String.Format("select * from song, path where song.idPath=path.idPath");
-			try
-			{
-				results = MusicDatabase.DBHandle.Execute(strSQL);
-				if (results==null) return (int)Errors.ERROR_REORG_SONGS;
-			}
-			catch (Exception)
-			{
-				MusicDatabase.DBHandle.Execute("rollback");
-				return (int)Errors.ERROR_REORG_SONGS;
-			}
-
-			//	songs cleanup
 			GUIDialogProgress 	pDlgProgress= (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			if (null==pDlgProgress) return (int)Errors.ERROR_REORG_SONGS;
 
 			pDlgProgress.SetHeading(313);
-			pDlgProgress.SetLine(1, 314);
 			pDlgProgress.SetLine(2, "");
 			pDlgProgress.SetLine(3, "");
 			pDlgProgress.SetPercentage(0);
 			pDlgProgress.Progress();
-
-
-			if (results.Rows.Count==0)
-			{
-				MusicDatabase.DBHandle.Execute("rollback");
-				return (int)Errors.ERROR_OK;
-			}
 			pDlgProgress.SetLine(1, 316);
 			pDlgProgress.ShowProgressBar(true);
-			if (IsCanceled())
-				return (int)Errors.ERROR_CANCEL;
-			//	test every song in database, if its file still exists
-			for (int i=0; i < results.Rows.Count;++i)
-			{
-				string strFileName = DatabaseUtility.Get(results,i,"path.strPath") ;
-				strFileName += DatabaseUtility.Get(results,i,"song.strFileName") ;
-				pDlgProgress.SetLine(2, System.IO.Path.GetFileName(strFileName) );
-	
-				if (! System.IO.File.Exists(strFileName))
-				{
-					// song doesn't exist anymore, we have cleanup 
-					// candidates, remember foreign keys to remove 
-					// entries later if no relation exists
-					m_songids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idSong") ) );
-					m_albumids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idAlbum") ) );
-          m_albumnames.Add(DatabaseUtility.Get(results,i,"album.strAlbum"));
-					m_artistids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idArtist") ) );
-					m_pathids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idPath") ) );
-					m_genreids.Add( Int32.Parse( DatabaseUtility.Get(results,i,"song.idGenre") ) );
-				}
-				else
-				{
-					int idAlbumNew=0, idArtistNew=0, idPathNew=0, idGenreNew=0;
-					int idSong=Int32.Parse( DatabaseUtility.Get(results,i,"song.idSong"));
-					int idAlbum=idAlbumNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idAlbum"));
-					int idArtist=idArtistNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idArtist"));
-					int idPath=idPathNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idPath"));
-					int idGenre=idGenreNew=Int32.Parse( DatabaseUtility.Get(results,i,"song.idGenre"));
 
-					if (!UpdateSong(strFileName, idSong, ref idAlbumNew, ref idArtistNew, ref idGenreNew, ref idPathNew))
-					{
-						MusicDatabase.DBHandle.Execute("rollback"); 
-						return (int)Errors.ERROR_REORG_SONGS;
-					}
+			///TFRO71 4 june 2005
+			///Connect the event to a method that knows what to do with the event.
+			m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
+			///Execute the reorganisation
+			int appel = m_dbs.MusicDatabaseReorg();
+			///Tfro Disconnect the event from the method.
+			m_dbs.DatabaseReorgChanged -= new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
 
-					// if we have cleanup candidates, remember foreign 
-					// keys to remove entries later if no relation exists
-					if (idAlbumNew!=idAlbum)
-						m_albumids.Add(idAlbum);
-					if (idArtistNew!=idArtist)
-						m_artistids.Add(idArtist);
-					if (idPathNew!=idPath)
-						m_pathids.Add(idPath);
-					if (idGenreNew!=idGenre)
-						m_genreids.Add(idGenre);
-				}
-				SetPercentDone(i*100/results.Rows.Count);
-				if (IsCanceled())
-				{
-					return (int)Errors.ERROR_CANCEL;
-				}
-			}//for (int i=0; i < results.Rows.Count;++i)
-
-			// nothing to do for song cleanup?
-			if (m_songids.Count>0)
-			{
-				pDlgProgress.SetLine(1, 318);
-				pDlgProgress.SetLine(2, "");
-				pDlgProgress.Progress();
-
-				int nRet=DeleteSongs();
-				if (nRet!=(int)Errors.ERROR_OK)
-					return nRet;
-			}
-
-			// artist cleanup
-			if (m_artistids.Count>0)
-			{
-				pDlgProgress.SetLine(1, 320);
-				pDlgProgress.SetLine(2, "");
-				pDlgProgress.SetPercentage(0);
-				pDlgProgress.Progress();
-
-				// Do the collected artistids have a
-				// relation to song table?
-				int nRet=ExamineAndDeleteArtistids();
-				if (nRet!=(int)Errors.ERROR_OK)
-					return nRet;
-			}
-
-			// genres cleanup
-			if (m_genreids.Count>0)
-			{
-				pDlgProgress.SetLine(1, 322);
-				pDlgProgress.SetLine(2, "");
-				pDlgProgress.SetPercentage(0);
-				pDlgProgress.Progress();
-
-				// Do the collected genreids have a
-				// relation to song table?
-				int nRet=ExamineAndDeleteGenreids();
-				if (nRet!=(int)Errors.ERROR_OK)
-					return nRet;
-			}
-			// path cleanup
-			if (m_pathids.Count>0)
-			{
-				pDlgProgress.SetLine(1, 324);
-				pDlgProgress.SetLine(2, "");
-				pDlgProgress.SetPercentage(0);
-				pDlgProgress.Progress();
-		
-				// Do the collected pathids have a
-				// relation to song table?
-				int nRet=ExamineAndDeletePathids();
-				if (nRet!=(int)Errors.ERROR_OK)
-					return nRet;
-			}
-			// album cleanup
-			if (m_albumids.Count>0)
-			{
-				pDlgProgress.SetLine(1, 326);
-				pDlgProgress.SetLine(2, "");
-				pDlgProgress.SetPercentage(0);
-				pDlgProgress.Progress();
-
-				// Do the collected albumids have a
-				// relation to song table?
-				int nRet=ExamineAndDeleteAlbumids();
-				if (nRet!=(int)Errors.ERROR_OK)
-					return nRet;
-			}
-      pDlgProgress.SetLine(1, 328);
-			pDlgProgress.SetLine(2, "");
-			pDlgProgress.SetLine(3, 330);
-			pDlgProgress.ShowProgressBar(false);
-			pDlgProgress.Progress();
-			// commit changes of our transaction
-			try
-			{
-				MusicDatabase.DBHandle.Execute("end");
-			}
-			catch (Exception)
-			{
-				return (int)Errors.ERROR_WRITING_CHANGES;
-			}
-
-
-      pDlgProgress.SetLine(1, 331);
-			pDlgProgress.SetLine(2, "");
-			pDlgProgress.SetLine(3, 330);
-			pDlgProgress.Progress();
-
-			m_dbs.EmptyCache();
-			// compress database file
-			return Compress();
-		}
-
-		int DeleteSongs()
-		{
-			// build a propper where clause out of the
-			// songids, whose files do not exist anymore 
-			// and delete the songs from database
-			string strWhere="song.idSong in ( ";
-			foreach (int lSongId in m_songids)
-			{
-				string strSongId;
-				strSongId=String.Format("{0}, ", lSongId);
-				strWhere+=strSongId;
-			}
-			strWhere=strWhere.TrimEnd( new char[] {',',' '} );
-			strWhere+=" )";
-
-			// delete the songs
-			string strSql;
-			strSql = "delete from song where " + strWhere;
-			try 
-			{
-				MusicDatabase.DBHandle.Execute(strSql); 
-			}
-			catch (Exception)
-			{
-				MusicDatabase.DBHandle.Execute("rollback"); 
-				return (int)Errors.ERROR_REORG_SONGS;
-			}
-			return (int)Errors.ERROR_OK;
-		}
-
-		int ExamineAndDeleteArtistids()
-		{
-			int i=0;
-			string strSql;
-			SQLiteResultSet results;
-			// check the collected artist keys, if they have a relation to song
-			foreach (int iArtistId in m_artistids)
-			{
-				// do we get songs of that artistException
-				strSql=String.Format("select * from song where song.idArtist={0}", iArtistId );
-				try
-				{
-					results = MusicDatabase.DBHandle.Execute(strSql);
-				}
-				catch (Exception)
-				{
-					MusicDatabase.DBHandle.Execute("rollback"); 
-					return (int)Errors.ERROR_REORG_ARTIST;
-				}
-				int iRowsFound = results.Rows.Count;
-				if (iRowsFound== 0)
-				{
-					// Exception no, delete him
-					strSql=String.Format("delete from artist where artist.idArtist={0}", iArtistId  );
-					try
-					{
-						MusicDatabase.DBHandle.Execute(strSql); 
-					}
-					catch (Exception)
-					{
-						MusicDatabase.DBHandle.Execute("rollback");
-						return (int)Errors.ERROR_REORG_ARTIST;
-					}
-				}
-				SetPercentDone(i*100/m_artistids.Count);
-				if (IsCanceled())
-					return (int)Errors.ERROR_CANCEL;
-			}
+			pDlgProgress.SetLine(2, "Klaar" );
 
 			return (int)Errors.ERROR_OK;
-		}
-
-		int ExamineAndDeleteGenreids()
-		{
-			int i=0;
-			string strSql;
-			SQLiteResultSet results;
-			// check the collected genre keys, if they have a relation to song
-			foreach (int iGenreId in m_genreids)
-			{
-				// do we get songs of that genreException
-				strSql=String.Format("select * from song where song.idGenre={0}", iGenreId );
-				try
-				{
-					results = MusicDatabase.DBHandle.Execute(strSql);
-				}
-				catch (Exception)
-				{
-					MusicDatabase.DBHandle.Execute("rollback"); 
-					return (int)Errors.ERROR_REORG_GENRE;
-				}
-				int iRowsFound = results.Rows.Count;
-				if (iRowsFound== 0)
-				{
-					// Exception no, delete him
-					strSql=String.Format("delete from genre where genre.idGenre={0}", iGenreId  );
-					try
-					{
-						MusicDatabase.DBHandle.Execute(strSql); 
-					}
-					catch (Exception)
-					{
-						MusicDatabase.DBHandle.Execute("rollback");
-						return (int)Errors.ERROR_REORG_GENRE;
-					}
-				}
-				SetPercentDone(i*100/m_genreids.Count);
-				if (IsCanceled())
-					return (int)Errors.ERROR_CANCEL;
-			}
-
-			return (int)Errors.ERROR_OK;
-		}
-
-		int ExamineAndDeletePathids()
-		{
-			int i=0;
-			string strSql;
-			SQLiteResultSet results;
-			// check the collected path keys, if they have a relation to song
-			foreach (int iPathId in m_pathids)
-			{
-				// do we get songs of that pathException
-				strSql=String.Format("select * from song where song.idPath={0}", iPathId );
-				try
-				{
-					results = MusicDatabase.DBHandle.Execute(strSql);
-				}
-				catch (Exception)
-				{
-					MusicDatabase.DBHandle.Execute("rollback"); 
-					return (int)Errors.ERROR_REORG_PATH;
-				}
-				int iRowsFound = results.Rows.Count;
-				if (iRowsFound== 0)
-				{
-					// Exception no, delete him
-					strSql=String.Format("delete from path where path.idPath={0}", iPathId  );
-					try
-					{
-						MusicDatabase.DBHandle.Execute(strSql); 
-					}
-					catch (Exception)
-					{
-						MusicDatabase.DBHandle.Execute("rollback");
-						return (int)Errors.ERROR_REORG_PATH;
-					}
-				}
-				SetPercentDone(i*100/m_pathids.Count);
-				if (IsCanceled())
-					return (int)Errors.ERROR_CANCEL;
-			}
-
-			return (int)Errors.ERROR_OK;
-		}
-
-		int ExamineAndDeleteAlbumids()
-		{
-			int i=0;
-			string strSql;
-			SQLiteResultSet results;
-			// check the collected album keys, if they have a relation to song
-			foreach (int iAlbumId in m_albumids)
-			{
-				// do we get songs of that albumException
-				strSql=String.Format("select * from song where song.idAlbum={0}", iAlbumId );
-				try
-				{
-					results = MusicDatabase.DBHandle.Execute(strSql);
-				}
-				catch (Exception)
-				{
-					MusicDatabase.DBHandle.Execute("rollback"); 
-					return (int)Errors.ERROR_REORG_ALBUM;
-				}
-				int iRowsFound = results.Rows.Count;
-				if (iRowsFound== 0)
-				{
-					// Exception no, delete him
-					strSql=String.Format("delete from album where album.idAlbum={0}", iAlbumId  );
-					try
-					{
-						MusicDatabase.DBHandle.Execute(strSql); 
-					}
-					catch (Exception)
-					{
-						MusicDatabase.DBHandle.Execute("rollback");
-						return (int)Errors.ERROR_REORG_ALBUM;
-					}
-				}
-				SetPercentDone(i*100/m_albumids.Count);
-				if (IsCanceled())
-					return (int)Errors.ERROR_CANCEL;
-			}
-
-			return (int)Errors.ERROR_OK;
-		}
-
-
-		int Compress()
-		{
-			//	compress database
-			try
-			{
-				MusicDatabase.DBHandle.Execute("vacuum");
-			}
-			catch(Exception)
-			{
-				return (int)Errors.ERROR_COMPRESSING;
-			}
-			return (int)Errors.ERROR_OK;
-		}
-
-		bool UpdateSong(string  strPathSong, int idSong, ref int idAlbum, ref int idArtist, ref int idGenre, ref int idPath)
-		{
-			MusicTag tag;
-			tag=TagReader.TagReader.ReadTag(strPathSong);									
-			if (tag!=null)
-			{
-				Song song = new Song();
-				song.Title		= tag.Title;
-				song.Genre		= tag.Genre;
-				song.FileName= strPathSong;
-				song.Artist	= tag.Artist;
-				song.Album		= tag.Album;
-				song.Year			=	tag.Year;
-				song.Track			= tag.Track;
-				song.Duration	= tag.Duration;
-
-				string strPath, strFileName;
-				DatabaseUtility.Split(song.FileName, out strPath, out strFileName); 
-
-				string strTmp;
-				strTmp=song.Album;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Album=strTmp;
-				strTmp=song.Genre;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Genre=strTmp;
-				strTmp=song.Artist;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Artist=strTmp;
-				strTmp=song.Title;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Title=strTmp;
-
-				DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
-				idGenre  = m_dbs.AddGenre(tag.Genre);
-				idArtist = m_dbs.AddArtist(tag.Artist);
-				idPath   = m_dbs.AddPath(strPath);
-				idAlbum  = m_dbs.AddAlbum(tag.Album,idArtist);
-				ulong dwCRC=0;
-				CRCTool crc= new CRCTool();
-				crc.Init(CRCTool.CRCCode.CRC32);
-				dwCRC=crc.calc(song.FileName);
-				//SQLiteResultSet results;
-
-				string strSQL;
-				strSQL=String.Format("update song set idArtist={0},idAlbum={1},idGenre={2},idPath={3},strTitle='{4}',iTrack={5},iDuration={6},iYear={7},dwFileNameCRC='{8}',strFileName='{9}' where idSong={10}",
-															idArtist,idAlbum,idGenre,idPath,
-															song.Title,
-															song.Track,song.Duration,song.Year,
-															dwCRC,
-															strFileName, idSong);
-				try
-				{
-					MusicDatabase.DBHandle.Execute(strSQL);
-				}
-				catch(Exception)
-				{
-					return false;
-				}
-			}
-			return true;
 		}
 
 		public void DeleteAlbumInfo()
@@ -602,6 +195,7 @@ namespace MediaPortal.GUI.Settings
 		}
 
 
+		
 		public void DeleteSingleAlbum()
 		{
 			// CMusicDatabaseReorg is friend of CMusicDatabase
@@ -609,6 +203,13 @@ namespace MediaPortal.GUI.Settings
 			// use the same databaseobject as CMusicDatabase
 			// to rollback transactions even if CMusicDatabase
 			// memberfunctions are called; create our working dataset
+
+			ArrayList m_songids = new ArrayList();
+			ArrayList m_albumids = new ArrayList();
+			ArrayList m_artistids = new ArrayList();
+			ArrayList m_genreids = new ArrayList();
+			ArrayList m_albumnames = new ArrayList();
+
 			string strSQL;
 			SQLiteResultSet results;
 			strSQL=String.Format("select * from album,artist where album.idArtist=artist.idArtist order by album.strAlbum");
@@ -705,6 +306,6 @@ namespace MediaPortal.GUI.Settings
 			}
 
 		}
-
+	
 	}
 }
