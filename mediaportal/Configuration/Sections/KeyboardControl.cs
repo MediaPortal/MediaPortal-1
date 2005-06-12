@@ -317,6 +317,10 @@ namespace MediaPortal.Configuration.Sections
                                                                                                               "DVD",
                                                                                                               "F8",
                                                                                                               "Next chapter"}, -1);
+      System.Windows.Forms.ListViewItem listViewItem67 = new System.Windows.Forms.ListViewItem(new string[] {
+                                                                                                              "DVD",
+                                                                                                              "L",
+                                                                                                              "Toggle subtitles"}, -1);
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.sharesListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
