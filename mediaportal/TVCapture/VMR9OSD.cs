@@ -22,6 +22,13 @@ namespace MediaPortal.TV.Recording
 			//
 			ReadSkinFile();
 		}
+		enum OSD
+		{
+			ZapOSD=1,
+			ZapList,
+			VolumeOSD,
+			None
+		}
 		void ReadSkinFile()
 		{
 			m_osdSkin.rects=new string[99];
@@ -132,6 +139,7 @@ namespace MediaPortal.TV.Recording
 		OSDChannelList m_osdChannels;
 		bool m_bitmapIsVisible=false;
 		int m_timeout=0;
+		OSD m_osdRendered=OSD.None;
 
 		public bool Mute
 		{
@@ -148,6 +156,7 @@ namespace MediaPortal.TV.Recording
 			int counter=0;
 			bool logosFound=false;
 			m_timeout=0;
+			m_osdRendered=OSD.ZapList;
 
 			foreach(TVChannel chan in group.tvChannels)
 			{
@@ -279,7 +288,7 @@ namespace MediaPortal.TV.Recording
 		public void CheckTimeOuts()
 		{
 			TimeSpan ts=DateTime.Now-m_timeDisplayed;
-			if(ts.TotalMilliseconds>m_timeout && m_timeout>0)
+			if(ts.TotalMilliseconds>m_timeout && m_timeout>0 && (m_muteState==false && m_osdRendered==OSD.VolumeOSD))
 			{
 				m_bitmapIsVisible=true; // force clear
 				HideBitmap();
@@ -301,6 +310,7 @@ namespace MediaPortal.TV.Recording
 			else
 				m_muteState=false;
 
+			m_osdRendered=OSD.VolumeOSD;
 			m_bitmapIsVisible=false;
 			m_timeout=3000; // 3 sec for volume osd
 			if(System.IO.File.Exists(m_mediaPath+String.Format("volume_level_{0}.png",volume))==true)
@@ -342,6 +352,7 @@ namespace MediaPortal.TV.Recording
 
 				return null;
 			}
+			m_osdRendered=OSD.ZapOSD;
 			m_timeout=0;
 			m_actualChannel=channel;
 			m_channelSNR=signalLevel;
@@ -577,13 +588,13 @@ namespace MediaPortal.TV.Recording
 				{
 					if(seg[0]=="icon" && seg.Length==4)
 					{
-						if(System.IO.File.Exists(m_mediaPath+seg[3]))
+						if(System.IO.File.Exists(m_mediaPath+"volume_level_0.png"))
 						{
-							Bitmap muteBmp=new Bitmap(m_mediaPath+seg[3]);
+							Bitmap muteBmp=new Bitmap(m_mediaPath+"volume_level_0.png");
 							muteBmp.MakeTransparent(Color.White);
 							int xPos=Convert.ToInt16(seg[1]);
 							int yPos=Convert.ToInt16(seg[2]);
-							gr.DrawImage(muteBmp,xPos,yPos,60,60);
+							gr.DrawImageUnscaled(muteBmp,xPos,yPos,60,60);
 							muteBmp.Dispose();
 						}
 					}
@@ -687,12 +698,20 @@ namespace MediaPortal.TV.Recording
 				{
 					if(m_bitmapIsVisible==true)
 					{
-						hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
-						if(hr!=0)
+						if(m_muteState==true)
 						{
-							return false;
+							RenderVolumeOSD();
 						}
-						m_bitmapIsVisible=false;
+						else
+						{
+							hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
+							if(hr!=0)
+							{
+								return false;
+							}
+							m_bitmapIsVisible=false;
+							m_osdRendered=OSD.None;
+						}
 					}
 				}
 				// dispose
