@@ -84,7 +84,7 @@ namespace ProgramsDatabase
         //sqlDB.Execute("begin");
         string strSQL2 = String.Format(String.Format("INSERT INTO filterItem (appid, grouperAppID, fileID, filename) VALUES ({0}, {1}, {2}, '{3}');",
           this.TargetAppID, this.AppID, this.FileID, ProgramUtils.Encode(Filename)));
-        Log.Write("hi from filelinkiteminsert: {0}", strSQL2);
+        // Log.Write("hi from filelinkiteminsert: {0}", strSQL2);
         sqlDB.Execute(strSQL2);
         //sqlDB.Execute("commit");
       }

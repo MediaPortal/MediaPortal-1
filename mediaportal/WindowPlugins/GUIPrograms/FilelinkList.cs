@@ -31,6 +31,10 @@ namespace ProgramsDatabase
       newLink.Filepath = ProgramUtils.Get(results, iRecord, "filepath");
       newLink.Imagefile = ProgramUtils.Get(results, iRecord, "imagefile");
       newLink.Genre = ProgramUtils.Get(results, iRecord, "genre");
+      newLink.Genre2 = ProgramUtils.Get(results, iRecord, "genre2");
+      newLink.Genre3 = ProgramUtils.Get(results, iRecord, "genre3");
+      newLink.Genre4 = ProgramUtils.Get(results, iRecord, "genre4");
+      newLink.Genre5 = ProgramUtils.Get(results, iRecord, "genre5");
       newLink.Country = ProgramUtils.Get(results, iRecord, "country");
       newLink.Manufacturer = ProgramUtils.Get(results, iRecord, "manufacturer");
       newLink.Year = ProgramUtils.GetIntDef(results, iRecord, "year",  - 1);

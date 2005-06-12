@@ -191,8 +191,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // tcFileItemData
       // 
-      this.tcFileItemData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.tcFileItemData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.tcFileItemData.Controls.Add(this.tabPage1);
       this.tcFileItemData.Controls.Add(this.tabPage2);
       this.tcFileItemData.Location = new System.Drawing.Point(8, 8);
@@ -212,8 +213,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // gbFileDetails
       // 
-      this.gbFileDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbFileDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.gbFileDetails.Controls.Add(this.buttonViewImg);
       this.gbFileDetails.Controls.Add(this.txtFilepath);
       this.gbFileDetails.Controls.Add(this.label1);
@@ -247,8 +249,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFilepath
       // 
-      this.txtFilepath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.txtFilepath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFilepath.Location = new System.Drawing.Point(88, 72);
       this.txtFilepath.Name = "txtFilepath";
       this.txtFilepath.ReadOnly = true;
@@ -267,20 +269,28 @@ namespace WindowPlugins.GUIPrograms
       // cbRating
       // 
       this.cbRating.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbRating.Items.AddRange(new object[]
-      {
-        "0 - poor", "1", "2", "3", "4", "5 - average", "6", "7", "8", "9", "10 - perfect"
-      }
-      );
-      this.cbRating.Location = new System.Drawing.Point(88, 192);
+      this.cbRating.Items.AddRange(new object[] {
+                                                  "0 - poor",
+                                                  "1",
+                                                  "2",
+                                                  "3",
+                                                  "4",
+                                                  "5 - average",
+                                                  "6",
+                                                  "7",
+                                                  "8",
+                                                  "9",
+                                                  "10 - perfect"});
+      this.cbRating.Location = new System.Drawing.Point(230, 194);
       this.cbRating.Name = "cbRating";
       this.cbRating.Size = new System.Drawing.Size(192, 21);
       this.cbRating.TabIndex = 8;
       // 
       // txtOverview
       // 
-      this.txtOverview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtOverview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtOverview.Location = new System.Drawing.Point(8, 288);
       this.txtOverview.Multiline = true;
       this.txtOverview.Name = "txtOverview";
@@ -299,9 +309,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtSystem
       // 
-      this.txtSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
-      this.txtSystem.Location = new System.Drawing.Point(88, 240);
+      this.txtSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtSystem.Location = new System.Drawing.Point(88, 242);
       this.txtSystem.Name = "txtSystem";
       this.txtSystem.Size = new System.Drawing.Size(332, 20);
       this.txtSystem.TabIndex = 10;
@@ -309,7 +319,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblSystem
       // 
-      this.lblSystem.Location = new System.Drawing.Point(8, 244);
+      this.lblSystem.Location = new System.Drawing.Point(8, 246);
       this.lblSystem.Name = "lblSystem";
       this.lblSystem.Size = new System.Drawing.Size(64, 16);
       this.lblSystem.TabIndex = 59;
@@ -317,9 +327,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtCountry
       // 
-      this.txtCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
-      this.txtCountry.Location = new System.Drawing.Point(88, 216);
+      this.txtCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtCountry.Location = new System.Drawing.Point(88, 218);
       this.txtCountry.Name = "txtCountry";
       this.txtCountry.Size = new System.Drawing.Size(332, 20);
       this.txtCountry.TabIndex = 9;
@@ -327,7 +337,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblCountry
       // 
-      this.lblCountry.Location = new System.Drawing.Point(8, 220);
+      this.lblCountry.Location = new System.Drawing.Point(8, 222);
       this.lblCountry.Name = "lblCountry";
       this.lblCountry.Size = new System.Drawing.Size(72, 16);
       this.lblCountry.TabIndex = 57;
@@ -335,15 +345,15 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblRating
       // 
-      this.lblRating.Location = new System.Drawing.Point(8, 196);
+      this.lblRating.Location = new System.Drawing.Point(177, 197);
       this.lblRating.Name = "lblRating";
-      this.lblRating.Size = new System.Drawing.Size(72, 16);
+      this.lblRating.Size = new System.Drawing.Size(47, 16);
       this.lblRating.TabIndex = 55;
       this.lblRating.Text = "Rating:";
       // 
       // txtYear
       // 
-      this.txtYear.Location = new System.Drawing.Point(88, 168);
+      this.txtYear.Location = new System.Drawing.Point(88, 194);
       this.txtYear.MaxLength = 4;
       this.txtYear.Name = "txtYear";
       this.txtYear.Size = new System.Drawing.Size(48, 20);
@@ -352,7 +362,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblYear
       // 
-      this.lblYear.Location = new System.Drawing.Point(8, 172);
+      this.lblYear.Location = new System.Drawing.Point(8, 194);
       this.lblYear.Name = "lblYear";
       this.lblYear.Size = new System.Drawing.Size(64, 16);
       this.lblYear.TabIndex = 53;
@@ -360,9 +370,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtManufacturer
       // 
-      this.txtManufacturer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
-      this.txtManufacturer.Location = new System.Drawing.Point(88, 144);
+      this.txtManufacturer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtManufacturer.Location = new System.Drawing.Point(88, 170);
       this.txtManufacturer.Name = "txtManufacturer";
       this.txtManufacturer.Size = new System.Drawing.Size(332, 20);
       this.txtManufacturer.TabIndex = 6;
@@ -370,7 +380,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblManufacturer
       // 
-      this.lblManufacturer.Location = new System.Drawing.Point(8, 148);
+      this.lblManufacturer.Location = new System.Drawing.Point(8, 170);
       this.lblManufacturer.Name = "lblManufacturer";
       this.lblManufacturer.Size = new System.Drawing.Size(80, 16);
       this.lblManufacturer.TabIndex = 51;
@@ -378,11 +388,13 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtGenre
       // 
-      this.txtGenre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.txtGenre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtGenre.Location = new System.Drawing.Point(88, 120);
+      this.txtGenre.Multiline = true;
       this.txtGenre.Name = "txtGenre";
-      this.txtGenre.Size = new System.Drawing.Size(332, 20);
+      this.txtGenre.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.txtGenre.Size = new System.Drawing.Size(332, 48);
       this.txtGenre.TabIndex = 5;
       this.txtGenre.Text = "";
       // 
@@ -414,8 +426,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFilename
       // 
-      this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFilename.Location = new System.Drawing.Point(88, 48);
       this.txtFilename.Name = "txtFilename";
       this.txtFilename.Size = new System.Drawing.Size(332, 20);
@@ -424,8 +436,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtImageFile
       // 
-      this.txtImageFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.txtImageFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtImageFile.Location = new System.Drawing.Point(88, 96);
       this.txtImageFile.Name = "txtImageFile";
       this.txtImageFile.Size = new System.Drawing.Size(310, 20);
@@ -434,8 +446,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
-      this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTitle.Location = new System.Drawing.Point(88, 24);
       this.txtTitle.Name = "txtTitle";
       this.txtTitle.Size = new System.Drawing.Size(332, 20);
@@ -479,8 +491,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // gbExtended
       // 
-      this.gbExtended.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbExtended.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.gbExtended.Controls.Add(this.txtCategoryData);
       this.gbExtended.Controls.Add(this.lblCategoryData);
       this.gbExtended.Controls.Add(this.txtTagData);
@@ -493,8 +506,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtCategoryData
       // 
-      this.txtCategoryData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
-        System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtCategoryData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtCategoryData.Location = new System.Drawing.Point(8, 224);
       this.txtCategoryData.Multiline = true;
       this.txtCategoryData.Name = "txtCategoryData";
@@ -513,8 +527,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTagData
       // 
-      this.txtTagData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) |
-        System.Windows.Forms.AnchorStyles.Right)));
+      this.txtTagData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTagData.Location = new System.Drawing.Point(8, 32);
       this.txtTagData.Multiline = true;
       this.txtTagData.Name = "txtTagData";
@@ -559,7 +573,7 @@ namespace WindowPlugins.GUIPrograms
       txtFilename.Text = m_CurFile.Filename;
       txtFilepath.Text = m_CurFile.Filepath;
       txtImageFile.Text = m_CurFile.Imagefile;
-      txtGenre.Text = m_CurFile.Genre;
+      FileItemToGenre();
       txtManufacturer.Text = m_CurFile.Manufacturer;
       if (m_CurFile.Year > 1900)
       {
@@ -620,13 +634,58 @@ namespace WindowPlugins.GUIPrograms
       return m_Checker.IsOk;
     }
 
+    void GenreToFileItem()
+    {
+      CurFile.Genre = "";
+      CurFile.Genre2 = "";
+      CurFile.Genre3 = "";
+      CurFile.Genre4 = "";
+      CurFile.Genre5 = "";
+      if (txtGenre.Lines.Length > 0){ CurFile.Genre = txtGenre.Lines[0]; }
+      if (txtGenre.Lines.Length > 1){ CurFile.Genre2 = txtGenre.Lines[1]; }
+      if (txtGenre.Lines.Length > 2){ CurFile.Genre3 = txtGenre.Lines[2]; }
+      if (txtGenre.Lines.Length > 3){ CurFile.Genre4 = txtGenre.Lines[3]; }
+      if (txtGenre.Lines.Length > 4){ CurFile.Genre5 = txtGenre.Lines[4]; }
+    }
+
+    void FileItemToGenre()
+    {
+      string sep = "";
+      txtGenre.Text = "";
+      if (CurFile.Genre != "")
+      {
+        txtGenre.Text = txtGenre.Text + sep + CurFile.Genre;
+        sep = "\r\n";
+      }
+      if (CurFile.Genre2 != "")
+      {
+        txtGenre.Text = txtGenre.Text + sep + CurFile.Genre2;
+        sep = "\r\n";
+      }
+      if (CurFile.Genre3 != "")
+      {
+        txtGenre.Text = txtGenre.Text + sep + CurFile.Genre3;
+        sep = "\r\n";
+      }
+      if (CurFile.Genre4 != "")
+      {
+        txtGenre.Text = txtGenre.Text + sep + CurFile.Genre4;
+        sep = "\r\n";
+      }
+      if (CurFile.Genre5 != "")
+      {
+        txtGenre.Text = txtGenre.Text + sep + CurFile.Genre5;
+        sep = "\r\n";
+      }
+    }
+
     private void btnOk_Click(object sender, EventArgs e)
     {
       CurFile.Title = txtTitle.Text;
       CurFile.Filename = txtFilename.Text;
       CurFile.Filepath = txtFilepath.Text;
       CurFile.Imagefile = txtImageFile.Text;
-      CurFile.Genre = txtGenre.Text;
+      GenreToFileItem();
       CurFile.Manufacturer = txtManufacturer.Text;
       CurFile.Year = ProgramUtils.StrToIntDef(txtYear.Text,  - 1);
       CurFile.Rating = cbRating.SelectedIndex;

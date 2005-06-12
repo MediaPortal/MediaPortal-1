@@ -53,6 +53,10 @@ namespace ProgramsDatabase
       newFile.Filepath = ProgramUtils.Get(results, iRecord, "filepath");
       newFile.Imagefile = ProgramUtils.Get(results, iRecord, "imagefile");
       newFile.Genre = ProgramUtils.Get(results, iRecord, "genre");
+      newFile.Genre2 = ProgramUtils.Get(results, iRecord, "genre2");
+      newFile.Genre3 = ProgramUtils.Get(results, iRecord, "genre3");
+      newFile.Genre4 = ProgramUtils.Get(results, iRecord, "genre4");
+      newFile.Genre5 = ProgramUtils.Get(results, iRecord, "genre5");
       newFile.Country = ProgramUtils.Get(results, iRecord, "country");
       newFile.Manufacturer = ProgramUtils.Get(results, iRecord, "manufacturer");
       newFile.Year = ProgramUtils.GetIntDef(results, iRecord, "year",  - 1);

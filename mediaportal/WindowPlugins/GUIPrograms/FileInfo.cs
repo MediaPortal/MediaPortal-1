@@ -17,6 +17,10 @@ namespace ProgramsDatabase
     string mGameURL;
     string mTitle;
     string mGenre;
+    string mGenre2;
+    string mGenre3;
+    string mGenre4;
+    string mGenre5;
     string mStyle;
     string mPlatform;
     string mRating;
@@ -37,6 +41,10 @@ namespace ProgramsDatabase
       mGameURL = "";
       mTitle = "";
       mGenre = "";
+      mGenre2 = "";
+      mGenre3 = "";
+      mGenre4 = "";
+      mGenre5 = "";
       mStyle = "";
       mPlatform = "";
       mRating = "";
@@ -124,6 +132,54 @@ namespace ProgramsDatabase
       set
       {
         mGenre = value;
+      }
+    }
+
+    public string Genre2
+    {
+      get
+      {
+        return mGenre2;
+      }
+      set
+      {
+        mGenre2 = value;
+      }
+    }
+
+    public string Genre3
+    {
+      get
+      {
+        return mGenre3;
+      }
+      set
+      {
+        mGenre3 = value;
+      }
+    }
+
+    public string Genre4
+    {
+      get
+      {
+        return mGenre4;
+      }
+      set
+      {
+        mGenre4 = value;
+      }
+    }
+
+    public string Genre5
+    {
+      get
+      {
+        return mGenre5;
+      }
+      set
+      {
+        mGenre5 = value;
       }
     }
 

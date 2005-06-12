@@ -20,6 +20,10 @@ namespace ProgramsDatabase
     string mFilepath;
     string mImagefile;
     string mGenre;
+    string mGenre2;
+    string mGenre3;
+    string mGenre4;
+    string mGenre5;
     string mCountry;
     string mManufacturer;
     int mYear;
@@ -56,6 +60,10 @@ namespace ProgramsDatabase
       mFilepath = "";
       mImagefile = "";
       mGenre = "";
+      mGenre2 = "";
+      mGenre3 = "";
+      mGenre4 = "";
+      mGenre5 = "";
       mCountry = "";
       mManufacturer = "";
       mYear =  - 1;
@@ -190,6 +198,50 @@ namespace ProgramsDatabase
       set
       {
         mGenre = value;
+      }
+    }
+    public string Genre2
+    {
+      get
+      {
+        return mGenre2;
+      }
+      set
+      {
+        mGenre2 = value;
+      }
+    }
+    public string Genre3
+    {
+      get
+      {
+        return mGenre3;
+      }
+      set
+      {
+        mGenre3 = value;
+      }
+    }
+    public string Genre4
+    {
+      get
+      {
+        return mGenre4;
+      }
+      set
+      {
+        mGenre4 = value;
+      }
+    }
+    public string Genre5
+    {
+      get
+      {
+        return mGenre5;
+      }
+      set
+      {
+        mGenre5 = value;
       }
     }
     public string Country
@@ -520,7 +572,8 @@ namespace ProgramsDatabase
       try
       {
         string strSQL = String.Format(
-          "insert into file (fileid, appid, title, filename, filepath, imagefile, genre, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id, uppertitle, tagdata, categorydata) values (null, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}')", AppID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), Country, ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount, ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
+          "insert into file (fileid, appid, title, filename, filepath, imagefile, genre, genre2, genre3, genre4, genre5, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id, uppertitle, tagdata, categorydata) values (null, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}')", AppID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), ProgramUtils.Encode(Genre2), ProgramUtils.Encode(Genre3), ProgramUtils.Encode(Genre4), ProgramUtils.Encode(Genre5), Country, ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount, ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
+        // Log.Write("dw sql\n{0}", strSQL);
         sqlDB.Execute(strSQL);
       }
       catch (SQLiteException ex)
@@ -541,7 +594,7 @@ namespace ProgramsDatabase
       try
       {
         string strSQL = String.Format(
-          "update file set title = '{1}', filename = '{2}', filepath = '{3}', imagefile = '{4}', genre = '{5}', country = '{6}', manufacturer = '{7}', year = '{8}', rating = '{9}', overview = '{10}', system = '{11}', uppertitle = '{12}', tagdata = '{13}', categorydata = '{14}' where  fileid = {0}", FileID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), ProgramUtils.Encode(Country), ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
+          "update file set title = '{1}', filename = '{2}', filepath = '{3}', imagefile = '{4}', genre = '{5}', genre2 = '{6}', genre3 = '{7}', genre4 = '{8}', genre5 = '{9}', country = '{10}', manufacturer = '{11}', year = '{12}', rating = '{13}', overview = '{14}', system = '{15}', uppertitle = '{16}', tagdata = '{17}', categorydata = '{18}' where  fileid = {0}", FileID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), ProgramUtils.Encode(Genre2), ProgramUtils.Encode(Genre3), ProgramUtils.Encode(Genre4), ProgramUtils.Encode(Genre5), ProgramUtils.Encode(Country), ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
         sqlDB.Execute(strSQL);
       }
       catch (SQLiteException ex)
@@ -673,6 +726,10 @@ namespace ProgramsDatabase
       {
         // DON'T overwrite title! this.Title = FileInfoFavourite.Title;
         this.Genre = FileInfoFavourite.Genre;
+        this.Genre2 = FileInfoFavourite.Genre2;
+        this.Genre3 = FileInfoFavourite.Genre3;
+        this.Genre4 = FileInfoFavourite.Genre4;
+        this.Genre5 = FileInfoFavourite.Genre5;
         this.Manufacturer = FileInfoFavourite.Manufacturer;
         this.Year = ProgramUtils.StrToIntDef(FileInfoFavourite.Year,  - 1);
         this.Overview = FileInfoFavourite.Overview;
