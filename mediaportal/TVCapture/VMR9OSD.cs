@@ -242,7 +242,7 @@ namespace MediaPortal.TV.Recording
 					if(System.IO.File.Exists(tvlogo))
 					{
 						Bitmap logo=new Bitmap(tvlogo);
-						gr.DrawImageUnscaled(logo,x,pos,logo.Width,logo.Height);
+						gr.DrawImage(logo,x,pos,64,64);
 						logo.Dispose();
 					}
 				}
@@ -374,12 +374,13 @@ namespace MediaPortal.TV.Recording
 						{
 							gr.FillRectangle(new SolidBrush(oColor),xPos,yPos,width+outline,height+outline);
 							Bitmap logo=new Bitmap(tvlogo);
-							gr.DrawImageUnscaled(logo,xPos+(outline/2),yPos+(outline/2),logo.Width,logo.Height);
+							gr.DrawImage(logo,xPos+(outline/2),yPos+(outline/2),64,64);
 							logo.Dispose();
 						}
 					}
 				}
 			}
+			
 			//channel name (chName)
 			string chName=m_osdSkin.chName;
 			if(chName!=null)
