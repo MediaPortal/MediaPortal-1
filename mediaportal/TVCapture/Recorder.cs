@@ -871,7 +871,22 @@ namespace MediaPortal.TV.Recording
 			}
 			return false;
 		}//static public bool IsViewing()
-    
+
+		static public bool IsCardViewing(int cardId)
+		{
+			if (m_eState!= State.Initialized) return false;
+			if (m_iCurrentCard <0 || m_iCurrentCard >=m_tvcards.Count) return false;
+			TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[m_iCurrentCard];
+			if (dev.ID!=cardId) return false;
+			if (dev.View) return true;
+			if (dev.IsTimeShifting)
+			{
+				if (g_Player.Playing && g_Player.CurrentFile == GetTimeShiftFileName(m_iCurrentCard))
+					return true;
+			}
+			return false;
+		}//static public bool IsViewing()
+ 
 		/// <summary>
 		/// Property which get TV Viewing mode.
 		/// if TV Viewing  mode is turned on then live tv will be shown

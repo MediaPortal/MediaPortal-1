@@ -811,6 +811,9 @@ namespace MediaPortal.TV.Recording
 		}
 		bool SaveVMR9Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
+			if (VMR9Util.g_vmr9==null) 
+				return false;
+			
 			if(VMR9Util.g_vmr9.MixerBitmapInterface==null)
 				return false;
 

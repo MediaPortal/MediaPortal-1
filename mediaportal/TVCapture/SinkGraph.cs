@@ -712,11 +712,16 @@ namespace MediaPortal.TV.Recording
 				return;
 			if(m_osd!=null && channel!=null && m_useVMR9Zap==true)
 			{
-
-				int level=SignalStrength();
-				int quality=SignalQuality();
-				m_osd.ShowBitmap(m_osd.RenderZapOSD(channel,quality),0.8f);
-				
+				bool cardViewed=false;
+				if (m_graphState== State.Viewing) cardViewed=true;
+				else if (g_Player.Playing && Recorder.GetTimeShiftFileName(m_cardID-1)==g_Player.CurrentFile)
+					cardViewed=true;
+				if (cardViewed)
+				{
+					int level=SignalStrength();
+					int quality=SignalQuality();
+					m_osd.ShowBitmap(m_osd.RenderZapOSD(channel,quality),0.8f);
+				}
 			}
 		}
 
