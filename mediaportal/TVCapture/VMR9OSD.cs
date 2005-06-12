@@ -187,15 +187,14 @@ namespace MediaPortal.TV.Recording
 			int textHeight;
 			if(logosFound)
 			{
-				textHeight=64;
+				textHeight=66;
 				layoutRect.X+=66;
-				layoutRect.Width-=132;
+				layoutRect.Width-=128;
 			}
 			else
-				textHeight=(int)textSize.Height;
+				textHeight=2+((int)textSize.Height);
 
 
-			textHeight+=2;
 			string headText=group.GroupName;
 			
 			gr.FillRectangle(new SolidBrush(headColor),x,y,720-(2*x),textHeight);
@@ -242,7 +241,8 @@ namespace MediaPortal.TV.Recording
 					if(System.IO.File.Exists(tvlogo))
 					{
 						Bitmap logo=new Bitmap(tvlogo);
-						gr.DrawImage(logo,x,pos,64,64);
+						gr.FillRectangle(new SolidBrush(Color.FromArgb(144,144,144)),x,pos+1,64,64);
+						gr.DrawImage(logo,x,pos+1,64,64);
 						logo.Dispose();
 					}
 				}
@@ -623,6 +623,7 @@ namespace MediaPortal.TV.Recording
 						return false;
 					}
 					surface.Dispose();
+					
 					m_timeDisplayed=DateTime.Now;
 				}
 				else
