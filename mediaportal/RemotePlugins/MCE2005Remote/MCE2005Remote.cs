@@ -527,11 +527,11 @@ namespace MediaPortal
 						break;
           
 					case 0xe9: //volume+
-						//            action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
+						action=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
 						break;
           
 					case 0xea: //volume-
-						//            action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
+						action=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
 						break;
           
 					case 0x9c: //channel+
@@ -543,6 +543,7 @@ namespace MediaPortal
 						break;
           
 					case 0xe2: //mute
+						action=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
 						break;
 
 					case 0x5A: //teletext
