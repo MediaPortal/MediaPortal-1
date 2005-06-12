@@ -186,6 +186,11 @@ namespace MediaPortal.GUI.TV
 
 		public override void OnAction(Action action)
 		{
+			if (action.wID==Action.ActionType.ACTION_SHOW_VOLUME)
+			{
+				if(m_vmr9OSD!=null)
+					m_vmr9OSD.RenderVolumeOSD();
+			}
 			if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
 			{
 				// switch back to the menu
@@ -1211,6 +1216,9 @@ namespace MediaPortal.GUI.TV
 					if(m_vmr9OSD!=null)
 						m_vmr9OSD.HideBitmap();
 				}
+				if(m_vmr9OSD!=null)
+					m_vmr9OSD.CheckTimeOuts();
+				
 			}
 
 

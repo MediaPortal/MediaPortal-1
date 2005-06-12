@@ -139,6 +139,7 @@ namespace MediaPortal.GUI.Library
 			,ACTION_REMOTE_BLUE_BUTTON
 			,ACTION_REMOTE_SUBPAGE_UP
 			,ACTION_REMOTE_SUBPAGE_DOWN
+			,ACTION_SHOW_VOLUME
 
 		};
 		public ActionType   wID=0;

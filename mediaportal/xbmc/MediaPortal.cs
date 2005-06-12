@@ -1157,6 +1157,11 @@ public class MediaPortalApp : D3DApp, IRender
                     iCurrent -= iStep;
                     if (iCurrent < iMin) iCurrent = iMin;
                     AudioMixerHelper.SetVolume(iCurrent);
+					if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+					{
+						Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+						GUIGraphicsContext.OnAction(showVolume);
+					}
                     return;
 
 
@@ -1166,7 +1171,12 @@ public class MediaPortalApp : D3DApp, IRender
                     iCurrent += iStep;
                     if (iCurrent > iMax) iCurrent = iMax;
                     AudioMixerHelper.SetVolume(iCurrent);
-                    break;
+					if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+					{
+						Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+						GUIGraphicsContext.OnAction(showVolume);
+					}
+					break;
 
                 case Action.ActionType.ACTION_BACKGROUND_TOGGLE:
 

@@ -131,6 +131,7 @@ namespace MediaPortal.TV.Recording
 		OSDSkin m_osdSkin;
 		OSDChannelList m_osdChannels;
 		bool m_bitmapIsVisible=false;
+		int m_timeout=0;
 
 		public bool Mute
 		{
@@ -146,6 +147,7 @@ namespace MediaPortal.TV.Recording
 			int positionActChannel=0;
 			int counter=0;
 			bool logosFound=false;
+			m_timeout=0;
 
 			foreach(TVChannel chan in group.tvChannels)
 			{
@@ -274,6 +276,60 @@ namespace MediaPortal.TV.Recording
 		{
 			ShowBitmap(RenderZapOSD(m_actualChannel,m_channelSNR),0.8f);
 		}
+		public void CheckTimeOuts()
+		{
+			TimeSpan ts=DateTime.Now-m_timeDisplayed;
+			if(ts.TotalMilliseconds>m_timeout && m_timeout>0)
+			{
+				m_bitmapIsVisible=true; // force clear
+				HideBitmap();
+				m_timeout=0;
+			}
+		}
+		public void RenderVolumeOSD()
+		{
+			int max;
+			int min;
+			int currentVolume=AudioMixerHelper.GetMinMaxVolume(out min,out max);
+			int volume=0;
+			if(currentVolume>0)
+			{
+				volume=((currentVolume*100)/max)/10;
+			}
+			if(volume<1)
+				m_muteState=true;
+			else
+				m_muteState=false;
+
+			m_bitmapIsVisible=false;
+			m_timeout=3000; // 3 sec for volume osd
+			if(System.IO.File.Exists(m_mediaPath+String.Format("volume_level_{0}.png",volume))==true)
+			{
+				if(m_osdSkin.mute!=null)
+				{
+					string[] seg =m_osdSkin.mute.Split(new char[]{':'});
+					if(seg!=null)
+					{
+						if(seg[0]=="icon" && seg.Length==4)
+						{
+							Bitmap osd=new Bitmap(720,576);
+							Graphics gr=Graphics.FromImage(osd);
+							Bitmap gfx=new Bitmap(m_mediaPath+String.Format("volume_level_{0}.png",volume));
+							gfx.MakeTransparent(Color.White);
+							int xPos=Convert.ToInt16(seg[1]);
+							int yPos=Convert.ToInt16(seg[2]);
+							gr.DrawImageUnscaled(gfx,xPos,yPos,gfx.Width,gfx.Height);
+							SaveVMR9Bitmap(osd,true,true,0.9f);
+							gr.Dispose();
+							osd.Dispose();
+							gfx.Dispose();
+							m_timeDisplayed=DateTime.Now;
+						}
+					}
+				
+				}
+			}
+		}
 		public Bitmap RenderZapOSD(TVChannel channel,int signalLevel)
 		{
 			Bitmap bm=new Bitmap(720,576);//m_mediaPath+@"bgimage.png");
@@ -286,6 +342,7 @@ namespace MediaPortal.TV.Recording
 
 				return null;
 			}
+			m_timeout=0;
 			m_actualChannel=channel;
 			m_channelSNR=signalLevel;
 			// set the tvchannel data
