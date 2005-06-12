@@ -195,10 +195,21 @@ namespace ProcessPlugins.CallerId
               {
                 capiConnectInd ConnectInd = new capiConnectInd();
                 RtlMoveMemory (ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (MessageHeader.Length - HeaderLength));
+                
+                string logBuffer = "";
+                foreach (char c in ConnectInd.buffer)
+                {
+                  if (((int)c < 48) || ((int)c > 57))
+                    logBuffer = logBuffer + "(" + ((int)c).ToString() + ")";
+                  else
+                    logBuffer = logBuffer + c;
+                }
+                Log.Write("ISDN: Buffer: {0}", logBuffer);
+
                 int lengthCalledId = ConnectInd.buffer[0];
                 string CalledId = ConnectInd.buffer.Substring(2, (lengthCalledId - 1));
                 int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
-                Log.Write("ISDN: {0}", stripPrefix);
+                Log.Write("ISDN: stripping {0} digits", stripPrefix);
                 CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4 + stripPrefix), (lengthCallerId - 2 - stripPrefix));
 
                 if (ConnectInd.buffer[lengthCalledId+2] != 33)
