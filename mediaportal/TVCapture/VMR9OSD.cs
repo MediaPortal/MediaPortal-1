@@ -197,9 +197,9 @@ namespace MediaPortal.TV.Recording
 				TVProgram prog=chan.GetProgramAt(DateTime.Now);
 				string channelText="";
 				if(prog!=null)
-					channelText=chan.Number.ToString()+" "+chan.Name+" "+"\""+prog.Title+"\"";
+					channelText=chan.Name+" "+"\""+prog.Title+"\"";
 				else
-					channelText=chan.Number.ToString()+" "+chan.Name;
+					channelText=chan.Name;
 
 				if(chan.Name==currentChannel)
 				{
