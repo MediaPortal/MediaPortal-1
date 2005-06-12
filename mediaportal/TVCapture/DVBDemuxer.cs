@@ -810,7 +810,7 @@ namespace MediaPortal.TV.Recording
 //						Log.Write("pid:0x{0:X} transport error", m_sectionPid);
 					continue;// error, ignore packet
 				}
-
+/*
 				if (m_packetHeader.Pid==0)
 				{
 					Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5} {0:X}",
@@ -821,7 +821,7 @@ namespace MediaPortal.TV.Recording
 						m_packetHeader.PayloadUnitStart,
 						m_packetHeader.SectionLen,
 						m_sectionPid);
-				}
+				}*/
 				// teletext
 
 				if (m_packetHeader.Pid==m_teletextPid && m_teleText != null && m_teletextPid>0)

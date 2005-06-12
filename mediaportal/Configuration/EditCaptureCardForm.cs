@@ -99,7 +99,6 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.CheckBox checkBoxHiQuality;
-		bool m_stopEPGGrab;
 		private System.Windows.Forms.NumericUpDown updownPrio;
 		private System.Windows.Forms.Label label24;
 		private System.Windows.Forms.Label label25;

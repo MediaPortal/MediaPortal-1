@@ -595,7 +595,7 @@ namespace MediaPortal.Music.Database
 	
 			
 			}
-			catch (Exception ex) 
+			catch (Exception ) 
 			{
 				Log.Write ("MusicDatabaseReorg: Executing query failed");
 			}

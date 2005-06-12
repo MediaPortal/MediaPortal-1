@@ -49,7 +49,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label switchMHZ;
 		private System.Windows.Forms.TextBox lnb0MHZ;
 		private System.Windows.Forms.Label label22;
-		int m_currentDiseqc=1;
+		//int m_currentDiseqc=1;
 
 		public Wizard_DVBSTVSetup() : this("DVB-S TV")
 		{
