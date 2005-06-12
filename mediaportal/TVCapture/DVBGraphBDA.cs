@@ -2770,11 +2770,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			if(m_osd!=null && channel!=null && m_useVMR9Zap==true)
 			{
-				bool cardViewed=false;
-				if (m_graphState== State.Viewing) cardViewed=true;
-				else if (g_Player.Playing && Recorder.GetTimeShiftFileName(m_cardID-1)==g_Player.CurrentFile)
-					cardViewed=true;
-				if (cardViewed)
+				if (Recorder.IsCardViewing(m_cardID))
 				{
 					int level=SignalStrength();
 					int quality=SignalQuality();
