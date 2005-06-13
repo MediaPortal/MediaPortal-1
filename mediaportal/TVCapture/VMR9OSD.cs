@@ -1015,6 +1015,84 @@ namespace MediaPortal.TV.Recording
 			}
 			return false;
 		}// savevmr9bitmap
+
+		bool SaveVMR7Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
+		{
+			if (VMR7Util.g_vmr7==null) 
+				return false;
+			
+			if(VMR7Util.g_vmr7.MixerBitmapInterface==null)
+				return false;
+
+			if(VMR7Util.g_vmr7!=null)
+			{
+				if(VMR7Util.g_vmr7.IsVMR7Connected==false)
+				{
+					Log.Write("SaveVMR9Bitmap() failed, no VMR7");
+					return false;
+				}
+				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
+				int hr=0;
+				// transparent image?
+				if(bitmap!=null)
+				{
+					if(transparent==true)
+						bitmap.MakeTransparent(Color.Black);
+					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
+					mStr.Position=0;
+				}
+				VMRAlphaBitmap bmp=new VMRAlphaBitmap();
+
+				if(show==true)
+				{
+					using (Graphics g = Graphics.FromImage(bitmap))
+					{
+						bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
+						bmp.color.blu=0;
+						bmp.color.green=0;
+						bmp.color.red=0;
+						bmp.HDC=g.GetHdc();
+						bmp.rDest=new NormalizedRect();
+						bmp.rDest.top=0.0f;
+						bmp.rDest.left=0.0f;
+						bmp.rDest.bottom=1.0f;
+						bmp.rDest.right=1.0f;
+						bmp.fAlpha=alphaValue;
+						//Log.Write("SaveVMR7Bitmap() called");
+						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+						if(hr!=0)
+						{
+							//Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+							return false;
+						}
+					}
+					m_timeDisplayed=DateTime.Now;
+				}
+				else
+				{
+					if(m_bitmapIsVisible==true)
+					{
+						if(m_muteState==true)
+						{
+							RenderVolumeOSD();
+						}
+						else
+						{
+							hr=VMR7Util.g_vmr7.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
+							if(hr!=0)
+							{
+								return false;
+							}
+							m_bitmapIsVisible=false;
+							m_osdRendered=OSD.None;
+						}
+					}
+				}
+				// dispose
+				return true;
+			}
+			return false;
+		}// savevmr7bitmap
 		#endregion
 	}// class
 }// namespace
