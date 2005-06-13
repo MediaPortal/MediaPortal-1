@@ -1221,9 +1221,9 @@ namespace MediaPortal.TV.Recording
 
 			
 			//get SDT table (pid 0x11)
-			MsGetStreamData(filter,0x11, 0x42,0,m_timeoutMS);
+			GetStreamData(filter,0x11, 0x42,0,m_timeoutMS);
 			tab42=(ArrayList)m_sectionsList.Clone();
-			MsGetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
+			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
 			tab46=(ArrayList)m_sectionsList.Clone();
 
 			//for each PMT table...
@@ -1249,7 +1249,7 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//get PMT table
-					MsGetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
+					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
 
 					//PMT table contains the audio/video/teletext pids, so decode them
 					foreach(byte[] wdata in m_sectionsList)
@@ -2330,7 +2330,7 @@ namespace MediaPortal.TV.Recording
 				transponder.PMTTable = new ArrayList();
 
 				//get PAT table (pid=0x11)
-				MsGetStreamData(filter,0, 0,0,Timeout);
+				GetStreamData(filter,0, 0,0,Timeout);
 				
 				//The PAT table contains the pid of each PMT table
 				//so decode it...

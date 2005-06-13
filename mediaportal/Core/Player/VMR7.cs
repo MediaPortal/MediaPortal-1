@@ -63,14 +63,20 @@ namespace MediaPortal.Player
 				return;
 			}
 
+			int hr ;
 			IVMRFilterConfig config = VMR7Filter as IVMRFilterConfig;
 			if (config!=null)
 			{
-				config.SetNumberOfStreams(2);
+				hr=config.SetNumberOfStreams(1);
+				if (hr != 0)
+				{
+					Log.WriteFile(Log.LogType.Log, true, "VMR7Helper:Failed to set number of streams:0x{0:X}",hr);
+					return;
+				}
 			}
 
 			m_mixerBitmap=VMR7Filter as IVMRMixerBitmap;
-			int hr = graphBuilder.AddFilter(VMR7Filter, "Video Mixing Renderer");
+			hr = graphBuilder.AddFilter(VMR7Filter, "Video Mixing Renderer");
 			if (hr != 0)
 			{
 				Error.SetError("Unable to play movie", "Unable to initialize VMR7");
@@ -177,26 +183,31 @@ namespace MediaPortal.Player
 
 				if(show==true)
 				{
-					using (Graphics g = Graphics.FromImage(bitmap))
+					Graphics g = Graphics.FromImage(bitmap);
+					IntPtr hdc=g.GetHdc();
+					bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
+					bmp.color.blu=0;
+					bmp.color.green=0;
+					bmp.color.red=0;
+					bmp.pDDS=IntPtr.Zero;
+					bmp.HDC=hdc;
+					bmp.rSrc = new DsRECT();
+					bmp.rSrc.Top=0;
+					bmp.rSrc.Left=0;
+					bmp.rSrc.Right=bitmap.Width;
+					bmp.rSrc.Bottom=bitmap.Height;
+					bmp.rDest=new NormalizedRect();
+					bmp.rDest.top=0.0f;
+					bmp.rDest.left=0.0f;
+					bmp.rDest.bottom=1.0f;
+					bmp.rDest.right=1.0f;
+					bmp.fAlpha=0.6f;
+					//Log.Write("SaveVMR7Bitmap() called");
+					hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+					if(hr!=0)
 					{
-						bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
-						bmp.color.blu=0;
-						bmp.color.green=0;
-						bmp.color.red=0;
-						bmp.HDC=g.GetHdc();
-						bmp.rDest=new NormalizedRect();
-						bmp.rDest.top=0.0f;
-						bmp.rDest.left=0.0f;
-						bmp.rDest.bottom=1.0f;
-						bmp.rDest.right=1.0f;
-						bmp.fAlpha=alphaValue;
-						//Log.Write("SaveVMR7Bitmap() called");
-						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
-						if(hr!=0)
-						{
-							//Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
-							return false;
-						}
+						Log.Write("SaveVMR7Bitmap() failed: error 0x{0:X} on SetAlphaBitmap()",hr);
+						return false;
 					}
 				}
 				else
@@ -216,7 +227,7 @@ namespace MediaPortal.Player
 					hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
 					if(hr!=0)
 					{
-						//Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+						Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
 						return false;
 					}
 				}

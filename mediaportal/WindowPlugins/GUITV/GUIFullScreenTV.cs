@@ -327,7 +327,7 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_SHOW_INFO:
 				{
-					if(m_useVMR9Zap==true && GUIGraphicsContext.Vmr9Active==true)
+					if(m_useVMR9Zap==true )
 					{
 						m_dwZapTimer=DateTime.Now;
 					}
@@ -1215,7 +1215,7 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
-			if(m_useVMR9Zap==true && GUIGraphicsContext.Vmr9Active==true)
+			if(m_useVMR9Zap==true )
 			{
 				TimeSpan ts =DateTime.Now - m_dwZapTimer;
 				if ( ts.TotalMilliseconds > m_iZapTimeOut)
@@ -1437,7 +1437,7 @@ namespace MediaPortal.GUI.TV
 		{
 			GUITVHome.Navigator.ZapToPreviousChannel(true);
 			UpdateOSD();
-			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
+			if(m_useVMR9Zap==true && m_vmr9OSD!=null )
 			{
 				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}
@@ -1453,7 +1453,7 @@ namespace MediaPortal.GUI.TV
 		{
 			GUITVHome.Navigator.ZapToNextChannel(true);
 			UpdateOSD();
-			if(m_useVMR9Zap==true && m_vmr9OSD!=null && GUIGraphicsContext.Vmr9Active)
+			if(m_useVMR9Zap==true && m_vmr9OSD!=null )
 			{
 				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}

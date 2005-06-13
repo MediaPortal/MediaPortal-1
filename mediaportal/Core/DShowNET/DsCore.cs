@@ -1581,16 +1581,16 @@ public interface IMediaSample
 	{
 		// Set bitmap, location to blend it, and blending value
 		[PreserveSig]
-		int SetAlphaBitmap([In] VMRAlphaBitmap bitmap);
+		int SetAlphaBitmap( VMRAlphaBitmap bitmap);
 
 		// Change bitmap location, size and blending value,
 		// graph must be running for change to take effect.
 		[PreserveSig]
-		int UpdateAlphaBitmapParameters([In] VMRAlphaBitmap bitmap);
+		int UpdateAlphaBitmapParameters( VMRAlphaBitmap bitmap);
 
 		// Get bitmap, location to blend it, and blending value
 		[PreserveSig]
-		int GetAlphaBitmapParameters([Out] VMRAlphaBitmap bitmap);
+		int GetAlphaBitmapParameters(VMRAlphaBitmap bitmap);
 	};
 
 } // namespace DShowNET
