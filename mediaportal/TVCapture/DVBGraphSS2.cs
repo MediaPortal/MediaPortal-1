@@ -249,7 +249,6 @@ namespace MediaPortal.TV.Recording
 		int m_aspectY=1;
 		DateTime m_timeDisplayed=DateTime.Now;
 		bool m_useVMR9Zap=false;
-		VMR9OSD	m_osd=new VMR9OSD();
 
 		bool m_lastTuneError=false;
 		#endregion
@@ -264,7 +263,6 @@ namespace MediaPortal.TV.Recording
 				m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				m_cardType=xmlreader.GetValueAsString("DVBSS2","cardtype","");
 				m_cardFilename=xmlreader.GetValueAsString("dvb_ts_cards","filename","");
-				m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
 			}
 
 			// teletext settings
@@ -524,13 +522,6 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 
-			m_osd.Mute=false;
-			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-			if(win!=null)
-				win.SetObject(m_osd);
-			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-			if(win!=null)
-				win.SetObject(m_osd);
 	
 			m_graphState=State.Created;
 			return true;
@@ -1446,25 +1437,9 @@ namespace MediaPortal.TV.Recording
 					else
 						m_streamDemuxer.GetMHWEPG();
 				}
-				SetZapOSDData(channel);
 
 			}
 			
-		}
-		// this sets the channel to render the osd
-		void SetZapOSDData(TVChannel channel)
-		{
-			if(GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-				return;
-			if(m_osd!=null && channel!=null && m_useVMR9Zap==true)
-			{
-
-				int level=0;
-				int quality=0;
-				GetSNR(m_tunerCtrl,out level,out quality);
-				m_osd.RenderZapOSD(channel,quality);
-				
-			}
 		}
 		void SetDemux(int audioPid,int videoPid)
 		{
@@ -1865,13 +1840,6 @@ namespace MediaPortal.TV.Recording
 				{
 					Vmr9.Repaint();// repaint vmr9
 				}
-			}
-			if(m_osd!=null)
-			{
-				int level;
-				int quality;
-				GetSNR(m_tunerCtrl,out level,out quality);
-				m_osd.RefreshCurrentChannel(quality);
 			}
 			if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
 			{

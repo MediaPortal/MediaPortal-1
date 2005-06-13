@@ -47,7 +47,8 @@ namespace MediaPortal.TV.Recording
 		static DateTime      m_dtStart=DateTime.Now;
 		static DateTime      m_dtProgresBar=DateTime.Now;
 		static int           m_iCurrentCard=-1;
-		
+		static VMR9OSD			 m_osd = new VMR9OSD();
+		static bool          m_useVMR9Zap=false;
 		#endregion
 
 		#region delegates and events
@@ -123,6 +124,7 @@ namespace MediaPortal.TV.Recording
 				m_iPostRecordInterval= xmlreader.GetValueAsInt("capture","postrecord", 5);
 				//m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
 				TVChannelName  = xmlreader.GetValueAsString("mytv","channel",String.Empty);
+				m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
 				
 			}
 
@@ -151,6 +153,14 @@ namespace MediaPortal.TV.Recording
       
 			GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
 			m_eState=State.Initialized;
+
+			m_osd.Mute=false;
+			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+			if(win!=null)
+				win.SetObject(m_osd);
+			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+			if(win!=null)
+				win.SetObject(m_osd);
 		}//static public void Start()
 
 		/// <summary>
@@ -965,7 +975,36 @@ namespace MediaPortal.TV.Recording
 					m_strTVChannel=value;
 					if (OnTvChannelChanged!=null)
 						OnTvChannelChanged(m_strTVChannel);
+					SetZapOSDData(m_strTVChannel);
 				}
+			}
+		}
+
+		// this sets the channel to render the osd
+		static void SetZapOSDData(string channelName)
+		{
+			if (m_eState!= State.Initialized) return ;
+			if (m_iCurrentCard <0 || m_iCurrentCard >=m_tvcards.Count) return ;
+			TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[m_iCurrentCard];
+
+			TVChannel channel=null;
+			foreach (TVChannel chan in m_TVChannels)
+			{
+				if (chan.Name==channelName)
+				{
+					channel=chan;
+					break;
+				}
+			}
+			if (channel==null) return;
+
+			if(GUIWindowManager.ActiveWindow!=(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+				return;
+			if(m_osd!=null && channel!=null && m_useVMR9Zap==true)
+			{
+					int level=dev.SignalStrength;
+					int quality=dev.SignalQuality;
+					m_osd.RenderZapOSD(channel,quality);
 			}
 		}
 
@@ -1434,6 +1473,7 @@ namespace MediaPortal.TV.Recording
 			{
 				RecorderProperties.UpdateRecordingProperties();
 				m_dtProgresBar=DateTime.Now;
+
 			}
 
 			ts=DateTime.Now-m_dtStart;
@@ -1598,9 +1638,10 @@ namespace MediaPortal.TV.Recording
 						msg.Label=chan.ExternalTunerChannel;
 						GUIWindowManager.SendThreadMessage(msg);
 					}
-					return;
+					break;
 				}
 			}
+			SetZapOSDData(strChannelName);
 		}//static void TuneExternalChannel(string strChannelName)
     
 		#endregion

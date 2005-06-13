@@ -1,4 +1,7 @@
 using System;
+using System.Drawing.Text;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DShowNET;
@@ -23,7 +26,7 @@ namespace MediaPortal.Player
 	/// </summary>
 	public class VMR7Util
 	{
-		static public VMR7Util g_VMR7=null;
+		static public VMR7Util g_vmr7=null;
 		public IBaseFilter		VMR7Filter = null;
 		IQualProp quality=null;
 		IVMRMixerBitmap m_mixerBitmap=null;
@@ -75,7 +78,7 @@ namespace MediaPortal.Player
 				return;
 			}
 			quality = VMR7Filter as IQualProp ;
-			g_VMR7=this;
+			g_vmr7=this;
 		}
 
 		/// <summary>
@@ -89,7 +92,7 @@ namespace MediaPortal.Player
 				
 			if (VMR7Filter != null)
 				Marshal.ReleaseComObject(VMR7Filter); VMR7Filter = null;
-			g_VMR7=null;
+			g_vmr7=null;
 		}
 
 
@@ -147,5 +150,80 @@ namespace MediaPortal.Player
 				return true;
 			}//get {
 		}//public bool IsVMR7Connected
+
+		public bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
+		{
+			if(MixerBitmapInterface==null)
+				return false;
+
+			if(VMR7Filter!=null)
+			{
+				if(IsVMR7Connected==false)
+				{
+					Log.Write("SaveVMR9Bitmap() failed, no VMR7");
+					return false;
+				}
+				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
+				int hr=0;
+				// transparent image?
+				if(bitmap!=null)
+				{
+					if(transparent==true)
+						bitmap.MakeTransparent(Color.Black);
+					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
+					mStr.Position=0;
+				}
+				VMRAlphaBitmap bmp=new VMRAlphaBitmap();
+
+				if(show==true)
+				{
+					using (Graphics g = Graphics.FromImage(bitmap))
+					{
+						bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
+						bmp.color.blu=0;
+						bmp.color.green=0;
+						bmp.color.red=0;
+						bmp.HDC=g.GetHdc();
+						bmp.rDest=new NormalizedRect();
+						bmp.rDest.top=0.0f;
+						bmp.rDest.left=0.0f;
+						bmp.rDest.bottom=1.0f;
+						bmp.rDest.right=1.0f;
+						bmp.fAlpha=alphaValue;
+						//Log.Write("SaveVMR7Bitmap() called");
+						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+						if(hr!=0)
+						{
+							//Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+							return false;
+						}
+					}
+				}
+				else
+				{
+					bmp.dwFlags=(int)VMRAlphaBitmapFlags.Disable;
+					bmp.color.blu=0;
+					bmp.color.green=0;
+					bmp.color.red=0;
+					bmp.HDC=IntPtr.Zero;
+					bmp.rDest=new NormalizedRect();
+					bmp.rDest.top=0.0f;
+					bmp.rDest.left=0.0f;
+					bmp.rDest.bottom=1.0f;
+					bmp.rDest.right=1.0f;
+					bmp.fAlpha=alphaValue;
+					//Log.Write("SaveVMR7Bitmap() called");
+					hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+					if(hr!=0)
+					{
+						//Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+						return false;
+					}
+				}
+				// dispose
+				return true;
+			}
+			return false;
+		}// savevmr7bitmap
 	}//public class VMR7Util
 }//namespace MediaPortal.Player 

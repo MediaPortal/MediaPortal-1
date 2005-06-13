@@ -295,17 +295,6 @@ namespace MediaPortal.TV.Recording
 
 				m_graphState = State.Created;
 				DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() OUT");
-				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-				{
-					m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
-				}
-				m_osd.Mute=false;
-				GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-				if(win!=null)
-					win.SetObject(m_osd);
-				win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-				if(win!=null)
-					win.SetObject(m_osd);
 
 
 				return true;

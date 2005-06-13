@@ -1,4 +1,8 @@
 using System;
+using System.Drawing.Text;
+using System.Drawing.Imaging;
+using System.Drawing;
+
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DShowNET;
@@ -325,5 +329,79 @@ namespace MediaPortal.Player
     {
       if (m_scene != null) m_scene.Enabled = onOff;
     }
+
+		public bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
+		{
+			if (VMR9Filter==null) 
+				return false;
+			
+			if(MixerBitmapInterface==null)
+				return false;
+
+			if(IsVMR9Connected==false)
+			{
+				Log.Write("SaveVMR9Bitmap() failed, no VMR9");
+				return false;
+			}
+			System.IO.MemoryStream mStr=new System.IO.MemoryStream();
+			int hr=0;
+			// transparent image?
+			if(bitmap!=null)
+			{
+				if(transparent==true)
+					bitmap.MakeTransparent(Color.Black);
+				bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
+				mStr.Position=0;
+			}
+			VMR9AlphaBitmap bmp=new VMR9AlphaBitmap();
+
+			if(show==true)
+			{
+				Microsoft.DirectX.Direct3D.Surface surface=GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,GUIGraphicsContext.Height,Microsoft.DirectX.Direct3D.Format.X8R8G8B8,Microsoft.DirectX.Direct3D.Pool.SystemMemory);
+				Microsoft.DirectX.Direct3D.SurfaceLoader.FromStream(surface,mStr,Microsoft.DirectX.Direct3D.Filter.None,0);
+				bmp.dwFlags=4|8;
+				bmp.color.blu=0;
+				bmp.color.green=0;
+				bmp.color.red=0;
+				unsafe
+				{
+					bmp.pDDS=(System.IntPtr)surface.UnmanagedComPointer;
+				}
+				bmp.rDest=new VMR9NormalizedRect();
+				bmp.rDest.top=0.0f;
+				bmp.rDest.left=0.0f;
+				bmp.rDest.bottom=1.0f;
+				bmp.rDest.right=1.0f;
+				bmp.fAlpha=alphaValue;
+				//Log.Write("SaveVMR9Bitmap() called");
+				hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
+				if(hr!=0)
+				{
+					//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+					return false;
+				}
+				surface.Dispose();					
+			}
+			else
+			{
+				bmp.dwFlags=1;
+				bmp.color.blu=0;
+				bmp.color.green=0;
+				bmp.color.red=0;
+				bmp.rDest=new VMR9NormalizedRect();
+				bmp.rDest.top=0.0f;
+				bmp.rDest.left=0.0f;
+				bmp.rDest.bottom=1.0f;
+				bmp.rDest.right=1.0f;
+				bmp.fAlpha=alphaValue;
+				hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
+				if(hr!=0)
+				{
+					return false;
+				}
+			}
+			// dispose
+			return true;
+		}// savevmr9bitmap
   }//public class VMR9Util
 }//namespace MediaPortal.Player 
