@@ -288,23 +288,7 @@ namespace MediaPortal.TV.Recording
 			header.HeaderExtB13 = data[offset+13];
 			return header;
 		}
-		public DVBSectionHeader GetSectionHeader(IntPtr address,int offset)
-		{
-			DVBSectionHeader header=new DVBSectionHeader();
-			header.TableID = Marshal.ReadByte(address,offset);
-			header.SectionSyntaxIndicator = (Marshal.ReadByte(address,offset+1)>>7) & 1;
-			header.SectionLength = ((Marshal.ReadByte(address,offset+1)& 0xF)<<8) + Marshal.ReadByte(address,offset+2);
-			header.TableIDExtension = (Marshal.ReadByte(address,offset+3)<<8)+Marshal.ReadByte(address,offset+4);
-			header.VersionNumber = ((Marshal.ReadByte(address,offset+5)>>1)&0x1F);
-			header.CurrentNextIndicator = Marshal.ReadByte(address,offset+5) & 1;
-			header.SectionNumber = Marshal.ReadByte(address,offset+6);
-			header.LastSectionNumber = Marshal.ReadByte(address,offset+7);
-			header.HeaderExtB8B9=(Marshal.ReadByte(address,offset+8)<<8)+Marshal.ReadByte(address,offset+9);
-			header.HeaderExtB10B11 = (Marshal.ReadByte(address,offset+10)<<8)+Marshal.ReadByte(address,offset+11);
-			header.HeaderExtB12 = Marshal.ReadByte(address,offset+12);
-			header.HeaderExtB13 = Marshal.ReadByte(address,offset+13);
-			return header;
-		}
+
 		public bool GetTable(int pid,int tableID,int timeout)
 		{
 			if(pid<0 || pid>0x1FFF)
@@ -340,12 +324,12 @@ namespace MediaPortal.TV.Recording
 				m_teletextPid = teletext;
 			// subtitle
 			if (subtitle > 0x1FFF)
-				m_subtitlePid = 0;
+				m_subtitlePid = -1;
 			else
 				m_subtitlePid = subtitle;
 			// pmt pid
 			if (pmtPid > 0x1FFF)
-				m_pmtPid = 0;
+				m_pmtPid = -1;
 			else
 				m_pmtPid = pmtPid;
 			// name
