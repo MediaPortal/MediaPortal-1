@@ -70,7 +70,7 @@ namespace MediaPortal.Player
     protected const int WS_CLIPCHILDREN	= 0x02000000;
     protected const int WS_CLIPSIBLINGS	= 0x04000000;
     protected bool        m_bVisible=false;
-		IQualProp quality=null;
+		VMR7Util  vmr7 = null;
 
     public VideoPlayerVMR7()
     {
@@ -291,8 +291,6 @@ namespace MediaPortal.Player
 				//mediaPos.get_Duration(out m_dDuration);
 				mediaPos.get_CurrentPosition(out m_dCurrentPos);
 			}
-			if (quality!=null) 
-				VideoRendererStatistics.Update(quality);
 
       if (GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false)
       {
@@ -706,6 +704,8 @@ namespace MediaPortal.Player
         comobj = Activator.CreateInstance( comtype );
         graphBuilder = (IGraphBuilder) comobj; comobj = null;
 			
+				vmr7=new VMR7Util();
+				vmr7.AddVMR7(graphBuilder);
 				// add preferred video & audio codecs
 				string strVideoCodec="";
 				string strAudioCodec="";
@@ -788,19 +788,7 @@ namespace MediaPortal.Player
         basicVideo	= graphBuilder as IBasicVideo2;
         basicAudio	= graphBuilder as IBasicAudio;
 				
-				//find vmr7 video renderer
-				IBaseFilter overlayFilter;
-				DsUtils.FindFilterByClassID(graphBuilder,new Guid("B87BEB7B-8D29-423F-AE4D-6582C10175AC"),out overlayFilter);
 
-				if (overlayFilter!=null)
-				{
-					//get quality interface
-					quality = overlayFilter as IQualProp;    
-					overlayFilter=null;
-				}
-
-//        m_ovMgr = new OVTOOLLib.OvMgrClass();
-//        m_ovMgr.SetGraph(graphBuilder);
         DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
         DirectShowUtil.EnableDeInterlace(graphBuilder);
         return true;
@@ -859,6 +847,9 @@ namespace MediaPortal.Player
           hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
           mediaEvt = null;
         }
+				if (vmr7!=null)
+					vmr7.RemoveVMR7();
+				vmr7=null;
 
         if( videoWin != null )
         {
@@ -873,7 +864,7 @@ namespace MediaPortal.Player
         basicVideo	= null;
         videoStep	= null;
         basicAudio	= null;
-				quality     = null;
+				
         if( vobSub != null )
           Marshal.ReleaseComObject( vobSub ); vobSub = null;
 

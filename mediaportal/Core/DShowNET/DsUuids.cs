@@ -132,6 +132,7 @@ public class FilterCategory		// uuids.h  :  CLSID_*
 	// VMR9
 		/// <summary> CLSID_DvdGraphBuilder,  DVD graph builder </summary>
 		public static readonly Guid VideoMixingRenderer9 = new Guid( 0x51b4abf3, 0x748f, 0x4e3b, 0xa2, 0x76, 0xc8, 0x28, 0x33, 0x0e, 0x92, 0x6a );
+		public static readonly Guid VideoMixingRenderer = new Guid( 0xB87BEB7B, 0x8D29, 0x423f, 0xAE, 0x4D, 0x65, 0x82, 0xC1, 0x01, 0x75, 0xAC);
 		/// <summary> CLSID_DvdGraphBuilder,  DVD graph builder </summary>
 		public static readonly Guid AllocPresenter9  	= new Guid( 0x2d2e24cb, 0x0cd5, 0x458f, 0x86, 0xea, 0x3e, 0x6f, 0xa2, 0x2c, 0x83, 0x64 );
 		/// <summary> CLSID_DvdGraphBuilder,  DVD graph builder </summary>

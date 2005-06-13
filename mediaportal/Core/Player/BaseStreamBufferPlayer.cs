@@ -63,7 +63,7 @@ namespace MediaPortal.Player
 
 		/// <summary> audio interface used to control volume. </summary>
 		protected IBasicAudio								basicAudio=null;
-		IQualProp quality=null;
+		VMR7Util  vmr7 = null;
 
 		protected const int WM_GRAPHNOTIFY	= 0x00008001;	// message from graph
 		protected const int WS_CHILD			= 0x40000000;	// attributes for video window
@@ -354,8 +354,6 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
-				if (quality!=null) 
-					VideoRendererStatistics.Update(quality);
 
 			}
 
@@ -830,6 +828,10 @@ namespace MediaPortal.Player
 				}
 				comobj = Activator.CreateInstance( comtype );
 				graphBuilder = (IGraphBuilder) comobj; comobj = null;
+
+				vmr7=new VMR7Util();
+				vmr7.AddVMR7(graphBuilder);
+
 				Guid clsid = Clsid.StreamBufferSource;
 				Guid riid = typeof(IStreamBufferSource).GUID;
 				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
@@ -877,16 +879,6 @@ namespace MediaPortal.Player
 				basicVideo	= graphBuilder as IBasicVideo2;
 				basicAudio	= graphBuilder as IBasicAudio;
 				
-				//find vmr7 video renderer
-				IBaseFilter overlayFilter;
-				DsUtils.FindFilterByClassID(graphBuilder,new Guid("B87BEB7B-8D29-423F-AE4D-6582C10175AC"),out overlayFilter);
-
-				if (overlayFilter!=null)
-				{
-					//get quality interface
-					quality = overlayFilter as IQualProp;    
-					overlayFilter=null;
-				}
 				Log.Write("StreamBufferPlayer:SetARMode");
 				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
@@ -950,7 +942,9 @@ namespace MediaPortal.Player
         
 				basicVideo	= null;
 				basicAudio	= null;
-				quality     = null;
+				if (vmr7!=null)
+					vmr7.RemoveVMR7();
+				vmr7=null;
 
 				if ( bufferSource != null )
 					Marshal.ReleaseComObject( bufferSource );

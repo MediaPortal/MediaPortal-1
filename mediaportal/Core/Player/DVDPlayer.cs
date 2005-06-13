@@ -91,7 +91,8 @@ namespace MediaPortal.Player
     protected DvdDomain				      currnDomain;
     protected IBasicAudio				    basicAudio=null;
     protected IMediaPosition		    mediaPos=null;
-    protected int                   m_iSpeed=1;
+		VMR7Util  vmr7 = null;
+		protected int                   m_iSpeed=1;
     protected double                m_dCurrentTime=0;
     protected bool                          m_bVisible=true;
     protected bool                          m_bStarted=false;
@@ -474,6 +475,9 @@ namespace MediaPortal.Player
           hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_DVD_EVENT, IntPtr.Zero );
           mediaEvt = null;
         }
+				if (vmr7!=null)
+					vmr7.RemoveVMR7();
+				vmr7=null;
 
         if( videoWin != null )
         {
@@ -577,6 +581,8 @@ namespace MediaPortal.Player
         if( hr < 0 )
           Marshal.ThrowExceptionForHR( hr );
         DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
+				vmr7=new VMR7Util();
+				vmr7.AddVMR7(graphBuilder);
 
 				
         try

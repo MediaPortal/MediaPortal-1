@@ -1109,6 +1109,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Player\VMR7.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Player\VMR9.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
