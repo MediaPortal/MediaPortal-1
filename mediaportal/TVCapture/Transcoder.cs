@@ -268,6 +268,26 @@ namespace MediaPortal.TV.Recording
 					break;
 			}
 
+			if (isWMV)
+			{
+				TranscodeToWMV WMVConverter = new TranscodeToWMV();
+				if (!WMVConverter.Transcode(info,VideoFormat.Wmv,MediaPortal.Core.Transcoding.Quality.High))
+				{
+					tinfo.status=Status.Error;
+					return;
+				}
+				while (!WMVConverter.IsFinished()) 
+				{
+					tinfo.percentDone=WMVConverter.Percentage();
+					System.Threading.Thread.Sleep(100);
+				}
+				if (deleteOriginal)
+				{
+					DiskManagement.DeleteRecording(info.file);
+				}
+				tinfo.status=Status.Completed;
+				return;
+			}
 
 			Dvrms2Mpeg mpgConverter = new Dvrms2Mpeg();
 			if (!mpgConverter.Transcode(info,VideoFormat.Mpeg2,MediaPortal.Core.Transcoding.Quality.High))
@@ -281,6 +301,11 @@ namespace MediaPortal.TV.Recording
 			}
 			if (isMpeg)
 			{
+				if (deleteOriginal)
+				{
+					DiskManagement.DeleteRecording(info.file);
+				}
+				tinfo.status=Status.Completed;
 				return;
 			}
 

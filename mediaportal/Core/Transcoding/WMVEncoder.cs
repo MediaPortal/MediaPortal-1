@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
-using WMEncoderLib;
+using System.Runtime.InteropServices;
+using DShowNET;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Core.Transcoding
 {
@@ -9,54 +10,46 @@ namespace MediaPortal.Core.Transcoding
 	/// </summary>
 	public class TranscodeToWMV : ITranscode	
 	{
-		WMEncoder Encoder ;
-		bool      finishedEncoding=false;
-		WMEncProfile2  profile = null;
+
+		[ComVisible(true), ComImport,
+		Guid("45086030-F7E4-486a-B504-826BB5792A3B"),
+		InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+		public interface IConfigAsfWriter 
+		{
+			[PreserveSig]
+			int ConfigureFilterUsingProfileId([In] uint dwProfileId);
+			[PreserveSig]
+			int GetCurrentProfileId([Out] out uint pdwProfileId);
+			[PreserveSig]
+			int ConfigureFilterUsingProfileGuid([In] Guid guidProfile);
+			[PreserveSig]
+			int GetCurrentProfileGuid([Out] out Guid pProfileGuid);
+			[PreserveSig]
+			int ConfigureFilterUsingProfile([In] IntPtr  pProfile);
+			[PreserveSig]
+			int GetCurrentProfile([Out] out IntPtr ppProfile);
+			[PreserveSig]
+			int SetIndexMode( [In]  bool bIndexFile );
+			[PreserveSig]
+			int GetIndexMode( [Out] out bool pbIndexFile );
+		}
+
+		protected int												rotCookie = 0;
+		protected  IGraphBuilder			  			      graphBuilder =null;
+		protected  IStreamBufferSource 			        bufferSource=null ;
+		protected IMediaControl											mediaControl=null;
+		protected IMediaSeeking											mediaSeeking=null;
+		protected IBaseFilter												powerDvdMuxer =null;
+		protected IMediaEventEx											mediaEvt=null;
+		protected IFileSinkFilter										fileWriterFilter = null;			// DShow Filter: file writer
+		protected IBaseFilter												Mpeg2VideoCodec =null;
+		protected IBaseFilter												Mpeg2AudioCodec =null;
 
 		public TranscodeToWMV()
 		{
 		}
 		public void CreateProfile(string name, int KBPS, Size videoSize, int bitRate, int FPS)
 		{
-			profile =new WMEncProfile2 ();
-			profile.ValidateMode=true;
-			profile.ProfileName=name;
-			profile.ContentType=17;//audio & video
-			profile.set_VBRMode(WMENC_SOURCE_TYPE.WMENC_VIDEO, 0, WMENC_PROFILE_VBR_MODE.WMENC_PVM_BITRATE_BASED);
-			profile.AddAudience(KBPS);
-			// Create an audience object then loop through all of the audiences
-			// in the current profile, making the same changes to each audience.
-			IWMEncAudienceObj Audnc;
-			for (int i = 0; i < profile.AudienceCount; i++)
-			{
-				Audnc = profile.get_Audience(i);
-				// The Windows Media 9 codec is used by default, but you can change
-				// it as follows. Be sure to make this change for each audience.
-				//Audnc.set_VideoCodec(0, 2);
-
-				// Make the video output size match the input size by setting
-				// the height and width to 0.
-				Audnc.set_VideoHeight(0, videoSize.Height);
-				Audnc.set_VideoWidth(0, videoSize.Width);
-				Audnc.set_VideoFPS(0,FPS);
-				
-				Audnc.SetAudioConfig(0,2,44100,192000,16);
-				
-				int videoBitRate=KBPS;
-				videoBitRate-=9*1024;//overhead
-				videoBitRate-= (192000);//audio
-				Audnc.set_VideoBitrate(0,videoBitRate);
-			
-
-				// Change the buffer size to 5 seconds. By default, the end user's
-				// default setting is used.
-				Audnc.set_VideoBufferSize(0, 5000);
-				Audnc.set_VideoImageSharpness(0, 85);
-
-			}
-
-			profile.Validate();
-
 
 
 		}
@@ -69,150 +62,283 @@ namespace MediaPortal.Core.Transcoding
 
 		public bool Transcode(TranscodeInfo info, VideoFormat format,Quality quality)
 		{
-			if (!Supports(format)) return false;
-			try 
+			try
 			{
-				// Create a WMEncoder object.
-				Encoder = new WMEncoder();
-				Encoder.OnStateChange +=new _IWMEncoderEvents_OnStateChangeEventHandler(OnStateChange);
+				if (!Supports(format)) return false;
+				string ext=System.IO.Path.GetExtension(info.file);
+				if (ext.ToLower() !=".dvr-ms" && ext.ToLower() !=".sbe" ) return false;
 
-				// Retrieve the source group collection.
-				IWMEncSourceGroupCollection SrcGrpColl = Encoder.SourceGroupCollection;
-
-				// Add a source group to the collection.
-				IWMEncSourceGroup SrcGrp  = SrcGrpColl.Add("SG_1");
-
-				// Add a video and audio source to the source group.
-				IWMEncSource SrcAud = SrcGrp.AddSource(WMENC_SOURCE_TYPE.WMENC_AUDIO);
-				SrcAud.SetInput(info.file, "", "");
-
-				IWMEncVideoSource2 SrcVid = (IWMEncVideoSource2)SrcGrp.AddSource(WMENC_SOURCE_TYPE.WMENC_VIDEO);
-				SrcVid.SetInput(info.file, "", "");
-
-				// Crop 2 pixels from each edge of the video image.
-				SrcVid.CroppingBottomMargin = 2;
-				SrcVid.CroppingTopMargin = 2;
-				SrcVid.CroppingLeftMargin = 2;
-				SrcVid.CroppingRightMargin = 2;
-
-				string outputFile=System.IO.Path.ChangeExtension(info.file,".wmv");
-				// Specify a file object in which to save encoded content.
-				IWMEncFile File = Encoder.File;
-				File.LocalFileName = outputFile;
-
-				// Choose a profile from the collection.
-				if (profile==null)
+				Type comtype = null;
+				object comobj = null;
+				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
+				if( comtype == null )
 				{
-					IWMEncProfileCollection ProColl = Encoder.ProfileCollection;
-					IWMEncProfile Pro;
-					string name="Windows Media Video 8 for Local Area Network (384 Kbps)";
-					if (quality==Quality.Medium)
-						name="Windows Media Video 8 for Local Area Network (100 Kbps)";
-					if (quality==Quality.Low)
-						name="Windows Media Video 8 for Dial-up Modems (56 Kbps)";
-					for (int i = 0; i < ProColl.Count; i++)
-					{
-						Pro = ProColl.Item(i);
-						//Trace.WriteLine(Pro.Name+" - "+Pro.Description);
-						if (Pro.Name == name)
-						{
-							SrcGrp.set_Profile(Pro);
-							break;
-						}
-					}
+					Log.Write("StreamBufferPlayer9:DirectX 9 not installed");
+					return false;
 				}
-				else
+				comobj = Activator.CreateInstance( comtype );
+				graphBuilder = (IGraphBuilder) comobj; comobj = null;
+		
+				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
+
+				Guid clsid = Clsid.StreamBufferSource;
+				Guid riid = typeof(IStreamBufferSource).GUID;
+				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
+				bufferSource = (IStreamBufferSource) comObj; comObj = null;
+
+	
+				IBaseFilter filter = (IBaseFilter) bufferSource;
+				graphBuilder.AddFilter(filter, "SBE SOURCE");
+	
+				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
+				int hr = fileSource.Load(info.file, IntPtr.Zero);
+
+				//add mpeg2 audio/video codecs
+				string strVideoCodec="Mpeg2Dec Filter";
+				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
+				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
-					SrcGrp.set_Profile(profile);
+					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec",strVideoCodec);
+					strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec",strAudioCodec);
+				}
+			
+				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+				if (Mpeg2VideoCodec==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to add mpeg2 video codec");
+					Cleanup();
+					return false;
+				}
+				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+				if (Mpeg2AudioCodec==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to add mpeg2 audio codec");
+					Cleanup();
+					return false;
 				}
 
-				// Fill in the description object members.
-				
-				IWMEncDisplayInfo Descr = Encoder.DisplayInfo;
-				Descr.Author = info.Author;
-				Descr.Copyright = info.Copyright;
-				Descr.Description = info.Description;
-				Descr.Rating = info.Rating;
-				Descr.Title = info.Title;
-				
+				//connect output #0 of streambuffer source->mpeg2 audio codec pin 1
+				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
+				IPin pinOut0, pinOut1;
+				IPin pinIn0, pinIn1;
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
+				if (pinOut0==null || pinOut1==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get pins of source");
+					Cleanup();
+					return false;
+				}
 
-				// Add an attribute to the collection.
-				IWMEncAttributes Attr = Encoder.Attributes;
-				Attr.Add ("URL", "IP address");
+				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);
+				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);
+				if (pinIn0==null || pinIn1==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get pins of mpeg2 video/audio codec");
+					Cleanup();
+					return false;
+				}
+			
+				AMMediaType amAudio= new AMMediaType();
+				amAudio.majorType = MediaType.Audio;
+				amAudio.subType = MediaSubType.MPEG2_Audio;
+				pinOut0.Connect(pinIn1,ref amAudio);
+				if (hr!=0 )
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
 
-				// Start the encoding process.
-				// Wait until the encoding process stops before exiting the application.
-				Encoder.PrepareToEncode(true);
-				Encoder.Start();
+			
+				AMMediaType amVideo= new AMMediaType();
+				amVideo.majorType = MediaType.Video;
+				amVideo.subType = MediaSubType.MPEG2_Video;
+				pinOut1.Connect(pinIn0,ref amVideo);
+				if (hr!=0 )
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+
+				//add asf file writer
+				string monikerAsfWriter=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}";
+
+				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerAsfWriter ) as IBaseFilter;
+				if (fileWriterbase==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:Unable to create FileWriter");
+					Cleanup();
+					return false;
+				}
+
+			
+				fileWriterFilter = fileWriterbase as IFileSinkFilter;
+				if (fileWriterFilter ==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:Add unable to get IFileSinkFilter for filewriter");
+					Cleanup();
+					return false;
+				}
+				//set output filename
+				string outputFileName=System.IO.Path.ChangeExtension(info.file,".wmv");
+				AMMediaType mt = new AMMediaType();
+				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
+				if (hr!=0 )
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+				hr = graphBuilder.AddFilter( fileWriterbase , "WM ASF Writer" );
+				if( hr != 0 ) 
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+
+				//connect output #0 of videocodec->asf writer pin 1
+				//connect output #0 of audiocodec->asf writer pin 0
+				DsUtils.GetPin((IBaseFilter)Mpeg2AudioCodec,PinDirection.Output,0,out pinOut0);
+				DsUtils.GetPin((IBaseFilter)Mpeg2VideoCodec,PinDirection.Output,0,out pinOut1);
+				if (pinOut0==null || pinOut1==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get outpins of video codec");
+					Cleanup();
+					return false;
+				}
+
+				DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn0);
+				DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
+				if (pinIn0==null || pinIn1==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get pins of asf wm writer");
+					Cleanup();
+					return false;
+				}
+			
+				amAudio= new AMMediaType();
+				pinOut0.Connect(pinIn0,ref amAudio);
+				if (hr!=0 )
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+			
+				amVideo= new AMMediaType();
+				pinOut1.Connect(pinIn1,ref amVideo);
+				if (hr!=0 )
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+				IConfigAsfWriter config = fileWriterbase as IConfigAsfWriter;
+				//config.ConfigureFilterUsingProfileGuid();
+
+				mediaControl= graphBuilder as IMediaControl;
+				mediaSeeking= graphBuilder as IMediaSeeking;
+				mediaEvt    = graphBuilder as IMediaEventEx;
+				hr=mediaControl.Run();
+				if (hr!=0 )
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to start graph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
 			} 
 			catch (Exception e) 
 			{  
 				// TODO: Handle exceptions.
 				Log.Write("unable to transcode file:{0} message:{1}", info.file,e.Message);
-				Encoder=null;
+
 				return false;
 			}
-			finishedEncoding=false;
 			return true;
+		}
+		public bool IsFinished()
+		{
+			if (mediaControl==null) return true;
+			FilterState state;
+
+			mediaControl.GetState(200, out state);
+			if (state==FilterState.Stopped)
+			{
+				Cleanup();
+				return true;
+			}
+			int p1, p2, hr = 0;
+			DsEvCode code;
+			hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
+			hr = mediaEvt.FreeEventParams( code, p1, p2 );
+			if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+			{
+				Cleanup();
+				return true;
+			}
+			return false;
+		}
+
+		public int Percentage()
+		{
+			if (mediaSeeking==null) return 100;
+			long lDuration,lCurrent;
+			mediaSeeking.GetCurrentPosition(out lCurrent);
+			mediaSeeking.GetDuration(out lDuration);
+			float percent = ((float)lCurrent) / ((float)lDuration);
+			percent*=100.0f;
+			return (int)percent;
 		}
 
 		public bool IsTranscoding()
 		{
 			if (IsFinished()) return false;
-
 			return true;
 		}
 
-		public bool IsFinished()
+		void Cleanup()
 		{
-			if (Encoder==null) return true;
-			if (!finishedEncoding) return false;
-			Encoder.Stop();
-			Encoder=null;
-			return true;
+			if( rotCookie != 0 )
+				DsROT.RemoveGraphFromRot( ref rotCookie );
+
+			if( mediaControl != null )
+			{
+				mediaControl.Stop();
+				mediaControl = null;
+			}
+			mediaSeeking=null;
+			mediaEvt=null;
+
+			
+			
+			if ( Mpeg2AudioCodec != null )
+				Marshal.ReleaseComObject( Mpeg2AudioCodec );
+			Mpeg2AudioCodec=null;
+			
+			if ( Mpeg2VideoCodec != null )
+				Marshal.ReleaseComObject( Mpeg2VideoCodec );
+			Mpeg2VideoCodec=null;
+
+			if ( fileWriterFilter != null )
+				Marshal.ReleaseComObject( fileWriterFilter );
+			fileWriterFilter=null;
+
+			if ( bufferSource != null )
+				Marshal.ReleaseComObject( bufferSource );
+			bufferSource = null;
+
+			DsUtils.RemoveFilters(graphBuilder);
+
+			if( graphBuilder != null )
+				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
 		}
 
-		
-		public int Percentage()
-		{
-			if (Encoder==null) return 100;
-			return -1;
-		}
-
-		private void OnStateChange(WMENC_ENCODER_STATE enumState)
-		{
-				switch( enumState )
-		 {
-			 case WMENC_ENCODER_STATE.WMENC_ENCODER_RUNNING:
-				 // TODO: Handle running state.
-				 break;
-
-			 case WMENC_ENCODER_STATE.WMENC_ENCODER_STOPPED:
-				 // TODO: Handle stopped state.
-				 Encoder.OnStateChange -= new _IWMEncoderEvents_OnStateChangeEventHandler(OnStateChange);
-				 finishedEncoding=true;
-				 break;
-
-			 case WMENC_ENCODER_STATE.WMENC_ENCODER_STARTING:
-				 // TODO: Handle starting state.
-				 break;
-
-			 case WMENC_ENCODER_STATE.WMENC_ENCODER_PAUSING:
-				 // TODO: Handle pausing state.
-				 break;
-
-			 case WMENC_ENCODER_STATE.WMENC_ENCODER_STOPPING:
-				 // TODO: Handle stopping state.
-				 break;
-
-			 case WMENC_ENCODER_STATE.WMENC_ENCODER_PAUSED:
-				 // TODO: Handle paused state.
-				 break;
-
-			 case WMENC_ENCODER_STATE.WMENC_ENCODER_END_PREPROCESS:
-				 // TODO: Handle end preprocess state.
-				 break;
-		 }
-		}
 	}
 }
