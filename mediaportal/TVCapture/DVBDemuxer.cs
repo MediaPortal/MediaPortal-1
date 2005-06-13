@@ -784,16 +784,11 @@ namespace MediaPortal.TV.Recording
 			for (int ptr = add; ptr < end; ptr += 188)//main loop
 			{
 				if (m_pluginsEnabled == true)
-				{
-					//PidCallback((IntPtr)ptr);
-				}
+					PidCallback((IntPtr)ptr);
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
 				if(m_packetHeader.SyncByte!=0x47) 
-				{
-					Log.Write("dvbdemuxer: syncbyte={0:X}",m_packetHeader.SyncByte);
 					continue;
-				}
 				if(m_packetHeader.TransportError==true)
 				{
 //					if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
@@ -836,41 +831,41 @@ namespace MediaPortal.TV.Recording
 				#endregion
 
 				#region Audio & Video
-//				if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
-//				{
-////					Log.Write("got audio pid:0x{0:X}", m_audioPid);
-//					if (m_packetHeader.PayloadUnitStart == true)// start
-//					{
-//						AudioHeader ah = new AudioHeader();
-//						byte[] packet = new byte[184];
-//						Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
-//						if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
-//						{
-//							if (ah.Bitrate!=m_usedAudioFormat.Bitrate || 
-//								ah.Channel!=m_usedAudioFormat.Channel ||
-//								ah.SamplingFreq!=m_usedAudioFormat.SamplingFreq ||
-//								ah.Layer!=m_usedAudioFormat.Layer ||
-//								ah.Mode!=m_usedAudioFormat.Mode)
-//							{
-//								if(OnAudioFormatChanged!=null)
-//								{
-//									bool success=OnAudioFormatChanged(ah);
-//									if(success) m_usedAudioFormat = ah;
-//								}
-//                                
-//							}
-//						}
-//					}
-//				}
-//				if (m_packetHeader.Pid == m_videoPid && m_videoPid > 0)
-//				{
-////					Log.Write("got video pid:0x{0:X}", m_videoPid);
-//					if (m_packetHeader.PayloadUnitStart == true)// start
-//					{
-//						byte[] packet = new byte[188];
-//						Marshal.Copy((IntPtr)ptr, packet, 0, 188);
-//					}
-//				}
+				if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
+				{
+//					Log.Write("got audio pid:0x{0:X}", m_audioPid);
+					if (m_packetHeader.PayloadUnitStart == true)// start
+					{
+						AudioHeader ah = new AudioHeader();
+						byte[] packet = new byte[184];
+						Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
+						if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
+						{
+							if (ah.Bitrate!=m_usedAudioFormat.Bitrate || 
+								ah.Channel!=m_usedAudioFormat.Channel ||
+								ah.SamplingFreq!=m_usedAudioFormat.SamplingFreq ||
+								ah.Layer!=m_usedAudioFormat.Layer ||
+								ah.Mode!=m_usedAudioFormat.Mode)
+							{
+								if(OnAudioFormatChanged!=null)
+								{
+									bool success=OnAudioFormatChanged(ah);
+									if(success) m_usedAudioFormat = ah;
+								}
+                                
+							}
+						}
+					}
+				}
+				if (m_packetHeader.Pid == m_videoPid && m_videoPid > 0)
+				{
+//					Log.Write("got video pid:0x{0:X}", m_videoPid);
+					if (m_packetHeader.PayloadUnitStart == true)// start
+					{
+						byte[] packet = new byte[188];
+						Marshal.Copy((IntPtr)ptr, packet, 0, 188);
+					}
+				}
 				#endregion
 
 				#region mhw grabbing
@@ -1041,8 +1036,6 @@ namespace MediaPortal.TV.Recording
 							{
 //								Log.Write("Parse...");
 								ParseSection();
-								m_bufferPositionSec=0;
-
 							}
 								
 						}
@@ -1051,15 +1044,12 @@ namespace MediaPortal.TV.Recording
 							DVBSectionHeader header=GetHeader();
 							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>header.SectionLength && header.SectionLength>0)
 							{
-								//								Log.Write("Parse2...");
+//								Log.Write("Parse2...");
 								ParseSection();
-								m_bufferPositionSec=0;
 							}
 							else if(IsEPGScheduleGrabbing()==true)
-							{
 								GetAllSections();
-								m_bufferPositionSec=0;
-							}
+							m_bufferPositionSec=0;
 						}
 					}
 					catch(Exception ex)
