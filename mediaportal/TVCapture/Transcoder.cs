@@ -242,30 +242,29 @@ namespace MediaPortal.TV.Recording
 			bool isXVID=(Type==2);
 			quality= (Quality)QualityIndex;
 
+
+			Dvrms2Mpeg mpgConverter = new Dvrms2Mpeg();
+			if (!mpgConverter.Transcode(info,VideoFormat.Mpeg2,MediaPortal.Core.Transcoding.Quality.High))
+			{
+				tinfo.status=Status.Error;
+				return;
+			}
+			while (!mpgConverter.IsFinished()) 
+			{
+				System.Threading.Thread.Sleep(100);
+			}
 			if (isMpeg)
 			{
-				string outputFile=System.IO.Path.ChangeExtension(info.file,".mpg");
-				string mencoderParams=String.Format(@"{0} -oac lavc -ovc lavc -of mpeg -lavcopts autoaspect:acodec=mp3:vcodec=mpeg2video -demuxer 35 -o {1}",
-																					info.file,outputFile);
-				Utils.StartProcess(@"mencoder\mencoder.exe",mencoderParams,true,true);
-				if (System.IO.File.Exists(outputFile))
-				{
-					if (deleteOriginal)
-					{
-						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
-					}
-					tinfo.status=Status.Completed;
-				}
-				else
-				{
-					tinfo.status=Status.Error;
-				}
+				return;
 			}
+
+			info.file=System.IO.Path.ChangeExtension(info.file,".mpg");
 			if (isXVID)
 			{
 				string outputFile=System.IO.Path.ChangeExtension(info.file,".avi");
-				string mencoderParams=String.Format("{0} -o {1} -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate=1024 -demuxer 35",
+				string mencoderParams=String.Format("\"{0}\" -o \"{1}\" -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate=1024 -demuxer 35",
 																								info.file,outputFile);
+				Log.Write("mencoder.exe {0}", mencoderParams);
 				Utils.StartProcess(@"mencoder\mencoder.exe",mencoderParams,true,true);
 				if (System.IO.File.Exists(outputFile))
 				{
