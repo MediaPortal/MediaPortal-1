@@ -15,6 +15,7 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class VMR9OSD
 	{
+		#region constructor / destructor
 		public VMR9OSD()
 		{
 			//
@@ -22,103 +23,18 @@ namespace MediaPortal.TV.Recording
 			//
 			ReadSkinFile();
 		}
+		#endregion
+		// structs
+		#region structs / enums
 		enum OSD
 		{
 			ZapOSD=1,
 			ZapList,
 			VolumeOSD,
+			OtherBitmap,
 			None
 		}
-		void ReadSkinFile()
-		{
-			m_osdSkin.rects=new string[99];
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\osdskin.xml"))
-			{
-				// first graphic elements and pictures
-				// rects
-				
-				for(int i=0;i<99;i++)
-				{
-					string rect=xmlreader.GetValueAsString("zaposdSkin",String.Format("rect{0}",i),"");
-					if(rect=="")
-						break;
-					else
-						m_osdSkin.rects[i]=rect;
-				}
-				// text always gets an x-offset 40 pix.
-				//channel name (chName)
-				string chName=xmlreader.GetValueAsString("zaposdSkin","chName","");
-				if(chName!=null)
-				{
-					if(chName!="")
-						m_osdSkin.chName=chName;
-				}
-				//now on tv (chNow)
-				string chNow=xmlreader.GetValueAsString("zaposdSkin","chNow","");
-				if(chNow!=null)
-				{
-					if(chNow!="")
-						m_osdSkin.chNow=chNow;
-				}
-				//next on tv (chNow)
-				string chNext=xmlreader.GetValueAsString("zaposdSkin","chNext","");
-				if(chNext!=null)
-				{
-					if(chNext!="")
-						m_osdSkin.chNext=chNext;
 
-				}
-				//progress tv (chNow)
-				string chProgress=xmlreader.GetValueAsString("zaposdSkin","chProgress","");
-				if(chProgress!=null)
-				{
-					if(chProgress!="")
-						m_osdSkin.chProgress=chProgress;
-
-				}
-				//signal level
-				string sigBar=xmlreader.GetValueAsString("zaposdSkin","signalBar","");
-				if(sigBar!=null)
-				{
-					if(sigBar!="")
-						m_osdSkin.sigBar=sigBar;
-
-				}
-				
-				// time display
-				string time=xmlreader.GetValueAsString("zaposdSkin","time","");
-				if(time!=null)
-				{
-					if(time!="")
-						m_osdSkin.time=time;
-				}
-				// mute
-				string mute=xmlreader.GetValueAsString("zaposdSkin","mute","");
-				if(mute!=null)
-				{
-					if(mute!="")
-						m_osdSkin.mute=mute;
-				}
-				// mute
-				string chLogo=xmlreader.GetValueAsString("zaposdSkin","chLogo","");
-				if(chLogo!=null)
-				{
-					if(chLogo!="")
-						m_osdSkin.chLogo=chLogo;
-				}
-				// channel list
-				m_osdChannels.baseRect=xmlreader.GetValueAsString("zaposdChannels","rect","");
-			}
-			try
-			{
-				m_volumeBitmap=new Bitmap(m_mediaPath+"volume_level_10.png");
-				m_volumeBitmap.MakeTransparent(Color.White);
-				m_muteBitmap=new Bitmap(m_mediaPath+"volume_level_0.png");
-				m_muteBitmap.MakeTransparent(Color.White);
-			}
-			catch{}
-		}
-		// structs
 		struct OSDSkin
 		{
 			public string[] rects;
@@ -135,8 +51,9 @@ namespace MediaPortal.TV.Recording
 		{
 			public string baseRect;
 		}
+		#endregion
 		//
-		
+		#region globals
 		DateTime m_timeDisplayed=DateTime.Now;
 		bool m_muteState=false;
 		string m_mediaPath=System.Windows.Forms.Application.StartupPath+@"\osdskin-media\";
@@ -150,12 +67,17 @@ namespace MediaPortal.TV.Recording
 		OSD m_osdRendered=OSD.None;
 		Bitmap m_volumeBitmap;
 		Bitmap m_muteBitmap;
+		#endregion
 
+		#region properties
 		public bool Mute
 		{
 			get{return m_muteState;}
 			set{m_muteState=value;}
 		}
+		#endregion
+
+		#region osd render functions
 		public void RenderChannelList(TVGroup group,string currentChannel)
 		{
 			int gWidth=GUIGraphicsContext.Width;
@@ -286,29 +208,6 @@ namespace MediaPortal.TV.Recording
 			textBrush.Dispose();
 	
 		}
-		public void RefreshCurrentChannel(int signal)
-		{
-			if(signal!=m_channelSNR && m_bitmapIsVisible==true)
-			{
-				m_channelSNR=signal;
-				ShowBitmap(RenderZapOSD(m_actualChannel,m_channelSNR),0.8f);
-			}
-		}
-
-		public void RefreshCurrentChannel()
-		{
-			ShowBitmap(RenderZapOSD(m_actualChannel,m_channelSNR),0.8f);
-		}
-		public void CheckTimeOuts()
-		{
-			TimeSpan ts=DateTime.Now-m_timeDisplayed;
-			if(ts.TotalMilliseconds>m_timeout && m_timeout>0 && (m_muteState==false && m_osdRendered==OSD.VolumeOSD))
-			{
-				m_bitmapIsVisible=true; // force clear
-				HideBitmap();
-				m_timeout=0;
-			}
-		}
 		public void RenderVolumeOSD()
 		{
 			int gWidth=GUIGraphicsContext.Width;
@@ -377,7 +276,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
-		public Bitmap RenderZapOSD(TVChannel channel,int signalLevel)
+		public void RenderZapOSD(TVChannel channel,int signalLevel)
 		{
 			int gWidth=GUIGraphicsContext.Width;
 			int gHeight=GUIGraphicsContext.Height;
@@ -388,8 +287,7 @@ namespace MediaPortal.TV.Recording
 			if(bm==null || gr==null || channel==null)
 			{
 				Log.Write("end rendering zaposd: no bitmap (memory problem?)");
-
-				return null;
+				return ;
 			}
 			m_osdRendered=OSD.ZapOSD;
 			m_timeout=0;
@@ -741,8 +639,6 @@ namespace MediaPortal.TV.Recording
 					{
 						if(System.IO.File.Exists(m_mediaPath+"volume_level_0.png"))
 						{
-							Bitmap muteBmp=new Bitmap(m_mediaPath+"volume_level_0.png");
-							muteBmp.MakeTransparent(Color.White);
 							int xPos=0;
 							int yPos=0;
 
@@ -755,22 +651,24 @@ namespace MediaPortal.TV.Recording
 								yPos=GetPosition(gHeight,seg[2]);
 							else
 								yPos=y+Convert.ToInt16(seg[2]);
-							gr.DrawImageUnscaled(muteBmp,xPos,yPos,60,60);
-							muteBmp.Dispose();
+							if(m_muteBitmap!=null)
+								gr.DrawImageUnscaled(m_muteBitmap,xPos,yPos,60,60);
 						}
 					}
 				}
 			}
 			m_bitmapIsVisible=true;
-			return bm;
+			SaveVMR9Bitmap(bm,true,true,0.8f);
 		}
+		#endregion
+
+		#region private helper functions
 		int GetPosition(int baseVal,string val)
 		{
 			string val1=val.Substring(1,val.Length-1);
 			int val2=Convert.ToInt16(val1);
 			return (baseVal-val2<0)?0:baseVal-val2;
 		}
-
 		Color GetColor(string colString)
 		{
 			Color col=new Color();
@@ -793,22 +691,162 @@ namespace MediaPortal.TV.Recording
 			}
 			return col;
 		}
+		#endregion
+
+		#region public functions
+		public void RefreshCurrentChannel(int signal)
+		{
+			if(signal!=m_channelSNR && m_bitmapIsVisible==true)
+			{
+				m_channelSNR=signal;
+				RenderZapOSD(m_actualChannel,m_channelSNR);
+			}
+		}
+
+		public void RefreshCurrentChannel()
+		{
+			RenderZapOSD(m_actualChannel,m_channelSNR);
+		}
+		public void CheckTimeOuts()
+		{
+			TimeSpan ts=DateTime.Now-m_timeDisplayed;
+			if(ts.TotalMilliseconds>m_timeout && m_timeout>0 && (m_muteState==false && m_osdRendered==OSD.VolumeOSD))
+			{
+				m_bitmapIsVisible=true; // force clear
+				HideBitmap();
+				m_timeout=0;
+			}
+		}
 		public void ShowBitmap(Bitmap bmp)
 		{
 			if(bmp==null)
 				return;
+			m_timeout=0;
+			m_osdRendered=OSD.OtherBitmap;
 			SaveVMR9Bitmap(bmp,true,true,1.0f);
 		}
+		public void ShowBitmap(Bitmap bmp,int timeout)
+		{
+			if(bmp==null)
+				return;
+			m_timeout=timeout;
+			m_osdRendered=OSD.OtherBitmap;
+			SaveVMR9Bitmap(bmp,true,true,1.0f);
+		}
+		public void ShowBitmap(Bitmap bmp,float alpha,int timeout)
+		{
+			if(bmp==null)
+				return;
+			m_timeout=timeout;
+			m_osdRendered=OSD.OtherBitmap;
+			SaveVMR9Bitmap(bmp,true,true,alpha);
+		}
+
 		public void ShowBitmap(Bitmap bmp,float alpha)
 		{
 			if(bmp==null)
 				return;
+			m_timeout=0;
+			m_osdRendered=OSD.OtherBitmap;
 			SaveVMR9Bitmap(bmp,true,true,alpha);
 		}
 		public void HideBitmap()
 		{
 			SaveVMR9Bitmap(null,false,true,0f);
 		}
+		#endregion
+
+		#region private functions
+		void ReadSkinFile()
+		{
+			m_osdSkin.rects=new string[99];
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\osdskin.xml"))
+			{
+				// first graphic elements and pictures
+				// rects
+				
+				for(int i=0;i<99;i++)
+				{
+					string rect=xmlreader.GetValueAsString("zaposdSkin",String.Format("rect{0}",i),"");
+					if(rect=="")
+						break;
+					else
+						m_osdSkin.rects[i]=rect;
+				}
+				// text always gets an x-offset 40 pix.
+				//channel name (chName)
+				string chName=xmlreader.GetValueAsString("zaposdSkin","chName","");
+				if(chName!=null)
+				{
+					if(chName!="")
+						m_osdSkin.chName=chName;
+				}
+				//now on tv (chNow)
+				string chNow=xmlreader.GetValueAsString("zaposdSkin","chNow","");
+				if(chNow!=null)
+				{
+					if(chNow!="")
+						m_osdSkin.chNow=chNow;
+				}
+				//next on tv (chNow)
+				string chNext=xmlreader.GetValueAsString("zaposdSkin","chNext","");
+				if(chNext!=null)
+				{
+					if(chNext!="")
+						m_osdSkin.chNext=chNext;
+
+				}
+				//progress tv (chNow)
+				string chProgress=xmlreader.GetValueAsString("zaposdSkin","chProgress","");
+				if(chProgress!=null)
+				{
+					if(chProgress!="")
+						m_osdSkin.chProgress=chProgress;
+
+				}
+				//signal level
+				string sigBar=xmlreader.GetValueAsString("zaposdSkin","signalBar","");
+				if(sigBar!=null)
+				{
+					if(sigBar!="")
+						m_osdSkin.sigBar=sigBar;
+
+				}
+				
+				// time display
+				string time=xmlreader.GetValueAsString("zaposdSkin","time","");
+				if(time!=null)
+				{
+					if(time!="")
+						m_osdSkin.time=time;
+				}
+				// mute
+				string mute=xmlreader.GetValueAsString("zaposdSkin","mute","");
+				if(mute!=null)
+				{
+					if(mute!="")
+						m_osdSkin.mute=mute;
+				}
+				// mute
+				string chLogo=xmlreader.GetValueAsString("zaposdSkin","chLogo","");
+				if(chLogo!=null)
+				{
+					if(chLogo!="")
+						m_osdSkin.chLogo=chLogo;
+				}
+				// channel list
+				m_osdChannels.baseRect=xmlreader.GetValueAsString("zaposdChannels","rect","");
+			}
+			try
+			{
+				m_volumeBitmap=new Bitmap(m_mediaPath+"volume_level_10.png");
+				m_volumeBitmap.MakeTransparent(Color.White);
+				m_muteBitmap=new Bitmap(m_mediaPath+"volume_level_0.png");
+				m_muteBitmap.MakeTransparent(Color.White);
+			}
+			catch{}
+		}
+
 		bool SaveVMR9Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
 			if (VMR9Util.g_vmr9==null) 
@@ -889,5 +927,6 @@ namespace MediaPortal.TV.Recording
 			}
 			return false;
 		}// savevmr9bitmap
+		#endregion
 	}// class
 }// namespace

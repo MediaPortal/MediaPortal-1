@@ -2774,7 +2774,7 @@ namespace MediaPortal.TV.Recording
 				{
 					int level=SignalStrength();
 					int quality=SignalQuality();
-					m_osd.ShowBitmap(m_osd.RenderZapOSD(channel,quality),0.8f);
+					m_osd.RenderZapOSD(channel,quality);
 				}
 			}
 		}

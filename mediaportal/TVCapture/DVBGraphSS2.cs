@@ -1462,7 +1462,7 @@ namespace MediaPortal.TV.Recording
 				int level=0;
 				int quality=0;
 				GetSNR(m_tunerCtrl,out level,out quality);
-				m_osd.ShowBitmap(m_osd.RenderZapOSD(channel,quality),0.8f);
+				m_osd.RenderZapOSD(channel,quality);
 				
 			}
 		}
