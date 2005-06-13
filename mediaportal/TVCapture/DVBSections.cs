@@ -507,6 +507,7 @@ namespace MediaPortal.TV.Recording
 				while(m_syncWait==false)
 				{
 					System.Windows.Forms.Application.DoEvents();
+					System.Threading.Thread.Sleep(100);
 				}
 				m_eitTimeoutTimer.Stop();
 			}
