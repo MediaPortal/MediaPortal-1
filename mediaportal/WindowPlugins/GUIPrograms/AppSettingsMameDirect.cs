@@ -239,6 +239,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
+      this.txtTitle.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtTitle.Location = new System.Drawing.Point(120, 40);
       this.txtTitle.Name = "txtTitle";
       this.txtTitle.Size = new System.Drawing.Size(250, 20);
@@ -280,6 +281,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // edFilename
       // 
+      this.edFilename.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.edFilename.Location = new System.Drawing.Point(120, 64);
       this.edFilename.Name = "edFilename";
       this.edFilename.Size = new System.Drawing.Size(250, 20);

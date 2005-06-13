@@ -64,8 +64,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // LabelTitle
       // 
-      this.LabelTitle.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)))
-        ;
+      this.LabelTitle.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.LabelTitle.Location = new System.Drawing.Point(0, 0);
       this.LabelTitle.Name = "LabelTitle";
       this.LabelTitle.Size = new System.Drawing.Size(184, 32);
@@ -78,7 +77,8 @@ namespace WindowPlugins.GUIPrograms
       this.LabelHint.Name = "LabelHint";
       this.LabelHint.Size = new System.Drawing.Size(248, 40);
       this.LabelHint.TabIndex = 8;
-      this.LabelHint.Text = "This item can hold subitems. Use drag and drop in the treeview to add / move node" + "s.";
+      this.LabelHint.Text = "This item can hold subitems. Use drag and drop in the treeview to add / move node" +
+        "s.";
       // 
       // lblImageFile
       // 
@@ -109,8 +109,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.chkbEnabled.Checked = true;
       this.chkbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
-        (System.Byte)(0)));
+      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.chkbEnabled.Location = new System.Drawing.Point(320, 8);
       this.chkbEnabled.Name = "chkbEnabled";
       this.chkbEnabled.Size = new System.Drawing.Size(72, 24);
@@ -120,6 +119,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
+      this.txtTitle.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtTitle.Location = new System.Drawing.Point(120, 40);
       this.txtTitle.Name = "txtTitle";
       this.txtTitle.Size = new System.Drawing.Size(250, 20);

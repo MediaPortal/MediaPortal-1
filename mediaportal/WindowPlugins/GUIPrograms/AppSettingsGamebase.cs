@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Drawing;
-using System.Data;
+using System.IO;
 using System.Windows.Forms;
 using Programs.Utils;
 using ProgramsDatabase;
@@ -179,6 +178,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtSource
       // 
+      this.txtSource.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtSource.Location = new System.Drawing.Point(120, 256);
       this.txtSource.Name = "txtSource";
       this.txtSource.Size = new System.Drawing.Size(250, 20);
@@ -332,6 +332,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFilename
       // 
+      this.txtFilename.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtFilename.Location = new System.Drawing.Point(120, 64);
       this.txtFilename.Name = "txtFilename";
       this.txtFilename.Size = new System.Drawing.Size(250, 20);
@@ -340,6 +341,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
+      this.txtTitle.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtTitle.Location = new System.Drawing.Point(120, 40);
       this.txtTitle.Name = "txtTitle";
       this.txtTitle.Size = new System.Drawing.Size(250, 20);
@@ -515,7 +517,7 @@ namespace WindowPlugins.GUIPrograms
       toolTip.SetToolTip(txtFilename, "Program you wish to execute, include the full path (mandatory if ShellExecute is " + "OFF)");
       toolTip.SetToolTip(txtImageDirs, "Optional directory where MediaPortal searches for matching images. \r\n MediaPort" + 
         "al will cycle through all the directories and display a mini-slideshow of all ma" + "tching images.");
-      toolTip.SetToolTip(txtSource, "(*.mlf) file to import with the complete path.");
+      toolTip.SetToolTip(txtSource, "(*.mdb) file to import with the complete path.");
       toolTip.SetToolTip(chkbValidImagesOnly, "Check this if you want to display only items where at least one matching image was found.");
       toolTip.SetToolTip(chkbEnableGUIRefresh, "Check this if users can run the import through the REFRESH button in MediaPortal.");
 
@@ -645,8 +647,99 @@ namespace WindowPlugins.GUIPrograms
       if (dialogFile.ShowDialog(null) == DialogResult.OK)
       {
         txtSource.Text = dialogFile.FileName;
+        SetSourceDirectories();
       }
     }
+
+    void SetSourceDirectories()
+    {
+      StringCollection pathIni = new StringCollection();
+      if (File.Exists(txtSource.Text))
+      {
+        string pathIniFile = Path.GetDirectoryName(txtSource.Text) + "\\Paths.ini";
+        if (File.Exists(pathIniFile))
+        {
+          ReadFileFromStream(pathIniFile, pathIni);
+          int i = 0;
+          string curLine;
+          string sep = "";
+          ArrayList parts;
+          bool gameDirs = false;
+          bool picDirs = false;
+
+          while (i <= pathIni.Count - 1)
+          {
+            curLine = pathIni[i];
+            if (curLine.StartsWith("[Games]"))
+            {
+              gameDirs = true;
+              picDirs = false;
+            }
+            else if (curLine.StartsWith("[Pictures]"))
+            {
+              picDirs = true;
+              gameDirs = false;
+            }
+            else
+            {
+              if (gameDirs)
+              {
+                if (txtFiles.Text == "")
+                {
+
+                  parts = new ArrayList(curLine.Split('='));
+                  if (parts.Count > 1)
+                  {
+                    if (Directory.Exists(parts[1].ToString()))
+                    {
+                      this.txtFiles.Text = parts[1].ToString();
+                    }
+                  }
+                }
+              }
+              else if (picDirs)
+              {
+                if (txtImageDirs.Text == "")
+                {
+                  parts = new ArrayList(curLine.Split('='));
+                  if (parts.Count > 1)
+                  {
+                    if (Directory.Exists(parts[1].ToString()))
+                    {
+                      txtImageDirs.Text = txtImageDirs.Text + sep + parts[1].ToString();
+                      sep = "\r\n";
+                    }
+                  }
+                }
+              }
+            }
+            i++;
+          }
+        }
+      }
+    }
+
+
+    void ReadFileFromStream(string filename, StringCollection coll)
+    {
+      string line;
+      coll.Clear();
+      StreamReader sr = File.OpenText(filename);
+      while (true)
+      {
+        line = sr.ReadLine();
+        if (line == null)
+        {
+          break;
+        }
+        else
+        {
+          coll.Add(line);
+        }
+      }
+      sr.Close();
+    }
+
 
     private void txtPinCode_KeyPress(object sender, KeyPressEventArgs e)
     {

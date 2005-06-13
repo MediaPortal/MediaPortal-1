@@ -135,6 +135,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtExtensions
       // 
+      this.txtExtensions.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtExtensions.Location = new System.Drawing.Point(120, 288);
       this.txtExtensions.Name = "txtExtensions";
       this.txtExtensions.Size = new System.Drawing.Size(250, 20);
@@ -153,6 +154,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFiles
       // 
+      this.txtFiles.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtFiles.Location = new System.Drawing.Point(120, 264);
       this.txtFiles.Name = "txtFiles";
       this.txtFiles.Size = new System.Drawing.Size(250, 20);
@@ -300,6 +302,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
+      this.txtTitle.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtTitle.Location = new System.Drawing.Point(120, 40);
       this.txtTitle.Name = "txtTitle";
       this.txtTitle.Size = new System.Drawing.Size(250, 20);
@@ -381,6 +384,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // cbFilename
       // 
+      this.cbFilename.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.cbFilename.Items.AddRange(new object[] {
                                                     "%PLAY%",
                                                     "%PLAYAUDIOSTREAM%",

@@ -184,11 +184,11 @@ namespace WindowPlugins.GUIPrograms
       // cbWindowStyle
       // 
       this.cbWindowStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbWindowStyle.Items.AddRange(new object[]
-      {
-        "Normal", "Minimized", "Maximized", "Hidden"
-      }
-      );
+      this.cbWindowStyle.Items.AddRange(new object[] {
+                                                       "Normal",
+                                                       "Minimized",
+                                                       "Maximized",
+                                                       "Hidden"});
       this.cbWindowStyle.Location = new System.Drawing.Point(120, 184);
       this.cbWindowStyle.Name = "cbWindowStyle";
       this.cbWindowStyle.Size = new System.Drawing.Size(250, 21);
@@ -245,8 +245,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.chkbEnabled.Checked = true;
       this.chkbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (
-        (System.Byte)(0)));
+      this.chkbEnabled.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.chkbEnabled.Location = new System.Drawing.Point(320, 16);
       this.chkbEnabled.Name = "chkbEnabled";
       this.chkbEnabled.TabIndex = 28;
@@ -254,6 +253,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFilename
       // 
+      this.txtFilename.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtFilename.Location = new System.Drawing.Point(120, 64);
       this.txtFilename.Name = "txtFilename";
       this.txtFilename.Size = new System.Drawing.Size(250, 20);
@@ -262,6 +262,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
+      this.txtTitle.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtTitle.Location = new System.Drawing.Point(120, 40);
       this.txtTitle.Name = "txtTitle";
       this.txtTitle.Size = new System.Drawing.Size(250, 20);
@@ -311,6 +312,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtSource
       // 
+      this.txtSource.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtSource.Location = new System.Drawing.Point(120, 256);
       this.txtSource.Name = "txtSource";
       this.txtSource.Size = new System.Drawing.Size(250, 20);

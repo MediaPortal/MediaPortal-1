@@ -55,8 +55,7 @@ namespace WindowPlugins.GUIPrograms
         curFile.Rating = 5; // average / not rated....
       }
       curFile.Overview = myReader.GetString(5);
-      // todo: system
-      curFile.System_ = "Gamebase Import";
+      curFile.System_ = m_App.Title;
       // not imported properties => set default values
       curFile.ManualFilename = "";
       curFile.LastTimeLaunched = DateTime.MinValue;
