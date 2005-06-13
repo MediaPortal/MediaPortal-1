@@ -271,7 +271,6 @@ namespace MediaPortal.TV.Recording
 					if (deleteOriginal)
 					{
 						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
-						DiskManagement.DeleteRecording(info.file);
 					}
 					tinfo.status=Status.Completed;
 				}
@@ -279,6 +278,7 @@ namespace MediaPortal.TV.Recording
 				{
 					tinfo.status=Status.Error;
 				}
+				DiskManagement.DeleteRecording(info.file);//delete the .mpg file
 			}
 		}
 	}
