@@ -271,6 +271,7 @@ namespace MediaPortal.TV.Recording
 					if (deleteOriginal)
 					{
 						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
+						DiskManagement.DeleteRecording(info.file);
 					}
 					tinfo.status=Status.Completed;
 				}
