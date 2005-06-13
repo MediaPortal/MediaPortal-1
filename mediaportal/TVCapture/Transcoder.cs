@@ -241,6 +241,32 @@ namespace MediaPortal.TV.Recording
 			bool isWMV=(Type==1);
 			bool isXVID=(Type==2);
 			quality= (Quality)QualityIndex;
+			switch (quality)
+			{
+				case Quality.High:
+					ScreenSize=new Size(0,0);//keep video resolution
+					FPS=0;//keep video FPS
+					bitRate=8192;
+				break;
+					
+				case Quality.Medium:
+					ScreenSize=new Size(0,0);//keep video resolution
+					FPS=0;//keep video FPS
+					bitRate=4096;
+					break;
+					
+				case Quality.Low:
+					ScreenSize=new Size(0,0);//keep video resolution
+					FPS=0;//keep video FPS
+					bitRate=1024;
+					break;
+					
+				case Quality.Portable:
+					ScreenSize=new Size(352,288);
+					FPS=15;
+					bitRate=300;
+					break;
+			}
 
 
 			Dvrms2Mpeg mpgConverter = new Dvrms2Mpeg();
@@ -262,8 +288,13 @@ namespace MediaPortal.TV.Recording
 			if (isXVID)
 			{
 				string outputFile=System.IO.Path.ChangeExtension(info.file,".avi");
-				string mencoderParams=String.Format("\"{0}\" -o \"{1}\" -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate=1024 -demuxer 35",
-																								info.file,outputFile);
+				string mencoderParams=String.Format("\"{0}\" -o \"{1}\" -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate={2} -demuxer 35",
+																								info.file,outputFile,bitRate);
+				if (FPS>0)
+					mencoderParams+=String.Format(" -ofps {0}", FPS);
+				if (ScreenSize.Width>0 && ScreenSize.Height>0)
+					mencoderParams+=String.Format(" -vf scale={0}:{1}", ScreenSize.Width,ScreenSize.Height);
+
 				Log.Write("mencoder.exe {0}", mencoderParams);
 				Utils.StartProcess(@"mencoder\mencoder.exe",mencoderParams,true,true);
 				if (System.IO.File.Exists(outputFile))

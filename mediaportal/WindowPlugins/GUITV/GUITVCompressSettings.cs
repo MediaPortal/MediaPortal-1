@@ -81,7 +81,7 @@ namespace WindowPlugins.GUITV
 			spinQuality.Disabled=(isMpeg2||isXVID);
 			spinScreenSize.Disabled=(isMpeg2||isXVID);
 
-			if (isWMV)
+			if (isWMV||isXVID)
 			{
 				bool isCustom=(spinQuality.Value==4);
 				spinBitrate.Disabled=!isCustom;
