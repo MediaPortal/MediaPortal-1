@@ -43,14 +43,8 @@ namespace MediaPortal.TV.Recording
 		static ArrayList  queue = new ArrayList();
 		static Thread		  WorkerThread =null;
 		
-		static Dvrms2Mpeg			convertToMpg=null;
-		static TranscodeToWMV	convertToWMV=null;
-		static Dvrms2XVID			convertToXVID=null;
 		static Transcoder()
 		{
-			convertToMpg = new Dvrms2Mpeg();
-			convertToWMV = new TranscodeToWMV();
-			convertToXVID = new Dvrms2XVID();
 		}
 
 		static public void Transcode(TVRecorded rec)
@@ -250,15 +244,12 @@ namespace MediaPortal.TV.Recording
 
 			if (isMpeg)
 			{
-				if ( convertToMpg.Transcode(info,VideoFormat.Mpeg2,MediaPortal.Core.Transcoding.Quality.High) )
+				string outputFile=System.IO.Path.ChangeExtension(info.file,".mpg");
+				string mencoderParams=String.Format(@"{0} -oac lavc -ovc lavc -of mpeg -lavcopts autoaspect:acodec=mp3:vcodec=mpeg2video -demuxer 35 -o {1}",
+																					info.file,outputFile);
+				Utils.StartProcess(@"mencoder\mencoder.exe",mencoderParams,true,true);
+				if (System.IO.File.Exists(outputFile))
 				{
-					
-					while (!convertToMpg.IsFinished() )
-					{
-						tinfo.percentDone=convertToMpg.Percentage();
-						System.Threading.Thread.Sleep(100);
-					}
-
 					if (deleteOriginal)
 					{
 						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
@@ -270,64 +261,14 @@ namespace MediaPortal.TV.Recording
 					tinfo.status=Status.Error;
 				}
 			}
-			if (isWMV)
+			if (isMpeg)
 			{
-				switch (quality)
+				string outputFile=System.IO.Path.ChangeExtension(info.file,".avi");
+				string mencoderParams=String.Format("{0} -o {1} -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate=1024 -demuxer 35",
+																								info.file,outputFile);
+				Utils.StartProcess(@"mencoder\mencoder.exe",mencoderParams,true,true);
+				if (System.IO.File.Exists(outputFile))
 				{
-					case Quality.Portable:
-						convertToWMV.CreateProfile("portable", 100*1000, new Size(0,0), 0, 0);
-						break;
-					case Quality.Low:
-						convertToWMV.CreateProfile("low", 300*1000, new Size(0,0), 0, 0);
-						break;
-					case Quality.Medium:
-						convertToWMV.CreateProfile("medium", 2048*1000, new Size(0,0), 0, 0);
-						break;
-					case Quality.High:
-						convertToWMV.CreateProfile("high", 4096*1000, new Size(0,0), 0, 0);
-						break;
-					case Quality.Custom:
-						convertToWMV.CreateProfile("custom", bitRate*1000, ScreenSize, bitRate, FPS);
-						break;
-				}
-				if ( convertToMpg.Transcode(info,VideoFormat.Mpeg2,MediaPortal.Core.Transcoding.Quality.High) )
-				{
-					while (!convertToMpg.IsFinished() )
-					{
-						System.Threading.Thread.Sleep(100);
-					}
-					info.file=System.IO.Path.ChangeExtension(info.file,".mpg");
-					if ( convertToWMV.Transcode(info,VideoFormat.Wmv,MediaPortal.Core.Transcoding.Quality.High) )
-					{
-						while (!convertToWMV.IsFinished() )
-						{
-							tinfo.percentDone=convertToWMV.Percentage();
-							System.Threading.Thread.Sleep(100);
-						}
-
-						if (deleteOriginal)
-						{
-							DiskManagement.DeleteRecording(tinfo.recorded.FileName);//.dvr-ms
-							DiskManagement.DeleteRecording(info.file);//.mpg
-						}
-						tinfo.status=Status.Completed;
-					}
-					else tinfo.status=Status.Error;
-				}
-				else
-					tinfo.status=Status.Error;
-			}
-			if (isXVID)
-			{
-				if ( convertToXVID.Transcode(info,VideoFormat.Xvid,MediaPortal.Core.Transcoding.Quality.High) )
-				{
-					
-					while (!convertToXVID.IsFinished() )
-					{
-						tinfo.percentDone=convertToXVID.Percentage();
-						System.Threading.Thread.Sleep(100);
-					}
-
 					if (deleteOriginal)
 					{
 						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
@@ -339,7 +280,6 @@ namespace MediaPortal.TV.Recording
 					tinfo.status=Status.Error;
 				}
 			}
-		
 		}
 	}
 }
