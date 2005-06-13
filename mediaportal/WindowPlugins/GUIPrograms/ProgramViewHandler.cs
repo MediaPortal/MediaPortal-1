@@ -272,7 +272,7 @@ namespace WindowPlugins.GUIPrograms
 
     void BuildFilter(FilterDefinition filter, SQLSelectBuilder sqlSelect)
     {
-      sqlSelect.AddWhereCond(String.Format(" {0}='{1}'", GetFieldId(filter.Where), filter.SelectedValue));
+      sqlSelect.AddWhereCond(String.Format(" {0}='{1}'", GetFieldId(filter.Where), ProgramUtils.Encode(filter.SelectedValue)));
     }
 
     void BuildRestriction(FilterDefinition filter, SQLSelectBuilder sqlSelect)
@@ -319,7 +319,7 @@ namespace WindowPlugins.GUIPrograms
       }
       if (filter.WhereValue != "*")
       {
-        sqlSelect.AddWhereCond(String.Format(" {0}='{1}'", GetField(filter.Where), filter.WhereValue));
+        sqlSelect.AddWhereCond(String.Format(" {0}='{1}'", GetField(filter.Where), ProgramUtils.Encode(filter.WhereValue)));
       }
     }
 
@@ -523,7 +523,7 @@ namespace WindowPlugins.GUIPrograms
       }
       if (definition.Where == "year")
       {
-        item.Label = ((int) filterItem.Year).ToString();
+        item.Label = (filterItem.Year).ToString();
         item.Label2 = String.Empty;
         item.Label3 = String.Empty;
       }
