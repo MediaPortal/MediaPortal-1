@@ -197,10 +197,11 @@ namespace ProcessPlugins.CallerId
                 RtlMoveMemory (ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (MessageHeader.Length - HeaderLength));
                 
                 string logBuffer = "";
+
                 foreach (char c in ConnectInd.buffer)
                 {
-                  if (((int)c < 48) || ((int)c > 57))
-                    logBuffer = logBuffer + "(" + ((int)c).ToString() + ")";
+                  if (((byte)c < 48) || ((byte)c > 57))
+                    logBuffer = logBuffer + "(" + (byte)c + ")";
                   else
                     logBuffer = logBuffer + c;
                 }
@@ -211,6 +212,11 @@ namespace ProcessPlugins.CallerId
                 int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
                 Log.Write("ISDN: stripping {0} digits", stripPrefix);
                 CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4 + stripPrefix), (lengthCallerId - 2 - stripPrefix));
+                if (CallerId.Length < 1)
+                {
+                  CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4), (lengthCallerId - 2));
+                  Log.Write("ISDN: stripping failed, length of incoming CID <= {0} digits", stripPrefix);
+                }
 
                 if (ConnectInd.buffer[lengthCalledId+2] == 17)
                   CallerId = "+" + CallerId;
