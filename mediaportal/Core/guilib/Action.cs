@@ -141,6 +141,7 @@ namespace MediaPortal.GUI.Library
 			,ACTION_REMOTE_SUBPAGE_DOWN
 			,ACTION_SHOW_VOLUME
 			,ACTION_VOLUME_MUTE
+			,ACTION_SHOW_CURRENT_TV_INFO
 
 		};
 		public ActionType   wID=0;

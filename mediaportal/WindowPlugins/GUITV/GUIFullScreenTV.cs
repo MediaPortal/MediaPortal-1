@@ -191,6 +191,13 @@ namespace MediaPortal.GUI.TV
 				if(m_vmr9OSD!=null)
 					m_vmr9OSD.RenderVolumeOSD();
 			}
+			//ACTION_SHOW_CURRENT_TV_INFO
+			if (action.wID==Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO)
+			{
+				if(m_vmr9OSD!=null)
+					m_vmr9OSD.RenderCurrentShowInfo();
+			}
+
 			if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
 			{
 				// switch back to the menu
@@ -1370,6 +1377,12 @@ namespace MediaPortal.GUI.TV
 		}
 		private void OnKeyCode(char chKey)
 		{
+			if(chKey=='o')
+			{
+				Action showInfo=new Action(Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO,0,0);
+				OnAction(showInfo);
+				return;
+			}
 			if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
 			{
 				m_bShowInput = true;

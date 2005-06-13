@@ -31,6 +31,7 @@ namespace MediaPortal.TV.Recording
 			ZapOSD=1,
 			ZapList,
 			VolumeOSD,
+			CurrentTVShowInfo,
 			OtherBitmap,
 			None
 		}
@@ -78,6 +79,74 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
 		#region osd render functions
+		public void RenderCurrentShowInfo()
+		{
+			int gWidth=GUIGraphicsContext.Width;
+			int gHeight=GUIGraphicsContext.Height;
+
+			if(m_osdRendered==OSD.CurrentTVShowInfo)
+			{
+				m_bitmapIsVisible=true;
+				HideBitmap();
+				m_timeout=0;
+				return;
+			}
+			if(m_actualChannel==null)
+				return;
+
+			TVChannel channel=m_actualChannel;
+			TVProgram prog=channel.GetProgramAt(DateTime.Now);
+			
+			if(prog==null)
+				return;
+			
+			m_timeout=10000;// ten seconds
+			m_osdRendered=OSD.CurrentTVShowInfo;
+			// render list
+			Bitmap bm=new Bitmap(gWidth,gHeight);//m_mediaPath+@"bgimage.png");
+			Graphics gr=Graphics.FromImage(bm);
+			int x=60;
+			int y=20;
+			if(bm==null || gr==null || m_osdChannels.baseRect==null)
+				return;
+			
+			string[] seg=m_osdChannels.baseRect.Split(new char[]{':'});
+			if(seg==null) return;
+			if(seg.Length!=7) return;
+			if(seg[0]!="nsrect") return;
+			Color headColor=GetColor(seg[1]);
+			Color nBoxColor=GetColor(seg[2]);
+			Color sBoxColor=GetColor(seg[3]);
+			Color textColor=GetColor(seg[4]);
+			//
+			Font drawFont=new Font(seg[5],Convert.ToInt16(seg[6]));
+			SolidBrush textBrush=new SolidBrush(textColor);
+			RectangleF layoutRect=new RectangleF(x,y,gWidth-(x*2),gHeight-(y*2));
+			//
+			SizeF textSize=gr.MeasureString("AAA",drawFont);
+			int textHeight=2+((int)textSize.Height);
+
+			string headerText=String.Format("{0}: {1} ({2}-{3})",channel.Name,prog.Title,prog.StartTime.ToShortTimeString(),prog.EndTime.ToShortTimeString());
+
+			gr.FillRectangle(new SolidBrush(headColor),x,y,gWidth-(2*x),textHeight);
+			gr.DrawString(headerText,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
+			layoutRect.Y+=textHeight;
+			layoutRect.Height-=textHeight*2;
+			// draw
+			gr.FillRectangle(new SolidBrush(nBoxColor),layoutRect);
+			layoutRect.Width-=20;// ten pixel offset
+			layoutRect.X+=10;
+			gr.DrawString(prog.Description,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
+			// display and release
+			m_bitmapIsVisible=false;
+			SaveVMR9Bitmap(bm,true,true,0.8f);
+			bm.Dispose();
+			gr.Dispose();
+			drawFont.Dispose();
+			textBrush.Dispose();
+			m_timeDisplayed=DateTime.Now;
+		}
+
 		public void RenderChannelList(TVGroup group,string currentChannel)
 		{
 			int gWidth=GUIGraphicsContext.Width;
@@ -710,11 +779,20 @@ namespace MediaPortal.TV.Recording
 		public void CheckTimeOuts()
 		{
 			TimeSpan ts=DateTime.Now-m_timeDisplayed;
-			if(ts.TotalMilliseconds>m_timeout && m_timeout>0 && (m_muteState==false && m_osdRendered==OSD.VolumeOSD))
+			if(ts.TotalMilliseconds>m_timeout && m_timeout>0)
 			{
-				m_bitmapIsVisible=true; // force clear
-				HideBitmap();
-				m_timeout=0;
+				
+				if(m_osdRendered==OSD.VolumeOSD)
+				{
+					if(m_muteState==true)
+						return;
+				}
+				else
+				{
+					m_bitmapIsVisible=true; // force clear
+					HideBitmap();
+					m_timeout=0;
+				}
 			}
 		}
 		public void ShowBitmap(Bitmap bmp)
