@@ -977,14 +977,11 @@ namespace MediaPortal.TV.Recording
 
 			if (VMR7Util.g_vmr7!=null)
 			{
-				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
 				// transparent image?
 				if(bitmap!=null)
 				{
 					if(transparent==true)
 						bitmap.MakeTransparent(Color.Black);
-					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
-					mStr.Position=0;
 				}
 				if (show==true)
 				{

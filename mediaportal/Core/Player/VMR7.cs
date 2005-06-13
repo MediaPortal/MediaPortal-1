@@ -166,31 +166,22 @@ namespace MediaPortal.Player
 			{
 				if(IsVMR7Connected==false)
 				{
-					Log.Write("SaveVMR9Bitmap() failed, no VMR7");
+					Log.Write("SaveBitmap() failed, no VMR7");
 					return false;
 				}
-				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
 				int hr=0;
-				// transparent image?
-				if(bitmap!=null)
-				{
-					if(transparent==true)
-						bitmap.MakeTransparent(Color.Black);
-					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
-					mStr.Position=0;
-				}
+				
 				VMRAlphaBitmap bmp=new VMRAlphaBitmap();
 
 				if(show==true)
 				{
 					Graphics g = Graphics.FromImage(bitmap);
-					IntPtr hdc=g.GetHdc();
 					bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
 					bmp.color.blu=0;
 					bmp.color.green=0;
 					bmp.color.red=0;
 					bmp.pDDS=IntPtr.Zero;
-					bmp.HDC=hdc;
+					bmp.HDC=g.GetHdc();
 					bmp.rSrc = new DsRECT();
 					bmp.rSrc.Top=0;
 					bmp.rSrc.Left=0;
