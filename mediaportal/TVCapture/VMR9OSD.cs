@@ -22,6 +22,14 @@ namespace MediaPortal.TV.Recording
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//
 			ReadSkinFile();
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\MediaPortal.xml"))
+			{
+				int alpha=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
+				if(alpha>0)
+					m_renderOSDAlpha=(float)alpha/10;
+				else 
+					m_renderOSDAlpha=0.8f;// default
+			}
 		}
 		#endregion
 		// structs
@@ -68,6 +76,8 @@ namespace MediaPortal.TV.Recording
 		OSD m_osdRendered=OSD.None;
 		Bitmap m_volumeBitmap;
 		Bitmap m_muteBitmap;
+		float m_renderOSDAlpha=0.8f;
+
 		#endregion
 
 		#region properties
@@ -139,7 +149,7 @@ namespace MediaPortal.TV.Recording
 			gr.DrawString(prog.Description,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
 			// display and release
 			m_bitmapIsVisible=false;
-			SaveVMR9Bitmap(bm,true,true,0.8f);
+			SaveVMR9Bitmap(bm,true,true,m_renderOSDAlpha);
 			bm.Dispose();
 			gr.Dispose();
 			drawFont.Dispose();
@@ -270,7 +280,7 @@ namespace MediaPortal.TV.Recording
 					break;
 			}
 			m_bitmapIsVisible=false;
-			SaveVMR9Bitmap(bm,true,true,0.8f);
+			SaveVMR9Bitmap(bm,true,true,m_renderOSDAlpha);
 			bm.Dispose();
 			gr.Dispose();
 			drawFont.Dispose();
@@ -727,7 +737,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			m_bitmapIsVisible=true;
-			SaveVMR9Bitmap(bm,true,true,0.8f);
+			SaveVMR9Bitmap(bm,true,true,m_renderOSDAlpha);
 		}
 		#endregion
 
