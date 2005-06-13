@@ -324,27 +324,27 @@ namespace MediaPortal.TV.Recording
 			epgRegrabTime= DateTime.MinValue;
 			m_currentPMTVersion=-1;
 			// audio
-			if (audio > 0x1FFD)
-				m_audioPid = 0;
+			if (audio > 0x1FFF)
+				m_audioPid = -1;
 			else
 				m_audioPid = audio;
 			// video
-			if (video > 0x1FFD)
-				m_videoPid = 0;
+			if (video > 0x1FFF)
+				m_videoPid = -1;
 			else
-				m_videoPid = audio;
+				m_videoPid = video;
 			// teletext
-			if (teletext > 0x1FFD)
-				m_teletextPid = 0;
+			if (teletext > 0x1FFF)
+				m_teletextPid = -1;
 			else
 				m_teletextPid = teletext;
 			// subtitle
-			if (subtitle > 0x1FFD)
+			if (subtitle > 0x1FFF)
 				m_subtitlePid = 0;
 			else
 				m_subtitlePid = subtitle;
 			// pmt pid
-			if (pmtPid > 0x1FFD)
+			if (pmtPid > 0x1FFF)
 				m_pmtPid = 0;
 			else
 				m_pmtPid = pmtPid;
@@ -803,7 +803,8 @@ namespace MediaPortal.TV.Recording
 					PidCallback((IntPtr)ptr);
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-				if(m_packetHeader.SyncByte!=0x47) continue;
+				if(m_packetHeader.SyncByte!=0x47) 
+					continue;
 				if(m_packetHeader.TransportError==true)
 				{
 //					if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
