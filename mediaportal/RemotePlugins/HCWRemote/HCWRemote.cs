@@ -135,7 +135,6 @@ namespace MediaPortal
     bool appActive        = true;   // Focus
     DateTime lastTime;              // Timestamp of last execution
     int lastCommand;                // Last executed command
-    int volumeMute        = 0;      // Volume before MUTE
     bool enableCursorMode = true;   // Cursor Mode for 34 Button Remotes
 
     const int IR_NOKEY               = 0x1FFF;  // No key received
@@ -472,10 +471,10 @@ namespace MediaPortal
               switch ((int) remoteCode)
               {
                 case HCWPVR:
-                  remoteCommand = ((int) keyCode) + 1000;
+                  remoteCommand = ((int)keyCode) + 1000;
                   break;
                 case HCWPVR2:
-                  remoteCommand = ((int) keyCode) + 2000;
+                  remoteCommand = ((int)keyCode) + 2000;
                   break;
               }
               if (repeatDelay != 0)
@@ -484,11 +483,11 @@ namespace MediaPortal
                 {
                   lastTime = DateTime.Now;
                   lastCommand = remoteCommand;
-                  ExecuteCommand (remoteCommand);
+                  ExecuteCommand(remoteCommand);
                 }
               }
               else
-                ExecuteCommand (remoteCommand);
+                ExecuteCommand(remoteCommand);
             }
           }
           catch (Exception ex)
@@ -709,20 +708,9 @@ namespace MediaPortal
         case (int)PVR_1.MUTE:  // HCWPVR Button MUTE
         case (int)PVR_2.MUTE:  // HCWPVR2 Button MUTE
         {
-          if (AudioMixerHelper.GetVolume() != 0)
-          {
-            // Mute Audio
-            volumeMute = AudioMixerHelper.GetVolume();
-            AudioMixerHelper.SetVolume(0);
-            if (logVerbose) Log.Write("HCW: [PVR/PVR2] Command MUTE: Mute Audio");
-          }
-          else
-          {
-            // Unmute Audio
-            AudioMixerHelper.SetVolume(volumeMute);
-            volumeMute = 0;
-            if (logVerbose) Log.Write("HCW: [PVR/PVR2] Command MUTE: Unmute Audio");
-          }
+          Action action = new Action(Action.ActionType.ACTION_VOLUME_MUTE, 0, 0);
+          GUIGraphicsContext.OnAction(action);
+          if (logVerbose) Log.Write("HCW: [PVR/PVR2] Command MUTE");
         }
           break;
 
