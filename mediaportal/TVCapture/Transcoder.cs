@@ -261,7 +261,7 @@ namespace MediaPortal.TV.Recording
 					tinfo.status=Status.Error;
 				}
 			}
-			if (isMpeg)
+			if (isXVID)
 			{
 				string outputFile=System.IO.Path.ChangeExtension(info.file,".avi");
 				string mencoderParams=String.Format("{0} -o {1} -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate=1024 -demuxer 35",
