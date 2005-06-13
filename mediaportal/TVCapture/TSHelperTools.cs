@@ -24,7 +24,6 @@ namespace MediaPortal.TV.Recording
 			public int	SectionLen;
 			public bool	IsMHWTable;
 			public int	MHWIndicator;
-			public byte[] Payload;
 		}
 		
 		public TSHelperTools()
@@ -36,25 +35,43 @@ namespace MediaPortal.TV.Recording
 
 		public TSHeader GetHeader(IntPtr streamData)
 		{
+			byte[] data=new byte[8];
+			Marshal.Copy(streamData,data,0,8);
 			TSHeader header=new TSHeader();
-			header.SyncByte=Marshal.ReadByte(streamData,0); // indicates header is not valid
-			if(header.SyncByte!=0x47)
-			{
+			header.SyncByte=data[0]; // indicates header is not valid
+			if(data[0]!=0x47)
 				return header;// no ts-header, return
-			}
-			header.SyncByte=Marshal.ReadByte(streamData,0);
-			header.TransportError=(Marshal.ReadByte(streamData,1) & 0x80)>0?true:false;
-			header.PayloadUnitStart=((Marshal.ReadByte(streamData,1)>>6) & 0x01)>0?true:false;
-			header.TransportPriority=(Marshal.ReadByte(streamData,1) & 0x20)>0?true:false;
-			header.Pid=((Marshal.ReadByte(streamData,1) & 0x1F) <<8)+Marshal.ReadByte(streamData,2);
-			header.TransportScrambling=Marshal.ReadByte(streamData,3) & 0xC0;
-			header.AdaptionFieldControl=(Marshal.ReadByte(streamData,3)>>4) & 0x3;
-			header.ContinuityCounter=Marshal.ReadByte(streamData,3) & 0x0F;
-			header.AdaptionField=Marshal.ReadByte(streamData,4);
-			header.TableID=Marshal.ReadByte(streamData,5);
-			header.SectionLen=((Marshal.ReadByte(streamData,6)-0x70)<<8)+Marshal.ReadByte(streamData,7);
+			header.SyncByte=data[0];
+			header.TransportError=(data[1] & 0x80)>0?true:false;
+			header.PayloadUnitStart=(data[1] & 0x40)>0?true:false;
+			header.TransportPriority=(data[1] & 0x20)>0?true:false;
+			header.Pid=((data[1] & 0x1F) <<8)+data[2];
+			header.TransportScrambling=data[3] & 0xC0;
+			header.AdaptionFieldControl=(data[3]>>4) & 0x3;
+			header.ContinuityCounter=data[3] & 0x0F;
+			header.AdaptionField=data[4];
+			header.TableID=data[5];
+			header.SectionLen=((data[6]-0x70)<<8)+data[7];
 			return header;
 		}
-
+		public TSHeader GetHeader(byte[] data)
+		{
+			TSHeader header=new TSHeader();
+			header.SyncByte=data[0]; // indicates header is not valid
+			if(data[0]!=0x47)
+				return header;// no ts-header, return
+			header.SyncByte=data[0];
+			header.TransportError=(data[1] & 0x80)>0?true:false;
+			header.PayloadUnitStart=(data[1] & 0x40)>0?true:false;
+			header.TransportPriority=(data[1] & 0x20)>0?true:false;
+			header.Pid=((data[1] & 0x1F) <<8)+data[2];
+			header.TransportScrambling=data[3] & 0xC0;
+			header.AdaptionFieldControl=(data[3]>>4) & 0x3;
+			header.ContinuityCounter=data[3] & 0x0F;
+			header.AdaptionField=data[4];
+			header.TableID=data[5];
+			header.SectionLen=((data[6]-0x70)<<8)+data[7];
+			return header;
+		}
 	}
 }
