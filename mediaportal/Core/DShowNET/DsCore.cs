@@ -1544,4 +1544,53 @@ public interface IMediaSample
 		int get_DevSyncOffset( out int piDev) ;               // Out
 	}
 
+	public enum VMRAlphaBitmapFlags
+	{
+		Disable=1,
+		HDC=2,
+		EntireDDS=4,
+		SrcColorKey=8,
+		SrcRect=16
+
+	}
+	[StructLayout(LayoutKind.Sequential), ComVisible(false)]
+	public class NormalizedRect 
+	{
+		public float left;
+		public float top;
+		public float right;
+		public float bottom;
+	}
+
+	[StructLayout(LayoutKind.Sequential), ComVisible(false)]
+	public class VMRAlphaBitmap 
+	{
+		public UInt32 dwFlags;
+		public IntPtr HDC;
+		public IntPtr pDDS;  // not done yet!!
+		public DsRECT rSrc;
+		public NormalizedRect rDest;
+		public float fAlpha;
+		public RGB color;
+	}
+
+	[ComVisible(true), ComImport,
+	Guid("1E673275-0257-40aa-AF20-7C608D4A0428"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IVMRMixerBitmap 
+	{
+		// Set bitmap, location to blend it, and blending value
+		[PreserveSig]
+		int SetAlphaBitmap([In] VMRAlphaBitmap bitmap);
+
+		// Change bitmap location, size and blending value,
+		// graph must be running for change to take effect.
+		[PreserveSig]
+		int UpdateAlphaBitmapParameters([In] VMRAlphaBitmap bitmap);
+
+		// Get bitmap, location to blend it, and blending value
+		[PreserveSig]
+		int GetAlphaBitmapParameters([Out] VMRAlphaBitmap bitmap);
+	};
+
 } // namespace DShowNET
