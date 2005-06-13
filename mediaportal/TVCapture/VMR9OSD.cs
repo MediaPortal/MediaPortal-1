@@ -149,7 +149,7 @@ namespace MediaPortal.TV.Recording
 			gr.DrawString(prog.Description,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
 			// display and release
 			m_bitmapIsVisible=false;
-			SaveVMR9Bitmap(bm,true,true,m_renderOSDAlpha);
+			SaveBitmap(bm,true,true,m_renderOSDAlpha);
 			bm.Dispose();
 			gr.Dispose();
 			drawFont.Dispose();
@@ -280,7 +280,7 @@ namespace MediaPortal.TV.Recording
 					break;
 			}
 			m_bitmapIsVisible=false;
-			SaveVMR9Bitmap(bm,true,true,m_renderOSDAlpha);
+			SaveBitmap(bm,true,true,m_renderOSDAlpha);
 			bm.Dispose();
 			gr.Dispose();
 			drawFont.Dispose();
@@ -345,7 +345,7 @@ namespace MediaPortal.TV.Recording
 								if(m_muteBitmap!=null)
 									gr.DrawImageUnscaled(m_muteBitmap,xPos,yPos,m_muteBitmap.Width,m_muteBitmap.Height);
 
-							SaveVMR9Bitmap(osd,true,true,0.9f);
+							SaveBitmap(osd,true,true,0.9f);
 							gr.Dispose();
 							osd.Dispose();
 							m_timeDisplayed=DateTime.Now;
@@ -737,7 +737,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			m_bitmapIsVisible=true;
-			SaveVMR9Bitmap(bm,true,true,m_renderOSDAlpha);
+			SaveBitmap(bm,true,true,m_renderOSDAlpha);
 		}
 		#endregion
 
@@ -811,7 +811,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			m_timeout=0;
 			m_osdRendered=OSD.OtherBitmap;
-			SaveVMR9Bitmap(bmp,true,true,1.0f);
+			SaveBitmap(bmp,true,true,1.0f);
 		}
 		public void ShowBitmap(Bitmap bmp,int timeout)
 		{
@@ -819,7 +819,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			m_timeout=timeout;
 			m_osdRendered=OSD.OtherBitmap;
-			SaveVMR9Bitmap(bmp,true,true,1.0f);
+			SaveBitmap(bmp,true,true,1.0f);
 		}
 		public void ShowBitmap(Bitmap bmp,float alpha,int timeout)
 		{
@@ -827,7 +827,7 @@ namespace MediaPortal.TV.Recording
 				return;
 			m_timeout=timeout;
 			m_osdRendered=OSD.OtherBitmap;
-			SaveVMR9Bitmap(bmp,true,true,alpha);
+			SaveBitmap(bmp,true,true,alpha);
 		}
 
 		public void ShowBitmap(Bitmap bmp,float alpha)
@@ -836,11 +836,11 @@ namespace MediaPortal.TV.Recording
 				return;
 			m_timeout=0;
 			m_osdRendered=OSD.OtherBitmap;
-			SaveVMR9Bitmap(bmp,true,true,alpha);
+			SaveBitmap(bmp,true,true,alpha);
 		}
 		public void HideBitmap()
 		{
-			SaveVMR9Bitmap(null,false,true,0f);
+			SaveBitmap(null,false,true,0f);
 		}
 		#endregion
 
@@ -935,23 +935,11 @@ namespace MediaPortal.TV.Recording
 			catch{}
 		}
 
-		bool SaveVMR9Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
+		bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
-			if (VMR9Util.g_vmr9==null) 
-				return false;
-			
-			if(VMR9Util.g_vmr9.MixerBitmapInterface==null)
-				return false;
-
-			if(VMR9Util.g_vmr9!=null)
+			if (VMR9Util.g_vmr9!=null)
 			{
-				if(VMR9Util.g_vmr9.IsVMR9Connected==false)
-				{
-					Log.Write("SaveVMR9Bitmap() failed, no VMR9");
-					return false;
-				}
 				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
-				int hr=0;
 				// transparent image?
 				if(bitmap!=null)
 				{
@@ -960,35 +948,11 @@ namespace MediaPortal.TV.Recording
 					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
 					mStr.Position=0;
 				}
-				VMR9AlphaBitmap bmp=new VMR9AlphaBitmap();
-
-				if(show==true)
+				if (show==true)
 				{
-					Microsoft.DirectX.Direct3D.Surface surface=GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,GUIGraphicsContext.Height,Microsoft.DirectX.Direct3D.Format.X8R8G8B8,Microsoft.DirectX.Direct3D.Pool.SystemMemory);
-					Microsoft.DirectX.Direct3D.SurfaceLoader.FromStream(surface,mStr,Microsoft.DirectX.Direct3D.Filter.None,0);
-					bmp.dwFlags=4|8;
-					bmp.color.blu=0;
-					bmp.color.green=0;
-					bmp.color.red=0;
-					unsafe
-					{
-						bmp.pDDS=(System.IntPtr)surface.UnmanagedComPointer;
-					}
-					bmp.rDest=new VMR9NormalizedRect();
-					bmp.rDest.top=0.0f;
-					bmp.rDest.left=0.0f;
-					bmp.rDest.bottom=1.0f;
-					bmp.rDest.right=1.0f;
-					bmp.fAlpha=alphaValue;
-					//Log.Write("SaveVMR9Bitmap() called");
-					hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
-					if(hr!=0)
-					{
-						//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
-						return false;
-					}
-					surface.Dispose();					
+					VMR9Util.g_vmr9.SaveBitmap(bitmap,show,transparent,alphaValue);
 					m_timeDisplayed=DateTime.Now;
+					return true;
 				}
 				else
 				{
@@ -1000,11 +964,7 @@ namespace MediaPortal.TV.Recording
 						}
 						else
 						{
-							hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
-							if(hr!=0)
-							{
-								return false;
-							}
+							VMR9Util.g_vmr9.SaveBitmap(bitmap,show,transparent,alphaValue);
 							m_bitmapIsVisible=false;
 							m_osdRendered=OSD.None;
 						}
@@ -1013,86 +973,49 @@ namespace MediaPortal.TV.Recording
 				// dispose
 				return true;
 			}
+
+
+			if (VMR7Util.g_vmr7!=null)
+			{
+				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
+				// transparent image?
+				if(bitmap!=null)
+				{
+					if(transparent==true)
+						bitmap.MakeTransparent(Color.Black);
+					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
+					mStr.Position=0;
+				}
+				if (show==true)
+				{
+					VMR7Util.g_vmr7.SaveBitmap(bitmap,show,transparent,alphaValue);
+					m_timeDisplayed=DateTime.Now;
+					return true;
+				}
+				else
+				{
+					if(m_bitmapIsVisible==true)
+					{
+						if(m_muteState==true)
+						{
+							RenderVolumeOSD();
+						}
+						else
+						{
+							VMR7Util.g_vmr7.SaveBitmap(bitmap,show,transparent,alphaValue);
+							m_bitmapIsVisible=false;
+							m_osdRendered=OSD.None;
+						}
+					}
+				}
+				// dispose
+				return true;
+			}
+
 			return false;
 		}// savevmr9bitmap
 
-		bool SaveVMR7Bitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
-		{
-			if (VMR7Util.g_vmr7==null) 
-				return false;
-			
-			if(VMR7Util.g_vmr7.MixerBitmapInterface==null)
-				return false;
-
-			if(VMR7Util.g_vmr7!=null)
-			{
-				if(VMR7Util.g_vmr7.IsVMR7Connected==false)
-				{
-					Log.Write("SaveVMR9Bitmap() failed, no VMR7");
-					return false;
-				}
-				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
-				int hr=0;
-				// transparent image?
-				if(bitmap!=null)
-				{
-					if(transparent==true)
-						bitmap.MakeTransparent(Color.Black);
-					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
-					mStr.Position=0;
-				}
-				VMRAlphaBitmap bmp=new VMRAlphaBitmap();
-
-				if(show==true)
-				{
-					using (Graphics g = Graphics.FromImage(bitmap))
-					{
-						bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
-						bmp.color.blu=0;
-						bmp.color.green=0;
-						bmp.color.red=0;
-						bmp.HDC=g.GetHdc();
-						bmp.rDest=new NormalizedRect();
-						bmp.rDest.top=0.0f;
-						bmp.rDest.left=0.0f;
-						bmp.rDest.bottom=1.0f;
-						bmp.rDest.right=1.0f;
-						bmp.fAlpha=alphaValue;
-						//Log.Write("SaveVMR7Bitmap() called");
-						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
-						if(hr!=0)
-						{
-							//Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
-							return false;
-						}
-					}
-					m_timeDisplayed=DateTime.Now;
-				}
-				else
-				{
-					if(m_bitmapIsVisible==true)
-					{
-						if(m_muteState==true)
-						{
-							RenderVolumeOSD();
-						}
-						else
-						{
-							hr=VMR7Util.g_vmr7.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
-							if(hr!=0)
-							{
-								return false;
-							}
-							m_bitmapIsVisible=false;
-							m_osdRendered=OSD.None;
-						}
-					}
-				}
-				// dispose
-				return true;
-			}
-			return false;
-		}// savevmr7bitmap
+		
 		#endregion
 	}// class
 }// namespace
