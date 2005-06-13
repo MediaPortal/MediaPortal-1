@@ -217,9 +217,9 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-			this.label1 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
 			this.mpGroupBox1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -299,12 +299,29 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Controls.Add(this.label3);
 			this.groupBox2.Controls.Add(this.label1);
 			this.groupBox2.Controls.Add(this.numericUpDown1);
+			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox2.Location = new System.Drawing.Point(8, 352);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(440, 80);
+			this.groupBox2.Size = new System.Drawing.Size(440, 64);
 			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "VMR9 OSD Settings";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(184, 32);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(128, 16);
+			this.label3.TabIndex = 2;
+			this.label3.Text = "(10 = solid, 0 = invisible)";
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(16, 32);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(96, 16);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "OSD Alpha level:";
 			// 
 			// numericUpDown1
 			// 
@@ -322,22 +339,6 @@ namespace MediaPortal.Configuration.Sections
 																		 0,
 																		 0,
 																		 0});
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 32);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(96, 16);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "OSD Alpha level:";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(184, 32);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(128, 16);
-			this.label3.TabIndex = 2;
-			this.label3.Text = "(10 = solid, 0 = invisible)";
 			// 
 			// General
 			// 
