@@ -175,6 +175,7 @@ namespace MediaPortal.Player
 
 				if(show==true)
 				{
+					
 					Graphics g = Graphics.FromImage(bitmap);
 					bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
 					bmp.color.blu=0;

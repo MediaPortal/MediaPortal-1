@@ -680,7 +680,7 @@ namespace MediaPortal.TV.Recording
 					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
 					m_sampleInterface.SetCallback(m_streamDemuxer,1);
 					m_sampleInterface.SetMediaType(ref mt);
-					m_sampleInterface.SetBufferSamples(false);
+					m_sampleInterface.SetBufferSamples(true);
 				}
 				else
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
