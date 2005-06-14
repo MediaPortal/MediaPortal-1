@@ -1624,7 +1624,6 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(samplePin);
 
 			//
-
 			
 			if(Vmr9.IsVMR9Connected==false && Vmr9.UseVMR9inMYTV==true)// fallback
 			{
@@ -1788,7 +1787,10 @@ namespace MediaPortal.TV.Recording
 		
 		public int  SignalQuality()
 		{
-			return 100;
+			int level;
+			int quality;
+			GetSNR(m_tunerCtrl,out level,out quality);
+			return quality;
 		}
 		
 		public int  SignalStrength()
