@@ -130,6 +130,7 @@ namespace MediaPortal.TV.Recording
 		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 		StreamBufferConfig					m_StreamBufferConfig	= null;
 		VMR9Util									  Vmr9								  = null; 
+		VMR7Util									  Vmr7								  = null; 
 		//GuideDataEvent							m_Event               = null;
 		//GCHandle										myHandle;
 		//int                         adviseCookie;
@@ -142,7 +143,6 @@ namespace MediaPortal.TV.Recording
 
 		DateTime										timeResendPid=DateTime.Now;
 		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
-		bool m_useVMR9Zap=false;
 		
 		int m_iVideoWidth=1;
 		int m_iVideoHeight=1;
@@ -248,6 +248,7 @@ namespace MediaPortal.TV.Recording
 
 				//create new instance of VMR9 helper utility
 				Vmr9 =new VMR9Util("mytv");
+				Vmr7 =new VMR7Util();
 
 				// Make a new filter graph
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:create new filter graph (IGraphBuilder)");
@@ -741,6 +742,14 @@ namespace MediaPortal.TV.Recording
 					Vmr9=null;
 				}
 
+				if (Vmr7!=null)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free vmr7");
+					Vmr7.RemoveVMR7();
+					Vmr7=null;
+				}
+
+
 				//			UnAdviseProgramInfo();
 				
 				if (m_recorder!=null) 
@@ -891,6 +900,14 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Release();
 				Vmr9=null;
 			}
+
+			if (Vmr7!=null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free vmr7");
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
+			}
+
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
 			uint iRecordingType=0;
 			if (bContentRecording) 
@@ -1000,6 +1017,10 @@ namespace MediaPortal.TV.Recording
 
 			// add VMR9 renderer to graph
 			Vmr9.AddVMR9(m_graphBuilder);
+			if (Vmr9.VMR9Filter==null)
+			{
+					Vmr7.AddVMR7(m_graphBuilder);
+			}
 
 			// add the preferred video/audio codecs
 			AddPreferredCodecs(true,true);
@@ -1137,6 +1158,11 @@ namespace MediaPortal.TV.Recording
 				Vmr9.RemoveVMR9();
 				Vmr9.Release();
 				Vmr9=null;
+			}
+			if (Vmr7!=null)
+			{
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartTimeShifting()");
 
@@ -3603,6 +3629,11 @@ namespace MediaPortal.TV.Recording
 				{
 					Vmr9.RemoveVMR9();
 					Vmr9=null;
+				}
+				if (Vmr7!=null)
+				{
+					Vmr7.RemoveVMR7();
+					Vmr7=null;
 				}
 				
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRadio()");

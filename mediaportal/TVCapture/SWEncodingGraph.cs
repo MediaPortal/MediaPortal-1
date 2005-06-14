@@ -98,6 +98,7 @@ namespace MediaPortal.TV.Recording
     StreamBufferConfig         m_StreamBufferConfig=null;
     bool                       m_bOverlayVisible=false;
 		protected VMR9Util							  Vmr9=null; 
+		protected VMR7Util							  Vmr7=null; 
 		string                     cardName;
 
 		public SWEncodingGraph(int ID,int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel,string friendlyName)
@@ -140,6 +141,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState != State.None) return false;
       m_bIsUsingMPEG = false;
 			Vmr9 =new VMR9Util("mytv");
+			Vmr7 =new VMR7Util();
       
       Filter filterVideoCompressor ;
       Filter filterAudioCompressor;
@@ -375,6 +377,12 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Release();
         Vmr9=null;
       }
+
+			if (Vmr7!=null)
+			{
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
+			}
 
 			SetRecordingLevel(false,0);
 			m_mixer=null;
@@ -803,6 +811,10 @@ namespace MediaPortal.TV.Recording
 			if (Vmr9!=null)
 			{
 				Vmr9.AddVMR9(m_graphBuilder);
+				if (Vmr9.VMR9Filter==null)
+				{
+					Vmr7.AddVMR7(m_graphBuilder);
+				}
 			}
 
 
@@ -2031,6 +2043,11 @@ namespace MediaPortal.TV.Recording
 					Vmr9.RemoveVMR9();
 					Vmr9.Release();
 					Vmr9=null;
+				}
+				if (Vmr7!=null)
+				{
+					Vmr7.RemoveVMR7();
+					Vmr7=null;
 				}
 
 				Log.WriteFile(Log.LogType.Capture,true,"SWGraph:render video preview");

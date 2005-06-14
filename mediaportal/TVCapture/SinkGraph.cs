@@ -57,6 +57,7 @@ namespace MediaPortal.TV.Recording
     protected IAMVideoProcAmp         m_videoprocamp=null;
     protected VideoProcAmp            m_videoAmp=null;
 		protected VMR9Util							  Vmr9=null; 
+		protected VMR7Util							  Vmr7=null; 
 		protected string                     cardName;
 		ArrayList						m_audioPidList=new ArrayList();
 		int									SelectedLanguage = 11;
@@ -170,6 +171,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.None) return false;
 			Vmr9 =new VMR9Util("mytv");
+			Vmr7 = new VMR7Util();
 			Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph()");
       GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       m_iPrevChannel=-1;
@@ -344,6 +346,12 @@ namespace MediaPortal.TV.Recording
         Vmr9=null;
       }
 
+			if (Vmr7!=null)
+			{
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
+			}
+
       if (m_videoprocamp!=null)
       {
         m_videoAmp=null;
@@ -423,6 +431,12 @@ namespace MediaPortal.TV.Recording
 				Vmr9.RemoveVMR9();
 				Vmr9.Release();
 				Vmr9=null;
+			}
+			
+			if (Vmr7!=null)
+			{
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
 			}
 			Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartTimeShifting()");
       m_graphState=State.TimeShifting;
@@ -534,6 +548,12 @@ namespace MediaPortal.TV.Recording
 				Vmr9.RemoveVMR9();
 				Vmr9.Release();
 				Vmr9=null;
+			}
+			
+			if (Vmr7!=null)
+			{
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
 			}
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartRecording({0} {1} {2})",strFileName,bContentRecording,recording.Quality);
 			if (recording.Quality != TVRecording.QualityType.NotSet)
@@ -730,7 +750,10 @@ namespace MediaPortal.TV.Recording
 			}
 
 			Vmr9.AddVMR9(m_graphBuilder);
-
+			if (Vmr9.VMR9Filter==null)
+			{
+				Vmr7.AddVMR7(m_graphBuilder);
+			}
 			AddPreferredCodecs(true,true);
       
 			m_graphState=State.Viewing;
@@ -1189,6 +1212,11 @@ namespace MediaPortal.TV.Recording
 				{
 					Vmr9.RemoveVMR9();
 					Vmr9=null;
+				}
+				if (Vmr7!=null)
+				{
+					Vmr7.RemoveVMR7();
+					Vmr7=null;
 				}
 				
 				AddPreferredCodecs(true,false);

@@ -460,11 +460,9 @@ namespace MediaPortal.Core.Transcoding
 								hr=streamConfig.GetStreamType(out majorType);
 								if (majorType==MediaType.Video)
 								{
-									int xx=1;
 								}
 								if (majorType==MediaType.Audio)
 								{
-									int yy=1;
 								}
 							}
 						}
