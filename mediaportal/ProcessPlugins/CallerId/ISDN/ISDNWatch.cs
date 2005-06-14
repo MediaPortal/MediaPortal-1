@@ -40,8 +40,8 @@ namespace ProcessPlugins.CallerId
     {
       public uint PLCI;
       public ushort CIP;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst=100)]
-      public string buffer;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst=100)]
+      public byte[] buffer;
     }
 
     [DllImport("CAPI2032.DLL")]
@@ -180,51 +180,53 @@ namespace ProcessPlugins.CallerId
         else
         {
           Log.Write("ISDN: CAPI signaling activated");
-        
-          // Waiting for signal and signal-processing
-          string CallerId = null;
-          capiMessageHeader MessageHeader = new capiMessageHeader();
-          IntPtr capiBufferPointer = new IntPtr();
-          while (!stopThread)
+          
+          while (!stopThread) // Waiting for signal and signal-processing
           {
+            string callerId = null;
+            string calledId = null;
+            string logBuffer = "";
+            capiMessageHeader messageHeader = new capiMessageHeader();
+            IntPtr capiBufferPointer = new IntPtr();
+
             //        CAPI_WAIT_FOR_SIGNAL(applicationId);
             if (CAPI_GET_MESSAGE(applicationId, ref capiBufferPointer) == 0)
             {
-              RtlMoveMemory(ref MessageHeader, capiBufferPointer, HeaderLength);
-              if ((MessageHeader.Command == CAPI_CONNECT) && (MessageHeader.SubCommand == CAPI_IND))
+              RtlMoveMemory(ref messageHeader, capiBufferPointer, HeaderLength);
+              if ((messageHeader.Command == CAPI_CONNECT) && (messageHeader.SubCommand == CAPI_IND))
               {
                 capiConnectInd ConnectInd = new capiConnectInd();
-                RtlMoveMemory (ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (MessageHeader.Length - HeaderLength));
+                RtlMoveMemory (ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (messageHeader.Length - HeaderLength));
                 
-                string logBuffer = "";
+                for (int i = 99; i >= 0; i--)
+                  if ((logBuffer.Length != 0) || (ConnectInd.buffer[i] !=0))
+                  {
+                    if ((ConnectInd.buffer[i] < 48) || (ConnectInd.buffer[i] > 57))
+                      logBuffer = "(" + ConnectInd.buffer[i] + ")" + logBuffer;
+                    else
+                      logBuffer = (char)ConnectInd.buffer[i] + logBuffer;
+                  }
 
-                foreach (char c in ConnectInd.buffer)
-                {
-                  if (((byte)c < 48) || ((byte)c > 57))
-                    logBuffer = logBuffer + "(" + (byte)c + ")";
-                  else
-                    logBuffer = logBuffer + c;
-                }
                 Log.Write("ISDN: Buffer: {0}", logBuffer);
 
                 int lengthCalledId = ConnectInd.buffer[0];
-                string CalledId = ConnectInd.buffer.Substring(2, (lengthCalledId - 1));
                 int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
-                Log.Write("ISDN: stripping {0} digits", stripPrefix);
-                CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4 + stripPrefix), (lengthCallerId - 2 - stripPrefix));
-                if (CallerId.Length < 1)
-                {
-                  CallerId = ConnectInd.buffer.Substring((lengthCalledId + 4), (lengthCallerId - 2));
-                  Log.Write("ISDN: stripping failed, length of incoming CID <= {0} digits", stripPrefix);
-                }
 
-                if (ConnectInd.buffer[lengthCalledId+2] == 17)
-                  CallerId = "+" + CallerId;
+                for (int i = 2; i < (lengthCalledId + 1); i++)
+                  calledId = calledId + (char)ConnectInd.buffer[i];
+                for (int i = (lengthCalledId + 4); i < (lengthCallerId + lengthCalledId + 2); i++)
+                  callerId = callerId + (char)ConnectInd.buffer[i];
 
-                Log.Write("ISDN: CalledID: {0}", CalledId);
-                Log.Write("ISDN: CallerID: {0}", CallerId);
+                callerId = callerId.TrimStart('0');
+                Log.Write("ISDN: stripped {0} leading zeros", lengthCallerId - callerId.Length - 2);
 
-                CidReceiver(CallerId);
+                if (ConnectInd.buffer[lengthCalledId+2] == 17)  // International call
+                  callerId = "+" + callerId;
+
+                Log.Write("ISDN: CalledID: {0}", calledId);
+                Log.Write("ISDN: CallerID: {0}", callerId);
+
+                CidReceiver(callerId);
               }
             }
             Thread.Sleep(200);

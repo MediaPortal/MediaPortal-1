@@ -216,7 +216,7 @@ namespace ProcessPlugins.CallerId
 
     public bool HasSetup()
     {
-      return true;
+      return false;
     }
 
     public void ShowPlugin()
@@ -273,6 +273,7 @@ namespace ProcessPlugins.CallerId
       {
         string country;
         string countryCode;
+        string outlookQuery;
 
         if (callerId[0] == '+')
         {
@@ -308,7 +309,10 @@ namespace ProcessPlugins.CallerId
 
         string areaCode = callerId.Substring(0, posAreaCode);
         string phoneNumber = callerId.Remove(0, posAreaCode);
-        string outlookQuery = countryCode + " (" + areaCode + ") " + phoneNumber;
+        if (location != "unknown")
+          outlookQuery = countryCode + " (" + areaCode + ") " + phoneNumber;
+        else
+          outlookQuery = countryCode + "  (I) " + phoneNumber;
         OutlookHelper.Caller caller = OutlookHelper.OutlookLookup(outlookQuery);
 
         if (caller.Name != null)
@@ -320,7 +324,7 @@ namespace ProcessPlugins.CallerId
         // Notify window popup
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY, 0, 0, 0, 0, 0, 0);
         msg.Label = "Incoming call";
-        if ((location != "unknown") && (country != "unknown"))
+        if (country != "unknown")
         {
           msg.Label = msg.Label + " from " + location + ", " + (string)CountryTranslator[country];
           if (caller.Name != null)
