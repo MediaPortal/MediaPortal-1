@@ -504,7 +504,6 @@ namespace MediaPortal.TV.Recording
 
 			m_sectionsList=new ArrayList();
 			bool flag=false;
-
 			if(m_streamDemuxer.GetTable(pid,tid,timeout)==true)
 			{
 				m_syncWait=false;
@@ -531,6 +530,7 @@ namespace MediaPortal.TV.Recording
 			int version=0;
 			byte[] arr = new byte[1];
 			IntPtr sectionBuffer=IntPtr.Zero;
+
 
 			m_sectionsList=new ArrayList();
 			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);

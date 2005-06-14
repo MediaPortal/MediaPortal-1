@@ -28,19 +28,14 @@ namespace MediaPortal.Player
 	public class VMR7Util
 	{
 		
-		[DllImport("gdi32.dll", EntryPoint="BitBlt")]
-		public static extern bool BitBlt(IntPtr hdcDest,int xDest,
-			int yDest,int wDest,int hDest,IntPtr hdcSource,
-			int xSrc,int ySrc,int RasterOp);
-		
 		[DllImport("gdi32.dll", EntryPoint="CreateCompatibleDC")]
-		public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
+		static extern IntPtr CreateCompatibleDC(IntPtr hdc);
 
 		[DllImport("gdi32.dll", EntryPoint="SelectObject")]
-		public static extern IntPtr SelectObject(IntPtr hdc,IntPtr bmp);
+		static extern IntPtr SelectObject(IntPtr hdc,IntPtr bmp);
 
 		[DllImport("gdi32.dll", EntryPoint="DeleteDC")]
-		public static extern IntPtr DeleteDC(IntPtr hDc);
+		static extern IntPtr DeleteDC(IntPtr hDc);
 
 		static public VMR7Util g_vmr7=null;
 		public IBaseFilter		VMR7Filter = null;

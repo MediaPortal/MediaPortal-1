@@ -232,6 +232,8 @@ namespace MediaPortal.TV.Recording
 		protected bool					m_channelFound=false;
 		StreamBufferConfig				m_streamBufferConfig=null;
 		protected VMR9Util				Vmr9=null; 
+		protected VMR7Util				Vmr7=null;
+
 		protected string				m_filename="";
 		protected DVBSections			m_sections=new DVBSections();
 		protected bool					m_pluginsEnabled=false;
@@ -248,7 +250,6 @@ namespace MediaPortal.TV.Recording
 		int m_aspectX=1;
 		int m_aspectY=1;
 		DateTime m_timeDisplayed=DateTime.Now;
-		bool m_useVMR9Zap=false;
 
 		bool m_lastTuneError=false;
 		#endregion
@@ -378,7 +379,7 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph()");
 			// create graphs
 			Vmr9 =new VMR9Util("mytv");
-
+			Vmr7=new VMR7Util();
 			m_graphBuilder=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
 			
 			int n=0;
@@ -1551,6 +1552,11 @@ namespace MediaPortal.TV.Recording
 			if(Vmr9.UseVMR9inMYTV)
 			{
 				Vmr9.AddVMR9(m_graphBuilder);
+				if (Vmr9.VMR9Filter==null)
+				{
+					Vmr7.AddVMR7(m_graphBuilder);
+				}
+
 			}
 
 
