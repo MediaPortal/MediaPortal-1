@@ -16,7 +16,8 @@ namespace MediaPortal.Core.Transcoding
 		Portable,
 		Low,
 		Medium,
-		High
+		High,
+		Custom
 	}
 
 	/// <summary>

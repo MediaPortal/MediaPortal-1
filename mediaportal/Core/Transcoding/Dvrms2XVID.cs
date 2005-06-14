@@ -93,7 +93,7 @@ namespace MediaPortal.Core.Transcoding
 				xvidCodec = Marshal.BindToMoniker( monikerXVID ) as IBaseFilter;
 				if (xvidCodec==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Unable to create XviD MPEG-4 Codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Unable to create XviD MPEG-4 Codec");
 					Cleanup();
 					return false;
 				}
@@ -101,7 +101,7 @@ namespace MediaPortal.Core.Transcoding
 				hr = graphBuilder.AddFilter( xvidCodec, "XviD MPEG-4 Codec" );
 				if( hr != 0 ) 
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -111,7 +111,7 @@ namespace MediaPortal.Core.Transcoding
 				mp3Codec = Marshal.BindToMoniker( monikerMPEG3 ) as IBaseFilter;
 				if (mp3Codec==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Unable to create MPEG Layer-3 Codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Unable to create MPEG Layer-3 Codec");
 					Cleanup();
 					return false;
 				}
@@ -119,7 +119,7 @@ namespace MediaPortal.Core.Transcoding
 				hr = graphBuilder.AddFilter( mp3Codec, "MPEG Layer-3" );
 				if( hr != 0 ) 
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Add MPEG Layer-3 to filtergraph :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add MPEG Layer-3 to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -129,7 +129,7 @@ namespace MediaPortal.Core.Transcoding
 				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerFileWrite ) as IBaseFilter;
 				if (fileWriterbase==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Unable to create FileWriter");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Unable to create FileWriter");
 					Cleanup();
 					return false;
 				}
@@ -138,7 +138,7 @@ namespace MediaPortal.Core.Transcoding
 				fileWriterFilter = fileWriterbase as IFileSinkFilter;
 				if (fileWriterFilter ==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Add unable to get IFileSinkFilter for filewriter");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add unable to get IFileSinkFilter for filewriter");
 					Cleanup();
 					return false;
 				}
@@ -146,7 +146,7 @@ namespace MediaPortal.Core.Transcoding
 				hr = graphBuilder.AddFilter( fileWriterbase , "FileWriter" );
 				if( hr != 0 ) 
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -161,7 +161,7 @@ namespace MediaPortal.Core.Transcoding
 				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -170,7 +170,7 @@ namespace MediaPortal.Core.Transcoding
 				aviMuxer = Marshal.BindToMoniker( monikerAviMuxer ) as IBaseFilter;
 				if (aviMuxer==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Unable to create AviMux");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Unable to create AviMux");
 					Cleanup();
 					return false;
 				}
@@ -179,7 +179,7 @@ namespace MediaPortal.Core.Transcoding
 				hr = graphBuilder.AddFilter( aviMuxer , "AviMux" );
 				if( hr != 0 ) 
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:Add AviMux to filtergraph :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add AviMux to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -191,14 +191,14 @@ namespace MediaPortal.Core.Transcoding
 				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				if (Mpeg2VideoCodec==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to add mpeg2 video codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add mpeg2 video codec");
 					Cleanup();
 					return false;
 				}
 				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
 				if (Mpeg2AudioCodec==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to add mpeg2 audio codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add mpeg2 audio codec");
 					Cleanup();
 					return false;
 				}
@@ -211,7 +211,7 @@ namespace MediaPortal.Core.Transcoding
 				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
 				if (pinOut0==null || pinOut1==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to get pins of source");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to get pins of source");
 					Cleanup();
 					return false;
 				}
@@ -220,7 +220,7 @@ namespace MediaPortal.Core.Transcoding
 				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);
 				if (pinIn0==null || pinIn1==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to get pins of mpeg2 video/audio codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to get pins of mpeg2 video/audio codec");
 					Cleanup();
 					return false;
 				}
@@ -231,7 +231,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut0.Connect(pinIn1,ref amAudio);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to connect audio pins :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to connect audio pins :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -243,7 +243,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut1.Connect(pinIn0,ref amVideo);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to connect video pins :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to connect video pins :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -254,14 +254,14 @@ namespace MediaPortal.Core.Transcoding
 				hr=DsUtils.GetPin(xvidCodec,PinDirection.Input,0,out pinIn);
 				if (hr!=0 || pinIn==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get input pin of xvid codec:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get input pin of xvid codec:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 				hr=DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get output pin of mpeg2 video codec :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get output pin of mpeg2 video codec :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -270,7 +270,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut.Connect(pinIn,ref amVideo);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to connect mpeg2 video codec->xvid:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to connect mpeg2 video codec->xvid:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -279,14 +279,14 @@ namespace MediaPortal.Core.Transcoding
 				hr=DsUtils.GetPin(mp3Codec,PinDirection.Input,0,out pinIn);
 				if (hr!=0 || pinIn==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 				hr=DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -295,7 +295,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut.Connect(pinIn,ref amVideo);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to connect mpeg2 audio codec->mpeg3:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to connect mpeg2 audio codec->mpeg3:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -306,14 +306,14 @@ namespace MediaPortal.Core.Transcoding
 				hr=DsUtils.GetPin(mp3Codec,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 				hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,0,out pinIn);
 				if (hr!=0 || pinIn==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -322,7 +322,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut.Connect(pinIn,ref amVideo);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to connect mpeg3 codec->avimux:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to connect mpeg3 codec->avimux:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -331,14 +331,14 @@ namespace MediaPortal.Core.Transcoding
 				hr=DsUtils.GetPin(xvidCodec,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 				hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,1,out pinIn);
 				if (hr!=0 || pinIn==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get output#1 pin of avimux :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get output#1 pin of avimux :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -347,7 +347,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut.Connect(pinIn,ref amVideo);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to connect xvid codec->avimux:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to connect xvid codec->avimux:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -357,7 +357,7 @@ namespace MediaPortal.Core.Transcoding
 				hr=DsUtils.GetPin(aviMuxer,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get output pin of avimux:0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get output pin of avimux:0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -365,14 +365,14 @@ namespace MediaPortal.Core.Transcoding
 				hr=DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn);
 				if (hr!=0 || pinIn==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:cannot get input pin of Filewriter :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:cannot get input pin of Filewriter :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 				hr=pinOut.Connect(pinIn,ref mt);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:connect muxer->filewriter :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:connect muxer->filewriter :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -382,14 +382,14 @@ namespace MediaPortal.Core.Transcoding
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2MPG:FAILED:unable to start graph :0x{0:X}",hr);
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to start graph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 			}
 			catch(Exception ex)
 			{
-				Log.Write("DVR2MPG:Unable create graph", ex.Message);
+				Log.Write("DVR2XVID:Unable create graph", ex.Message);
 				Cleanup();
 				return false;
 			}

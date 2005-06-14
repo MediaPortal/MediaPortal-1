@@ -21,18 +21,181 @@ namespace MediaPortal.Core.Transcoding
 			[PreserveSig]
 			int GetCurrentProfileId([Out] out uint pdwProfileId);
 			[PreserveSig]
-			int ConfigureFilterUsingProfileGuid([In] Guid guidProfile);
+			int ConfigureFilterUsingProfileGuid([In] ref Guid guidProfile);
 			[PreserveSig]
 			int GetCurrentProfileGuid([Out] out Guid pProfileGuid);
 			[PreserveSig]
-			int ConfigureFilterUsingProfile([In] IntPtr  pProfile);
+			int ConfigureFilterUsingProfile([In] IWMProfile pProfile);
 			[PreserveSig]
-			int GetCurrentProfile([Out] out IntPtr ppProfile);
+			int GetCurrentProfile([Out] out IWMProfile ppProfile);
 			[PreserveSig]
 			int SetIndexMode( [In]  bool bIndexFile );
 			[PreserveSig]
 			int GetIndexMode( [Out] out bool pbIndexFile );
 		}
+		[ComVisible(true), ComImport,
+		Guid("96406BDB-2B2B-11d3-B36B-00C04F6108FF"),
+		InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+		public interface IWMProfile 
+		{
+			[PreserveSig]
+			int GetVersion( [Out] out int pdwVersion );
+			[PreserveSig]
+			int GetName( [Out] IntPtr pwszName,ref uint pcchName );
+			[PreserveSig]
+			int SetName( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszName );
+			[PreserveSig]
+			int GetDescription( [Out, MarshalAs(UnmanagedType.LPWStr)] out string pwszDescription, ref uint pcchDescription );
+			[PreserveSig]
+			int SetDescription( [In,MarshalAs(UnmanagedType.LPWStr)] string pwszDescription );
+			[PreserveSig]
+			int GetStreamCount( [Out] out uint pcStreams );
+			[PreserveSig]
+			int GetStream( [In] uint dwStreamIndex,[Out] out IWMStreamConfig ppConfig );
+			[PreserveSig]
+			int GetStreamByNumber( [In] short wStreamNum,[Out] out IWMStreamConfig ppConfig );
+			[PreserveSig]
+			int RemoveStream( [In] IWMStreamConfig pConfig );
+			[PreserveSig]
+			int RemoveStreamByNumber( [In] short wStreamNum );
+			[PreserveSig]
+			int AddStream( [In] IWMStreamConfig pConfig );
+			[PreserveSig]
+			int ReconfigStream( [In] IWMStreamConfig pConfig );
+			[PreserveSig]
+			int CreateNewStream( [In] Guid guidStreamType,[Out] out IWMStreamConfig ppConfig );
+			[PreserveSig]
+			int GetMutualExclusionCount( [Out] out uint pcME );
+			[PreserveSig]
+			int GetMutualExclusion( [In] uint dwMEIndex,[Out] out IWMMutualExclusion ppME );
+			[PreserveSig]
+			int RemoveMutualExclusion( [In] IWMMutualExclusion pME );
+			[PreserveSig]
+			int AddMutualExclusion( [In] IWMMutualExclusion pME );
+			[PreserveSig]
+			int CreateNewMutualExclusion( [Out] out IWMMutualExclusion ppME );
+		};
+
+		[ComVisible(true), ComImport,
+		Guid("96406BDE-2B2B-11d3-B36B-00C04F6108FF"),
+		InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+		public interface IWMMutualExclusion 
+		{
+			[PreserveSig]
+			int GetStreams( [Out] short[] pwStreamNumArray,ref short pcStreams );
+			[PreserveSig]
+			int AddStream( [In] short wStreamNum );
+			[PreserveSig]
+			int RemoveStream( [In] short wStreamNum );
+			[PreserveSig]
+			int GetType( [Out] out Guid pguidType );
+			[PreserveSig]
+			int SetType( [In] Guid guidType );
+		};
+
+
+		[ComVisible(true), ComImport,
+		Guid("96406BDC-2B2B-11d3-B36B-00C04F6108FF"),
+		InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+		public interface IWMStreamConfig 
+		{
+			[PreserveSig]
+			int GetStreamType( [Out] out Guid pGuidStreamType );
+			[PreserveSig]
+			int GetStreamNumber( [Out] out short pwStreamNum );
+			[PreserveSig]
+			int SetStreamNumber( [In] short wStreamNum );
+			[PreserveSig]
+			int GetStreamName( [Out, MarshalAs(UnmanagedType.LPWStr)] out string pwszStreamName, ref short pcchStreamName );
+			[PreserveSig]
+			int SetStreamName( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszStreamName );
+			[PreserveSig]
+			int GetConnectionName( [Out, MarshalAs(UnmanagedType.LPWStr)] out string pwszInputName,ref short pcchInputName );
+			[PreserveSig]
+			int SetConnectionName( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszInputName );
+			[PreserveSig]
+			int GetBitrate( [Out] out uint pdwBitrate );
+			[PreserveSig]
+			int SetBitrate( [In] uint  pdwBitrate );
+			[PreserveSig]
+			int GetBufferWindow( [Out] out uint pmsBufferWindow );
+			[PreserveSig]
+			int SetBufferWindow( [In] uint msBufferWindow );
+		};
+
+		public enum WMT_ATTR_DATATYPE:int
+		{
+
+			WMT_TYPE_DWORD      = 0,
+			WMT_TYPE_STRING     = 1,
+			WMT_TYPE_BINARY     = 2,
+			WMT_TYPE_BOOL       = 3,
+			WMT_TYPE_QWORD      = 4,
+			WMT_TYPE_WORD       = 5,
+			WMT_TYPE_GUID       = 6,
+		}
+
+		[ComVisible(true), ComImport,
+			Guid("962dc1ec-c046-4db8-9cc7-26ceae500817"),
+			InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+		public interface IWMWriterAdvanced2 
+		{
+			[PreserveSig]
+			int GetSinkCount( [Out] out uint pcSinks );
+			[PreserveSig]
+			int GetSink( [In] uint dwSinkNum,[Out] out IntPtr ppSink );//IWMWriterSink
+			[PreserveSig]
+			int AddSink( [In] IntPtr pSink );//IWMWriterSink
+			[PreserveSig]
+			int RemoveSink( [In] IntPtr pSink );//IWMWriterSink
+			[PreserveSig]
+			int WriteStreamSample( [In] short wStreamNum,
+															[In] Int64 cnsSampleTime,
+															[In] uint msSampleSendTime,
+															[In] Int64 cnsSampleDuration,
+															[In] uint dwFlags,
+															[In] IntPtr pSample );//INSSBuffer
+
+			[PreserveSig]
+			int SetLiveSource( bool fIsLiveSource );
+			[PreserveSig]
+			int IsRealTime( [Out] out bool pfRealTime );
+			[PreserveSig]
+			int GetWriterTime( [Out] out Int64 pcnsCurrentTime );
+			[PreserveSig]
+			int GetStatistics( [In] short wStreamNum,[Out] IntPtr pStats );//WM_WRITER_STATISTICS
+			[PreserveSig]
+			int SetSyncTolerance(   [In]    uint   msWindow );
+			[PreserveSig]
+			int GetSyncTolerance(   [Out]   out uint  pmsWindow );
+			[PreserveSig]
+			int GetInputSetting(
+								[In] uint dwInputNum,
+								[In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+								[Out] out WMT_ATTR_DATATYPE pType,
+								[Out] out IntPtr pValue,
+								[In, Out] ref short pcbLength );
+
+			[PreserveSig]
+			int SetInputSetting(
+							[In] uint dwInputNum,
+							[In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+							[In] WMT_ATTR_DATATYPE Type,
+							[In] IntPtr pValue,
+							[In] short cbLength );
+		};
+
+		Guid WMProfile_V80_256Video = new Guid(0xbbc75500,0x33d2,0x4466,0xb8, 0x6b, 0x12, 0x2b, 0x20, 0x1c, 0xc9, 0xae );
+		Guid WMProfile_V80_384Video = new Guid(0x29b00c2b,0x9a9,0x48bd,0xad, 0x9, 0xcd, 0xae, 0x11, 0x7d, 0x1d, 0xa7 );
+		Guid WMProfile_V80_768Video= new Guid(0x74d01102,0xe71a,0x4820,0x8f, 0xd, 0x13, 0xd2, 0xec, 0x1e, 0x48, 0x72 );
+		Guid WMProfile_V80_700NTSCVideo = new Guid(0xc8c2985f,0xe5d9,0x4538,0x9e, 0x23, 0x9b, 0x21, 0xbf, 0x78, 0xf7, 0x45 );
+		Guid WMProfile_V80_1400NTSCVideo= new Guid( 0x931d1bee,0x617a,0x4bcd,0x99, 0x5, 0xcc, 0xd0, 0x78, 0x66, 0x83, 0xee );
+		Guid WMProfile_V80_384PALVideo = new Guid(0x9227c692,0xae62,0x4f72,0xa7, 0xea, 0x73, 0x60, 0x62, 0xd0, 0xe2, 0x1e );
+		Guid WMProfile_V80_700PALVideo = new Guid( 0xec298949,0x639b,0x45e2,0x96, 0xfd, 0x4a, 0xb3, 0x2d, 0x59, 0x19, 0xc2 );
+		Guid WMProfile_V80_FAIRVBRVideo= new Guid(0x3510a862,0x5850,0x4886,0x83, 0x5f, 0xd7, 0x8e, 0xc6, 0xa6, 0x40, 0x42 );
+		Guid WMProfile_V80_HIGHVBRVideo = new Guid(0xf10d9d3,0x3b04,0x4fb0,0xa3, 0xd3, 0x88, 0xd4, 0xac, 0x85, 0x4a, 0xcc );
+		Guid WMProfile_V80_BESTVBRVideo = new Guid(0x48439ba,0x309c,0x440e,0x9c, 0xb4, 0x3d, 0xcc, 0xa3, 0x75, 0x64, 0x23 );
+
 
 		protected int												rotCookie = 0;
 		protected  IGraphBuilder			  			      graphBuilder =null;
@@ -45,12 +208,17 @@ namespace MediaPortal.Core.Transcoding
 		protected IBaseFilter												Mpeg2VideoCodec =null;
 		protected IBaseFilter												Mpeg2AudioCodec =null;
 
+		protected int bitrate;
+		protected int fps;
+		protected Size screenSize;
 		public TranscodeToWMV()
 		{
 		}
-		public void CreateProfile(string name, int KBPS, Size videoSize, int bitRate, int FPS)
+		public void CreateProfile(Size videoSize, int bitRate, int FPS)
 		{
-
+			bitrate=bitRate;
+			screenSize=videoSize;
+			fps=FPS;
 
 		}
 		
@@ -241,8 +409,63 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 				IConfigAsfWriter config = fileWriterbase as IConfigAsfWriter;
-				//config.ConfigureFilterUsingProfileGuid();
-
+				switch (quality)
+				{
+					case Quality.High:
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_BESTVBRVideo);
+						break;
+					case Quality.Medium:
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_FAIRVBRVideo);
+						break;
+					case Quality.Low:
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768Video);
+						break;
+					case Quality.Portable:
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256Video);
+						break;
+					case Quality.Custom:
+						//create new profile
+						IWMProfile newProfile ;
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_BESTVBRVideo);
+						hr=config.GetCurrentProfile(out newProfile);
+						if (hr==0)
+						{
+							uint numberOfStreams;
+							uint bitr;
+							Guid majorType;
+							IWMStreamConfig streamConfig;
+							uint chars=256;
+							string name;
+							int version;
+							hr=newProfile.GetVersion(out version);
+							IntPtr namePtr=Marshal.AllocCoTaskMem((int)chars);
+							hr=newProfile.GetName(namePtr, ref chars);
+							name=Marshal.PtrToStringAuto(namePtr);
+							hr=newProfile.GetStreamCount(out numberOfStreams);
+							
+							for (uint i=0; i < numberOfStreams;++i)
+							{
+								hr=newProfile.GetStream(i, out streamConfig);
+								hr=streamConfig.GetBitrate(out bitr);
+								hr=streamConfig.GetStreamType(out majorType);
+								if (majorType==MediaType.Video)
+								{
+									int xx=1;
+								}
+								if (majorType==MediaType.Audio)
+								{
+									int yy=1;
+								}
+							}
+						}
+					break;
+				}
+				if (hr!=0 )
+				{
+					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to set profile :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= graphBuilder as IMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;

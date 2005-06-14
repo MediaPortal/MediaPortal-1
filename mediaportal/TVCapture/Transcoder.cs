@@ -32,14 +32,6 @@ namespace MediaPortal.TV.Recording
 			Completed,
 			Error
 		}
-		enum Quality
-		{
-			Portable=0,
-			Low,
-			Medium,
-			High,
-			Custom
-		}
 		static ArrayList  queue = new ArrayList();
 		static Thread		  WorkerThread =null;
 		
@@ -271,7 +263,8 @@ namespace MediaPortal.TV.Recording
 			if (isWMV)
 			{
 				TranscodeToWMV WMVConverter = new TranscodeToWMV();
-				if (!WMVConverter.Transcode(info,VideoFormat.Wmv,MediaPortal.Core.Transcoding.Quality.High))
+				WMVConverter.CreateProfile(ScreenSize,bitRate,FPS);
+				if (!WMVConverter.Transcode(info,VideoFormat.Wmv,quality))
 				{
 					tinfo.status=Status.Error;
 					return;
@@ -297,6 +290,7 @@ namespace MediaPortal.TV.Recording
 			}
 			while (!mpgConverter.IsFinished()) 
 			{
+				tinfo.percentDone=mpgConverter.Percentage();
 				System.Threading.Thread.Sleep(100);
 			}
 			if (isMpeg)
@@ -309,9 +303,9 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
-			info.file=System.IO.Path.ChangeExtension(info.file,".mpg");
 			if (isXVID)
 			{
+				info.file=System.IO.Path.ChangeExtension(info.file,".mpg");				
 				string outputFile=System.IO.Path.ChangeExtension(info.file,".avi");
 				string mencoderParams=String.Format("\"{0}\" -o \"{1}\" -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate={2} -demuxer 35",
 																								info.file,outputFile,bitRate);
