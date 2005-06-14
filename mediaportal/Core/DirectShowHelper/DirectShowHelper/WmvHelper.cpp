@@ -8,12 +8,19 @@
 // CWmvHelper
 void Log(const char *fmt, ...) ;
 
-STDMETHODIMP CWmvHelper::SetProfile(IConfigAsfWriter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY)
+STDMETHODIMP CWmvHelper::SetProfile(IBaseFilter* baseFilter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY)
 {
 
-	Log("WMV:SetProfile (%d, %d %x)",screenX,screenY,asfWriter);
-	CComPtr<IConfigAsfWriter>	m_pAsfWriter;
-	m_pAsfWriter.Attach( asfWriter);
+	Log("WMV:SetProfile (%d, %d %x) 2",screenX,screenY,baseFilter);
+	CComPtr<IBaseFilter>	m_pBaseFilter;
+	m_pBaseFilter.Attach( baseFilter);
+	if (m_pBaseFilter==NULL)
+	{
+		Log("WMV:could not get IBaseFilter");
+		return S_OK;
+	}
+
+	CComQIPtr<IConfigAsfWriter>	m_pAsfWriter=baseFilter;
 	if (m_pAsfWriter==NULL)
 	{
 		Log("WMV:could not get IConfigAsfWriter");
@@ -105,6 +112,10 @@ STDMETHODIMP CWmvHelper::SetProfile(IConfigAsfWriter* asfWriter, ULONG bitrate, 
 		Log("WMV:  ReconfigStream returned 0x%x",hr);
 
 	}
+	hr=m_pAsfWriter->ConfigureFilterUsingProfile(profile);
+	if (!SUCCEEDED(hr))
+		Log("WMV:ConfigureFilterUsingProfile returned:0x%x",hr);
+
 	Log("WMV:Set Deinterlace");
 	CComPtr<IServiceProvider> pProvider;
 	CComPtr<IWMWriterAdvanced2> pWMWA2;
@@ -114,17 +125,22 @@ STDMETHODIMP CWmvHelper::SetProfile(IConfigAsfWriter* asfWriter, ULONG bitrate, 
 		hr = pProvider->QueryService(IID_IWMWriterAdvanced2,IID_IWMWriterAdvanced2,(void**)&pWMWA2);
 		if (SUCCEEDED(hr))
 		{
+			WMT_ATTR_DATATYPE wmType;
 			DWORD pValue = WM_DM_DEINTERLACE_NORMAL;
+			WORD len=sizeof(DWORD);
 			// Set the first parameter to your actual input number.
-			hr = pWMWA2->SetInputSetting(0, g_wszDeinterlaceMode,WMT_TYPE_DWORD, (BYTE*) &pValue, sizeof(WMT_TYPE_BOOL));
+			hr = pWMWA2->GetInputSetting(1, g_wszDeinterlaceMode,&wmType, (BYTE*) &pValue, &len );
 			if (!SUCCEEDED(hr))
-				Log("WMV:Could not get set deinterlace mode 0x%x",hr);
+				Log("WMV:Could not get deinterlace mode pin1 0x%x",hr);
+			pValue = WM_DM_DEINTERLACE_NORMAL;
+			hr = pWMWA2->SetInputSetting(1, g_wszDeinterlaceMode,wmType, (BYTE*) &pValue, len );
+			if (!SUCCEEDED(hr))
+				Log("WMV:Could not set deinterlace mode pin1 0x%x (%d, %d, %d)",hr,wmType,pValue,len);
+			else
+				Log("WMV:Set deinterlace mode (%d, %d, %d)",wmType,pValue,len);
 		}
 		else Log("WMV:Could not get IWMWriterAdvanced2");
 	}
 	else Log("WMV:Could not get IServiceProvider");
-	hr=m_pAsfWriter->ConfigureFilterUsingProfile(profile);
-	if (!SUCCEEDED(hr))
-		Log("WMV:ConfigureFilterUsingProfile returned:0x%x",hr);
 	return S_OK;
 }

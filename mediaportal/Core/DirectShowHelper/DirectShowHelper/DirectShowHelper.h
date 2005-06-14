@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Tue Jun 14 19:54:05 2005
+/* at Tue Jun 14 20:32:26 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -139,7 +139,6 @@ typedef struct WmvHelper WmvHelper;
 #include "oaidl.h"
 #include "ocidl.h"
 #include "amstream.h"
-#include "dshowasf.h"
 
 #ifdef __cplusplus
 extern "C"{
@@ -804,7 +803,7 @@ void __RPC_STUB IStreamBufferRecorder_SetAttributeDWORD_Stub(
 #define __IWmvHelper_INTERFACE_DEFINED__
 
 /* interface IWmvHelper */
-/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
+/* [unique][helpstring][uuid][object] */ 
 
 
 EXTERN_C const IID IID_IWmvHelper;
@@ -816,7 +815,7 @@ EXTERN_C const IID IID_IWmvHelper;
     {
     public:
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE SetProfile( 
-            IConfigAsfWriter *asfWriter,
+            /* [in] */ IBaseFilter *asfWriter,
             ULONG bitrate,
             ULONG fps,
             ULONG screenX,
@@ -843,7 +842,7 @@ EXTERN_C const IID IID_IWmvHelper;
         
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *SetProfile )( 
             IWmvHelper * This,
-            IConfigAsfWriter *asfWriter,
+            /* [in] */ IBaseFilter *asfWriter,
             ULONG bitrate,
             ULONG fps,
             ULONG screenX,
@@ -884,7 +883,7 @@ EXTERN_C const IID IID_IWmvHelper;
 
 /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IWmvHelper_SetProfile_Proxy( 
     IWmvHelper * This,
-    IConfigAsfWriter *asfWriter,
+    /* [in] */ IBaseFilter *asfWriter,
     ULONG bitrate,
     ULONG fps,
     ULONG screenX,

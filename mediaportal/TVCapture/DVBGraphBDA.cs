@@ -3234,7 +3234,10 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} is a tv channel",newchannel.ServiceName);
 					//check if this channel already exists in the tv database
 					bool isNewChannel=true;
-					int iChannelNumber=0;
+					TVChannel tvChan = new TVChannel();
+					tvChan.Name=newchannel.ServiceName;
+					tvChan.Scrambled=newchannel.IsScrambled;
+
 					int channelId=-1;
 					foreach (TVChannel tvchan in tvChannels)
 					{
@@ -3243,7 +3246,7 @@ namespace MediaPortal.TV.Recording
 							if (TVDatabase.DoesChannelExist(tvchan.ID, newchannel.TransportStreamID, newchannel.NetworkID))
 							{
 								//yes already exists
-								iChannelNumber=tvchan.Number;
+								tvChan=tvchan;
 								isNewChannel=false;
 								channelId=tvchan.ID;
 								break;
@@ -3251,16 +3254,11 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 
-					//if the tv channel found is not yet in the tv database
-					TVChannel tvChan = new TVChannel();
-					tvChan.Name=newchannel.ServiceName;
-					tvChan.VisibleInGuide=true;
-					tvChan.Scrambled=newchannel.IsScrambled;
-					iChannelNumber=tvChan.Number;
 					if (isNewChannel)
 					{
 						//tvChan.Number=TVDatabase.FindFreeTvChannelNumber(0);
 						//then add a new channel to the database
+						tvChan.VisibleInGuide=true;
 						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}",newchannel.ServiceName);
 						int id=TVDatabase.AddChannel(tvChan);
@@ -3269,11 +3267,9 @@ namespace MediaPortal.TV.Recording
 					}
 					else
 					{
-						tvChan.ID=channelId;
-						tvChan.Number=iChannelNumber;
 						TVDatabase.UpdateChannel(tvChan,tvChan.Sort);
 						updatedChannels++;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists",newchannel.ServiceName);
 					}
 				
 					if (Network() == NetworkType.DVBT)
@@ -3360,7 +3356,7 @@ namespace MediaPortal.TV.Recording
 					group.ID=groupid;
 					TVChannel tvTmp=new TVChannel();
 					tvTmp.Name=newchannel.ServiceName;
-					tvTmp.Number=iChannelNumber;
+					tvTmp.Number=tvChan.Number;
 					tvTmp.ID=channelId;
 					TVDatabase.MapChannelToGroup(group,tvTmp);
 
@@ -3371,7 +3367,7 @@ namespace MediaPortal.TV.Recording
 					group.ID=groupid;
 					tvTmp=new TVChannel();
 					tvTmp.Name=newchannel.ServiceName;
-					tvTmp.Number=iChannelNumber;
+					tvTmp.Number=tvChan.Number;
 					tvTmp.ID=channelId;
 					TVDatabase.MapChannelToGroup(group,tvTmp);
 

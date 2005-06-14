@@ -38,7 +38,7 @@ END_COM_MAP()
 	}
 
 public:
-	STDMETHOD(SetProfile)(IConfigAsfWriter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY);
+	STDMETHOD(SetProfile)(IBaseFilter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WmvHelper), CWmvHelper)

@@ -15,7 +15,6 @@ HKCR
 		{
 			ProgID = s 'DirectShowHelper.WmvHelper.1'
 			VersionIndependentProgID = s 'DirectShowHelper.WmvHelper'
-			ForceRemove 'Programmable'
 			InprocServer32 = s '%MODULE%'
 			{
 				val ThreadingModel = s 'Apartment'
