@@ -145,7 +145,17 @@ public class MediaPortalApp : D3DApp, IRender
       System.IO.Directory.SetCurrentDirectory(applicationPath);
       Log.Write("  Set current directory to :{0}", applicationPath);
 			applicationPath=null;
-
+/*
+			TranscodeToWMV wmv = new TranscodeToWMV();
+			TranscodeInfo info = new TranscodeInfo();
+			info.file=@"C:\erwin\media\videos\test.dvr-ms";
+			wmv.CreateProfile( new Size(100,120),512,15);
+			wmv.Transcode(info,VideoFormat.Wmv,Quality.Custom);
+			while (!wmv.IsFinished())
+			{
+				System.Threading.Thread.Sleep(100);
+			}
+*/
 			//check if mediaportal has been configured
       if (!System.IO.File.Exists("mediaportal.xml"))
       {
@@ -302,6 +312,8 @@ public class MediaPortalApp : D3DApp, IRender
                 Log.Write("running...");
                 try
                 {
+
+
                     app.Run();
 
                     //Application.Run(app);

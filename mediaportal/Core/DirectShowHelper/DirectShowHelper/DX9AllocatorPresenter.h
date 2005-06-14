@@ -44,7 +44,6 @@ protected:
 	void Paint(IDirect3DSurface9* pSurface,SIZE aspecRatio);
 	void DeleteSurfaces();
 
-	void Log(const char *fmt, ...) ;
 	CComPtr<IVMRSurfaceAllocatorNotify9> m_pIVMRSurfAllocNotify;
 
     CComPtr<IDirect3DDevice9> m_pD3DDev;

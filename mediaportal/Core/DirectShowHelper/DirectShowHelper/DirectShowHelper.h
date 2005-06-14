@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Mon May 30 14:51:09 2005
+/* at Tue Jun 14 15:51:02 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -69,6 +69,12 @@ typedef interface IStreamBufferRecorder IStreamBufferRecorder;
 #endif 	/* __IStreamBufferRecorder_FWD_DEFINED__ */
 
 
+#ifndef __IWmvHelper_FWD_DEFINED__
+#define __IWmvHelper_FWD_DEFINED__
+typedef interface IWmvHelper IWmvHelper;
+#endif 	/* __IWmvHelper_FWD_DEFINED__ */
+
+
 #ifndef __VMR9Callback_FWD_DEFINED__
 #define __VMR9Callback_FWD_DEFINED__
 
@@ -115,6 +121,18 @@ typedef struct StreamBufferRecorder StreamBufferRecorder;
 #endif /* __cplusplus */
 
 #endif 	/* __StreamBufferRecorder_FWD_DEFINED__ */
+
+
+#ifndef __WmvHelper_FWD_DEFINED__
+#define __WmvHelper_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class WmvHelper WmvHelper;
+#else
+typedef struct WmvHelper WmvHelper;
+#endif /* __cplusplus */
+
+#endif 	/* __WmvHelper_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -781,6 +799,108 @@ void __RPC_STUB IStreamBufferRecorder_SetAttributeDWORD_Stub(
 #endif 	/* __IStreamBufferRecorder_INTERFACE_DEFINED__ */
 
 
+#ifndef __IWmvHelper_INTERFACE_DEFINED__
+#define __IWmvHelper_INTERFACE_DEFINED__
+
+/* interface IWmvHelper */
+/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IWmvHelper;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("FE5A869F-F0BB-401C-93E8-DD2222353C14")
+    IWmvHelper : public IUnknown
+    {
+    public:
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE SetProfile( 
+            IBaseFilter *asfWriter,
+            ULONG bitrate,
+            ULONG fps,
+            ULONG screenX,
+            ULONG screenY) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct IWmvHelperVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IWmvHelper * This,
+            /* [in] */ REFIID riid,
+            /* [iid_is][out] */ void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IWmvHelper * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IWmvHelper * This);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *SetProfile )( 
+            IWmvHelper * This,
+            IBaseFilter *asfWriter,
+            ULONG bitrate,
+            ULONG fps,
+            ULONG screenX,
+            ULONG screenY);
+        
+        END_INTERFACE
+    } IWmvHelperVtbl;
+
+    interface IWmvHelper
+    {
+        CONST_VTBL struct IWmvHelperVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IWmvHelper_QueryInterface(This,riid,ppvObject)	\
+    (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
+
+#define IWmvHelper_AddRef(This)	\
+    (This)->lpVtbl -> AddRef(This)
+
+#define IWmvHelper_Release(This)	\
+    (This)->lpVtbl -> Release(This)
+
+
+#define IWmvHelper_SetProfile(This,asfWriter,bitrate,fps,screenX,screenY)	\
+    (This)->lpVtbl -> SetProfile(This,asfWriter,bitrate,fps,screenX,screenY)
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IWmvHelper_SetProfile_Proxy( 
+    IWmvHelper * This,
+    IBaseFilter *asfWriter,
+    ULONG bitrate,
+    ULONG fps,
+    ULONG screenX,
+    ULONG screenY);
+
+
+void __RPC_STUB IWmvHelper_SetProfile_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+
+#endif 	/* __IWmvHelper_INTERFACE_DEFINED__ */
+
+
 
 #ifndef __DirectShowHelperLib_LIBRARY_DEFINED__
 #define __DirectShowHelperLib_LIBRARY_DEFINED__
@@ -821,6 +941,14 @@ EXTERN_C const CLSID CLSID_StreamBufferRecorder;
 
 class DECLSPEC_UUID("BBB2551F-E239-41CE-805A-651964BE143E")
 StreamBufferRecorder;
+#endif
+
+EXTERN_C const CLSID CLSID_WmvHelper;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("CE282FB8-8E9F-4086-BFB1-A67E01166D92")
+WmvHelper;
 #endif
 #endif /* __DirectShowHelperLib_LIBRARY_DEFINED__ */
 

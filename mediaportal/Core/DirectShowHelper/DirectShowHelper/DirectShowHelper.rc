@@ -96,6 +96,7 @@ IDR_VMR9CALLBACK        REGISTRY                "VMR9Callback.rgs"
 IDR_VMR9HELPER          REGISTRY                "VMR9Helper.rgs"
 IDR_DVD                 REGISTRY                "DVD.rgs"
 IDR_STREAMBUFFERRECORDER REGISTRY                "StreamBufferRecorder.rgs"
+IDR_WMVHELPER           REGISTRY                "WmvHelper.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //

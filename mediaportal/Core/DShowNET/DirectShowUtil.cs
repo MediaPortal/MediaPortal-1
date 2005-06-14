@@ -45,9 +45,9 @@ namespace DShowNET
 				}
 				return NewFilter;
 			}
-			catch(Exception)
+			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Error,true,"failed filter:{0} not found", strFilterName);
+				Log.WriteFile(Log.LogType.Error,true,"failed filter:{0} not found {0}", strFilterName,ex.Message);
 				return null;
 			}
     }

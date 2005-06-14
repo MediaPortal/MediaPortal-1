@@ -2,31 +2,7 @@
 #include ".\dx9allocatorpresenter.h"
 #include ".\Vector.h"
 
-static char buffer[1000]; 
-
-void CVMR9AllocatorPresenter::Log(const char *fmt, ...) 
-{
-	try
-	{
-		va_list ap;
-		va_start(ap,fmt);
-
-		int tmp;
-		va_start(ap,fmt);
-		tmp=vsprintf(buffer, fmt, ap);
-		va_end(ap); 
-
-		FILE* fp = fopen("log/vmr9.log","a+");
-		if (fp!=NULL)
-		{
-			fprintf(fp,"%s\n",buffer);
-			fclose(fp);
-		}
-	}
-	catch(...)
-	{
-	}
-};
+void Log(const char *fmt, ...) ;
 
 CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
 : m_refCount(1)

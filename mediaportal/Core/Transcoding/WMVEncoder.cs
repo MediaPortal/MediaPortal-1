@@ -135,64 +135,8 @@ namespace MediaPortal.Core.Transcoding
 			WMT_TYPE_GUID       = 6,
 		}
 
-		[ComVisible(true), ComImport,
-			Guid("962dc1ec-c046-4db8-9cc7-26ceae500817"),
-			InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-		public interface IWMWriterAdvanced2 
-		{
-			[PreserveSig]
-			int GetSinkCount( [Out] out uint pcSinks );
-			[PreserveSig]
-			int GetSink( [In] uint dwSinkNum,[Out] out IntPtr ppSink );//IWMWriterSink
-			[PreserveSig]
-			int AddSink( [In] IntPtr pSink );//IWMWriterSink
-			[PreserveSig]
-			int RemoveSink( [In] IntPtr pSink );//IWMWriterSink
-			[PreserveSig]
-			int WriteStreamSample( [In] short wStreamNum,
-															[In] Int64 cnsSampleTime,
-															[In] uint msSampleSendTime,
-															[In] Int64 cnsSampleDuration,
-															[In] uint dwFlags,
-															[In] IntPtr pSample );//INSSBuffer
 
-			[PreserveSig]
-			int SetLiveSource( bool fIsLiveSource );
-			[PreserveSig]
-			int IsRealTime( [Out] out bool pfRealTime );
-			[PreserveSig]
-			int GetWriterTime( [Out] out Int64 pcnsCurrentTime );
-			[PreserveSig]
-			int GetStatistics( [In] short wStreamNum,[Out] IntPtr pStats );//WM_WRITER_STATISTICS
-			[PreserveSig]
-			int SetSyncTolerance(   [In]    uint   msWindow );
-			[PreserveSig]
-			int GetSyncTolerance(   [Out]   out uint  pmsWindow );
-			[PreserveSig]
-			int GetInputSetting(
-								[In] uint dwInputNum,
-								[In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-								[Out] out WMT_ATTR_DATATYPE pType,
-								[Out] out IntPtr pValue,
-								[In, Out] ref short pcbLength );
 
-			[PreserveSig]
-			int SetInputSetting(
-							[In] uint dwInputNum,
-							[In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-							[In] WMT_ATTR_DATATYPE Type,
-							[In] IntPtr pValue,
-							[In] short cbLength );
-		};
-
-		[ComVisible(true), ComImport,
-		Guid("005140c1-7436-11ce-8034-00aa006009fa"),
-		InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-		public interface IServiceProvider 
-		{
-			[PreserveSig]
-			int QueryService([In] ref Guid guidService,[In] Guid riid,[Out, MarshalAs(UnmanagedType.IUnknown) ]		out	object		ppint );
-		};
 
 		Guid WMProfile_V80_256Video = new Guid(0xbbc75500,0x33d2,0x4466,0xb8, 0x6b, 0x12, 0x2b, 0x20, 0x1c, 0xc9, 0xae );
 		Guid WMProfile_V80_384Video = new Guid(0x29b00c2b,0x9a9,0x48bd,0xad, 0x9, 0xcd, 0xae, 0x11, 0x7d, 0x1d, 0xa7 );
@@ -435,48 +379,11 @@ namespace MediaPortal.Core.Transcoding
 						break;
 					case Quality.Custom:
 						//create new profile
-						IWMProfile newProfile ;
-						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_BESTVBRVideo);
-						hr=config.GetCurrentProfile(out newProfile);
-						if (hr==0)
-						{
-							uint numberOfStreams;
-							uint bitr;
-							Guid majorType;
-							IWMStreamConfig streamConfig;
-							uint chars=256;
-							string name;
-							int version;
-							hr=newProfile.GetVersion(out version);
-							IntPtr namePtr=Marshal.AllocCoTaskMem((int)chars);
-							hr=newProfile.GetName(namePtr, ref chars);
-							name=Marshal.PtrToStringAuto(namePtr);
-							hr=newProfile.GetStreamCount(out numberOfStreams);
-							
-							for (uint i=0; i < numberOfStreams;++i)
-							{
-								hr=newProfile.GetStream(i, out streamConfig);
-								hr=streamConfig.GetBitrate(out bitr);
-								hr=streamConfig.GetStreamType(out majorType);
-								if (majorType==MediaType.Video)
-								{
-								}
-								if (majorType==MediaType.Audio)
-								{
-								}
-							}
-						}
+						DirectShowHelperLib.WmvHelperClass wmvHelper = new DirectShowHelperLib.WmvHelperClass();
+						DirectShowHelperLib.IBaseFilter baseFilter = fileWriterbase as DirectShowHelperLib.IBaseFilter;
+						wmvHelper.SetProfile(baseFilter,(uint)bitrate,(uint)fps,(uint)screenSize.Width,(uint)screenSize.Height);
 					break;
 				}
-				/*
-				IServiceProvider sProvider = fileWriterbase as IServiceProvider;
-				object tmpObj;
-				sProvider.QueryService(ref IID_IWMWriterAdvanced2, IID_IWMWriterAdvanced2,out tmpObj);
-				IWMWriterAdvanced2 writerAdv = tmpObj as IWMWriterAdvanced2;
-				IntPtr intptr=Marshal.AllocCoTaskMem(4);
-				Marshal.WriteInt32(intptr,1);
-				writerAdv.SetInputSetting(1,"g_wszDeinterlaceMode",WMT_ATTR_DATATYPE.WMT_TYPE_DWORD,intptr,4);
-				Marshal.FreeCoTaskMem(intptr);*/
 				if (hr!=0 )
 				{
 					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to set profile :0x{0:X}",hr);

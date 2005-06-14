@@ -60,6 +60,17 @@ interface IStreamBufferRecorder : IDispatch{
 	[id(5), helpstring("method SetAttributeDWORD")] HRESULT SetAttributeDWORD([in] BSTR strName, ULONG dwValue);
 };
 [
+	object,
+	uuid(FE5A869F-F0BB-401C-93E8-DD2222353C14),
+	dual,
+	nonextensible,
+	helpstring("IWmvHelper Interface"),
+	pointer_default(unique)
+]
+interface IWmvHelper : IUnknown{
+	[id(1), helpstring("method SetProfile")] HRESULT SetProfile(IBaseFilter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY);
+};
+[
 	uuid(935FCAC9-6668-49FB-9706-43B51861F491),
 	version(1.0),
 	helpstring("DirectShowHelper 1.0 Type Library")
@@ -98,5 +109,13 @@ library DirectShowHelperLib
 	coclass StreamBufferRecorder
 	{
 		[default] interface IStreamBufferRecorder;
+	};
+	[
+		uuid(CE282FB8-8E9F-4086-BFB1-A67E01166D92),
+		helpstring("WmvHelper Class")
+	]
+	coclass WmvHelper
+	{
+		[default] interface IWmvHelper;
 	};
 };

@@ -18,6 +18,7 @@ del /F /Q plugins\process\*.*
 del *.dll
 
 copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.dll .
+copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.pdb .
 regsvr32 /s directshowhelper.dll
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .

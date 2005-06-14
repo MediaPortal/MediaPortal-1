@@ -165,11 +165,6 @@
                     HintPath = "..\edtftpnet-1.1.3.dll"
                 />
                 <Reference
-                    Name = "Interop.WMEncoderLib"
-                    AssemblyName = "Interop.WMEncoderLib"
-                    HintPath = "..\Interop.WMEncoderLib.dll"
-                />
-                <Reference
                     Name = "Interop.TunerLib"
                     AssemblyName = "Interop.TunerLib"
                     HintPath = "..\Interop.TunerLib.dll"
