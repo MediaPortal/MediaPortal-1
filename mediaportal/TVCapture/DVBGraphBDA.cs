@@ -3260,7 +3260,7 @@ namespace MediaPortal.TV.Recording
 						//then add a new channel to the database
 						tvChan.VisibleInGuide=true;
 						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}",newchannel.ServiceName);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}:{1}",newchannel.ServiceName,tvChan.Number);
 						int id=TVDatabase.AddChannel(tvChan);
 						channelId=id;
 						newChannels++;
@@ -3269,7 +3269,7 @@ namespace MediaPortal.TV.Recording
 					{
 						TVDatabase.UpdateChannel(tvChan,tvChan.Sort);
 						updatedChannels++;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists",newchannel.ServiceName);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0}:{1} already exists",newchannel.ServiceName,tvChan.Number);
 					}
 				
 					if (Network() == NetworkType.DVBT)
