@@ -213,7 +213,7 @@ namespace MediaPortal.Player
 						bmp.rDest.left=0.0f;
 						bmp.rDest.bottom=1.0f;
 						bmp.rDest.right=1.0f;
-						bmp.fAlpha=0.9f;
+						bmp.fAlpha=alphaValue;
 						//Log.Write("SaveVMR7Bitmap() called");
 					
 						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
