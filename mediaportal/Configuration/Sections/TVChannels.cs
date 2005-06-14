@@ -10,6 +10,7 @@ using System.Xml;
 using MWCommon;
 using MWControls;
 using Microsoft.Win32;
+using MediaPortal.Configuration.Controls;
 
 using SQLite.NET;
 using MediaPortal.TV.Database;
@@ -1549,6 +1550,10 @@ namespace MediaPortal.Configuration.Sections
 				case SortOrder.Descending: channelsListView.Sorting = SortOrder.Ascending; break;
 				case SortOrder.None: channelsListView.Sorting = SortOrder.Ascending; break;
 			}	
+			if (e.Column==1)
+				channelsListView.ListViewItemSorter = new ListViewItemComparerInt(e.Column);
+			else
+				channelsListView.ListViewItemSorter = new ListViewItemComparer(e.Column);
 			channelsListView.Sort();
 			channelsListView.Update();
 		}

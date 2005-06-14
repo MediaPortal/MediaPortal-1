@@ -179,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
 			base.OnSectionActivated ();
 			labelStatus.Text="";
 			XmlDocument doc= new XmlDocument();
-			doc.Load("dvbt.xml");
+			doc.Load("Tuningparameters/dvbt.xml");
 
 			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
 			foreach (XmlNode nodeCountry in countryList)
@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
 			frequencies.Clear();
 
 			XmlDocument doc= new XmlDocument();
-			doc.Load("dvbt.xml");
+			doc.Load("Tuningparameters/dvbt.xml");
 			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
 			foreach (XmlNode nodeCountry in countryList)
 			{

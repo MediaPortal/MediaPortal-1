@@ -416,6 +416,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ListViewItemComparer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\MPBeveledLine.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

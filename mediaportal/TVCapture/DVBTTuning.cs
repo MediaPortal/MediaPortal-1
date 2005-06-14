@@ -60,7 +60,7 @@ namespace MediaPortal.TV.Recording
 
 			Log.WriteFile(Log.LogType.Capture,"Opening dvbt.xml");
 			XmlDocument doc= new XmlDocument();
-			doc.Load("dvbt.xml");
+			doc.Load("Tuningparameters/dvbt.xml");
 
 			FormCountry formCountry = new FormCountry();
 			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");

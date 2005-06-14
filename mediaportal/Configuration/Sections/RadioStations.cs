@@ -15,6 +15,7 @@ using SQLite.NET;
 using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Configuration.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -218,6 +219,7 @@ namespace MediaPortal.Configuration.Sections
 			this.stationsListView.View = System.Windows.Forms.View.Details;
 			this.stationsListView.DoubleClick += new System.EventHandler(this.stationsListView_DoubleClick);
 			this.stationsListView.SelectedIndexChanged += new System.EventHandler(this.stationsListView_SelectedIndexChanged);
+			this.stationsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.stationsListView_ColumnClick);
 			this.stationsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.stationsListView_ItemCheck);
 			// 
 			// columnHeader1
@@ -846,6 +848,23 @@ namespace MediaPortal.Configuration.Sections
 				FillInChannelCardMappings();
 			}
 			base.OnPaint (e);
+		}
+
+		private void stationsListView_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+		{
+			
+			switch (stationsListView.Sorting)
+			{
+				case SortOrder.Ascending: stationsListView.Sorting = SortOrder.Descending; break;
+				case SortOrder.Descending: stationsListView.Sorting = SortOrder.Ascending; break;
+				case SortOrder.None: stationsListView.Sorting = SortOrder.Ascending; break;
+			}	
+			if (e.Column==1)
+				stationsListView.ListViewItemSorter = new ListViewItemComparerInt(e.Column);
+			else
+				stationsListView.ListViewItemSorter = new ListViewItemComparer(e.Column);
+			stationsListView.Sort();
+			stationsListView.Update();
 		}
 
 
