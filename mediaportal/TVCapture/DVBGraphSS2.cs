@@ -2075,8 +2075,9 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} is a tv channel",newchannel.ServiceName);
 					//check if this channel already exists in the tv database
 					bool isNewChannel=true;
-					int iChannelNumber=0;
 					int channelId=-1;
+					TVChannel tvChan = new TVChannel();
+					tvChan.Name=newchannel.ServiceName;
 					foreach (TVChannel tvchan in tvChannels)
 					{
 						if (tvchan.Name.Equals(newchannel.ServiceName))
@@ -2084,7 +2085,7 @@ namespace MediaPortal.TV.Recording
 							if (TVDatabase.DoesChannelExist(tvchan.ID, newchannel.TransportStreamID, newchannel.NetworkID))
 							{
 								//yes already exists
-								iChannelNumber=tvchan.Number;
+								tvChan=tvchan;
 								isNewChannel=false;
 								channelId=tvchan.ID;
 								break;
@@ -2093,24 +2094,18 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//if the tv channel found is not yet in the tv database
-					TVChannel tvChan = new TVChannel();
-					tvChan.Name=newchannel.ServiceName;
-					tvChan.VisibleInGuide=true;
 					tvChan.Scrambled=newchannel.IsScrambled;
 					if (isNewChannel)
 					{
 						//then add a new channel to the database
 						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: create new tv channel for {0}",newchannel.ServiceName);
-						iChannelNumber=tvChan.Number;
 						int id=TVDatabase.AddChannel(tvChan);
 						channelId=id;
 						newChannels++;
 					}
 					else
 					{
-						tvChan.ID=channelId;
-						tvChan.Number=iChannelNumber;
 						TVDatabase.UpdateChannel(tvChan,tvChan.Sort);
 						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} already exists in tv database",newchannel.ServiceName);
@@ -2118,7 +2113,6 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
 					newchannel.ID=channelId;
 					TVDatabase.AddSatChannel(newchannel);
-					//}
 					TVDatabase.MapChannelToCard(channelId,ID);
 
 					
@@ -2135,7 +2129,7 @@ namespace MediaPortal.TV.Recording
 					group.ID=groupid;
 					TVChannel tvTmp=new TVChannel();
 					tvTmp.Name=newchannel.ServiceName;
-					tvTmp.Number=iChannelNumber;
+					tvTmp.Number=tvChan.Number;
 					tvTmp.ID=channelId;
 					TVDatabase.MapChannelToGroup(group,tvTmp);
 
@@ -2146,7 +2140,7 @@ namespace MediaPortal.TV.Recording
 					group.ID=groupid;
 					tvTmp=new TVChannel();
 					tvTmp.Name=newchannel.ServiceName;
-					tvTmp.Number=iChannelNumber;
+					tvTmp.Number=tvChan.Number;
 					tvTmp.ID=channelId;
 					TVDatabase.MapChannelToGroup(group,tvTmp);
 

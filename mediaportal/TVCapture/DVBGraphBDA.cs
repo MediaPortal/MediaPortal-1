@@ -3236,7 +3236,6 @@ namespace MediaPortal.TV.Recording
 					bool isNewChannel=true;
 					TVChannel tvChan = new TVChannel();
 					tvChan.Name=newchannel.ServiceName;
-					tvChan.Scrambled=newchannel.IsScrambled;
 
 					int channelId=-1;
 					foreach (TVChannel tvchan in tvChannels)
@@ -3254,11 +3253,10 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 
+					tvChan.Scrambled=newchannel.IsScrambled;
 					if (isNewChannel)
 					{
-						//tvChan.Number=TVDatabase.FindFreeTvChannelNumber(0);
 						//then add a new channel to the database
-						tvChan.VisibleInGuide=true;
 						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}:{1}",newchannel.ServiceName,tvChan.Number);
 						int id=TVDatabase.AddChannel(tvChan);
