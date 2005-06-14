@@ -185,6 +185,15 @@ namespace MediaPortal.Core.Transcoding
 							[In] short cbLength );
 		};
 
+		[ComVisible(true), ComImport,
+		Guid("005140c1-7436-11ce-8034-00aa006009fa"),
+		InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+		public interface IServiceProvider 
+		{
+			[PreserveSig]
+			int QueryService([In] ref Guid guidService,[In] Guid riid,[Out, MarshalAs(UnmanagedType.IUnknown) ]		out	object		ppint );
+		};
+
 		Guid WMProfile_V80_256Video = new Guid(0xbbc75500,0x33d2,0x4466,0xb8, 0x6b, 0x12, 0x2b, 0x20, 0x1c, 0xc9, 0xae );
 		Guid WMProfile_V80_384Video = new Guid(0x29b00c2b,0x9a9,0x48bd,0xad, 0x9, 0xcd, 0xae, 0x11, 0x7d, 0x1d, 0xa7 );
 		Guid WMProfile_V80_768Video= new Guid(0x74d01102,0xe71a,0x4820,0x8f, 0xd, 0x13, 0xd2, 0xec, 0x1e, 0x48, 0x72 );
@@ -196,6 +205,7 @@ namespace MediaPortal.Core.Transcoding
 		Guid WMProfile_V80_HIGHVBRVideo = new Guid(0xf10d9d3,0x3b04,0x4fb0,0xa3, 0xd3, 0x88, 0xd4, 0xac, 0x85, 0x4a, 0xcc );
 		Guid WMProfile_V80_BESTVBRVideo = new Guid(0x48439ba,0x309c,0x440e,0x9c, 0xb4, 0x3d, 0xcc, 0xa3, 0x75, 0x64, 0x23 );
 
+		Guid IID_IWMWriterAdvanced2 = new Guid(0x962dc1ec,0xc046,0x4db8,0x9c,0xc7,0x26,0xce,0xae,0x50,0x08,0x17 );
 
 		protected int												rotCookie = 0;
 		protected  IGraphBuilder			  			      graphBuilder =null;
@@ -460,6 +470,15 @@ namespace MediaPortal.Core.Transcoding
 						}
 					break;
 				}
+				/*
+				IServiceProvider sProvider = fileWriterbase as IServiceProvider;
+				object tmpObj;
+				sProvider.QueryService(ref IID_IWMWriterAdvanced2, IID_IWMWriterAdvanced2,out tmpObj);
+				IWMWriterAdvanced2 writerAdv = tmpObj as IWMWriterAdvanced2;
+				IntPtr intptr=Marshal.AllocCoTaskMem(4);
+				Marshal.WriteInt32(intptr,1);
+				writerAdv.SetInputSetting(1,"g_wszDeinterlaceMode",WMT_ATTR_DATATYPE.WMT_TYPE_DWORD,intptr,4);
+				Marshal.FreeCoTaskMem(intptr);*/
 				if (hr!=0 )
 				{
 					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to set profile :0x{0:X}",hr);
