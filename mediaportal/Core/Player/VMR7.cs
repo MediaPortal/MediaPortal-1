@@ -10,6 +10,7 @@ using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
+using DirectDraw = Microsoft.DirectX.DirectDraw;
 
 namespace MediaPortal.Player
 {
@@ -26,6 +27,21 @@ namespace MediaPortal.Player
 	/// </summary>
 	public class VMR7Util
 	{
+		
+		[DllImport("gdi32.dll", EntryPoint="BitBlt")]
+		public static extern bool BitBlt(IntPtr hdcDest,int xDest,
+			int yDest,int wDest,int hDest,IntPtr hdcSource,
+			int xSrc,int ySrc,int RasterOp);
+		
+		[DllImport("gdi32.dll", EntryPoint="CreateCompatibleDC")]
+		public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
+
+		[DllImport("gdi32.dll", EntryPoint="SelectObject")]
+		public static extern IntPtr SelectObject(IntPtr hdc,IntPtr bmp);
+
+		[DllImport("gdi32.dll", EntryPoint="DeleteDC")]
+		public static extern IntPtr DeleteDC(IntPtr hDc);
+
 		static public VMR7Util g_vmr7=null;
 		public IBaseFilter		VMR7Filter = null;
 		IQualProp quality=null;
@@ -176,30 +192,46 @@ namespace MediaPortal.Player
 				if(show==true)
 				{
 					
-					Graphics g = Graphics.FromImage(bitmap);
-					bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC ;
-					bmp.color.blu=0;
-					bmp.color.green=0;
-					bmp.color.red=0;
-					bmp.pDDS=IntPtr.Zero;
-					bmp.HDC=g.GetHdc();
-					bmp.rSrc = new DsRECT();
-					bmp.rSrc.Top=0;
-					bmp.rSrc.Left=0;
-					bmp.rSrc.Right=bitmap.Width;
-					bmp.rSrc.Bottom=bitmap.Height;
-					bmp.rDest=new NormalizedRect();
-					bmp.rDest.top=0.0f;
-					bmp.rDest.left=0.0f;
-					bmp.rDest.bottom=1.0f;
-					bmp.rDest.right=1.0f;
-					bmp.fAlpha=0.6f;
-					//Log.Write("SaveVMR7Bitmap() called");
-					hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
-					if(hr!=0)
+					if(bitmap!=null)
 					{
-						Log.Write("SaveVMR7Bitmap() failed: error 0x{0:X} on SetAlphaBitmap()",hr);
-						return false;
+
+						Bitmap n=new Bitmap(bitmap.Width,bitmap.Height);
+						Graphics g=Graphics.FromImage(n);
+						g.Clear(Color.Black);
+						g.DrawImage(bitmap,0,0,bitmap.Width,bitmap.Height);
+						IntPtr handle1=g.GetHdc();
+						IntPtr hdc=CreateCompatibleDC(handle1);
+						IntPtr oldBitmap=SelectObject(hdc,n.GetHbitmap());
+						bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC | 8 ;
+						bmp.color.blu=0;
+						bmp.color.green=0;
+						bmp.color.red=0;
+						bmp.pDDS=IntPtr.Zero;
+						bmp.HDC=hdc;
+						bmp.rSrc = new DsRECT();
+						bmp.rSrc.Top=0;
+						bmp.rSrc.Left=0;
+						bmp.rSrc.Right=bitmap.Width;
+						bmp.rSrc.Bottom=bitmap.Height;
+						bmp.rDest=new NormalizedRect();
+						bmp.rDest.top=0.0f;
+						bmp.rDest.left=0.0f;
+						bmp.rDest.bottom=1.0f;
+						bmp.rDest.right=1.0f;
+						bmp.fAlpha=0.9f;
+						//Log.Write("SaveVMR7Bitmap() called");
+					
+						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+						//g.ReleaseHdc(ptrSrc);
+						DeleteDC(hdc);
+						g.ReleaseHdc(handle1);
+						g.Dispose();
+						n.Dispose();
+						if(hr!=0)
+						{
+							Log.Write("SaveVMR7Bitmap() failed: error 0x{0:X} on SetAlphaBitmap()",hr);
+							return false;
+						}
 					}
 				}
 				else
