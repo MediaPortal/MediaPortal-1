@@ -496,6 +496,12 @@ namespace MediaPortal.TV.Recording
 		// get stream data with mps demuxer-class
 		public bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
+			//when in config...
+			if (GUIGraphicsContext.DX9Device==null)
+			{
+				return MsGetStreamData(filter,pid,tid,tableSection,timeout);
+			}
+
 			m_sectionsList=new ArrayList();
 			bool flag=false;
 
@@ -2675,7 +2681,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_streamDemuxer!=null)
 			{
-				m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
+				m_streamDemuxer.OnGotTable-=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 				m_streamDemuxer=null;
 			}
 		}
