@@ -2095,13 +2095,12 @@ namespace MediaPortal.TV.Recording
 					//if the tv channel found is not yet in the tv database
 					TVChannel tvChan = new TVChannel();
 					tvChan.Name=newchannel.ServiceName;
-					tvChan.Number=newchannel.ProgramNumber;
 					tvChan.VisibleInGuide=true;
 					tvChan.Scrambled=newchannel.IsScrambled;
 					if (isNewChannel)
 					{
 						//then add a new channel to the database
-						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(0);
+						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: create new tv channel for {0}",newchannel.ServiceName);
 						iChannelNumber=tvChan.Number;
 						int id=TVDatabase.AddChannel(tvChan);
@@ -2111,6 +2110,7 @@ namespace MediaPortal.TV.Recording
 					else
 					{
 						tvChan.ID=channelId;
+						tvChan.Number=iChannelNumber;
 						TVDatabase.UpdateChannel(tvChan,tvChan.Sort);
 						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} already exists in tv database",newchannel.ServiceName);
