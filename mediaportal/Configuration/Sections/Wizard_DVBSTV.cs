@@ -41,6 +41,7 @@ namespace MediaPortal.Configuration.Sections
 		int																	count = 0;
 		
 		int newChannels, updatedChannels;
+		int																	newRadioChannels, updatedRadioChannels;
 		int m_diseqcLoops=1;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Label label3;
@@ -393,8 +394,10 @@ namespace MediaPortal.Configuration.Sections
 			LoadFrequencies();
 			progressBar1.Visible=true;
 			newChannels=0; updatedChannels=0;
+			newRadioChannels=0; updatedRadioChannels=0;
 			DoScan();
-			labelStatus.Text=String.Format("Imported {0} channels",newChannels);
+			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
+
 		}
 
 		private void DoScan()
@@ -466,7 +469,7 @@ namespace MediaPortal.Configuration.Sections
 		void ScanChannels()
 		{
 			
-			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
+			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			
 			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning transponders");
 			currentState=State.ScanTransponders;

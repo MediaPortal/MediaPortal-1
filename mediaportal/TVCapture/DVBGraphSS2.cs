@@ -1910,7 +1910,7 @@ namespace MediaPortal.TV.Recording
 
 		}
 		//
-		public void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels)
+		public void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels)
 		{
 			Log.WriteFile(Log.LogType.Capture,"called StoreChannels()");
 			if (m_mpeg2Data==null) return;
@@ -2183,11 +2183,11 @@ namespace MediaPortal.TV.Recording
 							station.Scrambled=info.scrambled;
 							int id=RadioDatabase.AddStation(ref station);
 							channelId=id;
-							newChannels++;
+							newRadioChannels++;
 						}
 						else
 						{
-							updatedChannels++;
+							updatedRadioChannels++;
 							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 						}
 

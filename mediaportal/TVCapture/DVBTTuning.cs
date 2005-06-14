@@ -31,6 +31,7 @@ namespace MediaPortal.TV.Recording
 		int																	currentOffset=0;
 		int                                 tunedFrequency=0;
 		int																	newChannels, updatedChannels;
+		int																	newRadioChannels, updatedRadioChannels;
 
 		public DVBTTuning()
 		{
@@ -43,6 +44,8 @@ namespace MediaPortal.TV.Recording
 		}
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
+			newRadioChannels=0;
+			updatedRadioChannels=0;
 			newChannels=0;
 			updatedChannels=0;
 			tunedFrequency=0;
@@ -186,9 +189,9 @@ namespace MediaPortal.TV.Recording
 		{
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			timer1.Enabled=false;
-			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
-			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
-			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
+			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
+			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
+			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			callback.UpdateList();
 			currentState=State.ScanFrequencies;
 			currentOffset=0;

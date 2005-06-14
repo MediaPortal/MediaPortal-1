@@ -3060,7 +3060,7 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		/// <param name="radio">if true:Store radio channels found in the database</param>
 		/// <param name="tv">if true:Store tv channels found in the database</param>
-		public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels)
+		public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels)
 		{	
 			if (m_SectionsTables==null) return;
 
@@ -3404,11 +3404,11 @@ namespace MediaPortal.TV.Recording
 						station.Scrambled=info.scrambled;
 						int id=RadioDatabase.AddStation(ref station);
 						channelId=id;
-						newChannels++;
+						newRadioChannels++;
 					}
 					else
 					{
-						updatedChannels++;
+						updatedRadioChannels++;
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
 

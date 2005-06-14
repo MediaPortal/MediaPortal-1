@@ -38,6 +38,7 @@ namespace MediaPortal.TV.Recording
 		int																	count = 0;
 		
 		int newChannels, updatedChannels;
+		int																	newRadioChannels, updatedRadioChannels;
 		int m_diseqcLoops=1;
 		int m_currentDiseqc=1;
 
@@ -48,6 +49,8 @@ namespace MediaPortal.TV.Recording
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
+			newRadioChannels=0;
+			updatedRadioChannels=0;
 			newChannels=0;
 			updatedChannels=0;
 			
@@ -214,9 +217,10 @@ namespace MediaPortal.TV.Recording
 		void ScanChannels()
 		{
 			timer1.Enabled=false;
-			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
-			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
-			callback.OnStatus2( String.Format("new:{0} updated:{1}", newChannels,updatedChannels) );
+			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
+			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
+			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
+
 			callback.UpdateList();
 			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning transponders");
 			currentState=State.ScanTransponders;

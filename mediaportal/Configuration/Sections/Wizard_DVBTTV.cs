@@ -38,6 +38,8 @@ namespace MediaPortal.Configuration.Sections
 		int																	currentOffset=0;
 		int                                 tunedFrequency=0;
 		int																	newChannels, updatedChannels;
+		int																	newRadioChannels, updatedRadioChannels;
+		
 		private System.Windows.Forms.Panel panel1;
 
 		public Wizard_DVBTTV() : this("DVBT TV")
@@ -235,8 +237,9 @@ namespace MediaPortal.Configuration.Sections
 			if (frequencies.Count==0) return;
 			progressBar1.Visible=true;
 			newChannels=0; updatedChannels=0;
+			newRadioChannels=0; updatedRadioChannels=0;
 			DoScan();
-			labelStatus.Text=String.Format("Imported {0} channels",newChannels);
+			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
 		}
 
 		private void DoScan()
@@ -320,7 +323,7 @@ namespace MediaPortal.Configuration.Sections
 
 		void ScanChannels()
 		{
-			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
+			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			currentState=State.ScanFrequencies;
 			currentOffset=0;
 			currentFrequencyIndex++;

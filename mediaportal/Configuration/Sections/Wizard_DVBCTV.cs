@@ -40,6 +40,7 @@ namespace MediaPortal.Configuration.Sections
 		int																	count = 0;
 		int																	retryCount=0;
 		int																	newChannels, updatedChannels;
+		int																	newRadioChannels, updatedRadioChannels;
 		private System.Windows.Forms.Panel panel1;
 
 
@@ -272,8 +273,9 @@ namespace MediaPortal.Configuration.Sections
 			if (count<=0) return;
 			progressBar1.Visible=true;
 			newChannels=0; updatedChannels=0;
+			newRadioChannels=0; updatedRadioChannels=0;
 			DoScan();
-			labelStatus.Text=String.Format("Imported {0} channels",newChannels);
+			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
 		}
 
 		private void DoScan()
@@ -352,7 +354,7 @@ namespace MediaPortal.Configuration.Sections
 
 			
 			Application.DoEvents();
-			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels);
+			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			
 			
 			
