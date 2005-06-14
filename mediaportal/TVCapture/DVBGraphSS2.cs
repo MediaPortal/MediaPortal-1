@@ -1552,11 +1552,11 @@ namespace MediaPortal.TV.Recording
 			if(Vmr9.UseVMR9inMYTV)
 			{
 				Vmr9.AddVMR9(m_graphBuilder);
-				if (Vmr9.VMR9Filter==null)
-				{
-					Vmr7.AddVMR7(m_graphBuilder);
-				}
 
+			}
+			if (Vmr9.VMR9Filter==null)
+			{
+				Vmr7.AddVMR7(m_graphBuilder);
 			}
 
 
