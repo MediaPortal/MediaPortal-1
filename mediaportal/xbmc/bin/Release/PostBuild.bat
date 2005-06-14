@@ -9,13 +9,16 @@ mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 mkdir plugins\process
 mkdir Wizards
+mkdir Tuningparameters
 
 del /F /Q plugins\windows\*.*
 del /F /Q plugins\tagreaders\*.*
 del /F /Q plugins\subtitle\*.*
 del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
+del /F /Q Tuningparameters\*.*
 del *.dll
+
 copy ..\..\..\core\directshowhelper\directshowhelper\release\directshowhelper.dll .
 regsvr32 /s directshowhelper.dll
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
@@ -43,7 +46,6 @@ copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .
 copy ..\..\..\edtftpnet-1.1.3.dll .
 copy ..\..\..\dvblib.dll .
-copy ..\..\..\*.tpl .
 copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
 copy ..\..\..\Interop.iTunesLib.dll .
@@ -74,3 +76,4 @@ copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\AxInterop.WMPLib.dll .
 copy ..\..\..\FireDTVKeyMap.XML .
 copy ..\..\..\FireDTVKeyMap.XML.Schema .
+copy ..\..\..\Tuningparameters\. Tuningparameters\

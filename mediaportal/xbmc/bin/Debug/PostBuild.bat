@@ -9,12 +9,14 @@ mkdir plugins\subtitle
 mkdir plugins\ExternalPlayers
 mkdir plugins\process
 mkdir Wizards
+mkdir Tuningparameters
 
 del /F /Q plugins\windows\*.*
 del /F /Q plugins\tagreaders\*.*
 del /F /Q plugins\subtitle\*.*
 del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
+del /F /Q Tuningparameters\*.*
 del *.dll
 
 copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.dll .
@@ -89,3 +91,4 @@ copy ..\..\..\AxInterop.WMPLib.dll .
 
 copy ..\..\..\FireDTVKeyMap.XML .
 copy ..\..\..\FireDTVKeyMap.XML.Schema .
+copy ..\..\..\Tuningparameters\. Tuningparameters\
