@@ -377,7 +377,10 @@ namespace MediaPortal.GUI.TV
 						item1.Label2=item2.Label2=GUILocalizeStrings.Get(681);
 						break;
 					case Transcoder.Status.Busy:
-						item1.Label2=item2.Label2=GUILocalizeStrings.Get(949);
+						if (info.percentDone==0)
+							item1.Label2=item2.Label2=GUILocalizeStrings.Get(949);
+						else
+							item1.Label2=item2.Label2=String.Format("{0}%", info.percentDone);
 						break;
 					case Transcoder.Status.Error:
 						item1.Label2=item2.Label2=GUILocalizeStrings.Get(257);

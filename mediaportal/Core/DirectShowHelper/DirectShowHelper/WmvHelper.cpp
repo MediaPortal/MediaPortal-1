@@ -8,14 +8,15 @@
 // CWmvHelper
 void Log(const char *fmt, ...) ;
 
-STDMETHODIMP CWmvHelper::SetProfile(IBaseFilter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY)
+STDMETHODIMP CWmvHelper::SetProfile(IConfigAsfWriter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY)
 {
 
-	//Log("WMV:SetProfile (%d, %d)",screenX,screenY);
-	CComQIPtr<IConfigAsfWriter>	m_pAsfWriter = asfWriter;
+	Log("WMV:SetProfile (%d, %d %x)",screenX,screenY,asfWriter);
+	CComPtr<IConfigAsfWriter>	m_pAsfWriter;
+	m_pAsfWriter.Attach( asfWriter);
 	if (m_pAsfWriter==NULL)
 	{
-		Log("WMV:could not get asfWriter");
+		Log("WMV:could not get IConfigAsfWriter");
 		return S_OK;
 	}
 	//Log("WMV:Get IWMProfile");

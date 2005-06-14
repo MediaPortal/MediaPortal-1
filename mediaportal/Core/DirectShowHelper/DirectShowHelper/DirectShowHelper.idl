@@ -7,6 +7,7 @@
 import "oaidl.idl";
 import "ocidl.idl";
 import "amstream.idl";
+import "dshowasf.idl";
 
 cpp_quote("#if 0")
 typedef DWORD           IDirect3DTexture9;
@@ -68,7 +69,7 @@ interface IStreamBufferRecorder : IDispatch{
 	pointer_default(unique)
 ]
 interface IWmvHelper : IUnknown{
-	[id(1), helpstring("method SetProfile")] HRESULT SetProfile(IBaseFilter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY);
+	[id(1), helpstring("method SetProfile")] HRESULT SetProfile(IConfigAsfWriter* asfWriter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY);
 };
 [
 	uuid(935FCAC9-6668-49FB-9706-43B51861F491),

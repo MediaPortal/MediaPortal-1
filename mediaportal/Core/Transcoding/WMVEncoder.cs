@@ -380,8 +380,8 @@ namespace MediaPortal.Core.Transcoding
 					case Quality.Custom:
 						//create new profile
 						DirectShowHelperLib.WmvHelperClass wmvHelper = new DirectShowHelperLib.WmvHelperClass();
-						DirectShowHelperLib.IBaseFilter baseFilter = fileWriterbase as DirectShowHelperLib.IBaseFilter;
-						wmvHelper.SetProfile(baseFilter,(uint)bitrate,(uint)fps,(uint)screenSize.Width,(uint)screenSize.Height);
+						DirectShowHelperLib.IConfigAsfWriter asfConfig = fileWriterbase as DirectShowHelperLib.IConfigAsfWriter;
+						wmvHelper.SetProfile(asfConfig,(uint)bitrate,(uint)fps,(uint)screenSize.Width,(uint)screenSize.Height);
 					break;
 				}
 				if (hr!=0 )
