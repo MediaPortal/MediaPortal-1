@@ -3205,7 +3205,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.IsScrambled  = info.scrambled;
 				newchannel.NetworkID         = info.networkID;
 				newchannel.TransportStreamID         = info.transportStreamID;
-				newchannel.ProgramNumber          = info.serviceID;
+				newchannel.ProgramNumber          = info.program_number;
 				newchannel.FEC     = info.fec;
 				newchannel.Polarity = currentTuningObject.Polarity;
 				newchannel.Modulation = currentTuningObject.Modulation;
@@ -3260,7 +3260,7 @@ namespace MediaPortal.TV.Recording
 					iChannelNumber=tvChan.Number;
 					if (isNewChannel)
 					{
-						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(0);
+						//tvChan.Number=TVDatabase.FindFreeTvChannelNumber(0);
 						//then add a new channel to the database
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}",newchannel.ServiceName);
 						int id=TVDatabase.AddChannel(tvChan);
@@ -3280,7 +3280,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
 						TVDatabase.MapDVBTChannel(newchannel.ServiceName,
 																			newchannel.ServiceProvider,
-																			channelId, 
+																			newchannel.ProgramNumber, 
 																			newchannel.Frequency, 
 																			newchannel.NetworkID,
 																			newchannel.TransportStreamID,

@@ -1219,6 +1219,133 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 
+		private object decodeNITTable(byte[] buf,ref Transponder tp)
+		{
+			int table_id;
+			int section_syntax_indicator;
+			int section_length;
+			int network_id;
+			int version_number;
+			int current_next_indicator;
+			int section_number;
+			int last_section_number;
+			int network_descriptor_length;
+			int transport_stream_loop_length;
+			int transport_stream_id;
+			int original_network_id;
+
+			int transport_descriptor_length=0;
+			//
+			int pointer=0;
+			int l1=0;
+			int l2=0;
+
+			try
+			{
+				table_id = buf[0];
+				section_syntax_indicator = buf[1] &0x80;
+				section_length = ((buf[1] &0xF)<<8)+buf[2];
+				network_id = (buf[3]<<8)+buf[4];
+				version_number = (buf[5]>>1) &0x1F;
+				current_next_indicator = buf[5]&1;
+				section_number = buf[6];
+				last_section_number = buf[7];
+				network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
+			
+			
+				l1 = network_descriptor_length;
+				pointer += 10;
+				int x = 0;
+			
+
+				while (l1 > 0)
+				{
+					int indicator=buf[pointer];
+					x = buf[pointer + 1] + 2;
+					byte[] service = new byte[x];
+					System.Array.Copy(buf, pointer, service, 0, x);
+					//					if(indicator==0x40)
+					//					{
+					//						nit.NetworkName=System.Text.Encoding.ASCII.GetString(service,2,x-2);
+					//					}
+					//					// This should be neccessary be some networks may have their information here
+					//					if(indicator==0x43) // sat
+					//					{
+					//						NITSatDescriptor tp=new NITSatDescriptor();
+					//						DVB_GetSatDelivSys(service,ref tp);
+					//						nit.NITDescriptorList.Add(tp);
+					//					}
+					//					if(indicator==0x44) // cable
+					//					{
+					//						NITCableDescriptor tp=new NITCableDescriptor();
+					//						DVB_GetCableDelivSys(service,ref tp);
+					//						nit.NITDescriptorList.Add(tp);
+					//					}
+					//					if(indicator==0x5A) // terrestrial
+					//					{
+					//						NITTerrestrialDescriptor tp=new NITTerrestrialDescriptor();
+					//						DVB_GetTerrestrialDelivSys(service,ref tp);
+					//						nit.NITDescriptorList.Add(tp);
+					//					}
+					l1 -= x;
+					pointer += x;
+				}
+				transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
+				l1 = transport_stream_loop_length;
+				pointer += 2;
+				while (l1 > 0)
+				{
+					transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
+					original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
+					transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
+					pointer += 6;
+					l1 -= 6;
+					l2 = transport_descriptor_length;
+					while (l2 > 0)
+					{
+						int indicator=buf[pointer];
+						x = buf[pointer + 1]+2 ;
+						byte[] service = new byte[x + 1];
+						System.Array.Copy(buf, pointer, service, 0, x);
+						//						if(indicator==0x43) // sat
+						//						{
+						//							NITSatDescriptor tp=new NITSatDescriptor();
+						//							DVB_GetSatDelivSys(service,ref tp);
+						//							nit.NITDescriptorList.Add(tp);
+						//						}
+						//						if(indicator==0x44) // cable
+						//						{
+						//							NITCableDescriptor tp=new NITCableDescriptor();
+						//							DVB_GetCableDelivSys(service,ref tp);
+						//							nit.NITDescriptorList.Add(tp);
+						//						}
+						//						if(indicator==0x5A) // terrestrial
+						//						{
+						//							NITTerrestrialDescriptor tp=new NITTerrestrialDescriptor();
+						//							DVB_GetTerrestrialDelivSys(service,ref tp);
+						//							nit.NITDescriptorList.Add(tp);
+						//						}
+						if(indicator==0x83) // lcn
+						{
+							Log.Write("Found LCN Descriptor in NIT");
+							this.DVB_GetLogicalChannelNumber(service, ref tp.channels);
+						}
+						//
+						pointer += x;
+						l2 -= x;
+						l1 -= x;
+					}
+				
+				}
+				x = 0;
+			}
+			catch
+			{
+				//int a=0;
+			}
+			return 0;
+		}
+
 		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		{
 			int t;
@@ -1447,6 +1574,48 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
 		#region Descriptors
+		//
+		private void DVB_GetLogicalChannelNumber(byte[] b, ref ArrayList servicesArray)
+		{
+			try
+			{
+				// 32 bits per record
+				int n = b[1] / 4;
+				if (n < 1)
+					return;
+
+				// desc id, desc len, (service id, service number)
+				byte[] descriptors = new byte[b[1]];
+				Array.Copy(b, 2, descriptors, 0, b[1]);
+
+				int ServiceID, LCN;
+				byte[] buf = new byte[4];
+				for (int i = 0; i < n; i++) 
+				{
+					ServiceID = 0;
+					LCN = 0;
+					//Log.Write("loop count: {0}", i);
+					Array.Copy(descriptors, (i * 4), buf, 0, 4);
+					ServiceID = (buf[0]<<8)|(buf[1]&0xff);
+					LCN = (buf[2]&0x03<<8)|(buf[3]&0xff);
+					//Log.Write("Service {0} has channel number {1}", myService.SID, myService.LCN);
+					for (int j = 0; j < servicesArray.Count; j++)
+					{
+						ChannelInfo info = (ChannelInfo)servicesArray[j];
+						if (info.serviceID == ServiceID)
+						{
+							info.program_number = LCN;
+							servicesArray[j] = info;
+							break;
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Log.Write("{0} {1}", e.Message, e.StackTrace);
+			}
+		}
 		//
 		private string DVB_GetTeletextDescriptor (byte[] b)
 		{
@@ -2346,6 +2515,12 @@ namespace MediaPortal.TV.Recording
 
 				// now we got the pids for all PMT tables, get each PMT table and decode it
 				LoadPMTTables(filter,transp[0],ref transponder);
+
+				// Fill in Logical Channel Numbers
+				Log.Write("Number of channels before processing NIT: {0}", transponder.channels.Count);
+				GetStreamData(filter, 16, 0x40, 0, Timeout);
+				foreach(byte[] arr in m_sectionsList)
+					decodeNITTable(arr, ref transponder);
 				
 				Log.Write("AutoTune() done");
 			}
