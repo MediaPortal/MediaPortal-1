@@ -397,6 +397,7 @@ namespace MediaPortal.Player
 			{
 				m_idebugstep=0;
 				reentrant=true;
+				if (width <=0 || height <=0) return;
 				GUIGraphicsContext.InVmr9Render=true;
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
@@ -413,7 +414,11 @@ namespace MediaPortal.Player
 
 				
 				m_idebugstep=1;
-				if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+				if (rTarget!=null) 
+				{
+				  if (!rTarget.Disposed)
+				    GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+				}
 
 				m_idebugstep=2;
 				//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
@@ -549,6 +554,7 @@ namespace MediaPortal.Player
 			try
 			{
 				reentrant=true;
+				if (width <=0 || height <=0) return;
 				m_idebugstep=1;
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
@@ -565,7 +571,12 @@ namespace MediaPortal.Player
 				if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
 				
 				m_idebugstep=2;
-				if (rTarget!=null) GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+				if (rTarget!=null) 
+				{
+				  if (!rTarget.Disposed)
+				    GUIGraphicsContext.DX9Device.SetRenderTarget(0, rTarget);
+				}
+
 
 				m_idebugstep=3;
 				//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
