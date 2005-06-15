@@ -3208,7 +3208,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.IsScrambled  = info.scrambled;
 				newchannel.NetworkID         = info.networkID;
 				newchannel.TransportStreamID         = info.transportStreamID;
-				newchannel.ProgramNumber          = info.program_number;
+				newchannel.ProgramNumber          = info.serviceID;
 				newchannel.FEC     = info.fec;
 				newchannel.Polarity = currentTuningObject.Polarity;
 				newchannel.Modulation = currentTuningObject.Modulation;
