@@ -291,6 +291,7 @@ namespace MediaPortal.TV.Recording
 				}
 				while (!WMVConverter.IsFinished()) 
 				{
+					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 					tinfo.percentDone=WMVConverter.Percentage();
 					System.Threading.Thread.Sleep(100);
 				}
@@ -312,6 +313,7 @@ namespace MediaPortal.TV.Recording
 			}
 			while (!mpgConverter.IsFinished()) 
 			{
+				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 				tinfo.percentDone=mpgConverter.Percentage();
 				System.Threading.Thread.Sleep(100);
 			}
