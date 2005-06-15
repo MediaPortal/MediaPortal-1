@@ -41,7 +41,7 @@ namespace ProcessPlugins.CallerId
       {
         if (areaCodeLookup == null)
         {
-          string areaCodeXMLFile = "ISDNAreaCodes.xml";
+          string areaCodeXMLFile = "ISDNCodes.xml";
           string areaCode, location;
           Hashtable areaTable = new Hashtable();
           areaTable.Add("", "unknown");
@@ -50,7 +50,7 @@ namespace ProcessPlugins.CallerId
           {
             XmlDocument source = new XmlDocument();
             source.Load(areaCodeXMLFile); 
-            XmlNodeList areaCodeNodes = source.SelectNodes("/areacodes/area");
+            XmlNodeList areaCodeNodes = source.SelectNodes("/codes/area");
 						
             XmlNode areaCodeNode;
             areaTable.Add("000", SUCCESS_LOADED_AREACODE_XML);	// slot 000 reserved for hashtable status
@@ -90,7 +90,7 @@ namespace ProcessPlugins.CallerId
       {
         if (countryCodeLookup == null)
         {
-          string countryCodeXMLFile = "ISDNCountryCodes.xml";
+          string countryCodeXMLFile = "ISDNCodes.xml";
           string countryCode, country;
           Hashtable countryTable = new Hashtable();
           countryTable.Add("+", "unknown");
@@ -99,7 +99,7 @@ namespace ProcessPlugins.CallerId
           {
             XmlDocument source = new XmlDocument();
             source.Load(countryCodeXMLFile); 
-            XmlNodeList countryCodeNodes = source.SelectNodes("/countrycodes/country");
+            XmlNodeList countryCodeNodes = source.SelectNodes("/codes/country");
 
             XmlNode countryCodeNode;
             countryTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
@@ -134,7 +134,7 @@ namespace ProcessPlugins.CallerId
       {
         if (countryTranslator == null)
         {
-          string translatorXMLFile = "ISDNCountryCodes.xml";
+          string translatorXMLFile = "ISDNCodes.xml";
           string countryShort, countryLong;
           Hashtable translatorTable = new Hashtable();
           translatorTable.Add("unknown", "unknown");
@@ -143,7 +143,7 @@ namespace ProcessPlugins.CallerId
           {
             XmlDocument source = new XmlDocument();
             source.Load(translatorXMLFile); 
-            XmlNodeList translatorNodes = source.SelectNodes("/countrycodes/country");
+            XmlNodeList translatorNodes = source.SelectNodes("/codes/country");
 						
             XmlNode translatorNode;
             translatorTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML);	// slot 000 reserved for hashtable status
