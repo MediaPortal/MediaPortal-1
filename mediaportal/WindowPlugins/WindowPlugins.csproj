@@ -1130,16 +1130,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "GUITV\FormOSD.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUITV\FormOSD.resx"
-                    DependentUpon = "FormOSD.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "GUITV\GUIFullscreenTeletext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1343,6 +1333,11 @@
                     RelPath = "GUIX10\SetupForm.resx"
                     DependentUpon = "SetupForm.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "home\GUIBasicHome.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "home\home.cs"
