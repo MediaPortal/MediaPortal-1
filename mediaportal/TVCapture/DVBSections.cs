@@ -2517,10 +2517,10 @@ namespace MediaPortal.TV.Recording
 				LoadPMTTables(filter,transp[0],ref transponder);
 
 				// Fill in Logical Channel Numbers
-				Log.Write("Number of channels before processing NIT: {0}", transponder.channels.Count);
-				GetStreamData(filter, 16, 0x40, 0, Timeout);
-				foreach(byte[] arr in m_sectionsList)
-					decodeNITTable(arr, ref transponder);
+				//Log.Write("Number of channels before processing NIT: {0}", transponder.channels.Count);
+				//GetStreamData(filter, 16, 0x40, 0, Timeout);
+				//foreach(byte[] arr in m_sectionsList)
+				//	decodeNITTable(arr, ref transponder);
 				
 				Log.Write("AutoTune() done");
 			}
