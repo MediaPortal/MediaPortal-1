@@ -5915,4 +5915,23 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Dazzle DVC II" capturename="Dazzle DVC II PCI Device" devid="ven_123f&amp;dev_8120&amp;subsys_16550001&amp;rev_b0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="crossbar"		name="Dazzle DVC II Capture PCI Crossbar"	checkdevice="true"></filter>
+		<filter cat="capture"		name="Dazzle DVC II PCI Device"				checkdevice="true"></filter>
+		<filter cat="encoderaudio"	name="C-Cube DVx MPEG Audio Compressor"		checkdevice="false"></filter>
+		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="1" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
