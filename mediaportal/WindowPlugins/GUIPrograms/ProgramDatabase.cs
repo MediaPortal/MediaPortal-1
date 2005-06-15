@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using MediaPortal.GUI.Library;
+using Programs.Utils;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
 
@@ -30,6 +31,7 @@ namespace ProgramsDatabase
         }
         catch (Exception){}
         sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db");
+        ProgramSettings.sqlDB = sqlDB;
         // make sure the DB-structure is complete
         CreateObjects();
         // patch old ContentID values...
@@ -161,19 +163,29 @@ namespace ProgramsDatabase
     {
       if (sqlDB == null)
         return;
-      sqlDB.Execute("update application set contentID = 100 where contentID IS NULL;");
-      sqlDB.Execute("update application set contentID = 100 where contentID <= 0;");
+      if (!ProgramSettings.KeyExists(ProgramUtils.cCONTENT_PATCH))
+      {
+        Log.Write("myPrograms: applying contentID-patch");
+        sqlDB.Execute("update application set contentID = 100 where contentID IS NULL;");
+        sqlDB.Execute("update application set contentID = 100 where contentID <= 0;");
+        ProgramSettings.WriteSetting(ProgramUtils.cCONTENT_PATCH, "DONE") ;
+      }
     }
 
     static void PatchGenreValues()
     {
       if (sqlDB == null)
         return;
-      sqlDB.Execute("update file set genre = '' where genre IS NULL;");
-      sqlDB.Execute("update file set genre2 = '' where genre2 IS NULL;");
-      sqlDB.Execute("update file set genre3 = '' where genre3 IS NULL;");
-      sqlDB.Execute("update file set genre4 = '' where genre4 IS NULL;");
-      sqlDB.Execute("update file set genre5 = '' where genre5 IS NULL;");
+      if (!ProgramSettings.KeyExists(ProgramUtils.cGENRE_PATCH))
+      {
+        Log.Write("myPrograms: applying genre-patch");
+        sqlDB.Execute("update file set genre = '' where genre IS NULL;");
+        sqlDB.Execute("update file set genre2 = '' where genre2 IS NULL;");
+        sqlDB.Execute("update file set genre3 = '' where genre3 IS NULL;");
+        sqlDB.Execute("update file set genre4 = '' where genre4 IS NULL;");
+        sqlDB.Execute("update file set genre5 = '' where genre5 IS NULL;");
+        ProgramSettings.WriteSetting(ProgramUtils.cGENRE_PATCH, "DONE") ;
+      }
     }
 
 

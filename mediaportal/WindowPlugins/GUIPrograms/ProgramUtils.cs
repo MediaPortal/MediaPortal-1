@@ -52,6 +52,8 @@ namespace Programs.Utils
 
     public const string cMIGRATIONKEY = "V1_V2MIGRATION";
     public const string cPLUGINTITLE = "PLUGINTITLE";
+    public const string cCONTENT_PATCH = "CONTENTPATCH";
+    public const string cGENRE_PATCH = "GENREPATCH";
 
     // singleton. Dont allow any instance of this class
     private ProgramUtils(){}
