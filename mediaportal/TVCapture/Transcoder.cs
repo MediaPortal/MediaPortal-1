@@ -297,6 +297,8 @@ namespace MediaPortal.TV.Recording
 				if (tinfo.deleteOriginal)
 				{
 					DiskManagement.DeleteRecording(info.file);
+					tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".wmv");
+					TVDatabase.SetRecordedFileName(tinfo.recorded);
 				}
 				tinfo.status=Status.Completed;
 				return;
@@ -318,6 +320,8 @@ namespace MediaPortal.TV.Recording
 				if (tinfo.deleteOriginal)
 				{
 					DiskManagement.DeleteRecording(info.file);
+					tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".mpg");
+					TVDatabase.SetRecordedFileName(tinfo.recorded);
 				}
 				tinfo.status=Status.Completed;
 				return;
@@ -342,6 +346,8 @@ namespace MediaPortal.TV.Recording
 					{
 						tinfo.percentDone=0;
 						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
+						tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".avi");
+						TVDatabase.SetRecordedFileName(tinfo.recorded);
 					}
 					tinfo.status=Status.Completed;
 				}
