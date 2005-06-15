@@ -2365,7 +2365,6 @@ namespace MediaPortal.TV.Recording
 
 		void LoadLNBSettings(ref DVBChannel ch, int disNo)
 		{
-			/*
 			try
 			{
 				string filename=String.Format(@"database\card_{0}.xml",m_Card.FriendlyName);
@@ -2445,22 +2444,14 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception)
 			{
-			}*/
+			}
 		} //void LoadLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		
-		void SetLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
+		void SetLNBSettings(TunerLib.IDVBSTuningSpace dvbSpace)
 		{
-			/*
 			try
 			{
-				if (tuneRequest==null) return;
-				if (tuneRequest.TuningSpace==null) return;
-				TunerLib.IDVBSTuningSpace space = tuneRequest.TuningSpace as TunerLib.IDVBSTuningSpace;
-				if (space==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: cannot get IDVBSTuningSpace in SetLNBSettings()");
-					return ;
-				}
+				if (dvbSpace==null) return;
 			//
 			//LOWORD -> LOBYTE -> Bit0 for Position (0-A,1-B)
 			//HIWORD -> LOBYTE -> Bit0 for Option   (0-A,1-B)
@@ -2470,21 +2461,28 @@ namespace MediaPortal.TV.Recording
 				switch (currentTuningObject.DiSEqC)
 				{
 					case 0: //none
+						Log.Write("DVBGraphBDA: disEqc:none");
 						return; 
 					case 1: //simple A
+						Log.Write("DVBGraphBDA: disEqc:simple A (not supported)");
 						return; 
 					case 2: //simple B
+						Log.Write("DVBGraphBDA: disEqc:simple B (not supported)");
 						return;
 					case 3: //Level 1 A/A
+						Log.Write("DVBGraphBDA: disEqc:level 1 A/A");
 						inputRange=0;
 					break;
 					case 4: //Level 1 B/A
+						Log.Write("DVBGraphBDA: disEqc:level 1 B/A");
 						inputRange=1;
 					break;
 					case 5: //Level 1 A/B
+						Log.Write("DVBGraphBDA: disEqc:level 1 A/B");
 						inputRange=1<<16;
 					break;
 					case 6: //Level 1 B/B
+						Log.Write("DVBGraphBDA: disEqc:level 1 B/B");
 						inputRange=(1<<16)+1;
 					break;
 				}
@@ -2494,11 +2492,12 @@ namespace MediaPortal.TV.Recording
 				if (currentTuningObject.LNBKHz==1) // 22khz 
 					inputRange |= (1<<8);
 
-				space.InputRange=inputRange.ToString();
+				Log.Write("Set inputrange to:{0}",inputRange);
+				dvbSpace.InputRange=inputRange.ToString();
 			}
 			catch(Exception)
 			{
-			}*/
+			}
 		}
 
 		void CheckVideoResolutionChanges()
@@ -2919,12 +2918,18 @@ namespace MediaPortal.TV.Recording
 				case NetworkType.DVBS:
 				{
 					//get the IDVBSLocator interface
+					LoadLNBSettings(ref ch,ch.DiSEqC);
 					TunerLib.IDVBSTuningSpace dvbSpace =myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
 					if (dvbSpace==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed could not get IDVBSTuningSpace");
 						return;
 					}
+
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: set LNBSwitch to {0} Khz",dvbSpace.LNBSwitch);
+					dvbSpace.LNBSwitch=ch.LNBKHz;
+					SetLNBSettings(dvbSpace);
+
 					newTuneRequest = dvbSpace.CreateTuneRequest();
 					if (newTuneRequest ==null)
 					{
@@ -2958,11 +2963,9 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.TSID						= ch.TransportStreamID;	//transport stream id
 					myTuneRequest.SID							= ch.ProgramNumber;		//service id
 					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
-					LoadLNBSettings(ref ch,ch.DiSEqC);
-					SetLNBSettings(myTuneRequest);
 					//and submit the tune request
 					myTuner.TuneRequest  = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+					//Marshal.ReleaseComObject(myTuneRequest);
 				}
 					break;
 
