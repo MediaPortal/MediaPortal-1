@@ -266,6 +266,23 @@ namespace MediaPortal.Music.Database
       {
         string strGenre = strGenre1;
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
+		  if (String.Compare(strGenre.Substring(0,1),"(")==0)
+		{
+			/// We have the strange codes!
+			/// Lets loop for the strange codes up to a of length X and delete them
+			///
+			bool FixedTheCode=false;
+			for (int i = 1; (i < 10 && i < strGenre.Length & !FixedTheCode); ++i)
+			{
+				if (String.Compare(strGenre.Substring(i,1),")")==0)
+				{
+					///Third position had the other end
+					strGenre=strGenre.Substring(i+1,(strGenre.Length-i-1));
+					FixedTheCode=true;
+				}
+			}
+		  Log.Write ("Genre {0} veranderd in {1}",strGenre1,strGenre);
+		  }
 
         if (null == m_db) return - 1;
         foreach (CGenreCache genre in m_genreCache)
@@ -2612,7 +2629,10 @@ namespace MediaPortal.Music.Database
 
 		  Log.Write ("Song {0} will be added with CRC {1}",MusicFileName,dwCRC);
 		  /// Here we add song to the database
-		  strSQL = String.Format("insert into song (idPath,strFileName,idAlbum,idArtist,idGenre,dwFileNameCRC,iTimesPlayed,iRating,favorite) values ({0},{2}{1}{2},{3},{4},{5},{6},{7},{8},{9})",idPath, MusicFileName, Convert.ToChar(34),idAlbum,idArtist,idGenre,dwCRC,0,0,0);
+		  /// strSQL = String.Format("insert into song (idPath,strFileName,idAlbum,idArtist,idGenre,dwFileNameCRC,iTimesPlayed,iRating,favorite) values ({0},{2}{1}{2},{3},{4},{5},{6},{7},{8},{9})",idPath, MusicFileName, Convert.ToChar(34),idAlbum,idArtist,idGenre,dwCRC,0,0,0);
+		  /// TFRO 12-6-2005 New insert because we missed some fields.
+
+		  strSQL = String.Format("insert into song (idArtist,idAlbum,idGenre,idPath,iTrack,iDuration,iYear,dwFileNameCRC,strFileName,iTimesPlayed,iRating,favorite) values ({0},{1},{2},{3},{4},{5},{6},{7},{9}{8}{9},{10},{11},{12})",idArtist,idAlbum,idGenre,idPath,0,0,0,dwCRC,MusicFileName, Convert.ToChar(34),0,0,0);
 		  //Log.Write (strSQL);
 		  try
 		  {
