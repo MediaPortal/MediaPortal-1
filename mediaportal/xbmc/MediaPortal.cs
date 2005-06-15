@@ -130,6 +130,19 @@ public class MediaPortalApp : D3DApp, IRender
     }
     return true;
   }
+	/*
+	static void TranscodeWorkerThread()
+	{
+		TranscodeToWMV wmv = new TranscodeToWMV();
+		TranscodeInfo info = new TranscodeInfo();
+		info.file=@"C:\erwin\media\videos\test.dvr-ms";
+		wmv.CreateProfile( new Size(100,120),512,15);
+		wmv.Transcode(info,VideoFormat.Wmv,Quality.Custom);
+		while (!wmv.IsFinished())
+		{
+			System.Threading.Thread.Sleep(100);
+		}
+	}*/
     //NProf doesnt work if the [STAThread] attribute is set
     //but is needed when you want to play music or video
     [STAThread]
@@ -145,16 +158,10 @@ public class MediaPortalApp : D3DApp, IRender
       System.IO.Directory.SetCurrentDirectory(applicationPath);
       Log.Write("  Set current directory to :{0}", applicationPath);
 			applicationPath=null;
-/*
-			TranscodeToWMV wmv = new TranscodeToWMV();
-			TranscodeInfo info = new TranscodeInfo();
-			info.file=@"C:\erwin\media\videos\test.dvr-ms";
-			wmv.CreateProfile( new Size(100,120),512,15);
-			wmv.Transcode(info,VideoFormat.Wmv,Quality.Custom);
-			while (!wmv.IsFinished())
-			{
-				System.Threading.Thread.Sleep(100);
-			}
+/*			Thread WorkerThread = new Thread(new ThreadStart(TranscodeWorkerThread));
+			WorkerThread.Start();
+			while (WorkerThread.IsAlive) System.Threading.Thread.Sleep(100);
+
 */
 			//check if mediaportal has been configured
       if (!System.IO.File.Exists("mediaportal.xml"))

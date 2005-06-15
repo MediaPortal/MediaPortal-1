@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.GUI.Library;
+
 namespace MediaPortal.Core.Transcoding
 {
 	/// <summary>
@@ -10,6 +11,11 @@ namespace MediaPortal.Core.Transcoding
 	/// </summary>
 	public class TranscodeToWMV : ITranscode	
 	{
+		#region imports
+
+		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		private static extern int SetWmvProfile(DShowNET.IBaseFilter filter, int bitrate, int fps, int screenX, int screenY);
+		#endregion
 
 		[ComVisible(true), ComImport,
 		Guid("45086030-F7E4-486a-B504-826BB5792A3B"),
@@ -379,9 +385,7 @@ namespace MediaPortal.Core.Transcoding
 						break;
 					case Quality.Custom:
 						//create new profile
-						DirectShowHelperLib.WmvHelperClass wmvHelper = new DirectShowHelperLib.WmvHelperClass();
-						DirectShowHelperLib.IBaseFilter baseFilter = fileWriterbase as DirectShowHelperLib.IBaseFilter;
-						wmvHelper.SetProfile(baseFilter,(uint)bitrate,(uint)fps,(uint)screenSize.Width,(uint)screenSize.Height);
+						SetWmvProfile(fileWriterbase,(int)bitrate,(int)fps,(int)screenSize.Width,(int)screenSize.Height);
 					break;
 				}
 				if (hr!=0 )

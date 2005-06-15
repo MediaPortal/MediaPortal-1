@@ -208,9 +208,6 @@
 			<File
 				RelativePath=".\VMR9Helper.cpp">
 			</File>
-			<File
-				RelativePath=".\WmvHelper.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -246,9 +243,6 @@
 			<File
 				RelativePath=".\VMR9Helper.h">
 			</File>
-			<File
-				RelativePath=".\WmvHelper.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -271,9 +265,6 @@
 			</File>
 			<File
 				RelativePath=".\VMR9Helper.rgs">
-			</File>
-			<File
-				RelativePath=".\WmvHelper.rgs">
 			</File>
 		</Filter>
 		<Filter
