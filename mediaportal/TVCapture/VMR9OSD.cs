@@ -51,7 +51,8 @@ namespace MediaPortal.TV.Recording
 			public string chNow;
 			public string chNext;
 			public string chProgress;
-			public string sigBar;
+			public string sigBarQ;
+			public string sigBarL;
 			public string time;
 			public string mute;
 			public string chLogo;
@@ -68,6 +69,7 @@ namespace MediaPortal.TV.Recording
 		string m_mediaPath=System.Windows.Forms.Application.StartupPath+@"\osdskin-media\";
 		TVChannel m_actualChannel=null;
 		int m_channelSNR=0;
+		int m_channelLevel=0;
 		// osd skin
 		OSDSkin m_osdSkin;
 		OSDChannelList m_osdChannels;
@@ -89,6 +91,68 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
 		#region osd render functions
+		public void RenderUserInformation(string header,params string[] textLines)
+		{
+			if(textLines==null)
+				return;
+			if(textLines.Length<1)
+				return;
+
+			int gWidth=GUIGraphicsContext.Width;
+			int gHeight=GUIGraphicsContext.Height;
+			m_timeout=10000;// ten seconds
+			m_osdRendered=OSD.CurrentTVShowInfo;
+			// render list
+			Bitmap bm=new Bitmap(gWidth,gHeight);//m_mediaPath+@"bgimage.png");
+			Graphics gr=Graphics.FromImage(bm);
+			if(bm==null || gr==null || m_osdChannels.baseRect==null)
+				return;
+
+			int x=60;
+			int y=20;
+			string[] seg=m_osdChannels.baseRect.Split(new char[]{':'});
+			if(seg==null) return;
+			if(seg.Length!=7) return;
+			if(seg[0]!="nsrect") return;
+			Color headColor=GetColor(seg[1]);
+			Color nBoxColor=GetColor(seg[2]);
+			Color sBoxColor=GetColor(seg[3]);
+			Color textColor=GetColor(seg[4]);
+
+			Font drawFont=new Font(seg[5],Convert.ToInt16(seg[6]));
+			SolidBrush textBrush=new SolidBrush(textColor);
+			RectangleF layoutRect=new RectangleF(x,y,gWidth-(x*2),gHeight-(y*2));
+			//
+			SizeF textSize=gr.MeasureString("AAA",drawFont);
+			int textHeight=2+((int)textSize.Height);
+
+			gr.FillRectangle(new SolidBrush(headColor),x,y,gWidth-(2*x),textHeight);
+			gr.DrawString(header,drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
+			int lineCount=textLines.Length;
+			if(lineCount*textHeight>(gHeight-((y*2)+textHeight)))
+				lineCount=(gHeight-((y*2)+textHeight))/textHeight;
+
+			layoutRect.Y+=textHeight;
+			layoutRect.Height-=textHeight*2;
+			int pos=y+textHeight;
+
+			for(int i=0;i<lineCount;i++)
+			{
+				gr.FillRectangle(new SolidBrush(nBoxColor),x,pos,gWidth-(2*x),textHeight);
+				gr.DrawString(textLines[i],drawFont,textBrush,layoutRect,StringFormat.GenericTypographic);
+				pos+=textHeight;
+				layoutRect.Y+=textHeight;
+				if(pos>=(gHeight-(y*2))-textHeight)
+					break;
+			}
+			m_bitmapIsVisible=false;
+			SaveBitmap(bm,true,true,m_renderOSDAlpha);
+			bm.Dispose();
+			gr.Dispose();
+			drawFont.Dispose();
+			textBrush.Dispose();
+
+		}
 		public void RenderCurrentShowInfo()
 		{
 			int gWidth=GUIGraphicsContext.Width;
@@ -355,7 +419,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
-		public void RenderZapOSD(TVChannel channel,int signalLevel)
+		public void RenderZapOSD(TVChannel channel,int signalQuality,int signalLevel)
 		{
 			int gWidth=GUIGraphicsContext.Width;
 			int gHeight=GUIGraphicsContext.Height;
@@ -371,7 +435,8 @@ namespace MediaPortal.TV.Recording
 			m_osdRendered=OSD.ZapOSD;
 			m_timeout=0;
 			m_actualChannel=channel;
-			m_channelSNR=signalLevel;
+			m_channelSNR=signalQuality;
+			m_channelLevel=signalLevel;
 			// set the tvchannel data
 			string serviceName=channel.Name;
 			TVProgram tvNext=null;
@@ -384,7 +449,9 @@ namespace MediaPortal.TV.Recording
 			string nextStart="";
 			string nextDur="";
 			double done=0;
+			double signalQual=(double)signalQuality;
 			double signalLev=(double)signalLevel;
+
 
 			if(tvNow!=null)
 			{
@@ -635,9 +702,9 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			//signal level
-			if(signalLevel>0)
+			if(signalQuality>0)
 			{
-				string sigBar=m_osdSkin.sigBar;
+				string sigBar=m_osdSkin.sigBarQ;
 				if(sigBar!=null)
 				{
 					string[] seg=sigBar.Split(new char[]{':'});
@@ -675,7 +742,53 @@ namespace MediaPortal.TV.Recording
 							gr.DrawString(seg[10],drawFont,new SolidBrush(tColor),xPos,yPos,StringFormat.GenericTypographic);
 							xPos+=5+((int)xEnd.Width);
 							gr.FillRectangle(new SolidBrush(bColor),xPos,yPos,width,height);
-							gr.FillRectangle(new SolidBrush(fColor),xPos+2,yPos+2,width-((int)(((signalLev/100)*width)))-4,height-4);
+							gr.FillRectangle(new SolidBrush(fColor),xPos+2,yPos+2,((int)(((signalQual/100)*(width-4)))),height-4);
+						}
+					}
+				}
+			}
+			//signal level
+			if(signalLevel>0)
+			{
+				string sigBar=m_osdSkin.sigBarL;
+				if(sigBar!=null)
+				{
+					string[] seg=sigBar.Split(new char[]{':'});
+					if(seg!=null)
+					{
+						if(seg[0]=="progressbar" && seg.Length==11)
+						{
+							int xPos=0;
+							int yPos=0;
+							int width=0;
+							int height=0;
+
+							if(seg[1].StartsWith("m"))
+								xPos=GetPosition(gWidth,seg[1]);
+							else
+								xPos=x+Convert.ToInt16(seg[1]);
+
+							if(seg[2].StartsWith("m"))
+								yPos=GetPosition(gHeight,seg[2]);
+							else
+								yPos=y+Convert.ToInt16(seg[2]);
+							if(seg[3]=="max")
+								width=gWidth;
+							else
+								width=Convert.ToInt16(seg[3]);
+							if(seg[4]=="max")
+								height=gHeight;
+							else
+								height=Convert.ToInt16(seg[4]);
+							Color fColor=GetColor(seg[5]);
+							Color bColor=GetColor(seg[6]);
+							Color tColor=GetColor(seg[7]);
+							Font drawFont=new Font(seg[8],Convert.ToInt16(seg[9]));
+							SizeF xEnd=gr.MeasureString(seg[10],drawFont);
+							gr.DrawString(seg[10],drawFont,new SolidBrush(tColor),xPos,yPos,StringFormat.GenericTypographic);
+							xPos+=5+((int)xEnd.Width);
+							gr.FillRectangle(new SolidBrush(bColor),xPos,yPos,width,height);
+							gr.FillRectangle(new SolidBrush(fColor),xPos+2,yPos+2,((int)(((signalLev/100)*(width-4)))),height-4);
 						}
 					}
 				}
@@ -778,13 +891,13 @@ namespace MediaPortal.TV.Recording
 			if(signal!=m_channelSNR && m_bitmapIsVisible==true)
 			{
 				m_channelSNR=signal;
-				RenderZapOSD(m_actualChannel,m_channelSNR);
+				RenderZapOSD(m_actualChannel,m_channelSNR,m_channelLevel);
 			}
 		}
 
 		public void RefreshCurrentChannel()
 		{
-			RenderZapOSD(m_actualChannel,m_channelSNR);
+			RenderZapOSD(m_actualChannel,m_channelSNR,m_channelLevel);
 		}
 		public void CheckTimeOuts()
 		{
@@ -796,6 +909,9 @@ namespace MediaPortal.TV.Recording
 				{
 					if(m_muteState==true)
 						return;
+					m_bitmapIsVisible=true; // force clear
+					HideBitmap();
+					m_timeout=0;
 				}
 				else
 				{
@@ -893,14 +1009,20 @@ namespace MediaPortal.TV.Recording
 
 				}
 				//signal level
-				string sigBar=xmlreader.GetValueAsString("zaposdSkin","signalBar","");
+				string sigBar=xmlreader.GetValueAsString("zaposdSkin","qualityBar","");
 				if(sigBar!=null)
 				{
 					if(sigBar!="")
-						m_osdSkin.sigBar=sigBar;
+						m_osdSkin.sigBarQ=sigBar;
 
 				}
-				
+				sigBar=xmlreader.GetValueAsString("zaposdSkin","levelBar","");
+				if(sigBar!=null)
+				{
+					if(sigBar!="")
+						m_osdSkin.sigBarL=sigBar;
+
+				}
 				// time display
 				string time=xmlreader.GetValueAsString("zaposdSkin","time","");
 				if(time!=null)
@@ -939,15 +1061,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (VMR9Util.g_vmr9!=null)
 			{
-				System.IO.MemoryStream mStr=new System.IO.MemoryStream();
-				// transparent image?
-				if(bitmap!=null)
-				{
-					if(transparent==true)
-						bitmap.MakeTransparent(Color.Black);
-					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
-					mStr.Position=0;
-				}
 				if (show==true)
 				{
 					VMR9Util.g_vmr9.SaveBitmap(bitmap,show,transparent,alphaValue);

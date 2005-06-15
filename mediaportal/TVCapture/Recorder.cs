@@ -1004,7 +1004,7 @@ namespace MediaPortal.TV.Recording
 			{
 					int level=dev.SignalStrength;
 					int quality=dev.SignalQuality;
-					m_osd.RenderZapOSD(channel,quality);
+					m_osd.RenderZapOSD(channel,quality,level);
 			}
 		}
 

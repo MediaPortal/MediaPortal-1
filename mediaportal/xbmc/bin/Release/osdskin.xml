@@ -13,8 +13,9 @@
 	  <entry name="chName">text:0:m194:Arial:255,255,255:0,0,0:18</entry>
 	  <entry name="chNow">text:0:m161:Arial:255,120,131:0,0,0:14</entry>
 	  <entry name="chNext">text:0:m121:Arial:230,230,230:0,0,0:14</entry>
-	  <entry name="chProgress">progressbar:0:m82:120:16:230,230,230:84,84,160</entry>
-	  <entry name="signalBar">progressbar:150:m82:120:16:14,230,21:84,84,160:255,255,255:Arial:14:Quality</entry>
+	  <entry name="chProgress">progressbar:0:m80:120:16:230,230,230:84,84,160</entry>
+	  <entry name="qualityBar">progressbar:150:m80:120:16:14,230,21:84,84,160:255,255,255:Arial:14:Quality</entry>
+	  <entry name="levelBar">progressbar:380:m80:120:16:14,230,21:84,84,160:255,255,255:Arial:14:Level</entry>
 	  <entry name="time">time:m200:m194:Arial:255,255,255:0,0,0:18</entry>
 	  <entry name="mute">icon:m270:60:mute.png</entry>
   </section>

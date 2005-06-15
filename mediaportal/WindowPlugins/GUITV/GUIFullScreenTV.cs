@@ -730,6 +730,10 @@ namespace MediaPortal.GUI.TV
 					catch(Exception)
 					{
 					}
+					if(m_vmr9OSD!=null)
+						m_vmr9OSD.RenderZapOSD(GUITVHome.Navigator.CurrentTVChannel,0,0);
+
+
 					return true;
 				}
 				case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
