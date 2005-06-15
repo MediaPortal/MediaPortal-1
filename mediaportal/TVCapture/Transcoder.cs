@@ -25,8 +25,9 @@ namespace MediaPortal.TV.Recording
 			public bool				deleteOriginal;
 			public Size				ScreenSize;
 			public DateTime   StartTime;
+			public bool				LowPriority=true;
 
-			public TranscoderInfo(TVRecorded recording, int kbps, int fps, Size newSize,bool deleteWhenDone, int qualityIndex,DateTime dateTime, int outputType)
+			public TranscoderInfo(TVRecorded recording, int kbps, int fps, Size newSize,bool deleteWhenDone, int qualityIndex,DateTime dateTime, int outputType, bool priority)
 			{
 				recorded=recording;
 				status=Status.Waiting;
@@ -38,6 +39,7 @@ namespace MediaPortal.TV.Recording
 				quality=(Quality)qualityIndex;
 				StartTime=dateTime;
 				Type=outputType;
+				LowPriority=priority;
 			}
 		}
 		public enum Status
@@ -146,7 +148,7 @@ namespace MediaPortal.TV.Recording
 					deleteWhenDone=AutoDeleteOriginal;
 					dtStart = dtStart.AddHours(AutoHours);
 				}
-				TranscoderInfo info = new TranscoderInfo(rec,bitRate,FPS,ScreenSize,deleteWhenDone,QualityIndex,dtStart,Type);
+				TranscoderInfo info = new TranscoderInfo(rec,bitRate,FPS,ScreenSize,deleteWhenDone,QualityIndex,dtStart,Type, Priority==0);
 				queue.Add(info);
 			}
 
@@ -200,7 +202,6 @@ namespace MediaPortal.TV.Recording
 
 		static void TranscodeWorkerThread()
 		{
-			System.Threading.Thread.CurrentThread.Priority=ThreadPriority.BelowNormal;
 
 			while (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
 			{
@@ -237,6 +238,12 @@ namespace MediaPortal.TV.Recording
 		}
 		static void DoTranscode(TranscoderInfo tinfo)
 		{
+
+			if (tinfo.LowPriority)
+				System.Threading.Thread.CurrentThread.Priority=ThreadPriority.Lowest;
+			else
+				System.Threading.Thread.CurrentThread.Priority=ThreadPriority.Normal;
+
 			tinfo.status=Status.Busy;
 			TranscodeInfo info = new TranscodeInfo();
 			info.Author="Mediaportal";
