@@ -204,9 +204,9 @@
 			<showrange>no</showrange>
 			<spintype>text</spintype>
 			<subitems>
-				<subitem>15</subitem>
-				<subitem>25</subitem>
-				<subitem>30</subitem>
+				<subitem>15 FPS</subitem>
+				<subitem>25 FPS</subitem>
+				<subitem>30 FPS</subitem>
 			</subitems>
 			<textureUp>arrow_round_right_nofocus.png</textureUp>
 			<textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -241,12 +241,10 @@
 			<showrange>no</showrange>
 			<spintype>text</spintype>
 			<subitems>
-				<subitem>300 Kbps</subitem>
-				<subitem>500 Kbps</subitem>
-				<subitem>1024 Kbps</subitem>
-				<subitem>2048 Kbps</subitem>
-				<subitem>4096 Kbps</subitem>
-				<subitem>8192 Kbps</subitem>
+				<subitem>100 Kbps</subitem>
+				<subitem>256 Kbps</subitem>
+				<subitem>384 Kbps</subitem>
+				<subitem>768 Kbps</subitem>
 			</subitems>
 			<textureUp>arrow_round_right_nofocus.png</textureUp>
 			<textureDown>arrow_round_left_nofocus.png</textureDown>

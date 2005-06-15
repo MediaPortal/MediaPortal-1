@@ -163,22 +163,16 @@ namespace MediaPortal.TV.Recording
 			switch (bitRate)
 			{
 				case 0:
-					bitRate=300;
+					bitRate=100;
 					break;
 				case 1:
-					bitRate=500;
+					bitRate=256;
 					break;
 				case 2:
-					bitRate=1024;
+					bitRate=384;
 					break;
 				case 3:
-					bitRate=2048;
-					break;
-				case 4:
-					bitRate=4096;
-					break;
-				case 5:
-					bitRate=8192;
+					bitRate=768;
 					break;
 			}
 			switch (FPS)

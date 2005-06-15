@@ -144,17 +144,11 @@ namespace MediaPortal.Core.Transcoding
 
 
 
-		Guid WMProfile_V80_256Video = new Guid(0xbbc75500,0x33d2,0x4466,0xb8, 0x6b, 0x12, 0x2b, 0x20, 0x1c, 0xc9, 0xae );
-		Guid WMProfile_V80_384Video = new Guid(0x29b00c2b,0x9a9,0x48bd,0xad, 0x9, 0xcd, 0xae, 0x11, 0x7d, 0x1d, 0xa7 );
-		Guid WMProfile_V80_768Video= new Guid(0x74d01102,0xe71a,0x4820,0x8f, 0xd, 0x13, 0xd2, 0xec, 0x1e, 0x48, 0x72 );
-		Guid WMProfile_V80_700NTSCVideo = new Guid(0xc8c2985f,0xe5d9,0x4538,0x9e, 0x23, 0x9b, 0x21, 0xbf, 0x78, 0xf7, 0x45 );
-		Guid WMProfile_V80_1400NTSCVideo= new Guid( 0x931d1bee,0x617a,0x4bcd,0x99, 0x5, 0xcc, 0xd0, 0x78, 0x66, 0x83, 0xee );
-		Guid WMProfile_V80_384PALVideo = new Guid(0x9227c692,0xae62,0x4f72,0xa7, 0xea, 0x73, 0x60, 0x62, 0xd0, 0xe2, 0x1e );
-		Guid WMProfile_V80_700PALVideo = new Guid( 0xec298949,0x639b,0x45e2,0x96, 0xfd, 0x4a, 0xb3, 0x2d, 0x59, 0x19, 0xc2 );
-		Guid WMProfile_V80_FAIRVBRVideo= new Guid(0x3510a862,0x5850,0x4886,0x83, 0x5f, 0xd7, 0x8e, 0xc6, 0xa6, 0x40, 0x42 );
-		Guid WMProfile_V80_HIGHVBRVideo = new Guid(0xf10d9d3,0x3b04,0x4fb0,0xa3, 0xd3, 0x88, 0xd4, 0xac, 0x85, 0x4a, 0xcc );
-		Guid WMProfile_V80_BESTVBRVideo = new Guid(0x48439ba,0x309c,0x440e,0x9c, 0xb4, 0x3d, 0xcc, 0xa3, 0x75, 0x64, 0x23 );
-
+		Guid WMProfile_V80_100KBPS = new Guid("{A2E300B4-C2D4-4FC0-B5DD-ECBD948DC0DF}");
+		Guid WMProfile_V80_256KBPS = new Guid("{BBC75500-33D2-4466-B86B-122B201CC9AE}");
+		Guid WMProfile_V80_384KBPS = new Guid("{29B00C2B-09A9-48BD-AD09-CDAE117D1DA7}" );
+		Guid WMProfile_V80_768KBPS = new Guid("{74D01102-E71A-4820-8F0D-13D2EC1E4872}");
+		
 		Guid IID_IWMWriterAdvanced2 = new Guid(0x962dc1ec,0xc046,0x4db8,0x9c,0xc7,0x26,0xce,0xae,0x50,0x08,0x17 );
 
 		protected int												rotCookie = 0;
@@ -222,8 +216,8 @@ namespace MediaPortal.Core.Transcoding
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
 				//add mpeg2 audio/video codecs
-				string strVideoCodec="Mpeg2Dec Filter";
-				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
+				string strVideoCodec="DScaler Mpeg2 Video Decoder";
+				string strAudioCodec="DScaler Audio Decoder";
 				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec",strVideoCodec);
@@ -372,19 +366,27 @@ namespace MediaPortal.Core.Transcoding
 				switch (quality)
 				{
 					case Quality.High:
-						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_BESTVBRVideo);
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768KBPS);
 						break;
 					case Quality.Medium:
-						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_FAIRVBRVideo);
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_384KBPS);
 						break;
 					case Quality.Low:
-						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768Video);
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256KBPS);
 						break;
 					case Quality.Portable:
-						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256Video);
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_100KBPS);
 						break;
 					case Quality.Custom:
 						//create new profile
+						if (bitrate==768)
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768KBPS);
+						else if (bitrate==384)
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_384KBPS);
+						else if (bitrate==256)
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256KBPS);
+						else
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_100KBPS);
 						SetWmvProfile(fileWriterbase,(int)bitrate,(int)fps,(int)screenSize.Width,(int)screenSize.Height);
 					break;
 				}
