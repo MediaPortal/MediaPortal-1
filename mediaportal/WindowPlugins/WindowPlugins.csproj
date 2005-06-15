@@ -1245,16 +1245,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "GUIVideoFiles\FormOSD.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIVideoFiles\FormOSD.resx"
-                    DependentUpon = "FormOSD.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "GUIVideoFiles\GUIVideoBaseWindow.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

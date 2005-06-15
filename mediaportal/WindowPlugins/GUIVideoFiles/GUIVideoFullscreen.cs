@@ -69,7 +69,7 @@ namespace MediaPortal.GUI.Video
     DateTime    m_dwOSDTimeOut;
     long        m_iMaxTimeOSDOnscreen;    
 		bool        m_bMSNChatVisible=false;
-    FormOSD     m_form=null;
+    //FormOSD     m_form=null;
     DateTime    m_UpdateTimer=DateTime.Now;  
 		bool				m_bDialogVisible=false;
 		bool				m_bMSNChatPopup=false;
@@ -612,10 +612,10 @@ namespace MediaPortal.GUI.Video
           
           if (!GUIGraphicsContext.Vmr9Active)
           {
-            m_form = new FormOSD();
-            m_form.Owner = GUIGraphicsContext.form;
-            m_form.Show();            
-            GUIGraphicsContext.form.Focus();
+//            m_form = new FormOSD();
+//            m_form.Owner = GUIGraphicsContext.form;
+//            m_form.Show();            
+//            GUIGraphicsContext.form.Focus();
           }
           GUIGraphicsContext.IsFullScreenVideo=true;
 					ScreenStateChanged();
@@ -644,12 +644,12 @@ namespace MediaPortal.GUI.Video
 						m_bMSNChatVisible=false;
             base.OnMessage(message);
             
-            if (m_form!=null) 
-            {
-              m_form.Close();
-              m_form.Dispose();
-            }
-            m_form=null;
+//            if (m_form!=null) 
+//            {
+//              m_form.Close();
+//              m_form.Dispose();
+//            }
+//            m_form=null;
           }
           return true;
         }
@@ -1040,6 +1040,31 @@ namespace MediaPortal.GUI.Video
 				if (isOsdVisible)
 				{
 					m_osdWindow.Render(timePassed);
+				}
+			}
+			else
+			{
+				if (screenState.MsnVisible ||
+					screenState.ContextMenuVisible ||
+					screenState.OsdVisible ||
+					screenState.Paused ||
+					screenState.ShowStatusLine ||
+					screenState.ShowTime || needToClearScreen)
+				{
+					if (VMR7Util.g_vmr7!=null)
+					{
+						using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
+						{
+							using (Graphics g = Graphics.FromImage(bmp))
+							{
+								GUIGraphicsContext.graphics=g;
+								base.Render(timePassed);
+								RenderForm(timePassed);
+								GUIGraphicsContext.graphics=null;
+								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
+							}
+						}
+					}
 				}
 			}
     }
