@@ -2492,7 +2492,7 @@ namespace MediaPortal.TV.Recording
 				if (currentTuningObject.LNBKHz==1) // 22khz 
 					inputRange |= (1<<8);
 
-				Log.Write("Set inputrange to:{0}",inputRange);
+				Log.Write("DVBGraphBDA: Set inputrange to:{0}",inputRange);
 				dvbSpace.InputRange=inputRange.ToString();
 			}
 			catch(Exception)
