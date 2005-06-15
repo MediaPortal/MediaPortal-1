@@ -860,7 +860,7 @@ namespace MediaPortal.GUI.Video
 
 		void UpdateGUI()
 		{
-			if (GUIGraphicsContext.Vmr9Active && (m_bShowStep||(!isOsdVisible&& g_Player.Speed!=1) || (!isOsdVisible&& g_Player.Paused)) )
+			if ( (m_bShowStep||(!isOsdVisible&& g_Player.Speed!=1) || (!isOsdVisible&& g_Player.Paused)) )
 			{
 				if (!isOsdVisible)
 				{
@@ -1034,7 +1034,7 @@ namespace MediaPortal.GUI.Video
 
 		public override void Render(float timePassed)
     {
-			if (GUIGraphicsContext.Vmr9Active)
+			if (GUIGraphicsContext.Vmr9Active || GUIWindowManager.IsRouted)
 			{
 				base.Render(timePassed); 
 				if (isOsdVisible)
@@ -1049,7 +1049,7 @@ namespace MediaPortal.GUI.Video
 					screenState.OsdVisible ||
 					screenState.Paused ||
 					screenState.ShowStatusLine ||
-					screenState.ShowTime || needToClearScreen)
+					screenState.ShowTime || needToClearScreen )
 				{
 					if (VMR7Util.g_vmr7!=null)
 					{

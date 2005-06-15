@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Drawing;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.Player;
 
 namespace MediaPortal.Dialogs
 {
@@ -95,6 +97,31 @@ namespace MediaPortal.Dialogs
 		{
 			lock (this)
 			{
+				if (GUIGraphicsContext.IsFullScreenVideo)
+				{
+					if (VMR7Util.g_vmr7!=null)
+					{
+						using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
+						{
+							using (Graphics g = Graphics.FromImage(bmp))
+							{
+								GUIGraphicsContext.graphics=g;
+
+								// render the parent window
+								if (null!=m_pParentWindow) 
+									m_pParentWindow.Render(timePassed);
+
+								GUIFontManager.Present();
+								// render this dialog box
+								base.Render(timePassed);
+
+								GUIGraphicsContext.graphics=null;
+								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
+							}
+						}
+						return;
+					}
+				}
 				// render the parent window
 				if (null!=m_pParentWindow) 
 					m_pParentWindow.Render(timePassed);

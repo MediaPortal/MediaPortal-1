@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Drawing;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Util;
 
 
