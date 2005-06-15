@@ -272,10 +272,13 @@ namespace MediaPortal.TV.Recording
 				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 
-				m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
-				m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
-				m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
-
+				//dont use samplegrabber in configuration.exe
+				if (GUIGraphicsContext.DX9Device!=null)
+				{
+					m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
+					m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
+					m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
+				}
 				// Loop through configured filters for this card, bind them and add them to the graph
 				// Note that while adding filters to a graph, some connections may already be created...
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...");
@@ -506,10 +509,13 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
-				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
+				if (GUIGraphicsContext.DX9Device!=null)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
-					return false;
+					if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
 				}
 				//=========================================================================================================
 				// add the MPEG-2 Demultiplexer 
@@ -526,10 +532,21 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
 				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
 				
-				if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
+				if (GUIGraphicsContext.DX9Device!=null)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
-					return false;
+					if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
+				}
+				else
+				{
+					if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
 				}
 				for (int i=0; i < 10; ++i)
 				{
@@ -683,8 +700,6 @@ namespace MediaPortal.TV.Recording
 					m_sampleInterface.SetMediaType(ref mt);
 					m_sampleInterface.SetBufferSamples(true);
 				}
-				else
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:creategraph() SampleGrabber-Interface not found");
 
 			
 				return true;
