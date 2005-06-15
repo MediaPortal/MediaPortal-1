@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.TV
 		bool				m_bZapOSDVisible=false;
 		bool				isMsnChatVisible=false;
 		bool				m_bShowInput=false;
-		FormOSD			m_form=null;        
+		
 		long				m_iMaxTimeOSDOnscreen;
 		long				m_iZapTimeOut;
 		DateTime		m_UpdateTimer=DateTime.Now;
@@ -656,13 +656,6 @@ namespace MediaPortal.GUI.TV
 					}
 					isMsnChatVisible=false;
 
-					if (m_form!=null) 
-					{
-						m_form.Close();
-						m_form.Dispose();
-					}
-					m_form=null;
-
 					base.OnMessage(message);
 					GUIGraphicsContext.IsFullScreenVideo=false;
 					if ( !GUITVHome.IsTVWindow(message.Param1) )
@@ -711,13 +704,6 @@ namespace MediaPortal.GUI.TV
 					m_bShowStatus=false;
 					m_bShowGroup=false;
 					m_dwTimeStatusShowTime=DateTime.Now;
-					if (!GUIGraphicsContext.Vmr9Active)
-					{
-						m_form = new FormOSD();
-						m_form.Owner = GUIGraphicsContext.form;
-						m_form.Show();
-						GUIGraphicsContext.form.Focus();
-					}
 
 					ScreenStateChanged();
 					UpdateGUI();
@@ -1277,6 +1263,37 @@ namespace MediaPortal.GUI.TV
 
 		public override void Render(float timePassed)
 		{
+			if (VMR7Util.g_vmr7!=null )
+			{
+				if (!GUIWindowManager.IsRouted)
+				{
+					if (screenState.ContextMenuVisible||
+						screenState.MsgBoxVisible ||
+						screenState.MsnVisible ||
+						screenState.OsdVisible ||
+						screenState.Paused ||
+						screenState.ShowGroup ||
+						screenState.ShowInput ||
+						screenState.ShowStatusLine ||
+						screenState.ShowTime ||
+						screenState.ZapOsdVisible ||
+						needToClearScreen)
+					{
+						using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
+						{
+							using (Graphics g = Graphics.FromImage(bmp))
+							{
+								GUIGraphicsContext.graphics=g;
+								base.Render(timePassed);
+								RenderForm(timePassed);
+								GUIGraphicsContext.graphics=null;
+								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
+							}
+						}
+					}
+				}
+			}
+
 			if (GUIGraphicsContext.Vmr9Active)
 			{
 				base.Render(timePassed);
