@@ -340,6 +340,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (tinfo.deleteOriginal)
 					{
+						tinfo.percentDone=0;
 						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
 					}
 					tinfo.status=Status.Completed;

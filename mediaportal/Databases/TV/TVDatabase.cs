@@ -1483,6 +1483,26 @@ namespace MediaPortal.TV.Database
 			return SearchPrograms(iStartTime, iEndTime,ref progs,-1,String.Empty);
 		}
 
+		static public void SetRecordedFileName(TVRecorded rec)
+		{
+
+			string strFileName=rec.FileName;
+			DatabaseUtility.RemoveInvalidChars(ref strFileName);
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null==m_db) return ;
+					string strSQL=String.Format("update recorded set strFileName='{0}' where idRecorded={1}",strFileName, rec.ID);
+					m_db.Execute(strSQL);
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
 		static public void UpdateRecording(TVRecording recording)
 		{
 			lock (typeof(TVDatabase))
