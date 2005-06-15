@@ -348,7 +348,7 @@ namespace MediaPortal.TV.Recording
 				{
 					tinfo.status=Status.Error;
 				}
-				DiskManagement.DeleteRecording(info.file);//delete the .mpg file
+				Utils.FileDelete(info.file);//delete the .mpg file
 			}
 		}
 	}
