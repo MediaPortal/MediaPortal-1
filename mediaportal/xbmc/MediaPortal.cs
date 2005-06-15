@@ -1292,6 +1292,7 @@ public class MediaPortalApp : D3DApp, IRender
 
                         if (msg.Param1 == 1)
                         {
+														AutoPlay.StopListening();
                             WindowsController.ExitWindows(RestartOptions.Reboot, true);
                             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
                         }
@@ -1311,7 +1312,8 @@ public class MediaPortalApp : D3DApp, IRender
                         GUIWindowManager.SendMessage(msg);
 
                         if (msg.Param1 == 1)
-                        {
+												{
+														AutoPlay.StopListening();
                             WindowsController.ExitWindows(RestartOptions.PowerOff, true);
                             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
                         }

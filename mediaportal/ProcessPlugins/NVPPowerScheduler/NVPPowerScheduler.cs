@@ -5,7 +5,7 @@ using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
-
+using MediaPortal.Ripper;
 namespace MediaPortal.PowerScheduler
 {
 	/// <summary>
@@ -354,18 +354,21 @@ namespace MediaPortal.PowerScheduler
 				if (m_shutdownMode.StartsWith("Suspend"))
 				{
 					Log.Write("PowerScheduler: Suspend system");
+					AutoPlay.StopListening();
 					WindowsController.ExitWindows(RestartOptions.Suspend, m_bForceShutdown);
 				}
 
 				if (m_shutdownMode.StartsWith("Hibernate"))
 				{
 					Log.Write("PowerScheduler: Hibernate system");
+					AutoPlay.StopListening();
 					WindowsController.ExitWindows(RestartOptions.Hibernate, m_bForceShutdown);
 				}
 						
 				if (m_shutdownMode.StartsWith("Shutdown"))
 				{
 					Log.Write("PowerScheduler: System shutdown");
+					AutoPlay.StopListening();
 					WindowsController.ExitWindows(RestartOptions.ShutDown, m_bForceShutdown);
 				}
 			}

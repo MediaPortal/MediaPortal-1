@@ -236,7 +236,6 @@ namespace MediaPortal
 			// signalStrength
 			// 
 			this.signalStrength.Location = new System.Drawing.Point(160, 88);
-			this.signalStrength.Maximum = 160;
 			this.signalStrength.Name = "signalStrength";
 			this.signalStrength.Size = new System.Drawing.Size(232, 16);
 			this.signalStrength.Step = 1;
@@ -256,7 +255,7 @@ namespace MediaPortal
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(40, 16);
 			this.label4.TabIndex = 17;
-			this.label4.Text = "160dB";
+			this.label4.Text = "100dB";
 			// 
 			// label5
 			// 
@@ -281,9 +280,6 @@ namespace MediaPortal
 			this.label7.Size = new System.Drawing.Size(40, 16);
 			this.label7.TabIndex = 20;
 			this.label7.Text = "100%";
-			// 
-			// timer1
-			// 
 			// 
 			// AnalogTVTuningForm
 			// 
@@ -536,8 +532,10 @@ namespace MediaPortal
 		}
 		public void OnSignal(int quality, int strength)
 		{
-			if (quality< 0 || quality>100) quality=0;
-			if (strength< 0 || strength>160) strength=0;
+			if (quality< 0) quality=0;
+			if (quality>100) quality=100;
+			if (strength< 0) strength=0;
+			if (strength>100) strength=100;
 			signalQuality.Value=quality;
 			signalStrength.Value=strength;
 			Application.DoEvents();
