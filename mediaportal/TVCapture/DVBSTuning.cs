@@ -256,7 +256,7 @@ namespace MediaPortal.TV.Recording
 
 			newchan.Polarity=transp[currentIndex].TPpol;
 			newchan.Symbolrate=transp[currentIndex].TPsymb;
-			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED;
 			newchan.Frequency=transp[currentIndex].TPfreq;
 
 			
