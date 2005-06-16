@@ -14,17 +14,20 @@ namespace DShowNET
 	/// </summary>
 	public class VideoCaptureProperties
 	{
+		Twinhan twinhan;
 		IVac ivac ;
 		Hauppauge hauppauge ;
 		DigitalEverywhere digitalEverywhere;
 		public VideoCaptureProperties(IBaseFilter filter)
-		{
+		{	
+			twinhan=new Twinhan(filter);
 			ivac=new IVac(filter);
 			hauppauge =new Hauppauge(filter);
 			digitalEverywhere=new DigitalEverywhere(filter);
 			if (hauppauge.IsHauppage) Log.Write("Hauppauge card properties supported");
 			if (ivac.IsIVAC) Log.Write("IVAC card properties supported");
 			if (digitalEverywhere.IsDigitalEverywhere) Log.Write("Digital Everywhere card properties supported");
+			if (twinhan.IsTwinhan) Log.Write("Twinhan card properties supported");
 		}
 
 
@@ -76,11 +79,16 @@ namespace DShowNET
     }
 		
 
-		public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
+		public bool SendPMT(int videoPid, int audioPid,byte[] PMT, int pmtLength)
 		{
 			if (digitalEverywhere.IsDigitalEverywhere)
 			{
 				return digitalEverywhere.SendPMTToFireDTV(PMT,pmtLength);
+			}
+			if (twinhan.IsTwinhan)
+			{
+				twinhan.SendPMT((uint)videoPid,(uint)audioPid,PMT,pmtLength);
+				return true;
 			}
 			return false;
 		}

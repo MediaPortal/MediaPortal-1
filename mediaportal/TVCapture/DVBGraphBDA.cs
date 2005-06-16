@@ -2364,7 +2364,7 @@ namespace MediaPortal.TV.Recording
 
 					//yes, then send the PMT table to the device
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to fireDTV device",pmtVersion);	
-					if (props.SendPMTToFireDTV(pmt, (int)len))
+					if (props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
 					{
 						return true;
 					}
