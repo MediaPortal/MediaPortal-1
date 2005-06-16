@@ -786,6 +786,61 @@ namespace MediaPortal.TV.Recording
 
 		#region Table Decoding
 		#region tables
+		private void decodeBATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
+		{
+			//  8------ 112-12-- -------- 16------ -------- 2-5----1 8------- 8------- 4---12-- --------
+			// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
+			//    0        1        2         3        4       5       6         7        8       9     
+
+			Log.Write("DecodeBAT {0}",buf.Length);
+			int table_id = buf[0];
+			int section_syntax_indicator = (buf[1]>>7) & 1;
+			int section_length = ((buf[1]& 0x7)<<8) + buf[2];
+			int bouquet_id = (buf[3]<<8)+buf[4];
+			int version_number = ((buf[5]>>1)&0x1F);
+			int current_next_indicator = buf[5] & 1;
+			int section_number = buf[6];
+			int last_section_number = buf[7];
+			int descriptor_length = ((buf[8]&0xf)<<8)+buf[9];
+			int start=10;
+			int len=0;
+			
+			Log.Write("DecodeBAT: desc length:{0} bouquet id:{1} tid:{2} sectionlen:{3}", 
+						descriptor_length,bouquet_id,table_id,section_length);
+			while (len < descriptor_length)
+			{
+				int descriptor_tag = buf[start+len];
+				int descriptor_len = buf[start+len+1];
+				Log.Write("  descriptor:{0:X} len:{1}", descriptor_tag, descriptor_len);
+				len += (descriptor_len+2);
+			}
+			start += descriptor_length;
+
+
+			Log.Write("DecodeBAT: decode transport length at:{0}", start);
+			int transport_length = ((buf[start]&0xf)<<8)+buf[start+1];
+			start+=2;
+			Log.Write("DecodeBAT: transport_length:{0}", transport_length);
+			len=0;
+			while (len < transport_length)
+			{
+				int tsid = ((buf[start+len]& 0xF)<<8) + buf[start+len+1];
+				int onid = ((buf[start+len+2]& 0xF)<<8) + buf[start+len+3];
+				descriptor_length = ((buf[start+len+4]& 0xF)<<8) + buf[start+len+5];
+				Log.Write("  tsid:{0:X} onid:{1} descriptor_length:{2}", tsid,onid,descriptor_length);
+
+				int descstart=start+len+6;
+				int desclen=0;
+				while (desclen < descriptor_length)
+				{
+					int descriptor_tag = buf[descstart+desclen];
+					int descriptor_len = buf[descstart+desclen+1];
+					Log.Write("  descriptor:{0:X} len:{1}", descriptor_tag, descriptor_len);
+					desclen += (descriptor_len+2);
+				}
+				len += (descriptor_length+6);
+			}
+		}
 		/// <summary>
 		/// The PAT table contains the PMT pid of each program
 		/// </summary>
@@ -2504,6 +2559,12 @@ namespace MediaPortal.TV.Recording
 
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
+
+				//get BAT (pid=0x11, tableid=0x4a)
+//				GetStreamData(filter,0x11, 0x4a,0,Timeout);
+//				Log.Write("BAT:{0}", m_sectionsList.Count);
+//				foreach(byte[] arr in m_sectionsList)
+//					decodeBATTable(arr, transp[0], ref transponder);
 
 				//get PAT table (pid=0x11)
 				GetStreamData(filter,0, 0,0,Timeout);
