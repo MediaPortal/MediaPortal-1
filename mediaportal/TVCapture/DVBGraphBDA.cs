@@ -2932,7 +2932,9 @@ namespace MediaPortal.TV.Recording
 				{
 					//get the IDVBSLocator interface
 					int lowOsc,hiOsc;
-					LoadLNBSettings(ref ch,disecqNo, out lowOsc, out hiOsc);
+					if (ch.DiSEqC<1) ch.DiSEqC=1;
+					if (ch.DiSEqC>4) ch.DiSEqC=4;
+					LoadLNBSettings(ref ch,ch.DiSEqC, out lowOsc, out hiOsc);
 					TunerLib.IDVBSTuningSpace dvbSpace =myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
 					if (dvbSpace==null)
 					{
@@ -3071,6 +3073,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			currentTuningObject=(DVBChannel)tuningObject;
+			currentTuningObject.DiSEqC=disecqNo;
 			SubmitTuneRequest(currentTuningObject);
 			m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0);
 		}//public void Tune(object tuningObject)
