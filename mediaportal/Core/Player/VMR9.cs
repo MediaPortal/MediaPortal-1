@@ -34,7 +34,8 @@ namespace MediaPortal.Player
     IRender m_renderFrame;
     public IBaseFilter VMR9Filter = null;
     public int textureCount = 0;
-    int videoHeight, videoWidth;
+		int videoHeight, videoWidth;
+		int videoAspectRatioX, videoAspectRatioY;
     DirectShowHelperLib.VMR9HelperClass vmr9Helper = null;
 		IQualProp quality=null;
     int frameCounter = 0;
@@ -211,6 +212,37 @@ namespace MediaPortal.Player
         videoHeight = value;
       }
     }
+
+
+		/// <summary>
+		/// returns the width of the video
+		/// </summary>
+		public int VideoAspectRatioX
+		{
+			get
+			{
+				return videoAspectRatioX;
+			}
+			set
+			{
+				videoAspectRatioX = value;
+			}
+		}
+
+		/// <summary>
+		/// returns the height of the video
+		/// </summary>
+		public int VideoAspectRatioY
+		{
+			get
+			{
+				return videoAspectRatioY;
+			}
+			set
+			{
+				videoAspectRatioY = value;
+			}
+		}
 
     /// <summary>
     /// repaints the last frame
@@ -403,5 +435,44 @@ namespace MediaPortal.Player
 			// dispose
 			return true;
 		}// savevmr9bitmap
+
+		public void GetVideoWindows(out System.Drawing.Rectangle rSource,out System.Drawing.Rectangle rDest)
+		{
+			MediaPortal.GUI.Library.Geometry			m_geometry = new MediaPortal.GUI.Library.Geometry();
+			// get the window where the video/tv should be shown
+			float x  = GUIGraphicsContext.VideoWindow.X;
+			float y  = GUIGraphicsContext.VideoWindow.Y;
+			float nw = GUIGraphicsContext.VideoWindow.Width;
+			float nh = GUIGraphicsContext.VideoWindow.Height; 
+
+			//sanity checks
+			if (nw > GUIGraphicsContext.OverScanWidth)
+				nw = GUIGraphicsContext.OverScanWidth;
+			if (nh > GUIGraphicsContext.OverScanHeight)
+				nh = GUIGraphicsContext.OverScanHeight;
+
+			//are we supposed to show video in fullscreen or in a preview window?
+			if (GUIGraphicsContext.IsFullScreenVideo || !GUIGraphicsContext.ShowBackground)
+			{
+				//yes fullscreen, then use the entire screen
+				x  = GUIGraphicsContext.OverScanLeft;
+				y  = GUIGraphicsContext.OverScanTop;
+				nw = GUIGraphicsContext.OverScanWidth;
+				nh = GUIGraphicsContext.OverScanHeight;
+			}
+        
+			//calculate the video window according to the current aspect ratio settings
+			float fVideoWidth  = (float)VideoWidth;
+			float fVideoHeight = (float)VideoHeight;
+			m_geometry.ImageWidth   = (int)fVideoWidth;
+			m_geometry.ImageHeight  = (int)fVideoHeight;
+			m_geometry.ScreenWidth  = (int)nw;
+			m_geometry.ScreenHeight = (int)nh;
+			m_geometry.ARType       = GUIGraphicsContext.ARType;
+			m_geometry.PixelRatio   = GUIGraphicsContext.PixelRatio;
+			m_geometry.GetWindow(VideoAspectRatioX, VideoAspectRatioY,out rSource, out rDest);
+			rDest.X += (int)x;
+			rDest.Y += (int)y;
+		}
   }//public class VMR9Util
 }//namespace MediaPortal.Player 

@@ -401,6 +401,8 @@ namespace MediaPortal.Player
 				GUIGraphicsContext.InVmr9Render=true;
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
+				m_vmr9Util.VideoAspectRatioX=arWidth;
+				m_vmr9Util.VideoAspectRatioY=arHeight;
 				arVideoWidth=arWidth;
 				arVideoHeight=arHeight;
 				
@@ -558,6 +560,8 @@ namespace MediaPortal.Player
 				m_idebugstep=1;
 				m_vmr9Util.VideoWidth=width;
 				m_vmr9Util.VideoHeight=height;
+				m_vmr9Util.VideoAspectRatioX=arWidth;
+				m_vmr9Util.VideoAspectRatioY=arHeight;
 				arVideoWidth=arWidth;
 				arVideoHeight=arHeight;
 				GUIGraphicsContext.InVmr9Render=true;
