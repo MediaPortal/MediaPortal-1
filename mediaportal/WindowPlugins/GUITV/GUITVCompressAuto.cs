@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player ;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Database;
 namespace WindowPlugins.GUITV
 {
 	/// <summary>
@@ -32,6 +34,10 @@ namespace WindowPlugins.GUITV
 		{
 			base.OnPageDestroy (newWindowId);
 			SaveSettings();
+			if (checkAutoCompress.Selected)
+			{
+				AutoCompress();
+			}
 		}
 		void LoadSettings()
 		{
@@ -91,5 +97,25 @@ namespace WindowPlugins.GUITV
 			checkDeleteOriginal.Disabled = !checkAutoCompress.Selected;
 		}
 
+		void AutoCompress()
+		{
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordedTV(ref recordings);
+			foreach (TVRecorded rec in recordings)
+			{
+				if (Transcoder.IsTranscoding(rec)) continue; //already transcoding...
+				try
+				{
+					if (!System.IO.File.Exists(rec.FileName)) continue;
+					string ext=System.IO.Path.GetExtension(rec.FileName).ToLower();
+					if (ext!=".dvr-ms" && ext != ".sbe") continue;
+				}
+				catch(Exception)
+				{
+					continue;
+				}
+				Transcoder.Transcode(rec,false);
+			}
+		}
 	}
 }

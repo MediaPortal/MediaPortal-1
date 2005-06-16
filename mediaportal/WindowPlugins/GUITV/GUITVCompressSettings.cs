@@ -104,7 +104,7 @@ namespace WindowPlugins.GUITV
 			bool isXVID=(spinType.Value==2);
 			spinBitrate.Disabled=(isMpeg2 || isXVID);
 			spinFPS.Disabled=(isMpeg2 || isXVID);
-			spinQuality.Disabled=(isMpeg2 || isXVID);
+			spinQuality.Disabled=(isMpeg2 );
 			spinScreenSize.Disabled=(isMpeg2 || isXVID);
 
 			if (isWMV)

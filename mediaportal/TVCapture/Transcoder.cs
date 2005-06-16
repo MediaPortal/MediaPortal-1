@@ -56,7 +56,7 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 
-		static public void Transcode(TVRecorded rec)
+		static public void Transcode(TVRecorded rec,bool manual)
 		{
 			int		bitRate,FPS,Priority,QualityIndex,ScreenSizeIndex,Type,AutoHours;
 			bool	deleteOriginal,AutoDeleteOriginal,AutoCompress;
@@ -143,7 +143,7 @@ namespace MediaPortal.TV.Recording
 			{
 				DateTime dtStart=DateTime.Now;
 				bool deleteWhenDone=deleteOriginal;
-				if (AutoCompress)
+				if (AutoCompress && !manual)
 				{
 					deleteWhenDone=AutoDeleteOriginal;
 					dtStart = dtStart.AddHours(AutoHours);
@@ -217,7 +217,7 @@ namespace MediaPortal.TV.Recording
 						for (int i=0; i < queue.Count;++i)
 						{
 							TranscoderInfo info = (TranscoderInfo)queue[i];
-							if (info.StartTime >= DateTime.Now)
+							if (DateTime.Now >=info.StartTime )
 							{
 								if (info.status==Status.Waiting)
 								{

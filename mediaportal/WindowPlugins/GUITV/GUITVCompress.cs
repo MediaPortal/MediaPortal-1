@@ -313,6 +313,16 @@ namespace MediaPortal.GUI.TV
 			foreach (TVRecorded rec in recordings)
 			{
 				if (Transcoder.IsTranscoding(rec)) continue; //already transcoding...
+				try
+				{
+					if (!System.IO.File.Exists(rec.FileName)) continue;
+					string ext=System.IO.Path.GetExtension(rec.FileName).ToLower();
+					if (ext!=".dvr-ms" && ext != ".sbe") continue;
+				}
+				catch(Exception)
+				{
+					continue;
+				}
 
 				GUIListItem item=new GUIListItem();
 				item.Label=rec.Title;
@@ -460,7 +470,7 @@ namespace MediaPortal.GUI.TV
 
 			foreach (TVRecorded rec in transcodings)
 			{
-				Transcoder.Transcode(rec);
+				Transcoder.Transcode(rec,true);
 			}
 
 			//now switch to status screen....
