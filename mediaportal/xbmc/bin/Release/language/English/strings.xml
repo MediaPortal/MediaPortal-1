@@ -2910,6 +2910,26 @@
 	<id>998</id>
 	<value>XviD</value>
 </string>
+<string>
+	<id>999</id>
+	<value>This plugin allows you to transcode your</value>
+</string>
+<string>
+	<id>1000</id>
+	<value>TV Recordings from dvr-ms into mpg, xvid or wmv</value>
+</string>
+<string>
+	<id>1001</id>
+	<value>Please note. You'll need to have the</value>
+</string>
+<string>
+	<id>1002</id>
+	<value>Elecard MPEG2 video decoder installed</value>
+</string>
+<string>
+	<id>1003</id>
+	<value>for transcoding to xvid and wmv</value>
+</string>
 
 <string>
 	<id>1440</id>

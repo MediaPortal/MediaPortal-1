@@ -216,29 +216,31 @@ namespace MediaPortal.Core.Transcoding
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
 				//add mpeg2 audio/video codecs
-				string strVideoCodec="DScaler Mpeg2 Video Decoder";
-				string strAudioCodec="DScaler Audio Decoder";
-				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-				{
-					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec",strVideoCodec);
-					strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec",strAudioCodec);
-				}
-			
-				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+				string strVideoCodecMoniker=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
+				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
+				Mpeg2VideoCodec = Marshal.BindToMoniker( strVideoCodecMoniker ) as IBaseFilter;
 				if (Mpeg2VideoCodec==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to add mpeg2 video codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add Elecard mpeg2 video decoder");
 					Cleanup();
 					return false;
 				}
-				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-				if (Mpeg2AudioCodec==null)
+				hr = graphBuilder.AddFilter( Mpeg2VideoCodec , "Elecard mpeg2 video decoder" );
+				if( hr != 0 ) 
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to add mpeg2 audio codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 
+				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+				if (Mpeg2AudioCodec==null)
+				{
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add mpeg2 audio codec");
+					Cleanup();
+					return false;
+				}
+				
 				//connect output #0 of streambuffer source->mpeg2 audio codec pin 1
 				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
 				IPin pinOut0, pinOut1;

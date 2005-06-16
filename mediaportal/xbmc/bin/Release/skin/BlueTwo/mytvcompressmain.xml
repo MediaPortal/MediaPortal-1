@@ -39,6 +39,56 @@
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>
+			<description>description line#1 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>100</posY>
+			<label>999</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>
+		<control>
+			<description>description line#2 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>116</posY>
+			<label>1000</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>	
+		<control>
+			<description>description line#3 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>132</posY>
+			<label>1001</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>	
+		<control>
+			<description>description line#4 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>148</posY>
+			<label>1002</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>	
+		<control>
+			<description>description line#5 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>164</posY>
+			<label>1003</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>	
+		<control>
 			<description>Date</description>
 			<type>label</type>
 			<id>200</id>

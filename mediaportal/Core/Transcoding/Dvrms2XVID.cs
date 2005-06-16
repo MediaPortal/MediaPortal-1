@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using Microsoft.Win32;
 using DShowNET;
 using MediaPortal.GUI.Library;
@@ -23,6 +24,9 @@ namespace MediaPortal.Core.Transcoding
 		protected IBaseFilter												Mpeg2AudioCodec =null;
 		protected IBaseFilter												aviMuxer =null;
 		protected IMediaEventEx											mediaEvt=null;
+		protected int bitrate;
+		protected int fps;
+		protected Size screenSize;
 
 		public Dvrms2XVID()
 		{
@@ -37,6 +41,13 @@ namespace MediaPortal.Core.Transcoding
 			if (format==VideoFormat.Xvid) return true;
 			return false;
 		}
+		public void CreateProfile(Size videoSize, int bitRate, int FPS)
+		{
+			bitrate=bitRate;
+			screenSize=videoSize;
+			fps=FPS;
+
+		}
 
 		public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format, MediaPortal.Core.Transcoding.Quality quality)
 		{
@@ -48,12 +59,16 @@ namespace MediaPortal.Core.Transcoding
 			try
 			{
 				RegistryKey hkcu = Registry.CurrentUser;
-				RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD");
+				RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD",true);
 				if (subkey != null)
 				{
 					Int32 uivalue=0;
 					subkey.SetValue("display_status", (Int32)uivalue);
 					subkey.SetValue("debug", (Int32)uivalue);
+					subkey.SetValue("bitrate", (Int32)bitrate);
+
+					uivalue=1;
+					subkey.SetValue("interlacing", (Int32)uivalue);
 					subkey.Close();
 				}
 				hkcu.Close();
@@ -185,16 +200,23 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				//add mpeg2 audio/video codecs
-				string strVideoCodec="Mpeg2Dec Filter";
+				string strVideoCodecMoniker=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
 				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
-				
-				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+				Mpeg2VideoCodec = Marshal.BindToMoniker( strVideoCodecMoniker ) as IBaseFilter;
 				if (Mpeg2VideoCodec==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add mpeg2 video codec");
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add Elecard mpeg2 video decoder");
 					Cleanup();
 					return false;
 				}
+				hr = graphBuilder.AddFilter( Mpeg2VideoCodec , "Elecard mpeg2 video decoder" );
+				if( hr != 0 ) 
+				{
+					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
 				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
 				if (Mpeg2AudioCodec==null)
 				{
@@ -427,6 +449,7 @@ namespace MediaPortal.Core.Transcoding
 			mediaSeeking.GetDuration(out lDuration);
 			float percent = ((float)lCurrent) / ((float)lDuration);
 			percent*=100.0f;
+			if (percent >100) percent=100;
 			return (int)percent;
 		}
 

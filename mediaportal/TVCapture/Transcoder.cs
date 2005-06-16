@@ -312,6 +312,32 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
+
+			if (isXVID)
+			{
+				Dvrms2XVID xvidEncoder = new Dvrms2XVID();
+				xvidEncoder.CreateProfile(tinfo.ScreenSize,tinfo.bitRate,tinfo.FPS);
+				if (!xvidEncoder.Transcode(info,VideoFormat.Xvid,tinfo.quality))
+				{
+					tinfo.status=Status.Error;
+					return;
+				}
+				while (!xvidEncoder.IsFinished()) 
+				{
+					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
+					tinfo.percentDone=xvidEncoder.Percentage();
+					System.Threading.Thread.Sleep(100);
+				}
+				if (tinfo.deleteOriginal)
+				{
+					DiskManagement.DeleteRecording(info.file);
+					tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".avi");
+					TVDatabase.SetRecordedFileName(tinfo.recorded);
+				}
+				tinfo.status=Status.Completed;
+				return;
+			}
+
 			Dvrms2Mpeg mpgConverter = new Dvrms2Mpeg();
 			if (!mpgConverter.Transcode(info,VideoFormat.Mpeg2,tinfo.quality))
 			{
@@ -335,7 +361,7 @@ namespace MediaPortal.TV.Recording
 				tinfo.status=Status.Completed;
 				return;
 			}
-
+/*
 			if (isXVID)
 			{
 				info.file=System.IO.Path.ChangeExtension(info.file,".mpg");				
@@ -366,6 +392,7 @@ namespace MediaPortal.TV.Recording
 				}
 				Utils.FileDelete(info.file);//delete the .mpg file
 			}
+			*/
 		}
 	}
 }

@@ -1026,7 +1026,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         RegistryKey hkcu = Registry.CurrentUser;
-        RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD");
+        RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD",true);
         if (subkey != null)
         {
           long uivalue=0;
