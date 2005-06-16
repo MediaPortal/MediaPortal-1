@@ -12,16 +12,6 @@ namespace DShowNET
 		readonly Guid THBDA_TUNER = new Guid( 0xE5644CC4, 0x17A1, 0x4eed,  0xBD, 0x90, 0x74, 0xFD, 0xA1, 0xD6, 0x54, 0x23);
 		readonly Guid GUID_THBDA_CMD = new Guid( 0x255e0082, 0x2017, 0x4b03,  0x90, 0xf8, 0x85, 0x6a, 0x62, 0xcb, 0x3d, 0x67 );
 		readonly uint THBDA_IOCTL_CI_PARSER_PMT=0xaa00033c;
-		struct THBDACMD
-		{
-			public Guid    CmdGUID;            // Private Command GUID
-			public uint    dwIoControlCode;    // operation
-			public IntPtr  lpInBuffer;         // input data buffer
-			public uint    nInBufferSize;      // size of input data buffer
-			public IntPtr  lpOutBuffer;        // output data buffer
-			public uint    nOutBufferSize;     // size of output data buffer
-			public IntPtr lpBytesReturned;    // byte count
-		};
 
 		public Twinhan(IBaseFilter filter)
 				:base(filter)
@@ -31,10 +21,20 @@ namespace DShowNET
 		{
 			get
 			{
+				if (captureFilter==null) 
+				{
+					return false;
+				}
 				IPin pin=DirectShowUtil.FindPinNr(captureFilter,PinDirection.Input,0);
-				if (pin==null) return false;
+				if (pin==null) 
+				{
+					return false;
+				}
 				IKsPropertySet propertySet= pin as IKsPropertySet;
-				if (propertySet==null) return false;
+				if (propertySet==null) 
+				{
+					return false;
+				}
 				Guid propertyGuid=THBDA_TUNER;
 				uint IsTypeSupported=0;
 				int hr=propertySet.QuerySupported( ref propertyGuid, 0, out IsTypeSupported);
@@ -63,17 +63,46 @@ namespace DShowNET
 
 			IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
 
-			THBDACMD bdaCmd = new THBDACMD();
-			bdaCmd.CmdGUID=GUID_THBDA_CMD;
-			bdaCmd.dwIoControlCode = THBDA_IOCTL_CI_PARSER_PMT;
-			bdaCmd.lpInBuffer = ptrPARSERPMTINFO;
-			bdaCmd.nInBufferSize = (uint)lenParserPMTInfo;
-			bdaCmd.lpOutBuffer = IntPtr.Zero;
-			bdaCmd.nOutBufferSize = 0;
-			bdaCmd.lpBytesReturned = ptrDwBytesReturned;
+		
+			int thbdaLen=0x28;
+			IntPtr thbdaBuf = Marshal.AllocCoTaskMem(thbdaLen);
+			Marshal.WriteInt32(thbdaBuf,0,0x255e0082);
+			Marshal.WriteInt16(thbdaBuf,4,0x2017);
+			Marshal.WriteInt16(thbdaBuf,6,0x4b03);
+			Marshal.WriteByte(thbdaBuf,8,0x90);
+			Marshal.WriteByte(thbdaBuf,9,0xf8);
+			Marshal.WriteByte(thbdaBuf,10,0x85);
+			Marshal.WriteByte(thbdaBuf,11,0x6a);
+			Marshal.WriteByte(thbdaBuf,12,0x62);
+			Marshal.WriteByte(thbdaBuf,13,0xcb);
+			Marshal.WriteByte(thbdaBuf,14,0x3d);
+			Marshal.WriteByte(thbdaBuf,15,0x67);
+			Marshal.WriteInt32(thbdaBuf,16,(int)THBDA_IOCTL_CI_PARSER_PMT);
+			Marshal.WriteInt32(thbdaBuf,20,ptrPARSERPMTINFO.ToInt32());
+			Marshal.WriteInt32(thbdaBuf,24,lenParserPMTInfo);
+			Marshal.WriteInt32(thbdaBuf,28,0);
+			Marshal.WriteInt32(thbdaBuf,32,0);
+			Marshal.WriteInt32(thbdaBuf,36,ptrDwBytesReturned.ToInt32());
 
-			SetStructure(THBDA_TUNER,0,typeof(THBDACMD), bdaCmd);
-			
+			IPin pin=DirectShowUtil.FindPinNr(captureFilter,PinDirection.Input,0);
+			if (pin!=null) 
+			{
+				IKsPropertySet propertySet= pin as IKsPropertySet;
+				if (propertySet!=null) 
+				{
+					Guid propertyGuid=THBDA_TUNER;
+					int hr=propertySet.RemoteSet(ref propertyGuid,0,IntPtr.Zero,0, thbdaBuf,(uint)thbdaLen );
+					if (hr!=0)
+					{
+						Log.Write("SetStructure() failed 0x{0:X}",hr);
+					}
+					else
+						Log.Write("SetStructure() returned ok 0x{0:X}",hr);
+				}
+			}
+
+
+			Marshal.FreeCoTaskMem(thbdaBuf);
 			Marshal.FreeCoTaskMem(ptrDwBytesReturned);
 			Marshal.FreeCoTaskMem(ptrPARSERPMTINFO);
 			Marshal.FreeCoTaskMem(ptrPMT);
@@ -86,28 +115,23 @@ namespace DShowNET
 			IPin pin=DirectShowUtil.FindPinNr(captureFilter,PinDirection.Input,0);
 			if (pin==null) return ;
 			IKsPropertySet propertySet= pin as IKsPropertySet;
-			uint IsTypeSupported=0;
 			if (propertySet==null) 
 			{
 				Log.Write("SetStructure() properySet=null");
 				return ;
 			}
 
-			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
-			{
-				Log.Write("GetString() GetStructure is not supported");
-				return ;
-			}
-
 			int iSize=Marshal.SizeOf(structureType);
+			Log.Write("size:{0}",iSize);
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
 			Marshal.StructureToPtr(structValue,pDataReturned,true);
-			hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,(uint)Marshal.SizeOf(structureType) );
+			int hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,(uint)Marshal.SizeOf(structureType) );
 			if (hr!=0)
 			{
 				Log.Write("SetStructure() failed 0x{0:X}",hr);
 			}
+			else
+				Log.Write("SetStructure() returned ok 0x{0:X}",hr);
 			Marshal.FreeCoTaskMem(pDataReturned);
 		}
 
