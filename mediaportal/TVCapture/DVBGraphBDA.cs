@@ -2932,7 +2932,7 @@ namespace MediaPortal.TV.Recording
 				{
 					//get the IDVBSLocator interface
 					int lowOsc,hiOsc;
-					LoadLNBSettings(ref ch,ch.DiSEqC, out lowOsc, out hiOsc);
+					LoadLNBSettings(ref ch,disecqNo, out lowOsc, out hiOsc);
 					TunerLib.IDVBSTuningSpace dvbSpace =myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
 					if (dvbSpace==null)
 					{

@@ -157,13 +157,12 @@ namespace MediaPortal.TV.Database
 		{
 			lock (typeof(TVDatabase))
 			{
-				string strSQL;
+				string strSQL=String.Empty;
 				try
 				{
 					DatabaseUtility.RemoveInvalidChars(ref provider);
 					DatabaseUtility.RemoveInvalidChars(ref channel);
 
-					string strChannel=channel;
 					SQLiteResultSet results=null;
 
 					strSQL=String.Format( "select * from tblDVBSMapping ");
@@ -200,7 +199,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception SQL:{0} err:{1} stack:{2}", strSQL,ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -211,7 +210,7 @@ namespace MediaPortal.TV.Database
 		{
 			lock (typeof(TVDatabase))
 			{
-				string strSQL;
+				string strSQL=String.Empty;
 				try
 				{
 
@@ -235,9 +234,13 @@ namespace MediaPortal.TV.Database
 						//eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
 						// teltxtpid,scrambled, pol,lnbfreq,networkid
 
+						string provider=ch.ServiceProvider;
+						string service=ch.ServiceName;
+						DatabaseUtility.RemoveInvalidChars(ref provider);
+						DatabaseUtility.RemoveInvalidChars(ref service);
 						strSQL=String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 							ch.ID,ch.Frequency,ch.Symbolrate,ch.FEC,ch.LNBKHz,ch.DiSEqC,
-							ch.ProgramNumber,ch.ServiceType,ch.ServiceProvider,ch.ServiceName,(ch.HasEITSchedule==true?1:0),
+							ch.ProgramNumber,ch.ServiceType,provider,service,(ch.HasEITSchedule==true?1:0),
 							(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
 							ch.TeletextPid,(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.AudioLanguage,ch.AudioLanguage1,ch.AudioLanguage2,ch.AudioLanguage3,ch.ECMPid,ch.PMTPid);
 					  
@@ -251,7 +254,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception {0} err:{1} stack:{2}", strSQL,ex.Message,ex.StackTrace);
 					Open();
 				}
 
@@ -685,7 +688,7 @@ namespace MediaPortal.TV.Database
 		{
 			lock (typeof(TVDatabase))
 			{
-				string strSQL;
+				string strSQL=String.Empty;
 				try
 				{
 					string strChannel=channel.Name;
@@ -743,7 +746,7 @@ namespace MediaPortal.TV.Database
 				} 
 				catch (Exception ex) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception sql:{0} err:{1} stack:{2}", strSQL,ex.Message,ex.StackTrace);
 					Open();
 				}
 
