@@ -2942,7 +2942,7 @@ namespace MediaPortal.TV.Recording
 						return;
 					}
 
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: set LNBSwitch to {0} Khz lowOsc={1} MHz hiOsc={2} Mhz",ch.LNBKHz, lowOsc, hiOsc);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: set LNBSwitch to {0} Khz lowOsc={1} MHz hiOsc={2} Mhz disecq:{3}",ch.LNBKHz, lowOsc, hiOsc, ch.DiSEqC);
 					dvbSpace.LNBSwitch=ch.LNBKHz;
 					dvbSpace.SpectralInversion=TunerLib.SpectralInversion.BDA_SPECTRAL_INVERSION_AUTOMATIC;
 					dvbSpace.LowOscillator=lowOsc*1000;
