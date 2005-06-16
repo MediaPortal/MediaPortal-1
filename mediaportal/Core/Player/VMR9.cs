@@ -389,6 +389,20 @@ namespace MediaPortal.Player
 
 			if(show==true)
 			{
+
+				// get AR for the bitmap
+				Rectangle src,dest;
+				VMR9Util.g_vmr9.GetVideoWindows(out src,out dest);
+				
+				int width=VMR9Util.g_vmr9.VideoWidth;
+				int height=VMR9Util.g_vmr9.VideoHeight;
+
+				float xx=(float)src.X/width;
+				float yy=(float)src.Y/height;
+				float fx=(float)(src.X+src.Width)/width;
+				float fy=(float)(src.Y+src.Height)/height;
+				//
+
 				Microsoft.DirectX.Direct3D.Surface surface=GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,GUIGraphicsContext.Height,Microsoft.DirectX.Direct3D.Format.X8R8G8B8,Microsoft.DirectX.Direct3D.Pool.SystemMemory);
 				Microsoft.DirectX.Direct3D.SurfaceLoader.FromStream(surface,mStr,Microsoft.DirectX.Direct3D.Filter.None,0);
 				bmp.dwFlags=4|8;
@@ -400,10 +414,10 @@ namespace MediaPortal.Player
 					bmp.pDDS=(System.IntPtr)surface.UnmanagedComPointer;
 				}
 				bmp.rDest=new VMR9NormalizedRect();
-				bmp.rDest.top=0.0f;
-				bmp.rDest.left=0.0f;
-				bmp.rDest.bottom=1.0f;
-				bmp.rDest.right=1.0f;
+				bmp.rDest.top=yy;
+				bmp.rDest.left=xx;
+				bmp.rDest.bottom=fy;
+				bmp.rDest.right=fx;
 				bmp.fAlpha=alphaValue;
 				//Log.Write("SaveVMR9Bitmap() called");
 				hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
@@ -412,7 +426,8 @@ namespace MediaPortal.Player
 					//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
 					return false;
 				}
-				surface.Dispose();					
+				surface.Dispose();	
+				
 			}
 			else
 			{
