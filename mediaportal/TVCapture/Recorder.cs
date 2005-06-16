@@ -975,7 +975,7 @@ namespace MediaPortal.TV.Recording
 					m_strTVChannel=value;
 					if (OnTvChannelChanged!=null)
 						OnTvChannelChanged(m_strTVChannel);
-					SetZapOSDData(m_strTVChannel);
+					//SetZapOSDData(m_strTVChannel);
 				}
 			}
 		}

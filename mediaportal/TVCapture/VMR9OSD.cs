@@ -373,7 +373,7 @@ namespace MediaPortal.TV.Recording
 			m_osdRendered=OSD.VolumeOSD;
 			m_bitmapIsVisible=false;
 			m_timeout=3000; // 3 sec for volume osd
-			if(System.IO.File.Exists(m_mediaPath+String.Format("volume_level_{0}.png",volume))==true)
+			if(System.IO.File.Exists(m_mediaPath+String.Format("volume_level_10.png",volume))==true)
 			{
 				if(m_osdSkin.mute!=null)
 				{
