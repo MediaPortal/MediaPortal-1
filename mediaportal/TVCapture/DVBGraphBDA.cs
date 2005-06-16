@@ -2449,7 +2449,7 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					ch.LNBFrequency=lnb0MHZ;
-					ch.LNBKHz=0;
+					ch.LNBKHz=-1;
 				}
 				lowOsc=lnb0MHZ;
 				hiOsc=lnb1MHZ;
@@ -2970,7 +2970,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed SubmitTuneRequest() could not get IDVBSLocator");
 						return;
 					}
-					//set the properties for the new tuning request. 
+					//set the properties for the new tuning request.
 					myLocator.CarrierFrequency		= ch.Frequency;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)ch.FEC;
 					if (ch.Polarity==0) 
