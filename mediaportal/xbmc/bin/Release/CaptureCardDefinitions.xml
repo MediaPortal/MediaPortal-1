@@ -5819,7 +5819,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600 - ATSC)"			checkdevice="true"></filter>
         <filter cat="capture"         name="VBox Vb35xx Capture"				checkdevice="true"></filter>
       </filters>
       <connections>
@@ -5835,7 +5835,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600 - ATSC)"			checkdevice="true"></filter>
         <filter cat="capture"         name="VBox Vb35xx Capture"				checkdevice="true"></filter>
       </filters>
       <connections>
@@ -5851,7 +5851,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600 - ATSC)"			checkdevice="true"></filter>
         <filter cat="capture"         name="VBox Vb35xx Capture"				checkdevice="true"></filter>
       </filters>
       <connections>
