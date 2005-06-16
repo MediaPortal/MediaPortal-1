@@ -4,24 +4,25 @@
 		<height>576</height>
 		<version>0.1.0.15</version>
 		<changelog>
-		  <change date="28-1-2005">Added my tetris gfx,sounds and xml</change>
-		  <change date="10-2-2005">Added my zap osd gfx and xml</change>
-		  <change date="16-2-2005">updated the alarm xmls</change>
-		  <change date="16-2-2005">updated the music artists and genres xml</change>
-		  <change date="17-2-2005">fixed mytvscheduler.xml</change>
-		  <change date="17-2-2005">Added my tv fullscreen/osd/zaposd record status</change>
-		  <change date="23-2-2005">Added list control to mytvrecordedtv.xml</change>
-		  <change date="24-2-2005">Added digits to spincontrols in mytvscheduler.xml</change>
-		  <change date="25-2-2005">changed mytvrecordedtv.xml</change>
-		  <change date="25-2-2005">changed mytvrecordedtvchannel.xml</change>
-		  <change date="25-2-2005">changed mytvrecordedtvgenre.xml</change>
-		  <change date="25-2-2005">changed mytvscheduler.xml</change>
-		  <change date="28-2-2005">changed mytvscheduler.xml</change>
-		  <change date="03-3-2005">changed mytvsearch.xml</change>
-		  <change date="08-3-2005">added DialogMenuBottomRight.xml</change>
-		  <change date="10-3-2005">added my playlists button to mymusicsongs.xml</change>
-		  <change date="18-3-2005">added FileMenu dialog window DialogFile.xml</change>
-		  <change date="15-4-2005">added Subtitle box in myTVFullscreen.xml (in B2)</change>
+			<change date="28-1-2005">Added my tetris gfx,sounds and xml</change>
+			<change date="10-2-2005">Added my zap osd gfx and xml</change>
+			<change date="16-2-2005">updated the alarm xmls</change>
+			<change date="16-2-2005">updated the music artists and genres xml</change>
+			<change date="17-2-2005">fixed mytvscheduler.xml</change>
+			<change date="17-2-2005">Added my tv fullscreen/osd/zaposd record status</change>
+			<change date="23-2-2005">Added list control to mytvrecordedtv.xml</change>
+			<change date="24-2-2005">Added digits to spincontrols in mytvscheduler.xml</change>
+			<change date="25-2-2005">changed mytvrecordedtv.xml</change>
+			<change date="25-2-2005">changed mytvrecordedtvchannel.xml</change>
+			<change date="25-2-2005">changed mytvrecordedtvgenre.xml</change>
+			<change date="25-2-2005">changed mytvscheduler.xml</change>
+			<change date="28-2-2005">changed mytvscheduler.xml</change>
+			<change date="03-3-2005">changed mytvsearch.xml</change>
+			<change date="08-3-2005">added DialogMenuBottomRight.xml</change>
+			<change date="10-3-2005">added my playlists button to mymusicsongs.xml</change>
+			<change date="18-3-2005">added FileMenu dialog window DialogFile.xml</change>
+			<change date="15-4-2005">added Subtitle box in myTVFullscreen.xml (in B2)</change>
+			<change date="16-6-2005">updated mytvcompressmain.xml</change>
 		</changelog>
 	</skin>
 	<control>
@@ -82,7 +83,7 @@
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
- 	<control>
+	<control>
 		<description>default togglebutton</description>
 		<type>togglebutton</type>
 		<id>4</id>
@@ -169,7 +170,7 @@
 		<textcolor3>ffffffff</textcolor3>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
-		<downloadColor>ff80ff80</downloadColor>		
+		<downloadColor>ff80ff80</downloadColor>
 		<textureCheckmark>check-box.png</textureCheckmark>
 		<textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
 		<MarkWidth>16</MarkWidth>
@@ -211,7 +212,7 @@
 		<textcolor3>ffffffff</textcolor3>
 		<colordiffuse>ffffffff</colordiffuse>
 		<remoteColor>ffFFA075</remoteColor>
-		<downloadColor>ff80ff80</downloadColor>		
+		<downloadColor>ff80ff80</downloadColor>
 		<textXOff>5</textXOff>
 		<textYOff>4</textYOff>
 		<textXOff2>0</textXOff2>
@@ -240,11 +241,11 @@
 		<itemWidth>108</itemWidth>
 		<itemHeight>108</itemHeight>
 		<textureWidth>80</textureWidth>
-		<textureHeight>80</textureHeight> 
+		<textureHeight>80</textureHeight>
 		<thumbWidth>62</thumbWidth>
 		<thumbHeight>62</thumbHeight>
 		<thumbPosX>9</thumbPosX>
-		<thumbPosY>9</thumbPosY>		
+		<thumbPosY>9</thumbPosY>
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
 		<font>font13</font>
@@ -255,13 +256,13 @@
 		<downloadColor>ff80ff80</downloadColor>
 		<suffix>|</suffix>
 		<textureWidthBig>108</textureWidthBig>
-		<textureHeightBig>108</textureHeightBig> 
+		<textureHeightBig>108</textureHeightBig>
 		<itemWidthBig>136</itemWidthBig>
 		<itemHeightBig>134</itemHeightBig>
 		<thumbWidthBig>84</thumbWidthBig>
 		<thumbHeightBig>84</thumbHeightBig>
 		<thumbPosXBig>12</thumbPosXBig>
-		<thumbPosYBig>12</thumbPosYBig>	
+		<thumbPosYBig>12</thumbPosYBig>
 		<thumbZoom>no</thumbZoom>
 	</control>
 	<control>
@@ -284,11 +285,11 @@
 		<itemWidth>108</itemWidth>
 		<itemHeight>108</itemHeight>
 		<textureWidth>80</textureWidth>
-		<textureHeight>80</textureHeight> 
+		<textureHeight>80</textureHeight>
 		<thumbWidth>62</thumbWidth>
 		<thumbHeight>62</thumbHeight>
 		<thumbPosX>9</thumbPosX>
-		<thumbPosY>9</thumbPosY>		
+		<thumbPosY>9</thumbPosY>
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
 		<font>font13</font>
@@ -299,13 +300,13 @@
 		<downloadColor>ff80ff80</downloadColor>
 		<suffix>|</suffix>
 		<textureWidthBig>108</textureWidthBig>
-		<textureHeightBig>108</textureHeightBig> 
+		<textureHeightBig>108</textureHeightBig>
 		<itemWidthBig>136</itemWidthBig>
 		<itemHeightBig>134</itemHeightBig>
 		<thumbWidthBig>84</thumbWidthBig>
 		<thumbHeightBig>84</thumbHeightBig>
 		<thumbPosXBig>12</thumbPosXBig>
-		<thumbPosYBig>12</thumbPosYBig>	
+		<thumbPosYBig>12</thumbPosYBig>
 		<background>previewbackground.png</background>
 		<backgroundx>290</backgroundx>
 		<backgroundy>97</backgroundy>
@@ -318,7 +319,6 @@
 		<InfoImagewidth>360</InfoImagewidth>
 		<InfoImageheight>302</InfoImageheight>
 		<InfoImagediffuse>ffffffff</InfoImagediffuse>
-
 	</control>
 	<control>
 		<description>default fadelabel</description>
@@ -423,9 +423,9 @@
 		<MarkHeight>16</MarkHeight>
 		<align>left</align>
 		<shadow>no</shadow>
-	</control>	
+	</control>
 	<control>
-	      <description>default select button</description>
+		<description>default select button</description>
 		<type>selectbutton</type>
 		<id>6</id>
 		<posX>55</posX>
@@ -453,5 +453,5 @@
 		<onright>50</onright>
 		<onup>3</onup>
 		<ondown>7</ondown>
-	</control>	
+	</control>
 </controls>

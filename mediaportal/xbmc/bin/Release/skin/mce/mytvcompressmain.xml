@@ -19,7 +19,7 @@
 			<posX>60</posX>
 			<posY>20</posY>
 			<texture>television_logo.png</texture>
-		</control>	
+		</control>
 		<control>
 			<description>Compress Text Label</description>
 			<type>label</type>
@@ -30,6 +30,56 @@
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control>
+			<description>description line#1 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>100</posY>
+			<label>999</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>
+		<control>
+			<description>description line#2 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>116</posY>
+			<label>1000</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>
+		<control>
+			<description>description line#3 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>132</posY>
+			<label>1001</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>
+		<control>
+			<description>description line#4 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>148</posY>
+			<label>1002</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
+		</control>
+		<control>
+			<description>description line#5 Label</description>
+			<type>label</type>
+			<id>1</id>
+			<posX>300</posX>
+			<posY>164</posY>
+			<label>1003</label>
+			<align>left</align>
+			<textcolor>ffa9d0f7</textcolor>
 		</control>
 		<control>
 			<description>Date</description>
@@ -57,19 +107,19 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
-		    <control>
-			    <description>Auto compress button</description>
-			    <type>button</type>
-			    <id>2</id>
-			    <posX>60</posX>
-			    <posY>97</posY>
-			    <label>895</label>
-			    <onleft>2</onleft>
-			    <onright>2</onright>
-			    <onup>17</onup>
-			    <ondown>3</ondown>
-			    <hyperlink>611</hyperlink>
-		    </control>
+			<control>
+				<description>Auto compress button</description>
+				<type>button</type>
+				<id>2</id>
+				<posX>60</posX>
+				<posY>97</posY>
+				<label>895</label>
+				<onleft>2</onleft>
+				<onright>2</onright>
+				<onup>17</onup>
+				<ondown>3</ondown>
+				<hyperlink>611</hyperlink>
+			</control>
 			<control>
 				<description>Compress</description>
 				<type>button</type>
@@ -108,29 +158,29 @@
 				<onup>4</onup>
 				<ondown>99</ondown>
 				<hyperlink>613</hyperlink>
-			</control>	
+			</control>
 		</control>
 		<control>
 			<description>Current program background</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX> 
-			<posY>419</posY> 
-			<width>161</width> 
-			<height>134</height> 
+			<posX>75</posX>
+			<posY>419</posY>
+			<width>161</width>
+			<height>134</height>
 			<texture>playback_background.png</texture>
 		</control>
 		<control>
-			<description>TV preview window</description> 
-			<type>videowindow</type> 
-			<id>99</id> 
-			<posX>86</posX> 
-			<posY>431</posY> 
-			<width>135</width> 
-			<height>108</height> 
+			<description>TV preview window</description>
+			<type>videowindow</type>
+			<id>99</id>
+			<posX>86</posX>
+			<posY>431</posY>
+			<width>135</width>
+			<height>108</height>
 			<onup>5</onup>
 			<action>18</action>
-			<textureFocus>tv_green_border.png</textureFocus> 
+			<textureFocus>tv_green_border.png</textureFocus>
 		</control>
 	</controls>
 </window>
