@@ -306,7 +306,7 @@ namespace DShowNET
 			return objReturned;
 		}
 
-		protected void SetStructure(Guid guidPropSet, uint propId, System.Type structureType, object structValue)
+		protected virtual void SetStructure(Guid guidPropSet, uint propId, System.Type structureType, object structValue)
 		{
 			Guid propertyGuid=guidPropSet;
 			IKsPropertySet propertySet= captureFilter as IKsPropertySet;

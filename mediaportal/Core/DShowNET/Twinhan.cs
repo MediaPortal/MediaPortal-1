@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices; 
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
@@ -30,7 +31,9 @@ namespace DShowNET
 		{
 			get
 			{
-				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+				IPin pin=DirectShowUtil.FindPinNr(captureFilter,PinDirection.Input,0);
+				if (pin==null) return false;
+				IKsPropertySet propertySet= pin as IKsPropertySet;
 				if (propertySet==null) return false;
 				Guid propertyGuid=THBDA_TUNER;
 				uint IsTypeSupported=0;
@@ -45,6 +48,7 @@ namespace DShowNET
 
 		public void SendPMT(uint videoPid, uint audioPid,byte[] PMT, int pmtLen)
 		{
+			Log.Write("Twinham send PMT len:{0} video:0x{1:X} audio:0x{2:X}", pmtLen,videoPid,audioPid);
 			IntPtr ptrPMT = Marshal.AllocCoTaskMem(pmtLen);
 			for (int i=0; i < pmtLen;++i) Marshal.WriteByte(ptrPMT,i,PMT[i]);
 
@@ -68,12 +72,44 @@ namespace DShowNET
 			bdaCmd.nOutBufferSize = 0;
 			bdaCmd.lpBytesReturned = ptrDwBytesReturned;
 
-			base.SetStructure(THBDA_TUNER,0,typeof(THBDACMD), bdaCmd);
+			SetStructure(THBDA_TUNER,0,typeof(THBDACMD), bdaCmd);
 			
 			Marshal.FreeCoTaskMem(ptrDwBytesReturned);
 			Marshal.FreeCoTaskMem(ptrPARSERPMTINFO);
 			Marshal.FreeCoTaskMem(ptrPMT);
 
 		}
+
+		protected override void SetStructure(Guid guidPropSet, uint propId, System.Type structureType, object structValue)
+		{
+			Guid propertyGuid=guidPropSet;
+			IPin pin=DirectShowUtil.FindPinNr(captureFilter,PinDirection.Input,0);
+			if (pin==null) return ;
+			IKsPropertySet propertySet= pin as IKsPropertySet;
+			uint IsTypeSupported=0;
+			if (propertySet==null) 
+			{
+				Log.Write("SetStructure() properySet=null");
+				return ;
+			}
+
+			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
+			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
+			{
+				Log.Write("GetString() GetStructure is not supported");
+				return ;
+			}
+
+			int iSize=Marshal.SizeOf(structureType);
+			IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
+			Marshal.StructureToPtr(structValue,pDataReturned,true);
+			hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,(uint)Marshal.SizeOf(structureType) );
+			if (hr!=0)
+			{
+				Log.Write("SetStructure() failed 0x{0:X}",hr);
+			}
+			Marshal.FreeCoTaskMem(pDataReturned);
+		}
+
 	}
 }
