@@ -2449,7 +2449,7 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					ch.LNBFrequency=lnb0MHZ;
-					ch.LNBKHz=0;
+					ch.LNBKHz=-1;
 				}
 				lowOsc=lnb0MHZ;
 				hiOsc=lnb1MHZ;
