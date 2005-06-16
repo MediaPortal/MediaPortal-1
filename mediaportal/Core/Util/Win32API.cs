@@ -16,6 +16,14 @@ namespace MediaPortal.Util
 
 //    [DllImportAttribute("user32", EntryPoint="SetWindowsHookExA", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
 //    public static extern int SetWindowsHookEx(int idHook, LowLevelKeyboardDelegate lpfn, int hmod, int dwThreadId);
+		[DllImport("gdi32.dll", EntryPoint="CreateCompatibleDC")]
+		public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
+
+		[DllImport("gdi32.dll", EntryPoint="SelectObject")]
+		public static extern IntPtr SelectObject(IntPtr hdc,IntPtr bmp);
+
+		[DllImport("gdi32.dll", EntryPoint="DeleteDC")]
+		public static extern IntPtr DeleteDC(IntPtr hDc);
 
     [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
     public static extern int CallNextHookEx(int hHook, int nCode, int wParam, ref int lParam);

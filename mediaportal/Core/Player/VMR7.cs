@@ -28,15 +28,6 @@ namespace MediaPortal.Player
 	public class VMR7Util
 	{
 		
-		[DllImport("gdi32.dll", EntryPoint="CreateCompatibleDC")]
-		static extern IntPtr CreateCompatibleDC(IntPtr hdc);
-
-		[DllImport("gdi32.dll", EntryPoint="SelectObject")]
-		static extern IntPtr SelectObject(IntPtr hdc,IntPtr bmp);
-
-		[DllImport("gdi32.dll", EntryPoint="DeleteDC")]
-		static extern IntPtr DeleteDC(IntPtr hDc);
-
 		static public VMR7Util g_vmr7=null;
 		public IBaseFilter		VMR7Filter = null;
 		IQualProp quality=null;
@@ -195,8 +186,8 @@ namespace MediaPortal.Player
 						g.Clear(Color.Black);
 						g.DrawImage(bitmap,0,0,bitmap.Width,bitmap.Height);
 						IntPtr handle1=g.GetHdc();
-						IntPtr hdc=CreateCompatibleDC(handle1);
-						IntPtr oldBitmap=SelectObject(hdc,n.GetHbitmap());
+						IntPtr hdc=Util.Win32API.CreateCompatibleDC(handle1);
+						IntPtr oldBitmap=Util.Win32API.SelectObject(hdc,n.GetHbitmap());
 						bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC | 8 ;
 						bmp.color.blu=0;
 						bmp.color.green=0;
@@ -218,7 +209,7 @@ namespace MediaPortal.Player
 					
 						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
 						//g.ReleaseHdc(ptrSrc);
-						DeleteDC(hdc);
+						Util.Win32API.DeleteDC(hdc);
 						g.ReleaseHdc(handle1);
 						g.Dispose();
 						n.Dispose();
