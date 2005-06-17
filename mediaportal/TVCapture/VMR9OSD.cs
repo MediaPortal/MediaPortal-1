@@ -422,321 +422,183 @@ namespace MediaPortal.TV.Recording
 		}
 		public void RenderZapOSD(TVChannel channel,int signalQuality,int signalLevel)
 		{
-			int gWidth=GUIGraphicsContext.Width;
-			int gHeight=GUIGraphicsContext.Height;
-			Bitmap bm=new Bitmap(gWidth,gHeight);//m_mediaPath+@"bgimage.png");
-			Graphics gr=Graphics.FromImage(bm);
-			int x=140;
-			int y=0;
-			if(bm==null || gr==null || channel==null)
+			try
 			{
-				Log.Write("end rendering zaposd: no bitmap (memory problem?)");
-				return ;
-			}
-			m_osdRendered=OSD.ZapOSD;
-			m_timeout=0;
-			m_actualChannel=channel;
-			m_channelSNR=signalQuality;
-			m_channelLevel=signalLevel;
-			// set the tvchannel data
-			string serviceName=channel.Name;
-			TVProgram tvNext=null;
-			TVProgram tvNow=channel.GetProgramAt(DateTime.Now);
-			string nowStart="";
-			string nowDur="";
-			string nowDescr="";
-			string nowTitle="";
-			string nextTitle="";
-			string nextStart="";
-			string nextDur="";
-			double done=0;
-			double signalQual=(double)signalQuality;
-			double signalLev=(double)signalLevel;
+				int gWidth=GUIGraphicsContext.Width;
+				int gHeight=GUIGraphicsContext.Height;
+				Bitmap bm=new Bitmap(gWidth,gHeight);//m_mediaPath+@"bgimage.png");
+				Graphics gr=Graphics.FromImage(bm);
+				int x=140;
+				int y=0;
+				if(bm==null || gr==null || channel==null)
+				{
+					Log.Write("end rendering zaposd: no bitmap (memory problem?)");
+					return ;
+				}
+				m_osdRendered=OSD.ZapOSD;
+				m_timeout=0;
+				m_actualChannel=channel;
+				m_channelSNR=signalQuality;
+				m_channelLevel=signalLevel;
+				// set the tvchannel data
+				string serviceName=channel.Name;
+				TVProgram tvNext=null;
+				TVProgram tvNow=channel.GetProgramAt(DateTime.Now);
+				string nowStart="";
+				string nowDur="";
+				string nowDescr="";
+				string nowTitle="";
+				string nextTitle="";
+				string nextStart="";
+				string nextDur="";
+				double done=0;
+				double signalQual=(double)signalQuality;
+				double signalLev=(double)signalLevel;
 
 
-			if(tvNow!=null)
-			{
-				tvNext=channel.GetProgramAt(tvNow.EndTime.AddMinutes(1));		
-				nowStart=tvNow.StartTime.ToShortTimeString();
-				nowDur=tvNow.Duration.ToString();
-				double nowDone=tvNow.EndTime.Subtract(DateTime.Now).TotalMinutes;
-				double nowTotal=tvNow.EndTime.Subtract(tvNow.StartTime).TotalMinutes;
-				done=(nowDone*100)/nowTotal;
-				nowTitle=tvNow.Title;
-				nowDescr=tvNow.Description;
-			}
-			if(tvNext!=null)
-			{
-				nextStart=tvNext.StartTime.ToShortTimeString();
-				nextTitle=tvNext.Title;
-				nextDur=tvNext.Duration.ToString();
-			}
+				if(tvNow!=null)
+				{
+					tvNext=channel.GetProgramAt(tvNow.EndTime.AddMinutes(1));		
+					nowStart=tvNow.StartTime.ToShortTimeString();
+					nowDur=tvNow.Duration.ToString();
+					double nowDone=tvNow.EndTime.Subtract(DateTime.Now).TotalMinutes;
+					double nowTotal=tvNow.EndTime.Subtract(tvNow.StartTime).TotalMinutes;
+					done=(nowDone*100)/nowTotal;
+					nowTitle=tvNow.Title;
+					nowDescr=tvNow.Description;
+				}
+				if(tvNext!=null)
+				{
+					nextStart=tvNext.StartTime.ToShortTimeString();
+					nextTitle=tvNext.Title;
+					nextDur=tvNext.Duration.ToString();
+				}
 			
-			// first graphic elements and pictures
-			// rects
-			string skinPath=GUIGraphicsContext.Skin+@"\media\";
-			// bg 2 draw?
+				// first graphic elements and pictures
+				// rects
+				string skinPath=GUIGraphicsContext.Skin+@"\media\";
+				// bg 2 draw?
 
-			int width=gWidth;
-			int height=210;
+				int width=gWidth;
+				int height=210;
 
-			int xpos=0;
-			int ypos=y+5;
-			int timeX=0;
-			int timeY=0;
-			int logoW=0;
-			int logoH=0;
+				int xpos=0;
+				int ypos=y+5;
+				int timeX=0;
+				int timeY=0;
+				int logoW=0;
+				int logoH=0;
 
-			if(System.IO.File.Exists(skinPath+"background.png")==true)
-			{
-				Bitmap osd=new Bitmap(skinPath+"background.png");
-				xpos=(gWidth-width)/2;
-				ypos=gHeight-height;
-				y=ypos+10;
-				gr.DrawImage(osd,new Rectangle(xpos,ypos,width,height),0,0,width,height,GraphicsUnit.Pixel);
-				gr.DrawImage(osd,new Rectangle(x,y,width-(x+10),height-20),x,y,width-(x+10),height-20,GraphicsUnit.Pixel);
-				osd=new Bitmap(skinPath+"icon_empty_focus.png");
-				logoW=osd.Width;
-				logoH=osd.Height;
-				int w=width-(x+10);
+				if(System.IO.File.Exists(skinPath+"background.png")==true)
+				{
+					Bitmap osd=new Bitmap(skinPath+"background.png");
+					xpos=(gWidth-width)/2;
+					ypos=gHeight-height;
+					y=ypos+10;
+					gr.DrawImage(osd,new Rectangle(xpos,ypos,width,height),0,0,osd.Width,osd.Height,GraphicsUnit.Pixel);
+					gr.DrawImage(osd,new Rectangle(x,y,width-(x+10),height-20),x,y,width-(x+10),height-20,GraphicsUnit.Pixel);
+					osd=new Bitmap(skinPath+"icon_empty_focus.png");
+					logoW=osd.Width;
+					logoH=osd.Height;
+					int w=width-(x+10);
+					xpos=10;
+					ypos+=10;
+					gr.DrawImage(osd,xpos,ypos,osd.Width,osd.Height);
+					timeX=xpos+10;
+					timeY=ypos+osd.Height+10;
+					if(nowStart!="")
+						gr.FillRectangle(new SolidBrush(Color.DarkBlue),x,y+30,w,60);
+					osd.Dispose();
+				}
+
+				x+=5;
+				// text always gets an x-offset 40 pix.
+				// tv channel logo
 				xpos=10;
-				ypos+=10;
-				gr.DrawImage(osd,xpos,ypos,osd.Width,osd.Height);
-				timeX=xpos+10;
-				timeY=ypos+osd.Height+10;
+				ypos=y;
+				string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
+				if(System.IO.File.Exists(tvlogo))
+				{
+					Bitmap logo=new Bitmap(tvlogo);
+					Util.BitmapResize.Resize(ref logo,64,64,true,true);
+					gr.DrawImage(logo,xpos+((logoW-64)/2),ypos+((logoH-64)/2),64,64);
+					logo.Dispose();
+				}
+				//channel name (chName)
+				gr.DrawString(serviceName,new System.Drawing.Font("Arial",16),new SolidBrush(Color.White),x,y,StringFormat.GenericTypographic);
+				y+=35;
+				//now on tv (chNow)
+
+				Font drawFont=new System.Drawing.Font("Arial",14);
+				Brush drawBrush=new SolidBrush(Color.White);
+				SizeF xEnd=gr.MeasureString(nowDur,drawFont);
+				int xPosEnd=(gWidth-70)-((int)xEnd.Width);
+				gr.DrawString(nowDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
+				gr.DrawString(nowStart+"  "+nowTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
+				// now prog
 				if(nowStart!="")
-					gr.FillRectangle(new SolidBrush(Color.DarkBlue),x,y+30,w,60);
-				osd.Dispose();
-			}
+				{
+					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
+					gr.DrawImage(prog,new Rectangle(x,y+26,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
+					prog=new Bitmap(skinPath+"osd_progress_mid_orange.png");
+					gr.DrawImage(prog,new Rectangle(x+1,y+28,200-((int)((done/100)*200))-2,prog.Height),0,0,200-((int)((done/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
+					prog.Dispose();
+					y+=65;
+				}
+				//next on tv (chNow)
 
-			x+=5;
-			// text always gets an x-offset 40 pix.
-			// tv channel logo
-			xpos=10;
-			ypos=y;
-			string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
-			if(System.IO.File.Exists(tvlogo))
+				xPosEnd=(gWidth-70)-((int)xEnd.Width);
+				gr.DrawString(nextDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
+				gr.DrawString(nextStart+"  "+nextTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
+
+				y+=35;
+
+				// quality and level
+				xEnd.Width=100;
+
+				if(signalQuality>0)
+				{
+					gr.DrawString("Quality:",drawFont,drawBrush,x,y);
+					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width),y,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
+					if(signalQuality>50)
+						prog=new Bitmap(skinPath+"osd_progress_mid.png");
+					else
+						prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
+
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,((int)((signalQual/100)*200))-2,prog.Height),0,0,((int)((signalQual/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
+					prog.Dispose();
+					y+=25;
+				}
+				if(signalLevel>0)
+				{
+					gr.DrawString("Level:",drawFont,drawBrush,x,y);
+					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width),y,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
+					if(signalLevel>50)
+						prog=new Bitmap(skinPath+"osd_progress_mid.png");
+					else
+						prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
+
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,((int)((signalLev/100)*200))-2,prog.Height),0,0,((int)((signalLev/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
+					prog.Dispose();
+				}
+
+				gr.DrawString(DateTime.Now.ToShortTimeString(),drawFont,drawBrush,timeX,timeY);
+
+				drawFont.Dispose();
+				drawBrush.Dispose();
+
+
+				m_bitmapIsVisible=true;
+				SaveBitmap(bm,true,true,m_renderOSDAlpha);
+			}
+			catch(Exception ex)
 			{
-				Bitmap logo=new Bitmap(tvlogo);
-				Util.BitmapResize.Resize(ref logo,64,64,true,true);
-				gr.DrawImage(logo,xpos+((logoW-64)/2),ypos+((logoH-64)/2),64,64);
-				logo.Dispose();
+				Log.Write("exception in render-osd:{0}, {1}, {2}",ex.Message,ex.Source,ex.StackTrace);
+				SaveBitmap(null,false,true,m_renderOSDAlpha);
+
 			}
-			//channel name (chName)
-			gr.DrawString(serviceName,new System.Drawing.Font("Arial",16),new SolidBrush(Color.White),x,y,StringFormat.GenericTypographic);
-			y+=35;
-			//now on tv (chNow)
-
-			Font drawFont=new System.Drawing.Font("Arial",14);
-			Brush drawBrush=new SolidBrush(Color.White);
-			SizeF xEnd=gr.MeasureString(nowDur,drawFont);
-			int xPosEnd=(gWidth-70)-((int)xEnd.Width);
-			gr.DrawString(nowDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
-			gr.DrawString(nowStart+"  "+nowTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
-			// now prog
-			if(nowStart!="")
-			{
-				Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
-				gr.DrawImage(prog,new Rectangle(x,y+26,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
-				prog=new Bitmap(skinPath+"osd_progress_mid_orange.png");
-				gr.DrawImage(prog,new Rectangle(x+1,y+28,200-((int)((done/100)*200))-2,prog.Height),0,0,200-((int)((done/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
-				prog.Dispose();
-				y+=65;
-			}
-			//next on tv (chNow)
-
-			xPosEnd=(gWidth-70)-((int)xEnd.Width);
-			gr.DrawString(nextDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
-			gr.DrawString(nextStart+"  "+nextTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
-
-			y+=35;
-
-			// quality and level
-			xEnd.Width=100;
-
-			if(signalQuality>0)
-			{
-				gr.DrawString("Quality:",drawFont,drawBrush,x,y);
-				Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
-				gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width),y,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
-				if(signalQuality>50)
-					prog=new Bitmap(skinPath+"osd_progress_mid.png");
-				else
-					prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
-
-				gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,((int)((signalQual/100)*200))-2,prog.Height),0,0,((int)((signalQual/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
-				prog.Dispose();
-				y+=25;
-			}
-			if(signalLevel>0)
-			{
-				gr.DrawString("Level:",drawFont,drawBrush,x,y);
-				Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
-				gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width),y,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
-				if(signalLevel>50)
-					prog=new Bitmap(skinPath+"osd_progress_mid.png");
-				else
-					prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
-
-				gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,((int)((signalLev/100)*200))-2,prog.Height),0,0,((int)((signalLev/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
-				prog.Dispose();
-			}
-
-			gr.DrawString(DateTime.Now.ToShortTimeString(),drawFont,drawBrush,timeX,timeY);
-
-			drawFont.Dispose();
-			drawBrush.Dispose();
-
-//			//signal level
-//			if(signalQuality>0)
-//			{
-//				string sigBar=m_osdSkin.sigBarQ;
-//				if(sigBar!=null)
-//				{
-//					string[] seg=sigBar.Split(new char[]{':'});
-//					if(seg!=null)
-//					{
-//						if(seg[0]=="progressbar" && seg.Length==11)
-//						{
-//							int xPos=0;
-//							int yPos=0;
-//							int width=0;
-//							int height=0;
-//
-//							if(seg[1].StartsWith("m"))
-//								xPos=GetPosition(gWidth,seg[1]);
-//							else
-//								xPos=x+Convert.ToInt16(seg[1]);
-//
-//							if(seg[2].StartsWith("m"))
-//								yPos=GetPosition(gHeight,seg[2]);
-//							else
-//								yPos=y+Convert.ToInt16(seg[2]);
-//							if(seg[3]=="max")
-//								width=gWidth;
-//							else
-//								width=Convert.ToInt16(seg[3]);
-//							if(seg[4]=="max")
-//								height=gHeight;
-//							else
-//								height=Convert.ToInt16(seg[4]);
-//							Color fColor=GetColor(seg[5]);
-//							Color bColor=GetColor(seg[6]);
-//							Color tColor=GetColor(seg[7]);
-//							Font drawFont=new Font(seg[8],Convert.ToInt16(seg[9]));
-//							SizeF xEnd=gr.MeasureString(seg[10],drawFont);
-//							gr.DrawString(seg[10],drawFont,new SolidBrush(tColor),xPos,yPos,StringFormat.GenericTypographic);
-//							xPos+=5+((int)xEnd.Width);
-//							gr.FillRectangle(new SolidBrush(bColor),xPos,yPos,width,height);
-//							gr.FillRectangle(new SolidBrush(fColor),xPos+2,yPos+2,((int)(((signalQual/100)*(width-4)))),height-4);
-//						}
-//					}
-//				}
-//			}
-//			//signal level
-//			if(signalLevel>0)
-//			{
-//				string sigBar=m_osdSkin.sigBarL;
-//				if(sigBar!=null)
-//				{
-//					string[] seg=sigBar.Split(new char[]{':'});
-//					if(seg!=null)
-//					{
-//						if(seg[0]=="progressbar" && seg.Length==11)
-//						{
-//							int xPos=0;
-//							int yPos=0;
-//							int width=0;
-//							int height=0;
-//
-//							if(seg[1].StartsWith("m"))
-//								xPos=GetPosition(gWidth,seg[1]);
-//							else
-//								xPos=x+Convert.ToInt16(seg[1]);
-//
-//							if(seg[2].StartsWith("m"))
-//								yPos=GetPosition(gHeight,seg[2]);
-//							else
-//								yPos=y+Convert.ToInt16(seg[2]);
-//							if(seg[3]=="max")
-//								width=gWidth;
-//							else
-//								width=Convert.ToInt16(seg[3]);
-//							if(seg[4]=="max")
-//								height=gHeight;
-//							else
-//								height=Convert.ToInt16(seg[4]);
-//							Color fColor=GetColor(seg[5]);
-//							Color bColor=GetColor(seg[6]);
-//							Color tColor=GetColor(seg[7]);
-//							Font drawFont=new Font(seg[8],Convert.ToInt16(seg[9]));
-//							SizeF xEnd=gr.MeasureString(seg[10],drawFont);
-//							gr.DrawString(seg[10],drawFont,new SolidBrush(tColor),xPos,yPos,StringFormat.GenericTypographic);
-//							xPos+=5+((int)xEnd.Width);
-//							gr.FillRectangle(new SolidBrush(bColor),xPos,yPos,width,height);
-//							gr.FillRectangle(new SolidBrush(fColor),xPos+2,yPos+2,((int)(((signalLev/100)*(width-4)))),height-4);
-//						}
-//					}
-//				}
-//			}
-//			// time display
-//			string time=m_osdSkin.time;
-//			if(time!=null)
-//			{
-//				string[] seg =time.Split(new char[]{':'});
-//				if(seg!=null)
-//				{
-//					if(seg[0]=="time" && seg.Length==7)
-//					{
-//						int xPos=0;
-//						int yPos=0;
-//
-//						if(seg[1].StartsWith("m"))
-//							xPos=GetPosition(gWidth,seg[1]);
-//						else
-//							xPos=x+Convert.ToInt16(seg[1]);
-//
-//						if(seg[2].StartsWith("m"))
-//							yPos=GetPosition(gHeight,seg[2]);
-//						else
-//							yPos=y+Convert.ToInt16(seg[2]);
-//						Color fColor=GetColor(seg[4]);
-//						Color bColor=GetColor(seg[5]);
-//						gr.DrawString(DateTime.Now.ToShortTimeString(),new System.Drawing.Font(seg[3],Convert.ToInt16(seg[6])),new SolidBrush(fColor),xPos,yPos,StringFormat.GenericTypographic);
-//					}
-//				}
-//			}
-//			// mute
-//			string mute=m_osdSkin.mute;
-//			if(mute!=null && m_muteState==true)
-//			{
-//				string[] seg =mute.Split(new char[]{':'});
-//				if(seg!=null)
-//				{
-//					if(seg[0]=="icon" && seg.Length==4)
-//					{
-//						if(System.IO.File.Exists(m_mediaPath+"volume_level_0.png"))
-//						{
-//							int xPos=0;
-//							int yPos=0;
-//
-//							if(seg[1].StartsWith("m"))
-//								xPos=GetPosition(gWidth,seg[1]);
-//							else
-//								xPos=x+Convert.ToInt16(seg[1]);
-//
-//							if(seg[2].StartsWith("m"))
-//								yPos=GetPosition(gHeight,seg[2]);
-//							else
-//								yPos=y+Convert.ToInt16(seg[2]);
-//							if(m_muteBitmap!=null)
-//								gr.DrawImageUnscaled(m_muteBitmap,xPos,yPos,60,60);
-//						}
-//					}
-//				}
-//			}
-			m_bitmapIsVisible=true;
-			SaveBitmap(bm,true,true,m_renderOSDAlpha);
 		}
 		#endregion
 
