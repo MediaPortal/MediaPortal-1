@@ -488,6 +488,7 @@ namespace MediaPortal.TV.Recording
 				int timeY=0;
 				int logoW=0;
 				int logoH=0;
+				Log.Write("rendering background...");
 
 				if(System.IO.File.Exists(skinPath+"background.png")==true &&
 					System.IO.File.Exists(skinPath+"icon_empty_focus.png")==true)
@@ -519,6 +520,7 @@ namespace MediaPortal.TV.Recording
 				xpos=10;
 				ypos=y;
 				string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
+				Log.Write("rendering tv-logo...");
 				if(System.IO.File.Exists(tvlogo))
 				{
 					logoW=logoW<64?64:logoW;
@@ -540,6 +542,7 @@ namespace MediaPortal.TV.Recording
 				gr.DrawString(nowDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
 				gr.DrawString(nowStart+"  "+nowTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
 				// now prog
+				Log.Write("rendering tv-now indicator...");
 				if(nowStart!="" && 
 					System.IO.File.Exists(skinPath+"osd_progress_mid_orange.png")==true &&
 					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true)
@@ -561,6 +564,7 @@ namespace MediaPortal.TV.Recording
 
 				// quality and level
 				xEnd.Width=100;
+				Log.Write("rendering signal quality indicator...");
 
 				if(signalQuality>2 && 
 					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true &&
@@ -579,6 +583,7 @@ namespace MediaPortal.TV.Recording
 					prog.Dispose();
 					y+=25;
 				}
+				Log.Write("rendering signal level indicator...");
 				if(signalLevel>2 &&
 					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true	&&
 					System.IO.File.Exists(skinPath+"osd_progress_mid.png")==true &&
