@@ -116,7 +116,9 @@ namespace MediaPortal.Dialogs
 								base.Render(timePassed);
 
 								GUIGraphicsContext.graphics=null;
-								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
+								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,1.0f);
+								g.Dispose();
+								bmp.Dispose();
 							}
 						}
 						return;
