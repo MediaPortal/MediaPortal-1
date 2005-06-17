@@ -131,7 +131,7 @@ namespace DShowNET
         0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
         0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
         0x00, 0x03,             // nBlockAlign      = 0x0300 = 768
-        0x00, 0x00,             // wBitsPerSample   = 0
+        0x10, 0x00,             // wBitsPerSample   = 16
         0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
         0x02, 0x00,             // fwHeadLayer
         0x00, 0xE8,0x03, 0x00,  // dwHeadBitrate

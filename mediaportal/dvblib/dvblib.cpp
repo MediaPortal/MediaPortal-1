@@ -303,7 +303,7 @@ HRESULT GetPidMap(IPin* pin, unsigned long* pid, unsigned long* mediasampletype)
 }
 
 
-HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID)
+HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *pAudioAC3,int AC3PID)
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
@@ -361,7 +361,36 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID)
 
 	pMap->Release();
 	
-	
+
+	// AC3
+	if (pAudioAC3!=NULL)
+	{
+		hr=pAudioAC3->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		if(FAILED(hr))
+			return 3;
+		// 
+		hr=pMap->EnumPIDMap(&pPidEnum);
+		if(FAILED(hr))
+			return 7;
+		// enum and unmap the pids
+		while(pPidEnum->Next(1,&pm,&count)== S_OK)
+		{
+			umPid=pm.ulPID;
+			hr=pMap->UnmapPID(1,&umPid);
+			if(FAILED(hr))
+				return 8;
+		}
+		pPidEnum->Release();
+		if (AC3PID>0 && AC3PID!=0x1fff)
+		{
+			pid = (ULONG)AC3PID;
+			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+			if(FAILED(hr))
+			return 4;
+		}
+
+		pMap->Release();
+	}
 	return S_OK;
 
 }

@@ -33,6 +33,24 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
+		static byte [] MPEG1AudioFormat = 
+			{
+				0x50, 0x00,             // format type      = 0x0050=WAVE_FORMAT_MPEG
+				0x02, 0x00,             // channels
+				0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
+				0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
+				0x00, 0x03,             // nBlockAlign      = 0x0300 = 768
+				0x10, 0x00,             // wBitsPerSample   = 16
+				0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
+				0x02, 0x00,             // fwHeadLayer
+				0x00, 0xE8,0x03, 0x00,  // dwHeadBitrate
+				0x01, 0x00,             // fwHeadMode
+				0x01, 0x00,             // fwHeadModeExt
+				0x01, 0x00,             // wHeadEmphasis
+				0x1C, 0x00,             // fwHeadFlags
+				0x00, 0x00, 0x00, 0x00, // dwPTSLow
+				0x00, 0x00, 0x00, 0x00  // dwPTSHigh
+			} ;
 
 		#region imports
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
@@ -70,7 +88,7 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1);
+		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1,IPin pin2,int pid2);
 
 		#endregion
 
@@ -122,6 +140,7 @@ namespace MediaPortal.TV.Recording
 		TVCaptureDevice					m_Card;
 		
 		//streambuffer interfaces
+		IPin												m_pinAC3Out				= null;
 		IPin												m_DemuxVideoPin				= null;
 		IPin												m_DemuxAudioPin				= null;
 		IPin												m_pinStreamBufferIn0	= null;
@@ -528,6 +547,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
+
 				// Add the Demux to the graph
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
 				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
@@ -591,6 +611,34 @@ namespace MediaPortal.TV.Recording
 					m_Card.TvInterfaceDefinition.Mpeg2PinName="1";
 					m_Card.TvInterfaceDefinition.SectionsAndTablesPinName="2";
 				}
+
+				IMpeg2Demultiplexer   demuxer=m_MPEG2Demultiplexer as IMpeg2Demultiplexer;
+				if (demuxer!=null)
+				{
+					
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2: create ac3 pin");
+					AMMediaType mediaAC3 = new AMMediaType();
+					mediaAC3.majorType = MediaType.Audio;
+					mediaAC3.subType = MediaSubType.DolbyAC3;
+					mediaAC3.sampleSize = 0;
+					mediaAC3.temporalCompression = false;
+					mediaAC3.fixedSizeSamples = false;
+					mediaAC3.unkPtr = IntPtr.Zero;
+					mediaAC3.formatType = FormatType.WaveEx;
+					mediaAC3.formatSize = MPEG1AudioFormat.GetLength(0);
+					mediaAC3.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAC3.formatSize);
+					System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mediaAC3.formatPtr,mediaAC3.formatSize) ;
+
+					hr=demuxer.CreateOutputPin(ref mediaAC3/*vidOut*/, "AC3", out m_pinAC3Out);
+					if (hr!=0 || m_pinAC3Out==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create AC3 pin:0x{0:X}",hr);
+					}
+				}
+				else
+					Log.WriteFile(Log.LogType.Capture,"mpeg2:mapped IMPEG2Demultiplexer not found");
+
+
 				//=========================================================================================================
 				// Add the BDA MPEG2 Transport Information Filter
 				//=========================================================================================================
@@ -704,9 +752,9 @@ namespace MediaPortal.TV.Recording
 			
 				return true;
 			}
-			catch(Exception)
+			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: Unable to create graph");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: Unable to create graph {0} {1}",ex.Message,ex.StackTrace);
 				return false;
 			}
 		}//public bool CreateGraph()
@@ -1339,7 +1387,15 @@ namespace MediaPortal.TV.Recording
 		{
 			if(audioPid!=currentTuningObject.AudioPid)
 			{
-				int hr=SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,audioPid);
+				int hr;
+				if (audioPid==currentTuningObject.AC3Pid)
+				{
+					hr=SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,audioPid,m_pinAC3Out,audioPid);
+				}
+				else
+				{
+					hr=SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,audioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
+				}
 				if(hr!=0)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
@@ -1785,6 +1841,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
+				//connect mpeg2 demuxer video out->mpeg2 analyzer input pin
 				//get input pin of MPEG2 Analyzer filter
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
 				pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
@@ -1794,7 +1851,6 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 				
-				//connect mpeg2 demuxer video out->mpeg2 analyzer input pin
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
 				hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
 				if (hr!=0)
@@ -1803,6 +1859,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
+				//connect MPEG2 analyzer Filter->stream buffer sink pin 0
 				//get output pin #0 from MPEG2 analyzer Filter
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
 				pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
@@ -1820,7 +1877,6 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
-				//connect MPEG2 analyzer output pin->StreamBufferSink Filter input pin
 				hr=m_graphBuilder.Connect(pinObj1, pinObj2) ;
 				if (hr!=0)
 				{
@@ -1828,6 +1884,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
+				//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
 				//Get StreamBufferSink InputPin #1
 				pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
 				if (hr!=0)
@@ -1835,7 +1892,6 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
 					return false;
 				}
-				//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
 				hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj3) ;
 				if (hr!=0)
 				{
@@ -1843,6 +1899,25 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
+				//connect ac3 pin ->stream buffersink input #2
+				if (false)
+				{
+					if (m_pinAC3Out!=null)
+					{
+						pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 2);	
+						if (hr!=0)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#3");
+							return false;
+						}
+						hr=m_graphBuilder.Connect(m_pinAC3Out, pinObj3) ;
+						if (hr!=0)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#3");
+							return false;
+						}
+					}
+				}
 				int ipos=fileName.LastIndexOf(@"\");
 				string strDir=fileName.Substring(0,ipos);
 				m_StreamBufferConfig	= new StreamBufferConfig();
@@ -2564,7 +2639,7 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid);
+				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
 				if (!SendPMT())
 				{
 					return;
@@ -2775,7 +2850,7 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
-				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid);
+				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
@@ -3628,7 +3703,7 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 
-				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid);
+				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
 				SendPMT();
 				if(m_pluginsEnabled==true)
 					ExecTuner();

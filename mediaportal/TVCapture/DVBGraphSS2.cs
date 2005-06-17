@@ -152,7 +152,7 @@ namespace MediaPortal.TV.Recording
 		public static extern int SetMenuHandle([In] long menu);
 
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1);
+		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1,IPin pin2,int pid2);
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid, int tid, ref int secCount,int tabSec,int timeout);
@@ -1420,7 +1420,7 @@ namespace MediaPortal.TV.Recording
 				if(m_mediaControl!=null && m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
 				{
 
-					int hr = SetupDemuxer(m_demuxVideoPin, ch.VideoPid,m_demuxAudioPin, ch.AudioPid);
+					int hr = SetupDemuxer(m_demuxVideoPin, ch.VideoPid,m_demuxAudioPin, ch.AudioPid,null,0);
 					if(hr!=0)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
@@ -1495,7 +1495,7 @@ namespace MediaPortal.TV.Recording
                 return;
             }
 
-			hr=SetupDemuxer(m_demuxVideoPin,videoPid,m_demuxAudioPin,audioPid);
+			hr=SetupDemuxer(m_demuxVideoPin,videoPid,m_demuxAudioPin,audioPid,null,0);
 			if(hr!=0)//ignore audio pin
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to config Demuxer");
@@ -2331,7 +2331,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			if(m_demuxVideoPin!=null && m_demuxAudioPin!=null)
-				SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,m_currentChannel.AudioPid);
+				SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,m_currentChannel.AudioPid,null,0);
 
 		}
 
@@ -2446,7 +2446,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if(audioPid!=m_selectedAudioPid)
 			{
-				int hr=SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,audioPid);
+				int hr=SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,audioPid,null,0);
                 if (hr != 0)
                 {
                     Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}", hr.ToString());

@@ -197,6 +197,9 @@ public class MediaType		// MEDIATYPE_*
 	[ComVisible(false)]
 public class MediaSubType		// MEDIASUBTYPE_*
 {
+		public static readonly Guid DolbyAC3= new Guid(0xe06d802c, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f, 0x6c, 0xbb, 0xea);
+		public static readonly Guid DolbyAC3SPDIF = new Guid(0x00000092, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+
     //083863F1-70DE-11D0-BD40-00A0C911CE86}\AA7BB8A0-5659-11D4-98B2-00A0C9EE6FD9
     //083863F1-70DE-11D0-BD40-00A0C911CE86}\7C069D00-777A-11D3-AEE3-00600857EED8}
   //public static readonly Guid WinTVMPEG2Writer	= new Guid( 0x083863F1,0x70DE,0x11D0,0xBD,0x40,0x00,0xA0,0xC9,0x11,0xCE,0x86);
@@ -267,6 +270,9 @@ public class MediaSubType		// MEDIASUBTYPE_*
 	[ComVisible(false)]
 public class FormatType		// FORMAT_*
 {
+	
+	public static readonly Guid DolbyAC3SPDIF = new Guid(0xe06d80e4, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f, 0x6c, 0xbb, 0xea);
+
 		/// <summary> FORMAT_None </summary>
 	public static readonly Guid None		= new Guid( 0x0F6417D6, 0xc318, 0x11d0, 0xa4, 0x3f, 0x00, 0xa0, 0xc9, 0x22, 0x31, 0x96 );
 
