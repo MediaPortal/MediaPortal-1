@@ -146,10 +146,16 @@ namespace MediaPortal.Configuration.Sections
 		private MadMouse.FireDTV.FireDTVControl FireDTV = new MadMouse.FireDTV.FireDTVControl(0);
 		private void LoadDrivers()
 		{
-			FireDTV.OpenDrivers();
-			comboBoxFireDTVDevice.DataSource	= FireDTV.SourceFilterCollection;
-			comboBoxFireDTVDevice.DisplayMember = "DeviceFriendlyName";
-			comboBoxFireDTVDevice.ValueMember	= "DisplayString";
+			try
+			{
+				FireDTV.OpenDrivers();
+				comboBoxFireDTVDevice.DataSource	= FireDTV.SourceFilterCollection;
+				comboBoxFireDTVDevice.DisplayMember = "DeviceFriendlyName";
+				comboBoxFireDTVDevice.ValueMember	= "DisplayString";
+			}
+			catch(Exception)
+			{
+			}
 		}
 		#endregion
 		#region LoadSettings
