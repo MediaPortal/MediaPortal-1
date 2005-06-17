@@ -1047,8 +1047,9 @@ namespace MediaPortal.TV.Recording
     /// <returns>true : graph needs to be rebuild for this channel
     ///          false: graph does not need to be rebuild for this channel
     /// </returns>
-    public bool ShouldRebuildGraph(int iChannel)
-    {
+    public bool ShouldRebuildGraph(TVChannel newChannel)
+		{
+			int iChannel=newChannel.Number;
       // if we switch from tuner <-> SVHS/Composite then 
       // we need to rebuild the capture graph
       bool bFixCrossbar=true;

@@ -1774,7 +1774,7 @@ namespace MediaPortal.TV.Recording
 		}
 
 		//
-		public bool ShouldRebuildGraph(int iChannel)
+		public bool ShouldRebuildGraph(TVChannel newChannel)
 		{
 			return false;
 		}

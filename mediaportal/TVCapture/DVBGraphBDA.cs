@@ -167,6 +167,7 @@ namespace MediaPortal.TV.Recording
 		int m_iVideoHeight=1;
 		int m_aspectX=1;
 		int m_aspectY=1;
+		bool isUsingAC3=false;
 
 		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
 #if DUMP
@@ -225,6 +226,7 @@ namespace MediaPortal.TV.Recording
 				//check if we didnt already create a graph
 				if (m_graphState != State.None) 
 					return false;
+				isUsingAC3=false;
 
 #if DUMP
 				fileout = new System.IO.FileStream("audiodump.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
@@ -772,6 +774,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (m_graphState < State.Created) 
 					return;
+				isUsingAC3=false;
 				m_iPrevChannel = -1;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
 				StopRecording();
@@ -1094,11 +1097,23 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render video out pin MPEG-2 Demultiplexer");
 				return false;
 			}
-
-			if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
+			
+			isUsingAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
+			if (!isUsingAC3)
 			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
-				return false;
+				if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+					return false;
+				}
+			}
+			else
+			{
+				if(m_graphBuilder.Render(m_pinAC3Out) != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render AC3 pin MPEG-2 Demultiplexer");
+					return false;
+				}
 			}
 
 			//get the IMediaControl interface of the graph
@@ -1229,8 +1244,8 @@ namespace MediaPortal.TV.Recording
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartTimeShifting()");
 
-			bool useAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
-			if(CreateSinkSource(strFileName,useAC3))
+			isUsingAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
+			if(CreateSinkSource(strFileName,isUsingAC3))
 			{
 				if(m_mediaControl == null) 
 				{
@@ -1374,8 +1389,13 @@ namespace MediaPortal.TV.Recording
 		/// <returns>true : graph needs to be rebuild for this channel
 		///          false: graph does not need to be rebuild for this channel
 		/// </returns>
-		public bool ShouldRebuildGraph(int iChannel)
+		public bool ShouldRebuildGraph(TVChannel newChannel)
 		{
+			//check if we switch from an channel with AC3 to a channel without AC3
+			//or vice-versa. ifso, graphs should be rebuild
+			if (m_graphState != State.Viewing && m_graphState!= State.TimeShifting && m_graphState!=State.Recording) return false; 
+			bool useAC3=TVDatabase.DoesChannelHaveAC3(newChannel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
+			if (useAC3 != isUsingAC3) return true; 
 			return false;
 		}
 

@@ -185,7 +185,7 @@ namespace MediaPortal.TV.Recording
     /// <returns>true : graph needs to be rebuild for this channel
     ///          false: graph does not need to be rebuild for this channel
     /// </returns>
-    bool ShouldRebuildGraph(int iChannel);
+    bool ShouldRebuildGraph(TVChannel newChannel);
 
     /// <summary>
     /// This method returns whether a signal is present. Meaning that the

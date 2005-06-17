@@ -1014,7 +1014,7 @@ namespace MediaPortal.TV.Recording
 					if (currentGraph != null)
 					{
 						TVChannel channel=GetChannel(currentTvChannelName);
-						if (currentGraph.ShouldRebuildGraph(channel.Number))
+						if (currentGraph.ShouldRebuildGraph(channel))
 						{
 							RebuildGraph();
 							// for ss2: restore full screen
@@ -1340,7 +1340,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (currentGraph.GetChannelNumber() != channel.Number)
 				{
-					if (!currentGraph.ShouldRebuildGraph(channel.Number))
+					if (!currentGraph.ShouldRebuildGraph(channel))
 					{
 						timeTimeshiftingStarted = DateTime.Now;
 						currentGraph.TuneChannel(channel);
