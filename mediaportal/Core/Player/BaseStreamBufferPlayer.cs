@@ -691,6 +691,7 @@ namespace MediaPortal.Player
         {
           if (dTime<0.0d) dTime=0.0d;
           if (dTime>Duration) dTime=Duration;
+					dTime=Math.Floor(dTime);
           Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
           dTime*=10000000d;
 					long pStop=0;
