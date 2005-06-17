@@ -1229,7 +1229,8 @@ namespace MediaPortal.TV.Recording
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartTimeShifting()");
 
-			if(CreateSinkSource(strFileName))
+			bool useAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
+			if(CreateSinkSource(strFileName,useAC3))
 			{
 				if(m_mediaControl == null) 
 				{
@@ -1801,7 +1802,7 @@ namespace MediaPortal.TV.Recording
 		}//IBDA_LNBInfo[] GetBDALNBInfoInterface()
 
 
-		private bool CreateSinkSource(string fileName)
+		private bool CreateSinkSource(string fileName, bool useAC3)
 		{
 			if(m_graphState!=State.Created)
 				return false;
@@ -1884,36 +1885,38 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
-				//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
-				//Get StreamBufferSink InputPin #1
-				pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
-				if (hr!=0)
+				if (!useAC3)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
-					return false;
+					//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
+					//Get StreamBufferSink InputPin #1
+					pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
+						return false;
+					}
+					hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj3) ;
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2");
+						return false;
+					}
 				}
-				hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj3) ;
-				if (hr!=0)
+				else
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2");
-					return false;
-				}
-
-				//connect ac3 pin ->stream buffersink input #2
-				if (false)
-				{
+					//connect ac3 pin ->stream buffersink input #2
 					if (m_pinAC3Out!=null)
 					{
-						pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 2);	
+						pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
 						if (hr!=0)
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#3");
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
 							return false;
 						}
 						hr=m_graphBuilder.Connect(m_pinAC3Out, pinObj3) ;
 						if (hr!=0)
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#3");
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2");
 							return false;
 						}
 					}
