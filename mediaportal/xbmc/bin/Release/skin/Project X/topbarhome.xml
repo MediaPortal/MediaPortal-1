@@ -75,7 +75,7 @@
 		<ondown>2</ondown>
 	</control>
 	<control>
-		<description>videowallpaper button</description>
+		<description>basichome button button</description>
 		<type>button</type>
 		<id>11</id>
 		<posX>594</posX>
@@ -85,7 +85,7 @@
 		<textureFocus>button_tvdesktop_focus.png</textureFocus>
 		<textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
 		<label>-</label>
-		<action>101</action>
+		<hyperlink>35</hyperlink>
 		<onleft>10</onleft>
 		<onright>12</onright>
 		<onup>11</onup>
