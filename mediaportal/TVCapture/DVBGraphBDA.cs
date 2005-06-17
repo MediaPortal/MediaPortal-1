@@ -2662,6 +2662,7 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
 				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
 				if (!SendPMT())
 				{
@@ -2872,7 +2873,7 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
 					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0} to audio, pid {1} to video",currentTuningObject.AudioPid, currentTuningObject.VideoPid);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
 				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
@@ -3726,6 +3727,7 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
 				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
 				SendPMT();
 				if(m_pluginsEnabled==true)
