@@ -489,7 +489,9 @@ namespace MediaPortal.TV.Recording
 				int logoW=0;
 				int logoH=0;
 
-				if(System.IO.File.Exists(skinPath+"background.png")==true)
+				if(System.IO.File.Exists(skinPath+"background.png")==true &&
+					System.IO.File.Exists(skinPath+"icon_empty_focus.png")==true)
+
 				{
 					Bitmap osd=new Bitmap(skinPath+"background.png");
 					xpos=(gWidth-width)/2;
@@ -519,6 +521,8 @@ namespace MediaPortal.TV.Recording
 				string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
 				if(System.IO.File.Exists(tvlogo))
 				{
+					logoW=logoW<64?64:logoW;
+					logoH=logoH<64?64:logoH;
 					Bitmap logo=new Bitmap(tvlogo);
 					Util.BitmapResize.Resize(ref logo,64,64,true,true);
 					gr.DrawImage(logo,xpos+((logoW-64)/2),ypos+((logoH-64)/2),64,64);
@@ -536,7 +540,9 @@ namespace MediaPortal.TV.Recording
 				gr.DrawString(nowDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
 				gr.DrawString(nowStart+"  "+nowTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
 				// now prog
-				if(nowStart!="")
+				if(nowStart!="" && 
+					System.IO.File.Exists(skinPath+"osd_progress_mid_orange.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true)
 				{
 					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
 					gr.DrawImage(prog,new Rectangle(x,y+26,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
@@ -556,7 +562,10 @@ namespace MediaPortal.TV.Recording
 				// quality and level
 				xEnd.Width=100;
 
-				if(signalQuality>0)
+				if(signalQuality>2 && 
+					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_mid.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_mid_red.png")==true)
 				{
 					gr.DrawString("Quality:",drawFont,drawBrush,x,y);
 					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
@@ -570,7 +579,11 @@ namespace MediaPortal.TV.Recording
 					prog.Dispose();
 					y+=25;
 				}
-				if(signalLevel>0)
+				if(signalLevel>2 &&
+					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true	&&
+					System.IO.File.Exists(skinPath+"osd_progress_mid.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_mid_red.png")==true)
+					
 				{
 					gr.DrawString("Level:",drawFont,drawBrush,x,y);
 					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
