@@ -373,7 +373,7 @@ namespace MediaPortal.TV.Recording
 		///	is watching channel A, and then when the recording starts on channel B the user suddenly 
 		///	sees channel B
 		/// </remarks>
-		static private int FindFreeCardForRecording(string recordingChannel,bool terminatePostRecording)
+		static private int FindFreeCardForRecording(string recordingChannel,bool stopRecordingsWithLowerPriority, int recordingPrio)
 		{
 			int cardNo=0;
 			int highestPrio=-1;
@@ -389,8 +389,8 @@ namespace MediaPortal.TV.Recording
 					if (dev.UseForRecording)
 					{
 						// and is it not recording already?
-						// or is it postrecording and we want to skip postrecording
-						if (!dev.IsRecording || (dev.IsPostRecording && terminatePostRecording) )
+						// or recording a show which has lower priority then the one we need to record?
+						if (!dev.IsRecording || (dev.IsRecording && stopRecordingsWithLowerPriority && dev.CurrentTVRecording.Priority<recordingPrio) )
 						{
 							//and can it receive the channel we want to record?
 							if (TVDatabase.CanCardViewTVChannel(recordingChannel, dev.ID) || m_tvcards.Count==1 )
@@ -489,17 +489,12 @@ namespace MediaPortal.TV.Recording
 			LogTvStatistics();
 
 			// find free card we can use for recording
-			int cardNo=FindFreeCardForRecording(rec.Channel,false);
+			int cardNo=FindFreeCardForRecording(rec.Channel,false,rec.Priority);
 			if (cardNo<0)
 			{
 				// no card found. 
-				// if we skip the pre-record interval should the new recording still be started then?
-				if ( rec.IsRecordingProgramAtTime(currentTime,currentProgram,0,0) )
-				{
-					//skip pre-recording interval and check if there is a card free
-					Log.WriteFile(Log.LogType.Recorder,"Recorder:  No card found, check if a card is post-recording");
-					cardNo=FindFreeCardForRecording(rec.Channel,true);
-				}
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:  No card found, check if a card is recording a show which has a lower priority then priority:{0}", rec.Priority);
+					cardNo=FindFreeCardForRecording(rec.Channel,true,rec.Priority);
 			}
 
 			if (cardNo<0) 
@@ -589,7 +584,20 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  using card:{0} prio:{1}", card.ID,card.Priority);
 			if (card.IsRecording)
 			{
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:  card:{0} was post-recording. Now use it for recording new program", card.ID);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  card:{0} was recording. Now use it for recording new program", card.ID);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",card.ID, card.TVChannel);
+				if (card.CurrentTVRecording.RecType==TVRecording.RecordingType.Once)
+				{
+					card.CurrentTVRecording.Canceled=Utils.datetolong(DateTime.Now);
+				}
+				else
+				{
+					long datetime=Utils.datetolong(DateTime.Now);
+					TVProgram prog=card.CurrentProgramRecording;
+					if (prog!=null) datetime=Utils.datetolong(prog.StartTime);
+					card.CurrentTVRecording.CanceledSeries.Add(datetime);
+				}
+				TVDatabase.UpdateRecording(card.CurrentTVRecording);
 				card.StopRecording();
 			}
 			
