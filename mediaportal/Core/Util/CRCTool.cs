@@ -119,6 +119,10 @@ namespace MediaPortal.Util
             }
         }
 
+		public ulong calc(byte[] arr)
+		{
+			return crctablefast(arr);
+		}
         public ulong calc(string strline)
         {
 					if (strline==null) return 0;
