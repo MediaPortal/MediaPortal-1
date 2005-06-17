@@ -1039,7 +1039,7 @@ namespace MediaPortal.TV.Recording
 							{
 								double position=g_Player.CurrentPosition;
 								double duration=g_Player.Duration;
-								if (position < duration-1d)
+								if (position < duration-25d)
 								{
 									g_Player.SeekAbsolute(g_Player.Duration);
 								}

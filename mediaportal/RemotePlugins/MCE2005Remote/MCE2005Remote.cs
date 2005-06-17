@@ -549,11 +549,17 @@ namespace MediaPortal
 						break;
           
 					case 0x9c: //channel+
-						action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
+						if (GUIGraphicsContext.IsFullScreenVideo)
+							action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
+						else
+							action=new Action(Action.ActionType.ACTION_PAGE_UP,0,0);
 						break;
           
 					case 0x9d: //channel-
-						action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
+						if (GUIGraphicsContext.IsFullScreenVideo)
+							action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
+						else
+							action=new Action(Action.ActionType.ACTION_PAGE_DOWN,0,0);
 						break;
           
 					case 0xe2: //mute

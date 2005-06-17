@@ -2129,6 +2129,9 @@ namespace MediaPortal.GUI.TV
 			{
 				dlg.Reset();
 				dlg.SetHeading(GUILocalizeStrings.Get(616));//616=Select Recording type
+				if (m_strCurrentChannel.Length>0)
+					dlg.AddLocalizedString( 938);// View this channel
+
 				//610=None
 				//611=Record once
 				//612=Record everytime on this channel
@@ -2137,9 +2140,9 @@ namespace MediaPortal.GUI.TV
 				//615=Record every day at this time
 				for (int i=610; i <= 615; ++i)
 				{
-					dlg.Add( GUILocalizeStrings.Get(i));
+					dlg.AddLocalizedString(i);
 				}
-				dlg.Add( GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
+				dlg.AddLocalizedString( 672);// 672=Record Mon-Fri
 				
 				dlg.DoModal( GetID);
 				if (dlg.SelectedLabel==-1) return;
@@ -2148,9 +2151,22 @@ namespace MediaPortal.GUI.TV
 				rec.Channel=m_strCurrentChannel;
 				rec.Start=m_iCurrentStartTime;
 				rec.End=m_iCurrentEndTime;
-				switch (dlg.SelectedLabel)
+				switch (dlg.SelectedId)
 				{
-					case 0://none
+					case 938: // view this channel:
+						if (g_Player.Playing && g_Player.IsTVRecording)
+						{
+							g_Player.Stop();
+						}
+						GUITVHome.IsTVOn=true;
+						GUITVHome.ViewChannel(m_strCurrentChannel);
+						if (Recorder.IsViewing())
+						{
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+						}
+						return;
+
+					case 610://none
 						foreach (TVRecording rec1 in m_recordings)
 						{
 							if (rec1.IsRecordingProgram(m_currentProgram,true))
@@ -2173,22 +2189,22 @@ namespace MediaPortal.GUI.TV
 						Update();
 						SetFocus();
 						return;
-					case 1://once
+					case 611://once
 						rec.RecType=TVRecording.RecordingType.Once;
 						break;
-					case 2://everytime, this channel
+					case 612://everytime, this channel
 						rec.RecType=TVRecording.RecordingType.EveryTimeOnThisChannel;
 						break;
-					case 3://everytime, all channels
+					case 613://everytime, all channels
 						rec.RecType=TVRecording.RecordingType.EveryTimeOnEveryChannel;
 						break;
-					case 4://weekly
+					case 614://weekly
 						rec.RecType=TVRecording.RecordingType.Weekly;
 						break;
-					case 5://daily
+					case 615://daily
 						rec.RecType=TVRecording.RecordingType.Daily;
 						break;
-					case 6://Mo-Fi
+					case 672://Mo-Fi
 						rec.RecType=TVRecording.RecordingType.WeekDays;
 						break;
 				}

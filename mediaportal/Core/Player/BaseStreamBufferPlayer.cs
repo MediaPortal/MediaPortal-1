@@ -703,10 +703,14 @@ namespace MediaPortal.Player
           dTime+=fContentStart;
           long lTime=(long)dTime;
           
-					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+					int hr=m_mediaSeeking.SetPositions(ref lTime, (SeekingFlags)((int)SeekingFlags.AbsolutePositioning+(int)SeekingFlags.SeekToKeyFrame),ref pStop, SeekingFlags.NoPositioning);
           if (hr !=0)
           {
-            Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
+						hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+						if (hr !=0)
+						{
+							Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
+						}
           }
 				}
         UpdateCurrentPosition();
