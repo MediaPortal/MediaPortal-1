@@ -794,14 +794,28 @@ namespace MediaPortal.TV.Recording
 				stream = new System.IO.FileStream("dump.mpg",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 				writer = new System.IO.BinaryWriter(stream);
 			}
-			byte[] byData=new byte[BufferLen];
-			Marshal.Copy(pBuffer,byData,0,BufferLen);
-			writer.Write(byData,0,BufferLen);
-			fileLen +=(ulong)BufferLen;
-			if (fileLen > 1024*1024*5)
+			for (int ptr = add; ptr < end; ptr += 188)//main loop
 			{
-				writer.Close();
-				stream.Close();
+				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
+				if(m_packetHeader.SyncByte!=0x47) 
+					continue;
+				if(m_packetHeader.TransportError==true)
+					continue;
+				if (m_packetHeader.Pid==m_audioPid)
+				{
+					byte[] byData=new byte[188];
+					Marshal.Copy((IntPtr)ptr,byData,0,188);
+					writer.Write(byData,0,188);
+					fileLen +=(ulong)188;
+				}
+
+				if (fileLen > 1024*1024*5)
+				{
+					writer.Close();
+					stream.Close();
+					writer=null;
+					stream=null;
+				}
 			}
 #endif
 
