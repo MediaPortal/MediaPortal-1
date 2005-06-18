@@ -194,7 +194,7 @@ namespace MediaPortal.TV.Recording
 				foreach (TranscoderInfo info in queue)
 				{
 					if (info.status==Status.Error || info.status==Status.Completed) continue;
-					if (info.recorded.FileName==info.recorded.FileName) return true;
+					if (info.recorded.FileName==rec.FileName) return true;
 				}
 			}
 			return false;
