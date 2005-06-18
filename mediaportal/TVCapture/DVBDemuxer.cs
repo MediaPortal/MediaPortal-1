@@ -774,13 +774,34 @@ namespace MediaPortal.TV.Recording
             return 0;
         }
         #endregion
+			
+		System.IO.BinaryWriter writer=null;
+		System.IO.FileStream stream=null;
+		ulong fileLen=0;
 		public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
 		{
 			int add = (int)pBuffer;
 			int end = add + BufferLen;
 
 			// when here, we can set graph as running
-
+			/* enable code below to make a dump file called dump.mpg of 5 megs */
+/*
+			if (fileLen==0&&writer==null || stream==null)
+			{
+				fileLen=0;
+				stream = new System.IO.FileStream("dump.mpg",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+				writer = new System.IO.BinaryWriter(stream);
+			}
+			byte[] byData=new byte[BufferLen];
+			Marshal.Copy(pBuffer,byData,0,BufferLen);
+			writer.Write(byData,0,BufferLen);
+			fileLen +=(ulong)BufferLen;
+			if (fileLen > 1024*1024*5)
+			{
+				writer.Close();
+				stream.Close();
+			}
+*/			
 			for (int ptr = add; ptr < end; ptr += 188)//main loop
 			{
 				if (m_pluginsEnabled == true)
