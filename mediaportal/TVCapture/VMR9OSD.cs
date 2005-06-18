@@ -579,7 +579,11 @@ namespace MediaPortal.TV.Recording
 					else
 						prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
 
-					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,((int)((signalQual/100)*200))-2,prog.Height),0,0,((int)((signalQual/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
+					int val=((int)((signalQual/100)*200))-2;
+					if(val<0) val=0;
+					if(val>200) val=200;
+					
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,val,prog.Height),0,0,val,prog.Height,GraphicsUnit.Pixel);
 					prog.Dispose();
 					y+=25;
 				}
@@ -597,8 +601,10 @@ namespace MediaPortal.TV.Recording
 						prog=new Bitmap(skinPath+"osd_progress_mid.png");
 					else
 						prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
-
-					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,((int)((signalLev/100)*200))-2,prog.Height),0,0,((int)((signalLev/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
+					int val=((int)((signalLev/100)*200))-2;
+					if(val<0) val=0;
+					if(val>200) val=200;
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,val,prog.Height),0,0,val,prog.Height,GraphicsUnit.Pixel);
 					prog.Dispose();
 				}
 
@@ -615,7 +621,6 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("exception in render-osd:{0}, {1}, {2}",ex.Message,ex.Source,ex.StackTrace);
 				SaveBitmap(null,false,true,m_renderOSDAlpha);
-
 			}
 		}
 		#endregion
