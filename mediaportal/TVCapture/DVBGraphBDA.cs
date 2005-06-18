@@ -618,7 +618,7 @@ namespace MediaPortal.TV.Recording
 				if (demuxer!=null)
 				{
 					
-					Log.WriteFile(Log.LogType.Capture,true,"mpeg2: create ac3 pin");
+					Log.WriteFile(Log.LogType.Capture,false,"mpeg2: create ac3 pin");
 					AMMediaType mediaAC3 = new AMMediaType();
 					mediaAC3.majorType = MediaType.Audio;
 					mediaAC3.subType = MediaSubType.DolbyAC3;
