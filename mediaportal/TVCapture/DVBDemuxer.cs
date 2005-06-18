@@ -1,3 +1,4 @@
+//#define MAKEDUMP
 using System;
 using System.Text;
 using DShowNET;
@@ -775,17 +776,18 @@ namespace MediaPortal.TV.Recording
         }
         #endregion
 			
+#if MAKEDUMP
 		System.IO.BinaryWriter writer=null;
 		System.IO.FileStream stream=null;
 		ulong fileLen=0;
+#endif
 		public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
 		{
 			int add = (int)pBuffer;
 			int end = add + BufferLen;
 
 			// when here, we can set graph as running
-			/* enable code below to make a dump file called dump.mpg of 5 megs */
-/*
+#if MAKEDUMP
 			if (fileLen==0&&writer==null || stream==null)
 			{
 				fileLen=0;
@@ -801,7 +803,8 @@ namespace MediaPortal.TV.Recording
 				writer.Close();
 				stream.Close();
 			}
-*/			
+#endif
+
 			for (int ptr = add; ptr < end; ptr += 188)//main loop
 			{
 				if (m_pluginsEnabled == true)
