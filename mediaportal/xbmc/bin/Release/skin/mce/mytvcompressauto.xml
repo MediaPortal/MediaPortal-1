@@ -53,7 +53,6 @@
 			<font>font13</font>
 			<textcolor>ffa9d0f7</textcolor>
 		</control>
-		
 		<control>
 			<description>Enable auto compress</description>
 			<type>checkmark</type>
@@ -107,8 +106,6 @@
 			<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
 			<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 		</control>
-
-
 		<control>
 			<description>Delete original file</description>
 			<type>checkmark</type>
@@ -122,31 +119,87 @@
 			<onup>5</onup>
 			<ondown>99</ondown>
 		</control>
-
-
-
-
+		<control>
+			<description>Current program title</description>
+			<type>fadelabel</type>
+			<id>13</id>
+			<posX>290</posX>
+			<posY>415</posY>
+			<width>250</width>
+			<label>#TV.View.title</label>
+			<font>font13</font>
+			<align>left</align>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control>
+			<description>Channel label</description>
+			<type>label</type>
+			<id>13</id>
+			<posX>660</posX>
+			<posY>415</posY>
+			<label>Channel</label>
+			<font>font13</font>
+			<align>right</align>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control>
+			<description>Current program time</description>
+			<type>label</type>
+			<id>13</id>
+			<posX>290</posX>
+			<posY>435</posY>
+			<label>#TV.View.start-#TV.View.stop</label>
+			<font>font13</font>
+			<align>left</align>
+			<textcolor>FFB2D4F5</textcolor>
+		</control>
+		<control>
+			<description>Current Channelname</description>
+			<type>fadelabel</type>
+			<id>13</id>
+			<posX>660</posX>
+			<posY>435</posY>
+			<width>90</width>
+			<label>#TV.View.channel</label>
+			<font>font13</font>
+			<align>right</align>
+			<textcolor>FFB2D4F5</textcolor>
+		</control>
+		<control>
+			<description>Description1</description>
+			<type>textboxscrollup</type>
+			<id>15</id>
+			<posX>290</posX>
+			<posY>455</posY>
+			<width>350</width> 
+			<height>90</height>
+			<seperator>----------------------------------------------------------------------------------------------</seperator> 
+			<label>#TV.View.description</label>
+			<font>font13</font>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
 		<control>
 			<description>Current program background</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>75</posX> 
-			<posY>419</posY> 
-			<width>161</width> 
-			<height>134</height> 
-			<texture>playback_background.png</texture>
+			<posX>60</posX>
+			<posY>420</posY>
+			<width>180</width>
+			<height>135</height>
+			<colordiffuse>60ffffff</colordiffuse>
+			<texture>previewbackground.png</texture>
 		</control>
 		<control>
 			<description>TV preview window</description> 
 			<type>videowindow</type> 
 			<id>99</id> 
-			<posX>86</posX> 
-			<posY>431</posY> 
-			<width>135</width> 
-			<height>108</height> 
+			<posX>65</posX> 
+			<posY>425</posY> 
+			<width>170</width> 
+			<height>125</height> 
 			<onup>5</onup>
 			<action>18</action>
-			<textureFocus>tv_green_border.png</textureFocus> 
+			<textureFocus>video_window_focus.png</textureFocus> 
 		</control>
 	</controls>
 </window>
