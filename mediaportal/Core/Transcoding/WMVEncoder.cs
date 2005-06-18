@@ -155,6 +155,7 @@ namespace MediaPortal.Core.Transcoding
 		protected  IGraphBuilder			  			      graphBuilder =null;
 		protected  IStreamBufferSource 			        bufferSource=null ;
 		protected IMediaControl											mediaControl=null;
+		protected IMediaPosition										mediaPos=null;
 		protected IMediaSeeking											mediaSeeking=null;
 		protected IBaseFilter												powerDvdMuxer =null;
 		protected IMediaEventEx											mediaEvt=null;
@@ -216,16 +217,14 @@ namespace MediaPortal.Core.Transcoding
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
 				//add mpeg2 audio/video codecs
-				string strVideoCodecMoniker=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
+				string strVideoCodec=@"MPEG2Dec Filter";
 				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
-				Mpeg2VideoCodec = Marshal.BindToMoniker( strVideoCodecMoniker ) as IBaseFilter;
-				if (Mpeg2VideoCodec==null)
+				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
-					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add Elecard mpeg2 video decoder");
-					Cleanup();
-					return false;
+					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","MPEG2Dec Filter");
 				}
-				hr = graphBuilder.AddFilter( Mpeg2VideoCodec , "Elecard mpeg2 video decoder" );
+
+				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				if( hr != 0 ) 
 				{
 					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
@@ -401,6 +400,8 @@ namespace MediaPortal.Core.Transcoding
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= graphBuilder as IMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
+				mediaPos    = graphBuilder as IMediaPosition;
+				mediaPos.put_CurrentPosition(1d);
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -470,6 +471,7 @@ namespace MediaPortal.Core.Transcoding
 			}
 			mediaSeeking=null;
 			mediaEvt=null;
+			mediaPos=null;
 
 			
 			

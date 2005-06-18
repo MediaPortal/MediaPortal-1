@@ -18,6 +18,7 @@ namespace MediaPortal.Core.Transcoding
 		protected IFileSinkFilter										fileWriterFilter = null;			// DShow Filter: file writer
 		protected IMediaControl											mediaControl=null;
 		protected IMediaSeeking											mediaSeeking=null;
+		protected IMediaPosition										mediaPos=null;
 		protected IBaseFilter												xvidCodec =null;
 		protected IBaseFilter												mp3Codec =null;
 		protected IBaseFilter												Mpeg2VideoCodec =null;
@@ -401,6 +402,8 @@ namespace MediaPortal.Core.Transcoding
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= graphBuilder as IMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
+				mediaPos    = graphBuilder as IMediaPosition;
+				mediaPos.put_CurrentPosition(1d);
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -471,6 +474,7 @@ namespace MediaPortal.Core.Transcoding
 			}
 			mediaSeeking=null;
 			mediaEvt=null;
+			mediaPos=null;
 
 			if ( xvidCodec != null )
 				Marshal.ReleaseComObject( xvidCodec );
