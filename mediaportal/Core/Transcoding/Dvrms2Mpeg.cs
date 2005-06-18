@@ -46,7 +46,7 @@ namespace MediaPortal.Core.Transcoding
 				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
 				if( comtype == null )
 				{
-					Log.Write("StreamBufferPlayer9:DirectX 9 not installed");
+					Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:DirectX 9 not installed");
 					return false;
 				}
 				comobj = Activator.CreateInstance( comtype );
@@ -202,7 +202,7 @@ namespace MediaPortal.Core.Transcoding
 			}
 			catch(Exception ex)
 			{
-				Log.Write("DVR2MPG:Unable create graph", ex.Message);
+				Log.WriteFile(Log.LogType.Log,true,"DVR2MPG:Unable create graph", ex.Message);
 				Cleanup();
 				return false;
 			}

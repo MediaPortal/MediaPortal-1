@@ -196,7 +196,7 @@ namespace MediaPortal.Core.Transcoding
 				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
 				if( comtype == null )
 				{
-					Log.Write("StreamBufferPlayer9:DirectX 9 not installed");
+					Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:DirectX 9 not installed");
 					return false;
 				}
 				comobj = Activator.CreateInstance( comtype );
@@ -227,7 +227,7 @@ namespace MediaPortal.Core.Transcoding
 				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				if( hr != 0 ) 
 				{
-					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -235,7 +235,7 @@ namespace MediaPortal.Core.Transcoding
 				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
 				if (Mpeg2AudioCodec==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2XVID:FAILED:unable to add mpeg2 audio codec");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to add mpeg2 audio codec");
 					Cleanup();
 					return false;
 				}
@@ -248,7 +248,7 @@ namespace MediaPortal.Core.Transcoding
 				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
 				if (pinOut0==null || pinOut1==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get pins of source");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of source");
 					Cleanup();
 					return false;
 				}
@@ -257,7 +257,7 @@ namespace MediaPortal.Core.Transcoding
 				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);
 				if (pinIn0==null || pinIn1==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get pins of mpeg2 video/audio codec");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of mpeg2 video/audio codec");
 					Cleanup();
 					return false;
 				}
@@ -268,7 +268,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut0.Connect(pinIn1,ref amAudio);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -280,7 +280,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut1.Connect(pinIn0,ref amVideo);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -292,7 +292,7 @@ namespace MediaPortal.Core.Transcoding
 				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerAsfWriter ) as IBaseFilter;
 				if (fileWriterbase==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:Unable to create FileWriter");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Unable to create FileWriter");
 					Cleanup();
 					return false;
 				}
@@ -301,7 +301,7 @@ namespace MediaPortal.Core.Transcoding
 				fileWriterFilter = fileWriterbase as IFileSinkFilter;
 				if (fileWriterFilter ==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:Add unable to get IFileSinkFilter for filewriter");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add unable to get IFileSinkFilter for filewriter");
 					Cleanup();
 					return false;
 				}
@@ -311,7 +311,7 @@ namespace MediaPortal.Core.Transcoding
 				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -319,7 +319,7 @@ namespace MediaPortal.Core.Transcoding
 				hr = graphBuilder.AddFilter( fileWriterbase , "WM ASF Writer" );
 				if( hr != 0 ) 
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -331,7 +331,7 @@ namespace MediaPortal.Core.Transcoding
 				DsUtils.GetPin((IBaseFilter)Mpeg2VideoCodec,PinDirection.Output,0,out pinOut1);
 				if (pinOut0==null || pinOut1==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get outpins of video codec");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get outpins of video codec");
 					Cleanup();
 					return false;
 				}
@@ -340,7 +340,7 @@ namespace MediaPortal.Core.Transcoding
 				DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
 				if (pinIn0==null || pinIn1==null)
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to get pins of asf wm writer");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of asf wm writer");
 					Cleanup();
 					return false;
 				}
@@ -349,7 +349,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut0.Connect(pinIn0,ref amAudio);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -359,7 +359,7 @@ namespace MediaPortal.Core.Transcoding
 				pinOut1.Connect(pinIn1,ref amVideo);
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -393,7 +393,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to set profile :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to set profile :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -405,7 +405,7 @@ namespace MediaPortal.Core.Transcoding
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
-					DirectShowUtil.DebugWrite("DVR2WMV:FAILED:unable to start graph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to start graph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -413,7 +413,7 @@ namespace MediaPortal.Core.Transcoding
 			catch (Exception e) 
 			{  
 				// TODO: Handle exceptions.
-				Log.Write("unable to transcode file:{0} message:{1}", info.file,e.Message);
+				Log.WriteFile(Log.LogType.Log,true,"unable to transcode file:{0} message:{1}", info.file,e.Message);
 
 				return false;
 			}
