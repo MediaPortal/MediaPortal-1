@@ -254,8 +254,8 @@ namespace MediaPortal.GUI.Music
 			{
 				btnShuffle.Disabled=true;
 				btnPlay.Disabled=true;
-				btnNext.Disabled=true;
-				btnSave.Disabled=true;
+				//btnNext.Disabled=true;
+				//btnSave.Disabled=true;
 			}
 			else
 			{

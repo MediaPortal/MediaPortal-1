@@ -27,6 +27,7 @@ namespace MediaPortal.TagReader.MP4
 		public override bool SupportsFile(string strFileName)
 		{
 			if (System.IO.Path.GetExtension(strFileName).ToLower()==".m4a") return true;
+			if (System.IO.Path.GetExtension(strFileName).ToLower()==".m4p") return true;
 			return false;
 		}
 		public override bool ReadTag(string strFileName)
