@@ -211,6 +211,7 @@ namespace MediaPortal.TV.Recording
 		protected IPin					m_data1=null;
 		protected IPin					m_data2=null;
 		protected IPin					m_data3=null;
+		protected IPin					m_pinAC3Out=null;
 		// stream buffer sink filter
 		protected IStreamBufferInitialize		m_streamBufferInit=null; 
 		protected IStreamBufferConfigure		m_config=null;
@@ -249,6 +250,8 @@ namespace MediaPortal.TV.Recording
 		int m_iVideoHeight=1;
 		int m_aspectX=1;
 		int m_aspectY=1;
+		bool isUsingAC3=false;
+
 		DateTime m_timeDisplayed=DateTime.Now;
 
 		bool m_lastTuneError=false;
@@ -381,7 +384,8 @@ namespace MediaPortal.TV.Recording
 			Vmr9 =new VMR9Util("mytv");
 			Vmr7=new VMR7Util();
 			m_graphBuilder=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
-			
+			isUsingAC3=false;
+
 			int n=0;
 			m_b2c2Adapter=null;
 			// create filters & interfaces
@@ -816,7 +820,8 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState < State.Created) return;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
-			
+			isUsingAC3=false;
+
 			if(m_streamDemuxer!=null)
 			{
 				try
@@ -955,6 +960,11 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_demuxAudioPin);
 				m_demuxAudioPin=null;
 			}
+			if(m_pinAC3Out!=null)
+			{
+				Marshal.ReleaseComObject(m_pinAC3Out);
+				m_pinAC3Out=null;
+			}
 			if(m_demuxSectionsPin!=null)
 			{
 				Marshal.ReleaseComObject(m_demuxSectionsPin);
@@ -1083,7 +1093,7 @@ namespace MediaPortal.TV.Recording
 			return true;
 		}
 		//
-		private bool CreateSinkSource(string fileName)
+		private bool CreateSinkSource(string fileName,bool useAC3)
 		{
 			if(m_graphState!=State.Created)
 				return false;
@@ -1108,7 +1118,7 @@ namespace MediaPortal.TV.Recording
 			if(hr!=0)
 				return false;
 
-			SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+			SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid,m_currentChannel.AC3Pid);
 				
 				
 			if(m_demuxVideoPin==null || m_demuxAudioPin==null)
@@ -1126,10 +1136,18 @@ namespace MediaPortal.TV.Recording
 					hr=m_graphBuilder.Render(pinObj1);
 					if(hr!=0)
 						return false;
-					hr=m_graphBuilder.Render(m_demuxAudioPin);
-					if(hr!=0)
-						return false;
-					
+					if(!useAC3)
+					{
+						hr=m_graphBuilder.Render(m_demuxAudioPin);
+						if(hr!=0)
+							return false;
+					}
+					else
+					{
+						hr=m_graphBuilder.Render(m_pinAC3Out);
+						if(hr!=0)
+							return false;
+					}
 					if(demuxInPin!=null)
 						Marshal.ReleaseComObject(demuxInPin);
 					if(samplePin!=null)
@@ -1227,13 +1245,14 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Release();
 				Vmr9=null;
 			}
+			isUsingAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
 
-			if(CreateSinkSource(fileName)==true)
+			if(CreateSinkSource(fileName,isUsingAC3)==true)
 			{
 				m_mediaControl=(IMediaControl)m_graphBuilder;
 				hr=m_mediaControl.Run();
 				m_graphState = State.TimeShifting;
-
+				//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
 			}
 			else {m_graphState=State.Created;return false;}
 			return true;
@@ -1420,7 +1439,7 @@ namespace MediaPortal.TV.Recording
 				if(m_mediaControl!=null && m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
 				{
 
-					int hr = SetupDemuxer(m_demuxVideoPin, ch.VideoPid,m_demuxAudioPin, ch.AudioPid,null,0);
+					int hr = SetupDemuxer(m_demuxVideoPin, ch.VideoPid,m_demuxAudioPin, ch.AudioPid,m_pinAC3Out,ch.AC3Pid);
 					if(hr!=0)
 					{
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
@@ -1442,7 +1461,7 @@ namespace MediaPortal.TV.Recording
 			}
 			
 		}
-		void SetDemux(int audioPid,int videoPid)
+		void SetDemux(int audioPid,int videoPid,int ac3Pid)
 		{
 			
 			if(m_demuxInterface==null)
@@ -1481,7 +1500,24 @@ namespace MediaPortal.TV.Recording
             mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
             System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
             ////IPin pinVideoOut,pinAudioOut;
- 
+			AMMediaType mediaAC3 = new AMMediaType();
+			mediaAC3.majorType = MediaType.Audio;
+			mediaAC3.subType = MediaSubType.DolbyAC3;
+			mediaAC3.sampleSize = 0;
+			mediaAC3.temporalCompression = false;
+			mediaAC3.fixedSizeSamples = false;
+			mediaAC3.unkPtr = IntPtr.Zero;
+			mediaAC3.formatType = FormatType.WaveEx;
+			mediaAC3.formatSize = MPEG1AudioFormat.GetLength(0);
+			mediaAC3.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAC3.formatSize);
+			System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mediaAC3.formatPtr,mediaAC3.formatSize) ;
+
+			hr=m_demuxInterface.CreateOutputPin(ref mediaAC3/*vidOut*/, "AC3", out m_pinAC3Out);
+			if (hr!=0 || m_pinAC3Out==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create AC3 pin:0x{0:X}",hr);
+			}
+
             hr=m_demuxInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_demuxVideoPin);
 			if (hr!=0)
 			{
@@ -1495,7 +1531,7 @@ namespace MediaPortal.TV.Recording
                 return;
             }
 
-			hr=SetupDemuxer(m_demuxVideoPin,videoPid,m_demuxAudioPin,audioPid,null,0);
+			hr=SetupDemuxer(m_demuxVideoPin,videoPid,m_demuxAudioPin,audioPid,m_pinAC3Out,ac3Pid);
 			if(hr!=0)//ignore audio pin
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to config Demuxer");
@@ -1597,7 +1633,7 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 
-			SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+			SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid,m_currentChannel.AC3Pid);
 			
 			if(m_demuxVideoPin==null)
 			{
@@ -1616,12 +1652,24 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot render demux video output pin");
 				return false;
 			}
-			hr = m_graphBuilder.Render(m_demuxAudioPin);
-			if (hr != 0)
+			isUsingAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
+			if (!isUsingAC3)
 			{
-				Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot render demux audio output pin");
-				return false;
+				if(m_graphBuilder.Render(m_demuxAudioPin) != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:Failed to render audio out pin MPEG-2 Demultiplexer");
+					return false;
+				}
 			}
+			else
+			{
+				if(m_graphBuilder.Render(m_pinAC3Out) != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:Failed to render AC3 pin MPEG-2 Demultiplexer");
+					return false;
+				}
+			}
+
 			//
 			//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
 			if(demuxInPin!=null)
@@ -1776,6 +1824,11 @@ namespace MediaPortal.TV.Recording
 		//
 		public bool ShouldRebuildGraph(TVChannel newChannel)
 		{
+			//check if we switch from an channel with AC3 to a channel without AC3
+			//or vice-versa. ifso, graphs should be rebuild
+			if (m_graphState != State.Viewing && m_graphState!= State.TimeShifting && m_graphState!=State.Recording) return false; 
+			bool useAC3=TVDatabase.DoesChannelHaveAC3(newChannel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
+			if (useAC3 != isUsingAC3) return true; 
 			return false;
 		}
 
@@ -2188,7 +2241,7 @@ namespace MediaPortal.TV.Recording
 						else
 						{
 							updatedRadioChannels++;
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: channel {0} already exists in tv database",newchannel.ServiceName);
 						}
 
 						if (Network() == NetworkType.DVBS)
@@ -2331,7 +2384,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			if(m_demuxVideoPin!=null && m_demuxAudioPin!=null)
-				SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,m_currentChannel.AudioPid,null,0);
+				SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,m_currentChannel.AudioPid,m_pinAC3Out,m_currentChannel.AC3Pid);
 
 		}
 
@@ -2389,7 +2442,7 @@ namespace MediaPortal.TV.Recording
 					return ;
 				}
 
-				SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid);
+				SetDemux(m_currentChannel.AudioPid,m_currentChannel.VideoPid,m_currentChannel.AC3Pid);
 			
 				if(m_demuxAudioPin==null)
 				{
@@ -2446,8 +2499,16 @@ namespace MediaPortal.TV.Recording
 		{
 			if(audioPid!=m_selectedAudioPid)
 			{
-				int hr=SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,audioPid,null,0);
-                if (hr != 0)
+				int hr=0;
+				if (audioPid==m_currentChannel.AC3Pid)
+				{
+					hr=SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,audioPid,m_pinAC3Out,audioPid);
+				}
+				else
+				{
+					hr=SetupDemuxer(m_demuxVideoPin,m_currentChannel.VideoPid,m_demuxAudioPin,audioPid,m_pinAC3Out,m_currentChannel.AC3Pid);
+				}
+					if (hr != 0)
                 {
                     Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: SetupDemuxer FAILED: errorcode {0}", hr.ToString());
                     return;
@@ -2487,6 +2548,13 @@ namespace MediaPortal.TV.Recording
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
 				al.AudioPid=m_currentChannel.Audio2;
 				al.AudioLanguageCode=m_currentChannel.AudioLanguage2;
+				alList.Add(al);
+			}
+			if(m_currentChannel.AC3Pid!=0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=m_currentChannel.AC3Pid;
+				al.AudioLanguageCode="AC3";
 				alList.Add(al);
 			}
 			return alList;
