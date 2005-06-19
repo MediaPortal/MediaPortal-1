@@ -1424,6 +1424,10 @@ namespace MediaPortal.TV.Recording
 
 			TVProgram prog=null;
 			DateTime dtNow = DateTime.Now.AddMinutes(preRecordInterval);
+			
+			if (!recording.IsContentRecording)
+				dtNow = DateTime.Now;
+
 			TVProgram currentRunningProgram = null;
 			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels);
