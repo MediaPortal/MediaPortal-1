@@ -621,6 +621,7 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,AudioPID);
 					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio1);
 					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio2);
+					SetPidToPin(m_dataCtrl,0,m_currentChannel.AC3Pid);
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
 					SetPidToPin(m_dataCtrl,0,dvbsubPID);
@@ -668,6 +669,8 @@ namespace MediaPortal.TV.Recording
 					SetPidToPin(m_dataCtrl,0,AudioPID);
 					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio1);
 					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio2);
+					SetPidToPin(m_dataCtrl,0,m_currentChannel.AC3Pid);
+
 					SetPidToPin(m_dataCtrl,0,VideoPID);
 					SetPidToPin(m_dataCtrl,0,dvbsubPID);
 					SetPidToPin(m_dataCtrl,0,pmtPID);
@@ -1671,7 +1674,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//
-			//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
+			DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
 			if(demuxInPin!=null)
 				Marshal.ReleaseComObject(demuxInPin);
 			if(samplePin!=null)
