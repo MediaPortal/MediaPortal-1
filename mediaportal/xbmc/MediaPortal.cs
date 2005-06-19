@@ -148,7 +148,6 @@ public class MediaPortalApp : D3DApp, IRender
     [STAThread]
     public static void Main()
     {
-
       Log.Write("Mediaportal is starting up");
 
       //Set current directory

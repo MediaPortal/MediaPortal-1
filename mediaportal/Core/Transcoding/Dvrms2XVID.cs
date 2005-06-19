@@ -29,6 +29,9 @@ namespace MediaPortal.Core.Transcoding
 		protected int fps;
 		protected Size screenSize;
 		protected long m_dDuration;
+		protected const int WS_CHILD			= 0x40000000;	// attributes for video window
+		protected const int WS_CLIPCHILDREN	= 0x02000000;
+		protected const int WS_CLIPSIBLINGS	= 0x04000000;
 		public Dvrms2XVID()
 		{
 			//
@@ -176,12 +179,50 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer);
+				comobj = Activator.CreateInstance(comtype);
+				IBaseFilter VMR7Filter = (IBaseFilter)comobj; comobj = null;
+				if (VMR7Filter == null)
+				{
+					Error.SetError("Unable to play movie", "VMR7 is not installed");
+					Log.WriteFile(Log.LogType.Log, true, "VMR7Helper:Failed to get instance of VMR7 ");
+					return false;
+				}
+
+				hr = graphBuilder.AddFilter( VMR7Filter, "Video Renderer" );
+				if( hr != 0 ) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add video renderer to filtergraph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2VideoCodec,1);
+
+				string monikerNullRenderer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{C1F400A4-3F08-11D3-9F0B-006008039E37}";
+				IBaseFilter nullRenderer = Marshal.BindToMoniker( monikerNullRenderer ) as IBaseFilter;
+				if (nullRenderer==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create nullRenderer Codec");
+					Cleanup();
+					return false;
+				}
+
+				hr = graphBuilder.AddFilter( nullRenderer, "Null renderer" );
+				if( hr != 0 ) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2AudioCodec);
+
 
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
 				mediaPos    = graphBuilder as IMediaPosition;
-
+				IVideoWindow videoWin	= graphBuilder as IVideoWindow;
 				//get file duration
 				long lTime=5*60*60;
 				lTime*=10000000;
@@ -196,9 +237,31 @@ namespace MediaPortal.Core.Transcoding
 					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
 				}
 
+				videoWin.put_Visible( DsHlp.OAFALSE );
+				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
+				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+
 				hr=mediaControl.Run();
-				System.Threading.Thread.Sleep(500);
+				while (true)
+				{
+					long lCurrent;
+					mediaSeeking.GetCurrentPosition(out lCurrent);
+					double dpos=(double)lCurrent;
+					dpos/=10000000d;
+					System.Windows.Forms.Application.DoEvents();
+					if (dpos >=1.0d) break;
+				}
 				mediaControl.Stop();
+
+				IBasicVideo2 basicvideo = graphBuilder as IBasicVideo2;
+				int height,width,arx,ary;
+				basicvideo.VideoHeight(out height);
+				basicvideo.VideoWidth(out width);
+				basicvideo.GetPreferredAspectRatio(out arx, out ary);
+				graphBuilder.RemoveFilter(nullRenderer);
+				graphBuilder.RemoveFilter(VMR7Filter);
+				Marshal.ReleaseComObject( nullRenderer);
+				Marshal.ReleaseComObject( VMR7Filter); 
 
 				string monikerXVID=@"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\xvid";
 				xvidCodec = Marshal.BindToMoniker( monikerXVID ) as IBaseFilter;
