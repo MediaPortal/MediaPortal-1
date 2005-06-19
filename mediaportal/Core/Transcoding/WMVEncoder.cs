@@ -317,7 +317,7 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
-				Log.Write("DVR2WMV: connect mpeg2 video codec->VM7 renderer");				
+				Log.Write("DVR2WMV: connect mpeg2 video codec->VMR7 renderer");				
 				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2VideoCodec,1);
 
 				Log.Write("DVR2WMV: create NullRenderer");				
