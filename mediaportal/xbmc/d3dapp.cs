@@ -2271,14 +2271,13 @@ namespace MediaPortal
 											DoSleep(50);
 										}
 									}
-								  counter=0;
-									if (GUIGraphicsContext.IsFullScreenVideo==false) counter=0;
+								FrameMove();
+								if (GUIGraphicsContext.IsFullScreenVideo==false) counter=0;
 									if (counter==0)
 									{
 										OnProcess();
 										if (useFrameClock)
 											StartFrameClock();
-										FrameMove();
 										FullRender();
 										if (useFrameClock)
 											WaitForFrameClock();
