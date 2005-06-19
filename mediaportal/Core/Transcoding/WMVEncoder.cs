@@ -370,15 +370,19 @@ namespace MediaPortal.Core.Transcoding
 				hr=mediaControl.Run();
 				if (hr!=0 && hr!=1)
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to start graph:0x{0:x}",hr);
+				int maxCount=20;
 				while (true)
 				{
 					long lCurrent;
 					mediaSeeking.GetCurrentPosition(out lCurrent);
 					double dpos=(double)lCurrent;
 					dpos/=10000000d;
-					if (dpos >=1.0d) break;
 					System.Threading.Thread.Sleep(100);
+					if (dpos >=1.0d) break;
+					maxCount--;
+					if (maxCount<=0) break;
 				}
+
 				mediaControl.Stop();
 
 				IBasicVideo2 basicvideo = VMR7Filter as IBasicVideo2;
