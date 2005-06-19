@@ -195,12 +195,14 @@ namespace MediaPortal.Core.Transcoding
 				string ext=System.IO.Path.GetExtension(info.file);
 				if (ext.ToLower() !=".dvr-ms" && ext.ToLower() !=".sbe" ) return false;
 
+				
+				Log.Write("DVR2WMV: create graph");
 				Type comtype = null;
 				object comobj = null;
 				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
 				if( comtype == null )
 				{
-					Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:DirectX 9 not installed");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:DirectX 9 not installed");
 					return false;
 				}
 				comobj = Activator.CreateInstance( comtype );
@@ -208,6 +210,8 @@ namespace MediaPortal.Core.Transcoding
 		
 				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
 
+				
+				Log.Write("DVR2WMV: add streambuffersource");
 				Guid clsid = Clsid.StreamBufferSource;
 				Guid riid = typeof(IStreamBufferSource).GUID;
 				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
@@ -217,6 +221,7 @@ namespace MediaPortal.Core.Transcoding
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "SBE SOURCE");
 	
+				Log.Write("DVR2WMV: load file:{0}",info.file);
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
@@ -228,22 +233,25 @@ namespace MediaPortal.Core.Transcoding
 					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","MPEG2Dec Filter");
 				}
 
+				Log.Write("DVR2WMV: add mpeg2 video codec:{0}", strVideoCodec);
 				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				if( hr != 0 ) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add mpeg2 video  to filtergraph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add mpeg2 video  to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 
+				Log.Write("DVR2WMV: add mpeg2 audio codec:{0}", strAudioCodec);
 				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
 				if (Mpeg2AudioCodec==null)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to add mpeg2 audio codec");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to add mpeg2 audio codec");
 					Cleanup();
 					return false;
 				}
 				
+				Log.Write("DVR2WMV: connect streambufer source->mpeg audio/video decoders");				
 				//connect output #0 of streambuffer source->mpeg2 audio codec pin 1
 				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
 				IPin pinOut0, pinOut1;
@@ -290,6 +298,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 
+				Log.Write("DVR2WMV: create VMR7 renderer");				
 				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer);
 				comobj = Activator.CreateInstance(comtype);
 				IBaseFilter VMR7Filter = (IBaseFilter)comobj; comobj = null;
@@ -300,32 +309,37 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				Log.Write("DVR2WMV: add VMR7 renderer to graph");				
 				hr = graphBuilder.AddFilter( VMR7Filter, "Video Renderer" );
 				if( hr != 0 ) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add video renderer to filtergraph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add video renderer to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
+				Log.Write("DVR2WMV: connect mpeg2 video codec->VM7 renderer");				
 				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2VideoCodec,1);
 
+				Log.Write("DVR2WMV: create NullRenderer");				
 				string monikerNullRenderer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{C1F400A4-3F08-11D3-9F0B-006008039E37}";
 				IBaseFilter nullRenderer = Marshal.BindToMoniker( monikerNullRenderer ) as IBaseFilter;
 				if (nullRenderer==null)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create nullRenderer Codec");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Unable to create nullRenderer Codec");
 					Cleanup();
 					return false;
 				}
 
+				Log.Write("DVR2WMV: add NullRenderer to graph");				
 				hr = graphBuilder.AddFilter( nullRenderer, "Null renderer" );
 				if( hr != 0 ) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 
+				Log.Write("DVR2WMV: connect mpeg2 audio codec->nullrenderer");				
 				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2AudioCodec,1);
 
 
@@ -334,6 +348,8 @@ namespace MediaPortal.Core.Transcoding
 				mediaEvt    = graphBuilder as IMediaEventEx;
 				mediaPos    = graphBuilder as IMediaPosition;
 				IVideoWindow videoWin	= graphBuilder as IVideoWindow;
+
+				Log.Write("DVR2WMV: Get duration of movie");				
 				//get file duration
 				long lTime=5*60*60;
 				lTime*=10000000;
@@ -347,11 +363,15 @@ namespace MediaPortal.Core.Transcoding
 					lTime=0;
 					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
 				}
+				double duration=m_dDuration/10000000d;
+				Log.Write("DVR2WMV: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 				videoWin.put_Visible( DsHlp.OAFALSE );
 				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
 				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
 
+
+				Log.Write("DVR2WMV: start graph to get video Width/Height and aspect ratio");				
 				hr=mediaControl.Run();
 				while (true)
 				{
@@ -374,14 +394,16 @@ namespace MediaPortal.Core.Transcoding
 				Marshal.ReleaseComObject( nullRenderer);
 				Marshal.ReleaseComObject( VMR7Filter); 
 
+				Log.Write("DVR2WMV: video:{0}x{1} AR:{2}:{3}",width,height,arx,ary);				
 
 				//add asf file writer
+				Log.Write("DVR2WMV: add WM ASF Writer to graph");				
 				string monikerAsfWriter=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}";
 
 				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerAsfWriter ) as IBaseFilter;
 				if (fileWriterbase==null)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Unable to create FileWriter");
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Unable to create ASF WM Writer");
 					Cleanup();
 					return false;
 				}
@@ -396,6 +418,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 				//set output filename
 				string outputFileName=System.IO.Path.ChangeExtension(info.file,".wmv");
+				Log.Write("DVR2WMV: set output file to:{0}", outputFileName);				
 				AMMediaType mt = new AMMediaType();
 				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
 				if (hr!=0 )
@@ -408,12 +431,13 @@ namespace MediaPortal.Core.Transcoding
 				hr = graphBuilder.AddFilter( fileWriterbase , "WM ASF Writer" );
 				if( hr != 0 ) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add ASF WM Writer to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
 
 
+				Log.Write("DVR2WMV: connect audio/video codecs outputs -> ASF WM Writer");
 				//connect output #0 of videocodec->asf writer pin 1
 				//connect output #0 of audiocodec->asf writer pin 0
 				DsUtils.GetPin((IBaseFilter)Mpeg2AudioCodec,PinDirection.Output,0,out pinOut0);
@@ -452,6 +476,8 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
+
+				Log.Write("DVR2WMV: set WMV quality proile");
 				IConfigAsfWriter config= fileWriterbase as IConfigAsfWriter;
 				switch (quality)
 				{
@@ -486,6 +512,7 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
+				Log.Write("DVR2WMV: start transcoding");
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -545,6 +572,7 @@ namespace MediaPortal.Core.Transcoding
 
 		void Cleanup()
 		{
+			Log.Write("DVR2WMV: cleanup");
 			if( rotCookie != 0 )
 				DsROT.RemoveGraphFromRot( ref rotCookie );
 
