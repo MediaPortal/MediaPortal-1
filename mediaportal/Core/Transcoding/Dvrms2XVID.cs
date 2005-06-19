@@ -84,6 +84,7 @@ namespace MediaPortal.Core.Transcoding
 			object comobj = null;
 			try 
 			{
+				Log.Write("DVR2XVID: create graph");
 				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
 				if( comtype == null )
 				{
@@ -95,6 +96,7 @@ namespace MediaPortal.Core.Transcoding
 			
 				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
 
+				Log.Write("DVR2XVID: add streambuffersource");
 				Guid clsid = Clsid.StreamBufferSource;
 				Guid riid = typeof(IStreamBufferSource).GUID;
 				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
@@ -104,6 +106,7 @@ namespace MediaPortal.Core.Transcoding
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "SBE SOURCE");		
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
+				Log.Write("DVR2XVID: load file:{0}",info.file);
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
 
@@ -111,6 +114,7 @@ namespace MediaPortal.Core.Transcoding
 				//add mpeg2 audio/video codecs
 				string strVideoCodecMoniker=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
 				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
+				Log.Write("DVR2XVID: add elecard mpeg2 video codec");
 				Mpeg2VideoCodec = Marshal.BindToMoniker( strVideoCodecMoniker ) as IBaseFilter;
 				if (Mpeg2VideoCodec==null)
 				{
@@ -126,6 +130,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				Log.Write("DVR2XVID: add mpeg2 audio codec:{0}", strAudioCodec);
 				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
 				if (Mpeg2AudioCodec==null)
 				{
@@ -136,6 +141,7 @@ namespace MediaPortal.Core.Transcoding
 
 				//connect output #0 of streambuffer source->mpeg2 audio codec pin 1
 				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
+				Log.Write("DVR2XVID: connect streambufer source->mpeg audio/video decoders");				
 				IPin pinOut0, pinOut1;
 				IPin pinIn0, pinIn1;
 				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
@@ -179,6 +185,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				Log.Write("DVR2XVID: create VMR7 renderer");				
 				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer);
 				comobj = Activator.CreateInstance(comtype);
 				IBaseFilter VMR7Filter = (IBaseFilter)comobj; comobj = null;
@@ -189,6 +196,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				Log.Write("DVR2XVID: add VMR7 renderer to graph");				
 				hr = graphBuilder.AddFilter( VMR7Filter, "Video Renderer" );
 				if( hr != 0 ) 
 				{
@@ -196,8 +204,10 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
+				Log.Write("DVR2XVID: connect mpeg2 video codec->VM7 renderer");				
 				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2VideoCodec,1);
 
+				Log.Write("DVR2XVID: create NullRenderer");				
 				string monikerNullRenderer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{C1F400A4-3F08-11D3-9F0B-006008039E37}";
 				IBaseFilter nullRenderer = Marshal.BindToMoniker( monikerNullRenderer ) as IBaseFilter;
 				if (nullRenderer==null)
@@ -207,6 +217,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				Log.Write("DVR2XVID: add NullRenderer to graph");				
 				hr = graphBuilder.AddFilter( nullRenderer, "Null renderer" );
 				if( hr != 0 ) 
 				{
@@ -215,7 +226,8 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2AudioCodec);
+				Log.Write("DVR2XVID: connect mpeg2 audio codec->nullrenderer");				
+				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2AudioCodec,1);
 
 
 				mediaControl= graphBuilder as IMediaControl;
@@ -223,7 +235,9 @@ namespace MediaPortal.Core.Transcoding
 				mediaEvt    = graphBuilder as IMediaEventEx;
 				mediaPos    = graphBuilder as IMediaPosition;
 				IVideoWindow videoWin	= graphBuilder as IVideoWindow;
+
 				//get file duration
+				Log.Write("DVR2XVID: Get duration of movie");				
 				long lTime=5*60*60;
 				lTime*=10000000;
 				long pStop=0;
@@ -236,11 +250,14 @@ namespace MediaPortal.Core.Transcoding
 					lTime=0;
 					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
 				}
+				double duration=m_dDuration/10000000d;
+				Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 				videoWin.put_Visible( DsHlp.OAFALSE );
 				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
 				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
 
+				Log.Write("DVR2XVID: start graph to get video Width/Height and aspect ratio");				
 				hr=mediaControl.Run();
 				while (true)
 				{
@@ -262,7 +279,9 @@ namespace MediaPortal.Core.Transcoding
 				graphBuilder.RemoveFilter(VMR7Filter);
 				Marshal.ReleaseComObject( nullRenderer);
 				Marshal.ReleaseComObject( VMR7Filter); 
+				Log.Write("DVR2XVID: video:{0}x{1} AR:{2}:{3}",width,height,arx,ary);				
 
+				Log.Write("DVR2XVID: add XVID codec to graph");				
 				string monikerXVID=@"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\xvid";
 				xvidCodec = Marshal.BindToMoniker( monikerXVID ) as IBaseFilter;
 				if (xvidCodec==null)
@@ -281,6 +300,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 
+				Log.Write("DVR2XVID: add MPEG3 codec to graph");				
 				string monikerMPEG3=@"@device:cm:{33D9A761-90C8-11D0-BD43-00A0C911CE86}\85MPEG Layer-3";
 				mp3Codec = Marshal.BindToMoniker( monikerMPEG3 ) as IBaseFilter;
 				if (mp3Codec==null)
@@ -299,6 +319,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				//add filewriter 
+				Log.Write("DVR2XVID: add FileWriter to graph");				
 				string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}";
 				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerFileWrite ) as IBaseFilter;
 				if (fileWriterbase==null)
@@ -329,6 +350,7 @@ namespace MediaPortal.Core.Transcoding
 				//set output filename
 				AMMediaType mt = new AMMediaType();
 				string outputFileName=System.IO.Path.ChangeExtension(info.file,".avi");
+				Log.Write("DVR2XVID: set output file to :{0}",outputFileName);				
 				mt.majorType=MediaType.Stream;
 				mt.subType=MediaSubType.Avi;
 				mt.formatType=FormatType.None;
@@ -339,7 +361,9 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
+
 				// add avi muxer
+				Log.Write("DVR2XVID: add AVI Muxer to graph");				
 				string monikerAviMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{E2510970-F137-11CE-8B67-00AA00A3F1A6}";
 				aviMuxer = Marshal.BindToMoniker( monikerAviMuxer ) as IBaseFilter;
 				if (aviMuxer==null)
@@ -360,6 +384,7 @@ namespace MediaPortal.Core.Transcoding
 
 
 				//connect output of mpeg2 codec to xvid codec
+				Log.Write("DVR2XVID: connect mpeg2 video codec->xvid codec");				
 				IPin pinOut, pinIn;
 				hr=DsUtils.GetPin(xvidCodec,PinDirection.Input,0,out pinIn);
 				if (hr!=0 || pinIn==null)
@@ -386,6 +411,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				//connect output of mpeg2 audio codec to mpeg3 codec
+				Log.Write("DVR2XVID: connect mpeg2 audio codec->mp3 codec");				
 				hr=DsUtils.GetPin(mp3Codec,PinDirection.Input,0,out pinIn);
 				if (hr!=0 || pinIn==null)
 				{
@@ -413,6 +439,7 @@ namespace MediaPortal.Core.Transcoding
 
 
 				//connect output of mpeg3 codec to pin#0 of avimux
+				Log.Write("DVR2XVID: connect mp3 codec->avimux");				
 				hr=DsUtils.GetPin(mp3Codec,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
@@ -438,6 +465,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				//connect output of xvid codec to pin#1 of avimux
+				Log.Write("DVR2XVID: connect xvid codec->avimux");				
 				hr=DsUtils.GetPin(xvidCodec,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
@@ -464,6 +492,7 @@ namespace MediaPortal.Core.Transcoding
 
 
 				//connect avi mux out->filewriter in
+				Log.Write("DVR2XVID: connect avimux->filewriter");				
 				hr=DsUtils.GetPin(aviMuxer,PinDirection.Output,0,out pinOut);
 				if (hr!=0 || pinOut==null)
 				{
@@ -487,6 +516,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				Log.Write("DVR2XVID: start transcoding");				
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -546,6 +576,7 @@ namespace MediaPortal.Core.Transcoding
 
 		void Cleanup()
 		{
+			Log.Write("DVR2XVID: cleanup");				
 			if( rotCookie != 0 )
 				DsROT.RemoveGraphFromRot( ref rotCookie );
 
