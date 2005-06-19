@@ -3342,6 +3342,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.Audio1=currentTuningObject.Audio1;
 				newchannel.Audio2=currentTuningObject.Audio2;
 				newchannel.Audio3=currentTuningObject.Audio3;
+				newchannel.AC3Pid=currentTuningObject.AC3Pid;
 				newchannel.AudioLanguage1=currentTuningObject.AudioLanguage1;
 				newchannel.AudioLanguage2=currentTuningObject.AudioLanguage2;
 				newchannel.AudioLanguage3=currentTuningObject.AudioLanguage3;
