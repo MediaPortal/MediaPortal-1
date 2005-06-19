@@ -1820,14 +1820,22 @@ namespace MediaPortal.GUI.Video
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
       int iidMovie=VideoDatabase.GetMovieId(filename);
-      VideoDatabase.GetFiles(iidMovie, ref movies);
-      for (int i=0 ; i<movies.Count ; i++)
-      {
-        string strFilePath = (string)movies[i];
-        int idFile=VideoDatabase.GetFileId(strFilePath);
-        if (idFile<0) break;
-        VideoDatabase.DeleteMovieStopTime(idFile);
-      }
+			if (iidMovie>=0)
+			{
+				VideoDatabase.GetFiles(iidMovie, ref movies);
+				for (int i=0 ; i<movies.Count ; i++)
+				{
+					string strFilePath = (string)movies[i];
+					int idFile=VideoDatabase.GetFileId(strFilePath);
+					if (idFile<0) break;
+					VideoDatabase.DeleteMovieStopTime(idFile);
+				}
+
+				IMDBMovie details = new IMDBMovie();
+				VideoDatabase.GetMovieInfoById(iidMovie, ref details);
+				details.Watched++;
+				VideoDatabase.SetWatched(details);
+			}
     }
     private void OnPlayBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {

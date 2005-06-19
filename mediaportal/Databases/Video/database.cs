@@ -773,6 +773,22 @@ namespace MediaPortal.Video.Database
 				Open();
 			}
 		}
+		static public void SetWatched(IMDBMovie details)
+		{
+			try
+			{
+				if (null==m_db) return ;
+				if (details.ID<0) return;
+				string strSQL;
+				strSQL=String.Format("update movieinfo set iswatched={0} where idMovie={1}", details.Watched, details.ID );
+				m_db.Execute(strSQL);
+			}
+			catch (Exception ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+		}
 
 		static public void ClearBookMarksOfMovie( string strFilenameAndPath)
 		{

@@ -899,7 +899,15 @@ namespace MediaPortal.GUI.TV
 				VideoDatabase.DeleteMovieInfo(filename);
 				VideoDatabase.DeleteMovie(filename);
 			}
+			else
+			{
+				IMDBMovie details = new IMDBMovie();
+				VideoDatabase.GetMovieInfoById(movieid, ref details);
+				details.Watched++;
+				VideoDatabase.SetWatched(details);
+			}
     }
+
     private void OnPlayRecordingBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)
     {
       if (type!=g_Player.MediaType.Recording) return;
