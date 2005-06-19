@@ -49,7 +49,7 @@ namespace MediaPortal.Profile
 		/// <returns>
 		///   The return value is the XMLDocument object based on the file, 
 		///   or null if the file does not exist. </returns>
-		private XmlDocument GetXmlDocument()
+		public XmlDocument GetXmlDocument()
 		{
 
 			if (!File.Exists(m_strFileName))

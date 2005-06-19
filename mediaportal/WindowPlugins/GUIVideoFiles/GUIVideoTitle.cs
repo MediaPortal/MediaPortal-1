@@ -393,6 +393,7 @@ namespace MediaPortal.GUI.Video
 							listItem.IconImageBig = coverArtImage;
 							listItem.IconImage = coverArtImage;
 						}
+						
 					}
 					else if (movie.Actor!=String.Empty)
 					{
