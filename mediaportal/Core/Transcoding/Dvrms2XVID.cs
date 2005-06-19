@@ -144,8 +144,8 @@ namespace MediaPortal.Core.Transcoding
 				Log.Write("DVR2XVID: connect streambufer source->mpeg audio/video decoders");				
 				IPin pinOut0, pinOut1;
 				IPin pinIn0, pinIn1;
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);//audio
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);//video
 				if (pinOut0==null || pinOut1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of source");
@@ -153,8 +153,8 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);
-				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);
+				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);//video
+				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);//audio
 				if (pinIn0==null || pinIn1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of mpeg2 video/audio codec");
@@ -162,10 +162,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 				
-				AMMediaType amAudio= new AMMediaType();
-				amAudio.majorType = MediaType.Audio;
-				amAudio.subType = MediaSubType.MPEG2_Audio;
-				pinOut0.Connect(pinIn1,ref amAudio);
+				hr=graphBuilder.Connect(pinOut0,pinIn1);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect audio pins :0x{0:X}",hr);
@@ -174,10 +171,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				
-				AMMediaType amVideo= new AMMediaType();
-				amVideo.majorType = MediaType.Video;
-				amVideo.subType = MediaSubType.MPEG2_Video;
-				pinOut1.Connect(pinIn0,ref amVideo);
+				hr=graphBuilder.Connect(pinOut1,pinIn0);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect video pins :0x{0:X}",hr);
@@ -186,7 +180,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				Log.Write("DVR2XVID: create VMR7 renderer");				
-				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer);
+				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
 				comobj = Activator.CreateInstance(comtype);
 				IBaseFilter VMR7Filter = (IBaseFilter)comobj; comobj = null;
 				if (VMR7Filter == null)
@@ -234,7 +228,7 @@ namespace MediaPortal.Core.Transcoding
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
 				mediaPos    = graphBuilder as IMediaPosition;
-				IVideoWindow videoWin	= graphBuilder as IVideoWindow;
+				IVideoWindow videoWin	= VMR7Filter as IVideoWindow;
 
 				//get file duration
 				Log.Write("DVR2XVID: Get duration of movie");				
@@ -254,11 +248,14 @@ namespace MediaPortal.Core.Transcoding
 				Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 				videoWin.put_Visible( DsHlp.OAFALSE );
+				videoWin.put_AutoShow( DsHlp.OAFALSE );
 				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
 				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
 
 				Log.Write("DVR2XVID: start graph to get video Width/Height and aspect ratio");				
 				hr=mediaControl.Run();
+				if (hr!=0 && hr!=1)
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to start graph:0x{0:x}",hr);
 				while (true)
 				{
 					long lCurrent;
@@ -270,7 +267,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 				mediaControl.Stop();
 
-				IBasicVideo2 basicvideo = graphBuilder as IBasicVideo2;
+				IBasicVideo2 basicvideo = VMR7Filter as IBasicVideo2;
 				int height,width,arx,ary;
 				basicvideo.VideoHeight(out height);
 				basicvideo.VideoWidth(out width);
@@ -401,8 +398,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				amVideo= new AMMediaType();
-				pinOut.Connect(pinIn,ref amVideo);
+				hr=graphBuilder.Connect(pinOut,pinIn);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg2 video codec->xvid:0x{0:X}",hr);
@@ -427,8 +423,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				amVideo= new AMMediaType();
-				pinOut.Connect(pinIn,ref amVideo);
+				hr=graphBuilder.Connect(pinOut,pinIn);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg2 audio codec->mpeg3:0x{0:X}",hr);
@@ -455,8 +450,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				amVideo= new AMMediaType();
-				pinOut.Connect(pinIn,ref amVideo);
+				hr=graphBuilder.Connect(pinOut,pinIn);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg3 codec->avimux:0x{0:X}",hr);
@@ -481,8 +475,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				amVideo= new AMMediaType();
-				pinOut.Connect(pinIn,ref amVideo);
+				hr=graphBuilder.Connect(pinOut,pinIn);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect xvid codec->avimux:0x{0:X}",hr);
@@ -508,7 +501,7 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
-				hr=pinOut.Connect(pinIn,ref mt);
+				hr=graphBuilder.Connect(pinOut,pinIn);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:connect muxer->filewriter :0x{0:X}",hr);
@@ -621,6 +614,10 @@ namespace MediaPortal.Core.Transcoding
 
 			if( graphBuilder != null )
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+			GC.Collect();
+			GC.Collect();
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 		#endregion

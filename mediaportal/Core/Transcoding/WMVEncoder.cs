@@ -256,8 +256,8 @@ namespace MediaPortal.Core.Transcoding
 				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
 				IPin pinOut0, pinOut1;
 				IPin pinIn0, pinIn1;
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);//audio
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);//video
 				if (pinOut0==null || pinOut1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of source");
@@ -265,8 +265,8 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);
-				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);
+				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);//video
+				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);//audio
 				if (pinIn0==null || pinIn1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of mpeg2 video/audio codec");
@@ -274,10 +274,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 			
-				AMMediaType amAudio= new AMMediaType();
-				amAudio.majorType = MediaType.Audio;
-				amAudio.subType = MediaSubType.MPEG2_Audio;
-				pinOut0.Connect(pinIn1,ref amAudio);
+				hr=graphBuilder.Connect(pinOut0,pinIn1);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
@@ -286,10 +283,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 			
-				AMMediaType amVideo= new AMMediaType();
-				amVideo.majorType = MediaType.Video;
-				amVideo.subType = MediaSubType.MPEG2_Video;
-				pinOut1.Connect(pinIn0,ref amVideo);
+				hr=graphBuilder.Connect(pinOut1,pinIn0);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
@@ -299,7 +293,7 @@ namespace MediaPortal.Core.Transcoding
 
 
 				Log.Write("DVR2WMV: create VMR7 renderer");				
-				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer);
+				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
 				comobj = Activator.CreateInstance(comtype);
 				IBaseFilter VMR7Filter = (IBaseFilter)comobj; comobj = null;
 				if (VMR7Filter == null)
@@ -347,7 +341,7 @@ namespace MediaPortal.Core.Transcoding
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
 				mediaPos    = graphBuilder as IMediaPosition;
-				IVideoWindow videoWin	= graphBuilder as IVideoWindow;
+				IVideoWindow videoWin	= VMR7Filter as IVideoWindow;
 
 				Log.Write("DVR2WMV: Get duration of movie");				
 				//get file duration
@@ -367,12 +361,15 @@ namespace MediaPortal.Core.Transcoding
 				Log.Write("DVR2WMV: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 				videoWin.put_Visible( DsHlp.OAFALSE );
+				videoWin.put_AutoShow( DsHlp.OAFALSE );
 				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
 				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
 
 
 				Log.Write("DVR2WMV: start graph to get video Width/Height and aspect ratio");				
 				hr=mediaControl.Run();
+				if (hr!=0 && hr!=1)
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to start graph:0x{0:x}",hr);
 				while (true)
 				{
 					long lCurrent;
@@ -384,7 +381,7 @@ namespace MediaPortal.Core.Transcoding
 				}
 				mediaControl.Stop();
 
-				IBasicVideo2 basicvideo = graphBuilder as IBasicVideo2;
+				IBasicVideo2 basicvideo = VMR7Filter as IBasicVideo2;
 				int height,width,arx,ary;
 				basicvideo.VideoHeight(out height);
 				basicvideo.VideoWidth(out width);
@@ -450,16 +447,14 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 				DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn0);
-				DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
-				if (pinIn0==null || pinIn1==null)
+				if (pinIn0==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of asf wm writer");
 					Cleanup();
 					return false;
 				}
 			
-				amAudio= new AMMediaType();
-				pinOut0.Connect(pinIn0,ref amAudio);
+				hr=graphBuilder.Connect(pinOut0,pinIn0);
 				if (hr!=0 )
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
@@ -468,13 +463,30 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 			
-				amVideo= new AMMediaType();
-				pinOut1.Connect(pinIn1,ref amVideo);
-				if (hr!=0 )
+				DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
+				if (pinIn1==null)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of asf wm writer");
 					Cleanup();
 					return false;
+				}
+				hr=graphBuilder.Connect(pinOut1,pinIn1);
+				if (hr!=0 )
+				{
+					GC.Collect();
+					GC.Collect();
+					GC.Collect();
+					GC.WaitForPendingFinalizers();
+					System.Threading.Thread.Sleep(1000);
+					DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
+					DsUtils.GetPin((IBaseFilter)Mpeg2VideoCodec,PinDirection.Output,0,out pinOut1);
+					hr=graphBuilder.Connect(pinOut1,pinIn1);
+					if (hr!=0 )
+					{
+						Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
+						Cleanup();
+						return false;
+					}
 				}
 
 				Log.Write("DVR2WMV: set WMV quality proile");
@@ -573,8 +585,6 @@ namespace MediaPortal.Core.Transcoding
 		void Cleanup()
 		{
 			Log.Write("DVR2WMV: cleanup");
-			if( rotCookie != 0 )
-				DsROT.RemoveGraphFromRot( ref rotCookie );
 
 			if( mediaControl != null )
 			{
@@ -604,9 +614,15 @@ namespace MediaPortal.Core.Transcoding
 			bufferSource = null;
 
 			DsUtils.RemoveFilters(graphBuilder);
+			if( rotCookie != 0 )
+				DsROT.RemoveGraphFromRot( ref rotCookie );
 
 			if( graphBuilder != null )
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+			GC.Collect();
+			GC.Collect();
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 	}
