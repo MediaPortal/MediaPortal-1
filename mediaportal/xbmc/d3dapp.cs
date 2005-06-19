@@ -2237,51 +2237,62 @@ namespace MediaPortal
 						GC.Collect();
 						GC.Collect();
 						GC.WaitForPendingFinalizers();
-					
+						bool useFrameClock=false;
+						int  counter=0;
             while (true)
             {
-                if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-                    break;
-                try
-                {
-                    OnProcess();
-										StartFrameClock();
-                    FrameMove();
-                    FullRender();
-									
-                    if (ShouldUseSleepingTime())
-                    {
-                        if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-                        {
-                            //dont sleep
-                        }
-                      else 
+              if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+                  break;
+              try
+              {
+									useFrameClock=false;
+								
+                  if (ShouldUseSleepingTime())
+                  {
+                      if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
                       {
-                        // Do some sleep....
-                        WaitForFrameClock();
+                          //dont sleep
                       }
-                    }
-                    else
+                    else 
                     {
-											if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-											{
-												//dont sleep
-											}
-											else
-											{
-												GUIGraphicsContext.CurrentFPS = 0f;
-												DoSleep(100);
-											}
+                      // Do some sleep....
+											useFrameClock=true;
                     }
-                    HandleMessage();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteFile(Log.LogType.Log, true, "exception:{0}", ex.ToString());
+                  }
+                  else
+                  {
+										if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+										{
+											//dont sleep
+										}
+										else
+										{
+											GUIGraphicsContext.CurrentFPS = 0f;
+											DoSleep(50);
+										}
+									}
+									if (GUIGraphicsContext.IsFullScreenVideo==false) counter=0;
+									if (counter==0)
+									{
+										OnProcess();
+										if (useFrameClock)
+											StartFrameClock();
+										FrameMove();
+										FullRender();
+										if (useFrameClock)
+											WaitForFrameClock();
+									}
+                  HandleMessage();
+									counter++;
+								  if (counter>25) counter=0;
+              }
+              catch (Exception ex)
+              {
+                  Log.WriteFile(Log.LogType.Log, true, "exception:{0}", ex.ToString());
 #if DEBUG
-          throw ex;
+        throw ex;
 #endif
-                }
+              }
             }
             OnExit();
             try
