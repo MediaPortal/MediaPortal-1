@@ -333,7 +333,7 @@ namespace MediaPortal.GUI.Video
 
 			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 			if (null==dlgYesNo) return;
-			dlgYesNo.SetHeading(GUILocalizeStrings.Get(664));
+			dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
 			dlgYesNo.SetLine(1,movie.Title);
 			dlgYesNo.SetLine(2, String.Empty);
 			dlgYesNo.SetLine(3, String.Empty);
