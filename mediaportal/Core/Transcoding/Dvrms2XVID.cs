@@ -248,7 +248,7 @@ namespace MediaPortal.Core.Transcoding
 					mediaSeeking.GetCurrentPosition(out lCurrent);
 					double dpos=(double)lCurrent;
 					dpos/=10000000d;
-					System.Windows.Forms.Application.DoEvents();
+					System.Threading.Thread.Sleep(100);
 					if (dpos >=1.0d) break;
 				}
 				mediaControl.Stop();
