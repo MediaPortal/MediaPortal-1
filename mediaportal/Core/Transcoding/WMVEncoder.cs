@@ -231,7 +231,7 @@ namespace MediaPortal.Core.Transcoding
 				Mpeg2VideoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				if( hr != 0 ) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add mpeg2 video  to filtergraph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
