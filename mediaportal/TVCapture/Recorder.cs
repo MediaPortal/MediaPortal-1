@@ -1015,6 +1015,28 @@ namespace MediaPortal.TV.Recording
 					m_osd.RenderZapOSD(channel,quality,level);
 			}
 		}
+		static public int SignalStrength
+		{
+			get 
+			{
+				if (m_eState!= State.Initialized) return 0;
+				if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return 0;
+			
+				TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
+				return dev.SignalStrength;
+			}
+		}
+		static public int SignalQuality
+		{
+			get 
+			{
+				if (m_eState!= State.Initialized) return 0;
+				if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return 0;
+			
+				TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
+				return dev.SignalQuality;
+			}
+		}
 
 		static public string GetRecordingFileName(TVRecording rec)
 		{

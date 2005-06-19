@@ -156,13 +156,13 @@ namespace MediaPortal.Core.Transcoding
 		protected  IStreamBufferSource 			        bufferSource=null ;
 		protected IMediaControl											mediaControl=null;
 		protected IMediaPosition										mediaPos=null;
-		protected IMediaSeeking											mediaSeeking=null;
+		protected IStreamBufferMediaSeeking					mediaSeeking=null;
 		protected IBaseFilter												powerDvdMuxer =null;
 		protected IMediaEventEx											mediaEvt=null;
 		protected IFileSinkFilter										fileWriterFilter = null;			// DShow Filter: file writer
 		protected IBaseFilter												Mpeg2VideoCodec =null;
 		protected IBaseFilter												Mpeg2AudioCodec =null;
-
+		protected long m_dDuration;
 		protected int bitrate;
 		protected int fps;
 		protected Size screenSize;
@@ -286,6 +286,30 @@ namespace MediaPortal.Core.Transcoding
 				}
 
 
+
+				mediaControl= graphBuilder as IMediaControl;
+				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
+				mediaEvt    = graphBuilder as IMediaEventEx;
+				mediaPos    = graphBuilder as IMediaPosition;
+
+				//get file duration
+				long lTime=5*60*60;
+				lTime*=10000000;
+				long pStop=0;
+				hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				if (hr==0)
+				{
+					long lStreamPos;
+					mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+					m_dDuration=lStreamPos;
+					lTime=0;
+					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				}
+
+				hr=mediaControl.Run();
+				System.Threading.Thread.Sleep(500);
+				mediaControl.Stop();
+
 				//add asf file writer
 				string monikerAsfWriter=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}";
 
@@ -397,11 +421,6 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
-				mediaControl= graphBuilder as IMediaControl;
-				mediaSeeking= graphBuilder as IMediaSeeking;
-				mediaEvt    = graphBuilder as IMediaEventEx;
-				mediaPos    = graphBuilder as IMediaPosition;
-				mediaPos.put_CurrentPosition(1d);
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -445,11 +464,11 @@ namespace MediaPortal.Core.Transcoding
 		public int Percentage()
 		{
 			if (mediaSeeking==null) return 100;
-			long lDuration,lCurrent;
+			long lCurrent;
 			mediaSeeking.GetCurrentPosition(out lCurrent);
-			mediaSeeking.GetDuration(out lDuration);
-			float percent = ((float)lCurrent) / ((float)lDuration);
+			float percent = ((float)lCurrent) / ((float)m_dDuration);
 			percent*=100.0f;
+			if (percent >100) percent=100;
 			return (int)percent;
 		}
 

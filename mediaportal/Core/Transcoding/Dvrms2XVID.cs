@@ -17,7 +17,7 @@ namespace MediaPortal.Core.Transcoding
 		protected  IStreamBufferSource 			        bufferSource=null ;
 		protected IFileSinkFilter										fileWriterFilter = null;			// DShow Filter: file writer
 		protected IMediaControl											mediaControl=null;
-		protected IMediaSeeking											mediaSeeking=null;
+		protected IStreamBufferMediaSeeking											mediaSeeking=null;
 		protected IMediaPosition										mediaPos=null;
 		protected IBaseFilter												xvidCodec =null;
 		protected IBaseFilter												mp3Codec =null;
@@ -28,7 +28,7 @@ namespace MediaPortal.Core.Transcoding
 		protected int bitrate;
 		protected int fps;
 		protected Size screenSize;
-
+		protected long m_dDuration;
 		public Dvrms2XVID()
 		{
 			//
@@ -99,11 +99,106 @@ namespace MediaPortal.Core.Transcoding
 
 		
 				IBaseFilter filter = (IBaseFilter) bufferSource;
-				graphBuilder.AddFilter(filter, "SBE SOURCE");
-		
+				graphBuilder.AddFilter(filter, "SBE SOURCE");		
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
+
+
+				//add mpeg2 audio/video codecs
+				string strVideoCodecMoniker=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
+				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
+				Mpeg2VideoCodec = Marshal.BindToMoniker( strVideoCodecMoniker ) as IBaseFilter;
+				if (Mpeg2VideoCodec==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to add Elecard mpeg2 video decoder");
+					Cleanup();
+					return false;
+				}
+				hr = graphBuilder.AddFilter( Mpeg2VideoCodec , "Elecard mpeg2 video decoder" );
+				if( hr != 0 ) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+				if (Mpeg2AudioCodec==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to add mpeg2 audio codec");
+					Cleanup();
+					return false;
+				}
+
+				//connect output #0 of streambuffer source->mpeg2 audio codec pin 1
+				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
+				IPin pinOut0, pinOut1;
+				IPin pinIn0, pinIn1;
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
+				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
+				if (pinOut0==null || pinOut1==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of source");
+					Cleanup();
+					return false;
+				}
+
+				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);
+				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);
+				if (pinIn0==null || pinIn1==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of mpeg2 video/audio codec");
+					Cleanup();
+					return false;
+				}
+				
+				AMMediaType amAudio= new AMMediaType();
+				amAudio.majorType = MediaType.Audio;
+				amAudio.subType = MediaSubType.MPEG2_Audio;
+				pinOut0.Connect(pinIn1,ref amAudio);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect audio pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+				
+				AMMediaType amVideo= new AMMediaType();
+				amVideo.majorType = MediaType.Video;
+				amVideo.subType = MediaSubType.MPEG2_Video;
+				pinOut1.Connect(pinIn0,ref amVideo);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect video pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+
+				mediaControl= graphBuilder as IMediaControl;
+				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
+				mediaEvt    = graphBuilder as IMediaEventEx;
+				mediaPos    = graphBuilder as IMediaPosition;
+
+				//get file duration
+				long lTime=5*60*60;
+				lTime*=10000000;
+				long pStop=0;
+				hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				if (hr==0)
+				{
+					long lStreamPos;
+					mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+					m_dDuration=lStreamPos;
+					lTime=0;
+					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				}
+
+				hr=mediaControl.Run();
+				System.Threading.Thread.Sleep(500);
+				mediaControl.Stop();
 
 				string monikerXVID=@"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\xvid";
 				xvidCodec = Marshal.BindToMoniker( monikerXVID ) as IBaseFilter;
@@ -196,77 +291,6 @@ namespace MediaPortal.Core.Transcoding
 				if( hr != 0 ) 
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add AviMux to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				//add mpeg2 audio/video codecs
-				string strVideoCodecMoniker=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
-				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
-				Mpeg2VideoCodec = Marshal.BindToMoniker( strVideoCodecMoniker ) as IBaseFilter;
-				if (Mpeg2VideoCodec==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to add Elecard mpeg2 video decoder");
-					Cleanup();
-					return false;
-				}
-				hr = graphBuilder.AddFilter( Mpeg2VideoCodec , "Elecard mpeg2 video decoder" );
-				if( hr != 0 ) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add Elecard mpeg2 video  to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				Mpeg2AudioCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-				if (Mpeg2AudioCodec==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to add mpeg2 audio codec");
-					Cleanup();
-					return false;
-				}
-
-				//connect output #0 of streambuffer source->mpeg2 audio codec pin 1
-				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
-				IPin pinOut0, pinOut1;
-				IPin pinIn0, pinIn1;
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
-				if (pinOut0==null || pinOut1==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of source");
-					Cleanup();
-					return false;
-				}
-
-				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);
-				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);
-				if (pinIn0==null || pinIn1==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of mpeg2 video/audio codec");
-					Cleanup();
-					return false;
-				}
-				
-				AMMediaType amAudio= new AMMediaType();
-				amAudio.majorType = MediaType.Audio;
-				amAudio.subType = MediaSubType.MPEG2_Audio;
-				pinOut0.Connect(pinIn1,ref amAudio);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect audio pins :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				
-				AMMediaType amVideo= new AMMediaType();
-				amVideo.majorType = MediaType.Video;
-				amVideo.subType = MediaSubType.MPEG2_Video;
-				pinOut1.Connect(pinIn0,ref amVideo);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect video pins :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -399,11 +423,7 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
-				mediaControl= graphBuilder as IMediaControl;
-				mediaSeeking= graphBuilder as IMediaSeeking;
-				mediaEvt    = graphBuilder as IMediaEventEx;
-				mediaPos    = graphBuilder as IMediaPosition;
-				mediaPos.put_CurrentPosition(1d);
+
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -447,10 +467,9 @@ namespace MediaPortal.Core.Transcoding
 		public int Percentage()
 		{
 			if (mediaSeeking==null) return 100;
-			long lDuration,lCurrent;
+			long lCurrent;
 			mediaSeeking.GetCurrentPosition(out lCurrent);
-			mediaSeeking.GetDuration(out lDuration);
-			float percent = ((float)lCurrent) / ((float)lDuration);
+			float percent = ((float)lCurrent) / ((float)m_dDuration);
 			percent*=100.0f;
 			if (percent >100) percent=100;
 			return (int)percent;
