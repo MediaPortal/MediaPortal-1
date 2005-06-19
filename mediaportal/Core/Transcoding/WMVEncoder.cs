@@ -226,11 +226,11 @@ namespace MediaPortal.Core.Transcoding
 				int hr = fileSource.Load(info.file, IntPtr.Zero);
 
 				//add mpeg2 audio/video codecs
-				string strVideoCodec=@"MPEG2Dec Filter";
+				string strVideoCodec=@"DScaler Mpeg2 Video Decoder";
 				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
 				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
-					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","MPEG2Dec Filter");
+					//strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","MPEG2Dec Filter");
 				}
 
 				Log.Write("DVR2WMV: add mpeg2 video codec:{0}", strVideoCodec);
@@ -495,15 +495,19 @@ namespace MediaPortal.Core.Transcoding
 				{
 					case Quality.High:
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Medium:
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_384KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Low:
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Portable:
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_100KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Custom:
 						//create new profile
