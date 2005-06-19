@@ -54,7 +54,7 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				Vmr9 =new VMR9Util("mytv");
-				DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() IN");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:CreateGraph() IN");
 				if (m_graphState != State.None) return false;		// If doing something already, return...
 				if (mCard==null) 
 				{
@@ -64,7 +64,7 @@ namespace MediaPortal.TV.Recording
 
 				if (!mCard.LoadDefinitions())											// Load configuration for this card
 				{
-					DirectShowUtil.DebugWrite("SinkGraphEx: Loading card definitions for card {0} failed", mCard.CaptureName);
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Loading card definitions for card {0} failed", mCard.CaptureName);
 					return false;
 				}
 				if (mCard.TvFilterDefinitions==null)
@@ -87,45 +87,45 @@ namespace MediaPortal.TV.Recording
 				int hr = 0;
 							
 				// Make a new filter graph
-				DirectShowUtil.DebugWrite("SinkGraphEx: Create new filter graph (IGraphBuilder)");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Create new filter graph (IGraphBuilder)");
 				m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true)); 
 
 				// Get the Capture Graph Builder...
-				DirectShowUtil.DebugWrite("SinkGraphEx: Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Get the Capture Graph Builder (ICaptureGraphBuilder2)");
 				Guid clsid = Clsid.CaptureGraphBuilder2;
 				Guid riid  = typeof(ICaptureGraphBuilder2).GUID;
 				m_captureGraphBuilder = (ICaptureGraphBuilder2) DsBugWO.CreateDsInstance(ref clsid, ref riid);
 
 				// ...and link the Capture Graph Builder to the Graph Builder
-				DirectShowUtil.DebugWrite("SinkGraphEx: Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
 				hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
 				if( hr < 0 ) 
 				{
-					DirectShowUtil.DebugWrite("SinkGraphEx: Error: link FAILED");
-					DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() OUT");
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Error: link FAILED");
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:CreateGraph() OUT");
 					return false;
 				}
 				// Add graph to Running Object Table (ROT), so we can connect to the graph using GraphEdit ;)
-				DirectShowUtil.DebugWrite("SinkGraphEx: Add graph to ROT table");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Add graph to ROT table");
 				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 				// Loop through configured filters for this card, bind them and add them to the graph
 				// Note that while adding filters to a graph, some connections may already be created...
-				DirectShowUtil.DebugWrite("SinkGraphEx: Adding configured filters...");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Adding configured filters...");
 				foreach (string catName in mCard.TvFilterDefinitions.Keys)
 				{
 					FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
-					DirectShowUtil.DebugWrite("SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
 					dsFilter.DSFilter         = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
 					hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
 					if (hr == 0)
 					{
-						DirectShowUtil.DebugWrite("SinkGraphEx:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+						Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
 					}
 					else
 					{
-						DirectShowUtil.DebugWrite("SinkGraphEx:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-						DirectShowUtil.DebugWrite("SinkGraphEx:  Error! Result code = {0}", hr);
+						Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+						Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  Error! Result code = {0}", hr);
 					}
 
 					// Support the "legacy" member variables. This could be done different using properties
@@ -133,7 +133,7 @@ namespace MediaPortal.TV.Recording
 					if (dsFilter.Category == "tvtuner") m_TVTuner       = dsFilter.DSFilter as IAMTVTuner;
 					if (dsFilter.Category == "capture") m_captureFilter = dsFilter.DSFilter;
 				}
-				DirectShowUtil.DebugWrite("SinkGraphEx: Adding configured filters...DONE");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Adding configured filters...DONE");
 
 				m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
 				InitializeTuner();
@@ -165,7 +165,7 @@ namespace MediaPortal.TV.Recording
 				//
 				// The code assumes method 1 is used. If that fails, method 2 is tried...
 
-				DirectShowUtil.DebugWrite("SinkGraphEx: Adding configured pin connections...");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Adding configured pin connections...");
 				for (int i = 0; i < mCard.TvConnectionDefinitions.Count; i++)
 				{
 					sourceFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
@@ -180,7 +180,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,true,"Cannot find sink filter for connection:{0}",i);
 						continue;
 					}
-					DirectShowUtil.DebugWrite("SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}", 
+					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}", 
 						sourceFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName,
 						sinkFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
 					//sourceFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
@@ -192,13 +192,13 @@ namespace MediaPortal.TV.Recording
 						{
 							sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
 							if (sourcePin==null)
-								DirectShowUtil.DebugWrite("SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
+								Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
 							else
-								DirectShowUtil.DebugWrite("SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+								Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
 						}
 					}
 					else
-						DirectShowUtil.DebugWrite("SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName);
+						Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName);
 
 					//sinkFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
 					sinkPin      = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
@@ -209,13 +209,13 @@ namespace MediaPortal.TV.Recording
 						{
 							sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
 							if (sinkPin==null)
-								DirectShowUtil.DebugWrite("SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
+								Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
 							else
-								DirectShowUtil.DebugWrite("SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+								Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
 						}
 					}
 					else
-						DirectShowUtil.DebugWrite("SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
+						Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
 
 					if (sourcePin!=null && sinkPin!=null)
 					{
@@ -224,12 +224,12 @@ namespace MediaPortal.TV.Recording
 						if (hr != 0)
 							hr = m_graphBuilder.Connect(sourcePin, sinkPin);
 						if (hr == 0)
-							DirectShowUtil.DebugWrite("SinkGraphEx:   Pins connected...");
+							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Pins connected...");
 
 						// Give warning and release pin...
 						if (conPin != null)
 						{
-							DirectShowUtil.DebugWrite("SinkGraphEx:   (Pin was already connected...)");
+							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   (Pin was already connected...)");
 							Marshal.ReleaseComObject(conPin as Object);
 							conPin = null;
 							hr     = 0;
@@ -238,14 +238,14 @@ namespace MediaPortal.TV.Recording
 
 					if (hr != 0)
 					{
-						DirectShowUtil.DebugWrite("SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
+						Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
 						if (hr == -2147220969)
 						{
-							DirectShowUtil.DebugWrite("SinkGraphEx:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
+							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
 						}
 					}
 				}
-				DirectShowUtil.DebugWrite("SinkGraphEx: Adding configured pin connections...DONE");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Adding configured pin connections...DONE");
 
 				// Find out which filter & pin is used as the interface to the rest of the graph.
 				// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
@@ -265,7 +265,7 @@ namespace MediaPortal.TV.Recording
 	      
 				m_FrameSize = m_videoCaptureDevice.GetFrameSize();
 
-				DirectShowUtil.DebugWrite("SinkGraphEx: Capturing:{0}x{1}", m_FrameSize.Width, m_FrameSize.Height);
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Capturing:{0}x{1}", m_FrameSize.Width, m_FrameSize.Height);
 				m_mpeg2Demux = null;
 				if (m_videoCaptureDevice.MPEG2)
 				{
@@ -294,7 +294,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 				m_graphState = State.Created;
-				DirectShowUtil.DebugWrite("SinkGraphEx:CreateGraph() OUT");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:CreateGraph() OUT");
 
 
 				return true;
@@ -312,7 +312,7 @@ namespace MediaPortal.TV.Recording
 
 
 			m_iPrevChannel=-1;
-			DirectShowUtil.DebugWrite("SinkGraph:DeleteGraph()");
+			Log.WriteFile(Log.LogType.Capture,"SinkGraph:DeleteGraph()");
 			StopRecording();
 			StopTimeShifting();
 			StopViewing();
@@ -392,7 +392,7 @@ namespace MediaPortal.TV.Recording
 			// AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
 			// the crossbar outputs are disconnected
 			// same for the winfast pvr 2000
-			DirectShowUtil.DebugWrite("SinkGraphEx:ConnectTVTunerOutputs()");
+			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:ConnectTVTunerOutputs()");
       
 			//find crossbar
 			int  hr;
@@ -404,37 +404,37 @@ namespace MediaPortal.TV.Recording
 			hr=m_captureGraphBuilder.FindInterface(new Guid[1]{cat},null,m_captureFilter, ref iid, out o);
 			if (hr !=0 || o == null) 
 			{
-				DirectShowUtil.DebugWrite("SinkGraphEx:no crossbar found");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:no crossbar found");
 				return; // no crossbar found?
 			}
     
 			IAMCrossbar crossbar = o as IAMCrossbar;
 			if (crossbar ==null) 
 			{
-				DirectShowUtil.DebugWrite("SinkGraphEx:no crossbar found");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:no crossbar found");
 				return;
 			}
 
 			//disconnect the output pins of the crossbar->video capture filter
-			DirectShowUtil.DebugWrite("SinkGraphEx:disconnect crossbar outputs");
+			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:disconnect crossbar outputs");
 			DirectShowUtil.DisconnectOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
 
 			//connect the output pins of the tvtuner
-			DirectShowUtil.DebugWrite("SinkGraphEx:connect tvtuner outputs");
+			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:connect tvtuner outputs");
 			bool bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)m_TVTuner);
 			if (bAllConnected)
-				DirectShowUtil.DebugWrite("SinkGraphEx:all connected");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:all connected");
 			else
-				DirectShowUtil.DebugWrite("SinkGraphEx:FAILED, not all pins connected");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:FAILED, not all pins connected");
 
 			//reconnect the output pins of the crossbar
-			DirectShowUtil.DebugWrite("SinkGraphEx:reconnect crossbar output pins");
+			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:reconnect crossbar output pins");
 
 			bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
 			if (bAllConnected)
-				DirectShowUtil.DebugWrite("SinkGraphEx:all connected");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:all connected");
 			else
-				DirectShowUtil.DebugWrite("SinkGraphEx:FAILED, not all pins connected");
+				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:FAILED, not all pins connected");
 		}
 	
 	#endregion

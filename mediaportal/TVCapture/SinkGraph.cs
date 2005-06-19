@@ -738,9 +738,16 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState!=State.Created && m_graphState!=State.Viewing) return false;
 
 			m_iCountryCode=channel.Country;
-			if (m_mpeg2Demux==null) return false;
-			if (m_videoCaptureDevice==null) return false;
-
+			if (m_mpeg2Demux==null) 
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:StartViewing() FAILED: no mpeg2 demuxer present");
+				return false;
+			}
+			if (m_videoCaptureDevice==null) 
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:StartViewing() FAILED: no video capture device present");
+				return false;
+			}
 			if (m_graphState==State.Viewing) 
 			{
 				if (channel.Number!=m_iChannelNr)
