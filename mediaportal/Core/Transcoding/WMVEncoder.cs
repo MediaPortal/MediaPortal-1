@@ -291,7 +291,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-
+/*
 				Log.Write("DVR2WMV: create VMR7 renderer");				
 				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
 				comobj = Activator.CreateInstance(comtype);
@@ -396,7 +396,7 @@ namespace MediaPortal.Core.Transcoding
 				Marshal.ReleaseComObject( VMR7Filter); 
 
 				Log.Write("DVR2WMV: video:{0}x{1} AR:{2}:{3}",width,height,arx,ary);				
-
+*/
 				//add asf file writer
 				Log.Write("DVR2WMV: add WM ASF Writer to graph");				
 				string monikerAsfWriter=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}";
@@ -477,44 +477,37 @@ namespace MediaPortal.Core.Transcoding
 				hr=graphBuilder.Connect(pinOut1,pinIn1);
 				if (hr!=0 )
 				{
-					GC.Collect();
-					GC.Collect();
-					GC.Collect();
-					GC.WaitForPendingFinalizers();
-					System.Threading.Thread.Sleep(1000);
-					DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
-					DsUtils.GetPin((IBaseFilter)Mpeg2VideoCodec,PinDirection.Output,0,out pinOut1);
-					hr=graphBuilder.Connect(pinOut1,pinIn1);
-					if (hr!=0 )
-					{
 						Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
 						Cleanup();
 						return false;
-					}
 				}
 
-				Log.Write("DVR2WMV: set WMV quality proile");
 				IConfigAsfWriter config= fileWriterbase as IConfigAsfWriter;
 				switch (quality)
 				{
 					case Quality.High:
+						Log.Write("DVR2WMV: set WMV High quality profile");
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768KBPS);
 						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Medium:
+						Log.Write("DVR2WMV: set WMV Medium quality profile");
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_384KBPS);
 						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Low:
+						Log.Write("DVR2WMV: set WMV Low quality profile");
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256KBPS);
 						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Portable:
+						Log.Write("DVR2WMV: set WMV Portable quality profile");
 						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_100KBPS);
 						SetWmvProfile(fileWriterbase,0,0,0,0);
 						break;
 					case Quality.Custom:
 						//create new profile
+						Log.Write("DVR2WMV: set WMV Custom quality profile");
 						if (bitrate==768)
 							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768KBPS);
 						else if (bitrate==384)
@@ -532,7 +525,169 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
-				Log.Write("DVR2WMV: start transcoding");
+				Log.Write("DVR2WMV: start pre-run");
+				mediaControl= graphBuilder as IMediaControl;
+				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
+				mediaEvt    = graphBuilder as IMediaEventEx;
+				mediaPos    = graphBuilder as IMediaPosition;
+				hr=mediaControl.Run();
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to start graph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+				int maxCount=20;
+				while (true)
+				{
+					long lCurrent;
+					mediaSeeking.GetCurrentPosition(out lCurrent);
+					double dpos=(double)lCurrent;
+					dpos/=10000000d;
+					System.Threading.Thread.Sleep(100);
+					if (dpos >=2.0d) break;
+					maxCount--;
+					if (maxCount<=0) break;
+				}
+				Log.Write("DVR2WMV: pre-run done");
+				
+				mediaControl.Stop();
+				FilterState state;
+				mediaControl.GetState(500,out state);
+				GC.Collect();GC.Collect();GC.Collect();GC.WaitForPendingFinalizers();
+				Log.Write("DVR2WMV: reconnect mpeg2 video codec->ASF WM Writer");
+				hr=graphBuilder.Disconnect(pinOut0);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to disconnect mpeg2 audio codec :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+				hr=graphBuilder.Disconnect(pinOut1);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to disconnect mpeg2 video codec :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+				graphBuilder.RemoveFilter(fileWriterbase);
+
+				fileWriterFilter = fileWriterbase as IFileSinkFilter;
+				if (fileWriterFilter ==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add unable to get IFileSinkFilter for filewriter");
+					Cleanup();
+					return false;
+				}
+				//set output filename
+				outputFileName=System.IO.Path.ChangeExtension(info.file,".wmv");
+				Log.Write("DVR2WMV: set output file to:{0}", outputFileName);				
+				mt = new AMMediaType();
+				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+				hr = graphBuilder.AddFilter( fileWriterbase , "WM ASF Writer" );
+				if( hr != 0 ) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:Add ASF WM Writer to filtergraph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+
+				Log.Write("DVR2WMV: connect audio/video codecs outputs -> ASF WM Writer");
+				//connect output #0 of videocodec->asf writer pin 1
+				//connect output #0 of audiocodec->asf writer pin 0
+				DsUtils.GetPin((IBaseFilter)Mpeg2AudioCodec,PinDirection.Output,0,out pinOut0);
+				DsUtils.GetPin((IBaseFilter)Mpeg2VideoCodec,PinDirection.Output,0,out pinOut1);
+				if (pinOut0==null || pinOut1==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get outpins of video codec");
+					Cleanup();
+					return false;
+				}
+
+				DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn0);
+				if (pinIn0==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of asf wm writer");
+					Cleanup();
+					return false;
+				}
+			
+				hr=graphBuilder.Connect(pinOut0,pinIn0);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect audio pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+			
+				DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
+				if (pinIn1==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of asf wm writer");
+					Cleanup();
+					return false;
+				}
+				hr=graphBuilder.Connect(pinOut1,pinIn1);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to connect video pins :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
+				config= fileWriterbase as IConfigAsfWriter;
+				switch (quality)
+				{
+					case Quality.High:
+						Log.Write("DVR2WMV: set WMV High quality profile");
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
+						break;
+					case Quality.Medium:
+						Log.Write("DVR2WMV: set WMV Medium quality profile");
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_384KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
+						break;
+					case Quality.Low:
+						Log.Write("DVR2WMV: set WMV Low quality profile");
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
+						break;
+					case Quality.Portable:
+						Log.Write("DVR2WMV: set WMV Portable quality profile");
+						hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_100KBPS);
+						SetWmvProfile(fileWriterbase,0,0,0,0);
+						break;
+					case Quality.Custom:
+						//create new profile
+						Log.Write("DVR2WMV: set WMV Custom quality profile");
+						if (bitrate==768)
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_768KBPS);
+						else if (bitrate==384)
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_384KBPS);
+						else if (bitrate==256)
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_256KBPS);
+						else
+							hr=config.ConfigureFilterUsingProfileGuid(ref WMProfile_V80_100KBPS);
+						SetWmvProfile(fileWriterbase,(int)bitrate,(int)fps,(int)screenSize.Width,(int)screenSize.Height);
+						break;
+				}
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to set profile :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
+
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
