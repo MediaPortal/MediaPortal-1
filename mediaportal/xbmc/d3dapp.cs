@@ -2271,6 +2271,7 @@ namespace MediaPortal
 											DoSleep(50);
 										}
 									}
+								  counter=0;
 									if (GUIGraphicsContext.IsFullScreenVideo==false) counter=0;
 									if (counter==0)
 									{
