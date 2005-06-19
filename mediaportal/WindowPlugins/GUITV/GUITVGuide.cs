@@ -2132,17 +2132,33 @@ namespace MediaPortal.GUI.TV
 				if (m_strCurrentChannel.Length>0)
 					dlg.AddLocalizedString( 938);// View this channel
 
+				bool isrecording=false;
+				foreach (TVRecording rec1 in m_recordings)
+				{
+					if (rec1.IsRecordingProgram(m_currentProgram,true))
+					{
+						isrecording=true;
+						break;
+					}
+				}
 				//610=None
 				//611=Record once
 				//612=Record everytime on this channel
 				//613=Record everytime on every channel
 				//614=Record every week at this time
 				//615=Record every day at this time
-				for (int i=610; i <= 615; ++i)
+				if (isrecording)
 				{
-					dlg.AddLocalizedString(i);
+					dlg.AddLocalizedString(610);
 				}
-				dlg.AddLocalizedString( 672);// 672=Record Mon-Fri
+				else
+				{
+					for (int i=611; i <= 615; ++i)
+					{
+						dlg.AddLocalizedString(i);
+					}
+					dlg.AddLocalizedString( 672);// 672=Record Mon-Fri
+				}
 				
 				dlg.DoModal( GetID);
 				if (dlg.SelectedLabel==-1) return;
