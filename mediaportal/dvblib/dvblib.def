@@ -14,3 +14,4 @@ SetupDemuxer			@7
 GetPidMap				@8
 GetSNR					@9
 SetWmvProfile			@10
+DeliverMediaSample		@11

@@ -376,48 +376,47 @@ namespace MediaPortal.TV.Recording
 			m_timeout=3000; // 3 sec for volume osd
 			if(System.IO.File.Exists(m_mediaPath+String.Format("volume_level_10.png",volume))==true)
 			{
-				if(m_osdSkin.mute!=null)
+				string mute="icon:m270:60:mute.png";
+				string[] seg =mute.Split(new char[]{':'});
+				if(seg!=null)
 				{
-					string[] seg =m_osdSkin.mute.Split(new char[]{':'});
-					if(seg!=null)
+					if(seg[0]=="icon" && seg.Length==4)
 					{
-						if(seg[0]=="icon" && seg.Length==4)
+						Bitmap osd=new Bitmap(gWidth,gHeight);
+						Graphics gr=Graphics.FromImage(osd);
+							
+						//Bitmap gfx=new Bitmap(m_mediaPath+String.Format("volume_level_{0}.png",volume));
+						//gfx.MakeTransparent(Color.White);
+						int xPos=0;
+						int yPos=0;
+
+						if(seg[1].StartsWith("m"))
+							xPos=GetPosition(gWidth,seg[1]);
+						else
+							xPos=Convert.ToInt16(seg[1]);
+
+						if(seg[2].StartsWith("m"))
+							yPos=GetPosition(gHeight,seg[2]);
+						else
+							yPos=Convert.ToInt16(seg[2]);
+							
+						if(volume>0)
 						{
-							Bitmap osd=new Bitmap(gWidth,gHeight);
-							Graphics gr=Graphics.FromImage(osd);
-							
-							//Bitmap gfx=new Bitmap(m_mediaPath+String.Format("volume_level_{0}.png",volume));
-							//gfx.MakeTransparent(Color.White);
-							int xPos=0;
-							int yPos=0;
-
-							if(seg[1].StartsWith("m"))
-								xPos=GetPosition(gWidth,seg[1]);
-							else
-								xPos=Convert.ToInt16(seg[1]);
-
-							if(seg[2].StartsWith("m"))
-								yPos=GetPosition(gHeight,seg[2]);
-							else
-								yPos=Convert.ToInt16(seg[2]);
-							
-							if(volume>0)
-							{
-								if(m_volumeBitmap!=null)
-									gr.DrawImage(m_volumeBitmap,xPos,yPos,new RectangleF(0f,0f,drawWidth[volume],m_volumeBitmap.Height),System.Drawing.GraphicsUnit.Pixel);
-							}
-							else
-								if(m_muteBitmap!=null)
-									gr.DrawImageUnscaled(m_muteBitmap,xPos,yPos,m_muteBitmap.Width,m_muteBitmap.Height);
-
-							SaveBitmap(osd,true,true,0.9f);
-							gr.Dispose();
-							osd.Dispose();
-							m_timeDisplayed=DateTime.Now;
+							if(m_volumeBitmap!=null)
+								gr.DrawImage(m_volumeBitmap,xPos,yPos,new RectangleF(0f,0f,drawWidth[volume],m_volumeBitmap.Height),System.Drawing.GraphicsUnit.Pixel);
 						}
+						else
+							if(m_muteBitmap!=null)
+							gr.DrawImageUnscaled(m_muteBitmap,xPos,yPos,m_muteBitmap.Width,m_muteBitmap.Height);
+
+						SaveBitmap(osd,true,true,0.9f);
+						gr.Dispose();
+						osd.Dispose();
+						m_timeDisplayed=DateTime.Now;
 					}
-				
 				}
+				
+				
 			}
 		}
 		public void RenderZapOSD(TVChannel channel,int signalQuality,int signalLevel)

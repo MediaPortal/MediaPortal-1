@@ -302,6 +302,21 @@ HRESULT GetPidMap(IPin* pin, unsigned long* pid, unsigned long* mediasampletype)
 	return 0;
 }
 
+HRESULT DeliverMediaSample(IPin *inputPin,IMediaSample *mediaSample)
+{
+	IMemInputPin *pMIP=NULL;
+	HRESULT hr;
+
+	hr=inputPin->QueryInterface(IID_IMemInputPin,(void**)&pMIP);
+	if(FAILED(hr))
+		return hr;
+
+	hr=pMIP->Receive(mediaSample);
+	if(FAILED(hr))
+		return hr;
+
+	return S_OK;
+}
 
 HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *pAudioAC3,int AC3PID)
 {
