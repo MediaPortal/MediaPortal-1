@@ -504,10 +504,10 @@ namespace MediaPortal.TV.Recording
 					logoW=osd.Width;
 					logoH=osd.Height;
 					int w=width-(x+10);
-					xpos=10;
+					xpos=20;
 					ypos+=10;
 					gr.DrawImage(osd,xpos,ypos,osd.Width,osd.Height);
-					timeX=xpos+10;
+					timeX=xpos;
 					timeY=ypos+osd.Height+10;
 					if(nowStart!="")
 						gr.FillRectangle(new SolidBrush(Color.DarkBlue),x,y+30,w,60);
@@ -517,7 +517,6 @@ namespace MediaPortal.TV.Recording
 				x+=5;
 				// text always gets an x-offset 40 pix.
 				// tv channel logo
-				xpos=10;
 				ypos=y;
 				string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
 				Log.Write("rendering tv-logo...");
@@ -538,7 +537,7 @@ namespace MediaPortal.TV.Recording
 				Font drawFont=new System.Drawing.Font("Arial",14);
 				Brush drawBrush=new SolidBrush(Color.White);
 				SizeF xEnd=gr.MeasureString(nowDur,drawFont);
-				int xPosEnd=(gWidth-70)-((int)xEnd.Width);
+				int xPosEnd=(gWidth-90)-((int)xEnd.Width);
 				gr.DrawString(nowDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
 				gr.DrawString(nowStart+"  "+nowTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
 				// now prog
@@ -556,7 +555,7 @@ namespace MediaPortal.TV.Recording
 				}
 				//next on tv (chNow)
 
-				xPosEnd=(gWidth-70)-((int)xEnd.Width);
+				xPosEnd=(gWidth-90)-((int)xEnd.Width);
 				gr.DrawString(nextDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
 				gr.DrawString(nextStart+"  "+nextTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
 
@@ -588,6 +587,7 @@ namespace MediaPortal.TV.Recording
 					y+=25;
 				}
 				Log.Write("rendering signal level indicator...");
+				
 				if(signalLevel>2 &&
 					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true	&&
 					System.IO.File.Exists(skinPath+"osd_progress_mid.png")==true &&
@@ -612,8 +612,6 @@ namespace MediaPortal.TV.Recording
 
 				drawFont.Dispose();
 				drawBrush.Dispose();
-
-
 				m_bitmapIsVisible=true;
 				SaveBitmap(bm,true,true,m_renderOSDAlpha);
 			}
