@@ -2750,7 +2750,7 @@ namespace MediaPortal.TV.Recording
 			if (m_NetworkProvider==null) return;
 			try
 			{
-
+				if (Vmr9!=null) Vmr9.Enable(false);
 				m_iPrevChannel		= m_iCurrentChannel;
 				m_iCurrentChannel = channel.Number;
 				m_StartTime				= DateTime.Now;
@@ -2948,6 +2948,7 @@ namespace MediaPortal.TV.Recording
 			}
 			finally
 			{
+				if (Vmr9!=null) Vmr9.Enable(true);
 			}
 			timeResendPid=DateTime.Now;
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
