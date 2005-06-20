@@ -2478,7 +2478,7 @@ namespace MediaPortal.TV.Recording
 
 								if(pmtData.stream_type == 0x09)
 								{
-									capmt.AddCaDescriptor(0, pmtData.stream_type, pmtData.data);
+//									capmt.AddCaDescriptor(0, pmtData.stream_type, pmtData.data);
 								}
 							}
 
