@@ -248,7 +248,7 @@ namespace MediaPortal.Core.Transcoding
 			mediaSeeking.GetCurrentPosition(out lCurrent);
 			mediaSeeking.GetDuration(out lDuration);
 			float percent = ((float)lCurrent) / ((float)lDuration);
-			percent*=100.0f;
+			percent*=50.0f;
 			return (int)percent;
 		}
 
