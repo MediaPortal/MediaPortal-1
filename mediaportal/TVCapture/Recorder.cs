@@ -272,7 +272,10 @@ namespace MediaPortal.TV.Recording
 									if ( rec.IsRecordingProgramAtTime(dtTime,prog2Min,m_iPreRecordInterval, m_iPostRecordInterval) )
 									{
 										rec.IsAnnouncementSend=true;
-										GUIGraphicsContext.SendMessage( new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,rec));
+										GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,null);
+										msg.Object=rec;
+										msg.Object2=prog2Min;
+										GUIGraphicsContext.SendMessage( msg );
 									}
 								}
 							}
@@ -309,7 +312,10 @@ namespace MediaPortal.TV.Recording
 						if ( rec.IsRecordingProgramAtTime(dtTime,null,m_iPreRecordInterval, m_iPostRecordInterval) )
 						{
 							rec.IsAnnouncementSend=true;
-							GUIGraphicsContext.SendMessage( new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,rec));
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,null);
+							msg.Object=rec;
+							msg.Object2=null;
+							GUIGraphicsContext.SendMessage( msg);
 						}
 					}
 				}

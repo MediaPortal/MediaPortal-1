@@ -93,6 +93,7 @@ namespace MediaPortal.GUI.Library
 		private int 					m_dwTargetControlID=0;
 		private MessageType 	m_dwMessage=0;
 		private object 			  m_object=null;
+		private object 			  m_object2=null;
 		private int 					m_dwParam1=0;
     private int 					m_dwParam2=0;
     private int 					m_dwParam3=0;
@@ -135,7 +136,11 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return m_object;}
 			set { m_object=value;}
-
+		}
+		public object Object2
+		{
+			get { return m_object2;}
+			set { m_object2=value;}
 		}
 
 		/// <summary>

@@ -37,6 +37,7 @@ namespace MediaPortal.GUI.TV
 			public bool  ShowGroup=false;
 			public bool  ShowInput=false;
 			public bool  NotifyDialogVisible=false;
+			public bool  bottomMenuVisible=false;
 		}
 
 		bool				m_bShowInfo=false;
@@ -67,9 +68,11 @@ namespace MediaPortal.GUI.TV
 		bool				m_bDialogVisible=false;
 		bool				m_bMSNChatPopup=false;
 		GUIDialogMenu dlg;
-		GUIDialogNotify dialogNotify=null;		
+		GUIDialogNotify dialogNotify=null;
+		GUIDialogMenuBottomRight dialogBottomMenu=null;
 		// Message box
 		bool				NotifyDialogVisible=false;
+		bool        bottomMenuVisible=false;
 		bool				isMsgBoxVisible=false;
 		DateTime		m_dwMsgTimer=DateTime.Now;
 		int					m_iMsgBoxTimeout=0;
@@ -587,15 +590,32 @@ namespace MediaPortal.GUI.TV
 					dlg.OnMessage(msg);	// Send a de-init msg to the OSD
 				}
 
-				string logo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
-				NotifyDialogVisible=true;
-				dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-				dialogNotify.TimeOut=10;
-				dialogNotify.SetHeading(1004);
-				dialogNotify.SetText( String.Format("{0} {1} {2}", GUILocalizeStrings.Get(1005),rec.Channel,rec.Title));
-				dialogNotify.SetImage(logo);
-				dialogNotify.DoModal(GetID);
-				NotifyDialogVisible=false;
+				bottomMenuVisible=true;
+				dialogBottomMenu = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+				dialogBottomMenu.TimeOut=10;
+				dialogBottomMenu.SetHeading(1004);//About to start recording
+				dialogBottomMenu.SetHeadingRow2(String.Format("{0} {1}", GUILocalizeStrings.Get(1005),rec.Channel));
+				dialogBottomMenu.SetHeadingRow3(rec.Title);
+				dialogBottomMenu.AddLocalizedString(1005); //Allow recording to begin
+				dialogBottomMenu.AddLocalizedString(1006); //Cancel recording and maintain watching tv
+				dialogBottomMenu.DoModal(GetID);
+				if (dialogBottomMenu.SelectedId==1006) //cancel recording
+				{
+					if (rec.RecType==TVRecording.RecordingType.Once)
+					{
+						rec.Canceled=Utils.datetolong(DateTime.Now);
+					}
+					else
+					{
+						TVProgram prog = message.Object2 as TVProgram;
+						if (prog!=null)
+							rec.CanceledSeries.Add(prog.Start);
+						else
+							rec.CanceledSeries.Add(Utils.datetolong(DateTime.Now));
+					}
+					TVDatabase.UpdateRecording(rec);
+				}
+				bottomMenuVisible=false;
 			}
 
 			if (isOsdVisible)
@@ -749,6 +769,7 @@ namespace MediaPortal.GUI.TV
 					m_bShowStatus=false;
 					m_bShowGroup=false;
 					NotifyDialogVisible=false;
+					bottomMenuVisible=false;
 					m_dwTimeStatusShowTime=DateTime.Now;
 
 					ScreenStateChanged();
@@ -1070,6 +1091,11 @@ namespace MediaPortal.GUI.TV
 			if (m_bShowStatus!=screenState.ShowStatusLine)
 			{
 				screenState.ShowStatusLine=m_bShowStatus;
+				updateGUI=true;
+			}
+			if (bottomMenuVisible != screenState.bottomMenuVisible)
+			{
+				screenState.bottomMenuVisible=bottomMenuVisible;
 				updateGUI=true;
 			}
 			if (NotifyDialogVisible != screenState.NotifyDialogVisible)

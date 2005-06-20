@@ -2938,6 +2938,14 @@
 	<id>1005</id>
 	<value>on channel </value>
 </string>
+<string>
+	<id>1005</id>
+	<value>Allow recording to begin</value>
+</string>
+<string>
+	<id>1006</id>
+	<value>Cancel recording and maintain watching tv</value>
+</string>
 
 <string>
 	<id>1440</id>
