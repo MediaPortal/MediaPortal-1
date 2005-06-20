@@ -2458,11 +2458,37 @@ namespace MediaPortal.TV.Recording
 					stream.Read(pmt,0,(int)len);
 					stream.Close();
 
-					int pmtVersion= ((pmt[5]>>1)&0x1F);
+					int pmtVersion = ((pmt[5]>>1)&0x1F);
 
-					//yes, then send the PMT table to the device
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to fireDTV device",pmtVersion);	
-					if (props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
+					// send the PMT table to the device
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
+
+					if(false && props.IsCAPMTNeeded)
+					{
+						DVBSections sections = new DVBSections();
+						DVBSections.ChannelInfo channelInfo = new DVBSections.ChannelInfo();
+
+						if(sections.GetChannelInfoFromPMT(pmt, ref channelInfo))
+						{
+							CaPmt capmt = new CaPmt(channelInfo.program_number);
+
+							foreach(DVBSections.PMTData pmtData in channelInfo.pid_list)
+							{
+								Log.Write("Stream Type: {0}", pmtData.stream_type);
+
+								if(pmtData.stream_type == 0x09)
+								{
+									capmt.AddCaDescriptor(0, pmtData.stream_type, pmtData.data);
+								}
+							}
+
+							if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, capmt.Data, capmt.Length))
+								return true;
+						}
+
+						Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Process() failed getting channel information from PMT");
+					}
+					else if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
 					{
 						return true;
 					}
