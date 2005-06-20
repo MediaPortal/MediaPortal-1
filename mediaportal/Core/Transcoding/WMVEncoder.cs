@@ -526,6 +526,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 				Log.Write("DVR2WMV: start pre-run");
+				graphBuilder.SetDefaultSyncSource();
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
@@ -704,6 +705,7 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
+				graphBuilder.SetDefaultSyncSource();
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{

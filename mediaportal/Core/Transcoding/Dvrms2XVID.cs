@@ -284,6 +284,7 @@ namespace MediaPortal.Core.Transcoding
 				if (!AddCodecs(graphBuilder, info)) return false;
 
 				Log.Write("DVR2XVID: start transcoding");
+				graphBuilder.SetDefaultSyncSource();
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
@@ -334,6 +335,7 @@ namespace MediaPortal.Core.Transcoding
 				graphBuilder.RemoveFilter((IBaseFilter)fileWriterFilter);
 				if (!AddCodecs(graphBuilder, info)) return false;
 
+				graphBuilder.SetDefaultSyncSource();
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
