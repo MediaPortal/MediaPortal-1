@@ -2715,7 +2715,11 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
-				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
+				try
+				{
+					SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
+				} 
+				catch(Exception){}
 				if (!SendPMT())
 				{
 					return;
@@ -2926,7 +2930,13 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
-				SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+				try
+				{
+					SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+				} 
+				catch(Exception)
+				{
+				}
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
@@ -3781,8 +3791,14 @@ namespace MediaPortal.TV.Recording
 				}
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
-				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
-				SendPMT();
+				try
+				{
+					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+				}
+				catch(Exception)
+				{
+				}
+					SendPMT();
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 			}
