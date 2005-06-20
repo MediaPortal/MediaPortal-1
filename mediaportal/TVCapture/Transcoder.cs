@@ -47,7 +47,8 @@ namespace MediaPortal.TV.Recording
 			Waiting,
 			Busy,
 			Completed,
-			Error
+			Error,
+			Canceled
 		}
 		static ArrayList  queue = new ArrayList();
 		static Thread		  WorkerThread =null;
@@ -156,6 +157,36 @@ namespace MediaPortal.TV.Recording
 			{
 				WorkerThread = new Thread(new ThreadStart(TranscodeWorkerThread));
 				WorkerThread.Start();
+			}
+		}
+
+		static public void Cancel(TranscoderInfo info)
+		{
+			lock (queue)
+			{
+				foreach(TranscoderInfo tinfo in queue)
+				{
+					if (tinfo.recorded.FileName==info.recorded.FileName)
+					{
+						tinfo.status=Status.Canceled;
+						return;
+					}
+				}
+			}
+		}
+
+		static public void ReQueue(TranscoderInfo info)
+		{
+			lock (queue)
+			{
+				foreach(TranscoderInfo tinfo in queue)
+				{
+					if (tinfo.recorded.FileName==info.recorded.FileName)
+					{
+						tinfo.status=Status.Waiting;
+						return;
+					}
+				}
 			}
 		}
 
@@ -301,6 +332,11 @@ namespace MediaPortal.TV.Recording
 					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 					tinfo.percentDone=WMVConverter.Percentage();
 					System.Threading.Thread.Sleep(100);
+					if (tinfo.status==Status.Canceled) 
+					{
+						WMVConverter.Stop();
+						return;
+					}
 				}
 				if (tinfo.deleteOriginal)
 				{
@@ -327,6 +363,11 @@ namespace MediaPortal.TV.Recording
 					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 					tinfo.percentDone=xvidEncoder.Percentage();
 					System.Threading.Thread.Sleep(100);
+					if (tinfo.status==Status.Canceled) 
+					{
+						xvidEncoder.Stop();
+						return;
+					}
 				}
 				if (tinfo.deleteOriginal)
 				{
@@ -349,6 +390,11 @@ namespace MediaPortal.TV.Recording
 				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 				tinfo.percentDone=mpgConverter.Percentage();
 				System.Threading.Thread.Sleep(100);
+				if (tinfo.status==Status.Canceled) 
+				{
+					mpgConverter.Stop();
+					return;
+				}
 			}
 			if (isMpeg)
 			{

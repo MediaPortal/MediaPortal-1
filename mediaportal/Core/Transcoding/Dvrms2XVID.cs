@@ -405,6 +405,7 @@ namespace MediaPortal.Core.Transcoding
 			mediaSeeking=null;
 			mediaEvt=null;
 			mediaPos=null;
+			mediaControl=null;
 
 			if ( xvidCodec != null )
 				Marshal.ReleaseComObject( xvidCodec );
@@ -679,6 +680,15 @@ namespace MediaPortal.Core.Transcoding
 				return false;
 			}
 			return true;
+		}
+
+		public void Stop()
+		{
+			if (mediaControl!=null)
+			{
+				mediaControl.Stop();
+			}
+			Cleanup();
 		}
 	}
 }

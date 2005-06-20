@@ -271,6 +271,7 @@ namespace MediaPortal.Core.Transcoding
 			}
 			mediaSeeking=null;
 			mediaEvt=null;
+			mediaControl=null;
 
 			if ( powerDvdMuxer != null )
 				Marshal.ReleaseComObject( powerDvdMuxer );
@@ -290,6 +291,15 @@ namespace MediaPortal.Core.Transcoding
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
 		}
 
+
+		public void Stop()
+		{
+			if (mediaControl!=null)
+			{
+				mediaControl.Stop();
+			}
+			Cleanup();
+		}
 		#endregion
 	}
 }

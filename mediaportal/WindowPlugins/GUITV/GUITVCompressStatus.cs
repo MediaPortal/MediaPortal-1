@@ -241,7 +241,43 @@ namespace MediaPortal.GUI.TV
 				}
 				OnSort();
 			}
-
+			if (control==listAlbums || control==listViews)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,control.GetID,0,0,null);
+				OnMessage(msg);         
+				int iItem=(int)msg.Param1;
+				GUIListItem item = GetItem(iItem);
+				if (item!=null)
+				{
+					OnShowMenu(item);
+				}
+			}
+		}
+		public void OnShowMenu(GUIListItem item)
+		{
+			if (item==null) return;
+			Transcoder.TranscoderInfo info = item.TVTag as Transcoder.TranscoderInfo ;
+			if (info==null) return;
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+      
+			dlg.Reset();
+			dlg.SetHeading(924);//menu
+			if (info.status==Transcoder.Status.Busy)
+				dlg.AddLocalizedString(222);//cancel
+			else
+				dlg.AddLocalizedString(1008);//queue
+			dlg.DoModal(GetID);
+			switch (dlg.SelectedId)
+			{
+				case 222://cancel
+					Transcoder.Cancel(info);
+				break;
+					
+				case 1008:
+					Transcoder.ReQueue(info);
+				break;
+			}
 		}
 
 		public override bool OnMessage(GUIMessage message)
@@ -387,6 +423,9 @@ namespace MediaPortal.GUI.TV
 						break;
 					case Transcoder.Status.Completed:
 						item1.Label2=item2.Label2=GUILocalizeStrings.Get(997);
+						break;
+					case Transcoder.Status.Canceled:
+						item1.Label2=item2.Label2=GUILocalizeStrings.Get(684);
 						break;
 				}
 				

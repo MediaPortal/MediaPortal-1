@@ -596,10 +596,10 @@ namespace MediaPortal.GUI.TV
 				dialogBottomMenu.SetHeading(1004);//About to start recording
 				dialogBottomMenu.SetHeadingRow2(String.Format("{0} {1}", GUILocalizeStrings.Get(1005),rec.Channel));
 				dialogBottomMenu.SetHeadingRow3(rec.Title);
-				dialogBottomMenu.AddLocalizedString(1005); //Allow recording to begin
-				dialogBottomMenu.AddLocalizedString(1006); //Cancel recording and maintain watching tv
+				dialogBottomMenu.AddLocalizedString(1006); //Allow recording to begin
+				dialogBottomMenu.AddLocalizedString(1007); //Cancel recording and maintain watching tv
 				dialogBottomMenu.DoModal(GetID);
-				if (dialogBottomMenu.SelectedId==1006) //cancel recording
+				if (dialogBottomMenu.SelectedId==1007) //cancel recording
 				{
 					if (rec.RecType==TVRecording.RecordingType.Once)
 					{

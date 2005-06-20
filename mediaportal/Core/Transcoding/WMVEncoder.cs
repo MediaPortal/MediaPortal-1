@@ -773,7 +773,7 @@ namespace MediaPortal.Core.Transcoding
 			mediaSeeking=null;
 			mediaEvt=null;
 			mediaPos=null;
-
+			mediaControl=null;
 			
 			
 			if ( Mpeg2AudioCodec != null )
@@ -804,5 +804,13 @@ namespace MediaPortal.Core.Transcoding
 			GC.WaitForPendingFinalizers();
 		}
 
+		public void Stop()
+		{
+			if (mediaControl!=null)
+			{
+				mediaControl.Stop();
+			}
+			Cleanup();
+		}
 	}
 }
