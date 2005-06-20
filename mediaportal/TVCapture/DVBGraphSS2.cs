@@ -1402,7 +1402,7 @@ namespace MediaPortal.TV.Recording
 		{
 			try
 			{
-				if (Vmr9!=null) Vmr9.Enable(true);
+				if (Vmr9!=null) Vmr9.Enable(false);
 				if(m_graphState==State.Recording)
 					return;
 
