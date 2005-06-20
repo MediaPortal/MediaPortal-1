@@ -2470,23 +2470,49 @@ namespace MediaPortal.TV.Recording
 
 						if(sections.GetChannelInfoFromPMT(pmt, ref channelInfo))
 						{
-							CaPmt capmt = new CaPmt(channelInfo.program_number);
-
-							foreach(DVBSections.PMTData pmtData in channelInfo.pid_list)
+							try
 							{
-								Log.Write("Stream Type: {0}", pmtData.stream_type);
+								CaPmt capmt = new CaPmt(channelInfo.program_number);
 
-								if(pmtData.stream_type == 0x09)
+								foreach(DVBSections.PMTData pmtData in channelInfo.pid_list)
 								{
-//									capmt.AddCaDescriptor(0, pmtData.stream_type, pmtData.data);
-								}
-							}
+									Log.Write("Stream Type: {0}", pmtData.stream_type);
 
-							if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, capmt.Data, capmt.Length))
-								return true;
+									if(pmtData.stream_type == 0x09)
+									{
+										// very inefficient way but will do for the time being
+										string[] caEntries = pmtData.data.Split(';');
+
+										for(int index = 0; index < caEntries.Length; index++)
+										{
+											string[] tokens = caEntries[index].Split('|');
+
+											int pid = Convert.ToInt32(tokens[0]);
+											int sid = Convert.ToInt32(tokens[2]);
+
+											byte[] data = new byte[8];
+
+											data[0] = (byte)((sid >> 8) & 0xFF);
+											data[1] = (byte)(sid & 0xFF);
+											data[2] = (byte)((pid >> 8) & 0xFF);
+											data[3] = (byte)(pid & 0xFF);
+
+											capmt.AddCaDescriptor(sid, pid, data);
+										}
+									}
+								}
+
+								if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, capmt.Data, capmt.Length))
+									return true;
+							}
+							catch(Exception e)
+							{
+								Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:Process() failed to build CA_PMT ({0})", e.Message);
+								return false;
+							}
 						}
 
-						Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Process() failed getting channel information from PMT");
+						Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Process() failed to get channel information from PMT");
 					}
 					else if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
 					{
