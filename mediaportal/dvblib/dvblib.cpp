@@ -326,21 +326,25 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 	PID_MAP			pm;
 	ULONG			count;
 	ULONG			umPid;
+	int				maxCounter;
 	HRESULT hr=0;
 
 	// video
 	if (pVideo!=NULL)
 	{
 		hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
-		if(FAILED(hr))
+		if(FAILED(hr) || pMap==NULL)
 			return 1;
 		// 
 		hr=pMap->EnumPIDMap(&pPidEnum);
-		if(FAILED(hr))
+		if(FAILED(hr) || pPidEnum==NULL)
 			return 5;
 		// enum and unmap the pids
+		maxCounter=20;
 		while(pPidEnum->Next(1,&pm,&count)== S_OK)
 		{
+			maxCounter--;
+			if (maxCounter<0) break;
 			if (count !=1) break;
 			umPid=pm.ulPID;
 			hr=pMap->UnmapPID(1,&umPid);
@@ -360,16 +364,20 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 	if (pAudio!=NULL)
 	{
 		hr=pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
-		if(FAILED(hr))
+		if(FAILED(hr) || pMap==NULL)
 			return 3;
 		// 
 		hr=pMap->EnumPIDMap(&pPidEnum);
-		if(FAILED(hr))
+		if(FAILED(hr) || pPidEnum==NULL)
 			return 7;
 		// enum and unmap the pids
+		maxCounter=20;
 		while(pPidEnum->Next(1,&pm,&count)== S_OK)
 		{
 			if (count!=1) break;
+			
+			maxCounter--;
+			if (maxCounter<0) break;
 			umPid=pm.ulPID;
 			hr=pMap->UnmapPID(1,&umPid);
 			if(FAILED(hr))
@@ -388,15 +396,18 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 	if (pAudioAC3!=NULL)
 	{
 		hr=pAudioAC3->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
-		if(FAILED(hr))
+		if(FAILED(hr) || pMap==NULL)
 			return 3;
 		// 
 		hr=pMap->EnumPIDMap(&pPidEnum);
-		if(FAILED(hr))
+		if(FAILED(hr) || pPidEnum==NULL)
 			return 7;
 		// enum and unmap the pids
+		maxCounter=20;
 		while(pPidEnum->Next(1,&pm,&count)== S_OK)
 		{
+			maxCounter--;
+			if (maxCounter<0) break;
 			if (count!=1) break;
 			umPid=pm.ulPID;
 			hr=pMap->UnmapPID(1,&umPid);
