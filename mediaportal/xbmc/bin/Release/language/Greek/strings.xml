@@ -1,0 +1,3317 @@
+<?xml version="1.0" encoding="ISO-8859-7"?>
+ <strings>
+	<characters>999</characters>
+	<string>
+		<id>0</id>
+		<value>Τα Προγράμματα μου</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Οι Φωτογραφίες μου</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Η Μουσική μου</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Τα Βίντεο μου</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>TV Guide</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Ρυθμίσεις</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX Media Center CVS build</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Τα Αρχεία μου</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>Ο Καιρός</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Ειδήσεις</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Οι Συνταγές μου</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Δευτέρα</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Τρίτη</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Τετάρτη</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Πέμπτη</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Παρασκευή</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Σάββατο</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Κυριακή</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Ιανουαρίου</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Φεβρουαρίου</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Μαρτίου</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Απριλίου</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Μαϊου</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Ιουνίου</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Ιουλίου</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>Αυγούστου</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>Σεπτεμβρίου</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Οκτωμβρίου</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>Νοεμβρίου</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>Δεκεμβρίου</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>View:Εικονίδια</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>View: Λίστα</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Scan</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Sort by: Ονομα</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Sort by: Ημερ/νια</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Sort by: Μέγεθος</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>ΟΧΙ</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>ΝΑΙ</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>SlideShow</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Create Thumbs</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Create Thumbnails</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Συντομέυσεις</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>ΠΑΥΣΗ</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Τα Αρχεία μου : Πηγή</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Τα Αρχεία μου : Προορισμός</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Αντιγραφή</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Μετακίνηση</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Διαγραφή</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Μετονομασία</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Νέος Φάκελος</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Επιβεβαίωση Αντιγραφής Αρχείου</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Επιβεβαίωση Μετακίνησης Αρχείου</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Επιβεβαίωση Διαγραφής Αρχείου</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Αντιγραφή Αρχείων;</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Μετακίνηση Αρχείων;</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Διαγραφή Αρχείων;</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Κατάσταση</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Αντικείμενα</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>Γενικά</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>Slideshow</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Πληροφορίες Συστήματος</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Οθόνη</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Αλμπουμ</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Καλλιτέχνες</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>Τραγούδια</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Είδος</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>Playlist</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Αναζήτηση</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>ΠΛΗΡΟΦΟΡΙΕΣ ΣΥΣΤΗΜΑΤΟΣ</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Θερμοκρασίες:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>CPU:</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>GPU:</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Time:</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>Current:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>Build:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Network:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Type:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Static</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Link:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Half duplex</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Full duplex</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Storage</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Drive</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Free</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Βίντεο</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Free Memory</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>No link</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Free</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>Μη διαθέσιμο</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>Οδηγός Ανοιχτός</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Ανάγνωση</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>Κανένας Δίσκος</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Δίσκος Παρόν</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Skin:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>FTP server:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Synchronize Time:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Ανάλυση:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Αλμπουμ:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Καλλιτέχνης:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Ημέρα Παραγωγης:</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Αξιολόγηση:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Είδος:</value>
+	</string>
+	<string>
+		<id>175</id>
+		<value>Tones:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Styles:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Review:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Κομμάτια:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Τραγούδι</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Διάρκεια</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Επιλογή Αλμπουμ</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Κομμάτια</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Review</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Ανανέωση</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Αναζήτηση Αλμπουμ</value>
+	</string>
+	<string>
+		<id>186</id>
+		<value>OK</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>Κανένα Αλμπουμ Δε Βρέθηκε!</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Επιλογή Όλων</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Scanning media info</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Αποθήκευση</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Τυχαία Επιλογή</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Σβήσιμο</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Scan</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Αναζήτηση...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>No IMDB info found!</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Επιλογή Ταινίας:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>Querying IMDB info</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>Φόρτωμα Λεπτομερειών</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Σκηνοθέτης:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Συγγραφέας:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Έτος:</value>
+	</string>
+	<string>
+		<id>202</id>
+		<value>Tagline:</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>Plot outline:</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Αξιολόγηση:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Ψήφοι:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Cast</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Πλοκή</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Αναπαραγωγή</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Επόμενο</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Προηγούμενο</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Αναζήτηση Εφαρμογών</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>Εφαρμογές Βρέθηκαν</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>UI Calibration</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Ρύθμιση Οθόνης</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>Soften</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Stretch</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>Οδηγός DVD</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Παρακαλώ Εισάγετε Δίσκο</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>Remote Share</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>Network is not connected</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Ακύρωση</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Auto widescreen switching</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Ταχύτητα</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>Transition time</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>Enable PAL60</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>Enable CDDB</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Shuffle Playlist on load</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>HD Spindown time (mins)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Φίλτρα</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Κανένα</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>Point</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>Linear</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>Anisotropic</value>
+	</string>
+	<string>
+		<id>235</id>
+		<value>Quincunx</value>
+	</string>
+	<string>
+		<id>236</id>
+		<value>Gaussian Cubic</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>Minification:</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>Magnification:</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>Autorun DVD-Video</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>Autorun VCD/SVCD</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Autorun Audio-CD</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>Autorun XBOX Games</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>Autorun Videos</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>Autorun Music</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>Autorun Pictures</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Scripts</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Γλώσσα</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Μουσική</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Visualisation</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>Επιλογή Φακέλου Προορισμού</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Εξαγωγή Σε Όλα Τα Ηχεία</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Αριθμός Καναλιών</value>
+	</string>
+	<string>
+		<id>254</id>
+		<value>DD Stereo Passthrough</value>
+	</string>
+	<string>
+		<id>255</id>
+		<value>CDDB</value>
+	</string>
+	<string>
+		<id>256</id>
+		<value>Querying freedb for CDDB info</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Λάθος</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>Enable ID3 tags</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>’νοιγμα</value>
+	</string>
+	<string>
+		<id>260</id>
+		<value>Shoutcast</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>Αναμονή Για Έναρξη....</value>
+	</string>
+	<string>
+		<id>262</id>
+		<value>Scripts Output</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>HTTP server:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Εγγραφή</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Στόπ Εγγραφής</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Sort by: Κομμάτι</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Sort by: Χρόνο</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Sort by: Τίτλο</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Sort by: Καλ/χνη</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Sort by: Αλμπουμ</value>
+	</string>
+	<string>
+		<id>271</id>
+		<value>Top 100</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>Top Left Overscan Compensation</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>Bottom Right Overscan Compensation</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Θέση Υπότιτλων</value>
+	</string>
+	<string>
+		<id>275</id>
+		<value>Pixel Ratio Adjustment</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>-WARNING!- Leave at 0,0 for best quality,change for shrinking video to fit.</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>Move the bar to change the subtitles position</value>
+	</string>
+	<string>
+		<id>278</id>
+		<value>-Important!- for best quality, change rectangle so it's perfectly square</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>Αδύνατο Το Φόρτωμα Των Ρυθμίσεων</value>
+	</string>
+	<string>
+		<id>280</id>
+		<value>using default fallbacks</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Ελέγχτε τα .xml Αρχεία</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>Βρέθηκαν %i Αντικείμενα</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Αποτελέσματα Αναζήτησης</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>0 Αποτελέσματα Βρέθηκαν</value>
+	</string>
+	<string>
+		<id>285</id>
+		<value>Deinterlace filter</value>
+	</string>
+	<string>
+		<id>286</id>
+		<value>Postprocessing filter</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Υπότιτλοι</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Font</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Μέγεθος</value>
+	</string>
+	<string>
+		<id>290</id>
+		<value>Volume amplification (dB)</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Βίντεο</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Ήχος</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Υπότιτλοι</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Create bookmark</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>Cycle bookmarks</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Clear bookmarks</value>
+	</string>
+	<string>
+		<id>297</id>
+		<value>AVDelay</value>
+	</string>
+	<string>
+		<id>298</id>
+		<value>Slider</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>Runtime:</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. Γλώσσα</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. Ένταση</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. Stream</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Καθυστέρηση</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Γλώσσα</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Ενεργοποιημένο</value>
+	</string>
+	<string>
+		<id>306</id>
+		<value>Non-Interleaved</value>
+	</string>
+	<string>
+		<id>307</id>
+		<value>Αυτόματο</value>
+	</string>
+	<string>
+			<id>308</id>
+		<value>vertical deblocking filter</value>
+	</string>
+	<string>
+		<id>309</id>
+		<value>horizontal deblocking filter</value>
+	</string>
+	<string>
+		<id>310</id>
+		<value>Auto brightness/contrast</value>
+	</string>
+	<string>
+		<id>311</id>
+		<value>Dering</value>
+	</string>
+	<string>
+		<id>312</id>
+		<value>(0=auto)</value>
+	</string>
+	<string>
+		<id>313</id>
+		<value>Reorganize database</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Ετοιμασία...</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Database error</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Αναζήτηση Τραγουδιών...</value>
+	</string>
+	<string>
+		<id>317</id>
+		<value>Αναδιοργάνωση Επιτυχής</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Marking deleted songs</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Λάθος αναδιο/σης songs</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Αναζήτηση Καλ/χνών...</value>
+	</string>
+	<string>
+		<id>321</id>
+		<value>Λάθος αναδιο/σης artists</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Αναζήτηση genres...</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Error reorganizing genres</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Αναζήτηση pathes...</value>
+	</string>
+	<string>
+		<id>325</id>
+		<value>Λάθος αναδ/σης pathes</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Αναζήτηση Aλμπουμ...</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Error reorganizing albums</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Εγγραφή Αλλαγών...</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Λάθος εγγραφής αλλαγών</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>Αυτό Μπορεί Να Διαρκέσει Πολύ Ώρα...</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>Compressing database...</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Error compressing database</value>
+	</string>
+	<string>
+		<id>333</id>
+		<value>Do you want to reorganize my music database?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Reorganize my music database</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Έναρξη</value>
+	</string>
+	<string>
+		<id>336</id>
+		<value>Adj. Framerate</value>
+	</string>
+	<string>
+		<id>337</id>
+		<value>Audio Output:</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Analog</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Digital</value>
+	</string>
+	<string>
+		<id>340</id>
+		<value>Various Artists</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Έναρξη DVD</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Ταινίες</value>
+	</string>
+	<string>
+		<id>343</id>
+		<value>Adjust Framerate</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Ηθοποιοί</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Χρονιά</value>
+	</string>
+	<string>
+		<id>346</id>
+		<value>Stack</value>
+	</string>
+	<string>
+		<id>347</id>
+		<value>Unstack</value>
+	</string>
+	<string>
+		<id>348</id>
+		<value>Flatten Directory Hierarchy</value>
+	</string>
+	<string>
+		<id>349</id>
+		<value>Show only Default.xbe</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Προγράμματα</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Off</value>
+	</string>
+	<string>
+		<id>352</id>
+		<value>Dim</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Μαύρο</value>
+	</string>
+	<string>
+		<id>354</id>
+		<value>Matrix Trails</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Screensaver Idle Timeout</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Screensaver Mode</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Shutdown Idle Timeout</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Όλα Τα Αλμπουμ</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Πρόσφατα Αλμπουμ</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>Screensaver</value>
+	</string>
+	<string>
+		<id>361</id>
+		<value>R. SlideShow</value>
+	</string>
+	<string>
+		<id>362</id>
+		<value>Screensaver Fade Level (%)</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Sort by: Αρχείο</value>
+	</string>
+	<string>
+		<id>364</id>
+		<value>DD/DTS Multichannel Passthrough</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Sort by: Όνομα</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Sort by: Χρονιά</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Sort by: Αξιολόγηση</value>
+	</string>
+	<string>
+		<id>368</id>
+		<value>IMDB</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Τίτλος</value>
+	</string>
+	<string>
+		<id>370</id>
+		<value>T-Storms</value>
+	</string>
+	<string>
+		<id>371</id>
+		<value>Επιμερός</value>
+	</string>
+	<string>
+		<id>372</id>
+		<value>Κυρίως</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Ηλιόλουστος</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Συννεφιασμένος</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Χιόνια</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Βροχή</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>Φωτεινός</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>ΠΜ</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>ΜΜ</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Μπόρα</value>
+	</string>
+	<string>
+		<id>381</id>
+		<value>Λίγα</value>
+	</string>
+	<string>
+		<id>382</id>
+		<value>Διασκορπισμένα</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Ανεμος</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>Δυνατός</value>
+	</string>
+	<string>
+		<id>385</id>
+		<value>Αίθριος</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>Καθαρός</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Νωρίς</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Επιλογή Τοποθεσίας</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Ανανέωση Χρόνου</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Μονάδες Θερμοκρασίας</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Μονάδες Ταχύτητας</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Ο Καιρός</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Θερμοκρασία</value>
+	</string>
+	<string>
+		<id>402</id>
+		<value>Δέιχνει να</value>
+	</string>
+	<string>
+		<id>403</id>
+		<value>Δείκτης UV</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Aνεμος</value>
+	</string>
+	<string>
+		<id>405</id>
+		<value>Πάχνη</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Υγρασία</value>
+	</string>
+	<string>
+		<id>407</id>
+		<value>Από</value>
+	</string>
+	<string>
+		<id>408</id>
+		<value>με</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Σύνδεση με Weather.com</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Λήψη Καιρού για:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Αδύνατη η λήψη του καιρού</value>
+	</string>
+	<string>
+		<id>413</id>
+		<value>Χειροκίνητα</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>Κανένα review για αυτό το Αλμπουμ</value>
+	</string>
+	<string>
+		<id>415</id>
+		<value>Λήψη thumbnail...</value>
+	</string>
+	<string>
+		<id>416</id>
+		<value>Μη Διαθέσιμο</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>View: Μεγάλα Εικονίδια</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Τα Βίντεό μου/Είδη</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Τα Βίντεό μου/Ηθοποιοί</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Τα Βίντεό μου/Χρονιά</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Τα Βίντεό μου/Τίτλος</value>
+	</string>
+	<string>
+		<id>422</id>
+		<value>Διαγραφή Πληροφοριών Αλμπουμ</value>
+	</string>
+	<string>
+		<id>423</id>
+		<value>Delete CDDB info</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Επιλογή</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>No albuminfo found.</value>
+	</string>
+	<string>
+		<id>426</id>
+		<value>No CDDB info found.</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Δίσκος:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Εισαγωγή Σωστού CD/DVD</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Παρακαλώ Εισάγετε Το Εξής CD/DVD</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>Τακτοποίηση ανά: DVD#</value>
+	</string>
+	<string>
+		<id>431</id>
+		<value>No Cache</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Διαγραφή Ταινίας Από Βάση Δεδομένων</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Είστε Σίγουροι Για Τη Μεταφορά</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>Της Ταινίας;</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Κομμάτι</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Χρονιά:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Διάρκεια:</value>
+	</string>
+	<string>
+		<id>438</id>
+		<value>’νοιγμα Αρχείου</value>
+	</string>
+	<string>
+		<id>439</id>
+		<value>Cache</value>
+	</string>
+	<string>
+		<id>440</id>
+		<value>Σκληρός Δίσκος</value>
+	</string>
+	<string>
+		<id>441</id>
+		<value>UDF</value>
+	</string>
+	<string>
+		<id>442</id>
+		<value>Δίκτυο</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>Internet</value>
+	</string>
+	<string>
+		<id>444</id>
+		<value>Βίντεο</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>Ήχος</value>
+	</string>
+	<string>
+		<id>446</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>447</id>
+		<value>Autorun</value>
+	</string>
+	<string>
+		<id>448</id>
+		<value>LCD</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Ενεργοποιημένο</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Στήλες</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Row 1 adress:</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Row 2 adress:</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Row 3 adress:</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Row 4 adress:</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Rows:</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Mode:</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Switch view</value>
+	</string>
+	<string>
+		<id>458</id>
+		<value>B/Mark</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Subs</value>
+	</string>
+	<string>
+		<id>460</id>
+		<value>Audio Stream</value>
+	</string>
+	<string>
+		<id>461</id>
+		<value>[Ενεργό]</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Υπότιτλος</value>
+	</string>
+	<string>
+		<id>463</id>
+		<value>Backlight</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Brightness</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Contrast</value>
+	</string>
+	<string>
+		<id>466</id>
+		<value>Gamma</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Τύπος</value>
+	</string>
+	<string>
+		<id>468</id>
+		<value>Move the bar to change the osd position</value>
+	</string>
+	<string>
+		<id>469</id>
+		<value>OSD Position</value>
+	</string>
+	<string>
+		<id>470</id>
+		<value>Credits</value>
+	</string>
+	<string>
+		<id>471</id>
+		<value>Modchip</value>
+	</string>
+	<string>
+		<id>472</id>
+		<value>OSD Timeout</value>
+	</string>
+	<string>
+		<id>473</id>
+		<value>High Quality Resampling</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Off</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Μόνο Μουσική</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Music &amp; Video</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>Unable to load playlist</value>
+	</string>
+	<string>
+		<id>478</id>
+		<value>OSD</value>
+	</string>
+	<string>
+		<id>479</id>
+		<value>Skin and Language</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>User Interface</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>Ρυθμίσεις Ήχου</value>
+	</string>
+	<string>
+		<id>482</id>
+		<value>About XBMC</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Αλμπουμ</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Καλ/χνης</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Διαγραφή Αλμπουμ</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Επανάληψη</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Επανάληψη Μονή</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Repeat folder playlist</value>
+	</string>
+	<string>
+		<id>489</id>
+		<value>Use playlist in songs</value>
+	</string>
+	<string>
+		<id>490</id>
+		<value>Auto switch list and icons in songs</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Χρησιμοποίηση Μεγάλων Εικονιδίων</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Μενού Αρχείων</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Ορισμός ως Προορισμός</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Αδύνατο να Ολοκληρωθεί</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Διαγραφή του Φακέλου</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Πήγαινε στον προορισμό</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Υπολογισμός</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Είσαι Σίγουρος;</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>αντικείμενα</value>
+	</string>	
+	<string>
+		<id>508</id>
+		<value>Στο</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Το Αρχείο Υπάρχει Ήδη. Ξανα-αντιγραφή ;</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Ακύρωση</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Πάντα</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Ποτέ</value>
+	</string>
+	
+	<string>
+		<id>530</id>
+		<value>Photo disc εισήχθει, θέλετε να τον ανοίξετε ;</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Movie disc εισήχθει, θέλετε να τον ανοίξετε ;</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Audio disc εισήχθει, θέλετε να τον ανοίξετε ;</value>
+	</string>
+	
+	
+		
+	<string>
+		<id>600</id>
+		<value>TVGuide</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Εγγραφή Τώρα</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Κανάλι</value>
+	</string>
+	<string>
+		<id>603</id>
+		<value>Προγραμματισμός</value>
+	</string>
+	<string>
+		<id>604</id>
+		<value>Recorded TV</value>
+	</string>
+	<string>
+		<id>605</id>
+		<value>Τηλεόραση</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Loading new TVGuide</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Φόρτωμα</value>
+	</string>
+	<string>
+		<id>608</id>
+		<value>TVGuide Import failed</value>
+	</string>
+	<string>
+		<id>609</id>
+		<value>TVGuide Import done</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>Κανένα</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Record once</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Record everytime on this channel</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Record everytime on every channel</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Record every week at this time</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Record every day at this time</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Select Recording type</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Νέο</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Διαγραφή</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Edit Date/Time</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Sort by: Κανάλι</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Sort by: Ημέρα</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Sort by: Όνομα</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Sort by: Τύπο</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Ξεκαθάρισμα</value>
+	</string>
+	<string>
+		<id>625</id>
+		<value>Schedules removed:</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Αλλαγή Τ΄ύπου</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Κανάλια:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>προγράμματα:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Στοπ Εγγραφής</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Να Γίνει Επανεκκίνηση;</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Να Κλείσει ο Υπολογιστής;</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Αντικείμενα</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Start Date/Time</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>End Date/Time</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Ωρα</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Ημέρα</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Επεξεργασία Εγγραφής</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Νέα Εγγραφή</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Albums of</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Saturation</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Ευκρίνεια</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Φόρτωμα Καναλιών</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Φόρτωμα Εκπομπών</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Τακτοποίηση Εκπομπών</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Φόρτωμα XML αρχείου</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Προγραμματισμένες Εγγραφές</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Μια Φορά</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Καθημερινά</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Κάθε</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Κάθε φορα σε αυτό το κανάλι</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Κάθε φορα σε οποιοδήποτε κανάλι</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Recorded TV</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Διαγραφή αυτής της εγγραφής ;</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Εξαγωγή</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Play recorded tv</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Delete recorded tv</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>Δευ</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Τρι</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Τετ</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Πεμ</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Παρ</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>Σαβ</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Κυρ</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Διαγραφή αυτής της εικόνας ;</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Ραδιόφωνο</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Σταθμοί</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Αυτόματος Συντονισμός</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Sort by: Τύπο</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Sort by: Είδος</value>
+	</string>	
+	<string>
+		<id>670</id>
+		<value>Sort by: Bitrate</value>
+	</string>	
+	<string>
+		<id>671</id>
+		<value>Sort by: Watched</value>
+	</string>
+	<string>
+		<id>672</id>
+		<value>Εγγραφή Δευ-Παρ</value>
+	</string>	
+	<string>
+		<id>673</id>
+		<value>Ταχύτητα Κύλλισης</value>
+	</string>	
+	<string>
+		<id>674</id>
+		<value>Ρυθμίσεις GUI</value>
+	</string>	
+	<string>
+		<id>675</id>
+		<value>Παράδειγμα:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Διαγραφή watched Εγγραφών;</value>
+	</string>	
+	<string>
+		<id>677</id>
+		<value>φορές</value>
+	</string>	
+	<string>
+		<id>678</id>
+		<value>Sort by: Είδος</value>
+	</string>	
+	<string>
+		<id>679</id>
+		<value>Εβδομαδιαία</value>
+	</string>	
+	<string>
+		<id>680</id>
+		<value>Δευ-Παρ</value>
+	</string>	
+	<string>
+		<id>681</id>
+		<value>Αναμονή</value>
+	</string>	
+	<string>
+		<id>682</id>
+		<value>Εγγραφή</value>
+	</string>	
+	<string>
+		<id>683</id>
+		<value>Τέλος</value>
+	</string>	
+	<string>
+		<id>684</id>
+		<value>Ακυρώθηκε</value>
+	</string>	
+	<string>
+		<id>685</id>
+		<value>Sort by: Κατάσταση</value>
+	</string>	
+	
+<string><id>10000</id><value>Home</value></string>
+<string><id>10001</id><value>Τηλεόραση</value></string>
+<string><id>10002</id><value>Οι Φωτογραφίες μου</value></string>
+<string><id>10003</id><value>Τα Αρχεία μου</value></string>
+<string><id>10004</id><value>Ρυθμίσεις</value></string>
+<string><id>10005</id><value>Η Μουσική μου</value></string>
+<string><id>10006</id><value>Τα Βιντεό μου</value></string>
+<string><id>10007</id><value>Πληροφορίες Συστήματος</value></string>
+<string><id>10008</id><value>Ρυθμίσεις->Γενικά</value></string>
+<string><id>10009</id><value>Ρυθμίσεις->Οθόνη</value></string>
+<string><id>10010</id><value>Ρυθμίσεις->Οθόνη->UI Ρυθμίσεις</value></string>
+<string><id>10011</id><value>Ρυθμίσεις->Οθόνη->Ρυθμίσεις Οθόνης</value></string>
+<string><id>10012</id><value>Ρυθμίσεις->SlideShow</value></string>
+<string><id>10013</id><value>Ρυθμίσεις->Οθόνη->Φίλτρα</value></string>
+<string><id>10014</id><value>Ρυθμίσεις->Μουσική</value></string>
+<string><id>10015</id><value>Ρυθμίσεις->Οθόνη->Υπότιτλοι</value></string>
+<string><id>10016</id><value>Ρυθμίσεις->Οθόνη->Screensaver</value></string>
+<string><id>10017</id><value>Ρυθμίσεις->Καιρός</value></string>
+<string><id>10020</id><value>Ρυθμίσεις->Scripts</value></string>
+<string><id>10021</id><value>Τα Βιντεό μου/είδος</value></string>
+<string><id>10022</id><value>Τα Βιντεό μου/ηθοποιοί</value></string>
+<string><id>10023</id><value>Τα Βιντεό μου/ετος</value></string>
+<string><id>10024</id><value>Ρυθμίσεις->Προγράμματα</value></string>
+<string><id>10025</id><value>Τα Βιντεό μου/τίτλος</value></string>
+<string><id>10026</id><value>Ρυθμίσεις->General->Cache</value></string>
+<string><id>10027</id><value>Ρυθμίσεις->General->Autorun</value></string>
+<string><id>10028</id><value>Τα Βιντεό μου/playlist</value></string>
+<string><id>10029</id><value>Ρυθμίσεις->Γενικά->LCD</value></string>
+<string><id>10030</id><value>Ραδιόφωνο</value></string>
+<string><id>10031</id><value>Ρυθμίσεις->Οθόνη->scroll speed</value></string>
+<string><id>10032</id><value>MSN Messenger</value></string>
+<string><id>10033</id><value>MSN Messenger chat</value></string>
+<string><id>10034</id><value>Πρόσθετα</value></string>
+<string><id>10100</id><value>Yes/no dialog</value></string>
+<string><id>10101</id><value>Progress dialog</value></string>
+<string><id>10500</id><value>Η Μουσική μου/playlist</value></string>
+<string><id>10501</id><value>Η Μουσική μου/αρχεία</value></string>
+<string><id>10502</id><value>Η Μουσική μου/αλμπουμ</value></string>
+<string><id>10503</id><value>Η Μουσική μου/καλ/χνες</value></string>
+<string><id>10504</id><value>Η Μουσική μου/είδη</value></string>
+<string><id>10505</id><value>Η Μουσική μου/top100</value></string>
+<string><id>10506</id><value>Η Μουσική μου/Αγαπημένα</value></string>
+<string><id>10600</id><value>Τηλεόραση/Guide</value></string>
+<string><id>10601</id><value>Τηλεόραση/Scheduler</value></string>
+<string><id>10602</id><value>Τηλεόραση/fullscreen</value></string>
+<string><id>10603</id><value>Τηλεόραση/Recorded TV</value></string>
+<string><id>10604</id><value>Τηλεόραση/Αναζήτηση</value></string>
+<string><id>10605</id><value>Τηλεόραση/Recorded Tv/Είδη</value></string>
+<string><id>10606</id><value>Τηλεόραση/Recorded Tv/κανάλια</value></string>
+<string><id>10750</id><value>Οι Συνταγές μου</value></string>
+<string><id>10755</id><value>Κατάσταση</value></string>
+<string><id>10756</id><value>Λεπτομέρειες Κατάστασης</value></string>
+<string><id>10757</id><value>Προτιμήσεις Κατάστασής μου</value></string>
+<string><id>10770</id><value>Explorer</value></string>
+<string><id>11000</id><value>Πληκτρολόγιο</value></string>
+<string><id>12000</id><value>Select dialog</value></string>
+<string><id>12001</id><value>Η Μουσική μου/πληροφορίες</value></string>
+<string><id>12002</id><value>Dialog OK</value></string>
+<string><id>12003</id><value>Τα Βίντεό μου/πληροφορίες</value></string>
+<string><id>12004</id><value>My Scripts/πληροφορίες</value></string>
+<string><id>12005</id><value>Fullscreen video</value></string>
+<string><id>12006</id><value>Audio visisalisation</value></string>
+<string><id>12007</id><value>Οι Φωτογραφίες μου/slideshow</value></string>
+<string><id>12008</id><value>Filestacking dialog</value></string>
+<string><id>12010</id><value>Ημερ/νια/Ωρα</value></string>
+<string><id>12011</id><value>Πληροφορίες καλ/χνη</value></string>
+<string><id>12012</id><value>Context menu</value></string>
+<string><id>12013</id><value>Set Rating</value></string>
+<string><id>12014</id><value>Πληροφορίες Εικόνας</value></string>
+<string><id>12600</id><value>Ο Καιρός</value></string>
+<string><id>12700</id><value>Ειδήσεις</value></string>
+<string><id>12900</id><value>Screensaver</value></string>
+<string><id>12901</id><value>Fullscreen OSD</value></string>
+<string><id>12902</id><value>MSN Messenger OSD</value></string>
+
+<string><id>686</id><value>Γεννήθηκε</value></string>
+<string><id>687</id><value>Years Active</value></string>
+<string><id>688</id><value>Instruments</value></string>
+<string><id>689</id><value>Bio.</value></string>
+<string><id>690</id><value>Δισκογραφία (Αλμπουμ)</value></string>
+<string><id>691</id><value>Δισκογραφία (συλλογές, boxes)</value></string>
+<string><id>700</id><value>Δισκογραφία (eps, singles)</value></string>
+<string><id>701</id><value>Δισκογραφία (bootlegs, βίντεος, συνεντεύξεις)</value></string>
+<string><id>702</id><value>No artists found!</value></string>
+<string><id>703</id><value>Δεν είσαι συνδεμένος με το internet!</value></string>
+<string><id>704</id><value>Ανάκτηση Τροφοδοσίας</value></string>
+<string><id>705</id><value>Λήψη RSS Τροφοδοσίας για </value></string>
+<string><id>706</id><value>Επιλογή Τροφοδοσίας</value></string>
+<string><id>707</id><value>TV On</value></string>
+<string><id>708</id><value>Timeshifting</value></string>
+<string><id>709</id><value>Αυτ/τη Αναβ/ση</value></string>
+<string><id>710</id><value>Μια νέα εκδοση είναι διαθέσιμη</value></string>
+<string><id>711</id><value>Αναβάθμιση απο v#old ->v#new ?</value></string>
+<string><id>712</id><value>Πίσω</value></string>
+
+<string>
+	<id>713</id>
+	<value>Autoplay</value>
+</string>
+<string>
+	<id>714</id>
+	<value>Δίσκος Εισήχθει, Αναπαραγωγή ;</value>
+</string>
+<string>
+	<id>715</id>
+	<value>CD Εισήχθει, Αναπαραγωγή ;</value>
+</string>
+<string>
+	<id>716</id>
+	<value>Δορυφόρος</value>
+</string>
+<string>
+	<id>717</id>
+	<value>Καιρός</value>
+</string>
+<string>
+	<id>718</id>
+	<value>Καθαρισμός Top100</value>
+</string>
+<string>
+	<id>719</id>
+	<value>Είστε σίγουροι για το reset της top 100 Λίστας;</value>
+</string>
+<string>
+	<id>720</id>
+	<value>Επίδειξη: Διάρκειας</value>
+</string>
+<string>
+	<id>721</id>
+	<value>Επίδειξη: Φορές Παιξίματος</value>
+</string>
+<string>
+	<id>722</id>
+	<value>Αδύνατη η αναπαραγωγή του Δίσκου</value>
+</string>
+<string>
+	<id>723</id>
+	<value>Εισάγατε Δίσκο;</value>
+</string>
+<string>
+	<id>724</id>
+	<value>Αναζήτηση TVGuide</value>
+</string>
+<string>
+	<id>725</id>
+	<value>Είδη</value>
+</string>
+<string>
+	<id>726</id>
+	<value>Τίτλος</value>
+</string>
+<string>
+	<id>727</id>
+	<value>Live tv in background</value>
+</string>
+<string>
+	<id>728</id>
+	<value>No Video/TV playing</value>
+</string>
+<string>
+	<id>729</id>
+	<value>Make sure you use VMR9 and that something is playing</value>
+</string>
+<string>
+	<id>730</id>
+	<value>This schedule is recording. If you delete</value>
+</string>
+<string>
+	<id>731</id>
+	<value>the schedule then the recording is stopped.</value>
+</string>
+<string>
+	<id>732</id>
+	<value>Είσαι Σίγουρος ;</value>
+</string>
+<string>
+	<id>733</id>
+	<value>View: Filmstrip</value>
+</string>
+<string>
+	<id>734</id>
+	<value>Εικόνα:</value>
+</string>
+<string>
+	<id>735</id>
+	<value>Περιστροφή</value>
+</string>	
+<string>
+	<id>736</id>
+	<value>Κανένα TVGuide δεδομένο διαθέσιμο</value>
+</string>
+<string>
+	<id>737</id>
+	<value>View: Δορυφόρος</value>
+</string>
+<string>
+	<id>738</id>
+	<value>View: Θερμοκρασία</value>
+</string>
+<string>
+	<id>739</id>
+	<value>View: Δείκτης UV</value>
+</string>
+<string>
+	<id>740</id>
+	<value>View:Aνεμοι</value>
+</string>
+<string>
+	<id>741</id>
+	<value>View: Υγρασία</value>
+</string>
+<string>
+	<id>742</id>
+	<value>View: Precipitation</value>
+</string>
+<string>
+	<id>743</id>
+	<value>Πρόβλεψη 4 Ημερών</value>
+</string>
+<string>
+	<id>744</id>
+	<value>Ανατ. Ηλίου</value>
+</string>
+<string>
+	<id>745</id>
+	<value>Δύση Ηλίου</value>
+</string>
+<string>
+	<id>746</id>
+	<value>Υψηλή</value>
+</string>
+<string>
+	<id>747</id>
+	<value>Χαμηλή</value>
+</string>
+<string>
+	<id>748</id>
+	<value>Precipitation</value>
+</string>
+<string>
+	<id>750</id>
+	<value>Εικόνες</value>
+</string>
+<string>
+	<id>800</id>
+	<value>Εναρξη με</value>
+</string>
+<string>
+	<id>801</id>
+	<value>Περιέχει</value>
+</string>
+<string>
+	<id>802</id>
+	<value>Τελειώνει με</value>
+</string>
+<string>
+	<id>803</id>
+	<value>  Είναι  </value>
+</string>
+<string>
+	<id>804</id>
+	<value>Ολοκληρωμένο</value>
+</string>
+<string>
+	<id>805</id>
+	<value>Καθαρισμός</value>
+</string>
+<string>
+	<id>806</id>
+	<value>Τίτλος</value>
+</string>
+<string>
+	<id>807</id>
+	<value>Σοδειά</value>
+</string>
+<string>
+	<id>808</id>
+	<value>Συστατικά</value>
+</string>
+<string>
+	<id>809</id>
+	<value>Κατευθύνσεις</value>
+</string>
+<string>
+	<id>810</id>
+	<value>Κάρτα</value>
+</string>
+<!-- My Alarm Strings -->
+<string>
+	<id>850</id>
+	<value>Ξυπνητήρι</value>
+</string>
+<string>
+	<id>851</id>
+	<value>Playlist</value>
+</string>
+<string>
+	<id>852</id>
+	<value>Ξυπνητήρι On/Off</value>
+</string>
+<string>
+	<id>853</id>
+	<value>Ονομα:</value>
+</string>
+<string>
+	<id>854</id>
+	<value>Enabled on these days</value>
+</string>
+<string>
+	<id>855</id>
+	<value>Ωρα Ξυπνητηριού</value>
+</string>
+<string>
+	<id>856</id>
+	<value>Sleep Timer</value>
+</string>
+<string>
+	<id>857</id>
+	<value>Snooze</value>
+</string>
+<string>
+	<id>858</id>
+	<value>Snooze Time</value>
+</string>
+<string>
+	<id>859</id>
+	<value>Sleep Timer</value>
+</string>
+<string>
+	<id>860</id>
+	<value>Increase volume over time</value>
+</string>
+<string>
+	<id>861</id>
+	<value>Λεπτομέρειες Ξυπνητηριού</value>
+</string>
+<string>
+	<id>862</id>
+	<value>Ραδιόφωνο</value>
+</string>
+<string>
+	<id>863</id>
+	<value>Αρχείο</value>
+</string>
+<string>
+	<id>864</id>
+	<value>Media type</value>
+</string>
+
+<string>
+	<id>865</id>
+	<value>Λεπτά που απομένουν μέχρι το sleep:</value>
+</string>
+<string>
+	<id>866</id>
+	<value>Decrease volume over time</value>
+</string>
+<string>
+	<id>867</id>
+	<value>Κλείσιμο Υπολογιστή</value>
+</string>
+<string>
+	<id>868</id>
+	<value>Reset</value>
+</string>
+
+<!-- Default name for new alarm -->
+<string>
+	<id>869</id>
+	<value>NewAlarm</value>
+</string>
+<string>
+	<id>870</id>
+	<value>Επανάληψη</value>
+</string>
+<string>
+	<id>871</id>
+	<value>Wake up pc</value>
+</string>
+<string>
+	<id>872</id>
+	<value>Εναρξη με</value>
+</string>
+<string>
+	<id>873</id>
+	<value>TV Show</value>
+</string>
+<string>
+	<id>874</id>
+	<value>Επεισόδιο</value>
+</string>
+<string>
+	<id>875</id>
+	<value>Τρέχων Πρόγραμμα</value>
+</string>
+<string>
+	<id>876</id>
+	<value>Untill manual stop</value>
+</string>
+
+<!-- End My Alarm Strings -->
+<string>
+	<id>890</id>
+	<value>Αναπαραγωγή CD</value>
+</string>
+
+<string>
+	<id>900</id>
+	<value>Συνέχεια ταινίας απο το τελευταίο σημείο ;</value>
+</string>
+<string>
+	<id>901</id>
+	<value>MSN Messenger</value>
+</string>
+<string>
+	<id>902</id>
+	<value>Συνδεδεμένες Επαφές</value>
+</string>
+<string>
+	<id>903</id>
+	<value>Είσοδος</value>
+</string>
+<string>
+	<id>904</id>
+	<value>Εξοδος</value>
+</string>
+<string>
+	<id>905</id>
+	<value>Πρέπει να ρυθμίσετε αυτο το plugin πρώτα</value>
+</string>
+<string>
+	<id>906</id>
+	<value>Συμπληρώστε το email σας στις ρυθμίσεις</value>
+</string>
+<string>
+	<id>907</id>
+	<value>Δεν μπορεί να συνδεθεί στο MSN</value>
+</string>
+<string>
+	<id>908</id>
+	<value>γράφει ενα μύνημα...</value>
+</string>
+<string>
+	<id>909</id>
+	<value>Σύνδεση...</value>
+</string>
+<string>
+	<id>910</id>
+	<value>Είσοδος...</value>
+</string>
+<string>
+	<id>911</id>
+	<value>Κανένα Κανάλι</value>
+</string>
+<string>
+	<id>912</id>
+	<value>Αδύνατο να ληφθούν τα τελευταία νέα</value>
+</string>
+<string>
+	<id>913</id>
+	<value>Πρόσθετα</value>
+</string>
+<string>
+	<id>914</id>
+	<value>Εγγραφές</value>
+</string>
+<string>
+	<id>915</id>
+	<value>Κανάλια TV</value>
+</string>
+<string>
+	<id>916</id>
+	<value>Απομακρυσμένο Αρχείο</value>
+</string>
+<string>
+	<id>917</id>
+	<value>This file is located on a remote share</value>
+</string>
+<string>
+	<id>918</id>
+	<value>Should I download it to your default</value>
+</string>
+<string>
+	<id>919</id>
+	<value>τοπικό μοίρασμα;</value>
+</string>
+<string>
+	<id>920</id>
+	<value>Αδύνατο να ληφθεί το απομακρυσμένο Αρχείο</value>
+</string>
+<string>
+	<id>921</id>
+	<value>Λήψη Αρχείου</value>
+</string>
+<string>
+	<id>922</id>
+	<value>Περιγραφή</value>
+</string>
+<string>
+	<id>923</id>
+	<value>Παρουσίαση</value>
+</string>
+<string>
+	<id>924</id>
+	<value>Μενού</value>
+</string>
+<string>
+	<id>925</id>
+	<value>Διαγραφή αυτής της ταινίας</value>
+</string>
+<string>
+	<id>926</id>
+	<value>Προσθήκη στην playlist</value>
+</string>
+<string>
+	<id>927</id>
+	<value>Προειδοποίηση</value>
+</string>
+<string>
+	<id>928</id>
+	<value>Ευρεση Εξώφυλλου</value>
+</string>
+<string>
+	<id>929</id>
+	<value>Κλείσιμο Μενού</value>
+</string>
+<string>
+	<id>930</id>
+	<value>Προσθήκη στα Αγαπημένα</value>
+</string>
+<string>
+	<id>931</id>
+	<value>Αξιολόγηση</value>
+</string>
+<string>
+	<id>932</id>
+	<value>Αγαπημένα</value>
+</string>
+<string>
+	<id>933</id>
+	<value>Αφαίρεση απο τα Αγαπημένα</value>
+</string>
+<string>
+	<id>934</id>
+	<value>Ορισμός Αξιολόγησης</value>
+</string>
+<string>
+	<id>935</id>
+	<value>Show: Αξιολόγηση</value>
+</string>
+<string>
+	<id>936</id>
+	<value>Συνέχεια απο:</value>
+</string>
+<string>
+	<id>937</id>
+	<value>Εισαγωγή TV Guide</value>
+</string>
+<string>
+	<id>938</id>
+	<value>Παρακολούθηση καναλιού</value>
+</string>
+<string>
+	<id>939</id>
+	<value>Αλλαγή mode</value>
+</string>
+<string>
+	<id>940</id>
+	<value>Ιδιότητες</value>
+</string>
+<string>
+	<id>941</id>
+	<value>Αλλαγή aspect ratio</value>
+</string>
+<string>
+	<id>942</id>
+	<value>Τέντωμα</value>
+</string>
+<string>
+	<id>943</id>
+	<value>Κανονικό</value>
+</string>
+<string>
+	<id>944</id>
+	<value>Γνήσιο</value>
+</string>
+<string>
+	<id>945</id>
+	<value>Letterbox</value>
+</string>
+<string>
+	<id>946</id>
+	<value>Pan and Scan</value>
+</string>
+<string>
+	<id>947</id>
+	<value>Ζουμ</value>
+</string>
+<string>
+	<id>948</id>
+	<value>Συνδεδεμένος</value>
+</string>
+<string>
+	<id>949</id>
+	<value>Απασχολημένος</value>
+</string>
+<string>
+	<id>950</id>
+	<value>Επιστρέφω Αμέσως</value>
+</string>
+<string>
+	<id>951</id>
+	<value>Μακρυά</value>
+</string>
+<string>
+	<id>952</id>
+	<value>Τηλέφωνο</value>
+</string>
+<string>
+	<id>953</id>
+	<value>Εκκίνηση</value>
+</string>
+<string>
+	<id>954</id>
+	<value>Κρυφό</value>
+</string>
+<string>
+	<id>955</id>
+	<value>Αδρανής</value>
+</string>
+<string>
+	<id>956</id>
+	<value>Συνδεδεμένος</value>
+</string>
+<string>
+	<id>957</id>
+	<value>MSN Messenger</value>
+</string>
+<string>
+	<id>958</id>
+	<value>Ομιλία με</value>
+</string>
+<string>
+	<id>959</id>
+	<value>προστέθηκε στη συνομιλία</value>
+</string>
+<string>
+	<id>960</id>
+	<value>έφυγε απο τη συνομιλία</value>
+</string>
+<string>
+	<id>961</id>
+	<value>MSN Status</value>
+</string>
+
+
+<string>
+	<id>970</id>
+	<value>Προηγούμενο Παράθυρο</value>
+</string>
+<string>
+	<id>971</id>
+	<value>Group</value>
+</string>
+<string>
+	<id>972</id>
+	<value>All Channels</value>
+</string>
+<string>
+	<id>973</id>
+	<value>Maximum FPS</value>
+</string>
+<string>
+	<id>974</id>
+	<value>Κυρίως Μενού</value>
+</string>
+<string>
+	<id>975</id>
+	<value>Προηγούμενο κεφάλαιο</value>
+</string>
+<string>
+	<id>976</id>
+	<value>Επόμενο κεφάλαιο</value>
+</string>
+<string>
+	<id>977</id>
+	<value>There is no free card available</value>
+</string>
+<string>
+	<id>978</id>
+	<value>which can watch this channel</value>
+</string>
+<string>
+	<id>979</id>
+	<value>Play recording from beginning</value>
+</string>
+<string>
+	<id>980</id>
+	<value>Play recording from live point</value>
+</string>
+<string>
+	<id>981</id>
+	<value>Cancel this show</value>
+</string>
+<string>
+	<id>982</id>
+	<value>Διαγραφή όλης της εγγραφής</value>
+</string>
+
+<string>
+	<id>983</id>
+	<value>Οι Playlists μου</value>
+</string>
+<string>
+	<id>984</id>
+	<value>Λήψη ταινιών</value>
+</string>
+<string>
+	<id>985</id>
+	<value>Λήψη λεπτομερειών ταινίας</value>
+</string>
+<string>
+	<id>986</id>
+	<value>Λήψη Ηθοποιού</value>
+</string>
+<string>
+	<id>987</id>
+	<value>Years</value>
+</string>
+
+<string>
+	<id>1440</id>
+	<value>My TeleText</value>
+</string>
+<string>
+	<id>1441</id>
+	<value>TeleText</value>
+</string>
+
+	<!-- My Status Strings -->
+	<string><id>1950</id><value>Κατάσταση</value></string>
+	<string><id>1951</id><value>Σκληρός Δίσκος</value></string>
+	<string><id>1952</id><value>Ανεμ/ρας</value></string>
+	<string><id>1953</id><value>Ελέυθερα</value></string>
+	<string><id>1954</id><value>Θερμοκρασία</value></string>
+	<string><id>1955</id><value>C</value></string>
+	<string><id>1956</id><value>Επιλογή Ηχου Συναγ/μού</value></string>
+	<string><id>1957</id><value>Προτιμήσεις</value></string>
+	<string><id>1958</id><value>Χρήση CPU</value></string>
+	<string><id>1959</id><value>Voltage</value></string>
+	<string><id>1960</id><value>Volt</value></string>
+	<string><id>1961</id><value>Clock frequency</value></string>
+	<string><id>1962</id><value>Προτιμήσεις</value></string>
+	<string><id>1963</id><value>Sensor details</value></string>
+	<string><id>1964</id><value>Sensor alarm</value></string>
+	<string><id>1965</id><value>Highest Value</value></string>
+	<string><id>1966</id><value>Lowest Value</value></string>
+	<string><id>1967</id><value>top alarm threshold</value></string>
+	<string><id>1968</id><value>lower alarm threshold</value></string>
+	<string><id>1969</id><value>Έλεγχος Ηχου</value></string>
+	<string><id>1970</id><value>Alarm interval (in seconds)</value></string>
+	<string><id>1971</id><value>Shutdown on alert</value></string>
+	<string><id>1972</id><value>Status details</value></string>
+	<string><id>1973</id><value>of</value></string>
+	<string><id>1974</id><value>Μνήμη</value></string>
+	<string><id>1975</id><value>Next Page</value></string>
+	<string><id>1976</id><value>rpm</value></string>	
+	<string><id>1977</id><value>Filesystem</value></string>	
+	<string><id>1978</id><value>VirtualMem</value></string>	
+	<!-- End of My Status Strings -->
+	
+	<!-- My Recipie Strings -->
+	<string><id>2005</id><value>Διαγραφή</value></string>
+	<string><id>2006</id><value>Τίτλος</value></string>
+	<string><id>2007</id><value>Παραγωγή</value></string>
+	<string><id>2008</id><value>Συστατικά</value></string>
+	<string><id>2009</id><value>Οδηγίες</value></string>
+	<string><id>2010</id><value>Κάρτα</value></string>
+	<string><id>2011</id><value>Εκτύπωση</value></string>
+	<string><id>2012</id><value>Διαγραφή</value></string>
+	<string><id>2013</id><value>Αγαπημένα</value></string>
+	<string><id>2014</id><value>Αγνωστο</value></string>
+	<string><id>2015</id><value>per Serving</value></string>
+	<string><id>2016</id><value>μικρό</value></string>
+	<string><id>2017</id><value>fluid ounce</value></string>
+	<string><id>2018</id><value>ποτήρι</value></string>
+	<string><id>2019</id><value>pint</value></string>
+	<string><id>2020</id><value>μεσαίο</value></string>
+	<string><id>2021</id><value>μεγάλο</value></string>
+	<string><id>2022</id><value>can</value></string>
+	<string><id>2023</id><value>πακέτο</value></string>
+	<string><id>2024</id><value>pinch</value></string>
+	<string><id>2025</id><value>drop</value></string>
+	<string><id>2026</id><value>dash</value></string>
+	<string><id>2027</id><value>carton</value></string>
+	<string><id>2028</id><value>bunch</value></string>
+	<string><id>2029</id><value>slice</value></string>
+	<string><id>2030</id><value>each</value></string>
+	<string><id>2031</id><value>teaspoon</value></string>
+	<string><id>2032</id><value>teaspoon</value></string>
+	<string><id>2033</id><value>tablespoon</value></string>
+	<string><id>2034</id><value>tablespoon</value></string>
+	<string><id>2035</id><value>quart</value></string>
+	<string><id>2036</id><value>gallon</value></string>
+	<string><id>2037</id><value>ounce</value></string>
+	<string><id>2038</id><value>pound</value></string>
+	<string><id>2039</id><value>mililiter</value></string>
+	<string><id>2040</id><value>mililiter</value></string>
+	<string><id>2041</id><value>centiliter</value></string>
+	<string><id>2042</id><value>deciliter</value></string>
+	<string><id>2043</id><value>liter</value></string>
+	<string><id>2044</id><value>milligram</value></string>
+	<string><id>2045</id><value>centigram</value></string>
+	<string><id>2046</id><value>decigram</value></string>
+	<string><id>2047</id><value>gram</value></string>
+	<string><id>2048</id><value>kilogram</value></string>
+	<string><id>2049</id><value>Διαγραφή της Συνταγής;</value></string>
+	<string><id>2050</id><value>Διαγραφή της Κατηγορίας;</value></string>
+	<string><id>2051</id><value>Search in Title</value></string>
+	<string><id>2052</id><value>Search in Recipie</value></string>
+	<string><id>2053</id><value>Categorie</value></string>
+	<string><id>2054</id><value>No Entry!</value></string>
+	<!-- End of My Recipie Strings -->
+	
+	<!-- My Burner Strings -->
+	<string><id>2100</id><value>Εγγραφή</value></string>
+	<string><id>2101</id><value>Αντιγραφή CD/DVD</value></string>
+	<string><id>2102</id><value>Δημ/ργία Audio-CD</value></string>
+	<string><id>2103</id><value>Δημ/ργία Video-CD</value></string>
+	<string><id>2104</id><value>Δημ/ργία Video-DVD</value></string>
+	<string><id>2105</id><value>Δημ/ργία Data-CD</value></string>
+	<string><id>2106</id><value>Δημ/ργία Data-DVD</value></string>
+	<string><id>2107</id><value>Εναρξη Αντ/φής</value></string>
+	<string><id>2108</id><value>Εισαγωγή Αδειου CD/DVD</value></string>
+	<string><id>2109</id><value>υστερα πιέστε OK</value></string>
+	<string><id>2110</id><value>Εισάγετε γνήσιο CD/DVD</value></string>
+	<string><id>2111</id><value>Τέλος !</value></string>
+	<string><id>2112</id><value>Αναμονή για CD/DVD</value></string>
+	<string><id>2113</id><value>Αντιγραφή Ολων</value></string>
+	<string><id>2114</id><value>Διαγραφή Δίσκου</value></string>
+	<string><id>2115</id><value>Εισαγωγή CD/DVD RW</value></string>
+	<string><id>2116</id><value>Ο οδηγός δεν είναι ετοιμος</value></string>
+	<string><id>2117</id><value>a fatal error has occurred!</value></string>
+	<string><id>2118</id><value>Μετατροπή DVR-MS</value></string>
+	<string><id>2119</id><value>Εναρξη Μετατροπης</value></string>
+	<string><id>2120</id><value>Μετατροπή αρχείου(ν)...</value></string>
+	<string><id>2121</id><value>Couldn't convert file(s)!</value></string>
+	<string><id>2122</id><value>έναρξη!</value></string>
+	<string><id>2123</id><value>Πληρ. Δίσκου</value></string>
+	<string><id>2124</id><value>Διαγραφή Αδύνατη: Media is not writable</value></string>
+	<string><id>2125</id><value>Διαγραφή Δίσκου....</value></string>
+	<string><id>2126</id><value>Εξαγωγή CD</value></string>
+	<string><id>2127</id><value>Το CD δεν είναι εγγράψιμο</value></string>
+	<string><id>2128</id><value>Προετοιμασία Εγγραφής: προβλ/ενη ωρα:</value></string>
+	<string><id>2129</id><value>Προε/σία Εγγραφής</value></string>
+	<string><id>2130</id><value>Block</value></string>
+	<string><id>2131</id><value>of</value></string>
+	<string><id>2132</id><value>Κλείσιμο Δίσκου: προβλ/ενη ωρα:</value></string>
+	<string><id>2133</id><value>TV-Recordings</value></string>
+	<string><id>2134</id><value>Βίντεο</value></string>
+	<string><id>2135</id><value>Ηχος</value></string>
+	<string><id>2136</id><value>Δεδομένα</value></string>
+	<string><id>2137</id><value>Μετατροπή</value></string>
+	<string><id>2138</id><value>Κόψιμο</value></string>
+	<string><id>2139</id><value>Δημ/γία MP3-CD</value></string>
+	<string><id>2140</id><value>Δημ/γία MP3-DVD</value></string>
+	<string><id>2141</id><value>MPEG2 -> DivX</value></string>
+	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string>
+	<string><id>2143</id><value>Home</value></string>
+
+	<!-- End of My Burner Strings -->
+
+	<!-- My Explorer Strings -->
+	<string><id>2200</id><value>Explorer</value></string>
+	<string><id>2201</id><value>Επιλογή Δίσκου</value></string>
+	<string><id>2202</id><value>Επιλογή προορ/μού</value></string>
+	<string><id>2203</id><value>Αντιγραφή Δεδ.</value></string>
+	<string><id>2204</id><value>Δημιουργία Φακέλου</value></string>
+	<string><id>2205</id><value>Επαναφορά Επιλογής</value></string>
+	<string><id>2206</id><value>Επιλογή Όλων</value></string>
+	<string><id>2207</id><value>Θα θέλατε να</value></string>
+	<string><id>2208</id><value>δημιουργία φακέλου;</value></string>
+	<string><id>2209</id><value>Να αντιγραφούν τα αρχεία;</value></string>
+	<string><id>2210</id><value>Αντιγράφηκαν!</value></string>
+	<string><id>2211</id><value>Υπομονή, αντιγραφή αρχείων.</value></string>
+	<string><id>2212</id><value>Διαγραφή</value></string>
+	<string><id>2213</id><value>Μετακίνηση</value></string>
+	<string><id>2214</id><value>Να μετακινηθούν τα επιλεγμένα αρχεία;</value></string>
+	<string><id>2215</id><value>Υπομονή, μετακίνηση αρχείων.</value></string>
+	<string><id>2216</id><value>Μετακινήθηκαν!</value></string>
+	<string><id>2217</id><value>Αρχείο προορισμού υπάρχει!</value></string>
+	<string><id>2218</id><value>Ξανα-αντιγραφή?</value></string>
+	<string><id>2219</id><value>Δεν μπορεί να μετακινηθεί!</value></string>
+	<string><id>2220</id><value>Αντιγραφή επιλεγμένου αρχείου?</value></string>
+	<string><id>2221</id><value>Να διαγραφούν τα επιλεγμένα στοιχεία;</value></string>
+	<string><id>2222</id><value>Διαγράφηκαν!</value></string>
+	<string><id>2223</id><value>Κάδος Ανακύκλωσης</value></string>
+	<string><id>2224</id><value> Ο φάκελος υπάρχει!</value></string>
+	<string><id>2225</id><value>Ο φάκελος δημιουργήθηκε</value></string>
+	<!-- End of My Explorer Strings -->
+
+              <string><id>3000</id><value>Program Options</value></string>
+              <string><id>3001</id><value>Ωρα</value></string>
+              <string><id>3002</id><value>Ωρες</value></string>
+              <string><id>3003</id><value>Λεπτό</value></string>
+              <string><id>3004</id><value>Λεπτά</value></string>
+              <string><id>3005</id><value>Ωρα πρίν</value></string>
+              <string><id>3006</id><value>Ωρες πρίν</value></string>
+              <string><id>3007</id><value>Λεπτό πρίν</value></string>
+              <string><id>3008</id><value>Λεπτά πρίν</value></string>
+              <string><id>3009</id><value>Αρχίζει  σε</value></string>
+              <string><id>3010</id><value>Λεπτά Απομένουν</value></string>
+              <string><id>3011</id><value>Ωρα Απομένει</value></string>
+              <string><id>3012</id><value>Ωρες Απομένουν</value></string>
+              <string><id>3013</id><value>Αρχίζει τώρα</value></string>
+              <string><id>3014</id><value>Μέρα</value></string>
+              <string><id>3015</id><value>Μέρες</value></string>
+              <string><id>3016</id><value>Ήδη Τελειώσει</value></string>
+              <string><id>3017</id><value>Αρχισε </value></string>
+              <string><id>3018</id><value>Λεπτά απομένουν</value></string>
+              <string><id>3019</id><value>Σειρές</value></string>
+              <string><id>3020</id><value>Επεισόδιο</value></string>
+              <string><id>3021</id><value>Κομμάτι</value></string>
+              <string><id>3022</id><value>του</value></string>
+                                                                                                                                                       <string>
+	<id>8000</id>
+	<value>Το Mail μου</value>
+</string>
+<string>
+	<id>8001</id>
+	<value>Ελεγχος Mailbox</value>
+</string>
+<string>
+	<id>8002</id>
+	<value>Autocheck off</value>
+</string>
+<string>
+	<id>8003</id>
+	<value>Autocheck on</value>
+</string>
+<string>
+	<id>8004</id>
+	<value>Εχετε νέο Mail!</value>
+</string>
+<string>
+	<id>8005</id>
+	<value>Αναναίωση Mailbox</value>
+</string>
+<string>
+	<id>8007</id>
+	<value>Αυτόματος Έλεγχος</value>
+</string>
+<string>
+	<id>8008</id>
+	<value>Πίσω</value>
+</string>
+<string>
+	<id>8009</id>
+	<value>Mark all unread</value>
+</string>
+<string>
+	<id>8010</id>
+	<value>Κανένα Mailbox δεν ορίστηκε</value>
+</string>
+<string>
+	<id>8011</id>
+	<value>Πήγαινε στις ρυθμίσεις και όρισε</value>
+</string>
+<string>
+	<id>8012</id>
+	<value>at least 1 Mailbox to use the Mail-Plugin.</value>
+</string>
+<string>
+	<id>8013</id>
+	<value>Καμμία ανταπόκριση του Server</value>
+</string>
+<string>
+	<id>8014</id>
+	<value>Ο Server '{0}' δεν ανταποκρίνεται!</value>
+</string>
+<string>
+	<id>8015</id>
+	<value>Ελέγχτε ρυθμίσεις του Mailbox '{0}'</value>
+</string>
+<string>
+	<id>8016</id>
+	<value>Απο</value>
+</string>
+<string>
+	<id>8017</id>
+	<value>Σε</value>
+</string>
+<string>
+	<id>8018</id>
+	<value>Θέμα</value>
+</string>
+<string>
+	<id>8019</id>
+	<value>Μύνημα</value>
+</string>
+<string>
+	<id>8020</id>
+	<value>Διαγραφή Mail</value>
+</string>
+<string>
+	<id>8021</id>
+	<value>Set as read</value>
+</string>
+<string>
+	<id>8022</id>
+	<value>Προβολή Attachments</value>
+</string>
+<string>
+	<id>8023</id>
+	<value>Νεο Μύνημα Ελήφθει</value>
+</string>
+<string>
+	<id>8024</id>
+	<value>Προβολή Μυνήματος</value>
+</string>
+<string>
+	<id>8025</id>
+	<value>Parsing Message</value>
+</string>
+<string>
+	<id>8030</id>
+	<value>Σύνδεση με το server</value>
+</string>
+<string>
+	<id>8031</id>
+	<value>Λήψη Αριθμού Mail</value>
+</string>
+<string>
+	<id>8033</id>
+	<value>Πρόοδος</value>
+</string>
+<string>
+	<id>8034</id>
+	<value>Προβολή HTML</value>
+</string>
+<string>
+	<id>9000</id>
+	<value>Διαστάσεις Εικόνας:</value>
+</string>
+<string>
+	<id>9001</id>
+	<value>Ανάλυση:</value>
+</string>
+<string>
+	<id>9002</id>
+	<value>Flash:</value>
+</string>
+<string>
+	<id>9003</id>
+	<value>Metering Mode:</value>
+</string>
+<string>
+	<id>9004</id>
+	<value>Compensation:</value>
+</string>
+<string>
+	<id>9005</id>
+	<value>Shutter Speed:</value>
+</string>
+<string>
+	<id>9006</id>
+	<value>Ημέρα Λήψης:</value>
+</string>
+<string>
+	<id>9007</id>
+	<value>Fstop:</value>
+</string>
+<string>
+	<id>9008</id>
+	<value>Exposure time:</value>
+</string>
+<string>
+	<id>9009</id>
+	<value>Μοντέλο Κάμερας:</value>
+</string>
+<string>
+	<id>9010</id>
+	<value>Equipment make:</value>
+</string>
+<string>
+	<id>9011</id>
+	<value>Προβολή Σχολίον:</value>
+</string>
+
+<string><id>12902</id><value>MSN Messenger OSD</value></string>
+<string>
+	<id>13000</id>
+	<value>Σύστημα:</value>
+</string>
+<string>
+	<id>13001</id>
+	<value>Κάτασκευαστής:</value>
+</string>
+<string>
+	<id>13002</id>
+	<value>Εκκίνηση</value>
+</string>
+<string>
+	<id>13003</id>
+	<value>Εισαγωγή *.mlf Αρχείου</value>
+</string>
+<string>
+	<id>13004</id>
+	<value>Εισαγωγή *.my Αρχείου</value>
+</string>
+<string>
+	<id>13005</id>
+	<value>Τελευταίο Εισαχθέν Αρχείο:</value>
+</string>
+<string>
+	<id>13006</id>
+	<value>Μικρή Εικόνα</value>
+</string>
+<string>
+	<id>13007</id>
+	<value>Μεγάλη Εικόνα</value>
+</string>
+<string>
+	<id>13008</id>
+	<value>Ken Burns effect</value>
+</string>
+<string>
+	<id>13009</id>
+	<value>Random transitions</value>
+</string>
+<string>
+	<id>13010</id>
+	<value>X-fade transitions</value>
+</string>
+<string>
+	<id>13011</id>
+	<value>Ken Burns speed</value>
+</string>
+<string>
+	<id>13012</id>
+	<value>Φόρτωμα εικόνας, αναμονή</value>
+</string>
+<string>
+	<id>13013</id>
+	<value>Φόρτωμα βίντεο, αναμονή</value>
+</string>
+<!-- Teletext --> 
+<string><id>25001</id><value>Waiting for Page {0:X}...!</value></string>
+
+<!-- My Tetris --> 
+<string><id>19001</id><value>Tetris</value></string> 
+<string><id>19002</id><value>Νέο Παιχνίδι</value></string> 
+<string><id>19003</id><value>Μουσική</value></string> 
+<string><id>19004</id><value>Ηχος</value></string> 
+<string><id>19005</id><value>Σκόρ</value></string> 
+<string><id>19006</id><value>Επίπεδο</value></string> 
+<string><id>19007</id><value>Γραμμές</value></string> 
+<string><id>19008</id><value>Highscore</value></string> 
+<string><id>19009</id><value>Επόμενο</value></string> 
+<string><id>19010</id><value>Πιέστε για να Αρχίσει...</value></string> 
+<string><id>19011</id><value>Παύση</value></string> 
+<string><id>19012</id><value>Χάσατε!</value></string> 
+
+
+<!-- id 100000 and higher are reserved!! --> 
+<string><id>100000</id><value>Home</value></string>
+<string><id>100001</id><value>My TV</value></string>
+<string><id>100002</id><value>My Pictures</value></string>
+<string><id>100003</id><value>My Files</value></string>
+<string><id>100004</id><value>Settings</value></string>
+<string><id>100005</id><value>My Music</value></string>
+<string><id>100006</id><value>My Videos/shares</value></string>
+<string><id>100007</id><value>System information</value></string>
+<string><id>100008</id><value>Settings->General</value></string>
+<string><id>100009</id><value>Settings->Screen</value></string>
+<string><id>100010</id><value>Settings->Screen->UI Calibration</value></string>
+<string><id>100011</id><value>Settings->Screen->Screen Calibration</value></string>
+<string><id>100012</id><value>Settings->SlideShow</value></string>
+<string><id>100013</id><value>Settings->Screen->Filters</value></string>
+<string><id>100014</id><value>Settings->Music</value></string>
+<string><id>100015</id><value>Settings->Screen->Subtitles</value></string>
+<string><id>100016</id><value>Settings->Screen->Screensaver</value></string>
+<string><id>100017</id><value>Settings->Weather</value></string>
+<string><id>100020</id><value>Settings->Scripts</value></string>
+<string><id>100021</id><value>My Videos/genre</value></string>
+<string><id>100022</id><value>My Videos/actor</value></string>
+<string><id>100023</id><value>My Videos/year</value></string>
+<string><id>100024</id><value>Settings->Programs</value></string>
+<string><id>100025</id><value>My Videos/title</value></string>
+<string><id>100026</id><value>Settings->General->Cache</value></string>
+<string><id>100027</id><value>Settings->General->Autorun</value></string>
+<string><id>100028</id><value>My Videos/playlist</value></string>
+<string><id>100029</id><value>Settings->General->LCD</value></string>
+<string><id>100030</id><value>My Radio</value></string>
+<string><id>100031</id><value>Settings->Screen->scroll speed</value></string>
+<string><id>100032</id><value>MSN Messenger</value></string>
+<string><id>100033</id><value>MSN Messenger chat</value></string>
+<string><id>100034</id><value>My Plugins</value></string>
+<string><id>100100</id><value>Yes/no dialog</value></string>
+<string><id>100101</id><value>Progress dialog</value></string>
+<string><id>100500</id><value>My Music/playlist</value></string>
+<string><id>100501</id><value>My Music/shares</value></string>
+<string><id>100502</id><value>My Music/albums</value></string>
+<string><id>100503</id><value>My Music/artists</value></string>
+<string><id>100504</id><value>My Music/genres</value></string>
+<string><id>100505</id><value>My Music/top100</value></string>
+<string><id>100506</id><value>My Music/Favorites</value></string>
+<string><id>100600</id><value>My TV/Guide</value></string>
+<string><id>100601</id><value>My TV/Scheduler</value></string>
+<string><id>100602</id><value>My TV/fullscreen</value></string>
+<string><id>100603</id><value>My TV/Recorded TV</value></string>
+<string><id>100604</id><value>My TV/Search</value></string>
+<string><id>100605</id><value>My TV/Recorded Tv/Genre</value></string>
+<string><id>100606</id><value>My TV/Recorded Tv/channels</value></string>
+<string><id>100750</id><value>My Recipies</value></string>
+<string><id>100755</id><value>My Status</value></string>
+<string><id>100756</id><value>My Status details</value></string>
+<string><id>100757</id><value>My Status preferences</value></string>
+<string><id>100758</id><value>File dialog</value></string>
+<string><id>100760</id><value>My Burner</value></string>
+<string><id>100770</id><value>Explorer</value></string>
+<string><id>101000</id><value>keyboard</value></string>
+<string><id>102000</id><value>Select dialog</value></string>
+<string><id>102001</id><value>My Music/info</value></string>
+<string><id>102002</id><value>Dialog OK</value></string>
+<string><id>102003</id><value>My Videos/Info</value></string>
+<string><id>102004</id><value>My Scripts/Info</value></string>
+<string><id>102005</id><value>Fullscreen video</value></string>
+<string><id>102006</id><value>Audio visisalisation</value></string>
+<string><id>102007</id><value>My Picture/slideshow</value></string>
+<string><id>102008</id><value>Filestacking dialog</value></string>
+<string><id>102009</id><value>Selection dialog</value></string>
+<string><id>102010</id><value>Date/Time</value></string>
+<string><id>102011</id><value>Artis info</value></string>
+<string><id>102012</id><value>Context menu</value></string>
+<string><id>102013</id><value>Set Rating</value></string>
+<string><id>102014</id><value>Picture info</value></string>
+<string><id>102015</id><value>Mini Menu</value></string>
+<string><id>102016</id><value>Notification</value></string>
+<string><id>102600</id><value>My Weather</value></string>
+<string><id>102700</id><value>My News</value></string>
+<string><id>102900</id><value>Screensaver</value></string>
+<string><id>102901</id><value>Fullscreen OSD</value></string>
+
+<string><id>103003</id><value>My TV/OSD</value></string>
+<string><id>103006</id><value>My TV/MSN OSD</value></string>
+<string><id>103007</id><value>My TV/Zap OSD</value></string>
+<string><id>107700</id><value>My TV/Teletext</value></string>
+<string><id>107701</id><value>My TV/Teletext</value></string>
+
+</strings>
+
+
