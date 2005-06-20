@@ -178,84 +178,123 @@ namespace MediaPortal.Core.Transcoding
 					Cleanup();
 					return false;
 				}
+				/*
+								Log.Write("DVR2XVID: create VMR7 renderer");				
+								comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
+								comobj = Activator.CreateInstance(comtype);
+								IBaseFilter VMR7Filter = (IBaseFilter)comobj; comobj = null;
+								if (VMR7Filter == null)
+								{
+									Error.SetError("Unable to play movie", "VMR7 is not installed");
+									Log.WriteFile(Log.LogType.Log, true, "VMR7Helper:Failed to get instance of VMR7 ");
+									return false;
+								}
 
-				Log.Write("DVR2XVID: create VMR7 renderer");				
-				comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
-				comobj = Activator.CreateInstance(comtype);
-				IBaseFilter VMR7Filter = (IBaseFilter)comobj; comobj = null;
-				if (VMR7Filter == null)
-				{
-					Error.SetError("Unable to play movie", "VMR7 is not installed");
-					Log.WriteFile(Log.LogType.Log, true, "VMR7Helper:Failed to get instance of VMR7 ");
-					return false;
-				}
+								Log.Write("DVR2XVID: add VMR7 renderer to graph");				
+								hr = graphBuilder.AddFilter( VMR7Filter, "Video Renderer" );
+								if( hr != 0 ) 
+								{
+									Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add video renderer to filtergraph :0x{0:X}",hr);
+									Cleanup();
+									return false;
+								}
+								Log.Write("DVR2XVID: connect mpeg2 video codec->VM7 renderer");				
+								DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2VideoCodec,1);
 
-				Log.Write("DVR2XVID: add VMR7 renderer to graph");				
-				hr = graphBuilder.AddFilter( VMR7Filter, "Video Renderer" );
-				if( hr != 0 ) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add video renderer to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-				Log.Write("DVR2XVID: connect mpeg2 video codec->VM7 renderer");				
-				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2VideoCodec,1);
+								Log.Write("DVR2XVID: create NullRenderer");				
+								string monikerNullRenderer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{C1F400A4-3F08-11D3-9F0B-006008039E37}";
+								IBaseFilter nullRenderer = Marshal.BindToMoniker( monikerNullRenderer ) as IBaseFilter;
+								if (nullRenderer==null)
+								{
+									Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create nullRenderer Codec");
+									Cleanup();
+									return false;
+								}
 
-				Log.Write("DVR2XVID: create NullRenderer");				
-				string monikerNullRenderer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{C1F400A4-3F08-11D3-9F0B-006008039E37}";
-				IBaseFilter nullRenderer = Marshal.BindToMoniker( monikerNullRenderer ) as IBaseFilter;
-				if (nullRenderer==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create nullRenderer Codec");
-					Cleanup();
-					return false;
-				}
+								Log.Write("DVR2XVID: add NullRenderer to graph");				
+								hr = graphBuilder.AddFilter( nullRenderer, "Null renderer" );
+								if( hr != 0 ) 
+								{
+									Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
+									Cleanup();
+									return false;
+								}
 
-				Log.Write("DVR2XVID: add NullRenderer to graph");				
-				hr = graphBuilder.AddFilter( nullRenderer, "Null renderer" );
-				if( hr != 0 ) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				Log.Write("DVR2XVID: connect mpeg2 audio codec->nullrenderer");				
-				DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2AudioCodec,1);
+								Log.Write("DVR2XVID: connect mpeg2 audio codec->nullrenderer");				
+								DirectShowUtil.RenderOutputPins(graphBuilder,Mpeg2AudioCodec,1);
 
 
+								mediaControl= graphBuilder as IMediaControl;
+								mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
+								mediaEvt    = graphBuilder as IMediaEventEx;
+								mediaPos    = graphBuilder as IMediaPosition;
+								IVideoWindow videoWin	= VMR7Filter as IVideoWindow;
+
+								//get file duration
+								Log.Write("DVR2XVID: Get duration of movie");				
+								long lTime=5*60*60;
+								lTime*=10000000;
+								long pStop=0;
+								hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+								if (hr==0)
+								{
+									long lStreamPos;
+									mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+									m_dDuration=lStreamPos;
+									lTime=0;
+									mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+								}
+								double duration=m_dDuration/10000000d;
+								Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
+
+								videoWin.put_Visible( DsHlp.OAFALSE );
+								videoWin.put_AutoShow( DsHlp.OAFALSE );
+								videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
+								videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+
+								Log.Write("DVR2XVID: start graph to get video Width/Height and aspect ratio");				
+								hr=mediaControl.Run();
+								if (hr!=0 && hr!=1)
+									Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to start graph:0x{0:x}",hr);
+								int maxCount=20;
+								while (true)
+								{
+									long lCurrent;
+									mediaSeeking.GetCurrentPosition(out lCurrent);
+									double dpos=(double)lCurrent;
+									dpos/=10000000d;
+									System.Threading.Thread.Sleep(100);
+									if (dpos >=1.0d) break;
+									maxCount--;
+									if (maxCount<=0) break;
+								}
+								mediaControl.Stop();
+
+								IBasicVideo2 basicvideo = VMR7Filter as IBasicVideo2;
+								int height,width,arx,ary;
+								basicvideo.VideoHeight(out height);
+								basicvideo.VideoWidth(out width);
+								basicvideo.GetPreferredAspectRatio(out arx, out ary);
+								graphBuilder.RemoveFilter(nullRenderer);
+								graphBuilder.RemoveFilter(VMR7Filter);
+								Marshal.ReleaseComObject( nullRenderer);
+								Marshal.ReleaseComObject( VMR7Filter); 
+								Log.Write("DVR2XVID: video:{0}x{1} AR:{2}:{3}",width,height,arx,ary);				
+				*/
+				if (!AddCodecs(graphBuilder, info)) return false;
+
+				Log.Write("DVR2XVID: start transcoding");
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
 				mediaPos    = graphBuilder as IMediaPosition;
-				IVideoWindow videoWin	= VMR7Filter as IVideoWindow;
-
-				//get file duration
-				Log.Write("DVR2XVID: Get duration of movie");				
-				long lTime=5*60*60;
-				lTime*=10000000;
-				long pStop=0;
-				hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
-				if (hr==0)
-				{
-					long lStreamPos;
-					mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-					m_dDuration=lStreamPos;
-					lTime=0;
-					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
-				}
-				double duration=m_dDuration/10000000d;
-				Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
-
-				videoWin.put_Visible( DsHlp.OAFALSE );
-				videoWin.put_AutoShow( DsHlp.OAFALSE );
-				videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
-				videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
-
-				Log.Write("DVR2XVID: start graph to get video Width/Height and aspect ratio");				
 				hr=mediaControl.Run();
-				if (hr!=0 && hr!=1)
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to start graph:0x{0:x}",hr);
+				if (hr!=0 )
+				{
+					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to start graph :0x{0:X}",hr);
+					Cleanup();
+					return false;
+				}
 				int maxCount=20;
 				while (true)
 				{
@@ -264,255 +303,22 @@ namespace MediaPortal.Core.Transcoding
 					double dpos=(double)lCurrent;
 					dpos/=10000000d;
 					System.Threading.Thread.Sleep(100);
-					if (dpos >=1.0d) break;
+					if (dpos >=2.0d) break;
 					maxCount--;
 					if (maxCount<=0) break;
 				}
+	
+
 				mediaControl.Stop();
+				FilterState state;
+				mediaControl.GetState(500,out state);
+				GC.Collect();GC.Collect();GC.Collect();GC.WaitForPendingFinalizers();
+				graphBuilder.RemoveFilter(aviMuxer);
+				graphBuilder.RemoveFilter(xvidCodec);
+				graphBuilder.RemoveFilter(mp3Codec);
+				graphBuilder.RemoveFilter((IBaseFilter)fileWriterFilter);
+				if (!AddCodecs(graphBuilder, info)) return false;
 
-				IBasicVideo2 basicvideo = VMR7Filter as IBasicVideo2;
-				int height,width,arx,ary;
-				basicvideo.VideoHeight(out height);
-				basicvideo.VideoWidth(out width);
-				basicvideo.GetPreferredAspectRatio(out arx, out ary);
-				graphBuilder.RemoveFilter(nullRenderer);
-				graphBuilder.RemoveFilter(VMR7Filter);
-				Marshal.ReleaseComObject( nullRenderer);
-				Marshal.ReleaseComObject( VMR7Filter); 
-				Log.Write("DVR2XVID: video:{0}x{1} AR:{2}:{3}",width,height,arx,ary);				
-
-				Log.Write("DVR2XVID: add XVID codec to graph");				
-				string monikerXVID=@"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\xvid";
-				xvidCodec = Marshal.BindToMoniker( monikerXVID ) as IBaseFilter;
-				if (xvidCodec==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create XviD MPEG-4 Codec");
-					Cleanup();
-					return false;
-				}
-
-				hr = graphBuilder.AddFilter( xvidCodec, "XviD MPEG-4 Codec" );
-				if( hr != 0 ) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-
-				Log.Write("DVR2XVID: add MPEG3 codec to graph");				
-				string monikerMPEG3=@"@device:cm:{33D9A761-90C8-11D0-BD43-00A0C911CE86}\85MPEG Layer-3";
-				mp3Codec = Marshal.BindToMoniker( monikerMPEG3 ) as IBaseFilter;
-				if (mp3Codec==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create MPEG Layer-3 Codec");
-					Cleanup();
-					return false;
-				}
-
-				hr = graphBuilder.AddFilter( mp3Codec, "MPEG Layer-3" );
-				if( hr != 0 ) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add MPEG Layer-3 to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				//add filewriter 
-				Log.Write("DVR2XVID: add FileWriter to graph");				
-				string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}";
-				IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerFileWrite ) as IBaseFilter;
-				if (fileWriterbase==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create FileWriter");
-					Cleanup();
-					return false;
-				}
-
-				
-				fileWriterFilter = fileWriterbase as IFileSinkFilter;
-				if (fileWriterFilter ==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add unable to get IFileSinkFilter for filewriter");
-					Cleanup();
-					return false;
-				}
-
-				hr = graphBuilder.AddFilter( fileWriterbase , "FileWriter" );
-				if( hr != 0 ) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-
-				//set output filename
-				AMMediaType mt = new AMMediaType();
-				string outputFileName=System.IO.Path.ChangeExtension(info.file,".avi");
-				Log.Write("DVR2XVID: set output file to :{0}",outputFileName);				
-				mt.majorType=MediaType.Stream;
-				mt.subType=MediaSubType.Avi;
-				mt.formatType=FormatType.None;
-				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				// add avi muxer
-				Log.Write("DVR2XVID: add AVI Muxer to graph");				
-				string monikerAviMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{E2510970-F137-11CE-8B67-00AA00A3F1A6}";
-				aviMuxer = Marshal.BindToMoniker( monikerAviMuxer ) as IBaseFilter;
-				if (aviMuxer==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create AviMux");
-					Cleanup();
-					return false;
-				}
-
-
-				hr = graphBuilder.AddFilter( aviMuxer , "AviMux" );
-				if( hr != 0 ) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add AviMux to filtergraph :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-
-				//connect output of mpeg2 codec to xvid codec
-				Log.Write("DVR2XVID: connect mpeg2 video codec->xvid codec");				
-				IPin pinOut, pinIn;
-				hr=DsUtils.GetPin(xvidCodec,PinDirection.Input,0,out pinIn);
-				if (hr!=0 || pinIn==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of xvid codec:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-				hr=DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Output,0,out pinOut);
-				if (hr!=0 || pinOut==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 video codec :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				hr=graphBuilder.Connect(pinOut,pinIn);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg2 video codec->xvid:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				//connect output of mpeg2 audio codec to mpeg3 codec
-				Log.Write("DVR2XVID: connect mpeg2 audio codec->mp3 codec");				
-				hr=DsUtils.GetPin(mp3Codec,PinDirection.Input,0,out pinIn);
-				if (hr!=0 || pinIn==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-				hr=DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Output,0,out pinOut);
-				if (hr!=0 || pinOut==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				hr=graphBuilder.Connect(pinOut,pinIn);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg2 audio codec->mpeg3:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-
-
-				//connect output of mpeg3 codec to pin#0 of avimux
-				Log.Write("DVR2XVID: connect mp3 codec->avimux");				
-				hr=DsUtils.GetPin(mp3Codec,PinDirection.Output,0,out pinOut);
-				if (hr!=0 || pinOut==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-				hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,0,out pinIn);
-				if (hr!=0 || pinIn==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				hr=graphBuilder.Connect(pinOut,pinIn);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg3 codec->avimux:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				//connect output of xvid codec to pin#1 of avimux
-				Log.Write("DVR2XVID: connect xvid codec->avimux");				
-				hr=DsUtils.GetPin(xvidCodec,PinDirection.Output,0,out pinOut);
-				if (hr!=0 || pinOut==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-				hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,1,out pinIn);
-				if (hr!=0 || pinIn==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output#1 pin of avimux :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				hr=graphBuilder.Connect(pinOut,pinIn);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect xvid codec->avimux:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-
-				//connect avi mux out->filewriter in
-				Log.Write("DVR2XVID: connect avimux->filewriter");				
-				hr=DsUtils.GetPin(aviMuxer,PinDirection.Output,0,out pinOut);
-				if (hr!=0 || pinOut==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of avimux:0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				hr=DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn);
-				if (hr!=0 || pinIn==null)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of Filewriter :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-				hr=graphBuilder.Connect(pinOut,pinIn);
-				if (hr!=0 )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:connect muxer->filewriter :0x{0:X}",hr);
-					Cleanup();
-					return false;
-				}
-
-				Log.Write("DVR2XVID: start transcoding");				
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
@@ -624,5 +430,240 @@ namespace MediaPortal.Core.Transcoding
 		}
 
 		#endregion
+		bool AddCodecs(IGraphBuilder graphBuilder, TranscodeInfo info)
+		{
+			int hr;
+			Log.Write("DVR2XVID: add XVID codec to graph");				
+			string monikerXVID=@"@device:cm:{33D9A760-90C8-11D0-BD43-00A0C911CE86}\xvid";
+			xvidCodec = Marshal.BindToMoniker( monikerXVID ) as IBaseFilter;
+			if (xvidCodec==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create XviD MPEG-4 Codec");
+				Cleanup();
+				return false;
+			}
+
+			hr = graphBuilder.AddFilter( xvidCodec, "XviD MPEG-4 Codec" );
+			if( hr != 0 ) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add XviD MPEG-4 Codec to filtergraph :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+
+			Log.Write("DVR2XVID: add MPEG3 codec to graph");				
+			string monikerMPEG3=@"@device:cm:{33D9A761-90C8-11D0-BD43-00A0C911CE86}\85MPEG Layer-3";
+			mp3Codec = Marshal.BindToMoniker( monikerMPEG3 ) as IBaseFilter;
+			if (mp3Codec==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create MPEG Layer-3 Codec");
+				Cleanup();
+				return false;
+			}
+
+			hr = graphBuilder.AddFilter( mp3Codec, "MPEG Layer-3" );
+			if( hr != 0 ) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add MPEG Layer-3 to filtergraph :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			//add filewriter 
+			Log.Write("DVR2XVID: add FileWriter to graph");				
+			string monikerFileWrite=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}";
+			IBaseFilter fileWriterbase = Marshal.BindToMoniker( monikerFileWrite ) as IBaseFilter;
+			if (fileWriterbase==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create FileWriter");
+				Cleanup();
+				return false;
+			}
+
+				
+			fileWriterFilter = fileWriterbase as IFileSinkFilter;
+			if (fileWriterFilter ==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add unable to get IFileSinkFilter for filewriter");
+				Cleanup();
+				return false;
+			}
+
+			hr = graphBuilder.AddFilter( fileWriterbase , "FileWriter" );
+			if( hr != 0 ) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add FileWriter to filtergraph :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+
+			//set output filename
+			AMMediaType mt = new AMMediaType();
+			string outputFileName=System.IO.Path.ChangeExtension(info.file,".avi");
+			Log.Write("DVR2XVID: set output file to :{0}",outputFileName);				
+			mt.majorType=MediaType.Stream;
+			mt.subType=MediaSubType.Avi;
+			mt.formatType=FormatType.None;
+			hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
+			if (hr!=0 )
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			// add avi muxer
+			Log.Write("DVR2XVID: add AVI Muxer to graph");				
+			string monikerAviMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{E2510970-F137-11CE-8B67-00AA00A3F1A6}";
+			aviMuxer = Marshal.BindToMoniker( monikerAviMuxer ) as IBaseFilter;
+			if (aviMuxer==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Unable to create AviMux");
+				Cleanup();
+				return false;
+			}
+
+
+			hr = graphBuilder.AddFilter( aviMuxer , "AviMux" );
+			if( hr != 0 ) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:Add AviMux to filtergraph :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+
+			//connect output of mpeg2 codec to xvid codec
+			Log.Write("DVR2XVID: connect mpeg2 video codec->xvid codec");				
+			IPin pinOut, pinIn;
+			hr=DsUtils.GetPin(xvidCodec,PinDirection.Input,0,out pinIn);
+			if (hr!=0 || pinIn==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of xvid codec:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+			hr=DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Output,0,out pinOut);
+			if (hr!=0 || pinOut==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 video codec :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			hr=graphBuilder.Connect(pinOut,pinIn);
+			if (hr!=0 )
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg2 video codec->xvid:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			//connect output of mpeg2 audio codec to mpeg3 codec
+			Log.Write("DVR2XVID: connect mpeg2 audio codec->mp3 codec");				
+			hr=DsUtils.GetPin(mp3Codec,PinDirection.Input,0,out pinIn);
+			if (hr!=0 || pinIn==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+			hr=DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Output,0,out pinOut);
+			if (hr!=0 || pinOut==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			hr=graphBuilder.Connect(pinOut,pinIn);
+			if (hr!=0 )
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg2 audio codec->mpeg3:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+
+
+			//connect output of mpeg3 codec to pin#0 of avimux
+			Log.Write("DVR2XVID: connect mp3 codec->avimux");				
+			hr=DsUtils.GetPin(mp3Codec,PinDirection.Output,0,out pinOut);
+			if (hr!=0 || pinOut==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+			hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,0,out pinIn);
+			if (hr!=0 || pinIn==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			hr=graphBuilder.Connect(pinOut,pinIn);
+			if (hr!=0 )
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect mpeg3 codec->avimux:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			//connect output of xvid codec to pin#1 of avimux
+			Log.Write("DVR2XVID: connect xvid codec->avimux");				
+			hr=DsUtils.GetPin(xvidCodec,PinDirection.Output,0,out pinOut);
+			if (hr!=0 || pinOut==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+			hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,1,out pinIn);
+			if (hr!=0 || pinIn==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output#1 pin of avimux :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			hr=graphBuilder.Connect(pinOut,pinIn);
+			if (hr!=0 )
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to connect xvid codec->avimux:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+
+			//connect avi mux out->filewriter in
+			Log.Write("DVR2XVID: connect avimux->filewriter");				
+			hr=DsUtils.GetPin(aviMuxer,PinDirection.Output,0,out pinOut);
+			if (hr!=0 || pinOut==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of avimux:0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+
+			hr=DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn);
+			if (hr!=0 || pinIn==null)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of Filewriter :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+			hr=graphBuilder.Connect(pinOut,pinIn);
+			if (hr!=0 )
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:connect muxer->filewriter :0x{0:X}",hr);
+				Cleanup();
+				return false;
+			}
+			return true;
+		}
 	}
 }
