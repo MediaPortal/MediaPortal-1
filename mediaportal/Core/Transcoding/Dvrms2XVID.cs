@@ -307,7 +307,22 @@ namespace MediaPortal.Core.Transcoding
 					maxCount--;
 					if (maxCount<=0) break;
 				}
-	
+				//get file duration
+				Log.Write("DVR2XVID: Get duration of movie");				
+				long lTime=5*60*60;
+				lTime*=10000000;
+				long pStop=0;
+				hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				if (hr==0)
+				{
+					long lStreamPos;
+					mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+					m_dDuration=lStreamPos;
+					lTime=0;
+					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				}
+				double duration=m_dDuration/10000000d;
+				Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 				mediaControl.Stop();
 				FilterState state;

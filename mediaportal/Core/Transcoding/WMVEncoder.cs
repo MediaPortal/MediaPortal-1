@@ -550,7 +550,23 @@ namespace MediaPortal.Core.Transcoding
 					if (maxCount<=0) break;
 				}
 				Log.Write("DVR2WMV: pre-run done");
-				
+				Log.Write("DVR2WMV: Get duration of movie");				
+				//get file duration
+				long lTime=5*60*60;
+				lTime*=10000000;
+				long pStop=0;
+				hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				if (hr==0)
+				{
+					long lStreamPos;
+					mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+					m_dDuration=lStreamPos;
+					lTime=0;
+					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				}
+				double duration=m_dDuration/10000000d;
+				Log.Write("DVR2WMV: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
+
 				mediaControl.Stop();
 				FilterState state;
 				mediaControl.GetState(500,out state);
