@@ -851,8 +851,21 @@ namespace MediaPortal.GUI.Video
 
       if (!VideoDatabase.HasMovieInfo(strFile))
       {
+				ArrayList allFiles=new ArrayList();
+				ArrayList items = m_directory.GetDirectory(currentFolder);
+				for (int i = 0; i < items.Count; ++i)
+				{
+					GUIListItem temporaryListItem = (GUIListItem)items[i];
+					if (Utils.ShouldStack(temporaryListItem.Path, strFile))
+					{   
+						allFiles.Add(items[i]);
+					}
+				}
         // set initial movie info
-				VideoDatabase.AddMovieFile(strFile);
+				foreach (GUIListItem item in allFiles)
+				{
+					VideoDatabase.AddMovieFile(item.Path);
+				}
   
         IMDBMovie movieDetails = new IMDBMovie();             
         int iidMovie=VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
