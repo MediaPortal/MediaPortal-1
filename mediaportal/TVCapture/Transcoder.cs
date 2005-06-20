@@ -183,6 +183,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (tinfo.recorded.FileName==info.recorded.FileName)
 					{
+						tinfo.percentDone=0;
 						tinfo.status=Status.Waiting;
 						return;
 					}
