@@ -61,6 +61,7 @@ namespace MediaPortal.TV.Database
 		int         episodesToKeep=Int32.MaxValue;//all
 		QualityType	m_iQuality=QualityType.NotSet;
 		ArrayList   m_canceledSeries = new ArrayList();
+		bool				announcementSend=false;
 
     /// <summary>
     /// Constructor.
@@ -85,8 +86,14 @@ namespace MediaPortal.TV.Database
 			m_iQuality=rec.m_iQuality;
 			m_canceledSeries=(ArrayList)rec.m_canceledSeries.Clone();
 			EpisodesToKeep = rec.EpisodesToKeep;
+			announcementSend=rec.announcementSend;
 		}
 
+		public bool IsAnnouncementSend
+		{
+			get { return announcementSend;}
+			set { announcementSend=value;}
+		}
     /// <summary>
     /// Property to get/set the recording type
     /// </summary>

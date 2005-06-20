@@ -2930,6 +2930,14 @@
 	<id>1003</id>
 	<value>for transcoding to xvid</value>
 </string>
+<string>
+	<id>1004</id>
+	<value>About to start recording</value>
+</string>
+<string>
+	<id>1005</id>
+	<value>on channel </value>
+</string>
 
 <string>
 	<id>1440</id>

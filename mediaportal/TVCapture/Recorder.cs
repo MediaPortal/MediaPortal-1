@@ -47,6 +47,7 @@ namespace MediaPortal.TV.Recording
 		static DateTime      m_dtStart=DateTime.Now;
 		static DateTime      m_dtProgresBar=DateTime.Now;
 		static int           m_iCurrentCard=-1;
+		static int           m_preRecordingWarningTime=2;
 		static VMR9OSD			 m_osd = new VMR9OSD();
 		static bool          m_useVMR9Zap=false;
 		#endregion
@@ -125,7 +126,7 @@ namespace MediaPortal.TV.Recording
 				//m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
 				TVChannelName  = xmlreader.GetValueAsString("mytv","channel",String.Empty);
 				m_useVMR9Zap=xmlreader.GetValueAsBool("general","useVMR9ZapOSD",false);
-				
+				m_preRecordingWarningTime=xmlreader.GetValueAsInt("mytv","recordwarningtime",2);
 			}
 
 			for (int i=0; i < m_tvcards.Count;++i)
@@ -260,6 +261,21 @@ namespace MediaPortal.TV.Recording
 									break;
 								}
 							}
+							else
+							{
+								if (!rec.IsAnnouncementSend)
+								{
+									DateTime dtTime=DateTime.Now.AddMinutes(m_preRecordingWarningTime);
+									TVProgram prog2Min=chan.GetProgramAt(dtTime.AddMinutes(m_iPreRecordInterval) );
+
+									// if the recording should record the tv program
+									if ( rec.IsRecordingProgramAtTime(dtTime,prog2Min,m_iPreRecordInterval, m_iPostRecordInterval) )
+									{
+										rec.IsAnnouncementSend=true;
+										GUIGraphicsContext.SendMessage( new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,rec));
+									}
+								}
+							}
 						}
 					}
 				}
@@ -284,9 +300,37 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
+				else
+				{
+					if (!rec.IsAnnouncementSend)
+					{
+						DateTime dtTime=DateTime.Now.AddMinutes(m_preRecordingWarningTime);
+						// if the recording should record the tv program
+						if ( rec.IsRecordingProgramAtTime(dtTime,null,m_iPreRecordInterval, m_iPostRecordInterval) )
+						{
+							rec.IsAnnouncementSend=true;
+							GUIGraphicsContext.SendMessage( new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,rec));
+						}
+					}
+				}
 			}
 		}//static void HandleRecordings()
 
+
+		static public bool NeedChannelSwitchForRecording(TVRecording rec)
+		{
+			if (IsViewing() && TVChannelName==rec.Channel) return false;
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				TVCaptureDevice dev = m_tvcards[i] as TVCaptureDevice;
+				if (!dev.IsRecording && !dev.IsRadio && !dev.IsTimeShifting && !dev.View)
+				{
+					if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || m_tvcards.Count==1 )
+						return true;
+				}
+			}
+			return false;
+		}
 
 		/// <summary>
 		/// Starts recording the specified tv channel immediately using a reference recording

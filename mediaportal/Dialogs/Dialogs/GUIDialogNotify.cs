@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Drawing;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 
 
 namespace MediaPortal.Dialogs
@@ -57,16 +60,40 @@ namespace MediaPortal.Dialogs
 		#region Base Dialog Members
 		public void RenderDlg(float timePassed)
 		{
-			lock (this)
+			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
-				// render the parent window
-				if (null!=m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
+				if (VMR7Util.g_vmr7!=null)
+				{
+					using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
+					{
+						using (Graphics g = Graphics.FromImage(bmp))
+						{
+							GUIGraphicsContext.graphics=g;
 
-				GUIFontManager.Present();
-				// render this dialog box
-				base.Render(timePassed);
+							// render the parent window
+							if (null!=m_pParentWindow) 
+								m_pParentWindow.Render(timePassed);
+
+							GUIFontManager.Present();
+							// render this dialog box
+							base.Render(timePassed);
+
+							GUIGraphicsContext.graphics=null;
+							VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,1.0f);
+							g.Dispose();
+							bmp.Dispose();
+						}
+					}
+					return;
+				}
 			}
+			// render the parent window
+			if (null!=m_pParentWindow) 
+				m_pParentWindow.Render(timePassed);
+
+			GUIFontManager.Present();
+			// render this dialog box
+			base.Render(timePassed);
 		}
 
 		void Close()

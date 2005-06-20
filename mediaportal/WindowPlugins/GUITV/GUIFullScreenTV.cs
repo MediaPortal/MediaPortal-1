@@ -36,6 +36,7 @@ namespace MediaPortal.GUI.TV
 			public bool  MsgBoxVisible=false;
 			public bool  ShowGroup=false;
 			public bool  ShowInput=false;
+			public bool  NotifyDialogVisible=false;
 		}
 
 		bool				m_bShowInfo=false;
@@ -66,8 +67,9 @@ namespace MediaPortal.GUI.TV
 		bool				m_bDialogVisible=false;
 		bool				m_bMSNChatPopup=false;
 		GUIDialogMenu dlg;
-		
+		GUIDialogNotify dialogNotify=null;		
 		// Message box
+		bool				NotifyDialogVisible=false;
 		bool				isMsgBoxVisible=false;
 		DateTime		m_dwMsgTimer=DateTime.Now;
 		int					m_iMsgBoxTimeout=0;
@@ -552,7 +554,50 @@ namespace MediaPortal.GUI.TV
 
 		public override bool OnMessage(GUIMessage message)
 		{
-			
+			if (message.Message==GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING)
+			{
+				TVRecording rec = message.Object as TVRecording;
+				if (rec==null) return true;
+				if (rec.Channel==Recorder.TVChannelName) return true;
+				if (!Recorder.NeedChannelSwitchForRecording(rec)) return true;
+
+				isMsgBoxVisible = false;
+				isMsnChatVisible= false;
+				if (m_bZapOSDVisible) 
+				{
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_zapWindow.GetID,0,0,GetID,0,null);
+					m_zapWindow.OnMessage(msg);
+					m_bZapOSDVisible=false;
+				}
+				if (isOsdVisible)
+				{
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
+					m_osdWindow.OnMessage(msg);
+					isOsdVisible=false;
+				}
+				if (isMsnChatVisible)
+				{
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,GetID,0,null);
+					m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+					isMsnChatVisible=false;
+				}
+				if (m_bDialogVisible && dlg!=null)
+				{
+					GUIMessage msg= new GUIMessage (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,dlg.GetID,0,0,GetID,0,null);
+					dlg.OnMessage(msg);	// Send a de-init msg to the OSD
+				}
+
+				string logo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
+				NotifyDialogVisible=true;
+				dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+				dialogNotify.TimeOut=10;
+				dialogNotify.SetHeading(1004);
+				dialogNotify.SetText( String.Format("{0} {1} {2}", GUILocalizeStrings.Get(1005),rec.Channel,rec.Title));
+				dialogNotify.SetImage(logo);
+				dialogNotify.DoModal(GetID);
+				NotifyDialogVisible=false;
+			}
+
 			if (isOsdVisible)
 			{ 
 				switch (message.Message)
@@ -703,6 +748,7 @@ namespace MediaPortal.GUI.TV
 					m_bShowStep=false;
 					m_bShowStatus=false;
 					m_bShowGroup=false;
+					NotifyDialogVisible=false;
 					m_dwTimeStatusShowTime=DateTime.Now;
 
 					ScreenStateChanged();
@@ -1024,6 +1070,11 @@ namespace MediaPortal.GUI.TV
 			if (m_bShowStatus!=screenState.ShowStatusLine)
 			{
 				screenState.ShowStatusLine=m_bShowStatus;
+				updateGUI=true;
+			}
+			if (NotifyDialogVisible != screenState.NotifyDialogVisible)
+			{
+				screenState.NotifyDialogVisible=NotifyDialogVisible;
 				updateGUI=true;
 			}
 			if (isMsgBoxVisible!=screenState.MsgBoxVisible)
