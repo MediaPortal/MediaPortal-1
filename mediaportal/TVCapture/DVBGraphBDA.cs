@@ -2927,7 +2927,11 @@ namespace MediaPortal.TV.Recording
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
-					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+					if(currentTuningObject.HasEITSchedule==true)
+						m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+					else
+						m_streamDemuxer.GetMHWEPG();
+
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
 				try
