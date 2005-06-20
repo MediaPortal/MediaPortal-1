@@ -81,6 +81,19 @@ namespace ProgramsDatabase
       return folderThumb;
     }
 
+    public override string GetCurThumb(GUIListItem item)
+    {
+      string res = GetFolderThumb(item.Label);
+      if (res != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png")
+      {
+        return res;
+      }
+      else
+      {
+        return "";
+      }
+    }
+
 
     int LoadDirectory(string newDirectory, GUIFacadeControl facadeView)
     {

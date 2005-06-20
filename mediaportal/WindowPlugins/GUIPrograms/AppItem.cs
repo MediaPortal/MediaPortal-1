@@ -1056,6 +1056,29 @@ namespace ProgramsDatabase
       }
     }
 
+    public virtual string GetCurThumb(GUIListItem item)
+    {
+      if (item.MusicTag == null)
+      {
+        return "";
+      }
+      if (item.MusicTag is FileItem)
+      {
+        FileItem curFile = item.MusicTag as FileItem;
+        return GetCurThumb(curFile);
+      }
+      else if (item.MusicTag is AppItem)
+      {
+        AppItem curApp = item.MusicTag as AppItem;
+        return curApp.Imagefile;
+      }
+      else
+      {
+        return "";
+      }
+    }
+
+
     public string GetCurThumb(FileItem fileItem)
     {
       string curThumb = "";

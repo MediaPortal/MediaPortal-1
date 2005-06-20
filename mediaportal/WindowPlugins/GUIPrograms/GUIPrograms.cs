@@ -737,16 +737,14 @@ namespace WindowPlugins.GUIPrograms
       // some preconditions...
       if (lastApp == null)
         return;
-      if (item.MusicTag == null)
-        return;
-      if (!(item.MusicTag is FileItem))
-        return;
-      FileItem curFile = item.MusicTag as FileItem;
-      // ok... let's get a filename
-      string thumbFilename = lastApp.GetCurThumb(curFile);
+      string thumbFilename = lastApp.GetCurThumb(item); // some modes look for thumbs differently
       if (System.IO.File.Exists(thumbFilename))
       {
         curTexture = Picture.Load(thumbFilename, 0, 512, 512, true, false, out textureWidth, out textureHeight);
+      }
+      else if(System.IO.File.Exists(lastApp.Imagefile))
+      {
+        curTexture = Picture.Load(lastApp.Imagefile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
       }
       lastApp.NextThumb(); // try to find a next thumbnail
       slideTime = (DateTime.Now.Ticks/10000); // reset timer!
