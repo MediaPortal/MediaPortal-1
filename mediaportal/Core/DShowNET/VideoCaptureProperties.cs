@@ -30,6 +30,10 @@ namespace DShowNET
 			if (twinhan.IsTwinhan) Log.Write("Twinhan card properties supported");
 		}
 
+		public bool IsCAPMTNeeded
+		{
+			get { return twinhan.IsTwinhan; }
+		}
 
 		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
 		{
