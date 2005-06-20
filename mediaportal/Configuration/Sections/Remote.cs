@@ -37,6 +37,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.TabPage tabPageHCW;
     private System.Windows.Forms.Label label2sec;
     private System.Windows.Forms.Label label0sec;
+    private System.Windows.Forms.Button btnMapping;
     private System.ComponentModel.IContainer components = null;
 
     public struct RAWINPUTDEVICE 
@@ -232,6 +233,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVerboseLog = new System.Windows.Forms.CheckBox();
       this.buttonDefault = new System.Windows.Forms.Button();
       this.checkBoxHCW = new System.Windows.Forms.CheckBox();
+      this.btnMapping = new System.Windows.Forms.Button();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMCE.SuspendLayout();
       this.tabPageHCW.SuspendLayout();
@@ -316,6 +318,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageHCW
       // 
+      this.tabPageHCW.Controls.Add(this.btnMapping);
       this.tabPageHCW.Controls.Add(this.groupBoxInformation);
       this.tabPageHCW.Controls.Add(this.groupBoxSettings);
       this.tabPageHCW.Controls.Add(this.checkBoxHCW);
@@ -482,6 +485,15 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHCW.Text = "Use Hauppauge remote";
       this.checkBoxHCW.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
       // 
+      // btnMapping
+      // 
+      this.btnMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnMapping.Location = new System.Drawing.Point(360, 24);
+      this.btnMapping.Name = "btnMapping";
+      this.btnMapping.TabIndex = 13;
+      this.btnMapping.Text = "Mapping";
+      this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
+      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -556,5 +568,11 @@ namespace MediaPortal.Configuration.Sections
 //      comboBoxPowerButton.SelectedIndex = 1;    
     }
     #endregion
+
+    private void btnMapping_Click(object sender, System.EventArgs e)
+    {
+      HCWMappingForm dlg = new HCWMappingForm();
+      dlg.ShowDialog(this);
+    }
   }
 }

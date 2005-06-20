@@ -292,6 +292,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "HCWMappingForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HCWMappingForm.resx"
+                    DependentUpon = "HCWMappingForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "LaunchGuideScheduler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
