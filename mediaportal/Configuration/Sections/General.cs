@@ -114,7 +114,8 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "alwaysontop", "false" },
 												new string[] { "general", "exclusivemode", "false" },
 												new string[] { "general", "useVMR9ZapOSD", "false" },
-                        new string[] { "general", "enableguisounds", "true" }
+												new string[] { "general", "enableguisounds", "true" },
+												new string[] { "general", "screensaver", "true" }
 												};
 
 		/// <summary>
@@ -276,19 +277,20 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.settingsCheckedListBox.Items.AddRange(new object[] {
-																		"Start Media Portal in fullscreen mode",
-																		"Auto hide mouse cursor when inactive",
-																		"Show special mouse controls (scrollbars, etc)",
-																		"Dont show file extensions like .mp3, .avi, .mpg,...",
-																		"Enable animations",
-																		"Autostart Mediaportal when windows starts",
-																		"Disable Windows XP balloon tips",
-																		"Use mouse left double click as right click",
-																		"Hide taskbar in fullscreen mode",
-																		"MediaPortal always on top",
-																		"use Exclusive DirectX Mode for fullscreen tv/video",
-																		"use VMR9-ZapOSD (GUIZapOSD will not displayed then)",
-																		"enable GUI sound effects"});
+																																"Start Media Portal in fullscreen mode",
+																																"Auto hide mouse cursor when inactive",
+																																"Show special mouse controls (scrollbars, etc)",
+																																"Dont show file extensions like .mp3, .avi, .mpg,...",
+																																"Enable animations",
+																																"Autostart Mediaportal when windows starts",
+																																"Disable Windows XP balloon tips",
+																																"Use mouse left double click as right click",
+																																"Hide taskbar in fullscreen mode",
+																																"MediaPortal always on top",
+																																"use Exclusive DirectX Mode for fullscreen tv/video",
+																																"use VMR9-ZapOSD (GUIZapOSD will not displayed then)",
+																																"enable GUI sound effects",
+																																"enable Screensaver in fullscreen mode"});
 			this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
 			this.settingsCheckedListBox.Name = "settingsCheckedListBox";
 			this.settingsCheckedListBox.Size = new System.Drawing.Size(416, 214);
@@ -327,18 +329,18 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.numericUpDown1.Location = new System.Drawing.Point(116, 30);
 			this.numericUpDown1.Maximum = new System.Decimal(new int[] {
-																		   10,
-																		   0,
-																		   0,
-																		   0});
+																																	 10,
+																																	 0,
+																																	 0,
+																																	 0});
 			this.numericUpDown1.Name = "numericUpDown1";
 			this.numericUpDown1.Size = new System.Drawing.Size(56, 20);
 			this.numericUpDown1.TabIndex = 0;
 			this.numericUpDown1.Value = new System.Decimal(new int[] {
-																		 10,
-																		 0,
-																		 0,
-																		 0});
+																																 10,
+																																 0,
+																																 0,
+																																 0});
 			// 
 			// General
 			// 

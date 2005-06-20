@@ -413,7 +413,7 @@ namespace MediaPortal.Player
 				if (GUIGraphicsContext.DX9Device==null)  return;
 				if (GUIGraphicsContext.DX9Device.Disposed) return;
 				if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
-
+				if (GUIGraphicsContext.BlankScreen) return;
 				
 				m_idebugstep=1;
 				if (rTarget!=null) 
@@ -573,7 +573,8 @@ namespace MediaPortal.Player
 				if (GUIGraphicsContext.DX9Device==null) return;
 				if (GUIGraphicsContext.DX9Device.Disposed) return;
 				if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
-				
+				if (GUIGraphicsContext.BlankScreen) return;
+
 				m_idebugstep=2;
 				if (rTarget!=null) 
 				{

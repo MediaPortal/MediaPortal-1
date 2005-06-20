@@ -95,11 +95,21 @@ namespace MediaPortal.GUI.Library
 		static float                    m_fVMR9FPS=0;
 		static float                    lasttime=0f;
 		static bool											vmr9RenderBusy=false;
+		static bool											blankScreen=false;
 
 		// singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
     {
-    }
+		}
+
+		/// <summary>
+		/// Property to enable/disable screenoutput
+		/// </summary>
+		static public bool BlankScreen
+		{
+			get { return blankScreen;}
+			set { blankScreen=value;}
+		}
 
 		/// <summary>
 		/// Property to enable/disable animations

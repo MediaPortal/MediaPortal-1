@@ -75,6 +75,8 @@ public class MediaPortalApp : D3DApp, IRender
     private USBUIRT usbuirtdevice;
     private WinLirc winlircdevice;//sd00//
     private RedEye redeyedevice;//PB00//
+		DateTime screenSaverTimer=DateTime.Now;
+		bool     useScreenSaver=true;
 #if AUTOUPDATE
     string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -318,8 +320,7 @@ public class MediaPortalApp : D3DApp, IRender
                 Log.Write("running...");
                 try
                 {
-
-
+										GUIGraphicsContext.BlankScreen=false;
                     app.Run();
 
                     //Application.Run(app);
@@ -370,7 +371,8 @@ public class MediaPortalApp : D3DApp, IRender
         using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
             tmpPluginsFlag = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
-        }
+						useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
+				}
 
         if (tmpPluginsFlag == true)
         {
@@ -584,6 +586,7 @@ public class MediaPortalApp : D3DApp, IRender
         {
             m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
         }
+			screenSaverTimer=DateTime.Now;
     }
 
     void RenderStats()
@@ -634,7 +637,7 @@ public class MediaPortalApp : D3DApp, IRender
         char key;
         Keys keyCode;
         if (MCE2005Remote.WndProc(ref msg, out action, out  key, out keyCode) ||
-			FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
+					 FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
         {
 
             msg.Result = new IntPtr(0);
@@ -647,6 +650,8 @@ public class MediaPortalApp : D3DApp, IRender
                         Utils.PlaySound(action.SoundFileName, false, true);
                 }
                 GUIGraphicsContext.OnAction(action);
+								screenSaverTimer=DateTime.Now;
+								GUIGraphicsContext.BlankScreen=false;
             }
 
             if (keyCode != Keys.A)
@@ -857,11 +862,14 @@ public class MediaPortalApp : D3DApp, IRender
             CreateStateBlock();
             GUIGraphicsContext.DX9Device.BeginScene();
 
-            // ask the window manager to render the current active window
-            GUIWindowManager.Render(timePassed);
-            RenderStats();
+						if (!GUIGraphicsContext.BlankScreen)
+						{
+							// ask the window manager to render the current active window
+							GUIWindowManager.Render(timePassed);
+							RenderStats();
 
-            GUIFontManager.Present();
+							GUIFontManager.Present();
+						}
             GUIGraphicsContext.DX9Device.EndScene();
 					try
 					{
@@ -970,16 +978,36 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void FrameMove()
     {
-        try
-        {
-            GUIWindowManager.DispatchThreadMessages();
-            GUIWindowManager.ProcessWindows();
-        }
-        catch (System.IO.FileNotFoundException ex)
-        {
-            System.Windows.Forms.MessageBox.Show("File not found:" + ex.FileName, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-            Close();
-        }
+      try
+      {
+          GUIWindowManager.DispatchThreadMessages();
+          GUIWindowManager.ProcessWindows();
+      }
+      catch (System.IO.FileNotFoundException ex)
+      {
+          System.Windows.Forms.MessageBox.Show("File not found:" + ex.FileName, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+          Close();
+      }
+			if (useScreenSaver)
+			{
+				if (GUIGraphicsContext.IsFullScreenVideo)
+				{
+					screenSaverTimer=DateTime.Now;
+					GUIGraphicsContext.BlankScreen=false;
+				}
+			
+				if (!GUIGraphicsContext.BlankScreen)
+				{
+					if (isMaximized) 
+					{
+						TimeSpan ts = DateTime.Now-screenSaverTimer;
+						if (ts.TotalSeconds>=30)
+						{
+							GUIGraphicsContext.BlankScreen=true;
+						}
+					}
+				}
+			}
     }
 
 
@@ -1449,7 +1477,9 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     protected override void keypressed(System.Windows.Forms.KeyPressEventArgs e)
-    {
+    {	
+				screenSaverTimer=DateTime.Now;
+				GUIGraphicsContext.BlankScreen=false;
         char keyc = e.KeyChar;
 
         Log.Write("key:{0} 0x{1:X} (2)", (int)keyc, (int)keyc, keyc);
@@ -1484,7 +1514,9 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void keydown(System.Windows.Forms.KeyEventArgs e)
     {
-        Key key = new Key(0, (int)e.KeyCode);
+			screenSaverTimer=DateTime.Now;
+			GUIGraphicsContext.BlankScreen=false;
+			Key key = new Key(0, (int)e.KeyCode);
         Action action = new Action();
         if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
         {
@@ -1497,7 +1529,9 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void OnMouseWheel(MouseEventArgs e)
     {
-        // Calculate Mouse position
+				screenSaverTimer=DateTime.Now;
+				GUIGraphicsContext.BlankScreen=false;
+			// Calculate Mouse position
         Point ptClientUL = new Point();
         Point ptScreenUL = new Point();
 
@@ -1530,7 +1564,9 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void mousemove(System.Windows.Forms.MouseEventArgs e)
     {
-        // Disable first mouse action when mouse was hidden
+				screenSaverTimer=DateTime.Now;
+				GUIGraphicsContext.BlankScreen=false;
+				// Disable first mouse action when mouse was hidden
         if (!m_bShowCursor)
         {
             base.mousemove(e);
@@ -1580,7 +1616,9 @@ public class MediaPortalApp : D3DApp, IRender
 
     protected override void mouseclick(MouseEventArgs e)
     {
-        // Disable first mouse action when mouse was hidden
+				screenSaverTimer=DateTime.Now;
+				GUIGraphicsContext.BlankScreen=false;
+				// Disable first mouse action when mouse was hidden
         if (!m_bShowCursor)
         {
             base.mouseclick(e);
