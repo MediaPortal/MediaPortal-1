@@ -77,7 +77,8 @@ namespace MediaPortal.TagReader.MultiTagReader
     {
       if (System.IO.Path.GetExtension(strFileName).ToLower()==".ogg" ||         
           System.IO.Path.GetExtension(strFileName).ToLower()==".flac" ||        
-          System.IO.Path.GetExtension(strFileName).ToLower()==".mpc" ||        
+					System.IO.Path.GetExtension(strFileName).ToLower()==".mpc" ||         
+					System.IO.Path.GetExtension(strFileName).ToLower()==".wv" ||        
           System.IO.Path.GetExtension(strFileName).ToLower()==".ape")         
         return true;      
       return false;    
