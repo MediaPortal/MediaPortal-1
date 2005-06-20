@@ -108,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxKeepControl.Checked       = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
         checkBoxVerboseLog.Checked        = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         trackBarDelay.Value               = xmlreader.GetValueAsInt("remote", "HCWDelay", 0);
-        comboBoxPowerButton.SelectedIndex = xmlreader.GetValueAsInt("remote", "HCWPower", 0);
+//        comboBoxPowerButton.SelectedIndex = xmlreader.GetValueAsInt("remote", "HCWPower", 0);
       }
 
       radioButtonEurope.Checked = !radioButtonUSA.Checked;
@@ -182,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "HCWKeepControl", checkBoxKeepControl.Checked);
         xmlwriter.SetValueAsBool("remote", "HCWVerboseLog", checkBoxVerboseLog.Checked);
         xmlwriter.SetValue("remote", "HCWDelay", trackBarDelay.Value);
-        xmlwriter.SetValue("remote", "HCWPower", comboBoxPowerButton.SelectedIndex);
+//        xmlwriter.SetValue("remote", "HCWPower", comboBoxPowerButton.SelectedIndex);
       }
     }
 
@@ -378,6 +378,7 @@ namespace MediaPortal.Configuration.Sections
       // comboBoxPowerButton
       // 
       this.comboBoxPowerButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxPowerButton.Enabled = false;
       this.comboBoxPowerButton.Items.AddRange(new object[] {
                                                              "do nothing",
                                                              "Exit Media Portal",
@@ -552,7 +553,7 @@ namespace MediaPortal.Configuration.Sections
       checkBoxKeepControl.Checked = false;
       checkBoxVerboseLog.Checked = false;
       trackBarDelay.Value = 0;
-      comboBoxPowerButton.SelectedIndex = 1;    
+//      comboBoxPowerButton.SelectedIndex = 1;    
     }
     #endregion
   }

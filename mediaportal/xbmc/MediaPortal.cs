@@ -628,7 +628,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
         PluginManager.ReceiveMsg(msg);	// Send received messages to PluginManager / added by mPod
 
-        if (HCWRemote.Enabled()) HCWRemote.WndProc(msg);  // Send received messages to HCWRemote / added by mPod
+        HCWRemote.WndProc(msg);  // Send received messages to HCWRemote / added by mPod
 
         Action action;
         char key;
@@ -1043,7 +1043,7 @@ public class MediaPortalApp : D3DApp, IRender
         MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
 		FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
 
-        if (HCWRemote.Enabled())
+        if (HCWRemote.Enabled)
         {
           if (splashScreen != null) splashScreen.SetInformation("Initializing Hauppauge remote...");
           HCWRemote.Init();
