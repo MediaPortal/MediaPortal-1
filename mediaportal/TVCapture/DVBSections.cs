@@ -247,6 +247,7 @@ namespace MediaPortal.TV.Recording
 			get{return m_timeoutMS;}
 			set{m_timeoutMS=value;}
 		}
+
 		#region tables
 		// tables
 		public struct EITDescr
@@ -841,6 +842,7 @@ namespace MediaPortal.TV.Recording
 				len += (descriptor_length+6);
 			}
 		}
+
 		/// <summary>
 		/// The PAT table contains the PMT pid of each program
 		/// </summary>
@@ -891,6 +893,19 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			return loop;
+		}
+
+		public bool GetChannelInfoFromPMT(byte[] buffer, ref ChannelInfo channelInfo)
+		{
+			TPList unused1 = new TPList();
+			Transponder unused2 = new Transponder();
+
+			channelInfo.program_number = (buffer[3] << 8) + buffer[4];
+
+			if(decodePMTTable(buffer, unused1, unused2, ref channelInfo)  == 0)
+				return false;
+
+			return true;
 		}
 
 		/// <summary>
@@ -1709,7 +1724,7 @@ namespace MediaPortal.TV.Recording
 		}
 		// ca
 		//
-		private string DVB_CADescriptor (byte[] b)
+		string DVB_CADescriptor (byte[] b)
 		{
 
 			int      descriptor_tag;
