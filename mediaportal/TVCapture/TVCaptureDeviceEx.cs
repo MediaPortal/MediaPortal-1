@@ -1478,7 +1478,7 @@ namespace MediaPortal.TV.Recording
 			recordedTvObject = new TVRecorded();
 			recordedTvObject.Start = Utils.datetolong(DateTime.Now);
 			recordedTvObject.Channel = currentTvChannelName;
-			recordedTvObject.FileName = strFileName;
+			recordedTvObject.FileName = strFileName;			
 			if (currentRunningProgram != null)
 			{
 				recordedTvObject.Title = currentRunningProgram.Title;
@@ -1497,6 +1497,7 @@ namespace MediaPortal.TV.Recording
 
 			Hashtable attribtutes=GetRecordingAttributes();
 			bool bResult = currentGraph.StartRecording(attribtutes,recording,channel, ref strFileName, recording.IsContentRecording, timeProgStart);
+			recordedTvObject.FileName = strFileName;
 
 			timeRecordingStarted = DateTime.Now;
 			currentGraphState = State.Recording;
