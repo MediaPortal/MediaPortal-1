@@ -1110,6 +1110,7 @@ namespace MediaPortal.TV.Recording
 			int pointer = 11;
 			int x = 0;
 		 
+			Log.Write("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
 
 			while (len1 > 0)
 			{
