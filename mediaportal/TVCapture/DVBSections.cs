@@ -890,7 +890,7 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					Log.Write("decodePATTable() program number=0");
+					Log.Write("dvbsections:decodePATTable() program number=0");
 				}
 			}
 			return loop;
@@ -1110,7 +1110,7 @@ namespace MediaPortal.TV.Recording
 			int pointer = 11;
 			int x = 0;
 		 
-			Log.Write("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
+			//Log.Write("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
 
 			while (len1 > 0)
 			{
@@ -1472,6 +1472,10 @@ namespace MediaPortal.TV.Recording
 						foreach(byte[] wdata in tab46)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 					}
+					if (pat.pid_list.Count==0)
+						Log.Write("DVBSections: no PMT found for channel:#{0}", ((t - 1) * 20) + n);
+					if (pat.serviceID==0)
+						Log.Write("DVBSections: no SDT found for channel:#{0}", ((t - 1) * 20) + n);
 					tp.channels.Add(pat);
 				}
 			}
@@ -2587,6 +2591,12 @@ namespace MediaPortal.TV.Recording
 				//for each services it specifies the transport stream id, program number and network PMT pid
 				foreach(byte[] patTable in m_sectionsList)
 					decodePATTable(patTable, transp[0], ref transponder);
+
+				if (transponder.PMTTable.Count>0)
+				{
+					Log.Write("DVBSections: decoding PAT delivered {0} services",transponder.PMTTable.Count);
+				}
+				else return transponder;
 
 				// now that we got the network PMT (Program Map Table) pids for all services
 				// load & decode the PMT tables themselves
