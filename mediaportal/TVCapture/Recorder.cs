@@ -206,6 +206,7 @@ namespace MediaPortal.TV.Recording
 			if (m_bRecordingsChanged)
 			{
 				// then get (refresh) all recordings from the database
+				ArrayList oldRecs=(ArrayList)m_Recordings.Clone();
 				m_Recordings.Clear();
 				m_TVChannels.Clear();
 				TVDatabase.GetRecordings(ref m_Recordings);
@@ -213,6 +214,15 @@ namespace MediaPortal.TV.Recording
 				m_bRecordingsChanged=false;
 				foreach (TVRecording recording in m_Recordings)
 				{
+					foreach (TVRecording oldrec in oldRecs)
+					{
+						if (oldrec.ID==recording.ID)
+						{
+							recording.IsAnnouncementSend=oldrec.IsAnnouncementSend;
+							break;
+						}
+					}
+
 					for (int i=0; i < m_tvcards.Count;++i)
 					{
 						TVCaptureDevice dev=(TVCaptureDevice )m_tvcards[i];
