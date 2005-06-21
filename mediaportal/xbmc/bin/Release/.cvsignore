@@ -9,3 +9,8 @@ database
 MediaPortal.log
 thumbs
 MediaPortal.exe.config
+LUI
+ExternalDisplay.xml
+*.DLL
+*.log
+config.ini

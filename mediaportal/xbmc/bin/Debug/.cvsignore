@@ -20,3 +20,7 @@ MediaPortal.exe.config
 log
 xml
 Wizards
+LUI
+ExternalDisplay.xml
+*.DLL
+*.log
