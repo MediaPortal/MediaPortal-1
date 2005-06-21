@@ -534,6 +534,7 @@ namespace MediaPortal.TV.Recording
 			IntPtr sectionBuffer=IntPtr.Zero;
 
 
+			//Log.Write("Get pid:{0:X} tid:{1:X} section:{2:X}",pid,tid,tableSection);
 			m_sectionsList=new ArrayList();
 			flag = GetSectionData(filter,pid, tid,ref sectLast,tableSection,timeout);
 			if(flag==false)
@@ -546,9 +547,13 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
 			}
-			for(int n=0;n<sectLast;n++)
+			//Log.Write("sections:{0}",sectLast);
+			int totalSections=sectLast;
+			for(int n=0;n<totalSections;n++)
 			{
+				//Log.Write(" get sect:{0}",n);
 				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
+				//Log.Write(" get sect:{0} returned len:{1} ext:{2} num:{3} last:{4} version:{5}",flag,dataLen,tableExt,sectNum, sectLast,version);
 				if(flag)
 				{
 					if (tableExt != - 1)
