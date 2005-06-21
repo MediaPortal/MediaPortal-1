@@ -356,7 +356,7 @@ namespace MediaPortal.TV.Recording
 			}
 			catch(Exception ex)
 			{
-				Log.Write("epg-grab: FAILED to add to database. message:{0} stack:{1} source:{2}",ex.Message,ex.StackTrace,ex.Source);
+				Log.WriteFile(Log.LogType.EPG,"epg-grab: FAILED to add to database. message:{0} stack:{1} source:{2}",ex.Message,ex.StackTrace,ex.Source);
 				dateProgramEnd=DateTime.MinValue;
 				return 0;
 			}
@@ -400,7 +400,7 @@ namespace MediaPortal.TV.Recording
 				m_sections.Timeout=500;
 			else
 				m_sections.Timeout=750;
-			Log.Write("epg-grab: grabbing table {0}",80);
+			Log.WriteFile(Log.LogType.EPG,"epg-grab: grabbing table {0}",80);
 			eitList=m_sections.GetEITSchedule(0x50,filter,ref lastTab);
 			tableList.Add(eitList);
 			
@@ -411,7 +411,7 @@ namespace MediaPortal.TV.Recording
 			{
 				for(int tab=0x51;tab<lastTab;tab++)
 				{
-					Log.Write("epg-grab: grabbing table {0}",tab);
+					Log.WriteFile(Log.LogType.EPG,"epg-grab: grabbing table {0}",tab);
 					eitList.Clear();
 					eitList=m_sections.GetEITSchedule(tab,filter,ref dummyTab);
 					if(eitList.Count>0)
@@ -431,7 +431,7 @@ namespace MediaPortal.TV.Recording
 					{
 						case (int)EPGCard.TechnisatStarCards:
 							progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id);
-							Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
+							Log.WriteFile(Log.LogType.EPG,"epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
 							break;
 
 						case (int)EPGCard.BDACards:
@@ -453,7 +453,7 @@ namespace MediaPortal.TV.Recording
 										if (eit.program_number==SID && eit.ts_id==TSID)
 										{
 											progName=chan.Name;
-											Log.Write("epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+											Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
 										}
 										break;
 									case NetworkType.DVBS:
@@ -463,7 +463,7 @@ namespace MediaPortal.TV.Recording
 										TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 										if (eit.program_number==SID && eit.ts_id==TSID)
 										{
-											Log.Write("epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+											Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
 											progName=chan.Name;
 										}
 										break;
@@ -479,13 +479,13 @@ namespace MediaPortal.TV.Recording
 					}
 					if(progName==null)
 					{
-						Log.Write("epg-grab: FAILED name is NULL");
+						Log.WriteFile(Log.LogType.EPG,"epg-grab: FAILED name is NULL");
 						continue;
 					}
 				
 					if(progName=="")
 					{
-						Log.Write("epg-grab: FAILED empty name service-id:{0}",eit.program_number);
+						Log.WriteFile(Log.LogType.EPG,"epg-grab: FAILED empty name service-id:{0}",eit.program_number);
 						continue;
 					}
 					DVBSections.EITDescr eit2DB=new MediaPortal.TV.Recording.DVBSections.EITDescr();
@@ -508,7 +508,7 @@ namespace MediaPortal.TV.Recording
 						{
 							if(lang=="")
 								continue;
-							Log.Write("epg-grabbing: language selected={0}",lang);
+							Log.WriteFile(Log.LogType.EPG,"epg-grabbing: language selected={0}",lang);
 							string codeEE="";
 							string codeSE="";
 
@@ -518,7 +518,7 @@ namespace MediaPortal.TV.Recording
 
 							if(eit.eeLanguageCode!=null)
 							{
-								Log.Write("epg-grabbing: e-event-lang={0}",eit.eeLanguageCode);
+								Log.WriteFile(Log.LogType.EPG,"epg-grabbing: e-event-lang={0}",eit.eeLanguageCode);
 								codeEE=eit.eeLanguageCode.ToLower();
 								if(codeEE.Length==3)
 								{
@@ -532,7 +532,7 @@ namespace MediaPortal.TV.Recording
 
 							if(eit.seLanguageCode!=null)
 							{
-								Log.Write("epg-grabbing: s-event-lang={0}",eit.seLanguageCode);
+								Log.WriteFile(Log.LogType.EPG,"epg-grabbing: s-event-lang={0}",eit.seLanguageCode);
 								codeSE=eit.seLanguageCode.ToLower();
 								if(codeSE.Length==3)
 								{
@@ -624,7 +624,7 @@ namespace MediaPortal.TV.Recording
 									if (eit.program_number==SID && eit.ts_id==TSID)
 									{
 										progName=chan.Name;
-										Log.Write("epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
 									}
 									break;
 								case NetworkType.DVBS:
@@ -634,7 +634,7 @@ namespace MediaPortal.TV.Recording
 									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
 									if (eit.program_number==SID && eit.ts_id==TSID)
 									{
-										Log.Write("epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
 										progName=chan.Name;
 									}
 									break;
@@ -773,7 +773,7 @@ namespace MediaPortal.TV.Recording
 				return; // already got channles table
 
 			int dataLen=data.Length;
-			Log.Write("mhw-epg: start parse channels for mhw",m_namesBuffer.Count);
+			Log.WriteFile(Log.LogType.EPG,"mhw-epg: start parse channels for mhw",m_namesBuffer.Count);
 			lock(m_namesBuffer.SyncRoot)
 			{
 				for(int n=4;n<dataLen;n+=22)
@@ -787,7 +787,7 @@ namespace MediaPortal.TV.Recording
 					ch.ChannelName=System.Text.Encoding.ASCII.GetString(data,n+6,16);
 					ch.ChannelName=ch.ChannelName.Trim();
 					m_namesBuffer.Add(ch);
-					Log.Write("mhw-epg: added channel {0} to mhw channels table",ch.ChannelName);
+					Log.WriteFile(Log.LogType.EPG,"mhw-epg: added channel {0} to mhw channels table",ch.ChannelName);
 				}// for(int n=0
 				//Log.Write("mhw-epg: found {0} channels for mhw",m_namesBuffer.Count);
 				m_mhwChannelsCount=m_namesBuffer.Count;
@@ -824,7 +824,7 @@ namespace MediaPortal.TV.Recording
 						th.ThemeText=th.ThemeText.Trim();
 						th.ThemeIndex=val;
 						m_themeBuffer.Add(th);
-						Log.Write("mhw-epg: theme '{0}' with id 0x{1:X} found",th.ThemeText,th.ThemeIndex);
+						Log.WriteFile(Log.LogType.EPG,"mhw-epg: theme '{0}' with id 0x{1:X} found",th.ThemeText,th.ThemeIndex);
 						val++;
 						themesNames+=15;
 					}
@@ -934,8 +934,8 @@ namespace MediaPortal.TV.Recording
 
 			lock(m_titleBuffer.SyncRoot)
 			{
-				Log.Write("mhw-epg: count of programms={0}",m_titleBuffer.Count);
-				Log.Write("mhw-epg: buffer contains {0} summaries now",m_summaryBuffer.Count);
+				Log.WriteFile(Log.LogType.EPG,"mhw-epg: count of programms={0}",m_titleBuffer.Count);
+				Log.WriteFile(Log.LogType.EPG,"mhw-epg: buffer contains {0} summaries now",m_summaryBuffer.Count);
 				ArrayList list=new ArrayList();
 				foreach(Programm prg in m_titleBuffer)
 				{
@@ -1048,9 +1048,9 @@ namespace MediaPortal.TV.Recording
 				
 				if(count>0)
 				{
-					Log.Write("mhw-epg: added {0} entries to database",m_addsToDatabase);
-					Log.Write("mhw-epg: titles buffer contains {0} objects",m_titleBuffer.Count);
-					Log.Write("mhw-epg: summaries buffer contains {0} objects",m_summaryBuffer.Count);
+					Log.WriteFile(Log.LogType.EPG,"mhw-epg: added {0} entries to database",m_addsToDatabase);
+					Log.WriteFile(Log.LogType.EPG,"mhw-epg: titles buffer contains {0} objects",m_titleBuffer.Count);
+					Log.WriteFile(Log.LogType.EPG,"mhw-epg: summaries buffer contains {0} objects",m_summaryBuffer.Count);
 				}
 				//m_titleBuffer.Clear();
 				for (int i=0; i < reGrabTimes.Length;++i)

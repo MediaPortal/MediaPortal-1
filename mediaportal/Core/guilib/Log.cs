@@ -15,7 +15,8 @@ namespace MediaPortal.GUI.Library
 			Log,
 			Capture,
 			Recorder,
-			Error
+			Error,
+			EPG
 		}
 		/// <summary>
 		/// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
@@ -34,6 +35,7 @@ namespace MediaPortal.GUI.Library
 			Initialize(LogType.Log);
 			Initialize(LogType.Recorder);
 			Initialize(LogType.Error);
+			Initialize(LogType.EPG);
 		}
 
 		static void Initialize(LogType type)
@@ -72,6 +74,9 @@ namespace MediaPortal.GUI.Library
 					break;
 				case LogType.Error:
 					fname=@"log\error.log";
+					break;
+				case LogType.EPG:
+					fname=@"log\epg.log";
 					break;
 			}
 			return fname;

@@ -1092,7 +1092,7 @@ namespace MediaPortal.TV.Recording
 					}
 					catch(Exception ex)
 					{
-						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
+						Log.WriteFile(Log.LogType.EPG,"mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
 					}
 
 				
@@ -1237,7 +1237,7 @@ namespace MediaPortal.TV.Recording
 						}
 						else
 						{
-							Log.Write("CRC error:{0:X} != {1:X}", crc1,crc2);
+							Log.WriteFile(Log.LogType.Error,"CRC error:{0:X} != {1:X}", crc1,crc2);
 							sectionOK=false;
 							// reject the section
 						}
