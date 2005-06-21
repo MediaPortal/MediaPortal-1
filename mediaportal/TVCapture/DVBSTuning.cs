@@ -193,8 +193,12 @@ namespace MediaPortal.TV.Recording
 			{
 				if (captureCard.SignalPresent())
 				{
-					Log.WriteFile(Log.LogType.Capture,"Found signal for transponder:{0} {1}",currentIndex,chanDesc);
-					currentState=State.ScanChannels;
+					
+					if (captureCard.SignalQuality>40)
+					{
+						Log.WriteFile(Log.LogType.Capture,"Found signal for transponder:{0} {1}",currentIndex,chanDesc);
+						currentState=State.ScanChannels;
+					}
 				}
 			}
 
