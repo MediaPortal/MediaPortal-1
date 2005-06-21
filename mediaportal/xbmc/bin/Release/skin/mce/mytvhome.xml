@@ -19,8 +19,30 @@
 			<posX>60</posX>
 			<posY>20</posY>
 			<texture>television_logo.png</texture>
-		</control>	
-			<control>
+		</control>
+		<control>
+			<description>Date</description>
+  			<type>label</type>
+  			<id>1</id>
+  			<posX>520</posX>
+  			<posY>72</posY>
+  			<label>#date</label>
+  			<align>left</align>
+  			<font>font13</font>
+  			<textcolor>ffa9d0f7</textcolor>
+  		</control>
+- 		<control>
+  			<description>Time</description>
+  			<type>label</type>
+  			<id>1</id>
+  			<posX>430</posX>
+  			<posY>72</posY>
+  			<label>#time</label>
+  			<align>left</align>
+  			<font>font13</font>
+  			<textcolor>ffa9d0f7</textcolor>
+		</control>
+		<control>
 			<description>My TV Text Label</description>
 			<type>label</type>
 			<id>1</id>
@@ -46,7 +68,7 @@
 				<onup>13</onup>
 				<ondown>3</ondown>
 				<onright>99</onright>
-			</control>	
+			</control>
 			<control>
 				<description>Record Now</description>
 				<type>button</type>
@@ -57,7 +79,7 @@
 				<onup>2</onup>
 				<ondown>6</ondown>
 				<onright>99</onright>
-			</control>	
+			</control>
 			<control>
 				<description>Group button</description>
 				<type>selectbutton</type>
@@ -250,9 +272,9 @@
 			<id>15</id>
 			<posX>290</posX>
 			<posY>455</posY>
-			<width>350</width> 
+			<width>350</width>
 			<height>90</height>
-			<seperator>----------------------------------------------------------------------------------------------</seperator> 
+			<seperator>----------------------------------------------------------------------------------------------</seperator>
 			<label>#TV.View.description</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
@@ -278,16 +300,16 @@
 			<visible>yes</visible>
 		</control>
 		<control>
-			<description>rectangle</description> 
-			<type>image</type> 
-			<id>21</id> 
-			<posX>85</posX> 
-			<posY>420</posY> 
-			<width>90</width> 
-			<height>90</height> 
-			<texture>previewbackground.png</texture> 
-			<colorkey>0</colorkey> 
-			<colordiffuse>ffffffff</colordiffuse> 
+			<description>rectangle</description>
+			<type>image</type>
+			<id>21</id>
+			<posX>85</posX>
+			<posY>420</posY>
+			<width>90</width>
+			<height>90</height>
+			<texture>previewbackground.png</texture>
+			<colorkey>0</colorkey>
+			<colordiffuse>ffffffff</colordiffuse>
 		</control>
 		<control>
 			<description>Recording Channel</description>
@@ -300,16 +322,16 @@
 			<texture>#TV.Record.thumb</texture>
 		</control>
 		<control>
-			<description>record info label</description> 
-			<type>fadelabel</type> 
+			<description>record info label</description>
+			<type>fadelabel</type>
 			<id>23</id>
 			<width>150</width>
-			<height>30</height> 
-			<posX>85</posX> 
+			<height>30</height>
+			<posX>85</posX>
 			<posY>530</posY>
 			<label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start-#TV.Record.stop</label>
-			<align>left</align>  
-			<font>font13</font> 
+			<align>left</align>
+			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
 		</control>
 		<control>

@@ -33,6 +33,28 @@
 			<texture>television_logo.png</texture>
 		</control>
 		<control>
+		<description>Date</description>
+  		<type>label</type>
+  		<id>1</id>
+  		<posX>400</posX>
+  		<posY>73</posY>
+  		<label>#date</label>
+  		<align>left</align>
+  		<font>font13</font>
+  		<textcolor>ffa9d0f7</textcolor>
+  	</control>
+- 	<control>
+  		<description>Time</description>
+  		<type>label</type>
+  		<id>1</id>
+  		<posX>310</posX>
+  		<posY>73</posY>
+  		<label>#time</label>
+  		<align>left</align>
+  		<font>font13</font>
+  		<textcolor>ffa9d0f7</textcolor>
+	</control>
+		<control>
 			<description>My TV Text Label</description>
 			<type>label</type>
 			<id>1</id>

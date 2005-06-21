@@ -63,7 +63,6 @@
 		<posY>325</posY>
 		<width>370</width>
 		<height>25</height>
-		<visible>no</visible>
 	</control>
 	<control>
 		<description>Cancel button</description>

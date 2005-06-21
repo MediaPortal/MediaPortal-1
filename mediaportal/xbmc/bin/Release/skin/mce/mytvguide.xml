@@ -19,13 +19,35 @@
 		<posX>60</posX>
 		<posY>20</posY>
 		<texture>television_logo.png</texture>
-	</control>	
+	</control>
+	<control>
+		<description>Date</description>
+  		<type>label</type>
+  		<id>1</id>
+  		<posX>520</posX>
+  		<posY>68</posY>
+  		<label>#date</label>
+  		<align>left</align>
+  		<font>font13</font>
+  		<textcolor>ffa9d0f7</textcolor>
+  	</control>
+- 	<control>
+  		<description>Time</description>
+  		<type>label</type>
+  		<id>1</id>
+  		<posX>430</posX>
+  		<posY>68</posY>
+  		<label>#time</label>
+  		<align>left</align>
+  		<font>font13</font>
+  		<textcolor>ffa9d0f7</textcolor>
+	</control>
 	<control>
 		<description>Guide Text Label</description>
 		<type>label</type>
 		<id>1</id>
 		<posX>250</posX>
-		<posY>70</posY>
+		<posY>65</posY>
 		<label>4</label>
 		<font>font16</font>
 		<align>right</align>
@@ -44,7 +66,7 @@
 	</control>
 
 	<!-- Timeheader background must be dedfined before Timeheader label template -->
-	<!-- b/c Timeheader is on the background and will be rendered first -->	
+	<!-- b/c Timeheader is on the background and will be rendered first -->
 	<control>
 		<description>time header background image template</description>
 		<type>image</type>
@@ -119,7 +141,7 @@
 		<centered>no</centered>
 		<zoom>yes</zoom>
 		<texture>defaultVideoBig.png</texture>
-	</control> 
+	</control>
 	<control>
 		<description>channel Label template</description>
 		<type>label</type>
@@ -171,13 +193,13 @@
 		<id>15</id>
 		<posX>250</posX>
 		<posY>450</posY>
-		<width>400</width> 
+		<width>400</width>
 		<height>65</height>
 <seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.Guide.Description</label>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
-	</control>	
+	</control>
 <!--	<control>
 		<description>template for program genre light area</description>
 		<type>label</type>
@@ -204,7 +226,7 @@
 		<height>270</height>
 		<colordiffuse>c0ffffff</colordiffuse>
 		<texture>tvguide_slider.png</texture>
-	</control>	
+	</control>
 	<control>
 		<description>template for program title darkarea </description>
 		<type>label</type>
@@ -235,15 +257,15 @@
 		<texture>previewbackground.png</texture>
 	</control>
 	<control>
-		<description>TV preview window</description> 
-		<type>videowindow</type> 
-		<id>99</id> 
-		<posX>65</posX> 
-		<posY>425</posY> 
-		<width>170</width> 
-		<height>125</height> 
+		<description>TV preview window</description>
+		<type>videowindow</type>
+		<id>99</id>
+		<posX>65</posX>
+		<posY>425</posY>
+		<width>170</width>
+		<height>125</height>
 		<action>18</action>
-		<textureFocus>video_window_focus.png</textureFocus> 
+		<textureFocus>video_window_focus.png</textureFocus>
 	</control>
 	<control>
 		<description>Horizontal scrollbar</description>
@@ -254,7 +276,7 @@
 		<width>607</width>
 		<height>20</height>
 		<visible>yes</visible>
-	</control>	
+	</control>
 	<control>
 		<description>Vertical scrollbar</description>
 		<type>vscrollbar</type>
@@ -264,7 +286,7 @@
 		<width>20</width>
 		<height>294</height>
 		<visible>yes</visible>
-	</control>	
+	</control>
 	<control>
 		<description>record pin</description>
 		<type>image</type>
