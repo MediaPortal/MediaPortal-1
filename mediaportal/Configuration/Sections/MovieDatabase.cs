@@ -16,6 +16,21 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class MovieDatabase : MediaPortal.Configuration.SectionSettings, IMDB.IProgress
 	{
+		private class MovieTitleComparer: IComparer
+		{
+			#region IComparer Members
+
+			public int Compare(object x, object y)
+			{
+				IMDBMovie movie1=x as IMDBMovie;
+				IMDBMovie movie2=y as IMDBMovie;
+				return movie1.Title.CompareTo(movie2.Title); 
+			}
+
+			#endregion
+
+		}
+
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.CheckedListBox sharesListBox;
     private System.Windows.Forms.Button startButton;
@@ -628,6 +643,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// cbTitle
 			// 
+			this.cbTitle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbTitle.Location = new System.Drawing.Point(96, 16);
 			this.cbTitle.Name = "cbTitle";
 			this.cbTitle.Size = new System.Drawing.Size(264, 21);
@@ -1019,6 +1035,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// comboBoxPictures
 			// 
+			this.comboBoxPictures.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBoxPictures.Location = new System.Drawing.Point(256, 56);
 			this.comboBoxPictures.Name = "comboBoxPictures";
 			this.comboBoxPictures.Size = new System.Drawing.Size(121, 21);
@@ -1534,6 +1551,7 @@ namespace MediaPortal.Configuration.Sections
 			cbTitle.Items.Clear();
 			ArrayList movies=new ArrayList();
 			VideoDatabase.GetMovies(ref movies);
+			movies.Sort(new MovieTitleComparer() );
 			int i=0;
 			foreach(IMDBMovie movie in movies)
 			{
@@ -1542,6 +1560,7 @@ namespace MediaPortal.Configuration.Sections
 				if (i==0) UpdateEdit(movie);
 				++i;
 			}
+			
 
 			IMDBMovie movieNew = new IMDBMovie();
 			movieNew.Title="New...";
