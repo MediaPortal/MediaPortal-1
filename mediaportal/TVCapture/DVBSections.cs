@@ -551,7 +551,6 @@ namespace MediaPortal.TV.Recording
 			int totalSections=sectLast;
 			for(int n=0;n<totalSections;n++)
 			{
-				//Log.Write(" get sect:{0}",n);
 				flag=GetSectionPtr(n,ref sectionBuffer,ref dataLen,ref header, ref tableExt, ref version,ref sectNum, ref sectLast);
 				//Log.Write(" get sect:{0} returned len:{1} ext:{2} num:{3} last:{4} version:{5}",flag,dataLen,tableExt,sectNum, sectLast,version);
 				if(flag)
