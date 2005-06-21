@@ -239,7 +239,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (queue.Count==0) 
 				{
-					System.Threading.Thread.Sleep(100);
+					System.Threading.Thread.Sleep(1000);
 				}
 				else
 				{
@@ -341,7 +341,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 					tinfo.percentDone=WMVConverter.Percentage();
-					System.Threading.Thread.Sleep(100);
+					System.Threading.Thread.Sleep(1000);
 					if (tinfo.status==Status.Canceled) 
 					{
 						WMVConverter.Stop();
@@ -372,7 +372,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 					tinfo.percentDone=xvidEncoder.Percentage();
-					System.Threading.Thread.Sleep(100);
+					System.Threading.Thread.Sleep(1000);
 					if (tinfo.status==Status.Canceled) 
 					{
 						xvidEncoder.Stop();
@@ -399,7 +399,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 				tinfo.percentDone=mpgConverter.Percentage();
-				System.Threading.Thread.Sleep(100);
+				System.Threading.Thread.Sleep(1000);
 				if (tinfo.status==Status.Canceled) 
 				{
 					mpgConverter.Stop();

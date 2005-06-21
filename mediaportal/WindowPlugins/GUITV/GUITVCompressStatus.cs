@@ -332,7 +332,10 @@ namespace MediaPortal.GUI.TV
 			OnSort();
 			UpdateButtonStates();
 			UpdateProperties();
-	
+			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
+			GUIControl.SelectItemControl(GetID,listViews.GetID,m_iSelectedItem);
+			GUIControl.SelectItemControl(GetID,listAlbums.GetID,m_iSelectedItem);
+
 		}
 
 		void UpdateButtonStates()
