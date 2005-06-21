@@ -3,6 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml;
 using System.IO;
 
 using MediaPortal.GUI.Library;
@@ -148,6 +149,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button btnDelete;
 		private System.Windows.Forms.ComboBox comboBoxPictures;
 		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.Button buttonImport;
     ArrayList availableFiles;
 
     public MovieDatabase() :  this("Movie Database")
@@ -318,6 +320,7 @@ namespace MediaPortal.Configuration.Sections
 			this.textBoxPictureURL = new System.Windows.Forms.TextBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.buttonImport = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -483,6 +486,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.buttonImport);
 			this.tabPage3.Controls.Add(this.btnDelete);
 			this.tabPage3.Controls.Add(this.tbWritingCredits);
 			this.tabPage3.Controls.Add(this.label18);
@@ -1086,6 +1090,14 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.Size = new System.Drawing.Size(432, 398);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Scan";
+			// 
+			// buttonImport
+			// 
+			this.buttonImport.Location = new System.Drawing.Point(192, 328);
+			this.buttonImport.Name = "buttonImport";
+			this.buttonImport.TabIndex = 39;
+			this.buttonImport.Text = "Import";
+			this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
 			// 
 			// MovieDatabase
 			// 
@@ -2005,6 +2017,93 @@ namespace MediaPortal.Configuration.Sections
 					}
 				}
 			}
+		}
+
+		private void buttonImport_Click(object sender, System.EventArgs e)
+		{
+			System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+			find_file.RestoreDirectory = true;
+			find_file.DefaultExt = "xml";
+			find_file.Filter = "DVD Profile|*.xml";
+			find_file.InitialDirectory = ".";
+			find_file.Title= "Select DVD Profiler database"+ tbTitle.Text;
+			if(find_file.ShowDialog(this)!=DialogResult.OK) return;
+			XmlDocument doc = new XmlDocument();
+			doc.Load(find_file.FileName);
+			XmlNodeList dvdList = doc.DocumentElement.SelectNodes("/Collection/DVD");
+			foreach (XmlNode nodeDVD in dvdList)
+			{
+				XmlNode nodeTitle=nodeDVD.SelectSingleNode("Title");
+				XmlNode nodeRating=nodeDVD.SelectSingleNode("Rating");
+				XmlNode nodeYear=nodeDVD.SelectSingleNode("ProductionYear");
+				XmlNode nodeDuration=nodeDVD.SelectSingleNode("RunningTime");
+				XmlNode nodeOverview=nodeDVD.SelectSingleNode("Overview");
+
+				string genre=String.Empty;
+				XmlNodeList  genreList = nodeDVD.SelectNodes("Genres/Genre");
+				foreach (XmlNode nodeGenre in genreList)
+				{
+					if (genre.Length>0) genre +=" / ";
+					genre+=nodeGenre.InnerText;
+				}
+				string cast="Cast overview:";
+				XmlNodeList  actorsList = nodeDVD.SelectNodes("Actors/Actor");
+				foreach (XmlNode nodeActor in actorsList)
+				{
+					string firstname=String.Empty;
+					string lastname=String.Empty;
+					string role=String.Empty;
+					XmlNode nodeFirstName=nodeActor.SelectSingleNode("FirstName");
+					XmlNode nodeLastName=nodeActor.SelectSingleNode("LastName");
+					XmlNode nodeRole=nodeActor.SelectSingleNode("Role");
+					if (nodeFirstName!=null && nodeFirstName.InnerText!=null) firstname=nodeFirstName.InnerText;
+					if (nodeLastName!=null && nodeLastName.InnerText!=null) lastname=nodeLastName.InnerText;
+					if (nodeRole!=null && nodeRole.InnerText!=null) role=nodeRole.InnerText;
+					string line = String.Format("{0} {1} as {2}\n", firstname, lastname, role);
+					cast+=line;
+				}
+
+				
+				string credits=String.Empty;
+				XmlNodeList  creditsList = nodeDVD.SelectNodes("Credits/Credit");
+				foreach (XmlNode nodeCredit in creditsList)
+				{
+					XmlNode nodeFirstName=nodeCredit.SelectSingleNode("FirstName");
+					XmlNode nodeLastName=nodeCredit.SelectSingleNode("LastName");
+					
+					if (credits.Length>0) credits +=" / ";
+					credits+=String.Format("{0} {1}",nodeFirstName.InnerText,nodeLastName.InnerText);
+				}
+
+				IMDBMovie movie = new IMDBMovie();
+				movie.Cast=cast;
+				movie.CDLabel=String.Empty;
+				movie.Director=String.Empty;
+				movie.DVDLabel=String.Empty;
+				movie.File=String.Empty;
+				movie.Genre=genre;
+				movie.IMDBNumber=String.Empty;
+				movie.MPARating=nodeRating.InnerText;
+				movie.Path=String.Empty;
+				movie.Plot=nodeOverview.InnerText;
+				movie.PlotOutline=String.Empty;
+				movie.Rating=0;
+				movie.RunTime=Int32.Parse(nodeDuration.InnerText);
+				movie.SearchString=String.Empty;
+				movie.TagLine=String.Empty;
+				movie.ThumbURL=String.Empty;
+				movie.Title=nodeTitle.InnerText;
+				movie.Top250=0;
+				movie.Votes=String.Empty;
+				movie.Watched=0;
+				movie.WritingCredits=credits;
+				movie.Year=Int32.Parse(nodeYear.InnerText);
+				int id=VideoDatabase.AddMovie(movie.Title,true);
+				movie.ID=id;
+				VideoDatabase.SetMovieInfoById(id,ref movie);
+				Application.DoEvents();
+			}
+			LoadMovies();
 		}
 
 		IMDBMovie CurrentMovie
