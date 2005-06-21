@@ -202,7 +202,7 @@ namespace MediaPortal.TV.Recording
 					for (int i=0; i < queue.Count;++i)
 					{
 						TranscoderInfo info = (TranscoderInfo)queue[i];
-						if (info.status==Status.Error || info.status==Status.Completed)
+						if (info.status==Status.Error || info.status==Status.Completed|| info.status==Status.Canceled)
 						{
 							deleted=true;
 							queue.RemoveAt(i);
