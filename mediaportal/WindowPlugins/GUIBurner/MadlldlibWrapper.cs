@@ -81,11 +81,11 @@ namespace MediaPortal.GUI.GUIBurner
 		};
 
 
-		public struct mad_timer_t 
-		{
-		  public long seconds;     // Whole seconds 
-		  public uint fraction;    // 1/MAD_TIMER_RESOLUTION seconds 
-		};
+//		public struct mad_timer_t 
+//		{
+	//	  public long seconds;     // Whole seconds 
+		//  public uint fraction;    // 1/MAD_TIMER_RESOLUTION seconds 
+		//};
 		
 
 		[StructLayout(LayoutKind.Sequential), Serializable]	
@@ -105,7 +105,10 @@ namespace MediaPortal.GUI.GUIBurner
 			public int flags;                   // Flags 
 			public int private_bits;            // Private bits 
 
-			public mad_timer_t duration;        // Audio playing time of frame 
+			//public mad_timer_t duration;        // Audio playing time of frame 
+			public long seconds;     // Whole seconds 
+			public uint fraction;    // 1/MAD_TIMER_RESOLUTION seconds 
+
 		};
 
 
