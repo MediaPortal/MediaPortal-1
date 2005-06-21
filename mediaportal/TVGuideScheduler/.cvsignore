@@ -1,4 +1,4 @@
-TVGuideScheduler.csproj.user
-TVGuideScheduler.suo
+*.user
+*.suo
 obj
 bin
