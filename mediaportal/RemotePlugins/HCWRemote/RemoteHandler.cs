@@ -96,7 +96,7 @@ namespace MediaPortal
         remote = new ArrayList();
         XmlDocument doc = new XmlDocument();
         doc.Load(xmlFile);
-        XmlNodeList listButtons=doc.DocumentElement.SelectNodes("/mappings/button");
+        XmlNodeList listButtons=doc.DocumentElement.SelectNodes("/mappings/remote/button");
         foreach (XmlNode nodeButton in listButtons)
         {
           string name  = nodeButton.Attributes["name"].Value;
@@ -244,7 +244,7 @@ namespace MediaPortal
                 if (g_Player.IsDVD)
                   found = map;
                 break;
-              case "PLAYING":
+              case "MEDIA":
                 if (g_Player.Playing)
                   found = map;
                 break;
