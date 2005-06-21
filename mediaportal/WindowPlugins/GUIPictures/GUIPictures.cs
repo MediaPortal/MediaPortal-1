@@ -886,6 +886,7 @@ namespace MediaPortal.GUI.Pictures
       if (dlgProgress!=null)
       {
         dlgProgress.SetHeading(110);
+				dlgProgress.ShowProgressBar(true);
         dlgProgress.SetLine(1,String.Empty);
         dlgProgress.SetLine(2,String.Empty);
         dlgProgress.StartModal(GetID);
@@ -897,8 +898,11 @@ namespace MediaPortal.GUI.Pictures
       {
         for (int i=0; i < GetItemCount(); ++i)
         {
+					int percent=(i*100) / (GetItemCount()+1);
           GUIListItem item = GetItem(i);
-          if (item.IsRemote) continue;
+					if (item.IsRemote) continue;
+					if (dlgProgress!=null)
+						dlgProgress.SetPercentage(percent);
           if (!item.IsFolder)
           {
             if (Utils.IsPicture(item.Path))
@@ -1031,12 +1035,16 @@ namespace MediaPortal.GUI.Pictures
         dlgProgress.SetHeading(110);
         dlgProgress.SetLine(1,String.Empty);
         dlgProgress.SetLine(2,String.Empty);
-        dlgProgress.StartModal(GetID);
+				dlgProgress.ShowProgressBar(true);
+				dlgProgress.StartModal(GetID);
         dlgProgress.Progress();
       }
       for (int i=0; i < GetItemCount(); ++i)
       {
-        GUIListItem item = GetItem(i);
+				int percent=(i*100) / (GetItemCount()+1);
+				if (dlgProgress!=null)
+					dlgProgress.SetPercentage(percent);
+				GUIListItem item = GetItem(i);
         if (item.IsFolder && item.Label!="..")
         {
           string progressLine=String.Format("progress:{0}/{1}", i+1, GetItemCount() );

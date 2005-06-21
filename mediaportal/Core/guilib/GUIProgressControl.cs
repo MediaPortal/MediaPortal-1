@@ -128,7 +128,9 @@ namespace MediaPortal.GUI.Library
 			GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
 			GUIGraphicsContext.ScaleVertical(ref iHeightRight);
 			//iHeight=20;
-			float fWidth = (float)m_iPercent;
+			int percent=m_iPercent;
+			if (percent>100) percent=100;
+			float fWidth = (float)percent;
 			fWidth/=100.0f;
 			fWidth *= (float) (m_guiBackground.Width-24-iWidthLeft-iWidthRight);
 
@@ -145,7 +147,7 @@ namespace MediaPortal.GUI.Library
 			m_guiLeft.Render(timePassed);
 
 			iXPos += iWidthLeft;
-			if (m_iPercent>0 && (int)fWidth > 1)
+			if (percent>0 && (int)fWidth > 1)
 			{
 				m_guiMid.SetPosition(iXPos,iYPos);
 				m_guiMid.Height=iHeightLeft;//m_guiMid.TextureHeight;

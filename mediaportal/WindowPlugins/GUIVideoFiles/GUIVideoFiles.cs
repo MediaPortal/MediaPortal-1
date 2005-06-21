@@ -2184,7 +2184,7 @@ namespace MediaPortal.GUI.Video
 			{
 				for (int i=1; i < actors.Length;++i)
 				{
-					int percent = (int)(i*100)/actors.Length;
+					int percent = (int)(i*100)/(1+actors.Length);
 					int pos =actors[i].IndexOf(" as ");
 					if (pos <0) continue;
 					string actor=actors[i].Substring(0,pos);

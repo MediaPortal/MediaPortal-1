@@ -76,7 +76,7 @@ namespace MediaPortal.TV.Recording
 		int     m_iMaxSizeLimit=50;
 		bool    m_bDeleteOnLowDiskspace=false;
 		int     m_iQuality=-1;
-
+		DateTime lastChannelChange=DateTime.Now;
 		enum State
 		{
 			None, 
@@ -1020,6 +1020,7 @@ namespace MediaPortal.TV.Recording
 							// for ss2: restore full screen
 							if(m_strVideoDevice=="B2C2 MPEG-2 Source")
 								GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
+							lastChannelChange=DateTime.Now;
 							return;
 						}/*
             if (IsTimeShifting && !View)
@@ -1033,6 +1034,7 @@ namespace MediaPortal.TV.Recording
 						
 
 						currentGraph.TuneChannel(channel);
+						lastChannelChange=DateTime.Now;
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
@@ -1076,6 +1078,7 @@ namespace MediaPortal.TV.Recording
 			{
 				View=true;
 			}
+			lastChannelChange=DateTime.Now;
 			Log.WriteFile(Log.LogType.Capture,"Card:{0} rebuild graph done",ID);
 		}
 
@@ -1344,6 +1347,7 @@ namespace MediaPortal.TV.Recording
 					{
 						timeTimeshiftingStarted = DateTime.Now;
 						currentGraph.TuneChannel(channel);
+						lastChannelChange=DateTime.Now;
 						return true;
 					}
 				}
@@ -1370,6 +1374,7 @@ namespace MediaPortal.TV.Recording
 				currentGraphState = State.Timeshifting;
 			}
 			SetTvSettings();
+			lastChannelChange=DateTime.Now;
 			return bResult;
 		}
 
@@ -1425,6 +1430,7 @@ namespace MediaPortal.TV.Recording
 			TVProgram prog=null;
 			DateTime dtNow = DateTime.Now.AddMinutes(preRecordInterval);
 			
+			//for reference recordings, find program which runs now
 			if (!recording.IsContentRecording)
 				dtNow = DateTime.Now;
 
@@ -1448,13 +1454,13 @@ namespace MediaPortal.TV.Recording
 			{
 				DateTime dt = currentRunningProgram.StartTime;
 				strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}", 
-					currentRunningProgram.Channel, currentRunningProgram.Title, 
-					dt.Year, dt.Month, dt.Day, 
-					dt.Hour, 
-					dt.Minute, 
-					DateTime.Now.Minute, DateTime.Now.Second, 
-					".dvr-ms");
-				timeProgStart = currentRunningProgram.StartTime.AddMinutes(- preRecordInterval);
+																	currentRunningProgram.Channel, currentRunningProgram.Title, 
+																	dt.Year, dt.Month, dt.Day, 
+																	dt.Hour, 
+																	dt.Minute, 
+																	DateTime.Now.Minute, DateTime.Now.Second, 
+																	".dvr-ms");				
+				timeProgStart = currentRunningProgram.StartTime;
 			}
 			else
 			{
@@ -1496,6 +1502,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			Hashtable attribtutes=GetRecordingAttributes();
+			if ( timeProgStart < lastChannelChange) timeProgStart=lastChannelChange;
 			bool bResult = currentGraph.StartRecording(attribtutes,recording,channel, ref strFileName, recording.IsContentRecording, timeProgStart);
 			recordedTvObject.FileName = strFileName;
 
@@ -1585,6 +1592,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (currentGraphState != State.Viewing) return;
 			currentGraph.TuneChannel( channel);
+			lastChannelChange=DateTime.Now;
 		}
 
 		/// <summary>
@@ -1619,6 +1627,7 @@ namespace MediaPortal.TV.Recording
 						currentGraph.StartViewing(chan);
 						SetTvSettings();
 						currentGraphState = State.Viewing;
+						lastChannelChange=DateTime.Now;
 					}
 				}
 			}

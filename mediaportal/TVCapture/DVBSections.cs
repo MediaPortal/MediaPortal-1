@@ -1424,13 +1424,16 @@ namespace MediaPortal.TV.Recording
 			ArrayList	tab46=new ArrayList();
 
 			
-			//get SDT table (pid 0x11)
+			//get SDT (Service Description Table) (pid 0x11)
+			//The SDT is used to list the names and other parameters of the services within TSs. 
+			//For each TS a separate SDT sub-Table exists.
 			GetStreamData(filter,0x11, 0x42,0,m_timeoutMS);
 			tab42=(ArrayList)m_sectionsList.Clone();
+			
 			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
 			tab46=(ArrayList)m_sectionsList.Clone();
 
-			//for each PMT table...
+			//for each PMT ...
 			ChannelInfo pat;
 			ArrayList pmtList = tp.PMTTable;
 			int pmtScans;
@@ -1452,14 +1455,14 @@ namespace MediaPortal.TV.Recording
 						DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,pat.network_pmt_PID);
 					}
 
-					//get PMT table
+					//get the PMT table
 					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
 
 					//PMT table contains the audio/video/teletext pids, so decode them
 					foreach(byte[] wdata in m_sectionsList)
 						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
 
-					//SDT contains the service/provide name, so get it
+					//SDT contains the service/provider name, so get it
 					if(res>0)
 					{
 						foreach(byte[] wdata in tab42)
@@ -2575,21 +2578,16 @@ namespace MediaPortal.TV.Recording
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
 
-				//get BAT (pid=0x11, tableid=0x4a)
-//				GetStreamData(filter,0x11, 0x4a,0,Timeout);
-//				Log.Write("BAT:{0}", m_sectionsList.Count);
-//				foreach(byte[] arr in m_sectionsList)
-//					decodeBATTable(arr, transp[0], ref transponder);
-
-				//get PAT table (pid=0x11)
+				//get Program Assocation Table (PAT) (pid=0x0)
 				GetStreamData(filter,0, 0,0,Timeout);
 				
-				//The PAT table contains the pid of each PMT table
-				//so decode it...
-				foreach(byte[] arr in m_sectionsList)
-					decodePATTable(arr, transp[0], ref transponder);
+				//The PAT contains a list of services
+				//for each services it specifies the transport stream id, program number and network PMT pid
+				foreach(byte[] patTable in m_sectionsList)
+					decodePATTable(patTable, transp[0], ref transponder);
 
-				// now we got the pids for all PMT tables, get each PMT table and decode it
+				// now that we got the network PMT (Program Map Table) pids for all services
+				// load & decode the PMT tables themselves
 				LoadPMTTables(filter,transp[0],ref transponder);
 
 				// Fill in Logical Channel Numbers
