@@ -2379,15 +2379,18 @@ namespace MediaPortal.GUI.Video
 		{
 			if (!GUIWindowManager.IsRouted) return;
 			GUIDialogProgress 	pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			pDlgProgress.ShowProgressBar(true);
 			pDlgProgress.SetLine(1, line1);
 			pDlgProgress.SetLine(2, line2);
-			//pDlgProgress.SetPercentage(percent);
+			if (percent>0)
+				pDlgProgress.SetPercentage(percent);
 			pDlgProgress.Progress();
 		}
 		static public void ShowProgress(string line1, string line2, string line3, int percent)
 		{
 			if (!GUIWindowManager.IsRouted) return;
 			GUIDialogProgress 	pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			pDlgProgress.ShowProgressBar(true);
 			pDlgProgress.SetLine(1, line1);
 			pDlgProgress.SetLine(2, line2);
 			pDlgProgress.SetPercentage(percent);
