@@ -514,7 +514,7 @@
 	</string>
 	<string>
 		<id>198</id>
-		<value>Loading Movie details</value>
+		<value>Downloading Movie details</value>
 	</string>
 	<string>
 		<id>199</id>
@@ -2849,15 +2849,15 @@
 </string>
 <string>
 	<id>984</id>
-	<value>Retrieving movies</value>
+	<value>Downloading movie list</value>
 </string>
 <string>
 	<id>985</id>
-	<value>Retrieving movies details</value>
+	<value>Downloading movies details</value>
 </string>
 <string>
 	<id>986</id>
-	<value>Retrieving actor</value>
+	<value>Downloading actor</value>
 </string>
 <string>
 	<id>987</id>
@@ -2950,7 +2950,10 @@
 	<id>1008</id>
 	<value>Queue</value>
 </string>
-
+<string>
+	<id>1009</id>
+	<value>Downloading coverart</value>
+</string>
 <string>
 	<id>1440</id>
 	<value>My TeleText</value>

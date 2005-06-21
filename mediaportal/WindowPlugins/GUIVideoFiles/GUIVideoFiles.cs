@@ -856,7 +856,8 @@ namespace MediaPortal.GUI.Video
 				for (int i = 0; i < items.Count; ++i)
 				{
 					GUIListItem temporaryListItem = (GUIListItem)items[i];
-					if (Utils.ShouldStack(temporaryListItem.Path, strFile))
+					if (temporaryListItem.IsFolder) continue;
+					if (Utils.ShouldStack(temporaryListItem.Path, strFile)||temporaryListItem.Path==strFile)
 					{   
 						allFiles.Add(items[i]);
 					}
@@ -1464,46 +1465,45 @@ namespace MediaPortal.GUI.Video
     void SetIMDBThumbs(ArrayList items)
     {
       GUIListItem pItem ;
-      ArrayList movies = new ArrayList();
-			
+			ArrayList movies = new ArrayList();
       for (int x = 0; x < items.Count; ++x)
       {
         pItem = (GUIListItem)items[x];
-        if (pItem.IsFolder)
+				if (pItem.IsFolder)
 				{
 					if (pItem.ThumbnailImage!=String.Empty) continue;
-          if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
-          {
-            movies.Clear();
-            string file= pItem.Path + @"\VIDEO_TS";
-            VideoDatabase.GetMoviesByPath(file, ref movies);
-            for (int i = 0; i < movies.Count; ++i)
-            {
-              IMDBMovie info = (IMDBMovie)movies[i];
-              string strFile = "VIDEO_TS.IFO";
-              if (info.File[0] == '\\' || info.File[0] == '/')
-                info.File = info.File.Substring(1);
+					if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+					{
+						movies.Clear();
+						string file= pItem.Path + @"\VIDEO_TS";
+						VideoDatabase.GetMoviesByPath(file, ref movies);
+						for (int i = 0; i < movies.Count; ++i)
+						{
+							IMDBMovie info = (IMDBMovie)movies[i];
+							string strFile = "VIDEO_TS.IFO";
+							if (info.File[0] == '\\' || info.File[0] == '/')
+								info.File = info.File.Substring(1);
 
-              if (strFile.Length > 0)
-              {
-                if (info.File == strFile /*|| pItem->GetLabel() == info.Title*/)
-                {
-                  string strThumb;
-                  if (Utils.IsDVD(pItem.Path))
-                    pItem.Label=String.Format( "({0}:) {1}",  pItem.Path.Substring(0,1),  info.Title );
-                  strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title );
-                  if (System.IO.File.Exists(strThumb))
-                  {
-                    pItem.ThumbnailImage = strThumb;
-                    pItem.IconImageBig = strThumb;
-                    pItem.IconImage = strThumb;
-                  }
-                  break;
-                }
-              }
-            } // of for (int i = 0; i < movies.Count; ++i)
-          } // of if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
-        } // of if (pItem.IsFolder)
+							if (strFile.Length > 0)
+							{
+								if (info.File == strFile /*|| pItem->GetLabel() == info.Title*/)
+								{
+									string strThumb;
+									if (Utils.IsDVD(pItem.Path))
+										pItem.Label=String.Format( "({0}:) {1}",  pItem.Path.Substring(0,1),  info.Title );
+									strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title );
+									if (System.IO.File.Exists(strThumb))
+									{
+										pItem.ThumbnailImage = strThumb;
+										pItem.IconImageBig = strThumb;
+										pItem.IconImage = strThumb;
+									}
+									break;
+								}
+							}
+						} // of for (int i = 0; i < movies.Count; ++i)
+					} // of if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+				} // of if (pItem.IsFolder)
       } // of for (int x = 0; x < items.Count; ++x)
 
       movies.Clear();
@@ -2169,6 +2169,7 @@ namespace MediaPortal.GUI.Video
 				{
 					if (imdbActor.ThumbnailUrl.Length!=0)
 					{
+						ShowProgress(GUILocalizeStrings.Get(1009),actor,"",0);
 						DownloadThumnail(Thumbs.MovieActors,imdbActor.ThumbnailUrl,actor);
 					}
 					else Log.Write("url=empty for actor {0}", actor);
@@ -2183,6 +2184,7 @@ namespace MediaPortal.GUI.Video
 			{
 				for (int i=1; i < actors.Length;++i)
 				{
+					int percent = (int)(i*100)/actors.Length;
 					int pos =actors[i].IndexOf(" as ");
 					if (pos <0) continue;
 					string actor=actors[i].Substring(0,pos);
@@ -2200,6 +2202,7 @@ namespace MediaPortal.GUI.Video
 						{
 							if (imdbActor.ThumbnailUrl.Length!=0)
 							{
+								ShowProgress(GUILocalizeStrings.Get(1009),actor,"",percent);
 								DownloadThumnail(Thumbs.MovieActors,imdbActor.ThumbnailUrl,actor);
 							}
 							else Log.Write("url=empty for actor {0}", actor);
@@ -2373,6 +2376,15 @@ namespace MediaPortal.GUI.Video
 		#region IProgress Members
 
 		public void OnProgress(string line1, string line2, string line3, int percent)
+		{
+			if (!GUIWindowManager.IsRouted) return;
+			GUIDialogProgress 	pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+			pDlgProgress.SetLine(1, line1);
+			pDlgProgress.SetLine(2, line2);
+			//pDlgProgress.SetPercentage(percent);
+			pDlgProgress.Progress();
+		}
+		static public void ShowProgress(string line1, string line2, string line3, int percent)
 		{
 			if (!GUIWindowManager.IsRouted) return;
 			GUIDialogProgress 	pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);

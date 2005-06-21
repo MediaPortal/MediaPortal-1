@@ -386,7 +386,7 @@ namespace MediaPortal.Video.Database
 
 				string line1,line2,line3;
 				line1=GUILocalizeStrings.Get(984);
-				line2=strSearch;
+				line2=GetSearchString(strMovie).Replace("+"," ");
 				line3="";
 				int percent=0;
 				m_progress.OnProgress(line1,line2,line3,percent);
@@ -465,7 +465,7 @@ namespace MediaPortal.Video.Database
 
 			string line1,line2,line3;
 			line1=GUILocalizeStrings.Get(986);
-			line2=strSearch;
+			line2=strActor;
 			line3="";
 			int percent=0;
 			if (m_progress!=null) m_progress.OnProgress(line1,line2,line3,percent);
