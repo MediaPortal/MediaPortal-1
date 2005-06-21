@@ -757,10 +757,12 @@ namespace MediaPortal.TV.Recording
 				return true;
 			}
 
-			Vmr9.AddVMR9(m_graphBuilder);
+			if (Vmr9!=null)
+				Vmr9.AddVMR9(m_graphBuilder);
 			if (Vmr9.VMR9Filter==null)
 			{
-				Vmr7.AddVMR7(m_graphBuilder);
+				if (Vmr7!=null)
+					Vmr7.AddVMR7(m_graphBuilder);
 			}
 			AddPreferredCodecs(true,true);
       
