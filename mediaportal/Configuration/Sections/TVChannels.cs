@@ -2815,7 +2815,7 @@ namespace MediaPortal.Configuration.Sections
 									"Overwrite?",MessageBoxButtons.YesNo)==DialogResult.Yes)
 								{
 									//Delete Canceled series information
-									foreach(long del_canx in check_recording.CanceledSeries)
+									for (int z=0; z < check_recording.CanceledSeries.Count;++z)
 									{
 										TVDatabase.DeleteCanceledSeries(check_recording);
 									}

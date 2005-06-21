@@ -83,8 +83,8 @@ namespace MediaPortal.GUI.GUIBurner
 
 		public struct mad_timer_t 
 		{
-		  long seconds;     // Whole seconds 
-		  uint fraction;    // 1/MAD_TIMER_RESOLUTION seconds 
+		  public long seconds;     // Whole seconds 
+		  public uint fraction;    // 1/MAD_TIMER_RESOLUTION seconds 
 		};
 		
 

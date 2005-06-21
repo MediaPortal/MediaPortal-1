@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.TV
 		bool				m_bDialogVisible=false;
 		bool				m_bMSNChatPopup=false;
 		GUIDialogMenu dlg;
-		GUIDialogNotify dialogNotify=null;
+		//GUIDialogNotify dialogNotify=null;
 		GUIDialogMenuBottomRight dialogBottomMenu=null;
 		// Message box
 		bool				NotifyDialogVisible=false;

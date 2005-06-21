@@ -255,86 +255,86 @@ namespace MadMouse.FireDTV
 
 		public struct FireDTV_SELECT_MULTIPLEX_DVBS
 		{
-			ulong				uFrequency;    // 9.750.000 - 12.750.000 kHz
-			ulong				uSymbolRate;   // 1.000 - 40.000 kBaud
-			byte				uFecInner;     // FEC_AUTO, FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
-			byte				uPolarization; // POLARIZATION_HORIZONTAL,POLARIZATION_VERTICAL,POLARIZATION_NONE
-			byte				uLnb;
+			public ulong				uFrequency;    // 9.750.000 - 12.750.000 kHz
+			public ulong				uSymbolRate;   // 1.000 - 40.000 kBaud
+			public byte				uFecInner;     // FEC_AUTO, FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
+			public byte				uPolarization; // POLARIZATION_HORIZONTAL,POLARIZATION_VERTICAL,POLARIZATION_NONE
+			public byte				uLnb;
 		}
 
 		public struct FireDTV_SELECT_MULTIPLEX_DVBT
 		{
-			ulong				uFrequency;        // 47.000 - 860.000 kHz
-			byte				uBandwidth;        // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
-			byte				uConstellation;    // CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
-			byte				uCodeRateHP;	   // CODE_RATE_12,CODE_RATE_23,CODE_RATE_34,CODE_RATE_56,CODE_RATE_78,OFDM_AUTO
-			byte				uCodeRateLP;	   // CODE_RATE_12,CODE_RATE_23,CODE_RATE_34,CODE_RATE_56,CODE_RATE_78,OFDM_AUTO
-			byte				uGuardInterval;    // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
-			byte				uTransmissionMode; // TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
-			byte				uHierarchyInfo;	   // HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
+			public ulong				uFrequency;        // 47.000 - 860.000 kHz
+			public byte				uBandwidth;        // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
+			public byte				uConstellation;    // CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
+			public byte				uCodeRateHP;	   // CODE_RATE_12,CODE_RATE_23,CODE_RATE_34,CODE_RATE_56,CODE_RATE_78,OFDM_AUTO
+			public byte				uCodeRateLP;	   // CODE_RATE_12,CODE_RATE_23,CODE_RATE_34,CODE_RATE_56,CODE_RATE_78,OFDM_AUTO
+			public byte				uGuardInterval;    // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+			public byte				uTransmissionMode; // TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
+			public byte				uHierarchyInfo;	   // HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
 		}
 
 		public struct FireDTV_SELECT_SERVICE_DVBS
 		{
-			bool				bCurrentTransponder;
-			ulong				uLnb;
-			struct QpskParameter
+			public bool				bCurrentTransponder;
+			public ulong				uLnb;
+			public struct QpskParameter
 			{
-				ulong			uFrequency;    // kHz
-				ulong			uSymbolRate;   // kBaud
-				byte			uFecInner;	   // FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
-				byte			uPolarization; // POLARIZATION_HORIZONTAL, POLARIZATION_VERTICAL
+				public ulong			uFrequency;    // kHz
+				public ulong			uSymbolRate;   // kBaud
+				public byte			uFecInner;	   // FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
+				public byte			uPolarization; // POLARIZATION_HORIZONTAL, POLARIZATION_VERTICAL
 			};
-			short				uOriginalNetworkId;
-			short				uTransportStreamId;
-			short				uServiceId;
-			short				uVideoPid;
-			short				uAudioPid;
-			short				uPcrPid;
-			short				uTeleTxtPid;
-			short				uPMTPid;
+			public short				uOriginalNetworkId;
+			public short				uTransportStreamId;
+			public short				uServiceId;
+			public short				uVideoPid;
+			public short				uAudioPid;
+			public short				uPcrPid;
+			public short				uTeleTxtPid;
+			public short				uPMTPid;
 		}
 
 		public struct FireDTV_SELECT_PIDS_DVBS
 		{
-			bool				bCurrentTransponder;
-			bool				bFullTransponder;
-			byte				uLnb;		   // 0-3
-			struct				QpskParameter
+			public bool				bCurrentTransponder;
+			public bool				bFullTransponder;
+			public byte				uLnb;		   // 0-3
+			public struct				QpskParameter
 			{
-				ulong			uFrequency;    // 9.750.000 - 12.750.000 kHz
-				ulong			uSymbolRate;   // kBaud 1.000 - 40.000
-				byte			uFecInner;	   // FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
-				byte			uPolarization; // POLARIZATION_HORIZONTAL, POLARIZATION_VERTICAL, POLARIZATION_NONE
+				public ulong			uFrequency;    // 9.750.000 - 12.750.000 kHz
+				public ulong			uSymbolRate;   // kBaud 1.000 - 40.000
+				public byte			uFecInner;	   // FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
+				public byte			uPolarization; // POLARIZATION_HORIZONTAL, POLARIZATION_VERTICAL, POLARIZATION_NONE
 			};
-			byte				uNumberOfValidPids; // 1-16
+			public byte				uNumberOfValidPids; // 1-16
 			[MarshalAs (UnmanagedType.ByValArray, SizeConst=16)]
-			short[]				uPids;
+			public short[]				uPids;
 		}
 
 		public struct FireDTV_SELECT_PIDS_DVBT
 		{
-			bool				bCurrentTransponder;
-			bool				bFullTransponder;
-			struct				OFDMParameter
+			public bool				bCurrentTransponder;
+			public bool				bFullTransponder;
+			public struct				OFDMParameter
 			{
-				ulong			uFrequency;				// kHz 47.000-860.000
-				byte			uBandwidth;				// BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
-				byte			uConstellation;			// CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
-				byte			uCodeRateHP;			// CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
-				byte			uCodeRateLP;			// CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
-				byte			uGuardInterval;			// GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
-				byte			uTransmissionMode;		// TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
-				byte			uHierarchyInfo;			// HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
+				public ulong			uFrequency;				// kHz 47.000-860.000
+				public byte			uBandwidth;				// BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
+				public byte			uConstellation;			// CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
+				public byte			uCodeRateHP;			// CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+				public byte			uCodeRateLP;			// CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+				public byte			uGuardInterval;			// GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+				public byte			uTransmissionMode;		// TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
+				public byte			uHierarchyInfo;			// HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
 			};
-			byte				uNumberOfValidPids;			// 1-16
+			public byte				uNumberOfValidPids;			// 1-16
 			[MarshalAs (UnmanagedType.ByValArray, SizeConst=16)]
-			short[]				uPids;
+			public short[]				uPids;
 		}
 
 		public struct FireDTV_SIGNAL_STRENGTH
 		{
-			ulong				uSignalStrength;
+			public ulong				uSignalStrength;
 		}
 		[StructLayout(LayoutKind.Sequential)] 
 			public struct FireDTV_FIRMWARE_VERSION
@@ -351,20 +351,20 @@ namespace MadMouse.FireDTV
 
 		public struct FireDTV_FRONTEND_STATUS
 		{
-			ulong				uFrequency;			//kHz
-			ulong				uBer;				//10-6
-			byte				uSignalStrength;	//0-100%
-			bool				bLock;	
+			public ulong				uFrequency;			//kHz
+			public ulong				uBer;				//10-6
+			public byte				uSignalStrength;	//0-100%
+			public bool				bLock;	
 	
-			short				uCNRatio;
-			byte				uAGC;
-			byte				uValue2;
-			byte				uStatusFlags;
-			short				uCIFlags;
+			public short				uCNRatio;
+			public byte				uAGC;
+			public byte				uValue2;
+			public byte				uStatusFlags;
+			public short				uCIFlags;
 
-			byte				uSupplyVoltage;
-			byte				uAntennaVoltage;
-			byte				uBusVoltage;
+			public byte				uSupplyVoltage;
+			public byte				uAntennaVoltage;
+			public byte				uBusVoltage;
 		}	
 		[StructLayout(LayoutKind.Sequential)] 
 			public struct FireDTV_SYSTEM_INFO
@@ -378,69 +378,69 @@ namespace MadMouse.FireDTV
 
 		public struct FireDTV_LNB_CMD
 		{
-			byte				uVoltage;
-			byte				uContTone;
-			byte				uBurst;
-			byte				uNrDiseqcCmds;
-			struct DiseqcCmd
+			public byte				uVoltage;
+			public byte				uContTone;
+			public byte				uBurst;
+			public byte				uNrDiseqcCmds;
+			public struct DiseqcCmd
 			{
-				byte			uLength;
-				byte			uFraming;
-				byte			uAddress;
-				byte			uCommand;
-				byte[]			Data;
+				public byte			uLength;
+				public byte			uFraming;
+				public byte			uAddress;
+				public byte			uCommand;
+				public byte[]			Data;
 			};
 		}
 
 		public struct FireDTV_FIRMWARE_UPDATE_STATUS
 		{
-			byte				uPercentageDone;
-			byte				uLastAVCTransactionStatusCode;
-			byte				uLastFirmwareStatusCode;
+			public byte				uPercentageDone;
+			public byte				uLastAVCTransactionStatusCode;
+			public byte				uLastFirmwareStatusCode;
 		}
 
 		public struct FireDTV_LNB_PARAMETERS
 		{
-			byte				uNrAntennas;
-			struct LnbParameter 
+			public byte				uNrAntennas;
+			public struct LnbParameter 
 			{
-				byte			uAntennaNr;
-				bool			bEast;
-				short			OrbitalPosition;
-				short			LOF1;			// MHz
-				short			SwitchFreq;		// MHz
-				short			LOF2;			// MHz
+				public byte			uAntennaNr;
+				public bool			bEast;
+				public short			OrbitalPosition;
+				public short			LOF1;			// MHz
+				public short			SwitchFreq;		// MHz
+				public short			LOF2;			// MHz
 			};
 		}
 
 		public struct FireDTV_BOARD_TEMPERATURE
 		{
-			byte[]				uTemperature;
+			public byte[]				uTemperature;
 		}
 
 		public struct FireDTV_TUNE_QPSK_PARAM
 		{
-			ulong				uFrequency;    // 950.000 - 2.150.000 kHz
-			short				uSymbolRate;   // 1.000 - 40.000 kBaud
-			byte				uFecInner;     // FEC_AUTO, FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
-			byte				uPolarization; // POLARIZATION_HORIZONTAL, POLARIZATION_VERTICAL,POLARIZATION_NONE
-			bool				bBand;		   // TRUE = HighBand FALSE = LowBand
+			public ulong				uFrequency;    // 950.000 - 2.150.000 kHz
+			public short				uSymbolRate;   // 1.000 - 40.000 kBaud
+			public byte				uFecInner;     // FEC_AUTO, FEC_12,FEC_23, FEC_34, FEC_56, FEC_78
+			public byte				uPolarization; // POLARIZATION_HORIZONTAL, POLARIZATION_VERTICAL,POLARIZATION_NONE
+			public bool				bBand;		   // TRUE = HighBand FALSE = LowBand
 		}
 
 		public struct FireDTV_CI_DEBUG_ERROR_MSG
 		{
-			byte	MsgType;
-			byte	MsgTextLength;
+			public byte	MsgType;
+			public byte	MsgTextLength;
 			[MarshalAs (UnmanagedType.ByValArray, SizeConst=256)]
-			byte[]	MsgText;
+			public byte[]	MsgText;
 		}
 
 		public struct UTC_TIME
 		{
 			[MarshalAs (UnmanagedType.ByValArray, SizeConst=2)]
-			byte[]	Date;
+			public byte[]	Date;
 			[MarshalAs (UnmanagedType.ByValArray, SizeConst=3)]
-			byte[]	Time;
+			public byte[]	Time;
 		}
 
 		#endregion
@@ -560,7 +560,7 @@ namespace MadMouse.FireDTV
 		#endregion
 		public FireDTVEventArgs(FireDTVSourceFilterInfo	sourceFilter):base()
 		{
-			sourceFilter = _sourceFilter;
+			_sourceFilter=sourceFilter;
 		}
 
 		public FireDTVSourceFilterInfo SourceFilter

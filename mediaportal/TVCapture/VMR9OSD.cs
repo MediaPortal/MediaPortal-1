@@ -43,7 +43,7 @@ namespace MediaPortal.TV.Recording
 			OtherBitmap,
 			None
 		}
-
+/*
 		struct OSDSkin
 		{
 			public string[] rects;
@@ -57,7 +57,7 @@ namespace MediaPortal.TV.Recording
 			public string mute;
 			public string chLogo;
 			public string bg;
-		}
+		}*/
 		struct OSDChannelList
 		{
 			public string baseRect;
@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Recording
 		int m_channelSNR=0;
 		int m_channelLevel=0;
 		// osd skin
-		OSDSkin m_osdSkin;
+		//OSDSkin m_osdSkin;
 		OSDChannelList m_osdChannels;
 		bool m_bitmapIsVisible=false;
 		int m_timeout=0;
