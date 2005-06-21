@@ -24,3 +24,4 @@ LUI
 ExternalDisplay.xml
 *.DLL
 *.log
+config.ini
