@@ -166,11 +166,10 @@ namespace MediaPortal.TV.Recording
 			newchan.MajorChannel=-1;
 			newchan.Frequency=-1;
 			newchan.PhysicalChannel=currentIndex;
-
-			newchan.Modulation=(int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
-			newchan.Symbolrate=-1;
-			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.Frequency=-1;
+			newchan.Symbolrate=-1;
+			newchan.Modulation=(int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
+			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			captureCard.Tune(newchan,0);
 			Application.DoEvents();
 			timer1.Enabled=true;
