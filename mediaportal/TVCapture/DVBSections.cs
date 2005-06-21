@@ -1459,8 +1459,6 @@ namespace MediaPortal.TV.Recording
 
 					//get the PMT table
 					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
-					if (m_sectionsList.Count>0)
-						pmtCache[pat.network_pmt_PID]=m_sectionsList;
 
 					//PMT table contains the audio/video/teletext pids, so decode them
 					foreach(byte[] wdata in m_sectionsList)
