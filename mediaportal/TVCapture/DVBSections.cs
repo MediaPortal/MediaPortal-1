@@ -1418,7 +1418,7 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 
-		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp, Hashtable pmtCache)
+		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		{
 			int t;
 			int n;
@@ -1458,16 +1458,9 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//get the PMT table
-					if (pmtCache!=null && pmtCache.ContainsKey(pat.network_pmt_PID) )
-					{
-						m_sectionsList=(ArrayList)pmtCache[pat.network_pmt_PID];
-					}
-					else
-					{
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
-						if (m_sectionsList.Count>0)
-							pmtCache[pat.network_pmt_PID]=m_sectionsList;
-					}
+					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
+					if (m_sectionsList.Count>0)
+						pmtCache[pat.network_pmt_PID]=m_sectionsList;
 
 					//PMT table contains the audio/video/teletext pids, so decode them
 					foreach(byte[] wdata in m_sectionsList)
@@ -2432,7 +2425,7 @@ namespace MediaPortal.TV.Recording
 			foreach(byte[] arr in m_sectionsList)
 				count=decodePATTable(arr, tp, ref transponder);
 			if(count>0)
-				LoadPMTTables(filter,tp,ref transponder,null);
+				LoadPMTTables(filter,tp,ref transponder);
 			return true;
 		}
 		public bool ProcessPATSections(DShowNET.IBaseFilter filter,TPList tp,ref Transponder transponder)
@@ -2442,7 +2435,7 @@ namespace MediaPortal.TV.Recording
 			GetStreamData(filter,0, 0,0,m_timeoutMS);
 			foreach(byte[] arr in m_sectionsList)
 				decodePATTable(arr, tp, ref transponder);
-			LoadPMTTables(filter,tp,ref transponder,null);
+			LoadPMTTables(filter,tp,ref transponder);
 			return true;
 		}
 		//
@@ -2586,7 +2579,6 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("AutoTune()");
 
-				Hashtable pmtCache = new Hashtable();
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
 
@@ -2600,7 +2592,7 @@ namespace MediaPortal.TV.Recording
 
 				// now that we got the network PMT (Program Map Table) pids for all services
 				// load & decode the PMT tables themselves
-				LoadPMTTables(filter,transp[0],ref transponder,pmtCache);
+				LoadPMTTables(filter,transp[0],ref transponder);
 
 				// Fill in Logical Channel Numbers
 				//Log.Write("Number of channels before processing NIT: {0}", transponder.channels.Count);
@@ -2627,7 +2619,6 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				m_sectionsList=new ArrayList();	
-				Hashtable pmtCache = new Hashtable();
 				Transponder transponder = new Transponder();
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
@@ -2641,7 +2632,7 @@ namespace MediaPortal.TV.Recording
 				foreach(byte[] arr in m_sectionsList)
 					decodePATTable(arr, transp[0], ref transponder);
 
-				LoadPMTTables(filter,transp[0],ref transponder,pmtCache);
+				LoadPMTTables(filter,transp[0],ref transponder);
 				int t;
 				int n;
 				ArrayList	tab42=new ArrayList();
