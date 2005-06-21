@@ -60,6 +60,10 @@ namespace ProcessPlugins.ExternalDisplay.Setting
       {
         s.Append(val.Evaluate());
       }
+      for(int i=0; i<Settings.Instance.TranslateFrom.Length;i++)
+      {
+        s.Replace(Settings.Instance.TranslateFrom[i],Settings.Instance.TranslateTo[i]);
+      }
       return s.ToString();
     }
   }

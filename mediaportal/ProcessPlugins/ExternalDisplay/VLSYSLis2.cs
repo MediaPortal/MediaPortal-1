@@ -94,7 +94,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="colsG">The width in pixels in graphic mode</param>
     /// <param name="delayG">Communication delay in graphic mode</param>
     /// <param name="backLight">Backlight on?</param>
-    public void Initialize(string port, int lines, int cols, int delay, int linesG, int colsG, int delayG, bool backLight)
+    public void Initialize(string port, int lines, int cols, int delay, int linesG, int colsG, int delayG, bool backLight, int contrast)
     {
       try
       {

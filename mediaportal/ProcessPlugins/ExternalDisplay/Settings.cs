@@ -106,6 +106,7 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_Port = value; }
     }
 
+    [XmlIgnore]
     public string GUIPort
     {
       get
@@ -232,6 +233,18 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_BackLight = value; }
     }
 
+    private int m_Contrast = 127;
+    
+    /// <summary>
+    /// Contrast
+    /// </summary>
+    [XmlAttribute]
+    public int Contrast
+    {
+      get { return m_Contrast; }
+      set { m_Contrast = value; }
+    }
+
     //        private string m_FontFile = "f8x11.fnt";
     //        [XmlAttribute]
     //        [DefaultValue("")]
@@ -279,6 +292,35 @@ namespace ProcessPlugins.ExternalDisplay
         return m_Drivers;
       }
     }
+
+    private string[] m_TranslateFrom;
+    [XmlArray]
+    public string[] TranslateFrom
+    {
+      get
+      {
+        return m_TranslateFrom;
+      }
+      set
+      {
+        m_TranslateFrom = value;
+      }
+    }
+
+    private string[] m_TranslateTo;
+    [XmlArray]
+    public string[] TranslateTo
+    {
+      get
+      {
+        return m_TranslateTo;
+      }
+      set
+      {
+        m_TranslateTo = value;
+      }
+    }
+
 
     #endregion
 
@@ -341,6 +383,8 @@ namespace ProcessPlugins.ExternalDisplay
       list.Add(new iMON());
       list.Add(new DebugForm());
       list.Add(new Clipboard());
+      list.Add(new Girder());
+      list.Add(new MediaPad());
       m_Drivers = new IDisplay[list.Count];
       list.CopyTo(m_Drivers);
     }
@@ -351,6 +395,9 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_settings"></param>
     private static void Default(Settings _settings)
     {
+      _settings.TranslateFrom = new string[] {"©","®"};
+      _settings.TranslateTo = new string[]   {"(c)","(R)"};
+
       Message msg;
       Line line;
       //

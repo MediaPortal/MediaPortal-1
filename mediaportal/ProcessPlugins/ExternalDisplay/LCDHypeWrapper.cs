@@ -72,7 +72,7 @@ namespace ProcessPlugins.ExternalDisplay
       get { return info.SupportGfxLCD; }
     }
 
-    public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight)
+    public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight, int _contrast)
     {
       if (!SupportsGraphics)
       {
@@ -81,7 +81,7 @@ namespace ProcessPlugins.ExternalDisplay
         _timeG=0;
       }
 
-      m_tDllReg.InvokeMember("LCD_SetIOPropertys",BINDING_FLAGS,null,null,new object[] {_port ,_time, _timeG, _cols, _lines, _colsG, _linesG,_backLight,(byte)127,info.SupportContrastSlider,(byte)127,0,false,false});
+      m_tDllReg.InvokeMember("LCD_SetIOPropertys",BINDING_FLAGS,null,null,new object[] {_port ,_time, _timeG, _cols, _lines, _colsG, _linesG,_backLight,(byte)127,info.SupportContrastSlider,(byte) _contrast,0,false,false});
     }
 
     public void Cleanup()

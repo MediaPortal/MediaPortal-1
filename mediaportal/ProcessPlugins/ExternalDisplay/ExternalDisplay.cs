@@ -47,7 +47,7 @@ namespace ProcessPlugins.ExternalDisplay
         //Initialize display
         display = Settings.Instance.LCDType;
         Debug.Assert(display != null);
-        display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLight);
+        display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLight, Settings.Instance.Contrast);
         handler = new DisplayHandler(display);
         handler.Start();
         //subscribe for action notification

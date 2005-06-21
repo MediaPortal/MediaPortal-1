@@ -34,11 +34,15 @@ copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
+rem ExternalDisplay plugin LCD driver DLLs
 copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
 if not exist LUI\. mkdir LUI
 copy ..\..\..\LUI.dll LUI\.
 copy ..\..\..\Communications.dll .
+copy ..\..\..\Interop.GIRDERLib.dll .
+copy ..\..\..\MediaPadLayer.dll .
+rem 
 copy ..\..\..\KCS.Utilities.dll .
 copy ..\..\..\X10Plugin.* .
 copy ..\..\..\X10Unified.* .

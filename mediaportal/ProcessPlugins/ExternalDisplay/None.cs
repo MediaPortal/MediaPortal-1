@@ -58,7 +58,7 @@ namespace ProcessPlugins.ExternalDisplay
         {
         }
 
-        public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight)
+        public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight, int _contrast)
         {
             lines = new string[_lines];
             Clear();

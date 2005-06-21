@@ -170,6 +170,11 @@
                     HintPath = "..\Communications.dll"
                 />
                 <Reference
+                    Name = "Interop.GIRDERLib"
+                    AssemblyName = "Interop.GIRDERLib"
+                    HintPath = "..\Interop.GIRDERLib.dll"
+                />
+                <Reference
                     Name = "Microsoft.Office.Interop.Outlook"
                     AssemblyName = "Microsoft.Office.Interop.Outlook"
                     HintPath = "..\Microsoft.Office.Interop.Outlook.dll"
@@ -249,6 +254,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ExternalDisplay\Girder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ExternalDisplay\HighPerformanceCounter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -270,6 +280,11 @@
                 />
                 <File
                     RelPath = "ExternalDisplay\LCDHypeWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ExternalDisplay\MediaPad.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

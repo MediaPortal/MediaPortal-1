@@ -130,7 +130,8 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_colsG">ignored</param>
     /// <param name="_timeG">ignored</param>
     /// <param name="_backLight">ignored</param>
-    public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight)
+    /// <param name="_contrast">ignored</param>
+    public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight, int _contrast)
     {
       this.Show();
       Clear();
