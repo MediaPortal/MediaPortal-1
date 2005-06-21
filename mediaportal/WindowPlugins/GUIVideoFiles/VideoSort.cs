@@ -93,15 +93,27 @@ namespace MediaPortal.GUI.Video
 						return String.Compare(item2.DVDLabel, item1.DVDLabel, true);
 					}
 				case SortMethod.Size:
-					if (item1.FileInfo==null) return -1;
-					if (item2.FileInfo==null) return -1;
-					if (sortAscending)
+					if (item1.FileInfo==null || item2.FileInfo==null)
 					{
-						return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+						if (sortAscending)
+						{
+							return (int)(item1.Duration - item2.Duration);
+						}
+						else
+						{
+							return (int)(item2.Duration - item1.Duration);
+						}
 					}
 					else
 					{
-						return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+						if (sortAscending)
+						{
+							return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+						}
+						else
+						{
+							return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+						}
 					}
 
         

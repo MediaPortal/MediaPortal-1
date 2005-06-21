@@ -387,6 +387,8 @@ namespace MediaPortal.GUI.Video
 						item.Label2 = movie.Rating.ToString();
 					else if (CurrentSortMethod==VideoSort.SortMethod.Label)
 						item.Label2 = movie.DVDLabel.ToString();
+					else if (CurrentSortMethod==VideoSort.SortMethod.Size)
+						item.Label2 = Utils.SecondsToHMString(movie.RunTime*60);
 				}
 				else
 				{
