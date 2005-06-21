@@ -523,12 +523,12 @@ namespace MediaPortal.TV.Recording
 			if(flag==false)
 			{
 				
-				Log.WriteFile(Log.LogType.Capture,"DVBSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
+				Log.WriteFile(Log.LogType.Capture,"ATSCSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
 				return false;
 			}
 			if (sectLast<=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
+				Log.WriteFile(Log.LogType.Capture,"ATSCSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,tid,tableSection,timeout);
 			}
 			for(int n=0;n<sectLast;n++)
 			{
@@ -544,7 +544,7 @@ namespace MediaPortal.TV.Recording
 						}
 						catch
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							Log.WriteFile(Log.LogType.Capture,true,"ATSCSections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
 							m_sectionsList.Clear();
 							break;
 						}
@@ -569,7 +569,7 @@ namespace MediaPortal.TV.Recording
 						}
 						catch
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"dvbsections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
+							Log.WriteFile(Log.LogType.Capture,true,"ATSCSections: error on copy data. address={0}, length ={1}",sectionBuffer,dataLen);
 							m_sectionsList.Clear();
 							break;
 						}
