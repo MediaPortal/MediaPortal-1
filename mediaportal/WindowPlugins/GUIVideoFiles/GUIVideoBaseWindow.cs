@@ -511,7 +511,46 @@ namespace MediaPortal.GUI.Video
           string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
           if (System.IO.File.Exists(fileName))
           {
+						IMDBMovie movieDetails = new IMDBMovie();
+						VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
+						int idFile=VideoDatabase.GetFileId(fileName);
+						int idMovie=VideoDatabase.GetMovieId(fileName);
+						int timeMovieStopped=0;
+						byte[] resumeData = null;
+						if ( (idMovie >= 0) && (idFile >= 0) )
+						{
+							timeMovieStopped=VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+							Log.Write("GUIVideoFiles::OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
+							if (timeMovieStopped>0)
+							{
+								string title=System.IO.Path.GetFileName(fileName);
+								VideoDatabase.GetMovieInfoById( idMovie, ref movieDetails);
+								if (movieDetails.Title!=String.Empty) title=movieDetails.Title;
+          
+								GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+								if (null == dlgYesNo) return;
+								dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
+								dlgYesNo.SetLine(1, title);
+								dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936)+Utils.SecondsToHMSString(timeMovieStopped) );
+								dlgYesNo.SetDefaultToYes(true);
+								dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+          
+								if (!dlgYesNo.IsConfirmed) timeMovieStopped=0;
+							}
+						}
+
             g_Player.PlayDVD();
+						if (g_Player.Playing && timeMovieStopped > 0)
+						{
+							if (g_Player.IsDVD)
+							{
+								g_Player.Player.SetResumeState(resumeData);
+							}
+							else
+							{
+								g_Player.SeekAbsolute(timeMovieStopped);
+							}
+						}
             return;
           }
         }
