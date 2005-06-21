@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
@@ -1416,7 +1417,7 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 
-		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
+		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp, Hashtable pmtCache)
 		{
 			int t;
 			int n;
@@ -1456,7 +1457,16 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//get the PMT table
-					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
+					if (pmtCache!=null && pmtCache.ContainsKey(pat.network_pmt_PID) )
+					{
+						m_sectionsList=(ArrayList)pmtCache[pat.network_pmt_PID];
+					}
+					else
+					{
+						GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
+						if (m_sectionsList.Count>0)
+							pmtCache[pat.network_pmt_PID]=m_sectionsList;
+					}
 
 					//PMT table contains the audio/video/teletext pids, so decode them
 					foreach(byte[] wdata in m_sectionsList)
@@ -2421,7 +2431,7 @@ namespace MediaPortal.TV.Recording
 			foreach(byte[] arr in m_sectionsList)
 				count=decodePATTable(arr, tp, ref transponder);
 			if(count>0)
-				LoadPMTTables(filter,tp,ref transponder);
+				LoadPMTTables(filter,tp,ref transponder,null);
 			return true;
 		}
 		public bool ProcessPATSections(DShowNET.IBaseFilter filter,TPList tp,ref Transponder transponder)
@@ -2431,7 +2441,7 @@ namespace MediaPortal.TV.Recording
 			GetStreamData(filter,0, 0,0,m_timeoutMS);
 			foreach(byte[] arr in m_sectionsList)
 				decodePATTable(arr, tp, ref transponder);
-			LoadPMTTables(filter,tp,ref transponder);
+			LoadPMTTables(filter,tp,ref transponder,null);
 			return true;
 		}
 		//
@@ -2575,6 +2585,7 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("AutoTune()");
 
+				Hashtable pmtCache = new Hashtable();
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
 
@@ -2588,7 +2599,7 @@ namespace MediaPortal.TV.Recording
 
 				// now that we got the network PMT (Program Map Table) pids for all services
 				// load & decode the PMT tables themselves
-				LoadPMTTables(filter,transp[0],ref transponder);
+				LoadPMTTables(filter,transp[0],ref transponder,pmtCache);
 
 				// Fill in Logical Channel Numbers
 				//Log.Write("Number of channels before processing NIT: {0}", transponder.channels.Count);
@@ -2605,171 +2616,6 @@ namespace MediaPortal.TV.Recording
 			return transponder;
 		}//public Transponder Scan(DShowNET.IBaseFilter filter)
 		
-		/// <summary>
-		/// Get all information about channels & services 
-		/// </summary>
-		/// <param name="filter">[in] IBase filter implementing IMpeg2Data</param>
-		/// <param name="serviceId">[in] The service id for which the raw PMT should be returned</param>
-		/// <param name="info">[Out] The channel info for the service id</param>
-		/// <returns>byte array containing the raw PMT or null if no PMT is found</returns>
-		public byte[] GetRAWPMT(DShowNET.IBaseFilter filter, int serviceId, out ChannelInfo info)
-		{
-			byte[] PMTTable=null;
-			info=new ChannelInfo();
-
-			ArrayList sectionTable=new ArrayList();
-			try
-			{
-				m_sectionsList=new ArrayList();	
-				Transponder transponder = new Transponder();
-				transponder.channels = new ArrayList();
-				transponder.PMTTable = new ArrayList();
-				//Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT for channel:{0}",serviceId);
-				GetStreamData(filter,0, 0,0,200);
-				if (m_sectionsList.Count==0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() timeout");
-					return null;
-				}
-				//Log.WriteFile(Log.LogType.Capture,"dvbSections:Decode PAT :{0}",m_sectionsList.Count);
-				// jump to parser
-				foreach(byte[] arr in m_sectionsList)
-					decodePATTable(arr, transp[0], ref transponder);
-
-				LoadPMTTables(filter,transp[0],ref transponder);
-				bool found=false;
-				foreach (ChannelInfo chanInfo in transponder.channels)
-				{
-					//Log.WriteFile(Log.LogType.Capture,"dvbSections:Got channel:{0} {1}",chanInfo.service_name, chanInfo.serviceID);
-					if (chanInfo.serviceID==serviceId)
-					{
-						Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() found channel:{0} scrambled:{1} service id:{2} network PMT pid:{3} program:{4}",
-									chanInfo.service_name,chanInfo.scrambled,chanInfo.serviceID,chanInfo.network_pmt_PID,chanInfo.program_number);
-						if (chanInfo.pid_list!=null)
-						{
-							for (int i=0; i < chanInfo.pid_list.Count;++i)
-							{
-								DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[i];
-								if (data.isTeletext) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() teletext pid:{0}", data.elementary_PID);
-								if (data.isAudio) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() audio pid:{0}", data.elementary_PID);
-								if (data.isVideo) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() video pid:{0}", data.elementary_PID);
-								if (data.isDVBSubtitle) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() subtitle pid:{0}", data.elementary_PID);
-								if (data.isAC3Audio) 
-									Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() ac3 audio pid:{0}", data.elementary_PID);
-							}
-						}
-						found=true;
-						info=chanInfo;
-						break;
-					}
-				}
-				if (!found) 
-				{
-					//Log.WriteFile(Log.LogType.Capture,"dvbSections:GetRAWPMT() channel not found");
-					return null;
-				}
-				int t;
-				int n;
-				ArrayList	tab42=new ArrayList();
-				ArrayList	tab46=new ArrayList();
-
-				// check tables
-				//AddTSPid(17);
-				//
-				
-				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,200);
-				tab42=(ArrayList)m_sectionsList.Clone();
-				
-				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,200);
-				tab46=(ArrayList)m_sectionsList.Clone();
-
-				
-				//bool flag=false;
-				ChannelInfo pat;
-				ArrayList pmtList = transponder.PMTTable;
-				int pmtScans;
-				pmtScans = (pmtList.Count / 20) + 1;
-				
-				//Log.WriteFile(Log.LogType.Capture,"dvbSections: PMT table list:{0} pmtScans:{1}", pmtList.Count,pmtScans);
-				for (t = 1; t <= pmtScans; t++)
-				{
-					//flag = DeleteAllPIDsI();
-					for (n = 0; n <= 19; n++)
-					{
-						if (((t - 1) * 20) + n > pmtList.Count - 1)
-						{
-							break;
-						}
-						pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-						
-						// parse pmt
-						int res=0;
-						//if (pat.program_number==serviceId)
-					{
-				//		Log.WriteFile(Log.LogType.Capture,"dvbSections.Get PMT pid:{0:X}",pat.network_pmt_PID);
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,200); // get here the pmt
-						foreach(byte[] wdata in m_sectionsList)
-						{
-							if (pat.program_number==serviceId)
-							{
-					//			Log.WriteFile(Log.LogType.Capture,"dvbsections:service id:{0} program:{1} PMT pid:{2:X} length:{3}",pat.serviceID,pat.program_number,pat.network_pmt_PID,wdata.Length);
-								for (int l=0; l < wdata.Length;++l)
-									sectionTable.Add(wdata[l]);
-							}
-							Debug.WriteLine("decode PMT:"+n.ToString());
-							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
-						}
-
-						if(res>0)
-						{
-
-							Debug.WriteLine("decode SDT table42");
-							foreach(byte[] wdata in tab42)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-
-							Debug.WriteLine("decode SDT table46");
-							foreach(byte[] wdata in tab46)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-						}
-						transponder.channels.Add(pat);
-					}
-					}
-				}
-
-				foreach (ChannelInfo chanInfo in transponder.channels)
-				{
-					if (chanInfo.serviceID==serviceId)
-					{
-						Debug.WriteLine("  got channelinfo");
-						info=chanInfo;
-						break;
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetRAWPMT() exception:{0}", ex.ToString());
-			}
-
-			if (sectionTable.Count>3)
-			{
-				byte byLen=(byte)sectionTable[2];
-				byLen+=3;
-				PMTTable = new byte[byLen];
-				for (int i=0; i < byLen;++i)
-				{
-					PMTTable[i]=(byte)sectionTable[i];
-				}
-			}
-			//Log.WriteFile(Log.LogType.Capture,"dvbsections:GetRAWPMT done");
-			return PMTTable;
-		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
 
 		public DVBChannel GetDVBChannel(DShowNET.IBaseFilter filter, int serviceId)
 		{
@@ -2780,6 +2626,7 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				m_sectionsList=new ArrayList();	
+				Hashtable pmtCache = new Hashtable();
 				Transponder transponder = new Transponder();
 				transponder.channels = new ArrayList();
 				transponder.PMTTable = new ArrayList();
@@ -2793,7 +2640,7 @@ namespace MediaPortal.TV.Recording
 				foreach(byte[] arr in m_sectionsList)
 					decodePATTable(arr, transp[0], ref transponder);
 
-				LoadPMTTables(filter,transp[0],ref transponder);
+				LoadPMTTables(filter,transp[0],ref transponder,pmtCache);
 				int t;
 				int n;
 				ArrayList	tab42=new ArrayList();
