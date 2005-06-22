@@ -2764,7 +2764,7 @@ namespace MediaPortal.TV.Recording
 				string providerName;
 				int audio1,audio2,audio3,ac3Pid;
 				string audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3;
-				
+				bool HasEITPresentFollow,HasEITSchedule;
 				switch (m_NetworkType)
 				{
 					case NetworkType.ATSC: 
@@ -2773,7 +2773,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get ATSC tuning details");
 						int symbolrate=0,innerFec=0,modulation=0,physicalChannel=0;
 						int minorChannel=0,majorChannel=0;
-						TVDatabase.GetATSCTuneRequest(channel.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minorChannel,out majorChannel);
+						TVDatabase.GetATSCTuneRequest(channel.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minorChannel,out majorChannel,out HasEITPresentFollow,out HasEITSchedule);
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}", 
 							frequency,physicalChannel,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
 
@@ -2802,6 +2802,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio1=audio1;
 						currentTuningObject.Audio2=audio2;
 						currentTuningObject.Audio3=audio3;
+						currentTuningObject.HasEITSchedule=HasEITSchedule;
+						currentTuningObject.HasEITPresentFollow=HasEITPresentFollow;
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() submit tuning request");
 						SubmitTuneRequest(currentTuningObject);
 					} break;
@@ -2811,7 +2813,7 @@ namespace MediaPortal.TV.Recording
 						//get the DVB-C tuning details from the tv database
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBC tuning details");
 						int symbolrate=0,innerFec=0,modulation=0;
-						TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+						TVDatabase.GetDVBCTuneRequest(channel.ID,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule);
 						if (frequency<=0) 
 						{
 							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
@@ -2840,6 +2842,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio1=audio1;
 						currentTuningObject.Audio2=audio2;
 						currentTuningObject.Audio3=audio3;
+						currentTuningObject.HasEITPresentFollow=HasEITPresentFollow;
+						currentTuningObject.HasEITSchedule=HasEITSchedule;
 						SubmitTuneRequest(currentTuningObject);
 
 					} break;
@@ -2881,6 +2885,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.DiSEqC=ch.DiSEqC;
 						currentTuningObject.LNBFrequency=ch.LNBFrequency;
 						currentTuningObject.LNBKHz=ch.LNBKHz;
+						currentTuningObject.HasEITPresentFollow=ch.HasEITPresentFollow;
+						currentTuningObject.HasEITSchedule=ch.HasEITSchedule;
 						SubmitTuneRequest(currentTuningObject);
 
 					} break;
@@ -2890,7 +2896,7 @@ namespace MediaPortal.TV.Recording
 						//get the DVB-T tuning details from the tv database
 						//for DVB-T this is the frequency, ONID , TSID and SID
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() get DVBT tuning details");
-						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule);
 						if (frequency<=0) 
 						{
 							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
@@ -2918,6 +2924,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio1=audio1;
 						currentTuningObject.Audio2=audio2;
 						currentTuningObject.Audio3=audio3;
+						currentTuningObject.HasEITPresentFollow=HasEITPresentFollow;
+						currentTuningObject.HasEITSchedule=HasEITSchedule;
 						SubmitTuneRequest(currentTuningObject);
 
 					} break;
@@ -3418,6 +3426,8 @@ namespace MediaPortal.TV.Recording
 				newchannel.LNBFrequency=currentTuningObject.LNBFrequency;
 				newchannel.LNBKHz=currentTuningObject.LNBKHz;
 				newchannel.PhysicalChannel=currentTuningObject.PhysicalChannel;
+				newchannel.HasEITPresentFollow=currentTuningObject.HasEITPresentFollow;
+				newchannel.HasEITSchedule=currentTuningObject.HasEITSchedule;
 
 				
 				if (info.serviceType==1)//tv
@@ -3478,7 +3488,8 @@ namespace MediaPortal.TV.Recording
 																			newchannel.PMTPid,
 																			newchannel.Bandwidth,
 																			newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,
-																			newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3);
+																			newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+																			newchannel.HasEITPresentFollow , newchannel.HasEITSchedule );
 					}
 					if (Network() == NetworkType.DVBC)
 					{
@@ -3498,7 +3509,9 @@ namespace MediaPortal.TV.Recording
 																			currentTuningObject.TeletextPid,
 																			newchannel.PMTPid,
 																			newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,
-																			newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3);
+																			newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+																			newchannel.HasEITPresentFollow , newchannel.HasEITSchedule );
+
 					}
 					if (Network() == NetworkType.ATSC)
 					{
@@ -3521,7 +3534,9 @@ namespace MediaPortal.TV.Recording
 							currentTuningObject.TeletextPid,
 							newchannel.PMTPid,
 							newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,
-							newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3);
+							newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+							newchannel.HasEITPresentFollow , newchannel.HasEITSchedule );
+
 					}
 
 					if (Network() == NetworkType.DVBS)

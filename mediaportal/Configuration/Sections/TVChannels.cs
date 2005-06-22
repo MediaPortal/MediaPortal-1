@@ -1855,9 +1855,9 @@ namespace MediaPortal.Configuration.Sections
 							string provider;
 							int audio1, audio2, audio3, ac3Pid;
 							string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
-						
+							bool HasEITPresentFollow,HasEITSchedule;						
 							//DVB-T
-							TVDatabase.GetDVBTTuneRequest(Selected_Chan.ID,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid,out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+							TVDatabase.GetDVBTTuneRequest(Selected_Chan.ID,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid,out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out HasEITPresentFollow,out HasEITSchedule);
 							channels.SetValue(listItem.Index.ToString(),"DVBTFreq",freq.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBTONID",ONID.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBTTSID",TSID.ToString());
@@ -1876,9 +1876,11 @@ namespace MediaPortal.Configuration.Sections
 							channels.SetValue(listItem.Index.ToString(),"DVBTAudioLanguage1",audioLanguage1);
 							channels.SetValue(listItem.Index.ToString(),"DVBTAudioLanguage2",audioLanguage2);
 							channels.SetValue(listItem.Index.ToString(),"DVBTAudioLanguage3",audioLanguage3);
+							channels.SetValueAsBool(listItem.Index.ToString(),"DVBTHasEITPresentFollow",HasEITPresentFollow);
+							channels.SetValueAsBool(listItem.Index.ToString(),"DVBTHasEITSchedule",HasEITSchedule);
 
 							//DVB-C
-							TVDatabase.GetDVBCTuneRequest(Selected_Chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3);
+							TVDatabase.GetDVBCTuneRequest(Selected_Chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out HasEITPresentFollow,out HasEITSchedule);
 							channels.SetValue(listItem.Index.ToString(),"DVBCFreq",freq.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBCONID",ONID.ToString());
 							channels.SetValue(listItem.Index.ToString(),"DVBCTSID",TSID.ToString());
@@ -1900,6 +1902,9 @@ namespace MediaPortal.Configuration.Sections
 							channels.SetValue(listItem.Index.ToString(),"DVBCAudioLanguage1",audioLanguage1);
 							channels.SetValue(listItem.Index.ToString(),"DVBCAudioLanguage2",audioLanguage2);
 							channels.SetValue(listItem.Index.ToString(),"DVBCAudioLanguage3",audioLanguage3);
+							channels.SetValueAsBool(listItem.Index.ToString(),"DVBCHasEITPresentFollow",HasEITPresentFollow);
+							channels.SetValueAsBool(listItem.Index.ToString(),"DVBCHasEITSchedule",HasEITSchedule);
+
 							//DVB-S
 							DVBChannel ch = new DVBChannel();
 							TVDatabase.GetSatChannel(Selected_Chan.ID,1,ref ch);
@@ -1925,6 +1930,8 @@ namespace MediaPortal.Configuration.Sections
 							channels.SetValue(listItem.Index.ToString(),"DVBSAudioLanguage1",ch.AudioLanguage1);
 							channels.SetValue(listItem.Index.ToString(),"DVBSAudioLanguage2",ch.AudioLanguage2);
 							channels.SetValue(listItem.Index.ToString(),"DVBSAudioLanguage3",ch.AudioLanguage3);
+							channels.SetValueAsBool(listItem.Index.ToString(),"DVBSHasEITPresentFollow",ch.HasEITPresentFollow);
+							channels.SetValueAsBool(listItem.Index.ToString(),"DVBSHasEITSchedule",ch.HasEITSchedule);
 
 						}
 					}
@@ -2236,6 +2243,7 @@ namespace MediaPortal.Configuration.Sections
 								int audio1, audio2, audio3, ac3Pid;
 								string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
 								string provider;
+								bool HasEITPresentFollow,HasEITSchedule;
 								//dvb-T
 								try
 								{
@@ -2257,9 +2265,11 @@ namespace MediaPortal.Configuration.Sections
 									audioLanguage1=channels.GetValueAsString(i.ToString(),"DVBTAudioLanguage1","");
 									audioLanguage2=channels.GetValueAsString(i.ToString(),"DVBTAudioLanguage2","");
 									audioLanguage3=channels.GetValueAsString(i.ToString(),"DVBTAudioLanguage3","");
+									HasEITPresentFollow=channels.GetValueAsBool(i.ToString(),"DVBTHasEITPresentFollow",false);
+									HasEITSchedule=channels.GetValueAsBool(i.ToString(),"DVBTHasEITSchedule",false);
 									if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 									{
-										TVDatabase.MapDVBTChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,bandWidth,audio1,audio2,audio3, ac3Pid,audioLanguage,audioLanguage1, audioLanguage2, audioLanguage3);
+										TVDatabase.MapDVBTChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,bandWidth,audio1,audio2,audio3, ac3Pid,audioLanguage,audioLanguage1, audioLanguage2, audioLanguage3,HasEITPresentFollow,HasEITSchedule);
 									}
 								}
 								catch(Exception)
@@ -2290,9 +2300,12 @@ namespace MediaPortal.Configuration.Sections
 									audioLanguage1=channels.GetValueAsString(i.ToString(),"DVBCAudioLanguage1","");
 									audioLanguage2=channels.GetValueAsString(i.ToString(),"DVBCAudioLanguage2","");
 									audioLanguage3=channels.GetValueAsString(i.ToString(),"DVBCAudioLanguage3","");
+									HasEITPresentFollow=channels.GetValueAsBool(i.ToString(),"DVBCHasEITPresentFollow",false);
+									HasEITSchedule=channels.GetValueAsBool(i.ToString(),"DVBCHasEITSchedule",false);
+
 									if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 									{
-										TVDatabase.MapDVBCChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,audio1,audio2,audio3,ac3Pid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3);
+										TVDatabase.MapDVBCChannel(Import_Chan.Name,provider,Import_Chan.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,audio1,audio2,audio3,ac3Pid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3,HasEITPresentFollow,HasEITSchedule);
 									}
 								}
 								catch(Exception)
@@ -2326,6 +2339,9 @@ namespace MediaPortal.Configuration.Sections
 									audioLanguage1=channels.GetValueAsString(i.ToString(),"DVBSAudioLanguage1","");
 									audioLanguage2=channels.GetValueAsString(i.ToString(),"DVBSAudioLanguage2","");
 									audioLanguage3=channels.GetValueAsString(i.ToString(),"DVBSAudioLanguage3","");
+									HasEITPresentFollow=channels.GetValueAsBool(i.ToString(),"DVBSHasEITPresentFollow",false);
+									HasEITSchedule=channels.GetValueAsBool(i.ToString(),"DVBSHasEITSchedule",false);
+
 									if (ONID>0 && TSID>0 && SID > 0 && freq>0)
 									{
 										ch.ServiceType=1;
@@ -2350,6 +2366,8 @@ namespace MediaPortal.Configuration.Sections
 										ch.AudioLanguage1=audioLanguage1;
 										ch.AudioLanguage2=audioLanguage2;
 										ch.AudioLanguage3=audioLanguage3;
+										ch.HasEITSchedule=HasEITSchedule;
+										ch.HasEITPresentFollow=HasEITPresentFollow;
 										TVDatabase.UpdateSatChannel(ch);
 									}
 								}
