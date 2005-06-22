@@ -2505,7 +2505,13 @@ namespace MediaPortal.Configuration.Sections
 												ArrayList GrabGroup = new ArrayList();
 												TVDatabase.GetGroups(ref GrabGroup);
 											
-												TVDatabase.MapChannelToGroup((TVGroup)GrabGroup[i], FindChan);
+												foreach (TVGroup tmpGroup in GrabGroup)
+												{
+													if (Import_Group.ID==tmpGroup.ID)
+													{
+														TVDatabase.MapChannelToGroup(tmpGroup, FindChan);
+													}
+												}
 											}
 										}
 									}
@@ -2534,7 +2540,6 @@ namespace MediaPortal.Configuration.Sections
 				if(Cards.Count==0)
 				{
 					MessageBox.Show("There are no cards configured.\nCannot map channels without at least one card.");
-					return;
 				}
 				else
 				{

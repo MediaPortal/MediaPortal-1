@@ -141,6 +141,7 @@ namespace MediaPortal.TV.Recording
 				timer1.Enabled=false;
 				callback.OnProgress(100);
 				callback.OnEnded();
+				callback.OnStatus("Finished");
 				return;
 			}
 			
@@ -162,6 +163,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (captureCard.SignalPresent())
 					{
+						System.Threading.Thread.Sleep(1000);
 						if (captureCard.SignalQuality>40)
 						{
 							Log.WriteFile(Log.LogType.Capture,"Found signal at:{0} MHz,scan for channels",frequency);
@@ -220,6 +222,7 @@ namespace MediaPortal.TV.Recording
 					timer1.Enabled=false;
 					callback.OnProgress(100);
 					callback.OnEnded();
+					callback.OnStatus("Finished");
 					captureCard.DeleteGraph();
 					return;
 				}
@@ -269,11 +272,11 @@ namespace MediaPortal.TV.Recording
 					timer1.Enabled=false;
 					callback.OnProgress(100);
 					callback.OnEnded();
+					callback.OnStatus("Finished");
 					captureCard.DeleteGraph();
 					return;
 				}
 			}
-//			System.Threading.Thread.Sleep(100);
 		}
 
 		#endregion

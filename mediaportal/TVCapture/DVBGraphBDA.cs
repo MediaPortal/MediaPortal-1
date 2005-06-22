@@ -3426,7 +3426,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.LNBFrequency=currentTuningObject.LNBFrequency;
 				newchannel.LNBKHz=currentTuningObject.LNBKHz;
 				newchannel.PhysicalChannel=currentTuningObject.PhysicalChannel;
-				newchannel.HasEITPresentFollow=currentTuningObject.HasEITPresentFollow;
+				newchannel.HasEITPresentFollow=info.eitPreFollow;
 				newchannel.HasEITSchedule=currentTuningObject.HasEITSchedule;
 
 				

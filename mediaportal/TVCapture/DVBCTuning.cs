@@ -169,6 +169,7 @@ namespace MediaPortal.TV.Recording
 			{
 				timer1.Enabled=false;
 				callback.OnProgress(100);
+				callback.OnStatus("Finished");
 				callback.OnEnded();
 				return;
 			}
@@ -238,6 +239,7 @@ namespace MediaPortal.TV.Recording
 			{
 				timer1.Enabled=false;
 				callback.OnProgress(100);
+				callback.OnStatus("Finished");
 				callback.OnEnded();
 				captureCard.DeleteGraph();
 				return;
