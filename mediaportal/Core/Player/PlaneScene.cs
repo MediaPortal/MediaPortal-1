@@ -397,14 +397,16 @@ namespace MediaPortal.Player
 			{
 				m_idebugstep=0;
 				reentrant=true;
-				if (width <=0 || height <=0) return;
 				GUIGraphicsContext.InVmr9Render=true;
-				m_vmr9Util.VideoWidth=width;
-				m_vmr9Util.VideoHeight=height;
-				m_vmr9Util.VideoAspectRatioX=arWidth;
-				m_vmr9Util.VideoAspectRatioY=arHeight;
-				arVideoWidth=arWidth;
-				arVideoHeight=arHeight;
+				if (width>0 && height>0)
+				{
+					m_vmr9Util.VideoWidth=width;
+					m_vmr9Util.VideoHeight=height;
+					m_vmr9Util.VideoAspectRatioX=arWidth;
+					m_vmr9Util.VideoAspectRatioY=arHeight;
+					arVideoWidth=arWidth;
+					arVideoHeight=arHeight;
+				}
 				
 				//if we're stopping then just return
 				float timePassed=GUIGraphicsContext.TimePassed;
@@ -452,8 +454,12 @@ namespace MediaPortal.Player
 
 				m_idebugstep=3;
 				//get desired video window
-				Size nativeSize = new Size(width, height);
-				renderTexture= SetVideoWindow(nativeSize);
+				if (width>0 && height>0 && pTex!=0)
+				{
+					Size nativeSize = new Size(width, height);
+					renderTexture= SetVideoWindow(nativeSize);
+				}
+				else renderTexture=false;
 
 				m_idebugstep=4;
 				//clear screen
@@ -556,12 +562,14 @@ namespace MediaPortal.Player
 			try
 			{
 				reentrant=true;
-				if (width <=0 || height <=0) return;
 				m_idebugstep=1;
-				m_vmr9Util.VideoWidth=width;
-				m_vmr9Util.VideoHeight=height;
-				m_vmr9Util.VideoAspectRatioX=arWidth;
-				m_vmr9Util.VideoAspectRatioY=arHeight;
+				if (width >0 && height >0) 
+				{
+					m_vmr9Util.VideoWidth=width;
+					m_vmr9Util.VideoHeight=height;
+					m_vmr9Util.VideoAspectRatioX=arWidth;
+					m_vmr9Util.VideoAspectRatioY=arHeight;
+				}
 				arVideoWidth=arWidth;
 				arVideoHeight=arHeight;
 				GUIGraphicsContext.InVmr9Render=true;
@@ -615,7 +623,11 @@ namespace MediaPortal.Player
 				m_idebugstep=4;
 				//get desired video window
 				Size nativeSize = new Size(width, height);
-				renderTexture= SetVideoWindow(nativeSize);
+				if (width>0 && height>0 && pSurface!=0)
+				{
+					renderTexture= SetVideoWindow(nativeSize);
+				}
+				else renderTexture=false;
 
 				m_idebugstep=5;
 				//clear screen
