@@ -2936,9 +2936,15 @@ namespace MediaPortal.TV.Recording
 				{
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
 					if(currentTuningObject.HasEITSchedule==true)
+					{
+						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
 						m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+					}
 					else
+					{
+						Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
 						m_streamDemuxer.GetMHWEPG();
+					}
 
 				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
@@ -3427,7 +3433,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.LNBKHz=currentTuningObject.LNBKHz;
 				newchannel.PhysicalChannel=currentTuningObject.PhysicalChannel;
 				newchannel.HasEITPresentFollow=info.eitPreFollow;
-				newchannel.HasEITSchedule=currentTuningObject.HasEITSchedule;
+				newchannel.HasEITSchedule=info.eitSchedule;
 
 				
 				if (info.serviceType==1)//tv
