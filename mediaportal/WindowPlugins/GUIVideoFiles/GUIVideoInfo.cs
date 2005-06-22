@@ -16,16 +16,18 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class GUIVideoInfo : GUIWindow
 	{
-		[SkinControlAttribute(9)]		protected GUIButtonControl btnPlay=null;
-		[SkinControlAttribute(6)]		protected GUISelectButtonControl btnTracks=null;
-		[SkinControlAttribute(7)]		protected GUIButtonControl btnRefresh=null;
-		[SkinControlAttribute(4)]		protected GUISpinControl spinImages=null;
-		[SkinControlAttribute(8)]		protected GUISpinControl spinDisc=null;
-		[SkinControlAttribute(3)]		protected GUIImage imgCoverArt=null;
-		[SkinControlAttribute(5)]		protected GUITextControl tbTextArea=null;
-		[SkinControlAttribute(10)]		protected GUITextScrollUpControl tbPlotArea=null;
+		[SkinControlAttribute(2)]		protected GUIButtonControl btnPlay=null;
+		[SkinControlAttribute(3)]		protected GUIToggleButtonControl btnPlot=null;
+		[SkinControlAttribute(4)]		protected GUIToggleButtonControl btnCast=null;
+		[SkinControlAttribute(5)]		protected GUIButtonControl btnRefresh=null;
+		[SkinControlAttribute(6)]		protected GUIToggleButtonControl btnWatched=null;
+		[SkinControlAttribute(10)]		protected GUISpinControl spinImages=null;
+		[SkinControlAttribute(11)]		protected GUISpinControl spinDisc=null;
+		[SkinControlAttribute(20)]		protected GUITextScrollUpControl tbPlotArea=null;
+		[SkinControlAttribute(21)]		protected GUIImage imgCoverArt=null;
+		[SkinControlAttribute(22)]		protected GUITextControl tbTextArea=null;
 		[SkinControlAttribute(30)]		protected GUILabelControl lblImage=null;
-    enum ViewMode
+		enum ViewMode
     {
       Image,
       Cast,
@@ -261,18 +263,15 @@ namespace MediaPortal.GUI.Video
 				return ;
 			}
 
-			if (control==btnTracks)
+			if (control==btnCast)
 			{
-				switch (viewmode)
-				{
-					case ViewMode.Image: 
-						viewmode=ViewMode.Cast;
-						break;
-                
-					case ViewMode.Cast: 
-						viewmode=ViewMode.Image;
-						break;
-				}
+				viewmode=ViewMode.Cast;
+				Update();
+			}
+			if (control==btnPlot)
+			{
+
+				viewmode=ViewMode.Image;
 				Update();
 			}
 
@@ -335,6 +334,8 @@ namespace MediaPortal.GUI.Video
 				imgCoverArt.IsVisible=true;
 				lblImage.IsVisible=false;
 				spinDisc.IsVisible=false;
+				btnPlot.Selected=false;
+				btnCast.Selected=true;
       }
       //cast->plot
       if (viewmode==ViewMode.Image)
@@ -344,9 +345,11 @@ namespace MediaPortal.GUI.Video
 				imgCoverArt.IsVisible=true;
 				lblImage.IsVisible=true;
 				spinDisc.IsVisible=true;
+				btnPlot.Selected=true;
+				btnCast.Selected=false;
 
-				btnTracks.Label=GUILocalizeStrings.Get(207);
       }
+			btnWatched.Selected = (currentMovie.Watched!=0);
 			currentMovie.SetProperties();
 			if (imgCoverArt!=null)
 			{

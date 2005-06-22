@@ -2955,6 +2955,10 @@
 	<value>Downloading coverart</value>
 </string>
 <string>
+	<id>1010</id>
+	<value>Watched</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
