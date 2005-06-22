@@ -187,7 +187,6 @@ Global
 		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
 		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
 		{CB2F9AD3-BCE2-4E67-86A4-C500E0FEE9DF}.Debug.ActiveCfg = Debug
-		{CB2F9AD3-BCE2-4E67-86A4-C500E0FEE9DF}.Debug.Build.0 = Debug
 		{CB2F9AD3-BCE2-4E67-86A4-C500E0FEE9DF}.Release.ActiveCfg = Release
 		{CB2F9AD3-BCE2-4E67-86A4-C500E0FEE9DF}.Release.Build.0 = Release
 		{CB2F9AD3-BCE2-4E67-86A4-C500E0FEE9DF}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions
