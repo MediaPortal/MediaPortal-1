@@ -2107,6 +2107,8 @@ namespace MediaPortal.Configuration.Sections
 			//Check if we have a file just in case
 			if(!File.Exists(fileStr))return;
 
+			TVDatabase.ClearAll();
+			LoadSettings();
 			//Current Version change to reflect the above exporter in order for compatibility
 			int CURRENT_VER=1;   //<--- Make sure that is the same number as in Export_to_XML
 			int VER=1;			 //Set to:  0 = old ; 1 = current ; 2 = newer
@@ -2535,78 +2537,34 @@ namespace MediaPortal.Configuration.Sections
 				//Grab Saved Card mapping
 				
 				//Check if we have cards first
-				ArrayList Cards = new ArrayList();
-				TVDatabase.GetCards(ref Cards);
-				if(Cards.Count==0)
+				int cards_index=0;
+				channel_index=0;
+			
+				//Grab total cards for reference
+				cards_index=channels.GetValueAsInt("CARDS","TOTAL",-1);
+			
+				//Check if we have any cards
+				for(int i=1;i<cards_index+1;i++)
 				{
-					MessageBox.Show("There are no cards configured.\nCannot map channels without at least one card.");
-				}
-				else
-				{
-					int cards_index=0;
-					channel_index=0;
-				
-					//Grab total cards for reference
-					cards_index=channels.GetValueAsInt("CARDS","TOTAL",-1);
-				
-					//Check if we have any cards
-					if(cards_index==-1||cards_index==0)
-					{
-						MessageBox.Show("No card related data was saved for this listing");
-						return;
-					}
+					//This is done for every version regardless
+					//Re-Map channels to available cards
+					ArrayList Card_Channels = new ArrayList();
+					TVDatabase.GetChannels(ref Card_Channels);
+					channel_index=channels.GetValueAsInt("Card "+i.ToString(),"TOTAL CHANNELS",0);	
 					
-					if(cards_index>Cards.Count)
+					if(channel_index>0)
 					{
-						MessageBox.Show("There is a total of "+cards_index.ToString()+" card(s) channel mappings to import\nHowever I can only import "+Cards.Count.ToString());
-						cards_index=Cards.Count;
-					}
-					else 
-					{
-						MessageBox.Show("There is a total of "+cards_index.ToString()+" card(s) channel mappings to import");
-					}
-					for(int i=1;i<cards_index+1;i++)
-					{
-						//Check if required to do anything specific for compatibility reasons
-						switch(VER)
+						for(int j=0;j<channel_index;j++)
 						{
-								//Do stuff for backward compatibility if needed
-							case 0:
-
-								break;
-								//Do stuff for current version only
-							case 1:
-
-								break;
-								//Do stuff for forward compatibility if needed
-							case 2:
-
-								break;
-						}
+							int tmpID = channels.GetValueAsInt("Card "+i.ToString(),"CHANNEL "+j.ToString(),0);
 						
-						//This is done for every version regardless
-						if(VER==0||VER==1||VER==2)
-						{
-							//Re-Map channels to available cards
-							ArrayList Card_Channels = new ArrayList();
-							TVDatabase.GetChannels(ref Card_Channels);
-							channel_index=channels.GetValueAsInt("Card "+i.ToString(),"TOTAL CHANNELS",0);	
-							
-							if(channel_index>0)
+							//Locate Channel so it can be added to Card
+							foreach(TVChannel FindChan in Card_Channels)
 							{
-								for(int j=0;j<channel_index;j++)
+								if(FindChan.ID==tmpID)
 								{
-									int tmpID = channels.GetValueAsInt("Card "+i.ToString(),"CHANNEL "+j.ToString(),0);
-								
-									//Locate Channel so it can be added to Card
-									foreach(TVChannel FindChan in Card_Channels)
-									{
-										if(FindChan.ID==tmpID)
-										{
-											//Map it
-											TVDatabase.MapChannelToCard(FindChan.ID,i);
-										}
-									}
+									//Map it
+									TVDatabase.MapChannelToCard(FindChan.ID,i);
 								}
 							}
 						}
@@ -2680,88 +2638,17 @@ namespace MediaPortal.Configuration.Sections
 								if(MessageBox.Show("Would you like to overwrite the entry for "+check_recorded.Title+" - Start Time: "+check_recorded.Start.ToString()+"\nWith the entry "+temp_recorded.Title+" - Start Time: "+temp_recorded.Start.ToString()+"\nProceed with overwrite?",
 								"Overwrite?",MessageBoxButtons.YesNo)==DialogResult.Yes)
 								{
-									//Check if this file exists first, if not ask user to locate it or no update
-									if(File.Exists(temp_recorded.FileName))
-									{
-										TVDatabase.RemoveRecordedTV(check_recorded);
-										TVDatabase.AddRecordedTV(temp_recorded);
-									}
-									else
-									{
-										if(MessageBox.Show("Could not find the file for "+temp_recorded.Title+"\nDo you want to find the file? (No will not add this recorded entry)","Cannot Find File..",MessageBoxButtons.YesNo)==DialogResult.Yes)
-										{
-											bool quit=false;
-											//Build open dialog for user to find file
-											System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
-                      find_file.RestoreDirectory = true;
-											find_file.DefaultExt = "dvr-ms";
-											find_file.Filter = "dvr-ms|*.dvr-ms";
-											find_file.InitialDirectory = ".";
-											find_file.Title= "Find Recorded File for "+ temp_recorded.Title;
-											while(!quit)
-											{
-												if(find_file.ShowDialog(this)==DialogResult.OK)
-												{
-													temp_recorded.FileName=find_file.FileName;
-													//Add the recorded data to database
-													TVDatabase.RemoveRecordedTV(check_recorded);
-													TVDatabase.AddRecordedTV(temp_recorded);
-												}
-												else
-												{
-													if(MessageBox.Show("Are you positive you don't want to add:\n"+temp_recorded.Title,"Are you sure?",MessageBoxButtons.YesNo)==DialogResult.Yes)
-													{
-														quit=true;
-													}
-													else quit=false;
-												}
-											}
-										}
-									}
+									TVDatabase.RemoveRecordedTV(check_recorded);
+									TVDatabase.AddRecordedTV(temp_recorded);
 								}
 							}
 							else
 							{
 								//Check if this file exists first, if not ask user to locate it or no update
-								if(File.Exists(temp_recorded.FileName))
-								{
-									TVDatabase.AddRecordedTV(temp_recorded);
-								}
-								else
-								{
-									if(MessageBox.Show("Could not find the file for "+temp_recorded.Title+"\nDo you want to find the file? (No will not add this recorded entry)","Cannot Find File..",MessageBoxButtons.YesNo)==DialogResult.Yes)
-									{
-										bool quit=false;
-										//Build open dialog for user to find file
-										System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
-                    find_file.RestoreDirectory = true;
-										find_file.DefaultExt = "dvr-ms";
-										find_file.Filter = "dvr-ms|*.dvr-ms";
-										find_file.InitialDirectory = ".";
-										find_file.Title= "Find Recorded File for "+ temp_recorded.Title;
-										while(!quit)
-										{
-											if(find_file.ShowDialog(this)==DialogResult.OK)
-											{
-												temp_recorded.FileName=find_file.FileName;
-												//Add the recorded data to database
-												TVDatabase.AddRecordedTV(temp_recorded);
-											}
-											else
-											{
-												if(MessageBox.Show("Are you positive you don't want to add:\n"+temp_recorded.Title,"Are you sure?",MessageBoxButtons.YesNo)==DialogResult.Yes)
-												{
-													quit=true;
-												}
-												else quit=false;
-											}
-										}
-									}
-								}
+								TVDatabase.AddRecordedTV(temp_recorded);
 							}
 						}	
 					}
-					
 				}
 				
 

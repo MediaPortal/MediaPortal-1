@@ -105,6 +105,23 @@ namespace MediaPortal.TV.Database
 			m_channelCache.Clear();
 			m_genreCache.Clear();
 		}
+		static public void ClearAll()
+		{
+			ClearCache();
+			m_db.Execute("delete from channel");
+			m_db.Execute("delete from tblPrograms");
+			m_db.Execute("delete from genre");
+			m_db.Execute("delete from recording");
+			m_db.Execute("delete from canceledseries");
+			m_db.Execute("delete from recorded");
+			m_db.Execute("delete from tblDVBSMapping");
+			m_db.Execute("delete from tblDVBCMapping");
+			m_db.Execute("delete from tblATSCMapping");
+			m_db.Execute("delete from tblDVBTMapping");
+			m_db.Execute("delete from tblGroups");
+			m_db.Execute("delete from tblGroupMapping");
+			m_db.Execute("delete from tblChannelCard");
+		}
 		/// <summary>
 		/// Checks if tables already exists in the database, if not creates the missing tables
 		/// </summary>
