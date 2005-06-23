@@ -661,7 +661,7 @@ namespace MediaPortal.TV.Recording
 				card.StopRecording();
 			}
 			
-			TuneExternalChannel(rec.Channel);
+			TuneExternalChannel(rec.Channel,m_iCurrentCard==cardNo);
 			card.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
 			
 			if (m_iCurrentCard==cardNo) 
@@ -1416,7 +1416,7 @@ namespace MediaPortal.TV.Recording
 								}
 								if (dev.TVChannel!=channel)
 								{
-									TuneExternalChannel(channel);
+									TuneExternalChannel(channel,true);
 									dev.TVChannel=channel;
 								}
 								if (!dev.IsRecording  && !dev.IsTimeShifting && dev.SupportsTimeShifting)
@@ -1448,7 +1448,7 @@ namespace MediaPortal.TV.Recording
 								}
 								if (dev.TVChannel!=channel)
 								{
-									TuneExternalChannel(channel);
+									TuneExternalChannel(channel,true);
 									dev.TVChannel=channel;
 								}
 								dev.View=true;
@@ -1509,7 +1509,7 @@ namespace MediaPortal.TV.Recording
 				if (dev.SupportsTimeShifting)
 				{
 					Log.WriteFile(Log.LogType.Recorder,"Recorder:  start timeshifting card {0} channel:{1}",dev.ID,channel);
-					TuneExternalChannel(channel);
+					TuneExternalChannel(channel,true);
 					dev.TVChannel=channel;
 					dev.StartTimeShifting();
 					TVChannelName=channel;
@@ -1530,7 +1530,7 @@ namespace MediaPortal.TV.Recording
 			//just present the overlay tv view
 			// now start watching on our card
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  start watching on card:{0} channel:{1}", dev.ID,channel);
-			TuneExternalChannel(channel);
+			TuneExternalChannel(channel,true);
 			dev.TVChannel=channel;
 			dev.View=true;
 			TVChannelName=channel;
@@ -1714,7 +1714,7 @@ namespace MediaPortal.TV.Recording
 		/// to switch channel on the remote device
 		/// </summary>
 		/// <param name="strChannelName">name of channel</param>
-		static void TuneExternalChannel(string strChannelName)
+		static void TuneExternalChannel(string strChannelName, bool isViewing)
 		{
 			if (strChannelName==null) return;
 			if (strChannelName==String.Empty) return;
@@ -1731,7 +1731,8 @@ namespace MediaPortal.TV.Recording
 					break;
 				}
 			}
-			SetZapOSDData(strChannelName);
+			if (isViewing)
+				SetZapOSDData(strChannelName);
 		}//static void TuneExternalChannel(string strChannelName)
     
 		#endregion
