@@ -990,7 +990,8 @@ public class MediaPortalApp : D3DApp, IRender
       }
 			if (useScreenSaver)
 			{
-				if (GUIGraphicsContext.IsFullScreenVideo)
+				if (GUIGraphicsContext.IsFullScreenVideo ||
+						GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_SLIDESHOW)
 				{
 					screenSaverTimer=DateTime.Now;
 					GUIGraphicsContext.BlankScreen=false;
