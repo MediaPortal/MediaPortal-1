@@ -698,49 +698,11 @@ namespace MediaPortal.GUI.Weather
 			}
 			else
 			{
-				switch (m_strSelectedDayName)
-				{
-					case "All":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(743));
-						break;
-					}
-					case "Monday":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(11));
-						break;
-					}
-					case "Tuesday":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(12));
-						break;
-					}
-					case "Wednesday":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(13));
-						break;
-					}
-					case "Thursday":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(14));
-						break;
-					}
-					case "Friday":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(15));
-						break;
-					}
-					case "Saturday":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(16));
-						break;
-					}
-					case "Sunday":
-					{
-						GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(17));
-						break;
-					}
-				}
+
+				if (m_strSelectedDayName=="All")
+					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(743));
+				else
+					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, m_strSelectedDayName);
 			}
 		}
     		
