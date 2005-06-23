@@ -661,7 +661,7 @@ namespace MediaPortal.TV.Recording
 				card.StopRecording();
 			}
 			
-			TuneExternalChannel(rec.Channel,m_iCurrentCard==cardNo);
+			TuneExternalChannel(rec.Channel,false);
 			card.Record(rec,currentProgram,iPostRecordInterval,iPostRecordInterval);
 			
 			if (m_iCurrentCard==cardNo) 
