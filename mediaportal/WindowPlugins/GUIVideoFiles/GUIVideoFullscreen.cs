@@ -29,6 +29,7 @@ namespace MediaPortal.GUI.Video
 			public bool  ContextMenuVisible=false;
 			public bool  ShowStatusLine=false;
 			public bool  ShowTime=false;
+			public bool  wasVMRBitmapVisible=false;
 		}
 
     enum Control 
@@ -1057,8 +1058,20 @@ namespace MediaPortal.GUI.Video
 								base.Render(timePassed);
 								RenderForm(timePassed);
 								GUIGraphicsContext.graphics=null;
+								screenState.wasVMRBitmapVisible=true;
 								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
 							}
+						}
+					}
+				}
+				else
+				{
+					if (screenState.wasVMRBitmapVisible)
+					{
+						screenState.wasVMRBitmapVisible=false;
+						if (VMR7Util.g_vmr7!=null)
+						{
+							VMR7Util.g_vmr7.SaveBitmap(null,false,false,0.8f);
 						}
 					}
 				}

@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.TV
 			public bool  ShowInput=false;
 			public bool  NotifyDialogVisible=false;
 			public bool  bottomMenuVisible=false;
+			public bool  wasVMRBitmapVisible=false;
 		}
 
 		bool				m_bShowInfo=false;
@@ -1362,8 +1363,17 @@ namespace MediaPortal.GUI.TV
 								base.Render(timePassed);
 								RenderForm(timePassed);
 								GUIGraphicsContext.graphics=null;
+								screenState.wasVMRBitmapVisible=true;
 								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
 							}
+						}
+					}
+					else
+					{
+						if (screenState.wasVMRBitmapVisible)
+						{
+							screenState.wasVMRBitmapVisible=false;
+							VMR7Util.g_vmr7.SaveBitmap(null,false,false,0.8f);
 						}
 					}
 				}
