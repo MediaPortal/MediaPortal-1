@@ -786,8 +786,10 @@ namespace MediaPortal.GUI.Music
 				dlgProgress.SetHeading(320);
 				dlgProgress.SetLine(1,artistName);
 				dlgProgress.SetLine(2,String.Empty);
+				dlgProgress.SetPercentage(0);
 				dlgProgress.StartModal(GetID);
 				dlgProgress.Progress();
+				dlgProgress.ShowProgressBar(true);
 			}
 			bool bDisplayErr=false;
 
@@ -827,18 +829,28 @@ namespace MediaPortal.GUI.Music
 						dlgProgress.SetHeading(320);
 						dlgProgress.SetLine(1,artistName);
 						dlgProgress.SetLine(2,String.Empty);
+						dlgProgress.SetPercentage(40);
 						dlgProgress.StartModal(GetID);
+						dlgProgress.ShowProgressBar(true);
 						dlgProgress.Progress();
 					}
 
 					// download the artist info
 					if(scraper.FindInfoByIndex(iSelectedAlbum))
 					{
-						if (null!=dlgProgress) 
-							dlgProgress.Close();
+						if (null!=dlgProgress)
+						{
+							dlgProgress.SetPercentage(60);
+							dlgProgress.Progress();
+						}
 						MusicArtistInfo artistInfo = new MusicArtistInfo();
 						if(artistInfo.Parse(scraper.GetHtmlContent()))
 						{
+							if (null!=dlgProgress)
+							{
+								dlgProgress.SetPercentage(80);
+								dlgProgress.Progress();
+							}
 							// if the artist selected from allmusic.com does not match
 							// the one from the file, override the one from the allmusic
 							// with the one from the file so the info is correct in the
@@ -849,6 +861,13 @@ namespace MediaPortal.GUI.Music
 							if (bSaveDb)
 							{
 								m_database.AddArtistInfo(artistInfo.Get());
+							}
+							if (null!=dlgProgress)
+							{
+								dlgProgress.SetPercentage(100);
+								dlgProgress.Progress();
+								dlgProgress.Close();
+								dlgProgress=null;
 							}
 
 							// ok, show Artist info
@@ -873,9 +892,20 @@ namespace MediaPortal.GUI.Music
 				}
 				else // single
 				{
+					if (null!=dlgProgress)
+					{
+						dlgProgress.SetPercentage(40);
+						dlgProgress.Progress();
+					}
 					MusicArtistInfo artistInfo = new MusicArtistInfo();
 					if(artistInfo.Parse(scraper.GetHtmlContent()))
 					{
+						
+						if (null!=dlgProgress)
+						{
+							dlgProgress.SetPercentage(60);
+							dlgProgress.Progress();
+						}
 						// if the artist selected from allmusic.com does not match
 						// the one from the file, override the one from the allmusic
 						// with the one from the file so the info is correct in the
@@ -889,6 +919,13 @@ namespace MediaPortal.GUI.Music
 							m_database.AddArtistInfo(artistInfo.Get());
 						}
 
+						if (null!=dlgProgress)
+						{
+							dlgProgress.SetPercentage(100);
+							dlgProgress.Progress();
+							dlgProgress.Close();
+							dlgProgress=null;
+						}
 						// ok, show Artist info
 						GUIMusicArtistInfo pDlgArtistInfo= (GUIMusicArtistInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_ARTIST_INFO);
 						if (null!=pDlgArtistInfo)
@@ -961,7 +998,9 @@ namespace MediaPortal.GUI.Music
 				dlgProgress.SetLine(1, strAlbumName );
 				dlgProgress.SetLine(2, artistName);
 				dlgProgress.SetLine(3, tag.Year.ToString());
+				dlgProgress.SetPercentage(0);
 				dlgProgress.StartModal(GetID);
+				dlgProgress.ShowProgressBar(true);
 				dlgProgress.Progress();
 			}
 			bool bDisplayErr = false;
@@ -970,7 +1009,12 @@ namespace MediaPortal.GUI.Music
 			MusicInfoScraper scraper = new MusicInfoScraper();
 			if (scraper.FindAlbuminfo(strAlbumName))
 			{
-				if (dlgProgress != null) dlgProgress.Close();
+				if (dlgProgress != null) 
+				{
+					dlgProgress.SetPercentage(30);
+					dlgProgress.Progress();
+					dlgProgress.Close();
+				}
 				// did we found at least 1 album?
 				int iAlbumCount = scraper.Count;
 				if (iAlbumCount >= 1)
@@ -1008,6 +1052,8 @@ namespace MediaPortal.GUI.Music
 						dlgProgress.SetLine(1, album.Title2);
 						dlgProgress.SetLine(2, album.Artist);
 						dlgProgress.StartModal(GetID);
+						dlgProgress.ShowProgressBar(true);
+						dlgProgress.SetPercentage(40);
 						dlgProgress.Progress();
 					}
 
@@ -1015,6 +1061,11 @@ namespace MediaPortal.GUI.Music
 					bool bLoaded = album.Loaded;
 					if (!bLoaded) 
 						bLoaded = album.Load();
+					if (null != dlgProgress) 
+					{
+						dlgProgress.SetPercentage(70);
+						dlgProgress.Progress();
+					}
 					if (bLoaded)
 					{
 						// set album title from musicinfotag, not the one we got from allmusic.com
@@ -1042,7 +1093,11 @@ namespace MediaPortal.GUI.Music
 						// save to database
 						m_database.AddAlbumInfo(albuminfo);
 						if (null != dlgProgress) 
+						{
+							dlgProgress.SetPercentage(100);
+							dlgProgress.Progress();
 							dlgProgress.Close();
+						}
 
 						// ok, show album info
 						GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
