@@ -356,11 +356,23 @@ namespace MediaPortal.GUI.Music
 				{
 					if (song.songId>0)
 					{
+						MusicTag tag = new MusicTag();
+						tag.Album=song.Album;
+						tag.Artist=song.Artist;
+						tag.Duration=song.Duration;
+						tag.Genre=song.Genre;
+						tag.Rating=song.Rating;
+						tag.TimesPlayed=song.TimesPlayed;
+						tag.Title=song.Title;
+						tag.Track=song.Track;
+						tag.Year=song.Year;
+						
 						GUIListItem item = new GUIListItem();
 						item.Path=song.FileName;
 						item.Label=song.Title;
 						item.Duration=song.Duration;
 						item.IsFolder=false;
+						item.MusicTag = tag;
 						AddItemToPlayList(item);
 					}
 				}
@@ -514,6 +526,7 @@ namespace MediaPortal.GUI.Music
           playlistItem.FileName=pItem.Path;
           playlistItem.Description=pItem.Label;
           playlistItem.Duration=pItem.Duration;
+					playlistItem.MusicTag=pItem.MusicTag;
           PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Add(playlistItem);
         }
       }
