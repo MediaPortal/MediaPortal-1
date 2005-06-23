@@ -18,6 +18,15 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicGenres: GUIMusicBaseWindow
   { 
+		class TrackComparer:IComparer	
+		{
+			public int Compare(object x, object y) 
+			{
+				Song s1=(Song)x;
+				Song s2=(Song)y;
+				return s1.Track-s2.Track;
+			}
+		}
     #region Base variabeles
 
     DirectoryHistory  m_history = new DirectoryHistory();
@@ -336,6 +345,13 @@ namespace MediaPortal.GUI.Music
 				handler.Select(pItem.AlbumInfoTag as Song);
 				ArrayList songs = handler.Execute();
 				handler.CurrentLevel--;
+
+				//if current view is albums, then queue items by track
+				FilterDefinition def=(FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+				if (def.Where=="album")
+				{
+					songs.Sort(new TrackComparer() );
+				}
 				foreach (Song song in songs)
 				{
 					if (song.songId>0)
