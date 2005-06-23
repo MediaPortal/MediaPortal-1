@@ -206,7 +206,9 @@ namespace MediaPortal.GUI.Weather
 					TimeSpan ts=DateTime.Now-m_lRefreshTime;
 					if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!=String.Empty )
 					{
+						m_lRefreshTime=DateTime.Now;
 						RefreshMe(false);	//do an autoUpdate refresh
+						m_lRefreshTime=DateTime.Now;
 					}
 					return true;
 				}
@@ -749,7 +751,7 @@ namespace MediaPortal.GUI.Weather
 		}
 
 
-		bool Download(string strWeatherFile)
+		bool Download(string strWeatherFile,GUIDialogProgress	pDlgProgress)
 		{
 			string			strURL;
 
@@ -768,11 +770,27 @@ namespace MediaPortal.GUI.Weather
 			strURL=String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&unit={1}&dayf=4&prod=xoap&par={2}&key={3}",
 				m_strLocation, c_units.ToString(), PARTNER_ID, PARTNER_KEY);
 			
+			if (pDlgProgress!=null)
+			{
+				pDlgProgress.SetPercentage(10);
+				pDlgProgress.Progress();
+			}
 			using (WebClient client = new WebClient())
 			{
 				try
 				{
+					
+					if (pDlgProgress!=null)
+					{
+						pDlgProgress.SetPercentage(15);
+						pDlgProgress.Progress();
+					}
 					client.DownloadFile(strURL, strWeatherFile);
+					if (pDlgProgress!=null)
+					{
+						pDlgProgress.SetPercentage(40);
+						pDlgProgress.Progress();
+					}
 					return true;
 				} 
 				catch(Exception ex)
@@ -910,22 +928,27 @@ namespace MediaPortal.GUI.Weather
 				pDlgProgress.SetHeading(410);						//"Accessing Weather.com"
 				pDlgProgress.SetLine(1, 411);						//"Getting Weather For:"
 				pDlgProgress.SetLine(2, m_strLocation);	//Area code
+				pDlgProgress.SetPercentage(0);
 				if(m_szLocation.Length > 1)							//got the location string yet?
 					pDlgProgress.SetLine(2, m_szLocation);
 				//else
 				//	pDlgProgress.SetLine(3, String.Empty);
 				pDlgProgress.StartModal(GetID);
+				pDlgProgress.ShowProgressBar(true);
 				pDlgProgress.Progress();
 			}	
 
 			//Do The Download
-			dlRes = Download(strWeatherFile);		
-
-			if(null!=pDlgProgress && !autoUpdate)	//close progress dialog
-				pDlgProgress.Close();
+			dlRes = Download(strWeatherFile,pDlgProgress);		
 
 			if(dlRes)	//dont load if download failed
-				ldRes = LoadWeather(strWeatherFile);	//parse
+				ldRes = LoadWeather(strWeatherFile,pDlgProgress);	//parse
+
+			if((!dlRes || !ldRes) && null!=pDlgOK && !autoUpdate) //this will probably crash on an autoupdate as well, but not tested
+			{
+				pDlgProgress.Close();
+				pDlgProgress=null;
+			}
 
 			//if the download or load failed, display an error message
 			if((!dlRes || !ldRes) && null!=pDlgOK && !autoUpdate) //this will probably crash on an autoupdate as well, but not tested
@@ -945,6 +968,12 @@ namespace MediaPortal.GUI.Weather
 				//				OnMessage(msgDe);
 				//			OnMessage(msgRe);
 			}
+			if (pDlgProgress!=null)
+			{
+				pDlgProgress.SetPercentage(80);
+				pDlgProgress.Progress();
+			}
+
 
 			// Update sattelite image
 			GUIImage img=GetControl((int)Controls.CONTROL_IMAGE_SAT) as GUIImage;
@@ -990,10 +1019,17 @@ namespace MediaPortal.GUI.Weather
 			}
 			m_lRefreshTime = DateTime.Now;
 			m_iDayNum = -2;
+			
+			if (pDlgProgress!=null)
+			{
+				pDlgProgress.SetPercentage(100);
+				pDlgProgress.Progress();
+				pDlgProgress.Close();
+			}
 		}
 
 
-		bool LoadWeather(string strWeatherFile)
+		bool LoadWeather(string strWeatherFile, GUIDialogProgress pDlgProgress)
 		{
 			int			iTmpInt=0;
 			string	iTmpStr=String.Empty;
@@ -1005,6 +1041,12 @@ namespace MediaPortal.GUI.Weather
 			XmlDocument doc= new XmlDocument();
 			doc.Load(strWeatherFile);
 			if (doc.DocumentElement==null) return false;
+			if (pDlgProgress!=null)
+			{
+				pDlgProgress.SetPercentage(50);
+				pDlgProgress.Progress();
+			}
+
 			string strRoot=doc.DocumentElement.Name;
 			XmlNode pRootElement=doc.DocumentElement;
 			if (strRoot=="error")
@@ -1090,6 +1132,12 @@ namespace MediaPortal.GUI.Weather
 				m_szNowDewp=String.Format( "{0}{1}{2}", iTmpInt, DEGREE_CHARACTER, szUnitTemp);
 
 			}
+			if (pDlgProgress!=null)
+			{
+				pDlgProgress.SetPercentage(60);
+				pDlgProgress.Progress();
+			}
+
 			//future forcast
 			pElement = pRootElement.SelectSingleNode("dayf");
 			GetString(pElement, "lsup", out m_szForcastUpdated, String.Empty);
@@ -1163,6 +1211,12 @@ namespace MediaPortal.GUI.Weather
 					pOneDayElement = pOneDayElement.NextSibling;//Element("day");
 				}
 			}
+
+			if (pDlgProgress!=null)
+			{
+				pDlgProgress.SetPercentage(70);
+				pDlgProgress.Progress();
+			}
 			return true;
 		}
 
@@ -1191,9 +1245,12 @@ namespace MediaPortal.GUI.Weather
 			TimeSpan ts=DateTime.Now-m_lRefreshTime;
 			if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!=String.Empty )
 			{
+				m_lRefreshTime=DateTime.Now;
 				m_strSelectedDayName="All";
 				m_iDayNum=-2;
 				RefreshMe(true);	//refresh clicked so do a complete update (not an autoUpdate)
+				
+				m_lRefreshTime=DateTime.Now;
 			}
 			base.Process ();
 		}
