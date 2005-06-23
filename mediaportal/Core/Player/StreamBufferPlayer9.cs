@@ -123,6 +123,14 @@ Log.Write("StreamBufferPlayer9: add codecs");
 					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
 					strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
 					strAudioRenderer=xmlreader.GetValueAsString("mytv","audiorenderer","");
+					string strValue=xmlreader.GetValueAsString("mytv","defaultar","normal");
+					if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
+					if (strValue.Equals("stretch")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
+					if (strValue.Equals("normal")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Normal;
+					if (strValue.Equals("original")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Original;
+					if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+					if (strValue.Equals("panscan")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+
 				}
 				if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
