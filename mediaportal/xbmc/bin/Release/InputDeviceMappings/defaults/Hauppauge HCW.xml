@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mappings>
-	<remote name="Hauppauge 45-button remote">
+	<remote family="Hauppauge 45-button remote">
 		<button name="0" code="2000">
 			<action layer="-1" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="-1" condition="WINDOW" conproperty="2" command="ACTION" cmdproperty="80" sound="click.wav" />
@@ -200,7 +200,7 @@
 			<action layer="-1" condition="*" conproperty="-1" command="ACTION" cmdproperty="9" sound="back.wav" />
 		</button>
 	</remote>
-	<remote name="Hauppauge 34-button remote">
+	<remote family="Hauppauge 34-button remote">
 		<button name="0" code="1000">
 			<action layer="-1" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="-1" condition="WINDOW" conproperty="2" command="ACTION" cmdproperty="80" sound="click.wav" />

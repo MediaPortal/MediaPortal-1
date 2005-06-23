@@ -63,30 +63,43 @@ namespace MediaPortal.Configuration
     /// </summary>
     class RemoteButton
     {
+      string    family;
       int       code;
       string    name;
       ArrayList mapping = new ArrayList();
 
+      public string    Family  { get { return family;  } }
       public int       Code    { get { return code;    } }
       public string    Name    { get { return name;    } }
       public ArrayList Mapping { get { return mapping; } }
 
-      public RemoteButton(int newCode, string newName, ArrayList newMapping)
+      public RemoteButton(string newFamily, int newCode, string newName, ArrayList newMapping)
       {
+        family  = newFamily;
         code    = newCode;
         name    = newName;
         mapping = newMapping;
       }
     }
 
+
+    class Remote
+    {
+      string name;
+      ArrayList buttons = new ArrayList();
+
+      public string    Name    { get { return name;    } }
+      public ArrayList Buttons { get { return buttons; } }
+
+      public Remote(string newName, ArrayList newButtons)
+      {
+        name    = newName;
+        buttons = newButtons;
+      }
+    }
+
+
     private System.Windows.Forms.TreeView treeMapping;
-    private System.Windows.Forms.TextBox textBoxButton;
-    private System.Windows.Forms.TextBox textBoxLayer;
-    private System.Windows.Forms.TextBox textBoxCondition;
-    private System.Windows.Forms.TextBox textBoxConProperty;
-    private System.Windows.Forms.TextBox textBoxCommand;
-    private System.Windows.Forms.TextBox textBoxCmdProperty;
-    private System.Windows.Forms.TextBox textBoxSound;
     private System.Windows.Forms.RadioButton radioButtonWindow;
     private System.Windows.Forms.RadioButton radioButtonFullscreen;
     private System.Windows.Forms.RadioButton radioButtonPlaying;
@@ -122,7 +135,10 @@ namespace MediaPortal.Configuration
       // Required for Windows Form Designer support
       //
       InitializeComponent();
-      PopulateTree("InputDeviceMappings\\defaults\\Hauppauge HCW.xml");
+      LoadMapping("InputDeviceMappings\\defaults\\Hauppauge HCW.xml");
+      Remote remote = (Remote)remotesList[0];
+      comboBoxRemoteName.SelectedItem = remote.Name;
+      PopulateTree(remote.Buttons);
     }
 
     /// <summary>
@@ -149,13 +165,6 @@ namespace MediaPortal.Configuration
     {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(HCWMappingForm));
       this.treeMapping = new System.Windows.Forms.TreeView();
-      this.textBoxButton = new System.Windows.Forms.TextBox();
-      this.textBoxLayer = new System.Windows.Forms.TextBox();
-      this.textBoxCondition = new System.Windows.Forms.TextBox();
-      this.textBoxConProperty = new System.Windows.Forms.TextBox();
-      this.textBoxCommand = new System.Windows.Forms.TextBox();
-      this.textBoxCmdProperty = new System.Windows.Forms.TextBox();
-      this.textBoxSound = new System.Windows.Forms.TextBox();
       this.radioButtonWindow = new System.Windows.Forms.RadioButton();
       this.radioButtonFullscreen = new System.Windows.Forms.RadioButton();
       this.radioButtonPlaying = new System.Windows.Forms.RadioButton();
@@ -191,75 +200,12 @@ namespace MediaPortal.Configuration
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
       this.treeMapping.ImageIndex = -1;
-      this.treeMapping.Location = new System.Drawing.Point(16, 62);
+      this.treeMapping.Location = new System.Drawing.Point(64, 62);
       this.treeMapping.Name = "treeMapping";
       this.treeMapping.SelectedImageIndex = -1;
-      this.treeMapping.Size = new System.Drawing.Size(424, 386);
+      this.treeMapping.Size = new System.Drawing.Size(312, 386);
       this.treeMapping.TabIndex = 1;
       this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
-      // 
-      // textBoxButton
-      // 
-      this.textBoxButton.Location = new System.Drawing.Point(824, 32);
-      this.textBoxButton.Name = "textBoxButton";
-      this.textBoxButton.Size = new System.Drawing.Size(176, 20);
-      this.textBoxButton.TabIndex = 2;
-      this.textBoxButton.Text = "Button";
-      this.textBoxButton.Visible = false;
-      // 
-      // textBoxLayer
-      // 
-      this.textBoxLayer.Location = new System.Drawing.Point(824, 72);
-      this.textBoxLayer.Name = "textBoxLayer";
-      this.textBoxLayer.Size = new System.Drawing.Size(176, 20);
-      this.textBoxLayer.TabIndex = 3;
-      this.textBoxLayer.Text = "Layer";
-      this.textBoxLayer.Visible = false;
-      // 
-      // textBoxCondition
-      // 
-      this.textBoxCondition.Location = new System.Drawing.Point(824, 112);
-      this.textBoxCondition.Name = "textBoxCondition";
-      this.textBoxCondition.Size = new System.Drawing.Size(176, 20);
-      this.textBoxCondition.TabIndex = 4;
-      this.textBoxCondition.Text = "Condition";
-      this.textBoxCondition.Visible = false;
-      // 
-      // textBoxConProperty
-      // 
-      this.textBoxConProperty.Location = new System.Drawing.Point(824, 152);
-      this.textBoxConProperty.Name = "textBoxConProperty";
-      this.textBoxConProperty.Size = new System.Drawing.Size(176, 20);
-      this.textBoxConProperty.TabIndex = 5;
-      this.textBoxConProperty.Text = "Condition Property";
-      this.textBoxConProperty.Visible = false;
-      // 
-      // textBoxCommand
-      // 
-      this.textBoxCommand.Location = new System.Drawing.Point(824, 192);
-      this.textBoxCommand.Name = "textBoxCommand";
-      this.textBoxCommand.Size = new System.Drawing.Size(176, 20);
-      this.textBoxCommand.TabIndex = 6;
-      this.textBoxCommand.Text = "Command";
-      this.textBoxCommand.Visible = false;
-      // 
-      // textBoxCmdProperty
-      // 
-      this.textBoxCmdProperty.Location = new System.Drawing.Point(824, 232);
-      this.textBoxCmdProperty.Name = "textBoxCmdProperty";
-      this.textBoxCmdProperty.Size = new System.Drawing.Size(176, 20);
-      this.textBoxCmdProperty.TabIndex = 7;
-      this.textBoxCmdProperty.Text = "Command Property";
-      this.textBoxCmdProperty.Visible = false;
-      // 
-      // textBoxSound
-      // 
-      this.textBoxSound.Location = new System.Drawing.Point(824, 272);
-      this.textBoxSound.Name = "textBoxSound";
-      this.textBoxSound.Size = new System.Drawing.Size(176, 20);
-      this.textBoxSound.TabIndex = 8;
-      this.textBoxSound.Text = "Sound";
-      this.textBoxSound.Visible = false;
       // 
       // radioButtonWindow
       // 
@@ -328,7 +274,7 @@ namespace MediaPortal.Configuration
       this.groupBoxCondition.Controls.Add(this.comboBoxCondProperty);
       this.groupBoxCondition.Enabled = false;
       this.groupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxCondition.Location = new System.Drawing.Point(456, 160);
+      this.groupBoxCondition.Location = new System.Drawing.Point(400, 160);
       this.groupBoxCondition.Name = "groupBoxCondition";
       this.groupBoxCondition.Size = new System.Drawing.Size(224, 112);
       this.groupBoxCondition.TabIndex = 15;
@@ -397,7 +343,7 @@ namespace MediaPortal.Configuration
       this.groupBoxAction.Controls.Add(this.comboBoxCmdProperty);
       this.groupBoxAction.Enabled = false;
       this.groupBoxAction.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxAction.Location = new System.Drawing.Point(456, 280);
+      this.groupBoxAction.Location = new System.Drawing.Point(400, 280);
       this.groupBoxAction.Name = "groupBoxAction";
       this.groupBoxAction.Size = new System.Drawing.Size(224, 168);
       this.groupBoxAction.TabIndex = 16;
@@ -431,7 +377,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.Location = new System.Drawing.Point(16, 16);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(672, 24);
+      this.headerLabel.Size = new System.Drawing.Size(656, 24);
       this.headerLabel.TabIndex = 17;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
@@ -454,6 +400,7 @@ namespace MediaPortal.Configuration
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 19;
       this.okButton.Text = "OK";
+      this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
       // cancelButton
       // 
@@ -480,7 +427,7 @@ namespace MediaPortal.Configuration
       this.groupBoxRemoteName.Controls.Add(this.numericUpDownLayer);
       this.groupBoxRemoteName.Controls.Add(this.comboBoxRemoteName);
       this.groupBoxRemoteName.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxRemoteName.Location = new System.Drawing.Point(456, 56);
+      this.groupBoxRemoteName.Location = new System.Drawing.Point(400, 56);
       this.groupBoxRemoteName.Name = "groupBoxRemoteName";
       this.groupBoxRemoteName.Size = new System.Drawing.Size(224, 96);
       this.groupBoxRemoteName.TabIndex = 22;
@@ -513,6 +460,7 @@ namespace MediaPortal.Configuration
       this.comboBoxRemoteName.Name = "comboBoxRemoteName";
       this.comboBoxRemoteName.Size = new System.Drawing.Size(176, 21);
       this.comboBoxRemoteName.TabIndex = 14;
+      this.comboBoxRemoteName.SelectedIndexChanged += new System.EventHandler(this.comboBoxRemoteName_SelectedIndexChanged);
       // 
       // HCWMappingForm
       // 
@@ -527,13 +475,6 @@ namespace MediaPortal.Configuration
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.headerLabel);
       this.Controls.Add(this.groupBoxCondition);
-      this.Controls.Add(this.textBoxSound);
-      this.Controls.Add(this.textBoxCmdProperty);
-      this.Controls.Add(this.textBoxCommand);
-      this.Controls.Add(this.textBoxConProperty);
-      this.Controls.Add(this.textBoxCondition);
-      this.Controls.Add(this.textBoxLayer);
-      this.Controls.Add(this.textBoxButton);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.groupBoxAction);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -551,42 +492,31 @@ namespace MediaPortal.Configuration
     }
     #endregion
 
-    void PopulateTree(string xmlFile)
+
+    void LoadMapping(string xmlFile)
     {
       XmlDocument doc = new XmlDocument();
       doc.Load(xmlFile);
       XmlNodeList listRemotes=doc.DocumentElement.SelectNodes("/mappings/remote");
-
       
       foreach (XmlNode nodeRemote in listRemotes)
       {
-        comboBoxRemoteName.Items.Add(nodeRemote.Attributes["name"].Value);
+        comboBoxRemoteName.Items.Add(nodeRemote.Attributes["family"].Value);
 
-        ArrayList remote = new ArrayList();
+        ArrayList buttonList = new ArrayList();
 
         XmlNodeList listButtons=nodeRemote.SelectNodes("button");
         foreach (XmlNode nodeButton in listButtons)
         {
-          int conditionCount = 0;
           string name  = nodeButton.Attributes["name"].Value;
 
-          TreeNode buttonNode   = new TreeNode(name);
-          TreeNode layer0Node   = new TreeNode("Layer 0");
-          TreeNode layer1Node   = new TreeNode("Layer 1");
-          TreeNode layerAllNode = new TreeNode("all Layers");
-        
           int code = Convert.ToInt32(nodeButton.Attributes["code"].Value);
         
-          treeMapping.Nodes.Add(buttonNode);
-
           ArrayList mapping = new ArrayList();
           XmlNodeList listActions = nodeButton.SelectNodes("action");
         
           foreach (XmlNode nodeAction in listActions)
           {
-            conditionCount++;
-            string conditionString = null;
-            string commandString = null;
             string condition   = nodeAction.Attributes["condition"].Value.ToUpper();
             string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
             string command     = nodeAction.Attributes["command"].Value.ToUpper();
@@ -595,101 +525,134 @@ namespace MediaPortal.Configuration
             int    layer       = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
             Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, sound);
             mapping.Add(conditionMap);
-
-            #region Conditions
-
-            switch (condition)
-            {
-              case "WINDOW":
-                conditionString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(conProperty));
-                break;
-              case "FULLSCREEN":
-                if (conProperty == "TRUE")
-                  conditionString = "Fullscreen";
-                else
-                  conditionString = "No fullscreen";
-                break;
-              case "PLAYER":
-              switch (conProperty)
-              {
-                case "TV":
-                  conditionString = "TV playing";
-                  break;
-                case "DVD":
-                  conditionString = "DVD playing";
-                  break;
-                case "PLAYING":
-                  conditionString = "Media playing";
-                  break;
-              }
-                break;
-              case "*":
-                conditionString = "Wildcard";
-                break;
-            }
-
-            #endregion
-            #region Commands
-
-            switch (command)
-            {
-              case "ACTION":
-                commandString = Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(cmdProperty));
-                break;
-              case "KEY":
-                commandString = "Key \"" + cmdProperty + "\"";
-                break;
-              case "WINDOW":
-                commandString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(cmdProperty));
-                break;
-              case "TOGGLE":
-                commandString = "Toggle Layer";
-                break;
-              case "POWER":
-              switch (cmdProperty)
-              {
-                case "EXIT":
-                  commandString = "Exit Media Portal";
-                  break;
-                case "REBOOT":
-                  commandString = "Reboot Windows";
-                  break;
-                case "SHUTDOWN":
-                  commandString = "Shutdown Windows";
-                  break;
-                case "STANDBY":
-                  commandString = "Suspend Windows (Standby)";
-                  break;
-                case "HIBERNATE":
-                  commandString = "Hibernate Windows";
-                  break;
-              }
-                break;
-            }
-
-            #endregion
-
-            TreeNode conditionNode = new TreeNode(conditionCount + ". " + conditionString);
-            TreeNode commandNode = new TreeNode(commandString);
-            conditionNode.Tag = conditionMap;
-            conditionNode.Nodes.Add(commandNode);
-
-            if ((command != "KEY") && (sound != ""))
-              conditionNode.Nodes.Add("Sound: " + sound);
-            if (layer == 0) layer0Node.Nodes.Add(conditionNode);
-            if (layer == 1) layer1Node.Nodes.Add(conditionNode);
-            if (layer == -1) layerAllNode.Nodes.Add(conditionNode);
           }
-          if (layer0Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer0Node);
-          if (layer1Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer1Node);
-          if (layerAllNode.Nodes.Count > 0) buttonNode.Nodes.Add(layerAllNode);
-
-          RemoteButton remoteButton = new RemoteButton(code, name, mapping);
-          remote.Add(remoteButton);
+          RemoteButton remoteButton = new RemoteButton(nodeRemote.Attributes["family"].Value, code, name, mapping);
+          buttonList.Add(remoteButton);
         }
+        Remote remote = new Remote(nodeRemote.Attributes["family"].Value, buttonList);
         remotesList.Add(remote);
       }
     }
+
+
+
+    void PopulateTree(ArrayList buttonList)
+    {
+      treeMapping.Nodes.Clear();
+      foreach (RemoteButton remoteButton in buttonList)
+      {
+        int conditionCount = 0;
+
+        TreeNode buttonNode   = new TreeNode(remoteButton.Name);
+        TreeNode layer0Node   = new TreeNode("Layer 0");
+        TreeNode layer1Node   = new TreeNode("Layer 1");
+        TreeNode layerAllNode = new TreeNode("all Layers");
+        
+        treeMapping.Nodes.Add(buttonNode);
+
+        foreach (Mapping conditionMap in remoteButton.Mapping)
+        {
+          conditionCount++;
+          string conditionString = null;
+          string commandString = null;
+          string condition   = conditionMap.Condition;
+          string conProperty = conditionMap.ConProperty;
+          string command     = conditionMap.Command;
+          string cmdProperty = conditionMap.CmdProperty;
+          string sound       = conditionMap.Sound;
+          int    layer       = conditionMap.Layer;
+
+          #region Conditions
+
+          switch (condition)
+          {
+            case "WINDOW":
+              conditionString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(conProperty));
+              break;
+            case "FULLSCREEN":
+              if (conProperty == "TRUE")
+                conditionString = "Fullscreen";
+              else
+                conditionString = "No fullscreen";
+              break;
+            case "PLAYER":
+            switch (conProperty)
+            {
+              case "TV":
+                conditionString = "TV playing";
+                break;
+              case "DVD":
+                conditionString = "DVD playing";
+                break;
+              case "PLAYING":
+                conditionString = "Media playing";
+                break;
+            }
+              break;
+            case "*":
+              conditionString = "Wildcard";
+              break;
+          }
+
+          #endregion
+          #region Commands
+
+          switch (command)
+          {
+            case "ACTION":
+              commandString = Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(cmdProperty));
+              break;
+            case "KEY":
+              commandString = "Key \"" + cmdProperty + "\"";
+              break;
+            case "WINDOW":
+              commandString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(cmdProperty));
+              break;
+            case "TOGGLE":
+              commandString = "Toggle Layer";
+              break;
+            case "POWER":
+            switch (cmdProperty)
+            {
+              case "EXIT":
+                commandString = "Exit Media Portal";
+                break;
+              case "REBOOT":
+                commandString = "Reboot Windows";
+                break;
+              case "SHUTDOWN":
+                commandString = "Shutdown Windows";
+                break;
+              case "STANDBY":
+                commandString = "Suspend Windows (Standby)";
+                break;
+              case "HIBERNATE":
+                commandString = "Hibernate Windows";
+                break;
+            }
+              break;
+          }
+
+          #endregion
+
+          TreeNode conditionNode = new TreeNode(conditionCount + ". " + conditionString);
+          TreeNode commandNode = new TreeNode(commandString);
+          conditionNode.Tag = conditionMap;
+          conditionNode.Nodes.Add(commandNode);
+
+          if ((command != "KEY") && (sound != ""))
+            conditionNode.Nodes.Add("Sound: " + sound);
+          if (layer == 0) layer0Node.Nodes.Add(conditionNode);
+          if (layer == 1) layer1Node.Nodes.Add(conditionNode);
+          if (layer == -1) layerAllNode.Nodes.Add(conditionNode);
+        }
+        if (layer0Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer0Node);
+        if (layer1Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer1Node);
+        if (layerAllNode.Nodes.Count > 0) buttonNode.Nodes.Add(layerAllNode);
+      }
+    }
+    
+
 
     
     private void treeMapping_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
@@ -710,13 +673,6 @@ namespace MediaPortal.Configuration
           groupBoxAction.Enabled = false;
           return;
         }
-
-        textBoxLayer.Text = conditionMap.Layer.ToString();
-        textBoxCondition.Text = conditionMap.Condition;
-        textBoxConProperty.Text = conditionMap.ConProperty;
-        textBoxCommand.Text = conditionMap.Command;
-        textBoxCmdProperty.Text = conditionMap.CmdProperty;
-        textBoxSound.Text = conditionMap.Sound;
 
         numericUpDownLayer.Value = conditionMap.Layer;
 
@@ -884,6 +840,21 @@ namespace MediaPortal.Configuration
       comboBoxCmdProperty.Enabled = true;
       Mapping conditionMap = (Mapping)currentlySelectedNode.Tag;
       UpdateCombo(ref comboBoxCmdProperty, powerList, conditionMap.CmdProperty);
+    }
+
+    private void comboBoxRemoteName_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      foreach (Remote remote in remotesList)
+      {
+        if (remote.Name == comboBoxRemoteName.SelectedItem.ToString())
+          PopulateTree(remote.Buttons);
+      }
+    }
+
+    private void okButton_Click(object sender, System.EventArgs e)
+    {
+      MessageBox.Show(this, "This feature is work in progress.\nMappings are not saved yet.");
+      this.Close();
     }
   }
 }
