@@ -564,6 +564,7 @@ namespace MediaPortal.GUI.Music
 				int nRemoteCount =0;
 				PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
 				PlayListPlayer.Reset();
+				ArrayList queueItems = new ArrayList();
 				for (int i = 0; i < (int) facadeView.Count; i++) 
 				{
 					GUIListItem pItem = facadeView[i];
@@ -579,27 +580,28 @@ namespace MediaPortal.GUI.Music
 					}
 					if (!PlayListFactory.IsPlayList(pItem.Path))
 					{
-						ArrayList list = new ArrayList();
-						list.Add(pItem);
-						m_bScan=true;
-						OnRetrieveMusicInfo(ref list);
-						m_database.CheckVariousArtistsAndCoverArt();
-						m_bScan=false;
-						
-						PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
-						playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
-						playlistItem.FileName = pItem.Path;
-						playlistItem.Description = pItem.Label;
-						playlistItem.Duration = pItem.Duration;
-						playlistItem.MusicTag = pItem.MusicTag;
-						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+						queueItems.Add(pItem);
 					}
 					else
 					{
-
 						if (i < facadeView.SelectedListItemIndex) nFolderCount++;
 						continue;
 					}
+				}
+				m_bScan=true;
+				OnRetrieveMusicInfo(ref queueItems);
+				m_database.CheckVariousArtistsAndCoverArt();
+				m_bScan=false;
+						
+				foreach (GUIListItem queueItem in queueItems)
+				{
+					PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+					playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+					playlistItem.FileName = queueItem.Path;
+					playlistItem.Description = queueItem.Label;
+					playlistItem.Duration = queueItem.Duration;
+					playlistItem.MusicTag = queueItem.MusicTag;
+					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
 				}
 
 				//	Save current window and directory to know where the selected item was
@@ -1252,6 +1254,7 @@ namespace MediaPortal.GUI.Music
 							if (song1.m_strPath == pItem.Path)
 							{
 								bNewFile = false;
+								break;
 							}
 						}
 					}
@@ -1260,6 +1263,7 @@ namespace MediaPortal.GUI.Music
 						if (song1.m_song.FileName == pItem.Path)
 						{
 							pItem.AlbumInfoTag=song1.m_song;
+							break;
 						}
 					}
 
