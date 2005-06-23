@@ -101,7 +101,7 @@ namespace MediaPortal.TV.Recording
 				ScanNextChannel();
 				if (captureCard.SignalPresent())
 				{
-					if (captureCard.SignalQuality>40)
+					//if (captureCard.SignalQuality>40)
 					{
 						ScanChannels();
 					}
@@ -114,7 +114,7 @@ namespace MediaPortal.TV.Recording
 				if (captureCard.SignalPresent())
 				{
 					
-					if (captureCard.SignalQuality>40)
+					//if (captureCard.SignalQuality>40)
 					{
 						ScanChannels();
 					}

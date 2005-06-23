@@ -186,7 +186,7 @@ namespace MediaPortal.TV.Recording
 				ScanNextDVBCChannel();
 				if (captureCard.SignalPresent())
 				{
-					if (captureCard.SignalQuality>40)
+					//if (captureCard.SignalQuality>40)
 					{
 						ScanChannels();
 					}
@@ -198,7 +198,7 @@ namespace MediaPortal.TV.Recording
 				ScanDVBCChannel();
 				if (captureCard.SignalPresent())
 				{
-					if (captureCard.SignalQuality>40)
+					//if (captureCard.SignalQuality>40)
 					{
 						ScanChannels();
 					}

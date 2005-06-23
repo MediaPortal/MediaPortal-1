@@ -164,7 +164,7 @@ namespace MediaPortal.TV.Recording
 					if (captureCard.SignalPresent())
 					{
 						System.Threading.Thread.Sleep(1000);
-						if (captureCard.SignalQuality>40)
+						//if (captureCard.SignalQuality>40)
 						{
 							Log.WriteFile(Log.LogType.Capture,"Found signal at:{0} MHz,scan for channels",frequency);
 							currentState=State.ScanChannels;
