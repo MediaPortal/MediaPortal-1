@@ -1,5 +1,4 @@
 using System;
-
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -7,11 +6,12 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Management;
 using System.Diagnostics;
-using MediaPortal.GUI.Library;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Xml;
+using System.ServiceProcess;
 using Microsoft.Win32;
+using MediaPortal.GUI.Library;
 
 
 namespace MediaPortal.Util
@@ -67,6 +67,11 @@ namespace MediaPortal.Util
 		static ArrayList m_PictureExtensions		=new ArrayList();
 		static bool m_bHideExtensions=false;
     static bool enableGuiSounds;
+
+    static bool restartMCEehRecvr = false;
+    static bool restartMCEehSched = false;
+    static ServiceController ehRecvr = new ServiceController("ehRecvr");
+    static ServiceController ehSched = new ServiceController("ehSched");
 
 		// singleton. Dont allow any instance of this class
 		private Utils()
@@ -1526,27 +1531,86 @@ namespace MediaPortal.Util
 			catch(Exception){}
 
 		}
-		static public void KillExternalTVProcesses()
+
+		static public void StopMCEServices()
 		{
-	
-			Process[] myProcesses;
-        
-			// kill ehtray.exe since that program catches the mce remote keys
-			// and will start mce 2005
-			myProcesses = Process.GetProcesses();
-			foreach(Process myProcess in myProcesses)
-			{
-				if (myProcess.ProcessName.ToLower().Equals("ehrecvr.exe"))
-				{
-					try
-					{
-						myProcess.Kill();
-					}
-					catch(Exception){}
-					return;
-				}
-			}
+      // Stop MCE ehRecvr and ehSched services
+      bool ehRecvrExist = false;
+      try
+      {
+        string dummy = ehRecvr.ServiceName;
+        ehRecvrExist = true;
+      }
+      catch {}
+      bool ehSchedExist = false;
+      try
+      {
+        string dummy = ehSched.ServiceName;
+        ehSchedExist = true;
+      }
+      catch {}
+
+      if ((ehRecvrExist && (ehRecvr.Status != ServiceControllerStatus.Stopped) && (ehRecvr.Status != ServiceControllerStatus.StopPending))
+        || (ehSchedExist && (ehSched.Status != ServiceControllerStatus.Stopped) && (ehSched.Status != ServiceControllerStatus.StopPending)))
+      {
+        Log.Write("  Stopping Microsoft Media Center services");
+        try
+        {
+          if ((ehRecvr.Status != ServiceControllerStatus.Stopped) && (ehRecvr.Status != ServiceControllerStatus.StopPending))
+          {
+            ehRecvr.Stop();
+            restartMCEehRecvr = true;
+          }
+        }
+        catch
+        {
+          Log.Write("Error stopping MCE service \"ehRecvr\"");
+        }
+        try
+        {
+          if ((ehSched.Status != ServiceControllerStatus.Stopped) && (ehSched.Status != ServiceControllerStatus.StopPending))
+          {
+            ehSched.Stop();
+            restartMCEehSched = true;
+          }
+        }
+        catch
+        {
+          Log.Write("Error stopping MCE service \"ehSched\"");
+        }
+      }
 		}
+
+    static public void RestartMCEServices()
+    {
+      if (restartMCEehRecvr || restartMCEehSched)
+      {
+        Log.Write("Restarting MCE Services");
+
+        try
+        {
+          if (restartMCEehRecvr)
+            ehRecvr.Start();
+        }
+        catch (Exception ex)
+        {
+          if (ehRecvr.Status != ServiceControllerStatus.Running)
+            Log.Write("Error starting MCE service \"ehRecvr\" {0}", ex.ToString());
+        }
+
+        try
+        {
+          if (restartMCEehSched)
+            ehSched.Start();
+        }
+        catch (Exception ex)
+        {
+          if (ehSched.Status != ServiceControllerStatus.Running)
+            Log.Write("Error starting MCE service \"ehSched\" {0}", ex.ToString());
+        }
+      }
+    }
+
 		static public DateTime ParseDateTimeString(string dateTime)
 		{
 			try

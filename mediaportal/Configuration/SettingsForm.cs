@@ -65,9 +65,10 @@ namespace MediaPortal.Configuration
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
-
 			
-			Utils.KillExternalTVProcesses();
+      // Stop MCE services
+			Utils.StopMCEServices();
+
 			//
 			// Set caption
 			//
@@ -427,6 +428,8 @@ namespace MediaPortal.Configuration
 
 		private void SettingsForm_Closed(object sender, System.EventArgs e)
 		{
+      // Restart MCE services
+      Utils.RestartMCEServices();
 			try
 			{
 				// stop serial ir receiver thread

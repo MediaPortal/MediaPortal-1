@@ -199,6 +199,11 @@
                     AssemblyName = "Interop.DirectShowHelperLib"
                     HintPath = "..\Interop.DirectShowHelperLib.dll"
                 />
+                <Reference
+                    Name = "System.ServiceProcess"
+                    AssemblyName = "System.ServiceProcess"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.ServiceProcess.dll"
+                />
             </References>
         </Build>
         <Files>
