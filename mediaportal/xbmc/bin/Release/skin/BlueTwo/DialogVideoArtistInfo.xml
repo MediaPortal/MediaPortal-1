@@ -45,14 +45,14 @@
 		<textcolor>FFFFFFFF</textcolor> 
 	</control>
 	<control>
-		<description>Plot</description> 
+		<description>Biography</description> 
 		<type>togglebutton</type> 
 		<id>3</id> 
 		<posX>60</posX> 
 		<posY>97</posY> 
 		<width>120</width> 
 		<height>32</height> 
-		<label>207</label>
+		<label>Biography</label>
 		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 		<textureFocus>togglebutton-on-focus.png</textureFocus>
@@ -67,14 +67,14 @@
 		<ondown>4</ondown>
 	</control>
 	<control>
-		<description>Cast</description> 
+		<description>Movies</description> 
 		<type>togglebutton</type> 
 		<id>4</id> 
 		<posX>60</posX> 
 		<posY>131</posY> 
 		<width>120</width> 
 		<height>32</height> 
-		<label>206</label>
+		<label>342</label>
 		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 		<textureFocus>togglebutton-on-focus.png</textureFocus>

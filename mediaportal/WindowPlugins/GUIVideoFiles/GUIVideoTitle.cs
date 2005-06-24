@@ -370,9 +370,23 @@ namespace MediaPortal.GUI.Video
 			if (item==null) return;
 			IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 			if (movie==null) return;
-			if (movie.ID<0) return;
-	
-			GUIVideoFiles.ShowIMDB(movie.ID);
+			if (movie.ID>=0)
+			{
+				GUIVideoFiles.ShowIMDB(movie.ID);
+			}
+			if (movie.actorId>=0)
+			{
+				ShowActorInfo(movie.actorId);
+			}
+		}
+		void ShowActorInfo(int actorId)
+		{
+			GUIVideoArtistInfo infoDlg = (GUIVideoArtistInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO);
+			if (infoDlg==null) return;
+			IMDBActor actor= VideoDatabase.GetActorInfo(actorId);
+			if (actor==null) return;
+			infoDlg.Actor=actor;
+			infoDlg.DoModal(GetID);
 		}
 
 		void SetIMDBThumbs(ArrayList items)

@@ -597,7 +597,7 @@ namespace MediaPortal.Video.Database
 					actor.MiniBiography=Utils.stripHTMLtags(href).Trim();
 
 					//get complete biography
-					string bioURL=url.URL;
+					string bioURL=absoluteUri;
 					int pos=bioURL.IndexOf("?");
 					if (pos > 0) 
 						bioURL=bioURL.Substring(0,pos);
@@ -609,7 +609,8 @@ namespace MediaPortal.Video.Database
 						posStart=strBioBody.IndexOf("biopar");
 						if (posStart>0)
 						{
-							posStart=strBioBody.IndexOf("<a",posStart);
+							posStart=strBioBody.IndexOf(">",posStart);
+							posStart++;
 							posEnd=strBioBody.IndexOf("</p>",posStart);
 							href=strBioBody.Substring(posStart,posEnd-posStart);
 							href=Utils.stripHTMLtags(href).Trim();

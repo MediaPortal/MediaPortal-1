@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Video
 
     
 		ViewMode viewmode= ViewMode.Biography;
-		bool m_bRefresh = false;
+		
 		IMDBActor currentActor = null;
 		bool m_bPrevOverlay = false;
 		string imdbCoverArtUrl = String.Empty;
@@ -157,7 +157,6 @@ namespace MediaPortal.GUI.Video
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
 				{
 					m_bPrevOverlay = GUIGraphicsContext.Overlay;
-					m_bRefresh = false;
 					base.OnMessage(message);
 					return true;
 				}

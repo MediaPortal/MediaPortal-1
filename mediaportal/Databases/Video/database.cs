@@ -1692,10 +1692,6 @@ namespace MediaPortal.Video.Database
 					}
 					return ;
 				}
-				else
-				{
-					return;
-				}
 			}
 			catch (Exception ex) 
 			{
@@ -1710,17 +1706,10 @@ namespace MediaPortal.Video.Database
 			try
 			{
 				if (null==m_db) return ;
-				string strSQL=String.Format("select * from actorinfomovies where idActor ={0}",idActor);
-				SQLiteResultSet results;
-				results=m_db.Execute(strSQL);
-				if (results.Rows.Count == 0) 
-				{
-					// doesnt exists, add it
-					strSQL = String.Format("insert into actorinfomovies (idActor, idDirector , strPlotOutline , strPlot , strTagLine , strVotes , fRating ,strCast ,strCredits , iYear , strGenre , strPictureURL , strTitle , IMDBID , mpaa ,runtime , iswatched , role  ) values( {0} ,{1} ,'{2}' , '{3}' , '{4}' , '{5}' , '{6}' ,'{7}' ,'{8}' , {9} , '{10}' , '{11}' , '{12}' , '{13}' ,'{14}',{15} , {16} , '{17}' )",
-																	idActor,-1,"-","-","-","-","-","-","-",movie.Year,"-","-",DatabaseUtility.FilterText(movie.MovieTitle),"-","-",-1,0,DatabaseUtility.FilterText(movie.Role) );
-					m_db.Execute(strSQL);
-					return ;
-				}
+				string strSQL = String.Format("insert into actorinfomovies (idActor, idDirector , strPlotOutline , strPlot , strTagLine , strVotes , fRating ,strCast ,strCredits , iYear , strGenre , strPictureURL , strTitle , IMDBID , mpaa ,runtime , iswatched , role  ) values( {0} ,{1} ,'{2}' , '{3}' , '{4}' , '{5}' , '{6}' ,'{7}' ,'{8}' , {9} , '{10}' , '{11}' , '{12}' , '{13}' ,'{14}',{15} , {16} , '{17}' )",
+																idActor,-1,"-","-","-","-","-","-","-",movie.Year,"-","-",DatabaseUtility.FilterText(movie.MovieTitle),"-","-",-1,0,DatabaseUtility.FilterText(movie.Role) );
+				m_db.Execute(strSQL);
+				return ;
 			}
 			catch (Exception ex) 
 			{
@@ -1728,6 +1717,45 @@ namespace MediaPortal.Video.Database
 				Open();
 			}
 			return ;
+		}
+
+		static public IMDBActor GetActorInfo(int idActor)
+		{
+			//"CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text
+			try
+			{
+				if (null==m_db) return null ;
+				string strSQL=String.Format("select * from actors,actorinfo where actors.idActor=actorinfo.idActor and actors.idActor ={0}",idActor);
+				SQLiteResultSet results;
+				results=m_db.Execute(strSQL);
+				if (results.Rows.Count != 0) 
+				{
+					IMDBActor actor= new IMDBActor();
+					actor.Biography=DatabaseUtility.Get(results,0,"actorinfo.biography");
+					actor.DateOfBirth=DatabaseUtility.Get(results,0,"actorinfo.dateofbirth");
+					actor.MiniBiography=DatabaseUtility.Get(results,0,"actorinfo.minibio");
+					actor.Name=DatabaseUtility.Get(results,0,"actors.strActor");
+					actor.PlaceOfBirth=DatabaseUtility.Get(results,0,"actorinfo.placeofbirth");
+					
+					strSQL=String.Format("select * from actorinfomovies where idActor ={0}",idActor);
+					results=m_db.Execute(strSQL);
+					for (int i=0; i < results.Rows.Count;++i) 
+					{
+						IMDBActor.IMDBActorMovie movie = new IMDBActor.IMDBActorMovie();
+						movie.MovieTitle=DatabaseUtility.Get(results,i,"strTitle");
+						movie.Role=DatabaseUtility.Get(results,i,"role");
+						movie.Year=Int32.Parse(DatabaseUtility.Get(results,i,"iYear"));
+						actor.Add(movie);
+					}
+					return actor;
+				}
+			}
+			catch (Exception ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+				Open();
+			}
+			return null;
 		}
 		#endregion
 	}
