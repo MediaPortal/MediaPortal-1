@@ -788,33 +788,38 @@ namespace MediaPortal.TV.Recording
 
 			// when here, we can set graph as running
 #if MAKEDUMP
-			if (fileLen==0&&writer==null || stream==null)
+			if (fileLen==0&&writer==null && stream==null)
 			{
 				fileLen=0;
-				stream = new System.IO.FileStream("dump.mpg",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
+				stream = new System.IO.FileStream("dump4GB.ts",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
 				writer = new System.IO.BinaryWriter(stream);
 			}
-			for (int ptr = add; ptr < end; ptr += 188)//main loop
+			
+			if (writer!=null)
 			{
-				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-				if(m_packetHeader.SyncByte!=0x47) 
-					continue;
-				if(m_packetHeader.TransportError==true)
-					continue;
-				if (m_packetHeader.Pid==m_audioPid)
+				for (int ptr = add; ptr < end; ptr += 188)//main loop
 				{
-					byte[] byData=new byte[188];
-					Marshal.Copy((IntPtr)ptr,byData,0,188);
-					writer.Write(byData,0,188);
-					fileLen +=(ulong)188;
-				}
+					m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
+					//	if(m_packetHeader.SyncByte!=0x47) 
+					//		continue;
+					//	if(m_packetHeader.TransportError==true)
+					//		continue;
+					//	if (m_packetHeader.Pid==m_audioPid)
+					{
+						byte[] byData=new byte[188];
+						Marshal.Copy((IntPtr)ptr,byData,0,188);
+						writer.Write(byData,0,188);
+						fileLen +=(ulong)188;
+					}
 
-				if (fileLen > 1024*1024*5)
-				{
-					writer.Close();
-					stream.Close();
-					writer=null;
-					stream=null;
+					//limit to 100MB
+					if (fileLen > 1024L*1024L*100L)
+					{
+						writer.Close();
+						stream.Close();
+						writer=null;
+						stream=null;
+					}
 				}
 			}
 #endif
