@@ -193,6 +193,9 @@ namespace ProcessPlugins.CallerId
             if (CAPI_GET_MESSAGE(applicationId, ref capiBufferPointer) == 0)
             {
               RtlMoveMemory(ref messageHeader, capiBufferPointer, HeaderLength);
+
+              Log.Write("ISDN: CAPI command: 0x{0} / 0x{1}", messageHeader.Command.ToString("X2"), messageHeader.SubCommand.ToString("X2"));
+
               if ((messageHeader.Command == CAPI_CONNECT) && (messageHeader.SubCommand == CAPI_IND))
               {
                 capiConnectInd ConnectInd = new capiConnectInd();
