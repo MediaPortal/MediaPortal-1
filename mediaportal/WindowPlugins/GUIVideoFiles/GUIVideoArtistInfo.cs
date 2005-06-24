@@ -200,7 +200,7 @@ namespace MediaPortal.GUI.Video
 			string movies="";
 			for (int i=0; i < currentActor.Count;++i)
 			{
-				string line = currentActor[i].Role+"\n";
+				string line = String.Format("{0}. {1}\n",i+1,currentActor[i].Role);
 				movies += line;
 			}
 			GUIPropertyManager.SetProperty("#Actor.Movies", movies);

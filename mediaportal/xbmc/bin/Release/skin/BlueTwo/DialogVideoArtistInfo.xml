@@ -92,10 +92,10 @@
 		<description>Biography value</description> 
 		<type>textboxscrollup</type> 
 		<id>20</id> 
-		<posX>200</posX> 
-		<posY>400</posY> 
-		<width>420</width>
-		<height>120</height> 
+		<posX>60</posX> 
+		<posY>300</posY> 
+		<width>660</width>
+		<height>250</height> 
 		<label>#Actor.Biography</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 
@@ -106,8 +106,8 @@
 		<id>21</id> 
 		<posX>200</posX> 
 		<posY>100</posY> 
-		<width>180</width> 
-		<height>275</height>
+		<width>233</width> 
+		<height>175</height>
 		<texture>#thumb</texture> 
 		<colorkey>FFFF00FF</colorkey> 
 		<colordiffuse>FFFFFFFF</colordiffuse>
@@ -117,10 +117,10 @@
 		<description>textarea</description> 
 		<type>textbox</type> 
 		<id>22</id> 
-		<posX>200</posX> 
-		<posY>400</posY> 
-		<width>420</width>
-		<height>150</height> 
+		<posX>60</posX> 
+		<posY>300</posY> 
+		<width>660</width>
+		<height>250</height> 
 		<onleft>2</onleft> 
 		<onright>2</onright> 
 		<onup>2</onup> 
