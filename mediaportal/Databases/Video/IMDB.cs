@@ -546,6 +546,108 @@ namespace MediaPortal.Video.Database
 
 				actor.Name=url.Title;
 				actor.ThumbnailUrl=strURL;
+
+				//find date of birth
+				//<a href="/OnThisDay?day=11&month=November">11 November</a> <a href="/BornInYear?1962">1962</a><br>
+				posStart=strBody.IndexOf("/OnThisDay?");
+				if (posStart>0)
+				{
+					posStart=strBody.IndexOf(">",posStart);
+					posStart++;
+					posEnd=strBody.IndexOf("<",posStart);
+					string birthDay=strBody.Substring(posStart,posEnd-posStart);
+					posStart=strBody.IndexOf("/BornInYear?");
+					if (posStart>0)
+					{
+						posStart=strBody.IndexOf(">",posStart);
+						posStart++;
+						posEnd=strBody.IndexOf("<",posStart);
+						birthDay+=" "+strBody.Substring(posStart,posEnd-posStart);
+					}
+					actor.DateOfBirth=birthDay;
+				}
+				//find place of birth
+				//<a href="/BornWhere?Roswell,%20New%20Mexico,%20USA">Roswell, New Mexico, USA</a>
+				posStart=strBody.IndexOf("/BornWhere?");
+				if (posStart>0)
+				{
+					posStart=strBody.IndexOf(">",posStart);
+					posStart++;
+					posEnd=strBody.IndexOf("<",posStart);
+					actor.PlaceOfBirth=strBody.Substring(posStart,posEnd-posStart);
+				}
+				
+				//find Mini Biography
+				//<dt><div class="ch">Mini biography</div></dt>
+				//<dd><a href="/name/nm0000193/">Demi Moore</a> was born 1962 in Roswell, New Mexico. Her father left her mother... <a href="bio">(show more)</a></dd>
+				//</dl>
+
+				posStart=strBody.IndexOf("Mini biography");
+				if (posStart>0)
+				{
+					posStart=strBody.IndexOf("<a href",posStart);
+					posEnd=strBody.IndexOf("<a ",posStart+3);
+					string href=strBody.Substring(posStart,posEnd-posStart);
+					actor.MiniBiography=Utils.stripHTMLtags(href).Trim();
+
+					//get complete biography
+					string bioURL=url.URL;
+					int pos=bioURL.IndexOf("?");
+					if (pos > 0) 
+						bioURL=bioURL.Substring(0,pos);
+					WebRequest reqBio = WebRequest.Create(bioURL+"bio");
+					WebResponse resultBio = reqBio.GetResponse();
+					Stream BioReceiveStream = resultBio.GetResponseStream();
+					StreamReader srBio = new StreamReader( BioReceiveStream, encode );
+					string strBioBody=srBio.ReadToEnd();
+
+					posStart=strBioBody.IndexOf("biopar");
+					if (posStart>0)
+					{
+						posStart=strBioBody.IndexOf("<a",posStart);
+						posEnd=strBioBody.IndexOf("</p>",posStart);
+						href=strBioBody.Substring(posStart,posEnd-posStart);
+						href=Utils.stripHTMLtags(href).Trim();
+						actor.Biography=util.ConvertHTMLToAnsi(href);
+					}
+				}
+
+				// get movie list
+				posStart=strBody.IndexOf("<ol>");
+				posEnd=strBody.IndexOf("</ol",posStart);
+				string movieList=strBody.Substring(posStart,posEnd-posStart);
+				posStart=0;
+				while (true)
+				{
+					int movieStart=movieList.IndexOf("<li>",posStart);
+					if (movieStart<0) break;
+					int movieEnd=movieList.IndexOf("</li>",movieStart);
+					//<li><a href="/title/tt0257778/">The Hunchback of Notre Dame II</a> (2002) (V)  (voice)   .... Esmeralda</li>
+					string movie=movieList.Substring(movieStart,movieEnd-movieStart);
+					int titleStart=movie.IndexOf("<a");
+					int titleEnd=movie.IndexOf("</a>");
+					string titleHREF=movie.Substring(titleStart,titleEnd+3-titleStart);
+					string title,titleUrl;
+					util.ParseAHREF(titleHREF,out title, out titleUrl);
+					title=util.ConvertHTMLToAnsi(title);
+					movie=Utils.stripHTMLtags(movie);
+					movie=util.ConvertHTMLToAnsi(movie);
+					int year=0;
+					int yearStart=movie.IndexOf("(19");
+					if (yearStart<0)
+						yearStart=movie.IndexOf("(20");
+					if (yearStart>0)
+					{
+						year=Int32.Parse(movie.Substring(yearStart+1,4));
+					}
+
+					IMDBActor.IMDBActorMovie actorMovie = new IMDBActor.IMDBActorMovie();
+					actorMovie.MovieTitle=title;
+					actorMovie.Role=movie;
+					actorMovie.Year=year;
+					actor.Add(actorMovie);
+					posStart=movieEnd;
+				}
 				return true;
 			}
 			catch(Exception)
