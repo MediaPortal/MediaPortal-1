@@ -1421,7 +1421,7 @@
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  		name="AVerMedia, MPEG WDM Tuner (88x)"		checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="AverMedia, MPEG TVAudio (88x)"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  		name="AVerMedia, MPEG TVAudio (88x)"		checkdevice="true"></filter>
         <filter cat="crossbar"	 	name="AVerMedia, MPEG Crossbar (88x)"		checkdevice="true"></filter>
         <filter cat="capture"  		name="AVerMedia, MPEG Video Capture (88x)"  	checkdevice="true"></filter>
         <filter cat="encoder"      	name="AVerMedia 61051 MPEG Encoder"		checkdevice="true"></filter>
