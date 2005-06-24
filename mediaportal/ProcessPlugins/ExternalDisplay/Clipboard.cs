@@ -1,9 +1,6 @@
 using System;
 using System.Text;
 using System.Threading;
-using System.Timers;
-using Clip = System.Windows.Forms.Clipboard;
-using Timer = System.Timers.Timer;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -15,8 +12,8 @@ namespace ProcessPlugins.ExternalDisplay
   /// Single Threaded Appartment (STA) thread</remarks>
   public class Clipboard : IDisplay
   {
+    private int maxLines;
     private string[] lines;
-    private System.Timers.Timer timer;
     private Thread th; //pointer to the thread that does the copying
 
     /// <summary>
@@ -26,18 +23,6 @@ namespace ProcessPlugins.ExternalDisplay
     {
       lines = new string[Settings.Instance.TextHeight];
       Clear();
-      timer = new Timer(Settings.Instance.ScrollDelay);
-      timer.Enabled = false;
-      timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-    }
-
-    /// <summary>
-    /// Starts the display.
-    /// </summary>
-    /// <remarks>
-    public void Start()
-    {
-      timer.Enabled = true;
     }
 
     /// <summary>
@@ -45,7 +30,6 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Stop()
     {
-      timer.Enabled = false;
       if (th != null)
       {
         if (th.IsAlive)
@@ -53,7 +37,7 @@ namespace ProcessPlugins.ExternalDisplay
           th.Abort();
         }
       }
-      Clip.SetDataObject("");
+      System.Windows.Forms.Clipboard.SetDataObject("");
     }
 
 
@@ -65,14 +49,14 @@ namespace ProcessPlugins.ExternalDisplay
     public void SetLine(int _line, string _message)
     {
       lines[_line] = _message;
+      if (_line==maxLines)
+        SendToClipboard();
     }
 
     /// <summary>
-    /// Starts the copy thread
+    /// Copies the generated text to the Windows clipboard
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void timer_Elapsed(object sender, ElapsedEventArgs e)
+    private void SendToClipboard()
     {
       if (th != null)
       {
@@ -84,6 +68,7 @@ namespace ProcessPlugins.ExternalDisplay
       th = new Thread(new ThreadStart(CopySTA));
       th.ApartmentState = ApartmentState.STA;
       th.Start();
+      th.Join();
     }
 
 
@@ -102,11 +87,10 @@ namespace ProcessPlugins.ExternalDisplay
           b.Append(lines[i]);
           b.Append(Environment.NewLine);
         }
-        Clip.SetDataObject(b.ToString(), true);
+        System.Windows.Forms.Clipboard.SetDataObject(b.ToString(), true);
       }
       catch (Exception)
       {}
-      Thread.CurrentThread.Join(); //blocks the calling thread until we are done
     }
 
 
@@ -138,6 +122,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_contrast">ignored</param>
     public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight, int _contrast)
     {
+      maxLines=_lines-1;
       Clear();
     }
 
