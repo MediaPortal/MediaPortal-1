@@ -207,6 +207,34 @@ namespace MediaPortal.Database
 				strReturn = "unknown";
 			strTxt = strReturn;
 		}
+		static public string FilterText(string strTxt)
+		{
+			if (strTxt==null) 
+			{
+				return "unknown";
+			}
+			if (strTxt.Length==0) 
+			{
+				return "unknown";
+			}
+			string strReturn = String.Empty;
+			for (int i = 0; i < (int)strTxt.Length; ++i)
+			{
+				char k = strTxt[i];
+				if (k == '\'') 
+				{
+					strReturn += "'";
+				}
+				if((byte)k==0)// remove 0-bytes from the string
+					k=(char)32;
+
+				strReturn += k;
+			}
+			strReturn=strReturn.Trim();
+			if (strReturn == String.Empty) 
+				strReturn = "unknown";
+			return strReturn;
+		}
 
 		static public void Split(string strFileNameAndPath, out string strPath, out string strFileName)
 		{

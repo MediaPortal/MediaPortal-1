@@ -1235,6 +1235,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIVideoFiles\GUIVideoArtistInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIVideoFiles\GUIVideoBaseWindow.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -2202,6 +2202,11 @@ namespace MediaPortal.GUI.Video
 						{
 							if (imdbActor.ThumbnailUrl.Length!=0)
 							{
+								int actorId=VideoDatabase.AddActor(actor);
+								if (actorId>0)
+								{
+									VideoDatabase.AddActorInfo(actorId,imdbActor);
+								}
 								ShowProgress(GUILocalizeStrings.Get(1009),actor,"",percent);
 								DownloadThumnail(Thumbs.MovieActors,imdbActor.ThumbnailUrl,actor);
 							}

@@ -221,12 +221,14 @@ namespace MediaPortal.Video.Database
 		} // END IEnumerable.GetEnumerator()
 
 		// trys to get a webpage from the specified url and returns the content as string
-		private string GetPage(string strURL, string strEncode)
+		private string GetPage(string strURL, string strEncode, out string absoluteUri)
 		{
 			string strBody = "";
+			absoluteUri=String.Empty;
 			try
 			{
 				// Make the Webrequest
+				Log.Write("IMDB: get page:{0}", strURL);
 				WebRequest req = WebRequest.Create(strURL);
 				WebResponse result = req.GetResponse();
 				Stream ReceiveStream = result.GetResponseStream();
@@ -235,6 +237,11 @@ namespace MediaPortal.Video.Database
 				Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
 				StreamReader sr = new StreamReader( ReceiveStream, encode );
 				strBody = sr.ReadToEnd();
+
+				absoluteUri=result.ResponseUri.AbsoluteUri;
+				sr.Close();
+				ReceiveStream.Close();
+				result.Close();
 			}
 			catch(Exception ex) 
 			{
@@ -481,7 +488,8 @@ namespace MediaPortal.Video.Database
 			try
 			{
 				HTMLUtil htmlUtil=new HTMLUtil();
-				string strBody = GetPage(strURL,"utf-8");
+				string absoluteUri;
+				string strBody = GetPage(strURL,"utf-8", out absoluteUri);
 				int posStart=0,posEnd;
 				posStart=strBody.IndexOf("<a name=\"headshot");
 				if (posStart>0)
@@ -522,13 +530,11 @@ namespace MediaPortal.Video.Database
 			try
 			{
 				//<a name="headshot" href="photogallery"><img border="0" src="http://ia.imdb.com/media/imdb/01/I/84/36/12m.jpg" width="100" height="140" alt="Bruce Willis (I)"></a>
-				string strBody;
-				WebRequest req = WebRequest.Create(url.URL);
-				WebResponse result = req.GetResponse();
-				Stream ReceiveStream = result.GetResponseStream();
-				Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
-				StreamReader sr = new StreamReader( ReceiveStream, encode );
-				strBody=sr.ReadToEnd();
+				string absoluteUri;
+				string strBody=GetPage(url.URL,"utf-8", out absoluteUri);
+				if (strBody==null) return false;
+				if (strBody.Length==0) return false;
+
 
 				//get picture
 				int posStart=strBody.IndexOf("<a name=\"headshot");
@@ -595,20 +601,20 @@ namespace MediaPortal.Video.Database
 					int pos=bioURL.IndexOf("?");
 					if (pos > 0) 
 						bioURL=bioURL.Substring(0,pos);
-					WebRequest reqBio = WebRequest.Create(bioURL+"bio");
-					WebResponse resultBio = reqBio.GetResponse();
-					Stream BioReceiveStream = resultBio.GetResponseStream();
-					StreamReader srBio = new StreamReader( BioReceiveStream, encode );
-					string strBioBody=srBio.ReadToEnd();
 
-					posStart=strBioBody.IndexOf("biopar");
-					if (posStart>0)
+					string strBioBody=GetPage(bioURL+"bio","utf-8",out absoluteUri);
+					if (strBioBody!=null && strBioBody.Length>0)
 					{
-						posStart=strBioBody.IndexOf("<a",posStart);
-						posEnd=strBioBody.IndexOf("</p>",posStart);
-						href=strBioBody.Substring(posStart,posEnd-posStart);
-						href=Utils.stripHTMLtags(href).Trim();
-						actor.Biography=util.ConvertHTMLToAnsi(href);
+
+						posStart=strBioBody.IndexOf("biopar");
+						if (posStart>0)
+						{
+							posStart=strBioBody.IndexOf("<a",posStart);
+							posEnd=strBioBody.IndexOf("</p>",posStart);
+							href=strBioBody.Substring(posStart,posEnd-posStart);
+							href=Utils.stripHTMLtags(href).Trim();
+							actor.Biography=util.ConvertHTMLToAnsi(href);
+						}
 					}
 				}
 
@@ -650,8 +656,9 @@ namespace MediaPortal.Video.Database
 				}
 				return true;
 			}
-			catch(Exception)
+			catch(Exception ex)
 			{
+				Log.Write("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL,ex.Message,ex.Source,ex.StackTrace);
 			}
 			return false;
 		}
@@ -704,7 +711,8 @@ namespace MediaPortal.Video.Database
 			string	strTitle;
 			try
 			{
-				string strBody = GetPage(strURL,"utf-8");
+				string absoluteUri;
+				string strBody = GetPage(strURL,"utf-8",out absoluteUri);
 
 				// Mars Warrior @ 03-sep-2004.
 				// First try to find an Exact Match. If no exact match found, just look
@@ -831,15 +839,11 @@ namespace MediaPortal.Video.Database
 				// add databaseinfo
 				movieDetails.Database = "IMDB";
 
-				string strBody;
-				WebRequest req = WebRequest.Create(url.URL);
-				WebResponse result = req.GetResponse();
-				Stream ReceiveStream = result.GetResponseStream();
-				Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
-				StreamReader sr = new StreamReader( ReceiveStream, encode );
-				strBody=sr.ReadToEnd();
+				string strAbsURL;
+				string strBody=GetPage(url.URL,"utf-8",out strAbsURL);
+				if (strBody==null) return false;
+				if (strBody.Length==0) return false;
 
-				string strAbsURL=result.ResponseUri.AbsoluteUri;
 				int iPos=strAbsURL.IndexOf("/title/");
 				if (iPos>0)
 				{
@@ -993,7 +997,8 @@ namespace MediaPortal.Video.Database
 					string strPlotURL= url.URL + "plotsummary";
 					try
 					{
-						string strPlotHTML =  GetPage(strPlotURL,"utf-8");
+						string absoluteUri;
+						string strPlotHTML =  GetPage(strPlotURL,"utf-8",out absoluteUri);
 
 						if (0!=strPlotHTML.Length)
 						{
@@ -1186,7 +1191,8 @@ namespace MediaPortal.Video.Database
 			try
 			{
 				// Body of the page with the searchresults
-				string strBody = GetPage(strURL,"iso-8859-1");
+				string absoluteUri;
+				string strBody = GetPage(strURL,"iso-8859-1", out absoluteUri);
 			
 				// Get start of Movielist, so search for <b>Titel:</b><br><br>
 
@@ -1360,7 +1366,8 @@ namespace MediaPortal.Video.Database
 				// add databaseinfo
 				movieDetails.Database = "OFDB";
 
-				string strBody = GetPage(url.URL,"iso-8859-1");
+				string absoluteUri;
+				string strBody = GetPage(url.URL,"iso-8859-1",out absoluteUri);
 
 				// Read Starting Points of the details
 				//int iTitle = strBody.IndexOf("Originaltitel:");
@@ -1515,7 +1522,7 @@ namespace MediaPortal.Video.Database
 						try
 						{
 							// Open the new page with detailed description
-							string strPlotHTML = GetPage("http://www.ofdb.de/"+strPlotURL,"iso-8859-1");
+							string strPlotHTML = GetPage("http://www.ofdb.de/"+strPlotURL,"iso-8859-1", out absoluteUri);
 
 							if (0!=strPlotHTML.Length)
 							{
@@ -1590,7 +1597,8 @@ namespace MediaPortal.Video.Database
 			try
 			{
 				// Body of the page with the searchresults
-				string strBody = GetPage(strURL,"iso-8859-1");
+				string absoluteUri;
+				string strBody = GetPage(strURL,"iso-8859-1",out absoluteUri);
 			
 				// Get start of Movielist, so search for <b>Titel:</b><br><br>
 				int iStartOfMovieList = strBody.IndexOf("<table class=\"tableSearchResult\"");
@@ -1669,7 +1677,8 @@ namespace MediaPortal.Video.Database
 				// add databaseinfo
 				movieDetails.Database = "FRDB";
 				// get page content
-				strBody = GetPage(url.URL,"iso-8859-1");
+				string absoluteUri;
+				strBody = GetPage(url.URL,"iso-8859-1",out absoluteUri);
 				
 				iStart = strBody.IndexOf("<br>", strBody.IndexOf("<div class=\"dvd_titleinfo\">"));
 				movieDetails.Year = int.Parse( strBody.Substring( iStart-4, 4) );

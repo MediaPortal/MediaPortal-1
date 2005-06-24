@@ -57,6 +57,10 @@ namespace MediaPortal.Video.Database
 			get { return _biography;}
 			set { _biography=value;}
 		}
+		public int Count
+		{
+			get { return movies.Count;}
+		}
 		public IMDBActorMovie this[int index]
 		{
 			get { return (IMDBActorMovie)movies[index];}
