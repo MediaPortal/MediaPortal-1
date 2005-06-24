@@ -16,7 +16,7 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DiskManagement
 	{
-		//static bool					 importing=false;
+		static bool					 importing=false;
 		static DateTime      m_dtCheckDiskSpace=DateTime.Now;
 		public DiskManagement()
 		{
@@ -58,15 +58,15 @@ namespace MediaPortal.TV.Recording
 		static public void ImportDvrMsFiles()
 		{
 			//dont import during recording...
-			//if (Recorder.IsAnyCardRecording()) return;
-			//if (importing) return;
-			//Thread WorkerThread = new Thread(new ThreadStart(ImportWorkerThreadFunction));
-			//WorkerThread.Start();
+			if (Recorder.IsAnyCardRecording()) return;
+			if (importing) return;
+			Thread WorkerThread = new Thread(new ThreadStart(ImportWorkerThreadFunction));
+			WorkerThread.Start();
 		}
 		static void ImportWorkerThreadFunction()
 		{
 			System.Threading.Thread.CurrentThread.Priority=ThreadPriority.BelowNormal;
-//			importing=true;
+			importing=true;
 			try
 			{
 				//dont import during recording...
@@ -168,7 +168,7 @@ namespace MediaPortal.TV.Recording
 			catch(Exception)
 			{
 			}
-			//importing=false;
+			importing=false;
 		} //static void ImportDvrMsFiles()
 		#endregion
 
