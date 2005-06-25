@@ -182,7 +182,7 @@ namespace DShowNET
     [PreserveSig]
     int SetFileName(
       [In, MarshalAs(UnmanagedType.LPWStr)]			string		pszFileName,
-      [In, MarshalAs(UnmanagedType.LPStruct)]			AMMediaType	pmt );
+      [In] IntPtr ptrMedia);
 	
     [PreserveSig]
     int GetCurFile(
