@@ -1573,7 +1573,6 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void mousemove(System.Windows.Forms.MouseEventArgs e)
   {
     screenSaverTimer=DateTime.Now;
-    GUIGraphicsContext.BlankScreen=false;
     // Disable first mouse action when mouse was hidden
     if (!m_bShowCursor)
     {
@@ -1593,7 +1592,8 @@ public class MediaPortalApp : D3DApp, IRender
     int iCursorY = ptClientUL.Y;
 
     if (m_iLastMousePositionX != iCursorX || m_iLastMousePositionY != iCursorY)
-    {
+		{
+			GUIGraphicsContext.BlankScreen=false;
       // check any still waiting single click events
       if (GUIGraphicsContext.DBLClickAsRightClick && bMouseClickFired)
       {
