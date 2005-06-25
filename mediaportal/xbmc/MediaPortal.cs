@@ -1009,7 +1009,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (isMaximized) 
         {
           TimeSpan ts = DateTime.Now-screenSaverTimer;
-          if (ts.TotalSeconds>=30)
+          if (ts.TotalSeconds>=60)
           {
             GUIGraphicsContext.BlankScreen=true;
           }
