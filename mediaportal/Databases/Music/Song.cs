@@ -81,7 +81,27 @@ namespace MediaPortal.Music.Database
     public string Artist
     {
       get { return m_strArtist;}
-      set {m_strArtist=value;}
+      set {
+				m_strArtist=value;
+				//remove 01. artist name
+				if (m_strArtist.Length>4)
+				{
+					if (Char.IsDigit(m_strArtist[0]) &&
+						Char.IsDigit(m_strArtist[1]) &&
+						m_strArtist[2]=='.' &&
+						m_strArtist[3]==' ')
+					{
+						m_strArtist=m_strArtist.Substring(4);
+					}
+				}
+				//remove artist name [dddd]
+				int pos=m_strArtist.IndexOf("[");
+				if (pos > 0)
+				{
+					m_strArtist=m_strArtist.Substring(pos);
+				}
+				m_strArtist=m_strArtist.Trim();
+			}
     }
     public string Album
     {
@@ -96,17 +116,30 @@ namespace MediaPortal.Music.Database
     public int Track
     {
       get { return m_iTrack;}
-      set {m_iTrack=value;}
+      set {
+				m_iTrack=value;
+				if (m_iTrack<0) m_iTrack=0;
+			}
     }
     public int Duration
     {
       get { return m_iDuration;}
-      set {m_iDuration=value;}
+      set {
+				m_iDuration=value;
+				if (m_iDuration<0) m_iDuration=0;
+			}
     }
     public int Year
     {
       get { return m_iYear;}
-      set {m_iYear=value;}
+      set {
+				m_iYear=value;
+				if (m_iYear<0) m_iYear=0;
+				else
+				{
+					if (m_iYear>0 && m_iYear < 100) m_iYear+=1900;
+				}
+			}
     }
     public int TimesPlayed
     {

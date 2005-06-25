@@ -149,8 +149,16 @@ namespace MediaPortal.GUI.Music
 					for (int i=0; i<results.Rows.Count; i++)
 					{
 						Song song = new Song();
-						song.Year =  (int)Math.Floor(0.5d+Double.Parse(Database.DatabaseUtility.Get(results,i,"iYear")));
-						songs.Add(song);
+						try
+						{
+							song.Year =  (int)Math.Floor(0.5d+Double.Parse(Database.DatabaseUtility.Get(results,i,"iYear")));
+						}
+						catch(Exception)
+						{
+							song.Year =  0;
+						}
+						if (song.Year>1000)
+							songs.Add(song);
 					}
 				}
 				else
