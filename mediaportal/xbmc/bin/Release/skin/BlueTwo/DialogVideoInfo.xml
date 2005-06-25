@@ -125,7 +125,7 @@
 	
 	<control>
 		<description>Watched</description> 
-		<type>button</type> 
+		<type>togglebutton</type> 
 		<id>6</id> 
 		<posX>60</posX> 
 		<posY>233</posY> 
