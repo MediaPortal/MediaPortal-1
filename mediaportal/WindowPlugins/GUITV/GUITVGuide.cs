@@ -2105,6 +2105,8 @@ namespace MediaPortal.GUI.TV
 						{
 							g_Player.Stop();
 						}
+						int count=0;
+						while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
 						GUITVHome.IsTVOn=true;
 						GUITVHome.ViewChannel(m_strCurrentChannel);
 						if (Recorder.IsViewing())
@@ -2182,6 +2184,8 @@ namespace MediaPortal.GUI.TV
 						{
 							g_Player.Stop();
 						}
+						int count=0;
+						while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
 						GUITVHome.IsTVOn=true;
 						GUITVHome.ViewChannel(m_strCurrentChannel);
 						if (Recorder.IsViewing())

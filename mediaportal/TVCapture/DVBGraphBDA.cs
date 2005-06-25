@@ -226,6 +226,7 @@ namespace MediaPortal.TV.Recording
 				//check if we didnt already create a graph
 				if (m_graphState != State.None) 
 					return false;
+				currentTuningObject=null;
 				isUsingAC3=false;
 
 #if DUMP
@@ -774,6 +775,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (m_graphState < State.Created) 
 					return;
+				currentTuningObject=null;
 				isUsingAC3=false;
 				m_iPrevChannel = -1;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
@@ -2788,6 +2790,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}", 
 							frequency,physicalChannel,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
 
+
 						
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.PhysicalChannel=physicalChannel;
@@ -2832,6 +2835,19 @@ namespace MediaPortal.TV.Recording
 						}
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
 							frequency,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
+						bool needSwitch=true;
+						if (currentTuningObject!=null)
+						{
+							if (currentTuningObject.Frequency==frequency &&
+								currentTuningObject.Symbolrate==symbolrate &&
+								currentTuningObject.Modulation==innerFec &&
+								currentTuningObject.FEC==innerFec &&
+								currentTuningObject.NetworkID==ONID &&
+								currentTuningObject.TransportStreamID==TSID)
+							{
+								needSwitch=false;
+							}
+						}
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.Frequency=frequency;
 						currentTuningObject.Symbolrate=symbolrate;
@@ -2855,7 +2871,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio3=audio3;
 						currentTuningObject.HasEITPresentFollow=HasEITPresentFollow;
 						currentTuningObject.HasEITSchedule=HasEITSchedule;
-						SubmitTuneRequest(currentTuningObject);
+						if (needSwitch)
+							SubmitTuneRequest(currentTuningObject);
 
 					} break;
 
@@ -2872,6 +2889,22 @@ namespace MediaPortal.TV.Recording
 						}
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
 							ch.Frequency,ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID,ch.ProgramNumber,ch.ServiceProvider);
+
+						bool needSwitch=true;
+						if (currentTuningObject!=null)
+						{
+							if (currentTuningObject.Frequency==frequency &&
+								  currentTuningObject.FEC==ch.FEC &&
+								  currentTuningObject.Polarity==ch.Polarity &&
+									currentTuningObject.LNBFrequency==ch.LNBFrequency &&
+								  currentTuningObject.LNBKHz==ch.LNBKHz &&
+								  currentTuningObject.DiSEqC==ch.DiSEqC &&
+									currentTuningObject.NetworkID==ch.NetworkID&&
+									currentTuningObject.TransportStreamID==ch.TransportStreamID)
+							{
+								needSwitch=false;
+							}
+						}
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.Frequency=ch.Frequency;
 						currentTuningObject.Symbolrate=ch.Symbolrate;
@@ -2898,7 +2931,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.LNBKHz=ch.LNBKHz;
 						currentTuningObject.HasEITPresentFollow=ch.HasEITPresentFollow;
 						currentTuningObject.HasEITSchedule=ch.HasEITSchedule;
-						SubmitTuneRequest(currentTuningObject);
+						if (needSwitch)
+							SubmitTuneRequest(currentTuningObject);
 
 					} break;
 
@@ -2916,6 +2950,16 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);
 						//get the IDVBTLocator interface from the new tuning request
 
+						bool needSwitch=true;
+						if (currentTuningObject!=null)
+						{
+							if (currentTuningObject.Frequency==frequency &&
+									currentTuningObject.NetworkID==ONID &&
+									currentTuningObject.TransportStreamID==TSID)
+							{
+								needSwitch=false;
+							}
+						}
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.Bandwidth=bandWidth;
 						currentTuningObject.Frequency=frequency;
@@ -2937,7 +2981,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.Audio3=audio3;
 						currentTuningObject.HasEITPresentFollow=HasEITPresentFollow;
 						currentTuningObject.HasEITSchedule=HasEITSchedule;
-						SubmitTuneRequest(currentTuningObject);
+						if (needSwitch)
+							SubmitTuneRequest(currentTuningObject);
 
 					} break;
 				}	//switch (m_NetworkType)
