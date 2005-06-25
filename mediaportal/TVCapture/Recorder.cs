@@ -338,16 +338,19 @@ namespace MediaPortal.TV.Recording
 		static public bool NeedChannelSwitchForRecording(TVRecording rec)
 		{
 			if (IsViewing() && TVChannelName==rec.Channel) return false;
+			//check if there's another card which is free
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				TVCaptureDevice dev = m_tvcards[i] as TVCaptureDevice;
-				if (!dev.IsRecording && !dev.IsRadio && !dev.IsTimeShifting && !dev.View)
+				if (!dev.IsRecording  && !dev.IsTimeShifting && !dev.View)
 				{
 					if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || m_tvcards.Count==1 )
-						return true;
+						return false;
 				}
 			}
-			return false;
+			
+
+			return true;
 		}
 
 		/// <summary>
