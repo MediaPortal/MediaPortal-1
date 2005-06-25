@@ -1292,6 +1292,7 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.DeleteMovieInfoById(iidMovie);
         else
           VideoDatabase.DeleteMovieInfo(strFile);
+				strMovieName=movieDetails.Title;
         GetStringFromKeyboard(ref strMovieName);
       }
       else
@@ -1416,7 +1417,8 @@ namespace MediaPortal.GUI.Video
                   else
                   {
                     bContinue = true;
-                    strMovieName = System.IO.Path.GetFileNameWithoutExtension(strMovie);
+                    //strMovieName = System.IO.Path.GetFileNameWithoutExtension(strMovie);
+										strMovieName = movieDetails.Title;
                     GetStringFromKeyboard(ref strMovieName);
                   }
                 }
