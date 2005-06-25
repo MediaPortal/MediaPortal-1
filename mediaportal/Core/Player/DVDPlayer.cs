@@ -226,14 +226,14 @@ namespace MediaPortal.Player
     {
       int iStreamsAvailable=0;
       int iCurrentStream=0;
-      Trace.WriteLine("  SelectAudioLanguage:"+ strLanguage);
+      Log.Write("DVDPlayer:SelectAudioLanguage:"+ strLanguage);
       int hr=dvdInfo.GetCurrentAudio( out iStreamsAvailable,out iCurrentStream);
       if (hr<0) 
       {
-        Trace.WriteLine("  GetCurrentAudio() failed");
+        Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetCurrentAudio() failed");
         return;
       }
-      Trace.WriteLine("  found {0} audiostreams", iStreamsAvailable.ToString());
+      Log.Write("DVDPlayer:found {0} audiostreams", iStreamsAvailable.ToString());
       if (iStreamsAvailable<=0) return;
       foreach ( CultureInfo ci in CultureInfo.GetCultures( CultureTypes.NeutralCultures ) )  
       {
@@ -250,13 +250,13 @@ namespace MediaPortal.Player
                 m_strAudioLanguage=strLanguage;
                 hr=dvdCtrl.SelectAudioStream(i, DvdCmdFlags.None,null);
                 if (hr==0)
-                  Trace.WriteLine("Selected audio stream:{0}", strLanguage);
+                  Log.Write("DVDPlayer:Selected audio stream:{0}", strLanguage);
                 else
-                  Trace.WriteLine("SelectAudioStream() failed");
+                  Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:SelectAudioStream() failed");
                 return;
               }
             }
-            else Trace.WriteLine("GetAudioLanguage() failed");
+            else Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetAudioLanguage() failed");
           }
         }
       }
@@ -267,14 +267,14 @@ namespace MediaPortal.Player
       int iStreamsAvailable=0;
       int iCurrentStream=0;
       bool bIsDisabled;
-      Trace.WriteLine("  SelectSubtitleLanguage:"+ strSubtitleLanguage);
+      Log.Write("DVDPlayer:SelectSubtitleLanguage:"+ strSubtitleLanguage);
       int hr=dvdInfo.GetCurrentSubpicture( out iStreamsAvailable,out iCurrentStream,out bIsDisabled);
       if (hr<0) 
       {
-        Trace.WriteLine("  GetCurrentSubpicture() failed");
+        Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetCurrentSubpicture() failed");
         return;
       }
-      Trace.WriteLine("  found {0} subpicture streams", iStreamsAvailable.ToString());
+      Log.Write("DVDPlayer:found {0} subpicture streams", iStreamsAvailable.ToString());
       if (iStreamsAvailable<=0) return;
       foreach ( CultureInfo ci in CultureInfo.GetCultures( CultureTypes.NeutralCultures) )  
       {
@@ -295,16 +295,16 @@ namespace MediaPortal.Player
                   hr=dvdCtrl.SetSubpictureState(m_bSubtitlesEnabled,DvdCmdFlags.None,null);
                   if (hr==0)
                   {
-                    Trace.WriteLine("switched subs to:" + strSubtitleLanguage);
+                    Log.Write("DVDPlayer:switched subs to:" + strSubtitleLanguage);
                   }
-                  else Trace.WriteLine("SetSubpictureState() failed");
+                  else Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:SetSubpictureState() failed");
                 }
-                else Trace.WriteLine("SelectSubpictureStream() failed");
+                else Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:SelectSubpictureStream() failed");
 
                 return;
               }
             }
-            else Trace.WriteLine("GetSubpictureLanguage() failed");
+            else Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetSubpictureLanguage() failed");
           }
         }
       }
@@ -798,8 +798,8 @@ namespace MediaPortal.Player
 						case DsEvCode.DvdSubPicStChange:
 						{
 							Log.Write("EVT:DvdSubPicture Changed to:{0} Enabled:{1}",p1,p2);
-							m_strSubtitleLanguage = p1.ToString();
-							m_bSubtitlesEnabled=(p2!=0);											
+							//m_strSubtitleLanguage = p1.ToString();
+							//m_bSubtitlesEnabled=(p2!=0);											
 						}
 							break;
 
@@ -956,7 +956,7 @@ namespace MediaPortal.Player
 
 				if( cmd != cmdOption.dvdCmd )
 				{
-					Trace.WriteLine( "DVD OnCmdComplete UNKNOWN CMD!!!" );
+					Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:DVD OnCmdComplete UNKNOWN CMD!!!" );
 					Marshal.ReleaseComObject( cmd ); cmd = null;
 					return;
 				}
@@ -1264,7 +1264,7 @@ namespace MediaPortal.Player
             {
               if ( ((uint)hr)==VFW_E_DVD_OPERATION_INHIBITED) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point",iHours,iMins,iSecs);
               else if ( ((uint)hr)==VFW_E_DVD_INVALIDDOMAIN) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain",iHours,iMins,iSecs);
-              else Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}",iHours,iMins,iSecs,hr); 
+              else Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}",iHours,iMins,iSecs,hr); 
             }
             //SetDefaultLanguages();
             //dvdCtrl.Pause(false);
@@ -1321,7 +1321,7 @@ namespace MediaPortal.Player
 			int hr = dvdInfo.GetState(out dvdState);
 			if (hr < 0)
 			{
-				Log.Write("DVDPlayer::GetResumeState() dvdInfo.GetState failed");
+				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetResumeState() dvdInfo.GetState failed");
 				return false;
 			}
 
@@ -1373,7 +1373,7 @@ namespace MediaPortal.Player
 				int hr = dvdInfo.GetState(out dvdState);
 				if (hr < 0)
 				{
-					Log.Write("DVDPlayer::GetResumeState() dvdInfo.GetState failed");
+					Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetResumeState() dvdInfo.GetState failed");
 					return false;
 				}
 				IPersistMemory dvdStatePersistMemory = (IPersistMemory)dvdState;
@@ -1643,7 +1643,7 @@ namespace MediaPortal.Player
 						int hr = dvdCtrl.PlayNextChapter( DvdCmdFlags.SendEvt, cmdOption );
 						if( hr < 0 )
 						{
-							Trace.WriteLine( "!!! PlayNextChapter error : 0x" + hr.ToString("x") );
+							Log.WriteFile(Log.LogType.Log,true,"!!! PlayNextChapter error : 0x" + hr.ToString("x") );
 							return false;
 						}
 
@@ -1666,7 +1666,7 @@ namespace MediaPortal.Player
 						int hr = dvdCtrl.PlayPrevChapter( DvdCmdFlags.SendEvt, cmdOption );
 						if( hr < 0 )
 						{
-							Trace.WriteLine( "!!! PlayPrevChapter error : 0x" + hr.ToString("x") );
+							Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:!!! PlayPrevChapter error : 0x" + hr.ToString("x") );
 							return false;
 						}
 
