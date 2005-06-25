@@ -330,65 +330,54 @@ namespace MediaPortal.TV.Recording
 
 			if (isWMV)
 			{
-				TranscodeToWMV WMVConverter = new TranscodeToWMV();
-				WMVConverter.CreateProfile(tinfo.ScreenSize,tinfo.bitRate,tinfo.FPS);
-				if (!WMVConverter.Transcode(info,VideoFormat.Wmv,tinfo.quality))
-				{
-					tinfo.status=Status.Error;
-					return;
-				}
-				while (!WMVConverter.IsFinished()) 
-				{
-					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
-					tinfo.percentDone=WMVConverter.Percentage();
-					System.Threading.Thread.Sleep(1000);
-					if (tinfo.status==Status.Canceled) 
-					{
-						WMVConverter.Stop();
-						return;
-					}
-				}
-				if (tinfo.deleteOriginal)
-				{
-					DiskManagement.DeleteRecording(info.file);
-					tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".wmv");
-					TVDatabase.SetRecordedFileName(tinfo.recorded);
-				}
-				tinfo.status=Status.Completed;
+				ConvertToWmv(info,tinfo);
+				return;
+			}
+			if (isMpeg)
+			{
+				ConvertToMpg(info,tinfo);
 				return;
 			}
 
 
 			if (isXVID)
 			{
-				Dvrms2XVID xvidEncoder = new Dvrms2XVID();
-				xvidEncoder.CreateProfile(tinfo.ScreenSize,tinfo.bitRate,tinfo.FPS);
-				if (!xvidEncoder.Transcode(info,VideoFormat.Xvid,tinfo.quality))
-				{
-					tinfo.status=Status.Error;
-					return;
-				}
-				while (!xvidEncoder.IsFinished()) 
-				{
-					if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
-					tinfo.percentDone=xvidEncoder.Percentage();
-					System.Threading.Thread.Sleep(1000);
-					if (tinfo.status==Status.Canceled) 
-					{
-						xvidEncoder.Stop();
-						return;
-					}
-				}
-				if (tinfo.deleteOriginal)
-				{
-					DiskManagement.DeleteRecording(info.file);
-					tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".avi");
-					TVDatabase.SetRecordedFileName(tinfo.recorded);
-				}
-				tinfo.status=Status.Completed;
+				ConvertToXvid(info,tinfo);
 				return;
 			}
+		}
 
+		static void ConvertToWmv(TranscodeInfo info, TranscoderInfo tinfo)
+		{
+			TranscodeToWMV WMVConverter = new TranscodeToWMV();
+			WMVConverter.CreateProfile(tinfo.ScreenSize,tinfo.bitRate,tinfo.FPS);
+			if (!WMVConverter.Transcode(info,VideoFormat.Wmv,tinfo.quality))
+			{
+				tinfo.status=Status.Error;
+				return;
+			}
+			while (!WMVConverter.IsFinished()) 
+			{
+				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
+				tinfo.percentDone=WMVConverter.Percentage();
+				System.Threading.Thread.Sleep(1000);
+				if (tinfo.status==Status.Canceled) 
+				{
+					WMVConverter.Stop();
+					return;
+				}
+			}
+			if (tinfo.deleteOriginal)
+			{
+				DiskManagement.DeleteRecording(info.file);
+				tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".wmv");
+				TVDatabase.SetRecordedFileName(tinfo.recorded);
+			}
+			tinfo.status=Status.Completed;
+		}
+
+		static void ConvertToMpg(TranscodeInfo info, TranscoderInfo tinfo)
+		{
 			Dvrms2Mpeg mpgConverter = new Dvrms2Mpeg();
 			if (!mpgConverter.Transcode(info,VideoFormat.Mpeg2,tinfo.quality))
 			{
@@ -406,49 +395,43 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 			}
-			if (isMpeg)
+			if (tinfo.deleteOriginal)
 			{
-				if (tinfo.deleteOriginal)
-				{
-					DiskManagement.DeleteRecording(info.file);
-					tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".mpg");
-					TVDatabase.SetRecordedFileName(tinfo.recorded);
-				}
-				tinfo.status=Status.Completed;
+				DiskManagement.DeleteRecording(info.file);
+				tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".mpg");
+				TVDatabase.SetRecordedFileName(tinfo.recorded);
+			}
+			tinfo.status=Status.Completed;
+		}
+
+		static void ConvertToXvid(TranscodeInfo info, TranscoderInfo tinfo)
+		{
+			Dvrms2XVID xvidEncoder = new Dvrms2XVID();
+			xvidEncoder.CreateProfile(tinfo.ScreenSize,tinfo.bitRate,tinfo.FPS);
+			if (!xvidEncoder.Transcode(info,VideoFormat.Xvid,tinfo.quality))
+			{
+				tinfo.status=Status.Error;
 				return;
 			}
-/*
-			if (isXVID)
+			while (!xvidEncoder.IsFinished()) 
 			{
-				info.file=System.IO.Path.ChangeExtension(info.file,".mpg");				
-				string outputFile=System.IO.Path.ChangeExtension(info.file,".avi");
-				string mencoderParams=String.Format("\"{0}\" -o \"{1}\" -oac mp3lame -ovc xvid  -xvidencopts autoaspect:bitrate={2} -demuxer 35",
-																								info.file,outputFile,tinfo.bitRate);
-				if (tinfo.FPS>0)
-					mencoderParams+=String.Format(" -ofps {0}", tinfo.FPS);
-				if (tinfo.ScreenSize.Width>0 && tinfo.ScreenSize.Height>0)
-					mencoderParams+=String.Format(" -vf scale={0}:{1}", tinfo.ScreenSize.Width,tinfo.ScreenSize.Height);
-
-				Log.Write("mencoder.exe {0}", mencoderParams);
-				Utils.StartProcess(@"mencoder\mencoder.exe",mencoderParams,true,true);
-				if (System.IO.File.Exists(outputFile))
+				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
+				tinfo.percentDone=xvidEncoder.Percentage();
+				System.Threading.Thread.Sleep(1000);
+				if (tinfo.status==Status.Canceled) 
 				{
-					if (tinfo.deleteOriginal)
-					{
-						tinfo.percentDone=0;
-						DiskManagement.DeleteRecording(tinfo.recorded.FileName);
-						tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".avi");
-						TVDatabase.SetRecordedFileName(tinfo.recorded);
-					}
-					tinfo.status=Status.Completed;
+					xvidEncoder.Stop();
+					return;
 				}
-				else
-				{
-					tinfo.status=Status.Error;
-				}
-				Utils.FileDelete(info.file);//delete the .mpg file
 			}
-			*/
+			if (tinfo.deleteOriginal)
+			{
+				DiskManagement.DeleteRecording(info.file);
+				tinfo.recorded.FileName=System.IO.Path.ChangeExtension(info.file,".avi");
+				TVDatabase.SetRecordedFileName(tinfo.recorded);
+			}
+			tinfo.status=Status.Completed;
+			return;
 		}
 	}
 }
