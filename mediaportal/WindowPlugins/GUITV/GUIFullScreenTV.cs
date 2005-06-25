@@ -417,10 +417,13 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_KEY_PRESSED:
 				{
-					if ((action.m_key!=null) && (!isMsnChatVisible))
-						OnKeyCode((char)action.m_key.KeyChar);
+					if (!GUIWindowManager.IsRouted)
+					{
+						if ((action.m_key!=null) && (!isMsnChatVisible))
+							OnKeyCode((char)action.m_key.KeyChar);
 
-					isMsgBoxVisible = false;
+						isMsgBoxVisible = false;
+					}
 				}
 					break;
 
