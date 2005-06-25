@@ -144,6 +144,21 @@ namespace MediaPortal.Database
 			}
 		}
 
+		static public int GetAsInt(SQLiteResultSet results, int iRecord, string strColum)
+		{
+			string result=Get(results, iRecord, strColum);
+			int returnValue=-1;
+			try
+			{
+				returnValue=Int32.Parse(result);
+			}
+			catch(Exception)
+			{
+				Log.Write("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int",
+													strColum,iRecord,result);
+			}
+			return returnValue;
+		}
 		static public string Get(SQLiteResultSet results, int iRecord, string strColum)
 		{
 			if (null == results) return String.Empty;
