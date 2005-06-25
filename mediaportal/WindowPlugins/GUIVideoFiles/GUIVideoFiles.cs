@@ -863,6 +863,12 @@ namespace MediaPortal.GUI.Video
 					}
 				}
         // set initial movie info
+				if (allFiles.Count==0)
+				{
+					GUIListItem item = new GUIListItem();
+					item.Path=strFile;
+					allFiles.Add(item);
+				}
 				foreach (GUIListItem item in allFiles)
 				{
 					VideoDatabase.AddMovieFile(item.Path);
