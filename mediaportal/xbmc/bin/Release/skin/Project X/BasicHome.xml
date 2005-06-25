@@ -13,6 +13,19 @@
 			<height>576</height>
 			<texture>background.png</texture>
 		</control>
+
+	<control>
+		<description>Big text</description>
+		<type>label</type>
+		<id>200</id>
+		<posX>368</posX>
+		<posY>450</posY>
+		<label>#highlightedbutton</label>
+		<align>center</align>
+		<font>font35</font>
+		<textcolor>40ffffff</textcolor>
+	</control>
+
 		<control>
 			<description>home BM Radio</description>
 			<type>button</type>
@@ -24,7 +37,8 @@
 			<textureFocus>BM_Radio_focus.png</textureFocus>
 			<textureNoFocus>BM_Radio_nofocus.png</textureNoFocus>
 			<hyperlink>30</hyperlink>
-			<label>-</label>
+			<label>665</label>
+  		<textcolor>00ffffff</textcolor>
 			<onleft>5</onleft>
 			<onright>3</onright>
 			<onup>21</onup>
@@ -41,7 +55,8 @@
 			<textureFocus>BM_Video_focus.png</textureFocus>
 			<textureNoFocus>BM_Video_nofocus.png</textureNoFocus>
 			<hyperlink>6</hyperlink>
-			<label>-</label>
+			<label>3</label>
+  		<textcolor>00ffffff</textcolor>
 			<onleft>2</onleft>
 			<onright>4</onright>
 			<onup>21</onup>
@@ -58,7 +73,8 @@
 			<textureFocus>BM_FFS_focus.png</textureFocus>
 			<textureNoFocus>BM_FFS_nofocus.png</textureNoFocus>
 			<hyperlink>1</hyperlink>
-			<label>-</label>
+			<label>605</label>
+  		<textcolor>00ffffff</textcolor>
 			<onleft>3</onleft>
 			<onright>5</onright>
 			<onup>21</onup>
@@ -75,7 +91,8 @@
 			<textureFocus>BM_Music_focus.png</textureFocus>
 			<textureNoFocus>BM_Music_nofocus.png</textureNoFocus>
 			<hyperlink>501</hyperlink>
-			<label>-</label>
+			<label>2</label>
+  		<textcolor>00ffffff</textcolor>
 			<onleft>4</onleft>
 			<onright>6</onright>
 			<onup>21</onup>
@@ -92,7 +109,8 @@
 			<textureFocus>BM_Pictures_focus.png</textureFocus>
 			<textureNoFocus>BM_Pictures_nofocus.png</textureNoFocus>
 			<hyperlink>2</hyperlink>
-			<label>-</label>
+			<label>1</label>
+  		<textcolor>00ffffff</textcolor>
 			<onleft>5</onleft>
 			<onright>2</onright>
 			<onup>21</onup>
