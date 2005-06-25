@@ -281,6 +281,7 @@ namespace MediaPortal.TV.Recording
 									// if the recording should record the tv program
 									if ( rec.IsRecordingProgramAtTime(dtTime,prog2Min,m_iPreRecordInterval, m_iPostRecordInterval) )
 									{
+										Log.Write("Recorder: Send announcement for recording:{0}",rec.ToString());
 										rec.IsAnnouncementSend=true;
 										GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,null);
 										msg.Object=rec;
@@ -322,6 +323,7 @@ namespace MediaPortal.TV.Recording
 						if ( rec.IsRecordingProgramAtTime(dtTime,null,m_iPreRecordInterval, m_iPostRecordInterval) )
 						{
 							rec.IsAnnouncementSend=true;
+							Log.Write("Recorder: Send announcement for recording:{0}",rec.ToString());
 							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,null);
 							msg.Object=rec;
 							msg.Object2=null;

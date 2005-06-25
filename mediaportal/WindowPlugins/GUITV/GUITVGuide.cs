@@ -225,7 +225,7 @@ namespace MediaPortal.GUI.TV
             if (m_iCursorX == 0)
             {
               m_bSingleChannel=!m_bSingleChannel;
-              Update();
+              Update(false);
               SetFocus();
             }
             else
@@ -251,7 +251,7 @@ namespace MediaPortal.GUI.TV
 									m_iCursorY=control.GetID-(int)Controls.IMG_CHAN1;
 									m_iCursorX=0;
 
-                  if (m_iSingleChannel != m_iCursorY + m_iChannelOffset) Update();
+                  if (m_iSingleChannel != m_iCursorY + m_iChannelOffset) Update(false);
 									UpdateCurrentProgram();
 									UpdateHorizontalScrollbar();
 									UpdateVerticalScrollbar();
@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_TVGUIDE_RESET:
 					m_iCursorX=0;
 					m_dtTime=DateTime.Now;
-					Update();
+					Update(false);
 					break;
 
 					
@@ -313,7 +313,7 @@ namespace MediaPortal.GUI.TV
 						if (m_iCursorX==0)
 						{
 							m_bSingleChannel=!m_bSingleChannel;
-							Update();
+							Update(false);
 							SetFocus();
 							return;              
 						}
@@ -392,21 +392,21 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_INCREASE_TIMEBLOCK:
 				{
 					m_iBlockTime+=15;
-					Update();
+					Update(false);
 					SetFocus();
 				}
 					break;
 				case Action.ActionType.ACTION_DECREASE_TIMEBLOCK:
 				{
 					if (m_iBlockTime>15) m_iBlockTime-=15;
-					Update();
+					Update(false);
 					SetFocus();
 				}
 					break;
 				case Action.ActionType.ACTION_DEFAULT_TIMEBLOCK:
 				{
 					m_iBlockTime=30;
-					Update();
+					Update(false);
 					SetFocus();
 				}
 					break;
@@ -515,6 +515,7 @@ namespace MediaPortal.GUI.TV
 					m_iChannels= (int)(((float)iHeight) / ((float)iItemHeight) );
 
           UnFocus();
+					m_currentProgram=null;
 					m_iCursorX=0;
 					m_iCursorY=0;
 					m_iChannelOffset=0;
@@ -572,12 +573,13 @@ namespace MediaPortal.GUI.TV
 						for (int i=1; i <= 4; i++) cntlTimeInterval.AddLabel(String.Empty,i);	
 						cntlTimeInterval.Value=1;
 					}
-					Update();
+					Update(true);
 					SetFocus();
 					if (m_currentProgram!=null)
 					{
 						m_dtStartTime=m_currentProgram.StartTime;
 					}
+					UpdateCurrentProgram();
 
 					Log.Write("turn tv on");
 					GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
@@ -598,7 +600,7 @@ namespace MediaPortal.GUI.TV
 						m_dtTime=DateTime.Now;
 						m_dtTime = new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,m_dtTime.Hour,m_dtTime.Minute,0,0);
 						m_dtTime=m_dtTime.AddDays(iDay);
-						Update();
+						Update(false);
 						SetFocus();
 						return true;
 					}
@@ -608,20 +610,20 @@ namespace MediaPortal.GUI.TV
 						int iInterval=(cntlTimeInt.Value)+1;
             if (iInterval>4) iInterval=4;
 						m_iBlockTime=iInterval*15;
-						Update();
+						Update(false);
 						SetFocus();
 						return true;
 					}
 					if (iControl>=100)
 					{
 						OnRecord();
-						Update();
+						Update(false);
 						SetFocus();
 					}
 					else if (m_iCursorX==0)
 					{
 						m_bSingleChannel=!m_bSingleChannel;						
-						Update();
+						Update(false);
 						SetFocus();
 					}
 					break;
@@ -630,7 +632,7 @@ namespace MediaPortal.GUI.TV
 			return base.OnMessage(message);;
 		}
 
-		void Update()
+		void Update(bool selectCurrentShow)
 		{
 			lock (this)
 			{
@@ -850,7 +852,7 @@ namespace MediaPortal.GUI.TV
 						if (chan < m_channels.Count)
 						{
 							TVChannel channel=(TVChannel)m_channels[chan];
-							RenderChannel(iChannel,channel,iStart,iEnd);
+							RenderChannel(iChannel,channel,iStart,iEnd,selectCurrentShow);
 						}
 						chan++;
 						if (chan >= m_channels.Count) chan=0;
@@ -1194,7 +1196,7 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		void RenderChannel(int iChannel,TVChannel channel, long iStart, long iEnd)
+		void RenderChannel(int iChannel,TVChannel channel, long iStart, long iEnd, bool selectCurrentShow)
 		{
 			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,channel.Name);
 			if (System.IO.File.Exists(strLogo))
@@ -1414,6 +1416,12 @@ namespace MediaPortal.GUI.TV
 							img.TexutureNoFocusLeftName="tvguide_button_left.png";
 							img.TexutureNoFocusMidName="tvguide_button_middle.png";
 							img.TexutureNoFocusRightName="tvguide_button_right.png";
+							if( selectCurrentShow && iChannel==m_iCursorY)
+							{
+								m_iCursorX=iProgram+1;
+								m_currentProgram=program;
+								SetProperties();
+							}
 						}
 
 						if (bEndsAfter)
@@ -1474,7 +1482,7 @@ namespace MediaPortal.GUI.TV
         {
           if (m_iCursorX==0) m_iProgramOffset=0;
           m_iCursorY++;
-          Update();
+          Update(false);
         }
         else 
         {
@@ -1483,14 +1491,14 @@ namespace MediaPortal.GUI.TV
             m_iProgramOffset=0;
             m_iChannelOffset++;
             if ( m_iChannelOffset>0 && m_iChannelOffset >= m_channels.Count)  m_iChannelOffset-=m_channels.Count;
-            Update();
+            Update(false);
           }
           else 
           {
             if (m_iCursorY + m_iProgramOffset+1 < m_iTotalPrograms)
             {
               m_iProgramOffset++;
-              Update();
+              Update(false);
             }
           }
         }
@@ -1506,13 +1514,13 @@ namespace MediaPortal.GUI.TV
 				if (m_iCursorY+1 < m_iChannels)
 				{
 					m_iCursorY++;
-          Update();
+          Update(false);
 				}
 				else
 				{
 					m_iChannelOffset++;
 					if ( m_iChannelOffset>0 && m_iChannelOffset >= m_channels.Count)  m_iChannelOffset-=m_channels.Count;
-          Update();
+          Update(false);
 				}
 				SetFocus();
 				SetProperties();
@@ -1541,7 +1549,7 @@ namespace MediaPortal.GUI.TV
 				{
 					m_iChannelOffset++;
 					if (m_iChannelOffset>0 && m_iChannelOffset>=m_channels.Count)  m_iChannelOffset -=m_channels.Count;
-					Update();
+					Update(false);
 				}
 
 				for (int x=1; x < 10; x++)
@@ -1580,7 +1588,7 @@ namespace MediaPortal.GUI.TV
 			}
       
 			Correct();
-			Update();  
+			Update(false);  
 			SetFocus();
 		}
 
@@ -1603,7 +1611,7 @@ namespace MediaPortal.GUI.TV
             {
               m_iProgramOffset=0;
               m_iChannelOffset--;
-              Update();            
+              Update(false);            
             }
           }
           else
@@ -1611,7 +1619,7 @@ namespace MediaPortal.GUI.TV
             if (m_iProgramOffset>0) 
             {
               m_iProgramOffset--;
-              Update();
+              Update(false);
             }
           }
 				}
@@ -1619,7 +1627,7 @@ namespace MediaPortal.GUI.TV
 				{
           if (m_iCursorX==0) m_iProgramOffset=0;
 					m_iCursorY--;
-          Update();
+          Update(false);
 				}
 				SetFocus();
 				UpdateCurrentProgram();
@@ -1634,13 +1642,13 @@ namespace MediaPortal.GUI.TV
 					if (m_iChannelOffset>0) 
 					{
 						m_iChannelOffset--;
-						Update();
+						Update(false);
 					}
 				}
 				else 
 				{
 					m_iCursorY--;
-          Update();
+          Update(false);
 				}
 				SetFocus();
 				SetProperties();
@@ -1666,7 +1674,7 @@ namespace MediaPortal.GUI.TV
 					if (m_iChannelOffset>0) 
 					{
 						m_iChannelOffset--;
-						Update();
+						Update(false);
 					}
 					else break;
 				}
@@ -1716,7 +1724,7 @@ namespace MediaPortal.GUI.TV
 			}
 
 			Correct();
-			Update();
+			Update(false);
 			SetFocus();
 		}
 
@@ -1740,7 +1748,7 @@ namespace MediaPortal.GUI.TV
           if (m_bSingleChannel) 
           {
             m_iProgramOffset=0;
-            Update();
+            Update(false);
           }
 					SetFocus();
 					SetProperties();
@@ -1753,7 +1761,7 @@ namespace MediaPortal.GUI.TV
 				return;
 			}
 			Correct();
-			Update();
+			Update(false);
 			SetFocus();
 			if (m_currentProgram!=null) m_dtStartTime=m_currentProgram.StartTime;
 		}
@@ -1800,7 +1808,7 @@ namespace MediaPortal.GUI.TV
           m_dtTime=m_dtTime.AddMinutes(-m_iBlockTime);
 			}
 			Correct();
-			Update();      
+			Update(false);      
 			SetFocus();
 			if (m_currentProgram!=null) m_dtStartTime=m_currentProgram.StartTime;
 		}
@@ -1922,7 +1930,7 @@ namespace MediaPortal.GUI.TV
 			m_iChannelOffset=0;
 			m_iCursorX=0;
 			m_iCursorY=0;
-			Update();
+			Update(false);
 			SetFocus();
 		}
 
@@ -1986,7 +1994,7 @@ namespace MediaPortal.GUI.TV
 			if (m_bNeedUpdate)
 			{
 				m_bNeedUpdate=false;
-				Update();
+				Update(false);
 				SetFocus();
 			}
 
@@ -2082,13 +2090,13 @@ namespace MediaPortal.GUI.TV
 						if (dlg.SelectedLabel==-1) return;
 						GUITVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
 						GetChannels();
-						Update();
+						Update(false);
 						SetFocus();
 					break;
 
 					case 937: //import tvguide
 						Import();
-						Update();
+						Update(false);
 						SetFocus();
 					break;
 					
@@ -2109,7 +2117,7 @@ namespace MediaPortal.GUI.TV
 
 					case 939: // switch mode
 						m_bSingleChannel=!m_bSingleChannel;							
-						Update();
+						Update(false);
 						SetFocus();
 						break;
 					
@@ -2202,7 +2210,7 @@ namespace MediaPortal.GUI.TV
 								Recorder.StopRecording(rec1);
 							}
 						}
-						Update();
+						Update(false);
 						SetFocus();
 						return;
 					case 611://once
@@ -2228,7 +2236,7 @@ namespace MediaPortal.GUI.TV
 #if DEBUG
 				CheckRecordingConflicts();
 #endif
-				Update();
+				Update(false);
 				SetFocus();
 			}
 		}
@@ -2253,14 +2261,14 @@ namespace MediaPortal.GUI.TV
 		void OnPageUp()
 		{
 			m_dtTime=m_dtTime.AddDays(1.0);
-			Update();
+			Update(false);
 			SetFocus();
 		}
 
 		void OnPageDown()
 		{
 			m_dtTime=m_dtTime.AddDays(-1.0);
-			Update();
+			Update(false);
 			SetFocus();
 		}
 
@@ -2349,7 +2357,7 @@ namespace MediaPortal.GUI.TV
 				}
 				m_iCursorY=iChannelNr;
         
-				Update();
+				Update(false);
 				SetFocus();
 			}
 		}
