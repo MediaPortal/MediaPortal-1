@@ -1593,7 +1593,8 @@ public class MediaPortalApp : D3DApp, IRender
 
     if (m_iLastMousePositionX != iCursorX || m_iLastMousePositionY != iCursorY)
 		{
-			GUIGraphicsContext.BlankScreen=false;
+			if ((Math.Abs(m_iLastMousePositionX - iCursorX) > 10) || (Math.Abs(m_iLastMousePositionY - iCursorY) > 10))
+				GUIGraphicsContext.BlankScreen=false;
       // check any still waiting single click events
       if (GUIGraphicsContext.DBLClickAsRightClick && bMouseClickFired)
       {
