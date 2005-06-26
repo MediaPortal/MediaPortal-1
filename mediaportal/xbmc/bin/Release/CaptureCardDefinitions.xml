@@ -851,22 +851,6 @@
     </tv>
   </capturecard>  
   
-  <capturecard commercialname="V-Stream Xpert DTV" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a617de&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"         checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Xpert BDA DVB-T Tuner/Demod"             checkdevice="true"></filter>
-        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture" checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>  
-  
   <capturecard commercialname="Snazzi III USB2" capturename="Snazzi*III USB2 Device" devid="vid_1779&amp;pid_2042">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -1249,14 +1233,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="V-Stream Xpert DTV" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a117de&amp;rev_05">
+  <capturecard commercialname="Kworld Xpert DTV - DVBT" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a117de&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
-        <filter cat="tunerdevice"		name="Xpert BDA DVB-T Tuner/Demod"				checkdevice="true"></filter>
-        <filter cat="capture"			name="Conexant 2388x Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"		name="DigiGo DVBT BDA Tuner/Demod"				checkdevice="true"></filter>
+        <filter cat="capture"			name="DigiGo DVBT 2388x Transport Stream Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
@@ -2333,7 +2317,7 @@
     <tv>
       <interface cat="capture" video="0" audio="3" mpeg2=""></interface>
       <filters>
-        <filter cat="crossbar"  name="Connexant 2388x Crossbar"	checkdevice="true"></filter>
+        <filter cat="crossbar"  name="Conexant 2388x Crossbar"	checkdevice="true"></filter>
         <filter cat="capture"   name="DVBT 2388x Video Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
@@ -6022,7 +6006,7 @@
       </connections>
     </tv>
   </capturecard>
-  
+    
   <capturecard commercialname="DNTV Live! LP Tuner Card" capturename="DNTV Live! LP TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -6039,19 +6023,115 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="KWorld DVBT" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a617de&amp;rev_05"> 
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
-	<tv> 
-	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
-	  <filters> 
+  <capturecard commercialname="Kworld DVBT 100" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a617de&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
 		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"				checkdevice="false"></filter> 
 		<filter cat="tunerdevice"		name="DigiGo DVBT BDA Tuner/Demod"					checkdevice="true"></filter> 
-		<filter cat="capture"			name="DigiGo DVBT 2388x Transport Stream Capture"	checkdevice="true"></filter> 
-	  </filters> 
-	  <connections> 
+		<filter cat="capture"			name="DigiGo DVBT 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
 		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
 		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
-	  </connections> 
-	</tv> 
-	</capturecard>
-  </capturecards>
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="KWorld DVBT 100 FM" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a717de&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"				checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="DigiGo DVBT BDA Tuner/Demod"					checkdevice="true"></filter> 
+		<filter cat="capture"			name="DigiGo DVBT 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="KWorld DVBS 100" capturename="DigiGo DVBS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08b117de&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBS Network Provider"				checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="DigiGo DVBS BDA Tuner/Demod"					checkdevice="true"></filter> 
+		<filter cat="capture"			name="DigiGo DVBS 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="KWorld DVBS 100" capturename="DigiGo DVBS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08b217de&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBS Network Provider"				checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="DigiGo DVBS BDA Tuner/Demod"					checkdevice="true"></filter> 
+		<filter cat="capture"			name="DigiGo DVBS 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="KWorld DVBS 100 CI" capturename="DigiGo DVBS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08b317de&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBS Network Provider"				checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="DigiGo DVBS BDA Tuner/Demod"					checkdevice="true"></filter> 
+		<filter cat="capture"			name="DigiGo DVBS 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="KWorld DVBS 100" capturename="DigiGo DVBS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08b617de&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBS Network Provider"				checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="DigiGo DVBS BDA Tuner/Demod"					checkdevice="true"></filter> 
+		<filter cat="capture"			name="DigiGo DVBS 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="KWorld ATSC" capturename="DigiGo ATSC 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08c117de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+		<filter cat="networkprovider"	name="Microsoft ATSC Network Provider"				checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="DigiGo ATSC BDA Tuner/Demod"					checkdevice="true"></filter> 
+		<filter cat="capture"			name="DigiGo ATSC 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+	</connections> 
+    </tv> 
+  </capturecard>
+</capturecards>
