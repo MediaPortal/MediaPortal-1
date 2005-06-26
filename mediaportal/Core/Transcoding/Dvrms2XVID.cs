@@ -182,7 +182,7 @@ namespace MediaPortal.Core.Transcoding
 
 				Log.Write("DVR2XVID: start transcoding");
 				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=null)
+				if (hr!=0)
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:to SetSyncSource :0x{0:X}",hr);
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
@@ -207,7 +207,7 @@ namespace MediaPortal.Core.Transcoding
 				Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=null)
+				if (hr!=0)
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:to SetSyncSource :0x{0:X}",hr);
 				hr=mediaControl.Run();
 				if (hr!=0 )
@@ -240,7 +240,7 @@ namespace MediaPortal.Core.Transcoding
 				if (!AddCodecs(graphBuilder, info)) return false;
 
 				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=null)
+				if (hr!=0)
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:to SetSyncSource :0x{0:X}",hr);
 
 				hr=mediaControl.Run();

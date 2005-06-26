@@ -296,7 +296,7 @@ namespace MediaPortal.Core.Transcoding
 
 				Log.Write("DVR2WMV: start pre-run");
 				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=null)
+				if (hr!=0)
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
@@ -320,7 +320,7 @@ namespace MediaPortal.Core.Transcoding
 
 
 				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=null)
+				if (hr!=0)
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
 
 				hr=mediaControl.Run();
@@ -355,7 +355,7 @@ namespace MediaPortal.Core.Transcoding
 
 
 				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=null)
+				if (hr!=0)
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
 
 				hr=mediaControl.Run();
