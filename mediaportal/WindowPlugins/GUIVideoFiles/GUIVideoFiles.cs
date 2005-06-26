@@ -2048,7 +2048,9 @@ namespace MediaPortal.GUI.Video
         for (int i = 0; i < items.Count; ++i)
         {
           GUIListItem temporaryListItem = (GUIListItem)items[i];
-          if (Utils.ShouldStack(temporaryListItem.Path, item.Path))
+					string fname1=System.IO.Path.GetFileNameWithoutExtension(temporaryListItem.Path).ToLower();
+					string fname2=System.IO.Path.GetFileNameWithoutExtension(item.Path).ToLower();
+          if (Utils.ShouldStack(temporaryListItem.Path, item.Path) || fname1.Equals(fname2))
           {   
             bStackedFile=true;
             movieFileName=System.IO.Path.GetFileName(temporaryListItem.Path);
