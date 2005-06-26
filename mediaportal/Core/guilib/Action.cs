@@ -204,5 +204,9 @@ namespace MediaPortal.GUI.Library
       get { return m_SoundFileName;}
       set { m_SoundFileName=value;}
     }
+		public bool IsUserAction()
+		{
+			return true;//all current actions are user actions
+		}
 	}
 }

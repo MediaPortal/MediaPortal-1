@@ -1143,8 +1143,15 @@ public class MediaPortalApp : D3DApp, IRender
     try
     {
       GUIWindow window;
+			if (action.IsUserAction())
+			{
+					screenSaverTimer=DateTime.Now;
+				GUIGraphicsContext.BlankScreen=false;
+
+			}
       switch (action.wID)
       {
+
         case Action.ActionType.ACTION_RECORD:
           // record current program
           GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
