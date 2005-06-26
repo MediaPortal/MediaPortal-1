@@ -2057,8 +2057,8 @@ namespace MediaPortal.GUI.Video
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
             if (null==dlgYesNo) return;
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
-            dlgYesNo.SetLine(1,movieTitle);
-            dlgYesNo.SetLine(2, String.Format("Part:{0}",iPart)  );
+            dlgYesNo.SetLine(1,movieFileName);
+            dlgYesNo.SetLine(2, String.Format("Part:{0}",iPart++)  );
             dlgYesNo.SetLine(3, String.Empty);
             dlgYesNo.DoModal(GetID);
 
@@ -2082,18 +2082,36 @@ namespace MediaPortal.GUI.Video
           DoDeleteItem(item);
         }
       }
-      else
+      else // stacking off
       {
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null==dlgYesNo) return;
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
-        dlgYesNo.SetLine(1,movieTitle);
-        dlgYesNo.SetLine(2, String.Empty);
-        dlgYesNo.SetLine(3, String.Empty);
-        dlgYesNo.DoModal(GetID);
 
         if (!dlgYesNo.IsConfirmed) return;
-        DoDeleteItem(item);
+				ArrayList items = m_directory.GetDirectory(currentFolder);
+				int iPart=1;
+				for (int i = 0; i < items.Count; ++i)
+				{
+					GUIListItem temporaryListItem = (GUIListItem)items[i];
+					string fname1=System.IO.Path.GetFileNameWithoutExtension(temporaryListItem.Path).ToLower();
+					string fname2=System.IO.Path.GetFileNameWithoutExtension(item.Path).ToLower();
+					if (fname1.Equals(fname2))
+					{
+						movieFileName=System.IO.Path.GetFileName(temporaryListItem.Path);
+						dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+						if (null==dlgYesNo) return;
+						dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
+						dlgYesNo.SetLine(1,movieFileName);
+						dlgYesNo.SetLine(2, String.Format("Part:{0}",iPart++));
+						dlgYesNo.SetLine(3, String.Empty);
+						dlgYesNo.DoModal(GetID);
+
+						if (dlgYesNo.IsConfirmed) 
+						{
+							DoDeleteItem(temporaryListItem);
+						}
+					}
+				}
       }
       
 			currentSelectedItem=facadeView.SelectedListItemIndex;
