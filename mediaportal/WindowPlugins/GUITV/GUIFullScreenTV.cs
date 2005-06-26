@@ -417,13 +417,10 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_KEY_PRESSED:
 				{
-					if (!GUIWindowManager.IsRouted)
-					{
-						if ((action.m_key!=null) && (!isMsnChatVisible))
-							OnKeyCode((char)action.m_key.KeyChar);
+					if ((action.m_key!=null) && (!isMsnChatVisible))
+						OnKeyCode((char)action.m_key.KeyChar);
 
-						isMsgBoxVisible = false;
-					}
+					isMsgBoxVisible = false;
 				}
 					break;
 
@@ -1486,6 +1483,8 @@ namespace MediaPortal.GUI.TV
 		}
 		private void OnKeyCode(char chKey)
 		{
+			if (m_bDialogVisible) return;
+			if (GUIWindowManager.IsRouted) return;
 			if(chKey=='o')
 			{
 				Action showInfo=new Action(Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO,0,0);
