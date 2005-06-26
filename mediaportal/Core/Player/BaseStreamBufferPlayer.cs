@@ -1154,6 +1154,9 @@ namespace MediaPortal.Player
 			mediaCtrl.Run();
 			mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
 			m_state=PlayState.Playing;
+			mediaCtrl.GetState(200,out state);
+			Application.DoEvents();
+			Log.Write("state:{0}", state.ToString());
 		}
 
 		
