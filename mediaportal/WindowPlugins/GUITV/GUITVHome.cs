@@ -819,6 +819,7 @@ namespace MediaPortal.GUI.TV
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS) return true;
 
 			return false;
