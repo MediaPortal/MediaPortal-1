@@ -2577,6 +2577,8 @@ namespace MediaPortal.Configuration
 						else
 						{
 							string chanNr=(string)comboBoxChannels.SelectedItem;
+							if (chanNr==null)
+								chanNr=comboBoxChannels.Text;
 							channel.Channel = -1;
 							for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 							{
@@ -2729,6 +2731,8 @@ namespace MediaPortal.Configuration
 						comboBoxChannels.Enabled=false;
 					labelSpecial.Text=String.Empty;
 					string chanNr=(string)comboBoxChannels.SelectedItem;
+					if (chanNr==null)
+						chanNr=comboBoxChannels.Text;
 					for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 					{
 						if (channel.Frequency.Herz==TVChannel.SpecialChannels[i].Frequency)
@@ -3500,6 +3504,8 @@ namespace MediaPortal.Configuration
 		{
 			labelSpecial.Text=String.Empty;
 			string chanNr=(string)comboBoxChannels.SelectedItem;
+			if (chanNr==null)
+				chanNr=comboBoxChannels.Text;
 			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 			{
 				if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
