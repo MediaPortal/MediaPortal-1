@@ -181,7 +181,9 @@ namespace MediaPortal.Core.Transcoding
 				if (!AddCodecs(graphBuilder, info)) return false;
 
 				Log.Write("DVR2XVID: start transcoding");
-				(graphBuilder as IMediaFilter).SetSyncSource(null);
+				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
+				if (hr!=null)
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:to SetSyncSource :0x{0:X}",hr);
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
@@ -204,11 +206,13 @@ namespace MediaPortal.Core.Transcoding
 				double duration=m_dDuration/10000000d;
 				Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
-				(graphBuilder as IMediaFilter).SetSyncSource(null);
+				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
+				if (hr!=null)
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:to SetSyncSource :0x{0:X}",hr);
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to start graph :0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to start graph :0x{0:X}",hr);
 					Cleanup();
 					return false;
 				}
@@ -235,7 +239,10 @@ namespace MediaPortal.Core.Transcoding
 				graphBuilder.RemoveFilter((IBaseFilter)fileWriterFilter);
 				if (!AddCodecs(graphBuilder, info)) return false;
 
-				graphBuilder.SetDefaultSyncSource();
+				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
+				if (hr!=null)
+					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:to SetSyncSource :0x{0:X}",hr);
+
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
