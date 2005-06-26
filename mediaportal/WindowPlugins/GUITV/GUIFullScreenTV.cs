@@ -1289,10 +1289,10 @@ namespace MediaPortal.GUI.TV
 					if(m_vmr9OSD!=null)
 						m_vmr9OSD.HideBitmap();
 				}
-				if(m_vmr9OSD!=null)
-					m_vmr9OSD.CheckTimeOuts();
-				
 			}
+			if(m_vmr9OSD!=null)
+				m_vmr9OSD.CheckTimeOuts();
+				
 
 
 			// OSD Timeout?
