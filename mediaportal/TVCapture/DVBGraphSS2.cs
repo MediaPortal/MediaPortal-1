@@ -1196,6 +1196,11 @@ namespace MediaPortal.TV.Recording
 
 			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
 			hr=pConfig.SetHKEY(subKey);
+
+			IStreamBufferConfigure2 streamConfig2	= m_streamBufferConfig as IStreamBufferConfigure2;
+			if (streamConfig2!=null)
+				streamConfig2.SetFFTransitionRates(8,32);
+
 			// lock on the 'filename' file
 			hr=m_sinkInterface.LockProfile(fileName);
 			m_filename=fileName;

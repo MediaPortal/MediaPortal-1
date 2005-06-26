@@ -1503,6 +1503,11 @@ namespace MediaPortal.TV.Recording
 
         hr=m_pConfig.SetBackingFileDuration( 30*60); // 60sec*30min= 0.5 hours/file
         if (hr!=0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
+
+				IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
+				if (streamConfig2!=null)
+					streamConfig2.SetFFTransitionRates(8,32);
+
       }
 
       // lock profile

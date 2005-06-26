@@ -36,6 +36,7 @@ namespace MediaPortal.Player
 		protected  IGraphBuilder			  			      graphBuilder =null;
 		protected  IStreamBufferSource 			        bufferSource=null ;
 		protected  IStreamBufferMediaSeeking        m_mediaSeeking=null;
+		protected  IStreamBufferMediaSeeking2       m_mediaSeeking2=null;
 		protected int                               m_iSpeed=1;
 		protected double                            m_dCurrentPos;
     protected double                            m_dContentStart;
@@ -880,12 +881,14 @@ namespace MediaPortal.Player
 				videoWin	= graphBuilder as IVideoWindow;
 				mediaEvt	= (IMediaEventEx)  graphBuilder;
 				m_mediaSeeking = bufferSource as IStreamBufferMediaSeeking ;
+				m_mediaSeeking2= bufferSource as IStreamBufferMediaSeeking2 ;
 				if (m_mediaSeeking==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"Unable to get IMediaSeeking interface#1");
-					//m_mediaSeeking= graphBuilder as IMediaSeeking;
-					//if (m_mediaSeeking==null)
-					//Log.Write("Unable to get IMediaSeeking interface#2");
+				}
+				if (m_mediaSeeking2==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"Unable to get IMediaSeeking interface#2");
 				}
 
 				basicVideo	= graphBuilder as IBasicVideo2;
@@ -950,6 +953,10 @@ namespace MediaPortal.Player
 				if ( m_mediaSeeking != null )
 					Marshal.ReleaseComObject( m_mediaSeeking );
 				m_mediaSeeking= null;
+
+				if ( m_mediaSeeking2 != null )
+					Marshal.ReleaseComObject( m_mediaSeeking2 );
+				m_mediaSeeking2= null;
         
         
 				basicVideo	= null;

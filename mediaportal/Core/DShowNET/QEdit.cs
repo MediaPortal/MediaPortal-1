@@ -98,6 +98,37 @@ public interface ISampleGrabberCB
 		[PreserveSig]
 		int GetBackingFileDuration(out uint secs);
 	}
+	[ComVisible(true), ComImport,
+	Guid("53E037BF-3992-4282-AE34-2487B4DAE06B"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IStreamBufferConfigure2 //: IStreamBufferConfigure
+	{
+		[PreserveSig]
+		int SetDirectory([MarshalAs(UnmanagedType.LPWStr)] string directoryName);
+		[PreserveSig]
+		int GetDirectory([MarshalAs(UnmanagedType.LPWStr)] out string directoryName);
+
+		[PreserveSig]
+		int SetBackingFileCount(uint min, uint max);
+		[PreserveSig]
+		int GetBackingFileCount(out uint min, out uint max);
+
+		[PreserveSig]
+		int SetBackingFileDuration(uint secs);
+		[PreserveSig]
+		int GetBackingFileDuration(out uint secs);
+
+		[PreserveSig]
+		int SetMultiplexedPacketSize ([In]    uint   cbBytesPerPacket) ;
+		[PreserveSig]
+		int GetMultiplexedPacketSize ([Out]   out uint pcbBytesPerPacket) ;
+		[PreserveSig]
+		int SetFFTransitionRates ( [In]    uint   dwMaxFullFrameRate, [In]    uint dwMaxNonSkippingRate ) ;
+		[PreserveSig]
+		int GetFFTransitionRates ( [Out]   out uint pdwMaxFullFrameRate, [Out]   out uint pdwMaxNonSkippingRate ) ;
+
+
+	}
 
 
 
@@ -155,6 +186,66 @@ public interface ISampleGrabberCB
     int GetPreroll( [Out] out long pllPreroll );
 
 	}
+
+
+	[ComVisible(true), ComImport,
+	Guid("3a439ab0-155f-470a-86a6-9ea54afd6eaf"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IStreamBufferMediaSeeking2
+	{
+		[PreserveSig]
+		int GetCapabilities( [Out] out SeekingCapabilities pCapabilities );
+
+		[PreserveSig]
+		int CheckCapabilities( [In, Out] ref SeekingCapabilities pCapabilities );
+
+		[PreserveSig]
+		int IsFormatSupported( [In] ref Guid pFormat );
+		[PreserveSig]
+		int QueryPreferredFormat( [Out] out Guid pFormat );
+
+		[PreserveSig]
+		int GetTimeFormat( [Out] out Guid pFormat );
+		[PreserveSig]
+		int IsUsingTimeFormat( [In] ref Guid pFormat );
+		[PreserveSig]
+		int SetTimeFormat( [In] ref Guid pFormat );
+
+		[PreserveSig]
+		int GetDuration( [Out] out long pDuration );
+		[PreserveSig]
+		int GetStopPosition( [Out] out long pStop );
+		[PreserveSig]
+		int GetCurrentPosition( [Out] out long pCurrent );
+
+		[PreserveSig]
+		int ConvertTimeFormat(	[Out] out long pTarget, [In] ref Guid pTargetFormat,
+			[In] long Source,  [In] ref Guid pSourceFormat );
+
+		[PreserveSig]
+		int SetPositions([In,Out] ref long pCurrent, [In] SeekingFlags dwCurrentFlags,
+			[In,Out] ref long pStop, [In] SeekingFlags dwStopFlags );
+
+		[PreserveSig]
+		int GetPositions( [Out] out long pCurrent, [Out] out long pStop );
+
+		[PreserveSig]
+		int GetAvailable( [Out] out long pEarliest, [Out] out long pLatest );
+
+		[PreserveSig]
+		int SetRate( [In] double dRate );
+
+		[PreserveSig]
+		int GetRate( [Out] out double pdRate );
+
+		[PreserveSig]
+		int GetPreroll( [Out] out long pllPreroll );
+
+		[PreserveSig]
+		int SetRateEx ([In]    double  dRate,[In]    uint   dwFramesPerSec) ;
+
+	}
+
 	[ComVisible(true), ComImport,
 	Guid("ba9b6c99-f3c7-4ff2-92db-cfdd4851bf31"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]

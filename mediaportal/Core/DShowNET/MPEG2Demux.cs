@@ -588,6 +588,10 @@ namespace DShowNET
         hr=m_pConfig.SetBackingFileDuration( (uint)iFileDuration); 
         if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
 #endif
+				IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
+				if (streamConfig2!=null)
+					streamConfig2.SetFFTransitionRates(8,32);
+
       }
 
       // lock profile

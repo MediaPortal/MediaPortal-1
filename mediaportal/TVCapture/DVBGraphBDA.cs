@@ -1961,11 +1961,11 @@ namespace MediaPortal.TV.Recording
 				
 				// setting the StreamBufferEngine registry key
 				IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
-			IStreamBufferInitialize pTemp = (IStreamBufferInitialize) m_IStreamBufferConfig;
-			IntPtr subKey = IntPtr.Zero;
+				IStreamBufferInitialize pTemp = (IStreamBufferInitialize) m_IStreamBufferConfig;
+				IntPtr subKey = IntPtr.Zero;
 
-			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-			hr=pTemp.SetHKEY(subKey);
+				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+				hr=pTemp.SetHKEY(subKey);
 				
 				//set timeshifting folder
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
@@ -1986,15 +1986,19 @@ namespace MediaPortal.TV.Recording
 				if(hr != 0)
 					return false;
 
-			subKey = IntPtr.Zero;
-			HKEY = (IntPtr) unchecked ((int)0x80000002L);
-			IStreamBufferInitialize pConfig = (IStreamBufferInitialize) m_StreamBufferSink;
+				subKey = IntPtr.Zero;
+				HKEY = (IntPtr) unchecked ((int)0x80000002L);
+				IStreamBufferInitialize pConfig = (IStreamBufferInitialize) m_StreamBufferSink;
 
-			RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-			hr = pConfig.SetHKEY(subKey);
+				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+				hr = pConfig.SetHKEY(subKey);
 				//set timeshifting filename
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
 				
+				IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
+				if (streamConfig2!=null)
+					streamConfig2.SetFFTransitionRates(8,32);
+
 				// lock on the 'filename' file
 				if(m_IStreamBufferSink.LockProfile(fileName) != 0)
 				{
