@@ -196,7 +196,7 @@
 			<action layer="-1" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="111" sound="back.wav" />
 			<action layer="-1" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="96" sound="back.wav" />
 			<action layer="-1" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="90" sound="back.wav" />
-			<action layer="-1" condition="FULLSCREEN" conproperty="" command="ACTION" cmdproperty="76" sound="back.wav" />
+			<action layer="-1" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="76" sound="back.wav" />
 			<action layer="-1" condition="*" conproperty="-1" command="ACTION" cmdproperty="9" sound="back.wav" />
 		</button>
 	</remote>
