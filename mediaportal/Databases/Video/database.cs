@@ -669,6 +669,7 @@ namespace MediaPortal.Video.Database
 			if (strFilenameAndPath.Length==0) return ;
 			int lMovieId=GetMovie(strFilenameAndPath,true);
 			if (lMovieId< 0) return;
+			details.ID=lMovieId;
 			SetMovieInfoById(lMovieId,ref details);
 
 			string strPath, strFileName ;
@@ -680,6 +681,7 @@ namespace MediaPortal.Video.Database
 		{
 			try
 			{
+				details.ID=lMovieId;
 				details.SearchString=String.Format("{0}", lMovieId);
 
 				IMDBMovie details1=details;

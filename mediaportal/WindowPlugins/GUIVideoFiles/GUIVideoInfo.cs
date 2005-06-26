@@ -274,6 +274,14 @@ namespace MediaPortal.GUI.Video
 				viewmode=ViewMode.Image;
 				Update();
 			}
+			if (control==btnWatched)
+			{
+				if (currentMovie.Watched>0) 
+					currentMovie.Watched=0;
+				else
+					currentMovie.Watched=1;
+				VideoDatabase.SetMovieInfoById(currentMovie.ID,ref currentMovie);
+			}
 
 			if (control==spinDisc)
 			{
