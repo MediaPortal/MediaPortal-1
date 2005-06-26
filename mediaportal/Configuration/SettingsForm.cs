@@ -621,54 +621,61 @@ namespace MediaPortal.Configuration
 		private void applyButton_Click(object sender, System.EventArgs e)
 		{
 
-      //
-      // Check if MediaPortal is running, if so inform user that it needs to be restarted
-      // for the changes to take effect.
-      //
-      string processName = "MediaPortal";
+			try
+			{
+				//
+				// Check if MediaPortal is running, if so inform user that it needs to be restarted
+				// for the changes to take effect.
+				//
+				string processName = "MediaPortal";
 
-      foreach(Process process in Process.GetProcesses())
-      {
-        if(process.ProcessName.Equals(processName))
-        {
-          DialogResult dialogResult = MessageBox.Show("For the changes to take effect you need to restart MediaPortal, restart now?", "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				foreach(Process process in Process.GetProcesses())
+				{
+					if(process.ProcessName.Equals(processName))
+					{
+						DialogResult dialogResult = MessageBox.Show("For the changes to take effect you need to restart MediaPortal, restart now?", "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-          if(dialogResult == DialogResult.Yes)
-          {
+						if(dialogResult == DialogResult.Yes)
+						{
 
-            try
-            {              
-              //
-              // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
-              //
-              IECallBack ewp = new IECallBack(EnumWindowCallBack);
-              EnumWindows(ewp, 0);
-              process.CloseMainWindow();
-  
-              //
-              // Wait for the process to die, we wait for a maximum of 10 seconds
-              //
-              if(process.WaitForExit(10000) == true)
-              {
-								SaveAllSettings();
-                //
-                // Start the MediaPortal process
-                // 
-                Process.Start(processName + ".exe");
-								return;
-              }
-            }
-            catch
-            {
-              // Ignore
-            }
+							try
+							{              
+								//
+								// Kill the MediaPortal process by finding window and sending ALT+F4 to it.
+								//
+								IECallBack ewp = new IECallBack(EnumWindowCallBack);
+								EnumWindows(ewp, 0);
+								process.CloseMainWindow();
+	  
+								//
+								// Wait for the process to die, we wait for a maximum of 10 seconds
+								//
+								if(process.WaitForExit(10000) == true)
+								{
+									SaveAllSettings();
+									//
+									// Start the MediaPortal process
+									// 
+									Process.Start(processName + ".exe");
+									return;
+								}
+							}
+							catch
+							{
+								// Ignore
+							}
 
-            break;
-          }
-        }
+							break;
+						}
+					}
+				}
+			}
+			catch(Exception)
+			{
 			}
 			SaveAllSettings();
 		}
+
     private bool EnumWindowCallBack(int hwnd, int lParam)
     {
       IntPtr windowHandle = (IntPtr)hwnd;
