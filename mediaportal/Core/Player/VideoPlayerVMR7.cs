@@ -165,6 +165,7 @@ namespace MediaPortal.Player
         mediaPos.get_Duration(out m_dDuration);
         Log.Write("VideoPlayer:Duration:{0}",m_dDuration);
         
+
       }
       return true;
     }
@@ -711,12 +712,15 @@ namespace MediaPortal.Player
 				string strAudioCodec="";
 				string strAudiorenderer="";
         bool   bAddFFDshow=false;
+				string defaultLanguage;
 				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           bAddFFDshow=xmlreader.GetValueAsBool("movieplayer","ffdshow",false);
 					strVideoCodec=xmlreader.GetValueAsString("movieplayer","mpeg2videocodec","");
 					strAudioCodec=xmlreader.GetValueAsString("movieplayer","mpeg2audiocodec","");
 					strAudiorenderer=xmlreader.GetValueAsString("movieplayer","audiorenderer","");
+					defaultLanguage= xmlreader.GetValueAsString("subtitles", "language", "English");
+
 				}
 				string strExt=System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
 				if (strExt.Equals(".dvr-ms") ||strExt.Equals(".mpg") ||strExt.Equals(".mpeg")||strExt.Equals(".bin")||strExt.Equals(".dat"))
@@ -775,6 +779,15 @@ namespace MediaPortal.Player
             int res = vobSub.put_TextSettings(logFont, size, color,  fShadow, fOutLine, fAdvancedRenderer);
           }
 
+					for (int i=0; i < SubtitleStreams;++i)
+					{
+						string language=SubtitleLanguage(i);
+						if (String.Compare(language,defaultLanguage,true)==0)
+						{
+							CurrentSubtitleStream=i;
+							break;
+						}
+					}
         }
         if( filter != null )
           Marshal.ReleaseComObject( filter ); filter = null;

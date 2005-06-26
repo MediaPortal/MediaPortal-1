@@ -52,6 +52,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox ZapTimeOutTextBox;
+		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.ComboBox defaultSubtitleLanguageComboBox;
 
 		string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -73,6 +75,7 @@ namespace MediaPortal.Configuration.Sections
 				folderNameTextBox.Text = xmlreader.GetValueAsString("movies", "playlists", "");
 
 				showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+				string defaultLanguage= xmlreader.GetValueAsString("subtitles", "language", "English");
 
 				dropShadowTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("subtitles", "shadow", 5));
 				displayTimoutTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 0));
@@ -171,7 +174,8 @@ namespace MediaPortal.Configuration.Sections
 				// set the first entry "activ"
 				this.lvDatabase.Items[0].Selected = true;
 				this.cbDatabaseLimit.Text = this.lvDatabase.Items[0].SubItems[2].Text;
-			}		
+				PopulateLanguages(defaultSubtitleLanguageComboBox,defaultLanguage);
+			}
 		}
 
 		public override void SaveSettings()
@@ -183,7 +187,8 @@ namespace MediaPortal.Configuration.Sections
 
 				xmlwriter.SetValueAsBool("subtitles", "enabled", showSubtitlesCheckBox.Checked);
 				xmlwriter.SetValue("subtitles", "shadow", dropShadowTextBox.Text);
-				
+				xmlwriter.SetValue("subtitles", "language", defaultSubtitleLanguageComboBox.Text);
+
 				xmlwriter.SetValue("movieplayer", "osdtimeout", displayTimoutTextBox.Text);
 				xmlwriter.SetValue("movieplayer", "zapdelay", zapDelayTextBox.Text);
 				xmlwriter.SetValue("movieplayer", "zaptimeout", ZapTimeOutTextBox.Text);
@@ -257,22 +262,24 @@ namespace MediaPortal.Configuration.Sections
 			this.chDatabaseLimit = new System.Windows.Forms.ColumnHeader();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.mpGroupBox3 = new System.Windows.Forms.GroupBox();
+			this.ZapTimeOutTextBox = new System.Windows.Forms.TextBox();
+			this.label3 = new System.Windows.Forms.Label();
 			this.zapDelayTextBox = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.ZapTimeOutTextBox = new System.Windows.Forms.TextBox();
+			this.label7 = new System.Windows.Forms.Label();
+			this.defaultSubtitleLanguageComboBox = new System.Windows.Forms.ComboBox();
 			this.groupBox1.SuspendLayout();
 			this.mpGroupBox1.SuspendLayout();
 			this.mpGroupBox2.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
-			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.tabPage2.SuspendLayout();
 			this.tabPage4.SuspendLayout();
 			this.mpGroupBox3.SuspendLayout();
 			this.SuspendLayout();
@@ -301,12 +308,12 @@ namespace MediaPortal.Configuration.Sections
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-																		 "Normal",
-																		 "Original Source Format",
-																		 "Stretch",
-																		 "Zoom",
-																		 "4:3 Letterbox",
-																		 "4:3 Pan and scan"});
+																																 "Normal",
+																																 "Original Source Format",
+																																 "Stretch",
+																																 "Zoom",
+																																 "4:3 Letterbox",
+																																 "4:3 Pan and scan"});
 			this.defaultZoomModeComboBox.Location = new System.Drawing.Point(24, 128);
 			this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
 			this.defaultZoomModeComboBox.Size = new System.Drawing.Size(256, 21);
@@ -362,6 +369,8 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.mpGroupBox1.Controls.Add(this.label7);
+			this.mpGroupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
 			this.mpGroupBox1.Controls.Add(this.dropShadowTextBox);
 			this.mpGroupBox1.Controls.Add(this.label4);
 			this.mpGroupBox1.Controls.Add(this.showSubtitlesCheckBox);
@@ -478,12 +487,12 @@ namespace MediaPortal.Configuration.Sections
 			// cbDatabaseLimit
 			// 
 			this.cbDatabaseLimit.Items.AddRange(new object[] {
-																 "0",
-																 "5",
-																 "10",
-																 "15",
-																 "20",
-																 "25"});
+																												 "0",
+																												 "5",
+																												 "10",
+																												 "15",
+																												 "20",
+																												 "25"});
 			this.cbDatabaseLimit.Location = new System.Drawing.Point(88, 160);
 			this.cbDatabaseLimit.Name = "cbDatabaseLimit";
 			this.cbDatabaseLimit.Size = new System.Drawing.Size(48, 21);
@@ -514,9 +523,9 @@ namespace MediaPortal.Configuration.Sections
 			// lvDatabase
 			// 
 			this.lvDatabase.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																						 this.chDatabaseDB,
-																						 this.chDatabaseLanguage,
-																						 this.chDatabaseLimit});
+																																								 this.chDatabaseDB,
+																																								 this.chDatabaseLanguage,
+																																								 this.chDatabaseLimit});
 			this.lvDatabase.FullRowSelect = true;
 			this.lvDatabase.GridLines = true;
 			this.lvDatabase.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -565,15 +574,6 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
 			// 
-			// tabPage2
-			// 
-			this.tabPage2.Controls.Add(this.groupBox2);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(448, 422);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "IMDB";
-			// 
 			// tabPage3
 			// 
 			this.tabPage3.Controls.Add(this.mpGroupBox1);
@@ -582,6 +582,15 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.Size = new System.Drawing.Size(448, 422);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Subtitles";
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.groupBox2);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(448, 422);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "IMDB";
 			// 
 			// tabPage4
 			// 
@@ -606,6 +615,22 @@ namespace MediaPortal.Configuration.Sections
 			this.mpGroupBox3.TabStop = false;
 			this.mpGroupBox3.Text = "Zap OnScreen Display(OSD)";
 			// 
+			// ZapTimeOutTextBox
+			// 
+			this.ZapTimeOutTextBox.Location = new System.Drawing.Point(160, 64);
+			this.ZapTimeOutTextBox.Name = "ZapTimeOutTextBox";
+			this.ZapTimeOutTextBox.Size = new System.Drawing.Size(40, 20);
+			this.ZapTimeOutTextBox.TabIndex = 22;
+			this.ZapTimeOutTextBox.Text = "";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(16, 64);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(128, 16);
+			this.label3.TabIndex = 21;
+			this.label3.Text = "Zap TimeOut (seconds)";
+			// 
 			// zapDelayTextBox
 			// 
 			this.zapDelayTextBox.Location = new System.Drawing.Point(160, 32);
@@ -622,21 +647,24 @@ namespace MediaPortal.Configuration.Sections
 			this.label2.TabIndex = 19;
 			this.label2.Text = "Zap Delay (seconds)";
 			// 
-			// label3
+			// label7
 			// 
-			this.label3.Location = new System.Drawing.Point(16, 64);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(128, 16);
-			this.label3.TabIndex = 21;
-			this.label3.Text = "Zap TimeOut (seconds)";
+			this.label7.Location = new System.Drawing.Point(16, 152);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(144, 23);
+			this.label7.TabIndex = 18;
+			this.label7.Text = "Default subtitle language:";
 			// 
-			// ZapTimeOutTextBox
+			// defaultSubtitleLanguageComboBox
 			// 
-			this.ZapTimeOutTextBox.Location = new System.Drawing.Point(160, 64);
-			this.ZapTimeOutTextBox.Name = "ZapTimeOutTextBox";
-			this.ZapTimeOutTextBox.Size = new System.Drawing.Size(40, 20);
-			this.ZapTimeOutTextBox.TabIndex = 22;
-			this.ZapTimeOutTextBox.Text = "";
+			this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(24, 176);
+			this.defaultSubtitleLanguageComboBox.Name = "defaultSubtitleLanguageComboBox";
+			this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(256, 21);
+			this.defaultSubtitleLanguageComboBox.Sorted = true;
+			this.defaultSubtitleLanguageComboBox.TabIndex = 17;
 			// 
 			// Movies
 			// 
@@ -649,8 +677,8 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
-			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
+			this.tabPage2.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
 			this.mpGroupBox3.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -815,7 +843,21 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-
+		void PopulateLanguages(ComboBox comboBox, string defaultLanguage)
+		{
+			comboBox.Items.Clear();
+			
+			foreach(CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures)) 
+			{
+				comboBox.Items.Add(cultureInformation.EnglishName);
+				
+				if(String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0) 
+				{
+					comboBox.Text = defaultLanguage;
+				}
+			}
+			comboBox.SelectedItem=defaultLanguage;
+		}
 	}
 }
 
