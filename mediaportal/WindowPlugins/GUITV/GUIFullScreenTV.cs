@@ -325,10 +325,11 @@ namespace MediaPortal.GUI.TV
 			}
 			switch (action.wID)
 			{
-				case Action.ActionType.ACTION_SELECT_ITEM:
-				{
-					GUITVHome.OnLastViewedChannel();
-				}
+					case Action.ActionType.ACTION_SELECT_ITEM:
+					{
+						if (!GUIWindowManager.IsRouted)
+							GUITVHome.OnLastViewedChannel();
+					}
 					break;
 
 				case Action.ActionType.ACTION_SHOW_INFO:

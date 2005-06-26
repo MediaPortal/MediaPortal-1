@@ -295,9 +295,9 @@ namespace MediaPortal.Core.Transcoding
 				if (!AddWmAsfWriter(outputFilename,quality)) return false;
 
 				Log.Write("DVR2WMV: start pre-run");
-				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=0)
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
+				//hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
+				//if (hr!=0)
+				//	Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
@@ -319,9 +319,9 @@ namespace MediaPortal.Core.Transcoding
 				Log.Write("DVR2WMV: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 
-				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=0)
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
+				//hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
+				//if (hr!=0)
+				//	Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
 
 				hr=mediaControl.Run();
 				if (hr!=0 )
@@ -354,10 +354,11 @@ namespace MediaPortal.Core.Transcoding
 				if (!AddWmAsfWriter(outputFilename,quality)) return false;
 
 
-				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
-				if (hr!=0)
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
+				//hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
+				//if (hr!=0)
+				//	Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:to SetSyncSource :0x{0:X}",hr);
 
+				Log.Write("DVR2WMV: Start transcoding");				
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
