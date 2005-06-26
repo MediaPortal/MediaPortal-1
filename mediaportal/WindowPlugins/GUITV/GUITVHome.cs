@@ -155,8 +155,14 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_PREV_CHANNEL:
 					GUITVHome.OnPreviousChannel();
 					break;
+				case Action.ActionType.ACTION_PAGE_DOWN:
+					GUITVHome.OnPreviousChannel();
+					break;
         
 				case Action.ActionType.ACTION_NEXT_CHANNEL:
+					GUITVHome.OnNextChannel();
+					break;
+				case Action.ActionType.ACTION_PAGE_UP:
 					GUITVHome.OnNextChannel();
 					break;
 
@@ -1119,12 +1125,18 @@ namespace MediaPortal.GUI.TV
 		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
 		public void ZapToNextChannel(bool useZapDelay)
 		{
+			string currentChan=String.Empty;
 			int currindex;
 			if (m_zapchannel == null)
+			{
 				currindex = GetChannelIndex(CurrentChannel);
+				currentChan=CurrentChannel;
+			}
 			else
+			{
 				currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel
-
+				currentChan=CurrentChannel;
+			}
 			// Step to next channel
 			currindex++;
 			if(currindex >= CurrentGroup.tvChannels.Count)
@@ -1132,6 +1144,7 @@ namespace MediaPortal.GUI.TV
 			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
 			m_zapchannel = chan.Name;
 
+			Log.Write("Navigator:ZapNext {0}->{1}", currentChan,m_zapchannel);
 			if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 			{				
 				if(useZapDelay)
@@ -1151,12 +1164,18 @@ namespace MediaPortal.GUI.TV
 		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
 		public void ZapToPreviousChannel(bool useZapDelay)
 		{
+			string currentChan=String.Empty;
 			int currindex;
 			if (m_zapchannel == null)
+			{
+				currentChan=CurrentChannel;
 				currindex = GetChannelIndex(CurrentChannel);
+			}
 			else
+			{
+				currentChan=m_zapchannel;
 				currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel
-
+			}
 			// Step to previous channel
 			currindex--;
 			if(currindex < 0)
@@ -1165,6 +1184,7 @@ namespace MediaPortal.GUI.TV
 			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
 			m_zapchannel = chan.Name;
 
+			Log.Write("Navigator:ZapPrevious {0}->{1}", currentChan,m_zapchannel);
 			if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
 			{				
 				if(useZapDelay)

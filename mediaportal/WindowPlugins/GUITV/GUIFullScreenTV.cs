@@ -1550,11 +1550,6 @@ namespace MediaPortal.GUI.TV
 			{
 				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}
-			else
-			{
-				GUITVHome.Navigator.ZapToPreviousChannel(true);
-				UpdateOSD();
-			}
 			m_dwZapTimer = DateTime.Now;
 		}
 
