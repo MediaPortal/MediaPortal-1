@@ -14,6 +14,7 @@ namespace MediaPortal.Player
 {
   public class StreamBufferPlayer9 : BaseStreamBufferPlayer
   {
+
 		VMR9Util Vmr9 = null;
     public StreamBufferPlayer9()
     {
@@ -46,7 +47,7 @@ namespace MediaPortal.Player
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
     {
-			
+		  Speed=1;	
 			Log.Write("StreamBufferPlayer9: GetInterfaces()");
       Type comtype = null;
       object comobj = null;
@@ -74,6 +75,26 @@ Log.Write("StreamBufferPlayer9: add vmr9");
 				Vmr9.AddVMR9(graphBuilder);			
 				Vmr9.Enable(false);	
 
+
+				int hr;
+				m_StreamBufferConfig	= new StreamBufferConfig();
+				streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
+				if (streamConfig2!=null)
+				{
+					// setting the StreamBufferEngine registry key
+					IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
+					IStreamBufferInitialize pTemp = (IStreamBufferInitialize) streamConfig2;
+					IntPtr subKey = IntPtr.Zero;
+
+					RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+					hr=pTemp.SetHKEY(subKey);
+					hr=streamConfig2.SetFFTransitionRates(8,32);	
+					Log.Write("set FFTransitionRates:{0:X}",hr);
+					
+					uint max,maxnon;
+					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
+					Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
+				}
 				Log.Write("StreamBufferPlayer9: add sbe");
 
 				// create SBE source
@@ -89,7 +110,7 @@ Log.Write("StreamBufferPlayer9: add vmr9");
 
 		
         IBaseFilter filter = (IBaseFilter) bufferSource;
-        int hr=graphBuilder.AddFilter(filter, "SBE SOURCE");
+        hr=graphBuilder.AddFilter(filter, "SBE SOURCE");
         if (hr!=0) 
         {
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to add SBE to graph");
@@ -142,12 +163,16 @@ Log.Write("StreamBufferPlayer9: add codecs");
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
-        m_mediaSeeking = bufferSource as IStreamBufferMediaSeeking ;
-        if (m_mediaSeeking==null)
-        {
-          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Unable to get IMediaSeeking interface#1");
-          return false;
-        }
+				m_mediaSeeking = bufferSource as IStreamBufferMediaSeeking ;
+				m_mediaSeeking2= bufferSource as IStreamBufferMediaSeeking2 ;
+				if (m_mediaSeeking==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"Unable to get IMediaSeeking interface#1");
+				}
+				if (m_mediaSeeking2==null)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"Unable to get IMediaSeeking interface#2");
+				}
         
 //        Log.Write("StreamBufferPlayer9:SetARMode");
 //        DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
@@ -233,6 +258,8 @@ Log.Write("StreamBufferPlayer9:clean vmr9");
 				basicAudio	= null;
 				m_mediaSeeking=null;
 				mediaCtrl = null;
+				m_StreamBufferConfig=null;
+				m_mediaSeeking2=null;
 
 
 Log.Write("StreamBufferPlayer9:remove filters");
@@ -283,19 +310,6 @@ Log.Write("StreamBufferPlayer9:switch");
 			}
     }
 
-		public override void Reset()
-		{
-			if (Vmr9==null || !GUIGraphicsContext.Vmr9Active || mediaCtrl==null) return;
-
-			Log.Write("StreamBufferPlayer9:Reset graph");
-			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			double pos=CurrentPosition;
-			mediaCtrl.Stop();
-			mediaCtrl.Run();
-			SeekAbsolute(pos);
-			mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
-			m_state=PlayState.Playing;
-		}
 
   }
 }

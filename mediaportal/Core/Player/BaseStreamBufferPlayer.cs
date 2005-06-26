@@ -15,6 +15,11 @@ namespace MediaPortal.Player
 {
 	public class BaseStreamBufferPlayer : IPlayer
 	{
+		[ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
+		protected class StreamBufferConfig {}
+		[DllImport("advapi32", CharSet=CharSet.Auto)]
+		protected  static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
+
 		public enum PlayState
 		{
 			Init,
@@ -22,6 +27,11 @@ namespace MediaPortal.Player
 			Paused,
       Ended
 		}
+		protected int      iSpeed=1;
+		protected IStreamBufferConfigure2 streamConfig2 = null;
+		protected StreamBufferConfig m_StreamBufferConfig	=null;
+
+
 		protected int 															m_iPositionX=0;
 		protected int 															m_iPositionY=0;
 		protected int 															m_iWidth=200;
@@ -45,7 +55,6 @@ namespace MediaPortal.Player
     protected bool          										m_bLive=false;
     protected double                            m_dLastPosition=0;
 		protected bool                              m_bWindowVisible=false;
-		protected long                      m_speedRate = 10000;
 		protected int												rotCookie = 0;
 		protected int                       m_aspectX=1;
 		protected int                       m_aspectY=1;
@@ -81,7 +90,7 @@ namespace MediaPortal.Player
 		public override bool Play(string strFile)
 		{
       if (!System.IO.File.Exists(strFile)) return false;
-			m_speedRate=10000;
+			iSpeed=1;
       m_bLive=false;
       m_dDuration=-1d;
       string strExt=System.IO.Path.GetExtension(strFile).ToLower();
@@ -349,7 +358,7 @@ namespace MediaPortal.Player
 			if ( !Playing) return;
 			if ( !m_bStarted) return;
 			TimeSpan ts=DateTime.Now-updateTimer;
-			if (ts.TotalMilliseconds>=800 || m_speedRate != 10000) 
+			if (ts.TotalMilliseconds>=800 || iSpeed!=1) 
 			{
 				UpdateCurrentPosition();
 					
@@ -411,7 +420,7 @@ namespace MediaPortal.Player
 				Log.Write("StreamBufferPlayer:show window");
 				if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
 			}      
-			DoFFRW();
+			
 			OnProcess();
 			CheckVideoResolutionChanges();
 		}
@@ -552,7 +561,7 @@ namespace MediaPortal.Player
 			if (m_state==PlayState.Paused) 
 			{
 				Log.Write("BaseStreamBufferPlayer:resume");
-				m_speedRate = 10000;
+				Speed=1;
 				mediaCtrl.Run();
 				m_state=PlayState.Playing;
 			}
@@ -843,12 +852,32 @@ namespace MediaPortal.Player
 				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
 				bufferSource = (IStreamBufferSource) comObj; comObj = null;
 
+				int hr;
+				m_StreamBufferConfig	= new StreamBufferConfig();
+				streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
+				if (streamConfig2!=null)
+				{
+					// setting the StreamBufferEngine registry key
+					IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
+					IStreamBufferInitialize pTemp = (IStreamBufferInitialize) streamConfig2;
+					IntPtr subKey = IntPtr.Zero;
+
+					RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+					hr=pTemp.SetHKEY(subKey);
+					hr=streamConfig2.SetFFTransitionRates(8,32);	
+					Log.Write("set FFTransitionRates:{0:X}",hr);
+					
+					uint max,maxnon;
+					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
+					Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
+				}
+
 		
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "SBE SOURCE");
 		
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
-				int hr = fileSource.Load(filename, IntPtr.Zero);
+				hr = fileSource.Load(filename, IntPtr.Zero);
 
 				// add preferred video & audio codecs
 				string strVideoCodec="";
@@ -1053,120 +1082,85 @@ namespace MediaPortal.Player
       }
     }
 
-		protected void DoFFRW()
-		{
-			if (!Playing) 
-				return;
-      
-			if ((m_speedRate == 10000) || (m_mediaSeeking == null))
-				return;
-
-
-			double newPosition;
-
-			// new time = current time + 2*timerinterval* (speed)
-			double timerInterval=300d;
-			newPosition = (2.0d *timerInterval) * ((double)m_speedRate);
-			newPosition /= 10000000d;
-			newPosition+=CurrentPosition ;
-		
-			// if we end up before the first moment of time then just
-			// start @ the beginning
-			if ((newPosition < 0) && (m_speedRate<0))
-			{
-				m_speedRate = 10000;
-				newPosition = 0;
-				SeekAbsolute(newPosition);
-				//mediaCtrl.Run();
-				Reset();
-				return;
-			}
-
-			// if we end up at the end of time then just
-			// start @ the end-100msec
-			if ((newPosition > (m_dDuration-1.0f)) &&(m_speedRate>0))
-			{
-				m_speedRate = 10000;
-				newPosition = m_dDuration;
-				SeekAbsolute(newPosition);
-				//mediaCtrl.Run();
-				Reset();
-				return;
-			}
-
-			//seek to new moment in time
-			SeekAbsolute(newPosition);
-			mediaCtrl.Pause();
-		}
-
 		public override int Speed
 		{
 			get 
 			{ 
 				if (m_state==PlayState.Init) return 1;
 				if (m_mediaSeeking==null) return 1;
-				switch ( m_speedRate)
-				{
-					case -10000:
-						return -1;
-					case -15000:
-						return -2;
-					case -30000:
-						return -4;
-					case -45000:
-						return -8;
-					case -60000:
-						return -16;
-					case -75000:
-						return -32;
-
-					case 10000:
-						return 1;
-					case 15000:
-						return 2;
-					case 30000:
-						return 4;
-					case 45000:
-						return 8;
-					case 60000:
-						return 16;
-					default: 
-						return 32;
-				}
+				return iSpeed;
 			}
 			set 
 			{
 				if (m_state!=PlayState.Init)
 				{
-					if (value==m_speedRate) return;
-					if (m_mediaSeeking!=null)
+					if (iSpeed!=value)
 					{
-						switch ( (int)value)
+						
+						iSpeed=value;
+						if (m_mediaSeeking2!=null)
 						{
-							case -1:  m_speedRate=-10000;break;
-							case -2:  m_speedRate=-15000;break;
-							case -4:  m_speedRate=-30000;break;
-							case -8:  m_speedRate=-45000;break;
-							case -16: m_speedRate=-60000;break;
-							case -32: m_speedRate=-75000;break;
-
-							case 1:  
-
-								m_speedRate=10000;
-								//mediaCtrl.Run();
-								Reset();
-								break;
-							case 2:  m_speedRate=15000;break;
-							case 4:  m_speedRate=30000;break;
-							case 8:  m_speedRate=45000;break;
-							case 16: m_speedRate=60000;break;
-							default: m_speedRate=75000;break;
+							int hr=m_mediaSeeking2.SetRateEx((double)iSpeed,25);
+							Log.Write("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
+							if (hr!=0)
+							{
+								IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
+								hr=oldMediaSeek.SetRate((double)iSpeed);
+								Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+							}
+						}
+						else
+						{
+							int hr=m_mediaSeeking.SetRate((double)iSpeed);
+							Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
+							if (hr!=0)
+							{
+								IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
+								hr=oldMediaSeek.SetRate((double)iSpeed);
+								Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+							}
+						}
+						if (iSpeed==1)
+						{
+							mediaCtrl.Stop();
+							Application.DoEvents();
+							System.Threading.Thread.Sleep(200);
+							Application.DoEvents();
+							FilterState state;
+							mediaCtrl.GetState(100,out state);
+							Log.Write("state:{0}", state.ToString());
+							mediaCtrl.Run();
 						}
 					}
 				}
-				Log.Write("StreamBufferPlayer:SetRate to:{0}", m_speedRate);
 			}
 		}
+
+
+		public override void Reset()
+		{
+			if (mediaCtrl==null) return;
+
+			Log.Write("StreamBufferPlayer:Reset graph");
+			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+			double pos=CurrentPosition;
+			mediaCtrl.Stop();
+
+			Application.DoEvents();
+			System.Threading.Thread.Sleep(200);
+			Application.DoEvents();
+			FilterState state;
+			mediaCtrl.GetState(100,out state);
+			Log.Write("state:{0}", state.ToString());
+
+			mediaCtrl.Run();
+			SeekAbsolute(pos);
+			mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
+			m_state=PlayState.Playing;
+		}
+
+		
+
 		protected virtual void OnInitialized()
 		{
 		}

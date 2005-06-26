@@ -1039,9 +1039,10 @@ namespace MediaPortal.TV.Recording
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
 							{
+								g_Player.Reset();
 								double position=g_Player.CurrentPosition;
 								double duration=g_Player.Duration;
-								if (position < duration-1d)
+								if (position < duration-5d)
 								{
 									g_Player.SeekAbsolute(g_Player.Duration);
 								}
