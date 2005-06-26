@@ -814,6 +814,7 @@ namespace MediaPortal.GUI.TV
 			if (windowId== (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_TELETEXT) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT) return true;
+			if (windowId== (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV_CONFLICTS) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
 			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
