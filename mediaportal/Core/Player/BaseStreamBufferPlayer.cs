@@ -1143,18 +1143,15 @@ namespace MediaPortal.Player
 
 			Log.Write("StreamBufferPlayer:Reset graph");
 			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			double pos=CurrentPosition;
 			mediaCtrl.Stop();
 
 			Application.DoEvents();
-			System.Threading.Thread.Sleep(200);
-			Application.DoEvents();
 			FilterState state;
-			mediaCtrl.GetState(100,out state);
+			mediaCtrl.GetState(200,out state);
+			Application.DoEvents();
 			Log.Write("state:{0}", state.ToString());
 
 			mediaCtrl.Run();
-			SeekAbsolute(pos);
 			mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
 			m_state=PlayState.Playing;
 		}
