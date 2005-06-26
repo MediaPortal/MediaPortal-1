@@ -401,6 +401,8 @@ namespace MediaPortal.TV.Database
 								if (nodeEpisode!=null && nodeEpisode.InnerText!=null)
 								{
 									strEpisode=htmlUtil.ConvertHTMLToAnsi(nodeEpisode.InnerText);
+									if (strTitle.Length==0)
+										strTitle=htmlUtil.ConvertHTMLToAnsi(nodeEpisode.InnerText);
 								}
 								if (nodeEpisodeNum!=null && nodeEpisodeNum.InnerText!=null)
 								{
