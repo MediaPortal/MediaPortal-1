@@ -295,7 +295,7 @@ namespace MediaPortal.Core.Transcoding
 				if (!AddWmAsfWriter(outputFilename,quality)) return false;
 
 				Log.Write("DVR2WMV: start pre-run");
-				graphBuilder.SetDefaultSyncSource();
+				(graphBuilder as IMediaFilter).SetSyncSource(null);
 				mediaControl= graphBuilder as IMediaControl;
 				mediaSeeking= bufferSource as IStreamBufferMediaSeeking;
 				mediaEvt    = graphBuilder as IMediaEventEx;
@@ -317,6 +317,7 @@ namespace MediaPortal.Core.Transcoding
 				Log.Write("DVR2WMV: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
 
 
+				(graphBuilder as IMediaFilter).SetSyncSource(null);
 				hr=mediaControl.Run();
 				if (hr!=0 )
 				{
