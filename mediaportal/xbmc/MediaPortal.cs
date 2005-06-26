@@ -1229,7 +1229,8 @@ public class MediaPortalApp : D3DApp, IRender
             _volumeBeforeMute = iCurrent;
           }
 
-          if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+						 GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
           {
             Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
             GUIGraphicsContext.OnAction(showVolume);
@@ -1255,7 +1256,8 @@ public class MediaPortalApp : D3DApp, IRender
           }
 
           AudioMixerHelper.SetVolume(iCurrent);
-          if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+					if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+						GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
           {
             Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
             GUIGraphicsContext.OnAction(showVolume);
@@ -1281,7 +1283,8 @@ public class MediaPortalApp : D3DApp, IRender
           }
 
           AudioMixerHelper.SetVolume(iCurrent);
-          if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+					if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+						GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
           {
             Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
             GUIGraphicsContext.OnAction(showVolume);

@@ -7,6 +7,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
+using MediaPortal.TV.Recording;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -78,6 +79,7 @@ namespace MediaPortal.GUI.Video
 		GUIDialogMenu		dlg;
 		GUIVideoOSD			m_osdWindow=null;
 		GUIVideoMSNOSD	m_msnWindow=null;
+		VMR9OSD				m_vmr9OSD=new VMR9OSD();
 
 		FullScreenState screenState=new FullScreenState();
 
@@ -246,7 +248,11 @@ namespace MediaPortal.GUI.Video
         GUIWindowManager.ShowPreviousWindow();
         return;
       }
-
+			if (action.wID==Action.ActionType.ACTION_SHOW_VOLUME)
+			{
+				if(m_vmr9OSD!=null)
+					m_vmr9OSD.RenderVolumeOSD();
+			}
 			if (isOsdVisible)
 			{
 				OnOsdAction(action); 
@@ -316,6 +322,9 @@ namespace MediaPortal.GUI.Video
           isOsdVisible=false;
           GUIGraphicsContext.IsFullScreenVideo=false;
           GUIWindowManager.ShowPreviousWindow();
+					if(m_vmr9OSD!=null)
+						m_vmr9OSD.HideBitmap();
+
           return;
         }
 
@@ -970,6 +979,8 @@ namespace MediaPortal.GUI.Video
 		
 		void CheckTimeOuts()
 		{
+			if(m_vmr9OSD!=null)
+				m_vmr9OSD.CheckTimeOuts();
 
 			if (m_bShowStatus||m_bShowStep)
 			{
