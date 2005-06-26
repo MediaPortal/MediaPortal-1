@@ -1137,13 +1137,13 @@ namespace MediaPortal.Player
 		}
 
 
-		public override void Reset()
+		public override void ContinueGraph()
 		{
 			if (mediaCtrl==null) return;
 
-			Log.Write("StreamBufferPlayer:Reset graph");
-			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			mediaCtrl.Stop();
+			Log.Write("StreamBufferPlayer:ContinueGraph");
+			//mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+			//mediaCtrl.Stop();
 
 			Application.DoEvents();
 			FilterState state;
@@ -1159,6 +1159,12 @@ namespace MediaPortal.Player
 			Log.Write("state:{0}", state.ToString());
 		}
 
+		public override void PauseGraph()
+		{
+			Log.Write("StreamBufferPlayer:Pause graph");
+			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+			mediaCtrl.Stop();
+		}
 		
 
 		protected virtual void OnInitialized()

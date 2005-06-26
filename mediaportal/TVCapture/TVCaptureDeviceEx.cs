@@ -1022,24 +1022,22 @@ namespace MediaPortal.TV.Recording
 								GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
 							lastChannelChange=DateTime.Now;
 							return;
-						}/*
-            if (IsTimeShifting && !View)
-            {
-              bool bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
-              g_Player.Stop();
-              RebuildGraph();
-              GUIGraphicsContext.IsFullScreenVideo=bFullScreen;
-              return;
-            }*/
+						}
 						
-
+						if (IsTimeShifting && !View)
+						{
+							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
+							{
+								g_Player.PauseGraph();
+							}
+						}
 						currentGraph.TuneChannel(channel);
 						lastChannelChange=DateTime.Now;
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
 							{
-								g_Player.Reset();
+								g_Player.ContinueGraph();
 								double position=g_Player.CurrentPosition;
 								double duration=g_Player.Duration;
 								if (position < duration-1d)

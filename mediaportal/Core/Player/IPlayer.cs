@@ -498,7 +498,10 @@ namespace MediaPortal.Player
     {
       get { return false;}
     }
-		public virtual void Reset()
+		public virtual void ContinueGraph()
+		{
+		}
+		public virtual void PauseGraph()
 		{
 		}
 

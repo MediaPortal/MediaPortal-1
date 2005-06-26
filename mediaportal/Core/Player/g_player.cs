@@ -120,11 +120,19 @@ namespace MediaPortal.Player
       }
     }
 		
-		public static void Reset()
+		public static void PauseGraph()
 		{
 			if (m_player!=null)
 			{
-				m_player.Reset();
+				m_player.PauseGraph();
+			}
+		}
+		
+		public static void ContinueGraph()
+		{
+			if (m_player!=null)
+			{
+				m_player.ContinueGraph();
 			}
 		}
 
