@@ -2036,13 +2036,15 @@ namespace MediaPortal.GUI.Video
 			int idMovie=VideoDatabase.GetMovieInfo(item.Path, ref movieDetails);
 
 			string movieFileName=System.IO.Path.GetFileName(item.Path);
-			if (idMovie>=0) movieFileName=movieDetails.Title;
+			string movieTitle=movieFileName;
+			if (idMovie>=0) movieTitle=movieDetails.Title;
 		
       //get all movies belonging to each other
       if (mapSettings.Stack)
       {           
         bool bStackedFile=false;
         ArrayList items = m_directory.GetDirectory(currentFolder);
+				int iPart=1;
         for (int i = 0; i < items.Count; ++i)
         {
           GUIListItem temporaryListItem = (GUIListItem)items[i];
@@ -2053,8 +2055,8 @@ namespace MediaPortal.GUI.Video
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
             if (null==dlgYesNo) return;
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
-            dlgYesNo.SetLine(1,movieFileName);
-            dlgYesNo.SetLine(2, String.Empty);
+            dlgYesNo.SetLine(1,movieTitle);
+            dlgYesNo.SetLine(2, String.Format("Part:{0}",iPart)  );
             dlgYesNo.SetLine(3, String.Empty);
             dlgYesNo.DoModal(GetID);
 
@@ -2069,7 +2071,7 @@ namespace MediaPortal.GUI.Video
           GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
           if (null==dlgYesNo) return;
           dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
-          dlgYesNo.SetLine(1,movieFileName);
+          dlgYesNo.SetLine(1,movieTitle);
           dlgYesNo.SetLine(2, String.Empty);
           dlgYesNo.SetLine(3, String.Empty);
           dlgYesNo.DoModal(GetID);
@@ -2083,7 +2085,7 @@ namespace MediaPortal.GUI.Video
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null==dlgYesNo) return;
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
-        dlgYesNo.SetLine(1,movieFileName);
+        dlgYesNo.SetLine(1,movieTitle);
         dlgYesNo.SetLine(2, String.Empty);
         dlgYesNo.SetLine(3, String.Empty);
         dlgYesNo.DoModal(GetID);
