@@ -74,6 +74,7 @@ static FONT_DATA_T*			fontData    = new FONT_DATA_T[MAX_FONTS];
 static TEXTURE_DATA_T*		textureData = new TEXTURE_DATA_T[MAX_TEXTURES];
 static LPDIRECT3DDEVICE9	m_pDevice=NULL;	
 static int                  textureZ[MAX_TEXTURES];
+static D3DRECT*				texturePlace[MAX_TEXTURES];
 static D3DTEXTUREFILTERTYPE m_Filter;
 int                         textureCount;
 
@@ -121,6 +122,7 @@ void FontEngineInitialize(int screenWidth, int screenHeight)
 			textureData[i].updateVertexBuffer=false;
 			textureData[i].useAlphaBlend=true;
 			textureZ[i]=-1;
+			texturePlace[i]=new D3DRECT[200];
 		}
 		initialized=true;
 		textureCount=0;
@@ -314,8 +316,9 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 //*******************************************************************************************************************
 void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
 {
-	//char log[128];
-	//sprintf(log,"FontEngineDrawTexture(%d) (%d,%d) (%dx%d) %03.3f %03.3f\n", textureNo,x,y,nw,nh,umax,vmax);
+//	char log[128];
+//	sprintf(log,"FontEngineDrawTexture(%d) (%d,%d)-(%d,%d)\n", textureNo,(int)x,(int)y,(int)(x+nw),(int)(y+nh));
+//	OutputDebugString(log);
 	//Log(log);
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	TEXTURE_DATA_T* texture;
@@ -331,7 +334,22 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		}
 		if (textureAlreadyDrawn && textureZ[i] != textureNo)
 		{
-			needRedraw=true;
+			//check if textures intersect
+			int count=textureZ[i];
+			D3DRECT rectThis;
+			rectThis.x1=x; rectThis.y1=y;rectThis.x2=x+nw;rectThis.y2=y+nh;
+			for (int r=0; r < 200;r++)
+			{
+				D3DRECT rect2=texturePlace[count][r];
+				if (rect2.x1=0 && rect2.x2==0) break;
+				if (((rect2.x1 < (rectThis.x2)) && (rectThis.x1 < (rect2.x2))) && (rect2.y1 < (rectThis.y2)))
+				{
+					if (rectThis.y1 < (rect2.y2))
+					{
+						needRedraw=true;
+					}
+				}
+			}
 		}
 	}
 
@@ -356,6 +374,11 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		textureZ[textureCount]=textureNo;
 		textureCount++;
 	}
+	texturePlace[textureNo][texture->dwNumTriangles/2].x1=x;
+	texturePlace[textureNo][texture->dwNumTriangles/2].y1=y;
+	texturePlace[textureNo][texture->dwNumTriangles/2].x2=x+nw;
+	texturePlace[textureNo][texture->dwNumTriangles/2].y2=y+nh;
+
 	int iv=texture->iv;
 	if (iv+6 >=MaxNumTextureVertices)
 	{
@@ -503,15 +526,22 @@ void FontEnginePresentTextures()
 		texture->iv = 0;
 		texture->updateVertexBuffer=false;
 		textureZ[i]=0;
+		for (int rect=0; rect < 200; ++rect)
+		{
+			texturePlace[index][rect].x1=0;
+			texturePlace[index][rect].y1=0;
+			texturePlace[index][rect].x2=0;
+			texturePlace[index][rect].y2=0;
+		}
 	}
 	textureCount=0;
-/*
-#ifdef _DEBUG
-	if (m_iTexturesInUse>0)
-	{
-		PrintStatistics();
-	}
-#endif*/
+
+//#ifdef _DEBUG
+//	if (m_iTexturesInUse>0)
+//	{
+//		PrintStatistics();
+//	}
+//#endif
 	m_iTexturesInUse=0;
 	m_iVertexBuffersUpdated=0;
 	m_iFontVertexBuffersUpdated=0;
