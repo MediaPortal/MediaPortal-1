@@ -365,6 +365,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	ypos-=0.5f;
 	xpos2-=0.5f;
 	ypos2-=0.5f;
+
 	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color)
 		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty2;iv++;
@@ -373,12 +374,13 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty1;iv++;
 
-	if (texture->vertices[iv].x != xpos2 || texture->vertices[iv].y!=ypos2 || texture->vertices[iv].tu!=tx2)
+	if (texture->vertices[iv].x != xpos2 || texture->vertices[iv].y!=ypos || texture->vertices[iv].tu!=tx2)
 		texture->updateVertexBuffer=true;
-	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty2;iv++;
 	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty1;iv++;
+
 	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty2;iv++;
-	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty1;iv++;
+	texture->vertices[iv].x=xpos;   texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty2;iv++;
+	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty1;iv++;
 
 	texture->iv=texture->iv+6;
 	texture->dwNumTriangles=texture->dwNumTriangles+2;
