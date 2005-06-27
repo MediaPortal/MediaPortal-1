@@ -107,11 +107,11 @@ namespace MediaPortal
 			// 
 			// btnOk
 			// 
-			this.btnOk.Location = new System.Drawing.Point(472, 352);
+			this.btnOk.Location = new System.Drawing.Point(600, 48);
 			this.btnOk.Name = "btnOk";
-			this.btnOk.Size = new System.Drawing.Size(32, 23);
+			this.btnOk.Size = new System.Drawing.Size(56, 23);
 			this.btnOk.TabIndex = 4;
-			this.btnOk.Text = "Ok";
+			this.btnOk.Text = "Close";
 			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
 			// 
 			// panel1
@@ -124,11 +124,11 @@ namespace MediaPortal
 			// buttonMap
 			// 
 			this.buttonMap.Enabled = false;
-			this.buttonMap.Location = new System.Drawing.Point(328, 352);
+			this.buttonMap.Location = new System.Drawing.Point(280, 352);
 			this.buttonMap.Name = "buttonMap";
-			this.buttonMap.Size = new System.Drawing.Size(40, 23);
+			this.buttonMap.Size = new System.Drawing.Size(136, 23);
 			this.buttonMap.TabIndex = 2;
-			this.buttonMap.Text = "Map";
+			this.buttonMap.Text = "Map to existing channel";
 			this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
 			// 
 			// label1
@@ -142,11 +142,11 @@ namespace MediaPortal
 			// buttonSkip
 			// 
 			this.buttonSkip.Enabled = false;
-			this.buttonSkip.Location = new System.Drawing.Point(376, 352);
+			this.buttonSkip.Location = new System.Drawing.Point(424, 352);
 			this.buttonSkip.Name = "buttonSkip";
-			this.buttonSkip.Size = new System.Drawing.Size(40, 23);
+			this.buttonSkip.Size = new System.Drawing.Size(104, 23);
 			this.buttonSkip.TabIndex = 3;
-			this.buttonSkip.Text = "Skip";
+			this.buttonSkip.Text = "Skip this channel";
 			this.buttonSkip.Click += new System.EventHandler(this.buttonSkip_Click);
 			// 
 			// listView1
@@ -157,19 +157,21 @@ namespace MediaPortal
 			this.listView1.Location = new System.Drawing.Point(288, 176);
 			this.listView1.MultiSelect = false;
 			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(216, 168);
+			this.listView1.Size = new System.Drawing.Size(264, 168);
 			this.listView1.SmallImageList = this.imageList1;
 			this.listView1.TabIndex = 5;
 			this.listView1.View = System.Windows.Forms.View.Details;
+			this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
 			// 
 			// columnHeader1
 			// 
 			this.columnHeader1.Text = "Name";
-			this.columnHeader1.Width = 147;
+			this.columnHeader1.Width = 155;
 			// 
 			// columnHeader2
 			// 
-			this.columnHeader2.Text = "Channel";
+			this.columnHeader2.Text = "Channel Number";
+			this.columnHeader2.Width = 100;
 			// 
 			// imageList1
 			// 
@@ -187,11 +189,12 @@ namespace MediaPortal
 			// 
 			// buttonAdd
 			// 
-			this.buttonAdd.Location = new System.Drawing.Point(280, 352);
+			this.buttonAdd.Enabled = false;
+			this.buttonAdd.Location = new System.Drawing.Point(280, 376);
 			this.buttonAdd.Name = "buttonAdd";
-			this.buttonAdd.Size = new System.Drawing.Size(40, 23);
+			this.buttonAdd.Size = new System.Drawing.Size(136, 23);
 			this.buttonAdd.TabIndex = 1;
-			this.buttonAdd.Text = "Add";
+			this.buttonAdd.Text = "Add as new channel";
 			this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
 			// 
 			// labelStatus2
@@ -203,9 +206,9 @@ namespace MediaPortal
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(424, 352);
+			this.button1.Location = new System.Drawing.Point(600, 16);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(40, 23);
+			this.button1.Size = new System.Drawing.Size(56, 23);
 			this.button1.TabIndex = 11;
 			this.button1.Text = "Stop";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -284,7 +287,7 @@ namespace MediaPortal
 			// AnalogTVTuningForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(528, 390);
+			this.ClientSize = new System.Drawing.Size(672, 454);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.label5);
@@ -329,7 +332,11 @@ namespace MediaPortal
 
     private void buttonMap_Click(object sender, System.EventArgs e)
     {
-      if (listView1.SelectedItems.Count<=0) return;
+			if (listView1.SelectedItems.Count<=0) 
+			{
+				MessageBox.Show("Please select a channel from the list", "Map TV Channel", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
       string selectedChannel=listView1.SelectedItems[0].Text;
       for (int i=0; i < listView1.Items.Count;++i)
       {
@@ -345,8 +352,8 @@ namespace MediaPortal
 
     private void AnalogTVTuningForm_Load(object sender, System.EventArgs e)
     {	
-			
-			
+			buttonMap.Enabled=false;
+			buttonMap.Enabled=false;
 			btnOk.Enabled=false;
 			UpdateList();
 			GUIGraphicsContext.form=this;
@@ -392,8 +399,10 @@ namespace MediaPortal
 
 		public void OnEnded()
 		{
-			UpdateSignal();
 			btnOk.Enabled=true;
+			button1.Enabled=false;
+			signalQuality.Value=0;
+			signalStrength.Value=0;
 		}
 		public void OnNewChannel()
 		{
@@ -557,6 +566,10 @@ namespace MediaPortal
 			{
 				reentrant=false;
 			}
+		}
+
+		private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
 		}
 	}
 }
