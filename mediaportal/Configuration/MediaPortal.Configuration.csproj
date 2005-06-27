@@ -222,6 +222,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "DigitalTVTuningForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DigitalTVTuningForm.resx"
+                    DependentUpon = "DigitalTVTuningForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "EditCaptureCardForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

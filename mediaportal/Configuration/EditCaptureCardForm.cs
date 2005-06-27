@@ -2550,17 +2550,35 @@ namespace MediaPortal.Configuration
 				}
 			}
 
-			AnalogTVTuningForm dialog = new AnalogTVTuningForm();
-			ITuning tuning=GraphFactory.CreateTuning(CaptureCard);
-			if (tuning!=null)
+			if (CaptureCard.Network==NetworkType.Analog)
 			{
-				dialog.Tuning=tuning;
-				dialog.Card=CaptureCard;
-				dialog.ShowDialog(this);
+				AnalogTVTuningForm dialog = new AnalogTVTuningForm();
+				ITuning tuning=GraphFactory.CreateTuning(CaptureCard);
+				if (tuning!=null)
+				{
+					dialog.Tuning=tuning;
+					dialog.Card=CaptureCard;
+					dialog.ShowDialog(this);
+				}
+				else
+				{
+					MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
 			}
 			else
 			{
-				MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				DigitalTVTuningForm dialog = new DigitalTVTuningForm();
+				ITuning tuning=GraphFactory.CreateTuning(CaptureCard);
+				if (tuning!=null)
+				{
+					dialog.Tuning=tuning;
+					dialog.Card=CaptureCard;
+					dialog.ShowDialog(this);
+				}
+				else
+				{
+					MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
 			}
 		}
 
