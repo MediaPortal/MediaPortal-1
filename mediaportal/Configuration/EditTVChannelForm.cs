@@ -2578,7 +2578,7 @@ namespace MediaPortal.Configuration
 						{
 							string chanNr=(string)comboBoxChannels.SelectedItem;
 							if (chanNr==null)
-								chanNr=comboBoxChannels.Text;
+								chanNr=comboBoxChannels.Text.ToUpper().Trim();
 							channel.Channel = -1;
 							for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 							{
@@ -2587,12 +2587,20 @@ namespace MediaPortal.Configuration
 									//get free nr
 									if (orgChannelNumber==-1)
 									{
-										channel.Channel=TVDatabase.FindFreeTvChannelNumber(orgChannelNumber);
+										channel.Channel=TVDatabase.FindFreeTvChannelNumber(TVChannel.SpecialChannels[i].Number);
 									}
 									else
 									{
+										int nr=TVDatabase.FindFreeTvChannelNumber(TVChannel.SpecialChannels[i].Number);
+										if (nr==TVChannel.SpecialChannels[i].Number)
+											orgChannelNumber=nr;
 										channel.Channel=orgChannelNumber;
 									}
+
+									Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
+									frequencyTextBox.Text=freq.ToString();
+
+									break;
 								}
 							}
 							if (chanNr.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
@@ -2732,7 +2740,7 @@ namespace MediaPortal.Configuration
 					labelSpecial.Text=String.Empty;
 					string chanNr=(string)comboBoxChannels.SelectedItem;
 					if (chanNr==null)
-						chanNr=comboBoxChannels.Text;
+						chanNr=comboBoxChannels.Text.ToUpper().Trim();
 					for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 					{
 						if (channel.Frequency.Herz==TVChannel.SpecialChannels[i].Frequency)
@@ -3060,6 +3068,7 @@ namespace MediaPortal.Configuration
 			{
 				TVDatabase.UpdateChannel(tvchannel,SortingPlace);
 			}
+			orgChannelNumber=tvchannel.Number;
 
 			int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
 			int bandWidth,pmtPid,audioPid,videoPid,teletextPid;
@@ -3505,7 +3514,7 @@ namespace MediaPortal.Configuration
 			labelSpecial.Text=String.Empty;
 			string chanNr=(string)comboBoxChannels.SelectedItem;
 			if (chanNr==null)
-				chanNr=comboBoxChannels.Text;
+				chanNr=comboBoxChannels.Text.ToUpper().Trim();
 			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
 			{
 				if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
@@ -3513,6 +3522,7 @@ namespace MediaPortal.Configuration
 					Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
 					frequencyTextBox.Text=freq.ToString();
 					labelSpecial.Text=TVChannel.SpecialChannels[i].Name;
+					break;
 				}
 			}
 		}
