@@ -616,12 +616,36 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 				ypos2 -= ypos2 - maxY;
 			}
 
-			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, intColor);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, intColor);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, intColor);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, intColor);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, intColor);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, intColor);
+			int alpha1=intColor;
+			int alpha2=intColor;
+			if (totalWidth+50>=maxWidth && maxWidth > 0 && maxWidth < 2000)
+			{
+				int maxAlpha=intColor>>24;
+				float diff=(float)(maxWidth-totalWidth);
+				diff/=50.0f;
+				alpha1=(int)(maxAlpha * diff);
+
+				diff=(float)(maxWidth-totalWidth);
+				diff+=(w - fSpacing);
+				diff/=50.0f;
+				alpha2=(int)(maxAlpha * diff);
+				
+				if (alpha1<0) alpha1=0;
+				if (alpha1>0xff) alpha1=0xff;
+				if (alpha2<0) alpha2=0;
+				if (alpha2>0xff) alpha2=0xff;
+				
+				alpha1 <<=24;
+				alpha2 <<=24;
+				alpha1|= (intColor & 0xffffff);
+				alpha2|= (intColor & 0xffffff);
+			}
+			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha1);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha1);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha2);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha2);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
 
 			font->dwNumTriangles += 2;
 			if (font->iv > (MaxNumfontVertices-12))
