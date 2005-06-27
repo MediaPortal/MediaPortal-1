@@ -503,20 +503,7 @@ namespace MediaPortal.Configuration.Sections
 
 			if(dialogResult == DialogResult.OK)
 			{
-				TelevisionChannel editedChannel = editChannel.Channel;
-
-				ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
-																		editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString(),
-                                    GetStandardName(editedChannel.standard),
-                                    editedChannel.External ? "External" : "Internal"
-																	  } );
-				listItem.Tag = editedChannel;
-				listItem.ImageIndex=0;
-				if (editedChannel.Scrambled)
-					listItem.ImageIndex=1;
-
-				channelsListView.Items.Add(listItem);
-				SaveSettings();
+				LoadSettings();
 			}
 		}
 
