@@ -61,6 +61,7 @@ struct TEXTURE_DATA_T
 	int						hashCode;
 	LPDIRECT3DTEXTURE9		pTexture;
 	LPDIRECT3DVERTEXBUFFER9	pVertexBuffer;
+	LPDIRECT3DINDEXBUFFER9  pIndexBuffer;
 	CUSTOMVERTEX*			vertices;
 	int                     iv;
 	int                     dwNumTriangles;
@@ -114,6 +115,7 @@ void FontEngineInitialize(int screenWidth, int screenHeight)
 			textureData[i].dwNumTriangles=0;
 			textureData[i].iv=0;
 			textureData[i].pVertexBuffer=NULL;
+			textureData[i].pIndexBuffer=NULL;
 			textureData[i].pTexture=NULL;
 			textureData[i].vertices = NULL;
 			textureData[i].updateVertexBuffer=false;
@@ -139,6 +141,11 @@ void FontEngineRemoveTexture(int textureNo)
 		textureData[textureNo].pVertexBuffer->Release();
 	}
 	textureData[textureNo].pVertexBuffer=NULL;
+	if (textureData[textureNo].pIndexBuffer!=NULL)
+	{
+		textureData[textureNo].pIndexBuffer->Release();
+	}
+	textureData[textureNo].pIndexBuffer=NULL;
 	
 	if (textureData[textureNo].vertices!=NULL)
 	{
@@ -203,6 +210,28 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 
 	}
 	textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
+
+	m_pDevice->CreateIndexBuffer(	MaxNumTextureVertices *sizeof(WORD),
+									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, 
+									&textureData[selected].pIndexBuffer, NULL ) ;
+	WORD* pIndices;
+	int triangle=0;
+	textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices,0);
+	for (int i=0; i < MaxNumTextureVertices;i+=6)
+	{
+		if (i+5 < MaxNumTextureVertices)
+		{
+			pIndices[i+0]=triangle*4+1;
+			pIndices[i+1]=triangle*4+0;
+			pIndices[i+2]=triangle*4+3;
+			pIndices[i+3]=triangle*4+2;
+			pIndices[i+4]=triangle*4+1;
+			pIndices[i+5]=triangle*4+3;
+		}
+		triangle++;
+	}
+	textureData[selected].pIndexBuffer->Unlock();
+
 	return selected;
 }
 
@@ -257,6 +286,28 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 		}
 	}
 	textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
+
+	m_pDevice->CreateIndexBuffer(	MaxNumTextureVertices *sizeof(WORD),
+									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, 
+									&textureData[selected].pIndexBuffer, NULL ) ;
+	WORD* pIndices;
+	int triangle=0;
+	textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices,0);
+	for (int i=0; i < MaxNumTextureVertices;i+=6)
+	{
+		if (i+5 < MaxNumTextureVertices)
+		{
+			pIndices[i+0]=triangle*4+1;
+			pIndices[i+1]=triangle*4+0;
+			pIndices[i+2]=triangle*4+3;
+			pIndices[i+3]=triangle*4+2;
+			pIndices[i+4]=triangle*4+1;
+			pIndices[i+5]=triangle*4+3;
+		}
+		triangle++;
+	}
+	textureData[selected].pIndexBuffer->Unlock();
+
 	return selected;
 }
 
@@ -368,23 +419,23 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	xpos2-=0.5f;
 	ypos2-=0.5f;
 
-	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color)
+
+
+	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color)
 		texture->updateVertexBuffer=true;
-	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty2;iv++;
+	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty1;iv++;
 
-	if (texture->vertices[iv].x != xpos || texture->vertices[iv].y !=ypos || texture->vertices[iv].tv!=ty1)
+	if (texture->vertices[iv].x != xpos || texture->vertices[iv].y !=ypos2 || texture->vertices[iv].tv!=ty2)
 		texture->updateVertexBuffer=true;
-	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty1;iv++;
+	texture->vertices[iv].x=xpos ;  texture->vertices[iv].y=ypos2  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty2;iv++;
 
-	if (texture->vertices[iv].x != xpos2 || texture->vertices[iv].y!=ypos || texture->vertices[iv].tu!=tx2)
+	if (texture->vertices[iv].x != xpos2 || texture->vertices[iv].y!=ypos2 || texture->vertices[iv].tu!=tx2)
 		texture->updateVertexBuffer=true;
-	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty1;iv++;
+	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos2  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty2;iv++;
 
-	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty2;iv++;
-	texture->vertices[iv].x=xpos;   texture->vertices[iv].y=ypos2 ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx1; texture->vertices[iv].tv=ty2;iv++;
-	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos  ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty1;iv++;
+	texture->vertices[iv].x=xpos2;  texture->vertices[iv].y=ypos ; texture->vertices[iv].color=color;texture->vertices[iv].tu=tx2; texture->vertices[iv].tv=ty1;iv++;
 
-	texture->iv=texture->iv+6;
+	texture->iv=texture->iv+4;
 	texture->dwNumTriangles=texture->dwNumTriangles+2;
 	
 }
@@ -430,7 +481,15 @@ void FontEnginePresentTextures()
 				m_pDevice->SetTexture(0, texture->pTexture);
 				m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
 				m_pDevice->SetStreamSource(0, texture->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-				m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, texture->dwNumTriangles);
+				m_pDevice->SetIndices( texture->pIndexBuffer );
+				m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
+												0,					 //baseVertexIndex,
+												0,					 //minVertexIndex,
+												texture->iv,			 //NumVertices
+												0,					 //StartIndex,
+												texture->dwNumTriangles //MaxPrimitives
+												);
+
 				m_pDevice->SetTexture(0, NULL);
 			}
 		}
@@ -723,8 +782,8 @@ void FontEnginePresent3D(int fontNumber)
 			m_pDevice->SetTexture(0, font->pTexture);
 			m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
 			m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
-			int hr=m_pDevice->SetIndices( font->pIndexBuffer );
-			hr=m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
+			m_pDevice->SetIndices( font->pIndexBuffer );
+			m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
 											0,					 //baseVertexIndex,
 											0,					 //minVertexIndex,
 											font->iv,			 //NumVertices
