@@ -598,7 +598,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cancelButton.Location = new System.Drawing.Point(421, 407);
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 3;
+			this.cancelButton.TabIndex = 1;
 			this.cancelButton.Text = "Cancel";
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
@@ -608,7 +608,7 @@ namespace MediaPortal.Configuration
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.okButton.Location = new System.Drawing.Point(341, 407);
 			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 2;
+			this.okButton.TabIndex = 0;
 			this.okButton.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
@@ -748,7 +748,7 @@ namespace MediaPortal.Configuration
 			this.comboBoxChannels.Location = new System.Drawing.Point(128, 48);
 			this.comboBoxChannels.Name = "comboBoxChannels";
 			this.comboBoxChannels.Size = new System.Drawing.Size(121, 21);
-			this.comboBoxChannels.TabIndex = 14;
+			this.comboBoxChannels.TabIndex = 1;
 			this.comboBoxChannels.SelectedIndexChanged += new System.EventHandler(this.comboBoxChannels_SelectedIndexChanged);
 			// 
 			// checkBoxScrambled
@@ -756,7 +756,7 @@ namespace MediaPortal.Configuration
 			this.checkBoxScrambled.Location = new System.Drawing.Point(24, 80);
 			this.checkBoxScrambled.Name = "checkBoxScrambled";
 			this.checkBoxScrambled.Size = new System.Drawing.Size(264, 24);
-			this.checkBoxScrambled.TabIndex = 13;
+			this.checkBoxScrambled.TabIndex = 2;
 			this.checkBoxScrambled.Text = "Tv channel is encrypted (only for digital TV)";
 			// 
 			// label45
@@ -2570,7 +2570,7 @@ namespace MediaPortal.Configuration
 						channel.Channel=orgChannelNumber;
 					else
 					{
-						if (comboBoxChannels.SelectedIndex<0 && orgChannelNumber==-1)
+						if (comboBoxChannels.Text.Length==0 &&comboBoxChannels.SelectedIndex<0 && orgChannelNumber==-1)
 						{
 							channel.Channel=TVDatabase.FindFreeTvChannelNumber(1);
 						}
