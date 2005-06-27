@@ -623,7 +623,7 @@ namespace MediaPortal.Configuration
 			this.audioDeviceComboBox.ItemHeight = 13;
 			this.audioDeviceComboBox.Location = new System.Drawing.Point(112, 32);
 			this.audioDeviceComboBox.Name = "audioDeviceComboBox";
-			this.audioDeviceComboBox.Size = new System.Drawing.Size(320, 21);
+			this.audioDeviceComboBox.Size = new System.Drawing.Size(400, 21);
 			this.audioDeviceComboBox.TabIndex = 1;
 			this.audioDeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.audioDeviceComboBox_SelectedIndexChanged);
 			// 
@@ -639,7 +639,7 @@ namespace MediaPortal.Configuration
 			this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.setupButton.Enabled = false;
 			this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.setupButton.Location = new System.Drawing.Point(368, 144);
+			this.setupButton.Location = new System.Drawing.Point(448, 144);
 			this.setupButton.Name = "setupButton";
 			this.setupButton.Size = new System.Drawing.Size(56, 21);
 			this.setupButton.TabIndex = 4;
@@ -654,7 +654,7 @@ namespace MediaPortal.Configuration
 			this.filterComboBox.Enabled = false;
 			this.filterComboBox.Location = new System.Drawing.Point(112, 144);
 			this.filterComboBox.Name = "filterComboBox";
-			this.filterComboBox.Size = new System.Drawing.Size(248, 21);
+			this.filterComboBox.Size = new System.Drawing.Size(328, 21);
 			this.filterComboBox.TabIndex = 3;
 			this.filterComboBox.SelectedIndexChanged += new System.EventHandler(this.filterComboBox_SelectedIndexChanged);
 			// 
@@ -732,7 +732,7 @@ namespace MediaPortal.Configuration
 			this.frameSizeComboBox.ItemHeight = 13;
 			this.frameSizeComboBox.Location = new System.Drawing.Point(112, 304);
 			this.frameSizeComboBox.Name = "frameSizeComboBox";
-			this.frameSizeComboBox.Size = new System.Drawing.Size(176, 21);
+			this.frameSizeComboBox.Size = new System.Drawing.Size(256, 21);
 			this.frameSizeComboBox.TabIndex = 10;
 			// 
 			// label7
@@ -781,7 +781,7 @@ namespace MediaPortal.Configuration
 			this.cardComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cardComboBox.Location = new System.Drawing.Point(112, 8);
 			this.cardComboBox.Name = "cardComboBox";
-			this.cardComboBox.Size = new System.Drawing.Size(320, 21);
+			this.cardComboBox.Size = new System.Drawing.Size(400, 21);
 			this.cardComboBox.TabIndex = 0;
 			this.cardComboBox.SelectedIndexChanged += new System.EventHandler(this.cardComboBox_SelectedIndexChanged);
 			// 
@@ -819,7 +819,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cancelButton.Location = new System.Drawing.Point(381, 450);
+			this.cancelButton.Location = new System.Drawing.Point(461, 450);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.TabIndex = 4;
 			this.cancelButton.Text = "Cancel";
@@ -829,7 +829,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.okButton.Location = new System.Drawing.Point(301, 450);
+			this.okButton.Location = new System.Drawing.Point(381, 450);
 			this.okButton.Name = "okButton";
 			this.okButton.TabIndex = 3;
 			this.okButton.Text = "OK";
@@ -846,7 +846,7 @@ namespace MediaPortal.Configuration
 			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(456, 432);
+			this.tabControl1.Size = new System.Drawing.Size(536, 432);
 			this.tabControl1.TabIndex = 5;
 			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
@@ -876,7 +876,7 @@ namespace MediaPortal.Configuration
 			this.tabPage1.Controls.Add(this.label8);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(448, 406);
+			this.tabPage1.Size = new System.Drawing.Size(528, 406);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Capture card";
 			// 
@@ -1612,7 +1612,7 @@ namespace MediaPortal.Configuration
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(474, 482);
+			this.ClientSize = new System.Drawing.Size(554, 482);
 			this.Controls.Add(this.btnRadio);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.tabControl1);
