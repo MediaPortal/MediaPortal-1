@@ -762,6 +762,9 @@ namespace MediaPortal.GUI.TV
 					imgBut.FontName1=cntlChannelLabel.FontName;
 					imgBut.TextColor1=cntlChannelLabel.TextColor;
 					imgBut.Label1=String.Empty;
+					imgBut.RenderLeft=false;
+					imgBut.RenderRight=false;
+
 					if (m_bUseChannelLogos)
 					{
 						imgBut.IconOffsetX=cntlChannelImg.XPosition;
@@ -1082,6 +1085,8 @@ namespace MediaPortal.GUI.TV
 					img.IsVisible=true;
 					img.DoUpdate();
 				}
+				img.RenderLeft=false;
+				img.RenderRight=false;
 				bool bRecording=false;
 				bool bSeries=false;
 				bool bConflict=false;
@@ -1220,6 +1225,7 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 
+
 			ArrayList programs=new ArrayList();
 			TVDatabase.GetProgramsPerChannel(channel.Name,iStart,iEnd,ref programs);
 			if (programs.Count==0)
@@ -1355,6 +1361,9 @@ namespace MediaPortal.GUI.TV
 							img.IsVisible=true;
 							img.DoUpdate();
 						}
+						img.RenderLeft=false;
+						img.RenderRight=false;
+
 						if (bRecording)
 						{
 							if (bConflict)
@@ -1427,6 +1436,8 @@ namespace MediaPortal.GUI.TV
 
 						if (bEndsAfter)
 						{
+							img.RenderRight=true;
+
 							img.TexutureFocusRightName="tvguide_arrow_selected_right.png";
 							img.TexutureNoFocusRightName="tvguide_arrow_light_right.png";
 							if (program.IsRunningAt(dt))
@@ -1436,6 +1447,7 @@ namespace MediaPortal.GUI.TV
 						}
 						if (bStartsBefore)
 						{
+							img.RenderLeft=true;
 							img.TexutureFocusLeftName="tvguide_arrow_selected_left.png";
 							img.TexutureNoFocusLeftName="tvguide_arrow_light_left.png";
 							if (program.IsRunningAt(dt))

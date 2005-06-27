@@ -56,6 +56,8 @@ namespace MediaPortal.GUI.Library
     GUILabelControl                  cntlLabel2=null;
     bool                             containsProperty1=false;
     bool                             containsProperty2=false;
+		bool														 renderLeftPart=true;
+		bool														 renderRightPart=true;
     //Sprite                           sprite=null;
     
 		/// <summary>
@@ -112,18 +114,18 @@ namespace MediaPortal.GUI.Library
 			{
 				//render the focused images
 				//if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
-				m_imgFocusLeft.Render(timePassed);
+				if (renderLeftPart) m_imgFocusLeft.Render(timePassed);
 				m_imgFocusMid.Render(timePassed);
-				m_imgFocusRight.Render(timePassed);
+				if (renderRightPart) m_imgFocusRight.Render(timePassed);
 				GUIPropertyManager.SetProperty("#highlightedbutton", m_strText1);
 			}
 			else 
 			{
 				//else render the non-focus images
 				//if (m_imgIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
-				m_imgNoFocusLeft.Render(timePassed);  		
+				if (renderLeftPart) m_imgNoFocusLeft.Render(timePassed);  		
 				m_imgNoFocusMid.Render(timePassed);  		
-				m_imgNoFocusRight.Render(timePassed);
+				if (renderRightPart) m_imgNoFocusRight.Render(timePassed);
       }
 
 			//render the icon
@@ -776,5 +778,15 @@ namespace MediaPortal.GUI.Library
       if (text.IndexOf("#")>=0) return true;
       return false;
     }
+		public bool RenderLeft
+		{
+			get { return renderLeftPart;}
+			set {renderLeftPart=value;}
+		}
+		public bool RenderRight
+		{
+			get { return renderRightPart;}
+			set {renderRightPart=value;}
+		}
   }
 }
