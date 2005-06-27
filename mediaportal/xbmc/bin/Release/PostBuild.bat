@@ -70,14 +70,6 @@ copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
 copy ..\..\..\ProcessPlugins\bin\release\ProcessPlugins.dll plugins\process\
 copy ..\..\..\Dialogs\bin\release\Dialogs.dll plugins\Windows
 copy ..\..\..\RemotePlugins\bin\release\RemotePlugins.dll .
-
-copy ..\..\..\ProcessPlugins\MCEDisplay\bin\release\MCEDisplay.dll plugins\process\
-copy ..\..\..\ProcessPlugins\MCEDisplay\bin\release\MCEDisplay.pdb plugins\process\
-rem copy ..\..\..\ProcessPlugins\MCEDisplay\bin\release\Interop.FILEWRITERLib.dll .
-copy ..\..\..\MSASState\bin\release\MSASState.dll .
-copy ..\..\..\MSASState\bin\release\MSASState.pdb .
-copy ..\..\..\MSASState\bin\release\MemMapFile.dll .
- 
 copy ..\..\..\sqlite.dll .
 copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .
