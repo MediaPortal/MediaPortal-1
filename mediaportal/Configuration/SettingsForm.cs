@@ -162,7 +162,9 @@ namespace MediaPortal.Configuration
       AddChildSection(television, new Sections.TVCaptureCards());
       Log.Write("  add tv channels section");
       AddChildSection(television, new Sections.TVChannels());
-      Log.Write("  add tv program guide section");
+			Log.Write("  add tv channel groups section");
+			AddChildSection(television, new Sections.TVGroups());
+			Log.Write("  add tv program guide section");
       AddChildSection(television, new Sections.TVProgramGuide());
       Log.Write("  add tv recording section");
       AddChildSection(television, new Sections.TVRecording());

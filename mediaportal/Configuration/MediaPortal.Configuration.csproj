@@ -946,6 +946,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\TVGroups.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\TVGroups.resx"
+                    DependentUpon = "TVGroups.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\TVPostProcessing.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
