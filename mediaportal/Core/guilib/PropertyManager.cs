@@ -111,7 +111,14 @@ namespace MediaPortal.GUI.Library
 			m_properties["#TV.Search.thumb"]=String.Empty;              
 			m_properties["#TV.Search.Genre"]=String.Empty;        
  
-			m_properties["#view"]=String.Empty;        
+			m_properties["#view"]=String.Empty;  
+      
+			m_properties["#TV.Transcoding.Percentage"]=String.Empty;        
+			m_properties["#TV.Transcoding.File"]=String.Empty;        
+			m_properties["#TV.Transcoding.Title"]=String.Empty;        
+			m_properties["#TV.Transcoding.Genre"]=String.Empty;        
+			m_properties["#TV.Transcoding.Description"]=String.Empty;        
+			m_properties["#TV.Transcoding.Channel"]=String.Empty;        
 
     }
 

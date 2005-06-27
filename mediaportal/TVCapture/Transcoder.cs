@@ -13,8 +13,23 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class Transcoder
 	{
+		#region vars
+		static ArrayList  queue = new ArrayList();
+		static Thread		  WorkerThread =null;
+		public enum Status
+		{
+			Waiting,
+			Busy,
+			Completed,
+			Error,
+			Canceled
+		}
+		#endregion
+		
+		#region TranscoderInfo class
 		public class TranscoderInfo
 		{
+			#region vars
 			public TVRecorded recorded;
 			public Status     status;
 			public int        percentDone;
@@ -26,7 +41,7 @@ namespace MediaPortal.TV.Recording
 			public Size				ScreenSize;
 			public DateTime   StartTime;
 			public bool				LowPriority=true;
-
+			#endregion
 			public TranscoderInfo(TVRecorded recording, int kbps, int fps, Size newSize,bool deleteWhenDone, int qualityIndex,DateTime dateTime, int outputType, bool priority)
 			{
 				recorded=recording;
@@ -41,22 +56,37 @@ namespace MediaPortal.TV.Recording
 				Type=outputType;
 				LowPriority=priority;
 			}
+			public void SetProperties()
+			{
+				if (status!=Status.Busy)
+				{
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Percentage","0");
+					GUIPropertyManager.SetProperty("#TV.Transcoding.File",String.Empty);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Title",String.Empty);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Genre",String.Empty);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Description",String.Empty);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Channel",String.Empty);
+				}
+				else
+				{
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Percentage",percentDone.ToString());
+					GUIPropertyManager.SetProperty("#TV.Transcoding.File",recorded.FileName);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Title",recorded.Title);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Genre",recorded.Genre);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Description",recorded.Description);
+					GUIPropertyManager.SetProperty("#TV.Transcoding.Channel",recorded.Channel);
+				}
+			}
 		}
-		public enum Status
-		{
-			Waiting,
-			Busy,
-			Completed,
-			Error,
-			Canceled
-		}
-		static ArrayList  queue = new ArrayList();
-		static Thread		  WorkerThread =null;
-		
+		#endregion
+
+		#region ctor		
 		static Transcoder()
 		{
 		}
+		#endregion
 
+		#region public methods
 		static public void Transcode(TVRecorded rec,bool manual)
 		{
 			int		bitRate,FPS,Priority,QualityIndex,ScreenSizeIndex,Type,AutoHours;
@@ -231,7 +261,9 @@ namespace MediaPortal.TV.Recording
 			}
 			return false;
 		}
+		#endregion
 
+		#region transcoding workerthread
 		static void TranscodeWorkerThread()
 		{
 
@@ -277,6 +309,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
+		
 		static void DoTranscode(TranscoderInfo tinfo)
 		{
 
@@ -328,6 +361,7 @@ namespace MediaPortal.TV.Recording
 					break;
 			}
 
+			tinfo.SetProperties();
 			if (isWMV)
 			{
 				ConvertToWmv(info,tinfo);
@@ -347,6 +381,9 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 
+		#endregion
+		
+		#region transcoding methods
 		static void ConvertToWmv(TranscodeInfo info, TranscoderInfo tinfo)
 		{
 			TranscodeToWMV WMVConverter = new TranscodeToWMV();
@@ -354,12 +391,14 @@ namespace MediaPortal.TV.Recording
 			if (!WMVConverter.Transcode(info,VideoFormat.Wmv,tinfo.quality))
 			{
 				tinfo.status=Status.Error;
+				tinfo.SetProperties();
 				return;
 			}
 			while (!WMVConverter.IsFinished()) 
 			{
 				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 				tinfo.percentDone=WMVConverter.Percentage();
+				tinfo.SetProperties();
 				System.Threading.Thread.Sleep(1000);
 				if (tinfo.status==Status.Canceled) 
 				{
@@ -374,6 +413,7 @@ namespace MediaPortal.TV.Recording
 				TVDatabase.SetRecordedFileName(tinfo.recorded);
 			}
 			tinfo.status=Status.Completed;
+			tinfo.SetProperties();
 		}
 
 		static void ConvertToMpg(TranscodeInfo info, TranscoderInfo tinfo)
@@ -382,12 +422,14 @@ namespace MediaPortal.TV.Recording
 			if (!mpgConverter.Transcode(info,VideoFormat.Mpeg2,tinfo.quality))
 			{
 				tinfo.status=Status.Error;
+				tinfo.SetProperties();
 				return;
 			}
 			while (!mpgConverter.IsFinished()) 
 			{
 				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 				tinfo.percentDone=mpgConverter.Percentage();
+				tinfo.SetProperties();
 				System.Threading.Thread.Sleep(1000);
 				if (tinfo.status==Status.Canceled) 
 				{
@@ -402,6 +444,7 @@ namespace MediaPortal.TV.Recording
 				TVDatabase.SetRecordedFileName(tinfo.recorded);
 			}
 			tinfo.status=Status.Completed;
+			tinfo.SetProperties();
 		}
 
 		static void ConvertToXvid(TranscodeInfo info, TranscoderInfo tinfo)
@@ -411,12 +454,14 @@ namespace MediaPortal.TV.Recording
 			if (!xvidEncoder.Transcode(info,VideoFormat.Xvid,tinfo.quality))
 			{
 				tinfo.status=Status.Error;
+				tinfo.SetProperties();
 				return;
 			}
 			while (!xvidEncoder.IsFinished()) 
 			{
 				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 				tinfo.percentDone=xvidEncoder.Percentage();
+				tinfo.SetProperties();
 				System.Threading.Thread.Sleep(1000);
 				if (tinfo.status==Status.Canceled) 
 				{
@@ -431,7 +476,9 @@ namespace MediaPortal.TV.Recording
 				TVDatabase.SetRecordedFileName(tinfo.recorded);
 			}
 			tinfo.status=Status.Completed;
+			tinfo.SetProperties();
 			return;
 		}
+		#endregion
 	}
 }
