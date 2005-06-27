@@ -48,6 +48,7 @@ struct FONT_DATA_T
 	float   				fSpacingPerChar;
 	LPDIRECT3DTEXTURE9		pTexture;
 	LPDIRECT3DVERTEXBUFFER9	pVertexBuffer;
+	LPDIRECT3DINDEXBUFFER9  pIndexBuffer;
 	float					textureCoord[MAX_TEXTURE_COORDS][4];
 	CUSTOMVERTEX*			vertices;
 	int                     iv;
@@ -102,6 +103,7 @@ void FontEngineInitialize(int screenWidth, int screenHeight)
 		for (int i=0; i < MAX_FONTS;++i)
 		{
 			fontData[i].pVertexBuffer=NULL;
+			fontData[i].pIndexBuffer=NULL;
 			fontData[i].pTexture = NULL;
 			fontData[i].vertices = NULL;
 			fontData[i].updateVertexBuffer=false;
@@ -501,6 +503,27 @@ void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int first
 											&g_pVB, 
 											NULL) ;
 	fontData[fontNumber].pVertexBuffer=g_pVB;
+	m_pDevice->CreateIndexBuffer(	MaxNumfontVertices *sizeof(WORD),
+									D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, 
+									&fontData[fontNumber].pIndexBuffer, NULL ) ;
+	WORD* pIndices;
+	int triangle=0;
+	fontData[fontNumber].pIndexBuffer->Lock(0,0,(VOID**)&pIndices,0);
+	for (int i=0; i < MaxNumfontVertices;i+=6)
+	{
+		if (i+5 < MaxNumfontVertices)
+		{
+			pIndices[i+0]=triangle*4+1;
+			pIndices[i+1]=triangle*4+0;
+			pIndices[i+2]=triangle*4+3;
+			pIndices[i+3]=triangle*4+2;
+			pIndices[i+4]=triangle*4+1;
+			pIndices[i+5]=triangle*4+3;
+		}
+		triangle++;
+	}
+	fontData[fontNumber].pIndexBuffer->Unlock();
+
 	int x=123;
 }
 
@@ -642,12 +665,14 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 				alpha1|= (intColor & 0xffffff);
 				alpha2|= (intColor & 0xffffff);
 			}
-			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha1);
+			int vertices=font->iv;
 			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha1);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha2);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha1);
 			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha2);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
-			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
+			UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha2);
+			//UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
+			//UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
+
 
 			font->dwNumTriangles += 2;
 			if (font->iv > (MaxNumfontVertices-12))
@@ -696,9 +721,16 @@ void FontEnginePresent3D(int fontNumber)
 			m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,1);
 
 			m_pDevice->SetTexture(0, font->pTexture);
-			m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
 			m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );
-			m_pDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, font->dwNumTriangles);
+			m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+			int hr=m_pDevice->SetIndices( font->pIndexBuffer );
+			hr=m_pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 
+											0,					 //baseVertexIndex,
+											0,					 //minVertexIndex,
+											font->iv,			 //NumVertices
+											0,					 //StartIndex,
+											font->dwNumTriangles //MaxPrimitives
+											);
 			m_pDevice->SetTexture(0, NULL);
 			font->dwNumTriangles = 0;
 			font->iv = 0;
@@ -726,6 +758,11 @@ void FontEngineRemoveFont(int fontNumber)
 		fontData[fontNumber].pVertexBuffer->Release();
 	}
 	fontData[fontNumber].pVertexBuffer=NULL;
+	if (fontData[fontNumber].pIndexBuffer!=NULL) 
+	{
+		fontData[fontNumber].pIndexBuffer->Release();
+	}
+	fontData[fontNumber].pIndexBuffer=NULL;
 
 	if (fontData[fontNumber].vertices!=NULL)
 		delete[] fontData[fontNumber].vertices;
