@@ -180,12 +180,13 @@ public class MediaPortalApp : D3DApp, IRender
     form=null;
 
 #if !DEBUG
-    ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
+    string version=ConfigurationSettings.AppSettings["version"];
+    //ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
     splashScreen = new SplashScreen();
-    splashScreen.SetVersion(clientInfo.InstalledVersion);
+    splashScreen.SetVersion(version);
     splashScreen.Show();
     splashScreen.Update();
-    clientInfo=null;
+    //clientInfo=null;
 #endif
 
     // Stop MCE services
