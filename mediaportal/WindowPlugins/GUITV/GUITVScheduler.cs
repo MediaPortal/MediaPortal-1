@@ -980,9 +980,9 @@ namespace MediaPortal.GUI.TV
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;
 
-			int mins=dlg.SelectedLabel*15;
-			hour=(dlg.SelectedLabel*15)/60;
-			minute=((dlg.SelectedLabel*15)%60);
+			int mins=(dlg.SelectedLabel+1)*15;
+			hour=(mins)/60;
+			minute=((mins)%60);
 
 			
 			dlg.Reset();

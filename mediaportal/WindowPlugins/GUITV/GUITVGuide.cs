@@ -2260,9 +2260,41 @@ namespace MediaPortal.GUI.TV
 						break;
 				}
 				TVDatabase.AddRecording(ref rec);
-#if DEBUG
-				CheckRecordingConflicts();
-#endif
+
+				//check if this program is interrupted (for example by a news bulletin)
+				//ifso ask the user if he wants to record the 2nd part also
+				ArrayList programs=new ArrayList();
+				DateTime dtStart=rec.EndTime.AddMinutes(1);
+				DateTime dtEnd  =dtStart.AddHours(3);
+				long iStart=Utils.datetolong(dtStart);
+				long iEnd=Utils.datetolong(dtEnd);
+				TVDatabase.GetProgramsPerChannel(rec.Channel,iStart,iEnd,ref programs);
+				if (programs.Count>=2)
+				{
+					TVProgram next=programs[0] as TVProgram;
+					TVProgram nextNext=programs[1] as TVProgram;
+					if (nextNext.Title==rec.Title)
+					{
+						TimeSpan ts=next.EndTime-next.StartTime;
+						if (ts.TotalMinutes<30)
+						{
+							//
+							GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+							dlgYesNo.SetHeading(1012);//This program will be interrupted by
+							dlgYesNo.SetLine(1,next.Title);
+							dlgYesNo.SetLine(2,1013);//Would you like to record the second part also?
+							dlgYesNo.DoModal(GetID);
+							if (dlgYesNo.IsConfirmed) 
+							{
+								rec.Start=nextNext.Start;
+								rec.End=nextNext.End;
+								rec.ID=-1;
+								TVDatabase.AddRecording(ref rec);
+							}
+						}
+					}
+				}
+				
 				Update(false);
 				SetFocus();
 			}

@@ -31,6 +31,7 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(17)]				protected GUILabelControl lblProgramGenre=null;
 		[SkinControlAttribute(18)]				protected GUIImage imgTvLogo=null;
 
+		DirectoryHistory history = new DirectoryHistory();
     enum SearchMode
     {
       Genre, 
@@ -43,17 +44,27 @@ namespace MediaPortal.GUI.TV
       Date,
       Channel
     }
-    SearchMode currentSearchMode=SearchMode.Title;
     SortMethod currentSortMethod=SortMethod.Name;
     bool       sortAscending=true;
-    int        currentLevel=0;
+		ArrayList   listRecordings=new ArrayList();
+//		int        currentSearchKind=-1;
+
+		SearchMode currentSearchMode=SearchMode.Title;
+		int        currentLevel=0;
     string     currentGenre=String.Empty;
-    ArrayList   listRecordings=new ArrayList();
-    int        currentSearchKind=-1;
     string     currentSearchCriteria=String.Empty;
 		string     filterLetter="a";
 		string     filterShow=String.Empty;
 		string     filterEpisode=String.Empty;
+
+
+		SearchMode prevcurrentSearchMode=SearchMode.Title;
+		int        prevcurrentLevel=0;
+		string     prevcurrentGenre=String.Empty;
+		string     prevcurrentSearchCriteria=String.Empty;
+		string     prevfilterLetter="a";
+		string     prevfilterShow=String.Empty;
+		string     prevfilterEpisode=String.Empty;
 
 		public GUITVSearch()
     {
@@ -113,7 +124,7 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageLoad ();
 			listRecordings.Clear();
-			currentSearchKind=-1;
+			//currentSearchKind=-1;
 			currentSearchCriteria=String.Empty;
 			TVDatabase.GetRecordings(ref listRecordings);
 					
@@ -143,7 +154,7 @@ namespace MediaPortal.GUI.TV
 				filterEpisode=String.Empty;
 				filterLetter="#";
 				filterShow=String.Empty;
-				currentSearchKind=-1;
+				//currentSearchKind=-1;
 				currentSearchCriteria=String.Empty;
 				Update();
 				GUIControl.FocusControl(GetID,btnSearchByGenre.GetID);
@@ -157,7 +168,7 @@ namespace MediaPortal.GUI.TV
 				filterShow=String.Empty;
 				currentSearchMode=SearchMode.Title;
 				currentLevel=0;
-				currentSearchKind=-1;
+				//currentSearchKind=-1;
 				currentSearchCriteria=String.Empty;
 				Update();
 				GUIControl.FocusControl(GetID,btnSearchByTitle.GetID);
@@ -171,7 +182,7 @@ namespace MediaPortal.GUI.TV
 				filterShow=String.Empty;
 				currentSearchMode=SearchMode.Description;
 				currentLevel=0;
-				currentSearchKind=-1;
+				//currentSearchKind=-1;
 				currentSearchCriteria=String.Empty;
 				Update();
 				GUIControl.FocusControl(GetID,btnSearchByDescription.GetID);
@@ -254,6 +265,7 @@ namespace MediaPortal.GUI.TV
 
     void Update()
     {
+			SetHistory();
 			listView.Clear();
 			titleView.Clear();
       if (currentLevel==0 && currentSearchMode==SearchMode.Genre)
@@ -383,7 +395,7 @@ namespace MediaPortal.GUI.TV
 						titleView.Add(item);
 
             ArrayList titles = new ArrayList();
-            TVDatabase.SearchProgramsPerGenre(currentGenre,titles, currentSearchKind, currentSearchCriteria);
+            TVDatabase.SearchProgramsPerGenre(currentGenre,titles, -1, currentSearchCriteria);
             foreach(TVProgram program in titles)
             {
 							//dont show programs which have ended
@@ -398,28 +410,29 @@ namespace MediaPortal.GUI.TV
 								{
 									if (!program.Title.ToLower().StartsWith(filterLetter.ToLower())) continue;
 								}
-								bool add=true;
-								foreach (TVProgram prog in programs)
+							}
+							bool add=true;
+							foreach (TVProgram prog in programs)
+							{
+								if (prog.Title == program.Title)
 								{
-									if (prog.Title == program.Title)
-									{
-										add=false;
-									}
-								}
-								if (!add && filterShow==String.Empty) continue;
-								if (add)
-								{
-									programs.Add(program);
-								}
-
-								if (filterShow!=String.Empty)
-								{
-									if (program.Title==filterShow)
-									{
-										episodes.Add(program);
-									}
+									add=false;
 								}
 							}
+							if (!add && filterShow==String.Empty) continue;
+							if (add)
+							{
+								programs.Add(program);
+							}
+
+							if (filterShow!=String.Empty)
+							{
+								if (program.Title==filterShow)
+								{
+									episodes.Add(program);
+								}
+							}
+							
 							if (filterShow!=String.Empty && program.Title!=filterShow) continue;
 
 							string strTime=String.Format("{0} {1}", 
@@ -456,10 +469,23 @@ namespace MediaPortal.GUI.TV
           break;
           case SearchMode.Title:
           {
+						if (filterShow!=String.Empty)
+						{
+						
+							GUIListItem item = new GUIListItem();
+							item.IsFolder=true;
+							item.Label="..";
+							item.Label2=String.Empty;
+							item.Path=String.Empty;
+							item.IconImage="defaultFolderBackBig.png";
+							item.IconImageBig="defaultFolderBackBig.png";
+							listView.Add(item);
+							titleView.Add(item);
+						}
             ArrayList titles = new ArrayList();
             long start=Utils.datetolong( DateTime.Now );
             long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
-            TVDatabase.SearchPrograms(start,end, ref titles, currentSearchKind, currentSearchCriteria);
+            TVDatabase.SearchPrograms(start,end, ref titles, -1, currentSearchCriteria);
             foreach(TVProgram program in titles)
 						{
 							if (filterLetter!="#")
@@ -493,7 +519,7 @@ namespace MediaPortal.GUI.TV
 										episodes.Add(program);
 									}
 								}
-							}
+							}//if (filterLetter!="#")
 
 							if (filterShow!=String.Empty && program.Title!=filterShow) continue;
 
@@ -536,7 +562,7 @@ namespace MediaPortal.GUI.TV
 					ArrayList titles = new ArrayList();
 					long start=Utils.datetolong( DateTime.Now );
 					long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
-					TVDatabase.SearchProgramsByDescription(start,end, ref titles, currentSearchKind, currentSearchCriteria);
+					TVDatabase.SearchProgramsByDescription(start,end, ref titles, -1, currentSearchCriteria);
 					foreach(TVProgram program in titles)
 					{
 						if (filterLetter!="#")
@@ -660,7 +686,49 @@ namespace MediaPortal.GUI.TV
 				btnSortAsc.Selected=true;
 
 			UpdateButtonStates();
+			RestoreHistory();
     }
+
+
+		void SetHistory()
+		{
+			GUIListItem item=GetSelectedItem();
+			if (item==null) return;
+			string currentFolder=String.Format("{0}.{1}.{2}.{3}.{4}.{5}.{6}",
+				(int)prevcurrentSearchMode,prevcurrentLevel,prevcurrentGenre,
+				prevcurrentSearchCriteria,prevfilterLetter,prevfilterShow,prevfilterEpisode);
+			prevcurrentSearchMode=currentSearchMode;
+			prevcurrentLevel=currentLevel;
+			prevcurrentGenre=currentGenre;
+			prevcurrentSearchCriteria=currentSearchCriteria;
+			prevfilterLetter=filterLetter;
+			prevfilterShow=filterShow;
+			prevfilterEpisode=filterEpisode;
+			if (item.Label=="..") return;
+
+			history.Set(item.Label, currentFolder);
+		}
+
+		void RestoreHistory()
+		{
+			string currentFolder=String.Format("{0}.{1}.{2}.{3}.{4}.{5}.{6}",
+													(int)currentSearchMode,currentLevel,currentGenre,
+													currentSearchCriteria,filterLetter,filterShow,filterEpisode);
+			string selectedItemLabel=history.Get(currentFolder);	
+			if (selectedItemLabel==null) return;
+			if (selectedItemLabel.Length==0) return;
+			for (int i=0; i< listView.Count;++i)
+			{
+				GUIListItem item =listView[i];
+				if (item.Label==selectedItemLabel)
+				{
+					listView.SelectedListItemIndex=i;
+					titleView.SelectedListItemIndex=i;
+					break;
+				}
+			}
+		}
+
     #region Sort Members
     void OnSort()
     {
@@ -759,13 +827,20 @@ namespace MediaPortal.GUI.TV
           {
             if (item.IsFolder) 
 						{
-							filterLetter="#";
-							filterShow=String.Empty;
-							filterEpisode=String.Empty;
-              currentGenre=String.Empty;
-              currentLevel=0;
-              Update();
-            }
+							if (filterShow!=String.Empty)
+							{
+								filterShow=String.Empty;
+							}
+							else
+							{
+								filterLetter="#";
+								filterShow=String.Empty;
+								filterEpisode=String.Empty;
+								currentGenre=String.Empty;
+								currentLevel=0;
+							}
+							Update();
+						}
             else
             {
 							TVProgram program = item.MusicTag as TVProgram;
@@ -781,6 +856,13 @@ namespace MediaPortal.GUI.TV
         break;
 				case SearchMode.Title:
 				{
+					if (item.Label==".."&&item.IsFolder) 
+					{
+						filterShow=String.Empty;
+						currentLevel=0;
+						Update();
+						return;
+					}
 					TVProgram program = item.MusicTag as TVProgram;
 					if (filterShow==String.Empty)
 					{
@@ -932,7 +1014,11 @@ namespace MediaPortal.GUI.TV
 
 		GUIListItem GetSelectedItem()
 		{
-			return titleView.SelectedListItem;
+			if (titleView.Focus)
+				return titleView.SelectedListItem;
+			if (listView.Focus)
+				return listView.SelectedListItem;
+			return null;
 		}
 		void UpdateDescription()
 		{

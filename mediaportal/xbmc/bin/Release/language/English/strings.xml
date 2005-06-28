@@ -2963,6 +2963,14 @@
 	<value>Biography</value>
 </string>
 <string>
+	<id>1012</id>
+	<value>This program will be interrupted by</value>
+</string>
+<string>
+	<id>1013</id>
+	<value>Would you like to record the second part also?</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
