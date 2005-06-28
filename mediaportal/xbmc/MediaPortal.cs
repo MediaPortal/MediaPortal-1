@@ -335,6 +335,7 @@ public class MediaPortalApp : D3DApp, IRender
           Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
         app.OnExit();
+				MediaPortal.Profile.Xml.SaveCache();
         Log.Write("MediaPortal done");
         Win32API.EnableStartBar(true);
         Win32API.ShowStartBar(true);

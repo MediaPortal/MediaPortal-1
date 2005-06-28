@@ -479,7 +479,7 @@ namespace MediaPortal.FoobarPlugin
         }
 
         xmlWriter.SetValue("foobarplugin", "enabledextensions", buff.ToString());
-        xmlWriter.Save();
+        //xmlWriter.Save();
       }
 
     }

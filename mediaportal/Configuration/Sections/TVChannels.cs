@@ -1191,7 +1191,7 @@ namespace MediaPortal.Configuration.Sections
 			using(MediaPortal.Profile.Xml channels = new MediaPortal.Profile.Xml(fileStr))
 			{
 				//Channel Data
-				channels.Clear();
+				//channels.Clear();
 				channels.SetValue("MP channel export list","version",CURRENT_VERSION.ToString());
 				if(channelsListView.Items.Count==0)
 				{

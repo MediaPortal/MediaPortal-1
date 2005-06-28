@@ -619,6 +619,7 @@ namespace MediaPortal.Configuration
 				//
 				SaveSectionSettings(treeNode);
 			}		
+			MediaPortal.Profile.Xml.SaveCache();
 		}
 		private void applyButton_Click(object sender, System.EventArgs e)
 		{

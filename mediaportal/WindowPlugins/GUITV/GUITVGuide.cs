@@ -2540,6 +2540,7 @@ namespace MediaPortal.GUI.TV
 		{
 			notifies.Clear();
 			TVDatabase.GetNotifies(notifies);
+			m_bNeedUpdate=true;
 		}
 	}
 }
