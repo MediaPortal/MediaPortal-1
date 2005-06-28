@@ -83,10 +83,6 @@ public class MediaPortalApp : D3DApp, IRender
     bool m_bCancelVersion = false;
 #endif
   //string m_strCurrentVersion = "";
-  MCE2005Remote MCE2005Remote = new MCE2005Remote();
-  HCWRemote HCWRemote = new HCWRemote();
-  MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
-
   MouseEventArgs eLastMouseClickEvent = null;
   private System.Timers.Timer tMouseClickTimer = null;
   private bool bMouseClickFired = false;
@@ -637,16 +633,15 @@ public class MediaPortalApp : D3DApp, IRender
   {
     PluginManager.ReceiveMsg(msg);	// Send received messages to PluginManager / added by mPod
 
-    HCWRemote.WndProc(msg);  // Send received messages to HCWRemote / added by mPod
-
     Action action;
     char key;
     Keys keyCode;
-    if (MCE2005Remote.WndProc(ref msg, out action, out  key, out keyCode) ||
-      FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
-    {
 
-      msg.Result = new IntPtr(0);
+	if(InputDevices.WndProc(ref msg, out action, out  key, out keyCode))
+    {
+		if(msg.Result.ToInt32() != 1)
+	      msg.Result = new IntPtr(0);
+
       if (action != null && action.wID != Action.ActionType.ACTION_INVALID)
       {
         Log.Write("action:{0} ", action.wID);
@@ -806,10 +801,7 @@ public class MediaPortalApp : D3DApp, IRender
     // this gives the windows the chance to do some cleanup
     Recorder.Stop();
 
-    MCE2005Remote.DeInit();
-
-    HCWRemote.DeInit();
-    FireDTVRemote.DeInit();
+	InputDevices.Stop();
 
     AutoPlay.StopListening();
 
@@ -1078,14 +1070,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Write("  video ram left:{0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
     }
 
-    MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
-    FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
-
-    if (HCWRemote.Enabled)
-    {
-      if (splashScreen != null) splashScreen.SetInformation("Initializing Hauppauge remote...");
-      HCWRemote.Init();
-    }
+	InputDevices.Init(/* splashScreen */);
 
     SetupCamera2D();
 
