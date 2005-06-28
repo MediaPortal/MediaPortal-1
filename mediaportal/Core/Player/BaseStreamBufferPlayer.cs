@@ -454,6 +454,10 @@ namespace MediaPortal.Player
 
 		protected virtual void OnProcess()
 		{
+			if (vmr7!=null)
+			{
+				vmr7.Process();
+			}
 		}
     
 

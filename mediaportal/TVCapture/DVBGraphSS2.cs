@@ -1933,6 +1933,10 @@ namespace MediaPortal.TV.Recording
 				CheckVideoResolutionChanges();
 			}
 
+			if(!GUIGraphicsContext.Vmr9Active && Vmr7!=null && m_graphState==State.Viewing)
+			{
+				Vmr7.Process();
+			}
 
 
 		}

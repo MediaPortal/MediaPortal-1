@@ -1143,6 +1143,11 @@ namespace MediaPortal.TV.Recording
 					Vmr9.Repaint();// repaint vmr9
 				}
 			}
+
+			if(!GUIGraphicsContext.Vmr9Active && Vmr7!=null && m_graphState==State.Viewing)
+			{
+				Vmr7.Process();
+			}
 		}
 		
 		public PropertyPageCollection PropertyPages()
