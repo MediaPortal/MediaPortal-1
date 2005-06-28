@@ -103,6 +103,23 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (listSchedules.Focus)
+				{
+					GUIListItem item = listSchedules[0];
+					if (item != null)
+					{
+						if (item.IsFolder && item.Label == "..")
+						{
+							currentShow=String.Empty;
+							LoadDirectory();
+							return;
+						}
+					}
+				}
+			}
+
       switch (action.wID)
       {
 				case Action.ActionType.ACTION_SHOW_GUI:

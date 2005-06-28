@@ -79,6 +79,22 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (listView.Focus || titleView.Focus)
+				{
+					GUIListItem item = GetItem(0);
+					if (item != null)
+					{
+						if (item.IsFolder && item.Label == "..")
+						{
+							OnClick(0);
+								return;
+						}
+					}
+				}
+			}
+
       switch (action.wID)
       {
 				case Action.ActionType.ACTION_SHOW_GUI:
