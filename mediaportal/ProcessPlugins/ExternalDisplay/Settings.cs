@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -67,17 +68,22 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get
       {
+        if (ExtensiveLogging) Log.Write("ExternalDisplay: Determining configured display type...");
         if (Type == null) //If no type selected, take the first one in the list
         {
+          if (ExtensiveLogging) Log.Write("ExternalDisplay: Requested type was NULL.  Returning first type found...");
           return Drivers[0];
         }
-        foreach (IDisplay disp in Drivers) //otherwise get the instance with the correct 
+        if (ExtensiveLogging) Log.Write("ExternalDisplay: Searching type {0}...",Type);
+        foreach (IDisplay disp in Drivers) //otherwise get the instance with the correct name
         {
-          if (disp.Name == Type)
+          if (string.Compare(disp.Name,Type,true,CultureInfo.InvariantCulture)==0)
           {
+            if (ExtensiveLogging) Log.Write("ExternalDisplay: Requested type was found.");
             return disp;
           }
         }
+        if (ExtensiveLogging) Log.Write("ExternalDisplay: Requested type not found.");
         return null;
       }
       set { Type = value.Name; }
@@ -271,6 +277,21 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_ScrollDelay = value; }
     }
 
+
+    private bool m_ExtensiveLogging = true;
+    [XmlAttribute]
+    public bool ExtensiveLogging
+    {
+      get
+      {
+        return m_ExtensiveLogging;
+      }
+      set
+      {
+        m_ExtensiveLogging=value;
+      }
+    }
+
     /// <summary>
     /// List of message rules
     /// </summary>
@@ -369,7 +390,22 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     private void LoadDrivers()
     {
+      Log.Write("ExternalDisplay: Loading drivers...");
       ArrayList list = new ArrayList();
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading DebugForm...");
+      list.Add(new DebugForm());
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading VLSYSLis2...");
+      list.Add(new VLSYSLis2()); // Added by Nopap
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading iMON...");
+      list.Add(new iMON());
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading ClipBoard...");
+      list.Add(new Clipboard());
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading Girder...");
+      list.Add(new Girder());
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading MediaPad...");
+      list.Add(new MediaPad());
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading 'None'...");
+      list.Add(new None());
       DirectoryInfo dinfo = new DirectoryInfo(@"plugins\process\LCDDrivers");
       if (!dinfo.Exists)
       {
@@ -377,16 +413,12 @@ namespace ProcessPlugins.ExternalDisplay
       }
       foreach (FileInfo fi in dinfo.GetFiles("*.dll"))
       {
+        if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading {0}...",fi.FullName);
         list.Add(new LCDHypeWrapper(fi.FullName));
       }
-      list.Add(new VLSYSLis2()); // Added by Nopap
-      list.Add(new iMON());
-      list.Add(new DebugForm());
-      list.Add(new Clipboard());
-      list.Add(new Girder());
-      list.Add(new MediaPad());
       m_Drivers = new IDisplay[list.Count];
       list.CopyTo(m_Drivers);
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Driver loading complete...");
     }
 
     /// <summary>

@@ -46,7 +46,11 @@ namespace ProcessPlugins.ExternalDisplay
 				}
         //Initialize display
         display = Settings.Instance.LCDType;
-        Debug.Assert(display != null);
+        if (display==null)
+        {
+          Log.Write("ExternalDisplay: Requested display type not found.  Plugin not started!!!");
+          return;
+        }
         display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLight, Settings.Instance.Contrast);
         handler = new DisplayHandler(display);
         handler.Start();
