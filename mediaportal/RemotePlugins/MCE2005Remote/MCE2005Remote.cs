@@ -378,6 +378,10 @@ namespace MediaPortal
 							{
 								action = new Action(Action.ActionType.ACTION_DVD_MENU,0,0);  
 							}
+							else 
+							{
+								action = new Action(Action.ActionType.ACTION_CONTEXT_MENU,0,0); 
+							}
 						}
 						else if (header.hid.RawData3==2)
 						{
