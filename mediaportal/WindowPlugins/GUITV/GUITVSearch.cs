@@ -744,6 +744,8 @@ namespace MediaPortal.GUI.TV
       GUIListItem item2=(GUIListItem)y;
       if (item1==null) return -1;
       if (item2==null) return -1;
+			if (item1.IsFolder && item1.Label=="..") return -1;
+			if (item2.IsFolder && item2.Label=="..") return 1;
 
       TVProgram prog1=item1.MusicTag as TVProgram;
       TVProgram prog2=item2.MusicTag as TVProgram;
