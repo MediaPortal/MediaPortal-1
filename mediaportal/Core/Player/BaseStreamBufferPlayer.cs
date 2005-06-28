@@ -408,6 +408,10 @@ namespace MediaPortal.Player
 			{
 				m_bIsVisible=false;
 			}
+			if (GUIGraphicsContext.BlankScreen)
+			{
+				m_bIsVisible=false;
+			}
 			if (m_bWindowVisible && !m_bIsVisible)
 			{
 				m_bWindowVisible=false;
@@ -926,6 +930,7 @@ namespace MediaPortal.Player
 				Log.Write("StreamBufferPlayer:SetARMode");
 				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
+				graphBuilder.SetDefaultSyncSource();
 				Log.Write("StreamBufferPlayer: set Deinterlace");
 
 				Log.Write("StreamBufferPlayer: done");

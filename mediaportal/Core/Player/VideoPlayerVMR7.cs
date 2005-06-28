@@ -293,7 +293,7 @@ namespace MediaPortal.Player
 				mediaPos.get_CurrentPosition(out m_dCurrentPos);
 			}
 
-      if (GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false)
+      if (GUIGraphicsContext.BlankScreen||(GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false))
       {
         if (m_bVisible)
         {

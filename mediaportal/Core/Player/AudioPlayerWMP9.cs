@@ -472,7 +472,7 @@ namespace MediaPortal.Player
     {
       if ( !Playing) return;
       if (m_player==null) return;
-      if (GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false)
+      if (GUIGraphicsContext.BlankScreen||(GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false))
       {
         if (m_player.Visible)
         {

@@ -101,7 +101,7 @@ namespace DShowNET
 				int hr;
 				IPin pinOut=null;
 				IBaseFilter NewFilter=null;
-				Log.WriteFile(Log.LogType.Capture,"add filter:{0} to graph", strFilterName);
+				Log.WriteFile(Log.LogType.Capture,"add filter:{0} to graph clock:{0}", strFilterName,setAsReferenceClock);
 				Filters filters = new Filters();
 	      
 				//check first if audio renderer exists!
