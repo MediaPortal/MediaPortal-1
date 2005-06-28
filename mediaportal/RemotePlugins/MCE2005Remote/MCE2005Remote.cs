@@ -341,7 +341,7 @@ namespace MediaPortal
 				Log.Write("hid.dwSizeHid:{0:X}",header.hid.dwSizeHid);
 				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 				*/
-				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+//				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 
 				switch(header.hid.RawData2)
 				{
@@ -360,7 +360,7 @@ namespace MediaPortal
 						}
 						else
 						{
-							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -385,12 +385,12 @@ namespace MediaPortal
 						}
 						else if (header.hid.RawData3==2)
 						{
-							Log.Write("key=27");
+//							Log.Write("key=27");
 							keyCode=Keys.Escape;
 						}
 						else
 						{
-							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -452,7 +452,7 @@ namespace MediaPortal
 						}
 						else
 						{
-							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -469,7 +469,7 @@ namespace MediaPortal
 						}
 						else
 						{
-							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -481,7 +481,7 @@ namespace MediaPortal
 						}
 						else
 						{
-							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -506,69 +506,69 @@ namespace MediaPortal
 						GUIGraphicsContext.SendMessage(msgHome2);
 						break;
           
-					case 0xB0: //play
-						action=new Action(Action.ActionType.ACTION_PLAY,0,0);
-						break;
+//					case 0xB0: //play
+//						action=new Action(Action.ActionType.ACTION_PLAY,0,0);
+//						break;
           
-					case 0xB1: //pause
-						action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
-						break;
+//					case 0xB1: //pause
+//						action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
+//						break;
           
-					case 0xB2: //record
-						action=new Action(Action.ActionType.ACTION_RECORD,0,0);
-						break;
+//					case 0xB2: //record
+//						action=new Action(Action.ActionType.ACTION_RECORD,0,0);
+//						break;
           
-					case 0xB4: //rewind
-						action=new Action(Action.ActionType.ACTION_REWIND,0,0);
-						break;
+//					case 0xB4: //rewind
+//						action=new Action(Action.ActionType.ACTION_REWIND,0,0);
+//						break;
           
-					case 0xB3: //fast forward
-						action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
-						break;
+//					case 0xB3: //fast forward
+//						action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
+//						break;
           
-					case 0xB5: //next
-						if ((g_Player.Playing) && (g_Player.IsDVD))
-							action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
-						else
-							action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
-						break;
+//					case 0xB5: //next
+//						if ((g_Player.Playing) && (g_Player.IsDVD))
+//							action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
+//						else
+//							action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
+//						break;
           
-					case 0xB6: //previous
-						if ((g_Player.Playing) && (g_Player.IsDVD))
-							action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
-						else
-							action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
-						break;
+//					case 0xB6: //previous
+//						if ((g_Player.Playing) && (g_Player.IsDVD))
+//							action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+//						else
+//							action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
+//						break;
           
-					case 0xb7: //stop
-						action=new Action(Action.ActionType.ACTION_STOP,0,0);
-						break;
+//					case 0xb7: //stop
+//						action=new Action(Action.ActionType.ACTION_STOP,0,0);
+//						break;
           
-					case 0xe9: //volume+
-						action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
-						break;
+//					case 0xe9: //volume+
+//						action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
+//						break;
           
-					case 0xea: //volume-
-						action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
-						break;
+//					case 0xea: //volume-
+//						action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
+//						break;
           
-					case 0x9c: //channel+
-						if (GUIGraphicsContext.IsFullScreenVideo)
-							action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
-						else
-							action=new Action(Action.ActionType.ACTION_PAGE_UP,0,0);
-						break;
+//					case 0x9c: //channel+
+//						if (GUIGraphicsContext.IsFullScreenVideo)
+//							action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
+//						else
+//							action=new Action(Action.ActionType.ACTION_PAGE_UP,0,0);
+//						break;
           
-					case 0x9d: //channel-
-						if (GUIGraphicsContext.IsFullScreenVideo)
-							action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
-						else
-							action=new Action(Action.ActionType.ACTION_PAGE_DOWN,0,0);
-						break;
+//					case 0x9d: //channel-
+//						if (GUIGraphicsContext.IsFullScreenVideo)
+//							action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
+//						else
+//							action=new Action(Action.ActionType.ACTION_PAGE_DOWN,0,0);
+//						break;
           
-					case 0xe2: //mute
-						action=new Action(Action.ActionType.ACTION_VOLUME_MUTE,0,0);
-						break;
+//					case 0xe2: //mute
+//						action=new Action(Action.ActionType.ACTION_VOLUME_MUTE,0,0);
+//						break;
 
 					case 0x5A: //teletext
 						if (g_Player.IsTV)
@@ -590,7 +590,7 @@ namespace MediaPortal
 
           
 					default:
-						Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+//						Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 						return false;
 				}
 				return true;
