@@ -75,6 +75,7 @@ namespace MediaPortal.GUI.TV
 		int                                 m_iTotalPrograms=0;
     int                                 m_iSingleChannel=0;
     bool                                m_bUseChannelLogos=false;
+		ArrayList                           notifies = new ArrayList();
 
 		DateTime  m_timeKeyPressed=DateTime.Now;
 		string    m_strInput=String.Empty;
@@ -156,7 +157,8 @@ namespace MediaPortal.GUI.TV
 			catch (Exception)
 			{
 			}
-      
+    
+			TVDatabase.OnNotifiesChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnNotifiesChanged);
 			return Load (GUIGraphicsContext.Skin+@"\mytvguide.xml");
 		}
 
@@ -506,6 +508,7 @@ namespace MediaPortal.GUI.TV
 				{
 					base.OnMessage(message);
           LoadSettings();
+					TVDatabase.GetNotifies(notifies);
 
 					GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
           GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
@@ -976,7 +979,7 @@ namespace MediaPortal.GUI.TV
 				else
 					GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
 			}
-		}
+		}//void SetProperties()
 
 		void RenderSingleChannel(TVChannel channel)
 		{
@@ -1184,9 +1187,11 @@ namespace MediaPortal.GUI.TV
 
 				img.SetPosition(img.XPosition, img.YPosition);
 
+				img.TexutureIcon=String.Empty;
+				if (HasNotify(program))
+					img.TexutureIcon=Thumbs.TvNotifyIcon;
 				if (bRecording)
 				{
-
 					if (bConflict)
 						img.TexutureIcon=Thumbs.TvConflictRecordingIcon;
 					else if (bSeries)
@@ -1194,12 +1199,8 @@ namespace MediaPortal.GUI.TV
 					else
 						img.TexutureIcon=Thumbs.TvRecordingIcon;
 				}
-				else
-				{
-					img.TexutureIcon=String.Empty;
-				}
 			}
-		}
+		}//void RenderSingleChannel(TVChannel channel)
 
 		void RenderChannel(int iChannel,TVChannel channel, long iStart, long iEnd, bool selectCurrentShow)
 		{
@@ -1364,6 +1365,9 @@ namespace MediaPortal.GUI.TV
 						img.RenderLeft=false;
 						img.RenderRight=false;
 
+						img.TexutureIcon=String.Empty;
+						if (HasNotify(program))
+							img.TexutureIcon=Thumbs.TvNotifyIcon;
 						if (bRecording)
 						{
 							if (bConflict)
@@ -1373,8 +1377,6 @@ namespace MediaPortal.GUI.TV
 							else
 								img.TexutureIcon=Thumbs.TvRecordingIcon;
 						}
-						else
-							img.TexutureIcon=String.Empty;
 
 						img.Data=program.Clone();
 						img.ColourDiffuse=GetColorForGenre(program.Genre);
@@ -1462,7 +1464,8 @@ namespace MediaPortal.GUI.TV
 					}
 				}
 			}
-		}
+		}//void RenderChannel(int iChannel,TVChannel channel, long iStart, long iEnd, bool selectCurrentShow)
+
 		int ProgramCount(int iChannel)
 		{
 			int iProgramCount=0;
@@ -2523,5 +2526,20 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 		}
-  }
+		private bool HasNotify(TVProgram program)
+		{
+			for (int i=0; i < notifies.Count;++i)
+			{
+				TVNotify notify=(TVNotify)notifies[i];
+				if (notify.Program.ID==program.ID) return true;
+			}
+			return false;
+		}
+
+		private void TVDatabase_OnNotifiesChanged()
+		{
+			notifies.Clear();
+			TVDatabase.GetNotifies(notifies);
+		}
+	}
 }

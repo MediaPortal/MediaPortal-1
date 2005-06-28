@@ -8,6 +8,7 @@ namespace MediaPortal.Util
 	public class Thumbs
 	{
 
+		static public readonly string TvNotifyIcon="tvguide_notify_button.png";
 		static public readonly string TvRecordingIcon="tvguide_record_button.png";
 		static public readonly string TvRecordingSeriesIcon="tvguide_recordserie_button.png";
 		static public readonly string TvConflictRecordingIcon="tvguide_recordconflict_button.png";
