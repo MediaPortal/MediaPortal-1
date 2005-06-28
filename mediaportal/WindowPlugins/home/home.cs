@@ -11,6 +11,7 @@ using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Topbar;
 using MediaPortal.GUI.GUIScript;
+using MediaPortal.TV.Database;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.DirectX;
@@ -187,6 +188,20 @@ namespace MediaPortal.GUI.Home
 		
 		private void OnGlobalMessage(GUIMessage message)
 		{
+
+			if (message.Message==GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
+			{
+				if (GUIGraphicsContext.IsFullScreenVideo) return;
+				GUIDialogNotify dialogNotify=(GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+				TVProgram notify=message.Object as TVProgram;
+				if (notify==null) return ;
+				dialogNotify.SetHeading(1016);
+				dialogNotify.SetText(String.Format("{0}\n{1}",notify.Title,notify.Description));
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,notify.Channel);
+				dialogNotify.SetImage( strLogo);
+				dialogNotify.TimeOut=10;
+				dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+			}
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_NOTIFY:

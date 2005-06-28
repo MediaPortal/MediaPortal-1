@@ -563,11 +563,11 @@ namespace MediaPortal.GUI.Video
 			if (message.Message==GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
 			{
 				dialogNotify=(GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-				TVNotify notify=message.Object as TVNotify;
+				TVProgram notify=message.Object as TVProgram;
 				if (notify==null) return true;
 				dialogNotify.SetHeading(1016);
-				dialogNotify.SetText(String.Format("{0}\n{1}",notify.Program.Title,notify.Program.Description));
-				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,notify.Program.Channel);
+				dialogNotify.SetText(String.Format("{0}\n{1}",notify.Title,notify.Description));
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,notify.Channel);
 				dialogNotify.SetImage( strLogo);
 				dialogNotify.TimeOut=10;
 				NotifyDialogVisible=true;
