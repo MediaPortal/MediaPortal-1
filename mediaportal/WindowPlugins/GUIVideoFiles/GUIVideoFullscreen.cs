@@ -8,6 +8,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Database;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -31,6 +32,7 @@ namespace MediaPortal.GUI.Video
 			public bool  ShowStatusLine=false;
 			public bool  ShowTime=false;
 			public bool  wasVMRBitmapVisible=false;
+			public bool  NotifyDialogVisible=false;
 		}
 
     enum Control 
@@ -79,6 +81,9 @@ namespace MediaPortal.GUI.Video
 		GUIDialogMenu		dlg;
 		GUIVideoOSD			m_osdWindow=null;
 		GUIVideoMSNOSD	m_msnWindow=null;
+		GUIDialogNotify dialogNotify=null;
+		bool				NotifyDialogVisible=false;
+
 		VMR9OSD				m_vmr9OSD=new VMR9OSD();
 
 		FullScreenState screenState=new FullScreenState();
@@ -555,6 +560,20 @@ namespace MediaPortal.GUI.Video
 		}
     public override bool OnMessage(GUIMessage message)
     {
+			if (message.Message==GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
+			{
+				dialogNotify=(GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+				TVNotify notify=message.Object as TVNotify;
+				if (notify==null) return true;
+				dialogNotify.SetHeading(1016);
+				dialogNotify.SetText(String.Format("{0}\n{1}",notify.Program.Title,notify.Program.Description));
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,notify.Program.Channel);
+				dialogNotify.SetImage( strLogo);
+				dialogNotify.TimeOut=10;
+				NotifyDialogVisible=true;
+				dialogNotify.DoModal(GetID);
+				NotifyDialogVisible=false;
+			}
       
       if (isOsdVisible)
       {
@@ -612,6 +631,7 @@ namespace MediaPortal.GUI.Video
           m_strTimeStamp="";
           m_iTimeCodePosition=0;
           m_dwTimeStatusShowTime=0;   
+					NotifyDialogVisible=false;
           
           m_UpdateTimer=DateTime.Now;
           LoadSettings(); 
@@ -812,6 +832,12 @@ namespace MediaPortal.GUI.Video
 		public bool ScreenStateChanged()
 		{
 			bool updateGUI=false;
+			if (NotifyDialogVisible != screenState.NotifyDialogVisible)
+			{
+				screenState.NotifyDialogVisible=NotifyDialogVisible;
+				updateGUI=true;
+			}
+
 			if (g_Player.Speed != screenState.Speed)
 			{
 				screenState.Speed=g_Player.Speed;

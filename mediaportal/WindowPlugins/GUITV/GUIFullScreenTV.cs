@@ -561,6 +561,7 @@ namespace MediaPortal.GUI.TV
 		{
 			if (message.Message==GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
 			{
+				dialogNotify=(GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
 				TVNotify notify=message.Object as TVNotify;
 				if (notify==null) return true;
 				dialogNotify.SetHeading(1016);
