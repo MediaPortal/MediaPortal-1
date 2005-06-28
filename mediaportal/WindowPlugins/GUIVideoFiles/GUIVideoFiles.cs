@@ -74,6 +74,7 @@ namespace MediaPortal.GUI.Video
 		static IMDB								  imdb ;
 		DirectoryHistory					m_history = new DirectoryHistory();
 		string										currentFolder = String.Empty;
+		string										m_strDirectoryStart= String.Empty;
 		int												currentSelectedItem = -1;
 		static VirtualDirectory		m_directory = new VirtualDirectory();
     MapSettings								mapSettings = new MapSettings();
@@ -229,7 +230,11 @@ namespace MediaPortal.GUI.Video
             if (strDefault == share.Name)
             {
               share.Default=true;
-              if (currentFolder.Length==0) currentFolder = share.Path;
+							if (currentFolder.Length==0) 
+							{
+								currentFolder = share.Path;
+								m_strDirectoryStart= share.Path;
+							}
             }
             m_directory.Add(share);
           }
@@ -245,6 +250,24 @@ namespace MediaPortal.GUI.Video
 		#region BaseWindow Members
 		public override void OnAction(Action action)
 		{
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (facadeView.Focus)
+				{
+					GUIListItem item = facadeView[0];
+					if (item != null)
+					{
+						if (item.IsFolder && item.Label == "..")
+						{
+							if (currentFolder!=m_strDirectoryStart)
+							{
+								LoadDirectory(item.Path);
+								return;
+							}
+						}
+					}
+				}
+			}
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];

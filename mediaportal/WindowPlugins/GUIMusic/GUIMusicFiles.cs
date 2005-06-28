@@ -67,6 +67,7 @@ namespace MediaPortal.GUI.Music
 		
     DirectoryHistory  m_history = new DirectoryHistory();
     string            m_strDirectory = String.Empty;
+		string            m_strDirectoryStart = String.Empty;
     int               m_iItemSelected = -1;
 		GUIListItem				m_itemItemSelected=null;
 		VirtualDirectory  m_directory = new VirtualDirectory();
@@ -230,7 +231,11 @@ namespace MediaPortal.GUI.Music
             if (strDefault == share.Name)
             {
               share.Default=true;
-              if (m_strDirectory.Length==0) m_strDirectory = share.Path;
+							if (m_strDirectory.Length==0) 
+							{
+								m_strDirectory = share.Path;
+								m_strDirectoryStart= share.Path;
+							}
             }
             m_directory.Add(share);
           }
@@ -266,6 +271,24 @@ namespace MediaPortal.GUI.Music
 
 		public override void OnAction(Action action)
     {
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (facadeView.Focus)
+				{
+					GUIListItem item = facadeView[0];
+					if (item != null)
+					{
+						if (item.IsFolder && item.Label == "..")
+						{
+							if (m_strDirectory!=m_strDirectoryStart)
+							{
+								LoadDirectory(item.Path);
+								return;
+							}
+						}
+					}
+				}
+			}
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];

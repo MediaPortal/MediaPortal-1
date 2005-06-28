@@ -108,6 +108,26 @@ namespace MediaPortal.GUI.Music
 
     public override void OnAction(Action action)
     {
+
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (facadeView.Focus)
+				{
+					GUIListItem item = facadeView[0];
+					if (item!=null && item.IsFolder)
+					{
+						if (item.Label=="..")
+						{
+							if (handler.CurrentLevel>0)
+							{
+								handler.CurrentLevel--;
+								LoadDirectory(item.Path);
+								return;
+							}
+						}
+					}
+				}
+			}
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];

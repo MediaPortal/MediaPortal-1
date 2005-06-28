@@ -97,6 +97,26 @@ namespace MediaPortal.GUI.Video
 
 		public override void OnAction(Action action)
 		{
+
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (facadeView.Focus)
+				{
+					GUIListItem item = facadeView[0];
+					if (item != null)
+					{
+						if (item.IsFolder && item.Label == "..")
+						{
+							if (handler.CurrentLevel>0)
+							{
+								handler.CurrentLevel--;
+								LoadDirectory(item.Path);
+								return;
+							}
+						}
+					}
+				}
+			}
 			if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
 			{
 				GUIListItem item = facadeView[0];

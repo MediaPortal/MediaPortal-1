@@ -90,6 +90,7 @@ namespace MediaPortal.GUI.Pictures
 		GUIListItem				selectedListItem=null;
     DirectoryHistory  folderHistory = new DirectoryHistory();
     string            currentFolder=String.Empty;
+		string            m_strDirectoryStart=String.Empty;
 		string						destinationFolder=String.Empty;
     VirtualDirectory  virtualDirectory = new VirtualDirectory();
     MapSettings       mapSettings = new MapSettings();
@@ -153,7 +154,11 @@ namespace MediaPortal.GUI.Pictures
 						if (strDefault == share.Name)
 						{
 							share.Default=true;
-							if (currentFolder.Length==0) currentFolder = share.Path;
+							if (currentFolder.Length==0) 
+							{
+								currentFolder = share.Path;
+								m_strDirectoryStart=share.Path;
+							}
 						}
 						virtualDirectory.Add(share);
 					}
@@ -181,6 +186,25 @@ namespace MediaPortal.GUI.Pictures
 
     public override void OnAction(Action action)
     {
+
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (facadeView.Focus)
+				{
+					GUIListItem item = facadeView[0];
+					if (item != null)
+					{
+						if (item.IsFolder && item.Label == "..")
+						{
+							if (currentFolder!=m_strDirectoryStart)
+							{
+								LoadDirectory(item.Path);
+								return;
+							}
+						}
+					}
+				}
+			}
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = GetItem(0);
