@@ -42,7 +42,8 @@ namespace MediaPortal.TV.Database
     public TVProgram Clone()
     {
       TVProgram prog = new TVProgram();
-      prog.m_strChannel=m_strChannel;
+      prog.ID=m_iID;
+			prog.m_strChannel=m_strChannel;
       prog.m_strGenre=m_strGenre;
       prog.m_strTitle=m_strTitle;
 	  prog.m_strEpisode=m_strEpisode;

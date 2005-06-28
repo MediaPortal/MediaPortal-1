@@ -2169,6 +2169,23 @@ namespace MediaPortal.GUI.TV
 						break;
 					}
 				}
+				TVNotify notification=null;
+				ArrayList notifies = new ArrayList();
+				TVDatabase.GetNotifies(notifies);
+				bool showNotify=true;
+				foreach (TVNotify notify in notifies)
+				{
+					if (notify.Program.ID==m_currentProgram.ID)
+					{
+						showNotify=false;
+						notification=notify;
+						break;
+					}
+				}
+				if (showNotify)
+					dlg.AddLocalizedString(1014);//Notify me when program begins
+				else
+					dlg.AddLocalizedString(1015);//Don't notify me when program begins
 				//610=None
 				//611=Record once
 				//612=Record everytime on this channel
@@ -2197,6 +2214,15 @@ namespace MediaPortal.GUI.TV
 				rec.End=m_iCurrentEndTime;
 				switch (dlg.SelectedId)
 				{
+					case 1015: // dont notify me
+						TVDatabase.DeleteNotify(notification);
+						return;
+					case 1014: // notify me
+						TVNotify notify = new TVNotify();
+						notify.Program=m_currentProgram;
+						TVDatabase.AddNotify(notify);
+						return;
+
 					case 938: // view this channel:
 						if (g_Player.Playing && g_Player.IsTVRecording)
 						{

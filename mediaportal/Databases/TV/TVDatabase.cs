@@ -37,6 +37,7 @@ namespace MediaPortal.TV.Database
 		public delegate void OnChangedHandler();
 		static public event OnChangedHandler OnProgramsChanged=null;
 		static public event OnChangedHandler OnRecordingsChanged=null;
+		static public event OnChangedHandler OnNotifiesChanged=null;
 
 		/// <summary>
 		/// private constructor to prevent any instance of this class
@@ -3198,6 +3199,8 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
+			if (OnNotifiesChanged!=null)
+				OnNotifiesChanged();
 		}
 		static public void AddNotify(TVNotify notify)
 		{
@@ -3216,6 +3219,8 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
+			if (OnNotifiesChanged!=null)
+				OnNotifiesChanged();
 		}
 
 		static public void GetNotifies(ArrayList notifies)
@@ -3264,6 +3269,8 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
+			if (OnNotifiesChanged!=null)
+				OnNotifiesChanged();
 		}
 
 	}//public class TVDatabase

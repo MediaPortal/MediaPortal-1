@@ -2971,6 +2971,14 @@
 	<value>Would you like to record the second part also?</value>
 </string>
 <string>
+	<id>1014</id>
+	<value>Notify me when program begins</value>
+</string>
+<string>
+	<id>1015</id>
+	<value>Don't notify me when program begins</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
