@@ -104,6 +104,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "InputDevices.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FireDTV\FireDTVRemote.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -130,6 +135,11 @@
                 />
                 <File
                     RelPath = "HCWRemote\RemoteHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HID\HIDListener.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
