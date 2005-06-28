@@ -6,6 +6,12 @@ using SQLite.NET;
 using DShowNET;
 namespace MediaPortal.TV.Database
 {
+	public class TVNotify
+	{
+		public int ID=-1;
+		public TVProgram Program=null;
+	}
+
 	public struct SpecialChannelsStruct
 	{
 		public string Name;

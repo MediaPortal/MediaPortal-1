@@ -121,6 +121,7 @@ namespace MediaPortal.TV.Database
 			m_db.Execute("delete from tblGroups");
 			m_db.Execute("delete from tblGroupMapping");
 			m_db.Execute("delete from tblChannelCard");
+			m_db.Execute("delete from tblNotifies");
 		}
 		/// <summary>
 		/// Checks if tables already exists in the database, if not creates the missing tables
@@ -160,6 +161,7 @@ namespace MediaPortal.TV.Database
 
 				//following table specifies which channels can be received by which card
 				DatabaseUtility.AddTable(m_db,"tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer)\n");
+				DatabaseUtility.AddTable(m_db,"tblNotifies"    ,"CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
 				return true;
 			}
 
@@ -3175,6 +3177,93 @@ namespace MediaPortal.TV.Database
 				if (ac3Pid>0) return true;
 			}
 			return false;
+		}
+
+
+		static public void DeleteNotify(TVNotify notify)
+		{
+			lock (typeof(TVDatabase))
+			{
+				if (null==m_db) return ;
+				try
+				{
+					string strSQL=String.Format("delete from tblNotifies where idNotify={0}",notify.ID);
+					m_db.Execute(strSQL);
+				  
+			  
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
+		static public void AddNotify(TVNotify notify)
+		{
+			lock (typeof(TVDatabase))
+			{
+				if (null==m_db) return ;
+				try
+				{
+					string strSQL=String.Format("insert into tblNotifies (idNotify,idProgram) Values (NULL,{0})",notify.Program.ID);
+					m_db.Execute(strSQL);
+					notify.ID=m_db.LastInsertID();
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
+
+		static public void GetNotifies(ArrayList notifies)
+		{
+			notifies.Clear();
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select * from channel,genre,tblPrograms,tblNotifies where channel.idChannel=tblPrograms.idChannel and tblPrograms.idGenre=genre.idGenre and tblPrograms.idProgram=tblNotifies.idProgram");
+
+					results=m_db.Execute(strSQL);
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						TVNotify notify= new TVNotify();
+						notify.Program = new TVProgram();
+						TVProgram prog=new TVProgram();
+						notify.Program.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
+						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
+						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+						notify.Program.Start=iStart;
+						notify.Program.End=iEnd;
+						notify.Program.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
+						notify.Program.Title=DatabaseUtility.Get(results,i,"tblPrograms.strTitle");
+						notify.Program.Description=DatabaseUtility.Get(results,i,"tblPrograms.strDescription");
+						notify.Program.Episode=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeName");
+						notify.Program.Repeat=DatabaseUtility.Get(results,i,"tblPrograms.strRepeat");
+						notify.Program.ID=Int32.Parse(DatabaseUtility.Get(results,i,"tblPrograms.idProgram"));
+						notify.Program.SeriesNum=DatabaseUtility.Get(results,i,"tblPrograms.strSeriesNum");
+						notify.Program.EpisodeNum=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeNum");
+						notify.Program.EpisodePart=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodePart");
+						notify.Program.Date=DatabaseUtility.Get(results,i,"tblPrograms.strDate");
+						notify.Program.StarRating=DatabaseUtility.Get(results,i,"tblPrograms.strStarRating");
+						notify.Program.Classification=DatabaseUtility.Get(results,i,"tblPrograms.strClassification");
+						notify.ID=DatabaseUtility.GetAsInt(results,i,"tblNotifies.idNotify");
+						notifies.Add(notify);
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
 		}
 
 	}//public class TVDatabase
