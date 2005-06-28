@@ -53,6 +53,7 @@ namespace MediaPortal.GUI.Radio
     VirtualDirectory	virtualDirectory = new VirtualDirectory();
     DirectoryHistory  directoryHistory = new DirectoryHistory();
     string            currentFolder=String.Empty;
+		string            startFolder=String.Empty;
 		string            currentRadioFolder=String.Empty;
     int               selectedItemIndex=-1;   
 		PlayList          currentPlayList=null;
@@ -148,7 +149,23 @@ namespace MediaPortal.GUI.Radio
 
     #region BaseWindow Members
     public override void OnAction(Action action)
-    {
+		{
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				if (listView.Focus || thumbnailView.Focus)
+				{
+					GUIListItem item = GetItem(0);
+					if (item!=null)
+					{
+						if (item.IsFolder && item.Label=="..")
+						{
+							LoadDirectory(item.Path);
+							return;
+						}
+					}
+				}
+			}
+
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = GetItem(0);
