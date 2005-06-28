@@ -404,7 +404,7 @@ namespace ProcessPlugins.ExternalDisplay
       list.Add(new Girder());
       if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading MediaPad...");
       list.Add(new MediaPad());
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading 'None'...");
+      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading PropertySetter...");
       list.Add(new None());
       DirectoryInfo dinfo = new DirectoryInfo(@"plugins\process\LCDDrivers");
       if (!dinfo.Exists)
