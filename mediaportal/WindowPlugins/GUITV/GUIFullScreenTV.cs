@@ -69,7 +69,7 @@ namespace MediaPortal.GUI.TV
 		bool				m_bDialogVisible=false;
 		bool				m_bMSNChatPopup=false;
 		GUIDialogMenu dlg;
-		//GUIDialogNotify dialogNotify=null;
+		GUIDialogNotify dialogNotify=null;
 		GUIDialogMenuBottomRight dialogBottomMenu=null;
 		// Message box
 		bool				NotifyDialogVisible=false;
@@ -559,6 +559,20 @@ namespace MediaPortal.GUI.TV
 
 		public override bool OnMessage(GUIMessage message)
 		{
+			if (message.Message==GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
+			{
+				TVNotify notify=message.Object as TVNotify;
+				if (notify==null) return true;
+				dialogNotify.SetHeading(1016);
+				dialogNotify.SetText(String.Format("{0}\n{1}",notify.Program.Title,notify.Program.Description));
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,notify.Program.Channel);
+				dialogNotify.SetImage( strLogo);
+				dialogNotify.TimeOut=10;
+				NotifyDialogVisible=true;
+				dialogNotify.DoModal(GetID);
+				NotifyDialogVisible=false;
+			}
+
 			if (message.Message==GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING)
 			{
 				TVRecording rec = message.Object as TVRecording;

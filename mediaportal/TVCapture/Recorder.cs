@@ -34,6 +34,7 @@ namespace MediaPortal.TV.Recording
 		}
 		
 		static bool          m_bRecordingsChanged=false;  // flag indicating that recordings have been added/changed/removed
+		static bool          m_bNotifiesChanged=false;  // flag indicating that notifies have been added/changed/removed
 		static int           m_iPreRecordInterval =0;
 		static int           m_iPostRecordInterval=0;
 		
@@ -43,6 +44,7 @@ namespace MediaPortal.TV.Recording
 		static ArrayList     m_tvcards    = new ArrayList();
 		static ArrayList     m_TVChannels = new ArrayList();
 		static ArrayList     m_Recordings = new ArrayList();
+		static ArrayList     m_Notifies   = new ArrayList();
 		
 		static DateTime      m_dtStart=DateTime.Now;
 		static DateTime      m_dtProgresBar=DateTime.Now;
@@ -147,10 +149,12 @@ namespace MediaPortal.TV.Recording
 			TVDatabase.GetChannels(ref m_TVChannels);
 
 			m_Recordings.Clear();
+			m_Notifies.Clear();
 			TVDatabase.GetRecordings(ref m_Recordings);
-
+			TVDatabase.GetNotifies(m_Notifies);
 
 			TVDatabase.OnRecordingsChanged += new TVDatabase.OnChangedHandler(Recorder.OnRecordingsChanged);
+			TVDatabase.OnNotifiesChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(Recorder.OnNotifiesChanged);
       
 			GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
 			m_eState=State.Initialized;
@@ -1586,6 +1590,7 @@ namespace MediaPortal.TV.Recording
 			if (ts.TotalMilliseconds<30000) return;
 			Recorder.HandleRecordings();
 			DiskManagement.CheckRecordingDiskSpace();
+			Recorder.HandleNotifies();
 			m_dtStart=DateTime.Now;
 		}//static public void Process()
     
@@ -1797,6 +1802,31 @@ namespace MediaPortal.TV.Recording
 				OnTvRecordingStarted(recordingFileName,recording, program);
 			if (OnTvRecordingChanged!=null)
 				OnTvRecordingChanged();
+		}
+		private static void OnNotifiesChanged()
+		{
+			m_bNotifiesChanged=true;
+		}
+		static void HandleNotifies()
+		{
+			if (m_bNotifiesChanged)
+			{
+				m_Notifies.Clear();
+				TVDatabase.GetNotifies(m_Notifies);
+				m_bNotifiesChanged=false;
+			}
+			DateTime dt5Mins=DateTime.Now.AddMinutes(5);
+			for (int i=0; i < m_Notifies.Count;++i)
+			{
+				TVNotify notify = (TVNotify)m_Notifies[i];
+				if ( dt5Mins> notify.Program.StartTime)
+				{
+					TVDatabase.DeleteNotify(notify);
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM,0,0,0,0,0,null);
+					msg.Object=notify.Program;
+					GUIGraphicsContext.SendMessage( msg );
+				}
+			}
 		}
 	}//public class Recorder
 }//namespace MediaPortal.TV.Recording

@@ -3269,8 +3269,6 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
-			if (OnNotifiesChanged!=null)
-				OnNotifiesChanged();
 		}
 
 	}//public class TVDatabase

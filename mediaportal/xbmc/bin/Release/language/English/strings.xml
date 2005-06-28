@@ -2979,6 +2979,10 @@
 	<value>Don't notify me when program begins</value>
 </string>
 <string>
+	<id>1016</id>
+	<value>The following program will start in 5 minutes</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>
