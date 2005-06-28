@@ -386,7 +386,7 @@ namespace MediaPortal
 						else if (header.hid.RawData3==2)
 						{
 //							Log.Write("key=27");
-							keyCode=Keys.Escape;
+//							keyCode=Keys.Escape;
 						}
 						else
 						{
