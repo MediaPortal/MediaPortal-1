@@ -1960,12 +1960,12 @@ namespace MediaPortal.GUI.TV
 		// Define the event handlers.
 		private static void OnChanged(object source, FileSystemEventArgs e)
 		{
-			if (e.Name=="tvguide.xml")
+			if (String.Compare(e.Name,"tvguide.xml",true)==0)
 				StartImportXML();
 		}
 		private static void OnRenamed(object source, RenamedEventArgs e)
 		{
-			if (e.Name=="tvguide.xml")
+			if (String.Compare(e.Name,"tvguide.xml",true)==0)
 				StartImportXML();
 		}
 		static void StartImportXML()
@@ -1978,7 +1978,7 @@ namespace MediaPortal.GUI.TV
 
 		static void ThreadFunctionImportTVGuide()
 		{
-			Log.Write(@"detected new xmltv\tvguide->import new tvguide");
+			Log.Write(@"detected new tvguide ->import new tvguide");
 			try
 			{
 				XMLTVImport import= new XMLTVImport();
