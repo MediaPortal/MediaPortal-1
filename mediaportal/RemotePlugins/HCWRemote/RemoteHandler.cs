@@ -18,7 +18,7 @@ namespace MediaPortal
   public class HCWHandler
   {
     ArrayList remote;
-    int currentLayer = 0;
+    int currentLayer = 1;
 
     /// <summary>
     /// Get current Layer (Multi-Layer support)
@@ -85,7 +85,14 @@ namespace MediaPortal
     /// <param name="xmlFile">path for XML mapping file</param>
     public HCWHandler(string xmlFile, out bool result)
     {
-      if (!File.Exists(xmlFile))
+      string path;
+
+      if (File.Exists("InputDeviceMappings\\custom\\" + xmlFile))
+        path = "InputDeviceMappings\\custom\\";
+      else
+        path = "InputDeviceMappings\\defaults\\";
+
+      if (!File.Exists(path + xmlFile))
       {
         Log.Write("MAP: XML file \"{0}\" cannot be found", xmlFile);
         result = false;
@@ -95,7 +102,7 @@ namespace MediaPortal
       {
         remote = new ArrayList();
         XmlDocument doc = new XmlDocument();
-        doc.Load(xmlFile);
+        doc.Load(path + xmlFile);
         XmlNodeList listButtons=doc.DocumentElement.SelectNodes("/mappings/remote/button");
         foreach (XmlNode nodeButton in listButtons)
         {
@@ -154,11 +161,11 @@ namespace MediaPortal
         case "WINDOW":  // activate Window x
           GUIWindowManager.ActivateWindow(Convert.ToInt32(map.CmdProperty));
           break;
-        case "TOGGLE":  // toggle Layer 0/1
-          if (currentLayer == 0)
-            currentLayer = 1;
+        case "TOGGLE":  // toggle Layer 1/2
+          if (currentLayer == 1)
+            currentLayer = 2;
           else
-            currentLayer = 0;
+            currentLayer = 1;
           break;
         case "POWER": // power down commands
         {
@@ -218,7 +225,7 @@ namespace MediaPortal
           break;
         }
       foreach (Mapping map in button.Mapping)
-        if ((map.Layer == -1) || (map.Layer == currentLayer))
+        if ((map.Layer == 0) || (map.Layer == currentLayer))
         {
           switch (map.Condition)
           {
