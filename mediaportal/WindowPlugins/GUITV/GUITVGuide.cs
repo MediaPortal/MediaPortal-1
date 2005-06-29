@@ -23,6 +23,8 @@ namespace MediaPortal.GUI.TV
 	public class GUITVGuide : GUIWindow
 	{
 		const int MaxDaysInGuide=30;
+		const int RowID=1000;
+		const int ColID=10;
 		enum Controls
 		{
 			PANEL_BACKGROUND=2,
@@ -271,11 +273,11 @@ namespace MediaPortal.GUI.TV
 									if (iControlId>=100)
 									{
 										iControlId-=100;
-										int iCursorY=(iControlId/100);
-										iControlId-=iCursorY*100;
-										if (iControlId%10==0)
+										int iCursorY=(iControlId/RowID);
+										iControlId-=iCursorY*RowID;
+										if (iControlId%ColID==0)
 										{
-											int iCursorX=(iControlId/10)+1;
+											int iCursorX=(iControlId/ColID)+1;
 											if (iCursorY!=m_iCursorY || iCursorX!=m_iCursorX)
 											{
 												UnFocus();
@@ -507,6 +509,7 @@ namespace MediaPortal.GUI.TV
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
+					
           LoadSettings();
 					TVDatabase.GetNotifies(notifies);
 
@@ -1055,7 +1058,7 @@ namespace MediaPortal.GUI.TV
 				}
 
 				int ypos=GetControl(ichan+(int)Controls.IMG_CHAN1).YPosition;
-				int iControlId=100+ichan*100+0*10;
+				int iControlId=100+ichan*RowID+0*ColID;
 				GUIButton3PartControl img =(GUIButton3PartControl)GetControl(iControlId);
 
 				if (img==null)
@@ -1329,7 +1332,7 @@ namespace MediaPortal.GUI.TV
 					if (iStartXPos>=0)
 					{
 						int ypos=GetControl(iChannel+(int)Controls.IMG_CHAN1).YPosition;
-						int iControlId=100+iChannel*100+iProgram*10;
+						int iControlId=100+iChannel*RowID+iProgram*ColID;
 						GUIButton3PartControl img =(GUIButton3PartControl)GetControl(iControlId);
 						int iWidth=iEndXPos-iStartXPos;
 						if (iWidth > 3) iWidth-=3;
@@ -1365,6 +1368,8 @@ namespace MediaPortal.GUI.TV
 						img.RenderLeft=false;
 						img.RenderRight=false;
 
+						Trace.WriteLine(String.Format("{0} {1} {2}-{3} {4}",
+																img.GetID,program.Channel,program.Start,program.End,program.Title));
 						img.TexutureIcon=String.Empty;
 						if (HasNotify(program))
 							img.TexutureIcon=Thumbs.TvNotifyIcon;
@@ -1471,7 +1476,7 @@ namespace MediaPortal.GUI.TV
 			int iProgramCount=0;
 			for (int iProgram=0; iProgram <m_iBlocks*5; ++iProgram)
 			{
-				int iControlId=100+iChannel*100+iProgram*10;
+				int iControlId=100+iChannel*RowID+iProgram*ColID;
 				GUIControl cntl= GetControl(iControlId);
 				if ( cntl!=null && cntl.IsVisible) iProgramCount++;
 				else return iProgramCount;
@@ -1546,7 +1551,7 @@ namespace MediaPortal.GUI.TV
 			int iCurOff=m_iChannelOffset;
 			int iX1,iX2;
 			//      int iNewWidth=0;
-			int iControlId=100+m_iCursorY*100+(m_iCursorX-1)*10;
+			int iControlId=100+m_iCursorY*RowID+(m_iCursorX-1)*ColID;
 			GUIControl control=GetControl(iControlId);
 			if (control==null) return;
 			iX1=control.XPosition;
@@ -1568,9 +1573,9 @@ namespace MediaPortal.GUI.TV
 					Update(false);
 				}
 
-				for (int x=1; x < 10; x++)
+				for (int x=1; x < ColID; x++)
 				{
-					iControlId=100+m_iCursorY*100+(x-1)*10;
+					iControlId=100+m_iCursorY*RowID+(x-1)*ColID;
 					control=GetControl(iControlId);
 					if (control !=null) 
 					{
@@ -1674,7 +1679,7 @@ namespace MediaPortal.GUI.TV
 			int iCurOff=m_iChannelOffset;
       
 			int iX1,iX2;
-			int iControlId=100+m_iCursorY*100+(m_iCursorX-1)*10;
+			int iControlId=100+m_iCursorY*RowID+(m_iCursorX-1)*ColID;
 			GUIControl control=GetControl(iControlId);
 			if (control==null) return;
 			iX1=control.XPosition;
@@ -1699,9 +1704,9 @@ namespace MediaPortal.GUI.TV
 					m_iCursorY--;
 				}
 
-				for (int x=1; x < 10; x++)
+				for (int x=1; x < ColID; x++)
 				{
-					iControlId=100+m_iCursorY*100+(x-1)*10;
+					iControlId=100+m_iCursorY*RowID+(x-1)*ColID;
 					control=GetControl(iControlId);
 					if (control !=null) 
 					{
@@ -1792,7 +1797,7 @@ namespace MediaPortal.GUI.TV
 				SetFocus();
 				return;
 			}
-			int iControlId=100+m_iCursorY*100+(m_iCursorX-1)*10;
+			int iControlId=100+m_iCursorY*RowID+(m_iCursorX-1)*ColID;
 			GUIButton3PartControl img=(GUIButton3PartControl)GetControl(iControlId);
 			if (null!=img)
 			{
@@ -1840,7 +1845,7 @@ namespace MediaPortal.GUI.TV
 			else
 			{
 				Correct();
-				int iControlId=100+m_iCursorY*100+(m_iCursorX-1)*10;
+				int iControlId=100+m_iCursorY*RowID+(m_iCursorX-1)*ColID;
 				GUIButton3PartControl img=GetControl(iControlId) as GUIButton3PartControl;
 				if (null!=img && img.IsVisible)
 				{
@@ -1860,11 +1865,13 @@ namespace MediaPortal.GUI.TV
 			else
 			{
 				Correct();
-				int iControlId=100+m_iCursorY*100+(m_iCursorX-1)*10;
+				int iControlId=100+m_iCursorY*RowID+(m_iCursorX-1)*ColID;
 				GUIButton3PartControl img=GetControl(iControlId) as GUIButton3PartControl;
 				if (null!=img && img.IsVisible)
 				{
 					img.ColourDiffuse=0xffffffff;
+					m_currentProgram=img.Data as TVProgram;
+					SetProperties();
 				}
 				GUIControl.FocusControl(GetID,iControlId);
 			}
@@ -1879,7 +1886,7 @@ namespace MediaPortal.GUI.TV
 			{
 				while (m_iCursorX>0)
 				{
-					iControlId=100+m_iCursorY*100+(m_iCursorX-1)*10;
+					iControlId=100+m_iCursorY*RowID+(m_iCursorX-1)*ColID;
 					GUIControl cntl=GetControl(iControlId);
 					if (cntl==null) m_iCursorX--;
 					else if (!cntl.IsVisible) m_iCursorX--;
@@ -1892,7 +1899,7 @@ namespace MediaPortal.GUI.TV
 			{
 				while (m_iCursorY>0)
 				{
-					iControlId=100+m_iCursorY*100+(0)*10;
+					iControlId=100+m_iCursorY*RowID+(0)*ColID;
 					GUIControl cntl=GetControl(iControlId);
 					if (cntl==null) m_iCursorY--;
 					else if (!cntl.IsVisible) m_iCursorY--;
