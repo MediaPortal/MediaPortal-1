@@ -21,8 +21,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.RadioButton radioButtonUSA;
     private System.Windows.Forms.RadioButton radioButtonEurope;
     private System.Windows.Forms.GroupBox groupBoxSettings;
-    private System.Windows.Forms.Label labelPowerButton;
-    private System.Windows.Forms.ComboBox comboBoxPowerButton;
     private System.Windows.Forms.Label labelDelay;
     public System.Windows.Forms.TrackBar trackBarDelay;
     private System.Windows.Forms.CheckBox checkBoxAllowExternal;
@@ -219,11 +217,10 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonEurope = new System.Windows.Forms.RadioButton();
       this.radioButtonUSA = new System.Windows.Forms.RadioButton();
       this.tabPageHCW = new System.Windows.Forms.TabPage();
+      this.btnMapping = new System.Windows.Forms.Button();
       this.groupBoxInformation = new System.Windows.Forms.GroupBox();
       this.infoDriverStatus = new System.Windows.Forms.Label();
       this.groupBoxSettings = new System.Windows.Forms.GroupBox();
-      this.labelPowerButton = new System.Windows.Forms.Label();
-      this.comboBoxPowerButton = new System.Windows.Forms.ComboBox();
       this.label2sec = new System.Windows.Forms.Label();
       this.label0sec = new System.Windows.Forms.Label();
       this.labelDelay = new System.Windows.Forms.Label();
@@ -233,7 +230,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVerboseLog = new System.Windows.Forms.CheckBox();
       this.buttonDefault = new System.Windows.Forms.Button();
       this.checkBoxHCW = new System.Windows.Forms.CheckBox();
-      this.btnMapping = new System.Windows.Forms.Button();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMCE.SuspendLayout();
       this.tabPageHCW.SuspendLayout();
@@ -328,6 +324,15 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageHCW.TabIndex = 1;
       this.tabPageHCW.Text = "Hauppauge Remote";
       // 
+      // btnMapping
+      // 
+      this.btnMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnMapping.Location = new System.Drawing.Point(360, 24);
+      this.btnMapping.Name = "btnMapping";
+      this.btnMapping.TabIndex = 13;
+      this.btnMapping.Text = "Mapping";
+      this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
+      // 
       // groupBoxInformation
       // 
       this.groupBoxInformation.Controls.Add(this.infoDriverStatus);
@@ -351,8 +356,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSettings
       // 
-      this.groupBoxSettings.Controls.Add(this.labelPowerButton);
-      this.groupBoxSettings.Controls.Add(this.comboBoxPowerButton);
       this.groupBoxSettings.Controls.Add(this.label2sec);
       this.groupBoxSettings.Controls.Add(this.label0sec);
       this.groupBoxSettings.Controls.Add(this.labelDelay);
@@ -368,30 +371,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.TabIndex = 7;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
-      // 
-      // labelPowerButton
-      // 
-      this.labelPowerButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.labelPowerButton.Location = new System.Drawing.Point(12, 108);
-      this.labelPowerButton.Name = "labelPowerButton";
-      this.labelPowerButton.Size = new System.Drawing.Size(108, 23);
-      this.labelPowerButton.TabIndex = 14;
-      this.labelPowerButton.Text = "Power button action:";
-      // 
-      // comboBoxPowerButton
-      // 
-      this.comboBoxPowerButton.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxPowerButton.Enabled = false;
-      this.comboBoxPowerButton.Items.AddRange(new object[] {
-                                                             "do nothing",
-                                                             "Exit Media Portal",
-                                                             "Shutdown Windows",
-                                                             "Standby",
-                                                             "Hibernate"});
-      this.comboBoxPowerButton.Location = new System.Drawing.Point(120, 104);
-      this.comboBoxPowerButton.Name = "comboBoxPowerButton";
-      this.comboBoxPowerButton.Size = new System.Drawing.Size(136, 21);
-      this.comboBoxPowerButton.TabIndex = 4;
       // 
       // label2sec
       // 
@@ -484,15 +463,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHCW.TabIndex = 10;
       this.checkBoxHCW.Text = "Use Hauppauge remote";
       this.checkBoxHCW.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
-      // 
-      // btnMapping
-      // 
-      this.btnMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnMapping.Location = new System.Drawing.Point(360, 24);
-      this.btnMapping.Name = "btnMapping";
-      this.btnMapping.TabIndex = 13;
-      this.btnMapping.Text = "Mapping";
-      this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
       // 
       // Remote
       // 
