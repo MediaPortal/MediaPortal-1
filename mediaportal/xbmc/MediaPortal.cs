@@ -1505,6 +1505,7 @@ public class MediaPortalApp : D3DApp, IRender
     if (key.KeyChar == '!') 
     {
       m_bShowStats = !m_bShowStats;
+
     }
 
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))

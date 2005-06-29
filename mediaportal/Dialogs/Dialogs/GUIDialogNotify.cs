@@ -215,10 +215,18 @@ namespace MediaPortal.Dialogs
 		}
 		public void SetImage(string filename)
 		{
+      
 			imgLogo.FreeResources();
 			imgLogo.SetFileName(filename);
 			imgLogo.AllocResources();
 		}
+    public void SetImageDimensions(Size size, bool keepAspectRatio,bool centered)
+    {
+      imgLogo.Width = size.Width;
+      imgLogo.Height = size.Height;
+      imgLogo.KeepAspectRatio = keepAspectRatio;
+      imgLogo.Centered = centered;
+    }
 		public override void Render(float timePassed)
 		{
 			RenderDlg(timePassed);

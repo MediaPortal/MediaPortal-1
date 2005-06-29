@@ -1,4 +1,4 @@
-<window>
+﻿<window>
   <id>2016</id> 
   <defaultcontrol>4</defaultcontrol> 
   <allowoverlay>no</allowoverlay>
@@ -59,7 +59,7 @@
 				<description>textarea</description> 
 				<type>textbox</type> 
 				<id>6</id> 
-				<posX>410</posX> 
+				<posX>425</posX> 
 				<posY>445</posY> 
 				<width>220</width>
 				<height>90</height>
