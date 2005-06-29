@@ -7,6 +7,7 @@ using System.Collections;
 using System.Management;
 using System.Diagnostics;
 using System.Text;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml;
 using System.ServiceProcess;
@@ -1635,6 +1636,32 @@ namespace MediaPortal.Util
 			{
 			}
 			return DateTime.Now;
+		}
+
+		public static void ExportEmbeddedResource(string resourceName, string path)
+		{
+			ExportEmbeddedResource(Assembly.GetExecutingAssembly(), resourceName, path);
+		}
+
+		public static void ExportEmbeddedResource(Assembly resourceAssembly, string resourceName, string path)
+		{
+			try
+			{
+				using(Stream resourceStream = resourceAssembly.GetManifestResourceStream(resourceName))
+				{
+					byte[] buffer = new byte[resourceStream.Length];
+					
+					if(resourceStream.Read(buffer, 0, buffer.Length) == buffer.Length)
+					{
+						using(Stream destinationStream = File.Create(path))
+							destinationStream.Write(buffer, 0, buffer.Length);
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				Log.Write("Util.ExportEmbeddedResource: {0}", e.Message);
+			}
 		}
 	}
 
