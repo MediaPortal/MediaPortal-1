@@ -2504,9 +2504,12 @@ namespace MediaPortal.Music.Database
 			  foreach (string Share in m_shares)
 			  {
 				  ///Here we can check if the Path has an existing share
-				  string Path_part =Path.Substring(0,Share.Length);
-				  if (Share.ToUpper() == Path_part.ToUpper() )
-					  Path_has_Share = true;
+					if (Share.Length<=Path.Length)
+					{
+						string Path_part =Path.Substring(0,Share.Length);
+						if (Share.ToUpper() == Path_part.ToUpper() )
+							Path_has_Share = true;
+					}
 			  }
 			  if (!Path_has_Share)
 			  {
