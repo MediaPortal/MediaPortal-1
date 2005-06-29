@@ -462,6 +462,7 @@ namespace MediaPortal.Configuration
 			}
       Log.Write("Load settings done");
 			GUIGraphicsContext.form=this;
+
     }
 
 		/// <summary>
