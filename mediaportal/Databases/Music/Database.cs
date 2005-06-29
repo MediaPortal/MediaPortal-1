@@ -2200,7 +2200,7 @@ namespace MediaPortal.Music.Database
               string folderThumb=Utils.GetFolderThumb(strPathSong);
               if (!System.IO.File.Exists(folderThumb))
               {
-                MediaPortal.Util.Picture.CreateThumbnail(image, folderThumb, 128, 128, 0);
+               System.IO.File.Copy(strSmallThumb,folderThumb,true);
               }
             }
           }

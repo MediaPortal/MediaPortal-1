@@ -318,10 +318,19 @@
 					<spaceBetweenItems>14</spaceBetweenItems>
 					<textureHeight>90</textureHeight>
 					<onleft>2</onleft>
-					<onright>52</onright>
+					<onright>53</onright>
 					<onup>2</onup>
 					<ondown>2</ondown>
 				</control>
+			    <control>
+				    <description>Filmstrip view</description>
+				    <type>filmstrip</type>
+				    <id>53</id>
+				    <onleft>2</onleft>
+				    <onright>2</onright>
+				    <onup>2</onup>
+				    <ondown>2</ondown>
+			    </control>
 			</control>
 		</control>
 	</controls>

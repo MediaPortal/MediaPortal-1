@@ -383,7 +383,7 @@ namespace MediaPortal.Configuration.Sections
 
       if(dialogResult == DialogResult.Yes)
       {
-        string database = @"database\musicdatabase2.db";
+        string database = @"database\musicdatabase4.db";
         if(File.Exists(database))
         {
           File.Delete(database);
