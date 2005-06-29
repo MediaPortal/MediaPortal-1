@@ -76,8 +76,10 @@ namespace MediaPortal
 			switch((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000))
 			{
 				case AppCommands.BrowserBackward:
-					action = new Action(Action.ActionType.ACTION_PREVIOUS_MENU, 0, 0);
+					keyCode = Keys.Escape;
 					break;
+//					action = new Action(Action.ActionType.ACTION_PREVIOUS_MENU, 0, 0);
+//					break;
 
 				case AppCommands.MediaChannelUp:
 					if (GUIGraphicsContext.IsFullScreenVideo)
