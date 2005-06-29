@@ -112,6 +112,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.DirectShowHelperLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Interop.DirectShowHelperLib.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TunerLib">
       <Name>Interop.TunerLib</Name>
       <HintPath>..\Interop.TunerLib.dll</HintPath>
@@ -172,13 +176,6 @@
       <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <COMReference Include="DirectShowHelperLib">
-      <Guid>{935FCAC9-6668-49FB-9706-43B51861F491}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalogTVTuningForm.cs">

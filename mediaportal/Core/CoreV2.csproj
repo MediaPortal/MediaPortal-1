@@ -244,9 +244,6 @@
     <Compile Include="DShowNET\BDATypes.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\CaPmt.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DShowNET\DirectShowUtil.cs">
       <SubType>Code</SubType>
     </Compile>
