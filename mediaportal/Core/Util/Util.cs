@@ -1640,7 +1640,7 @@ namespace MediaPortal.Util
 
 		public static void ExportEmbeddedResource(string resourceName, string path)
 		{
-			ExportEmbeddedResource(Assembly.GetExecutingAssembly(), resourceName, path);
+			ExportEmbeddedResource(Assembly.GetCallingAssembly(), resourceName, path);
 		}
 
 		public static void ExportEmbeddedResource(Assembly resourceAssembly, string resourceName, string path)
