@@ -2171,7 +2171,8 @@ namespace MediaPortal.Music.Database
       bool UpdateSong(string  strPathSong, int idSong, ref int idAlbum, ref int idArtist, ref int idGenre, ref int idPath)
 	  {
 		  MusicTag tag;
-		  tag=TagReader.TagReader.ReadTag(strPathSong);									
+      byte[] imageBytes = null;
+      tag = TagReader.TagReader.ReadTag(strPathSong, ref imageBytes);									
 		  if (tag!=null)
 		  {
 			  //Log.Write ("Musicdatabasereorg: We are gonna update the tags for {0}", strPathSong);
@@ -2185,6 +2186,25 @@ namespace MediaPortal.Music.Database
 			  song.Track		= tag.Track;
 			  song.Duration	= tag.Duration;
 
+        //extract embedded coverart from file
+        if (imageBytes != null)
+        {
+          using (MemoryStream memoryStream = new MemoryStream(imageBytes))
+          {
+            using (System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream))
+            {
+              string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tag.Album);
+              string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tag.Album);
+              MediaPortal.Util.Picture.CreateThumbnail(image, strSmallThumb, 128, 128, 0);
+              MediaPortal.Util.Picture.CreateThumbnail(image, strLargeThumb, 512, 512, 0);
+              string folderThumb=Utils.GetFolderThumb(strPathSong);
+              if (!System.IO.File.Exists(folderThumb))
+              {
+                MediaPortal.Util.Picture.CreateThumbnail(image, folderThumb, 128, 128, 0);
+              }
+            }
+          }
+        }
 			  string strPath, strFileName;
 			  DatabaseUtility.Split(song.FileName, out strPath, out strFileName); 
 

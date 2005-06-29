@@ -44,6 +44,7 @@ namespace MediaPortal.Profile
 			if (document==null) return null;
 
 			XmlElement root = document.DocumentElement;
+      if (root == null) return null;
   		XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
 			if (entryNode==null) return null;
 			return entryNode.InnerText;
