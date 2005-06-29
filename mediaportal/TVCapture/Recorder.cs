@@ -242,6 +242,8 @@ namespace MediaPortal.TV.Recording
 			}//if (m_bRecordingsChanged)
 
 
+			if (m_Recordings.Count==0) return;
+
 			int card;
 			for (int i=0; i < m_TVChannels.Count;++i)
 			{

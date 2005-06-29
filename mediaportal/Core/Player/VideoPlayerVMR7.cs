@@ -70,6 +70,7 @@ namespace MediaPortal.Player
     protected const int WS_CLIPCHILDREN	= 0x02000000;
     protected const int WS_CLIPSIBLINGS	= 0x04000000;
     protected bool        m_bVisible=false;
+		protected DateTime    updateTimer;
 		VMR7Util  vmr7 = null;
 
     public VideoPlayerVMR7()
@@ -79,6 +80,7 @@ namespace MediaPortal.Player
 
     public override bool Play(string strFile)
     {
+			updateTimer=DateTime.Now;
 			m_speedRate = 10000;
       m_bVisible=false;
       m_iVolume=100;
@@ -287,30 +289,38 @@ namespace MediaPortal.Player
     {
       if ( !Playing) return;
       if ( !m_bStarted) return;
-			if (mediaPos!=null)
+			TimeSpan ts=DateTime.Now-updateTimer;
+			if (ts.TotalMilliseconds>=800 || m_speedRate!=1) 
 			{
-				//mediaPos.get_Duration(out m_dDuration);
-				mediaPos.get_CurrentPosition(out m_dCurrentPos);
+				if (mediaPos!=null)
+				{
+					//mediaPos.get_Duration(out m_dDuration);
+					mediaPos.get_CurrentPosition(out m_dCurrentPos);
+				}
+
+				if (GUIGraphicsContext.BlankScreen||(GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false))
+				{
+					if (m_bVisible)
+					{
+						m_bVisible=false;
+						if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
+					}
+				}
+				else if (!m_bVisible)
+				{
+					m_bVisible=true;
+					if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
+				}      
+				CheckVideoResolutionChanges();
+				updateTimer=DateTime.Now;
 			}
-
-      if (GUIGraphicsContext.BlankScreen||(GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false))
-      {
-        if (m_bVisible)
-        {
-          m_bVisible=false;
-          if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
-        }
-      }
-      else if (!m_bVisible)
-      {
-        m_bVisible=true;
-        if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
-      }      
-      DoFFRW();
+			if (m_speedRate!=1)
+			{
+				DoFFRW();
+			}
 			OnProcess();
-			CheckVideoResolutionChanges();
+		}
 
-    }
 		void CheckVideoResolutionChanges()
 		{
 			if (videoWin==null || basicVideo==null) return;
