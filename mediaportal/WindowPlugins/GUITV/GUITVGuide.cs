@@ -2003,11 +2003,11 @@ namespace MediaPortal.GUI.TV
 					}
 				}
 			
-				m_watcher.EnableRaisingEvents = true;
 			}
 			catch (Exception)
 			{
 			}
+			m_watcher.EnableRaisingEvents = true;
 			Log.Write(@"import done");
 		}
 
