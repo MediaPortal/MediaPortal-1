@@ -2817,7 +2817,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}", 
 							frequency,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
 						bool needSwitch=true;
-						if (currentTuningObject!=null)
+						/*if (currentTuningObject!=null)
 						{
 							if (currentTuningObject.Frequency==frequency &&
 								currentTuningObject.Symbolrate==symbolrate &&
@@ -2828,7 +2828,7 @@ namespace MediaPortal.TV.Recording
 							{
 								needSwitch=false;
 							}
-						}
+						}*/
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.Frequency=frequency;
 						currentTuningObject.Symbolrate=symbolrate;
@@ -2874,7 +2874,7 @@ namespace MediaPortal.TV.Recording
 							ch.Frequency,ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID,ch.ProgramNumber,ch.ServiceProvider);
 
 						bool needSwitch=true;
-						if (currentTuningObject!=null)
+						/*if (currentTuningObject!=null)
 						{
 							if (currentTuningObject.Frequency==frequency &&
 								  currentTuningObject.FEC==ch.FEC &&
@@ -2887,7 +2887,7 @@ namespace MediaPortal.TV.Recording
 							{
 								needSwitch=false;
 							}
-						}
+						}*/
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.Frequency=ch.Frequency;
 						currentTuningObject.Symbolrate=ch.Symbolrate;
@@ -2936,7 +2936,7 @@ namespace MediaPortal.TV.Recording
 						//get the IDVBTLocator interface from the new tuning request
 
 						bool needSwitch=true;
-						if (currentTuningObject!=null)
+						/*if (currentTuningObject!=null)
 						{
 							if (currentTuningObject.Frequency==frequency &&
 									currentTuningObject.NetworkID==ONID &&
@@ -2944,7 +2944,7 @@ namespace MediaPortal.TV.Recording
 							{
 								needSwitch=false;
 							}
-						}
+						}*/
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.Bandwidth=bandWidth;
 						currentTuningObject.Frequency=frequency;
@@ -3482,6 +3482,8 @@ namespace MediaPortal.TV.Recording
 				newchannel.LNBFrequency=currentTuningObject.LNBFrequency;
 				newchannel.LNBKHz=currentTuningObject.LNBKHz;
 				newchannel.PhysicalChannel=currentTuningObject.PhysicalChannel;
+				newchannel.MinorChannel=info.minorChannel;
+				newchannel.MajorChannel=info.majorChannel;
 				newchannel.HasEITPresentFollow=info.eitPreFollow;
 				newchannel.HasEITSchedule=info.eitSchedule;
 
