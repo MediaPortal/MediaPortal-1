@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 
@@ -6,7 +7,46 @@ namespace DShowNET
 {
 	public class DigitalEverywhere : IksPropertyUtils
 	{
+		[StructLayout(LayoutKind.Explicit,Size=56), ComVisible(true)]
+		struct FIRESAT_SELECT_PIDS_DVBT
+		{
+			[FieldOffset(0)] public bool				bCurrentTransponder;//FRODO : Set TRUE
+			[FieldOffset(4)] public bool				bFullTransponder;   //FRODO : Set FALSE when selecting PIDs
+			[FieldOffset(8)] public uint			uFrequency;    // kHz 47.000-860.000
+			[FieldOffset(12)] public byte			uBandwidth;    // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
+			[FieldOffset(13)] public byte			uConstellation;// CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
+			[FieldOffset(14)] public byte			uCodeRateHP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+			[FieldOffset(15)] public byte			uCodeRateLP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+			[FieldOffset(16)] public byte			uGuardInterval;// GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+			[FieldOffset(17)] public byte			uTransmissionMode;// TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
+			[FieldOffset(18)] public byte			uHierarchyInfo;// HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
+			[FieldOffset(19)] public byte			dummy; // 
+			[FieldOffset(20)] public byte			uNumberOfValidPids; // 1-16
+			[FieldOffset(21)] public byte			dummy2; // 
+			[FieldOffset(22)] public ushort		uPid1 ;
+			[FieldOffset(24)] public ushort		uPid2 ;
+			[FieldOffset(26)] public ushort		uPid3 ;
+			[FieldOffset(28)] public ushort		uPid4 ;
+			[FieldOffset(30)] public ushort		uPid5 ;
+			[FieldOffset(32)] public ushort		uPid6 ;
+			[FieldOffset(34)] public ushort		uPid7 ;
+			[FieldOffset(36)] public ushort		uPid8 ;
+			[FieldOffset(38)] public ushort		uPid9 ;
+			[FieldOffset(40)] public ushort		uPid10 ;
+			[FieldOffset(42)] public ushort		uPid11 ;
+			[FieldOffset(44)] public ushort		uPid12 ;
+			[FieldOffset(46)] public ushort		uPid13 ;
+			[FieldOffset(48)] public ushort		uPid14 ;
+			[FieldOffset(50)] public ushort		uPid15 ;
+			[FieldOffset(54)] public ushort		uPid16 ;
+
+
+		}
 		static public readonly Guid KSPROPSETID_Firesat = new Guid( 0xab132414, 0xd060, 0x11d0,  0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba,0xf3  );
+		const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C=8;
+		const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T=6;
+		const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_S=2;
+
 		public DigitalEverywhere(IBaseFilter filter) 
 			:base(filter)
 		{
@@ -112,10 +152,70 @@ namespace DShowNET
 			Marshal.FreeCoTaskMem(pDataInstance);
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"FireDTV:SetStructure() failed 0x{0:X} offs:{1}",hr, offs);
+				Log.WriteFile(Log.LogType.Log,true,"FireDTV:SetPMT() failed 0x{0:X} offs:{1}",hr, offs);
 				return false;
 			}
 			return true;
 		}//public bool SendPMTToFireDTV(byte[] PMT)
+
+		public bool SetPIDS(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
+		{
+			if (!isDvbT) return false;
+
+			FIRESAT_SELECT_PIDS_DVBT dvbtStruct = new FIRESAT_SELECT_PIDS_DVBT();
+			dvbtStruct.bCurrentTransponder=true;
+			dvbtStruct.bFullTransponder=true;
+			if (pids.Count>0)
+			{
+				dvbtStruct.bFullTransponder=false;
+				dvbtStruct.uNumberOfValidPids=(byte)pids.Count;
+				if (pids.Count >=1) dvbtStruct.uPid1=(ushort)pids[0];
+				if (pids.Count >=2) dvbtStruct.uPid2=(ushort)pids[1];
+				if (pids.Count >=3) dvbtStruct.uPid3=(ushort)pids[2];
+				if (pids.Count >=4) dvbtStruct.uPid4=(ushort)pids[3];
+				if (pids.Count >=5) dvbtStruct.uPid5=(ushort)pids[4];
+				if (pids.Count >=6) dvbtStruct.uPid6=(ushort)pids[5];
+				if (pids.Count >=7) dvbtStruct.uPid7=(ushort)pids[6];
+				if (pids.Count >=8) dvbtStruct.uPid8=(ushort)pids[7];
+				if (pids.Count >=9) dvbtStruct.uPid9=(ushort)pids[8];
+				if (pids.Count >=10) dvbtStruct.uPid10=(ushort)pids[9];
+				if (pids.Count >=11) dvbtStruct.uPid11=(ushort)pids[10];
+				if (pids.Count >=12) dvbtStruct.uPid12=(ushort)pids[11];
+				if (pids.Count >=13) dvbtStruct.uPid13=(ushort)pids[12];
+				if (pids.Count >=14) dvbtStruct.uPid14=(ushort)pids[13];
+				if (pids.Count >=15) dvbtStruct.uPid15=(ushort)pids[14];
+				if (pids.Count >=16) dvbtStruct.uPid16=(ushort)pids[15];
+
+			}
+			
+			int len=Marshal.SizeOf(dvbtStruct) ;
+			
+			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+			IntPtr pDataInstance = Marshal.AllocCoTaskMem( len);
+			IntPtr pDataReturned = Marshal.AllocCoTaskMem(len);
+			Marshal.StructureToPtr(dvbtStruct,pDataInstance,true);
+			Marshal.StructureToPtr(dvbtStruct,pDataReturned,true);
+			Guid propertyGuid=KSPROPSETID_Firesat;
+
+			Log.WriteFile(Log.LogType.Log,true,"FireDTV:SetPIDS() count:{0} len:{1}",pids.Count,Marshal.SizeOf(dvbtStruct));
+
+			string txt="";
+			for (int i=0; i < len; ++i)
+				txt += String.Format("0x{0:X} ",Marshal.ReadByte(pDataInstance,i));
+			Log.Write("data:{0}",txt);
+			int hr=propertySet.RemoteSet(ref propertyGuid,
+																	(uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T,
+																  pDataInstance,(uint)len, 
+																	pDataReturned,(uint)len );
+			Marshal.FreeCoTaskMem(pDataReturned);
+			Marshal.FreeCoTaskMem(pDataInstance);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"FireDTV:SetPIDS() failed 0x{0:X}",hr);
+				return false;
+			}
+
+			return true;
+		}
 	}
 }

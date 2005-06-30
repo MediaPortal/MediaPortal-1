@@ -30,7 +30,7 @@ namespace DShowNET
 
 		public bool GetCIInfo()
 		{
-			Log.Write("Twinhan get CI Info");
+			//Log.Write("Twinhan get CI Info");
 			bool success=false;
 			IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
 

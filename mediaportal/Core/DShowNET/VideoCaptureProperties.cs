@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices; 
@@ -93,6 +94,14 @@ namespace DShowNET
 			{
 				twinhan.SendPMT((uint)videoPid,(uint)audioPid,PMT,pmtLength);
 				return true;
+			}
+			return false;
+		}
+		public bool SetPIDS(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
+		{
+			if (digitalEverywhere.IsDigitalEverywhere)
+			{
+				return digitalEverywhere.SetPIDS(isDvbc, isDvbT, isDvbS, isAtsc, pids);
 			}
 			return false;
 		}

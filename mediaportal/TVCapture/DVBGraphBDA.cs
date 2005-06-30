@@ -2699,7 +2699,13 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3, PMT:{3:X} PCR:{4:X} ECM:{5:X}",
+							currentTuningObject.AudioPid, 
+							currentTuningObject.VideoPid, 
+							currentTuningObject.AC3Pid,
+							currentTuningObject.PMTPid,
+							currentTuningObject.PCRPid,
+							currentTuningObject.ECMPid);
 				try
 				{
 					SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
@@ -2709,6 +2715,7 @@ namespace MediaPortal.TV.Recording
 				{
 					return;
 				}
+				SetPids();
 			}
 			catch(Exception)
 			{
@@ -2845,6 +2852,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.HasEITSchedule=HasEITSchedule;
 						if (needSwitch)
 							SubmitTuneRequest(currentTuningObject);
+						else 
+							SetPids();
 
 					} break;
 
@@ -2905,6 +2914,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.HasEITSchedule=ch.HasEITSchedule;
 						if (needSwitch)
 							SubmitTuneRequest(currentTuningObject);
+						else 
+							SetPids();
 
 					} break;
 
@@ -2955,6 +2966,8 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.HasEITSchedule=HasEITSchedule;
 						if (needSwitch)
 							SubmitTuneRequest(currentTuningObject);
+						else 
+							SetPids();
 
 					} break;
 				}	//switch (m_NetworkType)
@@ -2975,7 +2988,13 @@ namespace MediaPortal.TV.Recording
 					}
 
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3, PMT:{3:X} PCR:{4:X} ECM:{5:X}",
+					currentTuningObject.AudioPid, 
+					currentTuningObject.VideoPid, 
+					currentTuningObject.AC3Pid,
+					currentTuningObject.PMTPid,
+					currentTuningObject.PCRPid,
+					currentTuningObject.ECMPid);
 				try
 				{
 					SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
@@ -3253,6 +3272,7 @@ namespace MediaPortal.TV.Recording
 					Marshal.ReleaseComObject(myTuneRequest);
 				} break;
 			}
+			SetPids();
 		}
 
 		#endregion
@@ -3845,7 +3865,13 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 				}
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3",currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.AC3Pid);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3, PMT:{3:X} PCR:{4:X} ECM:{5:X}",
+					currentTuningObject.AudioPid, 
+					currentTuningObject.VideoPid, 
+					currentTuningObject.AC3Pid,
+					currentTuningObject.PMTPid,
+					currentTuningObject.PCRPid,
+					currentTuningObject.ECMPid);
 				try
 				{
 					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
@@ -4040,6 +4066,38 @@ namespace MediaPortal.TV.Recording
 		//	Log.Write("pid:{0:X} table:{1:X}", pid,tableID);
 		}
 
+		void SetPids()
+		{
+#if HW_PID_FILTERING
+			string pidsText=String.Empty;
+			ArrayList pids = new ArrayList();
+			pids.Add((ushort)0);
+			pids.Add((ushort)1);
+			pids.Add((ushort)17);
+			pids.Add((ushort)18);
+			pids.Add((ushort)0xd3);
+			pids.Add((ushort)0xd2);
+			//if (currentTuningObject.VideoPid>0) pids.Add((ushort)currentTuningObject.VideoPid);
+			if (currentTuningObject.AudioPid>0) pids.Add((ushort)currentTuningObject.AudioPid);
+			if (currentTuningObject.AC3Pid>0) pids.Add((ushort)currentTuningObject.AC3Pid);
+			if (currentTuningObject.PMTPid>0) pids.Add((ushort)currentTuningObject.PMTPid);
+			//if (currentTuningObject.TeletextPid>0) pids.Add((ushort)currentTuningObject.TeletextPid);
+			if (currentTuningObject.PCRPid>0) pids.Add((ushort)currentTuningObject.PCRPid);
+			if (currentTuningObject.ECMPid>0) pids.Add((ushort)currentTuningObject.ECMPid);
+			for (int i=0; i < pids.Count;++i)
+				pidsText+=String.Format("{0:X},", (ushort)pids[i]);
+
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SetPIDS to:{0}", pidsText);
+			VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+			props.SetPIDS(Network()==NetworkType.DVBC,
+										Network()==NetworkType.DVBT,
+										Network()==NetworkType.DVBS,
+										Network()==NetworkType.ATSC,
+										pids);
+
+
+#endif
+		}
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file
