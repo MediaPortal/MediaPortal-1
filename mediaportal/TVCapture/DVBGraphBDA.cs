@@ -3012,7 +3012,7 @@ namespace MediaPortal.TV.Recording
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
-			}
+			}	
 			finally
 			{
 				if (Vmr9!=null) Vmr9.Enable(true);
@@ -3275,6 +3275,7 @@ namespace MediaPortal.TV.Recording
 				} break;
 			}
 			SetPids();
+			Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
 		}
 
 		#endregion
@@ -3316,13 +3317,13 @@ namespace MediaPortal.TV.Recording
 		/// <param name="tv">if true:Store tv channels found in the database</param>
 		public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels)
 		{	
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels()");
 			if (m_SectionsTables==null) return;
 
 			//get list of current tv channels present in the database
 			ArrayList tvChannels = new ArrayList();
 			TVDatabase.GetChannels(ref tvChannels);
 
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels()");
 			DVBSections.Transponder transp;
 			if (Network() == NetworkType.ATSC)
 			{

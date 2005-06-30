@@ -58,7 +58,7 @@ namespace MediaPortal.TV.Recording
 			currentFrequencyIndex=-1;
 			String countryCode = String.Empty;
 
-			Log.WriteFile(Log.LogType.Capture,"Opening dvbt.xml");
+			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:Opening dvbt.xml");
 			XmlDocument doc= new XmlDocument();
 			doc.Load("Tuningparameters/dvbt.xml");
 
@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Recording
 			formCountry.ShowDialog();
 			string countryName=formCountry.countryName;
 			if (countryName==String.Empty) return;
-			Log.WriteFile(Log.LogType.Capture,"auto tune for {0}", countryName);
+			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:auto tune for {0}", countryName);
 			frequencies.Clear();
 
 			countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
@@ -80,16 +80,16 @@ namespace MediaPortal.TV.Recording
 			{
 				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
 				if (name!=countryName) continue;
-				Log.WriteFile(Log.LogType.Capture,"found country {0} in dvbt.xml", countryName);
+				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:found country {0} in dvbt.xml", countryName);
 				try
 				{
 					scanOffset =  XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-					Log.WriteFile(Log.LogType.Capture,"scanoffset: {0} ", scanOffset);
+					Log.WriteFile(Log.LogType.Capture,"dvbt-scan:scanoffset: {0} ", scanOffset);
 				}
 				catch(Exception){}
 
 				XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-				Log.WriteFile(Log.LogType.Capture,"number of carriers:{0}", frequencyList.Count);
+				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:number of carriers:{0}", frequencyList.Count);
 				int[] carrier;
 				foreach (XmlNode node in frequencyList)
 				{
@@ -103,13 +103,13 @@ namespace MediaPortal.TV.Recording
 
 					if (carrier[1]==0) carrier[1]=8;
 					frequencies.Add(carrier);
-					Log.WriteFile(Log.LogType.Capture,"added:{0}", carrier[0]);
+					Log.WriteFile(Log.LogType.Capture,"dvbt-scan:added:{0}", carrier[0]);
 				}
 			}
 			if (frequencies.Count==0) return;
 
-			Log.WriteFile(Log.LogType.Capture,"loaded:{0} frequencies", frequencies.Count);
-			Log.WriteFile(Log.LogType.Capture,"{0} has a scan offset of {1}KHz", countryCode, scanOffset);
+			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:loaded:{0} frequencies", frequencies.Count);
+			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:{0} has a scan offset of {1}KHz", countryCode, scanOffset);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
@@ -151,7 +151,7 @@ namespace MediaPortal.TV.Recording
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
 			int[] tmp = frequencies[currentFreq] as int[];
-			//Log.WriteFile(Log.LogType.Capture,"FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
+			//Log.WriteFile(Log.LogType.Capture,"dvbt-scan:FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
 			float frequency = tunedFrequency;
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
@@ -166,7 +166,7 @@ namespace MediaPortal.TV.Recording
 						System.Threading.Thread.Sleep(3000);
 						//if (captureCard.SignalQuality>40)
 						{
-							Log.WriteFile(Log.LogType.Capture,"Found signal at:{0} MHz,scan for channels",frequency);
+							Log.WriteFile(Log.LogType.Capture,"dvbt-scan:Found signal at:{0} MHz,scan for channels",frequency);
 							currentState=State.ScanChannels;
 							currentOffset=0;
 						}
@@ -230,7 +230,7 @@ namespace MediaPortal.TV.Recording
 				tmp = (int[])frequencies[currentFrequencyIndex];
 				chan.Frequency=tmp[0];
 				chan.Bandwidth=tmp[1];
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (i)",chan.Frequency, chan.Bandwidth);
+				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (i)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				return;
 			}
@@ -242,7 +242,7 @@ namespace MediaPortal.TV.Recording
 
 			if (currentOffset==0)
 			{
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (1)",chan.Frequency, chan.Bandwidth);
+				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (1)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				if (scanOffset==0) currentOffset=3;
 				else currentOffset=1;
@@ -251,7 +251,7 @@ namespace MediaPortal.TV.Recording
 			{
 				tunedFrequency-=scanOffset;
 				chan.Frequency-=scanOffset;
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (2)",chan.Frequency, chan.Bandwidth);
+				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (2)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				currentOffset=2;
 			}
@@ -259,7 +259,7 @@ namespace MediaPortal.TV.Recording
 			{
 				tunedFrequency+=(scanOffset);
 				chan.Frequency+=(scanOffset);
-				Log.WriteFile(Log.LogType.Capture,"tune:{0} bandwidth:{1} (3)",chan.Frequency, chan.Bandwidth);
+				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (3)",chan.Frequency, chan.Bandwidth);
 				captureCard.Tune(chan,0);
 				currentOffset=3;
 			}

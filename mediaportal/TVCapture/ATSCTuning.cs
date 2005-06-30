@@ -101,7 +101,7 @@ namespace MediaPortal.TV.Recording
 				ScanNextChannel();
 				if (captureCard.SignalPresent())
 				{
-					//if (captureCard.SignalQuality>40)
+					if (captureCard.SignalQuality>=30)
 					{
 						ScanChannels();
 					}
@@ -113,8 +113,7 @@ namespace MediaPortal.TV.Recording
 				ScanChannel();
 				if (captureCard.SignalPresent())
 				{
-					
-					//if (captureCard.SignalQuality>40)
+					if (captureCard.SignalQuality>=30)
 					{
 						ScanChannels();
 					}
@@ -126,11 +125,12 @@ namespace MediaPortal.TV.Recording
 
 		void ScanChannels()
 		{
+			Log.Write("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}",captureCard.SignalQuality,captureCard.SignalStrength);
+			timer1.Enabled=false;
 			string chanDesc=String.Format("Channel:{0} retry:{1}",currentIndex, retryCount);
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			callback.OnStatus(description);
 
-			timer1.Enabled=false;
 			Application.DoEvents();
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);

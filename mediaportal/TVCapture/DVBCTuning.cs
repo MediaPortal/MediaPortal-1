@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Recording
 			count = 0;
 			string line;
 			string[] tpdata;
-			Log.WriteFile(Log.LogType.Capture,"Opening {0}",ofd.FileName);
+			Log.WriteFile(Log.LogType.Capture,"dvbc-scan:Opening {0}",ofd.FileName);
 			// load dvbcChannelsList list and start scan
 			System.IO.TextReader tin = System.IO.File.OpenText(ofd.FileName);
 			
@@ -129,7 +129,7 @@ namespace MediaPortal.TV.Recording
 							}
 							catch
 							{
-								Log.WriteFile(Log.LogType.Capture,"Error in line:{0}", LineNr);
+								Log.WriteFile(Log.LogType.Capture,"dvbc-scan:Error in line:{0}", LineNr);
 							}
 						}
 					}
@@ -138,7 +138,7 @@ namespace MediaPortal.TV.Recording
 			tin.Close();
 			
 
-			Log.WriteFile(Log.LogType.Capture,"loaded:{0} dvbcChannels", count);
+			Log.WriteFile(Log.LogType.Capture,"dvbc-scan:loaded:{0} dvbcChannels", count);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
@@ -250,7 +250,7 @@ namespace MediaPortal.TV.Recording
 			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,count,chanDesc);
 			callback.OnStatus(description);
 
-			Log.WriteFile(Log.LogType.Capture,"tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
+			Log.WriteFile(Log.LogType.Capture,"dvbc-scan:tune dvbcChannel:{0}/{1} {2}",currentIndex ,count,chanDesc);
 
 			DVBChannel newchan = new DVBChannel();
 			newchan.NetworkID=-1;
