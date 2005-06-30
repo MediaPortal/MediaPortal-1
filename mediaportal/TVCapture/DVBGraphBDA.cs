@@ -133,7 +133,7 @@ namespace MediaPortal.TV.Recording
 		IVideoWindow            m_videoWindow						= null;
 		IBasicVideo2            m_basicVideo						= null;
 		IMediaControl						m_mediaControl					= null;
-		IBDA_SignalStatistics[] m_TunerStatistics       = null;
+		ArrayList               m_TunerStatistics       = new ArrayList();
 		NetworkType							m_NetworkType=NetworkType.Unknown;
 		IBaseFilter							m_sampleGrabber=null;
 		ISampleGrabber					m_sampleInterface=null;
@@ -728,7 +728,7 @@ namespace MediaPortal.TV.Recording
 				m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 				m_graphState=State.Created;
 
-				m_TunerStatistics=GetTunerSignalStatistics();
+				GetTunerSignalStatistics();
 
 				// teletext settings
 				GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
@@ -794,15 +794,15 @@ namespace MediaPortal.TV.Recording
 
 				if (m_TunerStatistics!=null)
 				{
-					for (int i = 0; i < m_TunerStatistics.Length; i++) 
+					for (int i = 0; i < m_TunerStatistics.Count; i++) 
 					{
 						if (m_TunerStatistics[i] != null)
 						{
-							Marshal.ReleaseComObject(m_TunerStatistics[i]); 
-							m_TunerStatistics[i] = null;
+							IBDA_SignalStatistics stat=(IBDA_SignalStatistics )m_TunerStatistics[i];
+							Marshal.ReleaseComObject(stat);
 						}
 					}
-					m_TunerStatistics=null;
+					m_TunerStatistics.Clear();
 				}
 
 				if (Vmr9!=null)
@@ -1536,14 +1536,15 @@ namespace MediaPortal.TV.Recording
 			bool isSignalPresent	= false;
 			long signalQuality=0;
 
-			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+			for (int i = 0; i < m_TunerStatistics.Count; i++) 
 			{
+				IBDA_SignalStatistics stat=(IBDA_SignalStatistics)m_TunerStatistics[i];
 				bool isLocked=false;
 				bool isPresent=false;
 				try
 				{
 					//is the tuner locked?
-					m_TunerStatistics[i].get_SignalLocked(ref isLocked);
+					stat.get_SignalLocked(ref isLocked);
 					isTunerLocked |= isLocked;
 				}
 				catch (COMException)
@@ -1552,7 +1553,7 @@ namespace MediaPortal.TV.Recording
 				try
 				{
 					//is a signal present?
-					m_TunerStatistics[i].get_SignalPresent(ref isPresent);
+					stat.get_SignalPresent(ref isPresent);
 					isSignalPresent |= isPresent;
 				}
 				catch (COMException)
@@ -1562,7 +1563,7 @@ namespace MediaPortal.TV.Recording
 				{
 					//is a signal quality ok?
 					long quality=0;
-					m_TunerStatistics[i].get_SignalQuality(ref quality); //1-100
+					stat.get_SignalQuality(ref quality); //1-100
 					if (quality>0) signalQuality += quality;
 				}
 				catch (COMException)
@@ -1584,15 +1585,18 @@ namespace MediaPortal.TV.Recording
 		}//public bool SignalPresent()
 		public int  SignalQuality()
 		{
-			if (m_TunerStatistics==null) return 1;
-			int signalQuality=0;
+			if (m_TunerStatistics==null) return -1;
+			if (m_TunerStatistics.Count==0) return -1;
+			int signalQuality=-1;
 			long quality=0;
-			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+			for (int i = 0; i < m_TunerStatistics.Count; i++) 
 			{
+				IBDA_SignalStatistics stat=(IBDA_SignalStatistics)m_TunerStatistics[i];
+
 				quality = 0;
 				try
 				{
-					m_TunerStatistics[i].get_SignalQuality(ref quality); //1-100
+					stat.get_SignalQuality(ref quality); //1-100
 				}
 				catch (COMException )
 				{
@@ -1605,15 +1609,18 @@ namespace MediaPortal.TV.Recording
 		}
 		public int  SignalStrength()
 		{
-			if (m_TunerStatistics==null) return 1;
-			int signalStrength=0;
+			if (m_TunerStatistics==null) return -1;
+			if (m_TunerStatistics.Count==0) return -1;
+			int signalStrength=-1;
 			long strength = 0;
-			for (int i = 0; i < m_TunerStatistics.Length; i++) 
+
+			for (int i = 0; i < m_TunerStatistics.Count; i++) 
 			{
+				IBDA_SignalStatistics stat=(IBDA_SignalStatistics)m_TunerStatistics[i];
 				strength = 0;
 				try
 				{
-					m_TunerStatistics[i].get_SignalStrength(ref strength); //1-100
+					stat.get_SignalStrength(ref strength); //1-100
 				}
 				catch (COMException )
 				{
@@ -1736,23 +1743,24 @@ namespace MediaPortal.TV.Recording
 		/// <remarks>
 		/// Graph should be created
 		/// </remarks>
-		IBDA_SignalStatistics[] GetTunerSignalStatistics()
+		void GetTunerSignalStatistics()
 		{
 			//no tuner filter? then return;
+			m_TunerStatistics=new ArrayList();
 			if (m_TunerDevice==null) 
-				return null;
+				return ;
 			
 			//get the IBDA_Topology from the tuner device
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: get IBDA_Topology");
+			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: get IBDA_Topology");
 			IBDA_Topology topology = m_TunerDevice as IBDA_Topology;
 			if (topology==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: could not get IBDA_Topology from tuner");
-				return null;
+				return ;
 			}
 
 			//get the NodeTypes from the topology
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: GetNodeTypes");
+			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: GetNodeTypes");
 			int nodeTypeCount=0;
 			int[] nodeTypes = new int[33];
 			Guid[] guidInterfaces = new Guid[33];
@@ -1760,33 +1768,46 @@ namespace MediaPortal.TV.Recording
 			int hr=topology.GetNodeTypes(ref nodeTypeCount, 32, nodeTypes);
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not get node types from tuner");
-				return null;
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not get node types from tuner:0x{0:X}",hr);
+				return ;
 			}
-			IBDA_SignalStatistics[] signal = new IBDA_SignalStatistics[nodeTypeCount];
+			if (nodeTypeCount==0)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not get any node types");
+			}
+			Guid GuidIBDA_SignalStatistic = new Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338");
 			//for each node type
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got {0} node types", nodeTypeCount);
+			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: got {0} node types", nodeTypeCount);
 			for (int i=0; i < nodeTypeCount;++i)
 			{
 				object objectNode;
+				int numberOfInterfaces=32;
+				hr=topology.GetNodeInterfaces(nodeTypes[i],ref numberOfInterfaces,32,guidInterfaces);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not GetNodeInterfaces for node:{0} 0x:{1:X}",i,hr);
+				}
+
 				hr=topology.GetControlNode(0,1, nodeTypes[i], out objectNode);
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not GetControlNode for node:{0}",hr);
-					return null;
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED could not GetControlNode for node:{0} 0x:{1:X}",i,hr);
+					return ;
 				}
+
 				//and get the final IBDA_SignalStatistics
-				try
+				for (int iface=0; iface < numberOfInterfaces; iface++)
 				{
-					signal[i] = (IBDA_SignalStatistics) objectNode;
+					if ( guidInterfaces[iface] == GuidIBDA_SignalStatistic)
+					{
+						Log.Write("DVBGraphBDA: got IBDA_SignalStatistics on node:{0} interface:{1}", i,iface);
+						m_TunerStatistics.Add ( (IBDA_SignalStatistics) objectNode);
+					}
 				}
-				catch 
-				{
-					Log.WriteFile(Log.LogType.Capture,"No interface on node {0}", i); 
-				}
+
 			}//for (int i=0; i < nodeTypeCount;++i)
 			Marshal.ReleaseComObject(topology);
-			return signal;
+			return ;
 		}//IBDA_SignalStatistics GetTunerSignalStatistics()
 
 		IBDA_LNBInfo[] GetBDALNBInfoInterface()
@@ -3318,21 +3339,22 @@ namespace MediaPortal.TV.Recording
 		public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels)
 		{	
 			//it may take a while before signal quality/level is correct
-			for (int i=0; i < 10;++i)
-			{
-				if (SignalQuality() < 40) 
-				{
-					System.Windows.Forms.Application.DoEvents();
-					System.Threading.Thread.Sleep(100);
-					System.Windows.Forms.Application.DoEvents();
-				}
-				else break;
-			}
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels() signal level:{0} signal quality:{1}",
-												SignalStrength(),SignalQuality() );
-			if (SignalQuality() < 40) return;
-
 			if (m_SectionsTables==null) return;
+			if (SignalQuality()!=-1)
+			{
+				for (int i=0; i < 10;++i)
+				{
+					if (SignalQuality() < 40) 
+					{
+						System.Windows.Forms.Application.DoEvents();
+						System.Threading.Thread.Sleep(100);
+						System.Windows.Forms.Application.DoEvents();
+					}
+					else break;
+				}
+				if (SignalQuality() < 40 ) return;
+			}
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels() signal level:{0} signal quality:{1}",SignalStrength(),SignalQuality() );
 
 			//get list of current tv channels present in the database
 			ArrayList tvChannels = new ArrayList();

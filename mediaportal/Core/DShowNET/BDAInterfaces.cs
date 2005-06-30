@@ -212,7 +212,6 @@ namespace DShowNET.BDA
 	[ComImport,
 	Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-
 	public interface IBDA_SignalStatistics
 	{
 		void put_SignalStrength ([In] long lDbStrength);
