@@ -161,7 +161,9 @@ namespace MediaPortal.TV.Recording
 		protected bool							m_pluginsEnabled=false;
 
 		DateTime										timeResendPid=DateTime.Now;
+		DateTime										updateTimer=DateTime.Now;
 		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
+
 		
 		int m_iVideoWidth=1;
 		int m_iVideoHeight=1;
@@ -2662,31 +2664,37 @@ namespace MediaPortal.TV.Recording
 		public void Process()
 		{
 			if (m_SectionsTables==null) return;
-			if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
+
+			TimeSpan ts=DateTime.Now-updateTimer;
+			if (ts.TotalMilliseconds>800)
 			{
-				CheckVideoResolutionChanges();
-			}
-			if(!GUIGraphicsContext.Vmr9Active && Vmr7!=null && m_graphState==State.Viewing)
-			{
-				Vmr7.Process();
-			}
-			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
-			{
-				Vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
+				if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
 				{
-					Vmr9.Repaint();// repaint vmr9
-					TimeSpan ts = DateTime.Now-timeResendPid;
-					if (ts.TotalSeconds>5)
+					CheckVideoResolutionChanges();
+				}
+				if(!GUIGraphicsContext.Vmr9Active && Vmr7!=null && m_graphState==State.Viewing)
+				{
+					Vmr7.Process();
+				}
+				if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
+				{
+					Vmr9.Process();
+					if (GUIGraphicsContext.Vmr9FPS < 1f)
 					{
-						refreshPmtTable=true;
-						timeResendPid=DateTime.Now;
+						Vmr9.Repaint();// repaint vmr9
+						ts = DateTime.Now-timeResendPid;
+						if (ts.TotalSeconds>5)
+						{
+							refreshPmtTable=true;
+							timeResendPid=DateTime.Now;
+						}
 					}
+					else timeResendPid=DateTime.Now;
 				}
 				else timeResendPid=DateTime.Now;
+				updateTimer=DateTime.Now;
 			}
-			else timeResendPid=DateTime.Now;
-			
+
 			if (!refreshPmtTable) return;
 
 			try
