@@ -1490,12 +1490,7 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Write("key:{0} 0x{1:X} (2)", (int)keyc, (int)keyc, keyc);
     Key key = new Key(e.KeyChar, 0);
     Action action = new Action();
-    if (GUIWindowManager.IsRouted &&
-      (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD ||
-      GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD) ||
-      GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_TVMSNOSD ||
-      GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_MSN_CHAT ||
-      GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_MSNOSD)
+    if (GUIWindowManager.IsRouted)
     {
       action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
       GUIGraphicsContext.OnAction(action);
