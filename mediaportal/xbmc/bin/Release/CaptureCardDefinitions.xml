@@ -6134,4 +6134,36 @@
 	</connections> 
     </tv> 
   </capturecard>
+
+  <capturecard commercialname="Avermedia DVB-T 16AR" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_2c051461&amp;rev_01"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"></filter> 
+        <filter cat="tunerdevice"		name="AVerMedia BDA DVBT Tuner"			checkdevice="true"></filter> 
+        <filter cat="capture"			name="AVerMedia BDA Digital Capture"	checkdevice="true"></filter> 
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0"	sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+        <connection sourcefilter="tunerdevice"		sourcepin="0"	sinkfilter="capture"		sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="Nebula DigiTV" capturename="Nebula DigiTV BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_01010071&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Nebula DigiTV BDA Tuner Filter"		checkdevice="true"></filter>
+        <filter cat="capture"         name="Nebula DigiTV BDA Capture Filter"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
