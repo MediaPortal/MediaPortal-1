@@ -1608,5 +1608,22 @@ namespace MediaPortal.GUI.TV
 
 			return base.GetControl(iControlId);
 		}
+
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			{
+				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
+				{
+					if (GUIGraphicsContext.ShowBackground)
+					{
+						// stop timeshifting & viewing... 
+	              
+						Recorder.StopViewing();
+					}
+				}
+			}
+			base.OnPageDestroy (newWindowId);
+		}
 	}
 }

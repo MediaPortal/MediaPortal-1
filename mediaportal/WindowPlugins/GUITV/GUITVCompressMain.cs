@@ -2,7 +2,7 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player ;
 using MediaPortal.TV.Recording;
-namespace WindowPlugins.GUITV
+namespace MediaPortal.GUI.TV
 {
 	/// <summary>
 	/// Summary description for GUITVCompressMain.
@@ -43,5 +43,21 @@ namespace WindowPlugins.GUITV
 			base.OnAction(action);
 		}
 
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			{
+				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
+				{
+					if (GUIGraphicsContext.ShowBackground)
+					{
+						// stop timeshifting & viewing... 
+	              
+						Recorder.StopViewing();
+					}
+				}
+			}
+			base.OnPageDestroy (newWindowId);
+		}
 	}
 }

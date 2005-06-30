@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.TV
 			SaveSettings();
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
 			{
-				if (! g_Player.Playing)
+				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{
 					if (GUIGraphicsContext.ShowBackground)
 					{

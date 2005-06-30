@@ -4,7 +4,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player ;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
-namespace WindowPlugins.GUITV
+namespace MediaPortal.GUI.TV
 {
 	/// <summary>
 	/// Summary description for GUITVCompressAuto.
@@ -29,15 +29,6 @@ namespace WindowPlugins.GUITV
 		{
 			base.OnPageLoad ();
 			LoadSettings();
-		}
-		protected override void OnPageDestroy(int newWindowId)
-		{
-			base.OnPageDestroy (newWindowId);
-			SaveSettings();
-			if (checkAutoCompress.Selected)
-			{
-				AutoCompress();
-			}
 		}
 		void LoadSettings()
 		{
@@ -115,6 +106,28 @@ namespace WindowPlugins.GUITV
 					continue;
 				}
 				Transcoder.Transcode(rec,false);
+			}
+		}
+
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			{
+				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
+				{
+					if (GUIGraphicsContext.ShowBackground)
+					{
+						// stop timeshifting & viewing... 
+	              
+						Recorder.StopViewing();
+					}
+				}
+			}
+			base.OnPageDestroy (newWindowId);
+			SaveSettings();
+			if (checkAutoCompress.Selected)
+			{
+				AutoCompress();
 			}
 		}
 	}

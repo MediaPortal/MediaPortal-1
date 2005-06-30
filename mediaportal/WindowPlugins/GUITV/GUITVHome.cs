@@ -246,7 +246,7 @@ namespace MediaPortal.GUI.TV
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
 			{
 				//and we're not playing which means we dont timeshift tv
-				if (! g_Player.Playing)
+				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{
 					// and we dont want tv in the background
 					if (GUIGraphicsContext.ShowBackground)

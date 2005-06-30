@@ -2549,5 +2549,23 @@ namespace MediaPortal.GUI.TV
 			TVDatabase.GetNotifies(notifies);
 			m_bNeedUpdate=true;
 		}
+		protected override void OnPageDestroy(int newWindowId)
+		{
+			base.OnPageDestroy (newWindowId);
+					
+			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			{
+				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
+				{
+					if (GUIGraphicsContext.ShowBackground)
+					{
+						// stop timeshifting & viewing... 
+	              
+						Recorder.StopViewing();
+					}
+				}
+			}
+		}
+
 	}
 }
