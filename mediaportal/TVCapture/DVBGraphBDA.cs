@@ -1,3 +1,4 @@
+//#define HW_PID_FILTERING
 //#define DUMP
 #if (UseCaptureCardDefinitions)
 using System;

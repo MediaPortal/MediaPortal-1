@@ -10,8 +10,8 @@ namespace DShowNET
 		[StructLayout(LayoutKind.Explicit,Size=56), ComVisible(true)]
 		struct FIRESAT_SELECT_PIDS_DVBT
 		{
-			[FieldOffset(0)] public bool				bCurrentTransponder;//FRODO : Set TRUE
-			[FieldOffset(4)] public bool				bFullTransponder;   //FRODO : Set FALSE when selecting PIDs
+			[FieldOffset(0)] public bool			bCurrentTransponder;//Set TRUE
+			[FieldOffset(4)] public bool			bFullTransponder;   //Set FALSE when selecting PIDs
 			[FieldOffset(8)] public uint			uFrequency;    // kHz 47.000-860.000
 			[FieldOffset(12)] public byte			uBandwidth;    // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
 			[FieldOffset(13)] public byte			uConstellation;// CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
@@ -38,9 +38,8 @@ namespace DShowNET
 			[FieldOffset(46)] public ushort		uPid13 ;
 			[FieldOffset(48)] public ushort		uPid14 ;
 			[FieldOffset(50)] public ushort		uPid15 ;
-			[FieldOffset(54)] public ushort		uPid16 ;
-
-
+			[FieldOffset(52)] public ushort		uPid16 ;
+			[FieldOffset(54)] public ushort		dummy3;
 		}
 		static public readonly Guid KSPROPSETID_Firesat = new Guid( 0xab132414, 0xd060, 0x11d0,  0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba,0xf3  );
 		const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C=8;
@@ -101,7 +100,7 @@ namespace DShowNET
 			int hr=propertySet.QuerySupported( ref propertyGuid, (uint)propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
 			{
-				Log.Write("SendPMTToFireDTV() GetStructure is not supported");
+				Log.Write("SendPMTToFireDTV() SendPMT is not supported");
 				return true;
 			}
 
@@ -161,6 +160,15 @@ namespace DShowNET
 		public bool SetPIDS(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
 		{
 			if (!isDvbT) return false;
+			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+			Guid propertyGuid=KSPROPSETID_Firesat;
+			uint IsTypeSupported=0;
+			int hr=propertySet.QuerySupported( ref propertyGuid, (uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T, out IsTypeSupported);
+			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Set)==0) 
+			{
+				Log.Write("SendPMTToFireDTV() SetPIDS is not supported");
+				return true;
+			}
 
 			FIRESAT_SELECT_PIDS_DVBT dvbtStruct = new FIRESAT_SELECT_PIDS_DVBT();
 			dvbtStruct.bCurrentTransponder=true;
@@ -190,12 +198,10 @@ namespace DShowNET
 			
 			int len=Marshal.SizeOf(dvbtStruct) ;
 			
-			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
 			IntPtr pDataInstance = Marshal.AllocCoTaskMem( len);
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(len);
 			Marshal.StructureToPtr(dvbtStruct,pDataInstance,true);
 			Marshal.StructureToPtr(dvbtStruct,pDataReturned,true);
-			Guid propertyGuid=KSPROPSETID_Firesat;
 
 			Log.WriteFile(Log.LogType.Log,true,"FireDTV:SetPIDS() count:{0} len:{1}",pids.Count,Marshal.SizeOf(dvbtStruct));
 
@@ -203,7 +209,7 @@ namespace DShowNET
 			for (int i=0; i < len; ++i)
 				txt += String.Format("0x{0:X} ",Marshal.ReadByte(pDataInstance,i));
 			Log.Write("data:{0}",txt);
-			int hr=propertySet.RemoteSet(ref propertyGuid,
+			hr=propertySet.RemoteSet(ref propertyGuid,
 																	(uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T,
 																  pDataInstance,(uint)len, 
 																	pDataReturned,(uint)len );
