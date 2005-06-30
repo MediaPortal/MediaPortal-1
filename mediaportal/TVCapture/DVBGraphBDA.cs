@@ -1585,7 +1585,7 @@ namespace MediaPortal.TV.Recording
 		public int  SignalQuality()
 		{
 			if (m_TunerStatistics==null) return 1;
-			int signalQuality=1;
+			int signalQuality=0;
 			long quality=0;
 			for (int i = 0; i < m_TunerStatistics.Length; i++) 
 			{
@@ -1606,7 +1606,7 @@ namespace MediaPortal.TV.Recording
 		public int  SignalStrength()
 		{
 			if (m_TunerStatistics==null) return 1;
-			int signalStrength=1;
+			int signalStrength=0;
 			long strength = 0;
 			for (int i = 0; i < m_TunerStatistics.Length; i++) 
 			{
@@ -3055,7 +3055,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: failed SubmitTuneRequest() could not create new tuningrequest");
 						return;
 					}
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() cast new tuningrequest to IATSCChannelTuneRequest");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() cast new tuningrequest to IATSCChannelTuneRequest");
 					myATSCTuneRequest = newTuneRequest as TunerLib.IATSCChannelTuneRequest;
 					if (myATSCTuneRequest ==null)
 					{
@@ -3064,7 +3064,7 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//get the IATSCLocator interface from the new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IATSCLocator interface");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IATSCLocator interface");
 					TunerLib.IATSCLocator myLocator = myATSCTuneRequest.Locator as TunerLib.IATSCLocator;	
 					if (myLocator==null)
 					{
@@ -3078,8 +3078,8 @@ namespace MediaPortal.TV.Recording
 						return ;
 					}
 					//set the properties on the new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties. Freq:{0} physical channel:{1} major:{2} minor:{3} SR:{4}",
-																						ch.Frequency,ch.PhysicalChannel,ch.MajorChannel,ch.MinorChannel,ch.Symbolrate);
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties. Freq:{0} physical channel:{1} major:{2} minor:{3} SR:{4}",
+					//																	ch.Frequency,ch.PhysicalChannel,ch.MajorChannel,ch.MinorChannel,ch.Symbolrate);
 					myLocator.CarrierFrequency		= ch.Frequency;
 					myLocator.PhysicalChannel			= ch.PhysicalChannel;
 					myLocator.SymbolRate				  = ch.Symbolrate;
@@ -3098,7 +3098,7 @@ namespace MediaPortal.TV.Recording
 				{
 					TunerLib.IDVBTuningSpace2 myTuningSpace =null;
 					//get the IDVBTuningSpace2 from the tuner
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBTuningSpace2");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBTuningSpace2");
 					myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 					if (myTuningSpace==null)
 					{
@@ -3108,7 +3108,7 @@ namespace MediaPortal.TV.Recording
 
 
 					//create a new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() create new tuningrequest");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() create new tuningrequest");
 					newTuneRequest = myTuningSpace.CreateTuneRequest();
 					if (newTuneRequest ==null)
 					{
@@ -3118,7 +3118,7 @@ namespace MediaPortal.TV.Recording
 
 
 					TunerLib.IDVBTuneRequest myTuneRequest=null;
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() cast new tuningrequest to IDVBTuneRequest");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() cast new tuningrequest to IDVBTuneRequest");
 					myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
 					if (myTuneRequest ==null)
 					{
@@ -3127,7 +3127,7 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//get the IDVBCLocator interface from the new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBCLocator interface");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBCLocator interface");
 					TunerLib.IDVBCLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBCLocator;	
 					if (myLocator==null)
 					{
@@ -3142,7 +3142,7 @@ namespace MediaPortal.TV.Recording
 					//set the properties on the new tuning request
 						
 						
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties to tuning request");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties to tuning request");
 					myLocator.CarrierFrequency		= ch.Frequency;
 					myLocator.SymbolRate				  = ch.Symbolrate;
 					myLocator.InnerFEC						= (TunerLib.FECMethod)ch.FEC;
@@ -3151,7 +3151,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.TSID	= ch.TransportStreamID;					//transport stream id
 					myTuneRequest.SID		= ch.ProgramNumber;					//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() submit tuning request");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() submit tuning request");
 					myTuner.TuneRequest = newTuneRequest;
 					Marshal.ReleaseComObject(myTuneRequest);
 
@@ -3222,7 +3222,7 @@ namespace MediaPortal.TV.Recording
 				{
 					TunerLib.IDVBTuningSpace2 myTuningSpace =null;
 					//get the IDVBTuningSpace2 from the tuner
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBTuningSpace2");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBTuningSpace2");
 					myTuningSpace = myTuner.TuningSpace as TunerLib.IDVBTuningSpace2;
 					if (myTuningSpace==null)
 					{
@@ -3232,7 +3232,7 @@ namespace MediaPortal.TV.Recording
 
 
 					//create a new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() create new tuningrequest");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() create new tuningrequest");
 					newTuneRequest = myTuningSpace.CreateTuneRequest();
 					if (newTuneRequest ==null)
 					{
@@ -3242,7 +3242,7 @@ namespace MediaPortal.TV.Recording
 
 
 					TunerLib.IDVBTuneRequest myTuneRequest=null;
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() cast new tuningrequest to IDVBTuneRequest");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() cast new tuningrequest to IDVBTuneRequest");
 					myTuneRequest = newTuneRequest as TunerLib.IDVBTuneRequest;
 					if (myTuneRequest ==null)
 					{
@@ -3250,7 +3250,7 @@ namespace MediaPortal.TV.Recording
 						return ;
 					}
 
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBTLocator");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() get IDVBTLocator");
 					TunerLib.IDVBTLocator myLocator = myTuneRequest.Locator as TunerLib.IDVBTLocator;	
 					if (myLocator==null)
 					{
@@ -3263,7 +3263,7 @@ namespace MediaPortal.TV.Recording
 						return ;
 					}
 					//set the properties on the new tuning request
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties to tuning request");
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties to tuning request");
 					myLocator.CarrierFrequency		= ch.Frequency;
 					myLocator.Bandwidth=ch.Bandwidth;
 					myTuneRequest.ONID	= ch.NetworkID;					//original network id
@@ -3317,7 +3317,21 @@ namespace MediaPortal.TV.Recording
 		/// <param name="tv">if true:Store tv channels found in the database</param>
 		public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels)
 		{	
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels()");
+			//it may take a while before signal quality/level is correct
+			for (int i=0; i < 10;++i)
+			{
+				if (SignalQuality() < 30) 
+				{
+					System.Windows.Forms.Application.DoEvents();
+					System.Threading.Thread.Sleep(100);
+					System.Windows.Forms.Application.DoEvents();
+				}
+				else break;
+			}
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels() signal level:{0} signal quality:{1}",
+												SignalStrength(),SignalQuality() );
+			if (SignalQuality() < 30) return;
+
 			if (m_SectionsTables==null) return;
 
 			//get list of current tv channels present in the database
