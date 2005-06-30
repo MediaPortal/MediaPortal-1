@@ -28,8 +28,6 @@ namespace MediaPortal.TV.Recording
 		AutoTuneCallback										callback = null;
 		int                                 currentIndex=-1;
 		private System.Windows.Forms.Timer  timer1;
-		
-		int																	retryCount=0;
 
 		int newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
@@ -49,7 +47,6 @@ namespace MediaPortal.TV.Recording
 			updatedRadioChannels=0;
 			newChannels=0;
 			updatedChannels=0;
-			retryCount=0;
 			captureCard=card;
 			callback=statusCallback;
 
@@ -96,23 +93,10 @@ namespace MediaPortal.TV.Recording
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
 			
-			if (retryCount==0)
+			ScanNextChannel();
+			if (captureCard.SignalPresent())
 			{
-				ScanNextChannel();
-				if (captureCard.SignalPresent())
-				{
-						ScanChannels();
-				}
-				retryCount=1;
-			}
-			else 
-			{
-				ScanChannel();
-				if (captureCard.SignalPresent())
-				{
-						ScanChannels();
-				}
-				retryCount=0;
+					ScanChannels();
 			}
 			timer1.Enabled=true;
 		}
@@ -121,7 +105,7 @@ namespace MediaPortal.TV.Recording
 		{
 			Log.Write("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}",captureCard.SignalQuality,captureCard.SignalStrength);
 			timer1.Enabled=false;
-			string chanDesc=String.Format("Channel:{0} retry:{1}",currentIndex, retryCount);
+			string chanDesc=String.Format("Channel:{0}",currentIndex);
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			callback.OnStatus(description);
 
@@ -155,7 +139,7 @@ namespace MediaPortal.TV.Recording
 			}
 			timer1.Enabled=false;
 
-			string chanDesc=String.Format("Channel:{0} retry:{1}",currentIndex, retryCount);
+			string chanDesc=String.Format("Channel:{0}",currentIndex);
 			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,MaxATSCChannel,chanDesc);
 			callback.OnStatus(description);
 

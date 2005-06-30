@@ -3320,7 +3320,7 @@ namespace MediaPortal.TV.Recording
 			//it may take a while before signal quality/level is correct
 			for (int i=0; i < 10;++i)
 			{
-				if (SignalQuality() < 30) 
+				if (SignalQuality() < 40) 
 				{
 					System.Windows.Forms.Application.DoEvents();
 					System.Threading.Thread.Sleep(100);
@@ -3330,7 +3330,7 @@ namespace MediaPortal.TV.Recording
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels() signal level:{0} signal quality:{1}",
 												SignalStrength(),SignalQuality() );
-			if (SignalQuality() < 30) return;
+			if (SignalQuality() < 40) return;
 
 			if (m_SectionsTables==null) return;
 
