@@ -2707,10 +2707,10 @@ namespace MediaPortal.TV.Recording
 							currentTuningObject.PMTPid,
 							currentTuningObject.PCRPid,
 							currentTuningObject.ECMPid);
-				try
-				{
-					SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
-				} 
+				//try
+				//{
+				//	SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
+				//} 
 				catch(Exception){}
 				if (!SendPMT())
 				{
@@ -2996,13 +2996,13 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.PMTPid,
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
-				try
-				{
-					SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
-				} 
-				catch(Exception)
-				{
-				}
+				//try
+				//{
+				//	SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+				//} 
+				//catch(Exception)
+				//{
+				//}
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
@@ -3873,13 +3873,13 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.PMTPid,
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
-				try
-				{
-					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
-				}
-				catch(Exception)
-				{
-				}
+				//try
+				//{
+				//	SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+				//}
+				//catch(Exception)
+				//{
+				//}
 					SendPMT();
 				if(m_pluginsEnabled==true)
 					ExecTuner();
