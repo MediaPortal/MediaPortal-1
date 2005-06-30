@@ -147,16 +147,17 @@ namespace MediaPortal.Player
 					//no input pin found, VMR7 is not possible
 					return false;
 				}
-				//Marshal.ReleaseComObject(pinIn);
 
 				//check if the input is connected to a video decoder
 				pinIn.ConnectedTo(out pinConnected);
 				if (pinConnected == null)
 				{
 					//no pin is not connected so VMR7 is not possible
+					Marshal.ReleaseComObject(pinIn);
 					return false;
 				}
-				//Marshal.ReleaseComObject(pinConnected);
+				Marshal.ReleaseComObject(pinIn);
+				Marshal.ReleaseComObject(pinConnected);
 				//all is ok, VMR7 is working
 				return true;
 			}//get {
@@ -184,7 +185,7 @@ namespace MediaPortal.Player
 					
 					if(bitmap!=null)
 					{
-						System.Drawing.ImageConverter conv=new ImageConverter();
+						System.Drawing.ImageConverter conv=new ImageConverter();						
 						byte[] imgComp=new byte[0];
 						imgComp=(byte[])conv.ConvertTo(bitmap,imgComp.GetType());
 						ulong crcVal=crc.calc(imgComp);
@@ -193,42 +194,44 @@ namespace MediaPortal.Player
 
 						m_oldSavedBitmapCRC=crcVal;
 
-						Bitmap n=new Bitmap(bitmap.Width,bitmap.Height);
-						Graphics g=Graphics.FromImage(n);
-						g.Clear(Color.Black);
-						g.DrawImage(bitmap,0,0,bitmap.Width,bitmap.Height);
-						IntPtr handle1=g.GetHdc();
-						IntPtr hdc=Util.Win32API.CreateCompatibleDC(handle1);
-						IntPtr oldBitmap=Util.Win32API.SelectObject(hdc,n.GetHbitmap());
-						bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC | 8 ;
-						bmp.color.blu=0;
-						bmp.color.green=0;
-						bmp.color.red=0;
-						bmp.pDDS=IntPtr.Zero;
-						bmp.HDC=hdc;
-						bmp.rSrc = new DsRECT();
-						bmp.rSrc.Top=0;
-						bmp.rSrc.Left=0;
-						bmp.rSrc.Right=bitmap.Width;
-						bmp.rSrc.Bottom=bitmap.Height;
-						bmp.rDest=new NormalizedRect();
-						bmp.rDest.top=0.0f;
-						bmp.rDest.left=0.0f;
-						bmp.rDest.bottom=1.0f;
-						bmp.rDest.right=1.0f;
-						bmp.fAlpha=alphaValue;
-						//Log.Write("SaveVMR7Bitmap() called");
-					
-						hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
-						//g.ReleaseHdc(ptrSrc);
-						Util.Win32API.DeleteDC(hdc);
-						g.ReleaseHdc(handle1);
-						g.Dispose();
-						n.Dispose();
-						if(hr!=0)
+						using(Bitmap n=new Bitmap(bitmap.Width,bitmap.Height))
 						{
-							Log.Write("SaveVMR7Bitmap() failed: error 0x{0:X} on SetAlphaBitmap()",hr);
-							return false;
+							using (Graphics g=Graphics.FromImage(n))
+							{
+								g.Clear(Color.Black);
+								g.DrawImage(bitmap,0,0,bitmap.Width,bitmap.Height);
+								IntPtr handle1=g.GetHdc();
+								IntPtr hdc=Util.Win32API.CreateCompatibleDC(handle1);
+								IntPtr oldBitmap=Util.Win32API.SelectObject(hdc,n.GetHbitmap());
+								bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC | 8 ;
+								bmp.color.blu=0;
+								bmp.color.green=0;
+								bmp.color.red=0;
+								bmp.pDDS=IntPtr.Zero;
+								bmp.HDC=hdc;
+								bmp.rSrc = new DsRECT();
+								bmp.rSrc.Top=0;
+								bmp.rSrc.Left=0;
+								bmp.rSrc.Right=bitmap.Width;
+								bmp.rSrc.Bottom=bitmap.Height;
+								bmp.rDest=new NormalizedRect();
+								bmp.rDest.top=0.0f;
+								bmp.rDest.left=0.0f;
+								bmp.rDest.bottom=1.0f;
+								bmp.rDest.right=1.0f;
+								bmp.fAlpha=alphaValue;
+								//Log.Write("SaveVMR7Bitmap() called");
+							
+								hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+								//g.ReleaseHdc(ptrSrc);
+								Util.Win32API.DeleteDC(hdc);
+								g.ReleaseHdc(handle1);
+								if(hr!=0)
+								{
+									Log.Write("SaveVMR7Bitmap() failed: error 0x{0:X} on SetAlphaBitmap()",hr);
+									return false;
+								}
+							}
 						}
 					}
 				}

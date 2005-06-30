@@ -25,34 +25,39 @@ namespace DShowNET
         filterFound=null;
         
         if (m_graphBuilder==null) return;
-        try
-        {
-          IEnumFilters ienumFilt;
-          int hr=m_graphBuilder.EnumFilters(out ienumFilt);
-          if (hr==0 && ienumFilt!=null)
-          {
-            uint iFetched;
-            IBaseFilter filter;
-            ienumFilt.Reset();
-            do
-            {
-              hr=ienumFilt.Next(1,out filter,out iFetched); 
-              if (hr==0 && iFetched==1)
-              {
-                Guid filterGuid;
-                filter.GetClassID(out filterGuid);
-                if (filterGuid == classID)
-                {
-                  filterFound=filter;
-                  return;
-                }
-              }
-            } while (iFetched==1 && hr==0);
-          }
-        }
-        catch(Exception)
-        {
-        }
+				IEnumFilters ienumFilt=null;
+				try
+				{
+					int hr=m_graphBuilder.EnumFilters(out ienumFilt);
+					if (hr==0 && ienumFilt!=null)
+					{
+						uint iFetched;
+						IBaseFilter filter;
+						ienumFilt.Reset();
+						do
+						{
+							hr=ienumFilt.Next(1,out filter,out iFetched); 
+							if (hr==0 && iFetched==1)
+							{
+								Guid filterGuid;
+								filter.GetClassID(out filterGuid);
+								if (filterGuid == classID)
+								{
+									filterFound=filter;
+									return;
+								}
+							}
+						} while (iFetched==1 && hr==0);
+					}
+				}
+				catch(Exception)
+				{
+				}
+				finally
+				{
+					if (ienumFilt!=null)
+						Marshal.ReleaseComObject(ienumFilt);
+				}
         return ; 
       }
 		static public void RemoveFilters(IGraphBuilder m_graphBuilder)
@@ -61,9 +66,9 @@ namespace DShowNET
 			for (int counter=0; counter < 100; counter++)
 			{
 				bool bFound=false;
+				IEnumFilters ienumFilt=null;
 				try
 				{
-					IEnumFilters ienumFilt;
 					int hr=m_graphBuilder.EnumFilters(out ienumFilt);
 					if (hr==0)
 					{
@@ -87,6 +92,11 @@ namespace DShowNET
 				{
 					return;
 				}
+				finally
+				{
+					if (ienumFilt!=null)
+						Marshal.ReleaseComObject(ienumFilt);
+				}
 			}
 		}
       static public void DumpFilters(IGraphBuilder m_graphBuilder)
@@ -94,10 +104,10 @@ namespace DShowNET
         if (m_graphBuilder==null) return;
         Filters filters = new Filters();
         
+				IEnumFilters ienumFilt=null;
         try
         {
           int iFilter=0;
-          IEnumFilters ienumFilt;
           int hr=m_graphBuilder.EnumFilters(out ienumFilt);
           if (hr==0)
           {
@@ -114,12 +124,19 @@ namespace DShowNET
                 DirectShowUtil.DebugWrite("Filter #{0} :{1}", iFilter,info.achName);
                 iFilter++;
               }
+							if (filter!=null)
+								Marshal.ReleaseComObject(filter);
             } while (iFetched==1 && hr==0);
           }
         }
         catch(Exception)
         {
-        }
+				}
+				finally
+				{
+					if (ienumFilt!=null)
+						Marshal.ReleaseComObject(ienumFilt);
+				}
       }
 
 
@@ -673,7 +690,7 @@ namespace DShowNET
       ppPin = null;
       if (filter==null) return -1;
 			int hr;
-			IEnumPins pinEnum;
+			IEnumPins pinEnum=null;
 			hr = filter.EnumPins( out pinEnum );
 			if( (hr < 0) || (pinEnum == null) )
 				return hr;

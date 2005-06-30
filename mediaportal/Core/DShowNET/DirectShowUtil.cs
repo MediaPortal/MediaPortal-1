@@ -92,6 +92,8 @@ namespace DShowNET
           }
           Marshal.ReleaseComObject( pBasefilter );
         }
+				Marshal.ReleaseComObject(enumFilters);
+				enumFilters=null;
       }
     }
     static public IBaseFilter AddAudioRendererToGraph(IGraphBuilder graphBuilder,string strFilterName, bool setAsReferenceClock)
@@ -168,6 +170,7 @@ namespace DShowNET
 						}
 						Marshal.ReleaseComObject( pBasefilter );
 					}
+					Marshal.ReleaseComObject(enumFilters);
 				}
 
 				if (!bNeedAdd) return null;
@@ -237,6 +240,7 @@ namespace DShowNET
     static public IPin FindPin (IBaseFilter filter, PinDirection dir,string strPinName)
     {
       int hr=0;
+
       IEnumPins pinEnum;
       hr=filter.EnumPins(out pinEnum);
       if( (hr == 0) && (pinEnum != null) )
@@ -257,7 +261,8 @@ namespace DShowNET
               PinInfo info;
               pins[0].QueryPinInfo(out info);
               if ( String.Compare(info.name,strPinName)==0 )
-              {
+							{
+								Marshal.ReleaseComObject(pinEnum);
                 return pins[0];
               }
             }
@@ -265,6 +270,7 @@ namespace DShowNET
           }
         }
         while( hr == 0 );
+				Marshal.ReleaseComObject(pinEnum);
       }
       return null;
     }
@@ -294,7 +300,8 @@ namespace DShowNET
               PinInfo info;
               pins[0].QueryPinInfo(out info);
               if ( iCurrentPinNr==iPinNr )
-              {
+							{
+								Marshal.ReleaseComObject(pinEnum);
                 return pins[0];
               }
               iCurrentPinNr++;
@@ -302,7 +309,8 @@ namespace DShowNET
             Marshal.ReleaseComObject( pins[0] );
           }
         }
-        while( hr == 0 );
+				while( hr == 0 );
+				Marshal.ReleaseComObject(pinEnum);
       }
       return null;
     }
@@ -330,14 +338,16 @@ namespace DShowNET
               IPin pSourcePin=null;
               hr=pins[0].ConnectedTo(out pSourcePin);
               if (hr>=0)
-              {
+							{
+								Marshal.ReleaseComObject(pinEnum);
                 return pSourcePin;
               }
             }
             Marshal.ReleaseComObject( pins[0] );
           }
         }
-        while( hr == 0 );
+				while( hr == 0 );
+				Marshal.ReleaseComObject(pinEnum);
       }
       return null;
     }
@@ -404,7 +414,8 @@ namespace DShowNET
             }
           }
           else iFetched=0;
-        }while( iFetched==1 && pinsRendered < maxPinsToRender);
+				}while( iFetched==1 && pinsRendered < maxPinsToRender);
+				Marshal.ReleaseComObject(pinEnum);
       }
       return bAllConnected;
     }
@@ -466,7 +477,8 @@ namespace DShowNET
             }
           }
           else iFetched=0;
-        }while( iFetched==1 );
+				}while( iFetched==1 );
+				Marshal.ReleaseComObject(pinEnum);
       }
     }
 
@@ -493,9 +505,12 @@ namespace DShowNET
           {
             AmAspectRatioMode mode;
             hr=pMC.SetAspectRatioMode(ARRatioMode);
-            hr=pMC.GetAspectRatioMode(out mode);
+						hr=pMC.GetAspectRatioMode(out mode);
+						Marshal.ReleaseComObject(pMC);
           }
-        }
+					Marshal.ReleaseComObject(iPin);
+				}
+				Marshal.ReleaseComObject(overlay);
       }
         
 
@@ -517,11 +532,13 @@ namespace DShowNET
             if (pARC!=null)
             {
               pARC.SetAspectRatioMode( (uint)VmrAspectRatioMode.VMR_ARMODE_NONE);
+							Marshal.ReleaseComObject(pARC);
             }
             IVMRAspectRatioControl9 pARC9 = pBasefilter as IVMRAspectRatioControl9;
             if (pARC9!=null)
             {
               pARC9.SetAspectRatioMode((uint)VmrAspectRatioMode.VMR_ARMODE_NONE);
+							Marshal.ReleaseComObject(pARC9);
             }
 
             IEnumPins pinEnum;
@@ -541,13 +558,16 @@ namespace DShowNET
                   if (null!=pMC)
                   {
                     pMC.SetAspectRatioMode(ARRatioMode);
-                  }
+										Marshal.ReleaseComObject( pMC);
+									}
                   Marshal.ReleaseComObject( pins[0] );
                 }
               } while( f ==1);
+							Marshal.ReleaseComObject(pinEnum);
             }
           }
         } while (iFetched==1 && pBasefilter!=null);
+				Marshal.ReleaseComObject(enumFilters);
       }
     }
 

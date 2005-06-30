@@ -2085,24 +2085,24 @@ namespace MediaPortal.TV.Recording
 								if (dsPinDir == PinDirection.Input)
 								{
 									hr = m_graphBuilder.Connect(outPin[0], dsPin[0]);
-									if(hr != 0) 
+									if(hr == 0) 
 									{
 										Marshal.ReleaseComObject(dsPin[0]);
-										break;
-									} 
-									else 
-									{
+										Marshal.ReleaseComObject(outPin[0]);
+										Marshal.ReleaseComObject(pinEnum);
+										Marshal.ReleaseComObject(downstreamPins);
 										return true;
 									}
+									Marshal.ReleaseComObject(dsPin[0]);
 								}
-							}
+							}//while(downstreamPins.Next(1, dsPin, out ulFetched) == 0) 
 							Marshal.ReleaseComObject(downstreamPins);
-						}
-					}
+						}//if (outputPinCounter == preferredOutputPin)
+					}//if (pinDir == PinDirection.Output)
 					Marshal.ReleaseComObject(outPin[0]);
-				}
+				}//while(pinEnum.Next(1, outPin, out ulFetched) == 0) 
 				pinEnum.Reset();        // Move back to start of enumerator
-			}
+			}//if (preferredOutputPin > 0) 
 			#endregion
 
 			IPin[] testPin = new IPin[1];
@@ -2125,16 +2125,16 @@ namespace MediaPortal.TV.Recording
 						if (dsPinDir == PinDirection.Input)
 						{
 							hr = m_graphBuilder.Connect(testPin[0], dsPin[0]);
-							if(hr != 0) 
+							if(hr == 0) 
 							{
 								Marshal.ReleaseComObject(dsPin[0]);
-								continue;
-							} 
-							else 
-							{
+								Marshal.ReleaseComObject(downstreamPins);
+								Marshal.ReleaseComObject(testPin[0]);
+								Marshal.ReleaseComObject(pinEnum);
 								return true;
 							}
 						}//if (dsPinDir == PinDirection.Input)
+						Marshal.ReleaseComObject(dsPin[0]);
 					}//while(downstreamPins.Next(1, dsPin, out ulFetched) == 0) 
 					Marshal.ReleaseComObject(downstreamPins);
 				}//if(pinDir == PinDirection.Output) // Go and find the input pin.
@@ -2424,7 +2424,8 @@ namespace MediaPortal.TV.Recording
 				propBag.Read("FriendlyName", ref val, IntPtr.Zero); 
 				string Name = val as string;
 				val = "";
-				if(String.Compare(Name.ToLower(), FriendlyName.ToLower()) == 0) // If found
+				Marshal.ReleaseComObject(propBag);
+				if(String.Compare(Name, FriendlyName,true) == 0) // If found
 				{
 					object filterObj = null;
 					System.Guid filterID = typeof(IBaseFilter).GUID;
@@ -2432,17 +2433,16 @@ namespace MediaPortal.TV.Recording
 					device = filterObj;
 					
 					filterObj = null;
-					if(device == null) 
+					if(device != null) 
 					{
-						continue;
-					} 
-					else 
-					{
+						Marshal.ReleaseComObject(deviceMoniker[0]);
+						Marshal.ReleaseComObject(enumMoniker);
 						return true;
 					}
 				}//if(String.Compare(Name.ToLower(), FriendlyName.ToLower()) == 0) // If found
 				Marshal.ReleaseComObject(deviceMoniker[0]);
 			}//while(enumMoniker.Next(1, deviceMoniker, out ulFetched) == 0) // while == S_OK
+			Marshal.ReleaseComObject(enumMoniker);
 			device = null;
 			return false;
 		}//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device) 
@@ -2467,22 +2467,24 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 					
-				System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None);
-				long len=stream.Length;
-				if (len>6)
+				using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None))
 				{
-					byte[] pmt = new byte[len];
-					stream.Read(pmt,0,(int)len);
-					stream.Close();
-
-					int pmtVersion = ((pmt[5]>>1)&0x1F);
-
-					// send the PMT table to the device
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
-
-					if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
+					long len=stream.Length;
+					if (len>6)
 					{
-						return true;
+						byte[] pmt = new byte[len];
+						stream.Read(pmt,0,(int)len);
+						stream.Close();
+
+						int pmtVersion = ((pmt[5]>>1)&0x1F);
+
+						// send the PMT table to the device
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
+
+						if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
+						{
+							return true;
+						}
 					}
 				}
 			}
@@ -3998,9 +4000,11 @@ namespace MediaPortal.TV.Recording
 					(int)Network());
 				
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
-				System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-				stream.Write(pmtTable,0,pmtTable.Length);
-				stream.Close();
+				using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None))
+				{
+					stream.Write(pmtTable,0,pmtTable.Length);
+					stream.Close();
+				}
 				refreshPmtTable=true;
 			}
 			catch(Exception ex)

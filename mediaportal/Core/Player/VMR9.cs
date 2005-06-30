@@ -314,16 +314,17 @@ namespace MediaPortal.Player
           //no input pin found, vmr9 is not possible
           return false;
         }
-        //Marshal.ReleaseComObject(pinIn);
 
         //check if the input is connected to a video decoder
         pinIn.ConnectedTo(out pinConnected);
         if (pinConnected == null)
         {
           //no pin is not connected so vmr9 is not possible
-          return false;
+					Marshal.ReleaseComObject(pinIn);
+					return false;
         }
-        //Marshal.ReleaseComObject(pinConnected);
+				Marshal.ReleaseComObject(pinIn);
+				Marshal.ReleaseComObject(pinConnected);
         //all is ok, vmr9 is working
         return true;
       }//get {
@@ -375,76 +376,79 @@ namespace MediaPortal.Player
 				Log.Write("SaveVMR9Bitmap() failed, no VMR9");
 				return false;
 			}
-			System.IO.MemoryStream mStr=new System.IO.MemoryStream();
 			int hr=0;
 			// transparent image?
-			if(bitmap!=null)
+			using (System.IO.MemoryStream mStr=new System.IO.MemoryStream())
 			{
-				if(transparent==true)
-					bitmap.MakeTransparent(Color.Black);
-				bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
-				mStr.Position=0;
-			}
-			VMR9AlphaBitmap bmp=new VMR9AlphaBitmap();
-
-			if(show==true)
-			{
-
-				// get AR for the bitmap
-				Rectangle src,dest;
-				VMR9Util.g_vmr9.GetVideoWindows(out src,out dest);
-				
-				int width=VMR9Util.g_vmr9.VideoWidth;
-				int height=VMR9Util.g_vmr9.VideoHeight;
-
-				float xx=(float)src.X/width;
-				float yy=(float)src.Y/height;
-				float fx=(float)(src.X+src.Width)/width;
-				float fy=(float)(src.Y+src.Height)/height;
-				//
-
-				Microsoft.DirectX.Direct3D.Surface surface=GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,GUIGraphicsContext.Height,Microsoft.DirectX.Direct3D.Format.X8R8G8B8,Microsoft.DirectX.Direct3D.Pool.SystemMemory);
-				Microsoft.DirectX.Direct3D.SurfaceLoader.FromStream(surface,mStr,Microsoft.DirectX.Direct3D.Filter.None,0);
-				bmp.dwFlags=4|8;
-				bmp.color.blu=0;
-				bmp.color.green=0;
-				bmp.color.red=0;
-				unsafe
+				if(bitmap!=null)
 				{
-					bmp.pDDS=(System.IntPtr)surface.UnmanagedComPointer;
+					if(transparent==true)
+						bitmap.MakeTransparent(Color.Black);
+					bitmap.Save(mStr,System.Drawing.Imaging.ImageFormat.Bmp);
+					mStr.Position=0;
 				}
-				bmp.rDest=new VMR9NormalizedRect();
-				bmp.rDest.top=yy;
-				bmp.rDest.left=xx;
-				bmp.rDest.bottom=fy;
-				bmp.rDest.right=fx;
-				bmp.fAlpha=alphaValue;
-				//Log.Write("SaveVMR9Bitmap() called");
-				hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
-				if(hr!=0)
+			
+				VMR9AlphaBitmap bmp=new VMR9AlphaBitmap();
+
+				if(show==true)
 				{
-					//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
-					return false;
+
+					// get AR for the bitmap
+					Rectangle src,dest;
+					VMR9Util.g_vmr9.GetVideoWindows(out src,out dest);
+					
+					int width=VMR9Util.g_vmr9.VideoWidth;
+					int height=VMR9Util.g_vmr9.VideoHeight;
+
+					float xx=(float)src.X/width;
+					float yy=(float)src.Y/height;
+					float fx=(float)(src.X+src.Width)/width;
+					float fy=(float)(src.Y+src.Height)/height;
+					//
+
+					using (Microsoft.DirectX.Direct3D.Surface surface=GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,GUIGraphicsContext.Height,Microsoft.DirectX.Direct3D.Format.X8R8G8B8,Microsoft.DirectX.Direct3D.Pool.SystemMemory))
+					{
+						Microsoft.DirectX.Direct3D.SurfaceLoader.FromStream(surface,mStr,Microsoft.DirectX.Direct3D.Filter.None,0);
+						bmp.dwFlags=4|8;
+						bmp.color.blu=0;
+						bmp.color.green=0;
+						bmp.color.red=0;
+						unsafe
+						{
+							bmp.pDDS=(System.IntPtr)surface.UnmanagedComPointer;
+						}
+						bmp.rDest=new VMR9NormalizedRect();
+						bmp.rDest.top=yy;
+						bmp.rDest.left=xx;
+						bmp.rDest.bottom=fy;
+						bmp.rDest.right=fx;
+						bmp.fAlpha=alphaValue;
+						//Log.Write("SaveVMR9Bitmap() called");
+						hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
+						if(hr!=0)
+						{
+							//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
+							return false;
+						}
+					}					
 				}
-				surface.Dispose();	
-				
-			}
-			else
-			{
-				bmp.dwFlags=1;
-				bmp.color.blu=0;
-				bmp.color.green=0;
-				bmp.color.red=0;
-				bmp.rDest=new VMR9NormalizedRect();
-				bmp.rDest.top=0.0f;
-				bmp.rDest.left=0.0f;
-				bmp.rDest.bottom=1.0f;
-				bmp.rDest.right=1.0f;
-				bmp.fAlpha=alphaValue;
-				hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
-				if(hr!=0)
+				else
 				{
-					return false;
+					bmp.dwFlags=1;
+					bmp.color.blu=0;
+					bmp.color.green=0;
+					bmp.color.red=0;
+					bmp.rDest=new VMR9NormalizedRect();
+					bmp.rDest.top=0.0f;
+					bmp.rDest.left=0.0f;
+					bmp.rDest.bottom=1.0f;
+					bmp.rDest.right=1.0f;
+					bmp.fAlpha=alphaValue;
+					hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
+					if(hr!=0)
+					{
+						return false;
+					}
 				}
 			}
 			// dispose
