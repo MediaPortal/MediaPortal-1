@@ -2789,8 +2789,8 @@ namespace MediaPortal.TV.Recording
 						int symbolrate=0,innerFec=0,modulation=0,physicalChannel=0;
 						int minorChannel=0,majorChannel=0;
 						TVDatabase.GetATSCTuneRequest(channel.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minorChannel,out majorChannel,out HasEITPresentFollow,out HasEITSchedule);
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}", 
-							frequency,physicalChannel,symbolrate, innerFec, modulation, ONID, TSID, SID,providerName);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz physicalChannel:{1} major channel:{2} minor channel:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}", 
+							frequency,physicalChannel,minorChannel, majorChannel, modulation, ONID, TSID, SID,providerName);
 
 
 						
