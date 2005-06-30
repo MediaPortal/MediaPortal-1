@@ -105,6 +105,12 @@ namespace DShowNET
 			}
 			return false;
 		}
+		public bool IsCISupported()
+		{
+			if (digitalEverywhere.IsDigitalEverywhere) return true;
+			if (twinhan.IsTwinhan) return true;
+			return false;
+		}
 		
 	}//public class VideoCaptureProperties
 }//namespace DShowNET

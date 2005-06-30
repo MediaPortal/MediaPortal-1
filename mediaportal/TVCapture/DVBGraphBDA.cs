@@ -2460,6 +2460,7 @@ namespace MediaPortal.TV.Recording
 		bool SendPMT()
 		{
 			VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+			if (!props.IsCISupported()) return true;
 			try
 			{
 
