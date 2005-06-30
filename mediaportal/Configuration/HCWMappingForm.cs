@@ -160,7 +160,6 @@ namespace MediaPortal.Configuration
       this.treeMapping.Location = new System.Drawing.Point(64, 78);
       this.treeMapping.Name = "treeMapping";
       this.treeMapping.SelectedImageIndex = -1;
-      this.treeMapping.ShowLines = false;
       this.treeMapping.Size = new System.Drawing.Size(312, 330);
       this.treeMapping.TabIndex = 1;
       this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
