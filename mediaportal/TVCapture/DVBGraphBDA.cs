@@ -2711,7 +2711,7 @@ namespace MediaPortal.TV.Recording
 				//{
 				//	SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
 				//} 
-				catch(Exception){}
+				//catch(Exception){}
 				if (!SendPMT())
 				{
 					return;
