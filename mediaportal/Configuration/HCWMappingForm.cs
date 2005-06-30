@@ -578,7 +578,7 @@ namespace MediaPortal.Configuration
               }
                 break;
               case "*":
-                conditionString = "Wildcard";
+                conditionString = "no Condition";
                 break;
             }
 
@@ -992,7 +992,7 @@ namespace MediaPortal.Configuration
       TreeNode node = getNode("CONDITION");
       Data data = new Data("CONDITION", "*", null);
       node.Tag = data;
-      node.Text = "Wildcard";
+      node.Text = "no Condition";
     }
 
     private void radioButtonAction_Click(object sender, System.EventArgs e)
@@ -1261,7 +1261,7 @@ namespace MediaPortal.Configuration
       newLayer.Tag = new Data("LAYER", null, "0");
       newLayer.ForeColor = Color.DimGray;
 
-      TreeNode newCondition = new TreeNode("Wildcard");
+      TreeNode newCondition = new TreeNode("no Condition");
       newCondition.Tag = new Data("CONDITION", "*", "-1");
       newCondition.ForeColor = Color.Blue;
 
