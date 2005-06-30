@@ -1264,6 +1264,11 @@ namespace MediaPortal.TV.Recording
 					else
 					{
 						//recording ended
+						Log.WriteFile(Log.LogType.Capture,"Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} priority:{6} quality:{7}",
+							ID,
+							CurrentTVRecording.Title,CurrentTVRecording.Channel, 
+							CurrentTVRecording.StartTime.ToLongTimeString(), CurrentTVRecording.EndTime.ToLongTimeString(),
+							CurrentTVRecording.ID, CurrentTVRecording.Priority,CurrentTVRecording.Quality.ToString());
 						StopRecording();
 					}
 				}

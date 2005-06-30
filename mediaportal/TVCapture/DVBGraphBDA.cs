@@ -1037,6 +1037,11 @@ namespace MediaPortal.TV.Recording
 				}
 				m_recorder.Start((int)lStartTime);
 			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to start recording :{0} {1} {2}",
+											ex.Message,ex.Source,ex.StackTrace);
+			}
 			finally
 			{
 			}
