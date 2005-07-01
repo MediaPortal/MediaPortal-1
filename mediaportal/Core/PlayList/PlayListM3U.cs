@@ -36,7 +36,7 @@ namespace MediaPortal.Playlists
 				
 				Encoding fileEncoding = Encoding.Default;
 				FileStream stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
-				StreamReader file = new StreamReader(stream, fileEncoding, true);
+				StreamReader file = new StreamReader(stream);
         //StreamReader file = File.OpenText(strFileName);
         if (file==null) 
         {
