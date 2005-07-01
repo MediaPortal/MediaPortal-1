@@ -1351,9 +1351,11 @@ namespace MediaPortal.Player
 						Marshal.FreeHGlobal(stateData);
 					}
 
+					Marshal.ReleaseComObject(dvdState);
 					Log.Write("DVDPlayer::GetResumeState() end true");
 					return true;
 				}
+				Marshal.ReleaseComObject(dvdStatePersistMemory);
 			}
 
 			Marshal.ReleaseComObject(dvdState);
