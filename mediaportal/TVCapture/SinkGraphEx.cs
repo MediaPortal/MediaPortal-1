@@ -296,6 +296,7 @@ namespace MediaPortal.TV.Recording
 				m_graphState = State.Created;
 				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:CreateGraph() OUT");
 
+				SetQuality(3);
 
 				return true;
 			}
