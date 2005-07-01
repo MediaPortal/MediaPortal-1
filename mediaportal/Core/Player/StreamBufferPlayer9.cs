@@ -236,6 +236,9 @@ Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
           if( mediaCtrl != null )
           {
             hr = mediaCtrl.Stop();
+						Marshal.ReleaseComObject(mediaCtrl);
+						mediaCtrl=null;
+
           }
           
 					Log.Write("StreamBufferPlayer9:stopped:{0}",GUIGraphicsContext.InVmr9Render);
@@ -243,7 +246,7 @@ Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
 					Log.Write("StreamBufferPlayer9:stop notifies");
 					if( mediaEvt != null )
 					{
-						hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+						Marshal.ReleaseComObject(mediaEvt);
 						mediaEvt = null;
 					}
 				//added from agree: check if Vmr9 already null
@@ -255,11 +258,15 @@ Log.Write("StreamBufferPlayer9:clean vmr9");
 					Vmr9=null;
 				}
 
-				basicAudio	= null;
-				m_mediaSeeking=null;
-				mediaCtrl = null;
-				m_StreamBufferConfig=null;
-				m_mediaSeeking2=null;
+				if (basicAudio!=null) Marshal.ReleaseComObject(basicAudio); basicAudio	= null;
+				if (basicVideo!=null) Marshal.ReleaseComObject(basicVideo); basicVideo	= null;
+				if (m_mediaSeeking!=null) Marshal.ReleaseComObject(m_mediaSeeking); m_mediaSeeking=null;
+				if (m_StreamBufferConfig!=null) Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
+				if (m_mediaSeeking2!=null) Marshal.ReleaseComObject(m_mediaSeeking2); m_mediaSeeking2=null;
+				if (m_mediaSeeking!=null) Marshal.ReleaseComObject(m_mediaSeeking); m_mediaSeeking=null;
+				if (streamConfig2!=null) Marshal.ReleaseComObject(streamConfig2); streamConfig2=null;
+				if (bufferSource!=null) Marshal.ReleaseComObject(bufferSource); bufferSource=null;
+				if (videoWin!=null) Marshal.ReleaseComObject(videoWin); videoWin=null;
 
 
 Log.Write("StreamBufferPlayer9:remove filters");

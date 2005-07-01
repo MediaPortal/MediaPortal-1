@@ -968,6 +968,7 @@ namespace MediaPortal.Player
 				if( mediaCtrl != null )
 				{
 					hr = mediaCtrl.Stop();
+					Marshal.ReleaseComObject(mediaCtrl);
 					mediaCtrl = null;
 				}
 
@@ -975,16 +976,15 @@ namespace MediaPortal.Player
 
 				if( mediaEvt != null )
 				{
-					hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+					Marshal.ReleaseComObject(mediaEvt);
 					mediaEvt = null;
 				}
 
 				if( videoWin != null )
 				{
           m_bWindowVisible=false;
-          m_bIsVisible=false;
-					hr = videoWin.put_Visible( DsHlp.OAFALSE );
-					hr = videoWin.put_Owner( IntPtr.Zero );
+					m_bIsVisible=false;
+					Marshal.ReleaseComObject(videoWin);
 					videoWin = null;
 				}
 
@@ -996,16 +996,16 @@ namespace MediaPortal.Player
 					Marshal.ReleaseComObject( m_mediaSeeking2 );
 				m_mediaSeeking2= null;
         
-        
-				basicVideo	= null;
-				basicAudio	= null;
+				if (basicAudio!=null) Marshal.ReleaseComObject(basicAudio); basicAudio	= null;
+				if (basicVideo!=null) Marshal.ReleaseComObject(basicVideo); basicVideo	= null;
+				if (m_StreamBufferConfig!=null) Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
+				if (streamConfig2!=null) Marshal.ReleaseComObject(streamConfig2); streamConfig2=null;
+				if (bufferSource!=null) Marshal.ReleaseComObject(bufferSource); bufferSource=null;
+				if (videoWin!=null) Marshal.ReleaseComObject(videoWin); videoWin=null;
+
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
 				vmr7=null;
-
-				if ( bufferSource != null )
-					Marshal.ReleaseComObject( bufferSource );
-				bufferSource = null;
 
         DsUtils.RemoveFilters(graphBuilder);
 
