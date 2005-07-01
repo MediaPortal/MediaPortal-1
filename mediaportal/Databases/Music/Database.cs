@@ -2189,25 +2189,29 @@ namespace MediaPortal.Music.Database
         //extract embedded coverart from file
         if (imageBytes != null)
         {
-          using (MemoryStream memoryStream = new MemoryStream(imageBytes))
-          {
-            using (System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream))
-            {
-              string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tag.Album);
-              string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tag.Album);
-              MediaPortal.Util.Picture.CreateThumbnail(image, strSmallThumb, 128, 128, 0);
-              MediaPortal.Util.Picture.CreateThumbnail(image, strLargeThumb, 512, 512, 0);
-              string folderThumb=Utils.GetFolderThumb(strPathSong);
-              if (!System.IO.File.Exists(folderThumb))
-              {
-								try
+					try
+					{
+						using (MemoryStream memoryStream = new MemoryStream(imageBytes))
+						{
+							using (System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream))
+							{
+								string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tag.Album);
+								string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tag.Album);
+								MediaPortal.Util.Picture.CreateThumbnail(image, strSmallThumb, 128, 128, 0);
+								MediaPortal.Util.Picture.CreateThumbnail(image, strLargeThumb, 512, 512, 0);
+								string folderThumb=Utils.GetFolderThumb(strPathSong);
+								if (!System.IO.File.Exists(folderThumb))
 								{
-									System.IO.File.Copy(strSmallThumb,folderThumb,true);
+									try
+									{
+										System.IO.File.Copy(strSmallThumb,folderThumb,true);
+									}
+									catch(Exception){}
 								}
-								catch(Exception){}
-              }
-            }
-          }
+							}
+						}
+					}
+					catch(Exception){}
         }
 			  string strPath, strFileName;
 			  DatabaseUtility.Split(song.FileName, out strPath, out strFileName); 
