@@ -143,11 +143,12 @@ namespace MediaPortal.Player
 				Log.Write("g_Player.Stop()");
         OnStopped();
         GUIGraphicsContext.ShowBackground=true;
-        m_player.Stop();
-        GUIGraphicsContext.form.Invalidate(true);
-        GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED,0,0,0,0,0,null);
+				m_player.Stop();
+				GUIGraphicsContext.form.Invalidate(true);
+				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED,0,0,0,0,0,null);
         GUIWindowManager.SendThreadMessage(msg);
-        GUIGraphicsContext.IsFullScreenVideo=false;
+
+				GUIGraphicsContext.IsFullScreenVideo=false;
         GUIGraphicsContext.IsPlaying=false;
         GUIGraphicsContext.IsPlayingVideo=false;
         m_player.Release();

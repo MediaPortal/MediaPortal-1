@@ -641,13 +641,13 @@ public interface IPersist
 		int IsDirty();
 
 		[PreserveSig]
-		int Load([In] IntPtr pMem, [In] ulong cbSize);
+		int Load([In] IntPtr pMem, [In] uint cbSize);
 
 		[PreserveSig]
-		int Save([Out] IntPtr pMem, [In] bool fClearDirty, [In] ulong cbSize);
+		int Save([Out] IntPtr pMem, [In] bool fClearDirty, [In] uint cbSize);
 
 		[PreserveSig]
-		int GetSizeMax([Out] out ulong pCbSize);
+		int GetSizeMax([Out] out uint pCbSize);
 
 		[PreserveSig]
 		int InitNew();

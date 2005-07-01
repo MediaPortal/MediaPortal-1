@@ -1851,6 +1851,7 @@ namespace MediaPortal.GUI.Video
 					g_Player.Player.GetResumeState(out resumeData);
 					Log.Write("GUIVideoFiles::OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
 					VideoDatabase.SetMovieStopTimeAndResumeData(idFile,timeMovieStopped,resumeData);
+					Log.Write("GUIVideoFiles::OnPlayBackStopped store resume time");
 				}
 				else
 					VideoDatabase.DeleteMovieStopTime(idFile);

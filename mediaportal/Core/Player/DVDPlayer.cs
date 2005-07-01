@@ -457,11 +457,9 @@ namespace MediaPortal.Player
       try 
       {
         Log.Write("DVDPlayer:cleanup DShow graph");
-				if( dvdCtrl != null )
-				{
-					hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
-					dvdCtrl.Stop();
-				}
+				if (mediaEvt!=null)
+					hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_DVD_EVENT, IntPtr.Zero );
+			
 
         if( mediaCtrl != null )
         {
@@ -470,11 +468,7 @@ namespace MediaPortal.Player
         }
         m_state = PlayState.Stopped;
 
-        if( mediaEvt != null )
-        {
-          hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_DVD_EVENT, IntPtr.Zero );
-          mediaEvt = null;
-        }
+        mediaEvt = null;
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
 				vmr7=null;
@@ -1135,22 +1129,22 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
+			int hr=0;
       if( (mediaCtrl == null) ||
         ((m_state != PlayState.Playing) && (m_state != PlayState.Paused) ) )
         return;
-			if( dvdCtrl != null )
-			{
-				dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
-				dvdCtrl.Stop();
-			}
-      int hr = mediaCtrl.Stop();
-      if( hr >= 0 )
+			Log.Write("DVDPlayer:Stop()");
+			if (mediaEvt!=null)
+				hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_DVD_EVENT, IntPtr.Zero );
+			
+			hr = mediaCtrl.Stop();
+			if( hr >= 0 )
       {
         m_state = PlayState.Stopped;
         UpdateMenu();
       }
-      CloseInterfaces();
-      GUIGraphicsContext.IsFullScreenVideo=false;
+			CloseInterfaces();
+			GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying=false;
     }
     public override int Speed
@@ -1317,51 +1311,46 @@ namespace MediaPortal.Player
 			Log.Write("DVDPlayer::GetResumeState() begin");
 			resumeData = null;
 			IDvdState dvdState;
-
 			int hr = dvdInfo.GetState(out dvdState);
-			if (hr < 0)
+			if (hr != 0)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetResumeState() dvdInfo.GetState failed");
 				return false;
 			}
 
-			Log.Write("DVDPlayer::GetResumeState() getting IPersistMemory");
 			IPersistMemory dvdStatePersistMemory = (IPersistMemory)dvdState;
-			if (dvdStatePersistMemory != null)
+			if (dvdStatePersistMemory == null)
 			{
-				ulong resumeSize = 0;
-				dvdStatePersistMemory.GetSizeMax(out resumeSize);
-				Log.Write("DVDPlayer::GetResumeState() resumeSize={0}", resumeSize);
-				if (resumeSize > 0)
-				{
-					IntPtr stateData = Marshal.AllocHGlobal((int)resumeSize); 
-
-					try
-					{
-						dvdStatePersistMemory.Save(stateData, true, resumeSize);
-						resumeData = new byte[resumeSize];
-						Marshal.Copy(stateData, resumeData, 0, (int)resumeSize);
-					}
-					catch (Exception e)
-					{
-						throw e;
-					}
-					finally
-					{
-						Marshal.FreeHGlobal(stateData);
-					}
-
-					Marshal.ReleaseComObject(dvdState);
-					Log.Write("DVDPlayer::GetResumeState() end true");
-					return true;
-				}
-				Marshal.ReleaseComObject(dvdStatePersistMemory);
+				Log.Write("DVDPlayer::GetResumeState() could not get IPersistMemory");
+				Marshal.ReleaseComObject(dvdState);
+				return false;
 			}
+			uint resumeSize = 0;
+			dvdStatePersistMemory.GetSizeMax(out resumeSize);
+			if (resumeSize <= 0)
+			{
+				Log.Write("DVDPlayer::GetResumeState() failed resumeSize={0}", resumeSize);
+				Marshal.ReleaseComObject(dvdStatePersistMemory);
+				Marshal.ReleaseComObject(dvdState);
+				return false;
+			}
+			IntPtr stateData = Marshal.AllocCoTaskMem((int)resumeSize); 
 
+			try
+			{
+				dvdStatePersistMemory.Save(stateData, true, resumeSize);
+				resumeData = new byte[resumeSize];
+				Marshal.Copy(stateData, resumeData, 0, (int)resumeSize);
+			}
+			catch (Exception ex)
+			{
+				Log.Write("DVDPlayer::GetResumeState() failed {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+			}
+			
+			Marshal.FreeCoTaskMem(stateData);
+			Marshal.ReleaseComObject(dvdStatePersistMemory);
 			Marshal.ReleaseComObject(dvdState);
-
-			Log.Write("DVDPlayer::GetResumeState() end false");
-			return false;
+			return true;
 		}
 
     
@@ -1384,7 +1373,7 @@ namespace MediaPortal.Player
 
 				try
 				{
-					dvdStatePersistMemory.Load(stateData, (ulong)resumeData.Length);
+					dvdStatePersistMemory.Load(stateData, (uint)resumeData.Length);
 				}
 				catch (Exception e)
 				{
