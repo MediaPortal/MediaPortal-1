@@ -464,24 +464,31 @@ namespace MediaPortal.Player
         if( mediaCtrl != null )
         {
           hr = mediaCtrl.Stop();
+					Marshal.ReleaseComObject(mediaCtrl);
           mediaCtrl = null;
         }
         m_state = PlayState.Stopped;
 
-        mediaEvt = null;
-				if (vmr7!=null)
-					vmr7.RemoveVMR7();
-				vmr7=null;
-
+				if (mediaEvt!=null)
+				{
+					Marshal.ReleaseComObject(mediaEvt);
+					mediaEvt = null;
+				}
         if( videoWin != null )
         {
           m_bVisible=false;
-          hr = videoWin.put_Visible( DsHlp.OAFALSE );
-          hr = videoWin.put_MessageDrain( IntPtr.Zero );
-          hr = videoWin.put_Owner( IntPtr.Zero );
-				//	Marshal.ReleaseComObject( videoWin ); 
+					Marshal.ReleaseComObject( videoWin ); 
 					videoWin = null;
         }
+				
+				if (vmr7!=null)
+					vmr7.RemoveVMR7();
+				vmr7=null;
+				if( videoStep != null )
+				{
+					Marshal.ReleaseComObject( videoStep ); 
+				}
+
         videoStep	= null;
 				
         if( cmdOption.dvdCmd != null )
@@ -494,6 +501,39 @@ namespace MediaPortal.Player
           m_ovMgr = null;
         }*/
 
+				if( dvdCtrl != null )
+				{
+						Marshal.ReleaseComObject( dvdCtrl ); 
+				}
+				dvdCtrl = null;
+
+				if( dvdInfo != null )
+				{
+					Marshal.ReleaseComObject( dvdInfo ); 
+				}
+				dvdInfo = null;
+
+				if (line21Decoder!=null)
+				{
+					Marshal.ReleaseComObject( line21Decoder); 
+					line21Decoder=null;
+				}
+				if (basicVideo!=null)
+				{
+					Marshal.ReleaseComObject( basicVideo); 
+					basicVideo=null;
+				}
+				if (basicAudio!=null)
+				{
+					Marshal.ReleaseComObject( basicAudio); 
+					basicAudio=null;
+				}
+				if (mediaPos!=null)
+				{
+					Marshal.ReleaseComObject( mediaPos); 
+					mediaPos=null;
+				}
+
         if (rotCookie !=0) DsROT.RemoveGraphFromRot( ref rotCookie );		// graphBuilder capGraph
         if (graphBuilder!=null)
         {
@@ -501,28 +541,9 @@ namespace MediaPortal.Player
           Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
         }
 
-        if (m_bFreeNavigator)
-        {
-          if( dvdCtrl != null )
-            Marshal.ReleaseComObject( dvdCtrl ); 
-        }
-        dvdCtrl = null;
-
-        if (m_bFreeNavigator)
-        {
-          if( dvdInfo != null )
-            Marshal.ReleaseComObject( dvdInfo ); 
-        }
-        dvdInfo = null;
-
         if( dvdGraph != null )
           Marshal.ReleaseComObject( dvdGraph ); dvdGraph = null;
 
-        line21Decoder=null;
-        dvdInfo=null;
-        basicVideo=null;
-        basicAudio=null;
-        mediaPos=null;
 				m_state = PlayState.Init;
 				GUIGraphicsContext.form.Invalidate(true);          
         GUIGraphicsContext.form.Activate();
