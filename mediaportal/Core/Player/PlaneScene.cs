@@ -784,6 +784,7 @@ namespace MediaPortal.Player
 		{	
 			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 			if (!isEnabled) return;
+			if (m_bStop) return;
 //			Log.Write("scene.repaint");
 			try
 			{

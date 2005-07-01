@@ -68,6 +68,8 @@ namespace MediaPortal.Player
       }
       if (GUIGraphicsContext.DX9Device == null) UseVMR9inMYTV = false;
       if (m_renderFrame == null) UseVMR9inMYTV = false;
+			if (g_vmr9!=null || GUIGraphicsContext.Vmr9Active) 
+				UseVMR9inMYTV = false;
     }
 
     public void SetTextureCount(int count)

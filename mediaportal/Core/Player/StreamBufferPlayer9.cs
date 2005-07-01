@@ -282,8 +282,6 @@ Log.Write("StreamBufferPlayer9:remove graph ");
 Log.Write("StreamBufferPlayer9:invalidate");
 
 				GUIGraphicsContext.form.Invalidate(true);
-				//GUIGraphicsContext.form.Update();
-				//GUIGraphicsContext.form.Validate();
 				m_state = PlayState.Init;
 				GC.Collect();
       }

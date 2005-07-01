@@ -102,8 +102,10 @@ namespace MediaPortal.Player
 				Marshal.ReleaseComObject(quality); quality = null;
 				
 			if (VMR7Filter != null)
+			{
 				Marshal.ReleaseComObject(VMR7Filter); VMR7Filter = null;
-			g_vmr7=null;
+				g_vmr7=null;
+			}
 		}
 
 
