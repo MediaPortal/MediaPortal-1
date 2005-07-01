@@ -123,34 +123,7 @@ namespace MediaPortal.Playlists
     public void Add( PlayListItem item)
     {
       if (item==null) return;
-      string strFile=item.FileName.ToLower();
-      if (strFile.StartsWith("cdda:") ||  
-          strFile.StartsWith("http:") ||  
-          strFile.StartsWith("https:") ||  
-          strFile.StartsWith("rtsp:") ||  
-          strFile.StartsWith("ftp:") ||  
-          strFile.IndexOf(".cda") >=0||  
-          strFile.IndexOf(".radio") >=0||  
-          strFile.StartsWith("mms:"))
-      {
-        m_items.Add(item);
-        return;
-      }
-      
-      //check if file exists
-      try
-      {
-        if (System.IO.File.Exists(item.FileName))
-        {
-          m_items.Add(item);
-          return;
-        }
-      }
-      catch(Exception)
-      {
-      }
-  
-      Log.Write("Playlist:file does not exists:{0}", item.FileName);
+      m_items.Add(item);
     }
 
     public string Name

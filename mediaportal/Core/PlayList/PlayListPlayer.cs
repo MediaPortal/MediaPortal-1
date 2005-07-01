@@ -205,6 +205,12 @@ namespace MediaPortal.Playlists
         //}
       }
       Play(iSong);
+
+
+			if (!g_Player.Playing)
+			{
+				PlayNext(bAutoPlay);
+			}
     }
 
     static public void			PlayPrevious()
@@ -220,7 +226,11 @@ namespace MediaPortal.Playlists
         iSong=playlist.Count-1;
 
       Play(iSong);
-    }
+			if (!g_Player.Playing)
+			{
+				PlayPrevious();
+			}
+		}
 
     static public void Play(string filename)
     {
