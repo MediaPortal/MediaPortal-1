@@ -104,7 +104,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				string currentSkin = xmlreader.GetValueAsString("skin", "name", "mce");
+				string currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
 
 				//
 				// Make sure the skin actually exists before setting it as the current skin
@@ -125,7 +125,7 @@ namespace MediaPortal.Configuration.Sections
 			if (listViewAvailableSkins.SelectedItems.Count==0) return;
 			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				string prevSkin = xmlwriter.GetValueAsString("skin", "name", "mce");
+				string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
 				if (prevSkin!=listViewAvailableSkins.SelectedItems[0].Text)
 				{
 					Utils.DeleteFiles(@"skin\"+listViewAvailableSkins.Text+@"\fonts","*");

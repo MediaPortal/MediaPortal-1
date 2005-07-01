@@ -695,6 +695,7 @@ namespace MediaPortal.Configuration
 			DVDClass.SaveSettings();
 			DVDClass.Dispose();
 
+			MediaPortal.Profile.Xml.SaveCache();
 		}
 	}
 }
