@@ -919,14 +919,14 @@ namespace MediaPortal.TV.Recording
 					{
 						tunedFlag=TuneChannel(m_transponder[t].TPfreq, m_transponder[t].TPsymb, 6, m_transponder[t].TPpol, m_selKhz, m_diseqc, lnbFreq);
 						tuneTryCount++;
-					}while(tunedFlag==false && tuneTryCount<3);
+					}while(tunedFlag==false && tuneTryCount<5);
 					//
 					SetPidToPin(m_dataCtrl,0,16);
 					SetPidToPin(m_dataCtrl,0,17);
 					SetPidToPin(m_dataCtrl,0,0);
 					if (tunedFlag==true)
 					{
-						m_dvbSections.Timeout=2500;
+						m_dvbSections.Timeout=6000;
 						m_dvbSections.ProcessPATSections(m_dataCtrl,m_mpeg2Data,m_transponder[t],ref transplist[t]);
 						if(m_textBox!=null)
 						{
