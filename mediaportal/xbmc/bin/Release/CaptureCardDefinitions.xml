@@ -6166,4 +6166,18 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="ADS Instant TV DVB-T USB (PTV-334)" capturename="DiBcom MOD3000 TV receiver" devid="vid_06e1&amp;pid_a334">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DiBcom MOD3000 TV receiver"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
