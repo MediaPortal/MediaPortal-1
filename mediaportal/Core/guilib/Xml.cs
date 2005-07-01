@@ -158,7 +158,7 @@ namespace MediaPortal.Profile
 			}
 			if (xmlDoc==null)
 			{
-				xmlDoc = new XmlDoc(xmlFileName);
+				xmlDoc = new XmlDoc(fileName);
 				xmlCache.Add(xmlDoc);
 			}
 		}
