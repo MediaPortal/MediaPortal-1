@@ -42,7 +42,7 @@
 	</string>
 	<string>
 		<id>10</id>
-		<value>My Recipies</value>
+		<value>My Recipes</value>
 	</string>
 	<string>
 		<id>11</id>
@@ -3470,7 +3470,7 @@
 <string><id>100604</id><value>My TV/Search</value></string>
 <string><id>100605</id><value>My TV/Recorded Tv/Genre</value></string>
 <string><id>100606</id><value>My TV/Recorded Tv/channels</value></string>
-<string><id>100750</id><value>My Recipies</value></string>
+<string><id>100750</id><value>My Recipes</value></string>
 <string><id>100755</id><value>My Status</value></string>
 <string><id>100756</id><value>My Status details</value></string>
 <string><id>100757</id><value>My Status preferences</value></string>
