@@ -311,6 +311,8 @@ namespace MediaPortal.TV.Recording
 				m_videoAmp.Sharpness=m_videoAmp.SharpnessDefault;
 
       }
+
+			SetQuality(3);//high
 			VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
 			int minKbps, maxKbps;
 			bool isVBR;
