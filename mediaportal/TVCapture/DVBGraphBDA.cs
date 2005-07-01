@@ -840,14 +840,14 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
 					m_mediaControl.Stop();
+					Marshal.ReleaseComObject(m_mediaControl); m_mediaControl=null;
 				}
 				graphRunning=false;
 
 				if (m_videoWindow != null)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: hide video window");
-					m_videoWindow.put_Visible(DsHlp.OAFALSE);
-					//m_videoWindow.put_Owner(IntPtr.Zero);
+					Marshal.ReleaseComObject(m_videoWindow); m_videoWindow=null;
 					m_videoWindow = null;
 				}
 
@@ -889,13 +889,16 @@ namespace MediaPortal.TV.Recording
 				if (m_SectionsTables != null)
 					Marshal.ReleaseComObject(m_SectionsTables); m_SectionsTables = null;
 
-				m_basicVideo = null;
-				m_mediaControl = null;
-			      
+				if (m_basicVideo != null)
+					Marshal.ReleaseComObject(m_basicVideo); m_basicVideo = null;
+
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove filters");
 				if (m_graphBuilder!=null)
 					DsUtils.RemoveFilters(m_graphBuilder);
 
+				if (m_pinAC3Out != null) Marshal.ReleaseComObject(m_pinAC3Out); m_pinAC3Out				= null;
+				if (m_DemuxVideoPin != null) Marshal.ReleaseComObject(m_DemuxVideoPin); m_DemuxVideoPin				= null;
+				if (m_DemuxAudioPin != null) Marshal.ReleaseComObject(m_DemuxAudioPin); m_DemuxAudioPin				= null;
 				
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove graph from rot");
 				if (m_rotCookie != 0)
