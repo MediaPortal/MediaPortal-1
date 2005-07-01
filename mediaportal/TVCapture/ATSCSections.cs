@@ -59,7 +59,7 @@ namespace MediaPortal.TV.Recording
 
 			//get Terrestial Virtual Channel Table (pid=0x1FFB, table id 0xc8)
 			
-			Log.Write("ATSC-scan: get Terrestial Virtual Channel Table");
+			Log.Write("ATSC-scan: get Terrestrial Virtual Channel Table");
 			MsGetStreamData(filter,0x1ffb, 0xc8,0,Timeout);
 			foreach(byte[] arr in m_sectionsList)
 				DecodeTerrestialVirtualChannelTable(transponder,arr);

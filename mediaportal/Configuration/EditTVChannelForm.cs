@@ -1310,7 +1310,7 @@ namespace MediaPortal.Configuration
 			this.label100.Name = "label100";
 			this.label100.Size = new System.Drawing.Size(272, 23);
 			this.label100.TabIndex = 65;
-			this.label100.Text = "Digital TV Terrestial settings for this TV channel";
+			this.label100.Text = "Digital TV Terrestrial settings for this TV channel";
 			// 
 			// label58
 			// 
