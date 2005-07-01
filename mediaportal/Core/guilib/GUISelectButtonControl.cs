@@ -226,6 +226,7 @@ namespace MediaPortal.GUI.Library
           m_label.SetPosition(m_dwPosX+m_imgLeft.Width+m_iTextOffsetX,m_iTextOffsetY+m_dwPosY);
           m_label.TextColor=dwTextColor;
           m_label.Label=(string)m_SubItems[SelectedItem];
+					m_label.Width=m_dwWidth - (m_imgRight.Width+m_imgLeft.Width+m_iTextOffsetX);
           m_label.Render(timePassed);
         }
 /*
