@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(408, 32);
       this.label3.TabIndex = 9;
-      this.label3.Text = "Please note that you need to install ffdshow seperately to make any this option w" +
+      this.label3.Text = "Please note that you need to install ffdshow separately to make any this option w" +
         "ork. Please read the MediaPortal manual for more information.";
       // 
       // MoviePostProcessing
