@@ -220,14 +220,14 @@ namespace MediaPortal.Player
 						if (counter >200) break;
 					}
           hr = mediaCtrl.Stop();
+					Marshal.ReleaseComObject(mediaCtrl);
+					mediaCtrl=null;
         }
   	    if( mediaEvt != null )
         {
-          hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+					Marshal.ReleaseComObject(mediaEvt);
           mediaEvt = null;
         }
-
-
 
 				if (Vmr9!=null)
 				{
@@ -236,10 +236,13 @@ namespace MediaPortal.Player
 					Vmr9=null;
 				}
 
-        mediaSeek	= null;
-        mediaPos	= null;
-        basicAudio	= null;
-        mediaCtrl = null;
+				if (mediaSeek!=null)
+					Marshal.ReleaseComObject(mediaSeek);mediaSeek	= null;
+        
+				if (mediaPos!=null)
+					Marshal.ReleaseComObject(mediaPos);mediaPos	= null;
+				if (basicAudio!=null)
+					Marshal.ReleaseComObject(basicAudio);basicAudio	= null;
 
         if( vobSub != null )
 					Marshal.ReleaseComObject( vobSub ); vobSub = null;

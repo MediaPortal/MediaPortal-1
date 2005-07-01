@@ -864,16 +864,15 @@ namespace MediaPortal.Player
         if( mediaCtrl != null )
         {
           hr = mediaCtrl.Stop();
+					Marshal.ReleaseComObject(mediaCtrl);
           mediaCtrl = null;
         }
 
         m_state = PlayState.Init;
 
         if( mediaEvt != null )
-        {
-          hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-          mediaEvt = null;
-        }
+					Marshal.ReleaseComObject(mediaEvt);mediaEvt = null;
+
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
 				vmr7=null;
@@ -881,16 +880,20 @@ namespace MediaPortal.Player
         if( videoWin != null )
         {
           m_bVisible=false;
-          hr = videoWin.put_Visible( DsHlp.OAFALSE );
-          hr = videoWin.put_Owner( IntPtr.Zero );
-          videoWin = null;
+					Marshal.ReleaseComObject(videoWin);
+					videoWin = null;
         }
 
-        mediaSeek	= null;
-        mediaPos	= null;
-        basicVideo	= null;
-        videoStep	= null;
-        basicAudio	= null;
+				if( mediaSeek != null )
+					Marshal.ReleaseComObject(mediaSeek);mediaSeek	= null;
+				if( mediaPos != null )
+					Marshal.ReleaseComObject(mediaPos);mediaPos	= null;
+				if( basicVideo != null )
+					Marshal.ReleaseComObject(basicVideo);basicVideo	= null;
+				if( videoStep != null )
+					Marshal.ReleaseComObject(videoStep);videoStep	= null;
+				if( basicAudio != null )
+					Marshal.ReleaseComObject(basicAudio);basicAudio	= null;
 				
         if( vobSub != null )
           Marshal.ReleaseComObject( vobSub ); vobSub = null;
