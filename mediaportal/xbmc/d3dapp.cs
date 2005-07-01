@@ -2273,18 +2273,23 @@ namespace MediaPortal
 									}
 								FrameMove();
 								if (GUIGraphicsContext.IsFullScreenVideo==false) counter=0;
-									if (counter==0)
-									{
-										OnProcess();
-										if (useFrameClock)
-											StartFrameClock();
+								if (counter==0)
+								{
+									OnProcess();
+									if (useFrameClock)
+										StartFrameClock();
+									FullRender();
+									if (useFrameClock)
+										WaitForFrameClock();
+								}
+								else if (counter==5 || counter==10 || counter==15||counter==20)
+								{
+									if (VMR7Util.g_vmr7!=null)
 										FullRender();
-										if (useFrameClock)
-											WaitForFrameClock();
-									}
-                  HandleMessage();
-									counter++;
-								  if (counter>25) counter=0;
+								}
+                HandleMessage();
+								counter++;
+								if (counter>25) counter=0;
               }
               catch (Exception ex)
               {
