@@ -116,11 +116,6 @@ public class MediaPortalApp : D3DApp, IRender
     System.IO.Directory.SetCurrentDirectory(applicationPath);
     Log.Write("  Set current directory to :{0}", applicationPath);
     applicationPath=null;
-    /*			Thread WorkerThread = new Thread(new ThreadStart(TranscodeWorkerThread));
-          WorkerThread.Start();
-          while (WorkerThread.IsAlive) System.Threading.Thread.Sleep(100);
-
-    */
     //check if mediaportal has been configured
     if (!System.IO.File.Exists("mediaportal.xml"))
     {
@@ -291,10 +286,6 @@ public class MediaPortalApp : D3DApp, IRender
           Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
         app.OnExit();
-				MediaPortal.Profile.Xml.SaveCache();
-        Log.Write("MediaPortal done");
-        Win32API.EnableStartBar(true);
-        Win32API.ShowStartBar(true);
       }
     }
     catch (Exception ex)
@@ -309,7 +300,11 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen=null;
     }
 #endif
-  }
+		MediaPortal.Profile.Xml.SaveCache();
+		Log.Write("MediaPortal done");
+		Win32API.EnableStartBar(true);
+		Win32API.ShowStartBar(true);
+	}
 	#endregion
 
 	#region remote callbacks
