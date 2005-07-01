@@ -1,7 +1,7 @@
 <window>
-	<id>601</id>
-	<defaultcontrol>6</defaultcontrol>
-	<allowoverlay>no</allowoverlay>
+	<id>607</id>
+	<defaultcontrol>10</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
 <controls>
 	<control>
 		<description>BG</description>
@@ -26,12 +26,12 @@
 	</control>
 
 	<control>
-		<description>Scheduled recordings text label</description>
+		<description>Priorities Text Label</description>
 		<type>label</type>
 		<id>1</id>
 		<posX>280</posX>
 		<posY>50</posY>
-		<label>646</label>
+		<label>877</label>
 		<font>font10</font>
 		<align>right</align>
 	</control>
@@ -46,99 +46,16 @@
 		<height>272</height>
 		<texture>panel.png</texture>
 	</control>
-	<control>
-		<description>New button</description>
-		<type>button</type>
-		<id>6</id>
-		<posX>55</posX>
-		<posY>115</posY>
-		<label>617</label>
-		<onleft>6</onleft>
-		<onright>10</onright>
-		<onup>1111</onup> <!-- Goto Topbar -->
-		<ondown>2</ondown>
-	</control>
-	<control>
-		<description>Sort-by button</description>
-		<type>button</type>
-		<id>2</id>
-		<posX>55</posX>
-		<posY>143</posY>
-		<label>620</label>
-		<onleft>2</onleft>
-		<onright>4</onright>
-		<onup>6</onup>
-		<ondown>7</ondown>
-	</control>
-	<control>
-		<description>Sort Asc</description>
-		<type>togglebutton</type>
-		<id>4</id>
-		<posX>200</posX>
-		<posY>149</posY>
-		<label>-</label>
-		<onleft>2</onleft>
-		<onright>10</onright>
-		<onup>4</onup>
-		<ondown>4</ondown>
-	</control>
-	<control>
-		<description>Panel Split</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>55</posX>
-		<posY>180</posY>
-		<width>180</width>
-		<height>2</height>
-		<texture>panel_split.png</texture>
-	</control>
-	<control>
-		<description>Cleanup</description>
-		<type>button</type>
-		<id>7</id>
-		<posX>55</posX>
-		<posY>189</posY>
-		<label>624</label>
-		<onleft>10</onleft>
-		<onright>10</onright>
-		<onup>2</onup>
-		<ondown>8</ondown>
-	</control>
-	<control>
-		<description>Priorities</description>
-		<type>button</type>
-		<id>8</id>
-		<posX>55</posX>
-		<posY>217</posY>
-		<label>877</label>
-		<hyperlink>607</hyperlink>
-		<onleft>8</onleft>
-		<onright>10</onright>
-		<onup>7</onup>
-		<ondown>9</ondown>
-	</control>
-	<control>
-		<description>Conflicts</description>
-		<type>button</type>
-		<id>9</id>
-		<posX>55</posX>
-		<posY>245</posY>
-		<label>892</label>
-		<hyperlink>608</hyperlink>
-		<onleft>9</onleft>
-		<onright>10</onright>
-		<onup>8</onup>
-		<ondown>99</ondown>
-	</control>
 
 	<control>
 		<description>scheduler recordings listcontrol</description>
-		<type>listcontrol</type>
+		<type>updownlistcontrol</type>
 		<id>10</id>
-		<onleft>6</onleft>
+		<onleft>99</onleft>
 		<onright>10</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
+		<spinPosX>550</spinPosX>
 		<textXOff>10</textXOff>
 		<textYOff>4</textYOff>
 		<textXOff2>425</textXOff2>
@@ -183,8 +100,8 @@
 		<id>99</id>
 		<onleft>99</onleft>
 		<onright>10</onright>
-		<onup>9</onup>
-		<ondown>6</ondown>
+		<onup>99</onup>
+<!--		<ondown>6</ondown> -->
     <posX>65</posX>
     <posY>455</posY>
     <width>120</width>

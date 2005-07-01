@@ -50,6 +50,24 @@
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
 
+	<control>
+		<description>default updownbutton</description>
+		<type>updownbutton</type>
+		<id>1</id>
+		<posX>300</posX>
+		<posY>200</posY>
+		<width>190</width>
+		<height>32</height>
+		<textXOff>10</textXOff>
+		<textYOff>5</textYOff>
+		<textureFocus>menu_list_focus.png</textureFocus>
+		<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
+		<font>font13</font>
+		<textcolor>ffffffff</textcolor>
+		<colordiffuse>ffffffff</colordiffuse>
+		<disabledcolor>60ffffff</disabledcolor>
+	</control>
+
  	<control>
 		<description>default togglebutton</description>
 		<type>togglebutton</type>
@@ -108,6 +126,100 @@
 		<textvisible1>yes</textvisible1>
 		<textvisible2>yes</textvisible2>
 		<textvisible3>yes</textvisible3>
+	</control>
+
+	<control>
+		<description>default checklistcontrol</description>
+		<type>checklistcontrol</type>
+		<id>10</id>
+		<posX>242</posX>
+		<posY>97</posY>
+		<width>433</width>
+		<height>459</height>
+		<spinWidth>20</spinWidth>
+		<spinHeight>20</spinHeight>
+		<spinPosX>590</spinPosX>
+		<spinPosY>530</spinPosY>
+		<spinColor>FFFFFFFF</spinColor>
+		<textureUp>arrow_up_nofocus.png</textureUp>
+		<textureDown>arrow_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
+		<textureFocus>list_focus.png</textureFocus>
+		<textureNoFocus>list_nofocus.png</textureNoFocus>
+		<textureHeight>30</textureHeight>
+		<image>folder_focus.png</image>
+		<font>font13</font>
+		<shadedColor>20484848</shadedColor>
+		<selectedColor>FF8080FF</selectedColor>
+		<textcolor>FF484848</textcolor>
+		<textcolor2>FF484848</textcolor2>
+		<textcolor3>FF484848</textcolor3>
+		<colordiffuse>ff000000</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
+		<scrollbarbg>slider_vertical.png</scrollbarbg>
+		<scrollbartop>progress_left.png</scrollbartop>
+		<scrollbarbottom>progress_right.png</scrollbarbottom>
+		<suffix>|</suffix>
+		<textvisible1>yes</textvisible1>
+		<textvisible2>yes</textvisible2>
+		<textvisible3>yes</textvisible3>
+		<textureCheckmark>check-box.png</textureCheckmark>
+		<textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
+		<MarkWidth>16</MarkWidth>
+		<MarkHeight>16</MarkHeight>
+		<textXOff>5</textXOff>
+		<textYOff>4</textYOff>
+		<textXOff2>0</textXOff2>
+		<textYOff2>4</textYOff2>
+		<IconXOff>8</IconXOff>
+		<IconYOff>8</IconYOff>
+	</control>
+
+	<control>
+		<description>default up/downlistcontrol</description>
+		<type>updownlistcontrol</type>
+		<id>10</id>
+		<posX>242</posX>
+		<posY>97</posY>
+		<width>433</width>
+		<height>459</height>
+		<spinWidth>20</spinWidth>
+		<spinHeight>20</spinHeight>
+		<spinPosX>590</spinPosX>
+		<spinPosY>530</spinPosY>
+		<spinColor>FFFFFFFF</spinColor>
+		<textureUp>arrow_up_nofocus.png</textureUp>
+		<textureDown>arrow_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_down_focus.png</textureDownFocus>
+		<textureFocus>list_focus.png</textureFocus>
+		<textureNoFocus>list_nofocus.png</textureNoFocus>
+		<textureHeight>30</textureHeight>
+		<image>folder_focus.png</image>
+		<font>font13</font>
+		<shadedColor>20484848</shadedColor>
+		<selectedColor>FF8080FF</selectedColor>
+		<textcolor>FF484848</textcolor>
+		<textcolor2>FF484848</textcolor2>
+		<textcolor3>FF484848</textcolor3>
+		<colordiffuse>ff000000</colordiffuse>
+		<remoteColor>ffff0000</remoteColor>
+    <downloadColor>ff00ff00</downloadColor>
+		<scrollbarbg>slider_vertical.png</scrollbarbg>
+		<scrollbartop>progress_left.png</scrollbartop>
+		<scrollbarbottom>progress_right.png</scrollbarbottom>
+		<suffix>|</suffix>
+		<textvisible1>yes</textvisible1>
+		<textvisible2>yes</textvisible2>
+		<textvisible3>yes</textvisible3>
+		<textXOff>5</textXOff>
+		<textYOff>4</textYOff>
+		<textXOff2>0</textXOff2>
+		<textYOff2>4</textYOff2>
+		<IconXOff>8</IconXOff>
+		<IconYOff>8</IconYOff>
 	</control>
 
 	<control>
@@ -382,6 +494,18 @@
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+	</control>
+
+	<control>
+		<description>TV preview window</description>
+		<type>videowindow</type>
+		<id>99</id>
+    <posX>65</posX>
+    <posY>455</posY>
+    <width>120</width>
+    <height>100</height>
+		<action>18</action>
+		<textureFocus>video_window_focus.png</textureFocus>
 	</control>
 
 </controls>
