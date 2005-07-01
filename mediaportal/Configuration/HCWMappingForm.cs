@@ -26,6 +26,7 @@ namespace MediaPortal.Configuration
                                               "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}", "{F6}",
                                               "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}",
                                               "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"};
+    string inputClassName;
 
     class Data
     {
@@ -83,7 +84,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public HCWMappingForm(string inputClassName)
+    public HCWMappingForm(string name)
     {
       //
       // Required for Windows Form Designer support
@@ -91,6 +92,7 @@ namespace MediaPortal.Configuration
       InitializeComponent();
       comboBoxSound.DataSource = soundList;
       comboBoxLayer.DataSource = layerList;
+      inputClassName = name;
       LoadMapping(inputClassName + ".xml", false);
       headerLabel.Caption = inputClassName;
     }
@@ -1075,7 +1077,7 @@ namespace MediaPortal.Configuration
 
     private void okButton_Click(object sender, System.EventArgs e)
     {
-      SaveMapping("Hauppauge HCW.xml");
+      SaveMapping(inputClassName + ".xml");
       this.Close();
     }
 
@@ -1187,7 +1189,7 @@ namespace MediaPortal.Configuration
 
     private void applyButton_Click(object sender, System.EventArgs e)
     {
-      SaveMapping("Hauppauge HCW.xml");
+      SaveMapping(inputClassName + ".xml");
     }
 
     private void buttonUp_Click(object sender, System.EventArgs e)
@@ -1311,7 +1313,7 @@ namespace MediaPortal.Configuration
 
     private void buttonReset_Click(object sender, System.EventArgs e)
     {
-      LoadMapping("Hauppauge HCW.xml", true);
+      LoadMapping(inputClassName + ".xml", true);
     }
 
 

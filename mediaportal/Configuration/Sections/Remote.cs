@@ -181,7 +181,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "HCWKeepControl", checkBoxKeepControl.Checked);
         xmlwriter.SetValueAsBool("remote", "HCWVerboseLog", checkBoxVerboseLog.Checked);
         xmlwriter.SetValue("remote", "HCWDelay", trackBarDelay.Value);
-//        xmlwriter.SetValue("remote", "HCWPower", comboBoxPowerButton.SelectedIndex);
       }
     }
 
