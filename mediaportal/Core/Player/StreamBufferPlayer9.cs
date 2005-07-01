@@ -263,7 +263,6 @@ Log.Write("StreamBufferPlayer9:clean vmr9");
 				if (m_mediaSeeking!=null) Marshal.ReleaseComObject(m_mediaSeeking); m_mediaSeeking=null;
 				if (m_StreamBufferConfig!=null) Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
 				if (m_mediaSeeking2!=null) Marshal.ReleaseComObject(m_mediaSeeking2); m_mediaSeeking2=null;
-				if (m_mediaSeeking!=null) Marshal.ReleaseComObject(m_mediaSeeking); m_mediaSeeking=null;
 				if (streamConfig2!=null) Marshal.ReleaseComObject(streamConfig2); streamConfig2=null;
 				if (bufferSource!=null) Marshal.ReleaseComObject(bufferSource); bufferSource=null;
 				if (videoWin!=null) Marshal.ReleaseComObject(videoWin); videoWin=null;
