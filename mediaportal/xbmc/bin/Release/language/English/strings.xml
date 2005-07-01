@@ -3399,6 +3399,9 @@
 	<id>13013</id>
 	<value>Loading video, please wait</value>
 </string>
+
+<string><id>16001</id><value>Party Shuffle</value></string> 
+
 <!-- Teletext --> 
 <string><id>25001</id><value>Waiting for Page {0:X}...!</value></string> 
 
