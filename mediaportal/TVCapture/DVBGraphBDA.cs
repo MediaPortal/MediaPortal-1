@@ -1593,17 +1593,17 @@ namespace MediaPortal.TV.Recording
 			{
 				IBDA_SignalStatistics stat=(IBDA_SignalStatistics)m_TunerStatistics[i];
 
-				quality = 0;
 				try
 				{
+					quality = -1;
 					stat.get_SignalQuality(ref quality); //1-100
+					if (quality>0 && quality>signalQuality) signalQuality = (int)quality;
 				}
 				catch (COMException )
 				{
 					//Log.Write("Loop {0} :: {1}{2}", i, e.Message, e.StackTrace);
 					continue;
 				}
-				if (quality>signalQuality) signalQuality = (int)quality;
 			}
 			return signalQuality;
 		}
@@ -1617,17 +1617,17 @@ namespace MediaPortal.TV.Recording
 			for (int i = 0; i < m_TunerStatistics.Count; i++) 
 			{
 				IBDA_SignalStatistics stat=(IBDA_SignalStatistics)m_TunerStatistics[i];
-				strength = 0;
 				try
 				{
+					strength = -1;
 					stat.get_SignalStrength(ref strength); //1-100
+					if (strength>0 && strength>signalStrength) signalStrength = (int)strength;
 				}
 				catch (COMException )
 				{
 					//Log.Write("Loop {0} :: {1}{2}", i, e.Message, e.StackTrace);
 					continue;
 				}
-				if (strength>signalStrength) signalStrength = (int)strength;
 			}
 			return signalStrength;
 		}

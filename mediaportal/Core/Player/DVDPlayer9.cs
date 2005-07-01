@@ -80,7 +80,7 @@ namespace MediaPortal.Player
 				Vmr9.AddVMR9(graphBuilder);
 				try
 				{
-					Log.Write("DVDPlayer9:Add DVD navigator");
+					Log.Write("DVDPlayer9:Add {0}",strDVDNavigator);
 					dvdbasefilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strDVDNavigator);
 					if (dvdbasefilter!=null)
 					{
@@ -231,11 +231,6 @@ namespace MediaPortal.Player
 					hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
 					dvdCtrl.Stop();
 				}
-        if( mediaCtrl != null )
-        {
-          hr = mediaCtrl.Stop();
-          mediaCtrl = null;
-        }
         m_state = PlayState.Stopped;
 
         if( mediaEvt != null )
@@ -256,41 +251,40 @@ namespace MediaPortal.Player
 				 Marshal.ReleaseComObject( dvdbasefilter); 
 				dvdbasefilter = null;              
 
-          m_bVisible=false;
+        m_bVisible=false;
     		
         if( cmdOption.dvdCmd != null )
           Marshal.ReleaseComObject( cmdOption.dvdCmd ); cmdOption.dvdCmd = null;
         pendingCmd = false;
 
-
-        if (rotCookie !=0) DsROT.RemoveGraphFromRot( ref rotCookie );		// graphBuilder capGraph
-        if( graphBuilder != null )
-        {
-          DsUtils.RemoveFilters(graphBuilder);
-          Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
-        }
-        if (m_bFreeNavigator)
-        {
-          if( dvdCtrl != null )
-            Marshal.ReleaseComObject( dvdCtrl ); 
-        }
+        if( dvdCtrl != null )
+          Marshal.ReleaseComObject( dvdCtrl ); 
         dvdCtrl = null;
 
-        if (m_bFreeNavigator)
-        {
-          if( dvdInfo != null )
-            Marshal.ReleaseComObject( dvdInfo ); 
-        }
+        if( dvdInfo != null )
+          Marshal.ReleaseComObject( dvdInfo ); 
         dvdInfo = null;
 
         if( dvdGraph != null )
           Marshal.ReleaseComObject( dvdGraph ); dvdGraph = null;
 
-        line21Decoder=null;
-        dvdInfo=null;
-        basicVideo=null;
-        basicAudio=null;
-        mediaPos=null;
+				if (line21Decoder!=null)
+					Marshal.ReleaseComObject( line21Decoder); line21Decoder=null;
+				if (basicVideo!=null)
+					Marshal.ReleaseComObject( basicVideo); basicVideo=null;
+				if (basicAudio!=null)
+					Marshal.ReleaseComObject( basicAudio); basicAudio=null;
+				if (mediaPos!=null)
+					Marshal.ReleaseComObject( mediaPos); mediaPos=null;
+
+
+				if (rotCookie !=0) DsROT.RemoveGraphFromRot( ref rotCookie );		// graphBuilder capGraph
+				if( graphBuilder != null )
+				{
+					DsUtils.RemoveFilters(graphBuilder);
+					Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+				}
+
         m_state = PlayState.Init;
 
 				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
