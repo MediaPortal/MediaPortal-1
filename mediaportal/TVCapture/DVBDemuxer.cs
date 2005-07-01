@@ -876,30 +876,30 @@ namespace MediaPortal.TV.Recording
 				#region Audio & Video
 				if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
 				{
-//					Log.Write("got audio pid:0x{0:X}", m_audioPid);
-					if (m_packetHeader.PayloadUnitStart == true)// start
+					if(OnAudioFormatChanged!=null)
 					{
-						AudioHeader ah = new AudioHeader();
-						byte[] packet = new byte[184];
-						Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
-						if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
+						//					Log.Write("got audio pid:0x{0:X}", m_audioPid);
+						if (m_packetHeader.PayloadUnitStart == true)// start
 						{
-							if (ah.Bitrate!=m_usedAudioFormat.Bitrate || 
-								ah.Channel!=m_usedAudioFormat.Channel ||
-								ah.SamplingFreq!=m_usedAudioFormat.SamplingFreq ||
-								ah.Layer!=m_usedAudioFormat.Layer ||
-								ah.Mode!=m_usedAudioFormat.Mode)
+							AudioHeader ah = new AudioHeader();
+							byte[] packet = new byte[184];
+							Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
+							if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
 							{
-								if(OnAudioFormatChanged!=null)
+								if (ah.Bitrate!=m_usedAudioFormat.Bitrate || 
+									ah.Channel!=m_usedAudioFormat.Channel ||
+									ah.SamplingFreq!=m_usedAudioFormat.SamplingFreq ||
+									ah.Layer!=m_usedAudioFormat.Layer ||
+									ah.Mode!=m_usedAudioFormat.Mode)
 								{
-									bool success=OnAudioFormatChanged(ah);
-									if(success) m_usedAudioFormat = ah;
+										bool success=OnAudioFormatChanged(ah);
+										if(success) m_usedAudioFormat = ah;
 								}
-                                
 							}
 						}
 					}
 				}
+				/*
 				if (m_packetHeader.Pid == m_videoPid && m_videoPid > 0)
 				{
 //					Log.Write("got video pid:0x{0:X}", m_videoPid);
@@ -909,6 +909,7 @@ namespace MediaPortal.TV.Recording
 						Marshal.Copy((IntPtr)ptr, packet, 0, 188);
 					}
 				}
+				*/
 				#endregion
 
 				#region mhw grabbing
@@ -988,14 +989,14 @@ namespace MediaPortal.TV.Recording
 
 						if(m_bufferPositionPMT>=header.SectionLength+3 && header.TableID==0x02 && header.SectionLength>0)
 						{
-							int len=header.SectionLength+3;
-							byte[] data=new byte[len];
-							Array.Copy(m_tableBufferPMT,0,data,0,len);
-							UInt32 crc1=GetCRC32(data);
-							UInt32 crc2=GetSectionCRCValue(data,len-4);
-							if(crc1==crc2)
+							if(header.VersionNumber!=m_currentPMTVersion)
 							{
-								if(header.VersionNumber!=m_currentPMTVersion)
+								int len=header.SectionLength+3;
+								byte[] data=new byte[len];
+								Array.Copy(m_tableBufferPMT,0,data,0,len);
+								UInt32 crc1=GetCRC32(data);
+								UInt32 crc2=GetSectionCRCValue(data,len-4);
+								if(crc1==crc2)
 								{
 									OnPMTIsChanged((byte[])data.Clone());
 									m_currentPMTVersion=header.VersionNumber;

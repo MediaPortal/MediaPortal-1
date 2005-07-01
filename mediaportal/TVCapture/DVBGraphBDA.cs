@@ -740,10 +740,10 @@ namespace MediaPortal.TV.Recording
 					win.SetObject(m_streamDemuxer.Teletext);
 
 
-				m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
+				//m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
 				m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 				m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
-				m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
+				//m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
 				if(m_sampleInterface!=null)
 				{
@@ -752,7 +752,7 @@ namespace MediaPortal.TV.Recording
 					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
 					m_sampleInterface.SetCallback(m_streamDemuxer,1);
 					m_sampleInterface.SetMediaType(ref mt);
-					m_sampleInterface.SetBufferSamples(true);
+					m_sampleInterface.SetBufferSamples(false);
 				}
 
 			
@@ -4060,7 +4060,7 @@ namespace MediaPortal.TV.Recording
 			Log.Write("DVBGraphBDA:  PrivateBit:{0}",audioFormat.PrivateBit);
 			Log.Write("DVBGraphBDA:  ProtectionBit:{0}",audioFormat.ProtectionBit);
 			Log.Write("DVBGraphBDA:  TimeLength:{0}",audioFormat.TimeLength);*/
-			return false;
+			return true;
 		}
 
 		private void m_streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
