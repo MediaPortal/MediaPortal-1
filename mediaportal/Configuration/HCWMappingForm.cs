@@ -83,7 +83,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public HCWMappingForm()
+    public HCWMappingForm(string inputClassName)
     {
       //
       // Required for Windows Form Designer support
@@ -91,7 +91,8 @@ namespace MediaPortal.Configuration
       InitializeComponent();
       comboBoxSound.DataSource = soundList;
       comboBoxLayer.DataSource = layerList;
-      LoadMapping("Hauppauge HCW.xml", false);
+      LoadMapping(inputClassName + ".xml", false);
+      headerLabel.Caption = inputClassName;
     }
 
     /// <summary>
@@ -333,7 +334,7 @@ namespace MediaPortal.Configuration
       // 
       this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.headerLabel.Caption = "Remote control mapping";
+      this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;

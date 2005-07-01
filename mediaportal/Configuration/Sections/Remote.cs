@@ -541,7 +541,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void btnMapping_Click(object sender, System.EventArgs e)
     {
-      HCWMappingForm dlg = new HCWMappingForm();
+      HCWMappingForm dlg = new HCWMappingForm("Hauppauge HCW");
       dlg.ShowDialog(this);
     }
   }
