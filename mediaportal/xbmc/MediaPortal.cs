@@ -1,4 +1,4 @@
-//#define AUTOUPDATE
+#region usings
 using System;
 using System.Text;
 using System.Drawing;
@@ -33,30 +33,12 @@ using MediaPortal.RedEyeIR;//PB00//
 using MediaPortal.Ripper;
 using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
+#endregion
 
-/// Performance issues: 
-///   (max fps in home:70 fps, without textures:160 fps, without textures & fonts: 190fps
-///   - guiimage PreRender is slow
-///   - GUIFont.DrawText() marshaling the string is slow
-///   - GUIWindow replace controls arraylist with []
-///   - Direct3D.Present() is slow
-///   - Application.DoEvents() is slow
-/// 
-/// Options for better performance:
-///    - pack font/thumbnail textures
-///    
-/// Performance enhancements already done:
-///    - Fonts are now rendered by the C++ fontengine. 
-///    - Textures now use a single vertexbuffer, are grouped & rendered by the C++ fontengine
-///    - GUIWindowManager.PostRender() is optimized
-///    - FPS Speed selection in settings->gui->speed
-///    - removed most locks on vertexbuffers
-///    - packed all skin textures
-///    
-///  Current issues:
-/// </summary>
+
 public class MediaPortalApp : D3DApp, IRender
 {
+	#region vars
 #if AUTOUPDATE
     private ApplicationUpdateManager _updater = null;
     private Thread _updaterThread = null;
@@ -99,7 +81,9 @@ public class MediaPortalApp : D3DApp, IRender
   int m_iDateLayout;
   int _volumeBeforeMute = int.MinValue;
   static SplashScreen splashScreen;
-
+	#endregion
+	
+	#region imports
   public delegate bool IECallBack(int hwnd, int lParam);
   const int SW_SHOWNORMAL = 1;
   [DllImport("user32.dll")]
@@ -114,34 +98,10 @@ public class MediaPortalApp : D3DApp, IRender
   public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
   [DllImport("User32.Dll")]
   public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
+	#endregion
 
-
-  private bool EnumWindowCallBack(int hwnd, int lParam)
-  {
-    IntPtr windowHandle = (IntPtr)hwnd;
-    StringBuilder sb = new StringBuilder(1024);
-    GetWindowText((int)windowHandle, sb, sb.Capacity);
-    string window = sb.ToString().ToLower();
-    if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
-    {
-      ShowWindow(windowHandle, SW_SHOWNORMAL);
-    }
-    return true;
-  }
-  /*
-  static void TranscodeWorkerThread()
-  {
-    TranscodeToWMV wmv = new TranscodeToWMV();
-    TranscodeInfo info = new TranscodeInfo();
-    info.file=@"C:\erwin\media\videos\test.dvr-ms";
-    wmv.CreateProfile( new Size(100,120),512,15);
-    wmv.Transcode(info,VideoFormat.Wmv,Quality.Custom);
-    while (!wmv.IsFinished())
-    {
-      System.Threading.Thread.Sleep(100);
-    }
-  }*/
-  //NProf doesnt work if the [STAThread] attribute is set
+	#region main()
+	//NProf doesnt work if the [STAThread] attribute is set
   //but is needed when you want to play music or video
   [STAThread]
   public static void Main()
@@ -350,22 +310,16 @@ public class MediaPortalApp : D3DApp, IRender
     }
 #endif
   }
+	#endregion
 
-  public static void SetDWORDRegKey(RegistryKey hklm, string Key, string Value, Int32 iValue)
-  {
-    RegistryKey subkey = hklm.CreateSubKey(Key);
-    if (subkey != null)
-    {
-      subkey.SetValue(Value, iValue);
-      subkey.Close();
-    }
-  }
-
+	#region remote callbacks
   private void OnRemoteCommand(object command)
   {
     GUIGraphicsContext.OnAction(new Action((Action.ActionType)command, 0, 0));
   }
+	#endregion
 
+	#region ctor
   public MediaPortalApp()
   {
     // check to load plugins
@@ -590,7 +544,9 @@ public class MediaPortalApp : D3DApp, IRender
     }
     screenSaverTimer=DateTime.Now;
   }
+	#endregion
 
+	#region RenderStats() method
   void RenderStats()
   {
     UpdateStats();
@@ -621,7 +577,9 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
   }
+	#endregion
 
+	#region PreProcessMessage() and WndProc()
   public override bool PreProcessMessage(ref Message msg)
   {
     //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("pre keydown");
@@ -697,7 +655,9 @@ public class MediaPortalApp : D3DApp, IRender
     g_Player.WndProc(ref msg);
     base.WndProc(ref msg);
   }
+	#endregion
 
+	#region process
   /// <summary>
   /// Process() gets called when a dialog is presented.
   /// It contains the message loop 
@@ -709,7 +669,9 @@ public class MediaPortalApp : D3DApp, IRender
     FrameMove();
     FullRender();
   }
+	#endregion
 
+	#region RenderFrame()
   public void RenderFrame(float timePassed)
   {
     try
@@ -723,7 +685,9 @@ public class MediaPortalApp : D3DApp, IRender
       Log.WriteFile(Log.LogType.Log, true, "RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
     }
   }
+	#endregion
 
+	#region Onstartup() / OnExit()
   /// <summary>
   /// OnStartup() gets called just before the application starts
   /// </summary>
@@ -775,7 +739,11 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.SendMessage(msg);
       }
     }
+
+		GUIPropertyManager.SetProperty("#date", GetDate());
+		GUIPropertyManager.SetProperty("#time", GetTime());
   }
+
 
   /// <summary>
   /// OnExit() Gets called just b4 application stops
@@ -822,7 +790,119 @@ public class MediaPortalApp : D3DApp, IRender
     Utils.RestartMCEServices();
   }
 
+	/// <summary>
+	/// The device has been created.  Resources that are not lost on
+	/// Reset() can be created here -- resources in Pool.Default,
+	/// Pool.Scratch, or Pool.SystemMemory.  Image surfaces created via
+	/// CreateImageSurface are never lost and can be created here.  Vertex
+	/// shaders and pixel shaders can also be created here as they are not
+	/// lost on Reset().
+	/// </summary>
+	protected override void InitializeDeviceObjects()
+	{
+		GUIWindowManager.Clear();
+		GUITextureManager.Dispose();
+		GUIFontManager.Dispose();
 
+		if (splashScreen != null) splashScreen.SetInformation("Loading keymap.xml...");
+		ActionTranslator.Load();
+
+		if (splashScreen != null) splashScreen.SetInformation("Loading strings...");
+		GUIGraphicsContext.Skin = @"skin\" + m_strSkin;
+		GUIGraphicsContext.ActiveForm = this.Handle;
+		GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
+
+		if (splashScreen != null) splashScreen.SetInformation("Initialize texture manager...");
+		GUITextureManager.Init();
+		if (splashScreen != null) splashScreen.SetInformation("Loading fonts...");
+		GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
+
+		if (splashScreen != null) splashScreen.SetInformation("Initializing fonts...");
+		GUIFontManager.InitializeDeviceObjects();
+		GUIFontManager.RestoreDeviceObjects();
+
+		if (splashScreen != null) splashScreen.SetInformation("Loading skin...");
+		Log.Write("  Load skin {0}", m_strSkin);
+		GUIWindowManager.Initialize();
+
+		if (splashScreen != null) splashScreen.SetInformation("Loading window plugins...");
+		PluginManager.LoadWindowPlugins();
+
+
+		Log.Write("  WindowManager.Load");
+		GUIGraphicsContext.Load();
+
+		if (splashScreen != null) splashScreen.SetInformation("Initializing skin...");
+		Log.Write("  WindowManager.Preinitialize");
+		GUIWindowManager.PreInit();
+		GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+
+		Log.Write("  WindowManager.ActivateWindow");
+		GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+
+		Log.Write("  skin initialized");
+		if (GUIGraphicsContext.DX9Device != null)
+		{
+			Log.Write("  DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
+			Log.Write("  video ram left:{0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
+		}
+
+		InputDevices.Init(/* splashScreen */);
+
+		SetupCamera2D();
+
+		g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
+		supportsFiltering = Manager.CheckDeviceFormat(
+			GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal,
+			GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType,
+			GUIGraphicsContext.DX9Device.DisplayMode.Format,
+			Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures,
+			Format.A8R8G8B8);
+
+		bSupportsAlphaBlend = Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal,
+			GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, GUIGraphicsContext.DX9Device.DisplayMode.Format,
+			Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface,
+			Format.A8R8G8B8);
+
+			
+	}
+
+	/// <summary>
+	/// The device exists, but may have just been Reset().  Resources in
+	/// Pool.Default and any other device state that persists during
+	/// rendering should be set here.  Render states, matrices, textures,
+	/// etc., that don't change during rendering can be set once here to
+	/// avoid redundant state setting during Render() or FrameMove().
+	/// </summary>
+	protected override void OnDeviceReset(System.Object sender, System.EventArgs e)
+	{
+		//
+		// Only perform the device reset if we're not shutting down MediaPortal.
+		//
+		if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+		{
+			Log.Write("OnDeviceReset()");
+			//g_Player.Stop();
+			GUIGraphicsContext.Load();
+			GUIFontManager.Dispose();
+			GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
+			GUIFontManager.InitializeDeviceObjects();
+			if (GUIGraphicsContext.DX9Device != null)
+			{
+				GUIWindowManager.Restore();
+				GUIWindowManager.PreInit();
+				GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+				GUIWindowManager.OnDeviceRestored();
+				GUIGraphicsContext.Load();
+			}
+			Log.Write(" done");
+			g_Player.PositionX++;
+			g_Player.PositionX--;
+		}
+	}
+	#endregion
+
+	#region Render()
   static bool reentrant = false;
   protected override void Render(float timePassed)
   {
@@ -895,7 +975,9 @@ public class MediaPortalApp : D3DApp, IRender
       reentrant = false;
     }
   }
+	#endregion
 
+	#region OnProcess()
   protected override void OnProcess()
   {
     // Set the date & time
@@ -976,7 +1058,9 @@ public class MediaPortalApp : D3DApp, IRender
       m_bPlayingState = true;
     }
   }
+	#endregion
 
+	#region FrameMove()
   protected override void FrameMove()
   {
     try
@@ -1011,119 +1095,9 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
   }
+	#endregion
 
-
-  /// <summary>
-  /// The device has been created.  Resources that are not lost on
-  /// Reset() can be created here -- resources in Pool.Default,
-  /// Pool.Scratch, or Pool.SystemMemory.  Image surfaces created via
-  /// CreateImageSurface are never lost and can be created here.  Vertex
-  /// shaders and pixel shaders can also be created here as they are not
-  /// lost on Reset().
-  /// </summary>
-  protected override void InitializeDeviceObjects()
-  {
-    GUIWindowManager.Clear();
-    GUITextureManager.Dispose();
-    GUIFontManager.Dispose();
-
-    if (splashScreen != null) splashScreen.SetInformation("Loading keymap.xml...");
-    ActionTranslator.Load();
-
-    if (splashScreen != null) splashScreen.SetInformation("Loading strings...");
-    GUIGraphicsContext.Skin = @"skin\" + m_strSkin;
-    GUIGraphicsContext.ActiveForm = this.Handle;
-    GUILocalizeStrings.Load(@"language\" + m_strLanguage + @"\strings.xml");
-
-    if (splashScreen != null) splashScreen.SetInformation("Initialize texture manager...");
-    GUITextureManager.Init();
-    if (splashScreen != null) splashScreen.SetInformation("Loading fonts...");
-    GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
-
-    if (splashScreen != null) splashScreen.SetInformation("Initializing fonts...");
-    GUIFontManager.InitializeDeviceObjects();
-    GUIFontManager.RestoreDeviceObjects();
-
-    if (splashScreen != null) splashScreen.SetInformation("Loading skin...");
-    Log.Write("  Load skin {0}", m_strSkin);
-    GUIWindowManager.Initialize();
-
-    if (splashScreen != null) splashScreen.SetInformation("Loading window plugins...");
-    PluginManager.LoadWindowPlugins();
-
-
-    Log.Write("  WindowManager.Load");
-    GUIGraphicsContext.Load();
-
-    if (splashScreen != null) splashScreen.SetInformation("Initializing skin...");
-    Log.Write("  WindowManager.Preinitialize");
-    GUIWindowManager.PreInit();
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-
-    Log.Write("  WindowManager.ActivateWindow");
-    GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-
-    Log.Write("  skin initialized");
-    if (GUIGraphicsContext.DX9Device != null)
-    {
-      Log.Write("  DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth, GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
-      Log.Write("  video ram left:{0} KByte", GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1024);
-    }
-
-	InputDevices.Init(/* splashScreen */);
-
-    SetupCamera2D();
-
-    g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-    supportsFiltering = Manager.CheckDeviceFormat(
-      GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal,
-      GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType,
-      GUIGraphicsContext.DX9Device.DisplayMode.Format,
-      Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures,
-      Format.A8R8G8B8);
-
-    bSupportsAlphaBlend = Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal,
-      GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, GUIGraphicsContext.DX9Device.DisplayMode.Format,
-      Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface,
-      Format.A8R8G8B8);
-
-			
-  }
-
-  /// <summary>
-  /// The device exists, but may have just been Reset().  Resources in
-  /// Pool.Default and any other device state that persists during
-  /// rendering should be set here.  Render states, matrices, textures,
-  /// etc., that don't change during rendering can be set once here to
-  /// avoid redundant state setting during Render() or FrameMove().
-  /// </summary>
-  protected override void OnDeviceReset(System.Object sender, System.EventArgs e)
-  {
-    //
-    // Only perform the device reset if we're not shutting down MediaPortal.
-    //
-    if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
-    {
-      Log.Write("OnDeviceReset()");
-      //g_Player.Stop();
-      GUIGraphicsContext.Load();
-      GUIFontManager.Dispose();
-      GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
-      GUIFontManager.InitializeDeviceObjects();
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIWindowManager.Restore();
-        GUIWindowManager.PreInit();
-        GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
-        GUIWindowManager.OnDeviceRestored();
-        GUIGraphicsContext.Load();
-      }
-      Log.Write(" done");
-      g_Player.PositionX++;
-      g_Player.PositionX--;
-    }
-  }
-
+	#region Handle messages, keypresses, mouse moves etc
   void OnAction(Action action)
   {
     int iCurrent, iMin, iMax, iStep;
@@ -2007,7 +1981,9 @@ public class MediaPortalApp : D3DApp, IRender
         break;
     }
   }
+	#endregion
 
+	#region helper funcs
   void CreateStateBlock()
   {
     GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = false;
@@ -2133,4 +2109,31 @@ public class MediaPortalApp : D3DApp, IRender
     form.ShowDialog(this);
   }
 
+	#region window callback
+	private bool EnumWindowCallBack(int hwnd, int lParam)
+	{
+		IntPtr windowHandle = (IntPtr)hwnd;
+		StringBuilder sb = new StringBuilder(1024);
+		GetWindowText((int)windowHandle, sb, sb.Capacity);
+		string window = sb.ToString().ToLower();
+		if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
+		{
+			ShowWindow(windowHandle, SW_SHOWNORMAL);
+		}
+		return true;
+	}
+	#endregion
+	#region registry helper function
+	public static void SetDWORDRegKey(RegistryKey hklm, string Key, string Value, Int32 iValue)
+	{
+		RegistryKey subkey = hklm.CreateSubKey(Key);
+		if (subkey != null)
+		{
+			subkey.SetValue(Value, iValue);
+			subkey.Close();
+		}
+	}
+	#endregion
+
+	#endregion
 }

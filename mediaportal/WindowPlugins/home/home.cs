@@ -179,8 +179,6 @@ namespace MediaPortal.GUI.Home
 			plugins=null;
 			m_iCurrentButton=m_iButtons/2;
 			LayoutButtons(0);
-			if (lblDate!=null) lblDate.Label=GetDate(); 
-			if (lblTime!=null) lblTime.Label=GUIPropertyManager.GetProperty("#time") ;
 			GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 			topBar.UseTopBarSub=false;
 			topBarHome.UseTopBarSub=false;
@@ -559,6 +557,9 @@ namespace MediaPortal.GUI.Home
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
+					if (lblDate!=null) lblDate.Label=GetDate(); 
+					if (lblTime!=null) lblTime.Label=GUIPropertyManager.GetProperty("#time") ;
+
 					ResetButtons();
 					VerifyButtonIndex(ref m_iCurrentButton);
 					LayoutButtons(0);
