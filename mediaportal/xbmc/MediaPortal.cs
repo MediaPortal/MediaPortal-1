@@ -764,7 +764,7 @@ public class MediaPortalApp : D3DApp, IRender
     // this gives the windows the chance to do some cleanup
     Recorder.Stop();
 
-	InputDevices.Stop();
+  	InputDevices.Stop();
 
     AutoPlay.StopListening();
 

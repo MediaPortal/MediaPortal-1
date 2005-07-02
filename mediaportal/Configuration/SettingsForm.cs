@@ -46,6 +46,7 @@ namespace MediaPortal.Configuration
 		private MPGradientLabel headerLabel;
 		private Sections.SerialUIR serialuir;
 		private Sections.RedEye redeye;//PB00//
+    private Sections.DirectInputRemote dinputRemote;
 
 		//
 		// Hashtable where we store each added tree node/section for faster access
@@ -187,6 +188,10 @@ namespace MediaPortal.Configuration
 
 			Log.Write("add FireDTV Remote section");
 			AddChildSection(remote,new Sections.FireDTVRemote());
+
+      Log.Write("add DirectInput section");
+      dinputRemote = new Sections.DirectInputRemote();
+      AddChildSection(remote, dinputRemote);
 
 			Sections.FiltersSection filterSection = new Sections.FiltersSection();
 			AddSection(filterSection);
@@ -441,6 +446,12 @@ namespace MediaPortal.Configuration
 			{
 				// Ignore
 			}
+      if (null != dinputRemote)
+      {
+        // make sure the listener thread gets killed cleanly!
+        dinputRemote.Dispose();
+        dinputRemote = null;
+      }
 		}
 
 		/// <summary>

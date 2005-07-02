@@ -94,6 +94,18 @@
                     Project = "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Microsoft.DirectX"
+                    AssemblyName = "Microsoft.DirectX"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll"
+                    AssemblyFolderKey = "hklm\dn\dx_1.0.2902.0"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.DirectInput"
+                    AssemblyName = "Microsoft.DirectX.DirectInput"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll"
+                    AssemblyFolderKey = "hklm\dn\dx_1.0.2902.0"
+                />
             </References>
         </Build>
         <Files>
@@ -105,6 +117,16 @@
                 />
                 <File
                     RelPath = "InputDevices.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DirectInputRemote\DirectInputHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DirectInputRemote\DirectInputListener.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

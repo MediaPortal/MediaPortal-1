@@ -192,6 +192,18 @@
                     Project = "{0A234721-1F13-4DF8-9B1E-64D9E3111203}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Microsoft.DirectX.DirectInput"
+                    AssemblyName = "Microsoft.DirectX.DirectInput"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Managed DirectX\v9.02.2904\Microsoft.DirectX.DirectInput.dll"
+                    AssemblyFolderKey = "hklm\current managed directx 9.2"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX"
+                    AssemblyName = "Microsoft.DirectX"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll"
+                    AssemblyFolderKey = "hklm\dn\dx_1.0.2902.0"
+                />
             </References>
         </Build>
         <Files>
@@ -508,6 +520,16 @@
                 <File
                     RelPath = "Sections\DaemonTools.resx"
                     DependentUpon = "DaemonTools.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Sections\DirectInputRemote.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\DirectInputRemote.resx"
+                    DependentUpon = "DirectInputRemote.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

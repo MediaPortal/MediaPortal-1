@@ -34,6 +34,7 @@ namespace MediaPortal
 			MCE2005Remote.DeInit();
 			HCWRemote.DeInit();
 			FireDTVRemote.DeInit();
+      diRemote.Stop();
 		}
 
 		public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
@@ -62,6 +63,7 @@ namespace MediaPortal
 
 		static MCE2005Remote MCE2005Remote = new MCE2005Remote();
 		static HCWRemote HCWRemote = new HCWRemote();
+    static DirectInputHandler diRemote = new DirectInputHandler();
 		static MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
 
 		#endregion Fields
