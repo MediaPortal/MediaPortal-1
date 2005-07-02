@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Web;
 using MediaPortal.Util;
 
 namespace MediaPortal.Music.Database
@@ -34,7 +35,8 @@ namespace MediaPortal.Music.Database
       // type is 
       // http://www.allmusic.com/cg/amg.dll?P=amg&SQL=escapolygy&OPT1=2
 
-      string strPostData=String.Format("P=amg&SQL={0}&OPT1=2", strAlbum );
+      HTMLUtil  util=new HTMLUtil();
+      string strPostData=String.Format("P=amg&SQL={0}&OPT1=2", HttpUtility.UrlEncode(strAlbum) );
 		
       string strHTML=PostHTTP("http://www.allmusic.com/cg/amg.dll", strPostData);
       if (strHTML.Length==0) return false;
@@ -55,7 +57,6 @@ namespace MediaPortal.Music.Database
       iStartOfTable=strHTMLLow.LastIndexOf("<table",iStartOfTable);
       if (iStartOfTable < 0) return false;
       
-      HTMLUtil  util=new HTMLUtil();
       HTMLTable table=new HTMLTable();
       string strTable=strHTML.Substring(iStartOfTable);
       table.Parse(strTable);

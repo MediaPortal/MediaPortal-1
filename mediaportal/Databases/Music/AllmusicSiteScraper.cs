@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Net;
+using System.Web;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -65,7 +66,7 @@ namespace MediaPortal.Music.Database
 		public bool FindInfo(SearchBy searchBy, string searchStr)
 		{
       HTMLUtil  util=new HTMLUtil();
-			string strPostData=String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int)searchBy, searchStr);
+			string strPostData=String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int)searchBy, HttpUtility.UrlEncode( searchStr));
     
 			string strHTML=PostHTTP(MAINURL+URLPROGRAM, strPostData);
 			if (strHTML.Length==0) return false;
