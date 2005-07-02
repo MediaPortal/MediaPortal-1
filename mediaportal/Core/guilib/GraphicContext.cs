@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Library
 
       using (MediaPortal.Profile.Xml xmlReader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",20);
+				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",50);
         SyncFrameTime();
         m_iScrollSpeed=xmlReader.GetValueAsInt("general","scrollspeed",5);
         m_bAnimations=xmlReader.GetValueAsBool("general","animations",true);
