@@ -22,7 +22,7 @@ namespace MediaPortal.TV.Recording
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//
 			ReadSkinFile();
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\MediaPortal.xml"))
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				int alpha=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 				if(alpha>0)
