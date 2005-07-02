@@ -14,7 +14,7 @@
 	</string>
 	<string>
 		<id>3</id>
-		<value>Mine Videoer</value>
+		<value>Mine Filmer</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -26,7 +26,7 @@
 	</string>
 	<string>
 		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
+		<value>XBOX Media Center CVS versjon</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -294,11 +294,11 @@
 	</string>
 	<string>
 		<id>143</id>
-		<value>Current:</value>
+		<value>Aktuell:</value>
 	</string>
 	<string>
 		<id>144</id>
-		<value>Bygg:</value>
+		<value>Versjon:</value>
 	</string>
 	<string>
 		<id>145</id>
@@ -330,7 +330,7 @@
 	</string>
 	<string>
 		<id>152</id>
-		<value>Half duplex</value>
+		<value>Halv duplex</value>
 	</string>
 	<string>
 		<id>153</id>
@@ -338,15 +338,15 @@
 	</string>
 	<string>
 		<id>154</id>
-		<value>Storage</value>
+		<value>Lager</value>
 	</string>
 	<string>
 		<id>155</id>
-		<value>Drive</value>
+		<value>Stasjon</value>
 	</string>
 	<string>
 		<id>156</id>
-		<value>Free</value>
+		<value>Ledig</value>
 	</string>
 	<string>
 		<id>157</id>
@@ -378,11 +378,11 @@
 	</string>
 	<string>
 		<id>164</id>
-		<value>Ingen Disc</value>
+		<value>Ingen Disk</value>
 	</string>
 	<string>
 		<id>165</id>
-		<value>Disc Tilstede</value>
+		<value>Disk Tilstede</value>
 	</string>
 	<string>
 		<id>166</id>
@@ -414,7 +414,7 @@
 	</string>
 	<string>
 		<id>173</id>
-		<value>Terningkast:</value>
+		<value>Rating:</value>
 	</string>
 	<string>
 		<id>174</id>
@@ -538,7 +538,7 @@
 	</string>
 	<string>
 		<id>204</id>
-		<value>Terningkast:</value>
+		<value>Rating:</value>
 	</string>
 	<string>
 		<id>205</id>
@@ -574,7 +574,7 @@
 	</string>
 	<string>
 		<id>213</id>
-		<value>UI Fininnstilling</value>
+		<value>Fininnstilling Grensesnitt</value>
 	</string>
 	<string>
 		<id>214</id>
@@ -594,15 +594,15 @@
 	</string>
 	<string>
 		<id>218</id>
-		<value>DVD Drive</value>
+		<value>DVD Stasjon</value>
 	</string>
 	<string>
 		<id>219</id>
-		<value>Vennligst sett inn disc</value>
+		<value>Vennligst sett inn disk</value>
 	</string>
 	<string>
 		<id>220</id>
-		<value>Remote Share</value>
+		<value>Fjernlager</value>
 	</string>
 	<string>
 		<id>221</id>
@@ -614,7 +614,7 @@
 	</string>
 	<string>
 		<id>223</id>
-		<value>Auto widescreen switching</value>
+		<value>Auto widescreen velging</value>
 	</string>
 	<string>
 		<id>224</id>
@@ -726,7 +726,7 @@
 	</string>
 	<string>
 		<id>252</id>
-		<value>Effekt til alle h&#248;ytalere</value>
+		<value>Ut til alle h&#248;ytalere</value>
 	</string>
 	<string>
 		<id>253</id>
@@ -750,7 +750,7 @@
 	</string>
 	<string>
 		<id>258</id>
-		<value>Koble inn ID3 tagging</value>
+		<value>Bruke ID3 tagging</value>
 	</string>
 	<string>
 		<id>259</id>
@@ -1062,7 +1062,7 @@
 	</string>
 	<string>
 		<id>337</id>
-		<value>Audio Output:</value>
+		<value>Lyd Ut:</value>
 	</string>
 	<string>
 		<id>338</id>
@@ -1242,7 +1242,7 @@
 	</string>
 	<string>
 		<id>382</id>
-		<value>Sprett</value>
+		<value>Spredt</value>
 	</string>
 	<string>
 		<id>383</id>
@@ -1315,7 +1315,7 @@
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temp</value>
+		<value>Temperatur</value>
 	</string>
 	<string>
 		<id>402</id>
@@ -1479,7 +1479,7 @@
 	</string>
 	<string>
 		<id>443</id>
-		<value>Internet</value>
+		<value>Internett</value>
 	</string>
 	<string>
 		<id>444</id>
@@ -1687,7 +1687,7 @@
 	</string>
 	<string>
 		<id>603</id>
-		<value>Skedulert</value>
+		<value>Planlagt</value>
 	</string>
 	<string>
 		<id>604</id>
@@ -1775,7 +1775,7 @@
 	</string>
 	<string>
 		<id>625</id>
-		<value>Skedulering fjernet:</value>
+		<value>Planlegging fjernet:</value>
 	</string>
 	<string>
 		<id>626</id>
@@ -1859,7 +1859,7 @@
 	</string>
 	<string>
 		<id>646</id>
-		<value>Skedulerte opptak</value>
+		<value>Planlagte opptak</value>
 	</string>
 	<string>
 		<id>647</id>
@@ -1931,7 +1931,7 @@
 	</string>
 	<string>
 		<id>664</id>
-		<value>Slett dette bilde?</value>
+		<value>Slett dette bildet?</value>
 	</string>
 	<string>
 		<id>665</id>
@@ -2024,11 +2024,11 @@
 <string><id>100003</id><value>Mine Filer</value></string>
 <string><id>100004</id><value>Innstillinger</value></string>
 <string><id>100005</id><value>Min Musikk</value></string>
-<string><id>100006</id><value>Mine Videoer</value></string>
+<string><id>100006</id><value>Mine Filmer</value></string>
 <string><id>100007</id><value>System informasjon</value></string>
 <string><id>100008</id><value>Innstillinger->Generelt</value></string>
 <string><id>100009</id><value>Innstillinger->Skjerm</value></string>
-<string><id>100010</id><value>Innstillinger->Skjerm->UI Fininnstilling</value></string>
+<string><id>100010</id><value>Innstillinger->Skjerm->Grensesnitt Fininnstilling</value></string>
 <string><id>100011</id><value>Innstillinger->Skjerm->Skjerm Fininnstilling</value></string>
 <string><id>100012</id><value>Innstillinger->Lysbildefremvisning</value></string>
 <string><id>100013</id><value>Innstillinger->Skjerm->Filter</value></string>
@@ -2039,7 +2039,7 @@
 <string><id>100020</id><value>Innstillinger->Skript</value></string>
 <string><id>100021</id><value>Mine Videoer/sjanger</value></string>
 <string><id>100022</id><value>Mine Videoer/skuespiller</value></string>
-<string><id>100023</id><value>Mine Videoer/&#229;r</value></string>
+<string><id>100023</id><value>Mine Videoer/&#197;r</value></string>
 <string><id>100024</id><value>Innstillinger->Programmer</value></string>
 <string><id>100025</id><value>Mine Videoer/tittel</value></string>
 <string><id>100026</id><value>Innstillinger->Generelt->Cache</value></string>
@@ -2076,7 +2076,7 @@
 <string><id>102000</id><value>Valg dialog</value></string>
 <string><id>102001</id><value>Min Musikk/info</value></string>
 <string><id>102002</id><value>Dialog OK</value></string>
-<string><id>102003</id><value>Mine Videoer/Info</value></string>
+<string><id>102003</id><value>Mine Filmer/Info</value></string>
 <string><id>102004</id><value>Mine Skript/Info</value></string>
 <string><id>102005</id><value>Fullskjerm video</value></string>
 <string><id>102006</id><value>Audio visualisering</value></string>
@@ -2093,7 +2093,7 @@
 <string><id>102901</id><value>Fullskjerm OSD</value></string>
 <string><id>102902</id><value>MSN Messenger OSD</value></string>
 <string><id>686</id><value>F&#248;dt</value></string>
-<string><id>687</id><value>Aktive &#229;r</value></string>
+<string><id>687</id><value>Aktive &#197;r</value></string>
 <string><id>688</id><value>Instrumenter</value></string>
 <string><id>689</id><value>Bio.</value></string>
 <string><id>690</id><value>Diskografi (Album)</value></string>
@@ -2117,9 +2117,9 @@
 <string><id>716</id><value>Satelitt</value></string>
 <string><id>717</id><value>V&#230;ret</value></string>
 <string><id>718</id><value>Rydd opp Top100</value> </string>
-<string><id>719</id><value>Er du sikker p&#229; at du vil resette top 100 listen?</value> </string>
+<string><id>719</id><value>Er du sikker p&#229; at du vil nullstille top 100 listen?</value> </string>
 <string><id>720</id> <value>Vis: Lengde</value> </string>
-<string><id>721</id> <value>Vis: Antall spilt</value> </string>
+<string><id>721</id> <value>Vis: Antall spillt</value> </string>
 <string>
 	<id>722</id>
 	<value>Kan ikke spille DVD</value>
@@ -2154,11 +2154,11 @@
 </string>
 <string>
 	<id>730</id>
-	<value>Denne skeduleringen tar opp n&#248;. Hvis du sletter</value>
+	<value>Planlagt opptak tar opp n&#229;. Hvis du sletter</value>
 </string>
 <string>
 	<id>731</id>
-	<value>denne skeduleringen opptaket vil stoppe.</value>
+	<value>dette planlagte opptaket vil stoppe.</value>
 </string>
 <string>
 	<id>732</id>
@@ -2379,11 +2379,108 @@
 	<id>874</id>
 	<value>Episode</value>
 </string>
+<string>
+	<id>875</id>
+	<value>Gjeldende program</value>
+</string>
+<string>
+	<id>876</id>
+	<value>Til manuall stopp</value>
+</string>
+<string>
+	<id>877</id>
+	<value>Prioriteringer</value>
+</string>
+<string>
+	<id>878</id>
+	<value>Lager</value>
+</string>
+<string>
+	<id>879</id>
+	<value>Opptaks konflikter</value>
+</string>
+<string>
+	<id>880</id>
+	<value>Tid for opptak:</value>
+</string>
+<string>
+	<id>881</id>
+	<value>Velg opptak &#229; stoppe:</value>
+</string>
+<string>
+	<id>882</id>
+	<value>Kvalitets innstilling</value>
+</string>
+<string>
+	<id>883</id>
+	<value>Lav</value>
+</string>
+<string>
+	<id>884</id>
+	<value>Medium</value>
+</string>
+<string>
+	<id>885</id>
+	<value>H&#248;y</value>
+</string>
+<string>
+	<id>886</id>
+	<value>Standard</value>
+</string>
+<string>
+	<id>887</id>
+	<value>Velg anntall episoder &#229; beholde</value>
+</string>
+<string>
+	<id>888</id>
+	<value>Episode Behandling</value>
+</string>
+<string>
+	<id>889</id>
+	<value>Alle episoder</value>
+</string>
 <!-- End My Alarm Strings -->
 <string>
 	<id>890</id>
-	<value>Spill CD</value>
+	<value>Spille CD</value>
 </string>
+<string>
+	<id>891</id>
+	<value>Velg TV Kanal</value>
+</string>
+<string>
+	<id>892</id>
+	<value>Konflikter</value>
+</string>
+<string>
+	<id>893</id>
+	<value>Flyttbare</value>
+</string>
+<string>
+	<id>894</id>
+	<value>Komprimer TV Opptak</value>
+</string>
+<string>
+	<id>895</id>
+	<value>Auto Komprimering</value>
+</string>
+<string>
+	<id>896</id>
+	<value>Komprimer</value>
+</string>
+<string>
+	<id>897</id>
+	<value>Innstillinger</value>
+</string>
+<string>
+	<id>898</id>
+	<value>MPEG-2</value>
+</string>
+<string>
+	<id>899</id>
+	<value>WMV</value>
+</string>
+
 <string>
 	<id>900</id>
 	<value>Fortsette film fra sist gang ?</value>
@@ -2771,7 +2868,7 @@
 	<string><id>2053</id><value>Kategori</value></string>
 	<string><id>2054</id><value>Ingen innslag!</value></string>
 <!-- My Burner Strings -->
-	<string><id>2100</id><value>Brenn</value></string>
+	<string><id>2100</id><value>Lag CD/DVD</value></string>
 	<string><id>2101</id><value>Kopier CD/DVD</value></string>
 	<string><id>2102</id><value>Lag Audio-CD</value></string>
 	<string><id>2103</id><value>Lag Video-CD</value></string>
@@ -3191,3 +3288,4 @@
 <string><id>3021</id><value>Del</value></string>
 <string><id>3022</id><value>av</value></string>
 </strings>
+
