@@ -30,6 +30,7 @@ namespace MediaPortal.Configuration.Sections
     private DataGrid dataGrid1;
     private ArrayList loadedPlugins = new ArrayList();
     private DataSet ds = new DataSet();
+		bool    isLoaded=false;
 
     public Plugins() : this("Plugins")
     {}
@@ -95,22 +96,6 @@ namespace MediaPortal.Configuration.Sections
       ds.Tables[0].Columns.Add("Author", typeof (string));
       ds.Tables[0].Columns.Add("Description", typeof (string));
       ds.Tables[0].Columns.Add("tag", typeof (ItemTag));
-
-      //
-      // Enumerate available plugins
-      //
-      EnumeratePlugins();
-
-      //
-      // Load plugins
-      //
-      LoadPlugins();
-
-      //
-      // Populate our list
-      //
-      PopulateDatagrid();
-      LoadSettings();
 
     }
 
@@ -295,6 +280,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
+			LoadAll();
       using (Xml xmlwriter = new Xml("MediaPortal.xml"))
       {
         foreach (DataRow row in ds.Tables[0].Rows)
@@ -428,6 +414,35 @@ namespace MediaPortal.Configuration.Sections
       }
       MessageBox.Show("Plugin has no setup");
     }
+
+		public override void OnSectionActivated()
+		{
+			base.OnSectionActivated ();
+			LoadAll();
+		}
+		void LoadAll()
+		{
+			if (!isLoaded)
+			{
+				isLoaded=true;
+				//
+				// Enumerate available plugins
+				//
+				EnumeratePlugins();
+
+				//
+				// Load plugins
+				//
+				LoadPlugins();
+
+				//
+				// Populate our list
+				//
+				PopulateDatagrid();
+				LoadSettings();
+
+			}
+		}
 
   }
 }
