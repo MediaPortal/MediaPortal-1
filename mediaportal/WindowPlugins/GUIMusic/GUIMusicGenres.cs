@@ -282,9 +282,10 @@ namespace MediaPortal.GUI.Music
 					playlistItem.FileName=pItem.Path;
 					playlistItem.Description=pItem.Label;
 					int iDuration=0;
-					MusicTag tag=(MusicTag)pItem.MusicTag;
+					MusicTag tag=pItem.MusicTag as MusicTag;
 					if (tag!=null) iDuration=tag.Duration;
 					playlistItem.Duration=iDuration;
+					playlistItem.MusicTag=tag;
 					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
 				}
 
