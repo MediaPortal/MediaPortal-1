@@ -6498,26 +6498,26 @@
 	<area iso="de" areacode="9976" location="Rötz" />
 	<area iso="de" areacode="9977" location="Arnschwang" />
 	<area iso="de" areacode="9978" location="Schönthal Oberpf" />
-	<area iso="hr" areacode="1" location="Zagreb" />
-	<area iso="hr" areacode="20" location="Dubrovnik and Neretva" />
-	<area iso="hr" areacode="21" location="Split and Dalmatia" />
-	<area iso="hr" areacode="22" location="Sibenik and Knin" />
-	<area iso="hr" areacode="23" location="Zadar" />
-	<area iso="hr" areacode="31" location="Osijek and Baranja" />
-	<area iso="hr" areacode="32" location="Vukovar and Srijem" />
-	<area iso="hr" areacode="33" location="Virovitica and Podravina" />
-	<area iso="hr" areacode="34" location="Pozega and Slavonia" />
-	<area iso="hr" areacode="35" location="Slavonski Brod and Posavina" />
-	<area iso="hr" areacode="40" location="Medjimurje" />
-	<area iso="hr" areacode="42" location="Varazdin" />
-	<area iso="hr" areacode="43" location="Bjelovar and Bilogora" />
-	<area iso="hr" areacode="44" location="Sisak and Moslavina" />
-	<area iso="hr" areacode="47" location="Karlovac" />
-	<area iso="hr" areacode="48" location="Koprivnica and Krizevci" />
-	<area iso="hr" areacode="49" location="Krapina and Zagorje" />
-	<area iso="hr" areacode="51" location="Primorje and Gorski Kotar" />
-	<area iso="hr" areacode="52" location="Istria" />
-	<area iso="hr" areacode="53" location="Lika and Senj" />
+	<area iso="hr" areacode="1" location="Zagreb i zagrebačka" />
+	<area iso="hr" areacode="20" location="Dubrovačko-neretvanska" />
+	<area iso="hr" areacode="21" location="Splitsko-dalmatinska" />
+	<area iso="hr" areacode="22" location="Šibensko-kninska" />
+	<area iso="hr" areacode="23" location="Zadarska" />
+	<area iso="hr" areacode="31" location="Osječko-baranjska" />
+	<area iso="hr" areacode="32" location="Vukovarsko-srijemska" />
+	<area iso="hr" areacode="33" location="Virovitičko-podravska" />
+	<area iso="hr" areacode="34" location="Požeško-slavonska" />
+	<area iso="hr" areacode="35" location="Brodsko-posavska" />
+	<area iso="hr" areacode="40" location="Međimurska" />
+	<area iso="hr" areacode="42" location="Varaždinska" />
+	<area iso="hr" areacode="43" location="Bjelovarsko-bilogorska" />
+	<area iso="hr" areacode="44" location="Sisačko-moslavačka" />
+	<area iso="hr" areacode="47" location="Karlovačka" />
+	<area iso="hr" areacode="48" location="Koprivničko-križevačka" />
+	<area iso="hr" areacode="49" location="Krapinsko-zagorska" />
+	<area iso="hr" areacode="51" location="Primorsko-goranska" />
+	<area iso="hr" areacode="52" location="Istarska" />
+	<area iso="hr" areacode="53" location="Ličko-senjska" />
 	<area iso="hr" areacode="91" location="VIP (Austria Mobilcom)" />
 	<area iso="hr" areacode="98" location="T-mobile" />
 	<area iso="lu" areacode="352" location="Luxembourg" />
