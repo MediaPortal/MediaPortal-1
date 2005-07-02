@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.Video.Database;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -17,6 +18,10 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelFileName;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.TextBox textBoxTitle;
+		private System.Windows.Forms.Button buttonFind;
+		IMDB _imdb;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -81,6 +86,9 @@ namespace MediaPortal.Configuration.Sections
 			this.button2 = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.labelFileName = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.textBoxTitle = new System.Windows.Forms.TextBox();
+			this.buttonFind = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// listView1
@@ -89,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
 																																								this.columnHeader1});
 			this.listView1.Location = new System.Drawing.Point(8, 56);
 			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(360, 248);
+			this.listView1.Size = new System.Drawing.Size(360, 200);
 			this.listView1.TabIndex = 0;
 			this.listView1.View = System.Windows.Forms.View.Details;
 			this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
@@ -101,7 +109,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(248, 320);
+			this.button1.Location = new System.Drawing.Point(264, 320);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(40, 23);
 			this.button1.TabIndex = 1;
@@ -110,7 +118,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// button2
 			// 
-			this.button2.Location = new System.Drawing.Point(304, 320);
+			this.button2.Location = new System.Drawing.Point(312, 320);
 			this.button2.Name = "button2";
 			this.button2.Size = new System.Drawing.Size(56, 23);
 			this.button2.TabIndex = 2;
@@ -132,10 +140,38 @@ namespace MediaPortal.Configuration.Sections
 			this.labelFileName.Size = new System.Drawing.Size(344, 16);
 			this.labelFileName.TabIndex = 4;
 			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(16, 272);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(48, 16);
+			this.label2.TabIndex = 5;
+			this.label2.Text = "Title:";
+			// 
+			// textBoxTitle
+			// 
+			this.textBoxTitle.Location = new System.Drawing.Point(72, 264);
+			this.textBoxTitle.Name = "textBoxTitle";
+			this.textBoxTitle.Size = new System.Drawing.Size(192, 20);
+			this.textBoxTitle.TabIndex = 6;
+			this.textBoxTitle.Text = "";
+			// 
+			// buttonFind
+			// 
+			this.buttonFind.Location = new System.Drawing.Point(280, 264);
+			this.buttonFind.Name = "buttonFind";
+			this.buttonFind.Size = new System.Drawing.Size(40, 23);
+			this.buttonFind.TabIndex = 7;
+			this.buttonFind.Text = "Find";
+			this.buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
+			// 
 			// DlgMovieList
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(384, 350);
+			this.Controls.Add(this.buttonFind);
+			this.Controls.Add(this.textBoxTitle);
+			this.Controls.Add(this.label2);
 			this.Controls.Add(this.labelFileName);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.button2);
@@ -166,6 +202,29 @@ namespace MediaPortal.Configuration.Sections
 			this.DialogResult=DialogResult.OK;
 			this.Close();
 
+		}
+
+		private void buttonFind_Click(object sender, System.EventArgs e)
+		{
+			buttonFind.Enabled=false;
+			button1.Enabled=false;
+			button2.Enabled=false;
+			textBoxTitle.Enabled=false;
+			imdb.Find( textBoxTitle.Text);
+			listView1.Items.Clear();
+			for (int i=0; i < imdb.Count;++i)
+				AddMovie(imdb[i].Title);
+
+			buttonFind.Enabled=true;
+			button1.Enabled=true;
+			button2.Enabled=true;
+			textBoxTitle.Enabled=true;
+
+		}
+		public IMDB imdb
+		{
+			get { return _imdb;}
+			set { _imdb=value;}
 		}
 	}
 }

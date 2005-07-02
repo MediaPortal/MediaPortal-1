@@ -254,6 +254,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.tabControl2 = new System.Windows.Forms.TabControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.buttonImport = new System.Windows.Forms.Button();
 			this.btnDelete = new System.Windows.Forms.Button();
 			this.tbWritingCredits = new System.Windows.Forms.TextBox();
 			this.label18 = new System.Windows.Forms.Label();
@@ -320,7 +321,6 @@ namespace MediaPortal.Configuration.Sections
 			this.textBoxPictureURL = new System.Windows.Forms.TextBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.buttonImport = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -520,6 +520,14 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.Size = new System.Drawing.Size(408, 358);
 			this.tabPage3.TabIndex = 0;
 			this.tabPage3.Text = "Title";
+			// 
+			// buttonImport
+			// 
+			this.buttonImport.Location = new System.Drawing.Point(192, 328);
+			this.buttonImport.Name = "buttonImport";
+			this.buttonImport.TabIndex = 39;
+			this.buttonImport.Text = "Import";
+			this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
 			// 
 			// btnDelete
 			// 
@@ -1091,14 +1099,6 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Scan";
 			// 
-			// buttonImport
-			// 
-			this.buttonImport.Location = new System.Drawing.Point(192, 328);
-			this.buttonImport.Name = "buttonImport";
-			this.buttonImport.TabIndex = 39;
-			this.buttonImport.Text = "Import";
-			this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
-			// 
 			// MovieDatabase
 			// 
 			this.Controls.Add(this.tabControl1);
@@ -1207,7 +1207,7 @@ namespace MediaPortal.Configuration.Sections
 
           case RebuildState.Scanning:
           {
-            SetStatus("Scanning files for valid tags");
+            SetStatus("Scanning movie files...");
             extractedTags = new ArrayList(totalFiles);
             ScanFiles(totalFiles);
             rebuildState = RebuildState.Updating; 
@@ -1395,6 +1395,7 @@ namespace MediaPortal.Configuration.Sections
 				if (imdb.Count>0)
 				{
 					DlgMovieList dlg = new DlgMovieList();
+					dlg.imdb = imdb;
 					dlg.Filename=file;
 					for (int i=0; i < imdb.Count;++i)
 						dlg.AddMovie(imdb[i].Title);
@@ -1409,6 +1410,19 @@ namespace MediaPortal.Configuration.Sections
 					Application.DoEvents();
 					if (ID < 0)
 					{
+						string path,filename;
+						Utils.Split(file,out path, out filename);
+						VirtualDirectory dir = new VirtualDirectory();
+						dir.SetExtensions(Utils.VideoExtensions);
+						ArrayList items = dir.GetDirectory(path);
+						foreach (GUIListItem item in items)
+						{
+							if (item.IsFolder) continue;
+							if (Utils.ShouldStack(item.Path, file)||item.Path==file)
+							{
+								VideoDatabase.AddMovieFile(item.Path);
+							}
+						}
 						id=VideoDatabase.AddMovie(file,false);
 						movieDetails.ID=id;
 					}
@@ -1513,12 +1527,15 @@ namespace MediaPortal.Configuration.Sections
 					if (!System.IO.File.Exists(strThumb))
 					{
 						imdb.FindActor(actor);
+						if(stopRebuild)  return;
 						IMDBActor imdbActor=new IMDBActor();
 						for (int x=0; x < imdb.Count;++x)
 						{
+							if(stopRebuild)  return;
 							imdb.GetActorDetails(imdb[x],out imdbActor);
 							if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
 						}
+						if(stopRebuild)  return;
 						if (imdbActor.ThumbnailUrl!=null)
 						{
 							if (imdbActor.ThumbnailUrl.Length!=0)
