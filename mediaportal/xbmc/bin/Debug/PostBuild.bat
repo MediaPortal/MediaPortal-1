@@ -32,6 +32,7 @@ copy ..\..\..\Microsoft.DirectX.Direct3D.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3DX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
+copy ..\..\..\Microsoft.DirectX.DirectInput.dll .
 rem ExternalDisplay plugin LCD driver DLLs
 copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
