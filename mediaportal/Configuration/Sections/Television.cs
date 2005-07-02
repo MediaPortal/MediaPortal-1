@@ -34,7 +34,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label lblminutes;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.ComboBox cbDeinterlace;
-		private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTv;
 
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -111,7 +110,6 @@ namespace MediaPortal.Configuration.Sections
 			this.lblminutes = new System.Windows.Forms.Label();
 			this.textBoxTimeShiftBuffer = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -319,7 +317,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox4.Controls.Add(this.lblminutes);
 			this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
 			this.groupBox4.Controls.Add(this.label7);
-			this.groupBox4.Controls.Add(this.cbTurnOnTv);
 			this.groupBox4.Location = new System.Drawing.Point(8, 328);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(440, 88);
@@ -351,15 +348,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label7.TabIndex = 1;
 			this.label7.Text = "Timeshift buffer:";
 			// 
-			// cbTurnOnTv
-			// 
-			this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cbTurnOnTv.Location = new System.Drawing.Point(16, 16);
-			this.cbTurnOnTv.Name = "cbTurnOnTv";
-			this.cbTurnOnTv.Size = new System.Drawing.Size(280, 24);
-			this.cbTurnOnTv.TabIndex = 0;
-			this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
-			// 
 			// Television
 			// 
 			this.Controls.Add(this.groupBox4);
@@ -381,7 +369,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
 				textBoxTimeShiftBuffer.Text= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
 				int DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
@@ -481,7 +468,6 @@ namespace MediaPortal.Configuration.Sections
 				if (cbDeinterlace.SelectedIndex>=0)
 					xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
 
-				xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
 				xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
 				try
 				{
