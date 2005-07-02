@@ -1369,6 +1369,7 @@ namespace MediaPortal.GUI.TV
 						screenState.ShowStatusLine ||
 						screenState.ShowTime ||
 						screenState.ZapOsdVisible ||
+						g_Player.Speed!=1||
 						needToClearScreen)
 					{
 						using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))

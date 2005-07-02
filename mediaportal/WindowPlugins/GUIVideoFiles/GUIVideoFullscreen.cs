@@ -1083,7 +1083,8 @@ namespace MediaPortal.GUI.Video
 					screenState.OsdVisible ||
 					screenState.Paused ||
 					screenState.ShowStatusLine ||
-					screenState.ShowTime || needToClearScreen )
+					screenState.ShowTime || needToClearScreen || 
+					g_Player.Speed!=1)
 				{
 					if (VMR7Util.g_vmr7!=null)
 					{
