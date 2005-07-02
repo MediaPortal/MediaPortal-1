@@ -15,10 +15,6 @@ namespace MediaPortal.Configuration.Sections
 		private Container components = null;
 
     private DirectInputHandler diHandler = null;
-    private System.Windows.Forms.Label label2sec;
-    private System.Windows.Forms.Label label0sec;
-    private System.Windows.Forms.Label labelDelay;
-    public System.Windows.Forms.TrackBar trackBarDelay;
     private System.Windows.Forms.Button buttonDefault;
     private System.Windows.Forms.Button btnRunControlPanel;
     private System.Windows.Forms.Label lblDInputDevice;
@@ -27,6 +23,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.GroupBox gbI;
     private System.Windows.Forms.GroupBox gbSettings;
     private System.Windows.Forms.Button btnMapping;
+    private System.Windows.Forms.Label lblDelayMS;
+    private System.Windows.Forms.NumericUpDown numDelay;
     private CheckBox cbEnable;
 
     public DirectInputRemote() : this("Direct Input")
@@ -74,18 +72,16 @@ namespace MediaPortal.Configuration.Sections
       this.gbI = new System.Windows.Forms.GroupBox();
       this.txtMonitor = new System.Windows.Forms.TextBox();
       this.gbSettings = new System.Windows.Forms.GroupBox();
+      this.numDelay = new System.Windows.Forms.NumericUpDown();
+      this.lblDelayMS = new System.Windows.Forms.Label();
       this.btnRunControlPanel = new System.Windows.Forms.Button();
       this.lblDInputDevice = new System.Windows.Forms.Label();
       this.cbDevices = new System.Windows.Forms.ComboBox();
-      this.label2sec = new System.Windows.Forms.Label();
-      this.label0sec = new System.Windows.Forms.Label();
-      this.labelDelay = new System.Windows.Forms.Label();
-      this.trackBarDelay = new System.Windows.Forms.TrackBar();
       this.buttonDefault = new System.Windows.Forms.Button();
       this.btnMapping = new System.Windows.Forms.Button();
       this.gbI.SuspendLayout();
       this.gbSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarDelay)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
       this.SuspendLayout();
       // 
       // cbEnable
@@ -101,9 +97,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.gbI.Controls.Add(this.txtMonitor);
       this.gbI.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.gbI.Location = new System.Drawing.Point(8, 208);
+      this.gbI.Location = new System.Drawing.Point(8, 184);
       this.gbI.Name = "gbI";
-      this.gbI.Size = new System.Drawing.Size(432, 176);
+      this.gbI.Size = new System.Drawing.Size(432, 200);
       this.gbI.TabIndex = 14;
       this.gbI.TabStop = false;
       this.gbI.Text = "Information";
@@ -115,28 +111,58 @@ namespace MediaPortal.Configuration.Sections
       this.txtMonitor.Multiline = true;
       this.txtMonitor.Name = "txtMonitor";
       this.txtMonitor.ReadOnly = true;
-      this.txtMonitor.Size = new System.Drawing.Size(426, 152);
+      this.txtMonitor.Size = new System.Drawing.Size(426, 176);
       this.txtMonitor.TabIndex = 4;
       this.txtMonitor.Text = "";
       // 
       // gbSettings
       // 
+      this.gbSettings.Controls.Add(this.numDelay);
+      this.gbSettings.Controls.Add(this.lblDelayMS);
       this.gbSettings.Controls.Add(this.btnRunControlPanel);
       this.gbSettings.Controls.Add(this.lblDInputDevice);
       this.gbSettings.Controls.Add(this.cbDevices);
-      this.gbSettings.Controls.Add(this.label2sec);
-      this.gbSettings.Controls.Add(this.label0sec);
-      this.gbSettings.Controls.Add(this.labelDelay);
-      this.gbSettings.Controls.Add(this.trackBarDelay);
       this.gbSettings.Controls.Add(this.buttonDefault);
       this.gbSettings.Enabled = false;
       this.gbSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.gbSettings.Location = new System.Drawing.Point(8, 40);
       this.gbSettings.Name = "gbSettings";
-      this.gbSettings.Size = new System.Drawing.Size(440, 160);
+      this.gbSettings.Size = new System.Drawing.Size(440, 136);
       this.gbSettings.TabIndex = 13;
       this.gbSettings.TabStop = false;
       this.gbSettings.Text = "Settings";
+      // 
+      // numDelay
+      // 
+      this.numDelay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.numDelay.Increment = new System.Decimal(new int[] {
+                                                               10,
+                                                               0,
+                                                               0,
+                                                               0});
+      this.numDelay.Location = new System.Drawing.Point(116, 64);
+      this.numDelay.Maximum = new System.Decimal(new int[] {
+                                                             2000,
+                                                             0,
+                                                             0,
+                                                             0});
+      this.numDelay.Name = "numDelay";
+      this.numDelay.Size = new System.Drawing.Size(52, 20);
+      this.numDelay.TabIndex = 18;
+      this.numDelay.Value = new System.Decimal(new int[] {
+                                                           150,
+                                                           0,
+                                                           0,
+                                                           0});
+      this.numDelay.ValueChanged += new System.EventHandler(this.numDelay_ValueChanged);
+      // 
+      // lblDelayMS
+      // 
+      this.lblDelayMS.Location = new System.Drawing.Point(8, 68);
+      this.lblDelayMS.Name = "lblDelayMS";
+      this.lblDelayMS.Size = new System.Drawing.Size(88, 16);
+      this.lblDelayMS.TabIndex = 16;
+      this.lblDelayMS.Text = "Delay [ms]:";
       // 
       // btnRunControlPanel
       // 
@@ -150,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblDInputDevice
       // 
-      this.lblDInputDevice.Location = new System.Drawing.Point(12, 32);
+      this.lblDInputDevice.Location = new System.Drawing.Point(8, 32);
       this.lblDInputDevice.Name = "lblDInputDevice";
       this.lblDInputDevice.Size = new System.Drawing.Size(104, 23);
       this.lblDInputDevice.TabIndex = 14;
@@ -165,62 +191,15 @@ namespace MediaPortal.Configuration.Sections
       this.cbDevices.TabIndex = 13;
       this.cbDevices.SelectedIndexChanged += new System.EventHandler(this.cbDevices_SelectedIndexChanged);
       // 
-      // label2sec
-      // 
-      this.label2sec.BackColor = System.Drawing.SystemColors.Control;
-      this.label2sec.Enabled = false;
-      this.label2sec.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.label2sec.Location = new System.Drawing.Point(228, 88);
-      this.label2sec.Name = "label2sec";
-      this.label2sec.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-      this.label2sec.Size = new System.Drawing.Size(40, 16);
-      this.label2sec.TabIndex = 12;
-      this.label2sec.Text = "2 sec.";
-      // 
-      // label0sec
-      // 
-      this.label0sec.BackColor = System.Drawing.SystemColors.Control;
-      this.label0sec.Enabled = false;
-      this.label0sec.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.label0sec.Location = new System.Drawing.Point(116, 88);
-      this.label0sec.Name = "label0sec";
-      this.label0sec.Size = new System.Drawing.Size(40, 16);
-      this.label0sec.TabIndex = 11;
-      this.label0sec.Text = "0 sec.";
-      // 
-      // labelDelay
-      // 
-      this.labelDelay.Enabled = false;
-      this.labelDelay.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.labelDelay.Location = new System.Drawing.Point(16, 72);
-      this.labelDelay.Name = "labelDelay";
-      this.labelDelay.Size = new System.Drawing.Size(96, 23);
-      this.labelDelay.TabIndex = 10;
-      this.labelDelay.Text = "Repeat-delay:";
-      // 
-      // trackBarDelay
-      // 
-      this.trackBarDelay.Enabled = false;
-      this.trackBarDelay.LargeChange = 100;
-      this.trackBarDelay.Location = new System.Drawing.Point(116, 64);
-      this.trackBarDelay.Maximum = 2000;
-      this.trackBarDelay.Name = "trackBarDelay";
-      this.trackBarDelay.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.trackBarDelay.Size = new System.Drawing.Size(152, 45);
-      this.trackBarDelay.SmallChange = 100;
-      this.trackBarDelay.TabIndex = 3;
-      this.trackBarDelay.TickFrequency = 1000;
-      this.trackBarDelay.TickStyle = System.Windows.Forms.TickStyle.None;
-      // 
       // buttonDefault
       // 
-      this.buttonDefault.Enabled = false;
       this.buttonDefault.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonDefault.Location = new System.Drawing.Point(320, 120);
+      this.buttonDefault.Location = new System.Drawing.Point(320, 100);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(112, 24);
       this.buttonDefault.TabIndex = 9;
       this.buttonDefault.Text = "Reset to &default";
+      this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
       // btnMapping
       // 
@@ -242,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
       this.Load += new System.EventHandler(this.DirectInputRemote_Load);
       this.gbI.ResumeLayout(false);
       this.gbSettings.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarDelay)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -295,6 +274,7 @@ namespace MediaPortal.Configuration.Sections
     {
       cbEnable.Checked = diHandler.Active;
       cbDevices.SelectedIndex = diHandler.SelectedDeviceIndex;
+      numDelay.Value = diHandler.Delay;
     }
 
 
@@ -314,7 +294,15 @@ namespace MediaPortal.Configuration.Sections
       dlg.ShowDialog(this);    
     }
 
+    private void buttonDefault_Click(object sender, System.EventArgs e)
+    {
+      numDelay.Value = (decimal)150;
+    }
 
+    private void numDelay_ValueChanged(object sender, System.EventArgs e)
+    {
+      diHandler.Delay = (int)numDelay.Value;
+    }
 
 	}
 }

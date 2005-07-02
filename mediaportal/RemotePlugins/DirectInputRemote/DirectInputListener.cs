@@ -3,9 +3,11 @@ using Microsoft.DirectX.DirectInput;
 
 namespace MediaPortal
 {
-	/// <summary>
+
+  /// <summary>
 	/// Summary description for DirectInputListener.
 	/// </summary>
+	/// 
 	public class DirectInputListener
 	{
 	  Device device = null;

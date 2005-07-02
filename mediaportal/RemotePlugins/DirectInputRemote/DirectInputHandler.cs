@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.DirectX.DirectInput;
@@ -12,6 +13,9 @@ namespace MediaPortal
   /// </summary>
   public class DirectInputHandler
   {
+    [DllImport("winmm.dll")]
+    public static extern int timeGetTime();
+
     DirectInputListener diListener = null;
     DeviceList deviceList = null;
     string selectedDeviceGUID = "";
@@ -21,6 +25,12 @@ namespace MediaPortal
     ArrayList deviceGUIDs = new ArrayList();
     bool active = false;
     bool doSendActions = true;
+    int delay = 150; // delay in milliseconds, used to filter events
+    int lastCodeSent = -1;
+    int lastAxisValue = 0;
+    int timeLastSend = 0;
+    int axisLimit = 4200;
+
 
     enum joyButton
     {
@@ -119,6 +129,12 @@ namespace MediaPortal
     {
       get { return doSendActions; }
       set { doSendActions = value; }
+    }
+
+    public int Delay
+    {
+      get { return delay; }
+      set { delay = value; }
     }
 
     void SetActive(bool value)
@@ -224,6 +240,7 @@ namespace MediaPortal
     void SendActions(JoystickState state)
     {
       int actionCode = -1;
+      int curAxisValue = 0;
       // todo: timer stuff!!
 
       // buttons first!
@@ -249,7 +266,6 @@ namespace MediaPortal
       }
 
       // pov next
-
       if (actionCode == -1)
       {
         int[] pov = state.GetPointOfView();
@@ -281,8 +297,9 @@ namespace MediaPortal
       if (actionCode == -1)
       {
         // axes next
-        if (Math.Abs(state.X) > 4500)
+        if (Math.Abs(state.X) > axisLimit)
         {
+          curAxisValue = state.X;
           if (state.X > 0)
           {
             actionCode = (int)joyButton.axisXUp; // right
@@ -292,8 +309,9 @@ namespace MediaPortal
             actionCode = (int)joyButton.axisXDown; // left
           }
         }
-        else if (Math.Abs(state.Y) > 4500)
+        else if (Math.Abs(state.Y) > axisLimit)
         {
+          curAxisValue = state.Y;
           if (state.Y > 0)
           {
             // down
@@ -305,8 +323,9 @@ namespace MediaPortal
             actionCode = (int)joyButton.axisYDown;
           }
         }
-        else if (Math.Abs(state.Z) > 4500)
+        else if (Math.Abs(state.Z) > axisLimit)
         {
+          curAxisValue = state.Z;
           if (state.Z > 0)
           {
             actionCode = (int)joyButton.axisZUp;
@@ -321,8 +340,9 @@ namespace MediaPortal
       if (actionCode == -1)
       {
         // rotation
-        if (Math.Abs(state.Rx) > 4500)
+        if (Math.Abs(state.Rx) > axisLimit)
         {
+          curAxisValue = state.Rx;
           if (state.Rx > 0)
           {
             actionCode = (int)joyButton.rotationXUp;
@@ -332,8 +352,9 @@ namespace MediaPortal
             actionCode = (int)joyButton.rotationXDown;
           }
         }
-        else if (Math.Abs(state.Ry) > 4500)
+        else if (Math.Abs(state.Ry) > axisLimit)
         {
+          curAxisValue = state.Ry;
           if (state.Ry > 0)
           {
             actionCode = (int)joyButton.rotationYUp;
@@ -343,8 +364,9 @@ namespace MediaPortal
             actionCode = (int)joyButton.rotationYDown;
           }
         }
-        else if (Math.Abs(state.Rz) > 4500)
+        else if (Math.Abs(state.Rz) > axisLimit)
         {
+          curAxisValue = state.Rz;
           if (state.Rz > 0)
           {
             actionCode = (int)joyButton.rotationZUp;
@@ -356,9 +378,9 @@ namespace MediaPortal
         }
       }
 
-      if (actionCode > 0)
+      if ((actionCode > 0) && (!FilterAction(actionCode, curAxisValue)))
       {
-        // Log.Write("mapping action {0}", actionCode);
+        Log.Write("mapping action {0}", actionCode);
         diMapper.MapAction(actionCode);
       }
     }
@@ -460,6 +482,7 @@ namespace MediaPortal
         {
           SelectDevice(strGUID);
         }
+        delay = xmlreader.GetValueAsInt("remote", "DirectInputDelayMS", 150);
       }
     }
 
@@ -469,6 +492,7 @@ namespace MediaPortal
       {
         xmlwriter.SetValueAsBool("remote", "DirectInput", active);
         xmlwriter.SetValue("remote", "DirectInputDeviceGUID", SelectedDeviceGUID);
+        xmlwriter.SetValue("remote", "DirectInputDelayMS", delay);
       }
     }
 
@@ -496,6 +520,37 @@ namespace MediaPortal
         SendActions(state);
       }
     }
+
+    bool FilterAction(int actionCode, int axisValue)
+    {
+      bool res = false;
+      // filter actionCodes only if
+      // 1) the last code that was sent is the one we'd like to re-send now
+      // AND 
+      // 2) the time elapsed when sending the same code is smaller than the delay threshold
+      if (actionCode == lastCodeSent)
+      {
+        int timeNow = timeGetTime();
+        int timeElapsed = timeNow - timeLastSend;
+        if (timeElapsed < delay)
+        {
+          res = true;
+        }
+        else if (Math.Abs(axisValue) < Math.Abs(lastAxisValue))
+        {
+          // axis is being released => don't send action!
+          res = true;
+        }
+      }
+      if (!res)
+      {
+        lastCodeSent = actionCode;
+        timeLastSend = timeGetTime();
+        lastAxisValue = axisValue;
+      }
+      return res;
+    }
+
 
 
     void CreateMapper()
