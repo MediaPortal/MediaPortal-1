@@ -75,6 +75,7 @@ namespace MediaPortal.GUI.Music
     bool              m_bAutoShuffle = true;
     string            m_strDiscId=String.Empty;    
 		string						m_strPlayListPath = String.Empty;
+		string						m_strCurrentFolder = String.Empty;
 		int               m_iSelectedAlbum=-1;
     static Freedb.CDInfoDetail m_musicCD = null;
 		// File menu
@@ -273,19 +274,30 @@ namespace MediaPortal.GUI.Music
     {
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
 			{
-				if (facadeView.Focus)
+				if (m_strDirectory!=m_strPlayListPath)
 				{
-					GUIListItem item = facadeView[0];
-					if (item != null)
+					if (facadeView.Focus)
 					{
-						if (item.IsFolder && item.Label == "..")
+						GUIListItem item = facadeView[0];
+						if (item != null)
 						{
-							if (m_strDirectory!=m_strDirectoryStart)
+							if (item.IsFolder && item.Label == "..")
 							{
-								LoadDirectory(item.Path);
-								return;
+								if (m_strDirectory!=m_strDirectoryStart)
+								{
+									LoadDirectory(item.Path);
+									return;
+								}
 							}
 						}
+					}
+				}
+				else
+				{
+					if (facadeView.Focus)
+					{
+						LoadDirectory(m_strCurrentFolder);
+						return;
 					}
 				}
 			}
@@ -340,7 +352,15 @@ namespace MediaPortal.GUI.Music
 			}
 			if (control==btnPlaylistFolder)
 			{
-				m_strDirectory=m_strPlayListPath;
+				if (m_strDirectory!=m_strPlayListPath)
+				{
+					m_strCurrentFolder=m_strDirectory;
+					m_strDirectory=m_strPlayListPath;
+				}
+				else
+				{
+					m_strDirectory=m_strCurrentFolder;
+				}
 				LoadDirectory(m_strDirectory);
 			}
 			base.OnClicked(controlId,control,actionType);
@@ -779,6 +799,7 @@ namespace MediaPortal.GUI.Music
       OnRetrieveMusicInfo(ref itemlist);
       foreach (GUIListItem item in itemlist)
       {
+				if (item.Label==".." && m_strDirectory==m_strPlayListPath) continue;
         item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
         item.OnItemSelected+=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
