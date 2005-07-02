@@ -339,13 +339,22 @@ namespace MediaPortal.Configuration.Sections
 
     private void startButton_Click(object sender, System.EventArgs e)
     {
+			ArrayList shares = new ArrayList();
+			for(int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
+			{
+				string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
+				if(Directory.Exists(path))
+				{
+					shares.Add(path);
+				}
+			}
 	  m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
 	  groupBox1.Enabled = false;
 	  groupBox2.Enabled = true;
       
 	  //RebuildDatabase();
 	  progressBar.Maximum = 100;
-	  int appel = m_dbs.MusicDatabaseReorg( );
+	  int appel = m_dbs.MusicDatabaseReorg( shares);
 	  progressBar.Value = 100;
 
 	  groupBox1.Enabled = true;

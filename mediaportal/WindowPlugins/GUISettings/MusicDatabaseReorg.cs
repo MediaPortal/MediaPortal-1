@@ -119,7 +119,7 @@ namespace MediaPortal.GUI.Settings
 			///Connect the event to a method that knows what to do with the event.
 			m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
 			///Execute the reorganisation
-			int appel = m_dbs.MusicDatabaseReorg();
+			int appel = m_dbs.MusicDatabaseReorg(null);
 			///Tfro Disconnect the event from the method.
 			m_dbs.DatabaseReorgChanged -= new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
 

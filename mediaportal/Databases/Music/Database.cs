@@ -1968,12 +1968,16 @@ namespace MediaPortal.Music.Database
 	  string strSQL;
 
 
-	  public int MusicDatabaseReorg ()
+	  public int MusicDatabaseReorg (ArrayList shares)
 	  {
-		/// Tfro71 29-5-2005
-		/// Added this method so that we can use it in front-end and in configuration
-		/// and to prevent double code for the same thing.
-		/// 
+			if (shares==null)
+			{
+				LoadShares();
+			}
+			else
+			{
+				m_shares=(ArrayList)shares.Clone();
+			}
 		  DatabaseReorgEventArgs MyArgs =new DatabaseReorgEventArgs(); 
 
 	  
@@ -2484,8 +2488,7 @@ namespace MediaPortal.Music.Database
 		  /// So we have to check Mediaportal.XML
 		  /// Loading the current MusicFolders
 		  Log.Write("Musicdatabasereorg: deleting songs in non-existing shares");
-		  int result = LoadShares();
-
+		  
 		  /// For each path in the MusicDatabase we will check if it's in a share
 		  /// If not, we will delete all the songs in this path.
 		  strSQL=String.Format("select * from path");
@@ -2581,7 +2584,6 @@ namespace MediaPortal.Music.Database
 		  string MusicFilePath, MusicFileName;
 		  double NewProgress;
 
-		  LoadShares();
 		  foreach (string Share in m_shares)
 		  {
 			  ///Here we can check if the Path has an existing share
