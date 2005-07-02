@@ -274,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
     {
       cbEnable.Checked = diHandler.Active;
       cbDevices.SelectedIndex = diHandler.SelectedDeviceIndex;
-      numDelay.Value = diHandler.Delay;
+//      numDelay.Value = diHandler.Delay; FIX THIS WAEBERD
     }
 
 
@@ -301,7 +301,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void numDelay_ValueChanged(object sender, System.EventArgs e)
     {
-      diHandler.Delay = (int)numDelay.Value;
+//      diHandler.Delay = (int)numDelay.Value; FIX THIS WAEBERD
     }
 
 	}
