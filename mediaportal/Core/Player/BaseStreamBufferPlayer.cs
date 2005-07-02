@@ -58,6 +58,8 @@ namespace MediaPortal.Player
 		protected int												rotCookie = 0;
 		protected int                       m_aspectX=1;
 		protected int                       m_aspectY=1;
+		protected long                      m_speedRate = 10000;
+		bool      usingNvidiaCodec=false;
 		/// <summary> control interface. </summary>
 		protected IMediaControl							mediaCtrl =null;
 
@@ -91,7 +93,8 @@ namespace MediaPortal.Player
 		{
       if (!System.IO.File.Exists(strFile)) return false;
 			iSpeed=1;
-      m_bLive=false;
+			m_speedRate = 10000;
+			m_bLive=false;
       m_dDuration=-1d;
       string strExt=System.IO.Path.GetExtension(strFile).ToLower();
       if (strExt.Equals(".tv"))
@@ -427,6 +430,10 @@ namespace MediaPortal.Player
 			
 			OnProcess();
 			CheckVideoResolutionChanges();
+			if (m_speedRate!=10000)
+			{
+				DoFFRW();
+			}
 		}
 
 		void CheckVideoResolutionChanges()
@@ -911,6 +918,9 @@ namespace MediaPortal.Player
 				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
+				if (strVideoCodec.ToLower().IndexOf("nvidia")>=0)
+					usingNvidiaCodec=true;
+
 				//render outputpins of SBE
 				DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)fileSource);
 
@@ -1097,48 +1107,100 @@ namespace MediaPortal.Player
 			{ 
 				if (m_state==PlayState.Init) return 1;
 				if (m_mediaSeeking==null) return 1;
-				return iSpeed;
+				if (usingNvidiaCodec) return iSpeed;
+				switch ( m_speedRate)
+				{
+					case -10000:
+						return -1;
+					case -15000:
+						return -2;
+					case -30000:
+						return -4;
+					case -45000:
+						return -8;
+					case -60000:
+						return -16;
+					case -75000:
+						return -32;
+
+					case 10000:
+						return 1;
+					case 15000:
+						return 2;
+					case 30000:
+						return 4;
+					case 45000:
+						return 8;
+					case 60000:
+						return 16;
+					default: 
+						return 32;
+				}
 			}
 			set 
 			{
 				if (m_state!=PlayState.Init)
 				{
-					if (iSpeed!=value)
+					if (usingNvidiaCodec)
 					{
-						
-						iSpeed=value;
-						if (m_mediaSeeking2!=null)
+						if (iSpeed!=value)
 						{
-							int hr=m_mediaSeeking2.SetRateEx((double)iSpeed,25);
-							Log.Write("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
-							if (hr!=0)
+							iSpeed=value;
+							if (m_mediaSeeking2!=null)
 							{
-								IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
-								hr=oldMediaSeek.SetRate((double)iSpeed);
-								Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+								int hr=m_mediaSeeking2.SetRateEx((double)iSpeed,25);
+								Log.Write("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
+								if (hr!=0)
+								{
+									IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
+									hr=oldMediaSeek.SetRate((double)iSpeed);
+									Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+								}
+							}
+							else
+							{
+								int hr=m_mediaSeeking.SetRate((double)iSpeed);
+								Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
+								if (hr!=0)
+								{
+									IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
+									hr=oldMediaSeek.SetRate((double)iSpeed);
+									Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+								}
+							}
+							if (iSpeed==1)
+							{
+								mediaCtrl.Stop();
+								Application.DoEvents();
+								System.Threading.Thread.Sleep(200);
+								Application.DoEvents();
+								FilterState state;
+								mediaCtrl.GetState(100,out state);
+								Log.Write("state:{0}", state.ToString());
+								mediaCtrl.Run();
 							}
 						}
-						else
+					}
+					else
+					{
+						switch ( (int)value)
 						{
-							int hr=m_mediaSeeking.SetRate((double)iSpeed);
-							Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
-							if (hr!=0)
-							{
-								IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
-								hr=oldMediaSeek.SetRate((double)iSpeed);
-								Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
-							}
-						}
-						if (iSpeed==1)
-						{
-							mediaCtrl.Stop();
-							Application.DoEvents();
-							System.Threading.Thread.Sleep(200);
-							Application.DoEvents();
-							FilterState state;
-							mediaCtrl.GetState(100,out state);
-							Log.Write("state:{0}", state.ToString());
-							mediaCtrl.Run();
+							case -1:  m_speedRate=-10000;break;
+							case -2:  m_speedRate=-15000;break;
+							case -4:  m_speedRate=-30000;break;
+							case -8:  m_speedRate=-45000;break;
+							case -16: m_speedRate=-60000;break;
+							case -32: m_speedRate=-75000;break;
+
+							case 1:  
+								m_speedRate=10000;
+								mediaCtrl.Run();
+								break;
+							case 2:  m_speedRate=15000;break;
+							case 4:  m_speedRate=30000;break;
+							case 8:  m_speedRate=45000;break;
+							case 16: m_speedRate=60000;break;
+							default: m_speedRate=75000;break;
 						}
 					}
 				}
@@ -1178,6 +1240,60 @@ namespace MediaPortal.Player
 
 		protected virtual void OnInitialized()
 		{
+		}
+		protected void DoFFRW()
+		{
+
+			if (!Playing) 
+				return;
+      
+			if ((m_speedRate == 10000) || (m_mediaSeeking == null))
+				return;
+
+			long earliest, latest, current,  stop, rewind, pStop;
+		
+			m_mediaSeeking.GetAvailable(out earliest, out latest);
+			m_mediaSeeking.GetPositions(out current, out stop);
+
+			// Log.Write("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+			//         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
+      
+			//earliest += + 30 * 10000000;
+
+			// new time = current time + 2*timerinterval* (speed)
+			long lTimerInterval=300;
+			rewind = (long)(current + (2 *(long)(lTimerInterval)* m_speedRate)) ;
+
+			int hr; 		
+			pStop  = 0;
+		
+			// if we end up before the first moment of time then just
+			// start @ the beginning
+			if ((rewind < earliest) && (m_speedRate<0))
+			{
+				m_speedRate = 10000;
+				rewind = earliest;
+				//Log.Write(" seek back:{0}",rewind/10000000);
+				hr = m_mediaSeeking.SetPositions(ref rewind, SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
+				mediaCtrl.Run();
+				return;
+			}
+			// if we end up at the end of time then just
+			// start @ the end-100msec
+			if ((rewind > (latest-100000))  &&(m_speedRate>0))
+			{
+				m_speedRate = 10000;
+				rewind = latest-100000;
+				//Log.Write(" seek ff:{0}",rewind/10000000);
+				hr = m_mediaSeeking.SetPositions(ref rewind, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				mediaCtrl.Run();
+				return;
+			}
+
+			//seek to new moment in time
+			//Log.Write(" seek :{0}",rewind/10000000);
+			hr = m_mediaSeeking.SetPositions(ref rewind, SeekingFlags.AbsolutePositioning		,ref pStop, SeekingFlags.NoPositioning);
+			mediaCtrl.Pause();
 		}
 
 		#region IDisposable Members
