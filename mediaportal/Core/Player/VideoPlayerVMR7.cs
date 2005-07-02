@@ -61,6 +61,7 @@ namespace MediaPortal.Player
     /// <summary> interface to single-step video. </summary>
     protected IVideoFrameStep			      videoStep;
     protected IDirectVobSub			        vobSub;
+		DateTime  elapsedTimer=DateTime.Now;
 
     /// <summary> audio interface used to control volume. </summary>
     protected IBasicAudio				basicAudio;
@@ -1025,6 +1026,8 @@ namespace MediaPortal.Player
       if ((m_speedRate == 10000) || (mediaSeek == null))
         return;
 
+			TimeSpan ts=DateTime.Now-elapsedTimer;
+			if (ts.TotalMilliseconds<60) return;
       long earliest, latest, current,  stop, rewind, pStop;
 		
       mediaSeek.GetAvailable(out earliest, out latest);
@@ -1036,7 +1039,9 @@ namespace MediaPortal.Player
       //earliest += + 30 * 10000000;
 
       // new time = current time + 2*timerinterval* (speed)
-      long lTimerInterval=300;
+			long lTimerInterval=(long)ts.TotalMilliseconds;
+			if (lTimerInterval > 300) lTimerInterval=300;
+
       rewind = (long)(current + (2 *(long)(lTimerInterval)* m_speedRate)) ;
 
       int hr; 		

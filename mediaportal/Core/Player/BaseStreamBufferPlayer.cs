@@ -76,6 +76,7 @@ namespace MediaPortal.Player
 		/// <summary> audio interface used to control volume. </summary>
 		protected IBasicAudio								basicAudio=null;
 		VMR7Util  vmr7 = null;
+		DateTime  elapsedTimer=DateTime.Now;
 
 		protected const int WM_GRAPHNOTIFY	= 0x00008001;	// message from graph
 		protected const int WS_CHILD			= 0x40000000;	// attributes for video window
@@ -1249,7 +1250,8 @@ namespace MediaPortal.Player
       
 			if ((m_speedRate == 10000) || (m_mediaSeeking == null))
 				return;
-
+			TimeSpan ts=DateTime.Now-elapsedTimer;
+			if (ts.TotalMilliseconds<60) return;
 			long earliest, latest, current,  stop, rewind, pStop;
 		
 			m_mediaSeeking.GetAvailable(out earliest, out latest);
@@ -1261,7 +1263,8 @@ namespace MediaPortal.Player
 			//earliest += + 30 * 10000000;
 
 			// new time = current time + 2*timerinterval* (speed)
-			long lTimerInterval=300;
+			long lTimerInterval=(long)ts.TotalMilliseconds;
+			if (lTimerInterval > 300) lTimerInterval=300;
 			rewind = (long)(current + (2 *(long)(lTimerInterval)* m_speedRate)) ;
 
 			int hr; 		
@@ -1294,6 +1297,8 @@ namespace MediaPortal.Player
 			//Log.Write(" seek :{0}",rewind/10000000);
 			hr = m_mediaSeeking.SetPositions(ref rewind, SeekingFlags.AbsolutePositioning		,ref pStop, SeekingFlags.NoPositioning);
 			mediaCtrl.Pause();
+
+			elapsedTimer=DateTime.Now;
 		}
 
 		#region IDisposable Members
