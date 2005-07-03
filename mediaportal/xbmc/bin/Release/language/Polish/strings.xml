@@ -914,6 +914,10 @@
 		<value>Suwak</value>
 	</string>
 	<string>
+		<id>299</id>
+		<value>Biblioteka:</value>
+	</string>
+	<string>
 		<id>300</id>
 		<value>1. Jêzyk</value>
 	</string>
@@ -1203,7 +1207,7 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>Wiêksze</value>
+		<value>Du¿e</value>
 	</string>
 	<string>
 		<id>373</id>
@@ -1673,7 +1677,11 @@
 		<id>491</id>
 		<value>U¿yj du¿ych ikon</value>
 	</string>
-<string>
+	<string>
+		<id>492</id>
+		<value>Jêzyk d¼wiêku</value>
+	</string>	
+	<string>
 		<id>500</id>
 		<value>Menu Plik</value>
 	</string>
@@ -1725,6 +1733,30 @@
 		<id>512</id>
 		<value>Nigdy</value>
 	</string>
+<string>
+		<id>513</id>
+		<value>Obiekt jest zabezpieczony, operacja zosta³a przerwana</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>B³±d podczas tworzenia folderu, operacja zosta³a przerwana</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>B³±d podczas kasowania folderu, operacja zosta³a przerwana</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Nie mo¿na usun±æ docelowego pliku, operacja zosta³a przerwana</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>B³±d krytyczny, operacja zosta³a przerwana</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Czy usun±æ tê piosenkê?</value>
+	</string>	
 	
 	<string>
 		<id>530</id>
@@ -1737,7 +1769,11 @@
 	<string>
 		<id>532</id>
 		<value>Wykryto dysk z muzyk±, czy chcesz go otworzyæ?</value>
-	</string>	
+	</string>
+		<string>
+		<id>550</id>
+		<value>Przytnij</value>
+	</string>
 	<string>
 		<id>600</id>
 		<value>Program telewizyjny</value>
@@ -2294,6 +2330,11 @@
 		<id>100757</id>
 		<value>Ustawienia statusu</value>
 	</string>
+		<string>
+		<id>100758</id>
+		<value>Okno pliku</value>
+	</string>
+	<string><id>100760</id><value>Nagrywarka</value></string>
 	<string>
 		<id>100770</id>
 		<value>Explorer</value>
@@ -2338,6 +2379,7 @@
 		<id>102008</id>
 		<value>Okno Po³±czenie plików</value>
 	</string>
+	<string><id>102009</id><value>Okno wyboru</value></string>
 	<string>
 		<id>102010</id>
 		<value>Data/Czas</value>
@@ -2358,6 +2400,8 @@
 		<id>102014</id>
 		<value>Informacje o obrazie</value>
 	</string>
+	<string><id>102015</id><value>Mini Menu</value></string>
+<string><id>102016</id><value>Powiadomienie</value></string>
 	<string>
 		<id>102700</id>
 		<value>Wiadomo¶ci</value>
@@ -2756,14 +2800,102 @@
 	<id>876</id>
 	<value>Do czasu zatrzymania</value>
 </string>
+<string>
+	<id>877</id>
+	<value>Priorytety</value>
+</string>
+<string>
+	<id>878</id>
+	<value>Storage</value>
+</string>
+<string>
+	<id>879</id>
+	<value>Konflikt nagrania</value>
+</string>
+<string>
+	<id>880</id>
+	<value>Czas do nagrania:</value>
+</string>
+<string>
+	<id>881</id>
+	<value>Wybierz nagrywanie aby zatrzymaæ:</value>
+</string>
+<string>
+	<id>882</id>
+	<value>Ustawienia jako¶ci</value>
+</string>
+<string>
+	<id>883</id>
+	<value>Niska</value>
+</string>
+<string>
+	<id>884</id>
+	<value>¦rednia</value>
+</string>
+<string>
+	<id>885</id>
+	<value>Wysoka</value>
+</string>
+<string>
+	<id>886</id>
+	<value>Domy¶lna</value>
+</string>
+<string>
+	<id>887</id>
+	<value>Ustal liczbê odcinków do zachowania</value>
+</string>
+<string>
+	<id>888</id>
+	<value>Zarz±dzanie odcinkami</value>
+</string>
+<string>
+	<id>889</id>
+	<value>Wszyskie odcinki</value>
+</string>
 	<!-- End My Alarm Strings -->
 	<string>
 		<id>890</id>
 		<value>Odtwarzaj CD</value>
 	</string>
 	<string>
+	<id>891</id>
+	<value>Wybierz program</value>
+</string>
+<string>
+	<id>892</id>
+	<value>Konflikty</value>
+</string>
+<string>
+	<id>893</id>
+	<value>Przeno¶ny</value>
+</string>
+<string>
+	<id>894</id>
+	<value>Kompresuj nagrania</value>
+</string>
+<string>
+	<id>895</id>
+	<value>Automatyczna kompresja</value>
+</string>
+<string>
+	<id>896</id>
+	<value>Kompresja</value>
+</string>
+<string>
+	<id>897</id>
+	<value>Ustawienia</value>
+</string>
+<string>
+	<id>898</id>
+	<value>MPEG-2</value>
+</string>
+<string>
+	<id>899</id>
+	<value>WMV</value>
+</string>
+	<string>
 		<id>900</id>
-		<value>Czy chcesz powróciæ do ostatnio zatrzymanej pozycji?</value>
+		<value>Czy rozpocz±æ od ostatnio zatrzymanej pozycji?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2907,7 +3039,7 @@
 	</string>
 	<string>
 		<id>936</id>
-		<value>Powrót z:</value>
+		<value>Ostatnia pozycja:</value>
 	</string>
 	<string>
 		<id>937</id>
@@ -3077,7 +3209,129 @@
 	<id>986</id>
 	<value>Odczytujê informacjê o aktorze</value>
 </string>
-	<!-- My Status Strings -->
+<string>
+	<id>987</id>
+	<value>Lata</value>
+</string>
+
+<string>
+	<id>988</id>
+	<value>Jako¶æ</value>
+</string>
+<string>
+	<id>989</id>
+	<value>FPS</value>
+</string>
+<string>
+	<id>990</id>
+	<value>Bitrate</value>
+</string>
+<string>
+	<id>991</id>
+	<value>Priorytet</value>
+</string>
+<string>
+	<id>992</id>
+	<value>Usuñ oryginalny plik</value>
+</string>
+<string>
+	<id>993</id>
+	<value>U¿ytkownika</value>
+</string>
+<string>
+	<id>994</id>
+	<value>W³±cz Auto-kompresjê</value>
+</string>
+<string>
+	<id>995</id>
+	<value>Czy chcesz skompresowaæ</value>
+</string>
+<string>
+	<id>996</id>
+	<value>wybrane nagrania?</value>
+</string>
+
+<string>
+	<id>997</id>
+	<value>Zakoñczono</value>
+</string>
+
+<string>
+	<id>998</id>
+	<value>XviD</value>
+</string>
+<string>
+	<id>999</id>
+	<value>Ten plugin pozwala Ci na konwertowanie Twoich</value>
+</string>
+<string>
+	<id>1000</id>
+	<value>nagrañ z formatu dvr-ms na mpg, xvid lub wmv</value>
+</string>
+<string>
+	<id>1001</id>
+	<value>Musisz mieæ zainstalowany dekoder</value>
+</string>
+<string>
+	<id>1002</id>
+	<value>Elecard MPEG2</value>
+</string>
+<string>
+	<id>1003</id>
+	<value>dla konwertowania do formatu xvid</value>
+</string>
+<string>
+	<id>1004</id>
+	<value>Nagrywanie rozpocznie siê</value>
+</string>
+<string>
+	<id>1005</id>
+	<value>na kanale</value>
+</string>
+<string>
+	<id>1006</id>
+	<value>Pozwól rozpocz±æ nagrywanie</value>
+</string>
+<string>
+	<id>1007</id>
+	<value>Anuluj nagrywanie i wróæ do ogl±dania telewizji</value>
+</string>
+<string>
+	<id>1008</id>
+	<value>Kolejka</value>
+</string>
+<string>
+	<id>1009</id>
+	<value>Pobieranie ok³adki</value>
+</string>
+<string>
+	<id>1010</id>
+	<value>Obejrzane</value>
+</string>
+<string>
+	<id>1011</id>
+	<value>Biografia</value>
+</string>
+<string>
+	<id>1012</id>
+	<value>Ten program bêdzie przerwany przez</value>
+</string>
+<string>
+	<id>1013</id>
+	<value>Czy chcesz nagraæ równie¿ drug± czê¶æ?</value>
+</string>
+<string>
+	<id>1014</id>
+	<value>Powiadom mnie kiedy zacznie siê program</value>
+</string>
+<string>
+	<id>1015</id>
+	<value>Nie powiadamiaj mnie o rozpoczêciu programu</value>
+</string>
+<string>
+	<id>1016</id>
+	<value>Program zacznie siê za 5 mins</value>
+</string>
 	<string>
 		<id>1950</id>
 		<value>Status</value>
@@ -3821,6 +4075,7 @@
 		<id>9011</id>
 		<value>Komentarz:</value>
 	</string>
+	<string><id>12902</id><value>MSN Messenger OSD</value></string>
 	<string>
 		<id>13000</id>
 		<value>System:</value>
@@ -3889,6 +4144,7 @@
 		<id>16001</id>
 		<value>Imprezka</value>
 	</string>
+	<string><id>25001</id><value>Czekam na stronê {0:X}...!</value></string> 
 	<!-- My Tetris -->
 	<string>
 		<id>19001</id>
@@ -4030,4 +4286,10 @@
 		<id>3022</id>
 		<value>z</value>
 	</string>
+
+<string><id>103003</id><value>Telewizja/OSD</value></string>
+<string><id>103006</id><value>Telewizja/MSN OSD</value></string>
+<string><id>103007</id><value>Telewizja/Zap OSD</value></string>
+<string><id>107700</id><value>Telewizja/Telegazeta</value></string>
+<string><id>107701</id><value>Telewizja/Telegazeta</value></string>
 </strings>
