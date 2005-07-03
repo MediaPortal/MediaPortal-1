@@ -4,7 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
-
+using MediaPortal.GUI.Library;
 namespace MediaPortal.Configuration
 {
 	/// <summary>
