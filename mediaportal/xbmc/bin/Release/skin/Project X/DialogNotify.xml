@@ -46,8 +46,8 @@
 				<description>logo</description> 
 				<type>image</type> 
 				<id>5</id> 
-				<posX>305</posX> 
-				<posY>455</posY> 
+				<posX>285</posX> 
+				<posY>450</posY> 
 				<width>70</width> 
 				<height>70</height>
 				<texture>#thumb</texture> 
