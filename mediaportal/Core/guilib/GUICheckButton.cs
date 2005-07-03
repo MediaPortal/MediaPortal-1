@@ -28,6 +28,8 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("textureCheckmark")]	protected string	m_strCheckMark;
 		[XMLSkinElement("MarkWidth")]			protected int		m_iCheckMarkWidth;
 		[XMLSkinElement("MarkHeight")]			protected int		m_iCheckMarkHeight;
+		[XMLSkinElement("MarkOffsetX")]			protected int		markOffsetX=0;
+		[XMLSkinElement("MarkOffsetY")]			protected int		markOffsetY=0;
 
 		protected int       m_dwFrameCounter=0;
 		protected GUIImage	m_imgFocus=null;
@@ -112,6 +114,16 @@ namespace MediaPortal.GUI.Library
 				checkMark.Focus=value;
 			}
 		}
+		public int CheckOffsetX
+		{
+			get { return markOffsetX;}
+			set {markOffsetX=value;}
+		}
+		public int CheckOffsetY
+		{
+			get { return markOffsetY;}
+			set {markOffsetY=value;}
+		}
 		public override bool Selected
 		{
 			get
@@ -164,10 +176,8 @@ namespace MediaPortal.GUI.Library
 				m_label.SetPosition(m_iTextOffsetX+m_dwPosX, m_iTextOffsetY+m_dwPosY);
 				m_label.Render(timePassed);
 			}
-			int off=m_imgNoFocus.Width/10;
-			GUIGraphicsContext.ScaleHorizontal(ref off);
-			checkMark.SetPosition(m_imgNoFocus.XPosition+m_imgNoFocus.Width-off-m_iCheckMarkWidth, 
-				m_imgNoFocus.YPosition+ (m_imgNoFocus.Height-m_iCheckMarkHeight)/2 );
+			checkMark.SetPosition(m_imgNoFocus.XPosition+m_imgNoFocus.Width-CheckOffsetX-checkMark.Width, 
+				m_imgNoFocus.YPosition+ CheckOffsetY );
 			checkMark.Render(timePassed);
 		}
 

@@ -17,6 +17,8 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("textureCheckmark")]	protected string	m_strCheckMark;
 		[XMLSkinElement("MarkWidth")]			protected int		m_iCheckMarkWidth;
 		[XMLSkinElement("MarkHeight")]			protected int		m_iCheckMarkHeight;
+		[XMLSkinElement("MarkOffsetX")]			protected int		markOffsetX;
+		[XMLSkinElement("MarkOffsetY")]			protected int		markOffsetY;
 				
 		
 		public GUICheckListControl(int dwParentID) : base(dwParentID)
@@ -75,6 +77,8 @@ namespace MediaPortal.GUI.Library
 			{
 				GUICheckButton cntl = new GUICheckButton(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwWidth, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused,m_strCheckMark,m_strCheckMarkNoFocus,m_iCheckMarkWidth,m_iCheckMarkHeight);
 				cntl.AllocResources();
+				cntl.CheckOffsetX=markOffsetX;
+				cntl.CheckOffsetY=markOffsetY;
 				m_imgButton.Add(cntl);
 			}
 		}

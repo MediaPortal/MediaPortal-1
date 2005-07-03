@@ -300,7 +300,7 @@ namespace MediaPortal.GUI.TV
 			ArrayList recordings = new ArrayList();
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordedTV(ref recordings);
-/*
+
 			TVRecorded rec1= new TVRecorded();
 			rec1.Channel="RTL 4";
 			rec1.Title="Friends";
@@ -309,7 +309,7 @@ namespace MediaPortal.GUI.TV
 			rec1.End=Utils.datetolong(DateTime.Now.AddHours(2));
 			recordings.Add(rec1);
 			recordings.Add(rec1);
-			recordings.Add(rec1);*/
+			recordings.Add(rec1);
 			foreach (TVRecorded rec in recordings)
 			{
 				if (Transcoder.IsTranscoding(rec)) continue; //already transcoding...

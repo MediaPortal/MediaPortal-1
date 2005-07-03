@@ -154,6 +154,8 @@
 		<textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
 		<MarkWidth>16</MarkWidth>
 		<MarkHeight>16</MarkHeight>
+		<MarkOffsetX>16</MarkOffsetX>
+		<MarkOffsetY>16</MarkOffsetY>
 		<textXOff>5</textXOff>
 		<textYOff>4</textYOff>
 		<textXOff2>0</textXOff2>
