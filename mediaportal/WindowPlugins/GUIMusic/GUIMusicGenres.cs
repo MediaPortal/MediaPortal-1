@@ -209,6 +209,16 @@ namespace MediaPortal.GUI.Music
 					item.IconImageBig=strThumb;
 					item.ThumbnailImage=strThumb;
 				}
+				else
+				{
+					strThumb=Utils.GetFolderThumb(item.Path);
+					if (System.IO.File.Exists(strThumb))
+					{
+						item.IconImage=strThumb;
+						item.IconImageBig=strThumb;
+						item.ThumbnailImage=strThumb;
+					}
+				}
 			}
 			else if (song.artistId>=0 && song.albumId<0 && song.songId<0)
 			{
@@ -229,6 +239,16 @@ namespace MediaPortal.GUI.Music
 					item.IconImage=strThumb;
 					item.IconImageBig=strThumb;
 					item.ThumbnailImage=strThumb;
+				}
+				else
+				{
+					strThumb=Utils.GetFolderThumb(item.Path);
+					if (System.IO.File.Exists(strThumb))
+					{
+						item.IconImage=strThumb;
+						item.IconImageBig=strThumb;
+						item.ThumbnailImage=strThumb;
+					}
 				}
 			}
 			else
