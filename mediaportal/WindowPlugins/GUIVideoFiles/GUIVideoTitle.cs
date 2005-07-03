@@ -242,6 +242,7 @@ namespace MediaPortal.GUI.Video
 						VideoDatabase.GetFiles(movie.ID,ref files);
 						foreach (string file in files)
 						{
+							item.AlbumInfoTag=movie;
 							item.Path=file;
 							AddItemToPlayList(item);
 						}
