@@ -1,11 +1,14 @@
 <fonts>
-  <!-- format: 
+  <!-- This file contains all the fonts used by the skin. Each font can be configured seperately and uses the 
+       following format format: 
 	<font>
 		<name>name of font used in the skin .xml files</name>
 		<filename>name of the font</filename>
 		<height>height of the font</height>
 		<bold>[yes|no]</bold>
 		<italic>[yes|no]</italic>
+		<start>start character (numeric) default : 0</start>
+		<end>end character (numeric) default : 255</end>
 	</font>
   !-->
   <font>
