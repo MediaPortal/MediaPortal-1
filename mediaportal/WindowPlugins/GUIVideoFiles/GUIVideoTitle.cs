@@ -223,6 +223,7 @@ namespace MediaPortal.GUI.Video
 		{
 			// add item 2 playlist
 			GUIListItem listItem=facadeView[itemIndex];
+			ArrayList files = new ArrayList();
 			if (handler.CurrentLevel < handler.MaxLevels-1)
 			{
 				//queue
@@ -238,13 +239,25 @@ namespace MediaPortal.GUI.Video
 						item.Label=movie.Title;
 						item.Duration=movie.RunTime*60;
 						item.IsFolder=false;
-						AddItemToPlayList(item);
+						VideoDatabase.GetFiles(movie.ID,ref files);
+						foreach (string file in files)
+						{
+							item.Path=file;
+							AddItemToPlayList(item);
+						}
+
 					}
 				}
 			}
 			else
 			{
-				AddItemToPlayList(listItem);
+				IMDBMovie movie =listItem.AlbumInfoTag as IMDBMovie;
+				VideoDatabase.GetFiles(movie.ID,ref files);
+				foreach (string file in files)
+				{
+					listItem.Path=file;
+					AddItemToPlayList(listItem);
+				}
 			}
 			//move to next item
 			GUIControl.SelectItemControl(GetID, facadeView.GetID,itemIndex+1);

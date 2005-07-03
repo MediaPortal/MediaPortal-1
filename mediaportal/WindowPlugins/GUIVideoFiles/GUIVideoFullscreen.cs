@@ -418,7 +418,12 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_BIG_STEP_BACK:
         { 
-          PlayListPlayer.PlayPrevious();
+          double currentpos=g_Player.CurrentPosition;
+					double duration=g_Player.Duration;
+					double percent = (currentpos/duration)*100d;
+					percent-=10d;
+					if (percent < 0) percent=0;
+					g_Player.SeekAsolutePercentage((int)percent);
           return;
         }
           //break;
@@ -426,7 +431,12 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
         {
             
-          PlayListPlayer.PlayNext(true);
+					double currentpos=g_Player.CurrentPosition;
+					double duration=g_Player.Duration;
+					double percent = (currentpos/duration)*100d;
+					percent+=10d;
+					if (percent >100d) percent=100d;
+					g_Player.SeekAsolutePercentage((int)percent);
           return;
         }
           //break;
