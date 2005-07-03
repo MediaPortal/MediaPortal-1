@@ -26,6 +26,26 @@
   		<label>181</label>
   		<textcolor>FF000000</textcolor>
   	</control>
+		<control>
+			<description>Label text </description>
+			<type>label</type>
+			<id>5</id>
+			<posX>398</posX>
+			<posY>392</posY>
+			<label>-</label>
+			<font>font10</font>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
+		<control>
+			<description>Label text </description>
+			<type>label</type>
+			<id>6</id>
+			<posX>398</posX>
+			<posY>405</posY>
+			<label>-</label>
+			<font>font10</font>
+			<textcolor>FFFFFFFF</textcolor>
+		</control>
     <control>
   		<description>Exit button</description>
   		<type>button</type>

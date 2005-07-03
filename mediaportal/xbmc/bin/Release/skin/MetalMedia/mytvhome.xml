@@ -320,8 +320,6 @@
 		<posX>65</posX> 
 		<posY>525</posY>
 		<align>left</align>  
-		<font>font13</font>
-		<textcolor>FFB2D4F5</textcolor>
 		<label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start-#TV.Record.stop</label>
 		<id>22</id>
 	</control>

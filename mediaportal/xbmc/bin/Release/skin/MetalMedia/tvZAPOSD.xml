@@ -104,7 +104,7 @@
 		<posX>664</posX>
 		<posY>519</posY>
 		<texture>tvguide_record_button.png</texture>
-		<colordiffuse>50ffffff</colordiffuse>
+		<colordiffuse>00ffffff</colordiffuse>
 		<visible>yes</visible>
 	</control>
 
