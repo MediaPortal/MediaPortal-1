@@ -1550,8 +1550,15 @@ namespace MediaPortal.Player
                                         rSource.X,rSource.Y, rSource.Right, rSource.Bottom,
                                         rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
 
+				if (basicVideo!=null)
+				{
+					basicVideo.SetDefaultSourcePosition();
+					basicVideo.SetDefaultDestinationPosition();
+				}
         SetSourceDestRectangles(rSource,rDest);
         SetVideoPosition(rDest);
+
+				
 
         //hr=videoWin.SetWindowPosition( rDest.X, rDest.Y, rDest.Width, rDest.Height );
         //hr=dvdCtrl.SelectVideoModePreference(m_iVideoPref);        
