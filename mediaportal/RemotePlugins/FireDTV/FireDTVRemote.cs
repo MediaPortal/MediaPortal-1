@@ -72,9 +72,9 @@ namespace MediaPortal.RemoteControls
 
 				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
-					_remoteEnabled	= ((xmlreader.GetValueAsBool("remote", "FireSAT", false)) && (_FireSAPapiFound));
-					_FileName		= (xmlreader.GetValueAsString("remote", "FireSATKeyFile", "FireSATKeyMap.XML"));
-					_RemoteName		= (xmlreader.GetValueAsString("remote", "FireSATRemoteName", "FireSAT Remote Control"));
+					_remoteEnabled	= ((xmlreader.GetValueAsBool("remote", "FireDTV", false)) && (_FireSAPapiFound));
+					_FileName		= (xmlreader.GetValueAsString("remote", "FireDTVKeyFile", "FireDTVKeyMap.XML"));
+					_RemoteName		= (xmlreader.GetValueAsString("remote", "FireDTVRemoteName", "FireDTV Remote Control"));
 					_AdvModeEnabled	=  xmlreader.GetValueAsBool("remote", "FireDTVAdvanceMode", false);
 					_DisplayName	=  xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
 					_AdvModeEnabled =  xmlreader.GetValueAsBool("remote", "FireDTVAdvanceMode", false);
