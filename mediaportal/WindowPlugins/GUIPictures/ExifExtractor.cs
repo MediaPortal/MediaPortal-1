@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Pictures
       {
         switch (Value)
         {
-          case "0":	DescriptionValue = "Unknown";	break;
+          case "0":	DescriptionValue = Strings.Unknown;	break;
           case "1":            
             DescriptionValue = "Average";
             break;

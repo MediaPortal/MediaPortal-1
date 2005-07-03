@@ -227,7 +227,7 @@ namespace MediaPortal.TV.Database
 			set 
 			{
 				m_strExternalTunerChannel=value;
-				if (m_strExternalTunerChannel.Equals("unknown") ) m_strExternalTunerChannel="";
+				if (m_strExternalTunerChannel.Equals(Strings.Unknown) ) m_strExternalTunerChannel="";
 			}
 		}
 

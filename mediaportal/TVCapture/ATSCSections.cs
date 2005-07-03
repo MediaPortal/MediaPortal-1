@@ -208,7 +208,7 @@ namespace MediaPortal.TV.Recording
 				int start=10;
 				for (int i=0; i < num_channels_in_section;i++)
 				{
-					string shortName="unknown";
+					string shortName=Strings.Unknown;
 					Log.Write("  channel:{0}", i);
 					try
 					{
@@ -338,7 +338,7 @@ namespace MediaPortal.TV.Recording
 				int start=10;
 				for (int i=0; i < num_channels_in_section;i++)
 				{
-					string shortName="unknown";
+					string shortName=Strings.Unknown;
 					Log.Write("  channel:{0}", i);
 					try
 					{

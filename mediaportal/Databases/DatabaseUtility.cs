@@ -196,12 +196,12 @@ namespace MediaPortal.Database
 		{
 			if (strTxt==null) 
 			{
-				strTxt="unknown";
+				strTxt=Strings.Unknown;
 				return;
 			}
 			if (strTxt.Length==0) 
 			{
-				strTxt="unknown";
+				strTxt=Strings.Unknown;
 				return;
 			}
 			string strReturn = String.Empty;
@@ -219,18 +219,18 @@ namespace MediaPortal.Database
 			}
 			strReturn=strReturn.Trim();
 			if (strReturn == String.Empty) 
-				strReturn = "unknown";
+				strReturn = Strings.Unknown;
 			strTxt = strReturn;
 		}
 		static public string FilterText(string strTxt)
 		{
 			if (strTxt==null) 
 			{
-				return "unknown";
+				return Strings.Unknown;
 			}
 			if (strTxt.Length==0) 
 			{
-				return "unknown";
+				return Strings.Unknown;
 			}
 			string strReturn = String.Empty;
 			for (int i = 0; i < (int)strTxt.Length; ++i)
@@ -247,7 +247,7 @@ namespace MediaPortal.Database
 			}
 			strReturn=strReturn.Trim();
 			if (strReturn == String.Empty) 
-				strReturn = "unknown";
+				strReturn = Strings.Unknown;
 			return strReturn;
 		}
 

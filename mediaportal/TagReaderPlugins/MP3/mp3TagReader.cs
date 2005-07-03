@@ -369,7 +369,7 @@ namespace MediaPortal.TagReader.ID3
       }
       else
       {
-        return "Unknown";
+        return Strings.Unknown;
       }
     }//GetGenre
 

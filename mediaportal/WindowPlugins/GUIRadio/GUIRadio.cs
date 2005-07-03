@@ -535,7 +535,7 @@ namespace MediaPortal.GUI.Radio
 					}
 					else 
 					{
-						if (station.Genre=="unknown" && station.Frequency>0)
+						if (station.Genre==Strings.Unknown && station.Frequency>0)
 						{
 							double frequency=station.Frequency;
 							frequency/=1000000d;

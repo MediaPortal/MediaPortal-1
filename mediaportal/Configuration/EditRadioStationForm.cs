@@ -397,7 +397,7 @@ namespace MediaPortal.Configuration
           station.Frequency = 0;
         }
         
-        station.Genre = genreTextBox.Text.Length > 0 ? genreTextBox.Text : "unknown";
+        station.Genre = genreTextBox.Text.Length > 0 ? genreTextBox.Text : Strings.Unknown;
 				station.Bitrate = Convert.ToInt32(bitrateTextBox.Text.Length > 0 ? bitrateTextBox.Text : "0");
 				station.URL = urlTextBox.Text;
 

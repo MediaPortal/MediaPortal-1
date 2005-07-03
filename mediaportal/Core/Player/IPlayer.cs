@@ -360,7 +360,7 @@ namespace MediaPortal.Player
 		/// </summary>
     public virtual string AudioLanguage(int iStream)
     {
-      return "Unknown";
+      return Strings.Unknown;
     }
 
 		
@@ -386,7 +386,7 @@ namespace MediaPortal.Player
 		/// </summary>
     public virtual string SubtitleLanguage(int iStream)
     {
-      return "Unknown";
+      return Strings.Unknown;
     }
 
 		

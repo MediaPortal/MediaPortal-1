@@ -804,6 +804,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\Strings.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\TexturePacker.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

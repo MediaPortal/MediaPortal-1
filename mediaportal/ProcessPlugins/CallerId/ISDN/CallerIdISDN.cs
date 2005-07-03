@@ -44,7 +44,7 @@ namespace ProcessPlugins.CallerId
           string areaCodeXMLFile = "ISDNCodes.xml";
           string areaCode, location;
           Hashtable areaTable = new Hashtable();
-          areaTable.Add("", "unknown");
+          areaTable.Add("", Strings.Unknown);
 
           if (File.Exists(areaCodeXMLFile)) 
           {
@@ -93,7 +93,7 @@ namespace ProcessPlugins.CallerId
           string countryCodeXMLFile = "ISDNCodes.xml";
           string countryCode, country;
           Hashtable countryTable = new Hashtable();
-          countryTable.Add("+", "unknown");
+          countryTable.Add("+", Strings.Unknown);
 
           if (File.Exists(countryCodeXMLFile)) 
           {
@@ -137,7 +137,7 @@ namespace ProcessPlugins.CallerId
           string translatorXMLFile = "ISDNCodes.xml";
           string countryShort, countryLong;
           Hashtable translatorTable = new Hashtable();
-          translatorTable.Add("unknown", "unknown");
+          translatorTable.Add(Strings.Unknown, Strings.Unknown);
 
           if (File.Exists(translatorXMLFile)) 
           {
@@ -239,12 +239,12 @@ namespace ProcessPlugins.CallerId
         myCountryCode = "+" + locationInfo.CountryCode;
         string myCountry = (string)CountryCodeLookup[myCountryCode];
         if (myCountry == null)
-          myCountry = "unknown";
+          myCountry = Strings.Unknown;
         string myCountryLong = (string)CountryTranslator[myCountry];
         myAreaCode = locationInfo.AreaCode;
         string myArea = (string)AreaCodeLookup[myAreaCode];
         if (myArea == null)
-          myArea = "unknown";
+          myArea = Strings.Unknown;
         if (myAreaCode != "")
           Log.Write("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
 
@@ -309,7 +309,7 @@ namespace ProcessPlugins.CallerId
 
         string areaCode = callerId.Substring(0, posAreaCode);
         string phoneNumber = callerId.Remove(0, posAreaCode);
-        if (location != "unknown")
+        if (location != Strings.Unknown)
           outlookQuery = countryCode + " (" + areaCode + ") " + phoneNumber;
         else
           outlookQuery = countryCode + "  (I) " + phoneNumber;
@@ -324,7 +324,7 @@ namespace ProcessPlugins.CallerId
         // Notify window popup
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY, 0, 0, 0, 0, 0, 0);
         msg.Label = "Incoming call";
-        if (country != "unknown")
+        if (country != Strings.Unknown)
         {
           msg.Label = msg.Label + " from " + location + ", " + (string)CountryTranslator[country];
           if (caller.Name != null)

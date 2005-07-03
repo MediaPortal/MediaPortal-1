@@ -318,7 +318,7 @@ namespace MediaPortal.Video.Database
 					string strPath,strFile;
 					strFile= DatabaseUtility.Get(results,i, "files.strFilename") ;
 					strPath= DatabaseUtility.Get(results,i, "path.strPath");
-					if (strPath!="unknown")
+					if (strPath!=Strings.Unknown)
 						strFile=strPath+strFile;
 					movies.Add(strFile);
 				}

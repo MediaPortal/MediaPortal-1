@@ -714,7 +714,7 @@ namespace MediaPortal.Util
 			if (strLine==null) return "000";
 			try
 			{
-				if (String.Compare("unknown",strLine,true)==0) return "";
+				if (String.Compare(Strings.Unknown,strLine,true)==0) return "";
 				CRCTool crc=new CRCTool();
 				crc.Init(CRCTool.CRCCode.CRC32);
 				ulong dwcrc=crc.calc(strLine);
@@ -1431,7 +1431,7 @@ namespace MediaPortal.Util
 		{
 			if (strLine==null) return String.Empty;
 			if (strLine.Length==0) return String.Empty;
-			if (String.Compare("unknown",strLine,true)==0) return String.Empty;
+			if (String.Compare(Strings.Unknown,strLine,true)==0) return String.Empty;
 			CRCTool crc=new CRCTool();
 			crc.Init(CRCTool.CRCCode.CRC32);
 			ulong dwcrc=crc.calc(strLine);

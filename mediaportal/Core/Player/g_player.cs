@@ -973,7 +973,7 @@ namespace MediaPortal.Player
     }
     static public string AudioLanguage(int iStream)
     {
-      if (m_player==null) return "Unknown";
+      if (m_player==null) return Strings.Unknown;
       return m_player.AudioLanguage(iStream);
     }
 
@@ -1007,7 +1007,7 @@ namespace MediaPortal.Player
 
     static public string SubtitleLanguage(int iStream)
     {
-      if (m_player==null) return "Unknown";
+      if (m_player==null) return Strings.Unknown;
       return m_player.SubtitleLanguage(iStream);
     }
     static public bool EnableSubtitle

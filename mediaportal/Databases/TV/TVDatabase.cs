@@ -1027,7 +1027,7 @@ namespace MediaPortal.TV.Database
 									chan.ProviderName=DatabaseUtility.Get(results,i,"tblATSCMapping.strProvider");
 									if (chan.ProviderName=="")
 									{
-										chan.ProviderName="Unknown";
+										chan.ProviderName=Strings.Unknown;
 									}
 								}
 							}

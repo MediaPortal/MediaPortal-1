@@ -299,7 +299,7 @@ namespace Programs.Utils
         strReturn += k;
       }
       if (strReturn == "")
-        strReturn = "unknown";
+        strReturn = Strings.Unknown;
       strTxt = strReturn.Trim();
     }
 

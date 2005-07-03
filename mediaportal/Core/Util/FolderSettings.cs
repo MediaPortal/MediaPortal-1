@@ -154,7 +154,7 @@ namespace MediaPortal.Util
         strReturn += k;
       }
       if (strReturn == "") 
-        strReturn = "unknown";
+        strReturn = Strings.Unknown;
       strTxt = strReturn.Trim();
     }
 

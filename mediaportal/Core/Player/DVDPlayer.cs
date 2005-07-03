@@ -1866,7 +1866,7 @@ namespace MediaPortal.Player
           }
         }
       }
-      return "Unknown";
+      return Strings.Unknown;
     }
 
     public override int SubtitleStreams
@@ -1909,7 +1909,7 @@ namespace MediaPortal.Player
           }
         }
       }
-      return "Unknown";
+      return Strings.Unknown;
     }
 
 		public void AddPreferedCodecs(IGraphBuilder graphBuilder)

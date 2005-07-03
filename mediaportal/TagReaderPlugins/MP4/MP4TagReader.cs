@@ -120,7 +120,7 @@ namespace MediaPortal.TagReader.MP4
 			}
 			else
 			{
-				return "Unknown";
+				return Strings.Unknown;
 			}
 		}//GetGenre
 

@@ -1087,9 +1087,9 @@ namespace MediaPortal.TV.Recording
 		string GetThemeText(int themeID)
 		{
 			if(m_themeBuffer==null)
-				return "unknown";
+				return Strings.Unknown;
 			if(m_themeBuffer.Count<1)
-				return "unknown";
+				return Strings.Unknown;
 			lock(m_themeBuffer.SyncRoot)
 			{
 				foreach(MHWTheme th in m_themeBuffer)
@@ -1097,7 +1097,7 @@ namespace MediaPortal.TV.Recording
 					if(th.ThemeIndex==themeID)
 						return th.ThemeText;
 				}
-				return "unknown";
+				return Strings.Unknown;
 			}
 		}
 		bool ProgramExists(int prgID)

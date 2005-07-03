@@ -96,7 +96,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private string GetActionName(int id)
 		{
-			string action = "Unknown";
+			string action = Strings.Unknown;
 
 			try
 			{

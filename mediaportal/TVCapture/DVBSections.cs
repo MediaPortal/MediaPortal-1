@@ -493,9 +493,9 @@ namespace MediaPortal.TV.Recording
 		{
 			int n=0;
 			if(code==null)
-				return "Unknown";
+				return Strings.Unknown;
 			if(code=="")
-				return "Unknown";
+				return Strings.Unknown;
 			if(code.Length>3)
 				return code;
 			foreach(string langCode in m_langCodes)

@@ -109,7 +109,7 @@ namespace MediaPortal.Radio.Database
 
             chan.Name = DatabaseUtility.Get(results,i,"strName");
             chan.URL = DatabaseUtility.Get(results,i,"URL");
-            if (chan.URL.Equals("unknown")) chan.URL ="";
+            if (chan.URL.Equals(Strings.Unknown)) chan.URL ="";
             try
             {
             chan.BitRate=Int32.Parse( DatabaseUtility.Get(results,i,"bitrate") );
@@ -171,7 +171,7 @@ namespace MediaPortal.Radio.Database
 						chan.Scrambled=false;
 					station.Name = DatabaseUtility.Get(results,0,"strName");
 					station.URL = DatabaseUtility.Get(results,0,"URL");
-					if (station.URL.Equals("unknown")) chan.URL ="";
+					if (station.URL.Equals(Strings.Unknown)) chan.URL ="";
 					try
 					{
 						station.BitRate=Int32.Parse( DatabaseUtility.Get(results,0,"bitrate") );
@@ -951,7 +951,7 @@ namespace MediaPortal.Radio.Database
 
 						chan.Name = DatabaseUtility.Get(results,i,"station.strName");
 						chan.URL = DatabaseUtility.Get(results,i,"station.URL");
-						if (chan.URL.Equals("unknown")) chan.URL ="";
+						if (chan.URL.Equals(Strings.Unknown)) chan.URL ="";
 						try
 						{
 							chan.BitRate=Int32.Parse( DatabaseUtility.Get(results,i,"station.bitrate") );

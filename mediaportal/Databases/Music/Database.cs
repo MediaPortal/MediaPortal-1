@@ -2663,9 +2663,9 @@ namespace MediaPortal.Music.Database
 		  SQLiteResultSet results;
 		  
 		  int idPath= AddPath(MusicFilePath);
-		  int idArtist = AddArtist ("unknown");
-		  int idAlbum = AddAlbum ("unknown",idArtist);
-		  int idGenre = AddGenre ("unknown");
+		  int idArtist = AddArtist (Strings.Unknown);
+		  int idAlbum = AddAlbum (Strings.Unknown,idArtist);
+		  int idGenre = AddGenre (Strings.Unknown);
 
 		  /// Here we are gonna make a CRC code to add to the database
 		  /// This coded is used for searching on the filename

@@ -977,7 +977,7 @@ namespace MediaPortal.Player
     }
     public override string SubtitleLanguage(int iStream)
     {
-      string ret = "unknown";
+      string ret = Strings.Unknown;
       if (vobSub != null)
       {
         IntPtr curNamePtr;

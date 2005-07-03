@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Diagnostics;
-
+using MediaPortal.GUI.Library;
 namespace MediaPortal.GUI.Pictures
 {
   /// Thanks to Doug Hanhart http://www.dotnet247.com/247reference/msgs/28/144569.aspx for the following code:
@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Pictures
       {
         switch (Value)
         {
-          case "0":	DescriptionValue = "Unknown";	break;
+          case "0":	DescriptionValue = Strings.Unknown;	break;
           case "1":            
             DescriptionValue = "Average";
             break;
