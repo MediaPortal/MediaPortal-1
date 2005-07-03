@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.Video
 			}			
       
       switch (action.wID)
-      {
+			{
 				case Action.ActionType.ACTION_SHOW_MSN_OSD:
 					if (m_bMSNChatPopup)
 					{
@@ -563,7 +563,12 @@ namespace MediaPortal.GUI.Video
 					m_dwOSDTimeOut=DateTime.Now;
 					break;
 			}
-			return m_osdWindow.OnMessage(message);	// route messages to OSD window
+			bool result= m_osdWindow.OnMessage(message);	// route messages to OSD window
+			if (m_osdWindow.NeedRefresh())
+			{
+				needToClearScreen=true;
+			}
+			return result;
 		}
     public override bool OnMessage(GUIMessage message)
     {
@@ -675,6 +680,10 @@ namespace MediaPortal.GUI.Video
 							m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 						}
 						m_bMSNChatVisible=false;
+						if (VMR7Util.g_vmr7!=null)
+						{
+							VMR7Util.g_vmr7.SaveBitmap(null,false,false,0.8f);
+						}
             base.OnMessage(message);
             
 //            if (m_form!=null) 
@@ -844,6 +853,7 @@ namespace MediaPortal.GUI.Video
 				screenState.NotifyDialogVisible=NotifyDialogVisible;
 				updateGUI=true;
 			}
+			
 
 			if (g_Player.Speed != screenState.Speed)
 			{
@@ -860,6 +870,9 @@ namespace MediaPortal.GUI.Video
 				screenState.OsdVisible=isOsdVisible;
 				updateGUI=true;
 			}
+			if (isOsdVisible && m_osdWindow.NeedRefresh())
+				needToClearScreen=true;
+
 			if (m_bMSNChatVisible != screenState.MsnVisible)
 			{
 				screenState.MsnVisible=m_bMSNChatVisible;
