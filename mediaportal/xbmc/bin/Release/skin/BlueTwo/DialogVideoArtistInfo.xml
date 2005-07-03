@@ -52,7 +52,7 @@
 		<posY>97</posY> 
 		<width>120</width> 
 		<height>32</height> 
-		<label>Biography</label>
+		<label>1011</label>
 		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 		<textureFocus>togglebutton-on-focus.png</textureFocus>
