@@ -1421,6 +1421,28 @@ namespace MediaPortal.GUI.Music
 		protected override void OnInfo(int iItem)
 		{
 			GUIListItem pItem = facadeView[iItem];
+			if (pItem.IsFolder && pItem.Label!="..")
+			{
+				string oldFolder=m_strDirectory;
+				VirtualDirectory dir = new VirtualDirectory();
+				dir.SetExtensions(Utils.AudioExtensions);
+				ArrayList items=dir.GetDirectoryUnProtected(pItem.Path,true);
+				if (items.Count<2)
+					return;
+				m_bScan=true;
+				m_strDirectory=pItem.Path;
+				OnRetrieveMusicInfo(ref items);
+				m_strDirectory=oldFolder;
+				m_bScan=false;
+				GUIListItem item=items[1] as GUIListItem;
+				MusicTag tag=item.MusicTag as MusicTag;
+				if (tag!=null && tag.Album.Length>0)
+				{
+					ShowAlbumInfo(true,tag.Artist,tag.Album, pItem.Path, tag, -1);
+					facadeView.RefreshCoverArt();
+				}
+				return;
+			}
 			Song song = pItem.AlbumInfoTag as Song;
 			if (song==null)
 			{
@@ -1431,6 +1453,7 @@ namespace MediaPortal.GUI.Music
 				m_bScan=false;
 			}
 			base.OnInfo (iItem);
+			facadeView.RefreshCoverArt();
 		}
 		protected override void AddSongToFavorites(GUIListItem item)
 		{

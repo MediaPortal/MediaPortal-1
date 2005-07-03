@@ -698,6 +698,7 @@ namespace MediaPortal.GUI.Music
 
 		void OnInfoFolder(GUIListItem item)
 		{
+
 		}
 
 		protected virtual void OnInfo(int iItem)
@@ -707,7 +708,7 @@ namespace MediaPortal.GUI.Music
 			Song song = pItem.AlbumInfoTag as Song;
 			if (song==null)
 			{
-				if (pItem.IsFolder)
+				if (!pItem.IsFolder)
 				{
 					if (pItem.Path!=String.Empty) OnInfoFile(pItem);
 				}
