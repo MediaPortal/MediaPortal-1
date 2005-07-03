@@ -785,6 +785,12 @@
       <sound />
       <description>delete item</description>
     </action>
+    <action>
+      <id>34</id>
+      <key>Y</key>
+      <sound />
+      <description>Add Item to the Playlist</description>
+    </action>
   </window>
   <window>
     <id>6</id>
