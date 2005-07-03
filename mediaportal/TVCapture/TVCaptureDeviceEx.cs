@@ -60,6 +60,7 @@ namespace MediaPortal.TV.Recording
 		string  m_strAudioDevice			  = String.Empty;
 		string  m_strVideoCompressor		= String.Empty;
 		string  m_strAudioCompressor		= String.Empty;
+		string  m_strCommercialName	  	= String.Empty;
 		bool    m_bUseForRecording			= false;
 		bool    m_bUseForTV							= false;
 		bool    m_bSupportsMPEG2				= false;							// #MW# Should be part of card definition??
@@ -214,8 +215,18 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		public string CommercialName
 		{
-			get {return _mCaptureCardDefinition.CommercialName;}
-			set {_mCaptureCardDefinition.CommercialName=value;}
+			get {
+				if (_mCaptureCardDefinition!=null && _mCaptureCardDefinition.CommercialName!=null)
+				{
+					m_strCommercialName=_mCaptureCardDefinition.CommercialName;
+					return _mCaptureCardDefinition.CommercialName;
+				}
+				return m_strCommercialName;
+			}
+			set {
+				_mCaptureCardDefinition.CommercialName=value;
+				m_strCommercialName=value;
+			}
 		}
 		/// <summary>
 		/// #MW#
@@ -476,7 +487,7 @@ namespace MediaPortal.TV.Recording
 			CaptureCardDefinition ccd =null;
 			foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
 			{
-				if (cd.DeviceId.IndexOf(deviceId)==0 && cd.CaptureName == VideoDevice)
+				if (cd.DeviceId.IndexOf(deviceId)==0 && cd.CaptureName == VideoDevice && cd.CommercialName==CommercialName)
 				{
 					ccd = cd;
 					break;

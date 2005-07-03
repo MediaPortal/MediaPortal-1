@@ -67,7 +67,7 @@ namespace MediaPortal.Configuration.Sections
 		private void AddCaptureCard(TVCaptureDevice card)
 		{
 			//cardsListView.Items.Clear();
-			ListViewItem listItem = new ListViewItem(new string[] { card.VideoDevice, 
+			ListViewItem listItem = new ListViewItem(new string[] { card.CommercialName, 
                                   card.FriendlyName,                                                                
 																	card.UseForTV.ToString(),
 																	card.UseForRecording.ToString()
@@ -260,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
 
 					listItem.Tag = captureCard;
 
-					listItem.SubItems[0].Text = captureCard.VideoDevice;
+					listItem.SubItems[0].Text = captureCard.CommercialName;
           listItem.SubItems[1].Text = captureCard.FriendlyName;
 					listItem.SubItems[2].Text = captureCard.UseForTV.ToString();
 					listItem.SubItems[3].Text = captureCard.UseForRecording.ToString();

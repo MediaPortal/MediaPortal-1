@@ -217,14 +217,10 @@ namespace MediaPortal.Configuration
 			ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
 
 			/* below is used for testing only
-			
+
 			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
-			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
-			availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
-			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&267465cb&0&4828f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
-			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&e6752e3&0&4820f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
-			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8070070&rev_01#5&e6752e3&0&4020f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");		
-		*/
+			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0803&subsys_40000070&rev_01#3&267a616a&0&48#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture");
+		*/			
 			FilterHelper.GetMPEG2VideoEncoders( availableVideoCompressors);
 			FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
 			for (int i=0; i < availableVideoDevices.Count;++i)
@@ -374,6 +370,8 @@ namespace MediaPortal.Configuration
 										deviceToEdit.VideoDevice    ==cbcc.CaptureDevice.CaptureName)
 									{
 										cardComboBox.Items.Add(cbcc); 
+										if (deviceToEdit!=null && deviceToEdit.CommercialName==cbcc.CaptureDevice.CommercialName)
+											cardComboBox.SelectedIndex=cardComboBox.Items.Count-1;
 									}
 								}
 							}
@@ -2198,7 +2196,8 @@ namespace MediaPortal.Configuration
 							if (cd.CaptureDevice.DeviceId==card.DeviceType)
 							{
 								if (card.VideoDeviceMoniker==cd.VideoDeviceMoniker &&
-									card.VideoDevice    ==cd.CaptureDevice.CaptureName)
+									card.VideoDevice    ==cd.CaptureDevice.CaptureName &&
+									card.CommercialName    ==cd.CaptureDevice.CommercialName)
 								{
 									cardComboBox.SelectedIndex=i;
 									break;
