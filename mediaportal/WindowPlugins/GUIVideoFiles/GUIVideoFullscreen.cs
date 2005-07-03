@@ -286,7 +286,14 @@ namespace MediaPortal.GUI.Video
 				Action newAction=new Action();
 				if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_DVD,action.m_key,ref newAction))
 				{
-					if ( g_Player.OnAction(newAction)) return;
+					if ( g_Player.OnAction(newAction)) 
+					{
+						if (m_osdWindow.NeedRefresh())
+						{
+							needToClearScreen=true;
+						}
+						return;
+					}
 				}
 
 				// route all unhandled actions to the dvd player
