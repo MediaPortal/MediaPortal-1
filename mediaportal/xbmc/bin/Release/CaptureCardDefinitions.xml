@@ -1254,7 +1254,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AVerMedia A16A DBV-T" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_2c011461&amp;rev_01"> 
+  <capturecard commercialname="AVerMedia A16A DVB-T" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_2c011461&amp;rev_01"> 
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv> 
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
@@ -6163,5 +6163,48 @@
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia A16A DVB-T" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_2c031461&amp;rev_01"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
+      <filters> 
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider"	checkdevice="false"></filter> 
+        <filter cat="tunerdevice"		name="AVerMedia BDA DVBT Tuner"			checkdevice="true"></filter> 
+        <filter cat="capture"			name="AVerMedia BDA Digital Capture"	checkdevice="true"></filter> 
+      </filters> 
+    <connections> 
+      <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+      <connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+    </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia A16A Analog" capturename="AVerMedia BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_2c031461&amp;rev_01"> 
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface> 
+      <filters>
+		<filter cat="tvtuner"		name="PhTVTune"							checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="AVerMedia BDA Analog Tv Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="AVerMedia BDA Analog Xbar"		checkdevice="true"></filter>
+        <filter cat="capture"		name="AVerMedia BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="encodervideo"  name="AVerMedia MPEG Video Encoder"		checkdevice="false"></filter>
+        <filter cat="encoderaudio"  name="AVerMedia MPEG Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="AVerMedia MPEG-2 Multiplexer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv> 
   </capturecard>
 </capturecards>
