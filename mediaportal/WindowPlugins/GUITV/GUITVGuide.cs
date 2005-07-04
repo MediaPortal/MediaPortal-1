@@ -2320,7 +2320,7 @@ namespace MediaPortal.GUI.TV
 					if (nextNext.Title==rec.Title)
 					{
 						TimeSpan ts=next.EndTime-next.StartTime;
-						if (ts.TotalMinutes<30)
+						if (ts.TotalMinutes<=40)
 						{
 							//
 							GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
