@@ -1665,6 +1665,8 @@ namespace MediaPortal.TV.Recording
 						eit.starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
 						eit.starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
 						eit.starttime_ss =getUTC((int) (start_time_UTC )& 255);
+
+
 						// convert the julian date
 						int year = (int) ((start_time_MJD - 15078.2) / 365.25);
 						int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
@@ -1675,6 +1677,14 @@ namespace MediaPortal.TV.Recording
 						eit.starttime_y=year;
 						eit.starttime_m=month;
 						eit.starttime_d=day;
+
+						DateTime dtUTC = new DateTime(eit.starttime_y,eit.starttime_m,eit.starttime_d,
+																					eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,0);
+						DateTime dtLocal=dtUTC.ToLocalTime();
+						eit.starttime_hh=dtLocal.Hour;
+						eit.starttime_mm=dtLocal.Minute;
+						eit.starttime_ss=dtLocal.Second;
+
 						eitInfo.program_id = service_id;
 						eitInfo.running_status = running_status;
 						if (free_CA_mode == 0)
