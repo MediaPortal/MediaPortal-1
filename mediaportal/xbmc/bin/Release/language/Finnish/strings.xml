@@ -1207,7 +1207,7 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>enimmäkseen</value>
+		<value>Enimmäkseen</value>
 	</string>
 	<string>
 		<id>373</id>
@@ -2068,7 +2068,7 @@
         </string>
         <string>
                 <id>672</id>
-                <value>Talleta ma-ti</value>
+                <value>Tallenna MA-PE</value>
         </string>
         <string>
                 <id>673</id>
@@ -2493,6 +2493,104 @@
 	        <id>874</id>
 	        <value>Jakso</value>
         </string>
+	<string>
+                 <id>875</id>
+                 <value>Nykyinen ohjelma</value>
+        </string> 
+	<string>
+                 <id>877</id>
+                 <value>Prioriteetit</value>
+        </string>
+	<string>
+                 <id>876</id>
+                 <value>Manuaalinen keskeytys</value>
+        </string>
+	<string>
+                 <id>878</id>
+                 <value>Säilytystila</value>
+        </string>
+
+	<string>
+                 <id>879</id>
+                 <value>Ristiriita tallennuksessa</value>
+        </string>
+	<string>
+                 <id>880</id>
+                 <value>Tallennettava kanava:</value>
+        </string>
+	<string>
+                 <id>881</id>
+                 <value>Valitse keskeytettävä tallennus:</value>
+        </string>
+	<string>
+                 <id>882</id>
+                 <value>Laatuasetukset</value>
+        </string>
+	<string>
+                 <id>883</id>
+                 <value>Heikko</value>
+        </string>
+	<string>
+                 <id>884</id>
+                 <value>Kohtalainen</value>
+        </string>
+	<string>
+                 <id>885</id>
+                 <value>Korkea</value>
+        </string>
+	<string>
+                 <id>886</id>
+                 <value>Oletus</value>
+        </string>
+	<string>
+                 <id>887</id>
+                 <value>Säilytettävien jaksojen lukumäärä</value>
+        </string> 
+	<string>
+                 <id>888</id>
+                 <value>Jaksojenhallinta</value>
+	</string>  
+	<string>
+                 <id>889</id>
+                 <value>Kaikki jaksot</value>
+        </string>
+	<string>
+                 <id>891</id>
+                 <value>Valitse TV-kanava</value>
+        </string>
+	<string>
+                 <id>892</id>
+                 <value>Ristiriidat</value>
+        </string>
+	<string>
+                 <id>893</id>
+                 <value>Siirrettävä</value>
+        </string>
+	<string>
+                 <id>894</id>
+                 <value>Pakkaa TV tallenteet</value>
+        </string>
+	<string>
+                 <id>895</id>
+                 <value>Automaattinen pakkaus</value>
+        </string>
+	<string>
+                 <id>896</id>
+                 <value>Pakkaa</value>
+        </string>
+	<string>
+                 <id>897</id>
+                 <value>Asetukset</value>
+        </string>
+	<string>
+                 <id>898</id>
+                 <value>MPEG-2</value>
+        </string>
+	<string>
+                 <id>899</id>
+                 <value>WMV</value>
+        </string>
+
 
         <!-- End My Alarm Strings -->
         <string>
@@ -2777,7 +2875,7 @@
         </string>
         <string>
 	        <id>977</id>
-         	<value>Ei vapaata korttia saatavilla</value>
+         	<value>Ei vapaata korttia</value>
         </string>
         <string>
 	        <id>978</id>
@@ -2820,6 +2918,118 @@
 	        <value>Vuosia</value>
         </string>
 
+	<string>
+                 <id>989</id>
+                 <value>Kuvaa sekuntissa</value>
+        </string>
+	<string>
+                 <id>988</id>
+                 <value>Laatu</value>
+        </string>
+	<string>
+                 <id>990</id>
+                 <value>Bitrate</value>
+        </string>        
+	<string>
+                 <id>991</id>
+                 <value>Prioriteetti</value>
+        </string>        
+        <string>
+                 <id>992</id>
+                 <value>Poista alkuperäinen tiedosto</value>
+        </string>     
+	<string>
+                 <id>993</id>
+                 <value>Oma</value>
+        </string>
+	<string>
+                 <id>994</id>
+                 <value>Automaattinen pakkaus</value>
+        </string>
+	<string>
+                 <id>995</id>
+                 <value>Oletko varma että haluat</value>
+        </string>
+	<string>
+                 <id>996</id>
+                 <value>pakata valitut tallenteet?</value>
+        </string>
+	<string>
+                 <id>997</id>
+                 <value>Valmis</value>
+        </string>
+	<string>
+                 <id>998</id>
+                 <value>XVID</value>
+        </string>
+	<string>
+                 <id>999</id>
+                 <value>Tämän pluginin avulla voit muuntaa TV tallenteet</value>
+        </string>
+	<string>
+                 <id>1000</id>
+                 <value>DVR-MS-tiedostomuodosta MPG, XVID tai </value>
+        </string>
+	<string>
+                 <id>1001</id>
+                 <value>WMV -muotoon Sinulla tulee olla</value>
+        </string>  
+	<string>
+                 <id>1002</id>
+                 <value>Elecard MPEG2 video decoderin asennettuna</value>
+        </string>
+	<string>
+                 <id>1003</id>
+                 <value>XVID muunnosta varten.</value>
+        </string>
+	<string>
+                 <id>1004</id>
+                 <value>Aloitetaan tallentamaan</value>
+        </string>
+	<string>
+                 <id>1005</id>
+                 <value>kanavalla</value>
+        </string>
+	<string>
+                 <id>1006</id>
+                 <value>Salli nauhoituksen alkaminen</value>
+        </string>
+	<string>
+                 <id>1007</id>
+                 <value>Peruuta tallennus ja jatka TV:n katsomista</value>
+        </string>
+	<string>
+                 <id>1009</id>
+                 <value>Ladataan kansikuvaa</value>
+        </string>
+	<string>
+                 <id>1010</id>
+                 <value>Katsottu</value>
+        </string>
+	<string>
+                 <id>1011</id>
+                 <value>Biografia</value>
+        </string>
+	<string>
+                 <id>1012</id>
+                 <value>Tämän ohjelman keskellä on</value>
+        </string>
+	<string>
+                 <id>1013</id>
+                 <value>Haluatko tallentaa myös jälkimmäisen osan?</value>
+        </string>
+	<string>
+                 <id>1014</id>
+                 <value>Ilmoitus ohjelman alkaessa</value>
+        </string>
+	<string>
+                 <id>1015</id>
+                 <value>Ei ilmoitusta ohjelman alkaessa</value>
+        </string>
+	<string>
+                 <id>1016 </id>
+                 <value>Ohjelma alkamassa</value>
+        </string>        
         <string>
         	<id>1440</id>
          	<value>Teksti-tv</value>
@@ -4099,4 +4309,54 @@
                  <id>19012</id>
                  <value>Peli loppu</value>
          </string>
+	<string>
+                 <id>100758</id>
+                 <value>Tiedosto dialogi</value>
+        </string>
+	<string>
+                 <id>102016</id>
+                 <value>Ilmoitus</value>
+        </string>
+	<string>
+                 <id>102015</id>
+                 <value>Valikko</value>
+        </string>
+	<string>
+                 <id>102009</id>
+                 <value>Valinta dialogi</value>
+        </string>
+	<string>
+                 <id>25001</id>
+                 <value>Ladataan sivua {0:X}...!</value>
+        </string>
+	<string>
+                 <id>107701</id>
+                 <value>TV/Teksti-TV</value>
+        </string>
+	<string>
+                 <id>107700</id>
+                 <value>TV/Teksti-TV</value>
+        </string>
+	<string>
+                 <id>100760</id>
+                 <value>CD/DVD Poltin</value>
+        </string>
+	<string>
+                 <id>103007</id>
+                 <value>TV/Zap OSD</value>
+        </string>
+	<string>
+                 <id>103006</id>
+                 <value>TV/MSN OSD</value>
+        </string>
+  	<string>
+                 <id>103003</id>
+                 <value>TV/OSD</value>
+        </string>
+	<string>
+                 <id>12902</id>
+                 <value>MSN Messenger OSD</value>
+        </string>
+
 </strings>
+

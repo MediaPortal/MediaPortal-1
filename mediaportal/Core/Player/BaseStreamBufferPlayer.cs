@@ -1208,7 +1208,7 @@ namespace MediaPortal.Player
 
 
 		public override void ContinueGraph()
-		{
+		{/*
 			if (mediaCtrl==null) return;
 
 			Log.Write("StreamBufferPlayer:ContinueGraph");
@@ -1226,14 +1226,14 @@ namespace MediaPortal.Player
 			m_state=PlayState.Playing;
 			mediaCtrl.GetState(200,out state);
 			Application.DoEvents();
-			Log.Write("state:{0}", state.ToString());
+			Log.Write("state:{0}", state.ToString());*/
 		}
 
 		public override void PauseGraph()
-		{
+		{/*
 			Log.Write("StreamBufferPlayer:Pause graph");
 			mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			mediaCtrl.Stop();
+			mediaCtrl.Stop();*/
 		}
 		
 
