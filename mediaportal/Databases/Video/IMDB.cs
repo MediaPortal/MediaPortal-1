@@ -580,7 +580,7 @@ namespace MediaPortal.Video.Database
 					posStart=strBody.IndexOf(">",posStart);
 					posStart++;
 					posEnd=strBody.IndexOf("<",posStart);
-					actor.PlaceOfBirth=strBody.Substring(posStart,posEnd-posStart);
+					actor.PlaceOfBirth=util.ConvertHTMLToAnsi(strBody.Substring(posStart,posEnd-posStart));
 				}
 				
 				//find Mini Biography
