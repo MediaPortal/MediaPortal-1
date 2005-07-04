@@ -2250,34 +2250,34 @@ namespace MediaPortal
                   break;
               try
               {
-									useFrameClock=false;
-								
-                  if (ShouldUseSleepingTime())
-                  {
-                      if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-                      {
-                          //dont sleep
-                      }
-                    else 
+								useFrameClock=false;
+							
+                if (ShouldUseSleepingTime())
+                {
+                    if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
                     {
-                      // Do some sleep....
-											useFrameClock=true;
+                        //dont sleep
                     }
-                  }
-                  else
+                  else 
                   {
-										if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-										{
-											//dont sleep
-										}
-										else
-										{
-											GUIGraphicsContext.CurrentFPS = 0f;
-											DoSleep(50);
-										}
+                    // Do some sleep....
+										useFrameClock=true;
+                  }
+                }
+                else
+                {
+									if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+									{
+										//dont sleep
 									}
+									else
+									{
+										GUIGraphicsContext.CurrentFPS = 0f;
+										DoSleep(50);
+									}
+								}
 								FrameMove();
-								if (GUIGraphicsContext.IsFullScreenVideo==false) counter=0;
+								if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
 								if (counter==0)
 								{
 									OnProcess();
