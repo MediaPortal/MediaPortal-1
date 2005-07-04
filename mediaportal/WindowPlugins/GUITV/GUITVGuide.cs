@@ -502,6 +502,10 @@ namespace MediaPortal.GUI.TV
 							}
 						}
 					}
+					notifies=null;
+					m_channels=null;
+					m_recordings=null;
+					m_currentProgram=null;
 
 					return true;
 				}
@@ -509,6 +513,9 @@ namespace MediaPortal.GUI.TV
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
+					notifies=new ArrayList();
+					m_channels=new ArrayList();
+					m_recordings=new ArrayList();
 					
           LoadSettings();
 					TVDatabase.GetNotifies(notifies);
@@ -1849,7 +1856,8 @@ namespace MediaPortal.GUI.TV
 				GUIButton3PartControl img=GetControl(iControlId) as GUIButton3PartControl;
 				if (null!=img && img.IsVisible)
 				{
-					img.ColourDiffuse=GetColorForGenre(m_currentProgram.Genre);
+					if (m_currentProgram!=null)
+						img.ColourDiffuse=GetColorForGenre(m_currentProgram.Genre);
 				}
 				GUIControl.UnfocusControl(GetID,iControlId);
 			}

@@ -516,8 +516,10 @@ namespace MediaPortal.GUI.Library
 							pWindow.OnMessage(msg);		
 							return;
 						}
-						catch(Exception) 
+						catch(Exception ex) 
 						{
+							Log.Write("WindowManager:Unable to initialize window:{0} {1} {2} {3}",
+											iWindowID,ex.Message,ex.Source,ex.StackTrace);
 							break;
 						}
           }

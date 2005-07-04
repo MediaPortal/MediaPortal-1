@@ -597,6 +597,7 @@ namespace MediaPortal
                 presentParams.DeviceWindow = this;
                 presentParams.Windowed = false;
             }
+						GUIGraphicsContext.DirectXPresentParameters=presentParams;
         }
 
         public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
@@ -1402,6 +1403,10 @@ namespace MediaPortal
 										VideoRendererStatistics.FramesDropped,
 										VideoRendererStatistics.Jitter);
 							frameStats+=quality;
+							//long lTotalMemory=GC.GetTotalMemory(false);
+							//string memory=String.Format("\nTotal Memory allocated:{0}",Utils.GetSize(lTotalMemory) );
+							
+							//frameStats+=memory;
 									
 
             }

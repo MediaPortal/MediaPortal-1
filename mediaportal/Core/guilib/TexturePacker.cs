@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Library
 
 		void SavePackedSkin(string skinName)
 		{
-			string packedXml=String.Format(@"{0}\packedTexures.xml",skinName);
+			string packedXml=String.Format(@"{0}\packedgfx.xml",skinName);
 			using(FileStream fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				SoapFormatter formatter = new SoapFormatter();
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Library
 
 		bool LoadPackedSkin(string skinName)
 		{
-			string packedXml=String.Format(@"{0}\packedTexures.xml",skinName);
+			string packedXml=String.Format(@"{0}\packedgfx.xml",skinName);
 			if(File.Exists(packedXml))
 			{
 				using(FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -231,17 +231,21 @@ namespace MediaPortal.GUI.Library
 				for (int i=0; i < files.Length;++i)
 				{
 					files[i]=files[i].ToLower();
-					if (files[i]!=String.Empty) 
+					if (files[i]!=String.Empty ) 
 					{
-						if (AddBitmap(bigOne.root,rootImage,files[i]))
+						bool dontAdd;
+						if (AddBitmap(bigOne.root,rootImage,files[i], out dontAdd))
 						{
 							files[i]=String.Empty;
 						}
 						else
-							ImagesLeft=true;
+						{
+							if (dontAdd) files[i]=String.Empty;
+							else ImagesLeft=true;
+						}
 					}
 				}
-				string fileName=String.Format(@"{0}\packed{1}.png",GUIGraphicsContext.Skin,packedTextures.Count);
+				string fileName=String.Format(@"{0}\packedgfx{1}.png",GUIGraphicsContext.Skin,packedTextures.Count);
 				rootImage.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
 				rootImage.Dispose();
 				packedTextures.Add(bigOne);
@@ -257,18 +261,21 @@ namespace MediaPortal.GUI.Library
 			int index=0;
 			foreach (PackedTexture bigOne in packedTextures)
 			{
+				Format useFormat=Format.A8R8G8B8;
+				if (IsCompressedTextureFormatOk(Format.Dxt5))
+					useFormat=Format.Dxt5;
 				if (bigOne.texture==null)
 				{
 					bigOne.textureNo=-1;
 
-					string fileName=String.Format(@"{0}\packed{1}.png",GUIGraphicsContext.Skin,index);
+					string fileName=String.Format(@"{0}\packedgfx{1}.png",GUIGraphicsContext.Skin,index);
 					ImageInformation info2 = new ImageInformation();
 					Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
 						fileName,
 						0,0,//width/height
 						1,//mipslevels
 						0,//Usage.Dynamic,
-						Format.A8R8G8B8,
+						useFormat,
 						Pool.Managed,
 						Filter.None,
 						Filter.None,
@@ -280,11 +287,18 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
-		bool AddBitmap(PackedTextureNode root, Image rootImage, string file)
+		bool AddBitmap(PackedTextureNode root, Image rootImage, string file, out bool dontAdd)
 		{
 			bool result=false;
+			dontAdd=false;
 			using (Image bmp = Image.FromFile(file))
 			{
+				if (bmp.Width >= GUIGraphicsContext.Width ||
+					bmp.Height >= GUIGraphicsContext.Height)
+				{
+					dontAdd=true;
+					return false;
+				}
 				int pos;
 				string skinName=String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
 				pos=file.IndexOf(skinName);
@@ -372,6 +386,14 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 			}
+		}
+		bool IsCompressedTextureFormatOk( Direct3D.Format textureFormat) 
+		{
+			if (Manager.CheckDeviceFormat(0, DeviceType.Hardware, GUIGraphicsContext.DirectXPresentParameters.BackBufferFormat,
+																				Usage.None, ResourceType.Textures,
+																				textureFormat))
+				return true;
+			return false;
 		}
 	}
 }

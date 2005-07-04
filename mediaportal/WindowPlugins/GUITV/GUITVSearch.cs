@@ -121,6 +121,7 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageDestroy (newWindowId);
 			listRecordings.Clear();
+			listRecordings=null;
 					
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
 			{
@@ -139,7 +140,7 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			listRecordings.Clear();
+			listRecordings = new ArrayList();
 			//currentSearchKind=-1;
 			currentSearchCriteria=String.Empty;
 			TVDatabase.GetRecordings(ref listRecordings);
