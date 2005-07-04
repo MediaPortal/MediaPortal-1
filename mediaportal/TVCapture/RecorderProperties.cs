@@ -44,7 +44,7 @@ namespace MediaPortal.TV.Recording
 				TVProgram currentTvProgram=currentTvChannel.CurrentProgram;
 				if (currentTvProgram!=null && currentTvProgram.Start!=programStart)
 				{
-					Recorder_OnTvChannelChanged(currentTvChannel.Name);
+					UpdateTvProgramProperties(currentTvChannel.Name);
 				}
 			}
 			if (Recorder.IsRecording())
@@ -176,6 +176,10 @@ namespace MediaPortal.TV.Recording
 		private static void Recorder_OnTvChannelChanged(string tvChannelName)
 		{
 			Log.WriteFile(Log.LogType.Recorder,"Recorder: tv channel changed:{0}",tvChannelName);
+			UpdateTvProgramProperties(tvChannelName);
+		}
+		static void UpdateTvProgramProperties(string tvChannelName)
+		{
 			programStart=-1;
 			// for each tv-channel
 			for (int i=0; i < m_TVChannels.Count;++i)
