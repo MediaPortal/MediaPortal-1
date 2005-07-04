@@ -1026,7 +1026,7 @@ namespace MediaPortal.Player
         return;
 
 			TimeSpan ts=DateTime.Now-elapsedTimer;
-			if (ts.TotalMilliseconds<60) return;
+			if (ts.TotalMilliseconds<100) return;
       long earliest, latest, current,  stop, rewind, pStop;
 		
       mediaSeek.GetAvailable(out earliest, out latest);
@@ -1040,7 +1040,7 @@ namespace MediaPortal.Player
       // new time = current time + 2*timerinterval* (speed)
 			long lTimerInterval=(long)ts.TotalMilliseconds;
 			if (lTimerInterval > 300) lTimerInterval=300;
-
+			lTimerInterval=300;
       rewind = (long)(current + (2 *(long)(lTimerInterval)* m_speedRate)) ;
 
       int hr; 		
