@@ -556,7 +556,7 @@ namespace MediaPortal
     void CreateMapper()
     {
       bool result;
-      diMapper = new HCWHandler("DirectInput.xml", out result);
+      diMapper = new HCWHandler("DirectInput", out result);
     }
 
     void AttachHandlers()

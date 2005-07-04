@@ -128,7 +128,7 @@ namespace MediaPortal
       }
       bool result = false;
       if (controlEnabled)
-        hcwHandler = new HCWHandler("Hauppauge HCW.xml", out result);
+        hcwHandler = new HCWHandler("Hauppauge HCW", out result);
       controlEnabled = (controlEnabled && result);
 
       if (controlEnabled)

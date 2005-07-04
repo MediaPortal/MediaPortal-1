@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<mappings>
+<mappings version="2">
 	<remote family="DirectInput Joystick / Gamepads">
 		<button name="axisX Up" code="3000">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />

@@ -17,6 +17,7 @@ namespace MediaPortal
   /// </summary>
   public class HCWHandler
   {
+    int xmlVersion = 2;
     ArrayList remote;
     int currentLayer = 1;
 
@@ -78,31 +79,64 @@ namespace MediaPortal
       }
     }
 
+    public bool CheckVersion(string xmlFile)
+    {
+      XmlDocument doc = new XmlDocument();
+      try
+      {
+        doc.Load(xmlFile);
+      }
+      catch (Exception ex)
+      {
+        Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlFile, ex.ToString());
+        return false;
+      }
+
+      try
+      {
+        if (Convert.ToInt32(doc.DocumentElement.SelectSingleNode("/mappings").Attributes["version"].Value) == xmlVersion)
+          return true;
+      }
+      catch
+      {
+      }
+      Log.Write("MAP: version mismatch in {0}", xmlFile);
+      Log.Write("MAP: Run configuration.exe and reset mappings to default.");
+      return false;
+    }
 
     /// <summary>
     /// Constructor: Initializes mappings from XML file
     /// </summary>
-    /// <param name="xmlFile">path for XML mapping file</param>
+    /// <param name="xmlFile">XML mapping file</param>
     public HCWHandler(string xmlFile, out bool result)
     {
-      string path;
+      string path = "";
+      string pathCustom = "InputDeviceMappings\\custom\\" + xmlFile + ".xml";
+      string pathDefault = "InputDeviceMappings\\defaults\\" + xmlFile + ".xml";
 
-      if (File.Exists("InputDeviceMappings\\custom\\" + xmlFile))
-        path = "InputDeviceMappings\\custom\\";
-      else
-        path = "InputDeviceMappings\\defaults\\";
-
-      if (!File.Exists(path + xmlFile))
+      if (File.Exists(pathCustom) && CheckVersion(pathCustom))
       {
-        Log.Write("MAP: XML file \"{0}\" cannot be found", xmlFile);
+        path = pathCustom;
+        Log.Write("MAP: using custom mappings for {0}", xmlFile);
+      }
+      else if (File.Exists(pathDefault) && CheckVersion(pathDefault))
+        {
+          path = pathDefault;
+          Log.Write("MAP: using default mappings for {0}", xmlFile);
+        }
+      else
+      {
+        Log.Write("MAP: can't load default mapping for {0}", xmlFile);
         result = false;
         return;
       }
+
       try
       {
         remote = new ArrayList();
         XmlDocument doc = new XmlDocument();
-        doc.Load(path + xmlFile);
+        doc.Load(path);
         XmlNodeList listButtons=doc.DocumentElement.SelectNodes("/mappings/remote/button");
         foreach (XmlNode nodeButton in listButtons)
         {
@@ -129,8 +163,9 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
-        Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlFile, ex.Message);
+        Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlFile, ex.ToString());
         result = false;
+        return;
       }
     }
 

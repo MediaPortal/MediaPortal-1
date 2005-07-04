@@ -17,10 +17,10 @@ namespace MediaPortal.Configuration
     Array    windowsList    = Enum.GetValues(typeof(GUIWindow.Window));
     Array    actionList     = Enum.GetValues(typeof(Action.ActionType));
     string[] layerList      = new string[] {"all", "1", "2"};
-    string[] fullScreenList = new string[] {"Fullscreen", "no Fullscreen"};
+    string[] fullScreenList = new string[] {"Fullscreen", "No Fullscreen"};
     string[] playerList     = new string[] {"TV", "DVD", "MEDIA"};
     string[] powerList      = new string[] {"EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE"};
-    string[] soundList      = new string[] {"no Sound", "back.wav", "click.wav", "cursor.wav"};
+    string[] soundList      = new string[] {"none", "back.wav", "click.wav", "cursor.wav"};
     string[] keyList        = new string[] {"{BACKSPACE}", "{BREAK}", "{CAPSLOCK}", "{DELETE}", "{DOWN}", "{END}", "{ENTER}", "{ESC}",
                                               "{HELP}", "{HOME}", "{INSERT}", "{LEFT}", "{NUMLOCK}", "{PGDN}", "{PGUP}", "{PRTSC}",
                                               "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}", "{F6}",
@@ -204,7 +204,7 @@ namespace MediaPortal.Configuration
       this.radioButtonNoCondition.Name = "radioButtonNoCondition";
       this.radioButtonNoCondition.Size = new System.Drawing.Size(88, 16);
       this.radioButtonNoCondition.TabIndex = 12;
-      this.radioButtonNoCondition.Text = "No condition";
+      this.radioButtonNoCondition.Text = "No Condition";
       this.radioButtonNoCondition.Click += new System.EventHandler(this.radioButtonNoCondition_Click);
       // 
       // comboBoxCondProperty
@@ -292,7 +292,7 @@ namespace MediaPortal.Configuration
       this.radioButtonPower.Name = "radioButtonPower";
       this.radioButtonPower.Size = new System.Drawing.Size(112, 16);
       this.radioButtonPower.TabIndex = 18;
-      this.radioButtonPower.Text = "Powerdown action";
+      this.radioButtonPower.Text = "Powerdown Action";
       this.radioButtonPower.Click += new System.EventHandler(this.radioButtonPower_Click);
       // 
       // groupBoxAction
@@ -530,7 +530,7 @@ namespace MediaPortal.Configuration
 
           TreeNode layer1Node   = new TreeNode("Layer 1");
           TreeNode layer2Node   = new TreeNode("Layer 2");
-          TreeNode layerAllNode = new TreeNode("all Layers");
+          TreeNode layerAllNode = new TreeNode("All Layers");
           layer1Node.Tag = new Data("LAYER", null, "1");
           layer2Node.Tag = new Data("LAYER", null, "2");
           layerAllNode.Tag = new Data("LAYER", null, "0");
@@ -563,24 +563,24 @@ namespace MediaPortal.Configuration
                 if (conProperty == "TRUE")
                   conditionString = "Fullscreen";
                 else
-                  conditionString = "no Fullscreen";
+                  conditionString = "No Fullscreen";
                 break;
               case "PLAYER":
               switch (conProperty)
               {
                 case "TV":
-                  conditionString = "TV playing";
+                  conditionString = "TV Playing";
                   break;
                 case "DVD":
-                  conditionString = "DVD playing";
+                  conditionString = "DVD Playing";
                   break;
                 case "MEDIA":
-                  conditionString = "Media playing";
+                  conditionString = "Media Playing";
                   break;
               }
                 break;
               case "*":
-                conditionString = "no Condition";
+                conditionString = "No Condition";
                 break;
             }
 
@@ -636,7 +636,7 @@ namespace MediaPortal.Configuration
             TreeNode soundNode = new TreeNode(sound);
             soundNode.Tag = new Data("SOUND", null, nodeAction.Attributes["sound"].Value);
             if (soundNode.Text == "")
-              soundNode.Text = "no Sound";
+              soundNode.Text = "No Sound";
             soundNode.ForeColor = Color.DarkRed;
             conditionNode.Nodes.Add(soundNode);
 
@@ -833,18 +833,18 @@ namespace MediaPortal.Configuration
           groupBoxLayer.Enabled = false;
           groupBoxCondition.Enabled = false;
           groupBoxAction.Enabled = false;
-          comboBoxLayer.Text = "all Layers";
-          comboBoxCondProperty.Text = "no Condition";
-          comboBoxCmdProperty.Text = "no Action";
-          comboBoxSound.Text = "no Sound";
+          comboBoxLayer.Text = "All Layers";
+          comboBoxCondProperty.Text = "none";
+          comboBoxCmdProperty.Text = "none";
+          comboBoxSound.Text = "none";
           return;
         case "LAYER":
           groupBoxLayer.Enabled = true;
           groupBoxCondition.Enabled = false;
           groupBoxAction.Enabled = false;
-          comboBoxCondProperty.Text = "no Condition";
-          comboBoxCmdProperty.Text = "no Action";
-          comboBoxSound.Text = "no Sound";
+          comboBoxCondProperty.Text = "none";
+          comboBoxCmdProperty.Text = "none";
+          comboBoxSound.Text = "none";
           comboBoxLayer.SelectedIndex = Convert.ToInt32(data.Value);
           return;
         case "COMMAND":
@@ -876,7 +876,7 @@ namespace MediaPortal.Configuration
               if (Convert.ToBoolean(data.Value))
                 UpdateCombo(ref comboBoxCondProperty, fullScreenList, "Fullscreen");
               else
-                UpdateCombo(ref comboBoxCondProperty, fullScreenList, "no Fullscreen");
+                UpdateCombo(ref comboBoxCondProperty, fullScreenList, "No Fullscreen");
               break;
             case "PLAYER":
               radioButtonPlaying.Checked = true;
@@ -884,7 +884,7 @@ namespace MediaPortal.Configuration
               UpdateCombo(ref comboBoxCondProperty, playerList, data.Value);
               break;
             case "*":
-              comboBoxCondProperty.Text = "no Condition";
+              comboBoxCondProperty.Text = "none";
               radioButtonNoCondition.Checked = true;
               comboBoxCondProperty.Enabled = false;
               comboBoxCondProperty.Items.Clear();
@@ -899,7 +899,7 @@ namespace MediaPortal.Configuration
                 if (data.Value != "")
                   comboBoxSound.SelectedItem = data.Value;
                 else
-                  comboBoxSound.SelectedItem = "no Sound";
+                  comboBoxSound.SelectedItem = "none";
                 break;
               case "COMMAND":
               switch (data.Parameter)
@@ -915,7 +915,7 @@ namespace MediaPortal.Configuration
                   comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
                   radioButtonKey.Checked = true;
                   comboBoxSound.Enabled = false;
-                  comboBoxSound.Text = "no Sound";
+                  comboBoxSound.Text = "none";
                   comboBoxCmdProperty.Enabled = true;
                   UpdateCombo(ref comboBoxCmdProperty, keyList, data.Value);
                   break;
@@ -990,11 +990,11 @@ namespace MediaPortal.Configuration
     {
       comboBoxCondProperty.Enabled = false;
       comboBoxCondProperty.Items.Clear();
-      comboBoxCondProperty.Text = "no Condition";
+      comboBoxCondProperty.Text = "none";
       TreeNode node = getNode("CONDITION");
       Data data = new Data("CONDITION", "*", null);
       node.Tag = data;
-      node.Text = "no Condition";
+      node.Text = "No Condition";
     }
 
     private void radioButtonAction_Click(object sender, System.EventArgs e)
@@ -1023,7 +1023,7 @@ namespace MediaPortal.Configuration
     {
       comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
       comboBoxSound.Enabled = false;
-      comboBoxSound.Text = "no Sound";
+      comboBoxSound.Text = "none";
       comboBoxCmdProperty.Enabled = true;
       TreeNode node = getNode("COMMAND");
       Data data = new Data("COMMAND", "KEY", "{ENTER}");
@@ -1031,7 +1031,7 @@ namespace MediaPortal.Configuration
       UpdateCombo(ref comboBoxCmdProperty, keyList, data.Value);
       node = getNode("SOUND");
       node.Tag = new Data("SOUND", null, "");
-      node.Text = "no Sound";
+      node.Text = "No Sound";
     }
 
     private void radioButtonToggle_Click(object sender, System.EventArgs e)
@@ -1039,7 +1039,7 @@ namespace MediaPortal.Configuration
       comboBoxSound.Enabled = true;
       comboBoxCmdProperty.Enabled = false;
       comboBoxCmdProperty.Items.Clear();
-      comboBoxCmdProperty.Text = "no Action";
+      comboBoxCmdProperty.Text = "none";
       TreeNode node = getNode("COMMAND");
       Data data = new Data("COMMAND", "TOGGLE", "-1");
       node.Tag = data;
@@ -1087,7 +1087,7 @@ namespace MediaPortal.Configuration
       {
         TreeNode node = getNode("SOUND");
         node.Text = (string)comboBoxSound.SelectedItem;
-        if (node.Text == "no Sound")
+        if (node.Text == "No Sound")
           node.Tag = new Data("SOUND", null, "");
         else
           node.Tag = new Data("SOUND", null, (string)comboBoxSound.SelectedItem);
@@ -1161,13 +1161,13 @@ namespace MediaPortal.Configuration
           switch ((string)comboBoxCondProperty.SelectedItem)
           {
             case "TV":
-              node.Text = "TV playing";
+              node.Text = "TV Playing";
               break;
             case "DVD":
-              node.Text = "DVD playing";
+              node.Text = "DVD Playing";
               break;
             case "MEDIA":
-              node.Text = "Media playing";
+              node.Text = "Media Playing";
               break;
           }
           break;
@@ -1182,7 +1182,7 @@ namespace MediaPortal.Configuration
       TreeNode node = getNode("LAYER");
       node.Tag = new Data("LAYER", null, comboBoxLayer.SelectedIndex);
       if (comboBoxLayer.SelectedIndex == 0)
-        node.Text = "all Layers";
+        node.Text = "All Layers";
       else
         node.Text = "Layer " + comboBoxLayer.SelectedIndex.ToString();
     }
@@ -1259,11 +1259,11 @@ namespace MediaPortal.Configuration
       TreeNode node = treeMapping.SelectedNode;
       Data data = (Data)node.Tag;
 
-      TreeNode newLayer = new TreeNode("all Layers");
+      TreeNode newLayer = new TreeNode("All Layers");
       newLayer.Tag = new Data("LAYER", null, "0");
       newLayer.ForeColor = Color.DimGray;
 
-      TreeNode newCondition = new TreeNode("no Condition");
+      TreeNode newCondition = new TreeNode("No Condition");
       newCondition.Tag = new Data("CONDITION", "*", "-1");
       newCondition.ForeColor = Color.Blue;
 
@@ -1271,7 +1271,7 @@ namespace MediaPortal.Configuration
       newCommand.Tag = new Data("COMMAND", "ACTION", "0");
       newCommand.ForeColor = Color.DarkGreen;
 
-      TreeNode newSound = new TreeNode("no Sound");
+      TreeNode newSound = new TreeNode("No Sound");
       newSound.Tag = new Data("SOUND", "", "");
       newSound.ForeColor = Color.DarkRed;
 
