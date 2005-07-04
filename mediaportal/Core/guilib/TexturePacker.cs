@@ -390,9 +390,12 @@ namespace MediaPortal.GUI.Library
 		bool IsCompressedTextureFormatOk( Direct3D.Format textureFormat) 
 		{
 			if (Manager.CheckDeviceFormat(0, DeviceType.Hardware, GUIGraphicsContext.DirectXPresentParameters.BackBufferFormat,
-																				Usage.None, ResourceType.Textures,
-																				textureFormat))
+				Usage.None, ResourceType.Textures,
+				textureFormat))
+			{
+				Log.Write("TexurePacker:Using compressed textures");
 				return true;
+			}
 			return false;
 		}
 	}
