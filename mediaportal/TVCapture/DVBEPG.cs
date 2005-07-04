@@ -445,6 +445,7 @@ namespace MediaPortal.TV.Recording
 			}
 			//
 			int n=0;
+			eitList.Sort(new EITComparer());
 			foreach(ArrayList eitData in tableList)
 				foreach(DVBSections.EITDescr eit in eitData)
 				{
