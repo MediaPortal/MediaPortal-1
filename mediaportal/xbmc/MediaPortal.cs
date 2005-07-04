@@ -158,6 +158,7 @@ public class MediaPortalApp : D3DApp, IRender
       SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
 			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
 			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
 
       // hauppauge mpeg2 codec settings
       SetDWORDRegKey(hklm, @"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec", "Hwmc", 1);
@@ -166,13 +167,16 @@ public class MediaPortalApp : D3DApp, IRender
       hklm.Close();
 
       // windvd6 mpeg2 codec settings
+			hklm = Registry.CurrentUser;
       SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
       SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
       SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
       SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
       SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
       SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
       hklm.Close();
       hklm=null;
     }
