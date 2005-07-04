@@ -180,6 +180,18 @@ namespace MediaPortal.Database
 			return String.Empty;
 		}
 
+		static public int GetAsInt(SQLiteResultSet results, int iRecord, int column)
+		{
+			string result=Get(results, iRecord, column);
+			try
+			{
+				int intValue=Int32.Parse(result);
+				return intValue;
+			}
+			catch(Exception)
+			{}
+			return 0;
+		}
 		static public string Get(SQLiteResultSet results, int iRecord, int column)
 		{
 			if (null == results) return String.Empty;

@@ -332,43 +332,43 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count<1) return false;
 					else
 					{
-						//chan.ID=Int32.Parse(DatabaseUtility.Get(results,i,"idChannel"));
-						//chan.Number = Int32.Parse(DatabaseUtility.Get(results,i,"iChannelNr"));
+						//chan.ID=DatabaseUtility.GetAsInt(results,i,"idChannel");
+						//chan.Number = DatabaseUtility.GetAsInt(results,i,"iChannelNr");
 						// sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName
 						//sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,
 						//sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID
 						int i=0;
-						freq=Int32.Parse(DatabaseUtility.Get(results,i,"sFreq"));
-						symrate=Int32.Parse(DatabaseUtility.Get(results,i,"sSymbrate"));
-						fec=Int32.Parse(DatabaseUtility.Get(results,i,"sFEC"));
-						lnbkhz=Int32.Parse(DatabaseUtility.Get(results,i,"sLNBKhz"));
-						diseqc=Int32.Parse(DatabaseUtility.Get(results,i,"sDiseqc"));
-						prognum=Int32.Parse(DatabaseUtility.Get(results,i,"sProgramNumber"));
-						servicetype=Int32.Parse(DatabaseUtility.Get(results,i,"sServiceType"));
+						freq=DatabaseUtility.GetAsInt(results,i,"sFreq");
+						symrate=DatabaseUtility.GetAsInt(results,i,"sSymbrate");
+						fec=DatabaseUtility.GetAsInt(results,i,"sFEC");
+						lnbkhz=DatabaseUtility.GetAsInt(results,i,"sLNBKhz");
+						diseqc=DatabaseUtility.GetAsInt(results,i,"sDiseqc");
+						prognum=DatabaseUtility.GetAsInt(results,i,"sProgramNumber");
+						servicetype=DatabaseUtility.GetAsInt(results,i,"sServiceType");
 						provider=DatabaseUtility.Get(results,i,"sProviderName");
 						channel=DatabaseUtility.Get(results,i,"sChannelName");
-						eitsched=Int32.Parse(DatabaseUtility.Get(results,i,"sEitSched"));
-						eitprefol= Int32.Parse(DatabaseUtility.Get(results,i,"sEitPreFol"));
-						audpid=Int32.Parse(DatabaseUtility.Get(results,i,"sAudioPid"));
-						vidpid=Int32.Parse(DatabaseUtility.Get(results,i,"sVideoPid"));
-						ac3pid=Int32.Parse(DatabaseUtility.Get(results,i,"sAC3Pid"));
-						apid1= Int32.Parse(DatabaseUtility.Get(results,i,"sAudio1Pid"));
-						apid2= Int32.Parse(DatabaseUtility.Get(results,i,"sAudio2Pid"));
-						apid3=Int32.Parse(DatabaseUtility.Get(results,i,"sAudio3Pid"));
-						teltxtpid=Int32.Parse(DatabaseUtility.Get(results,i,"sTeletextPid"));
-						scrambled= Int32.Parse(DatabaseUtility.Get(results,i,"sScrambled"));
-						pol=Int32.Parse(DatabaseUtility.Get(results,i,"sPol"));
-						lnbfreq=Int32.Parse(DatabaseUtility.Get(results,i,"sLNBFreq"));
-						networkid=Int32.Parse(DatabaseUtility.Get(results,i,"sNetworkID"));
-						tsid=Int32.Parse(DatabaseUtility.Get(results,i,"sTSID"));
-						pcrpid=Int32.Parse(DatabaseUtility.Get(results,i,"sPCRPid"));
+						eitsched=DatabaseUtility.GetAsInt(results,i,"sEitSched");
+						eitprefol= DatabaseUtility.GetAsInt(results,i,"sEitPreFol");
+						audpid=DatabaseUtility.GetAsInt(results,i,"sAudioPid");
+						vidpid=DatabaseUtility.GetAsInt(results,i,"sVideoPid");
+						ac3pid=DatabaseUtility.GetAsInt(results,i,"sAC3Pid");
+						apid1= DatabaseUtility.GetAsInt(results,i,"sAudio1Pid");
+						apid2= DatabaseUtility.GetAsInt(results,i,"sAudio2Pid");
+						apid3=DatabaseUtility.GetAsInt(results,i,"sAudio3Pid");
+						teltxtpid=DatabaseUtility.GetAsInt(results,i,"sTeletextPid");
+						scrambled= DatabaseUtility.GetAsInt(results,i,"sScrambled");
+						pol=DatabaseUtility.GetAsInt(results,i,"sPol");
+						lnbfreq=DatabaseUtility.GetAsInt(results,i,"sLNBFreq");
+						networkid=DatabaseUtility.GetAsInt(results,i,"sNetworkID");
+						tsid=DatabaseUtility.GetAsInt(results,i,"sTSID");
+						pcrpid=DatabaseUtility.GetAsInt(results,i,"sPCRPid");
 						// sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid
 						audioLang=DatabaseUtility.Get(results,i,"sAudioLang");
 						audioLang1=DatabaseUtility.Get(results,i,"sAudioLang1");
 						audioLang2=DatabaseUtility.Get(results,i,"sAudioLang2");
 						audioLang3=DatabaseUtility.Get(results,i,"sAudioLang3");
-						ecm=Int32.Parse(DatabaseUtility.Get(results,i,"sECMPid"));
-						pmt=Int32.Parse(DatabaseUtility.Get(results,i,"sPMTPid"));
+						ecm=DatabaseUtility.GetAsInt(results,i,"sECMPid");
+						pmt=DatabaseUtility.GetAsInt(results,i,"sPMTPid");
 						retChannel=new DVBChannel(idChannel, freq, symrate, fec, lnbkhz, diseqc,
 							prognum, servicetype,provider, channel, eitsched,
 							eitprefol, audpid, vidpid, ac3pid, apid1, apid2, apid3,
@@ -439,37 +439,37 @@ namespace MediaPortal.TV.Database
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 					  
-						idChannel=Int32.Parse(DatabaseUtility.Get(results,i,"idChannel"));
-						freq=Int32.Parse(DatabaseUtility.Get(results,i,"sFreq"));
-						symrate=Int32.Parse(DatabaseUtility.Get(results,i,"sSymbrate"));
-						fec=Int32.Parse(DatabaseUtility.Get(results,i,"sFEC"));
-						lnbkhz=Int32.Parse(DatabaseUtility.Get(results,i,"sLNBKhz"));
-						diseqc=Int32.Parse(DatabaseUtility.Get(results,i,"sDiseqc"));
-						prognum=Int32.Parse(DatabaseUtility.Get(results,i,"sProgramNumber"));
-						servicetype=Int32.Parse(DatabaseUtility.Get(results,i,"sServiceType"));
+						idChannel=DatabaseUtility.GetAsInt(results,i,"idChannel");
+						freq=DatabaseUtility.GetAsInt(results,i,"sFreq");
+						symrate=DatabaseUtility.GetAsInt(results,i,"sSymbrate");
+						fec=DatabaseUtility.GetAsInt(results,i,"sFEC");
+						lnbkhz=DatabaseUtility.GetAsInt(results,i,"sLNBKhz");
+						diseqc=DatabaseUtility.GetAsInt(results,i,"sDiseqc");
+						prognum=DatabaseUtility.GetAsInt(results,i,"sProgramNumber");
+						servicetype=DatabaseUtility.GetAsInt(results,i,"sServiceType");
 						provider=DatabaseUtility.Get(results,i,"sProviderName");
 						channel=DatabaseUtility.Get(results,i,"sChannelName");
-						eitsched=Int32.Parse(DatabaseUtility.Get(results,i,"sEitSched"));
-						eitprefol= Int32.Parse(DatabaseUtility.Get(results,i,"sEitPreFol"));
-						audpid=Int32.Parse(DatabaseUtility.Get(results,i,"sAudioPid"));
-						vidpid=Int32.Parse(DatabaseUtility.Get(results,i,"sVideoPid"));
-						ac3pid=Int32.Parse(DatabaseUtility.Get(results,i,"sAC3Pid"));
-						apid1= Int32.Parse(DatabaseUtility.Get(results,i,"sAudio1Pid"));
-						apid2= Int32.Parse(DatabaseUtility.Get(results,i,"sAudio2Pid"));
-						apid3=Int32.Parse(DatabaseUtility.Get(results,i,"sAudio3Pid"));
-						teltxtpid=Int32.Parse(DatabaseUtility.Get(results,i,"sTeletextPid"));
-						scrambled= Int32.Parse(DatabaseUtility.Get(results,i,"sScrambled"));
-						pol=Int32.Parse(DatabaseUtility.Get(results,i,"sPol"));
-						lnbfreq=Int32.Parse(DatabaseUtility.Get(results,i,"sLNBFreq"));
-						networkid=Int32.Parse(DatabaseUtility.Get(results,i,"sNetworkID"));
-						tsid=Int32.Parse(DatabaseUtility.Get(results,i,"sTSID"));
-						pcrpid=Int32.Parse(DatabaseUtility.Get(results,i,"sPCRPid"));
+						eitsched=DatabaseUtility.GetAsInt(results,i,"sEitSched");
+						eitprefol= DatabaseUtility.GetAsInt(results,i,"sEitPreFol");
+						audpid=DatabaseUtility.GetAsInt(results,i,"sAudioPid");
+						vidpid=DatabaseUtility.GetAsInt(results,i,"sVideoPid");
+						ac3pid=DatabaseUtility.GetAsInt(results,i,"sAC3Pid");
+						apid1= DatabaseUtility.GetAsInt(results,i,"sAudio1Pid");
+						apid2= DatabaseUtility.GetAsInt(results,i,"sAudio2Pid");
+						apid3=DatabaseUtility.GetAsInt(results,i,"sAudio3Pid");
+						teltxtpid=DatabaseUtility.GetAsInt(results,i,"sTeletextPid");
+						scrambled= DatabaseUtility.GetAsInt(results,i,"sScrambled");
+						pol=DatabaseUtility.GetAsInt(results,i,"sPol");
+						lnbfreq=DatabaseUtility.GetAsInt(results,i,"sLNBFreq");
+						networkid=DatabaseUtility.GetAsInt(results,i,"sNetworkID");
+						tsid=DatabaseUtility.GetAsInt(results,i,"sTSID");
+						pcrpid=DatabaseUtility.GetAsInt(results,i,"sPCRPid");
 						audioLang=DatabaseUtility.Get(results,i,"sAudioLang");
 						audioLang1=DatabaseUtility.Get(results,i,"sAudioLang1");
 						audioLang2=DatabaseUtility.Get(results,i,"sAudioLang2");
 						audioLang3=DatabaseUtility.Get(results,i,"sAudioLang3");
-						ecm=Int32.Parse(DatabaseUtility.Get(results,i,"sECMPid"));
-						pmt=Int32.Parse(DatabaseUtility.Get(results,i,"sPMTPid"));
+						ecm=DatabaseUtility.GetAsInt(results,i,"sECMPid");
+						pmt=DatabaseUtility.GetAsInt(results,i,"sPMTPid");
 						dvbChannel=new DVBChannel(idChannel, freq, symrate, fec, lnbkhz, diseqc,
 							prognum, servicetype,provider, channel, eitsched,
 							eitprefol, audpid, vidpid, ac3pid, apid1, apid2, apid3,
@@ -551,11 +551,11 @@ namespace MediaPortal.TV.Database
 					strSQL=String.Format( "select * from channel where strChannel like '{0}'", strChannel);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) return -1;
-					int iNewID=Int32.Parse(DatabaseUtility.Get(results,0,"idChannel"));
+					int iNewID=DatabaseUtility.GetAsInt(results,0,"idChannel");
 					CChannelCache chan=new CChannelCache();
 					chan.idChannel=iNewID;
 					chan.strChannel=DatabaseUtility.Get(results,0,"strChannel");
-					chan.iChannelNr=Int32.Parse(DatabaseUtility.Get(results,0,"iChannelNr"));
+					chan.iChannelNr=DatabaseUtility.GetAsInt(results,0,"iChannelNr");
 					m_channelCache.Add(chan);
 					return iNewID;
 				} 
@@ -586,7 +586,7 @@ namespace MediaPortal.TV.Database
 					strSQL=String.Format( "select * from channel where iChannelNr={0}", iChannelNr);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count==0) return -1;
-					int iNewID=Int32.Parse(DatabaseUtility.Get(results,0,"idChannel"));
+					int iNewID=DatabaseUtility.GetAsInt(results,0,"idChannel");
 					CChannelCache chan=new CChannelCache();
 					chan.idChannel=iNewID;
 					chan.strChannel=DatabaseUtility.Get(results,0,"strChannel");
@@ -754,7 +754,7 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						int iNewID=Int32.Parse(DatabaseUtility.Get(results,0,"idChannel"));
+						int iNewID=DatabaseUtility.GetAsInt(results,0,"idChannel");
 						CChannelCache chan=new CChannelCache();
 						chan.idChannel=iNewID;
 						chan.strChannel=strChannel;
@@ -809,7 +809,7 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						int iID=Int32.Parse(DatabaseUtility.Get(results,0,"idGenre"));
+						int iID=DatabaseUtility.GetAsInt(results,0,"idGenre");
 						CGenreCache genre= new CGenreCache();
 						genre.idGenre = iID;
 						genre.strGenre = strGenre1;
@@ -982,8 +982,8 @@ namespace MediaPortal.TV.Database
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 						TVChannel chan=new TVChannel();
-						chan.ID=Int32.Parse(DatabaseUtility.Get(results,i,"channel.idChannel"));
-						chan.Number = Int32.Parse(DatabaseUtility.Get(results,i,"channel.iChannelNr"));
+						chan.ID=DatabaseUtility.GetAsInt(results,i,"channel.idChannel");
+						chan.Number = DatabaseUtility.GetAsInt(results,i,"channel.iChannelNr");
 						decimal dFreq=0;
 						try
 						{
@@ -999,23 +999,23 @@ namespace MediaPortal.TV.Database
 						dFreq *=1000000M;
 						chan.Frequency = (long)Math.Round(dFreq,0);
 						chan.Name = DatabaseUtility.Get(results,i,"channel.strChannel");
-						int iExternal=Int32.Parse(DatabaseUtility.Get(results,i,"channel.bExternal"));
+						int iExternal=DatabaseUtility.GetAsInt(results,i,"channel.bExternal");
 						if (iExternal!=0) chan.External=true;
 						else chan.External=false;
 
-						int iVisible=Int32.Parse(DatabaseUtility.Get(results,i,"channel.Visible"));
+						int iVisible=DatabaseUtility.GetAsInt(results,i,"channel.Visible");
 						if (iVisible!=0) chan.VisibleInGuide=true;
 						else chan.VisibleInGuide=false;
 
-						int scrambled=Int32.Parse(DatabaseUtility.Get(results,i,"channel.scrambled"));
+						int scrambled=DatabaseUtility.GetAsInt(results,i,"channel.scrambled");
 						if (scrambled!=0) chan.Scrambled=true;
 						else chan.Scrambled=false;
 
 						chan.ExternalTunerChannel= DatabaseUtility.Get(results,i,"channel.ExternalChannel");
-						chan.TVStandard = (AnalogVideoStandard)Int32.Parse(DatabaseUtility.Get(results,i,"channel.standard"));
-						chan.Country=Int32.Parse(DatabaseUtility.Get(results,i,"channel.Country"));
+						chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results,i,"channel.standard");
+						chan.Country=DatabaseUtility.GetAsInt(results,i,"channel.Country");
 						chan.ProviderName=DatabaseUtility.Get(results,i,"tblDVBCMapping.strProvider");
-						chan.Sort=Int32.Parse(DatabaseUtility.Get(results,i,"channel.iSort"));
+						chan.Sort=DatabaseUtility.GetAsInt(results,i,"channel.iSort");
 						if (chan.ProviderName=="")
 						{
 							chan.ProviderName=DatabaseUtility.Get(results,i,"tblDVBSMapping.sProviderName");
@@ -1064,8 +1064,8 @@ namespace MediaPortal.TV.Database
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 						TVChannel chan=new TVChannel();
-						chan.ID=Int32.Parse(DatabaseUtility.Get(results,i,"idChannel"));
-						chan.Number = Int32.Parse(DatabaseUtility.Get(results,i,"iChannelNr"));
+						chan.ID=DatabaseUtility.GetAsInt(results,i,"idChannel");
+						chan.Number = DatabaseUtility.GetAsInt(results,i,"iChannelNr");
 						decimal dFreq=0;
 						try
 						{
@@ -1081,23 +1081,23 @@ namespace MediaPortal.TV.Database
 						dFreq *=1000000M;
 						chan.Frequency = (long)Math.Round(dFreq,0);
 						chan.Name = DatabaseUtility.Get(results,i,"strChannel");
-						int iExternal=Int32.Parse(DatabaseUtility.Get(results,i,"bExternal"));
+						int iExternal=DatabaseUtility.GetAsInt(results,i,"bExternal");
 						if (iExternal!=0) chan.External=true;
 						else chan.External=false;
 
-						int iVisible=Int32.Parse(DatabaseUtility.Get(results,i,"Visible"));
+						int iVisible=DatabaseUtility.GetAsInt(results,i,"Visible");
 						if (iVisible!=0) chan.VisibleInGuide=true;
 						else chan.VisibleInGuide=false;
 
 
-						int scrambled=Int32.Parse(DatabaseUtility.Get(results,i,"scrambled"));
+						int scrambled=DatabaseUtility.GetAsInt(results,i,"scrambled");
 						if (scrambled!=0) chan.Scrambled=true;
 						else chan.Scrambled=false;
-						chan.Sort=Int32.Parse(DatabaseUtility.Get(results,i,"iSort"));
+						chan.Sort=DatabaseUtility.GetAsInt(results,i,"iSort");
 
 						chan.ExternalTunerChannel= DatabaseUtility.Get(results,i,"ExternalChannel");
-						chan.TVStandard = (AnalogVideoStandard)Int32.Parse(DatabaseUtility.Get(results,i,"standard"));
-						chan.Country=Int32.Parse(DatabaseUtility.Get(results,i,"Country"));
+						chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results,i,"standard");
+						chan.Country=DatabaseUtility.GetAsInt(results,i,"Country");
 						channels.Add(chan);
 					}
 
@@ -1275,7 +1275,7 @@ namespace MediaPortal.TV.Database
 							prog.Description=DatabaseUtility.Get(results,i,"tblPrograms.strDescription");
 							prog.Episode=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeName");
 							prog.Repeat=DatabaseUtility.Get(results,i,"tblPrograms.strRepeat");
-							prog.ID=Int32.Parse(DatabaseUtility.Get(results,i,"tblPrograms.idProgram"));
+							prog.ID=DatabaseUtility.GetAsInt(results,i,"tblPrograms.idProgram");
               prog.SeriesNum=DatabaseUtility.Get(results,i,"tblPrograms.strSeriesNum");
               prog.EpisodeNum=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeNum");
               prog.EpisodePart=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodePart");
@@ -1335,7 +1335,7 @@ namespace MediaPortal.TV.Database
 							prog.Description=DatabaseUtility.Get(results,i,17);
 							prog.Episode=DatabaseUtility.Get(results,i,18);
 							prog.Repeat=DatabaseUtility.Get(results,i,19);
-							prog.ID=Int32.Parse(DatabaseUtility.Get(results,i,11));
+							prog.ID=DatabaseUtility.GetAsInt(results,i,11);
               prog.SeriesNum=DatabaseUtility.Get(results,i,20);
               prog.EpisodeNum=DatabaseUtility.Get(results,i,21);
               prog.EpisodePart=DatabaseUtility.Get(results,i,22);
@@ -1390,7 +1390,7 @@ namespace MediaPortal.TV.Database
 							prog.Description=DatabaseUtility.Get(results,i,"tblPrograms.strDescription");
 							prog.Episode=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeName");
 							prog.Repeat=DatabaseUtility.Get(results,i,"tblPrograms.strRepeat");
-							prog.ID=Int32.Parse(DatabaseUtility.Get(results,i,"tblPrograms.idProgram"));
+							prog.ID=DatabaseUtility.GetAsInt(results,i,"tblPrograms.idProgram");
               prog.SeriesNum=DatabaseUtility.Get(results,i,"tblPrograms.strSeriesNum");
               prog.EpisodeNum=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeNum");
               prog.EpisodePart=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodePart");
@@ -1486,7 +1486,7 @@ namespace MediaPortal.TV.Database
 					prog.Description=DatabaseUtility.Get(results,0,"tblPrograms.strDescription");
 					prog.Episode=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeName");
 					prog.Repeat=DatabaseUtility.Get(results,0,"tblPrograms.strRepeat");
-					prog.ID=Int32.Parse(DatabaseUtility.Get(results,0,"tblPrograms.idProgram"));
+					prog.ID=DatabaseUtility.GetAsInt(results,0,"tblPrograms.idProgram");
 					prog.SeriesNum=DatabaseUtility.Get(results,0,"tblPrograms.strSeriesNum");
 					prog.EpisodeNum=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeNum");
 					prog.EpisodePart=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodePart");
@@ -1738,13 +1738,13 @@ namespace MediaPortal.TV.Database
 							rec.Start=iStart;
 							rec.End=iEnd;
 							rec.Canceled = Int64.Parse(DatabaseUtility.Get(results,i,"recording.iCancelTime"));
-							rec.ID=Int32.Parse(DatabaseUtility.Get(results,i,"recording.idRecording"));
+							rec.ID=DatabaseUtility.GetAsInt(results,i,"recording.idRecording");
 							rec.Title=DatabaseUtility.Get(results,i,"recording.strProgram");
-							rec.RecType=(TVRecording.RecordingType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.iRecordingType"));
-							rec.Quality=(TVRecording.QualityType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.quality"));
-							rec.Priority=Int32.Parse(DatabaseUtility.Get(results,i,"recording.priority"));
-							rec.EpisodesToKeep=Int32.Parse(DatabaseUtility.Get(results,i,"recording.episodesToKeep"));
-							int iContectRec=Int32.Parse(DatabaseUtility.Get(results,i,"recording.bContentRecording"));
+							rec.RecType=(TVRecording.RecordingType)DatabaseUtility.GetAsInt(results,i,"recording.iRecordingType");
+							rec.Quality=(TVRecording.QualityType)DatabaseUtility.GetAsInt(results,i,"recording.quality");
+							rec.Priority=DatabaseUtility.GetAsInt(results,i,"recording.priority");
+							rec.EpisodesToKeep=DatabaseUtility.GetAsInt(results,i,"recording.episodesToKeep");
+							int iContectRec=DatabaseUtility.GetAsInt(results,i,"recording.bContentRecording");
 							if (iContectRec==1) rec.IsContentRecording=true;
 							else rec.IsContentRecording=false;
 							GetCanceledRecordings(ref rec);
@@ -1785,14 +1785,14 @@ namespace MediaPortal.TV.Database
 						rec.Start=iStart;
 						rec.End=iEnd;
 						rec.Canceled = Int64.Parse(DatabaseUtility.Get(results,i,"recording.iCancelTime"));
-						rec.ID=Int32.Parse(DatabaseUtility.Get(results,i,"recording.idRecording"));
+						rec.ID=DatabaseUtility.GetAsInt(results,i,"recording.idRecording");
 						rec.Title=DatabaseUtility.Get(results,i,"recording.strProgram");
-						rec.RecType=(TVRecording.RecordingType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.iRecordingType"));
-						rec.Quality=(TVRecording.QualityType)Int32.Parse(DatabaseUtility.Get(results,i,"recording.quality"));
-						rec.Priority=Int32.Parse(DatabaseUtility.Get(results,i,"recording.priority"));
-						rec.EpisodesToKeep=Int32.Parse(DatabaseUtility.Get(results,i,"recording.episodesToKeep"));
+						rec.RecType=(TVRecording.RecordingType)DatabaseUtility.GetAsInt(results,i,"recording.iRecordingType");
+						rec.Quality=(TVRecording.QualityType)DatabaseUtility.GetAsInt(results,i,"recording.quality");
+						rec.Priority=DatabaseUtility.GetAsInt(results,i,"recording.priority");
+						rec.EpisodesToKeep=DatabaseUtility.GetAsInt(results,i,"recording.episodesToKeep");
 
-						int iContectRec=Int32.Parse(DatabaseUtility.Get(results,i,"recording.bContentRecording"));
+						int iContectRec=DatabaseUtility.GetAsInt(results,i,"recording.bContentRecording");
 						if (iContectRec==1) rec.IsContentRecording=true;
 						else rec.IsContentRecording=false;
 						GetCanceledRecordings(ref rec);
@@ -1978,12 +1978,12 @@ namespace MediaPortal.TV.Database
 						rec.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
 						rec.Start=iStart;
 						rec.End=iEnd;
-						rec.ID=Int32.Parse(DatabaseUtility.Get(results,i,"recorded.idRecorded"));
+						rec.ID=DatabaseUtility.GetAsInt(results,i,"recorded.idRecorded");
 						rec.Title=DatabaseUtility.Get(results,i,"recorded.strProgram");
 						rec.Description=DatabaseUtility.Get(results,i,"recorded.strDescription");
 						rec.FileName=DatabaseUtility.Get(results,i,"recorded.strFileName");
 						rec.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
-						rec.Played=Int32.Parse(DatabaseUtility.Get(results,i,"recorded.iPlayed"));
+						rec.Played=DatabaseUtility.GetAsInt(results,i,"recorded.iPlayed");
 						recordings.Add(rec);
 					}
 
@@ -2024,12 +2024,12 @@ namespace MediaPortal.TV.Database
 					recording.Channel=DatabaseUtility.Get(results,0,"channel.strChannel");
 					recording.Start=iStart;
 					recording.End=iEnd;
-					recording.ID=Int32.Parse(DatabaseUtility.Get(results,0,"recorded.idRecorded"));
+					recording.ID=DatabaseUtility.GetAsInt(results,0,"recorded.idRecorded");
 					recording.Title=DatabaseUtility.Get(results,0,"recorded.strProgram");
 					recording.Description=DatabaseUtility.Get(results,0,"recorded.strDescription");
 					recording.FileName=DatabaseUtility.Get(results,0,"recorded.strFileName");
 					recording.Genre=DatabaseUtility.Get(results,0,"genre.strGenre");
-					recording.Played=Int32.Parse(DatabaseUtility.Get(results,0,"recorded.iPlayed"));
+					recording.Played=DatabaseUtility.GetAsInt(results,0,"recorded.iPlayed");
 
 					return true;
 				}
@@ -2154,7 +2154,7 @@ namespace MediaPortal.TV.Database
 						TVProgram prog=new TVProgram();
 						prog.Start=iStart;
 						prog.End=iEnd;
-						prog.ID=Int32.Parse(DatabaseUtility.Get(results,i,"tblPrograms.idProgram"));
+						prog.ID=DatabaseUtility.GetAsInt(results,i,"tblPrograms.idProgram");
 
 						prog.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
 						prog.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
@@ -2461,26 +2461,26 @@ namespace MediaPortal.TV.Database
 					SQLiteResultSet results;
 					results = m_db.Execute(strSQL);
 					if (results.Rows.Count != 1) return ;
-					frequency=Int32.Parse(DatabaseUtility.Get(results,0,"frequency"));
-					ONID=Int32.Parse(DatabaseUtility.Get(results,0,"ONID"));
-					TSID=Int32.Parse(DatabaseUtility.Get(results,0,"TSID"));
-					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
+					frequency=DatabaseUtility.GetAsInt(results,0,"frequency");
+					ONID=DatabaseUtility.GetAsInt(results,0,"ONID");
+					TSID=DatabaseUtility.GetAsInt(results,0,"TSID");
+					SID=DatabaseUtility.GetAsInt(results,0,"SID");
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
-					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
-					videoPid=Int32.Parse(DatabaseUtility.Get(results,0,"videoPid"));
-					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
-					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
-					bandwidth=Int32.Parse(DatabaseUtility.Get(results,0,"bandwidth"));
-					audio1=Int32.Parse(DatabaseUtility.Get(results,0,"audio1Pid"));
-					audio2=Int32.Parse(DatabaseUtility.Get(results,0,"audio2Pid"));
-					audio3=Int32.Parse(DatabaseUtility.Get(results,0,"audio3Pid"));
-					ac3Pid=Int32.Parse(DatabaseUtility.Get(results,0,"ac3Pid"));
+					audioPid=DatabaseUtility.GetAsInt(results,0,"audioPid");
+					videoPid=DatabaseUtility.GetAsInt(results,0,"videoPid");
+					teletextPid=DatabaseUtility.GetAsInt(results,0,"teletextPid");
+					pmtPid=DatabaseUtility.GetAsInt(results,0,"pmtPid");
+					bandwidth=DatabaseUtility.GetAsInt(results,0,"bandwidth");
+					audio1=DatabaseUtility.GetAsInt(results,0,"audio1Pid");
+					audio2=DatabaseUtility.GetAsInt(results,0,"audio2Pid");
+					audio3=DatabaseUtility.GetAsInt(results,0,"audio3Pid");
+					ac3Pid=DatabaseUtility.GetAsInt(results,0,"ac3Pid");
 					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
 					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
 					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
 					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
-					HasEITPresentFollow=Int32.Parse(DatabaseUtility.Get(results,0,"HasEITPresentFollow"))!=0;
-					HasEITSchedule=Int32.Parse(DatabaseUtility.Get(results,0,"HasEITSchedule"))!=0;
+					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
+					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
 					return ;
 				}
 				catch(Exception ex)
@@ -2517,29 +2517,29 @@ namespace MediaPortal.TV.Database
 					SQLiteResultSet results;
 					results = m_db.Execute(strSQL);
 					if (results.Rows.Count != 1) return ;
-					frequency=Int32.Parse(DatabaseUtility.Get(results,0,"frequency"));
-					symbolrate=Int32.Parse(DatabaseUtility.Get(results,0,"symbolrate"));
-					innerFec=Int32.Parse(DatabaseUtility.Get(results,0,"innerFec"));
-					modulation=Int32.Parse(DatabaseUtility.Get(results,0,"modulation"));
-					ONID=Int32.Parse(DatabaseUtility.Get(results,0,"ONID"));
-					TSID=Int32.Parse(DatabaseUtility.Get(results,0,"TSID"));
-					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
+					frequency=DatabaseUtility.GetAsInt(results,0,"frequency");
+					symbolrate=DatabaseUtility.GetAsInt(results,0,"symbolrate");
+					innerFec=DatabaseUtility.GetAsInt(results,0,"innerFec");
+					modulation=DatabaseUtility.GetAsInt(results,0,"modulation");
+					ONID=DatabaseUtility.GetAsInt(results,0,"ONID");
+					TSID=DatabaseUtility.GetAsInt(results,0,"TSID");
+					SID=DatabaseUtility.GetAsInt(results,0,"SID");
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
-					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
-					videoPid=Int32.Parse(DatabaseUtility.Get(results,0,"videoPid"));
-					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
-					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
-					audio1=Int32.Parse(DatabaseUtility.Get(results,0,"audio1Pid"));
-					audio2=Int32.Parse(DatabaseUtility.Get(results,0,"audio2Pid"));
-					audio3=Int32.Parse(DatabaseUtility.Get(results,0,"audio3Pid"));
-					ac3Pid=Int32.Parse(DatabaseUtility.Get(results,0,"ac3Pid"));
+					audioPid=DatabaseUtility.GetAsInt(results,0,"audioPid");
+					videoPid=DatabaseUtility.GetAsInt(results,0,"videoPid");
+					teletextPid=DatabaseUtility.GetAsInt(results,0,"teletextPid");
+					pmtPid=DatabaseUtility.GetAsInt(results,0,"pmtPid");
+					audio1=DatabaseUtility.GetAsInt(results,0,"audio1Pid");
+					audio2=DatabaseUtility.GetAsInt(results,0,"audio2Pid");
+					audio3=DatabaseUtility.GetAsInt(results,0,"audio3Pid");
+					ac3Pid=DatabaseUtility.GetAsInt(results,0,"ac3Pid");
 					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
 					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
 					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
 					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
 					
-					HasEITPresentFollow=Int32.Parse(DatabaseUtility.Get(results,0,"HasEITPresentFollow"))!=0;
-					HasEITSchedule=Int32.Parse(DatabaseUtility.Get(results,0,"HasEITSchedule"))!=0;
+					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
+					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
 					return ;
 				}
 				catch(Exception ex)
@@ -2579,31 +2579,31 @@ namespace MediaPortal.TV.Database
 					SQLiteResultSet results;
 					results = m_db.Execute(strSQL);
 					if (results.Rows.Count != 1) return ;
-					frequency=Int32.Parse(DatabaseUtility.Get(results,0,"frequency"));
-					symbolrate=Int32.Parse(DatabaseUtility.Get(results,0,"symbolrate"));
-					innerFec=Int32.Parse(DatabaseUtility.Get(results,0,"innerFec"));
-					modulation=Int32.Parse(DatabaseUtility.Get(results,0,"modulation"));
-					ONID=Int32.Parse(DatabaseUtility.Get(results,0,"ONID"));
-					TSID=Int32.Parse(DatabaseUtility.Get(results,0,"TSID"));
-					SID=Int32.Parse(DatabaseUtility.Get(results,0,"SID"));
+					frequency=DatabaseUtility.GetAsInt(results,0,"frequency");
+					symbolrate=DatabaseUtility.GetAsInt(results,0,"symbolrate");
+					innerFec=DatabaseUtility.GetAsInt(results,0,"innerFec");
+					modulation=DatabaseUtility.GetAsInt(results,0,"modulation");
+					ONID=DatabaseUtility.GetAsInt(results,0,"ONID");
+					TSID=DatabaseUtility.GetAsInt(results,0,"TSID");
+					SID=DatabaseUtility.GetAsInt(results,0,"SID");
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
-					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
-					videoPid=Int32.Parse(DatabaseUtility.Get(results,0,"videoPid"));
-					teletextPid=Int32.Parse(DatabaseUtility.Get(results,0,"teletextPid"));
-					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
-					audio1=Int32.Parse(DatabaseUtility.Get(results,0,"audio1Pid"));
-					audio2=Int32.Parse(DatabaseUtility.Get(results,0,"audio2Pid"));
-					audio3=Int32.Parse(DatabaseUtility.Get(results,0,"audio3Pid"));
-					ac3Pid=Int32.Parse(DatabaseUtility.Get(results,0,"ac3Pid"));
+					audioPid=DatabaseUtility.GetAsInt(results,0,"audioPid");
+					videoPid=DatabaseUtility.GetAsInt(results,0,"videoPid");
+					teletextPid=DatabaseUtility.GetAsInt(results,0,"teletextPid");
+					pmtPid=DatabaseUtility.GetAsInt(results,0,"pmtPid");
+					audio1=DatabaseUtility.GetAsInt(results,0,"audio1Pid");
+					audio2=DatabaseUtility.GetAsInt(results,0,"audio2Pid");
+					audio3=DatabaseUtility.GetAsInt(results,0,"audio3Pid");
+					ac3Pid=DatabaseUtility.GetAsInt(results,0,"ac3Pid");
 					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
 					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
 					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
 					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
-					physicalChannel=Int32.Parse(DatabaseUtility.Get(results,0,"channelNumber"));
-					minorChannel=Int32.Parse(DatabaseUtility.Get(results,0,"minorChannel"));
-					majorChannel=Int32.Parse(DatabaseUtility.Get(results,0,"majorChannel"));
-					HasEITPresentFollow=Int32.Parse(DatabaseUtility.Get(results,0,"HasEITPresentFollow"))!=0;
-					HasEITSchedule=Int32.Parse(DatabaseUtility.Get(results,0,"HasEITSchedule"))!=0;
+					physicalChannel=DatabaseUtility.GetAsInt(results,0,"channelNumber");
+					minorChannel=DatabaseUtility.GetAsInt(results,0,"minorChannel");
+					majorChannel=DatabaseUtility.GetAsInt(results,0,"majorChannel");
+					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
+					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
 					return ;
 				}
 				catch(Exception ex)
@@ -2630,9 +2630,9 @@ namespace MediaPortal.TV.Database
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 						TVGroup group = new TVGroup();
-						group.ID      =Int32.Parse(DatabaseUtility.Get(results,i,"idGroup"));
-						group.Sort     =Int32.Parse(DatabaseUtility.Get(results,i,"iSort"));
-						group.Pincode  =Int32.Parse(DatabaseUtility.Get(results,i,"Pincode"));
+						group.ID      =DatabaseUtility.GetAsInt(results,i,"idGroup");
+						group.Sort     =DatabaseUtility.GetAsInt(results,i,"iSort");
+						group.Pincode  =DatabaseUtility.GetAsInt(results,i,"Pincode");
 						group.GroupName=DatabaseUtility.Get(results,i,"strName");
 						groups.Add(group);
 					}
@@ -2667,7 +2667,7 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count== 0) return ;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						int channelid=Int32.Parse(DatabaseUtility.Get(results,i,"tblGroupMapping.idChannel"));
+						int channelid=DatabaseUtility.GetAsInt(results,i,"tblGroupMapping.idChannel");
 						foreach (TVChannel chan in tvchannels)
 						{
 							if (chan.ID==channelid)
@@ -2702,7 +2702,7 @@ namespace MediaPortal.TV.Database
 					results=m_db.Execute(strSQL);
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						cards.Add( Int32.Parse(DatabaseUtility.Get(results,i,"card")));
+						cards.Add( DatabaseUtility.GetAsInt(results,i,"card"));
 					}
 				} 
 				catch (Exception ex) 
@@ -2759,8 +2759,8 @@ namespace MediaPortal.TV.Database
 					results=m_db.Execute(strSQL);
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						int id    =Int32.Parse(DatabaseUtility.Get(results,i,"idChannelCard") );
-						int cardnr=Int32.Parse(DatabaseUtility.Get(results,i,"card") );	
+						int id    =DatabaseUtility.GetAsInt(results,i,"idChannelCard") ;
+						int cardnr=DatabaseUtility.GetAsInt(results,i,"card") ;	
 						cardnr--;
 						strSQL=String.Format( "update tblChannelCard set card={0} where idChannelCard={1}", 
 																cardnr, id);
@@ -2945,7 +2945,7 @@ namespace MediaPortal.TV.Database
 					else
 					{
 						//exists, update it
-						int iNewID=Int32.Parse(DatabaseUtility.Get(results,0,"idGroup"));
+						int iNewID=DatabaseUtility.GetAsInt(results,0,"idGroup");
 						strSQL=String.Format( "update tblGroups set strName='{0}', iSort={1}, Pincode={2} where idGroup={3}", 
 																   strgroupName, group.Sort,group.Pincode, iNewID);
 						results=m_db.Execute(strSQL);
@@ -3003,8 +3003,8 @@ namespace MediaPortal.TV.Database
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 						TVChannel chan=new TVChannel();
-						chan.ID=Int32.Parse(DatabaseUtility.Get(results,i,"channel.idChannel"));
-						chan.Number = Int32.Parse(DatabaseUtility.Get(results,i,"channel.iChannelNr"));
+						chan.ID=DatabaseUtility.GetAsInt(results,i,"channel.idChannel");
+						chan.Number = DatabaseUtility.GetAsInt(results,i,"channel.iChannelNr");
 						decimal dFreq=0;
 						try
 						{
@@ -3020,18 +3020,18 @@ namespace MediaPortal.TV.Database
 						dFreq *=1000000M;
 						chan.Frequency = (long)Math.Round(dFreq,0);
 						chan.Name = DatabaseUtility.Get(results,i,"channel.strChannel");
-						int iExternal=Int32.Parse(DatabaseUtility.Get(results,i,"channel.bExternal"));
+						int iExternal=DatabaseUtility.GetAsInt(results,i,"channel.bExternal");
 						if (iExternal!=0) chan.External=true;
 						else chan.External=false;
 
-						int iVisible=Int32.Parse(DatabaseUtility.Get(results,i,"channel.Visible"));
+						int iVisible=DatabaseUtility.GetAsInt(results,i,"channel.Visible");
 						if (iVisible!=0) chan.VisibleInGuide=true;
 						else chan.VisibleInGuide=false;
 
 						chan.ExternalTunerChannel= DatabaseUtility.Get(results,i,"channel.ExternalChannel");
-						chan.TVStandard = (AnalogVideoStandard)Int32.Parse(DatabaseUtility.Get(results,i,"channel.standard"));
-						chan.Country=Int32.Parse(DatabaseUtility.Get(results,i,"channel.Country"));
-						chan.Sort=Int32.Parse(DatabaseUtility.Get(results,i,"channel.iSort"));
+						chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results,i,"channel.standard");
+						chan.Country=DatabaseUtility.GetAsInt(results,i,"channel.Country");
+						chan.Sort=DatabaseUtility.GetAsInt(results,i,"channel.iSort");
 						channels.Add(chan);
 					}
 
@@ -3252,7 +3252,7 @@ namespace MediaPortal.TV.Database
 						notify.Program.Description=DatabaseUtility.Get(results,i,"tblPrograms.strDescription");
 						notify.Program.Episode=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeName");
 						notify.Program.Repeat=DatabaseUtility.Get(results,i,"tblPrograms.strRepeat");
-						notify.Program.ID=Int32.Parse(DatabaseUtility.Get(results,i,"tblPrograms.idProgram"));
+						notify.Program.ID=DatabaseUtility.GetAsInt(results,i,"tblPrograms.idProgram");
 						notify.Program.SeriesNum=DatabaseUtility.Get(results,i,"tblPrograms.strSeriesNum");
 						notify.Program.EpisodeNum=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeNum");
 						notify.Program.EpisodePart=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodePart");
