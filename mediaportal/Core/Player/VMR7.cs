@@ -117,6 +117,10 @@ namespace MediaPortal.Player
 			get{return m_mixerBitmap;}
 		}
 
+		public IQualProp Quality
+		{
+			get { return quality;}
+		}
 		public void Process()
 		{
 			TimeSpan ts = DateTime.Now - repaintTimer;

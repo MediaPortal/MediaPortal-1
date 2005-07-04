@@ -262,6 +262,10 @@ namespace MediaPortal.Player
       m_scene.Repaint();
     }
 
+		public IQualProp Quality
+		{
+			get { return quality;}
+		}
     public void Process()
     {
       TimeSpan ts = DateTime.Now - repaintTimer;
