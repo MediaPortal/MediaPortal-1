@@ -223,11 +223,19 @@ namespace MediaPortal.IR
 		{
 			try
 			{
+				Log.Write("USBUIRT:Open");
 				commandsLearned = new Hashtable();
 				UsbUirtHandle = UUIRTOpen();
 				if(UsbUirtHandle !=  empty )
+				{
 					isUsbUirtLoaded = true;
-
+					
+					Log.Write("USBUIRT:Open succes");
+				}
+				else
+				{
+					Log.Write("USBUIRT:Unable to open USBUIRT driver");
+				}
 				if(isUsbUirtLoaded)
 				{
 					using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -238,9 +246,15 @@ namespace MediaPortal.IR
 						tunerNeedsEnter = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false) ;
 					}
 					if (System.IO.File.Exists(remotefile))
+					{
 						LoadValues();
+					}
+					else Log.Write("USBUIRT:unable to load values from:{0}", remotefile);
 					if (System.IO.File.Exists(tunerfile))
+					{
 						LoadTunerValues();
+					}
+					else Log.Write("USBUIRT:unable to load tunervalues from:{0}", tunerfile);
 				}
 				//setup callack to receive IR messages
 				urcb = new UUIRTReceiveCallbackDelegate(this.UUIRTReceiveCallback);		
@@ -565,18 +579,23 @@ namespace MediaPortal.IR
 				return;
 			int length = channel.Length;
 			if ((!this.Is3Digit && length >2) || (length >3))
-				throw new System.Exception("invalid channel length");
-
+			{
+				Log.Write("USBUIRT: invalid channel:{0}", channel);
+				return;
+			}
 			for (int i = 0; i<length; i++ )
 			{
 				if (channel[i] < '0' || channel[i] > '9')
-					throw new System.Exception("invalid digit in channel: "+channel);
+					continue;
+				Log.Write("USBUIRT: send:{0}", channel[i]);
 				Transmit(this.externalTunerCodes[channel[i] - '0'], UUIRTDRV_IRFMT_UUIRT, 1);
 			}
 
 			if (this.NeedsEnter)
+			{
+				Log.Write("USBUIRT: send enter");
 				Transmit(this.externalTunerCodes[10], UUIRTDRV_IRFMT_UUIRT, 1);
-
+			}
 			// All succeeded, remember last channel
 			lastchannel = channel;
 		}
@@ -586,7 +605,7 @@ namespace MediaPortal.IR
 			if(!isUsbUirtLoaded) return;
 			if (!TransmitEnabled) return;
 			
-			UUIRTTransmitIR(UsbUirtHandle,
+			bool result=UUIRTTransmitIR(UsbUirtHandle,
 				gIRCode, // IRCode 
 				gIRCodeFormat, // codeFormat 
 				repeatCount, // repeatCount 
@@ -595,6 +614,8 @@ namespace MediaPortal.IR
 				0, // reserved1
 				0 // reserved2 
 				);
+			if (!result)
+				Log.Write("USBUIRT: unable to transmit code");
 		}
 		#endregion
 		
