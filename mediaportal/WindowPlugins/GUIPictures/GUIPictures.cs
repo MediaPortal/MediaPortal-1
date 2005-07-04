@@ -485,6 +485,7 @@ namespace MediaPortal.GUI.Pictures
 
     GUIListItem GetItem(int itemIndex)
     {
+			if (itemIndex>=facadeView.Count || itemIndex<0) return null;
       return facadeView[itemIndex];
     }
 

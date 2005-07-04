@@ -1878,6 +1878,7 @@ namespace MediaPortal.GUI.Library
 		{
 			get
 			{
+				if (index < 0 || index >=m_vecItems.Count) return null;
 				return (GUIListItem)m_vecItems[index];
 			}
 		}

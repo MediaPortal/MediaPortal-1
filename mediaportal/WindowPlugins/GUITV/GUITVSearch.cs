@@ -821,8 +821,12 @@ namespace MediaPortal.GUI.TV
 
     GUIListItem GetItem(int iItem)
     {
-      if (currentLevel!=0)
-        return titleView[iItem];
+			if (currentLevel!=0)
+			{
+				if (iItem>=titleView.Count || iItem<0) return null;
+				return titleView[iItem];
+			}
+			if (iItem>=listView.Count || iItem<0) return null;
 			return listView[iItem];
     }
 

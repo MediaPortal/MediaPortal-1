@@ -318,10 +318,16 @@ namespace MediaPortal.GUI.Radio
 
     GUIListItem GetItem(int itemIndex)
     {
-      if (ViewByIcon)
-        return thumbnailView[itemIndex];
-      else
-        return listView[itemIndex];
+			if (ViewByIcon)
+			{
+				if (itemIndex >=thumbnailView.Count) return null;
+				return thumbnailView[itemIndex];
+			}
+			else
+			{
+				if (itemIndex >=listView.Count) return null;
+				return listView[itemIndex];
+			}
     }
 
     int GetSelectedItemNo()
