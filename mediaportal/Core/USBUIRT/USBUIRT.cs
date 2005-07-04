@@ -230,7 +230,8 @@ namespace MediaPortal.IR
 				{
 					isUsbUirtLoaded = true;
 					
-					Log.Write("USBUIRT:Open succes");
+
+					Log.Write("USBUIRT:Open succes:{0}",GetVersions());
 				}
 				else
 				{
