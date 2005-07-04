@@ -310,6 +310,7 @@ namespace MediaPortal.GUI.Library
 						btn.SetPosition(x, y);
 						btn.Render(timePassed);
 					}
+					btn=null;
 				}
 			}
 		}
@@ -328,7 +329,6 @@ namespace MediaPortal.GUI.Library
 					pImage.KeepAspectRatio = m_bKeepAspectRatio;
 					pImage.AllocResources();
 					pItem.Icon = pImage;
-
 				}
 				if (pImage.TextureHeight==0&&pImage.TextureWidth==0)
 				{
@@ -340,7 +340,9 @@ namespace MediaPortal.GUI.Library
 				pImage.Height = m_iImageHeight;
 				pImage.SetPosition(x, y);
 				pImage.Render(timePassed);
+				pImage=null;
 			}
+			pItem=null;
 		}
 
 		protected virtual void RenderPinIcon(float timePassed,int buttonNr,int x,int y)
@@ -371,7 +373,9 @@ namespace MediaPortal.GUI.Library
 					pinImage.SetPosition(x+PinIconOffsetX,y+PinIconOffsetY );
 				}
 				pinImage.Render(timePassed);
+				pinImage=null;
 			}//if (pItem.HasPinIcon)
+			pItem=null;
 		}
 		
 		protected virtual void RenderLabel(float timePassed,int buttonNr,int dwPosX,int dwPosY)
@@ -489,6 +493,7 @@ namespace MediaPortal.GUI.Library
 								label2.TextAlignment=GUIControl.Alignment.ALIGN_RIGHT;
 								label2.FontName=m_strFont2Name;
 								label2.Render(timePassed);
+								label2=null;
 								//m_pFont.DrawText((float)dwPosX, (float)dwPosY + 2 + m_iTextOffsetY2, dwColor, m_wszText, GUIControl.Alignment.ALIGN_RIGHT);
 							}//if (label2!=null)
 						}//if (i>=0 && i < m_labels2.Count)
@@ -533,12 +538,14 @@ namespace MediaPortal.GUI.Library
 								label3.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
 								label3.FontName=m_strFont2Name;
 								label3.Render(timePassed);
+								label3=null;
 								//m_pFont.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
 							}//if (label3!=null)
 						}//if (i>=0 && i < m_labels3.Count)
 					}//if (m_labels3!=null)
 				}//if (m_bTextVisible3)
 			}//if (pItem.Label3.Length > 0)
+			pItem=null;
 		}
 
 		/// <summary>
@@ -584,7 +591,6 @@ namespace MediaPortal.GUI.Library
 					// render the icon
 					RenderIcon(timePassed,i,dwPosX + m_iIconOffsetX, dwPosY + m_iIconOffsetY);
 
-					GUIListItem pItem = (GUIListItem)m_vecItems[i + m_iOffset];
 					dwPosX += (m_iImageWidth + 10);
 
 					// render the text
