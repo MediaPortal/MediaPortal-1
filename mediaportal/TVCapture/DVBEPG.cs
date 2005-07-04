@@ -12,6 +12,31 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBEPG
 	{
+		public class EITComparer: IComparer
+		{
+			#region IComparer Members
+
+			public int Compare(object x, object y)
+			{
+				DVBSections.EITDescr desc1 = (DVBSections.EITDescr )x;
+				DVBSections.EITDescr desc2 = (DVBSections.EITDescr)y ;
+				//first sort on channel
+				long lNumber1=desc1.program_number*100000+desc1.ts_id;
+				long lNumber2=desc2.program_number*100000+desc2.ts_id;
+				if (lNumber1<lNumber2) return -1;
+				if (lNumber1>lNumber2) return 1;
+				//next on start time
+				DateTime date1=new DateTime(desc1.starttime_y,desc1.starttime_m,desc1.starttime_d,desc1.starttime_hh,desc1.starttime_mm,desc1.starttime_ss);
+				DateTime date2=new DateTime(desc2.starttime_y,desc2.starttime_m,desc2.starttime_d,desc2.starttime_hh,desc2.starttime_mm,desc2.starttime_ss);
+				if (date1 < date2) return -1;
+				if (date1 > date2) return 1;
+				return 0;
+			}
+
+			#endregion
+
+		}
+
 		public DVBEPG()
 		{
 			m_cardType=(int)EPGCard.Invalid;
@@ -453,7 +478,11 @@ namespace MediaPortal.TV.Recording
 										if (eit.program_number==SID && eit.ts_id==TSID)
 										{
 											progName=chan.Name;
-											Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+											Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBC:{0} start: {1}.{2}.{3} {4}:{5}:{6} duration: {7}:{8}:{9} {10}",
+												chan.Name,
+												eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,
+												eit.duration_hh,eit.duration_mm,eit.duration_ss,
+												eit.event_name);
 										}
 										break;
 									case NetworkType.DVBS:
@@ -463,7 +492,11 @@ namespace MediaPortal.TV.Recording
 										TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule);
 										if (eit.program_number==SID && eit.ts_id==TSID)
 										{
-											Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+											Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBT:{0} start: {1}.{2}.{3} {4}:{5}:{6} duration: {7}:{8}:{9} {10}",
+																							chan.Name,
+																							eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,
+																							eit.duration_hh,eit.duration_mm,eit.duration_ss,
+																							eit.event_name);
 											progName=chan.Name;
 										}
 										break;
@@ -593,6 +626,7 @@ namespace MediaPortal.TV.Recording
 			if(eitList==null)
 				return 0;
 
+			eitList.Sort(new EITComparer());
 			foreach(DVBSections.EITDescr eit in eitList)
 			{
 
@@ -624,7 +658,11 @@ namespace MediaPortal.TV.Recording
 									if (eit.program_number==SID && eit.ts_id==TSID)
 									{
 										progName=chan.Name;
-										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBC counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBC:{0} start: {1}.{2}.{3} {4}:{5}:{6} duration: {7}:{8}:{9} {10}",
+											chan.Name,
+											eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,
+											eit.duration_hh,eit.duration_mm,eit.duration_ss,
+											eit.event_name);
 									}
 									break;
 								case NetworkType.DVBS:
@@ -634,7 +672,11 @@ namespace MediaPortal.TV.Recording
 									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule);
 									if (eit.program_number==SID && eit.ts_id==TSID)
 									{
-										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBT counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10} {11}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss,chan.Name);
+										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBT:{0} start: {1}.{2}.{3} {4}:{5}:{6} duration: {7}:{8}:{9} {10}",
+											chan.Name,
+											eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,
+											eit.duration_hh,eit.duration_mm,eit.duration_ss,
+											eit.event_name);
 										progName=chan.Name;
 									}
 									break;
