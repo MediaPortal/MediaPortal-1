@@ -1071,6 +1071,7 @@ namespace MediaPortal.GUI.Video
 					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 					m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					isOsdVisible=false;
+					msg=null;
 				}
 			}
 		}
@@ -1217,7 +1218,8 @@ namespace MediaPortal.GUI.Video
       if (cntl!=null)
       {
         cntl.IsVisible=false;
-      }
+			}
+			cntl=null;
     }
     void ShowControl (int dwSenderId, int dwControlID) 
     {
@@ -1226,6 +1228,7 @@ namespace MediaPortal.GUI.Video
       {
         cntl.IsVisible=true;
       }
+			cntl=null;
     }
 
     public override int GetFocusControlId()

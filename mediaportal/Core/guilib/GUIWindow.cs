@@ -779,7 +779,9 @@ namespace MediaPortal.GUI.Library
 							float x = (GUIGraphicsContext.Width - fW) / 2f;
 							float y = (GUIGraphicsContext.Height - fH) / 2f;
 							font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT,-1);
+							strLine=null;
 						}
+						font=null;
 					}
 					for (int x = 0; x < controlList.Count; ++x)
 					{
@@ -865,6 +867,7 @@ namespace MediaPortal.GUI.Library
 					// set focus to the default control then
 					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
 					OnMessage(msg);
+					msg=null;
 
 				}
 				catch(Exception ex)
@@ -999,12 +1002,15 @@ namespace MediaPortal.GUI.Library
 								{
 									GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID, cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
 									cntlFocused.OnMessage(msgLostFocus);
+									msgLostFocus=null;
+									cntlFocused=null;
 								}
 								GUIControl cntTarget=GetControl(message.TargetControlId);
 								if (cntTarget!=null)
 								{
 									cntTarget.OnMessage(message);
 								}
+								cntTarget=null;
 							}
 							return true;
 						}

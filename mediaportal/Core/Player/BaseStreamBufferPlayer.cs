@@ -368,9 +368,7 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
-
 			}
-
 			double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
 			double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
 

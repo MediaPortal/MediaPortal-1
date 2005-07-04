@@ -494,6 +494,7 @@ namespace MediaPortal.Player
 			m_geometry.GetWindow(VideoAspectRatioX, VideoAspectRatioY,out rSource, out rDest);
 			rDest.X += (int)x;
 			rDest.Y += (int)y;
+			m_geometry=null;
 		}
   }//public class VMR9Util
 }//namespace MediaPortal.Player 

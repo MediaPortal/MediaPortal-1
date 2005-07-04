@@ -83,6 +83,7 @@ namespace MediaPortal.GUI.Library
         if (m_strText!=text)
         {
           m_strText=text;
+					text=null;
           textwidth=0;
           textheight=0;
           

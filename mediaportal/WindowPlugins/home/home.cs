@@ -995,6 +995,7 @@ namespace MediaPortal.GUI.Home
 				}
 			}
 			GUIGraphicsContext.DX9Device.Viewport=m_oldviewport;
+			enumControls=null;
 		}
 
 		/// <summary>

@@ -239,10 +239,8 @@ namespace MediaPortal.TV.Recording
 						}//if (dev.IsRecording)
 					}//for (int i=0; i < m_tvcards.Count;++i)
 				}//foreach (TVRecording recording in m_Recordings)
+				oldRecs=null;
 			}//if (m_bRecordingsChanged)
-
-
-			if (m_Recordings.Count==0) return;
 
 			int card;
 			for (int i=0; i < m_TVChannels.Count;++i)
@@ -1585,7 +1583,6 @@ namespace MediaPortal.TV.Recording
 			{
 				RecorderProperties.UpdateRecordingProperties();
 				m_dtProgresBar=DateTime.Now;
-
 			}
 
 			ts=DateTime.Now-m_dtStart;
@@ -1827,6 +1824,7 @@ namespace MediaPortal.TV.Recording
 					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM,0,0,0,0,0,null);
 					msg.Object=notify.Program;
 					GUIGraphicsContext.SendMessage( msg );
+					msg=null;
 				}
 			}
 		}

@@ -291,13 +291,10 @@ namespace MediaPortal.GUI.Library
         m_iCurrentImage =0;
 
       CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
-      string strFile=m_strFileName;
-      if (ContainsProperty)
-        strFile=GUIPropertyManager.Parse(m_strFileName);
-			
       // Check the delay.
 			int dwDelay    = frame.Duration;
       int iMaxLoops=0;
+			frame=null;
 
 			// Default delay = 100;
 			if (0==dwDelay) dwDelay=100;
@@ -462,6 +459,7 @@ namespace MediaPortal.GUI.Library
 				CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
 				if (frame==null) return;
 				Direct3D.Texture texture=frame.Image;
+				frame=null;
 				if (texture==null)
 				{
 					//no texture? then nothing todo
@@ -471,7 +469,9 @@ namespace MediaPortal.GUI.Library
 				// if texture is disposed then free its resources and return
 				if (texture.Disposed)
 				{
+					texture=null;
 					FreeResources();
+					texture=null;
 					return;
 				}
 
@@ -483,6 +483,7 @@ namespace MediaPortal.GUI.Library
 					m_iImageWidth = desc.Width;
 					m_iImageHeight = desc.Height;
 				}
+				texture=null;
 			}
 
       // Calculate the m_iTextureWidth and m_iTextureHeight 
@@ -748,12 +749,14 @@ namespace MediaPortal.GUI.Library
           {
             // filename for new image is empty
             // no need to load it
-            return false;
+						m_strTxt=null;
+						return false;
           }
           IsVisible=true;
           AllocResources();
           Update();
         }
+				m_strTxt=null;
       }
 
         
@@ -789,6 +792,7 @@ namespace MediaPortal.GUI.Library
                 strFileName=GUIGraphicsContext.Skin+@"\media\"+strFileName;
             }
             m_image= GUITextureManager.GetImage(strFileName);
+						strFileName=null;
           }
         }
 
@@ -837,6 +841,7 @@ namespace MediaPortal.GUI.Library
 				m_iImageHeight=0;
 				m_iTextureWidth=0;
 				m_iTextureHeight=0;
+				frame=null;
 				AllocResources();
         return false;
       }
@@ -853,6 +858,8 @@ namespace MediaPortal.GUI.Library
 				m_iImageHeight=0;
 				m_iTextureWidth=0;
 				m_iTextureHeight=0;
+				frame=null;
+				texture=null;
 				AllocResources();
         return false;
       }
@@ -883,37 +890,19 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void Render(float timePassed)
     {
-			//return;
-      //lock (this)
-      {
-        if (!PreRender()) return;
-				
-        //get the current frame
-				if (_packedTextureNo>=0)
-				{
-					FontEngineDrawTexture(_packedTextureNo,_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
-					return;
-				}
-        CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
-        if (frame==null) return ; // no frame? then return
-				frame.Draw(_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
-				/*
-				if (frame.UseNewTextureEngine)
-				{
-					frame.Draw(_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
-					return;
-				}
-        //get the texture of the frame
-        Direct3D.Texture texture=frame.Image;
-
-				GUIGraphicsContext.DX9Device.SetTexture( 0, texture); //SLOW
-        GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0); // SLOW
-        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-        GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 ); //SLOW
-
-        GUIGraphicsContext.DX9Device.SetTexture( 0, null);
-*/
-      }
+			if (!m_bVisible) return;
+      if (!PreRender()) return;
+			
+      //get the current frame
+			if (_packedTextureNo>=0)
+			{
+				FontEngineDrawTexture(_packedTextureNo,_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
+				return;
+			}
+      CachedTexture.Frame frame=m_vecTextures[m_iCurrentImage];
+      if (frame==null) return ; // no frame? then return
+			frame.Draw(_fx,_fy,_nw,_nh,_uoff,_voff,_umax,_vmax,_color);
+			frame=null;
 		}
 
 		/// <summary>

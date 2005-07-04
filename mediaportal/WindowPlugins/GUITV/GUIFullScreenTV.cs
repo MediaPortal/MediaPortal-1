@@ -1080,11 +1080,11 @@ namespace MediaPortal.GUI.TV
 				screenState.OsdVisible=isOsdVisible;
 				updateGUI=true;
 			}
-            if (m_bZapOSDVisible != screenState.ZapOsdVisible)
-            {
-                screenState.ZapOsdVisible=m_bZapOSDVisible;
-                updateGUI=true;
-            }
+      if (m_bZapOSDVisible != screenState.ZapOsdVisible)
+      {
+          screenState.ZapOsdVisible=m_bZapOSDVisible;
+          updateGUI=true;
+      }
 			if (isMsnChatVisible != screenState.MsnVisible)
 			{
 				screenState.MsnVisible=isMsnChatVisible;
@@ -1321,6 +1321,7 @@ namespace MediaPortal.GUI.TV
 					GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 					m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					isOsdVisible=false;
+					msg=null;
 				}
 			}
 
@@ -1338,8 +1339,8 @@ namespace MediaPortal.GUI.TV
 			}
 
 
-            // Let the navigator zap channel if needed
-            if (GUITVHome.Navigator.CheckChannelChange() || m_bZapOSDVisible && m_iZapTimeOut>0)
+      // Let the navigator zap channel if needed
+      if (GUITVHome.Navigator.CheckChannelChange() || m_bZapOSDVisible && m_iZapTimeOut>0)
 			{
 				TimeSpan ts =DateTime.Now - m_dwZapTimer;
 				if ( ts.TotalMilliseconds > m_iZapTimeOut)
@@ -1349,6 +1350,7 @@ namespace MediaPortal.GUI.TV
 					m_zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					Log.Write("timeout->ZAP OSD:Off");
 					m_bZapOSDVisible=false;
+					msg=null;
 				}
 			}
 		}
@@ -1412,12 +1414,14 @@ namespace MediaPortal.GUI.TV
 			//close window
 			GUIMessage msg2= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_osdWindow.GetID,0,0,GetID,0,null);
 			m_osdWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
+			msg2=null;
 			Log.Write("timeout->OSD:Off");
 			isOsdVisible=false;
 
 			//close window
 			msg2= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,GetID,0,null);
 			m_msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
+			msg2=null;
 			isMsnChatVisible=false;
 
 			Log.Write("fullscreentv:not viewing anymore");
@@ -1439,6 +1443,7 @@ namespace MediaPortal.GUI.TV
 				Action myaction=new Action();
 				myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
 				OnAction(myaction);
+				myaction=null;
 				m_dwZapTimer=DateTime.Now;
 			} 
 		}
@@ -1474,6 +1479,7 @@ namespace MediaPortal.GUI.TV
 			{
 				cntl.IsVisible=false;
 			}
+			cntl=null;
 		}
 		void ShowControl (int dwSenderId, int dwControlID) 
 		{
@@ -1482,6 +1488,7 @@ namespace MediaPortal.GUI.TV
 			{
 				cntl.IsVisible=true;
 			}
+			cntl=null;
 		}
 
 		void OnKeyTimeout()
@@ -1495,7 +1502,7 @@ namespace MediaPortal.GUI.TV
 				ChangeChannelNr(iChannel);
 				m_bShowInput=false;
 				
-				m_strChannel="";
+				m_strChannel=String.Empty;
 			}
 		}
 		private void OnKeyCode(char chKey)

@@ -69,17 +69,8 @@ namespace MediaPortal.GUI.Library
 						if ((bool)delegates[i].DynamicInvoke(new object[] {null,message,false} )) 
 							return;
 					}
+					delegates=null;
 				}
-				/*
-				//SLOW
-        for (int x=0; x < windowCount;++x)
-        {
-          if ( m_vecWindows[x].DoesPostRender() && m_vecWindows[x].Focused)
-          {
-            m_vecWindows[x].OnMessage(message);
-            if ( m_vecWindows[x].Focused) return;
-          }
-        }*/
       }
 
 			try
@@ -113,9 +104,12 @@ namespace MediaPortal.GUI.Library
 							if (pWindow.GetID==message.TargetWindowId)
 							{
 								pWindow.OnMessage(message);
+								pWindow=null;
+								activewindow=null;
 								return;
 							}
 						}
+						activewindow=null;
 						return;
 					}
 				}
@@ -123,6 +117,7 @@ namespace MediaPortal.GUI.Library
 				// else send message to the current active window
 				if (activewindow!=null)
 					activewindow.OnMessage(message);
+				activewindow=null;
 			}
 			catch(Exception ex)
 			{
@@ -151,19 +146,24 @@ namespace MediaPortal.GUI.Library
 			{
 				ArrayList list=m_vecThreadMessages;
 				m_vecThreadMessages=new ArrayList();
-				foreach(GUIMessage message in list)
+				for (int i=0; i < list.Count;++i)
 				{
-					SendMessage(message);
+					SendMessage(list[i] as GUIMessage);
 				}
+				list=null;
 			}
 			if (m_vecThreadActions.Count>0)
 			{
 				ArrayList list=m_vecThreadActions;
 				m_vecThreadActions=new ArrayList();
-				foreach(Action action in list)
+				for (int i=0; i < list.Count;++i)
 				{
-					if (OnNewAction!=null) OnNewAction(action);
+					if (OnNewAction!=null) 
+					{
+						OnNewAction(list[i] as Action);
+					}
 				}
+				list=null;
 			}
 		}
 
@@ -205,17 +205,8 @@ namespace MediaPortal.GUI.Library
 						if (focused || iActiveWindow!=ActiveWindow)
 							return;
 					}
+					delegates=null;
 				}
-				/*
-				for (int x=0; x < windowCount;++x)
-				{
-					if ( m_vecWindows[x].Focused && m_vecWindows[x].DoesPostRender()  )
-					{
-						int iActiveWindow=ActiveWindow;
-						m_vecWindows[x].OnAction(action);
-						if ( m_vecWindows[x].Focused || iActiveWindow!=ActiveWindow) return;
-					}
-				}*/
 			}
 
 			if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
@@ -224,15 +215,6 @@ namespace MediaPortal.GUI.Library
 				{
 					OnPostRenderAction(action,null,false);
 				}
-/*
-				for (int x=0; x < windowCount;++x)
-				{
-					if ( m_vecWindows[x].DoesPostRender() )
-					{
-						m_vecWindows[x].OnAction(action);
-					}
-				}
-*/				
 			}
 
 			// if a dialog is onscreen then route the action to the dialog
@@ -245,8 +227,10 @@ namespace MediaPortal.GUI.Library
 					if (ActionTranslator.GetAction(m_pRouteWindow.GetID,action.m_key,ref newaction))
 					{
 						m_pRouteWindow.OnAction(newaction);
+						newaction=null;
 						return;
 					}
+					newaction=null;
 				}
 				m_pRouteWindow.OnAction(action);
 				return;
@@ -267,14 +251,6 @@ namespace MediaPortal.GUI.Library
 						{
 							OnPostRenderAction(null,null,true);
 						}
-						/*
-						for (int x=0; x < windowCount;++x)
-						{
-							if ( m_vecWindows[x].DoesPostRender() )
-							{
-								m_vecWindows[x].Focused=true;
-							}
-						}*/
 					}
 				}
 			}
@@ -456,15 +432,6 @@ namespace MediaPortal.GUI.Library
 				{
 					OnPostRenderAction(null,null,false);
 				}
-				/*
-        for (int x=0; x < windowCount;++x)
-        {
-          if (m_vecWindows[x].DoesPostRender() )
-          {
-            m_vecWindows[x].Focused=false;
-          }
-        } */
-     
         GUIMessage msg;
         GUIWindow pWindow;  
 				int iActiveWindow=m_iActiveWindow;
@@ -774,24 +741,6 @@ namespace MediaPortal.GUI.Library
 					OnPostRender(iLayer,timePassed);
 				}
 			}
-			/*
-			//GUIFontManager.Present();
-			try
-			{
-				//render overlay layer 1-10
-				for (int iLayer=1; iLayer <= 2; iLayer++)
-				{
-					for (int x=0; x < windowCount;++x)
-					{
-						if ( m_vecWindows[x].DoesPostRender() )
-							m_vecWindows[x].PostRender(timePassed,iLayer);
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"PostRender exception:{0}", ex.ToString());
-			}*/
       GUIPropertyManager.Changed=false;
     }
 
@@ -807,7 +756,11 @@ namespace MediaPortal.GUI.Library
 				if (m_iActiveWindow >=0) 
 				{
 					GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
-					if (null!=pWindow) pWindow.Process();
+					if (null!=pWindow) 
+					{
+						pWindow.Process();
+						pWindow=null;
+					}
 				}
 			}
 			catch(Exception ex)
@@ -836,7 +789,11 @@ namespace MediaPortal.GUI.Library
       if (m_iActiveWindow >=0 && m_iActiveWindow < windowCount) 
       {
         GUIWindow pWindow=m_vecWindows[m_iActiveWindow];
-        if (null!=pWindow) pWindow.Render(timePassed);
+				if (null!=pWindow) 
+				{
+					pWindow.Render(timePassed);
+					pWindow=null;
+				}
       }
 
       // and call postrender
