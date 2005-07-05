@@ -22,6 +22,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelStatus;
 		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Button btnManualTV;
+		private System.Windows.Forms.Button btnManualRadio;
 		XmlDocument docSetup;
 		public Wizard_AnalogTV() : this("Analog TV")
 		{
@@ -65,6 +68,9 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.cbCountries = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.btnManualTV = new System.Windows.Forms.Button();
+			this.btnManualRadio = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -72,6 +78,9 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.btnManualRadio);
+			this.groupBox1.Controls.Add(this.btnManualTV);
+			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.label3);
 			this.groupBox1.Controls.Add(this.labelStatus);
 			this.groupBox1.Controls.Add(this.button1);
@@ -90,34 +99,34 @@ namespace MediaPortal.Configuration.Sections
 			// label3
 			// 
 			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-			this.label3.Location = new System.Drawing.Point(32, 184);
+			this.label3.Location = new System.Drawing.Point(32, 232);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(432, 56);
 			this.label3.TabIndex = 11;
-			this.label3.Text = "If your country/city is not listed then we dont have information which television" +
-				" and radio channels you can receive. You will need to add the tv/radio channels " +
-				"manually in the next screen by pressing Next";
+			this.label3.Text = "NOTE: If your country/city is not listed then we dont have information which tele" +
+				"vision and radio channels you can receive. You will need to add the tv/radio cha" +
+				"nnels manually in the next screen by pressing the Manual Tune button";
 			// 
 			// labelStatus
 			// 
 			this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.labelStatus.Location = new System.Drawing.Point(32, 136);
+			this.labelStatus.Location = new System.Drawing.Point(32, 176);
 			this.labelStatus.Name = "labelStatus";
 			this.labelStatus.Size = new System.Drawing.Size(400, 23);
 			this.labelStatus.TabIndex = 10;
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(32, 104);
+			this.button1.Location = new System.Drawing.Point(32, 136);
 			this.button1.Name = "button1";
 			this.button1.TabIndex = 9;
-			this.button1.Text = "Import";
+			this.button1.Text = "Download";
 			this.button1.Click += new System.EventHandler(this.button1_Click_1);
 			// 
 			// cbCities
 			// 
 			this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbCities.Location = new System.Drawing.Point(96, 64);
+			this.cbCities.Location = new System.Drawing.Point(96, 104);
 			this.cbCities.Name = "cbCities";
 			this.cbCities.Size = new System.Drawing.Size(344, 21);
 			this.cbCities.Sorted = true;
@@ -125,7 +134,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(32, 64);
+			this.label2.Location = new System.Drawing.Point(32, 104);
 			this.label2.Name = "label2";
 			this.label2.TabIndex = 7;
 			this.label2.Text = "City:";
@@ -133,7 +142,7 @@ namespace MediaPortal.Configuration.Sections
 			// cbCountries
 			// 
 			this.cbCountries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbCountries.Location = new System.Drawing.Point(96, 32);
+			this.cbCountries.Location = new System.Drawing.Point(96, 72);
 			this.cbCountries.Name = "cbCountries";
 			this.cbCountries.Size = new System.Drawing.Size(344, 21);
 			this.cbCountries.Sorted = true;
@@ -142,10 +151,37 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(32, 32);
+			this.label1.Location = new System.Drawing.Point(32, 72);
 			this.label1.Name = "label1";
 			this.label1.TabIndex = 5;
 			this.label1.Text = "Country:";
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(24, 24);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(432, 40);
+			this.label4.TabIndex = 12;
+			this.label4.Text = "Mediaportal has detected one or more analog Tv cards. Select your country/city  a" +
+				"nd press Import to download all the tv and radio channels";
+			// 
+			// btnManualTV
+			// 
+			this.btnManualTV.Location = new System.Drawing.Point(32, 296);
+			this.btnManualTV.Name = "btnManualTV";
+			this.btnManualTV.Size = new System.Drawing.Size(152, 23);
+			this.btnManualTV.TabIndex = 13;
+			this.btnManualTV.Text = "Manual scan TV channels";
+			this.btnManualTV.Click += new System.EventHandler(this.btnManualTV_Click);
+			// 
+			// btnManualRadio
+			// 
+			this.btnManualRadio.Location = new System.Drawing.Point(200, 296);
+			this.btnManualRadio.Name = "btnManualRadio";
+			this.btnManualRadio.Size = new System.Drawing.Size(152, 23);
+			this.btnManualRadio.TabIndex = 14;
+			this.btnManualRadio.Text = "Manual scan Radio channels";
+			this.btnManualRadio.Click += new System.EventHandler(this.btnManualRadio_Click);
 			// 
 			// Wizard_AnalogTV
 			// 
@@ -322,6 +358,88 @@ namespace MediaPortal.Configuration.Sections
 			FillInCities();
 		}
 
+
+		TVCaptureDevice CaptureCard
+		{
+			get
+			{
+				TVCaptureCards cards = new TVCaptureCards();
+				cards.LoadCaptureCards();
+				foreach (TVCaptureDevice dev in cards.captureCards)
+				{
+					if (dev.Network==NetworkType.Analog)
+					{
+						return dev;
+					}
+				}
+				return null;
+			}
+		}
+		private void btnManualTV_Click(object sender, System.EventArgs e)
+		{
+			TVCaptureDevice dev=CaptureCard;
+			if (dev==null) return;
+			AnalogTVTuningForm dialog = new AnalogTVTuningForm();
+			if ( dev.CreateGraph())
+			{
+				ITuning tuning=GraphFactory.CreateTuning(CaptureCard);
+				if (tuning!=null)
+				{
+					dialog.Tuning=tuning;
+					dialog.Card=CaptureCard;
+					dialog.ShowDialog(this);		
+					MapTvToOtherCards(dev.ID);
+				}
+				dev.DeleteGraph();
+			}
+		}
+
+		private void btnManualRadio_Click(object sender, System.EventArgs e)
+		{
+			TVCaptureDevice dev=CaptureCard;
+			if (dev==null) return;
+			if (dev.CreateGraph())
+			{
+				RadioAutoTuningForm dialog = new RadioAutoTuningForm(dev);
+				dialog.ShowDialog(this);		
+				MapRadioToOtherCards(dev.ID);
+				dev.DeleteGraph();
+			}
+		}
+		void MapTvToOtherCards(int id)
+		{
+			ArrayList tvchannels = new ArrayList();
+			TVDatabase.GetChannelsForCard(ref tvchannels,id);
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.Analog && dev.ID != id)
+				{
+					foreach (TVChannel chan in tvchannels)
+					{
+						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
+					}
+				}
+			}
+		}
+		void MapRadioToOtherCards(int id)
+		{
+			ArrayList radioChans = new ArrayList();
+			RadioDatabase.GetStationsForCard(ref radioChans,id);
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.Analog && dev.ID != id)
+				{
+					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
+					{
+						RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
+					}
+				}
+			}
+		}
 
 	}
 }

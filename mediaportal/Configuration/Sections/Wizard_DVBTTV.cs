@@ -39,6 +39,7 @@ namespace MediaPortal.Configuration.Sections
 		int                                 tunedFrequency=0;
 		int																	newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
+		private System.Windows.Forms.Label label3;
 		
 		private System.Windows.Forms.Panel panel1;
 
@@ -77,13 +78,14 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.labelStatus = new System.Windows.Forms.Label();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.button1 = new System.Windows.Forms.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.cbCountry = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
+			this.label3 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -91,6 +93,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.label3);
 			this.groupBox1.Controls.Add(this.panel1);
 			this.groupBox1.Controls.Add(this.labelStatus);
 			this.groupBox1.Controls.Add(this.progressBar1);
@@ -104,7 +107,14 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Size = new System.Drawing.Size(480, 360);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Setup digital tv (DVBT terrestrial)";
+			this.groupBox1.Text = "Setup digital tv (DVBT terrestial)";
+			// 
+			// panel1
+			// 
+			this.panel1.Location = new System.Drawing.Point(432, 328);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(1, 1);
+			this.panel1.TabIndex = 12;
 			// 
 			// labelStatus
 			// 
@@ -153,12 +163,13 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
 				"ess auto tune to scan for the tv and radio channels";
 			// 
-			// panel1
+			// label3
 			// 
-			this.panel1.Location = new System.Drawing.Point(280, 216);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(160, 120);
-			this.panel1.TabIndex = 12;
+			this.label3.Location = new System.Drawing.Point(40, 216);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(392, 48);
+			this.label3.TabIndex = 13;
+			this.label3.Text = @"NOTE: if your country is not present or if Mediaportal is unable to find any channels then MediaPortal probably doesnt know which frequencies to scan for your country. Edit the dvbt.xml in the TuningParameters/ subfolder and fill in all the frequencies needed for your country.";
 			// 
 			// Wizard_DVBTTV
 			// 
@@ -300,10 +311,11 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 			captureCard.DeleteGraph();
-			MapToOtherCards(captureCard.ID);
+			MapTvToOtherCards(captureCard.ID);
+			MapRadioToOtherCards(captureCard.ID);
 			captureCard=null;
 		}
-		void MapToOtherCards(int id)
+		void MapTvToOtherCards(int id)
 		{
 			ArrayList tvchannels = new ArrayList();
 			TVDatabase.GetChannelsForCard(ref tvchannels,id);
@@ -316,6 +328,23 @@ namespace MediaPortal.Configuration.Sections
 					foreach (TVChannel chan in tvchannels)
 					{
 						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
+					}
+				}
+			}
+		}
+		void MapRadioToOtherCards(int id)
+		{
+			ArrayList radioChans = new ArrayList();
+			MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans,id);
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.Analog && dev.ID != id)
+				{
+					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
+					{
+						MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
 					}
 				}
 			}

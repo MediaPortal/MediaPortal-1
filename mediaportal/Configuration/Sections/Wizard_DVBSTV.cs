@@ -109,13 +109,13 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.label6 = new System.Windows.Forms.Label();
 			this.progressBar3 = new System.Windows.Forms.ProgressBar();
 			this.button3 = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.comboBox2 = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -224,6 +224,13 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Setup digital tv (DVBS Satellite)";
 			// 
+			// panel1
+			// 
+			this.panel1.Location = new System.Drawing.Point(432, 328);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(1, 1);
+			this.panel1.TabIndex = 13;
+			// 
 			// label6
 			// 
 			this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
@@ -267,15 +274,8 @@ namespace MediaPortal.Configuration.Sections
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(432, 40);
 			this.label8.TabIndex = 0;
-			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
-				"ess auto tune to scan for the tv and radio channels";
-			// 
-			// panel1
-			// 
-			this.panel1.Location = new System.Drawing.Point(280, 216);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(160, 120);
-			this.panel1.TabIndex = 13;
+			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your transponder an" +
+				"d press auto tune to scan for the tv and radio channels";
 			// 
 			// Wizard_DVBSTV
 			// 
@@ -446,10 +446,11 @@ namespace MediaPortal.Configuration.Sections
 			}
 			captureCard.DeleteGraph();
 
-			MapToOtherCards(captureCard.ID);
+			MapTvToOtherCards(captureCard.ID);
+			MapRadioToOtherCards(captureCard.ID);
 			captureCard=null;
 		}
-		void MapToOtherCards(int id)
+		void MapTvToOtherCards(int id)
 		{
 			ArrayList tvchannels = new ArrayList();
 			TVDatabase.GetChannelsForCard(ref tvchannels,id);
@@ -462,6 +463,23 @@ namespace MediaPortal.Configuration.Sections
 					foreach (TVChannel chan in tvchannels)
 					{
 						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
+					}
+				}
+			}
+		}
+		void MapRadioToOtherCards(int id)
+		{
+			ArrayList radioChans = new ArrayList();
+			MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans,id);
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.Analog && dev.ID != id)
+				{
+					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
+					{
+						MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
 					}
 				}
 			}
