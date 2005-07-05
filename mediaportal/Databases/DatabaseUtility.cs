@@ -138,7 +138,7 @@ namespace MediaPortal.Database
 				}
 				catch (SQLiteException ex) 
 				{
-					Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
 				}
 				return true;
 			}

@@ -255,7 +255,10 @@ namespace MediaPortal.GUI.Library
 
       foreach (Frame tex in m_Frames)
       {
-        tex.Dispose();
+				if (tex!=null)
+				{
+					tex.Dispose();
+				}
       }
       m_Frames.Clear();
       if (m_Image!=null)
