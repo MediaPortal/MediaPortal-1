@@ -160,11 +160,6 @@
                     HintPath = "..\Setup\postsetup\wmppia.dll"
                 />
                 <Reference
-                    Name = "edtftpnet-1.1.3"
-                    AssemblyName = "edtftpnet-1.1.3"
-                    HintPath = "..\edtftpnet-1.1.3.dll"
-                />
-                <Reference
                     Name = "Interop.TunerLib"
                     AssemblyName = "Interop.TunerLib"
                     HintPath = "..\Interop.TunerLib.dll"
@@ -203,6 +198,11 @@
                     Name = "System.ServiceProcess"
                     AssemblyName = "System.ServiceProcess"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.ServiceProcess.dll"
+                />
+                <Reference
+                    Name = "edtftpnet-1.1.8"
+                    AssemblyName = "edtftpnet-1.1.8"
+                    HintPath = "..\edtftpnet-1.1.8.dll"
                 />
             </References>
         </Build>

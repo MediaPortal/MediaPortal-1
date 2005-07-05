@@ -48,7 +48,7 @@ copy ..\..\..\xAPTransport.dll .
 copy ..\..\..\mbm5.dll .
 copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .
-copy ..\..\..\edtftpnet-1.1.3.dll .
+copy ..\..\..\edtftpnet-1.1.8.dll .
 copy ..\..\..\dvblib.dll .
 copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
