@@ -839,7 +839,8 @@ namespace MediaPortal.TV.Recording
     /// Callback from GUIGraphicsContext. Will get called when the video window position or width/height changes
     /// </summary>
     private void GUIGraphicsContext_OnVideoWindowChanged()
-    {
+		{
+			if (GUIGraphicsContext.Vmr9Active) return;
       if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return ;
       if (m_mpeg2Demux==null) return ;
 			

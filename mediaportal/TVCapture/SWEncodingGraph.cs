@@ -949,6 +949,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     private void GUIGraphicsContext_OnVideoWindowChanged()
     {
+			
+			if (GUIGraphicsContext.Vmr9Active) return;
       if (m_graphState != State.Viewing) return;
       int iVideoWidth, iVideoHeight;
 			if (Vmr9.IsVMR9Connected)

@@ -717,6 +717,7 @@ namespace MediaPortal.TV.Recording
 
 		private void GUIGraphicsContext_OnVideoWindowChanged()
 		{
+			if (GUIGraphicsContext.Vmr9Active) return;
 			if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return;
 			
 			if (!Vmr9.UseVMR9inMYTV)

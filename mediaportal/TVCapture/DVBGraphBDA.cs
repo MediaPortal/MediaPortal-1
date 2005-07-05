@@ -1325,6 +1325,8 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		private void GUIGraphicsContext_OnVideoWindowChanged()
 		{
+			
+			if (GUIGraphicsContext.Vmr9Active) return;
 			if (m_graphState != State.Viewing) return;
 			int iVideoWidth, iVideoHeight;
 			int aspectX, aspectY;
@@ -2663,6 +2665,7 @@ namespace MediaPortal.TV.Recording
 
 		void CheckVideoResolutionChanges()
 		{
+			if (GUIGraphicsContext.Vmr9Active) return;
 			if (m_graphState != State.Viewing) return ;
 			if (m_videoWindow==null || m_basicVideo==null) return;
 			int aspectX, aspectY;
