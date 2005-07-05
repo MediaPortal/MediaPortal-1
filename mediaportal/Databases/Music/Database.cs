@@ -2564,7 +2564,6 @@ namespace MediaPortal.Music.Database
 
 	  private int AddMissingFiles(int StartProgress, int EndProgress)
 	  {
-		  m_shares.Clear();
 		  /// This seems to clear the arraylist and make it valid
 		  availableFiles = new ArrayList();
 		  Log.Write ("13");

@@ -36,6 +36,8 @@ namespace MediaPortal.Configuration.Sections
 		ArrayList sharesPhotos = new ArrayList();
 		bool stopScanning=false;
 		private System.Windows.Forms.ProgressBar progressBar1;
+		private System.Windows.Forms.Timer timer1;
+		private System.Windows.Forms.Label fileLabel;
 		bool isScanning=false;
 		public Wizard_SelectPlugins() : this("Media Search")
 		{
@@ -71,7 +73,9 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.buttonStopStart = new System.Windows.Forms.Button();
 			this.labelMovieCount = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
@@ -84,7 +88,8 @@ namespace MediaPortal.Configuration.Sections
 			this.labelHD = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.fileLabel = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -92,6 +97,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.fileLabel);
 			this.groupBox1.Controls.Add(this.progressBar1);
 			this.groupBox1.Controls.Add(this.buttonStopStart);
 			this.groupBox1.Controls.Add(this.labelMovieCount);
@@ -113,6 +119,14 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Find local media";
 			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+			// 
+			// progressBar1
+			// 
+			this.progressBar1.Location = new System.Drawing.Point(32, 264);
+			this.progressBar1.Name = "progressBar1";
+			this.progressBar1.Size = new System.Drawing.Size(400, 16);
+			this.progressBar1.TabIndex = 12;
+			this.progressBar1.Visible = false;
 			// 
 			// buttonStopStart
 			// 
@@ -211,13 +225,17 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Mediaportal will now search your harddisk(s) for any music, photo\'s and movies";
 			// 
-			// progressBar1
+			// timer1
 			// 
-			this.progressBar1.Location = new System.Drawing.Point(32, 264);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(400, 16);
-			this.progressBar1.TabIndex = 12;
-			this.progressBar1.Visible = false;
+			this.timer1.Interval = 1000;
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			// 
+			// fileLabel
+			// 
+			this.fileLabel.Location = new System.Drawing.Point(32, 288);
+			this.fileLabel.Name = "fileLabel";
+			this.fileLabel.Size = new System.Drawing.Size(392, 23);
+			this.fileLabel.TabIndex = 13;
 			// 
 			// Wizard_SelectPlugins
 			// 
@@ -277,6 +295,10 @@ namespace MediaPortal.Configuration.Sections
 
 				}
 			}
+			fileLabel.Text="";
+			progressBar1.Visible=true;
+			progressBar1.Value=0;
+			timer1.Enabled=true;
 			foreach(string drive in drives)
 			{
 				int driveType=Util.Utils.getDriveType(drive) ;
@@ -290,6 +312,8 @@ namespace MediaPortal.Configuration.Sections
 			SaveShare(sharesPhotos,"pictures");
 
 			ScanMusic();
+			progressBar1.Visible=false;
+			timer1.Enabled=false;
 			labelMovieCount.Text = totalVideo.ToString();
 			labelPhotoCount.Text = totalPhotos.ToString();
 			labelMusicCount.Text = totalAudio.ToString();
@@ -298,106 +322,23 @@ namespace MediaPortal.Configuration.Sections
 			isScanning=false;
 		}
 
-		void ScanTags(string folder, ref ArrayList extractedTags)
-		{
-			string[] files;
-			string[] folders;
-			try
-			{
-				files = Directory.GetFiles(folder);
-				folders= Directory.GetDirectories(folder);
-			}
-			catch(Exception)
-			{
-				return;
-			}
-			string strLastThumb="";
-			foreach (string file in files)
-			{
-				byte[] imageBytes=null;
-				MusicTag tag = TagReader.TagReader.ReadTag( file, ref imageBytes );
-
-				if(tag != null)
-				{
-					//
-					// Add to list of extracted tags
-					//
-					extractedTags.Add(new MusicDatabase.MusicData(file, tag));
-					progressBar1.Value=extractedTags.Count;
-					Application.DoEvents();
-					// What to call the thumb?
-					string name = String.Format( "{0}-{1}", tag.Artist, tag.Album );
-					string strSmallThumb =  Utils.GetCoverArtName( Thumbs.MusicAlbum, name );
-
-					if ( strSmallThumb != strLastThumb )
-					{
-						// Use the folder.jpg if it's there
-						string strImageFile = Utils.GetFolderThumb( file );
-
-						try
-						{
-							if ( System.IO.File.Exists( strImageFile ) )
-							{
-								MediaPortal.Util.Picture.CreateThumbnail( strImageFile, strSmallThumb, 128, 128, 0 );
-								// MediaPortal.Util.Picture.CreateThumbnail( strImageFile, strLargeThumb, 512, 512, 0 );
-
-								strLastThumb = strSmallThumb;
-							}
-							else if ( imageBytes != null )
-							{
-								MemoryStream memoryStream = new MemoryStream( imageBytes );
-								Image image = Image.FromStream( memoryStream );
-
-								MediaPortal.Util.Picture.CreateThumbnail( image, strSmallThumb, 128, 128, 0 );
-								// MediaPortal.Util.Picture.CreateThumbnail( image, strLargeThumb, 512, 512, 0 );
-
-								strLastThumb = strSmallThumb;
-							}
-						}
-						catch ( Exception )
-						{
-							// Just skip this one
-						}
-					}
-				}
-			}
-			foreach (string subfolder in folders)
-			{
-				if (subfolder!="." && subfolder!="..")
-				{
-					ScanTags (subfolder,ref extractedTags);
-				}
-			}
-		}
-
 		void ScanMusic()
 		{
-			progressBar1.Minimum=0;
-			progressBar1.Maximum=(int)totalAudio;
-			progressBar1.Visible=true;
-			ArrayList extractedTags = new ArrayList();
-			foreach (Shares.ShareData share in sharesMusic)
-			{
-				ScanTags(share.Folder,ref extractedTags);
-			}
-			MediaPortal.Music.Database.MusicDatabase database = new MediaPortal.Music.Database.MusicDatabase();
-			database.BeginTransaction();
-			foreach(MusicDatabase.MusicData data in extractedTags)
-			{
-				Song song         = new Song();
-				song.FileName     = data.FilePath;
-				song.Title		    = data.Tag.Title;
-				song.Genre		    = data.Tag.Genre;
-				song.Artist	      = data.Tag.Artist;
-				song.Album		    = data.Tag.Album;
-				song.Year			    =	data.Tag.Year;
-				song.Track			  = data.Tag.Track;
-				song.Duration	    = data.Tag.Duration;
-				database.AddSong(song, true);
-
-			}
-			database.CommitTransaction();
-			progressBar1.Visible=false;
+			timer1.Enabled=false;
+			progressBar1.Value=0;
+			MediaPortal.Music.Database.MusicDatabase m_dbs=new MediaPortal.Music.Database.MusicDatabase();
+			m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
+			int appel = m_dbs.MusicDatabaseReorg(null );
+		}
+		void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
+		{
+			progressBar1.Value = e.progress;
+			SetStatus(e.phase);
+		}
+		private void SetStatus(string status)
+		{
+			fileLabel.Text = status;
+			Application.DoEvents();
 		}
 
 		void ScanFolder(string folder, bool scanForAudio, bool scanForVideo, bool scanForPhotos)
@@ -636,6 +577,12 @@ namespace MediaPortal.Configuration.Sections
 		private void groupBox1_Enter(object sender, System.EventArgs e)
 		{
 		
+		}
+
+		private void timer1_Tick(object sender, System.EventArgs e)
+		{
+			if (progressBar1.Value+1<100) progressBar1.Value++;
+			else progressBar1.Value=0;
 		}
 	}
 }
