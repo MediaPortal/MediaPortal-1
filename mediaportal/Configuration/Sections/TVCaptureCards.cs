@@ -426,6 +426,8 @@ namespace MediaPortal.Configuration.Sections
 						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
 						cd.DeviceType					= ccd.DeviceId;
 						cd.RecordingPath			= recFolder;
+						cd.UseForRecording=true;
+						cd.UseForTV=true;
 						captureCards.Add(cd);
 						availableVideoDeviceMonikers.RemoveAt(i);
 						availableVideoDevices.RemoveAt(i);
