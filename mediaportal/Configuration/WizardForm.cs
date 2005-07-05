@@ -152,6 +152,11 @@ namespace MediaPortal.Configuration
 				AddSection(new Sections.Weather()			   , "Weather", "My weather setup", "");
 				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
 			}
+
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("capture", "tuner", "Cable");
+			}			
 		}
 
 		/// <summary>

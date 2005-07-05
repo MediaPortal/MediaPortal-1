@@ -184,6 +184,18 @@ namespace MediaPortal.Configuration.Sections
 		void FillInCities()
 		{
 			string country=(string)cbCountries.SelectedItem;
+			foreach (TunerCountry analogCountry in TunerCountries.Countries)
+			{
+				if (country.ToLower().IndexOf(analogCountry.Country.ToLower())>=0)
+				{
+					using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+					{
+						xmlwriter.SetValue("capture", "countryname", analogCountry.Country);
+						xmlwriter.SetValue("capture", "country", analogCountry.Id);
+						break;
+					}
+				}
+			}
 			cbCities.Items.Clear();
 			XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
 			foreach (XmlNode nodeCountry in listCountries)
