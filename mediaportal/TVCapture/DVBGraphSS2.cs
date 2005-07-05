@@ -843,7 +843,7 @@ namespace MediaPortal.TV.Recording
 
 			if (m_streamDemuxer != null)
 			{
-				m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0);
+				m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0,0);
 			}
 
 			StopRecording();
@@ -1443,7 +1443,7 @@ namespace MediaPortal.TV.Recording
 					m_lastTuneError=false;
 					if (m_streamDemuxer != null)
 					{
-						m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid);
+						m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid,ch.ProgramNumber);
 					}
 					if(m_pluginsEnabled==true)
 						ExecTuner();
@@ -2411,7 +2411,7 @@ namespace MediaPortal.TV.Recording
 			
 			if (m_streamDemuxer != null)
 			{
-				m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid);
+				m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid,ch.ProgramNumber);
 			}
 
 			if(m_demuxVideoPin!=null && m_demuxAudioPin!=null)
@@ -2548,7 +2548,7 @@ namespace MediaPortal.TV.Recording
                 {
                     m_selectedAudioPid = audioPid;
                     if(m_streamDemuxer!=null)
-                        m_streamDemuxer.SetChannelData(audioPid, m_currentChannel.VideoPid, m_currentChannel.TeletextPid, m_currentChannel.Audio3, m_currentChannel.ServiceName,m_currentChannel.PMTPid);
+                        m_streamDemuxer.SetChannelData(audioPid, m_currentChannel.VideoPid, m_currentChannel.TeletextPid, m_currentChannel.Audio3, m_currentChannel.ServiceName,m_currentChannel.PMTPid,m_currentChannel.ProgramNumber);
 
                 }
 			}

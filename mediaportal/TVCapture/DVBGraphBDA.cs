@@ -789,7 +789,7 @@ namespace MediaPortal.TV.Recording
 				// to clear buffers for epg and teletext
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0);
+					m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0,0);
 				}
 
 				if (m_TunerStatistics!=null)
@@ -3001,7 +3001,7 @@ namespace MediaPortal.TV.Recording
 			
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 					if(currentTuningObject.HasEITSchedule==true)
 					{
 						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
@@ -3331,7 +3331,7 @@ namespace MediaPortal.TV.Recording
 			currentTuningObject=(DVBChannel)tuningObject;
 			currentTuningObject.DiSEqC=disecqNo;
 			SubmitTuneRequest(currentTuningObject);
-			m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0);
+			m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0,0);
 		}//public void Tune(object tuningObject)
 		
 		/// <summary>
@@ -3905,8 +3905,7 @@ namespace MediaPortal.TV.Recording
 
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid);
-					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 				}
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3, PMT:{3:X} PCR:{4:X} ECM:{5:X}",

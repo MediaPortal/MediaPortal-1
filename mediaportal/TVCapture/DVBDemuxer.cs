@@ -185,6 +185,7 @@ namespace MediaPortal.TV.Recording
 		int m_lastContinuityCounter=0;
 		// pmt
 		int m_currentPMTVersion=-1;
+		int m_programNumber=-1;
 		// card
 		static int m_currentDVBCard=0;
 		static NetworkType m_currentNetworkType;
@@ -302,12 +303,15 @@ namespace MediaPortal.TV.Recording
 			m_secTimer.Interval=timeout;
 			return GetTable(pid,tableID);
 		}
-		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid)
+		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid, int programnumber)
 		{
 			m_secTimer.Stop();
 			m_packetsReceived=false;
 			epgRegrabTime= DateTime.MinValue;
 			m_currentPMTVersion=-1;
+			m_programNumber=-1;
+			if (programnumber>0)
+				m_programNumber=programnumber;
 			// audio
 			if (audio > 0x1FFF)
 				m_audioPid = -1;
@@ -998,8 +1002,11 @@ namespace MediaPortal.TV.Recording
 								UInt32 crc2=GetSectionCRCValue(data,len-4);
 								if(crc1==crc2)
 								{
-									OnPMTIsChanged((byte[])data.Clone());
-									m_currentPMTVersion=header.VersionNumber;
+									if (m_programNumber <=0 || m_programNumber == header.TableIDExtension)
+									{
+										OnPMTIsChanged((byte[])data.Clone());
+										m_currentPMTVersion=header.VersionNumber;
+									}
 								}
 
 							}
