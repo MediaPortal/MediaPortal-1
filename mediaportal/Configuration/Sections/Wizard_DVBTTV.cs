@@ -340,7 +340,7 @@ namespace MediaPortal.Configuration.Sections
 			cards.LoadCaptureCards();
 			foreach (TVCaptureDevice dev in cards.captureCards)
 			{
-				if (dev.Network==NetworkType.Analog && dev.ID != id)
+				if (dev.Network==NetworkType.DVBT && dev.ID != id)
 				{
 					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
 					{
