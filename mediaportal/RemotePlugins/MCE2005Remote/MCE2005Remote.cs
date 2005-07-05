@@ -400,7 +400,7 @@ namespace MediaPortal
           
 					case 0x8D://TV guide
 						GUIMessage msgtv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TVGUIDE,0,null);
-						GUIGraphicsContext.SendMessage(msgtv);
+						GUIWindowManager.SendThreadMessage(msgtv);
 						break;
 
 					case 0x46://(yellow/My tv  on USA model)
@@ -410,13 +410,13 @@ namespace MediaPortal
 					
 					case 0x25://My tv (or LiveTV on USA model)
 						GUIMessage msgtv2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TV,0,null);
-						GUIGraphicsContext.SendMessage(msgtv2);
+						GUIWindowManager.SendThreadMessage(msgtv2);
 						break;
           
           
 					case 0x47://My Music (green on USA model)
 						GUIMessage msgMusic = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_MUSIC_FILES,0,null);
-						GUIGraphicsContext.SendMessage(msgMusic);
+						GUIWindowManager.SendThreadMessage(msgMusic);
 						break;
           
 					case 0x49://My Pictures (blue on USA model)
@@ -428,7 +428,7 @@ namespace MediaPortal
 						else
 						{
 							GUIMessage msgPics = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_PICTURES,0,null);
-							GUIGraphicsContext.SendMessage(msgPics);
+							GUIWindowManager.SendThreadMessage(msgPics);
 						}
 						break;
           
@@ -441,7 +441,7 @@ namespace MediaPortal
 						else
 						{
 							GUIMessage msgVids = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_VIDEOS,0,null);
-							GUIGraphicsContext.SendMessage(msgVids);
+							GUIWindowManager.SendThreadMessage(msgVids);
 						}
 						break;
           
@@ -459,7 +459,7 @@ namespace MediaPortal
           
 					case 0x5C: //green home
 						GUIMessage msgHome = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_HOME,0,null);
-						GUIGraphicsContext.SendMessage(msgHome);
+						GUIWindowManager.SendThreadMessage(msgHome);
 						break;
 
 					case 0x5D://Show context menu (Yellow button)
@@ -494,7 +494,7 @@ namespace MediaPortal
           
 					case 0x48://Recorded TV
 						GUIMessage msgTvRec = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_RECORDEDTV,0,null);
-						GUIGraphicsContext.SendMessage(msgTvRec);
+						GUIWindowManager.SendThreadMessage(msgTvRec);
 
 						break;
           
@@ -503,7 +503,7 @@ namespace MediaPortal
           
 					case 0x0d:// home
 						GUIMessage msgHome2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_HOME,0,null);
-						GUIGraphicsContext.SendMessage(msgHome2);
+						GUIWindowManager.SendThreadMessage(msgHome2);
 						break;
           
 //					case 0xB0: //play
@@ -577,13 +577,13 @@ namespace MediaPortal
 							{
 								// Activate fullscreen teletext
 								GUIMessage msgTxt1 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT,0,null);
-								GUIGraphicsContext.SendMessage(msgTxt1);
+								GUIWindowManager.SendThreadMessage(msgTxt1);
 							}
 							else
 							{
 								// Activate teletext in window
 								GUIMessage msgTxt2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TELETEXT,0,null);
-								GUIGraphicsContext.SendMessage(msgTxt2);
+								GUIWindowManager.SendThreadMessage(msgTxt2);
 							}
 						}
 						break;

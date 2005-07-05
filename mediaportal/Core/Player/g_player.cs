@@ -920,7 +920,18 @@ namespace MediaPortal.Player
     
     static public void Process()
     {
-      if (m_player==null) return ;
+			if (m_player==null) 
+			{
+				if((GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9!=null))
+				{
+					VMR9Util.g_vmr9.Process();
+					if (GUIGraphicsContext.Vmr9FPS < 1f)
+					{
+						VMR9Util.g_vmr9.Repaint();// repaint vmr9
+					}
+				}
+				return ;
+			}
       m_player.Process();
       if (!m_player.Playing)
       {
