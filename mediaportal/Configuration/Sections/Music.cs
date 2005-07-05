@@ -51,7 +51,15 @@ namespace MediaPortal.Configuration.Sections
 				showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
 				autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
 
-				playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", "");
+				string playListFolder=Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+				playListFolder+=@"\My Playlists";
+				try
+				{
+					System.IO.Directory.CreateDirectory(playListFolder);
+				}
+				catch(Exception){}
+
+				playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", playListFolder);
 
 				audioPlayerComboBox.Text = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
 			      autoPlayCheckBox.Checked=xmlreader.GetValueAsBool("audioplayer", "autoplay", true);

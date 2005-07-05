@@ -71,8 +71,15 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
+				string playListFolder=Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+				playListFolder+=@"\My Playlists";
+				try
+				{
+					System.IO.Directory.CreateDirectory(playListFolder);
+				}
+				catch(Exception){}
 				repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("movies", "repeat", true);
-				folderNameTextBox.Text = xmlreader.GetValueAsString("movies", "playlists", "");
+				folderNameTextBox.Text = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
 
 				showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", true);
 				string defaultLanguage= xmlreader.GetValueAsString("subtitles", "language", "English");

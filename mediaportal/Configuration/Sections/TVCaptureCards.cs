@@ -390,6 +390,14 @@ namespace MediaPortal.Configuration.Sections
 			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&e6752e3&0&4820f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
 			availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8070070&rev_01#5&e6752e3&0&4020f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");		
 */
+			string recFolder=Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			recFolder+=@"\My Recordings";
+			try
+			{
+				System.IO.Directory.CreateDirectory(recFolder);
+			}
+			catch(Exception){}
+
 			//enum all cards known in capturedefinitions.xml
 			foreach (CaptureCardDefinition ccd  in CaptureCardDefinitions.CaptureCards)
 			{
@@ -415,9 +423,9 @@ namespace MediaPortal.Configuration.Sections
 						cd.IsMCECard					= ccd.Capabilities.IsMceDevice;
 						cd.SupportsMPEG2			= ccd.Capabilities.IsMpeg2Device;
 						cd.DeviceId						= ccd.DeviceId;
-						cd.RecordingPath=GetDefaultRecordingPath();
 						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
 						cd.DeviceType					= ccd.DeviceId;
+						cd.RecordingPath			= recFolder;
 						captureCards.Add(cd);
 						availableVideoDeviceMonikers.RemoveAt(i);
 						availableVideoDevices.RemoveAt(i);
@@ -427,22 +435,6 @@ namespace MediaPortal.Configuration.Sections
 			SaveCaptureCards(captureCards);
 		}
 
-		string GetDefaultRecordingPath()
-		{
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				for (int i = 0; i < 20; i++)
-				{
-					string strSharePath = String.Format("sharepath{0}",i);
-					string path=xmlreader.GetValueAsString("movies", strSharePath, "");
-					if (path!="" && Util.Utils.IsHD(path))
-					{
-						return path;
-					}
-				}
-			}
-			return "C:";
-		}
 	}
 }
 

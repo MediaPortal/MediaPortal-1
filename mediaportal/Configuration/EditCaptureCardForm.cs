@@ -1648,20 +1648,15 @@ namespace MediaPortal.Configuration
 		void FillInDefaultRecordingPath()
 		{
 			if (tbRecordingFolder.Text!=String.Empty) return;
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			
+			string recFolder=Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			recFolder+=@"\My Recordings";
+			try
 			{
-				for (int i = 0; i < 20; i++)
-				{
-					string strSharePath = String.Format("sharepath{0}",i);
-					string path=xmlreader.GetValueAsString("movies", strSharePath, "");
-					if (path!="" && Util.Utils.IsHD(path))
-					{
-						tbRecordingFolder.Text=path;
-						UpdatePercentageLabel();
-						break;
-					}
-				}
+				System.IO.Directory.CreateDirectory(recFolder);
 			}
+			catch(Exception){}
+			tbRecordingFolder.Text=recFolder;
 		}
 
 		/// <summary>

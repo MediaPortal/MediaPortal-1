@@ -234,14 +234,14 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 		}
-		void ImportAnalogChannels(string xmlFile, out int tvChannels, out int radioChannels)
+
+		void ImportAnalogChannels(string xmlFile,out int tvChannels, out int radioChannels)
 		{
-			TVCaptureCards cards =new TVCaptureCards();
-			cards.LoadCaptureCards();
-			tvChannels=0;//3888183
+			tvChannels=0;
 			radioChannels=0;
 			XmlDocument doc = new XmlDocument();
-			doc.Load("http://mediaportal.sourceforge.net/tvsetup/analog/"+xmlFile);
+			UriBuilder builder = new UriBuilder("http","mediaportal.sourceforge.net",80,"tvsetup/analog/"+xmlFile);
+			doc.Load(builder.Uri.AbsoluteUri);
 			XmlNodeList listTvChannels = doc.DocumentElement.SelectNodes("/mediaportal/tv/channel");
 			foreach (XmlNode nodeChannel in listTvChannels)
 			{
@@ -250,16 +250,13 @@ namespace MediaPortal.Configuration.Sections
 				XmlNode frequency			 = nodeChannel.Attributes.GetNamedItem("frequency");
 				TVChannel chan =new TVChannel();
 				chan.Name=name.Value;
-				chan.Number=Int32.Parse(number.Value);
-				chan.Frequency=ConvertToFrequency(frequency.Value);
-				TVDatabase.AddChannel(chan);
-				foreach (TVCaptureDevice dev in cards.captureCards)
+				try
 				{
-					if (dev.Network==NetworkType.Analog)
-					{
-						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
-					}
+					chan.Number=Int32.Parse(number.Value);
 				}
+				catch(Exception){}
+				chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
+				TVDatabase.AddChannel(chan);
 				tvChannels++;
 			}
 			XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
@@ -272,13 +269,6 @@ namespace MediaPortal.Configuration.Sections
 				chan.Frequency=ConvertToFrequency(frequency.Value);
 				RadioDatabase.AddStation(ref chan);
 				radioChannels++;
-				foreach (TVCaptureDevice dev in cards.captureCards)
-				{
-					if (dev.Network==NetworkType.Analog)
-					{
-						RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
-					}
-				}
 			}
 		}
 		long ConvertToFrequency(string frequency)
@@ -292,7 +282,29 @@ namespace MediaPortal.Configuration.Sections
 			freqValue*=1000000;
 			return (long)(freqValue);
 		}
+		
 
+		long ConvertToTvFrequency(string frequency, ref TVChannel chan)
+		{
+			if (frequency.Trim()==String.Empty) return 0;
+			chan.Number=TVDatabase.FindFreeTvChannelNumber(chan.Number);
+			frequency=frequency.ToUpper();
+			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
+			{
+				if (frequency.Equals(TVChannel.SpecialChannels[i].Name))
+				{
+					return TVChannel.SpecialChannels[i].Frequency;
+				}
+			}
+
+			float testValue=189.24f;
+			string usage=testValue.ToString("f2");
+			if (usage.IndexOf(".")>=0) frequency=frequency.Replace(",",".");
+			if (usage.IndexOf(",")>=0) frequency=frequency.Replace(".",",");
+			double freqValue=Convert.ToDouble(frequency);
+			freqValue*=1000000;
+			return (long)(freqValue);
+		}
 		private void cbCountries_SelectedIndexChanged_1(object sender, System.EventArgs e)
 		{
 			FillInCities();
