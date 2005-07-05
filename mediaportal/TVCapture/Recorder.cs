@@ -151,7 +151,7 @@ namespace MediaPortal.TV.Recording
 			m_Recordings.Clear();
 			m_Notifies.Clear();
 			TVDatabase.GetRecordings(ref m_Recordings);
-			TVDatabase.GetNotifies(m_Notifies);
+			TVDatabase.GetNotifies(m_Notifies,false);
 
 			TVDatabase.OnRecordingsChanged += new TVDatabase.OnChangedHandler(Recorder.OnRecordingsChanged);
 			TVDatabase.OnNotifiesChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(Recorder.OnNotifiesChanged);
@@ -1811,7 +1811,7 @@ namespace MediaPortal.TV.Recording
 			if (m_bNotifiesChanged)
 			{
 				m_Notifies.Clear();
-				TVDatabase.GetNotifies(m_Notifies);
+				TVDatabase.GetNotifies(m_Notifies,false);
 				m_bNotifiesChanged=false;
 			}
 			DateTime dt5Mins=DateTime.Now.AddMinutes(5);
@@ -1820,6 +1820,7 @@ namespace MediaPortal.TV.Recording
 				TVNotify notify = (TVNotify)m_Notifies[i];
 				if ( dt5Mins> notify.Program.StartTime)
 				{
+					TVDatabase.GetNotify(notify);
 					TVDatabase.DeleteNotify(notify);
 					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM,0,0,0,0,0,null);
 					msg.Object=notify.Program;

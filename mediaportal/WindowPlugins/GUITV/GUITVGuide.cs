@@ -518,7 +518,7 @@ namespace MediaPortal.GUI.TV
 					m_recordings=new ArrayList();
 					
           LoadSettings();
-					TVDatabase.GetNotifies(notifies);
+					TVDatabase.GetNotifies(notifies,false);
 
 					GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
           GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
@@ -2189,7 +2189,7 @@ namespace MediaPortal.GUI.TV
 				}
 				TVNotify notification=null;
 				ArrayList notifies = new ArrayList();
-				TVDatabase.GetNotifies(notifies);
+				TVDatabase.GetNotifies(notifies,false);
 				bool showNotify=true;
 				foreach (TVNotify notify in notifies)
 				{
@@ -2554,7 +2554,7 @@ namespace MediaPortal.GUI.TV
 		private void TVDatabase_OnNotifiesChanged()
 		{
 			notifies.Clear();
-			TVDatabase.GetNotifies(notifies);
+			TVDatabase.GetNotifies(notifies,false);
 			m_bNeedUpdate=true;
 		}
 		protected override void OnPageDestroy(int newWindowId)

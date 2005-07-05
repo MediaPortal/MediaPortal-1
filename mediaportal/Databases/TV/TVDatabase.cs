@@ -3223,7 +3223,7 @@ namespace MediaPortal.TV.Database
 				OnNotifiesChanged();
 		}
 
-		static public void GetNotifies(ArrayList notifies)
+		static public void GetNotifies(ArrayList notifies, bool complete)
 		{
 			notifies.Clear();
 			lock (typeof(TVDatabase))
@@ -3234,7 +3234,10 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return ;
 					SQLiteResultSet results;
 
-					strSQL=String.Format( "select * from channel,genre,tblPrograms,tblNotifies where channel.idChannel=tblPrograms.idChannel and tblPrograms.idGenre=genre.idGenre and tblPrograms.idProgram=tblNotifies.idProgram");
+					if (complete)
+						strSQL=String.Format( "select * from channel,genre,tblPrograms,tblNotifies where channel.idChannel=tblPrograms.idChannel and tblPrograms.idGenre=genre.idGenre and tblPrograms.idProgram=tblNotifies.idProgram");
+					else
+						strSQL=String.Format( "select * tblNotifies");
 
 					results=m_db.Execute(strSQL);
 					for (int i=0; i < results.Rows.Count;++i)
@@ -3242,25 +3245,73 @@ namespace MediaPortal.TV.Database
 						TVNotify notify= new TVNotify();
 						notify.Program = new TVProgram();
 						TVProgram prog=new TVProgram();
-						notify.Program.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
-						notify.Program.Start=iStart;
-						notify.Program.End=iEnd;
-						notify.Program.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
-						notify.Program.Title=DatabaseUtility.Get(results,i,"tblPrograms.strTitle");
-						notify.Program.Description=DatabaseUtility.Get(results,i,"tblPrograms.strDescription");
-						notify.Program.Episode=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeName");
-						notify.Program.Repeat=DatabaseUtility.Get(results,i,"tblPrograms.strRepeat");
-						notify.Program.ID=DatabaseUtility.GetAsInt(results,i,"tblPrograms.idProgram");
-						notify.Program.SeriesNum=DatabaseUtility.Get(results,i,"tblPrograms.strSeriesNum");
-						notify.Program.EpisodeNum=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeNum");
-						notify.Program.EpisodePart=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodePart");
-						notify.Program.Date=DatabaseUtility.Get(results,i,"tblPrograms.strDate");
-						notify.Program.StarRating=DatabaseUtility.Get(results,i,"tblPrograms.strStarRating");
-						notify.Program.Classification=DatabaseUtility.Get(results,i,"tblPrograms.strClassification");
+						if (complete)
+						{
+							notify.Program.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
+							long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
+							long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+							notify.Program.Start=iStart;
+							notify.Program.End=iEnd;
+							notify.Program.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
+							notify.Program.Title=DatabaseUtility.Get(results,i,"tblPrograms.strTitle");
+							notify.Program.Description=DatabaseUtility.Get(results,i,"tblPrograms.strDescription");
+							notify.Program.Episode=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeName");
+							notify.Program.Repeat=DatabaseUtility.Get(results,i,"tblPrograms.strRepeat");
+							notify.Program.SeriesNum=DatabaseUtility.Get(results,i,"tblPrograms.strSeriesNum");
+							notify.Program.EpisodeNum=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodeNum");
+							notify.Program.EpisodePart=DatabaseUtility.Get(results,i,"tblPrograms.strEpisodePart");
+							notify.Program.Date=DatabaseUtility.Get(results,i,"tblPrograms.strDate");
+							notify.Program.StarRating=DatabaseUtility.Get(results,i,"tblPrograms.strStarRating");
+							notify.Program.Classification=DatabaseUtility.Get(results,i,"tblPrograms.strClassification");
+						}
+						notify.Program.ID=DatabaseUtility.GetAsInt(results,i,"tblNotifies.idProgram");
 						notify.ID=DatabaseUtility.GetAsInt(results,i,"tblNotifies.idNotify");
 						notifies.Add(notify);
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+		}
+
+
+		static public void GetNotify(TVNotify notify)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					if (null==m_db) return ;
+					SQLiteResultSet results;
+
+					strSQL=String.Format( "select * from channel,genre,tblPrograms,tblNotifies where channel.idChannel=tblPrograms.idChannel and tblPrograms.idGenre=genre.idGenre and tblPrograms.idProgram=tblNotifies.idProgram and tblNotifies.idNotify={0}", notify.ID);
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count==1)
+					{
+						notify.Program = new TVProgram();
+						TVProgram prog=new TVProgram();
+						notify.Program.Channel=DatabaseUtility.Get(results,0,"channel.strChannel");
+						long iStart=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iStartTime"));
+						long iEnd=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iEndTime"));
+						notify.Program.Start=iStart;
+						notify.Program.End=iEnd;
+						notify.Program.Genre=DatabaseUtility.Get(results,0,"genre.strGenre");
+						notify.Program.Title=DatabaseUtility.Get(results,0,"tblPrograms.strTitle");
+						notify.Program.Description=DatabaseUtility.Get(results,0,"tblPrograms.strDescription");
+						notify.Program.Episode=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeName");
+						notify.Program.Repeat=DatabaseUtility.Get(results,0,"tblPrograms.strRepeat");
+						notify.Program.SeriesNum=DatabaseUtility.Get(results,0,"tblPrograms.strSeriesNum");
+						notify.Program.EpisodeNum=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeNum");
+						notify.Program.EpisodePart=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodePart");
+						notify.Program.Date=DatabaseUtility.Get(results,0,"tblPrograms.strDate");
+						notify.Program.StarRating=DatabaseUtility.Get(results,0,"tblPrograms.strStarRating");
+						notify.Program.Classification=DatabaseUtility.Get(results,0,"tblPrograms.strClassification");
+						notify.Program.ID=DatabaseUtility.GetAsInt(results,0,"tblNotifies.idProgram");
+						notify.ID=DatabaseUtility.GetAsInt(results,0,"tblNotifies.idNotify");
 					}
 				} 
 				catch (Exception ex) 
