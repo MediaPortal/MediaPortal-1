@@ -841,36 +841,35 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState < State.Created) return;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			isUsingAC3=false;
-
-			if(m_streamDemuxer!=null)
-			{
-				try
-				{
-					m_streamDemuxer.OnAudioFormatChanged -= new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
-					m_streamDemuxer.OnPMTIsChanged-=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
-					m_streamDemuxer.OnGotTable-=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
-				}
-				catch
-				{
-				}
-			}
 			m_iChannelNr=-1;
 			//m_fileWriter.Close();
+			StopRecording();
+			StopTimeShifting();
+			StopViewing();
 
 			if (m_streamDemuxer != null)
 			{
 				m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0,0);
 			}
 
-			StopRecording();
-			StopTimeShifting();
-			StopViewing();
-
 			if (Vmr9!=null)
 			{
 				Vmr9.RemoveVMR9();
 				Vmr9.Release();
 				Vmr9=null;
+			}
+			if (Vmr7!=null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free vmr7");
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
+			}
+				
+			if (m_recorder!=null) 
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
+				m_recorder.Stop();
+				m_recorder=null;
 			}
 
 			if (m_mediaControl != null)
@@ -897,16 +896,13 @@ namespace MediaPortal.TV.Recording
 			{
 				m_bOverlayVisible=false;
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
-				m_videoWindow.put_Owner(IntPtr.Zero);
+				//m_videoWindow.put_Owner(IntPtr.Zero);
 				m_videoWindow = null;
 			}
-
 
 			if (m_basicVideo != null)
 				m_basicVideo = null;
       
-
-			DsUtils.RemoveFilters(m_graphBuilder);
 			//
 			// release all interfaces and pins
 			//
@@ -1026,13 +1022,14 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_b2c2Adapter);
 				m_b2c2Adapter=null;
 			}
+			if (m_graphBuilder!=null)
+				DsUtils.RemoveFilters(m_graphBuilder);
+
 			if (m_graphBuilder != null)
 			{
 				Marshal.ReleaseComObject(m_graphBuilder); 
 				m_graphBuilder = null;
 			}
-			GUIGraphicsContext.form.Invalidate(true);
-			GC.Collect();
 
 			//add collected stuff into programs database
 
@@ -1294,7 +1291,8 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.TimeShifting) return false;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:StopTimeShifting()");
-			m_mediaControl.Stop();
+			if (m_mediaControl!=null)
+				m_mediaControl.Stop();
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
@@ -1858,8 +1856,10 @@ namespace MediaPortal.TV.Recording
 			{
 				Vmr9.Enable(false);
 			}
-			m_mediaControl.Stop();
-			m_mediaControl=null;
+			if (m_mediaControl!=null)
+			{
+				m_mediaControl.Stop();
+			}
 			m_graphState = State.Created;
 			DeleteGraph();
 			return true;
