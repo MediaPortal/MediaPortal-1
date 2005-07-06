@@ -3338,7 +3338,7 @@ namespace MediaPortal.TV.Database
 					if (complete)
 						strSQL=String.Format( "select * from channel,genre,tblPrograms,tblNotifies where channel.idChannel=tblPrograms.idChannel and tblPrograms.idGenre=genre.idGenre and tblPrograms.idProgram=tblNotifies.idProgram");
 					else
-						strSQL=String.Format( "select * tblNotifies");
+						strSQL=String.Format( "select * from tblNotifies");
 
 					results=m_db.Execute(strSQL);
 					for (int i=0; i < results.Rows.Count;++i)

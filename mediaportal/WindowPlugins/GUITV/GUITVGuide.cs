@@ -1376,8 +1376,6 @@ namespace MediaPortal.GUI.TV
 						img.RenderLeft=false;
 						img.RenderRight=false;
 
-						Trace.WriteLine(String.Format("{0} {1} {2}-{3} {4}",
-																img.GetID,program.Channel,program.Start,program.End,program.Title));
 						img.TexutureIcon=String.Empty;
 						if (HasNotify(program))
 							img.TexutureIcon=Thumbs.TvNotifyIcon;
