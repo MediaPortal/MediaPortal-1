@@ -13,6 +13,9 @@ namespace MediaPortal.TV.Recording
 		static  ArrayList recordings ;
 		static  TVUtil		util =null;
 		static  ArrayList conflictingRecordings=null;
+		
+		public delegate void OnConflictsUpdatedHandler();
+		static public event OnConflictsUpdatedHandler OnConflictsUpdated=null;
 		static  ConflictManager()
 		{
 			TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnRecordingsChanged);
@@ -75,6 +78,8 @@ namespace MediaPortal.TV.Recording
 			}
 			TimeSpan ts=DateTime.Now-dtStart;
 			Log.Write("Took:{0}:{1}", ts.Seconds,ts.Milliseconds);
+			if (OnConflictsUpdated!=null)
+				OnConflictsUpdated();
 		}
 
 		static public bool IsConflict(TVRecording rec)

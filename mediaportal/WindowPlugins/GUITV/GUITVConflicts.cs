@@ -21,6 +21,7 @@ namespace MediaPortal.GUI.TV
 		int								m_iSelectedItem=0;
 		TVRecording				currentShow=null;
 		TVRecording				currentEpisode=null;
+		bool							needUpdate=false;
 
 		public  GUITVConflicts()
 		{
@@ -36,6 +37,7 @@ namespace MediaPortal.GUI.TV
 		public override bool Init()
 		{
 			bool bResult=Load (GUIGraphicsContext.Skin+@"\mytvconflicts.xml");
+			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 			return bResult;
 		}
 
@@ -67,6 +69,7 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageLoad ();
 					
+			needUpdate=false;
 			LoadDirectory();
 					
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
@@ -425,5 +428,17 @@ namespace MediaPortal.GUI.TV
 			rec.SetProperties(prog);
 		}
 
+		private void ConflictManager_OnConflictsUpdated()
+		{
+			needUpdate=true;
+		}
+		public override void Process()
+		{
+			if (needUpdate)
+			{
+				needUpdate=false;
+				LoadDirectory();
+			}
+		}
 	}
 }

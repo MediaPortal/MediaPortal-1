@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.TV
     SortMethod        currentSortMethod=SortMethod.Date;
 		bool              m_bSortAscending=true;
 		int								m_iSelectedItem=0;
-		
+		bool							needUpdate=false;
 		string						currentShow=String.Empty;
 
     public  GUITVScheduler()
@@ -97,6 +97,7 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bResult=Load (GUIGraphicsContext.Skin+@"\mytvscheduler.xml");
 			LoadSettings();
+			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 			return bResult;
 		}
 
@@ -146,6 +147,7 @@ namespace MediaPortal.GUI.TV
 			base.OnPageLoad ();
 					
 			LoadSettings();
+			needUpdate=false;
 			LoadDirectory();
 					
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
@@ -1125,5 +1127,19 @@ namespace MediaPortal.GUI.TV
 			rec.SetProperties(prog);
 		}
 		#endregion
+
+		private void ConflictManager_OnConflictsUpdated()
+		{
+			needUpdate=true;
+		}
+		public override void Process()
+		{
+			if (needUpdate)
+			{
+				needUpdate=false;
+				LoadDirectory();
+			}
+		}
+
 	}
 }

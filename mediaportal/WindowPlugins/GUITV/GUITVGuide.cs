@@ -161,6 +161,7 @@ namespace MediaPortal.GUI.TV
 			}
     
 			TVDatabase.OnNotifiesChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnNotifiesChanged);
+			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 			return Load (GUIGraphicsContext.Skin+@"\mytvguide.xml");
 		}
 
@@ -2575,5 +2576,9 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
+		private void ConflictManager_OnConflictsUpdated()
+		{
+				m_bNeedUpdate=true;
+		}
 	}
 }
