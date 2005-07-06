@@ -17,7 +17,9 @@ CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevic
 
 CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
 {
-		for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
+	if (m_pCallback!=NULL)
+		m_pCallback->PresentImage(0,0,0,0,0);
+	for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
     {
         m_pSurfaces[i] = NULL;
     }
@@ -294,6 +296,8 @@ void CVMR9AllocatorPresenter::DeleteSurfaces()
 {
 	Log("vmr9:DeleteSurfaces()");
 
+	if (m_pCallback!=NULL)
+		m_pCallback->PresentImage(0,0,0,0,0);
 	for( size_t i = 0; i < m_pSurfaces.size(); ++i ) 
     {
         m_pSurfaces[i] = NULL;
@@ -333,7 +337,14 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
 					if (m_bfirstFrame)
 					{
 						m_bfirstFrame=false;
-						Log("vmr9:Paint() using PresentImage %dx%d",videoSize.cx,videoSize.cy);
+						D3DSURFACE_DESC desc;
+						pTexture->GetLevelDesc(0,&desc);
+						Log("vmr9:Paint() using PresentImage video:%dx%d surface:%dx%d format:%d type:%d pool:%d",
+							videoSize.cx,videoSize.cy,
+							desc.Width,desc.Height,
+							desc.Format,
+							desc.Type,
+							desc.Pool);
 					}
 					pTexture->Release();
 					
@@ -343,8 +354,15 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
 				m_pCallback->PresentSurface(videoSize.cx, videoSize.cy, szAspectRatio.cx,szAspectRatio.cy,dwPtr);
 				if (m_bfirstFrame)
 				{
+					D3DSURFACE_DESC desc;
+					pSurface->GetDesc(&desc);
 					m_bfirstFrame=false;
-					Log("vmr9:Paint() using PresentSurface %dx%d",videoSize.cx,videoSize.cy);
+					Log("vmr9:Paint() using PresentSurface video:%dx%d surface:%dx%d format:%d type:%d pool:%d",
+							videoSize.cx,videoSize.cy,
+							desc.Width,desc.Height,
+							desc.Format,
+							desc.Type,
+							desc.Pool);
 				}
 				return;
 			}

@@ -883,28 +883,34 @@ void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
 						   int dstX, int dstY, int dstWidth, int dstHeight,
 						   void* surface)
 {
-	IDirect3DSurface9* pBackBuffer;
-	m_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
-
-	LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
-	if(pBackBuffer)
+	try
 	{
-		
-		RECT srcRect,dstRect;
-		srcRect.left=(int)fx;
-		srcRect.top =(int)fy;
-		srcRect.right=srcRect.left+(int)nw;
-		srcRect.bottom=srcRect.top+(int)nh;
+		IDirect3DSurface9* pBackBuffer;
+		m_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
 
-		dstRect.left=(int)dstX;
-		dstRect.top =(int)dstY;
-		dstRect.right=dstRect.left+(int)dstWidth;
-		dstRect.bottom=dstRect.top+(int)dstHeight;
-		// IMPORTANT: rSrcVid has to be aligned on mod2 for yuy2->rgb conversion with StretchRect!!!
-		srcRect.left &= ~1; srcRect.right &= ~1;
-		srcRect.top &= ~1; srcRect.bottom &= ~1;
-		m_pDevice->StretchRect(pSurface, &srcRect, pBackBuffer, &dstRect, m_Filter);
+		LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
+		if(pBackBuffer)
+		{
+			
+			RECT srcRect,dstRect;
+			srcRect.left=(int)fx;
+			srcRect.top =(int)fy;
+			srcRect.right=srcRect.left+(int)nw;
+			srcRect.bottom=srcRect.top+(int)nh;
 
-		pBackBuffer->Release();
+			dstRect.left=(int)dstX;
+			dstRect.top =(int)dstY;
+			dstRect.right=dstRect.left+(int)dstWidth;
+			dstRect.bottom=dstRect.top+(int)dstHeight;
+			// IMPORTANT: rSrcVid has to be aligned on mod2 for yuy2->rgb conversion with StretchRect!!!
+			srcRect.left &= ~1; srcRect.right &= ~1;
+			srcRect.top &= ~1; srcRect.bottom &= ~1;
+			m_pDevice->StretchRect(pSurface, &srcRect, pBackBuffer, &dstRect, m_Filter);
+
+			pBackBuffer->Release();
+		}
+	}
+	catch(...)
+	{
 	}
 }

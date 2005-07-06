@@ -365,27 +365,65 @@ namespace MediaPortal.Player
 		
 		public void PresentImage(int width,int height,int arWidth, int arHeight, uint pTex)
 		{
-			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
-			if (!drawVideoAllowed  || !isEnabled)
+			try
 			{
+				if (pTex==0)
+				{
+					Log.Write("PlaneScene: dispose surfaces");
+					m_surfAdr=0;
+					m_texAdr=0;
+					m_vmr9Util.VideoWidth=0;
+					m_vmr9Util.VideoHeight=0;
+					m_vmr9Util.VideoAspectRatioX=0;
+					m_vmr9Util.VideoAspectRatioY=0;
+					arVideoWidth=0;
+					arVideoHeight=0;
+					return;
+				}
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+				if (!drawVideoAllowed  || !isEnabled)
+				{
+					m_vmr9Util.FrameCounter++;
+					return;
+				}
 				m_vmr9Util.FrameCounter++;
-				return;
+				//			Log.Write("vmr9:present image()");
+				InternalPresentImage(width,height,arWidth, arHeight, pTex, false);
+				//			Log.Write("vmr9:present image() done");
 			}
-			m_vmr9Util.FrameCounter++;
-//			Log.Write("vmr9:present image()");
-			InternalPresentImage(width,height,arWidth, arHeight, pTex, false);
-//			Log.Write("vmr9:present image() done");
+			catch(Exception)
+			{
+			}
 		}
 		public void PresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface)
 		{
-			if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
-			if (!drawVideoAllowed  || !isEnabled)
+			try
 			{
+				if (pSurface==0)
+				{
+					Log.Write("PlaneScene: dispose surfaces");
+					m_surfAdr=0;
+					m_texAdr=0;
+					m_vmr9Util.VideoWidth=0;
+					m_vmr9Util.VideoHeight=0;
+					m_vmr9Util.VideoAspectRatioX=0;
+					m_vmr9Util.VideoAspectRatioY=0;
+					arVideoWidth=0;
+					arVideoHeight=0;
+					return;
+				}
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+				if (!drawVideoAllowed  || !isEnabled)
+				{
+					m_vmr9Util.FrameCounter++;
+					return;
+				}
 				m_vmr9Util.FrameCounter++;
-				return;
+				InternalPresentSurface(width,height,arWidth, arHeight, pSurface, false);
 			}
-			m_vmr9Util.FrameCounter++;
-			InternalPresentSurface(width,height,arWidth, arHeight, pSurface, false);
+			catch(Exception)
+			{
+			}
 		}
 
 		private void InternalPresentImage(int width,int height,int arWidth, int arHeight, uint pTex, bool isRepaint)

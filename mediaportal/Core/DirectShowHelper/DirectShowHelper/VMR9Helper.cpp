@@ -255,12 +255,12 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 		strcpy(subtype,"mpeg1 packet");
 	if (pmt.subtype==MEDIASUBTYPE_MPEG1Payload )
 		strcpy(subtype,"mpeg1 payload");
-	if (pmt.subtype==MEDIASUBTYPE_ATSC_SI)
-		strcpy(subtype,"ATSC SI");
-	if (pmt.subtype==MEDIASUBTYPE_DVB_SI)
-		strcpy(subtype,"DVB SI");
-	if (pmt.subtype==MEDIASUBTYPE_MPEG2DATA)
-		strcpy(subtype,"MPEG2 Data");
+//	if (pmt.subtype==MEDIASUBTYPE_ATSC_SI)
+//		strcpy(subtype,"ATSC SI");
+//	if (pmt.subtype==MEDIASUBTYPE_DVB_SI)
+//		strcpy(subtype,"DVB SI");
+//	if (pmt.subtype==MEDIASUBTYPE_MPEG2DATA)
+//		strcpy(subtype,"MPEG2 Data");
 	if (pmt.subtype==MEDIASUBTYPE_MPEG2_TRANSPORT)
 		strcpy(subtype,"MPEG2 Transport");
 	if (pmt.subtype==MEDIASUBTYPE_MPEG2_PROGRAM)
@@ -300,8 +300,8 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 		strcpy(subtype,"MEDIASUBTYPE_AYUV");
 	if (pmt.subtype==MEDIASUBTYPE_YV12)
 		strcpy(subtype,"MEDIASUBTYPE_YV12");
-	if (pmt.subtype==MEDIASUBTYPE_NV12)
-		strcpy(subtype,"MEDIASUBTYPE_NV12");
+//	if (pmt.subtype==MEDIASUBTYPE_NV12)
+//		strcpy(subtype,"MEDIASUBTYPE_NV12");
 	Log("vmr9:SetDeinterlace() major:%s subtype:%s", major,subtype);
 	VideoDesc.dwSize = sizeof(VMR9VideoDesc);
 	VideoDesc.dwFourCC=vidInfo2->bmiHeader.biCompression;
