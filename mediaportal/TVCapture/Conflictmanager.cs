@@ -43,7 +43,7 @@ namespace MediaPortal.TV.Recording
 			if (cardNo>=0)
 			{
 				cards[cardNo]++;
-				Log.Write("  card:{0} {1} {2}",cardNo,cards[cardNo], ChannelName);
+				//Log.Write("  card:{0} {1} {2}",cardNo,cards[cardNo], ChannelName);
 				if (cards[cardNo]>1) return true;
 			}
 			return false;
@@ -68,10 +68,13 @@ namespace MediaPortal.TV.Recording
 		static void WorkerThreadFunction()
 		{
 			System.Threading.Thread.CurrentThread.Priority=ThreadPriority.BelowNormal;
+			DateTime dtStart=DateTime.Now;
 			foreach (TVRecording rec in recordings)
 			{
 				DetermineIsConflict(rec);
 			}
+			TimeSpan ts=DateTime.Now-dtStart;
+			Log.Write("Took:{0}:{1}", ts.Seconds,ts.Milliseconds);
 		}
 
 		static public bool IsConflict(TVRecording rec)

@@ -216,9 +216,9 @@ namespace MediaPortal.TV.Database
 
 			ArrayList programs=new ArrayList();
 			if (rec.RecType==TVRecording.RecordingType.EveryTimeOnThisChannel)
-				TVDatabase.SearchPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(m_iDays)),ref programs,3,rec.Title,rec.Channel);
+				TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(m_iDays)),ref programs,3,rec.Title,rec.Channel);
 			else
-				TVDatabase.SearchPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(m_iDays)),ref programs,3,rec.Title,String.Empty);
+				TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(m_iDays)),ref programs,3,rec.Title,String.Empty);
 			foreach (TVProgram prog in programs)
 			{
 				if (rec.IsRecordingProgram(prog,false))
