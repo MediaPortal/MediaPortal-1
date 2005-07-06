@@ -2552,9 +2552,12 @@ namespace MediaPortal.GUI.TV
 
 		private void TVDatabase_OnNotifiesChanged()
 		{
-			notifies.Clear();
-			TVDatabase.GetNotifies(notifies,false);
-			m_bNeedUpdate=true;
+			if (notifies!=null)
+			{
+				notifies.Clear();
+				TVDatabase.GetNotifies(notifies,false);
+				m_bNeedUpdate=true;
+			}
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{

@@ -3364,9 +3364,14 @@ namespace MediaPortal.TV.Database
 							notify.Program.Date=DatabaseUtility.Get(results,i,"tblPrograms.strDate");
 							notify.Program.StarRating=DatabaseUtility.Get(results,i,"tblPrograms.strStarRating");
 							notify.Program.Classification=DatabaseUtility.Get(results,i,"tblPrograms.strClassification");
+							notify.Program.ID=DatabaseUtility.GetAsInt(results,i,"tblNotifies.idProgram");
+							notify.ID=DatabaseUtility.GetAsInt(results,i,"tblNotifies.idNotify");
 						}
-						notify.Program.ID=DatabaseUtility.GetAsInt(results,i,"tblNotifies.idProgram");
-						notify.ID=DatabaseUtility.GetAsInt(results,i,"tblNotifies.idNotify");
+						else
+						{
+							notify.Program.ID=DatabaseUtility.GetAsInt(results,i,"idProgram");
+							notify.ID=DatabaseUtility.GetAsInt(results,i,"idNotify");
+						}
 						notifies.Add(notify);
 					}
 				} 
