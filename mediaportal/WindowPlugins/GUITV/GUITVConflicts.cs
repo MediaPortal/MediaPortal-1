@@ -156,7 +156,7 @@ namespace MediaPortal.GUI.TV
 				item.IsFolder=true;
 				Utils.SetDefaultIcons(item);
 				listConflicts.Add(item);
-				if (currentEpisode==null)
+				if (currentEpisode==null && currentShow.RecType!=TVRecording.RecordingType.Once)
 				{
 					ArrayList showEpisode = new ArrayList();
 					ConflictManager.GetConflictingSeries(currentShow, showEpisode);
@@ -165,30 +165,45 @@ namespace MediaPortal.GUI.TV
 						item=new GUIListItem();
 						item.Label=showSerie.Title;
 						item.TVTag=showSerie;
-						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,showSerie.Channel);
-						if (!System.IO.File.Exists(strLogo))
-						{
-							strLogo="defaultVideoBig.png";
-						}
+
 						item.PinImage=Thumbs.TvConflictRecordingIcon;
-						item.ThumbnailImage=strLogo;
-						item.IconImageBig=strLogo;
-						item.IconImage=strLogo;
 						item.IsFolder=true;
+						Utils.SetDefaultIcons(item);
 						listConflicts.Add(item);
 					}
 					total++;
 				}
 				else
 				{
-					TVRecording[] conflicts=ConflictManager.GetConflictingRecordings(currentEpisode);
+					TVRecording eps=currentEpisode;
+					if (eps==null)
+						eps=currentShow;
+
+					TVRecording[] conflicts=ConflictManager.GetConflictingRecordings(eps);
+
+					eps.RecType=TVRecording.RecordingType.Once;
+					item=new GUIListItem();
+					item.Label=eps.Title;
+					item.TVTag=eps;
+					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,eps.Channel);
+					if (!System.IO.File.Exists(strLogo))
+					{
+						strLogo="defaultVideoBig.png";
+					}
+					item.PinImage=Thumbs.TvConflictRecordingIcon;
+					item.ThumbnailImage=strLogo;
+					item.IconImageBig=strLogo;
+					item.IconImage=strLogo;
+					listConflicts.Add(item);
+					total++;
+
 					for (int i=0; i < conflicts.Length;++i)
 					{
 						conflicts[i].RecType=TVRecording.RecordingType.Once;
 						item=new GUIListItem();
 						item.Label=conflicts[i].Title;
 						item.TVTag=conflicts[i];
-						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,conflicts[i].Channel);
+						strLogo=Utils.GetCoverArt(Thumbs.TVChannel,conflicts[i].Channel);
 						if (!System.IO.File.Exists(strLogo))
 						{
 							strLogo="defaultVideoBig.png";
@@ -218,16 +233,9 @@ namespace MediaPortal.GUI.TV
 				GUIListItem item=new GUIListItem();
 				item.Label=rec.Title;
 				item.TVTag=rec;
-				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,rec.Channel);
-				if (!System.IO.File.Exists(strLogo))
-				{
-					strLogo="defaultVideoBig.png";
-				}
 				item.PinImage=Thumbs.TvConflictRecordingIcon;
-				item.ThumbnailImage=strLogo;
-				item.IconImageBig=strLogo;
-				item.IconImage=strLogo;
 				item.IsFolder=true;
+				Utils.SetDefaultIcons(item);
 				listConflicts.Add(item);
 				total++;
 			}
