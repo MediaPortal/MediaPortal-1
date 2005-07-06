@@ -15,6 +15,7 @@ public:
 	CVMR9Helper()
 		: m_pDevice(NULL)
 	{
+		vmr9AllocPresenter=NULL;
 	}
 
 DECLARE_REGISTRY_RESOURCEID(IDR_VMR9HELPER)
@@ -46,6 +47,7 @@ protected:
 	CComPtr<IVMRSurfaceAllocator9>  g_allocator;
 	CComPtr<IBaseFilter>			m_pVMR9Filter;
 	LPDIRECT3DDEVICE9				m_pDevice;
+	CVMR9AllocatorPresenter* vmr9AllocPresenter;
 public:
 
 };

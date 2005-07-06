@@ -88,7 +88,8 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 	if(!pSAN)
 		return E_FAIL;
 
-    g_allocator.Attach(new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor));
+	 vmr9AllocPresenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
+    g_allocator.Attach(vmr9AllocPresenter);
 
 	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, g_allocator)))
 	{
@@ -125,9 +126,10 @@ STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBase
 	
 STDMETHODIMP CVMR9Helper::Deinit(void)
 {
-    //g_allocator    = NULL;        
-	//m_pVMR9Filter=NULL;
+	if (vmr9AllocPresenter!=NULL)
+		vmr9AllocPresenter->ReleaseCallBack();
 	m_pDevice=NULL;
+	vmr9AllocPresenter=NULL;
 	return S_OK;
 }
 STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)

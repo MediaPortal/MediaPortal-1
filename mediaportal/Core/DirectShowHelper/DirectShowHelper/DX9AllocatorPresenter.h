@@ -38,7 +38,7 @@ public:
 
 	void DrawTexture(FLOAT fx, FLOAT fy, FLOAT nw, FLOAT nh, FLOAT uoff, FLOAT voff, FLOAT umax, FLOAT vmax, long color);
 	CSize GetVideoSize(bool fCorrectAR=true);
-
+	void ReleaseCallBack();
 
 protected:
 	void Paint(IDirect3DSurface9* pSurface,SIZE aspecRatio);

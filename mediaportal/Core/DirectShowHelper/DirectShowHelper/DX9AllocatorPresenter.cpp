@@ -292,6 +292,10 @@ STDMETHODIMP CVMR9AllocatorPresenter::PresentImage(DWORD_PTR dwUserID, VMR9Prese
     return hr;
 }
 
+void CVMR9AllocatorPresenter::ReleaseCallBack()
+{
+	m_pCallback=NULL;
+}
 void CVMR9AllocatorPresenter::DeleteSurfaces()
 {
 	Log("vmr9:DeleteSurfaces()");

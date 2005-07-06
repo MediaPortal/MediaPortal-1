@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Wed Jul 06 13:25:36 2005
+/* at Wed Jul 06 16:41:56 2005
  */
 /* Compiler settings for .\DirectShowHelper.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -304,6 +304,8 @@ EXTERN_C const IID IID_IVMR9Helper;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetDeinterlaceMode( 
             /* [in] */ int mode) = 0;
         
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE Deinit( void) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -338,6 +340,9 @@ EXTERN_C const IID IID_IVMR9Helper;
             IVMR9Helper * This,
             /* [in] */ int mode);
         
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE *Deinit )( 
+            IVMR9Helper * This);
+        
         END_INTERFACE
     } IVMR9HelperVtbl;
 
@@ -369,6 +374,9 @@ EXTERN_C const IID IID_IVMR9Helper;
 
 #define IVMR9Helper_SetDeinterlaceMode(This,mode)	\
     (This)->lpVtbl -> SetDeinterlaceMode(This,mode)
+
+#define IVMR9Helper_Deinit(This)	\
+    (This)->lpVtbl -> Deinit(This)
 
 #endif /* COBJMACROS */
 
@@ -410,6 +418,17 @@ void __RPC_STUB IVMR9Helper_SetDeinterlacePrefs_Stub(
 
 
 void __RPC_STUB IVMR9Helper_SetDeinterlaceMode_Stub(
+    IRpcStubBuffer *This,
+    IRpcChannelBuffer *_pRpcChannelBuffer,
+    PRPC_MESSAGE _pRpcMessage,
+    DWORD *_pdwStubPhase);
+
+
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IVMR9Helper_Deinit_Proxy( 
+    IVMR9Helper * This);
+
+
+void __RPC_STUB IVMR9Helper_Deinit_Stub(
     IRpcStubBuffer *This,
     IRpcChannelBuffer *_pRpcChannelBuffer,
     PRPC_MESSAGE _pRpcMessage,

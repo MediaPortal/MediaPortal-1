@@ -123,6 +123,7 @@ namespace MediaPortal.Player
       int hr = graphBuilder.AddFilter(VMR9Filter, "Video Mixing Renderer 9");
       if (hr != 0)
       {
+				vmr9Helper.Deinit();
 				m_scene.Stop();
 				m_scene.Deinit();
 				m_scene=null;
@@ -146,15 +147,18 @@ namespace MediaPortal.Player
     /// </summary>
     public void RemoveVMR9()
     {
-      if (!UseVMR9inMYTV) return;
+			if (!UseVMR9inMYTV) return;
+			g_vmr9=null;
       if (vmr9Helper != null)
-      {
+			{
+				Log.Write("VMR9Helper:stop vmr9 helper");
+				vmr9Helper.Deinit();
         vmr9Helper = null;
       }
 
       if (m_scene != null)
 			{
-				Log.Write("VMR9Helper:stop vmr9");
+				Log.Write("VMR9Helper:stop planescene");
 				m_scene.Stop();
         instanceCounter--;
         m_scene.Deinit();
@@ -169,7 +173,6 @@ namespace MediaPortal.Player
 				
       if (VMR9Filter != null)
         Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
-			g_vmr9=null;
 
 		}
 
