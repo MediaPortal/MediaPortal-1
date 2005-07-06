@@ -383,12 +383,14 @@ namespace MediaPortal.TV.Recording
 			// create graphs
 			Vmr9 =new VMR9Util("mytv");
 			Vmr7=new VMR7Util();
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() create graph");
 			m_graphBuilder=(IGraphBuilder)  Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) );
 			isUsingAC3=false;
 
 			int n=0;
 			m_b2c2Adapter=null;
 			// create filters & interfaces
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() create filters");
 			try
 			{
 				m_b2c2Adapter=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_B2C2Adapter, false ) );
@@ -410,10 +412,14 @@ namespace MediaPortal.TV.Recording
 			}
 
 			if(m_b2c2Adapter==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() m_b2c2Adapter not found");
 				return false;
+			}
 			try
 			{
 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() add filters to graph");
 				n=m_graphBuilder.AddFilter(m_b2c2Adapter,"B2C2-Source");
 				if(n!=0)
 				{
@@ -441,25 +447,27 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 				// get interfaces
-				m_dataCtrl=(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3) m_b2c2Adapter;
+				m_dataCtrl= m_b2c2Adapter as DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3;
 				if(m_dataCtrl==null)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: cannot get IB2C2MPEG2DataCtrl3");
 					return false;
 				}
-				m_tunerCtrl=(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2) m_b2c2Adapter;
+				m_tunerCtrl=m_b2c2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2;
 				if(m_tunerCtrl==null)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: cannot get IB2C2MPEG2TunerCtrl2");
 					return false;
 				}
-				m_avCtrl=(DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2) m_b2c2Adapter;
+				m_avCtrl= m_b2c2Adapter as DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2;
 				if(m_avCtrl==null)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: cannot get IB2C2MPEG2AVCtrl2");
 					return false;
 				}
 				// init for tuner
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Initialize Tuner()");
 				n=m_tunerCtrl.Initialize();
 				if(n!=0)
 				{
@@ -470,6 +478,9 @@ namespace MediaPortal.TV.Recording
 	
 				n=m_tunerCtrl.CheckLock();
 				bool b=false;
+
+				
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: SetVideoAudioPins()");
 				b=SetVideoAudioPins();
 				if(b==false)
 				{
@@ -479,13 +490,15 @@ namespace MediaPortal.TV.Recording
 
 				if(m_mpeg2Data!=null && m_demuxInterface!=null)
 				{
-					
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: connect demux<->mpeg2data");
 					int hr=0;
 					IPin mpeg2DataIn=null;
 					hr=DsUtils.GetPin(m_mpeg2Data,PinDirection.Input,0,out mpeg2DataIn);
 					if(mpeg2DataIn==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: input pin for mpeg2data not found");
 						return false;
-
+					}
 					AMMediaType mt=new AMMediaType();
 					mt.majorType=MEDIATYPE_MPEG2_SECTIONS;
 					mt.subType=MEDIASUBTYPE_MPEG2_DATA;
@@ -504,9 +517,12 @@ namespace MediaPortal.TV.Recording
 					}
 					Log.WriteFile(Log.LogType.Capture,"dvbgraphss2: successfully connected demux<->mpeg2data");
 				}
+				else
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: mpeg2data or demuxer=null");
 
 				if(m_sampleInterface!=null)
 				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: add sample grabber");
 					AMMediaType mt=new AMMediaType();
 					mt.majorType=DShowNET.MediaType.Stream;
 					mt.subType=DShowNET.MediaSubType.MPEG2Transport;	
@@ -519,11 +535,11 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
 					
 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: graph created");
 			}
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
-				System.Windows.Forms.MessageBox.Show(ex.Message);
 				return false;
 			}
 
