@@ -1694,6 +1694,11 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
+				if (m_pinAC3Out == null)
+				{
+					Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot find demux audio ac3 output pin");
+					return false;
+				}
 				if(m_graphBuilder.Render(m_pinAC3Out) != 0)
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:Failed to render AC3 pin MPEG-2 Demultiplexer");
