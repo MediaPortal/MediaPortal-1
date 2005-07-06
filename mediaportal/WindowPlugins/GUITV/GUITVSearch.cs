@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.TV
             ArrayList titles = new ArrayList();
             long start=Utils.datetolong( DateTime.Now );
             long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
-            TVDatabase.SearchPrograms(start,end, ref titles, -1, currentSearchCriteria);
+            TVDatabase.SearchPrograms(start,end, ref titles, -1, currentSearchCriteria,String.Empty);
             foreach(TVProgram program in titles)
 						{
 							if (filterLetter!="#")

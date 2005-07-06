@@ -1216,29 +1216,30 @@ namespace MediaPortal.TV.Database
 			DatabaseUtility.RemoveInvalidChars(ref genre);
 			DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
 			string strSQL=String.Empty;
+			string strOrder=" order by iStartTime";
 			switch(SearchKind)
 			{
 				case -1:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' order by iStartTime",genre);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' ",genre);
 					break;
 				case 0:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '{1}%' order by iStartTime",genre,SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '{1}%' ",genre,SearchCriteria);
 					break;
 
 				case 1:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '%{1}%' order by iStartTime",genre,SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '%{1}%' ",genre,SearchCriteria);
 					break;
         
 				case 2:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '%{1}' order by iStartTime",genre,SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '%{1}' ",genre,SearchCriteria);
 					break;
         
 				case 3:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '{1}' order by iStartTime",genre,SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '{1}' ",genre,SearchCriteria);
 					break;
 
 			}
-			return GetTVProgramsByGenre(strSQL, progs);
+			return GetTVProgramsByGenre(strSQL, strOrder,progs);
 		}
 
 		static public bool GetProgramsPerGenre(string genre1, ArrayList progs)
@@ -1246,7 +1247,7 @@ namespace MediaPortal.TV.Database
 			return SearchProgramsPerGenre(genre1, progs, -1, String.Empty);
 		}
 
-		static bool GetTVProgramsByGenre(string strSQL, ArrayList progs)
+		static bool GetTVProgramsByGenre(string strSQL, string strOrder, ArrayList progs)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -1254,6 +1255,7 @@ namespace MediaPortal.TV.Database
 				{
 					if (null==m_db) return false;
 
+					strSQL += strOrder;
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
@@ -1311,8 +1313,15 @@ namespace MediaPortal.TV.Database
 					DatabaseUtility.RemoveInvalidChars(ref strChannel);
 
 					string strSQL;
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and channel.strChannel like '{0}' order by iStartTime",
+					string strOrder=" order by iStartTime";
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and channel.strChannel like '{0}' ",
 						strChannel);
+					string where =String.Format(" and ( (tblPrograms.iEndTime>={0} and tblPrograms.iEndTime <={1}) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime>={0} and tblPrograms.iStartTime <= {1} ) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime<={0} and tblPrograms.iEndTime >= {1}) )", iStartTime,iEndTime);
+					strSQL+=where;
+					strSQL+=strOrder;
+
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
@@ -1359,7 +1368,7 @@ namespace MediaPortal.TV.Database
 		}
 
 
-		static bool GetTVPrograms(long iStartTime, long iEndTime,string strSQL, ref ArrayList progs)
+		static bool GetTVPrograms(long iStartTime, long iEndTime,string strSQL, string strOrder,ref ArrayList progs)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -1369,8 +1378,14 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return false;
 
 					SQLiteResultSet results;
+					string where =String.Format(" and ( (tblPrograms.iEndTime>={0} and tblPrograms.iEndTime <={1}) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime>={0} and tblPrograms.iStartTime <= {1} ) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime<={0} and tblPrograms.iEndTime >= {1}) )", iStartTime,iEndTime);
+					strSQL+=where;
+					strSQL+=strOrder;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
+														
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
@@ -1413,54 +1428,61 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public bool SearchPrograms(long iStartTime, long iEndTime,ref ArrayList progs, int SearchKind, string SearchCriteria)
+		static public bool SearchPrograms(long iStartTime, long iEndTime,ref ArrayList progs, int SearchKind, string SearchCriteria, string channel)
 		{
 			DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
 			string strSQL=String.Empty;
+			string strOrder=" order by iStartTime";
 			switch (SearchKind)
 			{
 				case -1:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel  order by iStartTime");
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel ");
 					break;
 				case 0:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}%' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}%' ", SearchCriteria);
 					break;
 				case 1:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '%{0}%' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '%{0}%' ", SearchCriteria);
 					break;
 				case 2:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '%{0}' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '%{0}' ", SearchCriteria);
 					break;
 				case 3:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}' ", SearchCriteria);
 					break;
 			}
-			return GetTVPrograms(iStartTime, iEndTime, strSQL, ref progs);
+			if (channel!=String.Empty)
+			{
+				DatabaseUtility.RemoveInvalidChars(ref channel);
+				strSQL += String.Format(" and channel.strChannel like '{0}' ",channel);
+			}
+			return GetTVPrograms(iStartTime, iEndTime, strSQL, strOrder,ref progs);
 		}
 
 		static public bool SearchProgramsByDescription(long iStartTime, long iEndTime,ref ArrayList progs, int SearchKind, string SearchCriteria)
 		{
 			DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
 			string strSQL=String.Empty;
+			string strOrder=" order by iStartTime";
 			switch (SearchKind)
 			{
 				case -1:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel  order by iStartTime");
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel  ");
 					break;
 				case 0:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '{0}%' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '{0}%' ", SearchCriteria);
 					break;
 				case 1:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '%{0}%' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '%{0}%' ", SearchCriteria);
 					break;
 				case 2:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '%{0}' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '%{0}' ", SearchCriteria);
 					break;
 				case 3:
-					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '{0}' order by iStartTime", SearchCriteria);
+					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '{0}' ", SearchCriteria);
 					break;
 			}
-			return GetTVPrograms(iStartTime, iEndTime, strSQL, ref progs);
+			return GetTVPrograms(iStartTime, iEndTime, strSQL,strOrder, ref progs);
 		}
 		static public int GetProgramByDescriptionID(string summaryID,ref TVProgram prog)
 		{
@@ -1503,7 +1525,7 @@ namespace MediaPortal.TV.Database
 		}
 		static public bool GetPrograms(long iStartTime, long iEndTime,ref ArrayList progs)
 		{
-			return SearchPrograms(iStartTime, iEndTime,ref progs,-1,String.Empty);
+			return SearchPrograms(iStartTime, iEndTime,ref progs,-1,String.Empty,String.Empty);
 		}
 
 		static public void SetRecordedFileName(TVRecorded rec)
