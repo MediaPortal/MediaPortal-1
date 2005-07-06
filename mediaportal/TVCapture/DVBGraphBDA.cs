@@ -1026,7 +1026,7 @@ namespace MediaPortal.TV.Recording
 
 					lStartTime *= -10000000L;//in reference time 
 				}//if (!bContentRecording)
-		
+		/*
 				foreach (MetadataItem item in attributes.Values)
 				{
 					try
@@ -1037,7 +1037,7 @@ namespace MediaPortal.TV.Recording
 							m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
 					}
 					catch(Exception){}
-				}
+				}*/
 				m_recorder.Start((int)lStartTime);
 			}
 			catch(Exception ex)

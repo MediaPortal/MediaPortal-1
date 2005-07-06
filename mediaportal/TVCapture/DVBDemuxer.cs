@@ -804,11 +804,10 @@ namespace MediaPortal.TV.Recording
 				for (int ptr = add; ptr < end; ptr += 188)//main loop
 				{
 					m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-					//	if(m_packetHeader.SyncByte!=0x47) 
-					//		continue;
-					//	if(m_packetHeader.TransportError==true)
-					//		continue;
-					//	if (m_packetHeader.Pid==m_audioPid)
+					if (m_packetHeader.Pid==0x3F4 ||
+						m_packetHeader.Pid==0x3F3 ||
+						m_packetHeader.Pid==0x3F2 ||
+						m_packetHeader.Pid==0)
 					{
 						byte[] byData=new byte[188];
 						Marshal.Copy((IntPtr)ptr,byData,0,188);

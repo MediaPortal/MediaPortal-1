@@ -1359,6 +1359,7 @@ namespace MediaPortal.TV.Recording
 
 				lStartTime*=-10000000L;//in reference time 
 			}
+			/*
 			foreach (MetadataItem item in attribtutes.Values)
 			{
 				try
@@ -1369,7 +1370,7 @@ namespace MediaPortal.TV.Recording
 						m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
 				}
 				catch(Exception){}
-			}
+			}*/
 			m_recorder.Start((int)lStartTime);
 
 			m_graphState=State.Recording;
