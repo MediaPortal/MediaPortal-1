@@ -2711,6 +2711,8 @@ namespace MediaPortal.TV.Recording
 						ts = DateTime.Now-timeResendPid;
 						if (ts.TotalSeconds>5)
 						{
+							Log.Write("DVBGraphBDA: no video,resend PMT signal level:{0} signal quality:{1}",
+													SignalStrength(), SignalQuality() );
 							refreshPmtTable=true;
 							timeResendPid=DateTime.Now;
 						}
@@ -3287,7 +3289,8 @@ namespace MediaPortal.TV.Recording
 						return ;
 					}
 					//set the properties on the new tuning request
-					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties to tuning request");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() frequency:{0} KHz Bandwidth:{1} ONID:{2} TSID:{3}, SID:{4}", 
+																									ch.Frequency,ch.Bandwidth,ch.NetworkID,ch.TransportStreamID,ch.ProgramNumber);
 					myLocator.CarrierFrequency		= ch.Frequency;
 					myLocator.Bandwidth=ch.Bandwidth;
 					myTuneRequest.ONID	= ch.NetworkID;					//original network id
