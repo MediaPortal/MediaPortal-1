@@ -205,12 +205,17 @@ namespace MediaPortal.Configuration.Sections
 				XmlNode frequency			 = nodeChannel.Attributes.GetNamedItem("frequency");
 				TVChannel chan =new TVChannel();
 				chan.Name=name.Value;
+				chan.Frequency=0;
 				try
 				{
 					chan.Number=Int32.Parse(number.Value);
 				}
 				catch(Exception){}
-				chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
+				try{
+
+					chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
+				}
+				catch(Exception){}
 				TVDatabase.AddChannel(chan);
 			}
 			XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");

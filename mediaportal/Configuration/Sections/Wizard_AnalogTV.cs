@@ -303,7 +303,11 @@ namespace MediaPortal.Configuration.Sections
 					chan.Number=Int32.Parse(number.Value);
 				}
 				catch(Exception){}
-				chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
+				try
+				{
+					chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
+				}
+				catch(Exception){}
 				TVDatabase.AddChannel(chan);
 				tvChannels++;
 			}
