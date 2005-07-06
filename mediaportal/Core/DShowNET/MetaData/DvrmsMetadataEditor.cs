@@ -160,14 +160,14 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 				Log.WriteFile(Log.LogType.Recorder,true,"Unable to open:{0} hr:0x{1:X}",filepath,hr);
 				return;
 			}
-			_editor = (Toub.MediaCenter.Dvrms.Metadata.IStreamBufferRecordingAttribute)sourceFilter;
+			_editor = sourceFilter as Toub.MediaCenter.Dvrms.Metadata.IStreamBufferRecordingAttribute;
 		}
 
 		/// <summary>Gets all of the attributes on a file.</summary>
 		/// <returns>A collection of the attributes from the file.</returns>
 		public override System.Collections.IDictionary GetAttributes()
 		{
-			if (_editor == null) throw new ObjectDisposedException(GetType().Name);
+			if (_editor == null) return null;
 
 			Hashtable propsRetrieved = new Hashtable();
 			object obj = _editor.EnumAttributes();
@@ -212,8 +212,8 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 		/// <param name="propsToSet">The properties to set on the file.</param>
 		public override void SetAttributes(System.Collections.IDictionary propsToSet)
 		{
-			if (_editor == null) throw new ObjectDisposedException(GetType().Name);
-			if (propsToSet == null) throw new ArgumentNullException("propsToSet");
+			if (_editor == null) return ;
+			if (propsToSet == null) return;
 
 			byte [] attributeValueBytes;
 

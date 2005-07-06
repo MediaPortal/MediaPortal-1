@@ -104,57 +104,60 @@ namespace MediaPortal.TV.Recording
 									System.Threading.Thread.Sleep(100);
 									using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
 									{
-										TVRecorded newRec = new TVRecorded();
-										newRec.FileName=file;
 										IDictionary dict=editor.GetAttributes();
-										foreach (MetadataItem item in dict.Values)
-										{
-											if (item==null) continue;
-											if (item.Name==null) continue;
-											//Log.WriteFile(Log.LogType.Recorder,"attribute:{0} value:{1}", item.Name,item.Value.ToString());
-											try { if (item.Name.ToLower()=="channel") newRec.Channel=(string)item.Value.ToString();} 
-											catch(Exception){}
-											try{ if (item.Name.ToLower()=="title") newRec.Title=(string)item.Value.ToString();} 
-											catch(Exception){}
-											try{ if (item.Name.ToLower()=="programtitle") newRec.Title=(string)item.Value.ToString();} 
-											catch(Exception){}
-											try{ if (item.Name.ToLower()=="genre") newRec.Genre=(string)item.Value.ToString();} 
-											catch(Exception){}
-											try{ if (item.Name.ToLower()=="details") newRec.Description=(string)item.Value.ToString();} 
-											catch(Exception){}
-											try{ if (item.Name.ToLower()=="start") newRec.Start=(long)UInt64.Parse(item.Value.ToString());} 
-											catch(Exception){}
-											try{ if (item.Name.ToLower()=="end") newRec.End=(long)UInt64.Parse(item.Value.ToString());} 
-											catch(Exception){}
-										}
-										if (newRec.Channel==null)
-										{
-											string name=Utils.GetFilename(file);
-											string[] parts=name.Split('_');
-											if (parts.Length>0)
-												newRec.Channel=parts[0];
-										}
-										if (newRec.Channel!=null)
-										{
-											TVChannel newChan = new TVChannel();
-											newChan.Name=newRec.Channel;
-											TVDatabase.AddChannel(newChan);
-											int id=TVDatabase.AddRecordedTV(newRec);
-											if (id < 0)
+										if (dict !=null)
+										{	
+											TVRecorded newRec = new TVRecorded();
+											newRec.FileName=file;
+											foreach (MetadataItem item in dict.Values)
 											{
-												Log.WriteFile(Log.LogType.Recorder,"Recorder: import recording {0} failed");
+												if (item==null) continue;
+												if (item.Name==null) continue;
+												//Log.WriteFile(Log.LogType.Recorder,"attribute:{0} value:{1}", item.Name,item.Value.ToString());
+												try { if (item.Name.ToLower()=="channel") newRec.Channel=(string)item.Value.ToString();} 
+												catch(Exception){}
+												try{ if (item.Name.ToLower()=="title") newRec.Title=(string)item.Value.ToString();} 
+												catch(Exception){}
+												try{ if (item.Name.ToLower()=="programtitle") newRec.Title=(string)item.Value.ToString();} 
+												catch(Exception){}
+												try{ if (item.Name.ToLower()=="genre") newRec.Genre=(string)item.Value.ToString();} 
+												catch(Exception){}
+												try{ if (item.Name.ToLower()=="details") newRec.Description=(string)item.Value.ToString();} 
+												catch(Exception){}
+												try{ if (item.Name.ToLower()=="start") newRec.Start=(long)UInt64.Parse(item.Value.ToString());} 
+												catch(Exception){}
+												try{ if (item.Name.ToLower()=="end") newRec.End=(long)UInt64.Parse(item.Value.ToString());} 
+												catch(Exception){}
 											}
-											recordings.Add(newRec);
-										}
-										else
-										{
-											Log.WriteFile(Log.LogType.Recorder,"Recorder: import recording {0} failed, unknown tv channel", file);
+											if (newRec.Channel==null)
+											{
+												string name=Utils.GetFilename(file);
+												string[] parts=name.Split('_');
+												if (parts.Length>0)
+													newRec.Channel=parts[0];
+											}
+											if (newRec.Channel!=null)
+											{
+												TVChannel newChan = new TVChannel();
+												newChan.Name=newRec.Channel;
+												TVDatabase.AddChannel(newChan);
+												int id=TVDatabase.AddRecordedTV(newRec);
+												if (id < 0)
+												{
+													Log.WriteFile(Log.LogType.Recorder,"Recorder: import recording {0} failed");
+												}
+												recordings.Add(newRec);
+											}
+											else
+											{
+												Log.WriteFile(Log.LogType.Recorder,"Recorder: import recording {0} failed, unknown tv channel", file);
+											}
 										}
 									}//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
 								}
 								catch(Exception ex)
 								{
-									Log.WriteFile(Log.LogType.Log,true,"Recorder:Unable to import {0} reason:{1} {2}", file,ex.Message, ex.Source);
+									Log.WriteFile(Log.LogType.Log,true,"Recorder:Unable to import {0} reason:{1} {2} {3}", file,ex.Message, ex.Source,ex.StackTrace);
 								}
 							}//if (add)
 						}//foreach (string file in files)
