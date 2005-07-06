@@ -1456,7 +1456,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (chan.Name==currentTvChannelName)
 				{
-					prog = chan.GetProgramAt(dtNow);
+					prog = chan.GetProgramAt(dtNow.AddMinutes(1));
 					break;
 				}
 			}

@@ -264,7 +264,7 @@ namespace MediaPortal.TV.Recording
 						if (!IsRecordingSchedule(rec, out card)) 
 						{
 							// check which program is running 
-							TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(m_iPreRecordInterval) );
+							TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(1+m_iPreRecordInterval) );
 
 							// if the recording should record the tv program
 							if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,m_iPreRecordInterval, m_iPostRecordInterval) )
@@ -280,7 +280,7 @@ namespace MediaPortal.TV.Recording
 								if (!rec.IsAnnouncementSend)
 								{
 									DateTime dtTime=DateTime.Now.AddMinutes(m_preRecordingWarningTime);
-									TVProgram prog2Min=chan.GetProgramAt(dtTime.AddMinutes(m_iPreRecordInterval) );
+									TVProgram prog2Min=chan.GetProgramAt(dtTime.AddMinutes(1+m_iPreRecordInterval) );
 
 									// if the recording should record the tv program
 									if ( rec.IsRecordingProgramAtTime(dtTime,prog2Min,m_iPreRecordInterval, m_iPostRecordInterval) )
