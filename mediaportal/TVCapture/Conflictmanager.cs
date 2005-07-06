@@ -77,7 +77,6 @@ namespace MediaPortal.TV.Recording
 				DetermineIsConflict(rec);
 			}
 			TimeSpan ts=DateTime.Now-dtStart;
-			Log.Write("Took:{0}:{1}", ts.Seconds,ts.Milliseconds);
 			if (OnConflictsUpdated!=null)
 				OnConflictsUpdated();
 		}
