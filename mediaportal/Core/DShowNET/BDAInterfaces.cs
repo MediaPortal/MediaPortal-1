@@ -214,13 +214,13 @@ namespace DShowNET.BDA
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
 	public interface IBDA_SignalStatistics
 	{
-		void put_SignalStrength ([In] long lDbStrength);
+		void put_SignalStrength ([In] uint lDbStrength);
     
-		void get_SignalStrength ([In, Out] ref long plDbStrength );
+		void get_SignalStrength ([In, Out] ref uint plDbStrength );
     
-		void put_SignalQuality ([In] long lPercentQuality);
+		void put_SignalQuality ([In] uint lPercentQuality);
     
-		void get_SignalQuality ([In, Out] ref long plPercentQuality);
+		void get_SignalQuality ([In, Out] ref uint plPercentQuality);
     
 		void put_SignalPresent ([In] bool fPresent);
     

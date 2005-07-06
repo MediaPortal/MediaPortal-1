@@ -1564,7 +1564,7 @@ namespace MediaPortal.TV.Recording
 				try
 				{
 					//is a signal quality ok?
-					long quality=0;
+					uint quality=0;
 					stat.get_SignalQuality(ref quality); //1-100
 					if (quality>0) signalQuality += quality;
 				}
@@ -1590,14 +1590,14 @@ namespace MediaPortal.TV.Recording
 			if (m_TunerStatistics==null) return -1;
 			if (m_TunerStatistics.Count==0) return -1;
 			int signalQuality=-1;
-			long quality=0;
+			uint quality=0;
 			for (int i = 0; i < m_TunerStatistics.Count; i++) 
 			{
 				IBDA_SignalStatistics stat=(IBDA_SignalStatistics)m_TunerStatistics[i];
 
 				try
 				{
-					quality = -1;
+					quality = 0;
 					stat.get_SignalQuality(ref quality); //1-100
 					if (quality>0 && quality>signalQuality) signalQuality = (int)quality;
 				}
@@ -1614,14 +1614,14 @@ namespace MediaPortal.TV.Recording
 			if (m_TunerStatistics==null) return -1;
 			if (m_TunerStatistics.Count==0) return -1;
 			int signalStrength=-1;
-			long strength = 0;
+			uint strength = 0;
 
 			for (int i = 0; i < m_TunerStatistics.Count; i++) 
 			{
 				IBDA_SignalStatistics stat=(IBDA_SignalStatistics)m_TunerStatistics[i];
 				try
 				{
-					strength = -1;
+					strength = 0;
 					stat.get_SignalStrength(ref strength); //1-100
 					if (strength>0 && strength>signalStrength) signalStrength = (int)strength;
 				}
@@ -2484,48 +2484,53 @@ namespace MediaPortal.TV.Recording
 		bool SendPMT()
 		{
 			VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-			if (!props.IsCISupported()) return true;
-			try
+			if (props.IsCISupported())
 			{
+				try
+				{
 
-				string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-					Utils.FilterFileName(currentTuningObject.ServiceName),
-					currentTuningObject.NetworkID,
-					currentTuningObject.TransportStreamID,
-					currentTuningObject.ProgramNumber,
-					(int)Network());
-				if (!System.IO.File.Exists(pmtName))
-				{
-					return false;
-				}
-					
-				using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None))
-				{
-					long len=stream.Length;
-					if (len>6)
+					string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+						Utils.FilterFileName(currentTuningObject.ServiceName),
+						currentTuningObject.NetworkID,
+						currentTuningObject.TransportStreamID,
+						currentTuningObject.ProgramNumber,
+						(int)Network());
+					if (!System.IO.File.Exists(pmtName))
 					{
-						byte[] pmt = new byte[len];
-						stream.Read(pmt,0,(int)len);
-						stream.Close();
-
-						int pmtVersion = ((pmt[5]>>1)&0x1F);
-
-						// send the PMT table to the device
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
-
-						if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
+						return false;
+					}
+						
+					using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None))
+					{
+						long len=stream.Length;
+						if (len>6)
 						{
-							return true;
+							byte[] pmt = new byte[len];
+							stream.Read(pmt,0,(int)len);
+							stream.Close();
+
+							int pmtVersion = ((pmt[5]>>1)&0x1F);
+
+							// send the PMT table to the device
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
+
+							if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
+							{
+								Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
+								return true;
+							}
 						}
 					}
 				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt {0} {1} {2}",
+						ex.Message,ex.Source,ex.StackTrace);
+				}
+				return false;
 			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt {0} {1} {2}",
-					ex.Message,ex.Source,ex.StackTrace);
-			}
-			return false;
+			Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
+			return true;
 		}//SendPMT()
 
 		void LoadLNBSettings(ref DVBChannel ch, int disNo, out int lowOsc, out int hiOsc)
