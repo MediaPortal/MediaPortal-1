@@ -3425,7 +3425,7 @@ namespace MediaPortal.TV.Recording
 			if (Network() == NetworkType.ATSC)
 			{
 				ATSCSections atscSections = new ATSCSections(m_streamDemuxer);
-				atscSections.Timeout=5000;
+				atscSections.Timeout=8000;
 				transp = atscSections.Scan(m_SectionsTables);
 			}
 			else
@@ -3433,7 +3433,7 @@ namespace MediaPortal.TV.Recording
 				using (DVBSections sections = new DVBSections())
 				{
 					sections.DemuxerObject=m_streamDemuxer;
-					sections.Timeout=5000;
+					sections.Timeout=8000;
 					transp = sections.Scan(m_SectionsTables);
 				}
 			}

@@ -219,7 +219,7 @@ namespace MediaPortal.TV.Recording
 			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=frequencies.Count) return;
 			int[] tmp;
 			tmp = (int[])frequencies[currentFrequencyIndex];
-			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]);
+			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]/1000);
 			callback.OnStatus(description);
 			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);

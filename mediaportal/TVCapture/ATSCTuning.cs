@@ -148,12 +148,7 @@ namespace MediaPortal.TV.Recording
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			callback.OnStatus(description);
 
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
@@ -199,12 +194,7 @@ namespace MediaPortal.TV.Recording
 			newchan.Modulation=(int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			captureCard.Tune(newchan,0);
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 		}
 		#endregion
