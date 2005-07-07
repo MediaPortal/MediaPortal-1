@@ -737,26 +737,15 @@ namespace MediaPortal.TV.Recording
 			
 			if (m_basicVideo==null) return;
 			if (m_videoWindow==null) return;
-			if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return;
+			if (m_graphState!=State.Viewing) return;
 			
-			if (GUIGraphicsContext.BlankScreen && Overlay)
+			if (GUIGraphicsContext.BlankScreen)
 			{
 				Overlay=false;
 			}
 			else
 			{
-				if (GUIGraphicsContext.Overlay==false)
-				{
-					if(m_graphState!=State.Viewing)
-					{
-						Overlay=false;
-						return;
-					}
-				}
-				else
-				{
-					Overlay=true;
-				}
+				Overlay=true;
 			}
 			int iVideoWidth=0;
 			int iVideoHeight=0;

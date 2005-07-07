@@ -858,7 +858,7 @@ namespace MediaPortal.TV.Recording
     private void GUIGraphicsContext_OnVideoWindowChanged()
 		{
 			if (GUIGraphicsContext.Vmr9Active) return;
-      if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return ;
+      if (m_graphState!=State.Viewing ) return ;
       if (m_mpeg2Demux==null) return ;
 			
 			if (GUIGraphicsContext.BlankScreen)
@@ -867,18 +867,7 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
-				if (GUIGraphicsContext.Overlay==false)
-				{
-					if (m_graphState!=State.Viewing)
-					{
-						m_mpeg2Demux.Overlay=false;
-						return;
-					}
-				}
-				else
-				{
-					m_mpeg2Demux.Overlay=true;
-				}
+				m_mpeg2Demux.Overlay=true;
 			}
 			int aspectX, aspectY;
       int iVideoWidth,iVideoHeight;

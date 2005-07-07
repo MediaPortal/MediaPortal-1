@@ -1390,24 +1390,13 @@ namespace MediaPortal.TV.Recording
 			m_aspectY=aspectY;
 			
 				
-			if (GUIGraphicsContext.BlankScreen && Overlay)
+			if (GUIGraphicsContext.BlankScreen)
 			{
 				Overlay=false;
 			}
 			else
 			{
-				if (GUIGraphicsContext.Overlay==false)
-				{
-					if(m_graphState!=State.Viewing)
-					{
-						Overlay=false;
-						return;
-					}
-				}
-				else
-				{
 					Overlay=true;
-				}
 			}
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{

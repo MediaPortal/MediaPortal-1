@@ -961,8 +961,19 @@ namespace MediaPortal.TV.Recording
     {
 			
 			if (GUIGraphicsContext.Vmr9Active) return;
-      if (m_graphState != State.Viewing) return;
+			if (m_graphState != State.Viewing) return;
+			if (m_basicVideo==null) return;
+			if (m_videoWindow==null) return;
       int iVideoWidth, iVideoHeight;
+
+			if (GUIGraphicsContext.BlankScreen)
+			{
+				Overlay=false;
+			}
+			else
+			{
+				Overlay=true;
+			}
 			m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
 			
       if (GUIGraphicsContext.IsFullScreenVideo)
