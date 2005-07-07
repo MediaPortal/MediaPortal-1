@@ -22,7 +22,6 @@ namespace MediaPortal.TV.Recording
 		int                                 currentFrequencyIndex=0;
 		int																	scanOffset = 0;
 		private System.Windows.Forms.Timer  timer1;
-		int                                 tunedFrequency=0;
 		int																	newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
 
@@ -41,7 +40,7 @@ namespace MediaPortal.TV.Recording
 			updatedRadioChannels=0;
 			newChannels=0;
 			updatedChannels=0;
-			tunedFrequency=0;
+			
 			captureCard=card;
 			callback=statusCallback;
 
@@ -120,7 +119,7 @@ namespace MediaPortal.TV.Recording
 			currentFrequencyIndex++;
 			UpdateStatus();
 
-			ScanNextFrequency();
+			ScanNextFrequency(0);
 			if (captureCard.SignalPresent())
 			{
 				ScanChannels();
@@ -133,7 +132,7 @@ namespace MediaPortal.TV.Recording
 				currentFrequencyIndex--;
 
 				UpdateStatus();
-				ScanNextFrequency();
+				ScanNextFrequency(0);
 				if (captureCard.SignalPresent())
 				{
 					ScanChannels();
@@ -182,10 +181,24 @@ namespace MediaPortal.TV.Recording
 			}
 
 			UpdateStatus();
-			ScanNextFrequency();
+			ScanNextFrequency(0);
 			if (captureCard.SignalPresent())
 			{
 				ScanChannels();
+			}
+
+			if (scanOffset!=0)
+			{
+				ScanNextFrequency(-scanOffset);
+				if (captureCard.SignalPresent())
+				{
+					ScanChannels();
+				}
+				ScanNextFrequency(scanOffset);
+				if (captureCard.SignalPresent())
+				{
+					ScanChannels();
+				}
 			}
 			currentFrequencyIndex++;
 			timer1.Enabled=true;
@@ -210,7 +223,7 @@ namespace MediaPortal.TV.Recording
 			callback.UpdateList();
 		}
 
-		void ScanNextFrequency()
+		void ScanNextFrequency(int offset)
 		{
 			if (currentFrequencyIndex <0) currentFrequencyIndex =0;
 			if (currentFrequencyIndex >=frequencies.Count) return;
@@ -221,6 +234,12 @@ namespace MediaPortal.TV.Recording
 			tmp = (int[])frequencies[currentFrequencyIndex];
 			chan.Frequency=tmp[0];
 			chan.Bandwidth=tmp[1];
+			chan.Frequency+=offset;
+
+			float frequency =((float)chan.Frequency) / 1000f;
+			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
+			callback.OnStatus(description);
+
 			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (i)",chan.Frequency, chan.Bandwidth);
 			captureCard.Tune(chan,0);
 			for (int i=0; i < 8; ++i)

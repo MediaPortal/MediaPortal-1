@@ -3532,7 +3532,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11} program#:{12}", 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11} program#:{12} pcr pid:{13:X}", 
 					info.service_provider_name,
 					info.service_name,
 					info.scrambled,
@@ -3542,7 +3542,8 @@ namespace MediaPortal.TV.Recording
 					info.serviceID,
 					hasVideo, ((!hasVideo) && hasAudio),
 					currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
-					info.program_number);
+					info.program_number,
+					info.pcr_pid);
 
 				if (info.serviceID==0) 
 				{
@@ -3574,6 +3575,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.Audio2=currentTuningObject.Audio2;
 				newchannel.Audio3=currentTuningObject.Audio3;
 				newchannel.AC3Pid=currentTuningObject.AC3Pid;
+				newchannel.PCRPid=info.pcr_pid;
 				newchannel.AudioLanguage1=currentTuningObject.AudioLanguage1;
 				newchannel.AudioLanguage2=currentTuningObject.AudioLanguage2;
 				newchannel.AudioLanguage3=currentTuningObject.AudioLanguage3;
