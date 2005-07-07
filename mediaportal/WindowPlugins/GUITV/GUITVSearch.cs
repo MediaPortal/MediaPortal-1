@@ -980,7 +980,7 @@ namespace MediaPortal.GUI.TV
 								{
 									//cancel recording
 									rec1.Canceled=Utils.datetolong(DateTime.Now);
-									TVDatabase.UpdateRecording( rec1);
+									TVDatabase.UpdateRecording( rec1, TVDatabase.RecordingChange.Canceled);
 								}
 								Recorder.StopRecording(rec1);
 							}

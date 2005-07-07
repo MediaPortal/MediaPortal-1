@@ -75,7 +75,7 @@ namespace MediaPortal.PowerScheduler
 
 			// Register with TVDatabase
 			// listen to OnRecordingsChanged and OnProgramsChanged
-			TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnRecordingsChanged);
+			TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnRecordingChangedHandler(this.OnRecordingsChanged);
 			TVDatabase.OnProgramsChanged +=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
 	
 			m_bResetWakeuptime = true;
@@ -115,7 +115,7 @@ namespace MediaPortal.PowerScheduler
 		/// <summary>
 		/// Recordings has been changed, flag for a rescan
 		/// </summary>
-		void OnRecordingsChanged()
+		void OnRecordingsChanged(TVDatabase.RecordingChange change)
 		{	
 			if (m_bExtensiveLog) Log.Write(" PowerScheduler: OnRecordingsChanged() ");
 			m_bRecordingsChanged = true;

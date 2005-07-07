@@ -153,7 +153,7 @@ namespace MediaPortal.TV.Recording
 			TVDatabase.GetRecordings(ref m_Recordings);
 			TVDatabase.GetNotifies(m_Notifies,true);
 
-			TVDatabase.OnRecordingsChanged += new TVDatabase.OnChangedHandler(Recorder.OnRecordingsChanged);
+			TVDatabase.OnRecordingsChanged += new TVDatabase.OnRecordingChangedHandler(Recorder.OnRecordingsChanged);
 			TVDatabase.OnNotifiesChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(Recorder.OnNotifiesChanged);
       
 			GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
@@ -176,7 +176,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_eState != State.Initialized) return;
 			m_eState=State.Deinitializing;
-			TVDatabase.OnRecordingsChanged -= new TVDatabase.OnChangedHandler(Recorder.OnRecordingsChanged);
+			TVDatabase.OnRecordingsChanged -= new TVDatabase.OnRecordingChangedHandler(Recorder.OnRecordingsChanged);
 			//TODO
 			GUIWindowManager.Receivers -= new SendMessageHandler(Recorder.OnMessage);
 
@@ -666,7 +666,7 @@ namespace MediaPortal.TV.Recording
 					if (prog!=null) datetime=Utils.datetolong(prog.StartTime);
 					card.CurrentTVRecording.CanceledSeries.Add(datetime);
 				}
-				TVDatabase.UpdateRecording(card.CurrentTVRecording);
+				TVDatabase.UpdateRecording(card.CurrentTVRecording,TVDatabase.RecordingChange.Canceled);
 				card.StopRecording();
 			}
 			
@@ -709,7 +709,7 @@ namespace MediaPortal.TV.Recording
 							if (prog!=null) datetime=Utils.datetolong(prog.StartTime);
 							rec.CanceledSeries.Add(datetime);
 						}
-						TVDatabase.UpdateRecording(rec);
+						TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
 						dev.StopRecording();
 
 						//if we're not viewing this card
@@ -751,7 +751,7 @@ namespace MediaPortal.TV.Recording
 					if (prog!=null) datetime=Utils.datetolong(prog.StartTime);
 					dev.CurrentTVRecording.CanceledSeries.Add(datetime);
 				}
-				TVDatabase.UpdateRecording(dev.CurrentTVRecording);
+				TVDatabase.UpdateRecording(dev.CurrentTVRecording,TVDatabase.RecordingChange.Canceled);
 				dev.StopRecording();
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
@@ -1603,7 +1603,7 @@ namespace MediaPortal.TV.Recording
 		/// added,changed or deleted. It forces the Scheduler to get update its list of
 		/// recordings.
 		/// </summary>
-		static private void OnRecordingsChanged()
+		static private void OnRecordingsChanged(TVDatabase.RecordingChange change)
 		{ 
 			if (m_eState!=State.Initialized) return;
 			m_bRecordingsChanged=true;

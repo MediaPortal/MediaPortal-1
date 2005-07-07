@@ -548,7 +548,7 @@ namespace MediaPortal.GUI.TV
 						rec.Canceled=0;
 						break;
 				}
-				TVDatabase.UpdateRecording(rec);
+				TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Modified);
 				LoadDirectory();
 
 			}
@@ -608,22 +608,22 @@ namespace MediaPortal.GUI.TV
 				tmpItem=GetItem( i );
 				tmprec=tmpItem.TVTag as TVRecording;
 				tmprec.Priority=TVRecording.HighestPriority-i;
-				TVDatabase.UpdateRecording(tmprec);
+				TVDatabase.SetRecordingPriority(tmprec);
 			}
 			tmpItem=GetItem( item+1 );
 			tmprec=tmpItem.TVTag as TVRecording;
 			tmprec.Priority=TVRecording.HighestPriority-item;
-			TVDatabase.UpdateRecording(tmprec);
+			TVDatabase.SetRecordingPriority(tmprec);
 			for (int i=item+2; i < GetItemCount();++i)
 			{
 				tmpItem=GetItem( i );
 				tmprec=tmpItem.TVTag as TVRecording;
 				tmprec.Priority=TVRecording.HighestPriority-i;
-				TVDatabase.UpdateRecording(tmprec);
+				TVDatabase.SetRecordingPriority(tmprec);
 			}
 			
 			rec.Priority=TVRecording.HighestPriority-item-1;
-			TVDatabase.UpdateRecording(rec);
+			TVDatabase.SetRecordingPriority(rec);
 			LoadDirectory();
 		}
 
@@ -646,7 +646,7 @@ namespace MediaPortal.GUI.TV
 				tmpItem=GetItem( i );
 				tmprec=tmpItem.TVTag as TVRecording;
 				tmprec.Priority=TVRecording.HighestPriority-i;
-				TVDatabase.UpdateRecording(tmprec);
+				TVDatabase.SetRecordingPriority(tmprec);
 			}
 			for (int i=item-1; i < GetItemCount();++i)
 			{
@@ -654,11 +654,11 @@ namespace MediaPortal.GUI.TV
 				tmpItem=GetItem( i );
 				tmprec=tmpItem.TVTag as TVRecording;
 				tmprec.Priority=TVRecording.HighestPriority-i-1;
-				TVDatabase.UpdateRecording(tmprec);
+				TVDatabase.SetRecordingPriority(tmprec);
 			}
 			
 			rec.Priority=TVRecording.HighestPriority-item+1;
-			TVDatabase.UpdateRecording(rec);
+			TVDatabase.SetRecordingPriority(rec);
 			LoadDirectory();
 		}
 

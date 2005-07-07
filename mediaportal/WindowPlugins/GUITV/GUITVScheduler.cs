@@ -882,7 +882,7 @@ namespace MediaPortal.GUI.TV
             rec.Canceled=0;
             break;
 				}
-				TVDatabase.UpdateRecording(rec);
+				TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Modified);
         LoadDirectory();
 
 			}
@@ -1055,7 +1055,7 @@ namespace MediaPortal.GUI.TV
           rec.Start=Utils.datetolong(dlg.StartDateTime);
           rec.End=Utils.datetolong(dlg.EndDateTime);
           rec.Canceled=0;
-          TVDatabase.UpdateRecording( rec);
+          TVDatabase.UpdateRecording( rec,TVDatabase.RecordingChange.Modified);
           LoadDirectory();
         }
       }

@@ -28,6 +28,17 @@ namespace MediaPortal.TV.Database
 			public string strChannel="";
 		};
 
+		public enum RecordingChange
+		{
+			Added,
+			Deleted,
+			Canceled,
+			CanceledSerie,
+			Modified,
+			QualityChange,
+			EpisodesToKeepChange,
+			PriorityChange
+		}
 		static SQLiteClient m_db=null;
 		static ArrayList m_genreCache=new ArrayList();
 		static ArrayList m_channelCache=new ArrayList();
@@ -35,8 +46,9 @@ namespace MediaPortal.TV.Database
 		static bool      m_bProgramsChanged=false;
 		static bool      m_bRecordingsChanged=false;
 		public delegate void OnChangedHandler();
+		public delegate void OnRecordingChangedHandler(RecordingChange change);
 		static public event OnChangedHandler OnProgramsChanged=null;
-		static public event OnChangedHandler OnRecordingsChanged=null;
+		static public event OnRecordingChangedHandler OnRecordingsChanged=null;
 		static public event OnChangedHandler OnNotifiesChanged=null;
 
 		/// <summary>
@@ -1186,7 +1198,7 @@ namespace MediaPortal.TV.Database
 			}
 			m_channelCache.Clear();
 			ProgramsChanged();
-			RecordingsChanged();
+			RecordingsChanged(RecordingChange.Deleted);
 		}		
 		static public void RemovePrograms()
 		{
@@ -1627,7 +1639,7 @@ namespace MediaPortal.TV.Database
 				}
 			}
 		}
-		static public void UpdateRecording(TVRecording recording)
+		static public void UpdateRecording(TVRecording recording, RecordingChange change)
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -1657,7 +1669,6 @@ namespace MediaPortal.TV.Database
 						recording.Priority,
 						recording.EpisodesToKeep,
 						recording.ID);
-					Log.Write("{0}",strSQL);
 					m_db.Execute(strSQL);
 	
 					DeleteCanceledSeries(recording);
@@ -1673,7 +1684,7 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
-			RecordingsChanged();
+			RecordingsChanged(change);
 		}
 		static public void SetRecordingQuality(TVRecording recording)
 		{
@@ -1700,7 +1711,34 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
-			RecordingsChanged();
+			RecordingsChanged(RecordingChange.QualityChange);
+		}
+		static public void SetRecordingPriority(TVRecording recording)
+		{
+			lock (typeof(TVDatabase))
+			{
+				string strSQL;
+				try
+				{
+					string strTitle=recording.Title;
+					DatabaseUtility.RemoveInvalidChars(ref strTitle);
+
+					if (null==m_db) return ;
+					if (recording.ID<0) return ;
+          
+					strSQL=String.Format("update recording set priority={0} where idRecording={1}", 
+						(int)recording.Priority,
+						recording.ID);
+					m_db.Execute(strSQL);
+
+				} 
+				catch (Exception ex) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+			RecordingsChanged(RecordingChange.PriorityChange);
 		}
 		static public void SetRecordingEpisodesToKeep(TVRecording recording)
 		{
@@ -1727,7 +1765,7 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
-			RecordingsChanged();
+			RecordingsChanged(RecordingChange.EpisodesToKeepChange);
 		}
 
   
@@ -1782,7 +1820,7 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
-			RecordingsChanged();
+			RecordingsChanged(RecordingChange.Added);
 			return lNewId;
 		}
 
@@ -1804,7 +1842,7 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
-			RecordingsChanged();
+			RecordingsChanged(RecordingChange.Deleted);
 		}
 
 
@@ -2152,16 +2190,16 @@ namespace MediaPortal.TV.Database
 				if (!m_bSupressEvents)
 				{
 					if (m_bProgramsChanged)  ProgramsChanged();
-					if (m_bRecordingsChanged)  RecordingsChanged();
+					if (m_bRecordingsChanged)  RecordingsChanged(RecordingChange.Added);
 				}
 			}
 		}
-		static void RecordingsChanged()
+		static void RecordingsChanged(RecordingChange changeType)
 		{
 			m_bRecordingsChanged=true;
 			if (!m_bSupressEvents)
 			{
-				if (OnRecordingsChanged!=null) OnRecordingsChanged();
+				if (OnRecordingsChanged!=null) OnRecordingsChanged(changeType);
 				m_bRecordingsChanged=false;
 			}
 		}
@@ -3168,6 +3206,7 @@ namespace MediaPortal.TV.Database
 				string strSQL=String.Format("insert into canceledseries (idRecording , idChannel,iCancelTime ) values ( {0}, {1},'{2}' )", 
 															rec.ID,idChannel,datetime);
 				m_db.Execute(strSQL);
+				 RecordingsChanged(RecordingChange.CanceledSerie);
 			}
 			catch(Exception ex)
 			{

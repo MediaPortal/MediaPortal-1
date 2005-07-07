@@ -630,7 +630,7 @@ namespace MediaPortal.GUI.TV
 						else
 							rec.CanceledSeries.Add(Utils.datetolong(DateTime.Now));
 					}
-					TVDatabase.UpdateRecording(rec);
+					TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
 				}
 				bottomMenuVisible=false;
 			}

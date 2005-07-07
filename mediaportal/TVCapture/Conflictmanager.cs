@@ -18,7 +18,7 @@ namespace MediaPortal.TV.Recording
 		static public event OnConflictsUpdatedHandler OnConflictsUpdated=null;
 		static  ConflictManager()
 		{
-			TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnRecordingsChanged);
+			TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnRecordingChangedHandler(TVDatabase_OnRecordingsChanged);
 		}
 		static bool AllocateCard(string ChannelName)
 		{
@@ -240,9 +240,16 @@ namespace MediaPortal.TV.Recording
 				}
 		}
 
-		static private void TVDatabase_OnRecordingsChanged()
+		static private void TVDatabase_OnRecordingsChanged(TVDatabase.RecordingChange change)
 		{
-			Initialize();
+			if (change==TVDatabase.RecordingChange.Added||
+				change==TVDatabase.RecordingChange.CanceledSerie||
+				change==TVDatabase.RecordingChange.Canceled||
+				change==TVDatabase.RecordingChange.Deleted||
+				change==TVDatabase.RecordingChange.Modified)
+			{
+				Initialize();
+			}
 		}
 	}
 }
