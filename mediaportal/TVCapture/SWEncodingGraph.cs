@@ -829,10 +829,20 @@ namespace MediaPortal.TV.Recording
 			m_mediaControl = (IMediaControl)m_graphBuilder;
 
 			bool useOverlay=true;
-			if (Vmr9.IsVMR9Connected) useOverlay=false;
-      Log.WriteFile(Log.LogType.Capture,"SWGraph:Get overlay interfaces");
+			if (Vmr9.IsVMR9Connected) 
+			{
+				Log.WriteFile(Log.LogType.Capture,false,"SWGraph:using vmr9");
+				useOverlay=false;
+			}
+			else
+			{
+				Vmr9.RemoveVMR9();
+				Vmr9.Release();
+				Vmr9=null;
+			}
 			if (useOverlay)
 			{
+				Log.WriteFile(Log.LogType.Capture,"SWGraph:Get overlay interfaces");
 				m_videoWindow = m_graphBuilder as IVideoWindow;
 				if (m_videoWindow==null)
 				{
@@ -861,7 +871,6 @@ namespace MediaPortal.TV.Recording
 				if (hr != 0) 
 					DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible:0x{0:X}",hr);
 			}
-
 
       DirectShowUtil.DebugWrite("SWGraph:enable deinterlace");
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
