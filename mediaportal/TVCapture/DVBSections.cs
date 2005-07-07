@@ -1483,7 +1483,6 @@ namespace MediaPortal.TV.Recording
 			ArrayList	tab42=new ArrayList();
 			ArrayList	tab46=new ArrayList();
 
-			
 			//get SDT (Service Description Table) (pid 0x11)
 			//The SDT is used to list the names and other parameters of the services within TSs. 
 			//For each TS a separate SDT sub-Table exists.
@@ -1516,27 +1515,39 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//get the PMT table
+					
 					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
 
 					//PMT table contains the audio/video/teletext pids, so decode them
+					
 					foreach(byte[] wdata in m_sectionsList)
+					{
 						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
-
+					}
+					
 					//SDT contains the service/provider name, so get it
 					if(res>0)
 					{
+						
 						foreach(byte[] wdata in tab42)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 						foreach(byte[] wdata in tab46)
 							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
 					}
-					if (pat.pid_list.Count==0)
+
+					if (pat.pid_list==null)
 						Log.Write("DVBSections: no PMT found for channel:#{0}", ((t - 1) * 20) + n);
+					else if (pat.pid_list.Count==0)
+						Log.Write("DVBSections: no PMT found for channel:#{0}", ((t - 1) * 20) + n);
+					
 					if (pat.serviceID==0)
 						Log.Write("DVBSections: no SDT found for channel:#{0}", ((t - 1) * 20) + n);
+
 					tp.channels.Add(pat);
 				}
 			}
+			Log.Write("dvb:loadpmttables done");
+
 		}//private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		
 

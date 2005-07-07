@@ -2783,13 +2783,14 @@ namespace MediaPortal.TV.Recording
 
 			try
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3, PMT:{3:X} PCR:{4:X} ECM:{5:X}",
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid 0x{0:X} to audio, pid 0x{1:X} to video, pid 0x{2:X} to AC3, PMT:0x{3:X} PCR:0x{4:X} ECM:0x{5:X}",
 					currentTuningObject.AudioPid, 
 					currentTuningObject.VideoPid, 
 					currentTuningObject.AC3Pid,
 					currentTuningObject.PMTPid,
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
+
 				try
 				{
 					SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
@@ -3072,13 +3073,14 @@ namespace MediaPortal.TV.Recording
 					}
 
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3, PMT:{3:X} PCR:{4:X} ECM:{5:X}",
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid 0x{0:X} to audio, pid 0x{1:X} to video, pid 0x{2:X} to AC3, PMT:0x{3:X} PCR:0x{4:X} ECM:0x{5:X}",
 					currentTuningObject.AudioPid, 
 					currentTuningObject.VideoPid, 
 					currentTuningObject.AC3Pid,
 					currentTuningObject.PMTPid,
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
+
 				try
 				{
 					SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
@@ -3426,7 +3428,7 @@ namespace MediaPortal.TV.Recording
 			if (Network() == NetworkType.ATSC)
 			{
 				ATSCSections atscSections = new ATSCSections(m_streamDemuxer);
-				atscSections.Timeout=8000;
+				atscSections.Timeout=1000;
 				transp = atscSections.Scan(m_SectionsTables);
 			}
 			else
@@ -3434,7 +3436,7 @@ namespace MediaPortal.TV.Recording
 				using (DVBSections sections = new DVBSections())
 				{
 					sections.DemuxerObject=m_streamDemuxer;
-					sections.Timeout=8000;
+					sections.Timeout=1000;
 					transp = sections.Scan(m_SectionsTables);
 				}
 			}
@@ -3463,6 +3465,17 @@ namespace MediaPortal.TV.Recording
 				info.freq=currentTuningObject.Frequency;
 				DVBChannel newchannel   = new DVBChannel();
 
+				currentTuningObject.VideoPid=0;
+				currentTuningObject.AudioPid=0;
+				currentTuningObject.TeletextPid=0;
+				currentTuningObject.AC3Pid=0;
+				currentTuningObject.Audio1=0;
+				currentTuningObject.Audio2=0;
+				currentTuningObject.Audio3=0;
+				currentTuningObject.AudioLanguage=String.Empty;
+				currentTuningObject.AudioLanguage1=String.Empty;
+				currentTuningObject.AudioLanguage2=String.Empty;
+				currentTuningObject.AudioLanguage3=String.Empty;
 				//check if this channel has audio/video streams
 				int audioOptions=0;
 				if (info.pid_list!=null)
@@ -3523,6 +3536,7 @@ namespace MediaPortal.TV.Recording
 						}
 						if (data.isAC3Audio)
 						{
+							hasAudio=true;
 							currentTuningObject.AC3Pid=data.elementary_PID;
 						}
 
@@ -3532,7 +3546,9 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:{9} videopid:{10} teletextpid:{11} program#:{12} pcr pid:{13}", 
+				if (!hasAudio && !hasVideo) continue;
+				if (info.serviceType!=1 && info.serviceType!=2) continue;
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X}", 
 					info.service_provider_name,
 					info.service_name,
 					info.scrambled,
@@ -3588,10 +3604,10 @@ namespace MediaPortal.TV.Recording
 				newchannel.HasEITPresentFollow=info.eitPreFollow;
 				newchannel.HasEITSchedule=info.eitSchedule;
 
-				
+
 				if (info.serviceType==1)//tv
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} is a tv channel",newchannel.ServiceName);
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} is a tv channel",newchannel.ServiceName);
 					//check if this channel already exists in the tv database
 					bool isNewChannel=true;
 					TVChannel tvChan = new TVChannel();
@@ -3619,7 +3635,7 @@ namespace MediaPortal.TV.Recording
 						//then add a new channel to the database
 						tvChan.Number=TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
 						tvChan.Sort=newchannel.ProgramNumber;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}:{1}",newchannel.ServiceName,tvChan.Number);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tv channel for {0}:{1}",newchannel.ServiceName,tvChan.Number);
 						int id=TVDatabase.AddChannel(tvChan);
 						channelId=id;
 						newChannels++;
@@ -3628,12 +3644,12 @@ namespace MediaPortal.TV.Recording
 					{
 						TVDatabase.UpdateChannel(tvChan,tvChan.Sort);
 						updatedChannels++;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0}:{1} already exists",newchannel.ServiceName,tvChan.Number);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0}:{1} already exists",newchannel.ServiceName,tvChan.Number);
 					}
 				
 					if (Network() == NetworkType.DVBT)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
 						TVDatabase.MapDVBTChannel(newchannel.ServiceName,
 							newchannel.ServiceProvider,
 							channelId, 
@@ -3652,7 +3668,7 @@ namespace MediaPortal.TV.Recording
 					}
 					if (Network() == NetworkType.DVBC)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
 						TVDatabase.MapDVBCChannel(newchannel.ServiceName,
 							newchannel.ServiceProvider,
 							channelId, 
@@ -3674,7 +3690,7 @@ namespace MediaPortal.TV.Recording
 					}
 					if (Network() == NetworkType.ATSC)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to ATSC card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to ATSC card:{2}",newchannel.ServiceName,channelId,ID);
 						TVDatabase.MapATSCChannel(newchannel.ServiceName,
 							newchannel.PhysicalChannel, 
 							newchannel.MinorChannel,  
@@ -3700,7 +3716,7 @@ namespace MediaPortal.TV.Recording
 
 					if (Network() == NetworkType.DVBS)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
 						newchannel.ID=channelId;
 						TVDatabase.AddSatChannel(newchannel);
 					}
@@ -3738,7 +3754,7 @@ namespace MediaPortal.TV.Recording
 				}
 				else if (info.serviceType==2) //radio
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} is a radio channel",newchannel.ServiceName);
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} is a radio channel",newchannel.ServiceName);
 					//check if this channel already exists in the radio database
 					bool isNewChannel=true;
 					int channelId=-1;
@@ -3761,7 +3777,7 @@ namespace MediaPortal.TV.Recording
 					if (isNewChannel)
 					{
 						//then add a new channel to the database
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new radio channel for {0}",newchannel.ServiceName);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new radio channel for {0}",newchannel.ServiceName);
 						RadioStation station = new RadioStation();
 						station.Name=newchannel.ServiceName;
 						station.Channel=newchannel.ProgramNumber;
@@ -3774,29 +3790,29 @@ namespace MediaPortal.TV.Recording
 					else
 					{
 						updatedRadioChannels++;
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
 
 					if (Network() == NetworkType.DVBT)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
 						RadioDatabase.MapDVBTChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,newchannel.PMTPid,newchannel.Bandwidth);
 					}
 					if (Network() == NetworkType.DVBC)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
 						RadioDatabase.MapDVBCChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.Symbolrate,newchannel.FEC,newchannel.Modulation,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,newchannel.PMTPid);
 					}
 					if (Network() == NetworkType.ATSC)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
 						RadioDatabase.MapATSCChannel(newchannel.ServiceName,newchannel.PhysicalChannel, 
 							newchannel.MinorChannel,  
 							newchannel.MajorChannel, newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.Symbolrate,newchannel.FEC,newchannel.Modulation,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,currentTuningObject.AudioPid,newchannel.PMTPid);
 					}
 					if (Network() == NetworkType.DVBS)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
 						newchannel.ID=channelId;
 
 						int scrambled=0;
@@ -3969,13 +3985,14 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 				}
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid {0:X} to audio, pid {1:X} to video, pid {2:X} to AC3, PMT:{3:X} PCR:{4:X} ECM:{5:X}",
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map pid 0x{0:X} to audio, pid 0x{1:X} to video, pid 0x{2:X} to AC3, PMT:0x{3:X} PCR:0x{4:X} ECM:0x{5:X}",
 					currentTuningObject.AudioPid, 
 					currentTuningObject.VideoPid, 
 					currentTuningObject.AC3Pid,
 					currentTuningObject.PMTPid,
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
+
 				try
 				{
 					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);

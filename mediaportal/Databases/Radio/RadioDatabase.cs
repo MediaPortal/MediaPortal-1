@@ -208,7 +208,7 @@ namespace MediaPortal.Radio.Database
 					if (channel.Scrambled) scrambled=1;
 					strSQL=String.Format("update station set strName='{0}',iChannelNr={1} ,frequency='{2}',URL='{3}',bitrate={4},genre='{5}',scrambled={6} where idChannel={7}", 
 																strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled, channel.ID);
-					Log.WriteFile(Log.LogType.Log,true,strSQL);
+					//Log.WriteFile(Log.LogType.Log,true,strSQL);
 					m_db.Execute(strSQL);
 				} 
 				catch (Exception ex) 
