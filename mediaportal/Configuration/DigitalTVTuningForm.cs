@@ -45,7 +45,10 @@ namespace MediaPortal
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Timer timer1;
+		private System.Windows.Forms.Button btnPrevChan;
+		private System.Windows.Forms.Button btnNext;
 		TVCaptureDevice captureCard;
+		bool	isAutoTuning=false;
 
 		public DigitalTVTuningForm()
 		{
@@ -89,6 +92,8 @@ namespace MediaPortal
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.btnPrevChan = new System.Windows.Forms.Button();
+			this.btnNext = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// labelStatus
@@ -100,7 +105,7 @@ namespace MediaPortal
 			// 
 			// btnOk
 			// 
-			this.btnOk.Location = new System.Drawing.Point(528, 48);
+			this.btnOk.Location = new System.Drawing.Point(536, 320);
 			this.btnOk.Name = "btnOk";
 			this.btnOk.Size = new System.Drawing.Size(56, 23);
 			this.btnOk.TabIndex = 4;
@@ -169,11 +174,11 @@ namespace MediaPortal
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(528, 16);
+			this.button1.Location = new System.Drawing.Point(536, 280);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(56, 23);
 			this.button1.TabIndex = 11;
-			this.button1.Text = "Stop";
+			this.button1.Text = "Auto";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// labelChannels
@@ -247,10 +252,32 @@ namespace MediaPortal
 			this.label7.TabIndex = 20;
 			this.label7.Text = "100%";
 			// 
+			// timer1
+			// 
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			// 
+			// btnPrevChan
+			// 
+			this.btnPrevChan.Location = new System.Drawing.Point(360, 280);
+			this.btnPrevChan.Name = "btnPrevChan";
+			this.btnPrevChan.TabIndex = 21;
+			this.btnPrevChan.Text = "< Previous";
+			this.btnPrevChan.Click += new System.EventHandler(this.btnPrevChan_Click);
+			// 
+			// btnNext
+			// 
+			this.btnNext.Location = new System.Drawing.Point(440, 280);
+			this.btnNext.Name = "btnNext";
+			this.btnNext.TabIndex = 22;
+			this.btnNext.Text = "Next >";
+			this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+			// 
 			// DigitalTVTuningForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(608, 358);
+			this.Controls.Add(this.btnNext);
+			this.Controls.Add(this.btnPrevChan);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.label5);
@@ -304,6 +331,9 @@ namespace MediaPortal
       GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
       
 			tuningInterface.AutoTuneTV(captureCard,this);
+			tuningInterface.Next();
+			timer1.Enabled=true;
+			timer1.Interval=100;
     }
 
 
@@ -333,6 +363,8 @@ namespace MediaPortal
 		{
 			btnOk.Enabled=true;
 			button1.Enabled=false;
+			btnPrevChan.Enabled=false;
+			btnNext.Enabled=false;
 			signalQuality.Value=0;
 			signalStrength.Value=0;
 		}
@@ -457,13 +489,33 @@ namespace MediaPortal
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
-			
-			if (tuningInterface==null) return;
-			tuningInterface.Stop();		
+			if (isAutoTuning)
+			{
+				if (tuningInterface==null) return;
+				isAutoTuning=false;
+				tuningInterface.Stop();		
 
-			button1.Enabled=false;
-			btnOk.Enabled=true;
-			btnOk.Focus();
+				button1.Enabled=true;
+				btnNext.Enabled=true;
+				btnPrevChan.Enabled=true;
+				btnOk.Enabled=true;
+				btnOk.Focus();
+				button1.Text="Start";
+				timer1.Enabled=true;
+			}
+			else
+			{
+				if (tuningInterface==null) return;
+				isAutoTuning=true;
+				tuningInterface.Start();		
+				button1.Enabled=true;
+				btnNext.Enabled=false;
+				btnPrevChan.Enabled=false;
+				btnOk.Enabled=false;
+				button1.Focus();
+				button1.Text="Stop";
+				timer1.Enabled=false;
+			}
 		}
 		public void OnSignal(int quality, int strength)
 		{
@@ -484,8 +536,6 @@ namespace MediaPortal
 			try
 			{
 				reentrant=true;
-				if (captureCard.SignalPresent())
-					System.Threading.Thread.Sleep(500);
 				OnSignal(captureCard.SignalQuality,captureCard.SignalStrength);
 			}
 			finally
@@ -496,6 +546,50 @@ namespace MediaPortal
 
 		private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
+		}
+
+		private void btnPrevChan_Click(object sender, System.EventArgs e)
+		{
+			if (tuningInterface==null) return;
+			timer1.Enabled=false;
+			button1.Enabled=false;
+			btnNext.Enabled=false;
+			btnPrevChan.Enabled=false;
+			btnOk.Enabled=false;
+
+			tuningInterface.Previous();
+			button1.Enabled=true;
+			btnNext.Enabled=true;
+			btnPrevChan.Enabled=true;
+			btnOk.Enabled=true;
+
+			timer1.Enabled=true;
+		}
+
+		private void btnNext_Click(object sender, System.EventArgs e)
+		{
+			if (tuningInterface==null) return;
+			timer1.Enabled=false;
+			button1.Enabled=false;
+			btnNext.Enabled=false;
+			btnPrevChan.Enabled=false;
+			btnOk.Enabled=false;
+
+			tuningInterface.Next();
+			button1.Enabled=true;
+			btnNext.Enabled=true;
+			btnPrevChan.Enabled=true;
+			btnOk.Enabled=true;
+
+			timer1.Enabled=true;
+		}
+
+		private void timer1_Tick(object sender, System.EventArgs e)
+		{
+			if (!isAutoTuning)
+			{
+				UpdateSignal();
+			}
 		}
 	}
 }
