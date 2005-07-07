@@ -836,6 +836,7 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
+				Log.WriteFile(Log.LogType.Capture,false,"SWGraph:vmr9 not supported, using overlay");
 				Vmr9.RemoveVMR9();
 				Vmr9.Release();
 				Vmr9=null;
@@ -962,33 +963,8 @@ namespace MediaPortal.TV.Recording
 			if (GUIGraphicsContext.Vmr9Active) return;
       if (m_graphState != State.Viewing) return;
       int iVideoWidth, iVideoHeight;
-			if (Vmr9.IsVMR9Connected)
-			{
-				iVideoWidth=Vmr9.VideoWidth;
-				iVideoHeight=Vmr9.VideoHeight;
-			}
-			else
-			{
-				m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
-			}
-      /*if (GUIGraphicsContext.Overlay==false)
-      {
-        if (Overlay!=false)
-        {
-          Log.WriteFile(Log.LogType.Capture,"SWGraph:overlay disabled");
-          Overlay=false;
-        }
-        return;
-      }
-      else
-      {
-        if (Overlay!=true)
-        {
-          Log.WriteFile(Log.LogType.Capture,"SWGraph:overlay enabled");
-          Overlay=true;
-        }
-      }*/
-      
+			m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
+			
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
         float x = GUIGraphicsContext.OverScanLeft;
@@ -1010,36 +986,28 @@ namespace MediaPortal.TV.Recording
         rDest.X += (int)x;
         rDest.Y += (int)y;
 
-				if (!Vmr9.IsVMR9Connected)
-				{
 					
-					if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
-					if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
-					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
-					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-					DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
-					DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
-				}
+				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+				if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
+				m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+				m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
+				m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+				DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+				DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
+				DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
       }
       else
       {
-				if (!Vmr9.IsVMR9Connected)
-				{
-					if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
-						GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
-					if (iVideoHeight<=0 || iVideoWidth<=0) return;
-					m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
-					m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-					m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-					DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
-					DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
-					DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
-				}
-
+				if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
+					GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
+				if (iVideoHeight<=0 || iVideoWidth<=0) return;
+				m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
+				m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+				m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+				DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}",iVideoWidth, iVideoHeight);
+				DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})",0, 0, iVideoWidth, iVideoHeight);
+				DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})",GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
       }
-
     }
 
     void SetRegistryThings()

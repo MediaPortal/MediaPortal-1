@@ -312,30 +312,44 @@ namespace MediaPortal.Player
         // check if vmr9 is enabled and if initialized
         if (VMR9Filter == null || !UseVMR9inMYTV)
         {
+					Log.Write("vmr9: not used or no filter:{0} {1:x}",UseVMR9inMYTV,VMR9Filter);
           return false;
         }
 
         //get the VMR9 input pin#0 is connected
-        IPin pinIn, pinConnected;
-        DsUtils.GetPin(VMR9Filter, PinDirection.Input, 0, out pinIn);
-        if (pinIn == null)
-        {
-          //no input pin found, vmr9 is not possible
-          return false;
-        }
+				for (int i=0; i < 3; ++i)
+				{
+					IPin pinIn, pinConnected;
+					int hr= DsUtils.GetPin(VMR9Filter, PinDirection.Input, i, out pinIn);
+					if (pinIn == null)
+					{
+						//no input pin found, vmr9 is not possible
+						Log.Write("vmr9: no input pin {0} found:{1:x}",i,hr);
+						continue;
+					}
 
-        //check if the input is connected to a video decoder
-        pinIn.ConnectedTo(out pinConnected);
-        if (pinConnected == null)
-        {
-          //no pin is not connected so vmr9 is not possible
-					Marshal.ReleaseComObject(pinIn);
-					return false;
-        }
-				Marshal.ReleaseComObject(pinIn);
-				Marshal.ReleaseComObject(pinConnected);
-        //all is ok, vmr9 is working
-        return true;
+					//check if the input is connected to a video decoder
+					hr=pinIn.ConnectedTo(out pinConnected);
+					if (pinConnected == null)
+					{
+						//no pin is not connected so vmr9 is not possible
+						Log.Write("vmr9: pin:{0} not connected:{1:x}",i, hr);
+					}
+					else
+					{
+						Log.Write("vmr9: pin:{0} is connected",i);
+						if (pinIn!=null)
+							Marshal.ReleaseComObject(pinIn);
+						if (pinConnected!=null)
+							Marshal.ReleaseComObject(pinConnected);
+						return true;
+					}
+					if (pinIn!=null)
+						Marshal.ReleaseComObject(pinIn);
+					if (pinConnected!=null)
+						Marshal.ReleaseComObject(pinConnected);
+				}
+				return false;
       }//get {
     }//public bool IsVMR9Connected
 
