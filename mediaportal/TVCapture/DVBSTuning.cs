@@ -211,20 +211,28 @@ namespace MediaPortal.TV.Recording
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
 			timer1.Enabled=false;
-			if (currentIndex >= count)
+			try
 			{
-				callback.OnProgress(100);
-				callback.OnStatus("Finished");
-				callback.OnEnded();
-				return;
+				if (currentIndex >= count)
+				{
+					callback.OnProgress(100);
+					callback.OnStatus("Finished");
+					callback.OnEnded();
+					return;
+				}
+				UpdateStatus();
+				ScanNextTransponder();
+				if (captureCard.SignalPresent())
+				{
+					Log.WriteFile(Log.LogType.Capture,"dvbs-scan:Found signal for transponder:{0}",currentIndex);
+					ScanChannels();
+				}
 			}
-			UpdateStatus();
-			ScanNextTransponder();
-			if (captureCard.SignalPresent())
+			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Capture,"dvbs-scan:Found signal for transponder:{0}",currentIndex);
-				ScanChannels();
+				Log.Write("Exception:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 			}
+
 			timer1.Enabled=true;
 			
 		}
@@ -236,8 +244,10 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < 8; ++i)
 			{
 				System.Threading.Thread.Sleep(100);
+				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 				Application.DoEvents();
 			}
+			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
@@ -290,8 +300,10 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < 8; ++i)
 			{
 				System.Threading.Thread.Sleep(100);
+				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 				Application.DoEvents();
 			}
+			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 		}
 
 		#endregion

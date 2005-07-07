@@ -172,35 +172,43 @@ namespace MediaPortal.TV.Recording
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
 			timer1.Enabled=false;
-			if (currentFrequencyIndex >= frequencies.Count)
+			try
 			{
-				callback.OnProgress(100);
-				callback.OnEnded();
-				callback.OnStatus("Finished");
-				return;
-			}
+				if (currentFrequencyIndex >= frequencies.Count)
+				{
+					callback.OnProgress(100);
+					callback.OnEnded();
+					callback.OnStatus("Finished");
+					return;
+				}
 
-			UpdateStatus();
-			ScanNextFrequency(0);
-			if (captureCard.SignalPresent())
-			{
-				ScanChannels();
-			}
-
-			if (scanOffset!=0)
-			{
-				ScanNextFrequency(-scanOffset);
+				UpdateStatus();
+				ScanNextFrequency(0);
 				if (captureCard.SignalPresent())
 				{
 					ScanChannels();
 				}
-				ScanNextFrequency(scanOffset);
-				if (captureCard.SignalPresent())
+
+				if (scanOffset!=0)
 				{
-					ScanChannels();
+					ScanNextFrequency(-scanOffset);
+					if (captureCard.SignalPresent())
+					{
+						ScanChannels();
+					}
+					ScanNextFrequency(scanOffset);
+					if (captureCard.SignalPresent())
+					{
+						ScanChannels();
+					}
 				}
+				currentFrequencyIndex++;
 			}
-			currentFrequencyIndex++;
+			catch(Exception ex)
+			{
+				Log.Write("Exception:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+			}
+
 			timer1.Enabled=true;
 		}
 
@@ -214,8 +222,10 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < 8; ++i)
 			{
 				System.Threading.Thread.Sleep(100);
+				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 				Application.DoEvents();
 			}
+			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
@@ -245,8 +255,10 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < 8; ++i)
 			{
 				System.Threading.Thread.Sleep(100);
+				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 				Application.DoEvents();
 			}
+			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 			return;
 		}
 

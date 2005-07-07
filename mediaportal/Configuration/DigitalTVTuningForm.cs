@@ -48,6 +48,7 @@ namespace MediaPortal
 		private System.Windows.Forms.Button btnPrevChan;
 		private System.Windows.Forms.Button btnNext;
 		TVCaptureDevice captureCard;
+		private System.Windows.Forms.GroupBox groupBox1;
 		bool	isAutoTuning=false;
 
 		public DigitalTVTuningForm()
@@ -94,6 +95,8 @@ namespace MediaPortal
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.btnPrevChan = new System.Windows.Forms.Button();
 			this.btnNext = new System.Windows.Forms.Button();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// labelStatus
@@ -174,11 +177,11 @@ namespace MediaPortal
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(536, 280);
+			this.button1.Location = new System.Drawing.Point(528, 280);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(56, 23);
+			this.button1.Size = new System.Drawing.Size(64, 23);
 			this.button1.TabIndex = 11;
-			this.button1.Text = "Auto";
+			this.button1.Text = "Auto Scan";
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// labelChannels
@@ -258,7 +261,7 @@ namespace MediaPortal
 			// 
 			// btnPrevChan
 			// 
-			this.btnPrevChan.Location = new System.Drawing.Point(360, 280);
+			this.btnPrevChan.Location = new System.Drawing.Point(16, 32);
 			this.btnPrevChan.Name = "btnPrevChan";
 			this.btnPrevChan.TabIndex = 21;
 			this.btnPrevChan.Text = "< Previous";
@@ -266,18 +269,28 @@ namespace MediaPortal
 			// 
 			// btnNext
 			// 
-			this.btnNext.Location = new System.Drawing.Point(440, 280);
+			this.btnNext.Location = new System.Drawing.Point(104, 32);
 			this.btnNext.Name = "btnNext";
 			this.btnNext.TabIndex = 22;
 			this.btnNext.Text = "Next >";
 			this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
 			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.btnPrevChan);
+			this.groupBox1.Controls.Add(this.btnNext);
+			this.groupBox1.Location = new System.Drawing.Point(312, 264);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(200, 72);
+			this.groupBox1.TabIndex = 23;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Manual tune";
+			// 
 			// DigitalTVTuningForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(608, 358);
-			this.Controls.Add(this.btnNext);
-			this.Controls.Add(this.btnPrevChan);
+			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.label5);
@@ -300,6 +313,7 @@ namespace MediaPortal
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.DigitalTVTuningForm_Closing);
 			this.Load += new System.EventHandler(this.DigitalTVTuningForm_Load);
 			this.Closed += new System.EventHandler(this.DigitalTVTuningForm_Closed);
+			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -370,24 +384,20 @@ namespace MediaPortal
 		}
 		public void OnNewChannel()
 		{
-			UpdateSignal();
 		}
 
 		public void OnProgress(int percentDone)
 		{
-			UpdateSignal();
 			progressBar1.Value=percentDone;
 		}
 
 		public void OnStatus(string description)
 		{
-			UpdateSignal();
 			labelStatus.Text=description;
 		}
 
 		public void OnStatus2(string description)
 		{
-			UpdateSignal();
 			labelStatus2.Text=description;
 		}
 
@@ -500,7 +510,7 @@ namespace MediaPortal
 				btnPrevChan.Enabled=true;
 				btnOk.Enabled=true;
 				btnOk.Focus();
-				button1.Text="Start";
+				button1.Text="Auto Scan";
 				timer1.Enabled=true;
 			}
 			else
