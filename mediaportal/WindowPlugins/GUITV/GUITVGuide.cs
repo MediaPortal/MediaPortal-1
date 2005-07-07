@@ -888,7 +888,7 @@ namespace MediaPortal.GUI.TV
 		void SetProperties()
 		{
 			if (m_channels.Count==0) return;
-			if (m_iCursorX==0)
+			if (m_iCursorX==0 || m_currentProgram==null)
 			{
 				int channel=m_iCursorY+m_iChannelOffset;
 				while (channel >= m_channels.Count) channel -=m_channels.Count;
@@ -921,7 +921,7 @@ namespace MediaPortal.GUI.TV
 				m_strCurrentChannel=strChannel;
 				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
 			}
-			else
+			else 
 			{
 				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,m_currentProgram.Channel);
 				string strTime=String.Format("{0}-{1}", 
