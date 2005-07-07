@@ -28,6 +28,7 @@ namespace MediaPortal.Player
   public class VMR9Util
   {
 		static public VMR9Util g_vmr9=null;
+		static int instanceCounter = 0;
 
     public PlaneScene m_scene = null;
     public bool UseVMR9inMYTV = false;
@@ -40,9 +41,8 @@ namespace MediaPortal.Player
 		IQualProp quality=null;
     int frameCounter = 0;
     DateTime repaintTimer = DateTime.Now;
-    static int instanceCounter = 0;
-
 	  IVMRMixerBitmap9 m_mixerBitmap=null;
+		bool vmr9Initialized=false;
     enum Vmr9PlayState
     {
       Playing,
@@ -84,10 +84,13 @@ namespace MediaPortal.Player
     public void AddVMR9(IGraphBuilder graphBuilder)
     {
       if (!UseVMR9inMYTV) return;
-      if (VMR9Filter != null)
-      {
-        RemoveVMR9();
-      }
+      if (vmr9Initialized) return;
+			Log.Write("VMR9Helper:AddVmr9");
+			if (instanceCounter != 0)
+			{
+				Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Multiple instances of VMR9 running!!!");
+				throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
+			}
 
       Type comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
       object comobj = Activator.CreateInstance(comtype);
@@ -99,24 +102,15 @@ namespace MediaPortal.Player
         return;
       }
 
-
-      if (instanceCounter != 0)
-      {
-        Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Multiple instances of VMR9 running!!!");
-        throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
-      }
-
       IntPtr hMonitor;
       AdapterInformation ai = Manager.Adapters.Default;
       hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
       IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
-      instanceCounter++;
       m_scene = new PlaneScene(m_renderFrame, this);
       m_scene.Init();
       vmr9Helper = new DirectShowHelperLib.VMR9HelperClass();
       DirectShowHelperLib.IBaseFilter baseFilter = VMR9Filter as DirectShowHelperLib.IBaseFilter;
-		m_mixerBitmap=baseFilter as IVMRMixerBitmap9;
 
       vmr9Helper.Init(m_scene, (uint)upDevice.ToInt32(), baseFilter, (uint)hMonitor.ToInt32());
 
@@ -127,17 +121,25 @@ namespace MediaPortal.Player
 				m_scene.Stop();
 				m_scene.Deinit();
 				m_scene=null;
+				vmr9Helper=null;
+				Marshal.ReleaseComObject(VMR9Filter);
+				VMR9Filter=null;
         Error.SetError("Unable to play movie", "Unable to initialize VMR9");
         Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Failed to add vmr9 to filtergraph");
         return;
       }
-      SetDeinterlacePrefs();
+
 			quality = VMR9Filter as IQualProp ;
-			Log.Write("VMR9Helper:start vmr9");
+			m_mixerBitmap=baseFilter as IVMRMixerBitmap9;
 			
+			instanceCounter++;
 			GUIGraphicsContext.Vmr9Active = true;
 			g_vmr9=this;
+			vmr9Initialized=true;
+			SetDeinterlacePrefs();
+			Log.Write("VMR9Helper:Vmr9 Added");
 		}
+
     public void Release()
     {
     }
@@ -147,33 +149,35 @@ namespace MediaPortal.Player
     /// </summary>
     public void RemoveVMR9()
     {
-			if (!UseVMR9inMYTV) return;
-			g_vmr9=null;
-      if (vmr9Helper != null)
+			if (vmr9Initialized)
 			{
-				Log.Write("VMR9Helper:stop vmr9 helper");
-				vmr9Helper.Deinit();
-        vmr9Helper = null;
-      }
+				Log.Write("VMR9Helper:RemoveVMR9");
+				g_vmr9=null;
+				if (vmr9Helper != null)
+				{
+					Log.Write("VMR9Helper:stop vmr9 helper");
+					vmr9Helper.Deinit();
+					vmr9Helper = null;
+				}
 
-      if (m_scene != null)
-			{
-				Log.Write("VMR9Helper:stop planescene");
-				m_scene.Stop();
-        instanceCounter--;
-        m_scene.Deinit();
-				m_scene = null;
-				GUIGraphicsContext.Vmr9Active = false;
-				GUIGraphicsContext.Vmr9FPS=0f;
-				GUIGraphicsContext.InVmr9Render=false;
-				currentVmr9State = Vmr9PlayState.Playing;
-      }
-			if (quality != null)
-				Marshal.ReleaseComObject(quality); quality = null;
-				
-      if (VMR9Filter != null)
-        Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
-
+				if (m_scene != null)
+				{
+					Log.Write("VMR9Helper:stop planescene");
+					m_scene.Stop();
+					instanceCounter--;
+					m_scene.Deinit();
+					m_scene = null;
+					GUIGraphicsContext.Vmr9Active = false;
+					GUIGraphicsContext.Vmr9FPS=0f;
+					GUIGraphicsContext.InVmr9Render=false;
+					currentVmr9State = Vmr9PlayState.Playing;
+				}
+				if (quality != null)
+					Marshal.ReleaseComObject(quality); quality = null;
+					
+				if (VMR9Filter != null)
+					Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
+			}
 		}
 
     public int FrameCounter
@@ -254,7 +258,7 @@ namespace MediaPortal.Player
     /// </summary>
     public void Repaint()
     {
-      if (m_scene == null || VMR9Filter == null) return;
+      if (!vmr9Initialized) return;
       if (m_scene.Enabled == false) return;
       if (currentVmr9State == Vmr9PlayState.Playing)
       {
@@ -271,6 +275,7 @@ namespace MediaPortal.Player
 		}
     public void Process()
 		{
+			if (!vmr9Initialized) return;
 			if( !GUIGraphicsContext.Vmr9Active) return;
       TimeSpan ts = DateTime.Now - repaintTimer;
       if (ts.TotalMilliseconds > 1000)
@@ -310,6 +315,8 @@ namespace MediaPortal.Player
     {
       get
       {
+				
+				if (!vmr9Initialized) return false;
         // check if vmr9 is enabled and if initialized
         if (VMR9Filter == null || !UseVMR9inMYTV)
         {
@@ -355,7 +362,8 @@ namespace MediaPortal.Player
     }//public bool IsVMR9Connected
 
     public void SetDeinterlacePrefs()
-    {
+		{
+			if (!vmr9Initialized) return;
       if (vmr9Helper == null) return;
       int DeInterlaceMode = 3;
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -369,7 +377,8 @@ namespace MediaPortal.Player
       vmr9Helper.SetDeinterlacePrefs((uint)DeInterlaceMode);
     }
     public void SetDeinterlaceMode()
-    {
+		{
+			if (!vmr9Initialized) return;
 			if (vmr9Helper == null) return;
 			int DeInterlaceMode = 3;
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -383,12 +392,14 @@ namespace MediaPortal.Player
 			vmr9Helper.SetDeinterlaceMode(DeInterlaceMode);
     }
     public void Enable(bool onOff)
-    {
+		{
+			if (!vmr9Initialized) return;
       if (m_scene != null) m_scene.Enabled = onOff;
     }
 
 		public bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
+			if (!vmr9Initialized) return false;
 			if (VMR9Filter==null) 
 				return false;
 			

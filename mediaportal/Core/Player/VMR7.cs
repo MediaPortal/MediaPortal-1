@@ -34,6 +34,7 @@ namespace MediaPortal.Player
 		IVMRMixerBitmap m_mixerBitmap=null;
 		DateTime repaintTimer = DateTime.Now;
 		ulong m_oldSavedBitmapCRC=0;
+		bool  vmr7intialized=false;
 		//Util.CRCTool crc=new MediaPortal.Util.CRCTool();
 		/// <summary>
 		/// Constructor
@@ -53,10 +54,8 @@ namespace MediaPortal.Player
 		/// <param name="graphBuilder"></param>
 		public void AddVMR7(IGraphBuilder graphBuilder)
 		{
-			if (VMR7Filter != null)
-			{
-				RemoveVMR7();
-			}
+			Log.Write("VMR7Helper:AddVMR7");
+			if (vmr7intialized) return;
 
 			Type comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer);
 			object comobj = Activator.CreateInstance(comtype);
@@ -76,20 +75,27 @@ namespace MediaPortal.Player
 				if (hr != 0)
 				{
 					Log.WriteFile(Log.LogType.Log, true, "VMR7Helper:Failed to set number of streams:0x{0:X}",hr);
+					Marshal.ReleaseComObject(config);
+					Marshal.ReleaseComObject(VMR7Filter);
+					VMR7Filter=null;
 					return;
 				}
+				Marshal.ReleaseComObject(config);
 			}
 
-			m_mixerBitmap=VMR7Filter as IVMRMixerBitmap;
 			hr = graphBuilder.AddFilter(VMR7Filter, "Video Mixing Renderer");
 			if (hr != 0)
 			{
 				Error.SetError("Unable to play movie", "Unable to initialize VMR7");
 				Log.WriteFile(Log.LogType.Log, true, "VMR7Helper:Failed to add VMR7 to filtergraph");
+				Marshal.ReleaseComObject(VMR7Filter);
+				VMR7Filter=null;
 				return;
 			}
+			m_mixerBitmap=VMR7Filter as IVMRMixerBitmap;
 			quality = VMR7Filter as IQualProp ;
 			g_vmr7=this;
+			vmr7intialized=true;
 		}
 
 		/// <summary>
@@ -97,16 +103,24 @@ namespace MediaPortal.Player
 		/// </summary>
 		public void RemoveVMR7()
 		{
-			
-			if (quality != null)
-				Marshal.ReleaseComObject(quality);
-			quality = null;
-				
-			if (VMR7Filter != null)
+			if (vmr7intialized)
 			{
-				Marshal.ReleaseComObject(VMR7Filter); 
-				VMR7Filter = null;
-				g_vmr7=null;
+				Log.Write("VMR7Helper:RemoveVMR7");
+				if (m_mixerBitmap != null)
+					Marshal.ReleaseComObject(m_mixerBitmap);
+				m_mixerBitmap = null;
+
+				if (quality != null)
+					Marshal.ReleaseComObject(quality);
+				quality = null;
+					
+				if (VMR7Filter != null)
+				{
+					Marshal.ReleaseComObject(VMR7Filter); 
+					VMR7Filter = null;
+					g_vmr7=null;
+				}
+				vmr7intialized=false;
 			}
 		}
 
@@ -116,7 +130,9 @@ namespace MediaPortal.Player
 		/// </summary>
 		public IVMRMixerBitmap MixerBitmapInterface
 		{
-			get{return m_mixerBitmap;}
+			get{
+				return m_mixerBitmap;
+			}
 		}
 
 		public IQualProp Quality
@@ -125,6 +141,7 @@ namespace MediaPortal.Player
 		}
 		public void Process()
 		{
+			if (!vmr7intialized) return;
 			if( GUIGraphicsContext.Vmr9Active) return;
 			TimeSpan ts = DateTime.Now - repaintTimer;
 			if (ts.TotalMilliseconds > 1000)
@@ -143,6 +160,8 @@ namespace MediaPortal.Player
 			get
 			{
 				// check if VMR7 is enabled and if initialized
+				
+				if (!vmr7intialized) return false;
 				if (VMR7Filter == null)
 				{
 					return false;
@@ -173,7 +192,8 @@ namespace MediaPortal.Player
 		}//public bool IsVMR7Connected
 
 		public bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
-		{
+		{	
+			if (!vmr7intialized) return true;
 			if( GUIGraphicsContext.Vmr9Active) return true;
 			if(MixerBitmapInterface==null)
 				return false;
