@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
@@ -15,20 +16,12 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBTTuning : ITuning
 	{
-		enum State
-		{
-			ScanFrequencies,
-			ScanChannels,
-			ScanOffset
-		}
 		TVCaptureDevice											captureCard;
 		AutoTuneCallback										callback = null;
 		ArrayList                           frequencies=new ArrayList();
 		int                                 currentFrequencyIndex=0;
 		int																	scanOffset = 0;
 		private System.Windows.Forms.Timer  timer1;
-		State                               currentState;
-		int																	currentOffset=0;
 		int                                 tunedFrequency=0;
 		int																	newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
@@ -49,11 +42,9 @@ namespace MediaPortal.TV.Recording
 			newChannels=0;
 			updatedChannels=0;
 			tunedFrequency=0;
-			currentOffset=0;
 			captureCard=card;
 			callback=statusCallback;
 
-			currentState=State.ScanFrequencies;
 			frequencies.Clear();
 			currentFrequencyIndex=-1;
 			String countryCode = String.Empty;
@@ -112,12 +103,43 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:{0} has a scan offset of {1}KHz", countryCode, scanOffset);
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-			timer1.Interval=100;
-			timer1.Enabled=true;
-			callback.OnProgress(0);
 			return;
 		}
 
+		public void Start()
+		{
+			currentFrequencyIndex=-1;
+			timer1.Interval=100;
+			timer1.Enabled=true;
+			callback.OnProgress(0);
+		}
+
+		public void Next()
+		{
+			if (currentFrequencyIndex+1>=frequencies.Count) return;
+			currentFrequencyIndex++;
+			UpdateStatus();
+
+			ScanNextFrequency();
+			if (captureCard.SignalPresent())
+			{
+				ScanChannels();
+			}
+		}
+		public void Previous()
+		{
+			if (currentFrequencyIndex>=1) 
+			{
+				currentFrequencyIndex--;
+
+				UpdateStatus();
+				ScanNextFrequency();
+				if (captureCard.SignalPresent())
+				{
+					ScanChannels();
+				}
+			}
+		}
 		public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
 		{
 			// TODO:  Add DVBTTuning.AutoTuneRadio implementation
@@ -134,17 +156,8 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 
-		private void timer1_Tick(object sender, System.EventArgs e)
+		void UpdateStatus()
 		{
-			if (currentFrequencyIndex >= frequencies.Count)
-			{
-				timer1.Enabled=false;
-				callback.OnProgress(100);
-				callback.OnEnded();
-				callback.OnStatus("Finished");
-				return;
-			}
-			
 			int currentFreq=currentFrequencyIndex;
 			if (currentFrequencyIndex<0) currentFreq=0;
 			float percent = ((float)currentFreq) / ((float)frequencies.Count);
@@ -152,131 +165,70 @@ namespace MediaPortal.TV.Recording
 			callback.OnProgress((int)percent);
 			int[] tmp = frequencies[currentFreq] as int[];
 			//Log.WriteFile(Log.LogType.Capture,"dvbt-scan:FREQ: {0} BWDTH: {1}", tmp[0], tmp[1]);
-			float frequency = tunedFrequency;
+			float frequency = tmp[0];
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
 			callback.OnStatus(description);
-
-			if (currentState==State.ScanFrequencies)
+		}
+		private void timer1_Tick(object sender, System.EventArgs e)
+		{
+			timer1.Enabled=false;
+			if (currentFrequencyIndex >= frequencies.Count)
 			{
-				if (frequency>0)
-				{
-					if (captureCard.SignalPresent())
-					{
-						System.Threading.Thread.Sleep(3000);
-						//if (captureCard.SignalQuality>40)
-						{
-							Log.WriteFile(Log.LogType.Capture,"dvbt-scan:Found signal at:{0} MHz,scan for channels",frequency);
-							currentState=State.ScanChannels;
-							currentOffset=0;
-						}
-					}
-				}
+				callback.OnProgress(100);
+				callback.OnEnded();
+				callback.OnStatus("Finished");
+				return;
 			}
 
-			if (currentState==State.ScanFrequencies)
+			UpdateStatus();
+			ScanNextFrequency();
+			if (captureCard.SignalPresent())
 			{
-				timer1.Enabled=false;
-				callback.OnStatus(description);
-				ScanNextFrequency();
-				timer1.Enabled=true;
-			}
-
-			if (currentState==State.ScanChannels)
-			{
-				description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
-				callback.OnStatus(description);
 				ScanChannels();
 			}
+			currentFrequencyIndex++;
+			timer1.Enabled=true;
 		}
 
 		void ScanChannels()
 		{
+			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=frequencies.Count) return;
+			int[] tmp;
+			tmp = (int[])frequencies[currentFrequencyIndex];
+			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]);
+			callback.OnStatus(description);
+			for (int i=0; i < 8; ++i)
+			{
+				System.Threading.Thread.Sleep(100);
+				Application.DoEvents();
+			}
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
-			timer1.Enabled=false;
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			callback.UpdateList();
-			currentState=State.ScanFrequencies;
-			currentOffset=0;
-			currentFrequencyIndex++;
-			ScanNextFrequency();
-			timer1.Enabled=true;
 		}
 
 		void ScanNextFrequency()
 		{
-		
-			Log.Write("ScanNextFrequency() {0}/{1} {2}",currentFrequencyIndex,frequencies.Count,currentOffset);
+			if (currentFrequencyIndex <0) currentFrequencyIndex =0;
 			if (currentFrequencyIndex >=frequencies.Count) return;
+			Log.Write("ScanNextFrequency() {0}/{1}",currentFrequencyIndex,frequencies.Count);
 
 			DVBChannel chan = new DVBChannel();
 			int[] tmp;
-			if (currentFrequencyIndex<0)
-			{
-				currentOffset=0;
-				currentFrequencyIndex=0;
-				if (currentFrequencyIndex>=frequencies.Count)
-				{
-					timer1.Enabled=false;
-					callback.OnProgress(100);
-					callback.OnEnded();
-					callback.OnStatus("Finished");
-					captureCard.DeleteGraph();
-					return;
-				}
-
-				tmp = (int[])frequencies[currentFrequencyIndex];
-				chan.Frequency=tmp[0];
-				chan.Bandwidth=tmp[1];
-				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (i)",chan.Frequency, chan.Bandwidth);
-				captureCard.Tune(chan,0);
-				return;
-			}
-
 			tmp = (int[])frequencies[currentFrequencyIndex];
 			chan.Frequency=tmp[0];
 			chan.Bandwidth=tmp[1];
-			tunedFrequency=chan.Frequency;
-
-			if (currentOffset==0)
+			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (i)",chan.Frequency, chan.Bandwidth);
+			captureCard.Tune(chan,0);
+			for (int i=0; i < 8; ++i)
 			{
-				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (1)",chan.Frequency, chan.Bandwidth);
-				captureCard.Tune(chan,0);
-				if (scanOffset==0) currentOffset=3;
-				else currentOffset=1;
+				System.Threading.Thread.Sleep(100);
+				Application.DoEvents();
 			}
-			else if (currentOffset==1)
-			{
-				tunedFrequency-=scanOffset;
-				chan.Frequency-=scanOffset;
-				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (2)",chan.Frequency, chan.Bandwidth);
-				captureCard.Tune(chan,0);
-				currentOffset=2;
-			}
-			else if (currentOffset==2)
-			{
-				tunedFrequency+=(scanOffset);
-				chan.Frequency+=(scanOffset);
-				Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (3)",chan.Frequency, chan.Bandwidth);
-				captureCard.Tune(chan,0);
-				currentOffset=3;
-			}
-			else
-			{
-				currentOffset=0;
-				currentFrequencyIndex++;
-				if (currentFrequencyIndex>=frequencies.Count)
-				{
-					timer1.Enabled=false;
-					callback.OnProgress(100);
-					callback.OnEnded();
-					callback.OnStatus("Finished");
-					captureCard.DeleteGraph();
-					return;
-				}
-			}
+			return;
 		}
 
 		#endregion

@@ -23,6 +23,15 @@ namespace MediaPortal.TV.Recording
 		}
 		#region ITuning Members
 
+		public void Start()
+		{
+		}
+		public void Next()
+		{
+		}
+		public void Previous()
+		{
+		}
 		public void Stop()
 		{
 			timer1.Enabled=false;
@@ -55,6 +64,7 @@ namespace MediaPortal.TV.Recording
 
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
+			timer1.Enabled=false;
 			float percent = ((float)currentChannel) / ((float)MaxChannelNo);
 			percent *= 100.0f;
 			callback.OnProgress((int)percent);
@@ -65,7 +75,6 @@ namespace MediaPortal.TV.Recording
 
 			if (captureCard.SignalPresent())
 			{
-				timer1.Enabled=false;
 				callback.OnNewChannel();
 				return;
 			}
@@ -73,13 +82,13 @@ namespace MediaPortal.TV.Recording
 			float freq=captureCard.VideoFrequency();
 			if ((int)freq == (int)lastFrequency && freq >100f) 
 			{
-				timer1.Enabled=false;
 				callback.OnProgress(100);
 				callback.OnEnded();
 				captureCard.DeleteGraph();
 				return;
 			}
 			lastFrequency=freq;
+			timer1.Enabled=true;
 		}
 		void NextChannel()
 		{
@@ -87,7 +96,6 @@ namespace MediaPortal.TV.Recording
 			currentChannel++;
 			if (currentChannel>=MaxChannelNo)
 			{
-				timer1.Enabled=false;
 				callback.OnProgress(100);
 				callback.OnEnded();
 				captureCard.DeleteGraph();
@@ -100,7 +108,6 @@ namespace MediaPortal.TV.Recording
 			chan.TVStandard=AnalogVideoStandard.None;
 			if (!captureCard.ViewChannel(chan) )
 			{
-				timer1.Enabled=false;
 				callback.OnProgress(100);
 				callback.OnEnded();
 				captureCard.DeleteGraph();

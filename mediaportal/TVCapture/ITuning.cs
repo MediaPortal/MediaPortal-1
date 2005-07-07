@@ -52,6 +52,9 @@ namespace MediaPortal.TV.Recording
 
 	public interface ITuning
 	{
+		void Start();
+		void Next();
+		void Previous();
 		/// <summary>
 		/// This method should do all auto-tuning for TV
 		/// It should locate & find all tv channels for the card specified and store them in the database
