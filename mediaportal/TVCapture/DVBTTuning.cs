@@ -176,6 +176,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (currentFrequencyIndex >= frequencies.Count)
 				{
+					Log.Write("dvbt-scan:finished");
 					callback.OnProgress(100);
 					callback.OnEnded();
 					callback.OnStatus("Finished");
@@ -214,30 +215,27 @@ namespace MediaPortal.TV.Recording
 
 		void ScanChannels()
 		{
+			Log.Write("dvbt-scan:ScanChannels() {0}/{1}",currentFrequencyIndex,frequencies.Count);
 			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=frequencies.Count) return;
 			int[] tmp;
 			tmp = (int[])frequencies[currentFrequencyIndex];
 			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]);
 			callback.OnStatus(description);
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 			callback.UpdateList();
+			Log.Write("dvbt-scan:ScanChannels() done");
 		}
 
 		void ScanNextFrequency(int offset)
 		{
+			Log.Write("dvbt-scan:ScanNextFrequency() {0}/{1}",currentFrequencyIndex,frequencies.Count);
 			if (currentFrequencyIndex <0) currentFrequencyIndex =0;
 			if (currentFrequencyIndex >=frequencies.Count) return;
-			Log.Write("ScanNextFrequency() {0}/{1}",currentFrequencyIndex,frequencies.Count);
 
 			DVBChannel chan = new DVBChannel();
 			int[] tmp;
@@ -250,15 +248,11 @@ namespace MediaPortal.TV.Recording
 			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
 			callback.OnStatus(description);
 
-			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} (i)",chan.Frequency, chan.Bandwidth);
+			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} offset:{2}",chan.Frequency, chan.Bandwidth,offset);
 			captureCard.Tune(chan,0);
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tuned");
 			return;
 		}
 

@@ -1605,6 +1605,9 @@ namespace MediaPortal.TV.Recording
 				catch (COMException)
 				{
 				}
+				catch (Exception )
+				{
+				}
 				try
 				{
 					//is a signal present?
@@ -1612,6 +1615,9 @@ namespace MediaPortal.TV.Recording
 					isSignalPresent |= isPresent;
 				}
 				catch (COMException)
+				{
+				}
+				catch (Exception )
 				{
 				}
 				try
@@ -1622,6 +1628,9 @@ namespace MediaPortal.TV.Recording
 					if (quality>0) signalQuality += quality;
 				}
 				catch (COMException)
+				{
+				}
+				catch (Exception )
 				{
 				}
 			}
@@ -1656,8 +1665,9 @@ namespace MediaPortal.TV.Recording
 				}
 				catch (COMException )
 				{
-					//Log.Write("Loop {0} :: {1}{2}", i, e.Message, e.StackTrace);
-					continue;
+				}
+				catch (Exception )
+				{
 				}
 			}
 			return signalQuality;
@@ -1680,8 +1690,9 @@ namespace MediaPortal.TV.Recording
 				}
 				catch (COMException )
 				{
-					//Log.Write("Loop {0} :: {1}{2}", i, e.Message, e.StackTrace);
-					continue;
+				}
+				catch (Exception )
+				{
 				}
 			}
 			return signalStrength;
@@ -3404,20 +3415,6 @@ namespace MediaPortal.TV.Recording
 		{	
 			//it may take a while before signal quality/level is correct
 			if (m_SectionsTables==null) return;
-			if (SignalQuality()!=-1)
-			{
-				for (int i=0; i < 10;++i)
-				{
-					if (SignalQuality() < 40) 
-					{
-						System.Windows.Forms.Application.DoEvents();
-						System.Threading.Thread.Sleep(100);
-						System.Windows.Forms.Application.DoEvents();
-					}
-					else break;
-				}
-				if (SignalQuality() < 40 ) return;
-			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: StoreChannels() signal level:{0} signal quality:{1}",SignalStrength(),SignalQuality() );
 
 			//get list of current tv channels present in the database

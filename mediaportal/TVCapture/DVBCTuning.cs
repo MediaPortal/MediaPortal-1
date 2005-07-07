@@ -233,12 +233,7 @@ namespace MediaPortal.TV.Recording
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate);
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			callback.OnStatus(description);
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
@@ -282,12 +277,7 @@ namespace MediaPortal.TV.Recording
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.Frequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan,0);
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 		}
 		#endregion

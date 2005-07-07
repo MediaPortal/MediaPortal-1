@@ -1,38 +1,21 @@
-
-Cosmetic bugs:
-  05-08-2004 my recipies: my recipies is not translatable
-  05-08-2004 GUI        : mousescrollbars are too long (should be as long as the list/icon view WITHOUT page controls, and in iconview way too far to the left letting it go offscreen
-  13-07-2004 general    : if name/file/... is to long then the text will just run right off the end of the dialog box
-  13-07-2004 general    : The cancel buttons dont work
-  12-07-2004 my tv      : home : current program title goes out of box if its 2 long (zipperzip)
-
-crash/things not working Bugs:
-  21-08-2004 Pictures	: Streaming radio station stops when viewing a picture
-  21-08-2004 Pictures	: single picture view is not AR compensated
-  18-08-2004 GUI        : textboxscrollup shows the first line briefly on the last line when using cursorkeys. Easy to see in the TVhome when you have a program description on screen.
-  18-08-2004 GUI        : when recording albumart is not shown in the music overlay.
-  18-08-2004 GUI        : GUI not rendered when starting MP maximised (set this in the shortcut)
-  18-08-2004 TVOSD      : when using a software tv card, the OSD only updates when you move your cursor from button to button on the OSD
-  15-08-2004 music      : albumart in overlay is not being AR corrected.
-  
-  02-08-2004 my tv      : dual tuner setup: when recording with card#1 you cannot switch tv channels anymore
-                          since card#1 is also used for tv viewing instead of card #2
-  24-04-2004 general    : some WMP9 visz. like g-force just show a black screen
-  02-05-2004 my music   : When having 2 albums with the same name it is shown as 1 with artist = various artists. 
-                          However, there r albums withds? (MrMario64 )
-  02-05-2004 my music   : reorganise datab the same name from different artists. (big change needed in database engine) 
-  
-
-Bugs which wont be fixed before 0.1
-  02-08-2004 my music   : The display of the cover art in the OSD is distorted.
-                          I is in form of a rectangle like a DVD Cover and not a square like a CD. 
+- create manual recording at 22:45->> takes start time:22:30
+- topbar should be lower
+- tv rectangle in scheduled/conflicts/priorities
+- add \ to end of shares (silentyl)
+- xvid/wmv transcoding
+- DVB: LCN
+- german/french IMDB cover art
+- ATSC
 
 
-  
-Bugs i cannot fix (at the moment)
-  23-05-2004 skin engine: rescale causes borders to appear on topbar buttons (new topbar) 
-                          reason : DirectX scaling causes this. Need to find out if this can b solved
-  30-06-2004 my programs: returns to home when stopping a application
-						  reason : cannot reproduce it (i tried .txt files with notepad)
-  18-06-2004 my video   : page counter goes wrong when > 9 pages
-                          reason : unable to reproduce this bug
+things todo for 0.1.3:
+- map epg channels
+- ac3 option
+- channel select usa option
+- 
+
+
+things to test:
+- conflicts
+- priorities
+- keep max # of episodes

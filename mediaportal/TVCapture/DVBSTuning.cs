@@ -241,12 +241,7 @@ namespace MediaPortal.TV.Recording
 		{
 			string description=String.Format("Found signal for transponder:{0}, Scanning channels", currentIndex);
 			callback.OnStatus(description);
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
@@ -297,12 +292,7 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"dvbs-scan:tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
 									newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
 			captureCard.Tune(newchan,m_currentDiseqc);
-			for (int i=0; i < 8; ++i)
-			{
-				System.Threading.Thread.Sleep(100);
-				callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-				Application.DoEvents();
-			}
+			System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 		}
 

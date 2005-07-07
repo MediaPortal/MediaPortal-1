@@ -1546,8 +1546,7 @@ namespace MediaPortal.TV.Recording
 					tp.channels.Add(pat);
 				}
 			}
-			Log.Write("dvb:loadpmttables done");
-
+			
 		}//private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		
 
