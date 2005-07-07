@@ -34,7 +34,7 @@ namespace MediaPortal.Player
 		IVMRMixerBitmap m_mixerBitmap=null;
 		DateTime repaintTimer = DateTime.Now;
 		ulong m_oldSavedBitmapCRC=0;
-		Util.CRCTool crc=new MediaPortal.Util.CRCTool();
+		//Util.CRCTool crc=new MediaPortal.Util.CRCTool();
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -43,7 +43,7 @@ namespace MediaPortal.Player
 		/// </param>
 		public VMR7Util()
 		{
-			crc.Init(Util.CRCTool.CRCCode.CRC32);
+			//crc.Init(Util.CRCTool.CRCCode.CRC32);
 		}
 
 
@@ -99,11 +99,13 @@ namespace MediaPortal.Player
 		{
 			
 			if (quality != null)
-				Marshal.ReleaseComObject(quality); quality = null;
+				Marshal.ReleaseComObject(quality);
+			quality = null;
 				
 			if (VMR7Filter != null)
 			{
-				Marshal.ReleaseComObject(VMR7Filter); VMR7Filter = null;
+				Marshal.ReleaseComObject(VMR7Filter); 
+				VMR7Filter = null;
 				g_vmr7=null;
 			}
 		}
@@ -191,14 +193,14 @@ namespace MediaPortal.Player
 					
 					if(bitmap!=null)
 					{
-						System.Drawing.ImageConverter conv=new ImageConverter();						
-						byte[] imgComp=new byte[0];
-						imgComp=(byte[])conv.ConvertTo(bitmap,imgComp.GetType());
-						ulong crcVal=crc.calc(imgComp);
-						if(crcVal==m_oldSavedBitmapCRC)
-							return false;
+//						System.Drawing.ImageConverter conv=new ImageConverter();						
+//						byte[] imgComp=new byte[0];
+//						imgComp=(byte[])conv.ConvertTo(bitmap,imgComp.GetType());
+						//ulong crcVal=crc.calc(imgComp);
+//						if(crcVal==m_oldSavedBitmapCRC)
+//							return false;
 
-						m_oldSavedBitmapCRC=crcVal;
+//						m_oldSavedBitmapCRC=crcVal;
 
 						using(Bitmap n=new Bitmap(bitmap.Width,bitmap.Height))
 						{
