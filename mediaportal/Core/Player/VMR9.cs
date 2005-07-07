@@ -270,7 +270,8 @@ namespace MediaPortal.Player
 			get { return quality;}
 		}
     public void Process()
-    {
+		{
+			if( !GUIGraphicsContext.Vmr9Active) return;
       TimeSpan ts = DateTime.Now - repaintTimer;
       if (ts.TotalMilliseconds > 1000)
       {
