@@ -804,9 +804,8 @@ namespace MediaPortal.TV.Recording
 				for (int ptr = add; ptr < end; ptr += 188)//main loop
 				{
 					m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-					if (m_packetHeader.Pid==0x3F4 ||
-						m_packetHeader.Pid==0x3F3 ||
-						m_packetHeader.Pid==0x3F2 ||
+					if (m_packetHeader.Pid==2222 ||
+						m_packetHeader.Pid==2220 ||
 						m_packetHeader.Pid==0)
 					{
 						byte[] byData=new byte[188];
