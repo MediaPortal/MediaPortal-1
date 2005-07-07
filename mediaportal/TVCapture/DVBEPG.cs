@@ -282,51 +282,35 @@ namespace MediaPortal.TV.Recording
 				
 				//
 				TVProgram tv=new TVProgram();
-				long chStart=0;
-				long chEnd=0;
 
 				if(data.isMHWEvent==false)
 				{
-					System.DateTime date;
+					System.DateTime datestart;
 					try
 					{
-						date=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
+						datestart=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
 					}
 					catch
 					{
 						return 0;
 					}
-					date=date.ToLocalTime();
-					System.DateTime dur=new DateTime(date.Ticks);
-					dur=dur.AddSeconds((double)data.duration_ss);
-					dur=dur.AddMinutes((double)data.duration_mm);
-					dur=dur.AddHours((double)data.duration_hh);
-					System.DateTime chStartDate=new DateTime((long)date.Ticks);
-					chStartDate=chStartDate.AddMinutes(2);
-					System.DateTime chEndDate=new DateTime((long)dur.Ticks-(4*60000));
-					chStart=GetLongFromDate(chStartDate.Year,chStartDate.Month,chStartDate.Day,chStartDate.Hour,chStartDate.Minute,chStartDate.Second);
-					chEnd=GetLongFromDate(chEndDate.Year,chEndDate.Month,chEndDate.Day,chEndDate.Hour,chEndDate.Minute,chEndDate.Second);
-					//
-					//
-					tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
-					tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
-					dateProgramEnd=new DateTime(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
+					DateTime dateend = datestart.AddSeconds(data.duration_ss);
+					dateend = dateend.AddMinutes(data.duration_mm);
+					dateend = dateend.AddHours(data.duration_hh);
+					tv.Start=Util.Utils.datetolong(datestart);
+					tv.End=Util.Utils.datetolong(dateend);
+					dateProgramEnd=dateend;
 				}
 				else
 				{
-					DateTime date=data.mhwStartTime;
-					System.DateTime dur=new DateTime(date.Ticks);
-					dur=dur.AddMinutes((double)data.duration_mm);
-					System.DateTime chStartDate=new DateTime((long)date.Ticks);
-					chStartDate=chStartDate.AddMinutes(2);
-					System.DateTime chEndDate=new DateTime((long)dur.Ticks-(4*60000));
-					chStart=GetLongFromDate(chStartDate.Year,chStartDate.Month,chStartDate.Day,chStartDate.Hour,chStartDate.Minute,chStartDate.Second);
-					chEnd=GetLongFromDate(chEndDate.Year,chEndDate.Month,chEndDate.Day,chEndDate.Hour,chEndDate.Minute,chEndDate.Second);
-					//
-					//
-					tv.Start=GetLongFromDate(date.Year,date.Month,date.Day,date.Hour,date.Minute,date.Second);
-					tv.End=GetLongFromDate(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
-					dateProgramEnd=new DateTime(dur.Year,dur.Month,dur.Day,dur.Hour,dur.Minute,dur.Second);
+					DateTime datestart=data.mhwStartTime;
+					DateTime dateend = datestart.AddSeconds(data.duration_ss);
+					dateend = dateend.AddMinutes(data.duration_mm);
+					dateend = dateend.AddHours(data.duration_hh);
+					
+					tv.Start=Util.Utils.datetolong(datestart);
+					tv.End=Util.Utils.datetolong(dateend);
+					dateProgramEnd=dateend;
 				}
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
@@ -335,19 +319,19 @@ namespace MediaPortal.TV.Recording
 				tv.Description=data.event_item_text;
 				//
 				if(tv.Title==null)
-					tv.Title="";
+					tv.Title=String.Empty;
 
 				if(tv.Description==null)
-					tv.Description="";
+					tv.Description=String.Empty;
 
-				if(tv.Description=="")
+				if(tv.Description==String.Empty)
 					tv.Description=data.event_text;
 
-				if(tv.Title=="")
+				if(tv.Title==String.Empty)
 					tv.Title=data.event_name;
 
 				//
-				if(tv.Title=="" || tv.Title=="n.a.") 
+				if(tv.Title==String.Empty || tv.Title=="n.a.") 
 				{
 					//Log.Write("epg: entrie without title found");
 					dateProgramEnd=DateTime.MinValue;
@@ -357,26 +341,29 @@ namespace MediaPortal.TV.Recording
 				//
 				// for check
 				//
-				ArrayList programsInDatabase = new ArrayList();
-				TVDatabase.GetProgramsPerChannel(tv.Channel,chStart,chEnd,ref programsInDatabase);
-				if(channelName=="")
+				if(channelName==String.Empty)
 				{
 					//Log.Write("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
 					dateProgramEnd=DateTime.MinValue;
 					return 0;
 				}
+
+			
+				Log.WriteFile(Log.LogType.EPG,"epg-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
+				ArrayList programsInDatabase = new ArrayList();
+				TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
 				if(programsInDatabase.Count==0)
 				{
 					int programID=TVDatabase.AddProgram(tv);
-					//TVDatabase.RemoveOverlappingPrograms();
 					if(programID!=-1)
 					{
 						retVal= 1;
 					}
-
-				}else
+				}
+				else
+				{
 					retVal=0;
-
+				}
 				return retVal;
 			}
 			catch(Exception ex)
@@ -628,18 +615,17 @@ namespace MediaPortal.TV.Recording
 				return 0;
 
 			eitList.Sort(new EITComparer());
+			Hashtable tableChannels = new Hashtable();
+
+			//find all channel names
 			foreach(DVBSections.EITDescr eit in eitList)
 			{
-
-				// the progName must be get from the database
-				// to submitt to correct channel
 				string progName="";
 				
 				switch(m_cardType)
 				{
 					case (int)EPGCard.TechnisatStarCards:
 						progName=TVDatabase.GetSatChannelName(eit.program_number,eit.org_network_id);
-						//Log.Write("epg-grab: counter={0} text:{1} start: {2}.{3}.{4} {5}:{6}:{7} duration: {8}:{9}:{10}",n,eit.event_name,eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,eit.duration_hh,eit.duration_mm,eit.duration_ss);
 						break;
 
 					case (int)EPGCard.BDACards:
@@ -659,11 +645,6 @@ namespace MediaPortal.TV.Recording
 									if (eit.program_number==SID && eit.ts_id==TSID)
 									{
 										progName=chan.Name;
-										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBC:{0} start: {1}.{2}.{3} {4}:{5}:{6} duration: {7}:{8}:{9} {10}",
-											chan.Name,
-											eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,
-											eit.duration_hh,eit.duration_mm,eit.duration_ss,
-											eit.event_name);
 									}
 									break;
 								case NetworkType.DVBS:
@@ -673,11 +654,6 @@ namespace MediaPortal.TV.Recording
 									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule);
 									if (eit.program_number==SID && eit.ts_id==TSID)
 									{
-										Log.WriteFile(Log.LogType.EPG,"epg-grab: DVBT:{0} start: {1}.{2}.{3} {4}:{5}:{6} duration: {7}:{8}:{9} {10}",
-											chan.Name,
-											eit.starttime_d,eit.starttime_m,eit.starttime_y,eit.starttime_hh,eit.starttime_mm,eit.starttime_ss,
-											eit.duration_hh,eit.duration_mm,eit.duration_ss,
-											eit.event_name);
 										progName=chan.Name;
 									}
 									break;
@@ -691,17 +667,17 @@ namespace MediaPortal.TV.Recording
 						progName=m_channelName;
 						break;
 				}
-				if(progName==null)
+				if(progName!=null)
 				{
-					//Log.Write("epg-grab: FAILED name is NULL");
-					continue;
+					tableChannels[ (eit.program_number*100000+eit.ts_id) ] = progName;
 				}
+			}
 
-				if(progName=="")
-				{
-					//Log.Write("epg-grab: FAILED empty name service-id:{0}",eit.program_number);
-					continue;
-				}
+			foreach(DVBSections.EITDescr eit in eitList)
+			{
+				int id=(eit.program_number*100000+eit.ts_id);
+				if (!tableChannels.ContainsKey(id)) continue;
+				string progName=(string)tableChannels[id];
 				DVBSections.EITDescr eit2DB=new MediaPortal.TV.Recording.DVBSections.EITDescr();
 				eit2DB=eit;
 				if(m_languagesToGrab!="")
