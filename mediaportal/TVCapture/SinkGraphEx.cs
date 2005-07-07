@@ -54,6 +54,8 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				Vmr9 =new VMR9Util("mytv");
+				Vmr7 = new VMR7Util();
+
 				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:CreateGraph() IN");
 				if (m_graphState != State.None) return false;		// If doing something already, return...
 				if (mCard==null) 
@@ -325,6 +327,11 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Release();
         Vmr9=null;
       }
+			if (Vmr7!=null)
+			{
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
+			}
 
 			if (m_videoprocamp != null)
 			{

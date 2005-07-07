@@ -785,7 +785,6 @@ namespace MediaPortal.TV.Recording
 			TuneChannel(channel);
 			m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9);
 
-      
 			DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
@@ -802,27 +801,22 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext.OnVideoWindowChanged +=new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
 			GUIGraphicsContext_OnVideoWindowChanged();
 
-      
-			int iVideoWidth,iVideoHeight;
-			if (Vmr9!=null && Vmr9.IsVMR9Connected)
+			if (Vmr9!=null)
 			{
-				iVideoWidth=Vmr9.VideoWidth;
-				iVideoHeight=Vmr9.VideoHeight;
-				Vmr9.SetDeinterlaceMode();
-			}
-			else
-			{
-				if (Vmr9!=null)
+				if (Vmr9.IsVMR9Connected)	
+				{
+					Vmr9.SetDeinterlaceMode();
+				}
+				else
 				{
 					Vmr9.RemoveVMR9();
+					Vmr9.Release();
 					Vmr9=null;
 				}
-				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
 			}
-
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
+		      
+      Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartViewing() started ");
       return true;
-
     }
 
 

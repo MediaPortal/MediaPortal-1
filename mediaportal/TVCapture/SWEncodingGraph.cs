@@ -808,15 +808,23 @@ namespace MediaPortal.TV.Recording
 			m_iCountryCode=channel.Country;
       TuneChannel(channel);
 
+			// add VMR9 renderer to graph
 			if (Vmr9!=null)
 			{
-				Vmr9.AddVMR9(m_graphBuilder);
-				if (Vmr9.VMR9Filter==null)
+				if (Vmr9.UseVMR9inMYTV)
 				{
-					Vmr7.AddVMR7(m_graphBuilder);
+					Vmr9.AddVMR9(m_graphBuilder);
+					if (Vmr9.VMR9Filter==null)
+					{
+						Vmr9.RemoveVMR9();
+						Vmr9.Release();
+						Vmr9=null;
+						Vmr7.AddVMR7(m_graphBuilder);
+					}
 				}
+				else Vmr7.AddVMR7(m_graphBuilder);
 			}
-
+			else Vmr7.AddVMR7(m_graphBuilder);
 
 			/* disabled. this causes a audio-echo because now both the video capture filter audio out
 			 * and the audio capture filter audio out are both connected to a directsound renderer
@@ -829,18 +837,22 @@ namespace MediaPortal.TV.Recording
 			m_mediaControl = (IMediaControl)m_graphBuilder;
 
 			bool useOverlay=true;
-			if (Vmr9.IsVMR9Connected) 
+
+			if (Vmr9!=null)
 			{
-				Log.WriteFile(Log.LogType.Capture,false,"SWGraph:using vmr9");
-				useOverlay=false;
+				if (Vmr9.IsVMR9Connected)	
+				{
+					useOverlay=false;
+					Vmr9.SetDeinterlaceMode();
+				}
+				else
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9.Release();
+					Vmr9=null;
+				}
 			}
-			else
-			{
-				Log.WriteFile(Log.LogType.Capture,false,"SWGraph:vmr9 not supported, using overlay");
-				Vmr9.RemoveVMR9();
-				Vmr9.Release();
-				Vmr9=null;
-			}
+
 			if (useOverlay)
 			{
 				Log.WriteFile(Log.LogType.Capture,"SWGraph:Get overlay interfaces");
@@ -1947,14 +1959,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_captureGraphBuilder==null) return;
 			if (m_filterCaptureVideo==null) return;
-			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
-			{
-				Vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-				{
-					Vmr9.Repaint();// repaint vmr9
-				}
-			}
 
 			if(!GUIGraphicsContext.Vmr9Active && Vmr7!=null && m_graphState==State.Viewing)
 			{
