@@ -511,8 +511,6 @@ namespace MediaPortal.GUI.TV
 					//manual record
 					Recorder.RecordNow(Navigator.CurrentChannel,true);
 				}
-				
-				
 			}
 			else
 			{

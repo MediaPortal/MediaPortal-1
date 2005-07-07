@@ -676,10 +676,7 @@ namespace MediaPortal.TV.Recording
 			if (m_iCurrentCard==cardNo) 
 			{
 				TVChannelName=rec.Channel;
-				
-				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,(int)GUIWindow.Window.WINDOW_TV,0,0,0,null);
-				msg.SendToTargetWindow=true;
-				GUIWindowManager.SendThreadMessage(msg);
+				StartViewing(rec.Channel,true,true);
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 			return true;
