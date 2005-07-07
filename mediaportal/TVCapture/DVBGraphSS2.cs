@@ -734,11 +734,17 @@ namespace MediaPortal.TV.Recording
 		private void GUIGraphicsContext_OnVideoWindowChanged()
 		{
 			if (GUIGraphicsContext.Vmr9Active) return;
+			
+			if (m_basicVideo==null) return;
+			if (m_videoWindow==null) return;
 			if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return;
 			
-			if (!Vmr9.UseVMR9inMYTV)
+			if (GUIGraphicsContext.BlankScreen && Overlay)
 			{
-
+				Overlay=false;
+			}
+			else
+			{
 				if (GUIGraphicsContext.Overlay==false)
 				{
 					if(m_graphState!=State.Viewing)
@@ -759,11 +765,6 @@ namespace MediaPortal.TV.Recording
 			{
 				m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);	
 				m_basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-			}
-			if (Vmr9.IsVMR9Connected)
-			{
-				aspectX=iVideoWidth=Vmr9.VideoWidth;
-				aspectY=iVideoHeight=Vmr9.VideoHeight;
 			}
 			
 			m_iVideoWidth=iVideoWidth;
@@ -791,28 +792,25 @@ namespace MediaPortal.TV.Recording
 				m_geometry.GetWindow(aspectX,aspectY,out rSource, out rDest);
 				rDest.X += (int)x;
 				rDest.Y += (int)y;
-				if (!Vmr9.IsVMR9Connected)
-				{					
-					Log.Write("overlay: video WxH  : {0}x{1}",iVideoWidth,iVideoHeight);
-					Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
-					Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
-					Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
-					Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
-					Log.Write("overlay: src        : ({0},{1})-({2},{3})",
-						rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
-					Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
-						rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
+				Log.Write("overlay: video WxH  : {0}x{1}",iVideoWidth,iVideoHeight);
+				Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
+				Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
+				Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
+				Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+				Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+					rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
+				Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+					rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
 
-					if(m_basicVideo!=null)
-					{
-						m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
-						m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
-					}
-					if(m_videoWindow!=null)
-						m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
+				if(m_basicVideo!=null)
+				{
+					m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
+					m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
 				}
+				if(m_videoWindow!=null)
+					m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
 			}
-			else if (!Vmr9.IsVMR9Connected)
+			else 
 			{
 				if ( GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || 
 						GUIGraphicsContext.VideoWindow.Width <=0 || GUIGraphicsContext.VideoWindow.Height <=0) return;
@@ -1609,6 +1607,7 @@ namespace MediaPortal.TV.Recording
 			int hr=0;
 			bool setVisFlag=false;
 			
+			m_bOverlayVisible=true;
 			if(m_channelFound==false)
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() channel not found");
@@ -1616,15 +1615,22 @@ namespace MediaPortal.TV.Recording
 			}
 			AddPreferredCodecs(true,true);
 			
-			if(Vmr9.UseVMR9inMYTV)
+			if (Vmr9!=null)
 			{
-				Vmr9.AddVMR9(m_graphBuilder);
-
+				if (Vmr9.UseVMR9inMYTV)
+				{
+					Vmr9.AddVMR9(m_graphBuilder);
+					if (Vmr9.VMR9Filter==null)
+					{
+						Vmr9.RemoveVMR9();
+						Vmr9.Release();
+						Vmr9=null;
+						Vmr7.AddVMR7(m_graphBuilder);
+					}
+				}
+				else Vmr7.AddVMR7(m_graphBuilder);
 			}
-			if (Vmr9.VMR9Filter==null)
-			{
-				Vmr7.AddVMR7(m_graphBuilder);
-			}
+			else Vmr7.AddVMR7(m_graphBuilder);
 
 
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() Using plugins");
@@ -1715,21 +1721,29 @@ namespace MediaPortal.TV.Recording
 
 			//
 			
-			if(Vmr9.IsVMR9Connected==false && Vmr9.UseVMR9inMYTV==true)// fallback
+			bool useOverlay=true;
+			if (Vmr9!=null)
 			{
-				if(Vmr9.VMR9Filter!=null)
-					m_graphBuilder.RemoveFilter(Vmr9.VMR9Filter);
-				Vmr9.RemoveVMR9();
-				Vmr9.UseVMR9inMYTV=false;
+				if (Vmr9.IsVMR9Connected)	
+				{
+					useOverlay=false;
+					Vmr9.SetDeinterlaceMode();
+				}
+				else
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9.Release();
+					Vmr9=null;
+				}
 			}
+
 			//
 			//
 			//
 			//
 			m_mediaControl = (IMediaControl)m_graphBuilder;
-			if (!Vmr9.UseVMR9inMYTV )
+			if (useOverlay)
 			{
-
 				m_videoWindow = (IVideoWindow) m_graphBuilder as IVideoWindow;
 				if (m_videoWindow==null)
 				{
@@ -1774,7 +1788,6 @@ namespace MediaPortal.TV.Recording
 			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() start graph");
 
-			if (Vmr9!=null) Vmr9.SetDeinterlaceMode();
 			m_mediaControl.Run();
 				
 			if(setVisFlag)
@@ -1918,6 +1931,7 @@ namespace MediaPortal.TV.Recording
 		
 		void CheckVideoResolutionChanges()
 		{
+			if (GUIGraphicsContext.Vmr9Active) return;
 			if (m_graphState != State.Viewing) return ;
 			if (m_videoWindow==null || m_basicVideo==null) return;
 			int aspectX, aspectY;
@@ -1937,31 +1951,17 @@ namespace MediaPortal.TV.Recording
 			{
 				GUIGraphicsContext_OnVideoWindowChanged();
 			}
+
 		}
 
 		public void Process()
 		{
-			//
-
-			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
-			{
-				Vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-				{
-					Vmr9.Repaint();// repaint vmr9
-				}
-			}
-			if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
-			{
-				CheckVideoResolutionChanges();
-			}
 
 			if(!GUIGraphicsContext.Vmr9Active && Vmr7!=null && m_graphState==State.Viewing)
 			{
 				Vmr7.Process();
 			}
-
-
+			CheckVideoResolutionChanges();
 		}
 		
 		public PropertyPageCollection PropertyPages()

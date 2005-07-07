@@ -109,7 +109,11 @@ namespace MediaPortal.GUI.Library
 		static public bool BlankScreen
 		{
 			get { return blankScreen;}
-			set { blankScreen=value;}
+			set { 
+				blankScreen=value;
+				if (OnVideoWindowChanged!=null)
+					OnVideoWindowChanged();
+			}
 		}
 
 		/// <summary>

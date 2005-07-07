@@ -761,13 +761,24 @@ namespace MediaPortal.TV.Recording
 				return true;
 			}
 
+			// add VMR9 renderer to graph
 			if (Vmr9!=null)
-				Vmr9.AddVMR9(m_graphBuilder);
-			if (Vmr9.VMR9Filter==null)
 			{
-				if (Vmr7!=null)
-					Vmr7.AddVMR7(m_graphBuilder);
+				if (Vmr9.UseVMR9inMYTV)
+				{
+					Vmr9.AddVMR9(m_graphBuilder);
+					if (Vmr9.VMR9Filter==null)
+					{
+						Vmr9.RemoveVMR9();
+						Vmr9.Release();
+						Vmr9=null;
+						Vmr7.AddVMR7(m_graphBuilder);
+					}
+				}
+				else Vmr7.AddVMR7(m_graphBuilder);
 			}
+			else Vmr7.AddVMR7(m_graphBuilder);
+
 			AddPreferredCodecs(true,true);
       
 			m_graphState=State.Viewing;
@@ -793,14 +804,20 @@ namespace MediaPortal.TV.Recording
 
       
 			int iVideoWidth,iVideoHeight;
-			if (!Vmr9.IsVMR9Connected)
-			{
-				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
-			}
-			else
+			if (Vmr9!=null && Vmr9.IsVMR9Connected)
 			{
 				iVideoWidth=Vmr9.VideoWidth;
 				iVideoHeight=Vmr9.VideoHeight;
+				Vmr9.SetDeinterlaceMode();
+			}
+			else
+			{
+				if (Vmr9!=null)
+				{
+					Vmr9.RemoveVMR9();
+					Vmr9=null;
+				}
+				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
 			}
 
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:StartViewing() started {0}x{1}",iVideoWidth, iVideoHeight);
@@ -844,7 +861,11 @@ namespace MediaPortal.TV.Recording
       if (m_graphState!=State.Viewing && m_graphState!=State.TimeShifting) return ;
       if (m_mpeg2Demux==null) return ;
 			
-			if (!Vmr9.IsVMR9Connected)
+			if (GUIGraphicsContext.BlankScreen)
+			{
+				m_mpeg2Demux.Overlay=false;
+			}
+			else
 			{
 				if (GUIGraphicsContext.Overlay==false)
 				{
@@ -861,18 +882,8 @@ namespace MediaPortal.TV.Recording
 			}
 			int aspectX, aspectY;
       int iVideoWidth,iVideoHeight;
-			if (!Vmr9.IsVMR9Connected)
-			{
-				m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
-				m_mpeg2Demux.GetPreferredAspectRatio(out aspectX, out aspectY);
-			}
-			else
-			{
-				iVideoWidth=Vmr9.VideoWidth;
-				iVideoHeight=Vmr9.VideoHeight;
-				aspectX=iVideoWidth;
-				aspectY=iVideoHeight;
-			}
+			m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
+			m_mpeg2Demux.GetPreferredAspectRatio(out aspectX, out aspectY);
 			if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
 			{
 				float x=GUIGraphicsContext.OverScanLeft;
@@ -895,24 +906,21 @@ namespace MediaPortal.TV.Recording
 				rDest.X += (int)x;
 				rDest.Y += (int)y;
 
-				if (!Vmr9.IsVMR9Connected)
-				{					
-					Log.Write("overlay: video WxH  : {0}x{1}",iVideoWidth,iVideoHeight);
-					Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
-					Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
-					Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
-					Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
-					Log.Write("overlay: src        : ({0},{1})-({2},{3})",
-						rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
-					Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
-						rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
+				Log.Write("overlay: video WxH  : {0}x{1}",iVideoWidth,iVideoHeight);
+				Log.Write("overlay: video AR   : {0}:{1}",aspectX, aspectY);
+				Log.Write("overlay: screen WxH : {0}x{1}",nw,nh);
+				Log.Write("overlay: AR type    : {0}",GUIGraphicsContext.ARType);
+				Log.Write("overlay: PixelRatio : {0}",GUIGraphicsContext.PixelRatio);
+				Log.Write("overlay: src        : ({0},{1})-({2},{3})",
+					rSource.X,rSource.Y, rSource.X+rSource.Width,rSource.Y+rSource.Height);
+				Log.Write("overlay: dst        : ({0},{1})-({2},{3})",
+					rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
 
-					if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
-					if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
-					m_mpeg2Demux.SetSourcePosition( rSource.Left,rSource.Top,rSource.Width,rSource.Height);
-					m_mpeg2Demux.SetDestinationPosition(0,0,rDest.Width,rDest.Height );
-					m_mpeg2Demux.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
-				}
+				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+				if (rDest.Left <0 || rDest.Top < 0 || rDest.Width<=0 || rDest.Height<=0) return;
+				m_mpeg2Demux.SetSourcePosition( rSource.Left,rSource.Top,rSource.Width,rSource.Height);
+				m_mpeg2Demux.SetDestinationPosition(0,0,rDest.Width,rDest.Height );
+				m_mpeg2Demux.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
 			}
 			else
 			{
@@ -1140,14 +1148,6 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_captureGraphBuilder==null) return;
 			if (m_captureFilter==null) return;
-			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
-			{
-				Vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-				{
-					Vmr9.Repaint();// repaint vmr9
-				}
-			}
 
 			if(!GUIGraphicsContext.Vmr9Active && Vmr7!=null && m_graphState==State.Viewing)
 			{

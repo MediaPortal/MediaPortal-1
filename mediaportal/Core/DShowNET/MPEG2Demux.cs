@@ -278,7 +278,7 @@ namespace DShowNET
         Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}",hr);
 
 			bool useOverlay=true;
-			if (vmr9.IsVMR9Connected && vmr9.UseVMR9inMYTV)
+			if (vmr9!=null && vmr9.IsVMR9Connected && vmr9.UseVMR9inMYTV)
 				useOverlay=false;
 			if (useOverlay)
 			{
