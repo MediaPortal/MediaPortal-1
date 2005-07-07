@@ -125,6 +125,7 @@ namespace MediaPortal.Player
 		}
 		public void Process()
 		{
+			if( GUIGraphicsContext.Vmr9Active) return;
 			TimeSpan ts = DateTime.Now - repaintTimer;
 			if (ts.TotalMilliseconds > 1000)
 			{
@@ -173,17 +174,13 @@ namespace MediaPortal.Player
 
 		public bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
+			if( GUIGraphicsContext.Vmr9Active) return true;
 			if(MixerBitmapInterface==null)
 				return false;
 
 
 			if(VMR7Filter!=null)
 			{
-				if(IsVMR7Connected==false)
-				{
-					Log.Write("SaveBitmap() failed, no VMR7");
-					return false;
-				}
 				int hr=0;
 				
 				VMRAlphaBitmap bmp=new VMRAlphaBitmap();

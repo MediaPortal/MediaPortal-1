@@ -394,7 +394,7 @@ namespace MediaPortal.Player
 			if(MixerBitmapInterface==null)
 				return false;
 
-			if(IsVMR9Connected==false)
+			if(GUIGraphicsContext.Vmr9Active==false)
 			{
 				Log.Write("SaveVMR9Bitmap() failed, no VMR9");
 				return false;
