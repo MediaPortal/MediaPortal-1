@@ -61,6 +61,8 @@ Metadata of the currently playing movie / song
 		#tagline                    tagline
 		#votes                      votes
 		#credits                    credits
+		#mpaarating                 MPAA rating of movie
+		#iswatched                  Indicates if movie has been watched or not
 		#thumb                      filename of the thumbnail containg the movie/song art
 		#watched                    indicates if current selected movie has been watched or not
 
@@ -115,7 +117,19 @@ metadata of My TV/TVGuide:
 		#TV.Guide.Title             title of current selected program
 		#TV.Guide.Time              start-endtime of current selected program
 		#TV.Guide.Description       description of current selected program
+		#TV.Guide.Duration          Duration of current selected program
+		#TV.Guide.TimeFromNow       -
+		#TV.Guide.EpisodeName       -
+		#TV.Guide.SeriesNumber      -
+		#TV.Guide.EpisodeNumber     -
+		#TV.Guide.EpisodePart       -
+		#TV.Guide.EpisodeDetail     -
 		#TV.Guide.Genre             genre of current selected program
+		#TV.Guide.Date
+		#TV.Guide.StarRating
+		#TV.Guide.Classification
+
+
 
 metadata of My TV/ Recorded TV:
 		#TV.RecordedTV.Title        title of current selected recording
@@ -131,6 +145,20 @@ meta data of current recording/program
 		#TV.Record.duration	    duration of current program (recording of viewing)
 		#TV.Record.current	    position we're currently viewing
 
+metadata of My TV/ Search:
+		#TV.Search.Title            title of current selected item
+		#TV.Search.Time             time of current selected item
+		#TV.Search.Description      description of current selected item
+		#TV.Search.thumb            thumbnail of current selected item
+		#TV.Search.Genre            genre of current selected item
+
+metadata of My TV/ compress:
+		#TV.Transcoding.Percentage  percentage done
+		#TV.Transcoding.File	    filename of show being transcoded
+		#TV.Transcoding.Title	    program title of show being transcoded
+		#TV.Transcoding.Genre	    genre of show being transcoded
+		#TV.Transcoding.Description description of show being transcoded
+		#TV.Transcoding.Channel     channel name of show being transcoded
 
 metadata of My TV/ Scheduled:
 		#TV.Scheduled.Title         title of current selected schedule
