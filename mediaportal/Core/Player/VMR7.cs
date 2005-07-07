@@ -75,12 +75,10 @@ namespace MediaPortal.Player
 				if (hr != 0)
 				{
 					Log.WriteFile(Log.LogType.Log, true, "VMR7Helper:Failed to set number of streams:0x{0:X}",hr);
-					Marshal.ReleaseComObject(config);
 					Marshal.ReleaseComObject(VMR7Filter);
 					VMR7Filter=null;
 					return;
 				}
-				Marshal.ReleaseComObject(config);
 			}
 
 			hr = graphBuilder.AddFilter(VMR7Filter, "Video Mixing Renderer");
