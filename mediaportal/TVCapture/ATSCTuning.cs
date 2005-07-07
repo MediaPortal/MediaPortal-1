@@ -195,6 +195,11 @@ namespace MediaPortal.TV.Recording
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			captureCard.Tune(newchan,0);
 			System.Threading.Thread.Sleep(400);
+			if (!captureCard.SignalPresent())
+				System.Threading.Thread.Sleep(400);
+			if (!captureCard.SignalPresent())
+				System.Threading.Thread.Sleep(400);
+
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 		}
 		#endregion
