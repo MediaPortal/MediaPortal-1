@@ -87,6 +87,7 @@
 		<carrier frequency="212500" />
 		<carrier frequency="219500" />
 		<carrier frequency="226500" />
+		<carrier frequency="462000" />
 		<carrier frequency="474000" />
 		<carrier frequency="481833" />
 		<carrier frequency="482000" />
@@ -94,6 +95,7 @@
 		<carrier frequency="498000" />
 		<carrier frequency="505833" />
 		<carrier frequency="506000" />
+		<carrier frequency="508000" />
 		<carrier frequency="514000" />
 		<carrier frequency="522000" />
 		<carrier frequency="529500" />
@@ -106,10 +108,10 @@
 		<carrier frequency="546000" />
 		<carrier frequency="550500" />
 		<carrier frequency="554000" />
-		<carrier frequency="561833" />
-		<carrier frequency="564500" />
 		<carrier frequency="557500" />
+		<carrier frequency="561833" />
 		<carrier frequency="562000" />
+		<carrier frequency="564500" />
 		<carrier frequency="570000" />
 		<carrier frequency="571500" />
 		<carrier frequency="578000" />
@@ -150,6 +152,7 @@
 		<carrier frequency="698000" />
 		<carrier frequency="704500" />
 		<carrier frequency="706000" />
+		<carrier frequency="708000" />
 		<carrier frequency="711500" />
 		<carrier frequency="714000" />
 		<carrier frequency="718500" />
@@ -159,6 +162,7 @@
 		<carrier frequency="732500" />
 		<carrier frequency="738000" />
 		<carrier frequency="739500" />
+		<carrier frequency="745000" />
 		<carrier frequency="746000" />
 		<carrier frequency="753500" />
 		<carrier frequency="754000" />
@@ -171,8 +175,8 @@
 		<carrier frequency="781500" />
 		<carrier frequency="788500" />
 		<carrier frequency="786000" />
-		<carrier frequency="795500" />
 		<carrier frequency="794000" />
+		<carrier frequency="795500" />
 		<carrier frequency="802000" />
 		<carrier frequency="802500" />
 		<carrier frequency="809500" />
@@ -356,13 +360,63 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Netherlands - All Regions" offset="125">
-		<carrier frequency="474000" bandwidth="8" />
-		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="578000" bandwidth="8" />
-		<carrier frequency="722000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="818000" bandwidth="8" />
+	<country name="Netherlands - All Regions">
+		<carrier frequency="177500" />
+		<carrier frequency="184500" />
+		<carrier frequency="191500" />
+		<carrier frequency="198500" />
+		<carrier frequency="212500" />
+		<carrier frequency="219500" />
+		<carrier frequency="226500" />
+		<carrier frequency="462000" />
+		<carrier frequency="474000" />
+		<carrier frequency="490000" />
+		<carrier frequency="498000" />
+		<carrier frequency="508000" />
+		<carrier frequency="514000" />
+		<carrier frequency="522000" />
+		<carrier frequency="530000" />
+		<carrier frequency="538000" />
+		<carrier frequency="546000" />
+		<carrier frequency="554000" />
+		<carrier frequency="562000" />
+		<carrier frequency="570000" />
+		<carrier frequency="578000" />
+		<carrier frequency="586000" />
+		<carrier frequency="594000" />
+		<carrier frequency="602000" />
+		<carrier frequency="610000" />
+		<carrier frequency="618000" />
+		<carrier frequency="626000" />
+		<carrier frequency="634000" />
+		<carrier frequency="642000" />
+		<carrier frequency="650000" />
+		<carrier frequency="658000" />
+		<carrier frequency="666000" />
+		<carrier frequency="674000" />
+		<carrier frequency="682000" />
+		<carrier frequency="690000" />
+		<carrier frequency="698000" />
+		<carrier frequency="708000" />
+		<carrier frequency="714000" />
+		<carrier frequency="722000" />
+		<carrier frequency="730000" />
+		<carrier frequency="738000" />
+		<carrier frequency="745000" />
+		<carrier frequency="754000" />
+		<carrier frequency="762000" />
+		<carrier frequency="770000" />
+		<carrier frequency="778000" />
+		<carrier frequency="788000" />
+		<carrier frequency="794000" />
+		<carrier frequency="802000" />
+		<carrier frequency="810000" />
+		<carrier frequency="818000" />
+		<carrier frequency="826000" />
+		<carrier frequency="834000" />
+		<carrier frequency="842000" />
+		<carrier frequency="850000" />
+		<carrier frequency="858000" />
 	</country>
 	<country name="Sweden - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
