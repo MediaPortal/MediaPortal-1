@@ -855,7 +855,11 @@ namespace MediaPortal.TV.Recording
 			if (m_recorder!=null) 
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
-				m_recorder.Stop();
+				try
+				{
+					m_recorder.Stop();
+				}
+				catch(Exception){}
 				m_recorder=null;
 			}
 
@@ -1319,61 +1323,68 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Release();
 				Vmr9=null;
 			}
-			uint iRecordingType=0;
-			if (bContentRecording) iRecordingType=0;
-			else iRecordingType=1;										
-		 
-			m_recorder = new DirectShowHelperLib.StreamBufferRecorderClass();
-			m_recorder.Create(m_sinkInterface as DirectShowHelperLib.IBaseFilter,strFilename,iRecordingType);
-			long lStartTime=0;
-
-			// if we're making a reference recording
-			// then record all content from the past as well
-			if (!bContentRecording)
+			try
 			{
-				// so set the startttime...
-				uint uiSecondsPerFile;
-				uint uiMinFiles, uiMaxFiles;
-				m_config.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
-				m_config.GetBackingFileDuration(out uiSecondsPerFile);
-				lStartTime = uiSecondsPerFile;
-				lStartTime*= (long)uiMaxFiles;
+				uint iRecordingType=0;
+				if (bContentRecording) iRecordingType=0;
+				else iRecordingType=1;										
+			 
+				m_recorder = new DirectShowHelperLib.StreamBufferRecorderClass();
+				m_recorder.Create(m_sinkInterface as DirectShowHelperLib.IBaseFilter,strFilename,iRecordingType);
+				long lStartTime=0;
 
-				// if start of program is given, then use that as our starttime
-				if (timeProgStart.Year>2000)
+				// if we're making a reference recording
+				// then record all content from the past as well
+				if (!bContentRecording)
 				{
-					TimeSpan ts = DateTime.Now-timeProgStart;
-					DirectShowUtil.DebugWrite("mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
-						timeProgStart.Hour,timeProgStart.Minute,timeProgStart.Second,
-						ts.TotalHours,ts.TotalMinutes,ts.TotalSeconds);
-															
-					lStartTime = (long)ts.TotalSeconds;
-				}
-				else DirectShowUtil.DebugWrite("mpeg2:record entire timeshift buffer");
-      
-				TimeSpan tsMaxTimeBack=DateTime.Now-m_StartTime;
-				if (lStartTime > tsMaxTimeBack.TotalSeconds )
-				{
-					lStartTime =(long)tsMaxTimeBack.TotalSeconds;
-				}
-        
+					// so set the startttime...
+					uint uiSecondsPerFile;
+					uint uiMinFiles, uiMaxFiles;
+					m_config.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
+					m_config.GetBackingFileDuration(out uiSecondsPerFile);
+					lStartTime = uiSecondsPerFile;
+					lStartTime*= (long)uiMaxFiles;
 
-				lStartTime*=-10000000L;//in reference time 
+					// if start of program is given, then use that as our starttime
+					if (timeProgStart.Year>2000)
+					{
+						TimeSpan ts = DateTime.Now-timeProgStart;
+						DirectShowUtil.DebugWrite("mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+							timeProgStart.Hour,timeProgStart.Minute,timeProgStart.Second,
+							ts.TotalHours,ts.TotalMinutes,ts.TotalSeconds);
+																
+						lStartTime = (long)ts.TotalSeconds;
+					}
+					else DirectShowUtil.DebugWrite("mpeg2:record entire timeshift buffer");
+	      
+					TimeSpan tsMaxTimeBack=DateTime.Now-m_StartTime;
+					if (lStartTime > tsMaxTimeBack.TotalSeconds )
+					{
+						lStartTime =(long)tsMaxTimeBack.TotalSeconds;
+					}
+	        
+
+					lStartTime*=-10000000L;//in reference time 
+				}
+				/*
+				foreach (MetadataItem item in attribtutes.Values)
+				{
+					try
+					{
+						if (item.Type == MetadataItemType.String)
+							m_recorder.SetAttributeString(item.Name,item.Value.ToString());
+						if (item.Type == MetadataItemType.Dword)
+							m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
+					}
+					catch(Exception){}
+				}*/
+				m_recorder.Start((int)lStartTime);
 			}
-			/*
-			foreach (MetadataItem item in attribtutes.Values)
+			catch(Exception ex)
 			{
-				try
-				{
-					if (item.Type == MetadataItemType.String)
-						m_recorder.SetAttributeString(item.Name,item.Value.ToString());
-					if (item.Type == MetadataItemType.Dword)
-						m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
-				}
-				catch(Exception){}
-			}*/
-			m_recorder.Start((int)lStartTime);
-
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:Failed to start recording :{0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
+			}
 			m_graphState=State.Recording;
 			return true;
 		}
@@ -1394,7 +1405,10 @@ namespace MediaPortal.TV.Recording
 
 			if (m_recorder!=null) 
 			{
+				try{
 				m_recorder.Stop();
+				}
+				catch(Exception){}
 				m_recorder=null;
 			}
 

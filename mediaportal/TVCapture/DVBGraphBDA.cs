@@ -827,7 +827,11 @@ namespace MediaPortal.TV.Recording
 				if (m_recorder!=null) 
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
-					m_recorder.Stop();
+					try
+					{
+						m_recorder.Stop();
+					}
+					catch(Exception){}
 					m_recorder=null;
 				}
 				
@@ -1067,7 +1071,11 @@ namespace MediaPortal.TV.Recording
 
 			if (m_recorder!=null) 
 			{
-				m_recorder.Stop();
+				try
+				{
+					m_recorder.Stop();
+				}
+				catch(Exception){}
 				m_recorder=null;
 			}
 

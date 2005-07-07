@@ -850,7 +850,7 @@ namespace DShowNET
         lStartTime*=-10000000L;//in reference time 
       }
 
-
+/*
 			foreach (MetadataItem item in attribtutes.Values)
 			{
 				try
@@ -862,6 +862,7 @@ namespace DShowNET
 				}
 				catch(Exception){}
 			}
+*/
 			m_recorder.Start((int)lStartTime);
     }
 
@@ -870,7 +871,11 @@ namespace DShowNET
       Log.WriteFile(Log.LogType.Capture,"mpeg2: stop recording");
       if (m_recorder!=null) 
 			{
-				m_recorder.Stop();
+				try
+				{
+					m_recorder.Stop();
+				}
+				catch(Exception){}
 				m_recorder=null;
 				
 			}
@@ -883,7 +888,10 @@ namespace DShowNET
       
 			if (m_recorder!=null) 
 			{
-				m_recorder.Stop();
+				try{
+				m_recorder.Stop();					
+				}
+				catch(Exception){}
 				m_recorder=null;
 				
 			}
