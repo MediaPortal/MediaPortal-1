@@ -327,7 +327,7 @@ namespace DShowNET
 			int iSize=Marshal.SizeOf(structureType);
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
 			Marshal.StructureToPtr(structValue,pDataReturned,true);
-			hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,(uint)Marshal.SizeOf(structureType) );
+			hr=propertySet.RemoteSet(ref propertyGuid,propId,pDataReturned,(uint)iSize, pDataReturned,(uint)iSize );
 			if (hr!=0)
 			{
 				Log.Write("SetStructure() failed 0x{0:X}",hr);
