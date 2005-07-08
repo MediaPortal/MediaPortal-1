@@ -119,7 +119,7 @@ namespace MediaPortal.Configuration
 					if (dev.Network==NetworkType.DVBS)  
 					{
 						Log.Write("Digital DVB-S Card:{0}",dev.CommercialName);
-						DVBCCard=true;
+						DVBSCard=true;
 					}
 				}
 
@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration
 				}
 				if (DVBTCard)
 				{
-					AddSection(new Sections.Wizard_DVBTTV() , "TV - DVB-T", "Digital TV Terresital configuration", "");
+					AddSection(new Sections.Wizard_DVBTTV() , "TV - DVB-T", "Digital TV Terrestial configuration", "");
 				}
 				if (DVBCCard)
 				{

@@ -295,7 +295,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			base.OnSectionActivated ();
 			labelStatus.Text="";
-			string [] files = System.IO.Directory.GetFiles( System.IO.Directory.GetCurrentDirectory());
+			string [] files = System.IO.Directory.GetFiles( System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters");
 			foreach (string file in files)
 			{
 				if (file.ToLower().IndexOf(".tpl") >=0)
