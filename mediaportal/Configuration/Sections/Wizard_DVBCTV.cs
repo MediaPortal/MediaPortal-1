@@ -38,7 +38,6 @@ namespace MediaPortal.Configuration.Sections
 		int                                 currentIndex=-1;
 		DVBCList[]													dvbcChannels=new DVBCList[1000];
 		int																	count = 0;
-		int																	retryCount=0;
 		int																	newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
 		private System.Windows.Forms.Label label3;
@@ -316,23 +315,10 @@ namespace MediaPortal.Configuration.Sections
 				percent *= 100.0f;
 				progressBar1.Value=(int)percent;
 			
-				if (retryCount==0)
+				ScanNextDVBCChannel();
+				if (captureCard.SignalPresent())
 				{
-					ScanNextDVBCChannel();
-					if (captureCard.SignalPresent())
-					{
-						ScanChannels();
-					}
-					retryCount=1;
-				}
-				else 
-				{
-					ScanDVBCChannel();
-					if (captureCard.SignalPresent())
-					{
-						ScanChannels();
-					}
-					retryCount=0;
+					ScanChannels();
 				}
 			}
 			captureCard.DeleteGraph();
@@ -377,8 +363,11 @@ namespace MediaPortal.Configuration.Sections
 		}
 		void ScanChannels()
 		{
+			System.Threading.Thread.Sleep(400);
+			Application.DoEvents();
+
 			DVBCList dvbcChan=dvbcChannels[currentIndex];
-			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate, retryCount);
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate);
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			labelStatus.Text=description;
 
@@ -408,8 +397,8 @@ namespace MediaPortal.Configuration.Sections
 				captureCard.DeleteGraph();
 				return;
 			}
-			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2} retry:{3}",
-				dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate, retryCount);
+			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
+				dvbcChannels[currentIndex].frequency,dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate);
 			string description=String.Format("Channel:{0}/{1} {2}", currentIndex,count,chanDesc);
 			labelStatus.Text=description;
 
@@ -425,8 +414,7 @@ namespace MediaPortal.Configuration.Sections
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.Frequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan,0);
-			Application.DoEvents();
-			System.Threading.Thread.Sleep(100);
+			System.Threading.Thread.Sleep(400);
 			Application.DoEvents();
 		}
 

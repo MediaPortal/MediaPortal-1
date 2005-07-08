@@ -420,23 +420,8 @@ namespace MediaPortal.Configuration.Sections
 						transponder.TPfreq, transponder.TPpol, transponder.TPsymb );
 					string description=String.Format("Transponder:{0}/{1} {2}", index,count,chanDesc);
 
-					if (currentState==State.ScanTransponders)
-					{
-						if (captureCard.SignalPresent())
-						{
-							Log.WriteFile(Log.LogType.Capture,"Found signal for transponder:{0} {1}",currentIndex,chanDesc);
-							currentState=State.ScanChannels;
-						}
-					}
-
-					if (currentState==State.ScanTransponders || currentState==State.ScanStart)
-					{
-						currentState=State.ScanTransponders ;
-						labelStatus.Text=(description);
-						ScanNextTransponder();
-					}
-
-					if (currentState==State.ScanChannels)
+					ScanNextTransponder();
+					if (captureCard.SignalPresent())
 					{
 						description=String.Format("Found signal for transponder:{0} {1}, Scanning channels", currentIndex,chanDesc);
 						labelStatus.Text=(description);
@@ -486,6 +471,8 @@ namespace MediaPortal.Configuration.Sections
 		}
 		void ScanChannels()
 		{
+			System.Threading.Thread.Sleep(400);
+			Application.DoEvents();
 			
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			
@@ -503,14 +490,12 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if(m_currentDiseqc>=m_diseqcLoops)
 				{
-					
 					progressBar1.Value=(100);
-					
 				}
 				else
 				{
 					m_currentDiseqc++;
-					currentIndex=0;
+					currentIndex=-1;
 				}
 				return;
 			}
@@ -523,17 +508,14 @@ namespace MediaPortal.Configuration.Sections
 			newchan.Symbolrate=transp[currentIndex].TPsymb;
 			newchan.FEC=(int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 			newchan.Frequency=transp[currentIndex].TPfreq;
-
-			
 			
 
 			Log.WriteFile(Log.LogType.Capture,"tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}",currentIndex,
 				newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
-			Application.DoEvents();
-			Application.DoEvents();
 			captureCard.Tune(newchan,m_currentDiseqc);
-			System.Threading.Thread.Sleep(100);
+			System.Threading.Thread.Sleep(400);
 			Application.DoEvents();
+
 		}
 
 	}

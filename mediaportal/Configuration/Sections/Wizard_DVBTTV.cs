@@ -272,7 +272,6 @@ namespace MediaPortal.Configuration.Sections
 
 			while (currentFrequencyIndex <frequencies.Count)
 			{
-				Application.DoEvents();
 				int currentFreq=currentFrequencyIndex;
 				if (currentFrequencyIndex<0) currentFreq=0;
 				float percent = ((float)currentFreq) / ((float)frequencies.Count);
@@ -285,36 +284,38 @@ namespace MediaPortal.Configuration.Sections
 				string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
 				labelStatus.Text=description;
 
-				if (currentState==State.ScanFrequencies)
-				{
-					if (frequency>0)
-					{
-						if (captureCard.SignalPresent())
-						{
-							currentState=State.ScanChannels;
-							currentOffset=0;
-						}
-					}
-				}
-
-				if (currentState==State.ScanFrequencies)
-				{
-					labelStatus.Text=description;
-					ScanNextFrequency();
-				}
-
-				if (currentState==State.ScanChannels)
+				ScanNextFrequency(0);
+				if (captureCard.SignalPresent())
 				{
 					description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency);
 					labelStatus.Text=description;
 					ScanChannels();
 				}
+				if (scanOffset!=0)
+				{
+					ScanNextFrequency(-scanOffset);
+					if (captureCard.SignalPresent())
+					{
+						description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency-scanOffset);
+						labelStatus.Text=description;
+						ScanChannels();
+					}
+					ScanNextFrequency(scanOffset);
+					if (captureCard.SignalPresent())
+					{
+						description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency+scanOffset);
+						labelStatus.Text=description;
+						ScanChannels();
+					}
+				}
+				currentFrequencyIndex++;
 			}
 			captureCard.DeleteGraph();
 			MapTvToOtherCards(captureCard.ID);
 			MapRadioToOtherCards(captureCard.ID);
 			captureCard=null;
 		}
+
 		void MapTvToOtherCards(int id)
 		{
 			ArrayList tvchannels = new ArrayList();
@@ -352,87 +353,32 @@ namespace MediaPortal.Configuration.Sections
 
 		void ScanChannels()
 		{
+			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=frequencies.Count) return;
+			int[] tmp;
+			tmp = (int[])frequencies[currentFrequencyIndex];
+			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]/1000);
+			labelStatus.Text=description;
+			System.Threading.Thread.Sleep(400);
+			Application.DoEvents();
+
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-			currentState=State.ScanFrequencies;
-			currentOffset=0;
-			currentFrequencyIndex++;
-			ScanNextFrequency();
 		}
 
-		void ScanNextFrequency()
+		void ScanNextFrequency(int offset)
 		{
+			if (currentFrequencyIndex <0) currentFrequencyIndex =0;
 			if (currentFrequencyIndex >=frequencies.Count) return;
 
 			DVBChannel chan = new DVBChannel();
 			int[] tmp;
-			if (currentFrequencyIndex<0)
-			{
-				currentOffset=0;
-				currentFrequencyIndex=0;
-				if (currentFrequencyIndex>=frequencies.Count)
-				{
-					
-					progressBar1.Value=100;
-					
-					captureCard.DeleteGraph();
-					return;
-				}
-
-				tmp = (int[])frequencies[currentFrequencyIndex];
-				chan.Frequency=tmp[0];
-				chan.Bandwidth=tmp[1];
-				captureCard.Tune(chan,0);
-				Application.DoEvents();
-				System.Threading.Thread.Sleep(100);
-				Application.DoEvents();
-				return;
-			}
-
 			tmp = (int[])frequencies[currentFrequencyIndex];
 			chan.Frequency=tmp[0];
 			chan.Bandwidth=tmp[1];
-			tunedFrequency=chan.Frequency;
-			if (currentOffset==0)
-			{
-				captureCard.Tune(chan,0);
-				Application.DoEvents();
-				System.Threading.Thread.Sleep(100);
-				Application.DoEvents();
-				if (scanOffset==0) currentOffset=3;
-				else currentOffset++;
-			}
-			else if (currentOffset==1)
-			{
-				tunedFrequency-=scanOffset;
-				chan.Frequency-=scanOffset;
-				captureCard.Tune(chan,0);
-				Application.DoEvents();
-				System.Threading.Thread.Sleep(100);
-				Application.DoEvents();
-				currentOffset++;
-			}
-			else if (currentOffset==2)
-			{
-				tunedFrequency+=scanOffset;
-				chan.Frequency+=scanOffset;
-				captureCard.Tune(chan,0);
-				Application.DoEvents();
-				System.Threading.Thread.Sleep(100);
-				Application.DoEvents();
-				currentOffset++;
-			}
-			else
-			{
-				currentOffset=0;
-				currentFrequencyIndex++;
-				if (currentFrequencyIndex>=frequencies.Count)
-				{
-					
-					progressBar1.Value=100;
-					captureCard.DeleteGraph();
-					return;
-				}
-			}
+			chan.Frequency+=offset;
+
+			captureCard.Tune(chan,0);
+			System.Threading.Thread.Sleep(400);
+
 		}
 	}
 }
