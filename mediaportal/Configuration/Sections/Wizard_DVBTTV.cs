@@ -78,6 +78,7 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label3 = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.labelStatus = new System.Windows.Forms.Label();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -85,7 +86,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.cbCountry = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -109,6 +109,14 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Setup digital tv (DVBT terrestial)";
 			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(40, 264);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(392, 64);
+			this.label3.TabIndex = 13;
+			this.label3.Text = @"NOTE: if your country is not present or if Mediaportal is unable to find any channels then MediaPortal probably doesnt know which frequencies to scan for your country. Edit the dvbt.xml in the TuningParameters/ subfolder and fill in all the frequencies needed for your country.";
+			// 
 			// panel1
 			// 
 			this.panel1.Location = new System.Drawing.Point(432, 328);
@@ -121,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
 			this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.labelStatus.Location = new System.Drawing.Point(40, 169);
 			this.labelStatus.Name = "labelStatus";
-			this.labelStatus.Size = new System.Drawing.Size(400, 23);
+			this.labelStatus.Size = new System.Drawing.Size(400, 63);
 			this.labelStatus.TabIndex = 11;
 			// 
 			// progressBar1
@@ -162,14 +170,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
 				"ess auto tune to scan for the tv and radio channels";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(40, 216);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(392, 48);
-			this.label3.TabIndex = 13;
-			this.label3.Text = @"NOTE: if your country is not present or if Mediaportal is unable to find any channels then MediaPortal probably doesnt know which frequencies to scan for your country. Edit the dvbt.xml in the TuningParameters/ subfolder and fill in all the frequencies needed for your country.";
 			// 
 			// Wizard_DVBTTV
 			// 
@@ -270,6 +270,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
+			currentFrequencyIndex=0;
 			while (currentFrequencyIndex <frequencies.Count)
 			{
 				int currentFreq=currentFrequencyIndex;
@@ -313,6 +314,7 @@ namespace MediaPortal.Configuration.Sections
 			captureCard.DeleteGraph();
 			MapTvToOtherCards(captureCard.ID);
 			MapRadioToOtherCards(captureCard.ID);
+			progressBar1.Value=100;
 			captureCard=null;
 		}
 

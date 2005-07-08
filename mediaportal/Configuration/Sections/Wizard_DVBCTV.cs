@@ -79,6 +79,7 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label3 = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.labelStatus = new System.Windows.Forms.Label();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -86,7 +87,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.cbCountry = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -108,7 +108,16 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Size = new System.Drawing.Size(480, 360);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Setup digital tv (DVBC Cable)";
+			this.groupBox1.Text = "Setup digital tv (DVB Cable)";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(32, 264);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(392, 56);
+			this.label3.TabIndex = 15;
+			this.label3.Text = @"NOTE: if your country is not present or if Mediaportal is unable to find any channels then MediaPortal probably doesnt know which frequencies to scan for your country. Edit the .dvbc file in the TuningParameters/ subfolder and fill in all the frequencies needed for your country.";
+			this.label3.Click += new System.EventHandler(this.label3_Click);
 			// 
 			// panel1
 			// 
@@ -122,7 +131,7 @@ namespace MediaPortal.Configuration.Sections
 			this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.labelStatus.Location = new System.Drawing.Point(40, 169);
 			this.labelStatus.Name = "labelStatus";
-			this.labelStatus.Size = new System.Drawing.Size(400, 23);
+			this.labelStatus.Size = new System.Drawing.Size(400, 63);
 			this.labelStatus.TabIndex = 11;
 			// 
 			// progressBar1
@@ -163,15 +172,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
 				"ess auto tune to scan for the tv and radio channels";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(32, 232);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(392, 48);
-			this.label3.TabIndex = 15;
-			this.label3.Text = @"NOTE: if your country is not present or if Mediaportal is unable to find any channels then MediaPortal probably doesnt know which frequencies to scan for your country. Edit the .dvbc file in the TuningParameters/ subfolder and fill in all the frequencies needed for your country.";
-			this.label3.Click += new System.EventHandler(this.label3_Click);
 			// 
 			// Wizard_DVBCTV
 			// 
@@ -306,6 +306,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
+			currentIndex=0;
 			while (currentIndex < count)
 			{
 				
@@ -326,6 +327,7 @@ namespace MediaPortal.Configuration.Sections
 			MapTvToOtherCards(captureCard.ID);
 			MapRadioToOtherCards(captureCard.ID);
 			captureCard=null;
+			progressBar1.Value=100;
 		}
 		void MapTvToOtherCards(int id)
 		{
@@ -371,8 +373,6 @@ namespace MediaPortal.Configuration.Sections
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			labelStatus.Text=description;
 
-			
-			Application.DoEvents();
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			
 			
@@ -384,16 +384,13 @@ namespace MediaPortal.Configuration.Sections
 		{
 			currentIndex++;
 			ScanDVBCChannel();
-			Application.DoEvents();
 		}
 
 		void ScanDVBCChannel()
 		{
 			if (currentIndex<0 || currentIndex>=count)
-			{
-				
-				progressBar1.Value=100;
-				
+			{				
+				progressBar1.Value=100;				
 				captureCard.DeleteGraph();
 				return;
 			}

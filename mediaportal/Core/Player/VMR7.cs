@@ -33,7 +33,7 @@ namespace MediaPortal.Player
 		IQualProp quality=null;
 		IVMRMixerBitmap m_mixerBitmap=null;
 		DateTime repaintTimer = DateTime.Now;
-		ulong m_oldSavedBitmapCRC=0;
+		//ulong m_oldSavedBitmapCRC=0;
 		bool  vmr7intialized=false;
 		//Util.CRCTool crc=new MediaPortal.Util.CRCTool();
 		/// <summary>

@@ -236,7 +236,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.label6.Location = new System.Drawing.Point(40, 169);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(400, 23);
+			this.label6.Size = new System.Drawing.Size(400, 87);
 			this.label6.TabIndex = 11;
 			// 
 			// progressBar3
@@ -405,6 +405,8 @@ namespace MediaPortal.Configuration.Sections
 			GUIGraphicsContext.form=this.FindForm();
 			GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
 
+			m_currentDiseqc=0;
+			currentIndex=-1;
 			while (m_currentDiseqc <m_diseqcLoops)
 			{
 				while (currentIndex < count)
@@ -476,11 +478,6 @@ namespace MediaPortal.Configuration.Sections
 			
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			
-			Log.WriteFile(Log.LogType.Capture,"timeout, goto scanning transponders");
-			currentState=State.ScanTransponders;
-			ScanNextTransponder();
-			
-			return;
 		}
 
 		void ScanNextTransponder()
