@@ -112,5 +112,12 @@ namespace DShowNET
 			return false;
 		}
 		
+		public void SetTvFormat(AnalogVideoStandard standard)
+		{
+			if (ivac.IsIVAC)
+			{
+				ivac.SetTvFormat(standard);
+			}
+		}
 	}//public class VideoCaptureProperties
 }//namespace DShowNET

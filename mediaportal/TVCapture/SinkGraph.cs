@@ -649,6 +649,7 @@ namespace MediaPortal.TV.Recording
 			AnalogVideoStandard standard=channel.TVStandard;
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}", 
 																												m_iChannelNr, m_iCountryCode, standard, channel.Name);
+
       if (m_iChannelNr < (int)ExternalInputs.svhs)
       {
         if (m_TVTuner==null) return;
@@ -933,6 +934,7 @@ namespace MediaPortal.TV.Recording
 			string strAudioCodec="";
 			string strAudioRenderer="";
       bool   bAddFFDshow=false;
+
       using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
@@ -1075,7 +1077,10 @@ namespace MediaPortal.TV.Recording
 		/// <param name="standard">TVStandard</param>
     protected void SetVideoStandard(AnalogVideoStandard standard)
     {
+			VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
+			props.SetTvFormat(standard);
       if (standard==AnalogVideoStandard.None) return;
+
       if (m_IAMAnalogVideoDecoder==null) return;
       AnalogVideoStandard currentStandard;
       int hr=m_IAMAnalogVideoDecoder.get_TVFormat(out currentStandard);
@@ -1278,39 +1283,61 @@ namespace MediaPortal.TV.Recording
 
 		protected void SetQuality(int Quality)
 		{
-			VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
-			if (Quality>=0)
-			{
-				switch (Quality)
+			string filename=String.Format(@"database\card_{0}.xml",mCard.FriendlyName);
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
+			{	
+
+				int portableMinKbps=xmlreader.GetValueAsInt("quality", "portLow", 100);
+				int portableMaxKbps=xmlreader.GetValueAsInt("quality", "portMax", 300);
+				bool portableVBR=xmlreader.GetValueAsBool("quality", "portVBR", false);
+
+				int lowMinKbps=xmlreader.GetValueAsInt("quality", "LowLow", 500);
+				int lowMaxKbps=xmlreader.GetValueAsInt("quality", "LowMax", 1500);
+				bool lowVBR=xmlreader.GetValueAsBool("quality", "LowVBR", true);	
+
+				int mediumMinKbps=xmlreader.GetValueAsInt("quality", "MedLow", 2000);
+				int mediumMaxKbps=xmlreader.GetValueAsInt("quality", "MedMax", 4000);
+				bool mediumVBR=xmlreader.GetValueAsBool("quality", "MedVBR", false);
+
+				int highMinKbps=xmlreader.GetValueAsInt("quality", "HighLow", 4000);
+				int highMaxKbps=xmlreader.GetValueAsInt("quality", "HighMax", 8000);
+				bool highVBR=xmlreader.GetValueAsBool("quality", "HighVBR", true);
+
+
+
+				VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
+				if (Quality>=0)
 				{
-					case 0://Portable
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:portable");
-						props.SetVideoBitRate(300,500,true);
-						break;
-					case 1://low
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:low");
-						props.SetVideoBitRate(2000,4500,true);
-						break;
-					case 2://medium
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:medium");
-						props.SetVideoBitRate(4000,6000,true);
-						break;
-							
-					case 3://hi
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:high");
-						props.SetVideoBitRate(8000,12000,true);
-						break;
-							
-					default://medium
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality to default (medium)");
-						props.SetVideoBitRate(4000,6000,true);
-						break;
+					switch (Quality)
+					{
+						case 0://Portable
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:portable");
+							props.SetVideoBitRate(portableMinKbps,portableMaxKbps,portableVBR);
+							break;
+						case 1://low
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:low");
+							props.SetVideoBitRate(lowMinKbps,lowMaxKbps,lowVBR);
+							break;
+						case 2://medium
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:medium");
+							props.SetVideoBitRate(mediumMinKbps,mediumMaxKbps,mediumVBR);
+							break;
+						case 3://hi
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality:high");
+							props.SetVideoBitRate(highMinKbps,highMaxKbps,highVBR);
+							break;
+								
+						default://
+							Log.WriteFile(Log.LogType.Capture,"SinkGraph:Set quality to default (medium)");
+							props.SetVideoBitRate(mediumMinKbps,mediumMaxKbps,mediumVBR);
+							break;
+					}
+					int minKbps, maxKbps;
+					bool isVBR;
+					props.GetVideoBitRate(out minKbps, out maxKbps,out isVBR);
+					Log.WriteFile(Log.LogType.Capture," driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo,minKbps, maxKbps,isVBR);
 				}
 			}//if (Quality>=0)
-			int minKbps, maxKbps;
-			bool isVBR;
-			props.GetVideoBitRate(out minKbps, out maxKbps,out isVBR);
-			Log.WriteFile(Log.LogType.Capture," driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo,minKbps, maxKbps,isVBR);
 		}//protected void SetQuality(int Quality)
 
 		public bool HasTeletext()

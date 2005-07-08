@@ -554,7 +554,7 @@ namespace MediaPortal.Configuration.Sections
 			if (CaptureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 			
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				checkBox1.Checked=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 			}
@@ -687,7 +687,7 @@ namespace MediaPortal.Configuration.Sections
 
 		void SaveDVBSSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",checkBox1.Checked);
 			}

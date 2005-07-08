@@ -43,7 +43,7 @@ namespace DShowNET
 
 		public enum eStreamOutput:int
 		{
-			Program       = 0,
+			Program       = 14,
 			Transport     = 1,
 			Mpeg1         = 2,
 			PES_AV        = 3,
@@ -124,7 +124,7 @@ namespace DShowNET
 		}
 
 
-		public eVideoFormat VideoFormat
+		eVideoFormat VideoFormat
 		{
 			get 
 			{
@@ -134,6 +134,29 @@ namespace DShowNET
 			{
 				int byValue=(int)value;
 				SetIntValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_TV_ENCODE_FORMAT, byValue);
+			}
+		}
+		public void SetTvFormat(AnalogVideoStandard standard)
+		{
+			if (standard==AnalogVideoStandard.NTSC_433||
+				standard==AnalogVideoStandard.NTSC_M||
+				standard==AnalogVideoStandard.NTSC_M_J)
+			{
+				VideoFormat=eVideoFormat.NTSC;
+				return;
+			}
+
+			if (standard==AnalogVideoStandard.PAL_60||
+					standard==AnalogVideoStandard.PAL_B||
+					standard==AnalogVideoStandard.PAL_G||
+					standard==AnalogVideoStandard.PAL_H||
+					standard==AnalogVideoStandard.PAL_I||
+					standard==AnalogVideoStandard.PAL_M||
+					standard==AnalogVideoStandard.PAL_N||
+					standard==AnalogVideoStandard.PAL_N_COMBO)
+			{
+				VideoFormat=eVideoFormat.PAL;
+				return;
 			}
 		}
 

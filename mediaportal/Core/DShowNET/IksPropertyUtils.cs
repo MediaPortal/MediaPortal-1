@@ -235,7 +235,7 @@ namespace DShowNET
 			}
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
 			Marshal.WriteInt32(pDataReturned, intValue);
-			hr=propertySet.RemoteSet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,1);
+			hr=propertySet.RemoteSet(ref propertyGuid,propId,pDataReturned,4, pDataReturned,4);
 			if (hr!=0)
 			{
 				Log.Write("SetIntValue() failed 0x{0:X}",hr);

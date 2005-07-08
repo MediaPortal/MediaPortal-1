@@ -150,7 +150,8 @@ namespace MediaPortal.Profile
 			xmlFileName=System.IO.Path.GetFileName(fileName);
 			foreach (XmlDoc doc in xmlCache)
 			{
-				if (String.Compare(doc.FileName,xmlFileName,true)==0)
+				string xmlName=System.IO.Path.GetFileName(doc.FileName);
+				if (String.Compare(xmlName,xmlFileName,true)==0)
 				{
 					xmlDoc=doc;
 					break;

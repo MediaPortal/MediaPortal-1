@@ -138,6 +138,26 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.Label label26;
 		private System.Windows.Forms.GroupBox groupBox5;
+		private System.Windows.Forms.GroupBox groupBox7;
+		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.Label label27;
+		private System.Windows.Forms.Label label28;
+		private System.Windows.Forms.Label label29;
+		private System.Windows.Forms.TextBox tbPortMin;
+		private System.Windows.Forms.TextBox tbPortMax;
+		private System.Windows.Forms.TextBox tbLowMax;
+		private System.Windows.Forms.TextBox tbLowMin;
+		private System.Windows.Forms.Label label34;
+		private System.Windows.Forms.TextBox tbMedMax;
+		private System.Windows.Forms.TextBox tbMedMin;
+		private System.Windows.Forms.Label label36;
+		private System.Windows.Forms.TextBox tbHighMax;
+		private System.Windows.Forms.TextBox tbHighMin;
+		private System.Windows.Forms.Label label37;
+		private System.Windows.Forms.CheckBox cbLowVBR;
+		private System.Windows.Forms.CheckBox cbMedVBR;
+		private System.Windows.Forms.CheckBox cbHighVBR;
+		private System.Windows.Forms.CheckBox cbPortVBR;
 		int  CardId;
 		
 		/// <summary>
@@ -544,6 +564,26 @@ namespace MediaPortal.Configuration
 			this.label22 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
 			this.btnRadio = new System.Windows.Forms.Button();
+			this.groupBox7 = new System.Windows.Forms.GroupBox();
+			this.label19 = new System.Windows.Forms.Label();
+			this.tbPortMin = new System.Windows.Forms.TextBox();
+			this.tbPortMax = new System.Windows.Forms.TextBox();
+			this.cbPortVBR = new System.Windows.Forms.CheckBox();
+			this.label27 = new System.Windows.Forms.Label();
+			this.label28 = new System.Windows.Forms.Label();
+			this.label29 = new System.Windows.Forms.Label();
+			this.cbLowVBR = new System.Windows.Forms.CheckBox();
+			this.tbLowMax = new System.Windows.Forms.TextBox();
+			this.tbLowMin = new System.Windows.Forms.TextBox();
+			this.label34 = new System.Windows.Forms.Label();
+			this.cbMedVBR = new System.Windows.Forms.CheckBox();
+			this.tbMedMax = new System.Windows.Forms.TextBox();
+			this.tbMedMin = new System.Windows.Forms.TextBox();
+			this.label36 = new System.Windows.Forms.Label();
+			this.cbHighVBR = new System.Windows.Forms.CheckBox();
+			this.tbHighMax = new System.Windows.Forms.TextBox();
+			this.tbHighMin = new System.Windows.Forms.TextBox();
+			this.label37 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.trackRecording)).BeginInit();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -560,6 +600,7 @@ namespace MediaPortal.Configuration
 			this.groupBox2.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
+			this.groupBox7.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// checkBoxHiQuality
@@ -672,7 +713,7 @@ namespace MediaPortal.Configuration
 			this.audioCompressorComboBox.ItemHeight = 13;
 			this.audioCompressorComboBox.Location = new System.Drawing.Point(128, 88);
 			this.audioCompressorComboBox.Name = "audioCompressorComboBox";
-			this.audioCompressorComboBox.Size = new System.Drawing.Size(272, 20);
+			this.audioCompressorComboBox.Size = new System.Drawing.Size(352, 20);
 			this.audioCompressorComboBox.TabIndex = 6;
 			this.audioCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.audioCompressorComboBox_KeyPress);
 			// 
@@ -692,7 +733,7 @@ namespace MediaPortal.Configuration
 			this.videoCompressorComboBox.ItemHeight = 13;
 			this.videoCompressorComboBox.Location = new System.Drawing.Point(128, 56);
 			this.videoCompressorComboBox.Name = "videoCompressorComboBox";
-			this.videoCompressorComboBox.Size = new System.Drawing.Size(272, 20);
+			this.videoCompressorComboBox.Size = new System.Drawing.Size(352, 20);
 			this.videoCompressorComboBox.TabIndex = 5;
 			this.videoCompressorComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.videoCompressorComboBox_KeyPress);
 			// 
@@ -836,8 +877,8 @@ namespace MediaPortal.Configuration
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage7);
+			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage4);
@@ -925,7 +966,7 @@ namespace MediaPortal.Configuration
 			this.tabPage3.Controls.Add(this.label17);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(448, 406);
+			this.tabPage3.Size = new System.Drawing.Size(528, 406);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Audio mapping";
 			// 
@@ -1031,7 +1072,7 @@ namespace MediaPortal.Configuration
 			this.tabPage7.Controls.Add(this.groupBox6);
 			this.tabPage7.Location = new System.Drawing.Point(4, 22);
 			this.tabPage7.Name = "tabPage7";
-			this.tabPage7.Size = new System.Drawing.Size(448, 406);
+			this.tabPage7.Size = new System.Drawing.Size(528, 406);
 			this.tabPage7.TabIndex = 6;
 			this.tabPage7.Text = "Recordings";
 			// 
@@ -1129,7 +1170,7 @@ namespace MediaPortal.Configuration
 			this.tabPage2.Controls.Add(this.label3);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(448, 406);
+			this.tabPage2.Size = new System.Drawing.Size(528, 406);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Codecs";
 			// 
@@ -1144,21 +1185,23 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage5
 			// 
+			this.tabPage5.Controls.Add(this.groupBox7);
 			this.tabPage5.Controls.Add(this.label18);
 			this.tabPage5.Controls.Add(this.label25);
 			this.tabPage5.Controls.Add(this.comboBoxQuality);
 			this.tabPage5.Controls.Add(this.checkBoxHiQuality);
 			this.tabPage5.Location = new System.Drawing.Point(4, 22);
 			this.tabPage5.Name = "tabPage5";
-			this.tabPage5.Size = new System.Drawing.Size(448, 406);
+			this.tabPage5.Size = new System.Drawing.Size(528, 406);
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "Quality";
+			this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
 			// 
 			// label18
 			// 
 			this.label18.Location = new System.Drawing.Point(24, 80);
 			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(408, 208);
+			this.label18.Size = new System.Drawing.Size(408, 72);
 			this.label18.TabIndex = 10;
 			this.label18.Text = @"Here you can specify the default quality for tv recordings. Note this is only supported for hauppauge PVR cards like the PVR 150,250,350,500. When scheduling a new recording in Mediaportal you can always overwrite the default setting and choose another quality.";
 			// 
@@ -1173,10 +1216,10 @@ namespace MediaPortal.Configuration
 			// comboBoxQuality
 			// 
 			this.comboBoxQuality.Items.AddRange(new object[] {
-																												 "Portable(VBR 300KBps-500KBps)",
-																												 "Low (VBR 2-4.5 MBPS)",
-																												 "Medium (VBR 4-6 MBPS)",
-																												 "High (VBR 8-12 MBPS)"});
+																												 "Portable",
+																												 "Low",
+																												 "Medium",
+																												 "High"});
 			this.comboBoxQuality.Location = new System.Drawing.Point(128, 48);
 			this.comboBoxQuality.Name = "comboBoxQuality";
 			this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
@@ -1191,7 +1234,7 @@ namespace MediaPortal.Configuration
 			this.tabPage4.Controls.Add(this.groupBox3);
 			this.tabPage4.Location = new System.Drawing.Point(4, 22);
 			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(448, 406);
+			this.tabPage4.Size = new System.Drawing.Size(528, 406);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "DVB-S LNB";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
@@ -1607,6 +1650,182 @@ namespace MediaPortal.Configuration
 			this.btnRadio.Text = "Autotune Radio";
 			this.btnRadio.Click += new System.EventHandler(this.btnRadio_Click);
 			// 
+			// groupBox7
+			// 
+			this.groupBox7.Controls.Add(this.cbHighVBR);
+			this.groupBox7.Controls.Add(this.tbHighMax);
+			this.groupBox7.Controls.Add(this.tbHighMin);
+			this.groupBox7.Controls.Add(this.label37);
+			this.groupBox7.Controls.Add(this.cbMedVBR);
+			this.groupBox7.Controls.Add(this.tbMedMax);
+			this.groupBox7.Controls.Add(this.tbMedMin);
+			this.groupBox7.Controls.Add(this.label36);
+			this.groupBox7.Controls.Add(this.cbLowVBR);
+			this.groupBox7.Controls.Add(this.tbLowMax);
+			this.groupBox7.Controls.Add(this.tbLowMin);
+			this.groupBox7.Controls.Add(this.label34);
+			this.groupBox7.Controls.Add(this.label29);
+			this.groupBox7.Controls.Add(this.label28);
+			this.groupBox7.Controls.Add(this.label27);
+			this.groupBox7.Controls.Add(this.cbPortVBR);
+			this.groupBox7.Controls.Add(this.tbPortMax);
+			this.groupBox7.Controls.Add(this.tbPortMin);
+			this.groupBox7.Controls.Add(this.label19);
+			this.groupBox7.Location = new System.Drawing.Point(24, 144);
+			this.groupBox7.Name = "groupBox7";
+			this.groupBox7.Size = new System.Drawing.Size(456, 224);
+			this.groupBox7.TabIndex = 11;
+			this.groupBox7.TabStop = false;
+			this.groupBox7.Text = "Quality settings:";
+			// 
+			// label19
+			// 
+			this.label19.Location = new System.Drawing.Point(16, 56);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(64, 16);
+			this.label19.TabIndex = 0;
+			this.label19.Text = "Portable:";
+			// 
+			// tbPortMin
+			// 
+			this.tbPortMin.Location = new System.Drawing.Point(80, 56);
+			this.tbPortMin.Name = "tbPortMin";
+			this.tbPortMin.Size = new System.Drawing.Size(64, 20);
+			this.tbPortMin.TabIndex = 1;
+			this.tbPortMin.Text = "100";
+			// 
+			// tbPortMax
+			// 
+			this.tbPortMax.Location = new System.Drawing.Point(168, 56);
+			this.tbPortMax.Name = "tbPortMax";
+			this.tbPortMax.Size = new System.Drawing.Size(64, 20);
+			this.tbPortMax.TabIndex = 2;
+			this.tbPortMax.Text = "300";
+			// 
+			// cbPortVBR
+			// 
+			this.cbPortVBR.Location = new System.Drawing.Point(248, 56);
+			this.cbPortVBR.Name = "cbPortVBR";
+			this.cbPortVBR.Size = new System.Drawing.Size(32, 24);
+			this.cbPortVBR.TabIndex = 3;
+			// 
+			// label27
+			// 
+			this.label27.Location = new System.Drawing.Point(80, 16);
+			this.label27.Name = "label27";
+			this.label27.Size = new System.Drawing.Size(88, 32);
+			this.label27.TabIndex = 4;
+			this.label27.Text = "Average bitrate (KBPS)";
+			// 
+			// label28
+			// 
+			this.label28.Location = new System.Drawing.Point(168, 16);
+			this.label28.Name = "label28";
+			this.label28.Size = new System.Drawing.Size(72, 32);
+			this.label28.TabIndex = 5;
+			this.label28.Text = "Peak bitrate (KBPS)";
+			// 
+			// label29
+			// 
+			this.label29.Location = new System.Drawing.Point(248, 24);
+			this.label29.Name = "label29";
+			this.label29.Size = new System.Drawing.Size(40, 16);
+			this.label29.TabIndex = 6;
+			this.label29.Text = "VBR";
+			// 
+			// cbLowVBR
+			// 
+			this.cbLowVBR.Location = new System.Drawing.Point(248, 88);
+			this.cbLowVBR.Name = "cbLowVBR";
+			this.cbLowVBR.Size = new System.Drawing.Size(32, 24);
+			this.cbLowVBR.TabIndex = 10;
+			// 
+			// tbLowMax
+			// 
+			this.tbLowMax.Location = new System.Drawing.Point(168, 88);
+			this.tbLowMax.Name = "tbLowMax";
+			this.tbLowMax.Size = new System.Drawing.Size(64, 20);
+			this.tbLowMax.TabIndex = 9;
+			this.tbLowMax.Text = "300";
+			// 
+			// tbLowMin
+			// 
+			this.tbLowMin.Location = new System.Drawing.Point(80, 88);
+			this.tbLowMin.Name = "tbLowMin";
+			this.tbLowMin.Size = new System.Drawing.Size(64, 20);
+			this.tbLowMin.TabIndex = 8;
+			this.tbLowMin.Text = "100";
+			// 
+			// label34
+			// 
+			this.label34.Location = new System.Drawing.Point(16, 88);
+			this.label34.Name = "label34";
+			this.label34.Size = new System.Drawing.Size(64, 16);
+			this.label34.TabIndex = 7;
+			this.label34.Text = "Low:";
+			// 
+			// cbMedVBR
+			// 
+			this.cbMedVBR.Location = new System.Drawing.Point(248, 120);
+			this.cbMedVBR.Name = "cbMedVBR";
+			this.cbMedVBR.Size = new System.Drawing.Size(32, 24);
+			this.cbMedVBR.TabIndex = 14;
+			// 
+			// tbMedMax
+			// 
+			this.tbMedMax.Location = new System.Drawing.Point(168, 120);
+			this.tbMedMax.Name = "tbMedMax";
+			this.tbMedMax.Size = new System.Drawing.Size(64, 20);
+			this.tbMedMax.TabIndex = 13;
+			this.tbMedMax.Text = "300";
+			// 
+			// tbMedMin
+			// 
+			this.tbMedMin.Location = new System.Drawing.Point(80, 120);
+			this.tbMedMin.Name = "tbMedMin";
+			this.tbMedMin.Size = new System.Drawing.Size(64, 20);
+			this.tbMedMin.TabIndex = 12;
+			this.tbMedMin.Text = "100";
+			// 
+			// label36
+			// 
+			this.label36.Location = new System.Drawing.Point(16, 120);
+			this.label36.Name = "label36";
+			this.label36.Size = new System.Drawing.Size(64, 16);
+			this.label36.TabIndex = 11;
+			this.label36.Text = "Medium:";
+			// 
+			// cbHighVBR
+			// 
+			this.cbHighVBR.Location = new System.Drawing.Point(248, 152);
+			this.cbHighVBR.Name = "cbHighVBR";
+			this.cbHighVBR.Size = new System.Drawing.Size(32, 24);
+			this.cbHighVBR.TabIndex = 18;
+			// 
+			// tbHighMax
+			// 
+			this.tbHighMax.Location = new System.Drawing.Point(168, 152);
+			this.tbHighMax.Name = "tbHighMax";
+			this.tbHighMax.Size = new System.Drawing.Size(64, 20);
+			this.tbHighMax.TabIndex = 17;
+			this.tbHighMax.Text = "300";
+			// 
+			// tbHighMin
+			// 
+			this.tbHighMin.Location = new System.Drawing.Point(80, 152);
+			this.tbHighMin.Name = "tbHighMin";
+			this.tbHighMin.Size = new System.Drawing.Size(64, 20);
+			this.tbHighMin.TabIndex = 16;
+			this.tbHighMin.Text = "100";
+			// 
+			// label37
+			// 
+			this.label37.Location = new System.Drawing.Point(16, 152);
+			this.label37.Name = "label37";
+			this.label37.Size = new System.Drawing.Size(64, 16);
+			this.label37.TabIndex = 15;
+			this.label37.Text = "High:";
+			// 
 			// EditCaptureCardForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1640,6 +1859,7 @@ namespace MediaPortal.Configuration
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
+			this.groupBox7.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1672,20 +1892,43 @@ namespace MediaPortal.Configuration
 				MessageBox.Show("No recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
-			
-			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(filename))
+			if (CaptureCard!=null && CaptureCard.FriendlyName!=String.Empty)
 			{
-				xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
-				xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
-				xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
-				xmlwriter.SetValue("mapping", "audio4", cbRgbAudio.SelectedIndex);
-																								 
-																								 
-				xmlwriter.SetValue("mapping", "video1", comboBox1Video.SelectedIndex);
-				xmlwriter.SetValue("mapping", "video2", comboBox2Video.SelectedIndex);
-				xmlwriter.SetValue("mapping", "video3", comboBox3Video.SelectedIndex);
-				xmlwriter.SetValue("mapping", "video4", cbRgbVideo.SelectedIndex);
+				string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
+				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(filename))
+				{
+					xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
+					xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
+					xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
+					xmlwriter.SetValue("mapping", "audio4", cbRgbAudio.SelectedIndex);
+																									 
+																									 
+					xmlwriter.SetValue("mapping", "video1", comboBox1Video.SelectedIndex);
+					xmlwriter.SetValue("mapping", "video2", comboBox2Video.SelectedIndex);
+					xmlwriter.SetValue("mapping", "video3", comboBox3Video.SelectedIndex);
+					xmlwriter.SetValue("mapping", "video4", cbRgbVideo.SelectedIndex);
+
+
+					xmlwriter.SetValue("quality", "portLow", tbPortMin.Text);
+					xmlwriter.SetValue("quality", "portMax", tbPortMax.Text);
+					xmlwriter.SetValueAsBool("quality", "portVBR", cbPortVBR.Checked);
+
+					
+					xmlwriter.SetValue("quality", "LowLow", tbLowMin.Text);
+					xmlwriter.SetValue("quality", "LowMax", tbLowMax.Text);
+					xmlwriter.SetValueAsBool("quality", "LowVBR", cbLowVBR.Checked);	
+
+					xmlwriter.SetValue("quality", "MedLow", tbMedMin.Text);
+					xmlwriter.SetValue("quality", "MedMax", tbMedMax.Text);
+					xmlwriter.SetValueAsBool("quality", "MedVBR", cbMedVBR.Checked);
+
+						
+					xmlwriter.SetValue("quality", "HighLow", tbHighMin.Text);
+					xmlwriter.SetValue("quality", "HighMax", tbHighMax.Text);
+					xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
+
+
+				}
 			}
 			SaveDVBSSettings();
 
@@ -2055,22 +2298,42 @@ namespace MediaPortal.Configuration
 			
 			if (CaptureCard!=null)
 			{
-				string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
-				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+				if (CaptureCard.FriendlyName!=String.Empty)
 				{
-					
-					
-					comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
-					comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
-					comboBox3Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio3", 0);
-					cbRgbAudio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio4", 0);
+					string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
+					using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+					{
+						
+						
+						comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
+						comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
+						comboBox3Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio3", 0);
+						cbRgbAudio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio4", 0);
+
+						
+						comboBox1Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video1", 0);
+						comboBox2Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video2", 1);
+						comboBox3Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video3", 0);
+						cbRgbVideo.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video4", 0);
+
+						tbPortMin.Text=xmlreader.GetValueAsInt("quality", "portLow", 100).ToString();
+						tbPortMax.Text=xmlreader.GetValueAsInt("quality", "portMax", 300).ToString();
+						cbPortVBR.Checked=xmlreader.GetValueAsBool("quality", "portVBR", false);
 
 					
-					comboBox1Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video1", 0);
-					comboBox2Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video2", 1);
-					comboBox3Video.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video3", 0);
-					cbRgbVideo.SelectedIndex = xmlreader.GetValueAsInt("mapping", "video4", 0);
+						tbLowMin.Text=xmlreader.GetValueAsInt("quality", "LowLow", 500).ToString();
+						tbLowMax.Text=xmlreader.GetValueAsInt("quality", "LowMax", 1500).ToString();
+						cbLowVBR.Checked=xmlreader.GetValueAsBool("quality", "LowVBR", true);	
 
+						tbMedMin.Text=xmlreader.GetValueAsInt("quality", "MedLow", 2000).ToString();
+						tbMedMax.Text=xmlreader.GetValueAsInt("quality", "MedMax", 4000).ToString();
+						cbMedVBR.Checked=xmlreader.GetValueAsBool("quality", "MedVBR", true);
+
+						
+						tbHighMin.Text=xmlreader.GetValueAsInt("quality", "HighLow", 4000).ToString();
+						tbHighMax.Text=xmlreader.GetValueAsInt("quality", "HighMax", 8000).ToString();
+						cbHighVBR.Checked=xmlreader.GetValueAsBool("quality", "HighVBR", true);
+					}
 				}
 			}
 			LoadDVBSSettings();
@@ -2295,7 +2558,7 @@ namespace MediaPortal.Configuration
 			if (CaptureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 			
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				checkBox1.Checked=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 			}
@@ -2428,97 +2691,101 @@ namespace MediaPortal.Configuration
 
 		void SaveDVBSSettings()
 		{
-			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 			// save settings
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",checkBox1.Checked);
-			}
-
-			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+			}			
+			if (CaptureCard!=null && CaptureCard.FriendlyName!=String.Empty)
 			{
-				xmlwriter.SetValue("dvbs","LNB0",lnb0MHZ.Text);
-				xmlwriter.SetValue("dvbs","LNB1",lnb1MHZ.Text);
-				xmlwriter.SetValue("dvbs","Switch",lnbswMHZ.Text);
-				xmlwriter.SetValue("dvbs","CBand",cbandMHZ.Text);
-				xmlwriter.SetValue("dvbs","Circular",circularMHZ.Text);
-				xmlwriter.SetValueAsBool("dvbs","useLNB1",true);				
-				xmlwriter.SetValueAsBool("dvbs","useLNB2",useLNB2.Checked);				
-				xmlwriter.SetValueAsBool("dvbs","useLNB3",useLNB3.Checked);
-				xmlwriter.SetValueAsBool("dvbs","useLNB4",useLNB4.Checked);
+				string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 
-				if(diseqca.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc",diseqca.SelectedIndex); 
-				}
-				if(diseqcb.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc2",diseqcb.SelectedIndex); 
-				}
-				if(diseqcc.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc3",diseqcc.SelectedIndex); 
-				}
-				if(diseqcd.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc4",diseqcd.SelectedIndex); 
-				}
-				if (lnbconfig1.SelectedIndex>=0)
-				{
-					switch (lnbconfig1.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb",44); break;
-					}
-				}
-				if (lnbconfig2.SelectedIndex>=0)
-				{
-					switch (lnbconfig2.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb2",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb2",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb2",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb2",44); break;
-					}
-				}
-				if (lnbconfig3.SelectedIndex>=0)
-				{
-					switch (lnbconfig3.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb3",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb3",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb3",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb3",44); break;
-					}
-				}
-				if (lnbconfig4.SelectedIndex>=0)
-				{
-					switch (lnbconfig4.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb4",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb4",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb4",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb4",44); break;
-					}
-				}
 
-				if (lnbkind1.SelectedIndex>=0)
+				using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
 				{
-					xmlwriter.SetValue("dvbs","lnbKind",lnbkind1.SelectedIndex); 
-				}
-				if (lnbkind2.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","lnbKind2",lnbkind2.SelectedIndex); 
-				}
-				if (lnbkind3.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","lnbKind3",lnbkind3.SelectedIndex); 
-				}
-				if (lnbkind4.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","lnbKind4",lnbkind4.SelectedIndex); 
+					xmlwriter.SetValue("dvbs","LNB0",lnb0MHZ.Text);
+					xmlwriter.SetValue("dvbs","LNB1",lnb1MHZ.Text);
+					xmlwriter.SetValue("dvbs","Switch",lnbswMHZ.Text);
+					xmlwriter.SetValue("dvbs","CBand",cbandMHZ.Text);
+					xmlwriter.SetValue("dvbs","Circular",circularMHZ.Text);
+					xmlwriter.SetValueAsBool("dvbs","useLNB1",true);				
+					xmlwriter.SetValueAsBool("dvbs","useLNB2",useLNB2.Checked);				
+					xmlwriter.SetValueAsBool("dvbs","useLNB3",useLNB3.Checked);
+					xmlwriter.SetValueAsBool("dvbs","useLNB4",useLNB4.Checked);
+
+					if(diseqca.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","diseqc",diseqca.SelectedIndex); 
+					}
+					if(diseqcb.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","diseqc2",diseqcb.SelectedIndex); 
+					}
+					if(diseqcc.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","diseqc3",diseqcc.SelectedIndex); 
+					}
+					if(diseqcd.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","diseqc4",diseqcd.SelectedIndex); 
+					}
+					if (lnbconfig1.SelectedIndex>=0)
+					{
+						switch (lnbconfig1.SelectedIndex)
+						{
+							case 0: xmlwriter.SetValue("dvbs","lnb",0); break;
+							case 1: xmlwriter.SetValue("dvbs","lnb",22); break;
+							case 2: xmlwriter.SetValue("dvbs","lnb",33); break;
+							case 3: xmlwriter.SetValue("dvbs","lnb",44); break;
+						}
+					}
+					if (lnbconfig2.SelectedIndex>=0)
+					{
+						switch (lnbconfig2.SelectedIndex)
+						{
+							case 0: xmlwriter.SetValue("dvbs","lnb2",0); break;
+							case 1: xmlwriter.SetValue("dvbs","lnb2",22); break;
+							case 2: xmlwriter.SetValue("dvbs","lnb2",33); break;
+							case 3: xmlwriter.SetValue("dvbs","lnb2",44); break;
+						}
+					}
+					if (lnbconfig3.SelectedIndex>=0)
+					{
+						switch (lnbconfig3.SelectedIndex)
+						{
+							case 0: xmlwriter.SetValue("dvbs","lnb3",0); break;
+							case 1: xmlwriter.SetValue("dvbs","lnb3",22); break;
+							case 2: xmlwriter.SetValue("dvbs","lnb3",33); break;
+							case 3: xmlwriter.SetValue("dvbs","lnb3",44); break;
+						}
+					}
+					if (lnbconfig4.SelectedIndex>=0)
+					{
+						switch (lnbconfig4.SelectedIndex)
+						{
+							case 0: xmlwriter.SetValue("dvbs","lnb4",0); break;
+							case 1: xmlwriter.SetValue("dvbs","lnb4",22); break;
+							case 2: xmlwriter.SetValue("dvbs","lnb4",33); break;
+							case 3: xmlwriter.SetValue("dvbs","lnb4",44); break;
+						}
+					}
+
+					if (lnbkind1.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","lnbKind",lnbkind1.SelectedIndex); 
+					}
+					if (lnbkind2.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","lnbKind2",lnbkind2.SelectedIndex); 
+					}
+					if (lnbkind3.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","lnbKind3",lnbkind3.SelectedIndex); 
+					}
+					if (lnbkind4.SelectedIndex>=0)
+					{
+						xmlwriter.SetValue("dvbs","lnbKind4",lnbkind4.SelectedIndex); 
+					}
 				}
 			}
 		}
@@ -2537,7 +2804,7 @@ namespace MediaPortal.Configuration
 				{
 					string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 					// save settings for get the filename in mp.xml
-					using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(Application.StartupPath+@"\MediaPortal.xml"))
+					using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						xmlwriter.SetValue("dvb_ts_cards","filename",filename);
 					}
@@ -2704,6 +2971,11 @@ namespace MediaPortal.Configuration
 
 
 		private void tabPage6_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void tabPage5_Click(object sender, System.EventArgs e)
 		{
 		
 		}

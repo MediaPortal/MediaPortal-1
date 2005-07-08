@@ -1754,14 +1754,17 @@ namespace MediaPortal.TV.Recording
 		}
 		void SaveContrastGammaBrightnessSettings()
 		{
-			string filename=String.Format(@"database\card_{0}.xml",m_strFriendlyName);
-			using(MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml(filename))
+			if (m_strFriendlyName!= null && m_strFriendlyName!=String.Empty) 
 			{
-				xmlWriter.SetValue("tv","contrast",GUIGraphicsContext.Contrast);
-				xmlWriter.SetValue("tv","brightness",GUIGraphicsContext.Brightness);
-				xmlWriter.SetValue("tv","gamma",GUIGraphicsContext.Gamma);
-				xmlWriter.SetValue("tv","saturation",GUIGraphicsContext.Saturation);
-				xmlWriter.SetValue("tv","sharpness",GUIGraphicsContext.Sharpness);
+				string filename=String.Format(@"database\card_{0}.xml",m_strFriendlyName);
+				using(MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml(filename))
+				{
+					xmlWriter.SetValue("tv","contrast",GUIGraphicsContext.Contrast);
+					xmlWriter.SetValue("tv","brightness",GUIGraphicsContext.Brightness);
+					xmlWriter.SetValue("tv","gamma",GUIGraphicsContext.Gamma);
+					xmlWriter.SetValue("tv","saturation",GUIGraphicsContext.Saturation);
+					xmlWriter.SetValue("tv","sharpness",GUIGraphicsContext.Sharpness);
+				}
 			}
 		}
 		public IBaseFilter Mpeg2DataFilter

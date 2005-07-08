@@ -258,7 +258,7 @@ namespace MediaPortal.TV.Recording
 				FilterDefinition lastFilter = mCard.TvFilterDefinitions[mCard.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
 
 
-				SetQuality(Quality);
+				
 
 				// All filters and connections have been made.
 				// Now fix the rest of the graph, add MUX etc.
