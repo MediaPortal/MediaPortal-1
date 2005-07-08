@@ -36,7 +36,6 @@ namespace MediaPortal.Configuration.Sections
 		}
 		TVCaptureDevice											captureCard;
 		int                                 currentIndex=-1;
-		State                               currentState;
 		TPList[]														transp=new TPList[800];
 		int																	count = 0;
 		
@@ -321,7 +320,7 @@ namespace MediaPortal.Configuration.Sections
 				if(xmlreader.GetValueAsBool("dvbs","useLNB4",false)==true)
 					m_diseqcLoops++;
 			}
-			currentState=State.ScanStart;
+
 			currentIndex=-1;
 
 			string countryName=(string)cbCountry.SelectedItem;

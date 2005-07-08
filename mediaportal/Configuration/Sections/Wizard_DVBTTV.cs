@@ -34,8 +34,6 @@ namespace MediaPortal.Configuration.Sections
 		int                                 currentFrequencyIndex=0;
 		int																	scanOffset = 0;
 		
-		State                               currentState;
-		int																	currentOffset=0;
 		int                                 tunedFrequency=0;
 		int																	newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
