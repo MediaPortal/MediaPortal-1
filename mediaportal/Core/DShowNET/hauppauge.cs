@@ -129,8 +129,6 @@ namespace DShowNET
 
 		public bool GetVideoBitRate(out int minKbps, out int maxKbps,out bool isVBR)
 		{
-			
-			Log.Write("hauppauge: getvideobitrate()");
 			VideoBitRate bitrate = new VideoBitRate();
 			bitrate.size=(uint)Marshal.SizeOf(bitrate);
 			object obj =GetStructure(HauppaugeGuid,(uint)PropertyId.VideoBitRate, typeof(VideoBitRate)) ;
@@ -142,7 +140,7 @@ namespace DShowNET
 			isVBR = (bitrate.isvbr!=0);
 			minKbps=(int)bitrate.bitrate;
 			maxKbps=(int)bitrate.maxBitrate;
-			Log.Write("hauppauge: min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
+			Log.Write("hauppauge: current videobitrate: min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
 			return true;
 		}
 		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
@@ -156,6 +154,8 @@ namespace DShowNET
 			bitrate.bitrate=(uint)minKbps;
 			bitrate.maxBitrate=(uint)maxKbps;
 			SetStructure(HauppaugeGuid,(uint)PropertyId.VideoBitRate, typeof(VideoBitRate), (object)bitrate) ;
+
+			GetVideoBitRate(out minKbps,out maxKbps,out isVBR);
 
 		}
 		

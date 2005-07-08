@@ -1,5 +1,7 @@
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using MediaPortal.GUI.Library;
 namespace DShowNET
 {
 	public class IVac : IksPropertyUtils
@@ -39,11 +41,11 @@ namespace DShowNET
 		} 
 
 
-		enum eStreamOutput:int
+		public enum eStreamOutput:int
 		{
-			PROGRAM       = 0,
-			TRANSPORT     = 1,
-			MPEG1         = 2,
+			Program       = 0,
+			Transport     = 1,
+			Mpeg1         = 2,
 			PES_AV        = 3,
 			PES_Video     = 5,
 			PES_Audio     = 7,
@@ -51,7 +53,7 @@ namespace DShowNET
 			VCD           = 11
 		};
 
-		enum eVideoFormat:byte
+		public enum eVideoFormat:byte
 		{
 			NTSC=0,
 			PAL=1
@@ -109,6 +111,7 @@ namespace DShowNET
 		
 		public void SetVideoBitRate(int minKbps, int maxKbps,bool isVBR)
 		{
+			Log.Write("IVAC: setvideobitrate min:{0} max:{1} vbr:{2}",minKbps,maxKbps,isVBR);
 			videoBitRate bitrate=new videoBitRate();
 			if (isVBR) bitrate.bEncodingMode=eBitRateMode.Vbr;
 			else bitrate.bEncodingMode=eBitRateMode.Cbr;
@@ -116,15 +119,103 @@ namespace DShowNET
 			bitrate.wBitrate=(ushort)((minKbps*1000)/400);
 			bitrate.dwPeak=(uint)((maxKbps*1000)/400);
 			SetStructure(IvacGuid,(uint)PropertyId.IVAC_BITRATE, typeof(videoBitRate), (object)bitrate) ;
+
+			GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
 		}
 
+
+		public eVideoFormat VideoFormat
+		{
+			get 
+			{
+				return (eVideoFormat)GetIntValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_TV_ENCODE_FORMAT);
+			}
+			set
+			{
+				int byValue=(int)value;
+				SetIntValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_TV_ENCODE_FORMAT, byValue);
+			}
+		}
+
+		public Size VideoResolution
+		{
+			get 
+			{
+				int videoRes= (GetIntValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_VIDEO_RESOLUTION) );
+				if (VideoFormat==eVideoFormat.NTSC)
+				{
+					switch (videoRes)
+					{
+						case (int)eVideoResolution.Resolution_720x480:
+							return new Size(720,480);
+						case (int)eVideoResolution.Resolution_480x480:
+							return new Size(480,480);
+						case (int)eVideoResolution.Resolution_352x480:
+							return new Size(352,480);
+							//case (int)eVideoResolution.Resolution_352x240:
+							//  return new Size(352,240);
+						case (int)eVideoResolution.Resolution_320x240:
+							return new Size(320,240);
+					}
+				}
+				else
+				{
+					switch (videoRes)
+					{
+						case (int)eVideoResolution.Resolution_720x576:
+							return new Size(720,576);
+						case (int)eVideoResolution.Resolution_480x576:
+							return new Size(480,576);
+						case (int)eVideoResolution.Resolution_352x288:
+							return new Size(352,288);
+					}
+				}
+				return new Size(0,0);
+			}
+			set
+			{
+				int byValue=0;
+				if (value.Width==720 && value.Height==480) byValue=(int)eVideoResolution.Resolution_720x480;
+				if (value.Width==480 && value.Height==480) byValue=(int)eVideoResolution.Resolution_480x480;
+				if (value.Width==352 && value.Height==480) byValue=(int)eVideoResolution.Resolution_352x480;
+				if (value.Width==352 && value.Height==240) byValue=(int)eVideoResolution.Resolution_352x240;
+				if (value.Width==320 && value.Height==240) byValue=(int)eVideoResolution.Resolution_320x240;
+
+				if (value.Width==720 && value.Height==576) byValue=(int)eVideoResolution.Resolution_720x576;
+				if (value.Width==480 && value.Height==576) byValue=(int)eVideoResolution.Resolution_480x576;
+				if (value.Width==352 && value.Height==576) byValue=(int)eVideoResolution.Resolution_352x576;
+				if (value.Width==352 && value.Height==288) byValue=(int)eVideoResolution.Resolution_352x288;
+
+				SetIntValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_VIDEO_RESOLUTION, byValue);
+			}
+		}
+    
 		public string VersionInfo
 		{
 			get
 			{
 				string version=GetString(IvacGuid,(uint)PropertyId.IVAC_VERSION_INFO);
-				
+				StreamOutput=eStreamOutput.Program;
+				Size res = VideoResolution;
+				int minKbps, maxKbps;
+				bool isVBR;
+				GetVideoBitRate(out minKbps, out maxKbps,out isVBR);
+				Log.Write("IVAC: version:{0} streamtype:{1} format:{2} resolution:{3}x{4}",version, StreamOutput.ToString(),VideoFormat.ToString(),res.Width,res.Height);
+				Log.Write("IVAC: average bitrate:{0} KBPs peak:{1} KBPs vbr:{2}",minKbps,maxKbps,isVBR);
+
 				return version;
+			}
+		}
+		public eStreamOutput StreamOutput
+		{
+			get 
+			{
+				return (eStreamOutput)GetIntValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_OUTPUT_TYPE);
+			}
+			set
+			{
+				int iValue=(int)value;
+				SetIntValue(IVac.IvacGuid,(uint)IVac.PropertyId.IVAC_OUTPUT_TYPE, iValue);
 			}
 		}
 	}
