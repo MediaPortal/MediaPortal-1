@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Drawing;
 using Microsoft.DirectX.Direct3D;
@@ -18,6 +17,7 @@ namespace MediaPortal.GUI.Library
     ArrayList m_vecLabels = new ArrayList();
     int m_iCurrentLabel = 0;
     int scroll_pos = 0;
+    double iScrollOffset = 0.0f;
     int iScrollX = 0;
     bool m_bFadeIn = false;
     int m_iCurrentFrame = 0;
@@ -34,7 +34,6 @@ namespace MediaPortal.GUI.Library
     bool ContainsProperty = false;
 
     string m_strPrevTxt = "";
-    DateTime m_dtTime = DateTime.Now;
     GUILabelControl m_label = null;
     GUIFont m_pFont = null;
 
@@ -72,7 +71,6 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      m_dtTime = DateTime.Now;
       GUILocalizeStrings.LocalizeLabel(ref m_strLabel);
       m_label = new GUILabelControl(m_dwParentID, 0, m_dwPosX, m_dwPosY, m_dwWidth, m_dwHeight, m_strFont, m_strLabel, m_dwTextColor, m_dwTextAlign, false);
       m_label.CacheFont = false;
@@ -101,11 +99,13 @@ namespace MediaPortal.GUI.Library
           m_iCurrentLabel = 0;
           scroll_pos = 0;
           iScrollX = 0;
+          iScrollOffset = 0.0f;
           m_bFadeIn = true;
           m_iCurrentFrame = 0;
           m_vecLabels.Clear();
           m_strPrevTxt = strText;
-          m_dtTime = DateTime.Now;
+          m_iCurrentFrame = 0;
+          timeElapsed = 0.0f;
           strText = strText.Replace("\\r", "\r");
           int ipos = 0;
           do
@@ -160,22 +160,12 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      TimeSpan ts = DateTime.Now - m_dtTime;
 
-      int iDiffFrames = 0;
       bool bAdd = false;
 
       timeElapsed += timePassed;
-      while (timeElapsed - TimeSlice >= 0.0f)
-      {
-        timeElapsed -= TimeSlice;
-        iDiffFrames++;
-        bAdd = true;
-      }
+      m_iCurrentFrame = (int) (timeElapsed / TimeSlice);
 
-      if (iDiffFrames > 25) iDiffFrames = 25;
-      int iFrameCount = 0;
-      if (bAdd) m_iCurrentFrame++;
       // More than one label
       m_bScrolling = true;
 
@@ -194,7 +184,7 @@ namespace MediaPortal.GUI.Library
           m_bFadeIn = false;
         }
       }
-        // no fading
+      // no fading
       else
       {
         if (!m_bAllowScrolling)
@@ -202,22 +192,23 @@ namespace MediaPortal.GUI.Library
           m_iCurrentLabel = 0;
           scroll_pos = 0;
           iScrollX = 0;
+          iScrollOffset = 0.0f;
           m_iCurrentFrame = 0;
         }
         // render the text
-        bool bDone = RenderText(timePassed, bAdd, (float) m_dwPosX, (float) m_dwPosY, (float) m_dwWidth, m_dwTextColor, strLabel, true);
+        bool bDone = RenderText(timePassed, bAdd, (float) m_dwPosX, (float) m_dwPosY, (float) m_dwWidth, m_dwTextColor, strLabel);
         if (bDone)
         {
           m_iCurrentLabel++;
           scroll_pos = 0;
           iScrollX = 0;
+          iScrollOffset = 0.0f;
           m_bFadeIn = true;
           m_iCurrentFrame = 0;
-          m_dtTime = DateTime.Now;
+          timeElapsed = 0.0f;
+          m_iCurrentFrame = 0;
         }
       }
-      iFrameCount++;
-      m_iCurrentFrame = (int) (ts.TotalMilliseconds/((double) ((11 - GUIGraphicsContext.ScrollSpeed)*15)));
     }
 
     /// <summary>
@@ -241,12 +232,12 @@ namespace MediaPortal.GUI.Library
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
-          m_dtTime = DateTime.Now;
           m_strPrevTxt = "";
           m_vecLabels.Clear();
           m_iCurrentLabel = 0;
           scroll_pos = 0;
           iScrollX = 0;
+          iScrollOffset = 0.0f;
           m_bFadeIn = true;
           m_iCurrentFrame = 0;
           timeElapsed = 0.0f;
@@ -273,17 +264,15 @@ namespace MediaPortal.GUI.Library
 
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
         {
-          m_dtTime = DateTime.Now;
           m_strPrevTxt = "";
           m_vecLabels.Clear();
           m_iCurrentLabel = 0;
           scroll_pos = 0;
           iScrollX = 0;
+          iScrollOffset = 0.0f;
           m_bFadeIn = true;
           m_iCurrentFrame = 0;
           timeElapsed = 0.0f;
-
-
         }
       }
       return base.OnMessage(message);
@@ -298,9 +287,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="fMaxWidth">The maximum render width.</param>
     /// <param name="dwTextColor">The color of the text.</param>
     /// <param name="wszText">The actual text.</param>
-    /// <param name="bScroll">A bool indication if there is scrolling or not.</param>
     /// <returns>true if the render was successful</returns>
-    bool RenderText(float timePassed, bool bAdvance, float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string wszText, bool bScroll)
+    bool RenderText(float timePassed, bool bAdvance, float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string wszText)
     {
       bool bResult = false;
       float fTextHeight = 0, fTextWidth = 0;
@@ -326,7 +314,6 @@ namespace MediaPortal.GUI.Library
       if (fHeight <= 0) return true;
 
       if (m_dwTextAlign == Alignment.ALIGN_RIGHT) fPosCX -= fMaxWidth;
-
 
       Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
       if (GUIGraphicsContext.graphics != null)
@@ -359,13 +346,14 @@ namespace MediaPortal.GUI.Library
           wszOrgText += " ";
         } while (fTextWidth >= 0 && fTextWidth < fMaxWidth);
       }
-      fMaxWidth += 50.0f;
+      fMaxWidth += 50.0f; 
       string szText = "";
 
       if (m_iCurrentFrame > 12 + 25)
       {
         // doscroll (after having waited some frames)
         string wTmp = "";
+        iScrollX = m_iCurrentFrame - (12 + 25);
         if (m_dwTextAlign != Alignment.ALIGN_RIGHT)
         {
           if (scroll_pos >= wszOrgText.Length)
@@ -373,7 +361,7 @@ namespace MediaPortal.GUI.Library
           else
             wTmp = wszOrgText.Substring(scroll_pos, 1);
           m_pFont.GetTextExtent(wTmp, ref fWidth, ref fHeight);
-          if (iScrollX >= fWidth)
+          if (iScrollX - iScrollOffset >= fWidth)
           {
             ++scroll_pos;
             if (scroll_pos > wszText.Length)
@@ -391,22 +379,13 @@ namespace MediaPortal.GUI.Library
 
               return true;
             }
-            iScrollX = 0;
-          }
-          else
-          {
-            if (bAdvance)
-            {
-              iScrollX++;
-            }
+            // now we need to correct iScrollX
+            // with the sum-length of all cut-off characters
+            iScrollOffset += fWidth; 
           }
         }
         else
         {
-          if (bAdvance)
-          {
-            iScrollX++;
-          }
           if (iScrollX >= fMaxWidth)
           {
             bResult = true;
@@ -437,23 +416,29 @@ namespace MediaPortal.GUI.Library
         {
           if (Alignment.ALIGN_RIGHT == m_dwTextAlign)
           {
+            // right alignment => different
             string strLabel = GetShortenedText(wszOrgText, m_dwWidth);
             float fwt = 0, fht = 0;
             m_pFont.GetTextExtent(strLabel, ref fwt, ref fht);
-            int xpos = (int) (fPosX - fwt);
+            int xpos = (int)(fPosX - fwt - iScrollX + iScrollOffset);
             m_label.Label = szText;
             m_label.Width = 0;
             m_label.TextColor = m_dwTextColor;
-            m_label.SetPosition((int) xpos - iScrollX, (int) fPosY);
+            // Log.Write("fPosX, fwt, iScrollX, iScrollOffset, xpos: {0} {1} {2} {3}", fPosX, fwt, iScrollX, iScrollOffset, xpos);
+            m_label.SetPosition(xpos, (int) fPosY);
             m_label.TextAlignment = Alignment.ALIGN_LEFT;
             m_label.Render(timePassed);
           }
           else
           {
+            // left or centered alignment
             m_label.Label = szText;
             m_label.Width = (int) fMaxWidth;
             m_label.TextColor = m_dwTextColor;
-            m_label.SetPosition((int) fPosX - iScrollX, (int) fPosY);
+            int xpos = (int) (fPosX - iScrollX + iScrollOffset);
+//            Log.Write("fPosX, iScrollX, iScrollOffset, xpos: {0} {1} {2} {3}", fPosX, iScrollX, iScrollOffset, xpos);
+//            Log.Write("szText {0}", szText);
+            m_label.SetPosition(xpos, (int) fPosY);
             m_label.Render(timePassed);
           }
         }
@@ -541,7 +526,8 @@ namespace MediaPortal.GUI.Library
       m_iCurrentLabel = 0;
       m_strPrevTxt = "";
       m_vecLabels.Clear();
-      m_dtTime = DateTime.Now;
+      m_iCurrentFrame = 0;
+      timeElapsed = 0.0f;
     }
 
     /// <summary>
