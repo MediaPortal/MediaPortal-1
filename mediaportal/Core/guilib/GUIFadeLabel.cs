@@ -100,12 +100,11 @@ namespace MediaPortal.GUI.Library
           scroll_pos = 0;
           iScrollX = 0;
           iScrollOffset = 0.0f;
-          m_bFadeIn = true;
-          m_iCurrentFrame = 0;
-          m_vecLabels.Clear();
-          m_strPrevTxt = strText;
           m_iCurrentFrame = 0;
           timeElapsed = 0.0f;
+          m_bFadeIn = true;
+          m_vecLabels.Clear();
+          m_strPrevTxt = strText;
           strText = strText.Replace("\\r", "\r");
           int ipos = 0;
           do
