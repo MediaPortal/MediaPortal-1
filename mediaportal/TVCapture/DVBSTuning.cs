@@ -264,6 +264,7 @@ namespace MediaPortal.TV.Recording
 					callback.OnStatus("Finished");
 					callback.OnEnded();
 					captureCard.DeleteGraph();
+					return;
 				}
 				else
 				{
@@ -293,11 +294,6 @@ namespace MediaPortal.TV.Recording
 									newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
 			captureCard.Tune(newchan,m_currentDiseqc);
 			System.Threading.Thread.Sleep(400);
-			if (!captureCard.SignalPresent())
-				System.Threading.Thread.Sleep(400);
-			if (!captureCard.SignalPresent())
-				System.Threading.Thread.Sleep(400);
-
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 		}
 
