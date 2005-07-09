@@ -62,6 +62,7 @@ namespace DShowNET
       }
 		static public void RemoveFilters(IGraphBuilder m_graphBuilder)
     {
+			int hr;
       if (m_graphBuilder==null) return;
 			for (int counter=0; counter < 100; counter++)
 			{
@@ -69,7 +70,7 @@ namespace DShowNET
 				IEnumFilters ienumFilt=null;
 				try
 				{
-					int hr=m_graphBuilder.EnumFilters(out ienumFilt);
+					hr=m_graphBuilder.EnumFilters(out ienumFilt);
 					if (hr==0)
 					{
 						uint iFetched;
@@ -81,7 +82,7 @@ namespace DShowNET
 							if (hr==0 && iFetched==1)
 							{
 								m_graphBuilder.RemoveFilter(filter);
-								Marshal.ReleaseComObject(filter);
+								int hres=Marshal.ReleaseComObject(filter);
 								bFound=true;
 							}
 						} while (iFetched==1 && hr==0);
@@ -95,7 +96,7 @@ namespace DShowNET
 				finally
 				{
 					if (ienumFilt!=null)
-						Marshal.ReleaseComObject(ienumFilt);
+						hr=Marshal.ReleaseComObject(ienumFilt);
 				}
 			}
 		}

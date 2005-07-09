@@ -355,12 +355,10 @@ namespace MediaPortal.TV.Recording
 				Vmr7=null;
 			}
 
-      if (m_videoprocamp!=null)
-      {
-        m_videoAmp=null;
-        m_videoprocamp=null;
-      }
-      if (m_mpeg2Demux!=null)
+      m_videoAmp=null;
+      m_videoprocamp=null;
+			m_IAMAnalogVideoDecoder = null;
+			if (m_mpeg2Demux!=null)
       {
         m_mpeg2Demux.CloseInterfaces();
         m_mpeg2Demux=null;
@@ -377,11 +375,6 @@ namespace MediaPortal.TV.Recording
         while ((hr=Marshal.ReleaseComObject( m_TVTuner ))>0); 
 			m_TVTuner = null;
 			
-      if (m_IAMAnalogVideoDecoder!=null)
-        while ((hr=Marshal.ReleaseComObject( m_IAMAnalogVideoDecoder ))>0); 
-			m_IAMAnalogVideoDecoder = null;
-
-
       if( m_captureFilter != null )
         while ((hr=Marshal.ReleaseComObject( m_captureFilter ))>0); 
 			m_captureFilter = null;
@@ -404,7 +397,7 @@ namespace MediaPortal.TV.Recording
 				m_graphBuilder = null;
 			}
       GUIGraphicsContext.form.Invalidate(true);
-     GC.Collect();GC.Collect();GC.Collect();
+      GC.Collect();GC.Collect();GC.Collect();
 
       m_graphState=State.None;
       return ;

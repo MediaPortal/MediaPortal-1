@@ -105,7 +105,7 @@ namespace MediaPortal.Player
 		{
 			if (vmr7intialized)
 			{
-				int result;
+//				int result;
 				Log.Write("VMR7Helper:RemoveVMR7");
 				//if (m_mixerBitmap != null)
 				//	while ((result=Marshal.ReleaseComObject(m_mixerBitmap))>0);

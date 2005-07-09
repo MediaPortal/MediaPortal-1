@@ -213,12 +213,10 @@ namespace MediaPortal.TV.Recording
 		protected IPin					m_data3=null;
 		protected IPin					m_pinAC3Out=null;
 		// stream buffer sink filter
-		protected IStreamBufferInitialize		m_streamBufferInit=null; 
 		protected IStreamBufferConfigure		m_config=null;
 		protected IStreamBufferSink				m_sinkInterface=null;
 		protected IBaseFilter					m_sinkFilter=null;
 		protected IBaseFilter					m_mpeg2Analyzer=null;
-		protected IBaseFilter					m_sourceFilter=null;
 		protected IBaseFilter					m_demux=null;
 		// def. the interfaces
 		protected DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3		m_dataCtrl=null;
@@ -380,6 +378,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState != State.None) return false;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph()");
+			m_myCookie=0;
 			// create graphs
 			Vmr9 =new VMR9Util("mytv");
 			Vmr7=new VMR7Util();
@@ -543,7 +542,7 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 
-	
+			DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
 			m_graphState=State.Created;
 			return true;
 		}
@@ -826,6 +825,7 @@ namespace MediaPortal.TV.Recording
 		public void DeleteGraph()
 		{
 			if (m_graphState < State.Created) return;
+			int hr;
 			DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
 			isUsingAC3=false;
 			m_iChannelNr=-1;
@@ -851,166 +851,93 @@ namespace MediaPortal.TV.Recording
 				Vmr7.RemoveVMR7();
 				Vmr7=null;
 			}
-				
-
-
-			if (m_mediaControl != null)
+			if (m_recorder!=null) 
 			{
-				m_mediaControl.Stop();
-				m_mediaControl = null;
+				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
+				try
+				{
+					m_recorder.Stop();
+				}
+				catch(Exception){}
+				m_recorder=null;
 			}
+				
+			
+			if (m_mediaControl!=null) m_mediaControl.Stop();	
+			m_mediaControl = null;
+			m_basicVideo = null;
+			m_videoPin=null;
+			m_audioPin=null;
+			m_demuxVideoPin=null;
+			m_demuxAudioPin=null;
+			m_demuxSectionsPin=null;
+			m_data0=null;
+			m_data1=null;
+			m_data2=null;
+			m_data3=null;
+			m_pinAC3Out=null;
+			m_sinkInterface=null;
+			m_demuxInterface=null;
+			m_sampleInterface=null;
+			m_tunerCtrl=null;
+			m_avCtrl=null;
+			m_dataCtrl=null;
+			m_config=null;
 
-			//DsROT.RemoveGraphFromRot(ref m_myCookie);
-
-
-			m_myCookie=0;
-
-			if(m_sampleGrabber!=null)
-			{
-				Marshal.ReleaseComObject(m_sampleGrabber);
-				m_sampleGrabber=null;
-			}	
-			if(m_sampleInterface!=null)
-			{
-				Marshal.ReleaseComObject(m_sampleInterface);
-				m_sampleGrabber=null;
-			}	
 			if (m_videoWindow != null)
 			{
 				m_bOverlayVisible=false;
 				m_videoWindow.put_Visible(DsHlp.OAFALSE);
-				m_videoWindow.put_Owner(IntPtr.Zero);
 				m_videoWindow = null;
 			}	
-				
-			
-		
-			m_basicVideo = null;
-
-			DsUtils.RemoveFilters(m_graphBuilder);      
-			//
-			// release all interfaces and pins
-			//
+			if (m_streamBufferConfig != null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(m_streamBufferConfig))>0); 
+				m_streamBufferConfig=null;
+			}
+	
+			if(m_sampleGrabber!=null)
+			{
+				while ((hr=Marshal.ReleaseComObject(m_sampleGrabber))>0);
+				m_sampleGrabber=null;
+			}
 			if(m_demux!=null)
 			{
-				Marshal.ReleaseComObject(m_demux);
+				while ((hr=Marshal.ReleaseComObject(m_demux))>0);
 				m_demux=null;
-			}			
-			if(m_demuxInterface!=null)
-			{
-				Marshal.ReleaseComObject(m_demuxInterface);
-				m_demuxInterface=null;
 			}			
 			if(m_mpeg2Data!=null)
 			{
-				Marshal.ReleaseComObject(m_mpeg2Data);
+				while ((hr=Marshal.ReleaseComObject(m_mpeg2Data))>0);
 				m_mpeg2Data=null;
 			}			
-			if(m_streamBufferInit!=null)
-			{
-				Marshal.ReleaseComObject(m_streamBufferInit);
-				m_streamBufferInit=null;
-			}
-			if(m_config!=null)
-			{
-				Marshal.ReleaseComObject(m_config);
-				m_config=null;
-			}
-			if(m_sinkInterface!=null)
-			{
-				Marshal.ReleaseComObject(m_sinkInterface);
-				m_sinkInterface=null;
-			}
-			if(m_videoPin!=null)
-			{
-				Marshal.ReleaseComObject(m_videoPin);
-				m_videoPin=null;
-			}
-			if(m_data0!=null)
-			{
-				Marshal.ReleaseComObject(m_data0);
-				m_data0=null;
-			}
-			if(m_data1!=null)
-			{
-				Marshal.ReleaseComObject(m_data1);
-				m_data1=null;
-			}
-			if(m_data2!=null)
-			{
-				Marshal.ReleaseComObject(m_data2);
-				m_data2=null;
-			}
-			if(m_data3!=null)
-			{
-				Marshal.ReleaseComObject(m_data3);
-				m_data3=null;
-			}
-			if(m_audioPin!=null)
-			{
-				Marshal.ReleaseComObject(m_audioPin);
-				m_audioPin=null;
-			}
-			if(m_demuxVideoPin!=null)
-			{
-				Marshal.ReleaseComObject(m_demuxVideoPin);
-				m_demuxVideoPin=null;
-			}
-			if(m_demuxAudioPin!=null)
-			{
-				Marshal.ReleaseComObject(m_demuxAudioPin);
-				m_demuxAudioPin=null;
-			}
-			if(m_pinAC3Out!=null)
-			{
-				Marshal.ReleaseComObject(m_pinAC3Out);
-				m_pinAC3Out=null;
-			}
-			if(m_demuxSectionsPin!=null)
-			{
-				Marshal.ReleaseComObject(m_demuxSectionsPin);
-				m_demuxSectionsPin=null;
-			}
 
-			if(m_tunerCtrl!=null)
-			{
-				Marshal.ReleaseComObject(m_tunerCtrl);
-				m_tunerCtrl=null;
-			}
-			if(m_sinkFilter!=null)
-			{
-				Marshal.ReleaseComObject(m_sinkFilter);
-				m_sinkFilter=null;
-			}
 			if(m_mpeg2Analyzer!=null)
 			{
-				Marshal.ReleaseComObject(m_mpeg2Analyzer);
+				while ((hr=Marshal.ReleaseComObject(m_mpeg2Analyzer))>0);
 				m_mpeg2Analyzer=null;
 			}
-			if(m_sourceFilter!=null)
+
+			if(m_sinkFilter!=null)
 			{
-				Marshal.ReleaseComObject(m_sourceFilter);
-				m_sourceFilter=null;
+				while ((hr=Marshal.ReleaseComObject(m_sinkFilter))>0);
+				m_sinkFilter=null;
 			}
-			if(m_avCtrl!=null)
-			{
-				Marshal.ReleaseComObject(m_avCtrl);
-				m_avCtrl=null;
-			}
-			if(m_dataCtrl!=null)
-			{
-				Marshal.ReleaseComObject(m_dataCtrl);
-				m_dataCtrl=null;
-			}
+
 			if(m_b2c2Adapter!=null)
 			{
-				Marshal.ReleaseComObject(m_b2c2Adapter);
+				while ((hr=Marshal.ReleaseComObject(m_b2c2Adapter))>0);
 				m_b2c2Adapter=null;
 			}
+			DsUtils.RemoveFilters(m_graphBuilder);      
+
+			if (m_myCookie != 0)
+				DsROT.RemoveGraphFromRot(ref m_myCookie);
+			m_myCookie = 0;
 
 			if (m_graphBuilder != null)
 			{
-				Marshal.ReleaseComObject(m_graphBuilder); 
+				while ((hr=Marshal.ReleaseComObject(m_graphBuilder))>0); 
 				m_graphBuilder = null;
 			}
 
@@ -1239,7 +1166,7 @@ namespace MediaPortal.TV.Recording
 			if(m_graphState!=State.Created)
 				return false;
 			int hr=0;
-
+			
 			TuneChannel(channel);
 
 			if(m_channelFound==false)
@@ -1263,9 +1190,12 @@ namespace MediaPortal.TV.Recording
 				m_mediaControl=(IMediaControl)m_graphBuilder;
 				hr=m_mediaControl.Run();
 				m_graphState = State.TimeShifting;
-				//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
 			}
-			else {m_graphState=State.Created;return false;}
+			else 
+			{
+				m_graphState=State.Created;
+				return false;
+			}
 			return true;
 		}
     
@@ -1714,7 +1644,6 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//
-			DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
 			if(demuxInPin!=null)
 				Marshal.ReleaseComObject(demuxInPin);
 			if(samplePin!=null)
@@ -2512,7 +2441,6 @@ namespace MediaPortal.TV.Recording
 					return ;
 				}
 				//
-				//DsROT.AddGraphToRot(m_graphBuilder,out m_myCookie);
 				if(demuxInPin!=null)
 					Marshal.ReleaseComObject(demuxInPin);
 				if(samplePin!=null)

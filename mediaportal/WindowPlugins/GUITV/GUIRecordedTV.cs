@@ -852,7 +852,7 @@ namespace MediaPortal.GUI.TV
 						return -1;
 					}
 				}
-				break;
+				
         case SortMethod.Date:
           if (m_bSortAscending)
           {

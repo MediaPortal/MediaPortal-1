@@ -120,6 +120,11 @@ namespace MediaPortal.TV.Recording
 		DateTime								m_StartTime							= DateTime.Now;
 
 
+		IPin												m_pinAC3Out				= null;
+		IPin												m_DemuxVideoPin				= null;
+		IPin												m_DemuxAudioPin				= null;
+		IStreamBufferSink						m_IStreamBufferSink		= null;
+		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 		IBaseFilter             m_NetworkProvider				= null;			// BDA Network Provider
 		IBaseFilter             m_TunerDevice						= null;			// BDA Digital Tuner Device
 		IBaseFilter							m_CaptureDevice					= null;			// BDA Digital Capture Device
@@ -127,40 +132,29 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter							m_TIF										= null;			// Transport Information Filter
 		IBaseFilter							m_SectionsTables				= null;
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
-		StreamBufferSink				m_StreamBufferSink=null;
 		IGraphBuilder           m_graphBuilder					= null;
 		ICaptureGraphBuilder2   m_captureGraphBuilder		= null;
 		IVideoWindow            m_videoWindow						= null;
 		IBasicVideo2            m_basicVideo						= null;
 		IMediaControl						m_mediaControl					= null;
-		ArrayList               m_TunerStatistics       = new ArrayList();
-		NetworkType							m_NetworkType=NetworkType.Unknown;
 		IBaseFilter							m_sampleGrabber=null;
 		ISampleGrabber					m_sampleInterface=null;
-		
-		TVCaptureDevice					m_Card;
-		
-		//streambuffer interfaces
-		IPin												m_pinAC3Out				= null;
-		IPin												m_DemuxVideoPin				= null;
-		IPin												m_DemuxAudioPin				= null;
-		IPin												m_pinStreamBufferIn0	= null;
-		IPin												m_pinStreamBufferIn1	= null;
-		IStreamBufferSink						m_IStreamBufferSink		= null;
-		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
+
+		StreamBufferSink				m_StreamBufferSink=null;
 		StreamBufferConfig					m_StreamBufferConfig	= null;
 		VMR9Util									  Vmr9								  = null; 
 		VMR7Util									  Vmr7								  = null; 
 		//GuideDataEvent							m_Event               = null;
 		//GCHandle										myHandle;
 		//int                         adviseCookie;
+		ArrayList               m_TunerStatistics       = new ArrayList();
+		NetworkType							m_NetworkType=NetworkType.Unknown;
+		TVCaptureDevice					m_Card;
 		bool												graphRunning=false;
 		DVBChannel									currentTuningObject=null;
 		TSHelperTools								transportHelper=new TSHelperTools();
 		bool												refreshPmtTable=false;
-		
 		protected bool							m_pluginsEnabled=false;
-
 		DateTime										timeResendPid=DateTime.Now;
 		DateTime										updateTimer=DateTime.Now;
 		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
@@ -785,6 +779,7 @@ namespace MediaPortal.TV.Recording
 				m_iPrevChannel = -1;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:DeleteGraph()");
 				StopRecording();
+				StopTimeShifting();
 				StopViewing();
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free tuner interfaces");
 				
@@ -819,9 +814,6 @@ namespace MediaPortal.TV.Recording
 					Vmr7.RemoveVMR7();
 					Vmr7=null;
 				}
-
-
-				//			UnAdviseProgramInfo();
 				
 				if (m_recorder!=null) 
 				{
@@ -834,20 +826,14 @@ namespace MediaPortal.TV.Recording
 					m_recorder=null;
 				}
 				
-				if (m_StreamBufferSink!=null) 
-				{
-					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free streambuffer");
-					while ((hr=Marshal.ReleaseComObject(m_StreamBufferSink))>0); 
-					m_StreamBufferSink=null;
-				}
-
-				if (m_mediaControl != null)
-				{
-					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
-					m_mediaControl.Stop();
-				}
+				if (m_mediaControl!=null) m_mediaControl.Stop();
 				m_mediaControl = null;
 				graphRunning=false;
+				m_basicVideo = null;
+				m_mediaControl = null;
+				m_pinAC3Out				= null;
+				m_DemuxVideoPin				= null;
+				m_DemuxAudioPin				= null;
 
 				if (m_videoWindow != null)
 				{
@@ -858,46 +844,31 @@ namespace MediaPortal.TV.Recording
 				}
 
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free other interfaces");
+				m_sampleInterface=null;
 				if (m_sampleGrabber != null) 
 				{
 					while ((hr=Marshal.ReleaseComObject(m_sampleGrabber))>0); 
 					m_sampleGrabber=null;
 				}
 				
-				if (m_sampleInterface != null) 
+
+				m_IStreamBufferConfig=null;
+				m_IStreamBufferSink=null;
+
+				if (m_StreamBufferSink!=null) 
 				{
-					while ((hr=Marshal.ReleaseComObject(m_sampleInterface))>0); 
-					m_sampleInterface=null;
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free streambuffer");
+					while ((hr=Marshal.ReleaseComObject(m_StreamBufferSink))>0); 
+					m_StreamBufferSink=null;
 				}
+
 
 				if (m_StreamBufferConfig != null) 
 				{
 					while ((hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0); 
 					m_StreamBufferConfig=null;
 				}
-				if (m_IStreamBufferConfig != null) 
-				{
-					while ((hr=Marshal.ReleaseComObject(m_IStreamBufferConfig))>0); 
-					m_IStreamBufferConfig=null;
-				}
 
-				if (m_pinStreamBufferIn1 != null) 
-				{
-					while ((hr=Marshal.ReleaseComObject(m_pinStreamBufferIn1))>0); 
-					m_pinStreamBufferIn1=null;
-				}
-
-				if (m_pinStreamBufferIn0 != null) 
-				{	
-					while ((hr=Marshal.ReleaseComObject(m_pinStreamBufferIn0))>0); 
-					m_pinStreamBufferIn0=null;
-				}
-
-				if (m_IStreamBufferSink != null) 
-				{
-					while ((hr=Marshal.ReleaseComObject(m_IStreamBufferSink))>0); 
-					m_IStreamBufferSink=null;
-				}
 
 				if (m_NetworkProvider != null)
 				{	
@@ -935,8 +906,6 @@ namespace MediaPortal.TV.Recording
 					m_SectionsTables = null;
 				}
 
-				m_basicVideo = null;
-				m_mediaControl = null;
 			      
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove filters");
 				if (m_graphBuilder!=null)
