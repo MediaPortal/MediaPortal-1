@@ -844,6 +844,7 @@ namespace MediaPortal.TV.Recording
 					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: stop graph");
 					m_mediaControl.Stop();
 				}
+				m_mediaControl = null;
 				graphRunning=false;
 
 				if (m_videoWindow != null)
@@ -857,6 +858,10 @@ namespace MediaPortal.TV.Recording
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free other interfaces");
 				if (m_sampleGrabber != null) 
 					Marshal.ReleaseComObject(m_sampleGrabber); m_sampleGrabber=null;
+				m_sampleGrabber=null;
+				
+				if (m_sampleInterface != null) 
+					Marshal.ReleaseComObject(m_sampleInterface); m_sampleInterface=null;
 				m_sampleInterface=null;
 
 				if (m_StreamBufferConfig != null) 

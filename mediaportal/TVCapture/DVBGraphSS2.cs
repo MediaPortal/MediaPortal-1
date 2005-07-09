@@ -870,19 +870,6 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//DsROT.RemoveGraphFromRot(ref m_myCookie);
-			
-			m_myCookie=0;
-
-			if(m_sampleGrabber!=null)
-			{
-				Marshal.ReleaseComObject(m_sampleGrabber);
-				m_sampleGrabber=null;
-			}	
-			if(m_sampleInterface!=null)
-			{
-				Marshal.ReleaseComObject(m_sampleInterface);
-				m_sampleInterface=null;
-			}	
 			if (m_videoWindow != null)
 			{
 				m_bOverlayVisible=false;
@@ -891,8 +878,32 @@ namespace MediaPortal.TV.Recording
 				m_videoWindow = null;
 			}
 
-			if (m_basicVideo != null)
-				m_basicVideo = null;
+			m_myCookie=0;
+
+			if(m_sampleGrabber!=null)
+			{
+				Marshal.ReleaseComObject(m_sampleGrabber);
+				m_sampleGrabber=null;
+			}	
+			if(m_sampleGrabber!=null)
+			{
+				Marshal.ReleaseComObject(m_sampleGrabber);
+				m_sampleGrabber=null;
+			}	
+				
+			if(m_sampleInterface!=null)
+			{
+				Marshal.ReleaseComObject(m_sampleInterface);
+				m_sampleInterface=null;
+			}	
+
+			if (m_streamBufferConfig != null) 
+				Marshal.ReleaseComObject(m_streamBufferConfig); m_streamBufferConfig=null;
+
+			if (m_config != null) 
+				Marshal.ReleaseComObject(m_config); m_config=null;
+
+			m_basicVideo = null;
       
 			//
 			// release all interfaces and pins
@@ -916,11 +927,6 @@ namespace MediaPortal.TV.Recording
 			{
 				Marshal.ReleaseComObject(m_streamBufferInit);
 				m_streamBufferInit=null;
-			}
-			if(m_config!=null)
-			{
-				Marshal.ReleaseComObject(m_config);
-				m_config=null;
 			}
 			if(m_sinkInterface!=null)
 			{
@@ -1259,6 +1265,11 @@ namespace MediaPortal.TV.Recording
 				Vmr9.Release();
 				Vmr9=null;
 			}
+			if (Vmr7!=null)
+			{
+				Vmr7.RemoveVMR7();
+				Vmr7=null;
+			}
 			isUsingAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
 
 			if(CreateSinkSource(fileName,isUsingAC3)==true)
@@ -1400,7 +1411,7 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public void StopRecording()
 		{
-			if (m_recorder==null || m_graphState!=State.Recording)
+			if (m_graphState!=State.Recording)
 				return ;
 			
 
