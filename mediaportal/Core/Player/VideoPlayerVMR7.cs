@@ -168,6 +168,7 @@ namespace MediaPortal.Player
         Log.Write("VideoPlayer:Duration:{0}",m_dDuration);
         
 
+				OnInitialized();
       }
       return true;
     }
@@ -1046,6 +1047,9 @@ namespace MediaPortal.Player
       mediaCtrl.Pause();
     }
 
+		protected virtual void OnInitialized()
+		{
+		}
 
 /*
     public override int GetHDC()

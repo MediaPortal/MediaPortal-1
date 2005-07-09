@@ -23,6 +23,15 @@ namespace MediaPortal.Player
 		{
 		}
 
+		protected override void OnInitialized()
+		{
+			if (Vmr9!=null)
+			{
+				Vmr9.Enable(true);
+				m_bUpdateNeeded=true;
+				SetVideoWindow();
+			}
+		}
 		/// <summary> create the used COM components and get the interfaces. </summary>
 		protected override bool GetInterfaces()
 		{
@@ -82,7 +91,7 @@ namespace MediaPortal.Player
 				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
 
 
-				int hr = DsUtils.RenderFileToVMR9(graphBuilder, m_strCurrentFile, Vmr9.VMR9Filter, false);
+				int hr = graphBuilder.RenderFile( m_strCurrentFile,String.Empty);
         if (hr!=0) 
         {
           Error.SetError("Unable to play movie","Unable to render file. Missing codecs?");
@@ -165,7 +174,7 @@ namespace MediaPortal.Player
 					return base.GetInterfaces();
 				}
 				Vmr9.SetDeinterlaceMode();
-        Vmr9.Enable(true);
+        
 				return true;
 			}
 			catch( Exception  ex)
@@ -221,6 +230,9 @@ namespace MediaPortal.Player
 						if (counter >200) break;
 					}
           hr = mediaCtrl.Stop();
+					FilterState state;
+					hr=mediaCtrl.GetState(10,out state);
+					Log.Write("state:{0} {1:X}",state.ToString(),hr);
 					mediaCtrl=null;
         }
   	    mediaEvt = null;
