@@ -178,8 +178,8 @@ namespace MediaPortal.Player
 				//	while ( (result=Marshal.ReleaseComObject(m_mixerBitmap))>0); 
 				//m_mixerBitmap = null;
 
-				if (quality != null)
-					while ( (result=Marshal.ReleaseComObject(quality))>0); 
+//				if (quality != null)
+//					while ( (result=Marshal.ReleaseComObject(quality))>0); 
 				quality = null;
 					
 				if (VMR9Filter != null)
