@@ -955,7 +955,7 @@ namespace MediaPortal.Player
 				if( mediaCtrl != null )
 				{
 					hr = mediaCtrl.Stop();
-					Marshal.ReleaseComObject(mediaCtrl);
+					while((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
 					mediaCtrl = null;
 				}
 
@@ -963,7 +963,7 @@ namespace MediaPortal.Player
 
 				if( mediaEvt != null )
 				{
-					Marshal.ReleaseComObject(mediaEvt);
+					while((hr=Marshal.ReleaseComObject(mediaEvt))>0);
 					mediaEvt = null;
 				}
 
@@ -971,24 +971,39 @@ namespace MediaPortal.Player
 				{
           m_bWindowVisible=false;
 					m_bIsVisible=false;
-					Marshal.ReleaseComObject(videoWin);
+					while((hr=Marshal.ReleaseComObject(videoWin))>0);
 					videoWin = null;
 				}
 
 				if ( m_mediaSeeking != null )
-					Marshal.ReleaseComObject( m_mediaSeeking );
-				m_mediaSeeking= null;
+				{
+					while((hr=Marshal.ReleaseComObject( m_mediaSeeking ))>0);
+					m_mediaSeeking= null;
+				}
 
         
-				if (basicAudio!=null) Marshal.ReleaseComObject(basicAudio); basicAudio	= null;
-				if (basicVideo!=null) Marshal.ReleaseComObject(basicVideo); basicVideo	= null;
+				if (basicAudio!=null) 
+				{
+					while((hr=Marshal.ReleaseComObject(basicAudio))>0); 
+					basicAudio	= null;
+				}
+				if (basicVideo!=null) 
+				{
+					while((hr=Marshal.ReleaseComObject(basicVideo))>0); 
+					basicVideo	= null;
+				}
 
-				bufferSource=null;
-				if (videoWin!=null) Marshal.ReleaseComObject(videoWin); videoWin=null;
+				if (videoWin!=null) 
+				{
+					while((hr=Marshal.ReleaseComObject(videoWin))>0); 
+					videoWin=null;
+				}
 
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
 				vmr7=null;
+
+				bufferSource	= null;
 
         DsUtils.RemoveFilters(graphBuilder);
 
@@ -997,7 +1012,10 @@ namespace MediaPortal.Player
         rotCookie=0;
 
 				if( graphBuilder != null )
-					Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+				{
+					while((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
+					graphBuilder = null;
+				}
 
 				m_state = PlayState.Init;
 				GUIGraphicsContext.form.Invalidate(true);

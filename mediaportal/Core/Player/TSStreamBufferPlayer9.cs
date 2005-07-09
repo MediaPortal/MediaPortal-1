@@ -170,7 +170,7 @@ namespace MediaPortal.Player
           if( mediaCtrl != null )
           {
             hr = mediaCtrl.Stop();
-						Marshal.ReleaseComObject(mediaCtrl);
+						while ((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
 						mediaCtrl=null;
 
           }
@@ -180,36 +180,54 @@ namespace MediaPortal.Player
 //					Log.Write("TStreamBufferPlayer9:stop notifies");
 					if( mediaEvt != null )
 					{
-						Marshal.ReleaseComObject(mediaEvt);
+						while ((hr=Marshal.ReleaseComObject(mediaEvt))>0);
 						mediaEvt = null;
 					}
 				//added from agree: check if Vmr9 already null
 //Log.Write("TStreamBufferPlayer9:clean vmr9");
 					if(Vmr9!=null)
-				{
-					Vmr9.RemoveVMR9();
-					Vmr9.Release();
-					Vmr9=null;
-				}
+					{
+						Vmr9.RemoveVMR9();
+						Vmr9.Release();
+						Vmr9=null;
+					}
 
-				if (basicAudio!=null) Marshal.ReleaseComObject(basicAudio); basicAudio	= null;
-				if (basicVideo!=null) Marshal.ReleaseComObject(basicVideo); basicVideo	= null;
-				if (m_mediaSeeking!=null) Marshal.ReleaseComObject(m_mediaSeeking); m_mediaSeeking=null;
-				if (bufferSource!=null) bufferSource=null;
-				if (videoWin!=null) Marshal.ReleaseComObject(videoWin); videoWin=null;
+					if (basicAudio!=null) 
+					{
+						while ((hr=Marshal.ReleaseComObject(basicAudio))>0); 
+						basicAudio	= null;
+					}
+					if (basicVideo!=null) 
+					{
+						while ((hr=Marshal.ReleaseComObject(basicVideo))>0); 
+						basicVideo	= null;
+					}
+					if (m_mediaSeeking!=null) 
+					{
+						while ((hr=Marshal.ReleaseComObject(m_mediaSeeking))>0); 
+						m_mediaSeeking=null;
+					}
+					bufferSource=null;
+					if (videoWin!=null) 
+					{
+						while ((hr=Marshal.ReleaseComObject(videoWin))>0); 
+						videoWin=null;
+					}
 
 
 //Log.Write("TStreamBufferPlayer9:remove filters");
 					DsUtils.RemoveFilters(graphBuilder);
 
 //Log.Write("TStreamBufferPlayer9:remove graph from rot");
-				if( rotCookie != 0 )
-				DsROT.RemoveGraphFromRot( ref rotCookie );
-				rotCookie=0;
+					if( rotCookie != 0 )
+						DsROT.RemoveGraphFromRot( ref rotCookie );
+					rotCookie=0;
 //Log.Write("TStreamBufferPlayer9:remove graph ");
-				if( graphBuilder != null )
-				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
-
+					if( graphBuilder != null )
+					{
+						while ((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
+						graphBuilder = null;
+					}
 //Log.Write("TStreamBufferPlayer9:invalidate");
 
 				GUIGraphicsContext.form.Invalidate(true);
