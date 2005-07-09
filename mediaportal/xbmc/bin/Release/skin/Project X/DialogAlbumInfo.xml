@@ -144,10 +144,11 @@
 	</control>
 	<control>
 		<description>Styles value</description> 
-		<type>label</type> 
+		<type>fadelabel</type> 
 		<id>26</id> 
 		<posX>220</posX> 
 		<posY>200</posY> 
+		<width>400</width> 
 		<label>-</label> 
 		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor> 

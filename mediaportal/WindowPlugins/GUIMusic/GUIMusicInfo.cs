@@ -25,7 +25,7 @@ namespace MediaPortal.GUI.Music
 		[SkinControlAttribute(23)]			protected GUILabelControl lblRating=null;
 		[SkinControlAttribute(24)]			protected GUILabelControl lblGenre=null;
 		[SkinControlAttribute(25)]			protected GUIFadeLabel		lblTone=null;
-		[SkinControlAttribute(26)]			protected GUILabelControl lblStyles=null;
+		[SkinControlAttribute(26)]			protected GUIFadeLabel    lblStyles=null;
 		[SkinControlAttribute(3)]				protected GUIImage imgCoverArt=null;
 		[SkinControlAttribute(4)]				protected GUITextControl tbTextArea=null;
 		[SkinControlAttribute(5)]				protected GUIButtonControl btnTracks=null;
@@ -180,7 +180,8 @@ namespace MediaPortal.GUI.Music
 			lblTone.Add(albumInfo.Tones.Trim());
 			strTmp=albumInfo.Tones; strTmp.Trim();
 
-			lblStyles.Label=albumInfo.Styles;
+      lblStyles.Clear();
+      lblStyles.Add(albumInfo.Styles.Trim());
 
 	    if (showReview)
 	    {
