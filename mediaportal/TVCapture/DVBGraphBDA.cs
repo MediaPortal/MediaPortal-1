@@ -446,7 +446,7 @@ namespace MediaPortal.TV.Recording
 						if (conPin != null)
 						{
 							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   (Pin was already connected...)");
-							Marshal.ReleaseComObject(conPin as Object);
+							while ((hr=Marshal.ReleaseComObject(conPin as Object))>0);
 							conPin = null;
 							hr     = 0;
 						}
@@ -464,8 +464,8 @@ namespace MediaPortal.TV.Recording
 						{
 							//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try other instances");
 							m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
-							Marshal.ReleaseComObject(sinkPin);
-							Marshal.ReleaseComObject(sinkFilter.DSFilter);
+							while ((hr=Marshal.ReleaseComObject(sinkPin))>0);
+							while ((hr=Marshal.ReleaseComObject(sinkFilter.DSFilter))>0);
 							sinkPin=null;
 							foreach (string key in AvailableFilters.Filters.Keys)
 							{
@@ -508,8 +508,8 @@ namespace MediaPortal.TV.Recording
 											{
 												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   cannot connect pins.");
 												m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
-												Marshal.ReleaseComObject(sinkPin);
-												Marshal.ReleaseComObject(sinkFilter.DSFilter);
+												while ((hr=Marshal.ReleaseComObject(sinkPin))>0);
+												while ((hr=Marshal.ReleaseComObject(sinkFilter.DSFilter))>0);
 											}
 										}
 									}
@@ -779,6 +779,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (m_graphState < State.Created) 
 					return;
+				int hr;
 				currentTuningObject=null;
 				isUsingAC3=false;
 				m_iPrevChannel = -1;
@@ -800,7 +801,7 @@ namespace MediaPortal.TV.Recording
 						if (m_TunerStatistics[i] != null)
 						{
 							IBDA_SignalStatistics stat=(IBDA_SignalStatistics )m_TunerStatistics[i];
-							Marshal.ReleaseComObject(stat);
+							while ((hr=Marshal.ReleaseComObject(stat))>0);
 						}
 					}
 					m_TunerStatistics.Clear();
@@ -836,7 +837,8 @@ namespace MediaPortal.TV.Recording
 				if (m_StreamBufferSink!=null) 
 				{
 					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free streambuffer");
-					Marshal.ReleaseComObject(m_StreamBufferSink); m_StreamBufferSink=null;
+					while ((hr=Marshal.ReleaseComObject(m_StreamBufferSink))>0); 
+					m_StreamBufferSink=null;
 				}
 
 				if (m_mediaControl != null)
@@ -857,45 +859,81 @@ namespace MediaPortal.TV.Recording
 
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free other interfaces");
 				if (m_sampleGrabber != null) 
-					Marshal.ReleaseComObject(m_sampleGrabber); m_sampleGrabber=null;
-				m_sampleGrabber=null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_sampleGrabber))>0); 
+					m_sampleGrabber=null;
+				}
 				
 				if (m_sampleInterface != null) 
-					Marshal.ReleaseComObject(m_sampleInterface); m_sampleInterface=null;
-				m_sampleInterface=null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_sampleInterface))>0); 
+					m_sampleInterface=null;
+				}
 
 				if (m_StreamBufferConfig != null) 
-					Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
-
+				{
+					while ((hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0); 
+					m_StreamBufferConfig=null;
+				}
 				if (m_IStreamBufferConfig != null) 
-					Marshal.ReleaseComObject(m_IStreamBufferConfig); m_IStreamBufferConfig=null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_IStreamBufferConfig))>0); 
+					m_IStreamBufferConfig=null;
+				}
 
 				if (m_pinStreamBufferIn1 != null) 
-					Marshal.ReleaseComObject(m_pinStreamBufferIn1); m_pinStreamBufferIn1=null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_pinStreamBufferIn1))>0); 
+					m_pinStreamBufferIn1=null;
+				}
 
 				if (m_pinStreamBufferIn0 != null) 
-					Marshal.ReleaseComObject(m_pinStreamBufferIn0); m_pinStreamBufferIn0=null;
+				{	
+					while ((hr=Marshal.ReleaseComObject(m_pinStreamBufferIn0))>0); 
+					m_pinStreamBufferIn0=null;
+				}
 
 				if (m_IStreamBufferSink != null) 
-					Marshal.ReleaseComObject(m_IStreamBufferSink); m_IStreamBufferSink=null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_IStreamBufferSink))>0); 
+					m_IStreamBufferSink=null;
+				}
 
 				if (m_NetworkProvider != null)
-					Marshal.ReleaseComObject(m_NetworkProvider); m_NetworkProvider = null;
+				{	
+					while ((hr=Marshal.ReleaseComObject(m_NetworkProvider))>0); 
+					m_NetworkProvider = null;
+				}
 
 				if (m_TunerDevice != null)
-					Marshal.ReleaseComObject(m_TunerDevice); m_TunerDevice = null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_TunerDevice))>0); 
+					m_TunerDevice = null;
+				}
 
 				if (m_CaptureDevice != null)
-					Marshal.ReleaseComObject(m_CaptureDevice); m_CaptureDevice = null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_CaptureDevice))>0); 
+					m_CaptureDevice = null;
+				}
 				
 				if (m_MPEG2Demultiplexer != null)
-					Marshal.ReleaseComObject(m_MPEG2Demultiplexer); m_MPEG2Demultiplexer = null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_MPEG2Demultiplexer))>0); 
+					m_MPEG2Demultiplexer = null;
+				}
 
 				if (m_TIF != null)
-					Marshal.ReleaseComObject(m_TIF); m_TIF = null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_TIF))>0); 
+					m_TIF = null;
+				}
 
 				if (m_SectionsTables != null)
-					Marshal.ReleaseComObject(m_SectionsTables); m_SectionsTables = null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_SectionsTables))>0); 
+					m_SectionsTables = null;
+				}
 
 				m_basicVideo = null;
 				m_mediaControl = null;
@@ -912,18 +950,25 @@ namespace MediaPortal.TV.Recording
 
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove graph");
 				if (m_captureGraphBuilder != null)
-					Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
+				{
+					while ((hr=Marshal.ReleaseComObject(m_captureGraphBuilder))>0); 
+					m_captureGraphBuilder = null;
+				}
 
 				if (m_graphBuilder != null)
-					Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
-
+				{
+					while ((hr=Marshal.ReleaseComObject(m_graphBuilder))>0); 
+					m_graphBuilder = null;
+				}
 
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
 				foreach (string strfName in m_Card.TvFilterDefinitions.Keys)
 				{
 					FilterDefinition dsFilter = m_Card.TvFilterDefinitions[strfName] as FilterDefinition;
 					if (dsFilter.DSFilter != null)
-						Marshal.ReleaseComObject(dsFilter.DSFilter);
+					{
+						while ((hr=Marshal.ReleaseComObject(dsFilter.DSFilter))>0);
+					}
 					((FilterDefinition)m_Card.TvFilterDefinitions[strfName]).DSFilter = null;
 					dsFilter = null;
 				}
@@ -1875,7 +1920,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 			}//for (int i=0; i < nodeTypeCount;++i)
-			Marshal.ReleaseComObject(topology);
+			while ((hr=Marshal.ReleaseComObject(topology))>0);
 			return ;
 		}//IBDA_SignalStatistics GetTunerSignalStatistics()
 
@@ -1928,7 +1973,7 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"No interface on node {0}", i); 
 				}
 			}//for (int i=0; i < nodeTypeCount;++i)
-			Marshal.ReleaseComObject(topology);
+			while ((hr=Marshal.ReleaseComObject(topology))>0);
 			return signal;
 		}//IBDA_LNBInfo[] GetBDALNBInfoInterface()
 
@@ -2114,15 +2159,15 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 				if(pinObj0 != null)
-					Marshal.ReleaseComObject(pinObj0);
+					while ((hr=Marshal.ReleaseComObject(pinObj0))>0);
 				if(pinObj1 != null)
-					Marshal.ReleaseComObject(pinObj1);
+					while ((hr=Marshal.ReleaseComObject(pinObj1))>0);
 				if(pinObj2 != null)
-					Marshal.ReleaseComObject(pinObj2);
+					while ((hr=Marshal.ReleaseComObject(pinObj2))>0);
 				if(pinObj3 != null)
-					Marshal.ReleaseComObject(pinObj3);
+					while ((hr=Marshal.ReleaseComObject(pinObj3))>0);
 				if(outPin != null)
-					Marshal.ReleaseComObject(outPin);
+					while ((hr=Marshal.ReleaseComObject(outPin))>0);
 
 				//if ( streamBufferInitialize !=null)
 				//Marshal.ReleaseComObject(streamBufferInitialize );
@@ -2192,19 +2237,19 @@ namespace MediaPortal.TV.Recording
 									hr = m_graphBuilder.Connect(outPin[0], dsPin[0]);
 									if(hr == 0) 
 									{
-										Marshal.ReleaseComObject(dsPin[0]);
-										Marshal.ReleaseComObject(outPin[0]);
-										Marshal.ReleaseComObject(pinEnum);
-										Marshal.ReleaseComObject(downstreamPins);
+										while ((hr=Marshal.ReleaseComObject(dsPin[0]))>0);
+										while ((hr=Marshal.ReleaseComObject(outPin[0]))>0);
+										while ((hr=Marshal.ReleaseComObject(pinEnum))>0);
+										while ((hr=Marshal.ReleaseComObject(downstreamPins))>0);
 										return true;
 									}
-									Marshal.ReleaseComObject(dsPin[0]);
+									while ((hr=Marshal.ReleaseComObject(dsPin[0]))>0);
 								}
 							}//while(downstreamPins.Next(1, dsPin, out ulFetched) == 0) 
-							Marshal.ReleaseComObject(downstreamPins);
+							while ((hr=Marshal.ReleaseComObject(downstreamPins))>0);
 						}//if (outputPinCounter == preferredOutputPin)
 					}//if (pinDir == PinDirection.Output)
-					Marshal.ReleaseComObject(outPin[0]);
+					while ((hr=Marshal.ReleaseComObject(outPin[0]))>0);
 				}//while(pinEnum.Next(1, outPin, out ulFetched) == 0) 
 				pinEnum.Reset();        // Move back to start of enumerator
 			}//if (preferredOutputPin > 0) 
@@ -2232,20 +2277,20 @@ namespace MediaPortal.TV.Recording
 							hr = m_graphBuilder.Connect(testPin[0], dsPin[0]);
 							if(hr == 0) 
 							{
-								Marshal.ReleaseComObject(dsPin[0]);
-								Marshal.ReleaseComObject(downstreamPins);
-								Marshal.ReleaseComObject(testPin[0]);
-								Marshal.ReleaseComObject(pinEnum);
+								while ((hr=Marshal.ReleaseComObject(dsPin[0]))>0);
+								while ((hr=Marshal.ReleaseComObject(downstreamPins))>0);
+								while ((hr=Marshal.ReleaseComObject(testPin[0]))>0);
+								while ((hr=Marshal.ReleaseComObject(pinEnum))>0);
 								return true;
 							}
 						}//if (dsPinDir == PinDirection.Input)
-						Marshal.ReleaseComObject(dsPin[0]);
+						while ((hr=Marshal.ReleaseComObject(dsPin[0]))>0);
 					}//while(downstreamPins.Next(1, dsPin, out ulFetched) == 0) 
-					Marshal.ReleaseComObject(downstreamPins);
+					while ((hr=Marshal.ReleaseComObject(downstreamPins))>0);
 				}//if(pinDir == PinDirection.Output) // Go and find the input pin.
-				Marshal.ReleaseComObject(testPin[0]);
+				while ((hr=Marshal.ReleaseComObject(testPin[0]))>0);
 			}//while(pinEnum.Next(1, testPin, out ulFetched) == 0) 
-			Marshal.ReleaseComObject(pinEnum);
+			while ((hr=Marshal.ReleaseComObject(pinEnum))>0);
 			return false;
 		}//private bool ConnectFilters(ref IBaseFilter UpstreamFilter, ref IBaseFilter DownstreamFilter, int preferredOutputPin) 
 
@@ -2355,15 +2400,15 @@ namespace MediaPortal.TV.Recording
 								myTuner.TuningSpace = tuningSpaceFound;
 								//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: used tuningspace:{0} {1} {2}", counter, tuningSpaceFound.UniqueName,tuningSpaceFound.FriendlyName);
 								if (myTuningSpaces!=null)
-									Marshal.ReleaseComObject(myTuningSpaces);
+									while ((hr=Marshal.ReleaseComObject(myTuningSpaces))>0);
 								if (TuningSpaceContainer!=null)
-									Marshal.ReleaseComObject(TuningSpaceContainer);
+									while ((hr=Marshal.ReleaseComObject(TuningSpaceContainer))>0);
 								return true;
 							}//if (tuningSpaceFound.UniqueName==uniqueName)
 						}//if (ulFetched==1 )
 					}//for (counter=0; counter < Count; counter++)
 					if (myTuningSpaces!=null)
-						Marshal.ReleaseComObject(myTuningSpaces);
+						while ((hr=Marshal.ReleaseComObject(myTuningSpaces))>0);
 				}//if (TuneEnum !=null)
 			}//if(Count > 0)
 
@@ -2529,7 +2574,7 @@ namespace MediaPortal.TV.Recording
 				propBag.Read("FriendlyName", ref val, IntPtr.Zero); 
 				string Name = val as string;
 				val = "";
-				Marshal.ReleaseComObject(propBag);
+				while ((hr=Marshal.ReleaseComObject(propBag))>0);
 				if(String.Compare(Name, FriendlyName,true) == 0) // If found
 				{
 					object filterObj = null;
@@ -2540,14 +2585,14 @@ namespace MediaPortal.TV.Recording
 					filterObj = null;
 					if(device != null) 
 					{
-						Marshal.ReleaseComObject(deviceMoniker[0]);
-						Marshal.ReleaseComObject(enumMoniker);
+						while ((hr=Marshal.ReleaseComObject(deviceMoniker[0]))>0);
+						while ((hr=Marshal.ReleaseComObject(enumMoniker))>0);
 						return true;
 					}
 				}//if(String.Compare(Name.ToLower(), FriendlyName.ToLower()) == 0) // If found
-				Marshal.ReleaseComObject(deviceMoniker[0]);
+				while ((hr=Marshal.ReleaseComObject(deviceMoniker[0]))>0);
 			}//while(enumMoniker.Next(1, deviceMoniker, out ulFetched) == 0) // while == S_OK
-			Marshal.ReleaseComObject(enumMoniker);
+			while ((hr=Marshal.ReleaseComObject(enumMoniker))>0);
 			device = null;
 			return false;
 		}//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device) 
@@ -3134,6 +3179,7 @@ namespace MediaPortal.TV.Recording
 		#region TuneRequest
 		void SubmitTuneRequest(DVBChannel ch)
 		{
+			int hr;
 			if (m_NetworkProvider==null) return;
 			//get the ITuner interface from the network provider filter
 			TunerLib.TuneRequest newTuneRequest = null;
@@ -3194,7 +3240,7 @@ namespace MediaPortal.TV.Recording
 					myATSCTuneRequest.Channel		  = ch.MajorChannel;
 					myATSCTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myATSCTuneRequest);
+					while ((hr=Marshal.ReleaseComObject(myATSCTuneRequest))>0);
 
 				}
 					break;
@@ -3258,7 +3304,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() submit tuning request");
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+					while ((hr=Marshal.ReleaseComObject(myTuneRequest))>0);
 
 
 				} break;
@@ -3319,7 +3365,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
 					//and submit the tune request
 					myTuner.TuneRequest  = newTuneRequest;
-					//Marshal.ReleaseComObject(myTuneRequest);
+					while ((hr=Marshal.ReleaseComObject(myTuneRequest))>0);
 				}
 					break;
 
@@ -3377,7 +3423,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.SID		= ch.ProgramNumber;					//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+					while ((hr=Marshal.ReleaseComObject(myTuneRequest))>0);
 				} break;
 			}
 			SetPids();

@@ -331,6 +331,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
 		public virtual void DeleteGraph()
     {
+			int hr;
       if (m_graphState < State.Created) return;
 
       m_iPrevChannel=-1;
@@ -373,17 +374,20 @@ namespace MediaPortal.TV.Recording
 
 
       if( m_TVTuner != null )
-        Marshal.ReleaseComObject( m_TVTuner ); m_TVTuner = null;
+        while ((hr=Marshal.ReleaseComObject( m_TVTuner ))>0); 
+			m_TVTuner = null;
 			
       if (m_IAMAnalogVideoDecoder!=null)
-        Marshal.ReleaseComObject( m_IAMAnalogVideoDecoder ); m_IAMAnalogVideoDecoder = null;
-
-			if (m_graphBuilder!=null)
-				DsUtils.RemoveFilters(m_graphBuilder);
+        while ((hr=Marshal.ReleaseComObject( m_IAMAnalogVideoDecoder ))>0); 
+			m_IAMAnalogVideoDecoder = null;
 
 
       if( m_captureFilter != null )
-        Marshal.ReleaseComObject( m_captureFilter ); m_captureFilter = null;
+        while ((hr=Marshal.ReleaseComObject( m_captureFilter ))>0); 
+			m_captureFilter = null;
+
+			if (m_graphBuilder!=null)
+				DsUtils.RemoveFilters(m_graphBuilder);
 
 			if( m_rotCookie != 0 )
 				DsROT.RemoveGraphFromRot( ref m_rotCookie);
@@ -391,11 +395,14 @@ namespace MediaPortal.TV.Recording
 
 
       if( m_captureGraphBuilder != null )
-        Marshal.ReleaseComObject( m_captureGraphBuilder ); m_captureGraphBuilder = null;
+        while ((hr=Marshal.ReleaseComObject( m_captureGraphBuilder ))>0); 
+			m_captureGraphBuilder = null;
 	
-      if( m_graphBuilder != null )
-        Marshal.ReleaseComObject( m_graphBuilder ); m_graphBuilder = null;
-
+			if( m_graphBuilder != null )
+			{
+				while ((hr=Marshal.ReleaseComObject( m_graphBuilder ))>0); 
+				m_graphBuilder = null;
+			}
       GUIGraphicsContext.form.Invalidate(true);
      GC.Collect();GC.Collect();GC.Collect();
 
@@ -493,7 +500,7 @@ namespace MediaPortal.TV.Recording
 					else
 						Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
 
-					Marshal.ReleaseComObject(pinIn);
+					while ((hr=Marshal.ReleaseComObject(pinIn))>0);
 				}
 				else
 					Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED could not find mpeg2 demux input pin");
