@@ -949,55 +949,23 @@ namespace MediaPortal.Player
 			Log.Write("TStreamBufferPlayer:cleanup DShow graph");
 			try 
 			{
-				if( rotCookie != 0 )
-					DsROT.RemoveGraphFromRot( ref rotCookie );
 
 				if( mediaCtrl != null )
 				{
 					hr = mediaCtrl.Stop();
-					while((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
 					mediaCtrl = null;
 				}
 
 				m_state = PlayState.Init;
 
-				if( mediaEvt != null )
-				{
-					while((hr=Marshal.ReleaseComObject(mediaEvt))>0);
-					mediaEvt = null;
-				}
-
-				if( videoWin != null )
-				{
-          m_bWindowVisible=false;
-					m_bIsVisible=false;
-					while((hr=Marshal.ReleaseComObject(videoWin))>0);
-					videoWin = null;
-				}
-
-				if ( m_mediaSeeking != null )
-				{
-					while((hr=Marshal.ReleaseComObject( m_mediaSeeking ))>0);
-					m_mediaSeeking= null;
-				}
-
-        
-				if (basicAudio!=null) 
-				{
-					while((hr=Marshal.ReleaseComObject(basicAudio))>0); 
-					basicAudio	= null;
-				}
-				if (basicVideo!=null) 
-				{
-					while((hr=Marshal.ReleaseComObject(basicVideo))>0); 
-					basicVideo	= null;
-				}
-
-				if (videoWin!=null) 
-				{
-					while((hr=Marshal.ReleaseComObject(videoWin))>0); 
-					videoWin=null;
-				}
+				mediaEvt = null;
+        m_bWindowVisible=false;
+				m_bIsVisible=false;
+				videoWin = null;
+				m_mediaSeeking= null;
+				basicAudio	= null;
+				basicVideo	= null;
+				videoWin=null;
 
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
@@ -1019,7 +987,7 @@ namespace MediaPortal.Player
 
 				m_state = PlayState.Init;
 				GUIGraphicsContext.form.Invalidate(true);
-				GC.Collect();
+				GC.Collect();GC.Collect();GC.Collect();
 			}
 			catch( Exception ex)
 			{

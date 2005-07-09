@@ -59,7 +59,7 @@ namespace MediaPortal.Player
     /// <summary> interface to get information and control video. </summary>
     protected IBasicVideo2			        basicVideo;
     /// <summary> interface to single-step video. </summary>
-    protected IVideoFrameStep			      videoStep;
+    
     protected IDirectVobSub			        vobSub;
 		DateTime  elapsedTimer=DateTime.Now;
 
@@ -128,7 +128,6 @@ namespace MediaPortal.Player
 						return false;
 					}
 				}
-        GetFrameStepInterface();
 
         /*
         GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
@@ -833,24 +832,6 @@ namespace MediaPortal.Player
     }
 
 
-
-    /// <summary> try to get the step interfaces. </summary>
-    bool GetFrameStepInterface()
-    {
-      videoStep = graphBuilder as IVideoFrameStep;
-      if( videoStep == null )
-        return false;
-
-      // Check if this decoder can step
-      int hr = videoStep.CanStep( 0, null );
-      if( hr != 0 )
-      {
-        videoStep = null;
-        return false;
-      }
-      return true;
-    }
-
     /// <summary> do cleanup and release DirectShow. </summary>
     protected virtual void CloseInterfaces()
     {
@@ -863,55 +844,21 @@ namespace MediaPortal.Player
         if( mediaCtrl != null )
         {
           hr = mediaCtrl.Stop();
-					while ( (hr=Marshal.ReleaseComObject(mediaCtrl))>0);
           mediaCtrl = null;
         }
 
         m_state = PlayState.Init;
 
-				if( mediaEvt != null )
-				{
-					while ( (hr=Marshal.ReleaseComObject(mediaEvt))>0);
-					mediaEvt = null;
-				}
-
+				mediaEvt = null;
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
 				vmr7=null;
-
-        if( videoWin != null )
-        {
-          m_bVisible=false;
-					while ( (hr=Marshal.ReleaseComObject(videoWin))>0);
-					videoWin = null;
-        }
-				if( mediaSeek != null )
-				{
-					while ( (hr=Marshal.ReleaseComObject(mediaSeek))>0);
-					mediaSeek = null;
-				}
-				if( mediaPos != null )
-				{
-					while ( (hr=Marshal.ReleaseComObject(mediaPos))>0);
-					mediaPos = null;
-				}
-				if( basicVideo != null )
-				{
-					while ( (hr=Marshal.ReleaseComObject(basicVideo))>0);
-					basicVideo = null;
-				}
-
-				if( videoStep != null )
-				{
-					while ( (hr=Marshal.ReleaseComObject(videoStep))>0);
-					videoStep = null;
-				}
-				
-				if( basicAudio != null )
-				{
-					while ( (hr=Marshal.ReleaseComObject(basicAudio))>0);
-					basicAudio = null;
-				}
+        m_bVisible=false;
+				videoWin = null;
+				mediaSeek = null;
+				mediaPos = null;
+				basicVideo = null;
+				basicAudio = null;
 				
 				if( vobSub != null )
 				{
@@ -932,7 +879,7 @@ namespace MediaPortal.Player
 				}
 
         m_state = PlayState.Init;
-        GC.Collect();
+        GC.Collect();GC.Collect();GC.Collect();
       }
       catch( Exception ex)
       {

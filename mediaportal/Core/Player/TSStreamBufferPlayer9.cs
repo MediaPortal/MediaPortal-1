@@ -166,73 +166,42 @@ namespace MediaPortal.Player
 						if (counter >200) break;
 					}
 
-//Log.Write("TStreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
           if( mediaCtrl != null )
           {
             hr = mediaCtrl.Stop();
-						while ((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
 						mediaCtrl=null;
-
           }
           
-//					Log.Write("TStreamBufferPlayer9:stopped:{0}",GUIGraphicsContext.InVmr9Render);
+					mediaEvt = null;
 
-//					Log.Write("TStreamBufferPlayer9:stop notifies");
-					if( mediaEvt != null )
-					{
-						while ((hr=Marshal.ReleaseComObject(mediaEvt))>0);
-						mediaEvt = null;
-					}
-				//added from agree: check if Vmr9 already null
-//Log.Write("TStreamBufferPlayer9:clean vmr9");
 					if(Vmr9!=null)
 					{
 						Vmr9.RemoveVMR9();
 						Vmr9.Release();
 						Vmr9=null;
 					}
-
-					if (basicAudio!=null) 
-					{
-						while ((hr=Marshal.ReleaseComObject(basicAudio))>0); 
-						basicAudio	= null;
-					}
-					if (basicVideo!=null) 
-					{
-						while ((hr=Marshal.ReleaseComObject(basicVideo))>0); 
-						basicVideo	= null;
-					}
-					if (m_mediaSeeking!=null) 
-					{
-						while ((hr=Marshal.ReleaseComObject(m_mediaSeeking))>0); 
-						m_mediaSeeking=null;
-					}
+					
+					basicAudio	= null;
+					basicVideo	= null;
+					m_mediaSeeking=null;
 					bufferSource=null;
-					if (videoWin!=null) 
-					{
-						while ((hr=Marshal.ReleaseComObject(videoWin))>0); 
-						videoWin=null;
-					}
+					videoWin=null;
 
-
-//Log.Write("TStreamBufferPlayer9:remove filters");
 					DsUtils.RemoveFilters(graphBuilder);
 
-//Log.Write("TStreamBufferPlayer9:remove graph from rot");
 					if( rotCookie != 0 )
 						DsROT.RemoveGraphFromRot( ref rotCookie );
 					rotCookie=0;
-//Log.Write("TStreamBufferPlayer9:remove graph ");
+
 					if( graphBuilder != null )
 					{
 						while ((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
 						graphBuilder = null;
 					}
-//Log.Write("TStreamBufferPlayer9:invalidate");
 
 				GUIGraphicsContext.form.Invalidate(true);
 				m_state = PlayState.Init;
-				GC.Collect();
+				GC.Collect();GC.Collect();GC.Collect();
       }
       catch( Exception ex)
       {

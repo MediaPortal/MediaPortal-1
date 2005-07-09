@@ -58,6 +58,7 @@ namespace MediaPortal.Player
 				graphBuilder = (IGraphBuilder) comobj; comobj = null;
 			
 				Vmr9.AddVMR9(graphBuilder);
+				Vmr9.Enable(false);
 
         // add preferred video & audio codecs
         string strVideoCodec="";
@@ -164,7 +165,7 @@ namespace MediaPortal.Player
 					return base.GetInterfaces();
 				}
 				Vmr9.SetDeinterlaceMode();
-        
+        Vmr9.Enable(true);
 				return true;
 			}
 			catch( Exception  ex)
@@ -220,14 +221,10 @@ namespace MediaPortal.Player
 						if (counter >200) break;
 					}
           hr = mediaCtrl.Stop();
-					while((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
 					mediaCtrl=null;
         }
-  	    if( mediaEvt != null )
-        {
-					while((hr=Marshal.ReleaseComObject(mediaEvt))>0);
-          mediaEvt = null;
-        }
+  	    mediaEvt = null;
+        
 
 				if (Vmr9!=null)
 				{
@@ -236,22 +233,12 @@ namespace MediaPortal.Player
 					Vmr9=null;
 				}
 
-				if (mediaSeek!=null)
-				{
-					while((hr=Marshal.ReleaseComObject(mediaSeek))>0);
-					mediaSeek	= null;
-				}
-				if (mediaPos!=null)
-				{
-					while((hr=Marshal.ReleaseComObject(mediaPos))>0);
-					mediaPos	= null;
-				}
-				if (basicAudio!=null)
-				{
-					while((hr=Marshal.ReleaseComObject(basicAudio))>0);
-					basicAudio	= null;
-				}
-
+				mediaSeek	= null;
+				mediaPos	= null;
+				basicAudio	= null;
+				basicVideo=null;
+				videoWin=null;
+				
 				if( vobSub != null )
 				{
 					while((hr=Marshal.ReleaseComObject( vobSub ))>0); 

@@ -189,7 +189,7 @@ namespace MediaPortal.Player
 						result=m_graphBuilder.RemoveFilter(VMR9Filter);
 					}
 					catch(Exception){}
-					//while ( (result=Marshal.ReleaseComObject(VMR9Filter))>0); 
+					while ( (result=Marshal.ReleaseComObject(VMR9Filter))>0); 
 					VMR9Filter = null;
 					m_graphBuilder=null;
 				}
@@ -364,15 +364,15 @@ namespace MediaPortal.Player
 					{
 						Log.Write("vmr9: pin:{0} is connected",i);
 						if (pinIn!=null)
-							Marshal.ReleaseComObject(pinIn);
+							hr=Marshal.ReleaseComObject(pinIn);
 						if (pinConnected!=null)
-							Marshal.ReleaseComObject(pinConnected);
+							hr=Marshal.ReleaseComObject(pinConnected);
 						return true;
 					}
 					if (pinIn!=null)
-						Marshal.ReleaseComObject(pinIn);
+						hr=Marshal.ReleaseComObject(pinIn);
 					if (pinConnected!=null)
-						Marshal.ReleaseComObject(pinConnected);
+						hr=Marshal.ReleaseComObject(pinConnected);
 				}
 				return false;
       }//get {
