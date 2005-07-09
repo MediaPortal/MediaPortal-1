@@ -106,13 +106,13 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.cbTransponder = new System.Windows.Forms.ComboBox();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.label6 = new System.Windows.Forms.Label();
 			this.progressBar3 = new System.Windows.Forms.ProgressBar();
 			this.button3 = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
-			this.cbTransponder = new System.Windows.Forms.ComboBox();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -215,6 +215,14 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Setup digital tv (DVBS Satellite)";
 			// 
+			// cbTransponder
+			// 
+			this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbTransponder.Location = new System.Drawing.Point(136, 72);
+			this.cbTransponder.Name = "cbTransponder";
+			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
+			this.cbTransponder.TabIndex = 14;
+			// 
 			// panel1
 			// 
 			this.panel1.Location = new System.Drawing.Point(432, 328);
@@ -244,6 +252,7 @@ namespace MediaPortal.Configuration.Sections
 			this.button3.Name = "button3";
 			this.button3.TabIndex = 3;
 			this.button3.Text = "Scan...";
+			this.button3.Click += new System.EventHandler(this.button3_Click);
 			// 
 			// label7
 			// 
@@ -260,15 +269,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label8.TabIndex = 0;
 			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your transponder an" +
 				"d press auto tune to scan for the tv and radio channels";
-			
-			// 
-			// cbTransponder
-			// 
-			this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder.Location = new System.Drawing.Point(136, 72);
-			this.cbTransponder.Name = "cbTransponder";
-			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder.TabIndex = 14;
 			// 
 			// Wizard_DVBSTV
 			// 
@@ -375,23 +375,6 @@ namespace MediaPortal.Configuration.Sections
 
 		private void button1_Click(object sender, System.EventArgs e)
 		{
-			TVCaptureCards cards = new TVCaptureCards();
-			cards.LoadCaptureCards();
-			foreach (TVCaptureDevice dev in cards.captureCards)
-			{
-				if (dev.Network==NetworkType.DVBT)
-				{
-					captureCard = dev;
-					captureCard.CreateGraph();
-					break;
-				}
-			}
-			LoadFrequencies();
-			progressBar1.Visible=true;
-			newChannels=0; updatedChannels=0;
-			newRadioChannels=0; updatedRadioChannels=0;
-			DoScan();
-			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
 
 		}
 
@@ -508,6 +491,28 @@ namespace MediaPortal.Configuration.Sections
 			System.Threading.Thread.Sleep(400);
 			Application.DoEvents();
 
+		}
+
+		private void button3_Click(object sender, System.EventArgs e)
+		{
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.DVBT)
+				{
+					captureCard = dev;
+					captureCard.CreateGraph();
+					break;
+				}
+			}
+			LoadFrequencies();
+			progressBar1.Visible=true;
+			newChannels=0; updatedChannels=0;
+			newRadioChannels=0; updatedRadioChannels=0;
+			DoScan();
+			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
+		
 		}
 
 	}
