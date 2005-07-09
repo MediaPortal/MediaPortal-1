@@ -220,12 +220,12 @@ namespace MediaPortal.Player
 						if (counter >200) break;
 					}
           hr = mediaCtrl.Stop();
-					Marshal.ReleaseComObject(mediaCtrl);
+					while((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
 					mediaCtrl=null;
         }
   	    if( mediaEvt != null )
         {
-					Marshal.ReleaseComObject(mediaEvt);
+					while((hr=Marshal.ReleaseComObject(mediaEvt))>0);
           mediaEvt = null;
         }
 
@@ -237,25 +237,37 @@ namespace MediaPortal.Player
 				}
 
 				if (mediaSeek!=null)
-					Marshal.ReleaseComObject(mediaSeek);mediaSeek	= null;
-        
+				{
+					while((hr=Marshal.ReleaseComObject(mediaSeek))>0);
+					mediaSeek	= null;
+				}
 				if (mediaPos!=null)
-					Marshal.ReleaseComObject(mediaPos);mediaPos	= null;
+				{
+					while((hr=Marshal.ReleaseComObject(mediaPos))>0);
+					mediaPos	= null;
+				}
 				if (basicAudio!=null)
-					Marshal.ReleaseComObject(basicAudio);basicAudio	= null;
+				{
+					while((hr=Marshal.ReleaseComObject(basicAudio))>0);
+					basicAudio	= null;
+				}
 
-        if( vobSub != null )
-					Marshal.ReleaseComObject( vobSub ); vobSub = null;
-		
+				if( vobSub != null )
+				{
+					while((hr=Marshal.ReleaseComObject( vobSub ))>0); 
+					vobSub = null;
+				}
 				DsUtils.RemoveFilters(graphBuilder);
 
         if( rotCookie != 0 )
           DsROT.RemoveGraphFromRot( ref rotCookie );
         rotCookie=0;
 
-        if( graphBuilder != null )
-          Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
-
+				if( graphBuilder != null )
+				{
+					while((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
+					graphBuilder = null;
+				}
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;

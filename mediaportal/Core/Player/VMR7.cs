@@ -107,17 +107,17 @@ namespace MediaPortal.Player
 			{
 				int result;
 				Log.Write("VMR7Helper:RemoveVMR7");
-				if (m_mixerBitmap != null)
-					result=Marshal.ReleaseComObject(m_mixerBitmap);
+				//if (m_mixerBitmap != null)
+				//	while ((result=Marshal.ReleaseComObject(m_mixerBitmap))>0);
 				m_mixerBitmap = null;
 
 				if (quality != null)
-					result=Marshal.ReleaseComObject(quality);
+					while ((result=Marshal.ReleaseComObject(quality))>0);
 				quality = null;
 	
 				if (VMR7Filter != null)
 				{
-					result=Marshal.ReleaseComObject(VMR7Filter); 
+					//while ((result=Marshal.ReleaseComObject(VMR7Filter))>0); 
 					try
 					{
 						m_graphBuilder.RemoveFilter(VMR7Filter);

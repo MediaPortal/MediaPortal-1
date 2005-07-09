@@ -854,24 +854,26 @@ namespace MediaPortal.Player
     /// <summary> do cleanup and release DirectShow. </summary>
     protected virtual void CloseInterfaces()
     {
+			if (graphBuilder==null) return;
       int hr;
       Log.Write("VideoPlayer:cleanup DShow graph");
       try 
       {
-        if( rotCookie != 0 )
-          DsROT.RemoveGraphFromRot( ref rotCookie );
 
         if( mediaCtrl != null )
         {
           hr = mediaCtrl.Stop();
-					Marshal.ReleaseComObject(mediaCtrl);
+					while ( (hr=Marshal.ReleaseComObject(mediaCtrl))>0);
           mediaCtrl = null;
         }
 
         m_state = PlayState.Init;
 
-        if( mediaEvt != null )
-					Marshal.ReleaseComObject(mediaEvt);mediaEvt = null;
+				if( mediaEvt != null )
+				{
+					while ( (hr=Marshal.ReleaseComObject(mediaEvt))>0);
+					mediaEvt = null;
+				}
 
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
@@ -880,23 +882,42 @@ namespace MediaPortal.Player
         if( videoWin != null )
         {
           m_bVisible=false;
-					Marshal.ReleaseComObject(videoWin);
+					while ( (hr=Marshal.ReleaseComObject(videoWin))>0);
 					videoWin = null;
         }
-
 				if( mediaSeek != null )
-					Marshal.ReleaseComObject(mediaSeek);mediaSeek	= null;
+				{
+					while ( (hr=Marshal.ReleaseComObject(mediaSeek))>0);
+					mediaSeek = null;
+				}
 				if( mediaPos != null )
-					Marshal.ReleaseComObject(mediaPos);mediaPos	= null;
+				{
+					while ( (hr=Marshal.ReleaseComObject(mediaPos))>0);
+					mediaPos = null;
+				}
 				if( basicVideo != null )
-					Marshal.ReleaseComObject(basicVideo);basicVideo	= null;
+				{
+					while ( (hr=Marshal.ReleaseComObject(basicVideo))>0);
+					basicVideo = null;
+				}
+
 				if( videoStep != null )
-					Marshal.ReleaseComObject(videoStep);videoStep	= null;
-				if( basicAudio != null )
-					Marshal.ReleaseComObject(basicAudio);basicAudio	= null;
+				{
+					while ( (hr=Marshal.ReleaseComObject(videoStep))>0);
+					videoStep = null;
+				}
 				
-        if( vobSub != null )
-          Marshal.ReleaseComObject( vobSub ); vobSub = null;
+				if( basicAudio != null )
+				{
+					while ( (hr=Marshal.ReleaseComObject(basicAudio))>0);
+					basicAudio = null;
+				}
+				
+				if( vobSub != null )
+				{
+					while((hr=Marshal.ReleaseComObject( vobSub))>0); 
+					vobSub = null;
+				}
 
         DsUtils.RemoveFilters(graphBuilder);
 
@@ -904,8 +925,11 @@ namespace MediaPortal.Player
           DsROT.RemoveGraphFromRot( ref rotCookie );
         rotCookie=0;
 
-        if( graphBuilder != null )
-          Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+				if( graphBuilder != null )
+				{
+					while((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
+					graphBuilder = null;
+				}
 
         m_state = PlayState.Init;
         GC.Collect();

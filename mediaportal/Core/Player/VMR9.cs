@@ -173,23 +173,24 @@ namespace MediaPortal.Player
 					currentVmr9State = Vmr9PlayState.Playing;
 				}
 				int result;
-				if (quality != null)
-					result=Marshal.ReleaseComObject(quality); 
-				quality = null;
 				
-				if (m_mixerBitmap!= null)
-					result=Marshal.ReleaseComObject(m_mixerBitmap); 
-				m_mixerBitmap = null;
+				//if (m_mixerBitmap!= null)
+				//	while ( (result=Marshal.ReleaseComObject(m_mixerBitmap))>0); 
+				//m_mixerBitmap = null;
+
+				if (quality != null)
+					while ( (result=Marshal.ReleaseComObject(quality))>0); 
+				quality = null;
 					
 				if (VMR9Filter != null)
 				{
-					result=Marshal.ReleaseComObject(VMR9Filter); 
-					VMR9Filter = null;
 					try
 					{
 						m_graphBuilder.RemoveFilter(VMR9Filter);
 					}
 					catch(Exception){}
+					//while ( (result=Marshal.ReleaseComObject(VMR9Filter))>0); 
+					VMR9Filter = null;
 					m_graphBuilder=null;
 				}
 				g_vmr9=null;

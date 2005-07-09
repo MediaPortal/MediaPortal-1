@@ -236,7 +236,7 @@ namespace MediaPortal.Player
           if( mediaCtrl != null )
           {
             hr = mediaCtrl.Stop();
-						hr=Marshal.ReleaseComObject(mediaCtrl);
+						while((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
 						mediaCtrl=null;
 
           }
@@ -246,39 +246,74 @@ namespace MediaPortal.Player
 //					Log.Write("StreamBufferPlayer9:stop notifies");
 					if( mediaEvt != null )
 					{
-						hr=Marshal.ReleaseComObject(mediaEvt);
+						while((hr=Marshal.ReleaseComObject(mediaEvt))>0);
 						mediaEvt = null;
 					}
 				//added from agree: check if Vmr9 already null
 //Log.Write("StreamBufferPlayer9:clean vmr9");
 					if(Vmr9!=null)
-				{
-					Vmr9.RemoveVMR9();
-					Vmr9.Release();
-					Vmr9=null;
-				}
+					{
+						Vmr9.RemoveVMR9();
+						Vmr9.Release();
+						Vmr9=null;
+					}
 
-				if (videoWin!=null) hr=Marshal.ReleaseComObject(videoWin); videoWin=null;
-				if (basicAudio!=null) hr=Marshal.ReleaseComObject(basicAudio); basicAudio	= null;
-				if (basicVideo!=null)hr= Marshal.ReleaseComObject(basicVideo); basicVideo	= null;
-				if (m_mediaSeeking!=null) hr=Marshal.ReleaseComObject(m_mediaSeeking); m_mediaSeeking=null;
-				if (m_mediaSeeking2!=null) hr=Marshal.ReleaseComObject(m_mediaSeeking2); m_mediaSeeking2=null;
-				if (streamConfig2!=null) hr=Marshal.ReleaseComObject(streamConfig2); streamConfig2=null;
-				if (bufferSource!=null) hr=Marshal.ReleaseComObject(bufferSource); bufferSource=null;
+					if (videoWin!=null) 
+					{
+						while((hr=Marshal.ReleaseComObject(videoWin))>0); 
+						videoWin=null;
+					}
+						if (basicAudio!=null) 
+						{
+							while((hr=Marshal.ReleaseComObject(basicAudio))>0); 
+							basicAudio	= null;
+						}
+					if (basicVideo!=null)
+					{
+						while((hr= Marshal.ReleaseComObject(basicVideo))>0); 
+						basicVideo	= null;
+					}
+					if (m_mediaSeeking!=null) 
+					{
+						while((hr=Marshal.ReleaseComObject(m_mediaSeeking))>0); 
+						m_mediaSeeking=null;
+					}
+					if (m_mediaSeeking2!=null) 
+					{
+						while((hr=Marshal.ReleaseComObject(m_mediaSeeking2))>0); 
+						m_mediaSeeking2=null;
+					}
+					if (streamConfig2!=null) 
+					{
+						while((hr=Marshal.ReleaseComObject(streamConfig2))>0); 
+						streamConfig2=null;
+					}
+					if (bufferSource!=null) 
+					{
+						while((hr=Marshal.ReleaseComObject(bufferSource))>0); 
+						bufferSource=null;
+					}
 
-				if (m_StreamBufferConfig!=null) hr=Marshal.ReleaseComObject(m_StreamBufferConfig); m_StreamBufferConfig=null;
+					if (m_StreamBufferConfig!=null) 
+					{
+						while((hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0); 
+						m_StreamBufferConfig=null;
+					}
 
 
 //Log.Write("StreamBufferPlayer9:remove filters");
 					DsUtils.RemoveFilters(graphBuilder);
 
 //Log.Write("StreamBufferPlayer9:remove graph from rot");
-				if( rotCookie != 0 )
-				DsROT.RemoveGraphFromRot( ref rotCookie );
-				rotCookie=0;
+					if( rotCookie != 0 )
+						DsROT.RemoveGraphFromRot( ref rotCookie );
+					rotCookie=0;
 //Log.Write("StreamBufferPlayer9:remove graph ");
-				if( graphBuilder != null )
-				hr=Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+					if( graphBuilder != null )
+					{
+						while((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
+						graphBuilder = null;
+					}
 
 //Log.Write("StreamBufferPlayer9:invalidate");
 
