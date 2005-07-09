@@ -294,7 +294,7 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:link FAILED:0x{0:X}",hr);
 					return false;
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add graph to ROT table");
+				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add graph to ROT table");
 				DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
 
 
@@ -3376,7 +3376,7 @@ namespace MediaPortal.TV.Recording
 				} break;
 			}
 			SetPids();
-			Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
+		//	Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
 		}
 
 		#endregion

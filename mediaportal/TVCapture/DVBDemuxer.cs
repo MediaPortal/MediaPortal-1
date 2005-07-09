@@ -358,8 +358,8 @@ namespace MediaPortal.TV.Recording
 			//
 			m_epgClass.ClearBuffer();
 			m_teleText.ClearBuffer();
-			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
-				channelName,audio, video, teletext, pmtPid,subtitle);
+		//	Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
+		//		channelName,audio, video, teletext, pmtPid,subtitle);
 		
 		}
 
@@ -1045,7 +1045,7 @@ namespace MediaPortal.TV.Recording
 								counter=-1;
 							if(counter+1!=m_packetHeader.ContinuityCounter)
 							{
-								Log.Write("dvb-demuxer: continuity counter dont match for pid {0}!={1}",counter+1,m_packetHeader.ContinuityCounter);
+								//Log.Write("dvb-demuxer: continuity counter dont match for pid {0}!={1}",counter+1,m_packetHeader.ContinuityCounter);
 								m_bufferPositionSec=0;
 							}
 						}
