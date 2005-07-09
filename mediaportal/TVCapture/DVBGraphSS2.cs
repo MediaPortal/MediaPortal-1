@@ -885,18 +885,12 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_sampleGrabber);
 				m_sampleGrabber=null;
 			}	
-			if(m_sampleGrabber!=null)
-			{
-				Marshal.ReleaseComObject(m_sampleGrabber);
-				m_sampleGrabber=null;
-			}	
-				
 			if(m_sampleInterface!=null)
 			{
 				Marshal.ReleaseComObject(m_sampleInterface);
-				m_sampleInterface=null;
+				m_sampleGrabber=null;
 			}	
-
+				
 			if (m_streamBufferConfig != null) 
 				Marshal.ReleaseComObject(m_streamBufferConfig); m_streamBufferConfig=null;
 
@@ -927,6 +921,11 @@ namespace MediaPortal.TV.Recording
 			{
 				Marshal.ReleaseComObject(m_streamBufferInit);
 				m_streamBufferInit=null;
+			}
+			if(m_config!=null)
+			{
+				Marshal.ReleaseComObject(m_config);
+				m_config=null;
 			}
 			if(m_sinkInterface!=null)
 			{
@@ -1029,7 +1028,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//add collected stuff into programs database
-
+			GUIGraphicsContext.form.Invalidate(true);
 			GC.Collect();GC.Collect();GC.Collect();
 			m_graphState = State.None;
 			return;		
@@ -1892,6 +1891,7 @@ namespace MediaPortal.TV.Recording
 			if (m_mediaControl!=null)
 			{
 				m_mediaControl.Stop();
+				m_mediaControl=null;
 			}
 			m_graphState = State.Created;
 			DeleteGraph();
