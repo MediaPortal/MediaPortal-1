@@ -176,7 +176,11 @@ namespace MediaPortal.Player
 					
 				if (VMR9Filter != null)
 				{
-					m_graphBuilder.RemoveFilter(VMR9Filter);
+					try
+					{
+						m_graphBuilder.RemoveFilter(VMR9Filter);
+					}
+					catch(Exception){}
 					m_graphBuilder=null;
 					Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
 				}
