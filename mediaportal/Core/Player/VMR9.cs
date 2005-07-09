@@ -152,8 +152,8 @@ namespace MediaPortal.Player
     {
 			if (vmr9Initialized)
 			{
-				Log.Write("VMR9Helper:RemoveVMR9");
 				g_vmr9=null;
+				Log.Write("VMR9Helper:RemoveVMR9");
 				if (vmr9Helper != null)
 				{
 					Log.Write("VMR9Helper:stop vmr9 helper");
@@ -182,13 +182,16 @@ namespace MediaPortal.Player
 					}
 					catch(Exception){}
 					m_graphBuilder=null;
-					Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
+					//Marshal.ReleaseComObject(VMR9Filter); 
+					VMR9Filter = null;
 				}
-				if (quality != null)
-					Marshal.ReleaseComObject(quality); quality = null;
+				//if (quality != null)
+				//	Marshal.ReleaseComObject(quality); 
+				quality = null;
 				
-				if (m_mixerBitmap!= null)
-					Marshal.ReleaseComObject(m_mixerBitmap); m_mixerBitmap = null;
+				//if (m_mixerBitmap!= null)
+				//	Marshal.ReleaseComObject(m_mixerBitmap); 
+				m_mixerBitmap = null;
 			}
 		}
 

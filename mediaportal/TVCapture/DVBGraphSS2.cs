@@ -278,10 +278,10 @@ namespace MediaPortal.TV.Recording
 			if(win!=null)
                 win.SetObject(m_streamDemuxer.Teletext);
 
-            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
+//            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards,NetworkType.DVBS);
-			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
-			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
+//			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+//			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 			// reg. settings
 			try
 			{
@@ -852,16 +852,7 @@ namespace MediaPortal.TV.Recording
 				Vmr7=null;
 			}
 				
-			if (m_recorder!=null) 
-			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
-				try
-				{
-					m_recorder.Stop();
-				}
-				catch(Exception){}
-				m_recorder=null;
-			}
+
 
 			if (m_mediaControl != null)
 			{
@@ -870,13 +861,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//DsROT.RemoveGraphFromRot(ref m_myCookie);
-			if (m_videoWindow != null)
-			{
-				m_bOverlayVisible=false;
-				m_videoWindow.put_Visible(DsHlp.OAFALSE);
-				//m_videoWindow.put_Owner(IntPtr.Zero);
-				m_videoWindow = null;
-			}
+
 
 			m_myCookie=0;
 
@@ -890,15 +875,19 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_sampleInterface);
 				m_sampleGrabber=null;
 			}	
+			if (m_videoWindow != null)
+			{
+				m_bOverlayVisible=false;
+				m_videoWindow.put_Visible(DsHlp.OAFALSE);
+				m_videoWindow.put_Owner(IntPtr.Zero);
+				m_videoWindow = null;
+			}	
 				
-			if (m_streamBufferConfig != null) 
-				Marshal.ReleaseComObject(m_streamBufferConfig); m_streamBufferConfig=null;
-
-			if (m_config != null) 
-				Marshal.ReleaseComObject(m_config); m_config=null;
-
+			
+		
 			m_basicVideo = null;
-      
+
+			DsUtils.RemoveFilters(m_graphBuilder);      
 			//
 			// release all interfaces and pins
 			//
@@ -1018,8 +1007,6 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(m_b2c2Adapter);
 				m_b2c2Adapter=null;
 			}
-			if (m_graphBuilder!=null)
-				DsUtils.RemoveFilters(m_graphBuilder);
 
 			if (m_graphBuilder != null)
 			{
