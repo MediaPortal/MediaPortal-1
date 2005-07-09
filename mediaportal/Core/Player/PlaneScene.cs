@@ -844,7 +844,7 @@ namespace MediaPortal.Player
 				else
 				{
 					if (!GUIGraphicsContext.InVmr9Render)
-						InternalPresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,0,true);
+						InternalPresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,true);
 				}
 			}
 			catch(Exception ex)
