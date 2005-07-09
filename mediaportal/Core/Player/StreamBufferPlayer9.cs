@@ -123,6 +123,8 @@ namespace MediaPortal.Player
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to get IFileSourceFilter");
           return false;
         }	
+
+
 //Log.Write("StreamBufferPlayer9: open file:{0}",filename);
 				hr = fileSource.Load(filename, IntPtr.Zero);
         if (hr!=0) 
@@ -189,18 +191,13 @@ namespace MediaPortal.Player
 				}
 
 				Vmr9.SetDeinterlaceMode();
-				//Log.Write("StreamBufferPlayer9: done");
 				return true;
+
       }
       catch( Exception  ex)
       {
         Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
         return false;
-      }
-      finally
-      {
-        if( comobj != null )
-          Marshal.ReleaseComObject( comobj ); comobj = null;
       }
     }
 
@@ -223,7 +220,6 @@ namespace MediaPortal.Player
         {
 					if(Vmr9!=null)
 						Vmr9.Enable(false);
-
 					int counter=0;
 					while (GUIGraphicsContext.InVmr9Render)
 					{
@@ -232,94 +228,47 @@ namespace MediaPortal.Player
 						if (counter >200) break;
 					}
 
-//Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
-          if( mediaCtrl != null )
-          {
-            hr = mediaCtrl.Stop();
-						while((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
-						mediaCtrl=null;
-
-          }
-          
-//					Log.Write("StreamBufferPlayer9:stopped:{0}",GUIGraphicsContext.InVmr9Render);
-
-//					Log.Write("StreamBufferPlayer9:stop notifies");
-					if( mediaEvt != null )
+					if( mediaCtrl != null )
 					{
-						while((hr=Marshal.ReleaseComObject(mediaEvt))>0);
-						mediaEvt = null;
+						hr = mediaCtrl.Stop();
 					}
-				//added from agree: check if Vmr9 already null
-//Log.Write("StreamBufferPlayer9:clean vmr9");
+					mediaCtrl=null;
+					mediaEvt = null;
+					m_mediaSeeking=null;
+					m_mediaSeeking2=null;
+					videoWin=null;
+					basicAudio	= null;
+					basicVideo	= null;
+					bufferSource=null;
+		
+					if (streamConfig2!=null) 
+					{
+						while((hr=Marshal.ReleaseComObject(streamConfig2))>0); 
+						streamConfig2=null;
+					}
+
+					m_StreamBufferConfig=null;
+
 					if(Vmr9!=null)
 					{
 						Vmr9.RemoveVMR9();
 						Vmr9.Release();
 						Vmr9=null;
 					}
-
-					if (videoWin!=null) 
-					{
-						while((hr=Marshal.ReleaseComObject(videoWin))>0); 
-						videoWin=null;
-					}
-						if (basicAudio!=null) 
-						{
-							while((hr=Marshal.ReleaseComObject(basicAudio))>0); 
-							basicAudio	= null;
-						}
-					if (basicVideo!=null)
-					{
-						while((hr= Marshal.ReleaseComObject(basicVideo))>0); 
-						basicVideo	= null;
-					}
-					if (m_mediaSeeking!=null) 
-					{
-						while((hr=Marshal.ReleaseComObject(m_mediaSeeking))>0); 
-						m_mediaSeeking=null;
-					}
-					if (m_mediaSeeking2!=null) 
-					{
-						while((hr=Marshal.ReleaseComObject(m_mediaSeeking2))>0); 
-						m_mediaSeeking2=null;
-					}
-					if (streamConfig2!=null) 
-					{
-						while((hr=Marshal.ReleaseComObject(streamConfig2))>0); 
-						streamConfig2=null;
-					}
-					if (bufferSource!=null) 
-					{
-						while((hr=Marshal.ReleaseComObject(bufferSource))>0); 
-						bufferSource=null;
-					}
-
-					if (m_StreamBufferConfig!=null) 
-					{
-						while((hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0); 
-						m_StreamBufferConfig=null;
-					}
-
-
-//Log.Write("StreamBufferPlayer9:remove filters");
 					DsUtils.RemoveFilters(graphBuilder);
 
-//Log.Write("StreamBufferPlayer9:remove graph from rot");
 					if( rotCookie != 0 )
 						DsROT.RemoveGraphFromRot( ref rotCookie );
 					rotCookie=0;
-//Log.Write("StreamBufferPlayer9:remove graph ");
 					if( graphBuilder != null )
 					{
 						while((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
 						graphBuilder = null;
 					}
 
-//Log.Write("StreamBufferPlayer9:invalidate");
-
 				GUIGraphicsContext.form.Invalidate(true);
 				m_state = PlayState.Init;
-				GC.Collect();
+				GC.Collect();GC.Collect();GC.Collect();
       }
       catch( Exception ex)
       {

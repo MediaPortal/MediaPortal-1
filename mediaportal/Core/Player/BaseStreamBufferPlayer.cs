@@ -971,65 +971,33 @@ namespace MediaPortal.Player
 			Log.Write("StreamBufferPlayer:cleanup DShow graph");
 			try 
 			{
-				if( rotCookie != 0 )
-					DsROT.RemoveGraphFromRot( ref rotCookie );
+
 
 				if( mediaCtrl != null )
 				{
 					hr = mediaCtrl.Stop();
-					while ( (hr=Marshal.ReleaseComObject(mediaCtrl))>0);
+
 					mediaCtrl = null;
 				}
 
 				m_state = PlayState.Init;
 
-				if( mediaEvt != null )
-				{
-					while ( (hr=Marshal.ReleaseComObject(mediaEvt))>0);
-					mediaEvt = null;
-				}
-
-				if( videoWin != null )
-				{
-          m_bWindowVisible=false;
-					m_bIsVisible=false;
-					while ( (hr=Marshal.ReleaseComObject(videoWin))>0);
-					videoWin = null;
-				}
-
-				if ( m_mediaSeeking != null )
-					while ( (hr=Marshal.ReleaseComObject( m_mediaSeeking ))>0);
+				mediaEvt = null;			
+        m_bWindowVisible=false;
+				m_bIsVisible=false;
+				videoWin = null;
 				m_mediaSeeking= null;
-
-				if ( m_mediaSeeking2 != null )
-					while ( (hr=Marshal.ReleaseComObject( m_mediaSeeking2 ))>0);
 				m_mediaSeeking2= null;
-        
-				if (basicAudio!=null) 
-				{
-					while ( (hr=Marshal.ReleaseComObject(basicAudio))>0); 
-					basicAudio	= null;
-				}
-				if (basicVideo!=null) 
-				{
-					while ( (hr=Marshal.ReleaseComObject(basicVideo))>0); 
-					basicVideo	= null;
-				}
-				if (m_StreamBufferConfig!=null) 
-				{
-					while ( (hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0); 
-					m_StreamBufferConfig=null;
-				}
+				basicAudio	= null;
+				basicVideo	= null;
+				bufferSource=null;
+
 				if (streamConfig2!=null) 
 				{
 					while ( (hr=Marshal.ReleaseComObject(streamConfig2))>0); 
 					streamConfig2=null;
 				}
-				if (bufferSource!=null) 
-				{
-					while ( (hr=Marshal.ReleaseComObject(bufferSource))>0); 
-					bufferSource=null;
-				}
+				m_StreamBufferConfig=null;
 
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
@@ -1049,7 +1017,7 @@ namespace MediaPortal.Player
 
 				m_state = PlayState.Init;
 				GUIGraphicsContext.form.Invalidate(true);
-				GC.Collect();
+				GC.Collect();GC.Collect();GC.Collect();
 			}
 			catch( Exception ex)
 			{

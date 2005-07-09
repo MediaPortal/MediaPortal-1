@@ -176,7 +176,7 @@ namespace MediaPortal.Player
 				
 				//if (m_mixerBitmap!= null)
 				//	while ( (result=Marshal.ReleaseComObject(m_mixerBitmap))>0); 
-				//m_mixerBitmap = null;
+				m_mixerBitmap = null;
 
 //				if (quality != null)
 //					while ( (result=Marshal.ReleaseComObject(quality))>0); 
@@ -186,7 +186,7 @@ namespace MediaPortal.Player
 				{
 					try
 					{
-						m_graphBuilder.RemoveFilter(VMR9Filter);
+						result=m_graphBuilder.RemoveFilter(VMR9Filter);
 					}
 					catch(Exception){}
 					//while ( (result=Marshal.ReleaseComObject(VMR9Filter))>0); 
