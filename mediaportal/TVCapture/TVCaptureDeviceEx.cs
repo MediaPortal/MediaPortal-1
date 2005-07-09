@@ -1512,7 +1512,6 @@ namespace MediaPortal.TV.Recording
 				recordedTvObject.Title = String.Empty;
 				recordedTvObject.Genre = String.Empty;
 				recordedTvObject.Description = String.Empty;
-				
 				recordedTvObject.End=Utils.datetolong(DateTime.Now.AddHours(2));
 			}
 

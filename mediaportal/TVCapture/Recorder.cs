@@ -1786,6 +1786,7 @@ namespace MediaPortal.TV.Recording
 
 		private static void card_OnTvRecordingEnded(string recordingFileName, TVRecording recording, TVProgram program)
 		{
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: recording ended '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}",recording.Title,recording.Channel, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString(),recording.ID, recording.Priority,recording.Quality.ToString());
 			if (OnTvRecordingEnded!=null)
 				OnTvRecordingEnded(recordingFileName,recording, program);
 			if (OnTvRecordingChanged!=null)
@@ -1794,6 +1795,7 @@ namespace MediaPortal.TV.Recording
 
 		private static void card_OnTvRecordingStarted(string recordingFileName, TVRecording recording, TVProgram program)
 		{
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: recording started '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}",recording.Title,recording.Channel, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString(),recording.ID, recording.Priority,recording.Quality.ToString());
 			if (OnTvRecordingStarted!=null)
 				OnTvRecordingStarted(recordingFileName,recording, program);
 			if (OnTvRecordingChanged!=null)

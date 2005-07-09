@@ -2983,6 +2983,10 @@
 	<value>Program starts in 5 mins</value>
 </string>
 <string>
+	<id>1017</id>
+	<value>Sort by: Duration</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>My TeleText</value>
 </string>

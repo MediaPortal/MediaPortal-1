@@ -32,6 +32,7 @@ namespace MediaPortal.GUI.TV
       Name=2,
       Genre=3,
       Played=4,
+			Duration=5
     }
 		enum ViewAs
 		{
@@ -75,11 +76,12 @@ namespace MediaPortal.GUI.TV
 					else if (strTmp=="name") currentSortMethod=SortMethod.Name;
 					else if (strTmp=="type") currentSortMethod=SortMethod.Genre;
 					else if (strTmp=="played") currentSortMethod=SortMethod.Played;
+					else if (strTmp=="duration") currentSortMethod=SortMethod.Duration;
 				}
 				strTmp=(string)xmlreader.GetValue("tvrecorded","view");
 				if (strTmp!=null)
 				{
-					if (strTmp=="albu,") currentViewMethod=ViewAs.Album;
+					if (strTmp=="album") currentViewMethod=ViewAs.Album;
 					else if (strTmp=="list") currentViewMethod=ViewAs.List;
 				}
 				
@@ -108,7 +110,10 @@ namespace MediaPortal.GUI.TV
             break;
           case SortMethod.Played:
             xmlwriter.SetValue("tvrecorded","sort","played");
-            break;
+						break;
+					case SortMethod.Duration:
+						xmlwriter.SetValue("tvrecorded","sort","duration");
+						break;
         }
 				switch (currentViewMethod)
 				{
@@ -269,6 +274,9 @@ namespace MediaPortal.GUI.TV
 						currentSortMethod=SortMethod.Played;
 						break;
 					case SortMethod.Played:
+						currentSortMethod=SortMethod.Duration;
+						break;
+					case SortMethod.Duration:
 						currentSortMethod=SortMethod.Channel;
 						break;
 				}
@@ -488,7 +496,10 @@ namespace MediaPortal.GUI.TV
           break;
         case SortMethod.Played:
           strLine=GUILocalizeStrings.Get(671);//Sort by: Watched
-          break;
+					break;
+				case SortMethod.Duration:
+					strLine=GUILocalizeStrings.Get(1017);//Sort by: Duration
+					break;
 			}
 			GUIControl.SetControlLabel(GetID,btnSortBy.GetID,strLine);
 			switch (currentViewMethod)
@@ -541,8 +552,9 @@ namespace MediaPortal.GUI.TV
 				TVRecorded rec=(TVRecorded)item1.TVTag;
 				item1.Label=item2.Label=rec.Title;
 				TimeSpan ts = rec.EndTime-rec.StartTime;
-				string strTime=String.Format("{0} {1} ", 
+				string strTime=String.Format("{0} {1} ({2})", 
 					Utils.GetShortDayString(rec.StartTime) , 
+					rec.StartTime.ToShortTimeString() , 
 					Utils.SecondsToHMString( (int)ts.TotalSeconds));
 				item1.Label2=item2.Label2=strTime;
 				if (currentViewMethod==ViewAs.Album)
@@ -823,17 +835,35 @@ namespace MediaPortal.GUI.TV
             else return iComp;
           }
 
+				case SortMethod.Duration:
+				{
+					long duration1=rec1.End-rec1.Start;
+					long duration2=rec2.End-rec2.Start;
+					if (m_bSortAscending)
+					{
+						if (duration1==duration2) goto case SortMethod.Date;
+						if (duration1>duration2) return 1;
+						return -1;
+					}
+					else
+					{
+						if (duration1==duration2) goto case SortMethod.Date;
+						if (duration1<duration2) return 1;
+						return -1;
+					}
+				}
+				break;
         case SortMethod.Date:
           if (m_bSortAscending)
           {
             if (rec1.StartTime==rec2.StartTime) return 0;
-            if (rec1.StartTime>rec2.StartTime) return 1;
+            if (rec1.StartTime<rec2.StartTime) return 1;
             return -1;
           }
           else
           {
-            if (rec2.StartTime==rec1.StartTime) return 0;
-            if (rec2.StartTime>rec1.StartTime) return 1;
+            if (rec1.StartTime==rec2.StartTime) return 0;
+            if (rec1.StartTime>rec2.StartTime) return 1;
             return -1;
           }
 
