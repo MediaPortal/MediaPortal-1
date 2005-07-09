@@ -107,6 +107,13 @@ namespace MediaPortal.Player
 			{
 				g_vmr7=null;
 				Log.Write("VMR7Helper:RemoveVMR7");
+				if (m_mixerBitmap != null)
+					Marshal.ReleaseComObject(m_mixerBitmap);
+				m_mixerBitmap = null;
+
+				if (quality != null)
+					Marshal.ReleaseComObject(quality);
+				quality = null;
 	
 				if (VMR7Filter != null)
 				{
@@ -114,17 +121,10 @@ namespace MediaPortal.Player
 					m_graphBuilder.RemoveFilter(VMR7Filter);
 					}
 					catch(Exception){}
+					Marshal.ReleaseComObject(VMR7Filter); 
 					m_graphBuilder=null;
-					//Marshal.ReleaseComObject(VMR7Filter); 
 					VMR7Filter = null;
 				}
-				//if (m_mixerBitmap != null)
-				//	Marshal.ReleaseComObject(m_mixerBitmap);
-				m_mixerBitmap = null;
-
-				//if (quality != null)
-				//	Marshal.ReleaseComObject(quality);
-				quality = null;
 				vmr7intialized=false;
 			}
 		}
