@@ -367,11 +367,11 @@ namespace MediaPortal.Player
 		{
 			try
 			{
+				m_texAdr=pTex;
 				if (pTex==0)
 				{
 					Log.Write("PlaneScene: dispose surfaces");
 					m_surfAdr=0;
-					m_texAdr=0;
 					m_vmr9Util.VideoWidth=0;
 					m_vmr9Util.VideoHeight=0;
 					m_vmr9Util.VideoAspectRatioX=0;
@@ -388,7 +388,7 @@ namespace MediaPortal.Player
 				}
 				m_vmr9Util.FrameCounter++;
 				//			Log.Write("vmr9:present image()");
-				InternalPresentImage(width,height,arWidth, arHeight, pTex, false);
+				InternalPresentImage(width,height,arWidth, arHeight, false);
 				//			Log.Write("vmr9:present image() done");
 			}
 			catch(Exception)
@@ -399,10 +399,10 @@ namespace MediaPortal.Player
 		{
 			try
 			{
+				m_surfAdr=pSurface;
 				if (pSurface==0)
 				{
 					Log.Write("PlaneScene: dispose surfaces");
-					m_surfAdr=0;
 					m_texAdr=0;
 					m_vmr9Util.VideoWidth=0;
 					m_vmr9Util.VideoHeight=0;
@@ -419,14 +419,14 @@ namespace MediaPortal.Player
 					return;
 				}
 				m_vmr9Util.FrameCounter++;
-				InternalPresentSurface(width,height,arWidth, arHeight, pSurface, false);
+				InternalPresentSurface(width,height,arWidth, arHeight, false);
 			}
 			catch(Exception)
 			{
 			}
 		}
 
-		private void InternalPresentImage(int width,int height,int arWidth, int arHeight, uint pTex, bool isRepaint)
+		private void InternalPresentImage(int width,int height,int arWidth, int arHeight, bool isRepaint)
 		{
 			if (reentrant)
 			{
@@ -493,7 +493,7 @@ namespace MediaPortal.Player
 
 				m_idebugstep=3;
 				//get desired video window
-				if (width>0 && height>0 && pTex!=0)
+				if (width>0 && height>0 && m_texAdr!=0)
 				{
 					Size nativeSize = new Size(width, height);
 					renderTexture= SetVideoWindow(nativeSize);
@@ -547,8 +547,10 @@ namespace MediaPortal.Player
 						m_idebugstep=12;
 						unsafe
 						{
-							m_texAdr=pTex;
-							DrawTexture(pTex,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
+							if (m_texAdr!=0)
+							{
+								DrawTexture(m_texAdr,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
+							}
 						}
 						
 						m_idebugstep=13;
@@ -583,7 +585,7 @@ namespace MediaPortal.Player
 			catch (Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
-					width,height,arWidth, arHeight, pTex, isRepaint,m_idebugstep,
+					width,height,arWidth, arHeight, m_texAdr, isRepaint,m_idebugstep,
 					ex.Message,ex.Source,ex.StackTrace);
 			}
 			finally
@@ -594,7 +596,7 @@ namespace MediaPortal.Player
 		}
 
 		
-		private void InternalPresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface, bool InRepaint)
+		private void InternalPresentSurface(int width,int height,int arWidth, int arHeight, bool InRepaint)
 		{
 			if (reentrant)
 			{
@@ -664,7 +666,7 @@ namespace MediaPortal.Player
 				m_idebugstep=4;
 				//get desired video window
 				Size nativeSize = new Size(width, height);
-				if (width>0 && height>0 && pSurface!=0)
+				if (width>0 && height>0 && m_surfAdr!=0)
 				{
 					renderTexture= SetVideoWindow(nativeSize);
 				}
@@ -713,8 +715,10 @@ namespace MediaPortal.Player
 						m_idebugstep=11;
 						unsafe
 						{
-							m_surfAdr=pSurface;
-							DrawSurface(pSurface,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
+							if (m_surfAdr!=0)
+							{
+								DrawSurface(m_surfAdr,_fx,_fy,_nw,_nh, _uoff, _voff, _umax, _vmax, m_lColorDiffuse);
+							}
 						}
 					}
 
@@ -747,7 +751,7 @@ namespace MediaPortal.Player
 			catch (Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in {7} {8} {9}",
-					width,height,arWidth, arHeight, pSurface, InRepaint,m_idebugstep,
+					width,height,arWidth, arHeight, m_surfAdr, InRepaint,m_idebugstep,
 					ex.Message,ex.Source,ex.StackTrace);
 			}
 			finally
@@ -830,12 +834,12 @@ namespace MediaPortal.Player
 				if (m_texAdr!=0)
 				{
 					if (!GUIGraphicsContext.InVmr9Render)
-						InternalPresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_texAdr,true);
+						InternalPresentImage(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,true);
 				}
 				else if (m_surfAdr!=0)
 				{
 					if (!GUIGraphicsContext.InVmr9Render)
-						InternalPresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,m_surfAdr,true);
+						InternalPresentSurface(m_vmr9Util.VideoWidth,m_vmr9Util.VideoHeight,arVideoWidth,arVideoHeight,true);
 				}
 				else
 				{
