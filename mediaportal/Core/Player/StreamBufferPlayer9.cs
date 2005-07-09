@@ -48,16 +48,16 @@ namespace MediaPortal.Player
     protected override bool GetInterfaces(string filename)
     {
 		  Speed=1;	
-			Log.Write("StreamBufferPlayer9: GetInterfaces()");
+			//Log.Write("StreamBufferPlayer9: GetInterfaces()");
       Type comtype = null;
       object comobj = null;
       
       //switch back to directx fullscreen mode
 			
-			Log.Write("StreamBufferPlayer9: switch to fullscreen mode");
+	//		Log.Write("StreamBufferPlayer9: switch to fullscreen mode");
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);
-Log.Write("StreamBufferPlayer9: build graph");
+//Log.Write("StreamBufferPlayer9: build graph");
 
       try 
       {
@@ -69,7 +69,7 @@ Log.Write("StreamBufferPlayer9: build graph");
         }
         comobj = Activator.CreateInstance( comtype );
         graphBuilder = (IGraphBuilder) comobj; comobj = null;
-Log.Write("StreamBufferPlayer9: add vmr9");
+//Log.Write("StreamBufferPlayer9: add vmr9");
 
 				Vmr9= new VMR9Util("mytv");
 				Vmr9.AddVMR9(graphBuilder);			
@@ -89,13 +89,13 @@ Log.Write("StreamBufferPlayer9: add vmr9");
 					RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
 					hr=pTemp.SetHKEY(subKey);
 					hr=streamConfig2.SetFFTransitionRates(8,32);	
-					Log.Write("set FFTransitionRates:{0:X}",hr);
+					//Log.Write("set FFTransitionRates:{0:X}",hr);
 					
 					uint max,maxnon;
 					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
-					Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
+					//Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
 				}
-				Log.Write("StreamBufferPlayer9: add sbe");
+				//Log.Write("StreamBufferPlayer9: add sbe");
 
 				// create SBE source
         Guid clsid = Clsid.StreamBufferSource;
@@ -123,7 +123,7 @@ Log.Write("StreamBufferPlayer9: add vmr9");
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to get IFileSourceFilter");
           return false;
         }	
-Log.Write("StreamBufferPlayer9: open file:{0}",filename);
+//Log.Write("StreamBufferPlayer9: open file:{0}",filename);
 				hr = fileSource.Load(filename, IntPtr.Zero);
         if (hr!=0) 
         {
@@ -132,7 +132,7 @@ Log.Write("StreamBufferPlayer9: open file:{0}",filename);
         }	
 
 
-Log.Write("StreamBufferPlayer9: add codecs");
+//Log.Write("StreamBufferPlayer9: add codecs");
 				// add preferred video & audio codecs
 				string strVideoCodec="";
         string strAudioCodec="";
@@ -177,7 +177,7 @@ Log.Write("StreamBufferPlayer9: add codecs");
 //        Log.Write("StreamBufferPlayer9:SetARMode");
 //        DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
-        Log.Write("StreamBufferPlayer9: set Deinterlace");
+        //Log.Write("StreamBufferPlayer9: set Deinterlace");
 
 				if ( !Vmr9.IsVMR9Connected )
 				{
@@ -189,7 +189,7 @@ Log.Write("StreamBufferPlayer9: add codecs");
 				}
 
 				Vmr9.SetDeinterlaceMode();
-				Log.Write("StreamBufferPlayer9: done");
+				//Log.Write("StreamBufferPlayer9: done");
 				return true;
       }
       catch( Exception  ex)
@@ -218,7 +218,7 @@ Log.Write("StreamBufferPlayer9: add codecs");
 				if (graphBuilder==null) return;
 
         int hr;
-        Log.Write("StreamBufferPlayer9:cleanup DShow graph {0}",GUIGraphicsContext.InVmr9Render);
+        //Log.Write("StreamBufferPlayer9:cleanup DShow graph {0}",GUIGraphicsContext.InVmr9Render);
         try 
         {
 					if(Vmr9!=null)
@@ -232,7 +232,7 @@ Log.Write("StreamBufferPlayer9: add codecs");
 						if (counter >200) break;
 					}
 
-Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
+//Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
           if( mediaCtrl != null )
           {
             hr = mediaCtrl.Stop();
@@ -241,16 +241,16 @@ Log.Write("StreamBufferPlayer9:stop graph:{0}",GUIGraphicsContext.InVmr9Render);
 
           }
           
-					Log.Write("StreamBufferPlayer9:stopped:{0}",GUIGraphicsContext.InVmr9Render);
+//					Log.Write("StreamBufferPlayer9:stopped:{0}",GUIGraphicsContext.InVmr9Render);
 
-					Log.Write("StreamBufferPlayer9:stop notifies");
+//					Log.Write("StreamBufferPlayer9:stop notifies");
 					if( mediaEvt != null )
 					{
 						Marshal.ReleaseComObject(mediaEvt);
 						mediaEvt = null;
 					}
 				//added from agree: check if Vmr9 already null
-Log.Write("StreamBufferPlayer9:clean vmr9");
+//Log.Write("StreamBufferPlayer9:clean vmr9");
 					if(Vmr9!=null)
 				{
 					Vmr9.RemoveVMR9();
@@ -268,18 +268,18 @@ Log.Write("StreamBufferPlayer9:clean vmr9");
 				if (videoWin!=null) Marshal.ReleaseComObject(videoWin); videoWin=null;
 
 
-Log.Write("StreamBufferPlayer9:remove filters");
+//Log.Write("StreamBufferPlayer9:remove filters");
 					DsUtils.RemoveFilters(graphBuilder);
 
-Log.Write("StreamBufferPlayer9:remove graph from rot");
+//Log.Write("StreamBufferPlayer9:remove graph from rot");
 				if( rotCookie != 0 )
 				DsROT.RemoveGraphFromRot( ref rotCookie );
 				rotCookie=0;
-Log.Write("StreamBufferPlayer9:remove graph ");
+//Log.Write("StreamBufferPlayer9:remove graph ");
 				if( graphBuilder != null )
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
 
-Log.Write("StreamBufferPlayer9:invalidate");
+//Log.Write("StreamBufferPlayer9:invalidate");
 
 				GUIGraphicsContext.form.Invalidate(true);
 				m_state = PlayState.Init;
@@ -290,7 +290,7 @@ Log.Write("StreamBufferPlayer9:invalidate");
         Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}",ex.Message, ex.StackTrace);
       }
 
-Log.Write("StreamBufferPlayer9:switch");
+//Log.Write("StreamBufferPlayer9:switch");
 			//switch back to directx windowed mode
 			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
 			GUIWindowManager.SendMessage(msg);

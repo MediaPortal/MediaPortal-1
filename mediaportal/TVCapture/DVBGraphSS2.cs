@@ -1024,6 +1024,7 @@ namespace MediaPortal.TV.Recording
 
 			//add collected stuff into programs database
 
+			GC.Collect();GC.Collect();GC.Collect();
 			m_graphState = State.None;
 			return;		
 		}

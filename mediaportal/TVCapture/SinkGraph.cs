@@ -397,7 +397,7 @@ namespace MediaPortal.TV.Recording
         Marshal.ReleaseComObject( m_graphBuilder ); m_graphBuilder = null;
 
       GUIGraphicsContext.form.Invalidate(true);
-      GC.Collect();
+     GC.Collect();GC.Collect();GC.Collect();
 
       m_graphState=State.None;
       return ;

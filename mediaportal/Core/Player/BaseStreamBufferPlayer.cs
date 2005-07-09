@@ -112,7 +112,7 @@ namespace MediaPortal.Player
 			m_ar=MediaPortal.GUI.Library.Geometry.Type.Normal;
 
 			m_bUpdateNeeded=true;
-			Log.Write("StreamBufferPlayer:preview {0}", strFile);
+			Log.Write("StreamBufferPlayer:play {0}", strFile);
 			GC.Collect();
 			CloseInterfaces();
 			GC.Collect();
@@ -417,13 +417,13 @@ namespace MediaPortal.Player
 			if (m_bWindowVisible && !m_bIsVisible)
 			{
 				m_bWindowVisible=false;
-				Log.Write("StreamBufferPlayer:hide window");
+				//Log.Write("StreamBufferPlayer:hide window");
 				if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
 			}
 			else if (!m_bWindowVisible && m_bIsVisible)
 			{
 				m_bWindowVisible=true;
-				Log.Write("StreamBufferPlayer:show window");
+				//Log.Write("StreamBufferPlayer:show window");
 				if (videoWin!=null) videoWin.put_Visible( DsHlp.OATRUE );
 			}      
 			
@@ -716,7 +716,7 @@ namespace MediaPortal.Player
           if (dTime<0.0d) dTime=0.0d;
           if (dTime>Duration) dTime=Duration;
 					dTime=Math.Floor(dTime);
-          Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
+          //Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
           dTime*=10000000d;
 					long pStop=0;
           long lContentStart,lContentEnd;
@@ -739,7 +739,7 @@ namespace MediaPortal.Player
           }
 				}
         UpdateCurrentPosition();
-        Log.Write("seek->current pos:{0}", CurrentPosition);
+        //Log.Write("seek->current pos:{0}", CurrentPosition);
 
 			}
 		}
@@ -879,11 +879,11 @@ namespace MediaPortal.Player
 					RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
 					hr=pTemp.SetHKEY(subKey);
 					hr=streamConfig2.SetFFTransitionRates(8,32);	
-					Log.Write("set FFTransitionRates:{0:X}",hr);
+					//Log.Write("set FFTransitionRates:{0:X}",hr);
 					
 					uint max,maxnon;
 					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
-					Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
+					//Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
 				}
 
 		
@@ -940,13 +940,13 @@ namespace MediaPortal.Player
 				basicVideo	= graphBuilder as IBasicVideo2;
 				basicAudio	= graphBuilder as IBasicAudio;
 				
-				Log.Write("StreamBufferPlayer:SetARMode");
+				//Log.Write("StreamBufferPlayer:SetARMode");
 				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
 				graphBuilder.SetDefaultSyncSource();
-				Log.Write("StreamBufferPlayer: set Deinterlace");
+				//Log.Write("StreamBufferPlayer: set Deinterlace");
 
-				Log.Write("StreamBufferPlayer: done");
+				//Log.Write("StreamBufferPlayer: done");
 				return true;
 			}
 			catch( Exception  ex)
@@ -1033,7 +1033,7 @@ namespace MediaPortal.Player
 			{
 				Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
 			}
-			Log.Write("StreamBufferPlayer:cleanup done");
+			//Log.Write("StreamBufferPlayer:cleanup done");
 		}
 
 		public override void WndProc( ref Message m )
@@ -1063,11 +1063,11 @@ namespace MediaPortal.Player
           hr = mediaEvt.FreeEventParams( code, p1, p2 );
           if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
           {
-            Log.Write("StreamBufferPlayer:on notify complete");
+            //Log.Write("StreamBufferPlayer:on notify complete");
             MovieEnded();
           }
-					Log.Write("basestreambufferplayer: event:{0} {1} {2}",
-										code.ToString(),p1,p2);
+					//Log.Write("basestreambufferplayer: event:{0} {1} {2}",
+					//					code.ToString(),p1,p2);
         }
         else
         {
@@ -1148,23 +1148,23 @@ namespace MediaPortal.Player
 							if (m_mediaSeeking2!=null)
 							{
 								int hr=m_mediaSeeking2.SetRateEx((double)iSpeed,25);
-								Log.Write("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
+								//Log.Write("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
 								if (hr!=0)
 								{
 									IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
 									hr=oldMediaSeek.SetRate((double)iSpeed);
-									Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+									//Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
 								}
 							}
 							else
 							{
 								int hr=m_mediaSeeking.SetRate((double)iSpeed);
-								Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
+								//Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
 								if (hr!=0)
 								{
 									IMediaSeeking oldMediaSeek=graphBuilder as IMediaSeeking;
 									hr=oldMediaSeek.SetRate((double)iSpeed);
-									Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+									//Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
 								}
 							}
 							if (iSpeed==1)
@@ -1175,7 +1175,7 @@ namespace MediaPortal.Player
 								Application.DoEvents();
 								FilterState state;
 								mediaCtrl.GetState(100,out state);
-								Log.Write("state:{0}", state.ToString());
+								//Log.Write("state:{0}", state.ToString());
 								mediaCtrl.Run();
 							}
 						}
