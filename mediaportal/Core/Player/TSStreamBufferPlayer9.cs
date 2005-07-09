@@ -111,35 +111,17 @@ namespace MediaPortal.Player
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
-				basicVideo	= graphBuilder as IBasicVideo2;
 				m_mediaSeeking = graphBuilder as IMediaSeeking;
         
-				hr = basicVideo.GetVideoSize( out m_iVideoWidth, out m_iVideoHeight );
-				if (hr!=0)
+				hasVideo=true;
+				if ( !Vmr9.IsVMR9Connected )
 				{
+					hasVideo=false;
 					if (videoCodec!=null)
 						graphBuilder.RemoveFilter(videoCodec);
-					hasVideo=false;
 					if (Vmr9!=null)
 						Vmr9.RemoveVMR9();
 					Vmr9=null;
-					basicVideo	= null;
-					videoWin=null;
-				}
-				basicVideo	= null;
-
-				if (hasVideo && Vmr9!=null)
-				{
-					if ( !Vmr9.IsVMR9Connected )
-					{
-						//VMR9 is not supported, switch to overlay
-						Log.Write("TStreamBufferPlayer9: switch to overlay");
-						mediaCtrl=null;
-						Cleanup();
-						return base.GetInterfaces(filename);
-					}
-					else 
-						Vmr9.SetDeinterlaceMode();
 				}
 
 				return true;

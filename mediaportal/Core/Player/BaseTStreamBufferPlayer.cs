@@ -908,6 +908,7 @@ namespace MediaPortal.Player
 				//Log.Write("TStreamBufferPlayer:SetARMode");
 				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
+				hasVideo=true;
 				hr = basicVideo.GetVideoSize( out m_iVideoWidth, out m_iVideoHeight );
 				if (hr!=0)
 				{
