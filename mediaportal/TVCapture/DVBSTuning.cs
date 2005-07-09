@@ -138,7 +138,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public void Start()
 		{
-			m_currentDiseqc=-1;
+			m_currentDiseqc=1;
 			currentIndex=-1;
 			timer1.Interval=100;
 			timer1.Enabled=true;
@@ -215,10 +215,14 @@ namespace MediaPortal.TV.Recording
 			{
 				if (currentIndex >= count)
 				{
-					callback.OnProgress(100);
-					callback.OnStatus("Finished");
-					callback.OnEnded();
-					return;
+					if(m_currentDiseqc>=m_diseqcLoops)
+					{
+						callback.OnProgress(100);
+						callback.OnStatus("Finished");
+						callback.OnEnded();
+						captureCard.DeleteGraph();
+						return;
+					}
 				}
 				UpdateStatus();
 				ScanNextTransponder();
