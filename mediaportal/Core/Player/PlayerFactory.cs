@@ -160,29 +160,33 @@ namespace MediaPortal.Player
 				iUseVMR9inMYMovies=xmlreader.GetValueAsInt("movieplayer","vmr9",0);
       }
 
-      if (Utils.IsVideo(strFileName))
-      {        
-        if ( strExt==".tv" ||   strExt==".sbe" || strExt==".dvr-ms" )
-        {
-          if ( strExt==".sbe" ||strExt==".dvr-ms" )
-          {
-             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
-             GUIWindowManager.SendMessage(msg);
-          }
-          if (iUseVMR9inMYTV==0) newPlayer=new Player.BaseStreamBufferPlayer();
-					if (iUseVMR9inMYTV==1) newPlayer=new Player.StreamBufferPlayerVMR9wl();
+			if (Utils.IsVideo(strFileName))
+			{        
+				if ( strExt==".tv" ||   strExt==".sbe" || strExt==".dvr-ms" )
+				{
+					if ( strExt==".sbe" ||strExt==".dvr-ms" )
+					{
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
+						GUIWindowManager.SendMessage(msg);
+					}
+					if (iUseVMR9inMYTV==0) newPlayer=new Player.BaseStreamBufferPlayer();
+					if (iUseVMR9inMYTV==1) newPlayer=new Player.StreamBufferPlayer9();
 					if (iUseVMR9inMYTV==2) newPlayer=new Player.StreamBufferPlayer9();
-          return newPlayer;
-        }
-        else
-        {
-          if (iUseVMR9inMYMovies==0) newPlayer=new Player.VideoPlayerVMR7();
-					if (iUseVMR9inMYMovies==1) newPlayer=new Player.VideoPlayerVMR9wl();
-					if (iUseVMR9inMYMovies==2) newPlayer=new Player.VideoPlayerVMR9();
-          return newPlayer;
-        }
-      }
-
+					return newPlayer;
+				}
+			}
+			if ( strExt==".ts")
+			{
+				if (iUseVMR9inMYTV==0) newPlayer=new Player.BaseTStreamBufferPlayer();
+				else newPlayer=new Player.TStreamBufferPlayer9();
+				return newPlayer;
+			}
+			if (Utils.IsVideo(strFileName))
+			{
+				if (iUseVMR9inMYMovies==0) newPlayer=new Player.VideoPlayerVMR7();
+				else newPlayer=new Player.VideoPlayerVMR9();
+				return newPlayer;
+			}
 
       if ( strExt==".radio" )
       {

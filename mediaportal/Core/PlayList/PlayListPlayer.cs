@@ -291,8 +291,11 @@ namespace MediaPortal.Playlists
         item.Played=true;
         if (Utils.IsVideo(item.FileName))
         {
-          GUIGraphicsContext.IsFullScreenVideo=true;
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+					if (g_Player.HasVideo)
+					{
+						GUIGraphicsContext.IsFullScreenVideo=true;
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+					}
         }
       }
     }

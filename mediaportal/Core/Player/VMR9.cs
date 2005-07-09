@@ -42,6 +42,7 @@ namespace MediaPortal.Player
     int frameCounter = 0;
     DateTime repaintTimer = DateTime.Now;
 	  IVMRMixerBitmap9 m_mixerBitmap=null;
+		IGraphBuilder m_graphBuilder=null;
 		bool vmr9Initialized=false;
     enum Vmr9PlayState
     {
@@ -131,7 +132,7 @@ namespace MediaPortal.Player
 
 			quality = VMR9Filter as IQualProp ;
 			m_mixerBitmap=baseFilter as IVMRMixerBitmap9;
-			
+			m_graphBuilder=graphBuilder;			
 			instanceCounter++;
 			GUIGraphicsContext.Vmr9Active = true;
 			g_vmr9=this;
@@ -172,11 +173,18 @@ namespace MediaPortal.Player
 					GUIGraphicsContext.InVmr9Render=false;
 					currentVmr9State = Vmr9PlayState.Playing;
 				}
-				if (quality != null)
-					Marshal.ReleaseComObject(quality); quality = null;
 					
 				if (VMR9Filter != null)
+				{
+					m_graphBuilder.RemoveFilter(VMR9Filter);
+					m_graphBuilder=null;
 					Marshal.ReleaseComObject(VMR9Filter); VMR9Filter = null;
+				}
+				if (quality != null)
+					Marshal.ReleaseComObject(quality); quality = null;
+				
+				if (m_mixerBitmap!= null)
+					Marshal.ReleaseComObject(m_mixerBitmap); m_mixerBitmap = null;
 			}
 		}
 

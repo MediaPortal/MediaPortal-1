@@ -35,7 +35,8 @@ namespace MediaPortal.Player
 		DateTime repaintTimer = DateTime.Now;
 		//ulong m_oldSavedBitmapCRC=0;
 		bool  vmr7intialized=false;
-		//Util.CRCTool crc=new MediaPortal.Util.CRCTool();
+		IGraphBuilder m_graphBuilder=null;
+			//Util.CRCTool crc=new MediaPortal.Util.CRCTool();
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -90,6 +91,7 @@ namespace MediaPortal.Player
 				VMR7Filter=null;
 				return;
 			}
+			m_graphBuilder=graphBuilder;
 			m_mixerBitmap=VMR7Filter as IVMRMixerBitmap;
 			quality = VMR7Filter as IQualProp ;
 			g_vmr7=this;
@@ -104,6 +106,15 @@ namespace MediaPortal.Player
 			if (vmr7intialized)
 			{
 				Log.Write("VMR7Helper:RemoveVMR7");
+	
+				if (VMR7Filter != null)
+				{
+					m_graphBuilder.RemoveFilter(VMR7Filter);
+					m_graphBuilder=null;
+					Marshal.ReleaseComObject(VMR7Filter); 
+					VMR7Filter = null;
+					g_vmr7=null;
+				}
 				if (m_mixerBitmap != null)
 					Marshal.ReleaseComObject(m_mixerBitmap);
 				m_mixerBitmap = null;
@@ -111,13 +122,7 @@ namespace MediaPortal.Player
 				if (quality != null)
 					Marshal.ReleaseComObject(quality);
 				quality = null;
-					
-				if (VMR7Filter != null)
-				{
-					Marshal.ReleaseComObject(VMR7Filter); 
-					VMR7Filter = null;
-					g_vmr7=null;
-				}
+				
 				vmr7intialized=false;
 			}
 		}

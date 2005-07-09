@@ -1049,6 +1049,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Player\BaseTStreamBufferPlayer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Player\DVDPlayer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1100,6 +1105,11 @@
                 />
                 <File
                     RelPath = "Player\StreamBufferPlayerVMR9wl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Player\TSStreamBufferPlayer9.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
