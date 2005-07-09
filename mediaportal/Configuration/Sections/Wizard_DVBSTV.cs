@@ -19,7 +19,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Label labelStatus;
-		private System.Windows.Forms.ComboBox cbCountry;
 		
 
 		struct TPList
@@ -54,9 +53,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ProgressBar progressBar3;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.ComboBox comboBox2;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.ComboBox cbTransponder;
 		int m_currentDiseqc=1;
 
 		public Wizard_DVBSTV() : this("DVB-S TV")
@@ -98,7 +97,6 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.button1 = new System.Windows.Forms.Button();
 			this.label2 = new System.Windows.Forms.Label();
-			this.cbCountry = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
@@ -113,8 +111,8 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar3 = new System.Windows.Forms.ProgressBar();
 			this.button3 = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
-			this.comboBox2 = new System.Windows.Forms.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
+			this.cbTransponder = new System.Windows.Forms.ComboBox();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -148,12 +146,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label2.Location = new System.Drawing.Point(0, 0);
 			this.label2.Name = "label2";
 			this.label2.TabIndex = 0;
-			// 
-			// cbCountry
-			// 
-			this.cbCountry.Location = new System.Drawing.Point(0, 0);
-			this.cbCountry.Name = "cbCountry";
-			this.cbCountry.TabIndex = 0;
 			// 
 			// label1
 			// 
@@ -208,12 +200,12 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.cbTransponder);
 			this.groupBox3.Controls.Add(this.panel1);
 			this.groupBox3.Controls.Add(this.label6);
 			this.groupBox3.Controls.Add(this.progressBar3);
 			this.groupBox3.Controls.Add(this.button3);
 			this.groupBox3.Controls.Add(this.label7);
-			this.groupBox3.Controls.Add(this.comboBox2);
 			this.groupBox3.Controls.Add(this.label8);
 			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox3.Location = new System.Drawing.Point(4, 4);
@@ -260,13 +252,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label7.TabIndex = 2;
 			this.label7.Text = "Transponder:";
 			// 
-			// comboBox2
-			// 
-			this.comboBox2.Location = new System.Drawing.Point(144, 72);
-			this.comboBox2.Name = "comboBox2";
-			this.comboBox2.Size = new System.Drawing.Size(168, 21);
-			this.comboBox2.TabIndex = 1;
-			// 
 			// label8
 			// 
 			this.label8.Location = new System.Drawing.Point(24, 24);
@@ -275,6 +260,15 @@ namespace MediaPortal.Configuration.Sections
 			this.label8.TabIndex = 0;
 			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your transponder an" +
 				"d press auto tune to scan for the tv and radio channels";
+			
+			// 
+			// cbTransponder
+			// 
+			this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbTransponder.Location = new System.Drawing.Point(136, 72);
+			this.cbTransponder.Name = "cbTransponder";
+			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
+			this.cbTransponder.TabIndex = 14;
 			// 
 			// Wizard_DVBSTV
 			// 
@@ -290,20 +284,22 @@ namespace MediaPortal.Configuration.Sections
 
 
 
+
+
 		public override void OnSectionActivated()
 		{
-			base.OnSectionActivated ();
 			labelStatus.Text="";
+			cbTransponder.Items.Clear();
 			string [] files = System.IO.Directory.GetFiles( System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters");
 			foreach (string file in files)
 			{
 				if (file.ToLower().IndexOf(".tpl") >=0)
 				{
-					cbCountry.Items.Add(file);
+					cbTransponder.Items.Add(System.IO.Path.GetFileName(file));
 				}
 			}
-			if (cbCountry.Items.Count>0)
-				cbCountry.SelectedIndex=0;
+			if (cbTransponder.Items.Count>0)
+				cbTransponder.SelectedIndex=0;
 
 		}
 
@@ -323,14 +319,14 @@ namespace MediaPortal.Configuration.Sections
 
 			currentIndex=-1;
 
-			string countryName=(string)cbCountry.SelectedItem;
+			string countryName=(string)cbTransponder.SelectedItem;
 			if (countryName==String.Empty) return;
 			count = 0;
 			string line;
 			string[] tpdata;
 			Log.WriteFile(Log.LogType.Capture,"Opening {0}",countryName);
 			// load transponder list and start scan
-			System.IO.TextReader tin = System.IO.File.OpenText(countryName);
+			System.IO.TextReader tin = System.IO.File.OpenText(System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters\"+countryName);
 			
 			do
 			{

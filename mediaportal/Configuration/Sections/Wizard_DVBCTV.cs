@@ -196,7 +196,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if (file.ToLower().IndexOf(".dvbc") >=0)
 				{
-					cbCountry.Items.Add(file);
+					cbCountry.Items.Add(System.IO.Path.GetFileName(file));
 				}
 			}
 
@@ -213,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
 			string[] tpdata;
 			Log.WriteFile(Log.LogType.Capture,"Opening {0}",countryName);
 			// load dvbcChannelsList list and start scan
-			System.IO.TextReader tin = System.IO.File.OpenText(countryName);
+			System.IO.TextReader tin = System.IO.File.OpenText(System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters\"+countryName);
 			
 			int LineNr=0;
 			do
