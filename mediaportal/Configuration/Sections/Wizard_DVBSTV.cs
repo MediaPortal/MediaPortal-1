@@ -222,6 +222,7 @@ namespace MediaPortal.Configuration.Sections
 			this.cbTransponder.Name = "cbTransponder";
 			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
 			this.cbTransponder.TabIndex = 14;
+			this.cbTransponder.SelectedIndexChanged += new System.EventHandler(this.cbTransponder_SelectedIndexChanged);
 			// 
 			// panel1
 			// 
@@ -499,7 +500,7 @@ namespace MediaPortal.Configuration.Sections
 			cards.LoadCaptureCards();
 			foreach (TVCaptureDevice dev in cards.captureCards)
 			{
-				if (dev.Network==NetworkType.DVBT)
+				if (dev.Network==NetworkType.DVBS)
 				{
 					captureCard = dev;
 					captureCard.CreateGraph();
@@ -512,6 +513,11 @@ namespace MediaPortal.Configuration.Sections
 			newRadioChannels=0; updatedRadioChannels=0;
 			DoScan();
 			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
+		
+		}
+
+		private void cbTransponder_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
 		
 		}
 
