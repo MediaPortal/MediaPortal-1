@@ -17,7 +17,7 @@
 			<description>Background TV</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>70</posX>
+			<posX>87</posX>
 			<posY>278</posY>
 			<width>-</width>
 			<height>-</height>
@@ -46,22 +46,22 @@
 			<description>Date</description>
 			<type>label</type>
 			<id>200</id>
-			<posX>65</posX>
+			<posX>95</posX>
 			<posY>300</posY>
 			<label>#date</label>
 			<align>left</align>
-			<font>font13</font>
+			<font>font12</font>
 			<textcolor>ffa9d0f7</textcolor>
 		</control>
 		<control>
 			<description>Time</description>
 			<type>label</type>
 			<id>201</id>
-			<posX>65</posX>
+			<posX>95</posX>
 			<posY>320</posY>
 			<label>#time</label>
 			<align>left</align>
-			<font>font13</font>
+			<font>font12</font>
 			<textcolor>ffa9d0f7</textcolor>
 		</control>
 		<control>
@@ -174,8 +174,8 @@
 		<description>TV background</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>60</posX>
-		<posY>420</posY>
+		<posX>77</posX>
+		<posY>390</posY>
 		<width>160</width>
 		<height>115</height>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -185,8 +185,8 @@
 		<description>TV preview window</description>
 		<type>videowindow</type>
 		<id>1</id>
-		<posX>75</posX>
-		<posY>425</posY>
+		<posX>92</posX>
+		<posY>395</posY>
 		<width>130</width>
 		<height>104</height>
 		<action>18</action>
