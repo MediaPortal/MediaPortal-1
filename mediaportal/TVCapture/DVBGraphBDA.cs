@@ -797,6 +797,7 @@ namespace MediaPortal.TV.Recording
 						{
 							IBDA_SignalStatistics stat=(IBDA_SignalStatistics )m_TunerStatistics[i];
 							while ((hr=Marshal.ReleaseComObject(stat))>0);
+							if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(tunerstat):{0}",hr);
 						}
 					}
 					m_TunerStatistics.Clear();
@@ -848,6 +849,7 @@ namespace MediaPortal.TV.Recording
 				if (m_sampleGrabber != null) 
 				{
 					while ((hr=Marshal.ReleaseComObject(m_sampleGrabber))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_sampleGrabber):{0}",hr);
 					m_sampleGrabber=null;
 				}
 				
@@ -859,6 +861,7 @@ namespace MediaPortal.TV.Recording
 				{
 					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free streambuffer");
 					while ((hr=Marshal.ReleaseComObject(m_StreamBufferSink))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_StreamBufferSink):{0}",hr);
 					m_StreamBufferSink=null;
 				}
 
@@ -866,6 +869,7 @@ namespace MediaPortal.TV.Recording
 				if (m_StreamBufferConfig != null) 
 				{
 					while ((hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_StreamBufferConfig):{0}",hr);
 					m_StreamBufferConfig=null;
 				}
 
@@ -873,36 +877,42 @@ namespace MediaPortal.TV.Recording
 				if (m_NetworkProvider != null)
 				{	
 					while ((hr=Marshal.ReleaseComObject(m_NetworkProvider))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_NetworkProvider):{0}",hr);
 					m_NetworkProvider = null;
 				}
 
 				if (m_TunerDevice != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(m_TunerDevice))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_TunerDevice):{0}",hr);
 					m_TunerDevice = null;
 				}
 
 				if (m_CaptureDevice != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(m_CaptureDevice))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_CaptureDevice):{0}",hr);
 					m_CaptureDevice = null;
 				}
 				
 				if (m_MPEG2Demultiplexer != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(m_MPEG2Demultiplexer))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_MPEG2Demultiplexer):{0}",hr);
 					m_MPEG2Demultiplexer = null;
 				}
 
 				if (m_TIF != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(m_TIF))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_TIF):{0}",hr);
 					m_TIF = null;
 				}
 
 				if (m_SectionsTables != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(m_SectionsTables))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_SectionsTables):{0}",hr);
 					m_SectionsTables = null;
 				}
 
@@ -921,12 +931,14 @@ namespace MediaPortal.TV.Recording
 				if (m_captureGraphBuilder != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(m_captureGraphBuilder))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_captureGraphBuilder):{0}",hr);
 					m_captureGraphBuilder = null;
 				}
 
 				if (m_graphBuilder != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(m_graphBuilder))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_graphBuilder):{0}",hr);
 					m_graphBuilder = null;
 				}
 
@@ -934,10 +946,7 @@ namespace MediaPortal.TV.Recording
 				foreach (string strfName in m_Card.TvFilterDefinitions.Keys)
 				{
 					FilterDefinition dsFilter = m_Card.TvFilterDefinitions[strfName] as FilterDefinition;
-					if (dsFilter.DSFilter != null)
-					{
-						while ((hr=Marshal.ReleaseComObject(dsFilter.DSFilter))>0);
-					}
+					dsFilter.DSFilter=null;
 					((FilterDefinition)m_Card.TvFilterDefinitions[strfName]).DSFilter = null;
 					dsFilter = null;
 				}

@@ -175,7 +175,7 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph()");
       GUIGraphicsContext.OnGammaContrastBrightnessChanged +=new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       m_iPrevChannel=-1;
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph()");
+//      Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph()");
       int hr=0;
       Filters filters = new Filters();
 			DShowNET.Filter                  videoCaptureDeviceFilter=null;
@@ -195,27 +195,27 @@ namespace MediaPortal.TV.Recording
 			}
 
       // Make a new filter graph
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:create new filter graph (IGraphBuilder)");
+//      Log.WriteFile(Log.LogType.Capture,"SinkGraph:create new filter graph (IGraphBuilder)");
       m_graphBuilder = (IGraphBuilder) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.FilterGraph, true ) ); 
 
       // Get the Capture Graph Builder
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+//      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
       Guid clsid = Clsid.CaptureGraphBuilder2;
       Guid riid = typeof(ICaptureGraphBuilder2).GUID;
       m_captureGraphBuilder = (ICaptureGraphBuilder2) DsBugWO.CreateDsInstance( ref clsid, ref riid ); 
 
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+//      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       hr = m_captureGraphBuilder.SetFiltergraph( m_graphBuilder );
       if( hr != 0 ) 
       {
         Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:link FAILED");
         return false;
       }
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Add graph to ROT table");
+//      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Add graph to ROT table");
       DsROT.AddGraphToRot( m_graphBuilder, out m_rotCookie );
 
       // Get the video device and add it to the filter graph
-			Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
+//			Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
 			try
 			{
 				m_captureFilter = Marshal.BindToMoniker( videoCaptureDeviceFilter.MonikerString ) as IBaseFilter;
@@ -244,13 +244,13 @@ namespace MediaPortal.TV.Recording
       // FindInterface will also add any required filters
       // (WDM devices in particular may need additional
       // upstream filters to function).
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:get Video stream control interface (IAMStreamConfig)");
+//      Log.WriteFile(Log.LogType.Capture,"SinkGraph:get Video stream control interface (IAMStreamConfig)");
       object o;
       Guid cat ;
       Guid iid ;
 
       // Retrieve TV Tuner if available
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Find TV Tuner");
+//      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Find TV Tuner");
       o = null;
       cat = FindDirection.UpstreamOnly;
       iid = typeof(IAMTVTuner).GUID;
@@ -263,8 +263,8 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:CreateGraph() FAILED:no tuner found :0x{0:X}",hr);
       }
-			else
-				Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() TV tuner found");
+//			else
+//				Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() TV tuner found");
 
       // For some reason, it happens alot that the capture card can NOT be connected (pin 656 for the
       // PRV150MCE) to the encoder because for some reason the videostandard is GONE...
@@ -372,13 +372,17 @@ namespace MediaPortal.TV.Recording
 
 
       if( m_TVTuner != null )
+			{
         while ((hr=Marshal.ReleaseComObject( m_TVTuner ))>0); 
-			m_TVTuner = null;
-			
-      if( m_captureFilter != null )
-        while ((hr=Marshal.ReleaseComObject( m_captureFilter ))>0); 
-			m_captureFilter = null;
-
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_TVTuner):{0}",hr);
+				m_TVTuner = null;
+			}
+			if( m_captureFilter != null )
+			{
+				while ((hr=Marshal.ReleaseComObject( m_captureFilter ))>0); 
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_captureFilter):{0}",hr);
+				m_captureFilter = null;
+			}
 			if (m_graphBuilder!=null)
 				DsUtils.RemoveFilters(m_graphBuilder);
 
@@ -387,13 +391,16 @@ namespace MediaPortal.TV.Recording
 			m_rotCookie=0;
 
 
-      if( m_captureGraphBuilder != null )
-        while ((hr=Marshal.ReleaseComObject( m_captureGraphBuilder ))>0); 
-			m_captureGraphBuilder = null;
-	
+			if( m_captureGraphBuilder != null )
+			{
+				while ((hr=Marshal.ReleaseComObject( m_captureGraphBuilder ))>0); 
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_captureGraphBuilder):{0}",hr);
+				m_captureGraphBuilder = null;
+			}
 			if( m_graphBuilder != null )
 			{
 				while ((hr=Marshal.ReleaseComObject( m_graphBuilder ))>0); 
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_captureGraphBuilder):{0}",hr);
 				m_graphBuilder = null;
 			}
       GUIGraphicsContext.form.Invalidate(true);
@@ -453,7 +460,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     protected void ConnectVideoCaptureToMPEG2Demuxer()
 		{
-			Log.WriteFile(Log.LogType.Capture,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
+//			Log.WriteFile(Log.LogType.Capture,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
 			if (m_captureFilter==null || m_graphBuilder==null) 
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
@@ -482,15 +489,13 @@ namespace MediaPortal.TV.Recording
 
 			if (m_mpeg2Demux!=null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"SinkGraph:find MPEG2 demuxer input pin");
+//				Log.WriteFile(Log.LogType.Capture,"SinkGraph:find MPEG2 demuxer input pin");
 				IPin pinIn=DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter,PinDirection.Input,0);
 				if (pinIn!=null) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"SinkGraph:found MPEG2 demuxer input pin");
+//					Log.WriteFile(Log.LogType.Capture,"SinkGraph:found MPEG2 demuxer input pin");
 					int hr=m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, pinIn);
-					if (hr==0)
-						Log.WriteFile(Log.LogType.Capture,"SinkGraph:connected video capture out->MPEG2 demuxer input");
-					else
+					if (hr!=0)
 						Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
 
 					Marshal.ReleaseComObject(pinIn);

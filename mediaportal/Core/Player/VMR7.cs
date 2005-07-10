@@ -105,7 +105,7 @@ namespace MediaPortal.Player
 		{
 			if (vmr7intialized)
 			{
-//				int result;
+				int result;
 				Log.Write("VMR7Helper:RemoveVMR7");
 				//if (m_mixerBitmap != null)
 				//	while ((result=Marshal.ReleaseComObject(m_mixerBitmap))>0);
@@ -120,10 +120,12 @@ namespace MediaPortal.Player
 					//while ((result=Marshal.ReleaseComObject(VMR7Filter))>0); 
 					try
 					{
-						m_graphBuilder.RemoveFilter(VMR7Filter);
+						result=m_graphBuilder.RemoveFilter(VMR7Filter);
+						if (result!=0) Log.Write("VMR7Helper:RemoveFilter():{0}",result);
 					}
 					catch(Exception){}
-					VMR7Filter = null;
+					while ( (result=Marshal.ReleaseComObject(VMR7Filter))>0); 
+					if (result!=0) Log.Write("VMR7Helper:ReleaseComObject():{0}",result);
 					m_graphBuilder=null;
 				}
 				vmr7intialized=false;

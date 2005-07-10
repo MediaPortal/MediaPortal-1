@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.InteropServices; 
 using System.Reflection;
 using DShowNET;
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
@@ -534,15 +535,57 @@ namespace DShowNET
 
 		public void CloseInterfaces()
 		{
-			if (_mCapturePin!=null) Marshal.ReleaseComObject(_mCapturePin); _mCapturePin=null;
-			if (_mPreviewAudioPin!=null) Marshal.ReleaseComObject(_mPreviewAudioPin); _mPreviewAudioPin=null;
-			if (_mPreviewVideoPin!=null) Marshal.ReleaseComObject(_mPreviewVideoPin); _mPreviewVideoPin=null;
-			if (_mVideoPortPin!=null) Marshal.ReleaseComObject(_mVideoPortPin); _mVideoPortPin=null;
-			if (_mVideoCaptureStreamConfig!=null) Marshal.ReleaseComObject(_mVideoCaptureStreamConfig); _mVideoCaptureStreamConfig=null;
-			if (_mVideoVPortStreamConfig!=null) Marshal.ReleaseComObject(_mVideoVPortStreamConfig); _mVideoVPortStreamConfig=null;
-			if (_mVideoPreviewStreamConfig!=null) Marshal.ReleaseComObject(_mVideoPreviewStreamConfig); _mVideoPreviewStreamConfig=null;
-			if (_mCaptureFilter!=null) Marshal.ReleaseComObject(_mCaptureFilter); _mCaptureFilter=null;
-			_mCaptureGraphBuilder=null;
+			int hr=0;
+			if (_mCapturePin!=null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(_mCapturePin))>0); 
+				_mCapturePin=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mCapturePin):{0}",hr);
+			}
+
+			if (_mPreviewAudioPin!=null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(_mPreviewAudioPin))>0); 
+				_mPreviewAudioPin=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mPreviewAudioPin):{0}",hr);
+			}
+			if (_mPreviewVideoPin!=null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(_mPreviewVideoPin))>0); 
+				_mPreviewVideoPin=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mPreviewVideoPin):{0}",hr);
+			}
+			if (_mVideoPortPin!=null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(_mVideoPortPin))>0); 
+				_mVideoPortPin=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mVideoPortPin):{0}",hr);
+			}
+
+			if (_mVideoCaptureStreamConfig!=null) 
+			{
+				_mVideoCaptureStreamConfig=null;
+			}
+
+			if (_mVideoVPortStreamConfig!=null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(_mVideoVPortStreamConfig))>0); 
+				_mVideoVPortStreamConfig=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mVideoVPortStreamConfig):{0}",hr);
+			}
+			if (_mVideoPreviewStreamConfig!=null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(_mVideoPreviewStreamConfig))>0); 
+				_mVideoPreviewStreamConfig=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mVideoPreviewStreamConfig):{0}",hr);
+			}
+			if (_mCaptureFilter!=null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(_mCaptureFilter))>0); 
+				_mCaptureFilter=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mCaptureFilter):{0}",hr);
+				_mCaptureGraphBuilder=null;
+			}
 			_mGraphBuilder=null;
 		}
 

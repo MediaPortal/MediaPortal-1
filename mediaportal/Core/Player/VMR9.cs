@@ -187,9 +187,11 @@ namespace MediaPortal.Player
 					try
 					{
 						result=m_graphBuilder.RemoveFilter(VMR9Filter);
+						if (result!=0) Log.Write("VMR9:RemoveFilter():{0}",result);
 					}
 					catch(Exception){}
 					while ( (result=Marshal.ReleaseComObject(VMR9Filter))>0); 
+					if (result!=0) Log.Write("VMR9:ReleaseComObject():{0}",result);
 					VMR9Filter = null;
 					m_graphBuilder=null;
 				}
