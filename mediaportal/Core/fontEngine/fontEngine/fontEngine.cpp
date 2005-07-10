@@ -655,6 +655,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	xpos-=0.5f;
 	float fStartX = xpos;
 	ypos -=0.5f;
+	float fStartY = ypos;
 
 	float yoff    = (font->textureCoord[0][3]-font->textureCoord[0][1])*font->fTextureHeight;
 	float fScaleX = font->fTextureWidth  / font->fTextureScale;
@@ -674,6 +675,39 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	float maxX = viewport.X + viewport.Width;
 	float maxY = viewport.Y + viewport.Height;
 
+	float lineWidths[90];
+	int lineNr=0;
+	for (int i=0; i < (int)wcslen(text);++i)
+	{
+        WCHAR c=text[i];
+		if (c == '\n')
+		{
+			lineWidths[lineNr]=totalWidth;
+			totalWidth=0;
+			xpos = fStartX;
+			ypos += yoff;
+			lineNr++;
+			continue;
+		}
+		else if (c < font->iFirstChar || c >= font->iEndChar)
+			continue;
+		else if (totalWidth >= maxWidth)		// Reached max width?
+			continue;							// Skip until row break or end of text
+
+        int index=c-font->iFirstChar;
+		float tx1 = font->textureCoord[index][0];
+		float tx2 = font->textureCoord[index][2];
+
+		float w = (tx2-tx1) * fScaleX;
+		totalWidth += (w - fSpacing);
+		xpos += (w - fSpacing);
+		lineWidths[lineNr]=totalWidth;
+	}
+
+	totalWidth=0;
+	xpos = fStartX;
+	ypos = fStartY;
+	lineNr=0;
 	for (int i=0; i < (int)wcslen(text);++i)
 	{
         WCHAR c=text[i];
@@ -682,6 +716,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 			totalWidth=0;
 			xpos = fStartX;
 			ypos += yoff;
+			lineNr++;
 			continue;
 		}
 		else if (c < font->iFirstChar || c >= font->iEndChar)
@@ -732,7 +767,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 
 			int alpha1=intColor;
 			int alpha2=intColor;
-			if (totalWidth+50>=maxWidth && maxWidth > 0 && maxWidth < 2000)
+			if (lineWidths[lineNr]>=maxWidth && totalWidth+50>=maxWidth && maxWidth > 0 && maxWidth < 2000)
 			{
 				int maxAlpha=intColor>>24;
 				float diff=(float)(maxWidth-totalWidth);
@@ -745,9 +780,9 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 				alpha2=(int)(maxAlpha * diff);
 				
 				if (alpha1<0) alpha1=0;
-				if (alpha1>0xff) alpha1=0xff;
+				if (alpha1>0xff) alpha1=maxAlpha;
 				if (alpha2<0) alpha2=0;
-				if (alpha2>0xff) alpha2=0xff;
+				if (alpha2>0xff) alpha2=maxAlpha;
 				
 				alpha1 <<=24;
 				alpha2 <<=24;
