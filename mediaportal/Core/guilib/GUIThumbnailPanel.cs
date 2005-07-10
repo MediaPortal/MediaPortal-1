@@ -106,6 +106,7 @@ namespace MediaPortal.GUI.Library
     protected double iScrollOffset = 0.0f;
     protected int iCurrentFrame = 0;
     protected double timeElapsed = 0.0f;
+    protected bool scrollContinuosly = false;
 
     public double TimeSlice
     {
@@ -1495,10 +1496,18 @@ namespace MediaPortal.GUI.Library
             iScrollOffset = 0.0f;
             iCurrentFrame = 0;
             timeElapsed = 0.0f;
+            scrollContinuosly = false;
           }
-          if (iCurrentFrame > 25 + 12)
+          if ((iCurrentFrame > 25 + 12) || scrollContinuosly)
           {
-            iScrollX = iCurrentFrame - (25 + 12);
+            if (scrollContinuosly)
+            {
+              iScrollX = iCurrentFrame;
+            }
+            else
+            {
+              iScrollX = iCurrentFrame - (25 + 12);
+            }
             char wTmp;
             if (scroll_pos >= m_strBrackedText.Length)
               wTmp = ' ';
@@ -1516,6 +1525,7 @@ namespace MediaPortal.GUI.Library
                 iScrollOffset = 0.0f;
                 iCurrentFrame = 0;
                 timeElapsed = 0.0f;
+                scrollContinuosly = true;
               }
               else
               {
