@@ -397,15 +397,17 @@ namespace MediaPortal.Configuration.Sections
 					percent *= 100.0f;
 					progressBar1.Value=((int)percent);
 					TPList transponder=transp[index];
-					string chanDesc=String.Format("freq:{0} Khz, Pol:{1} SR:{2}",
-						transponder.TPfreq, transponder.TPpol, transponder.TPsymb );
+					string chanDesc=String.Format("freq:{0} Khz, Pol:{1} SR:{2}",transponder.TPfreq, transponder.TPpol, transponder.TPsymb );
 					string description=String.Format("Transponder:{0}/{1} {2}", index,count,chanDesc);
+					labelStatus.Text=(description);
+					Application.DoEvents();
 
 					ScanNextTransponder();
 					if (captureCard.SignalPresent())
 					{
 						description=String.Format("Found signal for transponder:{0} {1}, Scanning channels", currentIndex,chanDesc);
 						labelStatus.Text=(description);
+						Application.DoEvents();
 						ScanChannels();
 					}
 				}			
@@ -467,6 +469,7 @@ namespace MediaPortal.Configuration.Sections
 				if(m_currentDiseqc>=m_diseqcLoops)
 				{
 					progressBar1.Value=(100);
+					Application.DoEvents();
 				}
 				else
 				{
@@ -509,11 +512,15 @@ namespace MediaPortal.Configuration.Sections
 			}
 			LoadFrequencies();
 			progressBar1.Visible=true;
+			progressBar1.Value=0;
+			Application.DoEvents();
 			newChannels=0; updatedChannels=0;
 			newRadioChannels=0; updatedRadioChannels=0;
 			DoScan();
 			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
 		
+			progressBar1.Value=100;
+			Application.DoEvents();
 		}
 
 		private void cbTransponder_SelectedIndexChanged(object sender, System.EventArgs e)

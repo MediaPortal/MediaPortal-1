@@ -305,6 +305,7 @@ namespace MediaPortal.Configuration.Sections
 					break;
 				}
 			}
+			progressBar1.Visible=true;
 
 			currentIndex=0;
 			while (currentIndex < count)
@@ -365,13 +366,13 @@ namespace MediaPortal.Configuration.Sections
 		}
 		void ScanChannels()
 		{
-			System.Threading.Thread.Sleep(400);
-			Application.DoEvents();
 
 			DVBCList dvbcChan=dvbcChannels[currentIndex];
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",dvbcChan.frequency,dvbcChan.modulation.ToString(), dvbcChan.symbolrate);
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			labelStatus.Text=description;
+			System.Threading.Thread.Sleep(400);
+			Application.DoEvents();
 
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			

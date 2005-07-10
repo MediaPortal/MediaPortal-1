@@ -282,6 +282,7 @@ namespace MediaPortal.Configuration.Sections
 				frequency /=1000;
 				string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
 				labelStatus.Text=description;
+				Application.DoEvents();
 
 				ScanNextFrequency(0);
 				if (captureCard.SignalPresent())
@@ -290,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
 					labelStatus.Text=description;
 					ScanChannels();
 				}
-				if (scanOffset!=0)
+				else if (scanOffset!=0)
 				{
 					ScanNextFrequency(-scanOffset);
 					if (captureCard.SignalPresent())
@@ -299,12 +300,15 @@ namespace MediaPortal.Configuration.Sections
 						labelStatus.Text=description;
 						ScanChannels();
 					}
-					ScanNextFrequency(scanOffset);
-					if (captureCard.SignalPresent())
+					else
 					{
-						description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency+scanOffset);
-						labelStatus.Text=description;
-						ScanChannels();
+						ScanNextFrequency(scanOffset);
+						if (captureCard.SignalPresent())
+						{
+							description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", frequency+scanOffset);
+							labelStatus.Text=description;
+							ScanChannels();
+						}
 					}
 				}
 				currentFrequencyIndex++;
