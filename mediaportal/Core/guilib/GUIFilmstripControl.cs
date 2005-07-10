@@ -1440,7 +1440,8 @@ namespace MediaPortal.GUI.Library
             }
             if (fPosY >= 0.0)
             {
-              m_pFont.DrawText((int) (fPosX - iScrollX + iScrollOffset), fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
+              //              m_pFont.DrawText((int) (fPosX - iScrollX + iScrollOffset), fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
+              m_pFont.DrawText((int) (fPosX - iScrollX + iScrollOffset), fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f + iScrollX - iScrollOffset));
             }
           }
           else
