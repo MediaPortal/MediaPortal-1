@@ -2325,14 +2325,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="ADS Instant TV DVB-T PCI" capturename="ADS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_03341421&amp;rev_05">
+  <capturecard commercialname="ADS Instant TV DVB-T PCI" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_03341421&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="ADS BDA DVB-T Tuner/Demod"      	checkdevice="true"></filter>
-        <filter cat="capture"         name="ADS 2388x Transport Stream Capture" checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="DigiGo DVBT BDA Tuner/Demod"      	checkdevice="true"></filter>
+        <filter cat="capture"         name="DigiGo DVBT 2388x Transport Stream Capture" checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -6206,5 +6206,21 @@
         <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv> 
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-1100" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_94020070&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
   </capturecard>
 </capturecards>
