@@ -893,40 +893,47 @@ namespace MediaPortal.TV.Recording
 			if (m_streamBufferConfig != null) 
 			{
 				while ((hr=Marshal.ReleaseComObject(m_streamBufferConfig))>0); 
+				if (hr!=0) Log.Write("ReleaseComObject(m_streamBufferConfig):{0}",hr);
 				m_streamBufferConfig=null;
 			}
 	
 			if(m_sampleGrabber!=null)
 			{
 				while ((hr=Marshal.ReleaseComObject(m_sampleGrabber))>0);
+				if (hr!=0) Log.Write("ReleaseComObject(m_sampleGrabber):{0}",hr);
 				m_sampleGrabber=null;
 			}
 			if(m_demux!=null)
 			{
 				while ((hr=Marshal.ReleaseComObject(m_demux))>0);
+				if (hr!=0) Log.Write("ReleaseComObject(m_demux):{0}",hr);
 				m_demux=null;
 			}			
 			if(m_mpeg2Data!=null)
 			{
 				while ((hr=Marshal.ReleaseComObject(m_mpeg2Data))>0);
+				if (hr!=0) Log.Write("ReleaseComObject(m_mpeg2Data):{0}",hr);
 				m_mpeg2Data=null;
 			}			
 
 			if(m_mpeg2Analyzer!=null)
 			{
 				while ((hr=Marshal.ReleaseComObject(m_mpeg2Analyzer))>0);
+				if (hr!=0) Log.Write("ReleaseComObject(m_mpeg2Analyzer):{0}",hr);
 				m_mpeg2Analyzer=null;
 			}
 
 			if(m_sinkFilter!=null)
 			{
 				while ((hr=Marshal.ReleaseComObject(m_sinkFilter))>0);
+				if (hr!=0) Log.Write("ReleaseComObject(m_sinkFilter):{0}",hr);
 				m_sinkFilter=null;
 			}
 
 			if(m_b2c2Adapter!=null)
 			{
 				while ((hr=Marshal.ReleaseComObject(m_b2c2Adapter))>0);
+				if (hr!=0) Log.Write("ReleaseComObject(m_b2c2Adapter):{0}",hr);
 				m_b2c2Adapter=null;
 			}
 			DsUtils.RemoveFilters(m_graphBuilder);      
@@ -938,6 +945,7 @@ namespace MediaPortal.TV.Recording
 			if (m_graphBuilder != null)
 			{
 				while ((hr=Marshal.ReleaseComObject(m_graphBuilder))>0); 
+				if (hr!=0) Log.Write("ReleaseComObject(m_graphBuilder):{0}",hr);
 				m_graphBuilder = null;
 			}
 
