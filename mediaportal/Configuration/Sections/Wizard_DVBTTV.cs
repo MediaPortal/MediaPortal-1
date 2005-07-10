@@ -136,7 +136,6 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar1.Name = "progressBar1";
 			this.progressBar1.Size = new System.Drawing.Size(416, 16);
 			this.progressBar1.TabIndex = 4;
-			this.progressBar1.Visible = false;
 			// 
 			// button1
 			// 

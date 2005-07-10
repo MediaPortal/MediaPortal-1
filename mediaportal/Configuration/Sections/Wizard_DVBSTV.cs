@@ -245,7 +245,6 @@ namespace MediaPortal.Configuration.Sections
 			this.progressBar3.Name = "progressBar3";
 			this.progressBar3.Size = new System.Drawing.Size(416, 16);
 			this.progressBar3.TabIndex = 4;
-			this.progressBar3.Visible = false;
 			// 
 			// button3
 			// 
