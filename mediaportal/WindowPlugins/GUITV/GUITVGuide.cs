@@ -2136,20 +2136,25 @@ namespace MediaPortal.GUI.TV
 							g_Player.Stop();
 						}
 						int count=0;
-						if (VMR9Util.g_vmr9!=null)
-							VMR9Util.g_vmr9.Enable(false);
-
-						while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
-						GUITVHome.IsTVOn=true;
-						GUITVHome.ViewChannel(m_strCurrentChannel);
-						if (Recorder.IsViewing())
+						try
 						{
-							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-							return;
+							if (VMR9Util.g_vmr9!=null)
+								VMR9Util.g_vmr9.Enable(false);
+
+							while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
+							GUITVHome.IsTVOn=true;
+							GUITVHome.ViewChannel(m_strCurrentChannel);
+							if (Recorder.IsViewing())
+							{
+								GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+							}
 						}
-						if (VMR9Util.g_vmr9!=null)
-							VMR9Util.g_vmr9.Enable(true);
-						break;
+						finally
+						{
+							if (VMR9Util.g_vmr9!=null)
+								VMR9Util.g_vmr9.Enable(true);
+						}
+						return;
 						
 
 					case 939: // switch mode
@@ -2245,19 +2250,25 @@ namespace MediaPortal.GUI.TV
 						{
 							g_Player.Stop();
 						}
-						
-						if (VMR9Util.g_vmr9!=null)
-							VMR9Util.g_vmr9.Enable(false);
-						int count=0;
-						while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
-						GUITVHome.IsTVOn=true;
-						GUITVHome.ViewChannel(m_strCurrentChannel);
-						if (Recorder.IsViewing())
+						try
 						{
-							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+							if (VMR9Util.g_vmr9!=null)
+								VMR9Util.g_vmr9.Enable(false);
+
+							int count=0;
+							while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
+							GUITVHome.IsTVOn=true;
+							GUITVHome.ViewChannel(m_strCurrentChannel);
+							if (Recorder.IsViewing())
+							{
+								GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+							}
 						}
-						if (VMR9Util.g_vmr9!=null)
-							VMR9Util.g_vmr9.Enable(true);
+						finally
+						{
+							if (VMR9Util.g_vmr9!=null)
+								VMR9Util.g_vmr9.Enable(true);
+						}
 						return;
 
 					case 610://none
