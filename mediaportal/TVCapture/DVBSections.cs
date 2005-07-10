@@ -1694,6 +1694,9 @@ namespace MediaPortal.TV.Recording
 						eit.starttime_hh=dtLocal.Hour;
 						eit.starttime_mm=dtLocal.Minute;
 						eit.starttime_ss=dtLocal.Second;
+						eit.starttime_y=dtLocal.Year;
+						eit.starttime_m=dtLocal.Month;
+						eit.starttime_d=dtLocal.Day;
 
 						eitInfo.program_id = service_id;
 						eitInfo.running_status = running_status;
