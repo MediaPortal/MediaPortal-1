@@ -55,28 +55,24 @@ namespace MediaPortal.GUI.Settings
         {
           base.OnMessage(message);
           LoadSettings();
-					GUISpinControl cntl = (GUISpinControl )GetControl((int)Controls.CONTROL_FPS);
-					cntl.ShowRange=false;
+          GUISpinControl cntl = (GUISpinControl )GetControl((int)Controls.CONTROL_FPS);
+          cntl.ShowRange=false;
           GUIControl.ClearControl(GetID,(int)Controls.CONTROL_SPEED);
           for (int i=1; i <=10;++i)
           {
             GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_SPEED,i.ToString());
-					}
-					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED,m_iSpeed-1);
+          }
+          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED,m_iSpeed-1);
 					
-					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_FPS);
-					for (int i=10; i <=100;++i)
-					{
-						GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_FPS,i.ToString());
-					}
-					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_FPS,GUIGraphicsContext.MaxFPS-10);
+          GUIControl.ClearControl(GetID,(int)Controls.CONTROL_FPS);
+          for (int i=10; i <=100;++i)
+          {
+            GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_FPS,i.ToString());
+          }
+          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_FPS,GUIGraphicsContext.MaxFPS-10);
 
-          GUIControl.ClearControl(GetID,(int)Controls.CONTROL_EXAMPLE);
-          GUIControl.ClearControl(GetID,(int)Controls.CONTROL_EXAMPLE2);
+          ResetExampleLabels();
 
-          string strTmp="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." ;
-          GUIControl.AddItemLabelControl( GetID,  (int)Controls.CONTROL_EXAMPLE, strTmp );
-          GUIControl.SetControlLabel( GetID,  (int)Controls.CONTROL_EXAMPLE2, strTmp );
           return true;
         }
         
@@ -94,13 +90,14 @@ namespace MediaPortal.GUI.Settings
             string strLabel=message.Label;
             m_iSpeed=Int32.Parse(strLabel);
             GUIGraphicsContext.ScrollSpeed=m_iSpeed;
+            ResetExampleLabels();
           }
 					if (iControl==(int)Controls.CONTROL_FPS)
 					{
 						string strLabel=message.Label;
 						int fps=Int32.Parse(strLabel);
 						GUIGraphicsContext.MaxFPS=fps;
-					}
+          }
 
         }
           break;
@@ -109,6 +106,14 @@ namespace MediaPortal.GUI.Settings
       return base.OnMessage(message);
     }
 
+    void ResetExampleLabels()
+    {
+      GUIControl.ClearControl(GetID,(int)Controls.CONTROL_EXAMPLE);
+      GUIControl.ClearControl(GetID,(int)Controls.CONTROL_EXAMPLE2);
+      string strTmp="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." ;
+      GUIControl.AddItemLabelControl( GetID,  (int)Controls.CONTROL_EXAMPLE, strTmp );
+      GUIControl.SetControlLabel( GetID,  (int)Controls.CONTROL_EXAMPLE2, strTmp );
+    }
     
     #region Serialisation
     void LoadSettings()
@@ -125,7 +130,7 @@ namespace MediaPortal.GUI.Settings
       using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
 				xmlwriter.SetValue("general","scrollspeed",m_iSpeed.ToString());
-				xmlwriter.SetValue("screen","maxfps",(int)GUIGraphicsContext.MaxFPS);
+				xmlwriter.SetValue("screen","maxfps",GUIGraphicsContext.MaxFPS);
       }
     }
     #endregion
