@@ -2996,7 +2996,7 @@
 </string>
 
 	<!-- My Status Strings -->
-	<string><id>1950</id><value>My status</value></string>
+	<string><id>1950</id><value>My Status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>
 	<string><id>1952</id><value>Fan</value></string>
 	<string><id>1953</id><value>Free</value></string>
