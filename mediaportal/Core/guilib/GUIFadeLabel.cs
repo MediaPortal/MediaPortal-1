@@ -173,7 +173,10 @@ namespace MediaPortal.GUI.Library
         dwAlpha <<= 24;
         dwAlpha += (m_dwTextColor & 0x00ffffff);
         m_label.TextColor = dwAlpha;
-        m_label.Label = GetShortenedText(strLabel, m_dwWidth);
+        float fwt = 0;
+        m_label.Label = GetShortenedText(strLabel, m_dwWidth, ref fwt);
+        if (m_dwTextAlign == Alignment.ALIGN_RIGHT)
+          m_label.Width = (int)(fwt);
         m_label.Render(timePassed);
         if (m_iCurrentFrame >= 12)
         {
@@ -393,14 +396,13 @@ namespace MediaPortal.GUI.Library
           if (Alignment.ALIGN_RIGHT == m_dwTextAlign)
           {
             // right alignment => calculate xpos differently
-            string strLabel = GetShortenedText(wszOrgText, m_dwWidth);
-            float fwt = 0, fht = 0;
-            m_pFont.GetTextExtent(strLabel, ref fwt, ref fht);
+            float fwt = 0;
+            //            string strLabel = GetShortenedText(wszOrgText, m_dwWidth, ref fwt);
+            GetShortenedText(wszOrgText, m_dwWidth, ref fwt); 
             int xpos = (int)(fPosX - fwt - iScrollX + iScrollOffset);
             m_label.Label = szText;
-            m_label.Width = 0;
+            m_label.Width = (int) (fMaxWidth - 50 + iScrollX - iScrollOffset); 
             m_label.TextColor = dwTextColor;
-//            Log.Write("fPosX, fwt, iScrollX, iScrollOffset, xpos: {0} {1} {2} {3} {4}", fPosX, fwt, iScrollX, iScrollOffset, xpos);
             m_label.SetPosition(xpos, (int) fPosY);
             m_label.TextAlignment = Alignment.ALIGN_LEFT;
             m_label.Render(timePassed);
@@ -409,7 +411,9 @@ namespace MediaPortal.GUI.Library
           {
             // left or centered alignment
             m_label.Label = szText;
-            m_label.Width = (int) fMaxWidth;
+            // 1) reduce maxwidth to ensure faded right edge is drawn
+            // 2) compensate the Width to ensure the faded right edge does not move
+            m_label.Width = (int) (fMaxWidth - 50 + iScrollX - iScrollOffset); 
             m_label.TextColor = dwTextColor;
             int xpos = (int) (fPosX - iScrollX + iScrollOffset);
             //            Log.Write("fPosX, iScrollX, iScrollOffset, xpos: {0} {1} {2} {3}", fPosX, iScrollX, iScrollOffset, xpos);
@@ -424,8 +428,17 @@ namespace MediaPortal.GUI.Library
         // wait some frames before scrolling
         if (fPosY >= 0.0)
         {
-          m_label.Label = GetShortenedText(wszText, (int) fMaxWidth - 50);
-          m_label.Width = (int) fMaxWidth - 50;
+          float fwt = 0, fht = 0;
+          m_label.Label = GetShortenedText(wszText, (int) fMaxWidth - 50, ref fwt);
+          m_pFont.GetTextExtent(m_label.Label, ref fwt, ref fht);
+          if (m_dwTextAlign == Alignment.ALIGN_RIGHT)
+          {
+            m_label.Width = (int)(fwt); 
+          }
+          else
+          {
+            m_label.Width = (int) fMaxWidth - 50;
+          }
           m_label.TextColor = dwTextColor;
           m_label.SetPosition((int) fPosX, (int) fPosY);
           m_label.Render(timePassed);
@@ -551,7 +564,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    string GetShortenedText(string strLabel, int iMaxWidth)
+    string GetShortenedText(string strLabel, int iMaxWidth, ref float fw)
     {
       if (strLabel == null) return string.Empty;
       if (strLabel.Length == 0) return string.Empty;
@@ -561,7 +574,7 @@ namespace MediaPortal.GUI.Library
         if (strLabel.Length > 0)
         {
           bool bTooLong = false;
-          float fw = 0, fh = 0;
+          float fh = 0;
           do
           {
             bTooLong = false;
