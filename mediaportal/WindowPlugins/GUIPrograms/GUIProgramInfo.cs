@@ -25,8 +25,6 @@ namespace WindowPlugins.GUIPrograms
     protected GUILabelControl lblRatingCaption = null;
     [SkinControlAttribute(34)]
     protected GUILabelControl lblGenreCaption = null;
-    [SkinControlAttribute(6)]
-    protected GUILabelControl lblLaunchStat = null;
 
     // Fadelabels
     [SkinControlAttribute(21)]
@@ -41,7 +39,8 @@ namespace WindowPlugins.GUIPrograms
 
     // Textbox                   
     [SkinControlAttribute(4)]
-    protected GUITextScrollUpControl tbOverviewData = null;
+      //    protected GUITextScrollUpControl tbOverviewData = null;
+    protected GUITextControl tbOverviewData = null;
 
     //Images                     
     [SkinControlAttribute(3)]
@@ -50,8 +49,6 @@ namespace WindowPlugins.GUIPrograms
     protected GUIImage imgBig = null;
 
     // Buttons                   
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnBack = null;
     [SkinControlAttribute(7)]
     protected GUIButtonControl btnPrev = null;
     [SkinControlAttribute(8)]
@@ -181,11 +178,7 @@ namespace WindowPlugins.GUIPrograms
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if (control == btnBack)
-      {
-        Close();
-      }
-      else if (control == btnPrev)
+      if (control == btnPrev)
       {
         curFile = curApp.PrevFile(curFile);
         curApp.ResetThumbs();
@@ -409,8 +402,6 @@ namespace WindowPlugins.GUIPrograms
       lblRatingData.Label = programRating;
       lblGenreData.Label = programGenre;
 
-      btnBack.Label = GUILocalizeStrings.Get(8008);
-
       if (curFile.Filename != "")
       {
         btnLaunch.Disabled = false;
@@ -420,7 +411,6 @@ namespace WindowPlugins.GUIPrograms
         btnLaunch.Disabled = true;
       }
 
-      lblLaunchStat.Label = ""; // always disable..... doesn't look nice!!
     }
 
 

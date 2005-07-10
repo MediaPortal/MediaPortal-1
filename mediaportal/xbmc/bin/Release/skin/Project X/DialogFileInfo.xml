@@ -1,6 +1,6 @@
 <window>
     <id>1206</id> 
-    <defaultcontrol>5</defaultcontrol> 
+    <defaultcontrol>8</defaultcontrol> 
     <allowoverlay>no</allowoverlay>
     <controls>
   	<control>
@@ -143,40 +143,19 @@
 	</control>
 	<control>
 		<description>Overview</description>
-		<type>textboxscrollup</type>
+		<type>textbox</type>
 		<id>4</id>
 		<posX>220</posX>
 		<posY>190</posY>
 		<width>410</width>
 		<height>340</height>
 		<label>-</label>
-		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
-	</control>
-	<control>
-		<description>Launch Stat</description> 
-		<type>label</type> 
-		<id>6</id> 
-		<posX>220</posX> 
-		<posY>540</posY> 
-		<label>-</label> 
-		<font>font11</font>
-		<align>left</align> 
-		<textcolor>FFB2D4F5</textcolor> 
-	</control>
-	<control>
-		<description>Close</description> 
-		<type>button</type> 
-		<id>5</id> 
-		<posX>60</posX> 
-		<posY>496</posY> 
-		<width>130</width> 
-		<height>32</height> 
-		<label>8008</label> 
-		<font>font13</font> 
-		<onup>8</onup>
-		<ondown>11</ondown>
+		<onleft>8</onleft> 
+		<onright>8</onright> 
+		<onup>8</onup> 
+		<ondown>8</ondown> 
 	</control>
 	<control>
 		<description>Overview / Screenshot Toggle</description> 
@@ -188,8 +167,10 @@
 		<height>32</height> 
 		<label>13006</label> 
 		<font>font13</font> 
-		<onup>5</onup>
+		<onup>8</onup>
 		<ondown>7</ondown>
+		<onleft>4</onleft> 
+		<onright>4</onright> 
 	</control>
 	<control>
 		<description>Prev</description> 
@@ -203,6 +184,8 @@
 		<font>font13</font> 
 		<onup>11</onup>
 		<ondown>9</ondown>
+		<onleft>4</onleft> 
+		<onright>4</onright> 
 	</control>
 	<control>
 		<description>Launch</description> 
@@ -215,7 +198,9 @@
 		<label>13002</label> 
 		<font>font13</font> 
 		<onup>9</onup>
-		<ondown>5</ondown>
+		<ondown>11</ondown>
+		<onleft>4</onleft> 
+		<onright>4</onright> 
 	</control>
 	<control>
 		<description>Next</description> 
@@ -229,6 +214,8 @@
 		<font>font13</font> 
 		<onup>7</onup>
 		<ondown>8</ondown>
+		<onleft>4</onleft> 
+		<onright>4</onright> 
 	</control>
     </controls>
 </window>
