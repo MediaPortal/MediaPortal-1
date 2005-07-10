@@ -993,6 +993,8 @@ namespace MediaPortal.TV.Recording
 						{
 							if(header.VersionNumber!=m_currentPMTVersion)
 							{
+								Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
+									header.VersionNumber,m_programNumber,header.TableIDExtension);
 								int len=header.SectionLength+3;
 								byte[] data=new byte[len];
 								Array.Copy(m_tableBufferPMT,0,data,0,len);

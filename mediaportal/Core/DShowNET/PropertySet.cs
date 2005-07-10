@@ -86,7 +86,7 @@ namespace DShowNET
 			if (PMT==null) return false;
 			if (pmtLength==0) return false;
 
-			Log.Write("SendPMTToFireDTV pmt:{0}", pmtLength);
+			//Log.Write("SendPMTToFireDTV pmt:{0}", pmtLength);
 			Guid propertyGuid=KSPROPSETID_Firesat;
 			int propId=22;
 			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
@@ -137,7 +137,7 @@ namespace DShowNET
 				byData[offs]=PMT[i];
 				offs++;
 			}
-			string log="data:";
+			string log=String.Format("pmt len:{0} data:",pmtLength);
 			for (int i=0; i < offs;++i)
 			{
 				Marshal.WriteByte(pDataInstance,i,byData[i]);

@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Library
 			}
 
 			//
-			if (type != LogType.Log && type != LogType.Error)
+			if (type != LogType.Log && type != LogType.Error&& type != LogType.EPG)
 				WriteFile(LogType.Log,strFormat,arg);
 		}//static public void WriteFile(LogType type, string strFormat, params object[] arg)
 	}
