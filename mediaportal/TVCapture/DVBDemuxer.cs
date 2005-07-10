@@ -309,6 +309,7 @@ namespace MediaPortal.TV.Recording
 			m_packetsReceived=false;
 			epgRegrabTime= DateTime.MinValue;
 			m_currentPMTVersion=-1;
+			m_bufferPositionPMT=0;
 			m_programNumber=-1;
 			if (programnumber>0)
 				m_programNumber=programnumber;
@@ -966,16 +967,14 @@ namespace MediaPortal.TV.Recording
 				#region pmt handling
 				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
 				{
-//					Log.Write("grab pmt:0x{0:X}",m_pmtPid);
+//					if (m_currentPMTVersion==-1)
+//						Log.Write("grab pmt:0x{0:X} adpt:{1} pos:{2}",m_pmtPid,m_packetHeader.AdaptionFieldControl,m_bufferPositionPMT);
 					try
 					{
 						int offset=0;
 						//
 						// calc offset & pointers
-						if(m_packetHeader.AdaptionFieldControl==2)
-							continue;
-
-						if(m_packetHeader.AdaptionFieldControl==3)
+						if(m_packetHeader.AdaptionFieldControl==2 || m_packetHeader.AdaptionFieldControl==3)
 							continue;
 						if(m_packetHeader.PayloadUnitStart==true && m_bufferPositionSec==0)
 							offset=m_packetHeader.AdaptionField+1;
@@ -993,8 +992,8 @@ namespace MediaPortal.TV.Recording
 						{
 							if(header.VersionNumber!=m_currentPMTVersion)
 							{
-								Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
-									header.VersionNumber,m_programNumber,header.TableIDExtension);
+							//	Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
+							//		header.VersionNumber,m_programNumber,header.TableIDExtension);
 								int len=header.SectionLength+3;
 								byte[] data=new byte[len];
 								Array.Copy(m_tableBufferPMT,0,data,0,len);
@@ -1008,7 +1007,10 @@ namespace MediaPortal.TV.Recording
 										m_currentPMTVersion=header.VersionNumber;
 									}
 								}
-
+								else 
+								{
+									//Log.Write("PMT CRC error");
+								}
 							}
 							m_bufferPositionPMT=0;
 						}
