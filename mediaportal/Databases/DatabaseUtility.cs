@@ -165,18 +165,24 @@ namespace MediaPortal.Database
 			if (results.Rows.Count < iRecord) return String.Empty;
 			ArrayList arr = (ArrayList)results.Rows[iRecord];
 			int iCol = 0;
-			foreach (string columnName in results.ColumnNames)
+			if (results.ColumnIndices.ContainsKey(strColum))
 			{
-				if (strColum == columnName)
-				{
-					if(arr[iCol]==null)
-						continue;
-					string strLine = ((string)arr[iCol]).Trim();
-					strLine = strLine.Replace("''","'");
-					return strLine;
-				}
-				iCol++;
+				iCol=(int)results.ColumnIndices[strColum];
+				string strLine = ((string)arr[iCol]).Trim();
+				strLine = strLine.Replace("''","'");
+				return strLine;
 			}
+			int pos=strColum.IndexOf(".");
+			if (pos < 0) return String.Empty;
+			strColum=strColum.Substring(pos+1);
+			if (results.ColumnIndices.ContainsKey(strColum))
+			{
+				iCol=(int)results.ColumnIndices[strColum];
+				string strLine = ((string)arr[iCol]).Trim();
+				strLine = strLine.Replace("''","'");
+				return strLine;
+			}
+
 			return String.Empty;
 		}
 
