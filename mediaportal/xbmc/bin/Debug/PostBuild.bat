@@ -87,7 +87,6 @@ copy ..\..\..\RemotePlugins\bin\debug\RemotePlugins.dll .
 
 
 copy ..\..\..\sqlite.dll .
-copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .
 copy ..\..\..\tag.cfg .
 copy ..\..\..\TaskScheduler.dll .

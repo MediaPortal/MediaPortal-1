@@ -72,7 +72,6 @@ copy ..\..\..\ProcessPlugins\bin\release\ProcessPlugins.dll plugins\process\
 copy ..\..\..\Dialogs\bin\release\Dialogs.dll plugins\Windows
 copy ..\..\..\RemotePlugins\bin\release\RemotePlugins.dll .
 copy ..\..\..\sqlite.dll .
-copy ..\..\..\SQLiteClient.dll .
 copy ..\..\..\tag.exe .
 copy ..\..\..\tag.cfg .
 copy ..\..\..\TaskScheduler.dll .
