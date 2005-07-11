@@ -1,0 +1,8 @@
+if exist ..\FolderDatabase2.db (if not exist ..\FolderDatabase2.db3	sqlite.exe ..\FolderDatabase2.db .dump | sqlite3.exe ..\FolderDatabase2.db3)
+if exist ..\PictureDatabase.db (if not exist ..\PictureDatabase.db3	sqlite.exe ..\PictureDatabase.db .dump | sqlite3.exe ..\PictureDatabase.db3)
+if exist ..\ProgramDatabaseV3.db (if not exist ..\ProgramDatabaseV3.db3	sqlite.exe ..\ProgramDatabaseV3.db .dump | sqlite3.exe ..\ProgramDatabaseV3.db3)
+if exist ..\RadioDatabase4.db (if not exist ..\RadioDatabase4.db3	sqlite.exe ..\RadioDatabase4.db .dump | sqlite3.exe ..\RadioDatabase4.db3)
+if exist ..\RecipieDatabaseV3.db (if not exist ..\RecipieDatabaseV3.db3	sqlite.exe ..\RecipieDatabaseV3.db .dump | sqlite3.exe ..\RecipieDatabaseV3.db3)
+if exist ..\TVDatabaseV20.db (if not exist ..\TVDatabaseV20.db3	sqlite.exe ..\TVDatabaseV20.db .dump | sqlite3.exe ..\TVDatabaseV20.db3)
+if exist ..\TVDatabaseV21.db (if not exist ..\TVDatabaseV21.db3	sqlite.exe ..\TVDatabaseV21.db .dump | sqlite3.exe ..\TVDatabaseV21.db3)
+if exist ..\VideoDatabaseV5.db (if not exist ..\VideoDatabaseV5.db3	sqlite.exe ..\VideoDatabaseV5.db .dump | sqlite3.exe ..\VideoDatabaseV5.db3)
