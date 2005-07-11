@@ -1013,6 +1013,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Sections\Volume.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Sections\Volume.resx"
+                    DependentUpon = "Volume.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Sections\Weather.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

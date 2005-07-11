@@ -418,6 +418,9 @@
     <Compile Include="Sections\USBUIRT.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\Volume.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\Weather.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -675,6 +678,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\USBUIRT.resx">
       <DependentUpon>USBUIRT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Volume.resx">
+      <DependentUpon>Volume.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">
       <DependentUpon>Weather.cs</DependentUpon>
