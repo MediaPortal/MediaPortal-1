@@ -1407,7 +1407,7 @@ namespace MediaPortal.Configuration.Sections
 					channels.SetValue("Recorded "+count.ToString(),"DESC",show.Description);
 					channels.SetValue("Recorded "+count.ToString(),"GENRE",show.Genre);
 					channels.SetValue("Recorded "+count.ToString(),"FILENAME",show.FileName);
-					channels.SetValue("Recorded "+count.ToString(),"START",show.Start.ToString());
+					channels.SetValue("Recorded "+count.ToString(),"STARTTIME",show.Start.ToString());
 					channels.SetValue("Recorded "+count.ToString(),"ENDTIME",show.End.ToString());
 					channels.SetValue("Recorded "+count.ToString(),"PLAYED",show.Played.ToString());
 					count++;
@@ -1918,6 +1918,8 @@ namespace MediaPortal.Configuration.Sections
 							temp_recorded.Genre=channels.GetValueAsString("Recorded "+i.ToString(),"GENRE","");
 							temp_recorded.FileName=channels.GetValueAsString("Recorded "+i.ToString(),"FILENAME","");
 							temp_recorded.Start=Convert.ToInt64(channels.GetValueAsString("Recorded "+i.ToString(),"STARTTIME","0"));
+							if (temp_recorded.Start==0)
+								temp_recorded.Start=Convert.ToInt64(channels.GetValueAsString("Recorded "+i.ToString(),"START","0"));
 							temp_recorded.End=Convert.ToInt64(channels.GetValueAsString("Recorded "+i.ToString(),"ENDTIME","0"));
 							temp_recorded.Played=channels.GetValueAsInt("Recorded "+i.ToString(),"PLAYED",0);
 							

@@ -10,6 +10,7 @@ namespace SQLite.NET
 		internal ArrayList columnNames;
 		private int internalRowPointer;
 		internal ArrayList rowData;
+		public string LastCommand;
 
 		// Methods
 		public SQLiteResultSet()

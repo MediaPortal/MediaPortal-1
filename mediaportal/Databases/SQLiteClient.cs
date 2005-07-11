@@ -126,7 +126,7 @@ namespace SQLite.NET
 		{
 			SQLiteClient.ResultCode err=ResultCode.EMPTY;
 			SQLiteResultSet set1 = new SQLiteResultSet();
-			
+			set1.LastCommand=query;	
 			void *stmt=null;
 			void** pStmnt=&stmt;
 			{
@@ -137,10 +137,10 @@ namespace SQLite.NET
 					{
 						if (pStmnt!=null) 
 						{
-							err= sqlite3_finalize(stmt);
+							sqlite3_finalize(stmt);
 						}
 						if (err==ResultCode.ERROR)
-							throw new SQLiteException("Unable to prepare:"+query, err);
+							throw new SQLiteException(String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
 
 						System.Threading.Thread.Sleep(5);
 						continue;
@@ -148,7 +148,7 @@ namespace SQLite.NET
 					break;
 				}
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
-					throw new SQLiteException("Unable to prepare:"+query, err);
+					throw new SQLiteException(String.Format("SQL2:{0} failed err:{1}", query,err.ToString()), err);
 
 				
 				int nCol = sqlite3_column_count(stmt);
@@ -158,9 +158,11 @@ namespace SQLite.NET
 					err= sqlite3_step(stmt);
 					if (err!=ResultCode.Row)
 					{
-						err= sqlite3_finalize(stmt);
+						sqlite3_finalize(stmt);
 						pStmnt=null;
 						stmt=null;
+						if (err!=ResultCode.OK && err!=ResultCode.Done)
+							throw new SQLiteException(String.Format("SQL3:{0} failed err:{1}", query,err.ToString()), err);
 						break;
 					}
 					else
@@ -189,11 +191,11 @@ namespace SQLite.NET
 			}
 			if (stmt!=null)
 			{
-				err= sqlite3_finalize(stmt);
+				sqlite3_finalize(stmt);
 				pStmnt=null;
 			}
 			if (err!=ResultCode.OK && err!=ResultCode.Done)
-				throw new SQLiteException("Unable to prepare:"+query, err);
+				throw new SQLiteException(String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
 			return set1;
 		}
  
