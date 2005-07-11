@@ -917,6 +917,12 @@ namespace MediaPortal.GUI.TV
         VideoDatabase.SetMovieStopTime(movieid,stoptime);
       else
         VideoDatabase.DeleteMovieStopTime(movieid);
+			if (GUITVHome.IsTVWindow(GUIWindowManager.ActiveWindow))
+			{
+				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
+				msg.SendToTargetWindow=true;
+				GUIWindowManager.SendThreadMessage(msg);
+			}
     }
 
     private void OnPlayRecordingBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
