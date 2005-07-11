@@ -58,10 +58,10 @@ namespace MediaPortal.TV.Recording
 		static public void ImportDvrMsFiles()
 		{
 			//dont import during recording...
-			//if (Recorder.IsAnyCardRecording()) return;
-			//if (importing) return;
-			//Thread WorkerThread = new Thread(new ThreadStart(ImportWorkerThreadFunction));
-			//WorkerThread.Start();
+			if (Recorder.IsAnyCardRecording()) return;
+			if (importing) return;
+		  Thread WorkerThread = new Thread(new ThreadStart(ImportWorkerThreadFunction));
+			WorkerThread.Start();
 		}
 		static void ImportWorkerThreadFunction()
 		{

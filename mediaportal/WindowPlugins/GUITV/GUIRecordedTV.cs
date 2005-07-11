@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.TV
 			base.OnPageLoad ();
 
 					
-			DiskManagement.ImportDvrMsFiles();
+			//DiskManagement.ImportDvrMsFiles();
 			LoadSettings();
 			LoadDirectory();
 
