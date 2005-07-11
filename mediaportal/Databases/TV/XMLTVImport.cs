@@ -186,13 +186,13 @@ namespace MediaPortal.TV.Database
 								if (number!=String.Empty)
 									channelNo=Int32.Parse(number);
 							  chan.XMLId=nodeId.InnerText;
-							  chan.Name=nodeName.InnerText;
+							  chan.Name=htmlUtil.ConvertHTMLToAnsi(nodeName.InnerText);
 							  chan.Number=channelNo;
 							  chan.Frequency=0;
 							  TVDatabase.AddChannel(chan);
 
 							  ChannelPrograms newProgChan = new ChannelPrograms();
-							  newProgChan.strName=chan.Name;
+							  newProgChan.strName=htmlUtil.ConvertHTMLToAnsi(chan.Name);
 							  newProgChan.XMLId=chan.XMLId;
 							  Programs.Add(newProgChan);
 
@@ -205,7 +205,7 @@ namespace MediaPortal.TV.Database
 									  XmlNode nodeSrc=nodeIcon.Attributes.GetNamedItem("src");
 									  if (nodeSrc !=null)
 									  {
-										  string strURL = nodeSrc.InnerText;
+										  string strURL = htmlUtil.ConvertHTMLToAnsi(nodeSrc.InnerText);
 										  string strLogoPng=Utils.GetCoverArtName(@"thumbs\tv\logos",chan.Name);
 										  if (!System.IO.File.Exists(strLogoPng) )
 										  {
@@ -284,7 +284,7 @@ namespace MediaPortal.TV.Database
 
 				        if (nodeRepeat!=null)strRepeat="Repeat";
 				         
-							  string strTitle=htmlUtil.ConvertHTMLToAnsi(nodeTitle.InnerText);
+							  string strTitle=nodeTitle.InnerText;
 							  long iStart=0;
                 if (nodeStart.InnerText.Length>=14)
                 {
@@ -392,17 +392,17 @@ namespace MediaPortal.TV.Database
 	              
 							  if (nodeCategory!=null && nodeCategory.InnerText!=null)
 							  {
-								  strCategory=htmlUtil.ConvertHTMLToAnsi(nodeCategory.InnerText);
+								  strCategory=nodeCategory.InnerText;
 							  }
 							  if (nodeDescription!=null && nodeDescription.InnerText!=null)
 							  {
-								  strDescription=htmlUtil.ConvertHTMLToAnsi(nodeDescription.InnerText);
+								  strDescription=nodeDescription.InnerText;
 							  }
 								if (nodeEpisode!=null && nodeEpisode.InnerText!=null)
 								{
-									strEpisode=htmlUtil.ConvertHTMLToAnsi(nodeEpisode.InnerText);
+									strEpisode=nodeEpisode.InnerText;
 									if (strTitle.Length==0)
-										strTitle=htmlUtil.ConvertHTMLToAnsi(nodeEpisode.InnerText);
+										strTitle=nodeEpisode.InnerText;
 								}
 								if (nodeEpisodeNum!=null && nodeEpisodeNum.InnerText!=null)
 								{
@@ -475,27 +475,28 @@ namespace MediaPortal.TV.Database
 								}
 								if (nodeStarRating!=null && nodeStarRating.InnerText!=null)
 								{
-									strStarRating = htmlUtil.ConvertHTMLToAnsi(nodeStarRating.InnerText);
+									strStarRating = nodeStarRating.InnerText;
 								}
 								if (nodeClasification!=null && nodeClasification.InnerText!=null)
 								{
-									strClasification = htmlUtil.ConvertHTMLToAnsi(nodeClasification.InnerText);
+									strClasification = nodeClasification.InnerText;
 								}
+								 
 							  TVProgram prog=new TVProgram();
-							  prog.Description=strDescription;
+							  prog.Description=htmlUtil.ConvertHTMLToAnsi(strDescription);
 							  prog.Start=iStart;
 							  prog.End=iStop;
-							  prog.Title=strTitle;
-							  prog.Episode=strEpisode;
-							  prog.Genre=strCategory;
-							  prog.Repeat=strRepeat;
-							  prog.Channel=strChannelName;
+							  prog.Title=htmlUtil.ConvertHTMLToAnsi(strTitle);
+							  prog.Episode=htmlUtil.ConvertHTMLToAnsi(strEpisode);
+							  prog.Genre=htmlUtil.ConvertHTMLToAnsi(strCategory);
+							  prog.Repeat=htmlUtil.ConvertHTMLToAnsi(strRepeat);
+							  prog.Channel=htmlUtil.ConvertHTMLToAnsi(strChannelName);
                 prog.Date=strDate;
-                prog.SeriesNum=strSeriesNum;
-                prog.EpisodeNum=strEpisodeNum;
-                prog.EpisodePart=strEpisodePart;
-                prog.StarRating=strStarRating;
-                prog.Classification=strClasification;
+                prog.SeriesNum=htmlUtil.ConvertHTMLToAnsi(strSeriesNum);
+                prog.EpisodeNum=htmlUtil.ConvertHTMLToAnsi(strEpisodeNum);
+                prog.EpisodePart=htmlUtil.ConvertHTMLToAnsi(strEpisodePart);
+                prog.StarRating=htmlUtil.ConvertHTMLToAnsi(strStarRating);
+                prog.Classification=htmlUtil.ConvertHTMLToAnsi(strClasification);
 							  m_stats.Programs++;
 							  if (bShowProgress && ShowProgress!=null && (m_stats.Programs%100)==0 ) ShowProgress(m_stats);
 							  foreach (ChannelPrograms progChan in Programs)
