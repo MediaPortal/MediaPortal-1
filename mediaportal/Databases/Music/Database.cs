@@ -2049,6 +2049,9 @@ namespace MediaPortal.Music.Database
 				OnDatabaseReorgChanged(MyArgs);
 				Compress();
 
+				MyArgs.progress=100;
+				MyArgs.phase="done";
+				OnDatabaseReorgChanged(MyArgs);
 				EmptyCache();
 			}
 			return (int)Errors.ERROR_OK;
@@ -2346,7 +2349,7 @@ namespace MediaPortal.Music.Database
 		  catch (Exception)
 		  {
 			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteArtistids failed");
-			  m_db.Execute("rollback");
+			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_ARTIST;
 		  }
 
@@ -2366,7 +2369,7 @@ namespace MediaPortal.Music.Database
 		  catch (Exception)
 		  {
 			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
-			  m_db.Execute("rollback");
+			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_GENRE;
 		  }
 
@@ -2378,7 +2381,7 @@ namespace MediaPortal.Music.Database
 		  catch (Exception)
 		  {
 			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
-			  m_db.Execute("rollback");
+			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_GENRE;
 
 		  }
@@ -2401,7 +2404,7 @@ namespace MediaPortal.Music.Database
 		  catch (Exception)
 		  {
 			  Log.Write ("Musicdatabasereorg: ExamineAndDeletePathids failed");
-			  m_db.Execute("rollback");
+			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_PATH;
 		  }
 		  Log.Write ("Musicdatabasereorg: ExamineAndDeletePathids completed");
@@ -2419,7 +2422,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  m_db.Execute("rollback");
+			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_ALBUM;
 		  }
 		  /// Now all the albums without songs will be deleted.
@@ -2432,7 +2435,7 @@ namespace MediaPortal.Music.Database
 		  catch (Exception)
 		  {
 			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteAlbumids failed");
-			  m_db.Execute("rollback");
+			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_ALBUM;
 		  }
 		  Log.Write ("Musicdatabasereorg: ExamineAndDeleteAlbumids completed");
@@ -2509,7 +2512,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  MusicDatabase.DBHandle.Execute("rollback");
+			  //MusicDatabase.DBHandle.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_SONGS;
 		  }
 		  NumPaths = PathResults.Rows.Count;
@@ -2542,7 +2545,7 @@ namespace MediaPortal.Music.Database
 				  }
 				  catch (Exception)
 				  {
-					  MusicDatabase.DBHandle.Execute("rollback");
+					  //MusicDatabase.DBHandle.Execute("rollback");
 					  return (int)Errors.ERROR_REORG_SONGS;
 				  }
 
@@ -2628,7 +2631,7 @@ namespace MediaPortal.Music.Database
 			  catch (Exception)
 			  {
 				  Log.Write ("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
-				  m_db.Execute("rollback");
+				  //m_db.Execute("rollback");
 				  return (int)Errors.ERROR_REORG_SONGS;
 			  }
 			  
@@ -2645,10 +2648,13 @@ namespace MediaPortal.Music.Database
 				  AddSong(MusicFileName,MusicFilePath);
 				  AddedCounter++;
 			  }
-			  NewProgress = StartProgress+((ProgressRange*SongCounter)/TotalSongs);
-			  MyArgs.progress =Convert.ToInt32(NewProgress);
-			  MyArgs.phase="Checking for new files";
-			  OnDatabaseReorgChanged(MyArgs);
+				if ((SongCounter%10)==0)
+				{
+					NewProgress = StartProgress+((ProgressRange*SongCounter)/TotalSongs);
+					MyArgs.progress =Convert.ToInt32(NewProgress);
+					MyArgs.phase=String.Format("Checking for new files {0}/{1} new:{2}",SongCounter,availableFiles.Count,AddedCounter);
+					OnDatabaseReorgChanged(MyArgs);
+				}
 		  } //end for-each
 		  Log.Write ("Musicdatabasereorg: AddMissingFiles finished with SongCounter = {0}",SongCounter);
 		  Log.Write ("Musicdatabasereorg: AddMissingFiles finished with AddedCounter = {0}",AddedCounter);
@@ -2700,7 +2706,7 @@ namespace MediaPortal.Music.Database
 		  catch (Exception)
 		  {
 			  Log.Write ("Musicdatabasereorg: Insert of song {0}{1} failed",MusicFilePath,MusicFileName);
-			  m_db.Execute("rollback");
+			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_SONGS;
 		  }
 
@@ -2732,7 +2738,7 @@ namespace MediaPortal.Music.Database
 			{
 				DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
 				MyArgs.progress=4;
-				MyArgs.phase=String.Format("Adding new files: {0}",totalFiles);
+				MyArgs.phase=String.Format("Adding new files: {0} files found",totalFiles);
 				OnDatabaseReorgChanged(MyArgs);
 			}
 		  //
