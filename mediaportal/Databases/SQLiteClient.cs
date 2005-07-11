@@ -118,7 +118,9 @@ namespace SQLite.NET
 
 		public void Close()
 		{
-			SQLiteClient.sqlite3_close(this.dbHandle);
+			if (this.dbHandle!=null)
+				SQLiteClient.sqlite3_close(this.dbHandle);
+			this.dbHandle=null;
 		}
  
 

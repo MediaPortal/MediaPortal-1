@@ -577,17 +577,17 @@ namespace MediaPortal.Music.Database
       {
         Song song = song1.Clone();
         string strTmp;
-  	    Log.Write ("MusicDatabaseReorg: Going to AddSong {0}",song.FileName);
+  	    //Log.Write ("MusicDatabaseReorg: Going to AddSong {0}",song.FileName);
 
 //        strTmp = song.Album; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Album = strTmp;
 //        strTmp = song.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Genre = strTmp;
 //        strTmp = song.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Artist = strTmp;
         strTmp = song.Title; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Title = strTmp;
-		strTmp = song.FileName; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.FileName = strTmp;
+				strTmp = song.FileName; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.FileName = strTmp;
 
         string strPath, strFileName;
 
-		  DatabaseUtility.Split(song.FileName, out strPath, out strFileName);
+				DatabaseUtility.Split(song.FileName, out strPath, out strFileName);
 
         if (null == m_db) return;
         int lGenreId = AddGenre(song.Genre);
@@ -595,7 +595,7 @@ namespace MediaPortal.Music.Database
         int lPathId = AddPath(strPath);
         int lAlbumId = AddAlbum(song.Album, lArtistId);
 
-		Log.Write ("Getting a CRC for {0}",song.FileName);
+		//Log.Write ("Getting a CRC for {0}",song.FileName);
 
         ulong dwCRC = 0;
         CRCTool crc = new CRCTool();
@@ -603,49 +603,49 @@ namespace MediaPortal.Music.Database
         dwCRC = crc.calc(song.FileName);
         SQLiteResultSet results;
 
-	    Log.Write ("MusicDatabaseReorg: CRC for {0} = {1}",song.FileName,dwCRC);
+	    //Log.Write ("MusicDatabaseReorg: CRC for {0} = {1}",song.FileName,dwCRC);
         if (bCheck)
         {
           strSQL = String.Format("select * from song where idAlbum={0} AND idGenre={1} AND idArtist={2} AND dwFileNameCRC='{3}' AND strTitle='{4}'", 
                                 lAlbumId, lGenreId, lArtistId, dwCRC, song.Title);
-		  Log.Write (strSQL);
-			try
-			{
-				results = m_db.Execute(strSQL);
+					//Log.Write (strSQL);
+					try
+					{
+						results = m_db.Execute(strSQL);
 
-				song1.albumId=lAlbumId;
-				song1.artistId=lArtistId;
-				song1.genreId=lGenreId;
+						song1.albumId=lAlbumId;
+						song1.artistId=lArtistId;
+						song1.genreId=lGenreId;
 
-				if (results.Rows.Count != 0)  
-				{
-					song1.songId=DatabaseUtility.GetAsInt(results,0,"idSong");
-					return;
-				}
-	
+						if (results.Rows.Count != 0)  
+						{
+							song1.songId=DatabaseUtility.GetAsInt(results,0,"idSong");
+							return;
+						}
 			
-			}
-			catch (Exception ) 
-			{
-				Log.Write ("MusicDatabaseReorg: Executing query failed");
-			}
-		} //End if
+					
+					}
+					catch (Exception ) 
+					{
+						Log.Write ("MusicDatabaseReorg: Executing query failed");
+					}
+				} //End if
 
-    	int iFavorite=0;
-		if (song.Favorite) iFavorite=1;
+				int iFavorite=0;
+				if (song.Favorite) iFavorite=1;
 
-		crc.Init(CRCTool.CRCCode.CRC32);
-		dwCRC = crc.calc(strFileName);
+				crc.Init(CRCTool.CRCCode.CRC32);
+				dwCRC = crc.calc(strFileName);
 
-		  Log.Write ("Song {0} will be added with CRC {1}",strFileName,dwCRC);
+				Log.Write ("Song {0} will be added with CRC {1}",strFileName,dwCRC);
 
-        strSQL = String.Format("insert into song (idSong,idArtist,idAlbum,idGenre,idPath,strTitle,iTrack,iDuration,iYear,dwFileNameCRC,strFileName,iTimesPlayed,iRating,favorite) values(NULL,{0},{1},{2},{3},'{4}',{5},{6},{7},'{8}','{9}',{10},{11},{12})",
-          lArtistId, lAlbumId, lGenreId, lPathId, 
-          song.Title, 
-          song.Track, song.Duration, song.Year, 
-          dwCRC, 
-          strFileName, 0,song.Rating, iFavorite);
-		song1.songId=m_db.LastInsertID();
+				strSQL = String.Format("insert into song (idSong,idArtist,idAlbum,idGenre,idPath,strTitle,iTrack,iDuration,iYear,dwFileNameCRC,strFileName,iTimesPlayed,iRating,favorite) values(NULL,{0},{1},{2},{3},'{4}',{5},{6},{7},'{8}','{9}',{10},{11},{12})",
+										lArtistId, lAlbumId, lGenreId, lPathId, 
+										song.Title, 
+										song.Track, song.Duration, song.Year, 
+										dwCRC, 
+										strFileName, 0,song.Rating, iFavorite);
+				song1.songId=m_db.LastInsertID();
 
 
         m_db.Execute(strSQL);
@@ -1927,23 +1927,23 @@ namespace MediaPortal.Music.Database
     public void CommitTransaction()
     {
       Log.Write ("Commit will effect {0} rows",m_db.ChangedRows());
-	  SQLiteResultSet CommitResults;
-		if (m_db.ChangedRows() == 0) 
-		{
-			Log.Write ("MusicDatabase: Commit not necessary, there are no changes.");
-		}
-		else
-		{
-			try
+			SQLiteResultSet CommitResults;
+			if (m_db.ChangedRows() == 0) 
 			{
-				CommitResults = m_db.Execute("commit");
+				Log.Write ("MusicDatabase: Commit not necessary, there are no changes.");
 			}
-			catch (Exception ex)
+			else
 			{
-				Log.WriteFile(Log.LogType.Log,true,"musicdatabase commit failed exception err:{0} ", ex.Message);
-				Open();
+				try
+				{
+					CommitResults = m_db.Execute("commit");
+				}
+				catch (Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"musicdatabase commit failed exception err:{0} ", ex.Message);
+					Open();
+				}
 			}
-		}
     }
     
     public void RollbackTransaction()
@@ -1980,74 +1980,78 @@ namespace MediaPortal.Music.Database
 			}
 		  DatabaseReorgEventArgs MyArgs =new DatabaseReorgEventArgs(); 
 
-	  
-		/// Delete song that are in non-existing MusicFolders (for example: you moved everything to another disk)
-		  MyArgs.progress=2;
-		  MyArgs.phase="Removing songs in old folders";
-		  OnDatabaseReorgChanged(MyArgs);
-		  DeleteSongsOldMusicFolders();
+			try
+			{
+				BeginTransaction();
+				/// Delete song that are in non-existing MusicFolders (for example: you moved everything to another disk)
+				MyArgs.progress=2;
+				MyArgs.phase="Removing songs in old folders";
+				OnDatabaseReorgChanged(MyArgs);
+				DeleteSongsOldMusicFolders();
 
-		  
-		  /// Delete files that don't exist anymore (example: you deleted files from the Windows Explorer)
-		  /// MyArgs.progress=10;
-		  MyArgs.progress=4;
-		  MyArgs.phase="Removing non existing songs";
-		  OnDatabaseReorgChanged(MyArgs);
-  		  DeleteNonExistingSongs();
+			  
+				/// Delete files that don't exist anymore (example: you deleted files from the Windows Explorer)
+				/// MyArgs.progress=10;
+				MyArgs.progress=4;
+				MyArgs.phase="Removing non existing songs";
+				OnDatabaseReorgChanged(MyArgs);
+				DeleteNonExistingSongs();
 
-	      /// Add missing files (example: You downloaded some new files)
-		  MyArgs.progress=6;
-		  MyArgs.phase="Adding new files";
-		  OnDatabaseReorgChanged(MyArgs);
+				/// Add missing files (example: You downloaded some new files)
+				MyArgs.progress=6;
+				MyArgs.phase="Adding new files";
+				OnDatabaseReorgChanged(MyArgs);
 
-		  int AddMissingFilesResult= AddMissingFiles(8,50);
-		  CommitTransaction();
-		  Log.Write ("Musicdatabasereorg: Addmissingfiles: {0} files added",AddMissingFilesResult);
+				int AddMissingFilesResult= AddMissingFiles(8,50);
+				Log.Write ("Musicdatabasereorg: Addmissingfiles: {0} files added",AddMissingFilesResult);
 
-		  /// Update the tags
-		  MyArgs.progress=50;
-		  MyArgs.phase="Updating tags";
-		  OnDatabaseReorgChanged(MyArgs);
-		  UpdateTags(52,88);	//This one works for all the files in the MusicDatabase
-		  CommitTransaction();
+				/// Update the tags
+				MyArgs.progress=50;
+				MyArgs.phase="Updating tags";
+				OnDatabaseReorgChanged(MyArgs);
+				UpdateTags(52,88);	//This one works for all the files in the MusicDatabase
 
-		  /// Cleanup foreign keys tables.
-		  /// We added, deleted new files
-		  /// We update all the tags
-		  /// Now lets clean up all the foreign keus
-		  MyArgs.progress=90;
-		  MyArgs.phase="Checking Artists";
-		  OnDatabaseReorgChanged(MyArgs);
-		  ExamineAndDeleteArtistids();
+				/// Cleanup foreign keys tables.
+				/// We added, deleted new files
+				/// We update all the tags
+				/// Now lets clean up all the foreign keus
+				MyArgs.progress=90;
+				MyArgs.phase="Checking Artists";
+				OnDatabaseReorgChanged(MyArgs);
+				ExamineAndDeleteArtistids();
 
-		  MyArgs.progress=92;
-		  MyArgs.phase="Checking Genres";
-		  OnDatabaseReorgChanged(MyArgs);
-		  ExamineAndDeleteGenreids();
+				MyArgs.progress=92;
+				MyArgs.phase="Checking Genres";
+				OnDatabaseReorgChanged(MyArgs);
+				ExamineAndDeleteGenreids();
 
-		  MyArgs.progress=94;
-		  MyArgs.phase="Checking Paths";
-		  OnDatabaseReorgChanged(MyArgs);
-		  ExamineAndDeletePathids();
+				MyArgs.progress=94;
+				MyArgs.phase="Checking Paths";
+				OnDatabaseReorgChanged(MyArgs);
+				ExamineAndDeletePathids();
 
-		  MyArgs.progress=96;
-		  MyArgs.phase="Checking Albums";
-		  OnDatabaseReorgChanged(MyArgs);
-		  ExamineAndDeleteAlbumids();
-		  
-		  MyArgs.progress=98;
-		  MyArgs.phase="Compressing the database";
-		  OnDatabaseReorgChanged(MyArgs);
-		  Compress();
+				MyArgs.progress=96;
+				MyArgs.phase="Checking Albums";
+				OnDatabaseReorgChanged(MyArgs);
+				ExamineAndDeleteAlbumids();
+			}
+			finally
+			{
+				CommitTransaction();
 
-		  CommitTransaction();
+				MyArgs.progress=100;
+				MyArgs.phase="Finished";
+				OnDatabaseReorgChanged(MyArgs);
+				
+			  
+				MyArgs.progress=98;
+				MyArgs.phase="Compressing the database";
+				OnDatabaseReorgChanged(MyArgs);
+				Compress();
 
-		  MyArgs.progress=100;
-		  MyArgs.phase="Finished";
-		  OnDatabaseReorgChanged(MyArgs);
-
-        EmptyCache();
-		return (int)Errors.ERROR_OK;
+				EmptyCache();
+			}
+			return (int)Errors.ERROR_OK;
 	}
 
 	  int  UpdateTags(int StartProgress, int EndProgress)
@@ -2162,10 +2166,13 @@ namespace MediaPortal.Music.Database
 					  NumRecodsUpdated=NumRecodsUpdated+1;
 				  }
 			  }
-			  NewProgress = StartProgress+((ProgressRange*SongCounter)/TotalSongs);
-			  MyArgs.progress =Convert.ToInt32(NewProgress);
-			  MyArgs.phase="Updating tags";
-			  OnDatabaseReorgChanged(MyArgs);
+				if ((i%10)==0)
+				{
+					NewProgress = StartProgress+((ProgressRange*SongCounter)/TotalSongs);
+					MyArgs.progress =Convert.ToInt32(NewProgress);
+					MyArgs.phase=String.Format("Updating tags {0}/{1}",i,FileList.Rows.Count);
+					OnDatabaseReorgChanged(MyArgs);
+				}
 			  SongCounter++;
 		  }//for (int i=0; i < results.Rows.Count;++i)
 		  Log.Write ("Musicdatabasereorg: UpdateTags completed for {0} songs",(int)NumRecodsUpdated);
@@ -2282,14 +2289,7 @@ namespace MediaPortal.Music.Database
 	  {
 		  string strSQL;
 			  /// Opening the MusicDatabase
-		  try
-		  {
-			  MusicDatabase.DBHandle.Execute("begin"); 
-		  }
-		  catch (Exception )
-		  {
-			  return (int)Errors.ERROR_DATABASE;
-		  }
+
 		  SQLiteResultSet results;
 		  strSQL=String.Format("select * from song, path where song.idPath=path.idPath");
 		  try
@@ -2302,6 +2302,7 @@ namespace MediaPortal.Music.Database
 			  //MusicDatabase.DBHandle.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_SONGS;
 		  }
+			int removed=0;
 		  Log.Write("Musicdatabasereorg: starting song cleanup for {0} songs", (int) results.Rows.Count );
 		  for (int i=0; i < results.Rows.Count;++i)
 		  {
@@ -2314,10 +2315,18 @@ namespace MediaPortal.Music.Database
 				  /// song doesn't exist anymore, delete it
 				  /// We don't care about foreign keys at this moment. We'll just change this later.
 					
-				  Log.Write("Musicdatabasereorg:Song {0} will to be deleted from MusicDatabase", strFileName);
+					removed++;
+				  //Log.Write("Musicdatabasereorg:Song {0} will to be deleted from MusicDatabase", strFileName);
 				  DeleteSong (strFileName,false);
 
 			  }
+				if ((i%10)==0)
+				{
+					DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
+					MyArgs.progress=4;
+					MyArgs.phase=String.Format("Removing non existing songs:{0}/{1} checked, {2} removed",i,results.Rows.Count,removed);
+					OnDatabaseReorgChanged(MyArgs);
+				}
 		  }//for (int i=0; i < results.Rows.Count;++i)
 		  Log.Write ("Musicdatabasereorg: DeleteNonExistingSongs completed");
 		  return (int)Errors.ERROR_OK;
@@ -2538,9 +2547,7 @@ namespace MediaPortal.Music.Database
 				  }
 
 				  Log.Write ("Trying to commit the deletes from the DB");
-				  /// This still gives some stupid errors. Doing this twice in MP does the track but
-				  /// it crashes the first. WTF!
-				  CommitTransaction();
+
 			  } /// If path has no share
 		  } /// For each path
 	    Log.Write ("Musicdatabasereorg: DeleteSongsOldMusicFolders completed");
@@ -2673,7 +2680,7 @@ namespace MediaPortal.Music.Database
 		  crc.Init(CRCTool.CRCCode.CRC32);
 		  dwCRC=crc.calc(MusicFileName);
 
-		  Log.Write ("Song {0} will be added with CRC {1}",MusicFileName,dwCRC);
+		  //Log.Write ("Song {0} will be added with CRC {1}",MusicFileName,dwCRC);
 		  /// Here we add song to the database
 		  /// strSQL = String.Format("insert into song (idPath,strFileName,idAlbum,idArtist,idGenre,dwFileNameCRC,iTimesPlayed,iRating,favorite) values ({0},{2}{1}{2},{3},{4},{5},{6},{7},{8},{9})",idPath, MusicFileName, Convert.ToChar(34),idAlbum,idArtist,idGenre,dwCRC,0,0,0);
 		  /// TFRO 12-6-2005 New insert because we missed some fields.
@@ -2682,7 +2689,7 @@ namespace MediaPortal.Music.Database
 		  //Log.Write (strSQL);
 		  try
 		  {
-			  Log.Write ("Musicdatabasereorg: Insert {0}{1} into the database",MusicFilePath,MusicFileName);
+			  //Log.Write ("Musicdatabasereorg: Insert {0}{1} into the database",MusicFilePath,MusicFileName);
 			  results = m_db.Execute(strSQL);
 			  if (results==null) 
 			  {
@@ -2721,7 +2728,13 @@ namespace MediaPortal.Music.Database
 		  {
 			  // Ignore
 		  }
-
+			if ((totalFiles%10)==0)
+			{
+				DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
+				MyArgs.progress=4;
+				MyArgs.phase=String.Format("Adding new files: {0}",totalFiles);
+				OnDatabaseReorgChanged(MyArgs);
+			}
 		  //
 		  // Count files in subdirectories
 		  //
