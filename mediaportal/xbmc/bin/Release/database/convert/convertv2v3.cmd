@@ -6,3 +6,4 @@ if exist ..\RecipieDatabaseV3.db (if not exist ..\RecipieDatabaseV3.db3	sqlite.e
 if exist ..\TVDatabaseV20.db (if not exist ..\TVDatabaseV20.db3	sqlite.exe ..\TVDatabaseV20.db .dump | sqlite3.exe ..\TVDatabaseV20.db3)
 if exist ..\TVDatabaseV21.db (if not exist ..\TVDatabaseV21.db3	sqlite.exe ..\TVDatabaseV21.db .dump | sqlite3.exe ..\TVDatabaseV21.db3)
 if exist ..\VideoDatabaseV5.db (if not exist ..\VideoDatabaseV5.db3	sqlite.exe ..\VideoDatabaseV5.db .dump | sqlite3.exe ..\VideoDatabaseV5.db3)
+if exist ..\musicdatabase4.db (if not exist ..\musicdatabase4.db3	sqlite.exe ..\musicdatabase4.db .dump | sqlite3.exe ..\musicdatabase4.db3)
