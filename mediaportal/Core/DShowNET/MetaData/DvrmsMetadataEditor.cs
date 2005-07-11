@@ -244,8 +244,6 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 		{
 			if (disposing)
 			{
-				if (_editor != null)
-					Marshal.ReleaseComObject(_editor);
 				if (sourceFilter != null)
 					Marshal.ReleaseComObject(sourceFilter);
 				_editor = null;
