@@ -535,7 +535,7 @@ namespace MediaPortal.TV.Database
 					  // dont import programs which have already ended...
 					  if (prog.EndTime > dtStartDate)
 					  {
-						  //Log.Write("Add program :{0,-20} {1} {2} {3}",prog.Channel, prog.StartTime.ToShortDateString(),prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , prog.Title); 
+						//  Log.Write("Add program :{0,-20} {1} {2} {3}",prog.Channel, prog.StartTime.ToShortDateString(),prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , prog.Title); 
 
 							TVDatabase.UpdateProgram(prog);
 						  if (prog.StartTime < m_stats.StartTime) m_stats.StartTime=prog.StartTime;

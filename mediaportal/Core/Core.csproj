@@ -135,11 +135,6 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
                 />
                 <Reference
-                    Name = "SQLiteClient"
-                    AssemblyName = "SQLiteClient"
-                    HintPath = "..\SQLiteClient.dll"
-                />
-                <Reference
                     Name = "AxInterop.WMPLib"
                     AssemblyName = "AxInterop.WMPLib"
                     HintPath = "..\AxInterop.WMPLib.dll"
@@ -1315,11 +1310,6 @@
                 />
                 <File
                     RelPath = "Util\FileInformation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\FolderSettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

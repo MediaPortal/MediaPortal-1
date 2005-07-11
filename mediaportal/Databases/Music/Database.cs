@@ -121,7 +121,7 @@ namespace MediaPortal.Music.Database
 					System.IO.Directory.CreateDirectory(strPath+@"\database");
 				}
 				catch(Exception){}
-        m_db = new SQLiteClient(strPath+@"\database\musicdatabase4.db");
+        m_db = new SQLiteClient(strPath+@"\database\musicdatabase4.db3");
         CreateTables();
 
         m_db.Execute("PRAGMA cache_size=8192\n");

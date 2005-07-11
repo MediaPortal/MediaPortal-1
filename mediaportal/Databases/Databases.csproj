@@ -44,7 +44,7 @@
                 />
                 <Config
                     Name = "Release"
-                    AllowUnsafeBlocks = "false"
+                    AllowUnsafeBlocks = "true"
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
@@ -120,11 +120,6 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "SQLiteClient"
-                    AssemblyName = "SQLiteClient"
-                    HintPath = "..\SQLiteClient.dll"
-                />
-                <Reference
                     Name = "System.Drawing"
                     AssemblyName = "System.Drawing"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
@@ -154,7 +149,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "SQLiteClient.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SQLiteException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SQLiteResultSet.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SQLSelectBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Folders\FolderSettings.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

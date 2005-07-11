@@ -389,8 +389,8 @@ namespace MediaPortal.GUI.GUIBurner
 					System.IO.Directory.CreateDirectory("database");
 				}
 				catch(Exception){}
-				dbExists = System.IO.File.Exists( @"database\TVDatabaseV20.db" );
-				m_db = new SQLiteClient(@"database\TVDatabaseV20.db");
+				dbExists = System.IO.File.Exists( @"database\TVDatabaseV20.db3" );
+				m_db = new SQLiteClient(@"database\TVDatabaseV20.db3");
 				if( dbExists )
 				{
  					rSQL = String.Format("SELECT * FROM recorded WHERE strFileName LIKE '{0}'",fileName);

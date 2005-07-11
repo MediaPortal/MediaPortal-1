@@ -39,7 +39,7 @@ namespace MediaPortal.Video.Database
 					System.IO.Directory.CreateDirectory(strPath+@"\database");
 				}
 				catch(Exception){}
-				m_db = new SQLiteClient(strPath+@"\database\VideoDatabaseV5.db");
+				m_db = new SQLiteClient(strPath+@"\database\VideoDatabaseV5.db3");
 				CreateTables();
 
 			} 

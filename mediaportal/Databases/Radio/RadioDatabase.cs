@@ -35,7 +35,7 @@ namespace MediaPortal.Radio.Database
 					System.IO.Directory.CreateDirectory(strPath+@"\database");
 				}
 				catch(Exception){}
-				m_db = new SQLiteClient(strPath+@"\database\RadioDatabase4.db");
+				m_db = new SQLiteClient(strPath+@"\database\RadioDatabase4.db3");
         CreateTables();
 
         if (m_db!=null)

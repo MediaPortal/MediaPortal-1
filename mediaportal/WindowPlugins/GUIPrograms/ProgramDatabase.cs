@@ -30,7 +30,7 @@ namespace ProgramsDatabase
           Directory.CreateDirectory("database");
         }
         catch (Exception){}
-        sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db");
+        sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db3");
         ProgramSettings.sqlDB = sqlDB;
         // make sure the DB-structure is complete
         CreateObjects();

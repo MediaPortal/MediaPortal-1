@@ -392,7 +392,7 @@ namespace MediaPortal.Configuration.Sections
 
       if(dialogResult == DialogResult.Yes)
       {
-        string database = @"database\musicdatabase4.db";
+        string database = @"database\musicdatabase4.db3";
         if(File.Exists(database))
         {
           File.Delete(database);

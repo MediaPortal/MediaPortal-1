@@ -1555,7 +1555,7 @@ namespace MediaPortal.Configuration.Sections
 
       if(dialogResult == DialogResult.Yes)
       {
-        string database = @"database\VideoDatabaseV5.db";
+        string database = @"database\VideoDatabaseV5.db3";
         if(File.Exists(database))
         {
           File.Delete(database);

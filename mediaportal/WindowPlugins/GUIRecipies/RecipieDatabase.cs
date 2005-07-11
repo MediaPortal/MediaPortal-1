@@ -56,8 +56,8 @@ namespace GUIRecipies
 					System.IO.Directory.CreateDirectory("database");
 				}
 				catch(Exception){}
-				dbExists = System.IO.File.Exists( @"database\RecipieDatabaseV3.db" );
-				m_db = new SQLiteClient(@"database\RecipieDatabaseV3.db");
+				dbExists = System.IO.File.Exists( @"database\RecipieDatabaseV3.db3" );
+				m_db = new SQLiteClient(@"database\RecipieDatabaseV3.db3");
 				if( !dbExists ){
 					CreateTables();
 				}

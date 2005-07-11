@@ -1260,7 +1260,6 @@ namespace MediaPortal.GUI.TV
 					string strTitle=program.Title;
 					bool bStartsBefore=false;
 					bool bEndsAfter=false;
-
 					if (program.End<=iStart) continue;
 					if (program.Start<iStart) bStartsBefore=true;
 					if (program.End>iEnd) bEndsAfter=true;

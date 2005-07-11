@@ -135,11 +135,6 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
                 />
                 <Reference
-                    Name = "SQLiteClient"
-                    AssemblyName = "SQLiteClient"
-                    HintPath = "..\SQLiteClient.dll"
-                />
-                <Reference
                     Name = "TVCapture"
                     Project = "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"

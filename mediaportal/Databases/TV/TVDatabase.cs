@@ -82,7 +82,7 @@ namespace MediaPortal.TV.Database
 					}
 					catch(Exception){}
 					//Upgrade();
-					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV21.db");
+					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV21.db3");
 					CreateTables();
 					UpdateFromPreviousVersion();
 					if (m_db!=null)
