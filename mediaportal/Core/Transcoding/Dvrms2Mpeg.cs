@@ -272,7 +272,7 @@ namespace MediaPortal.Core.Transcoding
 			mediaSeeking=null;
 			mediaEvt=null;
 			mediaControl=null;
-
+			
 			if ( powerDvdMuxer != null )
 				Marshal.ReleaseComObject( powerDvdMuxer );
 			powerDvdMuxer=null;

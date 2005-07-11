@@ -419,7 +419,6 @@ namespace MediaPortal.Core.Transcoding
 		void Cleanup()
 		{
 			Log.Write("DVR2WMV: cleanup");
-
 			if( mediaControl != null )
 			{
 				mediaControl.Stop();

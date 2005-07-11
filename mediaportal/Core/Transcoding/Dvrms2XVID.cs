@@ -311,6 +311,7 @@ namespace MediaPortal.Core.Transcoding
 				mediaControl.Stop();
 				mediaControl = null;
 			}
+			fileWriterFilter=null;
 			mediaSeeking=null;
 			mediaEvt=null;
 			mediaPos=null;
@@ -336,9 +337,6 @@ namespace MediaPortal.Core.Transcoding
 				Marshal.ReleaseComObject( Mpeg2VideoCodec );
 			Mpeg2VideoCodec=null;
 
-			if ( fileWriterFilter != null )
-				Marshal.ReleaseComObject( fileWriterFilter );
-			fileWriterFilter=null;
 
 			if ( bufferSource != null )
 				Marshal.ReleaseComObject( bufferSource );
