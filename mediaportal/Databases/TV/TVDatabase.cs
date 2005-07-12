@@ -89,7 +89,7 @@ namespace MediaPortal.TV.Database
 					{
 						m_db.Execute("PRAGMA cache_size=2000\n");
 						m_db.Execute("PRAGMA synchronous='OFF'\n");
-						m_db.Execute("PRAGMA count_changes=1'\n");
+						m_db.Execute("PRAGMA count_changes=1\n");
 						m_db.Execute("PRAGMA full_column_names=0\n");
 						m_db.Execute("PRAGMA short_column_names=0\n");
 					}

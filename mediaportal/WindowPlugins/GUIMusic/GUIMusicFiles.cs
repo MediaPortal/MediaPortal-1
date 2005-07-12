@@ -150,6 +150,12 @@ namespace MediaPortal.GUI.Music
 				filter1 = new FilterDefinition();filter1.Where="favorites";filter1.SqlOperator="=";filter1.Restriction="1";filter1.SortAscending=true;
 				viewFavorites.Filters.Add(filter1);
 
+				//all songs
+				ViewDefinition viewAllSongs = new ViewDefinition();
+				viewAllSongs.Name="All songs";
+				filter1 = new FilterDefinition();filter1.Where="title";filter1.SqlOperator="";filter1.Restriction="";filter1.SortAscending=true;
+				viewAllSongs.Filters.Add(filter1);
+
 				ArrayList listViews = new ArrayList();
 				listViews.Add(viewGenre);
 				listViews.Add(viewTop100);
@@ -157,6 +163,7 @@ namespace MediaPortal.GUI.Music
 				listViews.Add(viewAlbums);
 				listViews.Add(viewYears);
 				listViews.Add(viewFavorites);
+				listViews.Add(viewAllSongs);
 
 				using(FileStream fileStream = new FileStream("musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
 				{

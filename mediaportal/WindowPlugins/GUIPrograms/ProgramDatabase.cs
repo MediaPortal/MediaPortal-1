@@ -34,7 +34,7 @@ namespace ProgramsDatabase
 
 				sqlDB.Execute("PRAGMA cache_size=2000\n");
 				sqlDB.Execute("PRAGMA synchronous='OFF'\n");
-				sqlDB.Execute("PRAGMA count_changes=1'\n");
+				sqlDB.Execute("PRAGMA count_changes=1\n");
 				sqlDB.Execute("PRAGMA full_column_names=0\n");
 				sqlDB.Execute("PRAGMA short_column_names=0\n");
 
