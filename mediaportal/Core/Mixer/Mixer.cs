@@ -1,0 +1,261 @@
+using System;
+using System.Runtime.InteropServices;
+
+namespace MediaPortal.Mixer
+{
+	public sealed class Mixer : IDisposable
+	{
+		#region Events
+
+		public event MixerEventHandler	LineChanged;
+		public event MixerEventHandler	ControlChanged;
+
+		#endregion Events
+
+		#region Methods
+
+		public void Close()
+		{
+			lock(this)
+			{
+				if(_handle == IntPtr.Zero)
+					return;
+
+				MixerNativeMethods.mixerClose(_handle);
+
+				_handle = IntPtr.Zero;
+			}
+		}
+
+		public void Dispose()
+		{
+			Close();
+		}
+
+		public void Open()
+		{
+			Open(0);
+		}
+
+		public void Open(int mixerIndex)
+		{
+			lock(this)
+			{
+				if(_mixerEventListener == null)
+				{
+					_mixerEventListener = new MixerEventListener();
+					_mixerEventListener.Start();
+					_mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
+					_mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
+				}
+
+				IntPtr handle = IntPtr.Zero;
+
+//				MixerError error = MixerNativeMethods.mixerOpen(ref handle, mixerIndex, new MixerCallback(OnMixerCallback), 0, MixerFlags.CallbackDelegate);
+				MixerError error = MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0, MixerFlags.CallbackWindow);
+				
+				if(error != MixerError.None)
+					throw new InvalidOperationException();
+
+				_handle = handle;
+				_isMuted = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Mute) == 1;
+				_volume = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Volume);
+			}
+		}
+
+		void OnMixerCallback(IntPtr handle, short msg, IntPtr reserved, IntPtr WParam, IntPtr LParam)
+		{
+			bool b = true;
+		}
+
+		object GetValue(MixerComponentType componentType, MixerControlType controlType)
+		{
+			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine();
+
+			mixerLine.Size = Marshal.SizeOf(mixerLine);
+			mixerLine.ComponentType = componentType;
+
+			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+				throw new InvalidOperationException("Mixer.OpenControl.1");
+			
+			MixerNativeMethods.MixerLineControls mixerLineControls = new MixerNativeMethods.MixerLineControls();
+
+			mixerLineControls.Size = Marshal.SizeOf(mixerLineControls);
+			mixerLineControls.LineId = mixerLine.LineId;
+			mixerLineControls.ControlType = Convert.ToUInt32(controlType);
+			mixerLineControls.Controls = 1;
+			mixerLineControls.Data = Marshal.AllocCoTaskMem(152);
+			mixerLineControls.DataSize = 152;
+
+//			if(MixerNativeMethods.mixerGetLineControlsA(_handle, ref mixerLineControls, MixerLineControlFlags.OneByType) != MixerError.None)
+//				throw new InvalidOperationException("Mixer.OpenControl.2");
+
+			MixerError errorX = MixerNativeMethods.mixerGetLineControlsA(_handle, ref mixerLineControls, MixerLineControlFlags.OneByType);
+
+			MixerNativeMethods.MixerControl mixerControl = (MixerNativeMethods.MixerControl)Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl)); 
+
+			MixerNativeMethods.MixerControlDetails mixerControlDetails = new MixerNativeMethods.MixerControlDetails();
+
+			mixerControlDetails.Size = Marshal.SizeOf(mixerControlDetails); 
+			mixerControlDetails.ControlId = mixerControl.ControlId; 
+			mixerControlDetails.Data = Marshal.AllocCoTaskMem(4); 
+			mixerControlDetails.Channels = 1;
+			mixerControlDetails.Item = 0;
+			mixerControlDetails.DataSize = Marshal.SizeOf(4);
+
+			MixerError error = MixerNativeMethods.mixerGetControlDetailsA(_handle, ref mixerControlDetails, 0);
+
+			int value = Marshal.ReadInt32(mixerControlDetails.Data);
+
+			Marshal.FreeCoTaskMem(mixerLineControls.Data);
+			Marshal.FreeCoTaskMem(mixerControlDetails.Data);
+
+			return value;
+		}
+
+		void SetValue(MixerComponentType componentType, MixerControlType controlType, bool controlValue)
+		{
+			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine();
+
+			mixerLine.Size = Marshal.SizeOf(mixerLine);
+			mixerLine.ComponentType = componentType;
+
+			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+				throw new InvalidOperationException("Mixer.SetValue.1");
+			
+			MixerNativeMethods.MixerLineControls mixerLineControls = new MixerNativeMethods.MixerLineControls();
+
+			mixerLineControls.Size = Marshal.SizeOf(mixerLineControls);
+			mixerLineControls.LineId = mixerLine.LineId;
+			mixerLineControls.ControlType = Convert.ToUInt32(controlType);
+			mixerLineControls.Controls = 1;
+			mixerLineControls.Data = Marshal.AllocCoTaskMem(152);
+			mixerLineControls.DataSize = 152;
+
+			if(MixerNativeMethods.mixerGetLineControlsA(_handle, ref mixerLineControls, MixerLineControlFlags.OneByType) != MixerError.None)
+				throw new InvalidOperationException("Mixer.SetValue.2");
+
+			MixerNativeMethods.MixerControl mixerControl = (MixerNativeMethods.MixerControl)Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl)); 
+
+			MixerNativeMethods.MixerControlDetails mixerControlDetails = new MixerNativeMethods.MixerControlDetails();
+
+			mixerControlDetails.Size = Marshal.SizeOf(mixerControlDetails); 
+			mixerControlDetails.ControlId = mixerControl.ControlId; 
+			mixerControlDetails.Data = Marshal.AllocCoTaskMem(4);
+			mixerControlDetails.Channels = 1;
+			mixerControlDetails.Item = 0;
+			mixerControlDetails.DataSize = 4;
+
+			Marshal.WriteInt32(mixerControlDetails.Data, controlValue ? 1 : 0);
+
+			MixerError error = MixerNativeMethods.mixerSetControlDetails(_handle, ref mixerControlDetails, 0);
+
+			Marshal.FreeCoTaskMem(mixerLineControls.Data);
+			Marshal.FreeCoTaskMem(mixerControlDetails.Data);
+		}
+
+		void SetValue(MixerComponentType componentType, MixerControlType controlType, int controlValue)
+		{
+			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine();
+
+			mixerLine.Size = Marshal.SizeOf(mixerLine);
+			mixerLine.ComponentType = componentType;
+
+			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+				throw new InvalidOperationException("Mixer.SetValue.1");
+			
+			MixerNativeMethods.MixerLineControls mixerLineControls = new MixerNativeMethods.MixerLineControls();
+
+			mixerLineControls.Size = Marshal.SizeOf(mixerLineControls);
+			mixerLineControls.LineId = mixerLine.LineId;
+			mixerLineControls.ControlType = Convert.ToUInt32(controlType);
+			mixerLineControls.Controls = 1;
+			mixerLineControls.Data = Marshal.AllocCoTaskMem(152);
+			mixerLineControls.DataSize = 152;
+
+			if(MixerNativeMethods.mixerGetLineControlsA(_handle, ref mixerLineControls, MixerLineControlFlags.OneByType) != MixerError.None)
+				throw new InvalidOperationException("Mixer.SetValue.2");
+
+			MixerNativeMethods.MixerControl mixerControl = (MixerNativeMethods.MixerControl)Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl)); 
+
+			MixerNativeMethods.MixerControlDetails mixerControlDetails = new MixerNativeMethods.MixerControlDetails();
+
+			mixerControlDetails.Size = Marshal.SizeOf(mixerControlDetails); 
+			mixerControlDetails.ControlId = mixerControl.ControlId; 
+			mixerControlDetails.Data = Marshal.AllocCoTaskMem(4);
+			mixerControlDetails.Channels = 1;
+			mixerControlDetails.Item = 0;
+			mixerControlDetails.DataSize = 4;
+
+			Marshal.WriteInt32(mixerControlDetails.Data, controlValue);
+
+			MixerError error = MixerNativeMethods.mixerSetControlDetails(_handle, ref mixerControlDetails, 0);
+
+			Marshal.FreeCoTaskMem(mixerLineControls.Data);
+			Marshal.FreeCoTaskMem(mixerControlDetails.Data);
+		}
+
+		void OnLineChanged(object sender, MixerEventArgs e)
+		{		
+			if(LineChanged != null)
+				LineChanged(sender, e);
+		}
+		
+		void OnControlChanged(object sender, MixerEventArgs e)
+		{
+			_isMuted = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Mute) == 1;
+			_volume = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Volume);
+
+			if(ControlChanged != null)
+				ControlChanged(sender, e);
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		public bool IsMuted
+		{
+			get { lock(this) return _isMuted; }
+			set { lock(this) _isMuted = value; SetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Mute, _isMuted); }
+		}
+
+		public string Name
+		{
+			get { lock(this) return _name; }
+		}
+
+		public IntPtr Handle
+		{
+			get { lock(this) return _handle; }
+		}
+
+		public int Volume
+		{
+			get { lock(this) return _volume; }
+			set { lock(this) _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)); SetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Volume, _volume); }
+		}
+
+		public int VolumeMaximum
+		{
+			get { return 65535; }
+		}
+
+		public int VolumeMinimum
+		{
+			get { return 0; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		IntPtr						_handle;
+		bool						_isMuted;
+		string						_name;
+		static MixerEventListener	_mixerEventListener;
+		int							_volume;
+
+		#endregion Fields
+	}
+}
