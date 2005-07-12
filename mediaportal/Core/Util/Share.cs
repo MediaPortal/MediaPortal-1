@@ -13,6 +13,14 @@ namespace MediaPortal.Util
 	/// </summary>
 	public class Share
 	{
+		public enum Views
+		{
+			List=0,
+			Icons=1,
+			BigIcons=2,
+			Albums=3,
+			FilmStrip=4
+		}
     private string m_strPath=String.Empty;
     private string m_strName=String.Empty;
     private bool   m_bDefault=false;		
@@ -23,6 +31,7 @@ namespace MediaPortal.Util
     private string remotePassword=String.Empty;
     private string remoteFolder=String.Empty;
     private int    remotePort=21;
+		public Views   DefaultView=Views.List;
 		/// <summary>
 		/// empty constructor
 		/// </summary>

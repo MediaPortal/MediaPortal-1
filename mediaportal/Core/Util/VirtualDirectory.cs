@@ -289,6 +289,51 @@ namespace MediaPortal.Util
       }
       return false;
     }
+		public Share GetShare(string strDir)
+		{
+			if (strDir==null) return null;
+			if (strDir.Length <= 0) return null;
+			string strRoot = strDir;
+
+			bool isRemote=IsRemote(strDir);
+			if (!isRemote)
+			{
+				if (strDir != "cdda:")
+					strRoot = System.IO.Path.GetFullPath(strDir);
+			}
+
+			foreach (Share share in m_shares)
+			{
+				try
+				{
+					if (isRemote)
+					{
+						if (share.IsFtpShare)
+						{
+							string remoteFolder=String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+								share.FtpServer,share.FtpPort,share.FtpLoginName,share.FtpPassword,Utils.RemoveTrailingSlash(share.FtpFolder));
+							if (strDir == remoteFolder) 
+							{
+								return share;
+							}
+						}
+					}
+					else
+					{
+						string strFullPath = System.IO.Path.GetFullPath(share.Path);
+						if ( strRoot.ToLower().StartsWith(strFullPath.ToLower()) )
+						{
+							currentShare = strFullPath;
+							return share;
+						}
+					}
+				}
+				catch (Exception)
+				{
+				}
+			}
+			return null;
+		}
 
 		/// <summary>
 		/// This method check is the given extension is a image file

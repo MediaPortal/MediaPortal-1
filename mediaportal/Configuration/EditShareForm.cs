@@ -33,6 +33,8 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.TextBox textBoxRemoteFolder;
     private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.ComboBox comboBox1;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -74,6 +76,8 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
+			this.label9 = new System.Windows.Forms.Label();
 			this.textBoxRemoteFolder = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
@@ -103,6 +107,8 @@ namespace MediaPortal.Configuration
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.comboBox1);
+			this.groupBox1.Controls.Add(this.label9);
 			this.groupBox1.Controls.Add(this.textBoxRemoteFolder);
 			this.groupBox1.Controls.Add(this.label3);
 			this.groupBox1.Controls.Add(this.label8);
@@ -130,6 +136,28 @@ namespace MediaPortal.Configuration
 			this.groupBox1.Text = "Folder settings";
 			this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
 			// 
+			// comboBox1
+			// 
+			this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBox1.Items.AddRange(new object[] {
+																									 "List",
+																									 "Icons",
+																									 "Big Icons",
+																									 "Album",
+																									 "Filmstrip"});
+			this.comboBox1.Location = new System.Drawing.Point(16, 136);
+			this.comboBox1.Name = "comboBox1";
+			this.comboBox1.Size = new System.Drawing.Size(121, 21);
+			this.comboBox1.TabIndex = 25;
+			// 
+			// label9
+			// 
+			this.label9.Location = new System.Drawing.Point(16, 120);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(72, 16);
+			this.label9.TabIndex = 24;
+			this.label9.Text = "Default view:";
+			// 
 			// textBoxRemoteFolder
 			// 
 			this.textBoxRemoteFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -150,7 +178,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(16, 256);
+			this.label8.Location = new System.Drawing.Point(256, 224);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(100, 16);
 			this.label8.TabIndex = 22;
@@ -158,14 +186,14 @@ namespace MediaPortal.Configuration
 			// 
 			// textBoxPort
 			// 
-			this.textBoxPort.Location = new System.Drawing.Point(16, 272);
+			this.textBoxPort.Location = new System.Drawing.Point(256, 240);
 			this.textBoxPort.Name = "textBoxPort";
 			this.textBoxPort.TabIndex = 7;
 			this.textBoxPort.Text = "21";
 			// 
 			// textBoxPassword
 			// 
-			this.textBoxPassword.Location = new System.Drawing.Point(136, 232);
+			this.textBoxPassword.Location = new System.Drawing.Point(136, 280);
 			this.textBoxPassword.Name = "textBoxPassword";
 			this.textBoxPassword.PasswordChar = '*';
 			this.textBoxPassword.TabIndex = 6;
@@ -173,7 +201,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(136, 216);
+			this.label7.Location = new System.Drawing.Point(136, 264);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(100, 16);
 			this.label7.TabIndex = 19;
@@ -181,14 +209,14 @@ namespace MediaPortal.Configuration
 			// 
 			// textBoxLogin
 			// 
-			this.textBoxLogin.Location = new System.Drawing.Point(16, 232);
+			this.textBoxLogin.Location = new System.Drawing.Point(16, 280);
 			this.textBoxLogin.Name = "textBoxLogin";
 			this.textBoxLogin.TabIndex = 5;
 			this.textBoxLogin.Text = "";
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(16, 216);
+			this.label6.Location = new System.Drawing.Point(16, 264);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(100, 16);
 			this.label6.TabIndex = 17;
@@ -196,7 +224,7 @@ namespace MediaPortal.Configuration
 			// 
 			// textBoxServer
 			// 
-			this.textBoxServer.Location = new System.Drawing.Point(16, 192);
+			this.textBoxServer.Location = new System.Drawing.Point(16, 240);
 			this.textBoxServer.Name = "textBoxServer";
 			this.textBoxServer.Size = new System.Drawing.Size(224, 20);
 			this.textBoxServer.TabIndex = 4;
@@ -204,7 +232,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(16, 176);
+			this.label5.Location = new System.Drawing.Point(16, 224);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(100, 16);
 			this.label5.TabIndex = 15;
@@ -212,7 +240,7 @@ namespace MediaPortal.Configuration
 			// 
 			// checkBoxRemote
 			// 
-			this.checkBoxRemote.Location = new System.Drawing.Point(16, 152);
+			this.checkBoxRemote.Location = new System.Drawing.Point(16, 200);
 			this.checkBoxRemote.Name = "checkBoxRemote";
 			this.checkBoxRemote.Size = new System.Drawing.Size(176, 16);
 			this.checkBoxRemote.TabIndex = 3;
@@ -223,7 +251,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.pinCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.pinCodeTextBox.Location = new System.Drawing.Point(216, 48);
+			this.pinCodeTextBox.Location = new System.Drawing.Point(216, 40);
 			this.pinCodeTextBox.MaxLength = 4;
 			this.pinCodeTextBox.Name = "pinCodeTextBox";
 			this.pinCodeTextBox.Size = new System.Drawing.Size(63, 20);
@@ -243,7 +271,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.folderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.folderButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.folderButton.Location = new System.Drawing.Point(368, 96);
+			this.folderButton.Location = new System.Drawing.Point(368, 88);
 			this.folderButton.Name = "folderButton";
 			this.folderButton.Size = new System.Drawing.Size(24, 20);
 			this.folderButton.TabIndex = 3;
@@ -254,7 +282,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.folderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.folderTextBox.Location = new System.Drawing.Point(16, 96);
+			this.folderTextBox.Location = new System.Drawing.Point(16, 88);
 			this.folderTextBox.Name = "folderTextBox";
 			this.folderTextBox.Size = new System.Drawing.Size(344, 20);
 			this.folderTextBox.TabIndex = 2;
@@ -262,7 +290,7 @@ namespace MediaPortal.Configuration
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(16, 80);
+			this.label2.Location = new System.Drawing.Point(16, 72);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(168, 23);
 			this.label2.TabIndex = 8;
@@ -272,7 +300,7 @@ namespace MediaPortal.Configuration
 			// 
 			this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
-			this.nameTextBox.Location = new System.Drawing.Point(16, 48);
+			this.nameTextBox.Location = new System.Drawing.Point(16, 40);
 			this.nameTextBox.Name = "nameTextBox";
 			this.nameTextBox.Size = new System.Drawing.Size(184, 20);
 			this.nameTextBox.TabIndex = 0;
@@ -440,6 +468,7 @@ namespace MediaPortal.Configuration
       bool remote=IsRemote;
       checkBoxRemote.Checked=!remote;
       checkBoxRemote.Checked=remote;
+			if (comboBox1.SelectedIndex<0) comboBox1.SelectedIndex=0;
     }
 
 		public string Folder
@@ -498,5 +527,10 @@ namespace MediaPortal.Configuration
       get { return textBoxRemoteFolder.Text;}
       set { textBoxRemoteFolder.Text=value; }
     }
+		public int View
+		{
+			get { return comboBox1.SelectedIndex;}
+			set {comboBox1.SelectedIndex=value;}
+		}
 	}
 }

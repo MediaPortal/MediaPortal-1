@@ -10,7 +10,13 @@ namespace MediaPortal.Configuration.Sections
 	{
     public class ShareData
     {
-
+			public enum Views
+			{
+				List,
+				Icons,
+				BigIcons,
+				Filmstrip
+			}
       public string Name;
       public string Folder;
       public string PinCode;
@@ -21,6 +27,7 @@ namespace MediaPortal.Configuration.Sections
       public string PassWord=String.Empty;
       public string RemoteFolder=String.Empty;
       public int    Port=21;
+			public Views  DefaultView=Views.List;
 
       public bool   HasPinCode
       {
@@ -207,6 +214,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.PassWord=editShare.PassWord;
         shareData.Port=editShare.Port;
         shareData.RemoteFolder=editShare.RemoteFolder;
+				shareData.DefaultView=(ShareData.Views)editShare.View;
             
 
 				AddShare(shareData, currentlyCheckedItem == null);
@@ -247,7 +255,8 @@ namespace MediaPortal.Configuration.Sections
           editShare.Port=shareData.Port;
           editShare.LoginName=shareData.LoginName;
           editShare.PassWord=shareData.PassWord;
-          editShare.RemoteFolder=shareData.RemoteFolder;
+					editShare.RemoteFolder=shareData.RemoteFolder;
+					editShare.View=(int)shareData.DefaultView;
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -262,7 +271,8 @@ namespace MediaPortal.Configuration.Sections
             shareData.LoginName=editShare.LoginName;
             shareData.PassWord=editShare.PassWord;
             shareData.Port=editShare.Port;
-            shareData.RemoteFolder=editShare.RemoteFolder;
+						shareData.RemoteFolder=editShare.RemoteFolder;
+						shareData.DefaultView=(ShareData.Views)editShare.View;
             
 
             selectedItem.Tag = shareData;

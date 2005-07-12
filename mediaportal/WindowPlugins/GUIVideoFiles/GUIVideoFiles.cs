@@ -212,6 +212,7 @@ namespace MediaPortal.GUI.Video
           string sharePwd  = String.Format("sharepassword{0}", i);
           string sharePort = String.Format("shareport{0}", i);
           string remoteFolder = String.Format("shareremotepath{0}", i);
+					string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("movies", strShareName, String.Empty);
@@ -224,6 +225,7 @@ namespace MediaPortal.GUI.Video
           share.FtpPassword= xmlreader.GetValueAsString("movies", sharePwd,String.Empty);
           share.FtpPort= xmlreader.GetValueAsInt("movies", sharePort,21);
           share.FtpFolder= xmlreader.GetValueAsString("movies", remoteFolder,"/");
+					share.DefaultView= (Share.Views)xmlreader.GetValueAsInt("movies", shareViewPath, (int)Share.Views.List);
 
           if (share.Name.Length > 0)
           {
@@ -359,8 +361,25 @@ namespace MediaPortal.GUI.Video
       if (folderName==String.Empty) folderName="root";
       object o;
       FolderSettings.GetFolderSetting(folderName,"VideoFiles",typeof(GUIVideoFiles.MapSettings), out o);
-      if (o!=null) mapSettings = o as MapSettings;
-			if (mapSettings==null) mapSettings  = new MapSettings();
+			if (o!=null) 
+			{
+				mapSettings = o as MapSettings;
+				if (mapSettings==null) mapSettings  = new MapSettings();
+				CurrentSortAsc=mapSettings.SortAscending;
+				CurrentSortMethod=(VideoSort.SortMethod)mapSettings.SortBy;
+				currentView=(View)mapSettings.ViewAs;
+			}
+			else
+			{
+				Share share=m_directory.GetShare(folderName);
+				if (share!=null)
+				{
+					if (mapSettings==null) mapSettings  = new MapSettings();
+					CurrentSortAsc=mapSettings.SortAscending;
+					CurrentSortMethod=(VideoSort.SortMethod)mapSettings.SortBy;
+					currentView=(View)share.DefaultView;
+				}
+			}
 			SwitchView();
 			UpdateButtonStates();
     }

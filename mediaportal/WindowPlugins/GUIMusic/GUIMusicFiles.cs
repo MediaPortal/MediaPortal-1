@@ -214,6 +214,7 @@ namespace MediaPortal.GUI.Music
           string sharePwd  = String.Format("sharepassword{0}", i);
           string sharePort = String.Format("shareport{0}", i);
           string remoteFolder = String.Format("shareremotepath{0}", i);
+					string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("music", strShareName, String.Empty);
@@ -226,6 +227,7 @@ namespace MediaPortal.GUI.Music
           share.FtpPassword= xmlreader.GetValueAsString("music", sharePwd,String.Empty);
           share.FtpPort= xmlreader.GetValueAsInt("music", sharePort,21);
           share.FtpFolder= xmlreader.GetValueAsString("music", remoteFolder,"/");
+					share.DefaultView= (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
 
           if (share.Name.Length > 0)
           { 
@@ -751,11 +753,25 @@ namespace MediaPortal.GUI.Music
       if (strDirectory==String.Empty) strDirectory="root";
       object o;
       FolderSettings.GetFolderSetting(strDirectory,"MusicFiles",typeof(GUIMusicFiles.MapSettings), out o);
-      if (o!=null) _MapSettings = o as MapSettings;
-      if (_MapSettings==null) _MapSettings  = new MapSettings();
-			CurrentSortAsc=_MapSettings.SortAscending;
-			CurrentSortMethod=(MusicSort.SortMethod)_MapSettings.SortBy;
-			currentView=(View)_MapSettings.ViewAs;
+			if (o!=null) 
+			{
+				_MapSettings = o as MapSettings;
+				if (_MapSettings==null) _MapSettings  = new MapSettings();
+				CurrentSortAsc=_MapSettings.SortAscending;
+				CurrentSortMethod=(MusicSort.SortMethod)_MapSettings.SortBy;
+				currentView=(View)_MapSettings.ViewAs;
+			}
+			else
+			{
+				Share share=m_directory.GetShare(strDirectory);
+				if (share!=null)
+				{
+					if (_MapSettings==null) _MapSettings  = new MapSettings();
+					CurrentSortAsc=_MapSettings.SortAscending;
+					CurrentSortMethod=(MusicSort.SortMethod)_MapSettings.SortBy;
+					currentView=(View)share.DefaultView;
+				}
+			}
 			SwitchView();
 			UpdateButtonStates();
     }

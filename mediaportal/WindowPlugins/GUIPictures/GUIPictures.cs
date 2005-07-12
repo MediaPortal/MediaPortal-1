@@ -73,7 +73,8 @@ namespace MediaPortal.GUI.Pictures
       List    =       0,
       Icons    =      1,
       BigIcons  =   2,
-      Filmstrip   =   3,
+			Albums=3,
+      Filmstrip   =   4,
     }
 
 		[SkinControlAttribute(2)]		protected GUIButtonControl btnViewAs=null;
@@ -135,6 +136,7 @@ namespace MediaPortal.GUI.Pictures
 					string sharePwd  = String.Format("sharepassword{0}", i);
 					string sharePort = String.Format("shareport{0}", i);
 					string remoteFolder = String.Format("shareremotepath{0}", i);
+					string shareViewPath = String.Format("shareview{0}", i);
 
 					Share share=new Share();
 					share.Name=xmlreader.GetValueAsString("pictures", shareName,String.Empty);
@@ -147,6 +149,7 @@ namespace MediaPortal.GUI.Pictures
 					share.FtpPassword= xmlreader.GetValueAsString("pictures", sharePwd,String.Empty);
 					share.FtpPort= xmlreader.GetValueAsInt("pictures", sharePort,21);
 					share.FtpFolder= xmlreader.GetValueAsString("pictures", remoteFolder,"/");
+					share.DefaultView= (Share.Views)xmlreader.GetValueAsInt("pictures", shareViewPath, (int)Share.Views.List);
 
 					if (share.Name.Length>0)
 					{
@@ -270,6 +273,10 @@ namespace MediaPortal.GUI.Pictures
 				 case View.BigIcons:
 					 mapSettings.ViewAs=(int)View.Filmstrip;
 					 break;
+					case View.Albums:
+						mapSettings.ViewAs=(int)View.Filmstrip;
+						break;
+
 				 case View.Filmstrip:
 					 mapSettings.ViewAs=(int)View.List;
 					 break;
@@ -516,7 +523,10 @@ namespace MediaPortal.GUI.Pictures
           break;
         case View.BigIcons:
           textLine=GUILocalizeStrings.Get(417);
-          break;
+					break;
+				case View.Albums:
+					textLine=GUILocalizeStrings.Get(417);
+					break;
         case View.Filmstrip:
           textLine=GUILocalizeStrings.Get(733);
           
@@ -561,6 +571,10 @@ namespace MediaPortal.GUI.Pictures
       {
         facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
       }
+			else if ( mapSettings.ViewAs== (int)View.Albums )
+      {
+        facadeView.View=GUIFacadeControl.ViewMode.LargeIcons;
+      }
       else if (mapSettings.ViewAs== (int)View.Icons)
       {
         facadeView.View=GUIFacadeControl.ViewMode.SmallIcons;
@@ -588,8 +602,22 @@ namespace MediaPortal.GUI.Pictures
 			if (folder==String.Empty) folder="root";
 			object o;
 			FolderSettings.GetFolderSetting(folder,"Pictures",typeof(GUIPictures.MapSettings), out o);
-			if (o!=null) mapSettings = o as MapSettings;
-			if (mapSettings==null) mapSettings  = new MapSettings();				
+			if (o!=null) 
+			{
+				mapSettings = o as MapSettings;
+				if (mapSettings==null) mapSettings  = new MapSettings();
+			}
+			else
+			{
+				Share share=virtualDirectory.GetShare(folder);
+				if (share!=null)
+				{
+					if (mapSettings==null) mapSettings  = new MapSettings();
+					mapSettings.ViewAs=(int)share.DefaultView;
+				}
+			}
+
+
 		}
     void SaveFolderSettings(string folder)
     {

@@ -1404,33 +1404,33 @@ namespace MediaPortal.Player
 		
 		void HandleMouseMessages()
 		{
+			if (!GUIGraphicsContext.IsFullScreenVideo) return;
+			if (GUIGraphicsContext.Vmr9Active) return;
 			try
-			{				
-				if (GUIGraphicsContext.IsFullScreenVideo && !GUIGraphicsContext.Vmr9Active)
+			{	
+
+				DsPOINT  pt;
+				foreach(Message m in mouseMsg)
 				{
-					DsPOINT  pt;
-					foreach(Message m in mouseMsg)
+					long lParam=m.LParam.ToInt32();
+					if( m.Msg==WM_MOUSEMOVE)
 					{
-						long lParam=m.LParam.ToInt32();
-						if( m.Msg==WM_MOUSEMOVE)
-						{
-							pt=new DsPOINT();
-							pt.X = (int)(lParam  & 0xffff); 
-							pt.Y = (int)((lParam>>16)  & 0xffff); 
+						pt=new DsPOINT();
+						pt.X = (int)(lParam  & 0xffff); 
+						pt.Y = (int)((lParam>>16)  & 0xffff); 
 
-							// Select the button at the current position, if it exists
-							dvdCtrl.SelectAtPosition(pt);
-						}
+						// Select the button at the current position, if it exists
+						dvdCtrl.SelectAtPosition(pt);
+					}
 
-						if( m.Msg==WM_LBUTTONUP)
-						{
-							pt=new DsPOINT();
-							pt.X = (int)(lParam  & 0xffff); 
-							pt.Y = (int)((lParam>>16)  & 0xffff); 
+					if( m.Msg==WM_LBUTTONUP)
+					{
+						pt=new DsPOINT();
+						pt.X = (int)(lParam  & 0xffff); 
+						pt.Y = (int)((lParam>>16)  & 0xffff); 
 
-							// Highlight the button at the current position, if it exists
-							dvdCtrl.ActivateAtPosition(pt);
-						}
+						// Highlight the button at the current position, if it exists
+						dvdCtrl.ActivateAtPosition(pt);
 					}
 				}
 			}

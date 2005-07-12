@@ -982,8 +982,10 @@ namespace MediaPortal.TV.Database
 				{
 					if (null==m_db) return false;
 					string strSQL;
-					strSQL="select * from channel ";
-				  strSQL+="left join tblDVBCMapping on tblDVBCMapping.iLCN=channel.idChannel ";
+					strSQL="select channel.idChannel,channel.iChannelNr,channel.frequency,channel.strChannel,";
+					strSQL+="channel.bExternal,channel.Visible,channel.scrambled,channel.ExternalChannel,channel.standard,";
+					strSQL+="channel.Country,channel.iSort,tblDVBCMapping.strProvider,tblDVBSMapping.sProviderName,tblDVBTMapping.strProvider,tblATSCMapping.strProvider ";
+				  strSQL+="from channel left join tblDVBCMapping on tblDVBCMapping.iLCN=channel.idChannel ";
 					strSQL+="left join tblDVBTMapping on tblDVBTMapping.iLCN=channel.idChannel ";
 					strSQL+="left join tblDVBSMapping on tblDVBSMapping.idChannel=channel.idChannel ";
 					strSQL+="left join tblATSCMapping on tblATSCMapping.iLCN=channel.idChannel ";
@@ -994,12 +996,12 @@ namespace MediaPortal.TV.Database
 					for (int i=0; i < results.Rows.Count;++i)
 					{
 						TVChannel chan=new TVChannel();
-						chan.ID=DatabaseUtility.GetAsInt(results,i,"channel.idChannel");
-						chan.Number = DatabaseUtility.GetAsInt(results,i,"channel.iChannelNr");
+						chan.ID=DatabaseUtility.GetAsInt(results,i,0);
+						chan.Number = DatabaseUtility.GetAsInt(results,i,1);
 						decimal dFreq=0;
 						try
 						{
-							dFreq = (decimal)Int64.Parse(DatabaseUtility.Get(results,i,"channel.frequency"));
+							dFreq = (decimal)Int64.Parse(DatabaseUtility.Get(results,i,2));
 
 						}
 						catch(Exception)
@@ -1010,33 +1012,33 @@ namespace MediaPortal.TV.Database
 						dFreq=Math.Round(dFreq,3);
 						dFreq *=1000000M;
 						chan.Frequency = (long)Math.Round(dFreq,0);
-						chan.Name = DatabaseUtility.Get(results,i,"channel.strChannel");
-						int iExternal=DatabaseUtility.GetAsInt(results,i,"channel.bExternal");
+						chan.Name = DatabaseUtility.Get(results,i,3);
+						int iExternal=DatabaseUtility.GetAsInt(results,i,4);
 						if (iExternal!=0) chan.External=true;
 						else chan.External=false;
 
-						int iVisible=DatabaseUtility.GetAsInt(results,i,"channel.Visible");
+						int iVisible=DatabaseUtility.GetAsInt(results,i,5);
 						if (iVisible!=0) chan.VisibleInGuide=true;
 						else chan.VisibleInGuide=false;
 
-						int scrambled=DatabaseUtility.GetAsInt(results,i,"channel.scrambled");
+						int scrambled=DatabaseUtility.GetAsInt(results,i,6);
 						if (scrambled!=0) chan.Scrambled=true;
 						else chan.Scrambled=false;
 
-						chan.ExternalTunerChannel= DatabaseUtility.Get(results,i,"channel.ExternalChannel");
-						chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results,i,"channel.standard");
-						chan.Country=DatabaseUtility.GetAsInt(results,i,"channel.Country");
-						chan.ProviderName=DatabaseUtility.Get(results,i,"tblDVBCMapping.strProvider");
-						chan.Sort=DatabaseUtility.GetAsInt(results,i,"channel.iSort");
+						chan.ExternalTunerChannel= DatabaseUtility.Get(results,i,7);
+						chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results,i,8);
+						chan.Country=DatabaseUtility.GetAsInt(results,i,9);
+						chan.Sort=DatabaseUtility.GetAsInt(results,i,10);
+						chan.ProviderName=DatabaseUtility.Get(results,i,11);
 						if (chan.ProviderName=="")
 						{
-							chan.ProviderName=DatabaseUtility.Get(results,i,"tblDVBSMapping.sProviderName");
+							chan.ProviderName=DatabaseUtility.Get(results,i,12);
 							if (chan.ProviderName=="")
 							{
-								chan.ProviderName=DatabaseUtility.Get(results,i,"tblDVBTMapping.strProvider");
+								chan.ProviderName=DatabaseUtility.Get(results,i,13);
 								if (chan.ProviderName=="")
 								{
-									chan.ProviderName=DatabaseUtility.Get(results,i,"tblATSCMapping.strProvider");
+									chan.ProviderName=DatabaseUtility.Get(results,i,14);
 									if (chan.ProviderName=="")
 									{
 										chan.ProviderName=Strings.Unknown;
