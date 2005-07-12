@@ -54,8 +54,8 @@ namespace SQLite.NET
 		private static extern char* sqlite3_column_text16(void* stmt, int nCol);		
 
 		// Fields
-		private int busyRetries;
-		private int busyRetryDelay;
+		private int busyRetries=5;
+		private int busyRetryDelay=25;
 		private unsafe void* dbHandle;
 
 		// Nested Types
@@ -94,8 +94,6 @@ namespace SQLite.NET
 		public SQLiteClient(string dbName)
 		{
 			string text1;
-			this.busyRetries = 5;
-			this.busyRetryDelay = 5;
 			
 			dbHandle=null;
 			
@@ -133,7 +131,7 @@ namespace SQLite.NET
 			void *stmt=null;
 			void** pStmnt=&stmt;
 			{
-				for (int x=0; x < 5;++x)
+				for (int x=0; x < busyRetries;++x)
 				{
 					err= sqlite3_prepare16(this.dbHandle, query, query.Length, pStmnt, null);
 					if (err!=ResultCode.OK)
@@ -142,12 +140,16 @@ namespace SQLite.NET
 						{
 							sqlite3_finalize(stmt);
 						}
+
+						if (err==ResultCode.BUSY)
+						{
+							System.Threading.Thread.Sleep(busyRetryDelay);
+						}
 						if (err==ResultCode.ERROR)
 						{
 							Log.WriteFile(Log.LogType.Log,true,String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
 							throw new SQLiteException(String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
 						}
-						System.Threading.Thread.Sleep(5);
 						continue;
 					}
 					break;
