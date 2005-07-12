@@ -288,7 +288,7 @@ public interface IDvdControl2
 
 		[PreserveSig]
 	int SetDVDDirectory(
-		[In, MarshalAs(UnmanagedType.LPWStr)]			string		pszwPath );
+		[In]			string		pszwPath );
 
 		[PreserveSig]
 	int ActivateAtPosition( DsPOINT point);

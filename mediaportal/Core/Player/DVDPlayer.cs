@@ -65,7 +65,7 @@ namespace MediaPortal.Player
     protected IDvdControl2			dvdCtrl=null;
     /// <summary> dvd information interface. </summary>
     protected IDvdInfo2				dvdInfo=null;
-
+		protected IBaseFilter dvdbasefilter=null;
     /// <summary> dvd video playback window interface. </summary>
     protected IVideoWindow			videoWin=null;
     protected IBasicVideo2			basicVideo=null; 
@@ -457,83 +457,43 @@ namespace MediaPortal.Player
       int hr;
       try 
       {
-        Log.Write("DVDPlayer:cleanup DShow graph");
-				if (mediaEvt!=null)
-					hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_DVD_EVENT, IntPtr.Zero );
-			
+        Log.Write("DVDPlayer:cleanup DShow graph");			
 
         if( mediaCtrl != null )
         {
           hr = mediaCtrl.Stop();
-					while ((hr=Marshal.ReleaseComObject(mediaCtrl))>0);
           mediaCtrl = null;
         }
         m_state = PlayState.Stopped;
 
-				if (mediaEvt!=null)
-				{
-					while ((hr=Marshal.ReleaseComObject(mediaEvt))>0);
-					mediaEvt = null;
-				}
-        if( videoWin != null )
-        {
-          m_bVisible=false;
-					while ((hr=Marshal.ReleaseComObject( videoWin ))>0); 
-					videoWin = null;
-        }
+				mediaEvt = null;
+        m_bVisible=false;
+				videoWin = null;
+				videoStep	= null;
+				dvdCtrl = null;
+				dvdInfo = null;
+				basicVideo=null;
+				basicAudio=null;
+				mediaPos=null;
 				
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
 				vmr7=null;
-				if( videoStep != null )
-				{
-					while ((hr=Marshal.ReleaseComObject( videoStep ))>0); 
-				}
 
-        videoStep	= null;
-				
+				if( dvdbasefilter != null )
+				{
+					while ((hr=Marshal.ReleaseComObject( dvdbasefilter))>0); 
+					dvdbasefilter = null;              
+				}
+	
         if( cmdOption.dvdCmd != null )
           Marshal.ReleaseComObject( cmdOption.dvdCmd ); 
 				cmdOption.dvdCmd = null;
         pendingCmd = false;
-
-        /*if ( m_ovMgr != null)
-        {
-          Marshal.ReleaseComObject(m_ovMgr);
-          m_ovMgr = null;
-        }*/
-
-				if( dvdCtrl != null )
-				{
-						while ((hr=Marshal.ReleaseComObject( dvdCtrl ))>0); 
-				}
-				dvdCtrl = null;
-
-				if( dvdInfo != null )
-				{
-					while ((hr=Marshal.ReleaseComObject( dvdInfo ))>0); 
-				}
-				dvdInfo = null;
-
 				if (line21Decoder!=null)
 				{
 					while ((hr=Marshal.ReleaseComObject( line21Decoder))>0); 
 					line21Decoder=null;
-				}
-				if (basicVideo!=null)
-				{
-					while ((hr=Marshal.ReleaseComObject( basicVideo))>0); 
-					basicVideo=null;
-				}
-				if (basicAudio!=null)
-				{
-					while ((hr=Marshal.ReleaseComObject( basicAudio))>0); 
-					basicAudio=null;
-				}
-				if (mediaPos!=null)
-				{
-					while ((hr=Marshal.ReleaseComObject( mediaPos))>0); 
-					mediaPos=null;
 				}
 
         if (rotCookie !=0) 
@@ -610,7 +570,7 @@ namespace MediaPortal.Player
 				
         try
         {
-          IBaseFilter dvdbasefilter;
+
           dvdbasefilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strDVDNavigator);
           if (dvdbasefilter!=null)
           {

@@ -30,7 +30,6 @@ namespace MediaPortal.Player
     const uint  VFW_E_DVD_RENDERFAIL      =0x8004027A;
 
 		VMR9Util Vmr9 = null;
-		IBaseFilter dvdbasefilter=null;
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string strPath)
     {
@@ -92,23 +91,11 @@ namespace MediaPortal.Player
 							if (strPath!=null) 
 							{
 								if (strPath.Length!=0)
-									dvdCtrl.SetDVDDirectory(strPath);
+									hr=dvdCtrl.SetDVDDirectory(strPath);
+								
 							}
-							string path;
-							int size;
-							IntPtr ptrFolder = Marshal.AllocCoTaskMem(256);
-							dvdInfo.GetDVDDirectory( ptrFolder,256,out size);
-							path=Marshal.PtrToStringAuto(ptrFolder);
-							Marshal.FreeCoTaskMem(ptrFolder);
 							dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
 							dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
-/*
-							if (path!=null && path.Length>0)
-							{
-								DirectShowHelperLib.DVDClass dvdHelper = new DirectShowHelperLib.DVDClass();
-								dvdHelper.Reset(path);
-							}
-*/
 							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
 								
 							m_bFreeNavigator=false;
@@ -226,18 +213,21 @@ namespace MediaPortal.Player
       try 
       {
         Log.Write("DVDPlayer9:cleanup DShow graph");
-				if( dvdCtrl != null )
+				if( mediaCtrl != null )
 				{
-					hr = dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, true );
-					dvdCtrl.Stop();
+					hr = mediaCtrl.Stop();
+					mediaCtrl = null;
 				}
         m_state = PlayState.Stopped;
+				m_bVisible=false;
 
-        if( mediaEvt != null )
-        {
-          while ((hr=Marshal.ReleaseComObject(mediaEvt))>0);
-          mediaEvt = null;
-        }
+        mediaEvt = null;
+				dvdCtrl = null;
+				dvdInfo = null;
+				basicVideo=null;
+				basicAudio=null;
+				mediaPos=null;
+				videoWin=null;
 
 				if (Vmr9!=null) 
 				{
@@ -247,28 +237,17 @@ namespace MediaPortal.Player
 				Vmr9=null;
 
 				
-				if( dvdbasefilter != null )
-				{
-					while ((hr=Marshal.ReleaseComObject( dvdbasefilter))>0); 
-					dvdbasefilter = null;              
-				}
 
-        m_bVisible=false;
     		
         if( cmdOption.dvdCmd != null )
           Marshal.ReleaseComObject( cmdOption.dvdCmd ); 
 				cmdOption.dvdCmd = null;
         pendingCmd = false;
 
-				if( dvdCtrl != null )
+				if( dvdbasefilter != null )
 				{
-					while ((hr=Marshal.ReleaseComObject( dvdCtrl ))>0); 
-					dvdCtrl = null;
-				}
-				if( dvdInfo != null )
-				{
-					while ((hr=Marshal.ReleaseComObject( dvdInfo ))>0); 
-					dvdInfo = null;
+					while ((hr=Marshal.ReleaseComObject( dvdbasefilter))>0); 
+					dvdbasefilter = null;              
 				}
 
 				if( dvdGraph != null )
@@ -280,21 +259,6 @@ namespace MediaPortal.Player
 				{
 					while ((hr=Marshal.ReleaseComObject( line21Decoder))>0); 
 					line21Decoder=null;
-				}
-				if (basicVideo!=null)
-				{
-					while ((hr=Marshal.ReleaseComObject( basicVideo))>0); 
-					basicVideo=null;
-				}
-				if (basicAudio!=null)
-				{
-					while ((hr=Marshal.ReleaseComObject( basicAudio))>0); 
-					basicAudio=null;
-				}
-				if (mediaPos!=null)
-				{
-					while ((hr=Marshal.ReleaseComObject( mediaPos))>0); 
-					mediaPos=null;
 				}
 
 
