@@ -2827,6 +2827,14 @@
 		<value>Teletext</value>
 	</string>
 	<string>
+		<id>1442</id>
+		<value>Scroll-Geschwindigkeit (h)</value>
+	</string>	
+	<string>
+		<id>1443</id>
+		<value>Scroll-Geschwindigkeit (v)</value>
+	</string>	
+	<string>
 		<id>1950</id>
 		<value>Status</value>
 	</string>

@@ -10,13 +10,15 @@ namespace MediaPortal.GUI.Settings
   {
     enum Controls
     {
-			CONTROL_SPEED =2,
-			CONTROL_FPS   =3,
+      CONTROL_SPEED_HORIZONTAL =2,
+      CONTROL_SPEED_VERTICAL =4,
+      CONTROL_FPS   =3,
       CONTROL_EXAMPLE=25,
       CONTROL_EXAMPLE2=26,
     };
 
-    int m_iSpeed=5;
+    int m_iSpeedHorizontal=5;
+    int m_iSpeedVertical=5;
 
     public GUISettingsGUI()
     {
@@ -57,13 +59,20 @@ namespace MediaPortal.GUI.Settings
           LoadSettings();
           GUISpinControl cntl = (GUISpinControl )GetControl((int)Controls.CONTROL_FPS);
           cntl.ShowRange=false;
-          GUIControl.ClearControl(GetID,(int)Controls.CONTROL_SPEED);
+          GUIControl.ClearControl(GetID,(int)Controls.CONTROL_SPEED_HORIZONTAL);
           for (int i=1; i <=10;++i)
           {
-            GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_SPEED,i.ToString());
+            GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_SPEED_HORIZONTAL,i.ToString());
           }
-          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED,m_iSpeed-1);
-					
+          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED_HORIZONTAL,m_iSpeedHorizontal-1);
+
+          GUIControl.ClearControl(GetID,(int)Controls.CONTROL_SPEED_VERTICAL);
+          for (int i=1; i <=10;++i)
+          {
+            GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_SPEED_VERTICAL,i.ToString());
+          }
+          GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_SPEED_VERTICAL,m_iSpeedVertical-1);
+
           GUIControl.ClearControl(GetID,(int)Controls.CONTROL_FPS);
           for (int i=10; i <=100;++i)
           {
@@ -85,14 +94,21 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
         {
           int iControl=message.SenderControlId;
-          if (iControl==(int)Controls.CONTROL_SPEED)
+          if (iControl==(int)Controls.CONTROL_SPEED_HORIZONTAL)
           {
             string strLabel=message.Label;
-            m_iSpeed=Int32.Parse(strLabel);
-            GUIGraphicsContext.ScrollSpeed=m_iSpeed;
+            m_iSpeedHorizontal=Int32.Parse(strLabel);
+            GUIGraphicsContext.ScrollSpeedHorizontal=m_iSpeedHorizontal;
             ResetExampleLabels();
           }
-					if (iControl==(int)Controls.CONTROL_FPS)
+          if (iControl==(int)Controls.CONTROL_SPEED_VERTICAL)
+          {
+            string strLabel=message.Label;
+            m_iSpeedVertical=Int32.Parse(strLabel);
+            GUIGraphicsContext.ScrollSpeedVertical=m_iSpeedVertical;
+            ResetExampleLabels();
+          }
+          if (iControl==(int)Controls.CONTROL_FPS)
 					{
 						string strLabel=message.Label;
 						int fps=Int32.Parse(strLabel);
@@ -120,7 +136,8 @@ namespace MediaPortal.GUI.Settings
     {
       using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        m_iSpeed=xmlreader.GetValueAsInt("general","scrollspeed",5);
+        m_iSpeedHorizontal=xmlreader.GetValueAsInt("general","scrollspeedhorizontal",5);
+        m_iSpeedVertical=xmlreader.GetValueAsInt("general","scrollspeedvertical",5);
       }
       
     }
@@ -129,8 +146,9 @@ namespace MediaPortal.GUI.Settings
     {
       using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-				xmlwriter.SetValue("general","scrollspeed",m_iSpeed.ToString());
-				xmlwriter.SetValue("screen","maxfps",GUIGraphicsContext.MaxFPS);
+        xmlwriter.SetValue("general","scrollspeedhorizontal",m_iSpeedHorizontal.ToString());
+        xmlwriter.SetValue("general","scrollspeedvertical",m_iSpeedVertical.ToString());
+        xmlwriter.SetValue("screen","maxfps",GUIGraphicsContext.MaxFPS);
       }
     }
     #endregion

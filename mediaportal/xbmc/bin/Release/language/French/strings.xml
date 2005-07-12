@@ -1012,6 +1012,8 @@
 	<string><id>2120</id><value>Conversion du(des) fichier(s)...</value></string>
 	<string><id>2119</id><value>Convertir</value></string>
 	<string><id>1441</id><value>T&#233;l&#233;Texte</value></string>
+	<string><id>1442</id><value>Vitesse de d&#233;filement (hor.)</value></string>
+	<string><id>1443</id><value>Vitesse de d&#233;filement (ver.)</value></string>
 	<string><id>13012</id><value>Chargement des images, patientez</value></string>
 	<string><id>980</id><value>Lire l'enregistrement depuis le direct</value></string>
 	<string><id>979</id><value>Lire l'enregistrement depuis le début</value></string>

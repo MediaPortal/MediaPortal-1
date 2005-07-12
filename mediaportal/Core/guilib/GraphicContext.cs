@@ -83,8 +83,9 @@ namespace MediaPortal.GUI.Library
 		static Size                     m_skinSize = new Size(720,576);// original width/height for which the skin was designed
 		static bool											m_bShowBackGround=true;				//boolean indicating if we should show the GUI background or if we should show live tv in the background
 		static bool											m_bPlayingVideo=false;				//boolean indicating if we are playing a movie
-		static int                      m_iScrollSpeed=5;							//scroll speed for controls which scroll
-		static int                      m_iCharsInCharacterSet=255;		//number of characters for current fonts
+    static int                      m_iScrollSpeedVertical=5;							//scroll speed for controls which scroll
+    static int                      m_iScrollSpeedHorizontal=5;							//scroll speed for controls which scroll
+    static int                      m_iCharsInCharacterSet=255;		//number of characters for current fonts
 		static bool                     m_bEditMode=false;						//boolean indicating if we are in skin edit mode
 		static bool                     m_bAnimations=true;						//boolean indicating animiations are turned on or off
 		static IRender                  m_renderFrame=null;
@@ -193,8 +194,9 @@ namespace MediaPortal.GUI.Library
 			{
 				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",50);
 				SyncFrameTime();
-				m_iScrollSpeed=xmlReader.GetValueAsInt("general","scrollspeed",5);
-				m_bAnimations=xmlReader.GetValueAsBool("general","animations",true);
+        m_iScrollSpeedVertical=xmlReader.GetValueAsInt("general","scrollspeedvertical",5);
+        m_iScrollSpeedHorizontal=xmlReader.GetValueAsInt("general","scrollspeedhorizontal",5);
+        m_bAnimations=xmlReader.GetValueAsBool("general","animations",true);
 			}
 
 		}
@@ -734,20 +736,34 @@ namespace MediaPortal.GUI.Library
 			set { m_bShowBackGround=value;}
 		}
 
-		/// <summary>
-		/// Get/Set the current scroll speed 
-		/// </summary>
-		static public int ScrollSpeed
-		{
-			get { return m_iScrollSpeed;}
-			set 
-			{ 
-				if (m_iScrollSpeed<0) return;
-				m_iScrollSpeed=value;
-			}
-		}
+    /// <summary>
+    /// Get/Set the current scroll speed 
+    /// </summary>
+    static public int ScrollSpeedVertical
+    {
+      get { return m_iScrollSpeedVertical;}
+      set 
+      { 
+        if (m_iScrollSpeedVertical<0) return;
+        m_iScrollSpeedVertical=value;
+      }
+    }
 
-		/// <summary>
+    /// <summary>
+    /// Get/Set the current scroll speed 
+    /// </summary>
+    static public int ScrollSpeedHorizontal
+    {
+      get { return m_iScrollSpeedHorizontal;}
+      set 
+      { 
+        if (m_iScrollSpeedHorizontal<0) return;
+        m_iScrollSpeedHorizontal=value;
+      }
+    }
+
+
+    /// <summary>
 		/// Get/Set the current maximum number of FPS
 		/// </summary>
 		static public int MaxFPS

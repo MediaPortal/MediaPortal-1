@@ -2994,6 +2994,14 @@
 	<id>1441</id>
 	<value>TeleText</value>
 </string>
+<string>
+	<id>1442</id>
+	<value>Scroll speed (horizontal)</value>
+</string>	
+<string>
+	<id>1443</id>
+	<value>Scroll speed (vertical)</value>
+</string>	
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My Status</value></string>

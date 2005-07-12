@@ -31,7 +31,7 @@ namespace MediaPortal.GUI.Library
 
     public double TimeSlice
     {
-      get { return 0.01f + ((11 - GUIGraphicsContext.ScrollSpeed)*0.01f); }
+      get { return 0.01f + ((11 - GUIGraphicsContext.ScrollSpeedVertical)*0.01f); }
     }
 
     public GUITextScrollUpControl(int dwParentID) : base(dwParentID)

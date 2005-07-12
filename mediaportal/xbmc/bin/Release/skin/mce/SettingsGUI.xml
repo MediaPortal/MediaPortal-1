@@ -34,26 +34,49 @@
 		<textcolor>ffffffff</textcolor>
 	</control>
 	<control>
-		<description>Scroll Speed label</description>
+		<description>Scroll Speed label horizontal</description>
 		<type>label</type>
 		<id>1</id>
 		<posX>250</posX>
-		<posY>199</posY>
-		<label>673</label>
+		<posY>179</posY>
+		<label>1442</label>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
-		<description>Speedselect</description>
+		<description>Speedselect Horizontal</description>
 		<type>spincontrol</type>
 		<id>2</id>
 		<posX>450</posX>
-		<posY>199</posY>
+		<posY>183</posY>
+		<reverse>yes</reverse>
+		<onup>17</onup>
+		<ondown>4</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Scroll Speed label vertical</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>250</posX>
+		<posY>206</posY>
+		<label>1443</label>
+		<font>font13</font>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Speedselect Vertical</description>
+		<type>spincontrol</type>
+		<id>4</id>
+		<posX>450</posX>
+		<posY>210</posY>
 		<reverse>yes</reverse>
 		<onup>2</onup>
 		<ondown>3</ondown>
-		<onleft>2</onleft>
-		<onright>2</onright>
+		<onleft>4</onleft>
+		<onright>4</onright>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
@@ -72,7 +95,7 @@
 		<type>spincontrol</type>
 		<id>3</id>
 		<posX>450</posX>
-		<posY>233</posY>
+		<posY>237</posY>
 		<reverse>yes</reverse>
 		<onup>2</onup>
 		<ondown>2</ondown>

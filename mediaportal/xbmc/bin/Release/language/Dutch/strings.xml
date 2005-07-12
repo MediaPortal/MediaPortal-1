@@ -2835,6 +2835,14 @@
   	<id>1441</id>
   	<value>Teletekst</value>
   </string>
+ <string>
+	<id>1442</id>
+	<value>Rol snelheid (hor.)</value>
+ </string>
+ <string>
+	<id>1443</id>
+	<value>Rol snelheid (ver.)</value>
+ </string>
 
   <!-- My Status strings -->
 	<string>
