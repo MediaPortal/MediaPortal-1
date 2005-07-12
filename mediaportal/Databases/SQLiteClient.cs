@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
+using MediaPortal.GUI.Library;
 namespace SQLite.NET
 {
 	/// <summary>
@@ -142,16 +143,20 @@ namespace SQLite.NET
 							sqlite3_finalize(stmt);
 						}
 						if (err==ResultCode.ERROR)
+						{
+							Log.WriteFile(Log.LogType.Log,true,String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
 							throw new SQLiteException(String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
-
+						}
 						System.Threading.Thread.Sleep(5);
 						continue;
 					}
 					break;
 				}
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
+				{
+					Log.WriteFile(Log.LogType.Log,true,String.Format("SQL2:{0} failed err:{1}", query,err.ToString()), err);
 					throw new SQLiteException(String.Format("SQL2:{0} failed err:{1}", query,err.ToString()), err);
-
+				}
 				
 				int nCol = sqlite3_column_count(stmt);
 				int row=0;
@@ -164,7 +169,10 @@ namespace SQLite.NET
 						pStmnt=null;
 						stmt=null;
 						if (err!=ResultCode.OK && err!=ResultCode.Done)
+						{
+							Log.WriteFile(Log.LogType.Log,true,String.Format("SQL3:{0} failed err:{1}", query,err.ToString()), err);
 							throw new SQLiteException(String.Format("SQL3:{0} failed err:{1}", query,err.ToString()), err);
+						}
 						break;
 					}
 					else
@@ -197,7 +205,10 @@ namespace SQLite.NET
 				pStmnt=null;
 			}
 			if (err!=ResultCode.OK && err!=ResultCode.Done)
+			{
+				Log.WriteFile(Log.LogType.Log,true,String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
 				throw new SQLiteException(String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
+			}
 			return set1;
 		}
  
