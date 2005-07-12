@@ -58,6 +58,12 @@ namespace GUIRecipies
 				catch(Exception){}
 				dbExists = System.IO.File.Exists( @"database\RecipieDatabaseV3.db3" );
 				m_db = new SQLiteClient(@"database\RecipieDatabaseV3.db3");
+
+				m_db.Execute("PRAGMA cache_size=2000\n");
+				m_db.Execute("PRAGMA synchronous='OFF'\n");
+				m_db.Execute("PRAGMA count_changes=1'\n");
+				m_db.Execute("PRAGMA full_column_names=0\n");
+				m_db.Execute("PRAGMA short_column_names=0\n");
 				if( !dbExists ){
 					CreateTables();
 				}

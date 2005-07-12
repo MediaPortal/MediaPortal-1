@@ -31,6 +31,13 @@ namespace ProgramsDatabase
         }
         catch (Exception){}
         sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db3");
+
+				sqlDB.Execute("PRAGMA cache_size=2000\n");
+				sqlDB.Execute("PRAGMA synchronous='OFF'\n");
+				sqlDB.Execute("PRAGMA count_changes=1'\n");
+				sqlDB.Execute("PRAGMA full_column_names=0\n");
+				sqlDB.Execute("PRAGMA short_column_names=0\n");
+
         ProgramSettings.sqlDB = sqlDB;
         // make sure the DB-structure is complete
         CreateObjects();
