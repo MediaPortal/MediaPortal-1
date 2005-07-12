@@ -15,21 +15,7 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVPriorities :GUIWindow
 	{
-		public class PriorityComparer: IComparer
-		{
-			#region IComparer Members
 
-			public int Compare(object x, object y)
-			{
-				TVRecording rec1=x as TVRecording;
-				TVRecording rec2=y as TVRecording;
-				if (rec1.Priority>rec2.Priority) return -1;
-				if (rec1.Priority<rec2.Priority) return 1;
-				return 0;
-			}
-
-			#endregion
-		};
 		#region variables, ctor/dtor
 		[SkinControlAttribute(10)]			protected GUIListControl listPriorities=null;
 
@@ -199,7 +185,7 @@ namespace MediaPortal.GUI.TV
 
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordings(ref itemlist);
-			itemlist.Sort(new PriorityComparer());
+			itemlist.Sort(new TVRecording.PriorityComparer(true));
 			int total=0;
 			foreach (TVRecording rec in itemlist)
 			{

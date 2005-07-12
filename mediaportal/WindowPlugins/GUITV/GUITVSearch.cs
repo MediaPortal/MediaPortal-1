@@ -1008,7 +1008,7 @@ namespace MediaPortal.GUI.TV
             rec.RecType=TVRecording.RecordingType.WeekDays;
             break;
         }
-        TVDatabase.AddRecording(ref rec);
+        Recorder.AddRecording(ref rec);
         listRecordings.Clear();
         TVDatabase.GetRecordings(ref listRecordings);
         Update();

@@ -2312,7 +2312,7 @@ namespace MediaPortal.GUI.TV
 						rec.RecType=TVRecording.RecordingType.WeekDays;
 						break;
 				}
-				TVDatabase.AddRecording(ref rec);
+				Recorder.AddRecording(ref rec);
 
 				//check if this program is interrupted (for example by a news bulletin)
 				//ifso ask the user if he wants to record the 2nd part also
@@ -2342,7 +2342,7 @@ namespace MediaPortal.GUI.TV
 								rec.Start=nextNext.Start;
 								rec.End=nextNext.End;
 								rec.ID=-1;
-								TVDatabase.AddRecording(ref rec);
+								Recorder.AddRecording(ref rec);
 							}
 						}
 					}

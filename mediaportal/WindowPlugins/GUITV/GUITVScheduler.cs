@@ -1020,7 +1020,7 @@ namespace MediaPortal.GUI.TV
 			rec.Start=Utils.datetolong( new DateTime(dtNow.Year,dtNow.Month,dtNow.Day,hour,minute,0,0) );
 			rec.End=Utils.datetolong( rec.StartTime.AddMinutes(duration) );
       rec.Title=GUILocalizeStrings.Get(413);
-      TVDatabase.AddRecording(ref rec);
+      Recorder.AddRecording(ref rec);
       LoadDirectory();
     }
 

@@ -11,6 +11,37 @@ namespace MediaPortal.TV.Database
 	/// </summary>
 	public class TVRecording
 	{
+		public class PriorityComparer : IComparer
+		{
+			bool _sortAscending=true;
+
+			public PriorityComparer(bool sortAscending)
+			{
+				_sortAscending=sortAscending;
+			}
+
+			#region IComparer Members
+			public int Compare(object x, object y)
+			{
+				TVRecording rec1=(TVRecording)x;
+				TVRecording rec2=(TVRecording)y;
+				if (_sortAscending)
+				{
+					if (rec1.Priority>rec2.Priority) return -1;
+					if (rec1.Priority<rec2.Priority) return 1;
+				}
+				else
+				{
+					if (rec1.Priority>rec2.Priority) return 1;
+					if (rec1.Priority<rec2.Priority) return -1;
+				}
+				return 0;
+			}
+
+			#endregion
+
+		}
+
 		
 		static public readonly int HighestPriority=Int32.MaxValue;
 		static public readonly int LowestPriority=0;

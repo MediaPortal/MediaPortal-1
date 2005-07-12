@@ -410,9 +410,28 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:   start: {0} {1}",tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:   end  : {0} {1}",tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
 
-			TVDatabase.AddRecording(ref tmpRec);
+			AddRecording(ref tmpRec);
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}//static public void RecordNow(string strChannel)
+		
+		static public int AddRecording(ref TVRecording rec)
+		{
+			ArrayList recs = new ArrayList();
+			TVDatabase.GetRecordings(ref recs);
+			recs.Sort( new TVRecording.PriorityComparer(true));
+			int prio=Int32.MaxValue;
+			foreach (TVRecording recording in recs)
+			{
+				if (prio!=recording.Priority)
+				{
+					recording.Priority=prio;
+					TVDatabase.SetRecordingPriority(recording);
+				}
+				prio--;
+			}
+			rec.Priority=prio;
+			return TVDatabase.AddRecording(ref rec);
+		}
 
 		/// <summary>
 		/// Find a capture card we can use to start a new recording
