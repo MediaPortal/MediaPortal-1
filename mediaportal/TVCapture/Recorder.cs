@@ -1141,7 +1141,7 @@ namespace MediaPortal.TV.Recording
 			TVCaptureDevice dev=(TVCaptureDevice) m_tvcards[m_iCurrentCard];
 			if (!dev.IsTimeShifting) return String.Empty;
 			
-			string FileName=String.Format(@"{0}\card{1}\live.tv",dev.RecordingPath, m_iCurrentCard+1);
+			string FileName=String.Format(@"{0}\card{1}\{2}",dev.RecordingPath, m_iCurrentCard+1,dev.TimeShiftFileName);
 			return FileName;
 		}
 
@@ -1149,7 +1149,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (card<0 || card>=m_tvcards.Count) return String.Empty;
 			TVCaptureDevice dev=(TVCaptureDevice) m_tvcards[card];
-			string FileName=String.Format(@"{0}\card{1}\live.tv",dev.RecordingPath, card+1);
+			string FileName=String.Format(@"{0}\card{1}\{2}",dev.RecordingPath, card+1,dev.TimeShiftFileName);
 			return FileName;
 		}
 

@@ -1181,7 +1181,7 @@ namespace MediaPortal.TV.Recording
 				DeleteGraph();
 				return;
 			}
-			string timeshiftFilename=String.Format(@"{0}\card{1}\live.tv",RecordingPath, ID);
+			string timeshiftFilename=String.Format(@"{0}\card{1}\{2}",RecordingPath, ID,TimeShiftFileName);
 			if (!g_Player.CurrentFile.Equals(timeshiftFilename))
 			{
 				DeleteGraph();
@@ -1855,6 +1855,11 @@ namespace MediaPortal.TV.Recording
 			catch(Exception)
 			{
 			}
+		}
+		public string TimeShiftFileName
+		{
+			//we should get this from the cardx.xml when we will be supporting .ts streams
+			get { return "live.tv";}
 		}
   }
 }  
