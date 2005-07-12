@@ -18,7 +18,7 @@ namespace MediaPortal.GUI.Video
 	public class GUIVideoBaseWindow: GUIWindow
 	{
 
-		protected enum View
+		public enum View
 		{
 			List = 0, 
 			Icons = 1, 

@@ -24,7 +24,7 @@ namespace MediaPortal.GUI.Music
 			Root,
 			Sub
 		}
-		protected enum View
+		public enum View
 		{
 			List = 0, 
 			Icons = 1, 

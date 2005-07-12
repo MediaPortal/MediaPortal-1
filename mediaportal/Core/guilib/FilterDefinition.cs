@@ -19,6 +19,7 @@ namespace MediaPortal.GUI.View
 		protected string sqloperator="";
 		protected string whereValue="*";
 		protected string selectedValue="";
+		protected string defaultView="List";
 		protected int    limit=-1;
 
 		public FilterDefinition()
@@ -48,6 +49,14 @@ namespace MediaPortal.GUI.View
 		{
 			get { return sqloperator;}
 			set { sqloperator=value;}
+		}
+		
+
+		[XmlElement("DefaultView")]
+		public string DefaultView
+		{
+			get { return defaultView;}
+			set { defaultView=value;}
 		}
 
 		[XmlElement("Where")]

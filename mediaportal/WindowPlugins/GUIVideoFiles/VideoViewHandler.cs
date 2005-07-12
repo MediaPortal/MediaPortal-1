@@ -22,6 +22,53 @@ namespace MediaPortal.GUI.Video
 		ArrayList      views=new ArrayList();					
 		public VideoViewHandler()
 		{
+			if (!System.IO.File.Exists("videoViews.xml"))
+			{
+				//genres
+				FilterDefinition filter1,filter2;
+				ViewDefinition viewGenre = new ViewDefinition();
+				viewGenre.Name="Genres";
+				filter1 = new FilterDefinition();filter1.Where="genre";;filter1.SortAscending=true;
+				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
+				viewGenre.Filters.Add(filter1);
+				viewGenre.Filters.Add(filter2);
+
+				//artists
+				ViewDefinition viewArtists = new ViewDefinition();
+				viewArtists.Name="Actors";
+				filter1 = new FilterDefinition();filter1.Where="actor";;filter1.SortAscending=true;
+				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
+				viewArtists.Filters.Add(filter1);
+				viewArtists.Filters.Add(filter2);
+
+				//title
+				ViewDefinition viewTitles = new ViewDefinition();
+				viewTitles.Name="Title";
+				filter1 = new FilterDefinition();filter1.Where="title";;filter1.SortAscending=true;
+				viewTitles.Filters.Add(filter1);
+
+				//years
+				ViewDefinition viewYears = new ViewDefinition();
+				viewYears.Name="Years";
+				filter1 = new FilterDefinition();filter1.Where="year";;filter1.SortAscending=true;
+				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
+				viewYears.Filters.Add(filter1);
+				viewYears.Filters.Add(filter2);
+
+				ArrayList listViews = new ArrayList();
+				listViews.Add(viewGenre);
+				listViews.Add(viewArtists);
+				listViews.Add(viewTitles);
+				listViews.Add(viewYears);
+
+				using(FileStream fileStream = new FileStream("videoViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+				{
+					SoapFormatter formatter = new SoapFormatter();
+					formatter.Serialize(fileStream, listViews);
+					fileStream.Close();
+				}
+			}
+
 			try
 			{
 				using(FileStream fileStream = new FileStream("videoViews.xml", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))

@@ -330,7 +330,22 @@ namespace MediaPortal.GUI.Video
 
 			SetLabels();
 			OnSort();
-			
+		
+			FilterDefinition def =  handler.View.Filters[handler.CurrentLevel] as FilterDefinition;
+			if (def!=null)
+			{
+				if (def.DefaultView=="List")
+					CurrentView=GUIVideoBaseWindow.View.List;
+				if (def.DefaultView=="Icons")
+					CurrentView=GUIVideoBaseWindow.View.Icons;
+				if (def.DefaultView=="Big Icons")
+					CurrentView=GUIVideoBaseWindow.View.LargeIcons;
+				if (def.DefaultView=="Albums")
+					CurrentView=GUIVideoBaseWindow.View.List;
+				if (def.DefaultView=="Filmstrip")
+					CurrentView=GUIVideoBaseWindow.View.FilmStrip;
+			}
+	
 			SwitchView();
 			for (int i=0; i< facadeView.Count;++i)
 			{

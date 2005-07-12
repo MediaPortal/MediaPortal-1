@@ -529,6 +529,21 @@ namespace MediaPortal.GUI.Music
 			{
 				GUIControl.SelectItemControl(GetID,facadeView.GetID,m_iItemSelected);
       }
+
+			FilterDefinition def =  handler.View.Filters[handler.CurrentLevel] as FilterDefinition;
+			if (def!=null)
+			{
+				if (def.DefaultView=="List")
+					CurrentView=GUIMusicBaseWindow.View.List;
+				if (def.DefaultView=="Icons")
+					CurrentView=GUIMusicBaseWindow.View.Icons;
+				if (def.DefaultView=="Big Icons")
+					CurrentView=GUIMusicBaseWindow.View.LargeIcons;
+				if (def.DefaultView=="Albums")
+					CurrentView=GUIMusicBaseWindow.View.Albums;
+				if (def.DefaultView=="Filmstrip")
+					CurrentView=GUIMusicBaseWindow.View.FilmStrip;
+			}
 			SwitchView();
 		}
 	  	  

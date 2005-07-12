@@ -137,6 +137,15 @@ namespace MediaPortal.Configuration.Sections
 
       };
 
+		private string[] viewsAs = new string[]
+			{
+				"List",
+				"Icons",
+				"Big Icons",
+				"Albums",
+				"Filmstrip",
+
+		};
     public MovieViews() : this("Movie Views")
     {}
 
@@ -278,6 +287,24 @@ namespace MediaPortal.Configuration.Sections
       dtcCheck.ColumnName = "Sort Ascending";
       datasetFilters.Columns.Add(dtcCheck); //Add the above column to the //Data Table
 
+			dtCol = new DataColumn("ViewAs");
+			dtCol.DataType = Type.GetType("System.String");
+			dtCol.DefaultValue = "";
+			datasetFilters.Columns.Add(dtCol);
+
+			SyncedComboBox cbView = new SyncedComboBox();
+			cbView.Cursor = Cursors.Arrow;
+			cbView.DropDownStyle = ComboBoxStyle.DropDownList;
+			cbView.Dock = DockStyle.Fill;
+			cbView.DisplayMember = "ViewAs";
+			foreach (string strText in viewsAs)
+			{
+				cbView.Items.Add(strText);
+			}
+			cbView.Grid = dataGrid1;
+			cbView.Cell = 1;
+			cbView.SelectionChangeCommitted += new EventHandler(cbView_SelectionChangeCommitted);
+
       //fill in all rows...
       for (int i = 0; i < currentView.Filters.Count; ++i)
       {
@@ -287,7 +314,7 @@ namespace MediaPortal.Configuration.Sections
         {
           limit = "";
         }
-        datasetFilters.Rows.Add(new object[] {def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending});
+        datasetFilters.Rows.Add(new object[] {def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending,def.DefaultView});
       }
 
       //Set the Data Grid Source as the Data Table created above
@@ -341,6 +368,8 @@ namespace MediaPortal.Configuration.Sections
       boolColumn.AllowNull = false;
 
 
+			dgtb = (DataGridTextBoxColumn) dataGrid1.TableStyles[0].GridColumnStyles[5];
+			dgtb.TextBox.Controls.Add(cbView);
       updating = false;
     }
 
@@ -479,6 +508,8 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       StoreGridInView();
+			dataGrid1.DataSource = null;
+
       UpdateView();
     }
 
@@ -508,7 +539,27 @@ namespace MediaPortal.Configuration.Sections
       {}
     }
 
+		private void cbView_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			if (updating)
+			{
+				return;
+			}
+			SyncedComboBox box = sender as SyncedComboBox;
+			if (box == null)
+			{
+				return;
+			}
+			DataGridCell currentCell = dataGrid1.CurrentCell;
+			DataTable table = dataGrid1.DataSource as DataTable;
 
+			if (currentCell.RowNumber == table.Rows.Count)
+			{
+				table.Rows.Add(new object[] {"", "", "", ""});
+			}
+			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string) box.SelectedItem;
+
+		}
     private void cbOperators_SelectionChangeCommitted(object sender, EventArgs e)
     {
       try
@@ -629,7 +680,8 @@ namespace MediaPortal.Configuration.Sections
           {
             def.Limit = -1;
           }
-          def.SortAscending = (bool) row[4];
+					def.SortAscending = (bool) row[4];
+					def.DefaultView =  row[5].ToString();
           view.Filters.Add(def);
         }
       }
