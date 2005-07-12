@@ -139,6 +139,7 @@ namespace SQLite.NET
 						if (pStmnt!=null) 
 						{
 							sqlite3_finalize(stmt);
+							stmt=null;
 						}
 
 						if (err==ResultCode.BUSY)
@@ -164,11 +165,15 @@ namespace SQLite.NET
 				int row=0;
 				while(true)
 				{
-					err= sqlite3_step(stmt);
+					for (int x=0; x < busyRetries;++x)
+					{
+						err= sqlite3_step(stmt);
+						if (err!=ResultCode.BUSY) break;
+						System.Threading.Thread.Sleep(busyRetryDelay);
+					}
 					if (err!=ResultCode.Row)
 					{
 						sqlite3_finalize(stmt);
-						pStmnt=null;
 						stmt=null;
 						if (err!=ResultCode.OK && err!=ResultCode.Done)
 						{
@@ -204,7 +209,7 @@ namespace SQLite.NET
 			if (stmt!=null)
 			{
 				sqlite3_finalize(stmt);
-				pStmnt=null;
+				stmt=null;
 			}
 			if (err!=ResultCode.OK && err!=ResultCode.Done)
 			{
