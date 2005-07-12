@@ -116,25 +116,25 @@ namespace MediaPortal.TV.Recording
 			ReleaseMosaic
 		}
 		//
-		int[,] m_charTableA =new int[,]{{ '#', 367 },{ '£', '$' }, 
+		char[,] m_charTableA =new char[,]{{ '#', '\u016F' },{ '£', '$' }, 
 	{ '#', 'õ' },{ 'é', 'ï' }, { '#', '$' }, { '£', '$' },{ '#', '$' },
-	{ '#', 329 },{ 'ç', '$' }, { '#', '¤' },{ '#', 'Ë' }, { '#', '¤' },{ '£', 287 }
+	{ '#', '\u0149' },{ 'ç', '$' }, { '#', '¤' },{ '#', 'Ë' }, { '#', '¤' },{ '£', '\u011F' }
 	};
-		int[] m_charTableB =new int[]{269,'@',352,'à', '§','é',352,261,'¡',354,268,'É',304};
-		int[,] m_charTableC =new int[,]{{ 357, 382, 'ý', 'í', 345, 'é' },{8592, '½',8594,8593, '#', 822 },
-	{ 'Ä', 'Ö', 381, 'Ü', 'Õ', 353 },{ 'ë', 'ê', 'ù', 'î', '#', 'è' },
-	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç',8594,8593, '#', 'ù' },
-	{ 'é', 553, 381, 269, 363, 353 },{ 437, 346, 321, 263, 'ó', 281 },
-	{ 'á', 'é', 'í', 'ó', 'ú', '¿' },{ 'Â', 350, 461, 'Î', 305, 355 },
-	{ 262, 381, 272, 352, 'ë', 269 },{ 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' },
-	{ 350, 'Ö', 'Ç', 'Ü', 486, 305 }};
+		char[] m_charTableB =new char[]{'\u010D','@','\u0160','à', '§','é','\u0160','\u0105','¡','\u0162','\u010C','É','\u0130'};
+		char[,] m_charTableC =new char[,]{{ '\u0165', '\u017E', 'ý', 'í', '\u0159', 'é' },{'\u2190', '½','\u2192','\u2191', '#', '\u0336' },
+	{ 'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161' },{ 'ë', 'ê', 'ù', 'î', '#', 'è' },
+	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç','\u2192','\u2191', '#', 'ù' },
+	{ 'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161' },{ '\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119' },
+	{ 'á', 'é', 'í', 'ó', 'ú', '¿' },{ 'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163' },
+	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },{ 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' },
+	{ '\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131' }};
 		
-		int[,] m_charTableD =new int[,]{{ 'á', 283, 'ú', 353 },{ '¼',8214, '¾', '÷' },
-	{ 'ä', 'ö', 382, 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
-	{ 'à', 'ò', 'è', 'ì' },{ 261, 371, 382, 303 },{ 380, 347, 322, 378 },
-	{ 'ü', 'ñ', 'è', 'à' },{ 'â', 351, 462, 'î' },{ 263, 382, 273, 353 },
-	{ 'ä', 'ö', 'å', 'ü' },{ 351, 'ö', 231, 'ü' }};
-		int[] m_charTableE =new int[] {8592, 8594, 8593, 8595, 'O', 'K', 8592, 8592};
+		char[,] m_charTableD =new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
+	{ 'ä', 'ö', '\u017E', 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
+	{ 'à', 'ò', 'è', 'ì' },{ '\u0105', '\u0173', '\u017E', '\u012F' },{ '\u017C', '\u015B', '\u0142', '\u017A' },
+	{ 'ü', 'ñ', 'è', 'à' },{ 'â', '\u015F', '\u01CE', 'î' },{ '\u0107', '\u017E', '\u0111', '\u0161' },
+	{ 'ä', 'ö', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' }};
+		char[] m_charTableE =new char[] {'\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190'};
 		byte[] m_lutTable=new byte[] {0x00,0x08,0x04,0x0c,0x02,0x0a,0x06,0x0e,
 										 0x01,0x09,0x05,0x0d,0x03,0x0b,0x07,0x0f,
 										 0x00,0x80,0x40,0xc0,0x20,0xa0,0x60,0xe0,
@@ -1382,6 +1382,7 @@ namespace MediaPortal.TV.Recording
 		void Render(System.Drawing.Graphics graph,byte chr,int attrib,ref int x,ref int y,int w,int h)
 		{
 			bool charReady=false;
+			char chr2='?';
 			
 			if (chr == 0xFF)
 			{
@@ -1459,10 +1460,10 @@ namespace MediaPortal.TV.Recording
 					break;
 				case 0x23:
 				case 0x24:
-					chr = (byte)m_charTableA[m_txtLanguage,chr-0x23];
+					chr2 = m_charTableA[m_txtLanguage,chr-0x23];
 					break;
 				case 0x40:
-					chr = (byte)m_charTableB[m_txtLanguage];
+					chr2 = m_charTableB[m_txtLanguage];
 					break;
 				case 0x5B:
 				case 0x5C:
@@ -1470,13 +1471,13 @@ namespace MediaPortal.TV.Recording
 				case 0x5E:
 				case 0x5F:
 				case 0x60:
-					chr = (byte)m_charTableC[m_txtLanguage,chr-0x5B];
+					chr2 = m_charTableC[m_txtLanguage,chr-0x5B];
 					break;
 				case 0x7B:
 				case 0x7C:
 				case 0x7D:
 				case 0x7E:
-					chr = (byte)m_charTableD[m_txtLanguage,chr-0x7B];
+					chr2 = m_charTableD[m_txtLanguage,chr-0x7B];
 					break;
 				case 0x7F:
 					graph.FillRectangle(backBrush,x, y+factor*4, w, factor*(h-4));
@@ -1578,14 +1579,15 @@ namespace MediaPortal.TV.Recording
 				case 0xF4:
 				case 0xF5:
 				case 0xF6:
-					chr = (byte)m_charTableE[chr - 0xED];
+					chr2 = m_charTableE[chr - 0xED];
 					break;
 				default:
+					chr2 = (char)chr;
 					break;
 			}
 			if(charReady==false)
 			{
-				string text=""+((char)chr);
+				string text=""+chr2;
 				graph.FillRectangle(backBrush,x, y, w, h);
 				System.Drawing.SizeF width=graph.MeasureString(text,m_teletextFont);
 				System.Drawing.PointF xyPos=new System.Drawing.PointF((float)x+((w-((int)width.Width))/2),(float)y);
