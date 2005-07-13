@@ -344,6 +344,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// General
 			// 
+			this.AutoScroll = true;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);

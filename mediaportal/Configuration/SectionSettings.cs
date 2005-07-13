@@ -17,6 +17,7 @@ namespace MediaPortal.Configuration
 	{
 		public SectionSettings(string text)
 		{
+			this.AutoScroll=true;
 			Text = text;
 		}
 
@@ -41,6 +42,7 @@ namespace MediaPortal.Configuration
 		public SectionSettings()
 		{
 			// This call is required by the Windows.Forms Form Designer.
+			this.AutoScroll=true;
 			InitializeComponent();
 		}
 
