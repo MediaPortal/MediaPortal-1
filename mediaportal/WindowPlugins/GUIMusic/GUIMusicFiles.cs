@@ -277,6 +277,7 @@ namespace MediaPortal.GUI.Music
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
+
 			if (control==btnPlayCd)
 			{
 				for ( char c = 'C'; c <= 'Z'; c++)

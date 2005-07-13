@@ -285,7 +285,7 @@ namespace MediaPortal.TV.Recording
 									// if the recording should record the tv program
 									if ( rec.IsRecordingProgramAtTime(dtTime,prog2Min,m_iPreRecordInterval, m_iPostRecordInterval) )
 									{
-										Log.Write("Recorder: Send announcement for recording:{0}",rec.ToString());
+										Log.WriteFile(Log.LogType.Recorder,"Recorder: Send announcement for recording:{0}",rec.ToString());
 										rec.IsAnnouncementSend=true;
 										GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,null);
 										msg.Object=rec;
@@ -327,7 +327,7 @@ namespace MediaPortal.TV.Recording
 						if ( rec.IsRecordingProgramAtTime(dtTime,null,m_iPreRecordInterval, m_iPostRecordInterval) )
 						{
 							rec.IsAnnouncementSend=true;
-							Log.Write("Recorder: Send announcement for recording:{0}",rec.ToString());
+							Log.WriteFile(Log.LogType.Recorder,"Recorder: Send announcement for recording:{0}",rec.ToString());
 							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,0,0,0,0,0,null);
 							msg.Object=rec;
 							msg.Object2=null;
@@ -581,8 +581,13 @@ namespace MediaPortal.TV.Recording
 			if (cardNo<0)
 			{
 				// no card found. 
-					Log.WriteFile(Log.LogType.Recorder,"Recorder:  No card found, check if a card is recording a show which has a lower priority then priority:{0}", rec.Priority);
-					cardNo=FindFreeCardForRecording(rec.Channel,true,rec.Priority);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  No card found, check if a card is recording a show which has a lower priority then priority:{0}", rec.Priority);
+				cardNo=FindFreeCardForRecording(rec.Channel,true,rec.Priority);
+				if (cardNo<0)
+				{
+					Log.WriteFile(Log.LogType.Recorder,"Recorder:  no recordings have a lower priority then priority:{0}", rec.Priority);
+					return false;
+				}
 			}
 
 			if (cardNo<0) 
@@ -598,28 +603,27 @@ namespace MediaPortal.TV.Recording
 				for (int i=0; i < m_tvcards.Count;i++)
 				{
 					TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[i];
-					if (dev.IsRecording)
+					if (!dev.IsRecording) continue;
+					if (dev.CurrentTVRecording.Channel == rec.Channel)
 					{
-						if (dev.CurrentTVRecording.Channel == rec.Channel)
-						{
-							if (dev.IsPostRecording) return false;
-						}
-						GUIListItem item = new GUIListItem();
-						item.Label= dev.CurrentTVRecording.Title;
-						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,dev.CurrentTVRecording.Channel);                   
-						if (System.IO.File.Exists(strLogo))
-						{										
-							item.IconImage = strLogo;							
-						}
-						pDlgOK.Add(item);
-						int prio=dev.CurrentTVRecording.Priority;
-						if (prio < lowestPriority)
-						{
-							cardWithLowestPriority=i;
-							lowestPriority=prio;
-						}
-						count++;
+						if (dev.IsPostRecording) return false;
 					}
+
+					GUIListItem item = new GUIListItem();
+					item.Label= dev.CurrentTVRecording.Title;
+					string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,dev.CurrentTVRecording.Channel);                   
+					if (System.IO.File.Exists(strLogo))
+					{										
+						item.IconImage = strLogo;							
+					}
+					pDlgOK.Add(item);
+					int prio=dev.CurrentTVRecording.Priority;
+					if (prio < lowestPriority)
+					{
+						cardWithLowestPriority=i;
+						lowestPriority=prio;
+					}
+					count++;
 				}
 				
 				if (count>0)
@@ -630,7 +634,7 @@ namespace MediaPortal.TV.Recording
 					{
 						cardNo=cardWithLowestPriority;
 						TVCaptureDevice dev = (TVCaptureDevice)m_tvcards[cardNo];
-						Log.WriteFile(Log.LogType.Recorder,"Canceled recording:{0} priority:{1} on card:{2}",
+						Log.WriteFile(Log.LogType.Recorder,"Recorder: Canceled recording:{0} priority:{1} on card:{2}",
 													 dev.CurrentTVRecording.ToString(),
 													 dev.CurrentTVRecording.Priority,
 													 dev.ID);
@@ -649,7 +653,7 @@ namespace MediaPortal.TV.Recording
 									if (count==selectedIndex)
 									{
 										cardNo=i;
-										Log.WriteFile(Log.LogType.Recorder,"User canceled recording:{0} priority:{1} on card:{2}",
+										Log.WriteFile(Log.LogType.Recorder,"Recorder: User canceled recording:{0} priority:{1} on card:{2}",
 											dev.CurrentTVRecording.ToString(),
 											dev.CurrentTVRecording.Priority,
 											dev.ID);
@@ -663,8 +667,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				if (cardNo<0)
-				{
-					Log.WriteFile(Log.LogType.Recorder,"Recorder:  no card available for recording");
+				{					Log.WriteFile(Log.LogType.Recorder,"Recorder:  no card available for recording");
 					return false;//no card free
 				}
 			}
