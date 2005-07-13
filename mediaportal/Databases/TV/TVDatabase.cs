@@ -50,6 +50,7 @@ namespace MediaPortal.TV.Database
 		static public event OnChangedHandler OnProgramsChanged=null;
 		static public event OnRecordingChangedHandler OnRecordingsChanged=null;
 		static public event OnChangedHandler OnNotifiesChanged=null;
+		static public event OnChangedHandler OnChannelsChanged=null;
 
 		/// <summary>
 		/// private constructor to prevent any instance of this class
@@ -764,6 +765,7 @@ namespace MediaPortal.TV.Database
 						chan.iChannelNr=channel.Number;
 						m_channelCache.Add(chan);
 						channel.ID=iNewID;
+						if (OnChannelsChanged!=null) OnChannelsChanged();
 						return iNewID;
 					}
 					else
@@ -1203,6 +1205,8 @@ namespace MediaPortal.TV.Database
 			m_channelCache.Clear();
 			ProgramsChanged();
 			RecordingsChanged(RecordingChange.Deleted);
+			
+			if (OnChannelsChanged!=null) OnChannelsChanged();
 		}		
 		static public void RemovePrograms()
 		{

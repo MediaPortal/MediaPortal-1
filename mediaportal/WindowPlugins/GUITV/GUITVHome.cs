@@ -929,6 +929,7 @@ namespace MediaPortal.GUI.TV
 			m_groups.Add(tvgroup);
 
 			m_groups.AddRange(groups); // Add rest of the groups to the end of the list
+			TVDatabase.OnChannelsChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(OnChannelsChanged);
 		}
 
 		#endregion
@@ -1247,6 +1248,33 @@ namespace MediaPortal.GUI.TV
 		#endregion
 
 		#region Private methods
+
+		void OnChannelsChanged()
+		{
+			// Load all groups
+			if (GUIGraphicsContext.DX9Device==null) return;
+			ArrayList groups = new ArrayList();
+			TVDatabase.GetGroups(ref groups); // Put groups in a local variable to ensure the "All" group is first always
+
+			channels.Clear();
+			m_groups.Clear();
+			// Add a group containing all channels
+			TVDatabase.GetChannels(ref channels); // Load all channels
+			TVGroup tvgroup = new TVGroup();
+			tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
+			foreach (TVChannel channel in channels)
+				tvgroup.tvChannels.Add(channel);
+			m_groups.Add(tvgroup);
+			m_groups.AddRange(groups); // Add rest of the groups to the end of the list
+
+			if (m_currentchannel.Trim()==String.Empty)
+			{
+				TVGroup group=(TVGroup )m_groups[m_currentgroup];
+				m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
+			}
+			m_currentTvChannel=GetTVChannel(m_currentchannel);
+
+		}
 
 		/// <summary>
 		/// Retrieves the index of the current channel.
