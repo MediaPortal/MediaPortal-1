@@ -2502,9 +2502,100 @@
   <!-- End My Alarm Strings -->
   
   <string>
+    	<id>877</id>
+    	<value>Prioriteiten</value>
+    </string>
+    <string>
+    	<id>878</id>
+    	<value>Opslag</value>
+    </string>
+    <string>
+    	<id>879</id>
+    	<value>Opname conflicten</value>
+    </string>
+    <string>
+    	<id>880</id>
+    	<value>Tijd om op te nemen:</value>
+    </string>
+    <string>
+    	<id>881</id>
+    	<value>Kies opname om te stoppen:</value>
+    </string>
+    <string>
+    	<id>882</id>
+    	<value>Kwaliteits niveau:</value>
+    </string>
+    <string>
+    	<id>883</id>
+    	<value>Laag</value>
+    </string>
+    <string>
+    	<id>884</id>
+    	<value>Middelmatig</value>
+    </string>
+    <string>
+    	<id>885</id>
+    	<value>Hoog</value>
+    </string>
+    <string>
+    	<id>886</id>
+    	<value>Standaard</value>
+    </string>
+    <string>
+    	<id>887</id>
+    	<value>Geef het aantal afleveringen om te bewaren op</value>
+    </string>
+    <string>
+    	<id>888</id>
+    	<value>Afeleveringen beheer</value>
+    </string>
+    <string>
+    	<id>889</id>
+    	<value>Alle afleveringen</value>
+    </string>
+    
+  <string>
   	<id>890</id>
   	<value>CD afspelen</value>
   </string>
+  <string>
+  	<id>891</id>
+   	<value>Selecteer TV zender</value>
+  </string>
+  <string>
+   	<id>892</id>
+   	<value>Conflicten</value>
+  </string>
+  <string>
+   	<id>893</id>
+   	<value>Draagbaar</value>
+  </string>
+  <string>
+   	<id>894</id>
+    	<value>Comprimeer TV opnamen</value>
+    </string>
+    <string>
+    	<id>895</id>
+    	<value>Autom.comprimeren</value>
+    </string>
+    <string>
+    	<id>896</id>
+    	<value>Comprimeren</value>
+    </string>
+    <string>
+    	<id>897</id>
+    	<value>Instellingen</value>
+    </string>
+    <string>
+    	<id>898</id>
+    	<value>MPEG-2</value>
+    </string>
+    <string>
+    	<id>899</id>
+    	<value>WMV</value>
+    </string>
+
+  
   <string>
   	<id>900</id>
   	<value>Afspelen hervatten vanaf laatste punt?</value>
@@ -2826,6 +2917,128 @@
   	<id>987</id>
   	<value>Jaren</value>
   </string>
+<string>
+	<id>988</id>
+	<value>Kwaliteit</value>
+</string>
+<string>
+	<id>989</id>
+	<value>FPS</value>
+</string>
+<string>
+	<id>990</id>
+	<value>Bitrate</value>
+</string>
+<string>
+	<id>991</id>
+	<value>Prioriteit</value>
+</string>
+<string>
+	<id>992</id>
+	<value>Originele opname verwijderen</value>
+</string>
+<string>
+	<id>993</id>
+	<value>Aangepast</value>
+</string>
+<string>
+	<id>994</id>
+	<value>Autom. comprimeren aan</value>
+</string>
+<string>
+	<id>995</id>
+	<value>Weet U zeker dat U de geselecteerde</value>
+</string>
+<string>
+	<id>996</id>
+	<value>opnamen wilt comprimeren?</value>
+</string>
+
+<string>
+	<id>997</id>
+	<value>Gereed</value>
+</string>
+
+<string>
+	<id>998</id>
+	<value>XviD</value>
+</string>
+<string>
+	<id>999</id>
+	<value>Met dit plugin kan je opnamen omzetten van</value>
+</string>
+<string>
+	<id>1000</id>
+	<value>het DVR-MS formaat naar MPEG, XVID of WMV.</value>
+</string>
+<string>
+	<id>1001</id>
+	<value>LETOP: Om naar XVID om te kunnen zetten</value>
+</string>
+<string>
+	<id>1002</id>
+	<value>moet de Elecard MPEG2 video decoder</value>
+</string>
+<string>
+	<id>1003</id>
+	<value>geinstalleerd zijn.</value>
+</string>
+<string>
+	<id>1004</id>
+	<value>Opname begint bijna</value>
+</string>
+<string>
+	<id>1005</id>
+	<value>op kanaal</value>
+</string>
+<string>
+	<id>1006</id>
+	<value>Laat de opname beginnen</value>
+</string>
+<string>
+	<id>1007</id>
+	<value>Breek de opname af en ga door met TV kijken</value>
+</string>
+<string>
+	<id>1008</id>
+	<value>Klaarzetten</value>
+</string>
+<string>
+	<id>1009</id>
+	<value>Hoesje downloaden</value>
+</string>
+<string>
+	<id>1010</id>
+	<value>Gekeken</value>
+</string>
+<string>
+	<id>1011</id>
+	<value>Biografie</value>
+</string>
+<string>
+	<id>1012</id>
+	<value>Dit programma zal onderbroken worden door</value>
+</string>
+<string>
+	<id>1013</id>
+	<value>Wilt U het tweede deel ook opnemen?</value>
+</string>
+<string>
+	<id>1014</id>
+	<value>Waarschuw als het programma begint</value>
+</string>
+<string>
+	<id>1015</id>
+	<value>Geen waarschuwing als programma begint</value>
+</string>
+<string>
+	<id>1016</id>
+	<value>Programma begint over 5 minuten</value>
+</string>
+<string>
+	<id>1017</id>
+	<value>Sorteer: Lengte</value>
+</string>
 
   <string>
   	<id>1440</id>
