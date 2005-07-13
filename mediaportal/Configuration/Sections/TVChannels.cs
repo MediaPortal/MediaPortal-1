@@ -205,6 +205,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonLookup.Size = new System.Drawing.Size(75, 24);
       this.buttonLookup.TabIndex = 13;
       this.buttonLookup.Text = "Lookup";
+      this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
       // 
       // xmlImport
       // 
@@ -215,6 +216,7 @@ namespace MediaPortal.Configuration.Sections
       this.xmlImport.Size = new System.Drawing.Size(88, 16);
       this.xmlImport.TabIndex = 12;
       this.xmlImport.Text = "Import from XML";
+      this.xmlImport.Click += new System.EventHandler(this.xmlImport_Click);
       // 
       // xmlExport
       // 
@@ -225,6 +227,7 @@ namespace MediaPortal.Configuration.Sections
       this.xmlExport.Size = new System.Drawing.Size(88, 16);
       this.xmlExport.TabIndex = 11;
       this.xmlExport.Text = "Export to XML";
+      this.xmlExport.Click += new System.EventHandler(this.xmlExport_Click);
       // 
       // buttonCVS
       // 
@@ -234,6 +237,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonCVS.Size = new System.Drawing.Size(160, 23);
       this.buttonCVS.TabIndex = 8;
       this.buttonCVS.Text = "Add CVBS/SVHS channels";
+      this.buttonCVS.Click += new System.EventHandler(this.buttonCVS_Click);
       // 
       // channelsListView
       // 
@@ -284,6 +288,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnImport.Size = new System.Drawing.Size(112, 23);
       this.btnImport.TabIndex = 6;
       this.btnImport.Text = "Import from tvguide";
+      this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
       // 
       // btnClear
       // 
@@ -294,6 +299,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnClear.Size = new System.Drawing.Size(32, 23);
       this.btnClear.TabIndex = 7;
       this.btnClear.Text = "Clear";
+      this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
       // 
       // addButton
       // 
@@ -304,6 +310,7 @@ namespace MediaPortal.Configuration.Sections
       this.addButton.Size = new System.Drawing.Size(32, 23);
       this.addButton.TabIndex = 1;
       this.addButton.Text = "Add";
+      this.addButton.Click += new System.EventHandler(this.addButton_Click);
       // 
       // deleteButton
       // 
@@ -315,6 +322,7 @@ namespace MediaPortal.Configuration.Sections
       this.deleteButton.Size = new System.Drawing.Size(40, 23);
       this.deleteButton.TabIndex = 3;
       this.deleteButton.Text = "Delete";
+      this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
       // 
       // editButton
       // 
@@ -326,6 +334,7 @@ namespace MediaPortal.Configuration.Sections
       this.editButton.Size = new System.Drawing.Size(32, 23);
       this.editButton.TabIndex = 2;
       this.editButton.Text = "Edit";
+      this.editButton.Click += new System.EventHandler(this.editButton_Click);
       // 
       // upButton
       // 
@@ -337,6 +346,7 @@ namespace MediaPortal.Configuration.Sections
       this.upButton.Size = new System.Drawing.Size(32, 23);
       this.upButton.TabIndex = 5;
       this.upButton.Text = "Up";
+      this.upButton.Click += new System.EventHandler(this.upButton_Click);
       // 
       // downButton
       // 
@@ -348,6 +358,7 @@ namespace MediaPortal.Configuration.Sections
       this.downButton.Size = new System.Drawing.Size(40, 23);
       this.downButton.TabIndex = 4;
       this.downButton.Text = "Down";
+      this.downButton.Click += new System.EventHandler(this.downButton_Click);
       // 
       // tabPage4
       // 
@@ -2111,7 +2122,7 @@ namespace MediaPortal.Configuration.Sections
 			//If nothing return Default
 			return TV.Database.TVRecording.RecordingType.Once;
 		}
-		private void xmlExport_Click_1(object sender, System.EventArgs e)
+		private void xmlExport_Click(object sender, System.EventArgs e)
 		{
 
       XMLSaveDialog.RestoreDirectory = true;
@@ -2121,7 +2132,7 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-		private void xmlImport_Click_1(object sender, System.EventArgs e)
+		private void xmlImport_Click(object sender, System.EventArgs e)
 		{
       XMLOpenDialog.RestoreDirectory = true;
 			if(XMLOpenDialog.ShowDialog(this)==DialogResult.OK)
