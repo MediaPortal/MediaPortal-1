@@ -314,6 +314,8 @@ namespace MediaPortal.TV.Database
                     iStop=100*Int64.Parse(nodeStop.InnerText.Substring(0,12));//200403312220
                   }
 							  }
+								iStart=CorrectIllegalDateTime(iStart);
+								iStop=CorrectIllegalDateTime(iStop);
 							  string strTimeZoneStart="";
 							  string strTimeZoneEnd="";
 							  int iStartTimeOffset=0;
@@ -359,16 +361,20 @@ namespace MediaPortal.TV.Database
                 dtStart=dtStart.AddMinutes( iTimeZoneCorrection );
 							  iStart=Utils.datetolong(dtStart);
 
-							  // correct program endtime
-							  DateTime dtEnd=Utils.longtodate(iStop);
-							  iHour=(iEndTimeOffset/100);
-							  iMin=iEndTimeOffset-(iHour*100);
-				//			  iHour -= utcOff.Hours;
-				//			  iMin -= utcOff.Minutes;
-							  dtEnd=dtEnd.AddHours( iHour);
-                dtEnd=dtEnd.AddMinutes( iMin );
-                dtEnd=dtEnd.AddMinutes( iTimeZoneCorrection );
-							  iStop=Utils.datetolong(dtEnd);
+								if (nodeStop!=null && nodeStop.InnerText!=null)
+								{
+									// correct program endtime
+									DateTime dtEnd=Utils.longtodate(iStop);
+									iHour=(iEndTimeOffset/100);
+									iMin=iEndTimeOffset-(iHour*100);
+									//			  iHour -= utcOff.Hours;
+									//			  iMin -= utcOff.Minutes;
+									dtEnd=dtEnd.AddHours( iHour);
+									dtEnd=dtEnd.AddMinutes( iMin );
+									dtEnd=dtEnd.AddMinutes( iTimeZoneCorrection );
+									iStop=Utils.datetolong(dtEnd);
+								}
+								else iStop=iStart;
 
 							  int iChannelId=-1;
 							  string strChannelName="";
@@ -504,6 +510,7 @@ namespace MediaPortal.TV.Database
 								  if (String.Compare(progChan.strName,strChannelName,true)==0)
 								  {
 									  progChan.programs.Add(prog);
+
 								  }
 								  
 							  }
@@ -616,7 +623,23 @@ namespace MediaPortal.TV.Database
       }
       return 0;
     }
-    
+
+		long CorrectIllegalDateTime(long datetime)
+		{
+			//format : 20050710245500
+			long sec=datetime % 100; datetime /=100;
+			long min=datetime % 100; datetime /=100;
+			long hour=datetime % 100; datetime /=100;
+			long day=datetime % 100; datetime /=100;
+			long month=datetime % 100; datetime /=100;
+			long year=datetime ; 
+
+			DateTime dt = new DateTime((int)year,(int)month,(int)day,0,0,0);
+			dt=dt.AddHours(hour);
+			dt=dt.AddMinutes(min);
+			dt=dt.AddSeconds(sec);
+			return Utils.datetolong(dt);
+		}
     #region Sort Members
 
 
