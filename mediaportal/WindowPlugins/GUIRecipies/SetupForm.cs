@@ -66,12 +66,12 @@ namespace GUIRecipies
 		#region plugin vars
 		public string PluginName()
 		{
-			return "My Recipies";
+			return "My Recipes";
 		}
 
 		public string Description()
 		{
-			return "A recipie plugin for Media Portal";
+			return "A recipe plugin for Media Portal";
 		}
 
 		public string Author()
