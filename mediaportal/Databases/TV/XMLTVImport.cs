@@ -535,7 +535,12 @@ namespace MediaPortal.TV.Database
 					  // dont import programs which have already ended...
 					  if (prog.EndTime > dtStartDate)
 					  {
-						//  Log.Write("Add program :{0,-20} {1} {2} {3}",prog.Channel, prog.StartTime.ToShortDateString(),prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , prog.Title); 
+						  Log.WriteFile(Log.LogType.EPG,false,"epg-import :{0,-20} {1} {2}-{3} {4}",
+												prog.Channel, 
+								        prog.StartTime.ToShortDateString(),
+												prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , 
+												prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , 
+								        prog.Title); 
 
 							TVDatabase.UpdateProgram(prog);
 						  if (prog.StartTime < m_stats.StartTime) m_stats.StartTime=prog.StartTime;
@@ -623,6 +628,10 @@ namespace MediaPortal.TV.Database
       if (item1==null) return -1;
       if (item2==null) return -1;
 
+			if (item1.Channel != item2.Channel)
+			{
+				return String.Compare(item1.Channel,item2.Channel,true);
+			}
       if (item1.Start>item2.Start) return 1;
       if (item1.Start<item2.Start) return -1;
       return 0;
