@@ -86,6 +86,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbEnable
       // 
+      this.cbEnable.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbEnable.Location = new System.Drawing.Point(8, 8);
       this.cbEnable.Name = "cbEnable";
       this.cbEnable.Size = new System.Drawing.Size(176, 24);

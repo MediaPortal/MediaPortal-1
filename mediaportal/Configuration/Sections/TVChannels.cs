@@ -103,358 +103,362 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TVChannels));
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
-			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.buttonLookup = new System.Windows.Forms.Button();
-			this.xmlImport = new System.Windows.Forms.Button();
-			this.xmlExport = new System.Windows.Forms.Button();
-			this.buttonCVS = new System.Windows.Forms.Button();
-			this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
-			this.btnImport = new System.Windows.Forms.Button();
-			this.btnClear = new System.Windows.Forms.Button();
-			this.addButton = new System.Windows.Forms.Button();
-			this.deleteButton = new System.Windows.Forms.Button();
-			this.editButton = new System.Windows.Forms.Button();
-			this.upButton = new System.Windows.Forms.Button();
-			this.downButton = new System.Windows.Forms.Button();
-			this.tabPage4 = new System.Windows.Forms.TabPage();
-			this.btnMapChannelToCard = new System.Windows.Forms.Button();
-			this.btnUnmapChannelFromCard = new System.Windows.Forms.Button();
-			this.listViewTVChannelsForCard = new System.Windows.Forms.ListView();
-			this.listViewTVChannelsCard = new System.Windows.Forms.ListView();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.comboBoxCard = new System.Windows.Forms.ComboBox();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
-			this.tabControl1.SuspendLayout();
-			this.tabPage1.SuspendLayout();
-			this.tabPage4.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// imageList1
-			// 
-			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
-			// XMLOpenDialog
-			// 
-			this.XMLOpenDialog.DefaultExt = "xml";
-			this.XMLOpenDialog.FileName = "ChannelList";
-			this.XMLOpenDialog.Filter = "xml|*.xml";
-			this.XMLOpenDialog.InitialDirectory = ".";
-			this.XMLOpenDialog.Title = "Open....";
-			// 
-			// XMLSaveDialog
-			// 
-			this.XMLSaveDialog.CreatePrompt = true;
-			this.XMLSaveDialog.DefaultExt = "xml";
-			this.XMLSaveDialog.FileName = "ChannelList";
-			this.XMLSaveDialog.Filter = "xml|*.xml";
-			this.XMLSaveDialog.InitialDirectory = ".";
-			this.XMLSaveDialog.Title = "Save to....";
-			// 
-			// tabControl1
-			// 
-			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage4);
-			this.tabControl1.Location = new System.Drawing.Point(8, 8);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(440, 416);
-			this.tabControl1.TabIndex = 9;
-			// 
-			// tabPage1
-			// 
-			this.tabPage1.AutoScroll = true;
-			this.tabPage1.Controls.Add(this.buttonLookup);
-			this.tabPage1.Controls.Add(this.xmlImport);
-			this.tabPage1.Controls.Add(this.xmlExport);
-			this.tabPage1.Controls.Add(this.buttonCVS);
-			this.tabPage1.Controls.Add(this.channelsListView);
-			this.tabPage1.Controls.Add(this.btnImport);
-			this.tabPage1.Controls.Add(this.btnClear);
-			this.tabPage1.Controls.Add(this.addButton);
-			this.tabPage1.Controls.Add(this.deleteButton);
-			this.tabPage1.Controls.Add(this.editButton);
-			this.tabPage1.Controls.Add(this.upButton);
-			this.tabPage1.Controls.Add(this.downButton);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(432, 390);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "TV Channels";
-			// 
-			// buttonLookup
-			// 
-			this.buttonLookup.Location = new System.Drawing.Point(232, 352);
-			this.buttonLookup.Name = "buttonLookup";
-			this.buttonLookup.Size = new System.Drawing.Size(75, 24);
-			this.buttonLookup.TabIndex = 13;
-			this.buttonLookup.Text = "Lookup";
-			// 
-			// xmlImport
-			// 
-			this.xmlImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.xmlImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.xmlImport.Location = new System.Drawing.Point(328, 344);
-			this.xmlImport.Name = "xmlImport";
-			this.xmlImport.Size = new System.Drawing.Size(88, 16);
-			this.xmlImport.TabIndex = 12;
-			this.xmlImport.Text = "Import from XML";
-			// 
-			// xmlExport
-			// 
-			this.xmlExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.xmlExport.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.xmlExport.Location = new System.Drawing.Point(328, 360);
-			this.xmlExport.Name = "xmlExport";
-			this.xmlExport.Size = new System.Drawing.Size(88, 16);
-			this.xmlExport.TabIndex = 11;
-			this.xmlExport.Text = "Export to XML";
-			// 
-			// buttonCVS
-			// 
-			this.buttonCVS.Location = new System.Drawing.Point(16, 344);
-			this.buttonCVS.Name = "buttonCVS";
-			this.buttonCVS.Size = new System.Drawing.Size(160, 23);
-			this.buttonCVS.TabIndex = 8;
-			this.buttonCVS.Text = "Add CVBS/SVHS channels";
-			// 
-			// channelsListView
-			// 
-			this.channelsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.channelsListView.CheckBoxes = true;
-			this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																											 this.columnHeader1,
-																																											 this.columnHeader2,
-																																											 this.columnHeader5,
-																																											 this.columnHeader4});
-			this.channelsListView.FullRowSelect = true;
-			this.channelsListView.HideSelection = false;
-			this.channelsListView.Location = new System.Drawing.Point(8, 8);
-			this.channelsListView.Name = "channelsListView";
-			this.channelsListView.Size = new System.Drawing.Size(416, 304);
-			this.channelsListView.SmallImageList = this.imageList1;
-			this.channelsListView.TabIndex = 0;
-			this.channelsListView.View = System.Windows.Forms.View.Details;
-			// 
-			// btnImport
-			// 
-			this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.btnImport.Location = new System.Drawing.Point(232, 320);
-			this.btnImport.Name = "btnImport";
-			this.btnImport.Size = new System.Drawing.Size(112, 23);
-			this.btnImport.TabIndex = 6;
-			this.btnImport.Text = "Import from tvguide";
-			// 
-			// btnClear
-			// 
-			this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.btnClear.Location = new System.Drawing.Point(144, 320);
-			this.btnClear.Name = "btnClear";
-			this.btnClear.Size = new System.Drawing.Size(32, 23);
-			this.btnClear.TabIndex = 7;
-			this.btnClear.Text = "Clear";
-			// 
-			// addButton
-			// 
-			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.addButton.Location = new System.Drawing.Point(16, 320);
-			this.addButton.Name = "addButton";
-			this.addButton.Size = new System.Drawing.Size(32, 23);
-			this.addButton.TabIndex = 1;
-			this.addButton.Text = "Add";
-			// 
-			// deleteButton
-			// 
-			this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.deleteButton.Enabled = false;
-			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.deleteButton.Location = new System.Drawing.Point(96, 320);
-			this.deleteButton.Name = "deleteButton";
-			this.deleteButton.Size = new System.Drawing.Size(40, 23);
-			this.deleteButton.TabIndex = 3;
-			this.deleteButton.Text = "Delete";
-			// 
-			// editButton
-			// 
-			this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.editButton.Enabled = false;
-			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.editButton.Location = new System.Drawing.Point(56, 320);
-			this.editButton.Name = "editButton";
-			this.editButton.Size = new System.Drawing.Size(32, 23);
-			this.editButton.TabIndex = 2;
-			this.editButton.Text = "Edit";
-			// 
-			// upButton
-			// 
-			this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.upButton.Enabled = false;
-			this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.upButton.Location = new System.Drawing.Point(344, 320);
-			this.upButton.Name = "upButton";
-			this.upButton.Size = new System.Drawing.Size(32, 23);
-			this.upButton.TabIndex = 5;
-			this.upButton.Text = "Up";
-			// 
-			// downButton
-			// 
-			this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.downButton.Enabled = false;
-			this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.downButton.Location = new System.Drawing.Point(376, 320);
-			this.downButton.Name = "downButton";
-			this.downButton.Size = new System.Drawing.Size(40, 23);
-			this.downButton.TabIndex = 4;
-			this.downButton.Text = "Down";
-			// 
-			// tabPage4
-			// 
-			this.tabPage4.AutoScroll = true;
-			this.tabPage4.Controls.Add(this.btnMapChannelToCard);
-			this.tabPage4.Controls.Add(this.btnUnmapChannelFromCard);
-			this.tabPage4.Controls.Add(this.listViewTVChannelsForCard);
-			this.tabPage4.Controls.Add(this.listViewTVChannelsCard);
-			this.tabPage4.Controls.Add(this.label4);
-			this.tabPage4.Controls.Add(this.label5);
-			this.tabPage4.Controls.Add(this.label6);
-			this.tabPage4.Controls.Add(this.comboBoxCard);
-			this.tabPage4.Location = new System.Drawing.Point(4, 22);
-			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(432, 390);
-			this.tabPage4.TabIndex = 3;
-			this.tabPage4.Text = "Cards";
-			this.tabPage4.Visible = false;
-			// 
-			// btnMapChannelToCard
-			// 
-			this.btnMapChannelToCard.Location = new System.Drawing.Point(200, 152);
-			this.btnMapChannelToCard.Name = "btnMapChannelToCard";
-			this.btnMapChannelToCard.Size = new System.Drawing.Size(32, 23);
-			this.btnMapChannelToCard.TabIndex = 15;
-			this.btnMapChannelToCard.Text = ">>";
-			// 
-			// btnUnmapChannelFromCard
-			// 
-			this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(200, 184);
-			this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
-			this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(32, 23);
-			this.btnUnmapChannelFromCard.TabIndex = 14;
-			this.btnUnmapChannelFromCard.Text = "<<";
-			// 
-			// listViewTVChannelsForCard
-			// 
-			this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																																this.columnHeader10});
-			this.listViewTVChannelsForCard.Location = new System.Drawing.Point(244, 64);
-			this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
-			this.listViewTVChannelsForCard.Size = new System.Drawing.Size(168, 288);
-			this.listViewTVChannelsForCard.TabIndex = 13;
-			this.listViewTVChannelsForCard.View = System.Windows.Forms.View.Details;
-			// 
-			// listViewTVChannelsCard
-			// 
-			this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																														 this.columnHeader11});
-			this.listViewTVChannelsCard.Location = new System.Drawing.Point(20, 64);
-			this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
-			this.listViewTVChannelsCard.Size = new System.Drawing.Size(168, 288);
-			this.listViewTVChannelsCard.TabIndex = 12;
-			this.listViewTVChannelsCard.View = System.Windows.Forms.View.Details;
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(248, 40);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(156, 16);
-			this.label4.TabIndex = 11;
-			this.label4.Text = "TV channels assigned to card";
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(24, 40);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(136, 16);
-			this.label5.TabIndex = 10;
-			this.label5.Text = "TVChannels available";
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(20, 16);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(36, 16);
-			this.label6.TabIndex = 9;
-			this.label6.Text = "Card:";
-			// 
-			// comboBoxCard
-			// 
-			this.comboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.comboBoxCard.Location = new System.Drawing.Point(64, 8);
-			this.comboBoxCard.Name = "comboBoxCard";
-			this.comboBoxCard.Size = new System.Drawing.Size(280, 21);
-			this.comboBoxCard.TabIndex = 8;
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Channel name";
-			this.columnHeader1.Width = 137;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Channel";
-			this.columnHeader2.Width = 57;
-			// 
-			// columnHeader5
-			// 
-			this.columnHeader5.Text = "Standard";
-			this.columnHeader5.Width = 63;
-			// 
-			// columnHeader4
-			// 
-			this.columnHeader4.Text = "Type";
-			this.columnHeader4.Width = 155;
-			// 
-			// columnHeader10
-			// 
-			this.columnHeader10.Text = "TV Channel";
-			this.columnHeader10.Width = 161;
-			// 
-			// columnHeader11
-			// 
-			this.columnHeader11.Text = "TV Channel";
-			this.columnHeader11.Width = 159;
-			// 
-			// TVChannels
-			// 
-			this.Controls.Add(this.tabControl1);
-			this.Name = "TVChannels";
-			this.Size = new System.Drawing.Size(472, 448);
-			this.Load += new System.EventHandler(this.TVChannels_Load);
-			this.tabControl1.ResumeLayout(false);
-			this.tabPage1.ResumeLayout(false);
-			this.tabPage4.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.components = new System.ComponentModel.Container();
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TVChannels));
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+      this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
+      this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
+      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.buttonLookup = new System.Windows.Forms.Button();
+      this.xmlImport = new System.Windows.Forms.Button();
+      this.xmlExport = new System.Windows.Forms.Button();
+      this.buttonCVS = new System.Windows.Forms.Button();
+      this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.btnImport = new System.Windows.Forms.Button();
+      this.btnClear = new System.Windows.Forms.Button();
+      this.addButton = new System.Windows.Forms.Button();
+      this.deleteButton = new System.Windows.Forms.Button();
+      this.editButton = new System.Windows.Forms.Button();
+      this.upButton = new System.Windows.Forms.Button();
+      this.downButton = new System.Windows.Forms.Button();
+      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.btnMapChannelToCard = new System.Windows.Forms.Button();
+      this.btnUnmapChannelFromCard = new System.Windows.Forms.Button();
+      this.listViewTVChannelsForCard = new System.Windows.Forms.ListView();
+      this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
+      this.listViewTVChannelsCard = new System.Windows.Forms.ListView();
+      this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
+      this.label4 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.comboBoxCard = new System.Windows.Forms.ComboBox();
+      this.tabControl1.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.tabPage4.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // imageList1
+      // 
+      this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
+      this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      // 
+      // XMLOpenDialog
+      // 
+      this.XMLOpenDialog.DefaultExt = "xml";
+      this.XMLOpenDialog.FileName = "ChannelList";
+      this.XMLOpenDialog.Filter = "xml|*.xml";
+      this.XMLOpenDialog.InitialDirectory = ".";
+      this.XMLOpenDialog.Title = "Open....";
+      // 
+      // XMLSaveDialog
+      // 
+      this.XMLSaveDialog.CreatePrompt = true;
+      this.XMLSaveDialog.DefaultExt = "xml";
+      this.XMLSaveDialog.FileName = "ChannelList";
+      this.XMLSaveDialog.Filter = "xml|*.xml";
+      this.XMLSaveDialog.InitialDirectory = ".";
+      this.XMLSaveDialog.Title = "Save to....";
+      // 
+      // tabControl1
+      // 
+      this.tabControl1.Controls.Add(this.tabPage1);
+      this.tabControl1.Controls.Add(this.tabPage4);
+      this.tabControl1.Location = new System.Drawing.Point(8, 8);
+      this.tabControl1.Name = "tabControl1";
+      this.tabControl1.SelectedIndex = 0;
+      this.tabControl1.Size = new System.Drawing.Size(440, 416);
+      this.tabControl1.TabIndex = 9;
+      // 
+      // tabPage1
+      // 
+      this.tabPage1.AutoScroll = true;
+      this.tabPage1.Controls.Add(this.buttonLookup);
+      this.tabPage1.Controls.Add(this.xmlImport);
+      this.tabPage1.Controls.Add(this.xmlExport);
+      this.tabPage1.Controls.Add(this.buttonCVS);
+      this.tabPage1.Controls.Add(this.channelsListView);
+      this.tabPage1.Controls.Add(this.btnImport);
+      this.tabPage1.Controls.Add(this.btnClear);
+      this.tabPage1.Controls.Add(this.addButton);
+      this.tabPage1.Controls.Add(this.deleteButton);
+      this.tabPage1.Controls.Add(this.editButton);
+      this.tabPage1.Controls.Add(this.upButton);
+      this.tabPage1.Controls.Add(this.downButton);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Size = new System.Drawing.Size(432, 390);
+      this.tabPage1.TabIndex = 0;
+      this.tabPage1.Text = "TV Channels";
+      // 
+      // buttonLookup
+      // 
+      this.buttonLookup.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonLookup.Location = new System.Drawing.Point(232, 352);
+      this.buttonLookup.Name = "buttonLookup";
+      this.buttonLookup.Size = new System.Drawing.Size(75, 24);
+      this.buttonLookup.TabIndex = 13;
+      this.buttonLookup.Text = "Lookup";
+      // 
+      // xmlImport
+      // 
+      this.xmlImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.xmlImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.xmlImport.Location = new System.Drawing.Point(328, 344);
+      this.xmlImport.Name = "xmlImport";
+      this.xmlImport.Size = new System.Drawing.Size(88, 16);
+      this.xmlImport.TabIndex = 12;
+      this.xmlImport.Text = "Import from XML";
+      // 
+      // xmlExport
+      // 
+      this.xmlExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.xmlExport.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.xmlExport.Location = new System.Drawing.Point(328, 360);
+      this.xmlExport.Name = "xmlExport";
+      this.xmlExport.Size = new System.Drawing.Size(88, 16);
+      this.xmlExport.TabIndex = 11;
+      this.xmlExport.Text = "Export to XML";
+      // 
+      // buttonCVS
+      // 
+      this.buttonCVS.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonCVS.Location = new System.Drawing.Point(16, 344);
+      this.buttonCVS.Name = "buttonCVS";
+      this.buttonCVS.Size = new System.Drawing.Size(160, 23);
+      this.buttonCVS.TabIndex = 8;
+      this.buttonCVS.Text = "Add CVBS/SVHS channels";
+      // 
+      // channelsListView
+      // 
+      this.channelsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.channelsListView.CheckBoxes = true;
+      this.channelsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                       this.columnHeader1,
+                                                                                       this.columnHeader2,
+                                                                                       this.columnHeader5,
+                                                                                       this.columnHeader4});
+      this.channelsListView.FullRowSelect = true;
+      this.channelsListView.HideSelection = false;
+      this.channelsListView.Location = new System.Drawing.Point(8, 8);
+      this.channelsListView.Name = "channelsListView";
+      this.channelsListView.Size = new System.Drawing.Size(416, 304);
+      this.channelsListView.SmallImageList = this.imageList1;
+      this.channelsListView.TabIndex = 0;
+      this.channelsListView.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Channel name";
+      this.columnHeader1.Width = 137;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Channel";
+      this.columnHeader2.Width = 57;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Standard";
+      this.columnHeader5.Width = 63;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Type";
+      this.columnHeader4.Width = 155;
+      // 
+      // btnImport
+      // 
+      this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnImport.Location = new System.Drawing.Point(232, 320);
+      this.btnImport.Name = "btnImport";
+      this.btnImport.Size = new System.Drawing.Size(112, 23);
+      this.btnImport.TabIndex = 6;
+      this.btnImport.Text = "Import from tvguide";
+      // 
+      // btnClear
+      // 
+      this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnClear.Location = new System.Drawing.Point(144, 320);
+      this.btnClear.Name = "btnClear";
+      this.btnClear.Size = new System.Drawing.Size(32, 23);
+      this.btnClear.TabIndex = 7;
+      this.btnClear.Text = "Clear";
+      // 
+      // addButton
+      // 
+      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.addButton.Location = new System.Drawing.Point(16, 320);
+      this.addButton.Name = "addButton";
+      this.addButton.Size = new System.Drawing.Size(32, 23);
+      this.addButton.TabIndex = 1;
+      this.addButton.Text = "Add";
+      // 
+      // deleteButton
+      // 
+      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.deleteButton.Enabled = false;
+      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.deleteButton.Location = new System.Drawing.Point(96, 320);
+      this.deleteButton.Name = "deleteButton";
+      this.deleteButton.Size = new System.Drawing.Size(40, 23);
+      this.deleteButton.TabIndex = 3;
+      this.deleteButton.Text = "Delete";
+      // 
+      // editButton
+      // 
+      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.Enabled = false;
+      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.editButton.Location = new System.Drawing.Point(56, 320);
+      this.editButton.Name = "editButton";
+      this.editButton.Size = new System.Drawing.Size(32, 23);
+      this.editButton.TabIndex = 2;
+      this.editButton.Text = "Edit";
+      // 
+      // upButton
+      // 
+      this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.upButton.Enabled = false;
+      this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.upButton.Location = new System.Drawing.Point(344, 320);
+      this.upButton.Name = "upButton";
+      this.upButton.Size = new System.Drawing.Size(32, 23);
+      this.upButton.TabIndex = 5;
+      this.upButton.Text = "Up";
+      // 
+      // downButton
+      // 
+      this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.downButton.Enabled = false;
+      this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.downButton.Location = new System.Drawing.Point(376, 320);
+      this.downButton.Name = "downButton";
+      this.downButton.Size = new System.Drawing.Size(40, 23);
+      this.downButton.TabIndex = 4;
+      this.downButton.Text = "Down";
+      // 
+      // tabPage4
+      // 
+      this.tabPage4.AutoScroll = true;
+      this.tabPage4.Controls.Add(this.btnMapChannelToCard);
+      this.tabPage4.Controls.Add(this.btnUnmapChannelFromCard);
+      this.tabPage4.Controls.Add(this.listViewTVChannelsForCard);
+      this.tabPage4.Controls.Add(this.listViewTVChannelsCard);
+      this.tabPage4.Controls.Add(this.label4);
+      this.tabPage4.Controls.Add(this.label5);
+      this.tabPage4.Controls.Add(this.label6);
+      this.tabPage4.Controls.Add(this.comboBoxCard);
+      this.tabPage4.Location = new System.Drawing.Point(4, 22);
+      this.tabPage4.Name = "tabPage4";
+      this.tabPage4.Size = new System.Drawing.Size(432, 390);
+      this.tabPage4.TabIndex = 3;
+      this.tabPage4.Text = "Cards";
+      this.tabPage4.Visible = false;
+      // 
+      // btnMapChannelToCard
+      // 
+      this.btnMapChannelToCard.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnMapChannelToCard.Location = new System.Drawing.Point(200, 152);
+      this.btnMapChannelToCard.Name = "btnMapChannelToCard";
+      this.btnMapChannelToCard.Size = new System.Drawing.Size(32, 23);
+      this.btnMapChannelToCard.TabIndex = 15;
+      this.btnMapChannelToCard.Text = ">>";
+      // 
+      // btnUnmapChannelFromCard
+      // 
+      this.btnUnmapChannelFromCard.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(200, 184);
+      this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
+      this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(32, 23);
+      this.btnUnmapChannelFromCard.TabIndex = 14;
+      this.btnUnmapChannelFromCard.Text = "<<";
+      // 
+      // listViewTVChannelsForCard
+      // 
+      this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                                this.columnHeader10});
+      this.listViewTVChannelsForCard.Location = new System.Drawing.Point(244, 64);
+      this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
+      this.listViewTVChannelsForCard.Size = new System.Drawing.Size(168, 288);
+      this.listViewTVChannelsForCard.TabIndex = 13;
+      this.listViewTVChannelsForCard.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader10
+      // 
+      this.columnHeader10.Text = "TV Channel";
+      this.columnHeader10.Width = 161;
+      // 
+      // listViewTVChannelsCard
+      // 
+      this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                             this.columnHeader11});
+      this.listViewTVChannelsCard.Location = new System.Drawing.Point(20, 64);
+      this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
+      this.listViewTVChannelsCard.Size = new System.Drawing.Size(168, 288);
+      this.listViewTVChannelsCard.TabIndex = 12;
+      this.listViewTVChannelsCard.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader11
+      // 
+      this.columnHeader11.Text = "TV Channel";
+      this.columnHeader11.Width = 159;
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(248, 40);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(156, 16);
+      this.label4.TabIndex = 11;
+      this.label4.Text = "TV channels assigned to card";
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(24, 40);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(136, 16);
+      this.label5.TabIndex = 10;
+      this.label5.Text = "TVChannels available";
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(20, 16);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(36, 16);
+      this.label6.TabIndex = 9;
+      this.label6.Text = "Card:";
+      // 
+      // comboBoxCard
+      // 
+      this.comboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxCard.Location = new System.Drawing.Point(64, 8);
+      this.comboBoxCard.Name = "comboBoxCard";
+      this.comboBoxCard.Size = new System.Drawing.Size(280, 21);
+      this.comboBoxCard.TabIndex = 8;
+      // 
+      // TVChannels
+      // 
+      this.Controls.Add(this.tabControl1);
+      this.Name = "TVChannels";
+      this.Size = new System.Drawing.Size(472, 448);
+      this.Load += new System.EventHandler(this.TVChannels_Load);
+      this.tabControl1.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
+      this.tabPage4.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 

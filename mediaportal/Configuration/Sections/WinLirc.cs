@@ -142,6 +142,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // browsePathToWinlircButton
       // 
+      this.browsePathToWinlircButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.browsePathToWinlircButton.Location = new System.Drawing.Point(352, 56);
       this.browsePathToWinlircButton.Name = "browsePathToWinlircButton";
       this.browsePathToWinlircButton.Size = new System.Drawing.Size(64, 23);

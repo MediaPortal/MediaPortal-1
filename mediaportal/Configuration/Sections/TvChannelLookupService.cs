@@ -59,69 +59,70 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label1 = new System.Windows.Forms.Label();
-			this.cbCountries = new System.Windows.Forms.ComboBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.cbCities = new System.Windows.Forms.ComboBox();
-			this.button1 = new System.Windows.Forms.Button();
-			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 16);
-			this.label1.Name = "label1";
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Country:";
-			// 
-			// cbCountries
-			// 
-			this.cbCountries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbCountries.Location = new System.Drawing.Point(80, 16);
-			this.cbCountries.Name = "cbCountries";
-			this.cbCountries.Size = new System.Drawing.Size(280, 21);
-			this.cbCountries.Sorted = true;
-			this.cbCountries.TabIndex = 1;
-			this.cbCountries.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged);
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(16, 48);
-			this.label2.Name = "label2";
-			this.label2.TabIndex = 2;
-			this.label2.Text = "City:";
-			// 
-			// cbCities
-			// 
-			this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbCities.Location = new System.Drawing.Point(80, 48);
-			this.cbCities.Name = "cbCities";
-			this.cbCities.Size = new System.Drawing.Size(280, 21);
-			this.cbCities.Sorted = true;
-			this.cbCities.TabIndex = 3;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(288, 88);
-			this.button1.Name = "button1";
-			this.button1.TabIndex = 4;
-			this.button1.Text = "Import";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// TvChannelLookupService
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(384, 134);
-			this.Controls.Add(this.button1);
-			this.Controls.Add(this.cbCities);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.cbCountries);
-			this.Controls.Add(this.label1);
-			this.Name = "TvChannelLookupService";
-			this.Text = "TvChannelLookupService";
-			this.Load += new System.EventHandler(this.TvChannelLookupService_Load);
-			this.ResumeLayout(false);
+      this.label1 = new System.Windows.Forms.Label();
+      this.cbCountries = new System.Windows.Forms.ComboBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.cbCities = new System.Windows.Forms.ComboBox();
+      this.button1 = new System.Windows.Forms.Button();
+      this.SuspendLayout();
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 16);
+      this.label1.Name = "label1";
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Country:";
+      // 
+      // cbCountries
+      // 
+      this.cbCountries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbCountries.Location = new System.Drawing.Point(80, 16);
+      this.cbCountries.Name = "cbCountries";
+      this.cbCountries.Size = new System.Drawing.Size(280, 21);
+      this.cbCountries.Sorted = true;
+      this.cbCountries.TabIndex = 1;
+      this.cbCountries.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged);
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 48);
+      this.label2.Name = "label2";
+      this.label2.TabIndex = 2;
+      this.label2.Text = "City:";
+      // 
+      // cbCities
+      // 
+      this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbCities.Location = new System.Drawing.Point(80, 48);
+      this.cbCities.Name = "cbCities";
+      this.cbCities.Size = new System.Drawing.Size(280, 21);
+      this.cbCities.Sorted = true;
+      this.cbCities.TabIndex = 3;
+      // 
+      // button1
+      // 
+      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.button1.Location = new System.Drawing.Point(288, 88);
+      this.button1.Name = "button1";
+      this.button1.TabIndex = 4;
+      this.button1.Text = "Import";
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // TvChannelLookupService
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(384, 134);
+      this.Controls.Add(this.button1);
+      this.Controls.Add(this.cbCities);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.cbCountries);
+      this.Controls.Add(this.label1);
+      this.Name = "TvChannelLookupService";
+      this.Text = "TV Channel Lookup Service";
+      this.Load += new System.EventHandler(this.TvChannelLookupService_Load);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void TvChannelLookupService_Load(object sender, System.EventArgs e)

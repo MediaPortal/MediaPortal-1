@@ -64,117 +64,119 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.SearchButton = new System.Windows.Forms.Button();
-			this.SearchText = new System.Windows.Forms.TextBox();
-			this.ResultsBox = new MediaPortal.UserInterface.Controls.MPListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-			this.AddButton = new System.Windows.Forms.Button();
-			this.WaitLabel = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// SearchButton
-			// 
-			this.SearchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.SearchButton.ForeColor = System.Drawing.Color.Black;
-			this.SearchButton.Location = new System.Drawing.Point(8, 240);
-			this.SearchButton.Name = "SearchButton";
-			this.SearchButton.Size = new System.Drawing.Size(80, 23);
-			this.SearchButton.TabIndex = 0;
-			this.SearchButton.Text = "Search";
-			this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
-			// 
-			// SearchText
-			// 
-			this.SearchText.Location = new System.Drawing.Point(96, 240);
-			this.SearchText.Name = "SearchText";
-			this.SearchText.Size = new System.Drawing.Size(184, 20);
-			this.SearchText.TabIndex = 3;
-			this.SearchText.Text = "";
-			// 
-			// ResultsBox
-			// 
-			this.ResultsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.ResultsBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																						 this.columnHeader1,
-																						 this.columnHeader2,
-																						 this.columnHeader3});
-			this.ResultsBox.ForeColor = System.Drawing.Color.Black;
-			this.ResultsBox.FullRowSelect = true;
-			this.ResultsBox.HideSelection = false;
-			this.ResultsBox.Location = new System.Drawing.Point(8, 0);
-			this.ResultsBox.MultiSelect = false;
-			this.ResultsBox.Name = "ResultsBox";
-			this.ResultsBox.Size = new System.Drawing.Size(464, 232);
-			this.ResultsBox.TabIndex = 4;
-			this.ResultsBox.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Bitrate";
-			this.columnHeader1.Width = 65;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Station name";
-			this.columnHeader2.Width = 395;
-			// 
-			// columnHeader3
-			// 
-			this.columnHeader3.Text = "Station Number(Ignore)";
-			this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this.columnHeader3.Width = 121;
-			// 
-			// AddButton
-			// 
-			this.AddButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.AddButton.ForeColor = System.Drawing.Color.Black;
-			this.AddButton.Location = new System.Drawing.Point(392, 240);
-			this.AddButton.Name = "AddButton";
-			this.AddButton.Size = new System.Drawing.Size(80, 23);
-			this.AddButton.TabIndex = 5;
-			this.AddButton.Text = "Add Station";
-			this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
-			// 
-			// WaitLabel
-			// 
-			this.WaitLabel.BackColor = System.Drawing.Color.White;
-			this.WaitLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.WaitLabel.Enabled = false;
-			this.WaitLabel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-			this.WaitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.WaitLabel.ForeColor = System.Drawing.Color.Black;
-			this.WaitLabel.Location = new System.Drawing.Point(160, 104);
-			this.WaitLabel.Name = "WaitLabel";
-			this.WaitLabel.Size = new System.Drawing.Size(168, 32);
-			this.WaitLabel.TabIndex = 6;
-			this.WaitLabel.Text = "Please Wait";
-			this.WaitLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.WaitLabel.UseMnemonic = false;
-			this.WaitLabel.Visible = false;
-			// 
-			// SearchSHOUTcast
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(482, 265);
-			this.Controls.Add(this.WaitLabel);
-			this.Controls.Add(this.AddButton);
-			this.Controls.Add(this.ResultsBox);
-			this.Controls.Add(this.SearchText);
-			this.Controls.Add(this.SearchButton);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "SearchSHOUTcast";
-			this.ShowInTaskbar = false;
-			this.Text = "Search SHOUTcast for your favorite radio stations";
-			this.Load += new System.EventHandler(this.SearchSHOUTcast_Load);
-			this.ResumeLayout(false);
+      this.SearchButton = new System.Windows.Forms.Button();
+      this.SearchText = new System.Windows.Forms.TextBox();
+      this.ResultsBox = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.AddButton = new System.Windows.Forms.Button();
+      this.WaitLabel = new System.Windows.Forms.Label();
+      this.SuspendLayout();
+      // 
+      // SearchButton
+      // 
+      this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.SearchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+      this.SearchButton.ForeColor = System.Drawing.Color.Black;
+      this.SearchButton.Location = new System.Drawing.Point(8, 240);
+      this.SearchButton.Name = "SearchButton";
+      this.SearchButton.Size = new System.Drawing.Size(80, 23);
+      this.SearchButton.TabIndex = 0;
+      this.SearchButton.Text = "Search";
+      this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
+      // 
+      // SearchText
+      // 
+      this.SearchText.Location = new System.Drawing.Point(96, 240);
+      this.SearchText.Name = "SearchText";
+      this.SearchText.Size = new System.Drawing.Size(184, 20);
+      this.SearchText.TabIndex = 3;
+      this.SearchText.Text = "";
+      // 
+      // ResultsBox
+      // 
+      this.ResultsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.ResultsBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                 this.columnHeader1,
+                                                                                 this.columnHeader2,
+                                                                                 this.columnHeader3});
+      this.ResultsBox.ForeColor = System.Drawing.Color.Black;
+      this.ResultsBox.FullRowSelect = true;
+      this.ResultsBox.HideSelection = false;
+      this.ResultsBox.Location = new System.Drawing.Point(8, 0);
+      this.ResultsBox.MultiSelect = false;
+      this.ResultsBox.Name = "ResultsBox";
+      this.ResultsBox.Size = new System.Drawing.Size(464, 231);
+      this.ResultsBox.TabIndex = 4;
+      this.ResultsBox.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Bitrate";
+      this.columnHeader1.Width = 65;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Station name";
+      this.columnHeader2.Width = 395;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Station Number(Ignore)";
+      this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.columnHeader3.Width = 121;
+      // 
+      // AddButton
+      // 
+      this.AddButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.AddButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+      this.AddButton.ForeColor = System.Drawing.Color.Black;
+      this.AddButton.Location = new System.Drawing.Point(392, 240);
+      this.AddButton.Name = "AddButton";
+      this.AddButton.Size = new System.Drawing.Size(80, 23);
+      this.AddButton.TabIndex = 5;
+      this.AddButton.Text = "Add Station";
+      this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
+      // 
+      // WaitLabel
+      // 
+      this.WaitLabel.BackColor = System.Drawing.Color.White;
+      this.WaitLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.WaitLabel.Enabled = false;
+      this.WaitLabel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.WaitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.WaitLabel.ForeColor = System.Drawing.Color.Black;
+      this.WaitLabel.Location = new System.Drawing.Point(160, 104);
+      this.WaitLabel.Name = "WaitLabel";
+      this.WaitLabel.Size = new System.Drawing.Size(168, 32);
+      this.WaitLabel.TabIndex = 6;
+      this.WaitLabel.Text = "Please Wait";
+      this.WaitLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      this.WaitLabel.UseMnemonic = false;
+      this.WaitLabel.Visible = false;
+      // 
+      // SearchSHOUTcast
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(482, 264);
+      this.Controls.Add(this.WaitLabel);
+      this.Controls.Add(this.AddButton);
+      this.Controls.Add(this.ResultsBox);
+      this.Controls.Add(this.SearchText);
+      this.Controls.Add(this.SearchButton);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+      this.MaximizeBox = false;
+      this.MinimizeBox = false;
+      this.Name = "SearchSHOUTcast";
+      this.ShowInTaskbar = false;
+      this.Text = "Search SHOUTcast for your favorite radio stations";
+      this.Load += new System.EventHandler(this.SearchSHOUTcast_Load);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		public RadioStation Station

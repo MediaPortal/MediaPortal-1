@@ -128,6 +128,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.radioButtonKenBurns);
       this.groupBox2.Controls.Add(this.radioButtonRandom);
       this.groupBox2.Controls.Add(this.radioButtonXFade);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(16, 112);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(328, 112);
@@ -137,6 +138,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonKenBurns
       // 
+      this.radioButtonKenBurns.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonKenBurns.Location = new System.Drawing.Point(24, 24);
       this.radioButtonKenBurns.Name = "radioButtonKenBurns";
       this.radioButtonKenBurns.Size = new System.Drawing.Size(256, 24);
@@ -145,6 +147,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonRandom
       // 
+      this.radioButtonRandom.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonRandom.Location = new System.Drawing.Point(24, 48);
       this.radioButtonRandom.Name = "radioButtonRandom";
       this.radioButtonRandom.Size = new System.Drawing.Size(256, 24);
@@ -153,6 +156,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonXFade
       // 
+      this.radioButtonXFade.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonXFade.Location = new System.Drawing.Point(24, 72);
       this.radioButtonXFade.Name = "radioButtonXFade";
       this.radioButtonXFade.Size = new System.Drawing.Size(224, 24);

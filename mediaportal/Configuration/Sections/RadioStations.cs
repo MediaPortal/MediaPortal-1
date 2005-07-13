@@ -104,281 +104,283 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-			this.upButton = new System.Windows.Forms.Button();
-			this.downButton = new System.Windows.Forms.Button();
-			this.deleteButton = new System.Windows.Forms.Button();
-			this.editButton = new System.Windows.Forms.Button();
-			this.addButton = new System.Windows.Forms.Button();
-			this.stationsListView = new MediaPortal.UserInterface.Controls.MPListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.btnMapChannelToCard = new System.Windows.Forms.Button();
-			this.btnUnmapChannelFromCard = new System.Windows.Forms.Button();
-			this.listviewCardChannels = new System.Windows.Forms.ListView();
-			this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
-			this.listViewRadioChannels = new System.Windows.Forms.ListView();
-			this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.comboBoxCard = new System.Windows.Forms.ComboBox();
-			this.tabControl1.SuspendLayout();
-			this.tabPage1.SuspendLayout();
-			this.tabPage2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// columnHeader3
-			// 
-			this.columnHeader3.Text = "Frequency";
-			this.columnHeader3.Width = 54;
-			// 
-			// upButton
-			// 
-			this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.upButton.Enabled = false;
-			this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.upButton.Location = new System.Drawing.Point(296, 304);
-			this.upButton.Name = "upButton";
-			this.upButton.Size = new System.Drawing.Size(48, 23);
-			this.upButton.TabIndex = 5;
-			this.upButton.Text = "Up";
-			this.upButton.Visible = false;
-			this.upButton.Click += new System.EventHandler(this.upButton_Click);
-			// 
-			// downButton
-			// 
-			this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.downButton.Enabled = false;
-			this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.downButton.Location = new System.Drawing.Point(344, 304);
-			this.downButton.Name = "downButton";
-			this.downButton.Size = new System.Drawing.Size(48, 23);
-			this.downButton.TabIndex = 6;
-			this.downButton.Text = "Down";
-			this.downButton.Visible = false;
-			this.downButton.Click += new System.EventHandler(this.downButton_Click);
-			// 
-			// deleteButton
-			// 
-			this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.deleteButton.Enabled = false;
-			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.deleteButton.Location = new System.Drawing.Point(192, 304);
-			this.deleteButton.Name = "deleteButton";
-			this.deleteButton.TabIndex = 3;
-			this.deleteButton.Text = "Delete";
-			this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
-			// 
-			// editButton
-			// 
-			this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.editButton.Enabled = false;
-			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.editButton.Location = new System.Drawing.Point(112, 304);
-			this.editButton.Name = "editButton";
-			this.editButton.TabIndex = 2;
-			this.editButton.Text = "Edit";
-			this.editButton.Click += new System.EventHandler(this.editButton_Click);
-			// 
-			// addButton
-			// 
-			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.addButton.Location = new System.Drawing.Point(32, 304);
-			this.addButton.Name = "addButton";
-			this.addButton.TabIndex = 1;
-			this.addButton.Text = "Add";
-			this.addButton.Click += new System.EventHandler(this.addButton_Click);
-			// 
-			// stationsListView
-			// 
-			this.stationsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.stationsListView.CheckBoxes = true;
-			this.stationsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																											 this.columnHeader1,
-																																											 this.columnHeader2,
-																																											 this.columnHeader3,
-																																											 this.columnHeader4,
-																																											 this.columnHeader5,
-																																											 this.columnHeader6});
-			this.stationsListView.FullRowSelect = true;
-			this.stationsListView.HideSelection = false;
-			this.stationsListView.Location = new System.Drawing.Point(24, 8);
-			this.stationsListView.Name = "stationsListView";
-			this.stationsListView.Size = new System.Drawing.Size(432, 288);
-			this.stationsListView.TabIndex = 0;
-			this.stationsListView.View = System.Windows.Forms.View.Details;
-			this.stationsListView.DoubleClick += new System.EventHandler(this.stationsListView_DoubleClick);
-			this.stationsListView.SelectedIndexChanged += new System.EventHandler(this.stationsListView_SelectedIndexChanged);
-			this.stationsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.stationsListView_ColumnClick);
-			this.stationsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.stationsListView_ItemCheck);
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Type";
-			this.columnHeader1.Width = 65;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Station name";
-			this.columnHeader2.Width = 117;
-			// 
-			// columnHeader4
-			// 
-			this.columnHeader4.Text = "Genre";
-			this.columnHeader4.Width = 72;
-			// 
-			// columnHeader5
-			// 
-			this.columnHeader5.Text = "Bitrate";
-			this.columnHeader5.Width = 42;
-			// 
-			// columnHeader6
-			// 
-			this.columnHeader6.Text = "Server";
-			this.columnHeader6.Width = 78;
-			// 
-			// tabControl1
-			// 
-			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
-			this.tabControl1.Location = new System.Drawing.Point(8, 16);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(472, 392);
-			this.tabControl1.TabIndex = 1;
-			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
-			// 
-			// tabPage1
-			// 
-			this.tabPage1.Controls.Add(this.stationsListView);
-			this.tabPage1.Controls.Add(this.deleteButton);
-			this.tabPage1.Controls.Add(this.editButton);
-			this.tabPage1.Controls.Add(this.addButton);
-			this.tabPage1.Controls.Add(this.upButton);
-			this.tabPage1.Controls.Add(this.downButton);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(464, 366);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "Stations";
-			// 
-			// tabPage2
-			// 
-			this.tabPage2.Controls.Add(this.btnMapChannelToCard);
-			this.tabPage2.Controls.Add(this.btnUnmapChannelFromCard);
-			this.tabPage2.Controls.Add(this.listviewCardChannels);
-			this.tabPage2.Controls.Add(this.listViewRadioChannels);
-			this.tabPage2.Controls.Add(this.label4);
-			this.tabPage2.Controls.Add(this.label5);
-			this.tabPage2.Controls.Add(this.label6);
-			this.tabPage2.Controls.Add(this.comboBoxCard);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(464, 366);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Cards";
-			// 
-			// btnMapChannelToCard
-			// 
-			this.btnMapChannelToCard.Location = new System.Drawing.Point(216, 155);
-			this.btnMapChannelToCard.Name = "btnMapChannelToCard";
-			this.btnMapChannelToCard.Size = new System.Drawing.Size(32, 23);
-			this.btnMapChannelToCard.TabIndex = 23;
-			this.btnMapChannelToCard.Text = ">>";
-			this.btnMapChannelToCard.Click += new System.EventHandler(this.btnMapChannelToCard_Click);
-			// 
-			// btnUnmapChannelFromCard
-			// 
-			this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(216, 187);
-			this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
-			this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(32, 23);
-			this.btnUnmapChannelFromCard.TabIndex = 22;
-			this.btnUnmapChannelFromCard.Text = "<<";
-			this.btnUnmapChannelFromCard.Click += new System.EventHandler(this.btnUnmapChannelFromCard_Click);
-			// 
-			// listviewCardChannels
-			// 
-			this.listviewCardChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																													 this.columnHeader10});
-			this.listviewCardChannels.Location = new System.Drawing.Point(260, 67);
-			this.listviewCardChannels.Name = "listviewCardChannels";
-			this.listviewCardChannels.Size = new System.Drawing.Size(168, 277);
-			this.listviewCardChannels.TabIndex = 21;
-			this.listviewCardChannels.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader10
-			// 
-			this.columnHeader10.Text = "Radio Station";
-			this.columnHeader10.Width = 161;
-			// 
-			// listViewRadioChannels
-			// 
-			this.listViewRadioChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																														this.columnHeader11});
-			this.listViewRadioChannels.Location = new System.Drawing.Point(36, 67);
-			this.listViewRadioChannels.Name = "listViewRadioChannels";
-			this.listViewRadioChannels.Size = new System.Drawing.Size(168, 277);
-			this.listViewRadioChannels.TabIndex = 20;
-			this.listViewRadioChannels.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader11
-			// 
-			this.columnHeader11.Text = "Radio station";
-			this.columnHeader11.Width = 159;
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(264, 43);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(156, 16);
-			this.label4.TabIndex = 19;
-			this.label4.Text = "Stations assigned to card";
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(40, 43);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(136, 16);
-			this.label5.TabIndex = 18;
-			this.label5.Text = "Available Stations";
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(36, 19);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(36, 16);
-			this.label6.TabIndex = 17;
-			this.label6.Text = "Card:";
-			// 
-			// comboBoxCard
-			// 
-			this.comboBoxCard.Location = new System.Drawing.Point(80, 11);
-			this.comboBoxCard.Name = "comboBoxCard";
-			this.comboBoxCard.Size = new System.Drawing.Size(280, 21);
-			this.comboBoxCard.TabIndex = 16;
-			this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
-			// 
-			// RadioStations
-			// 
-			this.Controls.Add(this.tabControl1);
-			this.Name = "RadioStations";
-			this.Size = new System.Drawing.Size(488, 432);
-			this.tabControl1.ResumeLayout(false);
-			this.tabPage1.ResumeLayout(false);
-			this.tabPage2.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.upButton = new System.Windows.Forms.Button();
+      this.downButton = new System.Windows.Forms.Button();
+      this.deleteButton = new System.Windows.Forms.Button();
+      this.editButton = new System.Windows.Forms.Button();
+      this.addButton = new System.Windows.Forms.Button();
+      this.stationsListView = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.btnMapChannelToCard = new System.Windows.Forms.Button();
+      this.btnUnmapChannelFromCard = new System.Windows.Forms.Button();
+      this.listviewCardChannels = new System.Windows.Forms.ListView();
+      this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
+      this.listViewRadioChannels = new System.Windows.Forms.ListView();
+      this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
+      this.label4 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.comboBoxCard = new System.Windows.Forms.ComboBox();
+      this.tabControl1.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.tabPage2.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Frequency";
+      this.columnHeader3.Width = 54;
+      // 
+      // upButton
+      // 
+      this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.upButton.Enabled = false;
+      this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.upButton.Location = new System.Drawing.Point(296, 304);
+      this.upButton.Name = "upButton";
+      this.upButton.Size = new System.Drawing.Size(48, 23);
+      this.upButton.TabIndex = 5;
+      this.upButton.Text = "Up";
+      this.upButton.Visible = false;
+      this.upButton.Click += new System.EventHandler(this.upButton_Click);
+      // 
+      // downButton
+      // 
+      this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.downButton.Enabled = false;
+      this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.downButton.Location = new System.Drawing.Point(344, 304);
+      this.downButton.Name = "downButton";
+      this.downButton.Size = new System.Drawing.Size(48, 23);
+      this.downButton.TabIndex = 6;
+      this.downButton.Text = "Down";
+      this.downButton.Visible = false;
+      this.downButton.Click += new System.EventHandler(this.downButton_Click);
+      // 
+      // deleteButton
+      // 
+      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.deleteButton.Enabled = false;
+      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.deleteButton.Location = new System.Drawing.Point(192, 304);
+      this.deleteButton.Name = "deleteButton";
+      this.deleteButton.TabIndex = 3;
+      this.deleteButton.Text = "Delete";
+      this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+      // 
+      // editButton
+      // 
+      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.editButton.Enabled = false;
+      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.editButton.Location = new System.Drawing.Point(112, 304);
+      this.editButton.Name = "editButton";
+      this.editButton.TabIndex = 2;
+      this.editButton.Text = "Edit";
+      this.editButton.Click += new System.EventHandler(this.editButton_Click);
+      // 
+      // addButton
+      // 
+      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.addButton.Location = new System.Drawing.Point(32, 304);
+      this.addButton.Name = "addButton";
+      this.addButton.TabIndex = 1;
+      this.addButton.Text = "Add";
+      this.addButton.Click += new System.EventHandler(this.addButton_Click);
+      // 
+      // stationsListView
+      // 
+      this.stationsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.stationsListView.CheckBoxes = true;
+      this.stationsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                       this.columnHeader1,
+                                                                                       this.columnHeader2,
+                                                                                       this.columnHeader3,
+                                                                                       this.columnHeader4,
+                                                                                       this.columnHeader5,
+                                                                                       this.columnHeader6});
+      this.stationsListView.FullRowSelect = true;
+      this.stationsListView.HideSelection = false;
+      this.stationsListView.Location = new System.Drawing.Point(24, 8);
+      this.stationsListView.Name = "stationsListView";
+      this.stationsListView.Size = new System.Drawing.Size(432, 288);
+      this.stationsListView.TabIndex = 0;
+      this.stationsListView.View = System.Windows.Forms.View.Details;
+      this.stationsListView.DoubleClick += new System.EventHandler(this.stationsListView_DoubleClick);
+      this.stationsListView.SelectedIndexChanged += new System.EventHandler(this.stationsListView_SelectedIndexChanged);
+      this.stationsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.stationsListView_ColumnClick);
+      this.stationsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.stationsListView_ItemCheck);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Type";
+      this.columnHeader1.Width = 65;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Station name";
+      this.columnHeader2.Width = 117;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Genre";
+      this.columnHeader4.Width = 72;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Bitrate";
+      this.columnHeader5.Width = 42;
+      // 
+      // columnHeader6
+      // 
+      this.columnHeader6.Text = "Server";
+      this.columnHeader6.Width = 78;
+      // 
+      // tabControl1
+      // 
+      this.tabControl1.Controls.Add(this.tabPage1);
+      this.tabControl1.Controls.Add(this.tabPage2);
+      this.tabControl1.Location = new System.Drawing.Point(8, 16);
+      this.tabControl1.Name = "tabControl1";
+      this.tabControl1.SelectedIndex = 0;
+      this.tabControl1.Size = new System.Drawing.Size(472, 392);
+      this.tabControl1.TabIndex = 1;
+      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+      // 
+      // tabPage1
+      // 
+      this.tabPage1.Controls.Add(this.stationsListView);
+      this.tabPage1.Controls.Add(this.deleteButton);
+      this.tabPage1.Controls.Add(this.editButton);
+      this.tabPage1.Controls.Add(this.addButton);
+      this.tabPage1.Controls.Add(this.upButton);
+      this.tabPage1.Controls.Add(this.downButton);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Size = new System.Drawing.Size(464, 366);
+      this.tabPage1.TabIndex = 0;
+      this.tabPage1.Text = "Stations";
+      // 
+      // tabPage2
+      // 
+      this.tabPage2.Controls.Add(this.btnMapChannelToCard);
+      this.tabPage2.Controls.Add(this.btnUnmapChannelFromCard);
+      this.tabPage2.Controls.Add(this.listviewCardChannels);
+      this.tabPage2.Controls.Add(this.listViewRadioChannels);
+      this.tabPage2.Controls.Add(this.label4);
+      this.tabPage2.Controls.Add(this.label5);
+      this.tabPage2.Controls.Add(this.label6);
+      this.tabPage2.Controls.Add(this.comboBoxCard);
+      this.tabPage2.Location = new System.Drawing.Point(4, 22);
+      this.tabPage2.Name = "tabPage2";
+      this.tabPage2.Size = new System.Drawing.Size(464, 366);
+      this.tabPage2.TabIndex = 1;
+      this.tabPage2.Text = "Cards";
+      // 
+      // btnMapChannelToCard
+      // 
+      this.btnMapChannelToCard.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnMapChannelToCard.Location = new System.Drawing.Point(216, 155);
+      this.btnMapChannelToCard.Name = "btnMapChannelToCard";
+      this.btnMapChannelToCard.Size = new System.Drawing.Size(32, 23);
+      this.btnMapChannelToCard.TabIndex = 23;
+      this.btnMapChannelToCard.Text = ">>";
+      this.btnMapChannelToCard.Click += new System.EventHandler(this.btnMapChannelToCard_Click);
+      // 
+      // btnUnmapChannelFromCard
+      // 
+      this.btnUnmapChannelFromCard.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(216, 187);
+      this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
+      this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(32, 23);
+      this.btnUnmapChannelFromCard.TabIndex = 22;
+      this.btnUnmapChannelFromCard.Text = "<<";
+      this.btnUnmapChannelFromCard.Click += new System.EventHandler(this.btnUnmapChannelFromCard_Click);
+      // 
+      // listviewCardChannels
+      // 
+      this.listviewCardChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                           this.columnHeader10});
+      this.listviewCardChannels.Location = new System.Drawing.Point(260, 67);
+      this.listviewCardChannels.Name = "listviewCardChannels";
+      this.listviewCardChannels.Size = new System.Drawing.Size(168, 277);
+      this.listviewCardChannels.TabIndex = 21;
+      this.listviewCardChannels.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader10
+      // 
+      this.columnHeader10.Text = "Radio Station";
+      this.columnHeader10.Width = 161;
+      // 
+      // listViewRadioChannels
+      // 
+      this.listViewRadioChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                            this.columnHeader11});
+      this.listViewRadioChannels.Location = new System.Drawing.Point(36, 67);
+      this.listViewRadioChannels.Name = "listViewRadioChannels";
+      this.listViewRadioChannels.Size = new System.Drawing.Size(168, 277);
+      this.listViewRadioChannels.TabIndex = 20;
+      this.listViewRadioChannels.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader11
+      // 
+      this.columnHeader11.Text = "Radio station";
+      this.columnHeader11.Width = 159;
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(264, 43);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(156, 16);
+      this.label4.TabIndex = 19;
+      this.label4.Text = "Stations assigned to card";
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(40, 43);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(136, 16);
+      this.label5.TabIndex = 18;
+      this.label5.Text = "Available Stations";
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(36, 19);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(36, 16);
+      this.label6.TabIndex = 17;
+      this.label6.Text = "Card:";
+      // 
+      // comboBoxCard
+      // 
+      this.comboBoxCard.Location = new System.Drawing.Point(80, 11);
+      this.comboBoxCard.Name = "comboBoxCard";
+      this.comboBoxCard.Size = new System.Drawing.Size(280, 21);
+      this.comboBoxCard.TabIndex = 16;
+      this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
+      // 
+      // RadioStations
+      // 
+      this.Controls.Add(this.tabControl1);
+      this.Name = "RadioStations";
+      this.Size = new System.Drawing.Size(488, 432);
+      this.tabControl1.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
+      this.tabPage2.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void addButton_Click(object sender, EventArgs e)

@@ -184,6 +184,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.buildThumbsCheckBox.Checked = true;
       this.buildThumbsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.buildThumbsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buildThumbsCheckBox.Location = new System.Drawing.Point(16, 152);
       this.buildThumbsCheckBox.Name = "buildThumbsCheckBox";
       this.buildThumbsCheckBox.Size = new System.Drawing.Size(264, 16);

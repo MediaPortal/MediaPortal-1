@@ -73,214 +73,219 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.cbAnalogBlanking = new System.Windows.Forms.CheckBox();
-			this.cbColorSpace = new System.Windows.Forms.ComboBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.cbIDCT = new System.Windows.Forms.ComboBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.cbHardcodePal = new System.Windows.Forms.CheckBox();
-			this.cbDVBAR = new System.Windows.Forms.ComboBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
-			this.tbVideoOffset = new System.Windows.Forms.TextBox();
-			this.cbAspectRatio = new System.Windows.Forms.CheckBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.cbForcedSubtitles = new System.Windows.Forms.CheckBox();
-			this.cbDeinterlace = new System.Windows.Forms.ComboBox();
-			this.cbSmoothing = new System.Windows.Forms.CheckBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.cbAnalogBlanking);
-			this.groupBox1.Controls.Add(this.cbColorSpace);
-			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Controls.Add(this.cbIDCT);
-			this.groupBox1.Controls.Add(this.label4);
-			this.groupBox1.Controls.Add(this.cbHardcodePal);
-			this.groupBox1.Controls.Add(this.cbDVBAR);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.tbVideoOffset);
-			this.groupBox1.Controls.Add(this.cbAspectRatio);
-			this.groupBox1.Controls.Add(this.label5);
-			this.groupBox1.Controls.Add(this.cbForcedSubtitles);
-			this.groupBox1.Controls.Add(this.cbDeinterlace);
-			this.groupBox1.Controls.Add(this.cbSmoothing);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 424);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "DScaler Video  Decoder";
-			// 
-			// cbAnalogBlanking
-			// 
-			this.cbAnalogBlanking.Checked = true;
-			this.cbAnalogBlanking.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbAnalogBlanking.Location = new System.Drawing.Point(24, 248);
-			this.cbAnalogBlanking.Name = "cbAnalogBlanking";
-			this.cbAnalogBlanking.Size = new System.Drawing.Size(200, 16);
-			this.cbAnalogBlanking.TabIndex = 31;
-			this.cbAnalogBlanking.Text = "Do analog blanking";
-			// 
-			// cbColorSpace
-			// 
-			this.cbColorSpace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbColorSpace.Items.AddRange(new object[] {
-																											"YV12",
-																											"YUY2"});
-			this.cbColorSpace.Location = new System.Drawing.Point(160, 120);
-			this.cbColorSpace.Name = "cbColorSpace";
-			this.cbColorSpace.Size = new System.Drawing.Size(184, 21);
-			this.cbColorSpace.TabIndex = 30;
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(24, 120);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(128, 16);
-			this.label6.TabIndex = 29;
-			this.label6.Text = "Output colorspace:";
-			// 
-			// cbIDCT
-			// 
-			this.cbIDCT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbIDCT.Items.AddRange(new object[] {
-																								"Reference",
-																								"MMX only",
-																								"Accelerated"});
-			this.cbIDCT.Location = new System.Drawing.Point(160, 88);
-			this.cbIDCT.Name = "cbIDCT";
-			this.cbIDCT.Size = new System.Drawing.Size(184, 21);
-			this.cbIDCT.TabIndex = 28;
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(24, 88);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(128, 16);
-			this.label4.TabIndex = 27;
-			this.label4.Text = "IDCT to use:";
-			// 
-			// cbHardcodePal
-			// 
-			this.cbHardcodePal.Location = new System.Drawing.Point(24, 224);
-			this.cbHardcodePal.Name = "cbHardcodePal";
-			this.cbHardcodePal.Size = new System.Drawing.Size(200, 16);
-			this.cbHardcodePal.TabIndex = 26;
-			this.cbHardcodePal.Text = "Hardcode for PAL with FFdshow";
-			// 
-			// cbDVBAR
-			// 
-			this.cbDVBAR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbDVBAR.Items.AddRange(new object[] {
-																								 "16:9 Display",
-																								 "4:3 Display Center cut out",
-																								 "4:3 Display Letterbox"});
-			this.cbDVBAR.Location = new System.Drawing.Point(160, 56);
-			this.cbDVBAR.Name = "cbDVBAR";
-			this.cbDVBAR.Size = new System.Drawing.Size(184, 21);
-			this.cbDVBAR.TabIndex = 25;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(24, 56);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(128, 16);
-			this.label2.TabIndex = 24;
-			this.label2.Text = "DVB Aspect preference:";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(200, 272);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(100, 16);
-			this.label1.TabIndex = 23;
-			this.label1.Text = "msec.";
-			// 
-			// tbVideoOffset
-			// 
-			this.tbVideoOffset.Location = new System.Drawing.Point(152, 272);
-			this.tbVideoOffset.Name = "tbVideoOffset";
-			this.tbVideoOffset.Size = new System.Drawing.Size(32, 20);
-			this.tbVideoOffset.TabIndex = 22;
-			this.tbVideoOffset.Text = "0";
-			// 
-			// cbAspectRatio
-			// 
-			this.cbAspectRatio.Checked = true;
-			this.cbAspectRatio.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbAspectRatio.Location = new System.Drawing.Point(24, 200);
-			this.cbAspectRatio.Name = "cbAspectRatio";
-			this.cbAspectRatio.Size = new System.Drawing.Size(168, 16);
-			this.cbAspectRatio.TabIndex = 21;
-			this.cbAspectRatio.Text = "Use accurate Aspect Ratios";
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(24, 272);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(104, 16);
-			this.label5.TabIndex = 20;
-			this.label5.Text = "Video delay offset:";
-			// 
-			// cbForcedSubtitles
-			// 
-			this.cbForcedSubtitles.Checked = true;
-			this.cbForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbForcedSubtitles.Location = new System.Drawing.Point(24, 152);
-			this.cbForcedSubtitles.Name = "cbForcedSubtitles";
-			this.cbForcedSubtitles.Size = new System.Drawing.Size(160, 16);
-			this.cbForcedSubtitles.TabIndex = 13;
-			this.cbForcedSubtitles.Text = "Display Forced Subtitles";
-			// 
-			// cbDeinterlace
-			// 
-			this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbDeinterlace.Items.AddRange(new object[] {
-																											 "Automatic",
-																											 "Force Weave",
-																											 "Force Bob"});
-			this.cbDeinterlace.Location = new System.Drawing.Point(160, 24);
-			this.cbDeinterlace.Name = "cbDeinterlace";
-			this.cbDeinterlace.Size = new System.Drawing.Size(184, 21);
-			this.cbDeinterlace.TabIndex = 12;
-			// 
-			// cbSmoothing
-			// 
-			this.cbSmoothing.Checked = true;
-			this.cbSmoothing.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbSmoothing.Location = new System.Drawing.Point(24, 176);
-			this.cbSmoothing.Name = "cbSmoothing";
-			this.cbSmoothing.Size = new System.Drawing.Size(144, 16);
-			this.cbSmoothing.TabIndex = 11;
-			this.cbSmoothing.Text = "3:2 Playback smoothing";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(24, 24);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(96, 16);
-			this.label3.TabIndex = 8;
-			this.label3.Text = "Deinterlace mode";
-			// 
-			// DScalerVideoFilter
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "DScalerVideoFilter";
-			this.Size = new System.Drawing.Size(456, 448);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbAnalogBlanking = new System.Windows.Forms.CheckBox();
+      this.cbColorSpace = new System.Windows.Forms.ComboBox();
+      this.label6 = new System.Windows.Forms.Label();
+      this.cbIDCT = new System.Windows.Forms.ComboBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.cbHardcodePal = new System.Windows.Forms.CheckBox();
+      this.cbDVBAR = new System.Windows.Forms.ComboBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.tbVideoOffset = new System.Windows.Forms.TextBox();
+      this.cbAspectRatio = new System.Windows.Forms.CheckBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.cbForcedSubtitles = new System.Windows.Forms.CheckBox();
+      this.cbDeinterlace = new System.Windows.Forms.ComboBox();
+      this.cbSmoothing = new System.Windows.Forms.CheckBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.cbAnalogBlanking);
+      this.groupBox1.Controls.Add(this.cbColorSpace);
+      this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.Controls.Add(this.cbIDCT);
+      this.groupBox1.Controls.Add(this.label4);
+      this.groupBox1.Controls.Add(this.cbHardcodePal);
+      this.groupBox1.Controls.Add(this.cbDVBAR);
+      this.groupBox1.Controls.Add(this.label2);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.tbVideoOffset);
+      this.groupBox1.Controls.Add(this.cbAspectRatio);
+      this.groupBox1.Controls.Add(this.label5);
+      this.groupBox1.Controls.Add(this.cbForcedSubtitles);
+      this.groupBox1.Controls.Add(this.cbDeinterlace);
+      this.groupBox1.Controls.Add(this.cbSmoothing);
+      this.groupBox1.Controls.Add(this.label3);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(440, 424);
+      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "DScaler Video  Decoder";
+      // 
+      // cbAnalogBlanking
+      // 
+      this.cbAnalogBlanking.Checked = true;
+      this.cbAnalogBlanking.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbAnalogBlanking.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cbAnalogBlanking.Location = new System.Drawing.Point(24, 248);
+      this.cbAnalogBlanking.Name = "cbAnalogBlanking";
+      this.cbAnalogBlanking.Size = new System.Drawing.Size(200, 16);
+      this.cbAnalogBlanking.TabIndex = 31;
+      this.cbAnalogBlanking.Text = "Do analog blanking";
+      // 
+      // cbColorSpace
+      // 
+      this.cbColorSpace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbColorSpace.Items.AddRange(new object[] {
+                                                      "YV12",
+                                                      "YUY2"});
+      this.cbColorSpace.Location = new System.Drawing.Point(160, 120);
+      this.cbColorSpace.Name = "cbColorSpace";
+      this.cbColorSpace.Size = new System.Drawing.Size(184, 21);
+      this.cbColorSpace.TabIndex = 30;
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(24, 120);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(128, 16);
+      this.label6.TabIndex = 29;
+      this.label6.Text = "Output colorspace:";
+      // 
+      // cbIDCT
+      // 
+      this.cbIDCT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbIDCT.Items.AddRange(new object[] {
+                                                "Reference",
+                                                "MMX only",
+                                                "Accelerated"});
+      this.cbIDCT.Location = new System.Drawing.Point(160, 88);
+      this.cbIDCT.Name = "cbIDCT";
+      this.cbIDCT.Size = new System.Drawing.Size(184, 21);
+      this.cbIDCT.TabIndex = 28;
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(24, 88);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(128, 16);
+      this.label4.TabIndex = 27;
+      this.label4.Text = "IDCT to use:";
+      // 
+      // cbHardcodePal
+      // 
+      this.cbHardcodePal.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cbHardcodePal.Location = new System.Drawing.Point(24, 224);
+      this.cbHardcodePal.Name = "cbHardcodePal";
+      this.cbHardcodePal.Size = new System.Drawing.Size(200, 16);
+      this.cbHardcodePal.TabIndex = 26;
+      this.cbHardcodePal.Text = "Hardcode for PAL with FFdshow";
+      // 
+      // cbDVBAR
+      // 
+      this.cbDVBAR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbDVBAR.Items.AddRange(new object[] {
+                                                 "16:9 Display",
+                                                 "4:3 Display Center cut out",
+                                                 "4:3 Display Letterbox"});
+      this.cbDVBAR.Location = new System.Drawing.Point(160, 56);
+      this.cbDVBAR.Name = "cbDVBAR";
+      this.cbDVBAR.Size = new System.Drawing.Size(184, 21);
+      this.cbDVBAR.TabIndex = 25;
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(24, 56);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(128, 16);
+      this.label2.TabIndex = 24;
+      this.label2.Text = "DVB Aspect preference:";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(200, 272);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(100, 16);
+      this.label1.TabIndex = 23;
+      this.label1.Text = "msec.";
+      // 
+      // tbVideoOffset
+      // 
+      this.tbVideoOffset.Location = new System.Drawing.Point(152, 272);
+      this.tbVideoOffset.Name = "tbVideoOffset";
+      this.tbVideoOffset.Size = new System.Drawing.Size(32, 20);
+      this.tbVideoOffset.TabIndex = 22;
+      this.tbVideoOffset.Text = "0";
+      // 
+      // cbAspectRatio
+      // 
+      this.cbAspectRatio.Checked = true;
+      this.cbAspectRatio.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbAspectRatio.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cbAspectRatio.Location = new System.Drawing.Point(24, 200);
+      this.cbAspectRatio.Name = "cbAspectRatio";
+      this.cbAspectRatio.Size = new System.Drawing.Size(168, 16);
+      this.cbAspectRatio.TabIndex = 21;
+      this.cbAspectRatio.Text = "Use accurate Aspect Ratios";
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(24, 272);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(104, 16);
+      this.label5.TabIndex = 20;
+      this.label5.Text = "Video delay offset:";
+      // 
+      // cbForcedSubtitles
+      // 
+      this.cbForcedSubtitles.Checked = true;
+      this.cbForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbForcedSubtitles.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cbForcedSubtitles.Location = new System.Drawing.Point(24, 152);
+      this.cbForcedSubtitles.Name = "cbForcedSubtitles";
+      this.cbForcedSubtitles.Size = new System.Drawing.Size(160, 16);
+      this.cbForcedSubtitles.TabIndex = 13;
+      this.cbForcedSubtitles.Text = "Display Forced Subtitles";
+      // 
+      // cbDeinterlace
+      // 
+      this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbDeinterlace.Items.AddRange(new object[] {
+                                                       "Automatic",
+                                                       "Force Weave",
+                                                       "Force Bob"});
+      this.cbDeinterlace.Location = new System.Drawing.Point(160, 24);
+      this.cbDeinterlace.Name = "cbDeinterlace";
+      this.cbDeinterlace.Size = new System.Drawing.Size(184, 21);
+      this.cbDeinterlace.TabIndex = 12;
+      // 
+      // cbSmoothing
+      // 
+      this.cbSmoothing.Checked = true;
+      this.cbSmoothing.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbSmoothing.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cbSmoothing.Location = new System.Drawing.Point(24, 176);
+      this.cbSmoothing.Name = "cbSmoothing";
+      this.cbSmoothing.Size = new System.Drawing.Size(144, 16);
+      this.cbSmoothing.TabIndex = 11;
+      this.cbSmoothing.Text = "3:2 Playback smoothing";
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(24, 24);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(96, 16);
+      this.label3.TabIndex = 8;
+      this.label3.Text = "Deinterlace mode";
+      // 
+      // DScalerVideoFilter
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "DScalerVideoFilter";
+      this.Size = new System.Drawing.Size(456, 448);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		public override void LoadSettings()

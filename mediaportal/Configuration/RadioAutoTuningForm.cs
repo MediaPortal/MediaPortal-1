@@ -44,57 +44,57 @@ namespace MediaPortal.Configuration
 
 		private new void InitializeComponent()
 		{
-			this.groupBox1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).BeginInit();
-			this.SuspendLayout();
-			// 
-			// cancelButton
-			// 
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 2;
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.TabIndex = 0;
-			// 
-			// okButton
-			// 
-			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 1;
-			// 
-			// itemsListBox
-			// 
-			this.itemsListBox.Name = "itemsListBox";
-			// 
-			// progressBar
-			// 
-			this.progressBar.Name = "progressBar";
-			// 
-			// startButton
-			// 
-			this.startButton.Name = "startButton";
-			// 
-			// stopButton
-			// 
-			this.stopButton.Name = "stopButton";
-			// 
-			// tunerTimer
-			// 
-			this.tunerTimer.Enabled = false;
-			// 
-			// RadioAutoTuningForm
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(440, 222);
-			this.Name = "RadioAutoTuningForm";
-			this.Text = "Scan for radio channels";
-			this.Closed += new System.EventHandler(this.RadioAutoTuningForm_Closed);
-			this.groupBox1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).EndInit();
-			this.ResumeLayout(false);
+      this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).BeginInit();
+      this.SuspendLayout();
+      // 
+      // cancelButton
+      // 
+      this.cancelButton.Name = "cancelButton";
+      this.cancelButton.TabIndex = 2;
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.TabIndex = 0;
+      // 
+      // okButton
+      // 
+      this.okButton.Name = "okButton";
+      this.okButton.TabIndex = 1;
+      // 
+      // itemsListBox
+      // 
+      this.itemsListBox.Name = "itemsListBox";
+      // 
+      // progressBar
+      // 
+      this.progressBar.Name = "progressBar";
+      // 
+      // startButton
+      // 
+      this.startButton.Name = "startButton";
+      // 
+      // stopButton
+      // 
+      this.stopButton.Name = "stopButton";
+      // 
+      // tunerTimer
+      // 
+      this.tunerTimer.Enabled = false;
+      // 
+      // RadioAutoTuningForm
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(440, 222);
+      this.Name = "RadioAutoTuningForm";
+      this.Text = "Scan for radio channels";
+      this.Closed += new System.EventHandler(this.RadioAutoTuningForm_Closed);
+      this.groupBox1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).EndInit();
+      this.ResumeLayout(false);
 
-		}
+    }
 
 		public override void OnPerformTuning(int stepSize)
 		{

@@ -65,118 +65,121 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
-			this.checkBoxMPEGOverSPDIF = new System.Windows.Forms.CheckBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.checkBoxSPDIF = new System.Windows.Forms.CheckBox();
-			this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
-			this.checkBoxDynamicRange = new System.Windows.Forms.CheckBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.textBoxAudioOffset);
-			this.groupBox1.Controls.Add(this.checkBoxMPEGOverSPDIF);
-			this.groupBox1.Controls.Add(this.label5);
-			this.groupBox1.Controls.Add(this.checkBoxSPDIF);
-			this.groupBox1.Controls.Add(this.comboBoxSpeakerConfig);
-			this.groupBox1.Controls.Add(this.checkBoxDynamicRange);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 424);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "DScaler Audio Decoder";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(200, 128);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(100, 16);
-			this.label1.TabIndex = 23;
-			this.label1.Text = "msec.";
-			// 
-			// textBoxAudioOffset
-			// 
-			this.textBoxAudioOffset.Location = new System.Drawing.Point(152, 128);
-			this.textBoxAudioOffset.Name = "textBoxAudioOffset";
-			this.textBoxAudioOffset.Size = new System.Drawing.Size(32, 20);
-			this.textBoxAudioOffset.TabIndex = 22;
-			this.textBoxAudioOffset.Text = "0";
-			// 
-			// checkBoxMPEGOverSPDIF
-			// 
-			this.checkBoxMPEGOverSPDIF.Location = new System.Drawing.Point(24, 104);
-			this.checkBoxMPEGOverSPDIF.Name = "checkBoxMPEGOverSPDIF";
-			this.checkBoxMPEGOverSPDIF.Size = new System.Drawing.Size(168, 16);
-			this.checkBoxMPEGOverSPDIF.TabIndex = 21;
-			this.checkBoxMPEGOverSPDIF.Text = "MPEG Audio over S/PDIF";
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(24, 128);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(136, 16);
-			this.label5.TabIndex = 20;
-			this.label5.Text = "S/PDIF audio time offset";
-			// 
-			// checkBoxSPDIF
-			// 
-			this.checkBoxSPDIF.Location = new System.Drawing.Point(24, 56);
-			this.checkBoxSPDIF.Name = "checkBoxSPDIF";
-			this.checkBoxSPDIF.Size = new System.Drawing.Size(160, 16);
-			this.checkBoxSPDIF.TabIndex = 13;
-			this.checkBoxSPDIF.Text = "Use S/PDIF for AC3/DTS";
-			// 
-			// comboBoxSpeakerConfig
-			// 
-			this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
-																															 "Stereo",
-																															 "Dolby Stereo",
-																															 "4.0 (2 Front + 2 Rear)",
-																															 "4.1 (2 Front + 2 Rear + 1 Sub)",
-																															 "5.0 (3 Front + 2 Rear)",
-																															 "5.1 (3 Front + 2 Rear + 1 Sub)"});
-			this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(120, 24);
-			this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
-			this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(224, 21);
-			this.comboBoxSpeakerConfig.TabIndex = 12;
-			// 
-			// checkBoxDynamicRange
-			// 
-			this.checkBoxDynamicRange.Location = new System.Drawing.Point(24, 80);
-			this.checkBoxDynamicRange.Name = "checkBoxDynamicRange";
-			this.checkBoxDynamicRange.Size = new System.Drawing.Size(144, 16);
-			this.checkBoxDynamicRange.TabIndex = 11;
-			this.checkBoxDynamicRange.Text = "Dynamic Range Control";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(24, 24);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(88, 16);
-			this.label3.TabIndex = 8;
-			this.label3.Text = "Speaker config:";
-			// 
-			// DScalerAudioFilter
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "DScalerAudioFilter";
-			this.Size = new System.Drawing.Size(456, 448);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
+      this.checkBoxMPEGOverSPDIF = new System.Windows.Forms.CheckBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.checkBoxSPDIF = new System.Windows.Forms.CheckBox();
+      this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
+      this.checkBoxDynamicRange = new System.Windows.Forms.CheckBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.textBoxAudioOffset);
+      this.groupBox1.Controls.Add(this.checkBoxMPEGOverSPDIF);
+      this.groupBox1.Controls.Add(this.label5);
+      this.groupBox1.Controls.Add(this.checkBoxSPDIF);
+      this.groupBox1.Controls.Add(this.comboBoxSpeakerConfig);
+      this.groupBox1.Controls.Add(this.checkBoxDynamicRange);
+      this.groupBox1.Controls.Add(this.label3);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(440, 424);
+      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "DScaler Audio Decoder";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(200, 128);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(100, 16);
+      this.label1.TabIndex = 23;
+      this.label1.Text = "msec.";
+      // 
+      // textBoxAudioOffset
+      // 
+      this.textBoxAudioOffset.Location = new System.Drawing.Point(152, 128);
+      this.textBoxAudioOffset.Name = "textBoxAudioOffset";
+      this.textBoxAudioOffset.Size = new System.Drawing.Size(32, 20);
+      this.textBoxAudioOffset.TabIndex = 22;
+      this.textBoxAudioOffset.Text = "0";
+      // 
+      // checkBoxMPEGOverSPDIF
+      // 
+      this.checkBoxMPEGOverSPDIF.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxMPEGOverSPDIF.Location = new System.Drawing.Point(24, 104);
+      this.checkBoxMPEGOverSPDIF.Name = "checkBoxMPEGOverSPDIF";
+      this.checkBoxMPEGOverSPDIF.Size = new System.Drawing.Size(168, 16);
+      this.checkBoxMPEGOverSPDIF.TabIndex = 21;
+      this.checkBoxMPEGOverSPDIF.Text = "MPEG Audio over S/PDIF";
+      // 
+      // label5
+      // 
+      this.label5.Location = new System.Drawing.Point(24, 128);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(136, 16);
+      this.label5.TabIndex = 20;
+      this.label5.Text = "S/PDIF audio time offset";
+      // 
+      // checkBoxSPDIF
+      // 
+      this.checkBoxSPDIF.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxSPDIF.Location = new System.Drawing.Point(24, 56);
+      this.checkBoxSPDIF.Name = "checkBoxSPDIF";
+      this.checkBoxSPDIF.Size = new System.Drawing.Size(160, 16);
+      this.checkBoxSPDIF.TabIndex = 13;
+      this.checkBoxSPDIF.Text = "Use S/PDIF for AC3/DTS";
+      // 
+      // comboBoxSpeakerConfig
+      // 
+      this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
+                                                               "Stereo",
+                                                               "Dolby Stereo",
+                                                               "4.0 (2 Front + 2 Rear)",
+                                                               "4.1 (2 Front + 2 Rear + 1 Sub)",
+                                                               "5.0 (3 Front + 2 Rear)",
+                                                               "5.1 (3 Front + 2 Rear + 1 Sub)"});
+      this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(120, 24);
+      this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
+      this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(224, 21);
+      this.comboBoxSpeakerConfig.TabIndex = 12;
+      // 
+      // checkBoxDynamicRange
+      // 
+      this.checkBoxDynamicRange.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxDynamicRange.Location = new System.Drawing.Point(24, 80);
+      this.checkBoxDynamicRange.Name = "checkBoxDynamicRange";
+      this.checkBoxDynamicRange.Size = new System.Drawing.Size(144, 16);
+      this.checkBoxDynamicRange.TabIndex = 11;
+      this.checkBoxDynamicRange.Text = "Dynamic Range Control";
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(24, 24);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(88, 16);
+      this.label3.TabIndex = 8;
+      this.label3.Text = "Speaker config:";
+      // 
+      // DScalerAudioFilter
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "DScalerAudioFilter";
+      this.Size = new System.Drawing.Size(456, 448);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		public override void LoadSettings()

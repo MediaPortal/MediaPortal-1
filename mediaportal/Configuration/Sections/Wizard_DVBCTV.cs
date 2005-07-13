@@ -78,109 +78,110 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.labelStatus = new System.Windows.Forms.Label();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.button1 = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
-			this.cbCountry = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Controls.Add(this.panel1);
-			this.groupBox1.Controls.Add(this.labelStatus);
-			this.groupBox1.Controls.Add(this.progressBar1);
-			this.groupBox1.Controls.Add(this.button1);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.cbCountry);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(480, 360);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Setup digital tv (DVB Cable)";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(32, 264);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(392, 56);
-			this.label3.TabIndex = 15;
-			this.label3.Text = @"NOTE: if your country is not present or if Mediaportal is unable to find any channels then MediaPortal probably doesnt know which frequencies to scan for your country. Edit the .dvbc file in the TuningParameters/ subfolder and fill in all the frequencies needed for your country.";
-			this.label3.Click += new System.EventHandler(this.label3_Click);
-			// 
-			// panel1
-			// 
-			this.panel1.Location = new System.Drawing.Point(424, 320);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(1, 1);
-			this.panel1.TabIndex = 14;
-			// 
-			// labelStatus
-			// 
-			this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.labelStatus.Location = new System.Drawing.Point(40, 169);
-			this.labelStatus.Name = "labelStatus";
-			this.labelStatus.Size = new System.Drawing.Size(400, 63);
-			this.labelStatus.TabIndex = 11;
-			// 
-			// progressBar1
-			// 
-			this.progressBar1.Location = new System.Drawing.Point(32, 128);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(416, 16);
-			this.progressBar1.TabIndex = 4;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(344, 72);
-			this.button1.Name = "button1";
-			this.button1.TabIndex = 3;
-			this.button1.Text = "Scan...";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(32, 72);
-			this.label2.Name = "label2";
-			this.label2.TabIndex = 2;
-			this.label2.Text = "Country/Region:";
-			// 
-			// cbCountry
-			// 
-			this.cbCountry.Location = new System.Drawing.Point(144, 72);
-			this.cbCountry.Name = "cbCountry";
-			this.cbCountry.Size = new System.Drawing.Size(168, 21);
-			this.cbCountry.TabIndex = 1;
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(24, 24);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(432, 40);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
-				"ess auto tune to scan for the tv and radio channels";
-			// 
-			// Wizard_DVBCTV
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "Wizard_DVBCTV";
-			this.Size = new System.Drawing.Size(496, 384);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.labelStatus = new System.Windows.Forms.Label();
+      this.progressBar1 = new System.Windows.Forms.ProgressBar();
+      this.button1 = new System.Windows.Forms.Button();
+      this.label2 = new System.Windows.Forms.Label();
+      this.cbCountry = new System.Windows.Forms.ComboBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.label3);
+      this.groupBox1.Controls.Add(this.panel1);
+      this.groupBox1.Controls.Add(this.labelStatus);
+      this.groupBox1.Controls.Add(this.progressBar1);
+      this.groupBox1.Controls.Add(this.button1);
+      this.groupBox1.Controls.Add(this.label2);
+      this.groupBox1.Controls.Add(this.cbCountry);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(480, 360);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Setup digital tv (DVB Cable)";
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(32, 264);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(392, 56);
+      this.label3.TabIndex = 15;
+      this.label3.Text = @"NOTE: if your country is not present or if Mediaportal is unable to find any channels then MediaPortal probably doesnt know which frequencies to scan for your country. Edit the .dvbc file in the TuningParameters/ subfolder and fill in all the frequencies needed for your country.";
+      this.label3.Click += new System.EventHandler(this.label3_Click);
+      // 
+      // panel1
+      // 
+      this.panel1.Location = new System.Drawing.Point(424, 320);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(1, 1);
+      this.panel1.TabIndex = 14;
+      // 
+      // labelStatus
+      // 
+      this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.labelStatus.Location = new System.Drawing.Point(40, 169);
+      this.labelStatus.Name = "labelStatus";
+      this.labelStatus.Size = new System.Drawing.Size(400, 63);
+      this.labelStatus.TabIndex = 11;
+      // 
+      // progressBar1
+      // 
+      this.progressBar1.Location = new System.Drawing.Point(32, 128);
+      this.progressBar1.Name = "progressBar1";
+      this.progressBar1.Size = new System.Drawing.Size(416, 16);
+      this.progressBar1.TabIndex = 4;
+      // 
+      // button1
+      // 
+      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.button1.Location = new System.Drawing.Point(344, 72);
+      this.button1.Name = "button1";
+      this.button1.TabIndex = 3;
+      this.button1.Text = "Scan...";
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(32, 72);
+      this.label2.Name = "label2";
+      this.label2.TabIndex = 2;
+      this.label2.Text = "Country/Region:";
+      // 
+      // cbCountry
+      // 
+      this.cbCountry.Location = new System.Drawing.Point(144, 72);
+      this.cbCountry.Name = "cbCountry";
+      this.cbCountry.Size = new System.Drawing.Size(168, 21);
+      this.cbCountry.TabIndex = 1;
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(24, 24);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(432, 40);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Mediaportal has detected one or more digital Tv cards. Select your country and pr" +
+        "ess auto tune to scan for the tv and radio channels";
+      // 
+      // Wizard_DVBCTV
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "Wizard_DVBCTV";
+      this.Size = new System.Drawing.Size(496, 384);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 

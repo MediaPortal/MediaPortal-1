@@ -80,108 +80,111 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.listView1 = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.button1 = new System.Windows.Forms.Button();
-			this.button2 = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.labelFileName = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.textBoxTitle = new System.Windows.Forms.TextBox();
-			this.buttonFind = new System.Windows.Forms.Button();
-			this.SuspendLayout();
-			// 
-			// listView1
-			// 
-			this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																								this.columnHeader1});
-			this.listView1.Location = new System.Drawing.Point(8, 56);
-			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(360, 200);
-			this.listView1.TabIndex = 0;
-			this.listView1.View = System.Windows.Forms.View.Details;
-			this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Name";
-			this.columnHeader1.Width = 350;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(264, 320);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(40, 23);
-			this.button1.TabIndex = 1;
-			this.button1.Text = "Ok";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// button2
-			// 
-			this.button2.Location = new System.Drawing.Point(312, 320);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(56, 23);
-			this.button2.TabIndex = 2;
-			this.button2.Text = "Cancel";
-			this.button2.Click += new System.EventHandler(this.button2_Click);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 8);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(100, 16);
-			this.label1.TabIndex = 3;
-			this.label1.Text = "IMDB resutls for:";
-			// 
-			// labelFileName
-			// 
-			this.labelFileName.Location = new System.Drawing.Point(24, 32);
-			this.labelFileName.Name = "labelFileName";
-			this.labelFileName.Size = new System.Drawing.Size(344, 16);
-			this.labelFileName.TabIndex = 4;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(16, 272);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(48, 16);
-			this.label2.TabIndex = 5;
-			this.label2.Text = "Title:";
-			// 
-			// textBoxTitle
-			// 
-			this.textBoxTitle.Location = new System.Drawing.Point(72, 264);
-			this.textBoxTitle.Name = "textBoxTitle";
-			this.textBoxTitle.Size = new System.Drawing.Size(192, 20);
-			this.textBoxTitle.TabIndex = 6;
-			this.textBoxTitle.Text = "";
-			// 
-			// buttonFind
-			// 
-			this.buttonFind.Location = new System.Drawing.Point(280, 264);
-			this.buttonFind.Name = "buttonFind";
-			this.buttonFind.Size = new System.Drawing.Size(40, 23);
-			this.buttonFind.TabIndex = 7;
-			this.buttonFind.Text = "Find";
-			this.buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
-			// 
-			// DlgMovieList
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(384, 350);
-			this.Controls.Add(this.buttonFind);
-			this.Controls.Add(this.textBoxTitle);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.labelFileName);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.button2);
-			this.Controls.Add(this.button1);
-			this.Controls.Add(this.listView1);
-			this.Name = "DlgMovieList";
-			this.Text = "IMDB Movie results";
-			this.ResumeLayout(false);
+      this.listView1 = new System.Windows.Forms.ListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.button1 = new System.Windows.Forms.Button();
+      this.button2 = new System.Windows.Forms.Button();
+      this.label1 = new System.Windows.Forms.Label();
+      this.labelFileName = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.textBoxTitle = new System.Windows.Forms.TextBox();
+      this.buttonFind = new System.Windows.Forms.Button();
+      this.SuspendLayout();
+      // 
+      // listView1
+      // 
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                this.columnHeader1});
+      this.listView1.Location = new System.Drawing.Point(8, 56);
+      this.listView1.Name = "listView1";
+      this.listView1.Size = new System.Drawing.Size(360, 200);
+      this.listView1.TabIndex = 0;
+      this.listView1.View = System.Windows.Forms.View.Details;
+      this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Name";
+      this.columnHeader1.Width = 350;
+      // 
+      // button1
+      // 
+      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.button1.Location = new System.Drawing.Point(264, 320);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(40, 23);
+      this.button1.TabIndex = 1;
+      this.button1.Text = "Ok";
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // button2
+      // 
+      this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.button2.Location = new System.Drawing.Point(312, 320);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(56, 23);
+      this.button2.TabIndex = 2;
+      this.button2.Text = "Cancel";
+      this.button2.Click += new System.EventHandler(this.button2_Click);
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 8);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(100, 16);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "IMDB resutls for:";
+      // 
+      // labelFileName
+      // 
+      this.labelFileName.Location = new System.Drawing.Point(24, 32);
+      this.labelFileName.Name = "labelFileName";
+      this.labelFileName.Size = new System.Drawing.Size(344, 16);
+      this.labelFileName.TabIndex = 4;
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 272);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(48, 16);
+      this.label2.TabIndex = 5;
+      this.label2.Text = "Title:";
+      // 
+      // textBoxTitle
+      // 
+      this.textBoxTitle.Location = new System.Drawing.Point(72, 264);
+      this.textBoxTitle.Name = "textBoxTitle";
+      this.textBoxTitle.Size = new System.Drawing.Size(192, 20);
+      this.textBoxTitle.TabIndex = 6;
+      this.textBoxTitle.Text = "";
+      // 
+      // buttonFind
+      // 
+      this.buttonFind.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonFind.Location = new System.Drawing.Point(280, 264);
+      this.buttonFind.Name = "buttonFind";
+      this.buttonFind.Size = new System.Drawing.Size(40, 23);
+      this.buttonFind.TabIndex = 7;
+      this.buttonFind.Text = "Find";
+      this.buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
+      // 
+      // DlgMovieList
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(384, 350);
+      this.Controls.Add(this.buttonFind);
+      this.Controls.Add(this.textBoxTitle);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.labelFileName);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.button2);
+      this.Controls.Add(this.button1);
+      this.Controls.Add(this.listView1);
+      this.Name = "DlgMovieList";
+      this.Text = "IMDB Movie results";
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void button1_Click(object sender, System.EventArgs e)

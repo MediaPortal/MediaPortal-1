@@ -55,80 +55,80 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.cancelButton = new System.Windows.Forms.Button();
-			this.okButton = new System.Windows.Forms.Button();
-			this.parametersListView = new MediaPortal.UserInterface.Controls.MPListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.SuspendLayout();
-			// 
-			// cancelButton
-			// 
-			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cancelButton.Location = new System.Drawing.Point(286, 144);
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 2;
-			this.cancelButton.Text = "Cancel";
-			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-			// 
-			// okButton
-			// 
-			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okButton.Enabled = false;
-			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.okButton.Location = new System.Drawing.Point(206, 144);
-			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 1;
-			this.okButton.Text = "OK";
-			this.okButton.Click += new System.EventHandler(this.okButton_Click);
-			// 
-			// parametersListView
-			// 
-			this.parametersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.parametersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																												 this.columnHeader1,
-																																												 this.columnHeader2});
-			this.parametersListView.FullRowSelect = true;
-			this.parametersListView.Location = new System.Drawing.Point(8, 8);
-			this.parametersListView.Name = "parametersListView";
-			this.parametersListView.Size = new System.Drawing.Size(352, 128);
-			this.parametersListView.TabIndex = 0;
-			this.parametersListView.View = System.Windows.Forms.View.Details;
-			this.parametersListView.DoubleClick += new System.EventHandler(this.parametersListView_DoubleClick);
-			this.parametersListView.SelectedIndexChanged += new System.EventHandler(this.parametersListView_SelectedIndexChanged);
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Text = "Parameter";
-			this.columnHeader1.Width = 77;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Text = "Description";
-			this.columnHeader2.Width = 271;
-			// 
-			// ParameterForm
-			// 
-			this.AcceptButton = this.okButton;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(370, 176);
-			this.Controls.Add(this.parametersListView);
-			this.Controls.Add(this.okButton);
-			this.Controls.Add(this.cancelButton);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-			this.Name = "ParameterForm";
-			this.ShowInTaskbar = false;
-			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "ParameterForm";
-			this.ResumeLayout(false);
+      this.cancelButton = new System.Windows.Forms.Button();
+      this.okButton = new System.Windows.Forms.Button();
+      this.parametersListView = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.SuspendLayout();
+      // 
+      // cancelButton
+      // 
+      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cancelButton.Location = new System.Drawing.Point(286, 144);
+      this.cancelButton.Name = "cancelButton";
+      this.cancelButton.TabIndex = 2;
+      this.cancelButton.Text = "Cancel";
+      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+      // 
+      // okButton
+      // 
+      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Enabled = false;
+      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.okButton.Location = new System.Drawing.Point(206, 144);
+      this.okButton.Name = "okButton";
+      this.okButton.TabIndex = 1;
+      this.okButton.Text = "OK";
+      this.okButton.Click += new System.EventHandler(this.okButton_Click);
+      // 
+      // parametersListView
+      // 
+      this.parametersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                         this.columnHeader1,
+                                                                                         this.columnHeader2});
+      this.parametersListView.FullRowSelect = true;
+      this.parametersListView.Location = new System.Drawing.Point(8, 8);
+      this.parametersListView.Name = "parametersListView";
+      this.parametersListView.Size = new System.Drawing.Size(352, 128);
+      this.parametersListView.TabIndex = 0;
+      this.parametersListView.View = System.Windows.Forms.View.Details;
+      this.parametersListView.DoubleClick += new System.EventHandler(this.parametersListView_DoubleClick);
+      this.parametersListView.SelectedIndexChanged += new System.EventHandler(this.parametersListView_SelectedIndexChanged);
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Parameter";
+      this.columnHeader1.Width = 77;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Description";
+      this.columnHeader2.Width = 271;
+      // 
+      // ParameterForm
+      // 
+      this.AcceptButton = this.okButton;
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.CancelButton = this.cancelButton;
+      this.ClientSize = new System.Drawing.Size(370, 176);
+      this.Controls.Add(this.parametersListView);
+      this.Controls.Add(this.okButton);
+      this.Controls.Add(this.cancelButton);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.Name = "ParameterForm";
+      this.ShowInTaskbar = false;
+      this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "Parameter";
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void parametersListView_DoubleClick(object sender, System.EventArgs e)
