@@ -81,7 +81,7 @@ namespace MediaPortal.Player
     protected IMediaEventEx			    mediaEvt=null;
 
     /// <summary> interface to single-step video. </summary>
-    protected IVideoFrameStep			  videoStep=null;
+    //protected IVideoFrameStep			  videoStep=null;
     protected int                           m_iVolume=100;
     //protected OVTOOLLib.OvMgrClass	m_ovMgr=null;
 
@@ -469,7 +469,7 @@ namespace MediaPortal.Player
 				mediaEvt = null;
         m_bVisible=false;
 				videoWin = null;
-				videoStep	= null;
+//				videoStep	= null;
 				dvdCtrl = null;
 				dvdInfo = null;
 				basicVideo=null;
@@ -697,7 +697,7 @@ namespace MediaPortal.Player
           videoWin = (IVideoWindow) comobj; comobj = null;
         }
   */      
-        GetFrameStepInterface();
+       // GetFrameStepInterface();
 
         DirectShowUtil.SetARMode(graphBuilder,arMode);
         DirectShowUtil.EnableDeInterlace(graphBuilder);
@@ -719,23 +719,6 @@ namespace MediaPortal.Player
       }
     }
 
-
-    /// <summary> detect if we can single step. </summary>
-    bool GetFrameStepInterface()
-    {
-      videoStep = graphBuilder as IVideoFrameStep;
-      if( videoStep == null )
-        return false;
-
-      // Check if this decoder can step
-      int hr = videoStep.CanStep( 0, null );
-      if( hr != 0 )
-      {
-        videoStep = null;
-        return false;
-      }
-      return true;
-    }
 
 
 

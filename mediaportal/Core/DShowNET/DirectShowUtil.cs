@@ -532,13 +532,11 @@ namespace DShowNET
             if (pARC!=null)
             {
               pARC.SetAspectRatioMode( (uint)VmrAspectRatioMode.VMR_ARMODE_NONE);
-							Marshal.ReleaseComObject(pARC);
             }
             IVMRAspectRatioControl9 pARC9 = pBasefilter as IVMRAspectRatioControl9;
             if (pARC9!=null)
             {
               pARC9.SetAspectRatioMode((uint)VmrAspectRatioMode.VMR_ARMODE_NONE);
-							Marshal.ReleaseComObject(pARC9);
             }
 
             IEnumPins pinEnum;
@@ -558,13 +556,13 @@ namespace DShowNET
                   if (null!=pMC)
                   {
                     pMC.SetAspectRatioMode(ARRatioMode);
-										Marshal.ReleaseComObject( pMC);
 									}
                   Marshal.ReleaseComObject( pins[0] );
                 }
               } while( f ==1);
 							Marshal.ReleaseComObject(pinEnum);
             }
+						Marshal.ReleaseComObject(pBasefilter);
           }
         } while (iFetched==1 && pBasefilter!=null);
 				Marshal.ReleaseComObject(enumFilters);
