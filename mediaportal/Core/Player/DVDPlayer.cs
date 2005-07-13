@@ -1444,6 +1444,11 @@ namespace MediaPortal.Player
 
     protected virtual void OnProcess()
     {
+			
+			if (vmr7!=null)
+			{
+				vmr7.Process();
+			}
       if (videoWin!=null)
       {
         if (GUIGraphicsContext.Overlay==false && GUIGraphicsContext.IsFullScreenVideo==false)

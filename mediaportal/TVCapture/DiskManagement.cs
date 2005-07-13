@@ -136,11 +136,8 @@ namespace MediaPortal.TV.Recording
 												if (parts.Length>0)
 													newRec.Channel=parts[0];
 											}
-											if (newRec.Channel!=null)
+											if (newRec.Channel!=null && newRec.Channel.Length>0)
 											{
-												TVChannel newChan = new TVChannel();
-												newChan.Name=newRec.Channel;
-												TVDatabase.AddChannel(newChan);
 												int id=TVDatabase.AddRecordedTV(newRec);
 												if (id < 0)
 												{
