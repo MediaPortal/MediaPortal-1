@@ -102,7 +102,6 @@ namespace MediaPortal.Configuration.Sections
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TVGroups));
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.btnGroupDown = new System.Windows.Forms.Button();
 			this.buttonGroupUp = new System.Windows.Forms.Button();
@@ -124,6 +123,7 @@ namespace MediaPortal.Configuration.Sections
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
 			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
 			this.groupBox1.SuspendLayout();
@@ -157,15 +157,9 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl1.TabIndex = 8;
 			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
-			// imageList1
-			// 
-			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			// 
 			// tabPage2
 			// 
+			this.tabPage2.AutoScroll = true;
 			this.tabPage2.Controls.Add(this.btnGroupDown);
 			this.tabPage2.Controls.Add(this.buttonGroupUp);
 			this.tabPage2.Controls.Add(this.buttonEditGroup);
@@ -247,6 +241,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.AutoScroll = true;
 			this.tabPage3.Controls.Add(this.treeViewChannels);
 			this.tabPage3.Controls.Add(this.btnGrpChnDown);
 			this.tabPage3.Controls.Add(this.btnGrpChnUp);
@@ -360,6 +355,13 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBox1.Size = new System.Drawing.Size(280, 21);
 			this.comboBox1.TabIndex = 0;
 			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+			// 
+			// imageList1
+			// 
+			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// XMLOpenDialog
 			// 

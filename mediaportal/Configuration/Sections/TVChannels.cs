@@ -177,6 +177,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.AutoScroll = true;
 			this.tabPage1.Controls.Add(this.buttonLookup);
 			this.tabPage1.Controls.Add(this.xmlImport);
 			this.tabPage1.Controls.Add(this.xmlExport);
@@ -364,6 +365,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// tabPage4
 			// 
+			this.tabPage4.AutoScroll = true;
 			this.tabPage4.Controls.Add(this.btnMapChannelToCard);
 			this.tabPage4.Controls.Add(this.btnUnmapChannelFromCard);
 			this.tabPage4.Controls.Add(this.listViewTVChannelsForCard);
