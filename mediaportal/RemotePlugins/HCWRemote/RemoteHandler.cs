@@ -79,6 +79,12 @@ namespace MediaPortal
       }
     }
 
+
+    /// <summary>
+    /// Checks version of the XML mapping file 
+    /// </summary>
+    /// <param name="xmlFile">Filename without path or extension</param>
+    /// <returns>Valid version? true/false</returns>
     public bool CheckVersion(string xmlFile)
     {
       XmlDocument doc = new XmlDocument();
@@ -104,6 +110,7 @@ namespace MediaPortal
       Log.Write("MAP: Run configuration.exe and reset mappings to default.");
       return false;
     }
+
 
     /// <summary>
     /// Constructor: Initializes mappings from XML file

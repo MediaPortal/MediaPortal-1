@@ -672,6 +672,7 @@ namespace MediaPortal.Configuration
         writer.IndentChar = (char)9;
         writer.WriteStartDocument(true);
         writer.WriteStartElement("mappings"); // <mappings>
+        writer.WriteAttributeString("version", "2");
         foreach (TreeNode remoteNode in treeMapping.Nodes)
         {
           writer.WriteStartElement("remote"); // <remote>
