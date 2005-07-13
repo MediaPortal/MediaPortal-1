@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 424);
+      this.groupBox1.Size = new System.Drawing.Size(440, 408);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "DScaler Video  Decoder";
@@ -281,7 +281,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "DScalerVideoFilter";
-      this.Size = new System.Drawing.Size(456, 448);
+      this.Size = new System.Drawing.Size(456, 432);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 

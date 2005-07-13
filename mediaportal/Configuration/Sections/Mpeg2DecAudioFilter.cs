@@ -15,7 +15,6 @@ namespace MediaPortal.Configuration.Sections
 
 	public class MPEG2DecAudioFilter : MediaPortal.Configuration.SectionSettings
 	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		//private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.RadioButton radioPCM16Bit;
 		private System.Windows.Forms.RadioButton radioButtonPCM24Bit;
@@ -82,9 +81,6 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBox5 = new System.Windows.Forms.GroupBox();
-      this.checkBoxAACDownmix = new System.Windows.Forms.CheckBox();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.radioButtonAC3SPDIF = new System.Windows.Forms.RadioButton();
       this.radioButtonAC3Speakers = new System.Windows.Forms.RadioButton();
@@ -105,52 +101,15 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDTSLFE = new System.Windows.Forms.CheckBox();
       this.comboBoxDTSSpeakerConfig = new System.Windows.Forms.ComboBox();
       this.checkBoxDTSDynamicRange = new System.Windows.Forms.CheckBox();
+      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.checkBoxAACDownmix = new System.Windows.Forms.CheckBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.groupBox1.SuspendLayout();
-      this.groupBox5.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarBoost)).BeginInit();
       this.groupBox2.SuspendLayout();
+      this.groupBox5.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.groupBox5);
-      this.groupBox1.Controls.Add(this.groupBox4);
-      this.groupBox1.Controls.Add(this.groupBox3);
-      this.groupBox1.Controls.Add(this.groupBox2);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 424);
-      this.groupBox1.TabIndex = 1;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "MPEG/AC3/DTS/LPCM Audio Decoder";
-      // 
-      // groupBox5
-      // 
-      this.groupBox5.Controls.Add(this.checkBoxAACDownmix);
-      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox5.Location = new System.Drawing.Point(24, 336);
-      this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(392, 72);
-      this.groupBox5.TabIndex = 25;
-      this.groupBox5.TabStop = false;
-      this.groupBox5.Text = "AAC Decoder Settings";
-      // 
-      // checkBoxAACDownmix
-      // 
-      this.checkBoxAACDownmix.Checked = true;
-      this.checkBoxAACDownmix.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxAACDownmix.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.checkBoxAACDownmix.Location = new System.Drawing.Point(32, 32);
-      this.checkBoxAACDownmix.Name = "checkBoxAACDownmix";
-      this.checkBoxAACDownmix.Size = new System.Drawing.Size(128, 16);
-      this.checkBoxAACDownmix.TabIndex = 21;
-      this.checkBoxAACDownmix.Text = "Downmix to stereo";
       // 
       // groupBox4
       // 
@@ -160,7 +119,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.comboBoxAC3SpeakerConfig);
       this.groupBox4.Controls.Add(this.checkBoxAC3DynamicRange);
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox4.Location = new System.Drawing.Point(24, 128);
+      this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.groupBox4.Location = new System.Drawing.Point(32, 16);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(392, 100);
       this.groupBox4.TabIndex = 24;
@@ -238,7 +198,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.checkBoxNormalize);
       this.groupBox3.Controls.Add(this.trackBarBoost);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox3.Location = new System.Drawing.Point(24, 16);
+      this.groupBox3.Location = new System.Drawing.Point(32, 128);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(392, 100);
       this.groupBox3.TabIndex = 23;
@@ -317,7 +277,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.comboBoxDTSSpeakerConfig);
       this.groupBox2.Controls.Add(this.checkBoxDTSDynamicRange);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(24, 232);
+      this.groupBox2.Location = new System.Drawing.Point(32, 240);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(392, 96);
       this.groupBox2.TabIndex = 22;
@@ -381,6 +341,28 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDTSDynamicRange.TabIndex = 17;
       this.checkBoxDTSDynamicRange.Text = "Dynamic Range Control";
       // 
+      // groupBox5
+      // 
+      this.groupBox5.Controls.Add(this.checkBoxAACDownmix);
+      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox5.Location = new System.Drawing.Point(32, 352);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(392, 56);
+      this.groupBox5.TabIndex = 25;
+      this.groupBox5.TabStop = false;
+      this.groupBox5.Text = "AAC Decoder Settings";
+      // 
+      // checkBoxAACDownmix
+      // 
+      this.checkBoxAACDownmix.Checked = true;
+      this.checkBoxAACDownmix.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxAACDownmix.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxAACDownmix.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxAACDownmix.Name = "checkBoxAACDownmix";
+      this.checkBoxAACDownmix.Size = new System.Drawing.Size(128, 16);
+      this.checkBoxAACDownmix.TabIndex = 21;
+      this.checkBoxAACDownmix.Text = "Downmix to stereo";
+      // 
       // label2
       // 
       this.label2.Location = new System.Drawing.Point(104, 64);
@@ -391,15 +373,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // MPEG2DecAudioFilter
       // 
-      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.groupBox2);
+      this.Controls.Add(this.groupBox4);
+      this.Controls.Add(this.groupBox3);
+      this.Controls.Add(this.groupBox5);
       this.Name = "MPEG2DecAudioFilter";
-      this.Size = new System.Drawing.Size(456, 448);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox5.ResumeLayout(false);
+      this.Size = new System.Drawing.Size(456, 424);
       this.groupBox4.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.trackBarBoost)).EndInit();
       this.groupBox2.ResumeLayout(false);
+      this.groupBox5.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
