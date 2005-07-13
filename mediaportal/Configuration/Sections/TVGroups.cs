@@ -186,6 +186,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnGroupDown.Size = new System.Drawing.Size(48, 23);
       this.btnGroupDown.TabIndex = 5;
       this.btnGroupDown.Text = "Down";
+      this.btnGroupDown.Click += new System.EventHandler(this.btnGroupDown_Click);
       // 
       // buttonGroupUp
       // 
@@ -195,6 +196,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonGroupUp.Size = new System.Drawing.Size(32, 23);
       this.buttonGroupUp.TabIndex = 4;
       this.buttonGroupUp.Text = "Up";
+      this.buttonGroupUp.Click += new System.EventHandler(this.buttonGroupUp_Click);
       // 
       // buttonEditGroup
       // 
@@ -204,6 +206,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonEditGroup.Size = new System.Drawing.Size(40, 23);
       this.buttonEditGroup.TabIndex = 3;
       this.buttonEditGroup.Text = "Edit";
+      this.buttonEditGroup.Click += new System.EventHandler(this.buttonEditGroup_Click);
       // 
       // buttonDeleteGroup
       // 
@@ -213,6 +216,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDeleteGroup.Size = new System.Drawing.Size(48, 23);
       this.buttonDeleteGroup.TabIndex = 2;
       this.buttonDeleteGroup.Text = "Delete";
+      this.buttonDeleteGroup.Click += new System.EventHandler(this.buttonDeleteGroup_Click);
       // 
       // buttonAddGroup
       // 
@@ -222,6 +226,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonAddGroup.Size = new System.Drawing.Size(40, 23);
       this.buttonAddGroup.TabIndex = 1;
       this.buttonAddGroup.Text = "Add";
+      this.buttonAddGroup.Click += new System.EventHandler(this.buttonAddGroup_Click);
       // 
       // listViewGroups
       // 
@@ -284,6 +289,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnGrpChnDown.Size = new System.Drawing.Size(56, 23);
       this.btnGrpChnDown.TabIndex = 9;
       this.btnGrpChnDown.Text = "Down";
+      this.btnGrpChnDown.Click += new System.EventHandler(this.btnGrpChnDown_Click);
       // 
       // btnGrpChnUp
       // 
@@ -293,6 +299,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnGrpChnUp.Size = new System.Drawing.Size(32, 23);
       this.btnGrpChnUp.TabIndex = 8;
       this.btnGrpChnUp.Text = "Up";
+      this.btnGrpChnUp.Click += new System.EventHandler(this.btnGrpChnUp_Click);
       // 
       // buttonMap
       // 
@@ -302,6 +309,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonMap.Size = new System.Drawing.Size(32, 23);
       this.buttonMap.TabIndex = 7;
       this.buttonMap.Text = ">>";
+      this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
       // 
       // btnUnmap
       // 
@@ -311,6 +319,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnUnmap.Size = new System.Drawing.Size(32, 23);
       this.btnUnmap.TabIndex = 6;
       this.btnUnmap.Text = "<<";
+      this.btnUnmap.Click += new System.EventHandler(this.btnUnmap_Click);
       // 
       // listViewTVGroupChannels
       // 
@@ -844,7 +853,6 @@ namespace MediaPortal.Configuration.Sections
 			base.OnSectionActivated ();
 			LoadSettings();
 		}
-
 	}
 }
 
