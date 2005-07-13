@@ -506,7 +506,7 @@ namespace DShowNET
             AmAspectRatioMode mode;
             hr=pMC.SetAspectRatioMode(ARRatioMode);
 						hr=pMC.GetAspectRatioMode(out mode);
-						Marshal.ReleaseComObject(pMC);
+						//Marshal.ReleaseComObject(pMC);
           }
 					Marshal.ReleaseComObject(iPin);
 				}
