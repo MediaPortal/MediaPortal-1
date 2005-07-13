@@ -259,6 +259,7 @@ namespace MediaPortal.Configuration.Sections
       this.channelsListView.SmallImageList = this.imageList1;
       this.channelsListView.TabIndex = 0;
       this.channelsListView.View = System.Windows.Forms.View.Details;
+      this.channelsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.channelsListView_ColumnClick);
       // 
       // columnHeader1
       // 
