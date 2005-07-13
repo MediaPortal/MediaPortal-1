@@ -69,7 +69,7 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-		private void OnCheckChanged(object sender, System.EventArgs e)
+		void OnCheckChanged(object sender, System.EventArgs e)
 		{
 			_customTextbox.Enabled = sender == _useCustomHandler;
 			_customTextbox.Text = _customTextbox.Enabled ? _customText : string.Empty;
@@ -83,12 +83,12 @@ namespace MediaPortal.Configuration.Sections
 
 				ArrayList valueArray = new ArrayList();				
 
-				// for now we're happy so long as the token can be converted to integer
 				foreach(string token in ((TextBox)sender).Text.Split(new char[] { ',', ';', ' ' }))
 				{
 					if(token == string.Empty)
 						continue;
 
+					// for now we're happy so long as the token can be converted to integer
 					valueArray.Add(Math.Max(0, Math.Min(65535, Convert.ToInt32(token))));
 				}
 
@@ -103,13 +103,18 @@ namespace MediaPortal.Configuration.Sections
 					builder.Append(volume.ToString());
 				}
 
+				if(valueArray.Count < 2)
+					e.Cancel = true;
+
 				_customTextbox.Text = builder.ToString();
 				_customText = _customTextbox.Text;
 			}
 			catch(Exception ex)
 			{
-				if((e.Cancel = ex is FormatException || ex is OverflowException) == false)
+				if((ex is FormatException || ex is OverflowException) == false)
 					throw;
+
+				e.Cancel = true;
 			}
 		}
 
@@ -134,8 +139,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this._customTextbox);
 			this.groupBox1.Controls.Add(this._useCustomHandler);
@@ -159,7 +163,7 @@ namespace MediaPortal.Configuration.Sections
 			this._customTextbox.Location = new System.Drawing.Point(40, 168);
 			this._customTextbox.Name = "_customTextbox";
 			this._customTextbox.Size = new System.Drawing.Size(384, 20);
-			this._customTextbox.TabIndex = 5;
+			this._customTextbox.TabIndex = 6;
 			this._customTextbox.Text = "";
 			this._customTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomTable);
 			// 
@@ -170,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
 			this._useCustomHandler.Location = new System.Drawing.Point(24, 144);
 			this._useCustomHandler.Name = "_useCustomHandler";
 			this._useCustomHandler.Size = new System.Drawing.Size(408, 24);
-			this._useCustomHandler.TabIndex = 4;
+			this._useCustomHandler.TabIndex = 5;
 			this._useCustomHandler.Text = "C&ustom:";
 			this._useCustomHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
 			// 
@@ -181,8 +185,8 @@ namespace MediaPortal.Configuration.Sections
 			this._useLogarithmicHandler.Location = new System.Drawing.Point(24, 120);
 			this._useLogarithmicHandler.Name = "_useLogarithmicHandler";
 			this._useLogarithmicHandler.Size = new System.Drawing.Size(408, 24);
-			this._useLogarithmicHandler.TabIndex = 3;
-			this._useLogarithmicHandler.Text = "Logarithmic";
+			this._useLogarithmicHandler.TabIndex = 4;
+			this._useLogarithmicHandler.Text = "&Logarithmic";
 			this._useLogarithmicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
 			// 
 			// _useWindowsHandler
@@ -193,7 +197,7 @@ namespace MediaPortal.Configuration.Sections
 			this._useWindowsHandler.Name = "_useWindowsHandler";
 			this._useWindowsHandler.Size = new System.Drawing.Size(408, 24);
 			this._useWindowsHandler.TabIndex = 2;
-			this._useWindowsHandler.Text = "Windows default";
+			this._useWindowsHandler.Text = "&Windows default";
 			this._useWindowsHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
 			// 
 			// label1
@@ -214,7 +218,7 @@ namespace MediaPortal.Configuration.Sections
 			this._useClassicHandler.Location = new System.Drawing.Point(24, 96);
 			this._useClassicHandler.Name = "_useClassicHandler";
 			this._useClassicHandler.Size = new System.Drawing.Size(408, 24);
-			this._useClassicHandler.TabIndex = 0;
+			this._useClassicHandler.TabIndex = 3;
 			this._useClassicHandler.Text = "&Classic";
 			this._useClassicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
 			// 
