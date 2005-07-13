@@ -31,34 +31,33 @@ namespace MediaPortal.Configuration.Sections
 				return String.Format("{0} - {1}", FriendlyName, VideoDevice);
 			}
 		};
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.ComponentModel.IContainer components = null;
 		static bool reloadList=false;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.ColumnHeader columnHeader6;
-		private System.Windows.Forms.Button buttonAddGroup;
-		private System.Windows.Forms.Button buttonDeleteGroup;
-		private System.Windows.Forms.Button buttonEditGroup;
-		private System.Windows.Forms.Button buttonGroupUp;
-		private System.Windows.Forms.Button btnGroupDown;
-		private System.Windows.Forms.ColumnHeader columnHeader7;
-		private System.Windows.Forms.ListView listViewGroups;
-		private System.Windows.Forms.ComboBox comboBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.ListView listViewTVGroupChannels;
-		private System.Windows.Forms.ColumnHeader columnHeader9;
-		private System.Windows.Forms.Button btnUnmap;
-		private System.Windows.Forms.Button buttonMap;
-		private System.Windows.Forms.Button btnGrpChnUp;
-		private System.Windows.Forms.Button btnGrpChnDown;
-		private MWTreeView treeViewChannels;
 		private System.Windows.Forms.OpenFileDialog XMLOpenDialog;
 		private System.Windows.Forms.SaveFileDialog XMLSaveDialog;
 		private System.Windows.Forms.ImageList imageList1;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.Button btnGroupDown;
+		private System.Windows.Forms.Button buttonGroupUp;
+		private System.Windows.Forms.Button buttonEditGroup;
+		private System.Windows.Forms.Button buttonDeleteGroup;
+		private System.Windows.Forms.Button buttonAddGroup;
+		private System.Windows.Forms.ListView listViewGroups;
+		private System.Windows.Forms.TabPage tabPage3;
+		private MWControls.MWTreeView treeViewChannels;
+		private System.Windows.Forms.Button btnGrpChnDown;
+		private System.Windows.Forms.Button btnGrpChnUp;
+		private System.Windows.Forms.Button buttonMap;
+		private System.Windows.Forms.Button btnUnmap;
+		private System.Windows.Forms.ListView listViewTVGroupChannels;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.ComboBox comboBox1;
+		private System.Windows.Forms.ColumnHeader columnHeader6;
+		private System.Windows.Forms.ColumnHeader columnHeader7;
+		private System.Windows.Forms.ColumnHeader columnHeader9;
 
 		//
 		// Private members
@@ -100,7 +99,9 @@ namespace MediaPortal.Configuration.Sections
 		{
 			this.components = new System.ComponentModel.Container();
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TVGroups));
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
+			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.btnGroupDown = new System.Windows.Forms.Button();
@@ -109,8 +110,6 @@ namespace MediaPortal.Configuration.Sections
 			this.buttonDeleteGroup = new System.Windows.Forms.Button();
 			this.buttonAddGroup = new System.Windows.Forms.Button();
 			this.listViewGroups = new System.Windows.Forms.ListView();
-			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.treeViewChannels = new MWControls.MWTreeView();
 			this.btnGrpChnDown = new System.Windows.Forms.Button();
@@ -118,44 +117,51 @@ namespace MediaPortal.Configuration.Sections
 			this.buttonMap = new System.Windows.Forms.Button();
 			this.btnUnmap = new System.Windows.Forms.Button();
 			this.listViewTVGroupChannels = new System.Windows.Forms.ListView();
-			this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
-			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-			this.groupBox1.SuspendLayout();
+			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
 			this.tabControl1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// groupBox1
+			// imageList1
 			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.tabControl1);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(464, 440);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Settings";
+			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			// 
+			// XMLOpenDialog
+			// 
+			this.XMLOpenDialog.DefaultExt = "xml";
+			this.XMLOpenDialog.FileName = "ChannelList";
+			this.XMLOpenDialog.Filter = "xml|*.xml";
+			this.XMLOpenDialog.InitialDirectory = ".";
+			this.XMLOpenDialog.Title = "Open....";
+			// 
+			// XMLSaveDialog
+			// 
+			this.XMLSaveDialog.CreatePrompt = true;
+			this.XMLSaveDialog.DefaultExt = "xml";
+			this.XMLSaveDialog.FileName = "ChannelList";
+			this.XMLSaveDialog.Filter = "xml|*.xml";
+			this.XMLSaveDialog.InitialDirectory = ".";
+			this.XMLSaveDialog.Title = "Save to....";
 			// 
 			// tabControl1
 			// 
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
-			this.tabControl1.Location = new System.Drawing.Point(16, 16);
+			this.tabControl1.Location = new System.Drawing.Point(8, 8);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(440, 416);
-			this.tabControl1.TabIndex = 8;
-			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+			this.tabControl1.TabIndex = 9;
 			// 
 			// tabPage2
 			// 
@@ -179,7 +185,6 @@ namespace MediaPortal.Configuration.Sections
 			this.btnGroupDown.Size = new System.Drawing.Size(48, 23);
 			this.btnGroupDown.TabIndex = 5;
 			this.btnGroupDown.Text = "Down";
-			this.btnGroupDown.Click += new System.EventHandler(this.btnGroupDown_Click);
 			// 
 			// buttonGroupUp
 			// 
@@ -188,7 +193,6 @@ namespace MediaPortal.Configuration.Sections
 			this.buttonGroupUp.Size = new System.Drawing.Size(32, 23);
 			this.buttonGroupUp.TabIndex = 4;
 			this.buttonGroupUp.Text = "Up";
-			this.buttonGroupUp.Click += new System.EventHandler(this.buttonGroupUp_Click);
 			// 
 			// buttonEditGroup
 			// 
@@ -197,7 +201,6 @@ namespace MediaPortal.Configuration.Sections
 			this.buttonEditGroup.Size = new System.Drawing.Size(40, 23);
 			this.buttonEditGroup.TabIndex = 3;
 			this.buttonEditGroup.Text = "Edit";
-			this.buttonEditGroup.Click += new System.EventHandler(this.buttonEditGroup_Click);
 			// 
 			// buttonDeleteGroup
 			// 
@@ -206,7 +209,6 @@ namespace MediaPortal.Configuration.Sections
 			this.buttonDeleteGroup.Size = new System.Drawing.Size(48, 23);
 			this.buttonDeleteGroup.TabIndex = 2;
 			this.buttonDeleteGroup.Text = "Delete";
-			this.buttonDeleteGroup.Click += new System.EventHandler(this.buttonDeleteGroup_Click);
 			// 
 			// buttonAddGroup
 			// 
@@ -215,7 +217,6 @@ namespace MediaPortal.Configuration.Sections
 			this.buttonAddGroup.Size = new System.Drawing.Size(40, 23);
 			this.buttonAddGroup.TabIndex = 1;
 			this.buttonAddGroup.Text = "Add";
-			this.buttonAddGroup.Click += new System.EventHandler(this.buttonAddGroup_Click);
 			// 
 			// listViewGroups
 			// 
@@ -229,15 +230,6 @@ namespace MediaPortal.Configuration.Sections
 			this.listViewGroups.Size = new System.Drawing.Size(416, 304);
 			this.listViewGroups.TabIndex = 0;
 			this.listViewGroups.View = System.Windows.Forms.View.Details;
-			// 
-			// columnHeader6
-			// 
-			this.columnHeader6.Text = "Group name";
-			this.columnHeader6.Width = 342;
-			// 
-			// columnHeader7
-			// 
-			this.columnHeader7.Text = "Pincode";
 			// 
 			// tabPage3
 			// 
@@ -257,6 +249,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage3.Size = new System.Drawing.Size(432, 390);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Map channels";
+			this.tabPage3.Visible = false;
 			// 
 			// treeViewChannels
 			// 
@@ -276,7 +269,6 @@ namespace MediaPortal.Configuration.Sections
 			this.btnGrpChnDown.Size = new System.Drawing.Size(56, 23);
 			this.btnGrpChnDown.TabIndex = 9;
 			this.btnGrpChnDown.Text = "Down";
-			this.btnGrpChnDown.Click += new System.EventHandler(this.btnGrpChnDown_Click);
 			// 
 			// btnGrpChnUp
 			// 
@@ -285,7 +277,6 @@ namespace MediaPortal.Configuration.Sections
 			this.btnGrpChnUp.Size = new System.Drawing.Size(32, 23);
 			this.btnGrpChnUp.TabIndex = 8;
 			this.btnGrpChnUp.Text = "Up";
-			this.btnGrpChnUp.Click += new System.EventHandler(this.btnGrpChnUp_Click);
 			// 
 			// buttonMap
 			// 
@@ -294,7 +285,6 @@ namespace MediaPortal.Configuration.Sections
 			this.buttonMap.Size = new System.Drawing.Size(32, 23);
 			this.buttonMap.TabIndex = 7;
 			this.buttonMap.Text = ">>";
-			this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
 			// 
 			// btnUnmap
 			// 
@@ -303,7 +293,6 @@ namespace MediaPortal.Configuration.Sections
 			this.btnUnmap.Size = new System.Drawing.Size(32, 23);
 			this.btnUnmap.TabIndex = 6;
 			this.btnUnmap.Text = "<<";
-			this.btnUnmap.Click += new System.EventHandler(this.btnUnmap_Click);
 			// 
 			// listViewTVGroupChannels
 			// 
@@ -316,12 +305,6 @@ namespace MediaPortal.Configuration.Sections
 			this.listViewTVGroupChannels.Size = new System.Drawing.Size(168, 240);
 			this.listViewTVGroupChannels.TabIndex = 5;
 			this.listViewTVGroupChannels.View = System.Windows.Forms.View.Details;
-			this.listViewTVGroupChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVGroupChannels_ColumnClick);
-			// 
-			// columnHeader9
-			// 
-			this.columnHeader9.Text = "TV Channel";
-			this.columnHeader9.Width = 161;
 			// 
 			// label3
 			// 
@@ -354,39 +337,27 @@ namespace MediaPortal.Configuration.Sections
 			this.comboBox1.Name = "comboBox1";
 			this.comboBox1.Size = new System.Drawing.Size(280, 21);
 			this.comboBox1.TabIndex = 0;
-			this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 			// 
-			// imageList1
+			// columnHeader6
 			// 
-			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
-			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			this.columnHeader6.Text = "Group name";
+			this.columnHeader6.Width = 342;
 			// 
-			// XMLOpenDialog
+			// columnHeader7
 			// 
-			this.XMLOpenDialog.DefaultExt = "xml";
-			this.XMLOpenDialog.FileName = "ChannelList";
-			this.XMLOpenDialog.Filter = "xml|*.xml";
-			this.XMLOpenDialog.InitialDirectory = ".";
-			this.XMLOpenDialog.Title = "Open....";
+			this.columnHeader7.Text = "Pincode";
 			// 
-			// XMLSaveDialog
+			// columnHeader9
 			// 
-			this.XMLSaveDialog.CreatePrompt = true;
-			this.XMLSaveDialog.DefaultExt = "xml";
-			this.XMLSaveDialog.FileName = "ChannelList";
-			this.XMLSaveDialog.Filter = "xml|*.xml";
-			this.XMLSaveDialog.InitialDirectory = ".";
-			this.XMLSaveDialog.Title = "Save to....";
+			this.columnHeader9.Text = "TV Channel";
+			this.columnHeader9.Width = 161;
 			// 
 			// TVGroups
 			// 
-			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.tabControl1);
 			this.Name = "TVGroups";
 			this.Size = new System.Drawing.Size(472, 448);
 			this.Load += new System.EventHandler(this.TVGroups_Load);
-			this.groupBox1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
