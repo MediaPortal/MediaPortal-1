@@ -627,18 +627,31 @@ namespace MediaPortal.TV.Database
 		long CorrectIllegalDateTime(long datetime)
 		{
 			//format : 20050710245500
+			long orgDateTime=datetime;
 			long sec=datetime % 100; datetime /=100;
 			long min=datetime % 100; datetime /=100;
 			long hour=datetime % 100; datetime /=100;
 			long day=datetime % 100; datetime /=100;
 			long month=datetime % 100; datetime /=100;
 			long year=datetime ; 
-
 			DateTime dt = new DateTime((int)year,(int)month,(int)day,0,0,0);
 			dt=dt.AddHours(hour);
 			dt=dt.AddMinutes(min);
 			dt=dt.AddSeconds(sec);
-			return Utils.datetolong(dt);
+
+
+			long newDateTime=Utils.datetolong(dt);
+			if (sec<0 || sec>59 ||
+				min<0 || min>59 ||
+				hour<0 || hour >=24 ||
+				day <0 || day>31 ||
+				month <0 || month > 12)
+			{
+				Log.WriteFile(Log.LogType.EPG,true,"epg-import:tvguide.xml contains invalid date/time :{0} converted it to:{1}", 
+					            orgDateTime, newDateTime);
+			}
+
+			return newDateTime;
 		}
     #region Sort Members
 
