@@ -332,6 +332,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewTVGroupChannels.Size = new System.Drawing.Size(168, 240);
       this.listViewTVGroupChannels.TabIndex = 5;
       this.listViewTVGroupChannels.View = System.Windows.Forms.View.Details;
+      this.listViewTVGroupChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVGroupChannels_ColumnClick);
       // 
       // columnHeader9
       // 
@@ -853,6 +854,11 @@ namespace MediaPortal.Configuration.Sections
 			base.OnSectionActivated ();
 			LoadSettings();
 		}
+
+    private void listViewTVGroupChannels_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+    
+    }
 	}
 }
 
