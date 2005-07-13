@@ -186,9 +186,6 @@ namespace MediaPortal.Configuration
 			redeye = new Sections.RedEye();//PB00//
 			AddChildSection(remote, redeye);//PB00//
 
-			Log.Write("add FireDTV Remote section");
-			AddChildSection(remote,new Sections.FireDTVRemote());
-
       Log.Write("add DirectInput section");
       dinputRemote = new Sections.DirectInputRemote();
       AddChildSection(remote, dinputRemote);

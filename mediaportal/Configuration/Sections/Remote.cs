@@ -30,12 +30,14 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.CheckBox checkBoxHCW;
     private System.Windows.Forms.Label infoDriverStatus;
     private System.Windows.Forms.GroupBox groupBoxInformation;
-    private System.Windows.Forms.TabControl tabControlRemotes;
     private System.Windows.Forms.TabPage tabPageMCE;
     private System.Windows.Forms.TabPage tabPageHCW;
     private System.Windows.Forms.Label label2sec;
     private System.Windows.Forms.Label label0sec;
     private System.Windows.Forms.Button btnMapping;
+    private MediaPortal.Configuration.Sections.FireDTVRemote fireDTVRemote;
+    private System.Windows.Forms.TabControl tabControlRemotes;
+    private System.Windows.Forms.TabPage tabPageFireDTV;
     private System.ComponentModel.IContainer components = null;
 
     public struct RAWINPUTDEVICE 
@@ -107,7 +109,6 @@ namespace MediaPortal.Configuration.Sections
         checkBoxKeepControl.Checked       = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
         checkBoxVerboseLog.Checked        = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         trackBarDelay.Value               = xmlreader.GetValueAsInt("remote", "HCWDelay", 0);
-//        comboBoxPowerButton.SelectedIndex = xmlreader.GetValueAsInt("remote", "HCWPower", 0);
       }
 
       radioButtonEurope.Checked = !radioButtonUSA.Checked;
@@ -168,6 +169,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxHCW.Enabled = false;
         groupBoxSettings.Enabled = false;
       }
+
+      fireDTVRemote.LoadSettings();
     }
 
     public override void SaveSettings()
@@ -182,6 +185,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "HCWVerboseLog", checkBoxVerboseLog.Checked);
         xmlwriter.SetValue("remote", "HCWDelay", trackBarDelay.Value);
       }
+
+      fireDTVRemote.SaveSettings();
     }
 
     /// <summary>
@@ -229,12 +234,15 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVerboseLog = new System.Windows.Forms.CheckBox();
       this.buttonDefault = new System.Windows.Forms.Button();
       this.checkBoxHCW = new System.Windows.Forms.CheckBox();
+      this.tabPageFireDTV = new System.Windows.Forms.TabPage();
+      this.fireDTVRemote = new MediaPortal.Configuration.Sections.FireDTVRemote();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMCE.SuspendLayout();
       this.tabPageHCW.SuspendLayout();
       this.groupBoxInformation.SuspendLayout();
       this.groupBoxSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDelay)).BeginInit();
+      this.tabPageFireDTV.SuspendLayout();
       this.SuspendLayout();
       // 
       // pictureBoxEU
@@ -272,6 +280,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tabControlRemotes.Controls.Add(this.tabPageMCE);
       this.tabControlRemotes.Controls.Add(this.tabPageHCW);
+      this.tabControlRemotes.Controls.Add(this.tabPageFireDTV);
       this.tabControlRemotes.Location = new System.Drawing.Point(8, 16);
       this.tabControlRemotes.Name = "tabControlRemotes";
       this.tabControlRemotes.SelectedIndex = 0;
@@ -319,7 +328,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageHCW.Controls.Add(this.checkBoxHCW);
       this.tabPageHCW.Location = new System.Drawing.Point(4, 22);
       this.tabPageHCW.Name = "tabPageHCW";
-      this.tabPageHCW.Size = new System.Drawing.Size(456, 374);
+      this.tabPageHCW.Size = new System.Drawing.Size(464, 374);
       this.tabPageHCW.TabIndex = 1;
       this.tabPageHCW.Text = "Hauppauge Remote";
       // 
@@ -463,6 +472,23 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHCW.Text = "Use Hauppauge remote";
       this.checkBoxHCW.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
       // 
+      // tabPageFireDTV
+      // 
+      this.tabPageFireDTV.Controls.Add(this.fireDTVRemote);
+      this.tabPageFireDTV.Location = new System.Drawing.Point(4, 22);
+      this.tabPageFireDTV.Name = "tabPageFireDTV";
+      this.tabPageFireDTV.Size = new System.Drawing.Size(464, 374);
+      this.tabPageFireDTV.TabIndex = 2;
+      this.tabPageFireDTV.Text = "FireDTV Remote";
+      // 
+      // fireDTVRemote
+      // 
+      this.fireDTVRemote.AutoScroll = true;
+      this.fireDTVRemote.Location = new System.Drawing.Point(0, 8);
+      this.fireDTVRemote.Name = "fireDTVRemote";
+      this.fireDTVRemote.Size = new System.Drawing.Size(520, 368);
+      this.fireDTVRemote.TabIndex = 0;
+      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -474,6 +500,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxInformation.ResumeLayout(false);
       this.groupBoxSettings.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDelay)).EndInit();
+      this.tabPageFireDTV.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
