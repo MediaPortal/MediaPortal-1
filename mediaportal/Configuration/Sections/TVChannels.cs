@@ -259,7 +259,10 @@ namespace MediaPortal.Configuration.Sections
       this.channelsListView.SmallImageList = this.imageList1;
       this.channelsListView.TabIndex = 0;
       this.channelsListView.View = System.Windows.Forms.View.Details;
-      this.channelsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.channelsListView_ColumnClick);
+      this.channelsListView.DoubleClick += new System.EventHandler(this.channelsListView_DoubleClick); 	 
+      this.channelsListView.SelectedIndexChanged += new System.EventHandler(this.channelsListView_SelectedIndexChanged); 	 
+      this.channelsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.channelsListView_ColumnClick); 	 
+      this.channelsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.channelsListView_ItemCheck);
       // 
       // columnHeader1
       // 
@@ -388,6 +391,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnMapChannelToCard.Size = new System.Drawing.Size(32, 23);
       this.btnMapChannelToCard.TabIndex = 15;
       this.btnMapChannelToCard.Text = ">>";
+      this.btnMapChannelToCard.Click += new System.EventHandler(this.btnMapChannelToCard_Click);
       // 
       // btnUnmapChannelFromCard
       // 
@@ -397,6 +401,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(32, 23);
       this.btnUnmapChannelFromCard.TabIndex = 14;
       this.btnUnmapChannelFromCard.Text = "<<";
+      this.btnUnmapChannelFromCard.Click += new System.EventHandler(this.btnUnmapChannelFromCard_Click);
       // 
       // listViewTVChannelsForCard
       // 
@@ -459,6 +464,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxCard.Name = "comboBoxCard";
       this.comboBoxCard.Size = new System.Drawing.Size(280, 21);
       this.comboBoxCard.TabIndex = 8;
+      this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
       // 
       // TVChannels
       // 
