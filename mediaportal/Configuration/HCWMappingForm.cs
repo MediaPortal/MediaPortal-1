@@ -157,10 +157,12 @@ namespace MediaPortal.Configuration
       // treeMapping
       // 
       this.treeMapping.AllowDrop = true;
+      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
       this.treeMapping.ImageIndex = -1;
-      this.treeMapping.Location = new System.Drawing.Point(64, 78);
+      this.treeMapping.Location = new System.Drawing.Point(16, 56);
       this.treeMapping.Name = "treeMapping";
       this.treeMapping.SelectedImageIndex = -1;
       this.treeMapping.Size = new System.Drawing.Size(312, 330);
@@ -231,6 +233,7 @@ namespace MediaPortal.Configuration
       // 
       // groupBoxCondition
       // 
+      this.groupBoxCondition.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.groupBoxCondition.Controls.Add(this.radioButtonWindow);
       this.groupBoxCondition.Controls.Add(this.radioButtonFullscreen);
       this.groupBoxCondition.Controls.Add(this.radioButtonPlaying);
@@ -238,7 +241,7 @@ namespace MediaPortal.Configuration
       this.groupBoxCondition.Controls.Add(this.comboBoxCondProperty);
       this.groupBoxCondition.Enabled = false;
       this.groupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxCondition.Location = new System.Drawing.Point(400, 144);
+      this.groupBoxCondition.Location = new System.Drawing.Point(352, 120);
       this.groupBoxCondition.Name = "groupBoxCondition";
       this.groupBoxCondition.Size = new System.Drawing.Size(224, 112);
       this.groupBoxCondition.TabIndex = 15;
@@ -297,6 +300,7 @@ namespace MediaPortal.Configuration
       // 
       // groupBoxAction
       // 
+      this.groupBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAction.Controls.Add(this.labelSound);
       this.groupBoxAction.Controls.Add(this.comboBoxSound);
       this.groupBoxAction.Controls.Add(this.radioButtonAction);
@@ -307,7 +311,7 @@ namespace MediaPortal.Configuration
       this.groupBoxAction.Controls.Add(this.comboBoxCmdProperty);
       this.groupBoxAction.Enabled = false;
       this.groupBoxAction.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxAction.Location = new System.Drawing.Point(400, 264);
+      this.groupBoxAction.Location = new System.Drawing.Point(352, 240);
       this.groupBoxAction.Name = "groupBoxAction";
       this.groupBoxAction.Size = new System.Drawing.Size(224, 168);
       this.groupBoxAction.TabIndex = 16;
@@ -343,7 +347,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.Location = new System.Drawing.Point(16, 16);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(656, 24);
+      this.headerLabel.Size = new System.Drawing.Size(560, 24);
       this.headerLabel.TabIndex = 17;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
@@ -352,7 +356,7 @@ namespace MediaPortal.Configuration
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.applyButton.Location = new System.Drawing.Point(450, 485);
+      this.applyButton.Location = new System.Drawing.Point(348, 437);
       this.applyButton.Name = "applyButton";
       this.applyButton.TabIndex = 20;
       this.applyButton.Text = "Apply";
@@ -362,7 +366,7 @@ namespace MediaPortal.Configuration
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.okButton.Location = new System.Drawing.Point(530, 485);
+      this.okButton.Location = new System.Drawing.Point(428, 437);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 19;
       this.okButton.Text = "OK";
@@ -373,7 +377,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(609, 485);
+      this.cancelButton.Location = new System.Drawing.Point(507, 437);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 18;
       this.cancelButton.Text = "Cancel";
@@ -382,18 +386,19 @@ namespace MediaPortal.Configuration
       // 
       this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 475);
+      this.beveledLine1.Location = new System.Drawing.Point(8, 427);
       this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(676, 2);
+      this.beveledLine1.Size = new System.Drawing.Size(574, 2);
       this.beveledLine1.TabIndex = 21;
       // 
       // groupBoxLayer
       // 
+      this.groupBoxLayer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxLayer.Controls.Add(this.comboBoxLayer);
       this.groupBoxLayer.Controls.Add(this.labelLayer);
       this.groupBoxLayer.Enabled = false;
       this.groupBoxLayer.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxLayer.Location = new System.Drawing.Point(400, 72);
+      this.groupBoxLayer.Location = new System.Drawing.Point(352, 48);
       this.groupBoxLayer.Name = "groupBoxLayer";
       this.groupBoxLayer.Size = new System.Drawing.Size(224, 64);
       this.groupBoxLayer.TabIndex = 22;
@@ -420,8 +425,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonUp
       // 
+      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonUp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonUp.Location = new System.Drawing.Point(64, 416);
+      this.buttonUp.Location = new System.Drawing.Point(16, 392);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(56, 16);
       this.buttonUp.TabIndex = 23;
@@ -430,8 +436,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonDown
       // 
+      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonDown.Location = new System.Drawing.Point(128, 416);
+      this.buttonDown.Location = new System.Drawing.Point(80, 392);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(56, 16);
       this.buttonDown.TabIndex = 24;
@@ -440,8 +447,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonNew
       // 
+      this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonNew.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonNew.Location = new System.Drawing.Point(192, 416);
+      this.buttonNew.Location = new System.Drawing.Point(144, 392);
       this.buttonNew.Name = "buttonNew";
       this.buttonNew.Size = new System.Drawing.Size(56, 16);
       this.buttonNew.TabIndex = 26;
@@ -450,8 +458,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonRemove
       // 
+      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonRemove.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonRemove.Location = new System.Drawing.Point(256, 416);
+      this.buttonRemove.Location = new System.Drawing.Point(208, 392);
       this.buttonRemove.Name = "buttonRemove";
       this.buttonRemove.Size = new System.Drawing.Size(56, 16);
       this.buttonRemove.TabIndex = 27;
@@ -460,8 +469,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonDefault
       // 
+      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonDefault.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonDefault.Location = new System.Drawing.Point(320, 416);
+      this.buttonDefault.Location = new System.Drawing.Point(272, 392);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(56, 16);
       this.buttonDefault.TabIndex = 28;
@@ -472,28 +482,26 @@ namespace MediaPortal.Configuration
       // 
       this.AcceptButton = this.okButton;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(694, 518);
+      this.ClientSize = new System.Drawing.Size(592, 470);
+      this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
       this.Controls.Add(this.buttonRemove);
       this.Controls.Add(this.buttonNew);
       this.Controls.Add(this.buttonDown);
       this.Controls.Add(this.buttonUp);
-      this.Controls.Add(this.groupBoxLayer);
       this.Controls.Add(this.beveledLine1);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.headerLabel);
-      this.Controls.Add(this.groupBoxCondition);
-      this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.groupBoxAction);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+      this.Controls.Add(this.groupBoxCondition);
+      this.Controls.Add(this.groupBoxLayer);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.MinimumSize = new System.Drawing.Size(700, 550);
       this.Name = "HCWMappingForm";
       this.ShowInTaskbar = false;
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Media Portal - Setup";
       this.groupBoxCondition.ResumeLayout(false);
       this.groupBoxAction.ResumeLayout(false);

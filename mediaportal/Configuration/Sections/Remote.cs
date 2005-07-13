@@ -275,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlRemotes.Location = new System.Drawing.Point(8, 16);
       this.tabControlRemotes.Name = "tabControlRemotes";
       this.tabControlRemotes.SelectedIndex = 0;
-      this.tabControlRemotes.Size = new System.Drawing.Size(472, 408);
+      this.tabControlRemotes.Size = new System.Drawing.Size(472, 400);
       this.tabControlRemotes.TabIndex = 5;
       // 
       // tabPageMCE
@@ -287,7 +287,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageMCE.Controls.Add(this.pictureBoxUSA);
       this.tabPageMCE.Location = new System.Drawing.Point(4, 22);
       this.tabPageMCE.Name = "tabPageMCE";
-      this.tabPageMCE.Size = new System.Drawing.Size(464, 382);
+      this.tabPageMCE.Size = new System.Drawing.Size(464, 374);
       this.tabPageMCE.TabIndex = 0;
       this.tabPageMCE.Text = "Microsoft MCE Remote";
       // 
@@ -319,7 +319,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageHCW.Controls.Add(this.checkBoxHCW);
       this.tabPageHCW.Location = new System.Drawing.Point(4, 22);
       this.tabPageHCW.Name = "tabPageHCW";
-      this.tabPageHCW.Size = new System.Drawing.Size(464, 382);
+      this.tabPageHCW.Size = new System.Drawing.Size(456, 374);
       this.tabPageHCW.TabIndex = 1;
       this.tabPageHCW.Text = "Hauppauge Remote";
       // 
@@ -467,7 +467,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.tabControlRemotes);
       this.Name = "Remote";
-      this.Size = new System.Drawing.Size(488, 432);
+      this.Size = new System.Drawing.Size(488, 424);
       this.tabControlRemotes.ResumeLayout(false);
       this.tabPageMCE.ResumeLayout(false);
       this.tabPageHCW.ResumeLayout(false);
