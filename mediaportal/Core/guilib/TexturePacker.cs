@@ -262,8 +262,8 @@ namespace MediaPortal.GUI.Library
 			foreach (PackedTexture bigOne in packedTextures)
 			{
 				Format useFormat=Format.A8R8G8B8;
-				if (IsCompressedTextureFormatOk(Format.Dxt5))
-					useFormat=Format.Dxt5;
+				//if (IsCompressedTextureFormatOk(Format.Dxt5))
+				//	useFormat=Format.Dxt5;
 				if (bigOne.texture==null)
 				{
 					bigOne.textureNo=-1;
