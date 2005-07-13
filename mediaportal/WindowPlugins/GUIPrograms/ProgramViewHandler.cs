@@ -22,7 +22,7 @@ namespace WindowPlugins.GUIPrograms
 
     public ProgramViewHandler()
     {
-      if (!System.IO.File.Exists("programViews2.xml"))
+      if (!System.IO.File.Exists("programViews3.xml"))
       {
         FilterDefinition filter1 = null;
         FilterDefinition filter2 = null;
