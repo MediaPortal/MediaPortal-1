@@ -511,7 +511,16 @@ public enum DsEvCode
 	DvdDiscEjected		= 0x118,	// EC_DVD_DISC_EJECTED
 	DvdDiscInserted		= 0x119,	// EC_DVD_DISC_INSERTED
 	DvdCurrentHmsfTime	= 0x11a,	// EC_DVD_CURRENT_HMSF_TIME
-	DvdKaraokeMode		= 0x11b		// EC_DVD_KARAOKE_MODE
+	DvdKaraokeMode		= 0x11b,		// EC_DVD_KARAOKE_MODE
+
+	StreamBufferTimeHole=0x326,	//STREAMBUFFER_EC_TIMEHOLE 
+	StreamBufferStaleDataRead=0x327, //STREAMBUFFER_EC_STALE_DATA_READ
+  StreamBufferStaleFileDeleted=0x328,//STREAMBUFFER_EC_STALE_FILE_DELETED
+	StreamBufferContentBecomingStale=0x329,//STREAMBUFFER_EC_CONTENT_BECOMING_STALE
+	StreamBufferWriteFailure=0x32a,	//STREAMBUFFER_EC_WRITE_FAILURE,
+	StreamBufferReadFailure=0x32b, //STREAMBUFFER_EC_READ_FAILURE
+	StreamBufferRateChanged=0x32c,	//STREAMBUFFER_EC_RATE_CHANGED
+
 }
 
 

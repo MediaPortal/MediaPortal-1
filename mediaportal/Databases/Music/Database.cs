@@ -1738,7 +1738,7 @@ namespace MediaPortal.Music.Database
 
 	public bool GetSongsByPath2(string strPath1, ref ArrayList songs)
 		{
-		Log.Write ("GetSongsByPath2 {0} ",strPath1);
+		//Log.Write ("GetSongsByPath2 {0} ",strPath1);
 		
 		string strSQL=String.Empty;
 		try
