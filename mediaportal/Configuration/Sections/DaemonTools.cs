@@ -100,13 +100,13 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonSelectFolder = new System.Windows.Forms.Button();
       this.comboDriveNo = new System.Windows.Forms.ComboBox();
+      this.comboBoxDrive = new System.Windows.Forms.ComboBox();
+      this.textBoxDaemonTools = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
-      this.comboBoxDrive = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.buttonSelectFolder = new System.Windows.Forms.Button();
-      this.textBoxDaemonTools = new System.Windows.Forms.TextBox();
       this.checkBoxDaemonTools = new System.Windows.Forms.CheckBox();
       this.checkBoxAskBeforePlaying = new System.Windows.Forms.CheckBox();
       this.groupBox2.SuspendLayout();
@@ -116,22 +116,32 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.buttonSelectFolder);
       this.groupBox2.Controls.Add(this.comboDriveNo);
+      this.groupBox2.Controls.Add(this.comboBoxDrive);
+      this.groupBox2.Controls.Add(this.textBoxDaemonTools);
       this.groupBox2.Controls.Add(this.label4);
       this.groupBox2.Controls.Add(this.label3);
-      this.groupBox2.Controls.Add(this.comboBoxDrive);
       this.groupBox2.Controls.Add(this.label1);
-      this.groupBox2.Controls.Add(this.buttonSelectFolder);
-      this.groupBox2.Controls.Add(this.textBoxDaemonTools);
       this.groupBox2.Controls.Add(this.checkBoxDaemonTools);
       this.groupBox2.Controls.Add(this.checkBoxAskBeforePlaying);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(8, 8);
+      this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(440, 168);
+      this.groupBox2.Size = new System.Drawing.Size(472, 168);
       this.groupBox2.TabIndex = 3;
       this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "Daemon tools";
+      // 
+      // buttonSelectFolder
+      // 
+      this.buttonSelectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSelectFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonSelectFolder.Location = new System.Drawing.Point(384, 52);
+      this.buttonSelectFolder.Name = "buttonSelectFolder";
+      this.buttonSelectFolder.Size = new System.Drawing.Size(72, 22);
+      this.buttonSelectFolder.TabIndex = 2;
+      this.buttonSelectFolder.Text = "Browse";
+      this.buttonSelectFolder.Click += new System.EventHandler(this.buttonSelectFolder_Click);
       // 
       // comboDriveNo
       // 
@@ -141,26 +151,10 @@ namespace MediaPortal.Configuration.Sections
                                                       "1",
                                                       "2",
                                                       "3"});
-      this.comboDriveNo.Location = new System.Drawing.Point(128, 104);
+      this.comboDriveNo.Location = new System.Drawing.Point(128, 100);
       this.comboDriveNo.Name = "comboDriveNo";
       this.comboDriveNo.Size = new System.Drawing.Size(121, 21);
       this.comboDriveNo.TabIndex = 4;
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(32, 104);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(64, 16);
-      this.label4.TabIndex = 6;
-      this.label4.Text = "Drive No:";
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(32, 56);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(80, 16);
-      this.label3.TabIndex = 5;
-      this.label3.Text = "Daemon tools:";
       // 
       // comboBoxDrive
       // 
@@ -189,10 +183,34 @@ namespace MediaPortal.Configuration.Sections
                                                        "X:",
                                                        "Y:",
                                                        "Z:"});
-      this.comboBoxDrive.Location = new System.Drawing.Point(128, 80);
+      this.comboBoxDrive.Location = new System.Drawing.Point(128, 76);
       this.comboBoxDrive.Name = "comboBoxDrive";
       this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);
       this.comboBoxDrive.TabIndex = 3;
+      // 
+      // textBoxDaemonTools
+      // 
+      this.textBoxDaemonTools.Location = new System.Drawing.Point(128, 53);
+      this.textBoxDaemonTools.Name = "textBoxDaemonTools";
+      this.textBoxDaemonTools.Size = new System.Drawing.Size(240, 20);
+      this.textBoxDaemonTools.TabIndex = 1;
+      this.textBoxDaemonTools.Text = "";
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(32, 104);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(64, 16);
+      this.label4.TabIndex = 6;
+      this.label4.Text = "Drive No:";
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(32, 56);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(80, 16);
+      this.label3.TabIndex = 5;
+      this.label3.Text = "Daemon tools:";
       // 
       // label1
       // 
@@ -202,25 +220,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(80, 16);
       this.label1.TabIndex = 3;
       this.label1.Text = "Virtual drive:";
-      // 
-      // buttonSelectFolder
-      // 
-      this.buttonSelectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSelectFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonSelectFolder.Location = new System.Drawing.Point(368, 48);
-      this.buttonSelectFolder.Name = "buttonSelectFolder";
-      this.buttonSelectFolder.Size = new System.Drawing.Size(56, 20);
-      this.buttonSelectFolder.TabIndex = 2;
-      this.buttonSelectFolder.Text = "Browse";
-      this.buttonSelectFolder.Click += new System.EventHandler(this.buttonSelectFolder_Click);
-      // 
-      // textBoxDaemonTools
-      // 
-      this.textBoxDaemonTools.Location = new System.Drawing.Point(128, 48);
-      this.textBoxDaemonTools.Name = "textBoxDaemonTools";
-      this.textBoxDaemonTools.Size = new System.Drawing.Size(224, 20);
-      this.textBoxDaemonTools.TabIndex = 1;
-      this.textBoxDaemonTools.Text = "";
       // 
       // checkBoxDaemonTools
       // 
@@ -237,7 +236,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAskBeforePlaying.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxAskBeforePlaying.Location = new System.Drawing.Point(16, 136);
       this.checkBoxAskBeforePlaying.Name = "checkBoxAskBeforePlaying";
-      this.checkBoxAskBeforePlaying.Size = new System.Drawing.Size(296, 16);
+      this.checkBoxAskBeforePlaying.Size = new System.Drawing.Size(176, 16);
       this.checkBoxAskBeforePlaying.TabIndex = 8;
       this.checkBoxAskBeforePlaying.Text = "Ask before playing .iso/.bin files";
       // 
@@ -246,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
       this.BackColor = System.Drawing.SystemColors.Control;
       this.Controls.Add(this.groupBox2);
       this.Name = "DeamonTools";
-      this.Size = new System.Drawing.Size(456, 448);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 
