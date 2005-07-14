@@ -364,7 +364,12 @@ namespace MediaPortal.Player
 			TimeSpan ts=DateTime.Now-updateTimer;
 			if (ts.TotalMilliseconds>=800 || iSpeed!=1) 
 			{
-				UpdateCurrentPosition();
+				double pos=CurrentPosition;
+				UpdateCurrentPosition();/*
+				if (pos == CurrentPosition)
+				{
+					Log.Write("--- stopped at :{0}", pos);
+				}*/
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
@@ -707,17 +712,17 @@ namespace MediaPortal.Player
 			}
 		}
 
-		public override void SeekAbsolute(double dTime)
+		public override void SeekAbsolute(double dTimeInSecs)
 		{
 			if (m_state!=PlayState.Init)
 			{
 				if (mediaCtrl!=null && m_mediaSeeking!=null)
         {
-          if (dTime<0.0d) dTime=0.0d;
-          if (dTime>Duration) dTime=Duration;
-					dTime=Math.Floor(dTime);
-          //Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
-          dTime*=10000000d;
+          if (dTimeInSecs<0.0d) dTimeInSecs=0.0d;
+          if (dTimeInSecs>Duration) dTimeInSecs=Duration;
+					dTimeInSecs=Math.Floor(dTimeInSecs);
+          //Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
+          dTimeInSecs*=10000000d;
 					long pStop=0;
           long lContentStart,lContentEnd;
           double fContentStart,fContentEnd;
@@ -725,8 +730,8 @@ namespace MediaPortal.Player
           fContentStart=lContentStart;
           fContentEnd=lContentEnd;
 
-          dTime+=fContentStart;
-          long lTime=(long)dTime;
+          dTimeInSecs+=fContentStart;
+          long lTime=(long)dTimeInSecs;
           
 					int hr=m_mediaSeeking.SetPositions(ref lTime, (SeekingFlags)((int)SeekingFlags.AbsolutePositioning+(int)SeekingFlags.SeekToKeyFrame),ref pStop, SeekingFlags.NoPositioning);
           if (hr !=0)
@@ -1054,12 +1059,43 @@ namespace MediaPortal.Player
 						if (code>=DsEvCode.StreamBufferTimeHole && code <= DsEvCode.StreamBufferRateChanged)
 						{
 							Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+							long contentStart,contentStop,streamPosition,segmentstop;
+							double fcontentStart,fcontentStop,fstreamPosition,fsegmentstop;
+							m_mediaSeeking.GetAvailable(out contentStart, out contentStop);
+							m_mediaSeeking.GetCurrentPosition(out streamPosition);
+							m_mediaSeeking.GetStopPosition(out segmentstop);
+							fcontentStart=(double)contentStart;
+							fcontentStop=(double)contentStop;
+							fstreamPosition=(double)streamPosition;
+							fsegmentstop=(double)segmentstop;
+
+							fcontentStart/=10000000d;
+							fcontentStop/=10000000d;
+							fstreamPosition/=10000000d;
+							fsegmentstop/=10000000d;
+							Log.Write("StreamBufferPlayer:  content start   :{0} content stop :{1}", fcontentStart.ToString("f2"), fcontentStop.ToString("f2"));
+							Log.Write("StreamBufferPlayer:  streamPosition  :{0} segment stop :{1}", fstreamPosition.ToString("f2"), fsegmentstop.ToString("f2"));
+							if (code==DsEvCode.StreamBufferTimeHole)
+							{
+								//The Stream Buffer Source filter has reached a gap in the content. 
+								//p1 = Time of the start of the gap, in milliseconds, relative to the content start.
+								//param2 = Duration of the gap, in milliseconds.
+								double newpos=(double)p1 + (double)p2 + contentStart;
+								newpos /=1000d;
+								if (newpos <fstreamPosition-1 || newpos > fstreamPosition+1)
+								{
+									Log.Write("StreamBufferPlayer:  seek to:{0}", newpos.ToString("f2"));
+									SeekAbsolute(newpos);
+								}
+							}
 						}
-						if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+						else if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
 						{
 							Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
 							MovieEnded();
 						}
+						else
+							Log.Write("StreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
 					}
 					else break;
         }
