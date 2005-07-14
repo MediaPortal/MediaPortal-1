@@ -743,7 +743,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if(m_mhwGrabbing==false)
 			{
-				Log.Write("dvb-demuxer: timeout");//change
+				//Log.Write("dvb-demuxer: timeout for pid:{0} tableid:{1}",m_sectionPid, m_sectionTableID);//change
 				m_secTimer.Stop();
 				ClearGrabber();// clear up
 			}
@@ -1252,7 +1252,7 @@ namespace MediaPortal.TV.Recording
 						}
 						else
 						{
-							Log.WriteFile(Log.LogType.Error,"CRC error:{0:X} != {1:X}", crc1,crc2);
+							//Log.WriteFile(Log.LogType.Error,"CRC error:{0:X} != {1:X}", crc1,crc2);
 							sectionOK=false;
 							// reject the section
 						}
