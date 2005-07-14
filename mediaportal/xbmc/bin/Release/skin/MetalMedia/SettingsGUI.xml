@@ -36,34 +36,55 @@
 		<font>font10</font>
 		<align>right</align>
 	</control>
+
 	<control>
-		<description>Scroll Speed label</description>
+		<description>Scroll Speed label horizontal</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>100</posX>
+		<posY>200</posY>
+		<label>1442</label>
+	</control>
+	<control>
+		<description>Speedselect Horizontal</description>
+		<type>spincontrol</type>
+		<id>2</id>
+		<posX>240</posX>
+		<posY>204</posY>
+		<reverse>yes</reverse>
+		<onup>1234</onup> <!-- Goto topbar -->
+		<ondown>4</ondown>
+		<onleft>2</onleft>
+		<onright>2</onright>
+	</control>
+
+	<control>
+		<description>Scroll Speed label vertical</description>
 		<type>label</type>
 		<id>1</id>
 		<posX>100</posX>
 		<posY>218</posY>
-		<label>673</label>
-		<font>font13</font>
+		<label>1443</label>
 	</control>
 	<control>
-		<description>Speedselect</description>
+		<description>Speedselect Vertical</description>
 		<type>spincontrol</type>
-		<id>2</id>
-		<posX>220</posX>
+		<id>4</id>
+		<posX>240</posX>
 		<posY>222</posY>
 		<reverse>yes</reverse>
-		<onup>20</onup>
+		<onup>2</onup>
 		<ondown>3</ondown>
-		<onleft>2</onleft>
-		<onright>2</onright>
-		<buddycontrolid>100</buddycontrolid>
+		<onleft>4</onleft>
+		<onright>4</onright>
 	</control>
+
 	<control>
 		<description>FPS label</description>
 		<type>label</type>
 		<id>1</id>
 		<posX>100</posX>
-		<posY>240</posY>
+		<posY>260</posY>
 		<label>973</label>
 		<font>font13</font>
 	</control>
@@ -71,10 +92,10 @@
 		<description>FPS select</description>
 		<type>spincontrol</type>
 		<id>3</id>
-		<posX>264</posX>
+		<posX>284</posX>
 		<posY>244</posY>
 		<reverse>yes</reverse>
-		<onup>2</onup>
+		<onup>4</onup>
 		<ondown>3</ondown>
 		<onleft>3</onleft>
 		<onright>3</onright>
@@ -83,7 +104,7 @@
 		<description>currentFPS count</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>325</posX>
+		<posX>345</posX>
 		<posY>240</posY>
 		<label>#fps</label>
 	</control>
@@ -96,7 +117,6 @@
 		<posY>300</posY>
 		<width>400</width>
 		<label>675</label>
-		<font>font13</font>
 	</control>
 	<control>
 		<description>Horizontal example</description>
@@ -106,7 +126,6 @@
 		<posY>320</posY>
 		<width>300</width>
 		<label>-</label>
-		<font>font13</font>
 	</control>
 	<control>
 		<description>Textarea example</description>
@@ -117,7 +136,6 @@
 		<width>300</width>
 		<height>100</height>
 		<label>-</label>
-		<font>font13</font>
 	</control>
 
 </controls>
