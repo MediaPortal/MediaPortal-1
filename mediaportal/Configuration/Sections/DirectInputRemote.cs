@@ -105,7 +105,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbI.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.gbI.Location = new System.Drawing.Point(0, 176);
       this.gbI.Name = "gbI";
-      this.gbI.Size = new System.Drawing.Size(472, 200);
+      this.gbI.Size = new System.Drawing.Size(472, 232);
       this.gbI.TabIndex = 14;
       this.gbI.TabStop = false;
       this.gbI.Text = "Information";
@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
       this.txtMonitor.Multiline = true;
       this.txtMonitor.Name = "txtMonitor";
       this.txtMonitor.ReadOnly = true;
-      this.txtMonitor.Size = new System.Drawing.Size(440, 160);
+      this.txtMonitor.Size = new System.Drawing.Size(440, 192);
       this.txtMonitor.TabIndex = 4;
       this.txtMonitor.Text = "";
       // 
