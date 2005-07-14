@@ -50,7 +50,7 @@ namespace Programs.Utils
     public const string cGROUPER = "GROUPER";
     public const string cGAMEBASE = "GAMEBASE";
 
-    public const string cMIGRATIONKEY = "V1_V2MIGRATION";
+//    public const string cMIGRATIONKEY = "V1_V2MIGRATION";
     public const string cPLUGINTITLE = "PLUGINTITLE";
     public const string cCONTENT_PATCH = "CONTENTPATCH";
     public const string cGENRE_PATCH = "GENREPATCH";

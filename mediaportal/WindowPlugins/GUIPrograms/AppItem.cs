@@ -752,11 +752,10 @@ namespace ProgramsDatabase
         ArrayList arr = (ArrayList) results.Rows[0];
         if (arr[0] != null)
         {
-          res = Int32.Parse((string) arr[0]);
-        }
-        else
-        {
-          res = 0;
+          if ((string)arr[0] != "")
+          {
+            res = Int32.Parse((string) arr[0]);
+          }
         }
         return res + 1;
       }

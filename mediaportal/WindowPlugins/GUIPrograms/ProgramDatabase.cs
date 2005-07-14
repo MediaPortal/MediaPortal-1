@@ -113,7 +113,8 @@ namespace ProgramsDatabase
     }
 
 
-    static void DoV2_V3Migration()
+/*
+ *     static void DoV2_V3Migration()
     {
       try
       {
@@ -141,13 +142,12 @@ namespace ProgramsDatabase
         Log.Write("programdatabase migration exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
-
+*/
     static bool CreateObjects()
     {
-      bool bTryMigration = false;
       if (sqlDB == null)
         return false;
-      bTryMigration = AddObject("application", "table", 
+      AddObject("application", "table", 
         "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer);\n");
       AddObject("file", "table", 
         "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text);\n");
@@ -159,10 +159,12 @@ namespace ProgramsDatabase
       AddObject("idxFilterItem1", "index", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID);\n");
       AddObject("td_application", "trigger", 
         "CREATE TRIGGER td_application BEFORE DELETE ON application \n  BEGIN\n    DELETE FROM filterItem WHERE appID = old.appID OR grouperAppID = old.appID;\n    DELETE FROM file WHERE appID = old.appID;\n  END;\n");
-      if (bTryMigration)
+/*
+ *       if (bTryMigration)
       {
         DoV2_V3Migration();
       }
+*/      
       return true;
     }
 
