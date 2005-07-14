@@ -145,6 +145,7 @@ namespace DShowNET
 							NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
 							NewFilter.GetClassID(out classId2);
 							Marshal.ReleaseComObject( NewFilter );
+							NewFilter=null;
 
 							if (classId1.Equals(classId2))
 							{ 
@@ -155,6 +156,7 @@ namespace DShowNET
 									if (setAsReferenceClock)
 										(graphBuilder as IMediaFilter).SetSyncSource(pBasefilter as IReferenceClock);
 									Marshal.ReleaseComObject( pBasefilter );
+									pBasefilter =null;
 									bNeedAdd=false;
 									break;
 								}
@@ -166,12 +168,13 @@ namespace DShowNET
 									bAllRemoved=true;
 									break;
 								}
-							}
-						}
-						Marshal.ReleaseComObject( pBasefilter );
-					}
+							}//if (classId1.Equals(classId2))
+						}//foreach (Filter filter in filters.AudioRenderers)
+						if (pBasefilter !=null)
+							Marshal.ReleaseComObject( pBasefilter );
+					}//while(!bAllRemoved)
 					Marshal.ReleaseComObject(enumFilters);
-				}
+				}//if (hr>=0 && enumFilters!=null)
 
 				if (!bNeedAdd) return null;
 				// next add the new one...
@@ -199,8 +202,8 @@ namespace DShowNET
 								(graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock);
 							return NewFilter;
 						}
-					}
-				}
+					}//if (String.Compare(filter.Name,strFilterName,true) ==0)
+				}//foreach (Filter filter in filters.AudioRenderers)
 				if (NewFilter==null)
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"failed filter:{0} not found", strFilterName);
@@ -391,17 +394,20 @@ namespace DShowNET
               {
                 IPin pConnectPin=null;
                 hr=pins[0].ConnectedTo(out pConnectPin);  
-                if (hr< 0 || pConnectPin==null)
-                {
-                  hr=graphBuilder.Render(pins[0]);
-                  if (hr==0) Log.WriteFile(Log.LogType.Capture,"  render ok");
-                  else 
-                  {
-                    Log.WriteFile(Log.LogType.Capture,true,"  render failed:{0:x}",hr);
-                    bAllConnected=false;
-                  }
+								if (hr< 0 || pConnectPin==null)
+								{
+									hr=graphBuilder.Render(pins[0]);
+									if (hr==0) Log.WriteFile(Log.LogType.Capture,"  render ok");
+									else 
+									{
+										Log.WriteFile(Log.LogType.Capture,true,"  render failed:{0:x}",hr);
+										bAllConnected=false;
+									}
 									pinsRendered++;
-                }
+								}
+								if (pConnectPin!=null)
+									Marshal.ReleaseComObject(pConnectPin);
+								pConnectPin=null;
                 //else Log.WriteFile(Log.LogType.Capture,"pin is already connected");
               }
               Marshal.ReleaseComObject( pins[0] );
@@ -464,6 +470,8 @@ namespace DShowNET
                   {
                     Log.WriteFile(Log.LogType.Capture,true,"  disconnected failed");
                   }
+									Marshal.ReleaseComObject(pConnectPin);
+									pConnectPin=null;
                 }
                 //else Log.WriteFile(Log.LogType.Capture,"pin is already connected");
               }

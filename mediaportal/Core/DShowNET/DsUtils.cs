@@ -18,7 +18,7 @@ namespace DShowNET
 	public class DsUtils
 	{
 
-		const int magicConstant = -759872593;
+			const int magicConstant = -759872593;
 
       static public void FindFilterByClassID(IGraphBuilder m_graphBuilder, Guid classID, out IBaseFilter filterFound)
       {
@@ -41,6 +41,8 @@ namespace DShowNET
 							{
 								Guid filterGuid;
 								filter.GetClassID(out filterGuid);
+								Marshal.ReleaseComObject(filter);
+								filter=null;
 								if (filterGuid == classID)
 								{
 									filterFound=filter;
@@ -48,6 +50,9 @@ namespace DShowNET
 								}
 							}
 						} while (iFetched==1 && hr==0);
+						if (ienumFilt!=null)
+							Marshal.ReleaseComObject(ienumFilt);
+						ienumFilt=null;
 					}
 				}
 				catch(Exception)
@@ -83,9 +88,14 @@ namespace DShowNET
 							{
 								m_graphBuilder.RemoveFilter(filter);
 								int hres=Marshal.ReleaseComObject(filter);
+								filter=null;
 								bFound=true;
 							}
 						} while (iFetched==1 && hr==0);
+						if (ienumFilt!=null)
+							Marshal.ReleaseComObject(ienumFilt);
+						ienumFilt=null;
+
 					}
 					if (!bFound) return;
 				}
@@ -127,8 +137,12 @@ namespace DShowNET
               }
 							if (filter!=null)
 								Marshal.ReleaseComObject(filter);
+							filter=null;
             } while (iFetched==1 && hr==0);
-          }
+						if (ienumFilt!=null)
+							Marshal.ReleaseComObject(ienumFilt);
+						ienumFilt=null;
+					}
         }
         catch(Exception)
         {
@@ -717,7 +731,9 @@ namespace DShowNET
 					}
 					num--;
 				}
-				Marshal.ReleaseComObject( pinArray[0] ); pinArray[0] = null;
+				if (pinArray[0]!=null)
+					Marshal.ReleaseComObject( pinArray[0] ); 
+				pinArray[0] = null;
 			}
 			while( hr == 0 );
 
@@ -753,6 +769,7 @@ namespace DShowNET
 						IPin tmp;
 						
 						hr = pins[0].ConnectedTo(out tmp);
+						if (tmp!=null) Marshal.ReleaseComObject(tmp);
 						tmp = null;
 						if (hr != 0) 
 						{
@@ -761,7 +778,9 @@ namespace DShowNET
 							break;
 						}
 					}
-					Marshal.ReleaseComObject( pins[0] ); pins[0] = null;
+					if (pins[0]!=null)
+						Marshal.ReleaseComObject( pins[0] ); 
+					pins[0] = null;
 				}
 				while( true );
 
