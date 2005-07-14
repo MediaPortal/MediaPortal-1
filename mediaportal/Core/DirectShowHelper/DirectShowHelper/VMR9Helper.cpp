@@ -33,7 +33,12 @@ void Log(const char *fmt, ...)
 	FILE* fp = fopen("log/vmr9.log","a+");
 	if (fp!=NULL)
 	{
-		fprintf(fp,"%s\n",buffer);
+		SYSTEMTIME systemTime;
+		GetSystemTime(&systemTime);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			buffer);
 		fclose(fp);
 	}
 };

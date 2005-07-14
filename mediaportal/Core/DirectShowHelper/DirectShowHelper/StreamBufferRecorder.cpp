@@ -20,63 +20,62 @@ STDMETHODIMP CStreamBufferRecorder::Create(IBaseFilter* streamBufferSink,BSTR st
 	{
 		_bstr_t bstrPath(strPath,true);
 
-		Log("CStreamBufferRecorder::Record %s", (char*)bstrPath);
+		Log("CStreamBufferRecorder::Create() Record %s", (char*)bstrPath);
 		int hr;
 		CComPtr<IUnknown> pRecUnk;
 		CComQIPtr<IStreamBufferSink> sink=streamBufferSink;
 		if (!sink)
 		{
-			Log("cannot get IStreamBufferSink:%x", hr);
-			return E_FAIL;
+			Log("cannot get IStreamBufferSink:%x");
+			return E_NOINTERFACE;
 		}
-		Log("CStreamBufferRecorder::CreateRecorder");
-
 		hr=sink->CreateRecorder( (LPCWSTR)bstrPath,dwRecordingType,&pRecUnk);
 		if (!SUCCEEDED(hr))
 		{
-			Log("create recorded failed:%x", hr);
-			return E_FAIL;
+			Log("CStreamBufferRecorder::Create() create recorder failed:%x", hr);
+			return hr;
 		}
 
 		m_recordControl=pRecUnk;
 		if (!m_recordControl)
 		{
-			Log("cannot get recorder failed:%x", hr);
-			return E_FAIL;
+			Log("CStreamBufferRecorder::Create() cannot get recorder failed");
+			return E_NOINTERFACE;
 		}
 		
 
-		Log("CStreamBufferRecorder::done");	
+		Log("CStreamBufferRecorder::Create() done");	
 	}
 	catch(...)
 	{
-		Log("CStreamBufferRecorder::done exception");	
+		Log("CStreamBufferRecorder::Create() done exception");	
 	}
 	return S_OK;
 }
+
 STDMETHODIMP CStreamBufferRecorder::Start(LONG startTime)
 {
 	try
 	{
-		Log("CStreamBufferRecorder::Start:%d", startTime);
+		Log("CStreamBufferRecorder::Start():%d", startTime);
 		if (m_recordControl==NULL)
 		{
-			Log("cannot get recorder ");
-			return E_FAIL;
+			Log("CStreamBufferRecorder::Start() recorded=null");
+			return E_NOINTERFACE;
 		}
 		REFERENCE_TIME timeStart=startTime;
 		int hr=m_recordControl->Start(&timeStart);
 		if (!SUCCEEDED(hr))
 		{
-			Log("CStreamBufferRecorder:: start1 failed:%X", hr);
+			Log("CStreamBufferRecorder::Start() start failed:%X", hr);
 			if (startTime!=0)
 			{
 				timeStart=0;
 				int hr=m_recordControl->Start(&timeStart);
 				if (!SUCCEEDED(hr))
 				{
-					Log("start failed:%x", hr);
-					return E_FAIL;
+					Log("CStreamBufferRecorder::Start() start failed:%x", hr);
+					return hr;
 				}
 			}
 		}
@@ -84,12 +83,12 @@ STDMETHODIMP CStreamBufferRecorder::Start(LONG startTime)
 		HRESULT hrOut;
 		BOOL started,stopped;
 		m_recordControl->GetRecordingStatus(&hrOut,&started,&stopped);
-		Log("rec status:%x started:%d stopped:%d", hrOut,started,stopped);
-		Log("CStreamBufferRecorder:: started");
+		Log("CStreamBufferRecorder::Start() start status:%x started:%d stopped:%d", hrOut,started,stopped);
+		Log("CStreamBufferRecorder::Start() done");
 	}
 	catch(...)
 	{
-		Log("CStreamBufferRecorder:: start exception");
+		Log("CStreamBufferRecorder::Start()  exception");
 	}
 	return S_OK;
 }
@@ -98,13 +97,13 @@ STDMETHODIMP CStreamBufferRecorder::Stop(void)
 	
 	try
 	{
-		Log("CStreamBufferRecorder:: Stop");
+		Log("CStreamBufferRecorder::Stop()");
 		if (m_recordControl!=NULL)
 		{
 			int hr=m_recordControl->Stop(0);
 			if (!SUCCEEDED(hr))
 			{
-				Log("stop failed:%x", hr);
+				Log("CStreamBufferRecorder::Stop() failed:%x", hr);
 				return S_OK;
 			}
 			for (int x=0; x < 10;++x)
@@ -112,17 +111,17 @@ STDMETHODIMP CStreamBufferRecorder::Stop(void)
 				HRESULT hrOut;
 				BOOL started,stopped;
 				m_recordControl->GetRecordingStatus(&hrOut,&started,&stopped);
-				Log("rec status:%d %x started:%d stopped:%d",x, hrOut,started,stopped);
+				Log("CStreamBufferRecorder::Stop() status:%d %x started:%d stopped:%d",x, hrOut,started,stopped);
 				if (stopped!=0) break;
 				Sleep(100);
 			}
 			m_recordControl.Release();
 		}
-		Log("CStreamBufferRecorder:: Stopped");
+		Log("CStreamBufferRecorder::Stop() done");
 	}
 	catch(...)
 	{
-		Log("CStreamBufferRecorder:: Stopped exception");
+		Log("CStreamBufferRecorder::Stop() exception");
 	}
 
 	return S_OK;

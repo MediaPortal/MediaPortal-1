@@ -7,7 +7,7 @@ void Log(const char *fmt, ...) ;
 CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
 : m_refCount(1)
 {
-	Log("----------v0.35---------------------------");
+	Log("----------v0.36---------------------------");
 	m_hMonitor=monitor;
 	m_pD3DDev=direct3dDevice;
 	m_pCallback=callback;
@@ -84,7 +84,6 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 	if(!m_pIVMRSurfAllocNotify)
 		return E_FAIL;
 
-	Log("vmr9:InitializeDevice()");
 	Log("vmr9:InitializeDevice() %dx%d AR %d:%d flags:%d buffers:%d  fmt:(%x) %c%c%c%c", 
 			lpAllocInfo->dwWidth,lpAllocInfo->dwHeight, 
 			lpAllocInfo->szAspectRatio.cx,lpAllocInfo->szAspectRatio.cy,
