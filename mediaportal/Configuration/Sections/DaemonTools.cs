@@ -145,19 +145,23 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboDriveNo
       // 
+      this.comboDriveNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.comboDriveNo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboDriveNo.Items.AddRange(new object[] {
                                                       "0",
                                                       "1",
                                                       "2",
                                                       "3"});
-      this.comboDriveNo.Location = new System.Drawing.Point(128, 100);
+      this.comboDriveNo.Location = new System.Drawing.Point(168, 100);
       this.comboDriveNo.Name = "comboDriveNo";
-      this.comboDriveNo.Size = new System.Drawing.Size(121, 21);
+      this.comboDriveNo.Size = new System.Drawing.Size(288, 21);
       this.comboDriveNo.TabIndex = 4;
       // 
       // comboBoxDrive
       // 
+      this.comboBoxDrive.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDrive.Items.AddRange(new object[] {
                                                        "D:",
@@ -183,22 +187,24 @@ namespace MediaPortal.Configuration.Sections
                                                        "X:",
                                                        "Y:",
                                                        "Z:"});
-      this.comboBoxDrive.Location = new System.Drawing.Point(128, 76);
+      this.comboBoxDrive.Location = new System.Drawing.Point(168, 76);
       this.comboBoxDrive.Name = "comboBoxDrive";
-      this.comboBoxDrive.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxDrive.Size = new System.Drawing.Size(288, 21);
       this.comboBoxDrive.TabIndex = 3;
       // 
       // textBoxDaemonTools
       // 
-      this.textBoxDaemonTools.Location = new System.Drawing.Point(128, 53);
+      this.textBoxDaemonTools.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDaemonTools.Location = new System.Drawing.Point(168, 53);
       this.textBoxDaemonTools.Name = "textBoxDaemonTools";
-      this.textBoxDaemonTools.Size = new System.Drawing.Size(240, 20);
+      this.textBoxDaemonTools.Size = new System.Drawing.Size(208, 20);
       this.textBoxDaemonTools.TabIndex = 1;
       this.textBoxDaemonTools.Text = "";
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(32, 104);
+      this.label4.Location = new System.Drawing.Point(16, 104);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(64, 16);
       this.label4.TabIndex = 6;
@@ -206,7 +212,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(32, 56);
+      this.label3.Location = new System.Drawing.Point(16, 56);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(80, 16);
       this.label3.TabIndex = 5;
@@ -214,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(32, 80);
+      this.label1.Location = new System.Drawing.Point(16, 80);
       this.label1.Name = "label1";
       this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.label1.Size = new System.Drawing.Size(80, 16);

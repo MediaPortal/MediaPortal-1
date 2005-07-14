@@ -76,95 +76,96 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.addButton = new System.Windows.Forms.Button();
-			this.removeButton = new System.Windows.Forms.Button();
-			this.extensionsListBox = new System.Windows.Forms.ListBox();
-			this.extensionTextBox = new System.Windows.Forms.TextBox();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.addButton);
-			this.groupBox1.Controls.Add(this.removeButton);
-			this.groupBox1.Controls.Add(this.extensionsListBox);
-			this.groupBox1.Controls.Add(this.extensionTextBox);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(256, 264);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Extensions";
-			// 
-			// label1
-			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.label1.Location = new System.Drawing.Point(16, 24);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(224, 40);
-			this.label1.TabIndex = 4;
-			this.label1.Text = "Files matching an extension listed below will be considered a known media type.";
-			// 
-			// addButton
-			// 
-			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.addButton.Location = new System.Drawing.Point(168, 72);
-			this.addButton.Name = "addButton";
-			this.addButton.TabIndex = 1;
-			this.addButton.Text = "Add";
-			this.addButton.Click += new System.EventHandler(this.addButton_Click);
-			// 
-			// removeButton
-			// 
-			this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.removeButton.Enabled = false;
-			this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.removeButton.Location = new System.Drawing.Point(168, 104);
-			this.removeButton.Name = "removeButton";
-			this.removeButton.TabIndex = 2;
-			this.removeButton.Text = "Remove";
-			this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
-			// 
-			// extensionsListBox
-			// 
-			this.extensionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.extensionsListBox.Location = new System.Drawing.Point(16, 96);
-			this.extensionsListBox.Name = "extensionsListBox";
-			this.extensionsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.extensionsListBox.Size = new System.Drawing.Size(144, 147);
-			this.extensionsListBox.TabIndex = 1;
-			this.extensionsListBox.SelectedIndexChanged += new System.EventHandler(this.extensionsListBox_SelectedIndexChanged);
-			// 
-			// extensionTextBox
-			// 
-			this.extensionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.extensionTextBox.Location = new System.Drawing.Point(16, 72);
-			this.extensionTextBox.Name = "extensionTextBox";
-			this.extensionTextBox.Size = new System.Drawing.Size(144, 20);
-			this.extensionTextBox.TabIndex = 0;
-			this.extensionTextBox.Text = "";
-			// 
-			// FileExtensions
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Name = "FileExtensions";
-			this.Size = new System.Drawing.Size(272, 280);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.addButton = new System.Windows.Forms.Button();
+      this.removeButton = new System.Windows.Forms.Button();
+      this.extensionsListBox = new System.Windows.Forms.ListBox();
+      this.extensionTextBox = new System.Windows.Forms.TextBox();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.addButton);
+      this.groupBox1.Controls.Add(this.removeButton);
+      this.groupBox1.Controls.Add(this.extensionsListBox);
+      this.groupBox1.Controls.Add(this.extensionTextBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      // 
+      // label1
+      // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.label1.Location = new System.Drawing.Point(16, 24);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(440, 32);
+      this.label1.TabIndex = 4;
+      this.label1.Text = "Files matching an extension listed below will be considered a known media type.";
+      // 
+      // addButton
+      // 
+      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.addButton.Location = new System.Drawing.Point(384, 64);
+      this.addButton.Name = "addButton";
+      this.addButton.Size = new System.Drawing.Size(72, 22);
+      this.addButton.TabIndex = 1;
+      this.addButton.Text = "Add";
+      this.addButton.Click += new System.EventHandler(this.addButton_Click);
+      // 
+      // removeButton
+      // 
+      this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.removeButton.Enabled = false;
+      this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.removeButton.Location = new System.Drawing.Point(384, 88);
+      this.removeButton.Name = "removeButton";
+      this.removeButton.Size = new System.Drawing.Size(72, 22);
+      this.removeButton.TabIndex = 2;
+      this.removeButton.Text = "Remove";
+      this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
+      // 
+      // extensionsListBox
+      // 
+      this.extensionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionsListBox.Location = new System.Drawing.Point(16, 88);
+      this.extensionsListBox.Name = "extensionsListBox";
+      this.extensionsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+      this.extensionsListBox.Size = new System.Drawing.Size(360, 303);
+      this.extensionsListBox.TabIndex = 1;
+      this.extensionsListBox.SelectedIndexChanged += new System.EventHandler(this.extensionsListBox_SelectedIndexChanged);
+      // 
+      // extensionTextBox
+      // 
+      this.extensionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionTextBox.Location = new System.Drawing.Point(16, 64);
+      this.extensionTextBox.Name = "extensionTextBox";
+      this.extensionTextBox.Size = new System.Drawing.Size(360, 20);
+      this.extensionTextBox.TabIndex = 0;
+      this.extensionTextBox.Text = "";
+      // 
+      // FileExtensions
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "FileExtensions";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		/// <summary>

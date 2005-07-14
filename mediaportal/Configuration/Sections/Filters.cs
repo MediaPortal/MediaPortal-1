@@ -16,6 +16,16 @@ namespace MediaPortal.Configuration.Sections
 		{
 		}
 
+    private void InitializeComponent()
+    {
+      // 
+      // FiltersSection
+      // 
+      this.Name = "FiltersSection";
+      this.Size = new System.Drawing.Size(472, 408);
+
+    }
+
 		public FiltersSection(string name) : base(name)
 		{
 

@@ -317,10 +317,6 @@ namespace MediaPortal.Configuration.Sections
                                                                                                               "DVD",
                                                                                                               "F8",
                                                                                                               "Next chapter"}, -1);
-      System.Windows.Forms.ListViewItem listViewItem67 = new System.Windows.Forms.ListViewItem(new string[] {
-                                                                                                              "DVD",
-                                                                                                              "L",
-                                                                                                              "Toggle subtitles"}, -1);
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.sharesListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -336,12 +332,11 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.sharesListView);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(384, 352);
+      this.groupBox1.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Keyboard shortcuts";
       // 
       // sharesListView
       // 
@@ -435,7 +430,7 @@ namespace MediaPortal.Configuration.Sections
                                                                                    listViewItem66});
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
-      this.sharesListView.Size = new System.Drawing.Size(352, 280);
+      this.sharesListView.Size = new System.Drawing.Size(440, 368);
       this.sharesListView.TabIndex = 0;
       this.sharesListView.View = System.Windows.Forms.View.Details;
       this.sharesListView.SelectedIndexChanged += new System.EventHandler(this.sharesListView_SelectedIndexChanged);
@@ -453,13 +448,13 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader2
       // 
       this.columnHeader2.Text = "Function";
-      this.columnHeader2.Width = 222;
+      this.columnHeader2.Width = 224;
       // 
       // KeyboardControl
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "KeyboardControl";
-      this.Size = new System.Drawing.Size(400, 368);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 

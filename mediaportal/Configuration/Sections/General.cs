@@ -212,152 +212,154 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.languageComboBox = new System.Windows.Forms.ComboBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
-			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-			this.mpGroupBox1.SuspendLayout();
-			this.groupBox1.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-			this.SuspendLayout();
-			// 
-			// mpGroupBox1
-			// 
-			this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.mpGroupBox1.Controls.Add(this.languageComboBox);
-			this.mpGroupBox1.Controls.Add(this.label2);
-			this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.mpGroupBox1.Location = new System.Drawing.Point(8, 8);
-			this.mpGroupBox1.Name = "mpGroupBox1";
-			this.mpGroupBox1.Size = new System.Drawing.Size(440, 56);
-			this.mpGroupBox1.TabIndex = 1;
-			this.mpGroupBox1.TabStop = false;
-			this.mpGroupBox1.Text = "Language Settings";
-			// 
-			// languageComboBox
-			// 
-			this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.languageComboBox.Location = new System.Drawing.Point(168, 16);
-			this.languageComboBox.Name = "languageComboBox";
-			this.languageComboBox.Size = new System.Drawing.Size(256, 21);
-			this.languageComboBox.TabIndex = 0;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(16, 24);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(150, 23);
-			this.label2.TabIndex = 4;
-			this.label2.Text = "Display language";
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.settingsCheckedListBox);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 72);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(440, 264);
-			this.groupBox1.TabIndex = 2;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General Settings";
-			// 
-			// settingsCheckedListBox
-			// 
-			this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.settingsCheckedListBox.Items.AddRange(new object[] {
-																																"Start Media Portal in fullscreen mode",
-																																"Auto hide mouse cursor when inactive",
-																																"Show special mouse controls (scrollbars, etc)",
-																																"Dont show file extensions like .mp3, .avi, .mpg,...",
-																																"Enable animations",
-																																"Autostart Mediaportal when windows starts",
-																																"Disable Windows XP balloon tips",
-																																"Use mouse left double click as right click",
-																																"Hide taskbar in fullscreen mode",
-																																"MediaPortal always on top",
-																																"use Exclusive DirectX Mode for fullscreen tv/video",
-																																"use VMR9-ZapOSD (GUIZapOSD will not displayed then)",
-																																"enable GUI sound effects",
-																																"enable Screensaver in fullscreen mode"});
-			this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
-			this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-			this.settingsCheckedListBox.Size = new System.Drawing.Size(416, 214);
-			this.settingsCheckedListBox.TabIndex = 0;
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Controls.Add(this.label3);
-			this.groupBox2.Controls.Add(this.label1);
-			this.groupBox2.Controls.Add(this.numericUpDown1);
-			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(8, 352);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(440, 64);
-			this.groupBox2.TabIndex = 3;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "VMR9 OSD Settings";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(184, 32);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(128, 16);
-			this.label3.TabIndex = 2;
-			this.label3.Text = "(10 = solid, 0 = invisible)";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(16, 32);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(96, 16);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "OSD Alpha level:";
-			// 
-			// numericUpDown1
-			// 
-			this.numericUpDown1.Location = new System.Drawing.Point(116, 30);
-			this.numericUpDown1.Maximum = new System.Decimal(new int[] {
-																																	 10,
-																																	 0,
-																																	 0,
-																																	 0});
-			this.numericUpDown1.Name = "numericUpDown1";
-			this.numericUpDown1.Size = new System.Drawing.Size(56, 20);
-			this.numericUpDown1.TabIndex = 0;
-			this.numericUpDown1.Value = new System.Decimal(new int[] {
-																																 10,
-																																 0,
-																																 0,
-																																 0});
-			// 
-			// General
-			// 
-			this.AutoScroll = true;
-			this.BackColor = System.Drawing.SystemColors.Control;
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.mpGroupBox1);
-			this.Name = "General";
-			this.Size = new System.Drawing.Size(456, 448);
-			this.mpGroupBox1.ResumeLayout(false);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-			this.ResumeLayout(false);
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.languageComboBox = new System.Windows.Forms.ComboBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+      this.mpGroupBox1.SuspendLayout();
+      this.groupBox1.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+      this.SuspendLayout();
+      // 
+      // mpGroupBox1
+      // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.languageComboBox);
+      this.mpGroupBox1.Controls.Add(this.label2);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 56);
+      this.mpGroupBox1.TabIndex = 1;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Language Settings";
+      // 
+      // languageComboBox
+      // 
+      this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.languageComboBox.Location = new System.Drawing.Point(168, 20);
+      this.languageComboBox.Name = "languageComboBox";
+      this.languageComboBox.Size = new System.Drawing.Size(288, 21);
+      this.languageComboBox.TabIndex = 0;
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 24);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(96, 16);
+      this.label2.TabIndex = 4;
+      this.label2.Text = "Display language:";
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.settingsCheckedListBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(0, 64);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(472, 256);
+      this.groupBox1.TabIndex = 2;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "General Settings";
+      // 
+      // settingsCheckedListBox
+      // 
+      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.settingsCheckedListBox.Items.AddRange(new object[] {
+                                                                "Start Media Portal in fullscreen mode",
+                                                                "Auto hide mouse cursor when inactive",
+                                                                "Show special mouse controls (scrollbars, etc)",
+                                                                "Dont show file extensions like .mp3, .avi, .mpg,...",
+                                                                "Enable animations",
+                                                                "Autostart Mediaportal when windows starts",
+                                                                "Disable Windows XP balloon tips",
+                                                                "Use mouse left double click as right click",
+                                                                "Hide taskbar in fullscreen mode",
+                                                                "MediaPortal always on top",
+                                                                "use Exclusive DirectX Mode for fullscreen tv/video",
+                                                                "use VMR9-ZapOSD (GUIZapOSD will not displayed then)",
+                                                                "enable GUI sound effects",
+                                                                "enable Screensaver in fullscreen mode"});
+      this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
+      this.settingsCheckedListBox.Name = "settingsCheckedListBox";
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 214);
+      this.settingsCheckedListBox.TabIndex = 0;
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.label3);
+      this.groupBox2.Controls.Add(this.label1);
+      this.groupBox2.Controls.Add(this.numericUpDown1);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox2.Location = new System.Drawing.Point(0, 328);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(472, 56);
+      this.groupBox2.TabIndex = 3;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "VMR9 OSD Settings";
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(216, 24);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(128, 16);
+      this.label3.TabIndex = 2;
+      this.label3.Text = "(10 = solid, 0 = invisible)";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 24);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(96, 16);
+      this.label1.TabIndex = 1;
+      this.label1.Text = "OSD Alpha level:";
+      // 
+      // numericUpDown1
+      // 
+      this.numericUpDown1.Location = new System.Drawing.Point(168, 20);
+      this.numericUpDown1.Maximum = new System.Decimal(new int[] {
+                                                                   10,
+                                                                   0,
+                                                                   0,
+                                                                   0});
+      this.numericUpDown1.Name = "numericUpDown1";
+      this.numericUpDown1.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDown1.TabIndex = 0;
+      this.numericUpDown1.Value = new System.Decimal(new int[] {
+                                                                 10,
+                                                                 0,
+                                                                 0,
+                                                                 0});
+      // 
+      // General
+      // 
+      this.BackColor = System.Drawing.SystemColors.Control;
+      this.Controls.Add(this.groupBox2);
+      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.mpGroupBox1);
+      this.Name = "General";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.mpGroupBox1.ResumeLayout(false);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
     
