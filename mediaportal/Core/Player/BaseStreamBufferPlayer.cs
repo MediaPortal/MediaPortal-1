@@ -199,9 +199,9 @@ namespace MediaPortal.Player
 
 				UpdateCurrentPosition();
 				double dPos=m_dDuration-5;
-				if (dPos>=0)
+				if (dPos>=0 && CurrentPosition<dPos)
 				{
-					Log.Write("StreamBufferPlayer:Seek to 99%");
+					Log.Write("StreamBufferPlayer:Seek to end");
 					SeekAbsolute(dPos);
 				}
 			}
@@ -365,11 +365,11 @@ namespace MediaPortal.Player
 			if (ts.TotalMilliseconds>=800 || iSpeed!=1) 
 			{
 				double pos=CurrentPosition;
-				UpdateCurrentPosition();/*
+				UpdateCurrentPosition();
 				if (pos == CurrentPosition)
 				{
-					Log.Write("--- stopped at :{0}", pos);
-				}*/
+				//	Log.Write("--- stopped at :{0}", pos);
+				}
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
@@ -721,7 +721,7 @@ namespace MediaPortal.Player
           if (dTimeInSecs<0.0d) dTimeInSecs=0.0d;
           if (dTimeInSecs>Duration) dTimeInSecs=Duration;
 					dTimeInSecs=Math.Floor(dTimeInSecs);
-          //Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
+          Log.Write("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
           dTimeInSecs*=10000000d;
 					long pStop=0;
           long lContentStart,lContentEnd;
@@ -732,19 +732,14 @@ namespace MediaPortal.Player
 
           dTimeInSecs+=fContentStart;
           long lTime=(long)dTimeInSecs;
-          
-					int hr=m_mediaSeeking.SetPositions(ref lTime, (SeekingFlags)((int)SeekingFlags.AbsolutePositioning+(int)SeekingFlags.SeekToKeyFrame),ref pStop, SeekingFlags.NoPositioning);
-          if (hr !=0)
-          {
-						hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
-						if (hr !=0)
-						{
-							Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
-						}
-          }
+					int hr=m_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+					if (hr !=0)
+					{
+						Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
+					}
 				}
         UpdateCurrentPosition();
-        //Log.Write("seek->current pos:{0}", CurrentPosition);
+        Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
 
 			}
 		}
@@ -1085,7 +1080,7 @@ namespace MediaPortal.Player
 								if (newpos <fstreamPosition-1 || newpos > fstreamPosition+1)
 								{
 									Log.Write("StreamBufferPlayer:  seek to:{0}", newpos.ToString("f2"));
-									SeekAbsolute(newpos);
+									SeekAbsolute(1d+newpos);
 								}
 							}
 						}
