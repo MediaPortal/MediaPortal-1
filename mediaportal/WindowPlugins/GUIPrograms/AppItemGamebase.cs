@@ -28,6 +28,7 @@ namespace WindowPlugins.GUIPrograms
       pDlgProgress.SetLine(1, "");
       pDlgProgress.SetLine(2, "");
       pDlgProgress.StartModal(GetID);
+      pDlgProgress.ShowProgressBar(true);
       pDlgProgress.Progress();
     }
 
@@ -66,11 +67,16 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-    private void ReadNewFile(string strFileName)
+    private void ReadNewFile(string strFileName, int curPos, int maxPos)
     {
       if (pDlgProgress != null)
       {
         pDlgProgress.SetLine(2, String.Format("{0} {1}", GUILocalizeStrings.Get(13005), strFileName)); // "last imported file {0}"
+        if ((curPos > 0) && (maxPos > 0))
+        {
+          int perc = 100 * curPos / maxPos;
+          pDlgProgress.SetPercentage(perc);
+        }
         pDlgProgress.Progress();
       }
       SendRefreshInfo(String.Format("{0} {1}", GUILocalizeStrings.Get(13005), strFileName));

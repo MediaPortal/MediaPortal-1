@@ -15,7 +15,7 @@ namespace ProgramsDatabase
     private SQLiteClient sqlDB = null;
 
     // event: read new file
-    public delegate void MlfEventHandler(string strLine);
+    public delegate void MlfEventHandler(string strLine, int curPos, int maxPos);
     public event MlfEventHandler OnReadNewFile = null;
 
 
@@ -73,7 +73,7 @@ namespace ProgramsDatabase
         curFile.LastTimeLaunched = DateTime.MinValue;
         curFile.LaunchCount = 0;
         curFile.Write();
-        this.OnReadNewFile(curFile.Title); // send event to whom it may concern....
+        this.OnReadNewFile(curFile.Title, -1, -1); // send event to whom it may concern....
       }
       return ;
     }

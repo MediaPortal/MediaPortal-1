@@ -19,7 +19,7 @@ namespace ProgramsDatabase
     SQLiteClient sqlDB = null;
 
     // event: read new file
-    public delegate void MyEventHandler(string strLine);
+    public delegate void MyEventHandler(string strLine, int curPos, int maxPos);
 
     public event MyEventHandler OnReadNewFile = null;
     public event MyEventHandler OnSendMessage = null;
@@ -217,7 +217,7 @@ namespace ProgramsDatabase
     {
       if (OnSendMessage != null)
       {
-        OnSendMessage(msg);
+        OnSendMessage(msg, -1, -1);
       }
     }
 
@@ -225,13 +225,15 @@ namespace ProgramsDatabase
     {
       if (!CheckPrerequisites())
       {
-        OnSendMessage(Checker.Problems);
+        OnSendMessage(Checker.Problems, -1, -1);
         Log.Write("MameImporter: import failed! Details: {0}", Checker.Problems);
         return;
       }
+      int i = 0;
       foreach (string fileName in mameRoms)
       {
-        FillFileItem(fileName);
+        FillFileItem(fileName, i);
+        i++;
       }
     }
 
@@ -283,7 +285,7 @@ namespace ProgramsDatabase
       return res;
     }
 
-    void FillFileItem(string fullRomname)
+    void FillFileItem(string fullRomname, int count)
     {
       string curRomname = Path.GetFileNameWithoutExtension(fullRomname).ToLower();
       string fullEntry = "";
@@ -331,7 +333,7 @@ namespace ProgramsDatabase
         curFile.Write();
         if (OnReadNewFile != null)
         {
-          OnReadNewFile(curFile.Title);
+          OnReadNewFile(curFile.Title, count, mameRoms.Length);
         }
 
       }

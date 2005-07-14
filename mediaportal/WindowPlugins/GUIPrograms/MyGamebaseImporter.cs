@@ -2,6 +2,7 @@ using System;
 using System.Data.OleDb;
 using System.IO;
 using MediaPortal.GUI.Library;
+using Programs.Utils;
 using ProgramsDatabase;
 using SQLite.NET;
 
@@ -16,7 +17,7 @@ namespace WindowPlugins.GUIPrograms
     private SQLiteClient sqlDB = null;
 
     // event: read new file
-    public delegate void GamebaseEventHandler(string strLine);
+    public delegate void GamebaseEventHandler(string strLine, int curPos, int maxPos);
 
     public event GamebaseEventHandler OnReadNewFile = null;
 
@@ -28,7 +29,7 @@ namespace WindowPlugins.GUIPrograms
     }
 
 
-    void DBImportGamebaseItem(OleDbDataReader myReader, string romFilename, string imgFilename)
+    void DBImportGamebaseItem(OleDbDataReader myReader, string romFilename, string imgFilename, int curPos, int maxGames)
     {
       FileItem curFile = new FileItem(sqlDB);
       curFile.FileID =  - 1; // to force an INSERT statement when writing the item
@@ -61,7 +62,7 @@ namespace WindowPlugins.GUIPrograms
       curFile.LastTimeLaunched = DateTime.MinValue;
       curFile.LaunchCount = 0;
       curFile.Write();
-      this.OnReadNewFile(curFile.Title); // send event to whom it may concern....
+      this.OnReadNewFile(curFile.Title, curPos, maxGames); // send event to whom it may concern....
       return ;
     }
 
@@ -71,6 +72,7 @@ namespace WindowPlugins.GUIPrograms
       string strCon = String.Format("Provider=Microsoft.Jet.OLEDB.4.0 ;Data Source={0}", m_App.Source);
       OleDbConnection myCon = new OleDbConnection(strCon);
       //Make a Select Command for querying the gamebase-MDB-file
+      string sqlStrCount = "SELECT count(*) FROM Games";
       string sqlStr = "SELECT Games.Filename, Games.Name, Games.Comment, Games.Rating, Games.Classic, Games.MemoText, Genres.Genre, PGenres.ParentGenre, Publishers.Publisher, Years.Year, Games.ScrnshotFilename "
         + "FROM Games, Genres, PGenres, Publishers, Years "
         + "WHERE Games.GE_Id = Genres.GE_Id "
@@ -88,11 +90,14 @@ namespace WindowPlugins.GUIPrograms
       try
       {
         myCon.Open();
+        int maxGames = CountGames(myCon, sqlStrCount);
         OleDbDataReader myReader = myCmd.ExecuteReader();
         try
         {
+          int i = 0;
           while (myReader.Read())
           {
+            i++;
             curRomname = myReader.GetString(0);
             curFullRomname = m_App.FileDirectory + "\\" + curRomname;
 
@@ -119,7 +124,7 @@ namespace WindowPlugins.GUIPrograms
 
               if (bDoImport)
               {
-                DBImportGamebaseItem(myReader, curFullRomname, curTitleImage);
+                DBImportGamebaseItem(myReader, curFullRomname, curTitleImage, i, maxGames);
               }
               else
               {
@@ -149,6 +154,26 @@ namespace WindowPlugins.GUIPrograms
         myCon.Dispose();
       }
     }
+
+    int CountGames(OleDbConnection myCon, string sqlStrCount)
+    {
+      int res = 0;
+      OleDbCommand myCmd = new OleDbCommand(sqlStrCount, myCon);
+      try
+      {
+        res = (int) myCmd.ExecuteScalar();
+      }
+      catch (Exception er)
+      {
+        Log.Write("myProgams error in connecting to gamebase-mdb \n {0}", er.ToString());
+      }
+      finally
+      {
+        myCmd.Dispose();
+      }
+      return res;
+    }
+
 
 
   }

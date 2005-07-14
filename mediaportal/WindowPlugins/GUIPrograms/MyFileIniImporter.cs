@@ -17,7 +17,7 @@ namespace ProgramsDatabase
     private bool m_bOverviewReading = false;
 
     // event: read new file
-    public delegate void MyEventHandler(string strLine);
+    public delegate void MyEventHandler(string strLine, int curPos, int maxPos);
     public event MyEventHandler OnReadNewFile = null;
 
     public void Start()
@@ -292,7 +292,7 @@ namespace ProgramsDatabase
       if (bOk)
       {
         curFile.Write();
-        this.OnReadNewFile(curFile.Title); // send event to whom it may concern....
+        this.OnReadNewFile(curFile.Title, -1, -1); // send event to whom it may concern....
       }
     }
 
