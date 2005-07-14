@@ -6007,6 +6007,22 @@
     </tv>
   </capturecard>
   
+  <capturecard commercialname="DNTV Live! LP Tuner Card 2" capturename="DNTV Live! LP TS Capture Tuner 2" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! LP BDA DVB-T Tuner/Demod Tuner 2"	checkdevice="true"></filter>
+        <filter cat="capture"         name="DNTV Live! LP TS Capture Tuner 2"				checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="Kworld DVBT 100" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_08a617de&amp;rev_05"> 
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv>
