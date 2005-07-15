@@ -342,27 +342,33 @@ namespace MediaPortal.TV.Recording
 			//check how many episodes we got
 			ArrayList recordings = new ArrayList();
 			TVDatabase.GetRecordings(ref recordings);
-			int recordingsFound=0;
-			DateTime oldestRecording=DateTime.MaxValue;
-			string   oldestFileName=String.Empty;
-			foreach (TVRecorded rec in recordings)
+			while (true)
 			{
-				if (rec.Title.ToLower().Equals(recording.Title.ToLower())	)
+				int recordingsFound=0;
+				DateTime oldestRecording=DateTime.MaxValue;
+				string   oldestFileName=String.Empty;
+				TVRecorded oldestRec=null;
+				foreach (TVRecorded rec in recordings)
 				{
-					recordingsFound++;
-					if (rec.StartTime < oldestRecording)
+					if (rec.Title.ToLower().Equals(recording.Title.ToLower())	)
 					{
-						oldestRecording=rec.StartTime;
-						oldestFileName=rec.FileName;
+						recordingsFound++;
+						if (rec.StartTime < oldestRecording)
+						{
+							oldestRecording=rec.StartTime;
+							oldestFileName=rec.FileName;
+							oldestRec=rec;
+						}
 					}
 				}
-			}
-			if (recordingsFound <= recording.EpisodesToKeep) return;
-			if (Utils.FileDelete(oldestFileName))
-			{
+				if (oldestRec==null) return;
+				if (recordingsFound==0) return;
+				if (recordingsFound <= recording.EpisodesToKeep) return;
+				Utils.FileDelete(oldestFileName);
 				DeleteRecording(oldestFileName);
 				VideoDatabase.DeleteMovie(oldestFileName);
 				VideoDatabase.DeleteMovieInfo(oldestFileName);
+				recordings.Remove(oldestRec);
 			}
 		}
 		#endregion
