@@ -515,6 +515,9 @@ namespace MediaPortal.GUI.Library
       m_strPrevTxt = "";
       m_vecLabels.Clear();
       m_iCurrentFrame = 0;
+      scroll_pos = 0;
+      iScrollX = 0;
+      iScrollOffset = 0.0f;
       timeElapsed = 0.0f;
     }
 
