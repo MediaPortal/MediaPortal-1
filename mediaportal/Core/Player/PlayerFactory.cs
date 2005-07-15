@@ -175,12 +175,13 @@ namespace MediaPortal.Player
 					return newPlayer;
 				}
 			}
+			/* disabled for 0.1.3
 			if ( strExt==".ts")
 			{
 				if (iUseVMR9inMYTV==0) newPlayer=new Player.BaseTStreamBufferPlayer();
 				else newPlayer=new Player.TStreamBufferPlayer9();
 				return newPlayer;
-			}
+			}*/
 			if (Utils.IsVideo(strFileName))
 			{
 				if (iUseVMR9inMYMovies==0) newPlayer=new Player.VideoPlayerVMR7();
