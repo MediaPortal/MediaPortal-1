@@ -47,11 +47,11 @@ namespace DShowNET
     IPin                  m_pinInput=null;
     IPin                  m_pinAnalyserInput=null;
     IPin                  m_pinAnalyserOutput=null;
-    IBaseFilter           m_VidAnalyzer=null;
-    IBaseFilter           m_streamBuffer=null;
     IPin                  m_pinStreamBufferIn0=null;
     IPin                  m_pinStreamBufferIn1=null;
     IBaseFilter           m_mpeg2Multiplexer=null;
+		IBaseFilter           m_VidAnalyzer=null;
+		IBaseFilter           m_streamBuffer=null;
     
     IStreamBufferSink     m_bSink=null;
     IStreamBufferConfigure m_pConfig=null;
@@ -326,7 +326,8 @@ namespace DShowNET
         Log.WriteFile(Log.LogType.Capture,"mpeg2:StartViewing() start mediactl");
         hr=m_mediaControl.Run();
         m_bRunning=true;
-        Log.WriteFile(Log.LogType.Capture,true,"mpeg2:StartViewing() started mediactl:0x{0:X}",hr);
+				if (hr!=0 && hr!=1)
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:StartViewing() started mediactl:0x{0:X}",hr);
       }
 			Overlay=true;
     }
@@ -895,6 +896,23 @@ namespace DShowNET
 				m_recorder=null;
 				
 			}
+			if (m_mediaControl!=null)
+			{
+				Log.WriteFile(Log.LogType.Capture,"mpeg2: stop mediactl");
+				if (m_bRunning) m_mediaControl.Stop(); 
+				m_bRunning=false;
+				Log.WriteFile(Log.LogType.Capture,"mpeg2: stopped mediactl");
+				m_mediaControl=null;
+			}
+
+			if (m_pinAudioOut!=null) Marshal.ReleaseComObject(m_pinAudioOut);m_pinAudioOut=null;
+			if (m_pinVideoOut!=null) Marshal.ReleaseComObject(m_pinVideoOut);m_pinVideoOut=null;
+			if (m_pinInput!=null) Marshal.ReleaseComObject(m_pinInput);m_pinInput=null;
+			if (m_pinAnalyserInput!=null) Marshal.ReleaseComObject(m_pinAnalyserInput);m_pinAnalyserInput=null;
+			if (m_pinAnalyserOutput!=null) Marshal.ReleaseComObject(m_pinAnalyserOutput);m_pinAnalyserOutput=null;
+			if (m_pinStreamBufferIn0!=null) Marshal.ReleaseComObject(m_pinStreamBufferIn0);m_pinStreamBufferIn0=null;
+			if (m_pinStreamBufferIn1!=null) Marshal.ReleaseComObject(m_pinStreamBufferIn1);m_pinStreamBufferIn1=null;
+
       if (m_streamBuffer!=null) 
       {
         m_streamBuffer.Stop();
@@ -902,26 +920,16 @@ namespace DShowNET
 				m_streamBuffer=null;
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_streamBuffer):{0}",hr);
       }
-      if (m_mediaControl!=null)
-      {
-        Log.WriteFile(Log.LogType.Capture,"mpeg2: stop mediactl");
-        if (m_bRunning) m_mediaControl.Stop(); 
-        m_bRunning=false;
-        Log.WriteFile(Log.LogType.Capture,"mpeg2: stopped mediactl");
-        m_mediaControl=null;
-      }
 
       
-      if ( m_VideoAnalyzer!=null) 
+			if ( m_VideoAnalyzer!=null) 
       {
 				while ((hr=Marshal.ReleaseComObject(m_VideoAnalyzer))>0);
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_VideoAnalyzer):{0}",hr);
         m_VideoAnalyzer=null;
       }
-      if ( m_StreamBufferSink!=null) 
-      {
-        m_StreamBufferSink=null;
-      }
+
+			m_StreamBufferSink=null;
       if ( m_StreamBufferConfig!=null) 
       {
 				while ((hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0);
@@ -949,59 +957,17 @@ namespace DShowNET
 			{
 				m_mpeg2Multiplexer=null;
 			}
-			if (m_pinStreamBufferIn1!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(m_pinStreamBufferIn1))>0); 
-				m_pinStreamBufferIn1=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_pinStreamBufferIn1):{0}",hr);
-			}
-			if (m_pinStreamBufferIn0!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(m_pinStreamBufferIn0))>0); 
-				m_pinStreamBufferIn0=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_pinStreamBufferIn0):{0}",hr);
-			}
 			if (m_bSink!=null) 
 			{
 //				while ((hr=Marshal.ReleaseComObject(m_bSink))>0); 
 				m_bSink=null;
 //				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_bSink):{0}",hr);
 			}
-			if (m_pinAnalyserOutput!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(m_pinAnalyserOutput))>0); 
-				m_pinAnalyserOutput=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_pinAnalyserOutput):{0}",hr);
-			}
-			if (m_pinAnalyserInput!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(m_pinAnalyserInput))>0); 
-				m_pinAnalyserInput=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_pinAnalyserInput):{0}",hr);
-			}
 			if (m_VidAnalyzer!=null) 
 			{
 //				while ((hr=Marshal.ReleaseComObject(m_VidAnalyzer))>0); 
 				m_VidAnalyzer=null;
 //				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_VidAnalyzer):{0}",hr);
-			}
-			if (m_pinInput!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(m_pinInput))>0); 
-				m_pinInput=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_pinInput):{0}",hr);
-			}
-			if (m_pinVideoOut!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(m_pinVideoOut))>0); 
-				m_pinVideoOut=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_pinVideoOut):{0}",hr);
-			}
-			if (m_pinAudioOut!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(m_pinAudioOut))>0); 
-				m_pinAudioOut=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(m_pinAudioOut):{0}",hr);
 			}
 			if (m_demuxer!=null) 
 			{
@@ -1011,6 +977,7 @@ namespace DShowNET
 			}
 			m_graphBuilder=null;
     }
+
     public bool Overlay
     {
       get 

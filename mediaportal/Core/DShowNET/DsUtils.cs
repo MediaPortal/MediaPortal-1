@@ -345,7 +345,18 @@ namespace DShowNET
 						else
 						{
 							if (logActions) DirectShowUtil.DebugWrite("  no more crossbars");
+							
+							if (o!=null)
+							{
+								Marshal.ReleaseComObject(o);
+								o=null;
+							}
 							break;
+						}
+						if (o!=null)
+						{
+							Marshal.ReleaseComObject(o);
+							o=null;
 						}
 					}//if (hr ==0 && o != null)
 					else
@@ -546,7 +557,18 @@ namespace DShowNET
 							else
 							{
 								DirectShowUtil.DebugWrite("  no more crossbars");
+								
+								if (o!=null) 
+								{
+									Marshal.ReleaseComObject(o);
+									o=null;
+								}
 								break;
+							}
+							if (o!=null) 
+							{
+								Marshal.ReleaseComObject(o);
+								o=null;
 							}
 						}//if (hr ==0 && o != null)
 						else

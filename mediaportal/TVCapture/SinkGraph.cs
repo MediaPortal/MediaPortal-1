@@ -499,6 +499,7 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}",hr);
 
 					Marshal.ReleaseComObject(pinIn);
+					pinIn=null;
 				}
 				else
 					Log.WriteFile(Log.LogType.Capture,true,"SinkGraph:FAILED could not find mpeg2 demux input pin");

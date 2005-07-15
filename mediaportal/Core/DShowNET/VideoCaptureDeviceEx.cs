@@ -538,54 +538,51 @@ namespace DShowNET
 			int hr=0;
 			if (_mCapturePin!=null) 
 			{
-				while ((hr=Marshal.ReleaseComObject(_mCapturePin))>0); 
+				Marshal.ReleaseComObject(_mCapturePin);
 				_mCapturePin=null;
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mCapturePin):{0}",hr);
 			}
 
 			if (_mPreviewAudioPin!=null) 
 			{
-				while ((hr=Marshal.ReleaseComObject(_mPreviewAudioPin))>0); 
+				Marshal.ReleaseComObject(_mPreviewAudioPin);
 				_mPreviewAudioPin=null;
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mPreviewAudioPin):{0}",hr);
 			}
 			if (_mPreviewVideoPin!=null) 
 			{
-				while ((hr=Marshal.ReleaseComObject(_mPreviewVideoPin))>0); 
+				Marshal.ReleaseComObject(_mPreviewVideoPin); 
 				_mPreviewVideoPin=null;
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mPreviewVideoPin):{0}",hr);
 			}
 			if (_mVideoPortPin!=null) 
 			{
-				while ((hr=Marshal.ReleaseComObject(_mVideoPortPin))>0); 
+				hr=Marshal.ReleaseComObject(_mVideoPortPin); 
 				_mVideoPortPin=null;
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mVideoPortPin):{0}",hr);
 			}
 
 			if (_mVideoCaptureStreamConfig!=null) 
 			{
+				hr=Marshal.ReleaseComObject(_mVideoCaptureStreamConfig); 
 				_mVideoCaptureStreamConfig=null;
+				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mVideoCaptureStreamConfig):{0}",hr);
 			}
 
 			if (_mVideoVPortStreamConfig!=null) 
 			{
-				while ((hr=Marshal.ReleaseComObject(_mVideoVPortStreamConfig))>0); 
+				hr=Marshal.ReleaseComObject(_mVideoVPortStreamConfig); 
 				_mVideoVPortStreamConfig=null;
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mVideoVPortStreamConfig):{0}",hr);
 			}
 			if (_mVideoPreviewStreamConfig!=null) 
 			{
-				while ((hr=Marshal.ReleaseComObject(_mVideoPreviewStreamConfig))>0); 
+				 hr=Marshal.ReleaseComObject(_mVideoPreviewStreamConfig); 
 				_mVideoPreviewStreamConfig=null;
 				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mVideoPreviewStreamConfig):{0}",hr);
 			}
-			if (_mCaptureFilter!=null) 
-			{
-				while ((hr=Marshal.ReleaseComObject(_mCaptureFilter))>0); 
-				_mCaptureFilter=null;
-				if (hr!=0) Log.Write("Sinkgraph:ReleaseComobject(_mCaptureFilter):{0}",hr);
-				_mCaptureGraphBuilder=null;
-			}
+			_mCaptureFilter=null;
+			_mCaptureGraphBuilder=null;
 			_mGraphBuilder=null;
 		}
 

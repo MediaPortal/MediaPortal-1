@@ -151,8 +151,8 @@ namespace MediaPortal.TV.Recording
 
 				FilterDefinition sourceFilter;
 				FilterDefinition sinkFilter;
-				IPin sourcePin;
-				IPin sinkPin;
+				IPin sourcePin=null;
+				IPin sinkPin=null;
 
 				// Create pin connections. These connections are also specified in the definitions file.
 				// Note that some connections might fail due to the fact that the connection is already made,
@@ -247,6 +247,13 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
+
+				if (sinkPin!=null)
+					Marshal.ReleaseComObject(sinkPin);
+				sinkPin=null;
+				if (sourcePin!=null)
+					Marshal.ReleaseComObject(sourcePin);
+				sourcePin=null;
 //				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: Adding configured pin connections...DONE");
 
 				// Find out which filter & pin is used as the interface to the rest of the graph.
@@ -332,6 +339,8 @@ namespace MediaPortal.TV.Recording
 				Vmr7.RemoveVMR7();
 				Vmr7=null;
 			}
+			m_IAMAnalogVideoDecoder = null;
+
 
 			if (m_videoprocamp != null)
 			{
@@ -353,9 +362,7 @@ namespace MediaPortal.TV.Recording
 			if (m_TVTuner != null)
 				Marshal.ReleaseComObject(m_TVTuner); m_TVTuner = null;
 			
-			if (m_IAMAnalogVideoDecoder != null)
-				Marshal.ReleaseComObject(m_IAMAnalogVideoDecoder); m_IAMAnalogVideoDecoder = null;
-
+			
 			if (m_graphBuilder!=null)
 				DsUtils.RemoveFilters(m_graphBuilder);
 
@@ -365,11 +372,6 @@ namespace MediaPortal.TV.Recording
 			if (m_rotCookie != 0)
 				DsROT.RemoveGraphFromRot(ref m_rotCookie); m_rotCookie = 0;
 
-			if (m_captureGraphBuilder != null)
-				Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
-	
-			if (m_graphBuilder != null)
-				Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
 
 			foreach (string strfName in mCard.TvFilterDefinitions.Keys)
 			{
@@ -379,6 +381,12 @@ namespace MediaPortal.TV.Recording
 				((FilterDefinition)mCard.TvFilterDefinitions[strfName]).DSFilter = null;
 				dsFilter = null;
 			}
+
+			if (m_captureGraphBuilder != null)
+				Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
+	
+			if (m_graphBuilder != null)
+				Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
 
 			m_graphState = State.None;
 			return ;
@@ -439,6 +447,13 @@ namespace MediaPortal.TV.Recording
 			bAllConnected=DirectShowUtil.RenderOutputPins(m_graphBuilder,(IBaseFilter)crossbar);
 			if (!bAllConnected)
 				Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:FAILED, not all pins connected");
+
+			if (o!=null)
+			{
+				crossbar=null;
+				Marshal.ReleaseComObject(o);
+				o=null;
+			}
 		}
 	
 	#endregion
