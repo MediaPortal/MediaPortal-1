@@ -13,12 +13,6 @@ namespace MediaPortal.Configuration.Sections
 	public class Wizard_DVBSTV : MediaPortal.Configuration.SectionSettings
 	{
 		private System.ComponentModel.IContainer components = null;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.ProgressBar progressBar1;
-		private System.Windows.Forms.Label labelStatus;
 		
 
 		struct TPList
@@ -41,13 +35,6 @@ namespace MediaPortal.Configuration.Sections
 		int newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
 		int m_diseqcLoops=1;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.ProgressBar progressBar2;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.ComboBox comboBox1;
-		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.GroupBox groupBox3;
 		private System.Windows.Forms.ProgressBar progressBar3;
 		private System.Windows.Forms.Button button3;
@@ -92,19 +79,6 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.labelStatus = new System.Windows.Forms.Label();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.button1 = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.progressBar2 = new System.Windows.Forms.ProgressBar();
-			this.button2 = new System.Windows.Forms.Button();
-			this.label4 = new System.Windows.Forms.Label();
-			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.cbTransponder = new System.Windows.Forms.ComboBox();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -115,86 +89,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label8 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Location = new System.Drawing.Point(0, 0);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			// 
-			// labelStatus
-			// 
-			this.labelStatus.Location = new System.Drawing.Point(0, 0);
-			this.labelStatus.Name = "labelStatus";
-			this.labelStatus.TabIndex = 0;
-			// 
-			// progressBar1
-			// 
-			this.progressBar1.Location = new System.Drawing.Point(0, 0);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.TabIndex = 0;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(0, 0);
-			this.button1.Name = "button1";
-			this.button1.TabIndex = 0;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(0, 0);
-			this.label2.Name = "label2";
-			this.label2.TabIndex = 0;
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(0, 0);
-			this.label1.Name = "label1";
-			this.label1.TabIndex = 0;
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Location = new System.Drawing.Point(0, 0);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.TabIndex = 0;
-			this.groupBox2.TabStop = false;
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(0, 0);
-			this.label3.Name = "label3";
-			this.label3.TabIndex = 0;
-			// 
-			// progressBar2
-			// 
-			this.progressBar2.Location = new System.Drawing.Point(0, 0);
-			this.progressBar2.Name = "progressBar2";
-			this.progressBar2.TabIndex = 0;
-			// 
-			// button2
-			// 
-			this.button2.Location = new System.Drawing.Point(0, 0);
-			this.button2.Name = "button2";
-			this.button2.TabIndex = 0;
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(0, 0);
-			this.label4.Name = "label4";
-			this.label4.TabIndex = 0;
-			// 
-			// comboBox1
-			// 
-			this.comboBox1.Location = new System.Drawing.Point(0, 0);
-			this.comboBox1.Name = "comboBox1";
-			this.comboBox1.TabIndex = 0;
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(0, 0);
-			this.label5.Name = "label5";
-			this.label5.TabIndex = 0;
 			// 
 			// groupBox3
 			// 
@@ -208,9 +102,9 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox3.Controls.Add(this.label7);
 			this.groupBox3.Controls.Add(this.label8);
 			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox3.Location = new System.Drawing.Point(4, 4);
+			this.groupBox3.Location = new System.Drawing.Point(8, 0);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(480, 360);
+			this.groupBox3.Size = new System.Drawing.Size(464, 360);
 			this.groupBox3.TabIndex = 1;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Setup digital tv (DVBS Satellite)";
@@ -290,7 +184,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void OnSectionActivated()
 		{
-			labelStatus.Text="";
+			lblStatus.Text="";
 			cbTransponder.Items.Clear();
 			string [] files = System.IO.Directory.GetFiles( System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters");
 			foreach (string file in files)
@@ -375,10 +269,6 @@ namespace MediaPortal.Configuration.Sections
 		}
 	
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-
-		}
 
 		private void DoScan()
 		{

@@ -407,8 +407,22 @@ namespace MediaPortal.Configuration.Sections
 					//treat the SSE2 DVB-S card as a general H/W card
 					if( ((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
 					{
-						if (ccd.CommercialName=="General S/W encoding card" ) continue;
-						if (ccd.CommercialName=="General MCE card" ) continue;
+						TVCaptureDevice cd		= new TVCaptureDevice();
+						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[0].ToString();
+						cd.VideoDevice				= (string)availableVideoDevices[i];
+						cd.CommercialName			= "Skystar 2";
+						cd.IsBDACard					= true;
+						cd.IsMCECard					= false;
+						cd.SupportsMPEG2			= true;
+						cd.DeviceId						= "";
+						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
+						cd.DeviceType					= "";
+						cd.RecordingPath			= recFolder;
+						cd.UseForRecording=true;
+						cd.UseForTV=true;
+						captureCards.Add(cd);
+						availableVideoDeviceMonikers.RemoveAt(i);
+						availableVideoDevices.RemoveAt(i);
 					}
 					if (ccd.CaptureName==String.Empty) continue;
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
