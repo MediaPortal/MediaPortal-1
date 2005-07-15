@@ -441,6 +441,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0446CBDAAC6144E8AB0B716274F7974D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0451C6FD248A40C4BB418307C6B6654A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -767,12 +773,6 @@
         {
         "MsmKey" = "8:_0B43082BB61844B8B9898F6B0974133C"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0B97594EBAAE0AA196B18F79DFD2EDBB"
-        "OwnerKey" = "8:_39813DC372C8451C93C73DD84211DB8A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2242,12 +2242,6 @@
         "Entry"
         {
         "MsmKey" = "8:_214F6F13D305467EA8089CD7F41C095F"
-        "OwnerKey" = "8:_0B97594EBAAE0AA196B18F79DFD2EDBB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_214F6F13D305467EA8089CD7F41C095F"
         "OwnerKey" = "8:_1338301638894A159888E74663717F13"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2458,6 +2452,12 @@
         "Entry"
         {
         "MsmKey" = "8:_24F3AAC3A84848A8BF06138980BCAD16"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_24FE984264934FC597FE975FA919EC6F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3160,6 +3160,12 @@
         "Entry"
         {
         "MsmKey" = "8:_34AFA1E3BFB1407F95A46E75017C1DA4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_34C49DAD54954EDEB9E125AC72B4D8C0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4919,6 +4925,12 @@
         {
         "MsmKey" = "8:_578F2A647C559AD41A9F981BF54FE35E"
         "OwnerKey" = "8:_576112F652DC83B7D8E902EA4CAC5F9C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_578F2A647C559AD41A9F981BF54FE35E"
+        "OwnerKey" = "8:_39813DC372C8451C93C73DD84211DB8A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -7253,12 +7265,6 @@
         {
         "MsmKey" = "8:_82D8A348B7E4D050EB53F19CCEDC78F5"
         "OwnerKey" = "8:_578F2A647C559AD41A9F981BF54FE35E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_82D8A348B7E4D050EB53F19CCEDC78F5"
-        "OwnerKey" = "8:_0B97594EBAAE0AA196B18F79DFD2EDBB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -14146,6 +14152,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0446CBDAAC6144E8AB0B716274F7974D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\database\\convert\\sqlite3.exe"
+            "TargetName" = "8:sqlite3.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_381C3D971B1041F78C8874D22B91395F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_0451C6FD248A40C4BB418307C6B6654A"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\myexplorer.xml"
@@ -15257,37 +15283,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_0B97594EBAAE0AA196B18F79DFD2EDBB"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Interop.DirectShowHelperLib, Version=1.0.0.0, Culture=neutral"
-                "ScatterAssemblies"
-                {
-                    "_0B97594EBAAE0AA196B18F79DFD2EDBB"
-                    {
-                    "Name" = "8:Interop.DirectShowHelperLib.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Interop.DirectShowHelperLib.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_0B9B76C488D5463EB0F97FC61A9CDC86"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\Media\\Background_Mail.png"
@@ -15794,7 +15789,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2022.33110, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2022.34136, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_0ECD6E59B2601B5B5CAAEACBCFB3C1C7"
@@ -19323,6 +19318,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_24FE984264934FC597FE975FA919EC6F"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\database\\convert\\sqlite.exe"
+            "TargetName" = "8:sqlite.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_381C3D971B1041F78C8874D22B91395F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_25D23FB1BC5643A2A1E2452AE702AEE5"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\hover_my weather.png"
@@ -21649,6 +21664,26 @@
             "TargetName" = "8:gray_rectangle.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_34C49DAD54954EDEB9E125AC72B4D8C0"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\database\\convert\\convertv2v3.cmd"
+            "TargetName" = "8:convertv2v3.cmd"
+            "Tag" = "8:"
+            "Folder" = "8:_381C3D971B1041F78C8874D22B91395F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -53230,6 +53265,17 @@
                     "Property" = "8:_F6CF40BDA9934CB5911D776049652FC1"
                         "Folders"
                         {
+                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_381C3D971B1041F78C8874D22B91395F"
+                            {
+                            "Name" = "8:Convert"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_E886B5C4CE0642759A99A726DB7FA671"
+                                "Folders"
+                                {
+                                }
+                            }
                         }
                     }
                     "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_D0F4FAD973C94542A6D46CEE3AE37EE1"
@@ -53338,7 +53384,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{1BEB3F5F-ACC0-42E3-A77E-3E4B8D9E1CD4}"
+        "PackageCode" = "8:{F2A02D21-6E5E-46B3-90E8-5674F91F585F}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
