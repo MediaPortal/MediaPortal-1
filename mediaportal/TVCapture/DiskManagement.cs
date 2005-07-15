@@ -364,6 +364,12 @@ namespace MediaPortal.TV.Recording
 				if (oldestRec==null) return;
 				if (recordingsFound==0) return;
 				if (recordingsFound <= recording.EpisodesToKeep) return;
+				Log.WriteFile(Log.LogType.Recorder,false,"Delete episode {0} {1} {2} {3}",
+					                   oldestRec.Channel,
+					                   oldestRec.Title,
+					                   oldestRec.StartTime.ToLongDateString(),
+														 oldestRec.StartTime.ToLongTimeString());
+					                    
 				Utils.FileDelete(oldestFileName);
 				DeleteRecording(oldestFileName);
 				VideoDatabase.DeleteMovie(oldestFileName);
