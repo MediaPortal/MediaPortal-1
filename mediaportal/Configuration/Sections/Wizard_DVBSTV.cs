@@ -277,7 +277,7 @@ namespace MediaPortal.Configuration.Sections
 
 			m_currentDiseqc=1;
 			currentIndex=-1;
-			while (m_currentDiseqc <m_diseqcLoops)
+			while (m_currentDiseqc <=m_diseqcLoops)
 			{
 				while (currentIndex < count)
 				{
@@ -359,6 +359,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if(m_currentDiseqc>=m_diseqcLoops)
 				{
+					m_currentDiseqc++;
 					progressBar3.Value=(100);
 					Application.DoEvents();
 				}
