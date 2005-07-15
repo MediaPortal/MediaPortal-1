@@ -185,6 +185,7 @@ namespace MediaPortal.GUI.Music
 
 	    if (showReview)
 	    {
+        tbTextArea.Clear();
 				tbTextArea.Label=albumInfo.Review;
 				btnTracks.Label=GUILocalizeStrings.Get(182);
 	    }

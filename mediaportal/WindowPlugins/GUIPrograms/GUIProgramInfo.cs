@@ -348,7 +348,7 @@ namespace WindowPlugins.GUIPrograms
       {
         imgBig.IsVisible = false;
         tbOverviewData.IsVisible = true;
-        tbOverviewData.Label = ""; // force clear first....
+        tbOverviewData.Clear();
         tbOverviewData.Label = programOverview; // ... and set text next!
         btnToggleOverview.Label = GUILocalizeStrings.Get(13006);
       }
@@ -356,7 +356,7 @@ namespace WindowPlugins.GUIPrograms
       {
         imgBig.IsVisible = true;
         tbOverviewData.IsVisible = false;
-        tbOverviewData.Label = "";
+        tbOverviewData.Clear();
         btnToggleOverview.Label = GUILocalizeStrings.Get(13007);
       }
 
