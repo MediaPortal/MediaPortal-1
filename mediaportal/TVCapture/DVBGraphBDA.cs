@@ -332,7 +332,8 @@ namespace MediaPortal.TV.Recording
 					}
 					if (dsFilter.Category == "tunerdevice") m_TunerDevice	 							= dsFilter.DSFilter;
 					if (dsFilter.Category == "capture")			m_CaptureDevice							= dsFilter.DSFilter;
-				}
+				}//foreach (string catName in m_Card.TvFilterDefinitions.Keys)
+
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...DONE");
 
 				//no network provider specified? then we cannot build the graph
@@ -352,8 +353,8 @@ namespace MediaPortal.TV.Recording
 
 				FilterDefinition sourceFilter;
 				FilterDefinition sinkFilter;
-				IPin sourcePin;
-				IPin sinkPin;
+				IPin sourcePin=null;
+				IPin sinkPin=null;
 
 				// Create pin connections. These connections are also specified in the definitions file.
 				// Note that some connections might fail due to the fact that the connection is already made,
@@ -457,10 +458,17 @@ namespace MediaPortal.TV.Recording
 						if (sourceFilter.Category =="tunerdevice" && sinkFilter.Category=="capture")
 						{
 							//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try other instances");
-							m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
-							Marshal.ReleaseComObject(sinkPin);
-							Marshal.ReleaseComObject(sinkFilter.DSFilter);
+							if (sinkPin!=null)
+								Marshal.ReleaseComObject(sinkPin);
 							sinkPin=null;
+							if (sinkFilter.DSFilter!=null)
+							{	
+								m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
+								Marshal.ReleaseComObject(sinkFilter.DSFilter);
+							}
+							sinkFilter.DSFilter=null;
+							m_CaptureDevice=null;
+
 							foreach (string key in AvailableFilters.Filters.Keys)
 							{
 								Filter    filter;
@@ -496,23 +504,39 @@ namespace MediaPortal.TV.Recording
 											if (hr == 0)
 											{
 												//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Pins connected...");
+												m_CaptureDevice	= sinkFilter.DSFilter;
 												break;
 											}
 											else
 											{
 												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   cannot connect pins.");
-												m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
-												Marshal.ReleaseComObject(sinkPin);
-												Marshal.ReleaseComObject(sinkFilter.DSFilter);
+												if (sinkPin!=null)
+													Marshal.ReleaseComObject(sinkPin);
+												sinkPin=null;
+												if (sinkFilter.DSFilter!=null)
+												{
+													m_graphBuilder.RemoveFilter(sinkFilter.DSFilter);
+													Marshal.ReleaseComObject(sinkFilter.DSFilter);
+													sinkFilter.DSFilter=null;
+												}
 											}
 										}
-									}
-								}
-							}
-						}
-					}
-				}
+									}//for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
+								}//if (filter.Name.Equals(sinkFilter.FriendlyName))
+							}//foreach (string key in AvailableFilters.Filters.Keys)
+						}//if (sourceFilter.Category =="tunerdevice" && sinkFilter.Category=="capture")
+					}//if (hr != 0)
+				}//for (int i = 0; i < m_Card.TvConnectionDefinitions.Count; i++)
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured pin connections...DONE");
+
+				
+				if (sinkPin!=null)
+					Marshal.ReleaseComObject(sinkPin);
+				sinkPin=null;
+				
+				if (sourcePin!=null)
+					Marshal.ReleaseComObject(sourcePin);
+				sourcePin=null;
 
 				// Find out which filter & pin is used as the interface to the rest of the graph.
 				// The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
@@ -597,8 +621,10 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
-					}
+						Marshal.ReleaseComObject(pin);
+					}//if (pin!=null)
 				}
+
 				if (m_Card.TvInterfaceDefinition.AudioPinName=="3" &&
 					m_Card.TvInterfaceDefinition.VideoPinName=="2")
 				{
@@ -832,8 +858,16 @@ namespace MediaPortal.TV.Recording
 				graphRunning=false;
 				m_basicVideo = null;
 				m_mediaControl = null;
+				if ( m_pinAC3Out!=null)
+					Marshal.ReleaseComObject(m_pinAC3Out);
 				m_pinAC3Out				= null;
+
+				if ( m_DemuxVideoPin!=null)
+					Marshal.ReleaseComObject(m_DemuxVideoPin);
 				m_DemuxVideoPin				= null;
+
+				if ( m_DemuxAudioPin!=null)
+					Marshal.ReleaseComObject(m_DemuxAudioPin);
 				m_DemuxAudioPin				= null;
 
 				if (m_videoWindow != null)
@@ -922,6 +956,16 @@ namespace MediaPortal.TV.Recording
 					DsUtils.RemoveFilters(m_graphBuilder);
 
 				
+				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
+				foreach (string strfName in m_Card.TvFilterDefinitions.Keys)
+				{
+					FilterDefinition dsFilter = m_Card.TvFilterDefinitions[strfName] as FilterDefinition;
+					dsFilter.DSFilter=null;
+					((FilterDefinition)m_Card.TvFilterDefinitions[strfName]).DSFilter = null;
+					dsFilter = null;
+				}
+
+				
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove graph from rot");
 				if (m_rotCookie != 0)
 					DsROT.RemoveGraphFromRot(ref m_rotCookie);
@@ -940,15 +984,6 @@ namespace MediaPortal.TV.Recording
 					while ((hr=Marshal.ReleaseComObject(m_graphBuilder))>0); 
 					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_graphBuilder):{0}",hr);
 					m_graphBuilder = null;
-				}
-
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
-				foreach (string strfName in m_Card.TvFilterDefinitions.Keys)
-				{
-					FilterDefinition dsFilter = m_Card.TvFilterDefinitions[strfName] as FilterDefinition;
-					dsFilter.DSFilter=null;
-					((FilterDefinition)m_Card.TvFilterDefinitions[strfName]).DSFilter = null;
-					dsFilter = null;
 				}
 
 #if DUMP
@@ -2202,7 +2237,6 @@ namespace MediaPortal.TV.Recording
 						if (outputPinCounter == preferredOutputPin) // Go and find the input pin.
 						{
 							IEnumPins downstreamPins;
-
 							DownstreamFilter.EnumPins(out downstreamPins);
 
 							IPin[] dsPin = new IPin[1];

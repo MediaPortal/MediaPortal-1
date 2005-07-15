@@ -60,6 +60,10 @@ namespace MediaPortal.Player
 		protected int                       m_aspectY=1;
 		protected long                      m_speedRate = 10000;
 		bool      usingNvidiaCodec=false;
+		protected IBaseFilter								videoCodecFilter=null;
+		protected IBaseFilter								audioCodecFilter=null;
+		protected IBaseFilter								audioRendererFilter=null;
+		protected IBaseFilter								ffdShowFilter=null;
 		/// <summary> control interface. </summary>
 		protected IMediaControl							mediaCtrl =null;
 
@@ -912,10 +916,10 @@ namespace MediaPortal.Player
 					if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
 					if (strValue.Equals("panscan")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.PanScan43;
 				}
-				if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
-				if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
-        if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
+				if (strVideoCodec.Length>0) videoCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+				if (strAudioCodec.Length>0) audioCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+				if (strAudiorenderer.Length>0) audioRendererFilter=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
+        if (bAddFFDshow) ffdShowFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
 				if (strVideoCodec.ToLower().IndexOf("nvidia")>=0)
 					usingNvidiaCodec=true;
@@ -992,6 +996,29 @@ namespace MediaPortal.Player
 				basicVideo	= null;
 				bufferSource=null;
 
+				
+				if (videoCodecFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(videoCodecFilter))>0); 
+					videoCodecFilter=null;
+				}
+				if (audioCodecFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(audioCodecFilter))>0); 
+					audioCodecFilter=null;
+				}
+				
+				if (audioRendererFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(audioRendererFilter))>0); 
+					audioRendererFilter=null;
+				}
+				
+				if (ffdShowFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(ffdShowFilter))>0); 
+					ffdShowFilter=null;
+				}
 				if (streamConfig2!=null) 
 				{
 					while ( (hr=Marshal.ReleaseComObject(streamConfig2))>0); 
