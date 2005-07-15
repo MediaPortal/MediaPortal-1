@@ -430,6 +430,7 @@ namespace MediaPortal.Configuration.Sections
 						}
 						availableVideoDeviceMonikers.RemoveAt(i);
 						availableVideoDevices.RemoveAt(i);
+						continue;
 					}
 					if (ccd.CaptureName==String.Empty) continue;
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
