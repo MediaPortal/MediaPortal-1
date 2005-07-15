@@ -91,6 +91,11 @@ namespace MediaPortal.Player
     protected DvdDomain				      currnDomain;
     protected IBasicAudio				    basicAudio=null;
     protected IMediaPosition		    mediaPos=null;
+		protected IBaseFilter								videoCodecFilter=null;
+		protected IBaseFilter								audioCodecFilter=null;
+		protected IBaseFilter								audioRendererFilter=null;
+		protected IBaseFilter								ffdShowFilter=null;
+
 		VMR7Util  vmr7 = null;
 		protected int                   m_iSpeed=1;
     protected double                m_dCurrentTime=0;
@@ -479,6 +484,29 @@ namespace MediaPortal.Player
 				if (vmr7!=null)
 					vmr7.RemoveVMR7();
 				vmr7=null;
+
+				if (videoCodecFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(videoCodecFilter))>0); 
+					videoCodecFilter=null;
+				}
+				if (audioCodecFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(audioCodecFilter))>0); 
+					audioCodecFilter=null;
+				}
+				
+				if (audioRendererFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(audioRendererFilter))>0); 
+					audioRendererFilter=null;
+				}
+				
+				if (ffdShowFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(ffdShowFilter))>0); 
+					ffdShowFilter=null;
+				}
 
 				if( dvdbasefilter != null )
 				{
@@ -1882,15 +1910,11 @@ namespace MediaPortal.Player
 				strAudioCodec=xmlreader.GetValueAsString("dvdplayer","audiocodec","");
 				strAudiorenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
 			}
-			if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
-			if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-			if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
-      if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
+			if (strVideoCodec.Length>0) videoCodecFilter= DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+			if (strAudioCodec.Length>0) audioCodecFilter= DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+			if (strAudiorenderer.Length>0) audioRendererFilter=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
+      if (bAddFFDshow) ffdShowFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
-      //Type comtype = Type.GetTypeFromCLSID( Clsid.VideoMixingRenderer9 );
-      //object comobj = Activator.CreateInstance( comtype );
-      //IBaseFilter VMR9Filter=(IBaseFilter)comobj; comobj=null;
-			//graphBuilder.AddFilter(VMR9Filter,"VMR9");
 
 		}
 

@@ -237,6 +237,28 @@ namespace MediaPortal.Player
 				Vmr9=null;
 
 				
+				if (videoCodecFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(videoCodecFilter))>0); 
+					videoCodecFilter=null;
+				}
+				if (audioCodecFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(audioCodecFilter))>0); 
+					audioCodecFilter=null;
+				}
+				
+				if (audioRendererFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(audioRendererFilter))>0); 
+					audioRendererFilter=null;
+				}
+				
+				if (ffdShowFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(ffdShowFilter))>0); 
+					ffdShowFilter=null;
+				}
 
     		
         if( cmdOption.dvdCmd != null )

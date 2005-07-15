@@ -59,6 +59,10 @@ namespace MediaPortal.Player
     /// <summary> interface to get information and control video. </summary>
     protected IBasicVideo2			        basicVideo;
     /// <summary> interface to single-step video. </summary>
+		protected IBaseFilter								videoCodecFilter=null;
+		protected IBaseFilter								audioCodecFilter=null;
+		protected IBaseFilter								audioRendererFilter=null;
+		protected IBaseFilter								ffdShowFilter=null;
     
     protected IDirectVobSub			        vobSub;
 		DateTime  elapsedTimer=DateTime.Now;
@@ -739,11 +743,11 @@ namespace MediaPortal.Player
 				string strExt=System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
 				if (strExt.Equals(".dvr-ms") ||strExt.Equals(".mpg") ||strExt.Equals(".mpeg")||strExt.Equals(".bin")||strExt.Equals(".dat"))
 				{
-					if (strVideoCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
-					if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+					if (strVideoCodec.Length>0) videoCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+					if (strAudioCodec.Length>0) audioCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
 				}
-				if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
-				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
+				if (bAddFFDshow) ffdShowFilter= DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
+				if (strAudiorenderer.Length>0) audioRendererFilter= DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
 
 
         int hr = graphBuilder.RenderFile( m_strCurrentFile, null );
@@ -861,6 +865,10 @@ namespace MediaPortal.Player
 				basicVideo = null;
 				basicAudio = null;
 				
+				if (videoCodecFilter!=null) Marshal.ReleaseComObject(videoCodecFilter); videoCodecFilter=null;
+				if (audioCodecFilter!=null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter=null;
+				if (audioRendererFilter!=null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter=null;
+				if (ffdShowFilter!=null) Marshal.ReleaseComObject(ffdShowFilter); ffdShowFilter=null;
 				if( vobSub != null )
 				{
 					while((hr=Marshal.ReleaseComObject( vobSub))>0); 
