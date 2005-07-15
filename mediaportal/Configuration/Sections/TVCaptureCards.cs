@@ -408,15 +408,15 @@ namespace MediaPortal.Configuration.Sections
 					if( ((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
 					{
 						TVCaptureDevice cd		= new TVCaptureDevice();
-						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[0].ToString();
+						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
 						cd.VideoDevice				= (string)availableVideoDevices[i];
 						cd.CommercialName			= "Skystar 2";
-						cd.IsBDACard					= true;
+						cd.IsBDACard					= false;
 						cd.IsMCECard					= false;
 						cd.SupportsMPEG2			= true;
-						cd.DeviceId						= "";
+						cd.DeviceId						= (string)availableVideoDevices[i];
 						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
-						cd.DeviceType					= "";
+						cd.DeviceType					= "hw";
 						cd.RecordingPath			= recFolder;
 						cd.UseForRecording=true;
 						cd.UseForTV=true;
