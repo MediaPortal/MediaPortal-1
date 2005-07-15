@@ -146,7 +146,7 @@ namespace MediaPortal.GUI.Alarm
 		/// <param name="e"></param>
 		private void OnTimer(Object sender, EventArgs e)
 		{
-			Console.WriteLine(_SnoozeCount);
+			//Console.WriteLine(_SnoozeCount);
 			if(_SnoozeCount == _SnoozeTime)
 			{
 				_SnoozeTimer.Enabled= false;

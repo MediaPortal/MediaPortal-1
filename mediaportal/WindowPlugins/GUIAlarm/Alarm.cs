@@ -99,6 +99,7 @@ namespace MediaPortal.GUI.Alarm
 			{
 				_Id = id;
 				_Name = GUILocalizeStrings.Get(869) + _Id.ToString();
+				_Time=DateTime.Now;
 			}
 		#endregion
 
@@ -387,8 +388,19 @@ namespace MediaPortal.GUI.Alarm
 					{
 						if(station.Name == _Sound)
 						{ 	
-							g_Player.Play(GetPlayPath(station));
-							g_Player.Volume=99;
+							if (station.URL==String.Empty)
+							{
+								// FM radio
+								GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, (int)GUIWindow.Window.WINDOW_RADIO, 0, 0, 0, 0, null);
+								msg.Label = station.Name;
+								GUIGraphicsContext.SendMessage(msg);
+							}
+							else
+							{
+								// internet radio stream
+								g_Player.PlayAudioStream(station.URL);
+							}
+							break;
 						}
 					}
 					break;
