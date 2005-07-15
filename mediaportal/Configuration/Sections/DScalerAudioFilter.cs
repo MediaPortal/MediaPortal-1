@@ -129,6 +129,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
       this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(288, 21);
       this.comboBoxSpeakerConfig.TabIndex = 12;
+      this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
       // 
       // checkBoxMPEGOverSPDIF
       // 
@@ -251,7 +252,10 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-
+    private void comboBoxSpeakerConfig_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+    
+    }
 	}
 }
 

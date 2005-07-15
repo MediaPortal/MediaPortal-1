@@ -20,14 +20,11 @@ namespace MediaPortal.Configuration.Sections
 	public class MusicDatabase : MediaPortal.Configuration.SectionSettings
 	{
     private System.Windows.Forms.GroupBox groupBox1;
-    private System.Windows.Forms.Label label1;
     private System.Windows.Forms.CheckedListBox sharesListBox;
     private System.Windows.Forms.Button startButton;
     private System.Windows.Forms.CheckBox buildThumbsCheckBox;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.ProgressBar progressBar;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label countLabel;
     private System.Windows.Forms.Label fileLabel;
     private System.Windows.Forms.Button cancelButton;
 	private System.ComponentModel.IContainer components = null;
@@ -153,12 +150,9 @@ namespace MediaPortal.Configuration.Sections
       this.buildThumbsCheckBox = new System.Windows.Forms.CheckBox();
       this.startButton = new System.Windows.Forms.Button();
       this.sharesListBox = new System.Windows.Forms.CheckedListBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.cancelButton = new System.Windows.Forms.Button();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.fileLabel = new System.Windows.Forms.Label();
-      this.countLabel = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -171,21 +165,20 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.buildThumbsCheckBox);
       this.groupBox1.Controls.Add(this.startButton);
       this.groupBox1.Controls.Add(this.sharesListBox);
-      this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 216);
+      this.groupBox1.Size = new System.Drawing.Size(472, 184);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Music Database";
+      this.groupBox1.Text = "Scan Music Folders";
       // 
       // buildThumbsCheckBox
       // 
       this.buildThumbsCheckBox.Checked = true;
       this.buildThumbsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.buildThumbsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buildThumbsCheckBox.Location = new System.Drawing.Point(16, 152);
+      this.buildThumbsCheckBox.Location = new System.Drawing.Point(16, 128);
       this.buildThumbsCheckBox.Name = "buildThumbsCheckBox";
       this.buildThumbsCheckBox.Size = new System.Drawing.Size(264, 16);
       this.buildThumbsCheckBox.TabIndex = 3;
@@ -193,14 +186,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startButton
       // 
-      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.startButton.Location = new System.Drawing.Point(16, 176);
+      this.startButton.Location = new System.Drawing.Point(240, 152);
       this.startButton.Name = "startButton";
-      this.startButton.Size = new System.Drawing.Size(408, 23);
+      this.startButton.Size = new System.Drawing.Size(216, 22);
       this.startButton.TabIndex = 0;
-      this.startButton.Text = "Update music database from selected shares";
+      this.startButton.Text = "Update database from selected shares";
       this.startButton.Click += new System.EventHandler(this.startButton_Click);
       // 
       // sharesListBox
@@ -209,87 +201,64 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListBox.CheckOnClick = true;
-      this.sharesListBox.Location = new System.Drawing.Point(16, 40);
+      this.sharesListBox.Location = new System.Drawing.Point(16, 24);
       this.sharesListBox.Name = "sharesListBox";
-      this.sharesListBox.Size = new System.Drawing.Size(408, 94);
+      this.sharesListBox.Size = new System.Drawing.Size(440, 94);
       this.sharesListBox.TabIndex = 2;
       this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
       // 
-      // label1
+      // cancelButton
       // 
-      this.label1.Location = new System.Drawing.Point(16, 24);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(176, 23);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Music Folders";
+      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cancelButton.Location = new System.Drawing.Point(384, 280);
+      this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(72, 22);
+      this.cancelButton.TabIndex = 0;
+      this.cancelButton.Text = "Cancel";
+      this.cancelButton.Visible = false;
+      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
       // groupBox2
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.cancelButton);
       this.groupBox2.Controls.Add(this.fileLabel);
-      this.groupBox2.Controls.Add(this.countLabel);
-      this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(8, 256);
+      this.groupBox2.Location = new System.Drawing.Point(0, 192);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(440, 112);
+      this.groupBox2.Size = new System.Drawing.Size(472, 80);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Progress";
       // 
-      // cancelButton
-      // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(349, 27);
-      this.cancelButton.Name = "cancelButton";
-      this.cancelButton.TabIndex = 0;
-      this.cancelButton.Text = "Cancel";
-      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-      // 
       // fileLabel
       // 
       this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileLabel.Location = new System.Drawing.Point(16, 56);
+      this.fileLabel.Location = new System.Drawing.Point(16, 24);
       this.fileLabel.Name = "fileLabel";
-      this.fileLabel.Size = new System.Drawing.Size(408, 23);
+      this.fileLabel.Size = new System.Drawing.Size(440, 16);
       this.fileLabel.TabIndex = 3;
-      // 
-      // countLabel
-      // 
-      this.countLabel.Location = new System.Drawing.Point(96, 32);
-      this.countLabel.Name = "countLabel";
-      this.countLabel.Size = new System.Drawing.Size(192, 23);
-      this.countLabel.TabIndex = 2;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 32);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(80, 23);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Scanned files:";
       // 
       // progressBar
       // 
       this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar.Location = new System.Drawing.Point(16, 80);
+      this.progressBar.Location = new System.Drawing.Point(16, 48);
       this.progressBar.Name = "progressBar";
-      this.progressBar.Size = new System.Drawing.Size(408, 16);
+      this.progressBar.Size = new System.Drawing.Size(440, 16);
       this.progressBar.TabIndex = 0;
       // 
       // MusicDatabase
       // 
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.cancelButton);
       this.Name = "MusicDatabase";
-      this.Size = new System.Drawing.Size(456, 448);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);

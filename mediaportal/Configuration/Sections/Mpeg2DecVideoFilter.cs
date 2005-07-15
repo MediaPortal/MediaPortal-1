@@ -99,90 +99,90 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label7);
       this.groupBox1.Controls.Add(this.label6);
       this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.tbSaturation);
-      this.groupBox1.Controls.Add(this.tbHue);
-      this.groupBox1.Controls.Add(this.tbContrast);
-      this.groupBox1.Controls.Add(this.tbBrightness);
       this.groupBox1.Controls.Add(this.cbDeinterlace);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.cbForcedSubtitles);
       this.groupBox1.Controls.Add(this.cbPlanar);
+      this.groupBox1.Controls.Add(this.tbSaturation);
+      this.groupBox1.Controls.Add(this.tbHue);
+      this.groupBox1.Controls.Add(this.tbContrast);
+      this.groupBox1.Controls.Add(this.tbBrightness);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(16, 8);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 408);
+      this.groupBox1.Size = new System.Drawing.Size(472, 272);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "MPEG2 Video Decoder";
+      this.groupBox1.Text = "Settings";
       // 
       // label8
       // 
-      this.label8.Location = new System.Drawing.Point(24, 320);
+      this.label8.Location = new System.Drawing.Point(16, 200);
       this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(88, 16);
+      this.label8.Size = new System.Drawing.Size(64, 16);
       this.label8.TabIndex = 11;
-      this.label8.Text = "Saturation";
+      this.label8.Text = "Saturation:";
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(24, 264);
+      this.label7.Location = new System.Drawing.Point(16, 160);
       this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(88, 16);
+      this.label7.Size = new System.Drawing.Size(32, 16);
       this.label7.TabIndex = 10;
-      this.label7.Text = "Hue";
+      this.label7.Text = "Hue:";
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(24, 208);
+      this.label6.Location = new System.Drawing.Point(16, 120);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(88, 16);
+      this.label6.Size = new System.Drawing.Size(56, 16);
       this.label6.TabIndex = 9;
-      this.label6.Text = "Contrast";
+      this.label6.Text = "Contrast:";
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(24, 152);
+      this.label4.Location = new System.Drawing.Point(16, 80);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(88, 16);
+      this.label4.Size = new System.Drawing.Size(64, 16);
       this.label4.TabIndex = 8;
-      this.label4.Text = "Brightness";
+      this.label4.Text = "Brightness:";
       // 
       // tbSaturation
       // 
-      this.tbSaturation.Location = new System.Drawing.Point(128, 312);
+      this.tbSaturation.Location = new System.Drawing.Point(160, 196);
       this.tbSaturation.Maximum = 200;
       this.tbSaturation.Name = "tbSaturation";
-      this.tbSaturation.Size = new System.Drawing.Size(256, 45);
+      this.tbSaturation.Size = new System.Drawing.Size(304, 45);
       this.tbSaturation.TabIndex = 7;
       this.tbSaturation.TickFrequency = 20;
       this.tbSaturation.Value = 100;
       // 
       // tbHue
       // 
-      this.tbHue.Location = new System.Drawing.Point(128, 256);
+      this.tbHue.Location = new System.Drawing.Point(160, 156);
       this.tbHue.Maximum = 360;
       this.tbHue.Name = "tbHue";
-      this.tbHue.Size = new System.Drawing.Size(256, 45);
+      this.tbHue.Size = new System.Drawing.Size(304, 45);
       this.tbHue.TabIndex = 6;
       this.tbHue.TickFrequency = 32;
       this.tbHue.Value = 180;
       // 
       // tbContrast
       // 
-      this.tbContrast.Location = new System.Drawing.Point(128, 200);
+      this.tbContrast.Location = new System.Drawing.Point(160, 116);
       this.tbContrast.Maximum = 200;
       this.tbContrast.Name = "tbContrast";
-      this.tbContrast.Size = new System.Drawing.Size(256, 45);
+      this.tbContrast.Size = new System.Drawing.Size(304, 45);
       this.tbContrast.TabIndex = 5;
       this.tbContrast.TickFrequency = 20;
       this.tbContrast.Value = 100;
       // 
       // tbBrightness
       // 
-      this.tbBrightness.Location = new System.Drawing.Point(128, 144);
+      this.tbBrightness.Location = new System.Drawing.Point(160, 76);
       this.tbBrightness.Maximum = 255;
       this.tbBrightness.Name = "tbBrightness";
-      this.tbBrightness.Size = new System.Drawing.Size(256, 45);
+      this.tbBrightness.Size = new System.Drawing.Size(304, 45);
       this.tbBrightness.TabIndex = 4;
       this.tbBrightness.TickFrequency = 16;
       this.tbBrightness.Value = 128;
@@ -195,27 +195,27 @@ namespace MediaPortal.Configuration.Sections
                                                        "Weave",
                                                        "Blend",
                                                        "BOB"});
-      this.cbDeinterlace.Location = new System.Drawing.Point(152, 80);
+      this.cbDeinterlace.Location = new System.Drawing.Point(168, 236);
       this.cbDeinterlace.Name = "cbDeinterlace";
-      this.cbDeinterlace.Size = new System.Drawing.Size(121, 21);
+      this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
       this.cbDeinterlace.TabIndex = 3;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(24, 80);
+      this.label2.Location = new System.Drawing.Point(16, 240);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(112, 16);
       this.label2.TabIndex = 2;
-      this.label2.Text = "Deinterlace method";
+      this.label2.Text = "Deinterlace method:";
       // 
       // cbForcedSubtitles
       // 
       this.cbForcedSubtitles.Checked = true;
       this.cbForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbForcedSubtitles.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cbForcedSubtitles.Location = new System.Drawing.Point(24, 56);
+      this.cbForcedSubtitles.Location = new System.Drawing.Point(16, 48);
       this.cbForcedSubtitles.Name = "cbForcedSubtitles";
-      this.cbForcedSubtitles.Size = new System.Drawing.Size(336, 16);
+      this.cbForcedSubtitles.Size = new System.Drawing.Size(168, 16);
       this.cbForcedSubtitles.TabIndex = 1;
       this.cbForcedSubtitles.Text = "Always display forced subtitles";
       // 
@@ -224,9 +224,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbPlanar.Checked = true;
       this.cbPlanar.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbPlanar.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cbPlanar.Location = new System.Drawing.Point(24, 32);
+      this.cbPlanar.Location = new System.Drawing.Point(16, 24);
       this.cbPlanar.Name = "cbPlanar";
-      this.cbPlanar.Size = new System.Drawing.Size(336, 16);
+      this.cbPlanar.Size = new System.Drawing.Size(264, 16);
       this.cbPlanar.TabIndex = 0;
       this.cbPlanar.Text = "Enable planar YUV media types (YV12, I420, IYUV)";
       // 
@@ -234,7 +234,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "MPEG2DecVideoFilter";
-      this.Size = new System.Drawing.Size(456, 432);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.tbSaturation)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.tbHue)).EndInit();
