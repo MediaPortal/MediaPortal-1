@@ -1008,7 +1008,7 @@ namespace MediaPortal.GUI.TV
 			dlg.SetHeading(180);//select time
 			dlg.ShowQuickNumbers=false;
 			//duration
-			for (float hours =0.5f ; hours <=3f; hours+=0.5f)
+			for (float hours =0.5f ; hours <=24f; hours+=0.5f)
 			{
 				dlg.Add(String.Format("{0} {1}", hours.ToString("f2"),GUILocalizeStrings.Get(3002) ));
 			}
