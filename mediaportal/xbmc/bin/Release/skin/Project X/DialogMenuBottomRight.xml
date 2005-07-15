@@ -10,48 +10,48 @@
 		<control>
 			<type>image</type> 
 			<id>0</id> 
-			<posX>380</posX> 
-			<posY>407</posY> 
-			<width>300</width> 
-			<height>139</height> 
-			<texture>context_background.png</texture> 
+			<posX>180</posX> 
+			<posY>307</posY> 
+			<width>500</width> 
+			<height>239</height> 
+			<texture>dialog_background.png</texture> 
 		</control>
 			<control>
 				<description>Heading text label</description> 
 				<type>label</type> 
 				<id>4</id> 
-				<posX>406</posX> 
-				<posY>422</posY> 
+				<posX>216</posX> 
+				<posY>317</posY> 
 				<label>181</label> 
-				<font>font10</font> 
+				<font>font12</font> 
 				<textcolor>FFFFFFFF</textcolor> 
 			</control>	
 			<control>
 				<description>Label text </description> 
 				<type>label</type> 
 				<id>5</id> 
-				<posX>406</posX> 
-				<posY>435</posY> 
+				<posX>216</posX> 
+				<posY>333</posY> 
 				<label>-</label> 
-				<font>font10</font> 
+				<font>font12</font> 
 				<textcolor>FFFFFFFF</textcolor> 
 			</control>	
 			<control>
 				<description>Label text </description> 
 				<type>label</type> 
 				<id>6</id> 
-				<posX>406</posX> 
-				<posY>448</posY> 
+				<posX>216</posX> 
+				<posY>349</posY> 
 				<label>-</label> 
-				<font>font10</font> 
+				<font>font12</font> 
 				<textcolor>FFFFFFFF</textcolor> 
 			</control>	
 				<control>
 				<description>Exit button</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>635</posX>
-				<posY>422</posY>
+				<posX>630</posX>
+				<posY>324</posY>
 				<width>32</width>
 				<height>32</height>
 				<textureFocus>button_close_focus.png</textureFocus>
@@ -66,16 +66,16 @@
 				<description>options listcontrol</description> 
 				<type>listcontrol</type> 
 				<id>3</id> 
-				<posX>400</posX> 
-				<posY>470</posY> 
-				<width>265</width> 
-				<height>120</height> 
+				<posX>220</posX> 
+				<posY>375</posY> 
+				<width>425</width> 
+				<height>160</height> 
 				<onleft>2</onleft> 
 				<onright>2</onright>
 				<onup>2</onup> 
 				<ondown>2</ondown>
-				<spinPosX>642</spinPosX>
-				<spinPosY>545</spinPosY>
+				<spinPosX>580</spinPosX>
+				<spinPosY>498</spinPosY>
 				<spinWidth>16</spinWidth>
 				<spinHeight>16</spinHeight>
 				<textureHeight>22</textureHeight>
