@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public abstract class FileExtensions : MediaPortal.Configuration.SectionSettings
+  public abstract class FileExtensions : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.Button removeButton;

@@ -131,6 +131,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Size = new System.Drawing.Size(472, 168);
       this.groupBox2.TabIndex = 3;
       this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Settings";
       // 
       // buttonSelectFolder
       // 

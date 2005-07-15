@@ -95,6 +95,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Size = new System.Drawing.Size(472, 168);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Settings";
       // 
       // label1
       // 

@@ -140,14 +140,14 @@ namespace MediaPortal.Configuration.Sections
 		{
       this.internalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
       this.parametersButton = new System.Windows.Forms.Button();
       this.parametersTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.fileNameButton = new System.Windows.Forms.Button();
       this.fileNameTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
+      this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
+      this.label6 = new System.Windows.Forms.Label();
       this.button2 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -163,9 +163,9 @@ namespace MediaPortal.Configuration.Sections
       this.internalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.internalPlayerCheckBox.Location = new System.Drawing.Point(16, 24);
       this.internalPlayerCheckBox.Name = "internalPlayerCheckBox";
-      this.internalPlayerCheckBox.Size = new System.Drawing.Size(112, 16);
+      this.internalPlayerCheckBox.Size = new System.Drawing.Size(232, 16);
       this.internalPlayerCheckBox.TabIndex = 0;
-      this.internalPlayerCheckBox.Text = "Use external player";
+      this.internalPlayerCheckBox.Text = "Use external player (replaces internal player)";
       this.internalPlayerCheckBox.CheckedChanged += new System.EventHandler(this.internalPlayerCheckBox_CheckedChanged);
       // 
       // mpGroupBox1
@@ -186,31 +186,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "External Player";
-      // 
-      // defaultZoomModeComboBox
-      // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-                                                                 "Normal",
-                                                                 "Original Source Format",
-                                                                 "Stretch",
-                                                                 "Zoom",
-                                                                 "4:3 Letterbox",
-                                                                 "4:3 Pan and scan"});
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 44);
-      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
-      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 5;
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(16, 48);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 31;
-      this.label6.Text = "Default zoom mode:";
       // 
       // parametersButton
       // 
@@ -266,9 +241,34 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label1.Location = new System.Drawing.Point(16, 56);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(56, 16);
+      this.label1.Size = new System.Drawing.Size(80, 16);
       this.label1.TabIndex = 0;
-      this.label1.Text = "Filename:";
+      this.label1.Text = "Path/Filename:";
+      // 
+      // defaultZoomModeComboBox
+      // 
+      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
+                                                                 "Normal",
+                                                                 "Original Source Format",
+                                                                 "Stretch",
+                                                                 "Zoom",
+                                                                 "4:3 Letterbox",
+                                                                 "4:3 Pan and scan"});
+      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 44);
+      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
+      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
+      this.defaultZoomModeComboBox.TabIndex = 5;
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(16, 48);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(112, 16);
+      this.label6.TabIndex = 31;
+      this.label6.Text = "Default zoom mode:";
       // 
       // button2
       // 
@@ -297,6 +297,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 80);
       this.mpGroupBox3.TabIndex = 4;
       this.mpGroupBox3.TabStop = false;
+      this.mpGroupBox3.Text = "Settings";
       // 
       // videoRendererComboBox
       // 
@@ -312,7 +313,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label4.Location = new System.Drawing.Point(16, 24);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(88, 16);
+      this.label4.Size = new System.Drawing.Size(152, 16);
       this.label4.TabIndex = 27;
       this.label4.Text = "Video renderer:";
       // 

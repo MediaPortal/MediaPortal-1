@@ -82,74 +82,75 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.Label label10;
-		private System.Windows.Forms.Label label11;
-		private System.Windows.Forms.Label label13;
-		private System.Windows.Forms.ComboBox cbTitle;
-		private System.Windows.Forms.TextBox tbTitle;
-		private System.Windows.Forms.TextBox tbYear;
-		private System.Windows.Forms.TextBox tbRating;
-		private System.Windows.Forms.TextBox tbDuration;
-		private System.Windows.Forms.TextBox tbDirector;
-		private System.Windows.Forms.TextBox tbMPAARating;
-		private System.Windows.Forms.CheckBox cbWatched;
-		private System.Windows.Forms.TextBox tbDescription;
 		private System.Windows.Forms.TabControl tabControl2;
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.TabPage tabPage4;
 		private System.Windows.Forms.TabPage tabPage5;
 		private System.Windows.Forms.TabPage tabPage6;
 		private System.Windows.Forms.TabPage tabPage7;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.TextBox tbTagline;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.ListView listViewGenres;
-		private System.Windows.Forms.ListView listViewAllGenres;
-		private System.Windows.Forms.Button buttonUnmapGenre;
-		private System.Windows.Forms.Button buttonMapGenre;
-		private System.Windows.Forms.Button buttonNewGenre;
-		private System.Windows.Forms.Button btnDeleteGenre;
-		private System.Windows.Forms.Button buttonDeleteActor;
-		private System.Windows.Forms.Button buttonNewActor;
-		private System.Windows.Forms.Button buttonUnmapActors;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Button buttonMapActors;
-		private System.Windows.Forms.Label label14;
-		private System.Windows.Forms.ListView listViewMovieActors;
-		private System.Windows.Forms.ListView listViewAllActors;
-		private System.Windows.Forms.TextBox textBoxPictureURL;
-		private System.Windows.Forms.Label label15;
-		private System.Windows.Forms.Button btnLookupImage;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private System.Windows.Forms.ColumnHeader chName;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.ListView listViewFiles;
-		private System.Windows.Forms.ColumnHeader columnHeader4;
-		private System.Windows.Forms.Button buttonAddFile;
-		private System.Windows.Forms.Button buttonRemoveFile;
-		private System.Windows.Forms.Button btnSave;
-		private System.Windows.Forms.Button buttonLookupMovie;
-		private System.Windows.Forms.TextBox textBoxNewGenre;
-		private System.Windows.Forms.TextBox textBoxNewActor;
-		private System.Windows.Forms.Label label16;
-		private System.Windows.Forms.TextBox tbVotes;
-		private System.Windows.Forms.Label label17;
-		private System.Windows.Forms.TextBox tbPlotOutline;
-		private System.Windows.Forms.ColumnHeader columnHeader5;
-		private System.Windows.Forms.Label label18;
-		private System.Windows.Forms.TextBox tbWritingCredits;
-		private System.Windows.Forms.Button btnDelete;
-		private System.Windows.Forms.ComboBox comboBoxPictures;
-		private System.Windows.Forms.Label label19;
-		private System.Windows.Forms.Button buttonImport;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private System.Windows.Forms.Button buttonImport;
+    private System.Windows.Forms.Button btnDelete;
+    private System.Windows.Forms.TextBox tbWritingCredits;
+    private System.Windows.Forms.Label label18;
+    private System.Windows.Forms.TextBox tbPlotOutline;
+    private System.Windows.Forms.Label label17;
+    private System.Windows.Forms.TextBox tbVotes;
+    private System.Windows.Forms.Label label16;
+    private System.Windows.Forms.Button buttonLookupMovie;
+    private System.Windows.Forms.Button btnSave;
+    private System.Windows.Forms.TextBox tbTagline;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.CheckBox cbWatched;
+    private System.Windows.Forms.TextBox tbDescription;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label13;
+    private System.Windows.Forms.ComboBox cbTitle;
+    private System.Windows.Forms.TextBox tbMPAARating;
+    private System.Windows.Forms.Label label11;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.TextBox tbYear;
+    private System.Windows.Forms.Label label10;
+    private System.Windows.Forms.TextBox tbDirector;
+    private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.TextBox tbDuration;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.TextBox tbRating;
+    private System.Windows.Forms.TextBox tbTitle;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private System.Windows.Forms.TextBox textBoxNewGenre;
+    private System.Windows.Forms.Button btnDeleteGenre;
+    private System.Windows.Forms.Button buttonNewGenre;
+    private System.Windows.Forms.Button buttonUnmapGenre;
+    private System.Windows.Forms.Button buttonMapGenre;
+    private System.Windows.Forms.ListView listViewGenres;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ListView listViewAllGenres;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private System.Windows.Forms.GroupBox groupBox5;
+    private System.Windows.Forms.TextBox textBoxNewActor;
+    private System.Windows.Forms.Button buttonDeleteActor;
+    private System.Windows.Forms.Button buttonNewActor;
+    private System.Windows.Forms.Button buttonUnmapActors;
+    private System.Windows.Forms.Button buttonMapActors;
+    private System.Windows.Forms.ListView listViewMovieActors;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.ListView listViewAllActors;
+    private System.Windows.Forms.ColumnHeader chName;
+    private System.Windows.Forms.GroupBox groupBox6;
+    private System.Windows.Forms.Button buttonRemoveFile;
+    private System.Windows.Forms.Button buttonAddFile;
+    private System.Windows.Forms.ListView listViewFiles;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private System.Windows.Forms.GroupBox groupBox7;
+    private System.Windows.Forms.Label label19;
+    private System.Windows.Forms.ComboBox comboBoxPictures;
+    private System.Windows.Forms.Button btnLookupImage;
+    private System.Windows.Forms.Label label15;
+    private System.Windows.Forms.TextBox textBoxPictureURL;
+    private System.Windows.Forms.PictureBox pictureBox1;
     ArrayList availableFiles;
 
     public MovieDatabase() :  this("Movie Database")
@@ -254,6 +255,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabControl2 = new System.Windows.Forms.TabControl();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.buttonImport = new System.Windows.Forms.Button();
       this.btnDelete = new System.Windows.Forms.Button();
       this.tbWritingCredits = new System.Windows.Forms.TextBox();
@@ -283,37 +285,37 @@ namespace MediaPortal.Configuration.Sections
       this.label8 = new System.Windows.Forms.Label();
       this.tbRating = new System.Windows.Forms.TextBox();
       this.tbTitle = new System.Windows.Forms.TextBox();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.textBoxNewGenre = new System.Windows.Forms.TextBox();
-      this.btnDeleteGenre = new System.Windows.Forms.Button();
-      this.buttonNewGenre = new System.Windows.Forms.Button();
-      this.buttonUnmapGenre = new System.Windows.Forms.Button();
-      this.label12 = new System.Windows.Forms.Label();
-      this.buttonMapGenre = new System.Windows.Forms.Button();
-      this.label5 = new System.Windows.Forms.Label();
-      this.listViewGenres = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.listViewAllGenres = new System.Windows.Forms.ListView();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.tabPage5 = new System.Windows.Forms.TabPage();
+      this.groupBox5 = new System.Windows.Forms.GroupBox();
       this.textBoxNewActor = new System.Windows.Forms.TextBox();
       this.buttonDeleteActor = new System.Windows.Forms.Button();
       this.buttonNewActor = new System.Windows.Forms.Button();
       this.buttonUnmapActors = new System.Windows.Forms.Button();
-      this.label7 = new System.Windows.Forms.Label();
       this.buttonMapActors = new System.Windows.Forms.Button();
-      this.label14 = new System.Windows.Forms.Label();
       this.listViewMovieActors = new System.Windows.Forms.ListView();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.listViewAllActors = new System.Windows.Forms.ListView();
       this.chName = new System.Windows.Forms.ColumnHeader();
+      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.textBoxNewGenre = new System.Windows.Forms.TextBox();
+      this.btnDeleteGenre = new System.Windows.Forms.Button();
+      this.buttonNewGenre = new System.Windows.Forms.Button();
+      this.buttonUnmapGenre = new System.Windows.Forms.Button();
+      this.buttonMapGenre = new System.Windows.Forms.Button();
+      this.listViewGenres = new System.Windows.Forms.ListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.listViewAllGenres = new System.Windows.Forms.ListView();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.tabPage6 = new System.Windows.Forms.TabPage();
+      this.groupBox6 = new System.Windows.Forms.GroupBox();
       this.buttonRemoveFile = new System.Windows.Forms.Button();
       this.buttonAddFile = new System.Windows.Forms.Button();
       this.listViewFiles = new System.Windows.Forms.ListView();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.tabPage7 = new System.Windows.Forms.TabPage();
+      this.groupBox7 = new System.Windows.Forms.GroupBox();
       this.label19 = new System.Windows.Forms.Label();
       this.comboBoxPictures = new System.Windows.Forms.ComboBox();
       this.btnLookupImage = new System.Windows.Forms.Button();
@@ -327,10 +329,15 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.SuspendLayout();
       this.tabControl2.SuspendLayout();
       this.tabPage3.SuspendLayout();
-      this.tabPage4.SuspendLayout();
+      this.groupBox3.SuspendLayout();
       this.tabPage5.SuspendLayout();
+      this.groupBox5.SuspendLayout();
+      this.tabPage4.SuspendLayout();
+      this.groupBox4.SuspendLayout();
       this.tabPage6.SuspendLayout();
+      this.groupBox6.SuspendLayout();
       this.tabPage7.SuspendLayout();
+      this.groupBox7.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -343,7 +350,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(416, 160);
+      this.groupBox1.Size = new System.Drawing.Size(448, 160);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Movie Folders";
@@ -355,7 +362,7 @@ namespace MediaPortal.Configuration.Sections
       this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.startButton.Location = new System.Drawing.Point(16, 120);
       this.startButton.Name = "startButton";
-      this.startButton.Size = new System.Drawing.Size(384, 23);
+      this.startButton.Size = new System.Drawing.Size(416, 23);
       this.startButton.TabIndex = 0;
       this.startButton.Text = "Update movie database from selected shares";
       this.startButton.Click += new System.EventHandler(this.startButton_Click);
@@ -368,7 +375,7 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.CheckOnClick = true;
       this.sharesListBox.Location = new System.Drawing.Point(16, 24);
       this.sharesListBox.Name = "sharesListBox";
-      this.sharesListBox.Size = new System.Drawing.Size(384, 79);
+      this.sharesListBox.Size = new System.Drawing.Size(416, 79);
       this.sharesListBox.TabIndex = 2;
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
@@ -385,9 +392,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(8, 168);
+      this.groupBox2.Location = new System.Drawing.Point(8, 176);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(416, 224);
+      this.groupBox2.Size = new System.Drawing.Size(448, 184);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Progress";
@@ -410,8 +417,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(325, 27);
+      this.cancelButton.Location = new System.Drawing.Point(357, 27);
       this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(72, 22);
       this.cancelButton.TabIndex = 0;
       this.cancelButton.Text = "Cancel";
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -419,9 +427,9 @@ namespace MediaPortal.Configuration.Sections
       // fileLabel
       // 
       this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileLabel.Location = new System.Drawing.Point(16, 72);
+      this.fileLabel.Location = new System.Drawing.Point(16, 52);
       this.fileLabel.Name = "fileLabel";
-      this.fileLabel.Size = new System.Drawing.Size(384, 16);
+      this.fileLabel.Size = new System.Drawing.Size(416, 16);
       this.fileLabel.TabIndex = 3;
       // 
       // countLabel
@@ -443,19 +451,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar.Location = new System.Drawing.Point(16, 96);
+      this.progressBar.Location = new System.Drawing.Point(16, 56);
       this.progressBar.Name = "progressBar";
-      this.progressBar.Size = new System.Drawing.Size(384, 16);
+      this.progressBar.Size = new System.Drawing.Size(416, 16);
       this.progressBar.TabIndex = 0;
       // 
       // tabControl1
       // 
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Location = new System.Drawing.Point(8, 8);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(440, 424);
+      this.tabControl1.Size = new System.Drawing.Size(472, 408);
       this.tabControl1.TabIndex = 2;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -465,560 +473,572 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Controls.Add(this.tabControl2);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Size = new System.Drawing.Size(432, 398);
+      this.tabPage1.Size = new System.Drawing.Size(464, 382);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Editor";
       this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
       // 
       // tabControl2
       // 
+      this.tabControl2.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
       this.tabControl2.Controls.Add(this.tabPage3);
-      this.tabControl2.Controls.Add(this.tabPage4);
       this.tabControl2.Controls.Add(this.tabPage5);
+      this.tabControl2.Controls.Add(this.tabPage4);
       this.tabControl2.Controls.Add(this.tabPage6);
       this.tabControl2.Controls.Add(this.tabPage7);
       this.tabControl2.Location = new System.Drawing.Point(8, 8);
       this.tabControl2.Name = "tabControl2";
       this.tabControl2.SelectedIndex = 0;
-      this.tabControl2.Size = new System.Drawing.Size(416, 384);
+      this.tabControl2.Size = new System.Drawing.Size(448, 368);
       this.tabControl2.TabIndex = 31;
       this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
       // 
       // tabPage3
       // 
-      this.tabPage3.Controls.Add(this.buttonImport);
-      this.tabPage3.Controls.Add(this.btnDelete);
-      this.tabPage3.Controls.Add(this.tbWritingCredits);
-      this.tabPage3.Controls.Add(this.label18);
-      this.tabPage3.Controls.Add(this.tbPlotOutline);
-      this.tabPage3.Controls.Add(this.label17);
-      this.tabPage3.Controls.Add(this.tbVotes);
-      this.tabPage3.Controls.Add(this.label16);
-      this.tabPage3.Controls.Add(this.buttonLookupMovie);
-      this.tabPage3.Controls.Add(this.btnSave);
-      this.tabPage3.Controls.Add(this.tbTagline);
-      this.tabPage3.Controls.Add(this.label4);
-      this.tabPage3.Controls.Add(this.cbWatched);
-      this.tabPage3.Controls.Add(this.tbDescription);
-      this.tabPage3.Controls.Add(this.label3);
-      this.tabPage3.Controls.Add(this.label13);
-      this.tabPage3.Controls.Add(this.cbTitle);
-      this.tabPage3.Controls.Add(this.tbMPAARating);
-      this.tabPage3.Controls.Add(this.label11);
-      this.tabPage3.Controls.Add(this.label6);
-      this.tabPage3.Controls.Add(this.tbYear);
-      this.tabPage3.Controls.Add(this.label10);
-      this.tabPage3.Controls.Add(this.tbDirector);
-      this.tabPage3.Controls.Add(this.label9);
-      this.tabPage3.Controls.Add(this.tbDuration);
-      this.tabPage3.Controls.Add(this.label1);
-      this.tabPage3.Controls.Add(this.label8);
-      this.tabPage3.Controls.Add(this.tbRating);
-      this.tabPage3.Controls.Add(this.tbTitle);
-      this.tabPage3.Location = new System.Drawing.Point(4, 22);
+      this.tabPage3.Controls.Add(this.groupBox3);
+      this.tabPage3.Location = new System.Drawing.Point(4, 25);
       this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(408, 358);
+      this.tabPage3.Size = new System.Drawing.Size(440, 339);
       this.tabPage3.TabIndex = 0;
       this.tabPage3.Text = "Title";
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Controls.Add(this.buttonImport);
+      this.groupBox3.Controls.Add(this.btnDelete);
+      this.groupBox3.Controls.Add(this.tbWritingCredits);
+      this.groupBox3.Controls.Add(this.label18);
+      this.groupBox3.Controls.Add(this.tbPlotOutline);
+      this.groupBox3.Controls.Add(this.label17);
+      this.groupBox3.Controls.Add(this.tbVotes);
+      this.groupBox3.Controls.Add(this.label16);
+      this.groupBox3.Controls.Add(this.buttonLookupMovie);
+      this.groupBox3.Controls.Add(this.btnSave);
+      this.groupBox3.Controls.Add(this.tbTagline);
+      this.groupBox3.Controls.Add(this.label4);
+      this.groupBox3.Controls.Add(this.cbWatched);
+      this.groupBox3.Controls.Add(this.tbDescription);
+      this.groupBox3.Controls.Add(this.label3);
+      this.groupBox3.Controls.Add(this.label13);
+      this.groupBox3.Controls.Add(this.cbTitle);
+      this.groupBox3.Controls.Add(this.tbMPAARating);
+      this.groupBox3.Controls.Add(this.label11);
+      this.groupBox3.Controls.Add(this.label6);
+      this.groupBox3.Controls.Add(this.tbYear);
+      this.groupBox3.Controls.Add(this.label10);
+      this.groupBox3.Controls.Add(this.tbDirector);
+      this.groupBox3.Controls.Add(this.label9);
+      this.groupBox3.Controls.Add(this.tbDuration);
+      this.groupBox3.Controls.Add(this.label1);
+      this.groupBox3.Controls.Add(this.label8);
+      this.groupBox3.Controls.Add(this.tbRating);
+      this.groupBox3.Controls.Add(this.tbTitle);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox3.Location = new System.Drawing.Point(0, 0);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(440, 336);
+      this.groupBox3.TabIndex = 40;
+      this.groupBox3.TabStop = false;
       // 
       // buttonImport
       // 
       this.buttonImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonImport.Location = new System.Drawing.Point(192, 328);
+      this.buttonImport.Location = new System.Drawing.Point(200, 312);
       this.buttonImport.Name = "buttonImport";
-      this.buttonImport.TabIndex = 39;
+      this.buttonImport.Size = new System.Drawing.Size(72, 17);
+      this.buttonImport.TabIndex = 14;
       this.buttonImport.Text = "Import";
       this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
       // 
       // btnDelete
       // 
       this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnDelete.Location = new System.Drawing.Point(344, 328);
+      this.btnDelete.Location = new System.Drawing.Point(360, 312);
       this.btnDelete.Name = "btnDelete";
-      this.btnDelete.Size = new System.Drawing.Size(48, 23);
-      this.btnDelete.TabIndex = 15;
+      this.btnDelete.Size = new System.Drawing.Size(72, 17);
+      this.btnDelete.TabIndex = 16;
       this.btnDelete.Text = "Delete";
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
       // tbWritingCredits
       // 
-      this.tbWritingCredits.Location = new System.Drawing.Point(96, 232);
+      this.tbWritingCredits.Location = new System.Drawing.Point(88, 140);
       this.tbWritingCredits.Name = "tbWritingCredits";
-      this.tbWritingCredits.Size = new System.Drawing.Size(296, 20);
-      this.tbWritingCredits.TabIndex = 12;
+      this.tbWritingCredits.Size = new System.Drawing.Size(336, 20);
+      this.tbWritingCredits.TabIndex = 6;
       this.tbWritingCredits.Text = "";
       // 
       // label18
       // 
-      this.label18.Location = new System.Drawing.Point(16, 232);
+      this.label18.Location = new System.Drawing.Point(8, 144);
       this.label18.Name = "label18";
       this.label18.Size = new System.Drawing.Size(88, 16);
-      this.label18.TabIndex = 38;
+      this.label18.TabIndex = 67;
       this.label18.Text = "Writing Credits:";
       // 
       // tbPlotOutline
       // 
-      this.tbPlotOutline.Location = new System.Drawing.Point(96, 64);
+      this.tbPlotOutline.Location = new System.Drawing.Point(88, 68);
       this.tbPlotOutline.Name = "tbPlotOutline";
-      this.tbPlotOutline.Size = new System.Drawing.Size(296, 20);
+      this.tbPlotOutline.Size = new System.Drawing.Size(336, 20);
       this.tbPlotOutline.TabIndex = 3;
       this.tbPlotOutline.Text = "";
       // 
       // label17
       // 
-      this.label17.Location = new System.Drawing.Point(16, 64);
+      this.label17.Location = new System.Drawing.Point(8, 72);
       this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(62, 16);
-      this.label17.TabIndex = 36;
-      this.label17.Text = "Plot outline";
+      this.label17.Size = new System.Drawing.Size(64, 16);
+      this.label17.TabIndex = 66;
+      this.label17.Text = "Plot outline:";
       // 
       // tbVotes
       // 
-      this.tbVotes.Location = new System.Drawing.Point(208, 160);
+      this.tbVotes.Location = new System.Drawing.Point(88, 276);
       this.tbVotes.Name = "tbVotes";
-      this.tbVotes.Size = new System.Drawing.Size(56, 20);
-      this.tbVotes.TabIndex = 8;
+      this.tbVotes.Size = new System.Drawing.Size(96, 20);
+      this.tbVotes.TabIndex = 12;
       this.tbVotes.Text = "";
       // 
       // label16
       // 
-      this.label16.Location = new System.Drawing.Point(168, 160);
+      this.label16.Location = new System.Drawing.Point(8, 280);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(40, 16);
-      this.label16.TabIndex = 34;
-      this.label16.Text = "Votes";
+      this.label16.TabIndex = 65;
+      this.label16.Text = "Votes:";
       // 
       // buttonLookupMovie
       // 
-      this.buttonLookupMovie.Location = new System.Drawing.Point(368, 40);
+      this.buttonLookupMovie.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonLookupMovie.Location = new System.Drawing.Point(352, 43);
       this.buttonLookupMovie.Name = "buttonLookupMovie";
-      this.buttonLookupMovie.Size = new System.Drawing.Size(24, 23);
+      this.buttonLookupMovie.Size = new System.Drawing.Size(72, 22);
       this.buttonLookupMovie.TabIndex = 2;
-      this.buttonLookupMovie.Text = "...";
+      this.buttonLookupMovie.Text = "Lookup";
       this.buttonLookupMovie.Click += new System.EventHandler(this.buttonLookupMovie_Click);
       // 
       // btnSave
       // 
       this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnSave.Location = new System.Drawing.Point(280, 328);
+      this.btnSave.Location = new System.Drawing.Point(280, 312);
       this.btnSave.Name = "btnSave";
-      this.btnSave.Size = new System.Drawing.Size(56, 23);
-      this.btnSave.TabIndex = 14;
+      this.btnSave.Size = new System.Drawing.Size(72, 17);
+      this.btnSave.TabIndex = 15;
       this.btnSave.Text = "Save";
       this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
       // 
       // tbTagline
       // 
-      this.tbTagline.Location = new System.Drawing.Point(96, 88);
+      this.tbTagline.Location = new System.Drawing.Point(88, 92);
       this.tbTagline.Name = "tbTagline";
-      this.tbTagline.Size = new System.Drawing.Size(296, 20);
+      this.tbTagline.Size = new System.Drawing.Size(336, 20);
       this.tbTagline.TabIndex = 4;
       this.tbTagline.Text = "";
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(16, 136);
+      this.label4.Location = new System.Drawing.Point(8, 232);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(40, 16);
-      this.label4.TabIndex = 4;
-      this.label4.Text = "Year";
+      this.label4.Size = new System.Drawing.Size(32, 16);
+      this.label4.TabIndex = 47;
+      this.label4.Text = "Year:";
       // 
       // cbWatched
       // 
       this.cbWatched.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cbWatched.Location = new System.Drawing.Point(208, 184);
+      this.cbWatched.Location = new System.Drawing.Point(245, 280);
       this.cbWatched.Name = "cbWatched";
-      this.cbWatched.Size = new System.Drawing.Size(104, 16);
-      this.cbWatched.TabIndex = 10;
-      this.cbWatched.Text = "Watched";
+      this.cbWatched.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+      this.cbWatched.Size = new System.Drawing.Size(96, 16);
+      this.cbWatched.TabIndex = 13;
+      this.cbWatched.Text = "Watched          ";
       // 
       // tbDescription
       // 
-      this.tbDescription.Location = new System.Drawing.Point(88, 256);
+      this.tbDescription.Location = new System.Drawing.Point(88, 164);
       this.tbDescription.Multiline = true;
       this.tbDescription.Name = "tbDescription";
-      this.tbDescription.Size = new System.Drawing.Size(304, 64);
-      this.tbDescription.TabIndex = 13;
+      this.tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.tbDescription.Size = new System.Drawing.Size(336, 60);
+      this.tbDescription.TabIndex = 7;
       this.tbDescription.Text = "";
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 40);
+      this.label3.Location = new System.Drawing.Point(8, 48);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(32, 16);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Title";
+      this.label3.TabIndex = 44;
+      this.label3.Text = "Title:";
       // 
       // label13
       // 
-      this.label13.Location = new System.Drawing.Point(16, 264);
+      this.label13.Location = new System.Drawing.Point(8, 168);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(64, 16);
-      this.label13.TabIndex = 22;
+      this.label13.TabIndex = 64;
       this.label13.Text = "Description:";
       // 
       // cbTitle
       // 
       this.cbTitle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbTitle.Location = new System.Drawing.Point(96, 16);
+      this.cbTitle.Location = new System.Drawing.Point(88, 19);
       this.cbTitle.Name = "cbTitle";
-      this.cbTitle.Size = new System.Drawing.Size(264, 21);
+      this.cbTitle.Size = new System.Drawing.Size(336, 21);
       this.cbTitle.TabIndex = 0;
       this.cbTitle.SelectedIndexChanged += new System.EventHandler(this.cbTitle_SelectedIndexChanged);
       // 
       // tbMPAARating
       // 
-      this.tbMPAARating.Location = new System.Drawing.Point(96, 208);
+      this.tbMPAARating.Location = new System.Drawing.Point(328, 252);
       this.tbMPAARating.Name = "tbMPAARating";
-      this.tbMPAARating.Size = new System.Drawing.Size(296, 20);
+      this.tbMPAARating.Size = new System.Drawing.Size(96, 20);
       this.tbMPAARating.TabIndex = 11;
       this.tbMPAARating.Text = "";
       // 
       // label11
       // 
-      this.label11.Location = new System.Drawing.Point(16, 208);
+      this.label11.Location = new System.Drawing.Point(248, 256);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(80, 16);
-      this.label11.TabIndex = 18;
+      this.label11.TabIndex = 63;
       this.label11.Text = "MPAA Rating:";
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(16, 160);
+      this.label6.Location = new System.Drawing.Point(248, 232);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(40, 16);
-      this.label6.TabIndex = 7;
-      this.label6.Text = "Rating";
+      this.label6.TabIndex = 51;
+      this.label6.Text = "Rating:";
       // 
       // tbYear
       // 
-      this.tbYear.Location = new System.Drawing.Point(96, 136);
+      this.tbYear.Location = new System.Drawing.Point(88, 228);
       this.tbYear.Name = "tbYear";
-      this.tbYear.Size = new System.Drawing.Size(56, 20);
-      this.tbYear.TabIndex = 6;
+      this.tbYear.Size = new System.Drawing.Size(96, 20);
+      this.tbYear.TabIndex = 8;
       this.tbYear.Text = "";
       // 
       // label10
       // 
-      this.label10.Location = new System.Drawing.Point(16, 88);
+      this.label10.Location = new System.Drawing.Point(8, 96);
       this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(52, 16);
-      this.label10.TabIndex = 16;
-      this.label10.Text = "Tagline";
+      this.label10.Size = new System.Drawing.Size(48, 16);
+      this.label10.TabIndex = 62;
+      this.label10.Text = "Tagline:";
       // 
       // tbDirector
       // 
-      this.tbDirector.Location = new System.Drawing.Point(96, 112);
+      this.tbDirector.Location = new System.Drawing.Point(88, 116);
       this.tbDirector.Name = "tbDirector";
-      this.tbDirector.Size = new System.Drawing.Size(112, 20);
+      this.tbDirector.Size = new System.Drawing.Size(336, 20);
       this.tbDirector.TabIndex = 5;
       this.tbDirector.Text = "";
       // 
       // label9
       // 
-      this.label9.Location = new System.Drawing.Point(16, 112);
+      this.label9.Location = new System.Drawing.Point(8, 120);
       this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(52, 16);
-      this.label9.TabIndex = 14;
-      this.label9.Text = "Director";
+      this.label9.Size = new System.Drawing.Size(48, 16);
+      this.label9.TabIndex = 59;
+      this.label9.Text = "Director:";
       // 
       // tbDuration
       // 
-      this.tbDuration.Location = new System.Drawing.Point(96, 184);
+      this.tbDuration.Location = new System.Drawing.Point(88, 252);
       this.tbDuration.Name = "tbDuration";
-      this.tbDuration.Size = new System.Drawing.Size(56, 20);
-      this.tbDuration.TabIndex = 9;
+      this.tbDuration.Size = new System.Drawing.Size(96, 20);
+      this.tbDuration.TabIndex = 10;
       this.tbDuration.Text = "";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 16);
+      this.label1.Location = new System.Drawing.Point(8, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(56, 16);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Title";
+      this.label1.TabIndex = 42;
+      this.label1.Text = "Title:";
       // 
       // label8
       // 
-      this.label8.Location = new System.Drawing.Point(16, 184);
+      this.label8.Location = new System.Drawing.Point(8, 256);
       this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(52, 16);
-      this.label8.TabIndex = 12;
-      this.label8.Text = "Duration";
+      this.label8.Size = new System.Drawing.Size(56, 16);
+      this.label8.TabIndex = 56;
+      this.label8.Text = "Duration:";
       // 
       // tbRating
       // 
-      this.tbRating.Location = new System.Drawing.Point(96, 160);
+      this.tbRating.Location = new System.Drawing.Point(328, 228);
       this.tbRating.Name = "tbRating";
-      this.tbRating.Size = new System.Drawing.Size(56, 20);
-      this.tbRating.TabIndex = 7;
+      this.tbRating.Size = new System.Drawing.Size(96, 20);
+      this.tbRating.TabIndex = 9;
       this.tbRating.Text = "";
       // 
       // tbTitle
       // 
-      this.tbTitle.Location = new System.Drawing.Point(96, 40);
+      this.tbTitle.Location = new System.Drawing.Point(88, 44);
       this.tbTitle.Name = "tbTitle";
-      this.tbTitle.Size = new System.Drawing.Size(264, 20);
+      this.tbTitle.Size = new System.Drawing.Size(256, 20);
       this.tbTitle.TabIndex = 1;
       this.tbTitle.Text = "";
       // 
-      // tabPage4
-      // 
-      this.tabPage4.Controls.Add(this.textBoxNewGenre);
-      this.tabPage4.Controls.Add(this.btnDeleteGenre);
-      this.tabPage4.Controls.Add(this.buttonNewGenre);
-      this.tabPage4.Controls.Add(this.buttonUnmapGenre);
-      this.tabPage4.Controls.Add(this.label12);
-      this.tabPage4.Controls.Add(this.buttonMapGenre);
-      this.tabPage4.Controls.Add(this.label5);
-      this.tabPage4.Controls.Add(this.listViewGenres);
-      this.tabPage4.Controls.Add(this.listViewAllGenres);
-      this.tabPage4.Location = new System.Drawing.Point(4, 22);
-      this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(408, 358);
-      this.tabPage4.TabIndex = 1;
-      this.tabPage4.Text = "Genres";
-      // 
-      // textBoxNewGenre
-      // 
-      this.textBoxNewGenre.Location = new System.Drawing.Point(16, 280);
-      this.textBoxNewGenre.Name = "textBoxNewGenre";
-      this.textBoxNewGenre.TabIndex = 8;
-      this.textBoxNewGenre.Text = "";
-      // 
-      // btnDeleteGenre
-      // 
-      this.btnDeleteGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnDeleteGenre.Location = new System.Drawing.Point(112, 312);
-      this.btnDeleteGenre.Name = "btnDeleteGenre";
-      this.btnDeleteGenre.Size = new System.Drawing.Size(56, 23);
-      this.btnDeleteGenre.TabIndex = 7;
-      this.btnDeleteGenre.Text = "Delete";
-      this.btnDeleteGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
-      // 
-      // buttonNewGenre
-      // 
-      this.buttonNewGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonNewGenre.Location = new System.Drawing.Point(120, 280);
-      this.buttonNewGenre.Name = "buttonNewGenre";
-      this.buttonNewGenre.Size = new System.Drawing.Size(48, 23);
-      this.buttonNewGenre.TabIndex = 6;
-      this.buttonNewGenre.Text = "Add";
-      this.buttonNewGenre.Click += new System.EventHandler(this.buttonNewGenre_Click);
-      // 
-      // buttonUnmapGenre
-      // 
-      this.buttonUnmapGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonUnmapGenre.Location = new System.Drawing.Point(184, 136);
-      this.buttonUnmapGenre.Name = "buttonUnmapGenre";
-      this.buttonUnmapGenre.Size = new System.Drawing.Size(40, 23);
-      this.buttonUnmapGenre.TabIndex = 5;
-      this.buttonUnmapGenre.Text = "<<";
-      this.buttonUnmapGenre.Click += new System.EventHandler(this.buttonUnmapGenre_Click);
-      // 
-      // label12
-      // 
-      this.label12.Location = new System.Drawing.Point(232, 24);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(112, 16);
-      this.label12.TabIndex = 4;
-      this.label12.Text = "Genres for movie";
-      // 
-      // buttonMapGenre
-      // 
-      this.buttonMapGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonMapGenre.Location = new System.Drawing.Point(184, 104);
-      this.buttonMapGenre.Name = "buttonMapGenre";
-      this.buttonMapGenre.Size = new System.Drawing.Size(40, 23);
-      this.buttonMapGenre.TabIndex = 3;
-      this.buttonMapGenre.Text = ">>";
-      this.buttonMapGenre.Click += new System.EventHandler(this.buttonMapGenre_Click);
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(16, 24);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(112, 16);
-      this.label5.TabIndex = 2;
-      this.label5.Text = "Available Genres";
-      // 
-      // listViewGenres
-      // 
-      this.listViewGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                     this.columnHeader1});
-      this.listViewGenres.Location = new System.Drawing.Point(232, 48);
-      this.listViewGenres.Name = "listViewGenres";
-      this.listViewGenres.Size = new System.Drawing.Size(144, 224);
-      this.listViewGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewGenres.TabIndex = 1;
-      this.listViewGenres.View = System.Windows.Forms.View.Details;
-      // 
-      // columnHeader1
-      // 
-      this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 139;
-      // 
-      // listViewAllGenres
-      // 
-      this.listViewAllGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                        this.columnHeader2});
-      this.listViewAllGenres.Location = new System.Drawing.Point(16, 48);
-      this.listViewAllGenres.Name = "listViewAllGenres";
-      this.listViewAllGenres.Size = new System.Drawing.Size(152, 224);
-      this.listViewAllGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewAllGenres.TabIndex = 0;
-      this.listViewAllGenres.View = System.Windows.Forms.View.Details;
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Name";
-      this.columnHeader2.Width = 146;
-      // 
       // tabPage5
       // 
-      this.tabPage5.Controls.Add(this.textBoxNewActor);
-      this.tabPage5.Controls.Add(this.buttonDeleteActor);
-      this.tabPage5.Controls.Add(this.buttonNewActor);
-      this.tabPage5.Controls.Add(this.buttonUnmapActors);
-      this.tabPage5.Controls.Add(this.label7);
-      this.tabPage5.Controls.Add(this.buttonMapActors);
-      this.tabPage5.Controls.Add(this.label14);
-      this.tabPage5.Controls.Add(this.listViewMovieActors);
-      this.tabPage5.Controls.Add(this.listViewAllActors);
-      this.tabPage5.Location = new System.Drawing.Point(4, 22);
+      this.tabPage5.Controls.Add(this.groupBox5);
+      this.tabPage5.Location = new System.Drawing.Point(4, 25);
       this.tabPage5.Name = "tabPage5";
-      this.tabPage5.Size = new System.Drawing.Size(408, 358);
+      this.tabPage5.Size = new System.Drawing.Size(440, 339);
       this.tabPage5.TabIndex = 2;
       this.tabPage5.Text = "Actors";
       // 
+      // groupBox5
+      // 
+      this.groupBox5.Controls.Add(this.textBoxNewActor);
+      this.groupBox5.Controls.Add(this.buttonDeleteActor);
+      this.groupBox5.Controls.Add(this.buttonNewActor);
+      this.groupBox5.Controls.Add(this.buttonUnmapActors);
+      this.groupBox5.Controls.Add(this.buttonMapActors);
+      this.groupBox5.Controls.Add(this.listViewMovieActors);
+      this.groupBox5.Controls.Add(this.listViewAllActors);
+      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox5.Location = new System.Drawing.Point(0, 0);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(440, 336);
+      this.groupBox5.TabIndex = 0;
+      this.groupBox5.TabStop = false;
+      // 
       // textBoxNewActor
       // 
-      this.textBoxNewActor.Location = new System.Drawing.Point(24, 272);
+      this.textBoxNewActor.Location = new System.Drawing.Point(16, 270);
       this.textBoxNewActor.Name = "textBoxNewActor";
-      this.textBoxNewActor.Size = new System.Drawing.Size(112, 20);
-      this.textBoxNewActor.TabIndex = 16;
+      this.textBoxNewActor.Size = new System.Drawing.Size(152, 20);
+      this.textBoxNewActor.TabIndex = 25;
       this.textBoxNewActor.Text = "";
       // 
       // buttonDeleteActor
       // 
       this.buttonDeleteActor.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonDeleteActor.Location = new System.Drawing.Point(136, 304);
+      this.buttonDeleteActor.Location = new System.Drawing.Point(96, 296);
       this.buttonDeleteActor.Name = "buttonDeleteActor";
-      this.buttonDeleteActor.Size = new System.Drawing.Size(48, 23);
-      this.buttonDeleteActor.TabIndex = 15;
-      this.buttonDeleteActor.Text = "Delete";
+      this.buttonDeleteActor.Size = new System.Drawing.Size(72, 22);
+      this.buttonDeleteActor.TabIndex = 24;
+      this.buttonDeleteActor.Text = "Remove";
       this.buttonDeleteActor.Click += new System.EventHandler(this.buttonDeleteActor_Click);
       // 
       // buttonNewActor
       // 
       this.buttonNewActor.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonNewActor.Location = new System.Drawing.Point(144, 272);
+      this.buttonNewActor.Location = new System.Drawing.Point(16, 296);
       this.buttonNewActor.Name = "buttonNewActor";
-      this.buttonNewActor.Size = new System.Drawing.Size(40, 23);
-      this.buttonNewActor.TabIndex = 14;
+      this.buttonNewActor.Size = new System.Drawing.Size(72, 22);
+      this.buttonNewActor.TabIndex = 23;
       this.buttonNewActor.Text = "Add";
       this.buttonNewActor.Click += new System.EventHandler(this.buttonNewActor_Click);
       // 
       // buttonUnmapActors
       // 
       this.buttonUnmapActors.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonUnmapActors.Location = new System.Drawing.Point(184, 128);
+      this.buttonUnmapActors.Location = new System.Drawing.Point(184, 152);
       this.buttonUnmapActors.Name = "buttonUnmapActors";
-      this.buttonUnmapActors.Size = new System.Drawing.Size(40, 23);
-      this.buttonUnmapActors.TabIndex = 13;
+      this.buttonUnmapActors.Size = new System.Drawing.Size(40, 22);
+      this.buttonUnmapActors.TabIndex = 22;
       this.buttonUnmapActors.Text = "<<";
       this.buttonUnmapActors.Click += new System.EventHandler(this.buttonUnmapActors_Click);
-      // 
-      // label7
-      // 
-      this.label7.Location = new System.Drawing.Point(240, 16);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(112, 16);
-      this.label7.TabIndex = 12;
-      this.label7.Text = "Actors for movie";
       // 
       // buttonMapActors
       // 
       this.buttonMapActors.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonMapActors.Location = new System.Drawing.Point(184, 96);
+      this.buttonMapActors.Location = new System.Drawing.Point(184, 120);
       this.buttonMapActors.Name = "buttonMapActors";
-      this.buttonMapActors.Size = new System.Drawing.Size(40, 23);
-      this.buttonMapActors.TabIndex = 11;
+      this.buttonMapActors.Size = new System.Drawing.Size(40, 22);
+      this.buttonMapActors.TabIndex = 20;
       this.buttonMapActors.Text = ">>";
       this.buttonMapActors.Click += new System.EventHandler(this.buttonMapActors_Click);
-      // 
-      // label14
-      // 
-      this.label14.Location = new System.Drawing.Point(24, 16);
-      this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(112, 16);
-      this.label14.TabIndex = 10;
-      this.label14.Text = "Available Actors";
       // 
       // listViewMovieActors
       // 
       this.listViewMovieActors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                           this.columnHeader3,
                                                                                           this.columnHeader5});
-      this.listViewMovieActors.Location = new System.Drawing.Point(232, 40);
+      this.listViewMovieActors.Location = new System.Drawing.Point(240, 24);
       this.listViewMovieActors.Name = "listViewMovieActors";
-      this.listViewMovieActors.Size = new System.Drawing.Size(168, 224);
+      this.listViewMovieActors.Size = new System.Drawing.Size(184, 240);
       this.listViewMovieActors.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewMovieActors.TabIndex = 9;
+      this.listViewMovieActors.TabIndex = 18;
       this.listViewMovieActors.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader3
       // 
-      this.columnHeader3.Text = "Name";
-      this.columnHeader3.Width = 87;
+      this.columnHeader3.Text = "Actors for this Movie";
+      this.columnHeader3.Width = 116;
       // 
       // columnHeader5
       // 
-      this.columnHeader5.Text = "As";
-      this.columnHeader5.Width = 74;
+      this.columnHeader5.Text = "as";
+      this.columnHeader5.Width = 46;
       // 
       // listViewAllActors
       // 
       this.listViewAllActors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                         this.chName});
-      this.listViewAllActors.Location = new System.Drawing.Point(24, 40);
+      this.listViewAllActors.Location = new System.Drawing.Point(16, 24);
       this.listViewAllActors.Name = "listViewAllActors";
-      this.listViewAllActors.Size = new System.Drawing.Size(152, 224);
+      this.listViewAllActors.Size = new System.Drawing.Size(152, 240);
       this.listViewAllActors.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewAllActors.TabIndex = 8;
+      this.listViewAllActors.TabIndex = 17;
       this.listViewAllActors.View = System.Windows.Forms.View.Details;
       // 
       // chName
       // 
-      this.chName.Text = "Name";
-      this.chName.Width = 144;
+      this.chName.Text = "Available Actors";
+      this.chName.Width = 130;
+      // 
+      // tabPage4
+      // 
+      this.tabPage4.Controls.Add(this.groupBox4);
+      this.tabPage4.Location = new System.Drawing.Point(4, 25);
+      this.tabPage4.Name = "tabPage4";
+      this.tabPage4.Size = new System.Drawing.Size(440, 339);
+      this.tabPage4.TabIndex = 1;
+      this.tabPage4.Text = "Genres";
+      // 
+      // groupBox4
+      // 
+      this.groupBox4.Controls.Add(this.textBoxNewGenre);
+      this.groupBox4.Controls.Add(this.btnDeleteGenre);
+      this.groupBox4.Controls.Add(this.buttonNewGenre);
+      this.groupBox4.Controls.Add(this.buttonUnmapGenre);
+      this.groupBox4.Controls.Add(this.buttonMapGenre);
+      this.groupBox4.Controls.Add(this.listViewGenres);
+      this.groupBox4.Controls.Add(this.listViewAllGenres);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox4.Location = new System.Drawing.Point(0, 0);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(440, 336);
+      this.groupBox4.TabIndex = 0;
+      this.groupBox4.TabStop = false;
+      // 
+      // textBoxNewGenre
+      // 
+      this.textBoxNewGenre.Location = new System.Drawing.Point(16, 270);
+      this.textBoxNewGenre.Name = "textBoxNewGenre";
+      this.textBoxNewGenre.Size = new System.Drawing.Size(152, 20);
+      this.textBoxNewGenre.TabIndex = 17;
+      this.textBoxNewGenre.Text = "";
+      // 
+      // btnDeleteGenre
+      // 
+      this.btnDeleteGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnDeleteGenre.Location = new System.Drawing.Point(96, 296);
+      this.btnDeleteGenre.Name = "btnDeleteGenre";
+      this.btnDeleteGenre.Size = new System.Drawing.Size(72, 22);
+      this.btnDeleteGenre.TabIndex = 16;
+      this.btnDeleteGenre.Text = "Remove";
+      this.btnDeleteGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
+      // 
+      // buttonNewGenre
+      // 
+      this.buttonNewGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonNewGenre.Location = new System.Drawing.Point(16, 296);
+      this.buttonNewGenre.Name = "buttonNewGenre";
+      this.buttonNewGenre.Size = new System.Drawing.Size(72, 22);
+      this.buttonNewGenre.TabIndex = 15;
+      this.buttonNewGenre.Text = "Add";
+      this.buttonNewGenre.Click += new System.EventHandler(this.buttonNewGenre_Click);
+      // 
+      // buttonUnmapGenre
+      // 
+      this.buttonUnmapGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonUnmapGenre.Location = new System.Drawing.Point(184, 152);
+      this.buttonUnmapGenre.Name = "buttonUnmapGenre";
+      this.buttonUnmapGenre.Size = new System.Drawing.Size(40, 22);
+      this.buttonUnmapGenre.TabIndex = 14;
+      this.buttonUnmapGenre.Text = "<<";
+      this.buttonUnmapGenre.Click += new System.EventHandler(this.buttonUnmapGenre_Click);
+      // 
+      // buttonMapGenre
+      // 
+      this.buttonMapGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonMapGenre.Location = new System.Drawing.Point(184, 120);
+      this.buttonMapGenre.Name = "buttonMapGenre";
+      this.buttonMapGenre.Size = new System.Drawing.Size(40, 22);
+      this.buttonMapGenre.TabIndex = 12;
+      this.buttonMapGenre.Text = ">>";
+      this.buttonMapGenre.Click += new System.EventHandler(this.buttonMapGenre_Click);
+      // 
+      // listViewGenres
+      // 
+      this.listViewGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                     this.columnHeader1});
+      this.listViewGenres.Location = new System.Drawing.Point(240, 24);
+      this.listViewGenres.Name = "listViewGenres";
+      this.listViewGenres.Size = new System.Drawing.Size(184, 240);
+      this.listViewGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.listViewGenres.TabIndex = 10;
+      this.listViewGenres.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Genres for this Movie";
+      this.columnHeader1.Width = 180;
+      // 
+      // listViewAllGenres
+      // 
+      this.listViewAllGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                        this.columnHeader2});
+      this.listViewAllGenres.Location = new System.Drawing.Point(16, 24);
+      this.listViewAllGenres.Name = "listViewAllGenres";
+      this.listViewAllGenres.Size = new System.Drawing.Size(152, 240);
+      this.listViewAllGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.listViewAllGenres.TabIndex = 9;
+      this.listViewAllGenres.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Available Genres";
+      this.columnHeader2.Width = 148;
       // 
       // tabPage6
       // 
-      this.tabPage6.Controls.Add(this.buttonRemoveFile);
-      this.tabPage6.Controls.Add(this.buttonAddFile);
-      this.tabPage6.Controls.Add(this.listViewFiles);
-      this.tabPage6.Location = new System.Drawing.Point(4, 22);
+      this.tabPage6.Controls.Add(this.groupBox6);
+      this.tabPage6.Location = new System.Drawing.Point(4, 25);
       this.tabPage6.Name = "tabPage6";
-      this.tabPage6.Size = new System.Drawing.Size(408, 358);
+      this.tabPage6.Size = new System.Drawing.Size(440, 339);
       this.tabPage6.TabIndex = 3;
       this.tabPage6.Text = "Files";
+      // 
+      // groupBox6
+      // 
+      this.groupBox6.Controls.Add(this.buttonRemoveFile);
+      this.groupBox6.Controls.Add(this.buttonAddFile);
+      this.groupBox6.Controls.Add(this.listViewFiles);
+      this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox6.Location = new System.Drawing.Point(0, 0);
+      this.groupBox6.Name = "groupBox6";
+      this.groupBox6.Size = new System.Drawing.Size(440, 336);
+      this.groupBox6.TabIndex = 0;
+      this.groupBox6.TabStop = false;
       // 
       // buttonRemoveFile
       // 
       this.buttonRemoveFile.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonRemoveFile.Location = new System.Drawing.Point(104, 184);
+      this.buttonRemoveFile.Location = new System.Drawing.Point(352, 304);
       this.buttonRemoveFile.Name = "buttonRemoveFile";
-      this.buttonRemoveFile.TabIndex = 2;
+      this.buttonRemoveFile.Size = new System.Drawing.Size(72, 22);
+      this.buttonRemoveFile.TabIndex = 5;
       this.buttonRemoveFile.Text = "Remove";
       this.buttonRemoveFile.Click += new System.EventHandler(this.buttonRemoveFile_Click);
       // 
       // buttonAddFile
       // 
       this.buttonAddFile.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonAddFile.Location = new System.Drawing.Point(16, 184);
+      this.buttonAddFile.Location = new System.Drawing.Point(272, 304);
       this.buttonAddFile.Name = "buttonAddFile";
-      this.buttonAddFile.TabIndex = 1;
+      this.buttonAddFile.Size = new System.Drawing.Size(72, 22);
+      this.buttonAddFile.TabIndex = 4;
       this.buttonAddFile.Text = "Add";
       this.buttonAddFile.Click += new System.EventHandler(this.buttonAddFile_Click);
       // 
@@ -1026,82 +1046,92 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.listViewFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                     this.columnHeader4});
-      this.listViewFiles.Location = new System.Drawing.Point(16, 8);
+      this.listViewFiles.Location = new System.Drawing.Point(16, 24);
       this.listViewFiles.Name = "listViewFiles";
-      this.listViewFiles.Size = new System.Drawing.Size(376, 168);
-      this.listViewFiles.TabIndex = 0;
+      this.listViewFiles.Size = new System.Drawing.Size(408, 272);
+      this.listViewFiles.TabIndex = 3;
       this.listViewFiles.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader4
       // 
       this.columnHeader4.Text = "Filename";
-      this.columnHeader4.Width = 363;
+      this.columnHeader4.Width = 404;
       // 
       // tabPage7
       // 
-      this.tabPage7.Controls.Add(this.label19);
-      this.tabPage7.Controls.Add(this.comboBoxPictures);
-      this.tabPage7.Controls.Add(this.btnLookupImage);
-      this.tabPage7.Controls.Add(this.label15);
-      this.tabPage7.Controls.Add(this.textBoxPictureURL);
-      this.tabPage7.Controls.Add(this.pictureBox1);
-      this.tabPage7.Location = new System.Drawing.Point(4, 22);
+      this.tabPage7.Controls.Add(this.groupBox7);
+      this.tabPage7.Location = new System.Drawing.Point(4, 25);
       this.tabPage7.Name = "tabPage7";
-      this.tabPage7.Size = new System.Drawing.Size(408, 358);
+      this.tabPage7.Size = new System.Drawing.Size(440, 339);
       this.tabPage7.TabIndex = 4;
       this.tabPage7.Text = "Coverart";
       // 
+      // groupBox7
+      // 
+      this.groupBox7.Controls.Add(this.label19);
+      this.groupBox7.Controls.Add(this.comboBoxPictures);
+      this.groupBox7.Controls.Add(this.btnLookupImage);
+      this.groupBox7.Controls.Add(this.label15);
+      this.groupBox7.Controls.Add(this.textBoxPictureURL);
+      this.groupBox7.Controls.Add(this.pictureBox1);
+      this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox7.Location = new System.Drawing.Point(0, 0);
+      this.groupBox7.Name = "groupBox7";
+      this.groupBox7.Size = new System.Drawing.Size(440, 336);
+      this.groupBox7.TabIndex = 0;
+      this.groupBox7.TabStop = false;
+      // 
       // label19
       // 
-      this.label19.Location = new System.Drawing.Point(256, 32);
+      this.label19.Location = new System.Drawing.Point(280, 33);
       this.label19.Name = "label19";
       this.label19.Size = new System.Drawing.Size(100, 16);
-      this.label19.TabIndex = 32;
+      this.label19.TabIndex = 38;
       this.label19.Text = "Pictures:";
       // 
       // comboBoxPictures
       // 
       this.comboBoxPictures.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxPictures.Location = new System.Drawing.Point(256, 56);
+      this.comboBoxPictures.Location = new System.Drawing.Point(280, 57);
       this.comboBoxPictures.Name = "comboBoxPictures";
       this.comboBoxPictures.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxPictures.TabIndex = 31;
+      this.comboBoxPictures.TabIndex = 37;
       this.comboBoxPictures.SelectedIndexChanged += new System.EventHandler(this.comboBoxPictures_SelectedIndexChanged);
       // 
       // btnLookupImage
       // 
       this.btnLookupImage.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnLookupImage.Location = new System.Drawing.Point(304, 296);
+      this.btnLookupImage.Location = new System.Drawing.Point(328, 297);
       this.btnLookupImage.Name = "btnLookupImage";
-      this.btnLookupImage.Size = new System.Drawing.Size(56, 23);
-      this.btnLookupImage.TabIndex = 30;
+      this.btnLookupImage.Size = new System.Drawing.Size(72, 22);
+      this.btnLookupImage.TabIndex = 36;
       this.btnLookupImage.Text = "Lookup";
       this.btnLookupImage.Click += new System.EventHandler(this.btnLookupImage_Click);
       // 
       // label15
       // 
-      this.label15.Location = new System.Drawing.Point(16, 264);
+      this.label15.Location = new System.Drawing.Point(40, 265);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(32, 16);
-      this.label15.TabIndex = 29;
+      this.label15.TabIndex = 35;
       this.label15.Text = "URL:";
       // 
       // textBoxPictureURL
       // 
-      this.textBoxPictureURL.Location = new System.Drawing.Point(56, 264);
+      this.textBoxPictureURL.Location = new System.Drawing.Point(80, 265);
       this.textBoxPictureURL.Name = "textBoxPictureURL";
       this.textBoxPictureURL.Size = new System.Drawing.Size(304, 20);
-      this.textBoxPictureURL.TabIndex = 28;
+      this.textBoxPictureURL.TabIndex = 34;
       this.textBoxPictureURL.Text = "";
       // 
       // pictureBox1
       // 
       this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.pictureBox1.Location = new System.Drawing.Point(24, 16);
+      this.pictureBox1.Location = new System.Drawing.Point(48, 17);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(208, 232);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-      this.pictureBox1.TabIndex = 27;
+      this.pictureBox1.TabIndex = 33;
       this.pictureBox1.TabStop = false;
       // 
       // tabPage2
@@ -1110,7 +1140,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2.Controls.Add(this.groupBox1);
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Size = new System.Drawing.Size(432, 398);
+      this.tabPage2.Size = new System.Drawing.Size(464, 382);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Scan";
       // 
@@ -1118,17 +1148,22 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.tabControl1);
       this.Name = "MovieDatabase";
-      this.Size = new System.Drawing.Size(456, 448);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabControl2.ResumeLayout(false);
       this.tabPage3.ResumeLayout(false);
-      this.tabPage4.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
       this.tabPage5.ResumeLayout(false);
+      this.groupBox5.ResumeLayout(false);
+      this.tabPage4.ResumeLayout(false);
+      this.groupBox4.ResumeLayout(false);
       this.tabPage6.ResumeLayout(false);
+      this.groupBox6.ResumeLayout(false);
       this.tabPage7.ResumeLayout(false);
+      this.groupBox7.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.ResumeLayout(false);
 

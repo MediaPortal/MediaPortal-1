@@ -17,7 +17,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMCE;
     private System.Windows.Forms.PictureBox pictureBoxUSA;
-    private System.Windows.Forms.PictureBox pictureBoxEU;
     private System.Windows.Forms.RadioButton radioButtonUSA;
     private System.Windows.Forms.RadioButton radioButtonEurope;
     private System.Windows.Forms.GroupBox groupBoxSettings;
@@ -38,6 +37,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.Configuration.Sections.FireDTVRemote fireDTVRemote;
     private System.Windows.Forms.TabControl tabControlRemotes;
     private System.Windows.Forms.TabPage tabPageFireDTV;
+    private System.Windows.Forms.PictureBox pictureBoxEU;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.GroupBox groupBox2;
     private System.ComponentModel.IContainer components = null;
 
     public struct RAWINPUTDEVICE 
@@ -213,15 +215,18 @@ namespace MediaPortal.Configuration.Sections
     {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Remote));
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-      this.pictureBoxEU = new System.Windows.Forms.PictureBox();
       this.pictureBoxUSA = new System.Windows.Forms.PictureBox();
       this.checkBoxMCE = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes = new System.Windows.Forms.TabControl();
       this.tabPageMCE = new System.Windows.Forms.TabPage();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.radioButtonEurope = new System.Windows.Forms.RadioButton();
       this.radioButtonUSA = new System.Windows.Forms.RadioButton();
+      this.pictureBoxEU = new System.Windows.Forms.PictureBox();
       this.tabPageHCW = new System.Windows.Forms.TabPage();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.btnMapping = new System.Windows.Forms.Button();
+      this.checkBoxHCW = new System.Windows.Forms.CheckBox();
       this.groupBoxInformation = new System.Windows.Forms.GroupBox();
       this.infoDriverStatus = new System.Windows.Forms.Label();
       this.groupBoxSettings = new System.Windows.Forms.GroupBox();
@@ -233,35 +238,26 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxKeepControl = new System.Windows.Forms.CheckBox();
       this.checkBoxVerboseLog = new System.Windows.Forms.CheckBox();
       this.buttonDefault = new System.Windows.Forms.Button();
-      this.checkBoxHCW = new System.Windows.Forms.CheckBox();
       this.tabPageFireDTV = new System.Windows.Forms.TabPage();
       this.fireDTVRemote = new MediaPortal.Configuration.Sections.FireDTVRemote();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMCE.SuspendLayout();
+      this.groupBox1.SuspendLayout();
       this.tabPageHCW.SuspendLayout();
+      this.groupBox2.SuspendLayout();
       this.groupBoxInformation.SuspendLayout();
       this.groupBoxSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDelay)).BeginInit();
       this.tabPageFireDTV.SuspendLayout();
       this.SuspendLayout();
       // 
-      // pictureBoxEU
-      // 
-      this.pictureBoxEU.BackColor = System.Drawing.Color.Transparent;
-      this.pictureBoxEU.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxEU.Image")));
-      this.pictureBoxEU.Location = new System.Drawing.Point(216, 16);
-      this.pictureBoxEU.Name = "pictureBoxEU";
-      this.pictureBoxEU.Size = new System.Drawing.Size(145, 352);
-      this.pictureBoxEU.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-      this.pictureBoxEU.TabIndex = 4;
-      this.pictureBoxEU.TabStop = false;
-      // 
       // pictureBoxUSA
       // 
+      this.pictureBoxUSA.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxUSA.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxUSA.Image")));
-      this.pictureBoxUSA.Location = new System.Drawing.Point(216, 16);
+      this.pictureBoxUSA.Location = new System.Drawing.Point(208, 24);
       this.pictureBoxUSA.Name = "pictureBoxUSA";
-      this.pictureBoxUSA.Size = new System.Drawing.Size(136, 352);
+      this.pictureBoxUSA.Size = new System.Drawing.Size(100, 310);
       this.pictureBoxUSA.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pictureBoxUSA.TabIndex = 3;
       this.pictureBoxUSA.TabStop = false;
@@ -269,9 +265,9 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxMCE
       // 
       this.checkBoxMCE.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.checkBoxMCE.Location = new System.Drawing.Point(32, 24);
+      this.checkBoxMCE.Location = new System.Drawing.Point(16, 24);
       this.checkBoxMCE.Name = "checkBoxMCE";
-      this.checkBoxMCE.Size = new System.Drawing.Size(152, 24);
+      this.checkBoxMCE.Size = new System.Drawing.Size(152, 16);
       this.checkBoxMCE.TabIndex = 0;
       this.checkBoxMCE.Text = "Use Microsoft MCE remote";
       this.checkBoxMCE.CheckedChanged += new System.EventHandler(this.checkBoxMCE_CheckedChanged);
@@ -281,29 +277,39 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlRemotes.Controls.Add(this.tabPageMCE);
       this.tabControlRemotes.Controls.Add(this.tabPageHCW);
       this.tabControlRemotes.Controls.Add(this.tabPageFireDTV);
-      this.tabControlRemotes.Location = new System.Drawing.Point(8, 16);
+      this.tabControlRemotes.Location = new System.Drawing.Point(0, 0);
       this.tabControlRemotes.Name = "tabControlRemotes";
       this.tabControlRemotes.SelectedIndex = 0;
-      this.tabControlRemotes.Size = new System.Drawing.Size(472, 400);
+      this.tabControlRemotes.Size = new System.Drawing.Size(472, 408);
       this.tabControlRemotes.TabIndex = 5;
       // 
       // tabPageMCE
       // 
-      this.tabPageMCE.Controls.Add(this.radioButtonEurope);
-      this.tabPageMCE.Controls.Add(this.radioButtonUSA);
-      this.tabPageMCE.Controls.Add(this.checkBoxMCE);
-      this.tabPageMCE.Controls.Add(this.pictureBoxEU);
-      this.tabPageMCE.Controls.Add(this.pictureBoxUSA);
+      this.tabPageMCE.Controls.Add(this.groupBox1);
       this.tabPageMCE.Location = new System.Drawing.Point(4, 22);
       this.tabPageMCE.Name = "tabPageMCE";
-      this.tabPageMCE.Size = new System.Drawing.Size(464, 374);
+      this.tabPageMCE.Size = new System.Drawing.Size(464, 382);
       this.tabPageMCE.TabIndex = 0;
       this.tabPageMCE.Text = "Microsoft MCE Remote";
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.checkBoxMCE);
+      this.groupBox1.Controls.Add(this.radioButtonEurope);
+      this.groupBox1.Controls.Add(this.radioButtonUSA);
+      this.groupBox1.Controls.Add(this.pictureBoxUSA);
+      this.groupBox1.Controls.Add(this.pictureBoxEU);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(12, 8);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(440, 352);
+      this.groupBox1.TabIndex = 7;
+      this.groupBox1.TabStop = false;
       // 
       // radioButtonEurope
       // 
       this.radioButtonEurope.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonEurope.Location = new System.Drawing.Point(40, 64);
+      this.radioButtonEurope.Location = new System.Drawing.Point(32, 64);
       this.radioButtonEurope.Name = "radioButtonEurope";
       this.radioButtonEurope.Size = new System.Drawing.Size(104, 16);
       this.radioButtonEurope.TabIndex = 6;
@@ -313,41 +319,73 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonUSA
       // 
       this.radioButtonUSA.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonUSA.Location = new System.Drawing.Point(40, 48);
+      this.radioButtonUSA.Location = new System.Drawing.Point(32, 48);
       this.radioButtonUSA.Name = "radioButtonUSA";
       this.radioButtonUSA.Size = new System.Drawing.Size(104, 16);
       this.radioButtonUSA.TabIndex = 5;
       this.radioButtonUSA.Text = "USA version";
       this.radioButtonUSA.CheckedChanged += new System.EventHandler(this.radioButtonUSA_CheckedChanged);
       // 
+      // pictureBoxEU
+      // 
+      this.pictureBoxEU.BackColor = System.Drawing.Color.Transparent;
+      this.pictureBoxEU.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxEU.Image")));
+      this.pictureBoxEU.Location = new System.Drawing.Point(208, 24);
+      this.pictureBoxEU.Name = "pictureBoxEU";
+      this.pictureBoxEU.Size = new System.Drawing.Size(100, 310);
+      this.pictureBoxEU.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBoxEU.TabIndex = 4;
+      this.pictureBoxEU.TabStop = false;
+      // 
       // tabPageHCW
       // 
-      this.tabPageHCW.Controls.Add(this.btnMapping);
+      this.tabPageHCW.Controls.Add(this.groupBox2);
       this.tabPageHCW.Controls.Add(this.groupBoxInformation);
       this.tabPageHCW.Controls.Add(this.groupBoxSettings);
-      this.tabPageHCW.Controls.Add(this.checkBoxHCW);
       this.tabPageHCW.Location = new System.Drawing.Point(4, 22);
       this.tabPageHCW.Name = "tabPageHCW";
-      this.tabPageHCW.Size = new System.Drawing.Size(464, 374);
+      this.tabPageHCW.Size = new System.Drawing.Size(464, 382);
       this.tabPageHCW.TabIndex = 1;
       this.tabPageHCW.Text = "Hauppauge Remote";
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Controls.Add(this.btnMapping);
+      this.groupBox2.Controls.Add(this.checkBoxHCW);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox2.Location = new System.Drawing.Point(12, 8);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(440, 56);
+      this.groupBox2.TabIndex = 14;
+      this.groupBox2.TabStop = false;
       // 
       // btnMapping
       // 
       this.btnMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnMapping.Location = new System.Drawing.Point(360, 24);
+      this.btnMapping.Location = new System.Drawing.Point(344, 20);
       this.btnMapping.Name = "btnMapping";
+      this.btnMapping.Size = new System.Drawing.Size(72, 22);
       this.btnMapping.TabIndex = 13;
       this.btnMapping.Text = "Mapping";
       this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
+      // 
+      // checkBoxHCW
+      // 
+      this.checkBoxHCW.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxHCW.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxHCW.Name = "checkBoxHCW";
+      this.checkBoxHCW.Size = new System.Drawing.Size(144, 16);
+      this.checkBoxHCW.TabIndex = 10;
+      this.checkBoxHCW.Text = "Use Hauppauge remote";
+      this.checkBoxHCW.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
       // 
       // groupBoxInformation
       // 
       this.groupBoxInformation.Controls.Add(this.infoDriverStatus);
       this.groupBoxInformation.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxInformation.Location = new System.Drawing.Point(16, 272);
+      this.groupBoxInformation.Location = new System.Drawing.Point(12, 240);
       this.groupBoxInformation.Name = "groupBoxInformation";
-      this.groupBoxInformation.Size = new System.Drawing.Size(432, 88);
+      this.groupBoxInformation.Size = new System.Drawing.Size(440, 88);
       this.groupBoxInformation.TabIndex = 12;
       this.groupBoxInformation.TabStop = false;
       this.groupBoxInformation.Text = "Information";
@@ -373,9 +411,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.Controls.Add(this.checkBoxVerboseLog);
       this.groupBoxSettings.Controls.Add(this.buttonDefault);
       this.groupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxSettings.Location = new System.Drawing.Point(16, 64);
+      this.groupBoxSettings.Location = new System.Drawing.Point(12, 72);
       this.groupBoxSettings.Name = "groupBoxSettings";
-      this.groupBoxSettings.Size = new System.Drawing.Size(432, 184);
+      this.groupBoxSettings.Size = new System.Drawing.Size(440, 160);
       this.groupBoxSettings.TabIndex = 7;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
@@ -384,7 +422,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label2sec.BackColor = System.Drawing.SystemColors.Control;
       this.label2sec.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.label2sec.Location = new System.Drawing.Point(224, 160);
+      this.label2sec.Location = new System.Drawing.Point(224, 136);
       this.label2sec.Name = "label2sec";
       this.label2sec.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
       this.label2sec.Size = new System.Drawing.Size(40, 16);
@@ -395,7 +433,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label0sec.BackColor = System.Drawing.SystemColors.Control;
       this.label0sec.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.label0sec.Location = new System.Drawing.Point(112, 160);
+      this.label0sec.Location = new System.Drawing.Point(112, 136);
       this.label0sec.Name = "label0sec";
       this.label0sec.Size = new System.Drawing.Size(40, 16);
       this.label0sec.TabIndex = 11;
@@ -404,7 +442,7 @@ namespace MediaPortal.Configuration.Sections
       // labelDelay
       // 
       this.labelDelay.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.labelDelay.Location = new System.Drawing.Point(12, 144);
+      this.labelDelay.Location = new System.Drawing.Point(12, 120);
       this.labelDelay.Name = "labelDelay";
       this.labelDelay.Size = new System.Drawing.Size(96, 23);
       this.labelDelay.TabIndex = 10;
@@ -413,7 +451,7 @@ namespace MediaPortal.Configuration.Sections
       // trackBarDelay
       // 
       this.trackBarDelay.LargeChange = 100;
-      this.trackBarDelay.Location = new System.Drawing.Point(112, 136);
+      this.trackBarDelay.Location = new System.Drawing.Point(112, 112);
       this.trackBarDelay.Maximum = 2000;
       this.trackBarDelay.Name = "trackBarDelay";
       this.trackBarDelay.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -455,29 +493,19 @@ namespace MediaPortal.Configuration.Sections
       // buttonDefault
       // 
       this.buttonDefault.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonDefault.Location = new System.Drawing.Point(308, 148);
+      this.buttonDefault.Location = new System.Drawing.Point(344, 120);
       this.buttonDefault.Name = "buttonDefault";
-      this.buttonDefault.Size = new System.Drawing.Size(112, 24);
+      this.buttonDefault.Size = new System.Drawing.Size(72, 22);
       this.buttonDefault.TabIndex = 9;
-      this.buttonDefault.Text = "Reset to &default";
+      this.buttonDefault.Text = "&Reset";
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
-      // 
-      // checkBoxHCW
-      // 
-      this.checkBoxHCW.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.checkBoxHCW.Location = new System.Drawing.Point(32, 24);
-      this.checkBoxHCW.Name = "checkBoxHCW";
-      this.checkBoxHCW.Size = new System.Drawing.Size(144, 24);
-      this.checkBoxHCW.TabIndex = 10;
-      this.checkBoxHCW.Text = "Use Hauppauge remote";
-      this.checkBoxHCW.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
       // 
       // tabPageFireDTV
       // 
       this.tabPageFireDTV.Controls.Add(this.fireDTVRemote);
       this.tabPageFireDTV.Location = new System.Drawing.Point(4, 22);
       this.tabPageFireDTV.Name = "tabPageFireDTV";
-      this.tabPageFireDTV.Size = new System.Drawing.Size(464, 374);
+      this.tabPageFireDTV.Size = new System.Drawing.Size(464, 382);
       this.tabPageFireDTV.TabIndex = 2;
       this.tabPageFireDTV.Text = "FireDTV Remote";
       // 
@@ -493,10 +521,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.tabControlRemotes);
       this.Name = "Remote";
-      this.Size = new System.Drawing.Size(488, 424);
+      this.Size = new System.Drawing.Size(472, 408);
       this.tabControlRemotes.ResumeLayout(false);
       this.tabPageMCE.ResumeLayout(false);
+      this.groupBox1.ResumeLayout(false);
       this.tabPageHCW.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
       this.groupBoxInformation.ResumeLayout(false);
       this.groupBoxSettings.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDelay)).EndInit();
