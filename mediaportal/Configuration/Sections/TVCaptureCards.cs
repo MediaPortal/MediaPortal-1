@@ -421,6 +421,13 @@ namespace MediaPortal.Configuration.Sections
 						cd.UseForRecording=true;
 						cd.UseForTV=true;
 						captureCards.Add(cd);
+
+						string filename=String.Format(@"database\card_{0}.xml",cd.FriendlyName);
+						// save settings for get the filename in mp.xml
+						using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+						{
+							xmlwriter.SetValue("dvb_ts_cards","filename",filename);
+						}
 						availableVideoDeviceMonikers.RemoveAt(i);
 						availableVideoDevices.RemoveAt(i);
 					}
