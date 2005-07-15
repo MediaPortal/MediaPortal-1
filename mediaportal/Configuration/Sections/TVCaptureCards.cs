@@ -415,7 +415,7 @@ namespace MediaPortal.Configuration.Sections
 						cd.IsMCECard					= false;
 						cd.SupportsMPEG2			= true;
 						cd.DeviceId						= (string)availableVideoDevices[i];
-						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
+						cd.FriendlyName			  = String.Format("card{0}",captureCards.Count+1);
 						cd.DeviceType					= "hw";
 						cd.RecordingPath			= recFolder;
 						cd.UseForRecording=true;
@@ -437,7 +437,7 @@ namespace MediaPortal.Configuration.Sections
 						cd.IsMCECard					= ccd.Capabilities.IsMceDevice;
 						cd.SupportsMPEG2			= ccd.Capabilities.IsMpeg2Device;
 						cd.DeviceId						= ccd.DeviceId;
-						cd.FriendlyName			  = String.Format("card#{0}",captureCards.Count+1);
+						cd.FriendlyName			  = String.Format("card{0}",captureCards.Count+1);
 						cd.DeviceType					= ccd.DeviceId;
 						cd.RecordingPath			= recFolder;
 						cd.UseForRecording=true;
