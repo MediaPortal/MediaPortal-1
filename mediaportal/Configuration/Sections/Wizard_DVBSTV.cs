@@ -49,13 +49,13 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ComboBox comboBox1;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.ProgressBar progressBar3;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.ComboBox cbTransponder;
+		private System.Windows.Forms.Label lblStatus;
 		int m_currentDiseqc=1;
 
 		public Wizard_DVBSTV() : this("DVB-S TV")
@@ -92,194 +92,195 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.labelStatus = new System.Windows.Forms.Label();
-      this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.button1 = new System.Windows.Forms.Button();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.progressBar2 = new System.Windows.Forms.ProgressBar();
-      this.button2 = new System.Windows.Forms.Button();
-      this.label4 = new System.Windows.Forms.Label();
-      this.comboBox1 = new System.Windows.Forms.ComboBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.cbTransponder = new System.Windows.Forms.ComboBox();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.label6 = new System.Windows.Forms.Label();
-      this.progressBar3 = new System.Windows.Forms.ProgressBar();
-      this.button3 = new System.Windows.Forms.Button();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.groupBox3.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      // 
-      // labelStatus
-      // 
-      this.labelStatus.Location = new System.Drawing.Point(0, 0);
-      this.labelStatus.Name = "labelStatus";
-      this.labelStatus.TabIndex = 0;
-      // 
-      // progressBar1
-      // 
-      this.progressBar1.Location = new System.Drawing.Point(0, 0);
-      this.progressBar1.Name = "progressBar1";
-      this.progressBar1.TabIndex = 0;
-      // 
-      // button1
-      // 
-      this.button1.Location = new System.Drawing.Point(0, 0);
-      this.button1.Name = "button1";
-      this.button1.TabIndex = 0;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(0, 0);
-      this.label2.Name = "label2";
-      this.label2.TabIndex = 0;
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(0, 0);
-      this.label1.Name = "label1";
-      this.label1.TabIndex = 0;
-      // 
-      // groupBox2
-      // 
-      this.groupBox2.Location = new System.Drawing.Point(0, 0);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.TabIndex = 0;
-      this.groupBox2.TabStop = false;
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(0, 0);
-      this.label3.Name = "label3";
-      this.label3.TabIndex = 0;
-      // 
-      // progressBar2
-      // 
-      this.progressBar2.Location = new System.Drawing.Point(0, 0);
-      this.progressBar2.Name = "progressBar2";
-      this.progressBar2.TabIndex = 0;
-      // 
-      // button2
-      // 
-      this.button2.Location = new System.Drawing.Point(0, 0);
-      this.button2.Name = "button2";
-      this.button2.TabIndex = 0;
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(0, 0);
-      this.label4.Name = "label4";
-      this.label4.TabIndex = 0;
-      // 
-      // comboBox1
-      // 
-      this.comboBox1.Location = new System.Drawing.Point(0, 0);
-      this.comboBox1.Name = "comboBox1";
-      this.comboBox1.TabIndex = 0;
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(0, 0);
-      this.label5.Name = "label5";
-      this.label5.TabIndex = 0;
-      // 
-      // groupBox3
-      // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox3.Controls.Add(this.cbTransponder);
-      this.groupBox3.Controls.Add(this.panel1);
-      this.groupBox3.Controls.Add(this.label6);
-      this.groupBox3.Controls.Add(this.progressBar3);
-      this.groupBox3.Controls.Add(this.button3);
-      this.groupBox3.Controls.Add(this.label7);
-      this.groupBox3.Controls.Add(this.label8);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox3.Location = new System.Drawing.Point(4, 4);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(480, 360);
-      this.groupBox3.TabIndex = 1;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Setup digital tv (DVBS Satellite)";
-      // 
-      // cbTransponder
-      // 
-      this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbTransponder.Location = new System.Drawing.Point(136, 72);
-      this.cbTransponder.Name = "cbTransponder";
-      this.cbTransponder.Size = new System.Drawing.Size(192, 21);
-      this.cbTransponder.TabIndex = 14;
-      this.cbTransponder.SelectedIndexChanged += new System.EventHandler(this.cbTransponder_SelectedIndexChanged);
-      // 
-      // panel1
-      // 
-      this.panel1.Location = new System.Drawing.Point(432, 328);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(1, 1);
-      this.panel1.TabIndex = 13;
-      // 
-      // label6
-      // 
-      this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.label6.Location = new System.Drawing.Point(40, 169);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(400, 87);
-      this.label6.TabIndex = 11;
-      // 
-      // progressBar3
-      // 
-      this.progressBar3.Location = new System.Drawing.Point(32, 128);
-      this.progressBar3.Name = "progressBar3";
-      this.progressBar3.Size = new System.Drawing.Size(416, 16);
-      this.progressBar3.TabIndex = 4;
-      // 
-      // button3
-      // 
-      this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.button3.Location = new System.Drawing.Point(344, 72);
-      this.button3.Name = "button3";
-      this.button3.TabIndex = 3;
-      this.button3.Text = "Scan...";
-      this.button3.Click += new System.EventHandler(this.button3_Click);
-      // 
-      // label7
-      // 
-      this.label7.Location = new System.Drawing.Point(32, 72);
-      this.label7.Name = "label7";
-      this.label7.TabIndex = 2;
-      this.label7.Text = "Transponder:";
-      // 
-      // label8
-      // 
-      this.label8.Location = new System.Drawing.Point(24, 24);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(432, 40);
-      this.label8.TabIndex = 0;
-      this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your transponder an" +
-        "d press auto tune to scan for the tv and radio channels";
-      // 
-      // Wizard_DVBSTV
-      // 
-      this.Controls.Add(this.groupBox3);
-      this.Name = "Wizard_DVBSTV";
-      this.Size = new System.Drawing.Size(488, 368);
-      this.groupBox3.ResumeLayout(false);
-      this.ResumeLayout(false);
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.labelStatus = new System.Windows.Forms.Label();
+			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.button1 = new System.Windows.Forms.Button();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.progressBar2 = new System.Windows.Forms.ProgressBar();
+			this.button2 = new System.Windows.Forms.Button();
+			this.label4 = new System.Windows.Forms.Label();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
+			this.label5 = new System.Windows.Forms.Label();
+			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.cbTransponder = new System.Windows.Forms.ComboBox();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.lblStatus = new System.Windows.Forms.Label();
+			this.progressBar3 = new System.Windows.Forms.ProgressBar();
+			this.button3 = new System.Windows.Forms.Button();
+			this.label7 = new System.Windows.Forms.Label();
+			this.label8 = new System.Windows.Forms.Label();
+			this.groupBox3.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Location = new System.Drawing.Point(0, 0);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
+			// 
+			// labelStatus
+			// 
+			this.labelStatus.Location = new System.Drawing.Point(0, 0);
+			this.labelStatus.Name = "labelStatus";
+			this.labelStatus.TabIndex = 0;
+			// 
+			// progressBar1
+			// 
+			this.progressBar1.Location = new System.Drawing.Point(0, 0);
+			this.progressBar1.Name = "progressBar1";
+			this.progressBar1.TabIndex = 0;
+			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(0, 0);
+			this.button1.Name = "button1";
+			this.button1.TabIndex = 0;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(0, 0);
+			this.label2.Name = "label2";
+			this.label2.TabIndex = 0;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(0, 0);
+			this.label1.Name = "label1";
+			this.label1.TabIndex = 0;
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Location = new System.Drawing.Point(0, 0);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.TabIndex = 0;
+			this.groupBox2.TabStop = false;
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(0, 0);
+			this.label3.Name = "label3";
+			this.label3.TabIndex = 0;
+			// 
+			// progressBar2
+			// 
+			this.progressBar2.Location = new System.Drawing.Point(0, 0);
+			this.progressBar2.Name = "progressBar2";
+			this.progressBar2.TabIndex = 0;
+			// 
+			// button2
+			// 
+			this.button2.Location = new System.Drawing.Point(0, 0);
+			this.button2.Name = "button2";
+			this.button2.TabIndex = 0;
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(0, 0);
+			this.label4.Name = "label4";
+			this.label4.TabIndex = 0;
+			// 
+			// comboBox1
+			// 
+			this.comboBox1.Location = new System.Drawing.Point(0, 0);
+			this.comboBox1.Name = "comboBox1";
+			this.comboBox1.TabIndex = 0;
+			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(0, 0);
+			this.label5.Name = "label5";
+			this.label5.TabIndex = 0;
+			// 
+			// groupBox3
+			// 
+			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.cbTransponder);
+			this.groupBox3.Controls.Add(this.panel1);
+			this.groupBox3.Controls.Add(this.lblStatus);
+			this.groupBox3.Controls.Add(this.progressBar3);
+			this.groupBox3.Controls.Add(this.button3);
+			this.groupBox3.Controls.Add(this.label7);
+			this.groupBox3.Controls.Add(this.label8);
+			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox3.Location = new System.Drawing.Point(4, 4);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(480, 360);
+			this.groupBox3.TabIndex = 1;
+			this.groupBox3.TabStop = false;
+			this.groupBox3.Text = "Setup digital tv (DVBS Satellite)";
+			// 
+			// cbTransponder
+			// 
+			this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbTransponder.Location = new System.Drawing.Point(136, 72);
+			this.cbTransponder.Name = "cbTransponder";
+			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
+			this.cbTransponder.TabIndex = 14;
+			this.cbTransponder.SelectedIndexChanged += new System.EventHandler(this.cbTransponder_SelectedIndexChanged);
+			// 
+			// panel1
+			// 
+			this.panel1.Location = new System.Drawing.Point(432, 328);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(1, 1);
+			this.panel1.TabIndex = 13;
+			// 
+			// lblStatus
+			// 
+			this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.lblStatus.Location = new System.Drawing.Point(40, 169);
+			this.lblStatus.Name = "lblStatus";
+			this.lblStatus.Size = new System.Drawing.Size(400, 87);
+			this.lblStatus.TabIndex = 11;
+			// 
+			// progressBar3
+			// 
+			this.progressBar3.Location = new System.Drawing.Point(32, 128);
+			this.progressBar3.Name = "progressBar3";
+			this.progressBar3.Size = new System.Drawing.Size(416, 16);
+			this.progressBar3.Step = 1;
+			this.progressBar3.TabIndex = 4;
+			// 
+			// button3
+			// 
+			this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.button3.Location = new System.Drawing.Point(344, 72);
+			this.button3.Name = "button3";
+			this.button3.TabIndex = 3;
+			this.button3.Text = "Scan...";
+			this.button3.Click += new System.EventHandler(this.button3_Click);
+			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(32, 72);
+			this.label7.Name = "label7";
+			this.label7.TabIndex = 2;
+			this.label7.Text = "Transponder:";
+			// 
+			// label8
+			// 
+			this.label8.Location = new System.Drawing.Point(24, 24);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(432, 40);
+			this.label8.TabIndex = 0;
+			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your transponder an" +
+				"d press auto tune to scan for the tv and radio channels";
+			// 
+			// Wizard_DVBSTV
+			// 
+			this.Controls.Add(this.groupBox3);
+			this.Name = "Wizard_DVBSTV";
+			this.Size = new System.Drawing.Size(488, 368);
+			this.groupBox3.ResumeLayout(false);
+			this.ResumeLayout(false);
 
-    }
+		}
 		#endregion
 
 
@@ -395,18 +396,18 @@ namespace MediaPortal.Configuration.Sections
 					
 					float percent = ((float)index) / ((float)count);
 					percent *= 100.0f;
-					progressBar1.Value=((int)percent);
+					progressBar3.Value=((int)percent);
 					TPList transponder=transp[index];
 					string chanDesc=String.Format("freq:{0} Khz, Pol:{1} SR:{2}",transponder.TPfreq, transponder.TPpol, transponder.TPsymb );
 					string description=String.Format("Transponder:{0}/{1} {2}", index,count,chanDesc);
-					labelStatus.Text=(description);
+					lblStatus.Text=(description);
 					Application.DoEvents();
 
 					ScanNextTransponder();
 					if (captureCard.SignalPresent())
 					{
 						description=String.Format("Found signal for transponder:{0} {1}, Scanning channels", currentIndex,chanDesc);
-						labelStatus.Text=(description);
+						lblStatus.Text=(description);
 						Application.DoEvents();
 						ScanChannels();
 					}
@@ -468,7 +469,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if(m_currentDiseqc>=m_diseqcLoops)
 				{
-					progressBar1.Value=(100);
+					progressBar3.Value=(100);
 					Application.DoEvents();
 				}
 				else
@@ -511,15 +512,15 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 			LoadFrequencies();
-			progressBar1.Visible=true;
-			progressBar1.Value=0;
+			progressBar3.Visible=true;
+			progressBar3.Value=0;
 			Application.DoEvents();
 			newChannels=0; updatedChannels=0;
 			newRadioChannels=0; updatedRadioChannels=0;
 			DoScan();
-			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
+			lblStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
 		
-			progressBar1.Value=100;
+			progressBar3.Value=100;
 			Application.DoEvents();
 		}
 
