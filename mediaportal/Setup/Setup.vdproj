@@ -5091,6 +5091,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_59F13A0A272241EF99FE345A4CAD4C12"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_59FC5B9A589C41868D52A0956653EA3D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -15769,7 +15775,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2022.35125, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2022.36894, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_0ECD6E59B2601B5B5CAAEACBCFB3C1C7"
@@ -26748,7 +26754,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2022.32930, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2022.36861, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_576112F652DC83B7D8E902EA4CAC5F9C"
@@ -27092,6 +27098,26 @@
             "TargetName" = "8:mail_logo.png"
             "Tag" = "8:"
             "Folder" = "8:_1AAB5CBE521342C5AC5C638830AD41AC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_59F13A0A272241EF99FE345A4CAD4C12"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\mytvconflicts.xml"
+            "TargetName" = "8:mytvconflicts.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -32267,7 +32293,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2022.32934, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2022.36864, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_7C81614E2E0950153CD0A18AE5C7E674"
@@ -37075,7 +37101,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2022.32932, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2022.36863, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_9ACCAA6B2713340E31474E99E3BFA6E4"
@@ -53384,7 +53410,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{F2A02D21-6E5E-46B3-90E8-5674F91F585F}"
+        "PackageCode" = "8:{721A4942-F12F-4114-9EFC-DDB9935051BF}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
