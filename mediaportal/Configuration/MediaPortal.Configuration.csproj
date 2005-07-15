@@ -175,14 +175,6 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
                 />
                 <Reference
-                    Name = "DirectShowHelperLib"
-                    Guid = "{935FCAC9-6668-49FB-9706-43B51861F491}"
-                    VersionMajor = "1"
-                    VersionMinor = "0"
-                    Lcid = "0"
-                    WrapperTool = "tlbimp"
-                />
-                <Reference
                     Name = "RemotePlugins"
                     Project = "{0A234721-1F13-4DF8-9B1E-64D9E3111203}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -198,6 +190,11 @@
                     AssemblyName = "Microsoft.DirectX"
                     HintPath = "C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll"
                     AssemblyFolderKey = "hklm\dn\dx_1.0.2902.0"
+                />
+                <Reference
+                    Name = "Interop.DirectShowHelperLib"
+                    AssemblyName = "Interop.DirectShowHelperLib"
+                    HintPath = "..\Interop.DirectShowHelperLib.dll"
                 />
             </References>
         </Build>

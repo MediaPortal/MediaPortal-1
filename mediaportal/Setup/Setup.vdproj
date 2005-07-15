@@ -411,12 +411,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_03E7F967AC2D4CFC92002FB0B31C142D"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_04065DE6333D4BA88102C360DE7B3518"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -12999,6 +12993,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F9C9C7777FEA45FAB91FB9A90796FC56"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F9F17F53362A49CE89A93A94F84111E1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -14048,26 +14048,6 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_03E7F967AC2D4CFC92002FB0B31C142D"
-            {
-            "SourcePath" = "8:..\\Core\\DirectShowHelper\\DirectShowHelper\\Release\\DirectShowHelper.dll"
-            "TargetName" = "8:DirectShowHelper.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -15789,7 +15769,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2022.34136, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2022.35125, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_0ECD6E59B2601B5B5CAAEACBCFB3C1C7"
@@ -26851,7 +26831,7 @@
             "SourcePath" = "8:Interop.DirectShowHelperLib.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_DA7CBFA2FF05468B8C1DDEA2E7476690"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -26862,7 +26842,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -51634,6 +51614,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F9C9C7777FEA45FAB91FB9A90796FC56"
+            {
+            "SourcePath" = "8:..\\Core\\DirectShowHelper\\DirectShowHelper\\Release\\DirectShowHelper.dll"
+            "TargetName" = "8:DirectShowHelper.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"

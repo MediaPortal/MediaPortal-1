@@ -185,11 +185,6 @@
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
                 />
                 <Reference
-                    Name = "Interop.DirectShowHelperLib"
-                    AssemblyName = "Interop.DirectShowHelperLib"
-                    HintPath = "..\Interop.DirectShowHelperLib.dll"
-                />
-                <Reference
                     Name = "System.ServiceProcess"
                     AssemblyName = "System.ServiceProcess"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.ServiceProcess.dll"
@@ -198,6 +193,11 @@
                     Name = "edtftpnet-1.1.8"
                     AssemblyName = "edtftpnet-1.1.8"
                     HintPath = "..\edtftpnet-1.1.8.dll"
+                />
+                <Reference
+                    Name = "Interop.DirectShowHelperLib"
+                    AssemblyName = "Interop.DirectShowHelperLib"
+                    HintPath = "..\Interop.DirectShowHelperLib.dll"
                 />
             </References>
         </Build>
