@@ -275,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
 			GUIGraphicsContext.form=this.FindForm();
 			GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
 
-			m_currentDiseqc=0;
+			m_currentDiseqc=1;
 			currentIndex=-1;
 			while (m_currentDiseqc <m_diseqcLoops)
 			{
