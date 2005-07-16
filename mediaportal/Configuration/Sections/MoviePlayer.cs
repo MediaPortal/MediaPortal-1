@@ -152,11 +152,11 @@ namespace MediaPortal.Configuration.Sections
       this.label4 = new System.Windows.Forms.Label();
       this.audioRendererComboBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
-      this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.audioCodecComboBox = new System.Windows.Forms.ComboBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.videoCodecComboBox = new System.Windows.Forms.ComboBox();
       this.label6 = new System.Windows.Forms.Label();
+      this.audioCodecComboBox = new System.Windows.Forms.ComboBox();
+      this.videoCodecComboBox = new System.Windows.Forms.ComboBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -304,6 +304,14 @@ namespace MediaPortal.Configuration.Sections
       this.label3.TabIndex = 25;
       this.label3.Text = "Audio renderer:";
       // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(16, 24);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(72, 16);
+      this.label6.TabIndex = 6;
+      this.label6.Text = "Video codec:";
+      // 
       // audioCodecComboBox
       // 
       this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -313,14 +321,6 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioCodecComboBox.TabIndex = 1;
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(16, 48);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(80, 16);
-      this.label5.TabIndex = 8;
-      this.label5.Text = "Audio codec:";
       // 
       // videoCodecComboBox
       // 
@@ -332,13 +332,13 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.videoCodecComboBox.TabIndex = 0;
       // 
-      // label6
+      // label5
       // 
-      this.label6.Location = new System.Drawing.Point(16, 24);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(72, 16);
-      this.label6.TabIndex = 6;
-      this.label6.Text = "Video codec:";
+      this.label5.Location = new System.Drawing.Point(16, 48);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(80, 16);
+      this.label5.TabIndex = 8;
+      this.label5.Text = "Audio codec:";
       // 
       // MoviePlayer
       // 

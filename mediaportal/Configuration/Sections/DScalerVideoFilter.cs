@@ -18,7 +18,6 @@ namespace MediaPortal.Configuration.Sections
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label6;
@@ -82,7 +81,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbHardcodePal = new System.Windows.Forms.CheckBox();
       this.cbDVBAR = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
       this.tbVideoOffset = new System.Windows.Forms.TextBox();
       this.cbAspectRatio = new System.Windows.Forms.CheckBox();
       this.label5 = new System.Windows.Forms.Label();
@@ -105,7 +103,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.cbHardcodePal);
       this.groupBox1.Controls.Add(this.cbDVBAR);
       this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.tbVideoOffset);
       this.groupBox1.Controls.Add(this.cbAspectRatio);
       this.groupBox1.Controls.Add(this.label5);
@@ -206,19 +203,13 @@ namespace MediaPortal.Configuration.Sections
       this.label2.TabIndex = 24;
       this.label2.Text = "DVB Aspect preference:";
       // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(156, 256);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(36, 16);
-      this.label1.TabIndex = 23;
-      this.label1.Text = "msec.";
-      // 
       // tbVideoOffset
       // 
-      this.tbVideoOffset.Location = new System.Drawing.Point(120, 252);
+      this.tbVideoOffset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbVideoOffset.Location = new System.Drawing.Point(168, 252);
       this.tbVideoOffset.Name = "tbVideoOffset";
-      this.tbVideoOffset.Size = new System.Drawing.Size(32, 20);
+      this.tbVideoOffset.Size = new System.Drawing.Size(288, 20);
       this.tbVideoOffset.TabIndex = 22;
       this.tbVideoOffset.Text = "0";
       // 
@@ -237,9 +228,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label5.Location = new System.Drawing.Point(16, 256);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(104, 16);
+      this.label5.Size = new System.Drawing.Size(144, 16);
       this.label5.TabIndex = 20;
-      this.label5.Text = "Video delay offset:";
+      this.label5.Text = "Video delay offset (msec.):";
       // 
       // cbForcedSubtitles
       // 

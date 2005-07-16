@@ -411,7 +411,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // idTextBox
       // 
-      this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.idTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this.idTextBox.Enabled = false;
       this.idTextBox.Location = new System.Drawing.Point(168, 324);
       this.idTextBox.MaxLength = 3;

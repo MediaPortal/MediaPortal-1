@@ -51,13 +51,13 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button buttonMap;
 		private System.Windows.Forms.Button btnUnmap;
 		private System.Windows.Forms.ListView listViewTVGroupChannels;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox comboBox1;
 		private System.Windows.Forms.ColumnHeader columnHeader6;
 		private System.Windows.Forms.ColumnHeader columnHeader7;
 		private System.Windows.Forms.ColumnHeader columnHeader9;
+    private System.Windows.Forms.ListView listView1;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
 
 		//
 		// Private members
@@ -113,6 +113,8 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.listView1 = new System.Windows.Forms.ListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.treeViewChannels = new MWControls.MWTreeView();
       this.btnGrpChnDown = new System.Windows.Forms.Button();
       this.btnGrpChnUp = new System.Windows.Forms.Button();
@@ -120,8 +122,6 @@ namespace MediaPortal.Configuration.Sections
       this.btnUnmap = new System.Windows.Forms.Button();
       this.listViewTVGroupChannels = new System.Windows.Forms.ListView();
       this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.tabControl1.SuspendLayout();
@@ -155,12 +155,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Controls.Add(this.tabPage3);
-      this.tabControl1.Location = new System.Drawing.Point(8, 8);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(440, 416);
+      this.tabControl1.Size = new System.Drawing.Size(472, 408);
       this.tabControl1.TabIndex = 9;
       // 
       // tabPage2
@@ -174,201 +177,220 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2.Controls.Add(this.listViewGroups);
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Size = new System.Drawing.Size(432, 390);
+      this.tabPage2.Size = new System.Drawing.Size(464, 382);
       this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Groups";
+      this.tabPage2.Text = "TV Channel Groups";
       // 
       // btnGroupDown
       // 
+      this.btnGroupDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnGroupDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnGroupDown.Location = new System.Drawing.Point(240, 344);
+      this.btnGroupDown.Location = new System.Drawing.Point(376, 348);
       this.btnGroupDown.Name = "btnGroupDown";
-      this.btnGroupDown.Size = new System.Drawing.Size(48, 23);
+      this.btnGroupDown.Size = new System.Drawing.Size(72, 22);
       this.btnGroupDown.TabIndex = 5;
       this.btnGroupDown.Text = "Down";
       this.btnGroupDown.Click += new System.EventHandler(this.btnGroupDown_Click);
       // 
       // buttonGroupUp
       // 
+      this.buttonGroupUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonGroupUp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonGroupUp.Location = new System.Drawing.Point(200, 344);
+      this.buttonGroupUp.Location = new System.Drawing.Point(296, 348);
       this.buttonGroupUp.Name = "buttonGroupUp";
-      this.buttonGroupUp.Size = new System.Drawing.Size(32, 23);
+      this.buttonGroupUp.Size = new System.Drawing.Size(72, 22);
       this.buttonGroupUp.TabIndex = 4;
       this.buttonGroupUp.Text = "Up";
       this.buttonGroupUp.Click += new System.EventHandler(this.buttonGroupUp_Click);
       // 
       // buttonEditGroup
       // 
+      this.buttonEditGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonEditGroup.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonEditGroup.Location = new System.Drawing.Point(112, 344);
+      this.buttonEditGroup.Location = new System.Drawing.Point(216, 348);
       this.buttonEditGroup.Name = "buttonEditGroup";
-      this.buttonEditGroup.Size = new System.Drawing.Size(40, 23);
+      this.buttonEditGroup.Size = new System.Drawing.Size(72, 22);
       this.buttonEditGroup.TabIndex = 3;
       this.buttonEditGroup.Text = "Edit";
       this.buttonEditGroup.Click += new System.EventHandler(this.buttonEditGroup_Click);
       // 
       // buttonDeleteGroup
       // 
+      this.buttonDeleteGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonDeleteGroup.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonDeleteGroup.Location = new System.Drawing.Point(56, 344);
+      this.buttonDeleteGroup.Location = new System.Drawing.Point(136, 348);
       this.buttonDeleteGroup.Name = "buttonDeleteGroup";
-      this.buttonDeleteGroup.Size = new System.Drawing.Size(48, 23);
+      this.buttonDeleteGroup.Size = new System.Drawing.Size(72, 22);
       this.buttonDeleteGroup.TabIndex = 2;
       this.buttonDeleteGroup.Text = "Delete";
       this.buttonDeleteGroup.Click += new System.EventHandler(this.buttonDeleteGroup_Click);
       // 
       // buttonAddGroup
       // 
+      this.buttonAddGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonAddGroup.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonAddGroup.Location = new System.Drawing.Point(8, 344);
+      this.buttonAddGroup.Location = new System.Drawing.Point(56, 348);
       this.buttonAddGroup.Name = "buttonAddGroup";
-      this.buttonAddGroup.Size = new System.Drawing.Size(40, 23);
+      this.buttonAddGroup.Size = new System.Drawing.Size(72, 22);
       this.buttonAddGroup.TabIndex = 1;
       this.buttonAddGroup.Text = "Add";
       this.buttonAddGroup.Click += new System.EventHandler(this.buttonAddGroup_Click);
       // 
       // listViewGroups
       // 
+      this.listViewGroups.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewGroups.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                      this.columnHeader6,
                                                                                      this.columnHeader7});
       this.listViewGroups.FullRowSelect = true;
       this.listViewGroups.HideSelection = false;
-      this.listViewGroups.Location = new System.Drawing.Point(8, 8);
+      this.listViewGroups.Location = new System.Drawing.Point(16, 16);
       this.listViewGroups.Name = "listViewGroups";
-      this.listViewGroups.Size = new System.Drawing.Size(416, 304);
+      this.listViewGroups.Size = new System.Drawing.Size(432, 320);
       this.listViewGroups.TabIndex = 0;
       this.listViewGroups.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader6
       // 
       this.columnHeader6.Text = "Group name";
-      this.columnHeader6.Width = 342;
+      this.columnHeader6.Width = 346;
       // 
       // columnHeader7
       // 
       this.columnHeader7.Text = "Pincode";
+      this.columnHeader7.Width = 64;
       // 
       // tabPage3
       // 
       this.tabPage3.AutoScroll = true;
+      this.tabPage3.Controls.Add(this.listView1);
       this.tabPage3.Controls.Add(this.treeViewChannels);
       this.tabPage3.Controls.Add(this.btnGrpChnDown);
       this.tabPage3.Controls.Add(this.btnGrpChnUp);
       this.tabPage3.Controls.Add(this.buttonMap);
       this.tabPage3.Controls.Add(this.btnUnmap);
       this.tabPage3.Controls.Add(this.listViewTVGroupChannels);
-      this.tabPage3.Controls.Add(this.label3);
-      this.tabPage3.Controls.Add(this.label2);
       this.tabPage3.Controls.Add(this.label1);
       this.tabPage3.Controls.Add(this.comboBox1);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(432, 390);
+      this.tabPage3.Size = new System.Drawing.Size(464, 382);
       this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "Map channels";
+      this.tabPage3.Text = "Map Channels";
       this.tabPage3.Visible = false;
+      // 
+      // listView1
+      // 
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                this.columnHeader1});
+      this.listView1.FullRowSelect = true;
+      this.listView1.HideSelection = false;
+      this.listView1.Location = new System.Drawing.Point(16, 56);
+      this.listView1.Name = "listView1";
+      this.listView1.Size = new System.Drawing.Size(176, 21);
+      this.listView1.TabIndex = 11;
+      this.listView1.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Available TV Groups";
+      this.columnHeader1.Width = 154;
       // 
       // treeViewChannels
       // 
+      this.treeViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left)));
       this.treeViewChannels.FullRowSelect = true;
       this.treeViewChannels.ImageIndex = -1;
-      this.treeViewChannels.Location = new System.Drawing.Point(16, 88);
+      this.treeViewChannels.Location = new System.Drawing.Point(16, 76);
       this.treeViewChannels.Name = "treeViewChannels";
       this.treeViewChannels.SelectedImageIndex = -1;
-      this.treeViewChannels.Size = new System.Drawing.Size(168, 248);
+      this.treeViewChannels.Size = new System.Drawing.Size(176, 256);
       this.treeViewChannels.Sorted = true;
       this.treeViewChannels.TabIndex = 10;
       // 
       // btnGrpChnDown
       // 
+      this.btnGrpChnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnGrpChnDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnGrpChnDown.Location = new System.Drawing.Point(304, 344);
+      this.btnGrpChnDown.Location = new System.Drawing.Point(364, 344);
       this.btnGrpChnDown.Name = "btnGrpChnDown";
-      this.btnGrpChnDown.Size = new System.Drawing.Size(56, 23);
+      this.btnGrpChnDown.Size = new System.Drawing.Size(84, 22);
       this.btnGrpChnDown.TabIndex = 9;
       this.btnGrpChnDown.Text = "Down";
       this.btnGrpChnDown.Click += new System.EventHandler(this.btnGrpChnDown_Click);
       // 
       // btnGrpChnUp
       // 
+      this.btnGrpChnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnGrpChnUp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnGrpChnUp.Location = new System.Drawing.Point(264, 344);
+      this.btnGrpChnUp.Location = new System.Drawing.Point(272, 344);
       this.btnGrpChnUp.Name = "btnGrpChnUp";
-      this.btnGrpChnUp.Size = new System.Drawing.Size(32, 23);
+      this.btnGrpChnUp.Size = new System.Drawing.Size(80, 22);
       this.btnGrpChnUp.TabIndex = 8;
       this.btnGrpChnUp.Text = "Up";
       this.btnGrpChnUp.Click += new System.EventHandler(this.btnGrpChnUp_Click);
       // 
       // buttonMap
       // 
+      this.buttonMap.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.buttonMap.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonMap.Location = new System.Drawing.Point(192, 184);
+      this.buttonMap.Location = new System.Drawing.Point(212, 168);
       this.buttonMap.Name = "buttonMap";
-      this.buttonMap.Size = new System.Drawing.Size(32, 23);
+      this.buttonMap.Size = new System.Drawing.Size(40, 22);
       this.buttonMap.TabIndex = 7;
       this.buttonMap.Text = ">>";
       this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
       // 
       // btnUnmap
       // 
+      this.btnUnmap.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.btnUnmap.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnUnmap.Location = new System.Drawing.Point(192, 224);
+      this.btnUnmap.Location = new System.Drawing.Point(212, 200);
       this.btnUnmap.Name = "btnUnmap";
-      this.btnUnmap.Size = new System.Drawing.Size(32, 23);
+      this.btnUnmap.Size = new System.Drawing.Size(40, 22);
       this.btnUnmap.TabIndex = 6;
       this.btnUnmap.Text = "<<";
       this.btnUnmap.Click += new System.EventHandler(this.btnUnmap_Click);
       // 
       // listViewTVGroupChannels
       // 
+      this.listViewTVGroupChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewTVGroupChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                               this.columnHeader9});
       this.listViewTVGroupChannels.FullRowSelect = true;
       this.listViewTVGroupChannels.HideSelection = false;
-      this.listViewTVGroupChannels.Location = new System.Drawing.Point(240, 88);
+      this.listViewTVGroupChannels.Location = new System.Drawing.Point(272, 56);
       this.listViewTVGroupChannels.Name = "listViewTVGroupChannels";
-      this.listViewTVGroupChannels.Size = new System.Drawing.Size(168, 240);
+      this.listViewTVGroupChannels.Size = new System.Drawing.Size(176, 276);
       this.listViewTVGroupChannels.TabIndex = 5;
       this.listViewTVGroupChannels.View = System.Windows.Forms.View.Details;
       this.listViewTVGroupChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVGroupChannels_ColumnClick);
       // 
       // columnHeader9
       // 
-      this.columnHeader9.Text = "TV Channel";
-      this.columnHeader9.Width = 161;
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(240, 64);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(120, 16);
-      this.label3.TabIndex = 3;
-      this.label3.Text = "TV channels in group";
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 64);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(128, 16);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "TVGroups available";
+      this.columnHeader9.Text = "TV Channels in Group";
+      this.columnHeader9.Width = 154;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 8);
+      this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(100, 16);
+      this.label1.Size = new System.Drawing.Size(104, 16);
       this.label1.TabIndex = 1;
-      this.label1.Text = "Group:";
+      this.label1.Text = "TV Channel Group:";
       // 
       // comboBox1
       // 
+      this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBox1.Location = new System.Drawing.Point(40, 32);
+      this.comboBox1.Location = new System.Drawing.Point(160, 20);
       this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(280, 21);
+      this.comboBox1.Size = new System.Drawing.Size(288, 21);
       this.comboBox1.TabIndex = 0;
       this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
@@ -376,7 +398,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.tabControl1);
       this.Name = "TVGroups";
-      this.Size = new System.Drawing.Size(472, 448);
+      this.Size = new System.Drawing.Size(472, 408);
       this.Load += new System.EventHandler(this.TVGroups_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);

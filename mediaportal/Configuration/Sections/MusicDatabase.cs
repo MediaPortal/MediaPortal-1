@@ -160,7 +160,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.buildThumbsCheckBox);
       this.groupBox1.Controls.Add(this.startButton);
@@ -175,6 +176,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buildThumbsCheckBox
       // 
+      this.buildThumbsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buildThumbsCheckBox.Checked = true;
       this.buildThumbsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.buildThumbsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -186,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startButton
       // 
-      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.startButton.Location = new System.Drawing.Point(240, 152);
       this.startButton.Name = "startButton";
@@ -211,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(384, 280);
       this.cancelButton.Name = "cancelButton";
@@ -223,7 +225,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
       this.groupBox2.Controls.Add(this.progressBar);
@@ -237,7 +239,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 24);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 16);

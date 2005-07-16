@@ -78,8 +78,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.label1);
@@ -92,6 +91,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label8
       // 
+      this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.label8.Location = new System.Drawing.Point(16, 56);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(440, 30);
@@ -101,6 +102,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(440, 32);
@@ -110,8 +113,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.linkLabel4);
       this.groupBox2.Controls.Add(this.label7);

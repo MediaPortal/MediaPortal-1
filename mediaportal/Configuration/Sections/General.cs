@@ -261,7 +261,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.settingsCheckedListBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -299,11 +300,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.label1);
       this.groupBox2.Controls.Add(this.numericUpDown1);
+      this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 328);
       this.groupBox2.Name = "groupBox2";
@@ -314,14 +315,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(216, 24);
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.Location = new System.Drawing.Point(328, 24);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(128, 16);
       this.label3.TabIndex = 2;
       this.label3.Text = "(10 = solid, 0 = invisible)";
+      this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // label1
       // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(96, 16);
@@ -330,6 +334,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // numericUpDown1
       // 
+      this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.numericUpDown1.Location = new System.Drawing.Point(168, 20);
       this.numericUpDown1.Maximum = new System.Decimal(new int[] {
                                                                    10,
@@ -337,7 +343,7 @@ namespace MediaPortal.Configuration.Sections
                                                                    0,
                                                                    0});
       this.numericUpDown1.Name = "numericUpDown1";
-      this.numericUpDown1.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDown1.Size = new System.Drawing.Size(168, 20);
       this.numericUpDown1.TabIndex = 0;
       this.numericUpDown1.Value = new System.Decimal(new int[] {
                                                                  10,

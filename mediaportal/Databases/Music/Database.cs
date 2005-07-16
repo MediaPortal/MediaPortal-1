@@ -2654,7 +2654,7 @@ namespace MediaPortal.Music.Database
 				{
 					NewProgress = StartProgress+((ProgressRange*SongCounter)/TotalSongs);
 					MyArgs.progress =Convert.ToInt32(NewProgress);
-					MyArgs.phase=String.Format("Checking for new files {0}/{1} new:{2}",SongCounter,availableFiles.Count,AddedCounter);
+					MyArgs.phase=String.Format("Checking for new files {0}/{1} - new: {2}",SongCounter,availableFiles.Count,AddedCounter);
 					OnDatabaseReorgChanged(MyArgs);
 				}
 		  } //end for-each

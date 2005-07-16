@@ -168,6 +168,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // numDelay
       // 
+      this.numDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.numDelay.Increment = new System.Decimal(new int[] {
                                                                10,
                                                                0,
@@ -180,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
                                                              0,
                                                              0});
       this.numDelay.Name = "numDelay";
-      this.numDelay.Size = new System.Drawing.Size(52, 20);
+      this.numDelay.Size = new System.Drawing.Size(208, 20);
       this.numDelay.TabIndex = 18;
       this.numDelay.Value = new System.Decimal(new int[] {
                                                            150,

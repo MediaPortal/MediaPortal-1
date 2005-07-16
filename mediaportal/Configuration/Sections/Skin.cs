@@ -14,11 +14,10 @@ namespace MediaPortal.Configuration.Sections
 		const string SkinDirectory = @"skin\";
 
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.PictureBox previewPictureBox;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ListView listViewAvailableSkins;
 		private System.Windows.Forms.ColumnHeader colName;
 		private System.Windows.Forms.ColumnHeader colVersion;
+    private System.Windows.Forms.PictureBox previewPictureBox;
 		private System.ComponentModel.IContainer components = null;
 
 		public Skin() : this("Skin")
@@ -141,84 +140,75 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.listViewAvailableSkins = new System.Windows.Forms.ListView();
-			this.colName = new System.Windows.Forms.ColumnHeader();
-			this.colVersion = new System.Windows.Forms.ColumnHeader();
-			this.previewPictureBox = new System.Windows.Forms.PictureBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.listViewAvailableSkins);
-			this.groupBox1.Controls.Add(this.previewPictureBox);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(520, 440);
-			this.groupBox1.TabIndex = 0;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General settings";
-			// 
-			// listViewAvailableSkins
-			// 
-			this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																																														 this.colName,
-																																														 this.colVersion});
-			this.listViewAvailableSkins.FullRowSelect = true;
-			this.listViewAvailableSkins.HideSelection = false;
-			this.listViewAvailableSkins.Location = new System.Drawing.Point(48, 24);
-			this.listViewAvailableSkins.Name = "listViewAvailableSkins";
-			this.listViewAvailableSkins.Size = new System.Drawing.Size(336, 104);
-			this.listViewAvailableSkins.TabIndex = 0;
-			this.listViewAvailableSkins.View = System.Windows.Forms.View.Details;
-			this.listViewAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
-			// 
-			// colName
-			// 
-			this.colName.Text = "Name";
-			this.colName.Width = 202;
-			// 
-			// colVersion
-			// 
-			this.colVersion.Text = "Version";
-			this.colVersion.Width = 81;
-			// 
-			// previewPictureBox
-			// 
-			this.previewPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.previewPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.previewPictureBox.Location = new System.Drawing.Point(48, 160);
-			this.previewPictureBox.Name = "previewPictureBox";
-			this.previewPictureBox.Size = new System.Drawing.Size(300, 256);
-			this.previewPictureBox.TabIndex = 1;
-			this.previewPictureBox.TabStop = false;
-			// 
-			// label2
-			// 
-			this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.label2.Location = new System.Drawing.Point(48, 144);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(100, 16);
-			this.label2.TabIndex = 4;
-			this.label2.Text = "Preview";
-			// 
-			// Skin
-			// 
-			this.BackColor = System.Drawing.SystemColors.Control;
-			this.Controls.Add(this.groupBox1);
-			this.Name = "Skin";
-			this.Size = new System.Drawing.Size(536, 456);
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.listViewAvailableSkins = new System.Windows.Forms.ListView();
+      this.colName = new System.Windows.Forms.ColumnHeader();
+      this.colVersion = new System.Windows.Forms.ColumnHeader();
+      this.previewPictureBox = new System.Windows.Forms.PictureBox();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.listViewAvailableSkins);
+      this.groupBox1.Controls.Add(this.previewPictureBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      // 
+      // listViewAvailableSkins
+      // 
+      this.listViewAvailableSkins.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+                                                                                             this.colName,
+                                                                                             this.colVersion});
+      this.listViewAvailableSkins.FullRowSelect = true;
+      this.listViewAvailableSkins.HideSelection = false;
+      this.listViewAvailableSkins.Location = new System.Drawing.Point(16, 24);
+      this.listViewAvailableSkins.Name = "listViewAvailableSkins";
+      this.listViewAvailableSkins.Size = new System.Drawing.Size(440, 80);
+      this.listViewAvailableSkins.TabIndex = 0;
+      this.listViewAvailableSkins.View = System.Windows.Forms.View.Details;
+      this.listViewAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
+      // 
+      // colName
+      // 
+      this.colName.Text = "Name";
+      this.colName.Width = 338;
+      // 
+      // colVersion
+      // 
+      this.colVersion.Text = "Version";
+      this.colVersion.Width = 80;
+      // 
+      // previewPictureBox
+      // 
+      this.previewPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.previewPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+      this.previewPictureBox.Location = new System.Drawing.Point(86, 132);
+      this.previewPictureBox.Name = "previewPictureBox";
+      this.previewPictureBox.Size = new System.Drawing.Size(300, 240);
+      this.previewPictureBox.TabIndex = 2;
+      this.previewPictureBox.TabStop = false;
+      // 
+      // Skin
+      // 
+      this.BackColor = System.Drawing.SystemColors.Control;
+      this.Controls.Add(this.groupBox1);
+      this.Name = "Skin";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 

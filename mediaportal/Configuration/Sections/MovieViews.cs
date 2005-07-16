@@ -411,7 +411,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.tbViewName);
       this.groupBox1.Controls.Add(this.label2);
@@ -426,9 +427,12 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Size = new System.Drawing.Size(472, 352);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
+      this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
       // 
       // tbViewName
       // 
+      this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.tbViewName.Location = new System.Drawing.Point(168, 44);
       this.tbViewName.Name = "tbViewName";
       this.tbViewName.Size = new System.Drawing.Size(288, 20);
@@ -445,6 +449,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btnDelete
       // 
+      this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnDelete.Location = new System.Drawing.Point(384, 320);
       this.btnDelete.Name = "btnDelete";
@@ -455,6 +460,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btnSave
       // 
+      this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnSave.Location = new System.Drawing.Point(304, 320);
       this.btnSave.Name = "btnSave";
@@ -465,6 +471,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbViews
       // 
+      this.cbViews.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbViews.Location = new System.Drawing.Point(168, 20);
       this.cbViews.Name = "cbViews";
@@ -482,6 +490,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dataGrid1
       // 
+      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid1.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.dataGrid1.DataMember = "";
       this.dataGrid1.FlatMode = true;
@@ -714,6 +725,11 @@ namespace MediaPortal.Configuration.Sections
       }
       catch (Exception)
       {}
+    }
+
+    private void groupBox1_Enter(object sender, System.EventArgs e)
+    {
+    
     }
   }
 }

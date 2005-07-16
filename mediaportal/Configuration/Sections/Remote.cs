@@ -253,6 +253,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBoxUSA
       // 
+      this.pictureBoxUSA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxUSA.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxUSA.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxUSA.Image")));
       this.pictureBoxUSA.Location = new System.Drawing.Point(208, 24);
@@ -274,6 +275,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControlRemotes
       // 
+      this.tabControlRemotes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlRemotes.Controls.Add(this.tabPageMCE);
       this.tabControlRemotes.Controls.Add(this.tabPageHCW);
       this.tabControlRemotes.Controls.Add(this.tabPageFireDTV);
@@ -294,6 +298,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxMCE);
       this.groupBox1.Controls.Add(this.radioButtonEurope);
       this.groupBox1.Controls.Add(this.radioButtonUSA);
@@ -328,6 +335,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBoxEU
       // 
+      this.pictureBoxEU.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxEU.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxEU.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxEU.Image")));
       this.pictureBoxEU.Location = new System.Drawing.Point(208, 24);
@@ -350,6 +358,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.btnMapping);
       this.groupBox2.Controls.Add(this.checkBoxHCW);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -361,8 +371,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btnMapping
       // 
+      this.btnMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnMapping.Location = new System.Drawing.Point(344, 20);
+      this.btnMapping.Location = new System.Drawing.Point(352, 20);
       this.btnMapping.Name = "btnMapping";
       this.btnMapping.Size = new System.Drawing.Size(72, 22);
       this.btnMapping.TabIndex = 13;
@@ -381,6 +392,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxInformation
       // 
+      this.groupBoxInformation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxInformation.Controls.Add(this.infoDriverStatus);
       this.groupBoxInformation.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBoxInformation.Location = new System.Drawing.Point(12, 240);
@@ -392,6 +406,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // infoDriverStatus
       // 
+      this.infoDriverStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.infoDriverStatus.ForeColor = System.Drawing.SystemColors.ControlText;
       this.infoDriverStatus.Location = new System.Drawing.Point(12, 16);
       this.infoDriverStatus.Name = "infoDriverStatus";
@@ -402,6 +419,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSettings
       // 
+      this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSettings.Controls.Add(this.label2sec);
       this.groupBoxSettings.Controls.Add(this.label0sec);
       this.groupBoxSettings.Controls.Add(this.labelDelay);
@@ -420,6 +439,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2sec
       // 
+      this.label2sec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label2sec.BackColor = System.Drawing.SystemColors.Control;
       this.label2sec.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label2sec.Location = new System.Drawing.Point(224, 136);
@@ -450,6 +470,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarDelay
       // 
+      this.trackBarDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarDelay.LargeChange = 100;
       this.trackBarDelay.Location = new System.Drawing.Point(112, 112);
       this.trackBarDelay.Maximum = 2000;
@@ -492,8 +514,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonDefault
       // 
+      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonDefault.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonDefault.Location = new System.Drawing.Point(344, 120);
+      this.buttonDefault.Location = new System.Drawing.Point(352, 120);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(72, 22);
       this.buttonDefault.TabIndex = 9;

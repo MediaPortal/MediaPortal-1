@@ -341,42 +341,42 @@ namespace MediaPortal.Configuration.Sections
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
       this.setupButton = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.dataGrid1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.dataGrid1);
       this.groupBox1.Controls.Add(this.setupButton);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 432);
+      this.groupBox1.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Plugin Settings";
       // 
       // dataGrid1
       // 
-      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
+      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid1.DataMember = "";
       this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
       this.dataGrid1.Location = new System.Drawing.Point(16, 24);
       this.dataGrid1.Name = "dataGrid1";
-      this.dataGrid1.Size = new System.Drawing.Size(408, 368);
+      this.dataGrid1.Size = new System.Drawing.Size(440, 344);
       this.dataGrid1.TabIndex = 0;
       // 
       // setupButton
       // 
-      this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.setupButton.Location = new System.Drawing.Point(16, 400);
+      this.setupButton.Location = new System.Drawing.Point(384, 376);
       this.setupButton.Name = "setupButton";
+      this.setupButton.Size = new System.Drawing.Size(72, 22);
       this.setupButton.TabIndex = 1;
       this.setupButton.Text = "Setup";
       this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
@@ -385,9 +385,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "Plugins";
-      this.Size = new System.Drawing.Size(456, 448);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) (this.dataGrid1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
       this.ResumeLayout(false);
 
     }

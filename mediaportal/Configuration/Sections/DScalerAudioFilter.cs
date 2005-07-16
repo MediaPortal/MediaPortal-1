@@ -22,7 +22,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ComboBox comboBoxSpeakerConfig;
 		private System.Windows.Forms.CheckBox checkBoxDynamicRange;
 		private System.Windows.Forms.TextBox textBoxAudioOffset;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.CheckBox checkBoxMPEGOverSPDIF;
 		private System.ComponentModel.IContainer components = null;
 
@@ -66,7 +65,6 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new System.Windows.Forms.Label();
       this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
       this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
       this.checkBoxMPEGOverSPDIF = new System.Windows.Forms.CheckBox();
@@ -81,7 +79,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.textBoxAudioOffset);
       this.groupBox1.Controls.Add(this.comboBoxSpeakerConfig);
       this.groupBox1.Controls.Add(this.checkBoxMPEGOverSPDIF);
@@ -97,19 +94,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(188, 136);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(40, 16);
-      this.label1.TabIndex = 23;
-      this.label1.Text = "msec.";
-      // 
       // textBoxAudioOffset
       // 
-      this.textBoxAudioOffset.Location = new System.Drawing.Point(152, 132);
+      this.textBoxAudioOffset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAudioOffset.Location = new System.Drawing.Point(168, 132);
       this.textBoxAudioOffset.Name = "textBoxAudioOffset";
-      this.textBoxAudioOffset.Size = new System.Drawing.Size(32, 20);
+      this.textBoxAudioOffset.Size = new System.Drawing.Size(288, 20);
       this.textBoxAudioOffset.TabIndex = 22;
       this.textBoxAudioOffset.Text = "0";
       // 
@@ -144,9 +135,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label5.Location = new System.Drawing.Point(16, 136);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(136, 16);
+      this.label5.Size = new System.Drawing.Size(152, 16);
       this.label5.TabIndex = 20;
-      this.label5.Text = "S/PDIF audio time offset:";
+      this.label5.Text = "S/PDIF delay offset (msec.):";
       // 
       // checkBoxSPDIF
       // 

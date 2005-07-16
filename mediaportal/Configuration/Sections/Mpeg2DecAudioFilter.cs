@@ -113,6 +113,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox4
       // 
+      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox4.Controls.Add(this.radioButtonAC3SPDIF);
       this.groupBox4.Controls.Add(this.radioButtonAC3Speakers);
       this.groupBox4.Controls.Add(this.checkBoxAC3LFE);
@@ -151,6 +153,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxAC3LFE
       // 
+      this.checkBoxAC3LFE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxAC3LFE.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxAC3LFE.Location = new System.Drawing.Point(416, 24);
       this.checkBoxAC3LFE.Name = "checkBoxAC3LFE";
@@ -160,6 +163,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAC3SpeakerConfig
       // 
+      this.comboBoxAC3SpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAC3SpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAC3SpeakerConfig.Items.AddRange(new object[] {
                                                                   "Mono",
@@ -190,6 +195,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.label4);
       this.groupBox3.Controls.Add(this.radioPCM16Bit);
       this.groupBox3.Controls.Add(this.radioButtonPCM24Bit);
@@ -262,6 +269,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarBoost
       // 
+      this.trackBarBoost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarBoost.Location = new System.Drawing.Point(48, 52);
       this.trackBarBoost.Maximum = 100;
       this.trackBarBoost.Name = "trackBarBoost";
@@ -271,6 +280,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.radioButtonDTSSPDIF);
       this.groupBox2.Controls.Add(this.radioButtonDTSSpeakers);
       this.groupBox2.Controls.Add(this.checkBoxDTSLFE);
@@ -308,6 +319,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxDTSLFE
       // 
+      this.checkBoxDTSLFE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxDTSLFE.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxDTSLFE.Location = new System.Drawing.Point(416, 24);
       this.checkBoxDTSLFE.Name = "checkBoxDTSLFE";
@@ -317,6 +329,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDTSSpeakerConfig
       // 
+      this.comboBoxDTSSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDTSSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDTSSpeakerConfig.Items.AddRange(new object[] {
                                                                   "Mono",
@@ -343,6 +357,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox5
       // 
+      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.checkBoxAACDownmix);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox5.Location = new System.Drawing.Point(0, 344);

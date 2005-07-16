@@ -135,423 +135,430 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.checkBoxRTS = new System.Windows.Forms.CheckBox();
-			this.checkBoxDTR = new System.Windows.Forms.CheckBox();
-			this.label8 = new System.Windows.Forms.Label();
-			this.ParityCombo = new System.Windows.Forms.ComboBox();
-			this.buttonNoneCodes = new System.Windows.Forms.Button();
-			this.buttonDefaultCodes = new System.Windows.Forms.Button();
-			this.buttonAllCodes = new System.Windows.Forms.Button();
-			this.label7 = new System.Windows.Forms.Label();
-			this.ActionsCheckList = new System.Windows.Forms.CheckedListBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.CommandDelayCombo = new System.Windows.Forms.ComboBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.LearningTimeoutCombo = new System.Windows.Forms.ComboBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.IRLengthCombo = new System.Windows.Forms.ComboBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.HandShakeCombo = new System.Windows.Forms.ComboBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.BaudRateCombo = new System.Windows.Forms.ComboBox();
-			this.checkBoxInitUIRIrman = new System.Windows.Forms.CheckBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.CommPortCombo = new System.Windows.Forms.ComboBox();
-			this.internalCommandsButton = new System.Windows.Forms.Button();
-			this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.statusLabel = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.checkBoxRTS);
-			this.groupBox1.Controls.Add(this.checkBoxDTR);
-			this.groupBox1.Controls.Add(this.label8);
-			this.groupBox1.Controls.Add(this.ParityCombo);
-			this.groupBox1.Controls.Add(this.buttonNoneCodes);
-			this.groupBox1.Controls.Add(this.buttonDefaultCodes);
-			this.groupBox1.Controls.Add(this.buttonAllCodes);
-			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Controls.Add(this.ActionsCheckList);
-			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Controls.Add(this.CommandDelayCombo);
-			this.groupBox1.Controls.Add(this.label5);
-			this.groupBox1.Controls.Add(this.LearningTimeoutCombo);
-			this.groupBox1.Controls.Add(this.label4);
-			this.groupBox1.Controls.Add(this.IRLengthCombo);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Controls.Add(this.HandShakeCombo);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.BaudRateCombo);
-			this.groupBox1.Controls.Add(this.checkBoxInitUIRIrman);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.CommPortCombo);
-			this.groupBox1.Controls.Add(this.internalCommandsButton);
-			this.groupBox1.Controls.Add(this.inputCheckBox);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(448, 336);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General settings";
-			// 
-			// checkBoxRTS
-			// 
-			this.checkBoxRTS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkBoxRTS.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBoxRTS.Location = new System.Drawing.Point(16, 192);
-			this.checkBoxRTS.Name = "checkBoxRTS";
-			this.checkBoxRTS.Size = new System.Drawing.Size(48, 24);
-			this.checkBoxRTS.TabIndex = 33;
-			this.checkBoxRTS.Text = "RTS";
-			this.checkBoxRTS.CheckedChanged += new System.EventHandler(this.checkBoxRTS_CheckedChanged);
-			// 
-			// checkBoxDTR
-			// 
-			this.checkBoxDTR.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkBoxDTR.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBoxDTR.Location = new System.Drawing.Point(16, 168);
-			this.checkBoxDTR.Name = "checkBoxDTR";
-			this.checkBoxDTR.Size = new System.Drawing.Size(48, 24);
-			this.checkBoxDTR.TabIndex = 32;
-			this.checkBoxDTR.Text = "DTR";
-			this.checkBoxDTR.CheckedChanged += new System.EventHandler(this.checkBoxDTR_CheckedChanged);
-			// 
-			// label8
-			// 
-			this.label8.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label8.Location = new System.Drawing.Point(120, 120);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(64, 16);
-			this.label8.TabIndex = 31;
-			this.label8.Text = "Parity";
-			// 
-			// ParityCombo
-			// 
-			this.ParityCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ParityCombo.Items.AddRange(new object[] {
-															 "None",
-															 "Odd",
-															 "Even",
-															 "Mark",
-															 "Space"});
-			this.ParityCombo.Location = new System.Drawing.Point(120, 136);
-			this.ParityCombo.Name = "ParityCombo";
-			this.ParityCombo.Size = new System.Drawing.Size(88, 21);
-			this.ParityCombo.TabIndex = 30;
-			this.ParityCombo.SelectedIndexChanged += new System.EventHandler(this.ParityCombo_SelectedIndexChanged);
-			// 
-			// buttonNoneCodes
-			// 
-			this.buttonNoneCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.buttonNoneCodes.Location = new System.Drawing.Point(288, 16);
-			this.buttonNoneCodes.Name = "buttonNoneCodes";
-			this.buttonNoneCodes.Size = new System.Drawing.Size(40, 24);
-			this.buttonNoneCodes.TabIndex = 29;
-			this.buttonNoneCodes.Text = "Mini";
-			this.buttonNoneCodes.Click += new System.EventHandler(this.buttonNoneCodes_Click);
-			// 
-			// buttonDefaultCodes
-			// 
-			this.buttonDefaultCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.buttonDefaultCodes.Location = new System.Drawing.Point(336, 16);
-			this.buttonDefaultCodes.Name = "buttonDefaultCodes";
-			this.buttonDefaultCodes.Size = new System.Drawing.Size(64, 24);
-			this.buttonDefaultCodes.TabIndex = 28;
-			this.buttonDefaultCodes.Text = "Extended";
-			this.buttonDefaultCodes.Click += new System.EventHandler(this.buttonDefaultCodes_Click);
-			// 
-			// buttonAllCodes
-			// 
-			this.buttonAllCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.buttonAllCodes.Location = new System.Drawing.Point(408, 16);
-			this.buttonAllCodes.Name = "buttonAllCodes";
-			this.buttonAllCodes.Size = new System.Drawing.Size(32, 24);
-			this.buttonAllCodes.TabIndex = 27;
-			this.buttonAllCodes.Text = "All";
-			this.buttonAllCodes.Click += new System.EventHandler(this.buttonAllCodes_Click);
-			// 
-			// label7
-			// 
-			this.label7.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label7.Location = new System.Drawing.Point(248, 24);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(32, 16);
-			this.label7.TabIndex = 26;
-			this.label7.Text = "Learn:";
-			// 
-			// ActionsCheckList
-			// 
-			this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
-			this.ActionsCheckList.Name = "ActionsCheckList";
-			this.ActionsCheckList.Size = new System.Drawing.Size(216, 289);
-			this.ActionsCheckList.TabIndex = 25;
-			// 
-			// label6
-			// 
-			this.label6.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label6.Location = new System.Drawing.Point(24, 224);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(80, 32);
-			this.label6.TabIndex = 24;
-			this.label6.Text = "Delay between commands (ms):";
-			// 
-			// CommandDelayCombo
-			// 
-			this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.CommandDelayCombo.Items.AddRange(new object[] {
-																   "150",
-																   "200",
-																   "250",
-																   "300",
-																   "250",
-																   "400",
-																   "450",
-																   "500"});
-			this.CommandDelayCombo.Location = new System.Drawing.Point(120, 224);
-			this.CommandDelayCombo.Name = "CommandDelayCombo";
-			this.CommandDelayCombo.Size = new System.Drawing.Size(88, 21);
-			this.CommandDelayCombo.TabIndex = 23;
-			this.CommandDelayCombo.SelectedIndexChanged += new System.EventHandler(this.CommandDelayCombo_SelectedIndexChanged);
-			// 
-			// label5
-			// 
-			this.label5.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label5.Location = new System.Drawing.Point(24, 256);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(80, 32);
-			this.label5.TabIndex = 22;
-			this.label5.Text = "Learning Time out (secs):";
-			// 
-			// LearningTimeoutCombo
-			// 
-			this.LearningTimeoutCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.LearningTimeoutCombo.Items.AddRange(new object[] {
-																	  "1",
-																	  "2",
-																	  "3",
-																	  "4",
-																	  "5",
-																	  "6",
-																	  "7",
-																	  "8",
-																	  "9",
-																	  "10"});
-			this.LearningTimeoutCombo.Location = new System.Drawing.Point(120, 264);
-			this.LearningTimeoutCombo.Name = "LearningTimeoutCombo";
-			this.LearningTimeoutCombo.Size = new System.Drawing.Size(88, 21);
-			this.LearningTimeoutCombo.TabIndex = 21;
-			this.LearningTimeoutCombo.SelectedIndexChanged += new System.EventHandler(this.LearningTimeoutCombo_SelectedIndexChanged);
-			// 
-			// label4
-			// 
-			this.label4.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label4.Location = new System.Drawing.Point(120, 168);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(88, 16);
-			this.label4.TabIndex = 20;
-			this.label4.Text = "IR Code Length";
-			// 
-			// IRLengthCombo
-			// 
-			this.IRLengthCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.IRLengthCombo.Items.AddRange(new object[] {
-															   "1",
-															   "2",
-															   "3",
-															   "4",
-															   "5",
-															   "6",
-															   "7",
-															   "8",
-															   "9",
-															   "10",
-															   "11",
-															   "12",
-															   "13",
-															   "14",
-															   "15",
-															   "16",
-															   "17",
-															   "18",
-															   "19",
-															   "20",
-															   "21",
-															   "22",
-															   "23",
-															   "24",
-															   "25",
-															   "26",
-															   "27",
-															   "28",
-															   "29",
-															   "30",
-															   "31",
-															   "32"});
-			this.IRLengthCombo.Location = new System.Drawing.Point(120, 184);
-			this.IRLengthCombo.Name = "IRLengthCombo";
-			this.IRLengthCombo.Size = new System.Drawing.Size(88, 21);
-			this.IRLengthCombo.TabIndex = 19;
-			this.IRLengthCombo.SelectedIndexChanged += new System.EventHandler(this.IRLengthCombo_SelectedIndexChanged);
-			// 
-			// label3
-			// 
-			this.label3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label3.Location = new System.Drawing.Point(16, 120);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(64, 16);
-			this.label3.TabIndex = 18;
-			this.label3.Text = "HandShake";
-			// 
-			// HandShakeCombo
-			// 
-			this.HandShakeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.HandShakeCombo.Items.AddRange(new object[] {
-																"None",
-																"CtsRts",
-																"DsrDtr",
-																"XonXoff"});
-			this.HandShakeCombo.Location = new System.Drawing.Point(16, 136);
-			this.HandShakeCombo.Name = "HandShakeCombo";
-			this.HandShakeCombo.Size = new System.Drawing.Size(88, 21);
-			this.HandShakeCombo.TabIndex = 17;
-			this.HandShakeCombo.SelectedIndexChanged += new System.EventHandler(this.HandShakeCombo_SelectedIndexChanged);
-			// 
-			// label2
-			// 
-			this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label2.Location = new System.Drawing.Point(120, 72);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(56, 16);
-			this.label2.TabIndex = 16;
-			this.label2.Text = "Baud Rate";
-			// 
-			// BaudRateCombo
-			// 
-			this.BaudRateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.BaudRateCombo.Items.AddRange(new object[] {
-															   "300",
-															   "600",
-															   "1200",
-															   "2400",
-															   "4800",
-															   "9600",
-															   "14400",
-															   "19200",
-															   "28800",
-															   "38400",
-															   "56000",
-															   "57600",
-															   "115200"});
-			this.BaudRateCombo.Location = new System.Drawing.Point(120, 88);
-			this.BaudRateCombo.Name = "BaudRateCombo";
-			this.BaudRateCombo.Size = new System.Drawing.Size(88, 21);
-			this.BaudRateCombo.TabIndex = 15;
-			this.BaudRateCombo.SelectedIndexChanged += new System.EventHandler(this.BaudRateCombo_SelectedIndexChanged);
-			// 
-			// checkBoxInitUIRIrman
-			// 
-			this.checkBoxInitUIRIrman.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkBoxInitUIRIrman.Checked = true;
-			this.checkBoxInitUIRIrman.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBoxInitUIRIrman.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBoxInitUIRIrman.Location = new System.Drawing.Point(16, 48);
-			this.checkBoxInitUIRIrman.Name = "checkBoxInitUIRIrman";
-			this.checkBoxInitUIRIrman.Size = new System.Drawing.Size(192, 24);
-			this.checkBoxInitUIRIrman.TabIndex = 14;
-			this.checkBoxInitUIRIrman.Text = "Initialize UIR/IRMan type receiver";
-			this.checkBoxInitUIRIrman.CheckedChanged += new System.EventHandler(this.checkBoxInitUIRIrman_CheckedChanged);
-			// 
-			// label1
-			// 
-			this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label1.Location = new System.Drawing.Point(16, 72);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(64, 16);
-			this.label1.TabIndex = 13;
-			this.label1.Text = "Comm. Port";
-			// 
-			// CommPortCombo
-			// 
-			this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.CommPortCombo.Items.AddRange(new object[] {
-															   "COM1:",
-															   "COM2:",
-															   "COM3:",
-															   "COM4:",
-															   "COM5:",
-															   "COM6:",
-															   "COM7:",
-															   "COM8:"});
-			this.CommPortCombo.Location = new System.Drawing.Point(16, 88);
-			this.CommPortCombo.Name = "CommPortCombo";
-			this.CommPortCombo.Size = new System.Drawing.Size(88, 21);
-			this.CommPortCombo.TabIndex = 12;
-			this.CommPortCombo.SelectedIndexChanged += new System.EventHandler(this.CommPortCombo_SelectedIndexChanged);
-			// 
-			// internalCommandsButton
-			// 
-			this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.internalCommandsButton.Location = new System.Drawing.Point(16, 296);
-			this.internalCommandsButton.Name = "internalCommandsButton";
-			this.internalCommandsButton.Size = new System.Drawing.Size(192, 23);
-			this.internalCommandsButton.TabIndex = 11;
-			this.internalCommandsButton.Text = "Learn selected commands";
-			this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
-			// 
-			// inputCheckBox
-			// 
-			this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
-			this.inputCheckBox.Name = "inputCheckBox";
-			this.inputCheckBox.Size = new System.Drawing.Size(200, 24);
-			this.inputCheckBox.TabIndex = 7;
-			this.inputCheckBox.Text = "Enable Serial UIR for remote controls";
-			this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox2.Controls.Add(this.statusLabel);
-			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(8, 352);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(448, 64);
-			this.groupBox2.TabIndex = 2;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Status Display";
-			// 
-			// statusLabel
-			// 
-			this.statusLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.statusLabel.Font = new System.Drawing.Font("Verdana", 9.75F);
-			this.statusLabel.Location = new System.Drawing.Point(16, 24);
-			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(408, 32);
-			this.statusLabel.TabIndex = 1;
-			// 
-			// SerialUIR
-			// 
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.groupBox1);
-			this.Name = "SerialUIR";
-			this.Size = new System.Drawing.Size(464, 440);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxRTS = new System.Windows.Forms.CheckBox();
+      this.checkBoxDTR = new System.Windows.Forms.CheckBox();
+      this.label8 = new System.Windows.Forms.Label();
+      this.ParityCombo = new System.Windows.Forms.ComboBox();
+      this.buttonNoneCodes = new System.Windows.Forms.Button();
+      this.buttonDefaultCodes = new System.Windows.Forms.Button();
+      this.buttonAllCodes = new System.Windows.Forms.Button();
+      this.label7 = new System.Windows.Forms.Label();
+      this.ActionsCheckList = new System.Windows.Forms.CheckedListBox();
+      this.label6 = new System.Windows.Forms.Label();
+      this.CommandDelayCombo = new System.Windows.Forms.ComboBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.LearningTimeoutCombo = new System.Windows.Forms.ComboBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.IRLengthCombo = new System.Windows.Forms.ComboBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.HandShakeCombo = new System.Windows.Forms.ComboBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.BaudRateCombo = new System.Windows.Forms.ComboBox();
+      this.checkBoxInitUIRIrman = new System.Windows.Forms.CheckBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.CommPortCombo = new System.Windows.Forms.ComboBox();
+      this.internalCommandsButton = new System.Windows.Forms.Button();
+      this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.statusLabel = new System.Windows.Forms.Label();
+      this.groupBox1.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkBoxRTS);
+      this.groupBox1.Controls.Add(this.checkBoxDTR);
+      this.groupBox1.Controls.Add(this.label8);
+      this.groupBox1.Controls.Add(this.ParityCombo);
+      this.groupBox1.Controls.Add(this.buttonNoneCodes);
+      this.groupBox1.Controls.Add(this.buttonDefaultCodes);
+      this.groupBox1.Controls.Add(this.buttonAllCodes);
+      this.groupBox1.Controls.Add(this.label7);
+      this.groupBox1.Controls.Add(this.ActionsCheckList);
+      this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.Controls.Add(this.CommandDelayCombo);
+      this.groupBox1.Controls.Add(this.label5);
+      this.groupBox1.Controls.Add(this.LearningTimeoutCombo);
+      this.groupBox1.Controls.Add(this.label4);
+      this.groupBox1.Controls.Add(this.IRLengthCombo);
+      this.groupBox1.Controls.Add(this.label3);
+      this.groupBox1.Controls.Add(this.HandShakeCombo);
+      this.groupBox1.Controls.Add(this.label2);
+      this.groupBox1.Controls.Add(this.BaudRateCombo);
+      this.groupBox1.Controls.Add(this.checkBoxInitUIRIrman);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.CommPortCombo);
+      this.groupBox1.Controls.Add(this.internalCommandsButton);
+      this.groupBox1.Controls.Add(this.inputCheckBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(472, 336);
+      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Settings";
+      // 
+      // checkBoxRTS
+      // 
+      this.checkBoxRTS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.checkBoxRTS.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxRTS.Location = new System.Drawing.Point(16, 200);
+      this.checkBoxRTS.Name = "checkBoxRTS";
+      this.checkBoxRTS.Size = new System.Drawing.Size(48, 16);
+      this.checkBoxRTS.TabIndex = 33;
+      this.checkBoxRTS.Text = "RTS";
+      this.checkBoxRTS.CheckedChanged += new System.EventHandler(this.checkBoxRTS_CheckedChanged);
+      // 
+      // checkBoxDTR
+      // 
+      this.checkBoxDTR.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.checkBoxDTR.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxDTR.Location = new System.Drawing.Point(16, 176);
+      this.checkBoxDTR.Name = "checkBoxDTR";
+      this.checkBoxDTR.Size = new System.Drawing.Size(48, 16);
+      this.checkBoxDTR.TabIndex = 32;
+      this.checkBoxDTR.Text = "DTR";
+      this.checkBoxDTR.CheckedChanged += new System.EventHandler(this.checkBoxDTR_CheckedChanged);
+      // 
+      // label8
+      // 
+      this.label8.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label8.Location = new System.Drawing.Point(120, 120);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(64, 16);
+      this.label8.TabIndex = 31;
+      this.label8.Text = "Parity";
+      // 
+      // ParityCombo
+      // 
+      this.ParityCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.ParityCombo.Items.AddRange(new object[] {
+                                                     "None",
+                                                     "Odd",
+                                                     "Even",
+                                                     "Mark",
+                                                     "Space"});
+      this.ParityCombo.Location = new System.Drawing.Point(120, 136);
+      this.ParityCombo.Name = "ParityCombo";
+      this.ParityCombo.Size = new System.Drawing.Size(88, 21);
+      this.ParityCombo.TabIndex = 30;
+      this.ParityCombo.SelectedIndexChanged += new System.EventHandler(this.ParityCombo_SelectedIndexChanged);
+      // 
+      // buttonNoneCodes
+      // 
+      this.buttonNoneCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonNoneCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonNoneCodes.Location = new System.Drawing.Point(280, 22);
+      this.buttonNoneCodes.Name = "buttonNoneCodes";
+      this.buttonNoneCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonNoneCodes.TabIndex = 29;
+      this.buttonNoneCodes.Text = "Mini";
+      this.buttonNoneCodes.Click += new System.EventHandler(this.buttonNoneCodes_Click);
+      // 
+      // buttonDefaultCodes
+      // 
+      this.buttonDefaultCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefaultCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonDefaultCodes.Location = new System.Drawing.Point(344, 22);
+      this.buttonDefaultCodes.Name = "buttonDefaultCodes";
+      this.buttonDefaultCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonDefaultCodes.TabIndex = 28;
+      this.buttonDefaultCodes.Text = "Extended";
+      this.buttonDefaultCodes.Click += new System.EventHandler(this.buttonDefaultCodes_Click);
+      // 
+      // buttonAllCodes
+      // 
+      this.buttonAllCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAllCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonAllCodes.Location = new System.Drawing.Point(408, 22);
+      this.buttonAllCodes.Name = "buttonAllCodes";
+      this.buttonAllCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonAllCodes.TabIndex = 27;
+      this.buttonAllCodes.Text = "All";
+      this.buttonAllCodes.Click += new System.EventHandler(this.buttonAllCodes_Click);
+      // 
+      // label7
+      // 
+      this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label7.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label7.Location = new System.Drawing.Point(224, 24);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(32, 16);
+      this.label7.TabIndex = 26;
+      this.label7.Text = "Learn:";
+      // 
+      // ActionsCheckList
+      // 
+      this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
+      this.ActionsCheckList.Name = "ActionsCheckList";
+      this.ActionsCheckList.Size = new System.Drawing.Size(240, 289);
+      this.ActionsCheckList.TabIndex = 25;
+      // 
+      // label6
+      // 
+      this.label6.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label6.Location = new System.Drawing.Point(16, 222);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(88, 32);
+      this.label6.TabIndex = 24;
+      this.label6.Text = "Delay between commands (msec):";
+      // 
+      // CommandDelayCombo
+      // 
+      this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.CommandDelayCombo.Items.AddRange(new object[] {
+                                                           "150",
+                                                           "200",
+                                                           "250",
+                                                           "300",
+                                                           "250",
+                                                           "400",
+                                                           "450",
+                                                           "500"});
+      this.CommandDelayCombo.Location = new System.Drawing.Point(120, 224);
+      this.CommandDelayCombo.Name = "CommandDelayCombo";
+      this.CommandDelayCombo.Size = new System.Drawing.Size(88, 21);
+      this.CommandDelayCombo.TabIndex = 23;
+      this.CommandDelayCombo.SelectedIndexChanged += new System.EventHandler(this.CommandDelayCombo_SelectedIndexChanged);
+      // 
+      // label5
+      // 
+      this.label5.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label5.Location = new System.Drawing.Point(16, 262);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(80, 32);
+      this.label5.TabIndex = 22;
+      this.label5.Text = "Learning timeout (sec):";
+      // 
+      // LearningTimeoutCombo
+      // 
+      this.LearningTimeoutCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.LearningTimeoutCombo.Items.AddRange(new object[] {
+                                                              "1",
+                                                              "2",
+                                                              "3",
+                                                              "4",
+                                                              "5",
+                                                              "6",
+                                                              "7",
+                                                              "8",
+                                                              "9",
+                                                              "10"});
+      this.LearningTimeoutCombo.Location = new System.Drawing.Point(120, 264);
+      this.LearningTimeoutCombo.Name = "LearningTimeoutCombo";
+      this.LearningTimeoutCombo.Size = new System.Drawing.Size(88, 21);
+      this.LearningTimeoutCombo.TabIndex = 21;
+      this.LearningTimeoutCombo.SelectedIndexChanged += new System.EventHandler(this.LearningTimeoutCombo_SelectedIndexChanged);
+      // 
+      // label4
+      // 
+      this.label4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label4.Location = new System.Drawing.Point(120, 168);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(88, 16);
+      this.label4.TabIndex = 20;
+      this.label4.Text = "IR Code Length";
+      // 
+      // IRLengthCombo
+      // 
+      this.IRLengthCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.IRLengthCombo.Items.AddRange(new object[] {
+                                                       "1",
+                                                       "2",
+                                                       "3",
+                                                       "4",
+                                                       "5",
+                                                       "6",
+                                                       "7",
+                                                       "8",
+                                                       "9",
+                                                       "10",
+                                                       "11",
+                                                       "12",
+                                                       "13",
+                                                       "14",
+                                                       "15",
+                                                       "16",
+                                                       "17",
+                                                       "18",
+                                                       "19",
+                                                       "20",
+                                                       "21",
+                                                       "22",
+                                                       "23",
+                                                       "24",
+                                                       "25",
+                                                       "26",
+                                                       "27",
+                                                       "28",
+                                                       "29",
+                                                       "30",
+                                                       "31",
+                                                       "32"});
+      this.IRLengthCombo.Location = new System.Drawing.Point(120, 184);
+      this.IRLengthCombo.Name = "IRLengthCombo";
+      this.IRLengthCombo.Size = new System.Drawing.Size(88, 21);
+      this.IRLengthCombo.TabIndex = 19;
+      this.IRLengthCombo.SelectedIndexChanged += new System.EventHandler(this.IRLengthCombo_SelectedIndexChanged);
+      // 
+      // label3
+      // 
+      this.label3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label3.Location = new System.Drawing.Point(16, 120);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(64, 16);
+      this.label3.TabIndex = 18;
+      this.label3.Text = "HandShake";
+      // 
+      // HandShakeCombo
+      // 
+      this.HandShakeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.HandShakeCombo.Items.AddRange(new object[] {
+                                                        "None",
+                                                        "CtsRts",
+                                                        "DsrDtr",
+                                                        "XonXoff"});
+      this.HandShakeCombo.Location = new System.Drawing.Point(16, 136);
+      this.HandShakeCombo.Name = "HandShakeCombo";
+      this.HandShakeCombo.Size = new System.Drawing.Size(88, 21);
+      this.HandShakeCombo.TabIndex = 17;
+      this.HandShakeCombo.SelectedIndexChanged += new System.EventHandler(this.HandShakeCombo_SelectedIndexChanged);
+      // 
+      // label2
+      // 
+      this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label2.Location = new System.Drawing.Point(120, 72);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(56, 16);
+      this.label2.TabIndex = 16;
+      this.label2.Text = "Baud Rate";
+      // 
+      // BaudRateCombo
+      // 
+      this.BaudRateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.BaudRateCombo.Items.AddRange(new object[] {
+                                                       "300",
+                                                       "600",
+                                                       "1200",
+                                                       "2400",
+                                                       "4800",
+                                                       "9600",
+                                                       "14400",
+                                                       "19200",
+                                                       "28800",
+                                                       "38400",
+                                                       "56000",
+                                                       "57600",
+                                                       "115200"});
+      this.BaudRateCombo.Location = new System.Drawing.Point(120, 88);
+      this.BaudRateCombo.Name = "BaudRateCombo";
+      this.BaudRateCombo.Size = new System.Drawing.Size(88, 21);
+      this.BaudRateCombo.TabIndex = 15;
+      this.BaudRateCombo.SelectedIndexChanged += new System.EventHandler(this.BaudRateCombo_SelectedIndexChanged);
+      // 
+      // checkBoxInitUIRIrman
+      // 
+      this.checkBoxInitUIRIrman.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.checkBoxInitUIRIrman.Checked = true;
+      this.checkBoxInitUIRIrman.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxInitUIRIrman.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxInitUIRIrman.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxInitUIRIrman.Name = "checkBoxInitUIRIrman";
+      this.checkBoxInitUIRIrman.Size = new System.Drawing.Size(192, 16);
+      this.checkBoxInitUIRIrman.TabIndex = 14;
+      this.checkBoxInitUIRIrman.Text = "Initialize UIR/IRMan type receiver";
+      this.checkBoxInitUIRIrman.CheckedChanged += new System.EventHandler(this.checkBoxInitUIRIrman_CheckedChanged);
+      // 
+      // label1
+      // 
+      this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label1.Location = new System.Drawing.Point(16, 72);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(64, 16);
+      this.label1.TabIndex = 13;
+      this.label1.Text = "Comm. Port";
+      // 
+      // CommPortCombo
+      // 
+      this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.CommPortCombo.Items.AddRange(new object[] {
+                                                       "COM1:",
+                                                       "COM2:",
+                                                       "COM3:",
+                                                       "COM4:",
+                                                       "COM5:",
+                                                       "COM6:",
+                                                       "COM7:",
+                                                       "COM8:"});
+      this.CommPortCombo.Location = new System.Drawing.Point(16, 88);
+      this.CommPortCombo.Name = "CommPortCombo";
+      this.CommPortCombo.Size = new System.Drawing.Size(88, 21);
+      this.CommPortCombo.TabIndex = 12;
+      this.CommPortCombo.SelectedIndexChanged += new System.EventHandler(this.CommPortCombo_SelectedIndexChanged);
+      // 
+      // internalCommandsButton
+      // 
+      this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.internalCommandsButton.Location = new System.Drawing.Point(16, 296);
+      this.internalCommandsButton.Name = "internalCommandsButton";
+      this.internalCommandsButton.Size = new System.Drawing.Size(192, 23);
+      this.internalCommandsButton.TabIndex = 11;
+      this.internalCommandsButton.Text = "Learn selected commands";
+      this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
+      // 
+      // inputCheckBox
+      // 
+      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.inputCheckBox.Name = "inputCheckBox";
+      this.inputCheckBox.Size = new System.Drawing.Size(200, 16);
+      this.inputCheckBox.TabIndex = 7;
+      this.inputCheckBox.Text = "Enable Serial UIR for remote controls";
+      this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.statusLabel);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox2.Location = new System.Drawing.Point(0, 344);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(472, 64);
+      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Device Status";
+      // 
+      // statusLabel
+      // 
+      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.statusLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+      this.statusLabel.Location = new System.Drawing.Point(16, 24);
+      this.statusLabel.Name = "statusLabel";
+      this.statusLabel.Size = new System.Drawing.Size(448, 32);
+      this.statusLabel.TabIndex = 1;
+      // 
+      // SerialUIR
+      // 
+      this.Controls.Add(this.groupBox2);
+      this.Controls.Add(this.groupBox1);
+      this.Name = "SerialUIR";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private string[] buttonNames = {

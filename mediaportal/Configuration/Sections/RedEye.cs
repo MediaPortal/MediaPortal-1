@@ -27,6 +27,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Button buttonIRDA;
 		private System.Windows.Forms.Button buttonRC5;
 		private System.Windows.Forms.Button buttonSKY;
+    private System.Windows.Forms.GroupBox groupBox3;
 		private System.Windows.Forms.Button cmdTest;
 
 		
@@ -108,11 +109,11 @@ namespace MediaPortal.Configuration.Sections
 								 "",
 								 "In the Channel Setup for your TV simply put the channel number you would normally ",
 								 "select with your STB remote in the text box for the External Channel.",
-								 "You can test your configuration by typeing in a channel number and clicking 'Test'",
+								 "You can test your configuration by typeing in a channel number and clicking 'Test'.",
 								 "",
 								 "N.B. If the external Channel number has not changed the Plugin will not attempt",
-								 "to send an instruction to RedEye, this makes a smoother interface, please remember this when you",
-								 "are testing the unit"};
+								 "to send an instruction to RedEye, this makes a smoother interface, please remember",
+								 "this when you are testing the unit."};
 			infoTextBox.Lines = lines;
 		}
 		#region Designer generated code
@@ -122,248 +123,276 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.infoTextBox = new System.Windows.Forms.TextBox();
-			this.cmdTest = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
-			this.testRedeyeChannelsTextBox = new System.Windows.Forms.TextBox();
-			this.buttonIRDA = new System.Windows.Forms.Button();
-			this.buttonRC5 = new System.Windows.Forms.Button();
-			this.buttonSKY = new System.Windows.Forms.Button();
-			this.label7 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.CommandDelayCombo = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.CommPortCombo = new System.Windows.Forms.ComboBox();
-			this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.statusLabel = new System.Windows.Forms.Label();
-			this.groupBox1.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.infoTextBox);
-			this.groupBox1.Controls.Add(this.cmdTest);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.testRedeyeChannelsTextBox);
-			this.groupBox1.Controls.Add(this.buttonIRDA);
-			this.groupBox1.Controls.Add(this.buttonRC5);
-			this.groupBox1.Controls.Add(this.buttonSKY);
-			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Controls.Add(this.CommandDelayCombo);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.CommPortCombo);
-			this.groupBox1.Controls.Add(this.inputCheckBox);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(8, 8);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(448, 336);
-			this.groupBox1.TabIndex = 1;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General settings";
-			// 
-			// infoTextBox
-			// 
-			this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.infoTextBox.Location = new System.Drawing.Point(8, 192);
-			this.infoTextBox.Multiline = true;
-			this.infoTextBox.Name = "infoTextBox";
-			this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.infoTextBox.Size = new System.Drawing.Size(424, 128);
-			this.infoTextBox.TabIndex = 31;
-			this.infoTextBox.Text = "";
-			this.infoTextBox.WordWrap = false;
-			this.infoTextBox.TextChanged += new System.EventHandler(this.infoTextBox_TextChanged);
-			// 
-			// cmdTest
-			// 
-			this.cmdTest.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cmdTest.Location = new System.Drawing.Point(120, 152);
-			this.cmdTest.Name = "cmdTest";
-			this.cmdTest.Size = new System.Drawing.Size(64, 24);
-			this.cmdTest.TabIndex = 30;
-			this.cmdTest.Text = "Test";
-			this.cmdTest.Click += new System.EventHandler(this.cmdTest_Click);
-			// 
-			// label2
-			// 
-			this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label2.Location = new System.Drawing.Point(16, 136);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(64, 16);
-			this.label2.TabIndex = 0;
-			this.label2.Text = "Channels";
-			this.label2.Click += new System.EventHandler(this.label2_Click);
-			// 
-			// testRedeyeChannelsTextBox
-			// 
-			this.testRedeyeChannelsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.testRedeyeChannelsTextBox.Location = new System.Drawing.Point(16, 152);
-			this.testRedeyeChannelsTextBox.MaxLength = 3;
-			this.testRedeyeChannelsTextBox.Name = "testRedeyeChannelsTextBox";
-			this.testRedeyeChannelsTextBox.Size = new System.Drawing.Size(80, 20);
-			this.testRedeyeChannelsTextBox.TabIndex = 7;
-			this.testRedeyeChannelsTextBox.Text = "";
-			this.testRedeyeChannelsTextBox.TextChanged += new System.EventHandler(this.testRedeyeChannelsTextBox_TextChanged);
-			// 
-			// buttonIRDA
-			// 
-			this.buttonIRDA.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.buttonIRDA.Location = new System.Drawing.Point(328, 56);
-			this.buttonIRDA.Name = "buttonIRDA";
-			this.buttonIRDA.Size = new System.Drawing.Size(64, 24);
-			this.buttonIRDA.TabIndex = 29;
-			this.buttonIRDA.Text = "IRDA";
-			this.buttonIRDA.Click += new System.EventHandler(this.buttonIRDA_Click);
-			// 
-			// buttonRC5
-			// 
-			this.buttonRC5.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.buttonRC5.Location = new System.Drawing.Point(328, 80);
-			this.buttonRC5.Name = "buttonRC5";
-			this.buttonRC5.Size = new System.Drawing.Size(64, 24);
-			this.buttonRC5.TabIndex = 28;
-			this.buttonRC5.Text = "RC5";
-			this.buttonRC5.Click += new System.EventHandler(this.buttonRC5_Click);
-			// 
-			// buttonSKY
-			// 
-			this.buttonSKY.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.buttonSKY.Location = new System.Drawing.Point(328, 104);
-			this.buttonSKY.Name = "buttonSKY";
-			this.buttonSKY.Size = new System.Drawing.Size(64, 24);
-			this.buttonSKY.TabIndex = 27;
-			this.buttonSKY.Text = "SKY";
-			this.buttonSKY.Click += new System.EventHandler(this.buttonSKY_Click);
-			// 
-			// label7
-			// 
-			this.label7.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label7.Location = new System.Drawing.Point(328, 24);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(64, 16);
-			this.label7.TabIndex = 26;
-			this.label7.Text = "Signal Type";
-			// 
-			// label6
-			// 
-			this.label6.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label6.Location = new System.Drawing.Point(112, 48);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(80, 32);
-			this.label6.TabIndex = 24;
-			this.label6.Text = "Delay between commands (ms):";
-			// 
-			// CommandDelayCombo
-			// 
-			this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.CommandDelayCombo.Items.AddRange(new object[] {
-																   "150",
-																   "200",
-																   "250",
-																   "300",
-																   "250",
-																   "400",
-																   "450",
-																   "500",
-																   "550",
-																   "600",
-																   "650",
-																   "700",
-																   "750",
-																   "800",
-																   "850",
-																   "900",
-																   "950",
-																   "1000",
-																   "1050",
-																   "1100",
-																   "1150",
-																   "1200"});
-			this.CommandDelayCombo.Location = new System.Drawing.Point(112, 80);
-			this.CommandDelayCombo.Name = "CommandDelayCombo";
-			this.CommandDelayCombo.Size = new System.Drawing.Size(88, 21);
-			this.CommandDelayCombo.TabIndex = 23;
-			this.CommandDelayCombo.SelectedIndexChanged += new System.EventHandler(this.CommandDelayCombo_SelectedIndexChanged);
-			// 
-			// label1
-			// 
-			this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.label1.Location = new System.Drawing.Point(16, 64);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(64, 16);
-			this.label1.TabIndex = 13;
-			this.label1.Text = "Comm. Port";
-			// 
-			// CommPortCombo
-			// 
-			this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.CommPortCombo.Items.AddRange(new object[] {
-															   "COM1:",
-															   "COM2:",
-															   "COM3:",
-															   "COM4:",
-															   "COM5:",
-															   "COM6:",
-															   "COM7:",
-															   "COM8:"});
-			this.CommPortCombo.Location = new System.Drawing.Point(16, 80);
-			this.CommPortCombo.Name = "CommPortCombo";
-			this.CommPortCombo.Size = new System.Drawing.Size(88, 21);
-			this.CommPortCombo.TabIndex = 12;
-			this.CommPortCombo.SelectedIndexChanged += new System.EventHandler(this.CommPortCombo_SelectedIndexChanged);
-			// 
-			// inputCheckBox
-			// 
-			this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
-			this.inputCheckBox.Name = "inputCheckBox";
-			this.inputCheckBox.Size = new System.Drawing.Size(200, 24);
-			this.inputCheckBox.TabIndex = 7;
-			this.inputCheckBox.Text = "Enable RedEye Serial";
-			this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox2.Controls.Add(this.statusLabel);
-			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(8, 352);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(448, 64);
-			this.groupBox2.TabIndex = 2;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Status Display";
-			// 
-			// statusLabel
-			// 
-			this.statusLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.statusLabel.Font = new System.Drawing.Font("Verdana", 9.75F);
-			this.statusLabel.Location = new System.Drawing.Point(16, 24);
-			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(408, 32);
-			this.statusLabel.TabIndex = 1;
-			// 
-			// RedEye
-			// 
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.groupBox1);
-			this.Name = "RedEye";
-			this.Size = new System.Drawing.Size(464, 440);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox2.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cmdTest = new System.Windows.Forms.Button();
+      this.label2 = new System.Windows.Forms.Label();
+      this.testRedeyeChannelsTextBox = new System.Windows.Forms.TextBox();
+      this.buttonIRDA = new System.Windows.Forms.Button();
+      this.buttonRC5 = new System.Windows.Forms.Button();
+      this.buttonSKY = new System.Windows.Forms.Button();
+      this.label7 = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.CommandDelayCombo = new System.Windows.Forms.ComboBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.CommPortCombo = new System.Windows.Forms.ComboBox();
+      this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.infoTextBox = new System.Windows.Forms.TextBox();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.statusLabel = new System.Windows.Forms.Label();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.groupBox1.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.cmdTest);
+      this.groupBox1.Controls.Add(this.label2);
+      this.groupBox1.Controls.Add(this.testRedeyeChannelsTextBox);
+      this.groupBox1.Controls.Add(this.buttonIRDA);
+      this.groupBox1.Controls.Add(this.buttonRC5);
+      this.groupBox1.Controls.Add(this.buttonSKY);
+      this.groupBox1.Controls.Add(this.label7);
+      this.groupBox1.Controls.Add(this.label6);
+      this.groupBox1.Controls.Add(this.CommandDelayCombo);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.CommPortCombo);
+      this.groupBox1.Controls.Add(this.inputCheckBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(472, 184);
+      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "General settings";
+      // 
+      // cmdTest
+      // 
+      this.cmdTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmdTest.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.cmdTest.Location = new System.Drawing.Point(384, 152);
+      this.cmdTest.Name = "cmdTest";
+      this.cmdTest.Size = new System.Drawing.Size(72, 22);
+      this.cmdTest.TabIndex = 30;
+      this.cmdTest.Text = "Test";
+      this.cmdTest.Click += new System.EventHandler(this.cmdTest_Click);
+      // 
+      // label2
+      // 
+      this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label2.Location = new System.Drawing.Point(16, 128);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(48, 16);
+      this.label2.TabIndex = 0;
+      this.label2.Text = "Channels:";
+      // 
+      // testRedeyeChannelsTextBox
+      // 
+      this.testRedeyeChannelsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.testRedeyeChannelsTextBox.Location = new System.Drawing.Point(168, 124);
+      this.testRedeyeChannelsTextBox.MaxLength = 3;
+      this.testRedeyeChannelsTextBox.Name = "testRedeyeChannelsTextBox";
+      this.testRedeyeChannelsTextBox.Size = new System.Drawing.Size(288, 20);
+      this.testRedeyeChannelsTextBox.TabIndex = 7;
+      this.testRedeyeChannelsTextBox.Text = "";
+      // 
+      // buttonIRDA
+      // 
+      this.buttonIRDA.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonIRDA.Location = new System.Drawing.Point(167, 54);
+      this.buttonIRDA.Name = "buttonIRDA";
+      this.buttonIRDA.Size = new System.Drawing.Size(72, 16);
+      this.buttonIRDA.TabIndex = 29;
+      this.buttonIRDA.Text = "IRDA";
+      this.buttonIRDA.Click += new System.EventHandler(this.buttonIRDA_Click);
+      // 
+      // buttonRC5
+      // 
+      this.buttonRC5.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonRC5.Location = new System.Drawing.Point(247, 54);
+      this.buttonRC5.Name = "buttonRC5";
+      this.buttonRC5.Size = new System.Drawing.Size(72, 16);
+      this.buttonRC5.TabIndex = 28;
+      this.buttonRC5.Text = "RC5";
+      this.buttonRC5.Click += new System.EventHandler(this.buttonRC5_Click);
+      // 
+      // buttonSKY
+      // 
+      this.buttonSKY.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonSKY.Location = new System.Drawing.Point(327, 54);
+      this.buttonSKY.Name = "buttonSKY";
+      this.buttonSKY.Size = new System.Drawing.Size(72, 16);
+      this.buttonSKY.TabIndex = 27;
+      this.buttonSKY.Text = "SKY";
+      this.buttonSKY.Click += new System.EventHandler(this.buttonSKY_Click);
+      // 
+      // label7
+      // 
+      this.label7.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label7.Location = new System.Drawing.Point(16, 56);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(64, 16);
+      this.label7.TabIndex = 26;
+      this.label7.Text = "Signal Type:";
+      // 
+      // label6
+      // 
+      this.label6.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label6.Location = new System.Drawing.Point(16, 104);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(72, 16);
+      this.label6.TabIndex = 24;
+      this.label6.Text = "Delay (msec.):";
+      // 
+      // CommandDelayCombo
+      // 
+      this.CommandDelayCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.CommandDelayCombo.Items.AddRange(new object[] {
+                                                           "150",
+                                                           "200",
+                                                           "250",
+                                                           "300",
+                                                           "350",
+                                                           "400",
+                                                           "450",
+                                                           "500",
+                                                           "550",
+                                                           "600",
+                                                           "650",
+                                                           "700",
+                                                           "750",
+                                                           "800",
+                                                           "850",
+                                                           "900",
+                                                           "950",
+                                                           "1000",
+                                                           "1050",
+                                                           "1100",
+                                                           "1150",
+                                                           "1200"});
+      this.CommandDelayCombo.Location = new System.Drawing.Point(168, 100);
+      this.CommandDelayCombo.Name = "CommandDelayCombo";
+      this.CommandDelayCombo.Size = new System.Drawing.Size(288, 21);
+      this.CommandDelayCombo.TabIndex = 23;
+      this.CommandDelayCombo.SelectedIndexChanged += new System.EventHandler(this.CommandDelayCombo_SelectedIndexChanged);
+      // 
+      // label1
+      // 
+      this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.label1.Location = new System.Drawing.Point(16, 80);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(24, 16);
+      this.label1.TabIndex = 13;
+      this.label1.Text = "Port:";
+      // 
+      // CommPortCombo
+      // 
+      this.CommPortCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.CommPortCombo.Items.AddRange(new object[] {
+                                                       "COM1:",
+                                                       "COM2:",
+                                                       "COM3:",
+                                                       "COM4:",
+                                                       "COM5:",
+                                                       "COM6:",
+                                                       "COM7:",
+                                                       "COM8:"});
+      this.CommPortCombo.Location = new System.Drawing.Point(168, 76);
+      this.CommPortCombo.Name = "CommPortCombo";
+      this.CommPortCombo.Size = new System.Drawing.Size(288, 21);
+      this.CommPortCombo.TabIndex = 12;
+      this.CommPortCombo.SelectedIndexChanged += new System.EventHandler(this.CommPortCombo_SelectedIndexChanged);
+      // 
+      // inputCheckBox
+      // 
+      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.inputCheckBox.Name = "inputCheckBox";
+      this.inputCheckBox.Size = new System.Drawing.Size(128, 16);
+      this.inputCheckBox.TabIndex = 7;
+      this.inputCheckBox.Text = "Enable RedEye Serial";
+      this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
+      // 
+      // infoTextBox
+      // 
+      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.infoTextBox.BackColor = System.Drawing.SystemColors.Control;
+      this.infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.infoTextBox.Location = new System.Drawing.Point(16, 24);
+      this.infoTextBox.Multiline = true;
+      this.infoTextBox.Name = "infoTextBox";
+      this.infoTextBox.ReadOnly = true;
+      this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.infoTextBox.Size = new System.Drawing.Size(440, 104);
+      this.infoTextBox.TabIndex = 31;
+      this.infoTextBox.Text = "";
+      this.infoTextBox.WordWrap = false;
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.statusLabel);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox2.Location = new System.Drawing.Point(0, 192);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(472, 64);
+      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Device Status";
+      // 
+      // statusLabel
+      // 
+      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.statusLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+      this.statusLabel.Location = new System.Drawing.Point(16, 24);
+      this.statusLabel.Name = "statusLabel";
+      this.statusLabel.Size = new System.Drawing.Size(440, 32);
+      this.statusLabel.TabIndex = 1;
+      this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.statusLabel.Click += new System.EventHandler(this.statusLabel_Click);
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.infoTextBox);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox3.Location = new System.Drawing.Point(0, 264);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(472, 144);
+      this.groupBox3.TabIndex = 3;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Information";
+      // 
+      // RedEye
+      // 
+      this.Controls.Add(this.groupBox3);
+      this.Controls.Add(this.groupBox2);
+      this.Controls.Add(this.groupBox1);
+      this.Name = "RedEye";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void OnRemoteCommand(object command)
@@ -402,15 +431,6 @@ namespace MediaPortal.Configuration.Sections
 			MediaPortal.RedEyeIR.RedEye.Instance.InternalCommandsActive = inputCheckBox.Checked;
 		}
 
-		private void testRedeyeChannelsTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-
-		}
-		private void label2_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
 		private void buttonIRDA_Click(object sender, System.EventArgs e)
 		{
 			MediaPortal.RedEyeIR.RedEye.Instance.SetIRDA();
@@ -435,16 +455,14 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
-		private void infoTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
 		private void CommandDelayCombo_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			MediaPortal.RedEyeIR.RedEye.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
 		}
 
-
+    private void statusLabel_Click(object sender, System.EventArgs e)
+    {
+    
+    }
 	}
 }

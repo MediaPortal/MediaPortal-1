@@ -132,7 +132,6 @@ namespace MediaPortal.Configuration.Sections
       this._useCustomHandler = new System.Windows.Forms.RadioButton();
       this._useLogarithmicHandler = new System.Windows.Forms.RadioButton();
       this._useWindowsHandler = new System.Windows.Forms.RadioButton();
-      this.label1 = new System.Windows.Forms.Label();
       this._useClassicHandler = new System.Windows.Forms.RadioButton();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -145,83 +144,63 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this._useCustomHandler);
       this.groupBox1.Controls.Add(this._useLogarithmicHandler);
       this.groupBox1.Controls.Add(this._useWindowsHandler);
-      this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this._useClassicHandler);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 240);
+      this.groupBox1.Size = new System.Drawing.Size(472, 128);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Volume";
+      this.groupBox1.Text = "Volume Steps";
       // 
       // _customTextbox
       // 
       this._customTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this._customTextbox.Enabled = false;
-      this._customTextbox.Location = new System.Drawing.Point(40, 168);
+      this._customTextbox.Location = new System.Drawing.Point(168, 92);
       this._customTextbox.Name = "_customTextbox";
-      this._customTextbox.Size = new System.Drawing.Size(384, 20);
+      this._customTextbox.Size = new System.Drawing.Size(288, 20);
       this._customTextbox.TabIndex = 6;
       this._customTextbox.Text = "";
       this._customTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomTable);
       // 
       // _useCustomHandler
       // 
-      this._useCustomHandler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
       this._useCustomHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this._useCustomHandler.Location = new System.Drawing.Point(24, 144);
+      this._useCustomHandler.Location = new System.Drawing.Point(16, 96);
       this._useCustomHandler.Name = "_useCustomHandler";
-      this._useCustomHandler.Size = new System.Drawing.Size(408, 24);
+      this._useCustomHandler.Size = new System.Drawing.Size(80, 16);
       this._useCustomHandler.TabIndex = 5;
       this._useCustomHandler.Text = "C&ustom:";
       this._useCustomHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
       // _useLogarithmicHandler
       // 
-      this._useLogarithmicHandler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
       this._useLogarithmicHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this._useLogarithmicHandler.Location = new System.Drawing.Point(24, 120);
+      this._useLogarithmicHandler.Location = new System.Drawing.Point(16, 72);
       this._useLogarithmicHandler.Name = "_useLogarithmicHandler";
-      this._useLogarithmicHandler.Size = new System.Drawing.Size(408, 24);
+      this._useLogarithmicHandler.Size = new System.Drawing.Size(104, 16);
       this._useLogarithmicHandler.TabIndex = 4;
       this._useLogarithmicHandler.Text = "&Logarithmic";
       this._useLogarithmicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
       // _useWindowsHandler
       // 
-      this._useWindowsHandler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
       this._useWindowsHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this._useWindowsHandler.Location = new System.Drawing.Point(24, 72);
+      this._useWindowsHandler.Location = new System.Drawing.Point(16, 24);
       this._useWindowsHandler.Name = "_useWindowsHandler";
-      this._useWindowsHandler.Size = new System.Drawing.Size(408, 24);
+      this._useWindowsHandler.Size = new System.Drawing.Size(120, 16);
       this._useWindowsHandler.TabIndex = 2;
       this._useWindowsHandler.Text = "&Windows default";
       this._useWindowsHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
-      // label1
-      // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.label1.Location = new System.Drawing.Point(16, 32);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(416, 32);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Select how you would like the volume increments and decrements to be handled from" +
-        " the following options:";
-      // 
       // _useClassicHandler
       // 
-      this._useClassicHandler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
       this._useClassicHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this._useClassicHandler.Location = new System.Drawing.Point(24, 96);
+      this._useClassicHandler.Location = new System.Drawing.Point(16, 48);
       this._useClassicHandler.Name = "_useClassicHandler";
-      this._useClassicHandler.Size = new System.Drawing.Size(408, 24);
+      this._useClassicHandler.Size = new System.Drawing.Size(72, 16);
       this._useClassicHandler.TabIndex = 3;
       this._useClassicHandler.Text = "&Classic";
       this._useClassicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
@@ -230,7 +209,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "Volume";
-      this.Size = new System.Drawing.Size(456, 448);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -242,7 +221,6 @@ namespace MediaPortal.Configuration.Sections
 		Container					components = null;
 		MPGroupBox					groupBox1;
 		RadioButton					_useClassicHandler;
-		Label						label1;
 		RadioButton					_useWindowsHandler;
 		RadioButton					_useLogarithmicHandler;
 		string						_customText = string.Empty;

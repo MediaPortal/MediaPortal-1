@@ -76,14 +76,14 @@ namespace MediaPortal.Configuration.Sections
       this.label7 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
-      this.tbSaturation = new System.Windows.Forms.TrackBar();
-      this.tbHue = new System.Windows.Forms.TrackBar();
-      this.tbContrast = new System.Windows.Forms.TrackBar();
-      this.tbBrightness = new System.Windows.Forms.TrackBar();
       this.cbDeinterlace = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.cbForcedSubtitles = new System.Windows.Forms.CheckBox();
       this.cbPlanar = new System.Windows.Forms.CheckBox();
+      this.tbSaturation = new System.Windows.Forms.TrackBar();
+      this.tbHue = new System.Windows.Forms.TrackBar();
+      this.tbContrast = new System.Windows.Forms.TrackBar();
+      this.tbBrightness = new System.Windows.Forms.TrackBar();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.tbSaturation)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.tbHue)).BeginInit();
@@ -147,48 +147,10 @@ namespace MediaPortal.Configuration.Sections
       this.label4.TabIndex = 8;
       this.label4.Text = "Brightness:";
       // 
-      // tbSaturation
-      // 
-      this.tbSaturation.Location = new System.Drawing.Point(160, 196);
-      this.tbSaturation.Maximum = 200;
-      this.tbSaturation.Name = "tbSaturation";
-      this.tbSaturation.Size = new System.Drawing.Size(304, 45);
-      this.tbSaturation.TabIndex = 7;
-      this.tbSaturation.TickFrequency = 20;
-      this.tbSaturation.Value = 100;
-      // 
-      // tbHue
-      // 
-      this.tbHue.Location = new System.Drawing.Point(160, 156);
-      this.tbHue.Maximum = 360;
-      this.tbHue.Name = "tbHue";
-      this.tbHue.Size = new System.Drawing.Size(304, 45);
-      this.tbHue.TabIndex = 6;
-      this.tbHue.TickFrequency = 32;
-      this.tbHue.Value = 180;
-      // 
-      // tbContrast
-      // 
-      this.tbContrast.Location = new System.Drawing.Point(160, 116);
-      this.tbContrast.Maximum = 200;
-      this.tbContrast.Name = "tbContrast";
-      this.tbContrast.Size = new System.Drawing.Size(304, 45);
-      this.tbContrast.TabIndex = 5;
-      this.tbContrast.TickFrequency = 20;
-      this.tbContrast.Value = 100;
-      // 
-      // tbBrightness
-      // 
-      this.tbBrightness.Location = new System.Drawing.Point(160, 76);
-      this.tbBrightness.Maximum = 255;
-      this.tbBrightness.Name = "tbBrightness";
-      this.tbBrightness.Size = new System.Drawing.Size(304, 45);
-      this.tbBrightness.TabIndex = 4;
-      this.tbBrightness.TickFrequency = 16;
-      this.tbBrightness.Value = 128;
-      // 
       // cbDeinterlace
       // 
+      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDeinterlace.Items.AddRange(new object[] {
                                                        "Auto",
@@ -229,6 +191,54 @@ namespace MediaPortal.Configuration.Sections
       this.cbPlanar.Size = new System.Drawing.Size(264, 16);
       this.cbPlanar.TabIndex = 0;
       this.cbPlanar.Text = "Enable planar YUV media types (YV12, I420, IYUV)";
+      // 
+      // tbSaturation
+      // 
+      this.tbSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbSaturation.Location = new System.Drawing.Point(160, 196);
+      this.tbSaturation.Maximum = 200;
+      this.tbSaturation.Name = "tbSaturation";
+      this.tbSaturation.Size = new System.Drawing.Size(304, 45);
+      this.tbSaturation.TabIndex = 7;
+      this.tbSaturation.TickFrequency = 20;
+      this.tbSaturation.Value = 100;
+      // 
+      // tbHue
+      // 
+      this.tbHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbHue.Location = new System.Drawing.Point(160, 156);
+      this.tbHue.Maximum = 360;
+      this.tbHue.Name = "tbHue";
+      this.tbHue.Size = new System.Drawing.Size(304, 45);
+      this.tbHue.TabIndex = 6;
+      this.tbHue.TickFrequency = 32;
+      this.tbHue.Value = 180;
+      // 
+      // tbContrast
+      // 
+      this.tbContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbContrast.Location = new System.Drawing.Point(160, 116);
+      this.tbContrast.Maximum = 200;
+      this.tbContrast.Name = "tbContrast";
+      this.tbContrast.Size = new System.Drawing.Size(304, 45);
+      this.tbContrast.TabIndex = 5;
+      this.tbContrast.TickFrequency = 20;
+      this.tbContrast.Value = 100;
+      // 
+      // tbBrightness
+      // 
+      this.tbBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbBrightness.Location = new System.Drawing.Point(160, 76);
+      this.tbBrightness.Maximum = 255;
+      this.tbBrightness.Name = "tbBrightness";
+      this.tbBrightness.Size = new System.Drawing.Size(304, 45);
+      this.tbBrightness.TabIndex = 4;
+      this.tbBrightness.TickFrequency = 16;
+      this.tbBrightness.Value = 128;
       // 
       // MPEG2DecVideoFilter
       // 

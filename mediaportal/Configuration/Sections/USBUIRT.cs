@@ -120,50 +120,49 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.inputCheckBox);
       this.groupBox1.Controls.Add(this.statusLabel);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 128);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(440, 296);
+      this.groupBox1.Size = new System.Drawing.Size(472, 208);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "USBUIRT settings";
       // 
       // lblUSBUIRTVersion
       // 
-      this.lblUSBUIRTVersion.Location = new System.Drawing.Point(144, 240);
+      this.lblUSBUIRTVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 168);
       this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
-      this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 48);
+      this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 32);
       this.lblUSBUIRTVersion.TabIndex = 14;
-      this.lblUSBUIRTVersion.Text = "label2";
+      this.lblUSBUIRTVersion.Text = "Version";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 240);
+      this.label1.Location = new System.Drawing.Point(16, 168);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(100, 40);
+      this.label1.Size = new System.Drawing.Size(144, 16);
       this.label1.TabIndex = 13;
       this.label1.Text = "USBUIRT version detected:";
       this.label1.Click += new System.EventHandler(this.label1_Click);
       // 
       // tunerCommandsButton
       // 
-      this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.tunerCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.tunerCommandsButton.Location = new System.Drawing.Point(16, 120);
+      this.tunerCommandsButton.Location = new System.Drawing.Point(296, 56);
       this.tunerCommandsButton.Name = "tunerCommandsButton";
-      this.tunerCommandsButton.Size = new System.Drawing.Size(408, 23);
+      this.tunerCommandsButton.Size = new System.Drawing.Size(160, 23);
       this.tunerCommandsButton.TabIndex = 12;
       this.tunerCommandsButton.Text = "Learn settopbox commands";
       this.tunerCommandsButton.Click += new System.EventHandler(this.tunerCommandsButton_Click);
       // 
       // internalCommandsButton
       // 
-      this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.internalCommandsButton.Location = new System.Drawing.Point(16, 96);
+      this.internalCommandsButton.Location = new System.Drawing.Point(296, 24);
       this.internalCommandsButton.Name = "internalCommandsButton";
-      this.internalCommandsButton.Size = new System.Drawing.Size(408, 23);
+      this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
       this.internalCommandsButton.TabIndex = 11;
       this.internalCommandsButton.Text = "Learn Media Portal commands";
       this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
@@ -172,28 +171,28 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.enterCheckBox.Enabled = false;
       this.enterCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.enterCheckBox.Location = new System.Drawing.Point(56, 72);
+      this.enterCheckBox.Location = new System.Drawing.Point(32, 96);
       this.enterCheckBox.Name = "enterCheckBox";
-      this.enterCheckBox.Size = new System.Drawing.Size(336, 16);
+      this.enterCheckBox.Size = new System.Drawing.Size(192, 16);
       this.enterCheckBox.TabIndex = 10;
-      this.enterCheckBox.Text = "External settop ox needs \'Enter\' to be sent for changing channels";
+      this.enterCheckBox.Text = "Send \'Enter\' for changing channels";
       // 
       // digitCheckBox
       // 
       this.digitCheckBox.Enabled = false;
       this.digitCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.digitCheckBox.Location = new System.Drawing.Point(56, 48);
+      this.digitCheckBox.Location = new System.Drawing.Point(32, 72);
       this.digitCheckBox.Name = "digitCheckBox";
-      this.digitCheckBox.Size = new System.Drawing.Size(312, 24);
+      this.digitCheckBox.Size = new System.Drawing.Size(176, 16);
       this.digitCheckBox.TabIndex = 9;
-      this.digitCheckBox.Text = "External settop box uses 3 digits for channel selection";
+      this.digitCheckBox.Text = "Use 3 digits for channel selection";
       // 
       // outputCheckBox
       // 
       this.outputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.outputCheckBox.Location = new System.Drawing.Point(24, 32);
+      this.outputCheckBox.Location = new System.Drawing.Point(16, 48);
       this.outputCheckBox.Name = "outputCheckBox";
-      this.outputCheckBox.Size = new System.Drawing.Size(264, 16);
+      this.outputCheckBox.Size = new System.Drawing.Size(208, 16);
       this.outputCheckBox.TabIndex = 8;
       this.outputCheckBox.Text = "Let Media Portal control your settopbox";
       this.outputCheckBox.CheckedChanged += new System.EventHandler(this.outputCheckBox_CheckedChanged);
@@ -201,9 +200,9 @@ namespace MediaPortal.Configuration.Sections
       // inputCheckBox
       // 
       this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.inputCheckBox.Location = new System.Drawing.Point(24, 16);
+      this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
-      this.inputCheckBox.Size = new System.Drawing.Size(264, 16);
+      this.inputCheckBox.Size = new System.Drawing.Size(208, 16);
       this.inputCheckBox.TabIndex = 7;
       this.inputCheckBox.Text = "Use your remote to control Media Portal";
       // 
@@ -212,28 +211,30 @@ namespace MediaPortal.Configuration.Sections
       this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.statusLabel.Font = new System.Drawing.Font("Verdana", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.statusLabel.Location = new System.Drawing.Point(16, 152);
+      this.statusLabel.Location = new System.Drawing.Point(16, 128);
       this.statusLabel.Name = "statusLabel";
-      this.statusLabel.Size = new System.Drawing.Size(408, 72);
+      this.statusLabel.Size = new System.Drawing.Size(440, 24);
       this.statusLabel.TabIndex = 1;
       this.statusLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
       // groupBox2
       // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(8, 8);
+      this.groupBox2.Location = new System.Drawing.Point(0, 216);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(440, 112);
+      this.groupBox2.Size = new System.Drawing.Size(472, 104);
       this.groupBox2.TabIndex = 2;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "General Information";
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 88);
+      this.label3.Location = new System.Drawing.Point(16, 72);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(96, 16);
       this.label3.TabIndex = 2;
@@ -241,30 +242,32 @@ namespace MediaPortal.Configuration.Sections
       // 
       // linkLabel1
       // 
-      this.linkLabel1.Location = new System.Drawing.Point(120, 88);
+      this.linkLabel1.Location = new System.Drawing.Point(112, 72);
       this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(176, 16);
+      this.linkLabel1.Size = new System.Drawing.Size(120, 16);
       this.linkLabel1.TabIndex = 1;
       this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "http://www.usbuirt.com/";
+      this.linkLabel1.Text = "http://www.usbuirt.com";
       // 
       // label2
       // 
+      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(408, 56);
+      this.label2.Size = new System.Drawing.Size(448, 40);
       this.label2.TabIndex = 0;
       this.label2.Text = "The USBUIRT is an external USB device which allows Mediaportal to both Transmit a" +
         "nd Receive infrared signals. With USBUIRT you can tell mediaportal to remote con" +
         "trol your settop box and/or you can control mediaportal using any remote control" +
-        " you may have";
+        " you may have.";
       // 
       // USBUIRT
       // 
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "USBUIRT";
-      this.Size = new System.Drawing.Size(456, 440);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);

@@ -76,19 +76,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Controls.Add(this.ffdshowCheckBox);
       this.mpGroupBox3.Controls.Add(this.label3);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox3.Location = new System.Drawing.Point(8, 8);
+      this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(440, 96);
+      this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
       this.mpGroupBox3.TabIndex = 6;
       this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Post processing";
+      this.mpGroupBox3.Text = "Settings";
       // 
       // ffdshowCheckBox
       // 
       this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 56);
+      this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
       this.ffdshowCheckBox.Name = "ffdshowCheckBox";
-      this.ffdshowCheckBox.Size = new System.Drawing.Size(264, 24);
+      this.ffdshowCheckBox.Size = new System.Drawing.Size(184, 16);
       this.ffdshowCheckBox.TabIndex = 8;
       this.ffdshowCheckBox.Text = "Enable FFDshow post processing";
       // 
@@ -98,16 +98,16 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(408, 32);
+      this.label3.Size = new System.Drawing.Size(440, 32);
       this.label3.TabIndex = 9;
-      this.label3.Text = "Please note that you need to install ffdshow separately to make any this option w" +
-        "ork. Please read the MediaPortal manual for more information.";
+      this.label3.Text = "Note that you need to install ffdshow separately to make any this option work. Pl" +
+        "ease read the MediaPortal manual for more information.";
       // 
       // TVPostProcessing
       // 
       this.Controls.Add(this.mpGroupBox3);
       this.Name = "TVPostProcessing";
-      this.Size = new System.Drawing.Size(456, 448);
+      this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox3.ResumeLayout(false);
       this.ResumeLayout(false);
 

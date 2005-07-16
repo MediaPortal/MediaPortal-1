@@ -64,8 +64,8 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label3 = new System.Windows.Forms.Label();
+      this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -83,6 +83,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";
       // 
+      // label3
+      // 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.Location = new System.Drawing.Point(16, 24);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(440, 32);
+      this.label3.TabIndex = 10;
+      this.label3.Text = "Note that you need to install ffdshow separately to make any this option work. Pl" +
+        "ease read the MediaPortal manual for more information.";
+      // 
       // ffdshowCheckBox
       // 
       this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -91,15 +102,6 @@ namespace MediaPortal.Configuration.Sections
       this.ffdshowCheckBox.Size = new System.Drawing.Size(184, 16);
       this.ffdshowCheckBox.TabIndex = 8;
       this.ffdshowCheckBox.Text = "Enable FFDshow post processing";
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(16, 24);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(440, 32);
-      this.label3.TabIndex = 10;
-      this.label3.Text = "Note that you need to install ffdshow separately to make any this option work. Pl" +
-        "ease read the MediaPortal manual for more information.";
       // 
       // MoviePostProcessing
       // 
