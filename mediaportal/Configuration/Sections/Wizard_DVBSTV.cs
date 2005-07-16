@@ -539,11 +539,11 @@ namespace MediaPortal.Configuration.Sections
 				else
 				{
 					m_currentDiseqc++;
-					currentIndex=-1;
 					LoadFrequencies();
+					currentIndex=0;
 				}
-				return;
 			}
+			if (currentIndex<0 || currentIndex >=count) return;
 			DVBChannel newchan = new DVBChannel();
 			newchan.NetworkID=-1;
 			newchan.TransportStreamID=-1;

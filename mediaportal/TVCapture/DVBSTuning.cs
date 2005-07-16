@@ -70,7 +70,6 @@ namespace MediaPortal.TV.Recording
 			tplFiles=dlgSelectTPL.TransponderFiles;
 
 			m_currentDiseqc=1;
-			LoadFrequencies();
 
 		}
 		
@@ -136,8 +135,6 @@ namespace MediaPortal.TV.Recording
 			
 
 			Log.WriteFile(Log.LogType.Capture,"dvbs-scan:loaded:{0} transponders", count);
-			this.timer1 = new System.Windows.Forms.Timer();
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			return;
 		}
 		public void Start()
@@ -145,6 +142,8 @@ namespace MediaPortal.TV.Recording
 			m_currentDiseqc=1;
 			currentIndex=-1;
 			LoadFrequencies();
+			this.timer1 = new System.Windows.Forms.Timer();
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
 			timer1.Enabled=true;
 			callback.OnProgress(0);
@@ -179,6 +178,9 @@ namespace MediaPortal.TV.Recording
 		{
 			if(timer1!=null)
 			{
+				count=0;
+				currentIndex=1;
+				m_currentDiseqc=10;
 				timer1.Enabled=false;
 			}
 			captureCard.DeleteGraph();
