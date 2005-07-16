@@ -285,14 +285,15 @@ namespace MediaPortal.TV.Recording
 				{
 					m_currentDiseqc++;
 					LoadFrequencies();
+					currentIndex=0;
 				}
-				return;
 			}
 			ScanTransponder();
 		}
 
 		void ScanTransponder()
 		{
+			if (currentIndex< 0 || currentIndex >=count) return;
 			DVBChannel newchan = new DVBChannel();
 			newchan.NetworkID=-1;
 			newchan.TransportStreamID=-1;
