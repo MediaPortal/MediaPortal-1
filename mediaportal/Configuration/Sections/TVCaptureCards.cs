@@ -422,6 +422,7 @@ namespace MediaPortal.Configuration.Sections
 						cd.RecordingPath			= recFolder;
 						cd.UseForRecording=true;
 						cd.UseForTV=true;
+						cd.Priority=10;
 						captureCards.Add(cd);
 
 						string filename=String.Format(@"database\card_{0}.xml",cd.FriendlyName);
@@ -450,6 +451,8 @@ namespace MediaPortal.Configuration.Sections
 						cd.FriendlyName			  = String.Format("card{0}",captureCards.Count+1);
 						cd.DeviceType					= ccd.DeviceId;
 						cd.RecordingPath			= recFolder;
+						if (cd.IsBDACard) cd.Priority=10;
+						else cd.Priority=1;
 						cd.UseForRecording=true;
 						cd.UseForTV=true;
 						captureCards.Add(cd);

@@ -1430,6 +1430,7 @@ namespace MediaPortal.GUI.TV
 
 		public void UpdateOSD()
 		{
+			if (GUIWindowManager.ActiveWindow!=GetID) return;
 			if (isOsdVisible)
 			{
 				m_osdWindow.UpdateChannelInfo();
@@ -1439,7 +1440,8 @@ namespace MediaPortal.GUI.TV
 			}
 			else
 			{
-				m_zapWindow.UpdateChannelInfo();
+				if (m_zapWindow!=null)
+					m_zapWindow.UpdateChannelInfo();
 				Action myaction=new Action();
 				myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
 				OnAction(myaction);
