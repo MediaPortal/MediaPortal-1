@@ -99,13 +99,13 @@ namespace SQLite.NET
 			
 			fixed( void** ptr=&dbHandle)
 			{
-				dbHandleAdres=(long)ptr;
 				int err=SQLiteClient.sqlite3_open(dbName, ptr);
 				text1="";
 				if (err!=0)
 				{
 					throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0}", text1));
 				}
+				dbHandleAdres=(long)dbHandle;
 			}
 		}
  
@@ -126,11 +126,8 @@ namespace SQLite.NET
 
 		public SQLiteResultSet Execute(string query)
 		{
-			fixed( void** ptr=&dbHandle)
-			{
-				if ((long)ptr != dbHandleAdres)
-				throw new SQLiteException(String.Format("SQL0: ptr changed:{0:X} {1:X}", dbHandleAdres,(long)ptr), ResultCode.INTERNAL);
-			}
+			if ( (long)dbHandle != dbHandleAdres)
+				throw new SQLiteException(String.Format("SQL0: ptr changed:{0:X} {1:X}", dbHandleAdres,(long)dbHandle), ResultCode.INTERNAL);
 			SQLiteClient.ResultCode err=ResultCode.EMPTY;
 			SQLiteResultSet set1 = new SQLiteResultSet();
 			set1.LastCommand=query;	
