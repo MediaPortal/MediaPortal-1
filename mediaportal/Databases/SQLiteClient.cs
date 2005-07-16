@@ -57,7 +57,7 @@ namespace SQLite.NET
 		private int busyRetries=5;
 		private int busyRetryDelay=25;
 		private unsafe void* dbHandle;
-
+		private long dbHandleAdres=0;
 		// Nested Types
 		public enum ResultCode
 		{
@@ -99,6 +99,7 @@ namespace SQLite.NET
 			
 			fixed( void** ptr=&dbHandle)
 			{
+				dbHandleAdres=(long)ptr;
 				int err=SQLiteClient.sqlite3_open(dbName, ptr);
 				text1="";
 				if (err!=0)
@@ -125,6 +126,11 @@ namespace SQLite.NET
 
 		public SQLiteResultSet Execute(string query)
 		{
+			fixed( void** ptr=&dbHandle)
+			{
+				if ((long)ptr != dbHandleAdres)
+				throw new SQLiteException(String.Format("SQL0: ptr changed:{0:X} {1:X}", dbHandleAdres,(long)ptr), ResultCode.INTERNAL);
+			}
 			SQLiteClient.ResultCode err=ResultCode.EMPTY;
 			SQLiteResultSet set1 = new SQLiteResultSet();
 			set1.LastCommand=query;	

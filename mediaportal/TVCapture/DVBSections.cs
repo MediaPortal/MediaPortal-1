@@ -1786,9 +1786,9 @@ namespace MediaPortal.TV.Recording
 			int      teletext_magazine_number;
 			int      teletext_page_number;
 			int      len;
-
+			if (b.Length<2) return String.Empty;
 			descriptor_tag		 = b[0];
-			descriptor_length       	 = b[1];
+			descriptor_length  = b[1];
 
 			len = descriptor_length;
 			byte[] bytes=new byte[len+1];
