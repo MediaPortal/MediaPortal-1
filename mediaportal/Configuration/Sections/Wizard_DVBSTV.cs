@@ -13,7 +13,15 @@ namespace MediaPortal.Configuration.Sections
 	public class Wizard_DVBSTV : MediaPortal.Configuration.SectionSettings
 	{
 		private System.ComponentModel.IContainer components = null;
-		
+		class Transponder
+		{
+			public string SatName;
+			public string FileName;
+			public override string ToString()
+			{
+				return SatName;
+			}
+		}
 
 		struct TPList
 		{
@@ -261,10 +269,11 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if (file.ToLower().IndexOf(".tpl") >=0)
 				{
-					cbTransponder.Items.Add(System.IO.Path.GetFileName(file));
-					cbTransponder2.Items.Add(System.IO.Path.GetFileName(file));
-					cbTransponder3.Items.Add(System.IO.Path.GetFileName(file));
-					cbTransponder4.Items.Add(System.IO.Path.GetFileName(file));
+					Transponder ts = LoadTransponder(file);
+					cbTransponder.Items.Add(ts);
+					cbTransponder2.Items.Add(ts);
+					cbTransponder3.Items.Add(ts);
+					cbTransponder4.Items.Add(ts);
 				}
 			}
 			if (cbTransponder.Items.Count>0)
@@ -292,6 +301,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 			}
 
+			if (captureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 			{
@@ -314,23 +324,57 @@ namespace MediaPortal.Configuration.Sections
 
 		}
 
+		Transponder LoadTransponder(string file)
+		{
+			System.IO.TextReader tin = System.IO.File.OpenText(file);
+			Transponder ts = new Transponder();
+			ts.FileName=file;
+			string line=null;
+			do
+			{
+				line = null;
+				line = tin.ReadLine();
+				if(line!=null)
+				{
+					if (line.Length > 0)
+					{
+						if(line.StartsWith(";"))
+							continue;
+						int pos=line.IndexOf("satname=");
+						if (pos>=0)
+						{
+							ts.SatName=line.Substring(pos+"satname=".Length);
+							tin.Close();
+							return ts;
+						}
+					}
+				}
+			} while (!(line == null));
+			tin.Close();
+			return null;
+		}
+
 		void LoadFrequencies()
 		{
 
 			currentIndex=-1;
 
 			string countryName=String.Empty;
-			if (m_diseqcLoops==1) countryName=(string)cbTransponder.SelectedItem;
-			if (m_diseqcLoops==2) countryName=(string)cbTransponder2.SelectedItem;
-			if (m_diseqcLoops==3) countryName=(string)cbTransponder3.SelectedItem;
-			if (m_diseqcLoops==4) countryName=(string)cbTransponder4.SelectedItem;
+			Transponder ts=null;
+			if (m_diseqcLoops==1) ts=(Transponder)cbTransponder.SelectedItem;
+			if (m_diseqcLoops==2) ts=(Transponder)cbTransponder2.SelectedItem;
+			if (m_diseqcLoops==3) ts=(Transponder)cbTransponder3.SelectedItem;
+			if (m_diseqcLoops==4) ts=(Transponder)cbTransponder4.SelectedItem;
+
+			if (ts==null) return;
+			countryName=ts.FileName;
 			if (countryName==String.Empty) return;
 			count = 0;
 			string line;
 			string[] tpdata;
 			Log.WriteFile(Log.LogType.Capture,"Opening {0}",countryName);
 			// load transponder list and start scan
-			System.IO.TextReader tin = System.IO.File.OpenText(System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters\"+countryName);
+			System.IO.TextReader tin = System.IO.File.OpenText(countryName);
 			
 			do
 			{
