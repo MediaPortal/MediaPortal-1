@@ -363,10 +363,10 @@ namespace MediaPortal.Configuration.Sections
 
 			string countryName=String.Empty;
 			Transponder ts=null;
-			if (m_diseqcLoops==1) ts=(Transponder)cbTransponder.SelectedItem;
-			if (m_diseqcLoops==2) ts=(Transponder)cbTransponder2.SelectedItem;
-			if (m_diseqcLoops==3) ts=(Transponder)cbTransponder3.SelectedItem;
-			if (m_diseqcLoops==4) ts=(Transponder)cbTransponder4.SelectedItem;
+			if (m_currentDiseqc==1) ts=(Transponder)cbTransponder.SelectedItem;
+			if (m_currentDiseqc==2) ts=(Transponder)cbTransponder2.SelectedItem;
+			if (m_currentDiseqc==3) ts=(Transponder)cbTransponder3.SelectedItem;
+			if (m_currentDiseqc==4) ts=(Transponder)cbTransponder4.SelectedItem;
 
 			if (ts==null) return;
 			countryName=ts.FileName;
@@ -430,6 +430,8 @@ namespace MediaPortal.Configuration.Sections
 			GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
 
 			m_currentDiseqc=1;
+			LoadFrequencies();
+
 			currentIndex=-1;
 			while (m_currentDiseqc <=m_diseqcLoops)
 			{
