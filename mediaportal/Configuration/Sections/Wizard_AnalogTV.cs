@@ -76,7 +76,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnManualRadio);
       this.groupBox1.Controls.Add(this.btnManualTV);
@@ -89,108 +90,124 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.cbCountries);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(480, 360);
+      this.groupBox1.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Setup Analog tv and radio channels";
+      this.groupBox1.Text = "Setup Analog TV and Radio Channels";
       // 
       // btnManualRadio
       // 
+      this.btnManualRadio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnManualRadio.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnManualRadio.Location = new System.Drawing.Point(200, 296);
+      this.btnManualRadio.Location = new System.Drawing.Point(304, 288);
       this.btnManualRadio.Name = "btnManualRadio";
-      this.btnManualRadio.Size = new System.Drawing.Size(152, 23);
-      this.btnManualRadio.TabIndex = 14;
-      this.btnManualRadio.Text = "Manual scan Radio channels";
+      this.btnManualRadio.Size = new System.Drawing.Size(152, 22);
+      this.btnManualRadio.TabIndex = 9;
+      this.btnManualRadio.Text = "Manual scan radio channels";
       this.btnManualRadio.Click += new System.EventHandler(this.btnManualRadio_Click);
       // 
       // btnManualTV
       // 
+      this.btnManualTV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnManualTV.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnManualTV.Location = new System.Drawing.Point(32, 296);
+      this.btnManualTV.Location = new System.Drawing.Point(144, 288);
       this.btnManualTV.Name = "btnManualTV";
-      this.btnManualTV.Size = new System.Drawing.Size(152, 23);
-      this.btnManualTV.TabIndex = 13;
+      this.btnManualTV.Size = new System.Drawing.Size(152, 22);
+      this.btnManualTV.TabIndex = 8;
       this.btnManualTV.Text = "Manual scan TV channels";
       this.btnManualTV.Click += new System.EventHandler(this.btnManualTV_Click);
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(24, 24);
+      this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.label4.Location = new System.Drawing.Point(16, 24);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(432, 40);
-      this.label4.TabIndex = 12;
-      this.label4.Text = "Mediaportal has detected one or more analog Tv cards. Select your country/city  a" +
-        "nd press Import to download all the tv and radio channels";
+      this.label4.Size = new System.Drawing.Size(440, 32);
+      this.label4.TabIndex = 0;
+      this.label4.Text = "Mediaportal has detected one or more analog TV cards. Select your country/city  a" +
+        "nd press download to get all the TV and radio channels.";
       // 
       // label3
       // 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-      this.label3.Location = new System.Drawing.Point(32, 232);
+      this.label3.Location = new System.Drawing.Point(16, 232);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(432, 56);
-      this.label3.TabIndex = 11;
-      this.label3.Text = "NOTE: If your country/city is not listed then we dont have information which tele" +
-        "vision and radio channels you can receive. You will need to add the tv/radio cha" +
-        "nnels manually in the next screen by pressing the Manual Tune button";
+      this.label3.Size = new System.Drawing.Size(432, 40);
+      this.label3.TabIndex = 7;
+      this.label3.Text = "NOTE: If your country/city is not listed then we don\'t have information which TV " +
+        "and radio channels you can receive. You will need to add the TV/radio channels m" +
+        "anually in the next screen by pressing the manual scan button.";
       // 
       // labelStatus
       // 
+      this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.labelStatus.Location = new System.Drawing.Point(32, 176);
+      this.labelStatus.Location = new System.Drawing.Point(16, 176);
       this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(400, 23);
-      this.labelStatus.TabIndex = 10;
+      this.labelStatus.Size = new System.Drawing.Size(440, 23);
+      this.labelStatus.TabIndex = 6;
       // 
       // button1
       // 
+      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.button1.Location = new System.Drawing.Point(32, 136);
+      this.button1.Location = new System.Drawing.Point(384, 128);
       this.button1.Name = "button1";
-      this.button1.TabIndex = 9;
+      this.button1.Size = new System.Drawing.Size(72, 22);
+      this.button1.TabIndex = 5;
       this.button1.Text = "Download";
       this.button1.Click += new System.EventHandler(this.button1_Click_1);
       // 
       // cbCities
       // 
+      this.cbCities.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbCities.Location = new System.Drawing.Point(96, 104);
+      this.cbCities.Location = new System.Drawing.Point(112, 92);
       this.cbCities.Name = "cbCities";
       this.cbCities.Size = new System.Drawing.Size(344, 21);
       this.cbCities.Sorted = true;
-      this.cbCities.TabIndex = 8;
+      this.cbCities.TabIndex = 4;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(32, 104);
+      this.label2.Location = new System.Drawing.Point(16, 96);
       this.label2.Name = "label2";
-      this.label2.TabIndex = 7;
+      this.label2.Size = new System.Drawing.Size(32, 16);
+      this.label2.TabIndex = 3;
       this.label2.Text = "City:";
       // 
       // cbCountries
       // 
+      this.cbCountries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbCountries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbCountries.Location = new System.Drawing.Point(96, 72);
+      this.cbCountries.Location = new System.Drawing.Point(112, 68);
       this.cbCountries.Name = "cbCountries";
       this.cbCountries.Size = new System.Drawing.Size(344, 21);
       this.cbCountries.Sorted = true;
-      this.cbCountries.TabIndex = 6;
+      this.cbCountries.TabIndex = 2;
       this.cbCountries.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged_1);
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(32, 72);
+      this.label1.Location = new System.Drawing.Point(16, 72);
       this.label1.Name = "label1";
-      this.label1.TabIndex = 5;
+      this.label1.Size = new System.Drawing.Size(48, 16);
+      this.label1.TabIndex = 1;
       this.label1.Text = "Country:";
       // 
       // Wizard_AnalogTV
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "Wizard_AnalogTV";
-      this.Size = new System.Drawing.Size(496, 384);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 

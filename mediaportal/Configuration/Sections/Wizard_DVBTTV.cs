@@ -112,9 +112,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(24, 264);
+      this.label3.Location = new System.Drawing.Point(16, 264);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(432, 56);
+      this.label3.Size = new System.Drawing.Size(440, 56);
       this.label3.TabIndex = 6;
       this.label3.Text = @"NOTE: If your country is not present or if Media Portal is unable to find any channels, Media Portal probably doesn't know which frequencies to scan for your country. Edit the dvbt.xml in the ""TuningParameters"" subfolder and fill in all the frequencies needed for your country.";
       // 
@@ -130,9 +130,9 @@ namespace MediaPortal.Configuration.Sections
       this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.labelStatus.Location = new System.Drawing.Point(24, 169);
+      this.labelStatus.Location = new System.Drawing.Point(16, 169);
       this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(432, 63);
+      this.labelStatus.Size = new System.Drawing.Size(440, 63);
       this.labelStatus.TabIndex = 5;
       // 
       // progressBar1
