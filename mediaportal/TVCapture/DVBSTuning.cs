@@ -34,6 +34,7 @@ namespace MediaPortal.TV.Recording
 		int																	newRadioChannels, updatedRadioChannels;
 		int m_diseqcLoops=1;
 		int m_currentDiseqc=1;
+		bool reentrant=false;
 
 		public DVBSTuning()
 		{
@@ -214,13 +215,17 @@ namespace MediaPortal.TV.Recording
 		}
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
-			timer1.Enabled=false;
 			try
 			{
+				if (reentrant) return;
+				reentrant=true;
+
+//				/timer1.Enabled=false;
 				if (currentIndex >= count)
 				{
 					if(m_currentDiseqc>=m_diseqcLoops)
 					{
+						Log.WriteFile(Log.LogType.Capture,"dvbs-scan:finished");
 						callback.OnProgress(100);
 						callback.OnStatus("Finished");
 						callback.OnEnded();
@@ -240,9 +245,11 @@ namespace MediaPortal.TV.Recording
 			{
 				Log.Write("Exception:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 			}
-
-			timer1.Enabled=true;
-			
+			finally
+			{
+				reentrant=false;
+//				timer1.Enabled=true;
+			}
 		}
 
 		void ScanChannels()
@@ -257,8 +264,7 @@ namespace MediaPortal.TV.Recording
 			callback.OnStatus2( String.Format("new tv:{0} new radio:{1}", newChannels,newRadioChannels) );
 
 			callback.UpdateList();
-			Log.WriteFile(Log.LogType.Capture,"dvbs-scan:timeout, goto scanning transponders");
-			return;
+			Log.WriteFile(Log.LogType.Capture,"dvbs-scan:onto next transponder");
 		}
 
 		void ScanNextTransponder()
@@ -268,6 +274,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if(m_currentDiseqc>=m_diseqcLoops)
 				{
+					Log.WriteFile(Log.LogType.Capture,"dvbs-scan:finished");
 					callback.OnProgress(100);
 					callback.OnStatus("Finished");
 					callback.OnEnded();
@@ -283,6 +290,7 @@ namespace MediaPortal.TV.Recording
 			}
 			ScanTransponder();
 		}
+
 		void ScanTransponder()
 		{
 			DVBChannel newchan = new DVBChannel();
