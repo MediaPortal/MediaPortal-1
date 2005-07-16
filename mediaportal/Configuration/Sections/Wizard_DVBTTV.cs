@@ -378,6 +378,8 @@ namespace MediaPortal.Configuration.Sections
 			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]/1000);
 			labelStatus.Text=description;
 			System.Threading.Thread.Sleep(400);
+			if (captureCard.SignalQuality <40)
+				System.Threading.Thread.Sleep(400);
 			Application.DoEvents();
 
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);

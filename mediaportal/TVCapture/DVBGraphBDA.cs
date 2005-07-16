@@ -3315,7 +3315,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() submit tuning request");
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+//					Marshal.ReleaseComObject(myTuneRequest);
 
 
 				} break;
@@ -3376,7 +3376,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
 					//and submit the tune request
 					myTuner.TuneRequest  = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+					//Marshal.ReleaseComObject(myTuneRequest);
 				}
 					break;
 
@@ -3434,7 +3434,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.SID		= ch.ProgramNumber;					//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+//					Marshal.ReleaseComObject(myTuneRequest);
 				} break;
 			}
 			SetPids();

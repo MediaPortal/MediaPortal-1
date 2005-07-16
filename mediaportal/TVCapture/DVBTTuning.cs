@@ -251,6 +251,8 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tune:{0} bandwidth:{1} offset:{2}",chan.Frequency, chan.Bandwidth,offset);
 			captureCard.Tune(chan,0);
 			System.Threading.Thread.Sleep(400);
+			if (captureCard.SignalQuality <40)
+				System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 			Log.WriteFile(Log.LogType.Capture,"dvbt-scan:tuned");
 			return;

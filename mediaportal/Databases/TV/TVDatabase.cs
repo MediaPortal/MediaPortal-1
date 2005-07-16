@@ -220,9 +220,11 @@ namespace MediaPortal.TV.Database
 
 						strSQL=String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 							idChannel,freq,symrate, fec,lnbkhz,diseqc,
-							prognum,servicetype,provider,channel, eitsched,
+							prognum,servicetype,provider.Trim(),channel.Trim(), eitsched,
 							eitprefol, audpid,vidpid,ac3pid,apid1, apid2, apid3,
-							teltxtpid,scrambled, pol,lnbfreq,networkid,tsid,pcrpid,aLangCode,aLangCode1,aLangCode2,aLangCode3,ecmPid,pmtPid);
+							teltxtpid,scrambled, pol,lnbfreq,networkid,tsid,pcrpid,
+							aLangCode.Trim(),aLangCode1.Trim(),aLangCode2.Trim(),aLangCode3.Trim(),
+							ecmPid,pmtPid);
 					  
 						m_db.Execute(strSQL);
 						return 0;
@@ -275,9 +277,9 @@ namespace MediaPortal.TV.Database
 						DatabaseUtility.RemoveInvalidChars(ref service);
 						strSQL=String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 							ch.ID,ch.Frequency,ch.Symbolrate,ch.FEC,ch.LNBKHz,ch.DiSEqC,
-							ch.ProgramNumber,ch.ServiceType,provider,service,(ch.HasEITSchedule==true?1:0),
+							ch.ProgramNumber,ch.ServiceType,provider.Trim(),service.Trim(),(ch.HasEITSchedule==true?1:0),
 							(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
-							ch.TeletextPid,(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.AudioLanguage,ch.AudioLanguage1,ch.AudioLanguage2,ch.AudioLanguage3,ch.ECMPid,ch.PMTPid);
+							ch.TeletextPid,(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.AudioLanguage.Trim(),ch.AudioLanguage1.Trim(),ch.AudioLanguage2.Trim(),ch.AudioLanguage3.Trim(),ch.ECMPid,ch.PMTPid);
 					  
 						m_db.Execute(strSQL);
 						return 0;
@@ -2441,8 +2443,8 @@ namespace MediaPortal.TV.Database
 						// doesnt exists, add it
 						//ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3
 						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,HasEITPresentFollow , HasEITSchedule ,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},'{16}','{17}','{18}','{19}',{20},{21},1)",
-									strChannel,strProvider,idChannel,frequency,bandWidth,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,
-									ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3,
+									strChannel.Trim(),strProvider.Trim(),idChannel,frequency,bandWidth,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,
+									ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
 								(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) 
 						);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
@@ -2453,8 +2455,8 @@ namespace MediaPortal.TV.Database
 					else
 					{
 						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6},videoPid={7},teletextPid={8},pmtPid={9}, bandwidth={10},ac3Pid={11},audio1Pid={12},audio2Pid={13},audio3Pid={14},sAudioLang='{15}',sAudioLang1='{16}',sAudioLang2='{17}',sAudioLang3='{18}',HasEITPresentFollow={19} , HasEITSchedule={20}  where iLCN like '{21}'", 
-							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid, pmtPid,bandWidth,
-							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3,
+							frequency,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid, pmtPid,bandWidth,
+							ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
 							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) 
 							,idChannel);
 						//	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
@@ -2496,8 +2498,8 @@ namespace MediaPortal.TV.Database
 					{
 						// doesnt exists, add it
 						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3, HasEITPresentFollow , HasEITSchedule ,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},1)"
-																	,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
-																	ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3,
+																	,strChannel.Trim(),strProvider.Trim(),idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
+																	ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
 																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) );
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2507,8 +2509,8 @@ namespace MediaPortal.TV.Database
 					else
 					{
 						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}',HasEITPresentFollow={21} , HasEITSchedule={22}  where iLCN like '{23}'", 
-																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid,pmtPid,
-																	ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3,
+																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid,pmtPid,
+																	ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
 																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),
 																	idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
@@ -2551,8 +2553,8 @@ namespace MediaPortal.TV.Database
 					{
 						// doesnt exists, add it
 						strSQL=String.Format("insert into tblATSCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,channelNumber,minorChannel,majorChannel, HasEITPresentFollow , HasEITSchedule ,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},{24},{25},{26},1)"
-							,strChannel,strProvider,idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
-							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3, physicalChannel,minorChannel,majorChannel,
+							,strChannel.Trim(),strProvider.Trim(),idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
+							ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(), physicalChannel,minorChannel,majorChannel,
 							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0));
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2562,8 +2564,8 @@ namespace MediaPortal.TV.Database
 					else
 					{
 						strSQL=String.Format( "update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}', channelNumber={21}, majorChannel={22}, minorChannel={23},HasEITPresentFollow={24} , HasEITSchedule={25}  where iLCN like '{26}'", 
-							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,videoPid,teletextPid,pmtPid,
-							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3, physicalChannel,minorChannel,majorChannel,
+							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid,pmtPid,
+							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(), physicalChannel,minorChannel,majorChannel,
 							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),
 							idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);

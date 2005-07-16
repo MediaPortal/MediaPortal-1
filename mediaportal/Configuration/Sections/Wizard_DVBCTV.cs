@@ -428,6 +428,9 @@ namespace MediaPortal.Configuration.Sections
 			newchan.Frequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan,0);
 			System.Threading.Thread.Sleep(400);
+			if (captureCard.SignalQuality <40)
+				System.Threading.Thread.Sleep(400);
+
 			Application.DoEvents();
 		}
 

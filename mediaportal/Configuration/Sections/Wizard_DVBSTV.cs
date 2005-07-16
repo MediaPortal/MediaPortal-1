@@ -559,6 +559,8 @@ namespace MediaPortal.Configuration.Sections
 				newchan.Frequency,newchan.Symbolrate,newchan.Polarity);
 			captureCard.Tune(newchan,m_currentDiseqc);
 			System.Threading.Thread.Sleep(400);
+			if (captureCard.SignalQuality <40)
+				System.Threading.Thread.Sleep(400);
 			Application.DoEvents();
 
 		}

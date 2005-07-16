@@ -278,6 +278,9 @@ namespace MediaPortal.TV.Recording
 			newchan.Frequency=dvbcChannels[currentIndex].frequency;
 			captureCard.Tune(newchan,0);
 			System.Threading.Thread.Sleep(400);
+
+			if (captureCard.SignalQuality <40)
+				System.Threading.Thread.Sleep(400);
 			callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 		}
 		#endregion
