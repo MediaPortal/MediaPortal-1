@@ -1941,6 +1941,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_214767EB45964F588D9A0B1F614868C0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_214F0C7690D1458192D9339BEA82BAB0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -18736,6 +18742,26 @@
             "TargetName" = "8:DefaultPlaylistBig.png"
             "Tag" = "8:"
             "Folder" = "8:_26728B68D53242A2B44274DD22576AB8"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_214767EB45964F588D9A0B1F614868C0"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\thumbs\\yac\\private-number.jpg"
+            "TargetName" = "8:private-number.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_5BCD45BC34E7483F8CA0D6DE082D592C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
