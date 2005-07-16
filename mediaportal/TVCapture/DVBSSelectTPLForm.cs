@@ -84,26 +84,32 @@ namespace MediaPortal.TV.Recording
       // 
       // cbTransponder4
       // 
+      this.cbTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder4.Location = new System.Drawing.Point(160, 108);
       this.cbTransponder4.Name = "cbTransponder4";
-      this.cbTransponder4.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder4.Size = new System.Drawing.Size(288, 21);
       this.cbTransponder4.TabIndex = 28;
       // 
       // cbTransponder3
       // 
+      this.cbTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder3.Location = new System.Drawing.Point(160, 84);
       this.cbTransponder3.Name = "cbTransponder3";
-      this.cbTransponder3.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder3.Size = new System.Drawing.Size(288, 21);
       this.cbTransponder3.TabIndex = 27;
       // 
       // cbTransponder2
       // 
+      this.cbTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder2.Location = new System.Drawing.Point(160, 60);
       this.cbTransponder2.Name = "cbTransponder2";
-      this.cbTransponder2.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder2.Size = new System.Drawing.Size(288, 21);
       this.cbTransponder2.TabIndex = 26;
       // 
       // label3
@@ -132,10 +138,12 @@ namespace MediaPortal.TV.Recording
       // 
       // cbTransponder
       // 
+      this.cbTransponder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder.Location = new System.Drawing.Point(160, 36);
       this.cbTransponder.Name = "cbTransponder";
-      this.cbTransponder.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder.Size = new System.Drawing.Size(288, 21);
       this.cbTransponder.TabIndex = 22;
       // 
       // label7
@@ -148,8 +156,9 @@ namespace MediaPortal.TV.Recording
       // 
       // button1
       // 
+      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.button1.Location = new System.Drawing.Point(312, 156);
+      this.button1.Location = new System.Drawing.Point(400, 156);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(72, 22);
       this.button1.TabIndex = 29;
@@ -159,7 +168,7 @@ namespace MediaPortal.TV.Recording
       // DVBSSelectTPLForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(400, 190);
+      this.ClientSize = new System.Drawing.Size(488, 190);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.cbTransponder4);
       this.Controls.Add(this.cbTransponder3);
