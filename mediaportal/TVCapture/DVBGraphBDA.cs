@@ -1092,18 +1092,18 @@ namespace MediaPortal.TV.Recording
 
 					lStartTime *= -10000000L;//in reference time 
 				}//if (!bContentRecording)
-		/*
-				foreach (MetadataItem item in attributes.Values)
-				{
-					try
-					{
-						if (item.Type == MetadataItemType.String)
-							m_recorder.SetAttributeString(item.Name,item.Value.ToString());
-						if (item.Type == MetadataItemType.Dword)
-							m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
-					}
-					catch(Exception){}
-				}*/
+				/*
+						foreach (MetadataItem item in attributes.Values)
+						{
+							try
+							{
+								if (item.Type == MetadataItemType.String)
+									m_recorder.SetAttributeString(item.Name,item.Value.ToString());
+								if (item.Type == MetadataItemType.Dword)
+									m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
+							}
+							catch(Exception){}
+						}*/
 				m_recorder.Start((int)lStartTime);
 			}
 			catch(Exception ex)
@@ -1465,7 +1465,7 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
-					Overlay=true;
+				Overlay=true;
 			}
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
@@ -2015,7 +2015,7 @@ namespace MediaPortal.TV.Recording
 				int iFileDuration = iTimeShiftBuffer/6;
 
 				//create StreamBufferSink filter
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
 				hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
 				if(hr!=0)
 				{
@@ -2023,7 +2023,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}			
 				//create MPEG2 Analyzer filter
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
 				hr=m_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
 				if(hr!=0)
 				{
@@ -2033,7 +2033,7 @@ namespace MediaPortal.TV.Recording
 
 				//connect mpeg2 demuxer video out->mpeg2 analyzer input pin
 				//get input pin of MPEG2 Analyzer filter
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
 				pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
 				if(pinObj0 == null)
 				{
@@ -2041,7 +2041,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 				
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
 				hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
 				if (hr!=0)
 				{
@@ -2051,7 +2051,7 @@ namespace MediaPortal.TV.Recording
 
 				//connect MPEG2 analyzer Filter->stream buffer sink pin 0
 				//get output pin #0 from MPEG2 analyzer Filter
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
 				pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
 				if (hr!=0)
 				{
@@ -2124,7 +2124,7 @@ namespace MediaPortal.TV.Recording
 				hr=pTemp.SetHKEY(subKey);
 				
 				//set timeshifting folder
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
 				hr = m_IStreamBufferConfig.SetDirectory(strDir);	
 				if(hr != 0)
 				{
@@ -2155,7 +2155,7 @@ namespace MediaPortal.TV.Recording
 				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
 				hr = pConfig.SetHKEY(subKey);
 				//set timeshifting filename
-//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
 				
 				IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
 				if (streamConfig2!=null)
@@ -2614,54 +2614,137 @@ namespace MediaPortal.TV.Recording
 		// send PMT to firedtv device
 		bool SendPMT()
 		{
-			VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
-			if (props.IsCISupported())
+			try
 			{
-				try
-				{
 
-					string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
-						Utils.FilterFileName(currentTuningObject.ServiceName),
-						currentTuningObject.NetworkID,
-						currentTuningObject.TransportStreamID,
-						currentTuningObject.ProgramNumber,
-						(int)Network());
-					if (!System.IO.File.Exists(pmtName))
-					{
-						return false;
-					}
+				string pmtName=String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+					Utils.FilterFileName(currentTuningObject.ServiceName),
+					currentTuningObject.NetworkID,
+					currentTuningObject.TransportStreamID,
+					currentTuningObject.ProgramNumber,
+					(int)Network());
+				if (!System.IO.File.Exists(pmtName))
+				{
+					return false;
+				}
 						
-					using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None))
+				byte[] pmt=null;
+				using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None))
+				{
+					long len=stream.Length;
+					if (len>6)
 					{
-						long len=stream.Length;
-						if (len>6)
-						{
-							byte[] pmt = new byte[len];
-							stream.Read(pmt,0,(int)len);
-							stream.Close();
-
-							int pmtVersion = ((pmt[5]>>1)&0x1F);
-
-							// send the PMT table to the device
-							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
-
-							if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)len))
-							{
-								Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
-								return true;
-							}
-						}
+						pmt = new byte[len];
+						stream.Read(pmt,0,(int)len);
+						stream.Close();
 					}
 				}
-				catch(Exception ex)
+				if (pmt==null) return false;
+				if (pmt.Length<6) return false;
+
+				DVBSections sections = new DVBSections();
+				DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
+				if (!sections.GetChannelInfoFromPMT(pmt, ref info)) return false;
+				if (info.pid_list!=null)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt {0} {1} {2}",
-						ex.Message,ex.Source,ex.StackTrace);
+					bool hasAudio=false;
+					int audioOptions=0;
+					for (int pids =0; pids < info.pid_list.Count;pids++)
+					{
+						DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
+						if (data.isVideo)
+						{
+							currentTuningObject.VideoPid=data.elementary_PID;
+						}
+					
+						if (data.isAudio) 
+						{
+							switch(audioOptions)
+							{
+								case 0:
+									currentTuningObject.Audio1=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											currentTuningObject.AudioLanguage1=DVBSections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+								case 1:
+									currentTuningObject.Audio2=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											currentTuningObject.AudioLanguage2=DVBSections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+								case 2:
+									currentTuningObject.Audio3=data.elementary_PID;
+									if(data.data!=null)
+									{
+										if(data.data.Length==3)
+											currentTuningObject.AudioLanguage3=DVBSections.GetLanguageFromCode(data.data);
+									}
+									audioOptions++;
+									break;
+
+							}
+
+							if (hasAudio==false)
+							{
+								currentTuningObject.AudioPid=data.elementary_PID;
+								if(data.data!=null)
+								{
+									if(data.data.Length==3)
+										currentTuningObject.AudioLanguage=DVBSections.GetLanguageFromCode(data.data);
+								}
+								hasAudio=true;
+							}
+						}//if (data.isAudio) 
+
+						if (data.isAC3Audio)
+						{
+							currentTuningObject.AC3Pid=data.elementary_PID;
+						}
+
+						if (data.isTeletext)
+						{
+							currentTuningObject.TeletextPid=data.elementary_PID;
+						}
+					}//for (int pids =0; pids < info.pid_list.Count;pids++)
+
+					try
+					{
+						Log.Write("DVBGraphBDA:SendPMT() video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",
+														currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+						SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+					}
+					catch(Exception)
+					{
+					}
+				}//if (info.pid_list!=null)
+
+				VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
+				if (!props.IsCISupported()) return true;
+				int pmtVersion = ((pmt[5]>>1)&0x1F);
+
+				// send the PMT table to the device
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
+
+				if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+				{
+					Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
+					return true;
 				}
-				return false;
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt {0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
 			}
 			Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
-			return true;
+			return false;
 		}//SendPMT()
 
 		void LoadLNBSettings(ref DVBChannel ch, int disNo, out int lowOsc, out int hiOsc)
@@ -2869,11 +2952,6 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
 
-				try
-				{
-					SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
-				} 
-				catch(Exception){}
 				if (!SendPMT())
 				{
 					return;
@@ -3159,13 +3237,6 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
 
-				try
-				{
-					SetupDemuxer(m_DemuxVideoPin, currentTuningObject.VideoPid, m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
-				} 
-				catch(Exception)
-				{
-				}
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
@@ -3629,23 +3700,6 @@ namespace MediaPortal.TV.Recording
 																						info.serviceType);
 					continue;
 				}
-				if (!hasVideo && !hasAudio)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Channel currently not broadcasting: provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14}", 
-						info.service_provider_name,
-						info.service_name,
-						info.scrambled,
-						info.freq,
-						info.networkID,
-						info.transportStreamID,
-						info.serviceID,
-						hasVideo, ((!hasVideo) && hasAudio),
-						currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
-						info.program_number,
-						info.pcr_pid,
-						info.serviceType);
-					continue;
-				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X}", 
 																						info.service_provider_name,
 																						info.service_name,
@@ -4091,13 +4145,6 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.PCRPid,
 					currentTuningObject.ECMPid);
 
-				try
-				{
-					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
-				}
-				catch(Exception)
-				{
-				}
 				SendPMT();
 				if(m_pluginsEnabled==true)
 					ExecTuner();
