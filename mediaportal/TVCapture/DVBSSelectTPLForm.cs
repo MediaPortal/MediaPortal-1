@@ -229,12 +229,16 @@ namespace MediaPortal.TV.Recording
 			if (cbTransponder4.Items.Count>0)
 				cbTransponder4.SelectedIndex=0;
 
-			if (NumberOfLNBs==2)
-				cbTransponder2.Enabled=false;
-			if (NumberOfLNBs==3)
-				cbTransponder3.Enabled=false;
-			if (NumberOfLNBs==4)			
-				cbTransponder4.Enabled=false;
+			cbTransponder2.Enabled=false;
+			cbTransponder3.Enabled=false;
+			cbTransponder4.Enabled=false;
+
+			if (NumberOfLNBs>=2)
+				cbTransponder2.Enabled=true;
+			if (NumberOfLNBs>=3)
+				cbTransponder3.Enabled=true;
+			if (NumberOfLNBs>=4)			
+				cbTransponder4.Enabled=true;
 		}
 	
 		public int NumberOfLNBs

@@ -316,12 +316,12 @@ namespace MediaPortal.Configuration.Sections
 				if(xmlreader.GetValueAsBool("dvbs","useLNB3",false)==true)
 				{
 					m_diseqcLoops++;
-					cbTransponder3.Enabled=false;
+					cbTransponder3.Enabled=true;
 				}
 				if(xmlreader.GetValueAsBool("dvbs","useLNB4",false)==true)
 				{
 					m_diseqcLoops++;
-					cbTransponder4.Enabled=false;
+					cbTransponder4.Enabled=true;
 				}
 			}
 		}
