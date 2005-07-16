@@ -15781,7 +15781,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2023.11833, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2023.15853, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_0ECD6E59B2601B5B5CAAEACBCFB3C1C7"
@@ -28496,7 +28496,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -32299,7 +32299,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2023.11609, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2023.15841, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_7C81614E2E0950153CD0A18AE5C7E674"
@@ -37119,7 +37119,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -53447,7 +53447,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{721A4942-F12F-4114-9EFC-DDB9935051BF}"
+        "PackageCode" = "8:{E5B781B0-6285-4382-A5BE-8BB36A50A5B0}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
