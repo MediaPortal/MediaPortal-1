@@ -105,7 +105,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Size = new System.Drawing.Size(480, 360);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Setup digital tv (DVBT terrestial)";
+			this.groupBox1.Text = "Setup digital tv (DVBT terrestrial)";
 			// 
 			// label3
 			// 

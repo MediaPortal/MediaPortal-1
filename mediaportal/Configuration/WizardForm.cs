@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration
 				}
 				if (DVBTCard)
 				{
-					AddSection(new Sections.Wizard_DVBTTV() , "TV - DVB-T", "Digital TV Terrestial configuration", "");
+					AddSection(new Sections.Wizard_DVBTTV() , "TV - DVB-T", "Digital TV Terrestrial configuration", "");
 				}
 				if (DVBCCard)
 				{

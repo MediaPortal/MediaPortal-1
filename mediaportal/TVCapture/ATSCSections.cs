@@ -176,7 +176,7 @@ namespace MediaPortal.TV.Recording
 		void DecodeTerrestialVirtualChannelTable(DVBSections.Transponder transponder,byte[] buf)
 		{
 
-			Log.Write("ATSC-scan: DecodeTerrestialVirtualChannelTable() len={0}",buf.Length);
+			Log.Write("ATSC-scan: DecodeTerrestrialVirtualChannelTable() len={0}",buf.Length);
 			/*if (!System.IO.File.Exists("vct.dat"))
 			{
 				System.IO.FileStream stream = new System.IO.FileStream("vct.dat",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
