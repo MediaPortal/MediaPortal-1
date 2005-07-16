@@ -281,6 +281,17 @@ namespace MediaPortal.Configuration.Sections
 			cbTransponder3.Enabled=false;
 			cbTransponder4.Enabled=false;
 
+			TVCaptureCards cards = new TVCaptureCards();
+			cards.LoadCaptureCards();
+			foreach (TVCaptureDevice dev in cards.captureCards)
+			{
+				if (dev.Network==NetworkType.DVBS)
+				{
+					captureCard = dev;
+					break;
+				}
+			}
+
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 			{
