@@ -71,108 +71,110 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.cbTransponder4 = new System.Windows.Forms.ComboBox();
-			this.cbTransponder3 = new System.Windows.Forms.ComboBox();
-			this.cbTransponder2 = new System.Windows.Forms.ComboBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
-			this.cbTransponder = new System.Windows.Forms.ComboBox();
-			this.label7 = new System.Windows.Forms.Label();
-			this.button1 = new System.Windows.Forms.Button();
-			this.SuspendLayout();
-			// 
-			// cbTransponder4
-			// 
-			this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder4.Location = new System.Drawing.Point(160, 112);
-			this.cbTransponder4.Name = "cbTransponder4";
-			this.cbTransponder4.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder4.TabIndex = 28;
-			// 
-			// cbTransponder3
-			// 
-			this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder3.Location = new System.Drawing.Point(160, 88);
-			this.cbTransponder3.Name = "cbTransponder3";
-			this.cbTransponder3.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder3.TabIndex = 27;
-			// 
-			// cbTransponder2
-			// 
-			this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder2.Location = new System.Drawing.Point(160, 64);
-			this.cbTransponder2.Name = "cbTransponder2";
-			this.cbTransponder2.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder2.TabIndex = 26;
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(32, 112);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(120, 16);
-			this.label3.TabIndex = 25;
-			this.label3.Text = "Transponder for LNB4:";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(32, 88);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(120, 16);
-			this.label2.TabIndex = 24;
-			this.label2.Text = "Transponder for LNB3:";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(32, 64);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(120, 16);
-			this.label1.TabIndex = 23;
-			this.label1.Text = "Transponder for LNB2:";
-			// 
-			// cbTransponder
-			// 
-			this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder.Location = new System.Drawing.Point(160, 40);
-			this.cbTransponder.Name = "cbTransponder";
-			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder.TabIndex = 22;
-			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(32, 40);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(120, 16);
-			this.label7.TabIndex = 21;
-			this.label7.Text = "Transponder for LNB1:";
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(360, 152);
-			this.button1.Name = "button1";
-			this.button1.TabIndex = 29;
-			this.button1.Text = "OK";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// DVBSSelectTPLForm
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(456, 206);
-			this.Controls.Add(this.button1);
-			this.Controls.Add(this.cbTransponder4);
-			this.Controls.Add(this.cbTransponder3);
-			this.Controls.Add(this.cbTransponder2);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.cbTransponder);
-			this.Controls.Add(this.label7);
-			this.Name = "DVBSSelectTPLForm";
-			this.Text = "Select transponder for each LNB";
-			this.Load += new System.EventHandler(this.DVBSSelectTPLForm_Load);
-			this.ResumeLayout(false);
+      this.cbTransponder4 = new System.Windows.Forms.ComboBox();
+      this.cbTransponder3 = new System.Windows.Forms.ComboBox();
+      this.cbTransponder2 = new System.Windows.Forms.ComboBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.cbTransponder = new System.Windows.Forms.ComboBox();
+      this.label7 = new System.Windows.Forms.Label();
+      this.button1 = new System.Windows.Forms.Button();
+      this.SuspendLayout();
+      // 
+      // cbTransponder4
+      // 
+      this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder4.Location = new System.Drawing.Point(160, 108);
+      this.cbTransponder4.Name = "cbTransponder4";
+      this.cbTransponder4.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder4.TabIndex = 28;
+      // 
+      // cbTransponder3
+      // 
+      this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder3.Location = new System.Drawing.Point(160, 84);
+      this.cbTransponder3.Name = "cbTransponder3";
+      this.cbTransponder3.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder3.TabIndex = 27;
+      // 
+      // cbTransponder2
+      // 
+      this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder2.Location = new System.Drawing.Point(160, 60);
+      this.cbTransponder2.Name = "cbTransponder2";
+      this.cbTransponder2.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder2.TabIndex = 26;
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(32, 112);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(120, 16);
+      this.label3.TabIndex = 25;
+      this.label3.Text = "Transponder for LNB4:";
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(32, 88);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(120, 16);
+      this.label2.TabIndex = 24;
+      this.label2.Text = "Transponder for LNB3:";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(32, 64);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(120, 16);
+      this.label1.TabIndex = 23;
+      this.label1.Text = "Transponder for LNB2:";
+      // 
+      // cbTransponder
+      // 
+      this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder.Location = new System.Drawing.Point(160, 36);
+      this.cbTransponder.Name = "cbTransponder";
+      this.cbTransponder.Size = new System.Drawing.Size(192, 21);
+      this.cbTransponder.TabIndex = 22;
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(32, 40);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(120, 16);
+      this.label7.TabIndex = 21;
+      this.label7.Text = "Transponder for LNB1:";
+      // 
+      // button1
+      // 
+      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.button1.Location = new System.Drawing.Point(312, 156);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(72, 22);
+      this.button1.TabIndex = 29;
+      this.button1.Text = "OK";
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // DVBSSelectTPLForm
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(400, 190);
+      this.Controls.Add(this.button1);
+      this.Controls.Add(this.cbTransponder4);
+      this.Controls.Add(this.cbTransponder3);
+      this.Controls.Add(this.cbTransponder2);
+      this.Controls.Add(this.label3);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.cbTransponder);
+      this.Controls.Add(this.label7);
+      this.Name = "DVBSSelectTPLForm";
+      this.Text = "Select transponder for each LNB";
+      this.Load += new System.EventHandler(this.DVBSSelectTPLForm_Load);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		private void button1_Click(object sender, System.EventArgs e)
