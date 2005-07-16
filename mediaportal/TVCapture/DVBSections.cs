@@ -1792,7 +1792,7 @@ namespace MediaPortal.TV.Recording
 
 			len = descriptor_length;
 			byte[] bytes=new byte[len+1];
-			if(len<b.Length)
+			if(len<b.Length+2)
 				if (descriptor_tag==0x56)
 				{
 					int pointer  = 2;

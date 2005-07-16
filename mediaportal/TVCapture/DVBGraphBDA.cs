@@ -3629,6 +3629,23 @@ namespace MediaPortal.TV.Recording
 																						info.serviceType);
 					continue;
 				}
+				if (!hasVideo && !hasAudio)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Channel currently not broadcasting: provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14}", 
+						info.service_provider_name,
+						info.service_name,
+						info.scrambled,
+						info.freq,
+						info.networkID,
+						info.transportStreamID,
+						info.serviceID,
+						hasVideo, ((!hasVideo) && hasAudio),
+						currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
+						info.program_number,
+						info.pcr_pid,
+						info.serviceType);
+					continue;
+				}
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X}", 
 																						info.service_provider_name,
 																						info.service_name,
