@@ -93,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbEnable.Location = new System.Drawing.Point(16, 24);
       this.cbEnable.Name = "cbEnable";
       this.cbEnable.Size = new System.Drawing.Size(120, 16);
-      this.cbEnable.TabIndex = 1;
+      this.cbEnable.TabIndex = 0;
       this.cbEnable.Text = "Enable Direct Input";
       this.cbEnable.CheckedChanged += new System.EventHandler(this.cbEnable_CheckedChanged);
       // 
@@ -107,7 +107,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbI.Location = new System.Drawing.Point(0, 152);
       this.gbI.Name = "gbI";
       this.gbI.Size = new System.Drawing.Size(472, 256);
-      this.gbI.TabIndex = 14;
+      this.gbI.TabIndex = 2;
       this.gbI.TabStop = false;
       this.gbI.Text = "Information";
       // 
@@ -122,7 +122,7 @@ namespace MediaPortal.Configuration.Sections
       this.txtMonitor.Name = "txtMonitor";
       this.txtMonitor.ReadOnly = true;
       this.txtMonitor.Size = new System.Drawing.Size(440, 216);
-      this.txtMonitor.TabIndex = 4;
+      this.txtMonitor.TabIndex = 0;
       this.txtMonitor.Text = "";
       // 
       // gbSettings
@@ -140,7 +140,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbSettings.Location = new System.Drawing.Point(0, 64);
       this.gbSettings.Name = "gbSettings";
       this.gbSettings.Size = new System.Drawing.Size(472, 80);
-      this.gbSettings.TabIndex = 13;
+      this.gbSettings.TabIndex = 1;
       this.gbSettings.TabStop = false;
       this.gbSettings.Text = "Settings";
       // 
@@ -151,7 +151,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnRunControlPanel.Location = new System.Drawing.Point(384, 20);
       this.btnRunControlPanel.Name = "btnRunControlPanel";
       this.btnRunControlPanel.Size = new System.Drawing.Size(72, 22);
-      this.btnRunControlPanel.TabIndex = 15;
+      this.btnRunControlPanel.TabIndex = 2;
       this.btnRunControlPanel.Text = "Control Panel";
       this.btnRunControlPanel.Click += new System.EventHandler(this.btnRunControlPanel_Click);
       // 
@@ -162,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefault.Location = new System.Drawing.Point(384, 44);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(72, 22);
-      this.buttonDefault.TabIndex = 9;
+      this.buttonDefault.TabIndex = 5;
       this.buttonDefault.Text = "&Reset";
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
@@ -183,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
                                                              0});
       this.numDelay.Name = "numDelay";
       this.numDelay.Size = new System.Drawing.Size(208, 20);
-      this.numDelay.TabIndex = 18;
+      this.numDelay.TabIndex = 4;
       this.numDelay.Value = new System.Decimal(new int[] {
                                                            150,
                                                            0,
@@ -199,7 +199,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbDevices.Location = new System.Drawing.Point(168, 20);
       this.cbDevices.Name = "cbDevices";
       this.cbDevices.Size = new System.Drawing.Size(208, 21);
-      this.cbDevices.TabIndex = 13;
+      this.cbDevices.TabIndex = 1;
       this.cbDevices.SelectedIndexChanged += new System.EventHandler(this.cbDevices_SelectedIndexChanged);
       // 
       // lblDelayMS
@@ -207,7 +207,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblDelayMS.Location = new System.Drawing.Point(16, 48);
       this.lblDelayMS.Name = "lblDelayMS";
       this.lblDelayMS.Size = new System.Drawing.Size(72, 16);
-      this.lblDelayMS.TabIndex = 16;
+      this.lblDelayMS.TabIndex = 3;
       this.lblDelayMS.Text = "Delay [ms]:";
       // 
       // lblDInputDevice
@@ -215,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblDInputDevice.Location = new System.Drawing.Point(16, 24);
       this.lblDInputDevice.Name = "lblDInputDevice";
       this.lblDInputDevice.Size = new System.Drawing.Size(104, 16);
-      this.lblDInputDevice.TabIndex = 14;
+      this.lblDInputDevice.TabIndex = 0;
       this.lblDInputDevice.Text = "Direct Input Device:";
       // 
       // btnMapping
@@ -225,7 +225,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnMapping.Location = new System.Drawing.Point(384, 20);
       this.btnMapping.Name = "btnMapping";
       this.btnMapping.Size = new System.Drawing.Size(72, 22);
-      this.btnMapping.TabIndex = 16;
+      this.btnMapping.TabIndex = 1;
       this.btnMapping.Text = "Mapping";
       this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
       // 
@@ -239,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 56);
-      this.groupBox1.TabIndex = 15;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
       // DirectInputRemote

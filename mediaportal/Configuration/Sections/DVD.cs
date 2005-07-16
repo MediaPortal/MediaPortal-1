@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguagelabel.Location = new System.Drawing.Point(16, 80);
       this.defaultAudioLanguagelabel.Name = "defaultAudioLanguagelabel";
       this.defaultAudioLanguagelabel.Size = new System.Drawing.Size(88, 15);
-      this.defaultAudioLanguagelabel.TabIndex = 15;
+      this.defaultAudioLanguagelabel.TabIndex = 3;
       this.defaultAudioLanguagelabel.Text = "Audio language:";
       // 
       // label1
@@ -192,7 +192,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 56);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(96, 16);
-      this.label1.TabIndex = 14;
+      this.label1.TabIndex = 1;
       this.label1.Text = "Subtitle language:";
       // 
       // defaultAudioLanguageComboBox
@@ -204,7 +204,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguageComboBox.Name = "defaultAudioLanguageComboBox";
       this.defaultAudioLanguageComboBox.Size = new System.Drawing.Size(288, 21);
       this.defaultAudioLanguageComboBox.Sorted = true;
-      this.defaultAudioLanguageComboBox.TabIndex = 2;
+      this.defaultAudioLanguageComboBox.TabIndex = 4;
       // 
       // defaultSubtitleLanguageComboBox
       // 
@@ -215,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.Name = "defaultSubtitleLanguageComboBox";
       this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(288, 21);
       this.defaultSubtitleLanguageComboBox.Sorted = true;
-      this.defaultSubtitleLanguageComboBox.TabIndex = 1;
+      this.defaultSubtitleLanguageComboBox.TabIndex = 2;
       // 
       // showSubtitlesCheckBox
       // 
@@ -248,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
       this.displayModeLabel.Location = new System.Drawing.Point(16, 80);
       this.displayModeLabel.Name = "displayModeLabel";
       this.displayModeLabel.Size = new System.Drawing.Size(80, 15);
-      this.displayModeLabel.TabIndex = 16;
+      this.displayModeLabel.TabIndex = 3;
       this.displayModeLabel.Text = "Display mode:";
       // 
       // displayModeComboBox
@@ -264,7 +264,7 @@ namespace MediaPortal.Configuration.Sections
       this.displayModeComboBox.Location = new System.Drawing.Point(168, 76);
       this.displayModeComboBox.Name = "displayModeComboBox";
       this.displayModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.displayModeComboBox.TabIndex = 2;
+      this.displayModeComboBox.TabIndex = 4;
       // 
       // aspectRatioComboBox
       // 
@@ -279,14 +279,14 @@ namespace MediaPortal.Configuration.Sections
       this.aspectRatioComboBox.Location = new System.Drawing.Point(168, 52);
       this.aspectRatioComboBox.Name = "aspectRatioComboBox";
       this.aspectRatioComboBox.Size = new System.Drawing.Size(288, 21);
-      this.aspectRatioComboBox.TabIndex = 1;
+      this.aspectRatioComboBox.TabIndex = 2;
       // 
       // aspectRatioLabel
       // 
       this.aspectRatioLabel.Location = new System.Drawing.Point(16, 56);
       this.aspectRatioLabel.Name = "aspectRatioLabel";
       this.aspectRatioLabel.Size = new System.Drawing.Size(152, 16);
-      this.aspectRatioLabel.TabIndex = 12;
+      this.aspectRatioLabel.TabIndex = 1;
       this.aspectRatioLabel.Text = "Aspect ratio correction mode:";
       // 
       // pixelRatioCheckBox
@@ -307,7 +307,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.Location = new System.Drawing.Point(0, 240);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(472, 56);
-      this.mpGroupBox2.TabIndex = 4;
+      this.mpGroupBox2.TabIndex = 2;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Autoplay";
       // 

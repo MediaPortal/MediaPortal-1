@@ -165,7 +165,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 184);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General settings";
       // 
@@ -176,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
       this.cmdTest.Location = new System.Drawing.Point(384, 152);
       this.cmdTest.Name = "cmdTest";
       this.cmdTest.Size = new System.Drawing.Size(72, 22);
-      this.cmdTest.TabIndex = 30;
+      this.cmdTest.TabIndex = 11;
       this.cmdTest.Text = "Test";
       this.cmdTest.Click += new System.EventHandler(this.cmdTest_Click);
       // 
@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(16, 128);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(48, 16);
-      this.label2.TabIndex = 0;
+      this.label2.TabIndex = 9;
       this.label2.Text = "Channels:";
       // 
       // testRedeyeChannelsTextBox
@@ -197,7 +197,7 @@ namespace MediaPortal.Configuration.Sections
       this.testRedeyeChannelsTextBox.MaxLength = 3;
       this.testRedeyeChannelsTextBox.Name = "testRedeyeChannelsTextBox";
       this.testRedeyeChannelsTextBox.Size = new System.Drawing.Size(288, 20);
-      this.testRedeyeChannelsTextBox.TabIndex = 7;
+      this.testRedeyeChannelsTextBox.TabIndex = 10;
       this.testRedeyeChannelsTextBox.Text = "";
       // 
       // buttonIRDA
@@ -206,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonIRDA.Location = new System.Drawing.Point(167, 54);
       this.buttonIRDA.Name = "buttonIRDA";
       this.buttonIRDA.Size = new System.Drawing.Size(72, 16);
-      this.buttonIRDA.TabIndex = 29;
+      this.buttonIRDA.TabIndex = 2;
       this.buttonIRDA.Text = "IRDA";
       this.buttonIRDA.Click += new System.EventHandler(this.buttonIRDA_Click);
       // 
@@ -216,7 +216,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonRC5.Location = new System.Drawing.Point(247, 54);
       this.buttonRC5.Name = "buttonRC5";
       this.buttonRC5.Size = new System.Drawing.Size(72, 16);
-      this.buttonRC5.TabIndex = 28;
+      this.buttonRC5.TabIndex = 3;
       this.buttonRC5.Text = "RC5";
       this.buttonRC5.Click += new System.EventHandler(this.buttonRC5_Click);
       // 
@@ -226,7 +226,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonSKY.Location = new System.Drawing.Point(327, 54);
       this.buttonSKY.Name = "buttonSKY";
       this.buttonSKY.Size = new System.Drawing.Size(72, 16);
-      this.buttonSKY.TabIndex = 27;
+      this.buttonSKY.TabIndex = 4;
       this.buttonSKY.Text = "SKY";
       this.buttonSKY.Click += new System.EventHandler(this.buttonSKY_Click);
       // 
@@ -236,7 +236,7 @@ namespace MediaPortal.Configuration.Sections
       this.label7.Location = new System.Drawing.Point(16, 56);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(64, 16);
-      this.label7.TabIndex = 26;
+      this.label7.TabIndex = 1;
       this.label7.Text = "Signal Type:";
       // 
       // label6
@@ -245,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 104);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(72, 16);
-      this.label6.TabIndex = 24;
+      this.label6.TabIndex = 7;
       this.label6.Text = "Delay (msec.):";
       // 
       // CommandDelayCombo
@@ -279,7 +279,7 @@ namespace MediaPortal.Configuration.Sections
       this.CommandDelayCombo.Location = new System.Drawing.Point(168, 100);
       this.CommandDelayCombo.Name = "CommandDelayCombo";
       this.CommandDelayCombo.Size = new System.Drawing.Size(288, 21);
-      this.CommandDelayCombo.TabIndex = 23;
+      this.CommandDelayCombo.TabIndex = 8;
       this.CommandDelayCombo.SelectedIndexChanged += new System.EventHandler(this.CommandDelayCombo_SelectedIndexChanged);
       // 
       // label1
@@ -288,7 +288,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 80);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(24, 16);
-      this.label1.TabIndex = 13;
+      this.label1.TabIndex = 5;
       this.label1.Text = "Port:";
       // 
       // CommPortCombo
@@ -308,7 +308,7 @@ namespace MediaPortal.Configuration.Sections
       this.CommPortCombo.Location = new System.Drawing.Point(168, 76);
       this.CommPortCombo.Name = "CommPortCombo";
       this.CommPortCombo.Size = new System.Drawing.Size(288, 21);
-      this.CommPortCombo.TabIndex = 12;
+      this.CommPortCombo.TabIndex = 6;
       this.CommPortCombo.SelectedIndexChanged += new System.EventHandler(this.CommPortCombo_SelectedIndexChanged);
       // 
       // inputCheckBox
@@ -317,7 +317,7 @@ namespace MediaPortal.Configuration.Sections
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
       this.inputCheckBox.Size = new System.Drawing.Size(128, 16);
-      this.inputCheckBox.TabIndex = 7;
+      this.inputCheckBox.TabIndex = 0;
       this.inputCheckBox.Text = "Enable RedEye Serial";
       this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
       // 
@@ -334,7 +334,7 @@ namespace MediaPortal.Configuration.Sections
       this.infoTextBox.ReadOnly = true;
       this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.infoTextBox.Size = new System.Drawing.Size(440, 104);
-      this.infoTextBox.TabIndex = 31;
+      this.infoTextBox.TabIndex = 0;
       this.infoTextBox.Text = "";
       this.infoTextBox.WordWrap = false;
       // 
@@ -348,7 +348,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 192);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 64);
-      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Device Status";
       // 
@@ -362,7 +362,7 @@ namespace MediaPortal.Configuration.Sections
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";
       this.statusLabel.Size = new System.Drawing.Size(440, 32);
-      this.statusLabel.TabIndex = 1;
+      this.statusLabel.TabIndex = 0;
       this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.statusLabel.Click += new System.EventHandler(this.statusLabel_Click);
       // 
@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Location = new System.Drawing.Point(0, 264);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 144);
-      this.groupBox3.TabIndex = 3;
+      this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Information";
       // 

@@ -194,7 +194,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersButton.Location = new System.Drawing.Point(384, 76);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
-      this.parametersButton.TabIndex = 4;
+      this.parametersButton.TabIndex = 6;
       this.parametersButton.Text = "List";
       this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
       // 
@@ -205,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersTextBox.Location = new System.Drawing.Point(168, 76);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
-      this.parametersTextBox.TabIndex = 3;
+      this.parametersTextBox.TabIndex = 5;
       this.parametersTextBox.Text = "";
       // 
       // label2
@@ -213,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(16, 80);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 15);
-      this.label2.TabIndex = 3;
+      this.label2.TabIndex = 4;
       this.label2.Text = "Parameters:";
       // 
       // fileNameButton
@@ -223,7 +223,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton.Location = new System.Drawing.Point(384, 52);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
-      this.fileNameButton.TabIndex = 2;
+      this.fileNameButton.TabIndex = 3;
       this.fileNameButton.Text = "Browse";
       this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
       // 
@@ -234,7 +234,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 52);
       this.fileNameTextBox.Name = "fileNameTextBox";
       this.fileNameTextBox.Size = new System.Drawing.Size(208, 20);
-      this.fileNameTextBox.TabIndex = 1;
+      this.fileNameTextBox.TabIndex = 2;
       this.fileNameTextBox.Text = "";
       // 
       // label1
@@ -242,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 56);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(80, 16);
-      this.label1.TabIndex = 0;
+      this.label1.TabIndex = 1;
       this.label1.Text = "Path/Filename:";
       // 
       // defaultZoomModeComboBox
@@ -260,14 +260,14 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 44);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 5;
+      this.defaultZoomModeComboBox.TabIndex = 3;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 48);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 31;
+      this.label6.TabIndex = 2;
       this.label6.Text = "Default zoom mode:";
       // 
       // button2
@@ -295,7 +295,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 80);
-      this.mpGroupBox3.TabIndex = 4;
+      this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";
       // 
@@ -307,14 +307,14 @@ namespace MediaPortal.Configuration.Sections
       this.videoRendererComboBox.Location = new System.Drawing.Point(168, 20);
       this.videoRendererComboBox.Name = "videoRendererComboBox";
       this.videoRendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoRendererComboBox.TabIndex = 0;
+      this.videoRendererComboBox.TabIndex = 1;
       // 
       // label4
       // 
       this.label4.Location = new System.Drawing.Point(16, 24);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(88, 16);
-      this.label4.TabIndex = 27;
+      this.label4.TabIndex = 0;
       this.label4.Text = "Video renderer:";
       // 
       // DVDPlayer

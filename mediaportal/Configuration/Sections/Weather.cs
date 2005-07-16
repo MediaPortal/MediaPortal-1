@@ -324,7 +324,7 @@ namespace MediaPortal.Configuration.Sections
       this.searchButton.Location = new System.Drawing.Point(224, 208);
       this.searchButton.Name = "searchButton";
       this.searchButton.Size = new System.Drawing.Size(72, 22);
-      this.searchButton.TabIndex = 2;
+      this.searchButton.TabIndex = 1;
       this.searchButton.Text = "Add";
       this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
       // 
@@ -336,7 +336,7 @@ namespace MediaPortal.Configuration.Sections
       this.removeButton.Location = new System.Drawing.Point(304, 208);
       this.removeButton.Name = "removeButton";
       this.removeButton.Size = new System.Drawing.Size(72, 22);
-      this.removeButton.TabIndex = 1;
+      this.removeButton.TabIndex = 2;
       this.removeButton.Text = "Remove";
       this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
       // 

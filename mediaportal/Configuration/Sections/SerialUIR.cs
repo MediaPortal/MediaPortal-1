@@ -199,7 +199,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 336);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
@@ -210,7 +210,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxRTS.Location = new System.Drawing.Point(16, 200);
       this.checkBoxRTS.Name = "checkBoxRTS";
       this.checkBoxRTS.Size = new System.Drawing.Size(48, 16);
-      this.checkBoxRTS.TabIndex = 33;
+      this.checkBoxRTS.TabIndex = 12;
       this.checkBoxRTS.Text = "RTS";
       this.checkBoxRTS.CheckedChanged += new System.EventHandler(this.checkBoxRTS_CheckedChanged);
       // 
@@ -221,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDTR.Location = new System.Drawing.Point(16, 176);
       this.checkBoxDTR.Name = "checkBoxDTR";
       this.checkBoxDTR.Size = new System.Drawing.Size(48, 16);
-      this.checkBoxDTR.TabIndex = 32;
+      this.checkBoxDTR.TabIndex = 10;
       this.checkBoxDTR.Text = "DTR";
       this.checkBoxDTR.CheckedChanged += new System.EventHandler(this.checkBoxDTR_CheckedChanged);
       // 
@@ -231,7 +231,7 @@ namespace MediaPortal.Configuration.Sections
       this.label8.Location = new System.Drawing.Point(120, 120);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(64, 16);
-      this.label8.TabIndex = 31;
+      this.label8.TabIndex = 7;
       this.label8.Text = "Parity";
       // 
       // ParityCombo
@@ -246,7 +246,7 @@ namespace MediaPortal.Configuration.Sections
       this.ParityCombo.Location = new System.Drawing.Point(120, 136);
       this.ParityCombo.Name = "ParityCombo";
       this.ParityCombo.Size = new System.Drawing.Size(88, 21);
-      this.ParityCombo.TabIndex = 30;
+      this.ParityCombo.TabIndex = 9;
       this.ParityCombo.SelectedIndexChanged += new System.EventHandler(this.ParityCombo_SelectedIndexChanged);
       // 
       // buttonNoneCodes
@@ -256,7 +256,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonNoneCodes.Location = new System.Drawing.Point(280, 22);
       this.buttonNoneCodes.Name = "buttonNoneCodes";
       this.buttonNoneCodes.Size = new System.Drawing.Size(56, 16);
-      this.buttonNoneCodes.TabIndex = 29;
+      this.buttonNoneCodes.TabIndex = 20;
       this.buttonNoneCodes.Text = "Mini";
       this.buttonNoneCodes.Click += new System.EventHandler(this.buttonNoneCodes_Click);
       // 
@@ -267,7 +267,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefaultCodes.Location = new System.Drawing.Point(344, 22);
       this.buttonDefaultCodes.Name = "buttonDefaultCodes";
       this.buttonDefaultCodes.Size = new System.Drawing.Size(56, 16);
-      this.buttonDefaultCodes.TabIndex = 28;
+      this.buttonDefaultCodes.TabIndex = 21;
       this.buttonDefaultCodes.Text = "Extended";
       this.buttonDefaultCodes.Click += new System.EventHandler(this.buttonDefaultCodes_Click);
       // 
@@ -278,7 +278,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonAllCodes.Location = new System.Drawing.Point(408, 22);
       this.buttonAllCodes.Name = "buttonAllCodes";
       this.buttonAllCodes.Size = new System.Drawing.Size(56, 16);
-      this.buttonAllCodes.TabIndex = 27;
+      this.buttonAllCodes.TabIndex = 22;
       this.buttonAllCodes.Text = "All";
       this.buttonAllCodes.Click += new System.EventHandler(this.buttonAllCodes_Click);
       // 
@@ -289,7 +289,7 @@ namespace MediaPortal.Configuration.Sections
       this.label7.Location = new System.Drawing.Point(224, 24);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(32, 16);
-      this.label7.TabIndex = 26;
+      this.label7.TabIndex = 19;
       this.label7.Text = "Learn:";
       // 
       // ActionsCheckList
@@ -300,7 +300,7 @@ namespace MediaPortal.Configuration.Sections
       this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
       this.ActionsCheckList.Name = "ActionsCheckList";
       this.ActionsCheckList.Size = new System.Drawing.Size(240, 289);
-      this.ActionsCheckList.TabIndex = 25;
+      this.ActionsCheckList.TabIndex = 23;
       // 
       // label6
       // 
@@ -308,7 +308,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 222);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(88, 32);
-      this.label6.TabIndex = 24;
+      this.label6.TabIndex = 14;
       this.label6.Text = "Delay between commands (msec):";
       // 
       // CommandDelayCombo
@@ -326,7 +326,7 @@ namespace MediaPortal.Configuration.Sections
       this.CommandDelayCombo.Location = new System.Drawing.Point(120, 224);
       this.CommandDelayCombo.Name = "CommandDelayCombo";
       this.CommandDelayCombo.Size = new System.Drawing.Size(88, 21);
-      this.CommandDelayCombo.TabIndex = 23;
+      this.CommandDelayCombo.TabIndex = 15;
       this.CommandDelayCombo.SelectedIndexChanged += new System.EventHandler(this.CommandDelayCombo_SelectedIndexChanged);
       // 
       // label5
@@ -335,7 +335,7 @@ namespace MediaPortal.Configuration.Sections
       this.label5.Location = new System.Drawing.Point(16, 262);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(80, 32);
-      this.label5.TabIndex = 22;
+      this.label5.TabIndex = 16;
       this.label5.Text = "Learning timeout (sec):";
       // 
       // LearningTimeoutCombo
@@ -355,7 +355,7 @@ namespace MediaPortal.Configuration.Sections
       this.LearningTimeoutCombo.Location = new System.Drawing.Point(120, 264);
       this.LearningTimeoutCombo.Name = "LearningTimeoutCombo";
       this.LearningTimeoutCombo.Size = new System.Drawing.Size(88, 21);
-      this.LearningTimeoutCombo.TabIndex = 21;
+      this.LearningTimeoutCombo.TabIndex = 17;
       this.LearningTimeoutCombo.SelectedIndexChanged += new System.EventHandler(this.LearningTimeoutCombo_SelectedIndexChanged);
       // 
       // label4
@@ -364,7 +364,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(120, 168);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(88, 16);
-      this.label4.TabIndex = 20;
+      this.label4.TabIndex = 11;
       this.label4.Text = "IR Code Length";
       // 
       // IRLengthCombo
@@ -406,7 +406,7 @@ namespace MediaPortal.Configuration.Sections
       this.IRLengthCombo.Location = new System.Drawing.Point(120, 184);
       this.IRLengthCombo.Name = "IRLengthCombo";
       this.IRLengthCombo.Size = new System.Drawing.Size(88, 21);
-      this.IRLengthCombo.TabIndex = 19;
+      this.IRLengthCombo.TabIndex = 13;
       this.IRLengthCombo.SelectedIndexChanged += new System.EventHandler(this.IRLengthCombo_SelectedIndexChanged);
       // 
       // label3
@@ -415,7 +415,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 120);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(64, 16);
-      this.label3.TabIndex = 18;
+      this.label3.TabIndex = 6;
       this.label3.Text = "HandShake";
       // 
       // HandShakeCombo
@@ -429,7 +429,7 @@ namespace MediaPortal.Configuration.Sections
       this.HandShakeCombo.Location = new System.Drawing.Point(16, 136);
       this.HandShakeCombo.Name = "HandShakeCombo";
       this.HandShakeCombo.Size = new System.Drawing.Size(88, 21);
-      this.HandShakeCombo.TabIndex = 17;
+      this.HandShakeCombo.TabIndex = 8;
       this.HandShakeCombo.SelectedIndexChanged += new System.EventHandler(this.HandShakeCombo_SelectedIndexChanged);
       // 
       // label2
@@ -438,7 +438,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(120, 72);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(56, 16);
-      this.label2.TabIndex = 16;
+      this.label2.TabIndex = 3;
       this.label2.Text = "Baud Rate";
       // 
       // BaudRateCombo
@@ -461,7 +461,7 @@ namespace MediaPortal.Configuration.Sections
       this.BaudRateCombo.Location = new System.Drawing.Point(120, 88);
       this.BaudRateCombo.Name = "BaudRateCombo";
       this.BaudRateCombo.Size = new System.Drawing.Size(88, 21);
-      this.BaudRateCombo.TabIndex = 15;
+      this.BaudRateCombo.TabIndex = 5;
       this.BaudRateCombo.SelectedIndexChanged += new System.EventHandler(this.BaudRateCombo_SelectedIndexChanged);
       // 
       // checkBoxInitUIRIrman
@@ -473,7 +473,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxInitUIRIrman.Location = new System.Drawing.Point(16, 48);
       this.checkBoxInitUIRIrman.Name = "checkBoxInitUIRIrman";
       this.checkBoxInitUIRIrman.Size = new System.Drawing.Size(192, 16);
-      this.checkBoxInitUIRIrman.TabIndex = 14;
+      this.checkBoxInitUIRIrman.TabIndex = 1;
       this.checkBoxInitUIRIrman.Text = "Initialize UIR/IRMan type receiver";
       this.checkBoxInitUIRIrman.CheckedChanged += new System.EventHandler(this.checkBoxInitUIRIrman_CheckedChanged);
       // 
@@ -483,7 +483,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 72);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 16);
-      this.label1.TabIndex = 13;
+      this.label1.TabIndex = 2;
       this.label1.Text = "Comm. Port";
       // 
       // CommPortCombo
@@ -501,7 +501,7 @@ namespace MediaPortal.Configuration.Sections
       this.CommPortCombo.Location = new System.Drawing.Point(16, 88);
       this.CommPortCombo.Name = "CommPortCombo";
       this.CommPortCombo.Size = new System.Drawing.Size(88, 21);
-      this.CommPortCombo.TabIndex = 12;
+      this.CommPortCombo.TabIndex = 4;
       this.CommPortCombo.SelectedIndexChanged += new System.EventHandler(this.CommPortCombo_SelectedIndexChanged);
       // 
       // internalCommandsButton
@@ -510,7 +510,7 @@ namespace MediaPortal.Configuration.Sections
       this.internalCommandsButton.Location = new System.Drawing.Point(16, 296);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(192, 23);
-      this.internalCommandsButton.TabIndex = 11;
+      this.internalCommandsButton.TabIndex = 18;
       this.internalCommandsButton.Text = "Learn selected commands";
       this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
       // 
@@ -520,7 +520,7 @@ namespace MediaPortal.Configuration.Sections
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
       this.inputCheckBox.Size = new System.Drawing.Size(200, 16);
-      this.inputCheckBox.TabIndex = 7;
+      this.inputCheckBox.TabIndex = 0;
       this.inputCheckBox.Text = "Enable Serial UIR for remote controls";
       this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
       // 
@@ -533,7 +533,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 344);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 64);
-      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Device Status";
       // 
@@ -546,7 +546,7 @@ namespace MediaPortal.Configuration.Sections
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";
       this.statusLabel.Size = new System.Drawing.Size(448, 32);
-      this.statusLabel.TabIndex = 1;
+      this.statusLabel.TabIndex = 0;
       // 
       // SerialUIR
       // 

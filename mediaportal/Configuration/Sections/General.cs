@@ -218,9 +218,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.label3 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+      this.label3 = new System.Windows.Forms.Label();
       this.mpGroupBox1.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -237,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 56);
-      this.mpGroupBox1.TabIndex = 1;
+      this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Language Settings";
       // 
@@ -249,14 +249,14 @@ namespace MediaPortal.Configuration.Sections
       this.languageComboBox.Location = new System.Drawing.Point(168, 20);
       this.languageComboBox.Name = "languageComboBox";
       this.languageComboBox.Size = new System.Drawing.Size(288, 21);
-      this.languageComboBox.TabIndex = 0;
+      this.languageComboBox.TabIndex = 1;
       // 
       // label2
       // 
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(96, 16);
-      this.label2.TabIndex = 4;
+      this.label2.TabIndex = 0;
       this.label2.Text = "Display language:";
       // 
       // groupBox1
@@ -269,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 256);
-      this.groupBox1.TabIndex = 2;
+      this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General Settings";
       // 
@@ -309,19 +309,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 328);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 56);
-      this.groupBox2.TabIndex = 3;
+      this.groupBox2.TabIndex = 2;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "VMR9 OSD Settings";
-      // 
-      // label3
-      // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(328, 24);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(128, 16);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "(10 = solid, 0 = invisible)";
-      this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // label1
       // 
@@ -329,7 +319,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(96, 16);
-      this.label1.TabIndex = 1;
+      this.label1.TabIndex = 0;
       this.label1.Text = "OSD Alpha level:";
       // 
       // numericUpDown1
@@ -344,12 +334,22 @@ namespace MediaPortal.Configuration.Sections
                                                                    0});
       this.numericUpDown1.Name = "numericUpDown1";
       this.numericUpDown1.Size = new System.Drawing.Size(168, 20);
-      this.numericUpDown1.TabIndex = 0;
+      this.numericUpDown1.TabIndex = 1;
       this.numericUpDown1.Value = new System.Decimal(new int[] {
                                                                  10,
                                                                  0,
                                                                  0,
                                                                  0});
+      // 
+      // label3
+      // 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.Location = new System.Drawing.Point(328, 24);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(128, 16);
+      this.label3.TabIndex = 2;
+      this.label3.Text = "(10 = solid, 0 = invisible)";
+      this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // General
       // 

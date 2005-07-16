@@ -97,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 88);
-      this.groupBox1.TabIndex = 3;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
@@ -106,7 +106,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 56);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(48, 16);
-      this.label1.TabIndex = 2;
+      this.label1.TabIndex = 1;
       this.label1.Text = "Pincode:";
       // 
       // textPinCodeBox
@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
       this.textPinCodeBox.Location = new System.Drawing.Point(168, 52);
       this.textPinCodeBox.Name = "textPinCodeBox";
       this.textPinCodeBox.Size = new System.Drawing.Size(288, 20);
-      this.textPinCodeBox.TabIndex = 1;
+      this.textPinCodeBox.TabIndex = 2;
       this.textPinCodeBox.Text = "";
       // 
       // chbEnabled
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 104);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(88, 16);
-      this.label3.TabIndex = 5;
+      this.label3.TabIndex = 1;
       this.label3.Text = "Trashcan folder:";
       this.label3.Visible = false;
       // 
@@ -146,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
       this.textTrashcanFolder.Location = new System.Drawing.Point(168, 100);
       this.textTrashcanFolder.Name = "textTrashcanFolder";
       this.textTrashcanFolder.Size = new System.Drawing.Size(288, 20);
-      this.textTrashcanFolder.TabIndex = 4;
+      this.textTrashcanFolder.TabIndex = 2;
       this.textTrashcanFolder.Text = "";
       this.textTrashcanFolder.Visible = false;
       // 

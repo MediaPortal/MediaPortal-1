@@ -79,7 +79,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
-      this.mpGroupBox3.TabIndex = 7;
+      this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";
       // 
@@ -90,7 +90,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(440, 32);
-      this.label3.TabIndex = 10;
+      this.label3.TabIndex = 0;
       this.label3.Text = "Note that you need to install ffdshow separately to make any this option work. Pl" +
         "ease read the MediaPortal manual for more information.";
       // 
@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration.Sections
       this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
       this.ffdshowCheckBox.Name = "ffdshowCheckBox";
       this.ffdshowCheckBox.Size = new System.Drawing.Size(184, 16);
-      this.ffdshowCheckBox.TabIndex = 8;
+      this.ffdshowCheckBox.TabIndex = 1;
       this.ffdshowCheckBox.Text = "Enable FFDshow post processing";
       // 
       // MoviePostProcessing

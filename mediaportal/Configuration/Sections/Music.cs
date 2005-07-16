@@ -165,7 +165,7 @@ namespace MediaPortal.Configuration.Sections
       this.playlistButton.Location = new System.Drawing.Point(384, 75);
       this.playlistButton.Name = "playlistButton";
       this.playlistButton.Size = new System.Drawing.Size(72, 22);
-      this.playlistButton.TabIndex = 3;
+      this.playlistButton.TabIndex = 4;
       this.playlistButton.Text = "Browse";
       this.playlistButton.Click += new System.EventHandler(this.playlistButton_Click);
       // 
@@ -176,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
       this.playlistFolderTextBox.Location = new System.Drawing.Point(168, 76);
       this.playlistFolderTextBox.Name = "playlistFolderTextBox";
       this.playlistFolderTextBox.Size = new System.Drawing.Size(208, 20);
-      this.playlistFolderTextBox.TabIndex = 2;
+      this.playlistFolderTextBox.TabIndex = 3;
       this.playlistFolderTextBox.Text = "";
       // 
       // label1
@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(15, 80);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(113, 16);
-      this.label1.TabIndex = 10;
+      this.label1.TabIndex = 2;
       this.label1.Text = "Music playlist folder:";
       // 
       // mpGroupBox1
@@ -207,7 +207,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(16, 56);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(112, 16);
-      this.label2.TabIndex = 11;
+      this.label2.TabIndex = 1;
       this.label2.Text = "Internal music player:";
       // 
       // showID3CheckBox
@@ -228,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioPlayerComboBox.Location = new System.Drawing.Point(168, 52);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
       this.audioPlayerComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioPlayerComboBox.TabIndex = 1;
+      this.audioPlayerComboBox.TabIndex = 2;
       // 
       // label4
       // 

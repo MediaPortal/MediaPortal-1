@@ -308,7 +308,7 @@ namespace MediaPortal.Configuration
       this.sectionTree.Name = "sectionTree";
       this.sectionTree.SelectedImageIndex = -1;
       this.sectionTree.Size = new System.Drawing.Size(184, 440);
-      this.sectionTree.TabIndex = 0;
+      this.sectionTree.TabIndex = 2;
       this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       // 
       // cancelButton
@@ -317,7 +317,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(621, 479);
       this.cancelButton.Name = "cancelButton";
-      this.cancelButton.TabIndex = 2;
+      this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "Cancel";
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
@@ -327,7 +327,7 @@ namespace MediaPortal.Configuration
       this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(542, 479);
       this.okButton.Name = "okButton";
-      this.okButton.TabIndex = 3;
+      this.okButton.TabIndex = 0;
       this.okButton.Text = "OK";
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
@@ -343,7 +343,8 @@ namespace MediaPortal.Configuration
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
       this.headerLabel.Size = new System.Drawing.Size(472, 24);
-      this.headerLabel.TabIndex = 0;
+      this.headerLabel.TabIndex = 3;
+      this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       // 
@@ -367,6 +368,7 @@ namespace MediaPortal.Configuration
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(688, 2);
       this.beveledLine1.TabIndex = 5;
+      this.beveledLine1.TabStop = false;
       // 
       // applyButton
       // 
@@ -375,6 +377,7 @@ namespace MediaPortal.Configuration
       this.applyButton.Location = new System.Drawing.Point(462, 479);
       this.applyButton.Name = "applyButton";
       this.applyButton.TabIndex = 6;
+      this.applyButton.TabStop = false;
       this.applyButton.Text = "Apply";
       this.applyButton.Visible = false;
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);

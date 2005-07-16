@@ -114,7 +114,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 288);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
@@ -126,7 +126,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAnalogBlanking.Location = new System.Drawing.Point(16, 224);
       this.cbAnalogBlanking.Name = "cbAnalogBlanking";
       this.cbAnalogBlanking.Size = new System.Drawing.Size(136, 16);
-      this.cbAnalogBlanking.TabIndex = 31;
+      this.cbAnalogBlanking.TabIndex = 12;
       this.cbAnalogBlanking.Text = "Do analog blanking";
       // 
       // cbColorSpace
@@ -140,14 +140,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbColorSpace.Location = new System.Drawing.Point(168, 92);
       this.cbColorSpace.Name = "cbColorSpace";
       this.cbColorSpace.Size = new System.Drawing.Size(288, 21);
-      this.cbColorSpace.TabIndex = 30;
+      this.cbColorSpace.TabIndex = 7;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 96);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(128, 16);
-      this.label6.TabIndex = 29;
+      this.label6.TabIndex = 6;
       this.label6.Text = "Output colorspace:";
       // 
       // cbIDCT
@@ -162,14 +162,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbIDCT.Location = new System.Drawing.Point(168, 68);
       this.cbIDCT.Name = "cbIDCT";
       this.cbIDCT.Size = new System.Drawing.Size(288, 21);
-      this.cbIDCT.TabIndex = 28;
+      this.cbIDCT.TabIndex = 5;
       // 
       // label4
       // 
       this.label4.Location = new System.Drawing.Point(16, 72);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(128, 16);
-      this.label4.TabIndex = 27;
+      this.label4.TabIndex = 4;
       this.label4.Text = "IDCT to use:";
       // 
       // cbHardcodePal
@@ -178,7 +178,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbHardcodePal.Location = new System.Drawing.Point(16, 200);
       this.cbHardcodePal.Name = "cbHardcodePal";
       this.cbHardcodePal.Size = new System.Drawing.Size(184, 16);
-      this.cbHardcodePal.TabIndex = 26;
+      this.cbHardcodePal.TabIndex = 11;
       this.cbHardcodePal.Text = "Hardcode for PAL with FFdshow";
       // 
       // cbDVBAR
@@ -193,14 +193,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbDVBAR.Location = new System.Drawing.Point(168, 44);
       this.cbDVBAR.Name = "cbDVBAR";
       this.cbDVBAR.Size = new System.Drawing.Size(288, 21);
-      this.cbDVBAR.TabIndex = 25;
+      this.cbDVBAR.TabIndex = 3;
       // 
       // label2
       // 
       this.label2.Location = new System.Drawing.Point(16, 48);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(128, 16);
-      this.label2.TabIndex = 24;
+      this.label2.TabIndex = 2;
       this.label2.Text = "DVB Aspect preference:";
       // 
       // tbVideoOffset
@@ -210,7 +210,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbVideoOffset.Location = new System.Drawing.Point(168, 252);
       this.tbVideoOffset.Name = "tbVideoOffset";
       this.tbVideoOffset.Size = new System.Drawing.Size(288, 20);
-      this.tbVideoOffset.TabIndex = 22;
+      this.tbVideoOffset.TabIndex = 14;
       this.tbVideoOffset.Text = "0";
       // 
       // cbAspectRatio
@@ -221,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAspectRatio.Location = new System.Drawing.Point(16, 176);
       this.cbAspectRatio.Name = "cbAspectRatio";
       this.cbAspectRatio.Size = new System.Drawing.Size(168, 16);
-      this.cbAspectRatio.TabIndex = 21;
+      this.cbAspectRatio.TabIndex = 10;
       this.cbAspectRatio.Text = "Use accurate Aspect Ratios";
       // 
       // label5
@@ -229,7 +229,7 @@ namespace MediaPortal.Configuration.Sections
       this.label5.Location = new System.Drawing.Point(16, 256);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(144, 16);
-      this.label5.TabIndex = 20;
+      this.label5.TabIndex = 13;
       this.label5.Text = "Video delay offset (msec.):";
       // 
       // cbForcedSubtitles
@@ -240,7 +240,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbForcedSubtitles.Location = new System.Drawing.Point(16, 128);
       this.cbForcedSubtitles.Name = "cbForcedSubtitles";
       this.cbForcedSubtitles.Size = new System.Drawing.Size(136, 16);
-      this.cbForcedSubtitles.TabIndex = 13;
+      this.cbForcedSubtitles.TabIndex = 8;
       this.cbForcedSubtitles.Text = "Display Forced Subtitles";
       // 
       // cbDeinterlace
@@ -255,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 20);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 12;
+      this.cbDeinterlace.TabIndex = 1;
       // 
       // cbSmoothing
       // 
@@ -265,7 +265,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbSmoothing.Location = new System.Drawing.Point(16, 152);
       this.cbSmoothing.Name = "cbSmoothing";
       this.cbSmoothing.Size = new System.Drawing.Size(136, 16);
-      this.cbSmoothing.TabIndex = 11;
+      this.cbSmoothing.TabIndex = 9;
       this.cbSmoothing.Text = "3:2 Playback smoothing";
       // 
       // label3
@@ -273,7 +273,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(96, 16);
-      this.label3.TabIndex = 8;
+      this.label3.TabIndex = 0;
       this.label3.Text = "Deinterlace mode:";
       // 
       // DScalerVideoFilter

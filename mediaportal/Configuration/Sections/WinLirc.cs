@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General settings";
       // 
@@ -131,7 +131,7 @@ namespace MediaPortal.Configuration.Sections
       this.IRDelayTextBox.Location = new System.Drawing.Point(168, 76);
       this.IRDelayTextBox.Name = "IRDelayTextBox";
       this.IRDelayTextBox.Size = new System.Drawing.Size(288, 20);
-      this.IRDelayTextBox.TabIndex = 11;
+      this.IRDelayTextBox.TabIndex = 5;
       this.IRDelayTextBox.Text = "300";
       // 
       // IRDelayLabel
@@ -139,7 +139,7 @@ namespace MediaPortal.Configuration.Sections
       this.IRDelayLabel.Location = new System.Drawing.Point(16, 80);
       this.IRDelayLabel.Name = "IRDelayLabel";
       this.IRDelayLabel.Size = new System.Drawing.Size(88, 16);
-      this.IRDelayLabel.TabIndex = 10;
+      this.IRDelayLabel.TabIndex = 4;
       this.IRDelayLabel.Text = "IR delay (msec):";
       // 
       // browsePathToWinlircButton
@@ -149,7 +149,7 @@ namespace MediaPortal.Configuration.Sections
       this.browsePathToWinlircButton.Location = new System.Drawing.Point(384, 51);
       this.browsePathToWinlircButton.Name = "browsePathToWinlircButton";
       this.browsePathToWinlircButton.Size = new System.Drawing.Size(72, 22);
-      this.browsePathToWinlircButton.TabIndex = 9;
+      this.browsePathToWinlircButton.TabIndex = 3;
       this.browsePathToWinlircButton.Text = "Browse";
       this.browsePathToWinlircButton.Click += new System.EventHandler(this.browsePathToWinlircButton_Click);
       // 
@@ -160,7 +160,7 @@ namespace MediaPortal.Configuration.Sections
       this.pathToWinlircTextBox.Location = new System.Drawing.Point(168, 52);
       this.pathToWinlircTextBox.Name = "pathToWinlircTextBox";
       this.pathToWinlircTextBox.Size = new System.Drawing.Size(208, 20);
-      this.pathToWinlircTextBox.TabIndex = 8;
+      this.pathToWinlircTextBox.TabIndex = 2;
       this.pathToWinlircTextBox.Text = "";
       // 
       // PathToWinlircLabel
@@ -168,7 +168,7 @@ namespace MediaPortal.Configuration.Sections
       this.PathToWinlircLabel.Location = new System.Drawing.Point(16, 56);
       this.PathToWinlircLabel.Name = "PathToWinlircLabel";
       this.PathToWinlircLabel.Size = new System.Drawing.Size(96, 16);
-      this.PathToWinlircLabel.TabIndex = 7;
+      this.PathToWinlircLabel.TabIndex = 1;
       this.PathToWinlircLabel.Text = "Path to WinLIRC:";
       // 
       // inputCheckBox
@@ -177,7 +177,7 @@ namespace MediaPortal.Configuration.Sections
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
       this.inputCheckBox.Size = new System.Drawing.Size(248, 16);
-      this.inputCheckBox.TabIndex = 1;
+      this.inputCheckBox.TabIndex = 0;
       this.inputCheckBox.Text = "Enable WINLIRC for output to external devices";
       this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
       // 
@@ -191,7 +191,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 120);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 288);
-      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Information";
       // 

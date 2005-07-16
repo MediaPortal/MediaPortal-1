@@ -173,7 +173,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(472, 408);
-      this.tabControl1.TabIndex = 9;
+      this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // tabPage1
@@ -204,7 +204,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonLookup.Location = new System.Drawing.Point(16, 353);
       this.buttonLookup.Name = "buttonLookup";
       this.buttonLookup.Size = new System.Drawing.Size(64, 16);
-      this.buttonLookup.TabIndex = 13;
+      this.buttonLookup.TabIndex = 7;
       this.buttonLookup.Text = "Lookup";
       this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
       // 
@@ -215,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
       this.xmlImport.Location = new System.Drawing.Point(312, 353);
       this.xmlImport.Name = "xmlImport";
       this.xmlImport.Size = new System.Drawing.Size(64, 16);
-      this.xmlImport.TabIndex = 12;
+      this.xmlImport.TabIndex = 10;
       this.xmlImport.Text = "Restore";
       this.xmlImport.Click += new System.EventHandler(this.xmlImport_Click);
       // 
@@ -248,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnImport.Location = new System.Drawing.Point(200, 353);
       this.btnImport.Name = "btnImport";
       this.btnImport.Size = new System.Drawing.Size(104, 16);
-      this.btnImport.TabIndex = 6;
+      this.btnImport.TabIndex = 9;
       this.btnImport.Text = "Import from tvguide";
       this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
       // 
@@ -259,7 +259,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnClear.Location = new System.Drawing.Point(240, 334);
       this.btnClear.Name = "btnClear";
       this.btnClear.Size = new System.Drawing.Size(64, 16);
-      this.btnClear.TabIndex = 7;
+      this.btnClear.TabIndex = 4;
       this.btnClear.Text = "Clear";
       this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
       // 
@@ -318,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       this.downButton.Location = new System.Drawing.Point(384, 334);
       this.downButton.Name = "downButton";
       this.downButton.Size = new System.Drawing.Size(64, 16);
-      this.downButton.TabIndex = 4;
+      this.downButton.TabIndex = 6;
       this.downButton.Text = "Down";
       this.downButton.Click += new System.EventHandler(this.downButton_Click);
       // 
@@ -389,7 +389,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnMapChannelToCard.Location = new System.Drawing.Point(212, 168);
       this.btnMapChannelToCard.Name = "btnMapChannelToCard";
       this.btnMapChannelToCard.Size = new System.Drawing.Size(40, 22);
-      this.btnMapChannelToCard.TabIndex = 15;
+      this.btnMapChannelToCard.TabIndex = 3;
       this.btnMapChannelToCard.Text = ">>";
       this.btnMapChannelToCard.Click += new System.EventHandler(this.btnMapChannelToCard_Click);
       // 
@@ -400,7 +400,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(212, 200);
       this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
       this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(40, 22);
-      this.btnUnmapChannelFromCard.TabIndex = 14;
+      this.btnUnmapChannelFromCard.TabIndex = 4;
       this.btnUnmapChannelFromCard.Text = "<<";
       this.btnUnmapChannelFromCard.Click += new System.EventHandler(this.btnUnmapChannelFromCard_Click);
       // 
@@ -413,7 +413,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewTVChannelsForCard.Location = new System.Drawing.Point(272, 56);
       this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
       this.listViewTVChannelsForCard.Size = new System.Drawing.Size(176, 304);
-      this.listViewTVChannelsForCard.TabIndex = 13;
+      this.listViewTVChannelsForCard.TabIndex = 5;
       this.listViewTVChannelsForCard.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader10
@@ -430,7 +430,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewTVChannelsCard.Location = new System.Drawing.Point(16, 56);
       this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
       this.listViewTVChannelsCard.Size = new System.Drawing.Size(176, 304);
-      this.listViewTVChannelsCard.TabIndex = 12;
+      this.listViewTVChannelsCard.TabIndex = 2;
       this.listViewTVChannelsCard.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader11
@@ -443,7 +443,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 24);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(136, 16);
-      this.label6.TabIndex = 9;
+      this.label6.TabIndex = 0;
       this.label6.Text = "Map channels to TV card:";
       // 
       // comboBoxCard
@@ -454,7 +454,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxCard.Location = new System.Drawing.Point(160, 20);
       this.comboBoxCard.Name = "comboBoxCard";
       this.comboBoxCard.Size = new System.Drawing.Size(288, 21);
-      this.comboBoxCard.TabIndex = 8;
+      this.comboBoxCard.TabIndex = 1;
       this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
       // 
       // TVChannels

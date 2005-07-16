@@ -74,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 56);
-      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Internet Radio Stream Settings (asx, pls, ...)";
       // 
@@ -85,7 +85,7 @@ namespace MediaPortal.Configuration.Sections
       this.browseFolderButton.Location = new System.Drawing.Point(384, 19);
       this.browseFolderButton.Name = "browseFolderButton";
       this.browseFolderButton.Size = new System.Drawing.Size(72, 22);
-      this.browseFolderButton.TabIndex = 1;
+      this.browseFolderButton.TabIndex = 2;
       this.browseFolderButton.Text = "Browse";
       this.browseFolderButton.Click += new System.EventHandler(this.browseFolderButton_Click);
       // 
@@ -96,7 +96,7 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameTextBox.Location = new System.Drawing.Point(168, 20);
       this.folderNameTextBox.Name = "folderNameTextBox";
       this.folderNameTextBox.Size = new System.Drawing.Size(208, 20);
-      this.folderNameTextBox.TabIndex = 0;
+      this.folderNameTextBox.TabIndex = 1;
       this.folderNameTextBox.Text = "";
       // 
       // folderNameLabel
@@ -104,7 +104,7 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameLabel.Location = new System.Drawing.Point(16, 24);
       this.folderNameLabel.Name = "folderNameLabel";
       this.folderNameLabel.Size = new System.Drawing.Size(120, 16);
-      this.folderNameLabel.TabIndex = 11;
+      this.folderNameLabel.TabIndex = 0;
       this.folderNameLabel.Text = "Save streams to folder:";
       // 
       // label2

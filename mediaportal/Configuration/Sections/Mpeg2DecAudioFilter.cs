@@ -125,7 +125,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Location = new System.Drawing.Point(0, 0);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(472, 104);
-      this.groupBox4.TabIndex = 24;
+      this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "AC3 Decoder Settings";
       // 
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonAC3SPDIF.Location = new System.Drawing.Point(16, 48);
       this.radioButtonAC3SPDIF.Name = "radioButtonAC3SPDIF";
       this.radioButtonAC3SPDIF.Size = new System.Drawing.Size(56, 16);
-      this.radioButtonAC3SPDIF.TabIndex = 10;
+      this.radioButtonAC3SPDIF.TabIndex = 3;
       this.radioButtonAC3SPDIF.Text = "S/PDIF";
       this.radioButtonAC3SPDIF.CheckedChanged += new System.EventHandler(this.radioButtonAC3SPDIF_CheckedChanged);
       // 
@@ -146,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonAC3Speakers.Location = new System.Drawing.Point(16, 24);
       this.radioButtonAC3Speakers.Name = "radioButtonAC3Speakers";
       this.radioButtonAC3Speakers.Size = new System.Drawing.Size(120, 16);
-      this.radioButtonAC3Speakers.TabIndex = 9;
+      this.radioButtonAC3Speakers.TabIndex = 0;
       this.radioButtonAC3Speakers.TabStop = true;
       this.radioButtonAC3Speakers.Text = "Decode to speakers:";
       this.radioButtonAC3Speakers.CheckedChanged += new System.EventHandler(this.radioButtonAC3Speakers_CheckedChanged);
@@ -158,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAC3LFE.Location = new System.Drawing.Point(416, 24);
       this.checkBoxAC3LFE.Name = "checkBoxAC3LFE";
       this.checkBoxAC3LFE.Size = new System.Drawing.Size(40, 16);
-      this.checkBoxAC3LFE.TabIndex = 13;
+      this.checkBoxAC3LFE.TabIndex = 2;
       this.checkBoxAC3LFE.Text = "LFE";
       // 
       // comboBoxAC3SpeakerConfig
@@ -182,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxAC3SpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxAC3SpeakerConfig.Name = "comboBoxAC3SpeakerConfig";
       this.comboBoxAC3SpeakerConfig.Size = new System.Drawing.Size(240, 21);
-      this.comboBoxAC3SpeakerConfig.TabIndex = 12;
+      this.comboBoxAC3SpeakerConfig.TabIndex = 1;
       // 
       // checkBoxAC3DynamicRange
       // 
@@ -190,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAC3DynamicRange.Location = new System.Drawing.Point(16, 72);
       this.checkBoxAC3DynamicRange.Name = "checkBoxAC3DynamicRange";
       this.checkBoxAC3DynamicRange.Size = new System.Drawing.Size(144, 16);
-      this.checkBoxAC3DynamicRange.TabIndex = 11;
+      this.checkBoxAC3DynamicRange.TabIndex = 4;
       this.checkBoxAC3DynamicRange.Text = "Dynamic Range Control";
       // 
       // groupBox3
@@ -208,7 +208,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Location = new System.Drawing.Point(0, 224);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 112);
-      this.groupBox3.TabIndex = 23;
+      this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "AC3/AAC/DTS/LPCM Format";
       // 
@@ -217,7 +217,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(16, 56);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(40, 16);
-      this.label4.TabIndex = 7;
+      this.label4.TabIndex = 4;
       this.label4.Text = "Boost:";
       // 
       // radioPCM16Bit
@@ -227,7 +227,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioPCM16Bit.Location = new System.Drawing.Point(16, 24);
       this.radioPCM16Bit.Name = "radioPCM16Bit";
       this.radioPCM16Bit.Size = new System.Drawing.Size(80, 16);
-      this.radioPCM16Bit.TabIndex = 1;
+      this.radioPCM16Bit.TabIndex = 0;
       this.radioPCM16Bit.TabStop = true;
       this.radioPCM16Bit.Text = "PCM 16 bit";
       // 
@@ -237,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonPCM24Bit.Location = new System.Drawing.Point(104, 24);
       this.radioButtonPCM24Bit.Name = "radioButtonPCM24Bit";
       this.radioButtonPCM24Bit.Size = new System.Drawing.Size(80, 16);
-      this.radioButtonPCM24Bit.TabIndex = 2;
+      this.radioButtonPCM24Bit.TabIndex = 1;
       this.radioButtonPCM24Bit.Text = "PCM 24 bit";
       // 
       // radioButtonPCM32Bit
@@ -246,7 +246,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonPCM32Bit.Location = new System.Drawing.Point(192, 24);
       this.radioButtonPCM32Bit.Name = "radioButtonPCM32Bit";
       this.radioButtonPCM32Bit.Size = new System.Drawing.Size(80, 16);
-      this.radioButtonPCM32Bit.TabIndex = 3;
+      this.radioButtonPCM32Bit.TabIndex = 2;
       this.radioButtonPCM32Bit.Text = "PCM 32 bit";
       // 
       // radioButtonIEEE
@@ -255,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonIEEE.Location = new System.Drawing.Point(288, 24);
       this.radioButtonIEEE.Name = "radioButtonIEEE";
       this.radioButtonIEEE.Size = new System.Drawing.Size(80, 16);
-      this.radioButtonIEEE.TabIndex = 4;
+      this.radioButtonIEEE.TabIndex = 3;
       this.radioButtonIEEE.Text = "IEEE float";
       // 
       // checkBoxNormalize
@@ -264,7 +264,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxNormalize.Location = new System.Drawing.Point(16, 86);
       this.checkBoxNormalize.Name = "checkBoxNormalize";
       this.checkBoxNormalize.Size = new System.Drawing.Size(80, 16);
-      this.checkBoxNormalize.TabIndex = 5;
+      this.checkBoxNormalize.TabIndex = 6;
       this.checkBoxNormalize.Text = "Normalize";
       // 
       // trackBarBoost
@@ -275,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarBoost.Maximum = 100;
       this.trackBarBoost.Name = "trackBarBoost";
       this.trackBarBoost.Size = new System.Drawing.Size(200, 45);
-      this.trackBarBoost.TabIndex = 6;
+      this.trackBarBoost.TabIndex = 5;
       this.trackBarBoost.TickStyle = System.Windows.Forms.TickStyle.None;
       // 
       // groupBox2
@@ -291,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 112);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 104);
-      this.groupBox2.TabIndex = 22;
+      this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "DTS Decoder Settings";
       // 
@@ -301,7 +301,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonDTSSPDIF.Location = new System.Drawing.Point(16, 48);
       this.radioButtonDTSSPDIF.Name = "radioButtonDTSSPDIF";
       this.radioButtonDTSSPDIF.Size = new System.Drawing.Size(56, 16);
-      this.radioButtonDTSSPDIF.TabIndex = 16;
+      this.radioButtonDTSSPDIF.TabIndex = 3;
       this.radioButtonDTSSPDIF.Text = "S/PDIF";
       this.radioButtonDTSSPDIF.CheckedChanged += new System.EventHandler(this.radioButtonDTSSPDIF_CheckedChanged);
       // 
@@ -312,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonDTSSpeakers.Location = new System.Drawing.Point(16, 24);
       this.radioButtonDTSSpeakers.Name = "radioButtonDTSSpeakers";
       this.radioButtonDTSSpeakers.Size = new System.Drawing.Size(120, 16);
-      this.radioButtonDTSSpeakers.TabIndex = 15;
+      this.radioButtonDTSSpeakers.TabIndex = 0;
       this.radioButtonDTSSpeakers.TabStop = true;
       this.radioButtonDTSSpeakers.Text = "Decode to speakers:";
       this.radioButtonDTSSpeakers.CheckedChanged += new System.EventHandler(this.radioButtonDTSSpeakers_CheckedChanged);
@@ -324,7 +324,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDTSLFE.Location = new System.Drawing.Point(416, 24);
       this.checkBoxDTSLFE.Name = "checkBoxDTSLFE";
       this.checkBoxDTSLFE.Size = new System.Drawing.Size(40, 16);
-      this.checkBoxDTSLFE.TabIndex = 19;
+      this.checkBoxDTSLFE.TabIndex = 2;
       this.checkBoxDTSLFE.Text = "LFE";
       // 
       // comboBoxDTSSpeakerConfig
@@ -344,7 +344,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDTSSpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxDTSSpeakerConfig.Name = "comboBoxDTSSpeakerConfig";
       this.comboBoxDTSSpeakerConfig.Size = new System.Drawing.Size(240, 21);
-      this.comboBoxDTSSpeakerConfig.TabIndex = 18;
+      this.comboBoxDTSSpeakerConfig.TabIndex = 1;
       // 
       // checkBoxDTSDynamicRange
       // 
@@ -352,7 +352,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDTSDynamicRange.Location = new System.Drawing.Point(16, 72);
       this.checkBoxDTSDynamicRange.Name = "checkBoxDTSDynamicRange";
       this.checkBoxDTSDynamicRange.Size = new System.Drawing.Size(136, 16);
-      this.checkBoxDTSDynamicRange.TabIndex = 17;
+      this.checkBoxDTSDynamicRange.TabIndex = 4;
       this.checkBoxDTSDynamicRange.Text = "Dynamic Range Control";
       // 
       // groupBox5
@@ -364,7 +364,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Location = new System.Drawing.Point(0, 344);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(472, 56);
-      this.groupBox5.TabIndex = 25;
+      this.groupBox5.TabIndex = 3;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "AAC Decoder Settings";
       // 
@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAACDownmix.Location = new System.Drawing.Point(16, 24);
       this.checkBoxAACDownmix.Name = "checkBoxAACDownmix";
       this.checkBoxAACDownmix.Size = new System.Drawing.Size(128, 16);
-      this.checkBoxAACDownmix.TabIndex = 21;
+      this.checkBoxAACDownmix.TabIndex = 0;
       this.checkBoxAACDownmix.Text = "Downmix to stereo";
       // 
       // label2

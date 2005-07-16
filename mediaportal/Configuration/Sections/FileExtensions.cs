@@ -109,7 +109,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(440, 32);
-      this.label1.TabIndex = 4;
+      this.label1.TabIndex = 0;
       this.label1.Text = "Files matching an extension listed below will be considered a known media type.";
       // 
       // addButton
@@ -119,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
       this.addButton.Location = new System.Drawing.Point(384, 64);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
-      this.addButton.TabIndex = 1;
+      this.addButton.TabIndex = 2;
       this.addButton.Text = "Add";
       this.addButton.Click += new System.EventHandler(this.addButton_Click);
       // 
@@ -131,7 +131,7 @@ namespace MediaPortal.Configuration.Sections
       this.removeButton.Location = new System.Drawing.Point(384, 88);
       this.removeButton.Name = "removeButton";
       this.removeButton.Size = new System.Drawing.Size(72, 22);
-      this.removeButton.TabIndex = 2;
+      this.removeButton.TabIndex = 4;
       this.removeButton.Text = "Remove";
       this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
       // 
@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration.Sections
       this.extensionsListBox.Name = "extensionsListBox";
       this.extensionsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
       this.extensionsListBox.Size = new System.Drawing.Size(360, 303);
-      this.extensionsListBox.TabIndex = 1;
+      this.extensionsListBox.TabIndex = 3;
       this.extensionsListBox.SelectedIndexChanged += new System.EventHandler(this.extensionsListBox_SelectedIndexChanged);
       // 
       // extensionTextBox
@@ -154,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
       this.extensionTextBox.Location = new System.Drawing.Point(16, 64);
       this.extensionTextBox.Name = "extensionTextBox";
       this.extensionTextBox.Size = new System.Drawing.Size(360, 20);
-      this.extensionTextBox.TabIndex = 0;
+      this.extensionTextBox.TabIndex = 1;
       this.extensionTextBox.Text = "";
       // 
       // FileExtensions

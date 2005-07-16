@@ -436,7 +436,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbViewName.Location = new System.Drawing.Point(168, 44);
       this.tbViewName.Name = "tbViewName";
       this.tbViewName.Size = new System.Drawing.Size(288, 20);
-      this.tbViewName.TabIndex = 6;
+      this.tbViewName.TabIndex = 3;
       this.tbViewName.Text = "";
       // 
       // label2
@@ -444,7 +444,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(16, 48);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(40, 16);
-      this.label2.TabIndex = 5;
+      this.label2.TabIndex = 2;
       this.label2.Text = "Name:";
       // 
       // btnDelete
@@ -454,7 +454,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnDelete.Location = new System.Drawing.Point(384, 320);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(72, 22);
-      this.btnDelete.TabIndex = 4;
+      this.btnDelete.TabIndex = 6;
       this.btnDelete.Text = "Delete";
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
@@ -465,7 +465,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnSave.Location = new System.Drawing.Point(304, 320);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(72, 22);
-      this.btnSave.TabIndex = 3;
+      this.btnSave.TabIndex = 5;
       this.btnSave.Text = "Save";
       this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
       // 
@@ -477,7 +477,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbViews.Location = new System.Drawing.Point(168, 20);
       this.cbViews.Name = "cbViews";
       this.cbViews.Size = new System.Drawing.Size(288, 21);
-      this.cbViews.TabIndex = 2;
+      this.cbViews.TabIndex = 1;
       this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
       // 
       // label1
@@ -485,7 +485,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(32, 16);
-      this.label1.TabIndex = 1;
+      this.label1.TabIndex = 0;
       this.label1.Text = "View:";
       // 
       // dataGrid1
@@ -500,7 +500,7 @@ namespace MediaPortal.Configuration.Sections
       this.dataGrid1.Location = new System.Drawing.Point(16, 72);
       this.dataGrid1.Name = "dataGrid1";
       this.dataGrid1.Size = new System.Drawing.Size(440, 237);
-      this.dataGrid1.TabIndex = 0;
+      this.dataGrid1.TabIndex = 4;
       // 
       // MovieViews
       // 

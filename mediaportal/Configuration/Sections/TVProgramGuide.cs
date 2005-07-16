@@ -60,7 +60,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.TreeView treeView1;
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -151,7 +150,6 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.button3 = new System.Windows.Forms.Button();
       this.button2 = new System.Windows.Forms.Button();
-      this.label18 = new System.Windows.Forms.Label();
       this.treeView1 = new System.Windows.Forms.TreeView();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.label16 = new System.Windows.Forms.Label();
@@ -183,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
       this.label15.Location = new System.Drawing.Point(232, 88);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(40, 16);
-      this.label15.TabIndex = 69;
+      this.label15.TabIndex = 8;
       this.label15.Text = "Hours";
       this.label15.Click += new System.EventHandler(this.label15_Click);
       // 
@@ -192,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(160, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(8, 16);
-      this.label2.TabIndex = 68;
+      this.label2.TabIndex = 2;
       this.label2.Text = ":";
       // 
       // textBoxMinutes
@@ -200,7 +198,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxMinutes.Location = new System.Drawing.Point(200, 84);
       this.textBoxMinutes.Name = "textBoxMinutes";
       this.textBoxMinutes.Size = new System.Drawing.Size(32, 20);
-      this.textBoxMinutes.TabIndex = 4;
+      this.textBoxMinutes.TabIndex = 7;
       this.textBoxMinutes.Text = "0";
       // 
       // btnClearTVDatabase
@@ -210,7 +208,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnClearTVDatabase.Location = new System.Drawing.Point(272, 16);
       this.btnClearTVDatabase.Name = "btnClearTVDatabase";
       this.btnClearTVDatabase.Size = new System.Drawing.Size(144, 32);
-      this.btnClearTVDatabase.TabIndex = 11;
+      this.btnClearTVDatabase.TabIndex = 1;
       this.btnClearTVDatabase.Text = "Remove all programs from TV database";
       this.btnClearTVDatabase.Click += new System.EventHandler(this.btnClearTVDatabase_Click);
       // 
@@ -221,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnUpdateTvGuide.Location = new System.Drawing.Point(272, 76);
       this.btnUpdateTvGuide.Name = "btnUpdateTvGuide";
       this.btnUpdateTvGuide.Size = new System.Drawing.Size(144, 32);
-      this.btnUpdateTvGuide.TabIndex = 5;
+      this.btnUpdateTvGuide.TabIndex = 9;
       this.btnUpdateTvGuide.Text = "Update TV database with time zone compensation";
       this.btnUpdateTvGuide.Click += new System.EventHandler(this.btnUpdateTvGuide_Click);
       // 
@@ -232,7 +230,7 @@ namespace MediaPortal.Configuration.Sections
       this.RunGrabberButton.Location = new System.Drawing.Point(344, 192);
       this.RunGrabberButton.Name = "RunGrabberButton";
       this.RunGrabberButton.Size = new System.Drawing.Size(72, 22);
-      this.RunGrabberButton.TabIndex = 12;
+      this.RunGrabberButton.TabIndex = 11;
       this.RunGrabberButton.Text = "Run Grabber";
       this.RunGrabberButton.Click += new System.EventHandler(this.RunGrabberButton_Click);
       // 
@@ -243,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
       this.advancedRadioButton.Location = new System.Drawing.Point(16, 100);
       this.advancedRadioButton.Name = "advancedRadioButton";
       this.advancedRadioButton.Size = new System.Drawing.Size(160, 16);
-      this.advancedRadioButton.TabIndex = 55;
+      this.advancedRadioButton.TabIndex = 6;
       this.advancedRadioButton.Text = "Advanced Single Day Grabs";
       this.advancedRadioButton.CheckedChanged += new System.EventHandler(this.advancedRadioButton_CheckedChanged);
       // 
@@ -253,7 +251,7 @@ namespace MediaPortal.Configuration.Sections
       this.compensateTextBox.MaxLength = 3;
       this.compensateTextBox.Name = "compensateTextBox";
       this.compensateTextBox.Size = new System.Drawing.Size(24, 20);
-      this.compensateTextBox.TabIndex = 3;
+      this.compensateTextBox.TabIndex = 5;
       this.compensateTextBox.Text = "0";
       // 
       // useTimeZoneCheckBox
@@ -262,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
       this.useTimeZoneCheckBox.Location = new System.Drawing.Point(16, 56);
       this.useTimeZoneCheckBox.Name = "useTimeZoneCheckBox";
       this.useTimeZoneCheckBox.Size = new System.Drawing.Size(224, 16);
-      this.useTimeZoneCheckBox.TabIndex = 2;
+      this.useTimeZoneCheckBox.TabIndex = 3;
       this.useTimeZoneCheckBox.Text = "Use time zone information from XMLTV file";
       this.useTimeZoneCheckBox.CheckedChanged += new System.EventHandler(this.useTimeZoneCheckBox_CheckedChanged);
       // 
@@ -271,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 88);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(152, 16);
-      this.label1.TabIndex = 50;
+      this.label1.TabIndex = 4;
       this.label1.Text = "Compensate time zone with:";
       // 
       // browseButton
@@ -281,7 +279,7 @@ namespace MediaPortal.Configuration.Sections
       this.browseButton.Location = new System.Drawing.Point(344, 19);
       this.browseButton.Name = "browseButton";
       this.browseButton.Size = new System.Drawing.Size(72, 22);
-      this.browseButton.TabIndex = 1;
+      this.browseButton.TabIndex = 2;
       this.browseButton.Text = "Browse";
       this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
       // 
@@ -292,7 +290,7 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameTextBox.Location = new System.Drawing.Point(128, 20);
       this.folderNameTextBox.Name = "folderNameTextBox";
       this.folderNameTextBox.Size = new System.Drawing.Size(208, 20);
-      this.folderNameTextBox.TabIndex = 0;
+      this.folderNameTextBox.TabIndex = 1;
       this.folderNameTextBox.Text = "";
       // 
       // folderNameLabel
@@ -300,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
       this.folderNameLabel.Location = new System.Drawing.Point(16, 24);
       this.folderNameLabel.Name = "folderNameLabel";
       this.folderNameLabel.Size = new System.Drawing.Size(104, 16);
-      this.folderNameLabel.TabIndex = 47;
+      this.folderNameLabel.TabIndex = 0;
       this.folderNameLabel.Text = "Path to tvguide.xml:";
       // 
       // label6
@@ -308,7 +306,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 156);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(104, 16);
-      this.label6.TabIndex = 44;
+      this.label6.TabIndex = 9;
       this.label6.Text = "Days to download:";
       // 
       // daysToKeepTextBox
@@ -320,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       this.daysToKeepTextBox.MaxLength = 3;
       this.daysToKeepTextBox.Name = "daysToKeepTextBox";
       this.daysToKeepTextBox.Size = new System.Drawing.Size(288, 20);
-      this.daysToKeepTextBox.TabIndex = 9;
+      this.daysToKeepTextBox.TabIndex = 8;
       this.daysToKeepTextBox.Text = "";
       this.daysToKeepTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.daysToKeepTextBox_KeyPress);
       // 
@@ -332,7 +330,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersButton.Location = new System.Drawing.Point(344, 43);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
-      this.parametersButton.TabIndex = 8;
+      this.parametersButton.TabIndex = 4;
       this.parametersButton.Text = "List";
       this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
       // 
@@ -344,7 +342,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersTextBox.Location = new System.Drawing.Point(128, 44);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
-      this.parametersTextBox.TabIndex = 7;
+      this.parametersTextBox.TabIndex = 3;
       this.parametersTextBox.Text = "";
       // 
       // label7
@@ -372,7 +370,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(16, 132);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(120, 16);
-      this.label4.TabIndex = 30;
+      this.label4.TabIndex = 7;
       this.label4.Text = "Days to keep in guide:";
       // 
       // GrabbercomboBox
@@ -383,7 +381,7 @@ namespace MediaPortal.Configuration.Sections
       this.GrabbercomboBox.Location = new System.Drawing.Point(128, 20);
       this.GrabbercomboBox.Name = "GrabbercomboBox";
       this.GrabbercomboBox.Size = new System.Drawing.Size(288, 21);
-      this.GrabbercomboBox.TabIndex = 6;
+      this.GrabbercomboBox.TabIndex = 1;
       this.GrabbercomboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.GrabbercomboBox_KeyPress);
       this.GrabbercomboBox.SelectedIndexChanged += new System.EventHandler(this.GrabbercomboBox_SelectedIndexChanged);
       // 
@@ -392,7 +390,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(64, 16);
-      this.label3.TabIndex = 28;
+      this.label3.TabIndex = 0;
       this.label3.Text = "Grabber:";
       // 
       // basicRadioButton
@@ -402,7 +400,7 @@ namespace MediaPortal.Configuration.Sections
       this.basicRadioButton.Location = new System.Drawing.Point(16, 76);
       this.basicRadioButton.Name = "basicRadioButton";
       this.basicRadioButton.Size = new System.Drawing.Size(120, 16);
-      this.basicRadioButton.TabIndex = 54;
+      this.basicRadioButton.TabIndex = 5;
       this.basicRadioButton.Text = "Basic Multiday Grab";
       this.basicRadioButton.CheckedChanged += new System.EventHandler(this.basicRadioButton_CheckedChanged);
       // 
@@ -411,7 +409,7 @@ namespace MediaPortal.Configuration.Sections
       this.label10.Location = new System.Drawing.Point(280, 24);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(40, 16);
-      this.label10.TabIndex = 63;
+      this.label10.TabIndex = 6;
       this.label10.Text = "day(s)";
       // 
       // label9
@@ -419,7 +417,7 @@ namespace MediaPortal.Configuration.Sections
       this.label9.Location = new System.Drawing.Point(208, 24);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(34, 16);
-      this.label9.TabIndex = 62;
+      this.label9.TabIndex = 4;
       this.label9.Text = "Every";
       // 
       // dayIntervalTextBox
@@ -427,7 +425,7 @@ namespace MediaPortal.Configuration.Sections
       this.dayIntervalTextBox.Location = new System.Drawing.Point(248, 21);
       this.dayIntervalTextBox.Name = "dayIntervalTextBox";
       this.dayIntervalTextBox.Size = new System.Drawing.Size(32, 20);
-      this.dayIntervalTextBox.TabIndex = 3;
+      this.dayIntervalTextBox.TabIndex = 5;
       this.dayIntervalTextBox.Text = "";
       this.dayIntervalTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dayIntervalTextBox_KeyPress);
       // 
@@ -436,7 +434,7 @@ namespace MediaPortal.Configuration.Sections
       this.minutesTextBox.Location = new System.Drawing.Point(168, 21);
       this.minutesTextBox.Name = "minutesTextBox";
       this.minutesTextBox.Size = new System.Drawing.Size(32, 20);
-      this.minutesTextBox.TabIndex = 2;
+      this.minutesTextBox.TabIndex = 3;
       this.minutesTextBox.Text = "";
       this.minutesTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.minutesTextBox_KeyPress);
       // 
@@ -464,7 +462,7 @@ namespace MediaPortal.Configuration.Sections
       this.UserTextBox.Location = new System.Drawing.Point(96, 52);
       this.UserTextBox.Name = "UserTextBox";
       this.UserTextBox.Size = new System.Drawing.Size(120, 20);
-      this.UserTextBox.TabIndex = 5;
+      this.UserTextBox.TabIndex = 8;
       this.UserTextBox.Text = "";
       // 
       // PasswordTextBox
@@ -472,7 +470,7 @@ namespace MediaPortal.Configuration.Sections
       this.PasswordTextBox.Location = new System.Drawing.Point(296, 52);
       this.PasswordTextBox.Name = "PasswordTextBox";
       this.PasswordTextBox.Size = new System.Drawing.Size(120, 20);
-      this.PasswordTextBox.TabIndex = 6;
+      this.PasswordTextBox.TabIndex = 10;
       this.PasswordTextBox.Text = "";
       // 
       // label11
@@ -480,7 +478,7 @@ namespace MediaPortal.Configuration.Sections
       this.label11.Location = new System.Drawing.Point(16, 56);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(80, 16);
-      this.label11.TabIndex = 67;
+      this.label11.TabIndex = 7;
       this.label11.Text = "User account:";
       // 
       // label12
@@ -488,7 +486,7 @@ namespace MediaPortal.Configuration.Sections
       this.label12.Location = new System.Drawing.Point(232, 56);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(64, 16);
-      this.label12.TabIndex = 68;
+      this.label12.TabIndex = 9;
       this.label12.Text = "Password:";
       // 
       // groupBox3
@@ -512,7 +510,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Location = new System.Drawing.Point(16, 248);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(432, 120);
-      this.groupBox3.TabIndex = 2;
+      this.groupBox3.TabIndex = 1;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Windows Task Scheduler Settings";
       // 
@@ -523,7 +521,7 @@ namespace MediaPortal.Configuration.Sections
       this.DeleteTaskButton.Location = new System.Drawing.Point(344, 88);
       this.DeleteTaskButton.Name = "DeleteTaskButton";
       this.DeleteTaskButton.Size = new System.Drawing.Size(72, 22);
-      this.DeleteTaskButton.TabIndex = 4;
+      this.DeleteTaskButton.TabIndex = 12;
       this.DeleteTaskButton.Text = "Delete Task";
       this.DeleteTaskButton.Click += new System.EventHandler(this.DeleteTaskButton_Click);
       // 
@@ -532,7 +530,7 @@ namespace MediaPortal.Configuration.Sections
       this.label13.Location = new System.Drawing.Point(16, 78);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(192, 32);
-      this.label13.TabIndex = 70;
+      this.label13.TabIndex = 11;
       this.label13.Text = "Note: Windows does not run a task if no password is assigned to the user.";
       // 
       // tabControl1
@@ -546,7 +544,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(472, 408);
-      this.tabControl1.TabIndex = 3;
+      this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // tabPage1
@@ -570,7 +568,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Location = new System.Drawing.Point(16, 312);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(432, 56);
-      this.groupBox4.TabIndex = 73;
+      this.groupBox4.TabIndex = 2;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Miscellaneous";
       // 
@@ -582,13 +580,12 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.listView1);
       this.groupBox2.Controls.Add(this.button3);
       this.groupBox2.Controls.Add(this.button2);
-      this.groupBox2.Controls.Add(this.label18);
       this.groupBox2.Controls.Add(this.treeView1);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(16, 144);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 160);
-      this.groupBox2.TabIndex = 72;
+      this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = " DVB-EPG ";
       // 
@@ -603,7 +600,8 @@ namespace MediaPortal.Configuration.Sections
       this.listView1.Location = new System.Drawing.Point(16, 22);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(240, 21);
-      this.listView1.TabIndex = 40;
+      this.listView1.TabIndex = 0;
+      this.listView1.TabStop = false;
       this.listView1.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader1
@@ -618,7 +616,7 @@ namespace MediaPortal.Configuration.Sections
       this.button3.Location = new System.Drawing.Point(344, 120);
       this.button3.Name = "button3";
       this.button3.Size = new System.Drawing.Size(72, 22);
-      this.button3.TabIndex = 38;
+      this.button3.TabIndex = 3;
       this.button3.Text = "None";
       this.button3.Click += new System.EventHandler(this.button3_Click);
       // 
@@ -629,17 +627,9 @@ namespace MediaPortal.Configuration.Sections
       this.button2.Location = new System.Drawing.Point(264, 120);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(72, 22);
-      this.button2.TabIndex = 37;
+      this.button2.TabIndex = 2;
       this.button2.Text = "All";
       this.button2.Click += new System.EventHandler(this.button2_Click);
-      // 
-      // label18
-      // 
-      this.label18.Location = new System.Drawing.Point(168, -64);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(192, 8);
-      this.label18.TabIndex = 36;
-      this.label18.Text = "Only grab those Languages:";
       // 
       // treeView1
       // 
@@ -652,7 +642,7 @@ namespace MediaPortal.Configuration.Sections
       this.treeView1.Name = "treeView1";
       this.treeView1.SelectedImageIndex = -1;
       this.treeView1.Size = new System.Drawing.Size(240, 102);
-      this.treeView1.TabIndex = 35;
+      this.treeView1.TabIndex = 1;
       // 
       // groupBox1
       // 
@@ -672,16 +662,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(432, 120);
-      this.groupBox1.TabIndex = 71;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = " XMLTV ";
       // 
       // label16
       // 
-      this.label16.Location = new System.Drawing.Point(192, 92);
+      this.label16.Location = new System.Drawing.Point(192, 91);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(8, 9);
-      this.label16.TabIndex = 70;
+      this.label16.TabIndex = 6;
       this.label16.Text = ":";
       // 
       // tabPage2
@@ -715,7 +705,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Location = new System.Drawing.Point(16, 16);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(432, 224);
-      this.groupBox5.TabIndex = 70;
+      this.groupBox5.TabIndex = 0;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "Grabber Settings";
       // 
@@ -724,7 +714,7 @@ namespace MediaPortal.Configuration.Sections
       this.label14.Location = new System.Drawing.Point(16, 48);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(64, 16);
-      this.label14.TabIndex = 69;
+      this.label14.TabIndex = 2;
       this.label14.Text = "Parameters:";
       // 
       // TVProgramGuide

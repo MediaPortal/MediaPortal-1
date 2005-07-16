@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 160);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
@@ -210,7 +210,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAC3.Location = new System.Drawing.Point(16, 128);
       this.checkBoxAC3.Name = "checkBoxAC3";
       this.checkBoxAC3.Size = new System.Drawing.Size(320, 16);
-      this.checkBoxAC3.TabIndex = 4;
+      this.checkBoxAC3.TabIndex = 8;
       this.checkBoxAC3.Text = "Use AC3 filter (needed for some soundcards if using SPDIF out)";
       // 
       // dvdNavigatorComboBox
@@ -221,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
       this.dvdNavigatorComboBox.Location = new System.Drawing.Point(168, 92);
       this.dvdNavigatorComboBox.Name = "dvdNavigatorComboBox";
       this.dvdNavigatorComboBox.Size = new System.Drawing.Size(288, 21);
-      this.dvdNavigatorComboBox.TabIndex = 3;
+      this.dvdNavigatorComboBox.TabIndex = 7;
       // 
       // videoCodecComboBox
       // 
@@ -231,7 +231,7 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 68);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
       this.videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoCodecComboBox.TabIndex = 2;
+      this.videoCodecComboBox.TabIndex = 5;
       // 
       // audioCodecComboBox
       // 
@@ -241,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioCodecComboBox.TabIndex = 1;
+      this.audioCodecComboBox.TabIndex = 3;
       // 
       // audioRendererComboBox
       // 
@@ -251,14 +251,14 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 20);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioRendererComboBox.TabIndex = 0;
+      this.audioRendererComboBox.TabIndex = 1;
       // 
       // dvdNavigatorLabel
       // 
       this.dvdNavigatorLabel.Location = new System.Drawing.Point(16, 96);
       this.dvdNavigatorLabel.Name = "dvdNavigatorLabel";
       this.dvdNavigatorLabel.Size = new System.Drawing.Size(88, 15);
-      this.dvdNavigatorLabel.TabIndex = 3;
+      this.dvdNavigatorLabel.TabIndex = 6;
       this.dvdNavigatorLabel.Text = "DVD Navigator:";
       // 
       // videoCodecLabel
@@ -266,7 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecLabel.Location = new System.Drawing.Point(16, 72);
       this.videoCodecLabel.Name = "videoCodecLabel";
       this.videoCodecLabel.Size = new System.Drawing.Size(72, 16);
-      this.videoCodecLabel.TabIndex = 2;
+      this.videoCodecLabel.TabIndex = 4;
       this.videoCodecLabel.Text = "Video codec:";
       // 
       // audioCodecLabel
@@ -274,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecLabel.Location = new System.Drawing.Point(16, 48);
       this.audioCodecLabel.Name = "audioCodecLabel";
       this.audioCodecLabel.Size = new System.Drawing.Size(72, 17);
-      this.audioCodecLabel.TabIndex = 1;
+      this.audioCodecLabel.TabIndex = 2;
       this.audioCodecLabel.Text = "Audio codec:";
       // 
       // audioRendererLabel

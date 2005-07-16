@@ -94,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAddRecordingsToMovie.Location = new System.Drawing.Point(16, 104);
       this.cbAddRecordingsToMovie.Name = "cbAddRecordingsToMovie";
       this.cbAddRecordingsToMovie.Size = new System.Drawing.Size(184, 16);
-      this.cbAddRecordingsToMovie.TabIndex = 12;
+      this.cbAddRecordingsToMovie.TabIndex = 7;
       this.cbAddRecordingsToMovie.Text = "Add recordings to movie database";
       // 
       // endTextBox
@@ -105,7 +105,7 @@ namespace MediaPortal.Configuration.Sections
       this.endTextBox.MaxLength = 3;
       this.endTextBox.Name = "endTextBox";
       this.endTextBox.Size = new System.Drawing.Size(176, 20);
-      this.endTextBox.TabIndex = 3;
+      this.endTextBox.TabIndex = 4;
       this.endTextBox.Text = "";
       this.endTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.endTextBox_KeyPress);
       // 
@@ -117,7 +117,7 @@ namespace MediaPortal.Configuration.Sections
       this.startTextBox.MaxLength = 3;
       this.startTextBox.Name = "startTextBox";
       this.startTextBox.Size = new System.Drawing.Size(176, 20);
-      this.startTextBox.TabIndex = 2;
+      this.startTextBox.TabIndex = 1;
       this.startTextBox.Text = "";
       this.startTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.startTextBox_KeyPress);
       // 
@@ -126,7 +126,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(16, 48);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(88, 16);
-      this.label4.TabIndex = 8;
+      this.label4.TabIndex = 3;
       this.label4.Text = "Stop recording";
       // 
       // label3
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(296, 48);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(160, 16);
-      this.label3.TabIndex = 11;
+      this.label3.TabIndex = 5;
       this.label3.Text = "minute(s) after program ends.";
       // 
       // label2
@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(296, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(168, 16);
-      this.label2.TabIndex = 10;
+      this.label2.TabIndex = 2;
       this.label2.Text = "minute(s) before program starts.";
       // 
       // label1
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(88, 16);
-      this.label1.TabIndex = 9;
+      this.label1.TabIndex = 0;
       this.label1.Text = "Start recording";
       // 
       // cbDeleteWatchedShows
@@ -161,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeleteWatchedShows.Location = new System.Drawing.Point(16, 80);
       this.cbDeleteWatchedShows.Name = "cbDeleteWatchedShows";
       this.cbDeleteWatchedShows.Size = new System.Drawing.Size(232, 16);
-      this.cbDeleteWatchedShows.TabIndex = 3;
+      this.cbDeleteWatchedShows.TabIndex = 6;
       this.cbDeleteWatchedShows.Text = "Automaticly delete recordings after watching";
       // 
       // TVRecording

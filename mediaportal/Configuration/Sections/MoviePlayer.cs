@@ -176,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 136);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
-      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "External Player";
       // 
@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 24);
       this.externalPlayerCheckBox.Name = "externalPlayerCheckBox";
       this.externalPlayerCheckBox.Size = new System.Drawing.Size(232, 16);
-      this.externalPlayerCheckBox.TabIndex = 22;
+      this.externalPlayerCheckBox.TabIndex = 0;
       this.externalPlayerCheckBox.Text = "Use external player (replaces internal player)";
       this.externalPlayerCheckBox.CheckedChanged += new System.EventHandler(this.externalPlayerCheckBox_CheckedChanged);
       // 
@@ -197,7 +197,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersButton.Location = new System.Drawing.Point(384, 76);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
-      this.parametersButton.TabIndex = 3;
+      this.parametersButton.TabIndex = 6;
       this.parametersButton.Text = "List";
       this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
       // 
@@ -208,7 +208,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersTextBox.Location = new System.Drawing.Point(168, 76);
       this.parametersTextBox.Name = "parametersTextBox";
       this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
-      this.parametersTextBox.TabIndex = 2;
+      this.parametersTextBox.TabIndex = 5;
       this.parametersTextBox.Text = "";
       // 
       // label2
@@ -216,7 +216,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(16, 80);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 15);
-      this.label2.TabIndex = 19;
+      this.label2.TabIndex = 4;
       this.label2.Text = "Parameters:";
       // 
       // fileNameButton
@@ -226,7 +226,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton.Location = new System.Drawing.Point(384, 52);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
-      this.fileNameButton.TabIndex = 1;
+      this.fileNameButton.TabIndex = 3;
       this.fileNameButton.Text = "Browse";
       this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
       // 
@@ -237,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 52);
       this.fileNameTextBox.Name = "fileNameTextBox";
       this.fileNameTextBox.Size = new System.Drawing.Size(208, 20);
-      this.fileNameTextBox.TabIndex = 0;
+      this.fileNameTextBox.TabIndex = 2;
       this.fileNameTextBox.Text = "";
       // 
       // label1
@@ -245,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 56);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(80, 16);
-      this.label1.TabIndex = 16;
+      this.label1.TabIndex = 1;
       this.label1.Text = "Path/Filename:";
       // 
       // mpGroupBox1
@@ -264,7 +264,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 128);
-      this.mpGroupBox1.TabIndex = 1;
+      this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Settings";
       // 
@@ -276,14 +276,14 @@ namespace MediaPortal.Configuration.Sections
       this.videoRendererComboBox.Location = new System.Drawing.Point(168, 68);
       this.videoRendererComboBox.Name = "videoRendererComboBox";
       this.videoRendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoRendererComboBox.TabIndex = 1;
+      this.videoRendererComboBox.TabIndex = 5;
       // 
       // label4
       // 
       this.label4.Location = new System.Drawing.Point(16, 72);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(88, 16);
-      this.label4.TabIndex = 27;
+      this.label4.TabIndex = 4;
       this.label4.Text = "Video renderer:";
       // 
       // audioRendererComboBox
@@ -294,14 +294,14 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 92);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioRendererComboBox.TabIndex = 0;
+      this.audioRendererComboBox.TabIndex = 7;
       // 
       // label3
       // 
       this.label3.Location = new System.Drawing.Point(16, 96);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(88, 17);
-      this.label3.TabIndex = 25;
+      this.label3.TabIndex = 6;
       this.label3.Text = "Audio renderer:";
       // 
       // label6
@@ -309,7 +309,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 24);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(72, 16);
-      this.label6.TabIndex = 6;
+      this.label6.TabIndex = 0;
       this.label6.Text = "Video codec:";
       // 
       // audioCodecComboBox
@@ -320,7 +320,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioCodecComboBox.TabIndex = 1;
+      this.audioCodecComboBox.TabIndex = 3;
       // 
       // videoCodecComboBox
       // 
@@ -330,14 +330,14 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
       this.videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoCodecComboBox.TabIndex = 0;
+      this.videoCodecComboBox.TabIndex = 1;
       // 
       // label5
       // 
       this.label5.Location = new System.Drawing.Point(16, 48);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(80, 16);
-      this.label5.TabIndex = 8;
+      this.label5.TabIndex = 2;
       this.label5.Text = "Audio codec:";
       // 
       // MoviePlayer

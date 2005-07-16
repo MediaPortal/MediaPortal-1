@@ -129,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 168);
-      this.groupBox2.TabIndex = 3;
+      this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Settings";
       // 
@@ -140,7 +140,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonSelectFolder.Location = new System.Drawing.Point(384, 52);
       this.buttonSelectFolder.Name = "buttonSelectFolder";
       this.buttonSelectFolder.Size = new System.Drawing.Size(72, 22);
-      this.buttonSelectFolder.TabIndex = 2;
+      this.buttonSelectFolder.TabIndex = 3;
       this.buttonSelectFolder.Text = "Browse";
       this.buttonSelectFolder.Click += new System.EventHandler(this.buttonSelectFolder_Click);
       // 
@@ -157,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboDriveNo.Location = new System.Drawing.Point(168, 100);
       this.comboDriveNo.Name = "comboDriveNo";
       this.comboDriveNo.Size = new System.Drawing.Size(288, 21);
-      this.comboDriveNo.TabIndex = 4;
+      this.comboDriveNo.TabIndex = 7;
       // 
       // comboBoxDrive
       // 
@@ -191,7 +191,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDrive.Location = new System.Drawing.Point(168, 76);
       this.comboBoxDrive.Name = "comboBoxDrive";
       this.comboBoxDrive.Size = new System.Drawing.Size(288, 21);
-      this.comboBoxDrive.TabIndex = 3;
+      this.comboBoxDrive.TabIndex = 5;
       // 
       // textBoxDaemonTools
       // 
@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxDaemonTools.Location = new System.Drawing.Point(168, 53);
       this.textBoxDaemonTools.Name = "textBoxDaemonTools";
       this.textBoxDaemonTools.Size = new System.Drawing.Size(208, 20);
-      this.textBoxDaemonTools.TabIndex = 1;
+      this.textBoxDaemonTools.TabIndex = 2;
       this.textBoxDaemonTools.Text = "";
       // 
       // label4
@@ -216,7 +216,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 56);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(80, 16);
-      this.label3.TabIndex = 5;
+      this.label3.TabIndex = 1;
       this.label3.Text = "Daemon tools:";
       // 
       // label1
@@ -225,7 +225,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Name = "label1";
       this.label1.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.label1.Size = new System.Drawing.Size(80, 16);
-      this.label1.TabIndex = 3;
+      this.label1.TabIndex = 4;
       this.label1.Text = "Virtual drive:";
       // 
       // checkBoxDaemonTools

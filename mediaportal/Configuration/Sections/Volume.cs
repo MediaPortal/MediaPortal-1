@@ -161,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
       this._customTextbox.Location = new System.Drawing.Point(168, 92);
       this._customTextbox.Name = "_customTextbox";
       this._customTextbox.Size = new System.Drawing.Size(288, 20);
-      this._customTextbox.TabIndex = 6;
+      this._customTextbox.TabIndex = 4;
       this._customTextbox.Text = "";
       this._customTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomTable);
       // 
@@ -171,7 +171,7 @@ namespace MediaPortal.Configuration.Sections
       this._useCustomHandler.Location = new System.Drawing.Point(16, 96);
       this._useCustomHandler.Name = "_useCustomHandler";
       this._useCustomHandler.Size = new System.Drawing.Size(80, 16);
-      this._useCustomHandler.TabIndex = 5;
+      this._useCustomHandler.TabIndex = 3;
       this._useCustomHandler.Text = "C&ustom:";
       this._useCustomHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
@@ -181,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
       this._useLogarithmicHandler.Location = new System.Drawing.Point(16, 72);
       this._useLogarithmicHandler.Name = "_useLogarithmicHandler";
       this._useLogarithmicHandler.Size = new System.Drawing.Size(104, 16);
-      this._useLogarithmicHandler.TabIndex = 4;
+      this._useLogarithmicHandler.TabIndex = 2;
       this._useLogarithmicHandler.Text = "&Logarithmic";
       this._useLogarithmicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
@@ -191,7 +191,7 @@ namespace MediaPortal.Configuration.Sections
       this._useWindowsHandler.Location = new System.Drawing.Point(16, 24);
       this._useWindowsHandler.Name = "_useWindowsHandler";
       this._useWindowsHandler.Size = new System.Drawing.Size(120, 16);
-      this._useWindowsHandler.TabIndex = 2;
+      this._useWindowsHandler.TabIndex = 0;
       this._useWindowsHandler.Text = "&Windows default";
       this._useWindowsHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
@@ -201,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
       this._useClassicHandler.Location = new System.Drawing.Point(16, 48);
       this._useClassicHandler.Name = "_useClassicHandler";
       this._useClassicHandler.Size = new System.Drawing.Size(72, 16);
-      this._useClassicHandler.TabIndex = 3;
+      this._useClassicHandler.TabIndex = 1;
       this._useClassicHandler.Text = "&Classic";
       this._useClassicHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 

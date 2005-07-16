@@ -138,7 +138,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel4.Location = new System.Drawing.Point(24, 160);
       this.linkLabel4.Name = "linkLabel4";
       this.linkLabel4.Size = new System.Drawing.Size(224, 16);
-      this.linkLabel4.TabIndex = 21;
+      this.linkLabel4.TabIndex = 7;
       this.linkLabel4.TabStop = true;
       this.linkLabel4.Text = "http://sourceforge.net/projects/mediaportal";
       this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
@@ -148,7 +148,7 @@ namespace MediaPortal.Configuration.Sections
       this.label7.Location = new System.Drawing.Point(16, 144);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(72, 15);
-      this.label7.TabIndex = 20;
+      this.label7.TabIndex = 6;
       this.label7.Text = "Sourceforge:";
       // 
       // linkLabel3
@@ -156,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel3.Location = new System.Drawing.Point(24, 120);
       this.linkLabel3.Name = "linkLabel3";
       this.linkLabel3.Size = new System.Drawing.Size(192, 16);
-      this.linkLabel3.TabIndex = 19;
+      this.linkLabel3.TabIndex = 5;
       this.linkLabel3.TabStop = true;
       this.linkLabel3.Text = "http://www.maisenbachers.de/dokuw";
       this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
@@ -166,7 +166,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 105);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(100, 15);
-      this.label6.TabIndex = 18;
+      this.label6.TabIndex = 4;
       this.label6.Text = "Wiki:";
       // 
       // label5
@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
       this.label5.Location = new System.Drawing.Point(24, 200);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(232, 16);
-      this.label5.TabIndex = 17;
+      this.label5.TabIndex = 9;
       this.label5.Text = "IRC network: EFNet / channel: #MediaPortal";
       // 
       // label4
@@ -182,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(16, 184);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(32, 16);
-      this.label4.TabIndex = 16;
+      this.label4.TabIndex = 8;
       this.label4.Text = "IRC:";
       // 
       // linkLabel2
@@ -190,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel2.Location = new System.Drawing.Point(24, 80);
       this.linkLabel2.Name = "linkLabel2";
       this.linkLabel2.Size = new System.Drawing.Size(304, 16);
-      this.linkLabel2.TabIndex = 15;
+      this.linkLabel2.TabIndex = 3;
       this.linkLabel2.TabStop = true;
       this.linkLabel2.Text = "http://nolanparty.com/mediaportal.sourceforge.net/phpBB2";
       this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 64);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(48, 16);
-      this.label3.TabIndex = 14;
+      this.label3.TabIndex = 2;
       this.label3.Text = "Forums:";
       // 
       // linkLabel1
@@ -208,7 +208,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.Location = new System.Drawing.Point(24, 40);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(176, 16);
-      this.linkLabel1.TabIndex = 13;
+      this.linkLabel1.TabIndex = 1;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "http://mediaportal.sourceforge.net";
       this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
@@ -218,7 +218,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(64, 16);
-      this.label2.TabIndex = 12;
+      this.label2.TabIndex = 0;
       this.label2.Text = "Homepage:";
       // 
       // Project

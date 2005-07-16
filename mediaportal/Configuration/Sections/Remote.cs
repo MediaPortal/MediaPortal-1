@@ -285,7 +285,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlRemotes.Name = "tabControlRemotes";
       this.tabControlRemotes.SelectedIndex = 0;
       this.tabControlRemotes.Size = new System.Drawing.Size(472, 408);
-      this.tabControlRemotes.TabIndex = 5;
+      this.tabControlRemotes.TabIndex = 0;
       // 
       // tabPageMCE
       // 
@@ -310,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(12, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(440, 352);
-      this.groupBox1.TabIndex = 7;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
       // radioButtonEurope
@@ -319,7 +319,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonEurope.Location = new System.Drawing.Point(32, 64);
       this.radioButtonEurope.Name = "radioButtonEurope";
       this.radioButtonEurope.Size = new System.Drawing.Size(104, 16);
-      this.radioButtonEurope.TabIndex = 6;
+      this.radioButtonEurope.TabIndex = 2;
       this.radioButtonEurope.Text = "European version";
       this.radioButtonEurope.CheckedChanged += new System.EventHandler(this.radioButtonEurope_CheckedChanged);
       // 
@@ -329,7 +329,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonUSA.Location = new System.Drawing.Point(32, 48);
       this.radioButtonUSA.Name = "radioButtonUSA";
       this.radioButtonUSA.Size = new System.Drawing.Size(104, 16);
-      this.radioButtonUSA.TabIndex = 5;
+      this.radioButtonUSA.TabIndex = 1;
       this.radioButtonUSA.Text = "USA version";
       this.radioButtonUSA.CheckedChanged += new System.EventHandler(this.radioButtonUSA_CheckedChanged);
       // 
@@ -366,7 +366,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(12, 8);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(440, 56);
-      this.groupBox2.TabIndex = 14;
+      this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       // 
       // btnMapping
@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnMapping.Location = new System.Drawing.Point(352, 20);
       this.btnMapping.Name = "btnMapping";
       this.btnMapping.Size = new System.Drawing.Size(72, 22);
-      this.btnMapping.TabIndex = 13;
+      this.btnMapping.TabIndex = 1;
       this.btnMapping.Text = "Mapping";
       this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
       // 
@@ -386,7 +386,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHCW.Location = new System.Drawing.Point(16, 24);
       this.checkBoxHCW.Name = "checkBoxHCW";
       this.checkBoxHCW.Size = new System.Drawing.Size(144, 16);
-      this.checkBoxHCW.TabIndex = 10;
+      this.checkBoxHCW.TabIndex = 0;
       this.checkBoxHCW.Text = "Use Hauppauge remote";
       this.checkBoxHCW.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
       // 
@@ -400,7 +400,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxInformation.Location = new System.Drawing.Point(12, 240);
       this.groupBoxInformation.Name = "groupBoxInformation";
       this.groupBoxInformation.Size = new System.Drawing.Size(440, 88);
-      this.groupBoxInformation.TabIndex = 12;
+      this.groupBoxInformation.TabIndex = 2;
       this.groupBoxInformation.TabStop = false;
       this.groupBoxInformation.Text = "Information";
       // 
@@ -413,7 +413,7 @@ namespace MediaPortal.Configuration.Sections
       this.infoDriverStatus.Location = new System.Drawing.Point(12, 16);
       this.infoDriverStatus.Name = "infoDriverStatus";
       this.infoDriverStatus.Size = new System.Drawing.Size(414, 64);
-      this.infoDriverStatus.TabIndex = 11;
+      this.infoDriverStatus.TabIndex = 0;
       this.infoDriverStatus.Text = "No problems found.";
       this.infoDriverStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
@@ -433,7 +433,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.Location = new System.Drawing.Point(12, 72);
       this.groupBoxSettings.Name = "groupBoxSettings";
       this.groupBoxSettings.Size = new System.Drawing.Size(440, 160);
-      this.groupBoxSettings.TabIndex = 7;
+      this.groupBoxSettings.TabIndex = 1;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
       // 
@@ -446,7 +446,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2sec.Name = "label2sec";
       this.label2sec.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
       this.label2sec.Size = new System.Drawing.Size(40, 16);
-      this.label2sec.TabIndex = 12;
+      this.label2sec.TabIndex = 6;
       this.label2sec.Text = "2 sec.";
       // 
       // label0sec
@@ -456,7 +456,7 @@ namespace MediaPortal.Configuration.Sections
       this.label0sec.Location = new System.Drawing.Point(112, 136);
       this.label0sec.Name = "label0sec";
       this.label0sec.Size = new System.Drawing.Size(40, 16);
-      this.label0sec.TabIndex = 11;
+      this.label0sec.TabIndex = 5;
       this.label0sec.Text = "0 sec.";
       // 
       // labelDelay
@@ -465,7 +465,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelDelay.Location = new System.Drawing.Point(12, 120);
       this.labelDelay.Name = "labelDelay";
       this.labelDelay.Size = new System.Drawing.Size(96, 23);
-      this.labelDelay.TabIndex = 10;
+      this.labelDelay.TabIndex = 3;
       this.labelDelay.Text = "Repeat-delay:";
       // 
       // trackBarDelay
@@ -479,7 +479,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarDelay.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.trackBarDelay.Size = new System.Drawing.Size(152, 45);
       this.trackBarDelay.SmallChange = 100;
-      this.trackBarDelay.TabIndex = 3;
+      this.trackBarDelay.TabIndex = 4;
       this.trackBarDelay.TickFrequency = 1000;
       this.trackBarDelay.TickStyle = System.Windows.Forms.TickStyle.None;
       // 
@@ -519,7 +519,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefault.Location = new System.Drawing.Point(352, 120);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(72, 22);
-      this.buttonDefault.TabIndex = 9;
+      this.buttonDefault.TabIndex = 7;
       this.buttonDefault.Text = "&Reset";
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 

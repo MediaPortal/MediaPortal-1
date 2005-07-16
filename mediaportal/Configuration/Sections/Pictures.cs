@@ -118,7 +118,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 112);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 160);
-      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Slideshow Settings";
       // 
@@ -129,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
       this.kenburnsTextBox.Location = new System.Drawing.Point(168, 68);
       this.kenburnsTextBox.Name = "kenburnsTextBox";
       this.kenburnsTextBox.Size = new System.Drawing.Size(288, 20);
-      this.kenburnsTextBox.TabIndex = 2;
+      this.kenburnsTextBox.TabIndex = 5;
       this.kenburnsTextBox.Text = "";
       // 
       // label3
@@ -137,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 72);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(96, 16);
-      this.label3.TabIndex = 20;
+      this.label3.TabIndex = 4;
       this.label3.Text = "Ken Burns speed:";
       // 
       // transitionTextBox
@@ -147,7 +147,7 @@ namespace MediaPortal.Configuration.Sections
       this.transitionTextBox.Location = new System.Drawing.Point(168, 44);
       this.transitionTextBox.Name = "transitionTextBox";
       this.transitionTextBox.Size = new System.Drawing.Size(288, 20);
-      this.transitionTextBox.TabIndex = 1;
+      this.transitionTextBox.TabIndex = 3;
       this.transitionTextBox.Text = "";
       // 
       // durationTextBox
@@ -157,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
       this.durationTextBox.Location = new System.Drawing.Point(168, 20);
       this.durationTextBox.Name = "durationTextBox";
       this.durationTextBox.Size = new System.Drawing.Size(288, 20);
-      this.durationTextBox.TabIndex = 0;
+      this.durationTextBox.TabIndex = 1;
       this.durationTextBox.Text = "";
       // 
       // label2
@@ -182,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.repeatSlideshowCheckBox.Location = new System.Drawing.Point(16, 104);
       this.repeatSlideshowCheckBox.Name = "repeatSlideshowCheckBox";
       this.repeatSlideshowCheckBox.Size = new System.Drawing.Size(136, 16);
-      this.repeatSlideshowCheckBox.TabIndex = 0;
+      this.repeatSlideshowCheckBox.TabIndex = 6;
       this.repeatSlideshowCheckBox.Text = "Repeat/loop slideshow";
       // 
       // autoShuffleCheckBox
@@ -191,7 +191,7 @@ namespace MediaPortal.Configuration.Sections
       this.autoShuffleCheckBox.Location = new System.Drawing.Point(16, 128);
       this.autoShuffleCheckBox.Name = "autoShuffleCheckBox";
       this.autoShuffleCheckBox.Size = new System.Drawing.Size(128, 16);
-      this.autoShuffleCheckBox.TabIndex = 1;
+      this.autoShuffleCheckBox.TabIndex = 7;
       this.autoShuffleCheckBox.Text = "Auto shuffle slideshow";
       // 
       // groupBox2
@@ -205,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 104);
-      this.groupBox2.TabIndex = 21;
+      this.groupBox2.TabIndex = 0;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Slideshow Transitions";
       // 
@@ -215,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonKenBurns.Location = new System.Drawing.Point(24, 24);
       this.radioButtonKenBurns.Name = "radioButtonKenBurns";
       this.radioButtonKenBurns.Size = new System.Drawing.Size(176, 16);
-      this.radioButtonKenBurns.TabIndex = 3;
+      this.radioButtonKenBurns.TabIndex = 0;
       this.radioButtonKenBurns.Text = "Use Ken Burns effect on pictures";
       // 
       // radioButtonRandom
@@ -224,7 +224,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonRandom.Location = new System.Drawing.Point(24, 48);
       this.radioButtonRandom.Name = "radioButtonRandom";
       this.radioButtonRandom.Size = new System.Drawing.Size(216, 16);
-      this.radioButtonRandom.TabIndex = 4;
+      this.radioButtonRandom.TabIndex = 1;
       this.radioButtonRandom.Text = "Use random transitions between pictures";
       // 
       // radioButtonXFade
@@ -233,7 +233,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonXFade.Location = new System.Drawing.Point(24, 72);
       this.radioButtonXFade.Name = "radioButtonXFade";
       this.radioButtonXFade.Size = new System.Drawing.Size(208, 16);
-      this.radioButtonXFade.TabIndex = 5;
+      this.radioButtonXFade.TabIndex = 2;
       this.radioButtonXFade.Text = "Use X-fade transition between pictures";
       // 
       // Pictures

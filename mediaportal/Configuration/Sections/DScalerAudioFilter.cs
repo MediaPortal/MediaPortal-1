@@ -90,7 +90,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 168);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxAudioOffset.Location = new System.Drawing.Point(168, 132);
       this.textBoxAudioOffset.Name = "textBoxAudioOffset";
       this.textBoxAudioOffset.Size = new System.Drawing.Size(288, 20);
-      this.textBoxAudioOffset.TabIndex = 22;
+      this.textBoxAudioOffset.TabIndex = 6;
       this.textBoxAudioOffset.Text = "0";
       // 
       // comboBoxSpeakerConfig
@@ -119,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
       this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(288, 21);
-      this.comboBoxSpeakerConfig.TabIndex = 12;
+      this.comboBoxSpeakerConfig.TabIndex = 1;
       this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
       // 
       // checkBoxMPEGOverSPDIF
@@ -128,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxMPEGOverSPDIF.Location = new System.Drawing.Point(16, 104);
       this.checkBoxMPEGOverSPDIF.Name = "checkBoxMPEGOverSPDIF";
       this.checkBoxMPEGOverSPDIF.Size = new System.Drawing.Size(152, 16);
-      this.checkBoxMPEGOverSPDIF.TabIndex = 21;
+      this.checkBoxMPEGOverSPDIF.TabIndex = 4;
       this.checkBoxMPEGOverSPDIF.Text = "MPEG Audio over S/PDIF";
       // 
       // label5
@@ -136,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
       this.label5.Location = new System.Drawing.Point(16, 136);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(152, 16);
-      this.label5.TabIndex = 20;
+      this.label5.TabIndex = 5;
       this.label5.Text = "S/PDIF delay offset (msec.):";
       // 
       // checkBoxSPDIF
@@ -145,7 +145,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxSPDIF.Location = new System.Drawing.Point(16, 56);
       this.checkBoxSPDIF.Name = "checkBoxSPDIF";
       this.checkBoxSPDIF.Size = new System.Drawing.Size(144, 16);
-      this.checkBoxSPDIF.TabIndex = 13;
+      this.checkBoxSPDIF.TabIndex = 2;
       this.checkBoxSPDIF.Text = "Use S/PDIF for AC3/DTS";
       // 
       // checkBoxDynamicRange
@@ -154,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDynamicRange.Location = new System.Drawing.Point(16, 80);
       this.checkBoxDynamicRange.Name = "checkBoxDynamicRange";
       this.checkBoxDynamicRange.Size = new System.Drawing.Size(136, 16);
-      this.checkBoxDynamicRange.TabIndex = 11;
+      this.checkBoxDynamicRange.TabIndex = 3;
       this.checkBoxDynamicRange.Text = "Dynamic Range Control";
       // 
       // label3
@@ -162,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(88, 16);
-      this.label3.TabIndex = 8;
+      this.label3.TabIndex = 0;
       this.label3.Text = "Speaker config:";
       // 
       // DScalerAudioFilter

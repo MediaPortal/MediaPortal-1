@@ -183,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
       this.buildThumbsCheckBox.Location = new System.Drawing.Point(16, 128);
       this.buildThumbsCheckBox.Name = "buildThumbsCheckBox";
       this.buildThumbsCheckBox.Size = new System.Drawing.Size(264, 16);
-      this.buildThumbsCheckBox.TabIndex = 3;
+      this.buildThumbsCheckBox.TabIndex = 1;
       this.buildThumbsCheckBox.Text = "Use coverart embedded in MP3s for thumbnails";
       // 
       // startButton
@@ -193,7 +193,7 @@ namespace MediaPortal.Configuration.Sections
       this.startButton.Location = new System.Drawing.Point(240, 152);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(216, 22);
-      this.startButton.TabIndex = 0;
+      this.startButton.TabIndex = 2;
       this.startButton.Text = "Update database from selected shares";
       this.startButton.Click += new System.EventHandler(this.startButton_Click);
       // 
@@ -206,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.Location = new System.Drawing.Point(16, 24);
       this.sharesListBox.Name = "sharesListBox";
       this.sharesListBox.Size = new System.Drawing.Size(440, 94);
-      this.sharesListBox.TabIndex = 2;
+      this.sharesListBox.TabIndex = 0;
       this.sharesListBox.DoubleClick += new System.EventHandler(this.sharesListBox_DoubleClick);
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
@@ -218,7 +218,7 @@ namespace MediaPortal.Configuration.Sections
       this.cancelButton.Location = new System.Drawing.Point(384, 280);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(72, 22);
-      this.cancelButton.TabIndex = 0;
+      this.cancelButton.TabIndex = 2;
       this.cancelButton.Text = "Cancel";
       this.cancelButton.Visible = false;
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -244,7 +244,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileLabel.Location = new System.Drawing.Point(16, 24);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 16);
-      this.fileLabel.TabIndex = 3;
+      this.fileLabel.TabIndex = 0;
       // 
       // progressBar
       // 
@@ -253,7 +253,7 @@ namespace MediaPortal.Configuration.Sections
       this.progressBar.Location = new System.Drawing.Point(16, 48);
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(440, 16);
-      this.progressBar.TabIndex = 0;
+      this.progressBar.TabIndex = 1;
       // 
       // MusicDatabase
       // 

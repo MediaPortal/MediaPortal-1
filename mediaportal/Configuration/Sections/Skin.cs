@@ -190,8 +190,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // previewPictureBox
       // 
-      this.previewPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.previewPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.previewPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
       this.previewPictureBox.Location = new System.Drawing.Point(86, 132);
       this.previewPictureBox.Name = "previewPictureBox";

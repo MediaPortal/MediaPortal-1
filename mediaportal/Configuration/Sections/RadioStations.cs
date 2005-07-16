@@ -143,7 +143,7 @@ namespace MediaPortal.Configuration.Sections
       this.upButton.Location = new System.Drawing.Point(296, 344);
       this.upButton.Name = "upButton";
       this.upButton.Size = new System.Drawing.Size(72, 22);
-      this.upButton.TabIndex = 5;
+      this.upButton.TabIndex = 4;
       this.upButton.Text = "Up";
       this.upButton.Click += new System.EventHandler(this.upButton_Click);
       // 
@@ -155,7 +155,7 @@ namespace MediaPortal.Configuration.Sections
       this.downButton.Location = new System.Drawing.Point(376, 344);
       this.downButton.Name = "downButton";
       this.downButton.Size = new System.Drawing.Size(72, 22);
-      this.downButton.TabIndex = 6;
+      this.downButton.TabIndex = 5;
       this.downButton.Text = "Down";
       this.downButton.Click += new System.EventHandler(this.downButton_Click);
       // 
@@ -255,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(472, 408);
-      this.tabControl1.TabIndex = 1;
+      this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // tabPage1
@@ -293,7 +293,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnMapChannelToCard.Location = new System.Drawing.Point(212, 168);
       this.btnMapChannelToCard.Name = "btnMapChannelToCard";
       this.btnMapChannelToCard.Size = new System.Drawing.Size(40, 22);
-      this.btnMapChannelToCard.TabIndex = 23;
+      this.btnMapChannelToCard.TabIndex = 3;
       this.btnMapChannelToCard.Text = ">>";
       this.btnMapChannelToCard.Click += new System.EventHandler(this.btnMapChannelToCard_Click);
       // 
@@ -304,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(212, 200);
       this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
       this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(40, 22);
-      this.btnUnmapChannelFromCard.TabIndex = 22;
+      this.btnUnmapChannelFromCard.TabIndex = 4;
       this.btnUnmapChannelFromCard.Text = "<<";
       this.btnUnmapChannelFromCard.Click += new System.EventHandler(this.btnUnmapChannelFromCard_Click);
       // 
@@ -317,7 +317,7 @@ namespace MediaPortal.Configuration.Sections
       this.listviewCardChannels.Location = new System.Drawing.Point(272, 56);
       this.listviewCardChannels.Name = "listviewCardChannels";
       this.listviewCardChannels.Size = new System.Drawing.Size(176, 304);
-      this.listviewCardChannels.TabIndex = 21;
+      this.listviewCardChannels.TabIndex = 5;
       this.listviewCardChannels.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader10
@@ -334,7 +334,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewRadioChannels.Location = new System.Drawing.Point(16, 56);
       this.listViewRadioChannels.Name = "listViewRadioChannels";
       this.listViewRadioChannels.Size = new System.Drawing.Size(176, 304);
-      this.listViewRadioChannels.TabIndex = 20;
+      this.listViewRadioChannels.TabIndex = 2;
       this.listViewRadioChannels.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader11
@@ -347,7 +347,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 24);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(144, 16);
-      this.label6.TabIndex = 17;
+      this.label6.TabIndex = 0;
       this.label6.Text = "Map stations to radio card:";
       // 
       // comboBoxCard
@@ -357,7 +357,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxCard.Location = new System.Drawing.Point(160, 20);
       this.comboBoxCard.Name = "comboBoxCard";
       this.comboBoxCard.Size = new System.Drawing.Size(288, 21);
-      this.comboBoxCard.TabIndex = 16;
+      this.comboBoxCard.TabIndex = 1;
       this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
       // 
       // RadioStations

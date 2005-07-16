@@ -417,7 +417,7 @@ namespace MediaPortal.Configuration.Sections
       this.idTextBox.MaxLength = 3;
       this.idTextBox.Name = "idTextBox";
       this.idTextBox.Size = new System.Drawing.Size(40, 20);
-      this.idTextBox.TabIndex = 34;
+      this.idTextBox.TabIndex = 6;
       this.idTextBox.Text = "";
       this.idTextBox.Visible = false;
       this.idTextBox.TextChanged += new System.EventHandler(this.idTextBox_TextChanged);
@@ -431,7 +431,7 @@ namespace MediaPortal.Configuration.Sections
       this.idComboBox.Location = new System.Drawing.Point(168, 324);
       this.idComboBox.Name = "idComboBox";
       this.idComboBox.Size = new System.Drawing.Size(288, 21);
-      this.idComboBox.TabIndex = 33;
+      this.idComboBox.TabIndex = 7;
       this.idComboBox.SelectedIndexChanged += new System.EventHandler(this.idComboBox_SelectedIndexChanged);
       // 
       // addButton
@@ -442,7 +442,7 @@ namespace MediaPortal.Configuration.Sections
       this.addButton.Location = new System.Drawing.Point(304, 272);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
-      this.addButton.TabIndex = 4;
+      this.addButton.TabIndex = 1;
       this.addButton.Text = "Add";
       this.addButton.Click += new System.EventHandler(this.addButton_Click);
       // 
@@ -454,7 +454,7 @@ namespace MediaPortal.Configuration.Sections
       this.deleteButton.Location = new System.Drawing.Point(384, 272);
       this.deleteButton.Name = "deleteButton";
       this.deleteButton.Size = new System.Drawing.Size(72, 22);
-      this.deleteButton.TabIndex = 3;
+      this.deleteButton.TabIndex = 2;
       this.deleteButton.Text = "Delete";
       this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
       // 
@@ -466,7 +466,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton.Location = new System.Drawing.Point(384, 371);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
-      this.fileNameButton.TabIndex = 32;
+      this.fileNameButton.TabIndex = 12;
       this.fileNameButton.Text = "Browse";
       this.fileNameButton.Click += new System.EventHandler(this.fileNameButton_Click);
       // 
@@ -478,7 +478,7 @@ namespace MediaPortal.Configuration.Sections
       this.soundTextBox.Location = new System.Drawing.Point(168, 372);
       this.soundTextBox.Name = "soundTextBox";
       this.soundTextBox.Size = new System.Drawing.Size(208, 20);
-      this.soundTextBox.TabIndex = 31;
+      this.soundTextBox.TabIndex = 11;
       this.soundTextBox.Text = "";
       this.soundTextBox.TextChanged += new System.EventHandler(this.soundTextBox_TextChanged);
       // 
@@ -488,7 +488,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(16, 376);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(40, 16);
-      this.label4.TabIndex = 30;
+      this.label4.TabIndex = 10;
       this.label4.Text = "Sound:";
       // 
       // keyTextBox
@@ -501,7 +501,7 @@ namespace MediaPortal.Configuration.Sections
       this.keyTextBox.Name = "keyTextBox";
       this.keyTextBox.ReadOnly = true;
       this.keyTextBox.Size = new System.Drawing.Size(288, 20);
-      this.keyTextBox.TabIndex = 29;
+      this.keyTextBox.TabIndex = 9;
       this.keyTextBox.Text = "";
       this.keyTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyTextBox_KeyDown);
       // 
@@ -511,7 +511,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 352);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(32, 16);
-      this.label3.TabIndex = 28;
+      this.label3.TabIndex = 8;
       this.label3.Text = "Key:";
       // 
       // label2
@@ -531,7 +531,7 @@ namespace MediaPortal.Configuration.Sections
       this.descriptionTextBox.Location = new System.Drawing.Point(168, 300);
       this.descriptionTextBox.Name = "descriptionTextBox";
       this.descriptionTextBox.Size = new System.Drawing.Size(288, 20);
-      this.descriptionTextBox.TabIndex = 2;
+      this.descriptionTextBox.TabIndex = 4;
       this.descriptionTextBox.Text = "";
       this.descriptionTextBox.TextChanged += new System.EventHandler(this.descriptionTextBox_TextChanged);
       // 
@@ -541,7 +541,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 304);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 16);
-      this.label1.TabIndex = 1;
+      this.label1.TabIndex = 3;
       this.label1.Text = "Description:";
       // 
       // keyTreeView

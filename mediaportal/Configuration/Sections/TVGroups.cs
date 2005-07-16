@@ -164,7 +164,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(472, 408);
-      this.tabControl1.TabIndex = 9;
+      this.tabControl1.TabIndex = 0;
       // 
       // tabPage2
       // 
@@ -290,7 +290,8 @@ namespace MediaPortal.Configuration.Sections
       this.listView1.Location = new System.Drawing.Point(16, 56);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(176, 21);
-      this.listView1.TabIndex = 11;
+      this.listView1.TabIndex = 2;
+      this.listView1.TabStop = false;
       this.listView1.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader1
@@ -309,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
       this.treeViewChannels.SelectedImageIndex = -1;
       this.treeViewChannels.Size = new System.Drawing.Size(176, 256);
       this.treeViewChannels.Sorted = true;
-      this.treeViewChannels.TabIndex = 10;
+      this.treeViewChannels.TabIndex = 3;
       // 
       // btnGrpChnDown
       // 
@@ -318,7 +319,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnGrpChnDown.Location = new System.Drawing.Point(364, 344);
       this.btnGrpChnDown.Name = "btnGrpChnDown";
       this.btnGrpChnDown.Size = new System.Drawing.Size(84, 22);
-      this.btnGrpChnDown.TabIndex = 9;
+      this.btnGrpChnDown.TabIndex = 8;
       this.btnGrpChnDown.Text = "Down";
       this.btnGrpChnDown.Click += new System.EventHandler(this.btnGrpChnDown_Click);
       // 
@@ -329,7 +330,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnGrpChnUp.Location = new System.Drawing.Point(272, 344);
       this.btnGrpChnUp.Name = "btnGrpChnUp";
       this.btnGrpChnUp.Size = new System.Drawing.Size(80, 22);
-      this.btnGrpChnUp.TabIndex = 8;
+      this.btnGrpChnUp.TabIndex = 7;
       this.btnGrpChnUp.Text = "Up";
       this.btnGrpChnUp.Click += new System.EventHandler(this.btnGrpChnUp_Click);
       // 
@@ -340,7 +341,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonMap.Location = new System.Drawing.Point(212, 168);
       this.buttonMap.Name = "buttonMap";
       this.buttonMap.Size = new System.Drawing.Size(40, 22);
-      this.buttonMap.TabIndex = 7;
+      this.buttonMap.TabIndex = 4;
       this.buttonMap.Text = ">>";
       this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
       // 
@@ -351,7 +352,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnUnmap.Location = new System.Drawing.Point(212, 200);
       this.btnUnmap.Name = "btnUnmap";
       this.btnUnmap.Size = new System.Drawing.Size(40, 22);
-      this.btnUnmap.TabIndex = 6;
+      this.btnUnmap.TabIndex = 5;
       this.btnUnmap.Text = "<<";
       this.btnUnmap.Click += new System.EventHandler(this.btnUnmap_Click);
       // 
@@ -366,7 +367,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewTVGroupChannels.Location = new System.Drawing.Point(272, 56);
       this.listViewTVGroupChannels.Name = "listViewTVGroupChannels";
       this.listViewTVGroupChannels.Size = new System.Drawing.Size(176, 276);
-      this.listViewTVGroupChannels.TabIndex = 5;
+      this.listViewTVGroupChannels.TabIndex = 6;
       this.listViewTVGroupChannels.View = System.Windows.Forms.View.Details;
       this.listViewTVGroupChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTVGroupChannels_ColumnClick);
       // 
@@ -380,7 +381,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(104, 16);
-      this.label1.TabIndex = 1;
+      this.label1.TabIndex = 0;
       this.label1.Text = "TV Channel Group:";
       // 
       // comboBox1
@@ -391,7 +392,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBox1.Location = new System.Drawing.Point(160, 20);
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(288, 21);
-      this.comboBox1.TabIndex = 0;
+      this.comboBox1.TabIndex = 1;
       this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
       // TVGroups

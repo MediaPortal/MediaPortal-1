@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 272);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
       this.label8.Location = new System.Drawing.Point(16, 200);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(64, 16);
-      this.label8.TabIndex = 11;
+      this.label8.TabIndex = 8;
       this.label8.Text = "Saturation:";
       // 
       // label7
@@ -128,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
       this.label7.Location = new System.Drawing.Point(16, 160);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(32, 16);
-      this.label7.TabIndex = 10;
+      this.label7.TabIndex = 6;
       this.label7.Text = "Hue:";
       // 
       // label6
@@ -136,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(16, 120);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(56, 16);
-      this.label6.TabIndex = 9;
+      this.label6.TabIndex = 4;
       this.label6.Text = "Contrast:";
       // 
       // label4
@@ -144,7 +144,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(16, 80);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(64, 16);
-      this.label4.TabIndex = 8;
+      this.label4.TabIndex = 2;
       this.label4.Text = "Brightness:";
       // 
       // cbDeinterlace
@@ -160,14 +160,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 236);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 3;
+      this.cbDeinterlace.TabIndex = 11;
       // 
       // label2
       // 
       this.label2.Location = new System.Drawing.Point(16, 240);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(112, 16);
-      this.label2.TabIndex = 2;
+      this.label2.TabIndex = 10;
       this.label2.Text = "Deinterlace method:";
       // 
       // cbForcedSubtitles
@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbSaturation.Maximum = 200;
       this.tbSaturation.Name = "tbSaturation";
       this.tbSaturation.Size = new System.Drawing.Size(304, 45);
-      this.tbSaturation.TabIndex = 7;
+      this.tbSaturation.TabIndex = 9;
       this.tbSaturation.TickFrequency = 20;
       this.tbSaturation.Value = 100;
       // 
@@ -212,7 +212,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbHue.Maximum = 360;
       this.tbHue.Name = "tbHue";
       this.tbHue.Size = new System.Drawing.Size(304, 45);
-      this.tbHue.TabIndex = 6;
+      this.tbHue.TabIndex = 7;
       this.tbHue.TickFrequency = 32;
       this.tbHue.Value = 180;
       // 
@@ -236,7 +236,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbBrightness.Maximum = 255;
       this.tbBrightness.Name = "tbBrightness";
       this.tbBrightness.Size = new System.Drawing.Size(304, 45);
-      this.tbBrightness.TabIndex = 4;
+      this.tbBrightness.TabIndex = 3;
       this.tbBrightness.TickFrequency = 16;
       this.tbBrightness.Value = 128;
       // 

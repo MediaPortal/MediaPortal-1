@@ -147,14 +147,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 92);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 31;
+      this.cbDeinterlace.TabIndex = 7;
       // 
       // label8
       // 
       this.label8.Location = new System.Drawing.Point(16, 96);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(96, 16);
-      this.label8.TabIndex = 30;
+      this.label8.TabIndex = 6;
       this.label8.Text = "Deinterlace mode:";
       // 
       // defaultZoomModeComboBox
@@ -172,14 +172,14 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 116);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 2;
+      this.defaultZoomModeComboBox.TabIndex = 9;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 120);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 29;
+      this.label6.TabIndex = 8;
       this.label6.Text = "Default zoom mode:";
       // 
       // rendererComboBox
@@ -190,14 +190,14 @@ namespace MediaPortal.Configuration.Sections
       this.rendererComboBox.Location = new System.Drawing.Point(168, 68);
       this.rendererComboBox.Name = "rendererComboBox";
       this.rendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.rendererComboBox.TabIndex = 1;
+      this.rendererComboBox.TabIndex = 5;
       // 
       // label2
       // 
       this.label2.Location = new System.Drawing.Point(16, 72);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(88, 16);
-      this.label2.TabIndex = 9;
+      this.label2.TabIndex = 4;
       this.label2.Text = "Video renderer:";
       // 
       // videoCodecComboBox
@@ -208,14 +208,14 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
       this.videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoCodecComboBox.TabIndex = 0;
+      this.videoCodecComboBox.TabIndex = 1;
       // 
       // label5
       // 
       this.label5.Location = new System.Drawing.Point(16, 24);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(72, 16);
-      this.label5.TabIndex = 6;
+      this.label5.TabIndex = 0;
       this.label5.Text = "Video codec:";
       // 
       // label3
@@ -223,7 +223,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 48);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(72, 16);
-      this.label3.TabIndex = 8;
+      this.label3.TabIndex = 2;
       this.label3.Text = "Audio codec:";
       // 
       // audioCodecComboBox
@@ -234,7 +234,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioCodecComboBox.TabIndex = 1;
+      this.audioCodecComboBox.TabIndex = 3;
       // 
       // radioButton1
       // 
@@ -254,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 160);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 80);
-      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "TV Tuner";
       // 
@@ -268,14 +268,14 @@ namespace MediaPortal.Configuration.Sections
       this.countryComboBox.Name = "countryComboBox";
       this.countryComboBox.Size = new System.Drawing.Size(288, 21);
       this.countryComboBox.Sorted = true;
-      this.countryComboBox.TabIndex = 1;
+      this.countryComboBox.TabIndex = 3;
       // 
       // label4
       // 
       this.label4.Location = new System.Drawing.Point(16, 48);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(48, 16);
-      this.label4.TabIndex = 11;
+      this.label4.TabIndex = 2;
       this.label4.Text = "Country:";
       // 
       // inputComboBox
@@ -289,14 +289,14 @@ namespace MediaPortal.Configuration.Sections
       this.inputComboBox.Location = new System.Drawing.Point(168, 20);
       this.inputComboBox.Name = "inputComboBox";
       this.inputComboBox.Size = new System.Drawing.Size(288, 21);
-      this.inputComboBox.TabIndex = 0;
+      this.inputComboBox.TabIndex = 1;
       // 
       // label1
       // 
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(72, 16);
-      this.label1.TabIndex = 7;
+      this.label1.TabIndex = 0;
       this.label1.Text = "Input source:";
       // 
       // groupBox4
@@ -310,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Location = new System.Drawing.Point(0, 248);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(472, 88);
-      this.groupBox4.TabIndex = 3;
+      this.groupBox4.TabIndex = 2;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Timeshifting";
       // 

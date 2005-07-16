@@ -123,7 +123,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 208);
-      this.groupBox1.TabIndex = 1;
+      this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
       // lblUSBUIRTVersion
@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 168);
       this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
       this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 32);
-      this.lblUSBUIRTVersion.TabIndex = 14;
+      this.lblUSBUIRTVersion.TabIndex = 6;
       this.lblUSBUIRTVersion.Text = "Version";
       // 
       // label1
@@ -141,7 +141,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(16, 168);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(144, 16);
-      this.label1.TabIndex = 13;
+      this.label1.TabIndex = 5;
       this.label1.Text = "USBUIRT version detected:";
       this.label1.Click += new System.EventHandler(this.label1_Click);
       // 
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
       this.tunerCommandsButton.Location = new System.Drawing.Point(296, 56);
       this.tunerCommandsButton.Name = "tunerCommandsButton";
       this.tunerCommandsButton.Size = new System.Drawing.Size(160, 23);
-      this.tunerCommandsButton.TabIndex = 12;
+      this.tunerCommandsButton.TabIndex = 8;
       this.tunerCommandsButton.Text = "Learn settopbox commands";
       this.tunerCommandsButton.Click += new System.EventHandler(this.tunerCommandsButton_Click);
       // 
@@ -163,7 +163,7 @@ namespace MediaPortal.Configuration.Sections
       this.internalCommandsButton.Location = new System.Drawing.Point(296, 24);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
-      this.internalCommandsButton.TabIndex = 11;
+      this.internalCommandsButton.TabIndex = 7;
       this.internalCommandsButton.Text = "Learn Media Portal commands";
       this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
       // 
@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
       this.enterCheckBox.Location = new System.Drawing.Point(32, 96);
       this.enterCheckBox.Name = "enterCheckBox";
       this.enterCheckBox.Size = new System.Drawing.Size(192, 16);
-      this.enterCheckBox.TabIndex = 10;
+      this.enterCheckBox.TabIndex = 3;
       this.enterCheckBox.Text = "Send \'Enter\' for changing channels";
       // 
       // digitCheckBox
@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration.Sections
       this.digitCheckBox.Location = new System.Drawing.Point(32, 72);
       this.digitCheckBox.Name = "digitCheckBox";
       this.digitCheckBox.Size = new System.Drawing.Size(176, 16);
-      this.digitCheckBox.TabIndex = 9;
+      this.digitCheckBox.TabIndex = 2;
       this.digitCheckBox.Text = "Use 3 digits for channel selection";
       // 
       // outputCheckBox
@@ -193,7 +193,7 @@ namespace MediaPortal.Configuration.Sections
       this.outputCheckBox.Location = new System.Drawing.Point(16, 48);
       this.outputCheckBox.Name = "outputCheckBox";
       this.outputCheckBox.Size = new System.Drawing.Size(208, 16);
-      this.outputCheckBox.TabIndex = 8;
+      this.outputCheckBox.TabIndex = 1;
       this.outputCheckBox.Text = "Let Media Portal control your settopbox";
       this.outputCheckBox.CheckedChanged += new System.EventHandler(this.outputCheckBox_CheckedChanged);
       // 
@@ -203,7 +203,7 @@ namespace MediaPortal.Configuration.Sections
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
       this.inputCheckBox.Size = new System.Drawing.Size(208, 16);
-      this.inputCheckBox.TabIndex = 7;
+      this.inputCheckBox.TabIndex = 0;
       this.inputCheckBox.Text = "Use your remote to control Media Portal";
       // 
       // statusLabel
@@ -214,7 +214,7 @@ namespace MediaPortal.Configuration.Sections
       this.statusLabel.Location = new System.Drawing.Point(16, 128);
       this.statusLabel.Name = "statusLabel";
       this.statusLabel.Size = new System.Drawing.Size(440, 24);
-      this.statusLabel.TabIndex = 1;
+      this.statusLabel.TabIndex = 4;
       this.statusLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
       // groupBox2
@@ -228,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Location = new System.Drawing.Point(0, 216);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 104);
-      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "General Information";
       // 
@@ -237,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(16, 72);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(96, 16);
-      this.label3.TabIndex = 2;
+      this.label3.TabIndex = 1;
       this.label3.Text = "More information:";
       // 
       // linkLabel1
@@ -245,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.Location = new System.Drawing.Point(112, 72);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(120, 16);
-      this.linkLabel1.TabIndex = 1;
+      this.linkLabel1.TabIndex = 2;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "http://www.usbuirt.com";
       // 

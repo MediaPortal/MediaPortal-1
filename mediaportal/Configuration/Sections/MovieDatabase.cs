@@ -363,7 +363,7 @@ namespace MediaPortal.Configuration.Sections
       this.startButton.Location = new System.Drawing.Point(216, 128);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(216, 22);
-      this.startButton.TabIndex = 0;
+      this.startButton.TabIndex = 1;
       this.startButton.Text = "Update database from selected shares";
       this.startButton.Click += new System.EventHandler(this.startButton_Click);
       // 
@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.Location = new System.Drawing.Point(16, 24);
       this.sharesListBox.Name = "sharesListBox";
       this.sharesListBox.Size = new System.Drawing.Size(416, 94);
-      this.sharesListBox.TabIndex = 2;
+      this.sharesListBox.TabIndex = 0;
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
       // 
@@ -387,7 +387,7 @@ namespace MediaPortal.Configuration.Sections
       this.cancelButton.Location = new System.Drawing.Point(360, 120);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(72, 22);
-      this.cancelButton.TabIndex = 0;
+      this.cancelButton.TabIndex = 6;
       this.cancelButton.Text = "Cancel";
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
@@ -417,7 +417,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelLine2.Location = new System.Drawing.Point(16, 72);
       this.labelLine2.Name = "labelLine2";
       this.labelLine2.Size = new System.Drawing.Size(416, 16);
-      this.labelLine2.TabIndex = 5;
+      this.labelLine2.TabIndex = 4;
       // 
       // labelLine1
       // 
@@ -426,14 +426,14 @@ namespace MediaPortal.Configuration.Sections
       this.labelLine1.Location = new System.Drawing.Point(16, 56);
       this.labelLine1.Name = "labelLine1";
       this.labelLine1.Size = new System.Drawing.Size(416, 16);
-      this.labelLine1.TabIndex = 4;
+      this.labelLine1.TabIndex = 3;
       // 
       // fileLabel
       // 
       this.fileLabel.Location = new System.Drawing.Point(16, 40);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(416, 16);
-      this.fileLabel.TabIndex = 3;
+      this.fileLabel.TabIndex = 2;
       // 
       // countLabel
       // 
@@ -442,7 +442,7 @@ namespace MediaPortal.Configuration.Sections
       this.countLabel.Location = new System.Drawing.Point(96, 24);
       this.countLabel.Name = "countLabel";
       this.countLabel.Size = new System.Drawing.Size(336, 16);
-      this.countLabel.TabIndex = 2;
+      this.countLabel.TabIndex = 1;
       // 
       // label2
       // 
@@ -450,7 +450,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(80, 16);
-      this.label2.TabIndex = 1;
+      this.label2.TabIndex = 0;
       this.label2.Text = "Scanned files:";
       // 
       // progressBar
@@ -460,7 +460,7 @@ namespace MediaPortal.Configuration.Sections
       this.progressBar.Location = new System.Drawing.Point(16, 96);
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(416, 16);
-      this.progressBar.TabIndex = 0;
+      this.progressBar.TabIndex = 5;
       // 
       // tabControl1
       // 
@@ -473,7 +473,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(472, 408);
-      this.tabControl1.TabIndex = 2;
+      this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // tabPage1
@@ -502,7 +502,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl2.Name = "tabControl2";
       this.tabControl2.SelectedIndex = 0;
       this.tabControl2.Size = new System.Drawing.Size(448, 368);
-      this.tabControl2.TabIndex = 31;
+      this.tabControl2.TabIndex = 0;
       this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
       // 
       // tabPage3
@@ -552,7 +552,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Location = new System.Drawing.Point(0, 0);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(440, 336);
-      this.groupBox3.TabIndex = 40;
+      this.groupBox3.TabIndex = 0;
       this.groupBox3.TabStop = false;
       // 
       // buttonImport
@@ -562,7 +562,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonImport.Location = new System.Drawing.Point(200, 312);
       this.buttonImport.Name = "buttonImport";
       this.buttonImport.Size = new System.Drawing.Size(72, 17);
-      this.buttonImport.TabIndex = 14;
+      this.buttonImport.TabIndex = 26;
       this.buttonImport.Text = "Import";
       this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
       // 
@@ -573,7 +573,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnDelete.Location = new System.Drawing.Point(360, 312);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(72, 17);
-      this.btnDelete.TabIndex = 16;
+      this.btnDelete.TabIndex = 28;
       this.btnDelete.Text = "Delete";
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
@@ -584,7 +584,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbWritingCredits.Location = new System.Drawing.Point(88, 140);
       this.tbWritingCredits.Name = "tbWritingCredits";
       this.tbWritingCredits.Size = new System.Drawing.Size(336, 20);
-      this.tbWritingCredits.TabIndex = 6;
+      this.tbWritingCredits.TabIndex = 12;
       this.tbWritingCredits.Text = "";
       // 
       // label18
@@ -592,7 +592,7 @@ namespace MediaPortal.Configuration.Sections
       this.label18.Location = new System.Drawing.Point(8, 144);
       this.label18.Name = "label18";
       this.label18.Size = new System.Drawing.Size(88, 16);
-      this.label18.TabIndex = 67;
+      this.label18.TabIndex = 11;
       this.label18.Text = "Writing Credits:";
       // 
       // tbPlotOutline
@@ -602,7 +602,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbPlotOutline.Location = new System.Drawing.Point(88, 68);
       this.tbPlotOutline.Name = "tbPlotOutline";
       this.tbPlotOutline.Size = new System.Drawing.Size(336, 20);
-      this.tbPlotOutline.TabIndex = 3;
+      this.tbPlotOutline.TabIndex = 6;
       this.tbPlotOutline.Text = "";
       // 
       // label17
@@ -610,7 +610,7 @@ namespace MediaPortal.Configuration.Sections
       this.label17.Location = new System.Drawing.Point(8, 72);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(64, 16);
-      this.label17.TabIndex = 66;
+      this.label17.TabIndex = 5;
       this.label17.Text = "Plot outline:";
       // 
       // tbVotes
@@ -619,7 +619,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbVotes.Location = new System.Drawing.Point(88, 276);
       this.tbVotes.Name = "tbVotes";
       this.tbVotes.Size = new System.Drawing.Size(96, 20);
-      this.tbVotes.TabIndex = 12;
+      this.tbVotes.TabIndex = 24;
       this.tbVotes.Text = "";
       // 
       // label16
@@ -628,7 +628,7 @@ namespace MediaPortal.Configuration.Sections
       this.label16.Location = new System.Drawing.Point(8, 280);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(40, 16);
-      this.label16.TabIndex = 65;
+      this.label16.TabIndex = 23;
       this.label16.Text = "Votes:";
       // 
       // buttonLookupMovie
@@ -638,7 +638,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonLookupMovie.Location = new System.Drawing.Point(352, 43);
       this.buttonLookupMovie.Name = "buttonLookupMovie";
       this.buttonLookupMovie.Size = new System.Drawing.Size(72, 22);
-      this.buttonLookupMovie.TabIndex = 2;
+      this.buttonLookupMovie.TabIndex = 4;
       this.buttonLookupMovie.Text = "Lookup";
       this.buttonLookupMovie.Click += new System.EventHandler(this.buttonLookupMovie_Click);
       // 
@@ -649,7 +649,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnSave.Location = new System.Drawing.Point(280, 312);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(72, 17);
-      this.btnSave.TabIndex = 15;
+      this.btnSave.TabIndex = 27;
       this.btnSave.Text = "Save";
       this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
       // 
@@ -660,7 +660,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbTagline.Location = new System.Drawing.Point(88, 92);
       this.tbTagline.Name = "tbTagline";
       this.tbTagline.Size = new System.Drawing.Size(336, 20);
-      this.tbTagline.TabIndex = 4;
+      this.tbTagline.TabIndex = 8;
       this.tbTagline.Text = "";
       // 
       // label4
@@ -669,7 +669,7 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Location = new System.Drawing.Point(8, 232);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(32, 16);
-      this.label4.TabIndex = 47;
+      this.label4.TabIndex = 15;
       this.label4.Text = "Year:";
       // 
       // cbWatched
@@ -680,7 +680,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbWatched.Name = "cbWatched";
       this.cbWatched.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
       this.cbWatched.Size = new System.Drawing.Size(96, 16);
-      this.cbWatched.TabIndex = 13;
+      this.cbWatched.TabIndex = 25;
       this.cbWatched.Text = "Watched          ";
       // 
       // tbDescription
@@ -693,7 +693,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDescription.Name = "tbDescription";
       this.tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
       this.tbDescription.Size = new System.Drawing.Size(336, 60);
-      this.tbDescription.TabIndex = 7;
+      this.tbDescription.TabIndex = 14;
       this.tbDescription.Text = "";
       // 
       // label3
@@ -701,7 +701,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Location = new System.Drawing.Point(8, 48);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(32, 16);
-      this.label3.TabIndex = 44;
+      this.label3.TabIndex = 2;
       this.label3.Text = "Title:";
       // 
       // label13
@@ -709,7 +709,7 @@ namespace MediaPortal.Configuration.Sections
       this.label13.Location = new System.Drawing.Point(8, 168);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(64, 16);
-      this.label13.TabIndex = 64;
+      this.label13.TabIndex = 13;
       this.label13.Text = "Description:";
       // 
       // cbTitle
@@ -720,7 +720,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbTitle.Location = new System.Drawing.Point(88, 19);
       this.cbTitle.Name = "cbTitle";
       this.cbTitle.Size = new System.Drawing.Size(336, 21);
-      this.cbTitle.TabIndex = 0;
+      this.cbTitle.TabIndex = 1;
       this.cbTitle.SelectedIndexChanged += new System.EventHandler(this.cbTitle_SelectedIndexChanged);
       // 
       // tbMPAARating
@@ -729,7 +729,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbMPAARating.Location = new System.Drawing.Point(328, 252);
       this.tbMPAARating.Name = "tbMPAARating";
       this.tbMPAARating.Size = new System.Drawing.Size(96, 20);
-      this.tbMPAARating.TabIndex = 11;
+      this.tbMPAARating.TabIndex = 22;
       this.tbMPAARating.Text = "";
       // 
       // label11
@@ -738,7 +738,7 @@ namespace MediaPortal.Configuration.Sections
       this.label11.Location = new System.Drawing.Point(248, 256);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(80, 16);
-      this.label11.TabIndex = 63;
+      this.label11.TabIndex = 21;
       this.label11.Text = "MPAA Rating:";
       // 
       // label6
@@ -747,7 +747,7 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Location = new System.Drawing.Point(248, 232);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(40, 16);
-      this.label6.TabIndex = 51;
+      this.label6.TabIndex = 17;
       this.label6.Text = "Rating:";
       // 
       // tbYear
@@ -756,7 +756,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbYear.Location = new System.Drawing.Point(88, 228);
       this.tbYear.Name = "tbYear";
       this.tbYear.Size = new System.Drawing.Size(96, 20);
-      this.tbYear.TabIndex = 8;
+      this.tbYear.TabIndex = 16;
       this.tbYear.Text = "";
       // 
       // label10
@@ -764,7 +764,7 @@ namespace MediaPortal.Configuration.Sections
       this.label10.Location = new System.Drawing.Point(8, 96);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(48, 16);
-      this.label10.TabIndex = 62;
+      this.label10.TabIndex = 7;
       this.label10.Text = "Tagline:";
       // 
       // tbDirector
@@ -774,7 +774,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDirector.Location = new System.Drawing.Point(88, 116);
       this.tbDirector.Name = "tbDirector";
       this.tbDirector.Size = new System.Drawing.Size(336, 20);
-      this.tbDirector.TabIndex = 5;
+      this.tbDirector.TabIndex = 10;
       this.tbDirector.Text = "";
       // 
       // label9
@@ -782,7 +782,7 @@ namespace MediaPortal.Configuration.Sections
       this.label9.Location = new System.Drawing.Point(8, 120);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(48, 16);
-      this.label9.TabIndex = 59;
+      this.label9.TabIndex = 9;
       this.label9.Text = "Director:";
       // 
       // tbDuration
@@ -791,7 +791,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDuration.Location = new System.Drawing.Point(88, 252);
       this.tbDuration.Name = "tbDuration";
       this.tbDuration.Size = new System.Drawing.Size(96, 20);
-      this.tbDuration.TabIndex = 10;
+      this.tbDuration.TabIndex = 20;
       this.tbDuration.Text = "";
       // 
       // label1
@@ -799,7 +799,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(8, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(56, 16);
-      this.label1.TabIndex = 42;
+      this.label1.TabIndex = 0;
       this.label1.Text = "Title:";
       // 
       // label8
@@ -808,7 +808,7 @@ namespace MediaPortal.Configuration.Sections
       this.label8.Location = new System.Drawing.Point(8, 256);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(56, 16);
-      this.label8.TabIndex = 56;
+      this.label8.TabIndex = 19;
       this.label8.Text = "Duration:";
       // 
       // tbRating
@@ -817,7 +817,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbRating.Location = new System.Drawing.Point(328, 228);
       this.tbRating.Name = "tbRating";
       this.tbRating.Size = new System.Drawing.Size(96, 20);
-      this.tbRating.TabIndex = 9;
+      this.tbRating.TabIndex = 18;
       this.tbRating.Text = "";
       // 
       // tbTitle
@@ -827,7 +827,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbTitle.Location = new System.Drawing.Point(88, 44);
       this.tbTitle.Name = "tbTitle";
       this.tbTitle.Size = new System.Drawing.Size(256, 20);
-      this.tbTitle.TabIndex = 1;
+      this.tbTitle.TabIndex = 3;
       this.tbTitle.Text = "";
       // 
       // tabPage6
@@ -861,7 +861,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonRemoveFile.Location = new System.Drawing.Point(352, 304);
       this.buttonRemoveFile.Name = "buttonRemoveFile";
       this.buttonRemoveFile.Size = new System.Drawing.Size(72, 22);
-      this.buttonRemoveFile.TabIndex = 5;
+      this.buttonRemoveFile.TabIndex = 2;
       this.buttonRemoveFile.Text = "Remove";
       this.buttonRemoveFile.Click += new System.EventHandler(this.buttonRemoveFile_Click);
       // 
@@ -872,7 +872,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonAddFile.Location = new System.Drawing.Point(272, 304);
       this.buttonAddFile.Name = "buttonAddFile";
       this.buttonAddFile.Size = new System.Drawing.Size(72, 22);
-      this.buttonAddFile.TabIndex = 4;
+      this.buttonAddFile.TabIndex = 1;
       this.buttonAddFile.Text = "Add";
       this.buttonAddFile.Click += new System.EventHandler(this.buttonAddFile_Click);
       // 
@@ -886,7 +886,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewFiles.Location = new System.Drawing.Point(16, 24);
       this.listViewFiles.Name = "listViewFiles";
       this.listViewFiles.Size = new System.Drawing.Size(408, 272);
-      this.listViewFiles.TabIndex = 3;
+      this.listViewFiles.TabIndex = 0;
       this.listViewFiles.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader4
@@ -928,7 +928,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxNewActor.Location = new System.Drawing.Point(16, 270);
       this.textBoxNewActor.Name = "textBoxNewActor";
       this.textBoxNewActor.Size = new System.Drawing.Size(152, 20);
-      this.textBoxNewActor.TabIndex = 25;
+      this.textBoxNewActor.TabIndex = 4;
       this.textBoxNewActor.Text = "";
       // 
       // buttonDeleteActor
@@ -938,7 +938,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDeleteActor.Location = new System.Drawing.Point(96, 296);
       this.buttonDeleteActor.Name = "buttonDeleteActor";
       this.buttonDeleteActor.Size = new System.Drawing.Size(72, 22);
-      this.buttonDeleteActor.TabIndex = 24;
+      this.buttonDeleteActor.TabIndex = 6;
       this.buttonDeleteActor.Text = "Remove";
       this.buttonDeleteActor.Click += new System.EventHandler(this.buttonDeleteActor_Click);
       // 
@@ -949,7 +949,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonNewActor.Location = new System.Drawing.Point(16, 296);
       this.buttonNewActor.Name = "buttonNewActor";
       this.buttonNewActor.Size = new System.Drawing.Size(72, 22);
-      this.buttonNewActor.TabIndex = 23;
+      this.buttonNewActor.TabIndex = 5;
       this.buttonNewActor.Text = "Add";
       this.buttonNewActor.Click += new System.EventHandler(this.buttonNewActor_Click);
       // 
@@ -960,7 +960,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonUnmapActors.Location = new System.Drawing.Point(184, 152);
       this.buttonUnmapActors.Name = "buttonUnmapActors";
       this.buttonUnmapActors.Size = new System.Drawing.Size(40, 22);
-      this.buttonUnmapActors.TabIndex = 22;
+      this.buttonUnmapActors.TabIndex = 2;
       this.buttonUnmapActors.Text = "<<";
       this.buttonUnmapActors.Click += new System.EventHandler(this.buttonUnmapActors_Click);
       // 
@@ -971,7 +971,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonMapActors.Location = new System.Drawing.Point(184, 120);
       this.buttonMapActors.Name = "buttonMapActors";
       this.buttonMapActors.Size = new System.Drawing.Size(40, 22);
-      this.buttonMapActors.TabIndex = 20;
+      this.buttonMapActors.TabIndex = 1;
       this.buttonMapActors.Text = ">>";
       this.buttonMapActors.Click += new System.EventHandler(this.buttonMapActors_Click);
       // 
@@ -986,7 +986,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewMovieActors.Name = "listViewMovieActors";
       this.listViewMovieActors.Size = new System.Drawing.Size(184, 240);
       this.listViewMovieActors.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewMovieActors.TabIndex = 18;
+      this.listViewMovieActors.TabIndex = 3;
       this.listViewMovieActors.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader3
@@ -1009,7 +1009,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewAllActors.Name = "listViewAllActors";
       this.listViewAllActors.Size = new System.Drawing.Size(152, 240);
       this.listViewAllActors.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewAllActors.TabIndex = 17;
+      this.listViewAllActors.TabIndex = 0;
       this.listViewAllActors.View = System.Windows.Forms.View.Details;
       // 
       // chName
@@ -1051,7 +1051,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxNewGenre.Location = new System.Drawing.Point(16, 270);
       this.textBoxNewGenre.Name = "textBoxNewGenre";
       this.textBoxNewGenre.Size = new System.Drawing.Size(152, 20);
-      this.textBoxNewGenre.TabIndex = 17;
+      this.textBoxNewGenre.TabIndex = 4;
       this.textBoxNewGenre.Text = "";
       // 
       // btnDeleteGenre
@@ -1061,7 +1061,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnDeleteGenre.Location = new System.Drawing.Point(96, 296);
       this.btnDeleteGenre.Name = "btnDeleteGenre";
       this.btnDeleteGenre.Size = new System.Drawing.Size(72, 22);
-      this.btnDeleteGenre.TabIndex = 16;
+      this.btnDeleteGenre.TabIndex = 6;
       this.btnDeleteGenre.Text = "Remove";
       this.btnDeleteGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
       // 
@@ -1072,7 +1072,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonNewGenre.Location = new System.Drawing.Point(16, 296);
       this.buttonNewGenre.Name = "buttonNewGenre";
       this.buttonNewGenre.Size = new System.Drawing.Size(72, 22);
-      this.buttonNewGenre.TabIndex = 15;
+      this.buttonNewGenre.TabIndex = 5;
       this.buttonNewGenre.Text = "Add";
       this.buttonNewGenre.Click += new System.EventHandler(this.buttonNewGenre_Click);
       // 
@@ -1083,7 +1083,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonUnmapGenre.Location = new System.Drawing.Point(184, 152);
       this.buttonUnmapGenre.Name = "buttonUnmapGenre";
       this.buttonUnmapGenre.Size = new System.Drawing.Size(40, 22);
-      this.buttonUnmapGenre.TabIndex = 14;
+      this.buttonUnmapGenre.TabIndex = 2;
       this.buttonUnmapGenre.Text = "<<";
       this.buttonUnmapGenre.Click += new System.EventHandler(this.buttonUnmapGenre_Click);
       // 
@@ -1094,7 +1094,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonMapGenre.Location = new System.Drawing.Point(184, 120);
       this.buttonMapGenre.Name = "buttonMapGenre";
       this.buttonMapGenre.Size = new System.Drawing.Size(40, 22);
-      this.buttonMapGenre.TabIndex = 12;
+      this.buttonMapGenre.TabIndex = 1;
       this.buttonMapGenre.Text = ">>";
       this.buttonMapGenre.Click += new System.EventHandler(this.buttonMapGenre_Click);
       // 
@@ -1108,7 +1108,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewGenres.Name = "listViewGenres";
       this.listViewGenres.Size = new System.Drawing.Size(184, 240);
       this.listViewGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewGenres.TabIndex = 10;
+      this.listViewGenres.TabIndex = 3;
       this.listViewGenres.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader1
@@ -1126,7 +1126,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewAllGenres.Name = "listViewAllGenres";
       this.listViewAllGenres.Size = new System.Drawing.Size(152, 240);
       this.listViewAllGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewAllGenres.TabIndex = 9;
+      this.listViewAllGenres.TabIndex = 0;
       this.listViewAllGenres.View = System.Windows.Forms.View.Details;
       // 
       // columnHeader2
@@ -1166,7 +1166,7 @@ namespace MediaPortal.Configuration.Sections
       this.label19.Location = new System.Drawing.Point(16, 48);
       this.label19.Name = "label19";
       this.label19.Size = new System.Drawing.Size(96, 16);
-      this.label19.TabIndex = 38;
+      this.label19.TabIndex = 3;
       this.label19.Text = "Available Images:";
       // 
       // comboBoxPictures
@@ -1177,7 +1177,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxPictures.Location = new System.Drawing.Point(136, 44);
       this.comboBoxPictures.Name = "comboBoxPictures";
       this.comboBoxPictures.Size = new System.Drawing.Size(288, 21);
-      this.comboBoxPictures.TabIndex = 37;
+      this.comboBoxPictures.TabIndex = 4;
       this.comboBoxPictures.SelectedIndexChanged += new System.EventHandler(this.comboBoxPictures_SelectedIndexChanged);
       // 
       // btnLookupImage
@@ -1187,7 +1187,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnLookupImage.Location = new System.Drawing.Point(352, 19);
       this.btnLookupImage.Name = "btnLookupImage";
       this.btnLookupImage.Size = new System.Drawing.Size(72, 22);
-      this.btnLookupImage.TabIndex = 36;
+      this.btnLookupImage.TabIndex = 2;
       this.btnLookupImage.Text = "Lookup";
       this.btnLookupImage.Click += new System.EventHandler(this.btnLookupImage_Click);
       // 
@@ -1196,7 +1196,7 @@ namespace MediaPortal.Configuration.Sections
       this.label15.Location = new System.Drawing.Point(16, 24);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(80, 16);
-      this.label15.TabIndex = 35;
+      this.label15.TabIndex = 0;
       this.label15.Text = "Image-URL:";
       // 
       // textBoxPictureURL
@@ -1206,7 +1206,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxPictureURL.Location = new System.Drawing.Point(136, 20);
       this.textBoxPictureURL.Name = "textBoxPictureURL";
       this.textBoxPictureURL.Size = new System.Drawing.Size(208, 20);
-      this.textBoxPictureURL.TabIndex = 34;
+      this.textBoxPictureURL.TabIndex = 1;
       this.textBoxPictureURL.Text = "";
       // 
       // pictureBox1
