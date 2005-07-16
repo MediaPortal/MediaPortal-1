@@ -43,6 +43,12 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.ComboBox cbTransponder;
 		private System.Windows.Forms.Label lblStatus;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.ComboBox cbTransponder2;
+		private System.Windows.Forms.ComboBox cbTransponder3;
+		private System.Windows.Forms.ComboBox cbTransponder4;
 		int m_currentDiseqc=1;
 
 		public Wizard_DVBSTV() : this("DVB-S TV")
@@ -87,6 +93,12 @@ namespace MediaPortal.Configuration.Sections
 			this.button3 = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.cbTransponder2 = new System.Windows.Forms.ComboBox();
+			this.cbTransponder3 = new System.Windows.Forms.ComboBox();
+			this.cbTransponder4 = new System.Windows.Forms.ComboBox();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -94,6 +106,12 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.cbTransponder4);
+			this.groupBox3.Controls.Add(this.cbTransponder3);
+			this.groupBox3.Controls.Add(this.cbTransponder2);
+			this.groupBox3.Controls.Add(this.label3);
+			this.groupBox3.Controls.Add(this.label2);
+			this.groupBox3.Controls.Add(this.label1);
 			this.groupBox3.Controls.Add(this.cbTransponder);
 			this.groupBox3.Controls.Add(this.panel1);
 			this.groupBox3.Controls.Add(this.lblStatus);
@@ -112,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
 			// cbTransponder
 			// 
 			this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder.Location = new System.Drawing.Point(136, 72);
+			this.cbTransponder.Location = new System.Drawing.Point(152, 56);
 			this.cbTransponder.Name = "cbTransponder";
 			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
 			this.cbTransponder.TabIndex = 14;
@@ -128,14 +146,14 @@ namespace MediaPortal.Configuration.Sections
 			// lblStatus
 			// 
 			this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblStatus.Location = new System.Drawing.Point(40, 169);
+			this.lblStatus.Location = new System.Drawing.Point(40, 200);
 			this.lblStatus.Name = "lblStatus";
 			this.lblStatus.Size = new System.Drawing.Size(400, 87);
 			this.lblStatus.TabIndex = 11;
 			// 
 			// progressBar3
 			// 
-			this.progressBar3.Location = new System.Drawing.Point(32, 128);
+			this.progressBar3.Location = new System.Drawing.Point(32, 160);
 			this.progressBar3.Name = "progressBar3";
 			this.progressBar3.Size = new System.Drawing.Size(416, 16);
 			this.progressBar3.Step = 1;
@@ -144,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
 			// button3
 			// 
 			this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button3.Location = new System.Drawing.Point(344, 72);
+			this.button3.Location = new System.Drawing.Point(360, 304);
 			this.button3.Name = "button3";
 			this.button3.TabIndex = 3;
 			this.button3.Text = "Scan...";
@@ -152,10 +170,11 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(32, 72);
+			this.label7.Location = new System.Drawing.Point(24, 56);
 			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(120, 16);
 			this.label7.TabIndex = 2;
-			this.label7.Text = "Transponder:";
+			this.label7.Text = "Transponder for LNB1:";
 			// 
 			// label8
 			// 
@@ -165,6 +184,54 @@ namespace MediaPortal.Configuration.Sections
 			this.label8.TabIndex = 0;
 			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your transponder an" +
 				"d press auto tune to scan for the tv and radio channels";
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(24, 80);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(120, 16);
+			this.label1.TabIndex = 15;
+			this.label1.Text = "Transponder for LNB2:";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(24, 104);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(120, 16);
+			this.label2.TabIndex = 16;
+			this.label2.Text = "Transponder for LNB3:";
+			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(24, 128);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(120, 16);
+			this.label3.TabIndex = 17;
+			this.label3.Text = "Transponder for LNB4:";
+			// 
+			// cbTransponder2
+			// 
+			this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbTransponder2.Location = new System.Drawing.Point(152, 80);
+			this.cbTransponder2.Name = "cbTransponder2";
+			this.cbTransponder2.Size = new System.Drawing.Size(192, 21);
+			this.cbTransponder2.TabIndex = 18;
+			// 
+			// cbTransponder3
+			// 
+			this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbTransponder3.Location = new System.Drawing.Point(152, 104);
+			this.cbTransponder3.Name = "cbTransponder3";
+			this.cbTransponder3.Size = new System.Drawing.Size(192, 21);
+			this.cbTransponder3.TabIndex = 19;
+			// 
+			// cbTransponder4
+			// 
+			this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cbTransponder4.Location = new System.Drawing.Point(152, 128);
+			this.cbTransponder4.Name = "cbTransponder4";
+			this.cbTransponder4.Size = new System.Drawing.Size(192, 21);
+			this.cbTransponder4.TabIndex = 20;
 			// 
 			// Wizard_DVBSTV
 			// 
@@ -186,36 +253,66 @@ namespace MediaPortal.Configuration.Sections
 		{
 			lblStatus.Text="";
 			cbTransponder.Items.Clear();
+			cbTransponder2.Items.Clear();
+			cbTransponder3.Items.Clear();
+			cbTransponder4.Items.Clear();
 			string [] files = System.IO.Directory.GetFiles( System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters");
 			foreach (string file in files)
 			{
 				if (file.ToLower().IndexOf(".tpl") >=0)
 				{
 					cbTransponder.Items.Add(System.IO.Path.GetFileName(file));
+					cbTransponder2.Items.Add(System.IO.Path.GetFileName(file));
+					cbTransponder3.Items.Add(System.IO.Path.GetFileName(file));
+					cbTransponder4.Items.Add(System.IO.Path.GetFileName(file));
 				}
 			}
 			if (cbTransponder.Items.Count>0)
 				cbTransponder.SelectedIndex=0;
+			if (cbTransponder2.Items.Count>0)
+				cbTransponder2.SelectedIndex=0;
+			if (cbTransponder3.Items.Count>0)
+				cbTransponder3.SelectedIndex=0;
+			if (cbTransponder4.Items.Count>0)
+				cbTransponder4.SelectedIndex=0;
+
+			m_diseqcLoops=1;
+			cbTransponder2.Enabled=false;
+			cbTransponder3.Enabled=false;
+			cbTransponder4.Enabled=false;
+
+			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
+			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
+			{
+				if(xmlreader.GetValueAsBool("dvbs","useLNB2",false)==true)
+				{
+					m_diseqcLoops++;
+					cbTransponder2.Enabled=true;
+				}
+				if(xmlreader.GetValueAsBool("dvbs","useLNB3",false)==true)
+				{
+					m_diseqcLoops++;
+					cbTransponder3.Enabled=false;
+				}
+				if(xmlreader.GetValueAsBool("dvbs","useLNB4",false)==true)
+				{
+					m_diseqcLoops++;
+					cbTransponder4.Enabled=false;
+				}
+			}
 
 		}
 
 		void LoadFrequencies()
 		{
-			m_diseqcLoops=1;
-			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
-			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
-			{
-				if(xmlreader.GetValueAsBool("dvbs","useLNB2",false)==true)
-					m_diseqcLoops++;
-				if(xmlreader.GetValueAsBool("dvbs","useLNB3",false)==true)
-					m_diseqcLoops++;
-				if(xmlreader.GetValueAsBool("dvbs","useLNB4",false)==true)
-					m_diseqcLoops++;
-			}
 
 			currentIndex=-1;
 
-			string countryName=(string)cbTransponder.SelectedItem;
+			string countryName=String.Empty;
+			if (m_diseqcLoops==1) countryName=(string)cbTransponder.SelectedItem;
+			if (m_diseqcLoops==2) countryName=(string)cbTransponder2.SelectedItem;
+			if (m_diseqcLoops==3) countryName=(string)cbTransponder3.SelectedItem;
+			if (m_diseqcLoops==4) countryName=(string)cbTransponder4.SelectedItem;
 			if (countryName==String.Empty) return;
 			count = 0;
 			string line;
@@ -367,6 +464,7 @@ namespace MediaPortal.Configuration.Sections
 				{
 					m_currentDiseqc++;
 					currentIndex=-1;
+					LoadFrequencies();
 				}
 				return;
 			}

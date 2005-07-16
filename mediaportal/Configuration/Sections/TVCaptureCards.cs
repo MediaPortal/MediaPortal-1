@@ -412,7 +412,7 @@ namespace MediaPortal.Configuration.Sections
 						TVCaptureDevice cd		= new TVCaptureDevice();
 						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
 						cd.VideoDevice				= (string)availableVideoDevices[i];
-						cd.CommercialName			= "Skystar 2";
+						cd.CommercialName			= "General H/W encoding card";
 						cd.IsBDACard					= false;
 						cd.IsMCECard					= false;
 						cd.SupportsMPEG2			= true;
