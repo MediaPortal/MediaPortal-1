@@ -220,7 +220,7 @@ namespace MediaPortal.TV.Recording
 				if (reentrant) return;
 				reentrant=true;
 
-//				/timer1.Enabled=false;
+				timer1.Enabled=false;
 				if (currentIndex >= count)
 				{
 					if(m_currentDiseqc>=m_diseqcLoops)
@@ -248,7 +248,7 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 				reentrant=false;
-//				timer1.Enabled=true;
+				timer1.Enabled=true;
 			}
 		}
 
