@@ -93,163 +93,180 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.cbTransponder = new System.Windows.Forms.ComboBox();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.lblStatus = new System.Windows.Forms.Label();
-			this.progressBar3 = new System.Windows.Forms.ProgressBar();
-			this.button3 = new System.Windows.Forms.Button();
-			this.label7 = new System.Windows.Forms.Label();
-			this.label8 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.cbTransponder2 = new System.Windows.Forms.ComboBox();
-			this.cbTransponder3 = new System.Windows.Forms.ComboBox();
-			this.cbTransponder4 = new System.Windows.Forms.ComboBox();
-			this.groupBox3.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// groupBox3
-			// 
-			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox3.Controls.Add(this.cbTransponder4);
-			this.groupBox3.Controls.Add(this.cbTransponder3);
-			this.groupBox3.Controls.Add(this.cbTransponder2);
-			this.groupBox3.Controls.Add(this.label3);
-			this.groupBox3.Controls.Add(this.label2);
-			this.groupBox3.Controls.Add(this.label1);
-			this.groupBox3.Controls.Add(this.cbTransponder);
-			this.groupBox3.Controls.Add(this.panel1);
-			this.groupBox3.Controls.Add(this.lblStatus);
-			this.groupBox3.Controls.Add(this.progressBar3);
-			this.groupBox3.Controls.Add(this.button3);
-			this.groupBox3.Controls.Add(this.label7);
-			this.groupBox3.Controls.Add(this.label8);
-			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox3.Location = new System.Drawing.Point(8, 0);
-			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(464, 360);
-			this.groupBox3.TabIndex = 1;
-			this.groupBox3.TabStop = false;
-			this.groupBox3.Text = "Setup digital tv (DVBS Satellite)";
-			// 
-			// cbTransponder
-			// 
-			this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder.Location = new System.Drawing.Point(152, 56);
-			this.cbTransponder.Name = "cbTransponder";
-			this.cbTransponder.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder.TabIndex = 14;
-			this.cbTransponder.SelectedIndexChanged += new System.EventHandler(this.cbTransponder_SelectedIndexChanged);
-			// 
-			// panel1
-			// 
-			this.panel1.Location = new System.Drawing.Point(432, 328);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(1, 1);
-			this.panel1.TabIndex = 13;
-			// 
-			// lblStatus
-			// 
-			this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.lblStatus.Location = new System.Drawing.Point(40, 200);
-			this.lblStatus.Name = "lblStatus";
-			this.lblStatus.Size = new System.Drawing.Size(400, 87);
-			this.lblStatus.TabIndex = 11;
-			// 
-			// progressBar3
-			// 
-			this.progressBar3.Location = new System.Drawing.Point(32, 160);
-			this.progressBar3.Name = "progressBar3";
-			this.progressBar3.Size = new System.Drawing.Size(416, 16);
-			this.progressBar3.Step = 1;
-			this.progressBar3.TabIndex = 4;
-			// 
-			// button3
-			// 
-			this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button3.Location = new System.Drawing.Point(360, 304);
-			this.button3.Name = "button3";
-			this.button3.TabIndex = 3;
-			this.button3.Text = "Scan...";
-			this.button3.Click += new System.EventHandler(this.button3_Click);
-			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(24, 56);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(120, 16);
-			this.label7.TabIndex = 2;
-			this.label7.Text = "Transponder for LNB1:";
-			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(24, 24);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(432, 40);
-			this.label8.TabIndex = 0;
-			this.label8.Text = "Mediaportal has detected one or more digital Tv cards. Select your transponder an" +
-				"d press auto tune to scan for the tv and radio channels";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(24, 80);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(120, 16);
-			this.label1.TabIndex = 15;
-			this.label1.Text = "Transponder for LNB2:";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(24, 104);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(120, 16);
-			this.label2.TabIndex = 16;
-			this.label2.Text = "Transponder for LNB3:";
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(24, 128);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(120, 16);
-			this.label3.TabIndex = 17;
-			this.label3.Text = "Transponder for LNB4:";
-			// 
-			// cbTransponder2
-			// 
-			this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder2.Location = new System.Drawing.Point(152, 80);
-			this.cbTransponder2.Name = "cbTransponder2";
-			this.cbTransponder2.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder2.TabIndex = 18;
-			// 
-			// cbTransponder3
-			// 
-			this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder3.Location = new System.Drawing.Point(152, 104);
-			this.cbTransponder3.Name = "cbTransponder3";
-			this.cbTransponder3.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder3.TabIndex = 19;
-			// 
-			// cbTransponder4
-			// 
-			this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbTransponder4.Location = new System.Drawing.Point(152, 128);
-			this.cbTransponder4.Name = "cbTransponder4";
-			this.cbTransponder4.Size = new System.Drawing.Size(192, 21);
-			this.cbTransponder4.TabIndex = 20;
-			// 
-			// Wizard_DVBSTV
-			// 
-			this.Controls.Add(this.groupBox3);
-			this.Name = "Wizard_DVBSTV";
-			this.Size = new System.Drawing.Size(488, 368);
-			this.groupBox3.ResumeLayout(false);
-			this.ResumeLayout(false);
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.cbTransponder4 = new System.Windows.Forms.ComboBox();
+      this.cbTransponder3 = new System.Windows.Forms.ComboBox();
+      this.cbTransponder2 = new System.Windows.Forms.ComboBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.cbTransponder = new System.Windows.Forms.ComboBox();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.lblStatus = new System.Windows.Forms.Label();
+      this.progressBar3 = new System.Windows.Forms.ProgressBar();
+      this.button3 = new System.Windows.Forms.Button();
+      this.label7 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
+      this.groupBox3.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.cbTransponder4);
+      this.groupBox3.Controls.Add(this.cbTransponder3);
+      this.groupBox3.Controls.Add(this.cbTransponder2);
+      this.groupBox3.Controls.Add(this.label3);
+      this.groupBox3.Controls.Add(this.label2);
+      this.groupBox3.Controls.Add(this.label1);
+      this.groupBox3.Controls.Add(this.cbTransponder);
+      this.groupBox3.Controls.Add(this.panel1);
+      this.groupBox3.Controls.Add(this.lblStatus);
+      this.groupBox3.Controls.Add(this.progressBar3);
+      this.groupBox3.Controls.Add(this.button3);
+      this.groupBox3.Controls.Add(this.label7);
+      this.groupBox3.Controls.Add(this.label8);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox3.Location = new System.Drawing.Point(0, 0);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(472, 408);
+      this.groupBox3.TabIndex = 0;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Setup Digital TV (DVB-S Satellite)";
+      // 
+      // cbTransponder4
+      // 
+      this.cbTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder4.Location = new System.Drawing.Point(152, 132);
+      this.cbTransponder4.Name = "cbTransponder4";
+      this.cbTransponder4.Size = new System.Drawing.Size(304, 21);
+      this.cbTransponder4.TabIndex = 8;
+      // 
+      // cbTransponder3
+      // 
+      this.cbTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder3.Location = new System.Drawing.Point(152, 108);
+      this.cbTransponder3.Name = "cbTransponder3";
+      this.cbTransponder3.Size = new System.Drawing.Size(304, 21);
+      this.cbTransponder3.TabIndex = 6;
+      // 
+      // cbTransponder2
+      // 
+      this.cbTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder2.Location = new System.Drawing.Point(152, 84);
+      this.cbTransponder2.Name = "cbTransponder2";
+      this.cbTransponder2.Size = new System.Drawing.Size(304, 21);
+      this.cbTransponder2.TabIndex = 4;
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(16, 136);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(120, 16);
+      this.label3.TabIndex = 7;
+      this.label3.Text = "Transponder for LNB4:";
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 112);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(120, 16);
+      this.label2.TabIndex = 5;
+      this.label2.Text = "Transponder for LNB3:";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 88);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(120, 16);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "Transponder for LNB2:";
+      // 
+      // cbTransponder
+      // 
+      this.cbTransponder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbTransponder.Location = new System.Drawing.Point(152, 60);
+      this.cbTransponder.Name = "cbTransponder";
+      this.cbTransponder.Size = new System.Drawing.Size(304, 21);
+      this.cbTransponder.TabIndex = 2;
+      this.cbTransponder.SelectedIndexChanged += new System.EventHandler(this.cbTransponder_SelectedIndexChanged);
+      // 
+      // panel1
+      // 
+      this.panel1.Location = new System.Drawing.Point(432, 360);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(1, 1);
+      this.panel1.TabIndex = 12;
+      // 
+      // lblStatus
+      // 
+      this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.lblStatus.Location = new System.Drawing.Point(16, 208);
+      this.lblStatus.Name = "lblStatus";
+      this.lblStatus.Size = new System.Drawing.Size(440, 87);
+      this.lblStatus.TabIndex = 10;
+      // 
+      // progressBar3
+      // 
+      this.progressBar3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar3.Location = new System.Drawing.Point(16, 176);
+      this.progressBar3.Name = "progressBar3";
+      this.progressBar3.Size = new System.Drawing.Size(440, 16);
+      this.progressBar3.Step = 1;
+      this.progressBar3.TabIndex = 9;
+      // 
+      // button3
+      // 
+      this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.button3.Location = new System.Drawing.Point(384, 312);
+      this.button3.Name = "button3";
+      this.button3.Size = new System.Drawing.Size(72, 22);
+      this.button3.TabIndex = 11;
+      this.button3.Text = "Scan";
+      this.button3.Click += new System.EventHandler(this.button3_Click);
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(16, 64);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(120, 16);
+      this.label7.TabIndex = 1;
+      this.label7.Text = "Transponder for LNB1:";
+      // 
+      // label8
+      // 
+      this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.label8.Location = new System.Drawing.Point(16, 24);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(440, 24);
+      this.label8.TabIndex = 0;
+      this.label8.Text = "Mediaportal has detected one or more digital TV cards. Select your transponder an" +
+        "d press auto tune to scan for the TV and radio channels";
+      // 
+      // Wizard_DVBSTV
+      // 
+      this.Controls.Add(this.groupBox3);
+      this.Name = "Wizard_DVBSTV";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBox3.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 

@@ -93,67 +93,68 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Wizard_Finished));
-			this.headerLabel = new System.Windows.Forms.Label();
-			this.bodyLabel = new System.Windows.Forms.Label();
-			this.pictureBox = new System.Windows.Forms.PictureBox();
-			this.itemPictureBox = new System.Windows.Forms.PictureBox();
-			this.SuspendLayout();
-			// 
-			// headerLabel
-			// 
-			this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.headerLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.headerLabel.Location = new System.Drawing.Point(192, 8);
-			this.headerLabel.Name = "headerLabel";
-			this.headerLabel.Size = new System.Drawing.Size(360, 23);
-			this.headerLabel.TabIndex = 6;
-			this.headerLabel.Text = "Configuration finished";
-			// 
-			// bodyLabel
-			// 
-			this.bodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.bodyLabel.Location = new System.Drawing.Point(196, 48);
-			this.bodyLabel.Name = "bodyLabel";
-			this.bodyLabel.Size = new System.Drawing.Size(360, 280);
-			this.bodyLabel.TabIndex = 8;
-			this.bodyLabel.Text = "Mediaportal is now configured and ready to use";
-			// 
-			// pictureBox
-			// 
-			this.pictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
-			this.pictureBox.Dock = System.Windows.Forms.DockStyle.Left;
-			this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
-			this.pictureBox.Location = new System.Drawing.Point(0, 0);
-			this.pictureBox.Name = "pictureBox";
-			this.pictureBox.Size = new System.Drawing.Size(184, 342);
-			this.pictureBox.TabIndex = 7;
-			this.pictureBox.TabStop = false;
-			// 
-			// itemPictureBox
-			// 
-			this.itemPictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
-			this.itemPictureBox.Location = new System.Drawing.Point(30, 208);
-			this.itemPictureBox.Name = "itemPictureBox";
-			this.itemPictureBox.Size = new System.Drawing.Size(128, 128);
-			this.itemPictureBox.TabIndex = 9;
-			this.itemPictureBox.TabStop = false;
-			// 
-			// Wizard_Finished
-			// 
-			this.Controls.Add(this.itemPictureBox);
-			this.Controls.Add(this.bodyLabel);
-			this.Controls.Add(this.pictureBox);
-			this.Controls.Add(this.headerLabel);
-			this.Name = "Wizard_Finished";
-			this.Size = new System.Drawing.Size(560, 342);
-			this.ResumeLayout(false);
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Wizard_Finished));
+      this.headerLabel = new System.Windows.Forms.Label();
+      this.bodyLabel = new System.Windows.Forms.Label();
+      this.pictureBox = new System.Windows.Forms.PictureBox();
+      this.itemPictureBox = new System.Windows.Forms.PictureBox();
+      this.SuspendLayout();
+      // 
+      // headerLabel
+      // 
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.headerLabel.Location = new System.Drawing.Point(192, 8);
+      this.headerLabel.Name = "headerLabel";
+      this.headerLabel.Size = new System.Drawing.Size(280, 23);
+      this.headerLabel.TabIndex = 6;
+      this.headerLabel.Text = "Configuration finished";
+      // 
+      // bodyLabel
+      // 
+      this.bodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.bodyLabel.Location = new System.Drawing.Point(192, 48);
+      this.bodyLabel.Name = "bodyLabel";
+      this.bodyLabel.Size = new System.Drawing.Size(276, 360);
+      this.bodyLabel.TabIndex = 8;
+      this.bodyLabel.Text = "Mediaportal is now configured and ready to use";
+      // 
+      // pictureBox
+      // 
+      this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left)));
+      this.pictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
+      this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
+      this.pictureBox.Location = new System.Drawing.Point(0, 0);
+      this.pictureBox.Name = "pictureBox";
+      this.pictureBox.Size = new System.Drawing.Size(184, 408);
+      this.pictureBox.TabIndex = 7;
+      this.pictureBox.TabStop = false;
+      // 
+      // itemPictureBox
+      // 
+      this.itemPictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
+      this.itemPictureBox.Location = new System.Drawing.Point(30, 208);
+      this.itemPictureBox.Name = "itemPictureBox";
+      this.itemPictureBox.Size = new System.Drawing.Size(128, 128);
+      this.itemPictureBox.TabIndex = 9;
+      this.itemPictureBox.TabStop = false;
+      // 
+      // Wizard_Finished
+      // 
+      this.Controls.Add(this.itemPictureBox);
+      this.Controls.Add(this.bodyLabel);
+      this.Controls.Add(this.pictureBox);
+      this.Controls.Add(this.headerLabel);
+      this.Name = "Wizard_Finished";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 	}
 }

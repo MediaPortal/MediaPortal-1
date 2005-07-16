@@ -95,7 +95,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.fileLabel);
       this.groupBox1.Controls.Add(this.progressBar1);
@@ -112,9 +113,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(480, 360);
+      this.groupBox1.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Find local media";
@@ -122,40 +123,47 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Location = new System.Drawing.Point(32, 288);
+      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Location = new System.Drawing.Point(16, 288);
       this.fileLabel.Name = "fileLabel";
-      this.fileLabel.Size = new System.Drawing.Size(392, 23);
+      this.fileLabel.Size = new System.Drawing.Size(440, 23);
       this.fileLabel.TabIndex = 13;
       // 
       // progressBar1
       // 
-      this.progressBar1.Location = new System.Drawing.Point(32, 264);
+      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar1.Location = new System.Drawing.Point(16, 264);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(400, 16);
+      this.progressBar1.Size = new System.Drawing.Size(440, 16);
       this.progressBar1.TabIndex = 12;
       this.progressBar1.Visible = false;
       // 
       // buttonStopStart
       // 
+      this.buttonStopStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonStopStart.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonStopStart.Location = new System.Drawing.Point(320, 224);
+      this.buttonStopStart.Location = new System.Drawing.Point(384, 228);
       this.buttonStopStart.Name = "buttonStopStart";
-      this.buttonStopStart.Size = new System.Drawing.Size(88, 24);
+      this.buttonStopStart.Size = new System.Drawing.Size(72, 22);
       this.buttonStopStart.TabIndex = 11;
       this.buttonStopStart.Text = "Scan";
       this.buttonStopStart.Click += new System.EventHandler(this.buttonStop_Click);
       // 
       // labelMovieCount
       // 
+      this.labelMovieCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.labelMovieCount.Location = new System.Drawing.Point(176, 232);
       this.labelMovieCount.Name = "labelMovieCount";
-      this.labelMovieCount.Size = new System.Drawing.Size(112, 16);
+      this.labelMovieCount.Size = new System.Drawing.Size(200, 16);
       this.labelMovieCount.TabIndex = 10;
       this.labelMovieCount.Text = "-";
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(24, 232);
+      this.label6.Location = new System.Drawing.Point(16, 232);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(128, 16);
       this.label6.TabIndex = 9;
@@ -163,15 +171,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelPhotoCount
       // 
+      this.labelPhotoCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.labelPhotoCount.Location = new System.Drawing.Point(176, 208);
       this.labelPhotoCount.Name = "labelPhotoCount";
-      this.labelPhotoCount.Size = new System.Drawing.Size(112, 16);
+      this.labelPhotoCount.Size = new System.Drawing.Size(280, 16);
       this.labelPhotoCount.TabIndex = 8;
       this.labelPhotoCount.Text = "-";
       // 
       // label5
       // 
-      this.label5.Location = new System.Drawing.Point(24, 208);
+      this.label5.Location = new System.Drawing.Point(16, 208);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(128, 16);
       this.label5.TabIndex = 7;
@@ -179,15 +189,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelMusicCount
       // 
+      this.labelMusicCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.labelMusicCount.Location = new System.Drawing.Point(176, 184);
       this.labelMusicCount.Name = "labelMusicCount";
-      this.labelMusicCount.Size = new System.Drawing.Size(112, 16);
+      this.labelMusicCount.Size = new System.Drawing.Size(280, 16);
       this.labelMusicCount.TabIndex = 6;
       this.labelMusicCount.Text = "-";
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(24, 184);
+      this.label4.Location = new System.Drawing.Point(16, 184);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(128, 16);
       this.label4.TabIndex = 5;
@@ -195,7 +207,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelFolder
       // 
-      this.labelFolder.Location = new System.Drawing.Point(128, 104);
+      this.labelFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelFolder.Location = new System.Drawing.Point(128, 96);
       this.labelFolder.Name = "labelFolder";
       this.labelFolder.Size = new System.Drawing.Size(328, 64);
       this.labelFolder.TabIndex = 4;
@@ -203,35 +217,37 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(24, 104);
+      this.label3.Location = new System.Drawing.Point(16, 104);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(100, 16);
+      this.label3.Size = new System.Drawing.Size(40, 16);
       this.label3.TabIndex = 3;
       this.label3.Text = "Folder:";
       // 
       // labelHD
       // 
-      this.labelHD.Location = new System.Drawing.Point(128, 80);
+      this.labelHD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelHD.Location = new System.Drawing.Point(128, 72);
       this.labelHD.Name = "labelHD";
-      this.labelHD.Size = new System.Drawing.Size(112, 16);
+      this.labelHD.Size = new System.Drawing.Size(328, 16);
       this.labelHD.TabIndex = 2;
       this.labelHD.Text = "-";
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(24, 80);
+      this.label2.Location = new System.Drawing.Point(16, 72);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(100, 16);
+      this.label2.Size = new System.Drawing.Size(56, 16);
       this.label2.TabIndex = 1;
-      this.label2.Text = "Harddisk";
+      this.label2.Text = "Harddisk:";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(24, 24);
+      this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(408, 40);
+      this.label1.Size = new System.Drawing.Size(408, 16);
       this.label1.TabIndex = 0;
-      this.label1.Text = "Mediaportal will now search your harddisk(s) for any music, photo\'s and movies";
+      this.label1.Text = "Mediaportal will now search your harddisk(s) for any music, photo\'s and movies.";
       // 
       // timer1
       // 
@@ -242,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.groupBox1);
       this.Name = "Wizard_SelectPlugins";
-      this.Size = new System.Drawing.Size(496, 384);
+      this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
