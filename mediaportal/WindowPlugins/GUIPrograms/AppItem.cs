@@ -166,6 +166,10 @@ namespace ProgramsDatabase
 
     protected void LaunchGenericPlayer(string command, string filename)
     {
+      // quick&dirty: remove placeholder out of the filename
+      filename = filename.Replace("%PLAY%", "");
+      filename = filename.Replace("%PLAYAUDIOSTREAM%", "");
+      filename = filename.Replace("%PLAYVIDEOSTREAM%", "");
       // don't use quotes!
       filename = filename.Trim();
       filename = filename.TrimStart('\"');
