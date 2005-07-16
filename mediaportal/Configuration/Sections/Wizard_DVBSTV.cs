@@ -141,7 +141,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbTransponder4.Location = new System.Drawing.Point(152, 132);
+      this.cbTransponder4.Location = new System.Drawing.Point(152, 140);
       this.cbTransponder4.Name = "cbTransponder4";
       this.cbTransponder4.Size = new System.Drawing.Size(304, 21);
       this.cbTransponder4.TabIndex = 8;
@@ -151,7 +151,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbTransponder3.Location = new System.Drawing.Point(152, 108);
+      this.cbTransponder3.Location = new System.Drawing.Point(152, 116);
       this.cbTransponder3.Name = "cbTransponder3";
       this.cbTransponder3.Size = new System.Drawing.Size(304, 21);
       this.cbTransponder3.TabIndex = 6;
@@ -161,14 +161,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbTransponder2.Location = new System.Drawing.Point(152, 84);
+      this.cbTransponder2.Location = new System.Drawing.Point(152, 92);
       this.cbTransponder2.Name = "cbTransponder2";
       this.cbTransponder2.Size = new System.Drawing.Size(304, 21);
       this.cbTransponder2.TabIndex = 4;
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 136);
+      this.label3.Location = new System.Drawing.Point(16, 144);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(120, 16);
       this.label3.TabIndex = 7;
@@ -176,7 +176,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 112);
+      this.label2.Location = new System.Drawing.Point(16, 120);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(120, 16);
       this.label2.TabIndex = 5;
@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 88);
+      this.label1.Location = new System.Drawing.Point(16, 96);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(120, 16);
       this.label1.TabIndex = 3;
@@ -195,7 +195,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbTransponder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbTransponder.Location = new System.Drawing.Point(152, 60);
+      this.cbTransponder.Location = new System.Drawing.Point(152, 68);
       this.cbTransponder.Name = "cbTransponder";
       this.cbTransponder.Size = new System.Drawing.Size(304, 21);
       this.cbTransponder.TabIndex = 2;
@@ -213,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.lblStatus.Location = new System.Drawing.Point(16, 208);
+      this.lblStatus.Location = new System.Drawing.Point(16, 232);
       this.lblStatus.Name = "lblStatus";
       this.lblStatus.Size = new System.Drawing.Size(440, 87);
       this.lblStatus.TabIndex = 10;
@@ -222,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.progressBar3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar3.Location = new System.Drawing.Point(16, 176);
+      this.progressBar3.Location = new System.Drawing.Point(16, 200);
       this.progressBar3.Name = "progressBar3";
       this.progressBar3.Size = new System.Drawing.Size(440, 16);
       this.progressBar3.Step = 1;
@@ -232,7 +232,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.button3.Location = new System.Drawing.Point(384, 312);
+      this.button3.Location = new System.Drawing.Point(384, 336);
       this.button3.Name = "button3";
       this.button3.Size = new System.Drawing.Size(72, 22);
       this.button3.TabIndex = 11;
@@ -241,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(16, 64);
+      this.label7.Location = new System.Drawing.Point(16, 72);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(120, 16);
       this.label7.TabIndex = 1;
@@ -253,10 +253,10 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label8.Location = new System.Drawing.Point(16, 24);
       this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(440, 24);
+      this.label8.Size = new System.Drawing.Size(440, 32);
       this.label8.TabIndex = 0;
       this.label8.Text = "Mediaportal has detected one or more digital TV cards. Select your transponder an" +
-        "d press auto tune to scan for the TV and radio channels";
+        "d press auto tune to scan for the TV and radio channels.";
       // 
       // Wizard_DVBSTV
       // 
