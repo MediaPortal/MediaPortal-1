@@ -1185,6 +1185,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_1321617F6C844A90B495327BFDA09172"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_132B9F04F3994E5EBC665237196506B6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4713,6 +4719,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5885BF7FA14A4567A0123DC1F9F8A989"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_589F4A21B64942909F63148ABE5D8869"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7023,6 +7035,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_843903A3AF814BB4B5001D0833E89FF1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_844414F7884642D8A4919C3E6F547099"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7576,6 +7594,12 @@
         "Entry"
         {
         "MsmKey" = "8:_8FCA343023584AC79B5CEA0F30AE243F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8FFA7B914149423A9B15489DEFC6F9B3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8896,6 +8920,12 @@
         "Entry"
         {
         "MsmKey" = "8:_AC7A6C02C71F44A993E360A166EBE5EB"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AC83C332F5884A56955B2F8C788765C9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -15787,7 +15817,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2023.16210, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2023.16747, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_0ECD6E59B2601B5B5CAAEACBCFB3C1C7"
@@ -16660,6 +16690,26 @@
             "TargetName" = "8:tv_green_border.png"
             "Tag" = "8:"
             "Folder" = "8:_36716BB99E0A479DA4F30DA702F6C737"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_1321617F6C844A90B495327BFDA09172"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\Tuningparameters\\42degreesEast.tpl"
+            "TargetName" = "8:42degreesEast.tpl"
+            "Tag" = "8:"
+            "Folder" = "8:_90FAE76C2525465B8263CC971EC52929"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -27004,6 +27054,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5885BF7FA14A4567A0123DC1F9F8A989"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\Tuningparameters\\23.5degreesEast.tpl"
+            "TargetName" = "8:23.5degreesEast.tpl"
+            "Tag" = "8:"
+            "Folder" = "8:_90FAE76C2525465B8263CC971EC52929"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_589F4A21B64942909F63148ABE5D8869"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\osd_settings_video_nofocus.png"
@@ -33874,6 +33944,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_843903A3AF814BB4B5001D0833E89FF1"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\Tuningparameters\\36degreesEast.tpl"
+            "TargetName" = "8:36degreesEast.tpl"
+            "Tag" = "8:"
+            "Folder" = "8:_90FAE76C2525465B8263CC971EC52929"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_844414F7884642D8A4919C3E6F547099"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\DefaultShortcutBig.png"
@@ -35693,6 +35783,26 @@
             "TargetName" = "8:WEATHERALERT.png"
             "Tag" = "8:"
             "Folder" = "8:_B687B337DA3C42BA87AAD42FE9A66D09"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8FFA7B914149423A9B15489DEFC6F9B3"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\Tuningparameters\\26degreesEast.tpl"
+            "TargetName" = "8:26degreesEast.tpl"
+            "Tag" = "8:"
+            "Folder" = "8:_90FAE76C2525465B8263CC971EC52929"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -39548,6 +39658,26 @@
             "TargetName" = "8:button_green_nofocus_150x32.png"
             "Tag" = "8:"
             "Folder" = "8:_1AAB5CBE521342C5AC5C638830AD41AC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AC83C332F5884A56955B2F8C788765C9"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\Tuningparameters\\16degreesEast.tpl"
+            "TargetName" = "8:16degreesEast.tpl"
+            "Tag" = "8:"
+            "Folder" = "8:_90FAE76C2525465B8263CC971EC52929"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -53473,7 +53603,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{E95FD367-B0A7-420B-A95A-E8888D3C0C99}"
-        "PackageCode" = "8:{5D352A35-233D-414B-81E3-F0AB62ACBB34}"
+        "PackageCode" = "8:{F16EFD22-C8B2-42A1-BAC9-833AB32F471F}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"

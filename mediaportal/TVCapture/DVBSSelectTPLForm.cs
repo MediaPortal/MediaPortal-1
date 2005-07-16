@@ -211,10 +211,13 @@ namespace MediaPortal.TV.Recording
 				if (file.ToLower().IndexOf(".tpl") >=0)
 				{
 					Transponder ts = LoadTransponder(file);
-					cbTransponder.Items.Add(ts);
-					cbTransponder2.Items.Add(ts);
-					cbTransponder3.Items.Add(ts);
-					cbTransponder4.Items.Add(ts);
+					if (ts!=null)
+					{
+						cbTransponder.Items.Add(ts);
+						cbTransponder2.Items.Add(ts);
+						cbTransponder3.Items.Add(ts);
+						cbTransponder4.Items.Add(ts);
+					}
 				}
 			}
 			if (cbTransponder.Items.Count>0)
