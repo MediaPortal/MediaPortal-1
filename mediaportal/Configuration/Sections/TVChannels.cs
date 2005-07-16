@@ -966,6 +966,8 @@ namespace MediaPortal.Configuration.Sections
 		{
 			if(_columnSorter == null)
 				channelsListView.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+
+			_columnSorter.IsColumnNumeric = e.Column == 1;
 				
 			// Determine if clicked column is already the column that is being sorted.
 			if(e.Column == _columnSorter.SortColumn)

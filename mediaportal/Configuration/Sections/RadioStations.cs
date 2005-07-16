@@ -911,8 +911,17 @@ namespace MediaPortal.Configuration.Sections
 			listviewX = (ListViewItem)x;
 			listviewY = (ListViewItem)y;
 
-			// Compare the two items
-			compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text,listviewY.SubItems[ColumnToSort].Text);
+			if(_isColumnNumeric)
+			{
+				int xx = int.Parse(listviewX.SubItems[ColumnToSort].Text);
+				int yy = int.Parse(listviewY.SubItems[ColumnToSort].Text);
+
+				compareResult = xx.CompareTo(yy);
+			}
+			else
+			{
+				compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text,listviewY.SubItems[ColumnToSort].Text);
+			}
 
 			// Calculate correct return value based on object comparison
 			if (OrderOfSort == SortOrder.Ascending)
@@ -962,5 +971,12 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+		public bool IsColumnNumeric
+		{
+			set { _isColumnNumeric = value; }
+			get { return _isColumnNumeric; }
+		}
+
+		bool _isColumnNumeric = false;
 	}
 }
