@@ -7,6 +7,7 @@ using System.Xml;
 using System.Reflection;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration
 {
@@ -75,6 +76,9 @@ namespace MediaPortal.Configuration
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
+
+      // Stop MCE services
+      Utils.StopMCEServices();
 
 			//
 			// Set caption
@@ -307,8 +311,9 @@ namespace MediaPortal.Configuration
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(534, 518);
+      this.cancelButton.Location = new System.Drawing.Point(536, 520);
       this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(72, 22);
       this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "&Cancel";
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -317,8 +322,9 @@ namespace MediaPortal.Configuration
       // 
       this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.nextButton.Location = new System.Drawing.Point(449, 518);
+      this.nextButton.Location = new System.Drawing.Point(456, 520);
       this.nextButton.Name = "nextButton";
+      this.nextButton.Size = new System.Drawing.Size(72, 22);
       this.nextButton.TabIndex = 0;
       this.nextButton.Text = "&Next >";
       this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
@@ -327,8 +333,9 @@ namespace MediaPortal.Configuration
       // 
       this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.backButton.Location = new System.Drawing.Point(371, 518);
+      this.backButton.Location = new System.Drawing.Point(376, 520);
       this.backButton.Name = "backButton";
+      this.backButton.Size = new System.Drawing.Size(72, 22);
       this.backButton.TabIndex = 5;
       this.backButton.Text = "< &Back";
       this.backButton.Click += new System.EventHandler(this.backButton_Click);
@@ -628,6 +635,10 @@ namespace MediaPortal.Configuration
 				// This was the last page, finish off the wizard
 				//
 				SaveSectionSettings();
+
+        // Restart MCE services
+        Utils.RestartMCEServices();
+
 				this.Close();
 			}
 			else
@@ -641,6 +652,9 @@ namespace MediaPortal.Configuration
 
 		private void cancelButton_Click(object sender, System.EventArgs e)
 		{
+      // Restart MCE services
+      Utils.RestartMCEServices();
+
 			this.Close();
 		}
 
