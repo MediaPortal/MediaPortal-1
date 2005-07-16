@@ -1,4 +1,4 @@
-satname=Astra 2D (28.2E)
+satname=Astra 2A,2B,2D (28.2E)/EuroBird 1 (28.5E)
 10714,H,22000
 10729,V,22000
 10744,H,22000
