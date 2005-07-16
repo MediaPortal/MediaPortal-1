@@ -29,7 +29,7 @@ namespace MediaPortal.TV.Recording
 		private System.Windows.Forms.Timer  timer1;
 		TPList[]														transp=new TPList[800];
 		int																	count = 0;
-		
+		string[]														tplFiles;													
 		int newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
 		int m_diseqcLoops=1;
@@ -63,29 +63,32 @@ namespace MediaPortal.TV.Recording
 					m_diseqcLoops++;
 			}
 
+			DVBSSelectTPLForm dlgSelectTPL = new DVBSSelectTPLForm();
+			dlgSelectTPL.NumberOfLNBs=m_diseqcLoops;
+			dlgSelectTPL.ShowDialog();
+			tplFiles=dlgSelectTPL.TransponderFiles;
+
+			m_currentDiseqc=1;
+			LoadFrequencies();
+
+		}
+		
+		void LoadFrequencies()
+		{
 			currentIndex=-1;
 
-			OpenFileDialog ofd =new OpenFileDialog();
-			ofd.RestoreDirectory = true;
-			ofd.InitialDirectory=System.IO.Directory.GetCurrentDirectory()+@"\TuningParameters";
-			ofd.Filter = "Transponder-Listings (*.tpl)|*.tpl";
-			ofd.Title = "Choose Transponder-Listing Files";
-			DialogResult res=ofd.ShowDialog();
-			if(res!=DialogResult.OK)
+			string fileName=tplFiles[m_currentDiseqc-1];
+			if (fileName==String.Empty) 
 			{
-				Stop();
-				callback.OnProgress(100);
-				callback.OnStatus("Finished");
-				callback.OnEnded();
+				currentIndex=count+1;
 				return;
 			}
-			
 			count = 0;
 			string line;
 			string[] tpdata;
-			Log.WriteFile(Log.LogType.Capture,"dvbs-scan:Opening {0}",ofd.FileName);
+			Log.WriteFile(Log.LogType.Capture,"dvbs-scan:Opening {0}",fileName);
 			// load transponder list and start scan
-			System.IO.TextReader tin = System.IO.File.OpenText(ofd.FileName);
+			System.IO.TextReader tin = System.IO.File.OpenText(fileName);
 			
 			do
 			{
@@ -140,6 +143,7 @@ namespace MediaPortal.TV.Recording
 		{
 			m_currentDiseqc=1;
 			currentIndex=-1;
+			LoadFrequencies();
 			timer1.Interval=100;
 			timer1.Enabled=true;
 			callback.OnProgress(0);
@@ -273,7 +277,7 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					m_currentDiseqc++;
-					AutoTuneTV(captureCard,callback);
+					LoadFrequencies();
 				}
 				return;
 			}

@@ -264,6 +264,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DVBSSelectTPLForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DVBSSelectTPLForm.resx"
+                    DependentUpon = "DVBSSelectTPLForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "DVBSTuning.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

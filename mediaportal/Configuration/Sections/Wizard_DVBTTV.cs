@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration.Sections
 		int                                 currentFrequencyIndex=0;
 		int																	scanOffset = 0;
 		
-		int                                 tunedFrequency=0;
+		
 		int																	newChannels, updatedChannels;
 		int																	newRadioChannels, updatedRadioChannels;
 		private System.Windows.Forms.Label label3;
