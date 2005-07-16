@@ -63,6 +63,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ColumnHeader columnHeader4;
 		private System.Windows.Forms.ColumnHeader columnHeader10;
 		private System.Windows.Forms.ColumnHeader columnHeader11;
+		ListViewColumnSorter _columnSorter;
 
 		//
 		// Private members
@@ -963,16 +964,22 @@ namespace MediaPortal.Configuration.Sections
 
 		private void channelsListView_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
 		{
-			switch (channelsListView.Sorting)
+			if(_columnSorter == null)
+				channelsListView.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+				
+			// Determine if clicked column is already the column that is being sorted.
+			if(e.Column == _columnSorter.SortColumn)
 			{
-				case SortOrder.Ascending: channelsListView.Sorting = SortOrder.Descending; break;
-				case SortOrder.Descending: channelsListView.Sorting = SortOrder.Ascending; break;
-				case SortOrder.None: channelsListView.Sorting = SortOrder.Ascending; break;
-			}	
-			if (e.Column==1)
-				channelsListView.ListViewItemSorter = new ListViewItemComparerInt(e.Column);
+				_columnSorter.Order = _columnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+			}
 			else
-				channelsListView.ListViewItemSorter = new ListViewItemComparer(e.Column);
+			{
+				// Set the column number that is to be sorted; default to ascending.
+				_columnSorter.SortColumn = e.Column;
+				_columnSorter.Order = SortOrder.Ascending;
+			}
+
+			// Perform the sort with these new sort options.
 			channelsListView.Sort();
 			channelsListView.Update();
 		}
