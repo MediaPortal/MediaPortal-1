@@ -39,5 +39,21 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 				listCountries.Add(item);
 			}
 		}
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			if (control==listCountries)
+			{
+				GUIListItem item=listCountries.SelectedListItem;
+				DoScan(item.Label);
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_SCAN);
+				return;
+			}
+			base.OnClicked (controlId, control, actionType);
+		}
+
+		void DoScan(string country)
+		{
+			GUIPropertyManager.SetProperty("#WizardCountry",country);
+		}
 	}
 }

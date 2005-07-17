@@ -84,7 +84,7 @@
       </control>
       <control>
          <type>listcontrol</type>
-         <description>countryList</description>
+         <description>channelList</description>
          <id>24</id>
          <posX>32</posX>
          <posY>184</posY>
@@ -129,7 +129,7 @@
          <id>26</id>
          <posX>32</posX>
          <posY>344</posY>
-         <label>MediaPortal found 23 TV channels and 23 Radio channels</label>
+         <label>-</label>
       </control>
    </controls>
 </window>

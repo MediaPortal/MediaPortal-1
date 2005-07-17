@@ -16,6 +16,7 @@ namespace MediaPortal.GUI.Settings
 	public class GUIWizardCardsDetected: GUIWindow
 	{
 		[SkinControlAttribute(24)]			protected GUITextControl tbCards=null;
+		[SkinControlAttribute(5)]				protected GUIButtonControl btnNext=null;
 
 		public GUIWizardCardsDetected()
 		{
@@ -119,6 +120,8 @@ namespace MediaPortal.GUI.Settings
 			if (cardsDetected==String.Empty)
 				cardsDetected="No TV cards detected";
 			tbCards.Label=cardsDetected;
+			Recorder.Stop();
+			Recorder.Start();
 		}
 
 		void SaveCaptureCards(ArrayList availableCards)
@@ -129,6 +132,28 @@ namespace MediaPortal.GUI.Settings
 				formatter.Serialize(fileStream, availableCards);
 				fileStream.Close();
 			}
+		}
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			if (control==btnNext)
+			{
+				if (Recorder.Count>0)
+				{
+					GUIPropertyManager.SetProperty("#WizardCard","0");
+					for (int i=0; i < Recorder.Count;++i)
+					{
+						TVCaptureDevice dev = Recorder.Get(i);
+						if (dev.Network==NetworkType.DVBT)
+						{
+							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
+						}
+					}
+					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_COUNTRY);
+					return;
+				}
+			}
+			base.OnClicked (controlId, control, actionType);
 		}
 
 	}
