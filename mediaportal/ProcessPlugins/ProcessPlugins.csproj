@@ -199,16 +199,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "CallerId\ISDN\SetupForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CallerId\ISDN\SetupForm.resx"
-                    DependentUpon = "SetupForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "CallerId\YAC\CallerIdPlugin.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
