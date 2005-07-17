@@ -1075,6 +1075,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\DVBT\GUIWizardDVBTCountry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUISettings\Wizard\DVBT\GUIWizardDVBTScan.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIStatus\GUIStatus.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
