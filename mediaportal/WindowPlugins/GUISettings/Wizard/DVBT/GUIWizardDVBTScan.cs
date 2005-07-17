@@ -165,6 +165,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 				lblStatus.Label="Press Next to continue the setup";
 				MapTvToOtherCards(captureCard.ID);
 				MapRadioToOtherCards(captureCard.ID);
+				GUIControl.FocusControl(GetID,btnNext.GetID);
 
 			}
 		}

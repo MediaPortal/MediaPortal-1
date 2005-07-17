@@ -56,7 +56,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>120</posY>
-         <label>TV Setup - DVB Terrestial</label>
+         <label>TV Setup - DVB Terrestrial</label>
          <font>font18</font>
       </control>
       <control>
