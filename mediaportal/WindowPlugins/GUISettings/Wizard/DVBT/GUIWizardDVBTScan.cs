@@ -52,6 +52,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			progressBar.Percentage=0;
 			progressBar.Disabled=false;
 			progressBar.IsVisible=true;
+			UpdateList();
 			Thread WorkerThread = new Thread(new ThreadStart(ScanThread));
 			WorkerThread.Start();
 		}
@@ -120,7 +121,6 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			try
 			{
 				updateList=false;
-				System.Threading.Thread.Sleep(1000);
 				if (captureCard==null) return;
 				currentFrequencyIndex=0;
 				while (true)
@@ -176,6 +176,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			updateList=true;
+			lblStatus.Label=String.Format("Found {0} tv channels, {1} radio stations",newChannels, newRadioChannels);
 			Log.Write("dvbt-scan:ScanChannels() done");
 		}
 
@@ -211,8 +212,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 				UpdateList();
 				updateList=false;
 			}
-			lblStatus.Label=String.Format("Found {0} tv channels, {1} radio stations",newChannels, newRadioChannels);
-
+	
 			base.Process ();
 		}
 
@@ -221,6 +221,15 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			listChannelsFound.Clear();
 			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels);
+			if (channels.Count==0)
+			{
+				GUIListItem item = new GUIListItem();
+				item.Label="No channels found";
+				item.IsFolder=false;
+				listChannelsFound.Add(item);
+				return;
+
+			}
 			foreach (TVChannel chan in channels)
 			{
 				GUIListItem item = new GUIListItem();

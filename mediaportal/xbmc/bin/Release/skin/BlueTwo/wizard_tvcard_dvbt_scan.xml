@@ -130,7 +130,7 @@
          <description>total channels found</description>
          <id>26</id>
          <posX>32</posX>
-         <posY>368</posY>
+         <posY>364</posY>
          <label>-</label>
       </control>
       <control>
@@ -138,8 +138,8 @@
          <description>press next</description>
          <id>27</id>
          <posX>32</posX>
-         <posY>380</posY>
-         <label>Press Next to continue the setup</label>
+         <posY>388</posY>
+         <label>-</label>
       </control>
  
    </controls>
