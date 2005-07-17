@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(72, 22);
       this.button1.TabIndex = 3;
-      this.button1.Text = "Scan...";
+      this.button1.Text = "Scan";
       this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // label2
@@ -182,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(440, 32);
       this.label1.TabIndex = 0;
       this.label1.Text = "Mediaportal has detected one or more digital TV cards. Select your country and pr" +
-        "ess auto tune to scan for the TV and radio channels.";
+        "ess \"Scan\" to get TV and radio channels.";
       // 
       // Wizard_DVBTTV
       // 

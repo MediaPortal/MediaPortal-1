@@ -256,7 +256,7 @@ namespace MediaPortal.Configuration.Sections
       this.label8.Size = new System.Drawing.Size(440, 32);
       this.label8.TabIndex = 0;
       this.label8.Text = "Mediaportal has detected one or more digital TV cards. Select your transponder an" +
-        "d press auto tune to scan for the TV and radio channels.";
+        "d press \"Scan\" to get TV and radio channels.";
       // 
       // Wizard_DVBSTV
       // 
