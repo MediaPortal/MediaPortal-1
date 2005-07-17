@@ -2908,6 +2908,7 @@ namespace MediaPortal.TV.Recording
 
 		public void Process()
 		{
+			if (m_graphState==State.None || m_graphState==State.Created) return;
 			if (m_SectionsTables==null) return;
 
 			TimeSpan ts=DateTime.Now-updateTimer;
@@ -3307,7 +3308,7 @@ namespace MediaPortal.TV.Recording
 					myATSCTuneRequest.Channel		  = ch.MajorChannel;
 					myATSCTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myATSCTuneRequest);
+					//Marshal.ReleaseComObject(myATSCTuneRequest);
 
 				}
 					break;
@@ -3371,7 +3372,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() submit tuning request");
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+					//Marshal.ReleaseComObject(myTuneRequest);
 
 
 				} break;
@@ -3433,7 +3434,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.Locator					= (TunerLib.Locator)myLocator;
 					//and submit the tune request
 					myTuner.TuneRequest  = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+					//Marshal.ReleaseComObject(myTuneRequest);
 				}
 					break;
 
@@ -3491,7 +3492,7 @@ namespace MediaPortal.TV.Recording
 					myTuneRequest.SID		= ch.ProgramNumber;					//service id
 					myTuneRequest.Locator=(TunerLib.Locator)myLocator;
 					myTuner.TuneRequest = newTuneRequest;
-					Marshal.ReleaseComObject(myTuneRequest);
+					//Marshal.ReleaseComObject(myTuneRequest);
 				} break;
 			}
 			SetPids();
@@ -3518,10 +3519,16 @@ namespace MediaPortal.TV.Recording
 			//start viewing if we're not yet viewing
 			if (!graphRunning)
 			{
-				TVChannel chan = new TVChannel();
-				chan.Number=-1;
-				chan.ID=0;
-				StartViewing(chan);
+
+				if(m_mediaControl == null)
+					m_mediaControl = (IMediaControl) m_graphBuilder;
+				int hr=m_mediaControl.Run();
+				if (hr<0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+				}
+
+				graphRunning=true;
 			}
 
 			currentTuningObject=(DVBChannel)tuningObject;
@@ -3558,6 +3565,7 @@ namespace MediaPortal.TV.Recording
 				{
 					sections.DemuxerObject=m_streamDemuxer;
 					sections.Timeout=8000;
+					sections.GetTablesUsingMicrosoft=true;
 					transp = sections.Scan(m_SectionsTables);
 				}
 			}
@@ -4268,6 +4276,7 @@ namespace MediaPortal.TV.Recording
 
 		private void m_streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
 		{
+			if (m_graphState==State.None||m_graphState==State.Created) return;
 			if (pmtTable==null) return;
 			if (pmtTable.Length<6) return;
 			if (currentTuningObject.NetworkID<0 ||

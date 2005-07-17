@@ -44,6 +44,7 @@ namespace MediaPortal.TV.Recording
 		object								m_dataCtrl=null;
 		static DVBDemuxer					m_streamDemuxer;
 		bool								m_syncWait=false;
+		bool                m_getTablesUsingMS=false;
 		static object						m_syncRelease=false;
 
 		static string[] m_langCodes=new string[]{
@@ -241,6 +242,11 @@ namespace MediaPortal.TV.Recording
 			transp=new TPList[200];
 			m_eitTimeoutTimer=new System.Timers.Timer(3000);
 			m_eitTimeoutTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_eitTimeoutTimer_Elapsed);
+		}
+		public bool GetTablesUsingMicrosoft
+		{
+			get { return m_getTablesUsingMS;}
+			set { m_getTablesUsingMS=value;}
 		}
 		//
 		public int Timeout
@@ -522,7 +528,7 @@ namespace MediaPortal.TV.Recording
 		public bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
 			//when in config...
-			if (GUIGraphicsContext.DX9Device==null)
+			if (GUIGraphicsContext.DX9Device==null || m_getTablesUsingMS)
 			{
 				return MsGetStreamData(filter,pid,tid,tableSection,timeout);
 			}

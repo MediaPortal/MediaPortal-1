@@ -121,6 +121,7 @@ namespace MediaPortal.GUI.Settings
 				cardsDetected="No TV cards detected";
 			tbCards.Label=cardsDetected;
 			Recorder.Stop();
+
 			Recorder.Start();
 		}
 
@@ -138,9 +139,10 @@ namespace MediaPortal.GUI.Settings
 		{
 			if (control==btnNext)
 			{
+				Log.Write("cards detected:{0}", Recorder.Count);
+				GUIPropertyManager.SetProperty("#WizardCard","0");
 				if (Recorder.Count>0)
 				{
-					GUIPropertyManager.SetProperty("#WizardCard","0");
 					for (int i=0; i < Recorder.Count;++i)
 					{
 						TVCaptureDevice dev = Recorder.Get(i);
@@ -149,6 +151,7 @@ namespace MediaPortal.GUI.Settings
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 						}
 					}
+					Log.Write("property:{0}", GUIPropertyManager.GetProperty("#WizardCard"));
 					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_COUNTRY);
 					return;
 				}

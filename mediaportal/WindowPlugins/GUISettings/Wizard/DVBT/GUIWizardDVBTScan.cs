@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Xml;
+using System.Threading;
 using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
@@ -13,15 +14,18 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 	public class GUIWizardDVBTScan : GUIWindow
 	{
 		[SkinControlAttribute(26)]			protected GUILabelControl lblChannelsFound=null;
+		[SkinControlAttribute(27)]			protected GUILabelControl lblStatus=null;
 		[SkinControlAttribute(24)]			protected GUIListControl  listChannelsFound=null;
 		[SkinControlAttribute(5)]			  protected GUIButtonControl  btnNext=null;
 		[SkinControlAttribute(25)]			protected GUIButtonControl  btnBack=null;
+		[SkinControlAttribute(20)]			protected GUIProgressControl progressBar=null;
 
 		int card=0;
 		int scanOffset=0;
 		ArrayList  frequencies=null;
 		int        currentFrequencyIndex=0;
-		TVCaptureDevice captureCard=null;
+		bool updateList=false;
+		int newChannels=0, updatedChannels=0, newRadioChannels=0, updatedRadioChannels=0;
 
 		public GUIWizardDVBTScan()
 		{
@@ -36,22 +40,20 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 		{
 			base.OnPageDestroy (newWindowId);
 			frequencies=null;
-			if (captureCard!=null)
-			{
-				captureCard.DeleteGraph();
-				captureCard=null;
-			}
+			GUIGraphicsContext.VMR9Allowed=true;
 		}
 
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			LoadFrequencies();
-			if (card >=0 && card < Recorder.Count)
-			{
-				captureCard =Recorder.Get(card);
-				captureCard.CreateGraph();
-			}
+			GUIGraphicsContext.VMR9Allowed=false;
+			btnNext.Disabled=true;
+			btnBack.Disabled=true;
+			progressBar.Percentage=0;
+			progressBar.Disabled=false;
+			progressBar.IsVisible=true;
+			Thread WorkerThread = new Thread(new ThreadStart(ScanThread));
+			WorkerThread.Start();
 		}
 		
 		void LoadFrequencies()
@@ -96,50 +98,88 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			}
 		}
 
-		public override void Process()
+		public void ScanThread()
 		{
-			if (captureCard==null) return;
-			if (currentFrequencyIndex >= frequencies.Count)
+			newChannels=0;
+			updatedChannels=0;
+			newRadioChannels=0;
+			updatedRadioChannels=0;
+			LoadFrequencies();
+			TVCaptureDevice captureCard=null;
+			if (card >=0 && card < Recorder.Count)
+			{
+				captureCard =Recorder.Get(card);
+				captureCard.CreateGraph();
+			}
+			else
+			{
+				btnNext.Disabled=false;
+				btnBack.Disabled=false;
 				return;
-
-			ScanNextFrequency(0);
-			if (captureCard.SignalPresent())
-			{
-				ScanChannels();
 			}
-
-			if (scanOffset!=0)
+			try
 			{
-				ScanNextFrequency(-scanOffset);
-				if (captureCard.SignalPresent())
+				updateList=false;
+				System.Threading.Thread.Sleep(1000);
+				if (captureCard==null) return;
+				currentFrequencyIndex=0;
+				while (true)
 				{
-					ScanChannels();
-				}
-				ScanNextFrequency(scanOffset);
-				if (captureCard.SignalPresent())
-				{
-					ScanChannels();
+					if (currentFrequencyIndex >= frequencies.Count)
+					{
+						btnNext.Disabled=false;
+						btnBack.Disabled=false;
+						return;
+					}
+
+					UpdateStatus();
+					ScanNextFrequency(captureCard,0);
+					if (captureCard.SignalPresent())
+					{
+						ScanChannels(captureCard);
+					}
+
+					if (scanOffset!=0)
+					{
+						ScanNextFrequency(captureCard,-scanOffset);
+						if (captureCard.SignalPresent())
+						{
+							ScanChannels(captureCard);
+						}
+						ScanNextFrequency(captureCard,scanOffset);
+						if (captureCard.SignalPresent())
+						{
+							ScanChannels(captureCard);
+						}
+					}
+					currentFrequencyIndex++;
 				}
 			}
-			currentFrequencyIndex++;
+			finally
+			{
+				captureCard.DeleteGraph();
+				captureCard=null;
+				progressBar.Percentage=100;
+				lblChannelsFound.Label=String.Format("Finished, found {0} tv channels, {1} radio stations",newChannels, newRadioChannels);
+				lblStatus.Label="Press Next to continue the setup";
+			}
 		}
-
-		void ScanChannels()
+		void ScanChannels(TVCaptureDevice captureCard)
 		{
-			int newChannels=0, updatedChannels=0, newRadioChannels=0, updatedRadioChannels=0;
 			Log.Write("dvbt-scan:ScanChannels() {0}/{1}",currentFrequencyIndex,frequencies.Count);
 			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=frequencies.Count) return;
 			int[] tmp;
 			tmp = (int[])frequencies[currentFrequencyIndex];
 			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]/1000);
+			lblChannelsFound.Label=description;
 			System.Threading.Thread.Sleep(400);
 			Log.Write("ScanChannels() {0} {1}", captureCard.SignalStrength,captureCard.SignalQuality);
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-			UpdateList();
+			updateList=true;
 			Log.Write("dvbt-scan:ScanChannels() done");
 		}
 
-		void ScanNextFrequency(int offset)
+		void ScanNextFrequency(TVCaptureDevice captureCard,int offset)
 		{
 			Log.Write("dvbt-scan:ScanNextFrequency() {0}/{1}",currentFrequencyIndex,frequencies.Count);
 			if (currentFrequencyIndex <0) currentFrequencyIndex =0;
@@ -164,6 +204,18 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			return;
 		}
 
+		public override void Process()
+		{
+			if (updateList)
+			{
+				UpdateList();
+				updateList=false;
+			}
+			lblStatus.Label=String.Format("Found {0} tv channels, {1} radio stations",newChannels, newRadioChannels);
+
+			base.Process ();
+		}
+
 		void UpdateList()
 		{
 			listChannelsFound.Clear();
@@ -176,6 +228,21 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 				item.IsFolder=false;
 				listChannelsFound.Add(item);
 			}
+			listChannelsFound.ScrollToEnd();
+		}
+		void UpdateStatus()
+		{
+			int currentFreq=currentFrequencyIndex;
+			if (currentFrequencyIndex<0) currentFreq=0;
+			float percent = ((float)currentFreq) / ((float)frequencies.Count);
+			percent *= 100.0f;
+			
+			progressBar.Percentage=(int)percent;
+			int[] tmp = frequencies[currentFreq] as int[];
+			float frequency = tmp[0];
+			frequency /=1000;
+			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
+			lblChannelsFound.Label=description;
 		}
 	}
 }

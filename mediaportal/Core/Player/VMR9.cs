@@ -58,6 +58,11 @@ namespace MediaPortal.Player
     /// </param>
     public VMR9Util(string key)
     {
+			if (!GUIGraphicsContext.VMR9Allowed)
+			{
+				UseVMR9inMYTV = false;
+				return;
+			}
       // add vmr9 if necessary
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
