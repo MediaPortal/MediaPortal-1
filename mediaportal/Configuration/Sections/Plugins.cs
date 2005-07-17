@@ -241,76 +241,84 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Xml xmlreader = new Xml("MediaPortal.xml"))
-      {
-        foreach (DataRow row in ds.Tables[0].Rows)
-        {
-          ItemTag itemTag = row["tag"] as ItemTag;
+			try
+			{
+				using (Xml xmlreader = new Xml("MediaPortal.xml"))
+				{
+					foreach (DataRow row in ds.Tables[0].Rows)
+					{
+						ItemTag itemTag = row["tag"] as ItemTag;
 
-          if (itemTag.SetupForm != null)
-          {
-            if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
-            {
-              row["bool1"] = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
-            }
-            else
-            {
-              row["bool1"] = itemTag.SetupForm.DefaultEnabled();
-            }
+						if (itemTag.SetupForm != null)
+						{
+							if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+							{
+								row["bool1"] = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+							}
+							else
+							{
+								row["bool1"] = itemTag.SetupForm.DefaultEnabled();
+							}
 
-            bool bHome = false;
-            bool bPlugins = false;
-            row["bool2"] = bHome;
-            row["bool2"] = bPlugins;
-            string buttontxt, buttonimage, buttonimagefocus, picture;
-            if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
-            {
-              if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
-              {
-                bHome = true;
-                row["bool2"] = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
-                row["bool3"] = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
-              }
-            }
-          }
-        }
-      }
+							bool bHome = false;
+							bool bPlugins = false;
+							row["bool2"] = bHome;
+							row["bool2"] = bPlugins;
+							string buttontxt, buttonimage, buttonimagefocus, picture;
+							if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+							{
+								if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
+								{
+									bHome = true;
+									row["bool2"] = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
+									row["bool3"] = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
+								}
+							}
+						}
+					}
+				}
+			}
+			catch(Exception){}
     }
 
 
     public override void SaveSettings()
     {
 			LoadAll();
-      using (Xml xmlwriter = new Xml("MediaPortal.xml"))
-      {
-        foreach (DataRow row in ds.Tables[0].Rows)
-        {
-          ItemTag itemTag = row["tag"] as ItemTag;
+			try
+			{
+				using (Xml xmlwriter = new Xml("MediaPortal.xml"))
+				{
+					foreach (DataRow row in ds.Tables[0].Rows)
+					{
+						ItemTag itemTag = row["tag"] as ItemTag;
 
-          bool bEnabled = (bool) row["bool1"];
-          bool bHome = (bool) row["bool2"];
-          bool bPlugins = (bool) row["bool3"];
-          if (itemTag.SetupForm != null)
-          {
-            if (itemTag.SetupForm.DefaultEnabled() && !itemTag.SetupForm.CanEnable())
-            {
-              bEnabled = true;
-            }
-          }
-          else
-          {
-            bEnabled = true;
-          }
-          xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
-          xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
-          xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
-          xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, bEnabled);
-          if (itemTag.strType != String.Empty)
-          {
-            xmlwriter.SetValueAsBool("pluginswindows", itemTag.strType, bEnabled);
-          }
-        }
-      }
+						bool bEnabled = (bool) row["bool1"];
+						bool bHome = (bool) row["bool2"];
+						bool bPlugins = (bool) row["bool3"];
+						if (itemTag.SetupForm != null)
+						{
+							if (itemTag.SetupForm.DefaultEnabled() && !itemTag.SetupForm.CanEnable())
+							{
+								bEnabled = true;
+							}
+						}
+						else
+						{
+							bEnabled = true;
+						}
+						xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
+						xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
+						xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
+						xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, bEnabled);
+						if (itemTag.strType != String.Empty)
+						{
+							xmlwriter.SetValueAsBool("pluginswindows", itemTag.strType, bEnabled);
+						}
+					}
+				}
+			}
+			catch(Exception){}
     }
 
 

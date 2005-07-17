@@ -68,8 +68,8 @@ namespace MediaPortal.Music.Database
     ArrayList m_pathCache = new ArrayList();
     ArrayList m_albumCache = new ArrayList();
 
-	ArrayList m_pathids = new ArrayList();
-	ArrayList m_shares = new ArrayList ();
+		ArrayList m_pathids = new ArrayList();
+		ArrayList m_shares = new ArrayList ();
 
 
 
@@ -103,11 +103,11 @@ namespace MediaPortal.Music.Database
 
 
     static SQLiteClient m_db = null;
-	static MusicDatabase()
+		static MusicDatabase()
 		{
 			Open();
 		}
-	static void Open()
+		static void Open()
 		{
       Log.WriteFile(Log.LogType.Log,false,"Opening music database");
       try 
@@ -141,9 +141,9 @@ namespace MediaPortal.Music.Database
     {
     }
 
-	static public SQLiteClient DBHandle
+		static public SQLiteClient DBHandle
 		{
-		get { return m_db; }
+			get { return m_db; }
 		}
 
     static bool CreateTables()
@@ -154,9 +154,9 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.AddTable(m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text)\n");
       DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key,  strPath text)\n");
       DatabaseUtility.AddTable(m_db,"albuminfo","CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)\n");
-	  DatabaseUtility.AddTable(m_db,"artistinfo","CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)\n");
+			DatabaseUtility.AddTable(m_db,"artistinfo","CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)\n");
       DatabaseUtility.AddTable(m_db,"song","CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer)\n");
-	  return true;
+			return true;
     }
 
     public int AddPath(string strPath1)
