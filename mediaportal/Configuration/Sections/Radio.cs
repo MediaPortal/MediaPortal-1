@@ -103,9 +103,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.folderNameLabel.Location = new System.Drawing.Point(16, 24);
       this.folderNameLabel.Name = "folderNameLabel";
-      this.folderNameLabel.Size = new System.Drawing.Size(120, 16);
+      this.folderNameLabel.Size = new System.Drawing.Size(88, 16);
       this.folderNameLabel.TabIndex = 0;
-      this.folderNameLabel.Text = "Save streams to folder:";
+      this.folderNameLabel.Text = "Streams folder:";
       // 
       // label2
       // 
