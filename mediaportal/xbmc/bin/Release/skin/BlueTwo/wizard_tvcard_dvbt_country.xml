@@ -99,7 +99,7 @@
          <posX>32</posX>
          <posY>232</posY>
          <width>592</width>
-         <height>120</height>
+         <height>220</height>
          <onleft>5</onleft>
          <onright>5</onright>
          <onup>5</onup>
@@ -118,7 +118,8 @@
          <textcolor>ffffffff</textcolor>
          <shadedColor>20ffffff</shadedColor>
          <textureHeight>32</textureHeight>
-         <spinPosX>590</spinPosX>
+         <spinPosX>550</spinPosX>
+         <spinPosY>400</spinPosY>
          <textYOff2>4</textYOff2>
          <textureUpFocus>page_up_focus.png</textureUpFocus>
          <textXOff2>0</textXOff2>
@@ -131,7 +132,6 @@
          <selectedColor>FFF8BC70</selectedColor>
          <image>folder_focus.png</image>
          <IconXOff>8</IconXOff>
-         <spinPosY>530</spinPosY>
       </control>
    </controls>
 </window>
