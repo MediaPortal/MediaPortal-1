@@ -230,12 +230,14 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 				return;
 
 			}
+			int count=1;
 			foreach (TVChannel chan in channels)
 			{
 				GUIListItem item = new GUIListItem();
-				item.Label=chan.Name;
+				item.Label=String.Format("{0}. {1}", count,chan.Name);
 				item.IsFolder=false;
 				listChannelsFound.Add(item);
+				count++;
 			}
 			listChannelsFound.ScrollToEnd();
 		}
