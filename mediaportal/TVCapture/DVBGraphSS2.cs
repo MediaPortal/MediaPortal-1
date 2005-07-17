@@ -2126,16 +2126,8 @@ namespace MediaPortal.TV.Recording
 				newchannel.AudioLanguage3=info.pidCache;
 				newchannel.Audio3=m_currentTuningObject.Audio3;
 			
-				if (newchannel.ServiceProvider==null) 
-					newchannel.ServiceProvider=String.Empty;
-				if (newchannel.ServiceName==null) 
-					newchannel.ServiceName=String.Empty;
-				if (newchannel.ServiceName.Length==0)
-					newchannel.ServiceName=String.Format("Unknown{0}{1}{3}",newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber);
 
 				if (info.serviceType!=1 && info.serviceType!=2) continue;
-
-				if (newchannel.ServiceProvider==null) newchannel.ServiceProvider=String.Empty;
 				if (info.serviceType==1 && tv)
 				{
 					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} is a tv channel",newchannel.ServiceName);
