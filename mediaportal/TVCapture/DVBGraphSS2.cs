@@ -1987,6 +1987,17 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: found {0} channels", transp.channels.Count);
 			for (int i=0; i < transp.channels.Count;++i)
 			{
+				m_currentTuningObject.AC3Pid=-1;
+				m_currentTuningObject.VideoPid=0;
+				m_currentTuningObject.AudioPid=0;
+				m_currentTuningObject.TeletextPid=0;
+				m_currentTuningObject.Audio1=0;
+				m_currentTuningObject.Audio2=0;
+				m_currentTuningObject.Audio3=0;
+				m_currentTuningObject.AudioLanguage=String.Empty;
+				m_currentTuningObject.AudioLanguage1=String.Empty;
+				m_currentTuningObject.AudioLanguage2=String.Empty;
+				m_currentTuningObject.AudioLanguage3=String.Empty;
 				System.Windows.Forms.Application.DoEvents();
 				System.Windows.Forms.Application.DoEvents();
 

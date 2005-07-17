@@ -274,6 +274,10 @@ namespace MediaPortal.TV.Database
 						string provider=ch.ServiceProvider;
 						string service=ch.ServiceName;
 						
+						if (provider=null)
+							provider=String.Empty;
+						if (service=null)
+							service=String.Empty;
 						DatabaseUtility.RemoveInvalidChars(ref provider);
 						DatabaseUtility.RemoveInvalidChars(ref service);
 						string al=ch.AudioLanguage;
