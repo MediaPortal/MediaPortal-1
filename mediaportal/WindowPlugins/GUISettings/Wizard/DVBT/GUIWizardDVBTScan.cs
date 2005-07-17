@@ -163,6 +163,9 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 				progressBar.Percentage=100;
 				lblChannelsFound.Label=String.Format("Finished, found {0} tv channels, {1} radio stations",newChannels, newRadioChannels);
 				lblStatus.Label="Press Next to continue the setup";
+				MapTvToOtherCards(captureCard.ID);
+				MapRadioToOtherCards(captureCard.ID);
+
 			}
 		}
 		void ScanChannels(TVCaptureDevice captureCard)
@@ -263,6 +266,39 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			frequency /=1000;
 			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
 			lblChannelsFound.Label=description;
+		}
+		void MapTvToOtherCards(int id)
+		{
+			ArrayList tvchannels = new ArrayList();
+			TVDatabase.GetChannelsForCard(ref tvchannels,id);
+			for (int i=0; i < Recorder.Count;++i)
+			{
+				TVCaptureDevice dev = Recorder.Get(i);
+				if (dev.Network==NetworkType.DVBT && dev.ID != id)
+				{
+					foreach (TVChannel chan in tvchannels)
+					{
+						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
+					}
+				}
+			}
+		}
+		void MapRadioToOtherCards(int id)
+		{
+			ArrayList radioChans = new ArrayList();
+			MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans,id);
+			for (int i=0; i < Recorder.Count;++i)
+			{
+				TVCaptureDevice dev = Recorder.Get(i);
+
+				if (dev.Network==NetworkType.DVBT && dev.ID != id)
+				{
+					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
+					{
+						MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
+					}
+				}
+			}
 		}
 	}
 }
