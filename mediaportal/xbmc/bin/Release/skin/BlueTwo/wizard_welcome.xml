@@ -1,0 +1,108 @@
+﻿<window>
+   <id>615</id>
+   <defaultcontrol>5</defaultcontrol>
+   <allowoverlay>yes</allowoverlay>
+   <controls>
+      <control>
+         <type>image</type>
+         <description>BG</description>
+         <id>1</id>
+         <posX>0</posX>
+         <posY>0</posY>
+         <texture>background.png</texture>
+      </control>
+      <control>
+         <type>label</type>
+         <description>description 1</description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>164</posY>
+         <label>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</label>
+         <font>font12</font>
+      </control>
+      <control>
+         <type>label</type>
+         <description>description 2. </description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>180</posY>
+         <label>With MediaPortal you can enjoy your favorite music, radio</label>
+         <font>font12</font>
+      </control>
+      <control>
+         <type>label</type>
+         <description>decription 3. </description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>196</posY>
+         <label>It allows you to listen to your favorite music &amp; radio, watch your video's and DVD's</label>
+         <font>font12</font>
+      </control>
+      <control>
+         <type>label</type>
+         <description>description 4. </description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>212</posY>
+         <label>photos, videos and view/record live TV and much more.</label>
+         <font>font12</font>
+      </control>
+      <control>
+         <type>label</type>
+         <description>Description4</description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>280</posY>
+         <label>This wizard will help you to setup Mediaportal fast and easy. Please follow the steps through this </label>
+         <font>font12</font>
+      </control>
+      <control>
+         <type>label</type>
+         <description>Welcome to MediaPortal. </description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>312</posY>
+         <label>Press the Next button to begin</label>
+         <font>font12</font>
+      </control>
+      <control>
+         <type>image</type>
+         <id>1</id>
+         <posX>48</posX>
+         <posY>390</posY>
+         <texture>hover_settings.png</texture>
+      </control>
+      <control>
+         <type>image</type>
+         <description>MP Logo</description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>24</posY>
+         <texture>mplogo.png</texture>
+      </control>
+      <control>
+         <type>label</type>
+         <description>Welcome to MediaPortal. </description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>120</posY>
+         <label>Welcome to MediaPortal. </label>
+         <font>font18</font>
+      </control>
+      <control>
+         <type>button</type>
+         <description>Next</description>
+         <id>5</id>
+         <posX>560</posX>
+         <posY>504</posY>
+         <onleft>5</onleft>
+         <onright>5</onright>
+         <onup>5</onup>
+         <ondown>5</ondown>
+         <hyperlink>616</hyperlink>
+         <label>Next&gt;</label>
+         <width>96</width>
+         <height>32</height>
+      </control>
+   </controls>
+</window>

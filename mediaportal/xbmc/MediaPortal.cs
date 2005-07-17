@@ -1492,8 +1492,11 @@ public class MediaPortalApp : D3DApp, IRender
     if (key.KeyChar == '!') 
     {
       m_bShowStats = !m_bShowStats;
-
     }
+		if (key.KeyChar == '@') 
+		{
+			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_WELCOME);
+		}
 
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
     {
