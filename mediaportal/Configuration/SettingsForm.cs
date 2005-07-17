@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration
 			AddChildSection(general, new Sections.Keys());
 			AddChildSection(general, new Sections.DeamonTools());
 			AddChildSection(general, new Sections.FileMenu());
-
+			AddChildSection(general, new Sections.Volume());
 
 
       Log.Write("add DVD section");
