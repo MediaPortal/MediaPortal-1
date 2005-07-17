@@ -177,8 +177,22 @@ namespace MediaPortal.GUI.Settings.Wizard
 							return;
 						}
 					}
+					if (dev.Network==NetworkType.DVBS)
+					{
+						if (GUIPropertyManager.GetProperty("#Wizard.DVBS.Done") != "yes")
+						{
+							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_LNB);
+							return;
+						}
+					}
 				}
 			}
+			else
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_LNB);
+			}
+
 		}
 
 	}

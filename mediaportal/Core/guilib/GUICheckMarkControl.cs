@@ -103,12 +103,12 @@ namespace MediaPortal.GUI.Library
         else
         {
 					// put text at the right side of the checkmark
-          dwTextPosX += m_imgCheckMark.Width +5;
+          dwTextPosX = (dwCheckMarkPosX+m_imgCheckMark.Width +5);
         }
         if (Disabled )
         {
 					// If disabled, draw the text in the disabled color.
-					m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign,-1);
+					m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,GUIControl.Alignment.ALIGN_LEFT,-1);
         }
         else
         {
@@ -116,17 +116,17 @@ namespace MediaPortal.GUI.Library
           if (Focus)
           {
             if (m_bShadow)
-              m_pFont.DrawShadowText((float)dwTextPosX, (float)m_dwPosY, m_dwTextColor, m_strLabel,m_dwAlign,5,5,0xff000000);
+              m_pFont.DrawShadowText((float)dwTextPosX, (float)m_dwPosY, m_dwTextColor, m_strLabel,GUIControl.Alignment.ALIGN_LEFT,5,5,0xff000000);
             else
-              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwTextColor, m_strLabel,m_dwAlign,-1);
+              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwTextColor, m_strLabel,GUIControl.Alignment.ALIGN_LEFT,-1);
           }
 					// Draw non-focused text and shadow
           else
           {
             if (m_bShadow)
-              m_pFont.DrawShadowText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign,5,5,0xff000000);
+              m_pFont.DrawShadowText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,GUIControl.Alignment.ALIGN_LEFT,5,5,0xff000000);
             else
-              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,m_dwAlign,-1);
+              m_pFont.DrawText((float)dwTextPosX, (float)m_dwPosY, m_dwDisabledColor, m_strLabel,GUIControl.Alignment.ALIGN_LEFT,-1);
           }
         }
       }
