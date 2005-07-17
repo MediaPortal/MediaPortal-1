@@ -221,8 +221,6 @@ namespace ProcessPlugins.CallerId
 
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form setup=new SetupForm();
-      setup.ShowDialog();
     }
 
     #endregion
