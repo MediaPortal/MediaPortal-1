@@ -274,9 +274,9 @@ namespace MediaPortal.TV.Database
 						string provider=ch.ServiceProvider;
 						string service=ch.ServiceName;
 						
-						if (provider=null)
+						if (provider==null)
 							provider=String.Empty;
-						if (service=null)
+						if (service==null)
 							service=String.Empty;
 						DatabaseUtility.RemoveInvalidChars(ref provider);
 						DatabaseUtility.RemoveInvalidChars(ref service);
