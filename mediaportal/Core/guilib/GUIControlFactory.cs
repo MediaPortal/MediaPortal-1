@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Drawing;
 using System.Globalization;
@@ -13,17 +14,16 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIControlFactory
 	{
+		#region Constructors
+
 		private GUIControlFactory() // NON-CREATABLE
 		{
 		}
 		
+		#endregion Constructors
 
-		/// <summary>
-		/// Contains all of the reference nodes, indexed by control Type.
-		/// </summary>
-		static Hashtable m_referenceNodesByControlType = null;
-		static Hashtable m_hashCustomControls = new Hashtable();
-		
+		#region Methods
+
 		public static void LoadReferences(string referenceFile)
 		{
 			try
@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.Library
 			catch (Exception ex)
 			{
 				Log.Write("exception loading references {0} err:{1} stack:{2}",
-				          referenceFile, ex.Message, ex.StackTrace);
+					referenceFile, ex.Message, ex.StackTrace);
 			}
 		}
 
@@ -82,11 +82,7 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 		}
-		/// <summary>
-		/// A hashtable which contains the reflection results for every control.
-		/// </summary>
-		static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
-		
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -101,7 +97,7 @@ namespace MediaPortal.GUI.Library
 			
 			Hashtable fieldsTable = new Hashtable();
 			FieldInfo[] allFields = guiControlType.GetFields(
-				 BindingFlags.Instance 
+				BindingFlags.Instance 
 				|BindingFlags.NonPublic
 				|BindingFlags.FlattenHierarchy
 				|BindingFlags.Public);
@@ -119,61 +115,81 @@ namespace MediaPortal.GUI.Library
 						
 		}
 
-		private static object ConvertXmlStringToObject(string valueText, Type type)
+		private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
 		{
 			try
 			{
-        try
-        {
-          if (type == typeof (string))
-            return valueText;
-        }
-        catch (Exception) 
-        { 
-          return String.Empty;
-        }
-        try
-        {
-          if (type == typeof (int))
-            return System.Int32.Parse(valueText);
-          if (type == typeof (long))
-            return System.Int64.Parse(valueText, NumberStyles.HexNumber);
-        }
-        catch(Exception)
-        {
-          return 0;
-        }
-        try
-        {
-          if (type == typeof (bool))
-            if (valueText == "off" || valueText == "no" || valueText == "disabled") 
-              return false;
-            else 
-              return true;
-        }
-        catch(Exception)
-        {
-          return false;
-        }
-        try
-        {
-          if (type == typeof (GUIControl.Alignment))
-          {
-            switch (valueText)
-            {
-              case "right" :
-                return GUIControl.Alignment.ALIGN_RIGHT;
-              case "center" :
-                return GUIControl.Alignment.ALIGN_CENTER;
-              default:
-                return GUIControl.Alignment.ALIGN_LEFT;
-            }
-          }
-        }
-        catch(Exception)
-        {
-          return GUIControl.Alignment.ALIGN_LEFT;
-        }
+				try
+				{
+					if(type == typeof (string))
+						return valueText;
+				}
+				catch (Exception) 
+				{ 
+					return String.Empty;
+				}
+
+				try
+				{
+					if(type == typeof(int) || type == typeof(long))
+					{
+						switch(valueName.ToLower())
+						{
+							case "textcolor":
+							case "colorkey":
+							case "colordiffuse":
+								if(valueText.Length > 0)
+								{
+									// not very pretty but we can improve on this by requesting that RGB or ARGB
+									// colors are specified with '#'
+									if(valueText[0] != '#' && valueText.Length == 6 || valueText.Length == 8)
+										valueText = '#' + valueText;
+								}
+
+								return ColorTranslator.FromHtml(valueText).ToArgb();
+						}
+					}
+
+					if (type == typeof (int))
+						return System.Int32.Parse(valueText);
+					if (type == typeof (long))
+						return System.Int64.Parse(valueText, NumberStyles.HexNumber);
+				}
+				catch(Exception)
+				{
+					return 0;
+				}
+				try
+				{
+					if (type == typeof (bool))
+						if (valueText == "off" || valueText == "no" || valueText == "disabled") 
+							return false;
+						else 
+							return true;
+				}
+				catch(Exception)
+				{
+					return false;
+				}
+				try
+				{
+					if (type == typeof (GUIControl.Alignment))
+					{
+						switch (valueText)
+						{
+							case "right" :
+								return GUIControl.Alignment.ALIGN_RIGHT;
+							case "center" :
+								return GUIControl.Alignment.ALIGN_CENTER;
+							default:
+								return GUIControl.Alignment.ALIGN_LEFT;
+						}
+					}
+				}
+				catch(Exception)
+				{
+					return GUIControl.Alignment.ALIGN_LEFT;
+				}
 
 				try
 				{
@@ -196,48 +212,48 @@ namespace MediaPortal.GUI.Library
 				}
 
 
-        try
-        {
-          if (type == typeof (Animator.AnimationType))
-          {
-            switch (valueText.ToLower())
-            {
-              case "flyinfromleft":
-                return Animator.AnimationType.FlyInFromLeft;
-              case "flyinfromright":
-                return Animator.AnimationType.FlyInFromRight;
-              case "flyinfromtop":
-                return Animator.AnimationType.FlyInFromTop;
-              case "flyinfrombottom":
-                return Animator.AnimationType.FlyInFromBottom;
-              case "zoominfrommiddle":
-                return Animator.AnimationType.ZoomInFromMiddle;
-            }
-          }
-        }
-        catch(Exception)
-        {
-          return Animator.AnimationType.FlyInFromLeft;
-        }
-        try
-        {
-          if (type == typeof(GUISpinControl.SpinType))
-          {
-            switch (valueText.ToLower())
-            {
-              case "int": 
-                return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-              case "float":
-                return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
-              default: 
-                return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
-            }
-          }
-        }
-        catch(Exception)
-        {
-          return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-        }
+				try
+				{
+					if (type == typeof (Animator.AnimationType))
+					{
+						switch (valueText.ToLower())
+						{
+							case "flyinfromleft":
+								return Animator.AnimationType.FlyInFromLeft;
+							case "flyinfromright":
+								return Animator.AnimationType.FlyInFromRight;
+							case "flyinfromtop":
+								return Animator.AnimationType.FlyInFromTop;
+							case "flyinfrombottom":
+								return Animator.AnimationType.FlyInFromBottom;
+							case "zoominfrommiddle":
+								return Animator.AnimationType.ZoomInFromMiddle;
+						}
+					}
+				}
+				catch(Exception)
+				{
+					return Animator.AnimationType.FlyInFromLeft;
+				}
+				try
+				{
+					if (type == typeof(GUISpinControl.SpinType))
+					{
+						switch (valueText.ToLower())
+						{
+							case "int": 
+								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+							case "float":
+								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+							default: 
+								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+						}
+					}
+				}
+				catch(Exception)
+				{
+					return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+				}
 			
 				return null;
 			}
@@ -245,7 +261,6 @@ namespace MediaPortal.GUI.Library
 			{
 				return null;
 			}
-
 		}
 
 		public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines)
@@ -327,7 +342,7 @@ namespace MediaPortal.GUI.Library
 					if(defines.Contains(text))
 						text = (string)defines[text];
 
-					object newValue = ConvertXmlStringToObject(text,
+					object newValue = ConvertXmlStringToObject(element.Name, text,
 						correspondingField.FieldType);
 			
 					try
@@ -383,8 +398,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUIUpDownButton);
 				case ("button3part"):
 					return typeof (GUIButton3PartControl);
-			    case ("statusbar"):
-				    return typeof (GUIStatusbarControl);
+				case ("statusbar"):
+					return typeof (GUIStatusbarControl);
 				case ("progress"):
 					return typeof (GUIProgressControl);
 				case ("tvprogress"):
@@ -420,9 +435,9 @@ namespace MediaPortal.GUI.Library
 				case ("facadeview"):
 					return typeof (GUIFacadeControl);
 				case ("filmstrip"):
-          return typeof (GUIFilmstripControl);
-        case ("smsinput"):
-          return typeof (GUISMSInputControl);
+					return typeof (GUIFilmstripControl);
+				case ("smsinput"):
+					return typeof (GUISMSInputControl);
 				default:
 					Type t = (Type)m_hashCustomControls[xmlTypeName];
 
@@ -440,5 +455,23 @@ namespace MediaPortal.GUI.Library
 		{
 			m_hashCustomControls[strName] = t;
 		}
+
+		#endregion Methods
+
+		#region Fields
+
+		/// <summary>
+		/// Contains all of the reference nodes, indexed by control Type.
+		/// </summary>
+		static Hashtable			m_referenceNodesByControlType = null;
+
+		static Hashtable			m_hashCustomControls = new Hashtable();
+
+		/// <summary>
+		/// A hashtable which contains the reflection results for every control.
+		/// </summary>
+		static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+
+		#endregion Fields
 	}
 }
