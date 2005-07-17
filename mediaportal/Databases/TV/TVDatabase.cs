@@ -273,13 +273,25 @@ namespace MediaPortal.TV.Database
 
 						string provider=ch.ServiceProvider;
 						string service=ch.ServiceName;
+						
 						DatabaseUtility.RemoveInvalidChars(ref provider);
 						DatabaseUtility.RemoveInvalidChars(ref service);
+						string al=ch.AudioLanguage;
+						string al1=ch.AudioLanguage1;
+						string al2=ch.AudioLanguage2;
+						string al3=ch.AudioLanguage3;
+						al=(al==null?"":al.Trim());
+						al1=(al1==null?"":al1.Trim());
+						al2=(al2==null?"":al2.Trim());
+						al3=(al3==null?"":al3.Trim());
+						provider=(provider==null?"":provider.Trim());
+						service=(service==null?"":service.Trim());
+
 						strSQL=String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 							ch.ID,ch.Frequency,ch.Symbolrate,ch.FEC,ch.LNBKHz,ch.DiSEqC,
-							ch.ProgramNumber,ch.ServiceType,provider.Trim(),service.Trim(),(ch.HasEITSchedule==true?1:0),
+							ch.ProgramNumber,ch.ServiceType,provider,service,(ch.HasEITSchedule==true?1:0),
 							(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
-							ch.TeletextPid,(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.AudioLanguage.Trim(),ch.AudioLanguage1.Trim(),ch.AudioLanguage2.Trim(),ch.AudioLanguage3.Trim(),ch.ECMPid,ch.PMTPid);
+							ch.TeletextPid,(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,al,al1,al2,al3,ch.ECMPid,ch.PMTPid);
 					  
 						m_db.Execute(strSQL);
 						return 0;
