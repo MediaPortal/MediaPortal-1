@@ -44,8 +44,8 @@ namespace MediaPortal.Profile
 			if (document==null) return null;
 
 			XmlElement root = document.DocumentElement;
-      if (root == null) return null;
-  		XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
+			if (root == null) return null;
+			XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
 			if (entryNode==null) return null;
 			return entryNode.InnerText;
 		}
@@ -141,29 +141,37 @@ namespace MediaPortal.Profile
 
 	public class Xml :IDisposable
 	{
-		static ArrayList        xmlCache=new ArrayList();
-
-		string	xmlFileName;
-		XmlDoc	xmlDoc=null;
-		public Xml(string fileName) 
+		public Xml(string fileName) : this(fileName, true)
 		{
-			xmlFileName=System.IO.Path.GetFileName(fileName);
-			foreach (XmlDoc doc in xmlCache)
-			{
-				string xmlName=System.IO.Path.GetFileName(doc.FileName);
-				if (String.Compare(xmlName,xmlFileName,true)==0)
-				{
-					xmlDoc=doc;
-					break;
-				}
-			}
-			if (xmlDoc==null)
-			{
-				xmlDoc = new XmlDoc(fileName);
-				xmlCache.Add(xmlDoc);
-			}
 		}
 
+		public Xml(string fileName, bool isCached) 
+		{
+			xmlFileName=System.IO.Path.GetFileName(fileName);
+
+			_isCached = isCached;
+
+			if(_isCached)
+			{
+				foreach (XmlDoc doc in xmlCache)
+				{
+					string xmlName=System.IO.Path.GetFileName(doc.FileName);
+					if (String.Compare(xmlName,xmlFileName,true)==0)
+					{
+						xmlDoc=doc;
+						break;
+					}
+				}
+			}
+
+			if(xmlDoc==null)
+			{
+				xmlDoc = new XmlDoc(fileName);
+
+				if(_isCached)
+					xmlCache.Add(xmlDoc);
+			}
+		}
 		
 		public void SetValue(string section, string entry, object objValue)
 		{
@@ -177,71 +185,74 @@ namespace MediaPortal.Profile
 			return strValue;
 		}
 
-    public string GetValueAsString(string section, string entry, string strDefault)
-    {
-      string strValue=(string)xmlDoc.GetValue(section,entry);
-      if( strValue==null) return strDefault;
-      if (strValue.Length==0) return strDefault;
-      return strValue;
-    }
-    public bool GetValueAsBool(string section, string entry, bool bDefault)
-    {
-      string strValue=(string)xmlDoc.GetValue(section,entry);
-      if( strValue==null) return bDefault;
-      if (strValue.Length==0) return bDefault;
-      if (strValue=="yes") return true;
-      return false;
-    }
-    public int GetValueAsInt(string section, string entry, int iDefault)
-    {
-      string strValue=(string)xmlDoc.GetValue(section,entry);
-      if( strValue==null) return iDefault;
-      if (strValue.Length==0) return iDefault;
-      try
-      {
-        int iRet=System.Int32.Parse(strValue);
-        return iRet;
-      }
-      catch(Exception)
-      {
-      }
-      return iDefault;
-    }
+		public string GetValueAsString(string section, string entry, string strDefault)
+		{
+			string strValue=(string)xmlDoc.GetValue(section,entry);
+			if( strValue==null) return strDefault;
+			if (strValue.Length==0) return strDefault;
+			return strValue;
+		}
+		public bool GetValueAsBool(string section, string entry, bool bDefault)
+		{
+			string strValue=(string)xmlDoc.GetValue(section,entry);
+			if( strValue==null) return bDefault;
+			if (strValue.Length==0) return bDefault;
+			if (strValue=="yes") return true;
+			return false;
+		}
+		public int GetValueAsInt(string section, string entry, int iDefault)
+		{
+			string strValue=(string)xmlDoc.GetValue(section,entry);
+			if( strValue==null) return iDefault;
+			if (strValue.Length==0) return iDefault;
+			try
+			{
+				int iRet=System.Int32.Parse(strValue);
+				return iRet;
+			}
+			catch(Exception)
+			{
+			}
+			return iDefault;
+		}
     
-    public float GetValueAsFloat(string section, string entry, float fDefault)
-    {
-      string strValue=(string)xmlDoc.GetValue(section,entry);
-      if( strValue==null) return fDefault;
-      if (strValue.Length==0) return fDefault;
-      try
-      {
-        float fRet=(float)System.Double.Parse(strValue);
-        return fRet;
-      }
-      catch(Exception)
-      {
-      }
-      return fDefault;
-    }
-    public void SetValueAsBool(string section, string entry, bool bValue)
-    {
-      string strValue="yes";
-      if (!bValue) strValue="no";
-      SetValue(section,entry,strValue);
-    }
+		public float GetValueAsFloat(string section, string entry, float fDefault)
+		{
+			string strValue=(string)xmlDoc.GetValue(section,entry);
+			if( strValue==null) return fDefault;
+			if (strValue.Length==0) return fDefault;
+			try
+			{
+				float fRet=(float)System.Double.Parse(strValue);
+				return fRet;
+			}
+			catch(Exception)
+			{
+			}
+			return fDefault;
+		}
+		public void SetValueAsBool(string section, string entry, bool bValue)
+		{
+			string strValue="yes";
+			if (!bValue) strValue="no";
+			SetValue(section,entry,strValue);
+		}
 		public void RemoveEntry(string section, string entry)
 		{
 			xmlDoc.RemoveEntry(section, entry);
 		}
 		#region IDisposable Members
 
-    public void Dispose()
-    {
-    }
+		public void Dispose()
+		{
+			if(_isCached == false)
+				xmlDoc.Save();
+		}
 
 		public void Clear()
 		{
 		}
+
 		static public void SaveCache()
 		{
 			foreach (XmlDoc doc in xmlCache)
@@ -249,6 +260,15 @@ namespace MediaPortal.Profile
 				doc.Save();
 			}
 		}
-    #endregion
-  }
+		#endregion
+
+		#region Fields
+
+		bool						_isCached;
+		static ArrayList			xmlCache=new ArrayList();
+		string						xmlFileName;
+		XmlDoc						xmlDoc=null;
+
+		#endregion Fields
+	}
 }
