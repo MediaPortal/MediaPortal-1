@@ -32,7 +32,7 @@ namespace SQLite.NET
 		[DllImport("sqlite.dll")]
 		private static extern string sqlite3_libversion();
 		[DllImport("sqlite.dll")]
-		private static extern int sqlite3_open(string filename, void** handle);
+		private static extern SQLiteClient.ResultCode sqlite3_open(string filename, void** handle);
 
 		[DllImport("sqlite.dll")]
 		private static extern SQLiteClient.ResultCode  sqlite3_prepare(void* handle, string sql, int nbytes, void** stmt, void** tail);
@@ -93,19 +93,16 @@ namespace SQLite.NET
 		// Methods
 		public SQLiteClient(string dbName)
 		{
-			string text1;
-			
 			dbHandle=null;
 			
 			fixed( void** ptr=&dbHandle)
 			{
-				int err=SQLiteClient.sqlite3_open(dbName, ptr);
-				text1="";
-				if (err!=0)
-				{
-					throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0}", text1));
-				}
+				SQLiteClient.ResultCode err=SQLiteClient.sqlite3_open(dbName, ptr);
 				dbHandleAdres=(long)dbHandle;
+				if (err!=ResultCode.OK)
+				{
+					throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName,err.ToString() ));
+				}
 			}
 		}
  
