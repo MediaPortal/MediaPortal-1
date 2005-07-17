@@ -120,7 +120,6 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Size = new System.Drawing.Size(440, 56);
       this.label3.TabIndex = 6;
       this.label3.Text = @"NOTE: If your country is not present or if Media Portal is unable to find any channels, Media Portal probably doesn't know which frequencies to scan for your country. Edit the .dvbc file in the ""TuningParameters"" subfolder and fill in all the frequencies needed for your country.";
-      this.label3.Click += new System.EventHandler(this.label3_Click);
       // 
       // panel1
       // 
@@ -187,7 +186,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1.TabIndex = 0;
       this.label1.Text = "Mediaportal has detected one or more digital TV cards. Select your country and pr" +
         "ess \"Scan\" to get TV and radio channels.";
-      this.label1.Click += new System.EventHandler(this.label1_Click);
       // 
       // Wizard_DVBCTV
       // 
