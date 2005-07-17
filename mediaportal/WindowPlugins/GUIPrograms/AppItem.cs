@@ -830,8 +830,8 @@ namespace ProgramsDatabase
         try
         {
           DeleteFiles();
-          string sql = String.Format("delete from application where appid = {0}", AppID);
-          sqlDB.Execute(sql);
+          DeleteFileLinks();
+          sqlDB.Execute(String.Format("delete from application where appid = {0}", AppID));
         }
         catch (SQLiteException ex)
         {
@@ -869,6 +869,21 @@ namespace ProgramsDatabase
         try
         {
           sqlDB.Execute(String.Format("delete from file where appid = {0}", AppID));
+        }
+        catch (SQLiteException ex)
+        {
+          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+      }
+    }
+
+    protected void DeleteFileLinks()
+    {
+      if ((AppID >= 0) && (sqlDB != null))
+      {
+        try
+        {
+          sqlDB.Execute(String.Format("delete from filteritem where appid = {0} or grouperappid = {0}", AppID));
         }
         catch (SQLiteException ex)
         {

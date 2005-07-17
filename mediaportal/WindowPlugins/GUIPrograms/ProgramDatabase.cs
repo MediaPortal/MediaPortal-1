@@ -45,6 +45,8 @@ namespace ProgramsDatabase
         PatchContentID();
         // patch genre-values
         PatchGenreValues();
+        // remove trigger
+        PatchAppTrigger();
         // dirty hack: propagate the sqlDB to the singleton objects...
         ProgramSettings.sqlDB = sqlDB;
       }
@@ -55,9 +57,6 @@ namespace ProgramsDatabase
       viewHandler = new ProgramViewHandler();
       ProgramSettings.viewHandler = viewHandler;
       mAppList = new Applist(sqlDB, new AppItem.FilelinkLaunchEventHandler(LaunchFilelink));
-      //			mAppList = new Applist(sqlDB);
-      //			mAppList.OnLaunchFilelink += new AppItem.FilelinkLaunchEventHandler(LaunchFilelink);
-
     }
 
     static void LaunchFilelink(FilelinkItem curLink, bool MPGUIMode)
@@ -73,7 +72,7 @@ namespace ProgramsDatabase
     static bool ObjectExists(string strName, string strType)
     {
       SQLiteResultSet results;
-      bool res = true;
+      bool res = false;
       results = sqlDB.Execute("SELECT name FROM sqlite_master WHERE name='" + strName + "' and type='" + strType + 
         "' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='" + strType + "' ORDER BY name");
       if (results != null && results.Rows.Count > 0)
@@ -85,7 +84,7 @@ namespace ProgramsDatabase
           {
             if ((string)arr[0] == strName)
             {
-              res = false;
+              res = true;
             }
           }
         }
@@ -99,7 +98,7 @@ namespace ProgramsDatabase
     {
       if (sqlDB == null)
         return false;
-      if (!ObjectExists(strName, strType))
+      if (ObjectExists(strName, strType))
         return false;
       try
       {
@@ -157,14 +156,8 @@ namespace ProgramsDatabase
       AddObject("idxFile2", "index", "CREATE INDEX idxFile2 ON file(filepath, uppertitle);\n");
       AddObject("idxApp1", "index", "CREATE INDEX idxApp1 ON application(fatherID);\n");
       AddObject("idxFilterItem1", "index", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID);\n");
-      AddObject("td_application", "trigger", 
-        "CREATE TRIGGER td_application BEFORE DELETE ON application \n  BEGIN\n    DELETE FROM filterItem WHERE appID = old.appID OR grouperAppID = old.appID;\n    DELETE FROM file WHERE appID = old.appID;\n  END;\n");
-/*
- *       if (bTryMigration)
-      {
-        DoV2_V3Migration();
-      }
-*/      
+//      AddObject("td_application", "trigger", 
+//        "CREATE TRIGGER td_application BEFORE DELETE ON application \n  BEGIN\n    DELETE FROM filterItem WHERE appID = old.appID OR grouperAppID = old.appID;\n    DELETE FROM file WHERE appID = old.appID;\n  END;\n");
       return true;
     }
 
@@ -196,6 +189,25 @@ namespace ProgramsDatabase
         ProgramSettings.WriteSetting(ProgramUtils.cGENRE_PATCH, "DONE") ;
       }
     }
+
+    // trigger prevents sqlitev3 client from deleting apps....
+    static void PatchAppTrigger()
+    {
+      if (sqlDB == null)
+        return;
+      if (ObjectExists("td_application", "trigger"))
+      {
+        try
+        {
+          sqlDB.Execute("drop trigger td_application;\n");
+        }
+        catch (SQLiteException ex)
+        {
+          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+      }
+    }
+
 
 
 
