@@ -5,6 +5,7 @@ using System.Threading;
 using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
+using MediaPortal.Util;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBT
 {
@@ -236,6 +237,14 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 				GUIListItem item = new GUIListItem();
 				item.Label=String.Format("{0}. {1}", count,chan.Name);
 				item.IsFolder=false;
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,chan.Name);
+				if (!System.IO.File.Exists(strLogo))
+				{
+					strLogo="defaultVideoBig.png";
+				}
+				item.ThumbnailImage=strLogo;
+				item.IconImage=strLogo;
+				item.IconImageBig=strLogo;
 				listChannelsFound.Add(item);
 				count++;
 			}
