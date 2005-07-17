@@ -36,38 +36,11 @@
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
-         <id>1</id>
-         <posX>24</posX>
-         <posY>184</posY>
-         <label>t allows you to listen to your favorite music &amp; radio, watch your video's and DVD's</label>
-         <font>font12</font>
-      </control>
-      <control>
-         <type>label</type>
          <description>-</description>
          <id>1</id>
          <posX>32</posX>
          <posY>152</posY>
          <label>Please specify the details for LNB:1</label>
-         <font>font12</font>
-      </control>
-      <control>
-         <type>label</type>
-         <description>Welcome2</description>
-         <id>1</id>
-         <posX>48</posX>
-         <posY>160</posY>
-         <label>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</label>
-         <font>font12</font>
-      </control>
-      <control>
-         <type>label</type>
-         <description>Description</description>
-         <id>1</id>
-         <posX>56</posX>
-         <posY>152</posY>
-         <label>This wizard will help you to setup Mediaportal fast and easy. Please follow the steps through this </label>
          <font>font12</font>
       </control>
       <control>
@@ -104,7 +77,6 @@
          <onright>5</onright>
          <onup>5</onup>
          <ondown>5</ondown>
-         <hyperlink>12</hyperlink>
          <label>Next&gt;</label>
          <width>96</width>
          <height>32</height>
@@ -127,6 +99,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>None</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -139,6 +112,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Simple A</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -151,6 +125,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Simple B</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -163,6 +138,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Level 1 A/A</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -175,6 +151,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Level 1 B/A</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -187,6 +164,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Level 1 A/B</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -199,6 +177,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Level 1 B/B</label>
+         <align>left</align>
       </control>
       <control>
          <type>label</type>
@@ -218,6 +197,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>0 KHz</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -230,6 +210,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>22 KHz</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -242,6 +223,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>33 KHz</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -254,6 +236,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>44 KHz</label>
+         <align>left</align>
       </control>
       <control>
          <type>label</type>
@@ -273,6 +256,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>KU-Band</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -285,6 +269,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>C-Band</label>
+         <align>left</align>
       </control>
       <control>
          <type>checkmark</type>
@@ -297,6 +282,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Circular</label>
+         <align>right</align>
       </control>
    </controls>
 </window>
