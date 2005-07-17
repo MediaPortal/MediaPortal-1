@@ -8,7 +8,7 @@ using DShowNET;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using TVCapture;
-namespace MediaPortal.GUI.Settings
+namespace MediaPortal.GUI.Settings.Wizard
 {
 	/// <summary>
 	/// Summary description for GUIWizardCardsDetected.
@@ -140,19 +140,37 @@ namespace MediaPortal.GUI.Settings
 			if (control==btnNext)
 			{
 				Log.Write("cards detected:{0}", Recorder.Count);
+				GUIPropertyManager.SetProperty("#Wizard.DVBT.Done","no");
+				GUIPropertyManager.SetProperty("#Wizard.DVBC.Done","no");
+				GUIPropertyManager.SetProperty("#Wizard.DVBS.Done","no");
+				GUIPropertyManager.SetProperty("#Wizard.ATSC.Done","no");
+				GUIPropertyManager.SetProperty("#Wizard.Analog.Done","no");
 				GUIPropertyManager.SetProperty("#WizardCard","0");
-				if (Recorder.Count>0)
+				ScanNextCardType();
+				return;
+
+			}
+			base.OnClicked (controlId, control, actionType);
+		}
+		static public void ScanNextCardType()
+		{
+			if (Recorder.Count>0)
+			{
+				for (int i=0; i < Recorder.Count;++i)
 				{
-					for (int i=0; i < Recorder.Count;++i)
+					TVCaptureDevice dev = Recorder.Get(i);
+					if (dev.Network==NetworkType.DVBT)
 					{
-						TVCaptureDevice dev = Recorder.Get(i);
-						if (dev.Network==NetworkType.DVBT)
+						if (GUIPropertyManager.GetProperty("#Wizard.DVBT.Done") != "yes")
 						{
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_COUNTRY);
 							return;
 						}
-						if (dev.Network==NetworkType.DVBC)
+					}
+					if (dev.Network==NetworkType.DVBC)
+					{
+						if (GUIPropertyManager.GetProperty("#Wizard.DVBC.Done") != "yes")
 						{
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBC_COUNTRY);
@@ -161,7 +179,6 @@ namespace MediaPortal.GUI.Settings
 					}
 				}
 			}
-			base.OnClicked (controlId, control, actionType);
 		}
 
 	}

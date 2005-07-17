@@ -6,6 +6,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
+using MediaPortal.GUI.Settings.Wizard;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBC
 {
@@ -192,6 +193,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
 				MapTvToOtherCards(captureCard.ID);
 				MapRadioToOtherCards(captureCard.ID);
 				GUIControl.FocusControl(GetID,btnNext.GetID);
+				GUIPropertyManager.SetProperty("#Wizard.DVBC.Done","yes");
 
 			}
 		}
@@ -327,5 +329,15 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
 				}
 			}
 		}
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			if (control==btnNext)
+			{
+				GUIWizardCardsDetected.ScanNextCardType();
+				return;
+			}
+			base.OnClicked (controlId, control, actionType);
+		}
+
 	}
 }
