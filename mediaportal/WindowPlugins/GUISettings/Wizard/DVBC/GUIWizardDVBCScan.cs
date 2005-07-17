@@ -290,7 +290,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
 			
 			progressBar.Percentage=(int)percent;
 			string chanDesc=String.Format("freq:{0} Khz, Mod:{1} SR:{2}",dvbcChannels[currentFrequencyIndex].frequency,dvbcChannels[currentFrequencyIndex].modulation.ToString(), dvbcChannels[currentFrequencyIndex].symbolrate);
-			string description=String.Format("Found signal for channel:{0} {1}", currentFrequencyIndex,chanDesc);
+			string description=String.Format("Scan channel:{0} {1}", currentFrequencyIndex,chanDesc);
 
 			lblChannelsFound.Label=description;
 		}
