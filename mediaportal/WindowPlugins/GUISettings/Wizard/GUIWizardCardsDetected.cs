@@ -149,11 +149,16 @@ namespace MediaPortal.GUI.Settings
 						if (dev.Network==NetworkType.DVBT)
 						{
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_COUNTRY);
+							return;
+						}
+						if (dev.Network==NetworkType.DVBC)
+						{
+							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBC_COUNTRY);
+							return;
 						}
 					}
-					Log.Write("property:{0}", GUIPropertyManager.GetProperty("#WizardCard"));
-					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_COUNTRY);
-					return;
 				}
 			}
 			base.OnClicked (controlId, control, actionType);

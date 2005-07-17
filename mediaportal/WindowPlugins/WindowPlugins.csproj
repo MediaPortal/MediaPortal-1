@@ -229,6 +229,11 @@
                     Project = "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "Interop.TunerLib"
+                    AssemblyName = "Interop.TunerLib"
+                    HintPath = "..\Interop.TunerLib.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -1071,6 +1076,16 @@
                 />
                 <File
                     RelPath = "GUISettings\Wizard\GUIWizardWelcome.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUISettings\Wizard\DVBC\GUIWizardDVBCCountry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUISettings\Wizard\DVBC\GUIWizardDVBCScan.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
