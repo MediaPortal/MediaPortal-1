@@ -396,27 +396,42 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 
-        // Configure the autohide setting
-        XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
-        if (nodeAutoHideTopbar != null) 
-        {
-          if (nodeAutoHideTopbar.InnerText != null)
-          {
+				IDictionary defines = LoadDefines(doc);
+
+				// Configure the autohide setting
+				XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
+				if (nodeAutoHideTopbar != null) 
+				{
+					if (nodeAutoHideTopbar.InnerText != null)
+					{
 						m_iAutoHideTopbar = -1;
-            string strAllow = nodeAutoHideTopbar.InnerText.ToLower();
-            if (strAllow == "yes" || strAllow == "true")
-              m_iAutoHideTopbar = 1;
+						string strAllow = nodeAutoHideTopbar.InnerText.ToLower();
+						if (strAllow == "yes" || strAllow == "true")
+							m_iAutoHideTopbar = 1;
 						if (strAllow == "no" || strAllow == "false")
 							m_iAutoHideTopbar = 0;
-          }
-        } 
+					}
+				} 
 
-				// Load the list of the Controls that are used in the window
-				XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/control");
-				foreach (XmlNode node in nodeList)
+				XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
+
+				foreach(XmlNode node in nodeList)
 				{
-					LoadControl(node, controlList);
+					if(node.Name == null)
+						continue;
+
+					switch(node.Name)
+					{
+						case "control":
+							LoadControl(node, controlList, defines);
+							break;
+						case "include":
+						case "import":
+							LoadInclude(node, controlList, defines);
+							break;
+					}
 				}
+
 				// initialize the controls
 				OnWindowLoaded();
 				isSkinLoaded = true;
@@ -434,13 +449,13 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		/// <param name="node">XmlNode describing the control</param>
 		/// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
-    protected void LoadControl(XmlNode node, ArrayList controls)
-    {
+		protected void LoadControl(XmlNode node, ArrayList controls, IDictionary defines)
+		{
 			if (node==null) return;
 			if (controls==null) return;
 			try
 			{
-				GUIControl newControl = GUIControlFactory.Create(windowId, node);
+				GUIControl newControl = GUIControlFactory.Create(windowId, node, defines);
 				newControl.WindowId = GetID;
 				GUIImage img = newControl as GUIImage;
 				if (img!=null)
@@ -457,7 +472,68 @@ namespace MediaPortal.GUI.Library
 			{
 				Log.WriteFile(Log.LogType.Log,true,"Unable to load control. exception:{0}",ex.ToString());
 			}
-    }
+		}
+
+		bool LoadInclude(XmlNode node, ArrayList controlList, IDictionary defines)
+		{
+			if(node == null || controlList == null)
+				return false;
+
+			if(System.IO.File.Exists(windowXmlFileName) == false)
+			{
+				Log.WriteFile(Log.LogType.Log, true,"SKIN: Missing {0}", windowXmlFileName);
+				return false;
+			}
+
+			try
+			{
+				XmlDocument doc = new XmlDocument();
+
+				doc.Load(GUIGraphicsContext.Skin + "\\" + node.InnerText);
+
+				if(doc.DocumentElement == null)
+					return false;
+
+				if(doc.DocumentElement.Name != "window")
+					return false;
+
+				foreach(XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
+					LoadControl(controlNode, controlList, defines);
+
+				return true;
+			}
+			catch(Exception e)
+			{
+				Log.Write("GUIWIndow.LoadInclude: {0}", e.Message);
+			}
+
+			return false;
+		}
+
+		IDictionary LoadDefines(XmlDocument document)
+		{
+			Hashtable table = new Hashtable();
+
+			try
+			{
+				foreach(XmlNode node in document.SelectNodes("/window/define"))
+				{
+					string[] tokens = node.InnerText.Split(':');
+
+					if(tokens.Length < 2)
+						continue;
+
+					table[tokens[0]] = tokens[1];
+				}
+			}
+			catch(Exception e)
+			{
+				Log.Write("GUIWindow.LoadDefines: {0}", e.Message);
+			}
+
+			return table;
+		}
+		
 		#endregion
 
 		#region virtual methods

@@ -83,7 +83,8 @@ namespace MediaPortal.GUI.Library
 				GUI_MSG_CLICKED_UP,
 				GUI_MSG_CLICKED_DOWN,
 				GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING,
-				GUI_MSG_NOTIFY_TV_PROGRAM
+				GUI_MSG_NOTIFY_TV_PROGRAM,
+				GetList,
 		};
 
 		private string 				m_strLabel="";

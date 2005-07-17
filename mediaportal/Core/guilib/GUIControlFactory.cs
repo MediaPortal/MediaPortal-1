@@ -248,12 +248,12 @@ namespace MediaPortal.GUI.Library
 
 		}
 
-		public static GUIControl Create(int dwParentId, XmlNode pControlNode)
+		public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines)
 		{
 			Type typeOfControlToCreate = GetControlType(pControlNode);
 			if (typeOfControlToCreate == null)
 				return null;
-			
+
 			object[] ctorParams = { dwParentId };			
 			GUIControl control = (GUIControl)
 				Activator.CreateInstance(typeOfControlToCreate,ctorParams);
@@ -262,9 +262,9 @@ namespace MediaPortal.GUI.Library
 				(XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
 			
 			if (referenceNode != null)
-				UpdateControlWithXmlData(control,typeOfControlToCreate, referenceNode);
+				UpdateControlWithXmlData(control,typeOfControlToCreate, referenceNode, defines);
 			
-			UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode);
+			UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode, defines);
 			
 			control.ScaleToScreenResolution();
 			AddSubitemsToControl(pControlNode,control);
@@ -277,7 +277,7 @@ namespace MediaPortal.GUI.Library
 				XmlNodeList nodeList = pControlNode.SelectNodes("control");
 				foreach (XmlNode subControlNode in nodeList)
 				{
-					GUIControl subControl = Create(dwParentId, subControlNode);
+					GUIControl subControl = Create(dwParentId, subControlNode, defines);
 					group.AddControl(subControl);
 				}
 			}
@@ -288,7 +288,7 @@ namespace MediaPortal.GUI.Library
 				XmlNodeList nodeList = pControlNode.SelectNodes("control");
 				foreach (XmlNode subControlNode in nodeList)
 				{
-					GUIControl subControl = Create(dwParentId, subControlNode);
+					GUIControl subControl = Create(dwParentId, subControlNode, defines);
 					if (subControl is GUIListControl)
 					{
 						GUIListControl list = subControl as GUIListControl;
@@ -309,8 +309,8 @@ namespace MediaPortal.GUI.Library
 		}
 
 		private static void UpdateControlWithXmlData(GUIControl control, 
-													 Type controlType,
-													 XmlNode pControlNode)
+			Type controlType,
+			XmlNode pControlNode, IDictionary defines)
 		{
 			Hashtable fieldsThatCanBeUpdated = GetFieldsToUpdate(controlType);
 	
@@ -322,8 +322,13 @@ namespace MediaPortal.GUI.Library
 
 				if (correspondingField != null)
 				{
-					object newValue = ConvertXmlStringToObject(element.InnerText,
-								correspondingField.FieldType);
+					string text = element.InnerText;
+
+					if(defines.Contains(text))
+						text = (string)defines[text];
+
+					object newValue = ConvertXmlStringToObject(text,
+						correspondingField.FieldType);
 			
 					try
 					{
