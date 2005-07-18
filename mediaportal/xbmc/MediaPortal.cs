@@ -803,6 +803,8 @@ public class MediaPortalApp : D3DApp, IRender
 		GUIWindowManager.Clear();
 		GUILocalizeStrings.Dispose();
 
+		VolumeHandler.Instance.Dispose();
+
 		// Restart MCE Services
 		Utils.RestartMCEServices();
 	}
