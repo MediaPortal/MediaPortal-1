@@ -261,7 +261,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			chan.Frequency=DVBSChannels[currentFrequencyIndex].TPfreq;
 			Log.WriteFile(Log.LogType.Capture,"DVBS-scan:tune:{0} bandwidth:{1} offset:{2}",chan.Frequency, chan.Bandwidth,offset);
 
-			captureCard.Tune(chan,0);
+			captureCard.Tune(chan,m_currentDiseqc);
 			System.Threading.Thread.Sleep(400);
 			if (captureCard.SignalQuality <40)
 				System.Threading.Thread.Sleep(400);
