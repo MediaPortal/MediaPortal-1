@@ -1095,6 +1095,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\DVBS\GUIWizardDVBSScan.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\DVBS\GUIWizardDVBSSelectLNBs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

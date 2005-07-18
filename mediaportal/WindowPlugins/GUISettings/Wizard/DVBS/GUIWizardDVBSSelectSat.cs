@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.TV.Recording;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBS
 {
@@ -37,6 +38,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 		[SkinControlAttribute(26)]		protected GUIButtonControl btnNext=null;
 
 		int maxLNBs=1;
+		int card=0;
 		Transponder[] lnbConfig= new Transponder[5];
 		public GUIWizardDVBSSelectSat()
 		{
@@ -51,6 +53,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
+			card = Int32.Parse( GUIPropertyManager.GetProperty("#WizardCard"));
 			maxLNBs=Int32.Parse(GUIPropertyManager.GetProperty("#WizardsDVBSLNB"));
 			Update();
 		}
@@ -158,7 +161,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 						xmlwriter.SetValue("dvbs","sat4",lnbConfig[4].FileName);
 				}
 			}
-			GUIWindowManager.ActivateWindow(GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_SCAN);
+			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SCAN);
 		}
 		
 		void OnPreviousPage()
