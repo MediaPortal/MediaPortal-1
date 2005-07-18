@@ -30,11 +30,11 @@ namespace MediaPortal.Util
 
         if (m_db!=null)
         {
-					m_db.Execute("PRAGMA cache_size=2000\n");
-					m_db.Execute("PRAGMA synchronous='OFF'\n");
-					m_db.Execute("PRAGMA count_changes=1\n");
-					m_db.Execute("PRAGMA full_column_names=0\n");
-					m_db.Execute("PRAGMA short_column_names=0\n");
+					m_db.Execute("PRAGMA cache_size=2000;\n");
+					m_db.Execute("PRAGMA synchronous='OFF';\n");
+					m_db.Execute("PRAGMA count_changes=1;\n");
+					m_db.Execute("PRAGMA full_column_names=0;\n");
+					m_db.Execute("PRAGMA short_column_names=0;\n");
 				}
 
       } 
@@ -112,13 +112,13 @@ namespace MediaPortal.Util
     static bool CreateTables()
     {
       if (m_db==null) return false;
-      if ( AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text)\n"))
+      if ( AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text);\n"))
       {
-        m_db.Execute("CREATE INDEX idxPath ON path(idPath)");
+        m_db.Execute("CREATE INDEX idxPath ON path(idPath);\n");
       }
-      if ( AddTable("setting","CREATE TABLE setting ( idSetting integer primary key, idPath integer , key text, value text)\n"))
+      if ( AddTable("setting","CREATE TABLE setting ( idSetting integer primary key, idPath integer , key text, value text);\n"))
       {
-        m_db.Execute("CREATE INDEX idxSetting ON setting(idSetting)");
+        m_db.Execute("CREATE INDEX idxSetting ON setting(idSetting);\n");
       }
       return true;
     }

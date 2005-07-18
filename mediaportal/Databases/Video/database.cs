@@ -41,11 +41,11 @@ namespace MediaPortal.Video.Database
 				catch(Exception){}
 				m_db = new SQLiteClient(strPath+@"\database\VideoDatabaseV5.db3");
 				CreateTables();
-				m_db.Execute("PRAGMA cache_size=2000\n");
-				m_db.Execute("PRAGMA synchronous='OFF'\n");
-				m_db.Execute("PRAGMA count_changes=1\n");
-				m_db.Execute("PRAGMA full_column_names=0\n");
-				m_db.Execute("PRAGMA short_column_names=0\n");
+				m_db.Execute("PRAGMA cache_size=2000;\n");
+				m_db.Execute("PRAGMA synchronous='OFF';\n");
+				m_db.Execute("PRAGMA count_changes=1;\n");
+				m_db.Execute("PRAGMA full_column_names=0;\n");
+				m_db.Execute("PRAGMA short_column_names=0;\n");
 
 
 			} 
@@ -59,20 +59,20 @@ namespace MediaPortal.Video.Database
 		static bool CreateTables()
 		{
 			if (m_db==null) return false;
-			DatabaseUtility.AddTable(m_db,"bookmark","CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text)\n");
-			DatabaseUtility.AddTable(m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text)\n");
-			DatabaseUtility.AddTable(m_db,"genrelinkmovie","CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)\n");
-			DatabaseUtility.AddTable(m_db,"movie","CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text)\n");
-			DatabaseUtility.AddTable(m_db,"movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer)\n");
-			DatabaseUtility.AddTable(m_db,"actorlinkmovie","CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer )\n");
-			DatabaseUtility.AddTable(m_db,"actors","CREATE TABLE actors ( idActor integer primary key, strActor text )\n");
-			DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text)\n");
-			DatabaseUtility.AddTable(m_db,"files","CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text)\n");
-			DatabaseUtility.AddTable(m_db,"resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob)\n");
-			DatabaseUtility.AddTable(m_db,"duration","CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)\n");
+			DatabaseUtility.AddTable(m_db,"bookmark","CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text);\n");
+			DatabaseUtility.AddTable(m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
+			DatabaseUtility.AddTable(m_db,"genrelinkmovie","CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer);\n");
+			DatabaseUtility.AddTable(m_db,"movie","CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text);\n");
+			DatabaseUtility.AddTable(m_db,"movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer);\n");
+			DatabaseUtility.AddTable(m_db,"actorlinkmovie","CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer );\n");
+			DatabaseUtility.AddTable(m_db,"actors","CREATE TABLE actors ( idActor integer primary key, strActor text );\n");
+			DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text);\n");
+			DatabaseUtility.AddTable(m_db,"files","CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text);\n");
+			DatabaseUtility.AddTable(m_db,"resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob);\n");
+			DatabaseUtility.AddTable(m_db,"duration","CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer);\n");
 
-			DatabaseUtility.AddTable(m_db,"actorinfo","CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text)\n");
-			DatabaseUtility.AddTable(m_db,"actorinfomovies","CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text)\n");
+			DatabaseUtility.AddTable(m_db,"actorinfo","CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text);\n");
+			DatabaseUtility.AddTable(m_db,"actorinfomovies","CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text);\n");
 			return true;
 		}
 

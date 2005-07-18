@@ -123,6 +123,13 @@ namespace SQLite.NET
 
 		public SQLiteResultSet Execute(string query)
 		{
+			if (query==null) return null;
+			int len=query.Length;
+			if (len==0) return null;
+			if (query[len-1] != '\n' && query[len-2] != ';' )
+			{
+				query+=";";
+			}
 			//if ( (long)dbHandle != dbHandleAdres)
 			//	throw new SQLiteException(String.Format("SQL0: ptr changed:{0:X} {1:X}", dbHandleAdres,(long)dbHandle), ResultCode.INTERNAL);
 			SQLiteClient.ResultCode err=ResultCode.EMPTY;
