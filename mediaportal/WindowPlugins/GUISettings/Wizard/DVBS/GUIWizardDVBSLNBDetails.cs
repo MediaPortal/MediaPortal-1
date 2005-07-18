@@ -50,6 +50,17 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			base.OnPageLoad ();
 			card = Int32.Parse( GUIPropertyManager.GetProperty("#WizardCard"));
 			maxLNBs=Int32.Parse(GUIPropertyManager.GetProperty("#WizardsDVBSLNB"));
+
+			TVCaptureDevice captureCard= Recorder.Get(card);
+			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
+
+			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+			{
+				xmlwriter.SetValueAsBool("dvbs","useLNB1",maxLNBs>=1);
+				xmlwriter.SetValueAsBool("dvbs","useLNB2",maxLNBs>=2);
+				xmlwriter.SetValueAsBool("dvbs","useLNB3",maxLNBs>=3);
+				xmlwriter.SetValueAsBool("dvbs","useLNB4",maxLNBs>=4);
+			}
 			Update();
 		}
 		void Update()
@@ -183,86 +194,42 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
 		void SaveSettings()
 		{
-/*
+
 			TVCaptureDevice captureCard= Recorder.Get(card);
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
 			{
-				if(diseqca.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc",diseqca.SelectedIndex); 
-				}
-				if(diseqcb.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc2",diseqcb.SelectedIndex); 
-				}
-				if(diseqcc.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc3",diseqcc.SelectedIndex); 
-				}
-				if(diseqcd.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","diseqc4",diseqcd.SelectedIndex); 
-				}
-				if (lnbconfig1.SelectedIndex>=0)
-				{
-					switch (lnbconfig1.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb",44); break;
-					}
-				}
-				if (lnbconfig2.SelectedIndex>=0)
-				{
-					switch (lnbconfig2.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb2",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb2",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb2",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb2",44); break;
-					}
-				}
-				if (lnbconfig3.SelectedIndex>=0)
-				{
-					switch (lnbconfig3.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb3",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb3",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb3",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb3",44); break;
-					}
-				}
-				if (lnbconfig4.SelectedIndex>=0)
-				{
-					switch (lnbconfig4.SelectedIndex)
-					{
-						case 0: xmlwriter.SetValue("dvbs","lnb4",0); break;
-						case 1: xmlwriter.SetValue("dvbs","lnb4",22); break;
-						case 2: xmlwriter.SetValue("dvbs","lnb4",33); break;
-						case 3: xmlwriter.SetValue("dvbs","lnb4",44); break;
-					}
-				}
+				string lnbKey=String.Format("useLNB{0}",LNBNumber);
+				xmlwriter.SetValueAsBool("dvbs",lnbKey,true);
+				
+				lnbKey=String.Format("diseqc{0}",LNBNumber);
+				if (LNBNumber==1) lnbKey="diseqc";
+				int ivalue=0;
+				if (cmDisEqcSimpleA.Selected)  ivalue=1;
+				if (cmDisEqcSimpleB.Selected)  ivalue=2;
+				if (cmDisEqcLevel1AA.Selected) ivalue=3;
+				if (cmDisEqcLevel1BA.Selected) ivalue=4;
+				if (cmDisEqcLevel1AB.Selected) ivalue=5;
+				if (cmDisEqcLevel1BB.Selected) ivalue=6;
+				xmlwriter.SetValue("dvbs",lnbKey,ivalue); 
 
-				if (lnbkind1.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","lnbKind",lnbkind1.SelectedIndex); 
-				}
-				if (lnbkind2.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","lnbKind2",lnbkind2.SelectedIndex); 
-				}
-				if (lnbkind3.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","lnbKind3",lnbkind3.SelectedIndex); 
-				}
-				if (lnbkind4.SelectedIndex>=0)
-				{
-					xmlwriter.SetValue("dvbs","lnbKind4",lnbkind4.SelectedIndex); 
-				}
+				lnbKey=String.Format("lnb{0}",LNBNumber);
+				if (LNBNumber==1) lnbKey="lnb";
+				ivalue=0;
+				if (cmLnb0Khz.Selected==true) ivalue=0;
+				if (cmLnb22Khz.Selected==true) ivalue=22;
+				if (cmLnb33Khz.Selected==true) ivalue=33;
+				if (cmLnb44Khz.Selected==true) ivalue=44;
+				xmlwriter.SetValue("dvbs",lnbKey,ivalue); 
+
+				lnbKey=String.Format("lnbKind{0}",LNBNumber);
+				if (LNBNumber==1) lnbKey="lnbKind";
+				ivalue=0;
+				if (cmLnbBandKU.Selected==true) ivalue=0;
+				if (cmLnbBandC.Selected==true) ivalue=1;
+				if (cmLnbBandCircular.Selected==true) ivalue=2;
+				xmlwriter.SetValue("dvbs",lnbKey,ivalue);
 			}
-*/
 		}
 	}
 }
