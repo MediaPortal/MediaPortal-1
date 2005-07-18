@@ -15,14 +15,14 @@
          <type>button</type>
          <description>manual tune</description>
          <id>23</id>
-         <posX>448</posX>
+         <posX>418</posX>
          <posY>504</posY>
          <onleft>25</onleft>
          <onright>25</onright>
          <onup>24</onup>
          <ondown>25</ondown>
          <label>Manual Tune</label>
-         <width>96</width>
+         <width>126</width>
          <height>32</height>
       </control>
       <control>
