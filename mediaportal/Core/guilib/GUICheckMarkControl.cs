@@ -20,10 +20,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("disabledcolor")]		protected long		m_dwDisabledColor=0xFF606060;
     [XMLSkinElement("align")]				protected Alignment m_dwAlign=Alignment.ALIGN_RIGHT;  
     [XMLSkinElement("shadow")]				protected bool		m_bShadow=false;
-											protected GUIImage	m_imgCheckMark=null;
-											protected GUIImage	m_imgCheckMarkNoFocus=null;
-											protected GUIFont   m_pFont=null;
-	
+		protected GUIImage	m_imgCheckMark=null;
+		protected GUIImage	m_imgCheckMarkNoFocus=null;
+		protected GUIFont   m_pFont=null;
+		protected Rectangle m_rect=new Rectangle();
 	  public GUICheckMarkControl (int dwParentID) : base(dwParentID)
 	  {
 	  }
@@ -91,6 +91,9 @@ namespace MediaPortal.GUI.Library
 			}
       int dwTextPosX=m_dwPosX;
       int dwCheckMarkPosX=m_dwPosX;
+			m_rect.X=m_dwPosY;
+			m_rect.Y=m_dwPosY;
+			m_rect.Height=m_imgCheckMark.Height;
       if (null!=m_pFont) 
       {
         if (m_dwAlign==GUIControl.Alignment.ALIGN_LEFT)
@@ -99,12 +102,20 @@ namespace MediaPortal.GUI.Library
           float fTextHeight=0,fTextWidth=0;
           m_pFont.GetTextExtent( m_strLabel, ref fTextWidth,ref fTextHeight);
           dwCheckMarkPosX += ( (int)(fTextWidth)+5);
+					m_rect.X=m_dwPosX;
+					m_rect.Width=5+(int)fTextWidth+m_imgCheckMark.Width;
+					
         }
         else
         {
 					// put text at the right side of the checkmark
-          dwTextPosX = (dwCheckMarkPosX+m_imgCheckMark.Width +5);
-        }
+					dwTextPosX = (dwCheckMarkPosX+m_imgCheckMark.Width +5);
+
+					float fTextHeight=0,fTextWidth=0;
+					m_pFont.GetTextExtent( m_strLabel, ref fTextWidth,ref fTextHeight);
+					m_rect.X=dwTextPosX;
+					m_rect.Width=(dwTextPosX+(int)fTextWidth+5)-dwTextPosX;
+				}
         if (Disabled )
         {
 					// If disabled, draw the text in the disabled color.
@@ -323,6 +334,31 @@ namespace MediaPortal.GUI.Library
       get { return m_bShadow;}
       set { m_bShadow=value;}
     }
+
  
+
+		/// <summary>
+		/// Method which determines of the coordinate(x,y) is within the current control
+		/// </summary>
+		/// <param name="x">x coordinate</param>
+		/// <param name="y">y coordiate </param>
+		/// <param name="controlID">return id of control if coordinate is within control</param>
+		/// <returns>true: point is in control
+		///          false: point is not within control
+		/// </returns>
+		public override bool InControl(int x, int y, out int controlID)
+		{
+			controlID=-1;
+			if (x >= m_rect.Left && x < m_rect.Right)
+			{
+				if (y >= m_rect.Top && y < m_rect.Bottom)
+				{
+					controlID=GetID;
+					return true;
+				}
+			}
+			return false;
+		}
+
 	}
 }

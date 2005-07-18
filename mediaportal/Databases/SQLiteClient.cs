@@ -141,7 +141,6 @@ namespace SQLite.NET
 							sqlite3_finalize(stmt);
 							stmt=null;
 						}
-					
 						
 						if (err==ResultCode.EMPTY)
 						{
@@ -155,16 +154,21 @@ namespace SQLite.NET
 						}
 						if (err==ResultCode.ERROR)
 						{
-							Log.WriteFile(Log.LogType.Log,true,String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
+							Log.WriteFile(Log.LogType.Log,true,"SQL1:{0} failed err:{1}", query,err.ToString());
 							throw new SQLiteException(String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
 						}
 						continue;
 					}
 					break;
 				}
+				if (err==ResultCode.EMPTY)
+				{
+					//table is empty
+					return set1;
+				}
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
 				{
-					Log.WriteFile(Log.LogType.Log,true,String.Format("SQL2:{0} failed err:{1}", query,err.ToString()), err);
+					Log.WriteFile(Log.LogType.Log,true,"SQL2:{0} failed err:{1}", query,err.ToString());
 					throw new SQLiteException(String.Format("SQL2:{0} failed err:{1}", query,err.ToString()), err);
 				}
 				
@@ -191,7 +195,7 @@ namespace SQLite.NET
 						stmt=null;
 						if (err!=ResultCode.OK && err!=ResultCode.Done)
 						{
-							Log.WriteFile(Log.LogType.Log,true,String.Format("SQL3:{0} failed err:{1}", query,err.ToString()), err);
+							Log.WriteFile(Log.LogType.Log,true,"SQL3:{0} failed err:{1}", query,err.ToString());
 							throw new SQLiteException(String.Format("SQL3:{0} failed err:{1}", query,err.ToString()), err);
 						}
 						break;
