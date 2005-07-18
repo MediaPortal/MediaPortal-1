@@ -14,13 +14,10 @@ namespace SQLite.NET
 
 	public unsafe class SQLiteClient
 	{
-	
 		[DllImport("sqlite.dll")]
 		private static extern int sqlite3_changes(void* handle);
 		[DllImport("sqlite.dll")]
 		private static extern void sqlite3_close(void* handle);
-		[DllImport("sqlite.dll")]
-		private static extern ResultCode sqlite3_exec(void* handle, string sql, SQLiteCallback callBack, IntPtr pArg, out string errMsg);
 		[DllImport("sqlite.dll")]
 		private static extern void sqlite3_interrupt(void* handle);
 		[DllImport("sqlite.dll")]
