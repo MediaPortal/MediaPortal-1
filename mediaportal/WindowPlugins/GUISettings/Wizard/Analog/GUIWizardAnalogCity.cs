@@ -11,6 +11,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 	public class GUIWizardAnalogCity:GUIWindow, IComparer
 	{
 		[SkinControlAttribute(24)]			protected GUIListControl listCities=null;
+		[SkinControlAttribute(23)]			protected GUIListControl btnManual=null;
 		public GUIWizardAnalogCity()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY;
@@ -63,6 +64,10 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				DoScan(item.Label, item.Path);
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_IMPORTED);
 				return;
+			}
+			if (control==btnManual)
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_MANUAL_TUNE);
 			}
 			base.OnClicked (controlId, control, actionType);
 		}

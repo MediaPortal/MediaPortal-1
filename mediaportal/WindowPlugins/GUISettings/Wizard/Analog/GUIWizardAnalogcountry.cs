@@ -11,6 +11,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 	public class GUIWizardAnalogcountry:GUIWindow, IComparer
 	{
 		[SkinControlAttribute(24)]			protected GUIListControl listCountries=null;
+		[SkinControlAttribute(23)]			protected GUIListControl btnManual=null;
 		public GUIWizardAnalogcountry()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_COUNTRY;
@@ -51,6 +52,10 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				DoScan(item.Label);
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY);
 				return;
+			}
+			if (control==btnManual)
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_MANUAL_TUNE);
 			}
 			base.OnClicked (controlId, control, actionType);
 		}
