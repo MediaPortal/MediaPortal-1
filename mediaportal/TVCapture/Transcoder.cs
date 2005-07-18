@@ -186,6 +186,8 @@ namespace MediaPortal.TV.Recording
 			if (WorkerThread==null)
 			{
 				WorkerThread = new Thread(new ThreadStart(TranscodeWorkerThread));
+				WorkerThread.ApartmentState=ApartmentState.STA;
+				WorkerThread.IsBackground=true;
 				WorkerThread.Start();
 			}
 		}

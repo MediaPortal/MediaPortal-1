@@ -61,6 +61,8 @@ namespace MediaPortal.TV.Recording
 			if (Recorder.IsAnyCardRecording()) return;
 			if (importing) return;
 		  Thread WorkerThread = new Thread(new ThreadStart(ImportWorkerThreadFunction));
+			WorkerThread.ApartmentState=ApartmentState.STA;
+			WorkerThread.IsBackground=true;
 			WorkerThread.Start();
 		}
 		static void ImportWorkerThreadFunction()

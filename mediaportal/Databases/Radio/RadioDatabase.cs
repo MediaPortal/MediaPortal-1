@@ -28,8 +28,7 @@ namespace MediaPortal.Radio.Database
         // Open database
 				Log.WriteFile(Log.LogType.Log,false,"open radiodatabase");
 
-				String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
-					GetExecutingAssembly().Location); 
+				String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); 
 				try
 				{
 					System.IO.Directory.CreateDirectory(strPath+@"\database");

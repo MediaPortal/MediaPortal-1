@@ -82,6 +82,8 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 				}
 			}
 			Thread WorkerThread = new Thread(new ThreadStart(ScanThread));
+			WorkerThread.ApartmentState=ApartmentState.STA;
+			WorkerThread.IsBackground=true;
 			WorkerThread.Start();
 		}
 		

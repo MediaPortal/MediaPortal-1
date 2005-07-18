@@ -114,11 +114,18 @@ namespace MediaPortal.Util
       if (m_db==null) return false;
       if ( AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text);\n"))
       {
-        m_db.Execute("CREATE INDEX idxPath ON path(idPath);\n");
+				try
+				{
+					m_db.Execute("CREATE INDEX idxPath ON path(idPath);\n");
+				}
+				catch(Exception){}
       }
       if ( AddTable("setting","CREATE TABLE setting ( idSetting integer primary key, idPath integer , key text, value text);\n"))
       {
-        m_db.Execute("CREATE INDEX idxSetting ON setting(idSetting);\n");
+				try {
+					m_db.Execute("CREATE INDEX idxSetting ON setting(idSetting);\n");
+				}
+				catch(Exception){} 
       }
       return true;
     }

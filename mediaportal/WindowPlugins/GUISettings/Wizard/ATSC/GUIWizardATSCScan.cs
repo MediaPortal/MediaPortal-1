@@ -53,6 +53,8 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
 			progressBar.IsVisible=true;
 			UpdateList();
 			Thread WorkerThread = new Thread(new ThreadStart(ScanThread));
+			WorkerThread.ApartmentState=ApartmentState.STA;
+			WorkerThread.IsBackground=true;
 			WorkerThread.Start();
 		}
 		public void ScanThread()
