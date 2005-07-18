@@ -208,7 +208,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			}
 			else
 			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_LNB);
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_COUNTRY);
 			}
 
 		}

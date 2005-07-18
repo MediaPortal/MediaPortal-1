@@ -15,7 +15,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     
 		public override bool Init()
 		{
-			return Load (GUIGraphicsContext.Skin+@"\wizard_analog_county.xml");
+			return Load (GUIGraphicsContext.Skin+@"\wizard_tvcard_analog_country.xml");
 		}
 	}
 }
