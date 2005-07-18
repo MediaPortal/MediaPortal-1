@@ -60,7 +60,10 @@ namespace MediaPortal.Radio.Database
       if (m_db==null) return false;
       if ( DatabaseUtility.AddTable(m_db,"station","CREATE TABLE station ( idChannel integer primary key, strName text, iChannelNr integer, frequency text, URL text, genre text, bitrate integer, scrambled integer);\n"))
       {
-        m_db.Execute("CREATE INDEX idxStation ON station(idChannel);\n");
+				try {
+					m_db.Execute("CREATE INDEX idxStation ON station(idChannel);\n");
+				}
+				catch(Exception){} 
       }
 			DatabaseUtility.AddTable(m_db,"tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer);\n");
 			DatabaseUtility.AddTable(m_db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer);\n");

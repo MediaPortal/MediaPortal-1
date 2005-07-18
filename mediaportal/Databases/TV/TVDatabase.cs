@@ -150,17 +150,28 @@ namespace MediaPortal.TV.Database
 				if (m_db==null) return false;
 				if ( DatabaseUtility.AddTable(m_db,"channel","CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer, Country integer, scrambled integer);\n"))
 				{
-					m_db.Execute("CREATE INDEX idxChannel ON channel(iChannelNr)");
+					try {
+						m_db.Execute("CREATE INDEX idxChannel ON channel(iChannelNr);\n");
+					}
+					catch(Exception){} 
 				}
         
         if ( DatabaseUtility.AddTable(m_db,"tblPrograms","CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime text, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text);\n"))
 				{
-					m_db.Execute("CREATE INDEX idxProgram ON tblPrograms(idChannel,iStartTime,iEndTime)");
+					try
+					{
+						m_db.Execute("CREATE INDEX idxProgram ON tblPrograms(idChannel,iStartTime,iEndTime);\n");
+					}
+					catch(Exception){} 
 				}
 
 				if ( DatabaseUtility.AddTable(m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n"))
 				{
-					m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre)");
+					try
+					{
+						m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre);\n");
+					}
+					catch(Exception){} 
 				}
 
 				DatabaseUtility.AddTable(m_db,"recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer, priority integer, quality integer, episodesToKeep integer);\n");
