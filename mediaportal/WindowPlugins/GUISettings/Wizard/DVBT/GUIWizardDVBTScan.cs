@@ -56,7 +56,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 			UpdateList();
 			Thread WorkerThread = new Thread(new ThreadStart(ScanThread));
 			WorkerThread.ApartmentState=ApartmentState.STA;
-			WorkerThread.IsBackground=true;
+			//WorkerThread.IsBackground=true;
 			WorkerThread.Start();
 		}
 		

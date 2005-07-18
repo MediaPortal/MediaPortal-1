@@ -56,7 +56,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			UpdateList();
 			Thread WorkerThread = new Thread(new ThreadStart(ScanThread));
 			WorkerThread.ApartmentState=ApartmentState.STA;
-			WorkerThread.IsBackground=true;
+			//WorkerThread.IsBackground=true;
 			WorkerThread.Start();
 		}
 		public void ScanThread()
@@ -79,7 +79,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			{
 				updateList=false;
 				if (captureCard==null) return;
-				currentFrequencyIndex=0;
+				currentFrequencyIndex=4;
 				while (true)
 				{
 					if (currentFrequencyIndex >= 200)
@@ -101,7 +101,6 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			finally
 			{
 				captureCard.DeleteGraph();
-				captureCard=null;
 				progressBar.Percentage=100;
 				lblChannelsFound.Label=String.Format("Finished, found {0} tv channels",newChannels);
 				lblStatus.Label="Press Next to continue the setup";
@@ -109,6 +108,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				MapRadioToOtherCards(captureCard.ID);
 				GUIControl.FocusControl(GetID,btnNext.GetID);
 				GUIPropertyManager.SetProperty("#Wizard.Analog.Done","yes");
+				captureCard=null;
 
 			}
 		}
@@ -118,6 +118,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=200) return;
 
 			string description=String.Format("Found signal at channel:{0} MHz", currentFrequencyIndex);
+
+			lblChannelsFound.Label=description;
 
 			TVChannel chan = new TVChannel();
 			chan.Name=String.Format("Channel{0}",currentFrequencyIndex);
@@ -141,6 +143,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			chan.TVStandard=AnalogVideoStandard.None;
 
 			string description=String.Format("Channel:{0}", currentFrequencyIndex);
+			lblChannelsFound.Label=description;
 
 			Log.WriteFile(Log.LogType.Capture,"Analog-scan:tune:{0}",currentFrequencyIndex);
 
