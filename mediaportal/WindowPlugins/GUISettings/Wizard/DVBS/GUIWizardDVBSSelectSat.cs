@@ -76,6 +76,8 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			if (control==btnLNB2) OnLNB(2);
 			if (control==btnLNB3) OnLNB(3);
 			if (control==btnLNB4) OnLNB(4);
+			if (control==btnNext) OnNextPage();
+			if (control==btnBack) OnPreviousPage();
 			base.OnClicked (controlId, control, actionType);
 		}
 
@@ -125,6 +127,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 					{
 						GUIListItem item = new GUIListItem(ts.SatName);
 						item.MusicTag =(object)ts;
+						dlg.Add(item);
 						items.Add(ts);
 					}
 				}
@@ -134,6 +137,33 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			if (itemNo<0) return;
 			lnbConfig[lnb]= (Transponder)items[itemNo];
 			Update();
+		}
+
+		void OnNextPage()
+		{
+			TVCaptureDevice captureCard= Recorder.Get(card);
+			if (captureCard!=null) 
+			{
+				string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
+
+				using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+				{
+					if (lnbConfig[1]!=null)
+						xmlwriter.SetValue("dvbs","sat1",lnbConfig[1].FileName);
+					if (lnbConfig[2]!=null)
+						xmlwriter.SetValue("dvbs","sat2",lnbConfig[2].FileName);
+					if (lnbConfig[3]!=null)
+						xmlwriter.SetValue("dvbs","sat3",lnbConfig[3].FileName);
+					if (lnbConfig[4]!=null)
+						xmlwriter.SetValue("dvbs","sat4",lnbConfig[4].FileName);
+				}
+			}
+			GUIWindowManager.ActivateWindow(GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_SCAN);
+		}
+		
+		void OnPreviousPage()
+		{
+			GUIWindowManager.ShowPreviousWindow();
 		}
 	}
 }
