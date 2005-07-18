@@ -1075,6 +1075,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\GUIWizardFinished.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\GUIWizardWelcome.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

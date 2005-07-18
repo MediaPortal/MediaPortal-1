@@ -45,41 +45,56 @@
 			<description>group element</description>
 			<animation>FlyInFromTop</animation>
 			<control>
-				<description>Screen</description>
+				<description>Wizard</description>
 				<type>button</type>
 				<id>3</id>
 				<posX>280</posX>
 				<posY>165</posY>
 				<width>197</width>
 				<height>32</height>
-				<label>214</label>
-				<hyperlink>9</hyperlink>
+				<label>Setup Wizard</label>
+				<hyperlink>615</hyperlink>
 				<onleft>3</onleft>
 				<onright>3</onright>
 				<onup>17</onup>
 				<ondown>4</ondown>
 			</control>
 			<control>
-				<description>My Music</description>
+				<description>Screen</description>
 				<type>button</type>
 				<id>4</id>
 				<posX>280</posX>
 				<posY>199</posY>
 				<width>197</width>
 				<height>32</height>
-				<label>2</label>
-				<hyperlink>14</hyperlink>
+				<label>214</label>
+				<hyperlink>9</hyperlink>
 				<onleft>4</onleft>
 				<onright>4</onright>
 				<onup>3</onup>
 				<ondown>5</ondown>
 			</control>
 			<control>
-				<description>Slideshow</description>
+				<description>My Music</description>
 				<type>button</type>
 				<id>5</id>
 				<posX>280</posX>
 				<posY>233</posY>
+				<width>197</width>
+				<height>32</height>
+				<label>2</label>
+				<hyperlink>14</hyperlink>
+				<onleft>5</onleft>
+				<onright>5</onright>
+				<onup>4</onup>
+				<ondown>6</ondown>
+			</control>
+			<control>
+				<description>Slideshow</description>
+				<type>button</type>
+				<id>6</id>
+				<posX>280</posX>
+				<posY>267</posY>
 				<width>197</width>
 				<height>32</height>
 				<label>108</label>
