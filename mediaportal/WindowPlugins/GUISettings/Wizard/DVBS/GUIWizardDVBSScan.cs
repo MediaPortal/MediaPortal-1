@@ -216,12 +216,12 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			finally
 			{
 				captureCard.DeleteGraph();
-				captureCard=null;
 				progressBar.Percentage=100;
 				lblChannelsFound.Label=String.Format("Finished, found {0} tv channels, {1} radio stations",newChannels, newRadioChannels);
 				lblStatus.Label="Press Next to continue the setup";
 				MapTvToOtherCards(captureCard.ID);
 				MapRadioToOtherCards(captureCard.ID);
+				captureCard=null;
 				GUIControl.FocusControl(GetID,btnNext.GetID);
 				GUIPropertyManager.SetProperty("#Wizard.DVBS.Done","yes");
 
