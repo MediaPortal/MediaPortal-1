@@ -82,6 +82,7 @@ namespace MediaPortal.TV.Recording
 		Bitmap m_muteBitmap;
 	
 		Bitmap _volumeStatesBitmap;
+		Bitmap _volumeMuteBitmap;
 		float m_renderOSDAlpha=0.8f;
 
 		bool _legacyVolumeOsd = false;
@@ -455,8 +456,11 @@ namespace MediaPortal.TV.Recording
 
 				if(VolumeHandler.Instance.IsMuted)
 				{
-					bitmapSourceRectangle[0] = new Rectangle(0, 0, _volumeStatesBitmap.Width, imageHeight);
+					bitmapSourceRectangle[0] = new Rectangle(0, imageHeight * 1, _volumeStatesBitmap.Width, imageHeight);
 					bitmapSourceRectangle[1] = bitmapSourceRectangle[0];
+
+					if(_volumeMuteBitmap != null)
+						gr.DrawImage(_volumeMuteBitmap, xPos - _volumeMuteBitmap.Width, yPos + (imageHeight * 3));
 				}
 				else
 				{
@@ -809,7 +813,8 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					_volumeStatesBitmap = new Bitmap(m_mediaPath+"volume.states.png");
+					_volumeStatesBitmap = new Bitmap(m_mediaPath + "volume.states.png");
+					_volumeMuteBitmap = new Bitmap(m_mediaPath + "volume.states.mute.png");
 				}
 			}
 			catch{}
