@@ -110,7 +110,6 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				lblChannelsFound.Label=String.Format("Finished, found {0} tv channels",newChannels);
 				lblStatus.Label="Press Next to continue the setup";
 				GUIControl.FocusControl(GetID,btnNext.GetID);
-				GUIPropertyManager.SetProperty("#Wizard.Analog.Done","yes");
 				captureCard=null;
 
 			}

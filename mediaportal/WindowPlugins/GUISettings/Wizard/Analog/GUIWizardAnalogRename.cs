@@ -122,6 +122,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				MapTvToOtherCards(captureCard.ID);
 				MapRadioToOtherCards(captureCard.ID);
 			}
+			GUIPropertyManager.SetProperty("#Wizard.Analog.Done","yes");
 			GUIWizardCardsDetected.ScanNextCardType();
 		}
 
