@@ -1090,7 +1090,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogcountry2.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogImported.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogTune.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -396,11 +396,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TunerCountry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "VideoRenderers.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

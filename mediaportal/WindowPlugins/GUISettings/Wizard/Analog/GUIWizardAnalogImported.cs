@@ -6,6 +6,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.GUI.Settings.Wizard;
 
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
@@ -17,6 +18,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		[SkinControlAttribute(26)]			protected GUILabelControl lblChannelsFound=null;
 		[SkinControlAttribute(27)]			protected GUILabelControl lblStatus=null;
 		[SkinControlAttribute(24)]			protected GUIListControl  listChannelsFound=null;
+		[SkinControlAttribute(5)]				protected GUIListControl  btnNext=null;
 
 		public GUIWizardAnalogImported()
 		{
@@ -36,7 +38,16 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			UpdateList();
 			lblStatus.Label="Press Next to continue the setup";
 			GUIPropertyManager.SetProperty("#Wizard.Analog.Done","yes");
+		}
 
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			if (control==btnNext)
+			{
+				GUIWizardCardsDetected.ScanNextCardType();
+				return;
+			}
+			base.OnClicked (controlId, control, actionType);
 		}
 
 		void UpdateList()

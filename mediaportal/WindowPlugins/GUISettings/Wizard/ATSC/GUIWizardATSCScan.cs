@@ -22,7 +22,6 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
 		[SkinControlAttribute(20)]			protected GUIProgressControl progressBar=null;
 
 		int card=0;
-		int scanOffset=0;
 		
 		int        currentFrequencyIndex=0;
 		bool updateList=false;

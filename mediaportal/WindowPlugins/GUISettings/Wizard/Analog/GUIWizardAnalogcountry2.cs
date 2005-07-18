@@ -2,24 +2,23 @@ using System;
 using System.Collections;
 using System.Xml;
 using MediaPortal.GUI.Library;
-
+using DShowNET;
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
 	/// <summary>
-	/// Summary description for GUIWizardAnalogcountry.
+	/// Summary description for GUIWizardAnalogCountry2.
 	/// </summary>
-	public class GUIWizardAnalogcountry:GUIWindow, IComparer
+	public class GUIWizardAnalogCountry2:GUIWindow, IComparer
 	{
 		[SkinControlAttribute(24)]			protected GUIListControl listCountries=null;
-		[SkinControlAttribute(23)]			protected GUIButtonControl btnManual=null;
-		public GUIWizardAnalogcountry()
+		public GUIWizardAnalogCountry2()
 		{
-			GetID=(int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_COUNTRY;
+			GetID=(int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_MANUAL_TUNE;
 		}
     
 		public override bool Init()
 		{
-			return Load (GUIGraphicsContext.Skin+@"\wizard_tvcard_analog_country.xml");
+			return Load (GUIGraphicsContext.Skin+@"\wizard_tvcard_analog_country2.xml");
 		}
 		protected override void OnPageLoad()
 		{
@@ -30,32 +29,24 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		void LoadCountries()
 		{
 			listCountries.Clear();
-			XmlDocument doc= new XmlDocument();
-			doc = new XmlDocument();
-			doc.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
-			XmlNodeList countries = doc.DocumentElement.SelectNodes("/mediaportal/country");
-			foreach (XmlNode nodeCountry in countries)
+			for (int i=0; i < TunerCountries.Countries.Length;++i)
 			{
-				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
 				GUIListItem item = new GUIListItem();
 				item.IsFolder=false;
-				item.Label=nodeCountryName.Value;
+				item.Label=TunerCountries.Countries[i].Country;
 				listCountries.Add(item);
 			}
 			listCountries.Sort(this);
 		}
+
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
 			if (control==listCountries)
 			{
 				GUIListItem item=listCountries.SelectedListItem;
 				DoScan(item.Label);
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY);
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_TUNE);
 				return;
-			}
-			if (control==btnManual)
-			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_MANUAL_TUNE);
 			}
 			base.OnClicked (controlId, control, actionType);
 		}

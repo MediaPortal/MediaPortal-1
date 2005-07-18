@@ -30,7 +30,6 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
 		[SkinControlAttribute(20)]			protected GUIProgressControl progressBar=null;
 
 		int card=0;
-		int scanOffset=0;
 		int        currentFrequencyIndex=0;
 		bool updateList=false;
 		int newChannels=0, updatedChannels=0, newRadioChannels=0, updatedRadioChannels=0;

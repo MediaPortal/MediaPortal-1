@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
-
+using DShowNET;
 namespace MediaPortal.Configuration.Sections
 {
 	public class Wizard_AnalogTV : MediaPortal.Configuration.SectionSettings

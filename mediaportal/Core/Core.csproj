@@ -414,6 +414,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DShowNET\TunerCountry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DShowNET\Twinhan.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
