@@ -10,11 +10,8 @@ namespace MediaPortal.Player
 	{
 		#region Constructors
 
-		public VolumeHandler()
+		public VolumeHandler() : this(LoadFromRegistry())
 		{
-			_mixer = new Mixer.Mixer();
-			_mixer.Open();
-			_volumeTable = LoadFromRegistry();
 		}
 
 		public VolumeHandler(int[] volumeTable)
@@ -22,6 +19,20 @@ namespace MediaPortal.Player
 			_mixer = new Mixer.Mixer();
 			_mixer.Open();
 			_volumeTable = volumeTable;
+
+			using(MediaPortal.Profile.Xml reader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
+
+				if(levelStyle == 0)
+					_startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+
+				if(levelStyle == 1)
+					_startupVolume = _mixer.Volume;
+
+				if(levelStyle == 2)
+					_startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+			}
 		}
 
 		#endregion Constructors
@@ -46,7 +57,6 @@ namespace MediaPortal.Player
 				if(volumeStyle == 3)
 					return new VolumeHandlerCustom();
 			}
-
 			// classic volume table
 			return new VolumeHandler(new int[] { 0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535 });
 		}
@@ -54,7 +64,13 @@ namespace MediaPortal.Player
 		public void Dispose()
 		{
 			if(_mixer != null)
+			{
+				using(MediaPortal.Profile.Xml writer = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+					writer.SetValue("volume", "lastknown", _mixer.Volume);
+
 				_mixer.Dispose();
+				_mixer = null;
+			}
 		}
 
 		static int[] LoadFromRegistry()
@@ -192,6 +208,7 @@ namespace MediaPortal.Player
 										55141, 65535									
 									};
 		int[]						_volumeTable;
+		int							_startupVolume;
 
 		#endregion Fields
 	}
