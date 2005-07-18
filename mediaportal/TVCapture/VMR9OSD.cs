@@ -356,18 +356,17 @@ namespace MediaPortal.TV.Recording
 		{
 			int gWidth=GUIGraphicsContext.Width;
 			int gHeight=GUIGraphicsContext.Height;
-			int max;
-			int min;
-			int currentVolume=AudioMixerHelper.GetMinMaxVolume(out min,out max);
+			int max = VolumeHandler.Instance.Maximum;
+			int min = VolumeHandler.Instance.Minimum;
+			int currentVolume=VolumeHandler.Instance.Volume;
 			int volume=0;
+
 			if(currentVolume>0)
 			{
 				volume=((currentVolume*100)/max)/10;
 			}
-			if(volume<1)
-				m_muteState=true;
-			else
-				m_muteState=false;
+
+			m_muteState=VolumeHandler.Instance.IsMuted;
 			
 			int[] drawWidth=new int[]{0,25,43,62,82,99,117,137,155,173,200};
 
@@ -400,14 +399,14 @@ namespace MediaPortal.TV.Recording
 						else
 							yPos=Convert.ToInt16(seg[2]);
 							
-						if(volume>0)
+						if(VolumeHandler.Instance.IsMuted)
 						{
-							if(m_volumeBitmap!=null)
-								gr.DrawImage(m_volumeBitmap,xPos,yPos,new RectangleF(0f,0f,drawWidth[volume],m_volumeBitmap.Height),System.Drawing.GraphicsUnit.Pixel);
+							if(m_muteBitmap!=null)
+								gr.DrawImage(m_muteBitmap,xPos,yPos,new RectangleF(0f,0f,drawWidth[volume],m_muteBitmap.Height),System.Drawing.GraphicsUnit.Pixel);
 						}
 						else
-							if(m_muteBitmap!=null)
-							gr.DrawImageUnscaled(m_muteBitmap,xPos,yPos,m_muteBitmap.Width,m_muteBitmap.Height);
+							if(m_volumeBitmap!=null)
+								gr.DrawImage(m_volumeBitmap,xPos,yPos,new RectangleF(0f,0f,drawWidth[volume],m_volumeBitmap.Height),System.Drawing.GraphicsUnit.Pixel);
 
 						SaveBitmap(osd,true,true,0.9f);
 						gr.Dispose();
