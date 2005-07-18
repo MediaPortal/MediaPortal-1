@@ -146,8 +146,6 @@ namespace SQLite.NET
 						if (err==ResultCode.EMPTY)
 						{
 							//table is empty
-							sqlite3_finalize(stmt);
-							stmt=null;
 							return set1;
 						}
 
