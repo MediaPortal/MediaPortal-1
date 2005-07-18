@@ -858,6 +858,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     private void GUIGraphicsContext_OnVideoWindowChanged()
 		{
+			if (!GUIGraphicsContext.VMR9Allowed) return;
 			if (GUIGraphicsContext.Vmr9Active) return;
       if (m_graphState!=State.Viewing ) return ;
       if (m_mpeg2Demux==null) return ;

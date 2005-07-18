@@ -122,6 +122,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=200) return;
 
 
+			System.Threading.Thread.Sleep(400);
 			TVChannel chan = new TVChannel();
 			chan.Name=String.Format("Channel{0}",currentFrequencyIndex);
 			chan.Number=currentFrequencyIndex;
@@ -142,6 +143,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			chan.Country=captureCard.DefaultCountryCode;
 			chan.TVStandard=AnalogVideoStandard.None;
 
+			System.Threading.Thread.Sleep(400);
+			if (!captureCard.SignalPresent())
+				System.Threading.Thread.Sleep(400);
 
 			Log.WriteFile(Log.LogType.Capture,"Analog-scan:tune:{0}",currentFrequencyIndex);
 

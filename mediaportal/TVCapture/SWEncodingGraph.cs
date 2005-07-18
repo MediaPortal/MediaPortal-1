@@ -920,7 +920,7 @@ namespace MediaPortal.TV.Recording
     public bool StopViewing()
     {
       if (m_graphState != State.Viewing) return false;
-       
+       if (!GUIGraphicsContext.VMR9Allowed) return;
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       DirectShowUtil.DebugWrite("SWGraph:StopViewing()");
 			if (m_videoWindow!=null)
@@ -1957,6 +1957,7 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
+			if (!GUIGraphicsContext.VMR9Allowed) return;
 			if (m_captureGraphBuilder==null) return;
 			if (m_filterCaptureVideo==null) return;
 
