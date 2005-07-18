@@ -2986,6 +2986,36 @@
 	<id>1017</id>
 	<value>Sort by: Duration</value>
 </string>
+
+<string>
+	<id>1020</id>
+	<value>Information</value>
+</string>
+<string>
+	<id>1021</id>
+	<value>Press Alt+Enter to</value>
+</string>
+<string>
+	<id>1022</id>
+	<value>return to window mode.</value>
+</string>
+<string>
+	<id>1023</id>
+	<value>Fullscreen Mode Toggle</value>
+</string>
+<string>
+	<id>1024</id>
+	<value>All media has to be stopped.</value>
+</string>
+<string>
+	<id>1025</id>
+	<value>Your recording has to be stopped.</value>
+</string>
+<string>
+	<id>1026</id>
+	<value>Do you really want to switch?</value>
+</string>
+
 <string>
 	<id>1440</id>
 	<value>My TeleText</value>
