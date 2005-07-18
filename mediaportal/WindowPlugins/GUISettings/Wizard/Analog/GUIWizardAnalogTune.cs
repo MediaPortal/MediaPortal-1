@@ -27,7 +27,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		int        currentFrequencyIndex=0;
 		bool updateList=false;
 		int newChannels=0;
-		ArrayList listTvChannels = new ArrayList();
+		static ArrayList listTvChannels = new ArrayList();
 
 		public GUIWizardAnalogTune()
 		{
@@ -64,6 +64,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			listTvChannels.Clear();
 			newChannels=0;;
 			TVCaptureDevice captureCard=null;
+			card = Int32.Parse( GUIPropertyManager.GetProperty("#WizardCard"));
 			if (card >=0 && card < Recorder.Count)
 			{
 				captureCard =Recorder.Get(card);
@@ -108,8 +109,6 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				progressBar.Percentage=100;
 				lblChannelsFound.Label=String.Format("Finished, found {0} tv channels",newChannels);
 				lblStatus.Label="Press Next to continue the setup";
-				MapTvToOtherCards(captureCard.ID);
-				MapRadioToOtherCards(captureCard.ID);
 				GUIControl.FocusControl(GetID,btnNext.GetID);
 				GUIPropertyManager.SetProperty("#Wizard.Analog.Done","yes");
 				captureCard=null;
@@ -213,48 +212,19 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			lblStatus.Label=String.Format("Found {0} tv channels",newChannels);
 			Log.Write("Analog-scan:ScanChannels() done");
 		}
-		void MapTvToOtherCards(int id)
-		{
-			ArrayList tvchannels = new ArrayList();
-			TVDatabase.GetChannelsForCard(ref tvchannels,id);
-			for (int i=0; i < Recorder.Count;++i)
-			{
-				TVCaptureDevice dev = Recorder.Get(i);
-				if (dev.Network==NetworkType.Analog && dev.ID != id)
-				{
-					foreach (TVChannel chan in tvchannels)
-					{
-						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
-					}
-				}
-			}
-		}
-		void MapRadioToOtherCards(int id)
-		{
-			ArrayList radioChans = new ArrayList();
-			MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans,id);
-			for (int i=0; i < Recorder.Count;++i)
-			{
-				TVCaptureDevice dev = Recorder.Get(i);
-
-				if (dev.Network==NetworkType.Analog && dev.ID != id)
-				{
-					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
-					{
-						MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
-					}
-				}
-			}
-		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
 			if (control==btnNext)
 			{
-				GUIWizardCardsDetected.ScanNextCardType();
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_RENAME);
 				return;
 			}
 			base.OnClicked (controlId, control, actionType);
+		}
+		static public ArrayList TVChannelsFound
+		{
+			get { return listTvChannels;}
 		}
 	}
 }
