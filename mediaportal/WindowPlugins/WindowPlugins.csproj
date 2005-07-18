@@ -1080,6 +1080,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\ATSC\GUIWizardATSCScan.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\DVBC\GUIWizardDVBCCountry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
