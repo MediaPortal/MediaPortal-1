@@ -1100,6 +1100,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\DVBS\GUIWizardDVBSSelectSat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\DVBT\GUIWizardDVBTCountry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

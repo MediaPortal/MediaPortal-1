@@ -52,14 +52,17 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			maxLNBs=Int32.Parse(GUIPropertyManager.GetProperty("#WizardsDVBSLNB"));
 
 			TVCaptureDevice captureCard= Recorder.Get(card);
-			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
-
-			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+			if (captureCard!=null) 
 			{
-				xmlwriter.SetValueAsBool("dvbs","useLNB1",maxLNBs>=1);
-				xmlwriter.SetValueAsBool("dvbs","useLNB2",maxLNBs>=2);
-				xmlwriter.SetValueAsBool("dvbs","useLNB3",maxLNBs>=3);
-				xmlwriter.SetValueAsBool("dvbs","useLNB4",maxLNBs>=4);
+				string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
+
+				using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+				{
+					xmlwriter.SetValueAsBool("dvbs","useLNB1",maxLNBs>=1);
+					xmlwriter.SetValueAsBool("dvbs","useLNB2",maxLNBs>=2);
+					xmlwriter.SetValueAsBool("dvbs","useLNB3",maxLNBs>=3);
+					xmlwriter.SetValueAsBool("dvbs","useLNB4",maxLNBs>=4);
+				}
 			}
 			Update();
 		}
@@ -70,7 +73,11 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
-			if (control==btnNext) OnNextPage();
+			if (control==btnNext) 
+			{
+				OnNextPage();
+				return;
+			}
 			if (control==btnBack) OnPreviousPage();
 			if (controlId >=cmDisEqcNone.GetID && controlId <=cmDisEqcLevel1BB.GetID) OnDisEqC(control);
 			if (controlId >=cmLnb0Khz.GetID && controlId <=cmLnb44Khz.GetID) OnLNBKhz(control);
@@ -119,12 +126,14 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
 		void OnNextPage()
 		{
+			SaveSettings();
 			if (LNBNumber < maxLNBs)
 			{
-				SaveSettings();
 				LNBNumber++;
 				Update();
+				return;
 			}
+			GUIWindowManager.ActivateWindow( (int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_TRANSPONDER);
 		}
 
 		void OnPreviousPage()
@@ -151,6 +160,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			cmLnbBandCircular.Selected=false;
 
 			TVCaptureDevice captureCard= Recorder.Get(card);
+			if (captureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 			
 			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
@@ -196,6 +206,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 		{
 
 			TVCaptureDevice captureCard= Recorder.Get(card);
+			if (captureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
 			{
