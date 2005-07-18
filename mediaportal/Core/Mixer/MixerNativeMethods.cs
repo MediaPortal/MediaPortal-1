@@ -19,7 +19,7 @@ namespace MediaPortal.Mixer
 		public static extern MixerError mixerClose(IntPtr handle);
 
 		[DllImport("winmm.dll")]
-		public static extern MixerError mixerGetControlDetailsA(IntPtr handle, ref MixerControlDetails mixerControlDetails, int fdwDetails);
+		public static extern MixerError mixerGetControlDetailsA(IntPtr handle, MixerControlDetails mixerControlDetails, int fdwDetails);
 
 //		[DllImport("winmm.dll")] 
 //		public static extern int mixerGetDevCapsA(int uMxId, MIXERCAPS pmxcaps, int cbmxcaps); 
@@ -28,7 +28,7 @@ namespace MediaPortal.Mixer
 //		public static extern int mixerGetID(IntPtr handle, int pumxID, int fdwId);
 
 		[DllImport("winmm.dll")] 
-		public static extern MixerError mixerGetLineControlsA(IntPtr handle, ref MixerLineControls mixerLineControls, MixerLineControlFlags flags);
+		public static extern MixerError mixerGetLineControlsA(IntPtr handle, MixerLineControls mixerLineControls, MixerLineControlFlags flags);
 
 		[DllImport("winmm.dll")]
 		public static extern MixerError mixerGetLineInfoA(IntPtr handle, ref MixerLine mixerLine, MixerLineFlags flags);
@@ -46,7 +46,7 @@ namespace MediaPortal.Mixer
 		public static extern MixerError mixerOpen(ref IntPtr handle, int index, MixerCallback callback, int dwInstance, MixerFlags flags); 
 
 		[DllImport("winmm.dll")] 
-		public static extern MixerError mixerSetControlDetails(IntPtr handle, ref MixerControlDetails mixerControlDetails, int fdwDetails); 
+		public static extern MixerError mixerSetControlDetails(IntPtr handle, MixerControlDetails mixerControlDetails, int fdwDetails); 
 
 		#endregion Methods
 
@@ -54,6 +54,8 @@ namespace MediaPortal.Mixer
 
 		public struct MixerControl
 		{
+			#region Fields
+
 			public int						Size;
 			public int						ControlId;
 			public MixerControlType			ControlType;
@@ -71,20 +73,79 @@ namespace MediaPortal.Mixer
 
 			[MarshalAs(UnmanagedType.U4, SizeConst=10)] 
 			public int						Reserved;
+
+			#endregion Fields
 		}
 
-		public struct MixerControlDetails
+		[StructLayout(LayoutKind.Sequential)]
+		public class MixerControlDetails : IDisposable
 		{ 
+			#region Constructors
+
+			public MixerControlDetails(int controlId)
+			{
+				this.Size = Marshal.SizeOf(typeof(MixerControlDetails)); 
+				this.ControlId = controlId;
+				this.Data = Marshal.AllocCoTaskMem(4); 
+				this.Channels = 1;
+				this.Item = 0;
+				this.DataSize = Marshal.SizeOf(4);
+			}
+
+			#endregion Constructors
+
+			#region Methods
+
+			public void Dispose()
+			{
+				if(Data != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(Data);
+			}
+
+			#endregion Methods
+
+			#region Fields
+
 			public int						Size;
 			public int						ControlId;
 			public int						Channels;
 			public int						Item;
 			public int						DataSize;
 			public IntPtr					Data;
+
+			#endregion Fields
 		}
 
 		public struct MixerLine
 		{
+			#region Constructors
+
+			public MixerLine(MixerComponentType componentType)
+			{
+				this.Size = Marshal.SizeOf(typeof(MixerLine));
+				this.Destination = 0; 
+				this.Source = 0; 
+				this.LineId = 0; 
+				this.Status = MixerLineStatusFlags.Disconnected; 
+				this.dwUser = 0; 
+				this.ComponentType = componentType;
+				this.Channels = 0; 
+				this.Connections = 0; 
+				this.Controls = 0; 
+				this.ShortName = string.Empty; 
+				this.Name = string.Empty; 
+				this.Type = MixerLineTargetType.None; 
+				this.DeviceId = 0;
+				this.ManufacturerId = 0; 
+				this.ProductId = 0 ; 
+				this.DriverVersion = 0;
+				this.ProductName = string.Empty; 
+			}
+
+			#endregion Constructors
+
+			#region Fields
+
 			public int						Size; 
 			public int						Destination; 
 			public int						Source; 
@@ -110,16 +171,47 @@ namespace MediaPortal.Mixer
 
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)] 
 			public string					ProductName; 
+
+			#endregion Fields
 		}
 
-		public struct MixerLineControls
+		[StructLayout(LayoutKind.Sequential)]
+		public class MixerLineControls : IDisposable
 		{ 
+			#region Constructors
+
+			public MixerLineControls(int lineId, MixerControlType controlType)
+			{
+				this.Size = Marshal.SizeOf(typeof(MixerControlDetails));
+				this.LineId = lineId;
+				this.ControlType = Convert.ToUInt32(controlType);
+				this.Controls = 1;
+				this.Data = Marshal.AllocCoTaskMem(152);
+				this.DataSize = 152;
+			}
+
+			#endregion Constructors
+
+			#region Methods
+
+			public void Dispose()
+			{
+				if(Data != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(Data);
+			}
+
+			#endregion Methods
+
+			#region Fields
+
 			public int						Size; 
 			public int						LineId;
 			public uint						ControlType;
 			public int						Controls;
 			public int						DataSize;
 			public IntPtr					Data; 
+
+			#endregion Fields
 		}
 
 		#endregion Structures
