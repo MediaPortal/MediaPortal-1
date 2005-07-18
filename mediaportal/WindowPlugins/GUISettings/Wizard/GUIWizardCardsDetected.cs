@@ -195,6 +195,15 @@ namespace MediaPortal.GUI.Settings.Wizard
 							return;
 						}
 					}
+					if (dev.Network==NetworkType.Analog)
+					{
+						if (GUIPropertyManager.GetProperty("#Wizard.Analog.Done") != "yes")
+						{
+							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_COUNTRY);
+							return;
+						}
+					}
 				}
 			}
 			else

@@ -1080,6 +1080,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogCity.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogcountry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\ATSC\GUIWizardATSCScan.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
