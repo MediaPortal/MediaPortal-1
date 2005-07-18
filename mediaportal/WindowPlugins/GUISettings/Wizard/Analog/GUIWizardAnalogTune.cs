@@ -27,6 +27,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		int        currentFrequencyIndex=0;
 		bool updateList=false;
 		int newChannels=0;
+		ArrayList listTvChannels = new ArrayList();
 
 		public GUIWizardAnalogTune()
 		{
@@ -60,6 +61,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		}
 		public void ScanThread()
 		{
+			listTvChannels.Clear();
 			newChannels=0;;
 			TVCaptureDevice captureCard=null;
 			if (card >=0 && card < Recorder.Count)
@@ -117,6 +119,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
 			string description=String.Format("Found signal at channel:{0} MHz", currentFrequencyIndex);
 
+			TVChannel chan = new TVChannel();
+			chan.Name=String.Format("Channel{0}",currentFrequencyIndex);
+			listTvChannels.Add(chan);
 			updateList=true;
 			newChannels++;
 			lblStatus.Label=String.Format("Found {0} tv channels",newChannels);
@@ -158,9 +163,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		void UpdateList()
 		{
 			listChannelsFound.Clear();
-			ArrayList channels = new ArrayList();
-			TVDatabase.GetChannels(ref channels);
-			if (channels.Count==0)
+			if (listTvChannels.Count==0)
 			{
 				GUIListItem item = new GUIListItem();
 				item.Label="No channels found";
@@ -170,7 +173,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
 			}
 			int count=1;
-			foreach (TVChannel chan in channels)
+			foreach (TVChannel chan in listTvChannels)
 			{
 				GUIListItem item = new GUIListItem();
 				item.Label=String.Format("{0}. {1}", count,chan.Name);
