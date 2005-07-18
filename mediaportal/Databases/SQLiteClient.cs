@@ -141,6 +141,15 @@ namespace SQLite.NET
 							sqlite3_finalize(stmt);
 							stmt=null;
 						}
+					
+						
+						if (err==ResultCode.EMPTY)
+						{
+							//table is empty
+							sqlite3_finalize(stmt);
+							stmt=null;
+							return set1;
+						}
 
 						if (err==ResultCode.BUSY)
 						{
@@ -171,7 +180,14 @@ namespace SQLite.NET
 						if (err!=ResultCode.BUSY) break;
 						System.Threading.Thread.Sleep(busyRetryDelay);
 					}
-					if (err!=ResultCode.Row)
+					if (err==ResultCode.EMPTY)
+					{
+						//table is empty
+						sqlite3_finalize(stmt);
+						stmt=null;
+						return set1;
+					}
+					else if (err!=ResultCode.Row)
 					{
 						sqlite3_finalize(stmt);
 						stmt=null;
