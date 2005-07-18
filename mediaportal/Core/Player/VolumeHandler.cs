@@ -51,6 +51,12 @@ namespace MediaPortal.Player
 			return new VolumeHandler(new int[] { 0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535 });
 		}
 
+		public void Dispose()
+		{
+			if(_mixer != null)
+				_mixer.Dispose();
+		}
+
 		static int[] LoadFromRegistry()
 		{
 			using(RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Multimedia\Audio\VolumeControl"))
