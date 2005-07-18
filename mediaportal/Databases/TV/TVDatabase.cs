@@ -84,8 +84,6 @@ namespace MediaPortal.TV.Database
 					catch(Exception){}
 					//Upgrade();
 					m_db = new SQLiteClient(strPath+@"\database\TVDatabaseV21.db3");
-					CreateTables();
-					UpdateFromPreviousVersion();
 					if (m_db!=null)
 					{
 						m_db.Execute("PRAGMA cache_size=2000;\n");
@@ -94,7 +92,8 @@ namespace MediaPortal.TV.Database
 						m_db.Execute("PRAGMA full_column_names=0;\n");
 						m_db.Execute("PRAGMA short_column_names=0;\n");
 					}
-
+					CreateTables();
+				
 				} 
 				catch (Exception ex) 
 				{

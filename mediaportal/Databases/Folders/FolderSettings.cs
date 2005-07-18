@@ -26,7 +26,6 @@ namespace MediaPortal.Util
         // Open database
         Log.Write("open folderdatabase");
         m_db = new SQLiteClient(@"database\FolderDatabase2.db3");
-        CreateTables();
 
         if (m_db!=null)
         {
@@ -36,6 +35,7 @@ namespace MediaPortal.Util
 					m_db.Execute("PRAGMA full_column_names=0;\n");
 					m_db.Execute("PRAGMA short_column_names=0;\n");
 				}
+				CreateTables();
 
       } 
       catch (Exception ex) 

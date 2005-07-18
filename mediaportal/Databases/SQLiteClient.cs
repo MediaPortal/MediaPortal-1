@@ -14,9 +14,7 @@ namespace SQLite.NET
 
 	public unsafe class SQLiteClient
 	{
-		public unsafe delegate int SQLiteCallback(void* pArg, int argc, char** argv, char** columnNames);
-
-
+	
 		[DllImport("sqlite.dll")]
 		private static extern int sqlite3_changes(void* handle);
 		[DllImport("sqlite.dll")]

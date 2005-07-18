@@ -35,7 +35,6 @@ namespace MediaPortal.Radio.Database
 				}
 				catch(Exception){}
 				m_db = new SQLiteClient(strPath+@"\database\RadioDatabase4.db3");
-        CreateTables();
 
         if (m_db!=null)
         {
@@ -46,6 +45,7 @@ namespace MediaPortal.Radio.Database
 					m_db.Execute("PRAGMA short_column_names=0;\n");
 
         }
+				CreateTables();
 
       } 
       catch (Exception ex) 
