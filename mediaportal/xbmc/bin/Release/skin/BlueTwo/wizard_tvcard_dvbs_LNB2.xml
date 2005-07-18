@@ -1,4 +1,4 @@
-﻿<window>
+<window>
    <id>622</id>
    <defaultcontrol>40</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
@@ -26,10 +26,9 @@
          <posX>448</posX>
          <posY>504</posY>
          <onleft>25</onleft>
-         <onright>25</onright>
-         <onup>25</onup>
+         <onright>5</onright>
+         <onup>40</onup>
          <ondown>25</ondown>
-         <hyperlink>12</hyperlink>
          <label>&lt;Back</label>
          <width>96</width>
          <height>32</height>
@@ -75,7 +74,7 @@
          <posY>504</posY>
          <onleft>25</onleft>
          <onright>5</onright>
-         <onup>5</onup>
+         <onup>40</onup>
          <ondown>5</ondown>
          <label>Next&gt;</label>
          <width>96</width>
