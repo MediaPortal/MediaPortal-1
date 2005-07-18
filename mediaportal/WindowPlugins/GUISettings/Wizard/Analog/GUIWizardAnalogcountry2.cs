@@ -34,6 +34,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				GUIListItem item = new GUIListItem();
 				item.IsFolder=false;
 				item.Label=TunerCountries.Countries[i].Country;
+				item.ItemId=TunerCountries.Countries[i].Id;
 				listCountries.Add(item);
 			}
 			listCountries.Sort(this);
@@ -44,16 +45,21 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			if (control==listCountries)
 			{
 				GUIListItem item=listCountries.SelectedListItem;
-				DoScan(item.Label);
+				DoScan(item.Label,item.ItemId);
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_TUNE);
 				return;
 			}
 			base.OnClicked (controlId, control, actionType);
 		}
 
-		void DoScan(string country)
+		void DoScan(string country, int id)
 		{
 			GUIPropertyManager.SetProperty("#WizardCountry",country);
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("capture", "countryname", country);
+				xmlwriter.SetValue("capture", "country", id.ToString());
+			}
 		}
 
 		public int Compare(object x, object y)
