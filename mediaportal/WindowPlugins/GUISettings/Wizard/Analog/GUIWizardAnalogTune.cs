@@ -98,6 +98,10 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 					currentFrequencyIndex++;
 				}
 			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+			}
 			finally
 			{
 				captureCard.DeleteGraph();
@@ -117,17 +121,13 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			Log.Write("Analog-scan:ScanChannels() {0}/{1}",currentFrequencyIndex,200);
 			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=200) return;
 
-			string description=String.Format("Found signal at channel:{0} MHz", currentFrequencyIndex);
-
-			lblChannelsFound.Label=description;
 
 			TVChannel chan = new TVChannel();
 			chan.Name=String.Format("Channel{0}",currentFrequencyIndex);
+			chan.Number=currentFrequencyIndex;
 			listTvChannels.Add(chan);
 			updateList=true;
 			newChannels++;
-			lblStatus.Label=String.Format("Found {0} tv channels",newChannels);
-			Log.Write("Analog-scan:ScanChannels() done");
 		}
 
 		void ScanNextFrequency(TVCaptureDevice captureCard,int offset)
@@ -142,8 +142,6 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			chan.Country=captureCard.DefaultCountryCode;
 			chan.TVStandard=AnalogVideoStandard.None;
 
-			string description=String.Format("Channel:{0}", currentFrequencyIndex);
-			lblChannelsFound.Label=description;
 
 			Log.WriteFile(Log.LogType.Capture,"Analog-scan:tune:{0}",currentFrequencyIndex);
 
@@ -163,8 +161,10 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			base.Process ();
 		}
 
+
 		void UpdateList()
 		{
+			Log.Write("UpdateList()");
 			listChannelsFound.Clear();
 			if (listTvChannels.Count==0)
 			{
@@ -172,6 +172,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				item.Label="No channels found";
 				item.IsFolder=false;
 				listChannelsFound.Add(item);
+				Log.Write("UpdateList() done");
 				return;
 
 			}
@@ -193,6 +194,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				count++;
 			}
 			listChannelsFound.ScrollToEnd();
+			Log.Write("UpdateList() done");
 		}
 		void UpdateStatus()
 		{
@@ -204,6 +206,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			progressBar.Percentage=(int)percent;
 			string description=String.Format("Channel:{0}", currentFreq);
 			lblChannelsFound.Label=description;
+			lblStatus.Label=String.Format("Found {0} tv channels",newChannels);
+			Log.Write("Analog-scan:ScanChannels() done");
 		}
 		void MapTvToOtherCards(int id)
 		{

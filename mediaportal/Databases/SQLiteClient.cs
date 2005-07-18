@@ -118,21 +118,23 @@ namespace SQLite.NET
 
 		public SQLiteResultSet Execute(string query)
 		{
-			if (query==null) return null;
-			int len=query.Length;
-			if (len==0) return null;
-			if (query[len-1] != '\n' && query[len-2] != ';' )
+			lock(this)
 			{
-				query+=";";
-			}
-			//if ( (long)dbHandle != dbHandleAdres)
-			//	throw new SQLiteException(String.Format("SQL0: ptr changed:{0:X} {1:X}", dbHandleAdres,(long)dbHandle), ResultCode.INTERNAL);
-			SQLiteClient.ResultCode err=ResultCode.EMPTY;
-			SQLiteResultSet set1 = new SQLiteResultSet();
-			set1.LastCommand=query;	
-			void *stmt=null;
-			void** pStmnt=&stmt;
-			{
+				if (query==null) return null;
+				int len=query.Length;
+				if (len==0) return null;
+				if (query[len-1] != '\n' && query[len-2] != ';' )
+				{
+					query+=";";
+				}
+				//if ( (long)dbHandle != dbHandleAdres)
+				//	throw new SQLiteException(String.Format("SQL0: ptr changed:{0:X} {1:X}", dbHandleAdres,(long)dbHandle), ResultCode.INTERNAL);
+				SQLiteClient.ResultCode err=ResultCode.EMPTY;
+				SQLiteResultSet set1 = new SQLiteResultSet();
+				set1.LastCommand=query;	
+				void *stmt=null;
+				void** pStmnt=&stmt;
+
 				for (int x=0; x < busyRetries;++x)
 				{
 					err= sqlite3_prepare16(this.dbHandle, query, query.Length, pStmnt, null);
@@ -143,7 +145,7 @@ namespace SQLite.NET
 							sqlite3_finalize(stmt);
 							stmt=null;
 						}
-						
+							
 						if (err==ResultCode.EMPTY)
 						{
 							//table is empty
@@ -173,7 +175,7 @@ namespace SQLite.NET
 					Log.WriteFile(Log.LogType.Log,true,"SQL2:{0} failed err:{1}", query,err.ToString());
 					throw new SQLiteException(String.Format("SQL2:{0} failed err:{1}", query,err.ToString()), err);
 				}
-				
+					
 				int nCol = sqlite3_column_count(stmt);
 				int row=0;
 				while(true)
@@ -225,18 +227,18 @@ namespace SQLite.NET
 						row++;
 					}
 				}
+				if (stmt!=null)
+				{
+					sqlite3_finalize(stmt);
+					stmt=null;
+				}
+				if (err!=ResultCode.OK && err!=ResultCode.Done)
+				{
+					Log.WriteFile(Log.LogType.Log,true,String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
+					throw new SQLiteException(String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
+				}
+				return set1;
 			}
-			if (stmt!=null)
-			{
-				sqlite3_finalize(stmt);
-				stmt=null;
-			}
-			if (err!=ResultCode.OK && err!=ResultCode.Done)
-			{
-				Log.WriteFile(Log.LogType.Log,true,String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
-				throw new SQLiteException(String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
-			}
-			return set1;
 		}
  
 

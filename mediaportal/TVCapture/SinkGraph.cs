@@ -1140,6 +1140,7 @@ namespace MediaPortal.TV.Recording
 		
 		public void Process()
 		{
+			if (!GUIGraphicsContext.VMR9Allowed) return;
 			if (m_captureGraphBuilder==null) return;
 			if (m_captureFilter==null) return;
 
