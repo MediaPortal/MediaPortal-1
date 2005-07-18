@@ -202,6 +202,15 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 						ScanChannels(captureCard);
 					}
 					currentFrequencyIndex++;
+					if (currentFrequencyIndex>=count)
+					{
+						if(m_currentDiseqc<m_diseqcLoops)
+						{
+							m_currentDiseqc++;
+							LoadFrequencies();
+							currentFrequencyIndex=0;
+						}
+					}
 				}
 			}
 			finally
