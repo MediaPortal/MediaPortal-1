@@ -5,6 +5,8 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
+using MediaPortal.TV.Recording;
+
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
 	/// <summary>
@@ -33,6 +35,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			ImportAnalogChannels(url);
 			UpdateList();
 			lblStatus.Label="Press Next to continue the setup";
+			GUIPropertyManager.SetProperty("#Wizard.Analog.Done","yes");
+
 		}
 
 		void UpdateList()
@@ -95,6 +99,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				}
 				catch(Exception){}
 				TVDatabase.AddChannel(chan);
+				MapTvToOtherCards(chan);
 			}
 			XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
 			foreach (XmlNode nodeChannel in listRadioChannels)
@@ -105,6 +110,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				chan.Name=name.Value;
 				chan.Frequency=ConvertToFrequency(frequency.Value);
 				RadioDatabase.AddStation(ref chan);
+				MapRadioToOtherCards(chan);
 			}
 		}
 		long ConvertToFrequency(string frequency)
@@ -142,5 +148,29 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			return (long)(freqValue);
 		}
 
+		void MapTvToOtherCards(TVChannel chan)
+		{
+			for (int i=0; i < Recorder.Count;++i)
+			{
+				TVCaptureDevice dev = Recorder.Get(i);
+				if (dev.Network==NetworkType.Analog)
+				{
+						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
+				}
+			}
+		}
+
+		void MapRadioToOtherCards(MediaPortal.Radio.Database.RadioStation chan)
+		{
+			for (int i=0; i < Recorder.Count;++i)
+			{
+				TVCaptureDevice dev = Recorder.Get(i);
+
+				if (dev.Network==NetworkType.Analog)
+				{
+					MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
+				}
+			}
+		}
 	}
 }
