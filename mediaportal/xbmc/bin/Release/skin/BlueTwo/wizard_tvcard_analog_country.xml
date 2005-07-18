@@ -29,7 +29,7 @@
          <type>button</type>
          <description>Back</description>
          <id>25</id>
-         <posX>448</posX>
+         <posX>560</posX>
          <posY>504</posY>
          <onleft>23</onleft>
          <onright>25</onright>
