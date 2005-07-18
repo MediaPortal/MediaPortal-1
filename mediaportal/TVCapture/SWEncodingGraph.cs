@@ -920,7 +920,7 @@ namespace MediaPortal.TV.Recording
     public bool StopViewing()
     {
       if (m_graphState != State.Viewing) return false;
-       if (!GUIGraphicsContext.VMR9Allowed) return;
+       
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       DirectShowUtil.DebugWrite("SWGraph:StopViewing()");
 			if (m_videoWindow!=null)
@@ -966,12 +966,13 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+
     /// <summary>
     /// Callback from GUIGraphicsContext. Will get called when the video window position or width/height changes
     /// </summary>
     private void GUIGraphicsContext_OnVideoWindowChanged()
     {
-			
+			if (!GUIGraphicsContext.VMR9Allowed) return;
 			if (GUIGraphicsContext.Vmr9Active) return;
 			if (m_graphState != State.Viewing) return;
 			if (m_basicVideo==null) return;
