@@ -40,7 +40,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			if (card >=0 && card < Recorder.Count)
 			{
 				captureCard =Recorder.Get(card);
-				captureCard.CreateGraph();
+				TVChannel chan =(TVChannel )GUIWizardAnalogTune.TVChannelsFound[0];
+				captureCard.View=true;
+				captureCard.Tune(chan);
 			}
 		}
 		protected override void OnPageDestroy(int newWindowId)
@@ -77,6 +79,16 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			while (selectedItem>0 && selectedItem>=GUIWizardAnalogTune.TVChannelsFound.Count)
 				selectedItem--;
 			listChannelsFound.SelectedListItemIndex=selectedItem;
+			GUIListItem selitem=listChannelsFound.SelectedListItem;
+			if (selitem!=null)
+			{
+				TVChannel ch = selitem.MusicTag as TVChannel;
+				if (captureCard!=null)
+				{
+					captureCard.View=true;
+					captureCard.Tune(ch);
+				}
+			}
 
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -181,7 +193,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			TVChannel chan = (TVChannel)item.MusicTag;
 			if (captureCard!=null)
 			{
+				captureCard.View=true;
 				captureCard.Tune(chan);
+
 			}
 		}
 		void MapTvToOtherCards(int id)
