@@ -104,20 +104,29 @@ namespace MediaPortal
 
     public void InitDeviceList()
     {
-      deviceList = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AttachedOnly);
-      deviceNames.Clear();
-      deviceGUIDs.Clear();
-      deviceList.Reset();
-      foreach (DeviceInstance di in deviceList)
+      try
       {
-        if (Manager.GetDeviceAttached(di.InstanceGuid))
+        deviceList = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AttachedOnly);
+        deviceNames.Clear();
+        deviceGUIDs.Clear();
+        if (null == deviceList) return;
+        deviceList.Reset();
+        foreach (DeviceInstance di in deviceList)
         {
-          deviceNames.Add(di.InstanceName);
-          deviceGUIDs.Add(di.InstanceGuid);
+          if (Manager.GetDeviceAttached(di.InstanceGuid))
+          {
+            deviceNames.Add(di.InstanceName);
+            deviceGUIDs.Add(di.InstanceGuid);
+          }
         }
+      }			
+      catch (Exception ex)
+      {
+        Log.Write("DirectInputHandler: error in InitDeviceList");
+        Log.Write(ex.Message.ToString());
       }
-
     }
+
 
     public bool Active
     {
@@ -152,6 +161,7 @@ namespace MediaPortal
 
     int GetSelectedDeviceIndex()
     {
+      if (null == deviceList) return -1;
       int res = -1;
       int i = 0;
       if ((null != diListener.SelectedDevice) && (selectedDeviceGUID != ""))
@@ -192,7 +202,17 @@ namespace MediaPortal
 
     public int DeviceCount
     {
-      get { return deviceList.Count; }
+      get 
+      { 
+        if (null == deviceList)
+        {
+          return 0;
+        } 
+        else
+        {
+          return deviceList.Count;
+        }
+      }                                          
     }
 
     public ArrayList DeviceNames
@@ -215,6 +235,7 @@ namespace MediaPortal
     bool AcquireDevice(string devGUID)
     {
       bool res = false;
+      if (null == deviceList) return false;
       deviceList.Reset();
       foreach (DeviceInstance di in deviceList)
       {
