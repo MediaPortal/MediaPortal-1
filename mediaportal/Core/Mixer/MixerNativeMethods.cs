@@ -53,7 +53,7 @@ namespace MediaPortal.Mixer
 		#region Structures
 
 		public struct MixerControl
-		{ 
+		{
 			public int						Size;
 			public int						ControlId;
 			public MixerControlType			ControlType;
@@ -70,7 +70,7 @@ namespace MediaPortal.Mixer
 			public int						Maximum;
 
 			[MarshalAs(UnmanagedType.U4, SizeConst=10)] 
-			public int						Reserved; 
+			public int						Reserved;
 		}
 
 		public struct MixerControlDetails

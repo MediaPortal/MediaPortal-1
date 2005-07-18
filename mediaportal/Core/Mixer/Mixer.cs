@@ -49,9 +49,21 @@ namespace MediaPortal.Mixer
 					_mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
 				}
 
+				MixerNativeMethods.MixerControl mc = new MixerNativeMethods.MixerControl();
+
+				mc.Size = 0;
+				mc.ControlId = 0;
+				mc.ControlType = MixerControlType.Volume;
+				mc.fdwControl = 0;
+				mc.MultipleItems = 0;
+				mc.ShortName = string.Empty;
+				mc.Name = string.Empty;
+				mc.Minimum = 0;
+				mc.Maximum = 0;
+				mc.Reserved = 0;
+			
 				IntPtr handle = IntPtr.Zero;
 
-//				MixerError error = MixerNativeMethods.mixerOpen(ref handle, mixerIndex, new MixerCallback(OnMixerCallback), 0, MixerFlags.CallbackDelegate);
 				MixerError error = MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0, MixerFlags.CallbackWindow);
 				
 				if(error != MixerError.None)
@@ -63,17 +75,28 @@ namespace MediaPortal.Mixer
 			}
 		}
 
-		void OnMixerCallback(IntPtr handle, short msg, IntPtr reserved, IntPtr WParam, IntPtr LParam)
-		{
-			bool b = true;
-		}
-
 		object GetValue(MixerComponentType componentType, MixerControlType controlType)
 		{
 			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine();
 
 			mixerLine.Size = Marshal.SizeOf(mixerLine);
-			mixerLine.ComponentType = componentType;
+			mixerLine.Destination = 0; 
+			mixerLine.Source = 0; 
+			mixerLine.LineId = 0; 
+			mixerLine.Status = MixerLineStatusFlags.Disconnected; 
+			mixerLine.dwUser = 0; 
+			mixerLine.ComponentType = MixerComponentType.DestinationSpeakers; 
+			mixerLine.Channels = 0; 
+			mixerLine.Connections = 0; 
+			mixerLine.Controls = 0; 
+			mixerLine.ShortName = string.Empty; 
+			mixerLine.Name = string.Empty; 
+			mixerLine.Type = MixerLineTargetType.None; 
+			mixerLine.DeviceId = 0;
+			mixerLine.ManufacturerId = 0; 
+			mixerLine.ProductId = 0 ; 
+			mixerLine.DriverVersion = 0;
+			mixerLine.ProductName = string.Empty; 
 
 			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
 				throw new InvalidOperationException("Mixer.OpenControl.1");
@@ -220,11 +243,6 @@ namespace MediaPortal.Mixer
 			set { lock(this) _isMuted = value; SetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Mute, _isMuted); }
 		}
 
-		public string Name
-		{
-			get { lock(this) return _name; }
-		}
-
 		public IntPtr Handle
 		{
 			get { lock(this) return _handle; }
@@ -252,7 +270,6 @@ namespace MediaPortal.Mixer
 
 		IntPtr						_handle;
 		bool						_isMuted;
-		string						_name;
 		static MixerEventListener	_mixerEventListener;
 		int							_volume;
 

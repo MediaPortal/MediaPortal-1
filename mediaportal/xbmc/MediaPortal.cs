@@ -79,7 +79,6 @@ public class MediaPortalApp : D3DApp, IRender
 	int g_nAnisotropy;
 	DateTime m_updateTimer = DateTime.MinValue;
 	int m_iDateLayout;
-	int _volumeBeforeMute = int.MinValue;
 	static SplashScreen splashScreen;
 	#endregion
 	
@@ -1118,7 +1117,6 @@ public class MediaPortalApp : D3DApp, IRender
 	#region Handle messages, keypresses, mouse moves etc
 	void OnAction(Action action)
 	{
-		int iCurrent, iMin, iMax, iStep;
 		try
 		{
 			GUIWindow window;

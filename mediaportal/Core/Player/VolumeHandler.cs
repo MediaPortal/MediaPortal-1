@@ -70,6 +70,7 @@ namespace MediaPortal.Player
 				if((buffer.Length / 4) < 11 || (buffer.Length / 4) > 201)
 					return _systemTable;
 
+				// create an array large enough to hold the system's volume table
 				int[] volumeTable = new int[buffer.Length / 4];
 
 				for(int index = 0, offset = 0; index < volumeTable.Length; index++, offset += 4)
@@ -77,8 +78,6 @@ namespace MediaPortal.Player
 
 				return volumeTable;
 			}
-
-			return _systemTable;
 		}
 
 		protected virtual void SetVolume(int volume)
