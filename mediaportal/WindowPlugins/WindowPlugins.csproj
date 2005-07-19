@@ -1070,6 +1070,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\TV\GUISettingsTv.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\GUIWizardCardsDetected.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
