@@ -13,7 +13,7 @@ namespace MediaPortal.Util
 	/// </summary>
 	public class FolderSettings
 	{
-    static SQLiteClient m_db=null;
+    static public SQLiteClient m_db=null;
 
     private FolderSettings()
     {

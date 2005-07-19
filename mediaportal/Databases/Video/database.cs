@@ -12,7 +12,7 @@ namespace MediaPortal.Video.Database
 	/// </summary>
 	public class VideoDatabase
 	{
-		static SQLiteClient m_db=null;
+		static public SQLiteClient m_db=null;
 		#region ctor
 		// singleton. Dont allow any instance of this class
 		private VideoDatabase()

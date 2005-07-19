@@ -102,7 +102,7 @@ namespace MediaPortal.Music.Database
 	  }
 
 
-    static SQLiteClient m_db = null;
+    static public SQLiteClient m_db = null;
 		static MusicDatabase()
 		{
 			Open();

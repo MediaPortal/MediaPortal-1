@@ -12,7 +12,7 @@ namespace SQLite.NET
 	///
 
 
-	public unsafe class SQLiteClient
+	public class SQLiteClient : IDisposable
 	{
 		[DllImport("sqlite.dll")]
 		private static extern int sqlite3_changes(IntPtr handle);
@@ -91,20 +91,23 @@ namespace SQLite.NET
 		// Methods
 		public SQLiteClient(string dbName)
 		{
-			databaseName=dbName;
-			Log.Write("dbs:open:{0}",databaseName);
+			databaseName=System.IO.Path.GetFileName(dbName);
+//			Log.Write("dbs:open:{0}",databaseName);
 			dbHandle=IntPtr.Zero;
 			
 			SQLiteClient.ResultCode err=SQLiteClient.sqlite3_open(dbName, ref dbHandle);
+//			Log.Write("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
 			if (err!=ResultCode.OK)
 			{
 				throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName,err.ToString() ));
 			}
+//			Log.Write("dbs:opened:{0} {1:X}",databaseName, dbHandle.ToInt32());
 		}
  
 
 		public int ChangedRows()
 		{
+			if (this.dbHandle==IntPtr.Zero) return 0;
 			return SQLiteClient.sqlite3_changes(this.dbHandle);
 		}
  
@@ -113,7 +116,7 @@ namespace SQLite.NET
 		{
 			if (this.dbHandle!=IntPtr.Zero)
 			{	
-				Log.Write("dbs:close:{0}",databaseName);
+//				Log.Write("dbs:close:{0}",databaseName);
 				SQLiteClient.sqlite3_close(this.dbHandle);
 				this.dbHandle=IntPtr.Zero;
 				databaseName=String.Empty;
@@ -122,8 +125,12 @@ namespace SQLite.NET
  
 		void ThrowError(string statement, string sqlQuery,ResultCode err)
 		{
-			char* pErr= sqlite3_errmsg16(this.dbHandle);
-			string errorMsg = new string(pErr);
+			string errorMsg =String.Empty;
+			unsafe
+			{
+				char* pErr= sqlite3_errmsg16(this.dbHandle);
+				errorMsg = new string(pErr);
+			}
 			Log.WriteFile(Log.LogType.Log,true,"SQL:cmd:{0} err:{1} detailed:{2} query:{3}",
 											statement,err.ToString(),errorMsg,sqlQuery);
 					
@@ -132,8 +139,7 @@ namespace SQLite.NET
 
 		public SQLiteResultSet Execute(string query)
 		{
-			lock(this)
-			{
+//				Log.Write("dbs:{0} sql:{1}", databaseName,query);
 				if (query==null) return null;
 				int len=query.Length;
 				if (len==0) return null;
@@ -151,16 +157,19 @@ namespace SQLite.NET
 
 				for (int x=0; x < busyRetries;++x)
 				{
+					
+//					Log.Write("dbs:{0} prepare16 :{1:X} {2}",databaseName,dbHandle.ToInt32(),query);
 					err= sqlite3_prepare16(this.dbHandle, query, query.Length, ref stmt, ref ptrTail);
 					if (err!=ResultCode.OK)
 					{
+//						Log.Write("dbs:{0} prepare16 returns:{1}",databaseName, err.ToString());
 						if (stmt!=IntPtr.Zero) 
 						{
 							sqlite3_finalize(stmt);
 							stmt=IntPtr.Zero;
 						}
 							
-						if (err==ResultCode.EMPTY)
+						if (err==ResultCode.EMPTY||err==ResultCode.Done)
 						{
 							//table is empty
 							return set1;
@@ -176,9 +185,13 @@ namespace SQLite.NET
 						}
 						continue;
 					}
-					break;
+					else
+					{
+//						Log.Write("dbs:{0} prepare16 returns:{1}",databaseName, err.ToString());
+						break;
+					}
 				}
-				if (err==ResultCode.EMPTY)
+				if (err==ResultCode.EMPTY||err==ResultCode.Done)
 				{
 					//table is empty
 					return set1;
@@ -188,13 +201,17 @@ namespace SQLite.NET
 					ThrowError("sqlite3_prepare16(2)",query,err);
 				}
 					
+//				Log.Write("dbs:{0} sqlite3_column_count:{1:X}",databaseName, stmt.ToInt32());
 				int nCol = sqlite3_column_count(stmt);
+//				Log.Write("dbs:{0} sqlite3_column_count returns:{1:X} {2}",databaseName, stmt.ToInt32(), nCol);
 				int row=0;
 				while(true)
 				{
 					for (int x=0; x < busyRetries;++x)
 					{
+//						Log.Write("dbs:{0} sqlite3_step:{1:X}",databaseName, stmt.ToInt32());
 						err= sqlite3_step(stmt);
+//						Log.Write("dbs:{0} sqlite3_step returns:{1:X} {2}",databaseName, stmt.ToInt32(), err.ToString());
 						if (err!=ResultCode.BUSY) break;
 						System.Threading.Thread.Sleep(busyRetryDelay);
 					}
@@ -219,41 +236,56 @@ namespace SQLite.NET
 					{
 						if (row==0)
 						{
+//							Log.Write("dbs:{0} Get columnnames:{1:X}",databaseName,stmt.ToInt32());
 							for (int col=0; col < nCol;col++)
 							{
-								char* pColumnName= sqlite3_column_name16(stmt,col);
-								string columName = new string(pColumnName);
+								string columName =String.Empty;
+								unsafe
+								{
+									char* pColumnName= sqlite3_column_name16(stmt,col);
+									columName = new string(pColumnName);
+								}
 								set1.ColumnNames.Add(columName);
 								set1.ColumnIndices[columName]=col;
 							}
 						}
+//						Log.Write("dbs:{0} Get row:{1:X} {2}",databaseName,stmt.ToInt32(),row);
 						ArrayList rowData = new ArrayList();
 						for (int col=0; col < nCol;col++)
 						{
-							char* pColumnValue= sqlite3_column_text16(stmt,col);
-							string columValue = new string(pColumnValue);
+							string columValue =String.Empty;
+							unsafe
+							{
+								char* pColumnValue= sqlite3_column_text16(stmt,col);
+								columValue = new string(pColumnValue);
+							}
 							rowData.Add(columValue);
 						}
 						set1.Rows.Add(rowData);
+//						Log.Write("dbs:{0} Get row:{1} done",databaseName,row);
 						row++;
 					}
 				}
+
 				if (stmt!=IntPtr.Zero)
 				{
+//					Log.Write("dbs:{0} finalize :{1:X}",databaseName,stmt);
 					sqlite3_finalize(stmt);
 					stmt=IntPtr.Zero;
 				}
+			
+//			  Log.Write("dbs:{0} done:{1}",databaseName,err.ToString());
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
 				{
 					ThrowError("sqlite3_finalize(2)",query,err);
 				}
 				return set1;
-			}
 		}
  
 
 		~SQLiteClient()
 		{
+//			Log.Write("dbs:{0} ~ctor()", databaseName);
 			this.Close();
 		}
  
@@ -484,8 +516,14 @@ namespace SQLite.NET
 				this.busyRetryDelay = value;
 			}
 		}
- 
+		#region IDisposable Members
 
+		public void Dispose()
+		{
+//			Log.Write("dbs:{0} Dispose()", databaseName);
+		}
+
+		#endregion
 	}
  
 

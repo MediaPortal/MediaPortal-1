@@ -10,7 +10,7 @@ namespace MediaPortal.Radio.Database
 {
   public class RadioDatabase
   {
-    static SQLiteClient m_db=null;
+    static public SQLiteClient m_db=null;
 
     // singleton. Dont allow any instance of this class
     private RadioDatabase()

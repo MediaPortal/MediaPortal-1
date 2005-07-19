@@ -39,7 +39,7 @@ namespace MediaPortal.TV.Database
 			EpisodesToKeepChange,
 			PriorityChange
 		}
-		static SQLiteClient m_db=null;
+		static public SQLiteClient m_db=null;
 		static ArrayList m_genreCache=new ArrayList();
 		static ArrayList m_channelCache=new ArrayList();
 		static bool      m_bSupressEvents=false;
