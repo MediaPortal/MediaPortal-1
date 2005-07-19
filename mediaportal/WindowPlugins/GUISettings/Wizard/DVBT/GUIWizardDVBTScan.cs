@@ -309,6 +309,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 		{
 			if (control==btnNext)
 			{
+				Log.Write("dvbt-scan:pressed next");
 				GUIWizardCardsDetected.ScanNextCardType();
 				return;
 			}

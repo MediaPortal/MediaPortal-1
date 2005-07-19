@@ -154,6 +154,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 		}
 		static public void ScanNextCardType()
 		{
+			Log.Write("ScanNextCardType:cards:{0}",Recorder.Count);
 			if (Recorder.Count>0)
 			{
 				for (int i=0; i < Recorder.Count;++i)
@@ -163,6 +164,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.DVBT.Done") != "yes")
 						{
+							Log.Write("ScanNextCardType:goto dvbt");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBT_COUNTRY);
 							return;
@@ -172,6 +174,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.DVBC.Done") != "yes")
 						{
+							Log.Write("ScanNextCardType:goto dvbc");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBC_COUNTRY);
 							return;
@@ -181,6 +184,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.DVBS.Done") != "yes")
 						{
+							Log.Write("ScanNextCardType:goto dvbs");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SELECT_LNB);
 							return;
@@ -190,6 +194,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.ATSC.Done") != "yes")
 						{
+							Log.Write("ScanNextCardType:goto atsc");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ATSC_SCAN);
 							return;
@@ -198,7 +203,8 @@ namespace MediaPortal.GUI.Settings.Wizard
 					if (dev.Network==NetworkType.Analog)
 					{
 						if (GUIPropertyManager.GetProperty("#Wizard.Analog.Done") != "yes")
-						{
+						{	
+							Log.Write("ScanNextCardType:goto analog");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_COUNTRY);
 							return;
@@ -206,12 +212,9 @@ namespace MediaPortal.GUI.Settings.Wizard
 					}
 				}
 			}
-			else
-			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
-			//	GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_COUNTRY);
-			}
-
+			Log.Write("ScanNextCardType:goto finished");
+			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
+		
 		}
 
 	}

@@ -206,7 +206,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		{
 			int currentFreq=currentFrequencyIndex;
 			if (currentFrequencyIndex<minFreq) currentFreq=minFreq;
-			float percent = ((float)currentFreq) / ((float)(maxFreq-minFreq));
+			float percent = ((float)(currentFreq-minFreq)) / ((float)(maxFreq-minFreq));
 			percent *= 100.0f;
 			
 			progressBar.Percentage=(int)percent;
