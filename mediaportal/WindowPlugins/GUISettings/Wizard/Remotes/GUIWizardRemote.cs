@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmHauppauge.Selected=false;
 			cmFireDTV.Selected=false;
 			cmOther.Selected=false;
-			imgRemote.SetFileName(@"Wizards\MCEEU.JPG");
+			imgRemote.SetFileName(@"Wizards\remote_mce_eu.png");
 			GUIControl.FocusControl(GetID,cmMicrosoftEU.GetID);
 		}
 
