@@ -1105,11 +1105,17 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 				if (isMaximized) 
 				{
-					TimeSpan ts = DateTime.Now-screenSaverTimer;
-					if (ts.TotalSeconds>=60)
+					int window=GUIWindowManager.ActiveWindow;
+					if (window < (int)GUIWindow.Window.WINDOW_WIZARD_WELCOME ||
+						window > (int)GUIWindow.Window.WINDOW_WIZARD_FINISHED)
 					{
-						GUIGraphicsContext.BlankScreen=true;
+						TimeSpan ts = DateTime.Now-screenSaverTimer;
+						if (ts.TotalSeconds>=60)
+						{
+							GUIGraphicsContext.BlankScreen=true;
+						}
 					}
+					else screenSaverTimer=DateTime.Now;
 				}
 			}
 		}

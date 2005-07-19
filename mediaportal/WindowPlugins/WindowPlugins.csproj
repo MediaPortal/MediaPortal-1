@@ -1110,7 +1110,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogRenameRadio.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogTune.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUISettings\Wizard\Analog\GUIWizardAnalogTuneRadio.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
