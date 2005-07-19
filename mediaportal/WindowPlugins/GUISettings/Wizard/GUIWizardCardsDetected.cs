@@ -145,6 +145,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 				GUIPropertyManager.SetProperty("#Wizard.DVBS.Done","no");
 				GUIPropertyManager.SetProperty("#Wizard.ATSC.Done","no");
 				GUIPropertyManager.SetProperty("#Wizard.Analog.Done","no");
+				GUIPropertyManager.SetProperty("#Wizard.Remote.Done","no");
 				GUIPropertyManager.SetProperty("#WizardCard","0");
 				ScanNextCardType();
 				return;
@@ -211,6 +212,11 @@ namespace MediaPortal.GUI.Settings.Wizard
 						}
 					}
 				}
+			}
+			if (GUIPropertyManager.GetProperty("#Wizard.Remote.Done") != "yes")
+			{	
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_REMOTE);
+				return;
 			}
 			Log.Write("ScanNextCardType:goto finished");
 			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
