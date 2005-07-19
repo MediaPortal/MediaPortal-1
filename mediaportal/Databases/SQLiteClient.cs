@@ -47,6 +47,8 @@ namespace SQLite.NET
 		private static extern int sqlite3_column_count(void* stmt);
 		[DllImport("sqlite.dll")]
 		private static extern char* sqlite3_column_text16(void* stmt, int nCol);		
+		[DllImport("sqlite.dll")]
+		private static extern char* sqlite3_errmsg16(void* handle);
 
 		// Fields
 		private int busyRetries=5;
@@ -115,6 +117,15 @@ namespace SQLite.NET
 			this.dbHandle=null;
 		}
  
+		void ThrowError(string statement, string sqlQuery,ResultCode err)
+		{
+			char* pErr= sqlite3_errmsg16(this.dbHandle);
+			string errorMsg = new string(pErr);
+			Log.WriteFile(Log.LogType.Log,true,"SQL:cmd:{0} err:{1} detailed:{2} query:{3}",
+											statement,err.ToString(),errorMsg,sqlQuery);
+					
+			throw new SQLiteException( String.Format("SQL:cmd:{0} err:{1} detailed:{2} query:{3}",statement,err.ToString(),errorMsg,sqlQuery),err);
+		}
 
 		public SQLiteResultSet Execute(string query)
 		{
@@ -158,8 +169,7 @@ namespace SQLite.NET
 						}
 						if (err==ResultCode.ERROR)
 						{
-							Log.WriteFile(Log.LogType.Log,true,"SQL1:{0} failed err:{1}", query,err.ToString());
-							throw new SQLiteException(String.Format("SQL1:{0} failed err:{1}", query,err.ToString()), err);
+							ThrowError("sqlite3_prepare16",query,err);
 						}
 						continue;
 					}
@@ -172,8 +182,7 @@ namespace SQLite.NET
 				}
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"SQL2:{0} failed err:{1}", query,err.ToString());
-					throw new SQLiteException(String.Format("SQL2:{0} failed err:{1}", query,err.ToString()), err);
+					ThrowError("sqlite3_prepare16(2)",query,err);
 				}
 					
 				int nCol = sqlite3_column_count(stmt);
@@ -199,8 +208,7 @@ namespace SQLite.NET
 						stmt=null;
 						if (err!=ResultCode.OK && err!=ResultCode.Done)
 						{
-							Log.WriteFile(Log.LogType.Log,true,"SQL3:{0} failed err:{1}", query,err.ToString());
-							throw new SQLiteException(String.Format("SQL3:{0} failed err:{1}", query,err.ToString()), err);
+							ThrowError("sqlite3_step(2)",query,err);
 						}
 						break;
 					}
@@ -234,8 +242,7 @@ namespace SQLite.NET
 				}
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
 				{
-					Log.WriteFile(Log.LogType.Log,true,String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
-					throw new SQLiteException(String.Format("SQL4:{0} failed err:{1}", query,err.ToString()), err);
+					ThrowError("sqlite3_finalize(2)",query,err);
 				}
 				return set1;
 			}
