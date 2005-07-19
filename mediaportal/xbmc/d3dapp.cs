@@ -1831,6 +1831,7 @@ namespace MediaPortal
           this.mnuBreak2 = new System.Windows.Forms.MenuItem();
           this.mnuExit = new System.Windows.Forms.MenuItem();
           this.menuItem1 = new System.Windows.Forms.MenuItem();
+          this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
           this.menuItem2 = new System.Windows.Forms.MenuItem();
           this.menuItem4 = new System.Windows.Forms.MenuItem();
           this.dvdMenuItem = new System.Windows.Forms.MenuItem();
@@ -1843,7 +1844,6 @@ namespace MediaPortal
           this.contextMenu1 = new System.Windows.Forms.ContextMenu();
           this.menuItem3 = new System.Windows.Forms.MenuItem();
           this.menuItem5 = new System.Windows.Forms.MenuItem();
-          this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
           // 
           // mnuMain
           // 
@@ -1885,6 +1885,12 @@ namespace MediaPortal
                                                                                   this.menuItemFullscreen,
                                                                                   this.menuItem2});
           this.menuItem1.Text = "&Options";
+          // 
+          // menuItemFullscreen
+          // 
+          this.menuItemFullscreen.Index = 0;
+          this.menuItemFullscreen.Text = "&Fullscreen";
+          this.menuItemFullscreen.Click += new System.EventHandler(this.menuItemFullscreen_Click);
           // 
           // menuItem2
           // 
@@ -1963,13 +1969,6 @@ namespace MediaPortal
           // 
           this.menuItem5.Index = 0;
           this.menuItem5.Text = "";
-          // 
-          // menuItemFullscreen
-          // 
-          this.menuItemFullscreen.Index = 0;
-          this.menuItemFullscreen.Shortcut = System.Windows.Forms.Shortcut.F4;
-          this.menuItemFullscreen.Text = "&Fullscreen";
-          this.menuItemFullscreen.Click += new System.EventHandler(this.menuItemFullscreen_Click);
           // 
           // D3DApp
           // 
@@ -2397,7 +2396,7 @@ namespace MediaPortal
           dialogNotify.SetHeading(1020);
           dialogNotify.SetText(String.Format("{0}\n{1}", GUILocalizeStrings.Get(1021), GUILocalizeStrings.Get(1022)));
           dialogNotify.TimeOut = 6;
-          dialogNotify.SetImage(String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"dialog_information.png"));
+          dialogNotify.SetImage(String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, "dialog_information.png"));
           dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
         }
       }
