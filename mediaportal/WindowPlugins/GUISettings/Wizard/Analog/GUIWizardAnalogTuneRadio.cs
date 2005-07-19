@@ -222,7 +222,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		{
 			if (control==btnNext)
 			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_RENAME);
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_RENAME_RADIO);
 				return;
 			}
 			base.OnClicked (controlId, control, actionType);
