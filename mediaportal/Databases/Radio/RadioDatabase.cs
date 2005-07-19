@@ -45,7 +45,7 @@ namespace MediaPortal.Radio.Database
 					m_db.Execute("PRAGMA short_column_names=0;\n");
 
         }
-				CreateTables(ref m_db);
+				CreateTables();
 
       } 
       catch (Exception ex) 
@@ -54,24 +54,91 @@ namespace MediaPortal.Radio.Database
       }
       Log.WriteFile(Log.LogType.Log,false,"Radio database opened");
     }
-  
-    static bool CreateTables(ref SQLiteClient db)
+		static public bool AddTable( string strTable, string strSQL)
+		{
+			//	lock (typeof(DatabaseUtility))
+		
+			Log.Write("AddTable: {0}",strTable);
+			if (m_db==null) 
+			{
+				Log.Write("AddTable: database not opened");
+				return false;
+			}
+			if (strSQL==null) 
+			{
+				Log.Write("AddTable: no sql?");
+				return false;
+			}
+			if (strTable==null) 
+			{
+				Log.Write("AddTable: No table?");
+				return false;
+			}
+			if (strTable.Length==0) 
+			{
+				Log.Write("AddTable: empty table?");
+				return false;
+			}
+			if (strSQL.Length==0) 
+			{
+				Log.Write("AddTable: empty sql?");
+				return false;
+			}
+
+			//Log.Write("check for  table:{0}", strTable);
+			SQLiteResultSet results;
+			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+			if (results!=null)
+			{
+				Log.Write("  results:{0}", results.Rows.Count);
+				if (results.Rows.Count==1) 
+				{
+					Log.Write(" check result:0");
+					ArrayList arr = (ArrayList)results.Rows[0];
+					if (arr.Count==1)
+					{
+
+						if ( (string)arr[0] == strTable) 
+						{
+							Log.Write(" table exists");
+							return false;
+						}
+						Log.Write(" table has different name:{0}", (string)arr[0]);
+					}
+					else Log.Write(" array contains:{0} items?", arr.Count);
+				}
+			}
+
+			try 
+			{
+				Log.Write("create table:{0}", strSQL);
+				m_db.Execute(strSQL);
+				Log.Write("table created");
+			}
+			catch (SQLiteException ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
+			}
+			return true;
+		}
+
+    static bool CreateTables()
     {
-      if (db==null) return false;
-      if ( DatabaseUtility.AddTable(ref db,"station","CREATE TABLE station ( idChannel integer primary key, strName text, iChannelNr integer, frequency text, URL text, genre text, bitrate integer, scrambled integer);\n"))
+      if (m_db==null) return false;
+      if ( AddTable("station","CREATE TABLE station ( idChannel integer primary key, strName text, iChannelNr integer, frequency text, URL text, genre text, bitrate integer, scrambled integer);\n"))
       {
 				try {
-					db.Execute("CREATE INDEX idxStation ON station(idChannel);\n");
+					m_db.Execute("CREATE INDEX idxStation ON station(idChannel);\n");
 				}
 				catch(Exception){} 
       }
-			DatabaseUtility.AddTable(ref db,"tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer);\n");
-			DatabaseUtility.AddTable(ref db,"tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer);\n");
-			DatabaseUtility.AddTable(ref db,"tblATSCMapping" ,"CREATE TABLE tblATSCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer, channelNumber integer, minorChannel integer, majorChannel integer);\n");
-			DatabaseUtility.AddTable(ref db,"tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer, strChannel text, strProvider text, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer);\n");
+			AddTable("tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer);\n");
+			AddTable("tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer);\n");
+			AddTable("tblATSCMapping" ,"CREATE TABLE tblATSCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer, channelNumber integer, minorChannel integer, majorChannel integer);\n");
+			AddTable("tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer, strChannel text, strProvider text, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer);\n");
 
 			//following table specifies which channels can be received by which card
-			DatabaseUtility.AddTable(ref db,"tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer);\n");      
+			AddTable("tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer);\n");      
 
       return true;
     }

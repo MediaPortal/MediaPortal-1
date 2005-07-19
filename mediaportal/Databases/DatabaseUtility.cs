@@ -76,10 +76,11 @@ namespace MediaPortal.Database
 		/// <param name="strTable">name of table</param>
 		/// <param name="strSQL">SQL command to create the new table</param>
 		/// <returns>true if table is created</returns>
-		static public bool AddTable(ref SQLiteClient dbHandle,  string strTable, string strSQL)
+		static public bool AddTable( SQLiteClient dbHandle,  string strTable, string strSQL)
 		{
-			lock (typeof(DatabaseUtility))
+		//	lock (typeof(DatabaseUtility))
 			{
+				Log.Write("AddTable: {0}",strTable);
 				if (dbHandle==null) 
 				{
 					Log.Write("AddTable: database not opened");
@@ -111,30 +112,30 @@ namespace MediaPortal.Database
 				results = dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
 				if (results!=null)
 				{
-					//Log.Write("  results:{0}", results.Rows.Count);
+					Log.Write("  results:{0}", results.Rows.Count);
 					if (results.Rows.Count==1) 
 					{
-						//Log.Write(" check result:0");
+						Log.Write(" check result:0");
 						ArrayList arr = (ArrayList)results.Rows[0];
 						if (arr.Count==1)
 						{
 
 							if ( (string)arr[0] == strTable) 
 							{
-								//Log.Write(" table exists");
+								Log.Write(" table exists");
 								return false;
 							}
-							//Log.Write(" table has different name:{0}", (string)arr[0]);
+							Log.Write(" table has different name:{0}", (string)arr[0]);
 						}
-						//else Log.Write(" array contains:{0} items?", arr.Count);
+						else Log.Write(" array contains:{0} items?", arr.Count);
 					}
 				}
 
 				try 
 				{
-					//Log.Write("create table:{0}", strSQL);
+					Log.Write("create table:{0} {1}", strSQL,dbHandle);
 					dbHandle.Execute(strSQL);
-					//Log.Write("table created");
+					Log.Write("table created");
 				}
 				catch (SQLiteException ex) 
 				{

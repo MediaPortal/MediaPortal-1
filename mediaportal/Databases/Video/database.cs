@@ -56,23 +56,91 @@ namespace MediaPortal.Video.Database
       
 			Log.WriteFile(Log.LogType.Log,false,"video database opened");
 		}
+		static public bool AddTable( string strTable, string strSQL)
+		{
+			//	lock (typeof(DatabaseUtility))
+		
+			Log.Write("AddTable: {0}",strTable);
+			if (m_db==null) 
+			{
+				Log.Write("AddTable: database not opened");
+				return false;
+			}
+			if (strSQL==null) 
+			{
+				Log.Write("AddTable: no sql?");
+				return false;
+			}
+			if (strTable==null) 
+			{
+				Log.Write("AddTable: No table?");
+				return false;
+			}
+			if (strTable.Length==0) 
+			{
+				Log.Write("AddTable: empty table?");
+				return false;
+			}
+			if (strSQL.Length==0) 
+			{
+				Log.Write("AddTable: empty sql?");
+				return false;
+			}
+
+			//Log.Write("check for  table:{0}", strTable);
+			SQLiteResultSet results;
+			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+			if (results!=null)
+			{
+				Log.Write("  results:{0}", results.Rows.Count);
+				if (results.Rows.Count==1) 
+				{
+					Log.Write(" check result:0");
+					ArrayList arr = (ArrayList)results.Rows[0];
+					if (arr.Count==1)
+					{
+
+						if ( (string)arr[0] == strTable) 
+						{
+							Log.Write(" table exists");
+							return false;
+						}
+						Log.Write(" table has different name:{0}", (string)arr[0]);
+					}
+					else Log.Write(" array contains:{0} items?", arr.Count);
+				}
+			}
+
+			try 
+			{
+				Log.Write("create table:{0}", strSQL);
+				m_db.Execute(strSQL);
+				Log.Write("table created");
+			}
+			catch (SQLiteException ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
+			}
+			return true;
+		}
+
 		static bool CreateTables()
 		{
 			if (m_db==null) return false;
-			DatabaseUtility.AddTable(ref m_db,"bookmark","CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text);\n");
-			DatabaseUtility.AddTable(ref m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
-			DatabaseUtility.AddTable(ref m_db,"genrelinkmovie","CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer);\n");
-			DatabaseUtility.AddTable(ref m_db,"movie","CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text);\n");
-			DatabaseUtility.AddTable(ref m_db,"movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer);\n");
-			DatabaseUtility.AddTable(ref m_db,"actorlinkmovie","CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer );\n");
-			DatabaseUtility.AddTable(ref m_db,"actors","CREATE TABLE actors ( idActor integer primary key, strActor text );\n");
-			DatabaseUtility.AddTable(ref m_db,"path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text);\n");
-			DatabaseUtility.AddTable(ref m_db,"files","CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text);\n");
-			DatabaseUtility.AddTable(ref m_db,"resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob);\n");
-			DatabaseUtility.AddTable(ref m_db,"duration","CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer);\n");
+			AddTable("bookmark","CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text);\n");
+			AddTable("genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
+			AddTable("genrelinkmovie","CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer);\n");
+			AddTable("movie","CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text);\n");
+			AddTable("movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer);\n");
+			AddTable("actorlinkmovie","CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer );\n");
+			AddTable("actors","CREATE TABLE actors ( idActor integer primary key, strActor text );\n");
+			AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text);\n");
+			AddTable("files","CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text);\n");
+			AddTable("resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob);\n");
+			AddTable("duration","CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer);\n");
 
-			DatabaseUtility.AddTable(ref m_db,"actorinfo","CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text);\n");
-			DatabaseUtility.AddTable(ref m_db,"actorinfomovies","CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text);\n");
+			AddTable("actorinfo","CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text);\n");
+			AddTable("actorinfomovies","CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text);\n");
 			return true;
 		}
 

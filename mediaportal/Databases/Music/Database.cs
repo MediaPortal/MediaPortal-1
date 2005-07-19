@@ -121,13 +121,20 @@ namespace MediaPortal.Music.Database
 					System.IO.Directory.CreateDirectory(strPath+@"\database");
 				}
 				catch(Exception){}
-        m_db = new SQLiteClient(strPath+@"\database\musicdatabase4.db3");
+        m_db = new SQLiteClient(@"database\musicdatabase4.db3");
 				m_db.Execute("PRAGMA cache_size=2000;\n");
 				m_db.Execute("PRAGMA synchronous='OFF';\n");
 				m_db.Execute("PRAGMA count_changes=1;\n");
 				m_db.Execute("PRAGMA full_column_names=0;\n");
 				m_db.Execute("PRAGMA short_column_names=0;\n");
-				CreateTables();
+				AddTable("artist","CREATE TABLE artist ( idArtist integer primary key, strArtist text);\n");
+				AddTable("album","CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text);\n");
+				AddTable("genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
+				AddTable("path","CREATE TABLE path ( idPath integer primary key,  strPath text);\n");
+				AddTable("albuminfo","CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer);\n");
+				AddTable("artistinfo","CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text);\n");
+				AddTable("song","CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer);\n");
+				
 
       } 
       catch (Exception ex) 
@@ -136,6 +143,73 @@ namespace MediaPortal.Music.Database
       }
       Log.WriteFile(Log.LogType.Log,false,"music database opened");
     }
+		static public bool AddTable( string strTable, string strSQL)
+		{
+			//	lock (typeof(DatabaseUtility))
+		
+			Log.Write("AddTable: {0}",strTable);
+			if (m_db==null) 
+			{
+				Log.Write("AddTable: database not opened");
+				return false;
+			}
+			if (strSQL==null) 
+			{
+				Log.Write("AddTable: no sql?");
+				return false;
+			}
+			if (strTable==null) 
+			{
+				Log.Write("AddTable: No table?");
+				return false;
+			}
+			if (strTable.Length==0) 
+			{
+				Log.Write("AddTable: empty table?");
+				return false;
+			}
+			if (strSQL.Length==0) 
+			{
+				Log.Write("AddTable: empty sql?");
+				return false;
+			}
+
+			//Log.Write("check for  table:{0}", strTable);
+			SQLiteResultSet results;
+			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+			if (results!=null)
+			{
+				Log.Write("  results:{0}", results.Rows.Count);
+				if (results.Rows.Count==1) 
+				{
+					Log.Write(" check result:0");
+					ArrayList arr = (ArrayList)results.Rows[0];
+					if (arr.Count==1)
+					{
+
+						if ( (string)arr[0] == strTable) 
+						{
+							Log.Write(" table exists");
+							return false;
+						}
+						Log.Write(" table has different name:{0}", (string)arr[0]);
+					}
+					else Log.Write(" array contains:{0} items?", arr.Count);
+				}
+			}
+
+			try 
+			{
+				Log.Write("create table:{0}", strSQL);
+				m_db.Execute(strSQL);
+				Log.Write("table created");
+			}
+			catch (SQLiteException ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
+			}
+			return true;
+		}
 
     ~MusicDatabase()
     {
@@ -146,17 +220,10 @@ namespace MediaPortal.Music.Database
 			get { return m_db; }
 		}
 
-    static bool CreateTables()
+    static bool CreateTables(ref SQLiteClient dbHandle)
     {
       if (m_db == null) return false;
-      DatabaseUtility.AddTable(ref m_db,"artist","CREATE TABLE artist ( idArtist integer primary key, strArtist text);\n");
-      DatabaseUtility.AddTable(ref m_db,"album","CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text);\n");
-      DatabaseUtility.AddTable(ref m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
-      DatabaseUtility.AddTable(ref m_db,"path","CREATE TABLE path ( idPath integer primary key,  strPath text);\n");
-      DatabaseUtility.AddTable(ref m_db,"albuminfo","CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer);\n");
-			DatabaseUtility.AddTable(ref m_db,"artistinfo","CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text);\n");
-      DatabaseUtility.AddTable(ref m_db,"song","CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer);\n");
-			return true;
+ 			return true;
     }
 
     public int AddPath(string strPath1)

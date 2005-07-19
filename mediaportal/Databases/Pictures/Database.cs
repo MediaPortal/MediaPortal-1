@@ -59,9 +59,76 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         if (m_db==null) return false;
-        DatabaseUtility.AddTable(ref m_db,"picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer);\n");
+        AddTable("picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer);\n");
         return true;
       }
+		}
+		public bool AddTable( string strTable, string strSQL)
+		{
+			//	lock (typeof(DatabaseUtility))
+		
+			Log.Write("AddTable: {0}",strTable);
+			if (m_db==null) 
+			{
+				Log.Write("AddTable: database not opened");
+				return false;
+			}
+			if (strSQL==null) 
+			{
+				Log.Write("AddTable: no sql?");
+				return false;
+			}
+			if (strTable==null) 
+			{
+				Log.Write("AddTable: No table?");
+				return false;
+			}
+			if (strTable.Length==0) 
+			{
+				Log.Write("AddTable: empty table?");
+				return false;
+			}
+			if (strSQL.Length==0) 
+			{
+				Log.Write("AddTable: empty sql?");
+				return false;
+			}
+
+			//Log.Write("check for  table:{0}", strTable);
+			SQLiteResultSet results;
+			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+			if (results!=null)
+			{
+				Log.Write("  results:{0}", results.Rows.Count);
+				if (results.Rows.Count==1) 
+				{
+					Log.Write(" check result:0");
+					ArrayList arr = (ArrayList)results.Rows[0];
+					if (arr.Count==1)
+					{
+
+						if ( (string)arr[0] == strTable) 
+						{
+							Log.Write(" table exists");
+							return false;
+						}
+						Log.Write(" table has different name:{0}", (string)arr[0]);
+					}
+					else Log.Write(" array contains:{0} items?", arr.Count);
+				}
+			}
+
+			try 
+			{
+				Log.Write("create table:{0}", strSQL);
+				m_db.Execute(strSQL);
+				Log.Write("table created");
+			}
+			catch (SQLiteException ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
+			}
+			return true;
 		}
 
 		public int AddPicture(string strPicture, int iRotation)
