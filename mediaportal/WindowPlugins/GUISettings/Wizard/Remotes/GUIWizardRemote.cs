@@ -100,6 +100,8 @@ namespace MediaPortal.GUI.Settings.Wizard
 				xmlwriter.SetValueAsBool("remote", "mce2005", (cmMicrosoftUSA.Selected||cmMicrosoftEU.Selected));
 				xmlwriter.SetValueAsBool("remote", "USAModel", cmMicrosoftUSA.Selected);
 				xmlwriter.SetValueAsBool("remote", "HCW", cmHauppauge.Selected);
+				xmlwriter.SetValueAsBool("remote", "FireDTV", cmFireDTV.Selected);
+
 			}
 			GUIPropertyManager.SetProperty("#Wizard.Remote.Done","yes");
 			GUIWizardCardsDetected.ScanNextCardType();
