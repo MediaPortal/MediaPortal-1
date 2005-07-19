@@ -1,4 +1,4 @@
-﻿<window>
+<window>
    <id>628</id>
    <defaultcontrol>5</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
@@ -32,7 +32,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>152</posY>
-         <label>MediaPortal is now scanning for new radio stations and tv channels</label>
+         <label>MediaPortal found the following radio stations and tv channels</label>
          <font>font12</font>
       </control>
       <control>

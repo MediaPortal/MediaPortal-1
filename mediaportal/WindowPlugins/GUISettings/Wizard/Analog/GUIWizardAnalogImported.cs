@@ -18,7 +18,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		[SkinControlAttribute(26)]			protected GUILabelControl lblChannelsFound=null;
 		[SkinControlAttribute(27)]			protected GUILabelControl lblStatus=null;
 		[SkinControlAttribute(24)]			protected GUIListControl  listChannelsFound=null;
-		[SkinControlAttribute(5)]				protected GUIListControl  btnNext=null;
+		[SkinControlAttribute(5)]				protected GUIButtonControl  btnNext=null;
 
 		public GUIWizardAnalogImported()
 		{
