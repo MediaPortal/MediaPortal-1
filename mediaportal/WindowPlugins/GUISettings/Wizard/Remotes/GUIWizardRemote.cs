@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmHauppauge.Selected=true;
 			cmFireDTV.Selected=false;
 			cmOther.Selected=false;
-			imgRemote.SetFileName(@"Wizards\hauppauge.png");
+			imgRemote.SetFileName(@"Wizards\hauppauge.jpg");
 		}
 		
 		void OnFireDTV()
