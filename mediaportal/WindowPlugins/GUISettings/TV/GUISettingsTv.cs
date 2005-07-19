@@ -13,6 +13,7 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(24)]			protected GUIButtonControl btnVideoCodec=null;
 		[SkinControlAttribute(25)]			protected GUIButtonControl btnAudioCodec=null;
 		[SkinControlAttribute(26)]			protected GUIButtonControl btnVideoRenderer=null;
+		[SkinControlAttribute(26)]			protected GUIButtonControl btnDeinterlace=null;
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
 		[SkinControlAttribute(29)]			protected GUIButtonControl btnTimeshiftBuffer=null;
 		public GUISettingsTv()
@@ -31,6 +32,7 @@ namespace WindowPlugins.GUISettings.TV
 			if (control==btnVideoRenderer) OnVideoRenderer();
 			if (control==btnAspectRatio) OnAspectRatio();
 			if (control==btnTimeshiftBuffer) OnTimeshiftBuffer();
+			if (control==btnDeinterlace) OnDeinterlace();
 			base.OnClicked (controlId, control, actionType);
 		}
 		void OnVideoCodec()
@@ -118,7 +120,7 @@ namespace WindowPlugins.GUISettings.TV
 				if (dlg.SelectedLabel<0) return;
 				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
-						xmlwriter.SetValue("mytv", "vmr9", vmr9Index.ToString());
+						xmlwriter.SetValue("mytv", "vmr9", dlg.SelectedLabel.ToString());
 				}
 			}
 		}
@@ -182,8 +184,36 @@ namespace WindowPlugins.GUISettings.TV
 				if (dlg.SelectedLabel<0) return;
 				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
-					buflen=(dlg.SelectedLabel*30);
-					xmlwriter.SetValue("mytv", "timeshiftbuffer", buflen.ToString());
+					buflen=(dlg.SelectedLabel*30)+30;
+					xmlwriter.SetValue("capture", "timeshiftbuffer", buflen.ToString());
+				}
+			}
+		}
+		void OnDeinterlace()
+		{
+			string[] deinterlaceModes = { "None", "Bob", "Weave", "Best"};
+			int deInterlaceMode=1;
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				deInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 1);
+			}
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				
+				for(int index = 0; index < deinterlaceModes.Length; index++)
+				{
+					dlg.Add(deinterlaceModes[index]);
+				}
+				dlg.SelectedLabel=deInterlaceMode;
+				dlg.DoModal(GetID);
+				if (dlg.SelectedLabel<0) return;
+				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				{
+					xmlwriter.SetValue("mytv", "deinterlace", dlg.SelectedLabel);
 				}
 			}
 		}
