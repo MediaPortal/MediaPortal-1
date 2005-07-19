@@ -13,7 +13,7 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(24)]			protected GUIButtonControl btnVideoCodec=null;
 		[SkinControlAttribute(25)]			protected GUIButtonControl btnAudioCodec=null;
 		[SkinControlAttribute(26)]			protected GUIButtonControl btnVideoRenderer=null;
-		[SkinControlAttribute(26)]			protected GUIButtonControl btnDeinterlace=null;
+		[SkinControlAttribute(27)]			protected GUIButtonControl btnDeinterlace=null;
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
 		[SkinControlAttribute(29)]			protected GUIButtonControl btnTimeshiftBuffer=null;
 		public GUISettingsTv()
