@@ -15,45 +15,46 @@ namespace SQLite.NET
 	public unsafe class SQLiteClient
 	{
 		[DllImport("sqlite.dll")]
-		private static extern int sqlite3_changes(void* handle);
+		private static extern int sqlite3_changes(IntPtr handle);
 		[DllImport("sqlite.dll")]
-		private static extern void sqlite3_close(void* handle);
+		private static extern void sqlite3_close(IntPtr handle);
 		[DllImport("sqlite.dll")]
-		private static extern void sqlite3_interrupt(void* handle);
+		private static extern void sqlite3_interrupt(IntPtr handle);
 		[DllImport("sqlite.dll")]
-		private static extern int sqlite3_last_insert_rowid(void* handle);
+		private static extern int sqlite3_last_insert_rowid(IntPtr handle);
 		[DllImport("sqlite.dll")]
 		private static extern string sqlite3_libencoding();
 		[DllImport("sqlite.dll")]
 		private static extern string sqlite3_libversion();
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode sqlite3_open(string filename, void** handle);
+		private static extern SQLiteClient.ResultCode sqlite3_open(string filename, ref IntPtr handle);
 
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_prepare(void* handle, string sql, int nbytes, void** stmt, void** tail);
+		private static extern SQLiteClient.ResultCode  sqlite3_prepare(IntPtr handle, string sql, int nbytes, ref IntPtr stmt, ref IntPtr tail);
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_prepare16(void* handle,  [MarshalAs(UnmanagedType.LPWStr)]string sql, int nbytes, void** stmt, void** tail);
+		private static extern SQLiteClient.ResultCode  sqlite3_prepare16(IntPtr handle,  [MarshalAs(UnmanagedType.LPWStr)]string sql, int nbytes, ref IntPtr stmt, ref IntPtr tail);
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_finalize(void* stmt);
+		private static extern SQLiteClient.ResultCode  sqlite3_finalize(IntPtr stmt);
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_reset(void* stmt);		
+		private static extern SQLiteClient.ResultCode  sqlite3_reset(IntPtr stmt);		
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_step(void* stmt);		
+		private static extern SQLiteClient.ResultCode  sqlite3_step(IntPtr stmt);		
 		[DllImport("sqlite.dll")]
-		private static extern char* sqlite3_column_name16(void* stmt, int nCol);		
+		private static extern char* sqlite3_column_name16(IntPtr stmt, int nCol);		
 		[DllImport("sqlite.dll")]
-		private static extern sbyte* sqlite3_column_name(void* stmt, int nCol);		
+		private static extern sbyte* sqlite3_column_name(IntPtr stmt, int nCol);		
 		[DllImport("sqlite.dll")]
-		private static extern int sqlite3_column_count(void* stmt);
+		private static extern int sqlite3_column_count(IntPtr stmt);
 		[DllImport("sqlite.dll")]
-		private static extern char* sqlite3_column_text16(void* stmt, int nCol);		
+		private static extern char* sqlite3_column_text16(IntPtr stmt, int nCol);		
 		[DllImport("sqlite.dll")]
-		private static extern char* sqlite3_errmsg16(void* handle);
+		private static extern char* sqlite3_errmsg16(IntPtr handle);
 
 		// Fields
 		private int busyRetries=5;
 		private int busyRetryDelay=25;
-		private unsafe void* dbHandle;
+		IntPtr dbHandle=IntPtr.Zero;
+		string databaseName=String.Empty;
 		//private long dbHandleAdres=0;
 		// Nested Types
 		public enum ResultCode
@@ -90,16 +91,14 @@ namespace SQLite.NET
 		// Methods
 		public SQLiteClient(string dbName)
 		{
-			dbHandle=null;
+			databaseName=dbName;
+			Log.Write("dbs:open:{0}",databaseName);
+			dbHandle=IntPtr.Zero;
 			
-			fixed( void** ptr=&dbHandle)
+			SQLiteClient.ResultCode err=SQLiteClient.sqlite3_open(dbName, ref dbHandle);
+			if (err!=ResultCode.OK)
 			{
-				SQLiteClient.ResultCode err=SQLiteClient.sqlite3_open(dbName, ptr);
-//				dbHandleAdres=(long)dbHandle;
-				if (err!=ResultCode.OK)
-				{
-					throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName,err.ToString() ));
-				}
+				throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName,err.ToString() ));
 			}
 		}
  
@@ -112,9 +111,13 @@ namespace SQLite.NET
 
 		public void Close()
 		{
-			if (this.dbHandle!=null)
+			if (this.dbHandle!=IntPtr.Zero)
+			{	
+				Log.Write("dbs:close:{0}",databaseName);
 				SQLiteClient.sqlite3_close(this.dbHandle);
-			this.dbHandle=null;
+				this.dbHandle=IntPtr.Zero;
+				databaseName=String.Empty;
+			}
 		}
  
 		void ThrowError(string statement, string sqlQuery,ResultCode err)
@@ -143,18 +146,18 @@ namespace SQLite.NET
 				SQLiteClient.ResultCode err=ResultCode.EMPTY;
 				SQLiteResultSet set1 = new SQLiteResultSet();
 				set1.LastCommand=query;	
-				void *stmt=null;
-				void** pStmnt=&stmt;
+				IntPtr stmt=IntPtr.Zero;
+				IntPtr ptrTail=IntPtr.Zero;
 
 				for (int x=0; x < busyRetries;++x)
 				{
-					err= sqlite3_prepare16(this.dbHandle, query, query.Length, pStmnt, null);
+					err= sqlite3_prepare16(this.dbHandle, query, query.Length, ref stmt, ref ptrTail);
 					if (err!=ResultCode.OK)
 					{
-						if (pStmnt!=null) 
+						if (stmt!=IntPtr.Zero) 
 						{
 							sqlite3_finalize(stmt);
-							stmt=null;
+							stmt=IntPtr.Zero;
 						}
 							
 						if (err==ResultCode.EMPTY)
@@ -199,13 +202,13 @@ namespace SQLite.NET
 					{
 						//table is empty
 						sqlite3_finalize(stmt);
-						stmt=null;
+						stmt=IntPtr.Zero;
 						return set1;
 					}
 					else if (err!=ResultCode.Row)
 					{
 						sqlite3_finalize(stmt);
-						stmt=null;
+						stmt=IntPtr.Zero;
 						if (err!=ResultCode.OK && err!=ResultCode.Done)
 						{
 							ThrowError("sqlite3_step(2)",query,err);
@@ -235,10 +238,10 @@ namespace SQLite.NET
 						row++;
 					}
 				}
-				if (stmt!=null)
+				if (stmt!=IntPtr.Zero)
 				{
 					sqlite3_finalize(stmt);
-					stmt=null;
+					stmt=IntPtr.Zero;
 				}
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
 				{
