@@ -1,5 +1,6 @@
 using System;
 using MediaPortal.GUI.Library;
+
 namespace MediaPortal.GUI.Settings.Wizard
 {
 	/// <summary>
@@ -28,7 +29,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			OnMicrosoftEU();
+			LoadSettings();
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -50,6 +51,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmFireDTV.Selected=false;
 			cmOther.Selected=false;
 			imgRemote.SetFileName(@"Wizards\MCEUSA.jpg");
+			GUIControl.FocusControl(GetID,cmMicrosoftUSA.GetID);
 		}
 		void OnMicrosoftEU()
 		{
@@ -59,6 +61,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmFireDTV.Selected=false;
 			cmOther.Selected=false;
 			imgRemote.SetFileName(@"Wizards\MCEEU.JPG");
+			GUIControl.FocusControl(GetID,cmMicrosoftEU.GetID);
 		}
 
 		void OnHauppauge()
@@ -69,6 +72,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmFireDTV.Selected=false;
 			cmOther.Selected=false;
 			imgRemote.SetFileName(@"Wizards\hauppauge.jpg");
+			GUIControl.FocusControl(GetID,cmHauppauge.GetID);
 		}
 		
 		void OnFireDTV()
@@ -80,6 +84,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmFireDTV.Selected=true;
 			cmOther.Selected=false;
 			imgRemote.SetFileName(@"Wizards\firedtv.png");
+			GUIControl.FocusControl(GetID,cmFireDTV.GetID);
 		}
 		
 		void OnOther()
@@ -91,6 +96,22 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmFireDTV.Selected=false;
 			cmOther.Selected=true;
 			imgRemote.SetFileName("");
+			GUIControl.FocusControl(GetID,cmOther.GetID);
+		}
+		void LoadSettings()
+		{
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				bool useMCE=xmlreader.GetValueAsBool("remote", "mce2005", false);
+				bool useMCEUSA=xmlreader.GetValueAsBool("remote", "USAModel", false);
+				bool useHCW=xmlreader.GetValueAsBool("remote", "HCW", false);
+				bool useFireDTV=xmlreader.GetValueAsBool("remote", "FireDTV", false);
+				if (useMCE && useMCEUSA) OnMicrosoftUSA();
+				else if (useMCE && !useMCEUSA) OnMicrosoftEU();
+				else if (useHCW) OnHauppauge();
+				else if (useFireDTV) OnFireDTV();
+				else OnOther();
+			}
 		}
 		void OnNextPage()
 		{
@@ -101,10 +122,13 @@ namespace MediaPortal.GUI.Settings.Wizard
 				xmlwriter.SetValueAsBool("remote", "USAModel", cmMicrosoftUSA.Selected);
 				xmlwriter.SetValueAsBool("remote", "HCW", cmHauppauge.Selected);
 				xmlwriter.SetValueAsBool("remote", "FireDTV", cmFireDTV.Selected);
-
 			}
 			GUIPropertyManager.SetProperty("#Wizard.Remote.Done","yes");
-			GUIWizardCardsDetected.ScanNextCardType();
+
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESTART_REMOTE_CONTROLS,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msg);
+			
+			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_CARDS_DETECTED);
 		}
 	}
 }

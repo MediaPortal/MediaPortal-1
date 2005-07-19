@@ -33,6 +33,7 @@ using MediaPortal.RedEyeIR;//PB00//
 using MediaPortal.Ripper;
 using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
+using MediaPortal.Remotes;
 #endregion
 
 
@@ -1855,6 +1856,12 @@ public class MediaPortalApp : D3DApp, IRender
 	{
 		switch (message.Message)
 		{
+			case GUIMessage.MessageType.GUI_MSG_RESTART_REMOTE_CONTROLS:
+				Log.Write("app:Restart remote controls");
+				InputDevices.Stop();
+				InputDevices.Init();
+			break;
+
 			case GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW:
 				GUIWindowManager.ActivateWindow(message.Param1);
 				if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||

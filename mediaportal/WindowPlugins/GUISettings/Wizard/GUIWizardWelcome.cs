@@ -18,5 +18,18 @@ namespace MediaPortal.GUI.Settings
 		{
 			return Load (GUIGraphicsContext.Skin+@"\wizard_welcome.xml");
 		}
+		protected override void OnPageLoad()
+		{
+			GUIPropertyManager.SetProperty("#Wizard.DVBT.Done","no");
+			GUIPropertyManager.SetProperty("#Wizard.DVBC.Done","no");
+			GUIPropertyManager.SetProperty("#Wizard.DVBS.Done","no");
+			GUIPropertyManager.SetProperty("#Wizard.ATSC.Done","no");
+			GUIPropertyManager.SetProperty("#Wizard.Analog.Done","no");
+			GUIPropertyManager.SetProperty("#Wizard.Remote.Done","no");
+			GUIPropertyManager.SetProperty("#WizardCard","0");
+				
+			base.OnPageLoad ();
+		}
+
 	}
 }

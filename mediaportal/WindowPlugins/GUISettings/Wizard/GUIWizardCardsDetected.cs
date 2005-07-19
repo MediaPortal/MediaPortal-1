@@ -140,13 +140,6 @@ namespace MediaPortal.GUI.Settings.Wizard
 			if (control==btnNext)
 			{
 				Log.Write("cards detected:{0}", Recorder.Count);
-				GUIPropertyManager.SetProperty("#Wizard.DVBT.Done","no");
-				GUIPropertyManager.SetProperty("#Wizard.DVBC.Done","no");
-				GUIPropertyManager.SetProperty("#Wizard.DVBS.Done","no");
-				GUIPropertyManager.SetProperty("#Wizard.ATSC.Done","no");
-				GUIPropertyManager.SetProperty("#Wizard.Analog.Done","no");
-				GUIPropertyManager.SetProperty("#Wizard.Remote.Done","no");
-				GUIPropertyManager.SetProperty("#WizardCard","0");
 				ScanNextCardType();
 				return;
 

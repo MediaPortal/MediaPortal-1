@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal
+namespace MediaPortal.Remotes
 {
 	public sealed class InputDevices
 	{
@@ -22,6 +22,7 @@ namespace MediaPortal
 			MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
 			FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
 
+			HCWRemote = new HCWRemote();
 			if (HCWRemote.Enabled)
 			{
 //				if (splashScreen != null) splashScreen.SetInformation("Initializing Hauppauge remote...");
