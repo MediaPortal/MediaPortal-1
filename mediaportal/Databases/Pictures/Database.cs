@@ -59,7 +59,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         if (m_db==null) return false;
-        DatabaseUtility.AddTable(m_db,"picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer);\n");
+        DatabaseUtility.AddTable(ref m_db,"picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer);\n");
         return true;
       }
 		}

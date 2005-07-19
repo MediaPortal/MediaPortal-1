@@ -76,11 +76,11 @@ namespace MediaPortal.Database
 		/// <param name="strTable">name of table</param>
 		/// <param name="strSQL">SQL command to create the new table</param>
 		/// <returns>true if table is created</returns>
-		static public bool AddTable(SQLiteClient m_db,  string strTable, string strSQL)
+		static public bool AddTable(ref SQLiteClient dbHandle,  string strTable, string strSQL)
 		{
 			lock (typeof(DatabaseUtility))
 			{
-				if (m_db==null) 
+				if (dbHandle==null) 
 				{
 					Log.Write("AddTable: database not opened");
 					return false;
@@ -108,7 +108,7 @@ namespace MediaPortal.Database
 
 				//Log.Write("check for  table:{0}", strTable);
 				SQLiteResultSet results;
-				results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+				results = dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
 				if (results!=null)
 				{
 					//Log.Write("  results:{0}", results.Rows.Count);
@@ -133,7 +133,7 @@ namespace MediaPortal.Database
 				try 
 				{
 					//Log.Write("create table:{0}", strSQL);
-					m_db.Execute(strSQL);
+					dbHandle.Execute(strSQL);
 					//Log.Write("table created");
 				}
 				catch (SQLiteException ex) 

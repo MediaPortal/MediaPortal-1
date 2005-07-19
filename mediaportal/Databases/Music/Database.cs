@@ -149,13 +149,13 @@ namespace MediaPortal.Music.Database
     static bool CreateTables()
     {
       if (m_db == null) return false;
-      DatabaseUtility.AddTable(m_db,"artist","CREATE TABLE artist ( idArtist integer primary key, strArtist text);\n");
-      DatabaseUtility.AddTable(m_db,"album","CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text);\n");
-      DatabaseUtility.AddTable(m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
-      DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key,  strPath text);\n");
-      DatabaseUtility.AddTable(m_db,"albuminfo","CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer);\n");
-			DatabaseUtility.AddTable(m_db,"artistinfo","CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text);\n");
-      DatabaseUtility.AddTable(m_db,"song","CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer);\n");
+      DatabaseUtility.AddTable(ref m_db,"artist","CREATE TABLE artist ( idArtist integer primary key, strArtist text);\n");
+      DatabaseUtility.AddTable(ref m_db,"album","CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text);\n");
+      DatabaseUtility.AddTable(ref m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
+      DatabaseUtility.AddTable(ref m_db,"path","CREATE TABLE path ( idPath integer primary key,  strPath text);\n");
+      DatabaseUtility.AddTable(ref m_db,"albuminfo","CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer);\n");
+			DatabaseUtility.AddTable(ref m_db,"artistinfo","CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text);\n");
+      DatabaseUtility.AddTable(ref m_db,"song","CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer);\n");
 			return true;
     }
 
