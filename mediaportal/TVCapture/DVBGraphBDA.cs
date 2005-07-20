@@ -40,19 +40,19 @@ namespace MediaPortal.TV.Recording
 				0x02, 0x00,             // channels
 				0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
 				0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
-				0x00, 0x03,             // nBlockAlign      = 0x0300 = 768
-				0x10, 0x00,             // wBitsPerSample   = 16
+				0x01, 0x00,             // nBlockAlign      = 0x0300 = 768
+				0x00, 0x00,             // wBitsPerSample   = 16
 				0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
 				0x02, 0x00,             // fwHeadLayer
 				0x00, 0xE8,0x03, 0x00,  // dwHeadBitrate
 				0x01, 0x00,             // fwHeadMode
 				0x01, 0x00,             // fwHeadModeExt
 				0x01, 0x00,             // wHeadEmphasis
-				0x1C, 0x00,             // fwHeadFlags
+				0x16, 0x00,             // fwHeadFlags
 				0x00, 0x00, 0x00, 0x00, // dwPTSLow
 				0x00, 0x00, 0x00, 0x00  // dwPTSHigh
 			} ;
-
+		
 		#region imports
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
 			class VideoAnalyzer {};
@@ -671,7 +671,7 @@ namespace MediaPortal.TV.Recording
 					mediaMPG1.subType = MediaSubType.MPEG1AudioPayload;
 					mediaMPG1.sampleSize = 0;
 					mediaMPG1.temporalCompression = false;
-					mediaMPG1.fixedSizeSamples = true;
+					mediaMPG1.fixedSizeSamples = false;
 					mediaMPG1.unkPtr = IntPtr.Zero;
 					mediaMPG1.formatType = FormatType.WaveEx;
 					mediaMPG1.formatSize = MPEG1AudioFormat.GetLength(0);
