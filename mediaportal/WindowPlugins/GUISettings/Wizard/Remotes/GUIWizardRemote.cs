@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmHauppauge.Selected=true;
 			cmFireDTV.Selected=false;
 			cmOther.Selected=false;
-			imgRemote.SetFileName(@"Wizards\hauppauge.jpg");
+			imgRemote.SetFileName(@"Wizards\remote_hcw.png");
 			GUIControl.FocusControl(GetID,cmHauppauge.GetID);
 		}
 		
