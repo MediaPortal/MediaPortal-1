@@ -1,5 +1,8 @@
 using System;
 using System.Collections;
+using System.Drawing;
+
+using MediaPortal.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
@@ -8,248 +11,222 @@ namespace MediaPortal.GUI.Library
 	/// A group can hold 1 or more controls
 	/// and apply an animation to the entire group
 	/// </summary>
-	public class GUIGroup: GUIControl
+	public class GUIGroup : GUIControl, ILayoutComponent
 	{
-		//TODO: add comments
-		// Animation type
-    [XMLSkinElement("animation")] Animator.AnimationType m_Animation=Animator.AnimationType.None;
-		protected ArrayList     m_Controls = new ArrayList(); //array list holding all controls
-		protected bool          m_bStart=false;								//boolean indicating if a new animation should be started
-    protected Animator      m_animator;										//class which does the animations
+		#region Constructors
 
 		public GUIGroup()
 		{
 		}
-		public GUIGroup(int dwParentID) : base(dwParentID)
+
+		public GUIGroup(int parentId) : base(parentId)
 		{
 		}
 
-		/// <summary>
-		/// Get/set animation type
-		/// </summary>
-    public Animator.AnimationType Animation
-    {
-      get { return m_Animation;}
-      set { 
-        m_Animation=value;
-      }
-    }
+		#endregion Constructors
 
-    public override void OnInit()
-    {
-      m_bStart   = true;
-      m_animator = new Animator(m_Animation);
-    }
+		#region Methods
 
-    public void AddControl(GUIControl control)
-    {
-        m_Controls.Add(control);
-    }
+		public override void OnInit()
+		{
+			_startAnimation = true;
+			_animator = new Animator(_animatorType);
+		}
 
-    public int Count
-    {
-        get { return m_Controls.Count;}
-    }
+		public void AddControl(GUIControl control)
+		{
+			_controlCollection.Add(control);
+		}
 
-    public GUIControl this[int index]
-    {
-        get { 
-					if (index<0 || index>=m_Controls.Count) return null;
-					return (GUIControl)m_Controls[index]; 
-				}
-    }
-
-    public override void Render(float timePassed)
-    {
-      if (GUIGraphicsContext.Animations)
-      {
-        if (m_animator!=null)
-        {
-          if (m_bStart)
-          {
-            m_bStart=false;
-            StorePosition();
-          }
-
-          for (int i=0; i < m_Controls.Count;++i)
-          {
-            GUIControl cntl=m_Controls[i] as GUIControl;
-            if (cntl!=null) cntl.Animate(timePassed,m_animator);
-          }
-          m_animator.Advance(timePassed);
-        }
-      }
-
-      for (int i=0; i < m_Controls.Count;++i)
-      {
-        ((GUIControl)m_Controls[i]).Render(timePassed);
-      }
-			
-			if (m_animator!=null)
+		public override void Render(float timePassed)
+		{
+			if(GUIGraphicsContext.Animations)
 			{
-				if (m_animator.IsDone())
+				if(_animator != null)
 				{
-					ReStorePosition();
-					m_animator=null;
+					if(_startAnimation)
+					{
+						_startAnimation = false;
+						StorePosition();
+					}
+
+					foreach(GUIControl control in _controlCollection)
+					{
+						if(control != null)
+							control.Animate(timePassed, _animator);
+					}
+
+					_animator.Advance(timePassed);
 				}
 			}
-    }
 
-    public override void FreeResources()
-		{
-			if (m_animator!=null)
+			foreach(GUIControl control in _controlCollection)
+				control.Render(timePassed);
+			
+			if(_animator != null && _animator.IsDone())
 			{
 				ReStorePosition();
-				m_animator=null;
+				_animator = null;
 			}
-      for (int i=0; i < m_Controls.Count;++i)
-      {
-        ((GUIControl)m_Controls[i]).FreeResources();
-      }
-    }
+		}
 
-    public override void AllocResources()
-    {
-      for (int i=0; i < m_Controls.Count;++i)
-      {
-        ((GUIControl)m_Controls[i]).AllocResources();
-      }
-    }
+		public override void FreeResources()
+		{
+			if(_animator != null)
+			{
+				ReStorePosition();
+				_animator = null;
+			}
 
-    public override void PreAllocResources()
-    {
-      for (int i=0; i < m_Controls.Count;++i)
-      {
-        ((GUIControl)m_Controls[i]).PreAllocResources();
-      }
-    }
+			foreach(GUIControl control in _controlCollection)
+				control.FreeResources();
+		}
 
-    public override GUIControl GetControlById(int ID)
-    {
-      for (int i=0; i < m_Controls.Count;++i)
-      {
-        GUIControl cntl = ((GUIControl)m_Controls[i]).GetControlById(ID);
-        if (cntl!=null) return cntl;
-      }
-      return null;
-    }
+		public override void AllocResources()
+		{
+			foreach(GUIControl control in _controlCollection)
+				control.AllocResources();
+		}
 
-    public override bool NeedRefresh()
-    {
-      for (int i=0; i < m_Controls.Count;++i)
-      {
-        if ( ((GUIControl)m_Controls[i]).NeedRefresh() ) return true;
-      }
-      return false;
-    }
+		public override void PreAllocResources()
+		{
+			foreach(GUIControl control in _controlCollection)
+				control.PreAllocResources();
+		}
 
-    public override bool HitTest(int x, int y, out int controlID, out bool focused)
-    {
-      controlID=-1;
-      focused=false;
-      for (int i=m_Controls.Count-1 ;  i>=0 ; i--)
-      {
-        if ( ((GUIControl)m_Controls[i]).HitTest(x,y, out controlID,out  focused) ) return true;
-      }
-      return false;
-    }
+		public override GUIControl GetControlById(int ID)
+		{
+			foreach(GUIControl control in _controlCollection)
+			{
+				GUIControl childControl = control.GetControlById(ID);
 
-    public override void OnAction(Action action)
-    {
-      for (int i=0; i < m_Controls.Count;++i)
-      {
-        if ( ((GUIControl)m_Controls[i]).Focus ) 
-        {
-          ((GUIControl)m_Controls[i]).OnAction(action);
-        }
-      }
-    }
+				if(childControl != null)
+					return childControl;
+			}
 
-    public void Remove(int dwId)
-    {
-      int index = 0;
-      foreach (GUIControl control in m_Controls)
-      {
-        GUIGroup grp = control as GUIGroup;
-        if (grp !=null)
-        {
-          grp.Remove(dwId);
-        }
-        else
-        {
-          if (control.GetID == dwId)
-          {
-						if (index >=0 && index < m_Controls.Count)
-							m_Controls.RemoveAt(index);
-            return;
-          }
-        }
-        index++;
-      }
-    }
-    public int GetFocusControlId()
-    {
-      for (int x = 0; x < m_Controls.Count; ++x)
-      {
-        GUIGroup grp = m_Controls[x] as GUIGroup;
-        if (grp!=null)
-        {
-          int iFocusedControlId=grp.GetFocusControlId();
-          if (iFocusedControlId>=0) return iFocusedControlId;
-        }
-        else
-        {
-          if (((GUIControl)m_Controls[x]).Focus) return ((GUIControl)m_Controls[x]).GetID;
-        }
-      }
-      return - 1;
-    }
+			return null;
+		}
 
-    public override void DoUpdate()
-    {
-      for (int x = 0; x < m_Controls.Count; ++x)
-      {
-        ((GUIControl)m_Controls[x]).DoUpdate();
-      }
-    }
+		public override bool NeedRefresh()
+		{
+			foreach(GUIControl control in _controlCollection)
+			{
+				if(control.NeedRefresh())
+					return true;
+			}
 
+			return false;
+		}
+
+		public override bool HitTest(int x, int y, out int controlID, out bool focused)
+		{
+			controlID=-1;
+			focused=false;
+
+			for(int index = _controlCollection.Count - 1; index >= 0; index--)
+			{
+				if((_controlCollection[index]).HitTest(x, y, out controlID, out focused))
+					return true;
+			}
+
+			return false;
+		}
+
+		public override void OnAction(Action action)
+		{
+			foreach(GUIControl control in _controlCollection)
+			{
+				if(control.Focus)
+					control.OnAction(action);
+			}
+		}
+
+		public void Remove(int controlId)
+		{
+			foreach(GUIControl control in _controlCollection)
+			{
+				if(control is GUIGroup)
+				{
+					((GUIGroup)control).Remove(controlId);
+					break;
+				}
+				else if(control.GetID == controlId)
+				{
+					_controlCollection.Remove(control);
+					break;
+				}
+			}
+		}
+
+		public int GetFocusControlId()
+		{
+			foreach(GUIControl control in _controlCollection)
+			{
+				if(control is GUIGroup)
+				{
+					int focusedId = ((GUIGroup)control).GetFocusControlId();
+
+					if(focusedId != -1)
+						return focusedId;
+				}
+				else if(control.Focus)
+				{
+					return control.GetID;
+				}
+			}
+
+			return -1;
+		}
+
+		public override void DoUpdate()
+		{
+			foreach(GUIControl control in _controlCollection)
+				control.DoUpdate();
+		}
     
-    public ArrayList GUIControls
-    {
-      get 
-      {
-        return m_Controls;
-      }
-    }
-
-    public override void StorePosition()
-    {
-      for (int x = 0; x < m_Controls.Count; ++x)
-      {
-        ((GUIControl)m_Controls[x]).StorePosition();
-      }
+		public override void StorePosition()
+		{
+			foreach(GUIControl control in _controlCollection)
+				control.StorePosition();
       
-      base.StorePosition();
-    }
+			base.StorePosition();
+		}
 
-    public override void ReStorePosition()
-    {
-      for (int x = 0; x < m_Controls.Count; ++x)
-      {
-        ((GUIControl)m_Controls[x]).ReStorePosition();
-      }
+		public override void ReStorePosition()
+		{
+			foreach(GUIControl control in _controlCollection)
+				control.ReStorePosition();
       
-      base.ReStorePosition();
-    }
+			base.ReStorePosition();
+		}
 
-    public override void Animate(float timePassed,Animator animator)
-    {
-      for (int x = 0; x < m_Controls.Count; ++x)
-      {
-        ((GUIControl)m_Controls[x]).Animate(timePassed,animator);
-      }
-      base.Animate(timePassed,animator);
-    }
+		public override void Animate(float timePassed,Animator animator)
+		{
+			foreach(GUIControl control in _controlCollection)
+				control.Animate(timePassed, animator);
+
+			base.Animate(timePassed, animator);
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		public Animator.AnimationType Animation
+		{
+			get { return _animatorType; }
+			set { _animatorType = value; }
+		}
+
+		public int Count
+		{
+			get { return _controlCollection.Count; }
+		}
+
+		public GUIControl this[int index]
+		{
+			get { return _controlCollection[index]; }
+		}
 
 		/// <summary>
 		/// Property to get/set the id of the window 
@@ -257,15 +234,71 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override int WindowId
 		{
-			get { return m_iWindowID; }
-			set { 
-				m_iWindowID = value; 
-				for (int x = 0; x < m_Controls.Count; ++x)
-				{
-					((GUIControl)m_Controls[x]).WindowId=value;
-				}
-			}
+			get { return base.WindowId; }
+			set { base.WindowId = value; foreach(GUIControl control in _controlCollection) control.WindowId = value; }
 		}
 
+		#endregion Properties
+
+		////////////////////////////
+		
+		#region Methods
+
+		void ILayoutComponent.Arrange(Rectangle finalRectangle)
+		{
+			if(_layout != null)
+				_layout.Arrange(this, finalRectangle.Size);
+		}
+
+		void ILayoutComponent.Measure(Size availableSize)
+		{
+			if(_layout != null)
+				_layout.Measure(this, availableSize);
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		ICollection ILayoutComponent.Children
+		{
+			get { return _controlCollection; }
+		}
+
+		public ILayout Layout
+		{
+			get { return _layout; }
+			set { _layout = value; }
+		}
+
+		Point ILayoutComponent.Location
+		{
+			get { return new Point(m_dwPosX, m_dwPosY); }
+		}
+
+		Rectangle ILayoutComponent.Margins
+		{
+			get { return Rectangle.Empty; }
+		}
+
+		Size ILayoutComponent.Size
+		{
+			get { return Size.Empty; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		ILayout						_layout;
+
+		[XMLSkinElement("animation")]
+		Animator.AnimationType		_animatorType = Animator.AnimationType.None;
+
+		bool						_startAnimation;
+		Animator					_animator;
+		GUIControlCollection		_controlCollection = new GUIControlCollection();
+
+		#endregion Fields
 	}
 }

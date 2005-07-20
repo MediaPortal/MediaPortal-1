@@ -293,6 +293,7 @@ namespace MediaPortal.GUI.Library
 				foreach (XmlNode subControlNode in nodeList)
 				{
 					GUIControl subControl = Create(dwParentId, subControlNode, defines);
+					
 					group.AddControl(subControl);
 				}
 			}
