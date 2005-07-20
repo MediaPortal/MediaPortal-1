@@ -116,9 +116,9 @@
       <Name>AxInterop.WMPLib</Name>
       <HintPath>..\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="edtftpnet-1.1.3">
-      <Name>edtftpnet-1.1.3</Name>
-      <HintPath>..\edtftpnet-1.1.3.dll</HintPath>
+    <Reference Include="edtftpnet-1.1.8">
+      <Name>edtftpnet-1.1.8</Name>
+      <HintPath>..\edtftpnet-1.1.8.dll</HintPath>
     </Reference>
     <Reference Include="Interop.DirectShowHelperLib">
       <Name>Interop.DirectShowHelperLib</Name>
@@ -143,10 +143,6 @@
     <Reference Include="Microsoft.DirectX.DirectDraw">
       <Name>Microsoft.DirectX.DirectDraw</Name>
       <HintPath>..\Microsoft.DirectX.DirectDraw.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLiteClient">
-      <Name>SQLiteClient</Name>
-      <HintPath>..\SQLiteClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -319,6 +315,9 @@
     <Compile Include="DShowNET\QEdit.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\TunerCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DShowNET\Twinhan.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -407,6 +406,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUIControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIControlCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUIControlFactory.cs">
@@ -541,6 +543,9 @@
     <Compile Include="guilib\SkinControlAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="guilib\Strings.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="guilib\TexturePacker.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -560,6 +565,84 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\XMLSkinElementAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\EmptyCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\EmptyEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\GridLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\IFrameworkElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\ILayoutComponent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\Layout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\LayoutConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Layouts\StackLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\Mixer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerComponentType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlUnits.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerErrors.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineControlFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineStatusFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineTarget.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerMessages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerNativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerTargetType.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mmedia\AudioWriters.cs">
@@ -673,6 +756,9 @@
     <Compile Include="Player\BaseStreamBufferPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Player\BaseTStreamBufferPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Player\DVDPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -706,6 +792,9 @@
     <Compile Include="Player\StreamBufferPlayerVMR9wl.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Player\TSStreamBufferPlayer9.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Player\VideoPlayerVMR7.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -719,6 +808,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player\VMR9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VolumeHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VolumeHandlerCustom.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PlayList\PlayList.cs">
@@ -827,9 +922,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\FileInformation.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\FolderSettings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\FtpConnectionCache.cs">

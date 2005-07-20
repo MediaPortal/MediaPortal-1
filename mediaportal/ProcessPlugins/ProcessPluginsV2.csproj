@@ -148,9 +148,6 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Runtime.Remoting">
-      <Name>System.Runtime.Remoting</Name>
-    </Reference>
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
     </Reference>
@@ -176,9 +173,6 @@
     </Compile>
     <Compile Include="CallerId\ISDN\OutlookHelper.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CallerId\ISDN\SetupForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
       <SubType>Code</SubType>
@@ -306,9 +300,6 @@
     <Compile Include="NVPPowerScheduler\WaitableTimer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="CallerId\ISDN\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ExternalDisplay\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
     </EmbeddedResource>

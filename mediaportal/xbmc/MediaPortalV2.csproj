@@ -111,22 +111,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ApplicationBlocks.ApplicationUpdater">
-      <Name>Microsoft.ApplicationBlocks.ApplicationUpdater</Name>
-      <HintPath>..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces">
-      <Name>Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces</Name>
-      <HintPath>..\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationBlocks.ExceptionManagement">
-      <Name>Microsoft.ApplicationBlocks.ExceptionManagement</Name>
-      <HintPath>..\Microsoft.ApplicationBlocks.ExceptionManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces">
-      <Name>Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces</Name>
-      <HintPath>..\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.DirectX">
       <Name>Microsoft.DirectX</Name>
       <HintPath>..\Microsoft.DirectX.dll</HintPath>
@@ -175,6 +159,11 @@
     <ProjectReference Include="..\Databases\DatabasesV2.csproj">
       <Name>Databases</Name>
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Dialogs\DialogsV2.csproj">
+      <Name>Dialogs</Name>
+      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlugins\RemotePluginsV2.csproj">

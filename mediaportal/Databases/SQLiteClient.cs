@@ -40,15 +40,15 @@ namespace SQLite.NET
 		[DllImport("sqlite.dll")]
 		private static extern SQLiteClient.ResultCode  sqlite3_step(IntPtr stmt);		
 		[DllImport("sqlite.dll")]
-		private static extern char* sqlite3_column_name16(IntPtr stmt, int nCol);		
+		private static extern unsafe char* sqlite3_column_name16(IntPtr stmt, int nCol);		
 		[DllImport("sqlite.dll")]
-		private static extern sbyte* sqlite3_column_name(IntPtr stmt, int nCol);		
+		private static extern unsafe sbyte* sqlite3_column_name(IntPtr stmt, int nCol);		
 		[DllImport("sqlite.dll")]
 		private static extern int sqlite3_column_count(IntPtr stmt);
 		[DllImport("sqlite.dll")]
-		private static extern char* sqlite3_column_text16(IntPtr stmt, int nCol);		
+		private static extern unsafe char* sqlite3_column_text16(IntPtr stmt, int nCol);		
 		[DllImport("sqlite.dll")]
-		private static extern char* sqlite3_errmsg16(IntPtr handle);
+		private static extern unsafe char* sqlite3_errmsg16(IntPtr handle);
 
 		// Fields
 		private int busyRetries=5;

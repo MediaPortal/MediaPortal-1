@@ -112,8 +112,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.DirectShowHelperLib, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Interop.DirectShowHelperLib">
+      <Name>Interop.DirectShowHelperLib</Name>
       <HintPath>..\Interop.DirectShowHelperLib.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TunerLib">
@@ -124,9 +124,15 @@
       <Name>mbm5</Name>
       <HintPath>..\mbm5.dll</HintPath>
     </Reference>
-    <Reference Include="SQLiteClient">
-      <Name>SQLiteClient</Name>
-      <HintPath>..\SQLiteClient.dll</HintPath>
+    <Reference Include="Microsoft.DirectX">
+      <Name>Microsoft.DirectX</Name>
+      <HintPath>C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\dx_1.0.2902.0</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectInput">
+      <Name>Microsoft.DirectX.DirectInput</Name>
+      <HintPath>C:\WINDOWS\Microsoft.NET\Managed DirectX\v9.02.2904\Microsoft.DirectX.DirectInput.dll</HintPath>
+      <AssemblyFolderKey>hklm\current managed directx 9.2</AssemblyFolderKey>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -269,6 +275,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\DaemonTools.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DirectInputRemote.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\DlgMovieList.cs">
@@ -466,9 +475,6 @@
     <Compile Include="TaskScheduler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TunerCountry.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="VideoRenderers.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -534,6 +540,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DaemonTools.resx">
       <DependentUpon>DaemonTools.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DirectInputRemote.resx">
+      <DependentUpon>DirectInputRemote.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DlgMovieList.resx">
       <DependentUpon>DlgMovieList.cs</DependentUpon>

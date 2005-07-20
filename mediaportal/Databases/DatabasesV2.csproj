@@ -29,7 +29,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
@@ -50,7 +50,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
@@ -121,10 +121,6 @@
       <Name>Interop.TunerLib</Name>
       <HintPath>..\Interop.TunerLib.dll</HintPath>
     </Reference>
-    <Reference Include="SQLiteClient">
-      <Name>SQLiteClient</Name>
-      <HintPath>..\SQLiteClient.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -143,6 +139,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseUtility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Folders\FolderSettings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\AlbumInfo.cs">
@@ -182,6 +181,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Radio\RadioStation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SQLiteClient.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SQLiteException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SQLiteResultSet.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SQLSelectBuilder.cs">

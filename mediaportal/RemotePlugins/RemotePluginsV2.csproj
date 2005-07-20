@@ -70,6 +70,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.DirectX">
+      <Name>Microsoft.DirectX</Name>
+      <HintPath>C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\dx_1.0.2902.0</AssemblyFolderKey>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectInput">
+      <Name>Microsoft.DirectX.DirectInput</Name>
+      <HintPath>C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll</HintPath>
+      <AssemblyFolderKey>hklm\dn\dx_1.0.2902.0</AssemblyFolderKey>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -97,6 +107,12 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DirectInputRemote\DirectInputHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectInputRemote\DirectInputListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FireDTV\FireDTV interfaces\FireSATControl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -115,8 +131,12 @@
     <Compile Include="HCWRemote\RemoteHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HID\HIDListener.cs" />
-    <Compile Include="InputDevices.cs" />
+    <Compile Include="HID\HIDListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InputDevices.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="MCE2005Remote\MCE2005Remote.cs">
       <SubType>Code</SubType>
     </Compile>

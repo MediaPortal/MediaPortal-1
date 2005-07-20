@@ -120,6 +120,10 @@
       <Name>DotMSN</Name>
       <HintPath>GUIMSNPlugin\DotMSN.dll</HintPath>
     </Reference>
+    <Reference Include="Interop.TunerLib">
+      <Name>Interop.TunerLib</Name>
+      <HintPath>..\Interop.TunerLib.dll</HintPath>
+    </Reference>
     <Reference Include="KCS.Utilities">
       <Name>KCS.Utilities</Name>
       <HintPath>..\KCS.Utilities.dll</HintPath>
@@ -143,10 +147,6 @@
     <Reference Include="Microsoft.DirectX.DirectDraw">
       <Name>Microsoft.DirectX.DirectDraw</Name>
       <HintPath>..\Microsoft.DirectX.DirectDraw.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLiteClient">
-      <Name>SQLiteClient</Name>
-      <HintPath>..\SQLiteClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -622,6 +622,78 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUISettings\MusicDatabaseReorg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\TV\GUISettingsRecordings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\TV\GUISettingsSortChannels.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\TV\GUISettingsTv.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogCity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogcountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogcountry2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogImported.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogRename.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogRenameRadio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogTune.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Analog\GUIWizardAnalogTuneRadio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\ATSC\GUIWizardATSCScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBC\GUIWizardDVBCCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBC\GUIWizardDVBCScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSLNBDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSSelectLNBs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBS\GUIWizardDVBSSelectSat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBT\GUIWizardDVBTCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\DVBT\GUIWizardDVBTScan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\GUIWizardCardsDetected.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\GUIWizardFinished.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\GUIWizardWelcome.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Remotes\GUIWizardRemote.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIStatus\GUIStatus.cs">
