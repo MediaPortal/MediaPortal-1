@@ -46,7 +46,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Auto delete recordings after watching them</label>
-         <align>left</align>
+         <align>right</align>
          <onup>4</onup>
          <ondown>5</ondown>
       </control>
@@ -61,6 +61,7 @@
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
          <label>Add recordings to movie database</label>
+         <align>right</align>
          <onup>4</onup>
          <ondown>26</ondown>
       </control>
@@ -70,7 +71,6 @@
          <posX>70</posX>
          <posY>212</posY>
          <label>Start recording</label>
-         <align>left</align>
          <onup>5</onup>
          <ondown>27</ondown>         
       </control>
