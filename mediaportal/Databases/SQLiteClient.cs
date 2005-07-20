@@ -131,10 +131,10 @@ namespace SQLite.NET
 				char* pErr= sqlite3_errmsg16(this.dbHandle);
 				errorMsg = new string(pErr);
 			}
-			Log.WriteFile(Log.LogType.Log,true,"SQL:cmd:{0} err:{1} detailed:{2} query:{3}",
-											statement,err.ToString(),errorMsg,sqlQuery);
+			Log.WriteFile(Log.LogType.Log,true,"SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}",
+											databaseName,statement,err.ToString(),errorMsg,sqlQuery);
 					
-			throw new SQLiteException( String.Format("SQL:cmd:{0} err:{1} detailed:{2} query:{3}",statement,err.ToString(),errorMsg,sqlQuery),err);
+			throw new SQLiteException( String.Format("SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}",databaseName,statement,err.ToString(),errorMsg,sqlQuery),err);
 		}
 
 		public SQLiteResultSet Execute(string query)

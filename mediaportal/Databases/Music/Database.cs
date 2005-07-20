@@ -147,7 +147,7 @@ namespace MediaPortal.Music.Database
 		{
 			//	lock (typeof(DatabaseUtility))
 		
-			Log.Write("AddTable: {0}",strTable);
+			Log.Write("AddTable:[{0}]",strTable);
 			if (m_db==null) 
 			{
 				Log.Write("AddTable: database not opened");
@@ -186,13 +186,13 @@ namespace MediaPortal.Music.Database
 					ArrayList arr = (ArrayList)results.Rows[0];
 					if (arr.Count==1)
 					{
-
-						if ( (string)arr[0] == strTable) 
+							string tableName=((string)arr[0]).Trim();
+						if ( String.Compare(tableName,strTable,true)==0) 
 						{
-							Log.Write(" table exists");
+							//Log.Write(" table exists");
 							return false;
 						}
-						Log.Write(" table has different name:{0}", (string)arr[0]);
+						Log.Write(" table has different name:[{0}[ [{1}]", tableName,strTable);
 					}
 					else Log.Write(" array contains:{0} items?", arr.Count);
 				}
@@ -200,9 +200,9 @@ namespace MediaPortal.Music.Database
 
 			try 
 			{
-				Log.Write("create table:{0}", strSQL);
+				//Log.Write("create table:{0}", strSQL);
 				m_db.Execute(strSQL);
-				Log.Write("table created");
+				//Log.Write("table created");
 			}
 			catch (SQLiteException ex) 
 			{

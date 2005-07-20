@@ -119,13 +119,13 @@ namespace MediaPortal.Database
 						ArrayList arr = (ArrayList)results.Rows[0];
 						if (arr.Count==1)
 						{
-
-							if ( (string)arr[0] == strTable) 
+							string tableName=((string)arr[0]).Trim();
+							if ( String.Compare(tableName,strTable,true)==0) 
 							{
-								Log.Write(" table exists");
+								//Log.Write(" table exists");
 								return false;
 							}
-							Log.Write(" table has different name:{0}", (string)arr[0]);
+							Log.Write(" table has different name:[{0}[ [{1}]", tableName,strTable);
 						}
 						else Log.Write(" array contains:{0} items?", arr.Count);
 					}
@@ -133,9 +133,9 @@ namespace MediaPortal.Database
 
 				try 
 				{
-					Log.Write("create table:{0} {1}", strSQL,dbHandle);
+					//Log.Write("create table:{0} {1}", strSQL,dbHandle);
 					dbHandle.Execute(strSQL);
-					Log.Write("table created");
+					//Log.Write("table created");
 				}
 				catch (SQLiteException ex) 
 				{
