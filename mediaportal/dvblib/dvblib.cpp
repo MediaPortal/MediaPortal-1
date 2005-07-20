@@ -352,11 +352,14 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 				return 6;
 		}
 		pPidEnum->Release();
-		// map new pid
-		pid = (ULONG)videoPID;
-		hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
-		if(FAILED(hr))
-			return 2;
+		if (videoPID>0)
+		{
+			// map new pid
+			pid = (ULONG)videoPID;
+			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+			if(FAILED(hr))
+				return 2;
+		}
 		pMap->Release();
 	}
 	
@@ -384,11 +387,13 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 				return 8;
 		}
 		pPidEnum->Release();
-		pid = (ULONG)audioPID;
-		hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
-		if(FAILED(hr))
-			return 4;
-
+		if (audioPID>0)
+		{
+			pid = (ULONG)audioPID;
+			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+			if(FAILED(hr))
+				return 4;
+		}
 		pMap->Release();
 	}
 
@@ -463,14 +468,17 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, bool elementary_stream)
 				return 6;
 		}
 		pPidEnum->Release();
-		// map new pid
-		pid = (ULONG)videoPID;
-		if (elementary_stream)
-			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
-		else
-			hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
-		if(FAILED(hr))
-			return 2;
+		if (videoPID>0)
+		{
+			// map new pid
+			pid = (ULONG)videoPID;
+			if (elementary_stream)
+				hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+			else
+				hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
+			if(FAILED(hr))
+				return 2;
+		}
 		pMap->Release();
 	}
 	return S_OK;

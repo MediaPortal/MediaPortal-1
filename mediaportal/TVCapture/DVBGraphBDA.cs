@@ -2747,6 +2747,7 @@ namespace MediaPortal.TV.Recording
 						{
 							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X}",
 								currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+							SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
 							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
 						}
 						else
@@ -4201,6 +4202,7 @@ namespace MediaPortal.TV.Recording
 
 				TuneRadioChannel(station);
 
+				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
 				SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
 
 				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
