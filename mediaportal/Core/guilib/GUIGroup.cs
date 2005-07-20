@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 
 using MediaPortal.Layouts;
@@ -11,7 +12,7 @@ namespace MediaPortal.GUI.Library
 	/// A group can hold 1 or more controls
 	/// and apply an animation to the entire group
 	/// </summary>
-	public class GUIGroup : GUIControl, ILayoutComponent
+	public class GUIGroup : GUIControl, ILayoutComponent, ISupportInitialize
 	{
 		#region Constructors
 
@@ -250,10 +251,22 @@ namespace MediaPortal.GUI.Library
 				_layout.Arrange(this, finalRectangle.Size);
 		}
 
+		void ISupportInitialize.BeginInit()
+		{
+		}
+
 		void ILayoutComponent.Measure(Size availableSize)
 		{
 			if(_layout != null)
 				_layout.Measure(this, availableSize);
+		}
+
+		void ISupportInitialize.EndInit()
+		{
+			if(_layout == null)
+				return;
+
+			_layout.Arrange(this, new Size(720, 576));
 		}
 
 		#endregion Methods
@@ -290,6 +303,7 @@ namespace MediaPortal.GUI.Library
 
 		#region Fields
 
+		[XMLSkinElement("layout")]
 		ILayout						_layout;
 
 		[XMLSkinElement("animation")]
@@ -300,5 +314,9 @@ namespace MediaPortal.GUI.Library
 		GUIControlCollection		_controlCollection = new GUIControlCollection();
 
 		#endregion Fields
+
+		#region ISupportInitialize Members
+
+		#endregion
 	}
 }

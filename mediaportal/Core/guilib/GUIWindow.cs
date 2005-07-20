@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.Library
 						if (strAllow == "no" || strAllow == "false")
 							m_iAutoHideTopbar = 0;
 					}
-				} 
+				}
 
 				XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
 

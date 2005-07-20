@@ -88,8 +88,9 @@ namespace MediaPortal.Layouts
 				{
 					int index = r * cols + c;
 
+					// urghhhhhhhhhh!!!!
 					if(index < component.Children.Count)
-						((GUIControlCollection)component.Children)[index].Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
+						((ILayoutComponent)((GUIControlCollection)component.Children)[index]).Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
 
 					x += w + _spacing.Width;
 				}

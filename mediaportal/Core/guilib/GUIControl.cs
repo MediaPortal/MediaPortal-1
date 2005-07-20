@@ -3,14 +3,14 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 
-using MediaPortal.GUI.Layouts;
+using MediaPortal.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
 	/// Base class for GUIControls.
 	/// </summary>
-	public abstract class GUIControl : IFrameworkElement
+	public abstract class GUIControl : ILayoutComponent
 	{
 		[XMLSkinElement("subtype")]			protected string  m_strSubType = "";
 		[XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;
@@ -1017,12 +1017,11 @@ namespace MediaPortal.GUI.Library
 	  
 		#region Methods
 
-		public virtual void Measure(Size availableSize)
+		void ILayoutComponent.Measure(Size availableSize)
 		{
-
 		}
 
-		public virtual void Arrange(Rectangle finalRectangle)
+		void ILayoutComponent.Arrange(Rectangle finalRectangle)
 		{
 			m_dwPosX = finalRectangle.X;
 			m_dwPosY = finalRectangle.Y;
@@ -1034,17 +1033,22 @@ namespace MediaPortal.GUI.Library
 
 		#region Properties
 
-		public virtual ICollection Children
+		ICollection ILayoutComponent.Children
 		{
 			get { return EmptyCollection.Instance; }
 		}
 
-		public virtual Size DesiredSize
+		Size ILayoutComponent.Size
 		{
 			get { return new Size(m_dwWidth, m_dwHeight); }
 		}
 
-		public virtual Point Location
+		Rectangle ILayoutComponent.Margins
+		{
+			get { return Rectangle.Empty; }
+		}
+
+		Point ILayoutComponent.Location
 		{
 			get { return new Point(m_dwPosX, m_dwPosY); }
 		}

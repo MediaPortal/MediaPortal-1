@@ -6,6 +6,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Xml;
 
+using MediaPortal.Layouts;
+
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
@@ -254,6 +256,9 @@ namespace MediaPortal.GUI.Library
 				{
 					return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
 				}
+
+				if(type == typeof(ILayout))
+					return ParseLayout(valueText);
 			
 				return null;
 			}
@@ -272,6 +277,9 @@ namespace MediaPortal.GUI.Library
 			object[] ctorParams = { dwParentId };			
 			GUIControl control = (GUIControl)
 				Activator.CreateInstance(typeOfControlToCreate,ctorParams);
+
+			if(control is ISupportInitialize)
+				((ISupportInitialize)control).BeginInit();
 			
 			XmlNode referenceNode = 
 				(XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
@@ -320,8 +328,10 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 
-			return control;
+			if(control is ISupportInitialize)
+				((ISupportInitialize)control).EndInit();
 
+			return control;
 		}
 
 		private static void UpdateControlWithXmlData(GUIControl control, 
@@ -329,7 +339,7 @@ namespace MediaPortal.GUI.Library
 			XmlNode pControlNode, IDictionary defines)
 		{
 			Hashtable fieldsThatCanBeUpdated = GetFieldsToUpdate(controlType);
-	
+
 			XmlNodeList childNodes = pControlNode.ChildNodes;
 			foreach (XmlNode element in childNodes)
 			{
@@ -455,6 +465,87 @@ namespace MediaPortal.GUI.Library
 		public static void RegisterControl(string strName, Type t)
 		{
 			m_hashCustomControls[strName] = t;
+		}
+
+		static object ParseLayout(string valueText)
+		{
+			int openingBracket = valueText.IndexOf('(');
+			int[] valueParameters = new int[0];
+
+			string layoutClass = string.Empty;
+
+			if(openingBracket != -1)
+			{
+				layoutClass = valueText.Substring(0, openingBracket);
+				valueParameters = ParseParameters(valueText.Substring(openingBracket).Trim());
+			}
+			else
+			{
+				layoutClass = valueText;
+			}
+
+			if(layoutClass.ToLower() == "gridlayout")
+			{
+				if(valueParameters.Length == 0)
+					return null;
+
+				if(valueParameters.Length == 0)
+					return new GridLayout();
+
+				if(valueParameters.Length >= 4)
+					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3]);
+
+				if(valueParameters.Length >= 2)
+					return new GridLayout(valueParameters[0], valueParameters[1]);
+
+				if(valueParameters.Length >= 1)
+					return new GridLayout(valueParameters[0]);
+
+				return null;
+			}
+
+			if(layoutClass.ToLower() == "stacklayout")
+			{
+				if(valueParameters.Length >= 1)
+					return new StackLayout(valueParameters[0]);
+
+				if(valueParameters.Length == 0)
+					return new StackLayout();
+
+				return null;
+			}
+
+			return null;
+		}
+
+		static int[] ParseParameters(string valueText)
+		{
+			if(valueText.StartsWith("(") == false || valueText.EndsWith("") == false)
+				return new int[0];
+
+			valueText = valueText.Substring(1, valueText.Length - 2);
+
+			try
+			{
+				ArrayList valuesTemp = new ArrayList();
+
+				foreach(string token in valueText.Split(new char[] { ',', ' ' }))
+				{
+					if(token == string.Empty)
+						continue;
+
+					valuesTemp.Add(int.Parse(token));	
+				}
+
+				int[] values = new int[valuesTemp.Count];
+
+				Array.Copy(valuesTemp.ToArray(), values, values.Length);
+
+				return values;
+			}
+			catch { }
+
+			return new int[0];
 		}
 
 		#endregion Methods
