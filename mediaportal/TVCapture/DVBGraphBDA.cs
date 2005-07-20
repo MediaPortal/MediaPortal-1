@@ -90,6 +90,8 @@ namespace MediaPortal.TV.Recording
 		private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1,IPin pin2,int pid2);
+		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
+		public static extern int SetupDemuxerPin(IPin pin,int pid,bool elementaryStream);
 
 		#endregion
 
@@ -121,6 +123,7 @@ namespace MediaPortal.TV.Recording
 
 
 		IPin												m_pinAC3Out				= null;
+		IPin												m_pinMPG1Out				= null;
 		IPin												m_DemuxVideoPin				= null;
 		IPin												m_DemuxAudioPin				= null;
 		IStreamBufferSink						m_IStreamBufferSink		= null;
@@ -643,7 +646,7 @@ namespace MediaPortal.TV.Recording
 				if (demuxer!=null)
 				{
 					
-					//Log.WriteFile(Log.LogType.Capture,false,"mpeg2: create ac3 pin");
+					Log.WriteFile(Log.LogType.Capture,false,"mpeg2: create ac3 pin");
 					AMMediaType mediaAC3 = new AMMediaType();
 					mediaAC3.majorType = MediaType.Audio;
 					mediaAC3.subType = MediaSubType.DolbyAC3;
@@ -660,6 +663,25 @@ namespace MediaPortal.TV.Recording
 					if (hr!=0 || m_pinAC3Out==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create AC3 pin:0x{0:X}",hr);
+					}
+
+					Log.WriteFile(Log.LogType.Capture,false,"mpeg2: create mpg1 audio pin");
+					AMMediaType mediaMPG1 = new AMMediaType();
+					mediaMPG1.majorType = MediaType.Audio;
+					mediaMPG1.subType = MediaSubType.MPEG1AudioPayload;
+					mediaMPG1.sampleSize = 0;
+					mediaMPG1.temporalCompression = false;
+					mediaMPG1.fixedSizeSamples = false;
+					mediaMPG1.unkPtr = IntPtr.Zero;
+					mediaMPG1.formatType = FormatType.WaveEx;
+					mediaMPG1.formatSize = MPEG1AudioFormat.GetLength(0);
+					mediaMPG1.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaMPG1.formatSize);
+					System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mediaMPG1.formatPtr,mediaMPG1.formatSize) ;
+
+					hr=demuxer.CreateOutputPin(ref mediaMPG1/*vidOut*/, "audioMpg1", out m_pinMPG1Out);
+					if (hr!=0 || m_pinMPG1Out==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create MPG1 pin:0x{0:X}",hr);
 					}
 				}
 				else
@@ -861,6 +883,10 @@ namespace MediaPortal.TV.Recording
 				if ( m_pinAC3Out!=null)
 					Marshal.ReleaseComObject(m_pinAC3Out);
 				m_pinAC3Out				= null;
+				
+				if ( m_pinMPG1Out!=null)
+					Marshal.ReleaseComObject(m_pinMPG1Out);
+				m_pinMPG1Out				= null;
 
 				if ( m_DemuxVideoPin!=null)
 					Marshal.ReleaseComObject(m_DemuxVideoPin);
@@ -4163,14 +4189,17 @@ namespace MediaPortal.TV.Recording
 				AddPreferredCodecs(true,false);
 
 
+				TuneRadioChannel(station);
+
+				SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
+
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRadio() render demux output pin");
-				if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
+				if(m_graphBuilder.Render(m_pinMPG1Out/*m_DemuxAudioPin*/) != 0)
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
 					return;
 				}
 
-				TuneRadioChannel(station);
 				//get the IMediaControl interface of the graph
 				if(m_mediaControl == null)
 					m_mediaControl = m_graphBuilder as IMediaControl;

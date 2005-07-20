@@ -429,6 +429,54 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 
 }
 
+HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, bool elementary_stream)
+{
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
+	int				maxCounter;
+	HRESULT hr=0;
+
+	// video
+	if (pVideo!=NULL)
+	{
+		hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		if(FAILED(hr) || pMap==NULL)
+			return 1;
+		// 
+		hr=pMap->EnumPIDMap(&pPidEnum);
+		if(FAILED(hr) || pPidEnum==NULL)
+			return 5;
+		// enum and unmap the pids
+		maxCounter=20;
+		while(pPidEnum->Next(1,&pm,&count)== S_OK)
+		{
+			maxCounter--;
+			if (maxCounter<0) break;
+			if (count !=1) break;
+			umPid=pm.ulPID;
+			hr=pMap->UnmapPID(1,&umPid);
+			if(FAILED(hr))
+				return 6;
+		}
+		pPidEnum->Release();
+		// map new pid
+		pid = (ULONG)videoPID;
+		if (elementary_stream)
+			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+		else
+			hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
+		if(FAILED(hr))
+			return 2;
+		pMap->Release();
+	}
+	return S_OK;
+
+}
+
 //
 
 IPin *GetPin(IBaseFilter *pFilter, PIN_DIRECTION PinDir)
