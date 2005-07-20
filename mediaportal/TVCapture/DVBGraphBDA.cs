@@ -671,7 +671,7 @@ namespace MediaPortal.TV.Recording
 					mediaMPG1.subType = MediaSubType.MPEG1AudioPayload;
 					mediaMPG1.sampleSize = 0;
 					mediaMPG1.temporalCompression = false;
-					mediaMPG1.fixedSizeSamples = false;
+					mediaMPG1.fixedSizeSamples = true;
 					mediaMPG1.unkPtr = IntPtr.Zero;
 					mediaMPG1.formatType = FormatType.WaveEx;
 					mediaMPG1.formatSize = MPEG1AudioFormat.GetLength(0);
@@ -2673,6 +2673,7 @@ namespace MediaPortal.TV.Recording
 				if (!sections.GetChannelInfoFromPMT(pmt, ref info)) return false;
 				if (info.pid_list!=null)
 				{
+					
 					bool hasAudio=false;
 					int audioOptions=0;
 					for (int pids =0; pids < info.pid_list.Count;pids++)
@@ -2742,9 +2743,18 @@ namespace MediaPortal.TV.Recording
 
 					try
 					{
-						Log.Write("DVBGraphBDA:SendPMT() video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",
-														currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
-						SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+						if (m_graphState==State.Radio)
+						{
+							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X}",
+								currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
+						}
+						else
+						{
+							Log.Write("DVBGraphBDA:SendPMT() video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",
+								currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+							SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+						}
 					}
 					catch(Exception)
 					{
