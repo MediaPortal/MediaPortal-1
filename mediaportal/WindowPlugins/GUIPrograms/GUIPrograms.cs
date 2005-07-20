@@ -728,6 +728,7 @@ namespace WindowPlugins.GUIPrograms
 
     void RefreshScreenShot()
     {
+      AppItem appWithImg = lastApp;
       GUIListItem item = GetSelectedItem();
       if (curTexture != null)
       {
@@ -735,18 +736,27 @@ namespace WindowPlugins.GUIPrograms
         curTexture = null;
       }
       // some preconditions...
-      if (lastApp == null)
-        return;
-      string thumbFilename = lastApp.GetCurThumb(item); // some modes look for thumbs differently
+      if (appWithImg == null)
+      {
+        if ((item != null) && (item.MusicTag != null) && (item.MusicTag is AppItem))
+        {
+          appWithImg = (AppItem)(item.MusicTag);
+        }
+        else
+        {
+          return;
+        }
+      }
+      string thumbFilename = appWithImg.GetCurThumb(item); // some modes look for thumbs differently
       if (System.IO.File.Exists(thumbFilename))
       {
         curTexture = Picture.Load(thumbFilename, 0, 512, 512, true, false, out textureWidth, out textureHeight);
       }
-      else if(System.IO.File.Exists(lastApp.Imagefile))
+      else if(System.IO.File.Exists(appWithImg.Imagefile))
       {
-        curTexture = Picture.Load(lastApp.Imagefile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
+        curTexture = Picture.Load(appWithImg.Imagefile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
       }
-      lastApp.NextThumb(); // try to find a next thumbnail
+      appWithImg.NextThumb(); // try to find a next thumbnail
       slideTime = (DateTime.Now.Ticks/10000); // reset timer!
     }
 
