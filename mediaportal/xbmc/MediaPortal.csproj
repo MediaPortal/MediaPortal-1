@@ -150,26 +150,6 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces"
-                    AssemblyName = "Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces"
-                    HintPath = "..\Microsoft.ApplicationBlocks.ExceptionManagement.Interfaces.dll"
-                />
-                <Reference
-                    Name = "Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces"
-                    AssemblyName = "Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces"
-                    HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.Interfaces.dll"
-                />
-                <Reference
-                    Name = "Microsoft.ApplicationBlocks.ExceptionManagement"
-                    AssemblyName = "Microsoft.ApplicationBlocks.ExceptionManagement"
-                    HintPath = "..\Microsoft.ApplicationBlocks.ExceptionManagement.dll"
-                />
-                <Reference
-                    Name = "Microsoft.ApplicationBlocks.ApplicationUpdater"
-                    AssemblyName = "Microsoft.ApplicationBlocks.ApplicationUpdater"
-                    HintPath = "..\Microsoft.ApplicationBlocks.ApplicationUpdater.dll"
-                />
-                <Reference
                     Name = "System.Management"
                     AssemblyName = "System.Management"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
