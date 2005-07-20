@@ -99,23 +99,7 @@ namespace MediaPortal.Picture.Database
 			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
 			if (results!=null)
 			{
-				Log.Write("  results:{0}", results.Rows.Count);
-				if (results.Rows.Count==1) 
-				{
-					Log.Write(" check result:0");
-					ArrayList arr = (ArrayList)results.Rows[0];
-					if (arr.Count==1)
-					{
-						string tableName=((string)arr[0]).Trim();
-						if ( String.Compare(tableName,strTable,true)==0) 
-						{
-							//Log.Write(" table exists");
-							return false;
-						}
-						Log.Write(" table has different name:[{0}[ [{1}]", tableName,strTable);
-					}
-					else Log.Write(" array contains:{0} items?", arr.Count);
-				}
+				if (results.Rows.Count>0) return false;
 			}
 
 			try 
