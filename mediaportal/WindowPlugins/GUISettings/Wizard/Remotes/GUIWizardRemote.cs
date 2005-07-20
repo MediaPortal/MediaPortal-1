@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmHauppauge.Selected=false;
 			cmFireDTV.Selected=false;
 			cmOther.Selected=false;
-			imgRemote.SetFileName(@"Wizards\MCEUSA.jpg");
+			imgRemote.SetFileName(@"Wizards\remote_mce_us.png");
 			GUIControl.FocusControl(GetID,cmMicrosoftUSA.GetID);
 		}
 		void OnMicrosoftEU()
@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			cmHauppauge.Selected=false;
 			cmFireDTV.Selected=true;
 			cmOther.Selected=false;
-			imgRemote.SetFileName(@"Wizards\firedtv.png");
+			imgRemote.SetFileName(@"Wizards\remote_firedtv.png");
 			GUIControl.FocusControl(GetID,cmFireDTV.GetID);
 		}
 		
