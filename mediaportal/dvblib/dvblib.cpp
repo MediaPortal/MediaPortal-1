@@ -294,7 +294,7 @@ HRESULT GetPidMap(IPin* pin, unsigned long* pid, unsigned long* mediasampletype)
 	if(pPidEnum->Next(1,&pm,&count)== S_OK)
 	{
 		*pid=pm.ulPID;
-		*mediasampletype=pm.ulPID;
+		*mediasampletype=pm.MediaSampleContent;
 	}
 	
 	pPidEnum->Release();

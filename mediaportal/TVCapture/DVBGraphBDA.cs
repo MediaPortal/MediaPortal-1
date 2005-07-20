@@ -4193,6 +4193,15 @@ namespace MediaPortal.TV.Recording
 
 				SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
 
+				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
+				if (mpeg2Demuxer!=null)
+				{
+					Log.Write("DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
+          uint pid=0,sampletype=0;
+							GetPidMap(m_pinMPG1Out,ref pid, ref sampletype);
+							Log.Write("DVBGraphBDA:  Pin:mpg1 is mapped to pid:{0:x} content:{1}", pid, sampletype);
+				}
+
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRadio() render demux output pin");
 				if(m_graphBuilder.Render(m_pinMPG1Out/*m_DemuxAudioPin*/) != 0)
 				{
