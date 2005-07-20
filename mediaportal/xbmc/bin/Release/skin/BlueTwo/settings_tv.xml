@@ -28,7 +28,7 @@
       </control>
       <control>
          <type>label</type>
-         <description>Setup DVBT</description>
+         <description>Setup TV</description>
          <id>1</id>
          <posX>32</posX>
          <posY>96</posY>
@@ -44,8 +44,21 @@
          <ondown>25</ondown>
          <onup>24</onup>
          <onleft>24</onleft>
-         <onright>24</onright>
+         <onright>30</onright>
       </control>
+      
+      <control>
+         <type>button</type>
+         <id>30</id>
+         <posX>300</posX>
+         <posY>151</posY>
+         <label>Auto turn on TV</label>
+         <ondown>30</ondown>
+         <onup>30</onup>
+         <onleft>24</onleft>
+         <onright>30</onright>
+      </control>
+      
       <control>
          <type>button</type>
          <id>25</id>

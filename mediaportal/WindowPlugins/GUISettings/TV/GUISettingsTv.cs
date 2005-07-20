@@ -16,6 +16,7 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(27)]			protected GUIButtonControl btnDeinterlace=null;
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
 		[SkinControlAttribute(29)]			protected GUIButtonControl btnTimeshiftBuffer=null;
+		[SkinControlAttribute(30)]			protected GUIButtonControl btnAutoTurnOnTv=null;
 		public GUISettingsTv()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_TV;
@@ -33,6 +34,7 @@ namespace WindowPlugins.GUISettings.TV
 			if (control==btnAspectRatio) OnAspectRatio();
 			if (control==btnTimeshiftBuffer) OnTimeshiftBuffer();
 			if (control==btnDeinterlace) OnDeinterlace();
+			if (control==btnAutoTurnOnTv) OnAutoTurnOnTv();
 			base.OnClicked (controlId, control, actionType);
 		}
 		void OnVideoCodec()
@@ -214,6 +216,31 @@ namespace WindowPlugins.GUISettings.TV
 				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
 					xmlwriter.SetValue("mytv", "deinterlace", dlg.SelectedLabel);
+				}
+			}
+		}
+		void OnAutoTurnOnTv()
+		{
+
+			bool autoTurnOn=true;
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				autoTurnOn= xmlreader.GetValueAsBool("mytv", "tvon", true);
+			}
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				dlg.Add("Dont automaticly turn on tv when entering My TV");
+				dlg.Add("Automaticly turn on tv when entering My TV");
+				dlg.SelectedLabel=autoTurnOn?1:0;
+				dlg.DoModal(GetID);
+				if (dlg.SelectedLabel<0) return;
+				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				{
+					xmlwriter.SetValueAsBool("mytv", "tvon", (dlg.SelectedLabel==1));
 				}
 			}
 		}
