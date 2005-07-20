@@ -8,8 +8,8 @@ namespace MediaPortal.GUI.Layouts
 	{
 		#region Methods
 
-		void Measure(Size availableSize);
 		void Arrange(Rectangle finalRectangle);
+		void Measure(Size availableSize);
 
 		#endregion Methods
 
@@ -21,6 +21,11 @@ namespace MediaPortal.GUI.Layouts
 		}
 
 		Size DesiredSize
+		{
+			get;
+		}
+
+		Point Location
 		{
 			get;
 		}
