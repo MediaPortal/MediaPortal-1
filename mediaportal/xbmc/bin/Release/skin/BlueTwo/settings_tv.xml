@@ -53,10 +53,22 @@
          <posX>300</posX>
          <posY>151</posY>
          <label>Auto turn on TV</label>
-         <ondown>30</ondown>
+         <ondown>31</ondown>
          <onup>30</onup>
          <onleft>24</onleft>
          <onright>30</onright>
+      </control>
+      <control>
+         <type>button</type>
+         <id>31</id>
+         <posX>300</posX>
+         <posY>185</posY>
+         <label>Recording options</label>
+         <ondown>31</ondown>
+         <onup>30</onup>
+         <onleft>24</onleft>
+         <onright>31</onright>
+         <hyperlink>701</hyperlink>
       </control>
       
       <control>
@@ -68,7 +80,7 @@
          <ondown>26</ondown>
          <onup>24</onup>
          <onleft>25</onleft>
-         <onright>25</onright>
+         <onright>31</onright>
       </control>
       <control>
          <type>button</type>

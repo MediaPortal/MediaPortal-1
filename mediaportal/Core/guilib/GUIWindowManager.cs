@@ -29,7 +29,7 @@ namespace MediaPortal.GUI.Library
 		#endregion
 		#region variables
 		static int					 windowCount=0;
-    static GUIWindow[]	 m_vecWindows				= new GUIWindow[100];
+    static GUIWindow[]	 m_vecWindows				= new GUIWindow[200];
 		static ArrayList		 m_vecThreadMessages	= new ArrayList();
 		static ArrayList		 m_vecThreadActions	= new ArrayList();
     static ArrayList		 m_vecWindowList = new ArrayList();
