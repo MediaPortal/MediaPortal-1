@@ -18,7 +18,6 @@ using System.Globalization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-using Microsoft.ApplicationBlocks.ApplicationUpdater;
 
 using MediaPortal.GUI.Library;
 using MediaPortal;
