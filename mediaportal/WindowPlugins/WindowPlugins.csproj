@@ -1075,6 +1075,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\TV\GUISettingsSortChannels.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\TV\GUISettingsTv.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

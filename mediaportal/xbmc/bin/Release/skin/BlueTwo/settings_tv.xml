@@ -64,11 +64,23 @@
          <posX>300</posX>
          <posY>185</posY>
          <label>Recording options</label>
-         <ondown>31</ondown>
+         <ondown>32</ondown>
          <onup>30</onup>
          <onleft>24</onleft>
          <onright>31</onright>
          <hyperlink>701</hyperlink>
+      </control>
+      <control>
+         <type>button</type>
+         <id>32</id>
+         <posX>300</posX>
+         <posY>219</posY>
+         <label>Channel sorting</label>
+         <ondown>32</ondown>
+         <onup>31</onup>
+         <onleft>24</onleft>
+         <onright>32</onright>
+         <hyperlink>702</hyperlink>
       </control>
       
       <control>
@@ -91,7 +103,7 @@
          <ondown>27</ondown>
          <onup>25</onup>
          <onleft>26</onleft>
-         <onright>26</onright>
+         <onright>32</onright>
       </control>
       <control>
          <type>button</type>
