@@ -204,11 +204,6 @@ namespace MediaPortal.Music.Database
 			get { return m_db; }
 		}
 
-    static bool CreateTables(ref SQLiteClient dbHandle)
-    {
-      if (m_db == null) return false;
- 			return true;
-    }
 
     public int AddPath(string strPath1)
     {

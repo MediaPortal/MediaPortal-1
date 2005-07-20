@@ -27,15 +27,13 @@ namespace MediaPortal.Util
         Log.Write("open folderdatabase");
         m_db = new SQLiteClient(@"database\FolderDatabase2.db3");
 
-        if (m_db!=null)
-        {
-					m_db.Execute("PRAGMA cache_size=2000;\n");
-					m_db.Execute("PRAGMA synchronous='OFF';\n");
-					m_db.Execute("PRAGMA count_changes=1;\n");
-					m_db.Execute("PRAGMA full_column_names=0;\n");
-					m_db.Execute("PRAGMA short_column_names=0;\n");
-				}
-				CreateTables();
+				m_db.Execute("PRAGMA cache_size=2000;\n");
+				m_db.Execute("PRAGMA synchronous='OFF';\n");
+				m_db.Execute("PRAGMA count_changes=1;\n");
+				m_db.Execute("PRAGMA full_column_names=0;\n");
+				m_db.Execute("PRAGMA short_column_names=0;\n");
+				AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text);\n");
+				AddTable("setting","CREATE TABLE setting ( idSetting integer primary key, idPath integer , key text, value text);\n");
 
       } 
       catch (Exception ex) 
@@ -44,75 +42,59 @@ namespace MediaPortal.Util
       }
     }
   
-    static bool AddTable( string strTable, string strSQL)
-    {
-      if (m_db==null) 
-      {
-        Log.Write("AddTable: database not opened");
-        return false;
-      }
-      if (strSQL==null) 
-      {
-        Log.Write("AddTable: no sql?");
-        return false;
-      }
-      if (strTable==null) 
-      {
-        Log.Write("AddTable: No table?");
-        return false;
-      }
-      if (strTable.Length==0) 
-      {
-        Log.Write("AddTable: empty table?");
-        return false;
-      }
-      if (strSQL.Length==0) 
-      {
-        Log.Write("AddTable: empty sql?");
-        return false;
-      }
+		static public bool AddTable( string strTable, string strSQL)
+		{
+			//	lock (typeof(DatabaseUtility))
+		
+			Log.Write("AddTable:[{0}]",strTable);
+			if (m_db==null) 
+			{
+				Log.Write("AddTable: database not opened");
+				return false;
+			}
+			if (strSQL==null) 
+			{
+				Log.Write("AddTable: no sql?");
+				return false;
+			}
+			if (strTable==null) 
+			{
+				Log.Write("AddTable: No table?");
+				return false;
+			}
+			if (strTable.Length==0) 
+			{
+				Log.Write("AddTable: empty table?");
+				return false;
+			}
+			if (strSQL.Length==0) 
+			{
+				Log.Write("AddTable: empty sql?");
+				return false;
+			}
 
-      //Log.Write("check for  table:{0}", strTable);
-      SQLiteResultSet results;
-      results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
-      if (results!=null)
+			//Log.Write("check for  table:{0}", strTable);
+			SQLiteResultSet results;
+			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+			if (results!=null)
 			{
 				if (results.Rows.Count>0) return false;
-      }
+			}
 
-      try 
-      {
-        //Log.Write("create table:{0}", strSQL);
-        m_db.Execute(strSQL);
-        //Log.Write("table created");
-      }
-      catch (Exception ex) 
-      {
-        Log.Write("folderdatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
-      }
-      return true;
-    }
+			try 
+			{
+				//Log.Write("create table:{0}", strSQL);
+				m_db.Execute(strSQL);
+				//Log.Write("table created");
+			}
+			catch (SQLiteException ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
+			}
+			return true;
+		}
 
-    static bool CreateTables()
-    {
-      if (m_db==null) return false;
-      if ( AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text);\n"))
-      {
-				try
-				{
-					m_db.Execute("CREATE INDEX idxPath ON path(idPath);\n");
-				}
-				catch(Exception){}
-      }
-      if ( AddTable("setting","CREATE TABLE setting ( idSetting integer primary key, idPath integer , key text, value text);\n"))
-      {
-				try {
-					m_db.Execute("CREATE INDEX idxSetting ON setting(idSetting);\n");
-				}
-				catch(Exception){} 
-      }
-      return true;
-    }
+
 
     static string Get(SQLiteResultSet results, int iRecord, string strColum)
     {

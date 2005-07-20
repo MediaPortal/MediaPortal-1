@@ -139,6 +139,8 @@ namespace SQLite.NET
 
 		public SQLiteResultSet Execute(string query)
 		{
+			lock (typeof(SQLiteClient))
+			{
 				//Log.Write("dbs:{0} sql:{1}", databaseName,query);
 				if (query==null) return null;
 				int len=query.Length;
@@ -274,12 +276,13 @@ namespace SQLite.NET
 					stmt=IntPtr.Zero;
 				}
 			
-			  //Log.Write("dbs:{0} done:{1}",databaseName,err.ToString());
+				//Log.Write("dbs:{0} done:{1}",databaseName,err.ToString());
 				if (err!=ResultCode.OK && err!=ResultCode.Done)
 				{
 					ThrowError("sqlite3_finalize(2)",query,err);
 				}
 				return set1;
+			}
 		}
  
 
