@@ -1823,170 +1823,170 @@ namespace MediaPortal
         /// </summary>
         private void InitializeComponent()
         {
-          this.components = new System.ComponentModel.Container();
-          System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
-          this.mnuMain = new System.Windows.Forms.MainMenu();
-          this.mnuFile = new System.Windows.Forms.MenuItem();
-          this.mnuChange = new System.Windows.Forms.MenuItem();
-          this.mnuBreak2 = new System.Windows.Forms.MenuItem();
-          this.mnuExit = new System.Windows.Forms.MenuItem();
-          this.menuItem1 = new System.Windows.Forms.MenuItem();
-          this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
-          this.menuItem2 = new System.Windows.Forms.MenuItem();
-          this.menuItem4 = new System.Windows.Forms.MenuItem();
-          this.dvdMenuItem = new System.Windows.Forms.MenuItem();
-          this.moviesMenuItem = new System.Windows.Forms.MenuItem();
-          this.musicMenuItem = new System.Windows.Forms.MenuItem();
-          this.picturesMenuItem = new System.Windows.Forms.MenuItem();
-          this.televisionMenuItem = new System.Windows.Forms.MenuItem();
-          this.timer1 = new System.Windows.Forms.Timer(this.components);
-          this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-          this.contextMenu1 = new System.Windows.Forms.ContextMenu();
-          this.menuItem3 = new System.Windows.Forms.MenuItem();
-          this.menuItem5 = new System.Windows.Forms.MenuItem();
-          // 
-          // mnuMain
-          // 
-          this.mnuMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                this.mnuFile,
-                                                                                this.menuItem1,
-                                                                                this.menuItem4});
-          // 
-          // mnuFile
-          // 
-          this.mnuFile.Index = 0;
-          this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                this.mnuChange,
-                                                                                this.mnuBreak2,
-                                                                                this.mnuExit});
-          this.mnuFile.Text = "&File";
-          // 
-          // mnuChange
-          // 
-          this.mnuChange.Index = 0;
-          this.mnuChange.Text = "&Change Device...";
-          this.mnuChange.Click += new System.EventHandler(this.UserSelectNewDevice);
-          // 
-          // mnuBreak2
-          // 
-          this.mnuBreak2.Index = 1;
-          this.mnuBreak2.Text = "-";
-          // 
-          // mnuExit
-          // 
-          this.mnuExit.Index = 2;
-          this.mnuExit.Text = "Exit";
-          this.mnuExit.Click += new System.EventHandler(this.ExitSample);
-          // 
-          // menuItem1
-          // 
-          this.menuItem1.Index = 1;
-          this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                  this.menuItemFullscreen,
-                                                                                  this.menuItem2});
-          this.menuItem1.Text = "&Options";
-          // 
-          // menuItemFullscreen
-          // 
-          this.menuItemFullscreen.Index = 0;
-          this.menuItemFullscreen.Text = "&Fullscreen";
-          this.menuItemFullscreen.Click += new System.EventHandler(this.menuItemFullscreen_Click);
-          // 
-          // menuItem2
-          // 
-          this.menuItem2.Index = 1;
-          this.menuItem2.Shortcut = System.Windows.Forms.Shortcut.F2;
-          this.menuItem2.Text = "&Configuration...";
-          this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
-          // 
-          // menuItem4
-          // 
-          this.menuItem4.Index = 2;
-          this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                  this.dvdMenuItem,
-                                                                                  this.moviesMenuItem,
-                                                                                  this.musicMenuItem,
-                                                                                  this.picturesMenuItem,
-                                                                                  this.televisionMenuItem});
-          this.menuItem4.Text = "Wizards";
-          // 
-          // dvdMenuItem
-          // 
-          this.dvdMenuItem.Index = 0;
-          this.dvdMenuItem.Text = "DVD";
-          this.dvdMenuItem.Click += new System.EventHandler(this.dvdMenuItem_Click);
-          // 
-          // moviesMenuItem
-          // 
-          this.moviesMenuItem.Index = 1;
-          this.moviesMenuItem.Text = "Movies";
-          this.moviesMenuItem.Click += new System.EventHandler(this.moviesMenuItem_Click);
-          // 
-          // musicMenuItem
-          // 
-          this.musicMenuItem.Index = 2;
-          this.musicMenuItem.Text = "Music";
-          this.musicMenuItem.Click += new System.EventHandler(this.musicMenuItem_Click);
-          // 
-          // picturesMenuItem
-          // 
-          this.picturesMenuItem.Index = 3;
-          this.picturesMenuItem.Text = "Pictures";
-          this.picturesMenuItem.Click += new System.EventHandler(this.picturesMenuItem_Click);
-          // 
-          // televisionMenuItem
-          // 
-          this.televisionMenuItem.Index = 4;
-          this.televisionMenuItem.Text = "Television";
-          this.televisionMenuItem.Click += new System.EventHandler(this.televisionMenuItem_Click);
-          // 
-          // timer1
-          // 
-          this.timer1.Enabled = true;
-          this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-          // 
-          // notifyIcon1
-          // 
-          this.notifyIcon1.ContextMenu = this.contextMenu1;
-          this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-          this.notifyIcon1.Text = "MediaPortal";
-          this.notifyIcon1.DoubleClick += new System.EventHandler(this.Restore_OnClick);
-          // 
-          // contextMenu1
-          // 
-          this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                     this.menuItem3});
-          this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
-          // 
-          // menuItem3
-          // 
-          this.menuItem3.Index = 0;
-          this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                  this.menuItem5});
-          this.menuItem3.Text = "";
-          // 
-          // menuItem5
-          // 
-          this.menuItem5.Index = 0;
-          this.menuItem5.Text = "";
-          // 
-          // D3DApp
-          // 
-          this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-          this.ClientSize = new System.Drawing.Size(720, 576);
-          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-          this.KeyPreview = true;
-          this.MinimumSize = new System.Drawing.Size(100, 100);
-          this.Name = "D3DApp";
-          this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
-          this.Resize += new System.EventHandler(this.D3DApp_Resize);
-          this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
-          this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
-          this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
-          this.Load += new System.EventHandler(this.D3DApp_Load);
-          this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
+					this.components = new System.ComponentModel.Container();
+					System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
+					this.mnuMain = new System.Windows.Forms.MainMenu();
+					this.mnuFile = new System.Windows.Forms.MenuItem();
+					this.mnuChange = new System.Windows.Forms.MenuItem();
+					this.mnuBreak2 = new System.Windows.Forms.MenuItem();
+					this.mnuExit = new System.Windows.Forms.MenuItem();
+					this.menuItem1 = new System.Windows.Forms.MenuItem();
+					this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
+					this.menuItem2 = new System.Windows.Forms.MenuItem();
+					this.menuItem4 = new System.Windows.Forms.MenuItem();
+					this.dvdMenuItem = new System.Windows.Forms.MenuItem();
+					this.moviesMenuItem = new System.Windows.Forms.MenuItem();
+					this.musicMenuItem = new System.Windows.Forms.MenuItem();
+					this.picturesMenuItem = new System.Windows.Forms.MenuItem();
+					this.televisionMenuItem = new System.Windows.Forms.MenuItem();
+					this.timer1 = new System.Windows.Forms.Timer(this.components);
+					this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+					this.contextMenu1 = new System.Windows.Forms.ContextMenu();
+					this.menuItem3 = new System.Windows.Forms.MenuItem();
+					this.menuItem5 = new System.Windows.Forms.MenuItem();
+					// 
+					// mnuMain
+					// 
+					this.mnuMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																								this.mnuFile,
+																																								this.menuItem1,
+																																								this.menuItem4});
+					// 
+					// mnuFile
+					// 
+					this.mnuFile.Index = 0;
+					this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																								this.mnuChange,
+																																								this.mnuBreak2,
+																																								this.mnuExit});
+					this.mnuFile.Text = "&File";
+					// 
+					// mnuChange
+					// 
+					this.mnuChange.Index = 0;
+					this.mnuChange.Text = "&Change Device...";
+					this.mnuChange.Click += new System.EventHandler(this.UserSelectNewDevice);
+					// 
+					// mnuBreak2
+					// 
+					this.mnuBreak2.Index = 1;
+					this.mnuBreak2.Text = "-";
+					// 
+					// mnuExit
+					// 
+					this.mnuExit.Index = 2;
+					this.mnuExit.Text = "Exit";
+					this.mnuExit.Click += new System.EventHandler(this.ExitSample);
+					// 
+					// menuItem1
+					// 
+					this.menuItem1.Index = 1;
+					this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																									this.menuItemFullscreen,
+																																									this.menuItem2});
+					this.menuItem1.Text = "&Options";
+					// 
+					// menuItemFullscreen
+					// 
+					this.menuItemFullscreen.Index = 0;
+					this.menuItemFullscreen.Text = "&Fullscreen";
+					this.menuItemFullscreen.Click += new System.EventHandler(this.menuItemFullscreen_Click);
+					// 
+					// menuItem2
+					// 
+					this.menuItem2.Index = 1;
+					this.menuItem2.Shortcut = System.Windows.Forms.Shortcut.F2;
+					this.menuItem2.Text = "&Configuration...";
+					this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
+					// 
+					// menuItem4
+					// 
+					this.menuItem4.Index = 2;
+					this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																									this.dvdMenuItem,
+																																									this.moviesMenuItem,
+																																									this.musicMenuItem,
+																																									this.picturesMenuItem,
+																																									this.televisionMenuItem});
+					this.menuItem4.Text = "Wizards";
+					// 
+					// dvdMenuItem
+					// 
+					this.dvdMenuItem.Index = 0;
+					this.dvdMenuItem.Text = "DVD";
+					this.dvdMenuItem.Click += new System.EventHandler(this.dvdMenuItem_Click);
+					// 
+					// moviesMenuItem
+					// 
+					this.moviesMenuItem.Index = 1;
+					this.moviesMenuItem.Text = "Movies";
+					this.moviesMenuItem.Click += new System.EventHandler(this.moviesMenuItem_Click);
+					// 
+					// musicMenuItem
+					// 
+					this.musicMenuItem.Index = 2;
+					this.musicMenuItem.Text = "Music";
+					this.musicMenuItem.Click += new System.EventHandler(this.musicMenuItem_Click);
+					// 
+					// picturesMenuItem
+					// 
+					this.picturesMenuItem.Index = 3;
+					this.picturesMenuItem.Text = "Pictures";
+					this.picturesMenuItem.Click += new System.EventHandler(this.picturesMenuItem_Click);
+					// 
+					// televisionMenuItem
+					// 
+					this.televisionMenuItem.Index = 4;
+					this.televisionMenuItem.Text = "Television";
+					this.televisionMenuItem.Click += new System.EventHandler(this.televisionMenuItem_Click);
+					// 
+					// timer1
+					// 
+					this.timer1.Enabled = true;
+					this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+					// 
+					// notifyIcon1
+					// 
+					this.notifyIcon1.ContextMenu = this.contextMenu1;
+					this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+					this.notifyIcon1.Text = "MediaPortal";
+					this.notifyIcon1.DoubleClick += new System.EventHandler(this.Restore_OnClick);
+					// 
+					// contextMenu1
+					// 
+					this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																										 this.menuItem3});
+					this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
+					// 
+					// menuItem3
+					// 
+					this.menuItem3.Index = 0;
+					this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																									this.menuItem5});
+					this.menuItem3.Text = "";
+					// 
+					// menuItem5
+					// 
+					this.menuItem5.Index = 0;
+					this.menuItem5.Text = "";
+					// 
+					// D3DApp
+					// 
+					this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+					this.ClientSize = new System.Drawing.Size(720, 576);
+					this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+					this.KeyPreview = true;
+					this.MinimumSize = new System.Drawing.Size(100, 100);
+					this.Name = "D3DApp";
+					this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+					this.Resize += new System.EventHandler(this.D3DApp_Resize);
+					this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
+					this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
+					this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
+					this.Load += new System.EventHandler(this.D3DApp_Load);
+					this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
 
-        }
+				}
 
 
 

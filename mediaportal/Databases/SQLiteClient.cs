@@ -15,40 +15,48 @@ namespace SQLite.NET
 	public class SQLiteClient : IDisposable
 	{
 		[DllImport("sqlite.dll")]
-		private static extern int sqlite3_changes(IntPtr handle);
-		[DllImport("sqlite.dll")]
-		private static extern void sqlite3_close(IntPtr handle);
-		[DllImport("sqlite.dll")]
-		private static extern void sqlite3_interrupt(IntPtr handle);
-		[DllImport("sqlite.dll")]
-		private static extern int sqlite3_last_insert_rowid(IntPtr handle);
-		[DllImport("sqlite.dll")]
-		private static extern string sqlite3_libencoding();
-		[DllImport("sqlite.dll")]
-		private static extern string sqlite3_libversion();
-		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode sqlite3_open(string filename, ref IntPtr handle);
+		internal static extern int sqlite3_open16 ([MarshalAs(UnmanagedType.LPWStr)] string dbname, out IntPtr handle);
 
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_prepare(IntPtr handle, string sql, int nbytes, ref IntPtr stmt, ref IntPtr tail);
+		internal static extern void sqlite3_close (IntPtr sqlite_handle);
+
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_prepare16(IntPtr handle,  [MarshalAs(UnmanagedType.LPWStr)]string sql, int nbytes, ref IntPtr stmt, ref IntPtr tail);
+		internal static extern IntPtr sqlite3_errmsg16 (IntPtr sqlite_handle);
+
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_finalize(IntPtr stmt);
+		internal static extern int sqlite3_changes (IntPtr handle);
+
 		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_reset(IntPtr stmt);		
-		[DllImport("sqlite.dll")]
-		private static extern SQLiteClient.ResultCode  sqlite3_step(IntPtr stmt);		
-		[DllImport("sqlite.dll")]
-		private static extern unsafe char* sqlite3_column_name16(IntPtr stmt, int nCol);		
-		[DllImport("sqlite.dll")]
-		private static extern unsafe sbyte* sqlite3_column_name(IntPtr stmt, int nCol);		
-		[DllImport("sqlite.dll")]
-		private static extern int sqlite3_column_count(IntPtr stmt);
-		[DllImport("sqlite.dll")]
-		private static extern unsafe char* sqlite3_column_text16(IntPtr stmt, int nCol);		
-		[DllImport("sqlite.dll")]
-		private static extern unsafe char* sqlite3_errmsg16(IntPtr handle);
+		internal static extern int sqlite3_last_insert_rowid (IntPtr sqlite_handle);
+
+		[DllImport ("sqlite.dll")]
+		internal static extern SqliteError sqlite3_prepare16 (IntPtr sqlite_handle, [MarshalAs(UnmanagedType.LPWStr)] string zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
+
+		[DllImport ("sqlite.dll")]
+		internal static extern SqliteError sqlite3_step (IntPtr pVm);
+
+		[DllImport ("sqlite.dll")]
+		internal static extern SqliteError sqlite3_finalize (IntPtr pVm, out IntPtr pzErrMsg);
+
+		[DllImport ("sqlite.dll")]
+		internal static extern SqliteError sqlite3_exec16 (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
+	
+		[DllImport ("sqlite.dll")]
+		internal static extern IntPtr sqlite3_column_name16 (IntPtr pVm, int col);
+		[DllImport ("sqlite.dll")]
+		internal static extern IntPtr sqlite3_column_text16 (IntPtr pVm, int col);
+		[DllImport ("sqlite.dll")]
+		internal static extern IntPtr sqlite3_column_blob (IntPtr pVm, int col);
+		[DllImport ("sqlite.dll")]
+		internal static extern int sqlite3_column_bytes (IntPtr pVm, int col);
+		[DllImport ("sqlite.dll")]
+		internal static extern int sqlite3_column_count (IntPtr pVm);
+		[DllImport ("sqlite.dll")]
+		internal static extern int sqlite3_column_type (IntPtr pVm, int col);
+		[DllImport ("sqlite.dll")]
+		internal static extern Int64 sqlite3_column_int64 (IntPtr pVm, int col);
+		[DllImport ("sqlite.dll")]
+		internal static extern double sqlite3_column_double (IntPtr pVm, int col);
 
 		// Fields
 		private int busyRetries=5;
@@ -57,35 +65,66 @@ namespace SQLite.NET
 		string databaseName=String.Empty;
 		//private long dbHandleAdres=0;
 		// Nested Types
-		public enum ResultCode
+		public enum SqliteError : int 
 		{
-			// Fields
-			ABORT = 4,
-			AUTH = 0x17,
-			BUSY = 5,
-			CANTOPEN = 14,
-			CONSTRAINT = 0x13,
-			CORRUPT = 11,
-			EMPTY = 0x10,
-			ERROR = 1,
-			FULL = 13,
-			INTERNAL = 2,
-			INTERRUPT = 9,
-			IOERR = 10,
-			LOCKED = 6,
-			MISMATCH = 20,
-			MISUSE = 0x15,
-			NOLFS = 0x16,
-			NOMEM = 7,
-			NOTFOUND = 12,
-			OK = 0,
-			PERM = 3,
-			PROTOCOL = 15,
-			READONLY = 8,
-			SCHEMA = 0x11,
-			TOOBIG = 0x12,
-			Row=100,
-			Done=101
+			/// <value>Successful result</value>
+			OK        =  0,
+			/// <value>SQL error or missing database</value>
+			ERROR     =  1,
+			/// <value>An internal logic error in SQLite</value>
+			INTERNAL  =  2,
+			/// <value>Access permission denied</value>
+			PERM      =  3,
+			/// <value>Callback routine requested an abort</value>
+			ABORT     =  4,
+			/// <value>The database file is locked</value>
+			BUSY      =  5,
+			/// <value>A table in the database is locked</value>
+			LOCKED    =  6,
+			/// <value>A malloc() failed</value>
+			NOMEM     =  7,
+			/// <value>Attempt to write a readonly database</value>
+			READONLY  =  8,
+			/// <value>Operation terminated by public const int interrupt()</value>
+			INTERRUPT =  9,
+			/// <value>Some kind of disk I/O error occurred</value>
+			IOERR     = 10,
+			/// <value>The database disk image is malformed</value>
+			CORRUPT   = 11,
+			/// <value>(Internal Only) Table or record not found</value>
+			NOTFOUND  = 12,
+			/// <value>Insertion failed because database is full</value>
+			FULL      = 13,
+			/// <value>Unable to open the database file</value>
+			CANTOPEN  = 14,
+			/// <value>Database lock protocol error</value>
+			PROTOCOL  = 15,
+			/// <value>(Internal Only) Database table is empty</value>
+			EMPTY     = 16,
+			/// <value>The database schema changed</value>
+			SCHEMA    = 17,
+			/// <value>Too much data for one row of a table</value>
+			TOOBIG    = 18,
+			/// <value>Abort due to contraint violation</value>
+			CONSTRAINT= 19,
+			/// <value>Data type mismatch</value>
+			MISMATCH  = 20,
+			/// <value>Library used incorrectly</value>
+			MISUSE    = 21,
+			/// <value>Uses OS features not supported on host</value>
+			NOLFS     = 22,
+			/// <value>Authorization denied</value>
+			AUTH      = 23,
+			/// <value>Auxiliary database format error</value>
+			FORMAT    = 24,
+			/// <value>2nd parameter to sqlite_bind out of range</value>
+			RANGE     = 25,
+			/// <value>File opened that is not a database file</value>
+			NOTADB    = 26,
+			/// <value>sqlite_step() has another row ready</value>
+			ROW       = 100,
+			/// <value>sqlite_step() has finished executing</value>
+			DONE      = 101
 		}
 
 		// Methods
@@ -95,9 +134,9 @@ namespace SQLite.NET
 			//Log.Write("dbs:open:{0}",databaseName);
 			dbHandle=IntPtr.Zero;
 			
-			SQLiteClient.ResultCode err=SQLiteClient.sqlite3_open(dbName, ref dbHandle);
+			SqliteError err=(SqliteError)sqlite3_open16(dbName, out dbHandle);
 			//Log.Write("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
-			if (err!=ResultCode.OK)
+			if (err!=SqliteError.OK)
 			{
 				throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName,err.ToString() ));
 			}
@@ -108,7 +147,7 @@ namespace SQLite.NET
 		public int ChangedRows()
 		{
 			if (this.dbHandle==IntPtr.Zero) return 0;
-			return SQLiteClient.sqlite3_changes(this.dbHandle);
+			return sqlite3_changes(this.dbHandle);
 		}
  
 
@@ -117,20 +156,16 @@ namespace SQLite.NET
 			if (this.dbHandle!=IntPtr.Zero)
 			{	
 			//Log.Write("dbs:close:{0}",databaseName);
-				SQLiteClient.sqlite3_close(this.dbHandle);
+				sqlite3_close(this.dbHandle);
 				this.dbHandle=IntPtr.Zero;
 				databaseName=String.Empty;
 			}
 		}
  
-		void ThrowError(string statement, string sqlQuery,ResultCode err)
+		void ThrowError(string statement, string sqlQuery,SqliteError err)
 		{
-			string errorMsg =String.Empty;
-			unsafe
-			{
-				char* pErr= sqlite3_errmsg16(this.dbHandle);
-				errorMsg = new string(pErr);
-			}
+			
+			string errorMsg =Marshal.PtrToStringUni(sqlite3_errmsg16(this.dbHandle));
 			Log.WriteFile(Log.LogType.Log,true,"SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}",
 											databaseName,statement,err.ToString(),errorMsg,sqlQuery);
 					
@@ -139,153 +174,80 @@ namespace SQLite.NET
 
 		public SQLiteResultSet Execute(string query)
 		{
+			SQLiteResultSet set1 = new SQLiteResultSet();
 			lock (typeof(SQLiteClient))
 			{
 				//Log.Write("dbs:{0} sql:{1}", databaseName,query);
 				if (query==null) return null;
-				int len=query.Length;
-				if (len==0) return null;
-				if (query[len-1] != '\n' && query[len-2] != ';' )
-				{
-					query+=";";
-				}
-				//if ( (long)dbHandle != dbHandleAdres)
-				//	throw new SQLiteException(String.Format("SQL0: ptr changed:{0:X} {1:X}", dbHandleAdres,(long)dbHandle), ResultCode.INTERNAL);
-				SQLiteClient.ResultCode err=ResultCode.EMPTY;
-				SQLiteResultSet set1 = new SQLiteResultSet();
+				if (query.Length==0) return null;
+				IntPtr errMsg = IntPtr.Zero; 
+				//string msg = "";
+
+				SqliteError err=SqliteError.EMPTY;
 				set1.LastCommand=query;	
-				IntPtr stmt=IntPtr.Zero;
-				IntPtr ptrTail=IntPtr.Zero;
 
-				for (int x=0; x < busyRetries;++x)
+				try
 				{
-					
-					//Log.Write("dbs:{0} prepare16 :{1:X} {2}",databaseName,dbHandle.ToInt32(),query);
-					err= sqlite3_prepare16(this.dbHandle, query, query.Length, ref stmt, ref ptrTail);
-					if (err!=ResultCode.OK)
-					{
-						//Log.Write("dbs:{0} prepare16 returns:{1}",databaseName, err.ToString());
-						if (stmt!=IntPtr.Zero) 
-						{
-							sqlite3_finalize(stmt);
-							stmt=IntPtr.Zero;
-						}
-							
-						if (err==ResultCode.EMPTY||err==ResultCode.Done)
-						{
-							//table is empty
-							return set1;
-						}
+					IntPtr pVm = IntPtr.Zero;
+					IntPtr pzTail = IntPtr.Zero;
+					err = sqlite3_prepare16 (dbHandle, query, query.Length, out pVm, out pzTail);
+					if (err == SqliteError.OK)
+						ReadpVm(query,set1, pVm);
+					err = sqlite3_finalize (pVm, out errMsg);
+				}
+				finally
+				{
+				}
+				if (err != SqliteError.OK) 
+				{
+					ThrowError("sqlite3_finalize",query,err);
+				}
+			}
+			return set1;
+		}
+		internal void ReadpVm (string query,SQLiteResultSet set1 , IntPtr pVm)
+		{
+			int pN = 0;
+			IntPtr pazValue = IntPtr.Zero;
+			IntPtr pazColName = IntPtr.Zero;
+			SqliteError res;
 
-						if (err==ResultCode.BUSY)
-						{
-							System.Threading.Thread.Sleep(busyRetryDelay);
-						}
-						if (err==ResultCode.ERROR)
-						{
-							ThrowError("sqlite3_prepare16",query,err);
-						}
-						continue;
-					}
-					else
-					{
-						//Log.Write("dbs:{0} prepare16 returns:{1}",databaseName, err.ToString());
-						break;
-					}
+			while (true) 
+			{
+				res = sqlite3_step (pVm);
+				pN = sqlite3_column_count (pVm);
+				if (res == SqliteError.ERROR) 
+				{		
+					ThrowError("sqlite3_step",query,res);
 				}
-				if (err==ResultCode.EMPTY||err==ResultCode.Done)
+				if (res == SqliteError.DONE) 
 				{
-					//table is empty
-					return set1;
+					break;
 				}
-				if (err!=ResultCode.OK && err!=ResultCode.Done)
+				// We have some data; lets read it
+				if (set1.ColumnNames.Count == 0) 
 				{
-					ThrowError("sqlite3_prepare16(2)",query,err);
-				}
-					
-				//Log.Write("dbs:{0} sqlite3_column_count:{1:X}",databaseName, stmt.ToInt32());
-				int nCol = sqlite3_column_count(stmt);
-				//Log.Write("dbs:{0} sqlite3_column_count returns:{1:X} {2}",databaseName, stmt.ToInt32(), nCol);
-				int row=0;
-				while(true)
-				{
-					for (int x=0; x < busyRetries;++x)
+					for (int i = 0; i < pN; i++) 
 					{
-						//Log.Write("dbs:{0} sqlite3_step:{1:X}",databaseName, stmt.ToInt32());
-						err= sqlite3_step(stmt);
-						//Log.Write("dbs:{0} sqlite3_step returns:{1:X} {2}",databaseName, stmt.ToInt32(), err.ToString());
-						if (err!=ResultCode.BUSY) break;
-						System.Threading.Thread.Sleep(busyRetryDelay);
-					}
-					if (err==ResultCode.EMPTY)
-					{
-						//table is empty
-						sqlite3_finalize(stmt);
-						stmt=IntPtr.Zero;
-						return set1;
-					}
-					else if (err!=ResultCode.Row)
-					{
-						sqlite3_finalize(stmt);
-						stmt=IntPtr.Zero;
-						if (err!=ResultCode.OK && err!=ResultCode.Done)
-						{
-							ThrowError("sqlite3_step(2)",query,err);
-						}
-						break;
-					}
-					else
-					{
-						if (row==0)
-						{
-							//Log.Write("dbs:{0} Get columnnames:{1:X}",databaseName,stmt.ToInt32());
-							for (int col=0; col < nCol;col++)
-							{
-								string columName =String.Empty;
-								unsafe
-								{
-									char* pColumnName= sqlite3_column_name16(stmt,col);
-									columName = new string(pColumnName);
-								}
-								set1.ColumnNames.Add(columName);
-								set1.ColumnIndices[columName]=col;
-							}
-						}
-						//Log.Write("dbs:{0} Get row:{1:X} {2}",databaseName,stmt.ToInt32(),row);
-						ArrayList rowData = new ArrayList();
-						for (int col=0; col < nCol;col++)
-						{
-							string columValue =String.Empty;
-							unsafe
-							{
-								char* pColumnValue= sqlite3_column_text16(stmt,col);
-								columValue = new string(pColumnValue);
-							}
-							rowData.Add(columValue);
-						}
-						set1.Rows.Add(rowData);
-						//Log.Write("dbs:{0} Get row:{1} done",databaseName,row);
-						row++;
+						string colName = "";
+						IntPtr pName=sqlite3_column_name16 (pVm, i);
+						colName = Marshal.PtrToStringUni (pName);
+						set1.columnNames.Add(colName);
+						set1.ColumnIndices[colName]=i;
 					}
 				}
-
-				if (stmt!=IntPtr.Zero)
+				
+				ArrayList row = new ArrayList();
+				for (int i = 0; i < pN; i++) 
 				{
-					//Log.Write("dbs:{0} finalize :{1:X}",databaseName,stmt);
-					sqlite3_finalize(stmt);
-					stmt=IntPtr.Zero;
+					string colData = "";
+					colData = Marshal.PtrToStringUni (sqlite3_column_text16 (pVm, i));
+					row.Add(colData);
 				}
-			
-				//Log.Write("dbs:{0} done:{1}",databaseName,err.ToString());
-				if (err!=ResultCode.OK && err!=ResultCode.Done)
-				{
-					ThrowError("sqlite3_finalize(2)",query,err);
-				}
-				return set1;
+				set1.Rows.Add(row);
 			}
 		}
- 
-
+	
 		~SQLiteClient()
 		{
 			//Log.Write("dbs:{0} ~ctor()", databaseName);
@@ -325,122 +287,7 @@ namespace SQLite.NET
 		}
  
 
-		public static string GetLibEncoding()
-		{
-			return SQLiteClient.sqlite3_libencoding();
-		}
- 
 
-		public static string GetLibVersion()
-		{
-			return SQLiteClient.sqlite3_libversion();
-		}
- 
-
-		public static string GetMessageForError(SQLiteClient.ResultCode errorCode)
-		{
-			switch (errorCode)
-			{
-				case SQLiteClient.ResultCode.OK:
-				{
-					return "Successful result";
-				}
-				case SQLiteClient.ResultCode.ERROR:
-				{
-					return "SQL error or missing database";
-				}
-				case SQLiteClient.ResultCode.INTERNAL:
-				{
-					return "An internal logic error in SQLite";
-				}
-				case SQLiteClient.ResultCode.PERM:
-				{
-					return "Access permission denied";
-				}
-				case SQLiteClient.ResultCode.ABORT:
-				{
-					return "Callback routine requested an abort";
-				}
-				case SQLiteClient.ResultCode.BUSY:
-				{
-					return "The database file is locked";
-				}
-				case SQLiteClient.ResultCode.LOCKED:
-				{
-					return "A table in the database is locked";
-				}
-				case SQLiteClient.ResultCode.NOMEM:
-				{
-					return "A malloc() failed";
-				}
-				case SQLiteClient.ResultCode.READONLY:
-				{
-					return "Attempt to write a readonly database";
-				}
-				case SQLiteClient.ResultCode.INTERRUPT:
-				{
-					return "Operation terminated by sqlite_interrupt()";
-				}
-				case SQLiteClient.ResultCode.IOERR:
-				{
-					return "Some kind of disk I/O error occurred";
-				}
-				case SQLiteClient.ResultCode.CORRUPT:
-				{
-					return "The database disk image is malformed";
-				}
-				case SQLiteClient.ResultCode.NOTFOUND:
-				{
-					return "(Internal Only) Table or record not found";
-				}
-				case SQLiteClient.ResultCode.FULL:
-				{
-					return "Insertion failed because database is full";
-				}
-				case SQLiteClient.ResultCode.CANTOPEN:
-				{
-					return "Unable to open the database file";
-				}
-				case SQLiteClient.ResultCode.PROTOCOL:
-				{
-					return "Database lock protocol error";
-				}
-				case SQLiteClient.ResultCode.EMPTY:
-				{
-					return "(Internal Only) Database table is empty";
-				}
-				case SQLiteClient.ResultCode.SCHEMA:
-				{
-					return "The database schema changed";
-				}
-				case SQLiteClient.ResultCode.TOOBIG:
-				{
-					return "Too much data for one row of a table";
-				}
-				case SQLiteClient.ResultCode.CONSTRAINT:
-				{
-					return "Abort due to contraint violation";
-				}
-				case SQLiteClient.ResultCode.MISMATCH:
-				{
-					return "Data type mismatch";
-				}
-				case SQLiteClient.ResultCode.MISUSE:
-				{
-					return "Library used incorrectly";
-				}
-				case SQLiteClient.ResultCode.NOLFS:
-				{
-					return "Uses OS features not supported on host";
-				}
-				case SQLiteClient.ResultCode.AUTH:
-				{
-					return "Authorization denied";
-				}
-			}
-			return "";
-		}
- 
 
 		public string GetOne(string query)
 		{
@@ -475,15 +322,11 @@ namespace SQLite.NET
 		}
  
 
-		public void Interrupt()
-		{
-			SQLiteClient.sqlite3_interrupt(this.dbHandle);
-		}
- 
+
 
 		public int LastInsertID()
 		{
-			return SQLiteClient.sqlite3_last_insert_rowid(this.dbHandle);
+			return sqlite3_last_insert_rowid(this.dbHandle);
 		}
  
 

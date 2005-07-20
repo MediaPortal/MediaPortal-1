@@ -7,7 +7,7 @@ namespace SQLite.NET
 	/// </summary>
 	public class SQLiteException : Exception
 	{
-		private SQLiteClient.ResultCode errorCode;
+		private SQLiteClient.SqliteError errorCode;
  
 		// Methods
 		public SQLiteException(string message) : base(message)
@@ -16,14 +16,14 @@ namespace SQLite.NET
  
 
 		// Properties
-		public SQLiteException(string message, SQLiteClient.ResultCode code) : base(message)
+		public SQLiteException(string message, SQLiteClient.SqliteError code) : base(message)
 		{
 			this.errorCode = code;
 		}
  
 
 		// Fields
-		public SQLiteClient.ResultCode ErrorCode
+		public SQLiteClient.SqliteError ErrorCode
 		{
 			get
 			{
