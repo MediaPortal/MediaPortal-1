@@ -11,7 +11,7 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(4)]			protected GUICheckMarkControl cbAutoDeleteRecordings=null;
 		[SkinControlAttribute(5)]			protected GUICheckMarkControl cbAddRecordingsToDbs=null;
 		[SkinControlAttribute(27)]		protected GUISpinControl spinPreRecord=null;
-		[SkinControlAttribute(28)]		protected GUISpinControl spinPostRecord=null;
+		[SkinControlAttribute(30)]		protected GUISpinControl spinPostRecord=null;
 
 		public GUISettingsRecordings()
 		{
