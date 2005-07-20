@@ -79,12 +79,12 @@
          <id>27</id>
          <posX>200</posX>
          <posY>216</posY>
-         <spintype>text</spintype>
+         <spintype>int</spintype>
          <width>16</width>
          <height>16</height>
-         <subtype>integer</subtype>
+         <showrange>no</showrange>
          <onup>26</onup>
-         <ondown>27</ondown>                  
+         <ondown>30</ondown>                  
       </control>
       <control>
          <type>label</type>
@@ -105,10 +105,11 @@
          <id>30</id>
          <posX>200</posX>
          <posY>253</posY>
-         <spintype>text</spintype>
+         <spintype>int</spintype>
          <width>16</width>
          <height>16</height>
-         <subtype>integer</subtype>
+         <showrange>no</showrange>
+         <onup>27</onup>
       </control>
       <control>
          <type>label</type>

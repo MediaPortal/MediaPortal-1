@@ -24,6 +24,7 @@ namespace WindowPlugins.GUISettings.TV
 		}
 		protected override void OnPageLoad()
 		{
+			base.OnPageLoad ();
 			spinPreRecord.SetRange(0,30);
 			spinPostRecord.SetRange(0,30);
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -34,7 +35,6 @@ namespace WindowPlugins.GUISettings.TV
 				cbAddRecordingsToDbs.Selected= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
 
 			}		
-			base.OnPageLoad ();
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
