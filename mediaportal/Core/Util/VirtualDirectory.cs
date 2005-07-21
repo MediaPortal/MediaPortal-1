@@ -29,13 +29,20 @@ namespace MediaPortal.Util
 		string		currentShare = String.Empty;
 		string		previousShare = String.Empty;
     string    m_strLocalFolder=String.Empty;
+    bool      showFilesWithoutExtension = false;
 		/// <summary>
 		/// constructor
 		/// </summary>
     public VirtualDirectory()
 		{
 		}
-    
+
+    public bool ShowFilesWithoutExtension
+    {
+      get { return showFilesWithoutExtension;}
+      set { showFilesWithoutExtension = value;}
+    }
+
     public void AddDrives()
     {
     }
@@ -889,7 +896,9 @@ namespace MediaPortal.Util
 			if (strPath==String.Empty) return false;
 			try
 			{
-				if (!System.IO.Path.HasExtension(strPath)) return false;
+        //				if (!System.IO.Path.HasExtension(strPath)) return false;
+        // waeberd: allow searching for files without an extension
+        if (!System.IO.Path.HasExtension(strPath)) return showFilesWithoutExtension;
 				string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
 				if ((m_extensions[0]as string)=="*") return true;   // added for explorer modul by gucky
 				for (int i=0; i < m_extensions.Count;++i)
