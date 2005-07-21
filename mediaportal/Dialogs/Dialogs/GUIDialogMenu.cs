@@ -28,6 +28,8 @@ namespace MediaPortal.Dialogs
 		string selectedItemLabel=String.Empty;
     ArrayList listItems   = new ArrayList();
     bool    m_bPrevOverlay=false;
+		bool    needRefresh=false;
+		DateTime vmr7UpdateTimer=DateTime.Now;
 
     public GUIDialogMenu()
     {
@@ -50,6 +52,7 @@ namespace MediaPortal.Dialogs
 
     public override void OnAction(Action action)
     {
+			needRefresh=true;
       int iSelection;
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
@@ -101,25 +104,31 @@ namespace MediaPortal.Dialogs
 				{
 					if (VMR7Util.g_vmr7!=null)
 					{
-						using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
+						TimeSpan ts = DateTime.Now-vmr7UpdateTimer;
+						if (ts.TotalMilliseconds>=5000 || needRefresh)
 						{
-							using (Graphics g = Graphics.FromImage(bmp))
+							needRefresh=false;
+							using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
 							{
-								GUIGraphicsContext.graphics=g;
+								using (Graphics g = Graphics.FromImage(bmp))
+								{
+									GUIGraphicsContext.graphics=g;
 
-								// render the parent window
-								if (null!=m_pParentWindow) 
-									m_pParentWindow.Render(timePassed);
+									// render the parent window
+									if (null!=m_pParentWindow) 
+										m_pParentWindow.Render(timePassed);
 
-								GUIFontManager.Present();
-								// render this dialog box
-								base.Render(timePassed);
+									GUIFontManager.Present();
+									// render this dialog box
+									base.Render(timePassed);
 
-								GUIGraphicsContext.graphics=null;
-								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,1.0f);
-								g.Dispose();
-								bmp.Dispose();
+									GUIGraphicsContext.graphics=null;
+									VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,1.0f);
+									g.Dispose();
+									bmp.Dispose();
+								}
 							}
+							vmr7UpdateTimer=DateTime.Now;
 						}
 						return;
 					}
@@ -200,6 +209,7 @@ namespace MediaPortal.Dialogs
 
     public override bool OnMessage(GUIMessage message)
     {
+			needRefresh=true;
       switch ( message.Message )
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:

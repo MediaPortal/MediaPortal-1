@@ -52,6 +52,7 @@ namespace MediaPortal.GUI.TV
 		DateTime		m_dwOSDTimeOut;
 		DateTime		m_dwZapTimer;
 		DateTime		m_dwGroupZapTimer;
+		DateTime    vmr7UpdateTimer=DateTime.Now;  
 //		string			m_sZapChannel;
 //		long				m_iZapDelay;
 		bool				isOsdVisible=false;
@@ -192,6 +193,7 @@ namespace MediaPortal.GUI.TV
 
 		public override void OnAction(Action action)
 		{
+			needToClearScreen=true;
 			if (action.wID==Action.ActionType.ACTION_SHOW_VOLUME)
 			{
 				if(m_vmr9OSD!=null)
@@ -559,6 +561,7 @@ namespace MediaPortal.GUI.TV
 
 		public override bool OnMessage(GUIMessage message)
 		{
+			needToClearScreen=true;
 			if (message.Message==GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
 			{
 				dialogNotify=(GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -1374,17 +1377,23 @@ namespace MediaPortal.GUI.TV
 						g_Player.Speed!=1||
 						needToClearScreen)
 					{
-						using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
+						TimeSpan ts = DateTime.Now-vmr7UpdateTimer;
+						if ( (ts.TotalMilliseconds>=5000) || needToClearScreen)
 						{
-							using (Graphics g = Graphics.FromImage(bmp))
+							needToClearScreen=false;
+							using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
 							{
-								GUIGraphicsContext.graphics=g;
-								base.Render(timePassed);
-								RenderForm(timePassed);
-								GUIGraphicsContext.graphics=null;
-								screenState.wasVMRBitmapVisible=true;
-								VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
+								using (Graphics g = Graphics.FromImage(bmp))
+								{
+									GUIGraphicsContext.graphics=g;
+									base.Render(timePassed);
+									RenderForm(timePassed);
+									GUIGraphicsContext.graphics=null;
+									screenState.wasVMRBitmapVisible=true;
+									VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,0.8f);
+								}
 							}
+							vmr7UpdateTimer=DateTime.Now;
 						}
 					}
 					else
