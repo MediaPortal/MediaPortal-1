@@ -26,7 +26,15 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label lblDelayMS;
     private System.Windows.Forms.NumericUpDown numDelay;
     private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.GroupBox gbButtonCombos;
+    private System.Windows.Forms.Button btnLearn;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label lblComboKill;
+    private System.Windows.Forms.TextBox txtComboClose;
+    private System.Windows.Forms.TextBox txtComboKill;
     private CheckBox cbEnable;
+
+    private System.Windows.Forms.TextBox lastEdit;
 
     public DirectInputRemote() : this("Direct Input")
     {
@@ -81,10 +89,17 @@ namespace MediaPortal.Configuration.Sections
       this.lblDInputDevice = new System.Windows.Forms.Label();
       this.btnMapping = new System.Windows.Forms.Button();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.gbButtonCombos = new System.Windows.Forms.GroupBox();
+      this.btnLearn = new System.Windows.Forms.Button();
+      this.label2 = new System.Windows.Forms.Label();
+      this.lblComboKill = new System.Windows.Forms.Label();
+      this.txtComboClose = new System.Windows.Forms.TextBox();
+      this.txtComboKill = new System.Windows.Forms.TextBox();
       this.gbI.SuspendLayout();
       this.gbSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
       this.groupBox1.SuspendLayout();
+      this.gbButtonCombos.SuspendLayout();
       this.SuspendLayout();
       // 
       // cbEnable
@@ -104,9 +119,9 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbI.Controls.Add(this.txtMonitor);
       this.gbI.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.gbI.Location = new System.Drawing.Point(0, 152);
+      this.gbI.Location = new System.Drawing.Point(0, 232);
       this.gbI.Name = "gbI";
-      this.gbI.Size = new System.Drawing.Size(472, 256);
+      this.gbI.Size = new System.Drawing.Size(472, 176);
       this.gbI.TabIndex = 2;
       this.gbI.TabStop = false;
       this.gbI.Text = "Information";
@@ -121,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
       this.txtMonitor.Multiline = true;
       this.txtMonitor.Name = "txtMonitor";
       this.txtMonitor.ReadOnly = true;
-      this.txtMonitor.Size = new System.Drawing.Size(440, 216);
+      this.txtMonitor.Size = new System.Drawing.Size(440, 136);
       this.txtMonitor.TabIndex = 0;
       this.txtMonitor.Text = "";
       // 
@@ -139,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.gbSettings.Location = new System.Drawing.Point(0, 64);
       this.gbSettings.Name = "gbSettings";
-      this.gbSettings.Size = new System.Drawing.Size(472, 80);
+      this.gbSettings.Size = new System.Drawing.Size(472, 72);
       this.gbSettings.TabIndex = 1;
       this.gbSettings.TabStop = false;
       this.gbSettings.Text = "Settings";
@@ -242,8 +257,71 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
+      // gbButtonCombos
+      // 
+      this.gbButtonCombos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbButtonCombos.Controls.Add(this.btnLearn);
+      this.gbButtonCombos.Controls.Add(this.label2);
+      this.gbButtonCombos.Controls.Add(this.lblComboKill);
+      this.gbButtonCombos.Controls.Add(this.txtComboClose);
+      this.gbButtonCombos.Controls.Add(this.txtComboKill);
+      this.gbButtonCombos.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.gbButtonCombos.Location = new System.Drawing.Point(0, 144);
+      this.gbButtonCombos.Name = "gbButtonCombos";
+      this.gbButtonCombos.Size = new System.Drawing.Size(472, 80);
+      this.gbButtonCombos.TabIndex = 3;
+      this.gbButtonCombos.TabStop = false;
+      this.gbButtonCombos.Text = "Button Combos";
+      // 
+      // btnLearn
+      // 
+      this.btnLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnLearn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnLearn.Location = new System.Drawing.Point(384, 35);
+      this.btnLearn.Name = "btnLearn";
+      this.btnLearn.Size = new System.Drawing.Size(72, 22);
+      this.btnLearn.TabIndex = 15;
+      this.btnLearn.Text = "&Learn";
+      this.btnLearn.Click += new System.EventHandler(this.btnLearn_Click);
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 52);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(152, 16);
+      this.label2.TabIndex = 14;
+      this.label2.Text = "Close Process";
+      // 
+      // lblComboKill
+      // 
+      this.lblComboKill.Location = new System.Drawing.Point(16, 28);
+      this.lblComboKill.Name = "lblComboKill";
+      this.lblComboKill.Size = new System.Drawing.Size(136, 16);
+      this.lblComboKill.TabIndex = 13;
+      this.lblComboKill.Text = "Kill Process";
+      // 
+      // txtComboClose
+      // 
+      this.txtComboClose.Location = new System.Drawing.Point(168, 48);
+      this.txtComboClose.Name = "txtComboClose";
+      this.txtComboClose.Size = new System.Drawing.Size(208, 20);
+      this.txtComboClose.TabIndex = 12;
+      this.txtComboClose.Text = "";
+      this.txtComboClose.Enter += new System.EventHandler(this.txtComboClose_Enter);
+      // 
+      // txtComboKill
+      // 
+      this.txtComboKill.Location = new System.Drawing.Point(168, 24);
+      this.txtComboKill.Name = "txtComboKill";
+      this.txtComboKill.Size = new System.Drawing.Size(208, 20);
+      this.txtComboKill.TabIndex = 11;
+      this.txtComboKill.Text = "";
+      this.txtComboKill.Enter += new System.EventHandler(this.txtComboKill_Enter);
+      // 
       // DirectInputRemote
       // 
+      this.Controls.Add(this.gbButtonCombos);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.gbI);
       this.Controls.Add(this.gbSettings);
@@ -254,6 +332,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbSettings.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
       this.groupBox1.ResumeLayout(false);
+      this.gbButtonCombos.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -306,7 +385,9 @@ namespace MediaPortal.Configuration.Sections
     {
       cbEnable.Checked = diHandler.Active;
       cbDevices.SelectedIndex = diHandler.SelectedDeviceIndex;
-//      numDelay.Value = diHandler.Delay; FIX THIS WAEBERD
+      numDelay.Value = diHandler.Delay; 
+      txtComboKill.Text = diHandler.ButtonComboKill;
+      txtComboClose.Text = diHandler.ButtonComboClose;
     }
 
 
@@ -317,6 +398,8 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
+      diHandler.ButtonComboClose = txtComboClose.Text;
+      diHandler.ButtonComboKill = txtComboKill.Text;
       diHandler.SaveSettings();
     }
 
@@ -333,7 +416,30 @@ namespace MediaPortal.Configuration.Sections
 
     private void numDelay_ValueChanged(object sender, System.EventArgs e)
     {
-//      diHandler.Delay = (int)numDelay.Value; FIX THIS WAEBERD
+      diHandler.Delay = (int)numDelay.Value; 
+    }
+
+    private void btnLearn_Click(object sender, System.EventArgs e)
+    {
+      if (lastEdit == txtComboKill)
+      {
+        txtComboKill.Text = diHandler.GetCurrentButtonCombo();
+      }
+      else if (lastEdit == txtComboClose)
+      {
+        txtComboClose.Text = diHandler.GetCurrentButtonCombo();
+        
+      }
+    }
+
+    private void txtComboKill_Enter(object sender, System.EventArgs e)
+    {
+      lastEdit = txtComboKill;
+    }
+
+    private void txtComboClose_Enter(object sender, System.EventArgs e)
+    {
+      lastEdit = txtComboClose;
     }
 	}
 }

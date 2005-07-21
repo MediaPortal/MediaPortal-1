@@ -94,5 +94,14 @@
 		</button>
 		<button name="Button 20" code="3049">
 		</button>
+		
+		<button name="ComboKillProcess" code="4000">
+			<action layer="0" condition="*" conproperty="-1" command="KILLPROCESS" cmdproperty="-1" sound="" />
+		</button>
+
+		<button name="ComboCloseProcess" code="4001">
+			<action layer="0" condition="*" conproperty="-1" command="CLOSEPROCESS" cmdproperty="-1" sound="" />
+		</button>
+		
 	</remote>
 </mappings>

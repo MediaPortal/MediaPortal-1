@@ -26,10 +26,14 @@ namespace MediaPortal
     bool active = false;
     bool doSendActions = true;
     int delay = 150; // delay in milliseconds, used to filter events
+    string buttonComboKill = "2,3";
+    string buttonComboClose = "1,3";
+
     int lastCodeSent = -1;
     int lastAxisValue = 0;
     int timeLastSend = 0;
     int axisLimit = 4200;
+    Process lastProc = null;
 
 
     enum joyButton
@@ -76,7 +80,10 @@ namespace MediaPortal
       button17 = 3046,
       button18 = 3047,
       button19 = 3048,
-      button20 = 3049
+      button20 = 3049,
+
+      comboKillProcess = 4000,
+      comboCloseProcess = 4001
     }
 
     // event: debug info on joystick state change 
@@ -119,14 +126,13 @@ namespace MediaPortal
             deviceGUIDs.Add(di.InstanceGuid);
           }
         }
-      }			
+      }
       catch (Exception ex)
       {
         Log.Write("DirectInputHandler: error in InitDeviceList");
         Log.Write(ex.Message.ToString());
       }
     }
-
 
     public bool Active
     {
@@ -144,6 +150,28 @@ namespace MediaPortal
     {
       get { return delay; }
       set { delay = value; }
+    }
+
+    public string ButtonComboKill
+    {
+      get { return buttonComboKill;}
+      set { buttonComboKill = value;}
+    }
+
+    public string ButtonComboClose
+    {
+      get { return buttonComboClose;}
+      set { buttonComboClose = value;}
+    }
+
+    public string GetCurrentButtonCombo()
+    {
+      string res = "";
+      if (null != diListener)
+      {
+        res = diListener.GetCurrentButtonCombo();
+      }
+      return res;
     }
 
     void SetActive(bool value)
@@ -202,17 +230,17 @@ namespace MediaPortal
 
     public int DeviceCount
     {
-      get 
-      { 
+      get
+      {
         if (null == deviceList)
         {
           return 0;
-        } 
+        }
         else
         {
           return deviceList.Count;
         }
-      }                                          
+      }
     }
 
     public ArrayList DeviceNames
@@ -261,28 +289,65 @@ namespace MediaPortal
     void SendActions(JoystickState state)
     {
       int actionCode = -1;
+      int actionParam = -1;
       int curAxisValue = 0;
       // todo: timer stuff!!
 
       // buttons first!
       byte[] buttons = state.GetButtons();
       int button = 0;
-      bool foundButton = false;
+      string pressedButtons = "";
+
+      // button combos
+      string sep = "";
       foreach (byte b in buttons)
       {
         if (0 != (b & 0x80))
         {
-          foundButton = true;
-          break;
+          pressedButtons += sep + button.ToString("00");
+          sep = ",";
         }
         button++;
       }
-      if (foundButton)
+
+      if ((ButtonComboKill != "") && (ButtonComboKill == pressedButtons))
       {
-        if ((button >= 0) && (button <= 19))
+        if (null != lastProc)
         {
-          // don't need no stinkin' enum-constants here....
-          actionCode = 3030 + button;
+          actionCode = (int) joyButton.comboKillProcess;
+          actionParam = lastProc.Id;
+        }
+      }
+      else if ((ButtonComboClose != "") && (ButtonComboClose == pressedButtons))
+      {
+        if (null != lastProc)
+        {
+          actionCode = (int) joyButton.comboCloseProcess;
+          actionParam = lastProc.Id;
+        }
+      }
+
+      // single buttons
+      if (actionCode == -1)
+      {
+        button = 0;
+        bool foundButton = false;
+        foreach (byte b in buttons)
+        {
+          if (0 != (b & 0x80))
+          {
+            foundButton = true;
+            break;
+          }
+          button++;
+        }
+        if (foundButton)
+        {
+          if ((button >= 0) && (button <= 19))
+          {
+            // don't need no stinkin' enum-constants here....
+            actionCode = 3030 + button;
+          }
         }
       }
 
@@ -294,22 +359,22 @@ namespace MediaPortal
         {
           case 0:
             {
-              actionCode = (int)joyButton.povN;
+              actionCode = (int) joyButton.povN;
               break;
             }
           case 9000:
             {
-              actionCode = (int)joyButton.povE;
+              actionCode = (int) joyButton.povE;
               break;
             }
           case 18000:
             {
-              actionCode = (int)joyButton.povS;
+              actionCode = (int) joyButton.povS;
               break;
             }
           case 27000:
             {
-              actionCode = (int)joyButton.povW;
+              actionCode = (int) joyButton.povW;
               break;
             }
         }
@@ -323,11 +388,11 @@ namespace MediaPortal
           curAxisValue = state.X;
           if (state.X > 0)
           {
-            actionCode = (int)joyButton.axisXUp; // right
+            actionCode = (int) joyButton.axisXUp; // right
           }
           else
           {
-            actionCode = (int)joyButton.axisXDown; // left
+            actionCode = (int) joyButton.axisXDown; // left
           }
         }
         else if (Math.Abs(state.Y) > axisLimit)
@@ -336,12 +401,12 @@ namespace MediaPortal
           if (state.Y > 0)
           {
             // down
-            actionCode = (int)joyButton.axisYUp;
+            actionCode = (int) joyButton.axisYUp;
           }
           else
           {
             // up
-            actionCode = (int)joyButton.axisYDown;
+            actionCode = (int) joyButton.axisYDown;
           }
         }
         else if (Math.Abs(state.Z) > axisLimit)
@@ -349,11 +414,11 @@ namespace MediaPortal
           curAxisValue = state.Z;
           if (state.Z > 0)
           {
-            actionCode = (int)joyButton.axisZUp;
+            actionCode = (int) joyButton.axisZUp;
           }
           else
           {
-            actionCode = (int)joyButton.axisZDown;
+            actionCode = (int) joyButton.axisZDown;
           }
         }
       }
@@ -366,11 +431,11 @@ namespace MediaPortal
           curAxisValue = state.Rx;
           if (state.Rx > 0)
           {
-            actionCode = (int)joyButton.rotationXUp;
+            actionCode = (int) joyButton.rotationXUp;
           }
           else
           {
-            actionCode = (int)joyButton.rotationXDown;
+            actionCode = (int) joyButton.rotationXDown;
           }
         }
         else if (Math.Abs(state.Ry) > axisLimit)
@@ -378,11 +443,11 @@ namespace MediaPortal
           curAxisValue = state.Ry;
           if (state.Ry > 0)
           {
-            actionCode = (int)joyButton.rotationYUp;
+            actionCode = (int) joyButton.rotationYUp;
           }
           else
           {
-            actionCode = (int)joyButton.rotationYDown;
+            actionCode = (int) joyButton.rotationYDown;
           }
         }
         else if (Math.Abs(state.Rz) > axisLimit)
@@ -390,20 +455,48 @@ namespace MediaPortal
           curAxisValue = state.Rz;
           if (state.Rz > 0)
           {
-            actionCode = (int)joyButton.rotationZUp;
+            actionCode = (int) joyButton.rotationZUp;
           }
           else
           {
-            actionCode = (int)joyButton.rotationZDown;
+            actionCode = (int) joyButton.rotationZDown;
           }
         }
       }
 
-      if ((actionCode > 0) && (!FilterAction(actionCode, curAxisValue)))
+//      if ((actionCode > 0) && (!FilterAction(actionCode, curAxisValue)))
+      if (VerifyAction(actionCode, curAxisValue))
       {
         Log.Write("mapping action {0}", actionCode);
-        diMapper.MapAction(actionCode);
+        diMapper.MapAction(actionCode, actionParam);
       }
+    }
+
+    bool VerifyAction(int actionCode, int curAxisValue)
+    {
+      Log.Write(" dw 1 ");
+      bool res = false;
+      if (diListener.IsRunning)
+      {
+        Log.Write(" dw 2 ");
+        res = (actionCode > 0) && (actionCode < 4000) && (!FilterAction(actionCode, curAxisValue));
+      }
+      else
+      {
+        res = (actionCode >= 4000) && (actionCode < 5000);
+  /*
+ *         Log.Write(" dw 3 ");
+        // test:
+        if ((null != lastProc) && (actionCode == 4000))
+        {
+          Log.Write(" ready to kill ");
+          //          if (!lastProc.CloseMainWindow())
+          lastProc.Kill();
+          lastProc = null;
+        }
+*/        
+      }
+      return res;
     }
 
     string GetStateAsText(JoystickState state)
@@ -499,11 +592,13 @@ namespace MediaPortal
       {
         active = xmlreader.GetValueAsBool("remote", "DirectInput", false);
         string strGUID = xmlreader.GetValueAsString("remote", "DirectInputDeviceGUID", "");
-        if (active && ("" != strGUID)) 
+        if (active && ("" != strGUID))
         {
           SelectDevice(strGUID);
         }
         delay = xmlreader.GetValueAsInt("remote", "DirectInputDelayMS", 150);
+        buttonComboKill = xmlreader.GetValueAsString("remote", "DirectInputKillCombo", ""); 
+        buttonComboClose = xmlreader.GetValueAsString("remote", "DirectInputCloseCombo", ""); 
       }
     }
 
@@ -514,6 +609,8 @@ namespace MediaPortal
         xmlwriter.SetValueAsBool("remote", "DirectInput", active);
         xmlwriter.SetValue("remote", "DirectInputDeviceGUID", SelectedDeviceGUID);
         xmlwriter.SetValue("remote", "DirectInputDelayMS", delay);
+        xmlwriter.SetValue("remote", "DirectInputKillCombo", buttonComboKill);
+        xmlwriter.SetValue("remote", "DirectInputCloseCombo", buttonComboClose);
       }
     }
 
@@ -573,7 +670,6 @@ namespace MediaPortal
     }
 
 
-
     void CreateMapper()
     {
       bool result;
@@ -582,8 +678,8 @@ namespace MediaPortal
 
     void AttachHandlers()
     {
-      Utils.OnStartExternal  += new Utils.UtilEventHandler(OnStartExternal);
-      Utils.OnStopExternal  += new Utils.UtilEventHandler(OnStopExternal);
+      Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
+      Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
     }
 
     void DetachHandlers()
@@ -596,6 +692,7 @@ namespace MediaPortal
     {
       if (active && waitForExit)
       {
+        lastProc = proc;
         diListener.Pause();
       }
     }
@@ -604,6 +701,7 @@ namespace MediaPortal
     {
       if (active)
       {
+        lastProc = null;
         diListener.Resume();
       }
     }

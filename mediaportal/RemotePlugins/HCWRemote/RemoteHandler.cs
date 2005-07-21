@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections;
 using System.Xml;
@@ -185,6 +186,31 @@ namespace MediaPortal
     /// <returns>false = no action executed</returns>
     public bool MapAction(int btnCode)
     {
+      return DoMapAction(btnCode, -1);
+    }
+
+    /// <summary>
+    /// Evaluates the button number, gets its mapping and executes the action with an optional paramter
+    /// </summary>
+    /// <param name="btnCode">Button code (ref: XML file)</param>
+    /// <param name="param1">integer parameter that is necessary for some actions</param>
+    /// <returns>true = action successfully executed</returns>
+    /// <returns>false = no action executed</returns>
+    public bool MapAction(int btnCode, int param1)
+    {
+      return DoMapAction(btnCode, param1);
+    }
+
+
+    /// <summary>
+    /// Evaluates the button number, gets its mapping and executes the action
+    /// </summary>
+    /// <param name="btnCode">Button code (ref: XML file)</param>
+    /// <param name="param1">integer parameter that is necessary for some actions</param>
+    /// <returns>true = action successfully executed</returns>
+    /// <returns>false = no action executed</returns>
+    bool DoMapAction(int btnCode, int param1)
+    {
       if (remote == null) return false; // No mapping loaded
       Mapping map = GetMapping(btnCode);
       if (map == null) return false;  // No mapping found
@@ -245,6 +271,22 @@ namespace MediaPortal
           }
         }
           break;
+        case "KILLPROCESS":
+        {
+          if (param1 <= 0) return false;
+          Process proc = Process.GetProcessById(param1);
+          if (null == proc) return false;
+          proc.Kill();
+          break;
+        }
+        case "CLOSEPROCESS":
+        {
+          if (param1 <= 0) return false;
+          Process proc = Process.GetProcessById(param1);
+          if (null == proc) return false;
+          proc.CloseMainWindow();
+          break;
+        }
       }
       return true;
     }

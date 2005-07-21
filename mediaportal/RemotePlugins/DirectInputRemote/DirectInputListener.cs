@@ -1,39 +1,40 @@
+using System;
 using System.Threading;
 using Microsoft.DirectX.DirectInput;
 
 namespace MediaPortal
 {
-
   /// <summary>
-	/// Summary description for DirectInputListener.
-	/// </summary>
-	/// 
-	public class DirectInputListener
-	{
-	  Device device = null;
+  /// Summary description for DirectInputListener.
+  /// </summary>
+  /// 
+  public class DirectInputListener
+  {
+    Device device = null;
     Thread inputListener = null;
     AutoResetEvent deviceUpdated;
-	  ManualResetEvent appShutdown;
+    ManualResetEvent appShutdown;
     bool isRunning = false;
 
     // event: send info on joystick state change 
     public delegate void diStateChange(object sender, JoystickState state);
+
     public event diStateChange OnStateChange = null;
 
 
     public DirectInputListener()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
 
     ~DirectInputListener()
     {
       StopListener();
       DeInitDevice();
-    } 
+    }
 
     public Device SelectedDevice
     {
@@ -59,7 +60,7 @@ namespace MediaPortal
         {
           // We found an axis, set the range to a max of 10,000
           device.Properties.SetRange(ParameterHow.ById,
-            doi.ObjectId, new InputRange(-5000, 5000));
+                                     doi.ObjectId, new InputRange(-5000, 5000));
         }
       }
       deviceUpdated = new AutoResetEvent(false);
@@ -82,6 +83,49 @@ namespace MediaPortal
       }
     }
 
+
+    public string GetCurrentButtonCombo()
+    {
+      string res = "";
+      JoystickState state;
+      if (CheckDevice())
+      {
+        // Get the state of the device.
+        try
+        {
+          state = device.CurrentJoystickState;
+          return ButtonComboAsString(state);
+        }
+          // Catch any exceptions. None will be handled here, 
+          // any device re-aquisition will be handled above.  
+        catch (InputException)
+        {
+          return res;
+        }
+      }
+      return res;
+    }
+
+    string ButtonComboAsString(JoystickState state)
+    {
+      byte[] buttons = state.GetButtons();
+      int button = 0;
+      string res = "";
+
+      // button combos
+      string sep = "";
+      foreach (byte b in buttons)
+      {
+        if (0 != (b & 0x80))
+        {
+          res += sep + button.ToString("00");
+          sep = ",";
+        }
+        button++;
+      }
+      return res;
+    }
+
     void ThreadFunction()
     {
       WaitHandle[] handles = {deviceUpdated, appShutdown};
@@ -91,7 +135,7 @@ namespace MediaPortal
         int index = WaitHandle.WaitAny(handles);
         if (index == 0)
         {
-          if (isRunning)
+//          if (isRunning)
           {
             UpdateInputState();
           }
@@ -114,7 +158,7 @@ namespace MediaPortal
         // Poll the device for info.
         device.Poll();
       }
-      catch(InputException inputex)
+      catch (InputException inputex)
       {
         if ((inputex is NotAcquiredException) || (inputex is InputLostException))
         {
@@ -127,7 +171,7 @@ namespace MediaPortal
             // Acquire the device.
             device.Acquire();
           }
-          catch(InputException)
+          catch (InputException)
           {
             // Failed to acquire the device.
             // This could be because the app
@@ -135,7 +179,7 @@ namespace MediaPortal
             return false;
           }
         }
-                
+
       } //catch(InputException inputex)
 
       return (device != null);
@@ -147,10 +191,13 @@ namespace MediaPortal
       if (CheckDevice())
       {
         // Get the state of the device.
-        try {state = device.CurrentJoystickState;}
+        try
+        {
+          state = device.CurrentJoystickState;
+        }
           // Catch any exceptions. None will be handled here, 
           // any device re-aquisition will be handled above.  
-        catch(InputException)
+        catch (InputException)
         {
           return;
         }
@@ -191,5 +238,5 @@ namespace MediaPortal
     }
 
 
-	}
+  }
 }
