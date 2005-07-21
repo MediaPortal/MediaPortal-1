@@ -3027,6 +3027,22 @@
 	<id>1029</id>
 	<value>Subtitle Language</value>
 </string>
+<string>
+	<id>1030</id>
+	<value>Shutdown</value>
+</string>
+<string>
+	<id>1031</id>
+	<value>Restart</value>
+</string>
+<string>
+	<id>1032</id>
+	<value>Sleep</value>
+</string>
+<string>
+	<id>1033</id>
+	<value>Shows are being recorded right now</value>
+</string>
 
 <string>
 	<id>1440</id>

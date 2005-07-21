@@ -19,8 +19,9 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 
-using MediaPortal.GUI.Library;
 using MediaPortal;
+using MediaPortal.GUI.Library;
+using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Playlists;
@@ -99,6 +100,8 @@ public class MediaPortalApp : D3DApp, IRender
 	public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
 	#endregion
 
+	static RestartOptions restartOptions=RestartOptions.Reboot;
+	static bool					 useRestartOptions=false;
 	#region main()
 	//NProf doesnt work if the [STAThread] attribute is set
 	//but is needed when you want to play music or video
@@ -326,6 +329,10 @@ public class MediaPortalApp : D3DApp, IRender
 		Log.Write("MediaPortal done");
 		Win32API.EnableStartBar(true);
 		Win32API.ShowStartBar(true);
+		if (useRestartOptions)
+		{
+			WindowsController.ExitWindows(restartOptions, true);
+		}
 	}
 	#endregion
 
@@ -1242,6 +1249,17 @@ public class MediaPortalApp : D3DApp, IRender
 					return;
 
 				case Action.ActionType.ACTION_EXIT:
+					
+					if (Recorder.IsAnyCardRecording())
+					{
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
+						msg.Param1 = 1033;
+						msg.Param2 = 506;
+						msg.Param3 = 0;
+						GUIWindowManager.SendMessage(msg);
+
+						if (msg.Param1 != 1) return;
+					}
 					GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 					return;
 
@@ -1256,8 +1274,19 @@ public class MediaPortalApp : D3DApp, IRender
 
 					if (msg.Param1 == 1)
 					{
-						AutoPlay.StopListening();
-						WindowsController.ExitWindows(RestartOptions.Reboot, true);
+						
+						if (Recorder.IsAnyCardRecording())
+						{
+							msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
+							msg.Param1 = 1033;
+							msg.Param2 = 506;
+							msg.Param3 = 0;
+							GUIWindowManager.SendMessage(msg);
+
+							if (msg.Param1 != 1) return;
+						}
+						useRestartOptions=true;
+						restartOptions=RestartOptions.Reboot;
 						GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 					}
 				}
@@ -1269,16 +1298,41 @@ public class MediaPortalApp : D3DApp, IRender
 
 				case Action.ActionType.ACTION_SHUTDOWN:
 				{
-					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
-					msg.Param1 = 631;
-					msg.Param2 = 0;
-					msg.Param3 = 0;
-					GUIWindowManager.SendMessage(msg);
-
-					if (msg.Param1 == 1)
+					GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+					if (dlg!=null)
 					{
-						AutoPlay.StopListening();
-						WindowsController.ExitWindows(RestartOptions.PowerOff, true);
+						dlg.Reset();
+						dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+						dlg.AddLocalizedString(1030);//shutdown
+						dlg.AddLocalizedString(1031);//Restart
+						dlg.AddLocalizedString(1032);//Sleep
+						dlg.DoModal(GUIWindowManager.ActiveWindow);
+						RestartOptions option=RestartOptions.Suspend;
+						if (dlg.SelectedId<0) return;
+						switch (dlg.SelectedId)
+						{
+							case 1030:
+								option=RestartOptions.PowerOff;
+								break;
+							case 1031:
+								option=RestartOptions.Reboot;
+								break;
+							case 1032:
+								option=RestartOptions.Suspend;
+								break;
+						}
+						if (Recorder.IsAnyCardRecording())
+						{
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
+							msg.Param1 = 1033;
+							msg.Param2 = 506;
+							msg.Param3 = 0;
+							GUIWindowManager.SendMessage(msg);
+
+							if (msg.Param1 != 1) return;
+						}
+						restartOptions=option;
+						useRestartOptions=true;
 						GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
 					}
 					break;
@@ -1308,7 +1362,7 @@ public class MediaPortalApp : D3DApp, IRender
 									if (g_Player.HasVideo)
 									{
 										GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-										GUIGraphicsContext.IsFullScreenVideo = true;
+									GUIGraphicsContext.IsFullScreenVideo = true;
 										return;
 									}
 								}
