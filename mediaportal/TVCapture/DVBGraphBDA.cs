@@ -2741,9 +2741,10 @@ namespace MediaPortal.TV.Recording
 						}
 					}//for (int pids =0; pids < info.pid_list.Count;pids++)
 
+					currentTuningObject.PCRPid=info.pcr_pid;
 					try
 					{
-						if (m_graphState==State.Radio)
+						if (m_graphState==State.Radio && currentTuningObject.PCRPid<=0)
 						{
 							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X}",
 								currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
@@ -4206,25 +4207,34 @@ namespace MediaPortal.TV.Recording
 
 				TuneRadioChannel(station);
 
-				SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
-				SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
-
-				IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
-				if (mpeg2Demuxer!=null)
+				if ( currentTuningObject.PCRPid<=0)
 				{
-					Log.Write("DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
-          uint pid=0,sampletype=0;
-							GetPidMap(m_pinMPG1Out,ref pid, ref sampletype);
-							Log.Write("DVBGraphBDA:  Pin:mpg1 is mapped to pid:{0:x} content:{1}", pid, sampletype);
-				}
+					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
+					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
 
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRadio() render demux output pin");
-				if(m_graphBuilder.Render(m_pinMPG1Out/*m_DemuxAudioPin*/) != 0)
+					IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
+					if (mpeg2Demuxer!=null)
+					{
+						Log.Write("DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
+						uint pid=0,sampletype=0;
+						GetPidMap(m_pinMPG1Out,ref pid, ref sampletype);
+						Log.Write("DVBGraphBDA:  Pin:mpg1 is mapped to pid:{0:x} content:{1}", pid, sampletype);
+					}
+					if(m_graphBuilder.Render(m_pinMPG1Out/*m_DemuxAudioPin*/) != 0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+						return;
+					}
+				}
+				else
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
-					return;
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRadio() render demux output pin");
+					if(m_graphBuilder.Render(m_DemuxAudioPin) != 0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+						return;
+					}
 				}
-
 				//get the IMediaControl interface of the graph
 				if(m_mediaControl == null)
 					m_mediaControl = m_graphBuilder as IMediaControl;
