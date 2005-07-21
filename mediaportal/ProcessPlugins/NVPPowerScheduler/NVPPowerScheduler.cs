@@ -108,8 +108,10 @@ namespace MediaPortal.PowerScheduler
 			//SetPowerUpTimer();
 			WakeupManager();
 
+
 			// start recorder if needed
 			Recorder.Start();
+			AutoPlay.StartListening();
 		}
 
 		/// <summary>
@@ -333,6 +335,8 @@ namespace MediaPortal.PowerScheduler
 				if (abortshutdown)
 					return;
 
+				g_Player.Stop();
+				AutoPlay.StopListening();
 				if (m_bDisableTV)
 				{
 					Log.Write("PowerScheduler: Prepare for shutdown, disable any TVcard ");
@@ -340,7 +344,6 @@ namespace MediaPortal.PowerScheduler
 					Recorder.StopViewing();
 					Recorder.Stop();
 				}
-				g_Player.Stop();
 				GUIWindowManager.Dispose();
 				GUITextureManager.Dispose();
 				GUIFontManager.Dispose();
@@ -354,20 +357,17 @@ namespace MediaPortal.PowerScheduler
 				if (m_shutdownMode.StartsWith("Suspend"))
 				{
 					Log.Write("PowerScheduler: Suspend system");
-					AutoPlay.StopListening();
 					WindowsController.ExitWindows(RestartOptions.Suspend, m_bForceShutdown);
 				}
 
 				if (m_shutdownMode.StartsWith("Hibernate"))
 				{
 					Log.Write("PowerScheduler: Hibernate system");
-					AutoPlay.StopListening();
 					WindowsController.ExitWindows(RestartOptions.Hibernate, m_bForceShutdown);
 				}
 						
 				if (m_shutdownMode.StartsWith("Shutdown"))
 				{
-					Log.Write("PowerScheduler: System shutdown");
 					AutoPlay.StopListening();
 					WindowsController.ExitWindows(RestartOptions.ShutDown, m_bForceShutdown);
 				}
