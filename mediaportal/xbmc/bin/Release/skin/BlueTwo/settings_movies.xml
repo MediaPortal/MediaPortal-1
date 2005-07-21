@@ -1,0 +1,96 @@
+<window>
+   <id>703</id>
+   <defaultcontrol>24</defaultcontrol>
+   <allowoverlay>yes</allowoverlay>
+   <controls>
+      <control>
+         <type>image</type>
+         <description>BG</description>
+         <id>1</id>
+         <posX>0</posX>
+         <posY>0</posY>
+         <texture>background.png</texture>
+      </control>
+      <control>
+         <type>image</type>
+         <id>1</id>
+         <posX>48</posX>
+         <posY>390</posY>
+         <texture>hover_my tv.png</texture>
+      </control>
+      <control>
+         <type>image</type>
+         <description>MP Logo</description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>24</posY>
+         <texture>mplogo.png</texture>
+      </control>
+      <control>
+         <type>label</type>
+         <description>Setup Movies</description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>96</posY>
+         <label>Movie Setup</label>
+         <font>font18</font>
+      </control>
+      <control>
+         <type>button</type>
+         <id>24</id>
+         <posX>56</posX>
+         <posY>151</posY>
+         <label>Video Codec</label>
+         <ondown>25</ondown>
+         <onup>24</onup>
+         <onleft>24</onleft>
+         <onright>30</onright>
+      </control>
+      
+      
+      <control>
+         <type>button</type>
+         <id>25</id>
+         <posX>56</posX>
+         <posY>192</posY>
+         <label>Audio Codec</label>
+         <ondown>26</ondown>
+         <onup>24</onup>
+         <onleft>25</onleft>
+         <onright>31</onright>
+      </control>
+      <control>
+         <type>button</type>
+         <id>26</id>
+         <posX>56</posX>
+         <posY>232</posY>
+         <label>Video Renderer</label>
+         <ondown>27</ondown>
+         <onup>25</onup>
+         <onleft>26</onleft>
+         <onright>32</onright>
+      </control>
+      <control>
+         <type>button</type>
+         <id>27</id>
+         <posX>56</posX>
+         <posY>272</posY>
+         <label>Audio Renderer</label>
+      </control>
+         <ondown>28</ondown>
+         <onup>26</onup>
+         <onleft>27</onleft>
+         <onright>27</onright>
+      <control>
+         <type>button</type>
+         <id>28</id>
+         <posX>56</posX>
+         <posY>312</posY>
+         <label>Aspect ratio</label>
+         <ondown>29</ondown>
+         <onup>27</onup>
+         <onleft>28</onleft>
+         <onright>28</onright>
+      </control>
+   </controls>
+</window>
