@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using DShowNET;
@@ -15,6 +16,25 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(26)]			protected GUIButtonControl btnVideoRenderer=null;
 		[SkinControlAttribute(27)]			protected GUIButtonControl btnAudioRenderer=null;
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
+		[SkinControlAttribute(29)]			protected GUIButtonControl btnSubtitle=null;
+		[SkinControlAttribute(30)]			protected GUIButtonControl btnAudioLanguage=null;
+
+		
+		class CultureComparer :IComparer
+		{
+			#region IComparer Members
+
+			public int Compare(object x, object y)
+			{
+				CultureInfo info1=(CultureInfo)x;
+				CultureInfo info2=(CultureInfo)y;
+				return String.Compare(info1.EnglishName,info2.EnglishName,true);
+			}
+
+			#endregion
+
+		}
+
 		public GUISettingsDVD()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_DVD;
@@ -31,6 +51,8 @@ namespace WindowPlugins.GUISettings.TV
 			if (control==btnVideoRenderer) OnVideoRenderer();
 			if (control==btnAspectRatio) OnAspectRatio();
 			if (control==btnAudioRenderer) OnAudioRenderer();
+			if (control==btnSubtitle) OnSubtitle();
+			if (control==btnAudioLanguage) OnAudioLanguage();
 			base.OnClicked (controlId, control, actionType);
 		}
 		void OnVideoCodec()
@@ -188,5 +210,89 @@ namespace WindowPlugins.GUISettings.TV
 
 		}
 
+		void OnSubtitle()
+		{
+			string defaultSubtitleLanguage="";
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				defaultSubtitleLanguage= xmlreader.GetValueAsString("dvdplayer","subtitlelanguage", "English");
+			}
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				dlg.ShowQuickNumbers=false;
+				int selected=0;
+				ArrayList cultures = new ArrayList();
+				CultureInfo[] culturesInfos=CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+				for (int i=0; i < culturesInfos.Length;++i)
+				{
+					cultures.Add(culturesInfos[i]);
+				}
+				cultures.Sort( new CultureComparer());
+
+				for (int i=0; i < cultures.Count;++i)
+				{
+					CultureInfo info = (CultureInfo)cultures[i];
+					if(info.EnglishName.Equals(defaultSubtitleLanguage))
+					{
+						selected=i;
+					}
+					dlg.Add(info.EnglishName);
+				}
+				dlg.SelectedLabel=selected;
+				dlg.DoModal(GetID);
+				if (dlg.SelectedLabel<0) return;
+				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				{
+					CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
+					xmlwriter.SetValue("dvdplayer", "subtitlelanguage", info.EnglishName);
+				}
+			}
+		}
+		void OnAudioLanguage()
+		{
+			string defaultAudioLanguage="";
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				defaultAudioLanguage= xmlreader.GetValueAsString("dvdplayer","audiolanguage", "English");
+			}
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				dlg.ShowQuickNumbers=false;
+				int selected=0;
+				ArrayList cultures = new ArrayList();
+				CultureInfo[] culturesInfos=CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+				for (int i=0; i < culturesInfos.Length;++i)
+				{
+					cultures.Add(culturesInfos[i]);
+				}
+				cultures.Sort( new CultureComparer());
+
+				for (int i=0; i < cultures.Count;++i)
+				{
+					CultureInfo info = (CultureInfo)cultures[i];
+					if(info.EnglishName.Equals(defaultAudioLanguage))
+					{
+						selected=i;
+					}
+					dlg.Add(info.EnglishName);
+				}
+				dlg.SelectedLabel=selected;
+				dlg.DoModal(GetID);
+				if (dlg.SelectedLabel<0) return;
+				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				{
+					CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
+					xmlwriter.SetValue("dvdplayer", "audiolanguage", info.EnglishName);
+				}
+			}
+		}
 	}
 }

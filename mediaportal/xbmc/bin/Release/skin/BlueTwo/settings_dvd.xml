@@ -46,6 +46,17 @@
          <onleft>24</onleft>
          <onright>30</onright>
       </control>
+      <control>
+         <type>button</type>
+         <id>30</id>
+         <posX>300</posX>
+         <posY>151</posY>
+         <label>492</label>
+         <ondown>31</ondown>
+         <onup>30</onup>
+         <onleft>24</onleft>
+         <onright>30</onright>
+      </control>
       
       
       <control>
@@ -91,6 +102,17 @@
          <onup>27</onup>
          <onleft>28</onleft>
          <onright>28</onright>
+      </control>
+      <control>
+         <type>button</type>
+         <id>29</id>
+         <posX>56</posX>
+         <posY>352</posY>
+         <label>287</label>
+         <ondown>29</ondown>
+         <onup>28</onup>
+         <onleft>29</onleft>
+         <onright>29</onright>
       </control>
    </controls>
 </window>
