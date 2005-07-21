@@ -247,8 +247,10 @@ namespace MediaPortal.GUI.Library
 
 		void ILayoutComponent.Arrange(Rectangle finalRectangle)
 		{
-			if(_layout != null)
-				_layout.Arrange(this, finalRectangle.Size);
+			if(_layout == null)
+				return;
+
+			_layout.Arrange(this, finalRectangle);
 		}
 
 		void ISupportInitialize.BeginInit()
@@ -257,8 +259,10 @@ namespace MediaPortal.GUI.Library
 
 		void ILayoutComponent.Measure(Size availableSize)
 		{
-			if(_layout != null)
-				_layout.Measure(this, availableSize);
+			if(_layout == null)
+				return;
+
+			_layout.Measure(this, availableSize);
 		}
 
 		void ISupportInitialize.EndInit()
@@ -266,7 +270,10 @@ namespace MediaPortal.GUI.Library
 			if(_layout == null)
 				return;
 
-			_layout.Arrange(this, new Size(720, 576));
+			Rectangle rect = new Rectangle(m_dwPosX, m_dwPosY, 400, 400);
+
+			_layout.Measure(this, rect.Size);
+			_layout.Arrange(this, rect);
 		}
 
 		#endregion Methods
@@ -314,9 +321,5 @@ namespace MediaPortal.GUI.Library
 		GUIControlCollection		_controlCollection = new GUIControlCollection();
 
 		#endregion Fields
-
-		#region ISupportInitialize Members
-
-		#endregion
 	}
 }

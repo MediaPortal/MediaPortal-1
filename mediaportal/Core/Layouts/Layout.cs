@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Collections;
 using System.Drawing;
 
 namespace MediaPortal.Layouts
@@ -10,9 +9,18 @@ namespace MediaPortal.Layouts
 	{
 		#region Methods
 
-		void Arrange(ILayoutComponent component, Size availableSize);
-		void Measure(ILayoutComponent component, Size availableSize);
+		void Arrange(ILayoutComponent element, Rectangle finalRectangle);
+		void Measure(ILayoutComponent element, Size availableSize);
 
 		#endregion Methods
+
+		#region Properties
+
+		Size Size
+		{
+			get;
+		}
+
+		#endregion Properties
 	}
 }

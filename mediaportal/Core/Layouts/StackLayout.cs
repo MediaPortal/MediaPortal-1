@@ -22,16 +22,16 @@ namespace MediaPortal.Layouts
 
 		#region Methods
 
-		public void Arrange(ILayoutComponent component, Size finalSize)
+		public void Arrange(ILayoutComponent component, Rectangle finalRectangle)
 		{
 			Rectangle margins = component.Margins;
 
-			int x = component.Location.X;
-			int y = component.Location.Y + margins.Top;
+			int x = finalRectangle.X + margins.Left;
+			int y = finalRectangle.Y + margins.Top;
 
 			foreach(ILayoutComponent childComponent in component.Children)
 			{
-				childComponent.Arrange(new Rectangle(component.Location.X + margins.Left, y, finalSize.Width, childComponent.Size.Height));
+				childComponent.Arrange(new Rectangle(x, y, finalRectangle.Width - (margins.Left + margins.Width), childComponent.Size.Height));
 				
 				y += (childComponent.Size.Height + _spacing.Height);
 			}
@@ -39,8 +39,6 @@ namespace MediaPortal.Layouts
 
 		public void Measure(ILayoutComponent component, Size availableSize)
 		{
-			Rectangle margins = component.Margins;
-
 			int w = 0;
 			int h = 0;
 
@@ -49,19 +47,21 @@ namespace MediaPortal.Layouts
 				childComponent.Measure(availableSize);
 
 				w = Math.Max(w, childComponent.Size.Width);
-				h = h + childComponent.Size.Height + h == 0 ? 0 : _spacing.Height;
+				h = h + childComponent.Size.Height + _spacing.Height;
 			}
 
+			Rectangle margins = component.Margins;
+
 			_desiredSize = new Size(w, h);
-			_desiredSize.Width += margins.Left + margins.Right;
-			_desiredSize.Height += margins.Top + margins.Bottom;
+			_desiredSize.Width += margins.Left + margins.Width;
+			_desiredSize.Height += margins.Top + margins.Height;
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		public Size DesiredSize
+		public Size Size
 		{
 			get { return _desiredSize; }
 		}
@@ -76,7 +76,6 @@ namespace MediaPortal.Layouts
 
 		#region Fields
 
-		Point						_location = Point.Empty;
 		Size						_spacing = Size.Empty;
 		Size						_desiredSize = Size.Empty;
 

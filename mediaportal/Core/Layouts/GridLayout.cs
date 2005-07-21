@@ -42,30 +42,10 @@ namespace MediaPortal.Layouts
 
 		#region Methods
 
-		public void Measure(ILayoutComponent component, Size availableSize)
+		public void Arrange(ILayoutComponent component, Rectangle finalRectangle)
 		{
-			int w = 0;
-			int h = 0;
-
-			foreach(ILayoutComponent childComponent in component.Children)
-			{
-				childComponent.Measure(availableSize);
-
-				w = Math.Max(w, childComponent.Size.Width);
-				h = Math.Max(h, childComponent.Size.Height);
-			}
-
-			Rectangle margins = component.Margins;
-
-			_desiredSize = new Size(w, h);
-			_desiredSize.Width += margins.Left + margins.Right;
-			_desiredSize.Height += margins.Top + margins.Bottom;
-		}
-
-		public void Arrange(ILayoutComponent component, Size finalSize)
-		{
-			Point parentLocation = component.Location;
-			Size parentSize = component.Size;
+			Point parentLocation = finalRectangle.Location;
+			Size parentSize = finalRectangle.Size;
 			Rectangle parentMargins = component.Margins;
 
 			int rows = _rows;
@@ -76,17 +56,17 @@ namespace MediaPortal.Layouts
 			else
 				rows = (component.Children.Count + cols - 1) / cols;
 
-			double w = (parentSize.Width - (cols - 1) * _spacing.Width) / cols;
-			double h = (parentSize.Height - (rows - 1) * _spacing.Height) / rows;
+			double w = (parentSize.Width - parentMargins.Width - (cols - 1) * _spacing.Width) / cols;
+			double h = (parentSize.Height - parentMargins.Height - (rows - 1) * _spacing.Height) / rows;
 			double y = parentLocation.Y + parentMargins.Y;
 
-			for(int r = 0; r < rows; r++)
+			for(int row = 0; row < rows; row++)
 			{
 				double x = parentLocation.X + parentMargins.X;
 
-				for(int c = 0; c < cols; c++)
+				for(int col = 0; col < cols; col++)
 				{
-					int index = r * cols + c;
+					int index = row * cols + col;
 
 					// urghhhhhhhhhh!!!!
 					if(index < component.Children.Count)
@@ -99,6 +79,34 @@ namespace MediaPortal.Layouts
 			}
 		}
 
+		public void Measure(ILayoutComponent component, Size availableSize)
+		{
+			int w = 0;
+			int h = 0;
+
+			int rows = _rows;
+			int cols = _cols;
+
+			if(rows > 0)
+				cols = (component.Children.Count + rows - 1) / rows;
+			else
+				rows = (component.Children.Count + cols - 1) / cols;
+
+			foreach(ILayoutComponent childComponent in component.Children)
+			{
+				childComponent.Measure(availableSize);
+
+				w = Math.Max(w, childComponent.Size.Width);
+				h = Math.Max(h, childComponent.Size.Height);
+			}
+
+			Rectangle margins = component.Margins;
+
+			_desiredSize = new Size(w * cols + _spacing.Width * (cols - 1), h * rows + _spacing.Height * (rows - 1));
+			_desiredSize.Width += margins.Left + margins.Width;
+			_desiredSize.Height += margins.Top + margins.Height;
+		}
+
 		#endregion Methods
 
 		#region Properties
@@ -109,7 +117,7 @@ namespace MediaPortal.Layouts
 			set { if(value != _cols) { _cols = value; } }
 		}
 	
-		public Size DesiredSize
+		public Size Size
 		{
 			get { return _desiredSize; }
 		}
