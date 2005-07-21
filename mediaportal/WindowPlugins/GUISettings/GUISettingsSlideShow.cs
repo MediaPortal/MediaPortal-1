@@ -8,6 +8,9 @@ namespace MediaPortal.GUI.Settings
   /// </summary>
   public class GUISettingsSlideshow : GUIWindow
   {
+		[SkinControlAttribute(8)]		protected GUICheckMarkControl cmLoopSlideShows=null;
+		[SkinControlAttribute(9)]		protected GUICheckMarkControl cmShuffleSlideShows=null;
+
     enum Controls
     {
       CONTROL_SPEED =2,
@@ -166,7 +169,28 @@ namespace MediaPortal.GUI.Settings
         GUIControl.DeSelectControl(GetID, (int)Controls.CONTROL_KENBURNS);
 
     }
-    
+
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			if (cmLoopSlideShows==control) OnLoopSlideShows();
+			if (cmShuffleSlideShows==control) OnShuffleSlideShows();
+			base.OnClicked (controlId, control, actionType);
+		}
+		void OnLoopSlideShows()
+		{
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValueAsBool("pictures", "autoRepeat", cmLoopSlideShows.Selected);
+			}
+		}
+		void OnShuffleSlideShows()
+		{
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValueAsBool("pictures", "autoShuffle", cmShuffleSlideShows.Selected);
+			}
+		}
+
     #region Serialisation
     void LoadSettings()
     {
@@ -178,6 +202,10 @@ namespace MediaPortal.GUI.Settings
         m_bKenBurns=xmlreader.GetValueAsBool("pictures","kenburns", false);
         m_bRandom=xmlreader.GetValueAsBool("pictures","random", false);
         m_bXFade = (!m_bRandom & !m_bKenBurns);
+
+
+				cmShuffleSlideShows.Selected = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
+				cmLoopSlideShows.Selected = xmlreader.GetValueAsBool("pictures", "autoRepeat", false);
       }      
     }
 

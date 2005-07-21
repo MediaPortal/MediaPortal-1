@@ -90,14 +90,14 @@
 				<ondown>6</ondown>
 			</control>
 			<control>
-				<description>Slideshow</description>
+				<description>My Pictures</description>
 				<type>button</type>
 				<id>6</id>
 				<posX>280</posX>
 				<posY>267</posY>
 				<width>197</width>
 				<height>32</height>
-				<label>108</label>
+				<label>1</label>
 				<hyperlink>12</hyperlink>
 				<onleft>5</onleft>
 				<onright>5</onright>
