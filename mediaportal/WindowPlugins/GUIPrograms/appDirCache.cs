@@ -136,8 +136,11 @@ namespace ProgramsDatabase
     private void ImportDirectory(string curPath, bool mpGuiMode)
     {
       VirtualDirectory virtDir = new VirtualDirectory();
-      ArrayList dirExtensions = new ArrayList(this.ValidExtensions.Split(','));
+      ProgramUtils.SetFileExtensions(virtDir, ValidExtensions);
+/*
+ *       ArrayList dirExtensions = new ArrayList(this.ValidExtensions.Split(','));
       virtDir.SetExtensions(dirExtensions);
+*/      
 
       // read files
       ArrayList arrFiles = virtDir.GetDirectory(curPath);

@@ -97,10 +97,13 @@ namespace ProgramsDatabase
 
     int LoadDirectory(string newDirectory, GUIFacadeControl facadeView)
     {
+      ProgramUtils.SetFileExtensions(curDirectory, ValidExtensions);
+/*
       ValidExtensions = ValidExtensions.Replace(" ", "");
       ArrayList extensions = new ArrayList(this.ValidExtensions.Split(','));
       // allow spaces between extensions...
       curDirectory.SetExtensions(extensions);
+*/      
       ArrayList curFiles = curDirectory.GetDirectory(newDirectory);
 
       int totalItems = 0;

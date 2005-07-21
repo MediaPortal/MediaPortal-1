@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
 
@@ -335,18 +336,37 @@ namespace Programs.Utils
         foreach (string fileName in fileEntries)
         {
           string curExtension = System.IO.Path.GetExtension(fileName).ToLower();
-          if (curExtension.Trim() != "")
+          if (curExtension.Trim() == "")
           {
-            if (Checker.IndexOf("#" + curExtension + "#") ==  - 1)
-            {
-              Result = Result + sep + curExtension;
-              Checker = Checker + curExtension + "#";
-              sep = ",";
-            }
+            curExtension = "."; // placeholder for "files without any extension
+          }
+          if (Checker.IndexOf("#" + curExtension + "#") ==  - 1)
+          {
+            Result = Result + sep + curExtension;
+            Checker = Checker + curExtension + "#";
+            sep = ",";
           }
         }
       }
       return Result;
+    }
+
+    static public void SetFileExtensions(VirtualDirectory virtDir, string ValidExtensions)
+    {
+      ValidExtensions = ValidExtensions.Replace(" ", "");
+      ArrayList extensions = new ArrayList(ValidExtensions.Split(','));
+      // special treatment, if files WITHOUT ANY extension should be found
+      int n = extensions.IndexOf(".");
+      if (n >= 0)
+      {
+        extensions.RemoveAt(n);
+        virtDir.ShowFilesWithoutExtension = true;
+      }
+      else
+      {
+        virtDir.ShowFilesWithoutExtension = false;
+      }
+      virtDir.SetExtensions(extensions);
     }
 
     static public string NormalizedString(string strVal)
