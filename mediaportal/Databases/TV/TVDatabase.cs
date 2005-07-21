@@ -93,6 +93,7 @@ namespace MediaPortal.TV.Database
 						m_db.Execute("PRAGMA short_column_names=0;\n");
 					}
 					CreateTables();
+					UpdateFromPreviousVersion();
 				
 				} 
 				catch (Exception ex) 
@@ -102,6 +103,37 @@ namespace MediaPortal.TV.Database
 				Log.WriteFile(Log.LogType.Log,false,"tvdatabase opened");
 			}
 		}
+
+		static public void UpdateFromPreviousVersion()
+		{
+			int currentVersion=1;
+			int versionNr=0;
+			SQLiteResultSet results;
+			results = m_db.Execute("SELECT * FROM tblversion");
+			if (results.Rows.Count>=1)
+			{
+				ArrayList row=(ArrayList)results.Rows[0];
+				versionNr=Int32.Parse( (string)row[0] );
+			}
+			else 
+			{
+				m_db.Execute(String.Format("insert into tblversion (idVersion) values({0})",currentVersion));
+			}
+			if (versionNr==0)
+			{
+				m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.rgb).ToString() +" where strChannel like 'RGB'");
+				m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.svhs).ToString() +" where strChannel like 'SVHS'");
+				m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs1).ToString()+" where strChannel like 'Composite #1'");
+				m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs2).ToString()+" where strChannel like 'Composite #2'");
+
+				//add pcr pid column to mapping tables
+				m_db.Execute("ALTER TABLE tblDVBCMapping ADD COLUMN pcrPid Integer");
+				m_db.Execute("ALTER TABLE tblATSCMapping ADD COLUMN pcrPid Integer");
+				m_db.Execute("ALTER TABLE tblDVBTMapping ADD COLUMN pcrPid Integer");
+				m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
+			}
+		}
+		
 		static public bool AddTable( string strTable, string strSQL)
 		{
 			//	lock (typeof(DatabaseUtility))
@@ -154,15 +186,7 @@ namespace MediaPortal.TV.Database
 			return true;
 		}
 
-		static void UpdateFromPreviousVersion()
-		{
-			if (null==m_db) return ;
-			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.rgb).ToString() +" where strChannel like 'RGB'");
-			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.svhs).ToString() +" where strChannel like 'SVHS'");
-			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs1).ToString()+" where strChannel like 'Composite #1'");
-			m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs2).ToString()+" where strChannel like 'Composite #2'");
-		}
-  
+	
 		/// <summary>
 		/// clears the tv channel & genre cache
 		/// </summary>
@@ -239,10 +263,11 @@ namespace MediaPortal.TV.Database
 				//following table specifies which channels can be received by which card
 				AddTable("tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer);\n");
 				AddTable("tblNotifies"    ,"CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
+				AddTable("tblversion"     ,"CREATE TABLE tblversion( idVersion integer)");
 				return true;
 			}
-
 		}
+
 		//------------------------------------------------------------------------------------------------
 		//b2c2
 
@@ -2495,7 +2520,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int bandWidth, int audio1,int audio2, int audio3,int ac3Pid, string audioLanguage, string audioLanguage1, string audioLanguage2, string audioLanguage3, bool HasEITPresentFollow , bool HasEITSchedule )
+		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int bandWidth, int audio1,int audio2, int audio3,int ac3Pid, int pcrPid,string audioLanguage, string audioLanguage1, string audioLanguage2, string audioLanguage3, bool HasEITPresentFollow , bool HasEITSchedule )
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -2519,10 +2544,10 @@ namespace MediaPortal.TV.Database
 					{
 						// doesnt exists, add it
 						//ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3
-						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,HasEITPresentFollow , HasEITSchedule ,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},'{16}','{17}','{18}','{19}',{20},{21},1)",
+						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,HasEITPresentFollow , HasEITSchedule ,Visible,pcrPid) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},'{16}','{17}','{18}','{19}',{20},{21},1,{22})",
 									strChannel.Trim(),strProvider.Trim(),idChannel,frequency,bandWidth,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,
 									ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
-								(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) 
+								(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) , pcrPid
 						);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2531,10 +2556,10 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6},videoPid={7},teletextPid={8},pmtPid={9}, bandwidth={10},ac3Pid={11},audio1Pid={12},audio2Pid={13},audio3Pid={14},sAudioLang='{15}',sAudioLang1='{16}',sAudioLang2='{17}',sAudioLang3='{18}',HasEITPresentFollow={19} , HasEITSchedule={20}  where iLCN like '{21}'", 
+						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6},videoPid={7},teletextPid={8},pmtPid={9}, bandwidth={10},ac3Pid={11},audio1Pid={12},audio2Pid={13},audio3Pid={14},sAudioLang='{15}',sAudioLang1='{16}',sAudioLang2='{17}',sAudioLang3='{18}',HasEITPresentFollow={19} , HasEITSchedule={20}, pcrPid={21}  where iLCN like '{22}'", 
 							frequency,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid, pmtPid,bandWidth,
 							ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
-							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) 
+							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid 
 							,idChannel);
 						//	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2551,7 +2576,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 		
-		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int audio1,int audio2, int audio3, int ac3Pid, string audioLanguage,string audioLanguage1, string audioLanguage2, string audioLanguage3, bool HasEITPresentFollow , bool HasEITSchedule )
+		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int audio1,int audio2, int audio3, int ac3Pid, int pcrPid, string audioLanguage,string audioLanguage1, string audioLanguage2, string audioLanguage3, bool HasEITPresentFollow , bool HasEITSchedule )
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -2574,10 +2599,10 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3, HasEITPresentFollow , HasEITSchedule ,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},1)"
+						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3, HasEITPresentFollow , HasEITSchedule ,Visible,pcrPid) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},1,{24})"
 																	,strChannel.Trim(),strProvider.Trim(),idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
 																	ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
-																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) );
+																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid );
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -2585,10 +2610,10 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}',HasEITPresentFollow={21} , HasEITSchedule={22}  where iLCN like '{23}'", 
+						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}',HasEITPresentFollow={21} , HasEITSchedule={22},pcrPid={23}  where iLCN like '{24}'", 
 																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid,pmtPid,
 																	ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
-																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),
+																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid,
 																	idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2606,7 +2631,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public int MapATSCChannel(string channelName, int physicalChannel,int minorChannel,int majorChannel,string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int audio1,int audio2, int audio3, int ac3Pid, string audioLanguage,string audioLanguage1, string audioLanguage2, string audioLanguage3, bool HasEITPresentFollow , bool HasEITSchedule )
+		static public int MapATSCChannel(string channelName, int physicalChannel,int minorChannel,int majorChannel,string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int audio1,int audio2, int audio3, int ac3Pid, int pcrPid, string audioLanguage,string audioLanguage1, string audioLanguage2, string audioLanguage3, bool HasEITPresentFollow , bool HasEITSchedule )
 		{
 			lock (typeof(TVDatabase))
 			{
@@ -2629,10 +2654,10 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblATSCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,channelNumber,minorChannel,majorChannel, HasEITPresentFollow , HasEITSchedule ,Visible) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},{24},{25},{26},1)"
+						strSQL=String.Format("insert into tblATSCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,channelNumber,minorChannel,majorChannel, HasEITPresentFollow , HasEITSchedule ,Visible,pcrPid) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},{24},{25},{26},1,{27})"
 							,strChannel.Trim(),strProvider.Trim(),idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
 							ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(), physicalChannel,minorChannel,majorChannel,
-							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0));
+							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -2640,10 +2665,10 @@ namespace MediaPortal.TV.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}', channelNumber={21}, majorChannel={22}, minorChannel={23},HasEITPresentFollow={24} , HasEITSchedule={25}  where iLCN like '{26}'", 
+						strSQL=String.Format( "update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}', channelNumber={21}, majorChannel={22}, minorChannel={23},HasEITPresentFollow={24} , HasEITSchedule={25},pcrPid={26}  where iLCN like '{27}'", 
 							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid,pmtPid,
 							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(), physicalChannel,minorChannel,majorChannel,
-							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),
+							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid,
 							idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2662,7 +2687,7 @@ namespace MediaPortal.TV.Database
 		}
 
 		
-		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule) 
+		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid) 
 		{
 			HasEITPresentFollow=HasEITSchedule=false;
 			audio1=audio2=audio3=ac3Pid=-1;
@@ -2675,6 +2700,7 @@ namespace MediaPortal.TV.Database
 			ONID=-1;
 			TSID=-1;
 			SID=-1;
+			pcrPid=-1;
 			if (m_db == null) return ;
 			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
@@ -2707,6 +2733,7 @@ namespace MediaPortal.TV.Database
 					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
 					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
 					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
 					return ;
 				}
 				catch(Exception ex)
@@ -2716,7 +2743,7 @@ namespace MediaPortal.TV.Database
 				}
 			}
 		}
-		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule) 
+		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid) 
 		{
 			HasEITPresentFollow=HasEITSchedule=false;
 			audio1=audio2=audio3=ac3Pid=-1;
@@ -2731,6 +2758,7 @@ namespace MediaPortal.TV.Database
 			ONID=-1;
 			TSID=-1;
 			SID=-1;
+			pcrPid=-1;
 			if (m_db == null) return ;
 			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
@@ -2766,6 +2794,7 @@ namespace MediaPortal.TV.Database
 					
 					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
 					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
 					return ;
 				}
 				catch(Exception ex)
@@ -2776,7 +2805,7 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
-		static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out int minorChannel, out int majorChannel, out bool HasEITPresentFollow, out bool HasEITSchedule) 
+		static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid,out int videoPid, out int teletextPid, out int pmtPid, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out int minorChannel, out int majorChannel, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid) 
 		{
 			HasEITPresentFollow=HasEITSchedule=false;
 			minorChannel=-1; majorChannel=-1;
@@ -2793,6 +2822,7 @@ namespace MediaPortal.TV.Database
 			ONID=-1;
 			TSID=-1;
 			SID=-1;
+			pcrPid=-1;
 			if (m_db == null) return ;
 			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
 			lock (typeof(TVDatabase))
@@ -2830,6 +2860,7 @@ namespace MediaPortal.TV.Database
 					majorChannel=DatabaseUtility.GetAsInt(results,0,"majorChannel");
 					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
 					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
 					return ;
 				}
 				catch(Exception ex)
@@ -3375,7 +3406,7 @@ namespace MediaPortal.TV.Database
 		}
 		static public bool DoesChannelHaveAC3(TVChannel chan, bool checkDVBC, bool checkDVBT, bool checkDVBS, bool checkATSC)
 		{
-			int audio1, audio2, audio3, ac3Pid;
+			int audio1, audio2, audio3, ac3Pid,pcrPid;
 			string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
 			int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid,bandwidth;
 			bool HasEITPresentFollow ,HasEITSchedule ;
@@ -3384,12 +3415,12 @@ namespace MediaPortal.TV.Database
 
 			if (checkDVBT)
 			{
-				GetDVBTTuneRequest(chan.ID,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out bandwidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out HasEITPresentFollow ,out HasEITSchedule);
+				GetDVBTTuneRequest(chan.ID,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out bandwidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out HasEITPresentFollow ,out HasEITSchedule,out pcrPid);
 				if (ac3Pid>0) return true;
 			}
 			if (checkDVBC)
 			{
-				GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out HasEITPresentFollow ,out HasEITSchedule );
+				GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out HasEITPresentFollow ,out HasEITSchedule ,out pcrPid);
 				if (ac3Pid>0) return true;
 			}
 			if (checkDVBS)
@@ -3401,7 +3432,7 @@ namespace MediaPortal.TV.Database
 			if (checkATSC)
 			{
 				int physical,minor,major;
-				TVDatabase.GetATSCTuneRequest(chan.ID,out  physical, out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minor, out major, out HasEITPresentFollow ,out HasEITSchedule );
+				TVDatabase.GetATSCTuneRequest(chan.ID,out  physical, out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minor, out major, out HasEITPresentFollow ,out HasEITSchedule ,out pcrPid);
 				if (ac3Pid>0) return true;
 			}
 			return false;
