@@ -181,13 +181,13 @@ namespace MediaPortal.GUI.Weather
 
 					int i=0;
 					int iSelected=0;
-					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
+//					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
 					foreach (Location loc in m_locations)
 					{
 						string strCity=loc.m_strCity;
 						int pos=strCity.IndexOf(",");
-						if (pos>0) strCity=strCity.Substring(0,pos);
-							GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT,strCity);
+//						if (pos>0) strCity=strCity.Substring(0,pos);
+//							GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT,strCity);
 						if (m_strLocation==loc.m_strCode )
 						{
 							m_szLocation=loc.m_strCity;
@@ -201,7 +201,7 @@ namespace MediaPortal.GUI.Weather
 						}
 						i++;
 					}
-					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT,iSelected);
+					//GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT,iSelected);
 
 					TimeSpan ts=DateTime.Now-m_lRefreshTime;
 					if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!=String.Empty )
@@ -330,10 +330,19 @@ namespace MediaPortal.GUI.Weather
 					}
 					if (iControl == (int)Controls.CONTROL_LOCATIONSELECT)
 					{
-						foreach(Location loc in m_locations)
+						GUIDialogMenu pDlgOK	= (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+						if (pDlgOK!=null)
 						{
-							if (loc.m_strCity.StartsWith(message.Label))
+							pDlgOK.Reset();
+							pDlgOK.SetHeading(8);//my weather
+							foreach(Location loc in m_locations)
 							{
+								pDlgOK.Add(loc.m_strCity);
+							}
+							pDlgOK.DoModal(GetID);
+							if (pDlgOK.SelectedLabel>=0)
+							{
+								Location loc =(Location)m_locations[pDlgOK.SelectedLabel];
 								m_strLocation=loc.m_strCode;
 								m_szLocation=loc.m_strCity;
 								m_strSatelliteURL=loc.m_strURLSattelite;
@@ -386,12 +395,11 @@ namespace MediaPortal.GUI.Weather
 									img.FreeResources();
 									img.AllocResources();
 								}
-								break;
+								m_iDayNum = -2;
+								m_strSelectedDayName="All";
+								RefreshMe(false);	//refresh clicked so do a complete update (not an autoUpdate)
 							}
 						}
-						m_iDayNum = -2;
-						m_strSelectedDayName="All";
-						RefreshMe(false);	//refresh clicked so do a complete update (not an autoUpdate)
 					}
 					if (iControl==(int)Controls.CONTROL_BTNSWITCH)
 					{

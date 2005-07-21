@@ -80,21 +80,19 @@
     <onup>3</onup>
     <ondown>5</ondown>
   </control>
+
 	<control>
 		<description>weather location select</description>
-		<type>spincontrol</type>
+		<type>button</type>
 		<id>5</id>
-		<posX>68</posX>
-		<posY>205</posY>
-		<textcolor>ff484848</textcolor>
-		<reverse>yes</reverse>
-		<showrange>no</showrange>
+		<posX>55</posX>
+		<posY>201</posY>
+		<label>1028</label>
 		<onup>4</onup>
 		<ondown>2</ondown>
 		<onleft>5</onleft>
 		<onright>5</onright>
 	</control>
-
 	<control>
 		<description>Panel Split</description>
 		<type>image</type>

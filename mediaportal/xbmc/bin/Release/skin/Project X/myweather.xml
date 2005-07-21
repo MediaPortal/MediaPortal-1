@@ -81,14 +81,15 @@
 				<onup>3</onup>
 				<ondown>5</ondown>
 			</control>
+
+
 			<control>
 				<description>weather location select</description>
-				<type>spincontrol</type>
+				<type>button</type>
 				<id>5</id>
-				<posX>65</posX>
-				<posY>206</posY>
-				<reverse>yes</reverse>
-				<showrange>no</showrange>
+				<posX>60</posX>
+				<posY>198</posY>
+				<label>1028</label>
 				<onup>4</onup>
 				<ondown>2</ondown>
 				<onleft>5</onleft>
