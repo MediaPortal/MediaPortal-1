@@ -66,7 +66,7 @@
          <label>Recording options</label>
          <ondown>32</ondown>
          <onup>30</onup>
-         <onleft>24</onleft>
+         <onleft>25</onleft>
          <onright>31</onright>
          <hyperlink>701</hyperlink>
       </control>
@@ -78,7 +78,7 @@
          <label>Channel sorting</label>
          <ondown>32</ondown>
          <onup>31</onup>
-         <onleft>24</onleft>
+         <onleft>26</onleft>
          <onright>32</onright>
          <hyperlink>702</hyperlink>
       </control>
@@ -111,11 +111,11 @@
          <posX>56</posX>
          <posY>272</posY>
          <label>Deinterlacing</label>
-      </control>
          <ondown>28</ondown>
          <onup>26</onup>
          <onleft>27</onleft>
-         <onright>27</onright>
+         <onright>30</onright>
+      </control>
       <control>
          <type>button</type>
          <id>28</id>
@@ -125,7 +125,7 @@
          <ondown>29</ondown>
          <onup>27</onup>
          <onleft>28</onleft>
-         <onright>28</onright>
+         <onright>30</onright>
       </control>
       <control>
          <type>button</type>
@@ -136,7 +136,7 @@
          <ondown>29</ondown>
          <onup>28</onup>
          <onleft>29</onleft>
-         <onright>29</onright>
+         <onright>30</onright>
       </control>
    </controls>
 </window>

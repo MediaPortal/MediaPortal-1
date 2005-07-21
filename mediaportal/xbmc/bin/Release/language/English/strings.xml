@@ -3023,6 +3023,10 @@
 	<id>1028</id>
 	<value>City</value>
 </string>
+<string>
+	<id>1029</id>
+	<value>Subtitle Language</value>
+</string>
 
 <string>
 	<id>1440</id>

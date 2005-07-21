@@ -194,23 +194,24 @@ namespace MediaPortal.GUI.Library
 			packedTextures=new ArrayList();
 			string[] files1 =System.IO.Directory.GetFiles( String.Format(@"{0}\media",skinName),"*.png" );
 			string[] files2 =System.IO.Directory.GetFiles( @"thumbs\tv\logos","*.png" );
-			string[] files3 =System.IO.Directory.GetFiles( @"weather\64x64","*.png" );
-			string[] files4 =System.IO.Directory.GetFiles( @"weather\128x128","*.png" );
-			string[] files5 =System.IO.Directory.GetFiles( String.Format(@"{0}\media\tetris",skinName),"*.png" );
-			string [] files = new string[files1.Length+files2.Length+files3.Length+files4.Length+files5.Length];
+			//string[] files3 =System.IO.Directory.GetFiles( @"weather\64x64","*.png" );
+			//string[] files4 =System.IO.Directory.GetFiles( @"weather\128x128","*.png" );
+			//string[] files5 =System.IO.Directory.GetFiles( String.Format(@"{0}\media\tetris",skinName),"*.png" );
+			string [] files = new string[files1.Length+files2.Length/*+files3.Length+files4.Length+files5.Length*/];
 			
 			int off=0;
 			for (int i=0; i < files1.Length;++i)
 				files[off++] = files1[i];
 			for (int i=0; i < files2.Length;++i)
 				files[off++] = files2[i];
+/*
 			for (int i=0; i < files3.Length;++i)
 				files[off++] = files3[i];
 			for (int i=0; i < files4.Length;++i)
 				files[off++] = files4[i];
 			for (int i=0; i < files5.Length;++i)
 				files[off++] = files5[i];
-
+*/
 			//Determine maximum texture dimensions
 			//We limit the max resolution to 2048x2048
 			Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
@@ -233,6 +234,11 @@ namespace MediaPortal.GUI.Library
 					files[i]=files[i].ToLower();
 					if (files[i]!=String.Empty ) 
 					{
+						if (files[i].IndexOf("preview.")>=0) 
+						{
+							files[i]=String.Empty;
+							continue;
+						}
 						bool dontAdd;
 						if (AddBitmap(bigOne.root,rootImage,files[i], out dontAdd))
 						{
@@ -282,6 +288,7 @@ namespace MediaPortal.GUI.Library
 						(int)0,
 						ref info2);
 					bigOne.texture=tex;
+					Log.Write("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}",fileName, info2.Width,info2.Height, tex.LevelCount);
 				}
 				index++;
 			}

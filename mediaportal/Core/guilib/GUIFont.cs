@@ -473,11 +473,12 @@ namespace MediaPortal.GUI.Library
             (int)0,
             ref info);
 
+
           textureHeight=info.Height;
           textureWidth=info.Width;
           RestoreDeviceObjects();
-          Log.Write("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] memleft:{6}",
-              m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+          Log.Write("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",
+              m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,fontTexture.LevelCount);
           return;
         }
       }
@@ -636,7 +637,9 @@ namespace MediaPortal.GUI.Library
             
 			// Calculate the spacing between characters based on line height
 			size = g.MeasureString(" ", systemFont).ToSize();
-			x = spacingPerChar = (int) Math.Ceiling(size.Height * 0.3);
+			//x = spacingPerChar = (int) Math.Ceiling(size.Height * 0.3);
+			spacingPerChar=1;
+			x=0;
 
 			for (char c = (char)_StartCharacter; c < (char)_EndCharacter; c++)
 			{

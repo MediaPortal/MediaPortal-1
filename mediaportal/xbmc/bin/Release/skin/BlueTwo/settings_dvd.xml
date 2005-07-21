@@ -52,7 +52,7 @@
          <posX>300</posX>
          <posY>151</posY>
          <label>492</label>
-         <ondown>31</ondown>
+         <ondown>30</ondown>
          <onup>30</onup>
          <onleft>24</onleft>
          <onright>30</onright>
@@ -68,7 +68,7 @@
          <ondown>26</ondown>
          <onup>24</onup>
          <onleft>25</onleft>
-         <onright>31</onright>
+         <onright>30</onright>
       </control>
       <control>
          <type>button</type>
@@ -79,7 +79,7 @@
          <ondown>27</ondown>
          <onup>25</onup>
          <onleft>26</onleft>
-         <onright>32</onright>
+         <onright>30</onright>
       </control>
       <control>
          <type>button</type>
@@ -87,11 +87,11 @@
          <posX>56</posX>
          <posY>272</posY>
          <label>Audio Renderer</label>
-      </control>
          <ondown>28</ondown>
          <onup>26</onup>
          <onleft>27</onleft>
-         <onright>27</onright>
+         <onright>30</onright>
+      </control>
       <control>
          <type>button</type>
          <id>28</id>
@@ -101,18 +101,18 @@
          <ondown>29</ondown>
          <onup>27</onup>
          <onleft>28</onleft>
-         <onright>28</onright>
+         <onright>30</onright>
       </control>
       <control>
          <type>button</type>
          <id>29</id>
          <posX>56</posX>
          <posY>352</posY>
-         <label>287</label>
+         <label>1029</label>
          <ondown>29</ondown>
          <onup>28</onup>
          <onleft>29</onleft>
-         <onright>29</onright>
+         <onright>30</onright>
       </control>
    </controls>
 </window>
