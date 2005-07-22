@@ -434,7 +434,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 
 }
 
-HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, bool elementary_stream, bool unmapOtherPids)
+HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool unmapOtherPids)
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
@@ -475,10 +475,7 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, bool elementary_stream, bool 
 		{
 			// map new pid
 			pid = (ULONG)videoPID;
-			if (elementary_stream)
-				hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
-			else
-				hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
+				hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
 			if(FAILED(hr))
 				return 2;
 		}

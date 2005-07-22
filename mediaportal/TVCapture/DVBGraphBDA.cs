@@ -34,6 +34,14 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBGraphBDA : MediaPortal.TV.Recording.IGraph
 	{
+		enum MediaSampleContent :int 
+		{
+			TransportPacket,
+			ElementaryStream,
+			Mpeg2PSI,
+			TransportPayload
+		} ;
+
 		static byte [] MPEG1AudioFormat = 
 			{
 				0x50, 0x00,             // format type      = 0x0050=WAVE_FORMAT_MPEG
@@ -91,7 +99,7 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1,IPin pin2,int pid2);
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetupDemuxerPin(IPin pin,int pid,bool elementaryStream, bool unmapOtherPins);
+		public static extern int SetupDemuxerPin(IPin pin,int pid,int elementaryStream, bool unmapOtherPins);
 
 		#endregion
 
@@ -2749,8 +2757,8 @@ namespace MediaPortal.TV.Recording
 							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}",
 								currentTuningObject.AudioPid,currentTuningObject.AC3Pid,currentTuningObject.PCRPid);
 							SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
-							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false,true);
-							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,true,false);
+							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
+							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
 						}
 						else
 						{
@@ -4215,8 +4223,8 @@ namespace MediaPortal.TV.Recording
 				if ( currentTuningObject.PCRPid<=0 || currentTuningObject.PCRPid>=0x1fff)
 				{
 					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
-					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false,true);
-					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,true,false);
+					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
+					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
 
 					IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 					if (mpeg2Demuxer!=null)
