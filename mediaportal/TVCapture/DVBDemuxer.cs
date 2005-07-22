@@ -246,7 +246,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if(m_sectionPid!=-1)
 			{
-				Log.Write("MHWEPG: section pid already set to {0:X}",m_sectionPid);
+				Log.WriteFile(Log.LogType.EPG,"MHWEPG: section pid already set to {0:X}",m_sectionPid);
 				return; // only grab when no other grabbing was started
 			}
 			m_tableBufferD2=new byte[66000];
@@ -781,10 +781,30 @@ namespace MediaPortal.TV.Recording
 			else
 			{
 				// delete buffers and save epg-data
-				Log.Write("MHW-EPG grabbing stop");
+				Log.WriteFile(Log.LogType.EPG,"MHW-EPG grabbing stop");
 				m_secTimer.Stop();
 				m_mhwGrabbing=false;
 				m_epgClass.GetMHWBuffer(ref m_mhwChannels,ref m_mhwTitles,ref m_mhwSummaries,ref m_mhwThemes);
+				if (m_mhwChannels!=null)
+					Log.WriteFile(Log.LogType.EPG,"mhw:channels:{0}", m_mhwChannels.Count);
+				else
+					Log.WriteFile(Log.LogType.EPG,"mhw:no channels");
+
+				if (m_mhwTitles!=null)
+					Log.WriteFile(Log.LogType.EPG,"mhw:titles:{0}", m_mhwTitles.Count);
+				else
+					Log.WriteFile(Log.LogType.EPG,"mhw:no titles");
+				
+				if (m_mhwSummaries!=null)
+					Log.WriteFile(Log.LogType.EPG,"mhw:summaries:{0}", m_mhwSummaries.Count);
+				else
+					Log.WriteFile(Log.LogType.EPG,"mhw:no summaries");
+				
+				if (m_mhwThemes!=null)
+					Log.WriteFile(Log.LogType.EPG,"mhw:themes:{0}", m_mhwThemes.Count);
+				else
+					Log.WriteFile(Log.LogType.EPG,"mhw:no themes");
+
 				ProcessEPGData();
 				m_tableBufferD2=new byte[0];
 				m_tableBufferD3=new byte[0];
@@ -999,8 +1019,8 @@ namespace MediaPortal.TV.Recording
 				#region pmt handling
 				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid)
 				{
-					if (m_currentPMTVersion==-1)
-						Log.Write("grab pmt:0x{0:X} adpt:{1} pos:{2}",m_pmtPid,m_packetHeader.AdaptionFieldControl,m_bufferPositionPMT);
+					//if (m_currentPMTVersion==-1)
+					//	Log.Write("grab pmt:0x{0:X} adpt:{1} pos:{2}",m_pmtPid,m_packetHeader.AdaptionFieldControl,m_bufferPositionPMT);
 					try
 					{
 						int offset=0;
@@ -1024,8 +1044,8 @@ namespace MediaPortal.TV.Recording
 						{
 							if(header.VersionNumber!=m_currentPMTVersion)
 							{
-							  Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
-													header.VersionNumber,m_programNumber,header.TableIDExtension);
+							  //Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
+								//					header.VersionNumber,m_programNumber,header.TableIDExtension);
 								int len=header.SectionLength+3;
 								byte[] data=new byte[len];
 								Array.Copy(m_tableBufferPMT,0,data,0,len);
