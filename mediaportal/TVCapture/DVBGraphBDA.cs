@@ -2961,6 +2961,7 @@ namespace MediaPortal.TV.Recording
 			if (m_streamDemuxer!=null)
 				m_streamDemuxer.Process();
 			TimeSpan ts=DateTime.Now-updateTimer;
+			bool reTune=false;
 			if (ts.TotalMilliseconds>800)
 			{
 				if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
@@ -2978,7 +2979,7 @@ namespace MediaPortal.TV.Recording
 						ts = DateTime.Now-timeResendPid;
 						if (ts.TotalSeconds>5)
 						{
-							refreshPmtTable=true;
+							reTune=true;
 							timeResendPid=DateTime.Now;
 						}
 					}
@@ -2988,8 +2989,14 @@ namespace MediaPortal.TV.Recording
 				updateTimer=DateTime.Now;
 			}
 
-			if (!refreshPmtTable) return;
+			if (refreshPmtTable)
+			{
+				refreshPmtTable	= false;
+				SendPMT();
+				return;
+			}
 
+			if (!reTune) return;
 			Log.Write("DVBGraphBDA: no video->retune.. strength:{0} quality:{1}", SignalStrength(), SignalQuality());
 			SubmitTuneRequest(currentTuningObject);
 			if (m_streamDemuxer != null)
@@ -3287,6 +3294,7 @@ namespace MediaPortal.TV.Recording
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
+				timeResendPid=DateTime.Now;
 				refreshPmtTable	= false;
 				SendPMT();
 
@@ -3561,6 +3569,7 @@ namespace MediaPortal.TV.Recording
 				SetPids();
 				//	Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
 				timeResendPid=DateTime.Now;
+				refreshPmtTable=false;
 			}
 			catch(Exception ex)
 			{
@@ -4386,8 +4395,32 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.TransportStreamID,
 					currentTuningObject.ProgramNumber,
 					(int)Network());
-				
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
+
+				if (System.IO.File.Exists(pmtName))
+				{
+					byte[] pmt=null;
+					using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None))
+					{
+						long len=stream.Length;
+						if (len>6)
+						{
+							pmt = new byte[len];
+							stream.Read(pmt,0,(int)len);
+							stream.Close();
+							if (pmt.Length==pmtTable.Length)
+							{
+								bool isSame=true;
+								for (int i=0; i < pmt.Length;++i)
+								{
+									if (pmt[i]!=pmtTable[i]) isSame=false;
+								}
+								if (isSame) return;
+							}
+						}
+					}
+				}
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);				
 				using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None))
 				{
 					stream.Write(pmtTable,0,pmtTable.Length);
