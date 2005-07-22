@@ -242,7 +242,10 @@ namespace MediaPortal.TV.Recording
 		public void GetMHWEPG()
 		{
 			if(m_sectionPid!=-1)
+			{
+				Log.Write("MHWEPG: section pid already set to {0:X}",m_sectionPid);
 				return; // only grab when no other grabbing was started
+			}
 			m_tableBufferD2=new byte[66000];
 			m_tableBufferD3=new byte[66000];
 			m_mhwGrabbing=true;

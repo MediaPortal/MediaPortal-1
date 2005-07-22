@@ -3254,12 +3254,12 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 					if(currentTuningObject.HasEITSchedule==true)
 					{
-						//Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
 						m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
 					}
 					else
 					{
-						//Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
 						m_streamDemuxer.GetMHWEPG();
 					}
 
