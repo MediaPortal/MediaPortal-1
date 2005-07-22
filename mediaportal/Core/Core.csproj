@@ -849,6 +849,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Layouts\Composite.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Layouts\Control.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Layouts\EmptyCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -864,7 +874,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Layouts\IFrameworkElement.cs"
+                    RelPath = "Layouts\ILayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -874,12 +884,27 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Layouts\Layout.cs"
+                    RelPath = "Layouts\ILayoutComponentCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Layouts\ILayoutComposite.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Layouts\LayoutConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Layouts\Margins.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Layouts\Scrollable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
