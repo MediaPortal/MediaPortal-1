@@ -186,6 +186,9 @@ namespace MediaPortal.TV.Recording
 		// pmt
 		int m_currentPMTVersion=-1;
 		int m_programNumber=-1;
+		DateTime packetTimer=DateTime.MinValue;
+		bool     receivingPackets=false;
+		ulong    packetsReceived=0;
 		// card
 		static int m_currentDVBCard=0;
 		static NetworkType m_currentNetworkType;
@@ -360,11 +363,36 @@ namespace MediaPortal.TV.Recording
 			m_sectionTableID=-1;
 
 			//
+			packetTimer=DateTime.MinValue;
+			receivingPackets=false;
+			packetsReceived=0;
 			m_epgClass.ClearBuffer();
 			m_teleText.ClearBuffer();
-			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
-				channelName,audio, video, teletext, pmtPid,subtitle);
+			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
+				channelName,m_audioPid, m_videoPid, m_teletextPid, m_pmtPid,m_subtitlePid,m_programNumber);
 		
+		}
+		public void Process()
+		{
+			TimeSpan ts = DateTime.Now-packetTimer;
+			if (ts.TotalMilliseconds>=1000)
+			{
+				if (!receivingPackets && packetsReceived>0)
+				{
+					receivingPackets =true;
+					Log.Write("DVBDemuxer:receiving DVB packets");
+				}
+				else if (receivingPackets && packetsReceived==0)
+				{
+					receivingPackets =false;
+					Log.Write("DVBDemuxer:stopped receiving DVB packets");
+				}
+				
+				//Log.Write("DVBDemuxer: receiving:{0} #:{1}", receivingPackets,packetsReceived);
+
+				packetsReceived=0;
+				packetTimer=DateTime.Now;
+			}
 		}
 
         #endregion
@@ -837,13 +865,14 @@ namespace MediaPortal.TV.Recording
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
 				if(m_packetHeader.SyncByte!=0x47) 
-					continue;
+				{
+					return 0;
+				}
 				if(m_packetHeader.TransportError==true)
 				{
-//					if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
-//						Log.Write("pid:0x{0:X} transport error", m_sectionPid);
-					continue;// error, ignore packet
+					return 0;
 				}
+				packetsReceived++;
 /*
 				if (m_packetHeader.Pid==0)
 				{
@@ -970,8 +999,8 @@ namespace MediaPortal.TV.Recording
 				#region pmt handling
 				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid)
 				{
-//					if (m_currentPMTVersion==-1)
-//						Log.Write("grab pmt:0x{0:X} adpt:{1} pos:{2}",m_pmtPid,m_packetHeader.AdaptionFieldControl,m_bufferPositionPMT);
+					if (m_currentPMTVersion==-1)
+						Log.Write("grab pmt:0x{0:X} adpt:{1} pos:{2}",m_pmtPid,m_packetHeader.AdaptionFieldControl,m_bufferPositionPMT);
 					try
 					{
 						int offset=0;
@@ -1013,7 +1042,7 @@ namespace MediaPortal.TV.Recording
 								}
 								else 
 								{
-									//Log.Write("PMT CRC error");
+									Log.Write("PMT CRC error");
 								}
 							}
 							m_bufferPositionPMT=0;
