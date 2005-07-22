@@ -22,39 +22,43 @@ namespace MediaPortal.Layouts
 
 		#region Methods
 
-		public void Arrange(ILayoutComponent component, Rectangle finalRectangle)
+		public void Arrange(ILayoutComposite composite)
 		{
-			Rectangle margins = component.Margins;
+			Margins m = composite.Margins;
+			Point l = composite.Location;
 
-			int x = finalRectangle.X + margins.Left;
-			int y = finalRectangle.Y + margins.Top;
+			Rectangle r = new Rectangle();
 
-			foreach(ILayoutComponent childComponent in component.Children)
+			int x = l.X + m.Left;
+			int y = l.Y + m.Top;
+			int w = composite.Size.Width - m.Right;
+			int h = 0;
+
+			foreach(ILayoutComponent child in composite.Children)
 			{
-				childComponent.Arrange(new Rectangle(x, y, finalRectangle.Width - (margins.Left + margins.Width), childComponent.Size.Height));
-				
-				y += (childComponent.Size.Height + _spacing.Height);
+				child.Arrange(new Rectangle(x, y, w, h = child.Size.Height));
+				y += h + _spacing.Height;
 			}
 		}
 
-		public void Measure(ILayoutComponent component, Size availableSize)
+		public void Measure(ILayoutComposite composite, Size availableSize)
 		{
 			int w = 0;
 			int h = 0;
 
-			foreach(ILayoutComponent childComponent in component.Children)
+			foreach(ILayoutComponent child in composite.Children)
 			{
-				childComponent.Measure(availableSize);
+				child.Measure();
 
-				w = Math.Max(w, childComponent.Size.Width);
-				h = h + childComponent.Size.Height + _spacing.Height;
+				w = Math.Max(w, child.Size.Width);
+				h = h + child.Size.Height + _spacing.Height;
 			}
 
-			Rectangle margins = component.Margins;
+			Margins margins = composite.Margins;
 
 			_desiredSize = new Size(w, h);
-			_desiredSize.Width += margins.Left + margins.Width;
-			_desiredSize.Height += margins.Top + margins.Height;
+			_desiredSize.Width += margins.Width;
+			_desiredSize.Height += margins.Height;
 		}
 
 		#endregion Methods

@@ -8,27 +8,12 @@ namespace MediaPortal.Layouts
 	{
 		#region Methods
 
-		void Arrange(Rectangle finalRectangle);
-		void Measure(Size availableSize);
+		void Arrange(Rectangle rect);
+		void Measure();
 
 		#endregion Methods
 
 		#region Properties
-
-		ICollection Children
-		{
-			get;
-		}
-
-//		Constraints Constraints
-//		{
-//			get;
-//		}
-
-		Rectangle Margins
-		{
-			get;
-		}
 
 		Size Size
 		{

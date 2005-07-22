@@ -42,35 +42,48 @@ namespace MediaPortal.Layouts
 
 		#region Methods
 
-		public void Arrange(ILayoutComponent component, Rectangle finalRectangle)
+		public void Arrange(ILayoutComposite composite)
 		{
-			Point parentLocation = finalRectangle.Location;
-			Size parentSize = finalRectangle.Size;
-			Rectangle parentMargins = component.Margins;
+			Point location = composite.Location;
+			Size size = composite.Size;
+			Margins margins = composite.Margins;
 
 			int rows = _rows;
 			int cols = _cols;
 
 			if(rows > 0)
-				cols = (component.Children.Count + rows - 1) / rows;
+				cols = (composite.Children.Count + rows - 1) / rows;
 			else
-				rows = (component.Children.Count + cols - 1) / cols;
+				rows = (composite.Children.Count + cols - 1) / cols;
 
-			double w = (parentSize.Width - parentMargins.Width - (cols - 1) * _spacing.Width) / cols;
-			double h = (parentSize.Height - parentMargins.Height - (rows - 1) * _spacing.Height) / rows;
-			double y = parentLocation.Y + parentMargins.Y;
+			double w = (size.Width - margins.Width - (cols - 1) * _spacing.Width) / cols;
+			double h = (size.Height - margins.Height - (rows - 1) * _spacing.Height) / rows;
+			double y = location.Y + margins.Top;
 
 			for(int row = 0; row < rows; row++)
 			{
-				double x = parentLocation.X + parentMargins.X;
+				double x = location.X + margins.Left;
 
 				for(int col = 0; col < cols; col++)
 				{
 					int index = row * cols + col;
 
-					// urghhhhhhhhhh!!!!
-					if(index < component.Children.Count)
-						((ILayoutComponent)((GUIControlCollection)component.Children)[index]).Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
+					if(index < composite.Children.Count)
+					{
+						// ugly
+						if(composite.Children is GUIControlCollection)
+						{
+							ILayoutComponent component = ((GUIControlCollection)composite.Children)[index];
+
+							component.Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
+						}
+						else if(composite.Children is ILayoutComponentCollection)
+						{
+							ILayoutComponent component = ((ILayoutComponentCollection)composite.Children)[index];
+
+							component.Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
+						}
+					}
 
 					x += w + _spacing.Width;
 				}
@@ -79,7 +92,7 @@ namespace MediaPortal.Layouts
 			}
 		}
 
-		public void Measure(ILayoutComponent component, Size availableSize)
+		public void Measure(ILayoutComposite composite, Size availableSize)
 		{
 			int w = 0;
 			int h = 0;
@@ -88,23 +101,25 @@ namespace MediaPortal.Layouts
 			int cols = _cols;
 
 			if(rows > 0)
-				cols = (component.Children.Count + rows - 1) / rows;
+				cols = (composite.Children.Count + rows - 1) / rows;
 			else
-				rows = (component.Children.Count + cols - 1) / cols;
+				rows = (composite.Children.Count + cols - 1) / cols;
 
-			foreach(ILayoutComponent childComponent in component.Children)
+			foreach(ILayoutComponent child in composite.Children)
 			{
-				childComponent.Measure(availableSize);
+				Size s = child.Size;
 
-				w = Math.Max(w, childComponent.Size.Width);
-				h = Math.Max(h, childComponent.Size.Height);
+				child.Measure();
+
+				w = Math.Max(w, s.Width);
+				h = Math.Max(h, s.Height);
 			}
 
-			Rectangle margins = component.Margins;
+			Margins margins = composite.Margins;
 
-			_desiredSize = new Size(w * cols + _spacing.Width * (cols - 1), h * rows + _spacing.Height * (rows - 1));
-			_desiredSize.Width += margins.Left + margins.Width;
-			_desiredSize.Height += margins.Top + margins.Height;
+			_size = new Size(w * cols + _spacing.Width * (cols - 1), h * rows + _spacing.Height * (rows - 1));
+			_size.Width += margins.Width;
+			_size.Height += margins.Height;
 		}
 
 		#endregion Methods
@@ -119,7 +134,7 @@ namespace MediaPortal.Layouts
 	
 		public Size Size
 		{
-			get { return _desiredSize; }
+			get { return _size; }
 		}
 
 		public int Rows
@@ -140,7 +155,7 @@ namespace MediaPortal.Layouts
 
 		int							_cols;
 		int							_rows;
-		Size						_desiredSize = Size.Empty;
+		Size						_size = Size.Empty;
 		Size						_spacing = Size.Empty;
 
 		#endregion Fields

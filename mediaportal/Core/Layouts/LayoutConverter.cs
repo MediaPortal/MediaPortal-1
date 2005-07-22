@@ -15,7 +15,8 @@ namespace MediaPortal.Layouts
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			return new StackLayout();
+//			return new StackLayout();
+			return null;
 		}
 
 		#endregion Methods
