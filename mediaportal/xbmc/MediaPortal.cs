@@ -99,14 +99,6 @@ public class MediaPortalApp : D3DApp, IRender
 
 	private void InitializeComponent()
 	{
-		System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(ourRenderTarget));
-		// 
-		// ourRenderTarget
-		// 
-		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-		this.ClientSize = new System.Drawing.Size(720, 576);
-		this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-		this.Name = "ourRenderTarget";
 
 	}
 
