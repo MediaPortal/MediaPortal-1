@@ -3,16 +3,8 @@ using System.Drawing;
 
 namespace MediaPortal.Layouts
 {
-	public class Control : ILayoutComponent
+	public abstract class Control : ILayoutComponent
 	{
-		#region Constructors
-
-		public Control()
-		{
-		}
-
-		#endregion Constructors
-
 		#region Methods
 
 		void ILayoutComponent.Arrange(Rectangle rect)
@@ -37,24 +29,24 @@ namespace MediaPortal.Layouts
 
 		#region Properties
 
-		public Size Size
+		public abstract Size Size
 		{
-			get { return _size; }
-			set { _size = value; }
+			get;
+			set;
 		}
 
-		public Point Location
+		public abstract Point Location
 		{
-			get { return _location; }
-			set { _location = value; }
+			get;
+			set;
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		protected Size				_size = Size.Empty;
-		protected Point				_location = Point.Empty;
+//		protected Size				_size = Size.Empty;
+//		protected Point				_location = Point.Empty;
 
 		#endregion Fields
 	}

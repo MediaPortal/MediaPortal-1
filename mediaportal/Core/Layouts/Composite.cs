@@ -6,7 +6,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Layouts
 {
-	public class Composite : Scrollable, ILayoutComposite
+/*	public class Composite : Scrollable, IAddChild, ILayoutComposite
 	{
 		#region Methods
 
@@ -102,5 +102,5 @@ namespace MediaPortal.Layouts
 		Margins						_margins = Margins.Empty;
 
 		#endregion Fields
-	}
+	}*/
 }

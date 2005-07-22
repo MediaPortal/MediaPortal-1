@@ -10,12 +10,11 @@ namespace MediaPortal.Layouts
 
 		public StackLayout()
 		{
-			_spacing = new Size(0, 0);
 		}
 
 		public StackLayout(int gap)
 		{
-			_spacing = new Size(0, gap);
+			_spacing.Width = gap;
 		}
 
 		#endregion Constructors
@@ -50,15 +49,17 @@ namespace MediaPortal.Layouts
 			{
 				child.Measure();
 
-				w = Math.Max(w, child.Size.Width);
-				h = h + child.Size.Height + _spacing.Height;
+				Size s = child.Size;
+
+				w = Math.Max(w, s.Width);
+				h = h + s.Height + _spacing.Height;
 			}
 
 			Margins margins = composite.Margins;
 
-			_desiredSize = new Size(w, h);
-			_desiredSize.Width += margins.Width;
-			_desiredSize.Height += margins.Height;
+			_size = new Size(w, h);
+			_size.Width += margins.Width;
+			_size.Height += margins.Height;
 		}
 
 		#endregion Methods
@@ -67,7 +68,7 @@ namespace MediaPortal.Layouts
 
 		public Size Size
 		{
-			get { return _desiredSize; }
+			get { return _size; }
 		}
 
 		public Size Spacing
@@ -81,7 +82,7 @@ namespace MediaPortal.Layouts
 		#region Fields
 
 		Size						_spacing = Size.Empty;
-		Size						_desiredSize = Size.Empty;
+		Size						_size = Size.Empty;
 
 		#endregion Fields
 	}

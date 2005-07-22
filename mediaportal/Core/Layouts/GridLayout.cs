@@ -35,7 +35,8 @@ namespace MediaPortal.Layouts
 
 			_cols = columns;
 			_rows = rows;
-			_spacing = new Size(Math.Max(0, horizontalSpacing), Math.Max(0, verticalSpacing));
+			_spacing.Width = Math.Max(0, horizontalSpacing);
+			_spacing.Height = Math.Max(0, verticalSpacing);
 		}
 
 		#endregion Constructors
@@ -107,9 +108,9 @@ namespace MediaPortal.Layouts
 
 			foreach(ILayoutComponent child in composite.Children)
 			{
-				Size s = child.Size;
-
 				child.Measure();
+
+				Size s = child.Size;
 
 				w = Math.Max(w, s.Width);
 				h = Math.Max(h, s.Height);
