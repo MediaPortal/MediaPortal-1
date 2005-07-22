@@ -20,17 +20,7 @@ namespace MediaPortal.Layouts
 			set;
 		}
 
-		Point Location
-		{
-			get;
-		}
-
 		Margins Margins
-		{
-			get;
-		}
-
-		Size Size
 		{
 			get;
 		}

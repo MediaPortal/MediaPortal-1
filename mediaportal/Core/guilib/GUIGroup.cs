@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.Library
 			set { _layout = value; }
 		}
 
-		Point ILayoutComposite.Location
+		Point ILayoutComponent.Location
 		{
 			get { return new Point(m_dwPosX, m_dwPosY); }
 		}
@@ -299,7 +299,7 @@ namespace MediaPortal.GUI.Library
 			get { return new Margins(0, 0); }
 		}
 
-		Size ILayoutComposite.Size
+		Size ILayoutComponent.Size
 		{
 			get { return Size.Empty; }
 		}
