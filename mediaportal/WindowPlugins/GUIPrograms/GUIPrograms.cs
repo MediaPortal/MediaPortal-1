@@ -193,7 +193,7 @@ namespace WindowPlugins.GUIPrograms
       using (Xml xmlreader = new Xml("MediaPortal.xml"))
       {
         string curText = "";
-        curText = (string) xmlreader.GetValue("myprograms", "viewby");
+        curText = xmlreader.GetValue("myprograms", "viewby");
         if (curText != null)
         {
           if (curText == "list")
@@ -209,7 +209,7 @@ namespace WindowPlugins.GUIPrograms
         mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", - 1);
         mapSettings.LastViewLevel = xmlreader.GetValueAsInt("myprograms", "lastViewLevel", - 1);
         mapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
-        curText = (string) xmlreader.GetValue("myprograms", "sortasc");
+        curText = xmlreader.GetValue("myprograms", "sortasc");
         if (curText != null)
         {
           mapSettings.SortAscending = (curText.ToLower() == "yes");
@@ -219,7 +219,7 @@ namespace WindowPlugins.GUIPrograms
           mapSettings.SortAscending = true;
         }
 
-        curText = (string) xmlreader.GetValue("myprograms", "overviewvisible");
+        curText = xmlreader.GetValue("myprograms", "overviewvisible");
         if (curText != null)
         {
           mapSettings.OverviewVisible = (curText.ToLower() == "yes");
@@ -279,23 +279,14 @@ namespace WindowPlugins.GUIPrograms
       VIEW_AS_FILMSTRIP = 3,
     }
 
-    // Labels
-    [SkinControlAttribute(9)] protected GUILabelControl lblMyPrograms = null;
-    [SkinControlAttribute(10)] protected GUILabelControl lblCurApp = null;
 
     // Buttons
     [SkinControlAttribute(2)] protected GUIButtonControl btnViewAs = null;
     [SkinControlAttribute(3)] protected GUIButtonControl btnRefresh = null;
     [SkinControlAttribute(4)] protected GUIButtonControl btnViews = null;
-/*
- *     [SkinControlAttribute(4)]
-    protected GUIButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]
-    protected GUIToggleButtonControl btnSortAsc = null;
-*/
+
     //Images                     
     [SkinControlAttribute(6)] protected GUIImage screenShotImage = null;
-
 
     // FacadeView
     const int cFacadeID = 50;
@@ -612,19 +603,16 @@ namespace WindowPlugins.GUIPrograms
       {
         if ((ProgramSettings.viewHandler.CurrentView != null) && (ProgramSettings.viewHandler.MaxLevels > 0))
         {
-          lblCurApp.Label = ProgramState.View;
+          GUIPropertyManager.SetProperty("#curheader", ProgramState.View);
         }
         else
         {
-          lblCurApp.Label = lastApp.Title;
+          GUIPropertyManager.SetProperty("#curheader", lastApp.Title);
         }
-        lblMyPrograms.IsVisible = false;
-        lblCurApp.IsVisible = true;
       }
       else
       {
-        lblCurApp.IsVisible = false;
-        lblMyPrograms.IsVisible = true;
+        GUIPropertyManager.SetProperty("#curheader", GUILocalizeStrings.Get(0));
       }
 
       btnViewAs.Label = mapSettings.ViewAsText;
