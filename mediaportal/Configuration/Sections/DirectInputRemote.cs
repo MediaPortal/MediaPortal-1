@@ -266,6 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbButtonCombos.Controls.Add(this.lblComboKill);
       this.gbButtonCombos.Controls.Add(this.txtComboClose);
       this.gbButtonCombos.Controls.Add(this.txtComboKill);
+      this.gbButtonCombos.Enabled = false;
       this.gbButtonCombos.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.gbButtonCombos.Location = new System.Drawing.Point(0, 144);
       this.gbButtonCombos.Name = "gbButtonCombos";
@@ -361,6 +362,7 @@ namespace MediaPortal.Configuration.Sections
     {
       diHandler.Active = cbEnable.Checked;
       gbSettings.Enabled = cbEnable.Checked;
+      gbButtonCombos.Enabled = cbEnable.Checked;
       if (cbEnable.Checked)
       {
         SyncCombo();
