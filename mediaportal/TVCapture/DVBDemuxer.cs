@@ -362,8 +362,8 @@ namespace MediaPortal.TV.Recording
 			//
 			m_epgClass.ClearBuffer();
 			m_teleText.ClearBuffer();
-		//	Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
-		//		channelName,audio, video, teletext, pmtPid,subtitle);
+			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X}",
+				channelName,audio, video, teletext, pmtPid,subtitle);
 		
 		}
 
@@ -968,7 +968,7 @@ namespace MediaPortal.TV.Recording
 				#endregion
 
 				#region pmt handling
-				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid && OnPMTIsChanged!=null)
+				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid)
 				{
 //					if (m_currentPMTVersion==-1)
 //						Log.Write("grab pmt:0x{0:X} adpt:{1} pos:{2}",m_pmtPid,m_packetHeader.AdaptionFieldControl,m_bufferPositionPMT);
@@ -995,8 +995,8 @@ namespace MediaPortal.TV.Recording
 						{
 							if(header.VersionNumber!=m_currentPMTVersion)
 							{
-							//	Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
-							//		header.VersionNumber,m_programNumber,header.TableIDExtension);
+							  Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
+													header.VersionNumber,m_programNumber,header.TableIDExtension);
 								int len=header.SectionLength+3;
 								byte[] data=new byte[len];
 								Array.Copy(m_tableBufferPMT,0,data,0,len);
@@ -1006,7 +1006,8 @@ namespace MediaPortal.TV.Recording
 								{
 									if (m_programNumber <=0 || m_programNumber == header.TableIDExtension)
 									{
-										OnPMTIsChanged((byte[])data.Clone());
+										if (OnPMTIsChanged!=null)
+											OnPMTIsChanged((byte[])data.Clone());
 										m_currentPMTVersion=header.VersionNumber;
 									}
 								}
