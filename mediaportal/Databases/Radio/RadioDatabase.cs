@@ -46,6 +46,7 @@ namespace MediaPortal.Radio.Database
 
         }
 				CreateTables();
+				UpdateFromPreviousVersion();
 
       } 
       catch (Exception ex) 
@@ -54,6 +55,7 @@ namespace MediaPortal.Radio.Database
       }
       Log.WriteFile(Log.LogType.Log,false,"Radio database opened");
     }
+
 		static public bool AddTable( string strTable, string strSQL)
 		{
 			//	lock (typeof(DatabaseUtility))
@@ -120,12 +122,40 @@ namespace MediaPortal.Radio.Database
 			AddTable("tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer);\n");
 			AddTable("tblATSCMapping" ,"CREATE TABLE tblATSCMapping ( idChannel integer, strChannel text, strProvider text, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer, channelNumber integer, minorChannel integer, majorChannel integer);\n");
 			AddTable("tblDVBTMapping" ,"CREATE TABLE tblDVBTMapping ( idChannel integer, strChannel text, strProvider text, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, pmtPid integer);\n");
+			AddTable("tblversion"     ,"CREATE TABLE tblversion( idVersion integer)");
 
 			//following table specifies which channels can be received by which card
 			AddTable("tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer);\n");      
 
       return true;
     }
+		static public void UpdateFromPreviousVersion()
+		{
+			int currentVersion=1;
+			int versionNr=0;
+			SQLiteResultSet results;
+			results = m_db.Execute("SELECT * FROM tblversion");
+			if (results.Rows.Count>=1)
+			{
+				ArrayList row=(ArrayList)results.Rows[0];
+				versionNr=Int32.Parse( (string)row[0] );
+			}
+			else 
+			{
+				m_db.Execute(String.Format("insert into tblversion (idVersion) values({0})",currentVersion));
+			}
+			if (versionNr==0)
+			{
+
+				//add pcr pid column to mapping tables
+				m_db.Execute("ALTER TABLE tblDVBCMapping ADD COLUMN pcrPid Integer");
+				m_db.Execute("ALTER TABLE tblATSCMapping ADD COLUMN pcrPid Integer");
+				m_db.Execute("ALTER TABLE tblDVBTMapping ADD COLUMN pcrPid Integer");
+				m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
+			}
+		}
+		
+
     static public void GetStations(ref ArrayList stations)
     {
       stations.Clear();
@@ -490,7 +520,7 @@ namespace MediaPortal.Radio.Database
 			}
 		}
 
-		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int pmtPid, int bandWidth)
+		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int pmtPid, int bandWidth, int pcrPid)
 		{
 			lock (typeof(RadioDatabase))
 			{
@@ -510,8 +540,8 @@ namespace MediaPortal.Radio.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider,frequency , bandwidth , ONID , TSID , SID , audioPid,pmtPid,Visible) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},1)",
-							idChannel,strChannel,strProvider,frequency,bandWidth,ONID,TSID,SID,audioPid,pmtPid);
+						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider,frequency , bandwidth , ONID , TSID , SID , audioPid,pmtPid,Visible,pcrPid) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},1,{10})",
+							idChannel,strChannel,strProvider,frequency,bandWidth,ONID,TSID,SID,audioPid,pmtPid,pcrPid);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -519,8 +549,8 @@ namespace MediaPortal.Radio.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6}, pmtPid={7}, bandwidth={8} where idChannel ={9}", 
-							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid, bandWidth,idChannel);
+						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6}, pmtPid={7}, bandwidth={8},pcrPid={9} where idChannel ={10}", 
+							frequency,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid, bandWidth,pcrPid,idChannel);
 						//	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
@@ -536,7 +566,7 @@ namespace MediaPortal.Radio.Database
 			}
 		}
 
-		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int pmtPid)
+		static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int pmtPid, int pcrPid)
 		{
 			lock (typeof(RadioDatabase))
 			{
@@ -556,8 +586,8 @@ namespace MediaPortal.Radio.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,Visible) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},1)"
-							,idChannel,strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid);
+						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,Visible,pcrPid) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},1,{12},pcrPid)"
+							,idChannel,strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,pcrPid);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -565,8 +595,8 @@ namespace MediaPortal.Radio.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, pmtPid={10} where idChannel like '{11}'", 
-							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid,idChannel);
+						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, pmtPid={10},pcrPid={11} where idChannel like '{12}'", 
+							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid,pcrPid,idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
@@ -583,7 +613,7 @@ namespace MediaPortal.Radio.Database
 		}
 
 
-		static public int MapATSCChannel(string channelName, int physicalChannel,int minorChannel,int majorChannel,string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int pmtPid)
+		static public int MapATSCChannel(string channelName, int physicalChannel,int minorChannel,int majorChannel,string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int pmtPid, int pcrPid)
 		{
 			lock (typeof(RadioDatabase))
 			{
@@ -603,8 +633,8 @@ namespace MediaPortal.Radio.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblATSCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,channelNumber,minorChannel,majorChannel,Visible) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},1)"
-							,idChannel,strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,physicalChannel,minorChannel,majorChannel);
+						strSQL=String.Format("insert into tblATSCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,channelNumber,minorChannel,majorChannel,Visible,pcrPid) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},1,{15})"
+							,idChannel,strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,physicalChannel,minorChannel,majorChannel,pcrPid);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						int iNewID=m_db.LastInsertID();
@@ -612,8 +642,8 @@ namespace MediaPortal.Radio.Database
 					}
 					else
 					{
-						strSQL=String.Format( "update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, pmtPid={10}, channelNumber={11},minorChannel={12},majorChannel={13} where idChannel like '{14}'", 
-							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid,physicalChannel,minorChannel,majorChannel,idChannel);
+						strSQL=String.Format( "update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, pmtPid={10}, channelNumber={11},minorChannel={12},majorChannel={13},pcrPid={14} where idChannel like '{15}'", 
+							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel, strProvider,audioPid,pmtPid,physicalChannel,minorChannel,majorChannel,pcrPid,idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
 						return idChannel;
@@ -630,7 +660,7 @@ namespace MediaPortal.Radio.Database
 		}
 
 	
-		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int bandWidth) 
+		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int bandWidth,out int pcrPid) 
 		{
 			pmtPid=-1;
 			audioPid=-1;
@@ -640,6 +670,7 @@ namespace MediaPortal.Radio.Database
 			TSID=-1;
 			SID=-1;
 			bandWidth=-1;
+			pcrPid=-1;
 			if (m_db == null) return ;
 			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for idChannel:{0}", idChannel);
 			lock (typeof(RadioDatabase))
@@ -659,6 +690,7 @@ namespace MediaPortal.Radio.Database
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
 					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
 					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
 					bandWidth=Int32.Parse(DatabaseUtility.Get(results,0,"bandwidth"));
 					return ;
 				}
@@ -669,7 +701,7 @@ namespace MediaPortal.Radio.Database
 				}
 			}
 		}
-		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid) 
+		static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int pcrPid) 
 		{
 			audioPid=0;
 			strProvider="";
@@ -681,6 +713,7 @@ namespace MediaPortal.Radio.Database
 			ONID=-1;
 			TSID=-1;
 			SID=-1;
+			pcrPid=-1;
 			if (m_db == null) return ;
 			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for idChannel:{0}", idChannel);
 			lock (typeof(RadioDatabase))
@@ -703,6 +736,7 @@ namespace MediaPortal.Radio.Database
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
 					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
 					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
 					return ;
 				}
 				catch(Exception ex)
@@ -712,7 +746,7 @@ namespace MediaPortal.Radio.Database
 				}
 			}
 		}
-		static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out int minorChannel,out int majorChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid) 
+		static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out int minorChannel,out int majorChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int pcrPid) 
 		{
 			minorChannel=-1;
 			majorChannel=-1;
@@ -727,6 +761,7 @@ namespace MediaPortal.Radio.Database
 			ONID=-1;
 			TSID=-1;
 			SID=-1;
+			pcrPid=-1;
 			if (m_db == null) return ;
 			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for idChannel:{0}", idChannel);
 			lock (typeof(RadioDatabase))
@@ -749,9 +784,11 @@ namespace MediaPortal.Radio.Database
 					strProvider=DatabaseUtility.Get(results,0,"strProvider");
 					audioPid=Int32.Parse(DatabaseUtility.Get(results,0,"audioPid"));
 					pmtPid=Int32.Parse(DatabaseUtility.Get(results,0,"pmtPid"));
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
 					physicalChannel=Int32.Parse(DatabaseUtility.Get(results,0,"channelNumber"));
 					minorChannel=Int32.Parse(DatabaseUtility.Get(results,0,"minorChannel"));
 					majorChannel=Int32.Parse(DatabaseUtility.Get(results,0,"majorChannel"));
+
 					return ;
 				}
 				catch(Exception ex)
