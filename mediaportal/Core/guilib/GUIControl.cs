@@ -10,7 +10,7 @@ namespace MediaPortal.GUI.Library
 	/// <summary>
 	/// Base class for GUIControls.
 	/// </summary>
-	public abstract class GUIControl : ILayoutComponent
+	public abstract class GUIControl : MediaPortal.Layouts.Control
 	{
 		[XMLSkinElement("subtype")]			protected string  m_strSubType = "";
 		[XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;
@@ -1017,7 +1017,7 @@ namespace MediaPortal.GUI.Library
 	  
 		#region Methods
 
-		void ILayoutComponent.Arrange(Rectangle rect)
+		protected override void ArrangeCore(Rectangle rect)
 		{
 			m_dwPosX = rect.X;
 			m_dwPosY = rect.Y;
@@ -1025,7 +1025,7 @@ namespace MediaPortal.GUI.Library
 			m_dwHeight = rect.Height;
 		}
 
-		void ILayoutComponent.Measure()
+		protected override void MeasureCore()
 		{
 		}
 
@@ -1033,14 +1033,16 @@ namespace MediaPortal.GUI.Library
 
 		#region Properties
 
-		Size ILayoutComponent.Size
+		public override Size Size
 		{
 			get { return new Size(m_dwWidth, m_dwHeight); }
+			set { m_dwWidth = value.Width; m_dwHeight = value.Height; }
 		}
 
-		Point ILayoutComponent.Location
+		public override Point Location
 		{
 			get { return new Point(m_dwPosX, m_dwPosY); }
+			set { m_dwPosX = value.X; m_dwPosY = value.Y; }
 		}
 
 		#endregion Properties

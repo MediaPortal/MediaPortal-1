@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Reflection;
 using System.Xml;
+using System.Windows.Serialization;
 
 using MediaPortal.Layouts;
 
@@ -309,58 +310,58 @@ namespace MediaPortal.GUI.Library
 			GUIControl control = (GUIControl)
 				Activator.CreateInstance(typeOfControlToCreate,ctorParams);
 
-			if(control is ISupportInitialize)
-				((ISupportInitialize)control).BeginInit();
-			
-			XmlNode referenceNode = 
-				(XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
-			
-			if (referenceNode != null)
-				UpdateControlWithXmlData(control,typeOfControlToCreate, referenceNode, defines);
-			
-			UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode, defines);
-			
-			control.ScaleToScreenResolution();
-			AddSubitemsToControl(pControlNode,control);
-			control.FinalizeConstruction();
-			
-
-			if (typeOfControlToCreate == typeof(GUIGroup))
+			try
 			{
-				GUIGroup group = (GUIGroup) control;
-				XmlNodeList nodeList = pControlNode.SelectNodes("control");
-				foreach (XmlNode subControlNode in nodeList)
+				if(control is ISupportInitialize)
+					((ISupportInitialize)control).BeginInit();
+				
+				XmlNode referenceNode = 
+					(XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
+				
+				if (referenceNode != null)
+					UpdateControlWithXmlData(control,typeOfControlToCreate, referenceNode, defines);
+				
+				UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode, defines);
+				
+				control.ScaleToScreenResolution();
+				AddSubitemsToControl(pControlNode,control);
+				control.FinalizeConstruction();
+				
+				if(control is IAddChild)
 				{
-					GUIControl subControl = Create(dwParentId, subControlNode, defines);
-					
-					group.AddControl(subControl);
+					foreach(XmlNode subControlNode in pControlNode.SelectNodes("control"))
+						((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines));
 				}
-			}
 
-			if (typeOfControlToCreate == typeof (GUIFacadeControl))
-			{
-				GUIFacadeControl facade = (GUIFacadeControl) control;
-				XmlNodeList nodeList = pControlNode.SelectNodes("control");
-				foreach (XmlNode subControlNode in nodeList)
+				if (typeOfControlToCreate == typeof (GUIFacadeControl))
 				{
-					GUIControl subControl = Create(dwParentId, subControlNode, defines);
-					if (subControl is GUIListControl)
+					GUIFacadeControl facade = (GUIFacadeControl) control;
+					XmlNodeList nodeList = pControlNode.SelectNodes("control");
+					foreach (XmlNode subControlNode in nodeList)
 					{
-						GUIListControl list = subControl as GUIListControl;
-						if ( list.SubType=="album")
-							facade.AlbumListView = list;
-						else
-							facade.ListView = list;
+						GUIControl subControl = Create(dwParentId, subControlNode, defines);
+						if (subControl is GUIListControl)
+						{
+							GUIListControl list = subControl as GUIListControl;
+							if ( list.SubType=="album")
+								facade.AlbumListView = list;
+							else
+								facade.ListView = list;
+						}
+						if (subControl is GUIThumbnailPanel)
+							facade.ThumbnailView = subControl as GUIThumbnailPanel;
+						if (subControl is GUIFilmstripControl)
+							facade.FilmstripView = subControl as GUIFilmstripControl;
 					}
-					if (subControl is GUIThumbnailPanel)
-						facade.ThumbnailView = subControl as GUIThumbnailPanel;
-					if (subControl is GUIFilmstripControl)
-						facade.FilmstripView = subControl as GUIFilmstripControl;
 				}
-			}
 
-			if(control is ISupportInitialize)
-				((ISupportInitialize)control).EndInit();
+				if(control is ISupportInitialize)
+					((ISupportInitialize)control).EndInit();
+			}
+			catch(Exception e)
+			{
+				Log.Write("Buffer: {0}", e.Message);
+			}
 
 			return control;
 		}
@@ -501,7 +502,7 @@ namespace MediaPortal.GUI.Library
 		static object ParseLayout(string valueText)
 		{
 			int openingBracket = valueText.IndexOf('(');
-			int[] valueParameters = new int[0];
+			int[] valueParameters = null;
 
 			string layoutClass = string.Empty;
 
@@ -513,16 +514,11 @@ namespace MediaPortal.GUI.Library
 			else
 			{
 				layoutClass = valueText;
+				valueParameters = new int[0];
 			}
 
 			if(layoutClass.ToLower() == "gridlayout")
 			{
-				if(valueParameters.Length == 0)
-					return null;
-
-				if(valueParameters.Length == 0)
-					return new GridLayout();
-
 				if(valueParameters.Length >= 4)
 					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3]);
 
@@ -531,6 +527,9 @@ namespace MediaPortal.GUI.Library
 
 				if(valueParameters.Length >= 1)
 					return new GridLayout(valueParameters[0]);
+
+				if(valueParameters.Length == 0)
+					return new GridLayout();
 
 				return null;
 			}
@@ -551,7 +550,7 @@ namespace MediaPortal.GUI.Library
 
 		static int[] ParseParameters(string valueText)
 		{
-			if(valueText.StartsWith("(") == false || valueText.EndsWith("") == false)
+			if(!(valueText.StartsWith("(") && valueText.EndsWith(")")))
 				return new int[0];
 
 			valueText = valueText.Substring(1, valueText.Length - 2);
