@@ -8,17 +8,6 @@
 	<controls>
 		<import>common.window.xml</import>
 		<control>
-			<description>Game Title label</description>
-			<type>label</type>
-			<id>10</id>
-			<posX>250</posX>
-			<posY>70</posY>
-			<label>-</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>White</textcolor>
-		</control>
-		<control>
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
