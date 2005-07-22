@@ -4,7 +4,7 @@
 	<allowoverlay>no</allowoverlay>
 	<define>#header.image:television_logo.png</define>
 	<define>#header.label:605</define>
-	<define>#header.hover</define>
+	<define>#header.hover:hover_my tv.png</define>
 	<controls>
 		<include>common.window.xml</include>
 		<control>
