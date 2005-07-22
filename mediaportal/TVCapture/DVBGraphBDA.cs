@@ -4395,7 +4395,7 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.TransportStreamID,
 					currentTuningObject.ProgramNumber,
 					(int)Network());
-
+#if COMPARE_PMT
 				if (System.IO.File.Exists(pmtName))
 				{
 					byte[] pmt=null;
@@ -4419,7 +4419,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
-
+#endif
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);				
 				using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None))
 				{
