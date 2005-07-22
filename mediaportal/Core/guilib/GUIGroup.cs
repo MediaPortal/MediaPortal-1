@@ -12,7 +12,7 @@ namespace MediaPortal.GUI.Library
 	/// A group can hold 1 or more controls
 	/// and apply an animation to the entire group
 	/// </summary>
-	public class GUIGroup : GUIControl, ILayoutComponent, ISupportInitialize
+	public class GUIGroup : GUIControl, ILayoutComposite, ISupportInitialize
 	{
 		#region Constructors
 
@@ -245,24 +245,24 @@ namespace MediaPortal.GUI.Library
 		
 		#region Methods
 
-		void ILayoutComponent.Arrange(Rectangle finalRectangle)
+		void ILayoutComponent.Arrange(Rectangle rect)
 		{
 			if(_layout == null)
 				return;
 
-			_layout.Arrange(this, finalRectangle);
+			_layout.Arrange(this);
 		}
 
 		void ISupportInitialize.BeginInit()
 		{
 		}
 
-		void ILayoutComponent.Measure(Size availableSize)
+		void ILayoutComponent.Measure()
 		{
 			if(_layout == null)
 				return;
 
-			_layout.Measure(this, availableSize);
+			_layout.Measure(this, new Size(400, 400));
 		}
 
 		void ISupportInitialize.EndInit()
@@ -270,17 +270,15 @@ namespace MediaPortal.GUI.Library
 			if(_layout == null)
 				return;
 
-			Rectangle rect = new Rectangle(m_dwPosX, m_dwPosY, 400, 400);
-
-			_layout.Measure(this, rect.Size);
-			_layout.Arrange(this, rect);
+			_layout.Measure(this, new Size(400, 400));
+			_layout.Arrange(this);
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		ICollection ILayoutComponent.Children
+		ICollection ILayoutComposite.Children
 		{
 			get { return _controlCollection; }
 		}
@@ -291,17 +289,17 @@ namespace MediaPortal.GUI.Library
 			set { _layout = value; }
 		}
 
-		Point ILayoutComponent.Location
+		Point ILayoutComposite.Location
 		{
 			get { return new Point(m_dwPosX, m_dwPosY); }
 		}
 
-		Rectangle ILayoutComponent.Margins
+		Margins ILayoutComposite.Margins
 		{
-			get { return Rectangle.Empty; }
+			get { return new Margins(0, 0); }
 		}
 
-		Size ILayoutComponent.Size
+		Size ILayoutComposite.Size
 		{
 			get { return Size.Empty; }
 		}

@@ -1017,35 +1017,25 @@ namespace MediaPortal.GUI.Library
 	  
 		#region Methods
 
-		void ILayoutComponent.Measure(Size availableSize)
+		void ILayoutComponent.Arrange(Rectangle rect)
 		{
+			m_dwPosX = rect.X;
+			m_dwPosY = rect.Y;
+			m_dwWidth = rect.Width;
+			m_dwHeight = rect.Height;
 		}
 
-		void ILayoutComponent.Arrange(Rectangle finalRectangle)
+		void ILayoutComponent.Measure()
 		{
-			m_dwPosX = finalRectangle.X;
-			m_dwPosY = finalRectangle.Y;
-			m_dwWidth = finalRectangle.Width;
-			m_dwHeight = finalRectangle.Height;
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		ICollection ILayoutComponent.Children
-		{
-			get { return EmptyCollection.Instance; }
-		}
-
 		Size ILayoutComponent.Size
 		{
 			get { return new Size(m_dwWidth, m_dwHeight); }
-		}
-
-		Rectangle ILayoutComponent.Margins
-		{
-			get { return Rectangle.Empty; }
 		}
 
 		Point ILayoutComponent.Location
