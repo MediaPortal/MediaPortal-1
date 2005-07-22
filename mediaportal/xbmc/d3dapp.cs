@@ -2325,6 +2325,7 @@ namespace MediaPortal
 									}
 								}
 								FrameMove();
+								if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) counter=0;
 								if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
 								if (counter==0)
 								{
