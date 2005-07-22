@@ -2,64 +2,11 @@
 	<id>501</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:134</define>
+	<define>#header.image:music_logo.png</define>
+	<define>#header.hover:hover_my music.png</define>
 	<controls>
-		<control>
-			<description>BG</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>720</width>
-			<height>576</height> 
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
-			<texture>hover_my music.png</texture>
-		</control>		
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>music_logo.png</texture>
-		</control>
-		<control>
-			<description>Shares text label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
-			<label>134</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<description>Number of Files Label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>260</posX>
-			<posY>530</posY>
-			<label>#itemcount</label>
-			<align>left</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<description>Selected item Label</description>
-			<type>fadelabel</type>
-			<id>1</id>
-			<posX>660</posX>
-			<posY>70</posY>
-			<width>400</width>
-			<label>#selecteditem</label>
-			<font>font13</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
+		<import>common.window.xml</import>
 		<control>
 			<type>group</type>
 			<description>group element</description>
@@ -150,42 +97,6 @@
 			    <ondown>2</ondown>
 		    </control>
 		</control>
-		<control>
-			<type>group</type>
-			<description>group element</description>
-			<animation>FlyInFromTop</animation>
-			<control>
-				<description>composite control consisting of a list control and a thumbnail panel</description>
-			    <type>facadeview</type>
-			    <id>50</id>			
-			        <control>
-				        <description>listcontrol</description>
-				        <type>listcontrol</type>
-				        <id>50</id>
-				        <onleft>2</onleft>
-				        <onright>2</onright>
-				        <onup>2</onup>
-				        <ondown>2</ondown>
-			        </control>
-			        <control>
-				        <description>Thumbnail Panel</description>
-				        <type>thumbnailpanel</type>
-				        <id>50</id>
-				        <onleft>2</onleft>
-				        <onright>2</onright>
-				        <onup>2</onup>
-				        <ondown>2</ondown>
-			        </control>
-			        <control>
-				        <description>Filmstrip view</description>
-				        <type>filmstrip</type>
-				        <id>50</id>
-				        <onleft>2</onleft>
-				        <onright>2</onright>
-				        <onup>2</onup>
-				        <ondown>2</ondown>
-			        </control>
-		    </control>	
-		</control>
+		<import>common.facade.xml</import>
 	</controls>
 </window>
