@@ -142,13 +142,44 @@ namespace MediaPortal.GUI.Library
 							case "colordiffuse":
 								if(valueText.Length > 0)
 								{
-									// not very pretty but we can improve on this by requesting that RGB or ARGB
-									// colors are specified with '#'
-									if(valueText[0] != '#' && valueText.Length == 6 || valueText.Length == 8)
-										valueText = '#' + valueText;
+									bool isNamedColor = false;
+
+									foreach(char ch in valueText)
+									{
+										if(ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f')
+											continue;
+
+										isNamedColor = true;
+										break;
+									}
+
+									if(isNamedColor)
+									{
+										int index = valueText.IndexOf(':');
+
+										if(index != -1)
+										{
+											Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+											int alpha = 255;
+
+											if(index < valueText.Length)
+											{
+												if(valueText[index + 1] == '#')
+													alpha = int.Parse(valueText.Substring(index + 2), NumberStyles.HexNumber);
+												else
+													alpha = int.Parse(valueText.Substring(index + 1));
+											}
+
+											return Color.FromArgb(alpha, color).ToArgb();
+										}
+
+										return Color.FromName(valueText).ToArgb();
+									}
+
+									return ColorTranslator.FromHtml('#' + valueText).ToArgb();
 								}
 
-								return ColorTranslator.FromHtml(valueText).ToArgb();
+								break;
 						}
 					}
 
