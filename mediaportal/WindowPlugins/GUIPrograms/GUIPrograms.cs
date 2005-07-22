@@ -298,7 +298,7 @@ namespace WindowPlugins.GUIPrograms
 
 
     // FacadeView
-    const int cFacadeID = 7;
+    const int cFacadeID = 50;
     [SkinControlAttribute(cFacadeID)] protected GUIFacadeControl facadeView = null;
 
     #endregion 
