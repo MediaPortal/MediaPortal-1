@@ -434,7 +434,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 
 }
 
-HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, bool elementary_stream)
+HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, bool elementary_stream, bool unmapOtherPids)
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
@@ -452,22 +452,25 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, bool elementary_stream)
 		if(FAILED(hr) || pMap==NULL)
 			return 1;
 		// 
-		hr=pMap->EnumPIDMap(&pPidEnum);
-		if(FAILED(hr) || pPidEnum==NULL)
-			return 5;
-		// enum and unmap the pids
-		maxCounter=20;
-		while(pPidEnum->Next(1,&pm,&count)== S_OK)
+		if (unmapOtherPids)
 		{
-			maxCounter--;
-			if (maxCounter<0) break;
-			if (count !=1) break;
-			umPid=pm.ulPID;
-			hr=pMap->UnmapPID(1,&umPid);
-			if(FAILED(hr))
-				return 6;
+			hr=pMap->EnumPIDMap(&pPidEnum);
+			if(FAILED(hr) || pPidEnum==NULL)
+				return 5;
+			// enum and unmap the pids
+			maxCounter=20;
+			while(pPidEnum->Next(1,&pm,&count)== S_OK)
+			{
+				maxCounter--;
+				if (maxCounter<0) break;
+				if (count !=1) break;
+				umPid=pm.ulPID;
+				hr=pMap->UnmapPID(1,&umPid);
+				if(FAILED(hr))
+					return 6;
+			}
+			pPidEnum->Release();
 		}
-		pPidEnum->Release();
 		if (videoPID>0)
 		{
 			// map new pid

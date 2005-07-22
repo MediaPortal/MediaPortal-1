@@ -91,7 +91,7 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1,IPin pin2,int pid2);
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetupDemuxerPin(IPin pin,int pid,bool elementaryStream);
+		public static extern int SetupDemuxerPin(IPin pin,int pid,bool elementaryStream, bool unmapOtherPins);
 
 		#endregion
 
@@ -2744,12 +2744,13 @@ namespace MediaPortal.TV.Recording
 					currentTuningObject.PCRPid=info.pcr_pid;
 					try
 					{
-						if (m_graphState==State.Radio && currentTuningObject.PCRPid<=0)
+						if (m_graphState==State.Radio && (currentTuningObject.PCRPid<=0||currentTuningObject.PCRPid>=0x1fff))
 						{
-							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X}",
-								currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}",
+								currentTuningObject.AudioPid,currentTuningObject.AC3Pid,currentTuningObject.PCRPid);
 							SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
-							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
+							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false,true);
+							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,true,false);
 						}
 						else
 						{
@@ -4211,10 +4212,11 @@ namespace MediaPortal.TV.Recording
 
 				TuneRadioChannel(station);
 
-				if ( currentTuningObject.PCRPid<=0)
+				if ( currentTuningObject.PCRPid<=0 || currentTuningObject.PCRPid>=0x1fff)
 				{
 					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
-					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false);
+					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,false,true);
+					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,true,false);
 
 					IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 					if (mpeg2Demuxer!=null)
