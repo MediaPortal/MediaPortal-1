@@ -42,7 +42,7 @@
 		<id>9</id>
 		<posX>280</posX>
 		<posY>50</posY>
-		<label>0</label>
+		<label>#curheader</label>
 		<font>font10</font>
 	</control>
 	<control>

@@ -25,10 +25,10 @@
 		<control>
 			<description>My programs text label</description>
 			<type>label</type>
-			<id>9</id>
+			<id>1</id>
 			<posX>250</posX>
 			<posY>70</posY>
-			<label>0</label>
+			<label>#curheader</label>
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
