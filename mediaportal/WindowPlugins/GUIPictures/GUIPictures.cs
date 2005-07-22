@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Pictures
 		[SkinControlAttribute(7)]		protected GUIButtonControl btnSlideShowRecursive=null;
 		[SkinControlAttribute(8)]		protected GUIButtonControl btnCreateThumbs=null;
 		[SkinControlAttribute(9)]		protected GUIButtonControl btnRotate=null;
-		[SkinControlAttribute(10)]		protected GUIFacadeControl facadeView=null;
+		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView=null;
 
 
     int               selectedItemIndex=-1;
