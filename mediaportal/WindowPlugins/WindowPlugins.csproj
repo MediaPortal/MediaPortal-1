@@ -244,6 +244,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "mp.ico"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "GUIAlarm\Alarm.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

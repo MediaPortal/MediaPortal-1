@@ -234,10 +234,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "MP4\App.ico"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "MP4\MainClass.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

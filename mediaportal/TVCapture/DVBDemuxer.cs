@@ -721,7 +721,7 @@ namespace MediaPortal.TV.Recording
 				m_tableSections.Clear();
 			}
 			DVBEPG		tmpEPGClass=new DVBEPG(m_currentDVBCard,m_currentNetworkType);
-			Log.WriteFile(Log.LogType.EPG,"started thread {0}",System.Threading.Thread.CurrentThread.Name);
+			Log.WriteFile(Log.LogType.EPG,"mhw started thread {0}",System.Threading.Thread.CurrentThread.Name);
 			int count=0;
 			if(dataList!=null)
 			{
@@ -739,7 +739,7 @@ namespace MediaPortal.TV.Recording
 					m_mhwSummaries.Clear();
 				}
 			}
-			Log.WriteFile(Log.LogType.EPG,"epg ready. added {0} events to database! Next grab at {1}",count, epgRegrabTime.ToString() );
+			Log.WriteFile(Log.LogType.EPG,"mhwepg ready. added {0} events to database! Next grab at {1}",count, epgRegrabTime.ToString() );
 		}
 
 		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

@@ -96,6 +96,20 @@ public class MediaPortalApp : D3DApp, IRender
 	public static extern int EnumWindows(IECallBack x, int y);
 	[DllImport("User32.Dll")]
 	public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
+
+	private void InitializeComponent()
+	{
+		System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(ourRenderTarget));
+		// 
+		// ourRenderTarget
+		// 
+		this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+		this.ClientSize = new System.Drawing.Size(720, 576);
+		this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+		this.Name = "ourRenderTarget";
+
+	}
+
 	[DllImport("User32.Dll")]
 	public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
 	#endregion

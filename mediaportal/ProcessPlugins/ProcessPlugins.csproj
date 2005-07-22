@@ -179,6 +179,10 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "mp.ico"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "CallerId\ISDN\CallerIdISDN.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

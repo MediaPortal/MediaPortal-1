@@ -228,6 +228,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "D3DSettingsForm.resx"
+                    DependentUpon = "D3DSettingsForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "d3dutil.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -244,6 +249,14 @@
                 />
                 <File
                     RelPath = "mp.ico"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "mplogo.gif"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "mplogo.png"
                     BuildAction = "Content"
                 />
                 <File
