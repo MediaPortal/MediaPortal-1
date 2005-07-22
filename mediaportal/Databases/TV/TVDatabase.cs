@@ -1055,8 +1055,8 @@ namespace MediaPortal.TV.Database
 					if (results2.Rows.Count> 0) //and delete them
 						for (int i=0; i < results2.Rows.Count;++i)
 						{
-							long iStart=Int64.Parse(DatabaseUtility.Get(results2,i,"iStartTime"));
-							long iEnd=Int64.Parse(DatabaseUtility.Get(results2,i,"iEndTime"));
+							long iStart=DatabaseUtility.GetAsInt64(results2,i,"iStartTime");
+							long iEnd=DatabaseUtility.GetAsInt64(results2,i,"iEndTime");
 							//							Log.WriteFile(Log.LogType.Log,true,"Removing Program:{0} {1} {2}", DatabaseUtility.Get(results2,i,"strTitle"),iStart.ToString(),iEnd.ToString());
 							strSQL=String.Format("DELETE FROM tblPrograms WHERE idChannel={0} AND iStartTime={1} AND iEndTime={2}",
 								iChannelId,iStart,iEnd);
@@ -1109,7 +1109,7 @@ namespace MediaPortal.TV.Database
 						decimal dFreq=0;
 						try
 						{
-							dFreq = (decimal)Int64.Parse(DatabaseUtility.Get(results,i,2));
+							dFreq = (decimal)DatabaseUtility.GetAsInt64(results,i,2);
 
 						}
 						catch(Exception)
@@ -1191,7 +1191,7 @@ namespace MediaPortal.TV.Database
 						decimal dFreq=0;
 						try
 						{
-							dFreq = (decimal)Int64.Parse(DatabaseUtility.Get(results,i,"frequency"));
+							dFreq = (decimal)DatabaseUtility.GetAsInt64(results,i,"frequency");
 
 						}
 						catch(Exception)
@@ -1386,8 +1386,8 @@ namespace MediaPortal.TV.Database
 					long lTimeStart=Utils.datetolong(DateTime.Now);
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iEndTime");
 						bool bAdd=false;
 						if (iEnd >= lTimeStart) bAdd=true;
 						if (bAdd)
@@ -1451,8 +1451,8 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count== 0) return false;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,15));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,16));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,15);
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,16);
 						bool bAdd=false;
 						if (iEnd >=iStartTime && iEnd <= iEndTime) bAdd=true;
 						if (iStart >=iStartTime && iStart <= iEndTime) bAdd=true;
@@ -1511,8 +1511,8 @@ namespace MediaPortal.TV.Database
 														
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iEndTime");
 						bool bAdd=false;
 						if (iEnd >=iStartTime && iEnd <= iEndTime) bAdd=true;
 						if (iStart >=iStartTime && iStart <= iEndTime) bAdd=true;
@@ -1560,8 +1560,8 @@ namespace MediaPortal.TV.Database
 														
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iEndTime");
 						bool bAdd=false;
 						if (iEnd >=iStartTime && iEnd <= iEndTime) bAdd=true;
 						if (iStart >=iStartTime && iStart <= iEndTime) bAdd=true;
@@ -1701,8 +1701,8 @@ namespace MediaPortal.TV.Database
 					prog=new TVProgram();
 			
 					
-					long iStart=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iStartTime"));
-					long iEnd=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iEndTime"));
+					long iStart=DatabaseUtility.GetAsInt64(results,0,"tblPrograms.iStartTime");
+					long iEnd=DatabaseUtility.GetAsInt64(results,0,"tblPrograms.iEndTime");
 					prog.Channel=DatabaseUtility.Get(results,0,"channel.strChannel");
 					prog.Start=iStart;
 					prog.End=iEnd;
@@ -1976,8 +1976,8 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count== 0) return false;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"recording.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"recording.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,"recording.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,"recording.iEndTime");
 						bool bAdd=false;
 						if (iEnd >=iStartTime && iEnd <= iEndTime) bAdd=true;
 						if (iStart >=iStartTime && iStart <= iEndTime) bAdd=true;
@@ -1988,7 +1988,7 @@ namespace MediaPortal.TV.Database
 							rec.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
 							rec.Start=iStart;
 							rec.End=iEnd;
-							rec.Canceled = Int64.Parse(DatabaseUtility.Get(results,i,"recording.iCancelTime"));
+							rec.Canceled = DatabaseUtility.GetAsInt64(results,i,"recording.iCancelTime");
 							rec.ID=DatabaseUtility.GetAsInt(results,i,"recording.idRecording");
 							rec.Title=DatabaseUtility.Get(results,i,"recording.strProgram");
 							rec.RecType=(TVRecording.RecordingType)DatabaseUtility.GetAsInt(results,i,"recording.iRecordingType");
@@ -2029,13 +2029,13 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count== 0) return false;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"recording.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"recording.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,"recording.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,"recording.iEndTime");
 						TVRecording rec=new TVRecording ();
 						rec.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
 						rec.Start=iStart;
 						rec.End=iEnd;
-						rec.Canceled = Int64.Parse(DatabaseUtility.Get(results,i,"recording.iCancelTime"));
+						rec.Canceled = DatabaseUtility.GetAsInt64(results,i,"recording.iCancelTime");
 						rec.ID=DatabaseUtility.GetAsInt(results,i,"recording.idRecording");
 						rec.Title=DatabaseUtility.Get(results,i,"recording.strProgram");
 						rec.RecType=(TVRecording.RecordingType)DatabaseUtility.GetAsInt(results,i,"recording.iRecordingType");
@@ -2223,8 +2223,8 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count== 0) return false;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"recorded.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"recorded.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,"recorded.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,"recorded.iEndTime");
 						TVRecorded rec=new TVRecorded ();
 						rec.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
 						rec.Start=iStart;
@@ -2269,8 +2269,8 @@ namespace MediaPortal.TV.Database
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
-					long iStart=Int64.Parse(DatabaseUtility.Get(results,0,"recorded.iStartTime"));
-					long iEnd=Int64.Parse(DatabaseUtility.Get(results,0,"recorded.iEndTime"));
+					long iStart=DatabaseUtility.GetAsInt64(results,0,"recorded.iStartTime");
+					long iEnd=DatabaseUtility.GetAsInt64(results,0,"recorded.iEndTime");
            
 					recording.Channel=DatabaseUtility.Get(results,0,"channel.strChannel");
 					recording.Start=iStart;
@@ -2400,8 +2400,8 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count== 0) return ;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iEndTime");
 						TVProgram prog=new TVProgram();
 						prog.Start=iStart;
 						prog.End=iEnd;
@@ -3265,7 +3265,7 @@ namespace MediaPortal.TV.Database
 						decimal dFreq=0;
 						try
 						{
-							dFreq = (decimal)Int64.Parse(DatabaseUtility.Get(results,i,"channel.frequency"));
+							dFreq = (decimal)DatabaseUtility.GetAsInt64(results,i,"channel.frequency");
 
 						}
 						catch(Exception)
@@ -3347,7 +3347,7 @@ namespace MediaPortal.TV.Database
 					results=m_db.Execute(strSQL);
 					for (int x=0; x < results.Rows.Count;++x)
 					{
-						long datetime=Int64.Parse(DatabaseUtility.Get(results,x,"iCancelTime"));
+						long datetime=DatabaseUtility.GetAsInt64(results,x,"iCancelTime");
 						rec.CanceledSeries.Add(datetime);
 					}
 				} 
@@ -3506,8 +3506,8 @@ namespace MediaPortal.TV.Database
 						if (complete)
 						{
 							notify.Program.Channel=DatabaseUtility.Get(results,i,"channel.strChannel");
-							long iStart=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iStartTime"));
-							long iEnd=Int64.Parse(DatabaseUtility.Get(results,i,"tblPrograms.iEndTime"));
+							long iStart=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iStartTime");
+							long iEnd=DatabaseUtility.GetAsInt64(results,i,"tblPrograms.iEndTime");
 							notify.Program.Start=iStart;
 							notify.Program.End=iEnd;
 							notify.Program.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
@@ -3558,8 +3558,8 @@ namespace MediaPortal.TV.Database
 						notify.Program = new TVProgram();
 						TVProgram prog=new TVProgram();
 						notify.Program.Channel=DatabaseUtility.Get(results,0,"channel.strChannel");
-						long iStart=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iStartTime"));
-						long iEnd=Int64.Parse(DatabaseUtility.Get(results,0,"tblPrograms.iEndTime"));
+						long iStart=DatabaseUtility.GetAsInt64(results,0,"tblPrograms.iStartTime");
+						long iEnd=DatabaseUtility.GetAsInt64(results,0,"tblPrograms.iEndTime");
 						notify.Program.Start=iStart;
 						notify.Program.End=iEnd;
 						notify.Program.Genre=DatabaseUtility.Get(results,0,"genre.strGenre");
