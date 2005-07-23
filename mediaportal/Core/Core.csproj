@@ -859,6 +859,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Layouts\Dock.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Layouts\DockLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Layouts\EmptyCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
