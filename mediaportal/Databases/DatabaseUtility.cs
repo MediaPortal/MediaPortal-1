@@ -175,21 +175,6 @@ namespace MediaPortal.Database
 			}
 			return returnValue;
 		}
-		static public long GetAsInt64(SQLiteResultSet results, int iRecord, int iColumn)
-		{
-			string result=Get(results, iRecord, iColumn);
-			long returnValue=-1;
-			try
-			{
-				returnValue=Int64.Parse(result);
-			}
-			catch(Exception)
-			{
-				Log.Write("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64",
-					iColumn,iRecord,result);
-			}
-			return returnValue;
-		}
 		static public string Get(SQLiteResultSet results, int iRecord, string strColum)
 		{
 			if (null == results) return String.Empty;
