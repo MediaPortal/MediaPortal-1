@@ -92,7 +92,6 @@ namespace MediaPortal.TV.Database
 						m_db.Execute("PRAGMA full_column_names=0;\n");
 						m_db.Execute("PRAGMA short_column_names=0;\n");
 					}
-					CreateTables();
 					UpdateFromPreviousVersion();
 				
 				} 
@@ -106,7 +105,7 @@ namespace MediaPortal.TV.Database
 
 		static public void UpdateFromPreviousVersion()
 		{
-			int currentVersion=1;
+			int currentVersion=2;
 			int versionNr=0;
 			SQLiteResultSet results;
 			results = m_db.Execute("SELECT * FROM tblversion");
@@ -119,6 +118,13 @@ namespace MediaPortal.TV.Database
 			{
 				m_db.Execute(String.Format("insert into tblversion (idVersion) values({0})",currentVersion));
 			}
+			if (versionNr<=2)
+			{
+				//version 1->2 : changed start/ending times from text->int in version 2
+				m_db.Execute("drop table tblPrograms");
+			}
+			CreateTables();
+
 			if (versionNr==0)
 			{
 				m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.rgb).ToString() +" where strChannel like 'RGB'");
@@ -126,12 +132,12 @@ namespace MediaPortal.TV.Database
 				m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs1).ToString()+" where strChannel like 'Composite #1'");
 				m_db.Execute("update channel set iChannelNr="+((int)ExternalInputs.cvbs2).ToString()+" where strChannel like 'Composite #2'");
 
-				//add pcr pid column to mapping tables
+				//version 0->1: add pcr pid column to mapping tables
 				m_db.Execute("ALTER TABLE tblDVBCMapping ADD COLUMN pcrPid Integer");
 				m_db.Execute("ALTER TABLE tblATSCMapping ADD COLUMN pcrPid Integer");
 				m_db.Execute("ALTER TABLE tblDVBTMapping ADD COLUMN pcrPid Integer");
-				m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
 			}
+			m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
 		}
 		
 		static public bool AddTable( string strTable, string strSQL)
@@ -230,7 +236,7 @@ namespace MediaPortal.TV.Database
 					catch(Exception){} 
 				}
         
-        if ( AddTable("tblPrograms","CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime text, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text);\n"))
+        if ( AddTable("tblPrograms","CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime integer, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text);\n"))
 				{
 					try
 					{
@@ -248,10 +254,10 @@ namespace MediaPortal.TV.Database
 					catch(Exception){} 
 				}
 
-				AddTable("recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime text, iEndTime text, iCancelTime text, bContentRecording integer, priority integer, quality integer, episodesToKeep integer);\n");
+				AddTable("recording","CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime integer, iEndTime integer, iCancelTime integer, bContentRecording integer, priority integer, quality integer, episodesToKeep integer);\n");
 				AddTable("canceledseries","CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text);\n");
 
-				AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime text, iEndTime text, strDescription text, strFileName text, iPlayed integer);\n");
+				AddTable("recorded","CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime integer, iEndTime integer, strDescription text, strFileName text, iPlayed integer);\n");
 		
 				AddTable("tblDVBSMapping" ,"CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer);\n");
 				AddTable("tblDVBCMapping" ,"CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer);\n");
@@ -984,7 +990,7 @@ namespace MediaPortal.TV.Database
 					int iChannelId=GetChannelId(prog.Channel);
 					if (iChannelId<0) return -1;
           
-					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat) values ( NULL, {0}, {1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}')", 
+					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", 
 						iChannelId,iGenreId,strTitle,prog.Start.ToString(),
 						prog.End.ToString(), strDescription,strEpisode,strRepeat);
 					m_db.Execute(strSQL);
@@ -1064,7 +1070,7 @@ namespace MediaPortal.TV.Database
 						}
 
 					// then add the new shows
-					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')", 
+					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')", 
 						iChannelId,iGenreId,strTitle,prog.Start.ToString(),
 						prog.End.ToString(), strDescription, strEpisode, strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification);
 					m_db.Execute(strSQL);
@@ -1446,6 +1452,7 @@ namespace MediaPortal.TV.Database
 					strSQL+=where;
 					strSQL+=strOrder;
 
+					
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
